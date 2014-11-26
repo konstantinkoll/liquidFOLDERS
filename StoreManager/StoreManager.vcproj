@@ -82,6 +82,7 @@
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeForWindows98="0"
+				FixedBaseAddress="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -170,6 +171,7 @@
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeForWindows98="0"
+				FixedBaseAddress="1"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -267,6 +269,7 @@
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="0"
 				LinkTimeCodeGeneration="1"
+				FixedBaseAddress="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -363,6 +366,7 @@
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="0"
 				LinkTimeCodeGeneration="1"
+				FixedBaseAddress="1"
 				TargetMachine="17"
 			/>
 			<Tool
