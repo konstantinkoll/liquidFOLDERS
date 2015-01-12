@@ -8442,6 +8442,7 @@ WMC     Winnemucca, USA;4;40*53'48"N, 117*48'21"W
 WMD     Mandabe, Madagaskar;4;21*1'59"S, 44*57'0"E
 WME     Warramboor/Mt. Keith, Australien;4;27*17'11"S, 120*33'17"E
 WMH     Mountain Home, USA;4;36*22'8"N, 92*28'14"W
+WMI     Warschau-Modlin, Polen;5;52*27'4"N, 20*39'6"E
 WMK     Meyers Chuck, USA;4;55*44'23"N, 132*15'18"W
 WML     Malaimbandy, Madagaskar;4;20*21'0"S, 45*32'60"E
 WMN     Maroantsetra, Madagaskar;4;15*26'12"S, 49*41'18"E

@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8626
+#define AirportCount_DE 8627
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -8063,6 +8063,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 112, "WMD", "", "Mandabe", { 21.033056, 44.950000 } },
 	{  11, "WME", "", "Warramboor/Mt. Keith", { 27.286389, 120.554722 } },
 	{ 210, "WMH", "", "Mountain Home", { -36.368889, -92.470556 } },
+	{ 155, "WMI", "", "Warschau-Modlin", { -52.451111, 20.651667 } },
 	{ 210, "WMK", "", "Meyers Chuck", { -55.739722, -132.255000 } },
 	{ 112, "WML", "", "Malaimbandy", { 20.350000, 45.550000 } },
 	{ 112, "WMN", "", "Maroantsetra", { 15.436667, 49.688333 } },
