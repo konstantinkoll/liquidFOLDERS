@@ -2836,7 +2836,7 @@ HAZ     Hatzfeldthaven, New Guinea;4;4*24'0"S, 145*11'60"E
 HBA     Hobart, Australia;4;42*50'10"S, 147*30'37"E
 HBB     Hobbs (Industrial Airpark), USA;4;32*46'0"N, 103*12'32"W
 HBC     Hanus Bay, USA
-HBE     Borg El Arab, Egypt;5;30*55'4"N, 29ø41'47" E
+HBE     Borg El Arab, Egypt;5;30*55'4"N, 29*41'47" E
 HBG     Hattiesburg, USA;4;31*15'54"N, 89*15'10"W
 HBH     Hobart Bay, USA;4;57*24'44"N, 133*26'22"W
 HBI     Harbour Island, Bahamas;5;25*30'59"N, 76*36'0"W

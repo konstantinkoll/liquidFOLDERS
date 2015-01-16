@@ -2924,7 +2924,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 137, "HAZ", "", "Hatzfeldthaven", { 4.400000, 145.200000 } },
 	{  11, "HBA", "", "Hobart", { 42.836111, 147.510278 } },
 	{ 210, "HBB", "", "Hobbs (Industrial Airpark)", { -32.766667, -103.208889 } },
-	{   1, "HBE", "", "Burg al-`Arab", { -30.917778, 0.496389 } },
+	{   1, "HBE", "", "Burg al-`Arab", { -30.917778, 29.696389 } },
 	{ 210, "HBG", "", "Hattiesburg", { -31.265000, -89.252778 } },
 	{ 210, "HBH", "", "Hobart Bay", { -57.412222, -133.439444 } },
 	{  13, "HBI", "", "Harbour Island", { -25.516389, -76.600000 } },
