@@ -91,7 +91,7 @@ void LFUpdateDlg::UpdateFrame(BOOL bMove)
 	es |= WS_EX_TOOLWINDOW;
 	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, es);
 
-	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
 	AdjustWindowRectEx(rectClient, ws, FALSE, es);
 
@@ -112,11 +112,11 @@ void LFUpdateDlg::UpdateFrame(BOOL bMove)
 
 		const INT PosX = rectScreen.right-rectClient.Width()+1;
 		const INT PosY = rectScreen.bottom-rectClient.Height()+1;
-		SetWindowPos(&wndTopMost, PosX, PosY, rectClient.Width(), rectClient.Height(), SWP_NOZORDER);
+		SetWindowPos(&wndTopMost, PosX, PosY, rectClient.Width(), rectClient.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 	else
 	{
-		SetWindowPos(&wndTopMost, 0, 0, rectClient.Width(), rectClient.Height(), SWP_NOZORDER | SWP_NOMOVE);
+		SetWindowPos(&wndTopMost, 0, 0, rectClient.Width(), rectClient.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 }
 

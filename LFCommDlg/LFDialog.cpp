@@ -303,6 +303,7 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 LRESULT LFDialog::OnThemeChanged()
 {
 	m_BackBufferL = m_BackBufferH = 0;
+
 	return TRUE;
 }
 

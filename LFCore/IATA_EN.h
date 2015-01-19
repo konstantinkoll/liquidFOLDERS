@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8627
+#define AirportCount_EN 8628
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -6539,6 +6539,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 209, "RWN", "", "Rivne", { -50.607222, 26.141667 } },
 	{ 220, "RXA", "", "Raudha", { -14.450000, 47.283056 } },
 	{ 156, "RXS", "", "Roxas City", { -11.597778, 122.751667 } },
+	{ 149, "RYG", "", "Moss Airport (Rygge)", { -59.378889, 10.785556 } },
 	{ 151, "RYK", "", "Rahim Yar Khan", { -28.383889, 70.279444 } },
 	{  64, "RYN", "", "Royan", { -45.631111, 0.975556 } },
 	{   6, "RYO", "", "Rio Turbio", { 51.600000, -72.216944 } },

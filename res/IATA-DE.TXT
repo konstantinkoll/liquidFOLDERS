@@ -6829,6 +6829,7 @@ RWP     Rawalpindi, Pakistan
 RXA     Raudha, Jemen;4;14*26'60"N, 47*16'59"E
 RXS     Roxas City, Philippinen;4;11*35'52"N, 122*45'6"E
 RXW     Watersmeet, USA
+RYG     Moss Airport (Rygge), Norwegen;5;59*22'44"N, 10*47'08"E
 RYK     Rahim Yar Khan, Pakistan;4;28*23'2"N, 70*16'46"E
 RYN     Royan, Frankreich;4;45*37'52"N, 0*58'32"E
 RYO     Rio Turbio, Argentinien;4;51*35'60"S, 72*13'1"W
