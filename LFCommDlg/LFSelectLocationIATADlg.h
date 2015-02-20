@@ -21,15 +21,19 @@ public:
 
 	LFAirport* p_Airport;
 	UINT m_LastCountrySelected;
+	UINT m_LastSortColumn;
+	BOOL m_LastSortDirection;
 	BOOL m_OverwriteName;
 	BOOL m_OverwriteGPS;
 
 protected:
+	void Sort();
 	void LoadCountry(UINT country, BOOL SelectFirst=TRUE);
 	void UpdatePreview();
 
 private:
-	CMapPreviewCtrl m_Map;
+	CListCtrl m_wndList;
+	CMapPreviewCtrl m_wndMap;
 	LFAirport* m_Airports[MaxAirportsPerCountry];
 	INT m_nAirports;
 	UINT m_nIDTemplate;
@@ -38,8 +42,8 @@ private:
 	BOOL m_AllowOverwriteName;
 	BOOL m_AllowOverwriteGPS;
 
-	INT Compare(INT col, INT n1, INT n2);
-	void Heap(INT col, INT wurzel, INT anz);
+	INT Compare(INT n1, INT n2);
+	void Heap(INT wurzel, INT anz);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);

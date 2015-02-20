@@ -1458,7 +1458,7 @@ CPP     Calapan, Philippinen
 CPQ     Campinas, Brasilien;4;22*51'33"S, 47*6'29"W
 CPR     Casper, USA;4;42*54'29"N, 106*27'52"W
 CPS     Cahokia, USA;4;38*34'15"N, 90*9'22"W
-CPT     Kapstadt (Capetown), Südafrika;4;33*57'53"S, 18*36'6"E
+CPT     Kapstadt, Südafrika;4;33*57'53"S, 18*36'6"E
 CPU     Cururupu, Brasilien;4;1*47'36"S, 44*50'50"W
 CPV     Campina Grande, Brasilien;4;7*16'12"S, 35*53'47"W
 CPX     Culebra, Puerto Rico;4;18*18'48"N, 65*18'16"W
