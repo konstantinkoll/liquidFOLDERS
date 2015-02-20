@@ -185,9 +185,9 @@ CGlobeView::CGlobeView()
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
 {
-	return CFileView::Create(pParentWnd, nID, pRawFiles, pCookedFiles, Data, CS_DBLCLKS | CS_OWNDC);
+	return CFileView::Create(pParentWnd, nID, rect, pRawFiles, pCookedFiles, Data, nClassStyle | CS_OWNDC);
 }
 
 void CGlobeView::SetViewOptions(BOOL Force)

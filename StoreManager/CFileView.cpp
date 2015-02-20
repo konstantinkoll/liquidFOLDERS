@@ -90,7 +90,7 @@ CFileView::~CFileView()
 		delete p_FooterBitmap;
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
 {
 	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
 
@@ -98,8 +98,6 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LF
 	if (m_EnableScrolling)
 		dwStyle |= WS_HSCROLL | WS_VSCROLL;
 
-	CRect rect;
-	rect.SetRectEmpty();
 	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
 		return FALSE;
 

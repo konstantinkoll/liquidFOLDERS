@@ -31,10 +31,9 @@ class CGlobeView : public CFileView
 public:
 	CGlobeView();
 
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
-
-	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 
 protected:
 	GlobeParameters m_GlobeTarget;

@@ -119,12 +119,12 @@ public:
 	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableTooltipOnVirtual=TRUE);
 	virtual ~CFileView();
 
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
 	virtual void EditLabel(INT idx);
 	virtual BOOL IsEditing();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall=FALSE);
 	void UpdateFooter();

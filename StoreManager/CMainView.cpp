@@ -138,38 +138,23 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	case LFViewContent:
 	case LFViewPreview:
 		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
-		{
 			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
-		}
 		break;
 	case LFViewCalendar:
 		if (m_ViewID!=LFViewCalendar)
-		{
 			pNewView = new CCalendarView();
-			((CCalendarView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
-		}
 		break;
 	case LFViewTimeline:
 		if (m_ViewID!=LFViewTimeline)
-		{
 			pNewView = new CTimelineView();
-			((CTimelineView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
-		}
 		break;
 	case LFViewGlobe:
 		if (m_ViewID!=LFViewGlobe)
-		{
 			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
-		}
 		break;
 	case LFViewTagcloud:
 		if (m_ViewID!=LFViewTagcloud)
-		{
 			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
-		}
 		break;
 	}
 
@@ -178,13 +163,25 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	// Exchange view
 	if (pNewView)
 	{
+		CRect rect;
+		if (p_wndFileView)
+		{
+			p_wndFileView->GetWindowRect(rect);
+			ScreenToClient(rect);
+		}
+		else
+		{
+			rect.SetRectEmpty();
+		}
+
+		pNewView->Create(this, FileViewID, rect, p_RawFiles, p_CookedFiles, Data);
+
 		CFileView* pVictim = p_wndFileView;
 
 		p_wndFileView = pNewView;
 		p_wndFileView->SetOwner(GetOwner());
 		if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
 			p_wndFileView->SetFocus();
-		AdjustLayout();
 
 		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
 

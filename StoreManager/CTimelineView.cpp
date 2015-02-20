@@ -260,7 +260,7 @@ Restart:
 		}
 	}
 
-	m_ScrollHeight = m_TwoColumns ? max(CurRow[0], CurRow[1]) : CurRow[0];
+	m_ScrollHeight = max(CurRow[0], CurRow[1]);
 	m_ScrollWidth = rect.Width();
 
 	CFileView::AdjustLayout();
