@@ -2489,7 +2489,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  25, "FRC", "", "Franca", { 20.592222, -47.383056 } },
 	{ 212, "FRD", "", "Friday Harbor", { -48.521944, -123.024444 } },
 	{ 174, "FRE", "", "Fera Island", { 8.107500, 159.577222 } },
-	{  70, "FRF", "", "Frankfurt (Rhein-Main Airforce Base)", { -52.040278, 11.202778 } },
+	{  70, "FRF", "", "Oschersleben", { -52.040278, 11.202778 } },
 	{ 212, "FRG", "", "Long Island", { -40.728889, -73.413333 } },
 	{ 212, "FRH", "", "French Lick", { -38.506111, -86.636944 } },
 	{ 212, "FRI", "", "Fort Riley", { -39.052778, -96.764444 } },

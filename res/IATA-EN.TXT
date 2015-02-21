@@ -2370,7 +2370,7 @@ FRB     Forbes, Australia;4;33*21'49"S, 147*56'6"E
 FRC     Franca, Brazil;4;20*35'32"S, 47*22'59"W
 FRD     Friday Harbor, USA;4;48*31'19"N, 123*1'28"W
 FRE     Fera Island, Solomons;4;8*6'27"S, 159*34'38"E
-FRF     Frankfurt (Rhein-Main Airforce Base), Germany;4;52*2'25"N, 11*12'10"E
+FRF     Oschersleben, Germany;5;52*2'25"N, 11*12'10"E
 FRG     Long Island, USA;4;40*43'44"N, 73*24'48"W
 FRH     French Lick, USA;4;38*30'22"N, 86*38'13"W
 FRI     Fort Riley, USA;4;39*3'10"N, 96*45'52"W
