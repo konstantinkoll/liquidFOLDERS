@@ -144,7 +144,7 @@ void CTooltipHeader::OnPaint()
 			{
 				if (Themed)
 				{
-					if (rectItem.left==0)
+					if ((rectItem.left==0) && (lpBuffer[0]!=L'\0'))
 					{
 						g.DrawRectangle(&pen, rectItem.left-1, -1, 2, rectItem.Height()-1);
 						g.FillRectangle(&brush1, rectItem.left, 0, 1, Line);

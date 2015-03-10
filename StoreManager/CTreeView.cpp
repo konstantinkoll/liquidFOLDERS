@@ -1382,11 +1382,10 @@ void CTreeView::ScrollWindow(INT dx, INT dy)
 
 		WINDOWPOS wp;
 		HDLAYOUT HdLayout;
-		HdLayout.prc = &rectWindow;
+		HdLayout.prc = &rect;
 		HdLayout.pwpos = &wp;
 		m_wndHeader.Layout(&HdLayout);
 
-		wp.x = GetSystemMetrics(SM_CXVSCROLL);
 		wp.y = 0;
 
 		m_wndHeader.SetRedraw(FALSE);
