@@ -348,62 +348,87 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		// This level is created by the namespace extension, and does not exist in the core tree structure
 		if (e.childrenType & NSECT_Folders)
 		{
-			CString sortStr;
-			ENSURE(sortStr.LoadString(IDS_AttributeComment));
+			// Query files
+			f = LFAllocFilter();
+			f->Mode = LFFilterModeDirectoryTree;
+			strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
+			base = LFQuery(f);
 
-			// All files, regardless of attributes
-			FolderSerialization d;
-			ZeroMemory(&d, sizeof(d));
-			d.Level = Attrs.Level+2;
-			d.Icon = IDI_FLD_All;
-			d.Type = LFTypeFolder;
-			d.CategoryID = LFAttrCategoryCount;
-			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFiles, d.DisplayName, 256));
-			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFilesComment, d.Comment, 256));
-			strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
-			strcpy_s(d.FileID, LFKeySize, "ALL");
+			if (base->m_ItemCount)
+			{
+				CString sortStr;
+				ENSURE(sortStr.LoadString(IDS_AttributeComment));
 
-			e.children->AddTail(new CFolderItem(d));
+				// All files, regardless of attributes
+				FolderSerialization d;
+				ZeroMemory(&d, sizeof(d));
+				d.Level = Attrs.Level+2;
+				d.Icon = IDI_FLD_All;
+				d.Type = LFTypeFolder;
+				d.CategoryID = LFAttrCategoryCount;
+				ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFiles, d.DisplayName, 256));
+				ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFilesComment, d.Comment, 256));
+				strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
+				strcpy_s(d.FileID, LFKeySize, "ALL");
 
-			// Important attributes
-			for (UINT a=0; a<LFAttributeCount; a++)
-				switch (a)
-				{
-				case LFAttrFileName:
-				case LFAttrComments:
-				case LFAttrCreationTime:
-				case LFAttrFileTime:
-				case LFAttrTags:
-				case LFAttrRating:
-				case LFAttrPriority:
-				case LFAttrLocationName:
-				case LFAttrLocationIATA:
-				case LFAttrRoll:
-				case LFAttrAlbum:
-				case LFAttrArtist:
-				case LFAttrTitle:
-				case LFAttrCopyright:
-				case LFAttrRecordingTime:
-				case LFAttrRecordingEquipment:
-				case LFAttrResponsible:
-				case LFAttrDueTime:
-				case LFAttrDoneTime:
-				case LFAttrCustomer:
+				e.children->AddTail(new CFolderItem(d));
+
+				// Get existing attributes
+				LFBitArray ExistingAttrs(LFAttributeCount);
+				for (UINT a=0; a<base->m_ItemCount; a++)
+					for (UINT b=0; b<LFAttributeCount; b++)
+						if (!ExistingAttrs.IsSet(b))
+						{
+							LFVariantData v;
+							ZeroMemory(&v, sizeof(v));
+							v.Attr = b;
+							LFGetAttributeVariantData(base->m_Items[a], &v);
+
+							if (!LFIsNullVariantData(&v))
+								ExistingAttrs += b;
+						}
+
+				// Add important attributes which exist
+				for (UINT a=0; a<LFAttributeCount; a++)
+					switch (a)
 					{
-						FolderSerialization d ;
-						ZeroMemory(&d, sizeof(d));
-						d.Level = Attrs.Level+1;
-						d.Icon = IDI_FLD_Default;
-						d.Type = LFTypeFolder;
-						d.CategoryID = theApp.m_Attributes[a].Category;
-						wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a].Name);
-						wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a].Name));
-						strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
-						sprintf_s(d.FileID, LFKeySize, "%u", a);
+					case LFAttrFileName:
+					case LFAttrComments:
+					case LFAttrCreationTime:
+					case LFAttrFileTime:
+					case LFAttrTags:
+					case LFAttrRating:
+					case LFAttrPriority:
+					case LFAttrLocationName:
+					case LFAttrLocationIATA:
+					case LFAttrRoll:
+					case LFAttrAlbum:
+					case LFAttrArtist:
+					case LFAttrTitle:
+					case LFAttrCopyright:
+					case LFAttrRecordingTime:
+					case LFAttrRecordingEquipment:
+					case LFAttrResponsible:
+					case LFAttrDueTime:
+					case LFAttrDoneTime:
+					case LFAttrCustomer:
+						if (ExistingAttrs.IsSet(a))
+						{
+							FolderSerialization d ;
+							ZeroMemory(&d, sizeof(d));
+							d.Level = Attrs.Level+1;
+							d.Icon = IDI_FLD_Default;
+							d.Type = LFTypeFolder;
+							d.CategoryID = theApp.m_Attributes[a].Category;
+							wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a].Name);
+							wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a].Name));
+							strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
+							sprintf_s(d.FileID, LFKeySize, "%u", a);
 
-						e.children->AddTail(new CFolderItem(d));
+							e.children->AddTail(new CFolderItem(d));
+						}
 					}
-				}
+			}
 		}
 		break;
 	case LevelAttribute:
@@ -425,9 +450,8 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		break;
 	}
 
-	if (f)
-		LFFreeFilter(f);
 	LFFreeSearchResult(base);
+	LFFreeFilter(f);
 
 	return TRUE;
 }
