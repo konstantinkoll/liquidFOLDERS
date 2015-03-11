@@ -28,7 +28,7 @@ public:
 
 protected:
 	void Sort();
-	void LoadCountry(UINT country, BOOL SelectFirst=TRUE);
+	void LoadCountry(UINT country);
 	void UpdatePreview();
 
 private:
