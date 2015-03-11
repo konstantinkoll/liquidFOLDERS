@@ -55,6 +55,16 @@ protected:
 };
 
 
+// CStoreManagerGrid
+//
+
+class CStoreManagerGrid : public CInspectorGrid
+{
+protected:
+	virtual void ScrollWindow(INT dx, INT dy);
+};
+
+
 // CInspectorWnd
 //
 
@@ -72,7 +82,7 @@ public:
 
 protected:
 	CIconHeader m_IconHeader;
-	CInspectorGrid m_wndInspectorGrid;
+	CStoreManagerGrid m_wndGrid;
 	BOOL m_ShowInternal;
 	BOOL m_SortAlphabetic;
 	LFItemDescriptor* p_LastItem;
@@ -97,6 +107,8 @@ private:
 	UINT m_AttributeStatus[AttrCount];
 	BOOL m_AttributeEditable[AttrCount];
 	LFVariantData m_AttributeValues[AttrCount];
+	LFVariantData m_AttributeRangeFirst[AttrCount];
+	LFVariantData m_AttributeRangeSecond[AttrCount];
 	CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
 	CString m_TypeName;
 

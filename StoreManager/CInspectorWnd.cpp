@@ -127,6 +127,15 @@ void CIconHeader::SetPreview(LFItemDescriptor* i, CString Description)
 }
 
 
+// CStoreManagerGrid
+//
+
+void CStoreManagerGrid::ScrollWindow(INT /*dx*/, INT /*dy*/)
+{
+	Invalidate();
+}
+
+
 // CInspectorWnd
 //
 
@@ -145,8 +154,10 @@ CInspectorWnd::CInspectorWnd()
 
 	for (UINT a=0; a<AttrCount; a++)
 	{
-		m_AttributeValues[a].Attr = a;
+		m_AttributeValues[a].Attr = m_AttributeRangeFirst[a].Attr = m_AttributeRangeSecond[a].Attr = a;
 		LFGetNullVariantData(&m_AttributeValues[a]);
+		LFGetNullVariantData(&m_AttributeRangeFirst[a]);
+		LFGetNullVariantData(&m_AttributeRangeSecond[a]);
 	}
 }
 
@@ -155,7 +166,7 @@ void CInspectorWnd::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	m_wndInspectorGrid.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndGrid.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInspectorWnd::SaveSettings()
@@ -184,7 +195,34 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 			break;
 		case StatusUsed:
 			if (!LFIsEqualToVariantData(i, &m_AttributeValues[Attr]))
+			{
 				m_AttributeStatus[Attr] = StatusMultiple;
+
+				LFGetAttributeVariantData(i, &m_AttributeRangeFirst[Attr]);
+				if (LFCompareVariantData(&m_AttributeRangeFirst[Attr], &m_AttributeValues[Attr])==-1)
+				{
+					m_AttributeRangeSecond[Attr] = m_AttributeValues[Attr];
+				}
+				else
+				{
+					m_AttributeRangeSecond[Attr] = m_AttributeRangeFirst[Attr];
+					m_AttributeRangeFirst[Attr] = m_AttributeValues[Attr];
+				}
+			}
+			break;
+		case StatusMultiple:
+			LFGetAttributeVariantData(i, &m_AttributeValues[Attr]);
+
+			if (!LFIsNullVariantData(&m_AttributeValues[Attr]))
+			{
+				if (LFCompareVariantData(&m_AttributeValues[Attr], &m_AttributeRangeFirst[Attr])==-1)
+					m_AttributeRangeFirst[Attr] = m_AttributeValues[Attr];
+
+				if (LFCompareVariantData(&m_AttributeValues[Attr], &m_AttributeRangeSecond[Attr])==1)
+					m_AttributeRangeSecond[Attr] = m_AttributeValues[Attr];
+			}
+
+			break;
 		}
 }
 
@@ -225,7 +263,11 @@ void CInspectorWnd::UpdateStart()
 	ZeroMemory(m_AttributeStatus, sizeof(m_AttributeStatus));
 	ZeroMemory(m_AttributeEditable, sizeof(m_AttributeEditable));
 	for (UINT a=0; a<AttrCount; a++)
+	{
 		LFGetNullVariantData(&m_AttributeValues[a]);
+		LFGetNullVariantData(&m_AttributeRangeFirst[a]);
+		LFGetNullVariantData(&m_AttributeRangeSecond[a]);
+	}
 }
 
 void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
@@ -406,14 +448,15 @@ void CInspectorWnd::UpdateFinish()
 
 	// Werte aktualisieren
 	for (UINT a=0; a<AttrCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, m_AttributeStatus[a]==StatusMultiple,
-		a<LFAttributeCount ? (!theApp.m_Attributes[a].ReadOnly) && m_AttributeEditable[a] : FALSE,
-		m_AttributeVisible[a] & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a].Category!=LFAttrCategoryInternal) : FALSE));
+		m_wndGrid.UpdatePropertyState(a, m_AttributeStatus[a]==StatusMultiple,
+			a<LFAttributeCount ? (!theApp.m_Attributes[a].ReadOnly) && m_AttributeEditable[a] : FALSE,
+			m_AttributeVisible[a] & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a].Category!=LFAttrCategoryInternal) : FALSE),
+			&m_AttributeRangeFirst[a], &m_AttributeRangeSecond[a]);
 
 	// Store
-	m_wndInspectorGrid.SetStore(m_AttributeStatus[LFAttrStoreID]==StatusUsed ? m_AttributeValues[LFAttrStoreID].AnsiString : NULL);
+	m_wndGrid.SetStore(m_AttributeStatus[LFAttrStoreID]==StatusUsed ? m_AttributeValues[LFAttrStoreID].AnsiString : NULL);
 
-	m_wndInspectorGrid.AdjustLayout();
+	m_wndGrid.AdjustLayout();
 }
 
 
@@ -440,20 +483,20 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_SortAlphabetic = theApp.GetInt(_T("SortAlphabetic"), FALSE);
 	theApp.SetRegistryBase(oldBase);
 
-	if (!m_wndInspectorGrid.Create(this, 1, &m_IconHeader))
+	if (!m_wndGrid.Create(this, 1, &m_IconHeader))
 		return -1;
 
-	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
-	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
+	m_wndGrid.SetAlphabeticMode(m_SortAlphabetic);
+	m_wndGrid.AddAttributes(m_AttributeValues);
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)
-		m_wndInspectorGrid.AddProperty(new CProperty(&m_AttributeValues[a]), LFAttrCategoryInternal, m_AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
+		m_wndGrid.AddProperty(new CProperty(&m_AttributeValues[a]), LFAttrCategoryInternal, m_AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
 
 	return 0;
 }
 
 void CInspectorWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	m_wndInspectorGrid.SetFocus();
+	m_wndGrid.SetFocus();
 }
 
 void CInspectorWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
@@ -509,9 +552,9 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 				wcscpy_s(m_AttributeValues[AttrIATAAirportCountry].UnicodeString, 256, L"?");
 			}
 
-		m_wndInspectorGrid.UpdatePropertyState(AttrIATAAirportName, FALSE, FALSE, m_ShowInternal);
-		m_wndInspectorGrid.UpdatePropertyState(AttrIATAAirportCountry, FALSE, FALSE, m_ShowInternal);
-		m_wndInspectorGrid.AdjustLayout();
+		m_wndGrid.UpdatePropertyState(AttrIATAAirportName, FALSE, FALSE, m_ShowInternal);
+		m_wndGrid.UpdatePropertyState(AttrIATAAirportCountry, FALSE, FALSE, m_ShowInternal);
+		m_wndGrid.AdjustLayout();
 	}
 
 	((CMainView*)GetParent())->UpdateItems(Value1, Value2, Value3);
@@ -532,7 +575,7 @@ void CInspectorWnd::OnAlphabetic()
 	m_SortAlphabetic = !m_SortAlphabetic;
 	SaveSettings();
 
-	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
+	m_wndGrid.SetAlphabeticMode(m_SortAlphabetic);
 }
 
 void CInspectorWnd::OnExportSummary()
@@ -557,7 +600,7 @@ void CInspectorWnd::OnExportSummary()
 				f.WriteString(m_TypeName+_T("\n\n"));
 				for (UINT a=0; a<AttrCount; a++)
 					if (m_AttributeVisible[a])
-						f.WriteString(m_wndInspectorGrid.GetName(a)+_T(": ")+m_wndInspectorGrid.GetValue(a)+_T("\n"));
+						f.WriteString(m_wndGrid.GetName(a)+_T(": ")+m_wndGrid.GetValue(a)+_T("\n"));
 			}
 			catch(CFileException ex)
 			{

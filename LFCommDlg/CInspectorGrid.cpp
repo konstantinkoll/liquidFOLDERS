@@ -114,21 +114,40 @@ CProperty::CProperty(LFVariantData* pData)
 
 	p_Data = pData;
 	p_Parent = NULL;
-	m_Modified = m_Multiple = FALSE;
+	m_Modified = m_Multiple = m_ShowRange = FALSE;
+	ZeroMemory(&m_RangeFirst, sizeof(m_RangeFirst));
+	ZeroMemory(&m_RangeSecond, sizeof(m_RangeSecond));
 }
 
 void CProperty::ToString(WCHAR* tmpStr, INT nCount)
 {
 	ASSERT(p_Parent);
 
-	if ((m_Multiple) || (p_Data->Attr>=LFAttributeCount))
+	if (p_Data->Attr>=LFAttributeCount)
 	{
-		wcscpy_s(tmpStr, nCount, m_Multiple ? p_Parent->m_MultipleValues : p_Data->UnicodeString);
+		wcscpy_s(tmpStr, nCount, p_Data->UnicodeString);
 	}
 	else
-	{
-		LFVariantDataToString(p_Data, tmpStr, nCount);
-	}
+		if (m_Multiple)
+		{
+			if (m_ShowRange)
+			{
+				WCHAR tmpBuf[256];
+				LFVariantDataToString(&m_RangeSecond, tmpBuf, 256);
+
+				LFVariantDataToString(&m_RangeFirst, tmpStr, nCount);
+				wcscat_s(tmpStr, nCount, L" – ");
+				wcscat_s(tmpStr, nCount, tmpBuf);
+			}
+			else
+			{
+				wcscpy_s(tmpStr, nCount, m_Multiple ? p_Parent->m_MultipleValues : p_Data->UnicodeString);
+			}
+		}
+		else
+		{
+			LFVariantDataToString(p_Data, tmpStr, nCount);
+		}
 }
 
 void CProperty::DrawValue(CDC& dc, CRect rect)
@@ -220,9 +239,29 @@ void CProperty::SetParent(CPropertyHolder* pParentWnd)
 	p_Parent = pParentWnd;
 }
 
-void CProperty::SetMultiple(BOOL Multiple)
+void CProperty::SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariantData* pRangeSecond)
 {
 	m_Multiple = Multiple;
+
+	m_ShowRange = Multiple && (pRangeFirst!=NULL) && (pRangeSecond!=NULL);
+
+	if (m_ShowRange)
+	{
+		UINT Type = p_Parent->p_App->m_Attributes[p_Data->Attr].Type;
+
+		m_ShowRange &= (Type!=LFTypeUnicodeString) && (Type!=LFTypeUnicodeArray) && (Type!=LFTypeAnsiString) && (Type!=LFTypeFourCC) && (Type!=LFTypeFraction);
+	}
+
+	if (m_ShowRange)
+	{
+		m_RangeFirst = *pRangeFirst;
+		m_RangeSecond = *pRangeSecond;
+	}
+	else
+	{
+		ZeroMemory(&m_RangeFirst, sizeof(m_RangeFirst));
+		ZeroMemory(&m_RangeSecond, sizeof(m_RangeSecond));
+	}
 }
 
 void CProperty::ResetModified()
@@ -282,7 +321,7 @@ void CPropertyRating::DrawValue(CDC& dc, CRect rect)
 	ASSERT(p_Parent);
 
 	HDC hdcMem = CreateCompatibleDC(dc);
-	UCHAR level = m_Multiple ? 0 : p_Data->Rating;
+	UCHAR level = m_Multiple ? m_ShowRange ? m_RangeSecond.Rating : 0 : p_Data->Rating;
 	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? p_Parent->p_App->m_RatingBitmaps[level] : p_Parent->p_App->m_PriorityBitmaps[level]);
 
 	INT w = min(rect.Width()-6, RatingBitmapWidth);
@@ -827,7 +866,7 @@ void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
 	EnsureVisible(m_SelectedItem);
 }
 
-void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible)
+void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible, LFVariantData* pRangeFirst, LFVariantData* pRangeSecond)
 {
 	ASSERT(nID<m_Properties.m_ItemCount);
 
@@ -835,7 +874,7 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 
 	m_Properties.m_Items[nID].Editable = Editable;
 	m_Properties.m_Items[nID].Visible = Visible;
-	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple);
+	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple, pRangeFirst, pRangeSecond);
 	m_Properties.m_Items[nID].pProperty->ResetModified();
 }
 
@@ -962,7 +1001,7 @@ void CInspectorGrid::EnsureVisible(INT Item)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -990,7 +1029,7 @@ void CInspectorGrid::SelectItem(INT Item)
 
 void CInspectorGrid::ResetScrollbars()
 {
-	ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+	ScrollWindow(0, m_VScrollPos);
 	m_VScrollPos = 0;
 	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 }
@@ -1146,6 +1185,11 @@ void CInspectorGrid::AdjustLayout()
 
 	AdjustScrollbars();
 	Invalidate();
+}
+
+void CInspectorGrid::ScrollWindow(INT dx, INT dy)
+{
+	CWnd::ScrollWindow(dx, dy);
 }
 
 void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text, BOOL Themed)
@@ -1491,8 +1535,8 @@ void CInspectorGrid::OnPaint()
 	//Header
 	if (m_pHeader)
 	{
-		CRect rect(0, -m_VScrollPos, rect.Width(), m_pHeader->GetPreferredHeight()-m_VScrollPos);
-		m_pHeader->DrawHeader(dc, rect, Themed);
+		CRect rectHeader(0, -m_VScrollPos, rect.Width(), m_pHeader->GetPreferredHeight()-m_VScrollPos);
+		m_pHeader->DrawHeader(dc, rectHeader, Themed);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
@@ -1559,7 +1603,7 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1687,7 +1731,7 @@ BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		m_TooltipCtrl.Deactivate();
 
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 
 		ScreenToClient(&pt);

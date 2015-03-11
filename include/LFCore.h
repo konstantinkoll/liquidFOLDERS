@@ -162,6 +162,9 @@ LFCore_API bool __stdcall LFIsNullVariantData(LFVariantData* v);
 // Prüft, ob ein Dateiattribut gleich einer LFVariantData-Struktur ist
 LFCore_API bool __stdcall LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v);
 
+// Vergleicht zwei Dateiattribute
+LFCore_API int __stdcall LFCompareVariantData(LFVariantData* v1, LFVariantData* v2);
+
 // Entfernt doppelte Eintäge in einem Unicode-Array
 LFCore_API void __stdcall LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount);
 

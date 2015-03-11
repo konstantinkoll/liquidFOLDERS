@@ -696,6 +696,63 @@ LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 	}
 }
 
+LFCore_API int LFCompareVariantData(LFVariantData* v1, LFVariantData* v2)
+{
+	assert(v1);
+	assert(v2);
+
+	if ((v1->IsNull) && (v2->IsNull))
+		return 0;
+	if (v1->IsNull)
+		return -1;
+	if (v2->IsNull)
+		return 1;
+
+	assert(v1->Attr<LFAttributeCount);
+	assert(v2->Attr<LFAttributeCount);
+	assert(v1->Type==AttrTypes[v1->Attr]);
+	assert(v2->Type==AttrTypes[v2->Attr]);
+	assert(v1->Type<LFTypeCount);
+	assert(v2->Type<LFTypeCount);
+
+	if (v1->Type!=v2->Type)
+		return v1->Type-v2->Type;
+
+	switch (v1->Type)
+	{
+	case LFTypeUnicodeString:
+		return wcscmp(v1->UnicodeString, v2->UnicodeString);
+	case LFTypeUnicodeArray:
+		return wcscmp(v1->UnicodeArray, v2->UnicodeArray);
+	case LFTypeAnsiString:
+		return strcmp(v1->AnsiString, v2->AnsiString);
+	case LFTypeFourCC:
+		return (long)v1->FourCC-(long)v2->FourCC;
+	case LFTypeUINT:
+	case LFTypeDuration:
+	case LFTypeBitrate:
+		return (v1->UINT<v2->UINT) ? -1 : v1->UINT==v2->UINT ? 0 : 1;
+	case LFTypeRating:
+		return (int)v1->Rating-(int)v2->Rating;
+	case LFTypeINT64:
+		return (v1->INT64<v2->INT64) ? -1 : v1->INT64==v2->INT64 ? 0 : 1;
+	case LFTypeDouble:
+	case LFTypeMegapixel:
+		return (v1->Double<v2->Double) ? -1 : v1->Double==v2->Double ? 0 : 1;
+	case LFTypeTime:
+		if (v1->Time.dwHighDateTime==v2->Time.dwHighDateTime)
+		{
+			return (v1->Time.dwLowDateTime<v2->Time.dwLowDateTime) ? -1 : (v1->Time.dwLowDateTime==v2->Time.dwLowDateTime) ? 0 : 1;
+		}
+		else
+		{
+			return (v1->Time.dwHighDateTime<v2->Time.dwHighDateTime) ? -1 : 1;
+		}
+	}
+
+	return 0;
+}
+
 LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
 	assert(i);

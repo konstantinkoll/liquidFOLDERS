@@ -73,7 +73,7 @@ public:
 	virtual BOOL OnPushChar(UINT nChar);
 
 	void SetParent(CPropertyHolder* pParentWnd);
-	void SetMultiple(BOOL Multiple);
+	void SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariantData* pRangeSecond);
 	void ResetModified();
 	LFVariantData* GetData();
 
@@ -82,6 +82,9 @@ protected:
 	LFVariantData* p_Data;
 	BOOL m_Modified;
 	BOOL m_Multiple;
+	BOOL m_ShowRange;
+	LFVariantData m_RangeFirst;
+	LFVariantData m_RangeSecond;
 };
 
 
@@ -237,7 +240,7 @@ public:
 	void AddProperty(CProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable=FALSE);
 	void AddAttributes(LFVariantData* pData);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
-	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible);
+	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible, LFVariantData* pRangeFirst=NULL, LFVariantData* pRangeSecond=NULL);
 	CString GetName(UINT nID);
 	CString GetValue(UINT nID);
 
@@ -268,6 +271,7 @@ protected:
 	INT m_EditItem;
 
 	virtual void Init();
+	virtual void ScrollWindow(INT dx, INT dy);
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 
 	RECT GetItemRect(INT Item);
