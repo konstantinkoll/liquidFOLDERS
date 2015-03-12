@@ -74,6 +74,7 @@ BEGIN_MESSAGE_MAP(CTooltipHeader, CHeaderCtrl)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_MESSAGE(HDM_LAYOUT, OnLayout)
 END_MESSAGE_MAP()
 
 INT CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -380,4 +381,17 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 	tme.dwHoverTime = LFHOVERTIME;
 	tme.hwndTrack = GetSafeHwnd();
 	TrackMouseEvent(&tme);
+}
+
+LRESULT CTooltipHeader::OnLayout(WPARAM wParam, LPARAM lParam)
+{
+	INT res = CHeaderCtrl::DefWindowProc(HDM_LAYOUT, wParam, lParam);
+
+	LPHDLAYOUT pHL = (LPHDLAYOUT)lParam;
+	if (pHL->pwpos->cy)
+		pHL->pwpos->cy += 4;
+
+	pHL->prc->top = pHL->pwpos->cy;
+
+	return res;
 }

@@ -255,7 +255,7 @@ void CListView::AdjustLayout()
 
 	wp.x = 13-PADDING;
 	wp.y = 0;
-	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
+	m_HeaderHeight = wp.cy;
 
 	// Items
 	GVArrange gva = { 0, 0, 15-PADDING, 2, PADDING, 1, -1 };
