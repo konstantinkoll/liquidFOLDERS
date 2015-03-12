@@ -353,14 +353,19 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		}
 	}
 
-	if (menu.GetMenuItemCount())
-		menu.AppendMenu(MF_SEPARATOR);
+	BOOL NeedsSeparator = menu.GetMenuItemCount();
 
 	for (POSITION p=m_ButtonsRight.GetTailPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsRight.GetPrev(p);
 		if (btn->IsWindowEnabled())
 		{
+			if (NeedsSeparator)
+			{
+				menu.AppendMenu(MF_SEPARATOR);
+				NeedsSeparator = FALSE;
+			}
+
 			CString tmpStr;
 			btn->GetWindowText(tmpStr);
 			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
