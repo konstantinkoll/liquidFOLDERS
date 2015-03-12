@@ -106,8 +106,8 @@ BOOL CStoreManagerApp::InitInstance()
 	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwType = REG_SZ;
-		CHAR lszValue[255];
-		DWORD dwSize = 255;
+		WCHAR lszValue[256];
+		DWORD dwSize = sizeof(lszValue);
 
 		if (RegQueryValueEx(hKey, _T("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
 			m_PathGoogleEarth = lszValue;
@@ -206,16 +206,44 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 			return pFrame;
 		}
 
-		// Key
-		if ((wcslen(CmdLine)==LFKeySize-1) && (wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL))
+		if ((wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL))
 		{
-			WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, StoreID, LFKeySize, NULL, NULL);
+			// Key
+			if (wcslen(CmdLine)==LFKeySize-1)
+			{
+				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, StoreID, LFKeySize, NULL, NULL);
 
-			CMainWnd* pFrame = new CMainWnd();
-			pFrame->CreateStore(StoreID);
-			pFrame->ShowWindow(SW_SHOW);
+				CMainWnd* pFrame = new CMainWnd();
+				pFrame->CreateStore(StoreID);
+				pFrame->ShowWindow(SW_SHOW);
+	
+				return pFrame;
+			}
 
-			return pFrame;
+			// IATA airport code
+			if (wcslen(CmdLine)==3)
+			{
+				CHAR Code[4];
+				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, Code, 4, NULL, NULL);
+
+				LFFilter* f = LFAllocFilter();
+				f->Mode = LFFilterModeSearch;
+				f->ConditionList = LFAllocFilterCondition();
+				f->ConditionList->Compare = LFFilterCompareIsEqual;
+				f->ConditionList->AttrData.Attr = LFAttrLocationIATA;
+				f->ConditionList->AttrData.IsNull = false;
+				strcpy_s(f->ConditionList->AttrData.AnsiString, 256, Code);
+
+				LFAirport* pAirport = NULL;
+				if (LFIATAGetAirportByCode(Code, &pAirport))
+					MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, f->OriginalName, 256);
+
+				CMainWnd* pFrame = new CMainWnd();
+				pFrame->CreateFilter(f);
+				pFrame->ShowWindow(SW_SHOW);
+	
+				return pFrame;
+			}
 		}
 
 		// Filter
