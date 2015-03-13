@@ -103,7 +103,7 @@ BOOL CStoreManagerApp::InitInstance()
 
 	// Pfad zu Google Earth
 	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwType = REG_SZ;
 		WCHAR lszValue[256];
