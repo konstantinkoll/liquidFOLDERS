@@ -662,7 +662,7 @@ void CTimelineView::OnPaint()
 
 	if (Themed)
 	{
-		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE+1), Color(0xFF, 0xFF, 0xFF), Color(0xED, 0xEA, 0xE9));
+		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE+1), Color(0xFF, 0xFF, 0xFF), Color(0xE9, 0xEA, 0xED));
 		g.FillRectangle(&brush, Rect(0, 0, rect.Width(), WHITE));
 	}
 
