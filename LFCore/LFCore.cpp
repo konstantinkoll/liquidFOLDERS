@@ -506,6 +506,7 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 		ZeroMemory(fn, sizeof(LFFilter));
 		fn->Mode = LFFilterModeStores;
 	}
+
 	return fn;
 }
 

@@ -134,7 +134,7 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 			m_Context = f->ContextID;
 			break;
 		case LFFilterModeSearch:
-			m_Context = (f->Options.IsPersistent) || (f->ContextID) ? f->ContextID : LFContextSearch;
+			m_Context = ((f->Options.IsPersistent) || (f->ContextID) || ((f->Searchterm[0]==L'\0') && (f->ConditionList==NULL))) ? f->ContextID : LFContextSearch;
 			break;
 		}
 

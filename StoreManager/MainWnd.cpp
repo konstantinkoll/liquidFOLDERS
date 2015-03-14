@@ -188,7 +188,6 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 		LFFilter* f = LFAllocFilter();
 		f->Mode = LFFilterModeSearch;
 		m_wndSearch.GetWindowText(f->Searchterm, 256);
-		m_wndSearch.SetWindowText(_T(""));
 
 		SendMessage(WM_NAVIGATETO, (WPARAM)f);
 
@@ -302,8 +301,8 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 			FVPersistentData Data;
 			m_wndMainView.GetPersistentData(Data);
 
-			if ((f->Options.IsPersistent) && (!f->Options.IsSubfolder))
-				while (m_pActiveFilter ? m_pActiveFilter->Options.IsPersistent : false)
+			if ((f->Options.IsPersistent || (f->Mode==LFFilterModeSearch)) && (!f->Options.IsSubfolder))
+				while ((m_BreadcrumbBack!=NULL) && (m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || (m_pActiveFilter->Mode==LFFilterModeSearch)) : false)
 				{
 					LFFreeFilter(m_pActiveFilter);
 					ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
@@ -360,6 +359,9 @@ void CMainWnd::UpdateHistory()
 {
 	if (!m_IsClipboard)
 		m_wndHistory.SetHistory(m_pActiveFilter, m_BreadcrumbBack);
+
+	if (m_pActiveFilter)
+		m_wndSearch.SetWindowText(m_pActiveFilter->Searchterm);
 }
 
 void CMainWnd::HideFilterPane()
@@ -376,7 +378,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
-	ON_WM_CLOSE()
 
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)

@@ -29,7 +29,7 @@ BOOL CGlassEdit::Create(CString EmptyHint, CGlassWindow* pParentWnd, UINT nID, B
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(0, _T("EDIT"), _T(""), dwStyle, rect, pParentWnd, nID);
+	return CEdit::Create(dwStyle, rect, pParentWnd, nID);
 }
 
 UINT CGlassEdit::GetPreferredHeight()
@@ -168,7 +168,6 @@ void CGlassEdit::OnNcPaint()
 		Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
 		g.DrawPath(&pen, &path);
 		rectBounds.DeflateRect(1, 1);
-
 
 		if (LFGetApp()->OSVersion==OS_Eight)
 		{

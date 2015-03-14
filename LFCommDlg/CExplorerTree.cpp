@@ -987,7 +987,7 @@ void CExplorerTree::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 				if (strret.uType==STRRET_WSTR)
 				{
 					edit->SetWindowText(strret.pOleStr);
-					edit->SetSel(0, (INT)wcslen(strret.pOleStr));
+					edit->SetSel(0, -1);
 				}
 
 			pParentFolder->Release();
