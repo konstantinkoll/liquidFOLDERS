@@ -709,9 +709,9 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	// Reuse LFItemDescriptor
 	if (!i)
 	{
-		i = LFAllocItemDescriptor(); \
-		i->Type = Type; \
-		strcpy_s(i->StoreID, LFKeySize, slot->StoreID); \
+		i = LFAllocItemDescriptor();
+		i->Type = Type;
+		strcpy_s(i->StoreID, LFKeySize, slot->StoreID);
 	}
 	else
 		if (i->Slave)
@@ -719,6 +719,8 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 			free(i->Slave);
 			i->Slave = NULL;
 
+			FreeAttribute(i, LFAttrAspectRatio);
+			FreeAttribute(i, LFAttrDimension);
 			ZeroMemory(&i->AttributeValues[LFLastCoreAttribute+1], sizeof(void*)*(LFAttributeCount-LFLastCoreAttribute-1));
 		}
 

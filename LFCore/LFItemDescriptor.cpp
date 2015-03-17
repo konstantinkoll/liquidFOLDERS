@@ -223,7 +223,7 @@ void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v)
 
 LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 {
-	LFItemDescriptor* d = (LFItemDescriptor*)malloc(sizeof(LFItemDescriptor));
+	LFItemDescriptor* d = new LFItemDescriptor;
 	ZeroMemory(d, sizeof(LFItemDescriptor));
 	d->FirstAggregate = d->LastAggregate = -1;
 	d->RefCount = 1;
@@ -349,7 +349,7 @@ LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* i)
 				FreeAttribute(i, a);
 			if (i->Slave)
 				free(i->Slave);
-			free(i);
+			delete i;
 		}
 	}
 }
