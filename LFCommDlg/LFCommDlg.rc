@@ -125,7 +125,6 @@ IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_DEFAULT             ICON                    "res\\Default_Tiny.ico"
 IDI_RESET_NORMAL        ICON                    "res\\Reset_Normal_Tiny.ico"
 IDI_RESET_HOT           ICON                    "res\\Reset_Hot_Tiny.ico"
 IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed_Tiny.ico"

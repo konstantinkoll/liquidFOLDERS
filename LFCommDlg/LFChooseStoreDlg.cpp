@@ -92,9 +92,6 @@ END_MESSAGE_MAP()
 
 BOOL LFChooseStoreDlg::OnInitDialog()
 {
-	if (m_Mode==LFCSD_ChooseDefault)
-		m_nIDTemplate = IDI_DEFAULT;
-
 	LFDialog::OnInitDialog();
 
 	CString Hint;

@@ -291,7 +291,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="LFCommDlg wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=1"
+				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=3"
 			/>
 		</Configuration>
 		<Configuration
@@ -390,7 +390,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="LFCommDlg wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=1"
+				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=3"
 			/>
 		</Configuration>
 	</Configurations>
@@ -976,10 +976,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Attributes_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Default_Tiny.ico"
 				>
 			</File>
 			<File
