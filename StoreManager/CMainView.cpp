@@ -1112,7 +1112,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 
 		if (strcmp(wp.StoreID, "CHOOSE")==0)
 		{
-			LFChooseStoreDlg dlg(this, LFCSD_Mounted);
+			LFChooseStoreDlg dlg(this);
 			if (dlg.DoModal()!=IDOK)
 				return NULL;
 

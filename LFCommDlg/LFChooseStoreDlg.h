@@ -13,14 +13,10 @@
 // LFChooseStoreDlg
 //
 
-#define LFCSD_All               0
-#define LFCSD_Mounted           1
-#define LFCSD_ChooseDefault     2
-
 class AFX_EXT_CLASS LFChooseStoreDlg : public LFDialog
 {
 public:
-	LFChooseStoreDlg(CWnd* pParentWnd, UINT Mode);
+	LFChooseStoreDlg(CWnd* pParentWnd, BOOL Mounted=TRUE);
 	~LFChooseStoreDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -32,7 +28,7 @@ protected:
 	CHeaderArea m_wndHeaderArea;
 	CExplorerList m_wndExplorerList;
 	LFSearchResult* m_pResult;
-	UINT m_Mode;
+	BOOL m_Mounted;
 
 	void UpdateOkButton();
 

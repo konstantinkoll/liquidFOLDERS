@@ -222,7 +222,7 @@ void LFItemTemplateDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void LFItemTemplateDlg::OnChooseStore()
 {
-	LFChooseStoreDlg dlg(this, LFCSD_Mounted);
+	LFChooseStoreDlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
 		strcpy_s(m_StoreID, LFKeySize, dlg.m_StoreID);

@@ -196,7 +196,7 @@ void CMigrationWnd::OnMigrate()
 
 	if (wp.StoreID[0]=='\0')
 	{
-		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
+		LFChooseStoreDlg dlg(this);
 		if (dlg.DoModal()!=IDOK)
 			return;
 

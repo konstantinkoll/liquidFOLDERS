@@ -15,12 +15,12 @@ extern LFMessageIDs* MessageIDs;
 
 #define GetSelectedStore() m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
 
-LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, UINT Mode)
+LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, BOOL Mounted)
 	: LFDialog(IDD_CHOOSESTORE, pParentWnd)
 {
 	m_StoreID[0] = '\0';
 	m_pResult = NULL;
-	m_Mode = Mode;
+	m_Mounted = Mounted;
 }
 
 LFChooseStoreDlg::~LFChooseStoreDlg()
@@ -65,7 +65,7 @@ void LFChooseStoreDlg::UpdateOkButton()
 	INT idx = GetSelectedStore();
 	BOOL b = (idx!=-1);
 
-	if (b && (m_Mode==LFCSD_Mounted))
+	if (m_Mounted)
 		b &= !(m_pResult->m_Items[idx]->Type & LFTypeNotMounted);
 
 	GetDlgItem(IDOK)->EnableWindow(b);
@@ -95,7 +95,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	LFDialog::OnInitDialog();
 
 	CString Hint;
-	if (m_Mode==LFCSD_Mounted)
+	if (m_Mounted)
 		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
 
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
@@ -120,7 +120,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();
-	m_wndExplorerList.SetMenus(IDM_STORE, m_Mode==LFCSD_ChooseDefault, IDM_STORES);
+	m_wndExplorerList.SetMenus(IDM_STORE, FALSE, IDM_STORES);
 	m_wndExplorerList.EnableGroupView(p_App->OSVersion>OS_XP);
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
 	m_wndExplorerList.SetFocus();
@@ -165,7 +165,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM lParam)
 
 		m_wndExplorerList.SetSearchResult(m_pResult);
 
-		if (m_Mode!=LFCSD_Mounted)
+		if (!m_Mounted)
 		{
 			CString Hint;
 			CString Mask;
