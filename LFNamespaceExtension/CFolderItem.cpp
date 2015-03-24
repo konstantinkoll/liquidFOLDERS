@@ -135,6 +135,10 @@ CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 	Attrs.Count = i->AggregateCount;
 	Attrs.Size = i->CoreAttributes.FileSize;
 
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(i->AggregateCount==1 ? IDS_FILES_Singular : IDS_FILES_Plural));
+	swprintf_s(Attrs.Description, tmpStr, i->AggregateCount);
+
 	switch (Level)
 	{
 	case LevelStores:
