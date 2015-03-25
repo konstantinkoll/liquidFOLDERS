@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <iostream>
 #include <shlobj.h>
+#include <shlwapi.h>
 #include <winioctl.h>
 
 
@@ -51,6 +52,18 @@ LFCore_API void LFInitialize()
 	InitAirportDatabase();
 	InitStoreCache();
 	InitWatchdog();
+}
+
+
+LFCore_API void LFCombineFileCountSize(unsigned int count, __int64 size, wchar_t* str, size_t cCount)
+{
+	wchar_t tmpStr[256];
+	StrFormatByteSize(size, tmpStr, 256);
+
+	wchar_t tmpMask[256];
+	LoadString(LFCoreModuleHandle, count==1 ? IDS_Files_Singular : IDS_Files_Plural, tmpMask, 256);
+
+	swprintf_s(str, cCount, tmpMask, count, tmpStr);
 }
 
 

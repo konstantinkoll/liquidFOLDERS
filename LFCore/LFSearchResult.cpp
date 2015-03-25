@@ -579,6 +579,7 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 
 		folder->Type |= Source;
 		SetAttribute(folder, LFAttrFileSize, &size);
+		LFCombineFileCountSize(folder->AggregateCount, size, folder->Description, 256);
 		m_Items[write] = folder;
 
 		return 1;
@@ -757,6 +758,7 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 		SetAttribute(folder, LFAttrFileName, tag);
 		SetAttribute(folder, LFAttrFileSize, &it->second.size);
 		SetAttribute(folder, attr, tag);
+		LFCombineFileCountSize(folder->AggregateCount, it->second.size, folder->Description, 256);
 
 		LFFilterCondition* c = LFAllocFilterCondition();
 		c->Compare = LFFilterCompareSubfolder;

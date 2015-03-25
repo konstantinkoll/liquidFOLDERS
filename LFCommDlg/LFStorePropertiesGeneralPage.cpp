@@ -68,9 +68,10 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 		if (m_wndStoreComment.LineLength()==0)
 			m_wndStoreComment.SetWindowText(p_Store->StoreComment);
 
-		GetDlgItem(IDC_CONTENTS)->SetWindowText(CombineFileCountSize(p_Store->FileCount[LFContextAllFiles], p_Store->FileSize[LFContextAllFiles]));
-
 		WCHAR tmpStr[256];
+		LFCombineFileCountSize(p_Store->FileCount[LFContextAllFiles], p_Store->FileSize[LFContextAllFiles], tmpStr, 256);
+		GetDlgItem(IDC_CONTENTS)->SetWindowText(tmpStr);
+
 		LFTimeToString(p_Store->CreationTime, tmpStr, 256);
 		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
 		LFTimeToString(p_Store->FileTime, tmpStr, 256);

@@ -106,8 +106,6 @@ BEGIN
     IDS_NoLicense           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
     IDS_NULLFOLDER_NameMask "UOhne %s"
     IDS_NULLFOLDER_CommentMask "UAlle Dateien ohne %s"
-    IDS_FILES_Singular      "%u Datei"
-    IDS_FILES_Plural        "%u Dateien"
 END
 
 STRINGTABLE 
@@ -192,8 +190,6 @@ STRINGTABLE
 BEGIN
     IDS_NoLicense           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
     IDS_NULLFOLDER_NameMask "LSin %s"
-    IDS_FILES_Singular      "%u archivo"
-    IDS_FILES_Plural        "%u archivos"
 END
 
 STRINGTABLE 
@@ -280,8 +276,6 @@ BEGIN
     IDS_NoLicense           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
     IDS_NULLFOLDER_NameMask "LSans %s"
     IDS_NULLFOLDER_CommentMask "LTous les fichiers sans %s"
-    IDS_FILES_Singular      "%u fichier"
-    IDS_FILES_Plural        "%u fichiers"
 END
 
 STRINGTABLE 
@@ -403,8 +397,6 @@ BEGIN
     IDS_NoLicense           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
     IDS_NULLFOLDER_NameMask "LWithout %s"
     IDS_NULLFOLDER_CommentMask "LAll files without %s"
-    IDS_FILES_Singular      "%u file"
-    IDS_FILES_Plural        "%u files"
 END
 
 STRINGTABLE 

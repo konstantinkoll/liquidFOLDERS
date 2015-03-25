@@ -34,6 +34,11 @@ LFCore_API void __stdcall LFInitialize();
 
 
 
+// Liefert einen String für Dateianzahl und -größe zurück
+LFCore_API void __stdcall LFCombineFileCountSize(unsigned int count, __int64 size, wchar_t* str, size_t cCount);
+
+
+
 // Gibt true zurück, wenn diese Installation freigeschaltet ist
 // Die gespeicherten Lizenzinformationen finden sich in License
 LFCore_API bool __stdcall LFIsLicensed(LFLicense* License=NULL, bool Reload=false);

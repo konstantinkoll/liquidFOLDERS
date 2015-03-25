@@ -235,8 +235,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 					GlobeItemData* d = GetItemData(a);
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
 					LFGeoCoordinatesToString(coord, d->CoordString, 32, false);
-
-					wcscpy_s(d->DescriptionString, 32, CombineFileCountSize(p_CookedFiles->m_Items[a]->AggregateCount, p_CookedFiles->m_Items[a]->CoreAttributes.FileSize).GetBuffer());
+					wcscpy_s(d->DescriptionString, 32, p_CookedFiles->m_Items[a]->Description);
 
 					d->Hdr.Valid = TRUE;
 				}

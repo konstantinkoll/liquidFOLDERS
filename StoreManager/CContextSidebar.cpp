@@ -37,8 +37,14 @@ CString CContextSidebar::AppendTooltip(UINT CmdID)
 	const UINT Context = CmdID-IDM_NAV_SWITCHCONTEXT;
 	if (Context>LFLastQueryContext)
 		return _T("");
-	
-	return m_pStatistics->FileCount[Context] ? CombineFileCountSize(m_pStatistics->FileCount[Context], m_pStatistics->FileSize[Context]) : _T("");
+
+	if (!m_pStatistics->FileCount[Context])
+		return _T("");
+
+	WCHAR tmpStr[256];
+	LFCombineFileCountSize(m_pStatistics->FileCount[Context], m_pStatistics->FileSize[Context], tmpStr, 256);
+
+	return tmpStr;
 }
 
 void CContextSidebar::SetSelection(UINT CmdID, CHAR* StoreID)

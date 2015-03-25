@@ -207,6 +207,9 @@ STRINGTABLE
 BEGIN
     IDS_Duration13          "90-120 Minuten"
     IDS_Duration14          "Länger als 2 Stunden"
+    IDS_Files_Singular      "%u Datei (%s)"
+    IDS_Files_Plural        "%u Dateien (%s)"
+    IDS_DefaultStore        "Standard-Store"
 END
 
 STRINGTABLE 
@@ -361,11 +364,6 @@ BEGIN
     IDS_QSrcYouTube         "Auf YouTube"
 END
 
-STRINGTABLE 
-BEGIN
-    IDS_DefaultStore        "Standard-Store"
-END
-
 #endif    // Deutsch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -489,6 +487,9 @@ STRINGTABLE
 BEGIN
     IDS_Duration13          "90-120 minutes"
     IDS_Duration14          "Longer than 2 hours"
+    IDS_Files_Singular      "%u file (%s)"
+    IDS_Files_Plural        "%u files (%s)"
+    IDS_DefaultStore        "Default Store"
 END
 
 STRINGTABLE 
@@ -643,11 +644,6 @@ BEGIN
     IDS_QSrcYouTube         "On YouTube"
 END
 
-STRINGTABLE 
-BEGIN
-    IDS_DefaultStore        "Default Store"
-END
-
 #endif    // Englisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -771,6 +767,9 @@ STRINGTABLE
 BEGIN
     IDS_Duration13          "90-120 minutos"
     IDS_Duration14          "Más de 2 horas"
+    IDS_Files_Singular      "%u archivo (%s)"
+    IDS_Files_Plural        "%u archivos (%s)"
+    IDS_DefaultStore        "Store predeterminado"
 END
 
 STRINGTABLE 
@@ -925,11 +924,6 @@ BEGIN
     IDS_QSrcYouTube         "En YouTube"
 END
 
-STRINGTABLE 
-BEGIN
-    IDS_DefaultStore        "Store predeterminado"
-END
-
 #endif    // Spanisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1053,6 +1047,9 @@ STRINGTABLE
 BEGIN
     IDS_Duration13          "90-120 minutes"
     IDS_Duration14          "Plus de 2 heures"
+    IDS_Files_Singular      "%u fichier (%s)"
+    IDS_Files_Plural        "%u fichiers (%s)"
+    IDS_DefaultStore        "Store défaut"
 END
 
 STRINGTABLE 
@@ -1205,11 +1202,6 @@ BEGIN
     IDS_QSrcSoundCloud      "En SoundCloud"
     IDS_QSrcTwitter         "En Twitter"
     IDS_QSrcYouTube         "En YouTube"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_DefaultStore        "Store défaut"
 END
 
 #endif    // Französisch (neutral) resources

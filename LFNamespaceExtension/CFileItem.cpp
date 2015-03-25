@@ -229,7 +229,16 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 					CUtils::SetVariantUINT(value, v.UINT);
 					return TRUE;
 				case LFTypeINT64:
-					CUtils::SetVariantUINT64(value, v.INT64);
+					if (value->vt==VT_BSTR)
+					{
+						WCHAR tmpBuf[256];
+						LFINT64ToString(v.INT64, tmpBuf, 256);
+						CUtils::SetVariantLPCTSTR(value, tmpBuf);
+					}
+					else
+					{
+						CUtils::SetVariantINT64(value, v.INT64);
+					}
 					return TRUE;
 				case LFTypeDouble:
 					CUtils::SetVariantDOUBLE(value, v.Double);

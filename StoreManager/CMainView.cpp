@@ -225,7 +225,10 @@ void CMainView::SetHeader()
 		}
 		else
 		{
-			Hint = CombineFileCountSize(p_CookedFiles->m_FileCount, p_CookedFiles->m_FileSize);
+			WCHAR tmpStr[256];
+			LFCombineFileCountSize(p_CookedFiles->m_FileCount, p_CookedFiles->m_FileSize, tmpStr, 256);
+
+			Hint = tmpStr;
 		}
 
 		LFStoreDescriptor s;

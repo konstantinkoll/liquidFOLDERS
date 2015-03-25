@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "CListView.h"
 #include "ChooseDetailsDlg.h"
-#include "FooterGraph.h"
 #include "StoreManager.h"
 
 
@@ -32,9 +31,6 @@ static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
 {
-	ENSURE(m_Files_Singular.LoadString(IDS_FILES_SINGULAR));
-	ENSURE(m_Files_Plural.LoadString(IDS_FILES_PLURAL));
-
 	m_Icons[0] = m_Icons[1] = NULL;
 	m_HeaderItemClicked = -1;
 	m_IgnoreHeaderItemChange = m_ShowLegend = FALSE;
@@ -98,7 +94,7 @@ void CListView::SetViewOptions(BOOL Force)
 			if (p_ViewParameters->ColumnWidth[a]!=m_ViewParameters.ColumnWidth[a])
 			{
 				m_ViewParameters = *p_ViewParameters;
-				UpdateFooter();
+				AdjustLayout();
 				break;
 			}
 
@@ -205,40 +201,6 @@ void CListView::AdjustHeader(BOOL bShow)
 	{
 		m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
 	}
-}
-
-CBitmap* CListView::RenderFooter()
-{
-#ifndef DEBUG
-	if (!m_ShowLegend)
-		return NULL;
-#endif
-
-	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
-
-	const COLORREF col = 0x0000FF;
-
-	CString msg;
-	ENSURE(msg.LoadString(IDS_LEGEND_RED));
-
-	BOOL Themed = IsCtrlThemed();
-
-	CDC* pDC = GetWindowDC();
-	CDC dcDraw;
-
-	HGDIOBJ oldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
-	INT cx = pDC->GetTextExtent(msg).cx+m_FontHeight[2]+2*GraphSpacer-1;
-	INT cy = m_FontHeight[2]+2*GraphSpacer;
-
-	CBitmap* pBmp = CreateFooterBitmap(pDC, cx, cy, dcDraw, Themed);
-	CRect rect(0, GraphSpacer, cx, cy);
-
-	DrawLegend(dcDraw, rect, col, msg, Themed);
-
-	pDC->SelectObject(oldFont);
-	ReleaseDC(pDC);
-
-	return pBmp;
 }
 
 void CListView::AdjustLayout()
@@ -432,8 +394,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			Rows[3] = LFAttrRating;
 			break;
 		case LFTypeFolder:
-			Rows[1] = LFAttrFileCount;
-			Rows[2] = LFAttrFileSize;
+			Rows[1] = LFAttrDescription;
+			Rows[2] = -1;
 			Rows[3] = -1;
 			break;
 		}
@@ -609,19 +571,14 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 	{
 		tmpStr[a][0] = L'\0';
 
-		if (Rows[a]!=-1)
-			switch (Rows[a])
+		if (Rows[a]==LFAttrRating)
+		{
+			Cnt++;
+			Height += 18;
+		}
+		else
+			if (Rows[a]!=-1)
 			{
-			case LFAttrRating:
-				Cnt++;
-				Height += 18;
-				break;
-			case LFAttrFileCount:
-				swprintf_s(tmpStr[a], 256, i->AggregateCount==1 ? m_Files_Singular.GetBuffer() : m_Files_Plural.GetBuffer(), i->AggregateCount);
-				Cnt++;
-				Height += m_FontHeight[0];
-				break;
-			default:
 				AttributeToString(i, Rows[a], tmpStr[a], 256);
 				if (tmpStr[a][0]!=L'\0')
 				{

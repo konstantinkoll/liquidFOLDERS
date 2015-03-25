@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "CCalendarView.h"
 #include "StoreManager.h"
-#include "FooterGraph.h"
 #include "GoToYearDlg.h"
 
 
@@ -379,8 +378,6 @@ void CCalendarView::OnPaint()
 		if (IntersectRect(&rectIntersect, rect, rectUpdate))
 			DrawMonth(dc, rect, a, Themed);
 	}
-
-	DrawFooter(dc, Themed);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);

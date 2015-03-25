@@ -135,10 +135,6 @@ CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 	Attrs.Count = i->AggregateCount;
 	Attrs.Size = i->CoreAttributes.FileSize;
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(i->AggregateCount==1 ? IDS_FILES_Singular : IDS_FILES_Plural));
-	swprintf_s(Attrs.Description, tmpStr, i->AggregateCount);
-
 	switch (Level)
 	{
 	case LevelStores:
@@ -329,8 +325,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 		wcscpy_s(d.DisplayName, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
 		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_CommentMask));
 		wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
-		ENSURE(tmpStr.LoadString(NullCount==1 ? IDS_FILES_Singular : IDS_FILES_Plural));
-		swprintf_s(d.Description, tmpStr, NullCount);
+		LFCombineFileCountSize(NullCount, NullSize, d.Description, 256);
 
 		e.children->AddTail(new CFolderItem(d));
 	}
@@ -1382,12 +1377,6 @@ INT CFolderItem::GetTileViewColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrComments;
 	indices[1] = LFAttrDescription;
-
-	if (Attrs.Level==LevelAttrValue)
-	{
-		indices[2] = LFAttrFileSize;
-		return (strcmp(Attrs.FileID, "ALL")==0) ? 2 : 3;
-	}
 
 	return 2;
 }

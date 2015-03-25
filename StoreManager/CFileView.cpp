@@ -65,8 +65,6 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextAllFiles;
 	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_FontHeight[2] = m_FontHeight[3] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
-	p_FooterBitmap = NULL;
-	m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
 	m_Hover = m_BeginDragDrop = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
@@ -86,8 +84,6 @@ CFileView::~CFileView()
 
 	if (m_ItemData)
 		free(m_ItemData);
-	if (p_FooterBitmap)
-		delete p_FooterBitmap;
 }
 
 BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
@@ -165,7 +161,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 
 	if (Arrange)
 	{
-		UpdateFooter();
+		AdjustLayout();
 	}
 	else
 	{
@@ -256,24 +252,17 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 			}
 		}
 
-		UpdateFooter();
+		AdjustLayout();
 
 		if (!InternalCall)
 			EnsureVisible(m_FocusItem);
 	}
 	else
 	{
-		SetFooter();
 		Invalidate();
 	}
 
 	SetCursor(theApp.LoadStandardCursor(pCookedFiles ? IDC_ARROW : IDC_WAIT));
-}
-
-void CFileView::UpdateFooter()
-{
-	SetFooter();
-	AdjustLayout();
 }
 
 void CFileView::SetViewOptions(BOOL /*Force*/)
@@ -286,75 +275,8 @@ void CFileView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 	p_CookedFiles = pCookedFiles;
 }
 
-void CFileView::SetFooter()
-{
-	if (p_FooterBitmap)
-	{
-		delete p_FooterBitmap;
-		p_FooterBitmap = NULL;
-	}
-
-	if (p_CookedFiles && !m_Nothing)
-		p_FooterBitmap = RenderFooter();
-
-	if (!p_FooterBitmap)
-		m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
-}
-
-CBitmap* CFileView::RenderFooter()
-{
-	return NULL;
-}
-
-CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw, BOOL Themed)
-{
-	CRect rectClient;
-	GetClientRect(&rectClient);
-
-	m_FooterSize.cx = max(mincx, rectClient.Width()-18);
-	m_FooterSize.cy = cy;
-
-	CBitmap* pBmp = new CBitmap();
-	pBmp->CreateCompatibleBitmap(pDC, m_FooterSize.cx, m_FooterSize.cy);
-
-	dcDraw.CreateCompatibleDC(pDC);
-	dcDraw.SetBkMode(TRANSPARENT);
-	dcDraw.SelectObject(pBmp);
-	dcDraw.SelectStockObject(DEFAULT_GUI_FONT);
-
-	CRect rect(0, 0, m_FooterSize.cx, m_FooterSize.cy);
-#ifdef DEBUG
-	dcDraw.FillSolidRect(rect, 0xFFC0FF);
-#else
-	dcDraw.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-#endif
-	dcDraw.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-
-	return pBmp;
-}
-
-INT CFileView::GetFooterHeight()
-{
-	return p_FooterBitmap ? FooterMargin+2*CategoryPadding+m_FontHeight[1]+m_FooterSize.cy : 0;
-}
-
 void CFileView::AdjustLayout()
 {
-	if (p_FooterBitmap)
-	{
-		m_FooterPos.x = 16;
-
-		CRect rect;
-		GetClientRect(&rect);
-		m_FooterSize.cx = max(rect.Width()-m_FooterPos.x, m_FooterSize.cx);
-
-		m_ScrollWidth = max(m_ScrollWidth, m_FooterPos.x+m_FooterSize.cx);
-		m_FooterSize.cx = m_ScrollWidth-m_FooterPos.x;
-
-		m_FooterPos.y = m_ScrollHeight;
-		m_ScrollHeight += GetFooterHeight();
-	}
-
 	AdjustScrollbars();
 	Invalidate();
 }
@@ -956,31 +878,6 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 	dc.SelectObject(pOldFont);
 }
 
-void CFileView::DrawFooter(CDC& dc, BOOL Themed)
-{
-	if (!p_FooterBitmap)
-		return;
-
-	CRect rectClient;
-	GetClientRect(&rectClient);
-
-	CDC dcMem;
-	dcMem.CreateCompatibleDC(&dc);
-	CBitmap* pOldBitmap = dcMem.SelectObject(p_FooterBitmap);
-	dc.BitBlt(m_FooterPos.x-m_HScrollPos, m_ScrollHeight-m_FooterSize.cy-m_VScrollPos+(INT)m_HeaderHeight, m_FooterSize.cx, m_FooterSize.cy, &dcMem, 0, 0, SRCCOPY);
-	dcMem.SelectObject(pOldBitmap);
-
-	CRect rectCategory(15-CategoryPadding, m_FooterPos.y+FooterMargin, m_FooterPos.x+m_FooterSize.cx-2, m_ScrollHeight-m_FooterSize.cy);
-	rectCategory.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
-
-	ItemCategory ic = { 0 };
-	wcscpy_s(ic.Caption, 256, m_FooterCaption);
-#ifdef DEBUG
-	wcscat_s(ic.Caption, 256, L" (this area is intentionally purple for debugging purposes)");
-#endif
-	DrawCategory(dc, rectCategory, &ic, Themed);
-}
-
 void CFileView::ResetScrollbars()
 {
 	if (m_EnableScrolling)
@@ -1101,6 +998,7 @@ void CFileView::AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str)
 
 CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 {
+	WCHAR tmpStr[256];
 	CString hint;
 
 	switch (i->Type & LFTypeMask)
@@ -1110,7 +1008,10 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		break;
 	case LFTypeStore:
 		AppendAttribute(i, LFAttrComments, hint);
-		AppendString(LFAttrComments, hint, CombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize).GetBuffer());
+
+		LFCombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize, tmpStr, 256);
+		AppendString(LFAttrDescription, hint, tmpStr);
+
 		AppendAttribute(i, LFAttrCreationTime, hint);
 		AppendAttribute(i, LFAttrFileTime, hint);
 
@@ -1125,7 +1026,6 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 
 		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
 		{
-			WCHAR tmpStr[256];
 			tmpStr[0] = L' ';
 			wcscpy_s(&tmpStr[1], 255, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 			tmpStr[1] = (WCHAR)towlower(tmpStr[1]);
@@ -1151,9 +1051,7 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		break;
 	case LFTypeFolder:
 		AppendAttribute(i, LFAttrComments, hint);
-
-		if (i->AggregateCount>0)
-			AppendString(LFAttrComments, hint, CombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize).GetBuffer());
+		AppendAttribute(i, LFAttrDescription, hint);
 
 		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
 			AppendString(LFAttrComments, hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
@@ -1277,16 +1175,11 @@ LRESULT CFileView::OnThemeChanged()
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
-	SetFooter();
-
 	return TRUE;
 }
 
 void CFileView::OnSysColorChange()
 {
-	if (!IsCtrlThemed())
-		SetFooter();
-
 	Invalidate();
 }
 
@@ -1301,7 +1194,7 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 	CWnd::OnSize(nType, cx, cy);
 	SetRedraw(TRUE);
 
-	UpdateFooter();
+	AdjustLayout();
 }
 
 void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)

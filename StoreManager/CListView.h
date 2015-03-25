@@ -22,7 +22,6 @@ protected:
 	virtual CMenu* GetViewContextMenu();
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
-	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
@@ -44,8 +43,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CString m_Files_Singular;
-	CString m_Files_Plural;
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
 	INT m_HeaderItemClicked;

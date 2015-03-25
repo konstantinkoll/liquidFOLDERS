@@ -50,13 +50,10 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 
 	CRect rectWindow;
 	GetWindowRect(&rectWindow);
-	if (p_FooterBitmap)
-		if (rectWindow.Width()<m_FooterSize.cx)
-			rectWindow.right = rectWindow.left+m_FooterSize.cx;
+
 	if (!rectWindow.Width())
 		return;
 
-	const INT fh = GetFooterHeight();
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
@@ -124,7 +121,7 @@ Restart:
 		if (y+h+gva.guttery-1>m_ScrollHeight)
 		{
 			m_ScrollHeight = y+h+max(gva.guttery, 0);
-			if ((m_ScrollHeight+fh>rectWindow.Height()) && (!HasScrollbars))
+			if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars))
 			{
 				HasScrollbars = TRUE;
 				rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL);
@@ -162,9 +159,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	CRect rectWindow;
 	GetWindowRect(&rectWindow);
-	if (p_FooterBitmap)
-		if (rectWindow.Width()<m_FooterSize.cx)
-			rectWindow.right = rectWindow.left+m_FooterSize.cx;
+
 	if (!rectWindow.Width())
 		return;
 
@@ -172,7 +167,6 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	if (m_HasCategories)
 		top += 2*CategoryPadding+m_FontHeight[1]+4;
 
-	const INT fh = GetFooterHeight();
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
@@ -243,7 +237,7 @@ Restart:
 			}
 		}
 
-		if (y+h+gva.guttery+fh>rectWindow.Height())
+		if (y+h+gva.guttery>rectWindow.Height())
 		{
 			row = 0;
 			col++;
@@ -677,8 +671,6 @@ void CGridView::OnPaint()
 						if (IntersectRect(&rectIntersect, rect, rectUpdate))
 							DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
 					}
-
-				DrawFooter(dc, Themed);
 			}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

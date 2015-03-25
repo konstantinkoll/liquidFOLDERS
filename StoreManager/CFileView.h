@@ -127,7 +127,6 @@ public:
 
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall=FALSE);
-	void UpdateFooter();
 	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT idx);
@@ -141,10 +140,6 @@ protected:
 	LFViewParameters* p_ViewParameters;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
-	CString m_FooterCaption;
-	CBitmap* p_FooterBitmap;
-	CPoint m_FooterPos;
-	CSize m_FooterSize;
 	UINT m_DataSize;
 	BYTE* m_ItemData;
 	UINT m_ItemDataAllocated;
@@ -180,7 +175,6 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
-	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual INT ItemAtPosition(CPoint point);
@@ -189,13 +183,10 @@ protected:
 	virtual CMenu* GetItemContextMenu(INT idx);
 	virtual void ScrollWindow(INT dx, INT dy);
 
-	CBitmap* CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw, BOOL Themed);
-	INT GetFooterHeight();
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);
 	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 	void DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
-	void DrawFooter(CDC& dc, BOOL Themed);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);
@@ -235,7 +226,6 @@ private:
 	CEdit* p_Edit;
 	SendToItemData m_SendToItems[256];
 
-	void SetFooter();
 	void AppendString(UINT attr, CString& str, WCHAR* tmpStr);
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);

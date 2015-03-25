@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "CTagcloudView.h"
-#include "FooterGraph.h"
 #include "StoreManager.h"
 
 
@@ -26,12 +25,12 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 {
 	UINT Changes = 0;
 
+	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize) || (m_ViewParameters.TagcloudUseColors!=p_ViewParameters->TagcloudUseColors))
+		Changes = 1;
 	if ((Force) || (m_ViewParameters.TagcloudCanonical!=p_ViewParameters->TagcloudCanonical))
 		Changes = 2;
 	if ((Force) || (m_ViewParameters.TagcloudShowRare!=p_ViewParameters->TagcloudShowRare))
 		Changes = 2;
-	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize) || (m_ViewParameters.TagcloudUseColors!=p_ViewParameters->TagcloudUseColors))
-		Changes = 1;
 
 	if (p_CookedFiles)
 	{
@@ -43,7 +42,7 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 			SetSearchResult(p_RawFiles, p_CookedFiles, NULL);
 			GetOwner()->PostMessage(WM_COMMAND, WM_UPDATESELECTION);
 		case 1:
-			UpdateFooter();
+			AdjustLayout();
 			break;
 		case 0:
 			Invalidate();
@@ -130,9 +129,7 @@ void CTagcloudView::AdjustLayout()
 
 		CRect rectWindow;
 		GetWindowRect(&rectWindow);
-		if (p_FooterBitmap)
-			if (rectWindow.Width()<m_FooterSize.cx)
-				rectWindow.right = rectWindow.left+m_FooterSize.cx;
+
 		if (!rectWindow.Width())
 			return;
 
@@ -147,7 +144,7 @@ void CTagcloudView::AdjustLayout()
 			if (d->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
 			{ \
 				m_ScrollHeight = d->Hdr.Hdr.Rect.bottom-1; \
-				if ((m_ScrollHeight+fh>rectWindow.Height()) && (!HasScrollbars)) \
+				if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) \
 				{ \
 					HasScrollbars = TRUE; \
 					rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); \
@@ -156,8 +153,6 @@ void CTagcloudView::AdjustLayout()
 			} \
 		} \
 	}
-
-		const INT fh = GetFooterHeight();
 
 		BOOL HasScrollbars = FALSE;
 
