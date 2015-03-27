@@ -21,7 +21,7 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 
 		LFStoreDescriptor s;
 		if (LFGetStoreSettings(RootStore, &s)==LFOk)
-			wcscpy_s(f->ResultName, 256, s.StoreName);
+			wcscpy_s(f->OriginalName, 256, s.StoreName);
 	}
 	else
 	{
@@ -163,19 +163,15 @@ BOOL CMainWnd::CreateStore(CHAR* RootStore)
 BOOL CMainWnd::CreateFilter(LFFilter* f)
 {
 	m_pActiveFilter = f;
-	if (!m_pActiveFilter)
-		return FALSE;
 
-	return Create(FALSE);
+	return m_pActiveFilter ? Create(FALSE) : FALSE;
 }
 
 BOOL CMainWnd::CreateFilter(WCHAR* FileName)
 {
 	m_pActiveFilter = LFLoadFilter(FileName);
-	if (!m_pActiveFilter)
-		return FALSE;
 
-	return Create(FALSE);
+	return m_pActiveFilter ? Create(FALSE) : FALSE;
 }
 
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
