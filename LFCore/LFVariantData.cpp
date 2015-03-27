@@ -115,9 +115,10 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 			if ((stLocal.wHour) || (stLocal.wMinute) || (stLocal.wSecond))
 			{
 				if (mask & 1)
-					wcscat_s(str, cCount, L", ");
+					wcscat_s(str, cCount, L" ");
+
 				wchar_t tmpStr[256];
-				GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT, &stLocal, NULL, tmpStr, 256);
+				GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &stLocal, NULL, tmpStr, 256);
 				wcscat_s(str, cCount, tmpStr);
 			}
 	}
