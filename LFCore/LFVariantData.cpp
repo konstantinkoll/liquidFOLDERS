@@ -22,12 +22,14 @@ extern const unsigned char AttrTypes[];
 __forceinline double GetMinutes(double c)
 {
 	c = fabs(c)+ROUNDOFF;
+
 	return (c-(double)(int)c)*60.0;
 }
 
 __forceinline double GetSeconds(double c)
 {
 	c = fabs(c)*60.0+ROUNDOFF;
+
 	return (c-(double)(int)c)*60.0;
 }
 
@@ -42,11 +44,22 @@ LFCore_API void LFFourCCToString(const unsigned int c, wchar_t* str, size_t cCou
 		str[3] = c>>24;
 		str[4] = '\0';
 	}
+	else
+	{
+		*str = L'\0';
+	}
 }
 
 LFCore_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%u", v);
+	if (v==0)
+	{
+		*str = L'\0';
+	}
+	else
+	{
+		swprintf(str, cCount, L"%u", v);
+	}
 }
 
 LFCore_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
@@ -127,12 +140,27 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
 {
 	d = (d+500)/1000;
-	swprintf(str, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+
+	if (d==0)
+	{
+		*str = L'\0';
+	}
+	else
+	{
+		swprintf(str, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+	}
 }
 
 LFCore_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%u kBit/s", (r+500)/1000);
+	if (r==0)
+	{
+		*str = L'\0';
+	}
+	else
+	{
+		swprintf(str, cCount, L"%u kBit/s", (r+500)/1000);
+	}
 }
 
 LFCore_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount)

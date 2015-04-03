@@ -31,7 +31,7 @@ GLuint GLTexture::GetID()
 void GLTexture::SetTexture(UINT width, UINT height, UINT bpp, void* data)
 {
 	// Textur erzeugen
-	UINT pixel_mode = (bpp==4 ? GL_BGRA : GL_BGR);
+	UINT pixel_mode = (bpp==4) ? GL_BGRA : GL_BGR;
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 
