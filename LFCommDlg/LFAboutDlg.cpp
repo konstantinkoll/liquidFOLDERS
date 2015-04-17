@@ -43,13 +43,12 @@ LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
 	st.wMinute = COMPILE_MINUTE;
 	st.wSecond = COMPILE_SECOND;
 
-	FILETIME ft;
-	SystemTimeToFileTime(&st, &ft);
+	GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, m_Build, 256);
+	wcscat_s(m_Build, 256, L", ");
 
-	LFTimeToString(ft, m_Build, 256);
-	WCHAR* pChar = wcsrchr(m_Build, L':');
-	if (pChar)
-		*pChar = L'\0';
+	WCHAR tmpStr[256];
+	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT | TIME_NOSECONDS, &st, NULL, tmpStr, 256);
+	wcscat_s(m_Build, 256, tmpStr);
 
 	GetSystemTime(&st);
 	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), LFCommDlgDLL.hResource) : NULL;

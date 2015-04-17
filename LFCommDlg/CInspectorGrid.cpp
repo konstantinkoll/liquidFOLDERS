@@ -710,7 +710,7 @@ CInspectorGrid::~CInspectorGrid()
 	DestroyEdit();
 
 	if (m_pSortArray)
-		delete[] m_pSortArray;
+		delete m_pSortArray;
 }
 
 BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader)
@@ -1116,7 +1116,7 @@ __forceinline void CInspectorGrid::MakeSortArrayDirty()
 {
 	if (m_pSortArray)
 	{
-		delete[] m_pSortArray;
+		delete m_pSortArray;
 		m_pSortArray = NULL;
 	}
 }
