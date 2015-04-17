@@ -21,7 +21,7 @@
     <ROW Property="AI_ThemeStyle" Value="head" MultiBuildValue="DefaultBuild:nohead" MsiKey="AI_ThemeStyle"/>
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="2" MultiBuildValue="DefaultBuild:1"/>
-    <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]."/>
+    <ROW Property="ARPCOMMENTS" Value="[|ProductName] 32 Bit installer"/>
     <ROW Property="ARPCONTACT" Value="support@liquidfolders.net"/>
     <ROW Property="ARPHELPLINK" Value="http://liquidfolders.net/support/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
@@ -40,10 +40,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{028BF6CD-81DA-48EF-B40E-E9C77E262535} 3082:{AE756EA0-6619-43F2-A37C-06964FC9CC93} 1036:{098C4EC2-2250-43FF-AB29-AF1458AF3496} 1031:{9F59BFA2-ABA4-4216-9657-E508E1E710C4} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{F3C342B9-2725-46A1-978E-35E9A92C1504} 3082:{EE251DC1-B4DA-4FAB-9FDF-1DD088DE5C38} 1036:{E335312A-C955-45B4-B703-FB1546767CEE} 1031:{BE9E6164-65A2-4253-ADEC-0DA55C3903BE} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.7.6" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.7.7" Type="32"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
