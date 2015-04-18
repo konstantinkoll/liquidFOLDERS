@@ -366,7 +366,8 @@ LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Co
 				if (Copyright)
 					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
-			delete lpInfo;
+
+			delete[] lpInfo;
 		}
 	}
 }
@@ -419,13 +420,15 @@ LFCommDlg_API CString GetLatestVersion(CString CurrentVersion)
 							{
 								CHAR* pBuffer = new CHAR[dwSize+1];
 								DWORD dwDownloaded;
+
 								if (WinHttpReadData(hRequest, pBuffer, dwSize, &dwDownloaded))
 								{
 									pBuffer[dwDownloaded] = '\0';
 									CString tmpStr(pBuffer);
 									VersionIni += tmpStr;
-									delete pBuffer;
 								}
+
+								delete[] pBuffer;
 							}
 						}
 						while (dwSize>0);
