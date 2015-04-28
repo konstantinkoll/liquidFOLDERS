@@ -942,7 +942,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Tasks.bmp"
+				RelativePath=".\res\Tasks_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Tasks_32.bmp"
 				>
 			</File>
 			<File

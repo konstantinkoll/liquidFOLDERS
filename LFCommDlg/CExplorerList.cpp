@@ -39,13 +39,16 @@ void CExplorerList::Init()
 		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
+	LOGFONT lf;
+	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
+
 	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
 	tvi.cLines = 2;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 218;
+	tvi.sizeTile.cx = 14*abs(lf.lfHeight);
 
 	if ((p_App->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
 	{

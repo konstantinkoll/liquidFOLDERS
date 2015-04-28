@@ -7,25 +7,25 @@
 #include "LFCommDlg.h"
 
 
-#define CategoryPadding                 2
+#define CategoryPadding      2
 
 
 // View IDs
 
-#define LFViewLargeIcons                0
-#define LFViewSmallIcons                1
-#define LFViewList                      2
-#define LFViewDetails                   3
-#define LFViewTiles                     4
-#define LFViewStrips                    5
-#define LFViewContent                   6
-#define LFViewPreview                   7
-#define LFViewCalendar                  8
-#define LFViewTimeline                  9
-#define LFViewGlobe                     10
-#define LFViewTagcloud                  11
+#define LFViewLargeIcons     0
+#define LFViewSmallIcons     1
+#define LFViewList           2
+#define LFViewDetails        3
+#define LFViewTiles          4
+#define LFViewStrips         5
+#define LFViewContent        6
+#define LFViewPreview        7
+#define LFViewCalendar       8
+#define LFViewTimeline       9
+#define LFViewGlobe         10
+#define LFViewTagcloud      11
 
-#define LFViewCount                     12
+#define LFViewCount         12
 
 
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode);

@@ -223,7 +223,7 @@ void CGlassEdit::OnNcPaint()
 		rectText.DeflateRect(BORDER, 0);
 		if (m_IconSize)
 		{
-			DrawIconEx(dc, rectText.right-m_IconSize, rectText.top+(rectText.Height()-m_IconSize)/2, hSearchIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+			DrawIconEx(dc, rectText.right-m_IconSize, rectText.top+(rectText.Height()-m_IconSize+1)/2, hSearchIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 			rectText.right -= m_IconSize+BORDER;
 		}
 

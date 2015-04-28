@@ -19,9 +19,10 @@ CSidebar::CSidebar()
 {
 	p_App = LFGetApp();
 
-	m_Width = m_NumberWidth = 0;
+	m_Width = m_NumberWidth = m_IconSize = 0;
 	m_SelectedItem = m_HotItem = -1;
 	m_Hover = m_Keyboard = m_ShowNumbers = FALSE;
+	p_Icons = NULL;
 	hShadow = NULL;
 }
 
@@ -38,6 +39,12 @@ BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallI
 	m_SmallIcons.SetImageSize(CSize(16, 16));
 	if (SmallIconsID)
 		m_SmallIcons.Load(SmallIconsID);
+
+	LOGFONT lf;
+	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
+
+	m_IconSize = abs(lf.lfHeight)>=26 ? 32 : 16;
+	p_Icons = (m_IconSize==32) ? &m_LargeIcons : &m_SmallIcons;
 
 	// Create
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
@@ -110,8 +117,8 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 
 		if (Selectable)
 		{
-			sz.cx += 16+3*BORDER+m_NumberWidth+SHADOW/2;
-			sz.cy = max(16, sz.cy) + 2*BORDER;
+			sz.cx += m_IconSize+3*BORDER+m_NumberWidth+SHADOW/2;
+			sz.cy = max(m_IconSize, sz.cy) + 2*BORDER;
 		}
 		else
 		{
@@ -354,12 +361,12 @@ void CSidebar::OnPaint()
 				if (m_Items.m_Items[a].IconID!=-1)
 				{
 					CAfxDrawState ds;
-					m_SmallIcons.PrepareDrawImage(ds);
-					m_SmallIcons.Draw(&dc, rectItem.left, rectItem.top+(rectItem.Height()-16)/2, m_Items.m_Items[a].IconID);
-					m_SmallIcons.EndDrawImage(ds);
+					p_Icons->PrepareDrawImage(ds);
+					p_Icons->Draw(&dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID);
+					p_Icons->EndDrawImage(ds);
 				}
 
-				rectItem.left += 16+BORDER;
+				rectItem.left += m_IconSize+BORDER;
 
 				// Number
 				if (m_ShowNumbers && (m_Items.m_Items[a].Number))

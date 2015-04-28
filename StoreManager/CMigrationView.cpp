@@ -121,7 +121,7 @@ INT CMigrationView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Task bar
-	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
+	if (!m_wndTaskbar.Create(this, IDB_TASKS_32, IDB_TASKS_16, 1))
 		return -1;
 
 	m_wndTaskbar.AddButton(IDM_MIGRATION_SELECTROOT, 17);

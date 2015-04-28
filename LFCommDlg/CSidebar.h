@@ -54,6 +54,8 @@ protected:
 	BOOL m_ShowNumbers;
 	CMFCToolBarImages m_SmallIcons;
 	CMFCToolBarImages m_LargeIcons;
+	CMFCToolBarImages* p_Icons;
+	INT m_IconSize;
 	HBITMAP hShadow;
 
 	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed=FALSE);

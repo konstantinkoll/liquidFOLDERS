@@ -17,7 +17,7 @@ public:
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID);
 	UINT GetPreferredHeight();
 	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL SupressCaption=FALSE);
 	void AdjustLayout();
@@ -37,6 +37,7 @@ protected:
 
 private:
 	CMFCToolBarImages m_Icons;
+	INT m_IconSize;
 	CList<CTaskButton*> m_ButtonsLeft;
 	CList<CTaskButton*> m_ButtonsRight;
 	CBitmap m_BackBuffer;

@@ -17,12 +17,13 @@ CTaskButton::CTaskButton()
 	m_Hover = FALSE;
 }
 
-BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconID, CWnd* pParentWnd, UINT nID)
+BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID, CWnd* pParentWnd, UINT nID)
 {
 	m_Caption = Caption;
 	m_TooltipHeader = TooltipHeader;
 	m_TooltipHint = TooltipHint;
 	p_Icons = Icons;
+	m_IconSize = IconSize;
 	m_IconID = IconID;
 	m_OverlayID = -1;
 
@@ -71,7 +72,7 @@ INT CTaskButton::GetPreferredWidth()
 	INT l = 2*(BORDER+2)+1;
 
 	if ((p_Icons) && (m_IconID!=-1))
-		l += 16+(m_Caption.IsEmpty() ? 0 : BORDER);
+		l += m_IconSize+(m_Caption.IsEmpty() ? 0 : BORDER);
 
 	if (!m_Caption.IsEmpty())
 	{
@@ -96,15 +97,15 @@ void CTaskButton::DrawIcon(CDC& dc, CRect& rectText, INT Height, BOOL Selected)
 		CAfxDrawState ds;
 		p_Icons->PrepareDrawImage(ds);
 
-		CPoint pt(rectText.left, (Height-16)/2+(Selected ? 1 : 0));
+		CPoint pt(rectText.left, (Height-m_IconSize)/2+(Selected ? 1 : 0));
 		p_Icons->Draw(&dc, pt.x, pt.y, m_IconID);
 
 		if (m_OverlayID!=-1)
-			p_Icons->Draw(&dc, pt.x+5, pt.y-3, m_OverlayID);
+			p_Icons->Draw(&dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
 
 		p_Icons->EndDrawImage(ds);
 
-		rectText.left += 16+BORDER;
+		rectText.left += m_IconSize+BORDER;
 	}
 }
 

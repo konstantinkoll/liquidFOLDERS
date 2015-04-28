@@ -248,7 +248,7 @@ void CListView::AdjustLayout()
 		ArrangeHorizontal(gva, FALSE, TRUE);
 		break;
 	case LFViewTiles:
-		gva.cx = 240;
+		gva.cx = 15*m_FontHeight[0];
 		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]*3+max(m_FontHeight[0], 18));
 		gva.gutterx = gva.guttery = 3;
 		ArrangeHorizontal(gva, FALSE);
