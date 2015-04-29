@@ -13,9 +13,8 @@
     <ROW Property="AI_CLEAN_RESOURCES_UNINSTALL" Value="1"/>
     <ROW Property="AI_CLEAN_RESOURCES_USER_PROMPT_BASIC_UI" Value="0"/>
     <ROW Property="AI_CLEAN_RESOURCES_USER_PROMPT_FULL_UI" Value="0"/>
-    <ROW Property="AI_EXTERNALUIUNINSTALLERNAME" MultiBuildValue="DefaultBuild:aiui"/>
     <ROW Property="AI_FINDEXE_TITLE" Value="Select the installation package for [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
-    <ROW Property="AI_PRODUCTNAME_ARP" Value="[|ProductName]"/>
+    <ROW Property="AI_PRODUCTNAME_ARP" Value="liquidFOLDERS"/>
     <ROW Property="AI_SHORTCUTSREG" Value="0|0|0|0|"/>
     <ROW Property="AI_STARTUP_SH" Type="4" MsiKey="AI_STARTUP_SH"/>
     <ROW Property="AI_ThemeStyle" Value="head" MultiBuildValue="DefaultBuild:nohead" MsiKey="AI_ThemeStyle"/>
@@ -40,10 +39,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{F3C342B9-2725-46A1-978E-35E9A92C1504} 3082:{EE251DC1-B4DA-4FAB-9FDF-1DD088DE5C38} 1036:{E335312A-C955-45B4-B703-FB1546767CEE} 1031:{BE9E6164-65A2-4253-ADEC-0DA55C3903BE} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{CCB368F3-9FDA-4125-82CB-FB1F7FB66FCD} 3082:{38F409E3-1AF2-4DE6-B41B-536413CF520A} 1036:{F2613A53-B939-4785-9506-2F7E1A290988} 1031:{243B5DA8-25A6-4434-83FA-2BC0B8F29374} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.7.7" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.7.8" Type="32"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
@@ -71,8 +70,8 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_CustomARPName" ComponentId="{95F2A88D-509C-4809-AA93-08DC13ED1CB1}" Directory_="APPDIR" Attributes="4" KeyPath="Contact" Options="1"/>
-    <ROW Component="AI_DisableModify" ComponentId="{8B0B11A9-7FCA-4F1D-A59D-C6D38E0837AA}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{4F878DDA-81E5-41DE-8AEE-05ED6EAA8A70}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
+    <ROW Component="AI_DisableModify" ComponentId="{84D9DDFB-8798-4DB9-8DC3-731640A61DF6}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{EFEB7EE1-B3F4-433C-BF7B-3437F06605E1}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
     <ROW Component="LFCore.dll" ComponentId="{9B505893-2785-4480-9EE6-750BCF0B75F5}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
     <ROW Component="LFNamespaceExtension.dll" ComponentId="{C424FA2A-6FEB-4C17-9BAB-45716DF703A4}" Directory_="APPDIR" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
@@ -172,7 +171,6 @@
     <ROW Name="AppLogo.ico" SourcePath="Setup\AppLogo.ico"/>
     <ROW Name="Backdrop1.png" SourcePath="Setup\Backdrop1.png"/>
     <ROW Name="Backdrop2.png" SourcePath="Setup\Backdrop2.png"/>
-    <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
     <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
     <ROW Name="Install.ico" SourcePath="Setup\Install.ico"/>
     <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
@@ -242,15 +240,15 @@
     <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="300" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
     <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the selected features" TextStyle="TitleFont" Order="400" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
     <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
+    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ExitDialog#Bitmap"/>
     <ROW Dialog_="ExitDialog" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="&amp;Close" TextStyle="DlgFont8" Order="200" TextLocId="Azure.Control.Text.ExitDialog#Finish" MsiKey="ExitDialog#Finish" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="0" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="ExitDialog#Back" Options="1"/>
@@ -438,7 +436,6 @@
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
     <ROW Action="AI_DeleteRCadLzma" Type="51" Source="AI_DeleteRLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteRLzma" Type="1281" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
-    <ROW Action="AI_DoRemoveExternalUIStub" Type="3585" Source="ExternalUICleaner.dll" Target="DoRemoveExternalUIStub" WithoutSeq="true"/>
     <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
     <ROW Action="AI_EstimateExtractFiles" Type="1" Source="Prereq.dll" Target="EstimateExtractFiles"/>
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
@@ -450,7 +447,6 @@
     <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH" Target="[AI_SETUPEXEPATH_ORIGINAL]"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
-    <ROW Action="AI_RemoveExternalUIStub" Type="1" Source="ExternalUICleaner.dll" Target="RemoveExternalUIStub"/>
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
@@ -469,7 +465,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1502"/>
+    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1501"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
     <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
@@ -479,7 +475,6 @@
     <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6598" Builds="DefaultBuild"/>
-    <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1501"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="1402"/>
     <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6402"/>
     <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6401"/>
@@ -493,8 +488,8 @@
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="InstallFinalize" Sequence="6599" SeqType="0" MsiKey="InstallFinalize"/>
     <ROW Action="LFRunCmd.exe" Condition="( ( NOT Installed ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) ) AND ( NOT (($LFRunCmd.exe = 2) AND (?LFRunCmd.exe = 3)) )" Sequence="6600"/>
-    <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
+    <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -539,6 +534,7 @@
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayName" Value="[AI_PRODUCTNAME_ARP]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayVersion" Value="[ProductVersion]" Component_="AI_CustomARPName"/>
+    <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="EstimatedSize" Value="#[AI_ARP_SIZE]" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.DriveMenu" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.RootFolder" Component_="LFNamespaceExtension.dll"/>
@@ -576,7 +572,7 @@
     <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#1" Component_="AI_CustomARPName"/>
-    <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#5" Component_="AI_CustomARPName"/>
+    <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#7" Component_="AI_CustomARPName"/>
     <ROW Registry="WantsFORPARSING" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="WantsFORPARSING" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="_" Root="0" Key=".LFSendTo" Value="LFSendTofile" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__1" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Value="LFNamespaceExtension.SendTo" Component_="LFNamespaceExtension.dll"/>

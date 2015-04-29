@@ -101,8 +101,8 @@ IDB_TREEWIDGETS         BITMAP                  "res\\TreeWidgets.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,7,0
- PRODUCTVERSION 1,7,7,0
+ FILEVERSION 1,7,8,0
+ PRODUCTVERSION 1,7,8,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -119,13 +119,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "StoreManager"
-            VALUE "FileVersion", "1.7.7"
+            VALUE "FileVersion", "1.7.8"
             VALUE "InternalName", "StoreManager"
             VALUE "LegalCopyright", "© 2009-2015 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "StoreManager.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.7.7"
+            VALUE "ProductVersion", "1.7.8"
         END
     END
     BLOCK "VarFileInfo"
