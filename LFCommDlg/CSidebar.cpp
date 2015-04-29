@@ -43,7 +43,7 @@ BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallI
 	LOGFONT lf;
 	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
 
-	m_IconSize = abs(lf.lfHeight)>=26 ? 32 : 16;
+	m_IconSize = abs(lf.lfHeight)>=24 ? 32 : 16;
 	p_Icons = (m_IconSize==32) ? &m_LargeIcons : &m_SmallIcons;
 
 	// Create

@@ -24,7 +24,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT n
 	LOGFONT lf;
 	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
 
-	m_IconSize = abs(lf.lfHeight)>=26 ? 32 : 16;
+	m_IconSize = abs(lf.lfHeight)>=24 ? 32 : 16;
 	m_Icons.SetImageSize(CSize(m_IconSize, m_IconSize));
 	m_Icons.Load(m_IconSize==32 ? LargeResID : SmallResID);
 
@@ -46,7 +46,7 @@ UINT CTaskbar::GetPreferredHeight()
 	LOGFONT lf;
 	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
 
-	return 4*BORDER+abs(lf.lfHeight)+(IsCtrlThemed() ? 4 : 3);
+	return 4*BORDER+max(m_IconSize-2, abs(lf.lfHeight))+(IsCtrlThemed() ? 4 : 3);
 }
 
 CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL SupressCaption)
