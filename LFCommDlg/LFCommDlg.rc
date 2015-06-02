@@ -138,6 +138,7 @@ IDI_LIQUIDFOLDERS_TINY  ICON                    "res\\liquidFOLDERS_Tiny.ico"
 32518                   ICON                    "res\\Shield_7.ico"
 IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
 IDD_ABOUT               ICON                    "res\\About_Tiny.ico"
+IDD_ADDSTORE            ICON                    "res\\StoreAdd_Tiny.ico"
 IDD_CHOOSESTORE         ICON                    "res\\Stores_Tiny.ico"
 IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
 IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"
@@ -196,7 +197,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Neuen Store anlegen...",     IDM_STORES_CREATENEW
+        MENUITEM "Store &hinzufügen...",        IDM_STORES_ADD
     END
 END
 
@@ -271,7 +272,6 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,413,261,50,14,WS_GROUP
-    PUSHBUTTON      "&Neuen Store anlegen...",IDM_STORES_CREATENEW,7,261,95,14
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -412,14 +412,6 @@ BEGIN
     CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
 END
 
-IDD_CREATENEWSTORE DIALOGEX 0, 0, 108, 28
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "&Neuen Store anlegen...",IDOK,7,7,94,14
-END
-
 IDD_EDITTIME DIALOGEX 0, 0, 148, 210
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -544,6 +536,27 @@ BEGIN
     CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
 
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Store hinzufügen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    PUSHBUTTON      "Erstellt einen neuen Store für Ihre Dateien.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Pinterest-Konto als Store hinzu.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Soundcloud-Konto als Store hinzu.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Twitter-Konto als Store hinzu.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Fertig",IDOK,583,384,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,11,386,570,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -635,14 +648,6 @@ BEGIN
         BOTTOMMARGIN, 333
     END
 
-    IDD_CREATENEWSTORE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 101
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 21
-    END
-
     IDD_EDITTIME, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -697,6 +702,14 @@ BEGIN
         RIGHTMARGIN, 213
         TOPMARGIN, 7
         BOTTOMMARGIN, 111
+    END
+
+    IDD_ADDSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 11
+        RIGHTMARGIN, 633
+        TOPMARGIN, 11
+        BOTTOMMARGIN, 398
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -760,7 +773,6 @@ BEGIN
     IDS_AIRPORT_LOCATION    "Ort"
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_STORENEW            "Neuen Store anlegen"
-    IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen ?"
 END
@@ -832,7 +844,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Crear &nuevo store...",       IDM_STORES_CREATENEW
+        MENUITEM "&Adjuntar store...",          IDM_STORES_ADD
     END
 END
 
@@ -907,7 +919,6 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,413,261,50,14,WS_GROUP
-    PUSHBUTTON      "Crear &nuevo store...",IDM_STORES_CREATENEW,7,261,95,14
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -1030,14 +1041,6 @@ BEGIN
     PUSHBUTTON      "Omitir",IDC_SKIP,133,319,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,191,319,50,14,WS_GROUP
     CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
-END
-
-IDD_CREATENEWSTORE DIALOGEX 0, 0, 102, 28
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Crear &nuevo store...",IDOK,7,7,88,14
 END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
@@ -1182,6 +1185,27 @@ BEGIN
     CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
 END
 
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Adjuntar store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    PUSHBUTTON      "Crea un nuevo store para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Pinterest-Konto als Store hinzu.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Soundcloud-Konto als Store hinzu.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Twitter-Konto als Store hinzu.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Listo",IDOK,583,384,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,11,386,570,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1265,14 +1289,6 @@ BEGIN
         BOTTOMMARGIN, 333
     END
 
-    IDD_CREATENEWSTORE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 95
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 21
-    END
-
     IDD_EDITTAGS, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1336,6 +1352,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 111
     END
+
+    IDD_ADDSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 11
+        RIGHTMARGIN, 633
+        TOPMARGIN, 11
+        BOTTOMMARGIN, 398
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1398,7 +1422,6 @@ BEGIN
     IDS_AIRPORT_LOCATION    "Ubicación"
     IDS_STOREPROPERTIES     "Propiedades de ""%s"""
     IDS_STORENEW            "Crear nuevo store"
-    IDS_STORENEW_VOLUME     "Crear nuevo store en unidad %c:"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
 END
@@ -1470,7 +1493,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Créez un store &nouveau...",  IDM_STORES_CREATENEW
+        MENUITEM "&Ajouter store...",           IDM_STORES_ADD
     END
 END
 
@@ -1545,7 +1568,6 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,413,261,50,14,WS_GROUP
-    PUSHBUTTON      "Créez un store &nouveau...",IDM_STORES_CREATENEW,7,261,105,14
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 295, 204
@@ -1669,14 +1691,6 @@ BEGIN
     PUSHBUTTON      "Omettre",IDC_SKIP,133,319,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,191,319,50,14,WS_GROUP
     CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
-END
-
-IDD_CREATENEWSTORE DIALOGEX 0, 0, 116, 28
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Créez un store &nouveau...",IDOK,7,7,102,14
 END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
@@ -1819,6 +1833,27 @@ BEGIN
     CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
 
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Ajouter store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    PUSHBUTTON      "Crée un nouveau store pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Pinterest-Konto als Store hinzu.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Soundcloud-Konto als Store hinzu.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Twitter-Konto als Store hinzu.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Fini",IDOK,583,384,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,11,386,570,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1903,14 +1938,6 @@ BEGIN
         BOTTOMMARGIN, 333
     END
 
-    IDD_CREATENEWSTORE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 109
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 21
-    END
-
     IDD_EDITTAGS, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1974,6 +2001,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 111
     END
+
+    IDD_ADDSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 11
+        RIGHTMARGIN, 633
+        TOPMARGIN, 11
+        BOTTOMMARGIN, 398
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2036,7 +2071,6 @@ BEGIN
     IDS_AIRPORT_LOCATION    "Endroit"
     IDS_STOREPROPERTIES     "Qualités de ""%s"""
     IDS_STORENEW            "Créez un store nouveau"
-    IDS_STORENEW_VOLUME     "Créez un store nouveau sur lecteur %c:"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété ?"
 END
@@ -2158,7 +2192,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Create &new store...",        IDM_STORES_CREATENEW
+        MENUITEM "&Add store...",               IDM_STORES_ADD
     END
 END
 
@@ -2233,7 +2267,6 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,413,261,50,14,WS_GROUP
-    PUSHBUTTON      "Create &new store...",IDM_STORES_CREATENEW,7,261,84,14
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -2374,14 +2407,6 @@ BEGIN
     CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
 END
 
-IDD_CREATENEWSTORE DIALOGEX 0, 0, 102, 28
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Create &new store...",IDOK,7,7,88,14
-END
-
 IDD_EDITTIME DIALOGEX 0, 0, 148, 210
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2506,6 +2531,27 @@ BEGIN
     LTEXT           "A new version of liquidFOLDERS is available for download.",IDC_STATIC,7,50,206,16
     CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
     CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,120,9
+END
+
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    PUSHBUTTON      "Creates a new store for your files.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Adds an existing directory as store.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Dropbox account as store.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Facebook account as store.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Flickr account as store.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds an Instagram account as store.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Pinterest account as store.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds an Soundcloud account as store.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Twitter account as store.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a YouTube account as store.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Done",IDOK,583,384,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,11,386,570,8
 END
 
 
@@ -2654,6 +2700,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 111
     END
+
+    IDD_ADDSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 11
+        RIGHTMARGIN, 633
+        TOPMARGIN, 11
+        BOTTOMMARGIN, 398
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2716,7 +2770,6 @@ BEGIN
     IDS_AIRPORT_LOCATION    "Location"
     IDS_STOREPROPERTIES     "Properties of ""%s"""
     IDS_STORENEW            "Create new store"
-    IDS_STORENEW_VOLUME     "Create new store on volume %c:"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property ?"
 END

@@ -26,7 +26,7 @@ CmdCreateNewStore::CmdCreateNewStore()
 CString CmdCreateNewStore::GetCaption(CPtrList* /*nseItems*/)
 {
 	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_CreateNewStore));
+	ENSURE(caption.LoadString(IDS_MENU_AddStore));
 	caption.Remove('&');
 
 	return caption;
@@ -35,7 +35,7 @@ CString CmdCreateNewStore::GetCaption(CPtrList* /*nseItems*/)
 CString CmdCreateNewStore::GetToolTip(CPtrList* /*nseItems*/)
 {
 	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_CreateNewStore));
+	ENSURE(hint.LoadString(IDS_HINT_AddStore));
 
 	return hint;
 }
@@ -47,7 +47,7 @@ ExplorerCommandState CmdCreateNewStore::GetState(CPtrList* /*nseItems*/)
 
 BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
 {
-	return RunPath(NULL, theApp.m_PathRunCmd, _T("/NEWSTORE"));
+	return RunPath(NULL, theApp.m_PathRunCmd, _T("/ADDSTORE"));
 }
 
 CString CmdCreateNewStore::GetIcon(CPtrList* /*nseItems*/)

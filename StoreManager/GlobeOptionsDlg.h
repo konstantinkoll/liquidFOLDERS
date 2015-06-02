@@ -9,7 +9,7 @@
 // GlobeOptionsDlg
 //
 
-class GlobeOptionsDlg : public CDialog
+class GlobeOptionsDlg : public LFDialog
 {
 public:
 	GlobeOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context);

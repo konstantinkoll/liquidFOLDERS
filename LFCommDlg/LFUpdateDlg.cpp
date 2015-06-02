@@ -15,7 +15,7 @@ static const GUID TrayIcon = { 0x7091D760, 0xA474, 0x4C14, { 0x86, 0xB0, 0x2B, 0
 // LFUpdateDlg
 //
 
-#define WM_TRAYMENU     WM_USER+12
+#define WM_TRAYMENU     WM_USER+6
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 

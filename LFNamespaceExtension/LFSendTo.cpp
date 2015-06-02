@@ -48,8 +48,8 @@ void LFSendTo::GetExtensionTargetInfo(CSendToExtensionTargetInfo& info)
 	LFGetDefaultStoreName(Name, 256);
 
 	info.description = Name;
-	info.iconFile = theApp.m_PathCoreFile;
-	info.iconIndex = IDI_STR_Internal-1;
+	info.iconFile = theApp.m_PathStoreManager;
+	info.iconIndex = 0;
 }
 
 UINT LFSendTo::OnDragDrop(CDragDropEventArgs& /*e*/)

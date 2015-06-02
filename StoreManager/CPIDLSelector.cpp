@@ -159,16 +159,16 @@ void CPIDLDropdownWindow::PopulateList()
 	AddCSIDL(CSIDL_FAVORITES, 0);										// Favorites
 	AddCSIDL(CSIDL_FONTS, 2);											// Fonts
 
-	// Drives
-	UINT Drives = LFGetLogicalDrives(LFGLD_External);
+	// Volumes
+	UINT Volumes = LFGetLogicalVolumes(LFGLV_External);
 
-	for (WCHAR cDrive=L'A'; cDrive<=L'Z'; cDrive++, Drives>>=1)
+	for (WCHAR cVolume=L'A'; cVolume<=L'Z'; cVolume++, Volumes>>=1)
 	{
-		if (!(Drives & 1))
+		if (!(Volumes & 1))
 			continue;
 
 		WCHAR Drive[4] = L" :\\";
-		Drive[0] = cDrive;
+		Drive[0] = cVolume;
 		AddPath(Drive, 3);
 	}
 }

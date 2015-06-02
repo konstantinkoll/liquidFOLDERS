@@ -178,10 +178,9 @@
 #define IDM_ITEM_OPENNEWWINDOW          4401
 #define IDM_ITEM_OPENFILEDROP           4402
 #define IDM_VOLUME                      4500
-#define IDM_VOLUME_CREATENEWSTORE       4501
-#define IDM_VOLUME_EJECT                4502
-#define IDM_VOLUME_FORMAT               4503
-#define IDM_VOLUME_PROPERTIES           4504
+#define IDM_VOLUME_EJECT                4501
+#define IDM_VOLUME_FORMAT               4502
+#define IDM_VOLUME_PROPERTIES           4503
 #define IDM_FILE                        4600
 #define IDM_FILE_OPENWITH               4601
 #define IDM_FILE_OPENBROWSER            4602

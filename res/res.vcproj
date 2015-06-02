@@ -680,6 +680,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\StoreAdd_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreAdd_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\StoreBackup_16.png"
 				>
 			</File>
@@ -952,11 +960,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\STR_Internal.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\STR_NTFS.ico"
+				RelativePath=".\Stores\STR_liquidFOLDERS.ico"
 				>
 			</File>
 			<File
@@ -973,6 +977,10 @@
 			</File>
 			<File
 				RelativePath=".\Stores\STR_Unknown.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Windows.ico"
 				>
 			</File>
 			<File
@@ -1029,14 +1037,6 @@
 			>
 			<File
 				RelativePath=".\Overlays\OVR_Default.ico"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Sources"
-			>
-			<File
-				RelativePath=".\Sources\SRC_Internet.ico"
 				>
 			</File>
 		</Filter>
@@ -1378,6 +1378,10 @@
 		</File>
 		<File
 			RelativePath=".\SortOptions_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\StoreAdd_Tiny.ico"
 			>
 		</File>
 		<File

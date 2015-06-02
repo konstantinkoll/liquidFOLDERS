@@ -28,7 +28,7 @@ LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL UAC)
 
 void LFDialog::DoDataExchange(CDataExchange* pDX)
 {
-	for (UINT a=0; a<2; a++)
+	for (UINT a=0; a<3; a++)
 	{
 		CWnd* pWnd = GetDlgItem(IDC_GROUPBOX1+a);
 		if (pWnd)

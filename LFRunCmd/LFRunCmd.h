@@ -21,7 +21,7 @@ public:
 
 protected:
 	void OnAppAbout();
-	void OnStoreCreate(CHAR Drive='\0');
+	void OnStoreAdd();
 	void OnStoreDelete(CString ID);
 	void OnStoreImportFolder(CString ID);
 	void OnStoreProperties(CString ID);

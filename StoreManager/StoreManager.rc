@@ -182,8 +182,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "&Neuen Store anlegen...",     IDM_VOLUME_CREATENEWSTORE
-        MENUITEM SEPARATOR
         MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
         MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
@@ -368,10 +366,10 @@ BEGIN
     CONTROL         "A&bsteigend",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Gruppieren",IDC_STATIC,7,248,188,42
     GROUPBOX        "Sortierrichtung",IDC_STATIC,204,248,78,42
-    CONTROL         IDB_ASCENDING,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
-    CONTROL         IDB_DESCENDING,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
+    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
     LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
-    CONTROL         IDB_GROUPING,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
+    CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
 IDD_VIEWOPTIONS DIALOGEX 0, 0, 392, 277
@@ -393,16 +391,16 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,335,256,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 226
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Globus-Einstellungen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,204,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,121,204,50,14
-    GROUPBOX        "3D-Einstellungen (OpenGL)",IDC_STATIC,7,7,164,71
-    GROUPBOX        "Objekte",IDC_STATIC,7,84,164,66
-    GROUPBOX        "Sonstiges",IDC_STATIC,7,156,164,40
+    DEFPUSHBUTTON   "OK",IDOK,63,212,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,121,212,50,14
+    GROUPBOX        "3D-Einstellungen (OpenGL)",IDC_GROUPBOX1,7,7,164,71
+    GROUPBOX        "Objekte",IDC_GROUPBOX2,7,84,164,66
+    GROUPBOX        "Sonstiges",IDC_GROUPBOX3,7,156,164,40
     LTEXT           "Texturgröße:",IDC_STATIC,14,19,54,8
     COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "&Hochauflösendes 3D-Modell",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
@@ -571,7 +569,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 171
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 226
     END
 
     IDD_GOTOYEAR, DIALOG
@@ -721,12 +719,12 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner sind hier nicht verfügbar."
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
+    IDS_SEARCHTERM          "Suchbegriff"
+    IDS_DROPTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SEARCHTERM          "Suchbegriff"
-    IDS_DROPTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
     IDS_NOROOT_CAPTION      "Sie haben noch kein Verzeichnis ausgewählt"
     IDS_NOROOT_HINT         "Klicken Sie oben, um ein Verzeichnis auszuwählen."
     IDS_FOLDER_CAPTION      "Quelle:"
@@ -742,12 +740,12 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Wechseldatenträger"
     IDS_NOPROPERTY          "Hier klicken um eine Eigenschaft zu wählen"
     IDS_CHOOSEPROPERTY      "Eigenschaft aus&wählen..."
+    IDS_EXPANDBRANCH        "Alle &Unterverzeichnisse zeigen"
+    IDS_INCLUDEBRANCH       "Zweig &markieren"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPANDBRANCH        "Alle &Unterverzeichnisse zeigen"
-    IDS_INCLUDEBRANCH       "Zweig &markieren"
     IDS_EXCLUDEBRANCH       "Zweig ab&wählen"
     IDS_REPORTTAB0          "Erfolgreich importierte Verzeichnisse (%u)"
     IDS_REPORTTAB1          "Verzeichnisse mit Fehlern (%u)"
@@ -787,7 +785,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
-    IDM_STORES_CREATENEW    "Erstellt einen neuen Store für Ihre Dateien.\nNeuen Store anlegen..."
+    IDM_STORES_ADD          "Fügt einen neuen Store für Ihre Dateien hinzu.\nStore hinzufügen..."
 END
 
 STRINGTABLE 
@@ -950,8 +948,6 @@ IDM_VOLUME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "Crear &nuevo store...",       IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
         MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
         MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
@@ -1137,10 +1133,10 @@ BEGIN
     CONTROL         "&Descendiente",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Agrupación",IDC_STATIC,7,248,188,42
     GROUPBOX        "Tipo de instrucción",IDC_STATIC,204,248,78,42
-    CONTROL         IDB_ASCENDING,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
-    CONTROL         IDB_DESCENDING,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
+    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
     LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
-    CONTROL         IDB_GROUPING,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
+    CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
 IDD_VIEWOPTIONS DIALOGEX 0, 0, 412, 277
@@ -1162,16 +1158,16 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,355,256,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 226
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configuraciones de globo"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,204,50,14
-    PUSHBUTTON      "Cancelar",IDCANCEL,121,204,50,14
-    GROUPBOX        "Configuraciones 3D (OpenGL)",IDC_STATIC,7,7,164,71
-    GROUPBOX        "Objetos",IDC_STATIC,7,84,164,66
-    GROUPBOX        "Varios",IDC_STATIC,7,156,164,40
+    DEFPUSHBUTTON   "OK",IDOK,63,212,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,121,212,50,14
+    GROUPBOX        "Configuraciones 3D (OpenGL)",IDC_GROUPBOX1,7,7,164,71
+    GROUPBOX        "Objetos",IDC_GROUPBOX2,7,84,164,66
+    GROUPBOX        "Varios",IDC_GROUPBOX3,7,156,164,40
     LTEXT           "Dimensión:",IDC_STATIC,14,19,54,8
     COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "&Modelo de alta calidad",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
@@ -1341,7 +1337,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 171
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 226
     END
 
     IDD_GOTOYEAR, DIALOG
@@ -1490,12 +1486,12 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Subcarpetas no están disponibles aquí."
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
+    IDS_SEARCHTERM          "Buscar término"
+    IDS_DROPTIP             "Pega filas aquí para importarlas\na liquidFOLDERS"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SEARCHTERM          "Buscar término"
-    IDS_DROPTIP             "Pega filas aquí para importarlas\na liquidFOLDERS"
     IDS_NOROOT_CAPTION      "Usted no ha seleccionado todavía una carpeta raíz"
     IDS_NOROOT_HINT         "Dar click arriba para seleccionar una carpeta para navegar."
     IDS_FOLDER_CAPTION      "fuente:"
@@ -1511,12 +1507,12 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Almacenamiento desmontable"
     IDS_NOPROPERTY          "Dar click aquí para escoger una propiedad"
     IDS_CHOOSEPROPERTY      "Escoger &propiedad..."
+    IDS_EXPANDBRANCH        "Expandir &ramificación"
+    IDS_INCLUDEBRANCH       "&Incluir ramificación"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPANDBRANCH        "Expandir &ramificación"
-    IDS_INCLUDEBRANCH       "&Incluir ramificación"
     IDS_EXCLUDEBRANCH       "&Excluir ramificación"
     IDS_REPORTTAB0          "Carpetas migradas satisfactoriamente (%u)"
     IDS_REPORTTAB1          "Carpetas con errores (%u)"
@@ -1556,7 +1552,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
-    IDM_STORES_CREATENEW    "Crea un nuevo store para sus archivos.\nCrear nuevo store..."
+    IDM_STORES_ADD          "Adjuntar un store para sus archivos.\nAdjuntar store..."
 END
 
 STRINGTABLE 
@@ -1719,8 +1715,6 @@ IDM_VOLUME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "Créez un store &nouveau...",  IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
         MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
         MENUITEM "&Éjecter",                    IDM_VOLUME_EJECT
@@ -1907,10 +1901,10 @@ BEGIN
     CONTROL         "En &descendant",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,60,10
     GROUPBOX        "Grouper",IDC_STATIC,7,248,188,42
     GROUPBOX        "Direction de tri",IDC_STATIC,204,248,88,42
-    CONTROL         IDB_ASCENDING,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
-    CONTROL         IDB_DESCENDING,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
+    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
     LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
-    CONTROL         IDB_GROUPING,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
+    CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
 IDD_VIEWOPTIONS DIALOGEX 0, 0, 392, 277
@@ -1932,16 +1926,16 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,335,256,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 226
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Paramètres du globe"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,204,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,121,204,50,14
-    GROUPBOX        "3D-paramètres (OpenGL)",IDC_STATIC,7,7,164,71
-    GROUPBOX        "Les objets",IDC_STATIC,7,84,164,66
-    GROUPBOX        "Divers",IDC_STATIC,7,156,164,40
+    DEFPUSHBUTTON   "OK",IDOK,63,212,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,121,212,50,14
+    GROUPBOX        "3D-paramètres (OpenGL)",IDC_GROUPBOX1,7,7,164,71
+    GROUPBOX        "Les objets",IDC_GROUPBOX2,7,84,164,66
+    GROUPBOX        "Divers",IDC_GROUPBOX3,7,156,164,40
     LTEXT           "La texture:",IDC_STATIC,14,19,54,8
     COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "3D-&modèle à haute résolution",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
@@ -2113,7 +2107,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 171
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 226
     END
 
     IDD_GOTOYEAR, DIALOG
@@ -2262,12 +2256,12 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier ne sont pas disponible ici."
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
+    IDS_SEARCHTERM          "Mot de recherches"
+    IDS_DROPTIP             "Ici afiu de importer\ndans liquidFOLDERS"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SEARCHTERM          "Mot de recherches"
-    IDS_DROPTIP             "Ici afiu de importer\ndans liquidFOLDERS"
     IDS_NOROOT_CAPTION      "Vouz n'avez pas encore choisi aucun dossier"
     IDS_NOROOT_HINT         "Cliquez en haut pour choisir un dossier."
     IDS_FOLDER_CAPTION      "Source:"
@@ -2283,12 +2277,12 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Support de données de changement"
     IDS_NOPROPERTY          "Cliquez ici pour choisir une qualité"
     IDS_CHOOSEPROPERTY      "Choisissez &la qualité..."
+    IDS_EXPANDBRANCH        "Montrer tous &les sous-dossiers"
+    IDS_INCLUDEBRANCH       "Marquer &la branche"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPANDBRANCH        "Montrer tous &les sous-dossiers"
-    IDS_INCLUDEBRANCH       "Marquer &la branche"
     IDS_EXCLUDEBRANCH       "Abandonner &la branche"
     IDS_REPORTTAB0          "Des dossiers importées avec succès (%u)"
     IDS_REPORTTAB1          "Dossiers avec des fautes (%u)"
@@ -2327,7 +2321,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
-    IDM_STORES_CREATENEW    "Crée un nouveau store pour vos fichiers.\nCréez un store nouveau..."
+    IDM_STORES_ADD          "Ajouter un store pour vos fichiers.\nAjouter un store..."
 END
 
 STRINGTABLE 
@@ -2541,8 +2535,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "Create &new store...",        IDM_VOLUME_CREATENEWSTORE
-        MENUITEM SEPARATOR
         MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
         MENUITEM "E&ject",                      IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
@@ -2731,10 +2723,10 @@ BEGIN
     CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Grouping",IDC_STATIC,7,248,188,42
     GROUPBOX        "Sort direction",IDC_STATIC,204,248,78,42
-    CONTROL         IDB_ASCENDING,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
-    CONTROL         IDB_DESCENDING,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
+    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
     LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
-    CONTROL         IDB_GROUPING,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
+    CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
@@ -2753,16 +2745,16 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,151,255,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 226
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Globe settings"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,204,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,121,204,50,14
-    GROUPBOX        "3D settings (OpenGL)",IDC_STATIC,7,7,164,71
-    GROUPBOX        "Objects",IDC_STATIC,7,84,164,66
-    GROUPBOX        "Miscellaneous",IDC_STATIC,7,156,164,40
+    DEFPUSHBUTTON   "OK",IDOK,63,212,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,121,212,50,14
+    GROUPBOX        "3D settings (OpenGL)",IDC_GROUPBOX1,7,7,164,71
+    GROUPBOX        "Objects",IDC_GROUPBOX2,7,84,164,66
+    GROUPBOX        "Miscellaneous",IDC_GROUPBOX3,7,156,164,40
     LTEXT           "Texture size:",IDC_STATIC,14,19,54,8
     COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "&High-quality model",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
@@ -2930,7 +2922,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 171
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 226
     END
 
     IDD_GOTOYEAR, DIALOG
@@ -3079,12 +3071,12 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available here."
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
+    IDS_SEARCHTERM          "Search term"
+    IDS_DROPTIP             "Drop files here to import\nthem into liquidFOLDERS"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SEARCHTERM          "Search term"
-    IDS_DROPTIP             "Drop files here to import\nthem into liquidFOLDERS"
     IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
     IDS_NOROOT_HINT         "Click above to select a folder for browsing."
     IDS_FOLDER_CAPTION      "Source:"
@@ -3100,12 +3092,12 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Removable storage"
     IDS_NOPROPERTY          "Click here to choose a property"
     IDS_CHOOSEPROPERTY      "Choose p&roperty..."
+    IDS_EXPANDBRANCH        "Expand &branch"
+    IDS_INCLUDEBRANCH       "&Include branch"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPANDBRANCH        "Expand &branch"
-    IDS_INCLUDEBRANCH       "&Include branch"
     IDS_EXCLUDEBRANCH       "&Exclude branch"
     IDS_REPORTTAB0          "Successfully migrated folders (%u)"
     IDS_REPORTTAB1          "Folders with errors (%u)"
@@ -3144,7 +3136,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
-    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
+    IDM_STORES_ADD          "Add a store for your files.\nAdd store..."
 END
 
 STRINGTABLE 

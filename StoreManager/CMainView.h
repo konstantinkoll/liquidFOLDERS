@@ -92,7 +92,7 @@ protected:
 	afx_msg void OnView(UINT nID);
 	afx_msg void OnUpdateViewCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnStoresCreateNew();
+	afx_msg void OnStoresAdd();
 	afx_msg void OnStoresMaintainAll();
 	afx_msg void OnStoresShowStatistics();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
@@ -108,7 +108,7 @@ protected:
 
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnVolumeCreateNewStore();
+	afx_msg void OnVolumeAddStore();
 	afx_msg void OnVolumeFormat();
 	afx_msg void OnVolumeEject();
 	afx_msg void OnVolumeProperties();

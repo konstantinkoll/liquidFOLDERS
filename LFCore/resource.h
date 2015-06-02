@@ -3,8 +3,8 @@
 // Used by LFCore.rc
 //
 #define IDI_STR_Unknown                 1
-#define IDI_STR_Internal                2
-#define IDI_STR_NTFS                    3
+#define IDI_STR_liquidFOLDERS           2
+#define IDI_STR_Windows                 3
 #define IDI_STR_1394                    4
 #define IDI_STR_USB                     5
 #define IDI_STR_Dropbox                 6
@@ -18,12 +18,12 @@
 #define IDI_FLD_Default                 14
 #define IDI_FLD_All                     15
 #define IDI_OVR_Default                 16
-#define IDI_SRC_Internet                17
-#define IDI_LastIcon                    17
+#define IDI_LastIcon                    16
+#define IDI_LastStoreIcon               13
 #define IDS_FirstItemCategory           1000
 #define IDS_LFCategoryLocalStores       1000
 #define IDS_LFCategoryRemoteStores      1001
-#define IDS_LFCategoryDrives            1002
+#define IDS_LFCategoryVolumes           1002
 #define IDS_LFCategoryNight             1003
 #define IDS_FirstAttrCategory           1050
 #define IDS_LFCategoryBasic             1050
@@ -182,8 +182,8 @@
 #define IDS_AttrLikeCount               4052
 #define IDS_FirstSource                 5000
 #define IDS_SrcUnknown                  5000
-#define IDS_SrcInternal                 5001
-#define IDS_SrcNTFS                     5002
+#define IDS_SrcliquidFOLDERS            5001
+#define IDS_SrcWindows                  5002
 #define IDS_Src1394                     5003
 #define IDS_SrcUSB                      5004
 #define IDS_SrcDropbox                  5005
@@ -196,8 +196,8 @@
 #define IDS_SrcYouTube                  5012
 #define IDS_FirstQualifiedSource        5100
 #define IDS_QSrcUnknown                 5100
-#define IDS_QSrcInternal                5101
-#define IDS_QSrcNTFS                    5102
+#define IDS_QSrcliquidFOLDERS           5101
+#define IDS_QSrcWindows                 5102
 #define IDS_QSrc1394                    5103
 #define IDS_QSrcUSB                     5104
 #define IDS_QSrcDropbox                 5105

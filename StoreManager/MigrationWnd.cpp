@@ -164,12 +164,12 @@ void CMigrationWnd::OnIdleUpdateCmdUI()
 
 void CMigrationWnd::OnSelectRoot()
 {
-	CString caption;
-	CString hint;
-	ENSURE(caption.LoadString(IDS_BROWSEFORFOLDER_CAPTION));
-	ENSURE(hint.LoadString(IDS_BROWSEFORFOLDER_HINT));
+	CString Caption;
+	CString Hint;
+	ENSURE(Caption.LoadString(IDS_BROWSEFORFOLDER_CAPTION));
+	ENSURE(Hint.LoadString(IDS_BROWSEFORFOLDER_HINT));
 
-	LFBrowseForFolderDlg dlg(FALSE, FALSE, _T(""), this, caption, hint);
+	LFBrowseForFolderDlg dlg(this, Caption, Hint, FALSE);
 	if (dlg.DoModal()==IDOK)
 		m_wndFolder.SetItem(dlg.m_FolderPIDL);
 }

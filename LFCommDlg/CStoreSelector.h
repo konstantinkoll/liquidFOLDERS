@@ -24,7 +24,6 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnSetItem(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnCreateNewStore();
 	DECLARE_MESSAGE_MAP()
 };
 

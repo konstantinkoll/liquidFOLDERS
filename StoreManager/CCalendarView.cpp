@@ -162,10 +162,10 @@ Restart:
 				Day += m->SOM;
 
 				LPRECT rect = &d->Hdr.Rect;
-				rect->left = m->Rect.left+CategoryPadding+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
-				rect->top = m->Rect.top+m_FontHeight[1]+2*CategoryPadding+(Day/7)*(m_FontHeight[0]+2*PADDING-1);
+				rect->left = m->Rect.left+LFCategoryPadding+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
+				rect->top = m->Rect.top+m_FontHeight[1]+2*LFCategoryPadding+(Day/7)*(m_FontHeight[0]+2*PADDING-1);
 				if (m_ShowCaptions)
-					rect->top += m_FontHeight[0]+CategoryPadding;
+					rect->top += m_FontHeight[0]+LFCategoryPadding;
 				rect->right = rect->left+m_ColumnWidth;
 				rect->bottom = rect->top+m_FontHeight[0]+2*PADDING;
 			}
@@ -240,7 +240,7 @@ void CCalendarView::GetMonthSize(LPSIZE Size)
 	ReleaseDC(dc);
 
 	Size->cx = 7*m_ColumnWidth+6*COLUMNGUTTER;
-	Size->cy = m_FontHeight[1]+4*CategoryPadding+6*(m_FontHeight[0]+2*PADDING-1)+1;
+	Size->cy = m_FontHeight[1]+4*LFCategoryPadding+6*(m_FontHeight[0]+2*PADDING-1)+1;
 	if (m_ShowCaptions)
 		Size->cy += m_FontHeight[0];
 }
@@ -252,9 +252,9 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	// Header
 	ItemCategory ic = { 0 };
 	swprintf_s(ic.Caption, 256, m_Months[Month].Name, m_Year);
-	DrawCategory(dc, rect, &ic, Themed);
+	DrawCategory(dc, rect, ic.Caption, ic.Hint, Themed);
 
-	rect->top += m_FontHeight[1]+CategoryPadding;
+	rect->top += m_FontHeight[1]+LFCategoryPadding;
 	CRect rectItem(0, rect->top, m_ColumnWidth+2*EXTRA, rect->top+m_FontHeight[0]+2*PADDING);
 
 	// Days
@@ -262,14 +262,14 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	{
 		for (UINT a=0; a<7; a++)
 		{
-			rectItem.MoveToX(rect->left+CategoryPadding+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
+			rectItem.MoveToX(rect->left+LFCategoryPadding+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
 			dc.DrawText(m_Days[a], rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER | DT_TOP);
 		}
 
-		rect->top += m_FontHeight[0]+CategoryPadding;
+		rect->top += m_FontHeight[0]+LFCategoryPadding;
 	}
 
-	rect->top += CategoryPadding;
+	rect->top += LFCategoryPadding;
 	rectItem.DeflateRect(EXTRA, 0);
 
 	// Matrix
@@ -279,7 +279,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	UINT row = 0;
 	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
-		rectItem.MoveToXY(rect->left+CategoryPadding+col*(m_ColumnWidth+COLUMNGUTTER), rect->top+row*(m_FontHeight[0]+2*PADDING-1));
+		rectItem.MoveToXY(rect->left+LFCategoryPadding+col*(m_ColumnWidth+COLUMNGUTTER), rect->top+row*(m_FontHeight[0]+2*PADDING-1));
 		if (m_Months[Month].Matrix[Day]!=EMPTY)
 		{
 			DrawItemBackground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);

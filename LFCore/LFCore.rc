@@ -29,8 +29,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_STR_Unknown         ICON                    "res\\STR_Unknown.ico"
-IDI_STR_Internal        ICON                    "res\\STR_Internal.ico"
-IDI_STR_NTFS            ICON                    "res\\STR_NTFS.ico"
+IDI_STR_liquidFOLDERS   ICON                    "res\\STR_liquidFOLDERS.ico"
+IDI_STR_Windows         ICON                    "res\\STR_Windows.ico"
 IDI_STR_1394            ICON                    "res\\STR_1394.ico"
 IDI_STR_USB             ICON                    "res\\STR_USB.ico"
 IDI_STR_Dropbox         ICON                    "res\\STR_Dropbox.ico"
@@ -44,7 +44,6 @@ IDI_STR_YouTube         ICON                    "res\\STR_YouTube.ico"
 IDI_FLD_Default         ICON                    "res\\FLD_Default.ico"
 IDI_FLD_All             ICON                    "res\\FLD_All.ico"
 IDI_OVR_Default         ICON                    "res\\OVR_Default.ico"
-IDI_SRC_Internet        ICON                    "res\\SRC_Internet.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -107,7 +106,7 @@ BEGIN
     IDS_LFCategoryLocalStores "Auf diesem Computer gespeicherte Dateien"
     IDS_LFCategoryRemoteStores 
                             "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern."
-    IDS_LFCategoryDrives    "Geräte mit Wechselmedien\nWählen Sie eines dieser Geräte, um dort einen neuen Store anzulegen."
+    IDS_LFCategoryVolumes   "Geräte mit Wechselmedien"
     IDS_LFCategoryNight     "Nacht\nBis 6 Uhr"
 END
 
@@ -325,8 +324,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Unbekannt"
-    IDS_SrcInternal         "Interner Store"
-    IDS_SrcNTFS             "Windows Dateisystem"
+    IDS_SrcliquidFOLDERS    "liquidFOLDERS"
+    IDS_SrcWindows          "Windows-Verzeichnis"
     IDS_Src1394             "1394-Laufwerk"
     IDS_SrcUSB              "USB-Laufwerk"
     IDS_SrcDropbox          "Dropbox"
@@ -346,8 +345,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_QSrcUnknown         "Unbekannte Quelle"
-    IDS_QSrcInternal        "In internem Store"
-    IDS_QSrcNTFS            "Im Windows Dateisystem"
+    IDS_QSrcliquidFOLDERS   "Von liquidFOLDERS verwaltet"
+    IDS_QSrcWindows         "Im Windows-Dateisystem"
     IDS_QSrc1394            "Auf lokalem 1394-Laufwerk"
 END
 
@@ -387,7 +386,7 @@ BEGIN
     IDS_LFCategoryLocalStores "Files stored on this computer"
     IDS_LFCategoryRemoteStores 
                             "Network location\nThese stores reside on other computers."
-    IDS_LFCategoryDrives    "Devices with removable storage\nChoose one of these devices to create a new store there."
+    IDS_LFCategoryVolumes   "Devices with removable storage"
     IDS_LFCategoryNight     "Night\nUntil 6am"
 END
 
@@ -605,8 +604,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Unknown"
-    IDS_SrcInternal         "Internal store"
-    IDS_SrcNTFS             "Windows file system"
+    IDS_SrcliquidFOLDERS    "liquidFOLDERS"
+    IDS_SrcWindows          "Windows folder"
     IDS_Src1394             "1394 drive"
     IDS_SrcUSB              "USB drive"
     IDS_SrcDropbox          "Dropbox"
@@ -626,8 +625,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_QSrcUnknown         "Unknown source"
-    IDS_QSrcInternal        "In internal store"
-    IDS_QSrcNTFS            "In Windows file system"
+    IDS_QSrcliquidFOLDERS   "Managed by liquidFOLDERS"
+    IDS_QSrcWindows         "In Windows file system"
     IDS_QSrc1394            "On local 1394 drive"
 END
 
@@ -667,7 +666,7 @@ BEGIN
     IDS_LFCategoryLocalStores "Archivos almacenados en este equipo"
     IDS_LFCategoryRemoteStores 
                             "Ubicación de red\nEstos stores residen en otras computadoras."
-    IDS_LFCategoryDrives    "Dispositivos con almacenamiento extraible\nEscoja una de éstas para crear un nuevo store."
+    IDS_LFCategoryVolumes   "Dispositivos con almacenamiento extraible"
     IDS_LFCategoryNight     "Noche\nHasta 6am"
 END
 
@@ -885,8 +884,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Desconocido"
-    IDS_SrcInternal         "Store interno"
-    IDS_SrcNTFS             "Windows sistema de ficheros"
+    IDS_SrcliquidFOLDERS    "liquidFOLDERS"
+    IDS_SrcWindows          "Carpeta de Windows"
     IDS_Src1394             "Unidad de 1394"
     IDS_SrcUSB              "Unidad de USB"
     IDS_SrcDropbox          "Dropbox"
@@ -906,8 +905,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_QSrcUnknown         "Origen desconocido"
-    IDS_QSrcInternal        "En store interno"
-    IDS_QSrcNTFS            "En Windows sistema de ficheros"
+    IDS_QSrcliquidFOLDERS   "Administrador por liquidFOLDERS"
+    IDS_QSrcWindows         "En carpeta de Windows"
     IDS_QSrc1394            "En unidad local de 1394"
 END
 
@@ -947,7 +946,7 @@ BEGIN
     IDS_LFCategoryLocalStores "Fichiers enregistrés sur cet ordinateur"
     IDS_LFCategoryRemoteStores 
                             "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs."
-    IDS_LFCategoryDrives    "Périphériques utilisant des supports de stockage amovibles\nChoisissez un d'entre ceux-ci pour créer un nouveau store."
+    IDS_LFCategoryVolumes   "Périphériques utilisant des supports de stockage amovibles"
     IDS_LFCategoryNight     "Nuit\nJusqu'à 6 heures"
 END
 
@@ -1165,8 +1164,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Inconnu"
-    IDS_SrcInternal         "Store interne"
-    IDS_SrcNTFS             "Système de fichiers Windows"
+    IDS_SrcliquidFOLDERS    "liquidFOLDERS"
+    IDS_SrcWindows          "Dossier de Windows"
     IDS_Src1394             "Lecteur 1394"
     IDS_SrcUSB              "Lecteur USB"
     IDS_SrcDropbox          "Dropbox"
@@ -1186,8 +1185,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_QSrcUnknown         "Source inconnu"
-    IDS_QSrcInternal        "Dans store interne"
-    IDS_QSrcNTFS            "En système de fichiers Windows"
+    IDS_QSrcliquidFOLDERS   "Administrée de liquidFOLDERS"
+    IDS_QSrcWindows         "Dans dossier de Windows"
     IDS_QSrc1394            "En lecteur local de 1394"
 END
 

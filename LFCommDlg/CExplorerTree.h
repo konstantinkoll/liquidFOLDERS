@@ -11,11 +11,11 @@
 //
 
 #define CETR_Desktop            _T("")
-#define CETR_AllDrives          _T("::DRVALL")
-#define CETR_InternalDrives     _T("::DRVINTERNAL")
-#define CETR_ExternalDrives     _T("::DRVEXTERNAL")
+#define CETR_AllVolumes         _T("::VOLALL")
+#define CETR_InternalVolumes    _T("::VOLINTERNAL")
+#define CETR_ExternalVolumes    _T("::VOLEXTERNAL")
 
-#define WM_SHELLCHANGE         WM_USER+3
+#define WM_SHELLCHANGE         WM_USER+1
 
 struct ExplorerTreeItemData
 {

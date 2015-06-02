@@ -29,5 +29,5 @@ LFStoreDescriptor* FindStore(wchar_t* DatPath, HANDLE* lock=NULL);
 unsigned int FindStores(char** IDs);
 unsigned int UpdateStore(LFStoreDescriptor* s, bool UpdateTime=true, bool MakeDefault=false);
 unsigned int DeleteStore(LFStoreDescriptor* s);
-unsigned int MountVolume(char cDrive, bool InternalCall=false);
-unsigned int UnmountVolume(char cDrive, bool InternalCall=false);
+unsigned int MountVolume(char cVolume, bool InternalCall=false);
+unsigned int UnmountVolume(char cVolume, bool InternalCall=false);

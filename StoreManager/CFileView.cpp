@@ -580,19 +580,19 @@ CMenu* CFileView::GetSendToMenu()
 	}
 
 	// Volumes
-	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External | LFGLD_Network | LFGLD_IncludeFloppies);
-	DWORD DrivesWOFloppies = LFGetLogicalDrives(LFGLD_External | LFGLD_Network);
-	BOOL HideDrivesWithNoMedia = LFHideDrivesWithNoMedia();
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_External | LFGLV_Network | LFGLV_IncludeFloppies);
+	DWORD VolumesWOFloppies = LFGetLogicalVolumes(LFGLV_External | LFGLV_Network);
+	BOOL HideVolumesWithNoMedia = LFHideVolumesWithNoMedia();
 
-	for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1, DrivesWOFloppies>>=1)
+	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1, VolumesWOFloppies>>=1)
 	{
-		if ((DrivesOnSystem & 1)==0)
+		if ((VolumesOnSystem & 1)==0)
 			continue;
 
-		BOOL CheckEmpty = HideDrivesWithNoMedia && ((DrivesWOFloppies & 1)!=0);
+		BOOL CheckEmpty = HideVolumesWithNoMedia && ((VolumesWOFloppies & 1)!=0);
 
 		WCHAR szDriveRoot[] = L" :\\";
-		szDriveRoot[0] = cDrive;
+		szDriveRoot[0] = cVolume;
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON | (CheckEmpty ? SHGFI_ATTRIBUTES : 0)))
 		{
@@ -831,51 +831,6 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 				dc.SetTextColor(0x0000FF);
 			}
 	}
-}
-
-void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed)
-{
-	CRect rect(rectCategory);
-	rect.DeflateRect(0, CategoryPadding);
-	rect.left += CategoryPadding;
-
-	CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
-	dc.SetTextColor(Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(ic->Caption, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-	CRect rectLine(rect);
-	dc.DrawText(ic->Caption, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT | DT_NOPREFIX);
-	rectLine.right += 2*CategoryPadding;
-
-	if (rectLine.right<=rect.right)
-		if (Themed)
-		{
-			Graphics g(dc);
-	
-			LinearGradientBrush brush(Point(rectLine.right, rectLine.top), Point(rect.right, rectLine.top), Color(0xFF, 0xE2, 0xE2, 0xE2), Color(0x00, 0xE2, 0xE2, 0xE2));
-			g.FillRectangle(&brush, rectLine.right, rectLine.top+(m_FontHeight[1]+1)/2, rect.right-rectLine.right, 1);
-		}
-		else
-		{
-			CPen pen(PS_SOLID, 1, GetSysColor(COLOR_WINDOWTEXT));
-
-			CPen* pOldPen = dc.SelectObject(&pen);
-			dc.MoveTo(rectLine.right, rect.top+(m_FontHeight[1]+1)/2);
-			dc.LineTo(rect.right, rect.top+(m_FontHeight[1]+1)/2);
-			dc.SelectObject(pOldPen);
-		}
-
-	if (ic->Hint[0]!=L'\0')
-	{
-		if (Themed)
-			dc.SetTextColor(((dc.GetTextColor()>>1) & 0x7F7F7F) | 0x808080);
-
-		rect.top += m_FontHeight[1];
-		dc.SelectObject(&theApp.m_DefaultFont);
-		dc.DrawText(ic->Hint, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-	}
-
-	dc.SelectObject(pOldFont);
 }
 
 void CFileView::ResetScrollbars()

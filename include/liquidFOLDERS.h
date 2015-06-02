@@ -133,8 +133,8 @@ struct LFAirport
 
 // Item categories
 
-#define LFItemCategoryLocalStores       0
-#define LFItemCategoryRemoteStores      1
+#define LFItemCategoryLocal             0
+#define LFItemCategoryRemote            1
 #define LFItemCategoryVolumes           2
 #define LFItemCategoryNight             3
 
@@ -465,7 +465,7 @@ struct LFCoreAttributes
 
 #define LFTypeSourceUnknown             0x00000000	// Must be lowest bits
 #define LFTypeSourceInternal            0x00000001
-#define LFTypeSourceNTFS                0x00000002
+#define LFTypeSourceWindows             0x00000002
 #define LFTypeSource1394                0x00000003
 #define LFTypeSourceUSB                 0x00000004
 #define LFTypeSourceDropbox             0x00000005

@@ -315,7 +315,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	COLORREF brCol = Hot ? GetSysColor(COLOR_HIGHLIGHT) : Themed ? 0xD5D1D0 : GetSysColor(COLOR_3DSHADOW);
 	COLORREF bkCol = hThemeList ? 0xFFFFFF : Selected ? GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE) : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	COLORREF txCol = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF atCol = Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF atCol = Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT);
 	COLORREF cpCol = (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? i->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
 	// Shadow
@@ -519,7 +519,6 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 				if (d->pTitle)
 					wcscat_s(tmpStr, 513, d->pTitle);
 
-				dc.SetTextColor(txCol);
 				dc.DrawText(tmpStr, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 				rectAttr.OffsetRect(0, m_FontHeight[0]);
 			}

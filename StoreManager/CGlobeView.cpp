@@ -779,7 +779,7 @@ __forceinline void CGlobeView::DrawStatusBar(INT Height, COLORREF BarColor, BOOL
 
 	// Text
 	GLfloat TextColor[4];
-	ColorRef2GLColor(TextColor, Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
+	ColorRef2GLColor(TextColor, Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
 	glColor4f(TextColor[0], TextColor[1], TextColor[2], 1.0f);
 
 	INT Gutter = (ViewpointWidth>0) ? (m_Width-CopyrightWidth-ViewpointWidth)/3 : (m_Width-CopyrightWidth)/2;

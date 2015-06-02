@@ -163,10 +163,10 @@ void UpdateVolume(LFTransactionList* tl, unsigned int idx, LFVariantData* value)
 
 	if (value->Attr==LFAttrFileName)
 	{
-		WCHAR szDriveRoot[4] = L" :\\";
-		szDriveRoot[0] = tl->m_Items[idx].Item->CoreAttributes.FileID[0];
+		WCHAR szVolumeRoot[4] = L" :\\";
+		szVolumeRoot[0] = tl->m_Items[idx].Item->CoreAttributes.FileID[0];
 
-		result = SetVolumeLabel(szDriveRoot, value->UnicodeString) ? LFOk : LFDriveNotReady;
+		result = SetVolumeLabel(szVolumeRoot, value->UnicodeString) ? LFOk : LFDriveNotReady;
 
 		if (result==LFOk)
 			wcscpy_s(tl->m_Items[idx].Item->CoreAttributes.FileName, 256, value->UnicodeString);

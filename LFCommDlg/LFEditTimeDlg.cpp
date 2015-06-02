@@ -129,7 +129,7 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	m_wndCalendar.SetColor(MCSC_MONTHBK, GetSysColor(COLOR_WINDOW));
 	m_wndCalendar.SetColor(MCSC_TEXT, GetSysColor(COLOR_WINDOWTEXT));
 	m_wndCalendar.SetColor(MCSC_TITLETEXT, 0xFFFFFF);
-	m_wndCalendar.SetColor(MCSC_TITLEBK, 0x993300);
+	m_wndCalendar.SetColor(MCSC_TITLEBK, 0xCC3300);
 	m_wndCalendar.SetColor(MCSC_TRAILINGTEXT, GetSysColor(COLOR_3DSHADOW));
 
 	SYSTEMTIME stMin;

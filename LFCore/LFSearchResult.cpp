@@ -203,20 +203,20 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s)
 
 void LFSearchResult::AddVolumes()
 {
-	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
-	bool HideDrivesWithNoMedia = LFHideDrivesWithNoMedia();
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_External);
+	bool HideVolumesWithNoMedia = LFHideVolumesWithNoMedia();
 
-	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+	for (char cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
 	{
-		if ((DrivesOnSystem & 1)==0)
+		if ((VolumesOnSystem & 1)==0)
 			continue;
 
-		wchar_t szDriveRoot[] = L" :\\";
-		szDriveRoot[0] = cDrive;
+		wchar_t szVolumeRoot[] = L" :\\";
+		szVolumeRoot[0] = cVolume;
 		SHFILEINFO sfi;
-		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
+		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
-			if ((!sfi.dwAttributes) && HideDrivesWithNoMedia)
+			if ((!sfi.dwAttributes) && HideVolumesWithNoMedia)
 				continue;
 
 			unsigned int l = (unsigned int)wcslen(sfi.szDisplayName);
@@ -233,7 +233,7 @@ void LFSearchResult::AddVolumes()
 			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
 
 			char FileID[] = " :";
-			FileID[0] = cDrive;
+			FileID[0] = cVolume;
 			SetAttribute(d, LFAttrFileID, FileID);
 			SetAttribute(d, LFAttrDescription, sfi.szTypeName);
 

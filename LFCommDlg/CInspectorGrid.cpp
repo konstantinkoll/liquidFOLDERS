@@ -1145,7 +1145,7 @@ void CInspectorGrid::AdjustLayout()
 			Category = pProp->Category;
 			INT Spacer = (m_ScrollHeight==1) ? -PADDING : 8;
 			m_Categories[Category].Top = m_ScrollHeight;
-			m_Categories[Category].Bottom = m_ScrollHeight+m_FontHeight[1]+2*PADDING+Spacer;
+			m_Categories[Category].Bottom = m_ScrollHeight+m_FontHeight[1]+2*LFCategoryPadding+Spacer;
 			m_ScrollHeight += m_FontHeight[1]+2*PADDING+Spacer+1;
 		}
 
@@ -1190,36 +1190,6 @@ void CInspectorGrid::AdjustLayout()
 void CInspectorGrid::ScrollWindow(INT dx, INT dy)
 {
 	CWnd::ScrollWindow(dx, dy);
-}
-
-void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text, BOOL Themed)
-{
-	rect.DeflateRect(0, PADDING);
-	rect.left += GUTTER;
-
-	dc.DrawText(Text, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-	CRect rectLine(rect);
-	dc.DrawText(Text, rectLine, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
-	rectLine.right += 2*PADDING;
-
-	if (rectLine.right<=rect.right)
-		if (Themed)
-		{
-			Graphics g(dc);
-	
-			LinearGradientBrush brush(Point(rectLine.right, rectLine.top), Point(rect.right, rectLine.top), Color(0xFF, 0xE2, 0xE2, 0xE2), Color(0x00, 0xE2, 0xE2, 0xE2));
-			g.FillRectangle(&brush, rectLine.right, rectLine.bottom-(m_FontHeight[1]+1)/2, rect.right-rectLine.right, 1);
-		}
-		else
-		{
-			CPen pen(PS_SOLID, 1, Themed ? 0xE2E2E2 : GetSysColor(COLOR_WINDOWTEXT));
-
-			CPen* pOldPen = dc.SelectObject(&pen);
-			dc.MoveTo(rectLine.right, rect.bottom-(m_FontHeight[1]+1)/2);
-			dc.LineTo(rect.right-PADDING, rect.bottom-(m_FontHeight[1]+1)/2);
-			dc.SelectObject(pOldPen);
-		}
 }
 
 void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
@@ -1418,13 +1388,12 @@ void CInspectorGrid::OnPaint()
 
 	// Categories
 	CFont* pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
-	dc.SetTextColor(Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
 
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		if (m_Categories[a].Top!=-1)
 		{
-			CRect rect(0, m_Categories[a].Top-m_VScrollPos, rect.Width(), m_Categories[a].Bottom-m_VScrollPos);
-			DrawCategory(dc, rect, p_App->m_AttrCategoryNames[a], Themed);
+			CRect rect(1, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos);
+			DrawCategory(dc, rect, p_App->m_AttrCategoryNames[a], NULL, Themed);
 		}
 
 	// Items

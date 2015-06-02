@@ -6,6 +6,7 @@
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202
+#define IDC_BUTTON1                     2042
 #define IDB_DIV                         20000
 #define IDB_DIVDOWN                     20001
 #define IDB_DIVUP                       20002
@@ -83,9 +84,8 @@
 #define IDS_AIRPORT_LOCATION            20330
 #define IDS_STOREPROPERTIES             20331
 #define IDS_STORENEW                    20332
-#define IDS_STORENEW_VOLUME             20333
-#define IDS_DELETEPROPERTY_CAPTION      20334
-#define IDS_DELETEPROPERTY_MSG          20335
+#define IDS_DELETEPROPERTY_CAPTION      20333
+#define IDS_DELETEPROPERTY_MSG          20334
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401
@@ -102,18 +102,19 @@
 #define IDC_VERSIONINFO                 21001
 #define IDC_GROUPBOX1                   21002
 #define IDC_GROUPBOX2                   21003
-#define IDC_NAME                        21004
-#define IDC_PURCHASEDATE                21005
-#define IDC_ID                          21006
-#define IDC_PRODUCT                     21007
-#define IDC_QUANTITYTITLE               21008
-#define IDC_QUANTITY                    21009
-#define IDC_ENTERLICENSEKEY             21010
-#define IDC_ENABLEAUTOUPDATE            21011
-#define IDC_CHECKDAILY                  21012
-#define IDC_CHECKWEEKLY                 21013
-#define IDC_CHECKMONTHLY                21014
-#define IDC_UPDATENOW                   21015
+#define IDC_GROUPBOX3                   21004
+#define IDC_NAME                        21005
+#define IDC_PURCHASEDATE                21006
+#define IDC_ID                          21007
+#define IDC_PRODUCT                     21008
+#define IDC_QUANTITYTITLE               21009
+#define IDC_QUANTITY                    21010
+#define IDC_ENTERLICENSEKEY             21011
+#define IDC_ENABLEAUTOUPDATE            21012
+#define IDC_CHECKDAILY                  21013
+#define IDC_CHECKWEEKLY                 21014
+#define IDC_CHECKMONTHLY                21015
+#define IDC_UPDATENOW                   21016
 #define IDD_CHOOSESTORE                 21100
 #define IDC_STORELIST                   21101
 #define IDM_STORE                       21180
@@ -125,7 +126,7 @@
 #define IDM_STORE_RENAME                21186
 #define IDM_STORE_PROPERTIES            21187
 #define IDM_STORES                      21190
-#define IDM_STORES_CREATENEW            21191
+#define IDM_STORES_ADD                  21191
 #define IDD_STOREDELETE                 21200
 #define IDC_KEEP                        21201
 #define IDC_DELETE                      21202
@@ -166,7 +167,20 @@
 #define IDM_ITEMTEMPLATE                21890
 #define IDM_ITEMTEMPLATE_TOGGLESORT     21891
 #define IDM_ITEMTEMPLATE_RESET          21892
-#define IDD_CREATENEWSTORE              21900
+#define IDD_ADDSTORE                    21900
+#define IDC_ADDSTORE_CATEGORY_LOCAL     21901
+#define IDC_ADDSTORE_CATEGORY_REMOTE    21902
+#define IDC_ADDSTORE_LIQUIDFOLDERS      21903
+#define IDC_ADDSTORE_WINDOWS            21904
+#define IDC_ADDSTORE_DROPBOX            21905
+#define IDC_ADDSTORE_FACEBOOK           21906
+#define IDC_ADDSTORE_FLICKR             21907
+#define IDC_ADDSTORE_INSTAGRAM          21908
+#define IDC_ADDSTORE_PINTEREST          21909
+#define IDC_ADDSTORE_SOUNDCLOUD         21910
+#define IDC_ADDSTORE_TWITTER            21911
+#define IDC_ADDSTORE_YOUTUBE            21912
+#define IDC_ADDSTORE_LIQUIDFOLDERS9     21913
 #define IDD_EDITTIME                    22000
 #define IDC_CALENDAR                    22001
 #define IDC_USETIME                     22002
@@ -209,6 +223,7 @@
 #define IDC_PATHTREE                    23122
 #define IDD_UPDATE                      23200
 #define IDC_IGNOREUPDATE                23201
+#define IDD_ABOUT1                      23201
 #define IDC_HIDE                        23202
 #define IDM_UPDATE                      23290
 #define IDM_UPDATE_RESTORE              23291
@@ -220,7 +235,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2010
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2042
+#define _APS_NEXT_CONTROL_VALUE         2043
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

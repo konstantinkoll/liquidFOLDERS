@@ -68,7 +68,7 @@ void CHeaderButton::SetValue(CString Value, BOOL ShowDropdown, BOOL Repaint)
 void CHeaderButton::GetPreferredSize(CSize& sz, UINT& CaptionWidth)
 {
 	CDC* dc = GetDC();
-	HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(LFGetApp()->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
+	HFONT hOldFont = (HFONT)dc->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
 	sz = dc->GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
 	m_CaptionWidth = CaptionWidth = m_Caption.IsEmpty() ? 0 : dc->GetTextExtent(m_Caption+_T(":")).cx;
 	dc->SelectObject(hOldFont);
@@ -141,33 +141,22 @@ void CHeaderButton::OnPaint()
 		FillRect(dc, rect, brush);
 
 	// Button
+	BOOL Themed = IsCtrlThemed();
+
 	CRect rectText(rect);
-	COLORREF clrText;
-	if (IsCtrlThemed())
+	if (Themed)
 	{
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
-
-		Graphics g(dc);
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-
 		if ((Focused) || (Selected) || (m_Hover))
 		{
-			// Outer border
+			Graphics g(dc);
+			g.SetSmoothingMode(SmoothingModeNone);
+
 			CRect rectBounds(rect);
 			rectBounds.right--;
 			rectBounds.bottom--;
 
-			GraphicsPath path;
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
-			g.DrawPath(&pen, &path);
-
 			// Inner border
 			rectBounds.DeflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 1, path);
-
-			g.SetSmoothingMode(SmoothingModeNone);
 
 			if (Selected)
 			{
@@ -178,30 +167,30 @@ void CHeaderButton::OnPaint()
 				if (m_Hover)
 				{
 					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2);
+					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
 
 					SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
 					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
 				}
 
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
+			GraphicsPath path;
 
 			if (!Selected)
 			{
-				pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
+				CreateRoundRectangle(rectBounds, 1, path);
+
+				Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
 				g.DrawPath(&pen, &path);
 			}
+
+			// Outer border
+			rectBounds.InflateRect(1, 1);
+			CreateRoundRectangle(rectBounds, 2, path);
+
+			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
+			g.DrawPath(&pen, &path);
 		}
-
-		rectText.DeflateRect(BORDER+2, BORDER);
-		if (Selected)
-			rectText.OffsetRect(1, 1);
-
-		clrText = m_Hover ? 0xCC6633 : 0xCC3300;
-		dc.SetTextColor(clrText);
-		dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-
-		dc.SelectObject(pOldFont);
 	}
 	else
 	{
@@ -233,20 +222,22 @@ void CHeaderButton::OnPaint()
 			dc.SetTextColor(0x000000);
 			dc.DrawFocusRect(rectFocus);
 		}
-
-		rectText.DeflateRect(BORDER+2, BORDER);
-		if (Selected)
-			rectText.OffsetRect(1, 1);
-
-		HFONT hOldFont = (HFONT)dc.SelectStockObject(DEFAULT_GUI_FONT);
-
-		clrText = GetSysColor(COLOR_WINDOWTEXT);
-		dc.SetTextColor(clrText);
-		dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-
-		dc.SelectObject(hOldFont);
 	}
 
+	// Content
+	rectText.DeflateRect(BORDER+2, BORDER);
+	if (Selected)
+		rectText.OffsetRect(1, 1);
+
+	// Text
+	COLORREF clrText = Themed ? m_Hover ? 0xCC6633 : 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT);
+	dc.SetTextColor(clrText);
+
+	HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
+	dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+	dc.SelectObject(hOldFont);
+
+	// Icon
 	if (m_ShowDropdown)
 	{
 		CPen pen;

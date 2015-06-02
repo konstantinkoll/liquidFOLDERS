@@ -239,7 +239,15 @@ void CHeaderArea::OnPaint()
 		CRect rectText(BORDERLEFT, BORDER, m_RightEdge, BORDER+sz.cy);
 		dc.DrawText(m_Caption, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-		dc.SelectObject(&p_App->m_DefaultFont);
+		if (Themed)
+		{
+			dc.SelectObject(&p_App->m_DefaultFont);
+		}
+		else
+		{
+			dc.SelectStockObject(DEFAULT_GUI_FONT);
+		}
+
 		sz = dc.GetTextExtent(m_Hint);
 		rectText.SetRect(BORDERLEFT, rect.bottom-sz.cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
 		dc.DrawText(m_Hint, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);

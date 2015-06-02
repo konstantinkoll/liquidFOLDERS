@@ -323,7 +323,8 @@ CWnd* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
 
 void CStoreManagerApp::OnAppAbout()
 {
-	LFAbout(m_pActiveWnd);
+	LFAboutDlg dlg(m_pActiveWnd);
+	dlg.DoModal();
 }
 
 
@@ -401,10 +402,10 @@ void CStoreManagerApp::Reload(INT Context)
 
 // Shell
 
-void CStoreManagerApp::ExecuteExplorerContextMenu(CHAR cDrive, LPCSTR verb)
+void CStoreManagerApp::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR verb)
 {
 	WCHAR Path[4] = L" :\\";
-	Path[0] = cDrive;
+	Path[0] = cVolume;
 
 	LPITEMIDLIST pidlFQ = SHSimpleIDListFromPath(Path);
 	LPCITEMIDLIST pidlRel = NULL;

@@ -268,6 +268,7 @@ LFApplication::LFApplication(GUID& AppID)
 		ImageList_GetIconSize(m_SystemImageListExtraLarge, &cx, &cy);
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListExtraLarge);
 
+		ExtractCoreIcons(hModIcons, 96, &m_CoreImageListHuge, TRUE);
 		ExtractCoreIcons(hModIcons, 128, &m_CoreImageListJumbo);
 	}
 
@@ -599,18 +600,20 @@ HANDLE LFApplication::LoadFontFromResource(UINT nID, HMODULE hInst)
 	return res;
 }
 
-void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li)
+void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons)
 {
 	li->Create(size, size, ILC_COLOR32 | ILC_MASK, IDI_LastIcon, 1);
 
-	for (UINT a=1; a<=IDI_LastIcon; a++)
+	const UINT Last = OnlyStoreIcons ? IDI_LastStoreIcon : IDI_LastIcon;
+	for (UINT a=1; a<=Last; a++)
 	{
 		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(a), IMAGE_ICON, size, size, LR_DEFAULTCOLOR);
 		li->Add(ic);
 		DestroyIcon(ic);
 	}
 
-	li->SetOverlayImage(IDI_OVR_Default-1, 1);
+	if (!OnlyStoreIcons)
+		li->SetOverlayImage(IDI_OVR_Default-1, 1);
 }
 
 UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)

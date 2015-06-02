@@ -583,7 +583,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if (e.children->GetCount()==0)
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_CreateNewStore, _T(VERB_CREATENEWSTORE));
+			AddItem(e.menu, IDS_MENU_AddStore, _T(VERB_ADDSTORE));
 		}
 
 		if (e.children->GetCount()==1)
@@ -660,8 +660,8 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	if (e.menuItem->GetVerb()==_T(VERB_MIGRATIONWIZARD))
 		return RunStoreCommand(e, theApp.m_PathStoreManager, _T("/MIGRATE "));
 
-	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
-		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("/NEWSTORE"));
+	if (e.menuItem->GetVerb()==_T(VERB_ADDSTORE))
+		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("/ADDSTORE"));
 
 	if (e.menuItem->GetVerb()==_T(VERB_EXPLORE))
 		return OnExplorer(e);

@@ -12,7 +12,7 @@
 // CPropertyHolder
 //
 
-#define WM_PROPERTYCHANGED     WM_USER+10
+#define WM_PROPERTYCHANGED     WM_USER+4
 
 class AFX_EXT_CLASS CPropertyHolder : public CWnd
 {
@@ -282,7 +282,6 @@ protected:
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	void MakeSortArrayDirty();
-	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text, BOOL Themed);
 	void ResetProperty(UINT Attr);
 	void EditProperty(UINT Attr);
 	void DestroyEdit(BOOL Accept=FALSE);

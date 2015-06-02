@@ -718,10 +718,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\SRC_Internet.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\STR_1394.ico"
 				>
 			</File>
@@ -742,11 +738,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_Internal.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\STR_NTFS.ico"
+				RelativePath=".\res\STR_liquidFOLDERS.ico"
 				>
 			</File>
 			<File
@@ -767,6 +759,10 @@
 			</File>
 			<File
 				RelativePath=".\res\STR_USB.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Windows.ico"
 				>
 			</File>
 			<File

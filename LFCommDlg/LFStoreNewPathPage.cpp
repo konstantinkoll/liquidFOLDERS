@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "LFStoreNewPathPage.h"
-#include "LFStoreNewLocalDlg.h"
+#include "LFStoreNewDlg.h"
 #include "Resource.h"
 
 
@@ -12,12 +12,6 @@
 //
 
 extern LFMessageIDs* MessageIDs;
-
-LFStoreNewPathPage::LFStoreNewPathPage(CHAR Volume)
-	: CPropertyPage()
-{
-	m_Volume = Volume;
-}
 
 void LFStoreNewPathPage::DoDataExchange(CDataExchange* pDX)
 {
@@ -40,16 +34,7 @@ BOOL LFStoreNewPathPage::OnInitDialog()
 
 	// Tree
 	m_wndPathTree.SetOnlyFilesystem(TRUE);
-	if (m_Volume)
-	{
-		CString tmpStr;
-		tmpStr.Format(_T("%C:\\"), m_Volume);
-		m_wndPathTree.SetRootPath(tmpStr);
-	}
-	else
-	{
-		m_wndPathTree.SetRootPath(CETR_AllDrives);
-	}
+	m_wndPathTree.SetRootPath(CETR_AllVolumes);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

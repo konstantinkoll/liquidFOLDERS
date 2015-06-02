@@ -146,29 +146,29 @@ LFCore_API bool LFHideFileExt()
 	return (HideFileExt!=0);
 }
 
-LFCore_API bool LFHideDrivesWithNoMedia()
+LFCore_API bool LFHideVolumesWithNoMedia()
 {
-	DWORD HideDrivesWithNoMedia = (osInfo.dwMajorVersion<6) ? 0 : 1;
+	DWORD HideVolumesWithNoMedia = (osInfo.dwMajorVersion<6) ? 0 : 1;
 
 	HKEY k;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &k)==ERROR_SUCCESS)
 	{
-		DWORD sz = sizeof(HideDrivesWithNoMedia);
-		RegQueryValueEx(k, L"HideDrivesWithNoMedia", 0, NULL, (BYTE*)&HideDrivesWithNoMedia, &sz);
+		DWORD sz = sizeof(HideVolumesWithNoMedia);
+		RegQueryValueEx(k, L"HideVolumesWithNoMedia", 0, NULL, (BYTE*)&HideVolumesWithNoMedia, &sz);
 
 		RegCloseKey(k);
 	}
 
-	return (HideDrivesWithNoMedia!=0);
+	return (HideVolumesWithNoMedia!=0);
 }
 
 
-unsigned int GetDriveBus(char cDrive)
+unsigned int GetVolumeBus(char cVolume)
 {
 	unsigned int res = BusTypeMaxReserved;
 
 	char szBuf[MAX_PATH] = "\\\\?\\ :";
-	szBuf[4] = cDrive;
+	szBuf[4] = cVolume;
 	HANDLE hDevice = CreateFileA(szBuf, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
 
 	if (hDevice!=INVALID_HANDLE_VALUE)
@@ -193,10 +193,10 @@ unsigned int GetDriveBus(char cDrive)
 	return res;
 }
 
-LFCore_API unsigned int LFGetSourceForDrive(char cDrive)
+LFCore_API unsigned int LFGetSourceForVolume(char cVolume)
 {
-	if ((cDrive>='A') && (cDrive<='Z'))
-		switch (GetDriveBus(cDrive))
+	if ((cVolume>='A') && (cVolume<='Z'))
+		switch (GetVolumeBus(cVolume))
 		{
 		case BusType1394:
 			return LFTypeSource1394;
@@ -207,61 +207,61 @@ LFCore_API unsigned int LFGetSourceForDrive(char cDrive)
 	return LFTypeSourceUnknown;
 }
 
-LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
+LFCore_API unsigned int LFGetLogicalVolumes(unsigned int mask)
 {
-	DWORD DrivesOnSystem = GetLogicalDrives();
-	if ((mask & LFGLD_IncludeFloppies)==0)
-		DrivesOnSystem &= ~3;
+	DWORD VolumesOnSystem = GetLogicalDrives();
+	if ((mask & LFGLV_IncludeFloppies)==0)
+		VolumesOnSystem &= ~3;
 
 	DWORD Index = 1;
-	char szDriveRoot[] = " :\\";
+	char szVolumeRoot[] = " :\\";
 
-	for (char cDrive='A'; cDrive<='Z'; cDrive++, Index<<=1)
+	for (char cVolume='A'; cVolume<='Z'; cVolume++, Index<<=1)
 	{
-		if ((DrivesOnSystem & Index)==0)
+		if ((VolumesOnSystem & Index)==0)
 		{
-			VolumeTypes[cDrive-'A'] = DRIVE_UNKNOWN;
+			VolumeTypes[cVolume-'A'] = DRIVE_UNKNOWN;
 			continue;
 		}
 
-		unsigned int uDriveType = VolumeTypes[cDrive-'A'];
-		if (uDriveType==DRIVE_UNKNOWN)
+		unsigned int uVolumeType = VolumeTypes[cVolume-'A'];
+		if (uVolumeType==DRIVE_UNKNOWN)
 		{
-			szDriveRoot[0] = cDrive;
-			uDriveType = GetDriveTypeA(szDriveRoot);
+			szVolumeRoot[0] = cVolume;
+			uVolumeType = GetDriveTypeA(szVolumeRoot);
 
-			if (uDriveType==DRIVE_FIXED)
-				switch (GetDriveBus(cDrive))
+			if (uVolumeType==DRIVE_FIXED)
+				switch (GetVolumeBus(cVolume))
 				{
 				case BusType1394:
 				case BusTypeUsb:
-					uDriveType = DRIVE_REMOVABLE;
+					uVolumeType = DRIVE_REMOVABLE;
 					break;
 				}
 
-			VolumeTypes[cDrive-'A'] = uDriveType;
+			VolumeTypes[cVolume-'A'] = uVolumeType;
 		}
 
-		switch (uDriveType)
+		switch (uVolumeType)
 		{
 		case DRIVE_FIXED:
-			if (!(mask & LFGLD_Internal))
-				DrivesOnSystem &= ~Index;
+			if (!(mask & LFGLV_Internal))
+				VolumesOnSystem &= ~Index;
 			break;
 		case DRIVE_REMOVABLE:
-			if (!(mask & LFGLD_External))
-				DrivesOnSystem &= ~Index;
+			if (!(mask & LFGLV_External))
+				VolumesOnSystem &= ~Index;
 			break;
 		case DRIVE_REMOTE:
-			if (!(mask & LFGLD_Network))
-				DrivesOnSystem &= ~Index;
+			if (!(mask & LFGLV_Network))
+				VolumesOnSystem &= ~Index;
 			break;
 		default:
-			DrivesOnSystem &= ~Index;
+			VolumesOnSystem &= ~Index;
 		}
 	}
 
-	return DrivesOnSystem;
+	return VolumesOnSystem;
 }
 
 LFCore_API LFMessageIDs* LFGetMessageIDs()

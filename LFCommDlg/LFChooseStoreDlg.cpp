@@ -80,8 +80,6 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
-	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
-	ON_UPDATE_COMMAND_UI(IDM_STORES_CREATENEW, OnUpdateStoresCommands)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
@@ -106,14 +104,13 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	rect.SetRectEmpty();
 	m_wndExplorerList.Create(dwStyle, rect, this, IDC_STORELIST);
 
-	LFApplication* pApp = LFGetApp();
-	m_wndExplorerList.SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&pApp->m_CoreImageListLarge, LVSIL_NORMAL);
+	m_wndExplorerList.SetImageList(&p_App->m_CoreImageListSmall, LVSIL_SMALL);
+	m_wndExplorerList.SetImageList(&p_App->m_CoreImageListLarge, LVSIL_NORMAL);
 
 	IMAGEINFO ii;
-	pApp->m_CoreImageListLarge.GetImageInfo(0, &ii);
+	p_App->m_CoreImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
+	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
 	m_wndExplorerList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
@@ -128,7 +125,6 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	SendMessage(MessageIDs->StoresChanged);
 
 	AdjustLayout();
-	AddBottomRightControl(IDM_STORES_CREATENEW);
 
 	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -225,17 +221,6 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			LFFreeTransactionList(tl);
 			*pResult = TRUE;
 		}
-}
-
-
-void LFChooseStoreDlg::OnStoresCreateNew()
-{
-	LFCreateNewStore(this);
-}
-
-void LFChooseStoreDlg::OnUpdateStoresCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable((pCmdUI->m_nID==IDM_STORES_CREATENEW) || LFGetStoreCount());
 }
 
 

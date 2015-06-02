@@ -244,9 +244,9 @@ void CExplorerTree::PopulateTree()
 		hItem = InsertItem(pidl, p_App->GetShellManager()->CopyItem(pidl));
 	}
 	else
-		if ((m_RootPath==CETR_AllDrives) || (m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
+		if ((m_RootPath==CETR_AllVolumes) || (m_RootPath==CETR_InternalVolumes) || (m_RootPath==CETR_ExternalVolumes))
 		{
-			DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_AllDrives ? LFGLD_Both : m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
+			DWORD DrivesOnSystem = LFGetLogicalVolumes(m_RootPath==CETR_AllVolumes ? LFGLV_Both : m_RootPath==CETR_InternalVolumes ? LFGLV_Internal | LFGLV_Network : LFGLV_External);
 			WCHAR szDriveRoot[] = L" :\\";
 			BOOL First = TRUE;
 
@@ -1083,9 +1083,9 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	case SHCNE_DRIVEADD:
 	case SHCNE_MEDIAINSERTED:
 		if (Path1[0]!='\0')
-			if ((m_RootPath==CETR_AllDrives) || (m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
+			if ((m_RootPath==CETR_AllVolumes) || (m_RootPath==CETR_InternalVolumes) || (m_RootPath==CETR_ExternalVolumes))
 			{
-				DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_AllDrives ? LFGLD_Both : m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
+				DWORD DrivesOnSystem = LFGetLogicalVolumes(m_RootPath==CETR_AllVolumes ? LFGLV_Both : m_RootPath==CETR_InternalVolumes ? LFGLV_Internal | LFGLV_Network : LFGLV_External);
 
 				if (DrivesOnSystem & (1 << (Path1[0]-'A')))
 					InsertItem(Path1);

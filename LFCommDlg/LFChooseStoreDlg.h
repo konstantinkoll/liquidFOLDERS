@@ -33,15 +33,11 @@ protected:
 	void UpdateOkButton();
 
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
-
-	afx_msg void OnStoresCreateNew();
-	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreShortcut();

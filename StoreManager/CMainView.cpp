@@ -682,9 +682,10 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnView)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnUpdateViewCommands)
 
-	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
+	ON_COMMAND(IDM_STORES_ADD, OnStoresAdd)
 	ON_COMMAND(IDM_STORES_REPAIRCORRUPTEDINDEX, OnStoresMaintainAll)
-	ON_UPDATE_COMMAND_UI(IDM_STORES_CREATENEW, OnUpdateStoresCommands)
+	ON_UPDATE_COMMAND_UI(IDM_STORES_ADD, OnUpdateStoresCommands)
+	ON_UPDATE_COMMAND_UI(IDM_STORES_REPAIRCORRUPTEDINDEX, OnUpdateStoresCommands)
 
 	ON_COMMAND(IDM_NEW_REMOVENEW, OnNewRemoveNew)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_NEW_REMOVENEW, IDM_NEW_REMOVENEW, OnUpdateNewCommands)
@@ -697,11 +698,10 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
-	ON_COMMAND(IDM_VOLUME_CREATENEWSTORE, OnVolumeCreateNewStore)
 	ON_COMMAND(IDM_VOLUME_FORMAT, OnVolumeFormat)
 	ON_COMMAND(IDM_VOLUME_EJECT, OnVolumeEject)
 	ON_COMMAND(IDM_VOLUME_PROPERTIES, OnVolumeProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_CREATENEWSTORE, IDM_VOLUME_PROPERTIES, OnUpdateVolumeCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_FORMAT, IDM_VOLUME_PROPERTIES, OnUpdateVolumeCommands)
 
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
@@ -742,7 +742,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	#define FilterIconOverlay     35
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FilterIcon, TRUE, FALSE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 1);
+	m_wndTaskbar.AddButton(IDM_STORES_ADD, 1);
 	m_wndTaskbar.AddButton(IDM_NEW_REMOVENEW, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
@@ -1387,9 +1387,10 @@ void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)
 
 // Stores
 
-void CMainView::OnStoresCreateNew()
+void CMainView::OnStoresAdd()
 {
-	LFCreateNewStore(this);
+	LFAddStoreDlg dlg(this);
+	dlg.DoModal();
 }
 
 void CMainView::OnStoresMaintainAll()
@@ -1522,20 +1523,13 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 
 // Volume
 
-void CMainView::OnVolumeCreateNewStore()
-{
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-		LFCreateNewStore(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0]);
-}
-
 void CMainView::OnVolumeFormat()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		CHAR cDrive = p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0];
-		if (LFStoresOnDrive(cDrive))
+		CHAR cVolume = p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0];
+		if (LFStoresOnVolume(cVolume))
 		{
 			CString caption;
 			CString mask;
@@ -1548,7 +1542,7 @@ void CMainView::OnVolumeFormat()
 		}
 		else
 		{
-			theApp.ExecuteExplorerContextMenu(cDrive, "format");
+			theApp.ExecuteExplorerContextMenu(cVolume, "format");
 		}
 	}
 }
@@ -1577,7 +1571,6 @@ void CMainView::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 		switch (pCmdUI->m_nID)
 		{
-		case IDM_VOLUME_CREATENEWSTORE:
 		case IDM_VOLUME_FORMAT:
 		case IDM_VOLUME_EJECT:
 			b = ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);

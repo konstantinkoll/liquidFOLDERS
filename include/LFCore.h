@@ -20,12 +20,12 @@
 // Kernfunktionalität
 //
 
-#define LFGLD_Internal            1
-#define LFGLD_External            2
-#define LFGLD_Both                3
-#define LFGLD_Network             4
-#define LFGLD_IncludeFloppies     8
-#define LFGLD_All                 15
+#define LFGLV_Internal            1
+#define LFGLV_External            2
+#define LFGLV_Both                3
+#define LFGLV_Network             4
+#define LFGLV_IncludeFloppies     8
+#define LFGLV_All                 15
 
 
 
@@ -53,15 +53,15 @@ LFCore_API bool __stdcall LFIsSharewareExpired();
 LFCore_API bool __stdcall LFHideFileExt();
 
 // Gibt true zurück, wenn der Explorer leere Laufwerke verbirgt
-LFCore_API bool __stdcall LFHideDrivesWithNoMedia();
+LFCore_API bool __stdcall LFHideVolumesWithNoMedia();
 
 
 
 // Liefert den Source-Typ eines Laufwerks zurück
-LFCore_API unsigned int __stdcall LFGetSourceForDrive(char cDrive);
+LFCore_API unsigned int __stdcall LFGetSourceForVolume(char cVolume);
 
-// Wie Win32-Funktion GetLogicalDrives(), allerdings selektiv (s.o.)
-LFCore_API unsigned int __stdcall LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
+// Wie Win32-Funktion GetLogicalVolumes(), allerdings selektiv (s.o.)
+LFCore_API unsigned int __stdcall LFGetLogicalVolumes(unsigned int mask=LFGLV_Both);
 
 // Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
 LFCore_API LFMessageIDs* __stdcall LFGetMessageIDs();
@@ -371,7 +371,7 @@ LFCore_API void __stdcall LFGetDefaultStoreName(wchar_t* name, size_t cCount);
 LFCore_API unsigned int __stdcall LFGetStoreCount();
 
 // Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
-LFCore_API bool __stdcall LFStoresOnDrive(char cDrive);
+LFCore_API bool __stdcall LFStoresOnVolume(char cVolume);
 
 // Gibt die IDs aller Stores zurück
 LFCore_API unsigned int __stdcall LFGetStores(char** IDs, unsigned int* count);

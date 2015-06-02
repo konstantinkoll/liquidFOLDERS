@@ -401,10 +401,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CDriveMenu.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CFileItem.h"
 				>
 			</File>
@@ -455,7 +451,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\StoreNew_Tiny.ico"
+				RelativePath=".\res\StoreAdd_Tiny.ico"
 				>
 			</File>
 			<File
@@ -470,10 +466,6 @@
 			>
 			<File
 				RelativePath=".\Categorizer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CDriveMenu.cpp"
 				>
 			</File>
 			<File

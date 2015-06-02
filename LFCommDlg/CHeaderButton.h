@@ -9,8 +9,8 @@
 // CHeaderButton
 //
 
-#define WM_ADJUSTLAYOUT     WM_USER+8
-#define WM_GETMENU          WM_USER+9
+#define WM_ADJUSTLAYOUT     WM_USER+2
+#define WM_GETMENU          WM_USER+3
 
 class AFX_EXT_CLASS CHeaderButton : public CButton
 {

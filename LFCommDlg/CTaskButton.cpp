@@ -76,37 +76,14 @@ INT CTaskButton::GetPreferredWidth()
 
 	if (!m_Caption.IsEmpty())
 	{
-		CSize sz;
-
 		CDC* dc = GetDC();
-		HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(LFGetApp()->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
-		sz = dc->GetTextExtent(m_Caption);
+		HFONT hOldFont = (HFONT)dc->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
+		l += dc->GetTextExtent(m_Caption).cx;
 		dc->SelectObject(hOldFont);
 		ReleaseDC(dc);
-
-		l += sz.cx;
 	}
 
 	return l;
-}
-
-void CTaskButton::DrawIcon(CDC& dc, CRect& rectText, INT Height, BOOL Selected)
-{
-	if ((p_Icons) && (m_IconID!=-1))
-	{
-		CAfxDrawState ds;
-		p_Icons->PrepareDrawImage(ds);
-
-		CPoint pt(rectText.left, (Height-m_IconSize)/2+(Selected ? 1 : 0));
-		p_Icons->Draw(&dc, pt.x, pt.y, m_IconID);
-
-		if (m_OverlayID!=-1)
-			p_Icons->Draw(&dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
-
-		p_Icons->EndDrawImage(ds);
-
-		rectText.left += m_IconSize+BORDER;
-	}
 }
 
 
@@ -162,32 +139,20 @@ void CTaskButton::OnPaint()
 		FillRect(dc, rect, brush);
 
 	// Button
-	CRect rectText(rect);
-	if (IsCtrlThemed())
+	BOOL Themed = IsCtrlThemed();
+	if (Themed)
 	{
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
-
-		Graphics g(dc);
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-
 		if ((Focused) || (Selected) || (m_Hover))
 		{
-			// Outer border
+			Graphics g(dc);
+			g.SetSmoothingMode(SmoothingModeNone);
+
 			CRect rectBounds(rect);
 			rectBounds.right--;
 			rectBounds.bottom--;
 
-			GraphicsPath path;
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
-			g.DrawPath(&pen, &path);
-
 			// Inner border
 			rectBounds.DeflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 1, path);
-
-			g.SetSmoothingMode(SmoothingModeNone);
 
 			if (Selected)
 			{
@@ -205,24 +170,25 @@ void CTaskButton::OnPaint()
 				}
 
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
+			GraphicsPath path;
 
 			if (!Selected)
 			{
-				pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
+				CreateRoundRectangle(rectBounds, 1, path);
+
+				Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
 				g.DrawPath(&pen, &path);
 			}
+
+			// Outer border
+			rectBounds.InflateRect(1, 1);
+			CreateRoundRectangle(rectBounds, 2, path);
+
+			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
+			g.DrawPath(&pen, &path);
 		}
 
-		rectText.DeflateRect(BORDER+2, BORDER);
-		if (Selected)
-			rectText.OffsetRect(1, 1);
-
-		DrawIcon(dc, rectText, rect.Height(), Selected);
-
 		dc.SetTextColor(m_Hover ? 0x404040 : 0x333333);
-		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-
-		dc.SelectObject(pOldFont);
 	}
 	else
 	{
@@ -245,8 +211,6 @@ void CTaskButton::OnPaint()
 			dc.Draw3dRect(rectBorder, c2, c3);
 		}
 
-		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-
 		if (Focused)
 		{
 			CRect rectFocus(rect);
@@ -255,15 +219,36 @@ void CTaskButton::OnPaint()
 			dc.DrawFocusRect(rectFocus);
 		}
 
-		rectText.DeflateRect(BORDER+2, BORDER);
-		if (Selected)
-			rectText.OffsetRect(1, 1);
-
-		DrawIcon(dc, rectText, rect.Height(), Selected);
-
-		dc.SelectStockObject(DEFAULT_GUI_FONT);
-		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 	}
+
+	// Content
+	CRect rectText(rect);
+	rectText.DeflateRect(BORDER+2, BORDER);
+	if (Selected)
+		rectText.OffsetRect(1, 1);
+
+	// Icon
+	if ((p_Icons) && (m_IconID!=-1))
+	{
+		CAfxDrawState ds;
+		p_Icons->PrepareDrawImage(ds);
+
+		CPoint pt(rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1));
+		p_Icons->Draw(&dc, pt.x, pt.y, m_IconID);
+
+		if (m_OverlayID!=-1)
+			p_Icons->Draw(&dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
+
+		p_Icons->EndDrawImage(ds);
+
+		rectText.left += m_IconSize+BORDER;
+	}
+
+	// Text
+	HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
+	dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+	dc.SelectObject(hOldFont);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);

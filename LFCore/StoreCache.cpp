@@ -453,15 +453,15 @@ void SetStoreAttributes(LFStoreDescriptor* s)
 	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if (IsStoreMounted(s))
 		{
-			wchar_t szDriveRoot[] = L" :\\";
-			szDriveRoot[0] = s->DatPath[0];
+			wchar_t szVolumeRoot[] = L" :\\";
+			szVolumeRoot[0] = s->DatPath[0];
 
 			SHFILEINFO sfi;
-			if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
+			if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
 				wcscpy_s(s->LastSeen, 256, sfi.szDisplayName);
 
 			if ((s->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendNTFS)
-				s->Source = LFGetSourceForDrive(s->DatPath[0] & 0xFF);
+				s->Source = LFGetSourceForVolume(s->DatPath[0] & 0xFF);
 		}
 
 	// Get automatic data path
@@ -532,21 +532,21 @@ __forceinline void LoadRegistry()
 	RegCloseKey(hive);
 }
 
-__forceinline void MountExternalDrives()
+__forceinline void MountExternalVolumes()
 {
-	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
-	wchar_t szDriveRoot[4] = L" :\\";
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_External);
+	wchar_t szVolumeRoot[4] = L" :\\";
 
-	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+	for (char cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
 	{
-		if ((DrivesOnSystem & 1)==0)
+		if ((VolumesOnSystem & 1)==0)
 			continue;
 
-		szDriveRoot[0] = cDrive;
+		szVolumeRoot[0] = cVolume;
 		SHFILEINFO sfi;
-		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES))
+		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES))
 			if (sfi.dwAttributes)
-				MountVolume(cDrive, true);
+				MountVolume(cVolume, true);
 	}
 }
 
@@ -572,8 +572,8 @@ void InitStoreCache()
 			StoreCount = 0;
 			LoadRegistry();
 
-			// Mount external drives
-			MountExternalDrives();
+			// Mount external volumes
+			MountExternalVolumes();
 
 			// Run maintenance, set default store
 			bool DefaultStoreOk = false;
@@ -776,10 +776,10 @@ LFCore_API unsigned int LFGetStoreCount()
 }
 
 
-// Drive handling
+// Volume handling
 //
 
-LFCore_API bool LFStoresOnDrive(char cDrive)
+LFCore_API bool LFStoresOnVolume(char cVolume)
 {
 	bool res = false;
 
@@ -787,7 +787,7 @@ LFCore_API bool LFStoresOnDrive(char cDrive)
 	{
 		for (unsigned int a=0; a<StoreCount; a++)
 			if (IsStoreMounted(&StoreCache[a]))
-				if (StoreCache[a].DatPath[0]==cDrive)
+				if (StoreCache[a].DatPath[0]==cVolume)
 				{
 					res = true;
 					break;
@@ -799,13 +799,13 @@ LFCore_API bool LFStoresOnDrive(char cDrive)
 	return res;
 }
 
-unsigned int MountVolume(char cDrive, bool InternalCall)
+unsigned int MountVolume(char cVolume, bool InternalCall)
 {
-	assert(cDrive>='A');
-	assert(cDrive<='Z');
+	assert(cVolume>='A');
+	assert(cVolume<='Z');
 
 	wchar_t mask[] = L" :\\*.store";
-	mask[0] = cDrive;
+	mask[0] = cVolume;
 	bool ChangeOccured = false;
 	unsigned int res = LFOk;
 
@@ -817,7 +817,7 @@ unsigned int MountVolume(char cDrive, bool InternalCall)
 		{
 			// Vollständigen Dateinamen zusammensetzen
 			wchar_t f[MAX_PATH] = L" :\\";
-			f[0] = cDrive;
+			f[0] = cVolume;
 			wcscat_s(f, MAX_PATH, ffd.cFileName);
 
 			LFStoreDescriptor s;
@@ -865,7 +865,7 @@ unsigned int MountVolume(char cDrive, bool InternalCall)
 				if (slot)
 				{
 					wcscpy_s(slot->DatPath, MAX_PATH, s.DatPath);
-					slot->DatPath[0] = cDrive;
+					slot->DatPath[0] = cVolume;
 
 					SetStoreAttributes(slot);
 
@@ -918,10 +918,10 @@ Finish:
 	return res;
 }
 
-unsigned int UnmountVolume(char cDrive, bool InternalCall)
+unsigned int UnmountVolume(char cVolume, bool InternalCall)
 {
-	assert(cDrive>='A');
-	assert(cDrive<='Z');
+	assert(cVolume>='A');
+	assert(cVolume<='Z');
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
@@ -930,7 +930,7 @@ unsigned int UnmountVolume(char cDrive, bool InternalCall)
 
 	bool ChangeOccured = false;
 	bool RemovedDefaultStore = false;
-	VolumeTypes[cDrive-'A'] = DRIVE_UNKNOWN;
+	VolumeTypes[cVolume-'A'] = DRIVE_UNKNOWN;
 
 	char NotifyIDs[MaxStores][LFKeySize];
 	bool NotifyTypes[MaxStores];
@@ -938,7 +938,7 @@ unsigned int UnmountVolume(char cDrive, bool InternalCall)
 
 	for (unsigned int a=0; a<StoreCount; a++)
 		if (IsStoreMounted(&StoreCache[a]))
-			if ((StoreCache[a].DatPath[0]==cDrive) && ((StoreCache[a].Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal))
+			if ((StoreCache[a].DatPath[0]==cVolume) && ((StoreCache[a].Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal))
 			{
 				HANDLE StoreLock;
 				if (!GetMutexForStore(&StoreCache[a], &StoreLock))

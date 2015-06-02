@@ -22,8 +22,6 @@ public:
 	INT GetPreferredWidth();
 
 protected:
-	void DrawIcon(CDC& dc, CRect& rectText, INT Height, BOOL Selected);
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();

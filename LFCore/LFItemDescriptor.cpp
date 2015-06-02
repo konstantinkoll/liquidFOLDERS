@@ -314,7 +314,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 			SetAttribute(d, LFAttrDescription, descr);
 		}
 
-	d->CategoryID = (s->Source>LFTypeSourceUSB) ? LFItemCategoryRemoteStores : LFItemCategoryLocalStores;
+	d->CategoryID = (s->Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
 	d->IconID = LFGetStoreIcon(s);
 
 	SetAttribute(d, LFAttrFileName, s->StoreName);

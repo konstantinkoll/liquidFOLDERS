@@ -116,11 +116,8 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 LFCommDlg_API BOOL IsCtrlThemed()
 {
 	LFApplication* pApp = LFGetApp();
-	if (pApp)
-		if (pApp->m_ThemeLibLoaded)
-			return pApp->zIsAppThemed();
 
-	return FALSE;
+	return pApp->m_ThemeLibLoaded ? pApp->zIsAppThemed() : FALSE;
 }
 
 LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
@@ -155,6 +152,52 @@ LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
 	rect.DeflateRect(1, 1);
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
+}
+
+LFCommDlg_API void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
+{
+	ASSERT(Caption);
+
+	rect.DeflateRect(LFCategoryPadding, LFCategoryPadding);
+
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
+	dc.SetTextColor(Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.DrawText(Caption, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+	CRect rectLine(rect);
+	dc.DrawText(Caption, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT | DT_NOPREFIX);
+	rectLine.right += 2*LFCategoryPadding;
+
+	if (rectLine.right<=rect.right)
+		if (Themed)
+		{
+			Graphics g(dc);
+	
+			LinearGradientBrush brush(Point(rectLine.right, rectLine.top), Point(rect.right, rectLine.top), Color(0xFF, 0xE2, 0xE2, 0xE2), Color(0x00, 0xE2, 0xE2, 0xE2));
+			g.FillRectangle(&brush, rectLine.right, rectLine.top+(rectLine.Height()+1)/2, rect.right-rectLine.right, 1);
+		}
+		else
+		{
+			CPen pen(PS_SOLID, 1, GetSysColor(COLOR_WINDOWTEXT));
+
+			CPen* pOldPen = dc.SelectObject(&pen);
+			dc.MoveTo(rectLine.right, rect.top+(rectLine.Height()+1)/2);
+			dc.LineTo(rect.right, rect.top+(rectLine.Height()+1)/2);
+			dc.SelectObject(pOldPen);
+		}
+
+	if (Hint)
+		if (Hint[0]!=L'\0')
+		{
+			if (Themed)
+				dc.SetTextColor(((dc.GetTextColor()>>1) & 0x7F7F7F) | 0x808080);
+
+			rect.top += rectLine.Height();
+			dc.SelectObject(&LFGetApp()->m_DefaultFont);
+			dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		}
+
+	dc.SelectObject(pOldFont);
 }
 
 void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
@@ -271,12 +314,12 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
 		return;
 
-	CString caption;
-	ENSURE(caption.LoadString(IDS_IMPORTFOLDER_CAPTION));
-	CString hint;
-	ENSURE(hint.LoadString(IDS_IMPORTFOLDER_HINT));
+	CString Caption;
+	CString Hint;
+	ENSURE(Caption.LoadString(IDS_IMPORTFOLDER_CAPTION));
+	ENSURE(Hint.LoadString(IDS_IMPORTFOLDER_HINT));
 
-	LFBrowseForFolderDlg dlg(TRUE, TRUE, _T(""), pParentWnd, caption, hint);
+	LFBrowseForFolderDlg dlg(pParentWnd, Caption, Hint, TRUE, TRUE, _T(""));
 	if (dlg.DoModal()==IDOK)
 	{
 		WorkerParameters wp;
@@ -314,19 +357,6 @@ LFCommDlg_API void LFRunMaintenance(CWnd* pParentWnd, HWND hWndSource)
 	dlg.DoModal();
 
 	LFFreeMaintenanceList(wp.MaintenanceList);
-}
-
-
-LFCommDlg_API void LFCreateNewStore(CWnd* pParentWnd, CHAR Volume)
-{
-	LFStoreNewLocalDlg dlg(pParentWnd, Volume);
-	dlg.DoModal();
-}
-
-LFCommDlg_API void LFAbout(CWnd* pParentWnd)
-{
-	LFAboutDlg dlg(pParentWnd);
-	dlg.DoModal();
 }
 
 

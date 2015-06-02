@@ -55,14 +55,12 @@ BOOL CRunCmdApp::InitInstance()
 		case 2:
 			if (command==_T("/ABOUT"))
 				OnAppAbout();
-			if (command==_T("/NEWSTORE"))
-				OnStoreCreate();
+			if (command==_T("/ADDSTORE"))
+				OnStoreAdd();
 			if (command==_T("/INSTALL"))
 				LFCreateSendTo(true);
 			break;
 		case 3:
-			if (command==_T("/NEWSTOREVOLUME"))
-				OnStoreCreate(*__wargv[2] & 0xFF);
 			if (command==_T("/DELETESTORE"))
 				OnStoreDelete(__wargv[2]);
 			if (command==_T("/IMPORTFOLDER"))
@@ -77,12 +75,14 @@ BOOL CRunCmdApp::InitInstance()
 
 void CRunCmdApp::OnAppAbout()
 {
-	LFAbout(CWnd::GetForegroundWindow());
+	LFAboutDlg dlg(CWnd::GetForegroundWindow());
+	dlg.DoModal();
 }
 
-void CRunCmdApp::OnStoreCreate(CHAR Drive)
+void CRunCmdApp::OnStoreAdd()
 {
-	LFCreateNewStore(CWnd::GetForegroundWindow(), Drive);
+	LFAddStoreDlg dlg(CWnd::GetForegroundWindow());
+	dlg.DoModal();
 }
 
 void CRunCmdApp::OnStoreDelete(CString ID)

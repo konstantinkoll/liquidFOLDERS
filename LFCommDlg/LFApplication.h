@@ -87,6 +87,7 @@ public:
 	CImageList m_CoreImageListSmall;
 	CImageList m_CoreImageListLarge;
 	CImageList m_CoreImageListExtraLarge;
+	CImageList m_CoreImageListHuge;
 	CImageList m_CoreImageListJumbo;
 	HBITMAP m_RatingBitmaps[LFMaxRating+1];
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
@@ -146,7 +147,7 @@ public:
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
 	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
 	static HANDLE LoadFontFromResource(UINT nID, HMODULE hInst=NULL);
-	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li);
+	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons=FALSE);
 	static UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	static UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	static void PlayStandardSound();

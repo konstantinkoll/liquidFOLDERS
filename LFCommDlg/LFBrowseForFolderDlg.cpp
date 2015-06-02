@@ -11,14 +11,14 @@
 // LFBrowseForFolderDlg
 //
 
-LFBrowseForFolderDlg::LFBrowseForFolderDlg(BOOL OnlyFSObjects, BOOL ShowDeleteSource, CString RootPath, CWnd* pParentWnd, CString Caption, CString Hint)
+LFBrowseForFolderDlg::LFBrowseForFolderDlg(CWnd* pParentWnd, CString Caption, CString Hint, BOOL OnlyFSObjects, BOOL ShowDeleteSource, CString RootPath)
 	: LFDialog(IDD_BROWSEFORFOLDER, pParentWnd)
 {
+	m_Caption = Caption;
+	m_Hint = Hint;
 	m_OnlyFSObjects = OnlyFSObjects;
 	m_ShowDeleteSource = ShowDeleteSource;
 	m_RootPath = RootPath;
-	m_Caption = Caption;
-	m_Hint = Hint;
 	m_FolderPIDL = NULL;
 	m_FolderPath[0] = L'\0';
 	m_DeleteSource = FALSE;

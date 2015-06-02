@@ -1,4 +1,5 @@
 #pragma once
+#include "..\LFCommDlg\CCategory.h"
 #include "..\LFCommDlg\CConditionList.h"
 #include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerList.h"
@@ -19,12 +20,14 @@
 #include "..\LFCommDlg\CMapPreviewCtrl.h"
 #include "..\LFCommDlg\CPropertyEdit.h"
 #include "..\LFCommDlg\CSidebar.h"
+#include "..\LFCommDlg\CStoreButton.h"
 #include "..\LFCommDlg\CStoreSelector.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CTaskbar.h"
 #include "..\LFCommDlg\CTaskButton.h"
 #include "..\LFCommDlg\CTooltipHeader.h"
 #include "..\LFCommDlg\LFAboutDlg.h"
+#include "..\LFCommDlg\LFAddStoreDlg.h"
 #include "..\LFCommDlg\LFApplication.h"
 #include "..\LFCommDlg\LFAttributeListDlg.h"
 #include "..\LFCommDlg\LFBrowseForFolderDlg.h"
@@ -41,7 +44,6 @@
 #include "..\LFCommDlg\LFStoreDataObject.h"
 #include "..\LFCommDlg\LFStoreDeleteDlg.h"
 #include "..\LFCommDlg\LFStoreMaintenanceDlg.h"
-#include "..\LFCommDlg\LFStoreNewLocalDlg.h"
 #include "..\LFCommDlg\LFStorePropertiesDlg.h"
 #include "..\LFCommDlg\LFTooltip.h"
 #include "..\LFCommDlg\LFTransactionDataObject.h"
@@ -52,6 +54,7 @@
 #define LF_WORKERTHREAD_FINISH() LF_WORKERTHREAD_FINISH_EX(LFOk);
 #define LF_WORKERTHREAD_FINISH_EX(Result) CoUninitialize(); PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL); return Result;
 #define LFGetApp() ((LFApplication*)AfxGetApp())
+#define LFCategoryPadding     2
 
 #ifdef LFCommDlg_EXPORTS
 #define LFCommDlg_API __declspec(dllexport)
@@ -65,14 +68,12 @@ LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint);
 LFCommDlg_API BOOL IsCtrlThemed();
 LFCommDlg_API void DrawControlBorder(CWnd* pWnd);
+LFCommDlg_API void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed);
 LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT request=-1);
 
 LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFRunMaintenance(CWnd* pParentWnd=NULL, HWND hWndSource=NULL);
-
-LFCommDlg_API void LFCreateNewStore(CWnd* pParentWnd=NULL, CHAR Volume='\0');
-LFCommDlg_API void LFAbout(CWnd* pParentWnd=NULL);
 
 LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
 LFCommDlg_API void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);

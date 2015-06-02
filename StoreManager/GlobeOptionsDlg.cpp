@@ -10,7 +10,7 @@
 //
 
 GlobeOptionsDlg::GlobeOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context)
-	: CDialog(IDD_GLOBEOPTIONS, pParentWnd)
+	: LFDialog(IDD_GLOBEOPTIONS, pParentWnd)
 {
 	ASSERT(View);
 	p_View = View;
@@ -19,6 +19,8 @@ GlobeOptionsDlg::GlobeOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT 
 
 void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
+	LFDialog::DoDataExchange(pDX);
+
 	DDX_Control(pDX, IDC_TEXTURESIZE, m_wndTextureSize);
 	DDX_Control(pDX, IDC_VIEWPORT, m_wndViewport);
 
@@ -37,19 +39,13 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(GlobeOptionsDlg, CDialog)
+BEGIN_MESSAGE_MAP(GlobeOptionsDlg, LFDialog)
 	ON_BN_CLICKED(IDC_VIEWPORT, OnViewport)
 END_MESSAGE_MAP()
 
 BOOL GlobeOptionsDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
-
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_GLOBEOPTIONS);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	LFDialog::OnInitDialog();
 
 	// Texturgröße
 	CString tmpStr;

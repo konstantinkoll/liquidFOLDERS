@@ -99,7 +99,7 @@ Restart:
 				LPRECT rect = &m_Categories.m_Items[category].Rect;
 				rect->left = rect->right = x;
 				rect->top = y;
-				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
+				rect->bottom = rect->top+2*LFCategoryPadding+m_FontHeight[1];
 				if (m_Categories.m_Items[category].Hint[0]!=L'\0')
 					rect->bottom += m_FontHeight[0];
 
@@ -165,7 +165,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	INT top = gva.my;
 	if (m_HasCategories)
-		top += 2*CategoryPadding+m_FontHeight[1]+4;
+		top += 2*LFCategoryPadding+m_FontHeight[1]+4;
 
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
@@ -208,7 +208,7 @@ Restart:
 				LPRECT rect = &m_Categories.m_Items[category].Rect;
 				rect->left = x;
 				rect->top = gva.my;
-				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
+				rect->bottom = rect->top+2*LFCategoryPadding+m_FontHeight[1];
 			}
 
 		GridItemData* d = GetItemData(a);
@@ -669,7 +669,7 @@ void CGridView::OnPaint()
 						CRect rect(m_Categories.m_Items[a].Rect);
 						rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 						if (IntersectRect(&rectIntersect, rect, rectUpdate))
-							DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
+							DrawCategory(dc, rect, m_Categories.m_Items[a].Caption, m_Categories.m_Items[a].Hint, Themed);
 					}
 			}
 

@@ -68,7 +68,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_NewStore            ICON                    "res\\StoreNew_Tiny.ico"
+IDI_AddStore            ICON                    "res\\StoreAdd_Tiny.ico"
 IDI_StoreProperties     ICON                    "res\\StoreProperties_Tiny.ico"
 IDI_FolderAdd           ICON                    "res\\FolderAdd_Tiny.ico"
 #endif    // Neutral resources
@@ -110,8 +110,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "&Neuen Store anlegen..."
-    IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
+    IDS_MENU_AddStore       "Store &hinzufügen..."
+    IDS_HINT_AddStore       "Fügt einen neuen Store für Ihre Dateien hinzu."
     IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
     IDS_HINT_MakeDefaultStore 
                             "Setzt den ausgewählten Store als Standard-Store."
@@ -194,8 +194,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "Crear &nuevo store..."
-    IDS_HINT_CreateNewStore "Creaun nuevo store para sus archivos."
+    IDS_MENU_AddStore       "&Adjuntar store..."
+    IDS_HINT_AddStore       "Adjuntar un store para sus archivos."
     IDS_MENU_MakeDefaultStore "Establecer a &store predeterminado"
     IDS_HINT_MakeDefaultStore 
                             "Establece el store seleccionado como el store predeterminado."
@@ -280,8 +280,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "Créez un store &nouveau..."
-    IDS_HINT_CreateNewStore "Crée un nouveau store pour vos fichiers."
+    IDS_MENU_AddStore       "&Ajouter un store..."
+    IDS_HINT_AddStore       "Ajouter un store pour vos fichiers."
     IDS_MENU_MakeDefaultStore "Faites store &standard"
     IDS_HINT_MakeDefaultStore "Met le store choisi comme le store standard."
 END
@@ -401,8 +401,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "Create &new store..."
-    IDS_HINT_CreateNewStore "Creates a new store for your files."
+    IDS_MENU_AddStore       "&Add store..."
+    IDS_HINT_AddStore       "Add a store for your files."
     IDS_MENU_MakeDefaultStore "Make de&fault store"
     IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
 END
