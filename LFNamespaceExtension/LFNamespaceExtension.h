@@ -34,8 +34,7 @@ public:
 
 	WCHAR m_PathCoreFile[MAX_PATH];
 	WCHAR m_PathThisFile[MAX_PATH];
-	CString m_PathRunCmd;
-	CString m_PathStoreManager;
+	CString m_AppPath;
 	CString m_Categories[3][6];
 	CString m_Store;
 	CString m_Folder;

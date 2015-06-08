@@ -162,14 +162,38 @@ BOOL CStoreManagerApp::InitInstance()
 
 CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 {
-	CHAR StoreID[LFKeySize] = "";
-
 	// Parse parameter and create window
 	if (CmdLine)
 	{
+		// Prepare arguments
 		WCHAR* pChar = CmdLine;
 		while (*pChar)
 			*(pChar++) = (WCHAR)toupper(*pChar);
+
+		CHAR StoreID[LFKeySize] = "";
+
+		WCHAR* pSpace = wcschr(CmdLine, L' ');
+		if (pSpace)
+		{
+			WideCharToMultiByte(CP_ACP, 0, pSpace+1, -1, StoreID, LFKeySize, NULL, NULL);
+			*pSpace = L'\0';
+		}
+
+		// About
+		if (wcscmp(CmdLine, L"/ABOUT")==0)
+		{
+			OnAppAbout();
+			return NULL;
+		}
+
+		// Add store
+		if (wcscmp(CmdLine, L"/ADDSTORE")==0)
+		{
+			LFAddStoreDlg dlg(CWnd::GetForegroundWindow());
+			dlg.DoModal();
+
+			return NULL;
+		}
 
 		// Update
 		if (wcscmp(CmdLine, L"/CHECKUPDATE")==0)
@@ -178,27 +202,47 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 			return NULL;
 		}
 
+		// Delete store
+		if (wcscmp(CmdLine, L"/DELETESTORE")==0)
+			if (StoreID[0]!=L'\0')
+			{
+				LFStoreDescriptor store;
+				UINT res = LFGetStoreSettings(StoreID, &store);
+				if (res==LFOk)
+					res = DeleteStore(&store, CWnd::GetForegroundWindow());
+
+				LFErrorBox(res, GetForegroundWindow());
+
+				return NULL;
+			}
+
 		// FileDrop
-		if (wcsncmp(CmdLine, L"/FILEDROP", 9)==0)
+		if (wcscmp(CmdLine, L"/FILEDROP")==0)
 		{
-			if (CmdLine[9]==L' ')
-			{
-				WideCharToMultiByte(CP_ACP, 0, CmdLine+10, -1, StoreID, LFKeySize, NULL, NULL);
-			}
-			else
-			{
+			if (StoreID[0]=='\0')
 				LFGetDefaultStore(StoreID);
-			}
 
 			return GetFileDrop(StoreID);
 		}
 
-		// Migration
-		if (wcsncmp(CmdLine, L"/MIGRATE", 8)==0)
+		// Import folder
+		if (wcscmp(CmdLine, L"/IMPORTFOLDER")==0)
 		{
-			if (CmdLine[8]==L' ')
-				WideCharToMultiByte(CP_ACP, 0, CmdLine+9, -1, StoreID, LFKeySize, NULL, NULL);
+			LFImportFolder(StoreID, CWnd::GetForegroundWindow());
 
+			return NULL;
+		}
+
+		// Installation
+		if (wcscmp(CmdLine, L"/INSTALL")==0)
+		{
+			LFCreateSendTo();
+			return NULL;
+		}
+
+		// Migration
+		if (wcscmp(CmdLine, L"/MIGRATE")==0)
+		{
 			CMigrationWnd* pFrame = new CMigrationWnd();
 			pFrame->Create(StoreID);
 			pFrame->ShowWindow(SW_SHOW);
@@ -206,7 +250,18 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 			return pFrame;
 		}
 
-		if ((wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL))
+		// Store properties
+		if (wcscmp(CmdLine, L"/STOREPROPERTIES")==0)
+			if (StoreID[0]!=L'\0')
+			{
+				LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());
+				dlg.DoModal();
+
+				return NULL;
+			}
+
+		// Key or IATA code
+		if ((wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL) && (wcschr(CmdLine, L'/')==NULL))
 		{
 			// Key
 			if (wcslen(CmdLine)==LFKeySize-1)

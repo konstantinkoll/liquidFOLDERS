@@ -28,10 +28,8 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	// Pfade
 	GetModuleFileName((HINSTANCE)&__ImageBase, m_PathThisFile, MAX_PATH);
 
-	if (!GetApplicationPath(_T("LFRunCmd"), m_PathRunCmd))
-		m_PathRunCmd.Empty();
-	if (!GetApplicationPath(_T("StoreManager"), m_PathStoreManager))
-		m_PathStoreManager.Empty();
+	if (!GetApplicationPath(_T("StoreManager"), m_AppPath))
+		m_AppPath.Empty();
 
 	HMODULE hModCore = GetModuleHandle(_T("LFCORE.DLL"));
 	if (hModCore)

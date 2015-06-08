@@ -168,7 +168,7 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->name = _T("liquidFOLDERS");
 	nti->infoTip.LoadString(IDS_InfoTip);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
-	nti->iconFile = theApp.m_PathStoreManager;
+	nti->iconFile = theApp.m_AppPath;
 	nti->iconIndex = 0;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
 	nti->AddRootNodeProperty(_T("System.DescriptionID"), (UINT)20);
@@ -185,7 +185,7 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->name = _T("liquidFOLDERS");
 	nti->infoTip.LoadString(IDS_InfoTip);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
-	nti->iconFile = theApp.m_PathStoreManager;
+	nti->iconFile = theApp.m_AppPath;
 	nti->iconIndex = 0;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
 	nti->AddRootNodeProperty(_T("System.DescriptionID"), (UINT)20);
@@ -560,8 +560,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		{
 			if (Attrs.Level==LevelRoot)
 			{
-				InsertItem(e.menu, IDS_MENU_OpenFileDrop, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
-				InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+				InsertItem(e.menu, IDS_MENU_OpenFileDrop, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+				InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 			}
 
 			if (osInfo.dwMajorVersion<6)
@@ -596,8 +596,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			CShellMenuItem* pMenuItem = AddItem(e.menu, IDS_POPUP_AddFiles, _T(""));
 			pMenuItem->SetHasSubMenu(TRUE);
 
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathStoreManager.IsEmpty()));
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_AppPath.IsEmpty()));
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_AppPath.IsEmpty()));
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -607,13 +607,13 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			if (e.children->GetCount()==1)
 			{
-				AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+				AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 
 				if (e.flags & NSEQCF_CanRename)
 					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
 
 				AddSeparator(e.menu);
-				AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+				AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 			}
 		}
 		break;
@@ -622,13 +622,13 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		{
 			AddSeparator(e.menu);
 
-			AddItem(e.menu, IDS_MENU_OpenFileDrop, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+			AddItem(e.menu, IDS_MENU_OpenFileDrop, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 
 			CShellMenuItem* pMenuItem = AddItem(e.menu, IDS_POPUP_AddFiles, _T(""));
 			pMenuItem->SetHasSubMenu(TRUE);
 
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 		}
 	case LevelAttribute:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -655,13 +655,13 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.menuItem->GetVerb()==_T(VERB_IMPORTFOLDER))
-		return RunStoreCommand(e, theApp.m_PathRunCmd, _T("/IMPORTFOLDER "));
+		return RunStoreCommand(e, theApp.m_AppPath, _T("/IMPORTFOLDER "));
 
 	if (e.menuItem->GetVerb()==_T(VERB_MIGRATIONWIZARD))
-		return RunStoreCommand(e, theApp.m_PathStoreManager, _T("/MIGRATE "));
+		return RunStoreCommand(e, theApp.m_AppPath, _T("/MIGRATE "));
 
 	if (e.menuItem->GetVerb()==_T(VERB_ADDSTORE))
-		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("/ADDSTORE"));
+		return RunPath(e.hWnd, theApp.m_AppPath, _T("/ADDSTORE"));
 
 	if (e.menuItem->GetVerb()==_T(VERB_EXPLORE))
 		return OnExplorer(e);
@@ -675,10 +675,10 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	}
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENSTOREMANAGER))
-		return RunStoreCommand(e, theApp.m_PathStoreManager, _T(""));
+		return RunStoreCommand(e, theApp.m_AppPath, _T(""));
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENFILEDROP))
-		return RunStoreCommand(e, theApp.m_PathStoreManager, _T("/FILEDROP "));
+		return RunStoreCommand(e, theApp.m_AppPath, _T("/FILEDROP "));
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
 		return OnOpenWith(e);
@@ -737,14 +737,14 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 
 	CShellMenu* subMenu = item->GetSubMenu();
 
-	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 }
 
 void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 {
 	if(e.menuItem)
 		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
-			RunPath(NULL, theApp.m_PathRunCmd, _T("/ABOUT"));
+			RunPath(NULL, theApp.m_AppPath, _T("/ABOUT"));
 }
 
 
@@ -889,7 +889,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 			value->parray = SafeArrayCreate(VT_UI1, 1, &rgsabound);
 			((SHDESCRIPTIONID*)value->parray->pvData)->clsid = guid;
-			((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = (Attrs.CategoryID==LFItemCategoryRemoteStores) ? SHDID_COMPUTER_NETDRIVE : 20;
+			((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = (Attrs.CategoryID==LFItemCategoryRemote) ? SHDID_COMPUTER_NETDRIVE : 20;
 			value->vt = VT_ARRAY | VT_UI1;
 			return TRUE;
 		case 6:
@@ -1071,7 +1071,7 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes requested)
 	if (Attrs.Level==LevelStores)
 	{
 		mask |= NSEIA_CanRename;
-		if (!theApp.m_PathRunCmd.IsEmpty())
+		if (!theApp.m_AppPath.IsEmpty())
 			mask |= NSEIA_CanDelete | NSEIA_HasPropSheet;
 	}
 	if (Attrs.Level<LevelAttrValue)
@@ -1205,7 +1205,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		return FALSE;
 
 	// Folder
-	if ((Attrs.Level==LevelRoot) && (!theApp.m_PathRunCmd.IsEmpty()))
+	if ((Attrs.Level==LevelRoot) && (!theApp.m_AppPath.IsEmpty()))
 	{
 		POSITION pos = e.children->GetHeadPosition();
 		CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
@@ -1213,7 +1213,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFolderItem))
 		{
 			CString StoreID(AS(item, CFolderItem)->Attrs.StoreID);
-			return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("/DELETESTORE ")+StoreID);
+			return RunPath(e.hWnd, theApp.m_AppPath, _T("/DELETESTORE ")+StoreID);
 		}
 	}
 
@@ -1475,7 +1475,7 @@ BOOL CFolderItem::RunStoreCommand(CExecuteMenuitemsEventArgs& e, CString Path, C
 
 BOOL CFolderItem::OnProperties(CExecuteMenuitemsEventArgs& e)
 {
-	return RunStoreCommand(e, theApp.m_PathRunCmd, _T("/STOREPROPERTIES "));
+	return RunStoreCommand(e, theApp.m_AppPath, _T("/STOREPROPERTIES "));
 }
 
 BOOL CFolderItem::OnExplorer(CExecuteMenuitemsEventArgs& e)

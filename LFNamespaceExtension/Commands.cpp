@@ -42,12 +42,12 @@ CString CmdCreateNewStore::GetToolTip(CPtrList* /*nseItems*/)
 
 ExplorerCommandState CmdCreateNewStore::GetState(CPtrList* /*nseItems*/)
 {
-	return !theApp.m_PathRunCmd.IsEmpty() ? ECS_Enabled : ECS_Disabled;
+	return !theApp.m_AppPath.IsEmpty() ? ECS_Enabled : ECS_Disabled;
 }
 
 BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
 {
-	return RunPath(NULL, theApp.m_PathRunCmd, _T("/ADDSTORE"));
+	return RunPath(NULL, theApp.m_AppPath, _T("/ADDSTORE"));
 }
 
 CString CmdCreateNewStore::GetIcon(CPtrList* /*nseItems*/)
@@ -87,7 +87,7 @@ CString CmdProperties::GetToolTip(CPtrList* /*nseItems*/)
 
 ExplorerCommandState CmdProperties::GetState(CPtrList* nseItems)
 {
-	return ((nseItems->GetCount()==1) && (!theApp.m_PathRunCmd.IsEmpty())) ? ECS_Enabled : ECS_Disabled;
+	return ((nseItems->GetCount()==1) && (!theApp.m_AppPath.IsEmpty())) ? ECS_Enabled : ECS_Disabled;
 }
 
 BOOL CmdProperties::Invoke(CPtrList* nseItems)
@@ -99,7 +99,7 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 		if (IS(item, CFolderItem))
 		{
 			CString id(AS(item, CFolderItem)->Attrs.StoreID);
-			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("/STOREPROPERTIES ")+id, NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_AppPath, _T("/STOREPROPERTIES ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 	}
@@ -146,20 +146,20 @@ CString CmdFileDrop::GetToolTip(CPtrList* /*nseItems*/)
 
 ExplorerCommandState CmdFileDrop::GetState(CPtrList* /*nseItems*/)
 {
-	return !theApp.m_PathStoreManager.IsEmpty() ? ECS_Enabled : ECS_Disabled;
+	return !theApp.m_AppPath.IsEmpty() ? ECS_Enabled : ECS_Disabled;
 }
 
 BOOL CmdFileDrop::Invoke(CPtrList* /*nseItems*/)
 {
 	CString id(m_StoreID);
-	ShellExecute(NULL, _T("open"), theApp.m_PathStoreManager, _T("/FILEDROP ")+id, NULL, SW_SHOW);
+	ShellExecute(NULL, _T("open"), theApp.m_AppPath, _T("/FILEDROP ")+id, NULL, SW_SHOW);
 
 	return TRUE;
 }
 
 CString CmdFileDrop::GetIcon(CPtrList* /*nseItems*/)
 {
-	CString tmpStr(theApp.m_PathStoreManager);
+	CString tmpStr(theApp.m_AppPath);
 	tmpStr.Append(_T(",2"));
 
 	return tmpStr;
@@ -196,13 +196,13 @@ CString CmdImportFolder::GetToolTip(CPtrList* /*nseItems*/)
 
 ExplorerCommandState CmdImportFolder::GetState(CPtrList* /*nseItems*/)
 {
-	return !theApp.m_PathRunCmd.IsEmpty() ? ECS_Enabled : ECS_Disabled;
+	return !theApp.m_AppPath.IsEmpty() ? ECS_Enabled : ECS_Disabled;
 }
 
 BOOL CmdImportFolder::Invoke(CPtrList* /*nseItems*/)
 {
 	CString id(m_StoreID);
-	ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("/IMPORTFOLDER ")+id, NULL, SW_SHOW);
+	ShellExecute(NULL, _T("open"), theApp.m_AppPath, _T("/IMPORTFOLDER ")+id, NULL, SW_SHOW);
 
 	return TRUE;
 }
