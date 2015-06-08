@@ -592,12 +592,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_MakeDefaultStore, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(!(f->Attrs.Type & LFTypeDefault));
-
-			CShellMenuItem* pMenuItem = AddItem(e.menu, IDS_POPUP_AddFiles, _T(""));
-			pMenuItem->SetHasSubMenu(TRUE);
-
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_AppPath.IsEmpty()));
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_AppPath.IsEmpty()));
+			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_AppPath.IsEmpty()));
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -623,12 +618,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			AddSeparator(e.menu);
 
 			AddItem(e.menu, IDS_MENU_OpenFileDrop, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_AppPath.IsEmpty());
-
-			CShellMenuItem* pMenuItem = AddItem(e.menu, IDS_POPUP_AddFiles, _T(""));
-			pMenuItem->SetHasSubMenu(TRUE);
-
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_AppPath.IsEmpty());
-			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 		}
 	case LevelAttribute:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))

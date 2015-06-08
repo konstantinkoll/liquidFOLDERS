@@ -248,14 +248,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Field_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Field_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\File_16.png"
 				>
 			</File>
@@ -768,14 +760,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\TaskReport_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\TaskReport_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Trash_16.png"
 				>
 			</File>
@@ -1089,10 +1073,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Field_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\FileDrop_Small.ico"
 			>
 		</File>
@@ -1210,10 +1190,6 @@
 		</File>
 		<File
 			RelativePath=".\LocationIndicator_8.png"
-			>
-		</File>
-		<File
-			RelativePath=".\MigrationWizard_Small.ico"
 			>
 		</File>
 		<File
@@ -1421,10 +1397,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\TaskReport_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Thumbnail_Frame.png"
 			>
 		</File>
@@ -1438,10 +1410,6 @@
 		</File>
 		<File
 			RelativePath=".\Tools.png"
-			>
-		</File>
-		<File
-			RelativePath=".\TreeWidgets.bmp"
 			>
 		</File>
 		<File

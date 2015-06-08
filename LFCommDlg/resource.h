@@ -6,7 +6,6 @@
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202
-#define IDC_BUTTON1                     2042
 #define IDB_DIV                         20000
 #define IDB_DIVDOWN                     20001
 #define IDB_DIVUP                       20002
@@ -120,11 +119,10 @@
 #define IDM_STORE                       21180
 #define IDM_STORE_MAKEDEFAULT           21181
 #define IDM_STORE_IMPORTFOLDER          21182
-#define IDM_STORE_MIGRATIONWIZARD       21183
-#define IDM_STORE_SHORTCUT              21184
-#define IDM_STORE_DELETE                21185
-#define IDM_STORE_RENAME                21186
-#define IDM_STORE_PROPERTIES            21187
+#define IDM_STORE_SHORTCUT              21183
+#define IDM_STORE_DELETE                21184
+#define IDM_STORE_RENAME                21185
+#define IDM_STORE_PROPERTIES            21186
 #define IDM_STORES                      21190
 #define IDM_STORES_ADD                  21191
 #define IDD_STOREDELETE                 21200

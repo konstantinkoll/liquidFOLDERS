@@ -434,10 +434,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ChoosePropertyDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CInspectorWnd.cpp"
 				>
 			</File>
@@ -454,18 +450,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMigrationList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CMigrationView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CPIDLSelector.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CStorePanel.cpp"
 				>
 			</File>
@@ -479,14 +463,6 @@
 			</File>
 			<File
 				RelativePath=".\CTimelineView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CTreeView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DeleteFilesDlg.cpp"
 				>
 			</File>
 			<File
@@ -523,14 +499,6 @@
 			</File>
 			<File
 				RelativePath="..\include\MenuIcons.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MigrationWnd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ReportDlg.cpp"
 				>
 			</File>
 			<File
@@ -624,10 +592,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ChoosePropertyDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CInspectorWnd.h"
 				>
 			</File>
@@ -644,18 +608,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMigrationList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMigrationView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPIDLSelector.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CStorePanel.h"
 				>
 			</File>
@@ -669,14 +621,6 @@
 			</File>
 			<File
 				RelativePath=".\CTimelineView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTreeView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DeleteFilesDlg.h"
 				>
 			</File>
 			<File
@@ -737,14 +681,6 @@
 			</File>
 			<File
 				RelativePath="..\include\MenuIcons.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MigrationWnd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ReportDlg.h"
 				>
 			</File>
 			<File
@@ -823,10 +759,6 @@
 			</File>
 			<File
 				RelativePath=".\res\DisplayOptions_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Field_Tiny.ico"
 				>
 			</File>
 			<File
@@ -910,10 +842,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\MigrationWizard_Small.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Multiple.png"
 				>
 			</File>
@@ -938,10 +866,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\TaskReport_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Tasks_16.bmp"
 				>
 			</File>
@@ -955,10 +879,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Thumbnail_Shadow.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\TreeWidgets.bmp"
 				>
 			</File>
 			<File

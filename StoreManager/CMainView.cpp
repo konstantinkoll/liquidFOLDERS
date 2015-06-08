@@ -10,7 +10,6 @@
 #include "CTagcloudView.h"
 #include "CTimelineView.h"
 #include "EditFilterDlg.h"
-#include "MigrationWnd.h"
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
 #include "StoreManager.h"
@@ -705,7 +704,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
-	ON_COMMAND(IDM_STORE_MIGRATIONWIZARD, OnStoreMigrationWizard)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
@@ -936,9 +934,6 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_IMPORTFOLDER));
 		pSubMenu->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_IMPORTFOLDER, tmpStr);
-
-		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MIGRATIONWIZARD));
-		pSubMenu->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_MIGRATIONWIZARD, tmpStr);
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_ADDFILES));
 		pPopup->AppendMenu(MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSubMenu->m_hMenu, tmpStr);
@@ -1610,27 +1605,6 @@ void CMainView::OnStoreImportFolder()
 		}
 }
 
-void CMainView::OnStoreMigrationWizard()
-{
-	CHAR* pStore = NULL;
-
-	if (m_Context==LFContextStores)
-	{
-		INT idx = GetSelectedItem();
-		if (idx!=-1)
-			pStore = p_CookedFiles->m_Items[idx]->StoreID;
-	}
-	else
-	{
-		if (m_StoreIDValid)
-			pStore = m_StoreID;
-	}
-
-	CMigrationWnd* pFrame = new CMigrationWnd();
-	pFrame->Create(pStore);
-	pFrame->ShowWindow(SW_SHOW);
-}
-
 void CMainView::OnStoreShortcut()
 {
 	INT idx = GetSelectedItem();
@@ -1680,7 +1654,6 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					b = !(item->Type & LFTypeDefault);
 					break;
 				case IDM_STORE_IMPORTFOLDER:
-				case IDM_STORE_MIGRATIONWIZARD:
 					b = !(item->Type & LFTypeNotMounted);
 					break;
 				case IDM_STORE_SHORTCUT:
@@ -1696,7 +1669,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	}
 	else
 	{
-		if ((pCmdUI->m_nID==IDM_STORE_IMPORTFOLDER) || (pCmdUI->m_nID==IDM_STORE_MIGRATIONWIZARD))
+		if (pCmdUI->m_nID==IDM_STORE_IMPORTFOLDER)
 			b = m_StoreIDValid && (m_Context<=LFLastGroupContext);
 	}
 

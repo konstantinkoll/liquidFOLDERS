@@ -8,7 +8,6 @@
 #include "LFCore.h"
 #include "LFCommDlg.h"
 #include "MainWnd.h"
-#include "MigrationWnd.h"
 #include "StoreManager.h"
 
 
@@ -238,16 +237,6 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 		{
 			LFCreateSendTo();
 			return NULL;
-		}
-
-		// Migration
-		if (wcscmp(CmdLine, L"/MIGRATE")==0)
-		{
-			CMigrationWnd* pFrame = new CMigrationWnd();
-			pFrame->Create(StoreID);
-			pFrame->ShowWindow(SW_SHOW);
-
-			return pFrame;
 		}
 
 		// Store properties

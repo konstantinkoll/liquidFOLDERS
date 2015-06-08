@@ -1,7 +1,6 @@
 #pragma once
 #include "..\LFCommDlg\CCategory.h"
 #include "..\LFCommDlg\CConditionList.h"
-#include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerList.h"
 #include "..\LFCommDlg\CExplorerNotification.h"
 #include "..\LFCommDlg\CExplorerTree.h"
@@ -21,7 +20,6 @@
 #include "..\LFCommDlg\CPropertyEdit.h"
 #include "..\LFCommDlg\CSidebar.h"
 #include "..\LFCommDlg\CStoreButton.h"
-#include "..\LFCommDlg\CStoreSelector.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CTaskbar.h"
 #include "..\LFCommDlg\CTaskButton.h"

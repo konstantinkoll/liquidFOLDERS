@@ -14,9 +14,6 @@
 #define GWD_THEMED             2
 #define GWD_AERO               3
 
-#define WM_OPENDROPDOWN        WM_USER+1
-#define WM_CLOSEDROPDOWN       WM_USER+2
-
 class AFX_EXT_CLASS CGlassWindow : public CWnd
 {
 public:
@@ -34,13 +31,11 @@ public:
 	void GetLayoutRect(LPRECT lpRect) const;
 	void DrawFrameBackground(CDC* pDC, CRect rect);
 	UINT GetDesign();
-	CWnd* RegisterPopupWindow(CWnd* pPopupWnd);
 
 	HTHEME hTheme;
 
 protected:
 	LFApplication* p_App;
-	CWnd* p_PopupWindow;
 	CList<CWnd*> m_GlasChildren;
 	CString m_PlacementPrefix;
 	WINDOWPLACEMENT m_WindowPlacement;
@@ -59,8 +54,6 @@ protected:
 	afx_msg LRESULT OnDisplayChange(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
-	afx_msg BOOL OnNcActivate(BOOL bActive);
-	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);

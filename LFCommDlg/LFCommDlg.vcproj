@@ -411,10 +411,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CDropdownSelector.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CExplorerList.cpp"
 				>
 			</File>
@@ -492,10 +488,6 @@
 			</File>
 			<File
 				RelativePath=".\CStoreButton.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CStoreSelector.cpp"
 				>
 			</File>
 			<File
@@ -733,10 +725,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CDropdownSelector.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CExplorerList.h"
 				>
 			</File>
@@ -814,10 +802,6 @@
 			</File>
 			<File
 				RelativePath=".\CStoreButton.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CStoreSelector.h"
 				>
 			</File>
 			<File

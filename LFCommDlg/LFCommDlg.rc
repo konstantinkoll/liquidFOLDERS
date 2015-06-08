@@ -179,11 +179,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
-        POPUP "&Dateien hinzufügen"
-        BEGIN
-            MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
-            MENUITEM "&Migrations-Assistent",       IDM_STORE_MIGRATIONWIZARD
-        END
+        MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
@@ -826,11 +822,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
-        POPUP "Agregar &archivos"
-        BEGIN
-            MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
-            MENUITEM "Asistente de &migración",     IDM_STORE_MIGRATIONWIZARD
-        END
+        MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
@@ -1475,11 +1467,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
-        POPUP "Ajouter &fichiers"
-        BEGIN
-            MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
-            MENUITEM "L'assistant de &migration",   IDM_STORE_MIGRATIONWIZARD
-        END
+        MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_STORE_DELETE
@@ -2174,11 +2162,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
-        POPUP "Add &files"
-        BEGIN
-            MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
-            MENUITEM "&Migration Wizard",           IDM_STORE_MIGRATIONWIZARD
-        END
+        MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
         MENUITEM "&Delete",                     IDM_STORE_DELETE

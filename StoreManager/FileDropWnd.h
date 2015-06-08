@@ -46,7 +46,6 @@ protected:
 	afx_msg void OnStoreOpen();
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreImportFolder();
-	afx_msg void OnStoreMigrationWizard();
 	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreRename();
