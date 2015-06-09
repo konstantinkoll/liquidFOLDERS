@@ -9,7 +9,7 @@
 // CTaskButton
 //
 
-class AFX_EXT_CLASS CTaskButton : public CButton
+class CTaskButton : public CButton
 {
 public:
 	CTaskButton();

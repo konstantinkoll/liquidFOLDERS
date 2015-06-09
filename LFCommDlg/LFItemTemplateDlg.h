@@ -13,7 +13,7 @@
 // LFItemTemplateDlg
 //
 
-class AFX_EXT_CLASS LFItemTemplateDlg : public LFDialog
+class LFItemTemplateDlg : public LFDialog
 {
 public:
 	LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* StoreID, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);

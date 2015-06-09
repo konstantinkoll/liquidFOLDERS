@@ -3,9 +3,8 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
 #include "CImageListTransparent.h"
-#include "DynArray.h"
+#include "LFCore.h"
 #include "LFTooltip.h"
 
 
@@ -14,7 +13,7 @@
 
 #define WM_PROPERTYCHANGED     WM_USER+4
 
-class AFX_EXT_CLASS CPropertyHolder : public CWnd
+class CPropertyHolder : public CWnd
 {
 friend class CProperty;
 friend class CPropertyTags;
@@ -51,7 +50,7 @@ protected:
 // CProperty
 //
 
-class AFX_EXT_CLASS CProperty
+class CProperty
 {
 friend class CInspectorGrid;
 friend class CPropertyEdit;
@@ -91,7 +90,7 @@ protected:
 // CPropertyTags
 //
 
-class AFX_EXT_CLASS CPropertyTags : public CProperty
+class CPropertyTags : public CProperty
 {
 public:
 	CPropertyTags(LFVariantData* pData);
@@ -104,7 +103,7 @@ public:
 // CPropertyRating
 //
 
-class AFX_EXT_CLASS CPropertyRating : public CProperty
+class CPropertyRating : public CProperty
 {
 public:
 	CPropertyRating(LFVariantData* pData);
@@ -121,7 +120,7 @@ public:
 // CPropertyIATA
 //
 
-class AFX_EXT_CLASS CPropertyIATA : public CProperty
+class CPropertyIATA : public CProperty
 {
 friend class CInspectorGrid;
 
@@ -142,7 +141,7 @@ protected:
 // CPropertyGPS
 //
 
-class AFX_EXT_CLASS CPropertyGPS : public CProperty
+class CPropertyGPS : public CProperty
 {
 public:
 	CPropertyGPS(LFVariantData* pData);
@@ -157,7 +156,7 @@ public:
 // CPropertyTime
 //
 
-class AFX_EXT_CLASS CPropertyTime : public CProperty
+class CPropertyTime : public CProperty
 {
 public:
 	CPropertyTime(LFVariantData* pData);
@@ -172,7 +171,7 @@ public:
 // CPropertyNumber
 //
 
-class AFX_EXT_CLASS CPropertyNumber : public CProperty
+class CPropertyNumber : public CProperty
 {
 public:
 	CPropertyNumber(LFVariantData* pData);
@@ -184,7 +183,7 @@ public:
 // CPropertyDuration
 //
 
-class AFX_EXT_CLASS CPropertyDuration : public CPropertyNumber
+class CPropertyDuration : public CPropertyNumber
 {
 public:
 	CPropertyDuration(LFVariantData* pData);
@@ -196,7 +195,7 @@ public:
 // CInspectorHeader
 //
 
-class AFX_EXT_CLASS CInspectorHeader
+class CInspectorHeader
 {
 public:
 	virtual INT GetPreferredHeight();
@@ -226,7 +225,7 @@ struct PropertyCategory
 	INT Bottom;
 };
 
-class AFX_EXT_CLASS CInspectorGrid : public CPropertyHolder
+class CInspectorGrid : public CPropertyHolder
 {
 public:
 	CInspectorGrid();
@@ -245,7 +244,7 @@ public:
 	CString GetValue(UINT nID);
 
 protected:
-	DynArray<Property> m_Properties;
+	LFDynArray<Property> m_Properties;
 	PropertyCategory m_Categories[LFAttrCategoryCount];
 	HTHEME hThemeButton;
 	HTHEME hThemeList;

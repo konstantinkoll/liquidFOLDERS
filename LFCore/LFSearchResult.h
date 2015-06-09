@@ -1,9 +1,9 @@
 #pragma once
-#include "liquidFOLDERS.h"
-#include "DynArray.h"
+#include "LF.h"
+#include "LFDynArray.h"
 
 
-class LFSearchResult : public DynArray<LFItemDescriptor*>
+class LFSearchResult : public LFDynArray<LFItemDescriptor*>
 {
 public:
 	LFSearchResult(int ctx);

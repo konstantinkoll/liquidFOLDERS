@@ -4,7 +4,7 @@
 
 #pragma once
 #include "resource.h"
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include <objbase.h>
 #include <shlguid.h>
 
@@ -44,7 +44,7 @@ public:
 	UINT m_NagCounter;
 
 protected:
-	static BOOL GetApplicationPath(CString App, CString& Path);
+	static BOOL GetApplicationPath(CString& Path);
 };
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;

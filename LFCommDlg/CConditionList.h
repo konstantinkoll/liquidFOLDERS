@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LFCore.h"
 #include "LFApplication.h"
 #include "CImageListTransparent.h"
 
@@ -11,7 +11,7 @@
 // CConditionList
 //
 
-class AFX_EXT_CLASS CConditionList : public CListCtrl
+class CConditionList : public CListCtrl
 {
 public:
 	CConditionList();

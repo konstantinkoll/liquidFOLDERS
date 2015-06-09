@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "LFCore.h"
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include "resource.h"
 #include "IATA.h"
 #include "LFItemDescriptor.h"

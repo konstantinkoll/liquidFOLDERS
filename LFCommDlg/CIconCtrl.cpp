@@ -9,8 +9,6 @@
 // CIconCtrl
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CIconCtrl::CIconCtrl()
 	: CWnd()
 {
@@ -28,13 +26,6 @@ CIconCtrl::CIconCtrl()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CIconCtrl", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CIconCtrl", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();

@@ -1,6 +1,6 @@
 #pragma once
-#include "liquidFOLDERS.h"
-#include "DynArray.h"
+#include "LF.h"
+#include "LFDynArray.h"
 
 
 struct LFML_Item
@@ -11,7 +11,7 @@ struct LFML_Item
 	unsigned int Icon;
 };
 
-class LFMaintenanceList : public DynArray<LFML_Item>
+class LFMaintenanceList : public LFDynArray<LFML_Item>
 {
 public:
 	LFMaintenanceList();

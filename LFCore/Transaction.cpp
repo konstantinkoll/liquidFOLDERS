@@ -150,7 +150,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 
 	CLOSE_STORE();
 
-	SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
+	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 }
 
 
@@ -195,10 +195,10 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	switch (value->Attr)
 	{
 	case LFAttrFileName:
-		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, value->UnicodeString, NULL, NULL, true);
+		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, value->UnicodeString, NULL, true);
 		break;
 	case LFAttrComments:
-		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, NULL, value->UnicodeString, NULL, true);
+		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, NULL, value->UnicodeString, true);
 		break;
 	default:
 		result = LFIllegalAttribute;
@@ -218,7 +218,7 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	tl->m_Items[idx].Processed = true;
 }
 
-LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
+LFCore_API void LFTransactionUpdate(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	assert(tl);
 
@@ -271,11 +271,11 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 	// Update messages
 	if (StoresUpdated)
 	{
-		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, hWndSource);
+		SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 	if (FilesUpdated)
-		SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
+		SendLFNotifyMessage(LFMessages.StatisticsChanged);
 }
 
 LFCore_API void LFTransactionArchive(LFTransactionList* tl)
@@ -306,7 +306,7 @@ LFCore_API void LFTransactionArchive(LFTransactionList* tl)
 			}
 		}
 
-	SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
+	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 }
 
 LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFProgress* pProgress)
@@ -348,7 +348,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFPr
 					break;
 		}
 
-	SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
+	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 }
 
 LFCore_API void LFTransactionRestore(LFTransactionList* tl, unsigned int Flags)
@@ -379,7 +379,7 @@ LFCore_API void LFTransactionRestore(LFTransactionList* tl, unsigned int Flags)
 	LFGetNullVariantData(&value3);
 	value3.IsNull = false;
 
-	LFTransactionUpdate(tl, NULL, &value1, (Flags & LFFlagArchive) ? &value2 : NULL, (Flags & LFFlagTrash) ? &value3 : NULL);
+	LFTransactionUpdate(tl, &value1, (Flags & LFFlagArchive) ? &value2 : NULL, (Flags & LFFlagTrash) ? &value3 : NULL);
 }
 
 LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL)
@@ -503,7 +503,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFPr
 
 	CLOSE_STORE_PREFIX(idxDst1, idxDst2);
 
-	SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
+	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 }
 
 LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash, LFProgress* pProgress)
@@ -538,7 +538,7 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash, LFProgres
 					break;
 		}
 
-	SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
+	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 }
 
 LFCore_API void LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* sr)

@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
 #include "LFApplication.h"
 #include "LFCore.h"
 
@@ -11,7 +10,7 @@
 // CExplorerList
 //
 
-class AFX_EXT_CLASS CExplorerList : public CListCtrl
+class CExplorerList : public CListCtrl
 {
 public:
 	CExplorerList();

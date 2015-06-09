@@ -4,7 +4,7 @@
 
 #pragma once
 #include "LFApplication.h"
-#include "DynArray.h"
+#include "LFDynArray.h"
 
 
 // CSidebar
@@ -23,7 +23,7 @@ struct SidebarItem
 	BOOL NumberInRed;
 };
 
-class AFX_EXT_CLASS CSidebar : public CWnd
+class CSidebar : public CWnd
 {
 public:
 	CSidebar();
@@ -44,7 +44,7 @@ public:
 protected:
 	LFApplication* p_App;
 	LFTooltip m_TooltipCtrl;
-	DynArray<SidebarItem> m_Items;
+	LFDynArray<SidebarItem> m_Items;
 	INT m_Width;
 	INT m_SelectedItem;
 	INT m_HotItem;

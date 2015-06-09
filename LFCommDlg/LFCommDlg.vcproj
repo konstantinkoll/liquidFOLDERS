@@ -23,7 +23,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			UseOfMFC="2"
 			UseOfATL="0"
 			CharacterSet="1"
@@ -50,8 +50,8 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;LFCommDlg_EXPORTS"
+				AdditionalIncludeDirectories="$(SolutionDir)\LFCore"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -70,26 +70,16 @@
 				PreprocessorDefinitions="_DEBUG"
 				Culture="1031"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/Temp/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
-				LinkIncremental="1"
-				ModuleDefinitionFile=".\LFCommDlg.def"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeForWindows98="0"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -99,9 +89,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -111,7 +98,7 @@
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			UseOfMFC="2"
 			UseOfATL="0"
 			CharacterSet="1"
@@ -139,8 +126,8 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;LFCommDlg_EXPORTS"
+				AdditionalIncludeDirectories="$(SolutionDir)\LFCore"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -159,26 +146,16 @@
 				PreprocessorDefinitions="_DEBUG"
 				Culture="1031"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/Temp/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
-				LinkIncremental="1"
-				ModuleDefinitionFile=".\LFCommDlg.def"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeForWindows98="0"
-				TargetMachine="17"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -190,9 +167,6 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -200,7 +174,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			UseOfMFC="2"
 			UseOfATL="0"
 			CharacterSet="1"
@@ -230,8 +204,8 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT;LFCommDlg_EXPORTS"
+				AdditionalIncludeDirectories="$(SolutionDir)\LFCore"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
@@ -251,30 +225,16 @@
 				PreprocessorDefinitions="NDEBUG"
 				Culture="0"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/Temp/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
-				LinkIncremental="1"
-				GenerateManifest="true"
-				ModuleDefinitionFile=".\LFCommDlg.def"
-				GenerateDebugInformation="false"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
-				LinkTimeCodeGeneration="1"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -286,19 +246,15 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				Description="LFCommDlg wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=3"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			UseOfMFC="2"
 			UseOfATL="0"
 			CharacterSet="1"
@@ -329,8 +285,8 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT;LFCommDlg_EXPORTS"
+				AdditionalIncludeDirectories="$(SolutionDir)\LFCore"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
@@ -350,30 +306,16 @@
 				PreprocessorDefinitions="NDEBUG"
 				Culture="0"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/Temp/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
-				LinkIncremental="1"
-				GenerateManifest="true"
-				ModuleDefinitionFile=".\LFCommDlg.def"
-				GenerateDebugInformation="false"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
-				LinkTimeCodeGeneration="1"
-				TargetMachine="17"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -385,12 +327,8 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				Description="LFCommDlg wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=3"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -420,14 +358,6 @@
 			</File>
 			<File
 				RelativePath=".\CExplorerTree.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CFooterArea.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CFrameCtrl.cpp"
 				>
 			</File>
 			<File
@@ -491,6 +421,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStorePanel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTagList.cpp"
 				>
 			</File>
@@ -505,46 +439,6 @@
 			<File
 				RelativePath=".\CTooltipHeader.cpp"
 				>
-			</File>
-			<File
-				RelativePath=".\dllmain.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\LFAboutDlg.cpp"
@@ -575,10 +469,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFCommDlg.def"
-				>
-			</File>
-			<File
 				RelativePath=".\LFDialog.cpp"
 				>
 			</File>
@@ -591,11 +481,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFEditConditionDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFEditFilterDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFEditTagsDlg.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\LFEditTimeDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFGotoYearDlg.cpp"
 				>
 			</File>
 			<File
@@ -608,6 +510,10 @@
 			</File>
 			<File
 				RelativePath=".\LFProgressDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSaveFilterDlg.cpp"
 				>
 			</File>
 			<File
@@ -631,11 +537,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewGeneralPage.cpp"
+				RelativePath=".\LFStoreNewDlg.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewlDlg.cpp"
+				RelativePath=".\LFStoreNewGeneralPage.cpp"
 				>
 			</File>
 			<File
@@ -671,7 +577,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MenuIcons.cpp"
+				RelativePath=".\MenuIcons.cpp"
 				>
 			</File>
 			<File
@@ -710,6 +616,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\Workers.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -734,14 +644,6 @@
 			</File>
 			<File
 				RelativePath=".\CExplorerTree.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CFooterArea.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CFrameCtrl.h"
 				>
 			</File>
 			<File
@@ -805,6 +707,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStorePanel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CTagList.h"
 				>
 			</File>
@@ -818,6 +724,10 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\FileSystem.h"
 				>
 			</File>
 			<File
@@ -849,7 +759,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LFCommDlg.h"
+				RelativePath=".\LFCommDlg.h"
 				>
 			</File>
 			<File
@@ -869,11 +779,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFEditConditionDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFEditFilterDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFEditTagsDlg.h"
 				>
 			</File>
 			<File
 				RelativePath=".\LFEditTimeDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFGotoYearDlg.h"
 				>
 			</File>
 			<File
@@ -886,6 +808,10 @@
 			</File>
 			<File
 				RelativePath=".\LFProgressDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSaveFilterDlg.h"
 				>
 			</File>
 			<File
@@ -949,11 +875,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\liquidFOLDERS.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\MenuIcons.h"
+				RelativePath=".\MenuIcons.h"
 				>
 			</File>
 			<File
@@ -966,6 +888,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Workers.h"
 				>
 			</File>
 		</Filter>
@@ -984,6 +910,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Attributes_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Clipboard_Small.ico"
 				>
 			</File>
 			<File
@@ -1007,11 +937,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Folder_Small.ico"
+				RelativePath=".\res\FileDrop_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FilterEdit_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FilterSave_Tiny.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\res\Folder_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\GlobeOptions_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\GotoYear_Tiny.ico"
 				>
 			</File>
 			<File
@@ -1031,15 +977,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\liquidFOLDERS.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\liquidFOLDERS_128.png"
 				>
 			</File>
 			<File
 				RelativePath=".\res\liquidFOLDERS_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\liquidFOLDERS_Tiny.ico"
 				>
 			</File>
 			<File
@@ -1056,6 +1002,10 @@
 			</File>
 			<File
 				RelativePath=".\res\LocationIndicator_8.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Organize_Tiny.ico"
 				>
 			</File>
 			<File
@@ -1108,6 +1058,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Progress_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\QueryEdit_Tiny.ico"
 				>
 			</File>
 			<File
@@ -1219,6 +1173,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Table_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\TagFiles_Tiny.ico"
 				>
 			</File>
@@ -1227,18 +1185,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\ViewOptions_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Warning.ico"
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\include\liquidFOLDERS32.manifest.xml"
-			>
-		</File>
-		<File
-			RelativePath="..\include\liquidFOLDERS64.manifest.xml"
-			>
-		</File>
 	</Files>
 	<Globals>
 		<Global

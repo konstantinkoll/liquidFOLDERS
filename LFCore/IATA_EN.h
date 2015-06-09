@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8628
+#define AirportCount_EN 8629
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2059,6 +2059,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{   8, "DVR", "", "Daly River", { 13.750000, 130.693889 } },
 	{ 212, "DVT", "", "Phoenix (Deer Valley Airport)", { -33.688333, -112.082500 } },
 	{ 116, "DWB", "", "Soalala", { 16.083056, 45.366944 } },
+	{ 207, "DWC", "", "Dubai Al Maktoum International Airport", { -24.918333, 55.175556 } },
 	{ 212, "DWH", "", "Houston (Hooks Memorial Airport)", { -30.061944, -95.552778 } },
 	{ 212, "DWN", "", "Oklahoma City (Downtown Airpark)", { -35.449167, -97.533056 } },
 	{ 212, "DWS", "", "Orlando (Lake Buena Vista)", { -28.419444, -81.581111 } },
@@ -4246,7 +4247,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  25, "LIP", "", "Lins", { 21.664167, -49.730556 } },
 	{  43, "LIQ", "", "Lisala", { -2.170556, 21.496944 } },
 	{  45, "LIR", "", "Liberia", { -10.593333, -85.544444 } },
-	{ 158, "LIS", "", "Lisboa", { -38.781389, -9.135833 } },
+	{ 158, "LIS", "", "Lisbon", { -38.781389, -9.135833 } },
 	{ 212, "LIT", "", "Little Rock", { -34.729444, -92.224444 } },
 	{ 212, "LIV", "", "Livingood", { -65.472500, -148.669167 } },
 	{  31, "LIW", "", "Loikaw", { -19.691389, 97.214722 } },

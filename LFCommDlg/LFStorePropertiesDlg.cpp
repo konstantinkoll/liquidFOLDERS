@@ -12,9 +12,6 @@
 // LFStorePropertiesDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-extern LFMessageIDs* MessageIDs;
-
 LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd)
 	: CPropertySheet(_T(""), pParentWnd)
 {
@@ -61,7 +58,7 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		CString Comment;
 		pPage->m_wndStoreComment.GetWindowText(Comment);
 
-		UINT res = LFSetStoreAttributes(m_Store.StoreID, Name.GetBuffer(), Comment.GetBuffer(), GetSafeHwnd());
+		UINT res = LFSetStoreAttributes(m_Store.StoreID, Name.GetBuffer(), Comment.GetBuffer());
 		if (res!=LFOk)
 		{
 			LFErrorBox(res, GetSafeHwnd());
@@ -69,12 +66,12 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		}
 
 		if (pPage->m_wndMakeDefault.IsWindowEnabled() && pPage->m_wndMakeDefault.GetCheck())
-			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID, GetSafeHwnd()), GetSafeHwnd());
+			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID), GetSafeHwnd());
 
 		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==((m_Store.Mode & LFStoreModeIndexMask)>=LFStoreModeIndexHybrid));
 
 		if (pPage->m_wndMakeSearchable.IsWindowVisible())
-			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE, GetSafeHwnd()), GetSafeHwnd());
+			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE), GetSafeHwnd());
 	}
 
 	return CPropertySheet::OnCommand(wParam, lParam);
@@ -82,23 +79,20 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void LFStorePropertiesDlg::UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	if ((HWND)lParam!=GetSafeHwnd())
-	{
-		m_StoreValid = (LFGetStoreSettings(m_Key, &m_Store)==LFOk);
-		GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
+	m_StoreValid = (LFGetStoreSettings(m_Key, &m_Store)==LFOk);
+	GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
 
-		for (UINT a=0; a<m_PageCount; a++)
-			if (IsWindow(m_pPages[a]->GetSafeHwnd()))
-				m_pPages[a]->SendMessage(Message, wParam, lParam);
-	}
+	for (UINT a=0; a<m_PageCount; a++)
+		if (IsWindow(m_pPages[a]->GetSafeHwnd()))
+			m_pPages[a]->SendMessage(Message, wParam, lParam);
 }
 
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CPropertySheet)
 	ON_WM_DESTROY()
-	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
-	ON_REGISTERED_MESSAGE(MessageIDs->StatisticsChanged, OnStatisticsChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StatisticsChanged, OnStatisticsChanged)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesDlg::OnInitDialog()
@@ -107,7 +101,7 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_STOREPROPERTIES));
+	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_STOREPROPERTIES));
 	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
@@ -136,21 +130,21 @@ void LFStorePropertiesDlg::OnDestroy()
 
 LRESULT LFStorePropertiesDlg::OnStoresChanged(WPARAM wParam, LPARAM lParam)
 {
-	UpdateStore(MessageIDs->StoresChanged, wParam, lParam);
+	UpdateStore(LFGetApp()->p_MessageIDs->StoresChanged, wParam, lParam);
 
 	return NULL;
 }
 
 LRESULT LFStorePropertiesDlg::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 {
-	UpdateStore(MessageIDs->StoreAttributesChanged, wParam, lParam);
+	UpdateStore(LFGetApp()->p_MessageIDs->StoreAttributesChanged, wParam, lParam);
 
 	return NULL;
 }
 
 LRESULT LFStorePropertiesDlg::OnStatisticsChanged(WPARAM wParam, LPARAM lParam)
 {
-	UpdateStore(MessageIDs->StatisticsChanged, wParam, lParam);
+	UpdateStore(LFGetApp()->p_MessageIDs->StatisticsChanged, wParam, lParam);
 
 	return NULL;
 }

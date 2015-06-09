@@ -10,7 +10,7 @@
 // CTaskbar
 //
 
-class AFX_EXT_CLASS CTaskbar : public CWnd
+class CTaskbar : public CWnd
 {
 public:
 	CTaskbar();

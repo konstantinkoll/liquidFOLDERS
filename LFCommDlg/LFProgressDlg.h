@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include "LFDialog.h"
 #include "ITaskbarList3.h"
 
@@ -16,7 +16,7 @@ struct LFWorkerParameters
 	HWND hWnd;
 };
 
-class AFX_EXT_CLASS LFProgressDlg : public LFDialog
+class LFProgressDlg : public LFDialog
 {
 public:
 	LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);

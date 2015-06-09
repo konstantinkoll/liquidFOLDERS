@@ -10,7 +10,7 @@
 // LFAddStoreDlg
 //
 
-class AFX_EXT_CLASS LFAddStoreDlg : public LFDialog
+class LFAddStoreDlg : public LFDialog
 {
 public:
 	LFAddStoreDlg(CWnd* pParentWnd);
@@ -26,8 +26,6 @@ protected:
 	afx_msg void OnBtnWindows();
 	DECLARE_MESSAGE_MAP()
 
-	CCategory m_wndCategoryLocal;
-	CCategory m_wndCategoryRemote;
 	CStoreButton m_wndStoreButtons[10];
 
 private:

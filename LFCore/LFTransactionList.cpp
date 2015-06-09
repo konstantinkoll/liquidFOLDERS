@@ -6,7 +6,7 @@
 
 
 LFTransactionList::LFTransactionList()
-	: DynArray()
+	: LFDynArray()
 {
 	m_Changes = m_Resolved = false;
 }
@@ -24,7 +24,7 @@ bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 
 	LFTL_Item item = { i, UserData, LFOk, false };
 
-	if (!DynArray::AddItem(item))
+	if (!LFDynArray::AddItem(item))
 		return false;
 
 	i->RefCount++;

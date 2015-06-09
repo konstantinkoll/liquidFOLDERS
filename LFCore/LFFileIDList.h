@@ -1,6 +1,6 @@
 #pragma once
-#include "liquidFOLDERS.h"
-#include "DynArray.h"
+#include "LF.h"
+#include "LFDynArray.h"
 
 struct LFFIL1_Item
 {
@@ -12,7 +12,7 @@ struct LFFIL1_Item
 };
 
 
-class LFFileIDList : public DynArray<LFFIL1_Item>
+class LFFileIDList : public LFDynArray<LFFIL1_Item>
 {
 public:
 	LFFileIDList();

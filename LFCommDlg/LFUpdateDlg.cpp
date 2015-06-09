@@ -17,8 +17,6 @@ static const GUID TrayIcon = { 0x7091D760, 0xA474, 0x4C14, { 0x86, 0xB0, 0x2B, 0
 
 #define WM_TRAYMENU     WM_USER+6
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 LFUpdateDlg::LFUpdateDlg(CString Version, CString MSN, CWnd* pParentWnd)
 	: LFDialog(IDD_UPDATE, pParentWnd)
 {
@@ -26,7 +24,7 @@ LFUpdateDlg::LFUpdateDlg(CString Version, CString MSN, CWnd* pParentWnd)
 	m_CaptionTop = m_IconTop = 0;
 	m_Connected = TRUE;
 
-	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_64, _T("PNG"), LFCommDlgDLL.hResource);
+	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_64, _T("PNG"), AfxGetResourceHandle());
 
 	m_Version = Version;
 	m_MSN = MSN;
@@ -132,7 +130,7 @@ BOOL LFUpdateDlg::AddTrayIcon()
 	nid.guidItem = TrayIcon;
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WM_TRAYMENU;
-	nid.hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_LIQUIDFOLDERS_TINY), IMAGE_ICON, sz, sz, LR_DEFAULTCOLOR);
+	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, sz, sz, LR_DEFAULTCOLOR);
 	GetWindowText(nid.szTip, 128);
 	Shell_NotifyIcon(NIM_ADD, &nid);
 

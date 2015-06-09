@@ -10,7 +10,7 @@
 // CTooltipHeader
 //
 
-class AFX_EXT_CLASS CTooltipHeader : public CHeaderCtrl
+class CTooltipHeader : public CHeaderCtrl
 {
 public:
 	CTooltipHeader();

@@ -37,8 +37,6 @@ DOUBLE StringToCoord(CString str)
 // LFSelectLocationGPSDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(CWnd* pParentWnd, const LFGeoCoordinates Location)
 	: CDialog(IDD_SELECTGPS, pParentWnd)
 {
@@ -77,7 +75,7 @@ BOOL LFSelectLocationGPSDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_SELECTGPS));
+	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_SELECTGPS));
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 

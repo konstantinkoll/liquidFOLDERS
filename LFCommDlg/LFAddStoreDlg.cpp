@@ -12,8 +12,6 @@
 // LFAddStoreDlg
 //
 
-extern LFMessageIDs* MessageIDs;
-
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ADDSTORE, pParentWnd)
 {
@@ -22,9 +20,6 @@ LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 void LFAddStoreDlg::DoDataExchange(CDataExchange* pDX)
 {
 	LFDialog::DoDataExchange(pDX);
-
-	DDX_Control(pDX, IDC_ADDSTORE_CATEGORY_LOCAL, m_wndCategoryLocal);
-	DDX_Control(pDX, IDC_ADDSTORE_CATEGORY_REMOTE, m_wndCategoryRemote);
 
 	DDX_StoreButton(pDX, IDC_ADDSTORE_LIQUIDFOLDERS, m_wndStoreButtons[0], LFTypeSourceInternal);
 	DDX_StoreButton(pDX, IDC_ADDSTORE_WINDOWS, m_wndStoreButtons[1], LFTypeSourceWindows);
@@ -42,7 +37,7 @@ void LFAddStoreDlg::CheckInternetConnection()
 //	Connected = FALSE;
 #endif
 
-	m_wndCategoryRemote.ShowWindow(Connected ? SW_SHOW : SW_HIDE);
+	m_wndCategory[1].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
 	for (UINT a=0; a<8; a++)
 		m_wndStoreButtons[a+2].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
 }
@@ -51,7 +46,7 @@ void LFAddStoreDlg::CheckInternetConnection()
 BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
-	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
 	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
 END_MESSAGE_MAP()
@@ -61,8 +56,8 @@ BOOL LFAddStoreDlg::OnInitDialog()
 	LFDialog::OnInitDialog();
 
 	// Categories
-	m_wndCategoryLocal.SetWindowText(p_App->m_ItemCategories[LFItemCategoryLocal].Caption);
-	m_wndCategoryRemote.SetWindowText(p_App->m_ItemCategories[LFItemCategoryRemote].Caption);
+	m_wndCategory[0].SetWindowText(p_App->m_ItemCategories[LFItemCategoryLocal].Caption);
+	m_wndCategory[1].SetWindowText(p_App->m_ItemCategories[LFItemCategoryRemote].Caption);
 
 	// Internet
 	CheckInternetConnection();

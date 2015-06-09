@@ -6,7 +6,6 @@
 #include "LFNamespaceExtension.h"
 #include "LFCore.h"
 #include "..\\LFCore\\resource.h"
-#include "MenuIcons.h"
 #include "afxsettingsstore.h"
 #include <eznamespaceextensions.h>
 #include <ezshellextensions.h>
@@ -28,7 +27,7 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	// Pfade
 	GetModuleFileName((HINSTANCE)&__ImageBase, m_PathThisFile, MAX_PATH);
 
-	if (!GetApplicationPath(_T("StoreManager"), m_AppPath))
+	if (!GetApplicationPath(m_AppPath))
 		m_AppPath.Empty();
 
 	HMODULE hModCore = GetModuleHandle(_T("LFCORE.DLL"));
@@ -116,14 +115,14 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	return CWinApp::InitInstance();
 }
 
-BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
+BOOL LFNamespaceExtensionApp::GetApplicationPath(CString& Path)
 {
 	// Registry
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(TRUE, TRUE);
 
 	if (reg.Open(_T("Software\\liquidFOLDERS\\")))
-		if (reg.Read(App, Path))
+		if (reg.Read(_T("InstallLocation"), Path))
 			if (_waccess(Path, 0)==0)
 				return TRUE;
 
@@ -133,8 +132,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 	if (pos)
 		Path = Path.Left(pos+1);
 
-	Path.Append(App);
-	Path.Append(_T(".exe"));
+	Path.Append(_T("liquidFOLDERS.exe"));
 	if (_waccess(Path, 0)==0)
 		return TRUE;
 
@@ -144,9 +142,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 		return FALSE;
 
 	Path = tmpStr;
-	Path.Append(_T("\\liquidFOLDERS\\"));
-	Path.Append(App);
-	Path.Append(_T(".exe"));
+	Path.Append(_T("\\liquidFOLDERS\\liquidFOLDERS.exe"));
 	return (_waccess(Path, 0)==0);
 }
 

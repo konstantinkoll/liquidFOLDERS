@@ -8,7 +8,7 @@
 // CGlassPane
 //
 
-class AFX_EXT_CLASS CGlassPane : public CWnd
+class CGlassPane : public CWnd
 {
 public:
 	CGlassPane();

@@ -138,8 +138,6 @@ void CPropertyDisplay::OnKillFocus(CWnd* /*pNewWnd*/)
 // CPropertyEdit
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CPropertyEdit::CPropertyEdit()
 	: CPropertyHolder()
 {
@@ -157,13 +155,6 @@ CPropertyEdit::CPropertyEdit()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CPropertyEdit", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CPropertyEdit", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();

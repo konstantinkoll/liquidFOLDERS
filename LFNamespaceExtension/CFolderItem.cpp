@@ -647,9 +647,6 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	if (e.menuItem->GetVerb()==_T(VERB_IMPORTFOLDER))
 		return RunStoreCommand(e, theApp.m_AppPath, _T("/IMPORTFOLDER "));
 
-	if (e.menuItem->GetVerb()==_T(VERB_MIGRATIONWIZARD))
-		return RunStoreCommand(e, theApp.m_AppPath, _T("/MIGRATE "));
-
 	if (e.menuItem->GetVerb()==_T(VERB_ADDSTORE))
 		return RunPath(e.hWnd, theApp.m_AppPath, _T("/ADDSTORE"));
 

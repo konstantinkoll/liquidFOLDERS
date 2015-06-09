@@ -32,9 +32,6 @@ void CEscape(CString &s)
 // LFStorePropertiesToolsPage
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-extern LFMessageIDs* MessageIDs;
-
 LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore, BOOL* pStoreValid)
 	: CPropertyPage()
 {
@@ -55,21 +52,21 @@ BEGIN_MESSAGE_MAP(LFStorePropertiesToolsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_RUNMAINTENANCE, OnRunMaintenance)
 	ON_BN_CLICKED(IDC_RUNSYNCHRONIZE, OnRunSynchronize)
 	ON_BN_CLICKED(IDC_RUNBACKUP, OnRunBackup)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStore)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesToolsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_wndIconMaintenance.SetSmallIcon(LFCommDlgDLL.hResource, IDD_STOREMAINTENANCE);
+	m_wndIconMaintenance.SetSmallIcon(AfxGetResourceHandle(), IDD_STOREMAINTENANCE);
 
 	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_MaskMaintenance);
 	GetDlgItem(IDC_SYNCHRONIZED)->GetWindowText(m_MaskSynchronized);
 
 	// Store
-	SendMessage(MessageIDs->StoresChanged);
+	SendMessage(LFGetApp()->p_MessageIDs->StoresChanged);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

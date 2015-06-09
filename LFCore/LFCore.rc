@@ -164,8 +164,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DeleteStoreCaption  "Store „%s“ löschen"
-    IDS_DeleteStoreMessage  "Möchten Sie diesen Store wirklich löschen ?"
     IDS_ShortcutCaption     "Verknüpfung"
     IDS_ShortcutMessage     "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
     IDS_Rating1             "Schlecht"
@@ -237,9 +235,9 @@ BEGIN
     IDS_IllegalItemType     "Eines der gewählten Objekte unterstützt diese Operation nicht."
     IDS_IllegalValue        "Eine der Eigenschaften hat einen ungültigen Wert."
     IDS_IndexTableLoadError "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
-    IDS_IndexRepairError    "Der Index ist beschädigt und kann leider nicht repariert werden (Datenträger schreibgeschützt ?)."
+    IDS_IndexRepairError    "Der Index ist beschädigt und kann leider nicht repariert werden (Datenträger schreibgeschützt?)."
     IDS_IndexAccessError    "Auf den Store kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
-    IDS_IndexCreateError    "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt ?)."
+    IDS_IndexCreateError    "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt?)."
     IDS_NotEnoughFreeDisc   "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
 END
 
@@ -248,7 +246,7 @@ BEGIN
     IDS_CannotImportFile    "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind."
     IDS_CannotDeleteFile    "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
     IDS_CannotRenameFile    "Einige Dateien können nicht umbenannt werden, da sie noch in Gebrauch sind."
-    IDS_CannotCopyIndex     "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt ?)."
+    IDS_CannotCopyIndex     "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt?)."
     IDS_NoFileBody          "Der eigentliche Dateikörper befindet sich nicht im Store."
 END
 
@@ -444,8 +442,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DeleteStoreCaption  "Delete store ""%s"""
-    IDS_DeleteStoreMessage  "Do you really want to delete this store ?"
     IDS_ShortcutCaption     "Shortcut"
     IDS_ShortcutMessage     "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
     IDS_Rating1             "Poor"
@@ -517,9 +513,9 @@ BEGIN
     IDS_IllegalItemType     "At least one of the selected items does not support this operation."
     IDS_IllegalValue        "At least one of the property values is illegal."
     IDS_IndexTableLoadError "An index table cannot be loaded. Please run scheduled maintenance."
-    IDS_IndexRepairError    "The store index is damaged and could not be repaired (write protected disc ?)."
+    IDS_IndexRepairError    "The store index is damaged and could not be repaired (write protected disc?)."
     IDS_IndexAccessError    "The store cannot be accessed. Please check the access rights of the store's directory."
-    IDS_IndexCreateError    "The store index cannot be created (write protected disc ?)."
+    IDS_IndexCreateError    "The store index cannot be created (write protected disc?)."
     IDS_NotEnoughFreeDisc   "There is not enough free disc space."
 END
 
@@ -528,7 +524,7 @@ BEGIN
     IDS_CannotImportFile    "Some files cannot be imported because they are still in use."
     IDS_CannotDeleteFile    "Some files cannot be deleted because they are still in use."
     IDS_CannotRenameFile    "Some files cannot be renamed because they are still in use."
-    IDS_CannotCopyIndex     "The index cannot be updated (write protected disc ?)."
+    IDS_CannotCopyIndex     "The index cannot be updated (write protected disc?)."
     IDS_NoFileBody          "The actual file body is not present in the store."
 END
 
@@ -724,8 +720,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DeleteStoreCaption  "Eliminar store ""%s"""
-    IDS_DeleteStoreMessage  "¿Realmente quiere eliminar este store?"
     IDS_ShortcutCaption     "Acceso directo"
     IDS_ShortcutMessage     "Windows no puede crear un acceso directo aquí.\n¿Desea que en su lugar el acceso directo se coloque en el escritorio?"
     IDS_Rating1             "Pobre"
@@ -1004,10 +998,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DeleteStoreCaption  "Effacez le store ""%s"""
-    IDS_DeleteStoreMessage  "Voulez-vous vraiment effacer ce store ?"
     IDS_ShortcutCaption     "Raccourci"
-    IDS_ShortcutMessage     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
+    IDS_ShortcutMessage     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place?"
     IDS_Rating1             "Mauvais"
     IDS_Rating2             "Suffisant"
     IDS_Rating3             "Bien"
@@ -1077,9 +1069,9 @@ BEGIN
     IDS_IllegalItemType     "L'un des éléments choisis ne soutient pas cette opération."
     IDS_IllegalValue        "L'une des qualités a une valeur non valable."
     IDS_IndexTableLoadError "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
-    IDS_IndexRepairError    "L'index est endommagé et ne peut pas être réparé malheureusement (Est-ce que le support de données est protégé en écriture ?)."
+    IDS_IndexRepairError    "L'index est endommagé et ne peut pas être réparé malheureusement (Est-ce que le support de données est protégé en écriture?)."
     IDS_IndexAccessError    "Il n'ya pas accès au store. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
-    IDS_IndexCreateError    "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture ?)."
+    IDS_IndexCreateError    "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture?)."
     IDS_NotEnoughFreeDisc   "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
 END
 
@@ -1088,7 +1080,7 @@ BEGIN
     IDS_CannotImportFile    "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage."
     IDS_CannotDeleteFile    "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage."
     IDS_CannotRenameFile    "Certains fichiers ne peuvent pas être renommées, puisqu'ils sont encore dans l'usage."
-    IDS_CannotCopyIndex     "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture ?)."
+    IDS_CannotCopyIndex     "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture?)."
     IDS_NoFileBody          "Le véritable corps de fichier ne se trouve pas dans le store."
 END
 

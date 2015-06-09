@@ -1918,6 +1918,7 @@ DVR     Daly River, Australia;4;13*45'0"S, 130*41'38"E
 DVT     Phoenix (Deer Valley Airport), USA;4;33*41'18"N, 112*4'57"W
 DVX QDV Denver International, USA
 DWB     Soalala, Madagascar;4;16*4'59"S, 45*22'1"E
+DWC     Dubai Al Maktoum International Airport, UAE;5;24*55'6"N, 55*10'32"E
 DWH     Houston (Hooks Memorial Airport), USA;4;30*3'43"N, 95*33'10"W
 DWN     Oklahoma City (Downtown Airpark), USA;4;35*26'57"N, 97*31'59"W
 DWS     Orlando (Lake Buena Vista), USA;4;28*25'10"N, 81*34'52"W
@@ -3607,7 +3608,6 @@ JWH     Houston (Westchase Hilton Heliport), USA
 JWL     Houston (The Woodlands), USA
 JWN     Nashville (Tune Airport), USA;4;36*10'56"N, 86*53'12"W
 JWS NYC New York (Port Authority Wall Street Heliport), USA
-JXB     Dubai (Jebel Ali), UAE
 JXN     Jackson, USA;4;42*15'35"N, 84*27'34"W
 JYD     Meridian (Army National Guard Airport), USA
 JYL     Sylvania, USA;4;32*38'43"N, 81*35'50"W
@@ -4264,7 +4264,7 @@ LIO     Limon, Costa Rica;4;9*57'29"N, 83*1'19"W
 LIP     Lins, Brazil;4;21*39'51"S, 49*43'50"W
 LIQ     Lisala, Congo;4;2*10'14"N, 21*29'49"E
 LIR     Liberia, Costa Rica;4;10*35'36"N, 85*32'40"W
-LIS     Lisboa, Portugal;4;38*46'53"N, 9*8'9"W
+LIS     Lisbon, Portugal;4;38*46'53"N, 9*8'9"W
 LIT     Little Rock, USA;4;34*43'46"N, 92*13'28"W
 LIV     Livingood, USA;4;65*28'21"N, 148*40'9"W
 LIW     Loikaw, Burma;4;19*41'29"N, 97*12'53"E

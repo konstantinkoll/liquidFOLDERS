@@ -8,10 +8,7 @@
 #include <winhttp.h>
 
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
-
-LFCommDlg_API BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
+BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 {
 	if (!hSrc)
 	{
@@ -33,7 +30,7 @@ LFCommDlg_API BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 	return TRUE;
 }
 
-LFCommDlg_API INT GetAttributeIconIndex(UINT Attr)
+INT GetAttributeIconIndex(UINT Attr)
 {
 	static const UINT IconPosition[] = { LFAttrFileName, LFAttrStoreID, LFAttrFileID, LFAttrTitle, LFAttrCreationTime,
 		LFAttrAddTime, LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrArchiveTime,
@@ -49,7 +46,7 @@ LFCommDlg_API INT GetAttributeIconIndex(UINT Attr)
 	return -1;
 }
 
-LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
+void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 {
 	path.Reset();
 
@@ -70,7 +67,7 @@ LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 	path.CloseFigure();
 }
 
-LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint)
+void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint)
 {
 	LFApplication* pApp = LFGetApp();
 
@@ -113,14 +110,14 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 	}
 }
 
-LFCommDlg_API BOOL IsCtrlThemed()
+BOOL IsCtrlThemed()
 {
 	LFApplication* pApp = LFGetApp();
 
 	return pApp->m_ThemeLibLoaded ? pApp->zIsAppThemed() : FALSE;
 }
 
-LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
+void DrawControlBorder(CWnd* pWnd)
 {
 	CRect rect;
 	pWnd->GetWindowRect(rect);
@@ -154,7 +151,7 @@ LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-LFCommDlg_API void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
+void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 {
 	ASSERT(Caption);
 
@@ -208,7 +205,7 @@ void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
 	pComboBox->SetItemData(pComboBox->AddString(tmpStr), CompareID);
 }
 
-LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT request)
+void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT request)
 {
 	pComboBox->SetRedraw(FALSE);
 	pComboBox->ResetContent();
@@ -270,97 +267,7 @@ LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT reque
 }
 
 
-struct WorkerParameters
-{
-	LFWorkerParameters Hdr;
-	CHAR StoreID[LFKeySize];
-	BOOL DeleteSource;
-	LFItemDescriptor* Template;
-	HWND hWndSource;
-	union
-	{
-		LFFileImportList* FileImportList;
-		LFMaintenanceList* MaintenanceList;
-	};
-};
-
-DWORD WINAPI WorkerImport(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, true, wp->DeleteSource==TRUE, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-DWORD WINAPI WorkerMaintenance(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	wp->MaintenanceList = LFStoreMaintenance(wp->hWndSource, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
-{
-	LFProgressDlg dlg(pThreadProc, pParameters, pParentWnd);
-	dlg.DoModal();
-}
-
-LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
-{
-	// Allowed?
-	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
-		return;
-
-	CString Caption;
-	CString Hint;
-	ENSURE(Caption.LoadString(IDS_IMPORTFOLDER_CAPTION));
-	ENSURE(Hint.LoadString(IDS_IMPORTFOLDER_HINT));
-
-	LFBrowseForFolderDlg dlg(pParentWnd, Caption, Hint, TRUE, TRUE, _T(""));
-	if (dlg.DoModal()==IDOK)
-	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		wp.FileImportList = LFAllocFileImportList();
-		LFAddImportPath(wp.FileImportList, dlg.m_FolderPath);
-		strcpy_s(wp.StoreID, LFKeySize, StoreID);
-		wp.DeleteSource = dlg.m_DeleteSource;
-
-		// Template füllen
-		wp.Template = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(pParentWnd, wp.Template, StoreID, TRUE);
-		if (tdlg.DoModal()!=IDCANCEL)
-		{
-			LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
-
-			LFErrorBox(wp.FileImportList->m_LastError, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
-		}
-
-		LFFreeItemDescriptor(wp.Template);
-		LFFreeFileImportList(wp.FileImportList);
-	}
-}
-
-LFCommDlg_API void LFRunMaintenance(CWnd* pParentWnd, HWND hWndSource)
-{
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	wp.hWndSource = hWndSource;
-
-	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, pParentWnd);
-	LFErrorBox(wp.MaintenanceList->m_LastError, pParentWnd->GetSafeHwnd());
-
-	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, pParentWnd);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(wp.MaintenanceList);
-}
-
-
-LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
+void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
 {
 	if (Version)
 		Version->Empty();
@@ -402,7 +309,7 @@ LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Co
 	}
 }
 
-LFCommDlg_API CString GetLatestVersion(CString CurrentVersion)
+CString GetLatestVersion(CString CurrentVersion)
 {
 	CString VersionIni;
 

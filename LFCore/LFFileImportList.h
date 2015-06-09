@@ -1,5 +1,5 @@
 #pragma once
-#include "DynArray.h"
+#include "LFDynArray.h"
 
 struct LFFIL2_Item
 {
@@ -9,7 +9,7 @@ struct LFFIL2_Item
 };
 
 
-class LFFileImportList : public DynArray<LFFIL2_Item>
+class LFFileImportList : public LFDynArray<LFFIL2_Item>
 {
 public:
 	LFFileImportList();

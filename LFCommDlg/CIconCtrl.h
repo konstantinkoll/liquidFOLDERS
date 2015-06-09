@@ -8,7 +8,7 @@
 // CIconCtrl
 //
 
-class AFX_EXT_CLASS CIconCtrl : public CWnd
+class CIconCtrl : public CWnd
 {
 public:
 	CIconCtrl();

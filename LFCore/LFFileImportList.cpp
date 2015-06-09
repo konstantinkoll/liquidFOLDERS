@@ -6,7 +6,7 @@
 
 
 LFFileImportList::LFFileImportList()
-	: DynArray()
+	: LFDynArray()
 {
 	m_FileCount = 0;
 	m_FileSize = 0;
@@ -20,7 +20,7 @@ bool LFFileImportList::AddPath(wchar_t* path)
 	ZeroMemory(&item, sizeof(item));
 	wcscpy_s(item.Path, MAX_PATH, path);
 
-	return DynArray::AddItem(item);
+	return LFDynArray::AddItem(item);
 }
 
 void LFFileImportList::Resolve(bool recursive)

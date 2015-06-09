@@ -12,8 +12,6 @@
 // LFSelectLocationIATADlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
 	: CDialog(nIDTemplate, pParentWnd)
 {
@@ -197,7 +195,7 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate));
+	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate));
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 

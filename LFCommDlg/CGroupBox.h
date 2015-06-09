@@ -8,7 +8,7 @@
 // CGroupBox
 //
 
-class AFX_EXT_CLASS CGroupBox : public CStatic
+class CGroupBox : public CStatic
 {
 public:
 	CGroupBox();

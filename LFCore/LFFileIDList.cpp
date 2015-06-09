@@ -5,7 +5,7 @@
 
 
 LFFileIDList::LFFileIDList()
-	: DynArray()
+	: LFDynArray()
 {
 	m_Changes = false;
 }
@@ -21,7 +21,7 @@ bool LFFileIDList::AddFileID(char* StoreID, char* FileID, void* UserData)
 	strcpy_s(item.FileID, LFKeySize, FileID);
 	item.UserData = UserData;
 
-	return DynArray::AddItem(item);
+	return LFDynArray::AddItem(item);
 }
 
 void LFFileIDList::Reset()

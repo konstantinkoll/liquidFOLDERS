@@ -26,45 +26,6 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,8,0
- PRODUCTVERSION 1,7,8,0
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x4L
- FILETYPE 0x2L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "000004e4"
-        BEGIN
-            VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.7.8"
-            VALUE "InternalName", "LFCommDlg"
-            VALUE "LegalCopyright", "© 2009-2015 liquidFOLDERS"
-            VALUE "LegalTrademarks", "liquidFOLDERS®"
-            VALUE "OriginalFilename", "LFCommDlg.dll"
-            VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.7.8"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x0, 1252
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // JPG
 //
 
@@ -125,13 +86,15 @@ IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+IDR_APPLICATION         ICON                    "res\\liquidFOLDERS.ico"
+IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
+IDR_FILEDROP            ICON                    "res\\FileDrop_Small.ico"
 IDI_RESET_NORMAL        ICON                    "res\\Reset_Normal_Tiny.ico"
 IDI_RESET_HOT           ICON                    "res\\Reset_Hot_Tiny.ico"
 IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed_Tiny.ico"
 IDI_SEARCH              ICON                    "res\\Search.ico"
 IDI_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
 IDI_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
-IDI_LIQUIDFOLDERS_TINY  ICON                    "res\\liquidFOLDERS_Tiny.ico"
 32513                   ICON                    "res\\Error.ico"
 32516                   ICON                    "res\\Info.ico"
 32515                   ICON                    "res\\Warning.ico"
@@ -143,12 +106,19 @@ IDD_CHOOSESTORE         ICON                    "res\\Stores_Tiny.ico"
 IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
 IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"
 IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
-IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Tiny.ico"
+IDD_LICENSE             ICON                    "res\\Key_Tiny.ico"
 IDD_ITEMTEMPLATE        ICON                    "res\\TagFiles_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Small.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
 IDD_PROGRESS            ICON                    "res\\Progress_Tiny.ico"
+IDD_EDITCONDITION       ICON                    "res\\QueryEdit_Tiny.ico"
+IDD_EDITFILTER          ICON                    "res\\FilterEdit_Tiny.ico"
+IDD_SAVEFILTER          ICON                    "res\\FilterSave_Tiny.ico"
+IDD_GOTOYEAR            ICON                    "res\\GotoYear_Tiny.ico"
+IDI_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
+IDI_ORGANIZE            ICON                    "res\\Organize_Tiny.ico"
+IDI_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -225,19 +195,27 @@ BEGIN
     END
 END
 
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 212
+IDD_ABOUT DIALOGEX 0, 0, 390, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Über liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,333,191,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,333,192,50,14,WS_GROUP
     CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt am %s Uhr.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
@@ -266,8 +244,8 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Store wählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,413,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,413,260,50,14,WS_GROUP
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -280,7 +258,7 @@ BEGIN
     CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
     PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,47,162,165,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Soll der Store wirklich gelöscht werden?",IDC_CAPTION,7,31,263,8
+    LTEXT           "Soll der Store wirklich gelöscht werden?",IDC_CAPTION,7,31,263,15
     LTEXT           "Da der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,51,213,17
     LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“ auswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,213,17
     LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,190,263,8
@@ -343,21 +321,6 @@ BEGIN
     CTEXT           "X",IDC_GPSLOCATION,284,221,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Lizenzschlüssel eingeben"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
-    LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,18,322,18
-    LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,34,322,18
-    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
-    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,79,322,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,293,157,50,14,WS_GROUP
-END
-
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Wartungsarbeiten"
@@ -391,10 +354,10 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | W
 CAPTION "Verzeichnis wählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,288
-    CONTROL         "Quelldateien &löschen",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,297,137,10
-    DEFPUSHBUTTON   "OK",IDOK,146,295,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,203,295,50,14,WS_GROUP
+    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,287
+    CONTROL         "Quelldateien &löschen",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,296,135,10
+    DEFPUSHBUTTON   "OK",IDOK,146,294,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,203,294,50,14,WS_GROUP
 END
 
 IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
@@ -402,30 +365,30 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Eigenschaften ergänzen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,66,319,50,14,WS_GROUP
-    PUSHBUTTON      "Überspringen",IDC_SKIP,123,319,60,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,191,319,50,14,WS_GROUP
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
+    DEFPUSHBUTTON   "OK",IDOK,66,318,50,14,WS_GROUP
+    PUSHBUTTON      "Überspringen",IDC_SKIP,123,318,60,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,191,318,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
 END
 
-IDD_EDITTIME DIALOGEX 0, 0, 148, 210
+IDD_EDITTIME DIALOGEX 0, 0, 134, 218
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,14,19,120,102
-    CONTROL         "&Uhrzeit benutzen",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,146,120,10
-    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,14,160,120,15
-    DEFPUSHBUTTON   "OK",IDOK,34,189,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,91,189,50,14,WS_GROUP
-    GROUPBOX        "Datum",IDC_GROUPBOX1,7,7,134,122
-    GROUPBOX        "Uhrzeit",IDC_GROUPBOX2,7,135,134,48
+    DEFPUSHBUTTON   "OK",IDOK,20,196,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,77,196,50,14,WS_GROUP
+    CONTROL         "Datum",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
+    CONTROL         "Uhrzeit",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
+    CONTROL         "&Uhrzeit benutzen",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 249, 82
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Abbrechen",IDCANCEL,192,61,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,192,60,50,14
     CONTROL         "X",IDC_CAPTION,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,7,235,8
     CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",PBS_SMOOTH,7,19,235,14
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
@@ -532,13 +495,13 @@ BEGIN
     CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 406
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Store hinzufügen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,11,105,622,15
     PUSHBUTTON      "Erstellt einen neuen Store für Ihre Dateien.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -551,6 +514,78 @@ BEGIN
     PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
     DEFPUSHBUTTON   "Fertig",IDOK,583,384,50,14,WS_GROUP
     LTEXT           "",IDC_STATUS,11,386,570,8
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Filter speichern"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Eigenschaften",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,263,15
+    LTEXT           "Name:",IDC_STATIC,7,86,40,8
+    LTEXT           "Kommentar:",IDC_STATIC,7,107,40,8
+    EDITTEXT        IDC_FILENAME,51,84,219,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,51,105,219,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,220,136,50,14,WS_GROUP
+    CONTROL         "Ziel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,195,34,75,14
+END
+
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Jahr auswählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Jahr:",IDC_STATIC,7,8,25,8
+    EDITTEXT        IDC_YEAR,35,7,80,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,37,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,65,37,50,14,WS_GROUP
+END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 174, 278
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Filter bearbeiten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Durchsuchen",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
+    CONTROL         "&Alle Stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "Diesen &Store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    LTEXT           "Suchbegriff (in allen Eigenschaften):",IDC_STATIC,7,53,160,8
+    EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Weitere Bedingungen",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    PUSHBUTTON      "Bedingung &hinzufügen...",IDM_CONDITIONLIST_ADD,7,226,110,14,WS_GROUP
+    DEFPUSHBUTTON   "Speichern",IDOK,57,256,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,117,256,50,14,WS_GROUP
+END
+
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 297
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Bedingung bearbeiten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Eigenschaft",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,25,275,191
+    CONTROL         "Vergleich",IDC_CATEGORY2,"CCategory",WS_GROUP,7,226,275,15
+    COMBOBOX        IDC_COMPARE,7,243,80,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",IDC_PROPERTY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,96,243,186,13
+    DEFPUSHBUTTON   "OK",IDOK,174,275,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,232,275,50,14,WS_GROUP
+END
+
+IDD_LICENSE DIALOGEX 0, 0, 350, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Lizenzschlüssel eingeben"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Unser Partner share*it sendet Ihnen eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Laden Sie diese Datei, oder kopieren Sie den Inhalt der Datei in das Textfeld.",IDC_INSTRUCTIONS,7,7,336,35
+    CONTROL         "Lizenzschlüssel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
+    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,293,161,50,14,WS_GROUP
 END
 
 
@@ -567,7 +602,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 383
         TOPMARGIN, 7
-        BOTTOMMARGIN, 205
+        BOTTOMMARGIN, 206
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -575,7 +610,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 463
         TOPMARGIN, 7
-        BOTTOMMARGIN, 275
+        BOTTOMMARGIN, 274
     END
 
     IDD_STOREDELETE, DIALOG
@@ -610,14 +645,6 @@ BEGIN
         BOTTOMMARGIN, 298
     END
 
-    IDD_ENTERLICENSEKEY, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 171
-    END
-
     IDD_STOREMAINTENANCE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -634,22 +661,25 @@ BEGIN
         BOTTOMMARGIN, 238
     END
 
-    IDD_BROWSEFORFOLDER, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 309
-    END
-
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        BOTTOMMARGIN, 333
+        BOTTOMMARGIN, 332
     END
 
     IDD_EDITTIME, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 141
+        RIGHTMARGIN, 127
         TOPMARGIN, 7
-        BOTTOMMARGIN, 203
+        BOTTOMMARGIN, 210
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 74
     END
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
@@ -697,7 +727,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 213
         TOPMARGIN, 7
-        BOTTOMMARGIN, 111
+        BOTTOMMARGIN, 110
     END
 
     IDD_ADDSTORE, DIALOG
@@ -706,6 +736,46 @@ BEGIN
         RIGHTMARGIN, 633
         TOPMARGIN, 11
         BOTTOMMARGIN, 398
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 149
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 51
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 167
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 289
+    END
+
+    IDD_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 343
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -719,6 +789,8 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+    IDR_FILEDROP            "FileDrop"
+    IDR_CLIPBOARD           "Zwischenablage"
 END
 
 STRINGTABLE 
@@ -770,7 +842,14 @@ BEGIN
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_STORENEW            "Neuen Store anlegen"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
-    IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen ?"
+    IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen?"
+    IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
+    IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
 END
 
 STRINGTABLE 
@@ -868,19 +947,27 @@ BEGIN
     END
 END
 
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Añadir condición...",        IDM_CONDITIONLIST_ADD
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 212
+IDD_ABOUT DIALOGEX 0, 0, 390, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Acera liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,333,191,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,333,192,50,14,WS_GROUP
     CONTROL         "Desarrollado de <a>liquidFOLDERS</a> en Alemania.\nVersion %s, %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "Licensia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
@@ -896,7 +983,7 @@ BEGIN
     LTEXT           "X",IDC_QUANTITY,133,161,51,8
     PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,13,102,172,67,WS_GROUP
     CONTROL         "Actualizacione",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,199,93,184,82
-    CONTROL         "uscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
+    CONTROL         "Buscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,205,103,171,10
     CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,215,115,161,10
     CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,126,161,10
@@ -909,8 +996,8 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Seleccionar store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,413,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,413,260,50,14,WS_GROUP
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -923,7 +1010,7 @@ BEGIN
     CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,47,162,165,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,8
+    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,15
     LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,51,206,17
     LTEXT           "Usted da permiso de eliminar el store al elegir ""Eliminar"" en la parte de abajo y luego dar click en ""Eliminar ahora"".",IDC_STATIC,7,81,205,17
     LTEXT           "Esta ventana previene que usted elimine accidentalmente muchos archivos.",IDC_STATIC,7,190,263,8
@@ -998,30 +1085,15 @@ BEGIN
     CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Dictar licencia"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "Licencia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
-    LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo ""liquidFOLDERS.lic"" adjunto. Guarde este archivo de manera local en su computadora.",IDC_STATIC,14,18,322,18
-    LTEXT           "Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro debajo del botón.",IDC_STATIC,14,34,322,18
-    PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,14,54,111,15,WS_GROUP
-    LTEXT           "Licencia:",IDC_STATIC,14,79,322,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,293,157,50,14,WS_GROUP
-END
-
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 260, 316
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Seleccionar carpeta"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,288
-    CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,297,137,10
-    DEFPUSHBUTTON   "OK",IDOK,146,295,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,203,295,50,14,WS_GROUP
+    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,287
+    CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,296,135,10
+    DEFPUSHBUTTON   "OK",IDOK,146,294,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,203,294,50,14,WS_GROUP
 END
 
 IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
@@ -1029,10 +1101,10 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Complementar propiedades"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,76,319,50,14,WS_GROUP
-    PUSHBUTTON      "Omitir",IDC_SKIP,133,319,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,191,319,50,14,WS_GROUP
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
+    DEFPUSHBUTTON   "OK",IDOK,76,318,50,14,WS_GROUP
+    PUSHBUTTON      "Omitir",IDC_SKIP,133,318,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,191,318,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
 END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
@@ -1051,24 +1123,24 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,291,224,50,14,WS_GROUP
 END
 
-IDD_EDITTIME DIALOGEX 0, 0, 148, 210
+IDD_EDITTIME DIALOGEX 0, 0, 134, 218
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,14,19,120,102
-    CONTROL         "Usar &hora",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,146,120,10
-    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,14,160,120,15
-    DEFPUSHBUTTON   "OK",IDOK,34,189,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,91,189,50,14,WS_GROUP
-    GROUPBOX        "Fecha",IDC_GROUPBOX1,7,7,134,122
-    GROUPBOX        "Hora",IDC_GROUPBOX2,7,135,134,48
+    DEFPUSHBUTTON   "OK",IDOK,20,196,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,77,196,50,14,WS_GROUP
+    CONTROL         "Fecha",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
+    CONTROL         "Hora",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
+    CONTROL         "Usar &hora",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 249, 82
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Cancelar",IDCANCEL,192,61,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,192,60,50,14
     CONTROL         "X",IDC_CAPTION,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,7,235,8
     CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",PBS_SMOOTH,7,19,235,14
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
@@ -1177,13 +1249,13 @@ BEGIN
     CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 406
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Adjuntar store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,11,105,622,15
     PUSHBUTTON      "Crea un nuevo store para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -1196,6 +1268,78 @@ BEGIN
     PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
     DEFPUSHBUTTON   "Listo",IDOK,583,384,50,14,WS_GROUP
     LTEXT           "",IDC_STATUS,11,386,570,8
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Guardar filtro"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Propiedades",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,263,15
+    LTEXT           "Nombre:",IDC_STATIC,7,86,45,8
+    LTEXT           "Comentarios:",IDC_STATIC,7,107,45,8
+    EDITTEXT        IDC_FILENAME,56,84,214,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,56,105,214,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,220,136,50,14,WS_GROUP
+    CONTROL         "Destino",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,180,37
+    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,190,34,80,14
+END
+
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Seleccionar año"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Año:",IDC_STATIC,7,8,25,8
+    EDITTEXT        IDC_YEAR,35,7,80,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,37,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,65,37,50,14,WS_GROUP
+END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 174, 278
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Editar filtro"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Buscar en",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
+    CONTROL         "&Todos los stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "Este &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    LTEXT           "Buscar término (todas propriedades):",IDC_STATIC,7,53,160,8
+    EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Otras condiciones",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    PUSHBUTTON      "&Añadir condición...",IDM_CONDITIONLIST_ADD,7,226,100,14,WS_GROUP
+    DEFPUSHBUTTON   "Guardar",IDOK,57,256,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,117,256,50,14,WS_GROUP
+END
+
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 297
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Editar condición"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Propiedad",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,25,275,191
+    CONTROL         "Comparación",IDC_CATEGORY2,"CCategory",WS_GROUP,7,226,275,15
+    COMBOBOX        IDC_COMPARE,7,243,80,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",IDC_PROPERTY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,96,243,186,13
+    DEFPUSHBUTTON   "OK",IDOK,174,275,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,232,275,50,14,WS_GROUP
+END
+
+IDD_LICENSE DIALOGEX 0, 0, 350, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dictar licencia"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo ""liquidFOLDERS.lic"" adjunto. Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro.",IDC_INSTRUCTIONS,7,7,336,35
+    CONTROL         "Licencia",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
+    PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,7,62,115,15,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,293,161,50,14,WS_GROUP
 END
 
 
@@ -1212,7 +1356,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 383
         TOPMARGIN, 7
-        BOTTOMMARGIN, 205
+        BOTTOMMARGIN, 206
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -1220,7 +1364,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 463
         TOPMARGIN, 7
-        BOTTOMMARGIN, 275
+        BOTTOMMARGIN, 274
     END
 
     IDD_STOREDELETE, DIALOG
@@ -1263,22 +1407,14 @@ BEGIN
         BOTTOMMARGIN, 88
     END
 
-    IDD_ENTERLICENSEKEY, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 171
-    END
-
     IDD_BROWSEFORFOLDER, DIALOG
     BEGIN
-        BOTTOMMARGIN, 309
+        BOTTOMMARGIN, 308
     END
 
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        BOTTOMMARGIN, 333
+        BOTTOMMARGIN, 332
     END
 
     IDD_EDITTAGS, DIALOG
@@ -1292,9 +1428,17 @@ BEGIN
     IDD_EDITTIME, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 141
+        RIGHTMARGIN, 127
         TOPMARGIN, 7
-        BOTTOMMARGIN, 203
+        BOTTOMMARGIN, 210
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 74
     END
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
@@ -1342,7 +1486,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 213
         TOPMARGIN, 7
-        BOTTOMMARGIN, 111
+        BOTTOMMARGIN, 110
     END
 
     IDD_ADDSTORE, DIALOG
@@ -1351,6 +1495,46 @@ BEGIN
         RIGHTMARGIN, 633
         TOPMARGIN, 11
         BOTTOMMARGIN, 398
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 149
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 51
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 167
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 289
+    END
+
+    IDD_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 343
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1364,6 +1548,8 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+    IDR_FILEDROP            "FileDrop"
+    IDR_CLIPBOARD           "Portapapeles"
 END
 
 STRINGTABLE 
@@ -1416,6 +1602,13 @@ BEGIN
     IDS_STORENEW            "Crear nuevo store"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
+    IDS_DELETESTORE_CAPTION "Eliminar store ""%s"""
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
+    IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
 END
 
 STRINGTABLE 
@@ -1513,19 +1706,27 @@ BEGIN
     END
 END
 
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 212
+IDD_ABOUT DIALOGEX 0, 0, 390, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Concernant liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,333,191,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,333,192,50,14,WS_GROUP
     CONTROL         "Développée par <a>liquidFOLDERS</a> en Allemagne.\nVersion %s, crée %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
@@ -1554,8 +1755,8 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Choisissez un store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,413,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,413,260,50,14,WS_GROUP
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 295, 204
@@ -1568,7 +1769,7 @@ BEGIN
     CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
     PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,20,162,210,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,281,8
+    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,281,15
     LTEXT           "Comme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,51,213,17
     LTEXT           "Pour l'effacement vous donnez votre approbation en choisir ""Effacer"" et, ensuite, en cliquer sur ""Effacer maintenant"":",IDC_STATIC,7,81,213,17
     LTEXT           "Cette fenêtre empêche l'effacement non intentionnel de beaucoup de fichiers.",IDC_STATIC,7,189,281,8
@@ -1643,19 +1844,17 @@ BEGIN
     CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
+IDD_LICENSE DIALOGEX 0, 0, 350, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Donner clé de licence"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
-    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier „liquidFOLDERS.lic“ est ajouté. Mémorisez ce fichier localement sur votre ordinateur.",IDC_STATIC,14,18,322,18
-    LTEXT           "Ensuite ouvrez le fichier avec le tableau de commande mentionné ci-dessous. Alternatif vous pouvez copier son contenu dans le champ de texte y compris.",IDC_STATIC,14,34,322,18
-    PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,14,54,115,15,WS_GROUP
-    LTEXT           "Clé de licence:",IDC_STATIC,14,79,322,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,293,157,50,14,WS_GROUP
+    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier ""liquidFOLDERS.lic"" est ajouté. Ensuite ouvrez le fichier, ou copierez son contenu dans le champ de texte y compris.",IDC_INSTRUCTIONS,7,7,336,35
+    CONTROL         "Licence",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
+    PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,7,62,115,15,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,293,161,50,14,WS_GROUP
 END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 260, 316
@@ -1663,11 +1862,11 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | W
 CAPTION "Choisissez un dossier"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,288
+    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,287
     CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,297,137,10
-    DEFPUSHBUTTON   "OK",IDOK,146,295,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,203,295,50,14,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,296,135,10
+    DEFPUSHBUTTON   "OK",IDOK,146,294,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,203,294,50,14,WS_GROUP
 END
 
 IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
@@ -1675,10 +1874,10 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Ajouter les qualités"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,76,319,50,14,WS_GROUP
-    PUSHBUTTON      "Omettre",IDC_SKIP,133,319,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,191,319,50,14,WS_GROUP
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
+    DEFPUSHBUTTON   "OK",IDOK,76,318,50,14,WS_GROUP
+    PUSHBUTTON      "Omettre",IDC_SKIP,133,318,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,191,318,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
 END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
@@ -1697,24 +1896,24 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,291,224,50,14,WS_GROUP
 END
 
-IDD_EDITTIME DIALOGEX 0, 0, 148, 210
+IDD_EDITTIME DIALOGEX 0, 0, 134, 218
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,14,19,120,102
-    CONTROL         "Utiliser l'&heure",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,146,120,10
-    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,14,160,120,15
-    DEFPUSHBUTTON   "OK",IDOK,34,189,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,91,189,50,14,WS_GROUP
-    GROUPBOX        "Donnée",IDC_GROUPBOX1,7,7,134,122
-    GROUPBOX        "Heure",IDC_GROUPBOX2,7,135,134,48
+    DEFPUSHBUTTON   "OK",IDOK,20,196,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,77,196,50,14,WS_GROUP
+    CONTROL         "Jour",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
+    CONTROL         "Heure",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
+    CONTROL         "Utiliser l'&heure",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 249, 82
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Annuler",IDCANCEL,192,61,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,192,60,50,14
     CONTROL         "X",IDC_CAPTION,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,7,235,8
     CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",PBS_SMOOTH,7,19,235,14
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
@@ -1821,13 +2020,13 @@ BEGIN
     CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 406
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ajouter store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,11,105,622,15
     PUSHBUTTON      "Crée un nouveau store pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -1840,6 +2039,65 @@ BEGIN
     PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
     DEFPUSHBUTTON   "Fini",IDOK,583,384,50,14,WS_GROUP
     LTEXT           "",IDC_STATUS,11,386,570,8
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Sauvegarder le filtre"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Qualités",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,263,15
+    LTEXT           "Nom:",IDC_STATIC,7,86,50,8
+    LTEXT           "Commentaire:",IDC_STATIC,7,107,50,8
+    EDITTEXT        IDC_FILENAME,61,84,209,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,61,105,209,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,220,136,50,14,WS_GROUP
+    CONTROL         "Destination",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,175,37
+    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,185,34,85,14
+END
+
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choisissez l'année"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Année:",IDC_STATIC,7,8,25,8
+    EDITTEXT        IDC_YEAR,35,7,80,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,37,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,65,37,50,14,WS_GROUP
+END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 174, 278
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Modifier filtre"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Rechercher dans",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
+    CONTROL         "&Tous les stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "Ce &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    LTEXT           "Mot de recherches (tous le qualités):",IDC_STATIC,7,53,160,8
+    EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Autres conditions",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    PUSHBUTTON      "&Ajouter condition...",IDM_CONDITIONLIST_ADD,7,226,100,14,WS_GROUP
+    DEFPUSHBUTTON   "Sauvegarder",IDOK,57,256,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,117,256,50,14,WS_GROUP
+END
+
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 297
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Modifier condition"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Qualité",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,25,275,191
+    CONTROL         "Comparaison",IDC_CATEGORY2,"CCategory",WS_GROUP,7,226,275,15
+    COMBOBOX        IDC_COMPARE,7,243,80,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",IDC_PROPERTY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,96,243,186,13
+    DEFPUSHBUTTON   "OK",IDOK,174,275,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,232,275,50,14,WS_GROUP
 END
 
 
@@ -1856,7 +2114,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 383
         TOPMARGIN, 7
-        BOTTOMMARGIN, 205
+        BOTTOMMARGIN, 206
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -1864,7 +2122,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 463
         TOPMARGIN, 7
-        BOTTOMMARGIN, 275
+        BOTTOMMARGIN, 274
     END
 
     IDD_STOREDELETE, DIALOG
@@ -1908,22 +2166,17 @@ BEGIN
         BOTTOMMARGIN, 88
     END
 
-    IDD_ENTERLICENSEKEY, DIALOG
+    IDD_LICENSE, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 171
-    END
-
-    IDD_BROWSEFORFOLDER, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 309
+        BOTTOMMARGIN, 175
     END
 
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        BOTTOMMARGIN, 333
+        BOTTOMMARGIN, 332
     END
 
     IDD_EDITTAGS, DIALOG
@@ -1937,9 +2190,17 @@ BEGIN
     IDD_EDITTIME, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 141
+        RIGHTMARGIN, 127
         TOPMARGIN, 7
-        BOTTOMMARGIN, 203
+        BOTTOMMARGIN, 210
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 74
     END
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
@@ -1987,7 +2248,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 213
         TOPMARGIN, 7
-        BOTTOMMARGIN, 111
+        BOTTOMMARGIN, 110
     END
 
     IDD_ADDSTORE, DIALOG
@@ -1996,6 +2257,38 @@ BEGIN
         RIGHTMARGIN, 633
         TOPMARGIN, 11
         BOTTOMMARGIN, 398
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 149
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 51
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 167
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 289
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -2009,6 +2302,8 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+    IDR_FILEDROP            "FileDrop"
+    IDR_CLIPBOARD           "Presse-papiers"
 END
 
 STRINGTABLE 
@@ -2060,7 +2355,14 @@ BEGIN
     IDS_STOREPROPERTIES     "Qualités de ""%s"""
     IDS_STORENEW            "Créez un store nouveau"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
-    IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété ?"
+    IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété?"
+    IDS_DELETESTORE_CAPTION "Effacez le store ""%s"""
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
+    IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
 END
 
 STRINGTABLE 
@@ -2208,19 +2510,27 @@ BEGIN
     END
 END
 
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 212
+IDD_ABOUT DIALOGEX 0, 0, 390, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,333,191,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,333,192,50,14,WS_GROUP
     CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
@@ -2249,8 +2559,8 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Choose store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,413,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,413,260,50,14,WS_GROUP
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -2263,7 +2573,7 @@ BEGIN
     CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
     PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,47,162,165,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Please confirm that you really want to delete the selected store.",IDC_CAPTION,7,31,263,8
+    LTEXT           "Please confirm that you really want to delete the selected store.",IDC_CAPTION,7,31,263,15
     LTEXT           "Since the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,7,51,166,17
     LTEXT           "You give permission to delete the store by choosing ""Delete"" below, and then click on the button ""Delete now"".",IDC_STATIC,7,81,205,17
     LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,190,263,8
@@ -2338,21 +2648,6 @@ BEGIN
     CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Enter license key"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
-    LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.lic“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,18,322,18
-    LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,34,322,18
-    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
-    LTEXT           "License key:",IDC_STATIC,14,79,322,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,293,157,50,14,WS_GROUP
-END
-
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit tags"
@@ -2374,10 +2669,10 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | W
 CAPTION "Select a folder"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,288
-    CONTROL         "&Delete source files",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,297,137,10
-    DEFPUSHBUTTON   "OK",IDOK,146,295,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,203,295,50,14,WS_GROUP
+    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,287
+    CONTROL         "&Delete source files",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,296,135,10
+    DEFPUSHBUTTON   "OK",IDOK,146,294,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,203,294,50,14,WS_GROUP
 END
 
 IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
@@ -2385,30 +2680,30 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Tag files"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,76,319,50,14,WS_GROUP
-    PUSHBUTTON      "Skip",IDC_SKIP,133,319,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,191,319,50,14,WS_GROUP
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
+    DEFPUSHBUTTON   "OK",IDOK,76,318,50,14,WS_GROUP
+    PUSHBUTTON      "Skip",IDC_SKIP,133,318,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,191,318,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
 END
 
-IDD_EDITTIME DIALOGEX 0, 0, 148, 210
+IDD_EDITTIME DIALOGEX 0, 0, 134, 218
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,14,19,120,102
-    CONTROL         "Use &time",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,146,120,10
-    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,14,160,120,15
-    DEFPUSHBUTTON   "OK",IDOK,34,189,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,91,189,50,14,WS_GROUP
-    GROUPBOX        "Date",IDC_GROUPBOX1,7,7,134,122
-    GROUPBOX        "Time",IDC_GROUPBOX2,7,135,134,48
+    DEFPUSHBUTTON   "OK",IDOK,20,196,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,77,196,50,14,WS_GROUP
+    CONTROL         "Date",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
+    CONTROL         "Time",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
+    CONTROL         "Use &time",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 249, 82
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Cancel",IDCANCEL,192,61,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,192,60,50,14
     CONTROL         "X",IDC_CAPTION,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,7,235,8
     CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",PBS_SMOOTH,7,19,235,14
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
@@ -2517,13 +2812,13 @@ BEGIN
     CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,120,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 640, 405
+IDD_ADDSTORE DIALOGEX 0, 0, 640, 406
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_LOCAL,"CCategory",WS_GROUP,11,11,622,15
-    CONTROL         "X",IDC_ADDSTORE_CATEGORY_REMOTE,"CCategory",WS_GROUP,11,105,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,11,11,622,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,11,105,622,15
     PUSHBUTTON      "Creates a new store for your files.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Adds an existing directory as store.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adds a Dropbox account as store.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -2536,6 +2831,78 @@ BEGIN
     PUSHBUTTON      "Adds a YouTube account as store.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
     DEFPUSHBUTTON   "Done",IDOK,583,384,50,14,WS_GROUP
     LTEXT           "",IDC_STATUS,11,386,570,8
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Save filter"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Properties",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,263,15
+    LTEXT           "Name:",IDC_STATIC,7,86,40,8
+    LTEXT           "Comments:",IDC_STATIC,7,107,40,8
+    EDITTEXT        IDC_FILENAME,51,84,219,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,51,105,219,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,220,136,50,14,WS_GROUP
+    CONTROL         "Destination",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,195,34,75,14
+END
+
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Go to year"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Year:",IDC_STATIC,7,8,25,8
+    EDITTEXT        IDC_YEAR,35,7,80,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,37,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,37,50,14,WS_GROUP
+END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 174, 278
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit filter"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Search in",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
+    CONTROL         "&All stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "This &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    LTEXT           "Search term (in all propeties):",IDC_STATIC,7,53,160,8
+    EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Other conditions",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    PUSHBUTTON      "A&dd condition...",IDM_CONDITIONLIST_ADD,7,226,90,14,WS_GROUP
+    DEFPUSHBUTTON   "Save",IDOK,57,256,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,117,256,50,14,WS_GROUP
+END
+
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 297
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit condition"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Property",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,25,275,191
+    CONTROL         "Comparison",IDC_CATEGORY2,"CCategory",WS_GROUP,7,226,275,15
+    COMBOBOX        IDC_COMPARE,7,243,80,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",IDC_PROPERTY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,96,243,186,13
+    DEFPUSHBUTTON   "OK",IDOK,174,275,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,232,275,50,14,WS_GROUP
+END
+
+IDD_LICENSE DIALOGEX 0, 0, 350, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Enter license key"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Our partner share*it will send you an email that has the file ""liquidFOLDERS.lic"" attached to it. Open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_INSTRUCTIONS,7,7,336,35
+    CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
+    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,293,161,50,14,WS_GROUP
 END
 
 
@@ -2552,7 +2919,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 383
         TOPMARGIN, 7
-        BOTTOMMARGIN, 205
+        BOTTOMMARGIN, 206
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -2560,7 +2927,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 463
         TOPMARGIN, 7
-        BOTTOMMARGIN, 275
+        BOTTOMMARGIN, 274
     END
 
     IDD_STOREDELETE, DIALOG
@@ -2603,14 +2970,6 @@ BEGIN
         BOTTOMMARGIN, 88
     END
 
-    IDD_ENTERLICENSEKEY, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 171
-    END
-
     IDD_EDITTAGS, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -2621,20 +2980,28 @@ BEGIN
 
     IDD_BROWSEFORFOLDER, DIALOG
     BEGIN
-        BOTTOMMARGIN, 309
+        BOTTOMMARGIN, 308
     END
 
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        BOTTOMMARGIN, 333
+        BOTTOMMARGIN, 332
     END
 
     IDD_EDITTIME, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 141
+        RIGHTMARGIN, 127
         TOPMARGIN, 7
-        BOTTOMMARGIN, 203
+        BOTTOMMARGIN, 210
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 74
     END
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
@@ -2682,7 +3049,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 213
         TOPMARGIN, 7
-        BOTTOMMARGIN, 111
+        BOTTOMMARGIN, 110
     END
 
     IDD_ADDSTORE, DIALOG
@@ -2691,6 +3058,38 @@ BEGIN
         RIGHTMARGIN, 633
         TOPMARGIN, 11
         BOTTOMMARGIN, 398
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 149
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 51
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 167
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 343
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -2704,6 +3103,8 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+    IDR_FILEDROP            "FileDrop"
+    IDR_CLIPBOARD           "Clipboard"
 END
 
 STRINGTABLE 
@@ -2755,7 +3156,14 @@ BEGIN
     IDS_STOREPROPERTIES     "Properties of ""%s"""
     IDS_STORENEW            "Create new store"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
-    IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property ?"
+    IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property?"
+    IDS_DELETESTORE_CAPTION "Delete store ""%s"""
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
+    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
 END
 
 STRINGTABLE 

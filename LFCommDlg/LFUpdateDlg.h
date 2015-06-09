@@ -9,7 +9,7 @@
 // LFUpdateDlg
 //
 
-class AFX_EXT_CLASS LFUpdateDlg : public LFDialog
+class LFUpdateDlg : public LFDialog
 {
 public:
 	LFUpdateDlg(CString Version, CString MSN, CWnd* pParentWnd=NULL);

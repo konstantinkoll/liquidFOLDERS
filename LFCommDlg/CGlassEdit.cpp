@@ -11,8 +11,6 @@
 
 #define BORDER     4
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CGlassEdit::CGlassEdit()
 	: CEdit()
 {
@@ -70,7 +68,7 @@ INT CGlassEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		if (h>=16)
 		{
 			m_IconSize = (h>=27) ? 27 : (h>=22) ? 22 : 16;
-			hSearchIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_SEARCH), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+			hSearchIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_SEARCH), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 		}
 	}
 

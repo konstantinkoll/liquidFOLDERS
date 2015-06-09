@@ -22,7 +22,7 @@ static INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lPara
 extern INT GetAttributeIconIndex(UINT Attr);
 
 LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd)
-	: CDialog(nIDTemplate, pParentWnd)
+	: LFDialog(nIDTemplate, pParentWnd)
 {
 	p_App = LFGetApp();
 }
@@ -86,6 +86,7 @@ void LFAttributeListDlg::FinalizeListCtrl(CListCtrl* li, INT focus, BOOL sort)
 				select = a;
 				break;
 			}
+
 	li->SetItemState(select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
@@ -110,12 +111,12 @@ void LFAttributeListDlg::PopulateListCtrl(INT nID, BOOL check, INT focus, BOOL s
 }
 
 
-BEGIN_MESSAGE_MAP(LFAttributeListDlg, CDialog)
+BEGIN_MESSAGE_MAP(LFAttributeListDlg, LFDialog)
 END_MESSAGE_MAP()
 
 BOOL LFAttributeListDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	LFDialog::OnInitDialog();
 
 	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
 

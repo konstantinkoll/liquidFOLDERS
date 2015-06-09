@@ -10,7 +10,6 @@
 // LFStoreMaintenanceDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParentWnd)
 	: CDialog(IDD_STOREMAINTENANCE, pParentWnd)
@@ -61,14 +60,14 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_STOREMAINTENANCE));
+	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_STOREMAINTENANCE));
 	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
 	// Icons
 	m_Icons.Create(16, 16, ILC_COLOR32, 1, 1);
 
-	hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+	hIcon = (HICON)LoadImage(AfxGetResourceHandle(), IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 	m_Icons.Add(hIcon);
 	DestroyIcon(hIcon);
 

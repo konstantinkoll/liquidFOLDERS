@@ -1,5 +1,5 @@
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include "CIndex.h"
 #include <shlobj.h>
 
@@ -34,7 +34,7 @@ void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_
 bool FileExists(LPWSTR lpPath);
 unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t* Dst, size_t cCount);
 bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate);
-void SendLFNotifyMessage(unsigned int Msg, HWND hWndSource);
+void SendLFNotifyMessage(unsigned int Msg);
 void SendShellNotifyMessage(unsigned int Msg, char* StoreID=NULL, LPITEMIDLIST oldpidl=NULL, LPITEMIDLIST oldpidlDelegate=NULL);
 unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pProgress=NULL);
 unsigned int OpenStore(char* StoreID, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor** s, HANDLE* lock);

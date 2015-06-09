@@ -6,41 +6,6 @@
 #include "LFCommDlg.h"
 
 
-// Thread workers
-//
-
-struct WorkerParameters
-{
-	LFWorkerParameters Hdr;
-	CHAR StoreID[LFKeySize];
-	BOOL Move;
-	LFItemDescriptor* Template;
-	union
-	{
-		LFFileIDList* FileIDList;
-		LFFileImportList* FileImportList;
-	};
-};
-
-DWORD WINAPI WorkerImportFromFS(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, true, wp->Move==TRUE, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-DWORD WINAPI WorkerImportFromStore(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	LFTransactionImport(wp->StoreID, wp->FileIDList, wp->Move==TRUE, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-
 // LFDropTarget
 //
 
@@ -58,7 +23,6 @@ void LFDropTarget::SetDragging(BOOL IsDragging)
 {
 	m_IsDragging = IsDragging;
 }
-
 
 void LFDropTarget::SetOwner(CWnd* pOwner)
 {
@@ -90,7 +54,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
 	strcpy_s(wp.StoreID, LFKeySize, StoreID);
-	wp.Move = (dwEffect & DROPEFFECT_MOVE)!=0;
+	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
 	// Template füllen
 	if (!m_SkipTemplate)
@@ -112,7 +76,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	wp.FileImportList = LFAllocFileImportList(hDrop);
 	GlobalUnlock(hgDrop);
 
-	LFDoWithProgress(WorkerImportFromFS, &wp.Hdr, pWnd);
+	LFDoWithProgress(WorkerImportFromWindows, &wp.Hdr, pWnd);
 	UINT res = wp.FileImportList->m_LastError;
 	LFErrorBox(res, pWnd->GetSafeHwnd());
 
@@ -120,7 +84,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	LFFreeItemDescriptor(wp.Template);
 
 	if (p_Owner)
-		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
 	return (res==LFOk) ? S_OK : E_INVALIDARG;
 }
@@ -130,7 +94,7 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
 	strcpy_s(wp.StoreID, LFKeySize, StoreID);
-	wp.Move = (dwEffect & DROPEFFECT_MOVE)!=0;
+	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
 	wp.FileIDList = LFAllocFileIDList(hLiquid);
@@ -158,7 +122,7 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	LFFreeFileIDList(wp.FileIDList);
 
 	if (p_Owner)
-		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
 	return (res==LFOk) ? S_OK : E_INVALIDARG;
 }
@@ -180,7 +144,7 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 	LFFreeFileIDList(il);
 
 	if (p_Owner)
-		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
 	return (res==LFOk) ? S_OK : E_INVALIDARG;
 }

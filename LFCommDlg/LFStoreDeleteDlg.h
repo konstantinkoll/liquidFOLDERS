@@ -3,23 +3,24 @@
 //
 
 #pragma once
-#include "LFDialog.h"
+#include "LFCommDlg.h"
 
 
 // LFStoreDeleteDlg
 //
 
-class AFX_EXT_CLASS LFStoreDeleteDlg : public LFDialog
+class LFStoreDeleteDlg : public LFDialog
 {
 public:
-	LFStoreDeleteDlg(CWnd* pParentWnd, WCHAR* _StoreName);
+	LFStoreDeleteDlg(CHAR* StoreID, CWnd* pParentWnd=NULL);
 
 protected:
 	afx_msg BOOL OnInitDialog();
 	afx_msg void SetOkButton();
+	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
-	WCHAR* StoreName;
-	CFont BoldFont;
+	CHAR m_Key[LFKeySize];
+	LFStoreDescriptor m_Store;
 };

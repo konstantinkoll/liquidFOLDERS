@@ -8,7 +8,7 @@
 // CCategory
 //
 
-class AFX_EXT_CLASS CCategory : public CStatic
+class CCategory : public CStatic
 {
 public:
 	CCategory();

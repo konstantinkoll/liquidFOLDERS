@@ -5,7 +5,7 @@
 // CGdiPlusBitmap
 //
 
-class AFX_EXT_CLASS CGdiPlusBitmap
+class CGdiPlusBitmap
 {
 public:
 	CGdiPlusBitmap();
@@ -23,7 +23,7 @@ public:
 // CGdiPlusBitmapMemory
 //
 
-class AFX_EXT_CLASS CGdiPlusBitmapMemory : public CGdiPlusBitmap
+class CGdiPlusBitmapMemory : public CGdiPlusBitmap
 {
 public:
 	CGdiPlusBitmapMemory();
@@ -36,7 +36,7 @@ public:
 // CGdiPlusBitmapResource
 //
 
-class AFX_EXT_CLASS CGdiPlusBitmapResource : public CGdiPlusBitmapMemory
+class CGdiPlusBitmapResource : public CGdiPlusBitmapMemory
 {
 public:
 	CGdiPlusBitmapResource();

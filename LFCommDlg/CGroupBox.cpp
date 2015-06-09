@@ -10,8 +10,6 @@
 // CGroupBox
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CGroupBox::CGroupBox()
 	: CStatic()
 {
@@ -29,13 +27,6 @@ CGroupBox::CGroupBox()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CGroupBox", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CGroupBox", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();

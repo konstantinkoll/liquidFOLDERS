@@ -50,6 +50,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
 				MinimalRebuild="true"
+				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -82,7 +83,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -132,6 +132,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
 				MinimalRebuild="true"
+				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -164,7 +165,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -216,6 +216,7 @@
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\cryptlib&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
+				ExceptionHandling="1"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
@@ -253,7 +254,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -305,6 +305,7 @@
 				AdditionalIncludeDirectories="$(SolutionDir)\include;$(SolutionDir)\cryptlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
+				ExceptionHandling="1"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
@@ -342,7 +343,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -576,10 +576,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DynArray.h"
-				>
-			</File>
-			<File
 				RelativePath=".\IATA.h"
 				>
 			</File>
@@ -596,11 +592,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LFBitArray.h"
+				RelativePath=".\LF.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\LFCore.h"
+				RelativePath=".\LFBitArray.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFCore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDynArray.h"
 				>
 			</File>
 			<File
@@ -633,10 +637,6 @@
 			</File>
 			<File
 				RelativePath=".\License.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\liquidFOLDERS.h"
 				>
 			</File>
 			<File
@@ -770,14 +770,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\include\liquidFOLDERS32.manifest.xml"
-			>
-		</File>
-		<File
-			RelativePath="..\include\liquidFOLDERS64.manifest.xml"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

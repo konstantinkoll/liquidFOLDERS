@@ -1,6 +1,6 @@
 #pragma once
-#include "liquidFOLDERS.h"
-#include "DynArray.h"
+#include "LF.h"
+#include "LFDynArray.h"
 #include <shlobj.h>
 
 struct LFTL_Item
@@ -16,7 +16,7 @@ struct LFTL_Item
 };
 
 
-class LFTransactionList : public DynArray<LFTL_Item>
+class LFTransactionList : public LFDynArray<LFTL_Item>
 {
 public:
 	LFTransactionList();

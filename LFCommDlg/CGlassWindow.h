@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LFCore.h"
 #include "LFApplication.h"
 
 
@@ -14,7 +14,7 @@
 #define GWD_THEMED             2
 #define GWD_AERO               3
 
-class AFX_EXT_CLASS CGlassWindow : public CWnd
+class CGlassWindow : public CWnd
 {
 public:
 	CGlassWindow();
@@ -54,6 +54,7 @@ protected:
 	afx_msg LRESULT OnDisplayChange(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
+	afx_msg BOOL OnNcActivate(BOOL bActive);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);

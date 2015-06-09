@@ -1,5 +1,5 @@
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 
 unsigned char GetRatingCategory(const unsigned char rating);
 unsigned int GetSizeCategory(const __int64 sz);

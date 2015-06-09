@@ -14,7 +14,7 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFLicenseDlg::LFLicenseDlg(CWnd* pParentWnd)
-	: LFDialog(IDD_ENTERLICENSEKEY, pParentWnd)
+	: LFDialog(IDD_LICENSE, pParentWnd)
 {
 }
 
@@ -53,6 +53,15 @@ BEGIN_MESSAGE_MAP(LFLicenseDlg, LFDialog)
 	ON_BN_CLICKED(IDC_LOADLICENSE, OnLoadLicense)
 	ON_EN_CHANGE(IDC_LICENSEKEY, OnChange)
 END_MESSAGE_MAP()
+
+BOOL LFLicenseDlg::OnInitDialog()
+{
+	LFDialog::OnInitDialog();
+
+	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&p_App->m_DefaultFont);
+
+	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
 
 void LFLicenseDlg::OnLoadLicense()
 {

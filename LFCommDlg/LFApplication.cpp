@@ -11,33 +11,10 @@
 #include <mmsystem.h>
 
 
-// Thread workers
-//
-
-struct WorkerParameters
-{
-	LFWorkerParameters Hdr;
-	CHAR StoreID[LFKeySize];
-	HWND hWndSource;
-	UINT Result;
-};
-
-DWORD WINAPI WorkerDeleteStore(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	wp->Result = LFDeleteStore(wp->StoreID, wp->hWndSource, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-
 // LFApplication
 //
 
 #define ResetNagCounter     m_NagCounter = 0;
-
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
@@ -46,8 +23,6 @@ BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppCommands)
 END_MESSAGE_MAP()
-
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 void PlayRegSound(CString Identifier)
 {
@@ -199,14 +174,7 @@ LFApplication::LFApplication(GUID& AppID)
 	}
 
 	// Eingebettete Schrift
-	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC, LFCommDlgDLL.hResource);
-
-	// Rating and Priority bitmaps
-	for (UINT a=0; a<=LFMaxRating; a++)
-	{
-		m_RatingBitmaps[a] = LoadBitmap(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDB_RATING0+a));
-		m_PriorityBitmaps[a] = LoadBitmap(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDB_PRIORITY0+a));
-	}
+	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
 
 	// Fonts
 	CString face = GetDefaultFontFace();
@@ -341,9 +309,16 @@ BOOL LFApplication::InitInstance()
 
 	// Dialog classes
 	WNDCLASS wc;
-	GetClassInfo(LFCommDlgDLL.hModule, _T("#32770"), &wc);
+	GetClassInfo(AfxGetInstanceHandle(), _T("#32770"), &wc);
 	wc.lpszClassName = _T("UpdateDlg");
 	AfxRegisterClass(&wc);
+
+	// Rating and Priority bitmaps
+	for (UINT a=0; a<=LFMaxRating; a++)
+	{
+		m_RatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
+		m_PriorityBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_PRIORITY0+a));
+	}
 
 	// liquidFOLDERS initalisieren
 	LFInitialize();
@@ -351,7 +326,7 @@ BOOL LFApplication::InitInstance()
 	// SendTo-Link erzeugen
 	LFCreateSendTo();
 
-	SetRegistryKey(_T("liquidFOLDERS"));
+	SetRegistryKey(_T(""));
 
 	ResetNagCounter;
 
@@ -616,44 +591,6 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* 
 		li->SetOverlayImage(IDI_OVR_Default-1, 1);
 }
 
-UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)
-{
-	if (!LFAskDeleteStore(store, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL))
-		return LFCancel;
-
-	// Dialogbox nur zeigen, wenn der Store gemountet ist
-	if (!(store->Type & LFTypeNotMounted))
-	{
-		LFStoreDeleteDlg dlg(pParentWnd, store->CoreAttributes.FileName);
-		if (dlg.DoModal()!=IDOK)
-			return LFCancel;
-	}
-
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, store->StoreID);
-	wp.hWndSource = pOwnerWnd ? pOwnerWnd->GetSafeHwnd() : NULL;
-
-	LFDoWithProgress(WorkerDeleteStore, &wp.Hdr, pParentWnd);
-
-	return wp.Result;
-}
-
-UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)
-{
-	if (!LFAskDeleteStore(store, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL))
-		return LFCancel;
-
-	// Dialogbox nur zeigen, wenn der Store gemountet ist
-	if (store->DatPath[0]!='\0')
-	{
-		LFStoreDeleteDlg dlg(pParentWnd, store->StoreName);
-		if (dlg.DoModal()!=IDOK)
-			return LFCancel;
-	}
-
-	return LFDeleteStore(store->StoreID, pOwnerWnd ? pOwnerWnd->GetSafeHwnd() : NULL);
-}
 
 void LFApplication::PlayStandardSound()
 {

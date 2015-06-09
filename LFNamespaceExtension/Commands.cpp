@@ -8,7 +8,7 @@
 #include "Commands.h"
 #include "LFCore.h"
 #include "LFNamespaceExtension.h"
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include "resource.h"
 #include <io.h>
 #include <shlguid.h>

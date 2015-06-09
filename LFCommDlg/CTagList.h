@@ -3,13 +3,13 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LFCore.h"
 
 
 // CTagList
 //
 
-class AFX_EXT_CLASS CTagList : public CListCtrl
+class CTagList : public CListCtrl
 {
 public:
 	CTagList();

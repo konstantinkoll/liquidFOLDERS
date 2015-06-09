@@ -9,8 +9,6 @@
 // CExplorerNotification
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 #define BORDERX     8
 #define BORDERY     10
 
@@ -55,22 +53,22 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 	case ENT_INFO:
 		m_FirstCol = 0xFF8E6F;
 		m_SecondCol = 0xF26120;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_INFORMATION), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_INFORMATION), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 		break;
 	case ENT_WARNING:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_WARNING), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_WARNING), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 		break;
 	case ENT_SHIELD:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_SHIELD), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_SHIELD), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 		break;
 	default:
 		m_FirstCol = 0x0000E6;
 		m_SecondCol = 0x0000AF;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_ERROR), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ERROR), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 	}
 
 	m_Text = Text;

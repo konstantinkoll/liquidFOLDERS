@@ -9,7 +9,7 @@
 // CHeaderArea
 //
 
-class AFX_EXT_CLASS CHeaderArea : public CWnd
+class CHeaderArea : public CWnd
 {
 public:
 	CHeaderArea();

@@ -9,7 +9,7 @@
 // LFStoreDataObject
 //
 
-class AFX_EXT_CLASS LFStoreDataObject : public IDataObject
+class LFStoreDataObject : public IDataObject
 {
 public:
 	LFStoreDataObject(LFItemDescriptor* i);

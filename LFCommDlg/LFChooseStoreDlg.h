@@ -4,7 +4,6 @@
 
 #pragma once
 #include "LFCore.h"
-#include "liquidFOLDERS.h"
 #include "CHeaderArea.h"
 #include "CExplorerList.h"
 #include "LFDialog.h"
@@ -13,7 +12,7 @@
 // LFChooseStoreDlg
 //
 
-class AFX_EXT_CLASS LFChooseStoreDlg : public LFDialog
+class LFChooseStoreDlg : public LFDialog
 {
 public:
 	LFChooseStoreDlg(CWnd* pParentWnd, BOOL Mounted=TRUE);

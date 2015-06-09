@@ -4,6 +4,8 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
+#include "LFEditTagsDlg.h"
+#include "LFEditTimeDlg.h"
 #include "resource.h"
 
 
@@ -249,7 +251,7 @@ void CProperty::SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariant
 	{
 		UINT Type = p_Parent->p_App->m_Attributes[p_Data->Attr].Type;
 
-		m_ShowRange &= (Type!=LFTypeUnicodeString) && (Type!=LFTypeUnicodeArray) && (Type!=LFTypeAnsiString) && (Type!=LFTypeFourCC) && (Type!=LFTypeFraction);
+		m_ShowRange &= (Type!=LFTypeUnicodeString) && (Type!=LFTypeUnicodeArray) && (Type!=LFTypeAnsiString) && (Type!=LFTypeFourCC) && (Type!=LFTypeFraction) && (Type!=LFTypeFlags);
 	}
 
 	if (m_ShowRange)
@@ -653,7 +655,6 @@ void CInspectorHeader::DrawHeader(CDC& /*dc*/, CRect /*rect*/, BOOL /*Themed*/)
 // CInspectorGrid
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern INT GetAttributeIconIndex(UINT Attr);
 
 #define GUTTER         3
@@ -682,13 +683,6 @@ CInspectorGrid::CInspectorGrid()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CInspectorGrid", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CInspectorGrid", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();
@@ -753,7 +747,7 @@ void CInspectorGrid::Init()
 	m_TooltipCtrl.Create(this);
 
 	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
+	CFont* pOldFont = dc->SelectObject(&p_App->m_LargeFont);
 	m_FontHeight[1] = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectStockObject(DEFAULT_GUI_FONT);
 	m_FontHeight[0] = dc->GetTextExtent(_T("Wy")).cy;
@@ -762,9 +756,9 @@ void CInspectorGrid::Init()
 
 	m_RowHeight = max(m_FontHeight[0]+2, 16);
 	m_IconSize = (m_RowHeight>=27) ? 27 : (m_RowHeight>=22) ? 22 : 16;
-	hIconResetNormal = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
-	hIconResetHot = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
-	hIconResetPressed = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+	hIconResetNormal = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+	hIconResetHot = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+	hIconResetPressed = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 }
 
 BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
@@ -1144,7 +1138,7 @@ void CInspectorGrid::AdjustLayout()
 		{
 			Category = pProp->Category;
 			INT Spacer = (m_ScrollHeight==1) ? -PADDING : 8;
-			m_Categories[Category].Top = m_ScrollHeight;
+			m_Categories[Category].Top = m_ScrollHeight+Spacer;
 			m_Categories[Category].Bottom = m_ScrollHeight+m_FontHeight[1]+2*LFCategoryPadding+Spacer;
 			m_ScrollHeight += m_FontHeight[1]+2*PADDING+Spacer+1;
 		}

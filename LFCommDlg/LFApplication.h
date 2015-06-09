@@ -4,8 +4,8 @@
 
 #pragma once
 #include "resource.h"
-#include "liquidFOLDERS.h"
 #include "CGdiPlusBitmap.h"
+#include "LFCore.h"
 #include <uxtheme.h>
 
 #define RatingBitmapWidth      88
@@ -68,7 +68,7 @@ struct ResourceCacheItem
 
 class LFUpdateDlg;
 
-class AFX_EXT_CLASS LFApplication : public CWinAppEx
+class LFApplication : public CWinAppEx
 {
 public:
 	LFApplication(GUID& AppID);
@@ -148,8 +148,6 @@ public:
 	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
 	static HANDLE LoadFontFromResource(UINT nID, HMODULE hInst=NULL);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons=FALSE);
-	static UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
-	static UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	static void PlayStandardSound();
 	static void PlayNavigateSound();
 	static void PlayWarningSound();

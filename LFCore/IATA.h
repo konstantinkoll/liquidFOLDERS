@@ -1,5 +1,5 @@
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 
 void InitAirportDatabase();
 bool GetItemCoordinates(LFItemDescriptor* i, unsigned int PreferredAttr, LFGeoCoordinates* coord);

@@ -4,14 +4,14 @@
 
 #pragma once
 #include "CGdiPlusBitmap.h"
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include "LFDialog.h"
 
 
 // LFAboutDlg
 //
 
-class AFX_EXT_CLASS LFAboutDlg : public LFDialog
+class LFAboutDlg : public LFDialog
 {
 public:
 	LFAboutDlg(CWnd* pParentWnd=NULL);

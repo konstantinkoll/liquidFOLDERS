@@ -4,6 +4,7 @@
 
 #include "StdAfx.h"
 #include "LFCommDlg.h"
+#include "LFEditTimeDlg.h"
 #include "Resource.h"
 
 
@@ -11,17 +12,18 @@
 //
 
 LFEditTimeDlg::LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData)
-	: CDialog(IDD_EDITTIME, pParentWnd)
+	: LFDialog(IDD_EDITTIME, pParentWnd)
 {
 	ASSERT(pData);
 
-	p_App = LFGetApp();
 	p_Data = pData;
 	m_UseTime = TRUE;
 }
 
 void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 {
+	LFDialog::DoDataExchange(pDX);
+
 	DDX_Control(pDX, IDC_CALENDAR, m_wndCalendar);
 	DDX_Control(pDX, IDC_TIME, m_wndTime);
 
@@ -55,13 +57,13 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(LFEditTimeDlg, CDialog)
+BEGIN_MESSAGE_MAP(LFEditTimeDlg, LFDialog)
 	ON_BN_CLICKED(IDC_USETIME, OnUseTime)
 END_MESSAGE_MAP()
 
 BOOL LFEditTimeDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	LFDialog::OnInitDialog();
 
 	SetWindowText(p_App->m_Attributes[p_Data->Attr].Name);
 
@@ -85,21 +87,19 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	CRect rectCalendar;
 	m_wndCalendar.GetWindowRect(&rectCalendar);
 
-	INT GrowX = rect.Width()-rectCalendar.Width()+4;
-	INT GrowY = rect.Height()-rectCalendar.Height()+4;
+	INT GrowX = rect.Width()-rectCalendar.Width();
+	INT GrowY = rect.Height()-rectCalendar.Height();
 
-#define Grow(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
-#define GXMY(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE); }
-#define Move(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left+GrowX, rect.top+GrowY, 0, 0, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE); }
+#define GrowXY(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
+#define GrowX(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
+#define GrowXMoveY(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE); }
 
-	Grow(this);
-	Grow(GetDlgItem(IDC_GROUPBOX1));
-	Grow(GetDlgItem(IDC_CALENDAR));
-	GXMY(GetDlgItem(IDC_GROUPBOX2));
-	GXMY(GetDlgItem(IDC_USETIME));
-	GXMY(GetDlgItem(IDC_TIME));
-	Move(GetDlgItem(IDOK));
-	Move(GetDlgItem(IDCANCEL));
+	GrowXY(this);
+	GrowX(GetDlgItem(IDC_CATEGORY1));
+	GrowXY(GetDlgItem(IDC_CALENDAR));
+	GrowXMoveY(GetDlgItem(IDC_CATEGORY2));
+	GrowXMoveY(GetDlgItem(IDC_USETIME));
+	GrowXMoveY(GetDlgItem(IDC_TIME));
 
 	// Werte
 	if (!p_Data->IsNull)
@@ -118,19 +118,12 @@ BOOL LFEditTimeDlg::OnInitDialog()
 		}
 
 	// Calendar
-	m_wndCalendar.GetWindowRect(&rectCalendar);
-	ScreenToClient(rectCalendar);
-	m_FrameCtrl.Create(this, rectCalendar);
-
-	rectCalendar.DeflateRect(2, 2);
-	m_wndCalendar.SetWindowPos(NULL, rectCalendar.left, rectCalendar.top, rectCalendar.Width(), rectCalendar.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
-
-	m_wndCalendar.SetColor(MCSC_BACKGROUND, GetSysColor(COLOR_WINDOW));
-	m_wndCalendar.SetColor(MCSC_MONTHBK, GetSysColor(COLOR_WINDOW));
-	m_wndCalendar.SetColor(MCSC_TEXT, GetSysColor(COLOR_WINDOWTEXT));
-	m_wndCalendar.SetColor(MCSC_TITLETEXT, 0xFFFFFF);
-	m_wndCalendar.SetColor(MCSC_TITLEBK, 0xCC3300);
-	m_wndCalendar.SetColor(MCSC_TRAILINGTEXT, GetSysColor(COLOR_3DSHADOW));
+	m_wndCalendar.SetColor(MCSC_BACKGROUND, 0xFFFFFF);
+	m_wndCalendar.SetColor(MCSC_MONTHBK, 0xFFFFFF);
+	m_wndCalendar.SetColor(MCSC_TEXT, 0x000000);
+	m_wndCalendar.SetColor(MCSC_TITLETEXT, IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOWTEXT));
+	m_wndCalendar.SetColor(MCSC_TITLEBK, IsCtrlThemed() ? 0xCC3300 : GetSysColor(COLOR_WINDOW));
+	m_wndCalendar.SetColor(MCSC_TRAILINGTEXT, 0xCCCCCC);
 
 	SYSTEMTIME stMin;
 	GetSystemTime(&stMin);

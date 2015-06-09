@@ -10,8 +10,6 @@
 // CMapPreviewCtrl
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CMapPreviewCtrl::CMapPreviewCtrl()
 	: CWnd()
 {
@@ -29,13 +27,6 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CMapPreviewCtrl", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CMapPreviewCtrl", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();
@@ -104,8 +95,8 @@ void CMapPreviewCtrl::OnPaint()
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), LFCommDlgDLL.hResource);
-	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource);
+	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), AfxGetResourceHandle());
+	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"), AfxGetResourceHandle());
 
 	// Karte
 	if (p_Airport)

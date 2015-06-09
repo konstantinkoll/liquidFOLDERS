@@ -50,7 +50,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\LFCore&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -89,7 +89,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -139,7 +138,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\LFCore&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -178,7 +177,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -229,7 +227,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\LFCore&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -271,7 +269,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -323,7 +320,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\LFCore&quot;;&quot;C:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\include&quot;;&quot;C:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2013\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -365,7 +362,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -529,14 +525,6 @@
 				</FileConfiguration>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\include\liquidFOLDERS32.manifest.xml"
-			>
-		</File>
-		<File
-			RelativePath="..\include\liquidFOLDERS64.manifest.xml"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

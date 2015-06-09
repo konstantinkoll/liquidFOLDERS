@@ -3,15 +3,15 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 
 
 // LFStoreMaintenanceDlg
 //
 
-typedef DynArray<LFML_Item*> CMaintenanceReportList;
+typedef LFDynArray<LFML_Item*> CMaintenanceReportList;
 
-class AFX_EXT_CLASS LFStoreMaintenanceDlg : public CDialog
+class LFStoreMaintenanceDlg : public CDialog
 {
 public:
 	LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParentWnd=NULL);

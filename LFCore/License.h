@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-#include "liquidFOLDERS.h"
+#include "LF.h"
 
 // share*it
 #define LICENSE_ID           "LICENSE_ID"

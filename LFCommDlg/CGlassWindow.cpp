@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "CGlassWindow.h"
 #include "LFCommDlg.h"
 
 
@@ -212,6 +211,7 @@ BEGIN_MESSAGE_MAP(CGlassWindow, CWnd)
 	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
+	ON_WM_NCACTIVATE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
@@ -363,6 +363,26 @@ LRESULT CGlassWindow::OnNcHitTest(CPoint point)
 	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
 	LRESULT uHitTest = CWnd::OnNcHitTest(point);
 	return ((!(GetStyle() & WS_MAXIMIZEBOX)) && (uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
+}
+
+BOOL CGlassWindow::OnNcActivate(BOOL bActive)
+{
+	if (bActive!=m_Active)
+	{
+		m_Active = bActive;
+
+		if (GetDesign()==GWD_THEMED)
+		{
+			Invalidate();
+
+			for (POSITION p=m_GlasChildren.GetHeadPosition(); p; )
+				m_GlasChildren.GetNext(p)->RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE);
+
+			UpdateWindow();
+		}
+	}
+
+	return CWnd::OnNcActivate(bActive);
 }
 
 void CGlassWindow::OnSize(UINT nType, INT cx, INT cy)

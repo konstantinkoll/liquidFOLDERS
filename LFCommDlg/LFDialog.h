@@ -4,15 +4,15 @@
 
 
 #pragma once
+#include "CCategory.h"
 #include "CGroupBox.h"
-#include "liquidFOLDERS.h"
 #include "LFApplication.h"
 
 
 // LFDialog
 //
 
-class AFX_EXT_CLASS LFDialog : public CDialog
+class LFDialog : public CDialog
 {
 public:
 	LFDialog(UINT nIDTemplate, CWnd* pParentWnd=NULL, BOOL UAC=FALSE);
@@ -24,6 +24,7 @@ public:
 
 protected:
 	LFApplication* p_App;
+	CCategory m_wndCategory[4];
 	UINT m_nIDTemplate;
 	BOOL m_UAC;
 
@@ -46,9 +47,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CGroupBox m_GroupBox[3];
-	HICON hIconL;
-	HICON hIconS;
+	CGroupBox m_wndGroupBox[3];
 	HICON hIconShield;
 	INT m_ShieldSize;
 	INT m_UACHeight;

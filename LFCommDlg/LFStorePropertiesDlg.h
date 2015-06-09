@@ -10,7 +10,7 @@
 // LFStorePropertiesDlg
 //
 
-class AFX_EXT_CLASS LFStorePropertiesDlg : public CPropertySheet
+class LFStorePropertiesDlg : public CPropertySheet
 {
 public:
 	LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd=NULL);

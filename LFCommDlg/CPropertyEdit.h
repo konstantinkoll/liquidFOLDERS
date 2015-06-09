@@ -3,14 +3,14 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include "CInspectorGrid.h"
 
 
 // CPropertyDisplay
 //
 
-class AFX_EXT_CLASS CPropertyDisplay : public CWnd
+class CPropertyDisplay : public CWnd
 {
 public:
 	CPropertyDisplay();
@@ -37,7 +37,7 @@ protected:
 // CPropertyEdit
 //
 
-class AFX_EXT_CLASS CPropertyEdit : public CPropertyHolder
+class CPropertyEdit : public CPropertyHolder
 {
 public:
 	CPropertyEdit();

@@ -5,12 +5,13 @@
 #pragma once
 #include "CImageListTransparent.h"
 #include "LFApplication.h"
+#include "LFDialog.h"
 
 
 // LFAttributeListDlg
 //
 
-class AFX_EXT_CLASS LFAttributeListDlg : public CDialog
+class LFAttributeListDlg : public LFDialog
 {
 public:
 	LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd=NULL);

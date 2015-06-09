@@ -38,7 +38,6 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define VERB_MIGRATIONWIZARD    "migrationwizard"
 #define VERB_STOREMANAGER       "storemanager"
 #define VERB_FILEDROP           "filedrop"
-#define VERB_MIGRATE            "migrate"
 #define VERB_ABOUT              "about"
 
 struct FolderSerialization

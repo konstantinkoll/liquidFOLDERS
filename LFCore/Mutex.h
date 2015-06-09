@@ -1,5 +1,5 @@
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 
 void InitMutex();
 bool GetMutex(HANDLE m);

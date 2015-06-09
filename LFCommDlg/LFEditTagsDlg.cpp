@@ -11,8 +11,6 @@
 // LFEditTagsDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID)
 	: CDialog(IDD_EDITTAGS, pParentWnd)
 {
@@ -48,7 +46,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_EDITTAGS));
+	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_EDITTAGS));
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 

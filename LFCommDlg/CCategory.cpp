@@ -10,8 +10,6 @@
 // CCategory
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CCategory::CCategory()
 	: CStatic()
 {
@@ -29,13 +27,6 @@ CCategory::CCategory()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CCategory", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CCategory", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();

@@ -9,8 +9,6 @@
 // CHeaderArea
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 #define BORDERLEFT     16
 #define BORDER         10
 #define MARGIN         4
@@ -209,7 +207,7 @@ void CHeaderArea::OnPaint()
 		{
 			dc.FillSolidRect(rect, 0xFFFFFF);
 
-			CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVUP, _T("PNG"), LFCommDlgDLL.hResource);
+			CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVUP, _T("PNG"), AfxGetResourceHandle());
 			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
 
 			if (m_Shadow)

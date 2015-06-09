@@ -10,8 +10,6 @@
 // LFStorePropertiesGeneralPage
 //
 
-extern LFMessageIDs* MessageIDs;
-
 void LFStoreNewGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_STOREICON, m_wndIcon);

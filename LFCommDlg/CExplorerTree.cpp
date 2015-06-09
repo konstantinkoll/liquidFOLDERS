@@ -19,8 +19,6 @@ INT CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 // CExplorerTree
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CExplorerTree::CExplorerTree()
 	: CTreeCtrl()
 {
@@ -38,13 +36,6 @@ CExplorerTree::CExplorerTree()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CExplorerTree", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CExplorerTree", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();
@@ -765,7 +756,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				if (tvItem.cChildren)
 				{
 					CString tmpStr;
-					ENSURE(tmpStr.LoadString(LFCommDlgDLL.hResource, tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
+					ENSURE(tmpStr.LoadString(AfxGetResourceHandle(), tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
 					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
 					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 					SetMenuDefaultItem(hPopup, 0x7000, 0);

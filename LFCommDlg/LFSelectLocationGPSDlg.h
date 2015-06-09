@@ -11,7 +11,7 @@
 // LFSelectLocationGPSDlg
 //
 
-class AFX_EXT_CLASS LFSelectLocationGPSDlg : public CDialog
+class LFSelectLocationGPSDlg : public CDialog
 {
 public:
 	LFSelectLocationGPSDlg(CWnd* pParentWnd, const LFGeoCoordinates Location);

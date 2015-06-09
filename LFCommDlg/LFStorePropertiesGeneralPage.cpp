@@ -10,8 +10,6 @@
 // LFStorePropertiesGeneralPage
 //
 
-extern LFMessageIDs* MessageIDs;
-
 LFStorePropertiesGeneralPage::LFStorePropertiesGeneralPage(LFStoreDescriptor* pStore, BOOL* pStoreValid)
 	: CPropertyPage()
 {
@@ -33,9 +31,9 @@ void LFStorePropertiesGeneralPage::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesGeneralPage, CPropertyPage)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStore)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStore)
-	ON_REGISTERED_MESSAGE(MessageIDs->StatisticsChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StatisticsChanged, OnUpdateStore)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesGeneralPage::OnInitDialog()
@@ -54,7 +52,7 @@ BOOL LFStorePropertiesGeneralPage::OnInitDialog()
 	}
 
 	// Store
-	SendMessage(MessageIDs->StoresChanged);
+	SendMessage(LFGetApp()->p_MessageIDs->StoresChanged);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

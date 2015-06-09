@@ -12,8 +12,6 @@
 #define BORDER     6
 #define SHADOW     10
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CSidebar::CSidebar()
 	: CWnd()
 {
@@ -134,12 +132,12 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	m_Items.AddItem(i);
 }
 
-__forceinline void CSidebar::AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed)
+void CSidebar::AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed)
 {
 	AddItem(TRUE, CmdID, IconID, Caption, Hint, NumberInRed);
 }
 
-__forceinline void CSidebar::AddCaption(WCHAR* Caption)
+void CSidebar::AddCaption(WCHAR* Caption)
 {
 	AddItem(FALSE, 0, -1, Caption, L"", FALSE);
 }
@@ -263,7 +261,7 @@ INT CSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	hShadow = LoadBitmap(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
+	hShadow = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
 
 	m_TooltipCtrl.Create(this);
 

@@ -8,7 +8,7 @@
 // LFDropSource
 //
 
-class AFX_EXT_CLASS LFDropSource : public IDropSource
+class LFDropSource : public IDropSource
 {
 public:
 	LFDropSource();

@@ -12,7 +12,7 @@
 
 #define WM_PATHCHANGED     WM_USER+5
 
-class AFX_EXT_CLASS LFStoreNewDlg : public CPropertySheet
+class LFStoreNewDlg : public CPropertySheet
 {
 public:
 	LFStoreNewDlg(CWnd* pParentWnd=NULL);

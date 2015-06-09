@@ -11,7 +11,7 @@
 // LFBrowseForFolderDlg
 //
 
-class AFX_EXT_CLASS LFBrowseForFolderDlg : public LFDialog
+class LFBrowseForFolderDlg : public LFDialog
 {
 public:
 	LFBrowseForFolderDlg(CWnd* pParentWnd, CString Caption=_T(""), CString Hint=_T(""), BOOL OnlyFSObjects=TRUE, BOOL ShowDeleteSource=FALSE, CString RootPath=_T(""));

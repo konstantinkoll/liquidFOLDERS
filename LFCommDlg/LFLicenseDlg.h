@@ -3,14 +3,14 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include "LFDialog.h"
 
 
 // LFLicenseDlg
 //
 
-class AFX_EXT_CLASS LFLicenseDlg : public LFDialog
+class LFLicenseDlg : public LFDialog
 {
 public:
 	LFLicenseDlg(CWnd* pParentWnd=NULL);
@@ -18,6 +18,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
+	afx_msg BOOL OnInitDialog();
 	afx_msg void OnLoadLicense();
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()

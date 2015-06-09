@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "liquidFOLDERS.h"
+#include "LF.h"
 #include <shellapi.h>
 #include <shlobj.h>
 

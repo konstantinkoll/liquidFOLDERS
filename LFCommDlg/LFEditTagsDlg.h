@@ -11,7 +11,7 @@
 // LFEditTagsDlg
 //
 
-class AFX_EXT_CLASS LFEditTagsDlg : public CDialog
+class LFEditTagsDlg : public CDialog
 {
 public:
 	LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID);

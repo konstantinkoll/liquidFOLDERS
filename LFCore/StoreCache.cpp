@@ -154,7 +154,7 @@ void AppendGUID(LFStoreDescriptor* s, wchar_t* pPath, wchar_t* pSuffix)
 	}
 }
 
-bool IsStoreMounted(LFStoreDescriptor* s)
+__forceinline bool IsStoreMounted(LFStoreDescriptor* s)
 {
 	assert(s);
 
@@ -907,12 +907,12 @@ Finish:
 	if (!InternalCall)
 		if (ChangeOccured)
 		{
-			SendLFNotifyMessage(LFMessages.StoresChanged, NULL);
+			SendLFNotifyMessage(LFMessages.StoresChanged);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 		}
 		else
 		{
-			SendLFNotifyMessage(LFMessages.VolumesChanged, NULL);
+			SendLFNotifyMessage(LFMessages.VolumesChanged);
 		}
 
 	return res;
@@ -992,7 +992,7 @@ unsigned int UnmountVolume(char cVolume, bool InternalCall)
 	if (!InternalCall)
 		if (ChangeOccured)
 		{
-			SendLFNotifyMessage(LFMessages.StoresChanged, NULL);
+			SendLFNotifyMessage(LFMessages.StoresChanged);
 
 			for (unsigned int a=0; a<NotifyCount; a++)
 				SendShellNotifyMessage(NotifyTypes[a] ? SHCNE_RMDIR : SHCNE_UPDATEITEM, NotifyIDs[a]);
@@ -1000,7 +1000,7 @@ unsigned int UnmountVolume(char cVolume, bool InternalCall)
 		}
 		else
 		{
-			SendLFNotifyMessage(LFMessages.VolumesChanged, NULL);
+			SendLFNotifyMessage(LFMessages.VolumesChanged);
 		}
 
 	return res;

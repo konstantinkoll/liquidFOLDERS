@@ -152,14 +152,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Ascending_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Ascending_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Calendar_16.png"
 				>
 			</File>
@@ -213,14 +205,6 @@
 			</File>
 			<File
 				RelativePath="Ribbon\Delete_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Descending_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Descending_32.png"
 				>
 			</File>
 			<File
@@ -309,14 +293,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\GoogleEarth_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Grouping_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Grouping_32.png"
 				>
 			</File>
 			<File
@@ -616,6 +592,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Organize_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Organize_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Picture_16.png"
 				>
 			</File>
@@ -661,14 +645,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\SortByValue_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SortOptions_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SortOptions_32.png"
 				>
 			</File>
 			<File
@@ -768,14 +744,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\TreeExpand_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\TreeExpand_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\UndeleteAllFiles_16.png"
 				>
 			</File>
@@ -789,110 +757,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\UndeleteFile_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewCalendar_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewCalendar_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewContent_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewContent_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewDetails_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewDetails_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewGlobe_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewGlobe_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewLargeIcons_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewLargeIcons_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewList_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewList_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewOptions_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewOptions_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewPreview_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewPreview_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewSmallIcons_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewSmallIcons_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewStrips_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewStrips_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewTagcloud_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewTagcloud_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewTiles_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewTiles_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewTimeline_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewTimeline_32.png"
 				>
 			</File>
 			<File
@@ -1033,19 +897,11 @@
 			>
 		</File>
 		<File
-			RelativePath="Ascending_16.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\Clipboard_Small.ico"
 			>
 		</File>
 		<File
 			RelativePath=".\Crosshair.png"
-			>
-		</File>
-		<File
-			RelativePath="Descending_16.bmp"
 			>
 		</File>
 		<File
@@ -1117,11 +973,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\GotoDate_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Grouping_32.bmp"
+			RelativePath=".\GotoYear_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1198,6 +1050,10 @@
 		</File>
 		<File
 			RelativePath="Multiple.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Organize_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1346,10 +1202,6 @@
 		</File>
 		<File
 			RelativePath=".\SortIndicators.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\SortOptions_Tiny.ico"
 			>
 		</File>
 		<File

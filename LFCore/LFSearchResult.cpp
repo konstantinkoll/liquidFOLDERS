@@ -24,7 +24,7 @@ extern void LoadTwoStrings(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuf
 // LFSearchResult
 
 LFSearchResult::LFSearchResult(int ctx)
-	: DynArray()
+	: LFDynArray()
 {
 	assert(ctx<LFContextCount);
 
@@ -61,7 +61,7 @@ LFSearchResult::LFSearchResult(LFFilter* f)
 }
 
 LFSearchResult::LFSearchResult(LFSearchResult* res)
-	: DynArray()
+	: LFDynArray()
 {
 	m_Items = (LFItemDescriptor**)_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), Dyn_MemoryAlignment);
 
@@ -169,7 +169,7 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 {
 	assert(i);
 
-	if (!DynArray::AddItem(i))
+	if (!LFDynArray::AddItem(i))
 		return false;
 
 	switch (i->Type & LFTypeMask)

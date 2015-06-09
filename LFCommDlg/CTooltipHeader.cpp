@@ -9,8 +9,6 @@
 // CTooltipHeader
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
@@ -120,7 +118,7 @@ void CTooltipHeader::OnPaint()
 		CRect rectParent;
 		GetParent()->GetClientRect(rectParent);
 
-		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"), LFCommDlgDLL.hResource);
+		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"), AfxGetResourceHandle());
 		g.DrawImage(pDivider->m_pBitmap, (rectParent.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetParent()->GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
 	}
 

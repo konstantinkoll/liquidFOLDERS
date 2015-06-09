@@ -12,7 +12,7 @@
 
 #define MaxAirportsPerCountry   2500
 
-class AFX_EXT_CLASS LFSelectLocationIATADlg : public CDialog
+class LFSelectLocationIATADlg : public CDialog
 {
 public:
 	LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);

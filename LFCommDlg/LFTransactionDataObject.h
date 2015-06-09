@@ -9,7 +9,7 @@
 // LFTransactionDataObject
 //
 
-class AFX_EXT_CLASS LFTransactionDataObject : public IDataObject
+class LFTransactionDataObject : public IDataObject
 {
 public:
 	LFTransactionDataObject(LFTransactionList* tl);

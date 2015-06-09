@@ -9,7 +9,7 @@
 // CGlassEdit
 //
 
-class AFX_EXT_CLASS CGlassEdit : public CEdit
+class CGlassEdit : public CEdit
 {
 public:
 	CGlassEdit();

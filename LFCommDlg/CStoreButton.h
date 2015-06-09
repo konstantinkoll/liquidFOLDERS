@@ -8,7 +8,7 @@
 // CStoreButton
 //
 
-class AFX_EXT_CLASS CStoreButton : public CButton
+class CStoreButton : public CButton
 {
 public:
 	CStoreButton();

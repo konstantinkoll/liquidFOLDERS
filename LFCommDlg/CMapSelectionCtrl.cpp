@@ -10,8 +10,6 @@
 // CMapSelectionCtrl
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CMapSelectionCtrl::CMapSelectionCtrl()
 	: CWnd()
 {
@@ -29,13 +27,6 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CMapSelectionCtrl", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CMapSelectionCtrl", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();
@@ -130,7 +121,7 @@ BOOL CMapSelectionCtrl::OnEraseBkgnd(CDC* pDC)
 		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
 		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 
-		CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), LFCommDlgDLL.hResource);
+		CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), AfxGetResourceHandle());
 		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.DrawImage(pMap->m_pBitmap, 0, 0, rect.Width(), rect.Height());
@@ -174,7 +165,7 @@ void CMapSelectionCtrl::OnPaint()
 		INT cx = (INT)((m_Coord.Longitude+180)*rect.Width()/360)+1;
 		INT cy = (INT)((m_Coord.Latitude+90)*rect.Height()/180)+1;
 
-		CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource);
+		CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"), AfxGetResourceHandle());
 		INT h = pIndicator->m_pBitmap->GetHeight();
 		INT l = pIndicator->m_pBitmap->GetWidth();
 

@@ -24,7 +24,7 @@ struct ExplorerTreeItemData
 	ULONG dwAttributes;
 };
 
-class AFX_EXT_CLASS CExplorerTree : public CTreeCtrl
+class CExplorerTree : public CTreeCtrl
 {
 public:
 	CExplorerTree();

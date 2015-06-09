@@ -12,8 +12,6 @@
 // LFAboutDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 #define COMPILE_HOUR       (((__TIME__[0]-'0')*10)+(__TIME__[1]-'0'))
 #define COMPILE_MINUTE     (((__TIME__[3]-'0')*10)+(__TIME__[4]-'0'))
 #define COMPILE_SECOND     (((__TIME__[6]-'0')*10)+(__TIME__[7]-'0'))
@@ -51,8 +49,8 @@ LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
 	wcscat_s(m_Build, 256, tmpStr);
 
 	GetSystemTime(&st);
-	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), LFCommDlgDLL.hResource) : NULL;
-	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"), LFCommDlgDLL.hResource);
+	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), AfxGetResourceHandle()) : NULL;
+	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"), AfxGetResourceHandle());
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));

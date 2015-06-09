@@ -4,7 +4,7 @@
 
 
 LFMaintenanceList::LFMaintenanceList()
-	: DynArray()
+	: LFDynArray()
 {
 }
 
@@ -17,5 +17,5 @@ bool LFMaintenanceList::AddStore(unsigned int _Result, wchar_t* _Name, char* _St
 	wcscpy_s(item.Name, 256, _Name);
 	strcpy_s(item.StoreID, LFKeySize, _StoreID);
 
-	return DynArray::AddItem(item);
+	return LFDynArray::AddItem(item);
 }

@@ -4,13 +4,13 @@
 
 #pragma once
 #include "afxole.h"
-#include "liquidFOLDERS.h"
+#include "LF.h"
 
 
 // LFDropTarget
 //
 
-class AFX_EXT_CLASS LFDropTarget : public IDropTarget
+class LFDropTarget : public IDropTarget
 {
 public:
 	LFDropTarget();

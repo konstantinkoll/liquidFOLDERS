@@ -11,8 +11,6 @@
 // LFStoreNewPathPage
 //
 
-extern LFMessageIDs* MessageIDs;
-
 void LFStoreNewPathPage::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_AUTOPATH, m_wndAutoPath);
