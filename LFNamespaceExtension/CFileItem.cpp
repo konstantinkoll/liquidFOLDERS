@@ -3,10 +3,9 @@
 //
 
 #include "stdafx.h"
-#include "LFNamespaceExtension.h"
-#include "CFolderItem.h"
 #include "CFileItem.h"
-#include "LFCore.h"
+#include "CFolderItem.h"
+#include "LFNamespaceExtension.h"
 #include <shlwapi.h>
 
 
@@ -20,25 +19,25 @@ IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)
 
 CFileItem::CFileItem()
 {
-	Item = LFAllocItemDescriptor();
+	m_pItem = LFAllocItemDescriptor();
 }
 
-CFileItem::CFileItem(CHAR* _StoreID, LFCoreAttributes* Attrs)
+CFileItem::CFileItem(CHAR* StoreID, LFCoreAttributes* Attrs)
 {
-	Item = LFAllocItemDescriptor(Attrs);
-	Item->Type = LFTypeFile;
-	strcpy_s(Item->StoreID, LFKeySize, _StoreID);
+	m_pItem = LFAllocItemDescriptor(Attrs);
+	m_pItem->Type = LFTypeFile;
+	strcpy_s(m_pItem->StoreID, LFKeySize, StoreID);
 }
 
-CFileItem::CFileItem(LFItemDescriptor* _Item)
+CFileItem::CFileItem(LFItemDescriptor* pItem)
 {
-	Item = _Item;
-	Item->RefCount++;
+	m_pItem = pItem;
+	m_pItem->RefCount++;
 }
 
 CFileItem::~CFileItem()
 {
-	LFFreeItemDescriptor(Item);
+	LFFreeItemDescriptor(m_pItem);
 }
 
 
@@ -47,10 +46,10 @@ CFileItem::~CFileItem()
 void CFileItem::Serialize(CArchive& ar)
 {
 	ar << (BYTE)0x32;
-	ar << (BYTE)LFNamespaceExtensionVersion;
-	ar.Write(&Item->StoreID, sizeof(Item->StoreID));
+	ar << (BYTE)LFNSE_VERSION;
+	ar.Write(&m_pItem->StoreID, sizeof(m_pItem->StoreID));
 	ar << (UINT)sizeof(LFCoreAttributes);
-	ar.Write(&Item->CoreAttributes, sizeof(LFCoreAttributes));
+	ar.Write(&m_pItem->CoreAttributes, sizeof(LFCoreAttributes));
 
 	LFVariantData v[LFAttributeCount];
 	UINT Count = 0;
@@ -58,7 +57,7 @@ void CFileItem::Serialize(CArchive& ar)
 	{
 		v[a].Attr = a;
 		v[a].Type = theApp.m_Attributes[a].Type;
-		LFGetAttributeVariantData(Item, &v[a]);
+		LFGetAttributeVariantData(m_pItem, &v[a]);
 
 		if (!LFIsNullVariantData(&v[a]))
 			Count++;
@@ -75,7 +74,7 @@ void CFileItem::Serialize(CArchive& ar)
 
 void CFileItem::GetDisplayName(CString& displayName)
 {
-	displayName = Item->CoreAttributes.FileName;
+	displayName = m_pItem->CoreAttributes.FileName;
 }
 
 void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
@@ -83,15 +82,15 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
 		WCHAR Path[MAX_PATH];
-		displayName = (LFGetFileLocation(Item, Path, MAX_PATH, false, false)==LFOk) ? Path : _T("?");
+		displayName = (LFGetFileLocation(m_pItem, Path, MAX_PATH, false, false)==LFOk) ? Path : _T("?");
 		return;
 	}
 
-	displayName = Item->CoreAttributes.FileName;
-	if ((!(flags & NSEDNF_ForEditing)) && (Item->CoreAttributes.FileFormat[0]!='\0') && ((flags & NSEDNF_ForParsing) || (!(flags & NSEDNF_InFolder)) || (!LFHideFileExt())))
+	displayName = m_pItem->CoreAttributes.FileName;
+	if ((!(flags & NSEDNF_ForEditing)) && (m_pItem->CoreAttributes.FileFormat[0]!='\0') && ((flags & NSEDNF_ForParsing) || (!(flags & NSEDNF_InFolder)) || (!LFHideFileExt())))
 	{
 		displayName += '.';
-		displayName += Item->CoreAttributes.FileFormat;
+		displayName += m_pItem->CoreAttributes.FileFormat;
 	}
 }
 
@@ -101,7 +100,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	WCHAR tmpBuf[LFExtSize+2] = L"*.";
-	MultiByteToWideChar(CP_ACP, 0, Item->CoreAttributes.FileFormat, -1, &tmpBuf[2], LFExtSize);
+	MultiByteToWideChar(CP_ACP, 0, m_pItem->CoreAttributes.FileFormat, -1, &tmpBuf[2], LFExtSize);
 
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo(tmpBuf, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_USEFILEATTRIBUTES)))
@@ -120,7 +119,7 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 
 HBITMAP CFileItem::GetThumbnail(CGetThumbnailEventArgs& e)
 {
-	return LFGetThumbnail(Item, e.sizeThumbnail);
+	return LFGetThumbnail(m_pItem, e.sizeThumbnail);
 }
 
 CachingPolicy CFileItem::GetThumbnailCachingPolicy()
@@ -130,7 +129,7 @@ CachingPolicy CFileItem::GetThumbnailCachingPolicy()
 
 CTime CFileItem::GetThumbnailDateTimeStamp()
 {
-	CTime ti(Item->CoreAttributes.FileTime);
+	CTime ti(m_pItem->CoreAttributes.FileTime);
 	return ti;
 }
 
@@ -139,7 +138,7 @@ CTime CFileItem::GetThumbnailDateTimeStamp()
 
 void CFileItem::GetInfoTip(CString& infotip)
 {
-	infotip = Item->CoreAttributes.Comment;
+	infotip = m_pItem->CoreAttributes.Comment;
 }
 
 
@@ -163,9 +162,9 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			CUtils::SetVariantINT(value, 0);
 			return TRUE;
 		case 11:
-			if (Item->CoreAttributes.FileFormat[0]!='\0')
+			if (m_pItem->CoreAttributes.FileFormat[0]!='\0')
 			{
-				CString tmpStr(Item->CoreAttributes.FileFormat);
+				CString tmpStr(m_pItem->CoreAttributes.FileFormat);
 				tmpStr.Insert(0, _T("."));
 				CUtils::SetVariantCString(value, tmpStr);
 				return TRUE;
@@ -187,9 +186,9 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 	if (column.index==LFAttrFileFormat)
 	{
-		if (Item->CoreAttributes.FileFormat[0]!='\0')
+		if (m_pItem->CoreAttributes.FileFormat[0]!='\0')
 		{
-			CString tmpStr(Item->CoreAttributes.FileFormat);
+			CString tmpStr(m_pItem->CoreAttributes.FileFormat);
 			tmpStr.Insert(0, _T("."));
 
 			SHFILEINFO sfi;
@@ -212,7 +211,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			LFVariantData v;
 			v.Attr = column.index;
 			v.Type = Type;
-			LFGetAttributeVariantData(Item, &v);
+			LFGetAttributeVariantData(m_pItem, &v);
 
 			if (!LFIsNullVariantData(&v))
 			{
@@ -222,7 +221,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 				switch (Type)
 				{
 				case LFTypeRating:
-					tmpInt = Item->CoreAttributes.Rating*10;
+					tmpInt = m_pItem->CoreAttributes.Rating*10;
 					CUtils::SetVariantUINT(value, tmpInt>99 ? 99 : tmpInt);
 					return TRUE;
 				case LFTypeUINT:
@@ -256,13 +255,13 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			switch (column.index)
 			{
 			case LFAttrRating:
-				CUtils::SetVariantCString(value, theApp.m_Categories[0][Item->CoreAttributes.Rating/2]);
+				CUtils::SetVariantCString(value, theApp.m_Categories[0][m_pItem->CoreAttributes.Rating/2]);
 				break;
 			case LFAttrPriority:
-				CUtils::SetVariantCString(value, theApp.m_Categories[1][Item->CoreAttributes.Priority/2]);
+				CUtils::SetVariantCString(value, theApp.m_Categories[1][m_pItem->CoreAttributes.Priority/2]);
 				break;
 			default:
-				LFAttributeToString(Item, column.index, tmpBuf, 256);
+				LFAttributeToString(m_pItem, column.index, tmpBuf, 256);
 				CString tmpStr(tmpBuf);
 				CUtils::SetVariantCString(value, tmpStr);
 			}
@@ -279,17 +278,17 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 {
-	UINT res = LFTransactionRename(Item->StoreID, Item->CoreAttributes.FileID, e.newName.GetBuffer());
-	if (res==LFOk)
+	UINT Result = LFTransactionRename(m_pItem->StoreID, m_pItem->CoreAttributes.FileID, e.newName.GetBuffer());
+	if (Result==LFOk)
 	{
-		wcscpy_s(Item->CoreAttributes.FileName, 256, e.newName);
+		wcscpy_s(m_pItem->CoreAttributes.FileName, 256, e.newName);
 	}
 	else
 	{
-		LFErrorBox(res);
+		LFErrorBox(Result);
 	}
 
-	return (res==LFOk);
+	return (Result==LFOk);
 }
 
 
@@ -314,56 +313,56 @@ INT CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 	switch (column.index)
 	{
 	case LFAttrFileName:
-		str1 = Item->CoreAttributes.FileName;
-		str2 = file2->Item->CoreAttributes.FileName;
+		str1 = m_pItem->CoreAttributes.FileName;
+		str2 = file2->m_pItem->CoreAttributes.FileName;
 		break;
 	case LFAttrStoreID:
-		str1 = Item->StoreID;
-		str2 = file2->Item->StoreID;
+		str1 = m_pItem->StoreID;
+		str2 = file2->m_pItem->StoreID;
 		break;
 	case LFAttrFileID:
-		str1 = Item->CoreAttributes.FileID;
-		str2 = file2->Item->CoreAttributes.FileID;
+		str1 = m_pItem->CoreAttributes.FileID;
+		str2 = file2->m_pItem->CoreAttributes.FileID;
 		break;
 	case LFAttrComments:
-		str1 = Item->CoreAttributes.Comment;
-		str2 = file2->Item->CoreAttributes.Comment;
+		str1 = m_pItem->CoreAttributes.Comment;
+		str2 = file2->m_pItem->CoreAttributes.Comment;
 		break;
 	case LFAttrCreationTime:
-		ret = CompareFileTime(&Item->CoreAttributes.CreationTime, &file2->Item->CoreAttributes.CreationTime);
+		ret = CompareFileTime(&m_pItem->CoreAttributes.CreationTime, &file2->m_pItem->CoreAttributes.CreationTime);
 		goto GotRet;
 	case LFAttrFileTime:
-		ret = CompareFileTime(&Item->CoreAttributes.FileTime, &file2->Item->CoreAttributes.FileTime);
+		ret = CompareFileTime(&m_pItem->CoreAttributes.FileTime, &file2->m_pItem->CoreAttributes.FileTime);
 		goto GotRet;
 	case LFAttrFileSize:
-		if (Item->CoreAttributes.FileSize<file2->Item->CoreAttributes.FileSize)
+		if (m_pItem->CoreAttributes.FileSize<file2->m_pItem->CoreAttributes.FileSize)
 			return -1;
-		if (Item->CoreAttributes.FileSize>file2->Item->CoreAttributes.FileSize)
+		if (m_pItem->CoreAttributes.FileSize>file2->m_pItem->CoreAttributes.FileSize)
 			return 1;
 		goto GotRet;
 	case LFAttrURL:
-		str1 = Item->CoreAttributes.URL;
-		str2 = file2->Item->CoreAttributes.URL;
+		str1 = m_pItem->CoreAttributes.URL;
+		str2 = file2->m_pItem->CoreAttributes.URL;
 		break;
 	case LFAttrRating:
-		if (Item->CoreAttributes.Rating<file2->Item->CoreAttributes.Rating)
+		if (m_pItem->CoreAttributes.Rating<file2->m_pItem->CoreAttributes.Rating)
 			return -1;
-		if (Item->CoreAttributes.Rating>file2->Item->CoreAttributes.Rating)
+		if (m_pItem->CoreAttributes.Rating>file2->m_pItem->CoreAttributes.Rating)
 			return 1;
 		goto GotRet;
 	case LFAttrPriority:
-		if (Item->CoreAttributes.Priority<file2->Item->CoreAttributes.Priority)
+		if (m_pItem->CoreAttributes.Priority<file2->m_pItem->CoreAttributes.Priority)
 			return -1;
-		if (Item->CoreAttributes.Priority>file2->Item->CoreAttributes.Priority)
+		if (m_pItem->CoreAttributes.Priority>file2->m_pItem->CoreAttributes.Priority)
 			return 1;
 		goto GotRet;
 	case LFAttrLocationName:
-		str1 = Item->CoreAttributes.LocationName;
-		str2 = file2->Item->CoreAttributes.LocationName;
+		str1 = m_pItem->CoreAttributes.LocationName;
+		str2 = file2->m_pItem->CoreAttributes.LocationName;
 		break;
 	case LFAttrLocationIATA:
-		str1 = Item->CoreAttributes.LocationIATA;
-		str2 = file2->Item->CoreAttributes.LocationIATA;
+		str1 = m_pItem->CoreAttributes.LocationIATA;
+		str2 = file2->m_pItem->CoreAttributes.LocationIATA;
 		break;
 	}
 
@@ -380,17 +379,17 @@ GotRet:
 		return ret;
 
 	// Compare file names
-	ret = wcscmp(Item->CoreAttributes.FileName, file2->Item->CoreAttributes.FileName);
+	ret = wcscmp(m_pItem->CoreAttributes.FileName, file2->m_pItem->CoreAttributes.FileName);
 	if (ret)
 		return ret;
 
 	// Compare store IDs
-	ret = strcmp(Item->StoreID, file2->Item->StoreID);
+	ret = strcmp(m_pItem->StoreID, file2->m_pItem->StoreID);
 	if (ret)
 		return ret;
 
 	// Compare file IDs
-	return strcmp(Item->CoreAttributes.FileID, file2->Item->CoreAttributes.FileID);
+	return strcmp(m_pItem->CoreAttributes.FileID, file2->m_pItem->CoreAttributes.FileID);
 }
 
 
@@ -404,11 +403,11 @@ BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 
 	fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
 
-	fd->ftCreationTime = Item->CoreAttributes.CreationTime;
-	fd->ftLastWriteTime = Item->CoreAttributes.FileTime;
+	fd->ftCreationTime = m_pItem->CoreAttributes.CreationTime;
+	fd->ftLastWriteTime = m_pItem->CoreAttributes.FileTime;
 
 	LARGE_INTEGER sz;
-	sz.QuadPart = Item->CoreAttributes.FileSize;
+	sz.QuadPart = m_pItem->CoreAttributes.FileSize;
 	fd->nFileSizeHigh = sz.HighPart;
 	fd->nFileSizeLow = sz.LowPart;
 
@@ -420,10 +419,10 @@ LPSTREAM CFileItem::GetStream()
 	LPSTREAM ret = NULL;
 
 	WCHAR Path[MAX_PATH];
-	UINT res = LFGetFileLocation(Item, Path, MAX_PATH, true, false);
-	if (res!=LFOk)
+	UINT Result = LFGetFileLocation(m_pItem, Path, MAX_PATH, true, false);
+	if (Result!=LFOk)
 	{
-		LFErrorBox(res);
+		LFErrorBox(Result);
 	}
 	else
 	{
@@ -463,7 +462,7 @@ INT CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 	indices[2] = LFAttrTitle;
 	indices[3] = LFAttrRecordingTime;
 	indices[4] = LFAttrDuration;
-	indices[5] = LFAttrTags;
+	indices[5] = LFAttrHashtags;
 	indices[6] = LFAttrPages;
 	indices[7] = LFAttrRating;
 	indices[8] = LFAttrLanguage;
@@ -491,7 +490,7 @@ BOOL CFileItem::SetShellLink(IShellLink* pShellLink)
 	ASSERT(pShellLink);
 
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(Item, Path, MAX_PATH, true, false)==LFOk)
+	if (LFGetFileLocation(m_pItem, Path, MAX_PATH, true, false)==LFOk)
 	{
 		WCHAR Ext[LFExtSize+1] = L".*";
 		WCHAR* LastBackslash = wcsrchr(Path, L'\\');

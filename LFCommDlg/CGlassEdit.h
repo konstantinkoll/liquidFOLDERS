@@ -14,18 +14,10 @@ class CGlassEdit : public CEdit
 public:
 	CGlassEdit();
 
-	BOOL Create(CString EmptyHint, CGlassWindow* pParentWnd, UINT nID, BOOL ShowSearchIcon=FALSE);
+	BOOL Create(CGlassWindow* pParentWnd, UINT nID, CString EmptyHint, BOOL ShowSearchIcon=FALSE);
 	UINT GetPreferredHeight();
 
 protected:
-	CString m_EmptyHint;
-	BOOL m_ShowSearchIcon;
-	HICON hSearchIcon;
-	INT m_IconSize;
-	INT m_ClientAreaTopOffset;
-	INT m_FontHeight;
-	BOOL m_Hover;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -39,4 +31,12 @@ protected:
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
+
+	CString m_EmptyHint;
+	BOOL m_ShowSearchIcon;
+	HICON hSearchIcon;
+	INT m_IconSize;
+	INT m_ClientAreaTopOffset;
+	INT m_FontHeight;
+	BOOL m_Hover;
 };

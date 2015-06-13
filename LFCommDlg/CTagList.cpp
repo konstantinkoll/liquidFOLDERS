@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "CTagList.h"
 #include "LFCommDlg.h"
 
 
@@ -131,38 +130,36 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 	// Item
 	TCHAR text[260];
 	UINT columns[2];
-	LVITEM item;
-	ZeroMemory(&item, sizeof(item));
-	item.iItem = nID;
-	item.iSubItem = 1;
-	item.pszText = text;
-	item.cchTextMax = sizeof(text)/sizeof(TCHAR);
-	item.puColumns = columns;
-	item.cColumns = 1;
-	item.mask = LVIF_TEXT | LVIF_COLUMNS;
-	GetItem(&item);
+	LVITEM Item;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.iItem = nID;
+	Item.iSubItem = 1;
+	Item.pszText = text;
+	Item.cchTextMax = sizeof(text)/sizeof(TCHAR);
+	Item.puColumns = columns;
+	Item.cColumns = 1;
+	Item.mask = LVIF_TEXT | LVIF_COLUMNS;
+	GetItem(&Item);
 
 	pDC->SetBkMode(TRANSPARENT);
 
-	LFApplication* pApp = LFGetApp();
-
 	// Count
-	CFont* pOldFont = pDC->SelectObject(&pApp->m_SmallFont);
+	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_SmallFont);
 	rectBounds.DeflateRect(5, 0);
-	INT L = pDC->GetTextExtent(item.pszText).cx;
+	INT L = pDC->GetTextExtent(Item.pszText).cx;
 	pDC->SetTextColor((State & LVIS_SELECTED) ? texCol : ((texCol>>1) & 0x7F7F7F) + ((pDC->GetPixel(rectBounds.right, rectBounds.top+10)>>1) & 0x7F7F7F));
-	pDC->DrawText(item.pszText, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
+	pDC->DrawText(Item.pszText, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
 	pDC->SelectObject(pOldFont);
 
 	// Label
-	item.iSubItem = 0;
-	item.pszText = text;
-	GetItem(&item);
+	Item.iSubItem = 0;
+	Item.pszText = text;
+	GetItem(&Item);
 
-	pOldFont = pDC->SelectObject(&pApp->m_DefaultFont);
+	pOldFont = pDC->SelectObject(&LFGetApp()->m_DefaultFont);
 	rectBounds.right -= L+5;
 	pDC->SetTextColor(texCol);
-	pDC->DrawText(item.pszText, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+	pDC->DrawText(Item.pszText, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 	pDC->SelectObject(pOldFont);
 
 	// FocusRect

@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
 #include "CFileView.h"
 #include "CInspectorWnd.h"
 
@@ -20,7 +19,7 @@ public:
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
-	BOOL Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard);
 	void UpdateViewOptions();
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
 	BOOL StoreIDValid();
@@ -36,24 +35,6 @@ public:
 	void SelectNone();
 
 protected:
-	CTaskbar m_wndTaskbar;
-	CHeaderArea m_wndHeaderArea;
-	CFileView* p_wndFileView;
-	CInspectorWnd m_wndInspector;
-	CExplorerNotification m_wndExplorerNotification;
-	LFDropTarget m_DropTarget;
-	LFFilter* p_Filter;
-	LFSearchResult* p_RawFiles;
-	LFSearchResult* p_CookedFiles;
-	CHAR m_StoreID[LFKeySize];
-	INT m_Context;
-	INT m_ViewID;
-	BOOL m_StoreIDValid;
-	BOOL m_IsClipboard;
-	BOOL m_FilesSelected;
-	BOOL m_ShowInspectorPane;
-	BOOL m_Alerted;
-
 	LFFileIDList* BuildFileIDList(BOOL All=FALSE);
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolvePhysicalLocations=FALSE, BOOL IncludePIDL=FALSE);
 	void RemoveTransactedItems(LFFileIDList* il);
@@ -136,18 +117,36 @@ protected:
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	CTaskbar m_wndTaskbar;
+	CHeaderArea m_wndHeaderArea;
+	CFileView* p_wndFileView;
+	CInspectorWnd m_wndInspector;
+	CExplorerNotification m_wndExplorerNotification;
+	LFDropTarget m_DropTarget;
+	LFFilter* p_Filter;
+	LFSearchResult* p_RawFiles;
+	LFSearchResult* p_CookedFiles;
+	CHAR m_StoreID[LFKeySize];
+	INT m_Context;
+	INT m_ViewID;
+	BOOL m_StoreIDValid;
+	BOOL m_IsClipboard;
+	BOOL m_FilesSelected;
+	BOOL m_ShowInspectorPane;
+	BOOL m_Alerted;
+
 private:
+	BOOL CreateFileView(UINT ViewID, FVPersistentData* Data);
+	void SetHeaderButtons();
+	void SetHeader();
+	void AdjustLayout();
+	void AddFileIDItem(LFFileIDList* il, LFItemDescriptor* Item);
+	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* Item, UINT UserData);
+
 	CTaskButton* p_FilterButton;
 	CTaskButton* p_OpenButton;
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;
 	CHeaderButton* p_ViewButton;
 	BOOL m_Resizing;
-
-	BOOL CreateFileView(UINT ViewID, FVPersistentData* Data);
-	void SetHeaderButtons();
-	void SetHeader();
-	void AdjustLayout();
-	void AddFileIDItem(LFFileIDList* il, LFItemDescriptor* item);
-	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData);
 };

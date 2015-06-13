@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CStorePanel.h"
+#include "LFCommDlg.h"
 
 
 // CStorePanel
@@ -20,7 +20,7 @@ CStorePanel::CStorePanel()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CStorePanel";
@@ -33,7 +33,6 @@ CStorePanel::CStorePanel()
 			AfxThrowResourceException();
 	}
 
-	p_App = LFGetApp();
 	p_Icons = NULL;
 	p_Item = NULL;
 }
@@ -50,19 +49,19 @@ void CStorePanel::PreSubclassWindow()
 
 	INT szSmallX = 16;
 	INT szSmallY = 16;
-	ImageList_GetIconSize(p_App->m_CoreImageListSmall, &szSmallX, &szSmallY);
+	ImageList_GetIconSize(LFGetApp()->m_CoreImageListSmall, &szSmallX, &szSmallY);
 
 	INT szLargeX = 32;
 	INT szLargeY = 32;
-	ImageList_GetIconSize(p_App->m_CoreImageListLarge, &szLargeX, &szLargeY);
+	ImageList_GetIconSize(LFGetApp()->m_CoreImageListLarge, &szLargeX, &szLargeY);
 
 	INT szExtraLargeX = 48;
 	INT szExtraLargeY = 48;
-	ImageList_GetIconSize(p_App->m_CoreImageListExtraLarge, &szExtraLargeX, &szExtraLargeY);
+	ImageList_GetIconSize(LFGetApp()->m_CoreImageListExtraLarge, &szExtraLargeX, &szExtraLargeY);
 
 	INT szHugeX = 96;
 	INT szHugeY = 96;
-	ImageList_GetIconSize(p_App->m_CoreImageListHuge, &szHugeX, &szHugeY);
+	ImageList_GetIconSize(LFGetApp()->m_CoreImageListHuge, &szHugeX, &szHugeY);
 
 	CRect rect;
 	GetClientRect(rect);
@@ -71,27 +70,27 @@ void CStorePanel::PreSubclassWindow()
 	{
 		m_IconSizeX = szHugeX;
 		m_IconSizeY = szHugeY;
-		p_Icons = &p_App->m_CoreImageListHuge;
+		p_Icons = &LFGetApp()->m_CoreImageListHuge;
 	}
 	else
 		if (rect.Height()>=szExtraLargeY)
 		{
 			m_IconSizeX = szExtraLargeX;
 			m_IconSizeY = szExtraLargeY;
-			p_Icons = &p_App->m_CoreImageListExtraLarge;
+			p_Icons = &LFGetApp()->m_CoreImageListExtraLarge;
 		}
 		else
 			if (rect.Height()>=szLargeY)
 			{
 				m_IconSizeX = szLargeX;
 				m_IconSizeY = szLargeY;
-				p_Icons = &p_App->m_CoreImageListLarge;
+				p_Icons = &LFGetApp()->m_CoreImageListLarge;
 			}
 			else
 			{
 				m_IconSizeX = szSmallX;
 				m_IconSizeY = szSmallY;
-				p_Icons = &p_App->m_CoreImageListSmall;
+				p_Icons = &LFGetApp()->m_CoreImageListSmall;
 			}
 
 	ModifyStyle(0, WS_DISABLED);
@@ -159,7 +158,7 @@ void CStorePanel::OnPaint()
 
 		WCHAR Buffer[256];
 		LFAttributeToString(p_Item, LFAttrCreationTime, Buffer, 256);
-		CString tmpStr(p_App->m_Attributes[LFAttrCreationTime].Name);
+		CString tmpStr(LFGetApp()->m_Attributes[LFAttrCreationTime].Name);
 		tmpStr += _T(": ");
 		tmpStr += Buffer;
 

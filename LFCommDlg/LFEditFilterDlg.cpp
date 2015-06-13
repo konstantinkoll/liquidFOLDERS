@@ -3,8 +3,8 @@
 //
 
 #include "stdafx.h"
+#include "LFCommDlg.h"
 #include "LFEditConditionDlg.h"
-#include "LFEditFilterDlg.h"
 #include "LFSaveFilterDlg.h"
 
 
@@ -61,12 +61,6 @@ END_MESSAGE_MAP()
 BOOL LFEditFilterDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
-
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_EDITFILTER));
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
 	// Store-Namen einsetzen
 	BOOL InStore = FALSE;
@@ -125,10 +119,10 @@ void LFEditFilterDlg::OnSave()
 	{
 		CWaitCursor csr;
 
-		UINT res = LFSaveFilter(dlg.m_StoreID, CreateFilter(), dlg.m_FileName, dlg.m_Comments, NULL);
-		LFErrorBox(res, GetSafeHwnd());
+		UINT Result = LFSaveFilter(dlg.m_StoreID, CreateFilter(), dlg.m_FileName, dlg.m_Comments, NULL);
+		LFErrorBox(Result, GetSafeHwnd());
 
-		if (res==LFOk)
+		if (Result==LFOk)
 			EndDialog(IDOK);
 	}
 }
@@ -148,14 +142,14 @@ void LFEditFilterDlg::OnAddCondition()
 
 void LFEditFilterDlg::OnEditCondition()
 {
-	INT idx = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
-	if (idx!=-1)
+	INT Index = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	if (Index!=-1)
 	{
-		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions.m_Items[idx]);
+		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions.m_Items[Index]);
 		if (dlg.DoModal()==IDOK)
 		{
-			m_Conditions.m_Items[idx] = dlg.m_Condition;
-			m_wndList.SetItem(idx, &dlg.m_Condition);
+			m_Conditions.m_Items[Index] = dlg.m_Condition;
+			m_wndList.SetItem(Index, &dlg.m_Condition);
 		}
 
 		m_wndList.SetFocus();
@@ -164,14 +158,14 @@ void LFEditFilterDlg::OnEditCondition()
 
 void LFEditFilterDlg::OnDeleteCondition()
 {
-	INT idx = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
-	if (idx!=-1)
+	INT Index = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	if (Index!=-1)
 	{
 		m_Conditions.m_ItemCount--;
-		for (INT a=idx; a<(INT)m_Conditions.m_ItemCount; a++)
+		for (INT a=Index; a<(INT)m_Conditions.m_ItemCount; a++)
 			m_Conditions.m_Items[a] = m_Conditions.m_Items[a+1];
 
-		m_wndList.DeleteItem(idx);
+		m_wndList.DeleteItem(Index);
 		m_wndList.Arrange(LVA_ALIGNTOP);
 	}
 }

@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "LFCommDlg.h"
 #include "LFStoreNewDlg.h"
 #include "LFStoreNewGeneralPage.h"
 #include "LFStoreNewPathPage.h"
@@ -47,7 +48,7 @@ BOOL LFStoreNewDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 			swprintf_s(store.DatPath, MAX_PATH, L"%c:\\", m_Path[0]);
 
 		CWaitCursor csr;
-		LFErrorBox(LFCreateStore(&store, pPage->m_wndMakeDefault.GetCheck()==TRUE), GetSafeHwnd());
+		LFErrorBox(LFCreateStore(&store), GetSafeHwnd());
 	}
 
 	return CPropertySheet::OnCommand(wParam, lParam);
@@ -65,9 +66,9 @@ BOOL LFStoreNewDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_STORENEW));
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = LFGetApp()->LoadDialogIcon(IDI_STORENEW);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Einstellungen
 	OnPathChanged();
@@ -89,7 +90,7 @@ void LFStoreNewDlg::OnPathChanged()
 	LFStoreNewGeneralPage* pPage0 = (LFStoreNewGeneralPage*)m_pPages[0];
 	LFStoreNewPathPage* pPage1 = (LFStoreNewPathPage*)m_pPages[1];
 
-	UINT Icon = IDI_STR_liquidFOLDERS;
+	UINT Icon = IDI_STR_LIQUIDFOLDERS;
 	m_IsRemovable = FALSE;
 	m_Path[0] = L'\0';
 

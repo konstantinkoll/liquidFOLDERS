@@ -10,7 +10,7 @@
 // CGridView
 //
 
-#define GetItemData(idx)     ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
+#define GetItemData(Index)     ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
 
 CGridView::CGridView(UINT DataSize, BOOL EnableLabelEdit)
 	: CFileView(DataSize, TRUE, TRUE, TRUE, TRUE, EnableLabelEdit)
@@ -257,46 +257,46 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 		CRect rect;
 		GetClientRect(&rect);
 
-		INT item = m_FocusItem;
-		INT col = (item==-1) ? 0 : GetItemData(item)->Column;
-		INT row = (item==-1) ? 0 : GetItemData(item)->Row;
-		INT top = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.top;
-		INT bottom = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.bottom;
+		INT Item = m_FocusItem;
+		INT col = (Item==-1) ? 0 : GetItemData(Item)->Column;
+		INT row = (Item==-1) ? 0 : GetItemData(Item)->Row;
+		INT top = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.top;
+		INT bottom = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.bottom;
 		INT tmprow = -1;
 
 		switch (nChar)
 		{
 		case VK_LEFT:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Row==row) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
 
 			break;
 		case VK_RIGHT:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Row==row) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
 
 			break;
 		case VK_UP:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Row<row) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Column<=col)
 						break;
 				}
@@ -306,12 +306,12 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 
 			break;
 		case VK_PRIOR:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Row<=row) && (d->Column<=col) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Hdr.Rect.top<=bottom-rect.Height()+(INT)m_HeaderHeight)
 						break;
 				}
@@ -319,12 +319,12 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 
 			break;
 		case VK_DOWN:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Row>row) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Column>=col)
 						break;
 				}
@@ -334,7 +334,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 
 			break;
 		case VK_NEXT:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
 				if (d->Row!=GetItemData(a-1)->Row)
@@ -349,7 +349,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 								break;
 						}
 				if (((tmprow==-1) || (d->Column<=col)) && d->Hdr.Valid)
-					item = a;
+					Item = a;
 			}
 
 			break;
@@ -359,18 +359,18 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 				for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 					if (GetItemData(a)->Hdr.Valid)
 					{
-						item = a;
+						Item = a;
 						break;
 					}
 			}
 			else
-				for (INT a=item-1; a>=0; a--)
+				for (INT a=Item-1; a>=0; a--)
 				{
 					GridItemData* d = GetItemData(a);
 					if (d->Hdr.Valid)
 						if (d->Row==row)
 						{
-							item = a;
+							Item = a;
 						}
 						else
 						{
@@ -385,18 +385,18 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 				for (INT a=(INT)p_CookedFiles->m_ItemCount-1; a>=0; a--)
 					if (GetItemData(a)->Hdr.Valid)
 					{
-						item = a;
+						Item = a;
 						break;
 					}
 			}
 			else
-				for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+				for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 				{
 					GridItemData* d = GetItemData(a);
 					if (d->Hdr.Valid)
 						if (d->Row==row)
 						{
-							item = a;
+							Item = a;
 						}
 						else
 						{
@@ -407,9 +407,9 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			break;
 		}
 
-		if (item!=m_FocusItem)
+		if (Item!=m_FocusItem)
 		{
-			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+			SetFocusItem(Item, GetKeyState(VK_SHIFT)<0);
 
 			CPoint pt;
 			GetCursorPos(&pt);
@@ -426,22 +426,22 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 		CRect rect;
 		GetClientRect(&rect);
 
-		INT item = m_FocusItem;
-		INT col = (item==-1) ? 0 : GetItemData(item)->Column;
-		INT row = (item==-1) ? 0 : GetItemData(item)->Row;
-		INT left = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.left;
-		INT right = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.right;
+		INT Item = m_FocusItem;
+		INT col = (Item==-1) ? 0 : GetItemData(Item)->Column;
+		INT row = (Item==-1) ? 0 : GetItemData(Item)->Row;
+		INT left = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.left;
+		INT right = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.right;
 		INT tmpcol = -1;
 
 		switch (nChar)
 		{
 		case VK_LEFT:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Column<col) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Row<=row)
 						break;
 				}
@@ -451,12 +451,12 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 
 			break;
 		case VK_PRIOR:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Column<=col) && (d->Row<=row) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Hdr.Rect.left<=right-rect.Width())
 						break;
 				}
@@ -464,12 +464,12 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 
 			break;
 		case VK_RIGHT:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Column>col) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Row>=row)
 						break;
 				}
@@ -479,7 +479,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 
 			break;
 		case VK_NEXT:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
 				if (d->Column!=GetItemData(a-1)->Column)
@@ -494,29 +494,29 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 								break;
 						}
 				if (((tmpcol==-1) || (d->Row<=row)) && d->Hdr.Valid)
-					item = a;
+					Item = a;
 			}
 
 			break;
 		case VK_UP:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Column==col) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
 
 			break;
 		case VK_DOWN:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
 				if ((d->Column==col) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
@@ -528,18 +528,18 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 				for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 					if (GetItemData(a)->Hdr.Valid)
 					{
-						item = a;
+						Item = a;
 						break;
 					}
 			}
 			else
-				for (INT a=item-1; a>=0; a--)
+				for (INT a=Item-1; a>=0; a--)
 				{
 					GridItemData* d = GetItemData(a);
 					if (d->Hdr.Valid)
 						if (d->Column==col)
 						{
-							item = a;
+							Item = a;
 						}
 						else
 						{
@@ -554,18 +554,18 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 				for (INT a=(INT)p_CookedFiles->m_ItemCount-1; a>=0; a--)
 					if (GetItemData(a)->Hdr.Valid)
 					{
-						item = a;
+						Item = a;
 						break;
 					}
 			}
 			else
-				for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+				for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 				{
 					GridItemData* d = GetItemData(a);
 					if (d->Hdr.Valid)
 						if (d->Column==col)
 						{
-							item = a;
+							Item = a;
 						}
 						else
 						{
@@ -576,9 +576,9 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			break;
 		}
 
-		if (item!=m_FocusItem)
+		if (Item!=m_FocusItem)
 		{
-			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+			SetFocusItem(Item, GetKeyState(VK_SHIFT)<0);
 
 			CPoint pt;
 			GetCursorPos(&pt);
@@ -616,19 +616,6 @@ void CGridView::OnPaint()
 	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	dc.FillSolidRect(rect, bkCol);
 
-	if (m_HeaderHeight>0)
-		if (Themed)
-		{
-			CGdiPlusBitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP, _T("PNG"), GetModuleHandle(_T("LFCOMMDLG.DLL")));
-
-			Graphics g(dc);
-			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetScrollPos(SB_HORZ), m_HeaderHeight-(INT)pDivider->m_pBitmap->GetHeight());
-		}
-		else
-		{
-			dc.FillSolidRect(0, 0, rect.Width(), m_HeaderHeight, GetSysColor(COLOR_3DFACE));
-		}
-
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 	if (m_Nothing)
@@ -636,8 +623,7 @@ void CGridView::OnPaint()
 		CRect rectText(rect);
 		rectText.top += m_HeaderHeight+6;
 
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_NOTHINGTODISPLAY));
+		CString tmpStr((LPCSTR)IDS_NOTHINGTODISPLAY);
 
 		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE));
 		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);

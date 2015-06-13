@@ -11,7 +11,7 @@ HWND hWndWatchdog = NULL;
 ULONG ulSHChangeNotifyRegister;
 
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	struct SHNOTIFYSTRUCT
 	{
@@ -19,7 +19,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		DWORD dwItem2;
 	};
 
-	if (message==WM_USER)
+	if (Message==WM_USER)
 	{
 		SHNOTIFYSTRUCT* shns = (SHNOTIFYSTRUCT*)wParam;
 		WCHAR sPath[MAX_PATH];
@@ -41,7 +41,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 
-	return DefWindowProc(hWnd, message, wParam, lParam);
+	return DefWindowProc(hWnd, Message, wParam, lParam);
 }
 
 void RegisterWindowClass(PCWSTR pszClassName, WNDPROC lpfnWndProc)

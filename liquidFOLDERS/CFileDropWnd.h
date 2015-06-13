@@ -1,5 +1,5 @@
 
-// FileDropWnd.h: Schnittstelle der Klasse CFileDropWnd
+// CFileDropWnd.h: Schnittstelle der Klasse CFileDropWnd
 //
 
 #pragma once
@@ -20,16 +20,6 @@ public:
 	BOOL Create(CHAR* StoreID);
 
 protected:
-	CHAR m_StoreID[LFKeySize];
-	LFDropTarget m_DropTarget;
-	LFTooltip m_TooltipCtrl;
-	LFStoreDescriptor m_Store;
-	CString m_Label;
-	BOOL m_AlwaysOnTop;
-	BOOL m_StoreValid;
-	BOOL m_StoreMounted;
-	BOOL m_Hover;
-
 	void SetTopMost(BOOL AlwaysOnTop);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -54,4 +44,14 @@ protected:
 
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+	CHAR m_StoreID[LFKeySize];
+	LFDropTarget m_DropTarget;
+	LFTooltip m_TooltipCtrl;
+	LFStoreDescriptor m_Store;
+	CString m_Label;
+	BOOL m_AlwaysOnTop;
+	BOOL m_StoreValid;
+	BOOL m_StoreMounted;
+	BOOL m_Hover;
 };

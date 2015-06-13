@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "Resource.h"
 
 
 // CMapPreviewCtrl
@@ -19,7 +18,7 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CMapPreviewCtrl";
@@ -95,8 +94,8 @@ void CMapPreviewCtrl::OnPaint()
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), AfxGetResourceHandle());
-	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"), AfxGetResourceHandle());
+	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"));
+	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"));
 
 	// Karte
 	if (p_Airport)

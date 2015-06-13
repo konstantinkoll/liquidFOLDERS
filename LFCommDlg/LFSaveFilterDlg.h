@@ -3,7 +3,8 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "CStorePanel.h"
+#include "LFDialog.h"
 
 
 // LFSaveFilterDlg
@@ -12,7 +13,7 @@
 class LFSaveFilterDlg : public LFDialog
 {
 public:
-	LFSaveFilterDlg(CWnd* pParentWnd, CHAR* StoreID=NULL, BOOL AllowChooseStore=FALSE, WCHAR* FileName=NULL, WCHAR* Comments=NULL);
+	LFSaveFilterDlg(CWnd* pParentWnd=NULL, CHAR* StoreID=NULL, BOOL AllowChooseStore=FALSE, WCHAR* FileName=NULL, WCHAR* Comments=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -21,13 +22,13 @@ public:
 	WCHAR m_Comments[256];
 
 protected:
-	BOOL m_AllowChooseStore;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnChooseStore();
 	afx_msg void OnChange();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+	BOOL m_AllowChooseStore;
 
 private:
 	CStorePanel m_wndStorePanel;

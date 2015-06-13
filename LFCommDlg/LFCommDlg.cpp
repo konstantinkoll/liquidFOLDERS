@@ -35,7 +35,7 @@ INT GetAttributeIconIndex(UINT Attr)
 	static const UINT IconPosition[] = { LFAttrFileName, LFAttrStoreID, LFAttrFileID, LFAttrTitle, LFAttrCreationTime,
 		LFAttrAddTime, LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrArchiveTime,
 		LFAttrLocationName, LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComments,
-		LFAttrDuration, LFAttrLanguage, LFAttrDimension, LFAttrWidth, LFAttrHeight, LFAttrAspectRatio, LFAttrTags,
+		LFAttrDuration, LFAttrLanguage, LFAttrDimension, LFAttrWidth, LFAttrHeight, LFAttrAspectRatio, LFAttrHashtags,
 		LFAttrAlbum, LFAttrPriority, LFAttrURL, LFAttrISBN, LFAttrRecordingEquipment, LFAttrChannels, LFAttrCustomer,
 		LFAttrLikeCount };
 
@@ -67,16 +67,14 @@ void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 	path.CloseFigure();
 }
 
-void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint)
+void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& Caption, CString& Hint)
 {
-	LFApplication* pApp = LFGetApp();
-
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
 		hIcon = icons->ExtractIcon(sfi.iIcon);
-		caption = sfi.szDisplayName;
-		hint = sfi.szTypeName;
+		Caption = sfi.szDisplayName;
+		Hint = sfi.szTypeName;
 
 		IShellFolder* pParentFolder = NULL;
 		LPCITEMIDLIST Child = NULL;
@@ -95,9 +93,9 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSi
 
 				CString tmpStr;
 				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
-					pApp->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
-					pApp->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
-				hint.Append(tmpStr);
+					LFGetApp()->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
+					LFGetApp()->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
+				Hint.Append(tmpStr);
 			}
 			pParentFolder->Release();
 		}
@@ -112,9 +110,7 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSi
 
 BOOL IsCtrlThemed()
 {
-	LFApplication* pApp = LFGetApp();
-
-	return pApp->m_ThemeLibLoaded ? pApp->zIsAppThemed() : FALSE;
+	return LFGetApp()->m_ThemeLibLoaded ? LFGetApp()->zIsAppThemed() : FALSE;
 }
 
 void DrawControlBorder(CWnd* pWnd)
@@ -128,19 +124,18 @@ void DrawControlBorder(CWnd* pWnd)
 
 	CWindowDC dc(pWnd);
 
-	LFApplication* pApp = LFGetApp();
-	if (pApp->m_ThemeLibLoaded)
-		if (pApp->zIsAppThemed())
+	if (LFGetApp()->m_ThemeLibLoaded)
+		if (LFGetApp()->zIsAppThemed())
 		{
-			HTHEME hTheme = pApp->zOpenThemeData(pWnd->GetSafeHwnd(), VSCLASS_LISTBOX);
+			HTHEME hTheme = LFGetApp()->zOpenThemeData(pWnd->GetSafeHwnd(), VSCLASS_LISTBOX);
 			if (hTheme)
 			{
 				CRect rectClient(rect);
 				rectClient.DeflateRect(2, 2);
 				dc.ExcludeClipRect(rectClient);
 
-				pApp->zDrawThemeBackground(hTheme, dc, LBCP_BORDER_NOSCROLL, pWnd->IsWindowEnabled() ? GetFocus()==pWnd->GetSafeHwnd() ? LBPSN_FOCUSED : LBPSN_NORMAL : LBPSN_DISABLED, rect, rect);
-				pApp->zCloseThemeData(hTheme);
+				LFGetApp()->zDrawThemeBackground(hTheme, dc, LBCP_BORDER_NOSCROLL, pWnd->IsWindowEnabled() ? GetFocus()==pWnd->GetSafeHwnd() ? LBPSN_FOCUSED : LBPSN_NORMAL : LBPSN_DISABLED, rect, rect);
+				LFGetApp()->zCloseThemeData(hTheme);
 
 				return;
 			}
@@ -199,18 +194,17 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 
 void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
 {
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(ResID));
+	CString tmpStr((LPCSTR)ResID);
 
 	pComboBox->SetItemData(pComboBox->AddString(tmpStr), CompareID);
 }
 
-void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT request)
+void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request)
 {
 	pComboBox->SetRedraw(FALSE);
 	pComboBox->ResetContent();
 
-	switch (LFGetApp()->m_Attributes[attr].Type)
+	switch (LFGetApp()->m_Attributes[Attr].Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeAnsiString:
@@ -416,8 +410,6 @@ __forceinline INT ParseVersion(CString ver, Version* v)
 
 void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 {
-	LFApplication* pApp = LFGetApp();
-
 	// Obtain current version from instance version resource
 	CString CurrentVersion;
 	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
@@ -425,11 +417,11 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	// Check due?
 	BOOL Check = Force;
 	if (!Check)
-		Check = pApp->IsUpdateCheckDue();
+		Check = LFGetApp()->IsUpdateCheckDue();
 
 	// Perform check
-	CString LatestVersion = pApp->GetGlobalString(_T("LatestUpdateVersion"));
-	CString LatestMSN = pApp->GetGlobalString(_T("LatestUpdateMSN"));
+	CString LatestVersion = LFGetApp()->GetGlobalString(_T("LatestUpdateVersion"));
+	CString LatestMSN = LFGetApp()->GetGlobalString(_T("LatestUpdateMSN"));
 
 	if (Check)
 	{
@@ -441,8 +433,8 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			LatestVersion = GetIniValue(VersionIni, _T("Version"));
 			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
 
-			pApp->WriteGlobalString(_T("LatestUpdateVersion"), LatestVersion);
-			pApp->WriteGlobalString(_T("LatestUpdateMSN"), LatestMSN);
+			LFGetApp()->WriteGlobalString(_T("LatestUpdateVersion"), LatestVersion);
+			LFGetApp()->WriteGlobalString(_T("LatestUpdateMSN"), LatestMSN);
 		}
 	}
 
@@ -455,7 +447,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 		ParseVersion(CurrentVersion, &CV);
 		ParseVersion(LatestVersion, &LV);
 
-		CString IgnoreMSN = pApp->GetGlobalString(_T("IgnoreUpdateMSN"));
+		CString IgnoreMSN = LFGetApp()->GetGlobalString(_T("IgnoreUpdateMSN"));
 
 		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) &&
 			((LV.Major>CV.Major) ||
@@ -468,31 +460,29 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	{
 		if (pParentWnd)
 		{
-			if (pApp->m_pUpdateNotification)
-				pApp->m_pUpdateNotification->DestroyWindow();
+			if (LFGetApp()->m_pUpdateNotification)
+				LFGetApp()->m_pUpdateNotification->DestroyWindow();
 
 			LFUpdateDlg dlg(LatestVersion, LatestMSN, pParentWnd);
 			dlg.DoModal();
 		}
 		else
-			if (pApp->m_pUpdateNotification)
+			if (LFGetApp()->m_pUpdateNotification)
 			{
-				pApp->m_pUpdateNotification->SendMessage(WM_COMMAND, IDM_UPDATE_RESTORE);
+				LFGetApp()->m_pUpdateNotification->SendMessage(WM_COMMAND, IDM_UPDATE_RESTORE);
 			}
 			else
 			{
-				pApp->m_pUpdateNotification = new LFUpdateDlg(LatestVersion, LatestMSN);
-				pApp->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
-				pApp->m_pUpdateNotification->ShowWindow(SW_SHOW);
+				LFGetApp()->m_pUpdateNotification = new LFUpdateDlg(LatestVersion, LatestMSN);
+				LFGetApp()->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
+				LFGetApp()->m_pUpdateNotification->ShowWindow(SW_SHOW);
 			}
 	}
 	else
 		if (Force)
 		{
-			CString Caption;
-			CString Text;
-			ENSURE(Caption.LoadString(IDS_UPDATE));
-			ENSURE(Text.LoadString(IDS_UPDATENOTAVAILABLE));
+			CString Caption((LPCSTR)IDS_UPDATE);
+			CString Text((LPCSTR)IDS_UPDATENOTAVAILABLE);
 
 			MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONINFORMATION | MB_OK);
 		}

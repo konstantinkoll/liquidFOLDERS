@@ -2,7 +2,7 @@
 // LFDropTarget.cpp: Implementierung der Klasse LFDropTarget
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
 
 
@@ -61,7 +61,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	{
 		wp.Template = LFAllocItemDescriptor();
 
-		LFItemTemplateDlg dlg(pWnd, wp.Template, wp.StoreID, m_AllowChooseStore, p_Filter);
+		LFItemTemplateDlg dlg(wp.Template, wp.StoreID, pWnd, m_AllowChooseStore, p_Filter);
 		if (dlg.DoModal()==IDCANCEL)
 		{
 			LFFreeItemDescriptor(wp.Template);
@@ -77,8 +77,8 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	GlobalUnlock(hgDrop);
 
 	LFDoWithProgress(WorkerImportFromWindows, &wp.Hdr, pWnd);
-	UINT res = wp.FileImportList->m_LastError;
-	LFErrorBox(res, pWnd->GetSafeHwnd());
+	UINT Result = wp.FileImportList->m_LastError;
+	LFErrorBox(Result, pWnd->GetSafeHwnd());
 
 	LFFreeFileImportList(wp.FileImportList);
 	LFFreeItemDescriptor(wp.Template);
@@ -86,7 +86,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
-	return (res==LFOk) ? S_OK : E_INVALIDARG;
+	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
 
 __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
@@ -101,8 +101,8 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	GlobalUnlock(hgLiquid);
 
 	LFDoWithProgress(WorkerImportFromStore, &wp.Hdr, pWnd);
-	UINT res = wp.FileIDList->m_LastError;
-	LFErrorBox(res, pWnd->GetSafeHwnd());
+	UINT Result = wp.FileIDList->m_LastError;
+	LFErrorBox(Result, pWnd->GetSafeHwnd());
 
 	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
 	FORMATETC fmt;
@@ -124,7 +124,7 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
-	return (res==LFOk) ? S_OK : E_INVALIDARG;
+	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
 
 __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
@@ -139,14 +139,14 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 	GlobalUnlock(hgLiquid);
 
 	LFTransactionAddToSearchResult(il, p_SearchResult);
-	UINT res = il->m_LastError;
-	LFErrorBox(res, pWnd->GetSafeHwnd());
+	UINT Result = il->m_LastError;
+	LFErrorBox(Result, pWnd->GetSafeHwnd());
 	LFFreeFileIDList(il);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
-	return (res==LFOk) ? S_OK : E_INVALIDARG;
+	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
 
 

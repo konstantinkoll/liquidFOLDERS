@@ -1,13 +1,9 @@
 
-// StoreManager.cpp: Definiert das Klassenverhalten für die Anwendung.
+// liquidFOLDERS.cpp: Definiert das Klassenverhalten für die Anwendung.
 //
 
 #include "stdafx.h"
-#include "FileDropWnd.h"
-#include "..\\LFCore\\resource.h"
-#include "LFCore.h"
-#include "LFCommDlg.h"
-#include "MainWnd.h"
+#include "CFileDropWnd.h"
 #include "liquidFOLDERS.h"
 
 
@@ -40,16 +36,16 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 }
 
 
-// CStoreManagerApp
+// CLiquidFoldersApp
 
-BEGIN_MESSAGE_MAP(CStoreManagerApp, LFApplication)
+BEGIN_MESSAGE_MAP(CLiquidFoldersApp, LFApplication)
 	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
 END_MESSAGE_MAP()
 
 
-// CStoreManagerApp-Erstellung
+// CLiquidFoldersApp-Erstellung
 
-CStoreManagerApp::CStoreManagerApp()
+CLiquidFoldersApp::CLiquidFoldersApp()
 	: LFApplication(theAppID)
 {
 	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.StoreManager.NewWindow"));
@@ -58,14 +54,14 @@ CStoreManagerApp::CStoreManagerApp()
 }
 
 
-// Das einzige CStoreManagerApp-Objekt
+// Das einzige CLiquidFoldersApp-Objekt
 
-CStoreManagerApp theApp;
+CLiquidFoldersApp theApp;
 
 
-// CStoreManagerApp-Initialisierung
+// CLiquidFoldersApp-Initialisierung
 
-BOOL CStoreManagerApp::InitInstance()
+BOOL CLiquidFoldersApp::InitInstance()
 {
 	WCHAR CmdLine[256] = L"";
 	for (INT a=1; a<__argc; a++)
@@ -93,11 +89,11 @@ BOOL CStoreManagerApp::InitInstance()
 
 	for (UINT a=0; a<LFContextCount; a++)
 	{
-		m_AllowedViews[a] = new LFBitArray(LFViewCount);
+		m_AllowedViews[a] = 0;
 
 		UINT cnt = (a==LFContextStores) ? LFViewStrips : ((a<=LFLastGroupContext) || (a==LFContextSearch)) ? LFViewCount-1 : LFViewPreview;
 		for (UINT b=0; b<=cnt; b++)
-			(*m_AllowedViews[a]) += b;
+			m_AllowedViews[a] |= 1<<b;
 	}
 
 	// Pfad zu Google Earth
@@ -165,7 +161,7 @@ BOOL CStoreManagerApp::InitInstance()
 	return TRUE;
 }
 
-CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
+CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 {
 	// Parse parameter and create window
 	if (CmdLine)
@@ -310,15 +306,12 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 	return pFrame;
 }
 
-INT CStoreManagerApp::ExitInstance()
+INT CLiquidFoldersApp::ExitInstance()
 {
 	if (m_AppInitialized)
 	{
 		for (UINT a=0; a<LFContextCount; a++)
-		{
 			SaveViewOptions(a);
-			delete m_AllowedViews[a];
-		}
 
 		SetRegistryBase(_T("Settings"));
 		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
@@ -341,7 +334,7 @@ INT CStoreManagerApp::ExitInstance()
 }
 
 
-CMainWnd* CStoreManagerApp::GetClipboard()
+CMainWnd* CLiquidFoldersApp::GetClipboard()
 {
 	if (!p_Clipboard)
 	{
@@ -353,7 +346,7 @@ CMainWnd* CStoreManagerApp::GetClipboard()
 	return p_Clipboard;
 }
 
-CWnd* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
+CWnd* CLiquidFoldersApp::GetFileDrop(CHAR* StoreID)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 	{
@@ -369,19 +362,27 @@ CWnd* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
 	return pFrame;
 }
 
-void CStoreManagerApp::OnAppAbout()
+void CLiquidFoldersApp::OnAppAbout()
 {
 	LFAboutDlg dlg(m_pActiveWnd);
 	dlg.DoModal();
 }
 
 
-BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
+__forceinline BOOL CLiquidFoldersApp::IsViewAllowed(INT Context, INT View)
+{
+	ASSERT(View>=0);
+	ASSERT(View<=31);
+
+	return m_AllowedViews[Context] & (1<<View);
+}
+
+BOOL CLiquidFoldersApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 {
 	BOOL Modified = FALSE;
 
 	// Enforce valid view mode
-	if ((vp->Mode>=LFViewCount) || (!theApp.m_AllowedViews[context]->IsSet(vp->Mode)))
+	if ((vp->Mode>=LFViewCount) || (!IsViewAllowed(context, vp->Mode)))
 	{
 		vp->Mode = LFViewTiles;
 		Modified = TRUE;
@@ -390,7 +391,7 @@ BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 	// Choose other view mode if neccessary
 	if (!AttributeSortableInView(vp->SortBy, vp->Mode))
 		for (UINT a=0; a<LFViewCount; a++)
-			if ((theApp.m_AllowedViews[context]->IsSet(a)) && (AttributeSortableInView(vp->SortBy, a)))
+			if (IsViewAllowed(context, a) && (AttributeSortableInView(vp->SortBy, a)))
 			{
 				vp->Mode = (a<=LFViewTiles) ? LFViewTiles : a;
 				Modified = TRUE;
@@ -400,12 +401,12 @@ BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 	return Modified;
 }
 
-BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
+BOOL CLiquidFoldersApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 {
 	BOOL Modified = FALSE;
 
 	// Enforce valid view mode
-	if ((vp->Mode>=LFViewCount) || (!theApp.m_AllowedViews[context]->IsSet(vp->Mode)))
+	if ((vp->Mode>=LFViewCount) || (!IsViewAllowed(context, vp->Mode)))
 	{
 		vp->Mode = LFViewTiles;
 		Modified = TRUE;
@@ -424,25 +425,25 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 	return Modified;
 }
 
-void CStoreManagerApp::Broadcast(INT Context, INT View, UINT cmdMsg)
+void CLiquidFoldersApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 		m_pMainFrames.GetNext(p)->PostMessage(WM_CONTEXTVIEWCOMMAND, cmdMsg, MAKELPARAM(Context, View));
 }
 
-void CStoreManagerApp::UpdateSortOptions(INT Context)
+void CLiquidFoldersApp::UpdateSortOptions(INT Context)
 {
-	SanitizeSortBy(&theApp.m_Views[Context], Context);
+	SanitizeSortBy(&m_Views[Context], Context);
 	Broadcast(Context, -1, WM_UPDATESORTOPTIONS);
 }
 
-void CStoreManagerApp::UpdateViewOptions(INT Context, INT View)
+void CLiquidFoldersApp::UpdateViewOptions(INT Context, INT View)
 {
-	BOOL Modified = (Context!=-1) ? SanitizeViewMode(&theApp.m_Views[Context], Context) : FALSE;
+	BOOL Modified = (Context!=-1) ? SanitizeViewMode(&m_Views[Context], Context) : FALSE;
 	Broadcast(Context, Modified ? -1 : View, Modified ? WM_UPDATESORTOPTIONS : WM_UPDATEVIEWOPTIONS);
 }
 
-void CStoreManagerApp::Reload(INT Context)
+void CLiquidFoldersApp::Reload(INT Context)
 {
 	Broadcast(Context, -1, WM_RELOAD);
 }
@@ -450,7 +451,7 @@ void CStoreManagerApp::Reload(INT Context)
 
 // Shell
 
-void CStoreManagerApp::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR verb)
+void CLiquidFoldersApp::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR verb)
 {
 	WCHAR Path[4] = L" :\\";
 	Path[0] = cVolume;
@@ -493,7 +494,7 @@ void CStoreManagerApp::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR verb)
 
 // Registry and view settings
 
-void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
+void CLiquidFoldersApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 {
 	UINT sz;
 	LPBYTE buf = NULL;
@@ -507,7 +508,7 @@ void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 	}
 }
 
-void CStoreManagerApp::LoadViewOptions(UINT context)
+void CLiquidFoldersApp::LoadViewOptions(UINT context)
 {
 	CString base;
 	base.Format(_T("Settings\\Context%u"), context);
@@ -583,15 +584,15 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
 	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
 
-	if ((m_Views[context].Mode>=LFViewCount) || (!m_AllowedViews[context]->IsSet(m_Views[context].Mode)))
+	if ((m_Views[context].Mode>=LFViewCount) || (!IsViewAllowed(context, m_Views[context].Mode)))
 		m_Views[context].Mode = DefaultMode;
-	if (!m_Contexts[context].AllowedAttributes.IsSet(m_Views[context].SortBy))
+	if (!IsAttributeAllowed(context, m_Views[context].SortBy))
 		m_Views[context].SortBy = DefaultSortBy;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		m_Views[context].ColumnOrder[a] = a;
-		if (m_Contexts[context].AllowedAttributes.IsSet(a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
+		if (IsAttributeAllowed(context, a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
 		{
 			m_Views[context].ColumnWidth[a] = m_Attributes[a].RecommendedWidth;
 		}
@@ -604,7 +605,7 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	GetBinary(_T("ColumnWidth"), &m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (!m_Contexts[context].AllowedAttributes.IsSet(a))
+		if (!LFIsAttributeAllowed(m_Contexts[context], a))
 			m_Views[context].ColumnWidth[a] = 0;
 
 	m_Views[context].AutoDirs &= (m_Contexts[context].AllowGroups==true) || (context>=LFContextSubfolderDefault);
@@ -612,7 +613,7 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	SetRegistryBase(_T("Settings"));
 }
 
-void CStoreManagerApp::SaveViewOptions(UINT context)
+void CLiquidFoldersApp::SaveViewOptions(UINT context)
 {
 	CString base;
 	base.Format(_T("Settings\\Context%u"), context);

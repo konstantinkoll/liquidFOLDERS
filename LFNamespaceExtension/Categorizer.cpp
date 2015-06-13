@@ -3,10 +3,10 @@
 //
 
 #include "stdafx.h"
-#include "LFNamespaceExtension.h"
+#include "Categorizer.h"
 #include "CFileItem.h"
 #include "CFolderItem.h"
-#include "Categorizer.h"
+#include "LFNamespaceExtension.h"
 
 
 // CAttributeCategorizer
@@ -108,10 +108,10 @@ void CFolderCategorizer::OnGetCategoryName(CString& categoryName, DWORD category
 	switch (categoryID)
 	{
 	case 0:
-		ENSURE(categoryName.LoadString(IDS_Folders));
+		ENSURE(categoryName.LoadString(IDS_FOLDERS));
 		break;
 	case 1:
-		ENSURE(categoryName.LoadString(IDS_Files));
+		ENSURE(categoryName.LoadString(IDS_FILES));
 		break;
 	default:
 		categoryName = _T("?");
@@ -139,9 +139,9 @@ DWORD CRatingCategorizer::OnGetCategory(CNSEItem* child)
 			switch (this->column.index)
 			{
 			case LFAttrRating:
-				return AS(child, CFileItem)->Item->CoreAttributes.Rating/2;
+				return AS(child, CFileItem)->m_pItem->CoreAttributes.Rating/2;
 			case LFAttrPriority:
-				return AS(child, CFileItem)->Item->CoreAttributes.Priority/2;
+				return AS(child, CFileItem)->m_pItem->CoreAttributes.Priority/2;
 			}
 
 	return 0;
@@ -184,7 +184,7 @@ DWORD CSizeCategorizer::OnGetCategory(CNSEItem* child)
 		INT64 sz = 0;
 
 		if (IS(child, CFileItem))
-			sz = AS(child, CFileItem)->Item->CoreAttributes.FileSize;
+			sz = AS(child, CFileItem)->m_pItem->CoreAttributes.FileSize;
 
 		if (IS(child, CFolderItem))
 			sz = AS(child, CFolderItem)->Attrs.Size;

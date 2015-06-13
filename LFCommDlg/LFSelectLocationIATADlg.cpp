@@ -2,11 +2,16 @@
 // LFSelectLocationIATADlg.cpp: Implementierung der Klasse LFSelectLocationIATA
 //
 
-#pragma once
-#include "StdAfx.h"
-#include "LFSelectLocationIATADlg.h"
-#include "Resource.h"
-#include "LFCore.h"
+#include "stdafx.h"
+#include "LFCommDlg.h"
+
+
+__forceinline void Swap(LFAirport*& Eins, LFAirport*& Zwei)
+{
+	LFAirport* Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}
 
 
 // LFSelectLocationIATADlg
@@ -17,12 +22,11 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParent
 {
 	m_nIDTemplate = nIDTemplate;
 
-	p_App = LFGetApp();
-	m_LastCountrySelected = p_App->GetGlobalInt(_T("IATALastCountrySelected"), 0);
-	m_LastSortColumn = p_App->GetGlobalInt(_T("IATALastSortColumn"), 0);
-	m_LastSortDirection = p_App->GetGlobalInt(_T("IATALastSortDirection"), FALSE);
-	m_OverwriteName = AllowOverwriteName ? p_App->GetGlobalInt(_T("IATAOverwriteName"), TRUE) : FALSE;
-	m_OverwriteGPS = AllowOverwriteGPS ? p_App->GetGlobalInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
+	m_LastCountrySelected = LFGetApp()->GetGlobalInt(_T("IATALastCountrySelected"), 0);
+	m_LastSortColumn = LFGetApp()->GetGlobalInt(_T("IATALastSortColumn"), 0);
+	m_LastSortDirection = LFGetApp()->GetGlobalInt(_T("IATALastSortDirection"), FALSE);
+	m_OverwriteName = AllowOverwriteName ? LFGetApp()->GetGlobalInt(_T("IATAOverwriteName"), TRUE) : FALSE;
+	m_OverwriteGPS = AllowOverwriteGPS ? LFGetApp()->GetGlobalInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
 	m_AllowOverwriteName = AllowOverwriteName;
 	m_AllowOverwriteGPS = AllowOverwriteGPS;
 
@@ -49,48 +53,48 @@ void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		p_App->WriteGlobalInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
-		p_App->WriteGlobalInt(_T("IATALastSortColumn"), m_LastSortColumn);
-		p_App->WriteGlobalInt(_T("IATALastSortDirection"), m_LastSortDirection);
+		LFGetApp()->WriteGlobalInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
+		LFGetApp()->WriteGlobalInt(_T("IATALastSortColumn"), m_LastSortColumn);
+		LFGetApp()->WriteGlobalInt(_T("IATALastSortDirection"), m_LastSortDirection);
 		if (m_AllowOverwriteName)
-			p_App->WriteGlobalInt(_T("IATAOverwriteName"), m_OverwriteName);
+			LFGetApp()->WriteGlobalInt(_T("IATAOverwriteName"), m_OverwriteName);
 		if (m_AllowOverwriteGPS)
-			p_App->WriteGlobalInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
+			LFGetApp()->WriteGlobalInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
 	}
 }
 
 INT LFSelectLocationIATADlg::Compare(INT n1, INT n2)
 {
-	INT res = 0;
+	INT Result = 0;
 
 	switch (m_LastSortColumn)
 	{
 	case 0:
-		res = strcmp(m_Airports[n1]->Code, m_Airports[n2]->Code);
+		Result = strcmp(m_Airports[n1]->Code, m_Airports[n2]->Code);
 		break;
 	case 1:
-		res = strcmp(m_Airports[n1]->Name, m_Airports[n2]->Name);
+		Result = strcmp(m_Airports[n1]->Name, m_Airports[n2]->Name);
 		break;
 	}
 
 	if (m_LastSortDirection)
-		res = -res;
+		Result = -Result;
 
-	return res;
+	return Result;
 }
 
-void LFSelectLocationIATADlg::Heap(INT wurzel, INT anz)
+void LFSelectLocationIATADlg::Heap(INT Wurzel, INT Anz)
 {
-	while (wurzel<=anz/2-1)
+	while (Wurzel<=Anz/2-1)
 	{
-		INT idx = (wurzel+1)*2-1;
-		if (idx+1<anz)
-			if (Compare(idx, idx+1)<0)
-				idx++;
-		if (Compare(wurzel, idx)<0)
+		INT Index = (Wurzel+1)*2-1;
+		if (Index+1<Anz)
+			if (Compare(Index, Index+1)<0)
+				Index++;
+		if (Compare(Wurzel, Index)<0)
 		{
-			std::swap(m_Airports[wurzel], m_Airports[idx]);
-			wurzel = idx;
+			Swap(m_Airports[Wurzel], m_Airports[Index]);
+			Wurzel = Index;
 		}
 		else
 		{
@@ -105,28 +109,28 @@ void LFSelectLocationIATADlg::Sort()
 	{
 		for (INT a=m_nAirports/2-1; a>=0; a--)
 			Heap(a, m_nAirports);
-		for (INT a=m_nAirports-1; a>0; )
+		for (INT a=m_nAirports-1; a>0; a--)
 		{
-			std::swap(m_Airports[0], m_Airports[a]);
-			Heap(0, a--);
+			Swap(m_Airports[0], m_Airports[a]);
+			Heap(0, a);
 		}
 	}
 
 	CHeaderCtrl* pHeaderCtrl = m_wndList.GetHeaderCtrl();
 
-	HDITEM item;
-	ZeroMemory(&item, sizeof(item));
-	item.mask = HDI_FORMAT;
+	HDITEM Item;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.mask = HDI_FORMAT;
 
 	for (INT a=0; a<2; a++)
 	{
-		pHeaderCtrl->GetItem(a, &item);
+		pHeaderCtrl->GetItem(a, &Item);
 
-		item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+		Item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
 		if (a==(INT)m_LastSortColumn)
-			item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+			Item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
 
-		pHeaderCtrl->SetItem(a, &item);
+		pHeaderCtrl->SetItem(a, &Item);
 	}
 
 	INT sel = 0;
@@ -151,9 +155,9 @@ void LFSelectLocationIATADlg::LoadCountry(UINT country)
 
 	m_nAirports = 0;
 
-	INT idx = LFIATAGetNextAirportByCountry(country, -1, &m_Airports[m_nAirports]);
-	while ((idx!=-1) && (m_nAirports<MaxAirportsPerCountry))
-		idx = LFIATAGetNextAirportByCountry(country, idx, &m_Airports[++m_nAirports]);
+	INT Index = LFIATAGetNextAirportByCountry(country, -1, &m_Airports[m_nAirports]);
+	while ((Index!=-1) && (m_nAirports<MaxAirportsPerCountry))
+		Index = LFIATAGetNextAirportByCountry(country, Index, &m_Airports[++m_nAirports]);
 
 	m_wndList.SetItemCount(m_nAirports);
 	Sort();
@@ -169,9 +173,9 @@ void LFSelectLocationIATADlg::LoadCountry(UINT country)
 
 void LFSelectLocationIATADlg::UpdatePreview()
 {
-	INT idx = m_wndList.GetNextItem(-1, LVIS_SELECTED);
+	INT Index = m_wndList.GetNextItem(-1, LVIS_SELECTED);
 
-	p_Airport = m_Airports[idx];
+	p_Airport = m_Airports[Index];
 	m_wndMap.Update(p_Airport);
 
 	LFGeoCoordinatesToString(p_Airport->Location, m_Buffer, 256, false);
@@ -195,7 +199,7 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate));
+	HICON hIcon = LFGetApp()->LoadDialogIcon(m_nIDTemplate);
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
@@ -254,9 +258,9 @@ void LFSelectLocationIATADlg::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 		if (CDDS_ITEMPREPAINT==pLVCD->nmcd.dwDrawStage)
 		{
-			INT idx = (INT)pLVCD->nmcd.dwItemSpec;
+			INT Index = (INT)pLVCD->nmcd.dwItemSpec;
 
-			if (strcmp(m_Airports[idx]->Code, m_Airports[idx]->MetroCode)==0)
+			if (strcmp(m_Airports[Index]->Code, m_Airports[Index]->MetroCode)==0)
 				pLVCD->clrText = 0xFF0000;
 		}
 }
@@ -266,11 +270,11 @@ void LFSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* pItem = &pDispInfo->item;
 
-	INT idx = pItem->iItem;
+	INT Index = pItem->iItem;
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-		CHAR* src = (pItem->iSubItem==0) ? &m_Airports[idx]->Code[0] : &m_Airports[idx]->Name[0];
+		CHAR* src = (pItem->iSubItem==0) ? &m_Airports[Index]->Code[0] : &m_Airports[Index]->Name[0];
 		MultiByteToWideChar(CP_ACP, 0, src, -1, m_Buffer, 256);
 		pItem->pszText = (LPWSTR)m_Buffer;
 	}
@@ -324,16 +328,16 @@ void LFSelectLocationIATADlg::OnReportError(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	CString Subject = _T("IATA database error");
 
-	INT idx = m_wndList.GetNextItem(-1, LVIS_SELECTED);
-	if (idx!=-1)
+	INT Index = m_wndList.GetNextItem(-1, LVIS_SELECTED);
+	if (Index!=-1)
 	{
-		CString Code(m_Airports[idx]->Code);
-		CString Name(m_Airports[idx]->Name);
-		CString Country(&LFIATAGetCountry(m_Airports[idx]->CountryID)->Name[0]);
+		CString Code(m_Airports[Index]->Code);
+		CString Name(m_Airports[Index]->Name);
+		CString Country(&LFIATAGetCountry(m_Airports[Index]->CountryID)->Name[0]);
 		Subject += _T(": ")+Code+_T(" (")+Name+_T(", ")+Country+_T(")");
 	}
 
-	p_App->SendMail(Subject);
+	LFGetApp()->SendMail(Subject);
 
 	*pResult = 0;
 }

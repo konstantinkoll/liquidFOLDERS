@@ -1,6 +1,7 @@
-; LFCore.def : Deklariert die Modulparameter für die DLL.
+; LFCore.def : Declares the module parameters for the DLL.
 
-LIBRARY      "LFCore"
+LIBRARY      "LFCORE"
 
 EXPORTS
-    ; Explizite Exporte können hier eingefügt werden.
+	; Explicit exports can go here
+	LFInitialize @1

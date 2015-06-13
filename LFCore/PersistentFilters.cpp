@@ -38,7 +38,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* f)
 		Condition = Condition->Next;
 	}
 
-	bool res = false;
+	bool Result = false;
 	HANDLE hFile = CreateFile(fn, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hFile!=INVALID_HANDLE_VALUE)
 	{
@@ -46,13 +46,13 @@ bool StoreFilter(wchar_t* fn, LFFilter* f)
 		if (WriteFile(hFile, &Header, sizeof(Header), &Written, NULL))
 			if (WriteFile(hFile, &Body, sizeof(Body), &Written, NULL))
 			{
-				res = true;
+				Result = true;
 				Condition = f->ConditionList;
 				while (Condition)
 				{
 					if (!WriteFile(hFile, Condition, sizeof(LFFilterCondition), &Written, NULL))
 					{
-						res = false;
+						Result = false;
 						break;
 					}
 					Condition = Condition->Next;
@@ -62,7 +62,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* f)
 		CloseHandle(hFile);
 	}
 
-	return res;
+	return Result;
 }
 
 LFFilter* LoadFilter(wchar_t* fn, char* StoreID)
@@ -129,7 +129,7 @@ LFFilter* LoadFilter(wchar_t* fn, char* StoreID)
 }
 
 
-LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
+LFCORE_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
 {
 	assert(f);
 
@@ -158,8 +158,8 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 	CIndex* idx2;
 	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	unsigned int res = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
-	if (res==LFOk)
+	unsigned int Result = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
+	if (Result==LFOk)
 	{
 		LFItemDescriptor* i = LFAllocItemDescriptor();
 		SetAttribute(i, LFAttrFileName, name ? name : f->OriginalName);
@@ -168,8 +168,8 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 			SetAttribute(i, LFAttrComments, comments);
 
 		wchar_t Path[2*MAX_PATH];
-		res = PrepareImport(slot, i, Path, 2*MAX_PATH);
-		if (res==LFOk)
+		Result = PrepareImport(slot, i, Path, 2*MAX_PATH);
+		if (Result==LFOk)
 			if (StoreFilter(Path, f))
 			{
 				SetAttributesFromFile(i, Path, false);
@@ -194,7 +194,7 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 				RemoveDir(Path);
 
 				LFFreeItemDescriptor(i);
-				res = LFIllegalPhysicalPath;
+				Result = LFIllegalPhysicalPath;
 			}
 
 		LFFreeItemDescriptor(i);
@@ -206,10 +206,10 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 		ReleaseMutexForStore(StoreLock);
 	}
 
-	return res;
+	return Result;
 }
 
-LFCore_API LFFilter* LFLoadFilter(wchar_t* fn)
+LFCORE_API LFFilter* LFLoadFilter(wchar_t* fn)
 {
 	if (!GetMutex(Mutex_Stores))
 		return NULL;
@@ -241,7 +241,7 @@ LFCore_API LFFilter* LFLoadFilter(wchar_t* fn)
 	return f;
 }
 
-LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
+LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
 {
 	wchar_t Path[2*MAX_PATH];
 	if (LFGetFileLocation(i, Path, 2*MAX_PATH, true, true, true)!=LFOk)

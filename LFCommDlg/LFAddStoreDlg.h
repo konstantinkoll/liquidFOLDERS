@@ -13,7 +13,7 @@
 class LFAddStoreDlg : public LFDialog
 {
 public:
-	LFAddStoreDlg(CWnd* pParentWnd);
+	LFAddStoreDlg(CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

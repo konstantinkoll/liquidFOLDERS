@@ -25,7 +25,7 @@ public:
 	bool AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData);
 	void Reset();
 	void SetError(char* key, unsigned int error, LFProgress* pProgress=NULL);
-	void SetError(unsigned int idx, unsigned int res, LFProgress* pProgress=NULL);
+	void SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress=NULL);
 	LPITEMIDLIST DetachPIDL(unsigned int idx);
 	HGLOBAL CreateDropFiles();
 	HGLOBAL CreateLiquidFiles();

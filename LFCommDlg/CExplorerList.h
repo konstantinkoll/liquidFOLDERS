@@ -3,8 +3,7 @@
 //
 
 #pragma once
-#include "LFApplication.h"
-#include "LFCore.h"
+#include "LF.h"
 
 
 // CExplorerList
@@ -22,17 +21,10 @@ public:
 	void AddColumn(INT ID, CString Name);
 	void AddColumn(INT ID, UINT Attr);
 	void AddStoreColumns();
-	void SetSearchResult(LFSearchResult* result);
+	void SetSearchResult(LFSearchResult* Result);
 	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
 
 protected:
-	LFApplication* p_App;
-	LFSearchResult* p_Result;
-	HTHEME hTheme;
-	UINT m_ItemMenuID;
-	BOOL m_HighlightFirst;
-	UINT m_BackgroundMenuID;
-
 	virtual void Init();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -41,4 +33,12 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
+
+	LFSearchResult* p_Result;
+	HTHEME hTheme;
+
+private:
+	UINT m_ItemMenuID;
+	BOOL m_HighlightFirst;
+	UINT m_BackgroundMenuID;
 };

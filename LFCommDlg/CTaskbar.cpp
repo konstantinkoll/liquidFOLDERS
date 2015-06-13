@@ -28,12 +28,11 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT n
 	m_Icons.SetImageSize(CSize(m_IconSize, m_IconSize));
 	m_Icons.Load(m_IconSize==32 ? LargeResID : SmallResID);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
 }
 
 BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
@@ -51,9 +50,8 @@ UINT CTaskbar::GetPreferredHeight()
 
 CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL SupressCaption)
 {
-	CString Caption;
+	CString Caption((LPCSTR)nID);
 	CString Hint;
-	ENSURE(Caption.LoadString(nID));
 
 	INT pos = Caption.Find(L'\n');
 	if (pos!=-1)
@@ -70,10 +68,8 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	}
 
 	CTaskButton* btn = new CTaskButton();
-	btn->Create(AddRight || SupressCaption ? _T("") : Caption, Caption, Hint, &m_Icons, m_IconSize,
-		ForceIcon || AddRight || SupressCaption || (LFGetApp()->OSVersion<OS_Seven) ? IconID : -1,
-		this, nID);
-	btn->EnableWindow(FALSE);
+	btn->Create(this, nID, AddRight || SupressCaption ? _T("") : Caption, Caption, Hint, &m_Icons, m_IconSize,
+		ForceIcon || AddRight || SupressCaption || (LFGetApp()->OSVersion<OS_Seven) ? IconID : -1);
 
 	if (AddRight)
 	{

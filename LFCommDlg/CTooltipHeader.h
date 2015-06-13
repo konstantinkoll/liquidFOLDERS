@@ -30,6 +30,8 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 protected:
+	virtual void Init();
+
 	CImageListTransparent m_SortIndicators;
 	LFTooltip m_TooltipCtrl;
 	BOOL m_Hover;
@@ -37,6 +39,4 @@ protected:
 	INT m_PressedItem;
 	INT m_TrackItem;
 	INT m_TooltipItem;
-
-	virtual void Init();
 };

@@ -8,7 +8,7 @@ class LFSearchResult : public LFDynArray<LFItemDescriptor*>
 public:
 	LFSearchResult(int ctx);
 	LFSearchResult(LFFilter* f);
-	LFSearchResult(LFSearchResult* res);
+	LFSearchResult(LFSearchResult* Result);
 	~LFSearchResult();
 
 	void SetMetadataFromFilter(LFFilter* f);

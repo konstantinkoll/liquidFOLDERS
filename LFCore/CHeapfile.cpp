@@ -424,15 +424,15 @@ bool CHeapfile::Compact()
 	int Next = 0;
 	int Count = 0;
 	void* Ptr;
-	bool res = true;
+	bool Result = true;
 	char* tmpBuf = (char*)malloc(NewHdr.ElementSize);
 	ZeroMemory(tmpBuf, NewHdr.ElementSize);
 
-	while (res)
+	while (Result)
 	{
-		res = FindNext(Next, Ptr);
+		Result = FindNext(Next, Ptr);
 
-		if (res)
+		if (Result)
 		{
 			if ((NewHdr.ElementSize>Hdr.ElementSize) && (KeyOffset==Hdr.ElementSize-LFKeySize))
 			{

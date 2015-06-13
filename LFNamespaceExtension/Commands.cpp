@@ -3,15 +3,9 @@
 //
 
 #include "stdafx.h"
-#include "CFileItem.h"
 #include "CFolderItem.h"
 #include "Commands.h"
-#include "LFCore.h"
 #include "LFNamespaceExtension.h"
-#include "LF.h"
-#include "resource.h"
-#include <io.h>
-#include <shlguid.h>
 
 
 // CmdCreateNewStore
@@ -25,19 +19,17 @@ CmdCreateNewStore::CmdCreateNewStore()
 
 CString CmdCreateNewStore::GetCaption(CPtrList* /*nseItems*/)
 {
-	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_AddStore));
-	caption.Remove('&');
+	CString Caption((LPCSTR)IDS_MENU_ADDSTORE);
+	Caption.Remove('&');
 
-	return caption;
+	return Caption;
 }
 
 CString CmdCreateNewStore::GetToolTip(CPtrList* /*nseItems*/)
 {
-	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_AddStore));
+	CString Hint((LPCSTR)IDS_HINT_ADDSTORE);
 
-	return hint;
+	return Hint;
 }
 
 ExplorerCommandState CmdCreateNewStore::GetState(CPtrList* /*nseItems*/)
@@ -70,19 +62,17 @@ CmdProperties::CmdProperties()
 
 CString CmdProperties::GetCaption(CPtrList* /*nseItems*/)
 {
-	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_Properties));
-	caption.Remove('&');
+	CString Caption((LPCSTR)IDS_MENU_PROPERTIES);
+	Caption.Remove('&');
 
-	return caption;
+	return Caption;
 }
 
 CString CmdProperties::GetToolTip(CPtrList* /*nseItems*/)
 {
-	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_Properties));
+	CString Hint((LPCSTR)IDS_HINT_PROPERTIES);
 
-	return hint;
+	return Hint;
 }
 
 ExplorerCommandState CmdProperties::GetState(CPtrList* nseItems)
@@ -129,19 +119,17 @@ CmdFileDrop::CmdFileDrop(CHAR* StoreID)
 
 CString CmdFileDrop::GetCaption(CPtrList* /*nseItems*/)
 {
-	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_OpenFileDrop));
-	caption.Remove('&');
+	CString Caption((LPCSTR)IDS_MENU_OPENFILEDROP);
+	Caption.Remove('&');
 
-	return caption;
+	return Caption;
 }
 
 CString CmdFileDrop::GetToolTip(CPtrList* /*nseItems*/)
 {
-	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_OpenFileDrop));
+	CString Hint((LPCSTR)IDS_HINT_OPENFILEDROP);
 
-	return hint;
+	return Hint;
 }
 
 ExplorerCommandState CmdFileDrop::GetState(CPtrList* /*nseItems*/)
@@ -179,19 +167,17 @@ CmdImportFolder::CmdImportFolder(CHAR* StoreID)
 
 CString CmdImportFolder::GetCaption(CPtrList* /*nseItems*/)
 {
-	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_ImportFolder));
-	caption.Remove('&');
+	CString Caption((LPCSTR)IDS_MENU_IMPORTFOLDER);
+	Caption.Remove('&');
 
-	return caption;
+	return Caption;
 }
 
 CString CmdImportFolder::GetToolTip(CPtrList* /*nseItems*/)
 {
-	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_ImportFolder));
+	CString Hint((LPCSTR)IDS_HINT_IMPORTFOLDER);
 
-	return hint;
+	return Hint;
 }
 
 ExplorerCommandState CmdImportFolder::GetState(CPtrList* /*nseItems*/)

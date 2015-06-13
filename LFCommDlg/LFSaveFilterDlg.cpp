@@ -2,9 +2,9 @@
 // LFSaveFilterDlg.cpp: Implementierung der Klasse LFSaveFilterDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
+#include "LFCommDlg.h"
 #include "LFSaveFilterDlg.h"
-#include "Resource.h"
 
 
 // LFSaveFilterDlg

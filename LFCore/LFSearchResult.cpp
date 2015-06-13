@@ -28,7 +28,7 @@ LFSearchResult::LFSearchResult(int ctx)
 {
 	assert(ctx<LFContextCount);
 
-	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+ctx, m_Name, 256, m_Hint, 256);
+	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+ctx, m_Name, 256, m_Hint, 256);
 	m_RawCopy = true;
 	m_Context = ctx;
 	m_GroupAttribute = LFAttrFileName;
@@ -55,34 +55,34 @@ LFSearchResult::LFSearchResult(LFFilter* f)
 	}
 	else
 	{
-		LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+LFContextStores, m_Name, 256, m_Hint, 256);
+		LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+LFContextStores, m_Name, 256, m_Hint, 256);
 		m_Context = LFContextStores;
 	}
 }
 
-LFSearchResult::LFSearchResult(LFSearchResult* res)
+LFSearchResult::LFSearchResult(LFSearchResult* Result)
 	: LFDynArray()
 {
-	m_Items = (LFItemDescriptor**)_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), Dyn_MemoryAlignment);
+	m_Items = (LFItemDescriptor**)_aligned_malloc(Result->m_ItemCount*sizeof(LFItemDescriptor*), DYN_MEMORYALIGNMENT);
 
-	wcscpy_s(m_Name, 256, res->m_Name);
-	wcscpy_s(m_Hint, 256, res->m_Hint);
+	wcscpy_s(m_Name, 256, Result->m_Name);
+	wcscpy_s(m_Hint, 256, Result->m_Hint);
 	m_RawCopy = false;
-	m_Context = res->m_Context;
-	m_GroupAttribute = res->m_GroupAttribute;
-	m_HasCategories = res->m_HasCategories;
-	m_QueryTime = res->m_QueryTime;
-	m_FileCount = res->m_FileCount;
-	m_FileSize = res->m_FileSize;
-	m_StoreCount = res->m_StoreCount;
+	m_Context = Result->m_Context;
+	m_GroupAttribute = Result->m_GroupAttribute;
+	m_HasCategories = Result->m_HasCategories;
+	m_QueryTime = Result->m_QueryTime;
+	m_FileCount = Result->m_FileCount;
+	m_FileSize = Result->m_FileSize;
+	m_StoreCount = Result->m_StoreCount;
 
 	if (m_Items)
 	{
-		m_LastError = res->m_LastError;
-		m_ItemCount = m_Allocated = res->m_ItemCount;
+		m_LastError = Result->m_LastError;
+		m_ItemCount = m_Allocated = Result->m_ItemCount;
 
-		memcpy(m_Items, res->m_Items, res->m_ItemCount*sizeof(LFItemDescriptor*));
-		for (unsigned int a=0; a<res->m_ItemCount; a++)
+		memcpy(m_Items, Result->m_Items, Result->m_ItemCount*sizeof(LFItemDescriptor*));
+		for (unsigned int a=0; a<Result->m_ItemCount; a++)
 			m_Items[a]->RefCount++;
 	}
 	else
@@ -140,7 +140,7 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 
 	if ((f->OriginalName[0]==L'\0') || (m_Context==LFContextStores))
 	{
-		LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+m_Context, m_Name, 256, m_Hint, 256);
+		LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+m_Context, m_Name, 256, m_Hint, 256);
 	}
 	else
 	{
@@ -148,7 +148,7 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 
 		if (m_Context<=LFLastQueryContext)
 		{
-			LoadString(LFCoreModuleHandle, IDS_FirstContext+m_Context, m_Hint, 256);
+			LoadString(LFCoreModuleHandle, IDS_CONTEXT_FIRST+m_Context, m_Hint, 256);
 			wchar_t* brk = wcschr(m_Hint, L'\n');
 			if (brk)
 				*brk = L'\0';

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "CIconCtrl.h"
 
 
 // LFStoreNewGeneralPage
@@ -17,6 +17,5 @@ public:
 	CIconCtrl m_wndIcon;
 	CEdit m_wndStoreName;
 	CEdit m_wndStoreComment;
-	CButton m_wndMakeDefault;
 	CButton m_wndMakeSearchable;
 };

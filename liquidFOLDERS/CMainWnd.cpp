@@ -3,10 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "LFEditFilterDlg.h"
-#include "FileDropWnd.h"
 #include "liquidFOLDERS.h"
-#include "LFCommDlg.h"
 
 
 LFFilter* GetRootFilter(CHAR* RootStore=NULL)
@@ -33,10 +30,10 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 
 void WriteTXTItem(CStdioFile& f, LFItemDescriptor* i)
 {
-	for (UINT attr=0; attr<LFAttributeCount; attr++)
+	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
 	{
 		LFVariantData v;
-		v.Attr = attr;
+		v.Attr = Attr;
 		LFGetAttributeVariantData(i, &v);
 
 		if (!LFIsNullVariantData(&v))
@@ -44,7 +41,7 @@ void WriteTXTItem(CStdioFile& f, LFItemDescriptor* i)
 			WCHAR tmpBuf[256];
 			LFVariantDataToString(&v, tmpBuf, 256);
 
-			CString tmpStr(theApp.m_Attributes[attr].Name);
+			CString tmpStr(theApp.m_Attributes[Attr].Name);
 			tmpStr.Append(_T(": "));
 			tmpStr.Append(tmpBuf);
 			tmpStr.Append(_T("\n"));
@@ -73,12 +70,12 @@ void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
 		break;
 	}
 
-	f.WriteString(_T("\t<item type=\"")+Type+_T("\">\n"));
+	f.WriteString(_T("\t<Item type=\"")+Type+_T("\">\n"));
 
-	for (UINT attr=0; attr<LFAttributeCount; attr++)
+	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
 	{
 		LFVariantData v;
-		v.Attr = attr;
+		v.Attr = Attr;
 		LFGetAttributeVariantData(i, &v);
 
 		if (!LFIsNullVariantData(&v))
@@ -87,13 +84,13 @@ void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
 			LFVariantDataToString(&v, tmpBuf, 256);
 
 			CString tmpStr;
-			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[attr].XMLID, attr, tmpBuf);
+			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[Attr].XMLID, Attr, tmpBuf);
 
 			f.WriteString(tmpStr);
 		}
 	}
 
-	f.WriteString(_T("\t</item>\n"));
+	f.WriteString(_T("\t</Item>\n"));
 }
 
 
@@ -112,9 +109,11 @@ CMainWnd::~CMainWnd()
 {
 	if (m_pActiveFilter)
 		LFFreeFilter(m_pActiveFilter);
+
 	if (m_pCookedFiles!=m_pRawFiles)
 		LFFreeSearchResult(m_pCookedFiles);
 	LFFreeSearchResult(m_pRawFiles);
+
 	DeleteBreadcrumbs(&m_BreadcrumbBack);
 	DeleteBreadcrumbs(&m_BreadcrumbForward);
 }
@@ -123,16 +122,11 @@ BOOL CMainWnd::Create(BOOL IsClipboard)
 {
 	m_IsClipboard = IsClipboard;
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
-	CRect rect;
-	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
-	rect.DeflateRect(32, 32);
+	CString Caption((LPCSTR)(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
-	CString caption;
-	ENSURE(caption.LoadString(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
-
-	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, IsClipboard ? _T("Clipboard") : _T("Main"));
+	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, IsClipboard ? _T("Clipboard") : _T("Main"));
 }
 
 BOOL CMainWnd::CreateClipboard()
@@ -419,13 +413,12 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Journal-Button
-	if (!m_wndJournalButton.Create(m_wndHistory.GetPreferredHeight(), this, 1))
+	if (!m_wndJournalButton.Create(this, 1, m_wndHistory.GetPreferredHeight()))
 		return -1;
 
 	// Suchbegriff
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_SEARCHTERM));
-	if (!m_wndSearch.Create(tmpStr, this, 3, TRUE))
+	CString tmpStr((LPCSTR)IDS_SEARCHTERM);
+	if (!m_wndSearch.Create(this, 3, tmpStr, TRUE))
 		return -1;
 
 	// Sidebar
@@ -454,7 +447,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// Hauptansicht erstellen
-	if (!m_wndMainView.Create(m_IsClipboard, this, 5))
+	if (!m_wndMainView.Create(this, 5, m_IsClipboard))
 		return -1;
 
 	// Aero
@@ -649,10 +642,10 @@ void CMainWnd::OnFiltersCreateNew()
 
 void CMainWnd::OnItemOpen()
 {
-	INT idx = m_wndMainView.GetSelectedItem();
-	if (idx!=-1)
+	INT Index = m_wndMainView.GetSelectedItem();
+	if (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
 
 		if (i->NextFilter)
 		{
@@ -662,7 +655,7 @@ void CMainWnd::OnItemOpen()
 			if (!(i->Type & LFTypeNotMounted))
 			{
 				WCHAR Path[MAX_PATH];
-				UINT res;
+				UINT Result;
 
 				switch (i->Type & LFTypeMask)
 				{
@@ -681,15 +674,15 @@ void CMainWnd::OnItemOpen()
 					}
 					else
 					{
-						res = LFGetFileLocation(i, Path, MAX_PATH, true, true);
-						if (res==LFOk)
+						Result = LFGetFileLocation(i, Path, MAX_PATH, true, true);
+						if (Result==LFOk)
 						{
 							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
 								SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
 						}
 						else
 						{
-							LFErrorBox(res, GetSafeHwnd());
+							LFErrorBox(Result, GetSafeHwnd());
 						}
 					}
 					break;
@@ -702,10 +695,10 @@ void CMainWnd::OnItemOpen()
 
 void CMainWnd::OnItemOpenNewWindow()
 {
-	INT idx = m_wndMainView.GetSelectedItem();
-	if (idx!=-1)
+	INT Index = m_wndMainView.GetSelectedItem();
+	if (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
 
 		ASSERT((i->Type & LFTypeMask)==LFTypeStore);
 
@@ -719,10 +712,10 @@ void CMainWnd::OnItemOpenFileDrop()
 {
 	if (m_wndMainView.GetContext()==LFContextStores)
 	{
-		INT idx = m_wndMainView.GetSelectedItem();
-		if (idx!=-1)
+		INT Index = m_wndMainView.GetSelectedItem();
+		if (Index!=-1)
 		{
-			LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+			LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
 
 			ASSERT((i->Type & LFTypeMask)==LFTypeStore);
 			theApp.GetFileDrop(i->StoreID);
@@ -748,10 +741,10 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& f)
 #define Spacer { if (First) { First = FALSE; } else { f.WriteString(_T("\n")); } }
 
 	BOOL First = TRUE;
-	INT idx = m_wndMainView.GetNextSelectedItem(-1);
-	while (idx!=-1)
+	INT Index = m_wndMainView.GetNextSelectedItem(-1);
+	while (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
 
 		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
@@ -767,7 +760,7 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& f)
 			WriteTXTItem(f, i);
 		}
 
-		idx = m_wndMainView.GetNextSelectedItem(idx);
+		Index = m_wndMainView.GetNextSelectedItem(Index);
 	}
 }
 
@@ -775,10 +768,10 @@ void CMainWnd::WriteMetadataXML(CStdioFile& f)
 {
 	f.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\">\n<items>\n"));
 
-	INT idx = m_wndMainView.GetNextSelectedItem(-1);
-	while (idx!=-1)
+	INT Index = m_wndMainView.GetNextSelectedItem(-1);
+	while (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
 		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
 			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
@@ -789,7 +782,7 @@ void CMainWnd::WriteMetadataXML(CStdioFile& f)
 			WriteXMLItem(f, i);
 		}
 
-		idx = m_wndMainView.GetNextSelectedItem(idx);
+		Index = m_wndMainView.GetNextSelectedItem(Index);
 	}
 
 	f.WriteString(_T("</items>\n"));
@@ -797,12 +790,10 @@ void CMainWnd::WriteMetadataXML(CStdioFile& f)
 
 void CMainWnd::OnExportMetadata()
 {
-	CString Extensions;
-	ENSURE(Extensions.LoadString(IDS_TXTFILEFILTER));
+	CString Extensions((LPCSTR)IDS_TXTFILEFILTER);
 	Extensions += _T(" (*.txt)|*.txt|");
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadStringW(IDS_XMLFILEFILTER));
+	CString tmpStr((LPCSTR)IDS_XMLFILEFILTER);
 	Extensions += tmpStr+_T(" (*.xml)|*.xml||");
 
 	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
@@ -885,12 +876,12 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	LFSearchResult* pVictim = m_pCookedFiles;
 
 	LFViewParameters* vp = &theApp.m_Views[m_pRawFiles->m_Context];
-	LFAttributeDescriptor* attr = &theApp.m_Attributes[vp->SortBy];
+	LFAttributeDescriptor* Attr = &theApp.m_Attributes[vp->SortBy];
 
 	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
 		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewPreview) && (vp->Descending==TRUE)) || (vp->Mode==LFViewTimeline),
-			((vp->Mode>LFViewPreview) && (vp->Mode!=LFViewTimeline)) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
+			((vp->Mode>LFViewPreview) && (vp->Mode!=LFViewTimeline)) || ((Attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			m_pActiveFilter);
 	}
 	else

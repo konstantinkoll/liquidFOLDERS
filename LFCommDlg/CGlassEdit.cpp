@@ -19,15 +19,14 @@ CGlassEdit::CGlassEdit()
 	m_Hover = FALSE;
 }
 
-BOOL CGlassEdit::Create(CString EmptyHint, CGlassWindow* pParentWnd, UINT nID, BOOL ShowSearchIcon)
+BOOL CGlassEdit::Create(CGlassWindow* pParentWnd, UINT nID, CString EmptyHint, BOOL ShowSearchIcon)
 {
 	m_EmptyHint = EmptyHint;
 	m_ShowSearchIcon = ShowSearchIcon;
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CEdit::Create(dwStyle, rect, pParentWnd, nID);
+	return CEdit::Create(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, rect, pParentWnd, nID);
 }
 
 UINT CGlassEdit::GetPreferredHeight()
@@ -56,24 +55,23 @@ INT CGlassEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CEdit::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	LFApplication* pApp = LFGetApp();
-	SetFont(&pApp->m_DefaultFont);
+	SetFont(&LFGetApp()->m_DefaultFont);
 
 	if (m_ShowSearchIcon)
 	{
 		LOGFONT lf;
-		pApp->m_DefaultFont.GetLogFont(&lf);
+		LFGetApp()->m_DefaultFont.GetLogFont(&lf);
 		UINT h = max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON));
 
 		if (h>=16)
 		{
 			m_IconSize = (h>=27) ? 27 : (h>=22) ? 22 : 16;
-			hSearchIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_SEARCH), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+			hSearchIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_SEARCH), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 		}
 	}
 
 	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
+	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_DefaultFont);
 	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);

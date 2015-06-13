@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "afxole.h"
 #include "LF.h"
 
 

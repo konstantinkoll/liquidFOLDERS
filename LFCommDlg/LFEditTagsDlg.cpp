@@ -2,20 +2,18 @@
 // LFEditTagsDlg.cpp: Implementierung der Klasse LFEditTagsDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
 #include "LFEditTagsDlg.h"
-#include "Resource.h"
 
 
 // LFEditTagsDlg
 //
 
-LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID)
+LFEditTagsDlg::LFEditTagsDlg(CString Tags, CWnd* pParentWnd, CHAR* StoreID)
 	: CDialog(IDD_EDITTAGS, pParentWnd)
 {
 	m_Tags = Tags;
-	p_App = LFGetApp();
 
 	m_StoreIDValid = (StoreID!=NULL);
 	if (m_StoreIDValid)
@@ -46,7 +44,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_EDITTAGS));
+	HICON hIcon = LFGetApp()->LoadDialogIcon(IDD_EDITTAGS);
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
@@ -95,13 +93,13 @@ BOOL LFEditTagsDlg::OnInitDialog()
 
 	f->Options.IgnoreSlaves = true;
 	LFSearchResult* base = LFQuery(f);
-	LFSearchResult* res = LFGroupSearchResult(base, LFAttrTags, false, true, f);
+	LFSearchResult* Result = LFGroupSearchResult(base, LFAttrHashtags, false, true, f);
 	LFFreeSearchResult(base);
 	LFFreeFilter(f);
 
-	for (UINT a=0; a<res->m_ItemCount; a++)
+	for (UINT a=0; a<Result->m_ItemCount; a++)
 	{
-		LFItemDescriptor* i = res->m_Items[a];
+		LFItemDescriptor* i = Result->m_Items[a];
 		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->AggregateCount))
 		{
 			UINT puColumns[] = { 1 };
@@ -113,15 +111,15 @@ BOOL LFEditTagsDlg::OnInitDialog()
 			lvi.puColumns = puColumns;
 			lvi.iItem = a;
 			lvi.pszText = i->CoreAttributes.FileName;
-			INT idx = m_TagList.InsertItem(&lvi);
+			INT Index = m_TagList.InsertItem(&lvi);
 
 			CString cnt;
 			cnt.Format(_T("%u"), i->AggregateCount);
-			m_TagList.SetItemText(idx, 1, cnt);
+			m_TagList.SetItemText(Index, 1, cnt);
 		}
 	}
 
-		LFFreeSearchResult(res);
+		LFFreeSearchResult(Result);
 	
 	return TRUE;
 }
@@ -144,10 +142,10 @@ void LFEditTagsDlg::OnAddTags()
 	CString Tags;
 	m_TagEdit.GetWindowText(Tags);
 
-	INT idx = m_TagList.GetNextItem(-1, LVNI_SELECTED);
-	while (idx!=-1)
+	INT Index = m_TagList.GetNextItem(-1, LVNI_SELECTED);
+	while (Index!=-1)
 	{
-		CString toAdd = m_TagList.GetItemText(idx, 0);
+		CString toAdd = m_TagList.GetItemText(Index, 0);
 		if (toAdd.FindOneOf(_T(" ,:;|"))!=-1)
 			toAdd = _T("\"")+toAdd+_T("\"");
 
@@ -155,8 +153,8 @@ void LFEditTagsDlg::OnAddTags()
 			Tags += _T(" ");
 		Tags += toAdd;
 
-		m_TagList.SetItemState(idx, 0, LVIS_SELECTED);
-		idx = m_TagList.GetNextItem(idx, LVNI_SELECTED);
+		m_TagList.SetItemState(Index, 0, LVIS_SELECTED);
+		Index = m_TagList.GetNextItem(Index, LVNI_SELECTED);
 	}
 
 	WCHAR tmpStr[512];

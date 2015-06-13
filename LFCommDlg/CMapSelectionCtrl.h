@@ -26,8 +26,6 @@ public:
 	void SetGeoCoordinates(const LFGeoCoordinates Coord);
 
 protected:
-	LFGeoCoordinates m_Coord;
-
 	void UpdateLocation(CPoint point);
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -37,12 +35,14 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
+	LFGeoCoordinates m_Coord;
+
 private:
+	void SendUpdateMsg();
+
 	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	BOOL m_Blink;
 	UINT m_RemainVisible;
-
-	void SendUpdateMsg();
 };

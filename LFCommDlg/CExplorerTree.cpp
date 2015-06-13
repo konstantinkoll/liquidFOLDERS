@@ -28,7 +28,7 @@ CExplorerTree::CExplorerTree()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CExplorerTree";
@@ -41,7 +41,6 @@ CExplorerTree::CExplorerTree()
 			AfxThrowResourceException();
 	}
 
-	p_App = LFGetApp();
 	m_pContextMenu2 = NULL;
 	m_Hover = FALSE;
 	m_HoverItem = NULL;
@@ -53,13 +52,13 @@ void CExplorerTree::PreSubclassWindow()
 {
 	m_TooltipCtrl.Create(this);
 
-	SetImageList(&p_App->m_SystemImageListSmall, 0);
+	SetImageList(&LFGetApp()->m_SystemImageListSmall, 0);
 
 	// Schrift
 	LOGFONT lf;
-	p_App->m_DefaultFont.GetLogFont(&lf);
-	SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(p_App->OSVersion<OS_Vista ? 2 : 6)));
-	SetFont(&p_App->m_DefaultFont, FALSE);
+	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
+	SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(LFGetApp()->OSVersion<OS_Vista ? 2 : 6)));
+	SetFont(&LFGetApp()->m_DefaultFont, FALSE);
 
 	// Benachrichtigung, wenn sich Items ändern
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
@@ -92,21 +91,21 @@ BOOL CExplorerTree::GetSelectedPath(LPWSTR Path)
 	return pidl ? SHGetPathFromIDList(pidl, Path) : FALSE;
 }
 
-LRESULT CExplorerTree::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CExplorerTree::WindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	switch (Message)
 	{
 	case WM_INITMENUPOPUP:
 	case WM_DRAWITEM:
 	case WM_MEASUREITEM:
 		if (m_pContextMenu2)
 		{
-			m_pContextMenu2->HandleMenuMsg(message, wParam, lParam);
+			m_pContextMenu2->HandleMenuMsg(Message, wParam, lParam);
 			return 0;
 		}
 	}
 
-	return CTreeCtrl::WindowProc(message, wParam, lParam);
+	return CTreeCtrl::WindowProc(Message, wParam, lParam);
 }
 
 BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
@@ -218,7 +217,7 @@ HTREEITEM CExplorerTree::InsertItem(WCHAR* Path, HTREEITEM hParent)
 
 	pParentFolder->Release();
 
-	return InsertItem(pidlFQ, p_App->GetShellManager()->CopyItem(pidlRel), dwAttributes, hParent);
+	return InsertItem(pidlFQ, LFGetApp()->GetShellManager()->CopyItem(pidlRel), dwAttributes, hParent);
 }
 
 void CExplorerTree::PopulateTree()
@@ -232,7 +231,7 @@ void CExplorerTree::PopulateTree()
 		if (FAILED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
 			return;
 
-		hItem = InsertItem(pidl, p_App->GetShellManager()->CopyItem(pidl));
+		hItem = InsertItem(pidl, LFGetApp()->GetShellManager()->CopyItem(pidl));
 	}
 	else
 		if ((m_RootPath==CETR_AllVolumes) || (m_RootPath==CETR_InternalVolumes) || (m_RootPath==CETR_ExternalVolumes))
@@ -444,8 +443,8 @@ void CExplorerTree::UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlPar
 		{
 			ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
 
-			p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
-			pItem->pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pItem->pidlRel);
+			LFGetApp()->GetShellManager()->FreeItem(pItem->pidlFQ);
+			pItem->pidlFQ = LFGetApp()->GetShellManager()->ConcatenateItem(pidlParent, pItem->pidlRel);
 
 			UpdateChildPIDLs(hItem, pItem->pidlFQ);
 		}
@@ -489,11 +488,11 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDeskto
 						LPCITEMIDLIST pidlRel = NULL;
 						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 						{
-							p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
-							p_App->GetShellManager()->FreeItem(pItem->pidlRel);
+							LFGetApp()->GetShellManager()->FreeItem(pItem->pidlFQ);
+							LFGetApp()->GetShellManager()->FreeItem(pItem->pidlRel);
 
 							pItem->pidlFQ = pidlFQ;
-							pItem->pidlRel = p_App->GetShellManager()->CopyItem(pidlRel);
+							pItem->pidlRel = LFGetApp()->GetShellManager()->CopyItem(pidlRel);
 							pItem->dwAttributes = dwAttributes;
 
 							CString strItem = OnGetItemText(pItem);
@@ -564,7 +563,7 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 		return;
 
 	IShellFolder* pParentFolder = NULL;
-	if (p_App->GetShellManager()->GetItemSize(pidlParent)==2)
+	if (LFGetApp()->GetShellManager()->GetItemSize(pidlParent)==2)
 	{
 		pParentFolder = pDesktop;
 		pDesktop->AddRef();
@@ -600,15 +599,15 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 				}
 
 				// Don't include file junctions
-				LPITEMIDLIST pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
+				LPITEMIDLIST pidlFQ = LFGetApp()->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
 
 				WCHAR Path[MAX_PATH];
 				if (SUCCEEDED(SHGetPathFromIDList(pidlFQ, Path)))
 				{
-					DWORD attr = GetFileAttributes(Path);
-					if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+					DWORD Attr = GetFileAttributes(Path);
+					if ((Attr!=INVALID_FILE_ATTRIBUTES) && (!(Attr & FILE_ATTRIBUTE_DIRECTORY)))
 					{
-						p_App->GetShellManager()->FreeItem(pidlFQ);
+						LFGetApp()->GetShellManager()->FreeItem(pidlFQ);
 						continue;
 					}
 				}
@@ -755,8 +754,8 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 				if (tvItem.cChildren)
 				{
-					CString tmpStr;
-					ENSURE(tmpStr.LoadString(AfxGetResourceHandle(), tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
+					CString tmpStr((LPCSTR)(tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
+
 					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
 					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 					SetMenuDefaultItem(hPopup, 0x7000, 0);
@@ -870,12 +869,12 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 
 				HICON hIcon = NULL;
 				CSize size(0, 0);
-				CString caption;
-				CString hint;
-				TooltipDataFromPIDL(pItem->pidlFQ, &p_App->m_SystemImageListExtraLarge, hIcon, size, caption, hint);
+				CString Caption;
+				CString Hint;
+				TooltipDataFromPIDL(pItem->pidlFQ, &LFGetApp()->m_SystemImageListExtraLarge, hIcon, size, Caption, Hint);
 
 				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
+				m_TooltipCtrl.Track(point, hIcon, size, Caption, Hint);
 			}
 	}
 	else
@@ -955,8 +954,8 @@ void CExplorerTree::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 	ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->itemOld.lParam;
 
-	p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
-	p_App->GetShellManager()->FreeItem(pItem->pidlRel);
+	LFGetApp()->GetShellManager()->FreeItem(pItem->pidlFQ);
+	LFGetApp()->GetShellManager()->FreeItem(pItem->pidlRel);
 
 	GlobalFree((HGLOBAL)pItem);
 	*pResult = 0;
@@ -1009,16 +1008,16 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 				if (SUCCEEDED(pParentFolder->SetNameOf(m_hWnd, pItem->pidlRel, Name, SHGDN_NORMAL, &pidlRel)))
 				{
 					LPITEMIDLIST pidlParent = NULL;
-					p_App->GetShellManager()->GetParentItem(pItem->pidlFQ, pidlParent);
+					LFGetApp()->GetShellManager()->GetParentItem(pItem->pidlFQ, pidlParent);
 
-					p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
-					p_App->GetShellManager()->FreeItem(pItem->pidlRel);
+					LFGetApp()->GetShellManager()->FreeItem(pItem->pidlFQ);
+					LFGetApp()->GetShellManager()->FreeItem(pItem->pidlRel);
 
-					pItem->pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlRel);
+					pItem->pidlFQ = LFGetApp()->GetShellManager()->ConcatenateItem(pidlParent, pidlRel);
 					pItem->pidlRel = pidlRel;
 
 					UpdateChildPIDLs(pNMTreeView->item.hItem, pItem->pidlFQ);
-					p_App->GetShellManager()->FreeItem(pidlParent);
+					LFGetApp()->GetShellManager()->FreeItem(pidlParent);
 
 					*pResult = TRUE;
 				}

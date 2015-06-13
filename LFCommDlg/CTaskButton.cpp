@@ -17,7 +17,7 @@ CTaskButton::CTaskButton()
 	m_Hover = FALSE;
 }
 
-BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID, CWnd* pParentWnd, UINT nID)
+BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID)
 {
 	m_Caption = Caption;
 	m_TooltipHeader = TooltipHeader;
@@ -29,7 +29,7 @@ BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString Tooltip
 
 	CRect rect;
 	rect.SetRectEmpty();
-	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
+	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
 }
 
 BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
@@ -192,18 +192,12 @@ void CTaskButton::OnPaint()
 	}
 	else
 	{
-		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-		COLORREF c2 = GetSysColor(COLOR_3DFACE);
-		COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-		COLORREF c4 = 0x000000;
-
 		if ((Selected) || (m_Hover))
 		{
-			if (Selected)
-			{
-				std::swap(c1, c4);
-				std::swap(c2, c3);
-			}
+			COLORREF c1 = Selected ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+			COLORREF c2 = Selected ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+			COLORREF c3 = Selected ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+			COLORREF c4 = Selected ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 			CRect rectBorder(rect);
 			dc.Draw3dRect(rectBorder, c1, c4);

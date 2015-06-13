@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "LFDialog.h"
 
 
 // LFGotoYearDlg
@@ -12,7 +12,7 @@
 class LFGotoYearDlg : public LFDialog
 {
 public:
-	LFGotoYearDlg(CWnd* pParentWnd, UINT Year);
+	LFGotoYearDlg(UINT Year, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

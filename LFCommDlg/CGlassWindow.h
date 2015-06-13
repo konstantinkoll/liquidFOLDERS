@@ -3,23 +3,21 @@
 //
 
 #pragma once
-#include "LFCore.h"
-#include "LFApplication.h"
 
 
 // CGlassWindow
 //
 
-#define GWD_DEFAULT            1
-#define GWD_THEMED             2
-#define GWD_AERO               3
+#define GWD_DEFAULT     1
+#define GWD_THEMED      2
+#define GWD_AERO        3
 
 class CGlassWindow : public CWnd
 {
 public:
 	CGlassWindow();
 
-	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT DefWindowProc(UINT Message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
@@ -32,18 +30,7 @@ public:
 	void DrawFrameBackground(CDC* pDC, CRect rect);
 	UINT GetDesign();
 
-	HTHEME hTheme;
-
 protected:
-	LFApplication* p_App;
-	CList<CWnd*> m_GlasChildren;
-	CString m_PlacementPrefix;
-	WINDOWPLACEMENT m_WindowPlacement;
-	BOOL m_IsAeroWindow;
-	BOOL m_Active;
-	HACCEL hAccelerator;
-	MARGINS m_Margins;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
@@ -62,6 +49,15 @@ protected:
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 	DECLARE_MESSAGE_MAP()
+
+	CString m_PlacementPrefix;
+	WINDOWPLACEMENT m_WindowPlacement;
+	BOOL m_Active;
+	HACCEL hAccelerator;
+	HTHEME hTheme;
+	CList<CWnd*> m_GlasChildren;
+	BOOL m_IsAeroWindow;
+	MARGINS m_Margins;
 
 private:
 	void SetTheme();

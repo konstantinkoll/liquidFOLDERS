@@ -5,13 +5,12 @@
 #include "stdafx.h"
 #include "CCalendarView.h"
 #include "liquidFOLDERS.h"
-#include "LFCommDlg.h"
 
 
 // CCalendarView
 //
 
-#define GetItemData(idx)     ((CalendarItemData*)(m_ItemData+(idx)*m_DataSize))
+#define GetItemData(Index)     ((CalendarItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING              2
 #define MARGINLEFT           15-PADDING
 #define GUTTER               20
@@ -416,7 +415,7 @@ void CCalendarView::OnNextYear()
 
 void CCalendarView::OnGoToYear()
 {
-	LFGotoYearDlg dlg(this, m_Year);
+	LFGotoYearDlg dlg(m_Year, this);
 	if (dlg.DoModal()==IDOK)
 		SetYear(dlg.m_Year);
 }

@@ -3,8 +3,7 @@
 //
 
 #pragma once
-#include "LFCore.h"
-#include "LFApplication.h"
+#include "LF.h"
 #include "CImageListTransparent.h"
 
 
@@ -24,11 +23,6 @@ public:
 	void SetMenus(UINT BackgroundMenuID=0);
 
 protected:
-	LFApplication* p_App;
-	HTHEME hTheme;
-	UINT m_BackgroundMenuID;
-	INT m_LastWidth;
-
 	virtual void Init();
 
 	void SetTileSize(INT cx);
@@ -40,11 +34,15 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 
+	HTHEME hTheme;
+	UINT m_BackgroundMenuID;
+	INT m_LastWidth;
+
 private:
+	void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
+	void FinishItem(INT Index, LFFilterCondition* c);
+
 	CImageListTransparent m_AttributeIcons16;
 	CImageListTransparent m_AttributeIcons32;
 	CString m_Compare[LFFilterCompareCount];
-
-	void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
-	void FinishItem(INT idx, LFFilterCondition* c);
 };

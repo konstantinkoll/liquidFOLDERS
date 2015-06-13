@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LFCore.h"
 
 
 // CTagList

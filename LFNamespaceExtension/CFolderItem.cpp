@@ -1,23 +1,23 @@
 
+// CFolderItem.cpp: Implementierung der Klasse CFolderItem
+//
+
 #include "stdafx.h"
-#include "LFNamespaceExtension.h"
+#include "Categorizer.h"
+#include "Commands.h"
 #include "CFileItem.h"
 #include "CFolderItem.h"
-#include "Commands.h"
-#include "LFCore.h"
-#include "Categorizer.h"
-#include "afxsettingsstore.h"
-#include <io.h>
-#include <shlguid.h>
-#include <shlobj.h>
+#include "LFNamespaceExtension.h"
+#include <afxsettingsstore.h>
+//#include <io.h>
+//#include <shlguid.h>
+//#include <shlobj.h>
 
 
 CShellMenuItem* InsertItem(CShellMenu* Menu, UINT ResID, CString Verb, INT Pos=0)
 {
-	CString tmpStr;
-	CString tmpHint;
-	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpHint.LoadString(ResID+1));
+	CString tmpStr((LPCSTR)ResID);
+	CString tmpHint((LPCSTR)ResID+1);
 
 	return Menu->InsertItem(tmpStr, Verb, tmpHint, Pos);
 }
@@ -29,10 +29,8 @@ void AddSeparator(CShellMenu* Menu)
 
 CShellMenuItem* AddItem(CShellMenu* Menu, UINT ResID, CString Verb)
 {
-	CString tmpStr;
-	CString tmpHint;
-	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpHint.LoadString(ResID+1));
+	CString tmpStr((LPCSTR)ResID);
+	CString tmpHint((LPCSTR)ResID+1);
 
 	return Menu->AddItem(tmpStr, Verb, tmpHint);
 }
@@ -112,7 +110,7 @@ BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 CFolderItem::CFolderItem()
 {
 	ZeroMemory(&Attrs, sizeof(Attrs));
-	Attrs.Level = LevelRoot;
+	Attrs.Level = LEVELROOT;
 }
 
 CFolderItem::CFolderItem(FolderSerialization& _Attrs)
@@ -137,11 +135,11 @@ CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 
 	switch (Level)
 	{
-	case LevelStores:
+	case LEVELSTORES:
 		Attrs.CreationTime = i->CoreAttributes.CreationTime;
 		Attrs.FileTime = i->CoreAttributes.FileTime;
 		break;
-	case LevelAttrValue:
+	case LEVELATTRVALUE:
 		if (i->NextFilter)
 			if (i->NextFilter->ConditionList)
 			{
@@ -166,7 +164,7 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	CNSETargetInfo* nti = new CNSETargetInfo();
 	nti->nseTarget = NSET_MyComputer;
 	nti->name = _T("liquidFOLDERS");
-	nti->infoTip.LoadString(IDS_InfoTip);
+	nti->infoTip.LoadString(IDS_INFOTIP);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
 	nti->iconFile = theApp.m_AppPath;
 	nti->iconIndex = 0;
@@ -183,7 +181,7 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti = new CNSETargetInfo();
 	nti->nseTarget = NSET_Desktop;
 	nti->name = _T("liquidFOLDERS");
-	nti->infoTip.LoadString(IDS_InfoTip);
+	nti->infoTip.LoadString(IDS_INFOTIP);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
 	nti->iconFile = theApp.m_AppPath;
 	nti->iconIndex = 0;
@@ -203,8 +201,8 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 
 void CFolderItem::Serialize(CArchive& ar)
 {
-	ar << (Attrs.Level==LevelRoot ? (BYTE)0x1F : (BYTE)0x31);
-	ar << (BYTE)LFNamespaceExtensionVersion;
+	ar << (Attrs.Level==LEVELROOT ? (BYTE)0x1F : (BYTE)0x31);
+	ar << (BYTE)LFNSE_VERSION;
 	ar.Write(&Attrs, sizeof(Attrs));
 }
 
@@ -215,7 +213,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 
 	BYTE Version;
 	ar >> Version;
-	if (Version!=LFNamespaceExtensionVersion)
+	if (Version!=LFNSE_VERSION)
 		return NULL;
 
 	switch (ItemType)
@@ -247,7 +245,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 			{
 				LFVariantData v;
 				ar.Read(&v, sizeof(LFVariantData));
-				LFSetAttributeVariantData(f->Item, &v);
+				LFSetAttributeVariantData(f->m_pItem, &v);
 			}
 
 			return f;
@@ -260,24 +258,24 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 
 // IEnumIDList
 
-void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* res)
+void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* Result)
 {
-	if (!res)
+	if (!Result)
 		return;
 
-	if (res->m_LastError!=LFOk)
+	if (Result->m_LastError!=LFOk)
 	{
-		LFErrorBox(res->m_LastError, GetForegroundWindow());
-		LFFreeSearchResult(res);
+		LFErrorBox(Result->m_LastError, GetForegroundWindow());
+		LFFreeSearchResult(Result);
 		return;
 	}
 
 	UINT NullCount = 0;
 	INT64 NullSize = 0;
 
-	for (UINT a=0; a<res->m_ItemCount; a++)
+	for (UINT a=0; a<Result->m_ItemCount; a++)
 	{
-		LFItemDescriptor* i = res->m_Items[a];
+		LFItemDescriptor* i = Result->m_Items[a];
 
 		switch (i->Type & LFTypeMask)
 		{
@@ -290,7 +288,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 			}
 			break;
 		case LFTypeFile:
-			if ((Attrs.Level==LevelAttribute) && (atoi(Attrs.FileID)!=LFAttrFileName))
+			if ((Attrs.Level==LEVELATTRIBUTE) && (atoi(Attrs.FileID)!=LFAttrFileName))
 			{
 				NullCount++;
 				NullSize += i->CoreAttributes.FileSize;
@@ -310,7 +308,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 		FolderSerialization d;
 		ZeroMemory(&d, sizeof(d));
 		d.Level = Attrs.Level+1;
-		d.Icon = IDI_FLD_Default;
+		d.Icon = IDI_FLD_DEFAULT;
 		d.Type = LFTypeFolder;
 		d.CategoryID = LFAttrCategoryCount;
 		strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
@@ -321,16 +319,16 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 		d.Value.Attr = attr;
 
 		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_NameMask));
+		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_NAMEMASK));
 		wcscpy_s(d.DisplayName, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
-		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_CommentMask));
+		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_COMMENTMASK));
 		wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
 		LFCombineFileCountSize(NullCount, NullSize, d.Description, 256);
 
 		e.children->AddTail(new CFolderItem(d));
 	}
 
-	LFFreeSearchResult(res);
+	LFFreeSearchResult(Result);
 }
 
 BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
@@ -340,10 +338,10 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 
 	switch (Attrs.Level)
 	{
-	case LevelRoot:
+	case LEVELROOT:
 		ConvertSearchResult(e, LFQuery(NULL));
 		break;
-	case LevelStores:
+	case LEVELSTORES:
 		// This level is created by the namespace extension, and does not exist in the core tree structure
 		if (e.childrenType & NSECT_Folders)
 		{
@@ -355,28 +353,29 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 
 			if (base->m_ItemCount)
 			{
-				CString sortStr;
-				ENSURE(sortStr.LoadString(IDS_AttributeComment));
+				CString sortStr((LPCSTR)IDS_ATTRIBUTECOMMENT);
 
 				// All files, regardless of attributes
 				FolderSerialization d;
 				ZeroMemory(&d, sizeof(d));
 				d.Level = Attrs.Level+2;
-				d.Icon = IDI_FLD_All;
+				d.Icon = IDI_FLD_ALL;
 				d.Type = LFTypeFolder;
 				d.CategoryID = LFAttrCategoryCount;
-				ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFiles, d.DisplayName, 256));
-				ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFilesComment, d.Comment, 256));
+				ENSURE(LoadString(AfxGetResourceHandle(), IDS_ALLFILES, d.DisplayName, 256));
+				ENSURE(LoadString(AfxGetResourceHandle(), IDS_ALLFILESCOMMENT, d.Comment, 256));
 				strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 				strcpy_s(d.FileID, LFKeySize, "ALL");
 
 				e.children->AddTail(new CFolderItem(d));
 
 				// Get existing attributes
-				LFBitArray ExistingAttrs(LFAttributeCount);
+				BOOL ExistingAttributes[LFAttributeCount];
+				ZeroMemory(&ExistingAttributes, sizeof(ExistingAttributes));
+
 				for (UINT a=0; a<base->m_ItemCount; a++)
 					for (UINT b=0; b<LFAttributeCount; b++)
-						if (!ExistingAttrs.IsSet(b))
+						if (!ExistingAttributes[b])
 						{
 							LFVariantData v;
 							ZeroMemory(&v, sizeof(v));
@@ -384,7 +383,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 							LFGetAttributeVariantData(base->m_Items[a], &v);
 
 							if (!LFIsNullVariantData(&v))
-								ExistingAttrs += b;
+								ExistingAttributes[b] = TRUE;
 						}
 
 				// Add important attributes which exist
@@ -395,7 +394,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					case LFAttrComments:
 					case LFAttrCreationTime:
 					case LFAttrFileTime:
-					case LFAttrTags:
+					case LFAttrHashtags:
 					case LFAttrRating:
 					case LFAttrPriority:
 					case LFAttrLocationName:
@@ -411,12 +410,12 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					case LFAttrDueTime:
 					case LFAttrDoneTime:
 					case LFAttrCustomer:
-						if (ExistingAttrs.IsSet(a))
+						if (ExistingAttributes[a])
 						{
 							FolderSerialization d ;
 							ZeroMemory(&d, sizeof(d));
 							d.Level = Attrs.Level+1;
-							d.Icon = IDI_FLD_Default;
+							d.Icon = IDI_FLD_DEFAULT;
 							d.Type = LFTypeFolder;
 							d.CategoryID = theApp.m_Attributes[a].Category;
 							wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a].Name);
@@ -430,14 +429,14 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			}
 		}
 		break;
-	case LevelAttribute:
+	case LEVELATTRIBUTE:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		base = LFQuery(f);
 		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, atoi(Attrs.FileID)!=LFAttrFileName, f));
 		break;
-	case LevelAttrValue:
+	case LEVELATTRVALUE:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
@@ -475,22 +474,22 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 			StringFromGUID2(guid, &buf[2], 39);
 			displayName = buf;
 
-			if (Attrs.Level>LevelRoot)
+			if (Attrs.Level>LEVELROOT)
 			{
 				displayName.Append(_T("\\")+CString(Attrs.StoreID));
-				if (Attrs.Level>LevelStores)
+				if (Attrs.Level>LEVELSTORES)
 					displayName += _T("\\VFOLDER");
 			}
 		}
 		else
 		{
-			displayName = (Attrs.Level>LevelStores) ? "VFOLDER" : (Attrs.Level>LevelRoot) ? Attrs.StoreID : "";
+			displayName = (Attrs.Level>LEVELSTORES) ? "VFOLDER" : (Attrs.Level>LEVELROOT) ? Attrs.StoreID : "";
 		}
 }
 
 CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs& e)
 {
-	if (Attrs.Level!=LevelRoot)
+	if (Attrs.Level!=LEVELROOT)
 		return NULL;
 
 	CHAR key[LFKeySize];
@@ -500,7 +499,7 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 	if (LFGetStoreSettings(key, &store)!=LFOk)
 		return NULL;
 
-	return new CFolderItem(LevelStores, LFAllocItemDescriptor(&store));
+	return new CFolderItem(LEVELSTORES, LFAllocItemDescriptor(&store));
 }
 
 
@@ -519,7 +518,7 @@ void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
 	{
 		e.overlayIconType = NSEOIT_Custom;
 		e.iconFile = theApp.m_PathCoreFile;
-		e.iconIndex = IDI_OVR_Default-1;
+		e.iconIndex = IDI_OVR_DEFAULT-1;
 	}
 	else
 	{
@@ -542,48 +541,48 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 {
 	// All items can be opened
 	if (e.children->GetCount()==1)
-		if (Attrs.Level==LevelAttrValue)
+		if (Attrs.Level==LEVELATTRVALUE)
 		{
 			CNSEItem* temp = (CNSEItem*)e.children->GetHead();
 			if (IS(temp, CFileItem))
 			{
 				CFileItem* file = AS(temp, CFileItem);
 
-				if (file->Item->CoreAttributes.URL[0]!='\0')
-					InsertItem(e.menu, IDS_MENU_OpenBrowser, _T(VERB_OPENBROWSER));
+				if (file->m_pItem->CoreAttributes.URL[0]!='\0')
+					InsertItem(e.menu, IDS_MENU_OPENBROWSER, _T(VERB_OPENBROWSER));
 			}
 
-			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH));
-			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
+			InsertItem(e.menu, IDS_MENU_OPENWITH, _T(VERB_OPENWITH));
+			InsertItem(e.menu, IDS_MENU_OPEN, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 		}
 		else
 		{
-			if (Attrs.Level==LevelRoot)
+			if (Attrs.Level==LEVELROOT)
 			{
-				InsertItem(e.menu, IDS_MENU_OpenFileDrop, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_AppPath.IsEmpty());
-				InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+				InsertItem(e.menu, IDS_MENU_OPENFILEDROP, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+				InsertItem(e.menu, IDS_MENU_OPENLIQUIDFOLDERS, _T(VERB_OPENLIQUIDFOLDERS))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 			}
 
 			if (osInfo.dwMajorVersion<6)
 			{
-				InsertItem(e.menu, IDS_MENU_Explore, e.flags & NSEQCF_Explore ? _T(VERB_OPEN) : _T(VERB_EXPLORE), Attrs.Level==LevelRoot ? 2 : 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
-				InsertItem(e.menu, IDS_MENU_Open, e.flags & NSEQCF_Explore ? _T(VERB_OPENNEWWINDOW) : _T(VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
+				InsertItem(e.menu, IDS_MENU_EXPLORE, e.flags & NSEQCF_Explore ? _T(VERB_OPEN) : _T(VERB_EXPLORE), Attrs.Level==LEVELROOT ? 2 : 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
+				InsertItem(e.menu, IDS_MENU_OPEN, e.flags & NSEQCF_Explore ? _T(VERB_OPENNEWWINDOW) : _T(VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
 			}
 			else
 			{
-				InsertItem(e.menu, IDS_MENU_OpenNewWindow, _T(VERB_OPENNEWWINDOW));
+				InsertItem(e.menu, IDS_MENU_OPENNEWWINDOW, _T(VERB_OPENNEWWINDOW));
 				if ((e.flags & NSEQCF_NoDefault)==0)
-					InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem(TRUE);
+					InsertItem(e.menu, IDS_MENU_OPEN, _T(VERB_OPEN))->SetDefaultItem(TRUE);
 			}
 		}
 
 	switch (Attrs.Level)
 	{
-	case LevelRoot:
+	case LEVELROOT:
 		if (e.children->GetCount()==0)
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_AddStore, _T(VERB_ADDSTORE));
+			AddItem(e.menu, IDS_MENU_ADDSTORE, _T(VERB_ADDSTORE));
 		}
 
 		if (e.children->GetCount()==1)
@@ -591,52 +590,52 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			CFolderItem* f = (CFolderItem*)e.children->GetHead();
 
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_MakeDefaultStore, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(!(f->Attrs.Type & LFTypeDefault));
-			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_AppPath.IsEmpty()));
+			AddItem(e.menu, IDS_MENU_MAKEDEFAULTSTORE, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(!(f->Attrs.Type & LFTypeDefault));
+			AddItem(e.menu, IDS_MENU_IMPORTFOLDER, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_AppPath.IsEmpty()));
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
+			AddItem(e.menu, IDS_MENU_CREATESHORTCUT, _T(VERB_CREATESHORTCUT));
 
 			if (e.children->GetCount()==1)
 			{
-				AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+				AddItem(e.menu, IDS_MENU_DELETE, _T(VERB_DELETE))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 
 				if (e.flags & NSEQCF_CanRename)
-					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
+					AddItem(e.menu, IDS_MENU_RENAME, _T(VERB_RENAME));
 
 				AddSeparator(e.menu);
-				AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+				AddItem(e.menu, IDS_MENU_PROPERTIES, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 			}
 		}
 		break;
-	case LevelStores:
+	case LEVELSTORES:
 		if (e.children->GetCount()==0)
 		{
 			AddSeparator(e.menu);
 
-			AddItem(e.menu, IDS_MENU_OpenFileDrop, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_AppPath.IsEmpty());
-			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+			AddItem(e.menu, IDS_MENU_OPENFILEDROP, _T(VERB_OPENFILEDROP))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+			AddItem(e.menu, IDS_MENU_IMPORTFOLDER, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 		}
-	case LevelAttribute:
+	case LEVELATTRIBUTE:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
+			AddItem(e.menu, IDS_MENU_CREATESHORTCUT, _T(VERB_CREATESHORTCUT));
 		}
 		break;
-	case LevelAttrValue:
+	case LEVELATTRVALUE:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_Copy, _T(VERB_COPY));
+			AddItem(e.menu, IDS_MENU_COPY, _T(VERB_COPY));
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
-			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
+			AddItem(e.menu, IDS_MENU_CREATESHORTCUT, _T(VERB_CREATESHORTCUT));
+			AddItem(e.menu, IDS_MENU_DELETE, _T(VERB_DELETE));
 			if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
-				AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
+				AddItem(e.menu, IDS_MENU_RENAME, _T(VERB_RENAME));
 		}
 		break;
 	}
@@ -661,7 +660,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		return OnExplorer(e);
 	}
 
-	if (e.menuItem->GetVerb()==_T(VERB_OPENSTOREMANAGER))
+	if (e.menuItem->GetVerb()==_T(VERB_OPENLIQUIDFOLDERS))
 		return RunStoreCommand(e, theApp.m_AppPath, _T(""));
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENFILEDROP))
@@ -678,7 +677,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		{
 			CFileItem* file = AS(temp, CFileItem);
 
-			ShellExecuteA(e.hWnd, "open", file->Item->CoreAttributes.URL, NULL, NULL, SW_SHOW);
+			ShellExecuteA(e.hWnd, "open", file->m_pItem->CoreAttributes.URL, NULL, NULL, SW_SHOW);
 		}
 	}
 
@@ -690,9 +689,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		{
 			CFolderItem* folder = AS(temp, CFolderItem);
 
-			UINT res = LFMakeDefaultStore(folder->Attrs.StoreID);
-			LFErrorBox(res, GetForegroundWindow());
-			return (res==LFOk);
+			UINT Result = LFMakeDefaultStore(folder->Attrs.StoreID);
+			LFErrorBox(Result, GetForegroundWindow());
+			return (Result==LFOk);
 		}
 
 		return FALSE;
@@ -724,7 +723,7 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 
 	CShellMenu* subMenu = item->GetSubMenu();
 
-	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_AppPath.IsEmpty());
+	AddItem(subMenu, IDS_MENU_ABOUT, _T(VERB_ABOUT))->SetEnabled(!theApp.m_AppPath.IsEmpty());
 }
 
 void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
@@ -741,11 +740,11 @@ void CFolderItem::GetToolbarCommands(CPtrList& commands)
 {
 	switch (Attrs.Level)
 	{
-	case LevelRoot:
+	case LEVELROOT:
 		commands.AddTail(new CmdCreateNewStore());
 		commands.AddTail(new CmdProperties());
 		break;
-	case LevelStores:
+	case LEVELSTORES:
 		commands.AddTail(new CmdFileDrop(Attrs.StoreID));
 		commands.AddTail(new CmdImportFolder(Attrs.StoreID));
 		break;
@@ -761,11 +760,11 @@ CCategorizer* CFolderItem::GetCategorizer(CShellColumn& column)
 {
 	switch (Attrs.Level)
 	{
-	case LevelRoot:
+	case LEVELROOT:
 		return new CCategoryCategorizer(this, column);
-	case LevelStores:
+	case LEVELSTORES:
 		return new CAttributeCategorizer(this, column);
-	case LevelAttribute:
+	case LEVELATTRIBUTE:
 		return new CFolderCategorizer(this, column);
 	default:
 		switch (column.index)
@@ -787,7 +786,7 @@ CCategorizer* CFolderItem::GetCategorizer(CShellColumn& column)
 BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 {
 	// Determine last column for level
-	INT LastColumn = (Attrs.Level==LevelStores) ? LFAttrFileFormat : LFAttrTags;
+	INT LastColumn = (Attrs.Level==LEVELSTORES) ? LFAttrFileFormat : LFAttrHashtags;
 	if (index>LastColumn)
 		return FALSE;
 
@@ -820,7 +819,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 	}
 
 	// Shell column categorizer
-	if (Attrs.Level<=LevelAttribute)
+	if (Attrs.Level<=LEVELATTRIBUTE)
 	{
 		column.categorizerType = NSECT_Custom;
 	}
@@ -918,7 +917,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		switch (column.pid)
 		{
 		case 4:
-			CUtils::SetVariantCString(value, Attrs.Level==LevelStores ? theApp.m_Store : theApp.m_Folder);
+			CUtils::SetVariantCString(value, Attrs.Level==LEVELSTORES ? theApp.m_Store : theApp.m_Folder);
 			return TRUE;
 		case 10:
 			CUtils::SetVariantLPCTSTR(value, Attrs.DisplayName);
@@ -1022,7 +1021,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		}
 		break;
 	case LFAttrFileFormat:
-		CUtils::SetVariantCString(value, Attrs.Level==LevelStores ? theApp.m_Store : theApp.m_Folder);
+		CUtils::SetVariantCString(value, Attrs.Level==LEVELSTORES ? theApp.m_Store : theApp.m_Folder);
 		break;
 	case LFAttrFileCount:
 		CUtils::SetVariantUINT(value, Attrs.Count);
@@ -1053,18 +1052,18 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes requested)
 {
-	UINT mask = NSEIA_CFOLDERITEM;
+	UINT Mask = NSEIA_CFOLDERITEM;
 
-	if (Attrs.Level==LevelStores)
+	if (Attrs.Level==LEVELSTORES)
 	{
-		mask |= NSEIA_CanRename;
+		Mask |= NSEIA_CanRename;
 		if (!theApp.m_AppPath.IsEmpty())
-			mask |= NSEIA_CanDelete | NSEIA_HasPropSheet;
+			Mask |= NSEIA_CanDelete | NSEIA_HasPropSheet;
 	}
-	if (Attrs.Level<LevelAttrValue)
-		mask |= NSEIA_HasSubFolder;
+	if (Attrs.Level<LEVELATTRVALUE)
+		Mask |= NSEIA_HasSubFolder;
 
-	return (NSEItemAttributes)(requested & mask);
+	return (NSEItemAttributes)(requested & Mask);
 }
 
 INT CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
@@ -1165,10 +1164,10 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true, true);
-			if (res!=LFOk)
+			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, true, true);
+			if (Result!=LFOk)
 			{
-				LFErrorBox(res, GetForegroundWindow());
+				LFErrorBox(Result, GetForegroundWindow());
 			}
 			else
 				if (ShellExecute(e.hWnd, _T("open"), Path, _T(""), _T(""), SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
@@ -1192,7 +1191,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		return FALSE;
 
 	// Folder
-	if ((Attrs.Level==LevelRoot) && (!theApp.m_AppPath.IsEmpty()))
+	if ((Attrs.Level==LEVELROOT) && (!theApp.m_AppPath.IsEmpty()))
 	{
 		POSITION pos = e.children->GetHeadPosition();
 		CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
@@ -1205,7 +1204,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 	}
 
 	// Files
-	BOOL res = FALSE;
+	BOOL Result = FALSE;
 	LFFileIDList* il = LFAllocFileIDList();
 
 	POSITION pos = e.children->GetHeadPosition();
@@ -1214,7 +1213,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
 
 		if (IS(item, CFileItem))
-			LFAddFileID(il, AS(item, CFileItem)->Item->StoreID, AS(item, CFileItem)->Item->CoreAttributes.FileID, item);
+			LFAddFileID(il, AS(item, CFileItem)->m_pItem->StoreID, AS(item, CFileItem)->m_pItem->CoreAttributes.FileID, item);
 	}
 
 	if (il->m_ItemCount)
@@ -1225,31 +1224,31 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 			if ((il->m_Items[a].Processed) && (il->m_Items[a].LastError==LFOk))
 				((CFileItem*)il->m_Items[a].UserData)->Delete();
 
-		res = TRUE;
+		Result = TRUE;
 	}
 
 	LFErrorBox(il->m_LastError, GetForegroundWindow());
 	LFFreeFileIDList(il);
 
-	return res;
+	return Result;
 }
 
 BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 {
 	// Stores sind die einzigen CFolderItem, die umbenannt werden können
-	if (Attrs.Level==LevelStores)
+	if (Attrs.Level==LEVELSTORES)
 	{
-		UINT res = LFSetStoreAttributes(Attrs.StoreID, e.newName.GetBuffer(), NULL);
-		if (res==LFOk)
+		UINT Result = LFSetStoreAttributes(Attrs.StoreID, e.newName.GetBuffer(), NULL);
+		if (Result==LFOk)
 		{
 			wcscpy_s(Attrs.DisplayName, 256, e.newName);
 		}
 		else
 		{
-			LFErrorBox(res, GetForegroundWindow());
+			LFErrorBox(Result, GetForegroundWindow());
 		}
 
-		return (res==LFOk);
+		return (Result==LFOk);
 	}
 
 	return FALSE;
@@ -1270,7 +1269,7 @@ void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
 
 			if (IS(item, CFileItem))
-				LFAddFileID(il, AS(item, CFileItem)->Item->StoreID, AS(item, CFileItem)->Item->CoreAttributes.FileID);
+				LFAddFileID(il, AS(item, CFileItem)->m_pItem->StoreID, AS(item, CFileItem)->m_pItem->CoreAttributes.FileID);
 		}
 
 		e.dataObject->SetHasFileData();
@@ -1293,12 +1292,12 @@ BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 
 	switch (Attrs.Level)
 	{
-	case LevelRoot:
+	case LEVELROOT:
 		fd->dwFlags |= FD_WRITESTIME | FD_CREATETIME;
 		fd->ftCreationTime = Attrs.CreationTime;
 		fd->ftLastWriteTime = Attrs.FileTime;
 		break;
-	case LevelStores:
+	case LEVELSTORES:
 		LARGE_INTEGER sz;
 		sz.QuadPart = Attrs.Size;
 
@@ -1345,15 +1344,15 @@ INT CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 
 	switch (Attrs.Level)
 	{
-	case LevelStores:
+	case LEVELSTORES:
 		indices[2] = LFAttrCreationTime;
 		indices[3] = LFAttrFileTime;
 		indices[4] = LFAttrDescription;
 		return 5;
-	case LevelAttrValue:
+	case LEVELATTRVALUE:
 		indices[3] = LFAttrFileSize;
 		return (strcmp(Attrs.FileID, "ALL")==0) ? 3 : 4;
-	case LevelAttribute:
+	case LEVELATTRIBUTE:
 		return 2;
 	}
 
@@ -1375,15 +1374,15 @@ INT CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 
 	switch (Attrs.Level)
 	{
-	case LevelStores:
+	case LEVELSTORES:
 		indices[1] = LFAttrCreationTime;
 		indices[2] = LFAttrFileTime;
 		indices[3] = LFAttrDescription;
 		return 4;
-	case LevelAttrValue:
+	case LEVELATTRVALUE:
 		indices[2] = LFAttrFileSize;
 		return (strcmp(Attrs.FileID, "ALL")==0) ? 2 : 3;
-	case LevelAttribute:
+	case LEVELATTRIBUTE:
 		return 1;
 	}
 
@@ -1416,13 +1415,13 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 	IShellLink* pShellLink = NULL;
 	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
 	{
-		BOOL res = FALSE;
+		BOOL Result = FALSE;
 		if (IS(Item, CFolderItem))
-			res = AS(Item, CFolderItem)->SetShellLink(pShellLink);
+			Result = AS(Item, CFolderItem)->SetShellLink(pShellLink);
 		if (IS(Item, CFileItem))
-			res = AS(Item, CFileItem)->SetShellLink(pShellLink);
+			Result = AS(Item, CFileItem)->SetShellLink(pShellLink);
 
-		if (res)
+		if (Result)
 		{
 			CString LinkFilename;
 			Item->GetDisplayName(LinkFilename);
@@ -1437,7 +1436,7 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 BOOL CFolderItem::RunStoreCommand(CExecuteMenuitemsEventArgs& e, CString Path, CString Parameter)
 {
 	CString StoreID;
-	if (Attrs.Level==LevelRoot)
+	if (Attrs.Level==LEVELROOT)
 	{
 		POSITION pos = e.children->GetHeadPosition();
 		if (pos)
@@ -1502,10 +1501,10 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true, true);
-			if (res!=LFOk)
+			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, true, true);
+			if (Result!=LFOk)
 			{
-				LFErrorBox(res, GetForegroundWindow());
+				LFErrorBox(Result, GetForegroundWindow());
 			}
 			else
 			{

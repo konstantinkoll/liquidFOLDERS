@@ -17,8 +17,8 @@ public:
 
 	// IPersist
 	CFileItem();
-	CFileItem(CHAR* _StoreID, LFCoreAttributes* _Attrs);
-	CFileItem(LFItemDescriptor* _Item);
+	CFileItem(CHAR* StoreID, LFCoreAttributes* Attrs);
+	CFileItem(LFItemDescriptor* pItem);
 	~CFileItem();
 
 	// PIDL handling
@@ -62,5 +62,5 @@ public:
 	// Other
 	BOOL SetShellLink(IShellLink* pShellLink);
 
-	LFItemDescriptor* Item;
+	LFItemDescriptor* m_pItem;
 };

@@ -4,8 +4,6 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFCore.h"
-#include "Resource.h"
 
 
 // LFDialog
@@ -17,7 +15,6 @@ LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL UAC)
 	m_nIDTemplate = nIDTemplate;
 	m_UAC = UAC;
 
-	p_App = LFGetApp();
 	hIconShield = NULL;
 	hBackgroundBrush = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
@@ -31,13 +28,6 @@ void LFDialog::DoDataExchange(CDataExchange* pDX)
 		CWnd* pWnd = GetDlgItem(IDC_CATEGORY1+a);
 		if (pWnd)
 			DDX_Control(pDX, IDC_CATEGORY1+a, m_wndCategory[a]);
-	}
-
-	for (UINT a=0; a<3; a++)
-	{
-		CWnd* pWnd = GetDlgItem(IDC_GROUPBOX1+a);
-		if (pWnd)
-			DDX_Control(pDX, IDC_GROUPBOX1+a, m_wndGroupBox[a]);
 	}
 }
 
@@ -78,7 +68,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	{
 		dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFFFFFF);
 
-		CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"), AfxGetResourceHandle());
+		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"));
 		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, Line);
 	}
 	else
@@ -91,7 +81,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	{
 		if (Themed)
 		{
-			CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIV, _T("PNG"), AfxGetResourceHandle());
+			CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIV, _T("PNG"));
 			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, btn.bottom+borders.Height()+1);
 
 			LinearGradientBrush brush2(Point(0, 0), Point(m_BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
@@ -110,10 +100,9 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		rectText.left = borders.right+m_ShieldSize;
 		rectText.bottom = m_UACHeight;
 
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
+		CString tmpStr((LPCSTR)IDS_UACMESSAGE);
 
-		CFont* pOldFont = dc.SelectObject(&p_App->m_UACFont);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_UACFont);
 		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
 		dc.SelectObject(pOldFont);
 	}
@@ -186,22 +175,31 @@ BOOL LFDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	HICON hIcon = NULL;
+
 	if (m_UAC)
 	{
 		// Schild
 		m_UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
 		m_ShieldSize = (m_UACHeight<24) ? 16 : (m_UACHeight<32) ? 24 : (m_UACHeight<48) ? 32 : 48;
-		hIconShield = (HICON)LoadImage(AfxGetResourceHandle(), (p_App->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_ShieldSize, m_ShieldSize, LR_DEFAULTCOLOR);
+		hIconShield = (HICON)LoadImage(AfxGetResourceHandle(), (LFGetApp()->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_ShieldSize, m_ShieldSize, LR_SHARED);
 
-		p_App->PlayWarningSound();
+		LFGetApp()->PlayWarningSound();
+
+		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
+		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
+		if (LFGetApp()->OSVersion>OS_Vista)
+			hIcon = LFGetApp()->LoadDialogIcon(32518);
 	}
 	else
 	{
 		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-		SetIcon((HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR), FALSE);
-		SetIcon((HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR), TRUE);
+		hIcon = LFGetApp()->LoadDialogIcon(m_nIDTemplate);
 	}
+
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	CRect rect;
 	GetClientRect(rect);
@@ -215,8 +213,6 @@ BOOL LFDialog::OnInitDialog()
 
 void LFDialog::OnDestroy()
 {
-	if (hIconShield)
-		DestroyIcon(hIconShield);
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
 

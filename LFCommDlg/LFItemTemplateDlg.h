@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#include "LFCore.h"
-#include "LFApplication.h"
 #include "LFDialog.h"
 #include "CHeaderArea.h"
 #include "CInspectorGrid.h"
@@ -16,7 +14,7 @@
 class LFItemTemplateDlg : public LFDialog
 {
 public:
-	LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* StoreID, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
+	LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* StoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void AdjustLayout();
@@ -25,9 +23,6 @@ public:
 	LFItemDescriptor* m_pItem;
 
 protected:
-	LFApplication* p_App;
-	BOOL m_AllowChooseStore;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
@@ -40,6 +35,8 @@ protected:
 	afx_msg void OnSkip();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+	BOOL m_AllowChooseStore;
 
 private:
 	LFVariantData m_AttributeValues[LFAttributeCount];

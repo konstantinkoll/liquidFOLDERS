@@ -35,7 +35,7 @@ unsigned int VolumeTypes[26] = { DRIVE_UNKNOWN };
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
 
-LFCore_API void LFInitialize()
+LFCORE_API void LFInitialize()
 {
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
@@ -55,13 +55,13 @@ LFCore_API void LFInitialize()
 }
 
 
-LFCore_API void LFCombineFileCountSize(unsigned int count, __int64 size, wchar_t* str, size_t cCount)
+LFCORE_API void LFCombineFileCountSize(unsigned int count, __int64 size, wchar_t* str, size_t cCount)
 {
 	wchar_t tmpStr[256];
 	StrFormatByteSize(size, tmpStr, 256);
 
 	wchar_t tmpMask[256];
-	LoadString(LFCoreModuleHandle, count==1 ? IDS_Files_Singular : IDS_Files_Plural, tmpMask, 256);
+	LoadString(LFCoreModuleHandle, count==1 ? IDS_FILECOUNT_SINGULAR : IDS_FILECOUNT_PLURAL, tmpMask, 256);
 
 	swprintf_s(str, cCount, tmpMask, count, tmpStr);
 }
@@ -130,7 +130,7 @@ void LoadTwoStrings(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuffer1, i
 }
 
 
-LFCore_API bool LFHideFileExt()
+LFCORE_API bool LFHideFileExt()
 {
 	DWORD HideFileExt = 0;
 
@@ -146,7 +146,7 @@ LFCore_API bool LFHideFileExt()
 	return (HideFileExt!=0);
 }
 
-LFCore_API bool LFHideVolumesWithNoMedia()
+LFCORE_API bool LFHideVolumesWithNoMedia()
 {
 	DWORD HideVolumesWithNoMedia = (osInfo.dwMajorVersion<6) ? 0 : 1;
 
@@ -165,7 +165,7 @@ LFCore_API bool LFHideVolumesWithNoMedia()
 
 unsigned int GetVolumeBus(char cVolume)
 {
-	unsigned int res = BusTypeMaxReserved;
+	unsigned int Result = BusTypeMaxReserved;
 
 	char szBuf[MAX_PATH] = "\\\\?\\ :";
 	szBuf[4] = cVolume;
@@ -184,16 +184,16 @@ unsigned int GetVolumeBus(char cVolume)
 		if (DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
 			&Query, sizeof(STORAGE_PROPERTY_QUERY), pDevDesc, pDevDesc->Size,
 			&dwOutBytes, NULL))
-			res = pDevDesc->BusType;
+			Result = pDevDesc->BusType;
 
 		delete[] pDevDesc;
 		CloseHandle(hDevice);
 	}
 
-	return res;
+	return Result;
 }
 
-LFCore_API unsigned int LFGetSourceForVolume(char cVolume)
+LFCORE_API unsigned int LFGetSourceForVolume(char cVolume)
 {
 	if ((cVolume>='A') && (cVolume<='Z'))
 		switch (GetVolumeBus(cVolume))
@@ -207,10 +207,10 @@ LFCore_API unsigned int LFGetSourceForVolume(char cVolume)
 	return LFTypeSourceUnknown;
 }
 
-LFCore_API unsigned int LFGetLogicalVolumes(unsigned int mask)
+LFCORE_API unsigned int LFGetLogicalVolumes(unsigned int Mask)
 {
 	DWORD VolumesOnSystem = GetLogicalDrives();
-	if ((mask & LFGLV_IncludeFloppies)==0)
+	if ((Mask & LFGLV_IncludeFloppies)==0)
 		VolumesOnSystem &= ~3;
 
 	DWORD Index = 1;
@@ -245,15 +245,15 @@ LFCore_API unsigned int LFGetLogicalVolumes(unsigned int mask)
 		switch (uVolumeType)
 		{
 		case DRIVE_FIXED:
-			if (!(mask & LFGLV_Internal))
+			if (!(Mask & LFGLV_Internal))
 				VolumesOnSystem &= ~Index;
 			break;
 		case DRIVE_REMOVABLE:
-			if (!(mask & LFGLV_External))
+			if (!(Mask & LFGLV_External))
 				VolumesOnSystem &= ~Index;
 			break;
 		case DRIVE_REMOTE:
-			if (!(mask & LFGLV_Network))
+			if (!(Mask & LFGLV_Network))
 				VolumesOnSystem &= ~Index;
 			break;
 		default:
@@ -264,12 +264,12 @@ LFCore_API unsigned int LFGetLogicalVolumes(unsigned int mask)
 	return VolumesOnSystem;
 }
 
-LFCore_API LFMessageIDs* LFGetMessageIDs()
+LFCORE_API LFMessageIDs* LFGetMessageIDs()
 {
 	return &LFMessages;
 }
 
-LFCore_API void LFCreateSendTo(bool force)
+LFCORE_API void LFCreateSendTo(bool force)
 {
 	HKEY k;
 	if (RegCreateKeyA(HKEY_CURRENT_USER, "Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
@@ -311,12 +311,7 @@ LFCore_API void LFCreateSendTo(bool force)
 		}
 }
 
-LFCore_API HICON LFGetIcon(unsigned int ResID, int cx, int cy)
-{
-	return (HICON)LoadImage(LFCoreModuleHandle, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
-}
-
-LFCore_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, unsigned int MajorCount)
+LFCORE_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, unsigned int MajorCount)
 {
 	assert(pProgress);
 
@@ -333,20 +328,20 @@ __forceinline void SetRange(unsigned char &var, unsigned int ID, unsigned int lo
 		var = val;
 }
 
-LFCore_API void LFGetAttributeInfo(LFAttributeDescriptor& attr, unsigned int ID)
+LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& attr, unsigned int ID)
 {
 	ZeroMemory(&attr, sizeof(LFAttributeDescriptor));
 	if (ID>=LFAttributeCount)
 		return;
 
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttribute, attr.Name, 256);
+	LoadString(LFCoreModuleHandle, ID+IDS_ATTR_FIRST, attr.Name, 256);
 	attr.AlwaysVisible = (ID==LFAttrFileName);
 	attr.Type = AttrTypes[ID];
 
 	wchar_t tmpBuf[256];
 	wchar_t* ptrSrc = tmpBuf;
 	wchar_t* ptrDst = attr.XMLID;
-	LoadStringEnglish(LFCoreModuleHandle, ID+IDS_FirstAttribute, tmpBuf, 256);
+	LoadStringEnglish(LFCoreModuleHandle, ID+IDS_ATTR_FIRST, tmpBuf, 256);
 
 	do
 	{
@@ -442,60 +437,62 @@ LFCore_API void LFGetAttributeInfo(LFAttributeDescriptor& attr, unsigned int ID)
 }
 
 
-LFCore_API void LFGetContextInfo(LFContextDescriptor& ctx, unsigned int ID)
+LFCORE_API void LFGetContextInfo(LFContextDescriptor& ctx, unsigned int ID)
 {
-	ZeroMemory(&ctx, sizeof(LFContextDescriptor)-sizeof(LFAllowedAttributes));
+	ZeroMemory(&ctx, sizeof(LFContextDescriptor));
 	if (ID>=LFContextCount)
 		return;
 
-	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+ID, ctx.Name, 256, ctx.Comment, 256);
+#define AllowAttribute(Attr) ctx.AllowedAttributes[Attr>>5] |= 1<<(Attr & 0x1F);
+
+	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+ID, ctx.Name, 256, ctx.Comment, 256);
 
 	ctx.AllowGroups = (ID<=LFLastGroupContext) || (ID==LFContextSearch);
 
-	ctx.AllowedAttributes += LFAttrFileName;
-	ctx.AllowedAttributes += LFAttrStoreID;
-	ctx.AllowedAttributes += LFAttrComments;
+	AllowAttribute(LFAttrFileName);
+	AllowAttribute(LFAttrStoreID);
+	AllowAttribute(LFAttrComments);
 
 	switch (ID)
 	{
 	case LFContextStores:
-		ctx.AllowedAttributes += LFAttrDescription;
-		ctx.AllowedAttributes += LFAttrCreationTime;
-		ctx.AllowedAttributes += LFAttrFileTime;
-		ctx.AllowedAttributes += LFAttrFileCount;
-		ctx.AllowedAttributes += LFAttrFileSize;
+		AllowAttribute(LFAttrDescription);
+		AllowAttribute(LFAttrCreationTime);
+		AllowAttribute(LFAttrFileTime);
+		AllowAttribute(LFAttrFileCount);
+		AllowAttribute(LFAttrFileSize);
 		break;
 	case LFContextFilters:
-		ctx.AllowedAttributes += LFAttrFileID;
-		ctx.AllowedAttributes += LFAttrCreationTime;
-		ctx.AllowedAttributes += LFAttrFileTime;
-		ctx.AllowedAttributes += LFAttrAddTime;
-		ctx.AllowedAttributes += LFAttrFileSize;
+		AllowAttribute(LFAttrFileID);
+		AllowAttribute(LFAttrCreationTime);
+		AllowAttribute(LFAttrFileTime);
+		AllowAttribute(LFAttrAddTime);
+		AllowAttribute(LFAttrFileSize);
 		break;
 	default:
 		if (ID==LFContextArchive)
-			ctx.AllowedAttributes += LFAttrArchiveTime;
+			AllowAttribute(LFAttrArchiveTime);
 		if (ID==LFContextTrash)
-			ctx.AllowedAttributes += LFAttrDeleteTime;
+			AllowAttribute(LFAttrDeleteTime);
 
 		for (unsigned int a=0; a<LFAttributeCount; a++)
 			if ((((a!=LFAttrDescription) && (a!=LFAttrFileCount)) || (ID<LFContextSubfolderDefault)) && (a!=LFAttrDescription) && (a!=LFAttrArchiveTime) && (a!=LFAttrDeleteTime))
-				ctx.AllowedAttributes += a;
+				AllowAttribute(a);
 	}
 }
 
 
-LFCore_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, unsigned int ID)
+LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, unsigned int ID)
 {
 	ZeroMemory(&cat, sizeof(LFItemCategoryDescriptor));
 	if (ID>=LFItemCategoryCount)
 		return;
 
-	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstItemCategory+ID, cat.Caption, 256, cat.Hint, 256);
+	LoadTwoStrings(LFCoreModuleHandle, IDS_ITEMCATEGORY_FIRST+ID, cat.Caption, 256, cat.Hint, 256);
 }
 
 
-LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
+LFCORE_API LFFilter* LFAllocFilter(LFFilter* f)
 {
 	LFFilter* fn = new LFFilter;
 	if (f)
@@ -523,7 +520,7 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 	return fn;
 }
 
-LFCore_API void LFFreeFilter(LFFilter* f)
+LFCORE_API void LFFreeFilter(LFFilter* f)
 {
 	if (f)
 	{
@@ -539,7 +536,7 @@ LFCore_API void LFFreeFilter(LFFilter* f)
 	}
 }
 
-LFCore_API LFFilterCondition* LFAllocFilterCondition()
+LFCORE_API LFFilterCondition* LFAllocFilterCondition()
 {
 	LFFilterCondition* c = new LFFilterCondition();
 	ZeroMemory(c, sizeof(LFFilterCondition));
@@ -547,58 +544,58 @@ LFCore_API LFFilterCondition* LFAllocFilterCondition()
 	return c;
 }
 
-LFCore_API void LFFreeFilterCondition(LFFilterCondition* c)
+LFCORE_API void LFFreeFilterCondition(LFFilterCondition* c)
 {
 	if (c)
 		delete c;
 }
 
 
-LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res)
+LFCORE_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* Result)
 {
-	return res ? new LFSearchResult(res) : new LFSearchResult(ctx);
+	return Result ? new LFSearchResult(Result) : new LFSearchResult(ctx);
 }
 
-LFCore_API void LFFreeSearchResult(LFSearchResult* res)
+LFCORE_API void LFFreeSearchResult(LFSearchResult* Result)
 {
-	if (res)
-		delete res;
+	if (Result)
+		delete Result;
 }
 
-LFCore_API bool LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i)
+LFCORE_API bool LFAddItemDescriptor(LFSearchResult* Result, LFItemDescriptor* i)
 {
-	return res->AddItemDescriptor(i);
+	return Result->AddItemDescriptor(i);
 }
 
-LFCore_API void LFRemoveItemDescriptor(LFSearchResult* res, unsigned int idx)
+LFCORE_API void LFRemoveItemDescriptor(LFSearchResult* Result, unsigned int idx)
 {
-	res->RemoveItemDescriptor(idx);
+	Result->RemoveItemDescriptor(idx);
 }
 
-LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res)
+LFCORE_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* Result)
 {
-	res->RemoveFlaggedItemDescriptors();
+	Result->RemoveFlaggedItemDescriptors();
 }
 
-LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending)
+LFCORE_API void LFSortSearchResult(LFSearchResult* Result, unsigned int attr, bool descending)
 {
-	res->Sort(attr, descending);
+	Result->Sort(attr, descending);
 }
 
-LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool groupone, LFFilter* f)
+LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* Result, unsigned int attr, bool descending, bool groupone, LFFilter* f)
 {
 	assert(f);
 
 	if (f->Options.IsSubfolder)
 	{
-		res->Sort(attr, descending);
-		return res;
+		Result->Sort(attr, descending);
+		return Result;
 	}
 
 	// Special treatment for string arrays
 	if (AttrTypes[attr]==LFTypeUnicodeArray)
 	{
-		LFSearchResult* cooked = new LFSearchResult(res);
+		LFSearchResult* cooked = new LFSearchResult(Result);
 		cooked->GroupArray(attr, f);
 		cooked->Sort(attr, descending);
 		return cooked;
@@ -606,33 +603,33 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 
 	// Special treatment for missing GPS location
 	if (attr==LFAttrLocationGPS)
-		for (unsigned int a=0; a<res->m_ItemCount; a++)
-			if (IsNullValue(LFAttrLocationGPS, res->m_Items[a]->AttributeValues[LFAttrLocationGPS]))
+		for (unsigned int a=0; a<Result->m_ItemCount; a++)
+			if (IsNullValue(LFAttrLocationGPS, Result->m_Items[a]->AttributeValues[LFAttrLocationGPS]))
 			{
 				LFAirport* airport;
-				if (LFIATAGetAirportByCode((char*)res->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
-					res->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &airport->Location;
+				if (LFIATAGetAirportByCode((char*)Result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
+					Result->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &airport->Location;
 			}
 
-	res->Sort(attr, descending);
-	LFSearchResult* cooked = new LFSearchResult(res);
+	Result->Sort(attr, descending);
+	LFSearchResult* cooked = new LFSearchResult(Result);
 	cooked->Group(attr, groupone, f);
 
 	// Revert to old GPS location
 	if (attr==LFAttrLocationGPS)
-		for (unsigned int a=0; a<res->m_ItemCount; a++)
-			res->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &res->m_Items[a]->CoreAttributes.LocationGPS;
+		for (unsigned int a=0; a<Result->m_ItemCount; a++)
+			Result->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &Result->m_Items[a]->CoreAttributes.LocationGPS;
 
 	return cooked;
 }
 
 
-LFCore_API LFFileIDList* LFAllocFileIDList()
+LFCORE_API LFFileIDList* LFAllocFileIDList()
 {
 	return new LFFileIDList();
 }
 
-LFCore_API LFFileIDList* LFAllocFileIDList(HLIQUID hLiquid)
+LFCORE_API LFFileIDList* LFAllocFileIDList(HLIQUID hLiquid)
 {
 	LFFileIDList* il = new LFFileIDList();
 
@@ -664,29 +661,29 @@ LFCore_API LFFileIDList* LFAllocFileIDList(HLIQUID hLiquid)
 	return il;
 }
 
-LFCore_API void LFFreeFileIDList(LFFileIDList* il)
+LFCORE_API void LFFreeFileIDList(LFFileIDList* il)
 {
 	if (il)
 		delete il;
 }
 
-LFCore_API bool LFAddFileID(LFFileIDList* il, char* StoreID, char* FileID, void* UserData)
+LFCORE_API bool LFAddFileID(LFFileIDList* il, char* StoreID, char* FileID, void* UserData)
 {
 	return il->AddFileID(StoreID, FileID, UserData);
 }
 
-LFCore_API HGLOBAL LFCreateLiquidFiles(LFFileIDList* il)
+LFCORE_API HGLOBAL LFCreateLiquidFiles(LFFileIDList* il)
 {
 	return il->CreateLiquidFiles();
 }
 
 
-LFCore_API LFFileImportList* LFAllocFileImportList()
+LFCORE_API LFFileImportList* LFAllocFileImportList()
 {
 	return new LFFileImportList();
 }
 
-LFCore_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
+LFCORE_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
 {
 	LFFileImportList* il = new LFFileImportList();
 
@@ -703,86 +700,86 @@ LFCore_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
 	return il;
 }
 
-LFCore_API void LFFreeFileImportList(LFFileImportList* il)
+LFCORE_API void LFFreeFileImportList(LFFileImportList* il)
 {
 	if (il)
 		delete il;
 }
 
-LFCore_API bool LFAddImportPath(LFFileImportList* il, wchar_t* path)
+LFCORE_API bool LFAddImportPath(LFFileImportList* il, wchar_t* path)
 {
 	return il->AddPath(path);
 }
 
 
-LFCore_API LFMaintenanceList* LFAllocMaintenanceList()
+LFCORE_API LFMaintenanceList* LFAllocMaintenanceList()
 {
 	return new LFMaintenanceList();
 }
 
-LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
+LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
 {
 	if (ml)
 		delete ml;
 }
 
 
-LFCore_API LFTransactionList* LFAllocTransactionList()
+LFCORE_API LFTransactionList* LFAllocTransactionList()
 {
 	return new LFTransactionList();
 }
 
-LFCore_API void LFFreeTransactionList(LFTransactionList* tl)
+LFCORE_API void LFFreeTransactionList(LFTransactionList* tl)
 {
 	if (tl)
 		delete tl;
 }
 
-LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
+LFCORE_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
 {
 	return tl->AddItemDescriptor(i, UserData);
 }
 
-LFCore_API LPITEMIDLIST LFDetachPIDL(LFTransactionList* tl, unsigned int idx)
+LFCORE_API LPITEMIDLIST LFDetachPIDL(LFTransactionList* tl, unsigned int idx)
 {
 	return tl->DetachPIDL(idx);
 }
 
-LFCore_API HGLOBAL LFCreateDropFiles(LFTransactionList* tl)
+LFCORE_API HGLOBAL LFCreateDropFiles(LFTransactionList* tl)
 {
 	return tl->CreateDropFiles();
 }
 
-LFCore_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl)
+LFCORE_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl)
 {
 	return tl->CreateLiquidFiles();
 }
 
 
-LFCore_API void LFGetAttrCategoryName(wchar_t* pStr, unsigned int ID)
+LFCORE_API void LFGetAttrCategoryName(wchar_t* pStr, unsigned int ID)
 {
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttrCategory, pStr, 256);
+	LoadString(LFCoreModuleHandle, ID+IDS_ATTRCATEGORY_FIRST, pStr, 256);
 }
 
-LFCore_API void LFGetSourceName(wchar_t* pStr, unsigned int ID, bool qualified)
+LFCORE_API void LFGetSourceName(wchar_t* pStr, unsigned int ID, bool qualified)
 {
-	LoadString(LFCoreModuleHandle, ID+(qualified ? IDS_FirstQualifiedSource : IDS_FirstSource), pStr, 256);
+	LoadString(LFCoreModuleHandle, ID+(qualified ? IDS_QSRC_FIRST : IDS_SRC_FIRST), pStr, 256);
 }
 
-LFCore_API void LFGetErrorText(wchar_t* pStr, unsigned int ID)
+LFCORE_API void LFGetErrorText(wchar_t* pStr, unsigned int ID)
 {
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstError, pStr, 256);
+	LoadString(LFCoreModuleHandle, ID+IDS_ERR_FIRST, pStr, 256);
 }
 
-LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd)
+LFCORE_API void LFErrorBox(unsigned int ID, HWND hWnd)
 {
 	if (ID>LFCancel)
 	{
-		wchar_t caption[256];
+		wchar_t Caption[256];
 		wchar_t msg[256];
-		LoadString(LFCoreModuleHandle, IDS_ErrorCaption, caption, 256);
+		LoadString(LFCoreModuleHandle, IDS_ERRORCAPTION, Caption, 256);
 		LFGetErrorText(msg, ID);
 
-		MessageBox(hWnd, msg, caption, MB_OK | MB_ICONERROR);
+		MessageBox(hWnd, msg, Caption, MB_OK | MB_ICONERROR);
 	}
 }

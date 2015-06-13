@@ -2,9 +2,9 @@
 // Workers.cpp: Implementierung von Methoden zum Threading
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFStoreDeleteDlg.h"
+#include "LFDeleteStoreDlg.h"
 
 
 // Workers
@@ -74,10 +74,8 @@ void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
 		return;
 
-	CString Caption;
-	CString Hint;
-	ENSURE(Caption.LoadString(IDS_IMPORTFOLDER_CAPTION));
-	ENSURE(Hint.LoadString(IDS_IMPORTFOLDER_HINT));
+	CString Caption((LPCSTR)IDS_IMPORTFOLDER_CAPTION);
+	CString Hint((LPCSTR)IDS_IMPORTFOLDER_HINT);
 
 	LFBrowseForFolderDlg dlg(pParentWnd, Caption, Hint, TRUE, TRUE, _T(""));
 	if (dlg.DoModal()==IDOK)
@@ -91,7 +89,7 @@ void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 
 		// Template füllen
 		wp.Template = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(pParentWnd, wp.Template, StoreID, TRUE);
+		LFItemTemplateDlg tdlg(wp.Template, StoreID, pParentWnd, TRUE);
 		if (tdlg.DoModal()!=IDCANCEL)
 		{
 			LFDoWithProgress(WorkerImportFromWindows, (LFWorkerParameters*)&wp, pParentWnd);
@@ -121,22 +119,17 @@ void LFRunMaintenance(CWnd* pParentWnd)
 void LFDeleteStore(CHAR* StoreID, CWnd* pParentWnd)
 {
 	LFStoreDescriptor store;
-	UINT Res = LFGetStoreSettings(StoreID, &store);
-	if (Res!=LFOk)
+	UINT Result = LFGetStoreSettings(StoreID, &store);
+	if (Result!=LFOk)
 	{
-		LFErrorBox(Res, pParentWnd->GetSafeHwnd());
+		LFErrorBox(Result, pParentWnd->GetSafeHwnd());
 		return;
 	}
 
 	// Messagebox
 	CString Caption;
-	CString Msg;
-
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(AfxGetResourceHandle(), IDS_DELETESTORE_CAPTION));
-	Caption.Format(tmpStr, store.StoreName);
-
-	ENSURE(Msg.LoadString(AfxGetResourceHandle(), IDS_DELETESTORE_MSG));
+	Caption.Format(IDS_DELETESTORE_CAPTION, store.StoreName);
+	CString Msg((LPCSTR)IDS_DELETESTORE_MSG);
 
 	if (pParentWnd->MessageBox(Msg, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
 		return;
@@ -144,7 +137,7 @@ void LFDeleteStore(CHAR* StoreID, CWnd* pParentWnd)
 	// Dialogbox nur zeigen, wenn der Store gemountet ist
 	if (LFIsStoreMounted(&store))
 	{
-		LFStoreDeleteDlg dlg(store.StoreID, pParentWnd);
+		LFDeleteStoreDlg dlg(store.StoreID, pParentWnd);
 		if (dlg.DoModal()!=IDOK)
 			return;
 	}

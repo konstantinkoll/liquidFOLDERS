@@ -412,6 +412,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFileDropWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileView.cpp"
 				>
 			</File>
@@ -452,6 +456,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMainWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTagcloudView.cpp"
 				>
 			</File>
@@ -461,10 +469,6 @@
 			</File>
 			<File
 				RelativePath=".\CTimelineView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FileDropWnd.cpp"
 				>
 			</File>
 			<File
@@ -481,10 +485,6 @@
 			</File>
 			<File
 				RelativePath=".\liquidFOLDERS.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MainWnd.cpp"
 				>
 			</File>
 			<File
@@ -542,6 +542,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFileDropWnd.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileView.h"
 				>
 			</File>
@@ -582,6 +586,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMainWnd.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CTagcloudView.h"
 				>
 			</File>
@@ -591,18 +599,6 @@
 			</File>
 			<File
 				RelativePath=".\CTimelineView.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\DynArray.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FileDropWnd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\FileSystem.h"
 				>
 			</File>
 			<File
@@ -626,15 +622,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LFCore.h"
-				>
-			</File>
-			<File
 				RelativePath=".\liquidFOLDERS.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MainWnd.h"
 				>
 			</File>
 			<File
@@ -642,7 +630,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<File

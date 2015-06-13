@@ -1,14 +1,13 @@
-store
 
-// FileDropWnd.cpp: Implementierungsdatei der Klasse FileDropWnd
+// CFileDropWnd.cpp: Implementierungsdatei der Klasse CFileDropWnd
 //
 
 #include "stdafx.h"
-#include "FileDropWnd.h"
+#include "CFileDropWnd.h"
 #include "liquidFOLDERS.h"
 
 
-// FileDropWnd
+// CFileDropWnd
 //
 
 CFileDropWnd::CFileDropWnd()
@@ -21,12 +20,11 @@ BOOL CFileDropWnd::Create(CHAR* StoreID)
 {
 	strcpy_s(m_StoreID, LFKeySize, StoreID);
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
 
-	CString caption;
-	ENSURE(caption.LoadString(IDR_FILEDROP));
+	CString Caption((LPCSTR)IDR_FILEDROP);
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX, className, caption, _T("FileDrop"), CSize(164, 210));
+	return CGlassWindow::Create(WS_MINIMIZEBOX, className, Caption, _T("FileDrop"), CSize(164, 210));
 }
 
 BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
@@ -108,8 +106,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (pSysMenu)
 	{
 		// Always on top
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(SC_ALWAYSONTOP));
+		CString tmpStr((LPCSTR)SC_ALWAYSONTOP);
 		pSysMenu->InsertMenu(SC_CLOSE, MF_STRING | MF_BYCOMMAND | (m_AlwaysOnTop ? MF_CHECKED : 0), SC_ALWAYSONTOP, tmpStr);
 		pSysMenu->InsertMenu(SC_CLOSE, MF_SEPARATOR | MF_BYCOMMAND);
 
@@ -161,7 +158,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	// Icon
 	POINT pt = { rlayout.left+(rlayout.Width()-128)/2-1, rlayout.top+10 };
 	SIZE sz = { 128, 128 };
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_Unknown)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_UNKNOWN)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rlayout);
@@ -251,15 +248,13 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 	{
 		if (!m_TooltipCtrl.IsWindowVisible())
 		{
-			CString caption;
-			CString hint;
-			ENSURE(caption.LoadString(IDR_FILEDROP));
-			ENSURE(hint.LoadString(IDS_DROPTIP));
+			CString Caption((LPCSTR)IDR_FILEDROP);
+			CString Hint((LPCSTR)IDS_DROPTIP);
 
 			ClientToScreen(&point);
 			m_TooltipCtrl.Track(point,
-				(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FILEDROP), IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR),
-				CSize(48, 48), caption, hint);
+				(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FILEDROP), IMAGE_ICON, 48, 48, LR_SHARED),
+				CSize(48, 48), Caption, Hint);
 		}
 	}
 	else
@@ -299,8 +294,7 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 
 	pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENNEWWINDOW));
+	CString tmpStr((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW);
 	pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
 
 	pPopup->SetDefaultItem(IDM_ITEM_OPENNEWWINDOW);

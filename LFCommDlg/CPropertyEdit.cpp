@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "resource.h"
 
 
 // CPropertyDisplay
@@ -18,7 +17,7 @@ CPropertyDisplay::CPropertyDisplay()
 
 BOOL CPropertyDisplay::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
@@ -114,7 +113,7 @@ UINT CPropertyDisplay::OnGetDlgCode()
 	return DLGC_WANTARROWS | DLGC_WANTCHARS;
 }
 
-BOOL CPropertyDisplay::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+BOOL CPropertyDisplay::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	CPoint point;
 	GetCursorPos(&point);
@@ -147,7 +146,7 @@ CPropertyEdit::CPropertyEdit()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CPropertyEdit";
@@ -171,12 +170,11 @@ CPropertyEdit::CPropertyEdit()
 
 BOOL CPropertyEdit::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
 }
 
 void CPropertyEdit::PreSubclassWindow()
@@ -276,7 +274,7 @@ void CPropertyEdit::CreateProperty()
 		}
 		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
 		p_Property->SetEditMask(m_pWndEdit);
-		m_pWndEdit->SetLimitText(p_App->m_Attributes[m_Data.Attr].cCharacters);
+		m_pWndEdit->SetLimitText(LFGetApp()->m_Attributes[m_Data.Attr].cCharacters);
 		m_pWndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	}
 	else
@@ -297,7 +295,7 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 {
 	if ((Attr!=m_Data.Attr) || (!p_Property))
 	{
-		LFAttributeDescriptor* pAttr = &p_App->m_Attributes[Attr];
+		LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[Attr];
 		if (pAttr->Type!=m_Data.Type)
 		{
 			ZeroMemory(&m_Data, sizeof(m_Data));

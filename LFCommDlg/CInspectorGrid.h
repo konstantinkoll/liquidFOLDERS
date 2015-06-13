@@ -28,13 +28,6 @@ public:
 	void SetStore(CHAR* StoreID);
 
 protected:
-	LFApplication* p_App;
-	CString m_MultipleValues;
-	CFont m_BoldFont;
-	CFont m_ItalicFont;
-	BOOL m_StoreIDValid;
-	CHAR m_StoreID[LFKeySize];
-
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1)=NULL;
 
 	void CreateFonts();
@@ -44,6 +37,12 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
+
+	CString m_MultipleValues;
+	CFont m_BoldFont;
+	CFont m_ItalicFont;
+	BOOL m_StoreIDValid;
+	CHAR m_StoreID[LFKeySize];
 };
 
 
@@ -244,31 +243,6 @@ public:
 	CString GetValue(UINT nID);
 
 protected:
-	LFDynArray<Property> m_Properties;
-	PropertyCategory m_Categories[LFAttrCategoryCount];
-	HTHEME hThemeButton;
-	HTHEME hThemeList;
-	HICON hIconResetNormal;
-	HICON hIconResetHot;
-	HICON hIconResetPressed;
-	LFTooltip m_TooltipCtrl;
-	CInspectorHeader* m_pHeader;
-	CMFCMaskedEdit* p_Edit;
-	INT m_FontHeight[2];
-	INT m_RowHeight;
-	INT m_LabelWidth;
-	INT m_IconSize;
-	BOOL m_SortAlphabetic;
-	BOOL m_Hover;
-	BOOL m_PartPressed;
-	INT m_ScrollHeight;
-	INT m_VScrollPos;
-	INT m_VScrollMax;
-	INT m_HotItem;
-	UINT m_HotPart;
-	INT m_SelectedItem;
-	INT m_EditItem;
-
 	virtual void Init();
 	virtual void ScrollWindow(INT dx, INT dy);
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
@@ -301,15 +275,40 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg UINT OnGetDlgCode();
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 
+	LFDynArray<Property> m_Properties;
+	PropertyCategory m_Categories[LFAttrCategoryCount];
+	HTHEME hThemeButton;
+	HTHEME hThemeList;
+	HICON hIconResetNormal;
+	HICON hIconResetHot;
+	HICON hIconResetPressed;
+	LFTooltip m_TooltipCtrl;
+	CInspectorHeader* m_pHeader;
+	CMFCMaskedEdit* p_Edit;
+	INT m_FontHeight[2];
+	INT m_RowHeight;
+	INT m_LabelWidth;
+	INT m_IconSize;
+	BOOL m_SortAlphabetic;
+	BOOL m_Hover;
+	BOOL m_PartPressed;
+	INT m_ScrollHeight;
+	INT m_VScrollPos;
+	INT m_VScrollMax;
+	INT m_HotItem;
+	UINT m_HotPart;
+	INT m_SelectedItem;
+	INT m_EditItem;
+
 private:
+	INT Compare(INT Eins, INT Zwei);
+	void Heap(INT Wurzel, INT Anz);
+	void CreateSortArray();
+
 	INT* m_pSortArray;
 	CImageListTransparent m_AttributeIcons;
-
-	INT Compare(INT eins, INT zwei);
-	void Heap(INT wurzel, INT anz);
-	void CreateSortArray();
 };

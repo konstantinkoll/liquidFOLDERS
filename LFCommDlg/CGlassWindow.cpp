@@ -12,7 +12,6 @@
 CGlassWindow::CGlassWindow()
 	: CWnd()
 {
-	p_App = LFGetApp();
 	hAccelerator = NULL;
 	hTheme = NULL;
 	m_Active = TRUE;
@@ -42,7 +41,7 @@ BOOL CGlassWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 		return FALSE;
 
 	ZeroMemory(&m_WindowPlacement, sizeof(m_WindowPlacement));
-	p_App->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &m_WindowPlacement, sizeof(m_WindowPlacement));
+	LFGetApp()->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &m_WindowPlacement, sizeof(m_WindowPlacement));
 
 	if (m_WindowPlacement.length==sizeof(m_WindowPlacement))
 	{
@@ -61,16 +60,16 @@ BOOL CGlassWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 	return TRUE;
 }
 
-LRESULT CGlassWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CGlassWindow::DefWindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	if (m_IsAeroWindow)
 	{
-		LRESULT res;
-		if (p_App->zDwmDefWindowProc(m_hWnd, message, wParam, lParam, &res))
-			return res;
+		LRESULT Result;
+		if (LFGetApp()->zDwmDefWindowProc(m_hWnd, Message, wParam, lParam, &Result))
+			return Result;
 	}
 
-	return CWnd::DefWindowProc(message, wParam, lParam);
+	return CWnd::DefWindowProc(Message, wParam, lParam);
 }
 
 BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
@@ -96,7 +95,7 @@ BOOL CGlassWindow::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINF
 	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return p_App->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return LFGetApp()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CGlassWindow::UseGlasBackground(MARGINS Margins)
@@ -104,7 +103,7 @@ void CGlassWindow::UseGlasBackground(MARGINS Margins)
 	m_Margins = Margins;
 
 	if (m_IsAeroWindow)
-		p_App->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
+		LFGetApp()->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
 }
 
 void CGlassWindow::ToggleFullScreen()
@@ -167,7 +166,7 @@ void CGlassWindow::DrawFrameBackground(CDC* pDC, CRect rect)
 			rframe.right += GetSystemMetrics(SM_CXSIZEFRAME);
 			rframe.bottom += GetSystemMetrics(SM_CYSIZEFRAME);
 
-			p_App->zDrawThemeBackground(hTheme, *pDC, WP_FRAMELEFT, m_Active ? CS_ACTIVE : CS_INACTIVE, rframe, rect);
+			LFGetApp()->zDrawThemeBackground(hTheme, *pDC, WP_FRAMELEFT, m_Active ? CS_ACTIVE : CS_INACTIVE, rframe, rect);
 		}
 		else
 		{
@@ -182,19 +181,19 @@ UINT CGlassWindow::GetDesign()
 
 void CGlassWindow::SetTheme()
 {
-	if (p_App->m_ThemeLibLoaded)
+	if (LFGetApp()->m_ThemeLibLoaded)
 	{
 		if (hTheme)
-			p_App->zCloseThemeData(hTheme);
+			LFGetApp()->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), m_IsAeroWindow ? _T("CompositedWindow::Window") : VSCLASS_WINDOW);
+		hTheme = LFGetApp()->zOpenThemeData(GetSafeHwnd(), m_IsAeroWindow ? _T("CompositedWindow::Window") : VSCLASS_WINDOW);
 
-		if (p_App->zSetWindowThemeAttribute)
+		if (LFGetApp()->zSetWindowThemeAttribute)
 		{
 			WTA_OPTIONS opt;
 			opt.dwMask = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
 			opt.dwFlags = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
-			p_App->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
+			LFGetApp()->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
 		}
 	}
 }
@@ -225,7 +224,7 @@ INT CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	p_App->AddFrame(this);
+	LFGetApp()->AddFrame(this);
 
 	OnCompositionChanged();
 	SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
@@ -244,7 +243,7 @@ void CGlassWindow::OnClose()
 			goto Skip;
 	}
 
-	p_App->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&m_WindowPlacement, sizeof(m_WindowPlacement));
+	LFGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&m_WindowPlacement, sizeof(m_WindowPlacement));
 
 Skip:
 	CWnd::OnClose();
@@ -253,11 +252,11 @@ Skip:
 void CGlassWindow::OnDestroy()
 {
 	if (hTheme)
-		p_App->zCloseThemeData(hTheme);
+		LFGetApp()->zCloseThemeData(hTheme);
 
 	CWnd::OnDestroy();
 
-	p_App->KillFrame(this);
+	LFGetApp()->KillFrame(this);
 }
 
 BOOL CGlassWindow::OnEraseBkgnd(CDC* pDC)
@@ -319,9 +318,9 @@ void CGlassWindow::OnCompositionChanged()
 {
 	SetTheme();
 
-	if (p_App->m_AeroLibLoaded)
+	if (LFGetApp()->m_AeroLibLoaded)
 	{
-		p_App->zDwmIsCompositionEnabled(&m_IsAeroWindow);
+		LFGetApp()->zDwmIsCompositionEnabled(&m_IsAeroWindow);
 		UseGlasBackground(m_Margins);
 	}
 	else
@@ -445,10 +444,10 @@ BOOL CGlassWindow::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 		return FALSE;
 
 	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
-	if (cds.AppID!=p_App->m_AppID)
+	if (cds.AppID!=LFGetApp()->m_AppID)
 		return FALSE;
 
-	p_App->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
+	LFGetApp()->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
 
 	return TRUE;
 }

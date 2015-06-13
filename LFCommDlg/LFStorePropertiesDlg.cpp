@@ -17,12 +17,12 @@ LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd)
 {
 	if (LFGetStoreSettings(StoreID, &m_Store)==LFOk)
 	{
-		m_Key = m_Store.guid;
+		m_StoreID = m_Store.guid;
 		m_StoreValid = TRUE;
 	}
 	else
 	{
-		ZeroMemory(&m_Key, sizeof(m_Key));
+		ZeroMemory(&m_StoreID, sizeof(m_StoreID));
 		m_StoreValid = FALSE;
 	}
 
@@ -58,10 +58,10 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		CString Comment;
 		pPage->m_wndStoreComment.GetWindowText(Comment);
 
-		UINT res = LFSetStoreAttributes(m_Store.StoreID, Name.GetBuffer(), Comment.GetBuffer());
-		if (res!=LFOk)
+		UINT Result = LFSetStoreAttributes(m_Store.StoreID, Name.GetBuffer(), Comment.GetBuffer());
+		if (Result!=LFOk)
 		{
-			LFErrorBox(res, GetSafeHwnd());
+			LFErrorBox(Result, GetSafeHwnd());
 			return TRUE;
 		}
 
@@ -79,7 +79,7 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void LFStorePropertiesDlg::UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	m_StoreValid = (LFGetStoreSettings(m_Key, &m_Store)==LFOk);
+	m_StoreValid = (LFGetStoreSettings(m_StoreID, &m_Store)==LFOk);
 	GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
 
 	for (UINT a=0; a<m_PageCount; a++)
@@ -101,16 +101,13 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_STOREPROPERTIES));
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = LFGetApp()->LoadDialogIcon(IDI_STOREPROPERTIES);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Titel
-	CString mask;
-	ENSURE(mask.LoadString(IDS_STOREPROPERTIES));
-
 	CString title;
-	title.Format(mask, m_Store.StoreName);
+	title.Format(IDS_STOREPROPERTIES, m_Store.StoreName);
 	SetWindowText(title);
 
 	// Button

@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CFileView.h"
-#include "LFDynArray.h"
 
 
 // CGridView
@@ -38,10 +37,7 @@ public:
 	CGridView(UINT DataSize=sizeof(GridItemData), BOOL EnableLabelEdit=TRUE);
 
 protected:
-	BOOL m_HasCategories;
-	UINT m_GridArrange;
-
-	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)=0;
+	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)=0;
 
 	void AddItemCategory(WCHAR* Caption, WCHAR* Name);
 	void ResetItemCategories();
@@ -52,9 +48,12 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 
-private:
-	LFDynArray<ItemCategory> m_Categories;
+	BOOL m_HasCategories;
+	UINT m_GridArrange;
 
+private:
 	void HandleHorizontalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void HandleVerticalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+	LFDynArray<ItemCategory> m_Categories;
 };

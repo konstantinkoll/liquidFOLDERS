@@ -1,3 +1,4 @@
+
 #pragma once
 #include "LF.h"
 
@@ -21,7 +22,7 @@ public:
 	BOOL Lookup(LFItemDescriptor* i, ThumbnailData& td);
 
 protected:
-	void FreeItem(UINT idx);
+	void FreeItem(UINT Index);
 
 	ThumbnailData m_Items[C];
 	INT m_NextPtr;
@@ -43,10 +44,10 @@ ThumbnailList<C>::~ThumbnailList()
 }
 
 template <UINT C>
-__forceinline void ThumbnailList<C>::FreeItem(UINT idx)
+__forceinline void ThumbnailList<C>::FreeItem(UINT Index)
 {
-	if (m_Items[idx].hBmp)
-		DeleteObject(m_Items[idx].hBmp);
+	if (m_Items[Index].hBmp)
+		DeleteObject(m_Items[Index].hBmp);
 }
 
 template <UINT C>
@@ -74,7 +75,11 @@ BOOL ThumbnailList<C>::Lookup(LFItemDescriptor* i, ThumbnailData& td)
 			td = m_Items[Ptr];
 
 			if (Ptr!=m_NextPtr)
-				std::swap(m_Items[m_NextPtr], m_Items[Ptr]);
+			{
+				ThumbnailData Temp = m_Items[m_NextPtr];
+				m_Items[m_NextPtr] = m_Items[Ptr];
+				m_Items[Ptr] = Temp;
+			}
 
 			if (++m_NextPtr>=C)
 				m_NextPtr = 0;

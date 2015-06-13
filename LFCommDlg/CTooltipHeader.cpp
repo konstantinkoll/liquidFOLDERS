@@ -118,7 +118,7 @@ void CTooltipHeader::OnPaint()
 		CRect rectParent;
 		GetParent()->GetClientRect(rectParent);
 
-		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"), AfxGetResourceHandle());
+		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"));
 		g.DrawImage(pDivider->m_pBitmap, (rectParent.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetParent()->GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
 	}
 
@@ -222,16 +222,10 @@ void CTooltipHeader::OnPaint()
 					}
 					else
 					{
-						COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-						COLORREF c2 = GetSysColor(COLOR_3DFACE);
-						COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-						COLORREF c4 = 0x000000;
-
-						if (m_PressedItem==a)
-						{
-							std::swap(c1, c4);
-							std::swap(c2, c3);
-						}
+						COLORREF c1 = (m_PressedItem==a) ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+						COLORREF c2 = (m_PressedItem==a) ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+						COLORREF c3 = (m_PressedItem==a) ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+						COLORREF c4 = (m_PressedItem==a) ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 						dc.Draw3dRect(rectItem, c1, c4);
 						rectItem.DeflateRect(1, 1);
@@ -292,9 +286,9 @@ void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	HDHITTESTINFO htt;
 	htt.pt = point;
-	INT idx = HitTest(&htt);
-	m_PressedItem = (htt.flags==HHT_ONHEADER) ? idx : -1;
-	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? idx : -1;
+	INT Index = HitTest(&htt);
+	m_PressedItem = (htt.flags==HHT_ONHEADER) ? Index : -1;
+	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? Index : -1;
 
 	CHeaderCtrl::OnLButtonDown(nFlags, point);
 	Invalidate();
@@ -383,7 +377,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 
 LRESULT CTooltipHeader::OnLayout(WPARAM wParam, LPARAM lParam)
 {
-	LRESULT res = CHeaderCtrl::DefWindowProc(HDM_LAYOUT, wParam, lParam);
+	LRESULT Result = CHeaderCtrl::DefWindowProc(HDM_LAYOUT, wParam, lParam);
 
 	LPHDLAYOUT pHL = (LPHDLAYOUT)lParam;
 	if ((pHL->pwpos->cy) && (LFGetApp()->OSVersion==OS_XP))
@@ -391,5 +385,5 @@ LRESULT CTooltipHeader::OnLayout(WPARAM wParam, LPARAM lParam)
 
 	pHL->prc->top = pHL->pwpos->cy;
 
-	return res;
+	return Result;
 }

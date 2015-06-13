@@ -3,9 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "LFCore.h"
 #include "LFCommDlg.h"
-#include "Resource.h"
 #include <wininet.h>
 
 
@@ -49,8 +47,8 @@ LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
 	wcscat_s(m_Build, 256, tmpStr);
 
 	GetSystemTime(&st);
-	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), AfxGetResourceHandle()) : NULL;
-	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"), AfxGetResourceHandle());
+	p_Santa = (st.wMonth==12) ? LFGetApp()->GetCachedResourceImage(IDB_SANTA, _T("PNG")) : NULL;
+	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
@@ -72,11 +70,11 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
-		p_App->SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
+		LFGetApp()->SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 	}
 	else
 	{
-		p_App->GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
+		LFGetApp()->GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
@@ -140,10 +138,10 @@ BOOL LFAboutDlg::OnInitDialog()
 #define ISET _T(" (x86)")
 #endif
 
-	CString caption;
-	m_wndVersionInfo.GetWindowText(caption);
+	CString Caption;
+	m_wndVersionInfo.GetWindowText(Caption);
 	CString text;
-	text.Format(caption, m_Version+ISET, m_Build, m_Copyright);
+	text.Format(Caption, m_Version+ISET, m_Build, m_Copyright);
 	m_wndVersionInfo.SetWindowText(text);
 
 	// Hintergrund
@@ -158,7 +156,7 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	m_VersionFont.CreateFont(HeightVersion, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
+		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
 	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-LineGap-3*HeightVersion)/2-8;
@@ -235,10 +233,9 @@ void LFAboutDlg::OnUpdateNow()
 
 void LFAboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	CString url;
-	ENSURE(url.LoadString(IDS_ABOUTURL));
+	CString URL((LPCSTR)IDS_ABOUTURL);
 
-	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 
 	*pResult = 0;
 }

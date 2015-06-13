@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#include "LFCore.h"
-#include "LFApplication.h"
 #include "CTagList.h"
 
 
@@ -14,15 +12,13 @@
 class LFEditTagsDlg : public CDialog
 {
 public:
-	LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID);
+	LFEditTagsDlg(CString Tags, CWnd* pParentWnd=NULL, CHAR* StoreID=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	CString m_Tags;
 
 protected:
-	LFApplication* p_App;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);

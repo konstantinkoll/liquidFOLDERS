@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CGdiPlusBitmap.h"
-#include "LF.h"
 #include "LFDialog.h"
 
 

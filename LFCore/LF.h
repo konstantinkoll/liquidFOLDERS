@@ -1,3 +1,4 @@
+
 #pragma once
 #include <shellapi.h>
 #include <windows.h>
@@ -21,13 +22,13 @@ struct LIQUIDFILES
 };
 
 
-// Progress message
+// Progress Message
 
-#define WM_UPDATEPROGRESS     WM_USER
+#define WM_UPDATEPROGRESS       WM_USER
 
-#define LFProgressWorking     1
-#define LFProgressError       2
-#define LFProgressCancelled   3
+#define LFProgressWorking       1
+#define LFProgressError         2
+#define LFProgressCancelled     3
 
 struct LFProgress
 {
@@ -194,7 +195,7 @@ struct LFItemCategoryDescriptor
 #define LFAttrFileSize                 12
 #define LFAttrFlags                    13
 #define LFAttrURL                      14
-#define LFAttrTags                     15
+#define LFAttrHashtags                 15
 #define LFAttrRating                   16
 #define LFAttrPriority                 17
 #define LFAttrLocationName             18
@@ -344,21 +345,15 @@ struct LFAttributeDescriptor
 
 // Context descriptor
 
-#include "LFBitArray.h"
-
-class LFCore_API LFAllowedAttributes : public LFBitArray
-{
-public:
-	LFAllowedAttributes() : LFBitArray(LFAttributeCount) {};
-};
-
 struct LFContextDescriptor
 {
 	wchar_t Name[256];
 	wchar_t Comment[256];
 	bool AllowGroups;
-	LFAllowedAttributes AllowedAttributes;
+	unsigned long AllowedAttributes[(LFAttributeCount+31)>>5];
 };
+
+#define LFIsAttributeAllowed(CD, Attr) (CD.AllowedAttributes[Attr>>5] & 1<<(Attr & 0x1F))
 
 
 // Statistics

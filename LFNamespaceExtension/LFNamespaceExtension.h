@@ -4,7 +4,7 @@
 
 #pragma once
 #include "resource.h"
-#include "LF.h"
+#include "LFCore.h"
 #include <objbase.h>
 #include <shlguid.h>
 
@@ -12,12 +12,12 @@
 // LFNamespaceExtensionApp
 //
 
-#define LFNamespaceExtensionVersion   2
+#define LFNSE_VERSION       2
 
-#define NAG_NOTLICENSED               0
-#define NAG_EXPIRED                   1
-#define NAG_COUNTER                   0
-#define NAG_FORCE                     2
+#define NAG_NOTLICENSED     0
+#define NAG_EXPIRED         1
+#define NAG_COUNTER         0
+#define NAG_FORCE           2
 
 class LFNamespaceExtensionApp : public CWinApp
 {
@@ -27,7 +27,6 @@ public:
 
 	virtual BOOL InitInstance();
 
-	static void GetIconSize(INT& cx, INT& cy);
 	static CString FrmtAttrStr(CString Mask, CString Name);
 	UINT ImportFiles(CHAR* StoreID, IDataObject* pDataObject, BOOL Move);
 	BOOL ShowNagScreen(UINT Level, BOOL Abort=FALSE);
@@ -47,6 +46,5 @@ protected:
 	static BOOL GetApplicationPath(CString& Path);
 };
 
-EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 extern LFNamespaceExtensionApp theApp;
 extern OSVERSIONINFO osInfo;

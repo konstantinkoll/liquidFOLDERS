@@ -27,7 +27,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	LFApplication* p_App;
 	WCHAR m_Caption[256];
 	CImageList* p_Icons;
 	INT m_IconSize;

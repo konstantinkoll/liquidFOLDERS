@@ -570,7 +570,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Eliminar ""Nuevo"" attributo", IDM_NEW_REMOVENEW
+        MENUITEM "&Eliminar «Nuevo» attributo", IDM_NEW_REMOVENEW
     END
 END
 
@@ -717,7 +717,7 @@ END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 206, 276
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Detalles para ""%s"""
+CAPTION "Detalles para «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Detalles",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,192,15
@@ -732,7 +732,7 @@ END
 
 IDD_ORGANIZE DIALOGEX 0, 0, 289, 308
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Organizar ""%s"" por"
+CAPTION "Organizar «%s» por"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Organizar objetos",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
@@ -855,7 +855,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
-    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen ""%s"""
+    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen «%s»"
     IDS_FORMAT_TEXT         "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_AUTOMATIC           "Escoger automaticamente"
     IDS_FILETYPES           "Tipos de archivo"
@@ -900,7 +900,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Elimina la designación de archivo recién importado de todos los archivos.\nEliminar ""Nuevo"" attributo"
+    IDM_NEW_REMOVENEW       "Elimina la designación de archivo recién importado de todos los archivos.\nEliminar «Nuevo» attributo"
 END
 
 STRINGTABLE 
@@ -1008,7 +1008,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Enlever le marquage ""nouveau""", IDM_NEW_REMOVENEW
+        MENUITEM "&Enlever le marquage «Nouveau»", IDM_NEW_REMOVENEW
     END
 END
 
@@ -1155,7 +1155,7 @@ END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 201, 276
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Détails pour ""%s"""
+CAPTION "Détails pour «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Détails",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,187,15
@@ -1170,7 +1170,7 @@ END
 
 IDD_ORGANIZE DIALOGEX 0, 0, 289, 308
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Organiser ""%s"" après"
+CAPTION "Organiser «%s» après"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Organiser objets après qualité",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
@@ -1293,7 +1293,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
-    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur ""%s"""
+    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur «%s»"
     IDS_FORMAT_TEXT         "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_AUTOMATIC           "Choisir automatiquement"
     IDS_FILETYPES           "Types de fichiers"
@@ -1338,7 +1338,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Éloigne à tous les fichiers le marquage comme le fichier récemment importé.\nEnlever le marquage ""nouveau"""
+    IDM_NEW_REMOVENEW       "Éloigne à tous les fichiers le marquage comme le fichier récemment importé.\nEnlever le marquage «Nouveau»"
 END
 
 STRINGTABLE 
@@ -1496,7 +1496,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Remove ""New"" flag",        IDM_NEW_REMOVENEW
+        MENUITEM "&Remove “New” flag",        IDM_NEW_REMOVENEW
     END
 END
 
@@ -1644,7 +1644,7 @@ END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 196, 276
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Details for ""%s"""
+CAPTION "Details for “%s”"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Details",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,182,15
@@ -1659,7 +1659,7 @@ END
 
 IDD_ORGANIZE DIALOGEX 0, 0, 289, 308
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Organize ""%s"" by"
+CAPTION "Organize “%s” by"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Organize items by this property",IDC_CATEGORY1,
@@ -1782,7 +1782,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NONAVIGATION        "This window does not support any navigation."
-    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
+    IDS_FORMAT_CAPTION      "You cannot format volume “%s”"
     IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
     IDS_AUTOMATIC           "Choose automatically"
     IDS_FILETYPES           "File types"
@@ -1827,7 +1827,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Removes the designation as recently imported file from all files.\nRemove ""New"" flag"
+    IDM_NEW_REMOVENEW       "Removes the designation as recently imported file from all files.\nRemove “New” flag"
 END
 
 STRINGTABLE 

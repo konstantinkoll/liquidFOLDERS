@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "LFCommDlg.h"
 #include "LFEditConditionDlg.h"
 
 
@@ -41,9 +42,9 @@ void LFEditConditionDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFEditConditionDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
+void LFEditConditionDlg::TestAttribute(UINT Attr, BOOL& add, BOOL& check)
 {
-	add = (attr!=LFAttrFileID) && (attr!=LFAttrStoreID) && (attr!=LFAttrDescription) && (p_App->m_Attributes[attr].Type!=LFTypeFlags);
+	add = (Attr!=LFAttrFileID) && (Attr!=LFAttrStoreID) && (Attr!=LFAttrDescription) && (LFGetApp()->m_Attributes[Attr].Type!=LFTypeFlags);
 	check = FALSE;
 }
 
@@ -56,12 +57,6 @@ END_MESSAGE_MAP()
 BOOL LFEditConditionDlg::OnInitDialog()
 {
 	LFAttributeListDlg::OnInitDialog();
-
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_EDITCONDITION));
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
 	// Bedingung
 	m_wndEdit.SetData(&m_Condition.AttrData);
@@ -80,12 +75,12 @@ void LFEditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if ((pNMListView->uChanged & LVIF_STATE) && ((pNMListView->uOldState & LVIS_SELECTED) || (pNMListView->uNewState & LVIS_SELECTED)))
 	{
-		INT idx = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
-		if (idx!=-1)
+		INT Index = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
+		if (Index!=-1)
 		{
-			UINT attr = (UINT)m_wndAttribute.GetItemData(idx);
-			SetCompareComboBox(&m_wndCompare, attr, m_Condition.Compare);
-			m_wndEdit.SetAttribute(attr);
+			UINT Attr = (UINT)m_wndAttribute.GetItemData(Index);
+			SetCompareComboBox(&m_wndCompare, Attr, m_Condition.Compare);
+			m_wndEdit.SetAttribute(Attr);
 		}
 	}
 }

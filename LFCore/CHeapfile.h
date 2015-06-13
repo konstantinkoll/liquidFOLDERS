@@ -26,7 +26,7 @@ struct HeapfileHeader
 	unsigned char Fill[493];		// Auf 512 Byte
 };
 
-class LFCore_API CHeapfile
+class CHeapfile
 {
 public:
 	CHeapfile(wchar_t* Path, wchar_t* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);

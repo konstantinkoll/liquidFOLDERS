@@ -2,10 +2,9 @@
 // LFAddStoreDlg.cpp: Implementierung der Klasse LFAddStoreDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
 #include "LFStoreNewDlg.h"
-#include "Resource.h"
 #include <wininet.h>
 
 
@@ -34,7 +33,7 @@ void LFAddStoreDlg::CheckInternetConnection()
 	BOOL Connected = InternetGetConnectedState(&Flags, 0);
 
 #ifndef DEBUG
-//	Connected = FALSE;
+	Connected = FALSE;
 #endif
 
 	m_wndCategory[1].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
@@ -56,8 +55,8 @@ BOOL LFAddStoreDlg::OnInitDialog()
 	LFDialog::OnInitDialog();
 
 	// Categories
-	m_wndCategory[0].SetWindowText(p_App->m_ItemCategories[LFItemCategoryLocal].Caption);
-	m_wndCategory[1].SetWindowText(p_App->m_ItemCategories[LFItemCategoryRemote].Caption);
+	m_wndCategory[0].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryLocal].Caption);
+	m_wndCategory[1].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryRemote].Caption);
 
 	// Internet
 	CheckInternetConnection();
@@ -93,9 +92,7 @@ LRESULT LFAddStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	UINT StoreCount = LFGetStoreCount();
 
 	CString Hint;
-	CString Mask;
-	ENSURE(Mask.LoadString(StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
-	Hint.Format(Mask, StoreCount);
+	Hint.Format(StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, StoreCount);
 
 	GetDlgItem(IDC_STATUS)->SetWindowText(Hint);
 
@@ -110,6 +107,9 @@ void LFAddStoreDlg::OnBtnLiquidfolders()
 
 void LFAddStoreDlg::OnBtnWindows()
 {
+	MessageBox(L"Coming soon!");
+	return;
+
 	CString Caption;
 	GetWindowText(Caption);
 	CString Hint;
@@ -120,8 +120,8 @@ void LFAddStoreDlg::OnBtnWindows()
 	{
 		// TODO
 		CWaitCursor csr;
-		UINT Res = LFOk;
+		UINT Result = LFOk;
 
-		LFErrorBox(Res, GetSafeHwnd());
+		LFErrorBox(Result, GetSafeHwnd());
 	}
 }

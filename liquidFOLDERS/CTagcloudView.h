@@ -6,7 +6,7 @@
 #include "CGridView.h"
 
 
-// Item data
+// Item Data
 
 struct TagcloudItemData
 {
@@ -29,14 +29,12 @@ public:
 	virtual CMenu* GetViewContextMenu();
 
 protected:
-	CFont m_Fonts[20];
-
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
-	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
+	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
 
-	CFont* GetFont(INT idx);
+	CFont* GetFont(INT Index);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSortValue();
@@ -47,4 +45,6 @@ protected:
 	afx_msg void OnUseOpacity();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+	CFont m_Fonts[20];
 };

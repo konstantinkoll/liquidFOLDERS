@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LF.h"
 #include "LFCommDlg.h"
 
 
@@ -73,7 +72,7 @@ struct FVPersistentData
 };
 
 
-// SendTo item
+// SendTo Item
 
 struct SendToItemData
 {
@@ -84,7 +83,7 @@ struct SendToItemData
 };
 
 
-// Item data
+// Item Data
 
 struct FVItemData
 {
@@ -119,19 +118,68 @@ public:
 	virtual BOOL Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
-	virtual void EditLabel(INT idx);
+	virtual void EditLabel(INT Index);
 	virtual BOOL IsEditing();
 
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall=FALSE);
 	INT GetFocusItem();
 	INT GetSelectedItem();
-	INT GetNextSelectedItem(INT idx);
-	void SelectItem(INT idx, BOOL Select=TRUE, BOOL InternalCall=FALSE);
-	void EnsureVisible(INT idx);
+	INT GetNextSelectedItem(INT Index);
+	void SelectItem(INT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
+	void EnsureVisible(INT Index);
 	BOOL MultiSelectAllowed();
 
 protected:
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual void SetViewOptions(BOOL Force);
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
+	virtual void AdjustLayout();
+	virtual RECT GetLabelRect(INT Index);
+	virtual INT ItemAtPosition(CPoint point);
+	virtual void InvalidateItem(INT Index);
+	virtual CMenu* GetSendToMenu();
+	virtual CMenu* GetItemContextMenu(INT Index);
+	virtual void ScrollWindow(INT dx, INT dy);
+
+	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
+	RECT GetItemRect(INT Index);
+	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
+	void ResetScrollbars();
+	void AdjustScrollbars();
+	CString GetLabel(LFItemDescriptor* i);
+	BOOL BeginDragDrop();
+
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
+	afx_msg LRESULT OnThemeChanged();
+	afx_msg void OnSysColorChange();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnSelectAll();
+	afx_msg void OnSelectNone();
+	afx_msg void OnSelectInvert();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
+	afx_msg void OnDestroyEdit();
+	DECLARE_MESSAGE_MAP()
+
 	INT m_Context;
 	LFViewParameters m_ViewParameters;
 	LFViewParameters* p_ViewParameters;
@@ -169,61 +217,12 @@ protected:
 	BOOL m_BeginDragDrop;
 	CPoint m_DragPos;
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
-	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT idx);
-	virtual INT ItemAtPosition(CPoint point);
-	virtual void InvalidateItem(INT idx);
-	virtual CMenu* GetSendToMenu();
-	virtual CMenu* GetItemContextMenu(INT idx);
-	virtual void ScrollWindow(INT dx, INT dy);
-
-	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
-	RECT GetItemRect(INT idx);
-	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
-	void ResetScrollbars();
-	void AdjustScrollbars();
-	CString GetLabel(LFItemDescriptor* i);
-	BOOL BeginDragDrop();
-
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
-	afx_msg LRESULT OnThemeChanged();
-	afx_msg void OnSysColorChange();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnSelectAll();
-	afx_msg void OnSelectNone();
-	afx_msg void OnSelectInvert();
-	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
-	afx_msg void OnDestroyEdit();
-	DECLARE_MESSAGE_MAP()
-
 private:
-	CEdit* p_Edit;
-	SendToItemData m_SendToItems[256];
-
-	void AppendString(UINT attr, CString& str, WCHAR* tmpStr);
-	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
+	void AppendString(UINT Attr, CString& Str, WCHAR* tmpStr);
+	void AppendAttribute(LFItemDescriptor* i, UINT Attr, CString& Str);
 	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);
 	void DestroyEdit(BOOL Accept=FALSE);
+
+	CEdit* p_Edit;
+	SendToItemData m_SendToItems[256];
 };

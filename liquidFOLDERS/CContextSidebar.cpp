@@ -3,8 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CContextSidebar.h"
-#include "Resource.h"
+#include "liquidFOLDERS.h"
 
 
 // CContextSidebar

@@ -4,8 +4,6 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFBrowseForFolderDlg.h"
-#include "resource.h"
 
 
 // LFBrowseForFolderDlg
@@ -27,7 +25,7 @@ LFBrowseForFolderDlg::LFBrowseForFolderDlg(CWnd* pParentWnd, CString Caption, CS
 LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
 {
 	if (m_FolderPIDL)
-		p_App->GetShellManager()->FreeItem(m_FolderPIDL);
+		LFGetApp()->GetShellManager()->FreeItem(m_FolderPIDL);
 }
 
 void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
@@ -37,7 +35,7 @@ void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		m_FolderPIDL = p_App->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
+		m_FolderPIDL = LFGetApp()->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
 		SHGetPathFromIDList(m_FolderPIDL, m_FolderPath);
 		m_DeleteSource = m_wndDeleteSource.GetCheck();
 	}
@@ -80,9 +78,9 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 		m_wndHeaderArea.SetText(m_Caption, m_Hint, FALSE);
 	}
 
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	if ((LFGetApp()->m_ThemeLibLoaded) && (LFGetApp()->OSVersion>=OS_Vista))
 	{
-		p_App->zSetWindowTheme(m_wndExplorerTree, L"EXPLORER", NULL);
+		LFGetApp()->zSetWindowTheme(m_wndExplorerTree, L"EXPLORER", NULL);
 		m_wndExplorerTree.ModifyStyle(0, TVS_TRACKSELECT);
 	}
 

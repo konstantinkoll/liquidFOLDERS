@@ -8,8 +8,8 @@
 	CIndex* idx2; \
 	LFStoreDescriptor* slot; \
 	HANDLE StoreLock = NULL; \
-	unsigned int res = OpenStore(StoreID, WriteAccess, idx1, idx2, &slot, &StoreLock); \
-	if (res!=LFOk) { ErrorOps; } else {
+	unsigned int Result = OpenStore(StoreID, WriteAccess, idx1, idx2, &slot, &StoreLock); \
+	if (Result!=LFOk) { ErrorOps; } else {
 
 #define OPEN_STORE(StoreID, WriteAccess, ErrorOps) \
 	OPEN_STORE_PREFIX(StoreID, WriteAccess, ErrorOps, slot, idx1, idx2);

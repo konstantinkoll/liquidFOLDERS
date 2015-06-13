@@ -76,16 +76,16 @@ FileFound:
 	}
 }
 
-void LFFileImportList::SetError(unsigned int idx, unsigned int res, LFProgress* pProgress)
+void LFFileImportList::SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress)
 {
-	if (res>LFOk)
-		m_LastError = res;
-	m_Items[idx].LastError = res;
+	if (Result>LFOk)
+		m_LastError = Result;
+	m_Items[idx].LastError = Result;
 	m_Items[idx].Processed = true;
 
 	if (pProgress)
 	{
-		if (res>LFCancel)
+		if (Result>LFCancel)
 			pProgress->ProgressState = LFProgressError;
 
 		wcscpy_s(pProgress->Object, 256, m_Items[idx].Path);

@@ -42,7 +42,7 @@ void LFTransactionList::Reset()
 	m_LastError = LFOk;
 }
 
-void LFTransactionList::SetError(char* key, unsigned int res, LFProgress* pProgress)
+void LFTransactionList::SetError(char* key, unsigned int Result, LFProgress* pProgress)
 {
 	bool found = false;
 
@@ -52,7 +52,7 @@ void LFTransactionList::SetError(char* key, unsigned int res, LFProgress* pProgr
 			{
 				found = true;
 
-				m_Items[a].LastError = m_LastError = res;
+				m_Items[a].LastError = m_LastError = Result;
 				m_Items[a].Processed = true;
 				if (pProgress)
 					pProgress->MinorCurrent++;
@@ -60,7 +60,7 @@ void LFTransactionList::SetError(char* key, unsigned int res, LFProgress* pProgr
 
 	if (pProgress)
 	{
-		if (res>LFCancel)
+		if (Result>LFCancel)
 			pProgress->ProgressState = LFProgressError;
 		if (found)
 			pProgress->Object[0] = L'\0';
@@ -70,14 +70,14 @@ void LFTransactionList::SetError(char* key, unsigned int res, LFProgress* pProgr
 	}
 }
 
-void LFTransactionList::SetError(unsigned int idx, unsigned int res, LFProgress* pProgress)
+void LFTransactionList::SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress)
 {
-	m_Items[idx].LastError = m_LastError = res;
+	m_Items[idx].LastError = m_LastError = Result;
 	m_Items[idx].Processed = true;
 
 	if (pProgress)
 	{
-		if (res>LFCancel)
+		if (Result>LFCancel)
 			pProgress->ProgressState = LFProgressError;
 
 		wcscpy_s(pProgress->Object, 256, m_Items[idx].Item->CoreAttributes.FileName);

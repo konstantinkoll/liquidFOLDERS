@@ -104,13 +104,10 @@
 #define IDS_COMPARE_ENDSWITH            20408
 #define IDS_COMPARE_CONTAINS            20409
 #define IDF_LETTERGOTHIC                20500
-#define IDC_GROUPBOX1                   21000
-#define IDC_GROUPBOX2                   21001
-#define IDC_GROUPBOX3                   21002
-#define IDC_CATEGORY1                   21003
-#define IDC_CATEGORY2                   21004
-#define IDC_CATEGORY3                   21005
-#define IDC_CATEGORY4                   21006
+#define IDC_CATEGORY1                   21000
+#define IDC_CATEGORY2                   21001
+#define IDC_CATEGORY3                   21002
+#define IDC_CATEGORY4                   21003
 #define IDD_ABOUT                       21100
 #define IDC_VERSIONINFO                 21101
 #define IDC_NAME                        21105
@@ -136,7 +133,7 @@
 #define IDM_STORE_PROPERTIES            21286
 #define IDM_STORES                      21290
 #define IDM_STORES_ADD                  21291
-#define IDD_STOREDELETE                 21300
+#define IDD_DELETESTORE                 21300
 #define IDC_KEEP                        21301
 #define IDC_DELETE                      21302
 #define IDC_CAPTION                     21303
@@ -154,7 +151,7 @@
 #define IDD_JUMPTOIATA                  21420
 #define IDD_SELECTGPS                   21430
 #define IDC_RESET                       21431
-#define IDD_LICENSE             21500
+#define IDD_LICENSE                     21500
 #define IDC_INSTRUCTIONS                21501
 #define IDC_LOADLICENSE                 21502
 #define IDC_LICENSEKEY                  21503

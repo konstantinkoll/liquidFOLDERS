@@ -20,18 +20,12 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
-	BOOL Create(CString Caption, CString Hint, CWnd* pParentWnd, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint);
 	void SetValue(CString Value, BOOL ShowDropdown=TRUE, BOOL Repaint=TRUE);
 	void GetPreferredSize(CSize& sz, UINT& CaptionWidth);
 	void GetCaption(CString& Caption, UINT& CaptionWidth);
 
 protected:
-	CString m_Caption;
-	CString m_Hint;
-	CString m_Value;
-	UINT m_CaptionWidth;
-	BOOL m_ShowDropdown;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -42,6 +36,12 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
+
+	CString m_Caption;
+	CString m_Hint;
+	CString m_Value;
+	UINT m_CaptionWidth;
+	BOOL m_ShowDropdown;
 
 private:
 	LFTooltip m_TooltipCtrl;

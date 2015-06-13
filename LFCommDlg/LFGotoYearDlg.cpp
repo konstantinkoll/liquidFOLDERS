@@ -3,13 +3,13 @@
 //
 
 #include "stdafx.h"
-#include "LFGotoYearDlg.h"
+#include "LFCommDlg.h"
 
 
 // LFGotoYearDlg
 //
 
-LFGotoYearDlg::LFGotoYearDlg(CWnd* pParentWnd, UINT Year)
+LFGotoYearDlg::LFGotoYearDlg(UINT Year, CWnd* pParentWnd)
 	: LFDialog(IDD_GOTOYEAR, pParentWnd)
 {
 	m_Year = Year;
@@ -36,9 +36,8 @@ void LFGotoYearDlg::DoDataExchange(CDataExchange* pDX)
 		if (!Ok)
 		{
 			CString tmpCaption;
-			CString tmpMessage;
 			GetWindowText(tmpCaption);
-			ENSURE(tmpMessage.LoadString(IDS_ILLEGALYEAR));
+			CString tmpMessage((LPCSTR)IDS_ILLEGALYEAR);
 
 			MessageBox(tmpMessage, tmpCaption, MB_ICONERROR);
 			pDX->Fail();

@@ -3,8 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "LFUpdateDlg.h"
-#include "MenuIcons.h"
+#include "LFCommDlg.h"
 #include <wininet.h>
 
 
@@ -24,7 +23,7 @@ LFUpdateDlg::LFUpdateDlg(CString Version, CString MSN, CWnd* pParentWnd)
 	m_CaptionTop = m_IconTop = 0;
 	m_Connected = TRUE;
 
-	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_64, _T("PNG"), AfxGetResourceHandle());
+	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_64, _T("PNG"));
 
 	m_Version = Version;
 	m_MSN = MSN;
@@ -67,8 +66,8 @@ void LFUpdateDlg::UpdateFrame(BOOL bMove)
 
 	// Glass frame
 	BOOL IsAeroWindow = FALSE;
-	if (p_App->m_AeroLibLoaded)
-		p_App->zDwmIsCompositionEnabled(&IsAeroWindow);
+	if (LFGetApp()->m_AeroLibLoaded)
+		LFGetApp()->zDwmIsCompositionEnabled(&IsAeroWindow);
 
 	// Settings
 	LONG cl = GetClassLong(GetSafeHwnd(), GCL_STYLE);
@@ -158,7 +157,12 @@ void LFUpdateDlg::ShowMenu()
 	CMenu* pPopup = Menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	SetMenuItemBitmap(*pPopup, 0, HBMMENU_POPUP_RESTORE);
+	MENUITEMINFO mii;
+	mii.cbSize = sizeof(mii);
+	mii.fMask = MIIM_BITMAP;
+	mii.hbmpItem = HBMMENU_POPUP_RESTORE;
+
+	pPopup->SetMenuItemInfo(0, &mii, TRUE);
 	pPopup->SetDefaultItem(0, TRUE);
 
 	POINT pos;
@@ -172,7 +176,7 @@ void LFUpdateDlg::EndDialog(INT nResult)
 	if (m_NotificationWindow)
 	{
 		if (m_wndIgnoreUpdate.GetCheck())
-			p_App->WriteGlobalString(_T("IgnoreUpdateMSN"), m_MSN);
+			LFGetApp()->WriteGlobalString(_T("IgnoreUpdateMSN"), m_MSN);
 
 		DestroyWindow();
 	}
@@ -206,18 +210,18 @@ BOOL LFUpdateDlg::OnInitDialog()
 	LFDialog::OnInitDialog();
 
 	if (m_NotificationWindow)
-		p_App->AddFrame(this);
+		LFGetApp()->AddFrame(this);
 
 	// Stil
 	if (m_NotificationWindow)
 	{
-		p_App->PlayWarningSound();
+		LFGetApp()->PlayWarningSound();
 
 		UpdateFrame(TRUE);
 	}
 	else
 	{
-		p_App->PlayStandardSound();
+		LFGetApp()->PlayStandardSound();
 
 		GetDlgItem(IDC_IGNOREUPDATE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_HIDE)->ShowWindow(SW_HIDE);
@@ -228,10 +232,10 @@ BOOL LFUpdateDlg::OnInitDialog()
 	m_wndVersionInfo.GetWindowRect(&rectWnd);
 	ScreenToClient(&rectWnd);
 
-	CString caption;
-	m_wndVersionInfo.GetWindowText(caption);
+	CString Caption;
+	m_wndVersionInfo.GetWindowText(Caption);
 	CString text;
-	text.Format(caption, m_Version, m_MSN);
+	text.Format(Caption, m_Version, m_MSN);
 	m_wndVersionInfo.SetWindowText(text);
 
 	// Hintergrund
@@ -246,7 +250,7 @@ BOOL LFUpdateDlg::OnInitDialog()
 
 	m_VersionFont.CreateFont(HeightVersion, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
+		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
 	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-HeightVersion)/2-9;
@@ -272,8 +276,8 @@ void LFUpdateDlg::OnDestroy()
 
 	if (m_NotificationWindow)
 	{
-		p_App->m_pUpdateNotification = NULL;
-		p_App->KillFrame(this);
+		LFGetApp()->m_pUpdateNotification = NULL;
+		LFGetApp()->KillFrame(this);
 	}
 }
 
@@ -355,9 +359,9 @@ void LFUpdateDlg::OnHide(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 void LFUpdateDlg::OnDownload()
 {
-	CString url;
-	ENSURE(url.LoadString(IDS_UPDATEURL));
-	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+	CString URL((LPCSTR)IDS_UPDATEURL);
+
+	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 
 	EndDialog(IDOK);
 }
@@ -407,10 +411,10 @@ BOOL LFUpdateDlg::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 		return FALSE;
 
 	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
-	if (cds.AppID!=p_App->m_AppID)
+	if (cds.AppID!=LFGetApp()->m_AppID)
 		return FALSE;
 
-	p_App->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
+	LFGetApp()->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
 
 	return TRUE;
 }

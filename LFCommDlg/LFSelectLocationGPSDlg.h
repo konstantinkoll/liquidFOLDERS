@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#include "LFCore.h"
-#include "LFCommDlg.h"
 #include "CMapSelectionCtrl.h"
 
 
@@ -14,7 +12,7 @@
 class LFSelectLocationGPSDlg : public CDialog
 {
 public:
-	LFSelectLocationGPSDlg(CWnd* pParentWnd, const LFGeoCoordinates Location);
+	LFSelectLocationGPSDlg(const LFGeoCoordinates Location, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

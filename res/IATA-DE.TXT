@@ -1918,7 +1918,7 @@ DVR     Daly River, Australien;4;13*45'0"S, 130*41'38"E
 DVT     Phoenix (Deer Valley Airport), USA;4;33*41'18"N, 112*4'57"W
 DVX QDV Denver International, USA
 DWB     Soalala, Madagaskar;4;16*4'59"S, 45*22'1"E
-DWC     Dubai Al Maktoum International Airport, UAE;5;24*55'6"N, 55*10'32"E
+DWC     Dubai Al Maktoum International Airport, VAE;5;24*55'6"N, 55*10'32"E
 DWH     Houston (Hooks Memorial Airport), USA;4;30*3'43"N, 95*33'10"W
 DWN     Oklahoma City (Downtown Airpark), USA;4;35*26'57"N, 97*31'59"W
 DWS     Orlando (Lake Buena Vista), USA;4;28*25'10"N, 81*34'52"W

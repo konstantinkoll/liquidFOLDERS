@@ -3,15 +3,15 @@
 //
 
 #include "stdafx.h"
-#include "CListView.h"
 #include "ChooseDetailsDlg.h"
+#include "CListView.h"
 #include "liquidFOLDERS.h"
 
 
 // CListView
 //
 
-#define GetItemData(idx)                    ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
+#define GetItemData(Index)                    ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING                             2
 #define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), rect, DT_END_ELLIPSIS | format);
 #define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
@@ -244,9 +244,9 @@ void CListView::AdjustLayout()
 	m_wndHeader.Invalidate();
 }
 
-RECT CListView::GetLabelRect(INT idx)
+RECT CListView::GetLabelRect(INT Index)
 {
-	RECT rect = GetItemRect(idx);
+	RECT rect = GetItemRect(Index);
 
 	switch (m_ViewParameters.Mode)
 	{
@@ -268,10 +268,10 @@ RECT CListView::GetLabelRect(INT idx)
 	return rect;
 }
 
-void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
+void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 {
-	LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
-	GridItemData* d = GetItemData(idx);
+	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
+	GridItemData* d = GetItemData(Index);
 	INT Rows[4];
 	BOOL Right = FALSE;
 
@@ -293,7 +293,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
 		DrawIcon(dc, rectIcon, i);
 
-		if (IsEditing() && (idx==m_EditLabel))
+		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
 		rectLabel.top += m_IconSize[0].cy+PADDING;
@@ -310,18 +310,18 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
-			UINT attr = m_ViewParameters.ColumnOrder[a];
-			if (m_ViewParameters.ColumnWidth[attr])
+			UINT Attr = m_ViewParameters.ColumnOrder[a];
+			if (m_ViewParameters.ColumnWidth[Attr])
 			{
-				if (attr)
+				if (Attr)
 				{
 					rectLabel.left = rectLabel.right+3*PADDING;
-					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-3*PADDING;
+					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[Attr]-3*PADDING;
 				}
-				switch (attr)
+				switch (Attr)
 				{
 				case LFAttrFileName:
-					if ((IsEditing()) && (idx==m_EditLabel))
+					if ((IsEditing()) && (Index==m_EditLabel))
 						continue;
 					break;
 				case LFAttrFileCount:
@@ -332,7 +332,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 						continue;
 				}
 				if ((rectLabel.left<=rectClient.right) && (rectLabel.right>=rectClient.left))
-					DrawColumn(dc, rectLabel, i, attr);
+					DrawColumn(dc, rectLabel, i, Attr);
 			}
 		}
 		break;
@@ -340,7 +340,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
 
-		if (IsEditing() && (idx==m_EditLabel))
+		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+PADDING;
@@ -350,7 +350,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
 
-		if (IsEditing() && (idx==m_EditLabel))
+		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+m_FontHeight[0]/2;
@@ -382,7 +382,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
 
-		if (IsEditing() && (idx==m_EditLabel))
+		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
 		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
@@ -401,7 +401,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			break;
 		case LFTypeFile:
 			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
-			DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrHashtags, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
 			break;
 		case LFTypeFolder:
@@ -452,7 +452,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
 		DrawIcon(dc, rectIcon, i);
 
-		if (IsEditing() && (idx==m_EditLabel))
+		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
 		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
@@ -467,7 +467,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		DrawProperty(dc, rectLeft, i, d, LFAttrRecordingTime, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrRoll, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrDuration, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrHashtags, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrPages, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrWidth, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrHeight, Themed, FALSE);
@@ -864,7 +864,7 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 		ASSERT_VALID(pPopup);
 
 		for (INT a=LFLastCoreAttribute-1; a>=0; a--)
-			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(a)))
+			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (LFIsAttributeAllowed(theApp.m_Contexts[m_Context], a)))
 				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_DETAILS_TOGGLEATTRIBUTE+a, theApp.m_Attributes[a].Name);
 
 		CPoint ptClient(point);
@@ -883,20 +883,20 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CListView::OnToggleAttribute(UINT nID)
 {
-	UINT attr = nID-IDM_DETAILS_TOGGLEATTRIBUTE;
-	ASSERT(attr<LFAttributeCount);
+	UINT Attr = nID-IDM_DETAILS_TOGGLEATTRIBUTE;
+	ASSERT(Attr<LFAttributeCount);
 
-	p_ViewParameters->ColumnWidth[attr] = p_ViewParameters->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr].RecommendedWidth;
+	p_ViewParameters->ColumnWidth[Attr] = p_ViewParameters->ColumnWidth[Attr] ? 0 : theApp.m_Attributes[Attr].RecommendedWidth;
 	theApp.UpdateViewOptions(m_Context);
 }
 
 void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
 {
-	UINT attr = pCmdUI->m_nID-IDM_DETAILS_TOGGLEATTRIBUTE;
-	ASSERT(attr<LFAttributeCount);
+	UINT Attr = pCmdUI->m_nID-IDM_DETAILS_TOGGLEATTRIBUTE;
+	ASSERT(Attr<LFAttributeCount);
 
-	pCmdUI->SetCheck(m_ViewParameters.ColumnWidth[attr]);
-	pCmdUI->Enable(!theApp.m_Attributes[attr].AlwaysVisible);
+	pCmdUI->SetCheck(m_ViewParameters.ColumnWidth[Attr]);
+	pCmdUI->Enable(!theApp.m_Attributes[Attr].AlwaysVisible);
 }
 
 void CListView::OnAutosizeAll()
@@ -921,7 +921,7 @@ void CListView::OnAutosize()
 
 void CListView::OnChooseDetails()
 {
-	ChooseDetailsDlg dlg(this, m_Context);
+	ChooseDetailsDlg dlg(m_Context, this);
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateViewOptions(m_Context);
 }
@@ -1010,25 +1010,24 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-	UINT attr = pHdr->iItem;
+	UINT Attr = pHdr->iItem;
 
-	if (!AttributeSortableInView(attr, m_ViewParameters.Mode))
+	if (!AttributeSortableInView(Attr, m_ViewParameters.Mode))
 	{
-		CString msg;
-		ENSURE(msg.LoadString(IDS_ATTRIBUTENOTSORTABLE));
-		MessageBox(msg, theApp.m_Attributes[attr].Name, MB_OK | MB_ICONWARNING);
+		CString msg((LPCSTR)IDS_ATTRIBUTENOTSORTABLE);
+		MessageBox(msg, theApp.m_Attributes[Attr].Name, MB_OK | MB_ICONWARNING);
 	
 		return;
 	}
 
-	if (p_ViewParameters->SortBy==attr)
+	if (p_ViewParameters->SortBy==Attr)
 	{
 		p_ViewParameters->Descending = !p_ViewParameters->Descending;
 	}
 	else
 	{
-		p_ViewParameters->SortBy = attr;
-		p_ViewParameters->Descending = theApp.m_Attributes[attr].PreferDescendingSort;
+		p_ViewParameters->SortBy = Attr;
+		p_ViewParameters->Descending = theApp.m_Attributes[Attr].PreferDescendingSort;
 	}
 	theApp.UpdateSortOptions(m_Context);
 

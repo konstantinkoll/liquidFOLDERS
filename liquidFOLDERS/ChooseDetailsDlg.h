@@ -13,16 +13,12 @@
 class ChooseDetailsDlg : public LFAttributeListDlg
 {
 public:
-	ChooseDetailsDlg(CWnd* pParentWnd, INT Context, UINT nIDTemplate=IDD_CHOOSEDETAILS);
+	ChooseDetailsDlg(UINT Context, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
-	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
-
-	CListCtrl m_ShowAttributes;
-	LFViewParameters* p_View;
-	UINT m_Context;
+	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult);
@@ -32,8 +28,10 @@ protected:
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
 
+	CListCtrl m_ShowAttributes;
+	LFViewParameters* p_View;
+	UINT m_Context;
+
 private:
 	void SwapItems(INT FocusItem, INT NewPos);
-
-	UINT m_Template;
 };

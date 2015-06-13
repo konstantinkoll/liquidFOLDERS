@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "LFDropSource.h"
+#include "LFCommDlg.h"
 
 
 // LFDropSource

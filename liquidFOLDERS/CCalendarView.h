@@ -33,13 +33,6 @@ public:
 	virtual void GetPersistentData(FVPersistentData& Data);
 
 protected:
-	UINT m_FirstDayOfWeek;
-	WCHAR m_Days[7][3];
-	CalendarMonth m_Months[12];
-	UINT m_Year;
-	INT m_ColumnWidth;
-	BOOL m_ShowCaptions;
-
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
@@ -60,6 +53,13 @@ protected:
 	afx_msg void OnGoToYear();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+	UINT m_FirstDayOfWeek;
+	WCHAR m_Days[7][3];
+	CalendarMonth m_Months[12];
+	UINT m_Year;
+	INT m_ColumnWidth;
+	BOOL m_ShowCaptions;
 
 private:
 	BOOL IsLeapYear();

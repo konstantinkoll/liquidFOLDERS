@@ -34,7 +34,7 @@ __forceinline double GetSeconds(double c)
 }
 
 
-LFCore_API void LFFourCCToString(const unsigned int c, wchar_t* str, size_t cCount)
+LFCORE_API void LFFourCCToString(const unsigned int c, wchar_t* str, size_t cCount)
 {
 	if (cCount>=5)
 	{
@@ -50,7 +50,7 @@ LFCore_API void LFFourCCToString(const unsigned int c, wchar_t* str, size_t cCou
 	}
 }
 
-LFCore_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount)
+LFCORE_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount)
 {
 	if (v==0)
 	{
@@ -62,12 +62,12 @@ LFCore_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount
 	}
 }
 
-LFCore_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
+LFCORE_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
 {
 	StrFormatByteSize(v, str, (unsigned int)cCount);
 }
 
-LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t cCount)
+LFCORE_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t cCount)
 {
 	if ((frac.Num==0) || (frac.Denum==0))
 	{
@@ -79,12 +79,12 @@ LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t c
 	}
 }
 
-LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
+LFCORE_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
 {
 	swprintf(str, cCount, L"%.2lf", d);
 }
 
-LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero)
+LFCORE_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero)
 {
 	swprintf(str, cCount, FillZero ? L"%03u°%02u\'%02u\"%c" : L"%u°%u\'%u\"%c",
 		(unsigned int)(fabs(c)+ROUNDOFF),
@@ -93,7 +93,7 @@ LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCo
 		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
 }
 
-LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount, bool FillZero)
+LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount, bool FillZero)
 {
 	if ((c.Latitude==0) && (c.Longitude==0))
 	{
@@ -110,7 +110,7 @@ LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str,
 	}
 }
 
-LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, unsigned int mask)
+LFCORE_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, unsigned int Mask)
 {
 	*str = L'\0';
 
@@ -121,13 +121,13 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 		FileTimeToSystemTime(&t, &stUTC);
 		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
-		if (mask & 1)
+		if (Mask & 1)
 			GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, str, (int)cCount);
 
-		if (mask & 2)
+		if (Mask & 2)
 			if ((stLocal.wHour) || (stLocal.wMinute) || (stLocal.wSecond))
 			{
-				if (mask & 1)
+				if (Mask & 1)
 					wcscat_s(str, cCount, L" ");
 
 				wchar_t tmpStr[256];
@@ -137,7 +137,7 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 	}
 }
 
-LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
+LFCORE_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
 {
 	d = (d+500)/1000;
 
@@ -151,7 +151,7 @@ LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
 	}
 }
 
-LFCore_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCount)
+LFCORE_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCount)
 {
 	if (r==0)
 	{
@@ -163,7 +163,7 @@ LFCore_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCo
 	}
 }
 
-LFCore_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount)
+LFCORE_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount)
 {
 	swprintf(str, cCount, L"%.1lf Megapixel", d);
 }
@@ -242,7 +242,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 	wcscpy_s(str, cCount, L"");
 }
 
-LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wchar_t* str, size_t cCount)
+LFCORE_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wchar_t* str, size_t cCount)
 {
 	assert(i);
 	assert(attr<LFAttributeCount);
@@ -347,7 +347,7 @@ bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
 // LFVariantData
 //
 
-LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCount)
+LFCORE_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCount)
 {
 	assert(v);
 
@@ -362,7 +362,7 @@ LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCo
 	}
 }
 
-LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
+LFCORE_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 {
 	assert(v);
 
@@ -595,7 +595,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 	}
 }
 
-LFCore_API void LFGetNullVariantData(LFVariantData* v)
+LFCORE_API void LFGetNullVariantData(LFVariantData* v)
 {
 	assert(v);
 
@@ -618,7 +618,7 @@ LFCore_API void LFGetNullVariantData(LFVariantData* v)
 	}
 }
 
-LFCore_API bool LFIsNullVariantData(LFVariantData* v)
+LFCORE_API bool LFIsNullVariantData(LFVariantData* v)
 {
 	assert(v);
 
@@ -631,7 +631,7 @@ LFCore_API bool LFIsNullVariantData(LFVariantData* v)
 	return IsNullValue(v->Attr, &v->Value);
 }
 
-LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
+LFCORE_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
 {
 	if ((v1->IsNull!=v2->IsNull) || (v1->Type!=v2->Type))
 		return false;
@@ -674,7 +674,7 @@ LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
 	return false;
 }
 
-LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
+LFCORE_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
 	assert(i);
 	assert(v);
@@ -725,7 +725,7 @@ LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 	}
 }
 
-LFCore_API int LFCompareVariantData(LFVariantData* v1, LFVariantData* v2)
+LFCORE_API int LFCompareVariantData(LFVariantData* v1, LFVariantData* v2)
 {
 	assert(v1);
 	assert(v2);
@@ -782,7 +782,7 @@ LFCore_API int LFCompareVariantData(LFVariantData* v1, LFVariantData* v2)
 	return 0;
 }
 
-LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
+LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
 	assert(i);
 	assert(v);
@@ -801,7 +801,7 @@ LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 	}
 }
 
-LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
+LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
 	assert(i);
 	assert(v->Attr<LFAttributeCount);
@@ -824,7 +824,7 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 	SetAttribute(i, v->Attr, &v->Value);
 }
 
-LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
+LFCORE_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 {
 	typedef std::pair<std::wstring, bool> tagitem;
 	typedef std::map<std::wstring, tagitem> hashtags;

@@ -4,10 +4,9 @@
 
 #include "stdafx.h"
 #include "CGlobeView.h"
-#include "Resource.h"
-#include "LFCore.h"
 #include "GlobeOptionsDlg.h"
-#include <math.h>
+#include "liquidFOLDERS.h"
+
 
 #define DISTANCE        39.0f
 #define ARROWSIZE       9
@@ -52,27 +51,27 @@ __forceinline void MatrixMul(GLfloat Result[4][4], GLfloat Left[4][4], GLfloat R
 	Result[3][3] = Left[3][0]*Right[0][3] + Left[3][1]*Right[1][3] + Left[3][2]*Right[2][3] + Left[3][3]*Right[3][3];
 }
 
-__forceinline void CalculateWorldCoords(double lat, double lon, GLfloat result[])
+__forceinline void CalculateWorldCoords(double lat, double lon, GLfloat Result[])
 {
 	double lon_r = decToRad(lon);
 	double lat_r = -decToRad(lat);
 
 	double c = cos(lat_r);
 
-	result[0] = (GLfloat)(cos(lon_r)*c);
-	result[1] = (GLfloat)(sin(lon_r)*c);
-	result[2] = (GLfloat)(sin(lat_r));
+	Result[0] = (GLfloat)(cos(lon_r)*c);
+	Result[1] = (GLfloat)(sin(lon_r)*c);
+	Result[2] = (GLfloat)(sin(lat_r));
 }
 
-void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
+void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT Attr)
 {
 	WCHAR tmpStr[256];
-	LFAttributeToString(i, attr, tmpStr, 256);
+	LFAttributeToString(i, Attr, tmpStr, 256);
 
 	if (tmpStr[0]!='\0')
 	{
 		f->WriteString(_T("&lt;b&gt;"));
-		f->WriteString(theApp.m_Attributes[attr].Name);
+		f->WriteString(theApp.m_Attributes[Attr].Name);
 		f->WriteString(_T("&lt;/b&gt;: "));
 		f->WriteString(tmpStr);
 		f->WriteString(_T("&lt;br&gt;"));
@@ -160,7 +159,7 @@ void glDrawIcon(GLfloat x, GLfloat y, GLfloat Size, GLfloat Alpha, UINT ID)
 // CGlobeView
 //
 
-#define GetItemData(idx)     ((GlobeItemData*)(m_ItemData+idx*m_DataSize))
+#define GetItemData(Index)     ((GlobeItemData*)(m_ItemData+Index*m_DataSize))
 
 
 CGlobeView::CGlobeView()
@@ -251,7 +250,7 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 	if (!p_CookedFiles)
 		return -1;
 
-	INT res = -1;
+	INT Result = -1;
 	GLfloat Alpha = 0.0f;
 
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
@@ -262,12 +261,12 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 			if ((d->Alpha>0.75f) || ((d->Alpha>0.1f) && (d->Alpha>Alpha-0.05f)))
 				if (PtInRect(&d->Hdr.Rect, point))
 				{
-					res = a;
+					Result = a;
 					Alpha = d->Alpha;
 				}
 	}
 
-	return res;
+	return Result;
 }
 
 CMenu* CGlobeView::GetViewContextMenu()
@@ -278,15 +277,14 @@ CMenu* CGlobeView::GetViewContextMenu()
 	return pMenu;
 }
 
-CMenu* CGlobeView::GetItemContextMenu(INT idx)
+CMenu* CGlobeView::GetItemContextMenu(INT Index)
 {
-	CMenu* pMenu = CFileView::GetItemContextMenu(idx);
+	CMenu* pMenu = CFileView::GetItemContextMenu(Index);
 	
 	CMenu* pPopup = pMenu->GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENGOOGLEEARTH));
+	CString tmpStr((LPCSTR)IDS_CONTEXTMENU_OPENGOOGLEEARTH);
 	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, tmpStr);
 
 	return pMenu;
@@ -959,26 +957,26 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		return FALSE;
 	m_LockUpdate = TRUE;
 
-	BOOL res = Redraw;
+	BOOL Result = Redraw;
 	Normalize();
 
 	// Zoom
 	if (m_GlobeCurrent.Zoom<=m_GlobeTarget.Zoom-5)
 	{
-		res = TRUE;
+		Result = TRUE;
 		m_GlobeCurrent.Zoom += 5;
 		m_HotItem = -1;
 	}
 	else
 		if (m_GlobeCurrent.Zoom>=m_GlobeTarget.Zoom+5)
 		{
-			res = TRUE;
+			Result = TRUE;
 			m_GlobeCurrent.Zoom -= 5;
 			m_HotItem = -1;
 		}
 		else
 		{
-			res |= (m_GlobeCurrent.Zoom!=m_GlobeTarget.Zoom);
+			Result |= (m_GlobeCurrent.Zoom!=m_GlobeTarget.Zoom);
 			m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom;
 		}
 
@@ -1000,7 +998,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 			m_GlobeCurrent.Zoom = (INT)(m_GlobeTarget.Zoom*(1.0f-f)+(m_GlobeTarget.Zoom+Dist)*f);
 		}
 
-		res = TRUE;
+		Result = TRUE;
 		m_AnimCounter--;
 	}
 	else
@@ -1008,12 +1006,12 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		if (m_Momentum!=0.0f)
 			m_GlobeTarget.Longitude += m_Momentum;
 
-		res |= (m_GlobeCurrent.Latitude!=m_GlobeTarget.Latitude) || (m_GlobeCurrent.Longitude!=m_GlobeTarget.Longitude);
+		Result |= (m_GlobeCurrent.Latitude!=m_GlobeTarget.Latitude) || (m_GlobeCurrent.Longitude!=m_GlobeTarget.Longitude);
 		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude;
 		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude;
 	}
 
-	if (res)
+	if (Result)
 	{
 		DrawScene(TRUE);
 		UpdateCursor();
@@ -1023,7 +1021,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		m_LockUpdate = FALSE;
 	}
 
-	return res;
+	return Result;
 }
 
 
@@ -1152,7 +1150,7 @@ void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 	CFileView::OnSize(nType, cx, cy);
 }
 
-BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	SetCursor(hCursor);
 	return TRUE;
@@ -1218,8 +1216,8 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	INT idx = ItemAtPosition(point);
-	if (idx==-1)
+	INT Index = ItemAtPosition(point);
+	if (Index==-1)
 	{
 		if (CursorOnGlobe(point))
 		{
@@ -1354,7 +1352,7 @@ void CGlobeView::OnAutosize()
 
 void CGlobeView::OnSettings()
 {
-	GlobeOptionsDlg dlg(this, p_ViewParameters, m_Context);
+	GlobeOptionsDlg dlg(p_ViewParameters, m_Context, this);
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateViewOptions(-1, LFViewGlobe);
 }

@@ -89,7 +89,7 @@ void ParseInput(string& tmpStr, LFLicense* License)
 
 bool ReadCodedLicense(string& Message)
 {
-	bool res = false;
+	bool Result = false;
 
 	HKEY k;
 	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
@@ -99,13 +99,13 @@ bool ReadCodedLicense(string& Message)
 		if (RegQueryValueExA(k, "License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
 		{
 			Message = tmpStr;
-			res = true;
+			Result = true;
 		}
 
 		RegCloseKey(k);
 	}
 
-	return res;
+	return Result;
 }
 
 bool GetLicense(LFLicense* License)
@@ -140,7 +140,7 @@ bool GetLicense(LFLicense* License)
 	return true;
 }
 
-LFCore_API bool LFIsLicensed(LFLicense* License, bool Reload)
+LFCORE_API bool LFIsLicensed(LFLicense* License, bool Reload)
 {
 	// Setup
 	if (!LicenseRead || Reload)
@@ -157,7 +157,7 @@ LFCore_API bool LFIsLicensed(LFLicense* License, bool Reload)
 	return (wcsncmp(LicenseBuffer.ProductID, L"liquidFOLDERS", 13)==0) && (LicenseBuffer.Version.Major>=0);
 }
 
-LFCore_API bool LFIsSharewareExpired()
+LFCORE_API bool LFIsSharewareExpired()
 {
 	if (LFIsLicensed())
 		return false;
@@ -167,7 +167,7 @@ LFCore_API bool LFIsSharewareExpired()
 	{
 		ExpireRead = true;
 
-		bool res = false;
+		bool Result = false;
 
 		HKEY k;
 		if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
@@ -177,10 +177,10 @@ LFCore_API bool LFIsSharewareExpired()
 			{
 				sz = sizeof(DWORD);
 				if (RegQueryValueExA(k, "Envelope", 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
-					res = true;
+					Result = true;
 			}
 
-			if (!res)
+			if (!Result)
 			{
 				GetSystemTimeAsFileTime(&ExpireBuffer);
 				RegSetValueExA(k, "Seed", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));

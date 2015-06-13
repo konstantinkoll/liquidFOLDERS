@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "CExplorerTree.h"
 
 
 // LFStoreNewPathPage

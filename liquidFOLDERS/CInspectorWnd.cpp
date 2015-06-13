@@ -1,9 +1,9 @@
 
+// CInspectorWnd.cpp: Implementierung der Klasse CInspectorWnd
+//
+
 #include "stdafx.h"
-#include "CInspectorWnd.h"
-#include "Resource.h"
 #include "liquidFOLDERS.h"
-#include "LFCore.h"
 
 
 // CIconHeader
@@ -376,8 +376,7 @@ void CInspectorWnd::UpdateFinish()
 		if (m_Count!=1)
 			SID++;
 
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(SID));
+		CString tmpStr((LPCSTR)SID);
 		m_TypeName.Format(tmpStr, m_Count);
 	}
 
@@ -580,8 +579,7 @@ void CInspectorWnd::OnAlphabetic()
 
 void CInspectorWnd::OnExportSummary()
 {
-	CString Extensions;
-	ENSURE(Extensions.LoadString(IDS_TXTFILEFILTER));
+	CString Extensions((LPCSTR)IDS_TXTFILEFILTER);
 	Extensions += _T(" (*.txt)|*.txt||");
 
 	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);

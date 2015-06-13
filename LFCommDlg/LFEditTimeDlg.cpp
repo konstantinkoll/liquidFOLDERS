@@ -2,16 +2,15 @@
 // LFEditTimeDlg.cpp: Implementierung der Klasse LFEditTimeDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
 #include "LFEditTimeDlg.h"
-#include "Resource.h"
 
 
 // LFEditTimeDlg
 //
 
-LFEditTimeDlg::LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData)
+LFEditTimeDlg::LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd)
 	: LFDialog(IDD_EDITTIME, pParentWnd)
 {
 	ASSERT(pData);
@@ -29,7 +28,7 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		ASSERT(p_App->m_Attributes[p_Data->Attr].Type==LFTypeTime);
+		ASSERT(LFGetApp()->m_Attributes[p_Data->Attr].Type==LFTypeTime);
 		p_Data->IsNull = false;
 
 		SYSTEMTIME Date;
@@ -65,17 +64,17 @@ BOOL LFEditTimeDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
 
-	SetWindowText(p_App->m_Attributes[p_Data->Attr].Name);
+	SetWindowText(LFGetApp()->m_Attributes[p_Data->Attr].Name);
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	INT idx = GetAttributeIconIndex(p_Data->Attr);
-	if (idx!=-1)
+	INT Index = GetAttributeIconIndex(p_Data->Attr);
+	if (Index!=-1)
 	{
 		CImageListTransparent AttributeIcons;
 		AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
 
-		HICON hIcon = AttributeIcons.ExtractIcon(idx);
+		HICON hIcon = AttributeIcons.ExtractIcon(Index);
 		SetIcon(hIcon, FALSE);
 		SetIcon(hIcon, TRUE);
 	}

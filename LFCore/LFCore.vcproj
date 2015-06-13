@@ -72,6 +72,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
+				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -154,6 +155,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
+				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -240,6 +242,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
+				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -329,6 +332,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
+				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -434,11 +438,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFBitArray.cpp"
+				RelativePath=".\LFCore.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LFCore.cpp"
+				RelativePath=".\LFCore.def"
 				>
 			</File>
 			<File
@@ -593,10 +597,6 @@
 			</File>
 			<File
 				RelativePath=".\LF.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFBitArray.h"
 				>
 			</File>
 			<File

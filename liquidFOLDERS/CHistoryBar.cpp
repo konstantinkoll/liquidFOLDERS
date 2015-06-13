@@ -1,6 +1,8 @@
 
+// CHistoryBar.cpp: Implementierung der Klasse CHistoryBar
+//
+
 #include "stdafx.h"
-#include "CHistoryBar.h"
 #include "liquidFOLDERS.h"
 
 
@@ -11,24 +13,24 @@
 #define VIEW       -2
 #define RELOAD     -1
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* filter, FVPersistentData& data)
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* filter, FVPersistentData& Data)
 {
 	BreadcrumbItem* add = new BreadcrumbItem;
 	add->next = *bi;
 	add->filter = filter;
-	add->data = data;
+	add->Data = Data;
 	*bi = add;
 }
 
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** filter, FVPersistentData* data)
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** filter, FVPersistentData* Data)
 {
 	*filter = NULL;
-	ZeroMemory(data, sizeof(FVPersistentData));
+	ZeroMemory(Data, sizeof(FVPersistentData));
 
 	if (*bi)
 	{
 		*filter = (*bi)->filter;
-		*data = (*bi)->data;
+		*Data = (*bi)->Data;
 		BreadcrumbItem* victim = *bi;
 		*bi = (*bi)->next;
 		delete victim;
@@ -64,12 +66,11 @@ CHistoryBar::CHistoryBar()
 
 BOOL CHistoryBar::Create(CGlassWindow* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, theApp.LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
 }
 
 INT CHistoryBar::HitTest(CPoint point)
@@ -99,13 +100,13 @@ UINT CHistoryBar::GetPreferredHeight()
 
 void CHistoryBar::AddFilter(LFFilter* Filter, CDC* pDC)
 {
-	HistoryItem item;
-	ZeroMemory(&item, sizeof(item));
+	HistoryItem Item;
+	ZeroMemory(&Item, sizeof(Item));
 
-	wcscpy_s(item.Name, 256, Filter->ResultName);
-	item.Width = pDC->GetTextExtent(item.Name, (INT)wcslen(item.Name)).cx+2*MARGIN;
+	wcscpy_s(Item.Name, 256, Filter->ResultName);
+	Item.Width = pDC->GetTextExtent(Item.Name, (INT)wcslen(Item.Name)).cx+2*MARGIN;
 
-	m_Breadcrumbs.AddItem(item);
+	m_Breadcrumbs.AddItem(Item);
 }
 
 void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs)
@@ -336,16 +337,10 @@ void CHistoryBar::OnPaint()
 				}
 				else
 				{
-					COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-					COLORREF c2 = GetSysColor(COLOR_3DFACE);
-					COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-					COLORREF c4 = 0x000000;
-
-					if (Pressed)
-					{
-						std::swap(c1, c4);
-						std::swap(c2, c3);
-					}
+					COLORREF c1 = Pressed ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+					COLORREF c2 = Pressed ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+					COLORREF c3 = Pressed ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+					COLORREF c4 = Pressed ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 					dc.Draw3dRect(rectItem, c1, c4);
 					rectItem.DeflateRect(1, 1);

@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CFileView.h"
-#include "LFDynArray.h"
 
 
 // CTimelineView
@@ -37,6 +36,18 @@ public:
 	CTimelineView();
 
 protected:
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
+	virtual void AdjustLayout();
+	virtual RECT GetLabelRect(INT Index);
+	virtual void ScrollWindow(INT dx, INT dy);
+
+	void DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, BOOL Themed);
+
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnPaint();
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	DECLARE_MESSAGE_MAP()
+
 	BOOL m_TwoColumns;
 	INT m_CaptionHeight;
 	INT m_ItemWidth;
@@ -44,23 +55,11 @@ protected:
 	INT m_PreviewColumns;
 	SIZE m_IconSize;
 
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
-	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT idx);
-	virtual void ScrollWindow(INT dx, INT dy);
-
-	void DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOOL Themed);
-
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnPaint();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	DECLARE_MESSAGE_MAP()
-
 private:
+	void DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed);
+
 	CImageListTransparent m_AttributeIcons;
 	LFDynArray<ItemCategory> m_Categories;
 	CString m_FilesSingular;
 	CString m_FilesPlural;
-
-	void DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed);
 };

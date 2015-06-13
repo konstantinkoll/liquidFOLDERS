@@ -3,17 +3,16 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
 
 
 // CExplorerNotification
 //
 
-#define ENT_READY        1
-#define ENT_INFO         2
-#define ENT_WARNING      3
-#define ENT_SHIELD       4
-#define ENT_ERROR        5
+#define ENT_READY       1
+#define ENT_INFO        2
+#define ENT_WARNING     3
+#define ENT_SHIELD      4
+#define ENT_ERROR       5
 
 class CExplorerNotification : public CWnd
 {
@@ -26,8 +25,6 @@ public:
 	void DismissNotification();
 
 protected:
-	BOOL m_Dismissed;
-
 	void AdjustLayout();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -43,8 +40,9 @@ protected:
 	afx_msg void OnButtonClicked();
 	DECLARE_MESSAGE_MAP()
 
+	BOOL m_Dismissed;
+
 private:
-	LFApplication* p_App;
 	COLORREF m_FirstCol;
 	COLORREF m_SecondCol;
 	HICON hIcon;

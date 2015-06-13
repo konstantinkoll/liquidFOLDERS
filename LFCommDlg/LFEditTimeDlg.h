@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "LFDialog.h"
 
 
 // LFEditTimeDlg
@@ -12,16 +12,16 @@
 class LFEditTimeDlg : public LFDialog
 {
 public:
-	LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData);
+	LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
-	LFVariantData* p_Data;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnUseTime();
 	DECLARE_MESSAGE_MAP()
+
+	LFVariantData* p_Data;
 
 private:
 	CMonthCalCtrl m_wndCalendar;

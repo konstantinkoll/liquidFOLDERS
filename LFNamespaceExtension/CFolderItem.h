@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCore.h"
+#include "LF.h"
 #include <eznamespaceextensions.h>
 
 
@@ -13,10 +13,10 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 // CFolderItem
 //
 
-#define LevelRoot               0
-#define LevelStores             1
-#define LevelAttribute          2
-#define LevelAttrValue          3
+#define LEVELROOT               0
+#define LEVELSTORES             1
+#define LEVELATTRIBUTE          2
+#define LEVELATTRVALUE          3
 
 #define NSEIA_CFOLDERITEM       NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder | NSEIA_CanLink | NSEIA_DropTarget
 
@@ -27,7 +27,7 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define VERB_OPEN               "open"
 #define VERB_OPENNEWWINDOW      "opennewwindow"
 #define VERB_EXPLORE            "explore"
-#define VERB_OPENSTOREMANAGER   "openstoremanager"
+#define VERB_OPENLIQUIDFOLDERS   "openstoremanager"
 #define VERB_OPENFILEDROP       "filedrop"
 #define VERB_OPENWITH           "openwith"
 #define VERB_OPENBROWSER        "browse"
@@ -80,7 +80,7 @@ public:
 	virtual CNSEItem* DeserializeChild(CArchive& ar);
 
 	// IEnumIDList
-	virtual void ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* res);
+	virtual void ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* Result);
 	virtual BOOL GetChildren(CGetChildrenEventArgs& e);
 
 	// IMoniker

@@ -2,7 +2,7 @@
 #include "LF.h"
 
 #define LFStoresHive     "Software\\liquidFOLDERS\\Stores"
-#define MaxStores        250
+#define MaxStores        100
 
 #define RANDOMIZE() \
 	SYSTEMTIME st; \

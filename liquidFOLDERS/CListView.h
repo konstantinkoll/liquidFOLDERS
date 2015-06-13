@@ -16,13 +16,11 @@ public:
 	CListView(UINT DataSize=sizeof(GridItemData));
 
 protected:
-	CTooltipHeader m_wndHeader;
-
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT idx);
-	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
+	virtual RECT GetLabelRect(INT Index);
+	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
 	virtual void ScrollWindow(INT dx, INT dy);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -40,12 +38,9 @@ protected:
 	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-private:
-	CImageList* m_Icons[2];
-	SIZE m_IconSize[2];
-	INT m_HeaderItemClicked;
-	BOOL m_IgnoreHeaderItemChange;
+	CTooltipHeader m_wndHeader;
 
+private:
 	void AdjustHeader(BOOL bShow);
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
@@ -56,4 +51,9 @@ private:
 	INT GetMaxColumnWidth(UINT Col, INT Max);
 	void AutosizeColumn(UINT Col);
 	void SortCategories(LFSearchResult* Result);
+
+	CImageList* m_Icons[2];
+	SIZE m_IconSize[2];
+	INT m_HeaderItemClicked;
+	BOOL m_IgnoreHeaderItemChange;
 };

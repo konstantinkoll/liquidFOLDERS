@@ -2,9 +2,7 @@
 // CFormatCache.cpp: Implementierung der Klasse CFormatCache
 //
 
-#pragma once
 #include "stdafx.h"
-#include "CFormatCache.h"
 #include "liquidFOLDERS.h"
 
 
@@ -87,12 +85,12 @@ INT CFormatCache::ConvertIcon(INT SysIconIndex)
 	}
 
 	// Hinzufügen
-	INT res = ImageList_Add(m_SystemIcons128, hBmpDst, NULL);
+	INT Result = ImageList_Add(m_SystemIcons128, hBmpDst, NULL);
 
 	DeleteObject(hBmpSrc);
 	DeleteObject(hBmpDst);
 
-	return res;
+	return Result;
 }
 
 void CFormatCache::Lookup(CHAR* FileFormat, FormatData& fd)

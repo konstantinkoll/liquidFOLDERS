@@ -4,18 +4,16 @@
 
 #include "stdafx.h"
 #include "ChooseDetailsDlg.h"
-#include "LFCore.h"
 
 
 // ChooseDetailsDlg
 //
 
-ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, INT Context, UINT nIDTemplate)
-	: LFAttributeListDlg(nIDTemplate, pParentWnd)
+ChooseDetailsDlg::ChooseDetailsDlg(UINT Context, CWnd* pParentWnd)
+	: LFAttributeListDlg(IDD_CHOOSEDETAILS, pParentWnd)
 {
 	p_View = &theApp.m_Views[Context];
 	m_Context = Context;
-	m_Template = nIDTemplate;
 }
 
 void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
@@ -33,8 +31,8 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 		{
-			UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
-			p_View->ColumnWidth[attr] = m_ShowAttributes.GetCheck(a) ? OldWidth[attr] ? OldWidth[attr] : theApp.m_Attributes[attr].RecommendedWidth : 0;
+			UINT Attr = (UINT)m_ShowAttributes.GetItemData(a);
+			p_View->ColumnWidth[Attr] = m_ShowAttributes.GetCheck(a) ? OldWidth[Attr] ? OldWidth[Attr] : theApp.m_Attributes[Attr].RecommendedWidth : 0;
 		}
 
 		// Reihenfolge
@@ -52,10 +50,10 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void ChooseDetailsDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
+void ChooseDetailsDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	add = (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) && (!theApp.m_Attributes[attr].AlwaysVisible);
-	check = (p_View->ColumnWidth[attr]);
+	Add = LFIsAttributeAllowed(theApp.m_Contexts[m_Context], Attr) && (!theApp.m_Attributes[Attr].AlwaysVisible);
+	Check = (p_View->ColumnWidth[Attr]);
 }
 
 void ChooseDetailsDlg::SwapItems(INT FocusItem, INT NewPos)
@@ -78,7 +76,9 @@ void ChooseDetailsDlg::SwapItems(INT FocusItem, INT NewPos)
 	i2.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 	m_ShowAttributes.GetItem(&i2);
 
-	std::swap(i1.iItem, i2.iItem);
+	INT iItem = i1.iItem;
+	i1.iItem = i2.iItem;
+	i2.iItem = iItem;
 
 	m_ShowAttributes.SetItem(&i1);
 	m_ShowAttributes.SetItem(&i2);
@@ -107,9 +107,9 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	// Titelleiste
 	CString text;
 	GetWindowText(text);
-	CString caption;
-	caption.Format(text, theApp.m_Contexts[m_Context].Name);
-	SetWindowText(caption);
+	CString Caption;
+	Caption.Format(text, theApp.m_Contexts[m_Context].Name);
+	SetWindowText(Caption);
 
 	// Kontrollelemente einstellen
 	PrepareListCtrl(&m_ShowAttributes, TRUE);
@@ -130,12 +130,12 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	INT idx = (INT)pNMListView->iItem;
+	INT Index = (INT)pNMListView->iItem;
 
 	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
 	{
-		GetDlgItem(IDC_MOVEUP)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx>0));
-		GetDlgItem(IDC_MOVEDOWN)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx<m_ShowAttributes.GetItemCount()-1));
+		GetDlgItem(IDC_MOVEUP)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (Index>0));
+		GetDlgItem(IDC_MOVEDOWN)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (Index<m_ShowAttributes.GetItemCount()-1));
 	}
 
 	*pResult = 0;
@@ -143,16 +143,16 @@ void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ChooseDetailsDlg::OnMoveUp()
 {
-	INT idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
-	if (idx>0)
-		SwapItems(idx, idx-1);
+	INT Index = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
+	if (Index>0)
+		SwapItems(Index, Index-1);
 }
 
 void ChooseDetailsDlg::OnMoveDown()
 {
-	INT idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
-	if (idx<m_ShowAttributes.GetItemCount()-1)
-		SwapItems(idx, idx+1);
+	INT Index = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
+	if (Index<m_ShowAttributes.GetItemCount()-1)
+		SwapItems(Index, Index+1);
 }
 
 void ChooseDetailsDlg::OnCheckAll()

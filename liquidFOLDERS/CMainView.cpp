@@ -3,15 +3,13 @@
 //
 
 #include "stdafx.h"
-#include "CMainView.h"
 #include "CCalendarView.h"
 #include "CGlobeView.h"
 #include "CListView.h"
 #include "CTagcloudView.h"
 #include "CTimelineView.h"
-#include "LFEditFilterDlg.h"
-#include "OrganizeDlg.h"
 #include "liquidFOLDERS.h"
+#include "OrganizeDlg.h"
 
 
 void CreateShortcut(LFTL_Item* i)
@@ -56,16 +54,15 @@ CMainView::CMainView()
 	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
 }
 
-BOOL CMainView::Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID)
+BOOL CMainView::Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard)
 {
 	m_IsClipboard = IsClipboard;
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, rect, pParentWnd, nID);
 }
 
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -165,8 +162,7 @@ void CMainView::SetHeaderButtons()
 
 	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy].Name, TRUE, FALSE);
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDM_VIEW_FIRST+m_ViewID));
+	CString tmpStr((LPCSTR)IDM_VIEW_FIRST+m_ViewID);
 	p_ViewButton->SetValue(tmpStr);
 }
 
@@ -179,12 +175,10 @@ void CMainView::SetHeader()
 	else
 	{
 		CString Hint;
-		CString Mask;
 
 		if (m_Context==LFContextStores)
 		{
-			ENSURE(Mask.LoadString(p_CookedFiles->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
-			Hint.Format(Mask, p_CookedFiles->m_StoreCount);
+			Hint.Format(p_CookedFiles->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, p_CookedFiles->m_StoreCount);
 		}
 		else
 		{
@@ -396,16 +390,16 @@ void CMainView::SelectNone()
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 }
 
-void CMainView::AddFileIDItem(LFFileIDList* il, LFItemDescriptor* item)
+void CMainView::AddFileIDItem(LFFileIDList* il, LFItemDescriptor* Item)
 {
-	switch (item->Type & LFTypeMask)
+	switch (Item->Type & LFTypeMask)
 	{
 	case LFTypeFile:
-		LFAddFileID(il, item->StoreID, item->CoreAttributes.FileID, NULL);
+		LFAddFileID(il, Item->StoreID, Item->CoreAttributes.FileID, NULL);
 		break;
 	case LFTypeFolder:
-		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
-			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
+		if ((Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1))
+			for (INT a=Item->FirstAggregate; a<=Item->LastAggregate; a++)
 				LFAddFileID(il, p_RawFiles->m_Items[a]->StoreID, p_RawFiles->m_Items[a]->CoreAttributes.FileID, NULL);
 		break;
 	}
@@ -423,29 +417,29 @@ LFFileIDList* CMainView::BuildFileIDList(BOOL All)
 		}
 		else
 		{
-			INT idx = GetNextSelectedItem(-1);
-			while (idx!=-1)
+			INT Index = GetNextSelectedItem(-1);
+			while (Index!=-1)
 			{
-				AddFileIDItem(il, p_CookedFiles->m_Items[idx]);
-				idx = GetNextSelectedItem(idx);
+				AddFileIDItem(il, p_CookedFiles->m_Items[Index]);
+				Index = GetNextSelectedItem(Index);
 			}
 		}
 
 	return il;
 }
 
-void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData)
+void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* Item, UINT UserData)
 {
-	switch (item->Type & LFTypeMask)
+	switch (Item->Type & LFTypeMask)
 	{
 	case LFTypeVolume:
 	case LFTypeStore:
 	case LFTypeFile:
-		LFAddItemDescriptor(tl, item, UserData);
+		LFAddItemDescriptor(tl, Item, UserData);
 		break;
 	case LFTypeFolder:
-		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
-			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
+		if ((Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1))
+			for (INT a=Item->FirstAggregate; a<=Item->LastAggregate; a++)
 				LFAddItemDescriptor(tl, p_RawFiles->m_Items[a], UserData);
 		break;
 	}
@@ -464,11 +458,11 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolvePhysica
 		}
 		else
 		{
-			INT idx = GetNextSelectedItem(-1);
-			while (idx!=-1)
+			INT Index = GetNextSelectedItem(-1);
+			while (Index!=-1)
 			{
-				AddTransactionItem(tl, p_CookedFiles->m_Items[idx], idx);
-				idx = GetNextSelectedItem(idx);
+				AddTransactionItem(tl, p_CookedFiles->m_Items[Index], Index);
+				Index = GetNextSelectedItem(Index);
 			}
 		}
 
@@ -753,7 +747,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_ViewButton = m_wndHeaderArea.AddButton(IDM_VIEW);
 
 	// Inspector
-	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 4))
+	if (!m_wndInspector.Create(this, 4, FALSE, theApp.m_InspectorWidth))
 		return -1;
 
 	m_wndInspector.SetOwner(GetOwner());
@@ -928,18 +922,18 @@ void CMainView::OnUpdateSelection()
 {
 	m_wndInspector.UpdateStart();
 
-	INT idx = GetNextSelectedItem(-1);
+	INT Index = GetNextSelectedItem(-1);
 	m_FilesSelected = FALSE;
 
-	while (idx>=0)
+	while (Index>=0)
 	{
-		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
-		m_wndInspector.UpdateAdd(item, p_RawFiles);
+		LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
+		m_wndInspector.UpdateAdd(Item, p_RawFiles);
 
-		m_FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
-			(((item->Type & LFTypeMask)==LFTypeFolder) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
+		m_FilesSelected |= ((Item->Type & LFTypeMask)==LFTypeFile) ||
+			(((Item->Type & LFTypeMask)==LFTypeFolder) && (Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1));
 
-		idx = GetNextSelectedItem(idx);
+		Index = GetNextSelectedItem(Index);
 	}
 
 	m_wndInspector.UpdateFinish();
@@ -951,15 +945,15 @@ void CMainView::OnBeginDragDrop()
 	// Stores haben keinen physischen Speicherort, der von einer LFTransactionList aufgelöst werden kann
 	if (m_Context==LFContextStores)
 	{
-		INT idx = GetSelectedItem();
-		if (idx!=-1)
+		INT Index = GetSelectedItem();
+		if (Index!=-1)
 		{
-			LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
-			if ((item->Type & LFTypeStore) && (item->Type & LFTypeShortcutAllowed))
+			LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
+			if ((Item->Type & LFTypeStore) && (Item->Type & LFTypeShortcutAllowed))
 			{
 				m_DropTarget.SetDragging(TRUE);
 
-				LFStoreDataObject* pDataObject = new LFStoreDataObject(item);
+				LFStoreDataObject* pDataObject = new LFStoreDataObject(Item);
 				LFDropSource* pDropSource = new LFDropSource();
 
 				DWORD dwEffect;
@@ -1143,7 +1137,7 @@ void CMainView::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnSortOptions()
 {
-	OrganizeDlg dlg(this, m_Context);
+	OrganizeDlg dlg(m_Context, this);
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateSortOptions(m_Context);
 }
@@ -1177,8 +1171,8 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 	switch (wParam)
 	{
 	case IDM_ORGANIZE:
-#define AppendAttribute(hMenu, attr) if (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) { tmpStr = theApp.m_Attributes[attr].Name; AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_FIRST+attr, _T("&")+tmpStr); }
-#define AppendSeparator(hMenu, attr) if (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) { AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); }
+#define AppendAttribute(hMenu, Attr) if (theApp.IsAttributeAllowed(m_Context, Attr)) { tmpStr = theApp.m_Attributes[Attr].Name; AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_FIRST+Attr, _T("&")+tmpStr); }
+#define AppendSeparator(hMenu, Attr) if (theApp.IsAttributeAllowed(m_Context, Attr)) { AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); }
 #define AppendPopup(nID) if (GetMenuItemCount(hPopupMenu)) { ENSURE(tmpStr.LoadString(nID)); AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR)hPopupMenu, tmpStr); } else { DestroyMenu(hPopupMenu); }
 		AppendAttribute(hMenu, LFAttrFileName);
 		AppendAttribute(hMenu, LFAttrTitle);
@@ -1204,7 +1198,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 
 		AppendAttribute(hMenu, LFAttrRating);
 		AppendAttribute(hMenu, LFAttrPriority);
-		AppendAttribute(hMenu, LFAttrTags);
+		AppendAttribute(hMenu, LFAttrHashtags);
 		AppendAttribute(hMenu, LFAttrRoll);
 		AppendAttribute(hMenu, LFAttrArtist);
 		AppendAttribute(hMenu, LFAttrDuration);
@@ -1234,7 +1228,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 	case IDM_VIEW:
 		for (UINT a=0; a<LFViewCount; a++)
-			if (theApp.m_AllowedViews[m_Context]->IsSet(a))
+			if (theApp.IsViewAllowed(m_Context, a))
 			{
 				if ((a>LFViewPreview) && (!Separator))
 				{
@@ -1244,8 +1238,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 
 				UINT nID = IDM_VIEW_FIRST+a;
 
-				CString tmpStr;
-				ENSURE(tmpStr.LoadString(nID));
+				CString tmpStr((LPCSTR)nID);
 
 				AppendMenu(hMenu, MF_STRING, nID, _T("&")+tmpStr);
 			}
@@ -1274,7 +1267,7 @@ void CMainView::OnUpdateSortCommands(CCmdUI* pCmdUI)
 {
 	UINT Attr = pCmdUI->m_nID-IDM_ORGANIZE_FIRST;
 
-	pCmdUI->Enable(theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(Attr));
+	pCmdUI->Enable(theApp.IsAttributeAllowed(m_Context, Attr));
 	pCmdUI->SetRadio(theApp.m_Views[m_Context].SortBy==Attr);
 }
 
@@ -1295,7 +1288,7 @@ void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)
 {
 	INT View = pCmdUI->m_nID-IDM_VIEW_FIRST;
 
-	pCmdUI->Enable(theApp.m_AllowedViews[m_Context]->IsSet(View));
+	pCmdUI->Enable(theApp.IsViewAllowed(m_Context, View));
 	pCmdUI->SetRadio(m_ViewID==View);
 }
 
@@ -1371,8 +1364,8 @@ void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = (m_Context==LFContextTrash) && (p_CookedFiles) ? p_CookedFiles->m_ItemCount : FALSE;
 
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 	{
 		switch (pCmdUI->m_nID)
 		{
@@ -1392,14 +1385,14 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = (m_Context==LFContextFilters);
 
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 	{
-		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+		LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_FILTERS_EDIT:
-			b &= ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+			b &= ((Item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
 			break;
 		}
 	}
@@ -1414,19 +1407,19 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
 
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 	{
-		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+		LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_ITEM_OPEN:
-			b = (item->NextFilter!=NULL) ||
-				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile) ||
-				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
+			b = (Item->NextFilter!=NULL) ||
+				((Item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile) ||
+				((Item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
 
 			if (p_OpenButton)
-				p_OpenButton->SetIconID((item->Type & LFTypeMask)==LFTypeVolume ? OpenIconExplorer : OpenIconFolder);
+				p_OpenButton->SetIconID((Item->Type & LFTypeMask)==LFTypeVolume ? OpenIconExplorer : OpenIconFolder);
 
 			break;
 		}
@@ -1440,20 +1433,17 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnVolumeFormat()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 	{
-		CHAR cVolume = p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0];
+		CHAR cVolume = p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0];
 		if (LFStoresOnVolume(cVolume))
 		{
-			CString caption;
-			CString mask;
-			CString text;
-			ENSURE(mask.LoadString(IDS_FORMAT_CAPTION));
-			ENSURE(text.LoadString(IDS_FORMAT_TEXT));
-			caption.Format(mask, p_CookedFiles->m_Items[idx]->CoreAttributes.FileName);
+			CString Caption;
+			Caption.Format(IDS_FORMAT_CAPTION, p_CookedFiles->m_Items[Index]->CoreAttributes.FileName);
+			CString text((LPCSTR)IDS_FORMAT_TEXT);
 
-			MessageBox(text, caption, MB_ICONWARNING);
+			MessageBox(text, Caption, MB_ICONWARNING);
 		}
 		else
 		{
@@ -1464,34 +1454,34 @@ void CMainView::OnVolumeFormat()
 
 void CMainView::OnVolumeEject()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "eject");
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
+		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0], "eject");
 }
 
 void CMainView::OnVolumeProperties()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "properties");
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
+		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0], "properties");
 }
 
 void CMainView::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
 
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 	{
-		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+		LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_VOLUME_FORMAT:
 		case IDM_VOLUME_EJECT:
-			b = ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
+			b = ((Item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
 			break;
 		case IDM_VOLUME_PROPERTIES:
-			b = ((item->Type & LFTypeMask)==LFTypeVolume);
+			b = ((Item->Type & LFTypeMask)==LFTypeVolume);
 			break;
 		}
 	}
@@ -1504,18 +1494,18 @@ void CMainView::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnStoreMakeDefault()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-		LFErrorBox(LFMakeDefaultStore(p_CookedFiles->m_Items[idx]->StoreID), GetSafeHwnd());
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
+		LFErrorBox(LFMakeDefaultStore(p_CookedFiles->m_Items[Index]->StoreID), GetSafeHwnd());
 }
 
 void CMainView::OnStoreImportFolder()
 {
 	if (m_Context==LFContextStores)
 	{
-		INT idx = GetSelectedItem();
-		if (idx!=-1)
-			LFImportFolder(p_CookedFiles->m_Items[idx]->StoreID, this);
+		INT Index = GetSelectedItem();
+		if (Index!=-1)
+			LFImportFolder(p_CookedFiles->m_Items[Index]->StoreID, this);
 	}
 	else
 		if (m_StoreIDValid)
@@ -1527,32 +1517,32 @@ void CMainView::OnStoreImportFolder()
 
 void CMainView::OnStoreShortcut()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 		if (LFAskCreateShortcut(GetSafeHwnd()))
-			LFCreateDesktopShortcutForStore(p_CookedFiles->m_Items[idx]);
+			LFCreateDesktopShortcutForStore(p_CookedFiles->m_Items[Index]);
 }
 
 void CMainView::OnStoreDelete()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-		LFDeleteStore(p_CookedFiles->m_Items[idx]->StoreID, this);
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
+		LFDeleteStore(p_CookedFiles->m_Items[Index]->StoreID, this);
 }
 
 void CMainView::OnStoreRename()
 {
-	INT idx = GetSelectedItem();
-	if ((idx!=-1) && (p_wndFileView))
-		p_wndFileView->EditLabel(idx);
+	INT Index = GetSelectedItem();
+	if ((Index!=-1) && (p_wndFileView))
+		p_wndFileView->EditLabel(Index);
 }
 
 void CMainView::OnStoreProperties()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 	{
-		LFStorePropertiesDlg dlg(p_CookedFiles->m_Items[idx]->StoreID, this);
+		LFStorePropertiesDlg dlg(p_CookedFiles->m_Items[Index]->StoreID, this);
 		dlg.DoModal();
 	}
 }
@@ -1563,21 +1553,21 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 	if (m_Context==LFContextStores)
 	{
-		INT idx = GetSelectedItem();
-		if (idx!=-1)
+		INT Index = GetSelectedItem();
+		if (Index!=-1)
 		{
-			LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
-			if ((item->Type & LFTypeMask)==LFTypeStore)
+			LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
+			if ((Item->Type & LFTypeMask)==LFTypeStore)
 				switch (pCmdUI->m_nID)
 				{
 				case IDM_STORE_MAKEDEFAULT:
-					b = !(item->Type & LFTypeDefault);
+					b = !(Item->Type & LFTypeDefault);
 					break;
 				case IDM_STORE_IMPORTFOLDER:
-					b = !(item->Type & LFTypeNotMounted);
+					b = !(Item->Type & LFTypeNotMounted);
 					break;
 				case IDM_STORE_SHORTCUT:
-					b = (item->Type & LFTypeShortcutAllowed);
+					b = (Item->Type & LFTypeShortcutAllowed);
 					break;
 				case IDM_STORE_RENAME:
 					b = !p_wndFileView->IsEditing();
@@ -1601,12 +1591,12 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnFileOpenWith()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
 	{
 		WCHAR Path[MAX_PATH];
-		UINT res = LFGetFileLocation(p_CookedFiles->m_Items[idx], Path, MAX_PATH, true, true);
-		if (res==LFOk)
+		UINT Result = LFGetFileLocation(p_CookedFiles->m_Items[Index], Path, MAX_PATH, true, true);
+		if (Result==LFOk)
 		{
 			WCHAR Cmd[300];
 			wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
@@ -1615,25 +1605,25 @@ void CMainView::OnFileOpenWith()
 		}
 		else
 		{
-			LFErrorBox(res, GetSafeHwnd());
+			LFErrorBox(Result, GetSafeHwnd());
 		}
 	}
 }
 
 void CMainView::OnFileOpenBrowser()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-		ShellExecuteA(GetSafeHwnd(), "open", p_CookedFiles->m_Items[idx]->CoreAttributes.URL, NULL, NULL, SW_SHOW);
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
+		ShellExecuteA(GetSafeHwnd(), "open", p_CookedFiles->m_Items[Index]->CoreAttributes.URL, NULL, NULL, SW_SHOW);
 }
 
 void CMainView::OnFileEdit()
 {
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-		if (strcmp(p_CookedFiles->m_Items[idx]->CoreAttributes.FileFormat, "filter")==0)
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
+		if (strcmp(p_CookedFiles->m_Items[Index]->CoreAttributes.FileFormat, "filter")==0)
 		{
-			LFFilter* f = LFLoadFilter(p_CookedFiles->m_Items[idx]);
+			LFFilter* f = LFLoadFilter(p_CookedFiles->m_Items[Index]);
 
 			LFEditFilterDlg dlg(this, f ? f->StoreID[0]!='\0' ? f->StoreID : m_StoreID : m_StoreID, f);
 			if (dlg.DoModal()==IDOK)
@@ -1648,25 +1638,25 @@ void CMainView::OnFileRemember()
 	CMainWnd* pClipboard = theApp.GetClipboard();
 	BOOL changes = FALSE;
 
-	INT idx = GetNextSelectedItem(-1);
-	while (idx!=-1)
+	INT Index = GetNextSelectedItem(-1);
+	while (Index!=-1)
 	{
-		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
-		switch (item->Type & LFTypeMask)
+		LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
+		switch (Item->Type & LFTypeMask)
 		{
 		case LFTypeFile:
-			if (pClipboard->AddClipItem(item))
+			if (pClipboard->AddClipItem(Item))
 				changes = TRUE;
 			break;
 		case LFTypeFolder:
-			if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
-				for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
+			if ((Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1))
+				for (INT a=Item->FirstAggregate; a<=Item->LastAggregate; a++)
 					if (pClipboard->AddClipItem(p_RawFiles->m_Items[a]))
 						changes = TRUE;
 			break;
 		}
 
-		idx = GetNextSelectedItem(idx);
+		Index = GetNextSelectedItem(Index);
 	}
 
 	if (changes)
@@ -1737,9 +1727,9 @@ void CMainView::OnFileDelete()
 
 void CMainView::OnFileRename()
 {
-	INT idx = GetSelectedItem();
-	if ((idx!=-1) && (p_wndFileView))
-		p_wndFileView->EditLabel(idx);
+	INT Index = GetSelectedItem();
+	if ((Index!=-1) && (p_wndFileView))
+		p_wndFileView->EditLabel(Index);
 }
 
 void CMainView::OnFileProperties()
@@ -1765,22 +1755,22 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
 
-	INT idx = GetSelectedItem();
-	LFItemDescriptor* item = (idx==-1) ? NULL : p_CookedFiles->m_Items[idx];
+	INT Index = GetSelectedItem();
+	LFItemDescriptor* Item = (Index==-1) ? NULL : p_CookedFiles->m_Items[Index];
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_FILE_OPENWITH:
-		if (item)
-			b = ((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile) && (item->CoreAttributes.ContextID!=LFContextFilters);
+		if (Item)
+			b = ((Item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile) && (Item->CoreAttributes.ContextID!=LFContextFilters);
 		break;
 	case IDM_FILE_OPENBROWSER:
-		if (item)
-			b = ((item->Type & LFTypeMask)==LFTypeFile) && (item->CoreAttributes.URL[0]!='\0');
+		if (Item)
+			b = ((Item->Type & LFTypeMask)==LFTypeFile) && (Item->CoreAttributes.URL[0]!='\0');
 		break;
 	case IDM_FILE_EDIT:
-		if (item)
-			b = ((item->Type & LFTypeMask)==LFTypeFile) && (item->CoreAttributes.ContextID==LFContextFilters);
+		if (Item)
+			b = ((Item->Type & LFTypeMask)==LFTypeFile) && (Item->CoreAttributes.ContextID==LFContextFilters);
 		break;
 	case IDM_FILE_REMEMBER:
 		b = m_FilesSelected && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
@@ -1797,8 +1787,8 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		b = m_FilesSelected;
 		break;
 	case IDM_FILE_RENAME:
-		if ((item) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
-			b = ((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
+		if ((Item) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
+			b = ((Item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
 		if (p_wndFileView)
 			b &= !p_wndFileView->IsEditing();
 		break;

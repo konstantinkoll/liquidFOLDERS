@@ -23,14 +23,6 @@ public:
 	CHeaderButton* AddButton(UINT nID=0);
 
 protected:
-	LFApplication* p_App;
-	BOOL m_Shadow;
-	UINT m_FontHeight;
-	CList<CHeaderButton*> m_Buttons;
-	CString m_Caption;
-	CString m_Hint;
-	INT m_RightEdge;
-
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -41,6 +33,13 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnAdjustLayout();
 	DECLARE_MESSAGE_MAP()
+
+	BOOL m_Shadow;
+	UINT m_FontHeight;
+	CList<CHeaderButton*> m_Buttons;
+	CString m_Caption;
+	CString m_Hint;
+	INT m_RightEdge;
 
 private:
 	CBitmap m_BackBuffer;

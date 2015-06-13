@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "Resource.h"
 
 
 // CMapSelectionCtrl
@@ -19,7 +18,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CMapSelectionCtrl";
@@ -121,7 +120,7 @@ BOOL CMapSelectionCtrl::OnEraseBkgnd(CDC* pDC)
 		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
 		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 
-		CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), AfxGetResourceHandle());
+		CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"));
 		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.DrawImage(pMap->m_pBitmap, 0, 0, rect.Width(), rect.Height());
@@ -165,7 +164,7 @@ void CMapSelectionCtrl::OnPaint()
 		INT cx = (INT)((m_Coord.Longitude+180)*rect.Width()/360)+1;
 		INT cy = (INT)((m_Coord.Latitude+90)*rect.Height()/180)+1;
 
-		CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"), AfxGetResourceHandle());
+		CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"));
 		INT h = pIndicator->m_pBitmap->GetHeight();
 		INT l = pIndicator->m_pBitmap->GetWidth();
 

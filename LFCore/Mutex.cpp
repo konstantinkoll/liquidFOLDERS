@@ -30,14 +30,14 @@ bool GetMutexForStore(LFStoreDescriptor* s, HANDLE* m)
 
 	*m = CreateMutexA(NULL, FALSE, ID);
 
-	bool res = GetMutex(*m);
-	if (!res)
+	bool Result = GetMutex(*m);
+	if (!Result)
 	{
 		CloseHandle(*m);
 		*m = NULL;
 	}
 
-	return res;
+	return Result;
 }
 
 void ReleaseMutexForStore(HANDLE m)

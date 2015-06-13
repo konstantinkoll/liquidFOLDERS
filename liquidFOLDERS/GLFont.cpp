@@ -5,7 +5,6 @@
 #pragma once
 #include "stdafx.h"
 #include "GLFont.h"
-#include <math.h>
 
 
 // GLFont
@@ -24,17 +23,17 @@ GLFont::~GLFont()
 		glDeleteTextures(1, &m_TexID);
 }
 
-BOOL GLFont::Create(CString face, UINT size, BOOL bold, BOOL italic)
+BOOL GLFont::Create(CString Face, UINT Size, BOOL Bold, BOOL Italic)
 {
-	CFont font;
-	font.CreateFont(-(INT)size, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, (BYTE)italic, 0, 0, ANSI_CHARSET,
+	CFont Font;
+	Font.CreateFont(-(INT)Size, 0, 0, 0, Bold ? FW_BOLD : FW_NORMAL, (BYTE)Italic, 0, 0, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 
-	return Create(&font);
+	return Create(&Font);
 }
 
-BOOL GLFont::Create(CFont* font)
+BOOL GLFont::Create(CFont* Font)
 {
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
@@ -44,9 +43,9 @@ BOOL GLFont::Create(CFont* font)
 	dc.SetBkColor(RGB(0, 0, 0));
 	dc.SetTextAlign(TA_TOP);
 
-	HFONT hFontOld = (HFONT)dc.SelectObject(font);
+	HFONT hFontOld = (HFONT)dc.SelectObject(Font);
 
-	PaintResult p;
+	PAINTRESULT p;
 	while (MoreData==(p = PaintAlphabet(dc, TRUE)))
 		m_TexSize *= 2;
 
@@ -258,12 +257,12 @@ UINT GLFont::GetTextHeight(void* pStr)
 	return (pStr ? m_LineHeight : 0);
 }
 
-GLFont::PaintResult GLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
+GLFont::PAINTRESULT GLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 {
 	SIZE size;
-	CHAR str[2] = "?";
+	CHAR Str[2] = "?";
 
-	if (!GetTextExtentPoint32A(hDC, str, 1, &size))
+	if (!GetTextExtentPoint32A(hDC, Str, 1, &size))
 		return Fail;
 	m_Spacing = (INT)ceil((double)size.cy/3);
 	m_LineHeight = max(m_LineHeight, (UINT)size.cy);
@@ -273,8 +272,8 @@ GLFont::PaintResult GLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 
 	for (UCHAR c=32; c<255; c++)
 	{
-		str[0] = c;
-		if (!GetTextExtentPoint32A(hDC, str, 1, &size))
+		Str[0] = c;
+		if (!GetTextExtentPoint32A(hDC, Str, 1, &size))
 			continue;
 
 		if (x+size.cx+m_Spacing>m_TexSize)
@@ -287,7 +286,7 @@ GLFont::PaintResult GLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 
 		if (!bMeasureOnly)
 		{
-			if (!ExtTextOutA(hDC, x, y, ETO_OPAQUE, NULL, str, 1, NULL))
+			if (!ExtTextOutA(hDC, x, y, ETO_OPAQUE, NULL, Str, 1, NULL))
 				continue;
 
 			TexCoords[c-32][0] = ((GLfloat)(x))/m_TexSize;

@@ -100,10 +100,10 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 	wcscat_s(Path, MAX_PATH, Key);
 
 	// PIDL
-	bool res = SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, ppidl, &dwAttributes));
+	bool Result = SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, ppidl, &dwAttributes));
 
 	// Delegate PIDL
-	if (res)
+	if (Result)
 	{
 		LPITEMIDLIST pidlMyComputer = NULL;
 		if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_DRIVES, &pidlMyComputer)))
@@ -152,5 +152,5 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 	}
 
 	pDesktop->Release();
-	return res;
+	return Result;
 }

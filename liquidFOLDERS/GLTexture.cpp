@@ -28,10 +28,10 @@ GLuint GLTexture::GetID()
 	return m_ID;
 }
 
-void GLTexture::SetTexture(UINT width, UINT height, UINT bpp, void* data)
+void GLTexture::SetTexture(UINT Width, UINT Height, UINT BPP, void* Data)
 {
 	// Textur erzeugen
-	UINT pixel_mode = (bpp==4) ? GL_BGRA : GL_BGR;
+	UINT PixelMode = (BPP==4) ? GL_BGRA : GL_BGR;
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 
@@ -45,20 +45,20 @@ void GLTexture::SetTexture(UINT width, UINT height, UINT bpp, void* data)
 		// Hardware-Erzeugung von Mipmaps aktiv
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, bpp, width, height, 0, pixel_mode, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, BPP, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, Data);
 	}
 	else
-		if (width!=height)
+		if (Width!=Height)
 		{
 			// Breite!=Höhe, daher kein Mipmapping
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexImage2D(GL_TEXTURE_2D, 0, bpp, width, height, 0, pixel_mode, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, BPP, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, Data);
 		}
 		else
 		{
 			// Mipmaps von der CPU erzeugen lassen
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			gluBuild2DMipmaps(GL_TEXTURE_2D, bpp, width, height, pixel_mode, GL_UNSIGNED_BYTE, data);
+			gluBuild2DMipmaps(GL_TEXTURE_2D, BPP, Width, Height, PixelMode, GL_UNSIGNED_BYTE, Data);
 		}
 }
 

@@ -15,6 +15,8 @@
 // LFNamespaceExtensionApp
 //
 
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+
 #define ResetNagCounter     m_NagCounter = 0;
 
 LFNamespaceExtensionApp::LFNamespaceExtensionApp()
@@ -35,13 +37,13 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	{
 		GetModuleFileName(hModCore, m_PathCoreFile, MAX_PATH);
 
-		ENSURE(m_Categories[2][0].LoadString(hModCore, IDS_Size1));
+		ENSURE(m_Categories[2][0].LoadString(hModCore, IDS_SIZE1));
 
 		for (UINT a=1; a<6; a++)
 		{
-			ENSURE(m_Categories[0][a].LoadString(hModCore, IDS_Rating1+a-1));
-			ENSURE(m_Categories[1][a].LoadString(hModCore, IDS_Priority1+a-1));
-			ENSURE(m_Categories[2][a].LoadString(hModCore, IDS_Size1+a));
+			ENSURE(m_Categories[0][a].LoadString(hModCore, IDS_RATING1+a-1));
+			ENSURE(m_Categories[1][a].LoadString(hModCore, IDS_PRIORITY1+a-1));
+			ENSURE(m_Categories[2][a].LoadString(hModCore, IDS_SIZE1+a));
 		}
 	}
 	else
@@ -101,14 +103,13 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	EZShellExtensionsMFC::CExtensionTargetInfo::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#B2/22Ctegy/B3wHN28jR2uUsStzxt2RNPvEEmoFUuY4XGheEmCPKFVrhwK823NwN"));
 
 	// Strings
-	ENSURE(m_Store.LoadString(IDS_Store));
-	ENSURE(m_Folder.LoadString(IDS_Folder));
+	ENSURE(m_Store.LoadString(IDS_STORE));
+	ENSURE(m_Folder.LoadString(IDS_FOLDER));
 
-	CString sortStr;
-	ENSURE(sortStr.LoadString(IDS_NULLFOLDER_NameMask));
+	CString SortStr((LPCSTR)IDS_NULLFOLDER_NAMEMASK);
 
-	m_Categories[0][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrRating].Name));
-	m_Categories[1][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrPriority].Name));
+	m_Categories[0][0] = FrmtAttrStr(SortStr, CString(m_Attributes[LFAttrRating].Name));
+	m_Categories[1][0] = FrmtAttrStr(SortStr, CString(m_Attributes[LFAttrPriority].Name));
 
 	ResetNagCounter;
 
@@ -143,13 +144,8 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString& Path)
 
 	Path = tmpStr;
 	Path.Append(_T("\\liquidFOLDERS\\liquidFOLDERS.exe"));
-	return (_waccess(Path, 0)==0);
-}
 
-void LFNamespaceExtensionApp::GetIconSize(INT& cx, INT& cy)
-{
-	cx = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CXMENUCHECK : SM_CXSMICON);
-	cy = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CYMENUCHECK : SM_CYSMICON);
+	return (_waccess(Path, 0)==0);
 }
 
 CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
@@ -159,6 +155,7 @@ CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
 
 	CString tmpStr;
 	tmpStr.Format(Mask.Mid(1, Mask.GetLength()-1), Name);
+
 	return tmpStr;
 }
 
@@ -196,8 +193,8 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 		GlobalUnlock(hgLiquid);
 
 		LFTransactionImport(StoreID, il, Move==TRUE);
-		UINT res = il->m_LastError;
-		LFErrorBox(res, GetForegroundWindow());
+		UINT Result = il->m_LastError;
+		LFErrorBox(Result, GetForegroundWindow());
 
 		// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
 		FORMATETC fmt;
@@ -215,7 +212,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 
 		LFFreeFileIDList(il);
 
-		return (res==LFOk) ? Move ? DROPEFFECT_MOVE : DROPEFFECT_COPY : DROPEFFECT_NONE;
+		return (Result==LFOk) ? Move ? DROPEFFECT_MOVE : DROPEFFECT_COPY : DROPEFFECT_NONE;
 	}
 	else
 	{
@@ -224,17 +221,21 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 		GlobalUnlock(hgDrop);
 
 		// Import
-		UINT res = LFOk;
-		if (TRUE)
+		UINT Result = LFOk;
+		if (LFIsSharewareExpired())
+		{
+			ShowNagScreen(NAG_EXPIRED | NAG_FORCE, TRUE);
+		}
+		else
 		{
 			LFTransactionImport(StoreID, il, NULL, true, Move==TRUE);
-			res = il->m_LastError;
-			LFErrorBox(res, GetForegroundWindow());
+			Result = il->m_LastError;
+			LFErrorBox(Result, GetForegroundWindow());
 		}
 
 		LFFreeFileImportList(il);
 
-		return (res==LFOk) ? Move ? DROPEFFECT_MOVE : DROPEFFECT_COPY : DROPEFFECT_NONE;
+		return (Result==LFOk) ? Move ? DROPEFFECT_MOVE : DROPEFFECT_COPY : DROPEFFECT_NONE;
 	}
 }
 
@@ -243,8 +244,7 @@ BOOL LFNamespaceExtensionApp::ShowNagScreen(UINT Level, BOOL Abort)
 	if ((Level & NAG_EXPIRED) ? LFIsSharewareExpired() : !LFIsLicensed())
 		if ((Level & NAG_FORCE) || (++m_NagCounter)>5)
 		{
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_NoLicense));
+			CString tmpStr((LPCSTR)IDS_NOLICENSE);
 
 			MessageBox(GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
 			ResetNagCounter;

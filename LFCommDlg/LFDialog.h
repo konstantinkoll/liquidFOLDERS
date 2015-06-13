@@ -2,11 +2,8 @@
 // LFDialog.h: Schnittstelle der Klasse LFDialog
 //
 
-
 #pragma once
 #include "CCategory.h"
-#include "CGroupBox.h"
-#include "LFApplication.h"
 
 
 // LFDialog
@@ -23,11 +20,6 @@ public:
 	void GetLayoutRect(LPRECT lpRect) const;
 
 protected:
-	LFApplication* p_App;
-	CCategory m_wndCategory[4];
-	UINT m_nIDTemplate;
-	BOOL m_UAC;
-
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 
 	CWnd* GetBottomWnd() const;
@@ -46,8 +38,11 @@ protected:
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	DECLARE_MESSAGE_MAP()
 
+	CCategory m_wndCategory[4];
+	UINT m_nIDTemplate;
+	BOOL m_UAC;
+
 private:
-	CGroupBox m_wndGroupBox[3];
 	HICON hIconShield;
 	INT m_ShieldSize;
 	INT m_UACHeight;

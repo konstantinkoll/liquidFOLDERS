@@ -15,8 +15,6 @@
 CSidebar::CSidebar()
 	: CWnd()
 {
-	p_App = LFGetApp();
-
 	m_Width = m_NumberWidth = m_IconSize = 0;
 	m_SelectedItem = m_HotItem = -1;
 	m_Hover = m_Keyboard = m_ShowNumbers = FALSE;
@@ -45,12 +43,11 @@ BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallI
 	p_Icons = (m_IconSize==32) ? &m_LargeIcons : &m_SmallIcons;
 
 	// Create
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, rect, pParentWnd, nID);
 }
 
 BOOL CSidebar::PreTranslateMessage(MSG* pMsg)
@@ -108,7 +105,7 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	else
 	{
 		CDC* dc = GetDC();
-		CFont* pOldFont = dc->SelectObject(Selectable ? &p_App->m_LargeFont : &afxGlobalData.fontBold);
+		CFont* pOldFont = dc->SelectObject(Selectable ? &LFGetApp()->m_LargeFont : &afxGlobalData.fontBold);
 		sz = dc->GetTextExtent(i.Caption);
 		dc->SelectObject(pOldFont);
 		ReleaseDC(dc);
@@ -144,8 +141,7 @@ void CSidebar::AddCaption(WCHAR* Caption)
 
 void CSidebar::AddCaption(UINT ResID)
 {
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(ResID));
+	CString tmpStr((LPCSTR)ResID);
 
 	AddCaption(tmpStr.GetBuffer());
 }
@@ -200,20 +196,20 @@ INT CSidebar::ItemAtPosition(CPoint point)
 	return -1;
 }
 
-void CSidebar::InvalidateItem(INT idx)
+void CSidebar::InvalidateItem(INT Index)
 {
-	if (idx!=-1)
-		InvalidateRect(&m_Items.m_Items[idx].Rect);
+	if (Index!=-1)
+		InvalidateRect(&m_Items.m_Items[Index].Rect);
 }
 
-void CSidebar::SelectItem(INT idx)
+void CSidebar::SelectItem(INT Index)
 {
-	if (idx!=m_SelectedItem)
+	if (Index!=m_SelectedItem)
 	{
 		InvalidateItem(m_SelectedItem);
-		InvalidateItem(idx);
+		InvalidateItem(Index);
 
-		m_SelectedItem = idx;
+		m_SelectedItem = Index;
 	}
 }
 
@@ -428,7 +424,7 @@ void CSidebar::OnPaint()
 							tmpStr.Format(_T("%d"), m_Items.m_Items[a].Number);
 						}
 
-					CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].NumberInRed ? &afxGlobalData.fontBold : &p_App->m_SmallFont);
+					CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].NumberInRed ? &afxGlobalData.fontBold : &LFGetApp()->m_SmallFont);
 					dc.DrawText(tmpStr, rectNumber, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (m_Items.m_Items[a].NumberInRed ? DT_CENTER : DT_RIGHT));
 					dc.SelectObject(pOldFont);
 				}
@@ -445,7 +441,7 @@ void CSidebar::OnPaint()
 			// Text
 			if (m_Items.m_Items[a].Caption[0])
 			{
-				CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].Selectable ? &p_App->m_LargeFont : &afxGlobalData.fontBold);
+				CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].Selectable ? &LFGetApp()->m_LargeFont : &afxGlobalData.fontBold);
 
 				if (Themed)
 				{
@@ -543,8 +539,8 @@ void CSidebar::OnMouseHover(UINT nFlags, CPoint point)
 		if (m_HotItem!=-1)
 			if (!m_TooltipCtrl.IsWindowVisible())
 			{
-				INT idx = m_Items.m_Items[m_HotItem].IconID;
-				HICON hIcon = (idx!=-1) ? m_LargeIcons.ExtractIcon(idx) : NULL;
+				INT Index = m_Items.m_Items[m_HotItem].IconID;
+				HICON hIcon = (Index!=-1) ? m_LargeIcons.ExtractIcon(Index) : NULL;
 
 				CString Hint = m_Items.m_Items[m_HotItem].Hint;
 				CString Append = AppendTooltip(m_Items.m_Items[m_HotItem].CmdID);
@@ -590,14 +586,14 @@ void CSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	INT idx = m_SelectedItem;
+	INT Index = m_SelectedItem;
 
 	switch (nChar)
 	{
 	case VK_RETURN:
 	case VK_EXECUTE:
-		if (idx!=-1)
-			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[idx].CmdID);
+		if (Index!=-1)
+			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Index].CmdID);
 		return;
 	case VK_HOME:
 		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
@@ -620,11 +616,11 @@ void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_UP:
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
-			if (--idx<0)
-				idx = m_Items.m_ItemCount-1;
-			if (m_Items.m_Items[idx].Selectable)
+			if (--Index<0)
+				Index = m_Items.m_ItemCount-1;
+			if (m_Items.m_Items[Index].Selectable)
 			{
-				SelectItem(idx);
+				SelectItem(Index);
 				m_Keyboard = TRUE;
 				break;
 			}
@@ -633,11 +629,11 @@ void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_DOWN:
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
-			if (++idx>=(INT)m_Items.m_ItemCount)
-				idx = 0;
-			if (m_Items.m_Items[idx].Selectable)
+			if (++Index>=(INT)m_Items.m_ItemCount)
+				Index = 0;
+			if (m_Items.m_Items[Index].Selectable)
 			{
-				SelectItem(idx);
+				SelectItem(Index);
 				m_Keyboard = TRUE;
 				break;
 			}

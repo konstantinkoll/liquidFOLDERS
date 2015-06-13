@@ -221,7 +221,7 @@ void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v)
 // LFItemDescriptor
 //
 
-LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 {
 	LFItemDescriptor* d = new LFItemDescriptor;
 	ZeroMemory(d, sizeof(LFItemDescriptor));
@@ -278,7 +278,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	return d;
 }
 
-LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* attr)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* attr)
 {
 	assert(attr);
 
@@ -288,7 +288,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* attr)
 	return d;
 }
 
-LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 {
 	assert(s);
 
@@ -307,7 +307,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 		if (wcscmp(s->LastSeen, L"")!=0)
 		{
 			wchar_t ls[256];
-			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn : IDS_LastSeen, ls, 256);
+			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SEENON : IDS_LASTSEEN, ls, 256);
 
 			wchar_t descr[256];
 			wsprintf(descr, ls, s->LastSeen);
@@ -331,13 +331,13 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 LFItemDescriptor* AllocFolderDescriptor()
 {
 	LFItemDescriptor* d = LFAllocItemDescriptor();
-	d->IconID = IDI_FLD_Default;
+	d->IconID = IDI_FLD_DEFAULT;
 	d->Type = LFTypeFolder;
 
 	return d;
 }
 
-LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* i)
+LFCORE_API void LFFreeItemDescriptor(LFItemDescriptor* i)
 {
 	if (i)
 	{

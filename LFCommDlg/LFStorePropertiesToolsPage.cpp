@@ -3,8 +3,8 @@
 //
 
 #include "stdafx.h"
+#include "LFCommDlg.h"
 #include "LFStorePropertiesToolsPage.h"
-#include "Resource.h"
 
 
 CString MakeHex(BYTE* x, UINT bCount)
@@ -84,15 +84,14 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 {
 	CHAR* Keys;
 	UINT StoreCount;
-	UINT res = LFGetStores(&Keys, &StoreCount);
-	if (res!=LFOk)
+	UINT Result = LFGetStores(&Keys, &StoreCount);
+	if (Result!=LFOk)
 	{
-		LFErrorBox(res, GetSafeHwnd());
+		LFErrorBox(Result, GetSafeHwnd());
 		return;
 	}
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
+	CString tmpStr((LPCSTR)IDS_REGFILEFILTER);
 	tmpStr += _T(" (*.reg)|*.reg||");
 
 	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);

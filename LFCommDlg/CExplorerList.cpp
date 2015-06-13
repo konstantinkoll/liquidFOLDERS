@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "CExplorerList.h"
 #include "LFCommDlg.h"
 
 
@@ -13,7 +12,6 @@
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
-	p_App = LFGetApp();
 	p_Result = NULL;
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
@@ -33,10 +31,10 @@ void CExplorerList::Init()
 	ModifyStyle(0, LVS_SHAREIMAGELISTS);
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	if ((LFGetApp()->m_ThemeLibLoaded) && (LFGetApp()->OSVersion>=OS_Vista))
 	{
-		p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		LFGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+		hTheme = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	LOGFONT lf;
@@ -50,7 +48,7 @@ void CExplorerList::Init()
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 14*abs(lf.lfHeight);
 
-	if ((p_App->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
+	if ((LFGetApp()->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
 	{
 		tvi.dwMask |= LVTVIM_LABELMARGIN;
 		tvi.rcLabelMargin.top = 0;
@@ -70,7 +68,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.iGroupId = ID;
 	lvg.pszHeader = Name.GetBuffer();
-	if (p_App->OSVersion>=OS_Vista)
+	if (LFGetApp()->OSVersion>=OS_Vista)
 	{
 		if (!Hint.IsEmpty())
 		{
@@ -91,7 +89,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 void CExplorerList::AddItemCategories()
 {
 	for (UINT a=0; a<LFItemCategoryCount; a++)
-		AddCategory(a, p_App->m_ItemCategories[a].Caption, p_App->m_ItemCategories[a].Hint);
+		AddCategory(a, LFGetApp()->m_ItemCategories[a].Caption, LFGetApp()->m_ItemCategories[a].Hint);
 }
 
 void CExplorerList::AddColumn(INT ID, CString Name)
@@ -112,9 +110,9 @@ void CExplorerList::AddColumn(INT ID, UINT Attr)
 	ZeroMemory(&lvc, sizeof(lvc));
 
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.pszText = p_App->m_Attributes[Attr].Name;
-	lvc.cx = p_App->m_Attributes[Attr].RecommendedWidth;
-	lvc.fmt = p_App->m_Attributes[Attr].FormatRight ? LVCFMT_RIGHT : LVCFMT_LEFT;
+	lvc.pszText = LFGetApp()->m_Attributes[Attr].Name;
+	lvc.cx = LFGetApp()->m_Attributes[Attr].RecommendedWidth;
+	lvc.fmt = LFGetApp()->m_Attributes[Attr].FormatRight ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	lvc.iSubItem = ID;
 
 	InsertColumn(ID, &lvc);
@@ -129,15 +127,15 @@ void CExplorerList::AddStoreColumns()
 	AddColumn(LFAttrStoreID, 4);
 }
 
-void CExplorerList::SetSearchResult(LFSearchResult* result)
+void CExplorerList::SetSearchResult(LFSearchResult* Result)
 {
 	DeleteAllItems();
 
-	p_Result = result;
-	if (result)
+	p_Result = Result;
+	if (Result)
 	{
-		LFSortSearchResult(result, LFAttrFileName, false);
-		LFErrorBox(result->m_LastError, GetParent()->GetSafeHwnd());
+		LFSortSearchResult(Result, LFAttrFileName, false);
+		LFErrorBox(Result->m_LastError, GetParent()->GetSafeHwnd());
 
 		UINT puColumns[2];
 		puColumns[0] = 1;
@@ -150,23 +148,23 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 		lvi.puColumns = puColumns;
 
 
-		for (UINT a=0; a<result->m_ItemCount; a++)
+		for (UINT a=0; a<Result->m_ItemCount; a++)
 		{
 			lvi.iItem = a;
 			lvi.cColumns = 2;
-			lvi.pszText = (LPWSTR)result->m_Items[a]->CoreAttributes.FileName;
-			lvi.iImage = result->m_Items[a]->IconID-1;
-			lvi.iGroupId = result->m_Items[a]->CategoryID;
-			lvi.state = ((result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (result->m_Items[a]->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
-			INT idx = InsertItem(&lvi);
+			lvi.pszText = (LPWSTR)Result->m_Items[a]->CoreAttributes.FileName;
+			lvi.iImage = Result->m_Items[a]->IconID-1;
+			lvi.iGroupId = Result->m_Items[a]->CategoryID;
+			lvi.state = ((Result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (Result->m_Items[a]->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
+			INT Index = InsertItem(&lvi);
 
 			WCHAR tmpStr[256];
-			SetItemText(idx, 1, result->m_Items[a]->CoreAttributes.Comment);
-			SetItemText(idx, 2, result->m_Items[a]->Description);
-			LFAttributeToString(result->m_Items[a], LFAttrCreationTime, tmpStr, 256);
-			SetItemText(idx, 3, tmpStr);
-			LFAttributeToString(result->m_Items[a], LFAttrStoreID, tmpStr, 256);
-			SetItemText(idx, 4, tmpStr);
+			SetItemText(Index, 1, Result->m_Items[a]->CoreAttributes.Comment);
+			SetItemText(Index, 2, Result->m_Items[a]->Description);
+			LFAttributeToString(Result->m_Items[a], LFAttrCreationTime, tmpStr, 256);
+			SetItemText(Index, 3, tmpStr);
+			LFAttributeToString(Result->m_Items[a], LFAttrStoreID, tmpStr, 256);
+			SetItemText(Index, 4, tmpStr);
 		}
 	}
 
@@ -204,19 +202,19 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CExplorerList::OnDestroy()
 {
 	if (hTheme)
-		p_App->zCloseThemeData(hTheme);
+		LFGetApp()->zCloseThemeData(hTheme);
 
 	CListCtrl::OnDestroy();
 }
 
 LRESULT CExplorerList::OnThemeChanged()
 {
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	if ((LFGetApp()->m_ThemeLibLoaded) && (LFGetApp()->OSVersion>=OS_Vista))
 	{
 		if (hTheme)
-			p_App->zCloseThemeData(hTheme);
+			LFGetApp()->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hTheme = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	return TRUE;

@@ -3,7 +3,8 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "CGdiPlusBitmap.h"
+#include "LFDialog.h"
 
 
 // LFUpdateDlg

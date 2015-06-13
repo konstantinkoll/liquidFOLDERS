@@ -3,8 +3,7 @@
 //
 
 #pragma once
-#include "LFCore.h"
-#include "LFCommDlg.h"
+#include "LF.h"
 
 
 // LFStorePropertiesDlg
@@ -18,11 +17,6 @@ public:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 protected:
-	CPropertyPage* m_pPages[3];
-	UINT m_PageCount;
-	LFStoreDescriptor m_Store;
-	BOOL m_StoreValid;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
@@ -30,8 +24,13 @@ protected:
 	afx_msg LRESULT OnStatisticsChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
-private:
-	_GUID m_Key;
+	CPropertyPage* m_pPages[3];
+	UINT m_PageCount;
+	LFStoreDescriptor m_Store;
+	BOOL m_StoreValid;
 
+private:
 	void UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam);
+
+	_GUID m_StoreID;
 };

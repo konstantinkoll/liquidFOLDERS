@@ -3,15 +3,11 @@
 //
 
 #include "stdafx.h"
-#include "LFLicenseDlg.h"
-#include "LFCore.h"
-#include "Resource.h"
+#include "LFCommDlg.h"
 
 
 // LFLicenseDlg
 //
-
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFLicenseDlg::LFLicenseDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_LICENSE, pParentWnd)
@@ -27,21 +23,21 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 		CString key;
 		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(key);
 
-		p_App->WriteGlobalString(_T("License"), key);
+		LFGetApp()->WriteGlobalString(_T("License"), key);
 
-		CString caption;
-		CString message;
+		CString Caption;
+		CString Message;
 		if (LFIsLicensed(NULL, true))
 		{
-			ENSURE(caption.LoadString(IDS_LICENSEVALID_CAPTION));
-			ENSURE(message.LoadString(IDS_LICENSEVALID_MSG));
-			MessageBox(message, caption, MB_ICONINFORMATION);
+			ENSURE(Caption.LoadString(IDS_LICENSEVALID_CAPTION));
+			ENSURE(Message.LoadString(IDS_LICENSEVALID_MSG));
+			MessageBox(Message, Caption, MB_ICONINFORMATION);
 		}
 		else
 		{
-			ENSURE(caption.LoadString(IDS_ERROR));
-			ENSURE(message.LoadString(IDS_INVALIDLICENSE));
-			MessageBox(message, caption, MB_ICONWARNING);
+			ENSURE(Caption.LoadString(IDS_ERROR));
+			ENSURE(Message.LoadString(IDS_INVALIDLICENSE));
+			MessageBox(Message, Caption, MB_ICONWARNING);
 
 			pDX->Fail();
 		}
@@ -58,15 +54,14 @@ BOOL LFLicenseDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
 
-	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&p_App->m_DefaultFont);
+	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&LFGetApp()->m_DefaultFont);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
 void LFLicenseDlg::OnLoadLicense()
 {
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_LICFILEFILTER));
+	CString tmpStr((LPCSTR)IDS_LICFILEFILTER);
 	tmpStr += _T(" (*.lic)|*.lic||");
 
 	CFileDialog dlg(TRUE, _T(".lic"), NULL, OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, tmpStr, this);

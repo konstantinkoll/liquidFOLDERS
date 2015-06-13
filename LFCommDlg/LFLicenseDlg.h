@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LF.h"
 #include "LFDialog.h"
 
 

@@ -23,7 +23,7 @@ BOOL LFTooltip::Create(CWnd* pWndParent)
 	if (bDropShadow)
 		nClassStyle |= CS_DROPSHADOW;
 
-	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(nClassStyle, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, className, _T(""), WS_POPUP, 0, 0, 0, 0, pWndParent->GetSafeHwnd(), NULL);
 }
 

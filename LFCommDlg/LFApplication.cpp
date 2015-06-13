@@ -3,8 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "afxwinappex.h"
-#include "LFCore.h"
 #include "LFCommDlg.h"
 #include <commoncontrols.h>
 #include <io.h>
@@ -173,39 +171,6 @@ LFApplication::LFApplication(GUID& AppID)
 		m_KernelLibLoaded = FALSE;
 	}
 
-	// Eingebettete Schrift
-	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
-
-	// Fonts
-	CString face = GetDefaultFontFace();
-
-	INT sz = 8;
-	LOGFONT lf;
-	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
-		sz = abs(lf.lfHeight);
-
-	m_DefaultFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_BoldFont.CreateFont(-sz, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_ItalicFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_SmallFont.CreateFont(-(sz-2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		(sz<=11) ? _T("Tahoma") : face);
-	m_LargeFont.CreateFont(-(sz+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_CaptionFont.CreateFont(-(sz+11), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		_T("Letter Gothic"));
-	m_UACFont.CreateFont(-(sz+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-
 	// System image lists
 	IImageList* il;
 	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&il)))
@@ -257,7 +222,7 @@ LFApplication::LFApplication(GUID& AppID)
 	for (UINT a=0; a<LFContextCount; a++)
 		LFGetContextInfo(m_Contexts[a], a);
 
-	// Get item category information
+	// Get Item category information
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		LFGetItemCategoryInfo(m_ItemCategories[a], a);
 }
@@ -320,12 +285,46 @@ BOOL LFApplication::InitInstance()
 		m_PriorityBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_PRIORITY0+a));
 	}
 
+	// Eingebettete Schrift
+	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
+
+	// Fonts
+	CString face = GetDefaultFontFace();
+
+	INT sz = 8;
+	LOGFONT lf;
+	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
+		sz = abs(lf.lfHeight);
+
+	m_DefaultFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_BoldFont.CreateFont(-sz, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_ItalicFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_SmallFont.CreateFont(-(sz-2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		(sz<=11) ? _T("Tahoma") : face);
+	m_LargeFont.CreateFont(-(sz+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_CaptionFont.CreateFont(-(sz+11), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		_T("Letter Gothic"));
+	m_UACFont.CreateFont(-(sz+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+
 	// liquidFOLDERS initalisieren
 	LFInitialize();
 
 	// SendTo-Link erzeugen
 	LFCreateSendTo();
 
+	// Registry
 	SetRegistryKey(_T(""));
 
 	ResetNagCounter;
@@ -397,8 +396,7 @@ BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 	if ((Level & NAG_EXPIRED) ? LFIsSharewareExpired() : !LFIsLicensed())
 		if ((Level & NAG_FORCE) || (++m_NagCounter)>5)
 		{
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
+			CString tmpStr((LPCSTR)IDS_NOLICENSE);
 
 			MessageBox(pWndParent ? pWndParent->GetSafeHwnd() : GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
 			ResetNagCounter;
@@ -426,6 +424,14 @@ void LFApplication::SendMail(CString Subject)
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
+BOOL LFApplication::IsAttributeAllowed(INT Context, INT Attr)
+{
+	ASSERT(Context>=0);
+	ASSERT(Context<=LFContextCount);
+
+	return LFIsAttributeAllowed(m_Contexts[Context], Attr);
+}
+
 
 void LFApplication::OnAppSupport()
 {
@@ -434,10 +440,9 @@ void LFApplication::OnAppSupport()
 
 void LFApplication::OnAppPurchase()
 {
-	CString url;
-	ENSURE(url.LoadString(IDS_PURCHASEURL));
+	CString URL((LPCSTR)IDS_PURCHASEURL);
 
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
 void LFApplication::OnAppEnterLicenseKey()
@@ -532,31 +537,36 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 	return FALSE;
 }
 
-CGdiPlusBitmap* LFApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType, HMODULE hInst)
+CGdiPlusBitmap* LFApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType)
 {
 	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
 	{
-		ResourceCacheItem item = m_ResourceCache.GetNext(p);
+		ResourceCacheItem Item = m_ResourceCache.GetNext(p);
 
-		if (item.nResID==nID)
-			return item.pImage;
+		if (Item.nID==nID)
+			return Item.pImage;
 	}
 
-	ResourceCacheItem item;
-	item.pImage = new CGdiPlusBitmapResource(nID, pType, hInst);
-	item.nResID = nID;
+	ResourceCacheItem Item;
+	Item.pImage = new CGdiPlusBitmapResource(nID, pType, AfxGetResourceHandle());
+	Item.nID = nID;
 
-	m_ResourceCache.AddTail(item);
-	return item.pImage;
+	m_ResourceCache.AddTail(Item);
+	return Item.pImage;
 }
 
-HANDLE LFApplication::LoadFontFromResource(UINT nID, HMODULE hInst)
+HICON LFApplication::LoadDialogIcon(UINT nID)
 {
-	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(nID), L"TTF");
+	return (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, 16, 16, LR_SHARED);
+}
+
+HANDLE LFApplication::LoadFontFromResource(UINT nID)
+{
+	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), L"TTF");
 	if (!hResource)
 		return NULL;
 
-	HGLOBAL hMemory = LoadResource(hInst, hResource);
+	HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
 	if (!hMemory)
 		return NULL;
 
@@ -564,22 +574,22 @@ HANDLE LFApplication::LoadFontFromResource(UINT nID, HMODULE hInst)
 	if (!pResourceData)
 		return NULL;
 
-	DWORD Size = SizeofResource(hInst, hResource);
+	DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
 	if (!Size)
 		return NULL;
 
 	DWORD nFonts;
-	HANDLE res = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
+	HANDLE Result = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
 
 	UnlockResource(hMemory);
-	return res;
+	return Result;
 }
 
 void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons)
 {
-	li->Create(size, size, ILC_COLOR32 | ILC_MASK, IDI_LastIcon, 1);
+	li->Create(size, size, ILC_COLOR32 | ILC_MASK, IDI_LASTICON, 1);
 
-	const UINT Last = OnlyStoreIcons ? IDI_LastStoreIcon : IDI_LastIcon;
+	const UINT Last = OnlyStoreIcons ? IDI_LASTSTOREICON : IDI_LASTICON;
 	for (UINT a=1; a<=Last; a++)
 	{
 		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(a), IMAGE_ICON, size, size, LR_DEFAULTCOLOR);
@@ -588,7 +598,7 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* 
 	}
 
 	if (!OnlyStoreIcons)
-		li->SetOverlayImage(IDI_OVR_Default-1, 1);
+		li->SetOverlayImage(IDI_OVR_DEFAULT-1, 1);
 }
 
 

@@ -3,10 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "LFProgressDlg.h"
-#include "LFCore.h"
-#include "Resource.h"
-#include "..\\LFCore\\resource.h"
+#include "LFCommDlg.h"
 
 
 // LFProgressDlg
@@ -46,7 +43,7 @@ BOOL LFProgressDlg::OnInitDialog()
 	GetDlgItem(IDC_CAPTION)->SetWindowText(_T(""));
 	GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(_T(""));
 
-	if (p_App->OSVersion>=OS_Seven)
+	if (LFGetApp()->OSVersion>=OS_Seven)
 		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void**)&m_pTaskbarList3);
 
 	if (p_ThreadProc)

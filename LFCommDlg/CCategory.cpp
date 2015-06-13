@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "resource.h"
 
 
 // CCategory
@@ -19,7 +18,7 @@ CCategory::CCategory()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CCategory";

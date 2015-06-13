@@ -3,6 +3,8 @@
 //
 
 #pragma once
+#include "LF.h"
+#include <eznamespaceextensions.h>
 
 
 // CmdCreateNewStore
@@ -39,7 +41,6 @@ public:
 
 // CmdFileDrop
 //
-
 
 class CmdFileDrop : public CExplorerCommand
 {

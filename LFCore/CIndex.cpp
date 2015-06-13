@@ -110,7 +110,7 @@
 	Exists:
 
 #define DELETE_FILE() \
-	unsigned int res = LFOk; \
+	unsigned int Result = LFOk; \
 	if (PutInTrash) \
 	{ \
 		REMOVE_STATS(); \
@@ -126,14 +126,14 @@
 	else \
 	{ \
 		if (!(PtrM->Flags & LFFlagLink)) \
-			res = DeletePhysicalFile(PtrM); \
-		if (res==LFOk) \
+			Result = DeletePhysicalFile(PtrM); \
+		if (Result==LFOk) \
 		{ \
 			LOAD_SLAVE(); \
 			Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]); \
-			DISCARD_SLAVE(res = LFIndexTableLoadError); \
+			DISCARD_SLAVE(Result = LFIndexTableLoadError); \
 		} \
-		if (res==LFOk) \
+		if (Result==LFOk) \
 		{ \
 			REMOVE_STATS(); \
 			Tables[IDMaster]->Invalidate(PtrM); \
@@ -161,7 +161,7 @@ CIndex::~CIndex()
 			delete Tables[a];
 }
 
-bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
+bool CIndex::LoadTable(unsigned int ID, unsigned int* Result)
 {
 	assert(ID<IdxTableCount);
 
@@ -189,27 +189,27 @@ bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 		default:
 			assert(false);
 
-			if (res)
-				*res = HeapError;
+			if (Result)
+				*Result = HeapError;
 			return false;
 		}
 
-	if (res)
-		*res = Tables[ID]->OpenStatus;
+	if (Result)
+		*Result = Tables[ID]->OpenStatus;
 
 	return (Tables[ID]->OpenStatus!=HeapError) && (Tables[ID]->OpenStatus!=HeapNoAccess) && (Tables[ID]->OpenStatus!=HeapCannotCreate);
 }
 
 bool CIndex::Create()
 {
-	bool res = true;
+	bool Result = true;
 
 	if (IdxPath[0]!=L'\0')
 		for (unsigned int a=0; a<IdxTableCount; a++)
 			if (!LoadTable(a))
-				res = false;
+				Result = false;
 
-	return res;
+	return Result;
 }
 
 unsigned int CIndex::Check(bool Scheduled, bool* pRepaired, LFProgress* pProgress)
@@ -509,8 +509,8 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 	if (!(PtrM->Flags & LFFlagLink))
 		if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
 		{
-			unsigned int res = RenamePhysicalFile(PtrM, i->CoreAttributes.FileName);
-			switch (res)
+			unsigned int Result = RenamePhysicalFile(PtrM, i->CoreAttributes.FileName);
+			switch (Result)
 			{
 			case LFOk:
 				i->CoreAttributes.Flags &= ~LFFlagMissing;
@@ -519,7 +519,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 				i->CoreAttributes.Flags |= LFFlagMissing;
 			default:
 				wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
-				tl->m_Items[ItemID].LastError = tl->m_LastError = res;
+				tl->m_Items[ItemID].LastError = tl->m_LastError = Result;
 			}
 		}
 
@@ -592,10 +592,10 @@ void CIndex::Delete(LFTransactionList* tl, bool PutInTrash, LFProgress* pProgres
 	}
 
 	DELETE_FILE();
-	if (res==LFOk)
+	if (Result==LFOk)
 		tl->m_Changes = true;
 
-	tl->SetError(ItemID, res, pProgress);
+	tl->SetError(ItemID, Result, pProgress);
 	if (pProgress)
 		if (pProgress->UserAbort)
 			return;
@@ -626,7 +626,7 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash, LFProgress* pProgress)
 
 	DELETE_FILE();
 
-	il->SetError(ItemID, res, pProgress);
+	il->SetError(ItemID, Result, pProgress);
 	if (pProgress)
 		if (pProgress->UserAbort)
 			return;
@@ -664,7 +664,7 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName)
 	START_FINDMASTER(, LFIndexRepairError, FileID);
 	REMOVE_STATS();
 
-	unsigned int res = LFOk;
+	unsigned int Result = LFOk;
 	if (PtrM->Flags & LFFlagLink)
 	{
 		wcscpy_s(PtrM->FileName, 256, NewName);
@@ -672,8 +672,8 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName)
 	}
 	else
 	{
-		res = RenamePhysicalFile(PtrM, NewName);
-		switch (res)
+		Result = RenamePhysicalFile(PtrM, NewName);
+		switch (Result)
 		{
 		case LFOk:
 			PtrM->Flags &= ~LFFlagMissing;
@@ -688,19 +688,19 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName)
 	Tables[IDMaster]->MakeDirty();
 
 	ADD_STATS();
-	return res;
+	return Result;
 
 	END_FINDMASTER();
 	return LFIllegalKey;
 }
 
-void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
+void CIndex::Retrieve(LFFilter* f, LFSearchResult* Result)
 {
 	assert(f);
 	assert(f->Mode>=LFFilterModeDirectoryTree);
-	assert(res);
+	assert(Result);
 
-	START_ITERATEALL(res->m_LastError = LFIndexTableLoadError,);
+	START_ITERATEALL(Result->m_LastError = LFIndexTableLoadError,);
 
 	int pass = PassesFilterCore(PtrM, f);
 	if (pass==-1)
@@ -730,14 +730,14 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	{
 		LOAD_SLAVE();
 		APPEND_ITEMDESCRIPTOR();
-		DISCARD_SLAVE(res->m_LastError = LFIndexTableLoadError);
+		DISCARD_SLAVE(Result->m_LastError = LFIndexTableLoadError);
 
 		if (!pass)
 			pass = PassesFilterSlaves(i, f) ? 1 : -1;
 	}
 
 	if (pass!=-1)
-		if (res->AddItemDescriptor(i))
+		if (Result->AddItemDescriptor(i))
 		{
 			i = NULL;
 			continue;
@@ -749,20 +749,20 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		LFFreeItemDescriptor(i);
 }
 
-void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res)
+void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* Result)
 {
 	assert(il);
-	assert(res);
+	assert(Result);
 
-	START_ITERATEALL(il->SetError(slot->StoreID, LFIndexTableLoadError); res->m_LastError = LFIndexTableLoadError, );
+	START_ITERATEALL(il->SetError(slot->StoreID, LFIndexTableLoadError); Result->m_LastError = LFIndexTableLoadError, );
 	IN_FILEIDLIST(il);
 	BUILD_ITEMDESCRIPTOR();
 
 	LOAD_SLAVE()
 	APPEND_ITEMDESCRIPTOR();
-	DISCARD_SLAVE(res->m_LastError = il->m_Items[ItemID].LastError = LFIndexTableLoadError);
+	DISCARD_SLAVE(Result->m_LastError = il->m_Items[ItemID].LastError = LFIndexTableLoadError);
 
-	res->AddItemDescriptor(i);
+	Result->AddItemDescriptor(i);
 	il->m_Items[ItemID].Processed = true;
 
 	END_ITERATEALL();
@@ -810,9 +810,9 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 	GetFileLocation(slotSrc->DatPath, PtrM, PathSrc, 2*MAX_PATH);
 
 	wchar_t PathDst[2*MAX_PATH];
-	unsigned int res = PrepareImport(slotDst, i, PathDst, 2*MAX_PATH);
-	if (res!=LFOk)
-		ABORT(res);
+	unsigned int Result = PrepareImport(slotDst, i, PathDst, 2*MAX_PATH);
+	if (Result!=LFOk)
+		ABORT(Result);
 
 	// Files with "link" flag do not posses a file body
 	if (!(PtrM->Flags & LFFlagLink))
@@ -827,21 +827,21 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 		}
 
 	if (idxDst1)
-		res = idxDst1->AddItem(i);
-	if ((idxDst2) && (res==LFOk))
-		res |= idxDst2->AddItem(i);
+		Result = idxDst1->AddItem(i);
+	if ((idxDst2) && (Result==LFOk))
+		Result |= idxDst2->AddItem(i);
 
-	if (res!=LFOk)
-		ABORT(res);
+	if (Result!=LFOk)
+		ABORT(Result);
 
 	if (move)
 	{
 		// Files with "link" flag do not posses a file body
 		if (!(PtrM->Flags & LFFlagLink))
 		{
-			unsigned int res = DeletePhysicalFile(PtrM);
-			if (res!=LFOk)
-				ABORT(res);
+			unsigned int Result = DeletePhysicalFile(PtrM);
+			if (Result!=LFOk)
+				ABORT(Result);
 		}
 
 		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))

@@ -14,14 +14,15 @@ public:
 	CIconCtrl();
 	~CIconCtrl();
 
-	void SetIcon(HICON hIcon, INT cx, INT cy);
-	void SetCoreIcon(UINT nID);
-	void SetSmallIcon(HINSTANCE hInst, UINT nID);
+	void SetIcon(HICON hIcon, INT cx, INT cy, BOOL Center=TRUE);
+	void SetCoreIcon(UINT nID, BOOL Center=TRUE);
+	void SetSmallIcon(HINSTANCE hInst, UINT nID, BOOL Center=FALSE);
 
 protected:
 	HICON m_Icon;
 	INT m_IconSizeX;
 	INT m_IconSizeY;
+	BOOL m_Center;
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();

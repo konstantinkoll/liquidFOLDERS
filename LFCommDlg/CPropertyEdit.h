@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LF.h"
 #include "CInspectorGrid.h"
 
 
@@ -19,18 +18,18 @@ public:
 	void SetProperty(CProperty* pProperty);
 
 protected:
-	CProperty* p_Property;
-
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg UINT OnGetDlgCode();
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
+
+	CProperty* p_Property;
 };
 
 
@@ -55,11 +54,6 @@ public:
 	LFVariantData m_Data;
 
 protected:
-	CProperty* p_Property;
-	CPropertyDisplay* m_pWndDisplay;
-	CMFCMaskedEdit* m_pWndEdit;
-	CButton m_wndButton;
-
 	virtual void Init();
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 
@@ -76,4 +70,9 @@ protected:
 	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 	afx_msg void OnClick();
 	DECLARE_MESSAGE_MAP()
+
+	CProperty* p_Property;
+	CPropertyDisplay* m_pWndDisplay;
+	CMFCMaskedEdit* m_pWndEdit;
+	CButton m_wndButton;
 };

@@ -9,7 +9,7 @@
 // OrganizeDlg
 //
 
-OrganizeDlg::OrganizeDlg(CWnd* pParentWnd, UINT Context)
+OrganizeDlg::OrganizeDlg(UINT Context, CWnd* pParentWnd)
 	: LFAttributeListDlg(IDD_ORGANIZE, pParentWnd)
 {
 	p_View = &theApp.m_Views[Context];
@@ -32,10 +32,10 @@ void OrganizeDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void OrganizeDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
+void OrganizeDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	add = (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) && (theApp.m_Attributes[attr].Sortable);
-	check = FALSE;
+	Add = LFIsAttributeAllowed(theApp.m_Contexts[m_Context], Attr) && (theApp.m_Attributes[Attr].Sortable);
+	Check = FALSE;
 }
 
 
@@ -50,9 +50,9 @@ BOOL OrganizeDlg::OnInitDialog()
 	// Titelleiste
 	CString text;
 	GetWindowText(text);
-	CString caption;
-	caption.Format(text, theApp.m_Contexts[m_Context].Name);
-	SetWindowText(caption);
+	CString Caption;
+	Caption.Format(text, theApp.m_Contexts[m_Context].Name);
+	SetWindowText(Caption);
 
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_SORTATTRIBUTE, FALSE, p_View->SortBy);

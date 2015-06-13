@@ -31,8 +31,8 @@ WCHAR* GetAttribute(TimelineItemData* d, LFItemDescriptor* i, UINT Attr, UINT Ma
 #define MIDDLE        24
 #define WHITE         100
 
-#define GetItemData(idx)     ((TimelineItemData*)(m_ItemData+(idx)*m_DataSize))
-#define UsePreview(i)        ((!(i->Type & LFTypeNotMounted)) && (i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
+#define GetItemData(Index)     ((TimelineItemData*)(m_ItemData+(Index)*m_DataSize))
+#define UsePreview(i)          ((!(i->Type & LFTypeNotMounted)) && (i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
 
 CTimelineView::CTimelineView()
 	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
@@ -266,9 +266,9 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
-RECT CTimelineView::GetLabelRect(INT idx)
+RECT CTimelineView::GetLabelRect(INT Index)
 {
-	RECT rect = GetItemRect(idx);
+	RECT rect = GetItemRect(Index);
 
 	rect.left += 2*BORDER+m_IconSize.cx-5;
 	rect.top += BORDER-2;
@@ -304,12 +304,12 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, Item
 	dc.DrawText(ic->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
 
-void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOOL Themed)
+void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, BOOL Themed)
 {
-	TimelineItemData* d = GetItemData(idx);
-	LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
+	TimelineItemData* d = GetItemData(Index);
+	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
 
-	BOOL Hot = (m_HotItem==idx);
+	BOOL Hot = (m_HotItem==Index);
 	BOOL Selected = d->Hdr.Selected;
 
 	COLORREF brCol = Hot ? GetSysColor(COLOR_HIGHLIGHT) : Themed ? 0xD5D1D0 : GetSysColor(COLOR_3DSHADOW);
@@ -341,7 +341,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	if (hThemeList)
 	{
 		rect.InflateRect(1, 1);
-		DrawItemBackground(dc, rect, idx, Themed);
+		DrawItemBackground(dc, rect, Index, Themed);
 	}
 	else
 	{
@@ -357,7 +357,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			dc.SetBkColor(0xFFFFFF);
 		}
 
-		if ((idx==m_FocusItem) && (GetFocus()==this))
+		if ((Index==m_FocusItem) && (GetFocus()==this))
 			dc.DrawFocusRect(rect);
 	}
 
@@ -529,9 +529,9 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 				dc.DrawText(d->pAlbum, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-				INT idx = GetAttributeIconIndex(LFAttrAlbum);
-				if (idx>=0)
-					m_AttributeIcons.DrawEx(&dc, idx, CPoint(rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(m_FontHeight[0]-16)/2), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+				INT Index = GetAttributeIconIndex(LFAttrAlbum);
+				if (Index>=0)
+					m_AttributeIcons.DrawEx(&dc, Index, CPoint(rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(m_FontHeight[0]-16)/2), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
 				rectAttr.OffsetRect(0, m_FontHeight[0]);
 			}
@@ -675,8 +675,7 @@ void CTimelineView::OnPaint()
 		CRect rectText(rect);
 		rectText.top += m_HeaderHeight+6;
 
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_NOTHINGTODISPLAY));
+		CString tmpStr((LPCSTR)IDS_NOTHINGTODISPLAY);
 
 		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE));
 		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
@@ -734,66 +733,66 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		CRect rect;
 		GetClientRect(&rect);
 
-		INT item = m_FocusItem;
-		INT left = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.left;
-		INT right = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.right;
-		INT top = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.top;
-		INT bottom = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.bottom;
+		INT Item = m_FocusItem;
+		INT left = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.left;
+		INT right = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.right;
+		INT top = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.top;
+		INT bottom = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.bottom;
 
 		switch (nChar)
 		{
 		case VK_LEFT:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				TimelineItemData* d = GetItemData(a);
 				if ((d->Hdr.Rect.right<left) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
 
 			break;
 		case VK_RIGHT:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				TimelineItemData* d = GetItemData(a);
 				if ((d->Hdr.Rect.left>right) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
-			for (INT a=item; a>=0; a--)
+			for (INT a=Item; a>=0; a--)
 			{
 				TimelineItemData* d = GetItemData(a);
 				if ((d->Hdr.Rect.left>right) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
 
 			break;
 		case VK_UP:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				TimelineItemData* d = GetItemData(a);
 				if ((d->Hdr.Rect.left==left) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
 
 			break;
 		case VK_PRIOR:
-			for (INT a=item-1; a>=0; a--)
+			for (INT a=Item-1; a>=0; a--)
 			{
 				TimelineItemData* d = GetItemData(a);
 				if ((d->Hdr.Rect.left<=left) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Hdr.Rect.top<=bottom-rect.Height())
 						break;
 				}
@@ -801,24 +800,24 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 			break;
 		case VK_DOWN:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				TimelineItemData* d = GetItemData(a);
 				if ((d->Hdr.Rect.left==left) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					break;
 				}
 			}
 
 			break;
 		case VK_NEXT:
-			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
 				TimelineItemData* d = GetItemData(a);
 				if ((d->Hdr.Rect.right>=right) && d->Hdr.Valid)
 				{
-					item = a;
+					Item = a;
 					if (d->Hdr.Rect.bottom>=top+rect.Height())
 						break;
 				}
@@ -831,18 +830,18 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 					if (GetItemData(a)->Hdr.Valid)
 					{
-						item = a;
+						Item = a;
 						break;
 					}
 			}
 			else
-				for (INT a=item-1; a>=0; a--)
+				for (INT a=Item-1; a>=0; a--)
 				{
 					TimelineItemData* d = GetItemData(a);
 					if (d->Hdr.Valid)
 						if (d->Hdr.Rect.right<left)
 						{
-							item = a;
+							Item = a;
 							break;
 						}
 				}
@@ -854,18 +853,18 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				for (INT a=(INT)p_CookedFiles->m_ItemCount-1; a>=0; a--)
 					if (GetItemData(a)->Hdr.Valid)
 					{
-						item = a;
+						Item = a;
 						break;
 					}
 			}
 			else
-				for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+				for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 				{
 					TimelineItemData* d = GetItemData(a);
 					if (d->Hdr.Valid)
 						if (d->Hdr.Rect.left>right)
 						{
-							item = a;
+							Item = a;
 							break;
 						}
 				}
@@ -873,9 +872,9 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			break;
 		}
 
-		if (item!=m_FocusItem)
+		if (Item!=m_FocusItem)
 		{
-			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+			SetFocusItem(Item, GetKeyState(VK_SHIFT)<0);
 
 			CPoint pt;
 			GetCursorPos(&pt);

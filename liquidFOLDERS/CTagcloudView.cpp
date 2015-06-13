@@ -10,10 +10,10 @@
 // CTagcloudView
 //
 
-#define GetItemData(idx)     ((TagcloudItemData*)(m_ItemData+(idx)*m_DataSize))
-#define DefaultFontSize      2
-#define TextFormat           DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
-#define GUTTER               3
+#define GetItemData(Index)     ((TagcloudItemData*)(m_ItemData+(Index)*m_DataSize))
+#define DefaultFontSize        2
+#define TextFormat             DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
+#define GUTTER                 3
 
 
 CTagcloudView::CTagcloudView()
@@ -212,10 +212,10 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
-void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
+void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 {
-	LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
-	TagcloudItemData* d = GetItemData(idx);
+	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
+	TagcloudItemData* d = GetItemData(Index);
 
 	COLORREF color = m_ViewParameters.TagcloudUseColors ? d->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
@@ -232,7 +232,7 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 				((((color>>16) & 0xFF)*d->Alpha + ((back>>16) & 0xFF)*(255-d->Alpha))<<8) & 0xFF0000;
 		}
 
-	CFont* pOldFont = dc.SelectObject(GetFont(idx));
+	CFont* pOldFont = dc.SelectObject(GetFont(Index));
 	dc.SetTextColor(color);
 	dc.DrawText(i->CoreAttributes.FileName, rectItem, TextFormat | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
@@ -246,9 +246,9 @@ CMenu* CTagcloudView::GetViewContextMenu()
 	return menu;
 }
 
-CFont* CTagcloudView::GetFont(INT idx)
+CFont* CTagcloudView::GetFont(INT Index)
 {
-	return &m_Fonts[(m_ViewParameters.TagcloudUseSize ? GetItemData(idx)->FontSize : DefaultFontSize)];
+	return &m_Fonts[(m_ViewParameters.TagcloudUseSize ? GetItemData(Index)->FontSize : DefaultFontSize)];
 }
 
 

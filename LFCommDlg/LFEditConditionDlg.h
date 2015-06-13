@@ -3,7 +3,8 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "CPropertyEdit.h"
+#include "LFAttributeListDlg.h"
 
 
 // LFEditConditionDlg
@@ -12,14 +13,14 @@
 class LFEditConditionDlg : public LFAttributeListDlg
 {
 public:
-	LFEditConditionDlg(CWnd* pParentWnd, CHAR* StoreID=NULL, LFFilterCondition* pCondition=NULL);
+	LFEditConditionDlg(CWnd* pParentWnd=NULL, CHAR* StoreID=NULL, LFFilterCondition* pCondition=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	LFFilterCondition m_Condition;
 
 protected:
-	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
+	virtual void TestAttribute(UINT Attr, BOOL& add, BOOL& check);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);

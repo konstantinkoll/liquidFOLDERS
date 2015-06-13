@@ -684,7 +684,7 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* f)
 
 void RetrieveStore(char* StoreID, LFFilter* f, LFSearchResult* sr)
 {
-	OPEN_STORE(StoreID, false, sr->m_LastError = res);
+	OPEN_STORE(StoreID, false, sr->m_LastError = Result);
 
 	if (idx1)
 		idx1->Retrieve(f, sr);
@@ -755,7 +755,7 @@ __forceinline void QuerySearch(LFFilter* f, LFSearchResult* sr)
 
 // Public functions
 
-LFCore_API LFSearchResult* LFQuery(LFFilter* f)
+LFCORE_API LFSearchResult* LFQuery(LFFilter* f)
 {
 	DWORD start = GetTickCount();
 
@@ -802,7 +802,7 @@ Finish:
 	return sr;
 }
 
-LFCore_API LFSearchResult* LFQuery(LFFilter* f, LFSearchResult* base, int first, int last)
+LFCORE_API LFSearchResult* LFQuery(LFFilter* f, LFSearchResult* base, int first, int last)
 {
 	DWORD start = GetTickCount();
 
@@ -828,7 +828,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* f, LFSearchResult* base, int first,
 	return sr;
 }
 
-LFCore_API LFStatistics* LFQueryStatistics(char* StoreID)
+LFCORE_API LFStatistics* LFQueryStatistics(char* StoreID)
 {
 	LFStatistics* stat = new LFStatistics();
 	ZeroMemory(stat, sizeof(LFStatistics));

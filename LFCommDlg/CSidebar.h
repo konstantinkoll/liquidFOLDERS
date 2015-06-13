@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LFApplication.h"
 #include "LFDynArray.h"
 
 
@@ -42,26 +41,10 @@ public:
 	void SetSelection(UINT CmdID=0);
 
 protected:
-	LFApplication* p_App;
-	LFTooltip m_TooltipCtrl;
-	LFDynArray<SidebarItem> m_Items;
-	INT m_Width;
-	INT m_SelectedItem;
-	INT m_HotItem;
-	INT m_NumberWidth;
-	BOOL m_Hover;
-	BOOL m_Keyboard;
-	BOOL m_ShowNumbers;
-	CMFCToolBarImages m_SmallIcons;
-	CMFCToolBarImages m_LargeIcons;
-	CMFCToolBarImages* p_Icons;
-	INT m_IconSize;
-	HBITMAP hShadow;
-
 	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed=FALSE);
 	INT ItemAtPosition(CPoint point);
-	void InvalidateItem(INT idx);
-	void SelectItem(INT idx);
+	void InvalidateItem(INT Index);
+	void SelectItem(INT Index);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -76,4 +59,19 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
+
+	LFTooltip m_TooltipCtrl;
+	LFDynArray<SidebarItem> m_Items;
+	INT m_Width;
+	INT m_SelectedItem;
+	INT m_HotItem;
+	INT m_NumberWidth;
+	BOOL m_Hover;
+	BOOL m_Keyboard;
+	BOOL m_ShowNumbers;
+	CMFCToolBarImages m_SmallIcons;
+	CMFCToolBarImages m_LargeIcons;
+	CMFCToolBarImages* p_Icons;
+	INT m_IconSize;
+	HBITMAP hShadow;
 };

@@ -3,9 +3,9 @@
 //
 
 #include "stdafx.h"
-#include "LFStoreNewPathPage.h"
+#include "LFCommDlg.h"
 #include "LFStoreNewDlg.h"
-#include "Resource.h"
+#include "LFStoreNewPathPage.h"
 
 
 // LFStoreNewPathPage

@@ -1,7 +1,6 @@
 
 #pragma once
 #include "LFCommDlg.h"
-#include "LF.h"
 
 
 // Virtuelle Attribute
@@ -81,12 +80,6 @@ public:
 	void UpdateFinish();
 
 protected:
-	CIconHeader m_IconHeader;
-	CStoreManagerGrid m_wndGrid;
-	BOOL m_ShowInternal;
-	BOOL m_SortAlphabetic;
-	LFItemDescriptor* p_LastItem;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
@@ -98,7 +91,17 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	CIconHeader m_IconHeader;
+	CStoreManagerGrid m_wndGrid;
+	BOOL m_ShowInternal;
+	BOOL m_SortAlphabetic;
+	LFItemDescriptor* p_LastItem;
+
 private:
+	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=FALSE);
+	void AddValueVirtual(UINT Attr, CHAR* Value);
+	void AddValueVirtual(UINT Attr, WCHAR* Value);
+
 	UINT m_Count;
 	UINT m_IconID;
 	UINT m_IconStatus;
@@ -111,8 +114,4 @@ private:
 	LFVariantData m_AttributeRangeSecond[AttrCount];
 	CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
 	CString m_TypeName;
-
-	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=FALSE);
-	void AddValueVirtual(UINT Attr, CHAR* Value);
-	void AddValueVirtual(UINT Attr, WCHAR* Value);
 };

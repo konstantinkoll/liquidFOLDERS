@@ -3,8 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CJournalButton.h"
-#include "Resource.h"
+#include "liquidFOLDERS.h"
 
 
 // CJournalUI
@@ -36,16 +35,15 @@ CJournalButton::CJournalButton()
 	m_Hover = m_Pressed = -1;
 }
 
-BOOL CJournalButton::Create(UINT SuggestedHeight, CGlassWindow* pParentWnd, UINT nID)
+BOOL CJournalButton::Create(CGlassWindow* pParentWnd, UINT nID, UINT SuggestedHeight)
 {
 	m_IsLarge = (SuggestedHeight>=32);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, theApp.LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
 }
 
 UINT CJournalButton::GetPreferredHeight()

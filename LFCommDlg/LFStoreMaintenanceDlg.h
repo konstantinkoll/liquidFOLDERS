@@ -17,9 +17,6 @@ public:
 	LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParentWnd=NULL);
 
 protected:
-	CMaintenanceReportList m_Lists[2];
-	INT m_Page;
-
 	void SetPage(INT page);
 
 	afx_msg BOOL OnInitDialog();
@@ -28,6 +25,9 @@ protected:
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
+
+	CMaintenanceReportList m_Lists[2];
+	INT m_Page;
 
 private:
 	CImageList m_Icons;

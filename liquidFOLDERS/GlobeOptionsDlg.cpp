@@ -9,10 +9,11 @@
 // GlobeOptionsDlg
 //
 
-GlobeOptionsDlg::GlobeOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context)
+GlobeOptionsDlg::GlobeOptionsDlg(LFViewParameters* View, UINT Context, CWnd* pParentWnd)
 	: LFDialog(IDD_GLOBEOPTIONS, pParentWnd)
 {
 	ASSERT(View);
+
 	p_View = View;
 	m_Context = Context;
 }
@@ -48,8 +49,7 @@ BOOL GlobeOptionsDlg::OnInitDialog()
 	LFDialog::OnInitDialog();
 
 	// Texturgröße
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_AUTOMATIC));
+	CString tmpStr((LPCSTR)IDS_AUTOMATIC);
 	m_wndTextureSize.AddString(tmpStr);
 	m_wndTextureSize.AddString(_T("1024×1024"));
 	m_wndTextureSize.AddString(_T("2048×2048"));

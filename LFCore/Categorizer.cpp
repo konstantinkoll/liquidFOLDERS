@@ -179,7 +179,7 @@ void RatingCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescript
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		LoadString(LFCoreModuleHandle, ((attr==LFAttrRating) ? IDS_Rating1 : IDS_Priority1)+GetRatingCategory(*((unsigned char*)i->AttributeValues[attr]))-1, Name, 256);
+		LoadString(LFCoreModuleHandle, ((attr==LFAttrRating) ? IDS_RATING1 : IDS_PRIORITY1)+GetRatingCategory(*((unsigned char*)i->AttributeValues[attr]))-1, Name, 256);
 		SetAttribute(folder, LFAttrFileName, Name);
 
 		unsigned char rating = GetRatingCategory(*((unsigned char*)i->AttributeValues[attr]))*2;
@@ -309,7 +309,7 @@ void SizeCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		LoadString(LFCoreModuleHandle, IDS_Size1+GetSizeCategory(*((__int64*)i->AttributeValues[attr])), Name, 256);
+		LoadString(LFCoreModuleHandle, IDS_SIZE1+GetSizeCategory(*((__int64*)i->AttributeValues[attr])), Name, 256);
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, i->AttributeValues[attr]);
 	}
@@ -336,7 +336,7 @@ void DurationCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescri
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		LoadString(LFCoreModuleHandle, IDS_Duration1+GetDurationCategory(*((unsigned int*)i->AttributeValues[attr])), Name, 256);
+		LoadString(LFCoreModuleHandle, IDS_DURATION1+GetDurationCategory(*((unsigned int*)i->AttributeValues[attr])), Name, 256);
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, i->AttributeValues[attr]);
 	}

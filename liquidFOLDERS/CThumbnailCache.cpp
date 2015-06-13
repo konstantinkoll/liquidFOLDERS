@@ -2,9 +2,7 @@
 // CThumbnailCache.cpp: Implementierung der Klasse CThumbnailCache
 //
 
-#pragma once
 #include "stdafx.h"
-#include "CThumbnailCache.h"
 #include "liquidFOLDERS.h"
 
 

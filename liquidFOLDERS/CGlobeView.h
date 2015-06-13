@@ -3,14 +3,12 @@
 //
 
 #pragma once
-#include "LF.h"
-#include "liquidFOLDERS.h"
 #include "CFileView.h"
-#include "GLTexture.h"
 #include "GLFont.h"
+#include "GLTexture.h"
 
 
-// Item data
+// Item Data
 
 struct GlobeItemData
 {
@@ -36,21 +34,10 @@ public:
 	virtual void GetPersistentData(FVPersistentData& Data);
 
 protected:
-	GlobeParameters m_GlobeTarget;
-	GlobeParameters m_GlobeCurrent;
-
-	CClientDC* m_pDC;
-	HGLRC hRC;
-	INT m_Width;
-	INT m_Height;
-	GLTexture* m_pTextureGlobe;
-	GLTexture* m_pTextureIcons;
-	GLFont m_Fonts[2];
-
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual INT ItemAtPosition(CPoint point);
-	virtual CMenu* GetItemContextMenu(INT idx);
+	virtual CMenu* GetItemContextMenu(INT Index);
 
 	void PrepareModel();
 	void PrepareTexture();
@@ -66,7 +53,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -85,7 +72,20 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	GlobeParameters m_GlobeTarget;
+	GlobeParameters m_GlobeCurrent;
+	CClientDC* m_pDC;
+	HGLRC hRC;
+	INT m_Width;
+	INT m_Height;
+	GLTexture* m_pTextureGlobe;
+	GLTexture* m_pTextureIcons;
+	GLFont m_Fonts[2];
+
 private:
+	BOOL CursorOnGlobe(CPoint point);
+	void UpdateCursor();
+
 	LPCTSTR lpszCursorName;
 	HCURSOR hCursor;
 	CPoint m_CursorPos;
@@ -109,7 +109,4 @@ private:
 	BOOL m_Grabbed;
 	BOOL m_LockUpdate;
 	CString m_YouLookAt;
-
-	BOOL CursorOnGlobe(CPoint point);
-	void UpdateCursor();
 };

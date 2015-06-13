@@ -2,9 +2,8 @@
 // LFChooseStoreDlg.cpp: Implementierung der Klasse LFChooseStoreDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
-#include "Resource.h"
 
 
 // LFChooseStoreDlg
@@ -30,8 +29,8 @@ void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
 	{
-		INT idx = GetSelectedStore();
-		strcpy_s(m_StoreID, LFKeySize, idx!=-1 ? m_pResult->m_Items[idx]->StoreID : "");
+		INT Index = GetSelectedStore();
+		strcpy_s(m_StoreID, LFKeySize, Index!=-1 ? m_pResult->m_Items[Index]->StoreID : "");
 	}
 }
 
@@ -53,17 +52,17 @@ void LFChooseStoreDlg::AdjustLayout()
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
-	INT borderLeft = (p_App->OSVersion==OS_XP) ? 15 : borders.Width()/2;
+	INT borderLeft = (LFGetApp()->OSVersion==OS_XP) ? 15 : borders.Width()/2;
 	m_wndExplorerList.SetWindowPos(NULL, rect.left+borderLeft, rect.top+ExplorerHeight, rect.Width()-borderLeft, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()
 {
-	INT idx = GetSelectedStore();
-	BOOL b = (idx!=-1);
+	INT Index = GetSelectedStore();
+	BOOL b = (Index!=-1);
 
 	if (m_Mounted)
-		b &= !(m_pResult->m_Items[idx]->Type & LFTypeNotMounted);
+		b &= !(m_pResult->m_Items[Index]->Type & LFTypeNotMounted);
 
 	GetDlgItem(IDOK)->EnableWindow(b);
 }
@@ -94,20 +93,20 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
 
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
-	m_wndHeaderArea.SetText(p_App->m_Contexts[LFContextStores].Name, Hint, FALSE);
+	m_wndHeaderArea.SetText(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, FALSE);
 
 	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS;
 	CRect rect;
 	rect.SetRectEmpty();
 	m_wndExplorerList.Create(dwStyle, rect, this, IDC_STORELIST);
 
-	m_wndExplorerList.SetImageList(&p_App->m_CoreImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&p_App->m_CoreImageListLarge, LVSIL_NORMAL);
+	m_wndExplorerList.SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
+	m_wndExplorerList.SetImageList(&LFGetApp()->m_CoreImageListLarge, LVSIL_NORMAL);
 
 	IMAGEINFO ii;
-	p_App->m_CoreImageListLarge.GetImageInfo(0, &ii);
+	LFGetApp()->m_CoreImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
+	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_DefaultFont);
 	m_wndExplorerList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
@@ -115,11 +114,11 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();
 	m_wndExplorerList.SetMenus(IDM_STORE, FALSE, IDM_STORES);
-	m_wndExplorerList.EnableGroupView(p_App->OSVersion>OS_XP);
+	m_wndExplorerList.EnableGroupView(LFGetApp()->OSVersion>OS_XP);
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
 	m_wndExplorerList.SetFocus();
 
-	SendMessage(p_App->p_MessageIDs->StoresChanged);
+	SendMessage(LFGetApp()->p_MessageIDs->StoresChanged);
 
 	AdjustLayout();
 
@@ -143,9 +142,9 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	CHAR StoreID[LFKeySize] = "";
 	if (m_pResult)
 	{
-		INT idx = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
-		if (idx!=-1)
-			strcpy_s(StoreID, LFKeySize, m_pResult->m_Items[idx]->StoreID);
+		INT Index = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
+		if (Index!=-1)
+			strcpy_s(StoreID, LFKeySize, m_pResult->m_Items[Index]->StoreID);
 
 		LFFreeSearchResult(m_pResult);
 	}
@@ -159,19 +158,17 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	if (!m_Mounted)
 	{
 		CString Hint;
-		CString Mask;
-		ENSURE(Mask.LoadString(m_pResult->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
-		Hint.Format(Mask, m_pResult->m_StoreCount);
+		Hint.Format(m_pResult->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, m_pResult->m_StoreCount);
 
-		m_wndHeaderArea.SetText(p_App->m_Contexts[LFContextStores].Name, Hint);
+		m_wndHeaderArea.SetText(LFGetApp()->m_Contexts[LFContextStores].Name, Hint);
 	}
 
-	INT idx = -1;
+	INT Index = -1;
 	for (UINT a=0; a<m_pResult->m_ItemCount; a++)
-		if (((idx==-1) && (m_pResult->m_Items[a]->Type & LFTypeDefault)) || (!strcmp(StoreID, m_pResult->m_Items[a]->StoreID)))
-			idx = a;
+		if (((Index==-1) && (m_pResult->m_Items[a]->Type & LFTypeDefault)) || (!strcmp(StoreID, m_pResult->m_Items[a]->StoreID)))
+			Index = a;
 
-	m_wndExplorerList.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	m_wndExplorerList.SetItemState(Index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 
 	return NULL;
 }
@@ -220,44 +217,44 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 void LFChooseStoreDlg::OnStoreMakeDefault()
 {
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
-		LFErrorBox(LFMakeDefaultStore(m_pResult->m_Items[idx]->StoreID), GetSafeHwnd());
+	INT Index = GetSelectedStore();
+	if (Index!=-1)
+		LFErrorBox(LFMakeDefaultStore(m_pResult->m_Items[Index]->StoreID), GetSafeHwnd());
 }
 
 void LFChooseStoreDlg::OnStoreShortcut()
 {
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
+	INT Index = GetSelectedStore();
+	if (Index!=-1)
 		if (LFAskCreateShortcut(GetSafeHwnd()))
-			LFCreateDesktopShortcutForStore(m_pResult->m_Items[idx]);
+			LFCreateDesktopShortcutForStore(m_pResult->m_Items[Index]);
 }
 
 void LFChooseStoreDlg::OnStoreDelete()
 {
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
-		LFDeleteStore(m_pResult->m_Items[idx]->StoreID, this);
+	INT Index = GetSelectedStore();
+	if (Index!=-1)
+		LFDeleteStore(m_pResult->m_Items[Index]->StoreID, this);
 }
 
 void LFChooseStoreDlg::OnStoreRename()
 {
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
+	INT Index = GetSelectedStore();
+	if (Index!=-1)
 	{
 		if (GetFocus()!=&m_wndExplorerList)
 			m_wndExplorerList.SetFocus();
 
-		m_wndExplorerList.EditLabel(idx);
+		m_wndExplorerList.EditLabel(Index);
 	}
 }
 
 void LFChooseStoreDlg::OnStoreProperties()
 {
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
+	INT Index = GetSelectedStore();
+	if (Index!=-1)
 	{
-		LFStorePropertiesDlg dlg(m_pResult->m_Items[idx]->StoreID, this);
+		LFStorePropertiesDlg dlg(m_pResult->m_Items[Index]->StoreID, this);
 		dlg.DoModal();
 	}
 }
@@ -266,22 +263,22 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
 
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
+	INT Index = GetSelectedStore();
+	if (Index!=-1)
 	{
-		LFItemDescriptor* item = m_pResult->m_Items[idx];
-		b = ((item->Type & LFTypeMask)==LFTypeStore);
+		LFItemDescriptor* Item = m_pResult->m_Items[Index];
+		b = ((Item->Type & LFTypeMask)==LFTypeStore);
 
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_STORE_MAKEDEFAULT:
-			b = !(item->Type & LFTypeDefault);
+			b = !(Item->Type & LFTypeDefault);
 			break;
 		case IDM_STORE_IMPORTFOLDER:
 			b = FALSE;
 			break;
 		case IDM_STORE_SHORTCUT:
-			b = (item->Type & LFTypeShortcutAllowed);
+			b = (Item->Type & LFTypeShortcutAllowed);
 			break;
 		case IDM_STORE_RENAME:
 			b = (m_wndExplorerList.GetEditControl()==NULL);

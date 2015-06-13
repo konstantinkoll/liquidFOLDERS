@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "LF.h"
 
 
 // CStorePanel
@@ -21,13 +21,12 @@ public:
 	BOOL IsValidStore();
 
 protected:
-	LFApplication* p_App;
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnPaint();
+	DECLARE_MESSAGE_MAP()
+
 	INT m_IconSizeX;
 	INT m_IconSizeY;
 	CImageList* p_Icons;
 	LFItemDescriptor* p_Item;
-
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
-	DECLARE_MESSAGE_MAP()
 };

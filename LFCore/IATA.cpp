@@ -25,22 +25,22 @@ void InitAirportDatabase()
 	UseGermanDB = (GetUserDefaultUILanguage() & 0x1FF)==LANG_GERMAN;
 }
 
-LFCore_API unsigned int LFIATAGetCountryCount()
+LFCORE_API unsigned int LFIATAGetCountryCount()
 {
 	return UseGermanDB ? CountryCount_DE : CountryCount_EN;
 }
 
-LFCore_API unsigned int LFIATAGetAirportCount()
+LFCORE_API unsigned int LFIATAGetAirportCount()
 {
 	return UseGermanDB ? AirportCount_DE : AirportCount_EN;
 }
 
-LFCore_API LFCountry* LFIATAGetCountry(unsigned int ID)
+LFCORE_API LFCountry* LFIATAGetCountry(unsigned int ID)
 {
 	return UseGermanDB ? &Countries_DE[ID] : &Countries_EN[ID];
 }
 
-LFCore_API int LFIATAGetNextAirport(int last, LFAirport** pBuffer)
+LFCORE_API int LFIATAGetNextAirport(int last, LFAirport** pBuffer)
 {
 	if (last>=(int)LFIATAGetAirportCount()-1)
 		return -1;
@@ -49,7 +49,7 @@ LFCore_API int LFIATAGetNextAirport(int last, LFAirport** pBuffer)
 	return last;
 }
 
-LFCore_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, LFAirport** pBuffer)
+LFCORE_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, LFAirport** pBuffer)
 {
 	int count = (int)LFIATAGetAirportCount();
 
@@ -65,7 +65,7 @@ LFCore_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, L
 	return last;
 }
 
-LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
+LFCORE_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
 {
 	if (!Code)
 		return false;
@@ -80,11 +80,11 @@ LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
 		int mid = (first+last)/2;
 
 		*pBuffer = UseGermanDB ? &Airports_DE[mid] : &Airports_EN[mid];
-		int res = strcmp((*pBuffer)->Code, Code);
-		if (res==0)
+		int Result = strcmp((*pBuffer)->Code, Code);
+		if (Result==0)
 			return true;
 
-		if (res<0)
+		if (Result<0)
 		{
 			first = mid+1;
 		}

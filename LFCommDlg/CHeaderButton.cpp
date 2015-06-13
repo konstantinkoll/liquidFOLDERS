@@ -19,7 +19,7 @@ CHeaderButton::CHeaderButton()
 	m_ShowDropdown = TRUE;
 }
 
-BOOL CHeaderButton::Create(CString Caption, CString Hint, CWnd* pParentWnd, UINT nID)
+BOOL CHeaderButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint)
 {
 	m_Caption = Caption;
 	m_Hint = Hint;
@@ -194,20 +194,14 @@ void CHeaderButton::OnPaint()
 	}
 	else
 	{
-		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-		COLORREF c2 = GetSysColor(COLOR_3DFACE);
-		COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-		COLORREF c4 = 0x000000;
-
 		if ((Selected) || (m_Hover))
 		{
-			dc.FillSolidRect(rect, c2);
+			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 
-			if (Selected)
-			{
-				std::swap(c1, c4);
-				std::swap(c2, c3);
-			}
+			COLORREF c1 = Selected ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+			COLORREF c2 = Selected ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+			COLORREF c3 = Selected ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+			COLORREF c4 = Selected ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 			CRect rectBorder(rect);
 			dc.Draw3dRect(rectBorder, c1, c4);

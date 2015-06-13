@@ -17,24 +17,22 @@ CExplorerNotification::CExplorerNotification()
 {
 	m_Dismissed = TRUE;
 	hIcon = NULL;
-	p_App = LFGetApp();
 
 	m_IconCX = GetSystemMetrics(SM_CXICON);
 	m_IconCY = GetSystemMetrics(SM_CYICON);
-	ImageList_GetIconSize(p_App->m_SystemImageListLarge, &m_IconCX, &m_IconCY);
+	ImageList_GetIconSize(LFGetApp()->m_SystemImageListLarge, &m_IconCX, &m_IconCY);
 
-	m_GradientCY = max(m_IconCY/16,2);
+	m_GradientCY = max(m_IconCY/16, 2);
 	m_CloseHover = m_ClosePressed = FALSE;
 }
 
 BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_BORDER;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_BORDER, rect, pParentWnd, nID);
 }
 
 UINT CExplorerNotification::GetPreferredHeight()
@@ -53,22 +51,22 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 	case ENT_INFO:
 		m_FirstCol = 0xFF8E6F;
 		m_SecondCol = 0xF26120;
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_INFORMATION), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_INFORMATION), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
 		break;
 	case ENT_WARNING:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_WARNING), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_WARNING), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
 		break;
 	case ENT_SHIELD:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_SHIELD), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), IDI_SHIELD, IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
 		break;
 	default:
 		m_FirstCol = 0x0000E6;
 		m_SecondCol = 0x0000AF;
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ERROR), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ERROR), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
 	}
 
 	m_Text = Text;
@@ -97,7 +95,7 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 	Invalidate();
 
 	if (Type!=ENT_READY)
-		p_App->PlayWarningSound();
+		LFGetApp()->PlayWarningSound();
 
 	m_Dismissed = FALSE;
 }
@@ -238,7 +236,7 @@ void CExplorerNotification::OnPaint()
 	rect.right = m_RightMargin-BORDERX;
 	CRect rectText(rect);
 
-	CFont* pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 	dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(m_Text, rectText, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
 	if (rect.Height()>rectText.Height())
@@ -253,6 +251,7 @@ void CExplorerNotification::OnPaint()
 void CExplorerNotification::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
+
 	AdjustLayout();
 }
 

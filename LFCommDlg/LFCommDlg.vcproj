@@ -377,10 +377,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGroupBox.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CHeaderArea.cpp"
 				>
 			</File>
@@ -469,6 +465,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFDeleteStoreDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFDialog.cpp"
 				>
 			</File>
@@ -529,10 +529,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreDeleteDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFStoreMaintenanceDlg.cpp"
 				>
 			</File>
@@ -574,10 +570,6 @@
 			</File>
 			<File
 				RelativePath=".\LFUpdateDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuIcons.cpp"
 				>
 			</File>
 			<File
@@ -663,10 +655,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGroupBox.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CHeaderArea.h"
 				>
 			</File>
@@ -727,10 +715,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FileSystem.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ITaskbarList3.h"
 				>
 			</File>
@@ -763,7 +747,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LFCore.h"
+				RelativePath=".\LFDeleteStoreDlg.h"
 				>
 			</File>
 			<File
@@ -827,10 +811,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreDeleteDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LFStoreMaintenanceDlg.h"
 				>
 			</File>
@@ -875,11 +855,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MenuIcons.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<File

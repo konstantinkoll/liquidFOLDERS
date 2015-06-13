@@ -25,12 +25,12 @@ public:
 	void Delete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
 	void ResolvePhysicalLocations(LFTransactionList* tl);
 	unsigned int Rename(char* FileID, wchar_t* NewName);
-	void Retrieve(LFFilter* f, LFSearchResult* res);
-	void AddToSearchResult(LFFileIDList* il, LFSearchResult* res);
+	void Retrieve(LFFilter* f, LFSearchResult* Result);
+	void AddToSearchResult(LFFileIDList* il, LFSearchResult* Result);
 	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move, LFProgress* pProgress=NULL);
 
 protected:
-	bool LoadTable(unsigned int ID, unsigned int* res=NULL);
+	bool LoadTable(unsigned int ID, unsigned int* Result=NULL);
 	void AddFileToStatistics(LFCoreAttributes* PtrM);
 	void RemoveFileFromStatistics(LFCoreAttributes* PtrM);
 	unsigned int RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName);

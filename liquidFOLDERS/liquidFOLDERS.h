@@ -1,25 +1,25 @@
 
-// liquidFOLDERS.h: Hauptheaderdatei für die StoreManager-Anwendung
+// liquidFOLDERS.h: Hauptheaderdatei für die liquidFOLDERS-Anwendung
 //
 
 #pragma once
 #include "LFCommDlg.h"
 #include "CFormatCache.h"
 #include "CThumbnailCache.h"
-#include "MainWnd.h"
+#include "CMainWnd.h"
 #include "resource.h"
 
 
-// CStoreManagerApp:
+// CLiquidFoldersApp:
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //
 
 #define ViewParametersVersion     2
 
-class CStoreManagerApp : public LFApplication
+class CLiquidFoldersApp : public LFApplication
 {
 public:
-	CStoreManagerApp();
+	CLiquidFoldersApp();
 
 	virtual BOOL InitInstance();
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
@@ -28,6 +28,7 @@ public:
 	CMainWnd* GetClipboard();
 	CWnd* GetFileDrop(CHAR* StoreID);
 
+	BOOL IsViewAllowed(INT Context, INT View);
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
@@ -41,7 +42,7 @@ public:
 	CFormatCache m_FileFormats;
 	CThumbnailCache m_ThumbnailCache;
 	LFViewParameters m_Views[LFContextCount];
-	LFBitArray* m_AllowedViews[LFContextCount];
+	UINT m_AllowedViews[LFContextCount];
 
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
@@ -61,8 +62,6 @@ public:
 	BOOL m_MigrationExpandAll;
 
 protected:
-	BOOL m_AppInitialized;
-
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
@@ -71,6 +70,8 @@ protected:
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+
+	BOOL m_AppInitialized;
 };
 
-extern CStoreManagerApp theApp;
+extern CLiquidFoldersApp theApp;

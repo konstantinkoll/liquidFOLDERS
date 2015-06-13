@@ -58,7 +58,7 @@ struct CDS_Wakeup
 struct ResourceCacheItem
 {
 	CGdiPlusBitmapResource* pImage;
-	UINT nResID;
+	UINT nID;
 };
 
 
@@ -141,12 +141,14 @@ public:
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL, BOOL Abort=FALSE);
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
+	BOOL IsAttributeAllowed(INT Context, INT Attr);
 	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0);
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T(""));
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue);
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
-	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
-	static HANDLE LoadFontFromResource(UINT nID, HMODULE hInst=NULL);
+	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA);
+	static HICON LoadDialogIcon(UINT nID);
+	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons=FALSE);
 	static void PlayStandardSound();
 	static void PlayNavigateSound();

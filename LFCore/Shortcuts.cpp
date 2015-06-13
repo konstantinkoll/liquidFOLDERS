@@ -10,31 +10,27 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
+extern OSVERSIONINFO osInfo;
 
 
-LFCore_API bool LFAskCreateShortcut(HWND hwnd)
+LFCORE_API bool LFAskCreateShortcut(HWND hwnd)
 {
-	OSVERSIONINFO osInfo;
-	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&osInfo);
-
 	if (osInfo.dwMajorVersion<6)
 	{
 		// Ask if link should be created on desktop
-		wchar_t caption[256];
-		wchar_t message[256];
-		LoadString(LFCoreModuleHandle, IDS_ShortcutCaption, caption, 256);
-		LoadString(LFCoreModuleHandle, IDS_ShortcutMessage, message, 256);
+		wchar_t Caption[256];
+		wchar_t Message[256];
+		LoadString(LFCoreModuleHandle, IDS_SHORTCUTCAPTION, Caption, 256);
+		LoadString(LFCoreModuleHandle, IDS_SHORTCUTMESSAGE, Message, 256);
 
-		if (MessageBox(hwnd, message, caption, MB_YESNO | MB_ICONQUESTION)==IDNO)
+		if (MessageBox(hwnd, Message, Caption, MB_YESNO | MB_ICONQUESTION)==IDNO)
 			return FALSE;
 	}
 
 	return true;
 }
 
-LFCore_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFilename)
+LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFilename)
 {
 	// Get the fully qualified file name for the link file
 	wchar_t PathDesktop[MAX_PATH];
@@ -79,11 +75,11 @@ bool GetStoreManagerPath(wchar_t* Path, size_t cCount)
 	if (RegOpenKey(HKEY_LOCAL_MACHINE, L"Software\\liquidFOLDERS\\", &k)==ERROR_SUCCESS)
 	{
 		DWORD sz = (DWORD)(cCount*sizeof(wchar_t));
-		LSTATUS res = RegQueryValueEx(k, L"StoreManager", 0, NULL, (BYTE*)Path, &sz);
+		LSTATUS Result = RegQueryValueEx(k, L"StoreManager", 0, NULL, (BYTE*)Path, &sz);
 
 		RegCloseKey(k);
 
-		if (res==ERROR_SUCCESS)
+		if (Result==ERROR_SUCCESS)
 			return true;
 	}
 
@@ -123,14 +119,14 @@ IShellLink* GetShortcutForStore(char* StoreID, unsigned int IconID)
 }
 
 
-LFCore_API IShellLink* LFGetShortcutForStore(LFItemDescriptor* i)
+LFCORE_API IShellLink* LFGetShortcutForStore(LFItemDescriptor* i)
 {
 	assert(i);
 
 	return (i->Type & LFTypeStore) ? GetShortcutForStore(i->StoreID, i->IconID) : NULL;
 }
 
-LFCore_API IShellLink* LFGetShortcutForStore(LFStoreDescriptor* s)
+LFCORE_API IShellLink* LFGetShortcutForStore(LFStoreDescriptor* s)
 {
 	assert(s);
 
@@ -141,7 +137,7 @@ LFCore_API IShellLink* LFGetShortcutForStore(LFStoreDescriptor* s)
 	return pShellLink;
 }
 
-LFCore_API IShellLink* LFGetShortcutForStore(char* key)
+LFCORE_API IShellLink* LFGetShortcutForStore(char* key)
 {
 	if (!key)
 		return NULL;
@@ -158,7 +154,7 @@ LFCore_API IShellLink* LFGetShortcutForStore(char* key)
 }
 
 
-LFCore_API void LFCreateDesktopShortcutForStore(LFItemDescriptor* i)
+LFCORE_API void LFCreateDesktopShortcutForStore(LFItemDescriptor* i)
 {
 	IShellLink* pShellLink = LFGetShortcutForStore(i);
 	if (pShellLink)
@@ -168,7 +164,7 @@ LFCore_API void LFCreateDesktopShortcutForStore(LFItemDescriptor* i)
 	}
 }
 
-LFCore_API void LFCreateDesktopShortcutForStore(LFStoreDescriptor* s)
+LFCORE_API void LFCreateDesktopShortcutForStore(LFStoreDescriptor* s)
 {
 	IShellLink* pShellLink = LFGetShortcutForStore(s);
 	if (pShellLink)
@@ -178,7 +174,7 @@ LFCore_API void LFCreateDesktopShortcutForStore(LFStoreDescriptor* s)
 	}
 }
 
-LFCore_API void LFCreateDesktopShortcutForStore(char* key)
+LFCORE_API void LFCreateDesktopShortcutForStore(char* key)
 {
 	if (!key)
 		return;

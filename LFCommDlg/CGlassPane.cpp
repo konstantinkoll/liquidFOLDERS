@@ -17,17 +17,16 @@ CGlassPane::CGlassPane()
 	m_MaxWidth = 128+GRIPPER;
 }
 
-BOOL CGlassPane::Create(BOOL IsLeft, INT PreferredWidth, CWnd* pParentWnd, UINT nID)
+BOOL CGlassPane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth)
 {
 	m_IsLeft = IsLeft;
 	m_PreferredWidth = PreferredWidth;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_NOACTIVATE, className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_NOACTIVATE, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
 }
 
 void CGlassPane::AdjustLayout()

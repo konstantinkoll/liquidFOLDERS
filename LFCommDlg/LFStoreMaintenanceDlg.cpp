@@ -2,9 +2,8 @@
 // LFStoreMaintenanceDlg.cpp: Implementierung der Klasse LFStoreMaintenanceDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
-#include "Resource.h"
 
 
 // LFStoreMaintenanceDlg
@@ -60,16 +59,13 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_STOREMAINTENANCE));
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = LFGetApp()->LoadDialogIcon(IDD_STOREMAINTENANCE);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Icons
 	m_Icons.Create(16, 16, ILC_COLOR32, 1, 1);
-
-	hIcon = (HICON)LoadImage(AfxGetResourceHandle(), IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
-	m_Icons.Add(hIcon);
-	DestroyIcon(hIcon);
+	m_Icons.Add((HICON)LoadImage(AfxGetResourceHandle(), IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_SHARED));
 
 	// Tabs
 	CTabCtrl* tabs = (CTabCtrl*)GetDlgItem(IDC_TABS);
@@ -77,22 +73,18 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 
 	for (UINT a=0; a<(m_Lists[1].m_ItemCount ? (UINT)2 : (UINT)1); a++)
 	{
-		CString mask;
-		ENSURE(mask.LoadString(IDS_MAINTENANCETAB0+a));
-
 		CString tmpStr;
-		tmpStr.Format(mask, m_Lists[a].m_ItemCount);
+		tmpStr.Format(IDS_MAINTENANCETAB0+a, m_Lists[a].m_ItemCount);
 
 		tabs->InsertItem(a, tmpStr, (INT)a-1);
 	}
 
 	// Liste
-	LFApplication* pApp = LFGetApp();
 	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_STORELIST);
 	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	li->SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
-	li->SetFont(&pApp->m_DefaultFont, FALSE);
-	li->InsertColumn(0, pApp->m_Attributes[LFAttrFileName].Name);
+	li->SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
+	li->SetFont(&LFGetApp()->m_DefaultFont, FALSE);
+	li->InsertColumn(0, LFGetApp()->m_Attributes[LFAttrFileName].Name);
 	li->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
 
 	// Seite

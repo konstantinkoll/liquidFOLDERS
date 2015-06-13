@@ -11,5 +11,5 @@
 #define LICENSE_NAME         "LICENSE_NAME"
 
 // Interner Gebrauch
-LFCore_API bool LFIsLicensed(LFLicense* License, bool Reload);
-LFCore_API bool LFIsSharewareExpired();
+LFCORE_API bool LFIsLicensed(LFLicense* License, bool Reload);
+LFCORE_API bool LFIsSharewareExpired();

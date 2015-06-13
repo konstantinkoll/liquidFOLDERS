@@ -3,10 +3,8 @@
 //
 
 #include "stdafx.h"
-#include "LFCore.h"
 #include "LFNamespaceExtension.h"
 #include "LFSendTo.h"
-#include "..\\LFCore\\resource.h"
 
 
 IMPLEMENT_DYNCREATE(LFSendTo, CSendToExtension)

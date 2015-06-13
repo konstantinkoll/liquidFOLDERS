@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "LFCore.h"
 #include "CHeaderArea.h"
 #include "CExplorerList.h"
+#include "LF.h"
 #include "LFDialog.h"
 
 
@@ -15,7 +15,7 @@
 class LFChooseStoreDlg : public LFDialog
 {
 public:
-	LFChooseStoreDlg(CWnd* pParentWnd, BOOL Mounted=TRUE);
+	LFChooseStoreDlg(CWnd* pParentWnd=NULL, BOOL Mounted=TRUE);
 	~LFChooseStoreDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -24,11 +24,6 @@ public:
 	CHAR m_StoreID[LFKeySize];
 
 protected:
-	CHeaderArea m_wndHeaderArea;
-	CExplorerList m_wndExplorerList;
-	LFSearchResult* m_pResult;
-	BOOL m_Mounted;
-
 	void UpdateOkButton();
 
 	afx_msg BOOL OnInitDialog();
@@ -45,4 +40,9 @@ protected:
 	afx_msg void OnStoreProperties();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+	CHeaderArea m_wndHeaderArea;
+	CExplorerList m_wndExplorerList;
+	LFSearchResult* m_pResult;
+	BOOL m_Mounted;
 };

@@ -1,14 +1,12 @@
 
-// MainWnd.h: Schnittstelle der Klasse CMainWnd
+// CMainWnd.h: Schnittstelle der Klasse CMainWnd
 //
 
 #pragma once
-#include "LF.h"
+#include "CContextSidebar.h"
 #include "CJournalButton.h"
 #include "CHistoryBar.h"
-#include "CContextSidebar.h"
 #include "CMainView.h"
-#include "CFileView.h"
 
 
 // CMainWnd
@@ -46,19 +44,6 @@ public:
 	BOOL AddClipItem(LFItemDescriptor* i);
 
 protected:
-	BOOL m_IsClipboard;
-	CJournalButton m_wndJournalButton;
-	CHistoryBar m_wndHistory;
-	CGlassEdit m_wndSearch;
-	CContextSidebar m_wndContextSidebar;
-	CMainView m_wndMainView;
-	BreadcrumbItem* m_BreadcrumbBack;
-	BreadcrumbItem* m_BreadcrumbForward;
-	LFFilter* m_pActiveFilter;
-	LFSearchResult* m_pRawFiles;
-	LFSearchResult* m_pCookedFiles;
-	BOOL m_ShowFilterPane;
-
 	BOOL Create(BOOL IsClipboard);
 	void HideFilterPane();
 	void WriteMetadataTXT(CStdioFile& f);
@@ -100,6 +85,19 @@ protected:
 	afx_msg LRESULT OnVolumesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStatisticsChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+	BOOL m_IsClipboard;
+	CJournalButton m_wndJournalButton;
+	CHistoryBar m_wndHistory;
+	CGlassEdit m_wndSearch;
+	CContextSidebar m_wndContextSidebar;
+	CMainView m_wndMainView;
+	BreadcrumbItem* m_BreadcrumbBack;
+	BreadcrumbItem* m_BreadcrumbForward;
+	LFFilter* m_pActiveFilter;
+	LFSearchResult* m_pRawFiles;
+	LFSearchResult* m_pCookedFiles;
+	BOOL m_ShowFilterPane;
 
 private:
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);

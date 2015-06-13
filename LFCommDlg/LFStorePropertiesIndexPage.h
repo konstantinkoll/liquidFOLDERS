@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "LF.h"
 
 
 // LFStorePropertiesIndexPage
@@ -15,10 +15,10 @@ public:
 	LFStorePropertiesIndexPage(LFStoreDescriptor* pStore, BOOL* pStoreValid);
 
 protected:
-	LFStoreDescriptor* p_Store;
-	BOOL* p_StoreValid;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+	LFStoreDescriptor* p_Store;
+	BOOL* p_StoreValid;
 };

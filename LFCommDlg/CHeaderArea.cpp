@@ -16,7 +16,6 @@
 CHeaderArea::CHeaderArea()
 	: CWnd()
 {
-	p_App = LFGetApp();
 	m_FontHeight = m_RightEdge = 0;
 }
 
@@ -24,12 +23,11 @@ BOOL CHeaderArea::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
 {
 	m_Shadow = Shadow;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
 }
 
 BOOL CHeaderArea::OnCommand(WPARAM wParam, LPARAM lParam)
@@ -72,9 +70,9 @@ UINT CHeaderArea::GetPreferredHeight()
 	UINT h = 2*BORDER+MARGIN;
 
 	CDC* dc = GetDC();
-	CFont* pOldFont = dc->SelectObject(&p_App->m_CaptionFont);
+	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_CaptionFont);
 	h += dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(p_App->m_DefaultFont);
+	dc->SelectObject(LFGetApp()->m_DefaultFont);
 	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
 	h += m_FontHeight;
 	dc->SelectObject(pOldFont);
@@ -108,7 +106,7 @@ CHeaderButton* CHeaderArea::AddButton(UINT nID)
 	}
 
 	CHeaderButton* btn = new CHeaderButton();
-	btn->Create(Caption, Hint, this, nID);
+	btn->Create(this, nID, Caption, Hint);
 
 	m_Buttons.AddTail(btn);
 
@@ -207,7 +205,7 @@ void CHeaderArea::OnPaint()
 		{
 			dc.FillSolidRect(rect, 0xFFFFFF);
 
-			CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVUP, _T("PNG"), AfxGetResourceHandle());
+			CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"));
 			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
 
 			if (m_Shadow)
@@ -232,14 +230,14 @@ void CHeaderArea::OnPaint()
 
 		dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 
-		CFont* pOldFont = dc.SelectObject(&p_App->m_CaptionFont);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_CaptionFont);
 		CSize sz = dc.GetTextExtent(m_Caption);
 		CRect rectText(BORDERLEFT, BORDER, m_RightEdge, BORDER+sz.cy);
 		dc.DrawText(m_Caption, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 		if (Themed)
 		{
-			dc.SelectObject(&p_App->m_DefaultFont);
+			dc.SelectObject(&LFGetApp()->m_DefaultFont);
 		}
 		else
 		{

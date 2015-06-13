@@ -6,7 +6,14 @@
 #include "LFCommDlg.h"
 #include "LFEditTagsDlg.h"
 #include "LFEditTimeDlg.h"
-#include "resource.h"
+
+
+__forceinline void Swap(INT& Eins, INT& Zwei)
+{
+	INT Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}
 
 
 // CPropertyHolder
@@ -15,7 +22,6 @@
 CPropertyHolder::CPropertyHolder()
 	: CWnd()
 {
-	p_App = LFGetApp();
 	m_StoreIDValid = FALSE;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
@@ -49,13 +55,13 @@ void CPropertyHolder::CreateFonts()
 
 CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 {
-	LFAttributeDescriptor* pAttr = &p_App->m_Attributes[pData->Attr];
+	LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[pData->Attr];
 	CProperty* pProperty;
 
 	switch (pAttr->Type)
 	{
 	case LFTypeUnicodeArray:
-		pProperty = (pData->Attr==LFAttrTags) ? new CPropertyTags(pData) : new CProperty(pData);
+		pProperty = (pData->Attr==LFAttrHashtags) ? new CPropertyTags(pData) : new CProperty(pData);
 		break;
 	case LFTypeAnsiString:
 		pProperty = (pData->Attr==LFAttrLocationIATA) ? new CPropertyIATA(pData, NULL, NULL) : new CProperty(pData);
@@ -169,7 +175,7 @@ HCURSOR CProperty::SetCursor(INT /*x*/)
 {
 	ASSERT(p_Parent);
 
-	return p_Parent->p_App->LoadStandardCursor(IDC_IBEAM);
+	return LFGetApp()->LoadStandardCursor(IDC_IBEAM);
 }
 
 CString CProperty::GetValidChars()
@@ -249,7 +255,7 @@ void CProperty::SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariant
 
 	if (m_ShowRange)
 	{
-		UINT Type = p_Parent->p_App->m_Attributes[p_Data->Attr].Type;
+		UINT Type = LFGetApp()->m_Attributes[p_Data->Attr].Type;
 
 		m_ShowRange &= (Type!=LFTypeUnicodeString) && (Type!=LFTypeUnicodeArray) && (Type!=LFTypeAnsiString) && (Type!=LFTypeFourCC) && (Type!=LFTypeFraction) && (Type!=LFTypeFlags);
 	}
@@ -299,7 +305,7 @@ void CPropertyTags::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTagsDlg dlg(NULL, m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
+	LFEditTagsDlg dlg(m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -324,7 +330,7 @@ void CPropertyRating::DrawValue(CDC& dc, CRect rect)
 
 	HDC hdcMem = CreateCompatibleDC(dc);
 	UCHAR level = m_Multiple ? m_ShowRange ? m_RangeSecond.Rating : 0 : p_Data->Rating;
-	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? p_Parent->p_App->m_RatingBitmaps[level] : p_Parent->p_App->m_PriorityBitmaps[level]);
+	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? LFGetApp()->m_RatingBitmaps[level] : LFGetApp()->m_PriorityBitmaps[level]);
 
 	INT w = min(rect.Width()-6, RatingBitmapWidth);
 	INT h = min(rect.Height(), RatingBitmapHeight);
@@ -339,7 +345,7 @@ HCURSOR CPropertyRating::SetCursor(INT x)
 {
 	ASSERT(p_Parent);
 
-	return p_Parent->p_App->LoadStandardCursor(x<6 ? IDC_HAND : ((x<RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
+	return LFGetApp()->LoadStandardCursor(x<6 ? IDC_HAND : ((x<RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
 }
 
 BOOL CPropertyRating::CanDelete()
@@ -545,7 +551,7 @@ HCURSOR CPropertyGPS::SetCursor(INT /*x*/)
 {
 	ASSERT(p_Parent);
 
-	return p_Parent->p_App->LoadStandardCursor(IDC_ARROW);
+	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
 }
 
 BOOL CPropertyGPS::HasButton()
@@ -562,7 +568,7 @@ void CPropertyGPS::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFSelectLocationGPSDlg dlg(NULL, p_Data->GeoCoordinates);
+	LFSelectLocationGPSDlg dlg(p_Data->GeoCoordinates, p_Parent);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -585,7 +591,7 @@ HCURSOR CPropertyTime::SetCursor(INT /*x*/)
 {
 	ASSERT(p_Parent);
 
-	return p_Parent->p_App->LoadStandardCursor(IDC_ARROW);
+	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
 }
 
 BOOL CPropertyTime::HasButton()
@@ -602,7 +608,7 @@ void CPropertyTime::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTimeDlg dlg(NULL, p_Data);
+	LFEditTimeDlg dlg(p_Data, p_Parent);
 
 	if (dlg.DoModal()==IDOK)
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
@@ -675,7 +681,7 @@ CInspectorGrid::CInspectorGrid()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CInspectorGrid";
@@ -711,12 +717,11 @@ BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeade
 {
 	m_pHeader = pHeader;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, rect, pParentWnd, nID);
 }
 
 void CInspectorGrid::PreSubclassWindow()
@@ -730,13 +735,13 @@ void CInspectorGrid::PreSubclassWindow()
 
 void CInspectorGrid::Init()
 {
-	if (p_App->m_ThemeLibLoaded)
+	if (LFGetApp()->m_ThemeLibLoaded)
 	{
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
-		if (p_App->OSVersion>=OS_Vista)
+		hThemeButton = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (LFGetApp()->OSVersion>=OS_Vista)
 		{
-			p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+			LFGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+			hThemeList = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
 	}
 
@@ -747,7 +752,7 @@ void CInspectorGrid::Init()
 	m_TooltipCtrl.Create(this);
 
 	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&p_App->m_LargeFont);
+	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_LargeFont);
 	m_FontHeight[1] = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectStockObject(DEFAULT_GUI_FONT);
 	m_FontHeight[0] = dc->GetTextExtent(_T("Wy")).cy;
@@ -756,9 +761,9 @@ void CInspectorGrid::Init()
 
 	m_RowHeight = max(m_FontHeight[0]+2, 16);
 	m_IconSize = (m_RowHeight>=27) ? 27 : (m_RowHeight>=22) ? 22 : 16;
-	hIconResetNormal = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
-	hIconResetHot = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
-	hIconResetPressed = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+	hIconResetNormal = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+	hIconResetHot = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+	hIconResetPressed = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 }
 
 BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
@@ -845,7 +850,7 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 			((CPropertyIATA*)pProp)->p_LocationGPS = &pData[LFAttrLocationGPS];
 		}
 
-		LFAttributeDescriptor* pAttr = &p_App->m_Attributes[a];
+		LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[a];
 		AddProperty(pProp, pAttr->Category, pAttr->Name, !pAttr->ReadOnly);
 	}
 }
@@ -1051,30 +1056,30 @@ void CInspectorGrid::AdjustScrollbars()
 		Invalidate();
 }
 
-INT CInspectorGrid::Compare(INT eins, INT zwei)
+INT CInspectorGrid::Compare(INT Eins, INT Zwei)
 {
-	Property* pEins = &m_Properties.m_Items[m_pSortArray[eins]];
-	Property* pZwei = &m_Properties.m_Items[m_pSortArray[zwei]];
+	Property* pEins = &m_Properties.m_Items[m_pSortArray[Eins]];
+	Property* pZwei = &m_Properties.m_Items[m_pSortArray[Zwei]];
 
 	if (m_SortAlphabetic)
 		return wcscmp(pEins->Name, pZwei->Name);
 
-	return (pEins->Category==pZwei->Category) ? m_pSortArray[eins]-m_pSortArray[zwei] : (INT)pEins->Category-(INT)pZwei->Category;
+	return (pEins->Category==pZwei->Category) ? m_pSortArray[Eins]-m_pSortArray[Zwei] : (INT)pEins->Category-(INT)pZwei->Category;
 }
 
-void CInspectorGrid::Heap(INT wurzel, INT anz)
+void CInspectorGrid::Heap(INT Wurzel, INT Anz)
 {
-	while (wurzel<=anz/2-1)
+	while (Wurzel<=Anz/2-1)
 	{
-		INT idx = (wurzel+1)*2-1;
-		if (idx+1<anz)
-			if (Compare(idx, idx+1)<0)
-				idx++;
+		INT Index = (Wurzel+1)*2-1;
+		if (Index+1<Anz)
+			if (Compare(Index, Index+1)<0)
+				Index++;
 
-		if (Compare(wurzel, idx)<0)
+		if (Compare(Wurzel, Index)<0)
 		{
-			std::swap(m_pSortArray[wurzel], m_pSortArray[idx]);
-			wurzel = idx;
+			Swap(m_pSortArray[Wurzel], m_pSortArray[Index]);
+			Wurzel = Index;
 		}
 		else
 		{
@@ -1098,10 +1103,10 @@ __forceinline void CInspectorGrid::CreateSortArray()
 	{
 		for (INT a=m_Properties.m_ItemCount/2-1; a>=0; a--)
 			Heap(a, m_Properties.m_ItemCount);
-		for (INT a=m_Properties.m_ItemCount-1; a>0; )
+		for (INT a=m_Properties.m_ItemCount-1; a>0; a--)
 		{
-			std::swap(m_pSortArray[0], m_pSortArray[a]);
-			Heap(0, a--);
+			Swap(m_pSortArray[0], m_pSortArray[a]);
+			Heap(0, a);
 		}
 	}
 }
@@ -1256,7 +1261,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 			p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
 			pProp->pProperty->SetEditMask(p_Edit);
 			if (Attr<LFAttributeCount)
-				p_Edit->SetLimitText(p_App->m_Attributes[Attr].cCharacters);
+				p_Edit->SetLimitText(LFGetApp()->m_Attributes[Attr].cCharacters);
 			p_Edit->SetFont(&m_BoldFont);
 			p_Edit->SetFocus();
 			return;
@@ -1325,15 +1330,9 @@ void CInspectorGrid::OnDestroy()
 	CPropertyHolder::OnDestroy();
 
 	if (hThemeButton)
-		p_App->zCloseThemeData(hThemeButton);
+		LFGetApp()->zCloseThemeData(hThemeButton);
 	if (hThemeList)
-		p_App->zCloseThemeData(hThemeList);
-	if (hIconResetNormal)
-		DestroyIcon(hIconResetNormal);
-	if (hIconResetHot)
-		DestroyIcon(hIconResetHot);
-	if (hIconResetPressed)
-		DestroyIcon(hIconResetPressed);
+		LFGetApp()->zCloseThemeData(hThemeList);
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		delete m_Properties.m_Items[a].pProperty;
@@ -1341,16 +1340,16 @@ void CInspectorGrid::OnDestroy()
 
 LRESULT CInspectorGrid::OnThemeChanged()
 {
-	if (p_App->m_ThemeLibLoaded)
+	if (LFGetApp()->m_ThemeLibLoaded)
 	{
 		if (hThemeButton)
-			p_App->zCloseThemeData(hThemeButton);
+			LFGetApp()->zCloseThemeData(hThemeButton);
 		if (hThemeList)
-			p_App->zCloseThemeData(hThemeList);
+			LFGetApp()->zCloseThemeData(hThemeList);
 
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
-		if (p_App->OSVersion>=OS_Vista)
-			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hThemeButton = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (LFGetApp()->OSVersion>=OS_Vista)
+			hThemeList = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	return TRUE;
@@ -1381,13 +1380,13 @@ void CInspectorGrid::OnPaint()
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
 	// Categories
-	CFont* pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		if (m_Categories[a].Top!=-1)
 		{
 			CRect rect(1, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos);
-			DrawCategory(dc, rect, p_App->m_AttrCategoryNames[a], NULL, Themed);
+			DrawCategory(dc, rect, LFGetApp()->m_AttrCategoryNames[a], NULL, Themed);
 		}
 
 	// Items
@@ -1412,7 +1411,7 @@ void CInspectorGrid::OnPaint()
 					if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
 						State |= 2;
 					if (State)
-						p_App->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], &rectProp, &rectProp);
+						LFGetApp()->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], &rectProp, &rectProp);
 				}
 				else
 				{
@@ -1459,22 +1458,16 @@ void CInspectorGrid::OnPaint()
 					rectButton.InflateRect(1, 1);
 
 					UINT State = Pressed ? PBS_PRESSED : Hot ? PBS_HOT : PBS_NORMAL;
-					p_App->zDrawThemeBackground(hThemeButton, dc, BP_PUSHBUTTON, State, &rectButton, NULL);
+					LFGetApp()->zDrawThemeBackground(hThemeButton, dc, BP_PUSHBUTTON, State, &rectButton, NULL);
 				}
 				else
 				{
-					COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-					COLORREF c2 = GetSysColor(COLOR_3DFACE);
-					COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-					COLORREF c4 = 0x000000;
+					COLORREF c1 = Pressed ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+					COLORREF c2 = Pressed ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+					COLORREF c3 = Pressed ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+					COLORREF c4 = Pressed ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 					dc.FillSolidRect(rectButton, c2);
-
-					if (Pressed)
-					{
-						std::swap(c1, c4);
-						std::swap(c2, c3);
-					}
 
 					CRect rectBorder(rectButton);
 					dc.Draw3dRect(rectBorder, c1, c4);
@@ -1653,8 +1646,8 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 				Property* pProp = &m_Properties.m_Items[m_HotItem];
 				ASSERT(pProp);
 
-				INT idx = GetAttributeIconIndex(m_HotItem);
-				HICON hIcon = (idx!=-1) ? m_AttributeIcons.ExtractIcon(idx) : NULL;
+				INT Index = GetAttributeIconIndex(m_HotItem);
+				HICON hIcon = (Index!=-1) ? m_AttributeIcons.ExtractIcon(Index) : NULL;
 
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
@@ -1823,24 +1816,19 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		InvalidateItem(Item);
 
 		if ((Item==m_SelectedItem) && (Item!=-1))
-		{
-			CString caption;
-			CString msg;
-
-			switch (Part)
+			if (Part==PARTRESET)
 			{
-			case PARTBUTTON:
-				m_Properties.m_Items[Item].pProperty->OnClickButton();
-				break;
-			case PARTRESET:
-				ENSURE(caption.LoadString(IDS_DELETEPROPERTY_CAPTION));
-				ENSURE(msg.LoadString(IDS_DELETEPROPERTY_MSG));
+				CString Caption((LPCSTR)IDS_DELETEPROPERTY_CAPTION);
+				CString msg((LPCSTR)IDS_DELETEPROPERTY_MSG);
 
-				if (MessageBox(msg, caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES)
+				if (MessageBox(msg, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES)
 					ResetProperty(Item);
-				break;
 			}
-		}
+			else
+				if (Part==PARTBUTTON)
+				{
+					m_Properties.m_Items[Item].pProperty->OnClickButton();
+				}
 	}
 	else
 		if ((Item==m_SelectedItem) && (Item!=-1) && (Part==PARTVALUE))
@@ -1872,7 +1860,7 @@ UINT CInspectorGrid::OnGetDlgCode()
 	return DLGC_WANTARROWS | DLGC_WANTCHARS | DLGC_WANTALLKEYS;
 }
 
-BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	CPoint point;
 	GetCursorPos(&point);
@@ -1892,7 +1880,7 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*messa
 		}
 	}
 
-	SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
+	SetCursor(LFGetApp()->LoadStandardCursor(IDC_ARROW));
 	return TRUE;
 }
 

@@ -23,7 +23,6 @@ void DDX_StoreButton(CDataExchange* pDX, int nIDC, CStoreButton &rControl, UINT 
 CStoreButton::CStoreButton()
 	: CButton()
 {
-	p_App = LFGetApp();
 	p_Icons = NULL;
 	m_IconSize = 0;
 	m_IconID = -1;
@@ -44,7 +43,7 @@ void CStoreButton::SetStoreType(UINT StoreType)
 	INT h = rectClient.Height()-2*BORDER;
 
 	m_IconSize = (h>=128) ? 128 : (h>=96) ? 96 : 48;
-	p_Icons = (m_IconSize==128) ? &p_App->m_CoreImageListJumbo : (m_IconSize==96) ? &p_App->m_CoreImageListHuge : &p_App->m_CoreImageListExtraLarge;
+	p_Icons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : (m_IconSize==96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
 	m_IconID = StoreType;
 
 	Invalidate();
@@ -174,12 +173,12 @@ void CStoreButton::OnPaint()
 	CString Hint;
 	GetWindowText(Hint);
 
-	CFont* pOldFont = dc.SelectObject(&p_App->m_LargeFont);
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
 
 	INT HeightCaption = dc.GetTextExtent(m_Caption).cy;
 	HeightCaption += HeightCaption/2;
 
-	dc.SelectObject(&p_App->m_DefaultFont);
+	dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
 	CRect rectHint(rectText);
 	dc.DrawText(Hint, rectHint, DT_CALCRECT | DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
@@ -187,12 +186,12 @@ void CStoreButton::OnPaint()
 	rectText.top += (rectText.Height()-HeightCaption-rectHint.Height())/2;
 
 	dc.SetTextColor(IsWindowEnabled() ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
-	dc.SelectObject(&p_App->m_LargeFont);
+	dc.SelectObject(&LFGetApp()->m_LargeFont);
 	dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS);
 	rectText.top += HeightCaption;
 
 	dc.SetTextColor(IsWindowEnabled() ? Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
-	dc.SelectObject(&p_App->m_DefaultFont);
+	dc.SelectObject(&LFGetApp()->m_DefaultFont);
 	dc.DrawText(Hint, rectText, DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 	dc.SelectObject(pOldFont);

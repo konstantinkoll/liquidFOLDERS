@@ -17,7 +17,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
-	BOOL Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID, CWnd* pParentWnd, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons=NULL, INT IconSize=0, INT IconID=-1);
 	void SetIconID(INT IconID, INT OverlayID=-1);
 	INT GetPreferredWidth();
 

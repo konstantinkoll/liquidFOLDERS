@@ -3,19 +3,18 @@
 //
 
 #pragma once
-#include "LFApplication.h"
 #include "LFTooltip.h"
 
 
 // CExplorerTree
 //
 
-#define CETR_Desktop            _T("")
-#define CETR_AllVolumes         _T("::VOLALL")
-#define CETR_InternalVolumes    _T("::VOLINTERNAL")
-#define CETR_ExternalVolumes    _T("::VOLEXTERNAL")
+#define CETR_Desktop             _T("")
+#define CETR_AllVolumes          _T("::VOLALL")
+#define CETR_InternalVolumes     _T("::VOLINTERNAL")
+#define CETR_ExternalVolumes     _T("::VOLEXTERNAL")
 
-#define WM_SHELLCHANGE         WM_USER+1
+#define WM_SHELLCHANGE           WM_USER+1
 
 struct ExplorerTreeItemData
 {
@@ -38,16 +37,7 @@ public:
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
 
 protected:
-	LFApplication* p_App;
-	LFTooltip m_TooltipCtrl;
-	IContextMenu2* m_pContextMenu2;
-	BOOL m_OnlyFilesystem;
-	BOOL m_Hover;
-	BOOL m_ExplorerStyle;
-	HTREEITEM m_HoverItem;
-	CString m_RootPath;
-
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT Message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	CString OnGetItemText(ExplorerTreeItemData* pItem);
@@ -77,6 +67,14 @@ protected:
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+	LFTooltip m_TooltipCtrl;
+	IContextMenu2* m_pContextMenu2;
+	BOOL m_OnlyFilesystem;
+	BOOL m_Hover;
+	BOOL m_ExplorerStyle;
+	HTREEITEM m_HoverItem;
+	CString m_RootPath;
 
 private:
 	ULONG m_ulSHChangeNotifyRegister;

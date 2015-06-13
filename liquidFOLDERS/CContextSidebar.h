@@ -26,11 +26,11 @@ public:
 	void SetSelection(UINT CmdID, CHAR* StoreID);
 
 protected:
-	CHAR m_StoreID[LFKeySize];
-	LFStatistics* m_pStatistics;
-
 	afx_msg void OnUpdateNumbers();
 	DECLARE_MESSAGE_MAP()
+
+	CHAR m_StoreID[LFKeySize];
+	LFStatistics* m_pStatistics;
 
 private:
 	UINT m_ThreadID;

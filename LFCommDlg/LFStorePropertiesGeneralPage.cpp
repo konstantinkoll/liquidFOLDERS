@@ -3,8 +3,8 @@
 //
 
 #include "stdafx.h"
+#include "LFCommDlg.h"
 #include "LFStorePropertiesGeneralPage.h"
-#include "Resource.h"
 
 
 // LFStorePropertiesGeneralPage

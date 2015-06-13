@@ -3,22 +3,17 @@
 //
 
 #include "stdafx.h"
-#include "CConditionList.h"
-#include "LFCore.h"
 #include "LFCommDlg.h"
-#include "resource.h"
 
 
 // CConditionList
 //
 
-extern INT GetAttributeIconIndex(UINT Attr);
 static UINT puColumns[] = { 1, 2 };
 
 CConditionList::CConditionList()
 	: CListCtrl()
 {
-	p_App = LFGetApp();
 	hTheme = NULL;
 	m_BackgroundMenuID = 0;
 	m_LastWidth = -1;
@@ -41,16 +36,16 @@ void CConditionList::Init()
 	ModifyStyle(0, LVS_SHAREIMAGELISTS);
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	if ((LFGetApp()->m_ThemeLibLoaded) && (LFGetApp()->OSVersion>=OS_Vista))
 	{
-		p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		LFGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+		hTheme = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	m_AttributeIcons16.Create(IDB_ATTRIBUTEICONS_16);
-	m_AttributeIcons32.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
-
 	SetImageList(&m_AttributeIcons16, LVSIL_SMALL);
+
+	m_AttributeIcons32.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
 	SetImageList(&m_AttributeIcons32, LVSIL_NORMAL);
 
 	LV_COLUMN lvc;
@@ -78,13 +73,15 @@ BOOL CConditionList::SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT
 	if (cx<m_LastWidth)
 	{
 		SetTileSize(cx);
+
 		return CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
 	}
 	else
 	{
-		BOOL res = CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
+		BOOL Result = CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
 		SetTileSize(cx);
-		return res;
+
+		return Result;
 	}
 }
 
@@ -107,7 +104,7 @@ void CConditionList::SetTileSize(INT cx)
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = (IsGroupViewEnabled() && (p_App->OSVersion==OS_XP)) ? cx-16 : cx;
+	tvi.sizeTile.cx = (IsGroupViewEnabled() && (LFGetApp()->OSVersion==OS_XP)) ? cx-16 : cx;
 	SetTileViewInfo(&tvi);
 }
 
@@ -118,20 +115,23 @@ void CConditionList::ConditionToItem(LFFilterCondition* c, LVITEM& lvi)
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
 	lvi.cColumns = 2;
 	lvi.puColumns = puColumns;
-	lvi.pszText = p_App->m_Attributes[c->AttrData.Attr].Name;
+	lvi.pszText = LFGetApp()->m_Attributes[c->AttrData.Attr].Name;
 	lvi.iImage = GetAttributeIconIndex(c->AttrData.Attr);
 }
 
 void CConditionList::FinishItem(INT nItem, LFFilterCondition* c)
 {
-	WCHAR tmpStr[512];
 	ASSERT(c->Compare<LFFilterCompareCount);
+
+	WCHAR tmpStr[512];
 	wcscpy_s(tmpStr, 512, m_Compare[c->Compare]);
+
 	if (c->Compare)
 	{
 		wcscat_s(tmpStr, 512, L" ");
 		LFVariantDataToString(&c->AttrData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
 	}
+
 	SetItemText(nItem, 1, tmpStr);
 }
 
@@ -181,19 +181,19 @@ INT CConditionList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CConditionList::OnDestroy()
 {
 	if (hTheme)
-		p_App->zCloseThemeData(hTheme);
+		LFGetApp()->zCloseThemeData(hTheme);
 
 	CListCtrl::OnDestroy();
 }
 
 LRESULT CConditionList::OnThemeChanged()
 {
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	if ((LFGetApp()->m_ThemeLibLoaded) && (LFGetApp()->OSVersion>=OS_Vista))
 	{
 		if (hTheme)
-			p_App->zCloseThemeData(hTheme);
+			LFGetApp()->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hTheme = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	return TRUE;

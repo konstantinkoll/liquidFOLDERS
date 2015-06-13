@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CImageListTransparent.h"
-#include "LFApplication.h"
 #include "LFDialog.h"
 
 
@@ -17,18 +16,16 @@ public:
 	LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd=NULL);
 
 protected:
-	LFApplication* p_App;
+	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
 
-	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
-
-	void PrepareListCtrl(CListCtrl* li, BOOL check);
-	void PrepareListCtrl(INT nID, BOOL check);
-	void FinalizeListCtrl(CListCtrl* li, INT focus=-1, BOOL sort=TRUE);
-	void FinalizeListCtrl(UINT nID, INT focus=-1, BOOL sort=TRUE);
-	void AddAttribute(CListCtrl* li, UINT attr);
-	void AddAttribute(UINT nID, UINT attr);
-	void PopulateListCtrl(CListCtrl* li, BOOL check, INT focus=-1, BOOL sort=TRUE);
-	void PopulateListCtrl(INT nID, BOOL check, INT focus=-1, BOOL sort=TRUE);
+	void PrepareListCtrl(CListCtrl* li, BOOL Check);
+	void PrepareListCtrl(INT nID, BOOL Check);
+	void FinalizeListCtrl(CListCtrl* li, INT Focus=-1, BOOL Sort=TRUE);
+	void FinalizeListCtrl(UINT nID, INT Focus=-1, BOOL Sort=TRUE);
+	void AddAttribute(CListCtrl* li, UINT Attr);
+	void AddAttribute(UINT nID, UINT Attr);
+	void PopulateListCtrl(CListCtrl* li, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
+	void PopulateListCtrl(INT nID, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
 
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()

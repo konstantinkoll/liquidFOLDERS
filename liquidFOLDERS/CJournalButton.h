@@ -28,21 +28,11 @@ class CJournalButton : public CWnd
 public:
 	CJournalButton();
 
-	BOOL Create(UINT SuggestedHeight, CGlassWindow* pParentWnd, UINT nID);
+	BOOL Create(CGlassWindow* pParentWnd, UINT nID, UINT SuggestedHeight);
 	UINT GetPreferredHeight();
 	UINT GetPreferredWidth();
 
 protected:
-	BOOL m_IsLarge;
-	BOOL m_CmdEnabled[2];
-	INT m_Hover;
-	INT m_Pressed;
-	CGdiPlusBitmapResource m_Frame;
-	CGdiPlusBitmapResource m_Normal;
-	CGdiPlusBitmapResource m_Hot;
-	CGdiPlusBitmapResource m_Pushed;
-	CGdiPlusBitmapResource m_Disabled;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -54,6 +44,16 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnIdleUpdateCmdUI();
 	DECLARE_MESSAGE_MAP()
+
+	BOOL m_IsLarge;
+	BOOL m_CmdEnabled[2];
+	INT m_Hover;
+	INT m_Pressed;
+	CGdiPlusBitmapResource m_Frame;
+	CGdiPlusBitmapResource m_Normal;
+	CGdiPlusBitmapResource m_Hot;
+	CGdiPlusBitmapResource m_Pushed;
+	CGdiPlusBitmapResource m_Disabled;
 
 private:
 	UINT m_ButtonHeight;

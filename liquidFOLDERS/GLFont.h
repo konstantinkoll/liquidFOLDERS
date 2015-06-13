@@ -14,8 +14,8 @@ public:
 	GLFont();
 	~GLFont();
 
-	BOOL Create(CString face, UINT size, BOOL bold, BOOL italic);
-	BOOL Create(CFont* font);
+	BOOL Create(CString Face, UINT Size, BOOL Bold, BOOL Italic);
+	BOOL Create(CFont* Font);
 	UINT Render(CHAR* pStr, INT x, INT y, INT cCount=-1);
 	UINT Render(WCHAR* pStr, INT x, INT y, INT cCount=-1);
 	UINT GetTextWidth(CHAR* pStr, INT cCount=-1);
@@ -33,11 +33,11 @@ private:
 	UINT m_TexSize;
 	UINT m_TexID;
 
-	enum PaintResult
+	enum PAINTRESULT
 	{
 		Fail,
 		MoreData,
 		Success
 	};
-	PaintResult PaintAlphabet(HDC hDC, BOOL bMeasureOnly=FALSE);
+	PAINTRESULT PaintAlphabet(HDC hDC, BOOL bMeasureOnly=FALSE);
 };

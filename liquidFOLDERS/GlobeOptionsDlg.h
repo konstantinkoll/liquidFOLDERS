@@ -12,17 +12,17 @@
 class GlobeOptionsDlg : public LFDialog
 {
 public:
-	GlobeOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context);
+	GlobeOptionsDlg(LFViewParameters* View, UINT Context, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
-	LFViewParameters* p_View;
-	UINT m_Context;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnViewport();
 	DECLARE_MESSAGE_MAP()
+
+	LFViewParameters* p_View;
+	UINT m_Context;
 
 private:
 	CComboBox m_wndTextureSize;

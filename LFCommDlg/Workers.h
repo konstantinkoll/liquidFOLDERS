@@ -1,5 +1,5 @@
 
-// Works.h: Schnittstelle für Methoden zum Threading
+// Workers.h: Schnittstelle für Methoden zum Threading
 //
 
 struct WorkerParameters

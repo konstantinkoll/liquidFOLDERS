@@ -2,21 +2,19 @@
 // LFItemTemplateDlg.cpp: Implementierung der Klasse LFItemTemplateDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFCommDlg.h"
-#include "Resource.h"
 
 
 // LFItemTemplateDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
-LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* StoreID, BOOL AllowChooseStore, LFFilter* pFilter)
+LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* StoreID, CWnd* pParentWnd, BOOL AllowChooseStore, LFFilter* pFilter)
 	: LFDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
+	ASSERT(StoreID);
+
 	m_pItem = pItem;
-	p_App = LFGetApp();
 	strcpy_s(m_StoreID, LFKeySize, StoreID);
 	m_AllowChooseStore = AllowChooseStore;
 	m_SortAlphabetic = FALSE;
@@ -66,7 +64,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 			if (pCondition->Compare==LFFilterCompareSubfolder)
 			{
 				UINT Attr = pCondition->AttrData.Attr;
-				if ((!p_App->m_Attributes[Attr].ReadOnly) && (Attr!=LFAttrFileName))
+				if ((!LFGetApp()->m_Attributes[Attr].ReadOnly) && (Attr!=LFAttrFileName))
 				{
 					ASSERT(m_AttributeValues[Attr].Type==pCondition->AttrData.Type);
 					m_AttributeValues[Attr] = pCondition->AttrData;
@@ -162,8 +160,7 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 		CHeaderButton* pButton = m_wndHeaderArea.AddButton();
 		pButton->SetDlgCtrlID(IDC_CHOOSESTORE);
 
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDC_CHOOSESTORE));
+		CString tmpStr((LPCSTR)IDC_CHOOSESTORE);
 		pButton->SetValue(tmpStr, FALSE);
 	}
 
@@ -176,7 +173,7 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a].ReadOnly, (!p_App->m_Attributes[a].ReadOnly) && (a!=LFAttrFileName));
+		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !LFGetApp()->m_Attributes[a].ReadOnly, (!LFGetApp()->m_Attributes[a].ReadOnly) && (a!=LFAttrFileName));
 
 	AdjustLayout();
 	AddBottomRightControl(IDC_SKIP);
@@ -274,7 +271,7 @@ LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		{
 			WCHAR Buffer[256];
 			LFTimeToString(store.CreationTime, Buffer, 256);
-			tmpStr = p_App->m_Attributes[LFAttrCreationTime].Name;
+			tmpStr = LFGetApp()->m_Attributes[LFAttrCreationTime].Name;
 			tmpStr += _T(": ");
 			tmpStr += Buffer;
 		}

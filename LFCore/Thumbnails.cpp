@@ -7,15 +7,16 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
+extern OSVERSIONINFO osInfo;
 
 
-LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i)
+LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i)
 {
 	static SIZE sz = { 118, 118 };
 	return LFGetThumbnail(i, sz);
 }
 
-LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
+LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 {
 	if ((i->Type & LFTypeMask)!=LFTypeFile)
 		return NULL;
@@ -37,11 +38,6 @@ LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 			LPCITEMIDLIST pidlRel = NULL;
 			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 			{
-				OSVERSIONINFO osInfo;
-				ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-				osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-				GetVersionEx(&osInfo);
-
 				// IThumbnailProvider
 				if (osInfo.dwMajorVersion>=6)
 				{
