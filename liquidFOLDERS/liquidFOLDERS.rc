@@ -74,8 +74,8 @@ IDB_SOURCEICONS         BITMAP                  "res\\SourceIcons.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,8,0
- PRODUCTVERSION 1,7,8,0
+ FILEVERSION 1,8,0,0
+ PRODUCTVERSION 1,8,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -91,14 +91,14 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileDescription", "StoreManager"
-            VALUE "FileVersion", "1.7.8"
-            VALUE "InternalName", "StoreManager"
+            VALUE "FileDescription", "liquidFOLDERS"
+            VALUE "FileVersion", "1.8.0"
+            VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2015 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
-            VALUE "OriginalFilename", "StoreManager.exe"
+            VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.7.8"
+            VALUE "ProductVersion", "1.8.0"
         END
     END
     BLOCK "VarFileInfo"
