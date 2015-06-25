@@ -862,7 +862,7 @@ LFCORE_API LFStatistics* LFQueryStatistics(char* StoreID)
 
 				if (slot)
 				{
-					for (unsigned int b=0; b<min(LFLastQueryContext, 32); b++)
+					for (unsigned int b=0; b<=min(LFLastQueryContext, 31); b++)
 					{
 						stat->FileCount[b] += slot->FileCount[b];
 						stat->FileSize[b] += slot->FileSize[b];
