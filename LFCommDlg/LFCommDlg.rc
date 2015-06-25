@@ -94,7 +94,7 @@ IDI_RESET_HOT           ICON                    "res\\Reset_Hot_Tiny.ico"
 IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed_Tiny.ico"
 IDI_SEARCH              ICON                    "res\\Search.ico"
 IDI_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
-IDI_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
+IDD_CREATESTORE         ICON                    "res\\CreateStore_Tiny.ico"
 32513                   ICON                    "res\\Error.ico"
 32516                   ICON                    "res\\Info.ico"
 32515                   ICON                    "res\\Warning.ico"
@@ -200,6 +200,17 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
+        MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_VOLUME_PROPERTIES
     END
 END
 
@@ -456,30 +467,6 @@ BEGIN
     LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
 END
 
-IDD_STORENEW_GENERAL DIALOGEX 0, 0, 310, 63
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Allgemein"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,40,35
-    LTEXT           "Name:",-1,45,5,50,8
-    EDITTEXT        IDC_STORENAME,100,3,208,14,ES_AUTOHSCROLL
-    LTEXT           "Kommentar:",-1,45,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,100,23,208,14,ES_AUTOHSCROLL
-    CONTROL         "",-1,"Static",SS_ETCHEDHORZ,2,44,308,1
-    CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,49,305,10
-END
-
-IDD_STORENEW_PATH DIALOGEX 0, 0, 310, 310
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Speicherort"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "&Automatisch wählen",IDC_AUTOPATH,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,4,304,10
-    CONTROL         "",IDC_PATHTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_DISABLED | WS_BORDER | WS_HSCROLL | WS_GROUP | WS_TABSTOP,3,29,304,277
-    LTEXT           "Pfad:",IDC_STATIC,3,19,304,8
-END
-
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update verfügbar"
@@ -584,6 +571,26 @@ BEGIN
     EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,293,161,50,14,WS_GROUP
+END
+
+IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Neuen liquidFOLDERS-Store erstellen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Allgemein",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,24,40,35
+    LTEXT           "Name:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
+    LTEXT           "Kommentar:",IDC_STATIC,49,46,50,8
+    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    CONTROL         "Speicherort",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
+    CONTROL         "&Automatisch wählen",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
+    CONTROL         "Auf diesem &Laufwerk speichern:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10
+    CONTROL         "",IDC_VOLUMELIST,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,112,276,61
+    CONTROL         "Offline &durchsuchbar machen",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
+    DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,233,204,50,14,WS_GROUP
 END
 
 
@@ -704,22 +711,6 @@ BEGIN
         BOTTOMMARGIN, 63
     END
 
-    IDD_STORENEW_GENERAL, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 60
-    END
-
-    IDD_STORENEW_PATH, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 307
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 306
-    END
-
     IDD_UPDATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -774,6 +765,14 @@ BEGIN
         RIGHTMARGIN, 343
         TOPMARGIN, 7
         BOTTOMMARGIN, 175
+    END
+
+    IDD_CREATESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 283
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -838,15 +837,16 @@ BEGIN
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
-    IDS_STORENEW            "Neuen Store anlegen"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen?"
     IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
+    IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
+    IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
+    IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
 END
 
@@ -950,6 +950,17 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Añadir condición...",        IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
+        MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
     END
 END
 
@@ -1207,31 +1218,6 @@ BEGIN
     PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,110,14
 END
 
-IDD_STORENEW_GENERAL DIALOGEX 0, 0, 310, 63
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Geral"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,40,35
-    LTEXT           "Nombre:",-1,45,5,50,8
-    EDITTEXT        IDC_STORENAME,100,3,208,14,ES_AUTOHSCROLL
-    LTEXT           "Comentarios:",-1,45,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,100,23,208,14,ES_AUTOHSCROLL
-    CONTROL         "",-1,"Static",SS_ETCHEDHORZ,2,44,308,1
-    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,49,305,10
-END
-
-IDD_STORENEW_PATH DIALOGEX 0, 0, 310, 310
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Ubicación"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "Elegir &automaticamente",IDC_AUTOPATH,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,4,304,10
-    CONTROL         "",IDC_PATHTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_DISABLED | WS_BORDER | WS_HSCROLL | WS_GROUP | WS_TABSTOP,3,29,304,277
-    LTEXT           "Camino:",IDC_STATIC,3,19,304,8
-END
-
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Actualización disponible"
@@ -1336,6 +1322,27 @@ BEGIN
     EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,293,161,50,14,WS_GROUP
+END
+
+IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Crear un nuevo store de liquidFOLDERS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Geral",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,24,40,35
+    LTEXT           "Nombre:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
+    LTEXT           "Comentarios:",IDC_STATIC,49,46,50,8
+    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    CONTROL         "Ubicación",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
+    CONTROL         "Elegir &automaticamente",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
+    CONTROL         "Guardar en &unidad:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10
+    CONTROL         "",IDC_VOLUMELIST,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,112,276,61
+    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
+                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
+    DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,233,204,50,14,WS_GROUP
 END
 
 
@@ -1461,22 +1468,6 @@ BEGIN
         BOTTOMMARGIN, 162
     END
 
-    IDD_STORENEW_GENERAL, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 60
-    END
-
-    IDD_STORENEW_PATH, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 307
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 306
-    END
-
     IDD_UPDATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1531,6 +1522,14 @@ BEGIN
         RIGHTMARGIN, 343
         TOPMARGIN, 7
         BOTTOMMARGIN, 175
+    END
+
+    IDD_CREATESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 283
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1595,15 +1594,16 @@ BEGIN
     IDS_AIRPORT_CODE        "Código"
     IDS_AIRPORT_LOCATION    "Ubicación"
     IDS_STOREPROPERTIES     "Propiedades de «%s»"
-    IDS_STORENEW            "Crear nuevo store"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
     IDS_DELETESTORE_CAPTION "Eliminar store «%s»"
+    IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
+    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
+    IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
 END
 
@@ -1707,6 +1707,17 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
+        MENUITEM "&Éjecter",                    IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
     END
 END
 
@@ -1920,7 +1931,7 @@ CAPTION "Général"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,60,35
-    LTEXT           "Nom du store:",IDC_STATIC,75,5,50,8
+    LTEXT           "Nom:",IDC_STATIC,75,5,50,8
     EDITTEXT        IDC_STORENAME,130,3,178,14,ES_AUTOHSCROLL
     LTEXT           "Commentaire:",IDC_STATIC,75,25,50,8
     EDITTEXT        IDC_STORECOMMENT,130,23,178,14,ES_AUTOHSCROLL
@@ -1975,30 +1986,6 @@ BEGIN
     CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Sauvegarde les &paramètres",IDC_RUNBACKUP,39,140,130,14
-END
-
-IDD_STORENEW_GENERAL DIALOGEX 0, 0, 310, 63
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Général"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,40,35
-    LTEXT           "Nom du store:",-1,45,5,50,8
-    EDITTEXT        IDC_STORENAME,100,3,208,14,ES_AUTOHSCROLL
-    LTEXT           "Commentaire:",-1,45,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,100,23,208,14,ES_AUTOHSCROLL
-    CONTROL         "",-1,"Static",SS_ETCHEDHORZ,2,44,308,1
-    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,49,305,10
-END
-
-IDD_STORENEW_PATH DIALOGEX 0, 0, 310, 310
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Endroit"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "Choisissez &automatiquement",IDC_AUTOPATH,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,4,304,10
-    CONTROL         "",IDC_PATHTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_DISABLED | WS_BORDER | WS_HSCROLL | WS_GROUP | WS_TABSTOP,3,29,304,277
-    LTEXT           "Sentier:",IDC_STATIC,3,19,304,8
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
@@ -2092,6 +2079,26 @@ BEGIN
     CONTROL         "",IDC_PROPERTY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,96,243,186,13
     DEFPUSHBUTTON   "OK",IDOK,174,275,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,232,275,50,14,WS_GROUP
+END
+
+IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Créer un store nouveau de liquidFOLDERS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Général",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,24,40,35
+    LTEXT           "Nom:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
+    LTEXT           "Commentaire:",IDC_STATIC,49,46,50,8
+    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    CONTROL         "Endroit",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
+    CONTROL         "Choisissez &automatiquement",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
+    CONTROL         "Sauvegarder en &lecteur:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10
+    CONTROL         "",IDC_VOLUMELIST,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,112,276,61
+    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
+    DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,233,204,50,14,WS_GROUP
 END
 
 
@@ -2220,22 +2227,6 @@ BEGIN
         BOTTOMMARGIN, 162
     END
 
-    IDD_STORENEW_GENERAL, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 60
-    END
-
-    IDD_STORENEW_PATH, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 307
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 306
-    END
-
     IDD_UPDATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -2282,6 +2273,14 @@ BEGIN
         RIGHTMARGIN, 282
         TOPMARGIN, 7
         BOTTOMMARGIN, 289
+    END
+
+    IDD_CREATESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 283
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -2346,15 +2345,16 @@ BEGIN
     IDS_AIRPORT_CODE        "Code"
     IDS_AIRPORT_LOCATION    "Endroit"
     IDS_STOREPROPERTIES     "Qualités de «%s»"
-    IDS_STORENEW            "Créez un store nouveau"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété?"
     IDS_DELETESTORE_CAPTION "Effacez le store «%s»"
+    IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
+    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
+    IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
 END
 
@@ -2508,6 +2508,17 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
+        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "P&roperties",                 IDM_VOLUME_PROPERTIES
     END
 END
 
@@ -2765,31 +2776,6 @@ BEGIN
     PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,140,80,14
 END
 
-IDD_STORENEW_GENERAL DIALOGEX 0, 0, 310, 63
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "General"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,40,35
-    LTEXT           "Name:",-1,45,5,50,8
-    EDITTEXT        IDC_STORENAME,100,3,208,14,ES_AUTOHSCROLL
-    LTEXT           "Comments:",-1,45,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,100,23,208,14,ES_AUTOHSCROLL
-    CONTROL         "",-1,"Static",SS_ETCHEDHORZ,2,44,308,1
-    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,49,305,10
-END
-
-IDD_STORENEW_PATH DIALOGEX 0, 0, 310, 310
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Location"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "Choose &automatically",IDC_AUTOPATH,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,4,304,10
-    CONTROL         "",IDC_PATHTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_DISABLED | WS_BORDER | WS_HSCROLL | WS_GROUP | WS_TABSTOP,3,29,304,277
-    LTEXT           "Path:",IDC_STATIC,3,19,304,8
-END
-
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update available"
@@ -2894,6 +2880,27 @@ BEGIN
     EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,293,161,50,14,WS_GROUP
+END
+
+IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create a new liquidFOLDERS store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "General",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,24,40,35
+    LTEXT           "Name:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
+    LTEXT           "Comments:",IDC_STATIC,49,46,50,8
+    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    CONTROL         "Location",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
+    CONTROL         "Choose &automatically",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
+    CONTROL         "Keep on this &volume:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10
+    CONTROL         "",IDC_VOLUMELIST,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,112,276,61
+    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
+                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
+    DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,233,204,50,14,WS_GROUP
 END
 
 
@@ -3019,22 +3026,6 @@ BEGIN
         BOTTOMMARGIN, 162
     END
 
-    IDD_STORENEW_GENERAL, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 60
-    END
-
-    IDD_STORENEW_PATH, DIALOG
-    BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 307
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 306
-    END
-
     IDD_UPDATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -3081,6 +3072,14 @@ BEGIN
         RIGHTMARGIN, 343
         TOPMARGIN, 7
         BOTTOMMARGIN, 175
+    END
+
+    IDD_CREATESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 283
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -3145,15 +3144,16 @@ BEGIN
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
     IDS_STOREPROPERTIES     "Properties of “%s”"
-    IDS_STORENEW            "Create new store"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property?"
     IDS_DELETESTORE_CAPTION "Delete store “%s”"
+    IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
+    IDS_FORMAT_CAPTION      "You cannot format volume %c:"
+    IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
 END
 

@@ -53,7 +53,6 @@
 #define IDI_RESET_PRESSED               20202
 #define IDI_SEARCH                      20203
 #define IDI_STOREPROPERTIES             20204
-#define IDI_STORENEW                    20205
 #define IDS_PURCHASEURL                 20300
 #define IDS_UPDATEURL                   20301
 #define IDS_ABOUTURL                    20302
@@ -86,12 +85,13 @@
 #define IDS_AIRPORT_CODE                20329
 #define IDS_AIRPORT_LOCATION            20330
 #define IDS_STOREPROPERTIES             20331
-#define IDS_STORENEW                    20332
-#define IDS_DELETEPROPERTY_CAPTION      20333
-#define IDS_DELETEPROPERTY_MSG          20334
-#define IDS_DELETESTORE_CAPTION         20335
-#define IDS_DELETESTORE_MSG             20336
-#define IDS_ILLEGALYEAR                 20337
+#define IDS_DELETEPROPERTY_CAPTION      20332
+#define IDS_DELETEPROPERTY_MSG          20333
+#define IDS_DELETESTORE_CAPTION         20334
+#define IDS_DELETESTORE_MSG             20335
+#define IDS_FORMAT_CAPTION              20336
+#define IDS_FORMAT_MSG                  20337
+#define IDS_ILLEGALYEAR                 20338
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401
@@ -239,11 +239,14 @@
 #define IDC_IDXPATHAUXCAPTION           22744
 #define IDC_IDXPATHAUX                  22745
 #define IDC_IDXVERSION                  22746
-#define IDD_STORENEW_LOCAL              22800
-#define IDD_STORENEW_GENERAL            22810
-#define IDD_STORENEW_PATH               22820
-#define IDC_AUTOPATH                    22821
-#define IDC_PATHTREE                    22822
+#define IDD_CREATESTORE                 22800
+#define IDC_AUTOPATH                    22801
+#define IDC_VOLUMEPATH                  22802
+#define IDC_VOLUMELIST                  22803
+#define IDM_VOLUME                      22880
+#define IDM_VOLUME_FORMAT               22881
+#define IDM_VOLUME_EJECT                22882
+#define IDM_VOLUME_PROPERTIES           22883
 #define IDD_UPDATE                      22900
 #define IDC_IGNOREUPDATE                22901
 #define IDC_HIDE                        22902
@@ -257,7 +260,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2010
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2043
+#define _APS_NEXT_CONTROL_VALUE         2048
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

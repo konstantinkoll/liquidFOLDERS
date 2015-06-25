@@ -88,7 +88,6 @@ protected:
 
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnVolumeAddStore();
 	afx_msg void OnVolumeFormat();
 	afx_msg void OnVolumeEject();
 	afx_msg void OnVolumeProperties();

@@ -150,6 +150,7 @@ public:
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons=FALSE);
+	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR Verb);
 	static void PlayStandardSound();
 	static void PlayNavigateSound();
 	static void PlayWarningSound();

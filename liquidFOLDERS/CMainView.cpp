@@ -1435,21 +1435,7 @@ void CMainView::OnVolumeFormat()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-	{
-		CHAR cVolume = p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0];
-		if (LFStoresOnVolume(cVolume))
-		{
-			CString Caption;
-			Caption.Format(IDS_FORMAT_CAPTION, p_CookedFiles->m_Items[Index]->CoreAttributes.FileName);
-			CString text((LPCSTR)IDS_FORMAT_TEXT);
-
-			MessageBox(text, Caption, MB_ICONWARNING);
-		}
-		else
-		{
-			theApp.ExecuteExplorerContextMenu(cVolume, "format");
-		}
-	}
+		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0], "format");
 }
 
 void CMainView::OnVolumeEject()

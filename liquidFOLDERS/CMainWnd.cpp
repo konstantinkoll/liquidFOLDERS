@@ -292,7 +292,7 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 			m_wndMainView.GetPersistentData(Data);
 
 			if ((f->Options.IsPersistent || (f->Mode==LFFilterModeSearch)) && (!f->Options.IsSubfolder))
-				while ((m_BreadcrumbBack!=NULL) && (m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || (m_pActiveFilter->Mode==LFFilterModeSearch)) : false)
+				while ((m_BreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || (m_pActiveFilter->Mode==LFFilterModeSearch)) : FALSE))
 				{
 					LFFreeFilter(m_pActiveFilter);
 					ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
@@ -569,9 +569,8 @@ FilterFromScratch:
 	else
 		if (m_pActiveFilter)
 		{
-			while (m_pActiveFilter ? m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder : false)
+			while ((m_BreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder) : FALSE))
 			{
-				ASSERT(m_BreadcrumbBack);
 				LFFreeFilter(m_pActiveFilter);
 
 				FVPersistentData Data;
@@ -586,7 +585,7 @@ FilterFromScratch:
 			if (f->StoreID[0]=='\0')
 				f->OriginalName[0] = L'\0';
 
-			NavigateTo(f, NAVMODE_RELOAD);
+			NavigateTo(f, m_BreadcrumbBack ? NAVMODE_RELOAD : NAVMODE_NORMAL);
 		}
 
 	// Slide the filter pane away

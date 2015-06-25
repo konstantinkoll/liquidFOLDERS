@@ -465,6 +465,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFCreateStoreDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFDeleteStoreDlg.cpp"
 				>
 			</File>
@@ -530,18 +534,6 @@
 			</File>
 			<File
 				RelativePath=".\LFStoreMaintenanceDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStoreNewDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStoreNewGeneralPage.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStoreNewPathPage.cpp"
 				>
 			</File>
 			<File
@@ -747,6 +739,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFCreateStoreDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFDeleteStoreDlg.h"
 				>
 			</File>
@@ -815,18 +811,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStoreNewGeneralPage.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStoreNewPathPage.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LFStorePropertiesDlg.h"
 				>
 			</File>
@@ -890,6 +874,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Clipboard_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\CreateStore_Tiny.ico"
 				>
 			</File>
 			<File
@@ -1130,10 +1118,6 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreMaintenance_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\StoreNew_Tiny.ico"
 				>
 			</File>
 			<File

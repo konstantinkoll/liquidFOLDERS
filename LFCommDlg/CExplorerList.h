@@ -21,7 +21,7 @@ public:
 	void AddColumn(INT ID, CString Name);
 	void AddColumn(INT ID, UINT Attr);
 	void AddStoreColumns();
-	void SetSearchResult(LFSearchResult* Result);
+	void SetSearchResult(LFSearchResult* pResult);
 	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
 
 protected:

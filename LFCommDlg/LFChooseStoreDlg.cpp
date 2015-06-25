@@ -95,21 +95,12 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
 	m_wndHeaderArea.SetText(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, FALSE);
 
-	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS;
 	CRect rect;
 	rect.SetRectEmpty();
-	m_wndExplorerList.Create(dwStyle, rect, this, IDC_STORELIST);
+	m_wndExplorerList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS | LVS_SINGLESEL, rect, this, IDC_STORELIST);
 
 	m_wndExplorerList.SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&LFGetApp()->m_CoreImageListLarge, LVSIL_NORMAL);
-
-	IMAGEINFO ii;
-	LFGetApp()->m_CoreImageListLarge.GetImageInfo(0, &ii);
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_DefaultFont);
-	m_wndExplorerList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	m_wndExplorerList.SetImageList(&LFGetApp()->m_CoreImageListExtraLarge, LVSIL_NORMAL);
 
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();

@@ -602,6 +602,61 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* 
 }
 
 
+void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
+{
+	// Sicherheitsprüfung
+	if (strcmp(Verb, "format")==0)
+		if (LFStoresOnVolume(cVolume))
+		{
+			CString Caption;
+			Caption.Format(IDS_FORMAT_CAPTION, cVolume);
+			CString text((LPCSTR)IDS_FORMAT_MSG);
+
+			MessageBox(m_pMainWnd->GetSafeHwnd(), text, Caption, MB_ICONWARNING);
+
+			return;
+		}
+
+	// Ausführen
+	WCHAR Path[4] = L" :\\";
+	Path[0] = cVolume;
+
+	LPITEMIDLIST pidlFQ = SHSimpleIDListFromPath(Path);
+	LPCITEMIDLIST pidlRel = NULL;
+
+	IShellFolder* pParentFolder = NULL;
+	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+		return;
+
+	IContextMenu* pcm = NULL;
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(m_pMainWnd->GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	{
+		HMENU hPopup = CreatePopupMenu();
+		if (hPopup)
+		{
+			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
+			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+			{
+				CWaitCursor csr;
+
+				CMINVOKECOMMANDINFO cmi;
+				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+				cmi.fMask = 0;
+				cmi.hwnd = m_pMainWnd->GetSafeHwnd();
+				cmi.lpVerb = Verb;
+				cmi.lpParameters = NULL;
+				cmi.lpDirectory = NULL;
+				cmi.nShow = SW_SHOWNORMAL;
+				cmi.dwHotKey = 0;
+				cmi.hIcon = NULL;
+
+				pcm->InvokeCommand(&cmi);
+			}
+		}
+	}
+}
+
+
 void LFApplication::PlayStandardSound()
 {
 	PlayRegSound(_T("Apps\\.Default\\.Default"));

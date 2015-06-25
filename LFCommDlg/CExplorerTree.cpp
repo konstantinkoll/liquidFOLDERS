@@ -234,37 +234,10 @@ void CExplorerTree::PopulateTree()
 		hItem = InsertItem(pidl, LFGetApp()->GetShellManager()->CopyItem(pidl));
 	}
 	else
-		if ((m_RootPath==CETR_AllVolumes) || (m_RootPath==CETR_InternalVolumes) || (m_RootPath==CETR_ExternalVolumes))
-		{
-			DWORD DrivesOnSystem = LFGetLogicalVolumes(m_RootPath==CETR_AllVolumes ? LFGLV_Both : m_RootPath==CETR_InternalVolumes ? LFGLV_Internal | LFGLV_Network : LFGLV_External);
-			WCHAR szDriveRoot[] = L" :\\";
-			BOOL First = TRUE;
-
-			for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
-			{
-				if ((DrivesOnSystem & 1)==0)
-					continue;
-
-				szDriveRoot[0] = cDrive;
-
-				SHFILEINFO sfi;
-				if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
-					if (sfi.dwAttributes)
-					{
-						HTREEITEM hItem = InsertItem(szDriveRoot);
-						if (First)
-						{
-							Select(hItem, TVGN_CARET);
-							First = FALSE;
-						}
-					}
-			}
-		}
-		else
-		{
-			hItem = InsertItem(m_RootPath.GetBuffer());
-			Select(hItem, TVGN_CARET);
-		}
+	{
+		hItem = InsertItem(m_RootPath.GetBuffer());
+		Select(hItem, TVGN_CARET);
+	}
 
 	if ((hItem) && (!(GetStyle() & TVS_LINESATROOT)))
 		Expand(hItem, TVE_EXPAND);
@@ -1070,17 +1043,6 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 	switch (lParam)
 	{
-	case SHCNE_DRIVEADD:
-	case SHCNE_MEDIAINSERTED:
-		if (Path1[0]!='\0')
-			if ((m_RootPath==CETR_AllVolumes) || (m_RootPath==CETR_InternalVolumes) || (m_RootPath==CETR_ExternalVolumes))
-			{
-				DWORD DrivesOnSystem = LFGetLogicalVolumes(m_RootPath==CETR_AllVolumes ? LFGLV_Both : m_RootPath==CETR_InternalVolumes ? LFGLV_Internal | LFGLV_Network : LFGLV_External);
-
-				if (DrivesOnSystem & (1 << (Path1[0]-'A')))
-					InsertItem(Path1);
-			}
-		break;
 	case SHCNE_MKDIR:
 		if ((Path1[0]!='\0') && (Parent1[0]!='\0') && (wcscmp(Path1, Parent1)!=0))
 			if (AddPath(Path1, Parent1))

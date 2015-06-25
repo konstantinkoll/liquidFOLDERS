@@ -664,6 +664,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\StoreCreate_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreCreate_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\StoreDefault_16.png"
 				>
 			</File>
@@ -677,14 +685,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\StoreMaintenance_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreNew_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreNew_32.png"
 				>
 			</File>
 			<File
@@ -898,6 +898,10 @@
 		</File>
 		<File
 			RelativePath=".\Clipboard_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\CreateStore_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1218,10 +1222,6 @@
 		</File>
 		<File
 			RelativePath=".\StoreManager_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\StoreNew_Tiny.ico"
 			>
 		</File>
 		<File

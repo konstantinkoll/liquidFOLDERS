@@ -655,6 +655,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	{
 	case LFTypeVolume:
 		pMenu->LoadMenu(IDM_VOLUME);
+		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 		break;
 	case LFTypeStore:
 		pMenu->LoadMenu(IDM_STORE);

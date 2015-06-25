@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFStoreNewDlg.h"
+#include "LFCreateStoreDlg.h"
 #include <wininet.h>
 
 
@@ -101,7 +101,7 @@ LRESULT LFAddStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 void LFAddStoreDlg::OnBtnLiquidfolders()
 {
-	LFStoreNewDlg dlg(this);
+	LFCreateStoreDlg dlg(this);
 	dlg.DoModal();
 }
 

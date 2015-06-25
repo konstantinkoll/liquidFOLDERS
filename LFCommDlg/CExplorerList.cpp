@@ -46,7 +46,7 @@ void CExplorerList::Init()
 	tvi.cLines = 2;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 14*abs(lf.lfHeight);
+	tvi.sizeTile.cx = 25*abs(lf.lfHeight);
 
 	if ((LFGetApp()->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
 	{
@@ -56,6 +56,10 @@ void CExplorerList::Init()
 	}
 
 	SetTileViewInfo(&tvi);
+
+	IMAGEINFO ii;
+	LFGetApp()->m_SystemImageListExtraLarge.GetImageInfo(0, &ii);
+	SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+2*abs(lf.lfHeight)+4);
 }
 
 void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsible)
@@ -127,19 +131,17 @@ void CExplorerList::AddStoreColumns()
 	AddColumn(LFAttrStoreID, 4);
 }
 
-void CExplorerList::SetSearchResult(LFSearchResult* Result)
+void CExplorerList::SetSearchResult(LFSearchResult* pResult)
 {
 	DeleteAllItems();
 
-	p_Result = Result;
-	if (Result)
+	p_Result = pResult;
+	if (pResult)
 	{
-		LFSortSearchResult(Result, LFAttrFileName, false);
-		LFErrorBox(Result->m_LastError, GetParent()->GetSafeHwnd());
+		LFSortSearchResult(pResult, LFAttrFileName, false);
+		LFErrorBox(pResult->m_LastError, GetParent()->GetSafeHwnd());
 
-		UINT puColumns[2];
-		puColumns[0] = 1;
-		puColumns[1] = 2;
+		static UINT puColumns[2] = { 1, 2 };
 
 		LVITEM lvi;
 		ZeroMemory(&lvi, sizeof(lvi));
@@ -147,23 +149,22 @@ void CExplorerList::SetSearchResult(LFSearchResult* Result)
 		lvi.stateMask = LVIS_CUT | LVIS_OVERLAYMASK;
 		lvi.puColumns = puColumns;
 
-
-		for (UINT a=0; a<Result->m_ItemCount; a++)
+		for (UINT a=0; a<pResult->m_ItemCount; a++)
 		{
 			lvi.iItem = a;
 			lvi.cColumns = 2;
-			lvi.pszText = (LPWSTR)Result->m_Items[a]->CoreAttributes.FileName;
-			lvi.iImage = Result->m_Items[a]->IconID-1;
-			lvi.iGroupId = Result->m_Items[a]->CategoryID;
-			lvi.state = ((Result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (Result->m_Items[a]->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
+			lvi.pszText = (LPWSTR)pResult->m_Items[a]->CoreAttributes.FileName;
+			lvi.iImage = pResult->m_Items[a]->IconID-1;
+			lvi.iGroupId = pResult->m_Items[a]->CategoryID;
+			lvi.state = ((pResult->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (pResult->m_Items[a]->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
 			INT Index = InsertItem(&lvi);
 
 			WCHAR tmpStr[256];
-			SetItemText(Index, 1, Result->m_Items[a]->CoreAttributes.Comment);
-			SetItemText(Index, 2, Result->m_Items[a]->Description);
-			LFAttributeToString(Result->m_Items[a], LFAttrCreationTime, tmpStr, 256);
+			SetItemText(Index, 1, pResult->m_Items[a]->CoreAttributes.Comment);
+			SetItemText(Index, 2, pResult->m_Items[a]->Description);
+			LFAttributeToString(pResult->m_Items[a], LFAttrCreationTime, tmpStr, 256);
 			SetItemText(Index, 3, tmpStr);
-			LFAttributeToString(Result->m_Items[a], LFAttrStoreID, tmpStr, 256);
+			LFAttributeToString(pResult->m_Items[a], LFAttrStoreID, tmpStr, 256);
 			SetItemText(Index, 4, tmpStr);
 		}
 	}

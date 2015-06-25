@@ -9,12 +9,7 @@
 // CExplorerTree
 //
 
-#define CETR_Desktop             _T("")
-#define CETR_AllVolumes          _T("::VOLALL")
-#define CETR_InternalVolumes     _T("::VOLINTERNAL")
-#define CETR_ExternalVolumes     _T("::VOLEXTERNAL")
-
-#define WM_SHELLCHANGE           WM_USER+1
+#define WM_SHELLCHANGE     WM_USER+1
 
 struct ExplorerTreeItemData
 {

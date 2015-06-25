@@ -213,6 +213,7 @@ void LFSearchResult::AddVolumes()
 
 		wchar_t szVolumeRoot[] = L" :\\";
 		szVolumeRoot[0] = cVolume;
+
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
