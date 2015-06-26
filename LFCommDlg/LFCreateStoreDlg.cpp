@@ -105,6 +105,7 @@ BEGIN_MESSAGE_MAP(LFCreateStoreDlg, LFDialog)
 	ON_COMMAND(IDM_VOLUME_PROPERTIES, OnVolumeProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_FORMAT, IDM_VOLUME_PROPERTIES, OnUpdateVolumeCommands)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->VolumesChanged, OnVolumesChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnVolumesChanged)
 END_MESSAGE_MAP()
 
 BOOL LFCreateStoreDlg::OnInitDialog()

@@ -6,6 +6,7 @@
 #include "CGlobeView.h"
 #include "GlobeOptionsDlg.h"
 #include "liquidFOLDERS.h"
+#include <math.h>
 
 
 #define DISTANCE        39.0f

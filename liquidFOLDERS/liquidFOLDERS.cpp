@@ -364,7 +364,7 @@ CWnd* CLiquidFoldersApp::GetFileDrop(CHAR* StoreID)
 
 void CLiquidFoldersApp::OnAppAbout()
 {
-	LFAboutDlg dlg(m_pActiveWnd);
+	LFAboutDlg dlg(m_pActiveWnd ? m_pActiveWnd : CWnd::GetForegroundWindow());
 	dlg.DoModal();
 }
 

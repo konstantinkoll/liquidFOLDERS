@@ -5,6 +5,7 @@
 #pragma once
 #include "stdafx.h"
 #include "GLFont.h"
+#include <math.h>
 
 
 // GLFont
