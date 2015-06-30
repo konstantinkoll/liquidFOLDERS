@@ -67,7 +67,7 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg UINT OnGetDlgCode();
 	afx_msg void OnChange();
-	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
+	afx_msg LRESULT OnPropertyChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnClick();
 	DECLARE_MESSAGE_MAP()
 

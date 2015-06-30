@@ -519,11 +519,11 @@ void CInspectorWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 }
 
-LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
+LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wParam, LPARAM lParam)
 {
-	SHORT Attr1 = LOWORD(wparam);
-	SHORT Attr2 = LOWORD(lparam);
-	SHORT Attr3 = HIWORD(lparam);
+	SHORT Attr1 = LOWORD(wParam);
+	SHORT Attr2 = LOWORD(lParam);
+	SHORT Attr3 = HIWORD(lParam);
 	SHORT AttrIATA = (Attr1==LFAttrLocationIATA) ? Attr1 : (Attr2==LFAttrLocationIATA) ? Attr2 : (Attr3==LFAttrLocationIATA) ? Attr3 : -1;
 
 	LFVariantData* Value1 = (Attr1==-1) ? NULL : &m_AttributeValues[Attr1];

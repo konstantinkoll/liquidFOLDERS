@@ -416,7 +416,7 @@ void CPropertyEdit::OnChange()
 	PostMessage(WM_PROPERTYCHANGED);
 }
 
-LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wparam*/, LPARAM /*lparam*/)
+LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	ASSERT(m_pWndEdit);
 

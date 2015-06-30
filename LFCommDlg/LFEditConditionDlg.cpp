@@ -22,6 +22,7 @@ LFEditConditionDlg::LFEditConditionDlg(CWnd* pParentWnd, CHAR* StoreID, LFFilter
 	else
 	{
 		m_Condition.Compare = LFFilterCompareContains;
+
 		m_Condition.AttrData.Attr = LFAttrFileName;
 		LFGetNullVariantData(&m_Condition.AttrData);
 	}
@@ -42,10 +43,10 @@ void LFEditConditionDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFEditConditionDlg::TestAttribute(UINT Attr, BOOL& add, BOOL& check)
+void LFEditConditionDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	add = (Attr!=LFAttrFileID) && (Attr!=LFAttrStoreID) && (Attr!=LFAttrDescription) && (LFGetApp()->m_Attributes[Attr].Type!=LFTypeFlags);
-	check = FALSE;
+	Add = (Attr!=LFAttrFileID) && (Attr!=LFAttrStoreID) && (Attr!=LFAttrDescription) && (LFGetApp()->m_Attributes[Attr].Type!=LFTypeFlags);
+	Check = FALSE;
 }
 
 
@@ -85,7 +86,7 @@ void LFEditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	}
 }
 
-LRESULT LFEditConditionDlg::OnPropertyChanged(WPARAM /*wparam*/, LPARAM /*lparam*/)
+LRESULT LFEditConditionDlg::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	GetDlgItem(IDOK)->EnableWindow(m_wndEdit.m_IsValid && !m_wndEdit.m_IsEmpty);
 

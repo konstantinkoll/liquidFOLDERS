@@ -20,11 +20,11 @@ public:
 	LFFilterCondition m_Condition;
 
 protected:
-	virtual void TestAttribute(UINT Attr, BOOL& add, BOOL& check);
+	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
+	afx_msg LRESULT OnPropertyChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
