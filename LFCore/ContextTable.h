@@ -1,7 +1,8 @@
+
 struct RegisteredFile
 {
-	char Format[7];
-	unsigned char ContextID;
+	CHAR Format[7];
+	BYTE ContextID;
 };
 
 static const RegisteredFile Registry[] = {

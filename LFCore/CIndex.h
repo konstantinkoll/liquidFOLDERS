@@ -12,33 +12,33 @@
 class CIndex
 {
 public:
-	CIndex(LFStoreDescriptor* _slot, bool ForMainIndex);
+	CIndex(LFStoreDescriptor* _slot, BOOL ForMainIndex);
 	~CIndex();
 
-	bool Create();
-	unsigned int Check(bool Scheduled, bool* pRepaired, LFProgress* pProgress=NULL);
-	unsigned int AddItem(LFItemDescriptor* i);
-	bool UpdateSystemFlags(LFItemDescriptor* i, bool Exists, bool RemoveNew);
-	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
+	BOOL Create();
+	UINT Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress=NULL);
+	UINT AddItem(LFItemDescriptor* i);
+	BOOL UpdateSystemFlags(LFItemDescriptor* i, BOOL Exists, BOOL RemoveNew);
+	void Update(LFTransactionList* tl, LFVariantData* v1, LFVariantData* v2=NULL, LFVariantData* v3=NULL);
 	void Archive(LFTransactionList* tl);
-	void Delete(LFTransactionList* tl, bool PutInTrash=true, LFProgress* pProgress=NULL);
-	void Delete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
+	void Delete(LFTransactionList* tl, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
+	void Delete(LFFileIDList* il, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
 	void ResolvePhysicalLocations(LFTransactionList* tl);
-	unsigned int Rename(char* FileID, wchar_t* NewName);
+	UINT Rename(CHAR* FileID, WCHAR* NewName);
 	void Retrieve(LFFilter* f, LFSearchResult* Result);
 	void AddToSearchResult(LFFileIDList* il, LFSearchResult* Result);
-	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move, LFProgress* pProgress=NULL);
+	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress=NULL);
 
 protected:
-	bool LoadTable(unsigned int ID, unsigned int* Result=NULL);
+	BOOL LoadTable(UINT ID, UINT* Result=NULL);
 	void AddFileToStatistics(LFCoreAttributes* PtrM);
 	void RemoveFileFromStatistics(LFCoreAttributes* PtrM);
-	unsigned int RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName);
-	unsigned int DeletePhysicalFile(LFCoreAttributes* PtrM);
+	UINT RenamePhysicalFile(LFCoreAttributes* PtrM, WCHAR* NewName);
+	UINT DeletePhysicalFile(LFCoreAttributes* PtrM);
 
 private:
 	CHeapfile* Tables[IdxTableCount];
 	LFStoreDescriptor* slot;
-	bool TrackStats;
-	wchar_t IdxPath[MAX_PATH];
+	BOOL TrackStats;
+	WCHAR IdxPath[MAX_PATH];
 };

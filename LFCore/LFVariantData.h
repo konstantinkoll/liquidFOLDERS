@@ -1,5 +1,9 @@
+
 #pragma once
 #include "LF.h"
 
-bool IsNullValue(unsigned int attr, void* v);
-bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount);
+
+BOOL IsNullValue(UINT Type, void* v);
+INT CompareValues(UINT Type, void* v1, void* v2, BOOL CaseSensitive=TRUE);
+void ToString(void* v, UINT Type, WCHAR* pStr, size_t cCount);
+BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, size_t cCount);

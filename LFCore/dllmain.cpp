@@ -6,7 +6,7 @@
 extern HMODULE LFCoreModuleHandle;
 
 
-bool APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpReserved*/)
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpReserved*/)
 {
 	switch (ul_reason_for_call)
 	{
@@ -18,5 +18,5 @@ bool APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpRese
 	case DLL_PROCESS_DETACH:
 		break;
 	}
-	return true;
+	return TRUE;
 }

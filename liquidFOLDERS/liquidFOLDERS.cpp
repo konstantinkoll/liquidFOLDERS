@@ -275,7 +275,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 				f->ConditionList = LFAllocFilterCondition();
 				f->ConditionList->Compare = LFFilterCompareIsEqual;
 				f->ConditionList->AttrData.Attr = LFAttrLocationIATA;
-				f->ConditionList->AttrData.IsNull = false;
+				f->ConditionList->AttrData.IsNull = FALSE;
 				strcpy_s(f->ConditionList->AttrData.AnsiString, 256, Code);
 
 				LFAirport* pAirport = NULL;
@@ -565,7 +565,7 @@ void CLiquidFoldersApp::LoadViewOptions(UINT context)
 		if (!LFIsAttributeAllowed(m_Contexts[context], a))
 			m_Views[context].ColumnWidth[a] = 0;
 
-	m_Views[context].AutoDirs &= (m_Contexts[context].AllowGroups==true) || (context>=LFContextSubfolderDefault);
+	m_Views[context].AutoDirs &= (m_Contexts[context].AllowGroups) || (context>=LFContextSubfolderDefault);
 
 	SetRegistryBase(_T("Settings"));
 }

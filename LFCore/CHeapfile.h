@@ -19,60 +19,60 @@
 
 struct HeapfileHeader
 {
-	char ID[6];
-	unsigned int ElementSize;
-	unsigned int Version;
-	bool NeedsCompaction;
-	unsigned char Fill[493];		// Auf 512 Byte
+	CHAR ID[6];
+	UINT ElementSize;
+	UINT Version;
+	BOOL NeedsCompaction;
+	BYTE Fill[492];			// Auf 512 Byte
 };
 
 class CHeapfile
 {
 public:
-	CHeapfile(wchar_t* Path, wchar_t* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);
+	CHeapfile(WCHAR* Path, WCHAR* Filename, UINT _ElementSize, UINT _KeyOffset=0);
 	~CHeapfile();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i) = 0;
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc) = 0;
 
-	void GetAttribute(void* PtrDst, unsigned int offset, unsigned int attr, LFItemDescriptor* i);
+	void GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescriptor* i);
 	void CloseFile();
-	bool FindNext(int& Next, void*& Ptr);
-	bool FindKey(char* Key, int& Next, void*& Ptr);
+	BOOL FindNext(INT& Next, void*& Ptr);
+	BOOL FindKey(CHAR* Key, INT& Next, void*& Ptr);
 	void Add(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i, void* Ptr);
-	void Update(LFItemDescriptor* i, int& Next);
+	void Update(LFItemDescriptor* i, INT& Next);
 	void Update(LFItemDescriptor* i);
 	void Invalidate(void* Ptr);
-	void Invalidate(char* Key, int& Next);
+	void Invalidate(CHAR* Key, INT& Next);
 	void Invalidate(LFItemDescriptor* i);
-	unsigned int GetItemCount();
-	unsigned int GetRequiredElementSize();
-	unsigned int GetRequiredDiscSize();
-	bool Compact();
-	void MakeDirty(bool NeedsCompaction=false);
+	UINT GetItemCount();
+	UINT GetRequiredElementSize();
+	UINT GetRequiredDiscSize();
+	BOOL Compact();
+	void MakeDirty(BOOL NeedsCompaction=FALSE);
 
-	unsigned int OpenStatus;
+	UINT OpenStatus;
 
 protected:
 	void* Buffer;
 	HeapfileHeader Hdr;
-	unsigned int RequestedElementSize;
-	unsigned int KeyOffset;
-	unsigned int BufferSize;
-	int ItemCount;
-	int FirstInBuffer;
-	int LastInBuffer;
-	bool BufferNeedsWriteback;
-	bool HeaderNeedsWriteback;
+	UINT RequestedElementSize;
+	UINT KeyOffset;
+	UINT BufferSize;
+	INT ItemCount;
+	INT FirstInBuffer;
+	INT LastInBuffer;
+	BOOL BufferNeedsWriteback;
+	BOOL HeaderNeedsWriteback;
 
 	void AllocBuffer();
-	bool OpenFile();
-	bool WriteHeader();
-	bool Writeback();
-	void ElementToBuffer(int ID);
+	BOOL OpenFile();
+	BOOL WriteHeader();
+	BOOL Writeback();
+	void ElementToBuffer(INT ID);
 
 private:
-	wchar_t IdxFilename[MAX_PATH];
+	WCHAR IdxFilename[MAX_PATH];
 	HANDLE hFile;
 };

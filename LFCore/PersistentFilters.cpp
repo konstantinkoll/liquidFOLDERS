@@ -11,13 +11,13 @@
 
 extern HANDLE Mutex_Stores;
 
-bool StoreFilter(wchar_t* fn, LFFilter* f)
+BOOL StoreFilter(WCHAR* fn, LFFilter* f)
 {
 	assert(fn);
 	assert(f);
 
 	if (f->Mode!=LFFilterModeSearch)
-		return false;
+		return FALSE;
 
 	PersistentFilterHeader Header;
 	ZeroMemory(&Header, sizeof(Header));
@@ -38,7 +38,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* f)
 		Condition = Condition->Next;
 	}
 
-	bool Result = false;
+	BOOL Result = FALSE;
 	HANDLE hFile = CreateFile(fn, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hFile!=INVALID_HANDLE_VALUE)
 	{
@@ -46,13 +46,13 @@ bool StoreFilter(wchar_t* fn, LFFilter* f)
 		if (WriteFile(hFile, &Header, sizeof(Header), &Written, NULL))
 			if (WriteFile(hFile, &Body, sizeof(Body), &Written, NULL))
 			{
-				Result = true;
+				Result = TRUE;
 				Condition = f->ConditionList;
 				while (Condition)
 				{
 					if (!WriteFile(hFile, Condition, sizeof(LFFilterCondition), &Written, NULL))
 					{
-						Result = false;
+						Result = FALSE;
 						break;
 					}
 					Condition = Condition->Next;
@@ -65,7 +65,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* f)
 	return Result;
 }
 
-LFFilter* LoadFilter(wchar_t* fn, char* StoreID)
+LFFilter* LoadFilter(WCHAR* fn, CHAR* StoreID)
 {
 	assert(fn);
 
@@ -101,13 +101,13 @@ LFFilter* LoadFilter(wchar_t* fn, char* StoreID)
 
 	LFFilter* f = LFAllocFilter();
 	f->Mode = LFFilterModeSearch;
-	f->Options.IsPersistent = true;
+	f->Options.IsPersistent = TRUE;
 #define Abort3 { LFFreeFilter(f); Abort2; }
 
 	strcpy_s(f->StoreID, LFKeySize, Body.AllStores ? "" : StoreID);
 	wcscpy_s(f->Searchterm, 256, Body.Searchterm);
 
-	for (unsigned int a=Body.cConditions; a>0; a--)
+	for (UINT a=Body.cConditions; a>0; a--)
 	{
 		if (SetFilePointer(hFile, Header.szHeader+Header.szBody+(a-1)*Header.szCondition, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
 			Abort3;
@@ -129,7 +129,7 @@ LFFilter* LoadFilter(wchar_t* fn, char* StoreID)
 }
 
 
-LFCORE_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
+LFCORE_API UINT LFSaveFilter(CHAR* key, LFFilter* f, WCHAR* name, WCHAR* comments, LFItemDescriptor** created)
 {
 	assert(f);
 
@@ -137,7 +137,7 @@ LFCORE_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 		*created = NULL;
 
 	// Store finden
-	char store[LFKeySize] = "";
+	CHAR store[LFKeySize] = "";
 	if (key)
 		strcpy_s(store, LFKeySize, key);
 
@@ -158,7 +158,7 @@ LFCORE_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 	CIndex* idx2;
 	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	unsigned int Result = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
+	UINT Result = OpenStore(store, TRUE, idx1, idx2, &slot, &StoreLock);
 	if (Result==LFOk)
 	{
 		LFItemDescriptor* i = LFAllocItemDescriptor();
@@ -167,12 +167,12 @@ LFCORE_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 		if (comments)
 			SetAttribute(i, LFAttrComments, comments);
 
-		wchar_t Path[2*MAX_PATH];
+		WCHAR Path[2*MAX_PATH];
 		Result = PrepareImport(slot, i, Path, 2*MAX_PATH);
 		if (Result==LFOk)
 			if (StoreFilter(Path, f))
 			{
-				SetAttributesFromFile(i, Path, false);
+				SetAttributesFromFile(i, Path, FALSE);
 
 				if (idx1)
 					idx1->AddItem(i);
@@ -187,7 +187,7 @@ LFCORE_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 			}
 			else
 			{
-				wchar_t* LastBackslash = wcsrchr(Path, L'\\');
+				WCHAR* LastBackslash = wcsrchr(Path, L'\\');
 				if (LastBackslash)
 					*(LastBackslash+1) = L'\0';
 
@@ -209,14 +209,14 @@ LFCORE_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 	return Result;
 }
 
-LFCORE_API LFFilter* LFLoadFilter(wchar_t* fn)
+LFCORE_API LFFilter* LFLoadFilter(WCHAR* fn)
 {
 	if (!GetMutex(Mutex_Stores))
 		return NULL;
 
-	wchar_t Path[2*MAX_PATH];
+	WCHAR Path[2*MAX_PATH];
 	wcscpy_s(Path, 2*MAX_PATH, fn);
-	wchar_t* LastBackslash = wcsrchr(Path, L'\\');
+	WCHAR* LastBackslash = wcsrchr(Path, L'\\');
 	if (LastBackslash)
 		*(LastBackslash+1) = L'\0';
 
@@ -225,11 +225,11 @@ LFCORE_API LFFilter* LFLoadFilter(wchar_t* fn)
 	LFFilter* f = LoadFilter(fn, slot ? slot->StoreID : "");
 	if (f)
 	{
-		wchar_t Name[256];
+		WCHAR Name[256];
 		LastBackslash = wcsrchr(fn, L'\\');
 		wcscpy_s(Name, 256, (!LastBackslash) ? fn : (*LastBackslash==L'\0') ? fn : LastBackslash+1);
 
-		wchar_t* pExt = wcschr(Name, L'.');
+		WCHAR* pExt = wcschr(Name, L'.');
 		if (pExt)
 			*pExt = L'\0';
 
@@ -243,8 +243,8 @@ LFCORE_API LFFilter* LFLoadFilter(wchar_t* fn)
 
 LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
 {
-	wchar_t Path[2*MAX_PATH];
-	if (LFGetFileLocation(i, Path, 2*MAX_PATH, true, true, true)!=LFOk)
+	WCHAR Path[2*MAX_PATH];
+	if (LFGetFileLocation(i, Path, 2*MAX_PATH, TRUE, TRUE, TRUE)!=LFOk)
 		return NULL;
 
 	LFFilter* f = LoadFilter(Path, i->StoreID);

@@ -93,7 +93,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 
 	if (m_Abort)
 	{
-		pProgress->UserAbort = true;
+		pProgress->UserAbort = TRUE;
 		if (pProgress->ProgressState==LFProgressWorking)
 			pProgress->ProgressState = LFProgressCancelled;
 	}

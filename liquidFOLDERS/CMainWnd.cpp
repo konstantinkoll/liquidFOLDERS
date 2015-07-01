@@ -10,7 +10,7 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = RootStore ? LFFilterModeDirectoryTree : LFFilterModeStores;
-	f->Options.AddVolumes = true;
+	f->Options.AddVolumes = TRUE;
 
 	if (RootStore)
 	{
@@ -33,13 +33,12 @@ void WriteTXTItem(CStdioFile& f, LFItemDescriptor* i)
 	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
 	{
 		LFVariantData v;
-		v.Attr = Attr;
-		LFGetAttributeVariantData(i, &v);
+		LFGetAttributeVariantDataEx(i, Attr, v);
 
-		if (!LFIsNullVariantData(&v))
+		if (!LFIsNullVariantData(v))
 		{
 			WCHAR tmpBuf[256];
-			LFVariantDataToString(&v, tmpBuf, 256);
+			LFVariantDataToString(v, tmpBuf, 256);
 
 			CString tmpStr(theApp.m_Attributes[Attr].Name);
 			tmpStr.Append(_T(": "));
@@ -75,13 +74,12 @@ void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
 	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
 	{
 		LFVariantData v;
-		v.Attr = Attr;
-		LFGetAttributeVariantData(i, &v);
+		LFGetAttributeVariantDataEx(i, Attr, v);
 
-		if (!LFIsNullVariantData(&v))
+		if (!LFIsNullVariantData(v))
 		{
 			WCHAR tmpBuf[256];
-			LFVariantDataToString(&v, tmpBuf, 256);
+			LFVariantDataToString(v, tmpBuf, 256);
 
 			CString tmpStr;
 			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[Attr].XMLID, Attr, tmpBuf);
@@ -673,7 +671,7 @@ void CMainWnd::OnItemOpen()
 					}
 					else
 					{
-						Result = LFGetFileLocation(i, Path, MAX_PATH, true, true);
+						Result = LFGetFileLocation(i, Path, MAX_PATH, TRUE, TRUE);
 						if (Result==LFOk)
 						{
 							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
@@ -879,13 +877,13 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
-		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewPreview) && (vp->Descending==TRUE)) || (vp->Mode==LFViewTimeline),
+		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewPreview) && vp->Descending) || (vp->Mode==LFViewTimeline),
 			((vp->Mode>LFViewPreview) && (vp->Mode!=LFViewTimeline)) || ((Attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			m_pActiveFilter);
 	}
 	else
 	{
-		LFSortSearchResult(m_pRawFiles, vp->SortBy, vp->Descending==TRUE);
+		LFSortSearchResult(m_pRawFiles, vp->SortBy, vp->Descending);
 		m_pCookedFiles = m_pRawFiles;
 	}
 

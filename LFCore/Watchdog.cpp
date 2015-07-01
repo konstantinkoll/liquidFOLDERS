@@ -6,12 +6,12 @@
 
 extern HMODULE LFCoreModuleHandle;
 
-const wchar_t szWindowClass[] = L"LFWatchdog";
+const WCHAR szWindowClass[] = L"LFWatchdog";
 HWND hWndWatchdog = NULL;
 ULONG ulSHChangeNotifyRegister;
 
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam)
 {
 	struct SHNOTIFYSTRUCT
 	{
@@ -30,11 +30,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				{
 				case SHCNE_DRIVEADD:
 				case SHCNE_MEDIAINSERTED:
-					LFErrorBox(MountVolume((char)sPath[0]));
+					LFErrorBox(MountVolume((CHAR)sPath[0]));
 					break;
 				case SHCNE_MEDIAREMOVED:
 				case SHCNE_DRIVEREMOVED:
-					LFErrorBox(UnmountVolume((char)sPath[0]));
+					LFErrorBox(UnmountVolume((CHAR)sPath[0]));
 					break;
 				}
 

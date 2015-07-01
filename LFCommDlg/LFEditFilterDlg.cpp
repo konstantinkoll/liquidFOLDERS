@@ -32,7 +32,7 @@ LFFilter* LFEditFilterDlg::CreateFilter()
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = LFFilterModeSearch;
-	f->Options.IsPersistent = true;
+	f->Options.IsPersistent = TRUE;
 	strcpy_s(f->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
 	m_wndSearchterm.GetWindowText(f->Searchterm, 256);
 

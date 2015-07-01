@@ -129,7 +129,7 @@ void CConditionList::FinishItem(INT nItem, LFFilterCondition* c)
 	if (c->Compare)
 	{
 		wcscat_s(tmpStr, 512, L" ");
-		LFVariantDataToString(&c->AttrData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
+		LFVariantDataToString(c->AttrData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
 	}
 
 	SetItemText(nItem, 1, tmpStr);

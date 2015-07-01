@@ -129,7 +129,7 @@ void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 					}
 		}
 
-		if (m_HasCategories!=(p_CookedFiles->m_HasCategories==true))
+		if (m_HasCategories!=p_CookedFiles->m_HasCategories)
 			SortCategories(p_CookedFiles);
 	}
 

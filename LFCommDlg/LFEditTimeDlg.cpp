@@ -29,7 +29,7 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		ASSERT(LFGetApp()->m_Attributes[p_Data->Attr].Type==LFTypeTime);
-		p_Data->IsNull = false;
+		p_Data->IsNull = FALSE;
 
 		SYSTEMTIME Date;
 		m_wndCalendar.GetCurSel(&Date);

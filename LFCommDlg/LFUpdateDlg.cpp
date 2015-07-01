@@ -373,8 +373,10 @@ void LFUpdateDlg::OnCancel()
 		EndDialog(IDCANCEL);
 	}
 	else
+	{
 		if (AddTrayIcon())
 			ShowWindow(SW_HIDE);
+	}
 }
 
 LRESULT LFUpdateDlg::OnTrayMenu(WPARAM /*wParam*/, LPARAM lParam)

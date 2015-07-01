@@ -8,7 +8,7 @@
 #include <shlwapi.h>
 
 
-extern const unsigned char AttrTypes[];
+extern const BYTE AttrTypes[];
 
 
 static const GUID PropertyStorage =
@@ -48,7 +48,7 @@ static const GUID PropertyUnnamed6 =
 static const GUID PropertyUnnamed7 =
 	{ 0x276D7BB0, 0x5B34, 0x4FB0, { 0xAA, 0x4B, 0x15, 0x8E, 0xD1, 0x2A, 0x18, 0x09 } };
 
-static const unsigned char ContextSlaves[LFLastQueryContext+1] = {
+static const BYTE ContextSlaves[LFLastQueryContext+1] = {
 	IDMaster,							// LFContextAllFiles
 	IDMaster,							// LFContextFavorites
 	IDSlaveAudio,						// LFContextAudio
@@ -128,14 +128,14 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 };
 
 
-unsigned char GetHardcodedContext(char* ext)
+BYTE GetHardcodedContext(CHAR* ext)
 {
-	int left = 0;
-	int right = (sizeof(Registry)/sizeof(RegisteredFile))-1;
+	INT left = 0;
+	INT right = (sizeof(Registry)/sizeof(RegisteredFile))-1;
 
 	while (left<=right)
 	{
-		int mid = (left+right)/2;
+		INT mid = (left+right)/2;
 
 		switch (strcmp(ext, Registry[mid].Format))
 		{
@@ -153,9 +153,9 @@ unsigned char GetHardcodedContext(char* ext)
 	return 0;
 }
 
-unsigned char GetPerceivedContext(char* ext)
+BYTE GetPerceivedContext(CHAR* ext)
 {
-	wchar_t ExtW[17];
+	WCHAR ExtW[17];
 	ExtW[0] = '.';
 	MultiByteToWideChar(CP_ACP, 0, ext, -1, &ExtW[1], 16);
 
@@ -177,13 +177,13 @@ unsigned char GetPerceivedContext(char* ext)
 	return 0;
 }
 
-void SetFileContext(LFCoreAttributes* c, bool force)
+void SetFileContext(LFCoreAttributes* c, BOOL force)
 {
 	assert(c);
 
 	#ifdef _DEBUG
 	// Test: ist die Kontext-Liste korrekt sortiert?
-	for (unsigned int a=0; a<(sizeof(Registry)/sizeof(RegisteredFile))-2; a++)
+	for (UINT a=0; a<(sizeof(Registry)/sizeof(RegisteredFile))-2; a++)
 		if (strcmp(Registry[a].Format, Registry[a+1].Format)>-1)
 			MessageBoxA(NULL, Registry[a].Format, "Registry sort error", 0);
 	#endif
@@ -207,59 +207,59 @@ void SetFileContextAndSlave(LFItemDescriptor* i)
 	i->CoreAttributes.SlaveID = ContextSlaves[i->CoreAttributes.ContextID];
 }
 
-bool GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID Schema, UINT ID, LFItemDescriptor*i, UINT attr)
+BOOL GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID Schema, UINT32 ID, LFItemDescriptor*i, UINT32 Attr)
 {
 	SHCOLUMNID column = { Schema, ID };
 	VARIANT value = { 0 };
 	
 	if (FAILED(pParentFolder->GetDetailsEx(pidlRel, &column, &value)))
-		return false;
+		return FALSE;
 
 	switch (value.vt)
 	{
 	case VT_BSTR:
-		if ((AttrTypes[attr]==LFTypeUnicodeString) || (AttrTypes[attr]==LFTypeUnicodeArray))
-			SetAttribute(i, attr, value.pbstrVal);
+		if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+			SetAttribute(i, Attr, value.pbstrVal);
 		break;
 	case VT_I4:
-		if (((AttrTypes[attr]==LFTypeUINT) || (AttrTypes[attr]==LFTypeBitrate)) && (value.intVal>=0))
-			SetAttribute(i, attr, &value.intVal);
+		if (((AttrTypes[Attr]==LFTypeUINT) || (AttrTypes[Attr]==LFTypeBitrate)) && (value.intVal>=0))
+			SetAttribute(i, Attr, &value.intVal);
 		break;
 	case VT_UI4:
-		switch (AttrTypes[attr])
+		switch (AttrTypes[Attr])
 		{
 		case LFTypeUINT:
 		case LFTypeFourCC:
-			SetAttribute(i, attr, &value.uintVal);
+			SetAttribute(i, Attr, &value.uintVal);
 			break;
 		}
 		break;
 	case VT_I8:
 	case VT_UI8:
-		switch (AttrTypes[attr])
+		switch (AttrTypes[Attr])
 		{
-		case LFTypeINT64:
-			SetAttribute(i, attr, &value.ullVal);
+		case LFTypeSize:
+			SetAttribute(i, Attr, &value.ullVal);
 			break;
 		case LFTypeDuration:
 			value.ullVal /= 10000;
-			UINT Duration = (value.ullVal>0xFFFFFFFF) ? 0xFFFFFFFF : (UINT)value.ullVal;
-			SetAttribute(i, attr, &Duration);
+			UINT32 Duration = (value.ullVal>0xFFFFFFFF) ? 0xFFFFFFFF : (UINT32)value.ullVal;
+			SetAttribute(i, Attr, &Duration);
 			break;
 		}
 		break;
 	case VT_R8:
-		if (AttrTypes[attr]==LFTypeDouble)
-			SetAttribute(i, attr, &value.dblVal);
+		if (AttrTypes[Attr]==LFTypeDouble)
+			SetAttribute(i, Attr, &value.dblVal);
 		break;
 	case VT_DATE:
-		if (AttrTypes[attr]==LFTypeTime)
+		if (AttrTypes[Attr]==LFTypeTime)
 		{
 			SYSTEMTIME st;
 			FILETIME ft;
 			VariantTimeToSystemTime(value.date, &st);
 			SystemTimeToFileTime(&st, &ft);
-			SetAttribute(i, attr, &ft);
+			SetAttribute(i, Attr, &ft);
 		}
 		break;
 	}
@@ -268,7 +268,7 @@ bool GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 	return (value.vt!=0);
 }
 
-void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
+void SetAttributesFromFile(LFItemDescriptor* i, WCHAR* fn, BOOL metadata)
 {
 	// Attribute des Dateisystems
 	WIN32_FIND_DATA ffd;
@@ -276,7 +276,7 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
-		__int64 size = (((__int64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
+		INT64 size = (((INT64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
 		SetAttribute(i, LFAttrFileSize, &size);
 		SetAttribute(i, LFAttrCreationTime, &ffd.ftCreationTime);
 		SetAttribute(i, LFAttrFileTime, &ffd.ftLastWriteTime);
@@ -301,7 +301,7 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
 			LPCITEMIDLIST pidlRel = NULL;
 			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
 			{
-				for (unsigned int a=0; a<LFAttributeCount; a++)
+				for (UINT a=0; a<LFAttributeCount; a++)
 					if ((AttrProperties[a].ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
 						GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].Schema, AttrProperties[a].ID, i, a);
 
@@ -329,24 +329,24 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
 	// TODO: weitere Attribute durch eigene Metadaten-Bibliothek
 }
 
-void SetNameExtAddFromFile(LFItemDescriptor* i, wchar_t* fn)
+void SetNameExtAddFromFile(LFItemDescriptor* i, WCHAR* fn)
 {
 	i->Type = (i->Type & !LFTypeMask) | LFTypeFile;
 
 	// Name
-	wchar_t Name[256];
-	wchar_t* LastBackslash = wcsrchr(fn, L'\\');
+	WCHAR Name[256];
+	WCHAR* LastBackslash = wcsrchr(fn, L'\\');
 	wcscpy_s(Name, 256, (!LastBackslash) ? fn : (*LastBackslash==L'\0') ? fn : LastBackslash+1);
 
 	// Erweiterung
-	wchar_t* LastExt = wcsrchr(Name, L'.');
+	WCHAR* LastExt = wcsrchr(Name, L'.');
 	if (LastExt)
 		if (*LastExt!=L'\0')
 		{
-			char Ext[LFExtSize] = { 0 };
+			CHAR Ext[LFExtSize] = { 0 };
 
-			wchar_t* Ptr = LastExt+1;
-			unsigned int cCount = 0;
+			WCHAR* Ptr = LastExt+1;
+			UINT cCount = 0;
 			while ((*Ptr!=L'\0') && (cCount<LFExtSize-1))
 			{
 				Ext[cCount++] = (*Ptr<=255) ? tolower(*Ptr) & 0xFF : L'_';

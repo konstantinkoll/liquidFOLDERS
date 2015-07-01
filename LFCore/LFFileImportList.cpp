@@ -12,7 +12,7 @@ LFFileImportList::LFFileImportList()
 	m_FileSize = 0;
 }
 
-bool LFFileImportList::AddPath(wchar_t* path)
+BOOL LFFileImportList::AddPath(WCHAR* path)
 {
 	assert(path);
 
@@ -23,24 +23,24 @@ bool LFFileImportList::AddPath(wchar_t* path)
 	return LFDynArray::AddItem(item);
 }
 
-void LFFileImportList::Resolve(bool recursive)
+void LFFileImportList::Resolve(BOOL recursive)
 {
-	unsigned int a = 0;
+	UINT a = 0;
 
 	while (a<m_ItemCount)
 	{
 		if (!m_Items[a].Processed)
 		{
-			DWORD attr = GetFileAttributes(m_Items[a].Path);
-			if (attr==INVALID_FILE_ATTRIBUTES)
+			DWORD Attr = GetFileAttributes(m_Items[a].Path);
+			if (Attr==INVALID_FILE_ATTRIBUTES)
 			{
-				m_Items[a].Processed = true;
+				m_Items[a].Processed = TRUE;
 			}
 			else
-				if (attr & FILE_ATTRIBUTE_DIRECTORY)
+				if (Attr & FILE_ATTRIBUTE_DIRECTORY)
 				{
 					// Dateien suchen und hinzufügen
-					wchar_t DirSpec[MAX_PATH];
+					WCHAR DirSpec[MAX_PATH];
 					wcscpy_s(DirSpec, MAX_PATH, m_Items[a].Path);
 					wcscat_s(DirSpec, MAX_PATH, L"\\*");
 
@@ -54,7 +54,7 @@ FileFound:
 							(wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0) &&
 							((!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) || (recursive)))
 						{
-							wchar_t fn[MAX_PATH];
+							WCHAR fn[MAX_PATH];
 							wcscpy_s(fn, MAX_PATH, m_Items[a].Path);
 							wcscat_s(fn, MAX_PATH, L"\\");
 							wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
@@ -68,7 +68,7 @@ FileFound:
 
 					FindClose(hFind);
 
-					m_Items[a].Processed = true;
+					m_Items[a].Processed = TRUE;
 				}
 		}
 
@@ -76,12 +76,12 @@ FileFound:
 	}
 }
 
-void LFFileImportList::SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress)
+void LFFileImportList::SetError(UINT idx, UINT Result, LFProgress* pProgress)
 {
 	if (Result>LFOk)
 		m_LastError = Result;
 	m_Items[idx].LastError = Result;
-	m_Items[idx].Processed = true;
+	m_Items[idx].Processed = TRUE;
 
 	if (pProgress)
 	{

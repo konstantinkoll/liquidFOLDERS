@@ -2,6 +2,6 @@
 #include "LF.h"
 
 void InitMutex();
-bool GetMutex(HANDLE m);
-bool GetMutexForStore(LFStoreDescriptor* s, HANDLE* m);
+BOOL GetMutex(HANDLE m);
+BOOL GetMutexForStore(LFStoreDescriptor* s, HANDLE* m);
 void ReleaseMutexForStore(HANDLE m);

@@ -1,7 +1,9 @@
 
 #pragma once
 #include <shellapi.h>
-#include <windows.h>
+
+
+typedef double DOUBLE;
 
 
 // Resource IDs from LFCORE.DLL
@@ -18,7 +20,7 @@ typedef HANDLE HLIQUID;
 struct LIQUIDFILES
 {
 	DWORD pFiles;
-	UINT cFiles;
+	UINT32 cFiles;
 };
 
 
@@ -33,14 +35,14 @@ struct LIQUIDFILES
 struct LFProgress
 {
 	HWND hWnd;
-	wchar_t Object[256];
-	unsigned char ProgressState;
-	unsigned int MajorCurrent;			// Starting from 0, must not exceed max(0, MajorCount-1)
-	unsigned int MajorCount;			// May be 0
-	unsigned int MinorCurrent;			// Starting from 0, must nox exceed max(0, MinorCount-1)
-	unsigned int MinorCount;			// Must be 1 or higher
-	bool UserAbort;						// Set true if aborted by user
-	bool NoMinorCounter;				// Set true if thread does not wish minor progress counter to be displayed
+	WCHAR Object[256];
+	BYTE ProgressState;
+	UINT MajorCurrent;					// Starting from 0, must not exceed max(0, MajorCount-1)
+	UINT MajorCount;					// May be 0
+	UINT MinorCurrent;					// Starting from 0, must nox exceed max(0, MinorCount-1)
+	UINT MinorCount;					// Must be 1 or higher
+	BOOL UserAbort;						// Set TRUE if aborted by user
+	BOOL NoMinorCounter;				// Set TRUE if thread does not wish minor progress counter to be displayed
 };
 
 
@@ -48,18 +50,18 @@ struct LFProgress
 
 struct LFLicenseVersion
 {
-	unsigned int Major;
-	unsigned int Minor;
-	unsigned int Release;
+	UINT Major;
+	UINT Minor;
+	UINT Release;
 };
 
 struct LFLicense
 {
-	wchar_t PurchaseID[256];
-	wchar_t ProductID[256];
-	wchar_t PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
-	wchar_t Quantity[8];
-	wchar_t RegName[256];
+	WCHAR PurchaseID[256];
+	WCHAR ProductID[256];
+	WCHAR PurchaseDate[16];				// Either DD/MM/YYYY or DD.MM.YYYY
+	WCHAR Quantity[8];
+	WCHAR RegName[256];
 	LFLicenseVersion Version;
 };
 
@@ -68,86 +70,84 @@ struct LFLicense
 
 struct LFMessageIDs
 {
-	unsigned int ItemsDropped;
+	UINT ItemsDropped;
 
-	unsigned int StoresChanged;
-	unsigned int StoreAttributesChanged;
-	unsigned int DefaultStoreChanged;
-	unsigned int VolumesChanged;
-	unsigned int StatisticsChanged;
+	UINT StoresChanged;
+	UINT StoreAttributesChanged;
+	UINT DefaultStoreChanged;
+	UINT VolumesChanged;
+	UINT StatisticsChanged;
 };
 
 
 // Globals
 
-#define LFKeySize                       16
-#define LFKeyChars                      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-'
+#define LFKeySize      16
+#define LFKeyChars     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-'
 
-#define LFExtSize                       16
+#define LFExtSize      16
 
 
 // Mutex objects
 
-#define LFCM_Store                      "Global\\LFCoreMutex_Store_"
-#define LFCM_Stores                     "Global\\LFCoreMutex_Stores"
+#define LFCM_Store     "Global\\LFCoreMutex_Store_"
+#define LFCM_Stores    "Global\\LFCoreMutex_Stores"
 
 
 // Globe textures
 
-#define LFTextureNone                   -1
-#define LFTextureAuto                   0
-#define LFTexture1024                   1
-#define LFTexture2048                   2
-#define LFTexture4096                   3
-#define LFTexture8192                   4
+#define LFTextureNone     -1
+#define LFTextureAuto     0
+#define LFTexture1024     1
+#define LFTexture2048     2
+#define LFTexture4096     3
+#define LFTexture8192     4
 
 
 // IATA database
 
-struct LFCountry
-{
-	unsigned int ID;
-	char Name[31];
-};
-
 struct LFGeoCoordinates
 {
-	double Latitude;
-	double Longitude;
+	DOUBLE Latitude;
+	DOUBLE Longitude;
 };
 
-struct LFFraction
+#pragma pack(push,1)
+
+struct LFCountry
 {
-	unsigned int Num;
-	unsigned int Denum;
+	UINT ID;
+	CHAR Name[31];
 };
 
 struct LFAirport
 {
-	unsigned int CountryID;
-	char Code[4];
-	char MetroCode[4];
-	char Name[44];
+	UINT CountryID;
+	CHAR Code[4];
+	CHAR MetroCode[4];
+	CHAR Name[44];
 	LFGeoCoordinates Location;
 };
+
+#pragma pack(pop)
 
 
 // Item categories
 
-#define LFItemCategoryLocal             0
-#define LFItemCategoryRemote            1
-#define LFItemCategoryVolumes           2
-#define LFItemCategoryNight             3
+#define LFItemCategoryLocal       0
+#define LFItemCategoryRemote      1
+#define LFItemCategoryVolumes     2
+#define LFItemCategoryNight       3
 
-#define LFItemCategoryCount             4
+#define LFItemCategoryCount       4
 
 
 // Context descriptor
 
 struct LFItemCategoryDescriptor
 {
-	wchar_t Caption[256];
-	wchar_t Hint[256];
+	WCHAR Caption[256];
+	WCHAR Hint[256];
 };
 
 
@@ -246,58 +246,65 @@ struct LFItemCategoryDescriptor
 
 // Attribute types
 
-#define LFTypeUnicodeString             0
-#define LFTypeUnicodeArray              1
-#define LFTypeAnsiString                2
-#define LFTypeFourCC                    3
-#define LFTypeRating                    4
-#define LFTypeUINT                      5
-#define LFTypeINT64                     6
-#define LFTypeFraction                  7
-#define LFTypeDouble                    8
-#define LFTypeFlags                     9
-#define LFTypeGeoCoordinates           10
-#define LFTypeTime                     11
-#define LFTypeBitrate                  12
-#define LFTypeDuration                 13
-#define LFTypeMegapixel                14
+#define LFTypeUnicodeString      0
+#define LFTypeUnicodeArray       1
+#define LFTypeAnsiString         2
+#define LFTypeFourCC             3
+#define LFTypeRating             4
+#define LFTypeUINT               5
+#define LFTypeSize               6
+#define LFTypeFraction           7
+#define LFTypeDouble             8
+#define LFTypeFlags              9
+#define LFTypeGeoCoordinates     10
+#define LFTypeTime               11
+#define LFTypeBitrate            12
+#define LFTypeDuration           13
+#define LFTypeMegapixel          14
 
-#define LFTypeCount                    15
-#define LFMaxRating                    10
+#define LFTypeCount              15
+#define LFMaxRating              10
 
 
 // Variant attribute data
 
+struct LFFraction
+{
+	UINT Num;
+	UINT Denum;
+};
+
 struct LFVariantData
 {
-	unsigned int Attr;
-	unsigned char Type;
-	bool IsNull;
+	UINT Attr;
+	BYTE Type;
+	BYTE IsNull;
 	union
 	{
-		unsigned char Value[512];
+		BYTE Value[512];
 
-		wchar_t UnicodeString[256];
-		wchar_t UnicodeArray[256];
-		char AnsiString[256];
-		unsigned int FourCC;
-		unsigned char Rating;
-		unsigned int UINT;
-		__int64 INT64;
+		WCHAR UnicodeString[256];
+		WCHAR UnicodeArray[256];
+		CHAR AnsiString[256];
+		DWORD FourCC;
+		BYTE Rating;
+		UINT UINT32;
+		INT64 INT64;
 		LFFraction Fraction;
-		double Double;
+		DOUBLE Double;
 		struct
 		{
-			unsigned int Flags;
-			unsigned int Mask;
+			UINT Flags;
+			UINT Mask;
 		} Flags;
 		LFGeoCoordinates GeoCoordinates;
 		FILETIME Time;
-		unsigned int Duration;
-		unsigned int Bitrate;
-		double Megapixel;
+		UINT Duration;
+		UINT Bitrate;
+		DOUBLE Megapixel;
 	};
 };
+
 
 
 // Attribute categories
@@ -320,7 +327,7 @@ struct LFVariantData
 struct LFShellProperty
 {
 	GUID Schema;
-	int ID;
+	INT ID;
 };
 
 
@@ -328,17 +335,17 @@ struct LFShellProperty
 
 struct LFAttributeDescriptor
 {
-	wchar_t Name[256];
-	wchar_t XMLID[256];
-	bool AlwaysVisible;
-	bool Sortable;
-	bool PreferDescendingSort;
-	bool ReadOnly;
-	bool FormatRight;
-	unsigned char Type;
-	unsigned char Category;
-	unsigned int RecommendedWidth;
-	unsigned int cCharacters;
+	WCHAR Name[256];
+	WCHAR XMLID[256];
+	BOOL AlwaysVisible;
+	BOOL Sortable;
+	BOOL PreferDescendingSort;
+	BOOL ReadOnly;
+	BOOL FormatRight;
+	BYTE Type;
+	BYTE Category;
+	UINT RecommendedWidth;
+	UINT cCharacters;
 	LFShellProperty ShPropertyMapping;
 };
 
@@ -347,9 +354,9 @@ struct LFAttributeDescriptor
 
 struct LFContextDescriptor
 {
-	wchar_t Name[256];
-	wchar_t Comment[256];
-	bool AllowGroups;
+	WCHAR Name[256];
+	WCHAR Comment[256];
+	BOOL AllowGroups;
 	unsigned long AllowedAttributes[(LFAttributeCount+31)>>5];
 };
 
@@ -360,63 +367,63 @@ struct LFContextDescriptor
 
 struct LFStatistics
 {
-	unsigned int FileCount[LFLastQueryContext+1];
-	__int64 FileSize[LFLastQueryContext+1];
-	unsigned int LastError;
+	UINT FileCount[LFLastQueryContext+1];
+	INT64 FileSize[LFLastQueryContext+1];
+	UINT LastError;
 };
 
 
 // Search filter
 
-#define LFFilterModeStores              1
-#define LFFilterModeDirectoryTree       2
-#define LFFilterModeSearch              3
+#define LFFilterModeStores                1
+#define LFFilterModeDirectoryTree         2
+#define LFFilterModeSearch                3
 
-#define LFFilterCompareIgnore           0
-#define LFFilterCompareIsNull           1
-#define LFFilterCompareSubfolder        2
-#define LFFilterCompareIsEqual          3
-#define LFFilterCompareIsNotEqual       4
-#define LFFilterCompareIsAboveOrEqual   5
-#define LFFilterCompareBeginsWith       6	// Strings
-#define LFFilterCompareIsBelowOrEqual   7
-#define LFFilterCompareEndsWith         8	// Strings
-#define LFFilterCompareContains         9	// Strings
+#define LFFilterCompareIgnore             0
+#define LFFilterCompareIsNull             1
+#define LFFilterCompareSubfolder          2
+#define LFFilterCompareIsEqual            3
+#define LFFilterCompareIsNotEqual         4
+#define LFFilterCompareIsAboveOrEqual     5
+#define LFFilterCompareBeginsWith         6		// Nur für Strings
+#define LFFilterCompareIsBelowOrEqual     7
+#define LFFilterCompareEndsWith           8		// Nur für Strings
+#define LFFilterCompareContains           9		// Nur für Strings
 
-#define LFFilterCompareCount            10
+#define LFFilterCompareCount              10
 
 
 struct LFFilterOptions
 {
 	// For LFFilterModeStores
-	bool AddVolumes;						// If true, volumes are added
+	BOOL AddVolumes;						// If TRUE, volumes are added
 
 	// For LFFilterModeDirectoryTree and above
-	bool IgnoreSlaves;						// If true, only core properties are retrieved
-	bool IsSubfolder;						// If true, you are already inside a grouped subdirectory
-	bool IsPersistent;						// If true, the filter is a custom search filter
+	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
+	BOOL IsSubfolder;						// If TRUE, you are already inside a grouped subdirectory
+	BOOL IsPersistent;						// If TRUE, the filter is a custom search filter
 
 	// For subfolders
-	unsigned int GroupAttribute;			// Attribute on which parent folder was grouped
+	UINT GroupAttribute;					// Attribute on which parent folder was grouped
 };
 
 struct LFFilterCondition
 {
 	LFFilterCondition* Next;
 	LFVariantData AttrData;					// Never use for LFAttrDesciption or LFAttrStoreID
-	unsigned char Compare;
+	BYTE Compare;
 };
 
 struct LFFilter
 {
-	wchar_t OriginalName[256];
-	wchar_t ResultName[256];
-	unsigned int Mode;
+	WCHAR OriginalName[256];
+	WCHAR ResultName[256];
+	UINT Mode;
 	LFFilterOptions Options;
 
-	char StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
-	unsigned char ContextID;				// For LFFilterModeDirectoryTree and above
-	wchar_t Searchterm[256];				// For LFFilterModeDirectoryTree and above
+	CHAR StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
+	BYTE ContextID;							// For LFFilterModeDirectoryTree and above
+	WCHAR Searchterm[256];					// For LFFilterModeDirectoryTree and above
 	LFFilterCondition* ConditionList;		// For LFFilterModeDirectoryTree and above
 };
 
@@ -426,170 +433,169 @@ struct LFFilter
 struct LFCoreAttributes
 {
 	// Public
-	wchar_t FileName[256];
-	char FileID[LFKeySize];
-	wchar_t Comment[256];
+	WCHAR FileName[256];
+	CHAR FileID[LFKeySize];
+	WCHAR Comment[256];
 	FILETIME CreationTime;
 	FILETIME AddTime;
 	FILETIME FileTime;
 	FILETIME DeleteTime;
 	FILETIME ArchiveTime;
-	char FileFormat[LFExtSize];
-	__int64 FileSize;
-	unsigned int Flags;
-	char URL[256];
-	wchar_t Tags[256];
-	unsigned char Rating;
-	unsigned char Priority;
-	wchar_t LocationName[256];
-	char LocationIATA[4];
+	CHAR FileFormat[LFExtSize];
+	INT64 FileSize;
+	UINT Flags;
+	CHAR URL[256];
+	WCHAR Tags[256];
+	BYTE Rating;
+	BYTE Priority;
+	WCHAR LocationName[256];
+	CHAR LocationIATA[4];
 	LFGeoCoordinates LocationGPS;
 
 	// Private
-	unsigned char SlaveID;
-	unsigned char ContextID;
+	BYTE SlaveID;
+	BYTE ContextID;
 };
 
 
 // Souces
 
-#define LFSourceCount                   13
+#define LFSourceCount              13
 
 
 // Item structure
 
-#define LFTypeSourceUnknown             0x00000000	// Must be lowest bits
-#define LFTypeSourceInternal            0x00000001
-#define LFTypeSourceWindows             0x00000002
-#define LFTypeSource1394                0x00000003
-#define LFTypeSourceUSB                 0x00000004
-#define LFTypeSourceDropbox             0x00000005
-#define LFTypeSourceFacebook            0x00000006
-#define LFTypeSourceFlickr              0x00000007
-#define LFTypeSourceInstagram           0x00000008
-#define LFTypeSourcePinterest           0x00000009
-#define LFTypeSourceSoundCloud          0x0000000A
-#define LFTypeSourceTwitter             0x0000000B
-#define LFTypeSourceYouTube             0x0000000C
-#define LFTypeSourceMask                0x000000FF
+#define LFTypeSourceUnknown        0x00000000	// Must be lowest bits
+#define LFTypeSourceInternal       0x00000001
+#define LFTypeSourceWindows        0x00000002
+#define LFTypeSource1394           0x00000003
+#define LFTypeSourceUSB            0x00000004
+#define LFTypeSourceDropbox        0x00000005
+#define LFTypeSourceFacebook       0x00000006
+#define LFTypeSourceFlickr         0x00000007
+#define LFTypeSourceInstagram      0x00000008
+#define LFTypeSourcePinterest      0x00000009
+#define LFTypeSourceSoundCloud     0x0000000A
+#define LFTypeSourceTwitter        0x0000000B
+#define LFTypeSourceYouTube        0x0000000C
+#define LFTypeSourceMask           0x000000FF
 
-#define LFTypeDefault                   0x01000000	// Volatile
-#define LFTypeNotMounted                0x02000000
-#define LFTypeGhosted                   0x04000000
-#define LFTypeShortcutAllowed           0x08000000
+#define LFTypeDefault              0x01000000	// Volatile
+#define LFTypeNotMounted           0x02000000
+#define LFTypeGhosted              0x04000000
+#define LFTypeShortcutAllowed      0x08000000
 
-#define LFTypeVolume                    0x00000000	// Volatile
-#define LFTypeStore                     0x10000000
-#define LFTypeFile                      0x20000000
-#define LFTypeFolder                    0x30000000
-#define LFTypeOther                     0xF0000000
-#define LFTypeMask                      0xF0000000
+#define LFTypeVolume               0x00000000	// Volatile
+#define LFTypeStore                0x10000000
+#define LFTypeFile                 0x20000000
+#define LFTypeFolder               0x30000000
+#define LFTypeMask                 0xF0000000
 
-#define LFFlagTrash                     0x0001		// Persistent, DO NOT CHANGE
-#define LFFlagNew                       0x0002
-#define LFFlagLink                      0x0004
-#define LFFlagMissing                   0x0008
-#define LFFlagArchive                   0x0010
+#define LFFlagTrash                0x0001		// Persistent, DO NOT CHANGE
+#define LFFlagNew                  0x0002
+#define LFFlagLink                 0x0004
+#define LFFlagMissing              0x0008
+#define LFFlagArchive              0x0010
 
 struct LFItemDescriptor
 {
 	LFFilter* NextFilter;
-	unsigned int CategoryID;
-	unsigned int IconID;
-	unsigned int Type;
+	UINT CategoryID;
+	UINT IconID;
+	UINT Type;
 
 	LFCoreAttributes CoreAttributes;
-	char StoreID[LFKeySize];
-	wchar_t Description[256];
+	CHAR StoreID[LFKeySize];
+	WCHAR Description[256];
 	void* AttributeValues[LFAttributeCount];
 
 	// Internal use only
-	int FirstAggregate;
-	int LastAggregate;
-	unsigned int AggregateCount;
-	bool DeleteFlag;
-	unsigned int RefCount;
+	INT FirstAggregate;
+	INT LastAggregate;
+	UINT AggregateCount;
+	BOOL DeleteFlag;
+	UINT RefCount;
 	void* Slave;
 };
 
 
 // Store structure
 
-#define LFStoreModeIndexInternal       0x00
-#define LFStoreModeIndexHybrid         0x01
-#define LFStoreModeIndexExternal       0x02
-#define LFStoreModeIndexMask           0x0F
+#define LFStoreModeIndexInternal         0x00
+#define LFStoreModeIndexHybrid           0x01
+#define LFStoreModeIndexExternal         0x02
+#define LFStoreModeIndexMask             0x0F
 
-#define LFStoreModeBackendInternal     0x00000000
-#define LFStoreModeBackendNTFS         0x02000000
-#define LFStoreModeBackendDropbox      0x05000000
-#define LFStoreModeBackendFacebook     0x06000000
-#define LFStoreModeBackendFlickr       0x07000000
-#define LFStoreModeBackendInstagram    0x08000000
-#define LFStoreModeBackendPinterest    0x09000000
-#define LFStoreModeBackendSoundCloud   0x0A000000
-#define LFStoreModeBackendTwitter      0x0B000000
-#define LFStoreModeBackendYouTube      0x0C000000
-#define LFStoreModeBackendShift        24
-#define LFStoreModeBackendMask         0xFF000000
+#define LFStoreModeBackendInternal       0x00000000
+#define LFStoreModeBackendNTFS           0x02000000
+#define LFStoreModeBackendDropbox        0x05000000
+#define LFStoreModeBackendFacebook       0x06000000
+#define LFStoreModeBackendFlickr         0x07000000
+#define LFStoreModeBackendInstagram      0x08000000
+#define LFStoreModeBackendPinterest      0x09000000
+#define LFStoreModeBackendSoundCloud     0x0A000000
+#define LFStoreModeBackendTwitter        0x0B000000
+#define LFStoreModeBackendYouTube        0x0C000000
+#define LFStoreModeBackendShift          24
+#define LFStoreModeBackendMask           0xFF000000
 
-#define LFStoreFlagAutoLocation        1
-#define LFStoreFlagUnchecked           2
+#define LFStoreFlagAutoLocation          1
+#define LFStoreFlagUnchecked             2
 
 struct LFStoreDescriptor
 {
-	char StoreID[LFKeySize];
-	wchar_t StoreName[256];
-	wchar_t LastSeen[256];
-	wchar_t StoreComment[256];
-	int Mode;
+	CHAR StoreID[LFKeySize];
+	WCHAR StoreName[256];
+	WCHAR LastSeen[256];
+	WCHAR StoreComment[256];
+	UINT Mode;
 	GUID guid;
-	unsigned int Flags;
+	UINT Flags;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	FILETIME MaintenanceTime;
-	unsigned int IndexVersion;
-	wchar_t DatPath[MAX_PATH];
+	UINT IndexVersion;
+	WCHAR DatPath[MAX_PATH];
 	FILETIME SynchronizeTime;
-	wchar_t IdxPathMain[MAX_PATH];				// Volatile
-	wchar_t IdxPathAux[MAX_PATH];				// Volatile
-	unsigned int Source;						// Volatile
-	unsigned int FileCount[32];					// Volatile
-	__int64 FileSize[32];						// Volatile
+	WCHAR IdxPathMain[MAX_PATH];				// Volatile
+	WCHAR IdxPathAux[MAX_PATH];					// Volatile
+	UINT Source;								// Volatile
+	UINT FileCount[32];							// Volatile
+	INT64 FileSize[32];							// Volatile
 };
 
 
 // Error codes
 
-#define LFOk                            0
-#define LFCancel                        1
-#define LFMemoryError                   2
-#define LFIllegalQuery                  3
-#define LFIllegalStoreDescriptor        4
-#define LFStoreNotFound                 5
-#define LFDriveNotReady                 6
-#define LFDriveWriteProtected           7
-#define LFIllegalPhysicalPath           8
-#define LFRegistryError                 9
-#define LFAccessError                   10
-#define LFIllegalKey                    11
-#define LFNoDefaultStore                12
-#define LFTooManyStores                 13
-#define LFStoreNotMounted               14
-#define LFMutexError                    15
-#define LFIllegalAttribute              16
-#define LFIllegalItemType               17
-#define LFIllegalValue                  18
-#define LFIndexTableLoadError           19
-#define LFIndexRepairError              20
-#define LFIndexAccessError              21
-#define LFIndexCreateError              22
-#define LFNotEnoughFreeDiscSpace        23
-#define LFCannotImportFile              24
-#define LFCannotDeleteFile              25
-#define LFCannotRenameFile              26
-#define LFCannotCopyIndex               27
-#define LFNoFileBody                    28
+#define LFOk                         0
+#define LFCancel                     1
+#define LFMemoryError                2
+#define LFIllegalQuery               3
+#define LFIllegalStoreDescriptor     4
+#define LFStoreNotFound              5
+#define LFDriveNotReady              6
+#define LFDriveWriteProtected        7
+#define LFIllegalPhysicalPath        8
+#define LFRegistryError              9
+#define LFAccessError                10
+#define LFIllegalKey                 11
+#define LFNoDefaultStore             12
+#define LFTooManyStores              13
+#define LFStoreNotMounted            14
+#define LFMutexError                 15
+#define LFIllegalAttribute           16
+#define LFIllegalItemType            17
+#define LFIllegalValue               18
+#define LFIndexTableLoadError        19
+#define LFIndexRepairError           20
+#define LFIndexAccessError           21
+#define LFIndexCreateError           22
+#define LFNotEnoughFreeDiscSpace     23
+#define LFCannotImportFile           24
+#define LFCannotDeleteFile           25
+#define LFCannotRenameFile           26
+#define LFCannotCopyIndex            27
+#define LFNoFileBody                 28
 
 
 // Structures and classes from LFCore.dll

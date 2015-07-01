@@ -27,7 +27,7 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 
 		CString Caption;
 		CString Message;
-		if (LFIsLicensed(NULL, true))
+		if (LFIsLicensed(NULL, TRUE))
 		{
 			ENSURE(Caption.LoadString(IDS_LICENSEVALID_CAPTION));
 			ENSURE(Message.LoadString(IDS_LICENSEVALID_MSG));

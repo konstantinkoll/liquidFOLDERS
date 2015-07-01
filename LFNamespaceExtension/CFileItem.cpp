@@ -55,17 +55,15 @@ void CFileItem::Serialize(CArchive& ar)
 	UINT Count = 0;
 	for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
 	{
-		v[a].Attr = a;
-		v[a].Type = theApp.m_Attributes[a].Type;
-		LFGetAttributeVariantData(m_pItem, &v[a]);
+		LFGetAttributeVariantDataEx(m_pItem, a, v[a]);
 
-		if (!LFIsNullVariantData(&v[a]))
+		if (!LFIsNullVariantData(v[a]))
 			Count++;
 	}
 
 	ar << Count;
 	for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
-		if (!LFIsNullVariantData(&v[a]))
+		if (!LFIsNullVariantData(v[a]))
 			ar.Write(&v[a], sizeof(LFVariantData));
 }
 
@@ -82,7 +80,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
 		WCHAR Path[MAX_PATH];
-		displayName = (LFGetFileLocation(m_pItem, Path, MAX_PATH, false, false)==LFOk) ? Path : _T("?");
+		displayName = (LFGetFileLocation(m_pItem, Path, MAX_PATH, FALSE, FALSE)==LFOk) ? Path : _T("?");
 		return;
 	}
 
@@ -206,14 +204,12 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	if ((column.index>=0) && (column.index<LFAttributeCount))
 	{
 		UCHAR Type = theApp.m_Attributes[column.index].Type;
-		if ((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime))
+		if ((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeSize) || (Type==LFTypeDouble) || (Type==LFTypeTime))
 		{
 			LFVariantData v;
-			v.Attr = column.index;
-			v.Type = Type;
-			LFGetAttributeVariantData(m_pItem, &v);
+			LFGetAttributeVariantDataEx(m_pItem, column.index, v);
 
-			if (!LFIsNullVariantData(&v))
+			if (!LFIsNullVariantData(v))
 			{
 				CString tmpStr;
 				UINT tmpInt;
@@ -225,13 +221,13 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 					CUtils::SetVariantUINT(value, tmpInt>99 ? 99 : tmpInt);
 					return TRUE;
 				case LFTypeUINT:
-					CUtils::SetVariantUINT(value, v.UINT);
+					CUtils::SetVariantUINT(value, v.UINT32);
 					return TRUE;
-				case LFTypeINT64:
+				case LFTypeSize:
 					if (value->vt==VT_BSTR)
 					{
 						WCHAR tmpBuf[256];
-						LFINT64ToString(v.INT64, tmpBuf, 256);
+						LFSizeToString(v.INT64, tmpBuf, 256);
 						CUtils::SetVariantLPCTSTR(value, tmpBuf);
 					}
 					else
@@ -419,7 +415,7 @@ LPSTREAM CFileItem::GetStream()
 	LPSTREAM ret = NULL;
 
 	WCHAR Path[MAX_PATH];
-	UINT Result = LFGetFileLocation(m_pItem, Path, MAX_PATH, true, false);
+	UINT Result = LFGetFileLocation(m_pItem, Path, MAX_PATH, TRUE, FALSE);
 	if (Result!=LFOk)
 	{
 		LFErrorBox(Result);
@@ -490,7 +486,7 @@ BOOL CFileItem::SetShellLink(IShellLink* pShellLink)
 	ASSERT(pShellLink);
 
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(m_pItem, Path, MAX_PATH, true, false)==LFOk)
+	if (LFGetFileLocation(m_pItem, Path, MAX_PATH, TRUE, FALSE)==LFOk)
 	{
 		WCHAR Ext[LFExtSize+1] = L".*";
 		WCHAR* LastBackslash = wcsrchr(Path, L'\\');

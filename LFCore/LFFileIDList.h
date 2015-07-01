@@ -4,10 +4,10 @@
 
 struct LFFIL1_Item
 {
-	char StoreID[LFKeySize];
-	char FileID[LFKeySize];
-	unsigned int LastError;
-	bool Processed;
+	CHAR StoreID[LFKeySize];
+	CHAR FileID[LFKeySize];
+	UINT LastError;
+	BOOL Processed;
 	void* UserData;
 };
 
@@ -17,11 +17,11 @@ class LFFileIDList : public LFDynArray<LFFIL1_Item>
 public:
 	LFFileIDList();
 
-	bool AddFileID(char* StoreID, char* FileID, void* UserData=NULL);
+	BOOL AddFileID(CHAR* StoreID, CHAR* FileID, void* UserData=NULL);
 	void Reset();
-	void SetError(char* key, unsigned int error, LFProgress* pProgress=NULL);
-	void SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress=NULL);
+	void SetError(CHAR* key, UINT error, LFProgress* pProgress=NULL);
+	void SetError(UINT idx, UINT Result, LFProgress* pProgress=NULL);
 	HGLOBAL CreateLiquidFiles();
 
-	bool m_Changes;
+	BOOL m_Changes;
 };

@@ -8,74 +8,22 @@
 #include "Stores.h"
 #include "StoreCache.h"
 #include <assert.h>
+#include <shlwapi.h>
 
 
 extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
-extern const int CoreOffsets[];
-extern const unsigned char AttrTypes[];
+extern const INT CoreOffsets[];
+extern const BYTE AttrTypes[];
 
 
-wchar_t* wcsistr(const wchar_t* String, const wchar_t* Pattern)
-{
-	for (wchar_t* start=(wchar_t*)String; *start!=L'\0'; start++)
-	{
-		for (; ((*start!=L'\0') && (towupper(*start)!=towupper(*Pattern))); start++)
-		;
 
-		if (*start==L'\0')
-			return NULL;
-
-		wchar_t* pptr = (wchar_t*)Pattern;
-		wchar_t* sptr = start;
-
-		while (towupper(*sptr)==towupper(*pptr))
-		{
-			sptr++;
-			pptr++;
-
-			if (*pptr==L'\0')
-				return start;
-			
-		}
-	}
-
-	return NULL;
-}
-
-char* stristr(const char* String, const char* Pattern)
-{
-	for (char* start=(char*)String; *start!='\0'; start++)
-	{
-		for (; ((*start!='\0') && (toupper(*start)!=toupper(*Pattern))); start++)
-		;
-
-		if (*start=='\0')
-			return NULL;
-
-		char* pptr = (char*)Pattern;
-		char* sptr = start;
-
-		while (toupper(*sptr)==toupper(*pptr))
-		{
-			sptr++;
-			pptr++;
-
-			if (*pptr=='\0')
-				return start;
-			
-		}
-	}
-
-	return NULL;
-}
-
-unsigned char GetRatingCategory(const unsigned char rating)
+BYTE GetRatingCategory(const BYTE rating)
 {
 	return (rating==1) ? 1 : rating>>1;
 }
 
-unsigned int GetSizeCategory(const __int64 sz)
+UINT GetSizeCategory(const INT64 sz)
 {
 	if (sz<32*1024)
 		return 0;
@@ -91,7 +39,7 @@ unsigned int GetSizeCategory(const __int64 sz)
 	return 5;
 }
 
-unsigned int GetDurationCategory(const unsigned int duration)
+UINT GetDurationCategory(const UINT duration)
 {
 	if (duration<5*1000)
 		return 0;
@@ -123,84 +71,9 @@ unsigned int GetDurationCategory(const unsigned int duration)
 	return 13;
 }
 
-bool GetNamePrefix(wchar_t* FullName, wchar_t* Buffer)
+void GetServer(CHAR* URL, CHAR* Server)
 {
-#define Choose if ((P2) && ((!P1) || (P2<P1))) P1 = P2;
-
-	wchar_t* P1 = wcsstr(FullName, L" —");
-	wchar_t* P2;
-
-	P2 = wcsstr(FullName, L" –"); Choose;
-	P2 = wcsstr(FullName, L" -"); Choose;
-	P2 = wcsstr(FullName, L" \""); Choose;
-	P2 = wcsstr(FullName, L" ("); Choose;
-	P2 = wcsstr(FullName, L" /"); Choose;
-	P2 = wcsstr(FullName, L" »"); Choose;
-	P2 = wcsstr(FullName, L" «"); Choose;
-	P2 = wcsstr(FullName, L" „"); Choose;
-	P2 = wcsstr(FullName, L" “"); Choose;
-	P2 = wcsstr(FullName, L"—"); Choose;
-
-	// Wenn kein Trenner gefunden wurde, von rechts nach Ziffern suchen
-	if (!P1)
-	{
-		unsigned char Stelle = 1;
-
-		P2 = &FullName[wcslen(FullName)-1];
-		while (P2>FullName)
-			switch (Stelle)
-			{
-			case 1:
-				switch (*P2)
-				{
-				case L'0':
-				case L'1':
-				case L'2':
-				case L'3':
-				case L'4':
-				case L'5':
-				case L'6':
-				case L'7':
-				case L'8':
-				case L'9':
-				case L'.':
-				case L',':
-					P2--;
-					break;
-				case L' ':
-					P2--;
-					Stelle = 2;
-					break;
-				default:
-					goto Skip;
-				}
-				break;
-			case 2:
-				if (*P2==L' ')
-				{
-					P2--;
-				}
-				else
-				{
-					goto Fertig;
-				}
-			}
-
-Fertig:
-		if (Stelle==2)
-			P1 = P2+1;
-	}
-
-Skip:
-	if (P1)
-		wcsncpy_s(Buffer, 256, FullName, P1-FullName);
-
-	return (P1!=NULL);
-}
-
-void GetServer(char* URL, char* Server)
-{
-	char* Pos = strstr(URL, "://");
+	CHAR* Pos = strstr(URL, "://");
 	if (Pos)
 		URL = Pos+3;
 
@@ -212,7 +85,7 @@ void GetServer(char* URL, char* Server)
 }
 
 
-bool CheckCondition(void* value, LFFilterCondition* c)
+BOOL CheckCondition(void* value, LFFilterCondition* c)
 {
 	assert(c->Compare>=LFFilterCompareIgnore);
 	assert(c->Compare<=LFFilterCompareContains);
@@ -220,9 +93,9 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	switch (c->Compare)
 	{
 	case LFFilterCompareIgnore:
-		return true;
+		return TRUE;
 	case LFFilterCompareIsNull:
-		return IsNullValue(c->AttrData.Attr, value);
+		return IsNullValue(AttrTypes[c->AttrData.Attr], value);
 	}
 
 	if (!value)
@@ -230,11 +103,11 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return LFIsNullVariantData(&c->AttrData);
+			return LFIsNullVariantData(c->AttrData);
 		case LFFilterCompareIsNotEqual:
-			return !LFIsNullVariantData(&c->AttrData);
+			return !LFIsNullVariantData(c->AttrData);
 		default:
-			return false;
+			return FALSE;
 		}
 
 	assert(c->AttrData.Attr<LFAttributeCount);
@@ -248,11 +121,11 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	SYSTEMTIME stUTC;
 	SYSTEMTIME stLocal;
 	FILETIME ft;
-	wchar_t* conditionarray;
-	wchar_t condition[256];
-	wchar_t* tagarray;
-	wchar_t tag[256];
-	char Server[256];
+	WCHAR* conditionarray;
+	WCHAR condition[256];
+	WCHAR* tagarray;
+	WCHAR tag[256];
+	CHAR Server[256];
 
 	switch (c->AttrData.Type)
 	{
@@ -262,57 +135,57 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		case LFFilterCompareSubfolder:
 			if (c->AttrData.Attr==LFAttrFileName)
 			{
-				len1 = wcslen((wchar_t*)value);
+				len1 = wcslen((WCHAR*)value);
 				len2 = wcslen(c->AttrData.UnicodeString);
 				if (len1<=len2)
-					return false;
-				return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len2)==0;
+					return FALSE;
+				return _wcsnicmp((WCHAR*)value, c->AttrData.UnicodeString, len2)==0;
 			}
 		case LFFilterCompareIsEqual:
-			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)==0;
+			return _wcsicmp((WCHAR*)value, c->AttrData.UnicodeString)==0;
 		case LFFilterCompareIsNotEqual:
-			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)!=0;
+			return _wcsicmp((WCHAR*)value, c->AttrData.UnicodeString)!=0;
 		case LFFilterCompareBeginsWith:
 			len1 = wcslen(c->AttrData.UnicodeString);
-			len2 = wcslen((wchar_t*)value);
+			len2 = wcslen((WCHAR*)value);
 			if (len1>len2)
-				return false;
-			return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len1)==0;
+				return FALSE;
+			return _wcsnicmp((WCHAR*)value, c->AttrData.UnicodeString, len1)==0;
 		case LFFilterCompareEndsWith:
 			len1 = wcslen(c->AttrData.UnicodeString);
-			len2 = wcslen((wchar_t*)value);
+			len2 = wcslen((WCHAR*)value);
 			if (len1>len2)
-				return false;
-			return _wcsicmp(&((wchar_t*)value)[len2-len1], c->AttrData.UnicodeString)==0;
+				return FALSE;
+			return _wcsicmp(&((WCHAR*)value)[len2-len1], c->AttrData.UnicodeString)==0;
 		case LFFilterCompareContains:
-			return wcsistr((wchar_t*)value, c->AttrData.UnicodeString)!=NULL;
+			return StrStrIW((WCHAR*)value, c->AttrData.UnicodeString)!=NULL;
 		default:
 			
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeUnicodeArray:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			tagarray = (wchar_t*)value;
+			tagarray = (WCHAR*)value;
 			while (GetNextTag(&tagarray, tag, 256))
 				if (_wcsicmp(tag, c->AttrData.UnicodeArray)==0)
-					return true;
-			return false;
+					return TRUE;
+			return FALSE;
 		case LFFilterCompareContains:
 			conditionarray = c->AttrData.UnicodeArray;
 			while (GetNextTag(&conditionarray, condition, 256))
 			{
-				tagarray = (wchar_t*)value;
+				tagarray = (WCHAR*)value;
 				while (GetNextTag(&tagarray, tag, 256))
 					if (_wcsicmp(tag, condition)==0)
-						return true;
+						return TRUE;
 			}
-			return false;
+			return FALSE;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeAnsiString:
 		switch (c->Compare)
@@ -320,94 +193,94 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		case LFFilterCompareSubfolder:
 			if (c->AttrData.Attr==LFAttrURL)
 			{
-				GetServer((char*)value, Server);
+				GetServer((CHAR*)value, Server);
 				return _stricmp(Server, c->AttrData.AnsiString)==0;
 			}
 		case LFFilterCompareIsEqual:
-			return _stricmp((char*)value, c->AttrData.AnsiString)==0;
+			return _stricmp((CHAR*)value, c->AttrData.AnsiString)==0;
 		case LFFilterCompareIsNotEqual:
-			return _stricmp((char*)value, c->AttrData.AnsiString)!=0;
+			return _stricmp((CHAR*)value, c->AttrData.AnsiString)!=0;
 		case LFFilterCompareBeginsWith:
 			len1 = strlen(c->AttrData.AnsiString);
-			len2 = strlen((char*)value);
+			len2 = strlen((CHAR*)value);
 			if (len1>len2)
-				return false;
-			return _strnicmp((char*)value, c->AttrData.AnsiString, len1)==0;
+				return FALSE;
+			return _strnicmp((CHAR*)value, c->AttrData.AnsiString, len1)==0;
 		case LFFilterCompareEndsWith:
 			len1 = strlen(c->AttrData.AnsiString);
-			len2 = strlen((char*)value);
+			len2 = strlen((CHAR*)value);
 			if (len1>len2)
-				return false;
-			return _stricmp(&((char*)value)[len2-len1], c->AttrData.AnsiString)==0;
+				return FALSE;
+			return _stricmp(&((CHAR*)value)[len2-len1], c->AttrData.AnsiString)==0;
 		case LFFilterCompareContains:
-			return stristr((char*)value, c->AttrData.AnsiString)!=NULL;
+			return StrStrIA((CHAR*)value, c->AttrData.AnsiString)!=NULL;
 		default:
 			
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeFourCC:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return *(unsigned int*)value==c->AttrData.UINT;
+			return *(UINT*)value==c->AttrData.UINT32;
 		case LFFilterCompareIsNotEqual:
-			return *(unsigned int*)value!=c->AttrData.UINT;
+			return *(UINT*)value!=c->AttrData.UINT32;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeRating:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return GetRatingCategory(*(unsigned char*)value)==GetRatingCategory(c->AttrData.Rating);
+			return GetRatingCategory(*(BYTE*)value)==GetRatingCategory(c->AttrData.Rating);
 		case LFFilterCompareIsEqual:
-			return *(unsigned char*)value==c->AttrData.Rating;
+			return *(BYTE*)value==c->AttrData.Rating;
 		case LFFilterCompareIsNotEqual:
-			return *(unsigned char*)value!=c->AttrData.Rating;
+			return *(BYTE*)value!=c->AttrData.Rating;
 		case LFFilterCompareIsAboveOrEqual:
-			return *(unsigned char*)value>=c->AttrData.Rating;
+			return *(BYTE*)value>=c->AttrData.Rating;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(unsigned char*)value<=c->AttrData.Rating;
+			return *(BYTE*)value<=c->AttrData.Rating;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeUINT:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return *(unsigned int*)value==c->AttrData.UINT;
+			return *(UINT*)value==c->AttrData.UINT32;
 		case LFFilterCompareIsNotEqual:
-			return *(unsigned int*)value!=c->AttrData.UINT;
+			return *(UINT*)value!=c->AttrData.UINT32;
 		case LFFilterCompareIsAboveOrEqual:
-			return *(unsigned int*)value>=c->AttrData.UINT;
+			return *(UINT*)value>=c->AttrData.UINT32;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(unsigned int*)value<=c->AttrData.UINT;
+			return *(UINT*)value<=c->AttrData.UINT32;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
-	case LFTypeINT64:
+	case LFTypeSize:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
 			if (c->AttrData.Attr==LFAttrFileSize)
-				return GetSizeCategory(*(__int64*)value)==GetSizeCategory(c->AttrData.INT64);
+				return GetSizeCategory(*(INT64*)value)==GetSizeCategory(c->AttrData.INT64);
 		case LFFilterCompareIsEqual:
-			return *(__int64*)value==c->AttrData.INT64;
+			return *(INT64*)value==c->AttrData.INT64;
 		case LFFilterCompareIsNotEqual:
-			return *(__int64*)value!=c->AttrData.INT64;
+			return *(INT64*)value!=c->AttrData.INT64;
 		case LFFilterCompareIsAboveOrEqual:
-			return *(__int64*)value>=c->AttrData.INT64;
+			return *(INT64*)value>=c->AttrData.INT64;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(__int64*)value<=c->AttrData.INT64;
+			return *(INT64*)value<=c->AttrData.INT64;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeFraction:
 		switch (c->Compare)
@@ -418,35 +291,35 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		case LFFilterCompareIsNotEqual:
 			return memcmp(value, &c->AttrData.Fraction, sizeof(LFFraction))!=0;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeDouble:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return *(double*)value==c->AttrData.Double;
+			return *(DOUBLE*)value==c->AttrData.Double;
 		case LFFilterCompareIsNotEqual:
-			return *(double*)value!=c->AttrData.Double;
+			return *(DOUBLE*)value!=c->AttrData.Double;
 		case LFFilterCompareIsAboveOrEqual:
-			return *(double*)value>=c->AttrData.Double;
+			return *(DOUBLE*)value>=c->AttrData.Double;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(double*)value<=c->AttrData.Double;
+			return *(DOUBLE*)value<=c->AttrData.Double;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeFlags:
 		switch (c->Compare)
 		{
 		case LFFilterCompareIsEqual:
-			return (*(unsigned int*)value & c->AttrData.Flags.Mask)==(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
+			return (*(UINT*)value & c->AttrData.Flags.Mask)==(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
 		case LFFilterCompareIsNotEqual:
-			return (*(unsigned int*)value & c->AttrData.Flags.Mask)!=(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
+			return (*(UINT*)value & c->AttrData.Flags.Mask)!=(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeGeoCoordinates:
 		switch (c->Compare)
@@ -457,8 +330,8 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		case LFFilterCompareIsNotEqual:
 			return memcmp(value, &c->AttrData.GeoCoordinates, sizeof(LFGeoCoordinates))!=0;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeTime:
 		switch (c->Compare)
@@ -487,66 +360,66 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 			uli2.HighPart = c->AttrData.Time.dwHighDateTime;
 			return uli1.QuadPart<=uli2.QuadPart;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeDuration:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return GetDurationCategory(*(unsigned int*)value)==GetDurationCategory(c->AttrData.UINT);
+			return GetDurationCategory(*(UINT*)value)==GetDurationCategory(c->AttrData.UINT32);
 		case LFFilterCompareIsEqual:
-			return *(unsigned int*)value==c->AttrData.UINT;
+			return *(UINT*)value==c->AttrData.UINT32;
 		case LFFilterCompareIsNotEqual:
-			return *(unsigned int*)value!=c->AttrData.UINT;
+			return *(UINT*)value!=c->AttrData.UINT32;
 		case LFFilterCompareIsAboveOrEqual:
-			return *(unsigned int*)value>=c->AttrData.UINT;
+			return *(UINT*)value>=c->AttrData.UINT32;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(unsigned int*)value<=c->AttrData.UINT;
+			return *(UINT*)value<=c->AttrData.UINT32;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeBitrate:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return ((*(unsigned int*)value+500)/1000)==((c->AttrData.UINT+500)/1000);
+			return ((*(UINT*)value+500)/1000)==((c->AttrData.UINT32+500)/1000);
 		case LFFilterCompareIsNotEqual:
-			return ((*(unsigned int*)value+500)/1000)!=((c->AttrData.UINT+500)/1000);
+			return ((*(UINT*)value+500)/1000)!=((c->AttrData.UINT32+500)/1000);
 		case LFFilterCompareIsAboveOrEqual:
-			return *(unsigned int*)value>=c->AttrData.UINT;
+			return *(UINT*)value>=c->AttrData.UINT32;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(unsigned int*)value<=c->AttrData.UINT;
+			return *(UINT*)value<=c->AttrData.UINT32;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	case LFTypeMegapixel:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return (unsigned int)*((double*)value)==(unsigned int)c->AttrData.Megapixel;
+			return (UINT)*((DOUBLE*)value)==(UINT)c->AttrData.Megapixel;
 		case LFFilterCompareIsNotEqual:
-			return (unsigned int)*((double*)value)!=(unsigned int)c->AttrData.Megapixel;
+			return (UINT)*((DOUBLE*)value)!=(UINT)c->AttrData.Megapixel;
 		case LFFilterCompareIsAboveOrEqual:
-			return *(double*)value>=c->AttrData.Megapixel;
+			return *(DOUBLE*)value>=c->AttrData.Megapixel;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(double*)value<=c->AttrData.Megapixel;
+			return *(DOUBLE*)value<=c->AttrData.Megapixel;
 		default:
-			assert(false);
-			return false;
+			assert(FALSE);
+			return FALSE;
 		}
 	}
 
 	// Something fishy is going on - play it safe and include the file
-	assert(false);
-	return true;
+	assert(FALSE);
+	return TRUE;
 }
 
-int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
+INT PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 {
 	assert(ca);
 	assert(f);
@@ -592,7 +465,7 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 		}
 
 	// Attributes
-	int advanced = (f->Searchterm[0]==L'\0') ? 1 : 0;
+	INT advanced = (f->Searchterm[0]==L'\0') ? 1 : 0;
 
 	LFFilterCondition* c = f->ConditionList;
 	while (c)
@@ -600,7 +473,7 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 		if (c->AttrData.Attr<=LFLastCoreAttribute)
 		{
 			if (CoreOffsets[c->AttrData.Attr]!=-1)
-				if (!CheckCondition((char*)ca+CoreOffsets[c->AttrData.Attr], c))
+				if (!CheckCondition((CHAR*)ca+CoreOffsets[c->AttrData.Attr], c))
 					return -1;
 		}
 		else
@@ -614,7 +487,7 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 	return advanced;
 }
 
-bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* f)
+BOOL PassesFilterSlaves(LFItemDescriptor* i, LFFilter* f)
 {
 	assert(f);
 	assert(i);
@@ -625,44 +498,44 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* f)
 	{
 		if (c->AttrData.Attr>LFLastCoreAttribute)
 			if (!CheckCondition(i->AttributeValues[c->AttrData.Attr], c))
-				return false;
+				return FALSE;
 
 		c = c->Next;
 	}
 
 	if (f->Searchterm[0]=='\0')
-		return true;
+		return TRUE;
 
 	// Globaler Suchbegriff
-	bool checkTime = true;
-	for (unsigned int a=0; a<wcslen(f->Searchterm); a++)
+	BOOL checkTime = TRUE;
+	for (UINT a=0; a<wcslen(f->Searchterm); a++)
 	{
-		wchar_t ch = f->Searchterm[a];
+		WCHAR ch = f->Searchterm[a];
 		if (((ch<L'0') || (ch>L'9')) && (ch!=L':') && (ch!=L'.') && (ch!=L'/') && (ch!=L'.'))
 		{
-			checkTime = false;
+			checkTime = FALSE;
 			break;
 		}
 	}
 
-	char Searchterm[256];
+	CHAR Searchterm[256];
 	WideCharToMultiByte(CP_ACP, 0, f->Searchterm, -1, Searchterm, 256, NULL, NULL);
 
-	for (unsigned int a=0; a<LFAttributeCount; a++)
+	for (UINT a=0; a<LFAttributeCount; a++)
 		if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (i->AttributeValues[a]))
 		{
-			wchar_t tmpStr[256];
+			WCHAR tmpStr[256];
 
 			switch (AttrTypes[a])
 			{
 			case LFTypeUnicodeString:
 			case LFTypeUnicodeArray:
-				if (wcsistr((wchar_t*)i->AttributeValues[a], f->Searchterm)!=NULL)
-					return true;
+				if (StrStrIW((WCHAR*)i->AttributeValues[a], f->Searchterm)!=NULL)
+					return TRUE;
 				break;
 			case LFTypeAnsiString:
-				if (stristr((char*)i->AttributeValues[a], Searchterm)!=NULL)
-					return true;
+				if (StrStrIA((CHAR*)i->AttributeValues[a], Searchterm)!=NULL)
+					return TRUE;
 				break;
 			case LFTypeGeoCoordinates:
 				break;
@@ -671,20 +544,20 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* f)
 					break;
 			default:
 				LFAttributeToString(i, a, tmpStr, 256);
-				if (wcsistr(tmpStr, f->Searchterm)!=NULL)
-					return true;
+				if (StrStrIW(tmpStr, f->Searchterm)!=NULL)
+					return TRUE;
 			}
 		}
 
-	return false;
+	return FALSE;
 }
 
 
 // Query helpers
 
-void RetrieveStore(char* StoreID, LFFilter* f, LFSearchResult* sr)
+void RetrieveStore(CHAR* StoreID, LFFilter* f, LFSearchResult* sr)
 {
-	OPEN_STORE(StoreID, false, sr->m_LastError = Result);
+	OPEN_STORE(StoreID, FALSE, sr->m_LastError = Result);
 
 	if (idx1)
 		idx1->Retrieve(f, sr);
@@ -694,7 +567,7 @@ void RetrieveStore(char* StoreID, LFFilter* f, LFSearchResult* sr)
 
 void QueryStores(LFFilter* f, LFSearchResult* sr)
 {
-	sr->m_HasCategories = true;
+	sr->m_HasCategories = TRUE;
 
 	// Volumes
 	if (f)
@@ -729,14 +602,14 @@ __forceinline void QuerySearch(LFFilter* f, LFSearchResult* sr)
 			return;
 		}
 
-		char* IDs;
-		unsigned int count = FindStores(&IDs);
+		CHAR* IDs;
+		UINT count = FindStores(&IDs);
 		ReleaseMutex(Mutex_Stores);
 
 		if (count)
 		{
-			char* ptr = IDs;
-			for (unsigned int a=0; a<count; a++)
+			CHAR* ptr = IDs;
+			for (UINT a=0; a<count; a++)
 			{
 				RetrieveStore(ptr, f, sr);
 				ptr += LFKeySize;
@@ -802,14 +675,14 @@ Finish:
 	return sr;
 }
 
-LFCORE_API LFSearchResult* LFQuery(LFFilter* f, LFSearchResult* base, int first, int last)
+LFCORE_API LFSearchResult* LFQuery(LFFilter* f, LFSearchResult* base, INT first, INT last)
 {
 	DWORD start = GetTickCount();
 
 	LFSearchResult* sr;
 
 	if ((f->Mode>=LFFilterModeDirectoryTree) && (f->Options.IsSubfolder) && (base->m_RawCopy) &&
-		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
+		(first<=last) && (first>=0) && (first<(INT)base->m_ItemCount) && (last>=0) && (last<(INT)base->m_ItemCount))
 	{
 		sr = base;
 
@@ -828,7 +701,7 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* f, LFSearchResult* base, int first,
 	return sr;
 }
 
-LFCORE_API LFStatistics* LFQueryStatistics(char* StoreID)
+LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
 {
 	LFStatistics* stat = new LFStatistics();
 	ZeroMemory(stat, sizeof(LFStatistics));
@@ -846,14 +719,14 @@ LFCORE_API LFStatistics* LFQueryStatistics(char* StoreID)
 	}
 
 	// All stores
-	char* IDs;
-	unsigned int count = FindStores(&IDs);
+	CHAR* IDs;
+	UINT count = FindStores(&IDs);
 	ReleaseMutex(Mutex_Stores);
 
 	if (count)
 	{
-		char* ptr = IDs;
-		for (unsigned int a=0; a<count; a++)
+		CHAR* ptr = IDs;
+		for (UINT a=0; a<count; a++)
 		{
 			if ((*StoreID=='\0') || (strcmp(ptr, StoreID)==0))
 			{
@@ -862,7 +735,7 @@ LFCORE_API LFStatistics* LFQueryStatistics(char* StoreID)
 
 				if (slot)
 				{
-					for (unsigned int b=0; b<=min(LFLastQueryContext, 31); b++)
+					for (UINT b=0; b<=min(LFLastQueryContext, 31); b++)
 					{
 						stat->FileCount[b] += slot->FileCount[b];
 						stat->FileSize[b] += slot->FileSize[b];

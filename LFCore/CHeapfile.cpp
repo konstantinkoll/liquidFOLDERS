@@ -9,17 +9,17 @@
 #include <winioctl.h>
 
 
-void Compress(HANDLE hFile, wchar_t* IdxFilename)
+void Compress(HANDLE hFile, WCHAR* IdxFilename)
 {
 	// NTFS compression
 	BY_HANDLE_FILE_INFORMATION fi;
 	if (GetFileInformationByHandle(hFile, &fi))
 		if ((fi.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED)==0)
 		{
-			wchar_t Root[4];
+			WCHAR Root[4];
 			wcsncpy_s(Root, 4, IdxFilename, 3);
 
-			wchar_t VolumeName[MAX_PATH];
+			WCHAR VolumeName[MAX_PATH];
 			DWORD Flags;
 			if (GetVolumeInformation(Root, VolumeName, MAX_PATH, NULL, NULL, &Flags, NULL, 0))
 				if (Flags & FS_FILE_COMPRESSION)
@@ -35,7 +35,7 @@ void Compress(HANDLE hFile, wchar_t* IdxFilename)
 // CHeapFile
 //
 
-CHeapfile::CHeapfile(wchar_t* Path, wchar_t* Filename, unsigned int _ElementSize, unsigned int _KeyOffset)
+CHeapfile::CHeapfile(WCHAR* Path, WCHAR* Filename, UINT _ElementSize, UINT _KeyOffset)
 {
 	assert(sizeof(HeapfileHeader)==512);
 	assert(_ElementSize);
@@ -75,7 +75,7 @@ Create:
 			strcpy_s(Hdr.ID, sizeof(Hdr.ID), HeapSignature);
 			Hdr.ElementSize = _ElementSize;
 			Hdr.Version = CurIdxVersion;
-			HeaderNeedsWriteback = true;
+			HeaderNeedsWriteback = TRUE;
 
 			if (!WriteHeader())
 			{
@@ -99,7 +99,7 @@ Create:
 			if (strcmp(Hdr.ID, HeapSignature)!=0)
 				goto Create;
 
-			ItemCount = (unsigned int)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);
+			ItemCount = (UINT)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);
 			OpenStatus = (Hdr.Version<CurIdxVersion) ? HeapMaintenanceRequired : HeapOk;
 
 			// Anpassungen für andere Index-Versionen und Tupelgrößen
@@ -124,7 +124,7 @@ Create:
 	}
 
 Finish:
-	BufferNeedsWriteback = HeaderNeedsWriteback = false;
+	BufferNeedsWriteback = HeaderNeedsWriteback = FALSE;
 }
 
 CHeapfile::~CHeapfile()
@@ -134,23 +134,23 @@ CHeapfile::~CHeapfile()
 		free(Buffer);
 }
 
-void CHeapfile::GetAttribute(void* PtrDst, unsigned int offset, unsigned int attr, LFItemDescriptor* i)
+void CHeapfile::GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescriptor* i)
 {
 	assert(PtrDst);
-	assert(attr<LFAttributeCount);
+	assert(Attr<LFAttributeCount);
 
-	if (i->AttributeValues[attr])
+	if (i->AttributeValues[Attr])
 	{
-		size_t sz = GetAttributeSize(attr, i->AttributeValues[attr]);
+		size_t sz = GetAttributeSize(Attr, i->AttributeValues[Attr]);
 
-		unsigned int EndOfTuple = Hdr.ElementSize;
+		UINT EndOfTuple = Hdr.ElementSize;
 		if (KeyOffset==Hdr.ElementSize-LFKeySize)
 			EndOfTuple -= LFKeySize;
 
 		if (offset+sz<=EndOfTuple)
 		{
-			char* P = (char*)PtrDst+offset;
-			memcpy(P, i->AttributeValues[attr], sz);
+			CHAR* P = (CHAR*)PtrDst+offset;
+			memcpy(P, i->AttributeValues[Attr], sz);
 		}
 	}
 }
@@ -170,7 +170,7 @@ __forceinline void CHeapfile::AllocBuffer()
 	FirstInBuffer = LastInBuffer = -1;
 }
 
-__forceinline bool CHeapfile::OpenFile()
+__forceinline BOOL CHeapfile::OpenFile()
 {
 	if (hFile==INVALID_HANDLE_VALUE)
 		hFile = CreateFile(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -189,50 +189,50 @@ void CHeapfile::CloseFile()
 	}
 }
 
-bool CHeapfile::WriteHeader()
+BOOL CHeapfile::WriteHeader()
 {
 	if (!HeaderNeedsWriteback)
-		return true;
+		return TRUE;
 
 	if (!OpenFile())
-		return false;
+		return FALSE;
 
 	if (SetFilePointer(hFile, 0, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
-		return false;
+		return FALSE;
 
 	DWORD Written;
 	if (!WriteFile(hFile, &Hdr, sizeof(HeapfileHeader), &Written, NULL))
-		return false;
+		return FALSE;
 	if (sizeof(HeapfileHeader)!=Written)
-		return false;
+		return FALSE;
 
-	HeaderNeedsWriteback = false;
-	return true;
+	HeaderNeedsWriteback = FALSE;
+	return TRUE;
 }
 
-bool CHeapfile::Writeback()
+BOOL CHeapfile::Writeback()
 {
 	if (!BufferNeedsWriteback)
-		return true;
+		return TRUE;
 
 	if (!OpenFile())
-		return false;
+		return FALSE;
 
 	if (SetFilePointer(hFile, sizeof(HeapfileHeader)+FirstInBuffer*Hdr.ElementSize, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
-		return false;
+		return FALSE;
 
 	DWORD Written;
 	DWORD Size = (LastInBuffer-FirstInBuffer+1)*Hdr.ElementSize;
 	if (!WriteFile(hFile, Buffer, Size, &Written, NULL))
-		return false;
+		return FALSE;
 	if (Size!=Written)
-		return false;
+		return FALSE;
 
-	BufferNeedsWriteback = false;
-	return true;
+	BufferNeedsWriteback = FALSE;
+	return TRUE;
 }
 
-__forceinline void CHeapfile::ElementToBuffer(int ID)
+__forceinline void CHeapfile::ElementToBuffer(INT ID)
 {
 	if (((ID>=FirstInBuffer) && (ID<=LastInBuffer)) || (ID>=ItemCount))
 		return;
@@ -252,42 +252,42 @@ __forceinline void CHeapfile::ElementToBuffer(int ID)
 	LastInBuffer = ID+(Read/Hdr.ElementSize)-1;
 }
 
-bool CHeapfile::FindNext(int& Next, void*& Ptr)
+BOOL CHeapfile::FindNext(INT& Next, void*& Ptr)
 {
-	char* P;
+	CHAR* P;
 
 	do
 	{
 		if (Next>=ItemCount)
-			return false;
+			return FALSE;
 
 		ElementToBuffer(Next);
-		P = (char*)Buffer+(Next-FirstInBuffer)*Hdr.ElementSize+KeyOffset;
+		P = (CHAR*)Buffer+(Next-FirstInBuffer)*Hdr.ElementSize+KeyOffset;
 		Next++;
 	}
 	while (*P=='\0');
 
 	Ptr = P-KeyOffset;
-	return true;
+	return TRUE;
 }
 
-bool CHeapfile::FindKey(char* Key, int& Next, void*& Ptr)
+BOOL CHeapfile::FindKey(CHAR* Key, INT& Next, void*& Ptr)
 {
-	char* P;
+	CHAR* P;
 
 	do
 	{
 		if (Next>=ItemCount)
-			return false;
+			return FALSE;
 
 		ElementToBuffer(Next);
-		P = (char*)Buffer+(Next-FirstInBuffer)*Hdr.ElementSize+KeyOffset;
+		P = (CHAR*)Buffer+(Next-FirstInBuffer)*Hdr.ElementSize+KeyOffset;
 		Next++;
 	}
 	while (strcmp(P, Key)!=0);
 
 	Ptr = P-KeyOffset;
-	return true;
+	return TRUE;
 }
 
 void CHeapfile::Add(LFItemDescriptor* i)
@@ -301,7 +301,7 @@ void CHeapfile::Add(LFItemDescriptor* i)
 		LastInBuffer = ItemCount;
 	}
 	else
-		if ((LastInBuffer-FirstInBuffer+1<(int)BufferSize) && (LastInBuffer==ItemCount-1))
+		if ((LastInBuffer-FirstInBuffer+1<(INT)BufferSize) && (LastInBuffer==ItemCount-1))
 		{
 			// Noch Platz am Ende
 			LastInBuffer = ItemCount;
@@ -314,7 +314,7 @@ void CHeapfile::Add(LFItemDescriptor* i)
 		}
 
 	// Im RAM hinzufügen
-	char* P = (char*)Buffer+(ItemCount-FirstInBuffer)*Hdr.ElementSize;
+	CHAR* P = (CHAR*)Buffer+(ItemCount-FirstInBuffer)*Hdr.ElementSize;
 	if (KeyOffset==Hdr.ElementSize-LFKeySize)
 	{
 		GetFromItemDescriptor(P, i);
@@ -336,7 +336,7 @@ void CHeapfile::Update(LFItemDescriptor* i, void* Ptr)
 	MakeDirty();
 }
 
-void CHeapfile::Update(LFItemDescriptor* i, int& Next)
+void CHeapfile::Update(LFItemDescriptor* i, INT& Next)
 {
 	assert(i);
 
@@ -350,17 +350,17 @@ void CHeapfile::Update(LFItemDescriptor* i)
 {
 	assert(i);
 
-	int ID = 0;
+	INT ID = 0;
 	Update(i, ID);
 }
 
 void CHeapfile::Invalidate(void* Ptr)
 {
-	*((char*)Ptr+KeyOffset) = 0;
-	MakeDirty(true);
+	*((CHAR*)Ptr+KeyOffset) = 0;
+	MakeDirty(TRUE);
 }
 
-void CHeapfile::Invalidate(char* Key, int& Next)
+void CHeapfile::Invalidate(CHAR* Key, INT& Next)
 {
 	assert(Key);
 
@@ -374,46 +374,46 @@ void CHeapfile::Invalidate(LFItemDescriptor* i)
 {
 	assert(i);
 
-	int ID = 0;
+	INT ID = 0;
 	Invalidate(i->CoreAttributes.FileID, ID);
 }
 
-unsigned int CHeapfile::GetItemCount()
+UINT CHeapfile::GetItemCount()
 {
 	return ItemCount;
 }
 
-unsigned int CHeapfile::GetRequiredElementSize()
+UINT CHeapfile::GetRequiredElementSize()
 {
 	return max(Hdr.ElementSize, RequestedElementSize);
 }
 
-unsigned int CHeapfile::GetRequiredDiscSize()
+UINT CHeapfile::GetRequiredDiscSize()
 {
 	return GetRequiredElementSize()*ItemCount+sizeof(HeapfileHeader);
 }
 
-bool CHeapfile::Compact()
+BOOL CHeapfile::Compact()
 {
 	if ((!Hdr.NeedsCompaction) && (OpenStatus!=HeapMaintenanceRequired))
-		return true;
+		return TRUE;
 
-	wchar_t BufFilename[MAX_PATH];
+	WCHAR BufFilename[MAX_PATH];
 	wcscpy_s(BufFilename, MAX_PATH, IdxFilename);
 	wcscat_s(BufFilename, MAX_PATH, L".part");
 
 	HANDLE hOutput = CreateFile(BufFilename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hOutput==INVALID_HANDLE_VALUE)
-		return false;
+		return FALSE;
 
 	Compress(hOutput, BufFilename);
 
 	HeapfileHeader NewHdr = Hdr;
 	NewHdr.ElementSize = max(Hdr.ElementSize, RequestedElementSize);
-	NewHdr.NeedsCompaction = false;
+	NewHdr.NeedsCompaction = FALSE;
 	NewHdr.Version = CurIdxVersion;
 
-	#define ABORT { CloseHandle(hOutput); DeleteFile(BufFilename); return false; }
+	#define ABORT { CloseHandle(hOutput); DeleteFile(BufFilename); return FALSE; }
 
 	DWORD Written;
 	if (!WriteFile(hOutput, &NewHdr, sizeof(HeapfileHeader), &Written, NULL))
@@ -421,11 +421,11 @@ bool CHeapfile::Compact()
 	if (sizeof(HeapfileHeader)!=Written)
 		ABORT
 
-	int Next = 0;
-	int Count = 0;
+	INT Next = 0;
+	INT Count = 0;
 	void* Ptr;
-	bool Result = true;
-	char* tmpBuf = (char*)malloc(NewHdr.ElementSize);
+	BOOL Result = TRUE;
+	CHAR* tmpBuf = (CHAR*)malloc(NewHdr.ElementSize);
 	ZeroMemory(tmpBuf, NewHdr.ElementSize);
 
 	while (Result)
@@ -438,7 +438,7 @@ bool CHeapfile::Compact()
 			{
 				memcpy_s(tmpBuf, NewHdr.ElementSize, Ptr, Hdr.ElementSize-LFKeySize);
 
-				char* P = (char*)Ptr+Hdr.ElementSize-LFKeySize;
+				CHAR* P = (CHAR*)Ptr+Hdr.ElementSize-LFKeySize;
 				memcpy(tmpBuf+NewHdr.ElementSize-LFKeySize, P, LFKeySize);
 			}
 			else
@@ -456,14 +456,14 @@ bool CHeapfile::Compact()
 	};
 
 	free(tmpBuf);
-	HeaderNeedsWriteback = false;
+	HeaderNeedsWriteback = FALSE;
 	CloseHandle(hOutput);
 	CloseFile();
 
 	if (!DeleteFile(IdxFilename))
-		return false;
+		return FALSE;
 	if (!MoveFile(BufFilename, IdxFilename))
-		return false;
+		return FALSE;
 
 	if (KeyOffset==Hdr.ElementSize-LFKeySize)
 		KeyOffset = NewHdr.ElementSize-LFKeySize;
@@ -473,12 +473,12 @@ bool CHeapfile::Compact()
 	AllocBuffer();
 	FirstInBuffer = LastInBuffer = -1;
 	ItemCount = Count;
-	return true;
+	return TRUE;
 }
 
-void CHeapfile::MakeDirty(bool NeedsCompaction)
+void CHeapfile::MakeDirty(BOOL NeedsCompaction)
 {
-	BufferNeedsWriteback = true;
+	BufferNeedsWriteback = TRUE;
 	Hdr.NeedsCompaction |= NeedsCompaction;
 	HeaderNeedsWriteback |= NeedsCompaction;
 }

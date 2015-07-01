@@ -9,9 +9,6 @@
 #include "CFolderItem.h"
 #include "LFNamespaceExtension.h"
 #include <afxsettingsstore.h>
-//#include <io.h>
-//#include <shlguid.h>
-//#include <shlobj.h>
 
 
 CShellMenuItem* InsertItem(CShellMenu* Menu, UINT ResID, CString Verb, INT Pos=0)
@@ -245,7 +242,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 			{
 				LFVariantData v;
 				ar.Read(&v, sizeof(LFVariantData));
-				LFSetAttributeVariantData(f->m_pItem, &v);
+				LFSetAttributeVariantData(f->m_pItem, v);
 			}
 
 			return f;
@@ -378,11 +375,9 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 						if (!ExistingAttributes[b])
 						{
 							LFVariantData v;
-							ZeroMemory(&v, sizeof(v));
-							v.Attr = b;
-							LFGetAttributeVariantData(base->m_Items[a], &v);
+							LFGetAttributeVariantDataEx(base->m_Items[a], b, v);
 
-							if (!LFIsNullVariantData(&v))
+							if (!LFIsNullVariantData(v))
 								ExistingAttributes[b] = TRUE;
 						}
 
@@ -434,7 +429,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		base = LFQuery(f);
-		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, atoi(Attrs.FileID)!=LFAttrFileName, f));
+		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), FALSE, atoi(Attrs.FileID)!=LFAttrFileName, f));
 		break;
 	case LEVELATTRVALUE:
 		f = LFAllocFilter();
@@ -807,7 +802,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 	switch (theApp.m_Attributes[index].Type)
 	{
 	case LFTypeUINT:
-	case LFTypeINT64:
+	case LFTypeSize:
 	case LFTypeDouble:
 		column.dataType = NSESCDT_Numeric;
 		break;
@@ -926,7 +921,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			if (value->vt==VT_BSTR)
 			{
 				WCHAR tmpBuf[256];
-				LFINT64ToString(Attrs.Size, tmpBuf, 256);
+				LFSizeToString(Attrs.Size, tmpBuf, 256);
 				CUtils::SetVariantLPCTSTR(value, tmpBuf);
 			}
 			else
@@ -1030,7 +1025,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		if (value->vt==VT_BSTR)
 		{
 			WCHAR tmpBuf[256];
-			LFINT64ToString(Attrs.Size, tmpBuf, 256);
+			LFSizeToString(Attrs.Size, tmpBuf, 256);
 			CUtils::SetVariantLPCTSTR(value, tmpBuf);
 		}
 		else
@@ -1164,7 +1159,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, true, true);
+			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE, TRUE);
 			if (Result!=LFOk)
 			{
 				LFErrorBox(Result, GetForegroundWindow());
@@ -1501,7 +1496,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, true, true);
+			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE, TRUE);
 			if (Result!=LFOk)
 			{
 				LFErrorBox(Result, GetForegroundWindow());

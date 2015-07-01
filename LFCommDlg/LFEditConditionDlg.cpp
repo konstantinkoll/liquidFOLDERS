@@ -22,9 +22,7 @@ LFEditConditionDlg::LFEditConditionDlg(CWnd* pParentWnd, CHAR* StoreID, LFFilter
 	else
 	{
 		m_Condition.Compare = LFFilterCompareContains;
-
-		m_Condition.AttrData.Attr = LFAttrFileName;
-		LFGetNullVariantData(&m_Condition.AttrData);
+		LFInitVariantData(m_Condition.AttrData, LFAttrFileName);
 	}
 }
 

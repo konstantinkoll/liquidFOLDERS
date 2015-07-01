@@ -24,81 +24,81 @@
 
 struct LFDocumentAttributes
 {
-	wchar_t Author[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Responsible[256];
+	WCHAR Author[256];
+	WCHAR Copyright[256];
+	WCHAR Title[256];
+	WCHAR Responsible[256];
 	FILETIME DueTime;
 	FILETIME DoneTime;
-	char Signature[32];
-	char ISBN[32];
-	unsigned int Pages;
-	char Language[3];
-	wchar_t Customer[256];
+	CHAR Signature[32];
+	CHAR ISBN[32];
+	UINT Pages;
+	CHAR Language[3];
+	WCHAR Customer[256];
 };
 
 struct LFMessageAttributes
 {
-	char From[256];
-	char To[256];
-	wchar_t Subject[256];
-	char Language[3];
-	wchar_t Responsible[256];
+	CHAR From[256];
+	CHAR To[256];
+	WCHAR Subject[256];
+	CHAR Language[3];
+	WCHAR Responsible[256];
 	FILETIME DueTime;
 	FILETIME DoneTime;
 };
 
 struct LFAudioAttributes
 {
-	wchar_t Artist[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Album[256];
-	unsigned int AudioCodec;
-	unsigned int Channels;
-	unsigned int Samplerate;
-	unsigned int Duration;
-	unsigned int Bitrate;
+	WCHAR Artist[256];
+	WCHAR Copyright[256];
+	WCHAR Title[256];
+	WCHAR Album[256];
+	UINT AudioCodec;
+	UINT Channels;
+	UINT Samplerate;
+	UINT Duration;
+	UINT Bitrate;
 	FILETIME RecordingTime;
-	char Language[3];
+	CHAR Language[3];
 };
 
 struct LFPictureAttributes
 {
-	wchar_t Artist[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Equipment[256];
-	wchar_t Roll[256];
-	wchar_t Exposure[32];
-	unsigned int Height;
-	unsigned int Width;
+	WCHAR Artist[256];
+	WCHAR Copyright[256];
+	WCHAR Title[256];
+	WCHAR Equipment[256];
+	WCHAR Roll[256];
+	WCHAR Exposure[32];
+	UINT Height;
+	UINT Width;
 	LFFraction Aperture;
 	LFFraction Focus;
-	wchar_t Chip[32];
+	WCHAR Chip[32];
 	FILETIME RecordingTime;
-	char Language[3];
-	wchar_t Customer[256];
+	CHAR Language[3];
+	WCHAR Customer[256];
 };
 
 struct LFVideoAttributes
 {
-	wchar_t Artist[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Equipment[256];
-	wchar_t Roll[256];
-	unsigned int Height;
-	unsigned int Width;
-	unsigned int AudioCodec;
-	unsigned int VideoCodec;
-	unsigned int Channels;
-	unsigned int Samplerate;
-	unsigned int Duration;
-	unsigned int Bitrate;
+	WCHAR Artist[256];
+	WCHAR Copyright[256];
+	WCHAR Title[256];
+	WCHAR Equipment[256];
+	WCHAR Roll[256];
+	UINT Height;
+	UINT Width;
+	UINT AudioCodec;
+	UINT VideoCodec;
+	UINT Channels;
+	UINT Samplerate;
+	UINT Duration;
+	UINT Bitrate;
 	FILETIME RecordingTime;
-	char Language[3];
-	wchar_t Customer[256];
+	CHAR Language[3];
+	WCHAR Customer[256];
 };
 
 
@@ -108,7 +108,7 @@ struct LFVideoAttributes
 class CIdxTableMaster : public CHeapfile
 {
 public:
-	CIdxTableMaster(wchar_t* Path);
+	CIdxTableMaster(WCHAR* Path);
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -121,7 +121,7 @@ public:
 class CIdxTableDocuments : public CHeapfile
 {
 public:
-	CIdxTableDocuments(wchar_t* Path);
+	CIdxTableDocuments(WCHAR* Path);
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -134,7 +134,7 @@ public:
 class CIdxTableMessages : public CHeapfile
 {
 public:
-	CIdxTableMessages(wchar_t* Path);
+	CIdxTableMessages(WCHAR* Path);
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -147,7 +147,7 @@ public:
 class CIdxTableAudio : public CHeapfile
 {
 public:
-	CIdxTableAudio(wchar_t* Path);
+	CIdxTableAudio(WCHAR* Path);
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -160,7 +160,7 @@ public:
 class CIdxTablePictures : public CHeapfile
 {
 public:
-	CIdxTablePictures(wchar_t* Path);
+	CIdxTablePictures(WCHAR* Path);
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -173,7 +173,7 @@ public:
 class CIdxTableVideos : public CHeapfile
 {
 public:
-	CIdxTableVideos(wchar_t* Path);
+	CIdxTableVideos(WCHAR* Path);
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);

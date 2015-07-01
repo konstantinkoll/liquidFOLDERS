@@ -7,10 +7,10 @@
 LFFileIDList::LFFileIDList()
 	: LFDynArray()
 {
-	m_Changes = false;
+	m_Changes = FALSE;
 }
 
-bool LFFileIDList::AddFileID(char* StoreID, char* FileID, void* UserData)
+BOOL LFFileIDList::AddFileID(CHAR* StoreID, CHAR* FileID, void* UserData)
 {
 	assert(StoreID);
 	assert(FileID);
@@ -26,27 +26,27 @@ bool LFFileIDList::AddFileID(char* StoreID, char* FileID, void* UserData)
 
 void LFFileIDList::Reset()
 {
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	for (UINT a=0; a<m_ItemCount; a++)
 	{
 		m_Items[a].LastError = LFOk;
-		m_Items[a].Processed = false;
+		m_Items[a].Processed = FALSE;
 	}
 
 	m_LastError = LFOk;
 }
 
-void LFFileIDList::SetError(char* key, unsigned int Result, LFProgress* pProgress)
+void LFFileIDList::SetError(CHAR* key, UINT Result, LFProgress* pProgress)
 {
-	bool found = false;
+	BOOL found = FALSE;
 
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	for (UINT a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
 			if (strcmp(m_Items[a].StoreID, key)==0)
 			{
-				found = true;
+				found = TRUE;
 
 				m_Items[a].LastError = m_LastError = Result;
-				m_Items[a].Processed = true;
+				m_Items[a].Processed = TRUE;
 				if (pProgress)
 					pProgress->MinorCurrent++;
 			}
@@ -63,10 +63,10 @@ void LFFileIDList::SetError(char* key, unsigned int Result, LFProgress* pProgres
 	}
 }
 
-void LFFileIDList::SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress)
+void LFFileIDList::SetError(UINT idx, UINT Result, LFProgress* pProgress)
 {
 	m_Items[idx].LastError = m_LastError = Result;
-	m_Items[idx].Processed = true;
+	m_Items[idx].Processed = TRUE;
 
 	if (pProgress)
 	{
@@ -82,12 +82,12 @@ void LFFileIDList::SetError(unsigned int idx, unsigned int Result, LFProgress* p
 
 HGLOBAL LFFileIDList::CreateLiquidFiles()
 {
-	unsigned int cFiles = 0;
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	UINT cFiles = 0;
+	for (UINT a=0; a<m_ItemCount; a++)
 		if (m_Items[a].LastError==LFOk)
 			cFiles++;
 
-	unsigned int szBuffer = sizeof(LIQUIDFILES)+sizeof(char)*cFiles*LFKeySize*2;
+	UINT szBuffer = sizeof(LIQUIDFILES)+sizeof(CHAR)*cFiles*LFKeySize*2;
 	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
 	if (!hG)
 		return NULL;
@@ -102,8 +102,8 @@ HGLOBAL LFFileIDList::CreateLiquidFiles()
 	pFiles->pFiles = sizeof(LIQUIDFILES);
 	pFiles->cFiles = cFiles;
 
-	char* ptr = (char*)(((unsigned char*)pFiles)+sizeof(LIQUIDFILES));
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	CHAR* ptr = (CHAR*)(((BYTE*)pFiles)+sizeof(LIQUIDFILES));
+	for (UINT a=0; a<m_ItemCount; a++)
 		if (m_Items[a].LastError==LFOk)
 		{
 			strcpy_s(ptr, LFKeySize, m_Items[a].StoreID);

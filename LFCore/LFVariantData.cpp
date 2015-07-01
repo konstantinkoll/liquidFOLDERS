@@ -1,301 +1,234 @@
 
 #include "stdafx.h"
+#include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
-#include "LFCore.h"
 #include <algorithm>
 #include <assert.h>
-#include <cmath>
-#include <map>
+#include <hash_map>
+#include <math.h>
 #include <shlwapi.h>
-#include <wchar.h>
 
 
-extern const unsigned char AttrTypes[];
+extern const BYTE AttrTypes[];
 
 
-// Conversion ToString
+// Interne Methoden
 //
 
 #define ROUNDOFF 0.00000001
 
-__forceinline double GetMinutes(double c)
+__forceinline DOUBLE GetMinutes(DOUBLE c)
 {
-	c = fabs(c)+ROUNDOFF;
-
-	return (c-(double)(int)c)*60.0;
+	return floor(fabs(c)+ROUNDOFF)*60.0;
 }
 
-__forceinline double GetSeconds(double c)
+__forceinline DOUBLE GetSeconds(DOUBLE c)
 {
-	c = fabs(c)*60.0+ROUNDOFF;
-
-	return (c-(double)(int)c)*60.0;
+	return floor(fabs(c)*60.0+ROUNDOFF)*60.0;
 }
 
 
-LFCORE_API void LFFourCCToString(const unsigned int c, wchar_t* str, size_t cCount)
-{
-	if (cCount>=5)
-	{
-		str[0] = c & 0xFF;
-		str[1] = (c>>8) & 0xFF;
-		str[2] = (c>>16) & 0xFF;
-		str[3] = c>>24;
-		str[4] = '\0';
-	}
-	else
-	{
-		*str = L'\0';
-	}
-}
+// Interne Methoden
+//
 
-LFCORE_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount)
-{
-	if (v==0)
-	{
-		*str = L'\0';
-	}
-	else
-	{
-		swprintf(str, cCount, L"%u", v);
-	}
-}
-
-LFCORE_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
-{
-	StrFormatByteSize(v, str, (unsigned int)cCount);
-}
-
-LFCORE_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t cCount)
-{
-	if ((frac.Num==0) || (frac.Denum==0))
-	{
-		str[0] = L'\0';
-	}
-	else
-	{
-		swprintf(str, cCount, L"%u/%u", frac.Num, frac.Denum);
-	}
-}
-
-LFCORE_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
-{
-	swprintf(str, cCount, L"%.2lf", d);
-}
-
-LFCORE_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero)
-{
-	swprintf(str, cCount, FillZero ? L"%03u°%02u\'%02u\"%c" : L"%u°%u\'%u\"%c",
-		(unsigned int)(fabs(c)+ROUNDOFF),
-		(unsigned int)GetMinutes(c),
-		(unsigned int)(GetSeconds(c)+0.5),
-		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
-}
-
-LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount, bool FillZero)
-{
-	if ((c.Latitude==0) && (c.Longitude==0))
-	{
-		wcscpy_s(str, cCount, L"");
-	}
-	else
-	{
-		wchar_t tmpStr[256];
-		LFGeoCoordinateToString(c.Longitude, tmpStr, 256, false, FillZero);
-
-		LFGeoCoordinateToString(c.Latitude, str, cCount, true, FillZero);
-		wcscat_s(str, cCount, L", ");
-		wcscat_s(str, cCount, tmpStr);
-	}
-}
-
-LFCORE_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, unsigned int Mask)
-{
-	*str = L'\0';
-
-	if ((t.dwHighDateTime) || (t.dwLowDateTime))
-	{
-		SYSTEMTIME stUTC;
-		SYSTEMTIME stLocal;
-		FileTimeToSystemTime(&t, &stUTC);
-		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
-
-		if (Mask & 1)
-			GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, str, (int)cCount);
-
-		if (Mask & 2)
-			if ((stLocal.wHour) || (stLocal.wMinute) || (stLocal.wSecond))
-			{
-				if (Mask & 1)
-					wcscat_s(str, cCount, L" ");
-
-				wchar_t tmpStr[256];
-				GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &stLocal, NULL, tmpStr, 256);
-				wcscat_s(str, cCount, tmpStr);
-			}
-	}
-}
-
-LFCORE_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
-{
-	d = (d+500)/1000;
-
-	if (d==0)
-	{
-		*str = L'\0';
-	}
-	else
-	{
-		swprintf(str, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
-	}
-}
-
-LFCORE_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCount)
-{
-	if (r==0)
-	{
-		*str = L'\0';
-	}
-	else
-	{
-		swprintf(str, cCount, L"%u kBit/s", (r+500)/1000);
-	}
-}
-
-LFCORE_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount)
-{
-	swprintf(str, cCount, L"%.1lf Megapixel", d);
-}
-
-void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
-{
-	assert(type<LFTypeCount);
-	assert(str);
-
-	if (value)
-		switch (type)
-		{
-		case LFTypeUnicodeString:
-		case LFTypeUnicodeArray:
-			wcscpy_s(str, cCount, (wchar_t*)value);
-			return;
-		case LFTypeAnsiString:
-			MultiByteToWideChar(CP_ACP, 0, (char*)value, -1, str, (int)cCount);
-			return;
-		case LFTypeFourCC:
-			LFFourCCToString(*((unsigned int*)value), str, cCount);
-			return;
-		case LFTypeRating:
-			assert(*((unsigned char*)value)<=LFMaxRating);
-			if (*((unsigned char*)value)!=1)
-			{
-				swprintf_s(str, cCount, L"%u", (unsigned int)(*((unsigned char*)value)/2));
-			}
-			else
-			{
-				str[0] = L'\0';
-			}
-			if (*((unsigned char*)value)%2)
-				wcscat_s(str, cCount, L"½");
-			return;
-		case LFTypeUINT:
-			LFUINTToString(*((unsigned int*)value), str, cCount);
-			return;
-		case LFTypeINT64:
-			LFINT64ToString(*((__int64*)value), str, cCount);
-			return;
-		case LFTypeFraction:
-			LFFractionToString(*((LFFraction*)value), str, cCount);
-			return;
-		case LFTypeDouble:
-			LFDoubleToString(*((double*)value), str, cCount);
-			return;
-		case LFTypeFlags:
-			wchar_t FlagString[5];
-			FlagString[0] = (*((unsigned int*)value) & LFFlagLink) ? 'L' : '-';
-			FlagString[1] = (*((unsigned int*)value) & LFFlagNew) ? 'N' : '-';
-			FlagString[2] = (*((unsigned int*)value) & LFFlagTrash) ? 'T' : '-';
-			FlagString[3] = (*((unsigned int*)value) & LFFlagMissing) ? 'M' : '-';
-			FlagString[4] = '\0';
-			wcscpy_s(str, cCount, FlagString);
-			return;
-		case LFTypeGeoCoordinates:
-			LFGeoCoordinatesToString(*((LFGeoCoordinates*)value), str, cCount, false);
-			return;
-		case LFTypeTime:
-			LFTimeToString(*((FILETIME*)value), str, cCount, 3);
-			return;
-		case LFTypeDuration:
-			LFDurationToString(*((unsigned int*)value), str, cCount);
-			return;
-		case LFTypeBitrate:
-			LFBitrateToString(*((unsigned int*)value), str, cCount);
-			return;
-		case LFTypeMegapixel:
-			LFMegapixelToString(*((double*)value), str, cCount);
-			return;
-		default:
-			assert(false);
-		}
-
-	wcscpy_s(str, cCount, L"");
-}
-
-LFCORE_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wchar_t* str, size_t cCount)
-{
-	assert(i);
-	assert(attr<LFAttributeCount);
-	assert(AttrTypes[attr]<LFTypeCount);
-
-	ToString(i->AttributeValues[attr], AttrTypes[attr], str, cCount);
-}
-
-
-bool IsNullValue(unsigned int attr, void* v)
+BOOL IsNullValue(UINT Type, void* v)
 {
 	if (!v)
-		return true;
+		return TRUE;
 
-	assert(AttrTypes[attr]<LFTypeCount);
+	assert(Type<LFTypeCount);
 
-	switch (AttrTypes[attr])
+	switch (Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return (*(wchar_t*)v==L'\0');
+		return (*(WCHAR*)v==L'\0');
+
 	case LFTypeAnsiString:
-		return (*(char*)v=='\0');
+		return (*(CHAR*)v=='\0');
+
 	case LFTypeFourCC:
 	case LFTypeUINT:
 	case LFTypeDuration:
 	case LFTypeBitrate:
-		return (*(unsigned int*)v)==0;
+		return (*(UINT*)v)==0;
+
 	case LFTypeRating:
-		return (*(unsigned char*)v)==0;
-	case LFTypeINT64:
+		return (*(BYTE*)v)==0;
+
+	case LFTypeSize:
 	case LFTypeTime:
-		return (*(__int64*)v)==0;
+		return (*(INT64*)v)==0;
+
 	case LFTypeFraction:
 		return (((LFFraction*)v)->Num==0) || (((LFFraction*)v)->Denum==0);
+
 	case LFTypeDouble:
 	case LFTypeMegapixel:
-		return (*(double*)v)==-1;
+		return (*(DOUBLE*)v)==-1;
+
 	case LFTypeGeoCoordinates:
 		return (((LFGeoCoordinates*)v)->Latitude==0) && (((LFGeoCoordinates*)v)->Longitude==0);
 	}
 
-	return false;
+	return FALSE;
 }
 
-bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
+INT CompareValues(UINT Type, void* v1, void* v2, BOOL CaseSensitive)
 {
-	wchar_t* start = NULL;
-	bool quotation = false;
+	assert(Type<LFTypeCount);
+	assert(v1);
+	assert(v2);
 
-	while (**tagarray!=L'\0')
+	UINT u1;
+	UINT u2;
+	DOUBLE d1;
+	DOUBLE d2;
+
+	switch (Type)
 	{
-		switch (**tagarray)
+	case LFTypeUnicodeString:
+	case LFTypeUnicodeArray:
+		return CaseSensitive ? wcscmp((WCHAR*)v1, (WCHAR*)v2) : _wcsicmp((WCHAR*)v1, (WCHAR*)v2);
+
+	case LFTypeAnsiString:
+		return CaseSensitive ? strcmp((CHAR*)v1, (CHAR*)v2) : _stricmp((CHAR*)v1, (CHAR*)v2);
+
+	case LFTypeFourCC:
+	case LFTypeUINT:
+		return *(UINT*)v1==*(UINT*)v2 ? 0 : *(UINT*)v1<*(UINT*)v2 ? -1 : 1;
+
+	case LFTypeRating:
+		return (INT)(*(BYTE*)v1)-(INT)(*(BYTE*)v2);
+
+	case LFTypeSize:
+		return *(INT64*)v1==*(INT64*)v2 ? 0 : *(INT64*)v1<*(INT64*)v2 ? -1 : 1;
+
+	case LFTypeDouble:
+		d1 = (DOUBLE)((INT)(*(DOUBLE*)v1*100.0))/100.0;
+		d2 = (DOUBLE)((INT)(*(DOUBLE*)v2*100.0))/100.0;
+
+		return d1==d2 ? 0 : d1<d2 ? -1 : 1;
+
+	case LFTypeTime:
+		return CompareFileTime((FILETIME*)v1, (FILETIME*)v2);
+
+	case LFTypeBitrate:
+	case LFTypeDuration:
+		u1 = *(UINT*)v1/1000;
+		u2 = *(UINT*)v2/1000;
+
+		return u1==u2 ? 0 : u1<u2 ? -1 : 1;
+
+	case LFTypeMegapixel:
+		d1 = (DOUBLE)((INT)(*(DOUBLE*)v1*10.0))/10.0;
+		d2 = (DOUBLE)((INT)(*(DOUBLE*)v2*10.0))/10.0;
+
+		return d1==d2 ? 0 : d1<d2 ? -1 : 1;
+	}
+
+	return 0;
+}
+
+void ToString(void* v, UINT Type, WCHAR* pStr, size_t cCount)
+{
+	assert(Type<LFTypeCount);
+	assert(pStr);
+
+	if (v)
+		switch (Type)
+		{
+		case LFTypeUnicodeString:
+		case LFTypeUnicodeArray:
+			wcscpy_s(pStr, cCount, (WCHAR*)v);
+			return;
+
+		case LFTypeAnsiString:
+			MultiByteToWideChar(CP_ACP, 0, (CHAR*)v, -1, pStr, (INT)cCount);
+			return;
+
+		case LFTypeFourCC:
+			LFFourCCToString(*((UINT*)v), pStr, cCount);
+			return;
+
+		case LFTypeRating:
+			assert(*((BYTE*)v)<=LFMaxRating);
+
+			if (*((BYTE*)v)!=1)
+			{
+				swprintf_s(pStr, cCount, L"%u", (UINT)(*((BYTE*)v)/2));
+			}
+			else
+			{
+				pStr[0] = L'\0';
+			}
+
+			if (*((BYTE*)v)%2)
+				wcscat_s(pStr, cCount, L"½");
+
+			return;
+
+		case LFTypeUINT:
+			LFUINTToString(*((UINT*)v), pStr, cCount);
+			return;
+
+		case LFTypeSize:
+			LFSizeToString(*((INT64*)v), pStr, cCount);
+			return;
+
+		case LFTypeFraction:
+			LFFractionToString(*((LFFraction*)v), pStr, cCount);
+			return;
+
+		case LFTypeDouble:
+			LFDoubleToString(*((DOUBLE*)v), pStr, cCount);
+			return;
+
+		case LFTypeFlags:
+			if (cCount>=5)
+			{
+				pStr[0] = (*((UINT*)v) & LFFlagLink) ? 'L' : '-';
+				pStr[1] = (*((UINT*)v) & LFFlagNew) ? 'N' : '-';
+				pStr[2] = (*((UINT*)v) & LFFlagTrash) ? 'T' : '-';
+				pStr[3] = (*((UINT*)v) & LFFlagMissing) ? 'M' : '-';
+				pStr[4] = '\0';
+			}
+
+			return;
+
+		case LFTypeGeoCoordinates:
+			LFGeoCoordinatesToString(*((LFGeoCoordinates*)v), pStr, cCount, FALSE);
+			return;
+
+		case LFTypeTime:
+			LFTimeToString(*((FILETIME*)v), pStr, cCount);
+			return;
+
+		case LFTypeDuration:
+			LFDurationToString(*((UINT*)v), pStr, cCount);
+			return;
+
+		case LFTypeBitrate:
+			LFBitrateToString(*((UINT*)v), pStr, cCount);
+			return;
+
+		case LFTypeMegapixel:
+			LFMegapixelToString(*((DOUBLE*)v), pStr, cCount);
+			return;
+		}
+
+	*pStr = L'\0';
+}
+
+BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, size_t cCount)
+{
+	WCHAR* Start = NULL;
+	BOOL InQuotation = FALSE;
+
+	while (**ppUnicodeArray!=L'\0')
+	{
+		switch (**ppUnicodeArray)
 		{
 		case L' ':
 		case L'.':
@@ -305,212 +238,402 @@ bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
 		case L'?':
 		case L'!':
 		case L'|':
-			if ((start) && (!quotation))
+			if ((Start) && (!InQuotation))
 			{
-				wcsncpy_s(tag, cCount, start, ((*tagarray)++)-start);
-				return true;
+				wcsncpy_s(Tag, cCount, Start, ((*ppUnicodeArray)++)-Start);
+
+				return TRUE;
 			}
+
 			break;
+
 		case L'"':
-			if (quotation)
+			if (InQuotation)
 			{
-				quotation = false;
-				if (start)
+				if (Start)
 				{
-					wcsncpy_s(tag, cCount, start, ((*tagarray)++)-start);
-					return true;
+					wcsncpy_s(Tag, cCount, Start, ((*ppUnicodeArray)++)-Start);
+
+					return TRUE;
 				}
+
+				InQuotation = FALSE;
 			}
 			else
 			{
-				quotation = !start;
+				InQuotation = !Start;
 			}
+
 			break;
+
 		default:
-			if (!start)
-				start = *tagarray;
+			if (!Start)
+				Start = *ppUnicodeArray;
 		}
 
-		(*tagarray)++;
+		(*ppUnicodeArray)++;
 	}
 
-	if (start)
+	if (Start)
 	{
-		wcscpy_s(tag, cCount, start);
-		return true;
+		wcscpy_s(Tag, cCount, Start);
+
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
+}
+
+
+// ToString
+//
+
+LFCORE_API void LFFourCCToString(const UINT c, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	if (cCount<5)
+	{
+		*pStr = L'\0';
+	}
+	else
+	{
+		pStr[0] = c & 0xFF;
+		pStr[1] = (c>>8) & 0xFF;
+		pStr[2] = (c>>16) & 0xFF;
+		pStr[3] = c>>24;
+		pStr[4] = '\0';
+	}
+}
+
+LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	if (u==0)
+	{
+		*pStr = L'\0';
+	}
+	else
+	{
+		swprintf(pStr, cCount, L"%u", u);
+	}
+}
+
+LFCORE_API void LFSizeToString(const INT64 i, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	StrFormatByteSize(i, pStr, (UINT)cCount);
+}
+
+LFCORE_API void LFFractionToString(const LFFraction frac, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	if ((frac.Num==0) || (frac.Denum==0))
+	{
+		pStr[0] = L'\0';
+	}
+	else
+	{
+		swprintf(pStr, cCount, L"%u/%u", frac.Num, frac.Denum);
+	}
+}
+
+LFCORE_API void LFDoubleToString(const DOUBLE d, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	swprintf(pStr, cCount, L"%.2lf", d);
+}
+
+LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, size_t cCount, BOOL IsLatitude, BOOL FillZero)
+{
+	assert(pStr);
+
+	swprintf(pStr, cCount, FillZero ? L"%03u°%02u\'%02u\"%c" : L"%u°%u\'%u\"%c",
+		(UINT)(fabs(c)+ROUNDOFF),
+		(UINT)GetMinutes(c),
+		(UINT)(GetSeconds(c)+0.5),
+		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
+}
+
+LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, WCHAR* pStr, size_t cCount, BOOL FillZero)
+{
+	assert(pStr);
+
+	if ((c.Latitude==0) && (c.Longitude==0))
+	{
+		wcscpy_s(pStr, cCount, L"");
+	}
+	else
+	{
+		WCHAR tmpStr[256];
+		LFGeoCoordinateToString(c.Longitude, tmpStr, 256, FALSE, FillZero);
+
+		LFGeoCoordinateToString(c.Latitude, pStr, cCount, TRUE, FillZero);
+		wcscat_s(pStr, cCount, L", ");
+		wcscat_s(pStr, cCount, tmpStr);
+	}
+}
+
+LFCORE_API void LFTimeToString(const FILETIME t, WCHAR* pStr, size_t cCount, BOOL IncludeTime)
+{
+	assert(pStr);
+
+	*pStr = L'\0';
+
+	if ((t.dwHighDateTime) || (t.dwLowDateTime))
+	{
+		SYSTEMTIME stUTC;
+		SYSTEMTIME stLocal;
+		FileTimeToSystemTime(&t, &stUTC);
+		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+		INT Size = GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, pStr, (INT)cCount);
+
+		if (IncludeTime && ((stLocal.wHour) || (stLocal.wMinute) || (stLocal.wSecond)))
+		{
+			pStr[Size-1] = L' ';
+
+			GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &stLocal, NULL, &pStr[Size], (INT)cCount-Size);
+		}
+	}
+}
+
+LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	d = (d+500)/1000;
+
+	if (d==0)
+	{
+		*pStr = L'\0';
+	}
+	else
+	{
+		swprintf(pStr, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+	}
+}
+
+LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	if (r==0)
+	{
+		*pStr = L'\0';
+	}
+	else
+	{
+		swprintf(pStr, cCount, L"%u kBit/s", (r+500)/1000);
+	}
+}
+
+LFCORE_API void LFMegapixelToString(const DOUBLE d, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
+
+	swprintf(pStr, cCount, L"%.1lf Megapixel", d);
+}
+
+LFCORE_API void LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, size_t cCount)
+{
+	assert(i);
+	assert(Attr<LFAttributeCount);
+	assert(AttrTypes[Attr]<LFTypeCount);
+
+	ToString(i->AttributeValues[Attr], AttrTypes[Attr], pStr, cCount);
 }
 
 
 // LFVariantData
 //
 
-LFCORE_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCount)
+LFCORE_API void LFInitVariantData(LFVariantData& v, UINT Attr)
 {
-	assert(v);
+	v.Attr = Attr;
+	v.Type = (Attr<LFAttributeCount) ? AttrTypes[Attr] : LFTypeUnicodeString;
 
-	if (v->IsNull)
+	LFClearVariantData(v);
+}
+
+LFCORE_API void LFClearVariantData(LFVariantData& v)
+{
+	assert(v.Type<LFTypeCount);
+
+	v.IsNull = TRUE;
+
+	switch (v.Type)
 	{
-		wcscpy_s(str, cCount, L"");
-	}
-	else
-	{
-		assert(v->Type<LFTypeCount);
-		ToString(&v->Value, v->Type, str, cCount);
+	case LFTypeDouble:
+		v.Double = 0;
+		break;
+
+	case LFTypeGeoCoordinates:
+		v.GeoCoordinates.Latitude = v.GeoCoordinates.Longitude = 0;
+		break;
+
+	case LFTypeMegapixel:
+		v.Double = -1;
+		break;
+
+	default:
+		v.INT64 = 0;
 	}
 }
 
-LFCORE_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
+LFCORE_API BOOL LFIsNullVariantData(LFVariantData& v)
 {
-	assert(v);
+	return v.IsNull ? TRUE : IsNullValue(v.Type, &v.Value);
+}
 
-	LFGetNullVariantData(v);
+LFCORE_API void LFVariantDataToString(LFVariantData& v, WCHAR* pStr, size_t cCount)
+{
+	assert(pStr);
 
-	if ((str) && (v->Attr<LFAttributeCount))
+	if (v.IsNull)
 	{
-		size_t sz = wcslen(str);
+		*pStr = L'\0';
+	}
+	else
+	{
+		assert(v.Type<LFTypeCount);
 
-		wchar_t tmpBuf[256];
-		wchar_t* dst = &tmpBuf[0];
+		ToString(&v.Value, v.Type, pStr, cCount);
+	}
+}
 
-		int LatDeg;
-		int LatMin;
-		int LatSec;
-		wchar_t LatCh;
-		int LonDeg;
-		int LonMin;
-		int LonSec;
-		wchar_t LonCh;
+LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
+{
+	LFClearVariantData(v);
 
-		unsigned int Date1;
-		wchar_t DateCh1;
-		unsigned int Date2;
-		wchar_t DateCh2;
-		unsigned int Date3;
+	if (pStr)
+	{
+		size_t sz = wcslen(pStr);
+
+		INT LatDeg;
+		INT LatMin;
+		INT LatSec;
+		WCHAR LatCh;
+		INT LonDeg;
+		INT LonMin;
+		INT LonSec;
+		WCHAR LonCh;
+
+		UINT Date1;
+		WCHAR DateCh1;
+		UINT Date2;
+		WCHAR DateCh2;
+		UINT Date3;
 		SYSTEMTIME stLocal;
 		SYSTEMTIME stUTC;
-		bool YearFirst;
+		BOOL YearFirst;
 
-		unsigned int Hour;
-		unsigned int Min;
-		unsigned int Sec;
+		UINT Hour;
+		UINT Min;
+		UINT Sec;
 
-		switch (v->Type)
+		switch (v.Type)
 		{
 		case LFTypeUnicodeString:
-			v->IsNull = false;
-			wcscpy_s(v->UnicodeString, 256, str);
+			wcscpy_s(v.UnicodeString, 256, pStr);
+			v.IsNull = FALSE;
 			break;
+
 		case LFTypeUnicodeArray:
-			v->IsNull = false;
-			wcscpy_s(v->UnicodeArray, 256, str);
-			LFSanitizeUnicodeArray(v->UnicodeArray, 256);
+			wcscpy_s(v.UnicodeArray, 256, pStr);
+			LFSanitizeUnicodeArray(v.UnicodeArray, 256);
+			v.IsNull = FALSE;
 			break;
+
 		case LFTypeAnsiString:
-			v->IsNull = false;
-			WideCharToMultiByte(CP_ACP, 0, str, -1, v->AnsiString, 256, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, pStr, -1, v.AnsiString, 256, NULL, NULL);
+			v.IsNull = FALSE;
 			break;
-		case LFTypeFourCC:
-			if (sz>=4)
-			{
-				v->IsNull = false;
-				v->FourCC = (str[0]>0xFF ? L'_' : str[0]) |
-					((str[1]>0xFF ? L'_' : str[1])<<8) |
-					((str[2]>0xFF ? L'_' : str[2])<<16) |
-					((str[3]>0xFF ? L'_' : str[3])<<24);
-			}
-			break;
+
 		case LFTypeRating:
-			if (wcscmp(str, L"½")==0)
+			if (wcscmp(pStr, L"½")==0)
 			{
-				v->IsNull = false;
-				v->Rating = 1;
+				v.Rating = 1;
+				v.IsNull = FALSE;
 				return;
 			}
-			if ((str[0]>=L'0') && (str[0]<=L'5'))
+
+			if ((pStr[0]>=L'0') && (pStr[0]<=L'5'))
 				if (sz<=2)
 				{
-					v->IsNull = false;
-					v->Rating = (unsigned char)((str[0]-L'0')*2);
+					v.Rating = (BYTE)((pStr[0]-L'0')*2);
+
 					if (sz==2)
-						if (str[1]==L'½')
-							v->Rating++;
+						if (pStr[1]==L'½')
+							v.Rating++;
+
+					v.IsNull = FALSE;
 					return;
 				}
+
 			if ((sz>=1) && (sz<=5))
 			{
-				bool same = true;
-				for (unsigned int a=1; a<sz; a++)
-					same &= (str[a]==str[a-1]);
-				if (same)
+				BOOL Same = TRUE;
+				for (UINT a=1; a<sz; a++)
+					Same &= (pStr[a]==pStr[a-1]);
+
+				if (Same)
 				{
-					v->IsNull = false;
-					v->Rating = (unsigned char)(sz*2);
+					v.Rating = (BYTE)(sz*2);
+					v.IsNull = FALSE;
 					return;
 				}
 			}
+
 			break;
+
 		case LFTypeUINT:
-			if (swscanf_s(str, L"%u", &v->UINT)==1)
-				v->IsNull = false;
+			if (swscanf_s(pStr, L"%u", &v.UINT32)==1)
+				v.IsNull = FALSE;
+
 			break;
-		case LFTypeINT64:
-			for (unsigned int a=0; a<=wcslen(str); a++)
-				switch (str[a])
-				{
-				case L'0':
-				case L'1':
-				case L'2':
-				case L'3':
-				case L'4':
-				case L'5':
-				case L'6':
-				case L'7':
-				case L'8':
-				case L'9':
-					*(dst++) = str[a];
-				case L'.':
-				case L',':
-				case L'\'':
-					break;
-				default:
-					*dst = L'\0';
-					break;
-				}
-			if (swscanf_s(tmpBuf, L"%I64d", &v->INT64)==1)
-				v->IsNull = false;
-			break;
+
 		case LFTypeFraction:
-			if (swscanf_s(str, L"%u/%u", &v->Fraction.Num, &v->Fraction.Denum)==2)
-				v->IsNull = false;
+			if (swscanf_s(pStr, L"%u/%u", &v.Fraction.Num, &v.Fraction.Denum)==2)
+				v.IsNull = FALSE;
 			break;
+
 		case LFTypeDouble:
 		case LFTypeMegapixel:
-			if (swscanf_s(str, L"%lf", &v->Double)==1)
-				v->IsNull = false;
+			if (swscanf_s(pStr, L"%lf", &v.Double)==1)
+				v.IsNull = FALSE;
+
 			break;
+
 		case LFTypeGeoCoordinates:
-			if (swscanf_s(str, L"%i°%i\'%i\"%c, %i°%i\'%i\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
+			if (swscanf_s(pStr, L"%i°%i\'%i\"%c, %i°%i\'%i\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
 				if (((LatCh==L'N') || (LatCh==L'S')) && ((LonCh==L'W') || (LonCh==L'E')))
 				{
-					v->GeoCoordinates.Latitude = abs(LatDeg)+(abs(LatMin)/60.0)+(abs(LatSec)/3600.0);
+					v.GeoCoordinates.Latitude = abs(LatDeg)+(abs(LatMin)/60.0)+(abs(LatSec)/3600.0);
 					if (LatCh==L'N')
-						v->GeoCoordinates.Latitude -= v->GeoCoordinates.Latitude;
-					if ((v->GeoCoordinates.Latitude<180.0) || (v->GeoCoordinates.Latitude>180.0))
-						v->GeoCoordinates.Latitude = 0.0;
-					v->GeoCoordinates.Longitude = abs(LonDeg)+(abs(LonMin)/60.0)+(abs(LonSec)/3600.0);
-					if (LatCh==L'W')
-						v->GeoCoordinates.Longitude -= v->GeoCoordinates.Longitude;
-					if ((v->GeoCoordinates.Longitude<-180.0) || (v->GeoCoordinates.Longitude>180.0))
-						v->GeoCoordinates.Longitude = 0.0;
-					v->IsNull = false;
+						v.GeoCoordinates.Latitude -= v.GeoCoordinates.Latitude;
+					if ((v.GeoCoordinates.Latitude<180.0) || (v.GeoCoordinates.Latitude>180.0))
+						v.GeoCoordinates.Latitude = 0.0;
+
+					v.GeoCoordinates.Longitude = abs(LonDeg)+(abs(LonMin)/60.0)+(abs(LonSec)/3600.0);
+					if (LonCh==L'W')
+						v.GeoCoordinates.Longitude -= v.GeoCoordinates.Longitude;
+					if ((v.GeoCoordinates.Longitude<-180.0) || (v.GeoCoordinates.Longitude>180.0))
+						v.GeoCoordinates.Longitude = 0.0;
+
+					v.IsNull = FALSE;
 				}
+
 			break;
+
 		case LFTypeTime:
 			ZeroMemory(&stLocal, sizeof(stLocal));
-			switch (swscanf_s(str, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
+
+			switch (swscanf_s(pStr, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
 			{
 			case 1:
 			case 2:
@@ -520,25 +643,35 @@ LFCORE_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 					stLocal.wMonth = stLocal.wDay = 1;
 
 					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-					SystemTimeToFileTime(&stUTC, &v->Time);
-					v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+					SystemTimeToFileTime(&stUTC, &v.Time);
+					v.IsNull = !((v.Time.dwHighDateTime) || (v.Time.dwLowDateTime));
 				}
+
 				break;
+
 			case 3:
 			case 4:
 				if ((Date1>=0) && (Date1<=12) && (Date2>1600) && (Date2<0x10000))
-					std::swap(Date1, Date2);
+				{
+					UINT Temp = Date1;
+					Date1 = Date2;
+					Date2 = Temp;
+				}
+
 				if ((Date1>1600) && (Date1<0x10000) && (Date2>=0) && (Date2<=12))
+
 				{
 					stLocal.wYear = (WORD)Date1;
 					stLocal.wMonth = (WORD)Date2;
 					stLocal.wDay = 1;
 
 					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-					SystemTimeToFileTime(&stUTC, &v->Time);
-					v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+					SystemTimeToFileTime(&stUTC, &v.Time);
+					v.IsNull = !((v.Time.dwHighDateTime) || (v.Time.dwLowDateTime));
 				}
+
 				break;
+
 			case 5:
 				if ((DateCh1==DateCh2) && (Date1>0) && (Date2>0) && (Date3>0))
 				{
@@ -546,7 +679,12 @@ LFCORE_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 					if (YearFirst)
 					{
 						if ((DateCh1=='/') || ((Date2>12) && (Date3<=12)))
-							std::swap(Date2, Date3);
+						{
+							UINT Temp = Date2;
+							Date2 = Date3;
+							Date3 = Temp;
+						}
+
 						if ((Date2<=12) && (Date3<=31))
 						{
 							stLocal.wYear = (WORD)Date1;
@@ -554,15 +692,21 @@ LFCORE_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 							stLocal.wDay = (WORD)Date3;
 
 							TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-							SystemTimeToFileTime(&stUTC, &v->Time);
-							v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+							SystemTimeToFileTime(&stUTC, &v.Time);
+
+							v.IsNull = !((v.Time.dwHighDateTime) || (v.Time.dwLowDateTime));
 						}
 					}
 					else
 						if ((Date3>1600) && (Date3<0x10000))
 						{
 							if ((DateCh1=='/') || ((Date1>12) && (Date2<=12)))
-								std::swap(Date1, Date2);
+							{
+								UINT Temp = Date1;
+								Date1 = Date2;
+								Date2 = Temp;
+							}
+
 							if ((Date1<=31) && (Date2<=12))
 							{
 								stLocal.wYear = (WORD)Date3;
@@ -570,309 +714,150 @@ LFCORE_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 								stLocal.wDay = (WORD)Date1;
 
 								TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-								SystemTimeToFileTime(&stUTC, &v->Time);
-								v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+								SystemTimeToFileTime(&stUTC, &v.Time);
+
+								v.IsNull = !((v.Time.dwHighDateTime) || (v.Time.dwLowDateTime));
 							}
 						}
 				}
 			}
+
 			break;
+
 		case LFTypeDuration:
-			if (swscanf_s(str, L"%u:%u:%u", &Hour, &Min, &Sec)==3)
+			if (swscanf_s(pStr, L"%u:%u:%u", &Hour, &Min, &Sec)==3)
 			{
-				v->Duration = 1000*(Hour*3600+Min*60+Sec);
-				v->IsNull = false;
+				v.Duration = 1000*(Hour*3600+Min*60+Sec);
+				v.IsNull = FALSE;
 			}
+
 			break;
+
 		case LFTypeBitrate:
-			if (swscanf_s(str, L"%u", &v->Bitrate)==1)
+			if (swscanf_s(pStr, L"%u", &v.Bitrate)==1)
 			{
-				v->Bitrate *= 1000;
-				v->IsNull = false;
+				v.Bitrate *= 1000;
+				v.IsNull = FALSE;
 			}
+
 			break;
 		}
 	}
 }
 
-LFCORE_API void LFGetNullVariantData(LFVariantData* v)
+LFCORE_API INT LFCompareVariantData(LFVariantData& v1, LFVariantData& v2)
 {
-	assert(v);
+	if (v1.IsNull && v2.IsNull)
+		return 0;
+	if (v1.IsNull)
+		return -1;
+	if (v2.IsNull)
+		return 1;
 
-	v->Type = (v->Attr<LFAttributeCount) ? AttrTypes[v->Attr] : LFTypeUnicodeString;
-	v->IsNull = true;
+	if (v1.Type!=v2.Type)
+		return v1.Type-v2.Type;
 
-	switch (v->Type)
-	{
-	case LFTypeDouble:
-		v->Double = 0;
-		break;
-	case LFTypeGeoCoordinates:
-		v->GeoCoordinates.Latitude = v->GeoCoordinates.Longitude = 0;
-		break;
-	case LFTypeMegapixel:
-		v->Double = -1;
-		break;
-	default:
-		ZeroMemory(v->Value, sizeof(v->Value));
-	}
+	return CompareValues(v1.Type, &v1.Value, &v2.Value);
 }
 
-LFCORE_API bool LFIsNullVariantData(LFVariantData* v)
-{
-	assert(v);
-
-	if (v->IsNull)
-		return true;
-
-	assert(v->Attr<LFAttributeCount);
-	assert(v->Type==AttrTypes[v->Attr]);
-
-	return IsNullValue(v->Attr, &v->Value);
-}
-
-LFCORE_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
-{
-	if ((v1->IsNull!=v2->IsNull) || (v1->Type!=v2->Type))
-		return false;
-
-	assert(v1->Attr<LFAttributeCount);
-	assert(v2->Attr<LFAttributeCount);
-	assert(v1->Type==AttrTypes[v1->Attr]);
-	assert(v2->Type==AttrTypes[v2->Attr]);
-	assert(v1->Type<LFTypeCount);
-	assert(v2->Type<LFTypeCount);
-
-	switch (v1->Type)
-	{
-	case LFTypeUnicodeString:
-	case LFTypeUnicodeArray:
-		return wcscmp(v1->UnicodeString, v2->UnicodeString)==0;
-	case LFTypeAnsiString:
-		return strcmp(v1->AnsiString, v2->AnsiString)==0;
-	case LFTypeFourCC:
-	case LFTypeUINT:
-	case LFTypeFlags:
-	case LFTypeDuration:
-	case LFTypeBitrate:
-		return v1->UINT==v2->UINT;
-	case LFTypeRating:
-		return v1->Rating==v2->Rating;
-	case LFTypeINT64:
-		return v1->INT64==v2->INT64;
-	case LFTypeFraction:
-		return (v1->Fraction.Num==v2->Fraction.Num) && (v1->Fraction.Denum==v2->Fraction.Denum);
-	case LFTypeDouble:
-	case LFTypeMegapixel:
-		return (v1->Double==v2->Double);
-	case LFTypeGeoCoordinates:
-		return (v1->GeoCoordinates.Latitude==v2->GeoCoordinates.Latitude) && (v1->GeoCoordinates.Longitude==v2->GeoCoordinates.Longitude);
-	case LFTypeTime:
-		return memcmp(&v1->Time, &v2->Time, sizeof(FILETIME))==0;
-	}
-
-	return false;
-}
-
-LFCORE_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
+LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v)
 {
 	assert(i);
-	assert(v);
 
-	if (i->AttributeValues[v->Attr])
+	if (i->AttributeValues[v.Attr])
 	{
-		if (v->IsNull)
-			return false;
+		assert(v.Attr<LFAttributeCount);
+		assert(v.Type==AttrTypes[v.Attr]);
+		assert(v.Type<LFTypeCount);
 
-		assert(v->Attr<LFAttributeCount);
-		assert(v->Type==AttrTypes[v->Attr]);
-		assert(v->Type<LFTypeCount);
-
-		switch (v->Type)
-		{
-		case LFTypeUnicodeString:
-			return wcscmp((wchar_t*)i->AttributeValues[v->Attr], v->UnicodeString)==0;
-		case LFTypeUnicodeArray:
-			return wcscmp((wchar_t*)i->AttributeValues[v->Attr], v->UnicodeArray)==0;
-		case LFTypeAnsiString:
-			return strcmp((char*)i->AttributeValues[v->Attr], v->AnsiString)==0;
-		case LFTypeFourCC:
-		case LFTypeUINT:
-		case LFTypeFlags:
-		case LFTypeDuration:
-		case LFTypeBitrate:
-			return *(unsigned int*)i->AttributeValues[v->Attr]==v->UINT;
-		case LFTypeRating:
-			return *(unsigned char*)i->AttributeValues[v->Attr]==v->Rating;
-		case LFTypeINT64:
-			return *(__int64*)i->AttributeValues[v->Attr]==v->INT64;
-		case LFTypeFraction:
-			return memcmp(i->AttributeValues[v->Attr], &v->Fraction, sizeof(LFFraction))==0;
-		case LFTypeDouble:
-		case LFTypeMegapixel:
-			return (*(double*)i->AttributeValues[v->Attr]==v->Double);
-		case LFTypeGeoCoordinates:
-			return memcmp(i->AttributeValues[v->Attr], &v->GeoCoordinates, sizeof(LFGeoCoordinates))==0;
-		case LFTypeTime:
-			return memcmp(i->AttributeValues[v->Attr], &v->Time, sizeof(FILETIME))==0;
-		}
-
-		return false;
+		memcpy(&v.Value, i->AttributeValues[v.Attr], GetAttributeSize(v.Attr, i->AttributeValues[v.Attr]));
+		v.IsNull = FALSE;
 	}
 	else
 	{
-		return v->IsNull;
+		LFClearVariantData(v);
 	}
 }
 
-LFCORE_API int LFCompareVariantData(LFVariantData* v1, LFVariantData* v2)
-{
-	assert(v1);
-	assert(v2);
-
-	if ((v1->IsNull) && (v2->IsNull))
-		return 0;
-	if (v1->IsNull)
-		return -1;
-	if (v2->IsNull)
-		return 1;
-
-	assert(v1->Attr<LFAttributeCount);
-	assert(v2->Attr<LFAttributeCount);
-	assert(v1->Type==AttrTypes[v1->Attr]);
-	assert(v2->Type==AttrTypes[v2->Attr]);
-	assert(v1->Type<LFTypeCount);
-	assert(v2->Type<LFTypeCount);
-
-	if (v1->Type!=v2->Type)
-		return v1->Type-v2->Type;
-
-	switch (v1->Type)
-	{
-	case LFTypeUnicodeString:
-		return wcscmp(v1->UnicodeString, v2->UnicodeString);
-	case LFTypeUnicodeArray:
-		return wcscmp(v1->UnicodeArray, v2->UnicodeArray);
-	case LFTypeAnsiString:
-		return strcmp(v1->AnsiString, v2->AnsiString);
-	case LFTypeFourCC:
-		return (long)v1->FourCC-(long)v2->FourCC;
-	case LFTypeUINT:
-	case LFTypeDuration:
-	case LFTypeBitrate:
-		return (v1->UINT<v2->UINT) ? -1 : v1->UINT==v2->UINT ? 0 : 1;
-	case LFTypeRating:
-		return (int)v1->Rating-(int)v2->Rating;
-	case LFTypeINT64:
-		return (v1->INT64<v2->INT64) ? -1 : v1->INT64==v2->INT64 ? 0 : 1;
-	case LFTypeDouble:
-	case LFTypeMegapixel:
-		return (v1->Double<v2->Double) ? -1 : v1->Double==v2->Double ? 0 : 1;
-	case LFTypeTime:
-		if (v1->Time.dwHighDateTime==v2->Time.dwHighDateTime)
-		{
-			return (v1->Time.dwLowDateTime<v2->Time.dwLowDateTime) ? -1 : (v1->Time.dwLowDateTime==v2->Time.dwLowDateTime) ? 0 : 1;
-		}
-		else
-		{
-			return (v1->Time.dwHighDateTime<v2->Time.dwHighDateTime) ? -1 : 1;
-		}
-	}
-
-	return 0;
-}
-
-LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
+LFCORE_API void LFGetAttributeVariantDataEx(LFItemDescriptor* i, UINT Attr, LFVariantData& v)
 {
 	assert(i);
-	assert(v);
 
-	LFGetNullVariantData(v);
+	v.Attr = Attr;
+	v.Type = AttrTypes[Attr];
 
-	if (i->AttributeValues[v->Attr])
-	{
-		assert(v->Attr<LFAttributeCount);
-		assert(v->Type==AttrTypes[v->Attr]);
-		assert(v->Type<LFTypeCount);
-
-		size_t sz = GetAttributeSize(v->Attr, i->AttributeValues[v->Attr]);
-		memcpy(&v->Value, i->AttributeValues[v->Attr], sz);
-		v->IsNull = false;
-	}
+	LFGetAttributeVariantData(i, v);
 }
 
-LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
+LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v)
 {
 	assert(i);
-	assert(v->Attr<LFAttributeCount);
+	assert(v.Attr<LFAttributeCount);
+	assert(v.Type==AttrTypes[v.Attr]);
+	assert(v.Type<LFTypeCount);
 
 	// Special treatment for flags
-	if (v->Attr==LFAttrFlags)
+	if (v.Attr==LFAttrFlags)
 	{
-		v->Flags.Mask &= LFFlagArchive | LFFlagTrash;
-		v->Flags.Flags &= v->Flags.Mask;
+		v.Flags.Mask &= LFFlagArchive | LFFlagTrash;
+		v.Flags.Flags &= v.Flags.Mask;
 
-		if (i->AttributeValues[v->Attr])
-		{
-			unsigned int f = ((*(unsigned int*)i->AttributeValues[v->Attr]) & (~v->Flags.Mask)) | v->Flags.Flags;
-			SetAttribute(i, v->Attr, &f);
-			return;
-		}
+		i->CoreAttributes.Flags &= ~v.Flags.Mask;
+		i->CoreAttributes.Flags |= v.Flags.Flags;
 	}
-
-	// Other attributes
-	SetAttribute(i, v->Attr, &v->Value);
+	else
+	{
+		SetAttribute(i, v.Attr, &v.Value);
+	}
 }
 
-LFCORE_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
+LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, size_t cCount)
 {
-	typedef std::pair<std::wstring, bool> tagitem;
-	typedef std::map<std::wstring, tagitem> hashtags;
-	hashtags tags;
+	typedef std::pair<std::wstring, BOOL> TagItem;
+	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;
+	Hashtags Tags;
 
-	wchar_t tag[259];
-	wchar_t* tagarray = buf;
-	while (GetNextTag(&tagarray, tag, 256))
+	WCHAR Tag[259];
+	WCHAR* Tagarray = pBuffer;
+	while (GetNextTag(&Tagarray, Tag, 256))
 	{
-		std::wstring key(tag);
-		transform(key.begin(), key.end(), key.begin(), towlower);
+		std::wstring Key(Tag);
+		transform(Key.begin(), Key.end(), Key.begin(), towlower);
 
-		hashtags::iterator location = tags.find(key);
-		if (location==tags.end())
+		Hashtags::iterator Location = Tags.find(Key);
+		if (Location==Tags.end())
 		{
-			tags[key] = tagitem(tag, false);
+			Tags[Key] = TagItem(Tag, FALSE);
 		}
 		else
-			if (!location->second.second)
-				if (location->second.first.compare(tag)!=0)
-					location->second.second = true;
+			if (!Location->second.second)
+				if (Location->second.first.compare(Tag)!=0)
+					Location->second.second = TRUE;
 	}
 
-	buf[0] = L'\0';
-	for (hashtags::iterator it=tags.begin(); it!=tags.end(); it++)
+	pBuffer[0] = L'\0';
+	for (Hashtags::iterator it=Tags.begin(); it!=Tags.end(); it++)
 	{
-		tag[0] = L'\0';
-		if (buf[0]!=L'\0')
-			wcscpy_s(tag, 259, L" ");
+		wcscpy_s(Tag, 259, pBuffer[0]!=L'\0' ? L" " : L"");
 
 		if (it->second.first.find_first_of(L" .,:;?!|")!=std::wstring::npos)
 		{
-			wcscat_s(tag, 259, L"\"");
-			wcscat_s(tag, 259, it->second.first.c_str());
-			wcscat_s(tag, 259, L"\"");
+			wcscat_s(Tag, 259, L"\"");
+			wcscat_s(Tag, 259, it->second.first.c_str());
+			wcscat_s(Tag, 259, L"\"");
 		}
 		else
 		{
-			wcscat_s(tag, 259, it->second.first.c_str());
+			wcscat_s(Tag, 259, it->second.first.c_str());
 		}
 
-		if (wcslen(buf)+wcslen(tag)<=255)
+		if (wcslen(pBuffer)+wcslen(Tag)<=255)
 		{
 			if (it->second.second)
 			{
-				bool first = true;
-				for (wchar_t* ptr=tag; *ptr; ptr++)
-					switch (*ptr)
+				BOOL First = TRUE;
+				for (WCHAR* Ptr=Tag; *Ptr; Ptr++)
+					switch (*Ptr)
 					{
 					case L' ':
 					case L'.':
@@ -884,15 +869,16 @@ LFCORE_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 					case L'|':
 					case L'-':
 					case L'"':
-						first = true;
+						First = TRUE;
 						break;
+
 					default:
-						*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
-						first = false;
+						*Ptr = First ? (WCHAR)toupper(*Ptr) : (WCHAR)tolower(*Ptr);
+						First = FALSE;
 					}
 			}
 
-			wcscat_s(buf, cCount, tag);
+			wcscat_s(pBuffer, cCount, Tag);
 		}
 	}
 }

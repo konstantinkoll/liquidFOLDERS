@@ -21,9 +21,9 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 	if ((i->Type & LFTypeMask)!=LFTypeFile)
 		return NULL;
 
-	wchar_t Path[MAX_PATH];
+	WCHAR Path[MAX_PATH];
 
-	if (LFGetFileLocation(i, Path, MAX_PATH, true, false)!=LFOk)
+	if (LFGetFileLocation(i, Path, MAX_PATH, TRUE, FALSE)!=LFOk)
 		return NULL;
 
 	HBITMAP hBmp = NULL;
@@ -98,9 +98,9 @@ Finish:
 				BYTE* pBitsSrc = ((BYTE*)bm.bmBits);
 				BYTE* pBitsDst = ((BYTE*)bmNew.bmBits);
 
-				for (UINT a=0; a<128; a++)
+				for (UINT32 a=0; a<128; a++)
 				{
-					for (UINT b=0; b<128; b++)
+					for (UINT32 b=0; b<128; b++)
 					{
 						*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+4)+*(pBitsSrc+256*4)+*(pBitsSrc+256*4+4))>>2;
 						*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+5)+*(pBitsSrc+256*4+1)+*(pBitsSrc+256*4+5))>>2;

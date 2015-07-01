@@ -226,7 +226,7 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request)
 		break;
 	case LFTypeRating:
 	case LFTypeUINT:
-	case LFTypeINT64:
+	case LFTypeSize:
 	case LFTypeTime:
 	case LFTypeDouble:
 	case LFTypeDuration:

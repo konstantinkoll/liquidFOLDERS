@@ -61,7 +61,7 @@ void LFChooseStoreDlg::UpdateOkButton()
 	INT Index = GetSelectedStore();
 	BOOL b = (Index!=-1);
 
-	if (m_Mounted)
+	if (m_Mounted && b)
 		b &= !(m_pResult->m_Items[Index]->Type & LFTypeNotMounted);
 
 	GetDlgItem(IDOK)->EnableWindow(b);
@@ -193,7 +193,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			LFVariantData value;
 			value.Attr = LFAttrFileName;
 			value.Type = LFTypeUnicodeString;
-			value.IsNull = false;
+			value.IsNull = FALSE;
 
 			wcsncpy_s(value.UnicodeString, 256, pDispInfo->item.pszText, 255);
 

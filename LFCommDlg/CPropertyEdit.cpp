@@ -159,8 +159,7 @@ CPropertyEdit::CPropertyEdit()
 			AfxThrowResourceException();
 	}
 
-	ZeroMemory(&m_Data, sizeof(LFVariantData));
-	LFGetNullVariantData(&m_Data);
+	LFInitVariantData(m_Data, LFAttrFileName);
 	p_Property = NULL;
 	m_pWndDisplay = NULL;
 	m_pWndEdit = NULL;
@@ -288,7 +287,7 @@ void CPropertyEdit::CreateProperty()
 	AdjustLayout();
 
 	m_IsValid = TRUE;
-	m_IsEmpty = LFIsNullVariantData(&m_Data);
+	m_IsEmpty = LFIsNullVariantData(m_Data);
 }
 
 void CPropertyEdit::SetAttribute(UINT Attr)
@@ -298,9 +297,7 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 		LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[Attr];
 		if (pAttr->Type!=m_Data.Type)
 		{
-			ZeroMemory(&m_Data, sizeof(m_Data));
-			m_Data.Attr = Attr;
-			LFGetNullVariantData(&m_Data);
+			LFInitVariantData(m_Data, Attr);
 		}
 		else
 		{
@@ -337,7 +334,7 @@ void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
 
 		m_IsValid = TRUE;
-		m_IsEmpty = LFIsNullVariantData(&m_Data);
+		m_IsEmpty = LFIsNullVariantData(m_Data);
 	}
 
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
@@ -423,9 +420,9 @@ LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	WCHAR tmpStr[256];
 	m_pWndEdit->GetWindowText(tmpStr, 256);
 
-	LFVariantDataFromString(&m_Data, tmpStr);
+	LFVariantDataFromString(m_Data, tmpStr);
 	m_IsValid = !m_Data.IsNull;
-	m_IsEmpty = LFIsNullVariantData(&m_Data);
+	m_IsEmpty = LFIsNullVariantData(m_Data);
 
 	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, m_Data.Attr);
 }
@@ -440,7 +437,7 @@ void CPropertyEdit::OnClick()
 			if (m_pWndEdit)
 			{
 				WCHAR tmpStr[256];
-				LFVariantDataToString(&m_Data, tmpStr, 256);
+				LFVariantDataToString(m_Data, tmpStr, 256);
 
 				m_pWndEdit->SetWindowText(tmpStr);
 			}

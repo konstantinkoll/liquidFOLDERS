@@ -17,8 +17,8 @@ using namespace std;
 
 #pragma data_seg(".shared")
 
-bool LicenseRead = false;
-bool ExpireRead = false;
+BOOL LicenseRead = FALSE;
+BOOL ExpireRead = FALSE;
 LFLicense LicenseBuffer = { 0 };
 FILETIME ExpireBuffer = { 0, 0 };
 
@@ -27,7 +27,7 @@ FILETIME ExpireBuffer = { 0, 0 };
 
 void ParseVersion(string& tmpStr, LFLicenseVersion* Version)
 {
-	char Point;
+	CHAR Point;
 
 	stringstream ss(tmpStr);
 	ss >> Version->Major;
@@ -87,19 +87,19 @@ void ParseInput(string& tmpStr, LFLicense* License)
 	}
 }
 
-bool ReadCodedLicense(string& Message)
+BOOL ReadCodedLicense(string& Message)
 {
-	bool Result = false;
+	BOOL Result = FALSE;
 
 	HKEY k;
 	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
 	{
-		char tmpStr[4096];
+		CHAR tmpStr[4096];
 		DWORD sz = sizeof(tmpStr);
 		if (RegQueryValueExA(k, "License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
 		{
 			Message = tmpStr;
-			Result = true;
+			Result = TRUE;
 		}
 
 		RegCloseKey(k);
@@ -108,13 +108,13 @@ bool ReadCodedLicense(string& Message)
 	return Result;
 }
 
-bool GetLicense(LFLicense* License)
+BOOL GetLicense(LFLicense* License)
 {
 	string Message;
 	string Recovered;
 
 	if (!ReadCodedLicense(Message))
-		return false;
+		return FALSE;
 
 	// Setup
 	Integer n("745495196278906388636775394847083621342948184497620571684486911233963026358348142924980767925246631723125776567861840016140759057887626699111750486589518844265093743018380979709327527515518976285922706516923147828076538170972730183425557516081175385650534524185881211094278086683594714172177608841889993609400198766281044688600596754569489192345101979343468669802344086907480228591789172201629911453850773648840583343122891763767764228796196156401170554177938285696830486894331437834556251102634591813052294727051913850611273897873094152049052538993868633785883333899830540017013351013051436649700047349078185669990895492280131774298910733408039488338775031855217004993409862255738766029617966149166800537682141977654630013676816397200968712319762658485930029154225302095517962261669873874532952773591788024202484800434032440378140651213784614438189252406134607226451954778487476382220064125800227678929995859762762265522856822435862521744384622820138233752235289143337592718212618381294424731866372596352871531111041688119666919042905495747876323829528637851924273124345938360066547750112529335899447558317824780247359979724026700097382563761302560657179092084838455014801002071816886727980707589178515801870998113718231400298837471.");
@@ -125,7 +125,7 @@ bool GetLicense(LFLicense* License)
 
 	try
 	{
-		StringSource(Message, true,
+		StringSource(Message, TRUE,
 			new Base64Decoder(
 				new SignatureVerificationFilter(Verifier,
 					new StringSink(Recovered),
@@ -133,22 +133,22 @@ bool GetLicense(LFLicense* License)
 	}
 	catch(CryptoPP::Exception /*&e*/)
 	{
-		return false;
+		return FALSE;
 	}
 
 	ParseInput(Recovered, License);
-	return true;
+	return TRUE;
 }
 
-LFCORE_API bool LFIsLicensed(LFLicense* License, bool Reload)
+LFCORE_API BOOL LFIsLicensed(LFLicense* License, BOOL Reload)
 {
 	// Setup
 	if (!LicenseRead || Reload)
 	{
-		LicenseRead = true;
+		LicenseRead = TRUE;
 
 		if (!GetLicense(&LicenseBuffer))
-			return false;
+			return FALSE;
 	}
 
 	if (License)
@@ -157,17 +157,17 @@ LFCORE_API bool LFIsLicensed(LFLicense* License, bool Reload)
 	return (wcsncmp(LicenseBuffer.ProductID, L"liquidFOLDERS", 13)==0) && (LicenseBuffer.Version.Major>=0);
 }
 
-LFCORE_API bool LFIsSharewareExpired()
+LFCORE_API BOOL LFIsSharewareExpired()
 {
 	if (LFIsLicensed())
-		return false;
+		return FALSE;
 
 	// Setup
 	if (!ExpireRead)
 	{
-		ExpireRead = true;
+		ExpireRead = TRUE;
 
-		bool Result = false;
+		BOOL Result = FALSE;
 
 		HKEY k;
 		if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
@@ -177,7 +177,7 @@ LFCORE_API bool LFIsSharewareExpired()
 			{
 				sz = sizeof(DWORD);
 				if (RegQueryValueExA(k, "Envelope", 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
-					Result = true;
+					Result = TRUE;
 			}
 
 			if (!Result)

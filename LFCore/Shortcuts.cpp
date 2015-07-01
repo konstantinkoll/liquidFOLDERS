@@ -13,13 +13,13 @@ extern HANDLE Mutex_Stores;
 extern OSVERSIONINFO osInfo;
 
 
-LFCORE_API bool LFAskCreateShortcut(HWND hwnd)
+LFCORE_API BOOL LFAskCreateShortcut(HWND hwnd)
 {
 	if (osInfo.dwMajorVersion<6)
 	{
 		// Ask if link should be created on desktop
-		wchar_t Caption[256];
-		wchar_t Message[256];
+		WCHAR Caption[256];
+		WCHAR Message[256];
 		LoadString(LFCoreModuleHandle, IDS_SHORTCUTCAPTION, Caption, 256);
 		LoadString(LFCoreModuleHandle, IDS_SHORTCUTMESSAGE, Message, 256);
 
@@ -27,21 +27,21 @@ LFCORE_API bool LFAskCreateShortcut(HWND hwnd)
 			return FALSE;
 	}
 
-	return true;
+	return TRUE;
 }
 
-LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFilename)
+LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* LinkFilename)
 {
 	// Get the fully qualified file name for the link file
-	wchar_t PathDesktop[MAX_PATH];
+	WCHAR PathDesktop[MAX_PATH];
 	if (SHGetSpecialFolderPath(NULL, PathDesktop, CSIDL_DESKTOPDIRECTORY, FALSE))
 	{
-		wchar_t SanitizedLinkFilename[MAX_PATH];
+		WCHAR SanitizedLinkFilename[MAX_PATH];
 		SanitizeFileName(SanitizedLinkFilename, MAX_PATH, LinkFilename);
 
-		wchar_t PathLink[2*MAX_PATH];
-		wchar_t NumberStr[16] = L"";
-		unsigned int Number = 1;
+		WCHAR PathLink[2*MAX_PATH];
+		WCHAR NumberStr[16] = L"";
+		UINT Number = 1;
 
 		// Check if link file exists; otherwise append number
 		do
@@ -68,42 +68,42 @@ LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFil
 	}
 }
 
-bool GetStoreManagerPath(wchar_t* Path, size_t cCount)
+BOOL GetStoreManagerPath(WCHAR* Path, size_t cCount)
 {
 	// Registry
 	HKEY k;
 	if (RegOpenKey(HKEY_LOCAL_MACHINE, L"Software\\liquidFOLDERS\\", &k)==ERROR_SUCCESS)
 	{
-		DWORD sz = (DWORD)(cCount*sizeof(wchar_t));
+		DWORD sz = (DWORD)(cCount*sizeof(WCHAR));
 		LSTATUS Result = RegQueryValueEx(k, L"StoreManager", 0, NULL, (BYTE*)Path, &sz);
 
 		RegCloseKey(k);
 
 		if (Result==ERROR_SUCCESS)
-			return true;
+			return TRUE;
 	}
 
 	// Festen Pfad probieren
 	if (!SHGetSpecialFolderPath(NULL, Path, CSIDL_PROGRAM_FILES, FALSE))
-		return false;
+		return FALSE;
 
 	wcscat_s(Path, cCount, L"\\liquidFOLDERS\\StoreManager.exe");
 	return (_waccess(Path, 0)==0);
 }
 
-IShellLink* GetShortcutForStore(char* StoreID, unsigned int IconID)
+IShellLink* GetShortcutForStore(CHAR* StoreID, UINT IconID)
 {
-	wchar_t Path[2*MAX_PATH];
+	WCHAR Path[2*MAX_PATH];
 	if (GetStoreManagerPath(Path, 2*MAX_PATH))
 	{
 		// Get a pointer to the IShellLink interface
 		IShellLink* pShellLink = NULL;
 		if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
 		{
-			wchar_t ID[LFKeySize];
+			WCHAR ID[LFKeySize];
 			MultiByteToWideChar(CP_ACP, 0, StoreID, -1, ID, LFKeySize);
 	
-			wchar_t IconLocation[2*MAX_PATH];
+			WCHAR IconLocation[2*MAX_PATH];
 			GetModuleFileName(LFCoreModuleHandle, IconLocation, MAX_PATH);
 
 			pShellLink->SetPath(Path);
@@ -137,7 +137,7 @@ LFCORE_API IShellLink* LFGetShortcutForStore(LFStoreDescriptor* s)
 	return pShellLink;
 }
 
-LFCORE_API IShellLink* LFGetShortcutForStore(char* key)
+LFCORE_API IShellLink* LFGetShortcutForStore(CHAR* key)
 {
 	if (!key)
 		return NULL;
@@ -174,7 +174,7 @@ LFCORE_API void LFCreateDesktopShortcutForStore(LFStoreDescriptor* s)
 	}
 }
 
-LFCORE_API void LFCreateDesktopShortcutForStore(char* key)
+LFCORE_API void LFCreateDesktopShortcutForStore(CHAR* key)
 {
 	if (!key)
 		return;

@@ -6,12 +6,12 @@
 struct LFTL_Item
 {
 	LFItemDescriptor* Item;
-	unsigned int UserData;
+	UINT UserData;
 
-	unsigned int LastError;
-	bool Processed;
+	UINT LastError;
+	BOOL Processed;
 
-	wchar_t Path[2*MAX_PATH];
+	WCHAR Path[2*MAX_PATH];
 	LPITEMIDLIST pidlFQ;
 };
 
@@ -22,14 +22,14 @@ public:
 	LFTransactionList();
 	~LFTransactionList();
 
-	bool AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData);
+	BOOL AddItemDescriptor(LFItemDescriptor* i, UINT UserData);
 	void Reset();
-	void SetError(char* key, unsigned int error, LFProgress* pProgress=NULL);
-	void SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress=NULL);
-	LPITEMIDLIST DetachPIDL(unsigned int idx);
+	void SetError(CHAR* key, UINT error, LFProgress* pProgress=NULL);
+	void SetError(UINT idx, UINT Result, LFProgress* pProgress=NULL);
+	LPITEMIDLIST DetachPIDL(UINT idx);
 	HGLOBAL CreateDropFiles();
 	HGLOBAL CreateLiquidFiles();
 
-	bool m_Changes;
-	bool m_Resolved;
+	BOOL m_Changes;
+	BOOL m_Resolved;
 };

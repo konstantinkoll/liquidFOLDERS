@@ -1,25 +1,24 @@
 #pragma once
 #include "LF.h"
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma pack(push,1)
 
 struct PersistentFilterHeader
 {
-	char ID[9];					// LFFilter
-	unsigned char Version;		// Should be 1 across all platforms
-	unsigned int szHeader;
-	unsigned int szBody;
-	unsigned int szCondition;
+	CHAR ID[9];					// LFFilter
+	BYTE Version;				// Should be 1 across all platforms
+	UINT szHeader;
+	UINT szBody;
+	UINT szCondition;
 };
-
-#pragma pack(pop)
 
 struct PersistentFilterBody
 {
-	bool AllStores;
-	wchar_t Searchterm[256];
-	unsigned int cConditions;
+	BOOL AllStores;
+	WCHAR Searchterm[256];
+	UINT cConditions;
 };
+
+#pragma pack(pop)
 
 typedef LFFilterCondition PersistentFilterCondition;

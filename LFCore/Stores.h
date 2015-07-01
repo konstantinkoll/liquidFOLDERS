@@ -8,7 +8,7 @@
 	CIndex* idx2; \
 	LFStoreDescriptor* slot; \
 	HANDLE StoreLock = NULL; \
-	unsigned int Result = OpenStore(StoreID, WriteAccess, idx1, idx2, &slot, &StoreLock); \
+	UINT Result = OpenStore(StoreID, WriteAccess, idx1, idx2, &slot, &StoreLock); \
 	if (Result!=LFOk) { ErrorOps; } else {
 
 #define OPEN_STORE(StoreID, WriteAccess, ErrorOps) \
@@ -24,17 +24,17 @@
 
 DWORD CreateDir(LPWSTR lpPath);
 void HideDir(LPWSTR lpPath);
-bool RemoveDir(LPWSTR lpPath);
-bool DirFreeSpace(LPWSTR lpPath, unsigned int Required);
-bool DirWriteable(LPWSTR lpPath);
-unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst);
-void SanitizeFileName(wchar_t* dst, size_t cCount, wchar_t* src);
-unsigned int CreateStoreDirectories(LFStoreDescriptor* s);
-void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cCount);
-bool FileExists(LPWSTR lpPath);
-unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t* Dst, size_t cCount);
-bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate);
-void SendLFNotifyMessage(unsigned int Msg);
-void SendShellNotifyMessage(unsigned int Msg, char* StoreID=NULL, LPITEMIDLIST oldpidl=NULL, LPITEMIDLIST oldpidlDelegate=NULL);
-unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pProgress=NULL);
-unsigned int OpenStore(char* StoreID, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor** s, HANDLE* lock);
+BOOL RemoveDir(LPWSTR lpPath);
+BOOL DirFreeSpace(LPWSTR lpPath, UINT Required);
+BOOL DirWriteable(LPWSTR lpPath);
+UINT CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst);
+void SanitizeFileName(WCHAR* dst, size_t cCount, WCHAR* src);
+UINT CreateStoreDirectories(LFStoreDescriptor* s);
+void GetFileLocation(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, size_t cCount);
+BOOL FileExists(LPWSTR lpPath);
+UINT PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, WCHAR* Dst, size_t cCount);
+BOOL GetPIDLForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate);
+void SendLFNotifyMessage(UINT Msg);
+void SendShellNotifyMessage(UINT Msg, CHAR* StoreID=NULL, LPITEMIDLIST oldpidl=NULL, LPITEMIDLIST oldpidlDelegate=NULL);
+UINT RunMaintenance(LFStoreDescriptor* s, BOOL scheduled, LFProgress* pProgress=NULL);
+UINT OpenStore(CHAR* StoreID, BOOL WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor** s, HANDLE* lock);

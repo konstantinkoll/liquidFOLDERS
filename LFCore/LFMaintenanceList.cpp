@@ -8,7 +8,7 @@ LFMaintenanceList::LFMaintenanceList()
 {
 }
 
-bool LFMaintenanceList::AddStore(unsigned int _Result, wchar_t* _Name, char* _StoreID, unsigned int _Icon)
+BOOL LFMaintenanceList::AddStore(UINT _Result, WCHAR* _Name, CHAR* _StoreID, UINT _Icon)
 {
 	assert(_Name);
 	assert(_StoreID);

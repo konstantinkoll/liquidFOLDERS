@@ -12,7 +12,7 @@ void InitMutex()
 	Mutex_Stores = CreateMutexA(NULL, FALSE, LFCM_Stores);
 }
 
-bool GetMutex(HANDLE m)
+BOOL GetMutex(HANDLE m)
 {
 	// Wait for max. 20 seconds
 	DWORD dwWaitResult = WaitForSingleObject(m, 20000);
@@ -20,17 +20,17 @@ bool GetMutex(HANDLE m)
 	return ((dwWaitResult==WAIT_OBJECT_0) || (dwWaitResult==WAIT_ABANDONED));
 }
 
-bool GetMutexForStore(LFStoreDescriptor* s, HANDLE* m)
+BOOL GetMutexForStore(LFStoreDescriptor* s, HANDLE* m)
 {
 	assert(s);
 
-	char ID[MAX_PATH];
+	CHAR ID[MAX_PATH];
 	strcpy_s(ID, MAX_PATH, LFCM_Store);
 	strcat_s(ID, MAX_PATH, s->StoreID);
 
 	*m = CreateMutexA(NULL, FALSE, ID);
 
-	bool Result = GetMutex(*m);
+	BOOL Result = GetMutex(*m);
 	if (!Result)
 	{
 		CloseHandle(*m);

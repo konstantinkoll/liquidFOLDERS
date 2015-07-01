@@ -5,7 +5,7 @@
 #include <shlobj.h>
 
 
-LPITEMIDLIST AllocPIDL(unsigned int sz)
+LPITEMIDLIST AllocPIDL(UINT sz)
 {
 	LPMALLOC pMalloc;
 	if (FAILED(SHGetMalloc(&pMalloc)))
@@ -40,12 +40,12 @@ LPITEMIDLIST Next(LPITEMIDLIST pidl)
 	return (LPITEMIDLIST)lpMem;
 }
 
-unsigned int GetSize(LPITEMIDLIST pidl)
+UINT GetSize(LPITEMIDLIST pidl)
 {
 	if (!pidl)
 		return 0;
 
-	unsigned int sz = sizeof(pidl->mkid.cb);
+	UINT sz = sizeof(pidl->mkid.cb);
 
 	while(pidl->mkid.cb)
 	{
@@ -58,8 +58,8 @@ unsigned int GetSize(LPITEMIDLIST pidl)
 
 LPITEMIDLIST ConcatenatePIDLs(LPITEMIDLIST pidl1, LPITEMIDLIST pidl2)
 {
-	unsigned int cb1 = pidl1 ? GetSize(pidl1)-sizeof(pidl1->mkid.cb) : 0;
-	unsigned int cb2 = GetSize(pidl2);
+	UINT cb1 = pidl1 ? GetSize(pidl1)-sizeof(pidl1->mkid.cb) : 0;
+	UINT cb2 = GetSize(pidl2);
 
 	LPITEMIDLIST pidlNew = AllocPIDL(cb1+cb2);
 	if (pidlNew)
@@ -72,16 +72,16 @@ LPITEMIDLIST ConcatenatePIDLs(LPITEMIDLIST pidl1, LPITEMIDLIST pidl2)
 	return pidlNew;
 }
 
-bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate)
+BOOL GetPIDLForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate)
 {
 	*ppidl = *ppidlDelegate = NULL;
 
 	IShellFolder* pDesktop = NULL;
 	if (FAILED(SHGetDesktopFolder(&pDesktop)))
-		return false;
+		return FALSE;
 
 	// Path
-	wchar_t Key[LFKeySize+1];
+	WCHAR Key[LFKeySize+1];
 	if (StoreID)
 	{
 		wcscpy_s(Key, LFKeySize+1, L"\\");
@@ -92,7 +92,7 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 		Key[0] = L'\0';
 	}
 
-	wchar_t Path[MAX_PATH];
+	WCHAR Path[MAX_PATH];
 	ULONG chEaten = 0;
 	ULONG dwAttributes = SFGAO_FOLDER;
 
@@ -100,7 +100,7 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 	wcscat_s(Path, MAX_PATH, Key);
 
 	// PIDL
-	bool Result = SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, ppidl, &dwAttributes));
+	BOOL Result = SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, ppidl, &dwAttributes));
 
 	// Delegate PIDL
 	if (Result)
@@ -113,7 +113,7 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 				*ppidlDelegate = pidlMyComputer;
 
 				pDesktop->Release();
-				return true;
+				return TRUE;
 			}
 
 			IShellFolder* pParentFolder = NULL;

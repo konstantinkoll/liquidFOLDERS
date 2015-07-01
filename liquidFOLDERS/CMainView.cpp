@@ -468,7 +468,7 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolvePhysica
 
 		if (ResolvePhysicalLocations)
 		{
-			LFTransactionResolvePhysicalLocations(tl, IncludePIDL==TRUE);
+			LFTransactionResolvePhysicalLocations(tl, IncludePIDL);
 			LFErrorBox(tl->m_LastError, GetSafeHwnd());
 		}
 	}
@@ -490,7 +490,7 @@ void CMainView::RemoveTransactedItems(LFFileIDList* il)
 				if ((i->Type & LFTypeMask)==LFTypeFile)
 					if ((strcmp(il->m_Items[a].StoreID, i->StoreID)==0) && (strcmp(il->m_Items[a].FileID, i->CoreAttributes.FileID)==0))
 					{
-						p_RawFiles->m_Items[b]->DeleteFlag = true;
+						p_RawFiles->m_Items[b]->DeleteFlag = TRUE;
 						break;
 					}
 			}
@@ -509,7 +509,7 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if ((tl->m_Items[a].LastError==LFOk) && (tl->m_Items[a].Processed))
-			tl->m_Items[a].Item->DeleteFlag = true;
+			tl->m_Items[a].Item->DeleteFlag = TRUE;
 
 	LFRemoveFlaggedItemDescriptors(p_RawFiles);
 
@@ -526,7 +526,7 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 	{
 		CWaitCursor csr;
 
-		LFTransactionDelete(tl, true);
+		LFTransactionDelete(tl, TRUE);
 	}
 	else
 	{
@@ -998,7 +998,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	LFVariantData value;
 	value.Attr = LFAttrFileName;
 	value.Type = LFTypeUnicodeString;
-	value.IsNull = false;
+	value.IsNull = FALSE;
 
 	wcsncpy_s(value.UnicodeString, 256, (WCHAR*)lParam, 255);
 
@@ -1321,18 +1321,16 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnNewRemoveNew()
 {
-	LFVariantData Value;
-	Value.Attr = LFAttrFlags;
-	LFGetNullVariantData(&Value);
-
-	Value.Flags.Flags = 0;
-	Value.Flags.Mask = LFFlagNew;
-	Value.IsNull = false;
+	LFVariantData v;
+	LFInitVariantData(v, LFAttrFlags);
+	v.Flags.Flags = 0;
+	v.Flags.Mask = LFFlagNew;
+	v.IsNull = FALSE;
 
 	CWaitCursor csr;
 
 	LFTransactionList* tl = BuildTransactionList(TRUE);
-	LFTransactionUpdate(tl, &Value);
+	LFTransactionUpdate(tl, &v);
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
@@ -1581,7 +1579,7 @@ void CMainView::OnFileOpenWith()
 	if (Index!=-1)
 	{
 		WCHAR Path[MAX_PATH];
-		UINT Result = LFGetFileLocation(p_CookedFiles->m_Items[Index], Path, MAX_PATH, true, true);
+		UINT Result = LFGetFileLocation(p_CookedFiles->m_Items[Index], Path, MAX_PATH, TRUE, TRUE);
 		if (Result==LFOk)
 		{
 			WCHAR Cmd[300];
@@ -1654,7 +1652,7 @@ void CMainView::OnFileRemove()
 	LFTransactionList* tl = BuildTransactionList();
 
 	for (UINT a=0; a<tl->m_ItemCount; a++)
-		tl->m_Items[a].Processed = true;
+		tl->m_Items[a].Processed = TRUE;
 	RemoveTransactedItems(tl);
 
 	LFFreeTransactionList(tl);

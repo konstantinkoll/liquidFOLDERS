@@ -234,7 +234,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 				{
 					GlobeItemData* d = GetItemData(a);
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
-					LFGeoCoordinatesToString(coord, d->CoordString, 32, false);
+					LFGeoCoordinatesToString(coord, d->CoordString, 32, FALSE);
 					wcscpy_s(d->DescriptionString, 32, p_CookedFiles->m_Items[a]->Description);
 
 					d->Hdr.Valid = TRUE;
@@ -754,7 +754,7 @@ __forceinline void CGlobeView::DrawStatusBar(INT Height, COLORREF BarColor, BOOL
 		LFGeoCoordinates c;
 		c.Latitude = -m_GlobeCurrent.Latitude;
 		c.Longitude = (m_GlobeCurrent.Longitude>180.0) ? 360-m_GlobeCurrent.Longitude : -m_GlobeCurrent.Longitude;
-		LFGeoCoordinatesToString(c, Coord, 256, true);
+		LFGeoCoordinatesToString(c, Coord, 256, TRUE);
 
 		swprintf(Viewpoint, 256, m_YouLookAt, Coord);
 

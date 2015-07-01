@@ -1,12 +1,7 @@
 
 #include "stdafx.h"
 #include "LFCore.h"
-#include "LFItemDescriptor.h"
 #include "IATA.h"
-#include <assert.h>
-
-
-extern unsigned char AttrTypes[];
 
 
 #pragma data_seg(".shared")
@@ -17,7 +12,7 @@ extern unsigned char AttrTypes[];
 #pragma data_seg()
 
 
-bool UseGermanDB = false;
+BOOL UseGermanDB = FALSE;
 
 
 void InitAirportDatabase()
@@ -25,102 +20,74 @@ void InitAirportDatabase()
 	UseGermanDB = (GetUserDefaultUILanguage() & 0x1FF)==LANG_GERMAN;
 }
 
-LFCORE_API unsigned int LFIATAGetCountryCount()
+LFCORE_API UINT LFIATAGetCountryCount()
 {
 	return UseGermanDB ? CountryCount_DE : CountryCount_EN;
 }
 
-LFCORE_API unsigned int LFIATAGetAirportCount()
+LFCORE_API UINT LFIATAGetAirportCount()
 {
 	return UseGermanDB ? AirportCount_DE : AirportCount_EN;
 }
 
-LFCORE_API LFCountry* LFIATAGetCountry(unsigned int ID)
+LFCORE_API LFCountry* LFIATAGetCountry(UINT ID)
 {
 	return UseGermanDB ? &Countries_DE[ID] : &Countries_EN[ID];
 }
 
-LFCORE_API int LFIATAGetNextAirport(int last, LFAirport** pBuffer)
+LFCORE_API INT LFIATAGetNextAirport(INT Last, LFAirport** pBuffer)
 {
-	if (last>=(int)LFIATAGetAirportCount()-1)
+	if (Last>=(INT)LFIATAGetAirportCount()-1)
 		return -1;
 
-	*pBuffer = UseGermanDB ? &Airports_DE[++last] : &Airports_EN[++last];
-	return last;
+	*pBuffer = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+
+	return Last;
 }
 
-LFCORE_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, LFAirport** pBuffer)
+LFCORE_API INT LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** pBuffer)
 {
-	int count = (int)LFIATAGetAirportCount();
+	UINT Count = LFIATAGetAirportCount();
 
 	do
 	{
-		if (last>=count-1)
+		if (Last>=(INT)Count-1)
 			return -1;
 
-		*pBuffer = UseGermanDB ? &Airports_DE[++last] : &Airports_EN[++last];
+		*pBuffer = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 	}
 	while ((*pBuffer)->CountryID!=CountryID);
 
-	return last;
+	return Last;
 }
 
-LFCORE_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
+LFCORE_API BOOL LFIATAGetAirportByCode(CHAR* Code, LFAirport** pBuffer)
 {
 	if (!Code)
-		return false;
-	if (*Code=='\0')
-		return false;
+		return FALSE;
 
-	int first = 0;
-	int last = (int)LFIATAGetAirportCount()-1;
+	INT First = 0;
+	INT Last = (INT)LFIATAGetAirportCount()-1;
 
-	while (first<=last)
+	while (First<=Last)
 	{
-		int mid = (first+last)/2;
+		INT Mid = (First+Last)/2;
 
-		*pBuffer = UseGermanDB ? &Airports_DE[mid] : &Airports_EN[mid];
-		int Result = strcmp((*pBuffer)->Code, Code);
+		*pBuffer = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
+
+		INT Result = strcmp((*pBuffer)->Code, Code);
 		if (Result==0)
-			return true;
+			return TRUE;
 
 		if (Result<0)
 		{
-			first = mid+1;
+			First = Mid+1;
 		}
 		else
 		{
-			last = mid-1;
+			Last = Mid-1;
 		}
 	}
 
-	return false;
-}
-
-void CustomizeFolderForAirport(LFItemDescriptor* i, LFAirport* airport)
-{
-	// Ortsname in ANSI
-	char tmpStr1[256];
-	strcpy_s(tmpStr1, 256, airport->Name);
-	strcat_s(tmpStr1, 256, ", ");
-	strcat_s(tmpStr1, 256, LFIATAGetCountry(airport->CountryID)->Name);
-
-	// Dateiname in ANSI
-	char tmpStr2[256];
-	strcpy_s(tmpStr2, 256, airport->Code);
-	strcat_s(tmpStr2, 256, UseGermanDB ? " – " : "—");
-	strcat_s(tmpStr2, 256, tmpStr1);
-
-	// Dateiname in Unicode
-	wchar_t tmpStr3[256];
-	MultiByteToWideChar(CP_ACP, 0, tmpStr2, -1, tmpStr3, 256);
-	SetAttribute(i, LFAttrFileName, tmpStr3);
-
-	// Ortsname in Unicode
-	MultiByteToWideChar(CP_ACP, 0, tmpStr1, -1, tmpStr3, 256);
-	SetAttribute(i, LFAttrLocationName, tmpStr3);
-
-	// Weitere Attribute
-	SetAttribute(i, LFAttrLocationIATA, airport->Code);
-	SetAttribute(i, LFAttrLocationGPS, &airport->Location);
+	return FALSE;
 }

@@ -9,112 +9,59 @@
 class CCategorizer
 {
 public:
-	CCategorizer(unsigned int _attr);
+	CCategorizer(UINT Attr);
 
 	LFItemDescriptor* GetFolder(LFItemDescriptor* i, LFFilter* f);
-	bool IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	BOOL IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 
-	unsigned int attr;
+	UINT m_Attr;
 };
 
 
-// DateCategorizer
+// CDateCategorizer
 //
 
-class DateCategorizer : public CCategorizer
+class CDateCategorizer : public CCategorizer
 {
 public:
-	DateCategorizer(unsigned int _attr);
+	CDateCategorizer(UINT Attr);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 };
 
 
-// RatingCategorizer
+// CRatingCategorizer
 //
 
-class RatingCategorizer : public CCategorizer
+class CRatingCategorizer : public CCategorizer
 {
 public:
-	RatingCategorizer(unsigned int _attr);
+	CRatingCategorizer(UINT Attr);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
-};
-
-
-// UnicodeCategorizer
-//
-
-class UnicodeCategorizer : public CCategorizer
-{
-public:
-	UnicodeCategorizer(unsigned int _attr);
-
-protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
-};
-
-
-// AnsiCategorizer
-//
-
-class AnsiCategorizer : public CCategorizer
-{
-public:
-	AnsiCategorizer(unsigned int _attr);
-
-protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
-};
-
-
-// UINTCategorizer
-//
-
-class UINTCategorizer : public CCategorizer
-{
-public:
-	UINTCategorizer(unsigned int _attr);
-
-protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 };
 
 
 // IATACategorizer
 //
 
-class IATACategorizer : public AnsiCategorizer
+class IATACategorizer : public CCategorizer
 {
 public:
-	IATACategorizer(unsigned int _attr);
+	IATACategorizer(UINT Attr);
 
 protected:
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
-};
-
-
-// CoordCategorizer
-//
-
-class CoordCategorizer : public CCategorizer
-{
-public:
-	CoordCategorizer(unsigned int _attr);
-
-protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 };
 
 
@@ -124,10 +71,10 @@ protected:
 class SizeCategorizer : public CCategorizer
 {
 public:
-	SizeCategorizer(unsigned int _attr);
+	SizeCategorizer(UINT Attr);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 };
 
@@ -138,39 +85,28 @@ protected:
 class DurationCategorizer : public CCategorizer
 {
 public:
-	DurationCategorizer(unsigned int _attr);
+	DurationCategorizer(UINT Attr);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 };
 
 
-// NameCategorizer
+// CNameCategorizer
 //
 
-class NameCategorizer : public CCategorizer
+class CNameCategorizer : public CCategorizer
 {
 public:
-	NameCategorizer(unsigned int _attr);
+	CNameCategorizer(UINT Attr);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	static BOOL GetNamePrefix(WCHAR* FullName, WCHAR* Buffer);
+
+	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
-};
-
-
-// DurationBitrateCategorizer
-//
-
-class DurationBitrateCategorizer : public CCategorizer
-{
-public:
-	DurationBitrateCategorizer(unsigned int _attr);
-
-protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 };
 
 
@@ -180,10 +116,9 @@ protected:
 class MegapixelCategorizer : public CCategorizer
 {
 public:
-	MegapixelCategorizer(unsigned int _attr);
+	MegapixelCategorizer(UINT Attr);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 };
@@ -195,10 +130,10 @@ protected:
 class URLCategorizer : public CCategorizer
 {
 public:
-	URLCategorizer(unsigned int _attr);
+	URLCategorizer(UINT Attr);
 
 protected:
-	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 };

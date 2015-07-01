@@ -5,3 +5,30 @@ LIBRARY      "LFCORE"
 EXPORTS
 	; Explicit exports can go here
 	LFInitialize @1
+	LFCombineFileCountSize @2
+	LFHideFileExt @3
+	LFHideVolumesWithNoMedia @4
+
+	LFFourCCToString @100
+	LFUINTToString @101
+	LFSizeToString @102
+	LFFractionToString @103
+	LFDoubleToString @104
+	LFGeoCoordinateToString @105
+	LFGeoCoordinatesToString @106
+	LFTimeToString @107
+	LFDurationToString @108
+	LFBitrateToString @109
+	LFMegapixelToString @110
+	LFAttributeToString @111
+	LFInitVariantData @112
+	LFClearVariantData @113
+	LFIsNullVariantData @114
+	LFVariantDataToString @115
+	LFVariantDataFromString @116
+	LFCompareVariantData @117
+	LFGetAttributeVariantData @118
+	LFGetAttributeVariantDataEx @119
+	LFSetAttributeVariantData @120
+	LFSanitizeUnicodeArray @121
+	

@@ -12,7 +12,7 @@
 extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
-extern char KeyChars[38];
+extern CHAR KeyChars[38];
 
 
 // Verzeichnis-Funktionen
@@ -23,12 +23,12 @@ __forceinline DWORD CreateDir(LPWSTR lpPath)
 	return CreateDirectory(lpPath, NULL) ? ERROR_SUCCESS : GetLastError();
 }
 
-bool RemoveDir(LPWSTR lpPath)
+BOOL RemoveDir(LPWSTR lpPath)
 {
-	bool Result = true;
+	BOOL Result = TRUE;
 
 	// Dateien löschen
-	wchar_t DirSpec[MAX_PATH];
+	WCHAR DirSpec[MAX_PATH];
 	wcscpy_s(DirSpec, MAX_PATH, lpPath);
 	wcscat_s(DirSpec, MAX_PATH, L"*");
 
@@ -41,7 +41,7 @@ bool RemoveDir(LPWSTR lpPath)
 		{
 			if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 			{
-				wchar_t fn[MAX_PATH];
+				WCHAR fn[MAX_PATH];
 				wcscpy_s(fn, MAX_PATH, lpPath);
 				wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
 
@@ -51,13 +51,13 @@ bool RemoveDir(LPWSTR lpPath)
 					{
 						wcscat_s(fn, MAX_PATH, L"\\");
 						if (!RemoveDir(fn))
-							Result = false;
+							Result = FALSE;
 					}
 				}
 				else
 				{
 					if (!DeleteFile(fn))
-						Result = false;
+						Result = FALSE;
 				}
 			}
 		}
@@ -69,14 +69,14 @@ bool RemoveDir(LPWSTR lpPath)
 	// Verzeichnis löschen
 	if (Result)
 		if (!RemoveDirectory(lpPath))
-			Result = false;
+			Result = FALSE;
 
 	return Result;
 }
 
-unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst)
+UINT CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst)
 {
-	wchar_t DirSpec[MAX_PATH];
+	WCHAR DirSpec[MAX_PATH];
 	wcscpy_s(DirSpec, MAX_PATH, lpPathSrc);
 	wcscat_s(DirSpec, MAX_PATH, L"*");
 
@@ -89,11 +89,11 @@ unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst)
 		{
 			if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 			{
-				wchar_t fns[MAX_PATH];
+				WCHAR fns[MAX_PATH];
 				wcscpy_s(fns, MAX_PATH, lpPathSrc);
 				wcscat_s(fns, MAX_PATH, FindFileData.cFileName);
 
-				wchar_t fnd[MAX_PATH];
+				WCHAR fnd[MAX_PATH];
 				wcscpy_s(fnd, MAX_PATH, lpPathDst);
 				wcscat_s(fnd, MAX_PATH, FindFileData.cFileName);
 
@@ -112,27 +112,27 @@ unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst)
 	return LFOk;
 }
 
-bool DirFreeSpace(LPWSTR lpPath, unsigned int Required)
+BOOL DirFreeSpace(LPWSTR lpPath, UINT Required)
 {
 	ULARGE_INTEGER FreeBytesAvailable;
-	return GetDiskFreeSpaceEx(lpPath, &FreeBytesAvailable, NULL, NULL) ? FreeBytesAvailable.QuadPart>=Required : false;
+	return GetDiskFreeSpaceEx(lpPath, &FreeBytesAvailable, NULL, NULL) ? FreeBytesAvailable.QuadPart>=Required : FALSE;
 }
 
-bool DirWriteable(LPWSTR lpPath)
+BOOL DirWriteable(LPWSTR lpPath)
 {
-	wchar_t Filename[MAX_PATH];
+	WCHAR Filename[MAX_PATH];
 	wcscpy_s(Filename, MAX_PATH, lpPath);
 	wcscat_s(Filename, MAX_PATH, L"LF_TEST.BIN");
 
 	HANDLE h = CreateFile(Filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (h==INVALID_HANDLE_VALUE)
-		return false;
+		return FALSE;
 
 	CloseHandle(h);
 	return DeleteFile(Filename)==TRUE;
 }
 
-void SanitizeFileName(wchar_t* dst, size_t cCount, wchar_t* src)
+void SanitizeFileName(WCHAR* dst, size_t cCount, WCHAR* src)
 {
 	wcscpy_s(dst, cCount, src);
 
@@ -144,7 +144,7 @@ void SanitizeFileName(wchar_t* dst, size_t cCount, wchar_t* src)
 	}
 }
 
-unsigned int CreateStoreDirectories(LFStoreDescriptor* s)
+UINT CreateStoreDirectories(LFStoreDescriptor* s)
 {
 	assert(s);
 
@@ -170,7 +170,7 @@ unsigned int CreateStoreDirectories(LFStoreDescriptor* s)
 	// Create aux index
 	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 	{
-		wchar_t tmpStr[MAX_PATH];
+		WCHAR tmpStr[MAX_PATH];
 		GetAutoPath(s, tmpStr);
 
 		DWORD Result = CreateDir(tmpStr);
@@ -185,7 +185,7 @@ unsigned int CreateStoreDirectories(LFStoreDescriptor* s)
 	return LFOk;
 }
 
-__forceinline void CreateStoreIndex(LFStoreDescriptor* s, bool UseMainIndex, unsigned int &Result)
+__forceinline void CreateStoreIndex(LFStoreDescriptor* s, BOOL UseMainIndex, UINT &Result)
 {
 	assert(s);
 
@@ -194,12 +194,12 @@ __forceinline void CreateStoreIndex(LFStoreDescriptor* s, bool UseMainIndex, uns
 		Result = LFIndexCreateError;
 }
 
-void GetFilePath(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cCount)
+void GetFilePath(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, size_t cCount)
 {
-	wchar_t buf1[3] = L" \\";
+	WCHAR buf1[3] = L" \\";
 	buf1[0] = ca->FileID[0];
 
-	wchar_t buf2[LFKeySize-1];
+	WCHAR buf2[LFKeySize-1];
 	MultiByteToWideChar(CP_ACP, 0, &ca->FileID[1], -1, buf2, LFKeySize-1);
 
 	wcscpy_s(dst, cCount, L"\\\\?\\");
@@ -208,9 +208,9 @@ void GetFilePath(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cC
 	wcscat_s(dst, cCount, buf2);
 }
 
-void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cCount)
+void GetFileLocation(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, size_t cCount)
 {
-	wchar_t buf1[MAX_PATH];
+	WCHAR buf1[MAX_PATH];
 	SanitizeFileName(buf1, MAX_PATH, ca->FileName);
 
 	GetFilePath(DatPath, ca, dst, cCount);
@@ -219,7 +219,7 @@ void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_
 
 	if (ca->FileFormat[0]!='\0')
 	{
-		wchar_t buf2[LFExtSize];
+		WCHAR buf2[LFExtSize];
 		MultiByteToWideChar(CP_ACP, 0, ca->FileFormat, -1, buf2, LFExtSize);
 
 		wcscat_s(dst, cCount, L".");
@@ -227,19 +227,19 @@ void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_
 	}
 }
 
-bool FileExists(LPWSTR lpPath)
+BOOL FileExists(LPWSTR lpPath)
 {
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind = FindFirstFile(lpPath, &FindFileData);
 
-	bool Result = (hFind!=INVALID_HANDLE_VALUE);
+	BOOL Result = (hFind!=INVALID_HANDLE_VALUE);
 	if (Result)
 		FindClose(hFind);
 
 	return Result;
 }
 
-unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t* Dst, size_t cCount)
+UINT PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, WCHAR* Dst, size_t cCount)
 {
 	RANDOMIZE();
 
@@ -247,10 +247,10 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t
 	i->CoreAttributes.FileID[0] = RAND_CHAR();
 	i->CoreAttributes.FileID[LFKeySize-1] = '\0';
 
-	wchar_t Buf[3] = L" \\";
+	WCHAR Buf[3] = L" \\";
 	Buf[0] = i->CoreAttributes.FileID[0];
 
-	wchar_t Path[2*MAX_PATH];
+	WCHAR Path[2*MAX_PATH];
 	wcscpy_s(Path, 2*MAX_PATH, slot->DatPath);
 	wcscat_s(Path, 2*MAX_PATH, Buf);
 
@@ -260,7 +260,7 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t
 
 	do
 	{
-		for (unsigned int a=1; a<LFKeySize-1; a++)
+		for (UINT a=1; a<LFKeySize-1; a++)
 			i->CoreAttributes.FileID[a] = RAND_CHAR();
 
 		GetFilePath(slot->DatPath, &i->CoreAttributes, Path, 2*MAX_PATH);
@@ -275,12 +275,12 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t
 	return LFOk;
 }
 
-__forceinline void SendLFNotifyMessage(unsigned int Msg)
+__forceinline void SendLFNotifyMessage(UINT Msg)
 {
 	SendNotifyMessage(HWND_BROADCAST, Msg, NULL, NULL);
 }
 
-void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpidl, LPITEMIDLIST oldpidlDelegate)
+void SendShellNotifyMessage(UINT Msg, CHAR* StoreID, LPITEMIDLIST oldpidl, LPITEMIDLIST oldpidlDelegate)
 {
 	LPITEMIDLIST pidl;
 	LPITEMIDLIST pidlDelegate;
@@ -301,7 +301,7 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpid
 // Stores
 //
 
-LFCORE_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, size_t cCount, bool CheckExists, bool RemoveNew, bool Extended)
+LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, size_t cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended)
 {
 	if ((i->Type & LFTypeMask)!=LFTypeFile)
 		return LFIllegalItemType;
@@ -312,29 +312,29 @@ LFCORE_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 		return LFOk;
 	}
 
-	bool Changed = false;
+	BOOL Changed = FALSE;
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	unsigned int Result = LFIllegalKey;
+	UINT Result = LFIllegalKey;
 	LFStoreDescriptor* slot = FindStore(i->StoreID);
 
 	if (slot)
 		if (LFIsStoreMounted(slot))
 		{
-			wchar_t tmpPath[2*MAX_PATH];
+			WCHAR tmpPath[2*MAX_PATH];
 			GetFileLocation(slot->DatPath, &i->CoreAttributes, tmpPath, 2*MAX_PATH);
 			Result = LFOk;
 
 			if (CheckExists || (RemoveNew && (i->CoreAttributes.Flags & LFFlagNew)))
 			{
-				bool Exists = FileExists(tmpPath);
+				BOOL Exists = FileExists(tmpPath);
 
 				if ((Exists!=((i->CoreAttributes.Flags & LFFlagMissing)==0)) || (RemoveNew && (i->CoreAttributes.Flags & LFFlagNew)))
 				{
 					// Update index
-					OPEN_STORE(i->StoreID, true, Result = Result);
+					OPEN_STORE(i->StoreID, TRUE, Result = Result);
 
 					if (idx1)
 						idx1->UpdateSystemFlags(i, Exists, RemoveNew);
@@ -343,7 +343,7 @@ LFCORE_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 
 					CLOSE_STORE();
 
-					Changed = true;
+					Changed = TRUE;
 				}
 
 				if (CheckExists && !Exists)
@@ -378,7 +378,7 @@ LFCORE_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 	return Result;
 }
 
-LFCORE_API unsigned int LFGetStoreSettings(char* StoreID, LFStoreDescriptor* s)
+LFCORE_API UINT LFGetStoreSettings(CHAR* StoreID, LFStoreDescriptor* s)
 {
 	assert(StoreID);
 
@@ -393,7 +393,7 @@ LFCORE_API unsigned int LFGetStoreSettings(char* StoreID, LFStoreDescriptor* s)
 	return (slot ? LFOk : LFIllegalKey);
 }
 
-LFCORE_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s)
+LFCORE_API UINT LFGetStoreSettings(GUID guid, LFStoreDescriptor* s)
 {
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
@@ -406,17 +406,17 @@ LFCORE_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s)
 	return (slot ? LFOk : LFIllegalKey);
 }
 
-LFCORE_API bool LFIsStoreMounted(LFStoreDescriptor* s)
+LFCORE_API BOOL LFIsStoreMounted(LFStoreDescriptor* s)
 {
-	return s ? IsStoreMounted(s) : false;
+	return s ? IsStoreMounted(s) : FALSE;
 }
 
-LFCORE_API unsigned int LFGetStoreIcon(LFStoreDescriptor* s)
+LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* s)
 {
 	return s ? s->Source+1 : IDI_STR_UNKNOWN;
 }
 
-LFCORE_API unsigned int LFCreateStore(LFStoreDescriptor* s)
+LFCORE_API UINT LFCreateStore(LFStoreDescriptor* s)
 {
 	// GUID generieren
 	CoCreateGuid(&s->guid);
@@ -448,7 +448,7 @@ LFCORE_API unsigned int LFCreateStore(LFStoreDescriptor* s)
 	s->IndexVersion = CurIdxVersion;
 
 	// Store speichern
-	unsigned int Result = UpdateStore(s);
+	UINT Result = UpdateStore(s);
 	if (Result==LFOk)
 	{
 		HANDLE StoreLock;
@@ -459,8 +459,8 @@ LFCORE_API unsigned int LFCreateStore(LFStoreDescriptor* s)
 			Result = CreateStoreDirectories(s);
 			if (Result==LFOk)
 			{
-				CreateStoreIndex(s, true, Result);
-				CreateStoreIndex(s, false, Result);
+				CreateStoreIndex(s, TRUE, Result);
+				CreateStoreIndex(s, FALSE, Result);
 			}
 
 			ReleaseMutex(StoreLock);
@@ -480,7 +480,7 @@ LFCORE_API unsigned int LFCreateStore(LFStoreDescriptor* s)
 	return Result;
 }
 
-LFCORE_API unsigned int LFMakeDefaultStore(char* StoreID)
+LFCORE_API UINT LFMakeDefaultStore(CHAR* StoreID)
 {
 	assert(StoreID);
 
@@ -490,7 +490,7 @@ LFCORE_API unsigned int LFMakeDefaultStore(char* StoreID)
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	unsigned int Result = LFIllegalKey;
+	UINT Result = LFIllegalKey;
 	LFStoreDescriptor* slot = FindStore(StoreID);
 
 	if (slot)
@@ -504,14 +504,14 @@ LFCORE_API unsigned int LFMakeDefaultStore(char* StoreID)
 	return Result;
 }
 
-LFCORE_API unsigned int LFMakeStoreSearchable(char* StoreID, bool Searchable)
+LFCORE_API UINT LFMakeStoreSearchable(CHAR* StoreID, BOOL Searchable)
 {
 	assert(StoreID);
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	unsigned int Result = LFIllegalKey;
+	UINT Result = LFIllegalKey;
 	HANDLE StoreLock = NULL;
 	LFStoreDescriptor* slot = FindStore(StoreID, &StoreLock);
 	if (!StoreLock)
@@ -583,7 +583,7 @@ LFCORE_API unsigned int LFMakeStoreSearchable(char* StoreID, bool Searchable)
 		{
 			if (victim.IdxPathAux[0]!=L'\0')
 			{
-				wchar_t path[MAX_PATH];
+				WCHAR path[MAX_PATH];
 				GetAutoPath(&victim, path);
 				RemoveDir(path);
 			}
@@ -603,7 +603,7 @@ Abort:
 	return Result;
 }
 
-LFCORE_API unsigned int LFSetStoreAttributes(char* StoreID, wchar_t* name, wchar_t* comment, bool InternalCall)
+LFCORE_API UINT LFSetStoreAttributes(CHAR* StoreID, WCHAR* name, WCHAR* comment, BOOL InternalCall)
 {
 	assert(StoreID);
 
@@ -624,7 +624,7 @@ LFCORE_API unsigned int LFSetStoreAttributes(char* StoreID, wchar_t* name, wchar
 		return LFMutexError;
 	}
 
-	unsigned int Result = LFIllegalKey;
+	UINT Result = LFIllegalKey;
 	LFStoreDescriptor* slot = FindStore(StoreID);
 	if (slot)
 	{
@@ -658,14 +658,14 @@ LFCORE_API unsigned int LFSetStoreAttributes(char* StoreID, wchar_t* name, wchar
 	return Result;
 }
 
-LFCORE_API unsigned int LFDeleteStore(char* StoreID, LFProgress* pProgress)
+LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 {
 	assert(StoreID);
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	unsigned int Result = LFIllegalKey;
+	UINT Result = LFIllegalKey;
 	HANDLE StoreLock = NULL;
 	LFStoreDescriptor* slot = FindStore(StoreID, &StoreLock);
 	if (!StoreLock)
@@ -680,7 +680,7 @@ LFCORE_API unsigned int LFDeleteStore(char* StoreID, LFProgress* pProgress)
 		{
 			pProgress->MinorCount = 2;
 			pProgress->MinorCurrent = 0;
-			pProgress->NoMinorCounter = true;
+			pProgress->NoMinorCounter = TRUE;
 			wcscpy_s(pProgress->Object, 256, slot->StoreName);
 			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
 			{
@@ -693,7 +693,7 @@ LFCORE_API unsigned int LFDeleteStore(char* StoreID, LFProgress* pProgress)
 		// Delete
 		if (slot->DatPath[0]!=L'\0')
 		{
-			wchar_t Path[MAX_PATH];
+			WCHAR Path[MAX_PATH];
 			wcscpy_s(Path, MAX_PATH, slot->DatPath);
 			wcscat_s(Path, MAX_PATH, L"*");
 
@@ -726,7 +726,7 @@ LFCORE_API unsigned int LFDeleteStore(char* StoreID, LFProgress* pProgress)
 
 			if (victim.IdxPathAux[0]!=L'\0')
 			{
-				wchar_t path[MAX_PATH];
+				WCHAR path[MAX_PATH];
 				GetAutoPath(&victim, path);
 				RemoveDir(path);
 			}
@@ -754,7 +754,7 @@ LFCORE_API unsigned int LFDeleteStore(char* StoreID, LFProgress* pProgress)
 	return Result;
 }
 
-unsigned int RunMaintenance(LFStoreDescriptor* s, bool Scheduled, LFProgress* pProgress)
+UINT RunMaintenance(LFStoreDescriptor* s, BOOL Scheduled, LFProgress* pProgress)
 {
 	assert(s);
 
@@ -771,7 +771,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool Scheduled, LFProgress* pP
 	#define ABORT(Result) { if (pProgress) pProgress->ProgressState = LFProgressError; return Result; }
 
 	// Verzeichnisse prüfen
-	unsigned int Result = CreateStoreDirectories(s);
+	UINT Result = CreateStoreDirectories(s);
 	if (Result!=LFOk)
 		ABORT(Result);
 
@@ -779,7 +779,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool Scheduled, LFProgress* pP
 	if (pProgress)
 	{
 		pProgress->MinorCurrent++;
-		pProgress->NoMinorCounter = true;
+		pProgress->NoMinorCounter = TRUE;
 		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
 			return LFCancel;
 	}
@@ -787,7 +787,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool Scheduled, LFProgress* pP
 	// Index prüfen
 	CIndex* idx = new CIndex(s, (s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid);
 
-	bool Repaired = false;
+	BOOL Repaired = FALSE;
 	Result = idx->Check(Scheduled, &Repaired, pProgress);
 	delete idx;
 
@@ -821,7 +821,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool Scheduled, LFProgress* pP
 		GetSystemTimeAsFileTime(&s->MaintenanceTime);
 
 	// Store aktualisieren
-	Result = UpdateStore(s, false);
+	Result = UpdateStore(s, FALSE);
 	if (Result!=LFOk)
 		ABORT(Result);
 
@@ -846,8 +846,8 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 		return ml;
 	}
 
-	char* IDs;
-	unsigned int count = FindStores(&IDs);
+	CHAR* IDs;
+	UINT count = FindStores(&IDs);
 	ReleaseMutex(Mutex_Stores);
 
 	if (count)
@@ -855,8 +855,8 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 		if (pProgress)
 			pProgress->MajorCount = count;
 
-		char* ptr = IDs;
-		for (unsigned int a=0; a<count; a++)
+		CHAR* ptr = IDs;
+		for (UINT a=0; a<count; a++)
 		{
 			if (!GetMutex(Mutex_Stores))
 			{
@@ -872,7 +872,7 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 			if ((!slot) || (!StoreLock))
 				continue;
 
-			ml->AddStore(RunMaintenance(slot, true, pProgress), slot->StoreName, ptr, LFGetStoreIcon(slot));
+			ml->AddStore(RunMaintenance(slot, TRUE, pProgress), slot->StoreName, ptr, LFGetStoreIcon(slot));
 			ReleaseMutexForStore(StoreLock);
 
 			ptr += LFKeySize;
@@ -894,7 +894,7 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 	return ml;
 }
 
-unsigned int OpenStore(char* StoreID, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor** s, HANDLE* lock)
+UINT OpenStore(CHAR* StoreID, BOOL WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor** s, HANDLE* lock)
 {
 	Index1 = Index2 = NULL;
 
@@ -921,7 +921,7 @@ unsigned int OpenStore(char* StoreID, bool WriteAccess, CIndex* &Index1, CIndex*
 	// Run non-scheduled maintenance
 	if (slot->Flags & LFStoreFlagUnchecked)
 	{
-		unsigned int Result = RunMaintenance(slot, false);
+		UINT Result = RunMaintenance(slot, FALSE);
 		if ((Result!=LFOk) && (Result!=LFDriveWriteProtected))
 		{
 			ReleaseMutexForStore(*lock);
@@ -932,9 +932,9 @@ unsigned int OpenStore(char* StoreID, bool WriteAccess, CIndex* &Index1, CIndex*
 	// Open index(es)
 	if (WriteAccess)
 	{
-		Index1 = new CIndex(slot, true);
+		Index1 = new CIndex(slot, TRUE);
 		if ((slot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
-			Index2 = new CIndex(slot, false);
+			Index2 = new CIndex(slot, FALSE);
 	}
 	else
 	{

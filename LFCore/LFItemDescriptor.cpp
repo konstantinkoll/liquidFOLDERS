@@ -7,7 +7,7 @@
 #include <malloc.h>
 
 
-extern const int CoreOffsets[LFLastCoreAttribute+1] = {
+extern const INT CoreOffsets[LFLastCoreAttribute+1] = {
 	offsetof(LFCoreAttributes, FileName),
 	-1,
 	offsetof(LFCoreAttributes, FileID),
@@ -35,21 +35,21 @@ extern const size_t AttrSizes[LFTypeCount] = {
 	0,							// LFTypeUnicodeString
 	0,							// LFTypeUnicodeArray
 	0,							// LFTypeAnsiString
-	sizeof(unsigned int),		// LFTypeFourCC
-	sizeof(unsigned char),		// LFTypeRating
-	sizeof(unsigned int),		// LFTypeUINT
-	sizeof(__int64),			// LFTypeINT64
+	sizeof(DWORD),				// LFTypeFourCC
+	sizeof(BYTE),				// LFTypeRating
+	sizeof(UINT),				// LFTypeUINT
+	sizeof(INT64),				// LFTypeSize
 	sizeof(LFFraction),			// LFTypeFraction
-	sizeof(double),				// LFTypeDouble
-	sizeof(unsigned int),		// LFTypeFlags
+	sizeof(DOUBLE),				// LFTypeDouble
+	sizeof(UINT),				// LFTypeFlags
 	sizeof(LFGeoCoordinates),	// LFTypeGeoCoordinates
 	sizeof(FILETIME),			// LFTypeTime
-	sizeof(UINT),				// LFTypeDuration
-	sizeof(unsigned int),		// LFTypeBitrate,
-	sizeof(double)				// LFTypeMegapixel
+	sizeof(UINT32),				// LFTypeDuration
+	sizeof(UINT),				// LFTypeBitrate,
+	sizeof(DOUBLE)				// LFTypeMegapixel
 };
 
-extern const unsigned char AttrTypes[LFAttributeCount] = {
+extern const BYTE AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrFileName
 	LFTypeAnsiString,			// LFAttrStoreID
 	LFTypeAnsiString,			// LFAttrFileID
@@ -62,7 +62,7 @@ extern const unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeTime,					// LFAttrArchiveTime
 	LFTypeAnsiString,			// LFAttrFileFormat
 	LFTypeUINT,					// LFAttrFileCount
-	LFTypeINT64,				// LFAttrFileSize
+	LFTypeSize,					// LFAttrFileSize
 	LFTypeFlags,				// LFAttrFlags
 	LFTypeAnsiString,			// LFAttrURL
 	LFTypeUnicodeArray,			// LFAttrTags
@@ -117,35 +117,35 @@ extern HMODULE LFCoreModuleHandle;
 // Attribute handling
 //
 
-__forceinline bool IsSlaveAttribute(LFItemDescriptor* i, unsigned int attr)
+__forceinline BOOL IsSlaveAttribute(LFItemDescriptor* i, UINT Attr)
 {
 	assert(i);
 
 	if (!i->Slave)
-		return false;
+		return FALSE;
 
-	return (i->AttributeValues[attr]>=(char*)i->Slave) && (i->AttributeValues[attr]<(char*)i->Slave+_msize(i->Slave));
+	return (i->AttributeValues[Attr]>=(CHAR*)i->Slave) && (i->AttributeValues[Attr]<(CHAR*)i->Slave+_msize(i->Slave));
 }
 
-__forceinline void FreeAttribute(LFItemDescriptor* i, unsigned int attr)
+void FreeAttribute(LFItemDescriptor* i, UINT Attr)
 {
 	assert(i);
-	assert(attr<LFAttributeCount);
+	assert(Attr<LFAttributeCount);
 
 	// Attributwert nur dann freigeben wenn er nicht statischer Teil des LFItemDescriptor ist und auch nicht zum Slave gehört
-	if ((attr>LFLastCoreAttribute) && (!IsSlaveAttribute(i, attr)) && (i->AttributeValues[attr]))
+	if ((Attr>LFLastCoreAttribute) && (!IsSlaveAttribute(i, Attr)) && (i->AttributeValues[Attr]))
 	{
-		free(i->AttributeValues[attr]);
-		i->AttributeValues[attr] = NULL;
+		free(i->AttributeValues[Attr]);
+		i->AttributeValues[Attr] = NULL;
 	}
 }
 
-size_t GetAttributeMaxCharacterCount(unsigned int attr)
+size_t GetAttributeMaxCharacterCount(UINT Attr)
 {
-	assert(attr<LFAttributeCount);
-	assert((AttrTypes[attr]==LFTypeUnicodeString) || (AttrTypes[attr]==LFTypeUnicodeArray) || (AttrTypes[attr]==LFTypeAnsiString));
+	assert(Attr<LFAttributeCount);
+	assert((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray) || (AttrTypes[Attr]==LFTypeAnsiString));
 
-	switch (attr)
+	switch (Attr)
 	{
 	case LFAttrStoreID:
 	case LFAttrFileID:
@@ -166,54 +166,54 @@ size_t GetAttributeMaxCharacterCount(unsigned int attr)
 	return 255;
 }
 
-__forceinline size_t GetAttributeSize(unsigned int attr, const void* v)
+__forceinline size_t GetAttributeSize(UINT Attr, const void* v)
 {
-	assert(attr<LFAttributeCount);
-	assert(AttrTypes[attr]<LFTypeCount);
+	assert(Attr<LFAttributeCount);
+	assert(AttrTypes[Attr]<LFTypeCount);
 
-	switch (AttrTypes[attr])
+	switch (AttrTypes[Attr])
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return (min(GetAttributeMaxCharacterCount(attr), wcslen((wchar_t*)v))+1)*sizeof(wchar_t);
+		return (min(GetAttributeMaxCharacterCount(Attr), wcslen((WCHAR*)v))+1)*sizeof(WCHAR);
 	case LFTypeAnsiString:
-		return min(GetAttributeMaxCharacterCount(attr), strlen((char*)v))+1;
+		return min(GetAttributeMaxCharacterCount(Attr), strlen((CHAR*)v))+1;
 	default:
-		return AttrSizes[AttrTypes[attr]];
+		return AttrSizes[AttrTypes[Attr]];
 	}
 }
 
-void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v)
+void SetAttribute(LFItemDescriptor* i, UINT Attr, const void* v)
 {
 	assert(i);
-	assert(attr<LFAttributeCount);
+	assert(Attr<LFAttributeCount);
 	assert(v);
 
 	// Altes Attribut freigeben
-	FreeAttribute(i, attr);
+	FreeAttribute(i, Attr);
 
 	// Größe ermitteln
-	size_t sz = GetAttributeSize(attr, v);
+	size_t sz = GetAttributeSize(Attr, v);
 
 	// Ggf. Speicher reservieren
-	if (!i->AttributeValues[attr])
+	if (!i->AttributeValues[Attr])
 	{
-		i->AttributeValues[attr] = malloc(sz);
-		assert(i->AttributeValues[attr]);
+		i->AttributeValues[Attr] = malloc(sz);
+		assert(i->AttributeValues[Attr]);
 	}
 
 	// Kopieren
-	switch (AttrTypes[attr])
+	switch (AttrTypes[Attr])
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		wcsncpy_s((wchar_t*)i->AttributeValues[attr], sz/sizeof(wchar_t), (wchar_t*)v, (sz/sizeof(wchar_t))-1);
+		wcsncpy_s((WCHAR*)i->AttributeValues[Attr], sz/sizeof(WCHAR), (WCHAR*)v, (sz/sizeof(WCHAR))-1);
 		break;
 	case LFTypeAnsiString:
-		strncpy_s((char*)i->AttributeValues[attr], sz, (char*)v, sz-1);
+		strncpy_s((CHAR*)i->AttributeValues[Attr], sz, (CHAR*)v, sz-1);
 		break;
 	default:
-		memcpy(i->AttributeValues[attr], v, sz);
+		memcpy(i->AttributeValues[Attr], v, sz);
 	}
 }
 
@@ -229,8 +229,8 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	d->RefCount = 1;
 
 	// Zeiger auf statische Attributwerte initalisieren
-	for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
-		d->AttributeValues[a] = (char*)&d->CoreAttributes + CoreOffsets[a];
+	for (UINT a=0; a<=LFLastCoreAttribute; a++)
+		d->AttributeValues[a] = (CHAR*)&d->CoreAttributes + CoreOffsets[a];
 
 	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
 	d->AttributeValues[LFAttrDescription] = &d->Description[0];
@@ -260,12 +260,12 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 			memcpy(d->Slave, i->Slave, sz);
 		}
 
-		for (unsigned int a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
+		for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
 			if (i->AttributeValues[a])
 				if (IsSlaveAttribute(i, a))
 				{
-					__int64 ofs = (char*)i->AttributeValues[a]-(char*)i->Slave;
-					d->AttributeValues[a] = (char*)d->Slave+ofs;
+					INT64 ofs = (CHAR*)i->AttributeValues[a]-(CHAR*)i->Slave;
+					d->AttributeValues[a] = (CHAR*)d->Slave+ofs;
 				}
 				else
 				{
@@ -278,12 +278,12 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	return d;
 }
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* attr)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* Attr)
 {
-	assert(attr);
+	assert(Attr);
 
 	LFItemDescriptor* d = LFAllocItemDescriptor();
-	d->CoreAttributes = *attr;
+	d->CoreAttributes = *Attr;
 
 	return d;
 }
@@ -293,7 +293,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	assert(s);
 
 	LFItemDescriptor* d = LFAllocItemDescriptor();
-	bool IsMounted = LFIsStoreMounted(s);
+	BOOL IsMounted = LFIsStoreMounted(s);
 
 	d->Type |= LFTypeStore | s->Source;
 	if (strcmp(s->StoreID, DefaultStore)==0)
@@ -306,10 +306,10 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if (wcscmp(s->LastSeen, L"")!=0)
 		{
-			wchar_t ls[256];
+			WCHAR ls[256];
 			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SEENON : IDS_LASTSEEN, ls, 256);
 
-			wchar_t descr[256];
+			WCHAR descr[256];
 			wsprintf(descr, ls, s->LastSeen);
 			SetAttribute(d, LFAttrDescription, descr);
 		}
@@ -345,7 +345,7 @@ LFCORE_API void LFFreeItemDescriptor(LFItemDescriptor* i)
 		if (!i->RefCount)
 		{
 			LFFreeFilter(i->NextFilter);
-			for (unsigned int a=0; a<LFAttributeCount; a++)
+			for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
 				FreeAttribute(i, a);
 			if (i->Slave)
 				free(i->Slave);

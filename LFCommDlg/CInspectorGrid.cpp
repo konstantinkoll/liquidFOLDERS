@@ -70,7 +70,7 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 		pProperty = new CPropertyRating(pData);
 		break;
 	case LFTypeUINT:
-	case LFTypeINT64:
+	case LFTypeSize:
 		pProperty = new CPropertyNumber(pData);
 		break;
 	case LFTypeDuration:
@@ -141,9 +141,9 @@ void CProperty::ToString(WCHAR* tmpStr, INT nCount)
 			if (m_ShowRange)
 			{
 				WCHAR tmpBuf[256];
-				LFVariantDataToString(&m_RangeSecond, tmpBuf, 256);
+				LFVariantDataToString(m_RangeSecond, tmpBuf, 256);
 
-				LFVariantDataToString(&m_RangeFirst, tmpStr, nCount);
+				LFVariantDataToString(m_RangeFirst, tmpStr, nCount);
 				wcscat_s(tmpStr, nCount, L" – ");
 				wcscat_s(tmpStr, nCount, tmpBuf);
 			}
@@ -154,7 +154,7 @@ void CProperty::ToString(WCHAR* tmpStr, INT nCount)
 		}
 		else
 		{
-			LFVariantDataToString(p_Data, tmpStr, nCount);
+			LFVariantDataToString(*p_Data, tmpStr, nCount);
 		}
 }
 
@@ -198,7 +198,7 @@ void CProperty::OnSetString(CString Value)
 
 	if (((p_Data->Attr!=LFAttrFileName) || (!Value.IsEmpty())) && (wcscmp(tmpStr, Value.GetBuffer())!=0))
 	{
-		p_Data->IsNull = false;
+		p_Data->IsNull = FALSE;
 
 		switch (p_Data->Type)
 		{
@@ -229,7 +229,7 @@ void CProperty::OnClickButton()
 
 BOOL CProperty::CanDelete()
 {
-	return (p_Data->Attr!=LFAttrFileName) && ((!LFIsNullVariantData(p_Data)) || m_Multiple);
+	return (p_Data->Attr!=LFAttrFileName) && ((!LFIsNullVariantData(*p_Data)) || m_Multiple);
 }
 
 BOOL CProperty::HasButton()
@@ -309,8 +309,11 @@ void CPropertyTags::OnClickButton()
 
 	if (dlg.DoModal()==IDOK)
 	{
-		p_Data->IsNull = false;
 		wcscpy_s(p_Data->UnicodeArray, 256, dlg.m_Tags);
+		p_Data->IsNull = FALSE;
+
+		LFSanitizeUnicodeArray(p_Data->UnicodeArray, 256);
+
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
 }
@@ -369,7 +372,7 @@ BOOL CPropertyRating::OnClickValue(INT x)
 
 			if (p_Data->Rating!=(UCHAR)Rating)
 			{
-				p_Data->IsNull = false;
+				p_Data->IsNull = FALSE;
 				p_Data->Rating = (UCHAR)Rating;
 				p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 			}
@@ -413,7 +416,7 @@ BOOL CPropertyRating::OnPushChar(UINT nChar)
 
 	if (p_Data->Rating!=(UCHAR)Rating)
 	{
-		p_Data->IsNull = false;
+		p_Data->IsNull = FALSE;
 		p_Data->Rating = (UCHAR)Rating;
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
@@ -456,7 +459,7 @@ void CPropertyIATA::OnSetString(CString Value)
 	if ((wcslen(tmpStr)!=0) && (wcslen(tmpStr)!=3))
 		return;
 
-	p_Data->IsNull = false;
+	p_Data->IsNull = FALSE;
 	WideCharToMultiByte(CP_ACP, 0, Value, -1, p_Data->AnsiString, 256, NULL, NULL);
 	LFAirport* pAirportNew = NULL;
 	LFIATAGetAirportByCode(p_Data->AnsiString, &pAirportNew);
@@ -466,7 +469,7 @@ void CPropertyIATA::OnSetString(CString Value)
 	{
 		ASSERT(p_LocationName->Attr==LFAttrLocationName);
 
-		BOOL Set = LFIsNullVariantData(p_LocationName);
+		BOOL Set = LFIsNullVariantData(*p_LocationName);
 		if (pAirportOld)
 		{
 			MultiByteToWideChar(CP_ACP, 0, pAirportOld->Name, -1, tmpStr, 256);
@@ -477,7 +480,7 @@ void CPropertyIATA::OnSetString(CString Value)
 		{
 			Attr2 = LFAttrLocationName;
 
-			p_LocationName->IsNull = false;
+			p_LocationName->IsNull = FALSE;
 			MultiByteToWideChar(CP_ACP, 0, pAirportNew->Name, -1, p_LocationName->UnicodeString, 256);
 		}
 	}
@@ -487,7 +490,7 @@ void CPropertyIATA::OnSetString(CString Value)
 	{
 		ASSERT(p_LocationGPS->Attr==LFAttrLocationGPS);
 
-		BOOL Set = LFIsNullVariantData(p_LocationGPS);
+		BOOL Set = LFIsNullVariantData(*p_LocationGPS);
 		if (pAirportOld)
 			Set |= (p_LocationGPS->GeoCoordinates.Latitude==pAirportOld->Location.Latitude) && (p_LocationGPS->GeoCoordinates.Longitude==pAirportOld->Location.Longitude);
 
@@ -495,7 +498,7 @@ void CPropertyIATA::OnSetString(CString Value)
 		{
 			Attr3 = LFAttrLocationGPS;
 
-			p_LocationGPS->IsNull = false;
+			p_LocationGPS->IsNull = FALSE;
 			p_LocationGPS->GeoCoordinates = pAirportNew->Location;
 		}
 	}
@@ -518,7 +521,7 @@ void CPropertyIATA::OnClickButton()
 				ASSERT(p_LocationName->Attr==LFAttrLocationName);
 				Attr2 = LFAttrLocationName;
 
-				p_LocationName->IsNull = false;
+				p_LocationName->IsNull = FALSE;
 				MultiByteToWideChar(CP_ACP, 0, dlg.p_Airport->Name, -1, p_LocationName->UnicodeString, 256);
 			}
 
@@ -528,11 +531,11 @@ void CPropertyIATA::OnClickButton()
 				ASSERT(p_LocationGPS->Attr==LFAttrLocationGPS);
 				Attr3 = LFAttrLocationGPS;
 
-				p_LocationGPS->IsNull = false;
+				p_LocationGPS->IsNull = FALSE;
 				p_LocationGPS->GeoCoordinates = dlg.p_Airport->Location;
 			}
 
-			p_Data->IsNull = false;
+			p_Data->IsNull = FALSE;
 			strcpy_s(p_Data->AnsiString, 256, dlg.p_Airport->Code);
 			p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
 		}
@@ -573,7 +576,7 @@ void CPropertyGPS::OnClickButton()
 	if (dlg.DoModal()==IDOK)
 	{
 		p_Data->GeoCoordinates = dlg.m_Location;
-		p_Data->IsNull = false;
+		p_Data->IsNull = FALSE;
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
 }
@@ -1224,7 +1227,7 @@ void CInspectorGrid::ResetProperty(UINT Attr)
 
 	if ((m_Properties.m_Items[Attr].Editable) && (Attr!=LFAttrFileName))
 	{
-		LFGetNullVariantData(m_Properties.m_Items[Attr].pProperty->GetData());
+		LFClearVariantData(*m_Properties.m_Items[Attr].pProperty->GetData());
 		m_Properties.m_Items[Attr].pProperty->m_Modified = TRUE;
 
 		NotifyOwner((SHORT)Attr);

@@ -228,7 +228,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 		}
 		else
 		{
-			LFTransactionImport(StoreID, il, NULL, true, Move==TRUE);
+			LFTransactionImport(StoreID, il, NULL, TRUE, Move==TRUE);
 			Result = il->m_LastError;
 			LFErrorBox(Result, GetForegroundWindow());
 		}

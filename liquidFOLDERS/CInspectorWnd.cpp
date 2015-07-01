@@ -154,10 +154,9 @@ CInspectorWnd::CInspectorWnd()
 
 	for (UINT a=0; a<AttrCount; a++)
 	{
-		m_AttributeValues[a].Attr = m_AttributeRangeFirst[a].Attr = m_AttributeRangeSecond[a].Attr = a;
-		LFGetNullVariantData(&m_AttributeValues[a]);
-		LFGetNullVariantData(&m_AttributeRangeFirst[a]);
-		LFGetNullVariantData(&m_AttributeRangeSecond[a]);
+		LFInitVariantData(m_AttributeValues[a], a);
+		LFInitVariantData(m_AttributeRangeFirst[a], a);
+		LFInitVariantData(m_AttributeRangeSecond[a], a);
 	}
 }
 
@@ -183,47 +182,54 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 	m_AttributeEditable[Attr] |= Editable;
 
 	if (i->AttributeValues[Attr])
+	{
+		LFVariantData v;
+		LFGetAttributeVariantDataEx(i, Attr, v);
+
+		INT Cmp;
+
 		switch (m_AttributeStatus[Attr])
 		{
 		case StatusUnused:
-			LFGetAttributeVariantData(i, &m_AttributeValues[Attr]);
-			if ((Editable) || (!LFIsNullVariantData(&m_AttributeValues[Attr])))
+			m_AttributeValues[Attr] = v;
+			if ((Editable) || (!LFIsNullVariantData(v)))
 			{
 				m_AttributeStatus[Attr] = StatusUsed;
 				m_AttributeVisible[Attr] = TRUE;
 			}
 			break;
 		case StatusUsed:
-			if (!LFIsEqualToVariantData(i, &m_AttributeValues[Attr]))
+			Cmp = LFCompareVariantData(m_AttributeValues[Attr], v);
+
+			if (Cmp!=0)
 			{
 				m_AttributeStatus[Attr] = StatusMultiple;
 
-				LFGetAttributeVariantData(i, &m_AttributeRangeFirst[Attr]);
-				if (LFCompareVariantData(&m_AttributeRangeFirst[Attr], &m_AttributeValues[Attr])==-1)
+				if (Cmp<0)
 				{
-					m_AttributeRangeSecond[Attr] = m_AttributeValues[Attr];
+					m_AttributeRangeFirst[Attr] = m_AttributeValues[Attr];
+					m_AttributeRangeSecond[Attr] = v;
 				}
 				else
 				{
-					m_AttributeRangeSecond[Attr] = m_AttributeRangeFirst[Attr];
+					m_AttributeRangeSecond[Attr] = v;
 					m_AttributeRangeFirst[Attr] = m_AttributeValues[Attr];
 				}
 			}
 			break;
 		case StatusMultiple:
-			LFGetAttributeVariantData(i, &m_AttributeValues[Attr]);
-
-			if (!LFIsNullVariantData(&m_AttributeValues[Attr]))
+			if (!LFIsNullVariantData(v))
 			{
-				if (LFCompareVariantData(&m_AttributeValues[Attr], &m_AttributeRangeFirst[Attr])==-1)
-					m_AttributeRangeFirst[Attr] = m_AttributeValues[Attr];
+				if (LFCompareVariantData(v, m_AttributeRangeFirst[Attr])==-1)
+					m_AttributeRangeFirst[Attr] = v;
 
-				if (LFCompareVariantData(&m_AttributeValues[Attr], &m_AttributeRangeSecond[Attr])==1)
-					m_AttributeRangeSecond[Attr] = m_AttributeValues[Attr];
+				if (LFCompareVariantData(v, m_AttributeRangeSecond[Attr])==1)
+					m_AttributeRangeSecond[Attr] = v;
 			}
 
 			break;
 		}
+	}
 }
 
 void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
@@ -262,11 +268,12 @@ void CInspectorWnd::UpdateStart()
 	ZeroMemory(m_AttributeVisible, sizeof(m_AttributeVisible));
 	ZeroMemory(m_AttributeStatus, sizeof(m_AttributeStatus));
 	ZeroMemory(m_AttributeEditable, sizeof(m_AttributeEditable));
+
 	for (UINT a=0; a<AttrCount; a++)
 	{
-		LFGetNullVariantData(&m_AttributeValues[a]);
-		LFGetNullVariantData(&m_AttributeRangeFirst[a]);
-		LFGetNullVariantData(&m_AttributeRangeSecond[a]);
+		LFClearVariantData(m_AttributeValues[a]);
+		LFClearVariantData(m_AttributeRangeFirst[a]);
+		LFClearVariantData(m_AttributeRangeSecond[a]);
 	}
 }
 
@@ -534,7 +541,7 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wParam, LPARAM lParam)
 	if (AttrIATA!=-1)
 	{
 		LFAirport* pAirport;
-		if (LFIsNullVariantData(&m_AttributeValues[AttrIATA]))
+		if (LFIsNullVariantData(m_AttributeValues[AttrIATA]))
 		{
 			wcscpy_s(m_AttributeValues[AttrIATAAirportName].UnicodeString, 256, L"");
 			wcscpy_s(m_AttributeValues[AttrIATAAirportCountry].UnicodeString, 256, L"");

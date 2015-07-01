@@ -20,10 +20,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* StoreID, CWn
 	m_SortAlphabetic = FALSE;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		m_AttributeValues[a].Attr = a;
-		LFGetNullVariantData(&m_AttributeValues[a]);
-	}
+		LFInitVariantData(m_AttributeValues[a], a);
 
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, FALSE);
@@ -48,7 +45,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* StoreID, CWn
 						if (pSz==sizeof(m_AttributeValues[a].Value))
 						{
 							memcpy_s(m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value), pData, pSz);
-							m_AttributeValues[a].IsNull = false;
+							m_AttributeValues[a].IsNull = FALSE;
 						}
 
 						free(pData);
@@ -89,7 +86,7 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (!m_AttributeValues[a].IsNull)
-				LFSetAttributeVariantData(m_pItem, &m_AttributeValues[a]);
+				LFSetAttributeVariantData(m_pItem, m_AttributeValues[a]);
 
 		CSettingsStoreSP regSP;
 		CSettingsStore& reg = regSP.Create(FALSE, FALSE);
@@ -238,7 +235,7 @@ void LFItemTemplateDlg::OnToggleSort()
 void LFItemTemplateDlg::OnReset()
 {
 	for (UINT a=0; a<LFAttributeCount; a++)
-		LFGetNullVariantData(&m_AttributeValues[a]);
+		LFClearVariantData(m_AttributeValues[a]);
 
 	m_wndInspectorGrid.Invalidate();
 }

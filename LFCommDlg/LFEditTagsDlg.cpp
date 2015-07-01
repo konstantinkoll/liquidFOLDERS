@@ -91,9 +91,9 @@ BOOL LFEditTagsDlg::OnInitDialog()
 		f->Mode = LFFilterModeSearch;
 	}
 
-	f->Options.IgnoreSlaves = true;
+	f->Options.IgnoreSlaves = TRUE;
 	LFSearchResult* base = LFQuery(f);
-	LFSearchResult* Result = LFGroupSearchResult(base, LFAttrHashtags, false, true, f);
+	LFSearchResult* Result = LFGroupSearchResult(base, LFAttrHashtags, FALSE, TRUE, f);
 	LFFreeSearchResult(base);
 	LFFreeFilter(f);
 

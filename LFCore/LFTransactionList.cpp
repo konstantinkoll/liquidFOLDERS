@@ -8,52 +8,52 @@
 LFTransactionList::LFTransactionList()
 	: LFDynArray()
 {
-	m_Changes = m_Resolved = false;
+	m_Changes = m_Resolved = FALSE;
 }
 
 LFTransactionList::~LFTransactionList()
 {
 	if (m_Items)
-		for (unsigned int a=0; a<m_ItemCount; a++)
+		for (UINT a=0; a<m_ItemCount; a++)
 			LFFreeItemDescriptor(m_Items[a].Item);
 }
 
-bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData)
+BOOL LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, UINT UserData)
 {
 	assert(i);
 
-	LFTL_Item item = { i, UserData, LFOk, false };
+	LFTL_Item item = { i, UserData, LFOk, FALSE };
 
 	if (!LFDynArray::AddItem(item))
-		return false;
+		return FALSE;
 
 	i->RefCount++;
-	return true;
+	return TRUE;
 }
 
 void LFTransactionList::Reset()
 {
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	for (UINT a=0; a<m_ItemCount; a++)
 	{
 		m_Items[a].LastError = LFOk;
-		m_Items[a].Processed = false;
+		m_Items[a].Processed = FALSE;
 	}
 
 	m_LastError = LFOk;
 }
 
-void LFTransactionList::SetError(char* key, unsigned int Result, LFProgress* pProgress)
+void LFTransactionList::SetError(CHAR* key, UINT Result, LFProgress* pProgress)
 {
-	bool found = false;
+	BOOL found = FALSE;
 
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	for (UINT a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
 			if (strcmp(m_Items[a].Item->StoreID, key)==0)
 			{
-				found = true;
+				found = TRUE;
 
 				m_Items[a].LastError = m_LastError = Result;
-				m_Items[a].Processed = true;
+				m_Items[a].Processed = TRUE;
 				if (pProgress)
 					pProgress->MinorCurrent++;
 			}
@@ -70,10 +70,10 @@ void LFTransactionList::SetError(char* key, unsigned int Result, LFProgress* pPr
 	}
 }
 
-void LFTransactionList::SetError(unsigned int idx, unsigned int Result, LFProgress* pProgress)
+void LFTransactionList::SetError(UINT idx, UINT Result, LFProgress* pProgress)
 {
 	m_Items[idx].LastError = m_LastError = Result;
-	m_Items[idx].Processed = true;
+	m_Items[idx].Processed = TRUE;
 
 	if (pProgress)
 	{
@@ -87,7 +87,7 @@ void LFTransactionList::SetError(unsigned int idx, unsigned int Result, LFProgre
 	}
 }
 
-LPITEMIDLIST LFTransactionList::DetachPIDL(unsigned int idx)
+LPITEMIDLIST LFTransactionList::DetachPIDL(UINT idx)
 {
 	assert(idx<m_ItemCount);
 
@@ -102,12 +102,12 @@ HGLOBAL LFTransactionList::CreateDropFiles()
 	if (!m_Resolved)
 		return NULL;
 
-	unsigned int cChars = 0;
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	UINT cChars = 0;
+	for (UINT a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
-			cChars += (unsigned int)wcslen(&m_Items[a].Path[4])+1;
+			cChars += (UINT)wcslen(&m_Items[a].Path[4])+1;
 
-	unsigned int szBuffer = sizeof(DROPFILES)+sizeof(wchar_t)*(cChars+1);
+	UINT szBuffer = sizeof(DROPFILES)+sizeof(WCHAR)*(cChars+1);
 	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
 	if (!hG)
 		return NULL;
@@ -124,8 +124,8 @@ HGLOBAL LFTransactionList::CreateDropFiles()
 	pDrop->pt.x = pDrop->pt.y = 0;
 	pDrop->fWide = TRUE;
 
-	wchar_t* ptr = (wchar_t*)(((unsigned char*)pDrop)+sizeof(DROPFILES));
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	WCHAR* ptr = (WCHAR*)(((BYTE*)pDrop)+sizeof(DROPFILES));
+	for (UINT a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
 		{
 #pragma warning(push)
@@ -146,12 +146,12 @@ HGLOBAL LFTransactionList::CreateLiquidFiles()
 	if (!m_Resolved)
 		return NULL;
 
-	unsigned int cFiles = 0;
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	UINT cFiles = 0;
+	for (UINT a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
 			cFiles++;
 
-	unsigned int szBuffer = sizeof(LIQUIDFILES)+sizeof(char)*cFiles*LFKeySize*2;
+	UINT szBuffer = sizeof(LIQUIDFILES)+sizeof(CHAR)*cFiles*LFKeySize*2;
 	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
 	if (!hG)
 		return NULL;
@@ -166,8 +166,8 @@ HGLOBAL LFTransactionList::CreateLiquidFiles()
 	pFiles->pFiles = sizeof(LIQUIDFILES);
 	pFiles->cFiles = cFiles;
 
-	char* ptr = (char*)(((unsigned char*)pFiles)+sizeof(LIQUIDFILES));
-	for (unsigned int a=0; a<m_ItemCount; a++)
+	CHAR* ptr = (CHAR*)(((BYTE*)pFiles)+sizeof(LIQUIDFILES));
+	for (UINT a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
 		{
 			strcpy_s(ptr, LFKeySize, m_Items[a].Item->StoreID);

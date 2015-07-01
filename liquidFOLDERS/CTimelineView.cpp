@@ -52,10 +52,9 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
 			LFVariantData v;
-			v.Attr = m_ViewParameters.SortBy;
-			LFGetAttributeVariantData(i, &v);
+			LFGetAttributeVariantDataEx(i, m_ViewParameters.SortBy, v);
 
-			d->Hdr.Valid = !LFIsNullVariantData(&v);
+			d->Hdr.Valid = !LFIsNullVariantData(v);
 			if (d->Hdr.Valid)
 			{
 				SYSTEMTIME stUTC;

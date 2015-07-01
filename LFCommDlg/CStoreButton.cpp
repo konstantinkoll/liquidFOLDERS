@@ -35,7 +35,7 @@ void CStoreButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 
 void CStoreButton::SetStoreType(UINT StoreType)
 {
-	LFGetSourceName(m_Caption, StoreType, false);
+	LFGetSourceName(m_Caption, StoreType, FALSE);
 
 	CRect rectClient;
 	GetClientRect(rectClient);
