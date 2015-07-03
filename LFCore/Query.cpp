@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "Categorizer.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
@@ -15,74 +16,6 @@ extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 extern const INT CoreOffsets[];
 extern const BYTE AttrTypes[];
-
-
-
-BYTE GetRatingCategory(const BYTE rating)
-{
-	return (rating==1) ? 1 : rating>>1;
-}
-
-UINT GetSizeCategory(const INT64 sz)
-{
-	if (sz<32*1024)
-		return 0;
-	if (sz<128*1024)
-		return 1;
-	if (sz<1024*1024)
-		return 2;
-	if (sz<16384*1024)
-		return 3;
-	if (sz<131072*1024)
-		return 4;
-
-	return 5;
-}
-
-UINT GetDurationCategory(const UINT duration)
-{
-	if (duration<5*1000)
-		return 0;
-	if (duration<15*1000)
-		return 1;
-	if (duration<30*1000)
-		return 2;
-	if (duration<1*60*1000)
-		return 3;
-	if (duration<2*60*1000)
-		return 4;
-	if (duration<3*60*1000)
-		return 5;
-	if (duration<5*60*1000)
-		return 6;
-	if (duration<15*60*1000)
-		return 7;
-	if (duration<30*60*1000)
-		return 8;
-	if (duration<45*60*1000)
-		return 9;
-	if (duration<60*60*1000)
-		return 10;
-	if (duration<90*60*1000)
-		return 11;
-	if (duration<120*60*1000)
-		return 12;
-
-	return 13;
-}
-
-void GetServer(CHAR* URL, CHAR* Server)
-{
-	CHAR* Pos = strstr(URL, "://");
-	if (Pos)
-		URL = Pos+3;
-
-	strcpy_s(Server, 256, URL);
-
-	Pos = strchr(Server, '/');
-	if (Pos)
-		*Pos = '\0';
-}
 
 
 BOOL CheckCondition(void* value, LFFilterCondition* c)
@@ -118,8 +51,6 @@ BOOL CheckCondition(void* value, LFFilterCondition* c)
 	ULARGE_INTEGER uli2;
 	size_t len1;
 	size_t len2;
-	SYSTEMTIME stUTC;
-	SYSTEMTIME stLocal;
 	FILETIME ft;
 	WCHAR* conditionarray;
 	WCHAR condition[256];
@@ -193,7 +124,7 @@ BOOL CheckCondition(void* value, LFFilterCondition* c)
 		case LFFilterCompareSubfolder:
 			if (c->AttrData.Attr==LFAttrURL)
 			{
-				GetServer((CHAR*)value, Server);
+				CURLCategorizer::GetServer((CHAR*)value, Server, 256);
 				return _stricmp(Server, c->AttrData.AnsiString)==0;
 			}
 		case LFFilterCompareIsEqual:
@@ -235,7 +166,7 @@ BOOL CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return GetRatingCategory(*(BYTE*)value)==GetRatingCategory(c->AttrData.Rating);
+			return CRatingCategorizer::GetRatingCategory(*(BYTE*)value)==CRatingCategorizer::GetRatingCategory(c->AttrData.Rating);
 		case LFFilterCompareIsEqual:
 			return *(BYTE*)value==c->AttrData.Rating;
 		case LFFilterCompareIsNotEqual:
@@ -269,7 +200,7 @@ BOOL CheckCondition(void* value, LFFilterCondition* c)
 		{
 		case LFFilterCompareSubfolder:
 			if (c->AttrData.Attr==LFAttrFileSize)
-				return GetSizeCategory(*(INT64*)value)==GetSizeCategory(c->AttrData.INT64);
+				return CSizeCategorizer::GetSizeCategory(*(INT64*)value)==CSizeCategorizer::GetSizeCategory(c->AttrData.INT64);
 		case LFFilterCompareIsEqual:
 			return *(INT64*)value==c->AttrData.INT64;
 		case LFFilterCompareIsNotEqual:
@@ -337,11 +268,7 @@ BOOL CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			FileTimeToSystemTime((FILETIME*)value, &stUTC);
-			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
-			stLocal.wHour = stLocal.wMinute = stLocal.wSecond = stLocal.wMilliseconds = 0;
-			TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-			SystemTimeToFileTime(&stUTC, &ft);
+			CDateCategorizer::GetDay((FILETIME*)value, &ft);
 			return memcmp(&ft, &c->AttrData.Time, sizeof(FILETIME))==0;
 		case LFFilterCompareIsEqual:
 			return memcmp(value, &c->AttrData.Time, sizeof(FILETIME))==0;
@@ -367,7 +294,7 @@ BOOL CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return GetDurationCategory(*(UINT*)value)==GetDurationCategory(c->AttrData.UINT32);
+			return CDurationCategorizer::GetDurationCategory(*(UINT*)value)==CDurationCategorizer::GetDurationCategory(c->AttrData.UINT32);
 		case LFFilterCompareIsEqual:
 			return *(UINT*)value==c->AttrData.UINT32;
 		case LFFilterCompareIsNotEqual:

@@ -18,8 +18,7 @@ CTagList::CTagList()
 CTagList::~CTagList()
 {
 	for (UINT a=0; a<2; a++)
-		if (m_BgBitmaps[a])
-			delete m_BgBitmaps[a];
+		delete m_BgBitmaps[a];
 }
 
 
@@ -174,9 +173,8 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 void CTagList::OnSysColorChange()
 {
 	for (UINT a=0; a<2; a++)
-		if (m_BgBitmaps[a])
-		{
-			delete m_BgBitmaps[a];
-			m_BgBitmaps[a] = NULL;
-		}
+	{
+		delete m_BgBitmaps[a];
+		m_BgBitmaps[a] = NULL;
+	}
 }

@@ -173,10 +173,11 @@ LFCORE_API LFFilter* __stdcall LFAllocFilter(LFFilter* f=NULL);
 LFCORE_API void __stdcall LFFreeFilter(LFFilter* f);
 
 // Neue LFFilterCondition erzeugen
-LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition();
+LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
+LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
 
 // Existierende LFFilterCondition freigeben
-LFCORE_API void __stdcall LFFreeFilterCondition(LFFilterCondition* c);
+#define LFFreeFilterCondition(c) delete c;
 
 
 

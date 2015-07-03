@@ -37,12 +37,7 @@ LFFilter* LFEditFilterDlg::CreateFilter()
 	m_wndSearchterm.GetWindowText(f->Searchterm, 256);
 
 	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
-	{
-		LFFilterCondition* c = LFAllocFilterCondition();
-		*c = m_Conditions.m_Items[a];
-		c->Next = f->ConditionList;
-		f->ConditionList = c;
-	}
+		f->ConditionList = LFAllocFilterCondition(m_Conditions.m_Items[a].Compare, m_Conditions.m_Items[a].AttrData, f->ConditionList);
 
 	return f;
 }

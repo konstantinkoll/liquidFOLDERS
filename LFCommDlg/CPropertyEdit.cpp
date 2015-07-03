@@ -253,8 +253,8 @@ void CPropertyEdit::CreateProperty()
 		delete m_pWndEdit;
 		m_pWndEdit = NULL;
 	}
-	if (p_Property)
-		delete p_Property;
+
+	delete p_Property;
 
 	p_Property = CPropertyHolder::CreateProperty(&m_Data);
 
@@ -375,8 +375,8 @@ void CPropertyEdit::OnDestroy()
 		m_pWndEdit->DestroyWindow();
 		delete m_pWndEdit;
 	}
-	if (p_Property)
-		delete p_Property;
+
+	delete p_Property;
 
 	CPropertyHolder::OnDestroy();
 }

@@ -94,7 +94,6 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	f->Options.IgnoreSlaves = TRUE;
 	LFSearchResult* base = LFQuery(f);
 	LFSearchResult* Result = LFGroupSearchResult(base, LFAttrHashtags, FALSE, TRUE, f);
-	LFFreeSearchResult(base);
 	LFFreeFilter(f);
 
 	for (UINT a=0; a<Result->m_ItemCount; a++)
@@ -119,8 +118,9 @@ BOOL LFEditTagsDlg::OnInitDialog()
 		}
 	}
 
-		LFFreeSearchResult(Result);
-	
+	LFFreeSearchResult(Result);
+	LFFreeSearchResult(base);
+
 	return TRUE;
 }
 

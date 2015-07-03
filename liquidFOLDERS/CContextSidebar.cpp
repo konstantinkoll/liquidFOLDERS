@@ -19,8 +19,7 @@ CContextSidebar::CContextSidebar()
 
 CContextSidebar::~CContextSidebar()
 {
-	if (m_pStatistics)
-		delete m_pStatistics;
+	delete m_pStatistics;
 }
 
 BOOL CContextSidebar::Create(CWnd* pParentWnd, UINT nID)
@@ -66,8 +65,7 @@ END_MESSAGE_MAP()
 
 void CContextSidebar::OnUpdateNumbers()
 {
-	if (m_pStatistics)
-		delete m_pStatistics;
+	delete m_pStatistics;
 
 	m_pStatistics = LFQueryStatistics(m_StoreID);
 

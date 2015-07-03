@@ -514,10 +514,7 @@ LFCORE_API LFFilter* LFAllocFilter(LFFilter* f)
 		LFFilterCondition* c = f->ConditionList;
 		while (c)
 		{
-			LFFilterCondition* item = LFAllocFilterCondition();
-			*item = *c;
-			item->Next = fn->ConditionList;
-			fn->ConditionList = item;
+			fn->ConditionList = LFAllocFilterCondition(c->Compare, c->AttrData, fn->ConditionList);
 
 			c = c->Next;
 		}
@@ -547,18 +544,29 @@ LFCORE_API void LFFreeFilter(LFFilter* f)
 	}
 }
 
-LFCORE_API LFFilterCondition* LFAllocFilterCondition()
+
+LFCORE_API LFFilterCondition* LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext)
 {
 	LFFilterCondition* c = new LFFilterCondition();
-	ZeroMemory(c, sizeof(LFFilterCondition));
+
+	c->Next = pNext;
+	c->AttrData = v;
+	c->Compare = Compare;
 
 	return c;
 }
 
-LFCORE_API void LFFreeFilterCondition(LFFilterCondition* c)
+LFCORE_API LFFilterCondition* LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext)
 {
-	if (c)
-		delete c;
+	LFFilterCondition* c = new LFFilterCondition();
+
+	c->Next = pNext;
+	c->AttrData.Attr = Attr;
+	c->AttrData.Type = (Attr<LFAttributeCount) ? AttrTypes[Attr] : LFTypeUnicodeString;
+	c->AttrData.IsNull = FALSE;
+	c->Compare = Compare;
+
+	return c;
 }
 
 
@@ -569,8 +577,7 @@ LFCORE_API LFSearchResult* LFAllocSearchResult(INT ctx, LFSearchResult* Result)
 
 LFCORE_API void LFFreeSearchResult(LFSearchResult* Result)
 {
-	if (Result)
-		delete Result;
+	delete Result;
 }
 
 LFCORE_API BOOL LFAddItemDescriptor(LFSearchResult* Result, LFItemDescriptor* i)
@@ -674,8 +681,7 @@ LFCORE_API LFFileIDList* LFAllocFileIDList(HLIQUID hLiquid)
 
 LFCORE_API void LFFreeFileIDList(LFFileIDList* il)
 {
-	if (il)
-		delete il;
+	delete il;
 }
 
 LFCORE_API BOOL LFAddFileID(LFFileIDList* il, CHAR* StoreID, CHAR* FileID, void* UserData)
@@ -713,8 +719,7 @@ LFCORE_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
 
 LFCORE_API void LFFreeFileImportList(LFFileImportList* il)
 {
-	if (il)
-		delete il;
+	delete il;
 }
 
 LFCORE_API BOOL LFAddImportPath(LFFileImportList* il, WCHAR* path)
@@ -730,8 +735,7 @@ LFCORE_API LFMaintenanceList* LFAllocMaintenanceList()
 
 LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
 {
-	if (ml)
-		delete ml;
+	delete ml;
 }
 
 
@@ -742,8 +746,7 @@ LFCORE_API LFTransactionList* LFAllocTransactionList()
 
 LFCORE_API void LFFreeTransactionList(LFTransactionList* tl)
 {
-	if (tl)
-		delete tl;
+	delete tl;
 }
 
 LFCORE_API BOOL LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData)

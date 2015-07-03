@@ -272,10 +272,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 				LFFilter* f = LFAllocFilter();
 				f->Mode = LFFilterModeSearch;
-				f->ConditionList = LFAllocFilterCondition();
-				f->ConditionList->Compare = LFFilterCompareIsEqual;
-				f->ConditionList->AttrData.Attr = LFAttrLocationIATA;
-				f->ConditionList->AttrData.IsNull = FALSE;
+				f->ConditionList = LFAllocFilterConditionEx(LFFilterCompareIsEqual, LFAttrLocationIATA);
 				strcpy_s(f->ConditionList->AttrData.AnsiString, 256, Code);
 
 				LFAirport* pAirport = NULL;

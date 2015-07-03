@@ -451,19 +451,16 @@ void LFSearchResult::Group(UINT Attr, BOOL groupone, LFFilter* f)
 
 	switch (Attr)
 	{
-	case LFAttrFileSize:
-		c = new SizeCategorizer(Attr);
-		break;
 	case LFAttrLocationIATA:
-		c = new IATACategorizer(Attr);
+		c = new CIATACategorizer();
 		break;
 	case LFAttrURL:
-		c = new URLCategorizer(Attr);
+		c = new CURLCategorizer();
 		break;
 	case LFAttrFileName:
 		if (!groupone)
 		{
-			c = new CNameCategorizer(Attr);
+			c = new CNameCategorizer();
 			break;
 		}
 	default:
@@ -476,19 +473,19 @@ void LFSearchResult::Group(UINT Attr, BOOL groupone, LFFilter* f)
 			c = new CDateCategorizer(Attr);
 			break;
 		case LFTypeDuration:
-			c = new DurationCategorizer(Attr);
+			c = new CDurationCategorizer(Attr);
 			break;
 		case LFTypeMegapixel:
-			c = new MegapixelCategorizer(Attr);
+			c = new CMegapixelCategorizer(Attr);
+			break;
+		case LFTypeSize:
+			c = new CSizeCategorizer(Attr);
 			break;
 		default:
 			// Generic categorizer
 			c = new CCategorizer(Attr);
 		}
 	}
-
-	if (!c)
-		return;
 
 	// Process
 	UINT WritePtr = 0;
@@ -600,10 +597,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* f)
 		SetAttribute(folder, Attr, tag);
 		LFCombineFileCountSize(folder->AggregateCount, it->second.size, folder->Description, 256);
 
-		LFFilterCondition* c = LFAllocFilterCondition();
-		c->Compare = LFFilterCompareSubfolder;
-		c->AttrData.Attr = Attr;
-		c->AttrData.Type = AttrTypes[Attr];
+		LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, Attr);
 		wcscpy_s(c->AttrData.UnicodeArray, 256, tag);
 
 		folder->NextFilter = LFAllocFilter(f);

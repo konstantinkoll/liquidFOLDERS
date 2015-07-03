@@ -409,8 +409,8 @@ Smaller:
 
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_pTextureGlobe)
-			delete m_pTextureGlobe;
+		delete m_pTextureGlobe;
+
 		m_pTextureGlobe = new GLTextureBlueMarble(Tex);
 		m_CurrentGlobeTexture = Tex;
 
@@ -1104,16 +1104,16 @@ void CGlobeView::OnDestroy()
 	{
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_pTextureGlobe)
-			delete m_pTextureGlobe;
-		if (m_pTextureIcons)
-			delete m_pTextureIcons;
+		delete m_pTextureGlobe;
+		delete m_pTextureIcons;
+
 		if (m_GlobeModel!=-1)
 			glDeleteLists(m_GlobeModel, 1);
 
 		wglMakeCurrent(NULL, NULL);
 		if (hRC)
 			wglDeleteContext(hRC);
+
 		delete m_pDC;
 	}
 

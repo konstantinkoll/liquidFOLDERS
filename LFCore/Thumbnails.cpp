@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "Thumbnails.h"
-#include "Thumbcache.h"
+#include <Thumbcache.h>
 
 
 extern HMODULE LFCoreModuleHandle;
@@ -12,8 +12,9 @@ extern OSVERSIONINFO osInfo;
 
 LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i)
 {
-	static SIZE sz = { 118, 118 };
-	return LFGetThumbnail(i, sz);
+	static SIZE DefaultSize = { 118, 118 };
+
+	return LFGetThumbnail(i, DefaultSize);
 }
 
 LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)

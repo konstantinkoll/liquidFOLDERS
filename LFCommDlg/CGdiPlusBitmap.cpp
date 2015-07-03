@@ -25,11 +25,8 @@ CGdiPlusBitmap::~CGdiPlusBitmap()
 
 void CGdiPlusBitmap::Empty()
 {
-	if (m_pBitmap)
-	{
-		delete m_pBitmap;
-		m_pBitmap = NULL;
-	}
+	delete m_pBitmap;
+	m_pBitmap = NULL;
 }
 
 BOOL CGdiPlusBitmap::Load(LPCWSTR pFile)
@@ -65,11 +62,14 @@ BOOL CGdiPlusBitmapMemory::Load(LPVOID pMemory, DWORD Size)
 	pStream->Release();
 
 	if (m_pBitmap)
+	{
 		if (m_pBitmap->GetLastStatus()==Gdiplus::Ok)
 			return TRUE;
 
-	delete m_pBitmap;
-	m_pBitmap = NULL;
+		delete m_pBitmap;
+		m_pBitmap = NULL;
+	}
+
 	return FALSE;
 }
 

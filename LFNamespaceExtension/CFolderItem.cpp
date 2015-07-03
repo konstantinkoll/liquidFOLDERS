@@ -435,10 +435,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
-		f->ConditionList = LFAllocFilterCondition();
-		f->ConditionList->Next = NULL;
-		f->ConditionList->Compare = Attrs.Compare;
-		f->ConditionList->AttrData = Attrs.Value;
+		f->ConditionList = LFAllocFilterCondition(Attrs.Compare, Attrs.Value);
 		ConvertSearchResult(e, LFQuery(f));
 		break;
 	}
