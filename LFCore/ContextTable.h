@@ -110,6 +110,7 @@ static const RegisteredFile Registry[] = {
 	{ "pht",    LFContextDocuments },
 	{ "phtm",   LFContextDocuments },
 	{ "phtml",  LFContextDocuments },
+	{ "pkpass", LFContextDocuments },
 	{ "png",    LFContextPictures },
 	{ "pot",    LFContextDocuments },
 	{ "potm",   LFContextDocuments },
