@@ -43,7 +43,7 @@ protected:
 private:
 	void AdjustHeader(BOOL bShow);
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i);
-	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
+	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, SIZE_T cCount);
 	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed);
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr);
 	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed, BOOL AlwaysNewRow=TRUE);

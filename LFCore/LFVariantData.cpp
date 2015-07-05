@@ -20,17 +20,17 @@ extern const BYTE AttrTypes[];
 
 __forceinline DOUBLE GetMinutes(DOUBLE c)
 {
-	return floor(fabs(c)+ROUNDOFF)*60.0;
+	c = fabs(c)+ROUNDOFF;
+
+	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
 __forceinline DOUBLE GetSeconds(DOUBLE c)
 {
-	return floor(fabs(c)*60.0+ROUNDOFF)*60.0;
+	c = fabs(c)*60.0+ROUNDOFF;
+
+	return (c-(DOUBLE)(INT)c)*60.0;
 }
-
-
-// Interne Methoden
-//
 
 BOOL IsNullValue(UINT Type, void* v)
 {
@@ -131,7 +131,7 @@ INT CompareValues(UINT Type, void* v1, void* v2, BOOL CaseSensitive)
 	return 0;
 }
 
-void ToString(void* v, UINT Type, WCHAR* pStr, size_t cCount)
+void ToString(void* v, UINT Type, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(Type<LFTypeCount);
 	assert(pStr);
@@ -221,7 +221,7 @@ void ToString(void* v, UINT Type, WCHAR* pStr, size_t cCount)
 	*pStr = L'\0';
 }
 
-BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, size_t cCount)
+BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, SIZE_T cCount)
 {
 	WCHAR* Start = NULL;
 	BOOL InQuotation = FALSE;
@@ -288,7 +288,7 @@ BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, size_t cCount)
 // ToString
 //
 
-LFCORE_API void LFFourCCToString(const UINT c, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -306,7 +306,7 @@ LFCORE_API void LFFourCCToString(const UINT c, WCHAR* pStr, size_t cCount)
 	}
 }
 
-LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -320,14 +320,14 @@ LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, size_t cCount)
 	}
 }
 
-LFCORE_API void LFSizeToString(const INT64 i, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFSizeToString(const INT64 i, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
 	StrFormatByteSize(i, pStr, (UINT)cCount);
 }
 
-LFCORE_API void LFFractionToString(const LFFraction frac, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFFractionToString(const LFFraction frac, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -341,14 +341,14 @@ LFCORE_API void LFFractionToString(const LFFraction frac, WCHAR* pStr, size_t cC
 	}
 }
 
-LFCORE_API void LFDoubleToString(const DOUBLE d, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFDoubleToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
 	swprintf(pStr, cCount, L"%.2lf", d);
 }
 
-LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, size_t cCount, BOOL IsLatitude, BOOL FillZero)
+LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
 {
 	assert(pStr);
 
@@ -359,18 +359,18 @@ LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, size_t cCou
 		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
 }
 
-LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, WCHAR* pStr, size_t cCount, BOOL FillZero)
+LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, WCHAR* pStr, SIZE_T cCount, BOOL FillZero)
 {
 	assert(pStr);
 
 	if ((c.Latitude==0) && (c.Longitude==0))
 	{
-		wcscpy_s(pStr, cCount, L"");
+		*pStr = L'\0';
 	}
 	else
 	{
-		WCHAR tmpStr[256];
-		LFGeoCoordinateToString(c.Longitude, tmpStr, 256, FALSE, FillZero);
+		WCHAR tmpStr[32];
+		LFGeoCoordinateToString(c.Longitude, tmpStr, 32, FALSE, FillZero);
 
 		LFGeoCoordinateToString(c.Latitude, pStr, cCount, TRUE, FillZero);
 		wcscat_s(pStr, cCount, L", ");
@@ -378,7 +378,7 @@ LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, WCHAR* pStr, 
 	}
 }
 
-LFCORE_API void LFTimeToString(const FILETIME t, WCHAR* pStr, size_t cCount, BOOL IncludeTime)
+LFCORE_API void LFTimeToString(const FILETIME t, WCHAR* pStr, SIZE_T cCount, BOOL IncludeTime)
 {
 	assert(pStr);
 
@@ -402,7 +402,7 @@ LFCORE_API void LFTimeToString(const FILETIME t, WCHAR* pStr, size_t cCount, BOO
 	}
 }
 
-LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -418,7 +418,7 @@ LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, size_t cCount)
 	}
 }
 
-LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -432,14 +432,14 @@ LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, size_t cCount)
 	}
 }
 
-LFCORE_API void LFMegapixelToString(const DOUBLE d, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
 	swprintf(pStr, cCount, L"%.1lf Megapixel", d);
 }
 
-LFCORE_API void LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(i);
 	assert(Attr<LFAttributeCount);
@@ -490,7 +490,7 @@ LFCORE_API BOOL LFIsNullVariantData(LFVariantData& v)
 	return v.IsNull ? TRUE : IsNullValue(v.Type, &v.Value);
 }
 
-LFCORE_API void LFVariantDataToString(LFVariantData& v, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFVariantDataToString(LFVariantData& v, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -512,7 +512,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 
 	if (pStr)
 	{
-		size_t sz = wcslen(pStr);
+		SIZE_T sz = wcslen(pStr);
 
 		INT LatDeg;
 		INT LatMin;
@@ -811,7 +811,7 @@ LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v)
 	}
 }
 
-LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, size_t cCount)
+LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 {
 	typedef std::pair<std::wstring, BOOL> TagItem;
 	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;

@@ -75,9 +75,9 @@ void CStoreButton::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
 	BOOL Focused = (GetState() & 8);

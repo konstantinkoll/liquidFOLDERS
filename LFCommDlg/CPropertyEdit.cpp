@@ -60,9 +60,9 @@ void CPropertyDisplay::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	BOOL Focused = GetFocus()==this;
 

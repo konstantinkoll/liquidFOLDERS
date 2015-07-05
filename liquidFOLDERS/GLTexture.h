@@ -17,7 +17,7 @@ public:
 	virtual ~GLTexture();
 
 	GLuint GetID();
-	void SetTexture(UINT Width, UINT Height, UINT BPP, void* Data);
+	void SetTexture(UINT Width, UINT Height, UINT BPP, void* pData);
 
 protected:
 	GLuint m_ID;
@@ -32,9 +32,9 @@ class GLTextureBitmap : public GLTexture
 {
 public:
 	GLTextureBitmap();
-	GLTextureBitmap(HBITMAP hBMP);
+	GLTextureBitmap(HBITMAP hBitmap);
 
-	void SetTextureBitmap(HBITMAP hBMP);
+	void SetTextureBitmap(HBITMAP hBitmap);
 };
 
 
@@ -45,9 +45,9 @@ class GLTextureGdiPlusBitmap : public GLTextureBitmap
 {
 public:
 	GLTextureGdiPlusBitmap();
-	GLTextureGdiPlusBitmap(CGdiPlusBitmap* Texture);
+	GLTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture);
 
-	void SetTextureGdiPlusBitmap(CGdiPlusBitmap* Texture);
+	void SetTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture);
 };
 
 
@@ -58,9 +58,9 @@ class GLTextureCombine : public GLTextureGdiPlusBitmap
 {
 public:
 	GLTextureCombine();
-	GLTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1);
+	GLTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1);
 
-	void SetTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1);
+	void SetTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1);
 };
 
 

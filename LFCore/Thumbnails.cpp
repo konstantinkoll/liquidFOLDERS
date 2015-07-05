@@ -1,127 +1,166 @@
 
 #include "stdafx.h"
 #include "LFCore.h"
+#include "PIDL.h"
 #include "Thumbnails.h"
 #include <Thumbcache.h>
 
 
-extern HMODULE LFCoreModuleHandle;
-extern HANDLE Mutex_Stores;
 extern OSVERSIONINFO osInfo;
 
 
-LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i)
-{
-	static SIZE DefaultSize = { 118, 118 };
-
-	return LFGetThumbnail(i, DefaultSize);
-}
-
 LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 {
-	if ((i->Type & LFTypeMask)!=LFTypeFile)
-		return NULL;
-
 	WCHAR Path[MAX_PATH];
-
 	if (LFGetFileLocation(i, Path, MAX_PATH, TRUE, FALSE)!=LFOk)
 		return NULL;
 
-	HBITMAP hBmp = NULL;
+	HBITMAP hBitmap = NULL;
 
-	IShellFolder* pDesktop = NULL;
-	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+	LPITEMIDLIST pidlFQ;
+	if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, 0, NULL)))
 	{
-		LPITEMIDLIST pidlFQ = NULL;
-		if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, NULL, &pidlFQ, NULL)))
+		IShellFolder* pParentFolder;
+		LPCITEMIDLIST pidlRel;
+		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 		{
-			IShellFolder* pParentFolder = NULL;
-			LPCITEMIDLIST pidlRel = NULL;
-			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+			// IThumbnailProvider, verfügbar seit Windows Vista
+			// Liefert auch rechteckige Vorschaubilder
+			if (osInfo.dwMajorVersion>=6)
 			{
-				// IThumbnailProvider
-				if (osInfo.dwMajorVersion>=6)
+				IThumbnailProvider* pThumbnailProvider;
+				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (void**)&pThumbnailProvider)))
 				{
-					IThumbnailProvider* pThumbnailProvider = NULL;
-					if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (void**)&pThumbnailProvider)))
-					{
-						DWORD dwAlpha = WTSAT_UNKNOWN;
-						pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBmp, &dwAlpha);
+					DWORD dwAlpha = WTSAT_UNKNOWN;
+					pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBitmap, &dwAlpha);
 
-						pThumbnailProvider->Release();
-						goto Finish;
-					}
-				}
-
-				// IExtractImage
-				IExtractImage* pExtractImage = NULL;
-				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IExtractImage, NULL, (void**)&pExtractImage)))
-				{
-					DWORD dwPriority = 0;
-					DWORD dwFlags = IEIFLAG_SCREEN | IEIFLAG_NOBORDER | IEIFLAG_NOSTAMP | IEIFLAG_OFFLINE;
-					HRESULT hResult = pExtractImage->GetLocation(Path, MAX_PATH, &dwPriority, &sz, 32, &dwFlags);
-					if (SUCCEEDED(hResult) || (hResult==E_PENDING))
-						pExtractImage->Extract(&hBmp);
-
-					pExtractImage->Release();
+					pThumbnailProvider->Release();
 					goto Finish;
 				}
+			}
+
+			// IExtractImage, verfügbar seit Windows XP und Fallback seit Windows Vista
+			// Liefert immer quadratische Vorschaubilder
+			IExtractImage* pExtractImage;
+			if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IExtractImage, NULL, (void**)&pExtractImage)))
+			{
+				DWORD dwPriority = 0;
+				DWORD dwFlags = IEIFLAG_SCREEN | IEIFLAG_NOBORDER | IEIFLAG_NOSTAMP | IEIFLAG_OFFLINE;
+				HRESULT hResult = pExtractImage->GetLocation(Path, MAX_PATH, &dwPriority, &sz, 32, &dwFlags);
+				if (SUCCEEDED(hResult) || (hResult==E_PENDING))
+					pExtractImage->Extract(&hBitmap);
+
+				pExtractImage->Release();
+				goto Finish;
+			}
 
 Finish:
-				pParentFolder->Release();
-			}
+			pParentFolder->Release();
 		}
 
-		pDesktop->Release();
+		CoTaskMemFree(pidlFQ);
 	}
 
-	if (hBmp)
+	if (hBitmap)
 	{
-		BITMAP bm;
-		GetObject(hBmp, sizeof(bm), &bm);
+		BITMAP Bitmap;
+		GetObject(hBitmap, sizeof(Bitmap), &Bitmap);
 
-		if ((bm.bmWidth>128) || (bm.bmHeight>128))
-			if ((bm.bmWidth==256) && (bm.bmHeight==256) && (bm.bmBitsPixel==32))
+		// Manche Handler (z.B. Adobe Acrobat) setzen den gesamten Alpha-Kanal auf 0x00.
+		// In diesem Fall ist die gesamte Bitmap opak.
+		if (Bitmap.bmBitsPixel==32)
+		{
+			// Prüfen, ob mindesetens ein Alpha-Wert ungleich 0x00 ist
+			for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
 			{
-				// Scale down to 128x128
-				BITMAPINFO dib = { 0 };
-				dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-				dib.bmiHeader.biWidth = 128;
-				dib.bmiHeader.biHeight = 128;
-				dib.bmiHeader.biPlanes = 1;
-				dib.bmiHeader.biBitCount = 32;
-				dib.bmiHeader.biCompression = BI_RGB;
+				BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+3;
 
-				HBITMAP hBmpNew = CreateDIBSection(GetDC(NULL), &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-
-				BITMAP bmNew;
-				GetObject(hBmpNew, sizeof(BITMAP), &bmNew);
-				BYTE* pBitsSrc = ((BYTE*)bm.bmBits);
-				BYTE* pBitsDst = ((BYTE*)bmNew.bmBits);
-
-				for (UINT32 a=0; a<128; a++)
+				for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
 				{
-					for (UINT32 b=0; b<128; b++)
-					{
-						*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+4)+*(pBitsSrc+256*4)+*(pBitsSrc+256*4+4))>>2;
-						*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+5)+*(pBitsSrc+256*4+1)+*(pBitsSrc+256*4+5))>>2;
-						*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+6)+*(pBitsSrc+256*4+2)+*(pBitsSrc+256*4+6))>>2;
-						*(pBitsDst+3) = (*(pBitsSrc+3)+*(pBitsSrc+7)+*(pBitsSrc+256*4+3)+*(pBitsSrc+256*4+7))>>2;
-						pBitsSrc += 8;
-						pBitsDst += 4;
-					}
-					pBitsSrc += 256*4;
+					if (*Ptr)
+						goto BitmapOk;
+	
+					Ptr += 4;
 				}
+			}
 
-				DeleteObject(hBmp);
-				hBmp = hBmpNew;
+			// Alpha-Kanal auf 0xFF setzen
+			for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
+			{
+				BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+3;
+
+				for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
+				{
+					*Ptr = 0xFF;
+
+					Ptr += 4;
+				}
+			}
+		}
+BitmapOk:
+
+		// Manche Handler liefern größere Vorschaubilder als angefordert
+		// Beispiel: TTF-Dateien unter Windows 7 (immer 256x256)
+		// Vorschaubilder mit einer Größe von 256x256 werden auf 128x128 herunterskaliert.
+		// Die UI sorgt dafür, das Thumbnails mit einer Größe von 128x128 ohne Rahmen und Schatten dargestellt werden.
+		if ((Bitmap.bmWidth>sz.cx) || (Bitmap.bmHeight>sz.cy))
+			if ((Bitmap.bmWidth==256) && (Bitmap.bmHeight==256) && (Bitmap.bmBitsPixel==32))
+			{
+				hBitmap = LFQuarter256Bitmap(hBitmap);
 			}
 			else
 			{
-				DeleteObject(hBmp);
-				return NULL;
+				DeleteObject(hBitmap);
+				hBitmap = NULL;
 			}
 	}
 
-	return hBmp;
+	return hBitmap;
+}
+
+LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
+{
+	BITMAP BitmapSrc;
+	GetObject(hBitmap, sizeof(BitmapSrc), &BitmapSrc);
+
+	if ((BitmapSrc.bmWidth!=256) || (BitmapSrc.bmHeight!=256) || (BitmapSrc.bmBitsPixel!=32))
+		return hBitmap;
+
+	BYTE* pBitsSrc = ((BYTE*)BitmapSrc.bmBits);
+	BYTE* pBitsDst;
+
+	// Neue Bitmap erzeugen
+	BITMAPINFO DIB;
+	ZeroMemory(&DIB, sizeof(DIB));
+
+	DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	DIB.bmiHeader.biWidth = 128;
+	DIB.bmiHeader.biHeight = 128;
+	DIB.bmiHeader.biPlanes = 1;
+	DIB.bmiHeader.biBitCount = 32;
+	DIB.bmiHeader.biCompression = BI_RGB;
+
+	HDC hDC = GetDC(NULL);
+	HBITMAP hBitmapNew = CreateDIBSection(hDC, &DIB, DIB_RGB_COLORS, (void**)&pBitsDst, NULL, 0);
+	ReleaseDC(NULL, hDC);
+
+	for (UINT Row=0; Row<128; Row++)
+	{
+		for (UINT Column=0; Column<128; Column++)
+		{
+			*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+4)+*(pBitsSrc+256*4)+*(pBitsSrc+256*4+4))>>2;
+			*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+5)+*(pBitsSrc+256*4+1)+*(pBitsSrc+256*4+5))>>2;
+			*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+6)+*(pBitsSrc+256*4+2)+*(pBitsSrc+256*4+6))>>2;
+			*(pBitsDst+3) = (*(pBitsSrc+3)+*(pBitsSrc+7)+*(pBitsSrc+256*4+3)+*(pBitsSrc+256*4+7))>>2;
+
+			pBitsSrc += 8;
+			pBitsDst += 4;
+		}
+
+		pBitsSrc += 256*4;
+	}
+
+	DeleteObject(hBitmap);
+
+	return hBitmapNew;
 }

@@ -61,9 +61,9 @@ void CCategory::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Background
 	HBRUSH brush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);

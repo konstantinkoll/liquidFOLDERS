@@ -31,7 +31,7 @@ extern const INT CoreOffsets[LFLastCoreAttribute+1] = {
 	offsetof(LFCoreAttributes, LocationGPS)
 };
 
-extern const size_t AttrSizes[LFTypeCount] = {
+extern const SIZE_T AttrSizes[LFTypeCount] = {
 	0,							// LFTypeUnicodeString
 	0,							// LFTypeUnicodeArray
 	0,							// LFTypeAnsiString
@@ -140,7 +140,7 @@ void FreeAttribute(LFItemDescriptor* i, UINT Attr)
 	}
 }
 
-size_t GetAttributeMaxCharacterCount(UINT Attr)
+SIZE_T GetAttributeMaxCharacterCount(UINT Attr)
 {
 	assert(Attr<LFAttributeCount);
 	assert((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray) || (AttrTypes[Attr]==LFTypeAnsiString));
@@ -166,7 +166,7 @@ size_t GetAttributeMaxCharacterCount(UINT Attr)
 	return 255;
 }
 
-__forceinline size_t GetAttributeSize(UINT Attr, const void* v)
+__forceinline SIZE_T GetAttributeSize(UINT Attr, const void* v)
 {
 	assert(Attr<LFAttributeCount);
 	assert(AttrTypes[Attr]<LFTypeCount);
@@ -193,7 +193,7 @@ void SetAttribute(LFItemDescriptor* i, UINT Attr, const void* v)
 	FreeAttribute(i, Attr);
 
 	// Größe ermitteln
-	size_t sz = GetAttributeSize(Attr, v);
+	SIZE_T sz = GetAttributeSize(Attr, v);
 
 	// Ggf. Speicher reservieren
 	if (!i->AttributeValues[Attr])
@@ -255,7 +255,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 
 		if (i->Slave)
 		{
-			size_t sz = _msize(i->Slave);
+			SIZE_T sz = _msize(i->Slave);
 			d->Slave = malloc(sz);
 			memcpy(d->Slave, i->Slave, sz);
 		}
@@ -269,7 +269,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 				}
 				else
 				{
-					size_t sz = _msize(i->AttributeValues[a]);
+					SIZE_T sz = _msize(i->AttributeValues[a]);
 					d->AttributeValues[a] = malloc(sz);
 					memcpy(d->AttributeValues[a], i->AttributeValues[a], sz);
 				}

@@ -85,9 +85,9 @@ void CMapPreviewCtrl::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	Graphics g(dc);
 	g.SetCompositingMode(CompositingModeSourceOver);

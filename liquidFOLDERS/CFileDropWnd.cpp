@@ -131,37 +131,29 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 {
-	CRect rclient;
-	GetClientRect(rclient);
+	CRect rectClient;
+	GetClientRect(rectClient);
 
-	CRect rlayout;
-	GetLayoutRect(rlayout);
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
 
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rclient.Width();
-	dib.bmiHeader.biHeight = -rclient.Height();
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
+	HBITMAP hBitmap = CreateTransparentBitmap(rectClient.Width(), rectClient.Height());
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	// Hintergrund
 	CGlassWindow::OnEraseBkgnd(&dc);
 
 	// Icon
-	POINT pt = { rlayout.left+(rlayout.Width()-128)/2-1, rlayout.top+10 };
-	SIZE sz = { 128, 128 };
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_UNKNOWN)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_UNKNOWN)-1,
+		CPoint(rectLayout.left+(rectLayout.Width()-128)/2-1, rectLayout.top+10), CSize(128, 128),
+		CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
-	CRect rtext(rlayout);
+	CRect rtext(rectLayout);
 	rtext.top += 130;
 	rtext.bottom -= 10;
 
@@ -208,10 +200,10 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 		dc.SelectObject(oldFont);
 	}
 
-	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
+	pDC->BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBmp);
+	DeleteObject(hBitmap);
 
 	return TRUE;
 }

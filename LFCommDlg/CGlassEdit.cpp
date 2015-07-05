@@ -129,16 +129,8 @@ void CGlassEdit::OnNcPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rect.Width();
-	dib.bmiHeader.biHeight = -rect.Height();
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
+	HBITMAP hBitmap = CreateTransparentBitmap(rect.Width(), rect.Height());
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rect);
@@ -195,9 +187,9 @@ void CGlassEdit::OnNcPaint()
 	dcPaint.CreateCompatibleDC(&pDC);
 	dcPaint.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&dc, rectClient.Width(), rectClient.Height());
-	CBitmap* pOldBitmap = dcPaint.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&dc, rectClient.Width(), rectClient.Height());
+	CBitmap* pOldBitmap = dcPaint.SelectObject(&MemBitmap);
 
 	CEdit::DefWindowProc(WM_PAINT, (WPARAM)dcPaint.m_hDC, NULL);
 
@@ -231,7 +223,7 @@ void CGlassEdit::OnNcPaint()
 
 	// Set alpha
 	BITMAP bmp;
-	GetObject(hBmp, sizeof(BITMAP), &bmp);
+	GetObject(hBitmap, sizeof(BITMAP), &bmp);
 	BYTE* pBits = ((BYTE*)bmp.bmBits)+4*(rectContent.top*rect.Width()+rectContent.left);
 	for (INT row=rectContent.top; row<rectContent.bottom; row++)
 	{
@@ -246,7 +238,7 @@ void CGlassEdit::OnNcPaint()
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBmp);
+	DeleteObject(hBitmap);
 }
 
 void CGlassEdit::OnPaint()

@@ -7,29 +7,11 @@
 
 LPITEMIDLIST AllocPIDL(UINT sz)
 {
-	LPMALLOC pMalloc;
-	if (FAILED(SHGetMalloc(&pMalloc)))
-		return NULL;
-
-	LPITEMIDLIST pidl = (LPITEMIDLIST)pMalloc->Alloc(sz);
+	LPITEMIDLIST pidl = (LPITEMIDLIST)CoTaskMemAlloc(sz);
 	if (pidl)
 		ZeroMemory(pidl, sz);
 
-	pMalloc->Release();
 	return pidl;
-}
-
-void FreePIDL(LPITEMIDLIST pidl)
-{
-	if (pidl)
-	{
-		LPMALLOC pMalloc;
-		if (SUCCEEDED(SHGetMalloc(&pMalloc)))
-		{
-			pMalloc->Free(pidl);
-			pMalloc->Release();
-		}
-	}
 }
 
 LPITEMIDLIST Next(LPITEMIDLIST pidl)

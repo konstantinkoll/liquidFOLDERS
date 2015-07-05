@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "Categorizer.h"
+#include "Categorizers.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
@@ -49,8 +49,8 @@ BOOL CheckCondition(void* value, LFFilterCondition* c)
 
 	ULARGE_INTEGER uli1;
 	ULARGE_INTEGER uli2;
-	size_t len1;
-	size_t len2;
+	SIZE_T len1;
+	SIZE_T len2;
 	FILETIME ft;
 	WCHAR* conditionarray;
 	WCHAR condition[256];

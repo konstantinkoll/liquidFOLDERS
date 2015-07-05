@@ -92,9 +92,9 @@ void CIconCtrl::OnPaint()
 	CDC dc;
 	dc.CreateCompatibleDC(&pDC);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	HBRUSH brush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
 	if (brush)

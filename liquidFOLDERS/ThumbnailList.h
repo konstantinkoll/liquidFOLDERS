@@ -7,7 +7,7 @@ struct ThumbnailData
 {
 	CHAR StoreID[LFKeySize];
 	CHAR FileID[LFKeySize];
-	HBITMAP hBmp;
+	HBITMAP hBitmap;
 };
 
 
@@ -46,8 +46,8 @@ ThumbnailList<C>::~ThumbnailList()
 template <UINT C>
 __forceinline void ThumbnailList<C>::FreeItem(UINT Index)
 {
-	if (m_Items[Index].hBmp)
-		DeleteObject(m_Items[Index].hBmp);
+	if (m_Items[Index].hBitmap)
+		DeleteObject(m_Items[Index].hBitmap);
 }
 
 template <UINT C>

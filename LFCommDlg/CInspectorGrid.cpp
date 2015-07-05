@@ -8,14 +8,6 @@
 #include "LFEditTimeDlg.h"
 
 
-__forceinline void Swap(INT& Eins, INT& Zwei)
-{
-	INT Temp = Eins;
-	Eins = Zwei;
-	Zwei = Temp;
-}
-
-
 // CPropertyHolder
 //
 
@@ -333,14 +325,14 @@ void CPropertyRating::DrawValue(CDC& dc, CRect rect)
 
 	HDC hdcMem = CreateCompatibleDC(dc);
 	UCHAR level = m_Multiple ? m_ShowRange ? m_RangeSecond.Rating : 0 : p_Data->Rating;
-	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? LFGetApp()->m_RatingBitmaps[level] : LFGetApp()->m_PriorityBitmaps[level]);
+	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? LFGetApp()->m_RatingBitmaps[level] : LFGetApp()->m_PriorityBitmaps[level]);
 
 	INT w = min(rect.Width()-6, RatingBitmapWidth);
 	INT h = min(rect.Height(), RatingBitmapHeight);
 	BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 	AlphaBlend(dc, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF);
 
-	SelectObject(hdcMem, hbmOld);
+	SelectObject(hdcMem, hOldBitmap);
 	DeleteDC(hdcMem);
 }
 
@@ -1080,7 +1072,10 @@ void CInspectorGrid::Heap(INT Wurzel, INT Anz)
 
 		if (Compare(Wurzel, Index)<0)
 		{
-			Swap(m_pSortArray[Wurzel], m_pSortArray[Index]);
+			INT Temp = m_pSortArray[Wurzel];
+			m_pSortArray[Wurzel] = m_pSortArray[Index];
+			m_pSortArray[Index] = Temp;
+
 			Wurzel = Index;
 		}
 		else
@@ -1107,7 +1102,10 @@ __forceinline void CInspectorGrid::CreateSortArray()
 			Heap(a, m_Properties.m_ItemCount);
 		for (INT a=m_Properties.m_ItemCount-1; a>0; a--)
 		{
-			Swap(m_pSortArray[0], m_pSortArray[a]);
+			INT Temp = m_pSortArray[0];
+			m_pSortArray[0] = m_pSortArray[a];
+			m_pSortArray[a] = Temp;
+
 			Heap(0, a);
 		}
 	}
@@ -1373,9 +1371,9 @@ void CInspectorGrid::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	BOOL Themed = IsCtrlThemed();
 

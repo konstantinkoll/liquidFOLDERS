@@ -197,17 +197,9 @@ HTREEITEM CExplorerTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, U
 
 HTREEITEM CExplorerTree::InsertItem(WCHAR* Path, HTREEITEM hParent)
 {
-	IShellFolder* pDesktop = NULL;
-	if (FAILED(SHGetDesktopFolder(&pDesktop)))
-		return NULL;
-
-	ULONG chEaten;
-	ULONG dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
-	LPITEMIDLIST pidlFQ = NULL;
-	HRESULT hr = pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, &dwAttributes);
-	pDesktop->Release();
-
-	if (FAILED(hr))
+	SFGAOF dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
+	LPITEMIDLIST pidlFQ;
+	if (FAILED(SHParseDisplayName(Path, NULL, &pidlFQ, dwAttributes, NULL)))
 		return NULL;
 
 	IShellFolder* pParentFolder = NULL;
@@ -660,9 +652,9 @@ void CExplorerTree::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	CTreeCtrl::DefWindowProc(WM_PAINT, (WPARAM)dc.m_hDC, NULL);
 

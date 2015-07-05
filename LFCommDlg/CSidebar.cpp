@@ -299,9 +299,9 @@ void CSidebar::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Background
 	BOOL Themed = IsCtrlThemed();
@@ -466,7 +466,7 @@ void CSidebar::OnPaint()
 	if (Themed)
 	{
 		HDC hdcMem = CreateCompatibleDC(dc);
-		HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hShadow);
+		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hShadow);
 
 		BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 		AlphaBlend(dc, rect.right-SHADOW, 0, SHADOW, 5, hdcMem, 0, 0, SHADOW, 5, BF);
@@ -474,7 +474,7 @@ void CSidebar::OnPaint()
 		for (INT y=5; y<rect.Height(); y++)
 			AlphaBlend(dc, rect.right-SHADOW, y, SHADOW, 1, hdcMem, 0, 4, SHADOW, 1, BF);
 
-		SelectObject(hdcMem, hbmOld);
+		SelectObject(hdcMem, hOldBitmap);
 		DeleteDC(hdcMem);
 	}
 

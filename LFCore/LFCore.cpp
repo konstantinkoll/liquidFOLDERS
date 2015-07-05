@@ -58,7 +58,7 @@ LFCORE_API void LFInitialize()
 // Output handling
 //
 
-LFCORE_API void LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, size_t cCount)
+LFCORE_API void LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 

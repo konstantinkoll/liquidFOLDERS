@@ -62,8 +62,6 @@ LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* i, LFFilterCondi
 
 void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* /*i*/)
 {
-	assert(i->m_AttributeValues[m_Attr]);
-
 	LFSetAttributeVariantData(pFolder, pFolder->NextFilter->ConditionList->AttrData);
 
 	if (m_Attr!=LFAttrFileName)
@@ -194,7 +192,7 @@ CURLCategorizer::CURLCategorizer()
 {
 }
 
-void CURLCategorizer::GetServer(CHAR* URL, CHAR* Server, size_t cCount)
+void CURLCategorizer::GetServer(CHAR* URL, CHAR* Server, SIZE_T cCount)
 {
 	CHAR* Pos = strstr(URL, "://");
 	if (Pos)
@@ -237,7 +235,7 @@ CIATACategorizer::CIATACategorizer()
 
 void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
 {
-	assert(i->m_AttributeValues[m_Attr]);
+	assert(i->AttributeValues[m_Attr]);
 
 	LFAirport* pAirport;
 	if (LFIATAGetAirportByCode((CHAR*)i->AttributeValues[m_Attr], &pAirport))
@@ -296,7 +294,7 @@ BOOL CRatingCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2
 
 void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
 {
-	assert(i->m_AttributeValues[m_Attr]);
+	assert(i->AttributeValues[m_Attr]);
 
 	BYTE Rating = GetRatingCategory(*((BYTE*)i->AttributeValues[m_Attr]));
 
@@ -331,7 +329,7 @@ BOOL CSizeCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
 
 void CSizeCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
 {
-	assert(i->m_AttributeValues[m_Attr]);
+	assert(i->AttributeValues[m_Attr]);
 
 	WCHAR Name[256];
 	LoadString(LFCoreModuleHandle, IDS_SIZE1+GetSizeCategory(*((INT64*)i->AttributeValues[m_Attr])), Name, 256);
@@ -452,7 +450,7 @@ BOOL CDurationCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* 
 
 void CDurationCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
 {
-	assert(i->m_AttributeValues[m_Attr]);
+	assert(i->AttributeValues[m_Attr]);
 
 	WCHAR Name[256];
 	LoadString(LFCoreModuleHandle, IDS_DURATION1+GetDurationCategory(*((UINT*)i->AttributeValues[m_Attr])), Name, 256);
@@ -480,7 +478,7 @@ BOOL CMegapixelCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor*
 
 void CMegapixelCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
 {
-	assert(i->m_AttributeValues[m_Attr]);
+	assert(i->AttributeValues[m_Attr]);
 
 	UINT Dimension = (UINT)*(DOUBLE*)i->AttributeValues[m_Attr];
 

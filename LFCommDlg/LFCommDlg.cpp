@@ -30,6 +30,7 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 	return TRUE;
 }
 
+
 INT GetAttributeIconIndex(UINT Attr)
 {
 	static const UINT IconPosition[] = { LFAttrFileName, LFAttrStoreID, LFAttrFileID, LFAttrTitle, LFAttrCreationTime,
@@ -111,6 +112,25 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSi
 BOOL IsCtrlThemed()
 {
 	return LFGetApp()->m_ThemeLibLoaded ? LFGetApp()->zIsAppThemed() : FALSE;
+}
+
+HBITMAP CreateTransparentBitmap(LONG Width, LONG Height)
+{
+	BITMAPINFO DIB;
+	ZeroMemory(&DIB, sizeof(DIB));
+
+	DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	DIB.bmiHeader.biWidth = Width;
+	DIB.bmiHeader.biHeight = -Height;
+	DIB.bmiHeader.biPlanes = 1;
+	DIB.bmiHeader.biBitCount = 32;
+	DIB.bmiHeader.biCompression = BI_RGB;
+
+	HDC hDC = GetDC(NULL);
+	HBITMAP hBitmap = CreateDIBSection(hDC, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
+	ReleaseDC(NULL, hDC);
+
+	return hBitmap;
 }
 
 void DrawControlBorder(CWnd* pWnd)

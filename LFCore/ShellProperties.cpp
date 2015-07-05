@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "IdxTables.h"
-#include "PIDL.h"
 #include "ShellProperties.h"
 #include <assert.h>
 #include <shlobj.h>
@@ -291,39 +290,33 @@ void SetAttributesFromFile(LFItemDescriptor* i, WCHAR* fn, BOOL metadata)
 		return;
 
 	// Shell properties
-	IShellFolder* pDesktop = NULL;
-	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+	LPITEMIDLIST pidlFQ;
+	if (SUCCEEDED(SHParseDisplayName(fn, NULL, &pidlFQ, 0, NULL)))
 	{
-		LPITEMIDLIST pidlFQ = NULL;
-		if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, fn, NULL, &pidlFQ, NULL)))
+		IShellFolder2* pParentFolder = NULL;
+		LPCITEMIDLIST pidlRel = NULL;
+		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
 		{
-			IShellFolder2* pParentFolder = NULL;
-			LPCITEMIDLIST pidlRel = NULL;
-			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
-			{
-				for (UINT a=0; a<LFAttributeCount; a++)
-					if ((AttrProperties[a].ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
-						GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].Schema, AttrProperties[a].ID, i, a);
+			for (UINT a=0; a<LFAttributeCount; a++)
+				if ((AttrProperties[a].ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
+					GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].Schema, AttrProperties[a].ID, i, a);
 
-				// Besondere Eigenschaften
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 4, i, LFAttrBitrate);
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 5, i, LFAttrSamplerate);
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 7, i, LFAttrChannels);
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 10, i, LFAttrAudioCodec);
+			// Besondere Eigenschaften
+			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 4, i, LFAttrBitrate);
+			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 5, i, LFAttrSamplerate);
+			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 7, i, LFAttrChannels);
+			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 10, i, LFAttrAudioCodec);
 
-				GetShellProperty(pParentFolder, pidlRel, PropertyPhoto, 36867, i, LFAttrRecordingTime);
+			GetShellProperty(pParentFolder, pidlRel, PropertyPhoto, 36867, i, LFAttrRecordingTime);
 
-				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 3, i, LFAttrWidth);
-				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 4, i, LFAttrHeight);
-				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 8, i, LFAttrBitrate);
+			GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 3, i, LFAttrWidth);
+			GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 4, i, LFAttrHeight);
+			GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 8, i, LFAttrBitrate);
 
-				pParentFolder->Release();
-			}
-
-			FreePIDL(pidlFQ);
+			pParentFolder->Release();
 		}
 
-		pDesktop->Release();
+		CoTaskMemFree(pidlFQ);
 	}
 
 	// TODO: weitere Attribute durch eigene Metadaten-Bibliothek

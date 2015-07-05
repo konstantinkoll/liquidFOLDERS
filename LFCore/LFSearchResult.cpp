@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "Categorizer.h"
+#include "Categorizers.h"
 #include "IdxTables.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
@@ -396,7 +396,10 @@ void LFSearchResult::Sort(UINT Attr, BOOL descending)
 			Heap(a, m_ItemCount, Attr, descending);
 		for (INT a=m_ItemCount-1; a>0; a--)
 		{
-			std::swap(m_Items[0], m_Items[a]);
+			LFItemDescriptor* Temp = m_Items[0];
+			m_Items[0] = m_Items[a];
+			m_Items[a] = Temp;
+
 			Heap(0, a, Attr, descending);
 		}
 	}

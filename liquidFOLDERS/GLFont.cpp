@@ -5,6 +5,7 @@
 #pragma once
 #include "stdafx.h"
 #include "GLFont.h"
+#include "liquidFOLDERS.h"
 #include <math.h>
 
 
@@ -34,52 +35,44 @@ BOOL GLFont::Create(CString Face, UINT Size, BOOL Bold, BOOL Italic)
 	return Create(&Font);
 }
 
-BOOL GLFont::Create(CFont* Font)
+BOOL GLFont::Create(CFont* pFont)
 {
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
 	dc.SetMapMode(MM_TEXT);
 	dc.SetBkMode(TRANSPARENT);
-	dc.SetTextColor(RGB(255, 255, 255));
-	dc.SetBkColor(RGB(0, 0, 0));
+	dc.SetTextColor(0xFFFFFF);
+	dc.SetBkColor(0x000000);
 	dc.SetTextAlign(TA_TOP);
 
-	HFONT hFontOld = (HFONT)dc.SelectObject(Font);
+	CFont* pOldFont = dc.SelectObject(pFont);
 
-	PAINTRESULT p;
-	while (MoreData==(p = PaintAlphabet(dc, TRUE)))
+	PAINTRESULT Result;
+	while (MOREDATA==(Result = PaintAlphabet(dc, TRUE)))
 		m_TexSize *= 2;
 
-	BOOL ok = (p==Success);
-	if (ok)
+	if (Result==SUCCESS)
 	{
-		UCHAR* pBitmapBits;
-		BITMAPINFO bmi;
-		ZeroMemory(&bmi.bmiHeader, sizeof(BITMAPINFOHEADER));
-		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = (INT)m_TexSize;
-		bmi.bmiHeader.biHeight = -(INT)m_TexSize;
-		bmi.bmiHeader.biPlanes = 1;
-		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biBitCount = 32;
+		HBITMAP hBitmap = CreateTransparentBitmap(m_TexSize, m_TexSize);
+		HGDIOBJ hOldBitmap = dc.SelectObject(hBitmap);
 
-		HBITMAP hbmBitmap = CreateDIBSection(dc, &bmi, DIB_RGB_COLORS, (void**)&pBitmapBits, NULL, 0);
-		HGDIOBJ hbmOld = dc.SelectObject(hbmBitmap);
-
-		ok = (PaintAlphabet(dc)==Success);
-		if (ok)
+		Result = PaintAlphabet(dc);
+		if (Result==SUCCESS)
 		{
 			glGenTextures(1, &m_TexID);
-			BITMAP bitmap;
-			GetObject(hbmBitmap, sizeof(BITMAP), &bitmap);
 
-			UCHAR* x = (UCHAR*)bitmap.bmBits;
-			UINT size = m_TexSize*m_TexSize*4;
-			for (UINT pos=0; pos<size; pos+=4)
+			BITMAP bitmap;
+			GetObject(hBitmap, sizeof(BITMAP), &bitmap);
+
+			BYTE* Ptr = (BYTE*)bitmap.bmBits;
+			UINT Size = m_TexSize*m_TexSize;
+
+			for (UINT a=0; a<Size; a++)
 			{
-				x[3] = (x[0]+x[1]+x[2])/3;
-				x[0] = x[1] = x[2] = 0xff;
-				x += 4;
+				Ptr[3] = (Ptr[0]+Ptr[1]+Ptr[2]*2)/4;
+				Ptr[0] = Ptr[1] = Ptr[2] = 0xFF;
+
+				Ptr += 4;
 			}
 
 			glBindTexture(GL_TEXTURE_2D, m_TexID);
@@ -88,15 +81,16 @@ BOOL GLFont::Create(CFont* Font)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		}
 
-		dc.SelectObject(hbmOld);
-		dc.SelectObject(hFontOld);
-		DeleteObject(hbmBitmap);
+		dc.SelectObject(hOldBitmap);
+		DeleteObject(hBitmap);
 	}
 
-	return ok;
+	dc.SelectObject(pOldFont);
+
+	return Result==SUCCESS;
 }
 
-UINT GLFont::Render(CHAR* pStr, INT xs, INT ys, INT cCount)
+UINT GLFont::Render(CHAR* pStr, INT x, INT y, SIZE_T cCount)
 {
 	if (!pStr)
 		return 0;
@@ -104,39 +98,29 @@ UINT GLFont::Render(CHAR* pStr, INT xs, INT ys, INT cCount)
 	if (cCount<0)
 		cCount = MAXINT;
 
+	UINT Height = 0;
+
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_TexID);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glBegin (GL_QUADS);
-	INT x = xs;
-	INT y = ys;
-	UINT h = 0;
 
-	while ((cCount>0) && (*pStr))
+	while ((cCount-->0) && (*pStr))
 	{
-		UCHAR ch = *pStr;
+		CHAR Ch = *pStr++;
 
-		if (ch==' ')
-		{
-			x += m_Spacing;
-		}
-		else
-			if (ch>32)
-			{
-				x += RenderChar(ch-32, x, y, &h);
-			}
-
-		pStr++;
-		cCount--;
+		x += (Ch==' ') ? m_Spacing : (Ch>32) ? RenderChar((UCHAR)Ch-32, x, y, Height) : 0;
 	}
+
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-	return h;
+
+	return Height;
 }
 
-UINT GLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
+UINT GLFont::Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount)
 {
 	if (!pStr)
 		return 0;
@@ -144,50 +128,46 @@ UINT GLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 	if (cCount<0)
 		cCount = MAXINT;
 
+	UINT Height = 0;
+
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_TexID);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glBegin (GL_QUADS);
-	INT x = xs;
-	INT y = ys;
-	UINT h = 0;
 
-	while ((cCount>0) && (*pStr))
+	while ((cCount-->0) && (*pStr))
 	{
-		WCHAR ch = *pStr;
-		if ((ch==2013) || (ch==8211))
-			ch = 150;
-		if ((ch==2014) || (ch==8212))
-			ch = 151;
+		WCHAR Ch = *pStr++;
 
-		if (ch==L' ')
+		switch (Ch)
 		{
-			x += m_Spacing;
+		case 2013:
+		case 8211:
+			Ch = 150;
+			break;
+		case 2014:
+		case 8212:
+			Ch = 151;
+			break;
 		}
-		else
-			if ((ch>32) && (ch<256))
-			{
-				x += RenderChar((UCHAR)ch-32, x, y, &h);
-			}
 
-		pStr++;
-		cCount--;
+		x += (Ch==L' ') ? m_Spacing : (Ch>32) && (Ch<256) ? RenderChar((UCHAR)Ch-32, x, y, Height) : 0;
 	}
+
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-	return h;
+
+	return Height;
 }
 
-UINT GLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
+UINT GLFont::RenderChar(UCHAR Ch, INT x, INT y, UINT& Height)
 {
-	ASSERT(pHeight);
-
-	GLfloat tx1 = TexCoords[ch][0];
-	GLfloat ty1 = TexCoords[ch][1];
-	GLfloat tx2 = TexCoords[ch][2];
-	GLfloat ty2 = TexCoords[ch][3];
+	GLfloat tx1 = TexCoords[Ch][0];
+	GLfloat ty1 = TexCoords[Ch][1];
+	GLfloat tx2 = TexCoords[Ch][2];
+	GLfloat ty2 = TexCoords[Ch][3];
 
 	UINT w = (INT)((tx2-tx1)*m_TexSize);
 	UINT h = (INT)((ty2-ty1)*m_TexSize);
@@ -201,11 +181,13 @@ UINT GLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
 	glTexCoord2f(tx1, ty1);
 	glVertex2i(x, y);
 
-	*pHeight = max(*pHeight, h);
+	if (h>Height)
+		Height = h;
+
 	return w;
 }
 
-UINT GLFont::GetTextWidth(CHAR* pStr, INT cCount)
+UINT GLFont::GetTextWidth(CHAR* pStr, SIZE_T cCount)
 {
 	if (!pStr)
 		return 0;
@@ -213,21 +195,19 @@ UINT GLFont::GetTextWidth(CHAR* pStr, INT cCount)
 	if (cCount<0)
 		cCount = MAXINT;
 
-	GLfloat w = 0;
+	GLfloat Width = 0;
 
-	while ((cCount>0) && (*pStr))
+	while ((cCount-->0) && (*pStr))
 	{
-		UCHAR ch = *pStr;
+		CHAR Ch = *pStr++;
 
-		w += (ch==' ') ? m_Spacing : (ch>32) ? (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize : 0;
-		pStr++;
-		cCount--;
+		Width += (Ch==' ') ? m_Spacing : (Ch>32) ? (TexCoords[Ch-32][2]-TexCoords[Ch-32][0])*m_TexSize : 0;
 	}
 
-	return (UINT)w;
+	return (UINT)Width;
 }
 
-UINT GLFont::GetTextWidth(WCHAR* pStr, INT cCount)
+UINT GLFont::GetTextWidth(WCHAR* pStr, SIZE_T cCount)
 {
 	if (!pStr)
 		return 0;
@@ -235,69 +215,78 @@ UINT GLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 	if (cCount<0)
 		cCount = MAXINT;
 
-	GLfloat w = 0;
+	GLfloat Width = 0;
 
-	while ((cCount>0) && (*pStr))
+	while ((cCount-->0) && (*pStr))
 	{
-		WCHAR ch = *pStr;
-		if ((ch==2013) || (ch==8211))
-			ch = 150;
-		if ((ch==2014) || (ch==8212))
-			ch = 151;
+		WCHAR Ch = *pStr++;
 
-		w += (ch==L' ') ? m_Spacing : (ch>32) && (ch<256) ? (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize : 0;
-		pStr++;
-		cCount--;
+		switch (Ch)
+		{
+		case 2013:
+		case 8211:
+			Ch = 150;
+			break;
+		case 2014:
+		case 8212:
+			Ch = 151;
+			break;
+		}
+
+		Width += (Ch==L' ') ? m_Spacing : (Ch>32) && (Ch<256) ? (TexCoords[Ch-32][2]-TexCoords[Ch-32][0])*m_TexSize : 0;
 	}
 
-	return (UINT)w;
+	return (UINT)Width;
 }
 
 UINT GLFont::GetTextHeight(void* pStr)
 {
+	ASSERT(pStr);
+
 	return (pStr ? m_LineHeight : 0);
 }
 
 GLFont::PAINTRESULT GLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 {
-	SIZE size;
+	SIZE Size;
 	CHAR Str[2] = "?";
 
-	if (!GetTextExtentPoint32A(hDC, Str, 1, &size))
-		return Fail;
-	m_Spacing = (INT)ceil((double)size.cy/3);
-	m_LineHeight = max(m_LineHeight, (UINT)size.cy);
+	if (!GetTextExtentPoint32A(hDC, Str, 1, &Size))
+		return FAIL;
+
+	m_Spacing = (INT)ceil((DOUBLE)Size.cy/3);
+	m_LineHeight = max(m_LineHeight, (UINT)Size.cy);
 
 	INT x = m_Spacing;
 	INT y = 0;
 
-	for (UCHAR c=32; c<255; c++)
+	for (UCHAR Ch=32; Ch<255; Ch++)
 	{
-		Str[0] = c;
-		if (!GetTextExtentPoint32A(hDC, Str, 1, &size))
+		Str[0] = Ch;
+		if (!GetTextExtentPoint32A(hDC, Str, 1, &Size))
 			continue;
 
-		if (x+size.cx+m_Spacing>m_TexSize)
+		if (x+Size.cx+m_Spacing>m_TexSize)
 		{
 			x = m_Spacing;
-			y += size.cy+1;
+			y += Size.cy+1;
 		}
-		if (y+size.cy>(INT)m_TexSize)
-			return MoreData;
+		if (y+Size.cy>(INT)m_TexSize)
+			return MOREDATA;
 
 		if (!bMeasureOnly)
 		{
 			if (!ExtTextOutA(hDC, x, y, ETO_OPAQUE, NULL, Str, 1, NULL))
 				continue;
 
-			TexCoords[c-32][0] = ((GLfloat)(x))/m_TexSize;
-			TexCoords[c-32][1] = ((GLfloat)(y))/m_TexSize;
-			TexCoords[c-32][2] = ((GLfloat)(x+size.cx))/m_TexSize;
-			TexCoords[c-32][3] = ((GLfloat)(y+size.cy))/m_TexSize;
+			TexCoords[Ch-32][0] = ((GLfloat)(x))/m_TexSize;
+			TexCoords[Ch-32][1] = ((GLfloat)(y))/m_TexSize;
+			TexCoords[Ch-32][2] = ((GLfloat)(x+Size.cx))/m_TexSize;
+			TexCoords[Ch-32][3] = ((GLfloat)(y+Size.cy))/m_TexSize;
 		}
 
-		x += size.cx+(2*m_Spacing);
+		x += Size.cx+2;
 	}
 
-	return Success;
+	return SUCCESS;
 }

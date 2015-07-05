@@ -3,7 +3,6 @@
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "Mutex.h"
-#include "PIDL.h"
 #include "Stores.h"
 #include "StoreCache.h"
 #include <assert.h>
@@ -132,7 +131,7 @@ BOOL DirWriteable(LPWSTR lpPath)
 	return DeleteFile(Filename)==TRUE;
 }
 
-void SanitizeFileName(WCHAR* dst, size_t cCount, WCHAR* src)
+void SanitizeFileName(WCHAR* dst, SIZE_T cCount, WCHAR* src)
 {
 	wcscpy_s(dst, cCount, src);
 
@@ -194,7 +193,7 @@ __forceinline void CreateStoreIndex(LFStoreDescriptor* s, BOOL UseMainIndex, UIN
 		Result = LFIndexCreateError;
 }
 
-void GetFilePath(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, size_t cCount)
+void GetFilePath(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, SIZE_T cCount)
 {
 	WCHAR buf1[3] = L" \\";
 	buf1[0] = ca->FileID[0];
@@ -208,7 +207,7 @@ void GetFilePath(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, size_t cCount
 	wcscat_s(dst, cCount, buf2);
 }
 
-void GetFileLocation(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, size_t cCount)
+void GetFileLocation(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, SIZE_T cCount)
 {
 	WCHAR buf1[MAX_PATH];
 	SanitizeFileName(buf1, MAX_PATH, ca->FileName);
@@ -239,7 +238,7 @@ BOOL FileExists(LPWSTR lpPath)
 	return Result;
 }
 
-UINT PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, WCHAR* Dst, size_t cCount)
+UINT PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, WCHAR* Dst, SIZE_T cCount)
 {
 	RANDOMIZE();
 
@@ -287,12 +286,12 @@ void SendShellNotifyMessage(UINT Msg, CHAR* StoreID, LPITEMIDLIST oldpidl, LPITE
 	if (GetPIDLForStore(StoreID, &pidl, &pidlDelegate))
 	{
 		SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidl ? oldpidl : pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
-		FreePIDL(pidl);
+		CoTaskMemFree(pidl);
 
 		if (pidlDelegate)
 		{
 			SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidlDelegate ? oldpidlDelegate : pidlDelegate, (Msg==SHCNE_RENAMEFOLDER) ? pidlDelegate : NULL);
-			FreePIDL(pidlDelegate);
+			CoTaskMemFree(pidlDelegate);
 		}
 	}
 }
@@ -301,7 +300,7 @@ void SendShellNotifyMessage(UINT Msg, CHAR* StoreID, LPITEMIDLIST oldpidl, LPITE
 // Stores
 //
 
-LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, size_t cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended)
+LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, SIZE_T cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended)
 {
 	if ((i->Type & LFTypeMask)!=LFTypeFile)
 		return LFIllegalItemType;
@@ -619,8 +618,8 @@ LFCORE_API UINT LFSetStoreAttributes(CHAR* StoreID, WCHAR* name, WCHAR* comment,
 
 	if (!GetMutex(Mutex_Stores))
 	{
-		FreePIDL(oldpidl);
-		FreePIDL(oldpidlDelegate);
+		CoTaskMemFree(oldpidl);
+		CoTaskMemFree(oldpidlDelegate);
 		return LFMutexError;
 	}
 
@@ -653,8 +652,9 @@ LFCORE_API UINT LFSetStoreAttributes(CHAR* StoreID, WCHAR* name, WCHAR* comment,
 		}
 	}
 
-	FreePIDL(oldpidl);
-	FreePIDL(oldpidlDelegate);
+	CoTaskMemFree(oldpidl);
+	CoTaskMemFree(oldpidlDelegate);
+
 	return Result;
 }
 

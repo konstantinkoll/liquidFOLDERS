@@ -1,8 +1,8 @@
 #pragma once
 #include "LF.h"
 
-size_t GetAttributeMaxCharacterCount(UINT Attr);
-size_t GetAttributeSize(UINT Attr, const void* v);
+SIZE_T GetAttributeMaxCharacterCount(UINT Attr);
+SIZE_T GetAttributeSize(UINT Attr, const void* v);
 void FreeAttribute(LFItemDescriptor* i, UINT Attr);
 void SetAttribute(LFItemDescriptor* i, UINT Attr, const void* v);
 LFItemDescriptor* AllocFolderDescriptor();

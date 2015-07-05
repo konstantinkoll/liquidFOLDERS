@@ -180,16 +180,8 @@ void CHistoryBar::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rectClient.Width();
-	dib.bmiHeader.biHeight = -rectClient.Height();
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
+	HBITMAP hBitmap = CreateTransparentBitmap(rectClient.Width(), rectClient.Height());
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	BOOL Themed = IsCtrlThemed();
 
@@ -380,7 +372,7 @@ void CHistoryBar::OnPaint()
 
 	// Set alpha
 	BITMAP bmp;
-	GetObject(hBmp, sizeof(BITMAP), &bmp);
+	GetObject(hBitmap, sizeof(BITMAP), &bmp);
 	BYTE* pBits = ((BYTE*)bmp.bmBits)+4*(rectContent.top*rectClient.Width()+rectContent.left);
 	for (INT row=rectContent.top; row<rectContent.bottom; row++)
 	{
@@ -395,7 +387,7 @@ void CHistoryBar::OnPaint()
 	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBmp);
+	DeleteObject(hBitmap);
 }
 
 void CHistoryBar::OnSize(UINT nType, INT cx, INT cy)

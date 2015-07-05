@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "GLTexture.h"
-#include "resource.h"
+#include "Resource.h"
 
 
 // GLTexture
@@ -14,7 +14,7 @@ GLTexture::GLTexture()
 {
 	m_ID = 0;
 	m_SGISMIP = (strstr((CHAR*)glGetString(GL_EXTENSIONS), "SGIS_generate_mipmap")!=NULL) &&
-			(strcmp((CHAR*)glGetString(GL_VENDOR), "Intel")!=0);
+				(strcmp((CHAR*)glGetString(GL_VENDOR), "Intel")!=0);
 }
 
 GLTexture::~GLTexture()
@@ -28,7 +28,7 @@ GLuint GLTexture::GetID()
 	return m_ID;
 }
 
-void GLTexture::SetTexture(UINT Width, UINT Height, UINT BPP, void* Data)
+void GLTexture::SetTexture(UINT Width, UINT Height, UINT BPP, void* pData)
 {
 	// Textur erzeugen
 	UINT PixelMode = (BPP==4) ? GL_BGRA : GL_BGR;
@@ -45,20 +45,20 @@ void GLTexture::SetTexture(UINT Width, UINT Height, UINT BPP, void* Data)
 		// Hardware-Erzeugung von Mipmaps aktiv
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, BPP, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, Data);
+		glTexImage2D(GL_TEXTURE_2D, 0, BPP, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, pData);
 	}
 	else
 		if (Width!=Height)
 		{
 			// Breite!=Höhe, daher kein Mipmapping
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexImage2D(GL_TEXTURE_2D, 0, BPP, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, Data);
+			glTexImage2D(GL_TEXTURE_2D, 0, BPP, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, pData);
 		}
 		else
 		{
 			// Mipmaps von der CPU erzeugen lassen
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			gluBuild2DMipmaps(GL_TEXTURE_2D, BPP, Width, Height, PixelMode, GL_UNSIGNED_BYTE, Data);
+			gluBuild2DMipmaps(GL_TEXTURE_2D, BPP, Width, Height, PixelMode, GL_UNSIGNED_BYTE, pData);
 		}
 }
 
@@ -70,15 +70,16 @@ GLTextureBitmap::GLTextureBitmap()
 {
 }
 
-GLTextureBitmap::GLTextureBitmap(HBITMAP hBMP)
+GLTextureBitmap::GLTextureBitmap(HBITMAP hBitmap)
 {
-	SetTextureBitmap(hBMP);
+	SetTextureBitmap(hBitmap);
 }
 
-void GLTextureBitmap::SetTextureBitmap(HBITMAP hBMP)
+void GLTextureBitmap::SetTextureBitmap(HBITMAP hBitmap)
 {
 	BITMAP BMP;
-	GetObject(hBMP, sizeof(BMP), &BMP);
+	GetObject(hBitmap, sizeof(BMP), &BMP);
+
 	SetTexture(BMP.bmWidth, BMP.bmHeight, BMP.bmBitsPixel>>3, BMP.bmBits);
 }
 
@@ -90,20 +91,20 @@ GLTextureGdiPlusBitmap::GLTextureGdiPlusBitmap()
 {
 }
 
-GLTextureGdiPlusBitmap::GLTextureGdiPlusBitmap(CGdiPlusBitmap* Texture)
+GLTextureGdiPlusBitmap::GLTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture)
 {
-	SetTextureGdiPlusBitmap(Texture);
+	SetTextureGdiPlusBitmap(pTexture);
 }
 
-void GLTextureGdiPlusBitmap::SetTextureGdiPlusBitmap(CGdiPlusBitmap* Texture)
+void GLTextureGdiPlusBitmap::SetTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture)
 {
-	HBITMAP hBMP;
-	Texture->m_pBitmap->GetHBITMAP(NULL, &hBMP);
+	HBITMAP hBitmap;
+	pTexture->m_pBitmap->GetHBITMAP(NULL, &hBitmap);
 
-	if (hBMP)
+	if (hBitmap)
 	{
-		SetTextureBitmap(hBMP);
-		DeleteObject(hBMP);
+		SetTextureBitmap(hBitmap);
+		DeleteObject(hBitmap);
 	}
 }
 
@@ -115,45 +116,48 @@ GLTextureCombine::GLTextureCombine()
 {
 }
 
-GLTextureCombine::GLTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1)
+GLTextureCombine::GLTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1)
 {
-	SetTextureCombine(Texture0, Texture1);
+	SetTextureCombine(pTexture0, pTexture1);
 }
 
-void GLTextureCombine::SetTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1)
+void GLTextureCombine::SetTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1)
 {
-	HBITMAP hBMP0;
-	HBITMAP hBMP1;
-	Texture0->m_pBitmap->GetHBITMAP(NULL, &hBMP0);
-	Texture1->m_pBitmap->GetHBITMAP(NULL, &hBMP1);
+	HBITMAP hBitmap0;
+	pTexture0->m_pBitmap->GetHBITMAP(NULL, &hBitmap0);
 
-	if (hBMP1)
+	HBITMAP hBitmap1;
+	pTexture1->m_pBitmap->GetHBITMAP(NULL, &hBitmap1);
+
+	if (hBitmap1)
 	{
 		BITMAP BMP0;
+		GetObject(hBitmap0, sizeof(BMP0), &BMP0);
+
 		BITMAP BMP1;
-		GetObject(hBMP0, sizeof(BMP0), &BMP0);
-		GetObject(hBMP1, sizeof(BMP1), &BMP1);
+		GetObject(hBitmap1, sizeof(BMP1), &BMP1);
 
 		ASSERT(BMP0.bmHeight==BMP1.bmHeight);
 		ASSERT(BMP0.bmWidth==BMP1.bmWidth);
 
-		UINT sz = BMP0.bmHeight*BMP0.bmWidth;
 		BYTE* Ptr0 = (BYTE*)BMP0.bmBits;
 		BYTE* Ptr1 = (BYTE*)BMP1.bmBits;
-		for (UINT a=0; a<sz; a++)
+		UINT Size = BMP0.bmHeight*BMP0.bmWidth;
+
+		for (UINT a=0; a<Size; a++)
 		{
 			Ptr0[3] = Ptr1[0];
 			Ptr0 += 4;
 			Ptr1 += 4;
 		}
 
-		DeleteObject(hBMP1);
+		DeleteObject(hBitmap1);
 	}
 
-	if (hBMP0)
+	if (hBitmap0)
 	{
-		SetTextureBitmap(hBMP0);
-		DeleteObject(hBMP0);
+		SetTextureBitmap(hBitmap0);
+		DeleteObject(hBitmap0);
 	}
 }
 
@@ -174,6 +178,7 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 		{
 			p_BlueMarble->Release();
 			p_BlueMarble = NULL;
+
 			m_nIDLoaded = 0;
 		}
 
@@ -195,6 +200,7 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 
 		IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
 		OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&p_BlueMarble);
+
 		pStream->Release();
 
 		UnlockResource(hMemory);
@@ -206,6 +212,7 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 	if (p_BlueMarble)
 	{
 		HBITMAP hBitmap = NULL;
+
 		if (SUCCEEDED(p_BlueMarble->get_Handle((OLE_HANDLE*)&hBitmap)))
 			SetTextureBitmap(hBitmap);
 	}

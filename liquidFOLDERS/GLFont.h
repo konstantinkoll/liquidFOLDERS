@@ -14,17 +14,16 @@ public:
 	GLFont();
 	~GLFont();
 
-	BOOL Create(CString Face, UINT Size, BOOL Bold, BOOL Italic);
-	BOOL Create(CFont* Font);
-	UINT Render(CHAR* pStr, INT x, INT y, INT cCount=-1);
-	UINT Render(WCHAR* pStr, INT x, INT y, INT cCount=-1);
-	UINT GetTextWidth(CHAR* pStr, INT cCount=-1);
-	UINT GetTextWidth(WCHAR* pStr, INT cCount=-1);
+	BOOL Create(CString Face, UINT Size, BOOL Bold=FALSE, BOOL Italic=FALSE);
+	BOOL Create(CFont* pFont);
+	UINT Render(CHAR* pStr, INT x, INT y, SIZE_T cCount=-1);
+	UINT Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount=-1);
+	UINT GetTextWidth(CHAR* pStr, SIZE_T cCount=-1);
+	UINT GetTextWidth(WCHAR* pStr, SIZE_T cCount=-1);
 	UINT GetTextHeight(void* pStr);
 
 protected:
-	BOOL Initialize(HFONT hFont);
-	UINT RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight);
+	UINT RenderChar(UCHAR Ch, INT x, INT y, UINT& Height);
 
 private:
 	GLfloat TexCoords[256-32][4];
@@ -35,9 +34,9 @@ private:
 
 	enum PAINTRESULT
 	{
-		Fail,
-		MoreData,
-		Success
+		FAIL,
+		MOREDATA,
+		SUCCESS
 	};
 	PAINTRESULT PaintAlphabet(HDC hDC, BOOL bMeasureOnly=FALSE);
 };

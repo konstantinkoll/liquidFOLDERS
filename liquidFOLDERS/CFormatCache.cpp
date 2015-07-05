@@ -41,54 +41,20 @@ INT CFormatCache::ConvertIcon(INT SysIconIndex)
 	dc.CreateCompatibleDC(NULL);
 
 	// Icon in eine Bitmap konvertieren
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = 256;
-	dib.bmiHeader.biHeight = -256;
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBmpSrc = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmpSrc);
+	HBITMAP hBitmap = CreateTransparentBitmap(256, -256);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	theApp.m_SystemImageListJumbo.DrawEx(&dc, SysIconIndex, CPoint(0, 0), CSize(256, 256), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
 	dc.SelectObject(hOldBitmap);
 
 	// Ziel-Bitmap erstellen
-	dib.bmiHeader.biWidth = 128;
-	dib.bmiHeader.biHeight = -128;
-
-	HBITMAP hBmpDst = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-
-	// Skalieren
-	BITMAP bmpSrc;
-	BITMAP bmpDst;
-	GetObject(hBmpSrc, sizeof(BITMAP), &bmpSrc);
-	GetObject(hBmpDst, sizeof(BITMAP), &bmpDst);
-	BYTE* pBitsSrc = ((BYTE*)bmpSrc.bmBits);
-	BYTE* pBitsDst = ((BYTE*)bmpDst.bmBits);
-
-	for (UINT a=0; a<128; a++)
-	{
-		for (UINT b=0; b<128; b++)
-		{
-			*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+4)+*(pBitsSrc+256*4)+*(pBitsSrc+256*4+4))>>2;
-			*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+5)+*(pBitsSrc+256*4+1)+*(pBitsSrc+256*4+5))>>2;
-			*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+6)+*(pBitsSrc+256*4+2)+*(pBitsSrc+256*4+6))>>2;
-			*(pBitsDst+3) = (*(pBitsSrc+3)+*(pBitsSrc+7)+*(pBitsSrc+256*4+3)+*(pBitsSrc+256*4+7))>>2;
-			pBitsSrc += 8;
-			pBitsDst += 4;
-		}
-		pBitsSrc += 256*4;
-	}
+	hBitmap = LFQuarter256Bitmap(hBitmap);
 
 	// Hinzufügen
-	INT Result = ImageList_Add(m_SystemIcons128, hBmpDst, NULL);
+	INT Result = ImageList_Add(m_SystemIcons128, hBitmap, NULL);
 
-	DeleteObject(hBmpSrc);
-	DeleteObject(hBmpDst);
+	DeleteObject(hBitmap);
 
 	return Result;
 }

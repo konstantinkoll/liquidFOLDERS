@@ -76,7 +76,7 @@ struct FVPersistentData
 
 struct SendToItemData
 {
-	HBITMAP hBmp;
+	HBITMAP hBitmap;
 	BOOL IsStore;
 	CHAR StoreID[LFKeySize];
 	WCHAR Path[MAX_PATH];

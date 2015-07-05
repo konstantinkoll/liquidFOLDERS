@@ -208,9 +208,9 @@ void CExplorerNotification::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	BOOL Themed = IsCtrlThemed();
 
@@ -237,11 +237,15 @@ void CExplorerNotification::OnPaint()
 	CRect rectText(rect);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
+
 	dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(m_Text, rectText, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
+
 	if (rect.Height()>rectText.Height())
 		rect.top += (rect.Height()-rectText.Height())/2;
+
 	dc.DrawText(m_Text, rect, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+
 	dc.SelectObject(pOldFont);
 
 	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);

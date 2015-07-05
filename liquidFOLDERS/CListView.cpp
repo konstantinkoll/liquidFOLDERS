@@ -18,9 +18,9 @@
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
-                                            HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, bitmaps[level>LFMaxRating ? 0 : level]); \
+                                            HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>LFMaxRating ? 0 : level]); \
                                             AlphaBlend(dc, rect.left, rect.top+1, w, h, hdcMem, 0, 0, w, h, BF); \
-                                            SelectObject(hdcMem, hbmOld); \
+                                            SelectObject(hdcMem, hOldBitmap); \
                                             DeleteDC(hdcMem); }
 #define RIGHTCOLUMN                         215
 #define MAXAUTOWIDTH                        400
@@ -522,7 +522,7 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 	}
 }
 
-void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount)
+void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, SIZE_T cCount)
 {
 	switch (Attr)
 	{

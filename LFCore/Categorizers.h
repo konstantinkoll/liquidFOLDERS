@@ -48,7 +48,7 @@ class CURLCategorizer : public CCategorizer
 public:
 	CURLCategorizer();
 
-	static void GetServer(CHAR* URL, CHAR* Server, size_t cCount);
+	static void GetServer(CHAR* URL, CHAR* Server, SIZE_T cCount);
 
 protected:
 	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);

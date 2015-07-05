@@ -68,7 +68,7 @@ LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* LinkFilen
 	}
 }
 
-BOOL GetStoreManagerPath(WCHAR* Path, size_t cCount)
+BOOL GetStoreManagerPath(WCHAR* Path, SIZE_T cCount)
 {
 	// Registry
 	HKEY k;

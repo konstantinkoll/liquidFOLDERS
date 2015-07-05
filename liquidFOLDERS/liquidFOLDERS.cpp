@@ -139,8 +139,6 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	m_SourceIcons.Create(IDB_SOURCEICONS);
 
-	m_ThumbnailCache.LoadFrames();
-
 	CWnd* pFrame = OpenCommandLine(__argc>1 ? CmdLine : NULL);
 	if (pFrame)
 	{
@@ -324,8 +322,6 @@ INT CLiquidFoldersApp::ExitInstance()
 		WriteInt(_T("FileDropAlwaysOnTop"), m_FileDropAlwaysOnTop);
 		WriteInt(_T("MigrationExpandAll"), m_MigrationExpandAll);
 	}
-
-	m_ThumbnailCache.DeleteFrames();
 
 	return LFApplication::ExitInstance();
 }

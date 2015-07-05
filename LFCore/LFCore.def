@@ -8,7 +8,7 @@ EXPORTS
 	LFCombineFileCountSize @2
 	LFHideFileExt @3
 	LFHideVolumesWithNoMedia @4
-
+	
 	LFFourCCToString @100
 	LFUINTToString @101
 	LFSizeToString @102
@@ -31,4 +31,6 @@ EXPORTS
 	LFGetAttributeVariantDataEx @119
 	LFSetAttributeVariantData @120
 	LFSanitizeUnicodeArray @121
-	
+
+	LFGetThumbnail @200
+	LFQuarter256Bitmap @201

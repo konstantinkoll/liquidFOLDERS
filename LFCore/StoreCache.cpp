@@ -76,7 +76,7 @@ LFCORE_API BOOL LFGetDefaultStore(CHAR* StoreID)
 	return FALSE;
 }
 
-LFCORE_API void LFGetDefaultStoreName(WCHAR* name, size_t cCount)
+LFCORE_API void LFGetDefaultStoreName(WCHAR* name, SIZE_T cCount)
 {
 	LoadString(LFCoreModuleHandle, IDS_DEFAULTSTORE, name, (INT)cCount);
 }

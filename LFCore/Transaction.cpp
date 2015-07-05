@@ -404,18 +404,10 @@ LFCORE_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, BOO
 
 	// PIDLs
 	if (IncludePIDL)
-	{
-		IShellFolder* pDesktop = NULL;
-		if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
-		{
-			for (UINT a=0; a<tl->m_ItemCount; a++)
-				if ((tl->m_Items[a].Processed) && (tl->m_Items[a].LastError==LFOk))
-					if (FAILED(pDesktop->ParseDisplayName(NULL, NULL, &tl->m_Items[a].Path[4], NULL, &tl->m_Items[a].pidlFQ, NULL)))
-						tl->m_Items[a].LastError = tl->m_LastError = LFIllegalPhysicalPath;
-
-			pDesktop->Release();
-		}
-	}
+		for (UINT a=0; a<tl->m_ItemCount; a++)
+			if ((tl->m_Items[a].Processed) && (tl->m_Items[a].LastError==LFOk))
+				if (FAILED(SHParseDisplayName(&tl->m_Items[a].Path[4], NULL, &tl->m_Items[a].pidlFQ, 0, NULL)))
+					tl->m_Items[a].LastError = tl->m_LastError = LFIllegalPhysicalPath;
 
 	tl->m_Resolved = TRUE;
 }

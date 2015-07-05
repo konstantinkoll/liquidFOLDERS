@@ -141,7 +141,7 @@ void CHeapfile::GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescrip
 
 	if (i->AttributeValues[Attr])
 	{
-		size_t sz = GetAttributeSize(Attr, i->AttributeValues[Attr]);
+		SIZE_T sz = GetAttributeSize(Attr, i->AttributeValues[Attr]);
 
 		UINT EndOfTuple = Hdr.ElementSize;
 		if (KeyOffset==Hdr.ElementSize-LFKeySize)

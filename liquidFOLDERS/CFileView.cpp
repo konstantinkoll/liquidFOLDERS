@@ -29,28 +29,21 @@ HBITMAP IconToBitmap(HICON hIcon, INT cx, INT cy)
 
 	HDC hDC = CreateCompatibleDC(NULL);
 
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = cx;
-	dib.bmiHeader.biHeight = -cy;
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBmp = CreateDIBSection(hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP pOldBitmap = (HBITMAP)SelectObject(hDC, hBmp);
+	HBITMAP hBitmap = CreateTransparentBitmap(cx, cy);
+	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hDC, hBitmap);
 
 	if (theApp.OSVersion==OS_XP)
 	{
 		CRect rect(0, 0, cx, cy);
 		FillRect(hDC, rect, (HBRUSH)GetSysColorBrush(COLOR_MENU));
 	}
+
 	DrawIconEx(hDC, 0, 0, hIcon, cx, cy, 0, NULL, DI_NORMAL);
 
-	SelectObject(hDC, pOldBitmap);
+	SelectObject(hDC, hOldBitmap);
 	DeleteDC(hDC);
 
-	return hBmp;
+	return hBitmap;
 }
 
 void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy, SendToItemData* id)
@@ -61,13 +54,13 @@ void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, 
 
 	if (hIcon)
 	{
-		id[Index].hBmp = IconToBitmap(hIcon, cx, cy);
+		id[Index].hBitmap = IconToBitmap(hIcon, cx, cy);
 		DestroyIcon(hIcon);
 
 		MENUITEMINFO mii;
 		mii.cbSize = sizeof(mii);
 		mii.fMask = MIIM_BITMAP;
-		mii.hbmpItem = id[Index].hBmp;
+		mii.hbmpItem = id[Index].hBitmap;
 		SetMenuItemInfo(*pMenu, pMenu->GetMenuItemCount()-1, TRUE, &mii);
 	}
 }
@@ -216,7 +209,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 		m_AllowMultiSelect = (pCookedFiles->m_Context!=LFContextStores);
 #endif
 
-		size_t sz = pCookedFiles->m_ItemCount*m_DataSize;
+		SIZE_T sz = pCookedFiles->m_ItemCount*m_DataSize;
 		m_ItemData = (BYTE*)malloc(sz);
 		m_ItemDataAllocated = pCookedFiles->m_ItemCount;
 		ZeroMemory(m_ItemData, sz);
@@ -1371,6 +1364,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 							if (hIcon)
 								sz.cx = sz.cy = 128;
 						}
+
 						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
 						break;
 					case LFTypeVolume:
@@ -1694,8 +1688,8 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		}
 
 		for (UINT a=0; a<256; a++)
-			if (m_SendToItems[a].hBmp)
-				DeleteObject(m_SendToItems[a].hBmp);
+			if (m_SendToItems[a].hBitmap)
+				DeleteObject(m_SendToItems[a].hBitmap);
 
 		if (idCmd)
 			if (idCmd<0xFF00)

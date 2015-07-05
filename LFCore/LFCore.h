@@ -9,7 +9,6 @@
 #endif
 
 
-//
 // Kernfunktionalität
 //
 
@@ -21,16 +20,11 @@
 #define LFGLV_All                 15
 
 
-
 // liquidFOLDERS initalisieren
 LFCORE_API void __stdcall LFInitialize();
 
-
-
 // Liefert einen String mit Dateianzahl und -größe zurück
-LFCORE_API void __stdcall LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, size_t cCount);
-
-
+LFCORE_API void __stdcall LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount);
 
 // Gibt TRUE zurück, wenn der Explorer Dateiendungen verbirgt
 LFCORE_API BOOL __stdcall LFHideFileExt();
@@ -100,40 +94,40 @@ LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* i);
 
 
 // Konvertiert einen FourCC in eine Zeichenkette
-LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine 32-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFUINTToString(const UINT u, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine 64-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFSizeToString(const INT64 i, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFSizeToString(const INT64 i, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert einen Bruch in eine Zeichenkette
-LFCORE_API void __stdcall LFFractionToString(const LFFraction frac, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFFractionToString(const LFFraction frac, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine Double-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFDoubleToString(const DOUBLE d, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFDoubleToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine Koordinaten-Komponente in eine Zeichenkette
-LFCORE_API void __stdcall LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, size_t cCount, BOOL IsLatitude, BOOL FillZero);
+LFCORE_API void __stdcall LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
 
 // Konvertiert eine Geo-Position in eine Zeichenkette
-LFCORE_API void __stdcall LFGeoCoordinatesToString(const LFGeoCoordinates c, WCHAR* pStr, size_t cCount, BOOL FillZero);
+LFCORE_API void __stdcall LFGeoCoordinatesToString(const LFGeoCoordinates c, WCHAR* pStr, SIZE_T cCount, BOOL FillZero);
 
 // Konvertiert eine Zeit in eine Zeichenkette
-LFCORE_API void __stdcall LFTimeToString(const FILETIME t, WCHAR* pStr, size_t cCount, BOOL IncludeTime=TRUE);
+LFCORE_API void __stdcall LFTimeToString(const FILETIME t, WCHAR* pStr, SIZE_T cCount, BOOL IncludeTime=TRUE);
 
 // Konvertiert eine Zeitdauer in eine Zeichenkette
-LFCORE_API void __stdcall LFDurationToString(UINT d, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine Bitrate in eine Zeichenkette
-LFCORE_API void __stdcall LFBitrateToString(const UINT r, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine Megapixel-Angabe in eine Zeichenkette
-LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert ein Attribut in eine Zeichenkette
-LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, SIZE_T cCount);
 
 // Initalisiert eine LFVariantData-Struktur
 LFCORE_API void __stdcall LFInitVariantData(LFVariantData& v, UINT Attr);
@@ -146,7 +140,7 @@ LFCORE_API void __stdcall LFClearVariantData(LFVariantData& v);
 LFCORE_API BOOL __stdcall LFIsNullVariantData(LFVariantData& v);
 
 // Konvertiert eine LFVariantData-Struktur in eine Zeichenkette
-LFCORE_API void __stdcall LFVariantDataToString(LFVariantData& v, WCHAR* pStr, size_t cCount);
+LFCORE_API void __stdcall LFVariantDataToString(LFVariantData& v, WCHAR* pStr, SIZE_T cCount);
 
 // Erzeugt eine LFVariantData-Struktur aus einer Zeichenkette
 LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& v, WCHAR* pStr);
@@ -162,7 +156,7 @@ LFCORE_API void __stdcall LFGetAttributeVariantDataEx(LFItemDescriptor* i, UINT 
 LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v);
 
 // Entfernt doppelte Eintäge in einem Unicode-Array
-LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, size_t cCount);
+LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 
 
 
@@ -300,7 +294,7 @@ LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID);
 //
 
 // Gibt den physischen Pfad einer Datei zurück
-LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, size_t cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended=FALSE);
+LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, SIZE_T cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended=FALSE);
 
 // Gibt die Daten eines Stores zurück
 LFCORE_API UINT __stdcall LFGetStoreSettings(CHAR* StoreID, LFStoreDescriptor* s);
@@ -351,7 +345,7 @@ LFCORE_API BOOL __stdcall LFDefaultStoreAvailable();
 LFCORE_API BOOL __stdcall LFGetDefaultStore(CHAR* StoreID);
 
 // Gibt den Standardnamen des Default Stores zurück
-LFCORE_API void __stdcall LFGetDefaultStoreName(WCHAR* name, size_t cCount);
+LFCORE_API void __stdcall LFGetDefaultStoreName(WCHAR* name, SIZE_T cCount);
 
 // Gibt die Anzahl aller Stores zurück
 LFCORE_API UINT __stdcall LFGetStoreCount();
@@ -471,9 +465,11 @@ LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFStoreDescriptor* s);
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(CHAR* key);
 
 
-//
+
 // Thumbnails
 //
 
-LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* i);
 LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* i, SIZE sz);
+
+// Skaliert eine Bitmap von 256x256 auf 128x128 (nur 32 Bit)
+LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);

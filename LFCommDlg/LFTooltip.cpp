@@ -259,9 +259,9 @@ void LFTooltip::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	CRect rect(rectClient);
 	rect.DeflateRect(1, 1);

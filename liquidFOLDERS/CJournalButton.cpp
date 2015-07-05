@@ -118,16 +118,8 @@ void CJournalButton::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rectClient.Width();
-	dib.bmiHeader.biHeight = -rectClient.Height();
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
+	HBITMAP hBitmap = CreateTransparentBitmap(rectClient.Width(), rectClient.Height());
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	Graphics g(dc);
 
@@ -142,7 +134,7 @@ void CJournalButton::OnPaint()
 	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBmp);
+	DeleteObject(hBitmap);
 }
 
 void CJournalButton::OnMouseMove(UINT /*nFlags*/, CPoint point)

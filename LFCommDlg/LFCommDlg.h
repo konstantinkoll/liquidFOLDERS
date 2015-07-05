@@ -51,10 +51,12 @@
 #define LFCategoryPadding     2
 
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
+
 INT GetAttributeIconIndex(UINT Attr);
 void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& Caption, CString& Hint);
 BOOL IsCtrlThemed();
+HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed);
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request=-1);
