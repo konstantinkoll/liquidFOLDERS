@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
 #include "LFCore.h"
-#include "PIDL.h"
 #include "Thumbnails.h"
+#include <shellapi.h>
 #include <Thumbcache.h>
 
 

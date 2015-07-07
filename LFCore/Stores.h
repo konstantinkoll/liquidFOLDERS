@@ -33,7 +33,6 @@ UINT CreateStoreDirectories(LFStoreDescriptor* s);
 void GetFileLocation(WCHAR* DatPath, LFCoreAttributes* ca, WCHAR* dst, SIZE_T cCount);
 BOOL FileExists(LPWSTR lpPath);
 UINT PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, WCHAR* Dst, SIZE_T cCount);
-BOOL GetPIDLForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate);
 void SendLFNotifyMessage(UINT Msg);
 void SendShellNotifyMessage(UINT Msg, CHAR* StoreID=NULL, LPITEMIDLIST oldpidl=NULL, LPITEMIDLIST oldpidlDelegate=NULL);
 UINT RunMaintenance(LFStoreDescriptor* s, BOOL scheduled, LFProgress* pProgress=NULL);

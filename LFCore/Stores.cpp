@@ -3,6 +3,7 @@
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "Mutex.h"
+#include "PIDL.h"
 #include "Stores.h"
 #include "StoreCache.h"
 #include <assert.h>
@@ -283,7 +284,7 @@ void SendShellNotifyMessage(UINT Msg, CHAR* StoreID, LPITEMIDLIST oldpidl, LPITE
 {
 	LPITEMIDLIST pidl;
 	LPITEMIDLIST pidlDelegate;
-	if (GetPIDLForStore(StoreID, &pidl, &pidlDelegate))
+	if (GetPIDLsForStore(StoreID, &pidl, &pidlDelegate))
 	{
 		SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidl ? oldpidl : pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
 		CoTaskMemFree(pidl);
@@ -614,7 +615,7 @@ LFCORE_API UINT LFSetStoreAttributes(CHAR* StoreID, WCHAR* name, WCHAR* comment,
 
 	LPITEMIDLIST oldpidl;
 	LPITEMIDLIST oldpidlDelegate;
-	GetPIDLForStore(StoreID, &oldpidl, &oldpidlDelegate);
+	GetPIDLsForStore(StoreID, &oldpidl, &oldpidlDelegate);
 
 	if (!GetMutex(Mutex_Stores))
 	{
