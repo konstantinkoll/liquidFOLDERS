@@ -29,13 +29,11 @@ struct HeapfileHeader
 class CHeapfile
 {
 public:
-	CHeapfile(WCHAR* Path, WCHAR* Filename, UINT _ElementSize, UINT _KeyOffset=0);
+	CHeapfile(WCHAR* Path, BYTE TableID);
 	~CHeapfile();
 
-	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i) = 0;
-	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc) = 0;
+	void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 
-	void GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescriptor* i);
 	void CloseFile();
 	BOOL FindNext(INT& Next, void*& Ptr);
 	BOOL FindKey(CHAR* Key, INT& Next, void*& Ptr);
@@ -47,6 +45,7 @@ public:
 	void Invalidate(CHAR* Key, INT& Next);
 	void Invalidate(LFItemDescriptor* i);
 	UINT GetItemCount();
+	UINT GetElementSize();
 	UINT GetRequiredElementSize();
 	UINT GetRequiredDiscSize();
 	BOOL Compact();
@@ -55,6 +54,7 @@ public:
 	UINT OpenStatus;
 
 protected:
+	BYTE m_TableID;
 	void* Buffer;
 	HeapfileHeader Hdr;
 	UINT RequestedElementSize;
@@ -73,6 +73,8 @@ protected:
 	void ElementToBuffer(INT ID);
 
 private:
+	void GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescriptor* i);
+
 	WCHAR IdxFilename[MAX_PATH];
 	HANDLE hFile;
 };

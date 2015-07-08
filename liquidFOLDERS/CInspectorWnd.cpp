@@ -123,7 +123,7 @@ void CIconHeader::SetPreview(LFItemDescriptor* i, CString Description)
 	strcpy_s(m_FileFormat, LFExtSize, i->CoreAttributes.FileFormat);
 
 	FreeItem();
-	m_pItem = LFAllocItemDescriptor(i);
+	m_pItem = LFCloneItemDescriptor(i);
 }
 
 

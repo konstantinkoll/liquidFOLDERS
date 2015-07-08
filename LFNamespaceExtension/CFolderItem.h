@@ -48,7 +48,7 @@ struct FolderSerialization
 	UINT CategoryID;
 	WCHAR DisplayName[256];
 	WCHAR Description[256];
-	WCHAR Comment[256];
+	WCHAR Comments[256];
 	CHAR StoreID[LFKeySize];
 	CHAR FileID[LFKeySize];
 	UINT Count;

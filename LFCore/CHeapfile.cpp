@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "CHeapfile.h"
-#include "IdxTables.h"
+#include "IndexTables.h"
 #include <assert.h>
 #include <io.h>
 #include <malloc.h>
@@ -31,27 +31,42 @@ void Compress(HANDLE hFile, WCHAR* IdxFilename)
 		}
 }
 
+void ZeroCopy(void* _Dst, const rsize_t _DstSize, void* _Src, const rsize_t _SrcSize)
+{
+	memcpy_s(_Dst, _DstSize, _Src, min(_DstSize, _SrcSize));
+
+	if (_DstSize>_SrcSize)
+	{
+		CHAR* P = (CHAR*)_Dst+_SrcSize;
+		ZeroMemory(P, _DstSize-_SrcSize);
+	}
+}
+
 
 // CHeapFile
 //
 
-CHeapfile::CHeapfile(WCHAR* Path, WCHAR* Filename, UINT _ElementSize, UINT _KeyOffset)
+CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 {
 	assert(sizeof(HeapfileHeader)==512);
-	assert(_ElementSize);
+
 	ZeroMemory(&Hdr, sizeof(HeapfileHeader));
 	Buffer = NULL;
 
 	wcscpy_s(IdxFilename, MAX_PATH, Path);
-	wcscat_s(IdxFilename, MAX_PATH, Filename);
+	wcscat_s(IdxFilename, MAX_PATH, LFIndexTables[TableID].FileName);
 
-	if (_KeyOffset==0)
+	m_TableID = TableID;
+	KeyOffset = (TableID==0) ? offsetof(LFCoreAttributes, FileID) : 0;
+	UINT ElementSize = LFIndexTables[TableID].Size;
+
+	if (KeyOffset==0)
 	{
-		_KeyOffset = _ElementSize;
-		_ElementSize += LFKeySize;
+		KeyOffset = ElementSize;
+		ElementSize += LFKeySize;
 	}
-	KeyOffset = _KeyOffset;
-	RequestedElementSize = _ElementSize;
+
+	RequestedElementSize = ElementSize;
 	ItemCount = 0;
 
 	hFile = CreateFile(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -73,8 +88,8 @@ CHeapfile::CHeapfile(WCHAR* Path, WCHAR* Filename, UINT _ElementSize, UINT _KeyO
 		{
 Create:
 			strcpy_s(Hdr.ID, sizeof(Hdr.ID), HeapSignature);
-			Hdr.ElementSize = _ElementSize;
-			Hdr.Version = CurIdxVersion;
+			Hdr.ElementSize = ElementSize;
+			Hdr.Version = CURIDXVERSION;
 			HeaderNeedsWriteback = TRUE;
 
 			if (!WriteHeader())
@@ -100,18 +115,18 @@ Create:
 				goto Create;
 
 			ItemCount = (UINT)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);
-			OpenStatus = (Hdr.Version<CurIdxVersion) ? HeapMaintenanceRequired : HeapOk;
+			OpenStatus = (Hdr.Version<CURIDXVERSION) ? HeapMaintenanceRequired : HeapOk;
 
 			// Anpassungen für andere Index-Versionen und Tupelgrößen
-			if (Hdr.ElementSize>_ElementSize)
+			if (Hdr.ElementSize>ElementSize)
 			{
-				if (KeyOffset==_ElementSize-LFKeySize)
+				if (KeyOffset==ElementSize-LFKeySize)
 					KeyOffset = Hdr.ElementSize-LFKeySize;
 			}
 			else
-				if (Hdr.ElementSize<_ElementSize)
+				if (Hdr.ElementSize<ElementSize)
 				{
-					if (KeyOffset==_ElementSize-LFKeySize)
+					if (KeyOffset==ElementSize-LFKeySize)
 						KeyOffset = Hdr.ElementSize-LFKeySize;
 
 					OpenStatus = HeapMaintenanceRequired;
@@ -134,7 +149,7 @@ CHeapfile::~CHeapfile()
 		free(Buffer);
 }
 
-void CHeapfile::GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescriptor* i)
+__forceinline void CHeapfile::GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescriptor* i)
 {
 	assert(PtrDst);
 	assert(Attr<LFAttributeCount);
@@ -152,6 +167,24 @@ void CHeapfile::GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescrip
 			CHAR* P = (CHAR*)PtrDst+offset;
 			memcpy(P, i->AttributeValues[Attr], sz);
 		}
+	}
+}
+
+void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
+{
+	assert(i);
+	assert(PtrDst);
+
+	if (m_TableID==IDXTABLE_MASTER)
+	{
+		ZeroCopy(PtrDst, Hdr.ElementSize, &i->CoreAttributes, sizeof(LFCoreAttributes));
+	}
+	else
+	{
+		ZeroMemory(PtrDst, Hdr.ElementSize);
+
+		for (UINT a=0; a<LFIndexTables[m_TableID].cTableEntries; a++)
+			GetAttribute(PtrDst, LFIndexTables[m_TableID].pTableEntries[a].Offset, LFIndexTables[m_TableID].pTableEntries[a].Attr, i);
 	}
 }
 
@@ -232,7 +265,7 @@ BOOL CHeapfile::Writeback()
 	return TRUE;
 }
 
-__forceinline void CHeapfile::ElementToBuffer(INT ID)
+void CHeapfile::ElementToBuffer(INT ID)
 {
 	if (((ID>=FirstInBuffer) && (ID<=LastInBuffer)) || (ID>=ItemCount))
 		return;
@@ -411,7 +444,7 @@ BOOL CHeapfile::Compact()
 	HeapfileHeader NewHdr = Hdr;
 	NewHdr.ElementSize = max(Hdr.ElementSize, RequestedElementSize);
 	NewHdr.NeedsCompaction = FALSE;
-	NewHdr.Version = CurIdxVersion;
+	NewHdr.Version = CURIDXVERSION;
 
 	#define ABORT { CloseHandle(hOutput); DeleteFile(BufFilename); return FALSE; }
 

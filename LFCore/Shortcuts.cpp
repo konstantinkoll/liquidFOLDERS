@@ -130,7 +130,7 @@ LFCORE_API IShellLink* LFGetShortcutForStore(LFStoreDescriptor* s)
 {
 	assert(s);
 
-	LFItemDescriptor* i = LFAllocItemDescriptor(s);
+	LFItemDescriptor* i = LFAllocItemDescriptorEx(s);
 	IShellLink* pShellLink = LFGetShortcutForStore(i);
 	LFFreeItemDescriptor(i);
 

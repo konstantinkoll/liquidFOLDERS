@@ -3,6 +3,5 @@
 #include "LF.h"
 
 
-INT PassesFilterCore(LFCoreAttributes* ca, LFFilter* f);
-BOOL PassesFilterSlaves(LFItemDescriptor* i, LFFilter* f);
-LFSearchResult* QueryDomains(LFFilter* f);
+BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& CheckSearchterm);
+BOOL PassesFilter(LFItemDescriptor* i, LFFilter* pFilter);

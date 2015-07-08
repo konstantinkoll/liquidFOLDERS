@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
-#include "IdxTables.h"
+#include "IndexTables.h"
+#include "LFItemDescriptor.h"
 #include "ShellProperties.h"
 #include <assert.h>
 #include <shlobj.h>
@@ -48,18 +49,18 @@ static const GUID PropertyUnnamed7 =
 	{ 0x276D7BB0, 0x5B34, 0x4FB0, { 0xAA, 0x4B, 0x15, 0x8E, 0xD1, 0x2A, 0x18, 0x09 } };
 
 static const BYTE ContextSlaves[LFLastQueryContext+1] = {
-	IDMaster,							// LFContextAllFiles
-	IDMaster,							// LFContextFavorites
-	IDSlaveAudio,						// LFContextAudio
-	IDSlavePictures,					// LFContextPictures
-	IDSlaveVideos,						// LFContextVideos
-	IDSlaveDocuments,					// LFContextDocuments
-	IDMaster,							// LFContextContacts
-	IDSlaveMessages,					// LFContextMessages
-	IDMaster,							// LFContextEvents
-	IDMaster,							// LFContextNew
-	IDMaster,							// LFContextTrash
-	IDMaster							// LFContextFilters
+	IDXTABLE_MASTER,					// LFContextAllFiles
+	IDXTABLE_MASTER,					// LFContextFavorites
+	IDXTABLE_AUDIO,						// LFContextAudio
+	IDXTABLE_PICTURES,					// LFContextPictures
+	IDXTABLE_VIDEOS,					// LFContextVideos
+	IDXTABLE_DOCUMENTS,					// LFContextDocuments
+	IDXTABLE_MASTER,					// LFContextContacts
+	IDXTABLE_MESSAGES,					// LFContextMessages
+	IDXTABLE_MASTER,					// LFContextEvents
+	IDXTABLE_MASTER,					// LFContextNew
+	IDXTABLE_MASTER,					// LFContextTrash
+	IDXTABLE_MASTER						// LFContextFilters
 };
 
 #include "ContextTable.h"

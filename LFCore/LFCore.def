@@ -5,9 +5,10 @@ LIBRARY      "LFCORE"
 EXPORTS
 	; Explicit exports can go here
 	LFInitialize @1
-	LFCombineFileCountSize @2
-	LFHideFileExt @3
-	LFHideVolumesWithNoMedia @4
+	LFGetMessageIDs @2
+	LFCombineFileCountSize @3
+	LFHideFileExt @4
+	LFHideVolumesWithNoMedia @5
 	
 	LFFourCCToString @100
 	LFUINTToString @101
@@ -32,5 +33,21 @@ EXPORTS
 	LFSetAttributeVariantData @120
 	LFSanitizeUnicodeArray @121
 
-	LFGetThumbnail @200
-	LFQuarter256Bitmap @201
+	LFAllocItemDescriptor @200
+	LFAllocItemDescriptorEx @201
+	LFCloneItemDescriptor @202
+	LFFreeItemDescriptor @203
+
+	LFIATAGetCountryCount @300
+	LFIATAGetAirportCount @301
+	LFIATAGetCountry @302
+	LFIATAGetNextAirport @303
+	LFIATAGetNextAirportByCountry @304
+	LFIATAGetAirportByCode @305
+	
+	LFQuery @400
+	LFQueryEx @401
+	LFQueryStatistics @402
+
+	LFGetThumbnail @500
+	LFQuarter256Bitmap @501

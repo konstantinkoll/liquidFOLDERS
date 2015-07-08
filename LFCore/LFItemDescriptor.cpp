@@ -1,130 +1,26 @@
+
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
-#include "CIndex.h"
+#include "LFVariantData.h"
+#include "IndexTables.h"
 #include "StoreCache.h"
 #include <assert.h>
 #include <malloc.h>
 
 
-extern const INT CoreOffsets[LFLastCoreAttribute+1] = {
-	offsetof(LFCoreAttributes, FileName),
-	-1,
-	offsetof(LFCoreAttributes, FileID),
-	offsetof(LFCoreAttributes, Comment),
-	-1,
-	offsetof(LFCoreAttributes, CreationTime),
-	offsetof(LFCoreAttributes, FileTime),
-	offsetof(LFCoreAttributes, AddTime),
-	offsetof(LFCoreAttributes, DeleteTime),
-	offsetof(LFCoreAttributes, ArchiveTime),
-	offsetof(LFCoreAttributes, FileFormat),
-	-1,
-	offsetof(LFCoreAttributes, FileSize),
-	offsetof(LFCoreAttributes, Flags),
-	offsetof(LFCoreAttributes, URL),
-	offsetof(LFCoreAttributes, Tags),
-	offsetof(LFCoreAttributes, Rating),
-	offsetof(LFCoreAttributes, Priority),
-	offsetof(LFCoreAttributes, LocationName),
-	offsetof(LFCoreAttributes, LocationIATA),
-	offsetof(LFCoreAttributes, LocationGPS)
-};
-
-extern const SIZE_T AttrSizes[LFTypeCount] = {
-	0,							// LFTypeUnicodeString
-	0,							// LFTypeUnicodeArray
-	0,							// LFTypeAnsiString
-	sizeof(DWORD),				// LFTypeFourCC
-	sizeof(BYTE),				// LFTypeRating
-	sizeof(UINT),				// LFTypeUINT
-	sizeof(INT64),				// LFTypeSize
-	sizeof(LFFraction),			// LFTypeFraction
-	sizeof(DOUBLE),				// LFTypeDouble
-	sizeof(UINT),				// LFTypeFlags
-	sizeof(LFGeoCoordinates),	// LFTypeGeoCoordinates
-	sizeof(FILETIME),			// LFTypeTime
-	sizeof(UINT32),				// LFTypeDuration
-	sizeof(UINT),				// LFTypeBitrate,
-	sizeof(DOUBLE)				// LFTypeMegapixel
-};
-
-extern const BYTE AttrTypes[LFAttributeCount] = {
-	LFTypeUnicodeString,		// LFAttrFileName
-	LFTypeAnsiString,			// LFAttrStoreID
-	LFTypeAnsiString,			// LFAttrFileID
-	LFTypeUnicodeString,		// LFAttrComment
-	LFTypeUnicodeString,		// LFAttrDescription
-	LFTypeTime,					// LFAttrCreationTime
-	LFTypeTime,					// LFAttrAddTime
-	LFTypeTime,					// LFAttrFileTime
-	LFTypeTime,					// LFAttrDeleteTime
-	LFTypeTime,					// LFAttrArchiveTime
-	LFTypeAnsiString,			// LFAttrFileFormat
-	LFTypeUINT,					// LFAttrFileCount
-	LFTypeSize,					// LFAttrFileSize
-	LFTypeFlags,				// LFAttrFlags
-	LFTypeAnsiString,			// LFAttrURL
-	LFTypeUnicodeArray,			// LFAttrTags
-	LFTypeRating,				// LFAttrRating
-	LFTypeRating,				// LFAttrPriority
-	LFTypeUnicodeString,		// LFAttrLocationName
-	LFTypeAnsiString,			// LFAttrLocationIATA
-	LFTypeGeoCoordinates,		// LFAttrLocationGPS
-
-	LFTypeUINT,					// LFAttrWidth
-	LFTypeUINT,					// LFAttrHeight
-	LFTypeMegapixel,			// LFAttrDimension
-	LFTypeDouble,				// LFAttrAspectRatio
-	LFTypeFourCC,				// LFAttrVideoCodec
-	LFTypeUnicodeString,		// LFAttrRoll
-
-	LFTypeUnicodeString,		// LFAttrExposure
-	LFTypeFraction,				// LFAttrFocus
-	LFTypeFraction,				// LFAttrAperture
-	LFTypeUnicodeString,		// LFAttrChip
-
-	LFTypeUnicodeString,		// LFAttrAlbum
-	LFTypeUINT,					// LFAttrChannels
-	LFTypeUINT,					// LFAttrSamplerate
-	LFTypeFourCC,				// LFAttrAudioCodec
-
-	LFTypeDuration,				// LFAttrDuration
-	LFTypeBitrate,				// LFAttrBitrate
-
-	LFTypeUnicodeString,		// LFAttrArtist
-	LFTypeUnicodeString,		// LFAttrTitle
-	LFTypeUnicodeString,		// LFAttrCopyright
-	LFTypeAnsiString,			// LFAttrISBN
-	LFTypeAnsiString,			// LFAttrLanguage
-	LFTypeUINT,					// LFAttrPages
-	LFTypeTime,					// LFAttrRecordingTime
-	LFTypeUnicodeString,		// LFAttrRecordingEquipment
-	LFTypeAnsiString,			// LFAttrSignature
-
-	LFTypeAnsiString,			// LFAttrFrom
-	LFTypeAnsiString,			// LFAttrTo
-	LFTypeUnicodeString,		// LFAttrResponsible
-	LFTypeTime,					// LFAttrDueTime
-	LFTypeTime,					// LFAttrDoneTime
-	LFTypeUnicodeString,		// LFAttrCustomer
-	LFTypeUINT					// LFAttrLikeCount
-};
-
 extern HMODULE LFCoreModuleHandle;
 
 
-// Attribute handling
+// Dynamic attribute handling
 //
 
-__forceinline BOOL IsSlaveAttribute(LFItemDescriptor* i, UINT Attr)
+__forceinline BOOL IsStaticAttribute(LFItemDescriptor* i, UINT Attr)
 {
 	assert(i);
+	assert(Attr<LFAttributeCount);
 
-	if (!i->Slave)
-		return FALSE;
-
-	return (i->AttributeValues[Attr]>=(CHAR*)i->Slave) && (i->AttributeValues[Attr]<(CHAR*)i->Slave+_msize(i->Slave));
+	return (i->AttributeValues[Attr]>=(BYTE*)i) && (i->AttributeValues[Attr]<(BYTE*)i+sizeof(LFItemDescriptor));
 }
 
 void FreeAttribute(LFItemDescriptor* i, UINT Attr)
@@ -132,12 +28,12 @@ void FreeAttribute(LFItemDescriptor* i, UINT Attr)
 	assert(i);
 	assert(Attr<LFAttributeCount);
 
-	// Attributwert nur dann freigeben wenn er nicht statischer Teil des LFItemDescriptor ist und auch nicht zum Slave gehört
-	if ((Attr>LFLastCoreAttribute) && (!IsSlaveAttribute(i, Attr)) && (i->AttributeValues[Attr]))
-	{
-		free(i->AttributeValues[Attr]);
-		i->AttributeValues[Attr] = NULL;
-	}
+	// Attribut nur dann freigeben, wenn es nicht im statischer Teil des LFItemDescriptor liegt
+	if ((i->AttributeValues[Attr]) && !IsStaticAttribute(i, Attr))
+		{
+			free(i->AttributeValues[Attr]);
+			i->AttributeValues[Attr] = NULL;
+		}
 }
 
 SIZE_T GetAttributeMaxCharacterCount(UINT Attr)
@@ -150,20 +46,25 @@ SIZE_T GetAttributeMaxCharacterCount(UINT Attr)
 	case LFAttrStoreID:
 	case LFAttrFileID:
 		return LFKeySize-1;
+
 	case LFAttrLanguage:
 		return 2;
+
 	case LFAttrLocationIATA:
 		return 3;
+
 	case LFAttrFileFormat:
 		return LFExtSize-1;
+
 	case LFAttrExposure:
 	case LFAttrChip:
 	case LFAttrISBN:
 	case LFAttrSignature:
 		return 31;
-	}
 
-	return 255;
+	default:
+		return 255;
+	}
 }
 
 __forceinline SIZE_T GetAttributeSize(UINT Attr, const void* v)
@@ -176,8 +77,10 @@ __forceinline SIZE_T GetAttributeSize(UINT Attr, const void* v)
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
 		return (min(GetAttributeMaxCharacterCount(Attr), wcslen((WCHAR*)v))+1)*sizeof(WCHAR);
+
 	case LFTypeAnsiString:
 		return min(GetAttributeMaxCharacterCount(Attr), strlen((CHAR*)v))+1;
+
 	default:
 		return AttrSizes[AttrTypes[Attr]];
 	}
@@ -187,33 +90,33 @@ void SetAttribute(LFItemDescriptor* i, UINT Attr, const void* v)
 {
 	assert(i);
 	assert(Attr<LFAttributeCount);
+	assert(AttrTypes[Attr]<LFTypeCount);
 	assert(v);
 
 	// Altes Attribut freigeben
 	FreeAttribute(i, Attr);
 
 	// Größe ermitteln
-	SIZE_T sz = GetAttributeSize(Attr, v);
+	SIZE_T Size = GetAttributeSize(Attr, v);
 
 	// Ggf. Speicher reservieren
 	if (!i->AttributeValues[Attr])
-	{
-		i->AttributeValues[Attr] = malloc(sz);
-		assert(i->AttributeValues[Attr]);
-	}
+		i->AttributeValues[Attr] = malloc(Size);
 
 	// Kopieren
 	switch (AttrTypes[Attr])
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		wcsncpy_s((WCHAR*)i->AttributeValues[Attr], sz/sizeof(WCHAR), (WCHAR*)v, (sz/sizeof(WCHAR))-1);
+		wcscpy_s((WCHAR*)i->AttributeValues[Attr], Size/sizeof(WCHAR), (WCHAR*)v);
 		break;
+
 	case LFTypeAnsiString:
-		strncpy_s((CHAR*)i->AttributeValues[Attr], sz, (CHAR*)v, sz-1);
+		strcpy_s((CHAR*)i->AttributeValues[Attr], Size/sizeof(CHAR), (CHAR*)v);
 		break;
+
 	default:
-		memcpy(i->AttributeValues[Attr], v, sz);
+		memcpy(i->AttributeValues[Attr], v, Size);
 	}
 }
 
@@ -221,135 +124,155 @@ void SetAttribute(LFItemDescriptor* i, UINT Attr, const void* v)
 // LFItemDescriptor
 //
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes)
 {
-	LFItemDescriptor* d = new LFItemDescriptor;
-	ZeroMemory(d, sizeof(LFItemDescriptor));
-	d->FirstAggregate = d->LastAggregate = -1;
-	d->RefCount = 1;
+	LFItemDescriptor* i = new LFItemDescriptor;
+	ZeroMemory(i, sizeof(LFItemDescriptor)-LFMaxSlaveSize-(pCoreAttributes ? sizeof(LFCoreAttributes) : 0));
+
+	if (pCoreAttributes)
+		i->CoreAttributes = *pCoreAttributes;
+
+	i->FirstAggregate = i->LastAggregate = -1;
+	i->RefCount = 1;
+	i->Dimension = i->AspectRatio = 0.0;
 
 	// Zeiger auf statische Attributwerte initalisieren
-	for (UINT a=0; a<=LFLastCoreAttribute; a++)
-		d->AttributeValues[a] = (CHAR*)&d->CoreAttributes + CoreOffsets[a];
+	for (UINT a=0; a<LFIndexTables[IDXTABLE_MASTER].cTableEntries; a++)
+		i->AttributeValues[LFCoreAttributeEntries[a].Attr] = (BYTE*)&i->CoreAttributes+LFCoreAttributeEntries[a].Offset;
 
-	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
-	d->AttributeValues[LFAttrDescription] = &d->Description[0];
-	d->AttributeValues[LFAttrFileCount] = &d->AggregateCount;
+	i->AttributeValues[LFAttrStoreID] = &i->StoreID;
+	i->AttributeValues[LFAttrDescription] = &i->Description[0];
+	i->AttributeValues[LFAttrFileCount] = &i->AggregateCount;
 
-	// Ggf. Werte kopieren
-	if (i)
-	{
-		d->CategoryID = i->CategoryID;
-		d->CoreAttributes = i->CoreAttributes;
-		d->DeleteFlag = i->DeleteFlag;
-		d->AggregateCount = i->AggregateCount;
-		d->FirstAggregate = i->FirstAggregate;
-		d->LastAggregate = i->LastAggregate;
-		strcpy_s(d->StoreID, LFKeySize, i->StoreID);
-		wcscpy_s(d->Description, 256, i->Description);
-		d->IconID = i->IconID;
-		d->Type = i->Type;
-
-		if (i->NextFilter)
-			d->NextFilter = LFAllocFilter(i->NextFilter);
-
-		if (i->Slave)
-		{
-			SIZE_T sz = _msize(i->Slave);
-			d->Slave = malloc(sz);
-			memcpy(d->Slave, i->Slave, sz);
-		}
-
-		for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
-			if (i->AttributeValues[a])
-				if (IsSlaveAttribute(i, a))
-				{
-					INT64 ofs = (CHAR*)i->AttributeValues[a]-(CHAR*)i->Slave;
-					d->AttributeValues[a] = (CHAR*)d->Slave+ofs;
-				}
-				else
-				{
-					SIZE_T sz = _msize(i->AttributeValues[a]);
-					d->AttributeValues[a] = malloc(sz);
-					memcpy(d->AttributeValues[a], i->AttributeValues[a], sz);
-				}
-	}
-
-	return d;
+	return i;
 }
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* Attr)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor)
 {
-	assert(Attr);
+	assert(pStoreDescriptor);
 
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-	d->CoreAttributes = *Attr;
+	const BOOL IsMounted = LFIsStoreMounted(pStoreDescriptor);
 
-	return d;
-}
+	LFItemDescriptor* i = LFAllocItemDescriptor();
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
-{
-	assert(s);
+	i->Type = LFTypeStore | pStoreDescriptor->Source;
 
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-	BOOL IsMounted = LFIsStoreMounted(s);
-
-	d->Type |= LFTypeStore | s->Source;
-	if (strcmp(s->StoreID, DefaultStore)==0)
-		d->Type |= LFTypeDefault;
+	if (strcmp(pStoreDescriptor->StoreID, DefaultStore)==0)
+		i->Type |= LFTypeDefault;
 	if (!IsMounted)
-		d->Type |= LFTypeNotMounted | LFTypeGhosted;
-	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		d->Type |= LFTypeShortcutAllowed;
+		i->Type |= LFTypeNotMounted | LFTypeGhosted;
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+		i->Type |= LFTypeShortcutAllowed;
 
-	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if (wcscmp(s->LastSeen, L"")!=0)
+	i->CategoryID = (pStoreDescriptor->Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
+	i->IconID = LFGetStoreIcon(pStoreDescriptor);
+
+	// Description
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if (wcscmp(pStoreDescriptor->LastSeen, L"")!=0)
 		{
-			WCHAR ls[256];
-			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SEENON : IDS_LASTSEEN, ls, 256);
+			WCHAR LastSeen[256];
+			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SEENON : IDS_LASTSEEN, LastSeen, 256);
 
-			WCHAR descr[256];
-			wsprintf(descr, ls, s->LastSeen);
-			SetAttribute(d, LFAttrDescription, descr);
+			wsprintf(i->Description, LastSeen, pStoreDescriptor->LastSeen);
 		}
 
-	d->CategoryID = (s->Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
-	d->IconID = LFGetStoreIcon(s);
+	// Standard-Attribute kopieren
+	wcscpy_s(i->CoreAttributes.FileName, 256, pStoreDescriptor->StoreName);
+	wcscpy_s(i->CoreAttributes.Comments, 256, pStoreDescriptor->StoreComment);
+	strcpy_s(i->StoreID, LFKeySize, pStoreDescriptor->StoreID);
 
-	SetAttribute(d, LFAttrFileName, s->StoreName);
-	SetAttribute(d, LFAttrComments, s->StoreComment);
-	SetAttribute(d, LFAttrStoreID, s->StoreID);
-	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);
-	SetAttribute(d, LFAttrFileTime, &s->FileTime);
-	SetAttribute(d, LFAttrFileCount, &s->FileCount[LFContextAllFiles]);
-	SetAttribute(d, LFAttrFileSize, &s->FileSize[LFContextAllFiles]);
+	i->CoreAttributes.CreationTime = pStoreDescriptor->CreationTime;
+	i->CoreAttributes.FileTime = pStoreDescriptor->FileTime;
+	i->AggregateCount = pStoreDescriptor->FileCount[LFContextAllFiles];
+	i->CoreAttributes.FileSize = pStoreDescriptor->FileSize[LFContextAllFiles];
 
-	return d;
+	return i;
+}
+
+LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor)
+{
+	if (!pItemDescriptor)
+		return LFAllocItemDescriptor();
+
+	LFItemDescriptor* i = new LFItemDescriptor();
+	memcpy(i, pItemDescriptor, sizeof(LFItemDescriptor));
+
+	if (pItemDescriptor->NextFilter)
+		i->NextFilter = LFAllocFilter(pItemDescriptor->NextFilter);
+
+	// Zeiger anpassen
+	for (UINT a=0; a<LFAttributeCount; a++)
+		if (i->AttributeValues[a])
+			if (IsStaticAttribute(pItemDescriptor, a))
+			{
+				UINT_PTR Offset = (BYTE*)pItemDescriptor->AttributeValues[a]-(BYTE*)pItemDescriptor;
+				i->AttributeValues[a] = (BYTE*)i+Offset;
+			}
+			else
+			{
+				SIZE_T Size = _msize(pItemDescriptor->AttributeValues[a]);
+				memcpy(i->AttributeValues[a]=malloc(Size), pItemDescriptor->AttributeValues[a], Size);
+			}
+	
+
+	return i;
 }
 
 LFItemDescriptor* AllocFolderDescriptor()
 {
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-	d->IconID = IDI_FLD_DEFAULT;
-	d->Type = LFTypeFolder;
+	LFItemDescriptor* i = LFAllocItemDescriptor();
 
-	return d;
+	i->Type = LFTypeFolder;
+	i->IconID = IDI_FLD_DEFAULT;
+
+	return i;
 }
 
 LFCORE_API void LFFreeItemDescriptor(LFItemDescriptor* i)
 {
-	if (i)
+	assert(i);
+
+	if (--i->RefCount==0)
 	{
-		i->RefCount--;
-		if (!i->RefCount)
+		LFFreeFilter(i->NextFilter);
+
+		for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
+			FreeAttribute(i, a);
+
+		delete i;
+	}
+}
+
+void AttachSlave(LFItemDescriptor* i, BYTE SlaveID, void* pSlaveData)
+{
+	assert(SlaveID>0);
+	assert(SlaveID<IDXTABLECOUNT);
+	assert(pSlaveData);
+	assert(i);
+	assert(i->CoreAttributes.SlaveID==SlaveID);
+	assert(LFIndexTables[SlaveID].Size<=LFMaxSlaveSize);
+
+	const LFIdxTable* pTable = &LFIndexTables[SlaveID];
+
+	memcpy(i->SlaveData, pSlaveData, pTable->Size);
+
+	for (UINT a=0; a<pTable->cTableEntries; a++)
+		i->AttributeValues[pTable->pTableEntries[a].Attr] = i->SlaveData + pTable->pTableEntries[a].Offset;
+
+	// LFAttrDimension und LFAttrAspectRatio werden dynamisch berechnet
+	if ((i->AttributeValues[LFAttrWidth]) && (i->AttributeValues[LFAttrHeight]))
+	{
+		const UINT Width = *((UINT*)i->AttributeValues[LFAttrWidth]);
+		const UINT Height = *((UINT*)i->AttributeValues[LFAttrHeight]);
+
+		if ((Width) && (Height))
 		{
-			LFFreeFilter(i->NextFilter);
-			for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
-				FreeAttribute(i, a);
-			if (i->Slave)
-				free(i->Slave);
-			delete i;
+			i->Dimension = ((DOUBLE)Width*Height)/((DOUBLE)1000000);
+			i->AttributeValues[LFAttrDimension] = &i->Dimension;
+
+			i->AspectRatio = ((DOUBLE)Width)/((DOUBLE)Height);
+			i->AttributeValues[LFAttrAspectRatio] = &i->AspectRatio;
 		}
 	}
 }

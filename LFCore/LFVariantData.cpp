@@ -10,7 +10,85 @@
 #include <shlwapi.h>
 
 
-extern const BYTE AttrTypes[];
+extern const BYTE AttrTypes[LFAttributeCount] = {
+	LFTypeUnicodeString,		// LFAttrFileName
+	LFTypeAnsiString,			// LFAttrStoreID
+	LFTypeAnsiString,			// LFAttrFileID
+	LFTypeUnicodeString,		// LFAttrComment
+	LFTypeUnicodeString,		// LFAttrDescription
+	LFTypeTime,					// LFAttrCreationTime
+	LFTypeTime,					// LFAttrAddTime
+	LFTypeTime,					// LFAttrFileTime
+	LFTypeTime,					// LFAttrDeleteTime
+	LFTypeTime,					// LFAttrArchiveTime
+	LFTypeAnsiString,			// LFAttrFileFormat
+	LFTypeUINT,					// LFAttrFileCount
+	LFTypeSize,					// LFAttrFileSize
+	LFTypeFlags,				// LFAttrFlags
+	LFTypeAnsiString,			// LFAttrURL
+	LFTypeUnicodeArray,			// LFAttrTags
+	LFTypeRating,				// LFAttrRating
+	LFTypeRating,				// LFAttrPriority
+	LFTypeUnicodeString,		// LFAttrLocationName
+	LFTypeAnsiString,			// LFAttrLocationIATA
+	LFTypeGeoCoordinates,		// LFAttrLocationGPS
+
+	LFTypeUINT,					// LFAttrWidth
+	LFTypeUINT,					// LFAttrHeight
+	LFTypeMegapixel,			// LFAttrDimension
+	LFTypeDouble,				// LFAttrAspectRatio
+	LFTypeFourCC,				// LFAttrVideoCodec
+	LFTypeUnicodeString,		// LFAttrRoll
+
+	LFTypeUnicodeString,		// LFAttrExposure
+	LFTypeFraction,				// LFAttrFocus
+	LFTypeFraction,				// LFAttrAperture
+	LFTypeUnicodeString,		// LFAttrChip
+
+	LFTypeUnicodeString,		// LFAttrAlbum
+	LFTypeUINT,					// LFAttrChannels
+	LFTypeUINT,					// LFAttrSamplerate
+	LFTypeFourCC,				// LFAttrAudioCodec
+
+	LFTypeDuration,				// LFAttrDuration
+	LFTypeBitrate,				// LFAttrBitrate
+
+	LFTypeUnicodeString,		// LFAttrArtist
+	LFTypeUnicodeString,		// LFAttrTitle
+	LFTypeUnicodeString,		// LFAttrCopyright
+	LFTypeAnsiString,			// LFAttrISBN
+	LFTypeAnsiString,			// LFAttrLanguage
+	LFTypeUINT,					// LFAttrPages
+	LFTypeTime,					// LFAttrRecordingTime
+	LFTypeUnicodeString,		// LFAttrRecordingEquipment
+	LFTypeAnsiString,			// LFAttrSignature
+
+	LFTypeAnsiString,			// LFAttrFrom
+	LFTypeAnsiString,			// LFAttrTo
+	LFTypeUnicodeString,		// LFAttrResponsible
+	LFTypeTime,					// LFAttrDueTime
+	LFTypeTime,					// LFAttrDoneTime
+	LFTypeUnicodeString,		// LFAttrCustomer
+	LFTypeUINT					// LFAttrLikeCount
+};
+
+extern const SIZE_T AttrSizes[LFTypeCount] = {
+	0,							// LFTypeUnicodeString
+	0,							// LFTypeUnicodeArray
+	0,							// LFTypeAnsiString
+	sizeof(DWORD),				// LFTypeFourCC
+	sizeof(BYTE),				// LFTypeRating
+	sizeof(UINT),				// LFTypeUINT
+	sizeof(INT64),				// LFTypeSize
+	sizeof(LFFraction),			// LFTypeFraction
+	sizeof(DOUBLE),				// LFTypeDouble
+	sizeof(UINT),				// LFTypeFlags
+	sizeof(LFGeoCoordinates),	// LFTypeGeoCoordinates
+	sizeof(FILETIME),			// LFTypeTime
+	sizeof(UINT32),				// LFTypeDuration
+	sizeof(UINT),				// LFTypeBitrate,
+	sizeof(DOUBLE)				// LFTypeMegapixel
+};
 
 
 // Interne Methoden
@@ -32,7 +110,7 @@ __forceinline DOUBLE GetSeconds(DOUBLE c)
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
-BOOL IsNullValue(UINT Type, void* v)
+BOOL IsNullValue(UINT Type, const void* v)
 {
 	if (!v)
 		return TRUE;
@@ -75,7 +153,7 @@ BOOL IsNullValue(UINT Type, void* v)
 	return FALSE;
 }
 
-INT CompareValues(UINT Type, void* v1, void* v2, BOOL CaseSensitive)
+INT CompareValues(UINT Type, const void* v1, const void* v2, BOOL CaseSensitive)
 {
 	assert(Type<LFTypeCount);
 	assert(v1);
@@ -131,7 +209,7 @@ INT CompareValues(UINT Type, void* v1, void* v2, BOOL CaseSensitive)
 	return 0;
 }
 
-void ToString(void* v, UINT Type, WCHAR* pStr, SIZE_T cCount)
+void ToString(const void* v, UINT Type, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(Type<LFTypeCount);
 	assert(pStr);
@@ -186,7 +264,11 @@ void ToString(void* v, UINT Type, WCHAR* pStr, SIZE_T cCount)
 			return;
 
 		case LFTypeFlags:
-			if (cCount>=5)
+			if (cCount<5)
+			{
+				*pStr = '\0';
+			}
+			else
 			{
 				pStr[0] = (*((UINT*)v) & LFFlagLink) ? 'L' : '-';
 				pStr[1] = (*((UINT*)v) & LFFlagNew) ? 'N' : '-';
@@ -770,7 +852,21 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v)
 		assert(v.Type==AttrTypes[v.Attr]);
 		assert(v.Type<LFTypeCount);
 
-		memcpy(&v.Value, i->AttributeValues[v.Attr], GetAttributeSize(v.Attr, i->AttributeValues[v.Attr]));
+		switch (AttrTypes[v.Attr])
+		{
+		case LFTypeUnicodeString:
+		case LFTypeUnicodeArray:
+			wcscpy_s(v.UnicodeString, 256, (WCHAR*)i->AttributeValues[v.Attr]);
+			break;
+
+		case LFTypeAnsiString:
+			strcpy_s(v.AnsiString, 256, (CHAR*)i->AttributeValues[v.Attr]);
+			break;
+
+		default:
+			memcpy(&v.Value, i->AttributeValues[v.Attr], AttrSizes[AttrTypes[v.Attr]]);
+		}
+
 		v.IsNull = FALSE;
 	}
 	else

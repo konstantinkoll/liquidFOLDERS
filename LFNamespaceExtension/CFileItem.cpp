@@ -136,7 +136,7 @@ CTime CFileItem::GetThumbnailDateTimeStamp()
 
 void CFileItem::GetInfoTip(CString& infotip)
 {
-	infotip = m_pItem->CoreAttributes.Comment;
+	infotip = m_pItem->CoreAttributes.Comments;
 }
 
 
@@ -321,8 +321,8 @@ INT CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 		str2 = file2->m_pItem->CoreAttributes.FileID;
 		break;
 	case LFAttrComments:
-		str1 = m_pItem->CoreAttributes.Comment;
-		str2 = file2->m_pItem->CoreAttributes.Comment;
+		str1 = m_pItem->CoreAttributes.Comments;
+		str2 = file2->m_pItem->CoreAttributes.Comments;
 		break;
 	case LFAttrCreationTime:
 		ret = CompareFileTime(&m_pItem->CoreAttributes.CreationTime, &file2->m_pItem->CoreAttributes.CreationTime);
@@ -464,7 +464,7 @@ INT CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 	indices[8] = LFAttrLanguage;
 	indices[9] = LFAttrWidth;
 	indices[10] = LFAttrHeight;
-	indices[11] = LFAttrRecordingEquipment;
+	indices[11] = LFAttrEquipment;
 	indices[12] = LFAttrBitrate;
 	indices[13] = LFAttrCreationTime;
 	indices[14] = LFAttrFileTime;

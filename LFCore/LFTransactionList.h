@@ -26,7 +26,6 @@ public:
 	void Reset();
 	void SetError(CHAR* key, UINT error, LFProgress* pProgress=NULL);
 	void SetError(UINT idx, UINT Result, LFProgress* pProgress=NULL);
-	LPITEMIDLIST DetachPIDL(UINT idx);
 	HGLOBAL CreateDropFiles();
 	HGLOBAL CreateLiquidFiles();
 

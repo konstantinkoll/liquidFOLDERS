@@ -108,7 +108,7 @@ void CStorePanel::SetStore(CHAR* StoreID)
 	{
 		LFStoreDescriptor store;
 		if (LFGetStoreSettings(StoreID, &store)==LFOk)
-			p_Item = LFAllocItemDescriptor(&store);
+			p_Item = LFAllocItemDescriptorEx(&store);
 	}
 
 	Invalidate();
@@ -166,7 +166,7 @@ void CStorePanel::OnPaint()
 		INT cy = dc.GetTextExtent(_T("Wy")).cy;
 
 		INT rows = 2;
-		if (p_Item->CoreAttributes.Comment[0]!=L'\0')
+		if (p_Item->CoreAttributes.Comments[0]!=L'\0')
 			rows++;
 		if (p_Item->Description[0]!=L'\0')
 			rows++;
@@ -176,9 +176,9 @@ void CStorePanel::OnPaint()
 
 		dc.DrawText(p_Item->CoreAttributes.FileName, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 		rectText.OffsetRect(0, cy);
-		if (p_Item->CoreAttributes.Comment[0]!=L'\0')
+		if (p_Item->CoreAttributes.Comments[0]!=L'\0')
 		{
-			dc.DrawText(p_Item->CoreAttributes.Comment, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
+			dc.DrawText(p_Item->CoreAttributes.Comments, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 			rectText.OffsetRect(0, cy);
 		}
 		if (p_Item->Description[0]!=L'\0')

@@ -81,7 +81,9 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	LFErrorBox(Result, pWnd->GetSafeHwnd());
 
 	LFFreeFileImportList(wp.FileImportList);
-	LFFreeItemDescriptor(wp.Template);
+
+	if (wp.Template)
+		LFFreeItemDescriptor(wp.Template);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);

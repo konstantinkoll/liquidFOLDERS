@@ -21,14 +21,13 @@
 
 
 HMODULE LFCoreModuleHandle;
-LFMessageIDs LFMessages;
 OSVERSIONINFO osInfo;
-extern const BYTE AttrTypes[];
 extern LFShellProperty AttrProperties[];
 
 
 #pragma data_seg(".shared")
 
+LFMessageIDs LFMessages;
 UINT VolumeTypes[26] = { DRIVE_UNKNOWN };
 
 #pragma data_seg()
@@ -52,6 +51,11 @@ LFCORE_API void LFInitialize()
 	InitAirportDatabase();
 	InitStoreCache();
 	InitWatchdog();
+}
+
+LFCORE_API LFMessageIDs* LFGetMessageIDs()
+{
+	return &LFMessages;
 }
 
 
@@ -275,11 +279,6 @@ LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 	return VolumesOnSystem;
 }
 
-LFCORE_API LFMessageIDs* LFGetMessageIDs()
-{
-	return &LFMessages;
-}
-
 LFCORE_API void LFCreateSendTo(BOOL force)
 {
 	HKEY k;
@@ -377,7 +376,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 	}
 
 	// Recommended width
-	const UINT rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
+	static const UINT rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
 	Attr.RecommendedWidth = (ID==LFAttrComments) ? 350 : rWidths[Attr.Type];
 
 	// Category
@@ -425,7 +424,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 	case LFAttrDuration:
 	case LFAttrBitrate:
 	case LFAttrPages:
-	case LFAttrRecordingEquipment:
+	case LFAttrEquipment:
 	case LFAttrFrom:
 	case LFAttrTo:
 	case LFAttrLikeCount:
@@ -570,9 +569,9 @@ LFCORE_API LFFilterCondition* LFAllocFilterConditionEx(BYTE Compare, UINT Attr, 
 }
 
 
-LFCORE_API LFSearchResult* LFAllocSearchResult(INT ctx, LFSearchResult* Result)
+LFCORE_API LFSearchResult* LFAllocSearchResult(INT ctx)
 {
-	return Result ? new LFSearchResult(Result) : new LFSearchResult(ctx);
+	return new LFSearchResult(ctx);
 }
 
 LFCORE_API void LFFreeSearchResult(LFSearchResult* Result)
@@ -583,11 +582,6 @@ LFCORE_API void LFFreeSearchResult(LFSearchResult* Result)
 LFCORE_API BOOL LFAddItemDescriptor(LFSearchResult* Result, LFItemDescriptor* i)
 {
 	return Result->AddItemDescriptor(i);
-}
-
-LFCORE_API void LFRemoveItemDescriptor(LFSearchResult* Result, UINT idx)
-{
-	Result->RemoveItemDescriptor(idx);
 }
 
 LFCORE_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* Result)
@@ -728,11 +722,6 @@ LFCORE_API BOOL LFAddImportPath(LFFileImportList* il, WCHAR* path)
 }
 
 
-LFCORE_API LFMaintenanceList* LFAllocMaintenanceList()
-{
-	return new LFMaintenanceList();
-}
-
 LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
 {
 	delete ml;
@@ -752,11 +741,6 @@ LFCORE_API void LFFreeTransactionList(LFTransactionList* tl)
 LFCORE_API BOOL LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData)
 {
 	return tl->AddItemDescriptor(i, UserData);
-}
-
-LFCORE_API LPITEMIDLIST LFDetachPIDL(LFTransactionList* tl, UINT idx)
-{
-	return tl->DetachPIDL(idx);
 }
 
 LFCORE_API HGLOBAL LFCreateDropFiles(LFTransactionList* tl)

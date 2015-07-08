@@ -90,12 +90,13 @@ BOOL LFEditFilterDlg::OnInitDialog()
 	{
 		m_wndSearchterm.SetWindowText(p_Filter->Searchterm);
 
-		LFFilterCondition* c = p_Filter->ConditionList;
-		while (c)
+		LFFilterCondition* pFilterCondition = p_Filter->ConditionList;
+		while (pFilterCondition)
 		{
-			m_Conditions.AddItem(*c);
-			m_wndList.InsertItem(c);
-			c = c->Next;
+			m_Conditions.AddItem(*pFilterCondition);
+			m_wndList.InsertItem(pFilterCondition);
+
+			pFilterCondition = pFilterCondition->Next;
 		}
 	}
 
@@ -140,6 +141,7 @@ void LFEditFilterDlg::OnEditCondition()
 	INT Index = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
 	if (Index!=-1)
 	{
+		CString x; x.Format(L"%d",Index); MessageBox(x);
 		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions.m_Items[Index]);
 		if (dlg.DoModal()==IDOK)
 		{

@@ -445,7 +445,7 @@ LFCORE_API UINT LFCreateStore(LFStoreDescriptor* s)
 	CreateNewStoreID(s->StoreID);
 
 	// Index-Version
-	s->IndexVersion = CurIdxVersion;
+	s->IndexVersion = CURIDXVERSION;
 
 	// Store speichern
 	UINT Result = UpdateStore(s);
@@ -802,7 +802,7 @@ UINT RunMaintenance(LFStoreDescriptor* s, BOOL Scheduled, LFProgress* pProgress)
 
 	// Index-Version aktualisieren
 	if (Repaired)
-		s->IndexVersion = CurIdxVersion;
+		s->IndexVersion = CURIDXVERSION;
 
 	// Index duplizieren
 	if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid) && LFIsStoreMounted(s))
@@ -839,7 +839,7 @@ UINT RunMaintenance(LFStoreDescriptor* s, BOOL Scheduled, LFProgress* pProgress)
 
 LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 {
-	LFMaintenanceList* ml = LFAllocMaintenanceList();
+	LFMaintenanceList* ml = new LFMaintenanceList();
 
 	if (!GetMutex(Mutex_Stores))
 	{

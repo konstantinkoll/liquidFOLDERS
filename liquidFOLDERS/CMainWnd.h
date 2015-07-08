@@ -39,7 +39,7 @@ public:
 	BOOL CreateClipboard();
 	BOOL CreateRoot();
 	BOOL CreateStore(CHAR* RootStore);
-	BOOL CreateFilter(LFFilter* f);
+	BOOL CreateFilter(LFFilter* pFilter);
 	BOOL CreateFilter(WCHAR* FileName);
 	BOOL AddClipItem(LFItemDescriptor* i);
 

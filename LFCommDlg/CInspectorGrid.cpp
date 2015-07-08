@@ -1804,7 +1804,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	UINT Part;
 	INT Item = HitTest(point, &Part);
@@ -1818,10 +1818,17 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		if ((Item==m_SelectedItem) && (Item!=-1))
 			if (Part==PARTRESET)
 			{
-				CString Caption((LPCSTR)IDS_DELETEPROPERTY_CAPTION);
-				CString msg((LPCSTR)IDS_DELETEPROPERTY_MSG);
+				BOOL DoReset = (nFlags & MK_CONTROL);
 
-				if (MessageBox(msg, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES)
+				if (!DoReset)
+				{
+					CString Caption((LPCSTR)IDS_DELETEPROPERTY_CAPTION);
+					CString Message((LPCSTR)IDS_DELETEPROPERTY_MSG);
+
+					DoReset = (MessageBox(Message, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
+				}
+
+				if (DoReset)
 					ResetProperty(Item);
 			}
 			else

@@ -229,7 +229,7 @@ struct LFItemCategoryDescriptor
 #define LFAttrLanguage                 41
 #define LFAttrPages                    42
 #define LFAttrRecordingTime            43
-#define LFAttrRecordingEquipment       44
+#define LFAttrEquipment                44
 #define LFAttrSignature                45
 
 #define LFAttrFrom                     46
@@ -428,14 +428,14 @@ struct LFFilter
 };
 
 
-// Core attribute structure
+// Attribute structures
 
 struct LFCoreAttributes
 {
 	// Public
 	WCHAR FileName[256];
 	CHAR FileID[LFKeySize];
-	WCHAR Comment[256];
+	WCHAR Comments[256];
 	FILETIME CreationTime;
 	FILETIME AddTime;
 	FILETIME FileTime;
@@ -445,7 +445,7 @@ struct LFCoreAttributes
 	INT64 FileSize;
 	UINT Flags;
 	CHAR URL[256];
-	WCHAR Tags[256];
+	WCHAR Hashtags[256];
 	BYTE Rating;
 	BYTE Priority;
 	WCHAR LocationName[256];
@@ -458,7 +458,7 @@ struct LFCoreAttributes
 };
 
 
-// Souces
+// Sources
 
 #define LFSourceCount              13
 
@@ -497,25 +497,35 @@ struct LFCoreAttributes
 #define LFFlagMissing              0x0008
 #define LFFlagArchive              0x0010
 
+#define LFMaxSlaveSize             3236			// Check if new attributes are attached
+
 struct LFItemDescriptor
 {
-	LFFilter* NextFilter;
+	// Basic
+	UINT Type;
 	UINT CategoryID;
 	UINT IconID;
-	UINT Type;
-
-	LFCoreAttributes CoreAttributes;
-	CHAR StoreID[LFKeySize];
-	WCHAR Description[256];
-	void* AttributeValues[LFAttributeCount];
+	LFFilter* NextFilter;
 
 	// Internal use only
 	INT FirstAggregate;
 	INT LastAggregate;
 	UINT AggregateCount;
-	BOOL DeleteFlag;
 	UINT RefCount;
-	void* Slave;
+	BOOL DeleteFlag;
+
+	// Volatile attributes
+	CHAR StoreID[LFKeySize];
+	WCHAR Description[256];
+	DOUBLE Dimension;
+	DOUBLE AspectRatio;
+
+	// Pointer to attribute values
+	void* AttributeValues[LFAttributeCount];
+
+	// Must be last in struct in this order, as zero-filling depends on it
+	LFCoreAttributes CoreAttributes;
+	BYTE SlaveData[LFMaxSlaveSize];
 };
 
 

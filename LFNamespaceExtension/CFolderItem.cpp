@@ -124,7 +124,7 @@ CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 	Attrs.CategoryID = i->CategoryID;
 	wcscpy_s(Attrs.DisplayName, 256, i->CoreAttributes.FileName);
 	wcscpy_s(Attrs.Description, 256, i->Description);
-	wcscpy_s(Attrs.Comment, 256, i->CoreAttributes.Comment);
+	wcscpy_s(Attrs.Comments, 256, i->CoreAttributes.Comments);
 	strcpy_s(Attrs.StoreID, LFKeySize, i->NextFilter ? i->NextFilter->StoreID : i->StoreID);
 	strcpy_s(Attrs.FileID, LFKeySize, i->CoreAttributes.FileID);
 	Attrs.Count = i->AggregateCount;
@@ -319,7 +319,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_NAMEMASK));
 		wcscpy_s(d.DisplayName, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
 		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_COMMENTMASK));
-		wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
+		wcscpy_s(d.Comments, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
 		LFCombineFileCountSize(NullCount, NullSize, d.Description, 256);
 
 		e.children->AddTail(new CFolderItem(d));
@@ -360,7 +360,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				d.Type = LFTypeFolder;
 				d.CategoryID = LFAttrCategoryCount;
 				ENSURE(LoadString(AfxGetResourceHandle(), IDS_ALLFILES, d.DisplayName, 256));
-				ENSURE(LoadString(AfxGetResourceHandle(), IDS_ALLFILESCOMMENT, d.Comment, 256));
+				ENSURE(LoadString(AfxGetResourceHandle(), IDS_ALLFILESCOMMENT, d.Comments, 256));
 				strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 				strcpy_s(d.FileID, LFKeySize, "ALL");
 
@@ -400,7 +400,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					case LFAttrTitle:
 					case LFAttrCopyright:
 					case LFAttrRecordingTime:
-					case LFAttrRecordingEquipment:
+					case LFAttrEquipment:
 					case LFAttrResponsible:
 					case LFAttrDueTime:
 					case LFAttrDoneTime:
@@ -414,7 +414,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 							d.Type = LFTypeFolder;
 							d.CategoryID = theApp.m_Attributes[a].Category;
 							wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a].Name);
-							wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a].Name));
+							wcscpy_s(d.Comments, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a].Name));
 							strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 							sprintf_s(d.FileID, LFKeySize, "%u", a);
 
@@ -491,7 +491,7 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 	if (LFGetStoreSettings(key, &store)!=LFOk)
 		return NULL;
 
-	return new CFolderItem(LEVELSTORES, LFAllocItemDescriptor(&store));
+	return new CFolderItem(LEVELSTORES, LFAllocItemDescriptorEx(&store));
 }
 
 
@@ -990,7 +990,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		CUtils::SetVariantLPCTSTR(value, Attrs.Description);
 		break;
 	case LFAttrComments:
-		CUtils::SetVariantLPCTSTR(value, Attrs.Comment);
+		CUtils::SetVariantLPCTSTR(value, Attrs.Comments);
 		break;
 	case LFAttrCreationTime:
 		if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwLowDateTime))
@@ -1084,8 +1084,8 @@ INT CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 		str2 = dir2->Attrs.FileID;
 		break;
 	case LFAttrComments:
-		str1 = Attrs.Comment;
-		str2 = dir2->Attrs.Comment;
+		str1 = Attrs.Comments;
+		str2 = dir2->Attrs.Comments;
 		break;
 	case LFAttrDescription:
 		str1 = Attrs.Description;
@@ -1396,7 +1396,7 @@ BOOL CFolderItem::SetShellLink(IShellLink* pShellLink)
 	pShellLink->SetIDList(GetPIDLAbsolute());
 	pShellLink->SetIconLocation(theApp.m_PathCoreFile, Attrs.Icon-1);
 	pShellLink->SetShowCmd(SW_SHOWNORMAL);
-	pShellLink->SetDescription(Attrs.Comment);
+	pShellLink->SetDescription(Attrs.Comments);
 
 	return TRUE;
 }

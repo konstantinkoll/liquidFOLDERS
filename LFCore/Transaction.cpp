@@ -96,7 +96,7 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescr
 				}
 			}
 
-			LFItemDescriptor* i = LFAllocItemDescriptor(it);
+			LFItemDescriptor* i = LFCloneItemDescriptor(it);
 			i->CoreAttributes.Flags = LFFlagNew;
 			SetNameExtAddFromFile(i, il->m_Items[a].Path);
 			SetAttributesFromFile(i, il->m_Items[a].Path);

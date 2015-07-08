@@ -162,7 +162,6 @@ void glDrawIcon(GLfloat x, GLfloat y, GLfloat Size, GLfloat Alpha, UINT ID)
 
 #define GetItemData(Index)     ((GlobeItemData*)(m_ItemData+Index*m_DataSize))
 
-
 CGlobeView::CGlobeView()
 	: CFileView(sizeof(GlobeItemData), FALSE, TRUE, TRUE, FALSE, FALSE)
 {

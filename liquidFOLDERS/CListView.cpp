@@ -471,7 +471,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		DrawProperty(dc, rectLeft, i, d, LFAttrPages, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrWidth, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrHeight, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrRecordingEquipment, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrEquipment, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrBitrate, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrCreationTime, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrFileTime, Themed, FALSE);

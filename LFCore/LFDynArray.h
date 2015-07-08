@@ -36,7 +36,7 @@ protected:
 		if (!m_Items) \
 			return FALSE; \
 		m_Allocated = DYN_FIRSTALLOC; \
-	} \
+	}
 
 
 template <typename T>

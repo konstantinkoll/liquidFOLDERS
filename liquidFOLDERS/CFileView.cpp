@@ -1020,7 +1020,7 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendAttribute(i, LFAttrPages, Hint);
 		AppendAttribute(i, LFAttrWidth, Hint);
 		AppendAttribute(i, LFAttrHeight, Hint);
-		AppendAttribute(i, LFAttrRecordingEquipment, Hint);
+		AppendAttribute(i, LFAttrEquipment, Hint);
 		AppendAttribute(i, LFAttrBitrate, Hint);
 		AppendAttribute(i, LFAttrCreationTime, Hint);
 		AppendAttribute(i, LFAttrFileTime, Hint);

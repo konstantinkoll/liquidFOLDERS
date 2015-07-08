@@ -87,16 +87,6 @@ void LFTransactionList::SetError(UINT idx, UINT Result, LFProgress* pProgress)
 	}
 }
 
-LPITEMIDLIST LFTransactionList::DetachPIDL(UINT idx)
-{
-	assert(idx<m_ItemCount);
-
-	LPITEMIDLIST pidl = m_Items[idx].pidlFQ;
-	m_Items[idx].pidlFQ = NULL;
-
-	return pidl;
-}
-
 HGLOBAL LFTransactionList::CreateDropFiles()
 {
 	if (!m_Resolved)

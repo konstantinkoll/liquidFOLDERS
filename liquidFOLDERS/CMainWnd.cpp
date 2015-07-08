@@ -152,11 +152,11 @@ BOOL CMainWnd::CreateStore(CHAR* RootStore)
 	return Create(FALSE);
 }
 
-BOOL CMainWnd::CreateFilter(LFFilter* f)
+BOOL CMainWnd::CreateFilter(LFFilter* pFilter)
 {
-	m_pActiveFilter = f;
+	m_pActiveFilter = pFilter;
 
-	return m_pActiveFilter ? Create(FALSE) : FALSE;
+	return pFilter ? Create(FALSE) : FALSE;
 }
 
 BOOL CMainWnd::CreateFilter(WCHAR* FileName)
@@ -253,7 +253,7 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 			(strcmp(i->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
-	LFAddItemDescriptor(m_pRawFiles, LFAllocItemDescriptor(i));
+	LFAddItemDescriptor(m_pRawFiles, LFCloneItemDescriptor(i));
 
 	return TRUE;
 }
@@ -319,7 +319,8 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 
 	if ((m_pRawFiles) && (FirstAggregate!=-1) && (LastAggregate!=-1))
 	{
-		m_pRawFiles = LFQuery(f, m_pRawFiles, FirstAggregate, LastAggregate);
+		m_pRawFiles = LFQueryEx(f, m_pRawFiles, FirstAggregate, LastAggregate);
+
 		if ((pVictim) && (pVictim!=m_pRawFiles))
 			LFFreeSearchResult(pVictim);
 	}
@@ -327,6 +328,7 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 	{
 		if (pVictim)
 			LFFreeSearchResult(pVictim);
+
 		m_pRawFiles = LFQuery(m_pActiveFilter);
 	}
 

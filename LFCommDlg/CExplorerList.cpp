@@ -160,7 +160,7 @@ void CExplorerList::SetSearchResult(LFSearchResult* pResult)
 			INT Index = InsertItem(&lvi);
 
 			WCHAR tmpStr[256];
-			SetItemText(Index, 1, pResult->m_Items[a]->CoreAttributes.Comment);
+			SetItemText(Index, 1, pResult->m_Items[a]->CoreAttributes.Comments);
 			SetItemText(Index, 2, pResult->m_Items[a]->Description);
 			LFAttributeToString(pResult->m_Items[a], LFAttrCreationTime, tmpStr, 256);
 			SetItemText(Index, 3, tmpStr);

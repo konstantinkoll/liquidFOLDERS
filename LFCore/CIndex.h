@@ -1,13 +1,14 @@
 
 #pragma once
 #include "LFCore.h"
-#include "IdxTables.h"
+#include "CHeapfile.h"
+#include "IndexTables.h"
 
 
 // CIndex
 //
 
-#define IndexMaintenanceSteps     (IdxTableCount*2+1)
+#define IndexMaintenanceSteps     (IDXTABLECOUNT*2+1)
 
 class CIndex
 {
@@ -30,14 +31,14 @@ public:
 	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress=NULL);
 
 protected:
-	BOOL LoadTable(UINT ID, UINT* Result=NULL);
+	BOOL LoadTable(UINT TableID, UINT* Result=NULL);
 	void AddFileToStatistics(LFCoreAttributes* PtrM);
 	void RemoveFileFromStatistics(LFCoreAttributes* PtrM);
 	UINT RenamePhysicalFile(LFCoreAttributes* PtrM, WCHAR* NewName);
 	UINT DeletePhysicalFile(LFCoreAttributes* PtrM);
 
 private:
-	CHeapfile* Tables[IdxTableCount];
+	CHeapfile* Tables[IDXTABLECOUNT];
 	LFStoreDescriptor* slot;
 	BOOL TrackStats;
 	WCHAR IdxPath[MAX_PATH];

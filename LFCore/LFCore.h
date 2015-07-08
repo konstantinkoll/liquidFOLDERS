@@ -23,6 +23,9 @@
 // liquidFOLDERS initalisieren
 LFCORE_API void __stdcall LFInitialize();
 
+// Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
+LFCORE_API LFMessageIDs* __stdcall LFGetMessageIDs();
+
 // Liefert einen String mit Dateianzahl und -größe zurück
 LFCORE_API void __stdcall LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount);
 
@@ -31,6 +34,9 @@ LFCORE_API BOOL __stdcall LFHideFileExt();
 
 // Gibt TRUE zurück, wenn der Explorer leere Laufwerke verbirgt
 LFCORE_API BOOL __stdcall LFHideVolumesWithNoMedia();
+
+
+
 
 
 
@@ -50,8 +56,6 @@ LFCORE_API UINT __stdcall LFGetSourceForVolume(CHAR cVolume);
 // Wie Win32-Funktion GetLogicalVolumes(), allerdings selektiv (s.o.)
 LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_Both);
 
-// Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
-LFCORE_API LFMessageIDs* __stdcall LFGetMessageIDs();
 
 // Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
 // im SendTo-Ordner des Benutzers
@@ -75,21 +79,6 @@ LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ctx, UINT ID);
 
 // Informationen über eine Kategorie zurückliefern
 LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, UINT ID);
-
-
-
-// Neuen LFItemDescriptor erzeugen und zurücksetzen
-// Ggf. wird eine unabhängige Kopie von i erzeugt
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFItemDescriptor* i=NULL);
-
-// Neuen LFItemDescriptor erzeugen und die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* Attr);
-
-// Neuen LFItemDescriptor erzeugen und den LFStoreDescriptor konvertieren
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFStoreDescriptor* s);
-
-// Existierenden LFItemDescriptor freigeben
-LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* i);
 
 
 
@@ -160,6 +149,24 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 
 
 
+// Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL);
+
+// Neuen LFItemDescriptor für Store erzeugen
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
+
+// Unabhängige Kopie von i erzeugen
+LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor);
+
+// Existierenden LFItemDescriptor freigeben
+LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* i);
+
+
+
+
+
+
+
 // Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters
 LFCORE_API LFFilter* __stdcall LFAllocFilter(LFFilter* f=NULL);
 
@@ -176,19 +183,13 @@ LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, U
 
 
 // Neues Suchergebnis mit Kontext ctx erzeugen
-LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT ctx, LFSearchResult* Result=NULL);
+LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT ctx);
 
 // Existierendes LFSearchResult freigeben
 LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* Result);
 
 // LFItemDescriptor zum LFSearchResult hinzufügen
 LFCORE_API BOOL __stdcall LFAddItemDescriptor(LFSearchResult* Result, LFItemDescriptor* i);
-
-// LFItemDescriptor aus LFSearchResult entfernen
-//
-// !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren!
-LFCORE_API void __stdcall LFRemoveItemDescriptor(LFSearchResult* Result, UINT idx);
 
 // Alle markierten LFItemDescriptor (DeleteFlag==TRUE) aus LFSearchResult entfernen
 //
@@ -231,9 +232,6 @@ LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* il, WCHAR* path);
 
 
 
-// Neue LFMaintenanceList erzeugen
-LFCORE_API LFMaintenanceList* __stdcall LFAllocMaintenanceList();
-
 // Existierende LFMaintenanceList freigeben
 LFCORE_API void __stdcall LFFreeMaintenanceList(LFMaintenanceList* ml);
 
@@ -247,9 +245,6 @@ LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);
 
 // LFItemDescriptor zur LFTransactionList hinzufügen
 LFCORE_API BOOL __stdcall LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData=0);
-
-// PIDL von Transaktionsliste lösen
-LFCORE_API LPITEMIDLIST __stdcall LFDetachPIDL(LFTransactionList* tl, UINT idx);
 
 // Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
 LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* tl);
@@ -270,22 +265,6 @@ LFCORE_API void __stdcall LFGetErrorText(WCHAR* pStr, UINT ID);
 
 // Anzeigen eines Fehlers (LFError...) in aktueller Sprache
 LFCORE_API void __stdcall LFErrorBox(UINT ID, HWND hWnd=NULL);
-
-
-
-// Suchabfrage durchführen
-// - Ist f==NULL, so wird eine Liste aller Stores zurückgeliefert
-LFCORE_API LFSearchResult* __stdcall LFQuery(LFFilter* f);
-
-// Bestehendes Suchergebnis eingrenzen
-// - f muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
-// - f muss ein Unterverzeichnis sein
-// - first und last müssen einen gültigen Bereich umfassen
-LFCORE_API LFSearchResult* __stdcall LFQuery(LFFilter* f, LFSearchResult* base, INT first, INT last);
-
-// Statistik
-// - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
-LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID);
 
 
 
@@ -419,31 +398,6 @@ LFCORE_API void __stdcall LFTransactionAddToSearchResult(LFFileIDList* il, LFSea
 
 
 //
-// Geotagging
-//
-
-// Liefert die Anzahl der Territorien zurück
-LFCORE_API UINT __stdcall LFIATAGetCountryCount();
-
-// Liefert die Anzahl der Flughäfen zurück
-LFCORE_API UINT __stdcall LFIATAGetAirportCount();
-
-// Liefert Zeiger auf Territorium zurück
-LFCORE_API LFCountry* __stdcall LFIATAGetCountry(UINT ID);
-
-// Setzt den Zeiger *pBuffer auf den nächsten Flughafen
-LFCORE_API INT __stdcall LFIATAGetNextAirport(INT last, LFAirport** pBuffer);
-
-// Setzt den Zeiger *pBuffer auf den nächsten Flughafen, der im Territorium CountryID liegt.
-// *pBuffer kann in jedem Fall überschrieben werden.
-LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT last, LFAirport** pBuffer);
-
-// Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
-// *pBuffer kann in jedem Fall überschrieben werden.
-LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(CHAR* Code, LFAirport** pBuffer);
-
-
-//
 // Shortcuts
 //
 
@@ -463,6 +417,54 @@ LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(CHAR* key);
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFItemDescriptor* i);
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFStoreDescriptor* s);
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(CHAR* key);
+
+
+
+
+
+
+
+// Geotagging
+//
+
+// Liefert die Anzahl der Territorien zurück
+LFCORE_API UINT __stdcall LFIATAGetCountryCount();
+
+// Liefert die Anzahl der Flughäfen zurück
+LFCORE_API UINT __stdcall LFIATAGetAirportCount();
+
+// Liefert Zeiger auf Territorium zurück
+LFCORE_API LFCountry* __stdcall LFIATAGetCountry(UINT CountryID);
+
+// Setzt den Zeiger *pBuffer auf den nächsten Flughafen
+LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport** ppAirport);
+
+// Setzt den Zeiger *pBuffer auf den nächsten Flughafen, der im Territorium CountryID liegt.
+// *pBuffer kann in jedem Fall überschrieben werden.
+LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport);
+
+// Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
+// *pBuffer kann in jedem Fall überschrieben werden.
+LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(CHAR* Code, LFAirport** ppAirport);
+
+
+
+// Suchabfragen
+//
+
+// Suchabfrage durchführen
+// - Ist pFilter==NULL, so wird eine Liste aller Stores zurückgeliefert
+LFCORE_API LFSearchResult* __stdcall LFQuery(LFFilter* pFilter);
+
+// Bestehendes Suchergebnis eingrenzen
+// - pFilter muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
+// - pFilter muss ein Unterverzeichnis sein
+// - First und Last müssen einen gültigen Bereich umfassen
+LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchResult, INT First, INT Last);
+
+// Statistik
+// - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
+LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID);
 
 
 
