@@ -212,8 +212,8 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 				}
 				else
 				{
-					m_AttributeRangeSecond[Attr] = v;
-					m_AttributeRangeFirst[Attr] = m_AttributeValues[Attr];
+					m_AttributeRangeFirst[Attr] = v;
+					m_AttributeRangeSecond[Attr] = m_AttributeValues[Attr];
 				}
 			}
 			break;
