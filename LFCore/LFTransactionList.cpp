@@ -22,7 +22,7 @@ BOOL LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, UINT UserData)
 {
 	assert(i);
 
-	LFTL_Item item = { i, UserData, LFOk, FALSE };
+	LFTL_Item item = { "", "", i, UserData, LFOk, FALSE };
 
 	if (!LFDynArray::AddItem(item))
 		return FALSE;

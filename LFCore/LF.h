@@ -375,9 +375,9 @@ struct LFStatistics
 
 // Search filter
 
-#define LFFilterModeStores                1
-#define LFFilterModeDirectoryTree         2
-#define LFFilterModeSearch                3
+#define LFFilterModeStores                0
+#define LFFilterModeDirectoryTree         1
+#define LFFilterModeSearch                2
 
 #define LFFilterCompareIgnore             0
 #define LFFilterCompareIsNull             1

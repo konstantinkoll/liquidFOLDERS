@@ -41,14 +41,17 @@ EXPORTS
 	LFFreeItemDescriptor @203
 	LFAllocFilter @204
 	LFFreeFilter @205
-	LFAllocFilterCondition @206
-	LFAllocFilterConditionEx @207
-	LFAllocSearchResult @208
-	LFFreeSearchResult @209
-	LFAddItem @210
-	LFRemoveFlaggedItems @211
-	LFSortSearchResult @212
-	LFGroupSearchResult @213
+	LFLoadFilter @206
+	LFLoadFilterEx @207
+	LFSaveFilter @208
+	LFAllocFilterCondition @209
+	LFAllocFilterConditionEx @210
+	LFAllocSearchResult @211
+	LFFreeSearchResult @212
+	LFAddItem @213
+	LFRemoveFlaggedItems @214
+	LFSortSearchResult @215
+	LFGroupSearchResult @216
 
 	LFIATAGetCountryCount @300
 	LFIATAGetAirportCount @301

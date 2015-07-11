@@ -5,6 +5,8 @@
 
 struct LFTL_Item
 {
+	CHAR StoreID[LFKeySize];
+	CHAR FileID[LFKeySize];
 	LFItemDescriptor* Item;
 	UINT UserData;
 

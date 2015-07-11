@@ -161,7 +161,7 @@ BOOL CMainWnd::CreateFilter(LFFilter* pFilter)
 
 BOOL CMainWnd::CreateFilter(WCHAR* FileName)
 {
-	m_pActiveFilter = LFLoadFilter(FileName);
+	m_pActiveFilter = LFLoadFilterEx(FileName);
 
 	return m_pActiveFilter ? Create(FALSE) : FALSE;
 }

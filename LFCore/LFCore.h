@@ -294,16 +294,6 @@ LFCORE_API UINT __stdcall LFGetStores(CHAR** IDs, UINT* count);
 
 
 
-//
-// Filter
-//
-
-// Erzeugt eine neue Filterdatei in einem Store
-LFCORE_API UINT __stdcall LFSaveFilter(CHAR* key, LFFilter* f, WCHAR* name, WCHAR* comments=NULL, LFItemDescriptor** created=NULL);
-
-// Lädt einen abgespeicherten Filter
-LFCORE_API LFFilter* __stdcall LFLoadFilter(WCHAR* fn);
-LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* i);
 
 
 
@@ -402,12 +392,19 @@ LFCORE_API LFFilter* __stdcall LFAllocFilter(LFFilter* pFilter=NULL);
 // Existierenden LFFilter freigeben
 LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
 
+// Lädt einen abgespeicherten Filter
+LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* pItemDescriptor);
+LFCORE_API LFFilter* __stdcall LFLoadFilterEx(WCHAR* pFilename);
+
+// Speichert einen Filter in einem Store ab
+LFCORE_API UINT __stdcall LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComments=NULL);
+
 // Neue LFFilterCondition erzeugen
 LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
 LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
 
 // Existierende LFFilterCondition freigeben
-#define LFFreeFilterCondition(c) delete c;
+#define LFFreeFilterCondition(pFilterCondition) delete pFilterCondition;
 
 
 // Neues Suchergebnis mit Kontext ctx erzeugen
