@@ -512,7 +512,7 @@ struct LFItemDescriptor
 	INT LastAggregate;
 	UINT AggregateCount;
 	UINT RefCount;
-	BOOL DeleteFlag;
+	BOOL RemoveFlag;
 
 	// Volatile attributes
 	CHAR StoreID[LFKeySize];
@@ -606,12 +606,3 @@ struct LFStoreDescriptor
 #define LFCannotRenameFile           26
 #define LFCannotCopyIndex            27
 #define LFNoFileBody                 28
-
-
-// Structures and classes from LFCore.dll
-
-#include "..\\LFCore\\LFFileIDList.h"
-#include "..\\LFCore\\LFFileImportList.h"
-#include "..\\LFCore\\LFMaintenanceList.h"
-#include "..\\LFCore\\LFSearchResult.h"
-#include "..\\LFCore\\LFTransactionList.h"

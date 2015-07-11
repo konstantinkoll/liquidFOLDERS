@@ -534,7 +534,7 @@ __forceinline void LoadRegistry()
 
 __forceinline void MountExternalVolumes()
 {
-	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_External);
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL);
 	WCHAR szVolumeRoot[4] = L" :\\";
 
 	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)

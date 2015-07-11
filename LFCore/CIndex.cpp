@@ -699,7 +699,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* Result)
 		AttachSlave(i, PtrM->SlaveID, PtrS);
 
 	if (PassesFilter(i, f))
-		if (Result->AddItemDescriptor(i))
+		if (Result->AddItem(i))
 			continue;
 
 	LFFreeItemDescriptor(i);
@@ -720,7 +720,7 @@ void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* Result)
 	APPEND_ITEMDESCRIPTOR();
 	DISCARD_SLAVE(Result->m_LastError = il->m_Items[ItemID].LastError = LFIndexTableLoadError);
 
-	Result->AddItemDescriptor(i);
+	Result->AddItem(i);
 	il->m_Items[ItemID].Processed = TRUE;
 
 	END_ITERATEALL();

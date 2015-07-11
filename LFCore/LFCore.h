@@ -1,6 +1,11 @@
 
 #pragma once
 #include "LF.h"
+#include "LFFileIDList.h"
+#include "LFFileImportList.h"
+#include "LFMaintenanceList.h"
+#include "LFSearchResult.h"
+#include "LFTransactionList.h"
 
 #ifdef LFCore_EXPORTS
 #define LFCORE_API __declspec(dllexport)
@@ -12,12 +17,12 @@
 // Kernfunktionalität
 //
 
-#define LFGLV_Internal            1
-#define LFGLV_External            2
-#define LFGLV_Both                3
-#define LFGLV_Network             4
-#define LFGLV_IncludeFloppies     8
-#define LFGLV_All                 15
+#define LFGLV_INTERNAL            1
+#define LFGLV_EXTERNAL            2
+#define LFGLV_BOTH                3
+#define LFGLV_NETWORK             4
+#define LFGLV_INCLUDEFLOPPIES     8
+#define LFGLV_ALL                 15
 
 
 // liquidFOLDERS initalisieren
@@ -35,6 +40,12 @@ LFCORE_API BOOL __stdcall LFHideFileExt();
 // Gibt TRUE zurück, wenn der Explorer leere Laufwerke verbirgt
 LFCORE_API BOOL __stdcall LFHideVolumesWithNoMedia();
 
+// Liefert den Source-Typ eines Laufwerks zurück
+LFCORE_API UINT __stdcall LFGetSourceForVolume(CHAR cVolume);
+
+// Wie Win32-Funktion GetLogicalVolumes(), allerdings selektiv (s.o.)
+LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_BOTH);
+
 
 
 
@@ -48,13 +59,6 @@ LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* License=NULL, BOOL Reload=FALS
 // und keine ordnungsgemäße Lizenz vorliegt
 LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 
-
-
-// Liefert den Source-Typ eines Laufwerks zurück
-LFCORE_API UINT __stdcall LFGetSourceForVolume(CHAR cVolume);
-
-// Wie Win32-Funktion GetLogicalVolumes(), allerdings selektiv (s.o.)
-LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_Both);
 
 
 // Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
@@ -149,17 +153,6 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 
 
 
-// Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL);
-
-// Neuen LFItemDescriptor für Store erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
-
-// Unabhängige Kopie von i erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor);
-
-// Existierenden LFItemDescriptor freigeben
-LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* i);
 
 
 
@@ -167,41 +160,6 @@ LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* i);
 
 
 
-// Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters
-LFCORE_API LFFilter* __stdcall LFAllocFilter(LFFilter* f=NULL);
-
-// Existierenden LFFilter freigeben
-LFCORE_API void __stdcall LFFreeFilter(LFFilter* f);
-
-// Neue LFFilterCondition erzeugen
-LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
-LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
-
-// Existierende LFFilterCondition freigeben
-#define LFFreeFilterCondition(c) delete c;
-
-
-
-// Neues Suchergebnis mit Kontext ctx erzeugen
-LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT ctx);
-
-// Existierendes LFSearchResult freigeben
-LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* Result);
-
-// LFItemDescriptor zum LFSearchResult hinzufügen
-LFCORE_API BOOL __stdcall LFAddItemDescriptor(LFSearchResult* Result, LFItemDescriptor* i);
-
-// Alle markierten LFItemDescriptor (DeleteFlag==TRUE) aus LFSearchResult entfernen
-//
-// !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren!
-LFCORE_API void __stdcall LFRemoveFlaggedItemDescriptors(LFSearchResult* Result);
-
-// Sortiert LFSearchResult
-LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* Result, UINT Attr, BOOL descending);
-
-// Gruppiert LFSearchResult und liefert Kopie zurück
-LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* Result, UINT Attr, BOOL descending, BOOL groupone, LFFilter* f);
 
 
 
@@ -221,8 +179,7 @@ LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFFileIDList* il);
 
 
 // Neue Datei-Importliste erzeugen
-LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList();
-LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop);
+LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
 
 // Existierende LFFileImportList freigeben
 LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* il);
@@ -421,6 +378,58 @@ LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(CHAR* key);
 
 
 
+
+
+// Datenstrukturen
+//
+
+// Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL);
+
+// Neuen LFItemDescriptor für Store erzeugen
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
+
+// Unabhängige Kopie von i erzeugen
+LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor);
+
+// Existierenden LFItemDescriptor freigeben
+LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor);
+
+
+// Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters
+LFCORE_API LFFilter* __stdcall LFAllocFilter(LFFilter* pFilter=NULL);
+
+// Existierenden LFFilter freigeben
+LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
+
+// Neue LFFilterCondition erzeugen
+LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
+LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
+
+// Existierende LFFilterCondition freigeben
+#define LFFreeFilterCondition(c) delete c;
+
+
+// Neues Suchergebnis mit Kontext ctx erzeugen
+LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT Context);
+
+// Existierendes LFSearchResult freigeben
+LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* pSearchResult);
+
+// LFItemDescriptor zum LFSearchResult hinzufügen
+LFCORE_API BOOL __stdcall LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItemDescriptor);
+
+// Alle markierten LFItemDescriptor (DeleteFlag==TRUE) aus LFSearchResult entfernen
+//
+// !!ACHTUNG!!
+// Die Sortierreihenfolge geht verloren!
+LFCORE_API void __stdcall LFRemoveFlaggedItems(LFSearchResult* pSearchResult);
+
+// Sortiert LFSearchResult
+LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending);
+
+// Gruppiert LFSearchResult und liefert Kopie zurück
+LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupOne, LFFilter* pFilter);
 
 
 

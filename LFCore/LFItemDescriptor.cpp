@@ -229,18 +229,18 @@ LFItemDescriptor* AllocFolderDescriptor()
 	return i;
 }
 
-LFCORE_API void LFFreeItemDescriptor(LFItemDescriptor* i)
+LFCORE_API void LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor)
 {
-	assert(i);
+	assert(pItemDescriptor);
 
-	if (--i->RefCount==0)
+	if (--pItemDescriptor->RefCount==0)
 	{
-		LFFreeFilter(i->NextFilter);
+		LFFreeFilter(pItemDescriptor->NextFilter);
 
 		for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
-			FreeAttribute(i, a);
+			FreeAttribute(pItemDescriptor, a);
 
-		delete i;
+		delete pItemDescriptor;
 	}
 }
 

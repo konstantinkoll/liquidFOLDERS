@@ -112,6 +112,9 @@ LFCORE_API BOOL LFHideVolumesWithNoMedia()
 }
 
 
+// Resources
+//
+
 void LoadStringEnglish(HINSTANCE hInstance, UINT uID, WCHAR* lpBuffer, INT cchBufferMax)
 {
 	DWORD nID = (uID>>4)+1;
@@ -175,21 +178,21 @@ void LoadTwoStrings(HINSTANCE hInstance, UINT uID, WCHAR* lpBuffer1, INT cchBuff
 }
 
 
+// Volumes
+//
 
-
-
-UINT GetVolumeBus(CHAR cVolume)
+BYTE GetVolumeBus(CHAR cVolume)
 {
-	UINT Result = BusTypeMaxReserved;
+	BYTE VolumeBus = BusTypeMaxReserved;
 
 	CHAR szBuf[MAX_PATH] = "\\\\?\\ :";
 	szBuf[4] = cVolume;
-	HANDLE hDevice = CreateFileA(szBuf, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
 
+	HANDLE hDevice = CreateFileA(szBuf, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
 	if (hDevice!=INVALID_HANDLE_VALUE)
 	{
-		STORAGE_ADAPTER_DESCRIPTOR* pDevDesc = (STORAGE_ADAPTER_DESCRIPTOR*)new BYTE[sizeof(STORAGE_ADAPTER_DESCRIPTOR)];
-		pDevDesc->Size = sizeof(STORAGE_ADAPTER_DESCRIPTOR);
+		STORAGE_ADAPTER_DESCRIPTOR OutBuffer;
+		OutBuffer.Size = sizeof(STORAGE_ADAPTER_DESCRIPTOR);
 
 		STORAGE_PROPERTY_QUERY Query;
 		Query.PropertyId = StorageAdapterProperty;
@@ -197,15 +200,14 @@ UINT GetVolumeBus(CHAR cVolume)
 
 		DWORD dwOutBytes;
 		if (DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
-			&Query, sizeof(STORAGE_PROPERTY_QUERY), pDevDesc, pDevDesc->Size,
+			&Query, sizeof(STORAGE_PROPERTY_QUERY), &OutBuffer, sizeof(STORAGE_ADAPTER_DESCRIPTOR),
 			&dwOutBytes, NULL))
-			Result = pDevDesc->BusType;
+			VolumeBus = OutBuffer.BusType;
 
-		delete[] pDevDesc;
 		CloseHandle(hDevice);
 	}
 
-	return Result;
+	return VolumeBus;
 }
 
 LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
@@ -215,8 +217,10 @@ LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
 		{
 		case BusType1394:
 			return LFTypeSource1394;
+
 		case BusTypeUsb:
 			return LFTypeSourceUSB;
+
 		}
 
 	return LFTypeSourceUnknown;
@@ -225,7 +229,7 @@ LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
 LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 {
 	DWORD VolumesOnSystem = GetLogicalDrives();
-	if ((Mask & LFGLV_IncludeFloppies)==0)
+	if ((Mask & LFGLV_INCLUDEFLOPPIES)==0)
 		VolumesOnSystem &= ~3;
 
 	DWORD Index = 1;
@@ -260,17 +264,23 @@ LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 		switch (uVolumeType)
 		{
 		case DRIVE_FIXED:
-			if (!(Mask & LFGLV_Internal))
+			if (!(Mask & LFGLV_INTERNAL))
 				VolumesOnSystem &= ~Index;
+
 			break;
+
 		case DRIVE_REMOVABLE:
-			if (!(Mask & LFGLV_External))
+			if (!(Mask & LFGLV_EXTERNAL))
 				VolumesOnSystem &= ~Index;
+
 			break;
+
 		case DRIVE_REMOTE:
-			if (!(Mask & LFGLV_Network))
+			if (!(Mask & LFGLV_NETWORK))
 				VolumesOnSystem &= ~Index;
+
 			break;
+
 		default:
 			VolumesOnSystem &= ~Index;
 		}
@@ -278,6 +288,13 @@ LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 
 	return VolumesOnSystem;
 }
+
+
+
+
+
+
+
 
 LFCORE_API void LFCreateSendTo(BOOL force)
 {
@@ -397,7 +414,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 	}
 
 	// Sorting
-	Attr.Sortable = (Attr.Type!=LFTypeFlags) && (Attr.Type!=LFTypeGeoCoordinates);
+	Attr.Sortable = (Attr.Type!=LFTypeFlags);
 	Attr.PreferDescendingSort = (Attr.Type==LFTypeRating) || (Attr.Type==LFTypeTime) || (Attr.Type==LFTypeMegapixel);
 
 	// ReadOnly
@@ -569,71 +586,6 @@ LFCORE_API LFFilterCondition* LFAllocFilterConditionEx(BYTE Compare, UINT Attr, 
 }
 
 
-LFCORE_API LFSearchResult* LFAllocSearchResult(INT ctx)
-{
-	return new LFSearchResult(ctx);
-}
-
-LFCORE_API void LFFreeSearchResult(LFSearchResult* Result)
-{
-	delete Result;
-}
-
-LFCORE_API BOOL LFAddItemDescriptor(LFSearchResult* Result, LFItemDescriptor* i)
-{
-	return Result->AddItemDescriptor(i);
-}
-
-LFCORE_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* Result)
-{
-	Result->RemoveFlaggedItemDescriptors();
-}
-
-LFCORE_API void LFSortSearchResult(LFSearchResult* Result, UINT Attr, BOOL descending)
-{
-	Result->Sort(Attr, descending);
-}
-
-LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* Result, UINT Attr, BOOL descending, BOOL groupone, LFFilter* f)
-{
-	assert(f);
-
-	if (f->Options.IsSubfolder)
-	{
-		Result->Sort(Attr, descending);
-		return Result;
-	}
-
-	// Special treatment for string arrays
-	if (AttrTypes[Attr]==LFTypeUnicodeArray)
-	{
-		LFSearchResult* cooked = new LFSearchResult(Result);
-		cooked->GroupArray(Attr, f);
-		cooked->Sort(Attr, descending);
-		return cooked;
-	}
-
-	// Special treatment for missing GPS location
-	if (Attr==LFAttrLocationGPS)
-		for (UINT a=0; a<Result->m_ItemCount; a++)
-			if (IsNullValue(AttrTypes[LFAttrLocationGPS], Result->m_Items[a]->AttributeValues[LFAttrLocationGPS]))
-			{
-				LFAirport* airport;
-				if (LFIATAGetAirportByCode((CHAR*)Result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
-					Result->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &airport->Location;
-			}
-
-	Result->Sort(Attr, descending);
-	LFSearchResult* cooked = new LFSearchResult(Result);
-	cooked->Group(Attr, groupone, f);
-
-	// Revert to old GPS location
-	if (Attr==LFAttrLocationGPS)
-		for (UINT a=0; a<Result->m_ItemCount; a++)
-			Result->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &Result->m_Items[a]->CoreAttributes.LocationGPS;
-
-	return cooked;
-}
 
 
 LFCORE_API LFFileIDList* LFAllocFileIDList()
@@ -688,11 +640,6 @@ LFCORE_API HGLOBAL LFCreateLiquidFiles(LFFileIDList* il)
 	return il->CreateLiquidFiles();
 }
 
-
-LFCORE_API LFFileImportList* LFAllocFileImportList()
-{
-	return new LFFileImportList();
-}
 
 LFCORE_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
 {

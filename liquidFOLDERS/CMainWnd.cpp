@@ -253,7 +253,7 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 			(strcmp(i->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
-	LFAddItemDescriptor(m_pRawFiles, LFCloneItemDescriptor(i));
+	LFAddItem(m_pRawFiles, LFCloneItemDescriptor(i));
 
 	return TRUE;
 }

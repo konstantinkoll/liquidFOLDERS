@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "Categorizers.h"
-#include "IdxTables.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
@@ -15,43 +14,124 @@
 
 
 extern HMODULE LFCoreModuleHandle;
-extern OSVERSIONINFO osInfo;
-extern const BYTE AttrTypes[];
 extern UINT VolumeTypes[];
 extern void LoadTwoStrings(HINSTANCE hInstance, UINT uID, WCHAR* lpBuffer1, INT cchBufferMax1, WCHAR* lpBuffer, INT cchBufferMax);
 
 
-// LFSearchResult
-
-LFSearchResult::LFSearchResult(INT ctx)
-	: LFDynArray()
+LFCORE_API LFSearchResult* LFAllocSearchResult(INT Context)
 {
-	assert(ctx<LFContextCount);
+	assert(pSearchResult);
 
-	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+ctx, m_Name, 256, m_Hint, 256);
-	m_RawCopy = TRUE;
-	m_Context = ctx;
-	m_GroupAttribute = LFAttrFileName;
-	m_HasCategories = FALSE;
-	m_QueryTime = 0;
-	m_FileCount = 0;
-	m_FileSize = 0;
-	m_StoreCount = 0;
+	return new LFSearchResult(Context);
 }
 
-LFSearchResult::LFSearchResult(LFFilter* f)
+LFCORE_API void LFFreeSearchResult(LFSearchResult* pSearchResult)
 {
+	assert(pSearchResult);
+
+	delete pSearchResult;
+}
+
+LFCORE_API BOOL LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItemDescriptor)
+{
+	assert(pSearchResult);
+
+	return pSearchResult->AddItem(pItemDescriptor);
+}
+
+LFCORE_API void LFRemoveFlaggedItems(LFSearchResult* pSearchResult)
+{
+	assert(pSearchResult);
+
+	pSearchResult->RemoveFlaggedItems();
+}
+
+LFCORE_API void LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending)
+{
+	assert(pSearchResult);
+
+	pSearchResult->Sort(Attr, Descending);
+}
+
+LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupOne, LFFilter* pFilter)
+{
+	assert(pFilter);
+
+	if (pFilter->Options.IsSubfolder)
+	{
+		pSearchResult->Sort(Attr, Descending);
+
+		return pSearchResult;
+	}
+
+	// Special treatment for string arrays
+	if (AttrTypes[Attr]==LFTypeUnicodeArray)
+	{
+		pSearchResult = new LFSearchResult(pSearchResult);
+		pSearchResult->GroupArray(Attr, pFilter);
+		pSearchResult->Sort(Attr, Descending);
+
+		return pSearchResult;
+	}
+
+	// Special treatment for missing GPS location
+	if (Attr==LFAttrLocationGPS)
+		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
+			if (IsNullValue(AttrTypes[LFAttrLocationGPS], pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationGPS]))
+			{
+				LFAirport* pAirport;
+				if (LFIATAGetAirportByCode((CHAR*)pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
+					pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &pAirport->Location;
+			}
+
+	pSearchResult->Sort(Attr, Descending);
+
+	LFSearchResult* pCookedFiles = new LFSearchResult(pSearchResult);
+	pCookedFiles->Group(Attr, GroupOne, pFilter);
+
+	// Revert to old GPS location
+	if (Attr==LFAttrLocationGPS)
+		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
+			pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &pSearchResult->m_Items[a]->CoreAttributes.LocationGPS;
+
+	return pCookedFiles;
+}
+
+
+// LFSearchResult
+//
+
+LFSearchResult::LFSearchResult(UINT Context)
+	: LFDynArray()
+{
+	assert(Context<LFContextCount);
+
+	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+Context, m_Name, 256, m_Hint, 256);
+	m_QueryTime = 0;
+	m_Context = Context;
+	m_GroupAttribute = LFAttrFileName;
+
+	m_RawCopy = TRUE;
+	m_HasCategories = FALSE;
+
+	m_FileCount = m_StoreCount = 0;
+	m_FileSize = 0;
+}
+
+LFSearchResult::LFSearchResult(LFFilter* pFilter)
+{
+	m_QueryTime = 0;
+
 	m_RawCopy = TRUE;
 	m_GroupAttribute = LFAttrFileName;
 	m_HasCategories = FALSE;
-	m_QueryTime = 0;
-	m_FileCount = 0;
-	m_FileSize = 0;
-	m_StoreCount = 0;
 
-	if (f)
+	m_FileCount = m_StoreCount = 0;
+	m_FileSize = 0;
+
+	if (pFilter)
 	{
-		SetMetadataFromFilter(f);
+		SetMetadataFromFilter(pFilter);
 	}
 	else
 	{
@@ -60,35 +140,39 @@ LFSearchResult::LFSearchResult(LFFilter* f)
 	}
 }
 
-LFSearchResult::LFSearchResult(LFSearchResult* Result)
+LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
 	: LFDynArray()
 {
-	m_Items = (LFItemDescriptor**)_aligned_malloc(Result->m_ItemCount*sizeof(LFItemDescriptor*), DYN_MEMORYALIGNMENT);
+	assert(pSearchResult);
 
-	wcscpy_s(m_Name, 256, Result->m_Name);
-	wcscpy_s(m_Hint, 256, Result->m_Hint);
+	m_LastError = pSearchResult->m_LastError;
+
+	wcscpy_s(m_Name, 256, pSearchResult->m_Name);
+	wcscpy_s(m_Hint, 256, pSearchResult->m_Hint);
+	m_QueryTime = pSearchResult->m_QueryTime;
+	m_Context = pSearchResult->m_Context;
+	m_GroupAttribute = pSearchResult->m_GroupAttribute;
+
 	m_RawCopy = FALSE;
-	m_Context = Result->m_Context;
-	m_GroupAttribute = Result->m_GroupAttribute;
-	m_HasCategories = Result->m_HasCategories;
-	m_QueryTime = Result->m_QueryTime;
-	m_FileCount = Result->m_FileCount;
-	m_FileSize = Result->m_FileSize;
-	m_StoreCount = Result->m_StoreCount;
+	m_HasCategories = pSearchResult->m_HasCategories;
 
-	if (m_Items)
+	m_StoreCount = pSearchResult->m_StoreCount;
+	m_FileCount = pSearchResult->m_FileCount;
+	m_FileSize = pSearchResult->m_FileSize;
+
+	if (pSearchResult->m_ItemCount)
 	{
-		m_LastError = Result->m_LastError;
-		m_ItemCount = m_Allocated = Result->m_ItemCount;
+		assert(pSearchResult->m_Items);
 
-		memcpy(m_Items, Result->m_Items, Result->m_ItemCount*sizeof(LFItemDescriptor*));
-		for (UINT a=0; a<Result->m_ItemCount; a++)
+		SIZE_T Size = pSearchResult->m_ItemCount*sizeof(LFItemDescriptor*);
+
+		m_Items = (LFItemDescriptor**)malloc(Size);
+		memcpy(m_Items, pSearchResult->m_Items, pSearchResult->m_ItemCount*sizeof(LFItemDescriptor*));
+
+		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
 			m_Items[a]->RefCount++;
-	}
-	else
-	{
-		m_LastError = LFMemoryError;
-		m_ItemCount = m_Allocated =0;
+
+		m_ItemCount = m_Allocated = pSearchResult->m_ItemCount;
 	}
 }
 
@@ -99,19 +183,19 @@ LFSearchResult::~LFSearchResult()
 			LFFreeItemDescriptor(m_Items[a]);
 }
 
-void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
+void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 {
-	assert(f);
+	assert(pFilter);
 
-	if (f->Options.IsSubfolder)
+	if (pFilter->Options.IsSubfolder)
 	{
 		m_Context = LFContextSubfolderDefault;
 
-		if (f->ConditionList)
+		if (pFilter->ConditionList)
 		{
-			m_GroupAttribute = f->Options.GroupAttribute;
+			m_GroupAttribute = pFilter->Options.GroupAttribute;
 
-			switch (f->ConditionList->AttrData.Attr)
+			switch (pFilter->ConditionList->AttrData.Attr)
 			{
 			case LFAttrLocationName:
 			case LFAttrLocationIATA:
@@ -119,39 +203,40 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 				m_Context = LFContextSubfolderLocation;
 				break;
 			default:
-				if (AttrTypes[f->ConditionList->AttrData.Attr]==LFTypeTime)
+				if (AttrTypes[pFilter->ConditionList->AttrData.Attr]==LFTypeTime)
 					m_Context = LFContextSubfolderDay;
 			}
 		}
 	}
 	else
-		switch (f->Mode)
+		switch (pFilter->Mode)
 		{
 		case LFFilterModeStores:
 			m_Context = LFContextStores;
 			break;
 		case LFFilterModeDirectoryTree:
-			m_Context = f->ContextID;
+			m_Context = pFilter->ContextID;
 			break;
 		case LFFilterModeSearch:
-			m_Context = ((f->Options.IsPersistent) || (f->ContextID) || ((f->Searchterm[0]==L'\0') && (f->ConditionList==NULL))) ? f->ContextID : LFContextSearch;
+			m_Context = (pFilter->Options.IsPersistent || (pFilter->Searchterm[0]!=L'\0') || (pFilter->ConditionList!=NULL)) ? LFContextSearch : pFilter->ContextID;
 			break;
 		}
 
-	if ((f->OriginalName[0]==L'\0') || (m_Context==LFContextStores))
+	if ((pFilter->OriginalName[0]==L'\0') || (m_Context==LFContextStores))
 	{
 		LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+m_Context, m_Name, 256, m_Hint, 256);
 	}
 	else
 	{
-		wcscpy_s(m_Name, 256, f->OriginalName);
+		wcscpy_s(m_Name, 256, pFilter->OriginalName);
 
 		if (m_Context<=LFLastQueryContext)
 		{
 			LoadString(LFCoreModuleHandle, IDS_CONTEXT_FIRST+m_Context, m_Hint, 256);
-			WCHAR* brk = wcschr(m_Hint, L'\n');
-			if (brk)
-				*brk = L'\0';
+
+			WCHAR* Ptr = wcschr(m_Hint, L'\n');
+			if (Ptr)
+				*Ptr = L'\0';
 
 			if (wcscmp(m_Name, m_Hint)==0)
 				m_Hint[0] = L'\0';
@@ -162,10 +247,10 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 		}
 	}
 
-	wcscpy_s(f->ResultName, 256, m_Name);
+	wcscpy_s(pFilter->ResultName, 256, m_Name);
 }
 
-BOOL LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
+BOOL LFSearchResult::AddItem(LFItemDescriptor* i)
 {
 	assert(i);
 
@@ -186,24 +271,31 @@ BOOL LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 	return TRUE;
 }
 
-BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s)
+BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 {
-	assert(s);
+	assert(pStoreDescriptor);
 
-	LFFilter* nf = LFAllocFilter();
-	nf->Mode = LFFilterModeDirectoryTree;
-	strcpy_s(nf->StoreID, LFKeySize, s->StoreID);
-	wcscpy_s(nf->OriginalName, 256, s->StoreName);
+	LFItemDescriptor* i = LFAllocItemDescriptorEx(pStoreDescriptor);
 
-	LFItemDescriptor* d = LFAllocItemDescriptor(s);
-	d->NextFilter = nf;
+	if (AddItem(i))
+	{
+		i->NextFilter = LFAllocFilter();
 
-	return AddItemDescriptor(d);
+		i->NextFilter->Mode = LFFilterModeDirectoryTree;
+		strcpy_s(i->NextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
+		wcscpy_s(i->NextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
+
+		return TRUE;
+	}
+
+	LFFreeItemDescriptor(i);
+
+	return FALSE;
 }
 
 void LFSearchResult::AddVolumes()
 {
-	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_External);
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL);
 	BOOL HideVolumesWithNoMedia = LFHideVolumesWithNoMedia();
 
 	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
@@ -220,273 +312,283 @@ void LFSearchResult::AddVolumes()
 			if ((!sfi.dwAttributes) && HideVolumesWithNoMedia)
 				continue;
 
-			UINT l = (UINT)wcslen(sfi.szDisplayName);
-			if (l>=5)
-				if ((sfi.szDisplayName[l-5]==L' ') && (sfi.szDisplayName[l-4]==L'(') && (sfi.szDisplayName[l-2]==L':') && (sfi.szDisplayName[l-1]==L')'))
-					sfi.szDisplayName[l-5] = L'\0';
+			SIZE_T Len = wcslen(sfi.szDisplayName);
+			if (Len>=5)
+				if ((sfi.szDisplayName[Len-5]==L' ') && (sfi.szDisplayName[Len-4]==L'(') && (sfi.szDisplayName[Len-2]==L':') && (sfi.szDisplayName[Len-1]==L')'))
+					sfi.szDisplayName[Len-5] = L'\0';
 
-			LFItemDescriptor* d = LFAllocItemDescriptor();
-			d->Type = LFTypeVolume;
+			LFItemDescriptor* i = LFAllocItemDescriptor();
+			i->Type = LFTypeVolume;
 			if (!sfi.dwAttributes)
-				d->Type |= LFTypeGhosted | LFTypeNotMounted;
+				i->Type |= LFTypeGhosted | LFTypeNotMounted;
 			
-			d->CategoryID = LFItemCategoryVolumes;
-			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
+			i->CategoryID = LFItemCategoryVolumes;
+			SetAttribute(i, LFAttrFileName, sfi.szDisplayName);
 
 			CHAR FileID[] = " :";
 			FileID[0] = cVolume;
-			SetAttribute(d, LFAttrFileID, FileID);
-			SetAttribute(d, LFAttrDescription, sfi.szTypeName);
 
-			if (!AddItemDescriptor(d))
-				LFFreeItemDescriptor(d);
+			SetAttribute(i, LFAttrFileID, FileID);
+			SetAttribute(i, LFAttrDescription, sfi.szTypeName);
+
+			if (!AddItem(i))
+				LFFreeItemDescriptor(i);
 		}
 	}
 }
 
-void LFSearchResult::RemoveItemDescriptor(UINT idx, BOOL updatecount)
+void LFSearchResult::RemoveItem(UINT Index, BOOL UpdateCount)
 {
-	assert(idx<m_ItemCount);
+	assert(Index<m_ItemCount);
 
-	if (updatecount)
-		if ((m_Items[idx]->Type & LFTypeMask)==LFTypeFile)
+	if (UpdateCount)
+		if ((m_Items[Index]->Type & LFTypeMask)==LFTypeFile)
 		{
 			m_FileCount--;
-			m_FileSize -= m_Items[idx]->CoreAttributes.FileSize;
+			m_FileSize -= m_Items[Index]->CoreAttributes.FileSize;
 		}
 
-	LFFreeItemDescriptor(m_Items[idx]);
+	LFFreeItemDescriptor(m_Items[Index]);
 
-	if (idx<--m_ItemCount)
-		m_Items[idx] = m_Items[m_ItemCount];
+	if (Index<--m_ItemCount)
+		m_Items[Index] = m_Items[m_ItemCount];
 }
 
-void LFSearchResult::RemoveFlaggedItemDescriptors(BOOL updatecount)
+void LFSearchResult::RemoveFlaggedItems(BOOL UpdateCount)
 {
-	UINT idx = 0;
+	UINT Index = 0;
 
-	while (idx<m_ItemCount)
+	while (Index<m_ItemCount)
 	{
-		if (m_Items[idx]->DeleteFlag)
+		if (m_Items[Index]->RemoveFlag)
 		{
-			m_Items[idx]->DeleteFlag = FALSE;
-			RemoveItemDescriptor(idx, updatecount);
+			RemoveItem(Index, UpdateCount);
 		}
 		else
 		{
-			idx++;
+			Index++;
 		}
 	}
 }
 
-void LFSearchResult::KeepRange(INT first, INT last)
+void LFSearchResult::KeepRange(INT First, INT Last)
 {
-	for (INT a=m_ItemCount-1; a>last; a--)
-		RemoveItemDescriptor((UINT)a);
-	for (INT a=first-1; a>=0; a--)
-		RemoveItemDescriptor((UINT)a);
+	for (INT a=m_ItemCount-1; a>Last; a--)
+		RemoveItem((UINT)a);
+
+	for (INT a=First-1; a>=0; a--)
+		RemoveItem((UINT)a);
 }
 
-INT LFSearchResult::Compare(LFItemDescriptor* d1, LFItemDescriptor* d2, UINT Attr, BOOL descending)
+INT LFSearchResult::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Attr, BOOL Descending)
 {
 	// Kategorien
-	if ((m_HasCategories) && (d1->CategoryID!=d2->CategoryID))
-		return (INT)d1->CategoryID-(INT)d2->CategoryID;
+	if ((m_HasCategories) && (i1->CategoryID!=i2->CategoryID))
+		return (INT)i1->CategoryID-(INT)i2->CategoryID;
 
 	// Wenn zwei Laufwerke anhand des Namens verglichen werden sollen, Laufwerksbuchstaben nehmen
-	if (((d1->Type & LFTypeMask)==LFTypeVolume) && ((d2->Type & LFTypeMask)==LFTypeVolume))
+	if (((i1->Type & LFTypeMask)==LFTypeVolume) && ((i2->Type & LFTypeMask)==LFTypeVolume))
 		if (Attr==LFAttrFileName)
 			Attr = LFAttrFileID;
 
 	// Dateien mit NULL-Werten oder leeren Strings im gewünschten Attribut hinten einsortieren
 	const UINT Type = AttrTypes[Attr];
-	BOOL d1null = IsNullValue(Type, d1->AttributeValues[Attr]);
-	BOOL d2null = IsNullValue(Type, d2->AttributeValues[Attr]);
+	BOOL i1Null = IsNullValue(Type, i1->AttributeValues[Attr]);
+	BOOL i2Null = IsNullValue(Type, i2->AttributeValues[Attr]);
 
-	if (d1null!=d2null)
-		return (INT)d1null-(INT)d2null;
+	if (i1Null!=i2Null)
+		return (INT)i1Null-(INT)i2Null;
 
 	// Gewünschtes Attribut vergleichen
-	INT cmp = 0;
+	INT Compare = 0;
 
-	if ((!d1null) && (!d2null))
+	if ((!i1Null) && (!i2Null))
 	{
-		cmp = CompareValues(Type, d1->AttributeValues[Attr], d2->AttributeValues[Attr], FALSE);
+		Compare = CompareValues(Type, i1->AttributeValues[Attr], i2->AttributeValues[Attr], FALSE);
 
 		// Ggf. Reihenfolge umkehren
-		if (descending)
-			cmp = -cmp;
+		if (Descending)
+			Compare = -Compare;
 	}
 
 	// Dateien gleich bzgl. Attribut? Dann nach Name und notfalls FileID vergleichen für stabiles Ergebnis
-	if ((cmp==0) && (Attr!=LFAttrFileName))
-		cmp = _wcsicmp(d1->CoreAttributes.FileName, d2->CoreAttributes.FileName);
+	if ((Compare==0) && (Attr!=LFAttrFileName))
+		Compare = _wcsicmp(i1->CoreAttributes.FileName, i2->CoreAttributes.FileName);
 
-	if ((cmp==0) && (Attr!=LFAttrStoreID))
-		cmp = strcmp(d1->StoreID, d2->StoreID);
+	if ((Compare==0) && (Attr!=LFAttrStoreID))
+		Compare = strcmp(i1->StoreID, i2->StoreID);
 
-	if ((cmp==0) && (Attr!=LFAttrFileID))
-		cmp = strcmp(d1->CoreAttributes.FileID, d2->CoreAttributes.FileID);
+	if ((Compare==0) && (Attr!=LFAttrFileID))
+		Compare = strcmp(i1->CoreAttributes.FileID, i2->CoreAttributes.FileID);
 
-	// Wenn die Dateien noch immer gleich sind, ist irgendwas sehr kaputt
-	assert(cmp!=0);
-
-	return cmp;
+	return Compare;
 }
 
-void LFSearchResult::Heap(UINT wurzel, const UINT anz, const UINT Attr, const BOOL descending)
+void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending)
 {
-	LFItemDescriptor* i = m_Items[wurzel];
-	UINT parent = wurzel;
-	UINT child;
+	LFItemDescriptor* i = m_Items[Wurzel];
+	UINT Parent = Wurzel;
+	UINT Child;
 
-	while ((child=(parent+1)*2)<anz)
+	while ((Child=(Parent+1)*2)<Anz)
 	{
-		if (Compare(m_Items[child-1], m_Items[child], Attr, descending)>0)
-			child--;
+		if (Compare(m_Items[Child-1], m_Items[Child], Attr, Descending)>0)
+			Child--;
 
-		m_Items[parent] = m_Items[child];
-		parent = child;
+		m_Items[Parent] = m_Items[Child];
+		Parent = Child;
 	}
 
-	if (child==anz)
+	if (Child==Anz)
 	{
-		if (Compare(m_Items[--child], i, Attr, descending)>=0)
+		if (Compare(m_Items[--Child], i, Attr, Descending)>=0)
 		{
-			m_Items[parent] = m_Items[child];
-			m_Items[child] = i;
+			m_Items[Parent] = m_Items[Child];
+			m_Items[Child] = i;
+
 			return;
 		}
 
-		child = parent;
+		Child = Parent;
 	}
 	else
 	{
-		if (parent==wurzel)
+		if (Parent==Wurzel)
 			return;
 
-		if (Compare(m_Items[parent], i, Attr, descending)>=0)
+		if (Compare(m_Items[Parent], i, Attr, Descending)>=0)
 		{
-			m_Items[parent] = i;
+			m_Items[Parent] = i;
+
 			return;
 		}
 
-		child = (parent-1)/2;
+		Child = (Parent-1)/2;
 	}
 
-	while (child!=wurzel)
+	while (Child!=Wurzel)
 	{
-		parent = (child-1)/2;
+		Parent = (Child-1)/2;
 
-		if (Compare(m_Items[parent], i, Attr, descending)>=0)
+		if (Compare(m_Items[Parent], i, Attr, Descending)>=0)
 			break;
 
-		m_Items[child] = m_Items[parent];
-		child = parent;
+		m_Items[Child] = m_Items[Parent];
+		Child = Parent;
 	}
 
-	m_Items[child] = i;
+	m_Items[Child] = i;
 }
 
-void LFSearchResult::Sort(UINT Attr, BOOL descending)
+void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 {
 	if (m_ItemCount>1)
 	{
 		for (INT a=m_ItemCount/2-1; a>=0; a--)
-			Heap(a, m_ItemCount, Attr, descending);
+			Heap(a, m_ItemCount, Attr, Descending);
+
 		for (INT a=m_ItemCount-1; a>0; a--)
 		{
 			LFItemDescriptor* Temp = m_Items[0];
 			m_Items[0] = m_Items[a];
 			m_Items[a] = Temp;
 
-			Heap(0, a, Attr, descending);
+			Heap(0, a, Attr, Descending);
 		}
 	}
 }
 
-UINT LFSearchResult::Aggregate(UINT write, UINT read1, UINT read2, void* c, UINT Attr, BOOL groupone, LFFilter* f)
+UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 {
-	if (((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrTypes[Attr], m_Items[read1]->AttributeValues[Attr])))
+	if (((ReadIndex2==ReadIndex1+1) && ((!GroupOne) || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrTypes[Attr], m_Items[ReadIndex1]->AttributeValues[Attr])))
 	{
-		for (UINT a=read1; a<read2; a++)
-			m_Items[write++] = m_Items[a];
+		for (UINT a=ReadIndex1; a<ReadIndex2; a++)
+			m_Items[WriteIndex++] = m_Items[a];
 
-		return read2-read1;
+		return ReadIndex2-ReadIndex1;
 	}
-	else
+
+	LFItemDescriptor* pFolder = ((CCategorizer*)pCategorizer)->GetFolder(m_Items[ReadIndex1], pFilter);
+
+	pFolder->AggregateCount = ReadIndex2-ReadIndex1;
+	if (!m_RawCopy)
 	{
-		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1], f);
-		folder->AggregateCount = read2-read1;
-		if (!m_RawCopy)
-		{
-			folder->FirstAggregate = read1;
-			folder->LastAggregate = read2-1;
-		}
-
-		INT64 size = 0;
-		UINT Source = m_Items[read1]->Type & LFTypeSourceMask;
-		for (UINT a=read1; a<read2; a++)
-		{
-			if ((m_Items[a]->Type & LFTypeSourceMask)!=Source)
-				Source = LFTypeSourceUnknown;
-
-			size += m_Items[a]->CoreAttributes.FileSize;
-			LFFreeItemDescriptor(m_Items[a]);
-		}
-
-		folder->Type |= Source;
-		SetAttribute(folder, LFAttrFileSize, &size);
-		LFCombineFileCountSize(folder->AggregateCount, size, folder->Description, 256);
-		m_Items[write] = folder;
-
-		return 1;
+		pFolder->FirstAggregate = ReadIndex1;
+		pFolder->LastAggregate = ReadIndex2-1;
 	}
+
+	INT64 Size = 0;
+	UINT Source = m_Items[ReadIndex1]->Type & LFTypeSourceMask;
+
+	for (UINT a=ReadIndex1; a<ReadIndex2; a++)
+	{
+		if ((m_Items[a]->Type & LFTypeSourceMask)!=Source)
+			Source = LFTypeSourceUnknown;
+
+		Size += m_Items[a]->CoreAttributes.FileSize;
+		LFFreeItemDescriptor(m_Items[a]);
+	}
+
+	pFolder->Type |= Source;
+	SetAttribute(pFolder, LFAttrFileSize, &Size);
+	LFCombineFileCountSize(pFolder->AggregateCount, Size, pFolder->Description, 256);
+
+	m_Items[WriteIndex] = pFolder;
+
+	return 1;
 }
 
-void LFSearchResult::Group(UINT Attr, BOOL groupone, LFFilter* f)
+void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 {
 	if (!m_ItemCount)
 		return;
 
 	// Choose categorizer
-	CCategorizer* c = NULL;
+	CCategorizer* pCategorizer = NULL;
 
 	switch (Attr)
 	{
 	case LFAttrLocationIATA:
-		c = new CIATACategorizer();
+		pCategorizer = new CIATACategorizer();
 		break;
+
 	case LFAttrURL:
-		c = new CURLCategorizer();
+		pCategorizer = new CURLCategorizer();
 		break;
+
 	case LFAttrFileName:
-		if (!groupone)
+		if (!GroupOne)
 		{
-			c = new CNameCategorizer();
+			pCategorizer = new CNameCategorizer();
 			break;
 		}
+
 	default:
 		switch (AttrTypes[Attr])
 		{
 		case LFTypeRating:
-			c = new CRatingCategorizer(Attr);
+			pCategorizer = new CRatingCategorizer(Attr);
 			break;
+
 		case LFTypeTime:
-			c = new CDateCategorizer(Attr);
+			pCategorizer = new CDateCategorizer(Attr);
 			break;
+
 		case LFTypeDuration:
-			c = new CDurationCategorizer(Attr);
+			pCategorizer = new CDurationCategorizer(Attr);
 			break;
+
 		case LFTypeMegapixel:
-			c = new CMegapixelCategorizer(Attr);
+			pCategorizer = new CMegapixelCategorizer(Attr);
 			break;
+
 		case LFTypeSize:
-			c = new CSizeCategorizer(Attr);
+			pCategorizer = new CSizeCategorizer(Attr);
 			break;
+
 		default:
 			// Generic categorizer
-			c = new CCategorizer(Attr);
+			pCategorizer = new CCategorizer(Attr);
 		}
 	}
 
@@ -497,85 +599,80 @@ void LFSearchResult::Group(UINT Attr, BOOL groupone, LFFilter* f)
 
 	while (ReadPtr2<m_ItemCount)
 	{
-		if (!c->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
+		if (!pCategorizer->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
 		{
-			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, Attr, groupone, f);
+			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, pCategorizer, Attr, GroupOne, pFilter);
 			ReadPtr1 = ReadPtr2;
 		}
 
 		ReadPtr2++;
 	}
 
-	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, Attr, groupone, f);
+	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, pCategorizer, Attr, GroupOne, pFilter);
 	m_ItemCount = WritePtr;
 
-	delete c;
+	delete pCategorizer;
 }
 
-void LFSearchResult::GroupArray(UINT Attr, LFFilter* f)
+void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 {
 	assert(AttrTypes[Attr]==LFTypeUnicodeArray);
 
-	typedef struct { std::wstring name; BOOL multiple; UINT count; INT64 size; UINT source; } tagitem;
-	typedef stdext::hash_map<std::wstring, tagitem> hashtags;
-	hashtags tags;
+	typedef struct { std::wstring Name; BOOL Multiple; UINT Count; INT64 Size; UINT Source; } TagItem;
+	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;
+	Hashtags Tags;
 
 	for (UINT a=0; a<m_ItemCount; a++)
 	{
-		WCHAR* tagarray = (WCHAR*)m_Items[a]->AttributeValues[Attr];
-		BOOL found = FALSE;
+		BOOL Remove = FALSE;
 
-		if (tagarray)
+		WCHAR* TagArray = (WCHAR*)m_Items[a]->AttributeValues[Attr];
+		if (TagArray)
 		{
-			WCHAR tag[256];
-			while (GetNextTag(&tagarray, tag, 256))
+			WCHAR Tag[256];
+			while (GetNextTag(&TagArray, Tag, 256))
 			{
-				std::wstring key(tag);
-				transform(key.begin(), key.end(), key.begin(), towlower);
+				std::wstring Key(Tag);
+				transform(Key.begin(), Key.end(), Key.begin(), towlower);
 
-				hashtags::iterator location = tags.find(key);
-				if (location==tags.end())
+				Hashtags::iterator Location = Tags.find(Key);
+				if (Location==Tags.end())
 				{
-					tagitem item;
-					item.name.assign(tag);
-					item.multiple = FALSE;
-					item.count = 1;
-					item.size = m_Items[a]->CoreAttributes.FileSize;
-					item.source = m_Items[a]->Type & LFTypeSourceMask;
-					tags[key] = item;
+					TagItem Item = { Tag, FALSE, 1, 0, 0 };
+					Tags[Key] = Item;
 				}
 				else
 				{
-					if (!location->second.multiple)
-						if (location->second.name.compare(tag)!=0)
-							location->second.multiple = TRUE;
+					if (!Location->second.Multiple)
+						if (Location->second.Name.compare(Tag)!=0)
+							Location->second.Multiple = TRUE;
 
-					if ((m_Items[a]->Type & LFTypeSourceMask)!=location->second.source)
-						location->second.source = LFTypeSourceUnknown;
+					if ((m_Items[a]->Type & LFTypeSourceMask)!=Location->second.Source)
+						Location->second.Source = LFTypeSourceUnknown;
 
-					location->second.count++;
-					location->second.size += m_Items[a]->CoreAttributes.FileSize;
+					Location->second.Count++;
+					Location->second.Size += m_Items[a]->CoreAttributes.FileSize;
 				}
 
-				found = TRUE;
+				Remove = TRUE;
 			}
 		}
 
-		m_Items[a]->DeleteFlag = found;
+		m_Items[a]->RemoveFlag = Remove;
 	}
 
-	RemoveFlaggedItemDescriptors(FALSE);
+	RemoveFlaggedItems(FALSE);
 
-	for (hashtags::iterator it=tags.begin(); it!=tags.end(); it++)
+	for (Hashtags::iterator it=Tags.begin(); it!=Tags.end(); it++)
 	{
-		WCHAR tag[256];
-		wcscpy_s(tag, 256, it->second.name.c_str());
+		WCHAR Tag[256];
+		wcscpy_s(Tag, 256, it->second.Name.c_str());
 
-		if (it->second.multiple)
+		if (it->second.Multiple)
 		{
-			BOOL first = TRUE;
-			for (WCHAR* ptr=tag; *ptr; ptr++)
-				switch (*ptr)
+			BOOL First = TRUE;
+			for (WCHAR* Ptr=Tag; *Ptr; Ptr++)
+				switch (*Ptr)
 				{
 				case L' ':
 				case L',':
@@ -584,31 +681,33 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* f)
 				case L'|':
 				case L'-':
 				case L'"':
-					first = TRUE;
+					First = TRUE;
 					break;
+
 				default:
-					*ptr = first ? (WCHAR)towupper(*ptr) : (WCHAR)towlower(*ptr);
-					first = FALSE;
+					*Ptr = First ? (WCHAR)towupper(*Ptr) : (WCHAR)towlower(*Ptr);
+					First = FALSE;
 				}
 		}
 
-		LFItemDescriptor* folder = AllocFolderDescriptor();
-		folder->AggregateCount = it->second.count;
+		LFItemDescriptor* pFolder = AllocFolderDescriptor();
+		pFolder->AggregateCount = it->second.Count;
 
-		SetAttribute(folder, LFAttrFileName, tag);
-		SetAttribute(folder, LFAttrFileSize, &it->second.size);
-		SetAttribute(folder, Attr, tag);
-		LFCombineFileCountSize(folder->AggregateCount, it->second.size, folder->Description, 256);
+		SetAttribute(pFolder, LFAttrFileName, Tag);
+		SetAttribute(pFolder, LFAttrFileSize, &it->second.Size);
+		SetAttribute(pFolder, Attr, Tag);
+		LFCombineFileCountSize(pFolder->AggregateCount, it->second.Size, pFolder->Description, 256);
 
-		LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, Attr);
-		wcscpy_s(c->AttrData.UnicodeArray, 256, tag);
+		pFolder->NextFilter = LFAllocFilter(pFilter);
+		pFolder->NextFilter->Options.IsSubfolder = TRUE;
 
-		folder->NextFilter = LFAllocFilter(f);
-		folder->NextFilter->Options.IsSubfolder = TRUE;
-		c->Next = folder->NextFilter->ConditionList;
-		folder->NextFilter->ConditionList = c;
-		wcscpy_s(folder->NextFilter->OriginalName, 256, tag);
+		wcscpy_s(pFolder->NextFilter->OriginalName, 256, Tag);
 
-		AddItemDescriptor(folder);
+		LFFilterCondition* pFilterCondition = LFAllocFilterConditionEx(LFFilterCompareSubfolder, Attr, pFolder->NextFilter->ConditionList);
+		wcscpy_s(pFilterCondition->AttrData.UnicodeArray, 256, Tag);
+
+		pFolder->NextFilter->ConditionList = pFilterCondition;
+
+		AddItem(pFolder);
 	}
 }

@@ -430,11 +430,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Filters.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\IATA.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IdxTables.cpp"
+				RelativePath=".\IndexTables.cpp"
 				>
 			</File>
 			<File
@@ -479,10 +483,6 @@
 			</File>
 			<File
 				RelativePath=".\Mutex.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PersistentFilters.cpp"
 				>
 			</File>
 			<File
@@ -580,6 +580,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Filters.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IATA.h"
 				>
 			</File>
@@ -592,7 +596,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IdxTables.h"
+				RelativePath=".\IndexTables.h"
 				>
 			</File>
 			<File
@@ -641,10 +645,6 @@
 			</File>
 			<File
 				RelativePath=".\Mutex.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PersistentFilters.h"
 				>
 			</File>
 			<File

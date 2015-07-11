@@ -9,6 +9,8 @@ EXPORTS
 	LFCombineFileCountSize @3
 	LFHideFileExt @4
 	LFHideVolumesWithNoMedia @5
+	LFGetSourceForVolume @7
+	LFGetLogicalVolumes @8
 	
 	LFFourCCToString @100
 	LFUINTToString @101
@@ -37,6 +39,16 @@ EXPORTS
 	LFAllocItemDescriptorEx @201
 	LFCloneItemDescriptor @202
 	LFFreeItemDescriptor @203
+	LFAllocFilter @204
+	LFFreeFilter @205
+	LFAllocFilterCondition @206
+	LFAllocFilterConditionEx @207
+	LFAllocSearchResult @208
+	LFFreeSearchResult @209
+	LFAddItem @210
+	LFRemoveFlaggedItems @211
+	LFSortSearchResult @212
+	LFGroupSearchResult @213
 
 	LFIATAGetCountryCount @300
 	LFIATAGetAirportCount @301

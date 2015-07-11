@@ -5,7 +5,7 @@
 #pragma once
 #include "CHeaderArea.h"
 #include "CExplorerList.h"
-#include "LF.h"
+#include "LFCore.h"
 #include "LFDialog.h"
 
 

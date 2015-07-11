@@ -1,3 +1,4 @@
+
 #pragma once
 #include "LF.h"
 #include "LFDynArray.h"
@@ -6,35 +7,37 @@
 class LFSearchResult : public LFDynArray<LFItemDescriptor*>
 {
 public:
-	LFSearchResult(INT ctx);
-	LFSearchResult(LFFilter* f);
-	LFSearchResult(LFSearchResult* Result);
+	LFSearchResult(UINT Context);
+	LFSearchResult(LFFilter* pFilter);
+	LFSearchResult(LFSearchResult* pSearchResult);
 	~LFSearchResult();
 
-	void SetMetadataFromFilter(LFFilter* f);
-	BOOL AddItemDescriptor(LFItemDescriptor* i);
-	BOOL AddStoreDescriptor(LFStoreDescriptor* s);
+	void SetMetadataFromFilter(LFFilter* pFilter);
+	BOOL AddItem(LFItemDescriptor* i);
+	BOOL AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor);
 	void AddVolumes();
-	void RemoveItemDescriptor(UINT idx, BOOL updatecount=TRUE);
-	void RemoveFlaggedItemDescriptors(BOOL updatecount=TRUE);
-	void KeepRange(INT first, INT last);
-	void Sort(UINT Attr, BOOL descending);
-	void Group(UINT Attr, BOOL groupone, LFFilter* f);
-	void GroupArray(UINT Attr, LFFilter* f);
+	void RemoveItem(UINT Index, BOOL UpdateCount=TRUE);
+	void RemoveFlaggedItems(BOOL UpdateCount=TRUE);
+	void KeepRange(INT First, INT Last);
+	void Sort(UINT Attr, BOOL Descending);
+	void Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter);
+	void GroupArray(UINT Attr, LFFilter* pFilter);
 
 	WCHAR m_Name[256];
 	WCHAR m_Hint[256];
-	BOOL m_RawCopy;
+	DWORD m_QueryTime;
 	UINT m_Context;
 	UINT m_GroupAttribute;
+
+	BOOL m_RawCopy;
 	BOOL m_HasCategories;
-	DWORD m_QueryTime;
+
+	UINT m_StoreCount;
 	UINT m_FileCount;
 	INT64 m_FileSize;
-	UINT m_StoreCount;
 
 private:
-	INT Compare(LFItemDescriptor* d1, LFItemDescriptor* d2, UINT Attr, BOOL descending);
-	void Heap(UINT wurzel, const UINT anz, const UINT Attr, const BOOL descending);
-	UINT Aggregate(UINT write, UINT read1, UINT read2, void* c, UINT Attr, BOOL groupone, LFFilter* f);
+	INT Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Attr, BOOL Descending);
+	void Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending);
+	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupOne, LFFilter* pFilter);
 };

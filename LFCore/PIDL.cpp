@@ -1,7 +1,8 @@
 
 #include "stdafx.h"
 #include "LF.h"
-#include <shellapi.h>
+#include <assert.h>
+#include <shlobj.h>
 
 
 __forceinline LPITEMIDLIST AllocPIDL(SIZE_T cb)

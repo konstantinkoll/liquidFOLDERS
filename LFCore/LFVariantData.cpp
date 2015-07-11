@@ -189,6 +189,16 @@ INT CompareValues(UINT Type, const void* v1, const void* v2, BOOL CaseSensitive)
 
 		return d1==d2 ? 0 : d1<d2 ? -1 : 1;
 
+	case LFTypeGeoCoordinates:
+		if (((LFGeoCoordinates*)v1)->Latitude==((LFGeoCoordinates*)v2)->Latitude)
+		{
+			return ((LFGeoCoordinates*)v1)->Longitude==((LFGeoCoordinates*)v2)->Longitude ? 0 : ((LFGeoCoordinates*)v1)->Longitude<((LFGeoCoordinates*)v2)->Longitude ? -1 : 1;
+		}
+		else
+		{
+			return ((LFGeoCoordinates*)v1)->Latitude<((LFGeoCoordinates*)v2)->Latitude ? -1 : 1;
+		}
+
 	case LFTypeTime:
 		return CompareFileTime((FILETIME*)v1, (FILETIME*)v2);
 

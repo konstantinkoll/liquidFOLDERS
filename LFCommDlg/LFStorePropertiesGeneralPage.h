@@ -4,7 +4,7 @@
 
 #pragma once
 #include "CIconCtrl.h"
-#include "LF.h"
+#include "LFCore.h"
 
 
 // LFStorePropertiesGeneralPage

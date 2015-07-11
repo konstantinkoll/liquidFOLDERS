@@ -490,12 +490,12 @@ void CMainView::RemoveTransactedItems(LFFileIDList* il)
 				if ((i->Type & LFTypeMask)==LFTypeFile)
 					if ((strcmp(il->m_Items[a].StoreID, i->StoreID)==0) && (strcmp(il->m_Items[a].FileID, i->CoreAttributes.FileID)==0))
 					{
-						p_RawFiles->m_Items[b]->DeleteFlag = TRUE;
+						p_RawFiles->m_Items[b]->RemoveFlag = TRUE;
 						break;
 					}
 			}
 
-	LFRemoveFlaggedItemDescriptors(p_RawFiles);
+	LFRemoveFlaggedItems(p_RawFiles);
 
 	FVPersistentData Data;
 	GetPersistentData(Data);
@@ -509,9 +509,9 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if ((tl->m_Items[a].LastError==LFOk) && (tl->m_Items[a].Processed))
-			tl->m_Items[a].Item->DeleteFlag = TRUE;
+			tl->m_Items[a].Item->RemoveFlag = TRUE;
 
-	LFRemoveFlaggedItemDescriptors(p_RawFiles);
+	LFRemoveFlaggedItems(p_RawFiles);
 
 	FVPersistentData Data;
 	GetPersistentData(Data);

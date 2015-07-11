@@ -601,8 +601,8 @@ CMenu* CFileView::GetSendToMenu()
 	}
 
 	// Volumes
-	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_External | LFGLV_Network | LFGLV_IncludeFloppies);
-	DWORD VolumesWOFloppies = LFGetLogicalVolumes(LFGLV_External | LFGLV_Network);
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK | LFGLV_INCLUDEFLOPPIES);
+	DWORD VolumesWOFloppies = LFGetLogicalVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK);
 	BOOL HideVolumesWithNoMedia = LFHideVolumesWithNoMedia();
 
 	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1, VolumesWOFloppies>>=1)
