@@ -278,6 +278,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			}
 
 			break;
+
 		case VK_RIGHT:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -290,6 +291,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			}
 
 			break;
+
 		case VK_UP:
 			for (INT a=Item-1; a>=0; a--)
 			{
@@ -305,6 +307,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			}
 
 			break;
+
 		case VK_PRIOR:
 			for (INT a=Item-1; a>=0; a--)
 			{
@@ -318,6 +321,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			}
 
 			break;
+
 		case VK_DOWN:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -333,6 +337,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			}
 
 			break;
+
 		case VK_NEXT:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -353,6 +358,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			}
 
 			break;
+
 		case VK_HOME:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
@@ -379,6 +385,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 				}
 
 			break;
+
 		case VK_END:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
@@ -450,6 +457,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			}
 
 			break;
+
 		case VK_PRIOR:
 			for (INT a=Item-1; a>=0; a--)
 			{
@@ -463,6 +471,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			}
 
 			break;
+
 		case VK_RIGHT:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -478,6 +487,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			}
 
 			break;
+
 		case VK_NEXT:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -498,6 +508,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			}
 
 			break;
+
 		case VK_UP:
 			for (INT a=Item-1; a>=0; a--)
 			{
@@ -510,6 +521,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			}
 
 			break;
+
 		case VK_DOWN:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -522,6 +534,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			}
 
 			break;
+
 		case VK_HOME:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
@@ -548,6 +561,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 				}
 
 			break;
+
 		case VK_END:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
@@ -673,6 +687,7 @@ void CGridView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case GRIDARRANGE_HORIZONTAL:
 		HandleHorizontalKeys(nChar, nRepCnt, nFlags);
 		break;
+
 	case GRIDARRANGE_VERTICAL:
 		HandleVerticalKeys(nChar, nRepCnt, nFlags);
 		break;

@@ -387,6 +387,7 @@ LRESULT LFUpdateDlg::OnTrayMenu(WPARAM /*wParam*/, LPARAM lParam)
 	case WM_LBUTTONDBLCLK:
 		OnRestore();
 		break;
+
 	case WM_RBUTTONUP:
 		SetForegroundWindow();
 		ShowMenu();

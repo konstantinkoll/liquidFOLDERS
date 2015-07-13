@@ -440,10 +440,12 @@ void CHistoryBar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		case NOPART:
 		case VIEW:
 			break;
+
 		case RELOAD:
 		case 0:
 			GetOwner()->PostMessage(WM_RELOAD);
 			break;
+
 		default:
 			GetOwner()->PostMessage(WM_NAVIGATEBACK, (WPARAM)ID);
 			break;

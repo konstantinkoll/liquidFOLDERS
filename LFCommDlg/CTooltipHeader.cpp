@@ -246,9 +246,11 @@ void CTooltipHeader::OnPaint()
 					case HDF_LEFT:
 						nFormat |= DT_LEFT;
 						break;
+
 					case HDF_CENTER:
 						nFormat |= DT_CENTER;
 						break;
+
 					case HDF_RIGHT:
 						nFormat |= DT_RIGHT;
 						break;

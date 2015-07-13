@@ -265,12 +265,15 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		case IDM_STORE_MAKEDEFAULT:
 			b = !(Item->Type & LFTypeDefault);
 			break;
+
 		case IDM_STORE_IMPORTFOLDER:
 			b = FALSE;
 			break;
+
 		case IDM_STORE_SHORTCUT:
 			b = (Item->Type & LFTypeShortcutAllowed);
 			break;
+
 		case IDM_STORE_RENAME:
 			b = (m_wndExplorerList.GetEditControl()==NULL);
 			break;

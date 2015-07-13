@@ -61,22 +61,31 @@ void CListView::SetViewOptions(BOOL Force)
 		case LFViewPreview:
 			m_Icons[0] = &theApp.m_CoreImageListJumbo;
 			m_Icons[1] = (theApp.OSVersion<OS_Vista) ? &theApp.m_SystemImageListExtraLarge : &theApp.m_SystemImageListJumbo;
+
 			cx = cy = 128;
+
 			break;
+
 		case LFViewSmallIcons:
 			m_Icons[0] = &theApp.m_CoreImageListLarge;
 			m_Icons[1] = &theApp.m_SystemImageListLarge;
+
 			cx = cy = 32;
+
 			break;
+
 		case LFViewTiles:
 		case LFViewStrips:
 			m_Icons[0] = &theApp.m_CoreImageListExtraLarge;
 			m_Icons[1] = &theApp.m_SystemImageListExtraLarge;
+
 			cx = cy = 48;
+
 			break;
 		default:
 			m_Icons[0] = &theApp.m_CoreImageListSmall;
 			m_Icons[1] = &theApp.m_SystemImageListSmall;
+
 			cx = cy = 16;
 		}
 
@@ -95,6 +104,7 @@ void CListView::SetViewOptions(BOOL Force)
 			{
 				m_ViewParameters = *p_ViewParameters;
 				AdjustLayout();
+
 				break;
 			}
 
@@ -206,36 +216,53 @@ void CListView::AdjustLayout()
 		gva.cx = max(m_IconSize[0].cx, m_FontHeight[0]*10);
 		gva.cy = m_IconSize[0].cy+m_FontHeight[0]*2+PADDING;
 		gva.guttery = 1;
+
 		ArrangeHorizontal(gva);
+
 		break;
+
 	case LFViewList:
 		gva.cx = m_IconSize[0].cx+PADDING+GetMaxLabelWidth(240-m_IconSize[0].cx-PADDING);
 		if (gva.cx<140)
 			gva.cx = 140;
 		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
 		gva.gutterx = 6;
+
 		ArrangeVertical(gva);
+
 		break;
+
 	case LFViewDetails:
 		gva.cx = -2*gva.padding;
 		for (UINT a=0; a<LFAttributeCount; a++)
 			gva.cx += m_ViewParameters.ColumnWidth[a];
 		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
+
 		ArrangeHorizontal(gva, FALSE, TRUE);
+
 		break;
+
 	case LFViewTiles:
 		gva.cx = 15*m_FontHeight[0];
 		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]*3+max(m_FontHeight[0], 18));
 		gva.gutterx = gva.guttery = 3;
+
 		ArrangeHorizontal(gva, FALSE);
+
 		break;
+
 	case LFViewStrips:
 		gva.cy = 2+max(m_IconSize[0].cy, max(m_FontHeight[0]*3+m_FontHeight[1], m_FontHeight[0]*2+max(m_FontHeight[0], 18)*2+1));
+
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
+
 		break;
+
 	case LFViewContent:
 		gva.cy = m_IconSize[0].cy+18+3+8;
+
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
+		
 		break;
 	}
 
@@ -255,8 +282,10 @@ RECT CListView::GetLabelRect(INT Index)
 	case LFViewPreview:
 		rect.top += m_IconSize[0].cy+2*PADDING;
 		break;
+
 	case LFViewDetails:
 		rect.right = rect.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
+
 	case LFViewList:
 	case LFViewTiles:
 	case LFViewStrips:
@@ -298,7 +327,9 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 
 		rectLabel.top += m_IconSize[0].cy+PADDING;
 		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
+
 		break;
+
 	case LFViewDetails:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
@@ -318,24 +349,31 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 					rectLabel.left = rectLabel.right+3*PADDING;
 					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[Attr]-3*PADDING;
 				}
+
 				switch (Attr)
 				{
 				case LFAttrFileName:
 					if ((IsEditing()) && (Index==m_EditLabel))
 						continue;
+
 					break;
+
 				case LFAttrFileCount:
 					if (((i->Type & LFTypeMask)==LFTypeVolume) || ((i->Type & LFTypeMask)==LFTypeFile))
 						continue;
+
 				case LFAttrFileSize:
 					if ((i->Type & LFTypeMask)==LFTypeVolume)
 						continue;
 				}
+
 				if ((rectLabel.left<=rectClient.right) && (rectLabel.right>=rectClient.left))
 					DrawColumn(dc, rectLabel, i, Attr);
 			}
 		}
+
 		break;
+
 	case LFViewList:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
@@ -345,6 +383,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 
 		rectLabel.left += m_IconSize[0].cx+PADDING;
 		DrawLabel(dc, rectLabel, i, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
 		break;
 	case LFViewTiles:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
@@ -363,21 +402,28 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 			Rows[1] = LFAttrComments;
 			Rows[2] = LFAttrDescription;
 			Rows[3] = -1;
+
 			break;
+
 		case LFTypeFile:
 			Rows[1] = LFAttrFileTime;
 			Rows[2] = LFAttrFileSize;
 			Rows[3] = LFAttrRating;
+
 			break;
+
 		case LFTypeFolder:
 			Rows[1] = LFAttrDescription;
 			Rows[2] = -1;
 			Rows[3] = -1;
+
 			break;
 		}
 
 		DrawTileRows(dc, rectLabel, i, d, Rows, Themed);
+
 		break;
+
 	case LFViewStrips:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
@@ -392,22 +438,29 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 			rectLeft.right -= RIGHTCOLUMN+2*PADDING;
 
 		DrawProperty(dc, rectLeft, i, d, LFAttrFileName, Themed);
+
 		switch (i->Type & LFTypeMask)
 		{
 		case LFTypeStore:
 		case LFTypeVolume:
 			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+
 			break;
+
 		case LFTypeFile:
 			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrHashtags, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
+
 			break;
+
 		case LFTypeFolder:
 			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
+
 			break;
+
 		}
 
 		if (Right)
@@ -420,17 +473,21 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 			case LFTypeStore:
 				DrawProperty(dc, rectRight, i, d, LFAttrCreationTime, Themed);
 				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
+
 				break;
+
 			case LFTypeFile:
 				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
 				DrawProperty(dc, rectRight, i, d, LFAttrFileSize, Themed);
 				DrawProperty(dc, rectRight, i, d, LFAttrRating, Themed);
 				DrawProperty(dc, rectRight, i, d, LFAttrPriority, Themed);
+
 				break;
 			}
 		}
 
 		break;
+
 	case LFViewContent:
 		if (i->AttributeValues[LFAttrRating])
 		{
@@ -494,22 +551,29 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview))
 			if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, i))
 				return;
+
 		if (JUMBOICON)
 		{
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
 			return;
 		}
+
 		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(i->CoreAttributes.FileFormat);
+
 		break;
+
 	case LFTypeVolume:
 		strcpy_s(Path, 4, " :\\");
 		Path[0] = i->CoreAttributes.FileID[0];
+
 		if (JUMBOICON)
 		{
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, Path, i->Type & LFTypeGhosted);
 			return;
 		}
+
 		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(Path);
+
 		break;
 	}
 
@@ -529,9 +593,11 @@ void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr,
 	case LFAttrFileName:
 		wcsncpy_s(tmpStr, cCount, GetLabel(i), 255);
 		break;
+
 	case LFAttrFileFormat:
 		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats.GetTypeName(i->CoreAttributes.FileFormat));
 		break;
+
 	default:
 		LFAttributeToString(i, Attr, tmpStr, cCount);
 	}
@@ -636,7 +702,9 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		dc.SelectObject(pOldFont);
 
 		rect.top += m_FontHeight[1];
+
 		break;
+
 	case LFAttrRating:
 	case LFAttrPriority:
 		{
@@ -652,7 +720,9 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		}
 
 		rect.top += 18;
+
 		break;
+
 	default:
 		WCHAR tmpStr[256];
 		AttributeToString(i, Attr, tmpStr, 256);
@@ -683,6 +753,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		}
 
 		rect.top += m_FontHeight[0];
+
 		break;
 	}
 }

@@ -47,25 +47,37 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 	case ENT_READY:
 		m_FirstCol = 0x00E600;
 		m_SecondCol = 0x00AF00;
+
 		break;
+
 	case ENT_INFO:
 		m_FirstCol = 0xFF8E6F;
 		m_SecondCol = 0xF26120;
+
 		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_INFORMATION), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+
 		break;
+
 	case ENT_WARNING:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
+
 		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_WARNING), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+
 		break;
+
 	case ENT_SHIELD:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
+
 		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), IDI_SHIELD, IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+
 		break;
+
 	default:
 		m_FirstCol = 0x0000E6;
 		m_SecondCol = 0x0000AF;
+
 		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ERROR), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
 	}
 

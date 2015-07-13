@@ -233,9 +233,11 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request)
 		AddCompare(pComboBox, IDS_COMPARE_BEGINSWITH, LFFilterCompareBeginsWith);
 		AddCompare(pComboBox, IDS_COMPARE_ENDSWITH, LFFilterCompareEndsWith);
 		break;
+
 	case LFTypeUnicodeArray:
 		AddCompare(pComboBox, IDS_COMPARE_CONTAINS, LFFilterCompareContains);
 		break;
+
 	case LFTypeFourCC:
 	case LFTypeFraction:
 	case LFTypeFlags:
@@ -243,6 +245,7 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request)
 		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
 		break;
+
 	case LFTypeRating:
 	case LFTypeUINT:
 	case LFTypeSize:
@@ -256,8 +259,6 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request)
 		AddCompare(pComboBox, IDS_COMPARE_ISABOVEEQUAL, LFFilterCompareIsAboveOrEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISBELOWEQUAL, LFFilterCompareIsBelowOrEqual);
 		break;
-	default:
-		ASSERT(FALSE);
 	}
 
 	if (request!=-1)

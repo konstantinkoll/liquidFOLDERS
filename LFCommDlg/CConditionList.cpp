@@ -251,11 +251,15 @@ void CConditionList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_EDIT);
+
 		break;
+
 	case VK_DELETE:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_DELETE);
+
 		break;
+
 	default:
 		CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 	}

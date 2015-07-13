@@ -43,16 +43,17 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 	{
 	case IconEmpty:
 	case IconMultiple:
-		{
-			g.DrawImage((m_Status==IconEmpty) ? m_Empty.m_pBitmap : m_Multiple.m_pBitmap, cx, cy);
-			break;
-		}
+		g.DrawImage((m_Status==IconEmpty) ? m_Empty.m_pBitmap : m_Multiple.m_pBitmap, cx, cy);
+		break;
+
 	case IconCore:
 		theApp.m_CoreImageListJumbo.DrawEx(&dc, m_IconID, CPoint(cx, cy), CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 		break;
+
 	case IconPreview:
 		if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectIcon, m_pItem))
 			break;
+
 	case IconExtension:
 		theApp.m_FileFormats.DrawJumboIcon(dc, rectIcon, m_FileFormat);
 		break;
@@ -202,7 +203,9 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 				m_AttributeStatus[Attr] = StatusUsed;
 				m_AttributeVisible[Attr] = TRUE;
 			}
+
 			break;
+
 		case StatusUsed:
 			Cmp = LFCompareVariantData(m_AttributeValues[Attr], v);
 
@@ -221,7 +224,9 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 					m_AttributeRangeSecond[Attr] = m_AttributeValues[Attr];
 				}
 			}
+
 			break;
+
 		case StatusMultiple:
 			if (!LFIsNullVariantData(v))
 			{
@@ -253,10 +258,13 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, WCHAR* Value)
 		m_AttributeStatus[Attr] = StatusUsed;
 		m_AttributeVisible[Attr] = TRUE;
 		wcscpy_s(m_AttributeValues[Attr].UnicodeString, 256, Value);
+
 		break;
+
 	case StatusUsed:
 		if (wcscmp(m_AttributeValues[Attr].UnicodeString, Value)!=0)
 			m_AttributeStatus[Attr] = StatusMultiple;
+
 		break;
 	}
 }
@@ -294,9 +302,11 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 			m_IconStatus = StatusUsed;
 			m_IconID = i->IconID;
 			break;
+
 		case StatusUsed:
 			if (m_IconID!=i->IconID)
 				m_IconStatus = StatusMultiple;
+
 			break;
 		}
 
@@ -312,7 +322,9 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+
 		break;
+
 	case LFTypeStore:
 		m_Count++;
 
@@ -337,6 +349,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 
 		if ((s.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 			AddValueVirtual(AttrLastSeen, s.LastSeen);
+
 		break;
 	case LFTypeFile:
 		m_Count++;
@@ -345,7 +358,9 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 			if (a!=LFAttrDescription)
 				AddValue(i, a, !theApp.m_Attributes[a].ReadOnly);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][0]);
+
 		break;
+
 	case LFTypeFolder:
 		m_Count += i->AggregateCount;
 
@@ -363,6 +378,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 			for (UINT a=LFAttrFileName; a<LFAttributeCount; a++)
 				AddValue(i, a);
 		}
+
 		break;
 	}
 }
@@ -376,9 +392,11 @@ void CInspectorWnd::UpdateFinish()
 	case LFTypeVolume:
 		SID = IDS_DRIVES_SINGULAR;
 		break;
+
 	case LFTypeStore:
 		SID = IDS_STORES_SINGULAR;
 		break;
+
 	default:
 		SID = IDS_FILES_SINGULAR;
 	}
@@ -397,9 +415,11 @@ void CInspectorWnd::UpdateFinish()
 	case StatusUnused:
 		m_IconHeader.SetEmpty();
 		break;
+
 	case StatusMultiple:
 		m_IconHeader.SetMultiple(m_TypeName);
 		break;
+
 	default:
 		switch (m_TypeID)
 		{
@@ -417,7 +437,9 @@ void CInspectorWnd::UpdateFinish()
 				{
 					m_IconHeader.SetPreview(p_LastItem, m_TypeName);
 				}
+
 			break;
+
 		case LFTypeVolume:
 			if (m_AttributeStatus[AttrDriveLetter]==StatusMultiple)
 			{
@@ -430,7 +452,9 @@ void CInspectorWnd::UpdateFinish()
 				Path[0] = m_AttributeValues[AttrDriveLetter].AnsiString[0];
 				m_IconHeader.SetFormatIcon(Path, m_TypeName);
 			}
+
 			break;
+
 		default:
 			m_IconHeader.SetCoreIcon(m_IconID-1, m_TypeName);
 		}
@@ -630,9 +654,11 @@ void CInspectorWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_INSPECTOR_SHOWINTERNAL:
 		pCmdUI->SetCheck(m_ShowInternal);
 		break;
+
 	case IDM_INSPECTOR_SORTALPHABETIC:
 		pCmdUI->SetCheck(m_SortAlphabetic);
 		break;
+
 	case IDM_INSPECTOR_EXPORTSUMMARY:
 	case IDM_INSPECTOR_EXPORTMETADATA:
 		b = m_Count;

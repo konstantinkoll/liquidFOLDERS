@@ -459,6 +459,7 @@ void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_ENTERLICENSEKEY:
 		pCmdUI->Enable(!LFIsLicensed());
 		break;
+
 	default:
 		pCmdUI->Enable(TRUE);
 	}
@@ -720,9 +721,11 @@ BOOL LFApplication::IsUpdateCheckDue()
 		case 0:
 			LastUpdateCheck.QuadPart += DAY;
 			break;
+
 		case 1:
 			LastUpdateCheck.QuadPart += 7*DAY;
 			break;
+
 		case 2:
 			LastUpdateCheck.QuadPart += 30*DAY;
 			break;

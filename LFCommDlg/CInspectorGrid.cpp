@@ -55,25 +55,32 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 	case LFTypeUnicodeArray:
 		pProperty = (pData->Attr==LFAttrHashtags) ? new CPropertyTags(pData) : new CProperty(pData);
 		break;
+
 	case LFTypeAnsiString:
 		pProperty = (pData->Attr==LFAttrLocationIATA) ? new CPropertyIATA(pData, NULL, NULL) : new CProperty(pData);
 		break;
+
 	case LFTypeRating:
 		pProperty = new CPropertyRating(pData);
 		break;
+
 	case LFTypeUINT:
 	case LFTypeSize:
 		pProperty = new CPropertyNumber(pData);
 		break;
+
 	case LFTypeDuration:
 		pProperty = new CPropertyDuration(pData);
 		break;
+
 	case LFTypeGeoCoordinates:
 		pProperty = new CPropertyGPS(pData);
 		break;
+
 	case LFTypeTime:
 		pProperty = new CPropertyTime(pData);
 		break;
+
 	default:
 		pProperty = new CProperty(pData);
 	}
@@ -197,10 +204,12 @@ void CProperty::OnSetString(CString Value)
 		case LFTypeUnicodeString:
 			wcsncpy_s(p_Data->UnicodeString, 256, Value, 255);
 			break;
+
 		case LFTypeUnicodeArray:
 			wcsncpy_s(p_Data->UnicodeArray, 256, Value, 255);
 			LFSanitizeUnicodeArray(p_Data->UnicodeArray, 256);
 			break;
+
 		case LFTypeAnsiString:
 			WideCharToMultiByte(CP_ACP, 0, Value, -1, p_Data->AnsiString, 256, NULL, NULL);
 			break;
@@ -384,11 +393,13 @@ BOOL CPropertyRating::OnPushChar(UINT nChar)
 	case 0xBB:
 		Rating++;
 		break;
+
 	case 0x25:
 	case 0x6D:
 	case 0xBD:
 		Rating--;
 		break;
+
 	case '0':
 	case '1':
 	case '2':
@@ -397,6 +408,7 @@ BOOL CPropertyRating::OnPushChar(UINT nChar)
 	case '5':
 		Rating = (nChar-'0')*2;
 		break;
+
 	default:
 		return FALSE;
 	}
@@ -772,16 +784,21 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 			case VK_RETURN:
 				DestroyEdit(TRUE);
 				return TRUE;
+
 			case VK_ESCAPE:
 				DestroyEdit(FALSE);
 				return TRUE;
 			}
+
 		break;
+
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
 		if (p_Edit)
 			return TRUE;
+
 		break;
+
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -1530,21 +1547,27 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	case SB_TOP:
 		nInc = -m_VScrollPos;
 		break;
+
 	case SB_BOTTOM:
 		nInc = m_VScrollMax-m_VScrollPos;
 		break;
+
 	case SB_LINEUP:
 		nInc = -m_RowHeight-1;
 		break;
+
 	case SB_LINEDOWN:
 		nInc = m_RowHeight+1;
 		break;
+
 	case SB_PAGEUP:
 		nInc = min(-1, -rect.Height());
 		break;
+
 	case SB_PAGEDOWN:
 		nInc = max(1, rect.Height());
 		break;
+
 	case SB_THUMBTRACK:
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1730,7 +1753,9 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				SelectItem(m_pSortArray[a]);
 				break;
 			}
+
 		break;
+
 	case VK_UP:
 		for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		{
@@ -1742,7 +1767,9 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
 				Last = m_pSortArray[a];
 		}
+
 		break;
+
 	case VK_DOWN:
 		for (INT a=m_Properties.m_ItemCount-1; a>=0; a--)
 		{
@@ -1754,7 +1781,9 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
 				Last = m_pSortArray[a];
 		}
+
 		break;
+
 	case VK_END:
 		for (INT a=m_Properties.m_ItemCount-1; a>=0; a--)
 			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
@@ -1762,7 +1791,9 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				SelectItem(m_pSortArray[a]);
 				break;
 			}
+
 		break;
+
 	case VK_EXECUTE:
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)<0) && (m_SelectedItem!=-1))
@@ -1771,16 +1802,21 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				m_Properties.m_Items[m_SelectedItem].pProperty->OnClickButton();
 				break;
 			}
+
 	case VK_F2:
 		if (m_SelectedItem!=-1)
 			EditProperty(m_SelectedItem);
+
 		break;
+
 	case VK_BACK:
 	case VK_DELETE:
 	case VK_SPACE:
 		if (m_SelectedItem!=-1)
 			ResetProperty(m_SelectedItem);
+
 		break;
+
 	case VK_TAB:
 		{
 			CWnd* pWnd = GetParent()->GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
@@ -1788,9 +1824,11 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				pWnd->SetFocus();
 			break;
 		}
+
 	case VK_ESCAPE:
 		GetParent()->SendMessage(WM_COMMAND, IDCANCEL);
 		break;
+
 	default:
 		if (m_SelectedItem!=-1)
 		{

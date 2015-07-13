@@ -387,13 +387,9 @@ void CCalendarView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CFileView::OnKeyDown(nChar, nRepCnt, nFlags);
 
-	switch(nChar)
-	{
-	case 'Y':
+	if (nChar=='Y')
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnGoToYear();
-		break;
-	}
 }
 
 
@@ -428,9 +424,11 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_CALENDAR_SHOWCAPTIONS:
 		pCmdUI->SetCheck(theApp.m_CalendarShowCaptions);
 		break;
+
 	case IDM_CALENDAR_PREVYEAR:
 		b = (m_Year>MINYEAR);
 		break;
+
 	case IDM_CALENDAR_NEXTYEAR:
 		b = (m_Year<MAXYEAR);
 		break;

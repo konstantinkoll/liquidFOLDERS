@@ -192,6 +192,7 @@ void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 		case IDM_VOLUME_EJECT:
 			b = LFGetSourceForVolume(m_DriveLetters[Index])!=LFTypeSourceUnknown;
 			break;
+
 		case IDM_VOLUME_PROPERTIES:
 			b = TRUE;
 			break;

@@ -308,6 +308,7 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 			case LFTypeUnicodeString:
 				m_Data.UnicodeString[pAttr->cCharacters] = L'\0';
 				break;
+
 			case LFTypeAnsiString:
 				m_Data.AnsiString[pAttr->cCharacters] = '\0';
 				break;

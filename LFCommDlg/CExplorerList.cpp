@@ -278,13 +278,16 @@ void CExplorerList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			EditLabel(GetNextItem(-1, LVIS_SELECTED | LVIS_FOCUSED));
 			return;
 		}
+
 		break;
+
 	case VK_DELETE:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 		{
 			GetOwner()->SendMessage(WM_COMMAND, IDM_STORE_DELETE);
 			return;
 		}
+
 		break;
 	}
 

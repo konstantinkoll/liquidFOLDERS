@@ -115,14 +115,17 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 	case WM_KEYDOWN:
 		if ((pMsg->wParam==VK_RETURN) || (pMsg->wParam==VK_ESCAPE))
 		{
-			CEdit* edit = GetEditControl();
-			if (edit)
+			CEdit* pEditCtrl = GetEditControl();
+			if (pEditCtrl)
 			{
-				edit->SendMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam);
+				pEditCtrl->SendMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam);
+
 				return TRUE;
 			}
 		}
+
 		break;
+
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -886,6 +889,7 @@ void CExplorerTree::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 	case TVE_EXPAND:
 		GetChildItems(hItem);
+
 		if (!GetChildItem(hItem))
 		{
 			TV_ITEM tvItem;
@@ -894,7 +898,9 @@ void CExplorerTree::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 			tvItem.mask = TVIF_CHILDREN;
 			SetItem(&tvItem);
 		}
+
 		break;
+
 	case TVE_COLLAPSE:
 		for (HTREEITEM hItemSel = GetSelectedItem(); hItemSel;)
 		{
@@ -909,6 +915,7 @@ void CExplorerTree::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 
 		Expand(hItem, TVE_COLLAPSE | TVE_COLLAPSERESET);
+
 		break;
 	}
 
@@ -1040,14 +1047,18 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		if ((Path1[0]!='\0') && (Parent1[0]!='\0') && (wcscmp(Path1, Parent1)!=0))
 			if (AddPath(Path1, Parent1))
 				NotifyOwner = TRUE;
+
 		break;
+
 	case SHCNE_DRIVEREMOVED:
 	case SHCNE_MEDIAREMOVED:
 	case SHCNE_RMDIR:
 		if (Path1[0]!='\0')
 			if (DeletePath(Path1))
 				NotifyOwner = TRUE;
+
 		break;
+
 	case SHCNE_RENAMEFOLDER:
 		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
 			if (wcscmp(Parent1, Parent2)==0)
@@ -1062,12 +1073,15 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 					if (AddPath(Path2, Parent2))
 						NotifyOwner = TRUE;
 			}
+
 		break;
+
 	case SHCNE_UPDATEITEM:
 		wcscpy_s(Path2, MAX_PATH, Parent1);
 		wcscat_s(Path2, MAX_PATH, L"\\desktop.ini");
 		if (wcscmp(Path1, Path2)==0)
 			UpdatePath(Parent1, Parent1, pDesktop);
+
 		break;
 	}
 

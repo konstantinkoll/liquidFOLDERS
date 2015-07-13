@@ -9,16 +9,19 @@
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 {
 	BOOL b = theApp.m_Attributes[Attr].Sortable;
+
 	switch (ViewMode)
 	{
 	case LFViewCalendar:
 	case LFViewTimeline:
 		b &= (theApp.m_Attributes[Attr].Type==LFTypeTime);
 		break;
+
 	case LFViewGlobe:
 		b &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr].Type==LFTypeGeoCoordinates));
 		break;
 	}
+
 	return b;
 }
 
@@ -136,16 +139,21 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 			case VK_RETURN:
 				DestroyEdit(TRUE);
 				return TRUE;
+
 			case VK_ESCAPE:
 				DestroyEdit(FALSE);
 				return TRUE;
 			}
+
 		break;
+
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
 		if (p_Edit)
 			return TRUE;
+
 		break;
+
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -650,10 +658,12 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 		pMenu->LoadMenu(IDM_VOLUME);
 		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 		break;
+
 	case LFTypeStore:
 		pMenu->LoadMenu(IDM_STORE);
 		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 		break;
+
 	case LFTypeFile:
 		if ((m_Context==LFContextArchive) || (m_Context==LFContextTrash))
 		{
@@ -664,7 +674,9 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 		{
 			pMenu->LoadMenu(IDM_FILE);
 		}
+
 		break;
+
 	case LFTypeFolder:
 		if ((Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1))
 			pMenu->LoadMenu(IDM_FOLDER);
@@ -705,13 +717,16 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENNEWWINDOW));
 		pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
+
 		break;
+
 	case LFTypeFile:
 		if (Item->CoreAttributes.URL[0]!='\0')
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENBROWSER));
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENBROWSER, tmpStr);
 		}
+
 		if (Item->CoreAttributes.ContextID==LFContextFilters)
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_EDIT));
@@ -722,6 +737,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENWITH));
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
 		}
+
 		break;
 	}
 
@@ -809,7 +825,9 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL The
 					dc.SetBkColor(0xFFFFFF);
 					dc.DrawFocusRect(rect);
 				}
+
 				break;
+
 			case OS_Seven:
 			case OS_Eight:
 				if (!Selected)
@@ -827,6 +845,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL The
 					Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
 					g.DrawPath(&pen, &path);
 				}
+
 				break;
 			}
 	}
@@ -927,13 +946,16 @@ CString CFileView::GetLabel(LFItemDescriptor* i)
 		label += _T(" (");
 		label += i->CoreAttributes.FileID[0];
 		label += _T(":)");
+
 		break;
+
 	case LFTypeFile:
 		if (((!m_HideFileExt) || (i->CoreAttributes.FileName[0]==L'\0')) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			label += _T(".");
 			label += i->CoreAttributes.FileFormat;
 		}
+
 		break;
 	}
 
@@ -983,6 +1005,7 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 	case LFTypeVolume:
 		AppendAttribute(i, LFAttrDescription, Hint);
 		break;
+
 	case LFTypeStore:
 		AppendAttribute(i, LFAttrComments, Hint);
 
@@ -997,6 +1020,7 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 			AppendString(LFAttrComments, Hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 
 		break;
+
 	case LFTypeFile:
 		AppendAttribute(i, LFAttrComments, Hint);
 		AppendString(LFAttrFileFormat, Hint, FormatName);
@@ -1025,7 +1049,9 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendAttribute(i, LFAttrCreationTime, Hint);
 		AppendAttribute(i, LFAttrFileTime, Hint);
 		AppendAttribute(i, LFAttrFileSize, Hint);
+
 		break;
+
 	case LFTypeFolder:
 		AppendAttribute(i, LFAttrComments, Hint);
 		AppendAttribute(i, LFAttrDescription, Hint);
@@ -1187,21 +1213,27 @@ void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	case SB_TOP:
 		nInc = -m_VScrollPos;
 		break;
+
 	case SB_BOTTOM:
 		nInc = m_VScrollMax-m_VScrollPos;
 		break;
+
 	case SB_LINEUP:
 		nInc = -m_RowHeight;
 		break;
+
 	case SB_LINEDOWN:
 		nInc = m_RowHeight;
 		break;
+
 	case SB_PAGEUP:
 		nInc = min(-1, -(rect.Height()-(INT)m_HeaderHeight));
 		break;
+
 	case SB_PAGEDOWN:
 		nInc = max(1, rect.Height()-(INT)m_HeaderHeight);
 		break;
+
 	case SB_THUMBTRACK:
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1248,17 +1280,21 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	case SB_TOP:
 		nInc = -m_HScrollPos;
 		break;
+
 	case SB_BOTTOM:
 		nInc = m_HScrollMax-m_HScrollPos;
 		break;
+
 	case SB_PAGEUP:
 	case SB_LINEUP:
 		nInc = -64;
 		break;
+
 	case SB_PAGEDOWN:
 	case SB_LINEDOWN:
 		nInc = 64;
 		break;
+
 	case SB_THUMBTRACK:
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1366,12 +1402,16 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 						}
 
 						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
+
 						break;
+
 					case LFTypeVolume:
 						strcpy_s(Path, 4, " :\\");
 						Path[0] = i->CoreAttributes.FileID[0];
 						theApp.m_FileFormats.Lookup(Path, fd);
+
 						break;
+
 					case LFTypeFolder:
 						if (!m_EnableTooltipOnVirtual)
 							goto Leave;
@@ -1467,40 +1507,58 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case 'A':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectAll();
+
 		break;
+
 	case 'I':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectInvert();
+
 		break;
+
 	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectNone();
+
 		break;
+
 	case VK_SPACE:
 		if (m_FocusItem!=-1)
 			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !IsSelected(m_FocusItem));
+
 		break;
+
 	case VK_F2:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			EditLabel(m_FocusItem);
+
 		break;
+
 	case VK_F5:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			GetOwner()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
+
 		break;
+
 	case VK_BACK:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			GetOwner()->PostMessage(WM_COMMAND, ID_NAV_BACK);
+
 		break;
+
 	case VK_EXECUTE:
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			GetOwner()->PostMessage(WM_COMMAND, IDM_ITEM_OPEN);
+
 		break;
+
 	case VK_DELETE:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_DELETE);
+
 		break;
+
 	default:
 		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
@@ -1748,6 +1806,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_SELECTALL:
 	case IDM_SELECTINVERT:
 		b &= m_AllowMultiSelect;
+
 	case IDM_SELECTNONE:
 		b &= p_CookedFiles ? (p_CookedFiles->m_ItemCount!=NULL) : FALSE;
 		break;

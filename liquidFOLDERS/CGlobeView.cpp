@@ -509,10 +509,13 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 						}
 						cCaption = 3;
 					}
+
 					break;
+
 				case LFAttrLocationGPS:
 					if ((wcscmp(Caption, d->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
 						Coordinates = NULL;
+
 					break;
 				}
 
@@ -1271,15 +1274,20 @@ void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_OEM_PLUS:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			OnZoomIn();
+
 		break;
+
 	case VK_SUBTRACT:
 	case VK_OEM_MINUS:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			OnZoomOut();
+
 		break;
+
 	case 'L':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnJumpToLocation();
+
 		break;
 	}
 }
@@ -1436,12 +1444,15 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_GLOBE_ZOOMIN:
 		b = m_GlobeTarget.Zoom>0;
 		break;
+
 	case IDM_GLOBE_ZOOMOUT:
 		b = m_GlobeTarget.Zoom<1000;
 		break;
+
 	case IDM_GLOBE_AUTOSIZE:
 		b = m_GlobeTarget.Zoom!=600;
 		break;
+
 	case IDM_GLOBE_GOOGLEEARTH:
 		b = (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
 		break;

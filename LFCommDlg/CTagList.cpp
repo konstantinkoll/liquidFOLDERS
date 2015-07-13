@@ -36,10 +36,12 @@ void CTagList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	case CDDS_PREPAINT:
 		*pResult = CDRF_NOTIFYITEMDRAW;
 		break;
+
 	case CDDS_ITEMPREPAINT:
 		DrawItem((INT)lplvcd->nmcd.dwItemSpec, CDC::FromHandle(lplvcd->nmcd.hdc));
 		*pResult = CDRF_SKIPDEFAULT;
 		break;
+
 	default:
 		*pResult = CDRF_DODEFAULT;
 	}

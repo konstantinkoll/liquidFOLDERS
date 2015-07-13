@@ -72,6 +72,7 @@ INT LFSelectLocationIATADlg::Compare(INT n1, INT n2)
 	case 0:
 		Result = strcmp(m_Airports[n1]->Code, m_Airports[n2]->Code);
 		break;
+
 	case 1:
 		Result = strcmp(m_Airports[n1]->Name, m_Airports[n2]->Name);
 		break;

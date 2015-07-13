@@ -594,7 +594,9 @@ void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_EXECUTE:
 		if (Index!=-1)
 			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Index].CmdID);
+
 		return;
+
 	case VK_HOME:
 		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
 			if (m_Items.m_Items[a].Selectable)
@@ -603,7 +605,9 @@ void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				m_Keyboard = TRUE;
 				break;
 			}
+
 		return;
+
 	case VK_END:
 		for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
 			if (m_Items.m_Items[a].Selectable)
@@ -612,7 +616,9 @@ void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				m_Keyboard = TRUE;
 				break;
 			}
+
 		return;
+
 	case VK_UP:
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
@@ -625,12 +631,15 @@ void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				break;
 			}
 		}
+
 		return;
+
 	case VK_DOWN:
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
 			if (++Index>=(INT)m_Items.m_ItemCount)
 				Index = 0;
+
 			if (m_Items.m_Items[Index].Selectable)
 			{
 				SelectItem(Index);
@@ -638,6 +647,7 @@ void CSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				break;
 			}
 		}
+
 		return;
 	}
 

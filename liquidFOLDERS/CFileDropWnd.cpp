@@ -364,12 +364,15 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		LFGetDefaultStore(StoreID);
 		b &= (strcmp(m_Store.StoreID, StoreID)!=0);
 		break;
+
 	case IDM_STORE_IMPORTFOLDER:
 		b &= m_StoreMounted;
 		break;
+
 	case IDM_STORE_SHORTCUT:
 		b &= ((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
 		break;
+
 	case IDM_STORE_RENAME:
 		b = FALSE;
 		break;
