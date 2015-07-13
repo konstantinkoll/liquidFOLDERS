@@ -189,11 +189,11 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 	if (hgLiquid)
 	{
 		HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-		LFFileIDList* il = LFAllocFileIDList(hLiquid);
+		LFTransactionList* tl = LFAllocTransactionList(hLiquid);
 		GlobalUnlock(hgLiquid);
 
-		LFTransactionImport(StoreID, il, Move==TRUE);
-		UINT Result = il->m_LastError;
+		LFTransactionImport(StoreID, tl, Move==TRUE);
+		UINT Result = tl->m_LastError;
 		LFErrorBox(Result, GetForegroundWindow());
 
 		// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
@@ -206,11 +206,11 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 
 		STGMEDIUM stg;
 		stg.tymed = TYMED_HGLOBAL;
-		stg.hGlobal = LFCreateLiquidFiles(il);
+		stg.hGlobal = LFCreateLiquidFiles(tl);
 
 		pDataObject->SetData(&fmt, &stg, FALSE);
 
-		LFFreeFileIDList(il);
+		LFFreeTransactionList(tl);
 
 		return (Result==LFOk) ? Move ? DROPEFFECT_MOVE : DROPEFFECT_COPY : DROPEFFECT_NONE;
 	}

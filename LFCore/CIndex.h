@@ -23,12 +23,11 @@ public:
 	void Update(LFTransactionList* tl, LFVariantData* v1, LFVariantData* v2=NULL, LFVariantData* v3=NULL);
 	void Archive(LFTransactionList* tl);
 	void Delete(LFTransactionList* tl, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
-	void Delete(LFFileIDList* il, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
 	void ResolvePhysicalLocations(LFTransactionList* tl);
 	UINT Rename(CHAR* FileID, WCHAR* NewName);
 	void Retrieve(LFFilter* f, LFSearchResult* Result);
-	void AddToSearchResult(LFFileIDList* il, LFSearchResult* Result);
-	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress=NULL);
+	void AddToSearchResult(LFTransactionList* il, LFSearchResult* Result);
+	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFTransactionList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress=NULL);
 
 protected:
 	BOOL LoadTable(UINT TableID, UINT* Result=NULL);

@@ -187,8 +187,8 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	if ((m_pResult) && (pDispInfo->item.pszText))
 		if (pDispInfo->item.pszText[0]!=L'\0')
 		{
-			LFTransactionList* tl = LFAllocTransactionList();
-			LFAddItemDescriptor(tl, m_pResult->m_Items[pDispInfo->item.iItem]);
+			LFTransactionList* pTransactionList = LFAllocTransactionList();
+			LFAddTransactionItem(pTransactionList, m_pResult->m_Items[pDispInfo->item.iItem]);
 
 			LFVariantData value;
 			value.Attr = LFAttrFileName;
@@ -197,10 +197,10 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 			wcsncpy_s(value.UnicodeString, 256, pDispInfo->item.pszText, 255);
 
-			LFTransactionUpdate(tl, &value);
-			LFErrorBox(tl->m_LastError, GetSafeHwnd());
+			LFTransactionUpdate(pTransactionList, &value);
+			LFErrorBox(pTransactionList->m_LastError, GetSafeHwnd());
 
-			LFFreeTransactionList(tl);
+			LFFreeTransactionList(pTransactionList);
 			*pResult = TRUE;
 		}
 }

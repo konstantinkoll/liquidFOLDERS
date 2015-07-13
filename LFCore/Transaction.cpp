@@ -164,12 +164,12 @@ void UpdateVolume(LFTransactionList* tl, UINT idx, LFVariantData* v)
 	if (v->Attr==LFAttrFileName)
 	{
 		WCHAR szVolumeRoot[4] = L" :\\";
-		szVolumeRoot[0] = tl->m_Items[idx].Item->CoreAttributes.FileID[0];
+		szVolumeRoot[0] = tl->m_Items[idx].pItemDescriptor->CoreAttributes.FileID[0];
 
 		Result = SetVolumeLabel(szVolumeRoot, v->UnicodeString) ? LFOk : LFDriveNotReady;
 
 		if (Result==LFOk)
-			wcscpy_s(tl->m_Items[idx].Item->CoreAttributes.FileName, 256, v->UnicodeString);
+			wcscpy_s(tl->m_Items[idx].pItemDescriptor->CoreAttributes.FileName, 256, v->UnicodeString);
 	}
 	else
 	{
@@ -178,7 +178,7 @@ void UpdateVolume(LFTransactionList* tl, UINT idx, LFVariantData* v)
 
 	if (Result==LFOk)
 	{
-		tl->m_Changes = TRUE;
+		tl->m_Modified = TRUE;
 	}
 	else
 	{
@@ -195,10 +195,10 @@ void UpdateStore(LFTransactionList* tl, UINT idx, LFVariantData* v, BOOL& Update
 	switch (v->Attr)
 	{
 	case LFAttrFileName:
-		Result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, v->UnicodeString, NULL, TRUE);
+		Result = LFSetStoreAttributes(tl->m_Items[idx].pItemDescriptor->StoreID, v->UnicodeString, NULL, TRUE);
 		break;
 	case LFAttrComments:
-		Result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, NULL, v->UnicodeString, TRUE);
+		Result = LFSetStoreAttributes(tl->m_Items[idx].pItemDescriptor->StoreID, NULL, v->UnicodeString, TRUE);
 		break;
 	default:
 		Result = LFIllegalAttribute;
@@ -206,8 +206,8 @@ void UpdateStore(LFTransactionList* tl, UINT idx, LFVariantData* v, BOOL& Update
 
 	if (Result==LFOk)
 	{
-		LFSetAttributeVariantData(tl->m_Items[idx].Item, *v);
-		tl->m_Changes = TRUE;
+		LFSetAttributeVariantData(tl->m_Items[idx].pItemDescriptor, *v);
+		tl->m_Modified = TRUE;
 		Updated |= TRUE;
 	}
 	else
@@ -226,13 +226,10 @@ LFCORE_API void LFTransactionUpdate(LFTransactionList* tl, LFVariantData* v1, LF
 	BOOL StoresUpdated = FALSE;
 	BOOL FilesUpdated = FALSE;
 
-	// Reset
-	tl->Reset();
-
 	// Process
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if (tl->m_Items[a].LastError==LFOk)
-			switch (tl->m_Items[a].Item->Type & LFTypeMask)
+			switch (tl->m_Items[a].pItemDescriptor->Type & LFTypeMask)
 			{
 			case LFTypeVolume:
 				UpdateVolume(tl, a, v1);
@@ -251,7 +248,7 @@ LFCORE_API void LFTransactionUpdate(LFTransactionList* tl, LFVariantData* v1, LF
 			case LFTypeFile:
 				if (!tl->m_Items[a].Processed)
 				{
-					OPEN_STORE(tl->m_Items[a].Item->StoreID, TRUE, tl->SetError(tl->m_Items[a].Item->StoreID, Result))
+					OPEN_STORE(tl->m_Items[a].pItemDescriptor->StoreID, TRUE, tl->SetError(tl->m_Items[a].pItemDescriptor->StoreID, Result))
 
 					if (idx1)
 						idx1->Update(tl, v1, v2, v3);
@@ -283,16 +280,13 @@ LFCORE_API void LFTransactionArchive(LFTransactionList* tl)
 {
 	assert(tl);
 
-	// Reset
-	tl->Reset();
-
 	// Process
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
 		{
-			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
+			if ((tl->m_Items[a].pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 			{
-				OPEN_STORE(tl->m_Items[a].Item->StoreID, TRUE, tl->SetError(tl->m_Items[a].Item->StoreID, Result));
+				OPEN_STORE(tl->m_Items[a].pItemDescriptor->StoreID, TRUE, tl->SetError(tl->m_Items[a].pItemDescriptor->StoreID, Result));
 
 				if (idx1)
 					idx1->Archive(tl);
@@ -314,9 +308,6 @@ LFCORE_API void LFTransactionDelete(LFTransactionList* tl, BOOL PutInTrash, LFPr
 {
 	assert(tl);
 
-	// Reset
-	tl->Reset();
-
 	// Progress
 	if (pProgress)
 	{
@@ -328,9 +319,9 @@ LFCORE_API void LFTransactionDelete(LFTransactionList* tl, BOOL PutInTrash, LFPr
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
 		{
-			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
+			if ((tl->m_Items[a].pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 			{
-				OPEN_STORE(tl->m_Items[a].Item->StoreID, TRUE, tl->SetError(tl->m_Items[a].Item->StoreID, Result));
+				OPEN_STORE(tl->m_Items[a].pItemDescriptor->StoreID, TRUE, tl->SetError(tl->m_Items[a].pItemDescriptor->StoreID, Result));
 
 				if (idx1)
 					idx1->Delete(tl, PutInTrash, pProgress);
@@ -381,15 +372,12 @@ LFCORE_API void LFTransactionRestore(LFTransactionList* tl, UINT Flags)
 
 LFCORE_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, BOOL IncludePIDL)
 {
-	// Reset
-	tl->Reset();
-
 	// Retrieve physical paths
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
-			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
+			if ((tl->m_Items[a].pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 			{
-				OPEN_STORE(tl->m_Items[a].Item->StoreID, FALSE, tl->SetError(tl->m_Items[a].Item->StoreID, Result));
+				OPEN_STORE(tl->m_Items[a].pItemDescriptor->StoreID, FALSE, tl->SetError(tl->m_Items[a].pItemDescriptor->StoreID, Result));
 
 				if (idx1)
 					idx1->ResolvePhysicalLocations(tl);
@@ -416,12 +404,9 @@ LFCORE_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, BOO
 // LFFileIDList
 //
 
-LFCORE_API void LFTransactionImport(CHAR* key, LFFileIDList* il, BOOL move, LFProgress* pProgress)
+LFCORE_API void LFTransactionImport(CHAR* key, LFTransactionList* il, BOOL move, LFProgress* pProgress)
 {
 	assert(il);
-
-	// Reset
-	il->Reset();
 
 	// Store finden
 	CHAR StoreID[LFKeySize] = "";
@@ -495,47 +480,10 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFFileIDList* il, BOOL move, LFPr
 	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 }
 
-LFCORE_API void LFTransactionDelete(LFFileIDList* il, BOOL PutInTrash, LFProgress* pProgress)
+
+LFCORE_API void LFTransactionAddToSearchResult(LFTransactionList* il, LFSearchResult* sr)
 {
 	assert(il);
-
-	// Reset
-	il->Reset();
-
-	// Progress
-	if (pProgress)
-	{
-		pProgress->MinorCount = il->m_ItemCount;
-		pProgress->MinorCurrent = 0;
-	}
-
-	// Process
-	for (UINT a=0; a<il->m_ItemCount; a++)
-		if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
-		{
-			OPEN_STORE(il->m_Items[a].StoreID, TRUE, il->SetError(il->m_Items[a].StoreID, Result));
-
-			if (idx1)
-				idx1->Delete(il, PutInTrash, pProgress);
-			if (idx2)
-				idx2->Delete(il, PutInTrash, pProgress);
-
-			CLOSE_STORE();
-
-			if (pProgress)
-				if (pProgress->UserAbort)
-					break;
-		}
-
-	SendLFNotifyMessage(LFMessages.StatisticsChanged);
-}
-
-LFCORE_API void LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* sr)
-{
-	assert(il);
-
-	// Reset
-	il->Reset();
 
 	// Process
 	for (UINT a=0; a<il->m_ItemCount; a++)

@@ -1197,7 +1197,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 
 	// Files
 	BOOL Result = FALSE;
-	LFFileIDList* il = LFAllocFileIDList();
+	LFTransactionList* tl = LFAllocTransactionList();
 
 	POSITION pos = e.children->GetHeadPosition();
 	while (pos)
@@ -1205,22 +1205,22 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
 
 		if (IS(item, CFileItem))
-			LFAddFileID(il, AS(item, CFileItem)->m_pItem->StoreID, AS(item, CFileItem)->m_pItem->CoreAttributes.FileID, item);
+			LFAddTransactionItemEx(tl, AS(item, CFileItem)->m_pItem->StoreID, AS(item, CFileItem)->m_pItem->CoreAttributes.FileID, NULL, (UINT_PTR)item);
 	}
 
-	if (il->m_ItemCount)
+	if (tl->m_ItemCount)
 	{
-		LFTransactionDelete(il);
+		LFTransactionDelete(tl);
 
-		for (UINT a=0; a<il->m_ItemCount; a++)
-			if ((il->m_Items[a].Processed) && (il->m_Items[a].LastError==LFOk))
-				((CFileItem*)il->m_Items[a].UserData)->Delete();
+		for (UINT a=0; a<tl->m_ItemCount; a++)
+			if ((tl->m_Items[a].Processed) && (tl->m_Items[a].LastError==LFOk))
+				((CFileItem*)tl->m_Items[a].UserData)->Delete();
 
 		Result = TRUE;
 	}
 
-	LFErrorBox(il->m_LastError, GetForegroundWindow());
-	LFFreeFileIDList(il);
+	LFErrorBox(tl->m_LastError, GetForegroundWindow());
+	LFFreeTransactionList(tl);
 
 	return Result;
 }
@@ -1253,7 +1253,7 @@ void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 {
 	if (e.children->GetCount())
 	{
-		LFFileIDList* il = LFAllocFileIDList();
+		LFTransactionList* tl = LFAllocTransactionList();
 
 		POSITION pos = e.children->GetHeadPosition();
 		while (pos)
@@ -1261,14 +1261,14 @@ void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
 
 			if (IS(item, CFileItem))
-				LFAddFileID(il, AS(item, CFileItem)->m_pItem->StoreID, AS(item, CFileItem)->m_pItem->CoreAttributes.FileID);
+				LFAddTransactionItemEx(tl, AS(item, CFileItem)->m_pItem->StoreID, AS(item, CFileItem)->m_pItem->CoreAttributes.FileID);
 		}
 
 		e.dataObject->SetHasFileData();
-		if (il->m_ItemCount)
-			e.dataObject->SetHGlobalData(CFSTR_LIQUIDFILES, LFCreateLiquidFiles(il));
+		if (tl->m_ItemCount)
+			e.dataObject->SetHGlobalData(CFSTR_LIQUIDFILES, LFCreateLiquidFiles(tl));
 
-		LFFreeFileIDList(il);
+		LFFreeTransactionList(tl);
 
 		e.dataObject->SetPreferredDropEffect(DROPEFFECT_COPY);
 	}

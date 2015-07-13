@@ -450,10 +450,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFFileIDList.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFFileImportList.cpp"
 				>
 			</File>
@@ -609,10 +605,6 @@
 			</File>
 			<File
 				RelativePath=".\LFDynArray.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFFileIDList.h"
 				>
 			</File>
 			<File

@@ -27,11 +27,11 @@ public:
 
 	BOOL AddItem(LFItemDescriptor* pItemDescriptor, UINT_PTR UserData=0);
 	BOOL AddItem(CHAR* StoreID, CHAR* FileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
-	void SetError(CHAR* key, UINT error, LFProgress* pProgress=NULL);
-	void SetError(UINT idx, UINT Result, LFProgress* pProgress=NULL);
+	void SetError(CHAR* StoreID, UINT Result, LFProgress* pProgress=NULL);
+	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
 	HGLOBAL CreateDropFiles();
 	HGLOBAL CreateLiquidFiles();
 
-	BOOL m_Changes;
+	BOOL m_Modified;
 	BOOL m_Resolved;
 };

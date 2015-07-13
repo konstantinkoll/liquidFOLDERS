@@ -12,8 +12,8 @@
 #define PRV_NONE           0
 #define PRV_COMMENTS       1
 #define PRV_THUMBS         2
-#define PRV_AUDIOTITLE     4
-#define PRV_AUDIOALBUM     8
+#define PRV_TITLE          4
+#define PRV_ALBUM          8
 #define PRV_SOURCE        16
 
 struct TimelineItemData

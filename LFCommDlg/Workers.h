@@ -10,7 +10,6 @@ struct WorkerParameters
 	LFItemDescriptor* Template;
 	union
 	{
-		LFFileIDList* FileIDList;
 		LFFileImportList* FileImportList;
 		LFMaintenanceList* MaintenanceList;
 		LFTransactionList* TransactionList;

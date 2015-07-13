@@ -85,28 +85,16 @@
 
 #define END_ITERATEALL() }
 
-#define IN_FILEIDLIST(il) \
-	UINT ItemID = 0; \
-	for (; ItemID<il->m_ItemCount; ItemID++) \
-	{ \
-		i = NULL; \
-		if ((strcmp(il->m_Items[ItemID].StoreID, slot->StoreID)==0) && (strcmp(il->m_Items[ItemID].FileID, PtrM->FileID)==0)) \
-			goto Exists; \
-	} \
-	continue; \
-	Exists:
-
 #define IN_TRANSACTIONLIST(tl) \
 	UINT ItemID = 0; \
 	for (; ItemID<tl->m_ItemCount; ItemID++) \
 	{ \
-		i = tl->m_Items[ItemID].Item; \
-		if ((i->Type & LFTypeMask)==LFTypeFile) \
-			if ((strcmp(i->StoreID, slot->StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0)) \
-				goto Exists; \
+		if ((strcmp(tl->m_Items[ItemID].StoreID, slot->StoreID)==0) && (strcmp(tl->m_Items[ItemID].FileID, PtrM->FileID)==0)) \
+			goto Exists; \
 	} \
 	continue; \
-	Exists:
+	Exists: \
+	i = tl->m_Items[ItemID].pItemDescriptor; \
 
 #define DELETE_FILE() \
 	UINT Result = LFOk; \
@@ -514,7 +502,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* v1, LFVariantData* v2,
 		DISCARD_SLAVE(tl->m_Items[ItemID].LastError = tl->m_LastError = LFIndexTableLoadError);
 	}
 
-	tl->m_Items[ItemID].Processed = tl->m_Changes = TRUE;
+	tl->m_Items[ItemID].Processed = tl->m_Modified = TRUE;
 
 	END_ITERATEALL();
 
@@ -540,7 +528,7 @@ void CIndex::Archive(LFTransactionList* tl)
 	Tables[IDXTABLE_MASTER]->MakeDirty();
 	ADD_STATS();
 
-	tl->m_Items[ItemID].Processed = tl->m_Changes = TRUE;
+	tl->m_Items[ItemID].Processed = tl->m_Modified = TRUE;
 
 	END_ITERATEMASTER();
 
@@ -568,7 +556,7 @@ void CIndex::Delete(LFTransactionList* tl, BOOL PutInTrash, LFProgress* pProgres
 
 	DELETE_FILE();
 	if (Result==LFOk)
-		tl->m_Changes = TRUE;
+		tl->m_Modified = TRUE;
 
 	tl->SetError(ItemID, Result, pProgress);
 	if (pProgress)
@@ -579,37 +567,6 @@ void CIndex::Delete(LFTransactionList* tl, BOOL PutInTrash, LFProgress* pProgres
 
 	// Invalid items are perceived as deleted
 	tl->SetError(slot->StoreID, LFOk);
-}
-
-void CIndex::Delete(LFFileIDList* il, BOOL PutInTrash, LFProgress* pProgress)
-{
-	assert(il);
-
-	START_ITERATEALL(il->SetError(slot->StoreID, LFIndexTableLoadError),);
-	IN_FILEIDLIST(il);
-
-	// Progress
-	if (pProgress)
-	{
-		wcscpy_s(pProgress->Object, 256, PtrM->FileName);
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-		{
-			il->m_LastError = LFCancel;
-			return;
-		}
-	}
-
-	DELETE_FILE();
-
-	il->SetError(ItemID, Result, pProgress);
-	if (pProgress)
-		if (pProgress->UserAbort)
-			return;
-
-	END_ITERATEALL();
-
-	// Invalid items are perceived as deleted
-	il->SetError(slot->StoreID, LFOk);
 }
 
 void CIndex::ResolvePhysicalLocations(LFTransactionList* tl)
@@ -707,13 +664,13 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* Result)
 	END_ITERATEALL();
 }
 
-void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* Result)
+void CIndex::AddToSearchResult(LFTransactionList* il, LFSearchResult* Result)
 {
 	assert(il);
 	assert(Result);
 
 	START_ITERATEALL(il->SetError(slot->StoreID, LFIndexTableLoadError); Result->m_LastError = LFIndexTableLoadError, );
-	IN_FILEIDLIST(il);
+	IN_TRANSACTIONLIST(il);
 	BUILD_ITEMDESCRIPTOR();
 
 	LOAD_SLAVE()
@@ -726,7 +683,7 @@ void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* Result)
 	END_ITERATEALL();
 }
 
-void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress)
+void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFTransactionList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress)
 {
 	assert(il);
 
@@ -744,7 +701,7 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 	}
 
 	START_ITERATEALL(il->SetError(slot->StoreID, LFIndexTableLoadError), );
-	IN_FILEIDLIST(il);
+	IN_TRANSACTIONLIST(il);
 
 	// Progress
 	if (pProgress)

@@ -36,7 +36,7 @@ DWORD WINAPI WorkerImportFromStore(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	LFTransactionImport(wp->StoreID, wp->FileIDList, wp->DeleteSource==TRUE, &p);
+	LFTransactionImport(wp->StoreID, wp->TransactionList, wp->DeleteSource==TRUE, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }

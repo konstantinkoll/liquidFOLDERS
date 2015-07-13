@@ -35,10 +35,8 @@ public:
 	void SelectNone();
 
 protected:
-	LFFileIDList* BuildFileIDList(BOOL All=FALSE);
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolvePhysicalLocations=FALSE, BOOL IncludePIDL=FALSE);
-	void RemoveTransactedItems(LFFileIDList* il);
-	void RemoveTransactedItems(LFTransactionList* tl);
+	void RemoveTransactedItems(LFTransactionList* pTransactionList);
 	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
 	BOOL RestoreFiles(UINT Flags, BOOL All=FALSE);
 	BOOL UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3);
@@ -139,8 +137,7 @@ private:
 	void SetHeaderButtons();
 	void SetHeader();
 	void AdjustLayout();
-	void AddFileIDItem(LFFileIDList* il, LFItemDescriptor* Item);
-	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* Item, UINT UserData);
+	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData);
 
 	CTaskButton* p_FilterButton;
 	CTaskButton* p_OpenButton;

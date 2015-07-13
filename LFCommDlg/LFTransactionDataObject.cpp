@@ -16,9 +16,9 @@ LFTransactionDataObject::LFTransactionDataObject(LFTransactionList* tl)
 	m_hLiquidFiles = LFCreateLiquidFiles(tl);
 }
 
-LFFileIDList* LFTransactionDataObject::GetFileIDList()
+LFTransactionList* LFTransactionDataObject::GetTransactionList()
 {
-	return LFAllocFileIDList(m_hLiquidFiles);
+	return LFAllocTransactionList(m_hLiquidFiles);
 }
 
 STDMETHODIMP LFTransactionDataObject::QueryInterface(REFIID iid, void** ppvObject)

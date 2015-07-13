@@ -99,11 +99,11 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	wp.FileIDList = LFAllocFileIDList(hLiquid);
+	wp.TransactionList = LFAllocTransactionList(hLiquid);
 	GlobalUnlock(hgLiquid);
 
 	LFDoWithProgress(WorkerImportFromStore, &wp.Hdr, pWnd);
-	UINT Result = wp.FileIDList->m_LastError;
+	UINT Result = wp.TransactionList->m_LastError;
 	LFErrorBox(Result, pWnd->GetSafeHwnd());
 
 	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
@@ -117,11 +117,11 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	STGMEDIUM stg;
 	ZeroMemory(&stg, sizeof(stg));
 	stg.tymed = TYMED_HGLOBAL;
-	stg.hGlobal = LFCreateLiquidFiles(wp.FileIDList);
+	stg.hGlobal = LFCreateLiquidFiles(wp.TransactionList);
 
 	pDataObject->SetData(&fmt, &stg, FALSE);
 
-	LFFreeFileIDList(wp.FileIDList);
+	LFFreeTransactionList(wp.TransactionList);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
@@ -137,13 +137,13 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 	CWaitCursor csr;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	LFFileIDList* il = LFAllocFileIDList(hLiquid);
+	LFTransactionList* tl = LFAllocTransactionList(hLiquid);
 	GlobalUnlock(hgLiquid);
 
-	LFTransactionAddToSearchResult(il, p_SearchResult);
-	UINT Result = il->m_LastError;
+	LFTransactionAddToSearchResult(tl, p_SearchResult);
+	UINT Result = tl->m_LastError;
 	LFErrorBox(Result, pWnd->GetSafeHwnd());
-	LFFreeFileIDList(il);
+	LFFreeTransactionList(tl);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);

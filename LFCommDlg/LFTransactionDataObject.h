@@ -14,7 +14,7 @@ class LFTransactionDataObject : public IDataObject
 public:
 	LFTransactionDataObject(LFTransactionList* tl);
 
-	LFFileIDList* GetFileIDList();
+	LFTransactionList* GetTransactionList();
 
 	BEGIN_INTERFACE
 

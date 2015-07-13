@@ -70,14 +70,14 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeFile:
-					d->pComments = GetAttribute(d, i, LFAttrComments, PRV_COMMENTS);
-
 					if (i->CoreAttributes.ContextID==LFContextAudio)
 					{
-						d->pArtist = GetAttribute(d, i, LFAttrArtist, PRV_AUDIOTITLE);
-						d->pTitle = GetAttribute(d, i, LFAttrTitle, PRV_AUDIOTITLE);
-						d->pAlbum = GetAttribute(d, i, LFAttrAlbum, PRV_AUDIOALBUM);
+						d->pArtist = GetAttribute(d, i, LFAttrArtist, PRV_TITLE);
+						d->pAlbum = GetAttribute(d, i, LFAttrAlbum, PRV_ALBUM);
 					}
+
+					d->pComments = GetAttribute(d, i, LFAttrComments, PRV_COMMENTS);
+					d->pTitle = GetAttribute(d, i, LFAttrTitle, PRV_TITLE);
 
 					break;
 				case LFTypeFolder:
@@ -89,6 +89,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 						LFItemDescriptor* i = p_RawFiles->m_Items[b];
 
 						ASSERT(theApp.m_Attributes[LFAttrRoll].Type==LFTypeUnicodeString);
+
 						if (d->Preview & PRV_COMMENTS)
 							if (!i->AttributeValues[LFAttrRoll])
 							{
@@ -183,9 +184,9 @@ Restart:
 			INT h = 2*BORDER+m_CaptionHeight;
 			if (d->Preview)
 				h += BORDER/2+BORDER;
-			if (d->Preview & PRV_AUDIOTITLE)
+			if (d->Preview & PRV_TITLE)
 				h += m_FontHeight[0];
-			if (d->Preview & PRV_AUDIOALBUM)
+			if (d->Preview & PRV_ALBUM)
 				h += m_FontHeight[0];
 			if (d->Preview & PRV_COMMENTS)
 			{
@@ -203,7 +204,7 @@ Restart:
 					h += BORDER/2;
 				}
 				else
-					if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM | PRV_COMMENTS))
+					if (d->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 					{
 						h += 2*BORDER;
 					}
@@ -484,7 +485,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 				BottomHeight += BORDER/2;
 			}
 			else
-				if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM | PRV_COMMENTS))
+				if (d->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 				{
 					if (!Themed || !Selected)
 						dc.FillSolidRect(rectItem->left+BORDER+1, rectSource.top-BORDER, m_ItemWidth-2*BORDER-2, 1, Themed ? 0xE5E5E5 : GetSysColor(COLOR_3DFACE));
@@ -494,17 +495,17 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 		}
 
 		// Attributes
-		if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM | PRV_COMMENTS))
+		if (d->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 		{
 			CRect rectAttr(rectItem->left+BORDER+2, rectText.bottom+BORDER+BORDER/2, rectItem->right-BORDER, 0);
 			rectAttr.bottom = rectAttr.top+m_FontHeight[0];
 
-			if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM))
+			if (d->Preview & (PRV_TITLE | PRV_ALBUM))
 				rectAttr.left = rectItem->left+m_IconSize.cx+2*BORDER;
 
 			dc.SetTextColor(atCol);
 
-			if (d->Preview & PRV_AUDIOTITLE)
+			if (d->Preview & PRV_TITLE)
 			{
 				WCHAR tmpStr[513] = L"";
 
@@ -522,7 +523,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 				rectAttr.OffsetRect(0, m_FontHeight[0]);
 			}
 
-			if (d->Preview & PRV_AUDIOALBUM)
+			if (d->Preview & PRV_ALBUM)
 			{
 				ASSERT(d->pAlbum);
 
