@@ -58,6 +58,9 @@ EXPORTS
 	LFAddTransactionItemEx @220
 	LFCreateDropFiles @221
 	LFCreateLiquidFiles @222
+	LFAllocFileImportList @223
+	LFFreeFileImportList @224
+	LFAddImportPath @225
 
 	LFIATAGetCountryCount @300
 	LFIATAGetAirportCount @301

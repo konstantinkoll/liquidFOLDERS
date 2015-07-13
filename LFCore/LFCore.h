@@ -165,14 +165,6 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 
 
 
-// Neue Datei-Importliste erzeugen
-LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
-
-// Existierende LFFileImportList freigeben
-LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* il);
-
-// String zur LFFileImportList hinzufügen
-LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* il, WCHAR* path);
 
 
 
@@ -373,7 +365,7 @@ LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, U
 #define LFFreeFilterCondition(pFilterCondition) delete pFilterCondition;
 
 
-// Neues Suchergebnis mit Kontext ctx erzeugen
+// Neues Suchergebnis mit Kontext Context erzeugen
 LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT Context);
 
 // Existierendes LFSearchResult freigeben
@@ -409,6 +401,15 @@ LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionLi
 // Handle zu LIQUIDFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
 LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* pTransactionList);
 
+
+// Neue Datei-Importliste erzeugen
+LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
+
+// Existierende LFFileImportList freigeben
+LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* pFileImportList);
+
+// String zur LFFileImportList hinzufügen
+LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* Path);
 
 
 // Geotagging

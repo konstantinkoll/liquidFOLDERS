@@ -524,32 +524,6 @@ LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, UINT ID)
 
 
 
-LFCORE_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
-{
-	LFFileImportList* il = new LFFileImportList();
-
-	if (hDrop)
-	{
-		UINT NumFiles = DragQueryFile(hDrop, (UINT32)-1, NULL, 0);
-		WCHAR FileName[2*MAX_PATH];
-
-		for (UINT a=0; a<NumFiles; a++)
-			if (DragQueryFile(hDrop, a, FileName, 2*MAX_PATH))
-				il->AddPath(FileName);
-	}
-
-	return il;
-}
-
-LFCORE_API void LFFreeFileImportList(LFFileImportList* il)
-{
-	delete il;
-}
-
-LFCORE_API BOOL LFAddImportPath(LFFileImportList* il, WCHAR* path)
-{
-	return il->AddPath(path);
-}
 
 
 LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* ml)

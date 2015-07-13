@@ -1,22 +1,23 @@
+
 #pragma once
 #include "LFDynArray.h"
 
-struct LFFIL2_Item
+
+struct LFFileImportListItem
 {
 	WCHAR Path[MAX_PATH];
 	UINT LastError;
 	BOOL Processed;
 };
 
-
-class LFFileImportList : public LFDynArray<LFFIL2_Item>
+class LFFileImportList : public LFDynArray<LFFileImportListItem>
 {
 public:
 	LFFileImportList();
 
-	BOOL AddPath(WCHAR* path);
-	void Resolve(BOOL recursive);
-	void SetError(UINT idx, UINT Result, LFProgress* pProgress=NULL);
+	BOOL AddPath(WCHAR* Path);
+	void Resolve(BOOL Recursive);
+	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
 
 	UINT m_FileCount;
 	INT64 m_FileSize;
