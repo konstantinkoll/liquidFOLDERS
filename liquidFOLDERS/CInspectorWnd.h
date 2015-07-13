@@ -30,6 +30,7 @@ class CIconHeader : public CInspectorHeader
 {
 public:
 	CIconHeader();
+	~CIconHeader();
 
 	virtual INT GetPreferredHeight();
 	virtual void DrawHeader(CDC& dc, CRect rect, BOOL Themed);

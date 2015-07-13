@@ -21,6 +21,11 @@ CIconHeader::CIconHeader()
 	m_pItem = NULL;
 }
 
+CIconHeader::~CIconHeader()
+{
+	FreeItem();
+}
+
 INT CIconHeader::GetPreferredHeight()
 {
 	return 128+24;

@@ -1,7 +1,6 @@
 
 #pragma once
 #include "LF.h"
-#include "LFFileIDList.h"
 #include "LFFileImportList.h"
 #include "LFMaintenanceList.h"
 #include "LFSearchResult.h"
@@ -163,18 +162,6 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 
 
 
-// Neue Dateiliste erzeugen
-LFCORE_API LFFileIDList* __stdcall LFAllocFileIDList();
-LFCORE_API LFFileIDList* __stdcall LFAllocFileIDList(HLIQUID hLiquid);
-
-// Existierende LFFileIDList freigeben
-LFCORE_API void __stdcall LFFreeFileIDList(LFFileIDList* il);
-
-// String zur LFFileIDList hinzufügen
-LFCORE_API BOOL __stdcall LFAddFileID(LFFileIDList* il, CHAR* StoreID, CHAR* FileID, void* UserData=NULL);
-
-// Handle zu LIQUIDFILES-Struktur von Dateiliste auf globalem Heap erzeugen
-LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFFileIDList* il);
 
 
 
@@ -194,20 +181,6 @@ LFCORE_API void __stdcall LFFreeMaintenanceList(LFMaintenanceList* ml);
 
 
 
-// Neue Transaktionsliste erzeugen
-LFCORE_API LFTransactionList* __stdcall LFAllocTransactionList();
-
-// Existierende LFTransactionList freigeben
-LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);
-
-// LFItemDescriptor zur LFTransactionList hinzufügen
-LFCORE_API BOOL __stdcall LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData=0);
-
-// Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
-LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* tl);
-
-// Handle zu LIQUIDFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
-LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* tl);
 
 
 
@@ -330,18 +303,11 @@ LFCORE_API void __stdcall LFTransactionRestore(LFTransactionList* tl, UINT Flags
 // Physische Orte auflösen
 LFCORE_API void __stdcall LFTransactionResolvePhysicalLocations(LFTransactionList* tl, BOOL IncludePIDL=FALSE);
 
-
-// LFFileIDList
-//
-
 // Importiert Dateien in den Store
-LFCORE_API void __stdcall LFTransactionImport(CHAR* key, LFFileIDList* il, BOOL move, LFProgress* pProgress=NULL);
-
-// Löscht alle Dateien in il
-LFCORE_API void __stdcall LFTransactionDelete(LFFileIDList* il, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
+LFCORE_API void __stdcall LFTransactionImport(CHAR* key, LFTransactionList* il, BOOL move, LFProgress* pProgress=NULL);
 
 // Fügt die angegebenen Dateien zum Suchergebnis hinzu
-LFCORE_API void __stdcall LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* sr);
+LFCORE_API void __stdcall LFTransactionAddToSearchResult(LFTransactionList* il, LFSearchResult* sr);
 
 
 //
@@ -416,9 +382,7 @@ LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* pSearchResult);
 // LFItemDescriptor zum LFSearchResult hinzufügen
 LFCORE_API BOOL __stdcall LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItemDescriptor);
 
-// Alle markierten LFItemDescriptor (DeleteFlag==TRUE) aus LFSearchResult entfernen
-//
-// !!ACHTUNG!!
+// Alle markierten LFItemDescriptor (RemoveFlag==TRUE) aus LFSearchResult entfernen
 // Die Sortierreihenfolge geht verloren!
 LFCORE_API void __stdcall LFRemoveFlaggedItems(LFSearchResult* pSearchResult);
 
@@ -427,6 +391,23 @@ LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT
 
 // Gruppiert LFSearchResult und liefert Kopie zurück
 LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupOne, LFFilter* pFilter);
+
+
+// Neue Transaktionsliste erzeugen
+LFCORE_API LFTransactionList* __stdcall LFAllocTransactionList(HLIQUID hLiquid=NULL);
+
+// Existierende LFTransactionList freigeben
+LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);
+
+// LFItemDescriptor zur LFTransactionList hinzufügen
+LFCORE_API BOOL __stdcall LFAddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData=0);
+LFCORE_API BOOL __stdcall LFAddTransactionItemEx(LFTransactionList* pTransactionList, CHAR* StoreID, CHAR* FileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
+
+// Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
+LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionList);
+
+// Handle zu LIQUIDFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
+LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* pTransactionList);
 
 
 

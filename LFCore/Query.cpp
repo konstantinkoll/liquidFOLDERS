@@ -617,7 +617,7 @@ LFCORE_API LFSearchResult* LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchR
 
 LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
 {
-	LFStatistics* pStatistics = new LFStatistics();
+	LFStatistics* pStatistics = new LFStatistics;
 	ZeroMemory(pStatistics, sizeof(LFStatistics));
 
 	if (!StoreID)

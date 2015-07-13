@@ -9,8 +9,8 @@ EXPORTS
 	LFCombineFileCountSize @3
 	LFHideFileExt @4
 	LFHideVolumesWithNoMedia @5
-	LFGetSourceForVolume @7
-	LFGetLogicalVolumes @8
+	LFGetSourceForVolume @6
+	LFGetLogicalVolumes @7
 	
 	LFFourCCToString @100
 	LFUINTToString @101
@@ -52,6 +52,12 @@ EXPORTS
 	LFRemoveFlaggedItems @214
 	LFSortSearchResult @215
 	LFGroupSearchResult @216
+	LFAllocTransactionList @217
+	LFFreeTransactionList @218
+	LFAddTransactionItem @219
+	LFAddTransactionItemEx @220
+	LFCreateDropFiles @221
+	LFCreateLiquidFiles @222
 
 	LFIATAGetCountryCount @300
 	LFIATAGetAirportCount @301

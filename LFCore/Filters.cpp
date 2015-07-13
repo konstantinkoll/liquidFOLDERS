@@ -90,8 +90,6 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 		Ptr = pFilename;
 	}
 
-	MessageBox(NULL,Path,0,0);
-	MessageBox(NULL,Ptr,0,0);
 	LFStoreDescriptor* slot = FindStore(Path);
 
 	LFFilter* pFilter = LoadFilter(pFilename, slot ? slot->StoreID : "");
@@ -175,7 +173,7 @@ LFCORE_API UINT LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCH
 
 LFCORE_API LFFilterCondition* LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext)
 {
-	LFFilterCondition* pFilterCondition = new LFFilterCondition();
+	LFFilterCondition* pFilterCondition = new LFFilterCondition;
 
 	pFilterCondition->Next = pNext;
 	pFilterCondition->AttrData = v;
@@ -186,7 +184,7 @@ LFCORE_API LFFilterCondition* LFAllocFilterCondition(BYTE Compare, LFVariantData
 
 LFCORE_API LFFilterCondition* LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext)
 {
-	LFFilterCondition* pFilterCondition = new LFFilterCondition();
+	LFFilterCondition* pFilterCondition = new LFFilterCondition;
 
 	pFilterCondition->Next = pNext;
 	pFilterCondition->AttrData.Attr = Attr;
@@ -242,7 +240,7 @@ LFFilter* LoadFilter(WCHAR* pFilename, CHAR* StoreID)
 		if (!ReadFile(hFile, &Condition, min(Header.szCondition, sizeof(Condition)), &Read, NULL))
 			goto Leave;
 
-		LFFilterCondition* pFilterCondition = new LFFilterCondition();
+		LFFilterCondition* pFilterCondition = new LFFilterCondition;
 		memcpy_s(pFilterCondition, sizeof(LFFilterCondition), &Condition, sizeof(Condition));
 		pFilterCondition->Next = pFilter->ConditionList;
 

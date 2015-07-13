@@ -523,58 +523,6 @@ LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, UINT ID)
 
 
 
-LFCORE_API LFFileIDList* LFAllocFileIDList()
-{
-	return new LFFileIDList();
-}
-
-LFCORE_API LFFileIDList* LFAllocFileIDList(HLIQUID hLiquid)
-{
-	LFFileIDList* il = new LFFileIDList();
-
-	if (hLiquid)
-	{
-		LIQUIDFILES* pFiles = (LIQUIDFILES*)GlobalLock(hLiquid);
-		if (pFiles)
-		{
-			UINT cFiles = pFiles->cFiles;
-			CHAR* ptr = (CHAR*)(((BYTE*)pFiles)+sizeof(LIQUIDFILES));
-
-			for (UINT a=0; a<cFiles; a++)
-			{
-				CHAR StoreID[LFKeySize];
-				strcpy_s(StoreID, LFKeySize, ptr);
-				ptr += LFKeySize;
-
-				CHAR FileID[LFKeySize];
-				strcpy_s(FileID, LFKeySize, ptr);
-				ptr += LFKeySize;
-
-				il->AddFileID(StoreID, FileID);
-			}
-		}
-
-		GlobalUnlock(hLiquid);
-	}
-
-	return il;
-}
-
-LFCORE_API void LFFreeFileIDList(LFFileIDList* il)
-{
-	delete il;
-}
-
-LFCORE_API BOOL LFAddFileID(LFFileIDList* il, CHAR* StoreID, CHAR* FileID, void* UserData)
-{
-	return il->AddFileID(StoreID, FileID, UserData);
-}
-
-LFCORE_API HGLOBAL LFCreateLiquidFiles(LFFileIDList* il)
-{
-	return il->CreateLiquidFiles();
-}
-
 
 LFCORE_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
 {
@@ -609,31 +557,6 @@ LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
 	delete ml;
 }
 
-
-LFCORE_API LFTransactionList* LFAllocTransactionList()
-{
-	return new LFTransactionList();
-}
-
-LFCORE_API void LFFreeTransactionList(LFTransactionList* tl)
-{
-	delete tl;
-}
-
-LFCORE_API BOOL LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData)
-{
-	return tl->AddItemDescriptor(i, UserData);
-}
-
-LFCORE_API HGLOBAL LFCreateDropFiles(LFTransactionList* tl)
-{
-	return tl->CreateDropFiles();
-}
-
-LFCORE_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl)
-{
-	return tl->CreateLiquidFiles();
-}
 
 
 LFCORE_API void LFGetAttrCategoryName(WCHAR* pStr, UINT ID)

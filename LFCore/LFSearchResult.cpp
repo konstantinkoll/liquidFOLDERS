@@ -20,7 +20,8 @@ extern void LoadTwoStrings(HINSTANCE hInstance, UINT uID, WCHAR* lpBuffer1, INT 
 
 LFCORE_API LFSearchResult* LFAllocSearchResult(INT Context)
 {
-	assert(pSearchResult);
+	assert(Context>=0);
+	assert(Context<LFContextCount);
 
 	return new LFSearchResult(Context);
 }
@@ -275,20 +276,20 @@ BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreDescriptor);
 
-	LFItemDescriptor* i = LFAllocItemDescriptorEx(pStoreDescriptor);
+	LFItemDescriptor* pItemDesciptor = LFAllocItemDescriptorEx(pStoreDescriptor);
 
-	if (AddItem(i))
+	if (AddItem(pItemDesciptor))
 	{
-		i->NextFilter = LFAllocFilter();
+		pItemDesciptor->NextFilter = LFAllocFilter();
 
-		i->NextFilter->Mode = LFFilterModeDirectoryTree;
-		strcpy_s(i->NextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
-		wcscpy_s(i->NextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
+		pItemDesciptor->NextFilter->Mode = LFFilterModeDirectoryTree;
+		strcpy_s(pItemDesciptor->NextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
+		wcscpy_s(pItemDesciptor->NextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
 
 		return TRUE;
 	}
 
-	LFFreeItemDescriptor(i);
+	LFFreeItemDescriptor(pItemDesciptor);
 
 	return FALSE;
 }
@@ -317,22 +318,22 @@ void LFSearchResult::AddVolumes()
 				if ((sfi.szDisplayName[Len-5]==L' ') && (sfi.szDisplayName[Len-4]==L'(') && (sfi.szDisplayName[Len-2]==L':') && (sfi.szDisplayName[Len-1]==L')'))
 					sfi.szDisplayName[Len-5] = L'\0';
 
-			LFItemDescriptor* i = LFAllocItemDescriptor();
-			i->Type = LFTypeVolume;
+			LFItemDescriptor* pItemDesciptor = LFAllocItemDescriptor();
+			pItemDesciptor->Type = LFTypeVolume;
 			if (!sfi.dwAttributes)
-				i->Type |= LFTypeGhosted | LFTypeNotMounted;
+				pItemDesciptor->Type |= LFTypeGhosted | LFTypeNotMounted;
 			
-			i->CategoryID = LFItemCategoryVolumes;
-			SetAttribute(i, LFAttrFileName, sfi.szDisplayName);
+			pItemDesciptor->CategoryID = LFItemCategoryVolumes;
+			SetAttribute(pItemDesciptor, LFAttrFileName, sfi.szDisplayName);
 
 			CHAR FileID[] = " :";
 			FileID[0] = cVolume;
 
-			SetAttribute(i, LFAttrFileID, FileID);
-			SetAttribute(i, LFAttrDescription, sfi.szTypeName);
+			SetAttribute(pItemDesciptor, LFAttrFileID, FileID);
+			SetAttribute(pItemDesciptor, LFAttrDescription, sfi.szTypeName);
 
-			if (!AddItem(i))
-				LFFreeItemDescriptor(i);
+			if (!AddItem(pItemDesciptor))
+				LFFreeItemDescriptor(pItemDesciptor);
 		}
 	}
 }

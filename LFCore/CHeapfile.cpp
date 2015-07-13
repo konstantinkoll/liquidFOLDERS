@@ -181,7 +181,9 @@ void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 	}
 	else
 	{
-		ZeroMemory(PtrDst, Hdr.ElementSize);
+		assert(KeyOffset==Hdr.ElementSize-LFKeySize);
+
+		ZeroMemory(PtrDst, Hdr.ElementSize-LFKeySize);
 
 		for (UINT a=0; a<LFIndexTables[m_TableID].cTableEntries; a++)
 			GetAttribute(PtrDst, LFIndexTables[m_TableID].pTableEntries[a].Offset, LFIndexTables[m_TableID].pTableEntries[a].Attr, i);

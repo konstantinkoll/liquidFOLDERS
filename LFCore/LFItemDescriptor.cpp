@@ -195,8 +195,10 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 	if (!pItemDescriptor)
 		return LFAllocItemDescriptor();
 
-	LFItemDescriptor* i = new LFItemDescriptor();
+	LFItemDescriptor* i = new LFItemDescriptor;
 	memcpy(i, pItemDescriptor, sizeof(LFItemDescriptor));
+
+	i->RefCount = 1;
 
 	if (pItemDescriptor->NextFilter)
 		i->NextFilter = LFAllocFilter(pItemDescriptor->NextFilter);
@@ -206,15 +208,14 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 		if (i->AttributeValues[a])
 			if (IsStaticAttribute(pItemDescriptor, a))
 			{
-				UINT_PTR Offset = (BYTE*)pItemDescriptor->AttributeValues[a]-(BYTE*)pItemDescriptor;
+				INT_PTR Offset = (BYTE*)pItemDescriptor->AttributeValues[a]-(BYTE*)pItemDescriptor;
 				i->AttributeValues[a] = (BYTE*)i+Offset;
 			}
 			else
 			{
 				SIZE_T Size = _msize(pItemDescriptor->AttributeValues[a]);
-				memcpy(i->AttributeValues[a]=malloc(Size), pItemDescriptor->AttributeValues[a], Size);
+				memcpy(i->AttributeValues[a] = malloc(Size), pItemDescriptor->AttributeValues[a], Size);
 			}
-	
 
 	return i;
 }
