@@ -68,7 +68,8 @@ Finish:
 
 		// Manche Handler (z.B. Adobe Acrobat) setzen den gesamten Alpha-Kanal auf 0x00.
 		// In diesem Fall ist die gesamte Bitmap opak.
-		if (Bitmap.bmBitsPixel==32)
+		// Achtung! Bitmap.bmBits kann NULL sein!
+		if ((Bitmap.bmBitsPixel==32) && (Bitmap.bmBits))
 		{
 			// Prüfen, ob mindesetens ein Alpha-Wert ungleich 0x00 ist
 			for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
