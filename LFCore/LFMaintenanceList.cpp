@@ -1,21 +1,34 @@
+
 #include "stdafx.h"
+#include "LFCore.h"
 #include "LFMaintenanceList.h"
 #include <assert.h>
 
 
-LFMaintenanceList::LFMaintenanceList()
-	: LFDynArray()
+LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* pMaintenanceList)
 {
+	assert(pMaintenanceList);
+
+	delete pMaintenanceList;
 }
 
-BOOL LFMaintenanceList::AddStore(UINT _Result, WCHAR* _Name, CHAR* _StoreID, UINT _Icon)
+
+// LFMaintenanceList
+//
+
+BOOL LFMaintenanceList::AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UINT Result, UINT Icon)
 {
-	assert(_Name);
-	assert(_StoreID);
+	assert(Name);
+	assert(Comments);
+	assert(StoreID);
 
-	LFML_Item item = { _Result, L"", "", _Icon };
-	wcscpy_s(item.Name, 256, _Name);
-	strcpy_s(item.StoreID, LFKeySize, _StoreID);
+	LFMaintenaceListItem Item;
 
-	return LFDynArray::AddItem(item);
+	wcscpy_s(Item.Name, 256, Name);
+	wcscpy_s(Item.Comments, 256, Comments);
+	strcpy_s(Item.StoreID, LFKeySize, StoreID);
+	Item.Result = Result;
+	Item.Icon = Icon;
+
+	return LFDynArray::AddItem(Item);
 }

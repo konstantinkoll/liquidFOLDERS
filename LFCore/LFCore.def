@@ -11,6 +11,7 @@ EXPORTS
 	LFHideVolumesWithNoMedia @5
 	LFGetSourceForVolume @6
 	LFGetLogicalVolumes @7
+	LFInitProgress @8
 	
 	LFFourCCToString @100
 	LFUINTToString @101
@@ -61,6 +62,7 @@ EXPORTS
 	LFAllocFileImportList @223
 	LFFreeFileImportList @224
 	LFAddImportPath @225
+	LFFreeMaintenanceList @226
 
 	LFIATAGetCountryCount @300
 	LFIATAGetAirportCount @301

@@ -1,20 +1,20 @@
+
 #pragma once
 #include "LF.h"
 #include "LFDynArray.h"
 
 
-struct LFML_Item
+struct LFMaintenaceListItem
 {
-	UINT Result;
 	WCHAR Name[256];
+	WCHAR Comments[256];
 	CHAR StoreID[LFKeySize];
+	UINT Result;
 	UINT Icon;
 };
 
-class LFMaintenanceList : public LFDynArray<LFML_Item>
+class LFMaintenanceList : public LFDynArray<LFMaintenaceListItem>
 {
 public:
-	LFMaintenanceList();
-
-	BOOL AddStore(UINT _Result, WCHAR* _Name, CHAR* _StoreID, UINT _Icon);
+	BOOL AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UINT Result, UINT Icon);
 };

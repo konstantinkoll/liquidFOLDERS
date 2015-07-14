@@ -873,7 +873,7 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 			if ((!slot) || (!StoreLock))
 				continue;
 
-			ml->AddStore(RunMaintenance(slot, TRUE, pProgress), slot->StoreName, ptr, LFGetStoreIcon(slot));
+			ml->AddItem(slot->StoreName, slot->StoreComment, ptr, RunMaintenance(slot, TRUE, pProgress), LFGetStoreIcon(slot));
 			ReleaseMutexForStore(StoreLock);
 
 			ptr += LFKeySize;

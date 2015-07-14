@@ -30,14 +30,17 @@ LFCORE_API void __stdcall LFInitialize();
 // Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
 LFCORE_API LFMessageIDs* __stdcall LFGetMessageIDs();
 
+
 // Liefert einen String mit Dateianzahl und -größe zurück
 LFCORE_API void __stdcall LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount);
+
 
 // Gibt TRUE zurück, wenn der Explorer Dateiendungen verbirgt
 LFCORE_API BOOL __stdcall LFHideFileExt();
 
 // Gibt TRUE zurück, wenn der Explorer leere Laufwerke verbirgt
 LFCORE_API BOOL __stdcall LFHideVolumesWithNoMedia();
+
 
 // Liefert den Source-Typ eines Laufwerks zurück
 LFCORE_API UINT __stdcall LFGetSourceForVolume(CHAR cVolume);
@@ -46,44 +49,13 @@ LFCORE_API UINT __stdcall LFGetSourceForVolume(CHAR cVolume);
 LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_BOTH);
 
 
-
-
-
-
-// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
-// Die gespeicherten Lizenzinformationen finden sich in License
-LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* License=NULL, BOOL Reload=FALSE);
-
-// Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
-// und keine ordnungsgemäße Lizenz vorliegt
-LFCORE_API BOOL __stdcall LFIsSharewareExpired();
-
-
-
-// Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
-// im SendTo-Ordner des Benutzers
-// Wenn force==FALSE wird der Link nur beim ersten Aufruf erzeugt
-LFCORE_API void __stdcall LFCreateSendTo(BOOL force=FALSE);
-
 // Initalisiert eine LFProgress-Datenstruktur
 LFCORE_API void __stdcall LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount=0);
 
 
 
-// Informationen über ein Attribut zurückliefern
-LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID);
-
-
-
-// Informationen über ein Attribut zurückliefern
-LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ctx, UINT ID);
-
-
-
-// Informationen über eine Kategorie zurückliefern
-LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, UINT ID);
-
-
+// LFVariantData
+//
 
 // Konvertiert einen FourCC in eine Zeichenkette
 LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCount);
@@ -152,24 +124,180 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 
 
 
+// Datenstrukturen
+//
+
+// Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL);
+
+// Neuen LFItemDescriptor für Store erzeugen
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
+
+// Unabhängige Kopie von i erzeugen
+LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor);
+
+// Existierenden LFItemDescriptor freigeben
+LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor);
 
 
+// Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters
+LFCORE_API LFFilter* __stdcall LFAllocFilter(LFFilter* pFilter=NULL);
+
+// Existierenden LFFilter freigeben
+LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
+
+// Lädt einen abgespeicherten Filter
+LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* pItemDescriptor);
+LFCORE_API LFFilter* __stdcall LFLoadFilterEx(WCHAR* pFilename);
+
+// Speichert einen Filter in einem Store ab
+LFCORE_API UINT __stdcall LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComments=NULL);
+
+// Neue LFFilterCondition erzeugen
+LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
+LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
+
+// Existierende LFFilterCondition freigeben
+#define LFFreeFilterCondition(pFilterCondition) delete pFilterCondition;
 
 
+// Neues Suchergebnis mit Kontext Context erzeugen
+LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT Context);
+
+// Existierendes LFSearchResult freigeben
+LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* pSearchResult);
+
+// LFItemDescriptor zum LFSearchResult hinzufügen
+LFCORE_API BOOL __stdcall LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItemDescriptor);
+
+// Alle markierten LFItemDescriptor (RemoveFlag==TRUE) aus LFSearchResult entfernen
+// Die Sortierreihenfolge geht verloren!
+LFCORE_API void __stdcall LFRemoveFlaggedItems(LFSearchResult* pSearchResult);
+
+// Sortiert LFSearchResult
+LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending);
+
+// Gruppiert LFSearchResult und liefert Kopie zurück
+LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupOne, LFFilter* pFilter);
 
 
+// Neue Transaktionsliste erzeugen
+LFCORE_API LFTransactionList* __stdcall LFAllocTransactionList(HLIQUID hLiquid=NULL);
+
+// Existierende LFTransactionList freigeben
+LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);
+
+// LFItemDescriptor zur LFTransactionList hinzufügen
+LFCORE_API BOOL __stdcall LFAddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData=0);
+LFCORE_API BOOL __stdcall LFAddTransactionItemEx(LFTransactionList* pTransactionList, CHAR* StoreID, CHAR* FileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
+
+// Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
+LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionList);
+
+// Handle zu LIQUIDFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
+LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* pTransactionList);
 
 
+// Neue Datei-Importliste erzeugen
+LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
 
+// Existierende LFFileImportList freigeben
+LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* pFileImportList);
 
-
-
-
-
+// String zur LFFileImportList hinzufügen
+LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* Path);
 
 
 // Existierende LFMaintenanceList freigeben
 LFCORE_API void __stdcall LFFreeMaintenanceList(LFMaintenanceList* ml);
+
+
+
+// Geotagging
+//
+
+// Liefert die Anzahl der Territorien zurück
+LFCORE_API UINT __stdcall LFIATAGetCountryCount();
+
+// Liefert die Anzahl der Flughäfen zurück
+LFCORE_API UINT __stdcall LFIATAGetAirportCount();
+
+// Liefert Zeiger auf Territorium zurück
+LFCORE_API LFCountry* __stdcall LFIATAGetCountry(UINT CountryID);
+
+// Setzt den Zeiger *pBuffer auf den nächsten Flughafen
+LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport** ppAirport);
+
+// Setzt den Zeiger *pBuffer auf den nächsten Flughafen, der im Territorium CountryID liegt.
+// *pBuffer kann in jedem Fall überschrieben werden.
+LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport);
+
+// Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
+// *pBuffer kann in jedem Fall überschrieben werden.
+LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(CHAR* Code, LFAirport** ppAirport);
+
+
+
+// Suchabfragen
+//
+
+// Suchabfrage durchführen
+// - Ist pFilter==NULL, so wird eine Liste aller Stores zurückgeliefert
+LFCORE_API LFSearchResult* __stdcall LFQuery(LFFilter* pFilter);
+
+// Bestehendes Suchergebnis eingrenzen
+// - pFilter muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
+// - pFilter muss ein Unterverzeichnis sein
+// - First und Last müssen einen gültigen Bereich umfassen
+LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchResult, INT First, INT Last);
+
+// Statistik
+// - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
+LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID);
+
+
+
+// Thumbnails
+//
+
+LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* i, SIZE sz);
+
+// Skaliert eine Bitmap von 256x256 auf 128x128 (nur 32 Bit)
+LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -328,138 +456,33 @@ LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(CHAR* key);
 
 
 
-// Datenstrukturen
-//
-
-// Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL);
-
-// Neuen LFItemDescriptor für Store erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
-
-// Unabhängige Kopie von i erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor);
-
-// Existierenden LFItemDescriptor freigeben
-LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor);
 
 
-// Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters
-LFCORE_API LFFilter* __stdcall LFAllocFilter(LFFilter* pFilter=NULL);
+// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
+// Die gespeicherten Lizenzinformationen finden sich in License
+LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* License=NULL, BOOL Reload=FALSE);
 
-// Existierenden LFFilter freigeben
-LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
-
-// Lädt einen abgespeicherten Filter
-LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* pItemDescriptor);
-LFCORE_API LFFilter* __stdcall LFLoadFilterEx(WCHAR* pFilename);
-
-// Speichert einen Filter in einem Store ab
-LFCORE_API UINT __stdcall LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComments=NULL);
-
-// Neue LFFilterCondition erzeugen
-LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
-LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
-
-// Existierende LFFilterCondition freigeben
-#define LFFreeFilterCondition(pFilterCondition) delete pFilterCondition;
-
-
-// Neues Suchergebnis mit Kontext Context erzeugen
-LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT Context);
-
-// Existierendes LFSearchResult freigeben
-LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* pSearchResult);
-
-// LFItemDescriptor zum LFSearchResult hinzufügen
-LFCORE_API BOOL __stdcall LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItemDescriptor);
-
-// Alle markierten LFItemDescriptor (RemoveFlag==TRUE) aus LFSearchResult entfernen
-// Die Sortierreihenfolge geht verloren!
-LFCORE_API void __stdcall LFRemoveFlaggedItems(LFSearchResult* pSearchResult);
-
-// Sortiert LFSearchResult
-LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending);
-
-// Gruppiert LFSearchResult und liefert Kopie zurück
-LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupOne, LFFilter* pFilter);
-
-
-// Neue Transaktionsliste erzeugen
-LFCORE_API LFTransactionList* __stdcall LFAllocTransactionList(HLIQUID hLiquid=NULL);
-
-// Existierende LFTransactionList freigeben
-LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);
-
-// LFItemDescriptor zur LFTransactionList hinzufügen
-LFCORE_API BOOL __stdcall LFAddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData=0);
-LFCORE_API BOOL __stdcall LFAddTransactionItemEx(LFTransactionList* pTransactionList, CHAR* StoreID, CHAR* FileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
-
-// Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
-LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionList);
-
-// Handle zu LIQUIDFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
-LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* pTransactionList);
-
-
-// Neue Datei-Importliste erzeugen
-LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
-
-// Existierende LFFileImportList freigeben
-LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* pFileImportList);
-
-// String zur LFFileImportList hinzufügen
-LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* Path);
-
-
-// Geotagging
-//
-
-// Liefert die Anzahl der Territorien zurück
-LFCORE_API UINT __stdcall LFIATAGetCountryCount();
-
-// Liefert die Anzahl der Flughäfen zurück
-LFCORE_API UINT __stdcall LFIATAGetAirportCount();
-
-// Liefert Zeiger auf Territorium zurück
-LFCORE_API LFCountry* __stdcall LFIATAGetCountry(UINT CountryID);
-
-// Setzt den Zeiger *pBuffer auf den nächsten Flughafen
-LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport** ppAirport);
-
-// Setzt den Zeiger *pBuffer auf den nächsten Flughafen, der im Territorium CountryID liegt.
-// *pBuffer kann in jedem Fall überschrieben werden.
-LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport);
-
-// Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
-// *pBuffer kann in jedem Fall überschrieben werden.
-LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(CHAR* Code, LFAirport** ppAirport);
+// Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
+// und keine ordnungsgemäße Lizenz vorliegt
+LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 
 
 
-// Suchabfragen
-//
-
-// Suchabfrage durchführen
-// - Ist pFilter==NULL, so wird eine Liste aller Stores zurückgeliefert
-LFCORE_API LFSearchResult* __stdcall LFQuery(LFFilter* pFilter);
-
-// Bestehendes Suchergebnis eingrenzen
-// - pFilter muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
-// - pFilter muss ein Unterverzeichnis sein
-// - First und Last müssen einen gültigen Bereich umfassen
-LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchResult, INT First, INT Last);
-
-// Statistik
-// - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
-LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID);
+// Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
+// im SendTo-Ordner des Benutzers
+// Wenn force==FALSE wird der Link nur beim ersten Aufruf erzeugt
+LFCORE_API void __stdcall LFCreateSendTo(BOOL force=FALSE);
 
 
 
-// Thumbnails
-//
 
-LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* i, SIZE sz);
+// Informationen über ein Attribut zurückliefern
+LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID);
 
-// Skaliert eine Bitmap von 256x256 auf 128x128 (nur 32 Bit)
-LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);
+// Informationen über ein Attribut zurückliefern
+LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ctx, UINT ID);
+
+// Informationen über eine Kategorie zurückliefern
+LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, UINT ID);
+
+

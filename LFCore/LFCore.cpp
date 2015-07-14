@@ -290,6 +290,19 @@ LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 }
 
 
+// Threading
+//
+
+LFCORE_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount)
+{
+	assert(pProgress);
+
+	ZeroMemory(pProgress, sizeof(LFProgress));
+
+	pProgress->hWnd = hWnd;
+	pProgress->ProgressState = LFProgressWorking;
+	pProgress->MajorCount = MajorCount;
+}
 
 
 
@@ -338,15 +351,6 @@ LFCORE_API void LFCreateSendTo(BOOL force)
 		}
 }
 
-LFCORE_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount)
-{
-	assert(pProgress);
-
-	ZeroMemory(pProgress, sizeof(LFProgress));
-	pProgress->hWnd = hWnd;
-	pProgress->ProgressState = LFProgressWorking;
-	pProgress->MajorCount = MajorCount;
-}
 
 
 __forceinline void SetRange(BYTE &var, UINT ID, UINT lo, UINT hi, BYTE val)
@@ -526,10 +530,6 @@ LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, UINT ID)
 
 
 
-LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
-{
-	delete ml;
-}
 
 
 
