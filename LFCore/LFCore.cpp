@@ -305,6 +305,17 @@ LFCORE_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount
 }
 
 
+// Error handling
+//
+
+LFCORE_API void LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID)
+{
+	LoadString(LFCoreModuleHandle, ID+IDS_ERR_FIRST, pStr, (INT)cCount);
+}
+
+
+
+
 
 
 
@@ -543,11 +554,6 @@ LFCORE_API void LFGetSourceName(WCHAR* pStr, UINT ID, BOOL qualified)
 	LoadString(LFCoreModuleHandle, ID+(qualified ? IDS_QSRC_FIRST : IDS_SRC_FIRST), pStr, 256);
 }
 
-LFCORE_API void LFGetErrorText(WCHAR* pStr, UINT ID)
-{
-	LoadString(LFCoreModuleHandle, ID+IDS_ERR_FIRST, pStr, 256);
-}
-
 LFCORE_API void LFErrorBox(UINT ID, HWND hWnd)
 {
 	if (ID>LFCancel)
@@ -555,7 +561,7 @@ LFCORE_API void LFErrorBox(UINT ID, HWND hWnd)
 		WCHAR Caption[256];
 		WCHAR msg[256];
 		LoadString(LFCoreModuleHandle, IDS_ERRORCAPTION, Caption, 256);
-		LFGetErrorText(msg, ID);
+		LFGetErrorText(msg, 256, ID);
 
 		MessageBox(hWnd, msg, Caption, MB_OK | MB_ICONERROR);
 	}

@@ -100,6 +100,9 @@ IDD_CREATESTORE         ICON                    "res\\CreateStore_Tiny.ico"
 32515                   ICON                    "res\\Warning.ico"
 32518                   ICON                    "res\\Shield_7.ico"
 IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
+IDI_MAINTENANCE_OK      ICON                    "res\\Maintenance_Ok.ico"
+IDI_MAINTENANCE_WARNING ICON                    "res\\Maintenance_Warning.ico"
+IDI_MAINTENANCE_ERROR   ICON                    "res\\Maintenance_Error.ico"
 IDD_ABOUT               ICON                    "res\\About_Tiny.ico"
 IDD_ADDSTORE            ICON                    "res\\StoreAdd_Tiny.ico"
 IDD_CHOOSESTORE         ICON                    "res\\Stores_Tiny.ico"
@@ -331,16 +334,12 @@ BEGIN
     CTEXT           "X",IDC_GPSLOCATION,284,221,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 294, 300
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Wartungsarbeiten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
-    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,263
-    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
-    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
-    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
+    DEFPUSHBUTTON   "OK",IDOK,237,278,50,14,WS_GROUP
 END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
@@ -653,9 +652,9 @@ BEGIN
     IDD_STOREMAINTENANCE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 193
+        RIGHTMARGIN, 287
         TOPMARGIN, 7
-        BOTTOMMARGIN, 88
+        BOTTOMMARGIN, 292
     END
 
     IDD_EDITTAGS, DIALOG
@@ -826,8 +825,9 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHOOSESTORE_HINT    "Nur angeschlossene Stores können ausgewählt werden."
-    IDS_MAINTENANCETAB0     "Erfolgreich gewartet"
-    IDS_MAINTENANCETAB1     "Fehler"
+    IDS_STOREMAINTENANCE_CAPTION "Bericht"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d Store gewartet"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%d Stores gewartet"
     IDS_REGFILEFILTER       "Registrierungsdatei"
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
     IDS_XOFY_SINGULAR       "%u von %u"
@@ -841,12 +841,12 @@ BEGIN
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen?"
     IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
     IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
+    IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
+    IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
-    IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
 END
 
@@ -1079,18 +1079,6 @@ BEGIN
     GROUPBOX        "Vista previa",IDC_STATIC,278,7,230,232,WS_GROUP
     GROUPBOX        "Opciones",IDC_STATIC,277,247,231,30,WS_GROUP
     CTEXT           "X",IDC_GPSLOCATION,284,221,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
-END
-
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Mantenimiento programado"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
-    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,263
-    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
-    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
-    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
 END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 260, 316
@@ -1345,6 +1333,15 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,233,204,50,14,WS_GROUP
 END
 
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 294, 300
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Mantenimiento programado"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,237,278,50,14,WS_GROUP
+END
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1400,14 +1397,6 @@ BEGIN
         RIGHTMARGIN, 508
         TOPMARGIN, 7
         BOTTOMMARGIN, 298
-    END
-
-    IDD_STOREMAINTENANCE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 223
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 88
     END
 
     IDD_BROWSEFORFOLDER, DIALOG
@@ -1531,6 +1520,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 218
     END
+
+    IDD_STOREMAINTENANCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 287
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 292
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1583,8 +1580,9 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
-    IDS_MAINTENANCETAB0     "Revisión satisfactoria"
-    IDS_MAINTENANCETAB1     "Errores"
+    IDS_STOREMAINTENANCE_CAPTION "Reporte"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store inspeccionar"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores inspeccionar"
     IDS_REGFILEFILTER       "Archivo de Registro"
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
     IDS_XOFY_SINGULAR       "%u de %u"
@@ -1598,12 +1596,12 @@ BEGIN
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
     IDS_DELETESTORE_CAPTION "Eliminar store «%s»"
     IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
+    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
+    IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
-    IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
 END
 
@@ -1838,16 +1836,12 @@ BEGIN
     CTEXT           "X",IDC_GPSLOCATION,284,221,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 294, 300
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Travail d'entretien"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
-    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,263
-    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
-    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
-    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
+    DEFPUSHBUTTON   "OK",IDOK,237,278,50,14,WS_GROUP
 END
 
 IDD_LICENSE DIALOGEX 0, 0, 350, 183
@@ -2161,9 +2155,9 @@ BEGIN
     IDD_STOREMAINTENANCE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 213
+        RIGHTMARGIN, 287
         TOPMARGIN, 7
-        BOTTOMMARGIN, 88
+        BOTTOMMARGIN, 292
     END
 
     IDD_LICENSE, DIALOG
@@ -2334,8 +2328,9 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
-    IDS_MAINTENANCETAB0     "Entretenu avec succès"
-    IDS_MAINTENANCETAB1     "Erreurs"
+    IDS_STOREMAINTENANCE_CAPTION "Rapport"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store revisé"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores revisée"
     IDS_REGFILEFILTER       "Fichier de Registre"
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
     IDS_XOFY_SINGULAR       "%u sur %u"
@@ -2349,12 +2344,12 @@ BEGIN
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété?"
     IDS_DELETESTORE_CAPTION "Effacez le store «%s»"
     IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
+    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
+    IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
-    IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
 END
 
@@ -2639,18 +2634,6 @@ BEGIN
     CTEXT           "X",IDC_GPSLOCATION,284,221,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Scheduled maintenance"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
-    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,263
-    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
-    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
-    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
-END
-
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit tags"
@@ -2903,6 +2886,14 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,233,204,50,14,WS_GROUP
 END
 
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 294, 300
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Scheduled maintenance"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,237,278,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2958,14 +2949,6 @@ BEGIN
         RIGHTMARGIN, 508
         TOPMARGIN, 7
         BOTTOMMARGIN, 298
-    END
-
-    IDD_STOREMAINTENANCE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 193
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 88
     END
 
     IDD_EDITTAGS, DIALOG
@@ -3081,6 +3064,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 218
     END
+
+    IDD_STOREMAINTENANCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 287
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 292
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -3133,8 +3124,9 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
-    IDS_MAINTENANCETAB0     "Successfully serviced"
-    IDS_MAINTENANCETAB1     "Errors"
+    IDS_STOREMAINTENANCE_CAPTION "Report"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store serviced"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores serviced"
     IDS_REGFILEFILTER       "Registry file"
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
     IDS_XOFY_SINGULAR       "%u of %u"
@@ -3148,12 +3140,12 @@ BEGIN
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property?"
     IDS_DELETESTORE_CAPTION "Delete store “%s”"
     IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
+    IDS_FORMAT_CAPTION      "You cannot format volume %c:"
+    IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FORMAT_CAPTION      "You cannot format volume %c:"
-    IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
 END
 

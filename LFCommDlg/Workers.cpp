@@ -112,14 +112,12 @@ void LFRunMaintenance(CWnd* pParentWnd)
 
 	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, pParentWnd);
 	dlg.DoModal();
-
-	LFFreeMaintenanceList(wp.MaintenanceList);
 }
 
 void LFDeleteStore(CHAR* StoreID, CWnd* pParentWnd)
 {
-	LFStoreDescriptor store;
-	UINT Result = LFGetStoreSettings(StoreID, &store);
+	LFStoreDescriptor Store;
+	UINT Result = LFGetStoreSettings(StoreID, &Store);
 	if (Result!=LFOk)
 	{
 		LFErrorBox(Result, pParentWnd->GetSafeHwnd());
@@ -128,23 +126,23 @@ void LFDeleteStore(CHAR* StoreID, CWnd* pParentWnd)
 
 	// Messagebox
 	CString Caption;
-	Caption.Format(IDS_DELETESTORE_CAPTION, store.StoreName);
+	Caption.Format(IDS_DELETESTORE_CAPTION, Store.StoreName);
 	CString Msg((LPCSTR)IDS_DELETESTORE_MSG);
 
 	if (pParentWnd->MessageBox(Msg, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
 		return;
 
 	// Dialogbox nur zeigen, wenn der Store gemountet ist
-	if (LFIsStoreMounted(&store))
+	if (LFIsStoreMounted(&Store))
 	{
-		LFDeleteStoreDlg dlg(store.StoreID, pParentWnd);
+		LFDeleteStoreDlg dlg(Store.StoreID, pParentWnd);
 		if (dlg.DoModal()!=IDOK)
 			return;
 	}
 
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, store.StoreID);
+	strcpy_s(wp.StoreID, LFKeySize, Store.StoreID);
 
 	LFDoWithProgress(WorkerStoreDelete, &wp.Hdr, pParentWnd);
 	LFErrorBox(wp.Result, pParentWnd->GetSafeHwnd());

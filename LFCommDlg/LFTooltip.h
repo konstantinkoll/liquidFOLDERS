@@ -18,7 +18,7 @@ public:
 	virtual BOOL Create(CWnd* pWndParent);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	void Track(CPoint point, HICON hIcon, CSize szIcon, const CString& strCaption, CString strText);
+	void Track(CPoint point, HICON hIcon, const CString& strCaption, CString strText);
 	void Deactivate();
 
 protected:

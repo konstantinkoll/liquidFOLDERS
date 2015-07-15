@@ -606,3 +606,5 @@ struct LFStoreDescriptor
 #define LFCannotRenameFile           26
 #define LFCannotCopyIndex            27
 #define LFNoFileBody                 28
+
+#define LFErrorCount                 29

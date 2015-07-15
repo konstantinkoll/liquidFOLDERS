@@ -32,7 +32,7 @@ protected:
 
 private:
 	INT Compare(INT n1, INT n2);
-	void Heap(INT Wurzel, INT Anz);
+	void Heap(INT Wurzel, INT Anzahl);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);

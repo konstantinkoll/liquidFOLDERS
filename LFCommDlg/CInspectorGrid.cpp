@@ -1049,7 +1049,7 @@ void CInspectorGrid::AdjustScrollbars()
 	CRect rect;
 	GetClientRect(rect);
 
-	INT oldVScrollPos = m_VScrollPos;
+	INT OldVScrollPos = m_VScrollPos;
 	m_VScrollMax = max(0, m_ScrollHeight-rect.Height());
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 
@@ -1063,7 +1063,7 @@ void CInspectorGrid::AdjustScrollbars()
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
 
-	if (oldVScrollPos!=m_VScrollPos)
+	if (OldVScrollPos!=m_VScrollPos)
 		Invalidate();
 }
 
@@ -1078,12 +1078,12 @@ INT CInspectorGrid::Compare(INT Eins, INT Zwei)
 	return (pEins->Category==pZwei->Category) ? m_pSortArray[Eins]-m_pSortArray[Zwei] : (INT)pEins->Category-(INT)pZwei->Category;
 }
 
-void CInspectorGrid::Heap(INT Wurzel, INT Anz)
+void CInspectorGrid::Heap(INT Wurzel, INT Anzahl)
 {
-	while (Wurzel<=Anz/2-1)
+	while (Wurzel<=Anzahl/2-1)
 	{
 		INT Index = (Wurzel+1)*2-1;
-		if (Index+1<Anz)
+		if (Index+1<Anzahl)
 			if (Compare(Index, Index+1)<0)
 				Index++;
 
@@ -1676,7 +1676,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 				pProp->pProperty->ToString(tmpStr, 256);
 
 				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), pProp->Name, tmpStr);
+				m_TooltipCtrl.Track(point, hIcon, pProp->Name, tmpStr);
 			}
 	}
 	else
@@ -1692,7 +1692,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 	TrackMouseEvent(&tme);
 }
 
-BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
 	GetWindowRect(&rect);

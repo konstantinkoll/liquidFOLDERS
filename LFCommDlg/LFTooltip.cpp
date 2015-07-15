@@ -45,7 +45,7 @@ BOOL LFTooltip::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& strCaption, CString strText)
+void LFTooltip::Track(CPoint point, HICON hIcon, const CString& strCaption, CString strText)
 {
 	if (!GetSafeHwnd())
 		return;
@@ -59,26 +59,37 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		DestroyIcon(m_Icon);
 
 	m_Icon = hIcon;
-	m_szIcon = szIcon;
+	m_szIcon = CSize(0, 0);
 	m_strCaption = strCaption;
 	m_strText = strText;
 	m_TextHeight = 0;
 
+	if (hIcon)
+	{
+		ICONINFO IconInfo;
+		if (GetIconInfo(hIcon, &IconInfo))
+		{
+			BITMAP Bitmap;
+			if (GetObject(IconInfo.hbmColor, sizeof(Bitmap), &Bitmap))
+				m_szIcon = CSize(Bitmap.bmWidth, Bitmap.bmHeight);
+		}
+	}
+
 	// Size
-	CSize sz(0, 0);
+	CSize Size(0, 0);
 	CClientDC dc(this);
 
 	if (!strCaption.IsEmpty())
 	{
 		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
 		CSize szText = dc.GetTextExtent(strCaption);
-		sz.cx = max(sz.cx, szText.cx);
-		sz.cy += szText.cy;
+		Size.cx = max(Size.cx, szText.cx);
+		Size.cy += szText.cy;
 		m_TextHeight = max(m_TextHeight, szText.cy);
 		dc.SelectObject(pOldFont);
 
 		if (!strText.IsEmpty())
-			sz.cy += AFX_TEXT_MARGIN;
+			Size.cy += AFX_TEXT_MARGIN;
 	}
 
 	if (!strText.IsEmpty())
@@ -88,23 +99,23 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		while (!strText.IsEmpty())
 		{
 			CString Line;
-			INT pos = strText.Find('\n');
-			if (pos==-1)
+			INT Pos = strText.Find('\n');
+			if (Pos==-1)
 			{
 				Line = strText;
 				strText.Empty();
 			}
 			else
 			{
-				Line = strText.Left(pos);
-				strText.Delete(0, pos+1);
+				Line = strText.Left(Pos);
+				strText.Delete(0, Pos+1);
 			}
 
 			if (!Line.IsEmpty())
 			{
 				CSize szText = dc.GetTextExtent(Line);
-				sz.cx = max(sz.cx, szText.cx);
-				sz.cy += szText.cy;
+				Size.cx = max(Size.cx, szText.cx);
+				Size.cy += szText.cy;
 
 				m_TextHeight = max(m_TextHeight, szText.cy);
 			}
@@ -115,29 +126,29 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 	if (hIcon)
 	{
-		sz.cx += szIcon.cx+2*AFX_TEXT_MARGIN;
-		sz.cy = max(sz.cy, szIcon.cy);
+		Size.cx += m_szIcon.cx+2*AFX_TEXT_MARGIN;
+		Size.cy = max(Size.cy, m_szIcon.cy);
 	}
 
-	sz.cx += 2*(AFX_TEXT_MARGIN+3);
-	sz.cy += 2*(AFX_TEXT_MARGIN+2)+1;
-	if (sz.cx>m_TextHeight*40)
-		sz.cx = m_TextHeight*40;
+	Size.cx += 2*(AFX_TEXT_MARGIN+3);
+	Size.cy += 2*(AFX_TEXT_MARGIN+2)+1;
+	if (Size.cx>m_TextHeight*40)
+		Size.cx = m_TextHeight*40;
 
 	// Position
 	CRect rect;
 	rect.top = point.y+18;
-	rect.bottom = rect.top+sz.cy;
+	rect.bottom = rect.top+Size.cy;
 
 	if (GetParent()->GetExStyle() & WS_EX_LAYOUTRTL)
 	{
-		rect.left = point.x-sz.cx;
+		rect.left = point.x-Size.cx;
 		rect.right = point.x;
 	}
 	else
 	{
 		rect.left = point.x;
-		rect.right = point.x+sz.cx;
+		rect.right = point.x+Size.cx;
 	}
 
 	MONITORINFO mi;
@@ -162,13 +173,13 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		if (rect.right>rectScreen.right)
 		{
 			rect.right = rectScreen.right;
-			rect.left = rect.right-sz.cx;
+			rect.left = rect.right-Size.cx;
 		}
 		else
 			if (rect.left<rectScreen.left)
 			{
 				rect.left = rectScreen.left;
-				rect.right = rect.left+sz.cx;
+				rect.right = rect.left+Size.cx;
 			}
 
 	if (rect.Height()>rectScreen.Height())
@@ -180,13 +191,13 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		if (rect.bottom>rectScreen.bottom)
 		{
 			rect.bottom = point.y-1;
-			rect.top = rect.bottom-sz.cy;
+			rect.top = rect.bottom-Size.cy;
 		}
 		else
 			if (rect.top<rectScreen.top)
 			{
 				rect.top = rectScreen.top;
-				rect.bottom = rect.top+sz.cy;
+				rect.bottom = rect.top+Size.cy;
 			}
 
 	CRgn rgn;
@@ -194,11 +205,11 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 	m_Flat = m_Themed && (LFGetApp()->OSVersion>=OS_Eight);
 	if (m_Themed && !m_Flat)
 	{
-		rgn.CreateRoundRectRgn(0, 0, sz.cx+1, sz.cy+1, 3, 3);
+		rgn.CreateRoundRectRgn(0, 0, Size.cx+1, Size.cy+1, 3, 3);
 	}
 	else
 	{
-		rgn.CreateRectRgn(0, 0, sz.cx, sz.cy);
+		rgn.CreateRectRgn(0, 0, Size.cx, Size.cy);
 	}
 	SetWindowRgn(rgn, FALSE);
 

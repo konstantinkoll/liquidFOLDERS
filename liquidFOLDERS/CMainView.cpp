@@ -316,7 +316,7 @@ void CMainView::ShowNotification(UINT Type, CString Message, UINT Command)
 void CMainView::ShowNotification(UINT Type, UINT ResID, UINT Command)
 {
 	WCHAR tmpStr[256];
-	LFGetErrorText(tmpStr, ResID);
+	LFGetErrorText(tmpStr, 256, ResID);
 
 	ShowNotification(Type, tmpStr, Command);
 }
@@ -526,7 +526,7 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if (tl->m_Items[a].LastError!=LFOk)
 			{
-				p_wndFileView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
+				p_wndFileView->SelectItem((INT)tl->m_Items[a].UserData, FALSE, TRUE);
 				Deselected = TRUE;
 			}
 

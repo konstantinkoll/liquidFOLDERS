@@ -22,7 +22,7 @@ BOOL LFMaintenanceList::AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UIN
 	assert(Comments);
 	assert(StoreID);
 
-	LFMaintenaceListItem Item;
+	LFMaintenanceListItem Item;
 
 	wcscpy_s(Item.Name, 256, Name);
 	wcscpy_s(Item.Comments, 256, Comments);

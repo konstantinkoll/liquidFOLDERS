@@ -84,12 +84,12 @@ INT LFSelectLocationIATADlg::Compare(INT n1, INT n2)
 	return Result;
 }
 
-void LFSelectLocationIATADlg::Heap(INT Wurzel, INT Anz)
+void LFSelectLocationIATADlg::Heap(INT Wurzel, INT Anzahl)
 {
-	while (Wurzel<=Anz/2-1)
+	while (Wurzel<=Anzahl/2-1)
 	{
 		INT Index = (Wurzel+1)*2-1;
-		if (Index+1<Anz)
+		if (Index+1<Anzahl)
 			if (Compare(Index, Index+1)<0)
 				Index++;
 		if (Compare(Wurzel, Index)<0)

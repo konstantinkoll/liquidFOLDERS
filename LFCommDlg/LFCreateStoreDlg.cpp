@@ -28,13 +28,13 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		LFStoreDescriptor store;
-		ZeroMemory(&store, sizeof(store));
+		LFStoreDescriptor Store;
+		ZeroMemory(&Store, sizeof(Store));
 
-		store.Mode = LFStoreModeBackendInternal;
+		Store.Mode = LFStoreModeBackendInternal;
 
-		GetDlgItem(IDC_STORENAME)->GetWindowText(store.StoreName, 256);
-		GetDlgItem(IDC_STORECOMMENT)->GetWindowText(store.StoreComment, 256);
+		GetDlgItem(IDC_STORENAME)->GetWindowText(Store.StoreName, 256);
+		GetDlgItem(IDC_STORECOMMENT)->GetWindowText(Store.StoreComment, 256);
 
 		CHAR cVolume = '\0';
 		if (!m_wndAutoPath.GetCheck())
@@ -46,17 +46,17 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 
 		if (cVolume)
 		{
-			store.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceUnknown) ? LFStoreModeIndexInternal : m_wndMakeSearchable.GetCheck() ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
-			swprintf_s(store.DatPath, MAX_PATH, L"%c:\\", cVolume);
+			Store.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceUnknown) ? LFStoreModeIndexInternal : m_wndMakeSearchable.GetCheck() ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
+			swprintf_s(Store.DatPath, MAX_PATH, L"%c:\\", cVolume);
 		}
 		else
 		{
-			store.Mode |= LFStoreModeIndexInternal;
-			store.Flags |= LFStoreFlagAutoLocation;
+			Store.Mode |= LFStoreModeIndexInternal;
+			Store.Flags |= LFStoreFlagAutoLocation;
 		}
 
 		CWaitCursor csr;
-		LFErrorBox(LFCreateStore(&store), GetSafeHwnd());
+		LFErrorBox(LFCreateStore(&Store), GetSafeHwnd());
 	}
 }
 

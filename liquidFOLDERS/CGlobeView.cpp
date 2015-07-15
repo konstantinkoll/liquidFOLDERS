@@ -1184,7 +1184,7 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 	CFileView::OnMouseMove(nFlags, point);
 }
 
-BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
+BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
 	m_TooltipCtrl.Deactivate();
 

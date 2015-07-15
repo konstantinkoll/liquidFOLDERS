@@ -106,9 +106,9 @@ void CStorePanel::SetStore(CHAR* StoreID)
 
 	if (StoreID)
 	{
-		LFStoreDescriptor store;
-		if (LFGetStoreSettings(StoreID, &store)==LFOk)
-			p_Item = LFAllocItemDescriptorEx(&store);
+		LFStoreDescriptor Store;
+		if (LFGetStoreSettings(StoreID, &Store)==LFOk)
+			p_Item = LFAllocItemDescriptorEx(&Store);
 	}
 
 	Invalidate();

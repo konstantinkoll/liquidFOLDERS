@@ -116,7 +116,7 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 			g.FillPath(&br, &m_Path);
 		}
 
-		// Outer border
+		// Outer Border
 		Pen pen(Color(borCol & 0xFF, (borCol>>8) & 0xFF, (borCol>>16) & 0xFF));
 		g.DrawPath(&pen, &m_Path);
 	}

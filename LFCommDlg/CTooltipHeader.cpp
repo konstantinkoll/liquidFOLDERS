@@ -359,7 +359,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 					if (TooltipTextBuffer[0]!=L'\0')
 					{
 						ClientToScreen(&point);
-						m_TooltipCtrl.Track(point, NULL, NULL, _T(""), TooltipTextBuffer);
+						m_TooltipCtrl.Track(point, NULL, _T(""), TooltipTextBuffer);
 					}
 			}
 	}

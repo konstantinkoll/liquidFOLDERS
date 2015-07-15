@@ -548,7 +548,7 @@ void CSidebar::OnMouseHover(UINT nFlags, CPoint point)
 					Hint += _T("\n");
 
 				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), m_Items.m_Items[m_HotItem].Caption, Hint+Append);
+				m_TooltipCtrl.Track(point, hIcon, m_Items.m_Items[m_HotItem].Caption, Hint+Append);
 			}
 	}
 	else

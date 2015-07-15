@@ -49,11 +49,8 @@ void LFChooseStoreDlg::AdjustLayout()
 		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
-	CRect borders(0, 0, 7, 7);
-	MapDialogRect(&borders);
-
-	INT borderLeft = (LFGetApp()->OSVersion==OS_XP) ? 15 : borders.Width()/2;
-	m_wndExplorerList.SetWindowPos(NULL, rect.left+borderLeft, rect.top+ExplorerHeight, rect.Width()-borderLeft, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? 15 : 4;
+	m_wndExplorerList.SetWindowPos(NULL, rect.left+BorderLeft, rect.top+ExplorerHeight, rect.Width()-BorderLeft, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()

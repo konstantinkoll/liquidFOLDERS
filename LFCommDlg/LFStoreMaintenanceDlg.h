@@ -4,31 +4,26 @@
 
 #pragma once
 #include "LFCore.h"
+#include "CMaintenanceReport.h"
 
 
 // LFStoreMaintenanceDlg
 //
 
-typedef LFDynArray<LFML_Item*> CMaintenanceReportList;
-
-class LFStoreMaintenanceDlg : public CDialog
+class LFStoreMaintenanceDlg : public LFDialog
 {
 public:
-	LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParentWnd=NULL);
+	LFStoreMaintenanceDlg(LFMaintenanceList* pMaintenanceList, CWnd* pParentWnd=NULL);
+	~LFStoreMaintenanceDlg();
+
+	virtual void AdjustLayout();
 
 protected:
-	void SetPage(INT page);
-
 	afx_msg BOOL OnInitDialog();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnTabChanged(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	DECLARE_MESSAGE_MAP()
 
-	CMaintenanceReportList m_Lists[2];
-	INT m_Page;
-
-private:
-	CImageList m_Icons;
+	CHeaderArea m_wndHeaderArea;
+	CMaintenanceReport m_wndMaintenanceReport;
+	LFMaintenanceList* m_pMaintenanceList;
 };

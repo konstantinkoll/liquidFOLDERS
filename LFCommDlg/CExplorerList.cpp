@@ -42,17 +42,18 @@ void CExplorerList::Init()
 
 	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
+
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
 	tvi.cLines = 2;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 25*abs(lf.lfHeight);
 
+	// Hack: CListCtrl formatiert unter Windows XP die Textzeilen falsch, wenn LVS_OWNERDATA gesetzt ist
 	if ((LFGetApp()->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
 	{
 		tvi.dwMask |= LVTVIM_LABELMARGIN;
-		tvi.rcLabelMargin.top = 0;
-		tvi.rcLabelMargin.bottom = 16;
+		tvi.rcLabelMargin.top = 10;
 	}
 
 	SetTileViewInfo(&tvi);

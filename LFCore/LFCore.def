@@ -12,6 +12,7 @@ EXPORTS
 	LFGetSourceForVolume @6
 	LFGetLogicalVolumes @7
 	LFInitProgress @8
+	LFGetErrorText @9
 	
 	LFFourCCToString @100
 	LFUINTToString @101

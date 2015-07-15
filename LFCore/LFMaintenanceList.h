@@ -4,7 +4,7 @@
 #include "LFDynArray.h"
 
 
-struct LFMaintenaceListItem
+struct LFMaintenanceListItem
 {
 	WCHAR Name[256];
 	WCHAR Comments[256];
@@ -13,7 +13,7 @@ struct LFMaintenaceListItem
 	UINT Icon;
 };
 
-class LFMaintenanceList : public LFDynArray<LFMaintenaceListItem>
+class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem>
 {
 public:
 	BOOL AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UINT Result, UINT Icon);

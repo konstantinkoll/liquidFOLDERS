@@ -99,7 +99,7 @@ void CStoreButton::OnPaint()
 		rectBounds.right--;
 		rectBounds.bottom--;
 
-		// Inner border
+		// Inner Border
 		rectBounds.DeflateRect(1, 1);
 
 		if (Selected)

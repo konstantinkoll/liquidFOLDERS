@@ -53,6 +53,10 @@ LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_BOTH);
 LFCORE_API void __stdcall LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount=0);
 
 
+// Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
+LFCORE_API void __stdcall LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID);
+
+
 
 // LFVariantData
 //
@@ -310,8 +314,6 @@ LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, UINT ID);
 // Name einer Datenquelle in aktueller Sprache zurückliefern
 LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, UINT ID, BOOL qualified);
 
-// Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetErrorText(WCHAR* pStr, UINT ID);
 
 // Anzeigen eines Fehlers (LFError...) in aktueller Sprache
 LFCORE_API void __stdcall LFErrorBox(UINT ID, HWND hWnd=NULL);

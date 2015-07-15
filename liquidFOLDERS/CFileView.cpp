@@ -905,7 +905,7 @@ void CFileView::AdjustScrollbars()
 	if ((m_ScrollWidth>rect.Width()) && (!HScroll))
 		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
 
-	INT oldVScrollPos = m_VScrollPos;
+	INT OldVScrollPos = m_VScrollPos;
 	m_VScrollMax = max(0, m_ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 
@@ -919,7 +919,7 @@ void CFileView::AdjustScrollbars()
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
 
-	INT oldHScrollPos = m_HScrollPos;
+	INT OldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
 
@@ -932,7 +932,7 @@ void CFileView::AdjustScrollbars()
 	si.nPos = m_HScrollPos;
 	SetScrollInfo(SB_HORZ, &si);
 
-	if ((oldVScrollPos!=m_VScrollPos) || (oldHScrollPos!=m_HScrollPos))
+	if ((OldVScrollPos!=m_VScrollPos) || (OldHScrollPos!=m_HScrollPos))
 		Invalidate();
 }
 
@@ -971,30 +971,6 @@ BOOL CFileView::BeginDragDrop()
 	return TRUE;
 }
 
-void CFileView::AppendString(UINT Attr, CString& Str, WCHAR* tmpStr)
-{
-	if (tmpStr)
-		if (tmpStr[0]!=L'\0')
-		{
-			if (!Str.IsEmpty())
-				Str += _T("\n");
-			if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat) && (Attr!=LFAttrDescription))
-			{
-				Str += theApp.m_Attributes[Attr].Name;
-				Str += _T(": ");
-			}
-
-			Str += tmpStr;
-		}
-}
-
-void CFileView::AppendAttribute(LFItemDescriptor* i, UINT Attr, CString& Str)
-{
-	WCHAR tmpStr[256];
-	LFAttributeToString(i, Attr, tmpStr, 256);
-	AppendString(Attr, Str, tmpStr);
-}
-
 CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 {
 	WCHAR tmpStr[256];
@@ -1003,27 +979,16 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 	switch (i->Type & LFTypeMask)
 	{
 	case LFTypeVolume:
-		AppendAttribute(i, LFAttrDescription, Hint);
+		AppendTooltipAttribute(i, LFAttrDescription, Hint);
 		break;
 
 	case LFTypeStore:
-		AppendAttribute(i, LFAttrComments, Hint);
-
-		LFCombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize, tmpStr, 256);
-		AppendString(LFAttrDescription, Hint, tmpStr);
-
-		AppendAttribute(i, LFAttrCreationTime, Hint);
-		AppendAttribute(i, LFAttrFileTime, Hint);
-
-		AppendAttribute(i, LFAttrDescription, Hint);
-		if (((i->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(i->Type & LFStoreNotMounted)))
-			AppendString(LFAttrComments, Hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
-
+		GetHintForStore(i, Hint);
 		break;
 
 	case LFTypeFile:
-		AppendAttribute(i, LFAttrComments, Hint);
-		AppendString(LFAttrFileFormat, Hint, FormatName);
+		AppendTooltipAttribute(i, LFAttrComments, Hint);
+		AppendTooltipString(LFAttrFileFormat, Hint, FormatName);
 
 		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
 		{
@@ -1034,30 +999,30 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 			Hint += tmpStr;
 		}
 
-		AppendAttribute(i, LFAttrArtist, Hint);
-		AppendAttribute(i, LFAttrTitle, Hint);
-		AppendAttribute(i, LFAttrAlbum, Hint);
-		AppendAttribute(i, LFAttrRecordingTime, Hint);
-		AppendAttribute(i, LFAttrRoll, Hint);
-		AppendAttribute(i, LFAttrDuration, Hint);
-		AppendAttribute(i, LFAttrHashtags, Hint);
-		AppendAttribute(i, LFAttrPages, Hint);
-		AppendAttribute(i, LFAttrWidth, Hint);
-		AppendAttribute(i, LFAttrHeight, Hint);
-		AppendAttribute(i, LFAttrEquipment, Hint);
-		AppendAttribute(i, LFAttrBitrate, Hint);
-		AppendAttribute(i, LFAttrCreationTime, Hint);
-		AppendAttribute(i, LFAttrFileTime, Hint);
-		AppendAttribute(i, LFAttrFileSize, Hint);
+		AppendTooltipAttribute(i, LFAttrArtist, Hint);
+		AppendTooltipAttribute(i, LFAttrTitle, Hint);
+		AppendTooltipAttribute(i, LFAttrAlbum, Hint);
+		AppendTooltipAttribute(i, LFAttrRecordingTime, Hint);
+		AppendTooltipAttribute(i, LFAttrRoll, Hint);
+		AppendTooltipAttribute(i, LFAttrDuration, Hint);
+		AppendTooltipAttribute(i, LFAttrHashtags, Hint);
+		AppendTooltipAttribute(i, LFAttrPages, Hint);
+		AppendTooltipAttribute(i, LFAttrWidth, Hint);
+		AppendTooltipAttribute(i, LFAttrHeight, Hint);
+		AppendTooltipAttribute(i, LFAttrEquipment, Hint);
+		AppendTooltipAttribute(i, LFAttrBitrate, Hint);
+		AppendTooltipAttribute(i, LFAttrCreationTime, Hint);
+		AppendTooltipAttribute(i, LFAttrFileTime, Hint);
+		AppendTooltipAttribute(i, LFAttrFileSize, Hint);
 
 		break;
 
 	case LFTypeFolder:
-		AppendAttribute(i, LFAttrComments, Hint);
-		AppendAttribute(i, LFAttrDescription, Hint);
+		AppendTooltipAttribute(i, LFAttrComments, Hint);
+		AppendTooltipAttribute(i, LFAttrDescription, Hint);
 
 		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-			AppendString(LFAttrComments, Hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+			AppendTooltipString(LFAttrComments, Hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 
 		break;
 	}
@@ -1385,7 +1350,6 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					FormatData fd;
 					CHAR Path[4];
 					HICON hIcon = NULL;
-					CSize sz;
 
 					LFItemDescriptor* i = p_CookedFiles->m_Items[m_HotItem];
 					switch (i->Type & LFTypeMask)
@@ -1396,9 +1360,6 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 							CDC* pDC = GetWindowDC();
 							hIcon = theApp.m_ThumbnailCache.GetThumbnailIcon(i, pDC);
 							ReleaseDC(pDC);
-
-							if (hIcon)
-								sz.cx = sz.cy = 128;
 						}
 
 						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
@@ -1415,24 +1376,17 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					case LFTypeFolder:
 						if (!m_EnableTooltipOnVirtual)
 							goto Leave;
+
 					default:
 						fd.FormatName[0] = L'\0';
 						fd.SysIconIndex = -1;
 					}
 
 					if (!hIcon)
-					{
 						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
 
-						INT cx = 48;
-						INT cy = 48;
-						ImageList_GetIconSize(theApp.m_SystemImageListExtraLarge, &cx, &cy);
-						sz.cx = cx;
-						sz.cy = cy;
-					}
-
 					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i, fd.FormatName));
+					m_TooltipCtrl.Track(point, hIcon, GetLabel(i), GetHint(i, fd.FormatName));
 				}
 	}
 	else
@@ -1449,7 +1403,7 @@ Leave:
 	TrackMouseEvent(&tme);
 }
 
-BOOL CFileView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+BOOL CFileView::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
 	GetWindowRect(&rect);
@@ -1475,7 +1429,7 @@ BOOL CFileView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	return TRUE;
 }
 
-void CFileView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
+void CFileView::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
 	GetWindowRect(&rect);

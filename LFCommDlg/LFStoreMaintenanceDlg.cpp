@@ -10,143 +10,71 @@
 //
 
 
-LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParentWnd)
-	: CDialog(IDD_STOREMAINTENANCE, pParentWnd)
+LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* pMaintenanceList, CWnd* pParentWnd)
+	: LFDialog(IDD_STOREMAINTENANCE, pParentWnd)
 {
-	ASSERT(ml);
+	ASSERT(pMaintenanceList);
 
-	for (UINT a=0; a<ml->m_ItemCount; a++)
-		m_Lists[ml->m_Items[a].Result==LFOk ? 0 : 1].AddItem(&ml->m_Items[a]);
-
-	m_Page = 0;
+	m_pMaintenanceList = pMaintenanceList;
 }
 
-void LFStoreMaintenanceDlg::SetPage(INT page)
+LFStoreMaintenanceDlg::~LFStoreMaintenanceDlg()
 {
-	ASSERT((page==0) || (page==1));
+	if (m_pMaintenanceList)
+		LFFreeMaintenanceList(m_pMaintenanceList);
+}
 
-	m_Page = page;
+void LFStoreMaintenanceDlg::AdjustLayout()
+{
+	if (!IsWindow(m_wndMaintenanceReport))
+		return;
 
-	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_STORELIST);
-	li->SetRedraw(FALSE);
-	li->SetItemCount(0);
+	CRect rect;
+	GetLayoutRect(rect);
 
-	li->SetItemCount(m_Lists[m_Page].m_ItemCount);
-	li->SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
+	UINT ExplorerHeight = 0;
+	if (IsWindow(m_wndHeaderArea))
+	{
+		ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
+		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	}
 
-	li->SetItemState(0, LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	li->SetItemState(0, LVIS_SELECTED, LVIS_SELECTED);
-	li->EnsureVisible(0, FALSE);
-
-	li->SetRedraw(TRUE);
-	li->Invalidate();
-
-	if (!m_Lists[m_Page].m_ItemCount)
-		GetDlgItem(IDC_STATUS)->SetWindowText(_T(""));
+	m_wndMaintenanceReport.SetWindowPos(NULL, rect.left, rect.top+ExplorerHeight, rect.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 
-BEGIN_MESSAGE_MAP(LFStoreMaintenanceDlg, CDialog)
-	ON_WM_CTLCOLOR()
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TABS, OnTabChanged)
-	ON_NOTIFY(LVN_GETDISPINFO, IDC_STORELIST, OnGetDispInfo)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
+BEGIN_MESSAGE_MAP(LFStoreMaintenanceDlg, LFDialog)
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 BOOL LFStoreMaintenanceDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	LFDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LFGetApp()->LoadDialogIcon(IDD_STOREMAINTENANCE);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
+	CString Caption((LPCSTR)IDS_STOREMAINTENANCE_CAPTION);
 
-	// Icons
-	m_Icons.Create(16, 16, ILC_COLOR32, 1, 1);
-	m_Icons.Add((HICON)LoadImage(AfxGetResourceHandle(), IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_SHARED));
+	CString Mask;
+	ENSURE(Mask.LoadString(m_pMaintenanceList->m_ItemCount==1 ? IDS_STOREMAINTENANCE_HINT_SINGULAR : IDS_STOREMAINTENANCE_HINT_PLURAL));
 
-	// Tabs
-	CTabCtrl* tabs = (CTabCtrl*)GetDlgItem(IDC_TABS);
-	tabs->SetImageList(&m_Icons);
+	CString Hint;
+	Hint.Format(Mask, m_pMaintenanceList->m_ItemCount);
 
-	for (UINT a=0; a<(m_Lists[1].m_ItemCount ? (UINT)2 : (UINT)1); a++)
-	{
-		CString tmpStr;
-		tmpStr.Format(IDS_MAINTENANCETAB0+a, m_Lists[a].m_ItemCount);
+	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
+	m_wndHeaderArea.SetText(Caption, Hint, FALSE);
 
-		tabs->InsertItem(a, tmpStr, (INT)a-1);
-	}
+	m_wndMaintenanceReport.Create(this, IDC_MAINTENANCEREPORT);
+	m_wndMaintenanceReport.SetMaintenanceList(m_pMaintenanceList);
+	m_wndMaintenanceReport.SetFocus();
 
-	// Liste
-	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_STORELIST);
-	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	li->SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
-	li->SetFont(&LFGetApp()->m_DefaultFont, FALSE);
-	li->InsertColumn(0, LFGetApp()->m_Attributes[LFAttrFileName].Name);
-	li->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
+	AdjustLayout();
 
-	// Seite
-	tabs->SetCurSel(m_Lists[1].m_ItemCount ? 1 : 0);
-	SetPage(tabs->GetCurSel());
-
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
-HBRUSH LFStoreMaintenanceDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+void LFStoreMaintenanceDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	// Call base class version at first, else it will override changes
-	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	LFDialog::OnGetMinMaxInfo(lpMMI);
 
-	if ((nCtlColor==CTLCOLOR_STATIC) && IsCtrlThemed())
-	{
-		pDC->SetBkColor(0xFFFFFF);
-
-		hbr = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	}
-
-	return hbr;
-}
-
-void LFStoreMaintenanceDlg::OnTabChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
-{
-	CTabCtrl* tabs = (CTabCtrl*)GetDlgItem(IDC_TABS);
-	SetPage(tabs->GetCurSel());
-}
-
-void LFStoreMaintenanceDlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
-{
-	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
-	LV_ITEM* pItem = &pDispInfo->item;
-
-	LFML_Item* pStore = m_Lists[m_Page].m_Items[pItem->iItem];
-
-	if (pItem->mask & LVIF_TEXT)
-		pItem->pszText = pStore->Name;
-
-	if (pItem->mask & LVIF_IMAGE)
-		pItem->iImage = pStore->Icon-1;
-}
-
-void LFStoreMaintenanceDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
-{
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-
-	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
-	{
-		LFML_Item* pStore = m_Lists[m_Page].m_Items[pNMListView->iItem];
-
-		if (m_Page==0)
-		{
-			GetDlgItem(IDC_STATUS)->SetWindowText(_T(""));
-		}
-		else
-		{
-			WCHAR tmpStr[256];
-			LFGetErrorText(tmpStr, pStore->Result);
-
-			GetDlgItem(IDC_STATUS)->SetWindowText(tmpStr);
-		}
-	}
+	lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 450);
+	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
 }

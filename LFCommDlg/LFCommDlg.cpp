@@ -67,12 +67,12 @@ void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 	path.CloseFigure();
 }
 
-void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& Caption, CString& Hint)
+void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
 {
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
-		hIcon = icons->ExtractIcon(sfi.iIcon);
+		hIcon = pIcons->ExtractIcon(sfi.iIcon);
 		Caption = sfi.szDisplayName;
 		Hint = sfi.szTypeName;
 
@@ -99,12 +99,6 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSi
 			}
 			pParentFolder->Release();
 		}
-
-		INT cx = 48;
-		INT cy = 48;
-		ImageList_GetIconSize(*icons, &cx, &cy);
-		size.cx = cx;
-		size.cy = cy;
 	}
 }
 
@@ -278,6 +272,49 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request)
 
 	pComboBox->SetRedraw(TRUE);
 	pComboBox->Invalidate();
+}
+
+
+void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr)
+{
+	if (tmpStr)
+		if (tmpStr[0]!=L'\0')
+		{
+			if (!Str.IsEmpty())
+				Str += _T("\n");
+			if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat) && (Attr!=LFAttrDescription))
+			{
+				Str += LFGetApp()->m_Attributes[Attr].Name;
+				Str += _T(": ");
+			}
+
+			Str += tmpStr;
+		}
+}
+
+void AppendTooltipAttribute(LFItemDescriptor* i, UINT Attr, CString& Str)
+{
+	WCHAR tmpStr[256];
+	LFAttributeToString(i, Attr, tmpStr, 256);
+	AppendTooltipString(Attr, Str, tmpStr);
+}
+
+void GetHintForStore(LFItemDescriptor* i, CString& Str)
+{
+	WCHAR tmpStr[256];
+
+	AppendTooltipAttribute(i, LFAttrComments, Str);
+
+	LFCombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize, tmpStr, 256);
+	AppendTooltipString(LFAttrDescription, Str, tmpStr);
+
+	AppendTooltipAttribute(i, LFAttrCreationTime, Str);
+	AppendTooltipAttribute(i, LFAttrFileTime, Str);
+
+	AppendTooltipAttribute(i, LFAttrDescription, Str);
+
+	if (((i->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(i->Type & LFStoreNotMounted)))
+		AppendTooltipString(LFAttrComments, Str, LFGetApp()->m_SourceNames[i->Type & LFTypeSourceMask][1]);
 }
 
 

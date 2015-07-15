@@ -70,7 +70,7 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
 
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), IDI_SHIELD, IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), (LFGetApp()->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
 
 		break;
 

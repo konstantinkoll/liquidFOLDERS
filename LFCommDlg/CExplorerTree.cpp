@@ -837,13 +837,12 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 				ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
 
 				HICON hIcon = NULL;
-				CSize size(0, 0);
 				CString Caption;
 				CString Hint;
-				TooltipDataFromPIDL(pItem->pidlFQ, &LFGetApp()->m_SystemImageListExtraLarge, hIcon, size, Caption, Hint);
+				TooltipDataFromPIDL(pItem->pidlFQ, &LFGetApp()->m_SystemImageListExtraLarge, hIcon, Caption, Hint);
 
 				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, size, Caption, Hint);
+				m_TooltipCtrl.Track(point, hIcon, Caption, Hint);
 			}
 	}
 	else

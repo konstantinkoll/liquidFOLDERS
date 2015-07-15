@@ -54,12 +54,16 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
 
 INT GetAttributeIconIndex(UINT Attr);
 void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
-void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& Caption, CString& Hint);
+void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
 BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed);
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request=-1);
+
+void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr);
+void AppendTooltipAttribute(LFItemDescriptor* i, UINT Attr, CString& Str);
+void GetHintForStore(LFItemDescriptor* i, CString& Str);
 
 void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
 void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);

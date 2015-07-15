@@ -246,7 +246,7 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 			ClientToScreen(&point);
 			m_TooltipCtrl.Track(point,
 				(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FILEDROP), IMAGE_ICON, 48, 48, LR_SHARED),
-				CSize(48, 48), Caption, Hint);
+				Caption, Hint);
 		}
 	}
 	else

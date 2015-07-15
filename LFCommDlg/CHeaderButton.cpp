@@ -155,7 +155,7 @@ void CHeaderButton::OnPaint()
 			rectBounds.right--;
 			rectBounds.bottom--;
 
-			// Inner border
+			// Inner Border
 			rectBounds.DeflateRect(1, 1);
 
 			if (Selected)
@@ -184,7 +184,7 @@ void CHeaderButton::OnPaint()
 				g.DrawPath(&pen, &path);
 			}
 
-			// Outer border
+			// Outer Border
 			rectBounds.InflateRect(1, 1);
 			CreateRoundRectangle(rectBounds, 2, path);
 
@@ -287,7 +287,7 @@ void CHeaderButton::OnMouseHover(UINT nFlags, CPoint point)
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 		{
 			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, NULL, NULL, m_Caption, m_Hint);
+			m_TooltipCtrl.Track(point, NULL, m_Caption, m_Hint);
 		}
 		else
 		{

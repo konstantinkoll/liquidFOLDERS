@@ -256,24 +256,24 @@ void LFItemTemplateDlg::OnSkip()
 
 LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	LFStoreDescriptor store;
-	if (LFGetStoreSettings(m_StoreID, &store)==LFOk)
+	LFStoreDescriptor Store;
+	if (LFGetStoreSettings(m_StoreID, &Store)==LFOk)
 	{
 		CString tmpStr;
-		if (store.StoreComment[0]!=L'\0')
+		if (Store.StoreComment[0]!=L'\0')
 		{
-			tmpStr = store.StoreComment;
+			tmpStr = Store.StoreComment;
 		}
 		else
 		{
 			WCHAR Buffer[256];
-			LFTimeToString(store.CreationTime, Buffer, 256);
+			LFTimeToString(Store.CreationTime, Buffer, 256);
 			tmpStr = LFGetApp()->m_Attributes[LFAttrCreationTime].Name;
 			tmpStr += _T(": ");
 			tmpStr += Buffer;
 		}
 
-		m_wndHeaderArea.SetText(store.StoreName, tmpStr);
+		m_wndHeaderArea.SetText(Store.StoreName, tmpStr);
 
 		GetDlgItem(IDOK)->EnableWindow(TRUE);
 		GetDlgItem(IDC_SKIP)->EnableWindow(TRUE);

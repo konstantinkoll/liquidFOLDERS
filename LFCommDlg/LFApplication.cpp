@@ -335,13 +335,13 @@ BOOL LFApplication::InitInstance()
 		WriteGlobalInt(_T("FirstRun"), 0);
 
 		// Lokalen Store erstellen
-		LFStoreDescriptor store;
-		ZeroMemory(&store, sizeof(store));
+		LFStoreDescriptor Store;
+		ZeroMemory(&Store, sizeof(Store));
 
-		store.Flags = LFStoreFlagAutoLocation;
-		store.Mode = LFStoreModeIndexInternal | LFStoreModeBackendInternal;
+		Store.Flags = LFStoreFlagAutoLocation;
+		Store.Mode = LFStoreModeIndexInternal | LFStoreModeBackendInternal;
 
-		LFErrorBox(LFCreateStore(&store));
+		LFErrorBox(LFCreateStore(&Store));
 	}
 
 	return TRUE;
