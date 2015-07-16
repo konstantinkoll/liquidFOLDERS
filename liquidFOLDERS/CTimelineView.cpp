@@ -15,6 +15,7 @@ WCHAR* GetAttribute(TimelineItemData* d, LFItemDescriptor* i, UINT Attr, UINT Ma
 		if (*((WCHAR*)i->AttributeValues[Attr]))
 		{
 			d->Preview |= Mask;
+
 			return (WCHAR*)i->AttributeValues[Attr];
 		}
 
@@ -500,7 +501,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 			CRect rectAttr(rectItem->left+BORDER+2, rectText.bottom+BORDER+BORDER/2, rectItem->right-BORDER, 0);
 			rectAttr.bottom = rectAttr.top+m_FontHeight[0];
 
-			if (d->Preview & (PRV_TITLE | PRV_ALBUM))
+			if (d->Preview & PRV_ALBUM)
 				rectAttr.left = rectItem->left+m_IconSize.cx+2*BORDER;
 
 			dc.SetTextColor(atCol);
