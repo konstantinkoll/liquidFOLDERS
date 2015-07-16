@@ -1,40 +1,33 @@
 
 #include "stdafx.h"
-#include "LFCore.h"
 #include "StoreCache.h"
+#include "Watchdog.h"
 
 
 extern HMODULE LFCoreModuleHandle;
 
-const WCHAR szWindowClass[] = L"LFWatchdog";
 HWND hWndWatchdog = NULL;
 ULONG ulSHChangeNotifyRegister;
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam)
 {
-	struct SHNOTIFYSTRUCT
-	{
-		LPCITEMIDLIST dwItem1;
-		DWORD dwItem2;
-	};
-
 	if (Message==WM_USER)
 	{
-		SHNOTIFYSTRUCT* shns = (SHNOTIFYSTRUCT*)wParam;
-		WCHAR sPath[MAX_PATH];
+		WCHAR Path[MAX_PATH];
 
-		if (SHGetPathFromIDList(shns->dwItem1, sPath))
-			if ((sPath[0]>=L'A') && (sPath[0]<=L'Z'))
+		if (SHGetPathFromIDList(*((LPCITEMIDLIST*)wParam), Path))
+			if ((Path[0]>=L'A') && (Path[0]<=L'Z'))
 				switch(lParam)
 				{
 				case SHCNE_DRIVEADD:
 				case SHCNE_MEDIAINSERTED:
-					LFErrorBox(MountVolume((CHAR)sPath[0]));
+					LFErrorBox(MountVolume((CHAR)Path[0]));
 					break;
+
 				case SHCNE_MEDIAREMOVED:
 				case SHCNE_DRIVEREMOVED:
-					LFErrorBox(UnmountVolume((CHAR)sPath[0]));
+					LFErrorBox(UnmountVolume((CHAR)Path[0]));
 					break;
 				}
 
@@ -44,33 +37,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam
 	return DefWindowProc(hWnd, Message, wParam, lParam);
 }
 
-void RegisterWindowClass(PCWSTR pszClassName, WNDPROC lpfnWndProc)
-{
-	WNDCLASSEX wcex;
-	ZeroMemory(&wcex, sizeof(wcex));
-	wcex.cbSize = sizeof(wcex);
-	wcex.lpfnWndProc = lpfnWndProc;
-	wcex.hInstance = LFCoreModuleHandle;
-	wcex.lpszClassName = pszClassName;
-	RegisterClassEx(&wcex);
-}
-
 void InitWatchdog()
 {
 	if (hWndWatchdog)
 		return;
 
-	RegisterWindowClass(szWindowClass, WndProc);
+	static const WCHAR szWindowClass[] = L"LFWatchdog";
 
-	hWndWatchdog = CreateWindowEx(0, szWindowClass, L"", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
+	// Fenster-Klasse registrieren
+	WNDCLASSEX wcex;
+	ZeroMemory(&wcex, sizeof(wcex));
+
+	wcex.cbSize = sizeof(wcex);
+	wcex.lpfnWndProc = WndProc;
+	wcex.hInstance = LFCoreModuleHandle;
+	wcex.lpszClassName = szWindowClass;
+
+	RegisterClassEx(&wcex);
+
+	// Fenster erzeugen
+	hWndWatchdog = CreateWindow(szWindowClass, L"", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
+
 	if (hWndWatchdog)
 	{
 		// Benachrichtigung, wenn sich Laufwerke ändern
-		LPITEMIDLIST ppidl;
-		if (SHGetSpecialFolderLocation(hWndWatchdog, CSIDL_DESKTOP, &ppidl)==NOERROR)
+		LPITEMIDLIST pidl;
+		if (SHGetSpecialFolderLocation(hWndWatchdog, CSIDL_DESKTOP, &pidl)==NOERROR)
 		{
 			SHChangeNotifyEntry shCNE;
-			shCNE.pidl = ppidl;
+			shCNE.pidl = pidl;
 			shCNE.fRecursive = TRUE;
 
 			ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWndWatchdog, SHCNRF_ShellLevel,

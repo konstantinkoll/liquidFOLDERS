@@ -1,5 +1,6 @@
 #pragma once
 #include "LF.h"
+#include "LFCore.h"
 
 #define LFStoresHive     "Software\\liquidFOLDERS\\Stores"
 #define MaxStores        100
