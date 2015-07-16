@@ -94,7 +94,7 @@ BOOL GetPIDLsForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDel
 						{
 							SHDESCRIPTIONID SHDID;
 							if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &SHDID, sizeof(SHDESCRIPTIONID))))
-								if (SHDID.clsid==PropertyLF)
+								if (SHDID.clsid==PropertyLiquidFolders)
 								{
 									STRRET Name;
 									if (SUCCEEDED(pParentFolder->GetDisplayNameOf(pidlTemp, SHGDN_FORPARSING, &Name)))

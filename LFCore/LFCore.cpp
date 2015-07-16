@@ -473,7 +473,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 	Attr.ShPropertyMapping = AttrProperties[ID];
 	if (!Attr.ShPropertyMapping.ID)
 	{
-		Attr.ShPropertyMapping.Schema = PropertyLF;
+		Attr.ShPropertyMapping.Schema = PropertyLiquidFolders;
 		Attr.ShPropertyMapping.ID = ID;
 	}
 }
