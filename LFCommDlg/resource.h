@@ -254,9 +254,7 @@
 #define IDM_UPDATE                      22990
 #define IDM_UPDATE_RESTORE              22991
 #define IDI_SHIELD_VISTA                32519
-#define IDI_MAINTENANCE_OK              32520
-#define IDI_MAINTENANCE_WARNING         32521
-#define IDI_MAINTENANCE_ERROR           32522
+#define IDI_READY                       32520
 
 // Next default values for new objects
 // 

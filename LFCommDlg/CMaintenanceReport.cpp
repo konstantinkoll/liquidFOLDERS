@@ -116,7 +116,7 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Them
 	switch (pItem->Result)
 	{
 	case LFOk:
-		hIcon = hIconOk;
+		hIcon = hIconReady;
 
 		break;
 
@@ -142,12 +142,12 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Them
 
 	rect.top += (rect.Height()-rectText.Height()-m_FontHeight)/2-1;
 
-	dc.SetTextColor(hIcon!=hIconOk ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(hIcon!=hIconReady ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(pItem->Name, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 
 	rect.top += m_FontHeight;
 
-	dc.SetTextColor(hIcon!=hIconOk ? 0x0000FF : Themed ? 0x808080 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(hIcon!=hIconReady ? 0x0000FF : Themed ? 0x808080 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(pDescription, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_WORDBREAK);
 }
 
@@ -192,9 +192,9 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_IconSize = (m_ItemHeight>=96) ? 96 : 48;
 	m_BadgeSize = ii.rcImage.bottom-ii.rcImage.top;
 
-	hIconOk = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_MAINTENANCE_OK), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
-	hIconWarning = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_MAINTENANCE_WARNING), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
-	hIconError = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_MAINTENANCE_ERROR), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
+	hIconReady = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_READY), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
+	hIconWarning = (HICON)LoadImage(AfxGetResourceHandle(), IDI_WARNING, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
+	hIconError = (HICON)LoadImage(AfxGetResourceHandle(), IDI_ERROR, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
 
 	return 0;
 }

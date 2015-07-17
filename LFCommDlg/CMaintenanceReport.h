@@ -40,7 +40,7 @@ protected:
 
 	LFMaintenanceList* p_MaintenanceList;
 	CImageList* p_StoreIcons;
-	HICON hIconOk;
+	HICON hIconReady;
 	HICON hIconWarning;
 	HICON hIconError;
 	LFTooltip m_TooltipCtrl;

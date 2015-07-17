@@ -723,18 +723,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Maintenance_Error.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Maintenance_Ok.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Maintenance_Warning.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Organize_Tiny.ico"
 				>
 			</File>
@@ -836,6 +824,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Rating9.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Ready.ico"
 				>
 			</File>
 			<File

@@ -1049,18 +1049,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Maintenance_Error.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Maintenance_Ok.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Maintenance_Warning.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Multiple.ico"
 			>
 		</File>
@@ -1178,6 +1166,10 @@
 		</File>
 		<File
 			RelativePath=".\Rating9.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Ready.ico"
 			>
 		</File>
 		<File
