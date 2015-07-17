@@ -338,8 +338,7 @@ void CFileDropWnd::OnStoreImportFolder()
 
 void CFileDropWnd::OnStoreShortcut()
 {
-	if (LFAskCreateShortcut(GetSafeHwnd()))
-		LFCreateDesktopShortcutForStore(m_Store.StoreID);
+	LFCreateDesktopShortcutForStoreEx(&m_Store);
 }
 
 void CFileDropWnd::OnStoreDelete()

@@ -30,6 +30,8 @@ LFCORE_API void __stdcall LFInitialize();
 // Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
 LFCORE_API LFMessageIDs* __stdcall LFGetMessageIDs();
 
+// Gibt den Dateinamen der liquidFOLDERS-App zurück
+LFCORE_API BOOL __stdcall LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount);
 
 // Liefert einen String mit Dateianzahl und -größe zurück
 LFCORE_API void __stdcall LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount);
@@ -68,7 +70,7 @@ LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCo
 LFCORE_API void __stdcall LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine 64-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFSizeToString(const INT64 i, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFSizeToString(const INT64 pItemDescriptor, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert einen Bruch in eine Zeichenkette
 LFCORE_API void __stdcall LFFractionToString(const LFFraction frac, WCHAR* pStr, SIZE_T cCount);
@@ -95,7 +97,7 @@ LFCORE_API void __stdcall LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cC
 LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert ein Attribut in eine Zeichenkette
-LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* pStr, SIZE_T cCount);
 
 // Initalisiert eine LFVariantData-Struktur
 LFCORE_API void __stdcall LFInitVariantData(LFVariantData& v, UINT Attr);
@@ -117,11 +119,11 @@ LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 LFCORE_API INT __stdcall LFCompareVariantData(LFVariantData& v1, LFVariantData& v2);
 
 // Attributwert holen
-LFCORE_API void __stdcall LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v);
-LFCORE_API void __stdcall LFGetAttributeVariantDataEx(LFItemDescriptor* i, UINT Attr, LFVariantData& v);
+LFCORE_API void __stdcall LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& v);
+LFCORE_API void __stdcall LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& v);
 
 // Attributwert setzen
-LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v);
+LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& v);
 
 // Entfernt doppelte Eintäge in einem Unicode-Array
 LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
@@ -137,7 +139,7 @@ LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* p
 // Neuen LFItemDescriptor für Store erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
 
-// Unabhängige Kopie von i erzeugen
+// Unabhängige Kopie von pItemDescriptor erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor);
 
 // Existierenden LFItemDescriptor freigeben
@@ -264,13 +266,25 @@ LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID);
 // Thumbnails
 //
 
-LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* i, SIZE sz);
+LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz);
 
 // Skaliert eine Bitmap von 256x256 auf 128x128 (nur 32 Bit)
 LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);
 
 
 
+// Shortcuts
+//
+
+// Speichert pShellLink auf dem Desktop ab
+LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* LinkFilename);
+
+// Liefert einen ShellLink für den angegebenen Store
+LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* pItemDescriptor);
+
+// Erzeugt auf dem Desktop eine Verknüpfung mit dem angegebenen Store
+LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFItemDescriptor* pItemDescriptor);
+LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* pStoreDescriptor);
 
 
 
@@ -325,7 +339,7 @@ LFCORE_API void __stdcall LFErrorBox(UINT ID, HWND hWnd=NULL);
 //
 
 // Gibt den physischen Pfad einer Datei zurück
-LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, SIZE_T cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended=FALSE);
+LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* dst, SIZE_T cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended=FALSE);
 
 // Gibt die Daten eines Stores zurück
 LFCORE_API UINT __stdcall LFGetStoreSettings(CHAR* StoreID, LFStoreDescriptor* s);
@@ -432,26 +446,6 @@ LFCORE_API void __stdcall LFTransactionImport(CHAR* key, LFTransactionList* il, 
 LFCORE_API void __stdcall LFTransactionAddToSearchResult(LFTransactionList* il, LFSearchResult* sr);
 
 
-//
-// Shortcuts
-//
-
-// Fragt unter Windows XP, ob eine Verknüpfung auf dem Desktop erstellt werden soll
-// Bei höheren Windows-Versionen wird immer TRUE zurückgeliefert.
-LFCORE_API BOOL __stdcall LFAskCreateShortcut(HWND hwnd);
-
-// Speichert pShellLink auf dem Desktop ab
-LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* LinkFilename);
-
-// Liefert einen ShellLink für den angegebenen Store
-LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* i);
-LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFStoreDescriptor* s);
-LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(CHAR* key);
-
-// Erzeugt auf dem Desktop eine Verknüpfung mit dem angegebenen Store
-LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFItemDescriptor* i);
-LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFStoreDescriptor* s);
-LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(CHAR* key);
 
 
 

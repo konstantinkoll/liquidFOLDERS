@@ -4,44 +4,61 @@
 #include <assert.h>
 
 
-HANDLE Mutex_Stores;
+HMUTEX MutexStores;
 
 
 void InitMutex()
 {
-	Mutex_Stores = CreateMutexA(NULL, FALSE, LFCM_Stores);
+	MutexStores = CreateMutexA(NULL, FALSE, MUTEX_STORES);
 }
 
-BOOL GetMutex(HANDLE m)
+BOOL GetMutex(HMUTEX hMutex)
 {
-	// Wait for max. 20 seconds
-	DWORD dwWaitResult = WaitForSingleObject(m, 20000);
+	// Wait for max. 10 seconds
+	DWORD dwWaitResult = WaitForSingleObject(hMutex, 10000);
 
 	return ((dwWaitResult==WAIT_OBJECT_0) || (dwWaitResult==WAIT_ABANDONED));
 }
 
-BOOL GetMutexForStore(LFStoreDescriptor* s, HANDLE* m)
+
+BOOL GetMutexForStores()
 {
-	assert(s);
+	assert(MutexStores);
+
+	return GetMutex(MutexStores);
+}
+
+void ReleaseMutexForStores()
+{
+	assert(MutexStores);
+
+	ReleaseMutex(MutexStores);
+}
+
+
+BOOL GetMutexForStore(LFStoreDescriptor* pStoreDescriptor, HMUTEX* hMutex)
+{
+	assert(pStoreDescriptor);
 
 	CHAR ID[MAX_PATH];
-	strcpy_s(ID, MAX_PATH, LFCM_Store);
-	strcat_s(ID, MAX_PATH, s->StoreID);
+	strcpy_s(ID, MAX_PATH, MUTEX_STORES);
+	strcat_s(ID, MAX_PATH, "_");
+	strcat_s(ID, MAX_PATH, pStoreDescriptor->StoreID);
 
-	*m = CreateMutexA(NULL, FALSE, ID);
+	*hMutex = CreateMutexA(NULL, FALSE, ID);
+	if (*hMutex==NULL)
+		return FALSE;
 
-	BOOL Result = GetMutex(*m);
+	BOOL Result = GetMutex(*hMutex);
 	if (!Result)
-	{
-		CloseHandle(*m);
-		*m = NULL;
-	}
+		CloseHandle(*hMutex);
 
 	return Result;
 }
 
-void ReleaseMutexForStore(HANDLE m)
+void ReleaseMutexForStore(HANDLE hMutex)
 {
-	ReleaseMutex(m);
-	CloseHandle(m);
+	assert(hMutex);
+
+	ReleaseMutex(hMutex);
 }

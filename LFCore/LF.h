@@ -88,12 +88,6 @@ struct LFMessageIDs
 #define LFExtSize      16
 
 
-// Mutex objects
-
-#define LFCM_Store     "Global\\LFCoreMutex_Store_"
-#define LFCM_Stores    "Global\\LFCoreMutex_Stores"
-
-
 // Globe textures
 
 #define LFTextureNone     -1

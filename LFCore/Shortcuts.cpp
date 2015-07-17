@@ -11,23 +11,6 @@ extern HMODULE LFCoreModuleHandle;
 extern OSVERSIONINFO osInfo;
 
 
-LFCORE_API BOOL LFAskCreateShortcut(HWND hWnd)
-{
-	if (osInfo.dwMajorVersion<6)
-	{
-		// Ask if link should be created on desktop (mimicking Windows XP Explorer)
-		WCHAR Caption[256];
-		WCHAR Message[256];
-		LoadString(LFCoreModuleHandle, IDS_SHORTCUTCAPTION, Caption, 256);
-		LoadString(LFCoreModuleHandle, IDS_SHORTCUTMESSAGE, Message, 256);
-
-		if (MessageBox(hWnd, Message, Caption, MB_YESNO | MB_ICONQUESTION)==IDNO)
-			return FALSE;
-	}
-
-	return TRUE;
-}
-
 LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* LinkFilename)
 {
 	// Get the fully qualified file name for the link file

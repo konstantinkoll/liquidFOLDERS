@@ -10,7 +10,6 @@
 #include <assert.h>
 
 
-extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 
 
@@ -46,10 +45,10 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescr
 		strcpy_s(StoreID, LFKeySize, key);
 
 	if (StoreID[0]=='\0')
-		if (GetMutex(Mutex_Stores))
+		if (GetMutexForStores())
 		{
 			strcpy_s(StoreID, LFKeySize, DefaultStore);
-			ReleaseMutex(Mutex_Stores);
+			ReleaseMutexForStores();
 		}
 		else
 		{
@@ -414,10 +413,10 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFTransactionList* il, BOOL move,
 		strcpy_s(StoreID, LFKeySize, key);
 
 	if (StoreID[0]=='\0')
-		if (GetMutex(Mutex_Stores))
+		if (GetMutexForStores())
 		{
 			strcpy_s(StoreID, LFKeySize, DefaultStore);
-			ReleaseMutex(Mutex_Stores);
+			ReleaseMutexForStores();
 		}
 		else
 		{

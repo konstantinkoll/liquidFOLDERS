@@ -10,9 +10,6 @@
 #include <assert.h>
 
 
-extern HANDLE Mutex_Stores;
-
-
 LFCORE_API LFFilter* LFAllocFilter(LFFilter* pFilter)
 {
 	LFFilter* pNewFilter = new LFFilter;
@@ -72,7 +69,7 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 {
 	assert(pFilename);
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return NULL;
 
 	WCHAR Path[2*MAX_PATH];
@@ -102,7 +99,7 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 			*Ptr = L'\0';
 	}
 
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	return pFilter;
 }

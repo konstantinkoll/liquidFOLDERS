@@ -33,7 +33,7 @@ public:
 
 	WCHAR m_PathCoreFile[MAX_PATH];
 	WCHAR m_PathThisFile[MAX_PATH];
-	CString m_AppPath;
+	WCHAR m_PathApplication[MAX_PATH];
 	CString m_Categories[3][6];
 	CString m_Store;
 	CString m_Folder;
@@ -41,9 +41,6 @@ public:
 	LFAttributeDescriptor m_Attributes[LFAttributeCount];
 	LFItemCategoryDescriptor m_ItemCategories[LFItemCategoryCount];
 	UINT m_NagCounter;
-
-protected:
-	static BOOL GetApplicationPath(CString& Path);
 };
 
 extern LFNamespaceExtensionApp theApp;

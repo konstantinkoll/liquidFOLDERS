@@ -42,19 +42,6 @@ LFStoreDataObject::LFStoreDataObject(LFItemDescriptor* i)
 	}
 }
 
-LFStoreDataObject::LFStoreDataObject(LFStoreDescriptor* s)
-{
-	m_lRefCount = 1;
-	m_hDescriptor = m_hShellLink = NULL;
-	
-	IShellLink* pShellLink = LFGetShortcutForStore(s);
-	if (pShellLink)
-	{
-		CreateGlobals(pShellLink, s->StoreName);
-		pShellLink->Release();
-	}
-}
-
 void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, WCHAR* Name)
 {
 	WCHAR Path[MAX_PATH];
@@ -74,18 +61,18 @@ void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, WCHAR* Name)
 				HANDLE hFile = CreateFile(Filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 				if (hFile!=INVALID_HANDLE_VALUE)
 				{
-					LARGE_INTEGER size;
-					size.QuadPart = 0;
-					GetFileSizeEx(hFile, &size);
+					LARGE_INTEGER Size;
+					Size.QuadPart = 0;
+					GetFileSizeEx(hFile, &Size);
 
 					ASSERT(size.HighPart==0);
 
-					m_hShellLink = GlobalAlloc(GMEM_MOVEABLE, size.LowPart);
+					m_hShellLink = GlobalAlloc(GMEM_MOVEABLE, Size.LowPart);
 					if (m_hShellLink)
 					{
 						void* pDst = GlobalLock(m_hShellLink);
 						DWORD Read;
-						ReadFile(hFile, pDst, size.LowPart, &Read, NULL);
+						ReadFile(hFile, pDst, Size.LowPart, &Read, NULL);
 						GlobalUnlock(m_hShellLink);
 
 						// Descriptor
@@ -93,19 +80,20 @@ void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, WCHAR* Name)
 						ZeroMemory(&fgd, sizeof(fgd));
 						fgd.cItems = 1;
 						fgd.fgd[0].dwFlags = FD_FILESIZE | FD_WRITESTIME;
-						fgd.fgd[0].nFileSizeLow = size.LowPart;
-						fgd.fgd[0].nFileSizeHigh = size.HighPart;
-						fgd.fgd[0].ftLastWriteTime.dwLowDateTime = 0x256d4000;
-						fgd.fgd[0].ftLastWriteTime.dwHighDateTime = 0x01bf53eb;
+						fgd.fgd[0].nFileSizeLow = Size.LowPart;
+						fgd.fgd[0].nFileSizeHigh = Size.HighPart;
+						fgd.fgd[0].ftLastWriteTime.dwLowDateTime = 0x256D4000;
+						fgd.fgd[0].ftLastWriteTime.dwHighDateTime = 0x01BF53EB;
 
 						wcscpy_s(fgd.fgd[0].cFileName, MAX_PATH, Name);
 
-						WCHAR* pChar = fgd.fgd[0].cFileName;
-						while (*pChar!=L'\0')
+						WCHAR* Ptr = fgd.fgd[0].cFileName;
+						while (*Ptr!=L'\0')
 						{
-							if ((*pChar<L' ') || (wcschr(L"<>:\"/\\|?*", *pChar)))
-								*pChar = L'_';
-							pChar++;
+							if ((*Ptr<L' ') || (wcschr(L"<>:\"/\\|?*", *Ptr)))
+								*Ptr = L'_';
+
+							Ptr++;
 						}
 
 						wcscat_s(fgd.fgd[0].cFileName, MAX_PATH, L".lnk");

@@ -32,7 +32,6 @@ LFStoreDescriptor StoreCache[MaxStores];
 #pragma comment(linker, "/SECTION:.stores,RWS")
 
 
-extern HANDLE Mutex_Stores;
 extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
 extern UINT VolumeTypes[26];
@@ -53,10 +52,10 @@ LFCORE_API BOOL LFDefaultStoreAvailable()
 {
 	BOOL Result = FALSE;
 
-	if (GetMutex(Mutex_Stores))
+	if (GetMutexForStores())
 	{
 		Result = (DefaultStore[0]!='\0');
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 	}
 
 	return Result;
@@ -64,10 +63,10 @@ LFCORE_API BOOL LFDefaultStoreAvailable()
 
 LFCORE_API BOOL LFGetDefaultStore(CHAR* StoreID)
 {
-	if (GetMutex(Mutex_Stores))
+	if (GetMutexForStores())
 	{
 		strcpy_s(StoreID, LFKeySize, DefaultStore);
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 
 		return TRUE;
 	}
@@ -552,7 +551,7 @@ __forceinline void MountExternalVolumes()
 
 void InitStoreCache()
 {
-	if (GetMutex(Mutex_Stores))
+	if (GetMutexForStores())
 	{
 		if (!Initialized)
 		{
@@ -592,7 +591,7 @@ void InitStoreCache()
 				ChooseNewDefaultStore();
 		}
 
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 	}
 }
 
@@ -673,11 +672,11 @@ UINT FindStores(CHAR** IDs)
 
 LFCORE_API UINT LFGetStores(CHAR** StoreIDs, UINT* count)
 {
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	*count = FindStores(StoreIDs);
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	return LFOk;
 }
@@ -766,10 +765,10 @@ LFCORE_API UINT LFGetStoreCount()
 {
 	UINT Result = 0;
 
-	if (GetMutex(Mutex_Stores))
+	if (GetMutexForStores())
 	{
 		Result = StoreCount;
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 	}
 
 	return Result;
@@ -783,7 +782,7 @@ LFCORE_API BOOL LFStoresOnVolume(CHAR cVolume)
 {
 	BOOL Result = FALSE;
 
-	if (GetMutex(Mutex_Stores))
+	if (GetMutexForStores())
 	{
 		for (UINT a=0; a<StoreCount; a++)
 			if (IsStoreMounted(&StoreCache[a]))
@@ -793,7 +792,7 @@ LFCORE_API BOOL LFStoresOnVolume(CHAR cVolume)
 					break;
 				}
 
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 	}
 
 	return Result;
@@ -827,7 +826,7 @@ UINT MountVolume(CHAR cVolume, BOOL InternalCall)
 				if ((s.Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 					continue;
 
-				if (!GetMutex(Mutex_Stores))
+				if (!GetMutexForStores())
 				{
 					Result = LFMutexError;
 					continue;
@@ -886,7 +885,7 @@ UINT MountVolume(CHAR cVolume, BOOL InternalCall)
 					if (!GetMutexForStore(slot, &StoreLock))
 						goto Finish;
 
-					ReleaseMutex(Mutex_Stores);
+					ReleaseMutexForStores();
 					Result = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
 
 					if (!InternalCall)
@@ -897,7 +896,7 @@ UINT MountVolume(CHAR cVolume, BOOL InternalCall)
 				}
 
 Finish:
-				ReleaseMutex(Mutex_Stores);
+				ReleaseMutexForStores();
 			}
 		}
 		while (FindNextFile(hFind, &ffd));
@@ -923,7 +922,7 @@ UINT UnmountVolume(CHAR cVolume, BOOL InternalCall)
 	assert(cVolume>='A');
 	assert(cVolume<='Z');
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result = LFOk;
@@ -987,7 +986,7 @@ UINT UnmountVolume(CHAR cVolume, BOOL InternalCall)
 	if (RemovedDefaultStore)
 		ChooseNewDefaultStore();
 	
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	if (!InternalCall)
 		if (ChangeOccured)

@@ -11,9 +11,6 @@
 #include <shlwapi.h>
 
 
-extern HANDLE Mutex_Stores;
-
-
 BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 {
 	assert(pFilterCondition);
@@ -489,10 +486,10 @@ void QueryStores(LFFilter* pFilter, LFSearchResult* pSearchResult)
 			pSearchResult->AddVolumes();
 
 	// Stores
-	if (GetMutex(Mutex_Stores))
+	if (GetMutexForStores())
 	{
 		AddStoresToSearchResult(pSearchResult);
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 	}
 	else
 	{
@@ -510,7 +507,7 @@ __forceinline void QuerySearch(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	if (pFilter->StoreID[0]=='\0')
 	{
 		// All stores
-		if (!GetMutex(Mutex_Stores))
+		if (!GetMutexForStores())
 		{
 			pSearchResult->m_LastError = LFMutexError;
 			return;
@@ -518,7 +515,7 @@ __forceinline void QuerySearch(LFFilter* pFilter, LFSearchResult* pSearchResult)
 
 		CHAR* IDs;
 		UINT Count = FindStores(&IDs);
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 
 		if (Count)
 		{
@@ -627,7 +624,7 @@ LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
 		return pStatistics;
 	}
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 	{
 		pStatistics->LastError = LFMutexError;
 
@@ -637,7 +634,7 @@ LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
 	// All stores
 	CHAR* IDs;
 	UINT Count = FindStores(&IDs);
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	if (Count)
 	{

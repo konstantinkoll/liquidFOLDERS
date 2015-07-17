@@ -5,14 +5,15 @@ LIBRARY      "LFCORE"
 EXPORTS
 	; Explicit exports can go here
 	LFInitialize @1
-	LFGetMessageIDs @2
-	LFCombineFileCountSize @3
-	LFHideFileExt @4
-	LFHideVolumesWithNoMedia @5
-	LFGetSourceForVolume @6
-	LFGetLogicalVolumes @7
-	LFInitProgress @8
-	LFGetErrorText @9
+	LFGetApplicationPath @2
+	LFGetMessageIDs @3
+	LFCombineFileCountSize @4
+	LFHideFileExt @5
+	LFHideVolumesWithNoMedia @6
+	LFGetSourceForVolume @7
+	LFGetLogicalVolumes @8
+	LFInitProgress @9
+	LFGetErrorText @10
 	
 	LFFourCCToString @100
 	LFUINTToString @101
@@ -78,3 +79,8 @@ EXPORTS
 
 	LFGetThumbnail @500
 	LFQuarter256Bitmap @501
+	
+	LFCreateDesktopShortcut @600
+	LFGetShortcutForStore @601
+	LFCreateDesktopShortcutForStore @602
+	LFCreateDesktopShortcutForStoreEx @603

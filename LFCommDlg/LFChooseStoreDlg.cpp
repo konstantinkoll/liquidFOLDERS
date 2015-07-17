@@ -214,8 +214,7 @@ void LFChooseStoreDlg::OnStoreShortcut()
 {
 	INT Index = GetSelectedStore();
 	if (Index!=-1)
-		if (LFAskCreateShortcut(GetSafeHwnd()))
-			LFCreateDesktopShortcutForStore(m_pResult->m_Items[Index]);
+		LFCreateDesktopShortcutForStore(m_pResult->m_Items[Index]);
 }
 
 void LFChooseStoreDlg::OnStoreDelete()

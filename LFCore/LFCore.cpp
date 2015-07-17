@@ -53,6 +53,49 @@ LFCORE_API void LFInitialize()
 	InitWatchdog();
 }
 
+LFCORE_API BOOL LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount)
+{
+	assert(cCount>=MAX_PATH);
+
+	// Registry
+	HKEY k;
+	if (RegOpenKey(HKEY_LOCAL_MACHINE, L"Software\\liquidFOLDERS\\", &k)==ERROR_SUCCESS)
+	{
+		DWORD Size = (DWORD)(cCount*sizeof(WCHAR));
+		LSTATUS Result = RegQueryValueEx(k, L"InstallLocation", 0, NULL, (BYTE*)pStr, &Size);
+
+		RegCloseKey(k);
+
+		if (Result==ERROR_SUCCESS)
+			return TRUE;
+	}
+
+	// "Programme"-Verzeichnis
+	if (SHGetSpecialFolderPath(NULL, pStr, CSIDL_PROGRAM_FILES, FALSE))
+	{
+		wcscat_s(pStr, cCount, L"\\liquidFOLDERS\\liquidFOLDERS.exe");
+
+		if (_waccess(pStr, 0)==0)
+			return TRUE;
+	}
+
+	// Selbes Verzeichnis wie die DLL
+	GetModuleFileName(LFCoreModuleHandle, pStr, cCount);
+	if (GetLastError()==ERROR_SUCCESS)
+	{
+		WCHAR* Ptr = wcsrchr(pStr, L'\\');
+		if (Ptr)
+			*(Ptr+1) = L'\0';
+
+		wcscat_s(pStr, cCount, L"liquidFOLDERS.exe");
+
+		if (_waccess(pStr, 0)==0)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 LFCORE_API LFMessageIDs* LFGetMessageIDs()
 {
 	return &LFMessages;

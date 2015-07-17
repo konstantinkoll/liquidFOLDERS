@@ -159,8 +159,6 @@ BEGIN
     IDS_FILECOUNT_SINGULAR  "%u Datei (%s)"
     IDS_FILECOUNT_PLURAL    "%u Dateien (%s)"
     IDS_ERRORCAPTION        "Fehler"
-    IDS_SHORTCUTCAPTION     "Verknüpfung"
-    IDS_SHORTCUTMESSAGE     "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
 END
 
 STRINGTABLE 
@@ -431,8 +429,6 @@ BEGIN
     IDS_FILECOUNT_SINGULAR  "%u file (%s)"
     IDS_FILECOUNT_PLURAL    "%u files (%s)"
     IDS_ERRORCAPTION        "Error"
-    IDS_SHORTCUTCAPTION     "Shortcut"
-    IDS_SHORTCUTMESSAGE     "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
 END
 
 STRINGTABLE 
@@ -702,8 +698,6 @@ BEGIN
     IDS_FILECOUNT_SINGULAR  "%u archivo (%s)"
     IDS_FILECOUNT_PLURAL    "%u archivos (%s)"
     IDS_ERRORCAPTION        "Error"
-    IDS_SHORTCUTCAPTION     "Acceso directo"
-    IDS_SHORTCUTMESSAGE     "Windows no puede crear un acceso directo aquí.\n¿Desea que en su lugar el acceso directo se coloque en el escritorio?"
 END
 
 STRINGTABLE 
@@ -975,8 +969,6 @@ BEGIN
     IDS_FILECOUNT_SINGULAR  "%u fichier (%s)"
     IDS_FILECOUNT_PLURAL    "%u fichiers (%s)"
     IDS_ERRORCAPTION        "Erreur"
-    IDS_SHORTCUTCAPTION     "Raccourci"
-    IDS_SHORTCUTMESSAGE     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place?"
 END
 
 STRINGTABLE 

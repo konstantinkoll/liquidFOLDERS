@@ -10,7 +10,6 @@
 
 
 extern HMODULE LFCoreModuleHandle;
-extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 extern CHAR KeyChars[38];
 
@@ -314,7 +313,7 @@ LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, SIZE_T cCount
 
 	BOOL Changed = FALSE;
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result = LFIllegalKey;
@@ -370,7 +369,7 @@ LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* i, WCHAR* dst, SIZE_T cCount
 			Result = LFStoreNotMounted;
 		}
 
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	if (Changed)
 		SendLFNotifyMessage(LFMessages.StatisticsChanged);
@@ -382,27 +381,27 @@ LFCORE_API UINT LFGetStoreSettings(CHAR* StoreID, LFStoreDescriptor* s)
 {
 	assert(StoreID);
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	LFStoreDescriptor* slot = FindStore(StoreID[0]=='\0' ? DefaultStore : StoreID);
 	if (slot)
 		*s = *slot;
 
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 	return (slot ? LFOk : LFIllegalKey);
 }
 
 LFCORE_API UINT LFGetStoreSettings(GUID guid, LFStoreDescriptor* s)
 {
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	LFStoreDescriptor* slot = FindStore(guid);
 	if (slot)
 		*s = *slot;
 
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 	return (slot ? LFOk : LFIllegalKey);
 }
 
@@ -430,7 +429,7 @@ LFCORE_API UINT LFCreateStore(LFStoreDescriptor* s)
 	if (s->StoreName[0]==L'\0')
 		LoadString(LFCoreModuleHandle, IDS_NEWSTORE, s->StoreName, 256);
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	// CreateTime und MaintenanceTime setzen
@@ -454,7 +453,7 @@ LFCORE_API UINT LFCreateStore(LFStoreDescriptor* s)
 		HANDLE StoreLock;
 		if (GetMutexForStore(s, &StoreLock))
 		{
-			ReleaseMutex(Mutex_Stores);
+			ReleaseMutexForStores();
 
 			Result = CreateStoreDirectories(s);
 			if (Result==LFOk)
@@ -474,7 +473,7 @@ LFCORE_API UINT LFCreateStore(LFStoreDescriptor* s)
 	}
 	else
 	{
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 	}
 
 	return Result;
@@ -487,7 +486,7 @@ LFCORE_API UINT LFMakeDefaultStore(CHAR* StoreID)
 	if (strcmp(StoreID, DefaultStore)==0)
 		return LFOk;
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result = LFIllegalKey;
@@ -496,7 +495,7 @@ LFCORE_API UINT LFMakeDefaultStore(CHAR* StoreID)
 	if (slot)
 		Result = MakeDefaultStore(slot);
 
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	if (Result==LFOk)
 		SendLFNotifyMessage(LFMessages.DefaultStoreChanged);
@@ -508,7 +507,7 @@ LFCORE_API UINT LFMakeStoreSearchable(CHAR* StoreID, BOOL Searchable)
 {
 	assert(StoreID);
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result = LFIllegalKey;
@@ -516,14 +515,14 @@ LFCORE_API UINT LFMakeStoreSearchable(CHAR* StoreID, BOOL Searchable)
 	LFStoreDescriptor* slot = FindStore(StoreID, &StoreLock);
 	if (!StoreLock)
 	{
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 		return LFMutexError;
 	}
 	if (slot)
 	{
 		LFStoreDescriptor victim = *slot;
 
-		#define EXIT(Result) { ReleaseMutexForStore(StoreLock); ReleaseMutex(Mutex_Stores); return Result; }
+		#define EXIT(Result) { ReleaseMutexForStore(StoreLock); ReleaseMutexForStores(); return Result; }
 
 		switch (slot->Mode & LFStoreModeIndexMask)
 		{
@@ -567,7 +566,7 @@ LFCORE_API UINT LFMakeStoreSearchable(CHAR* StoreID, BOOL Searchable)
 		SetStoreAttributes(slot);
 
 		Result = UpdateStore(slot);
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 		if (Result!=LFOk)
 			goto Abort;
 
@@ -617,7 +616,7 @@ LFCORE_API UINT LFSetStoreAttributes(CHAR* StoreID, WCHAR* name, WCHAR* comment,
 	LPITEMIDLIST oldpidlDelegate;
 	GetPIDLsForStore(StoreID, &oldpidl, &oldpidlDelegate);
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 	{
 		CoTaskMemFree(oldpidl);
 		CoTaskMemFree(oldpidlDelegate);
@@ -637,7 +636,7 @@ LFCORE_API UINT LFSetStoreAttributes(CHAR* StoreID, WCHAR* name, WCHAR* comment,
 		Result = UpdateStore(slot);
 	}
 
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	if (Result==LFOk)
 	{
@@ -663,7 +662,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 {
 	assert(StoreID);
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result = LFIllegalKey;
@@ -671,7 +670,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 	LFStoreDescriptor* slot = FindStore(StoreID, &StoreLock);
 	if (!StoreLock)
 	{
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 		return LFMutexError;
 	}
 	if (slot)
@@ -685,7 +684,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 			wcscpy_s(pProgress->Object, 256, slot->StoreName);
 			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
 			{
-				ReleaseMutex(Mutex_Stores);
+				ReleaseMutexForStores();
 				ReleaseMutexForStore(StoreLock);
 				return LFCancel;
 			}
@@ -701,7 +700,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 			if (FileExists(Path))
 				if (!DirWriteable(slot->DatPath))
 				{
-					ReleaseMutex(Mutex_Stores);
+					ReleaseMutexForStores();
 					ReleaseMutexForStore(StoreLock);
 					return LFDriveWriteProtected;
 				}
@@ -709,7 +708,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 
 		LFStoreDescriptor victim = *slot;
 		Result = DeleteStore(slot);
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 		ReleaseMutexForStore(StoreLock);
 
 		if (Result==LFOk)
@@ -749,7 +748,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 	}
 	else
 	{
-		ReleaseMutex(Mutex_Stores);
+		ReleaseMutexForStores();
 	}
 
 	return Result;
@@ -841,7 +840,7 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 {
 	LFMaintenanceList* ml = new LFMaintenanceList();
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 	{
 		ml->m_LastError = LFMutexError;
 		return ml;
@@ -849,7 +848,7 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 
 	CHAR* IDs;
 	UINT count = FindStores(&IDs);
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	if (count)
 	{
@@ -859,7 +858,7 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 		CHAR* ptr = IDs;
 		for (UINT a=0; a<count; a++)
 		{
-			if (!GetMutex(Mutex_Stores))
+			if (!GetMutexForStores())
 			{
 				free(IDs);
 				ml->m_LastError = LFMutexError;
@@ -868,7 +867,7 @@ LFCORE_API LFMaintenanceList* LFStoreMaintenance(LFProgress* pProgress)
 
 			HANDLE StoreLock = NULL;
 			LFStoreDescriptor* slot = FindStore(ptr, &StoreLock);
-			ReleaseMutex(Mutex_Stores);
+			ReleaseMutexForStores();
 
 			if ((!slot) || (!StoreLock))
 				continue;
@@ -900,11 +899,11 @@ UINT OpenStore(CHAR* StoreID, BOOL WriteAccess, CIndex* &Index1, CIndex* &Index2
 {
 	Index1 = Index2 = NULL;
 
-	if (!GetMutex(Mutex_Stores))
+	if (!GetMutexForStores())
 		return LFMutexError;
 
 	LFStoreDescriptor* slot = FindStore(StoreID, lock);
-	ReleaseMutex(Mutex_Stores);
+	ReleaseMutexForStores();
 
 	if (!slot)
 		return LFIllegalKey;

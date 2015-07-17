@@ -29,8 +29,8 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	// Pfade
 	GetModuleFileName((HINSTANCE)&__ImageBase, m_PathThisFile, MAX_PATH);
 
-	if (!GetApplicationPath(m_AppPath))
-		m_AppPath.Empty();
+	if (!LFGetApplicationPath(m_PathApplication, MAX_PATH))
+		m_PathApplication[0] = L'\0';
 
 	HMODULE hModCore = GetModuleHandle(_T("LFCORE.DLL"));
 	if (hModCore)
@@ -114,38 +114,6 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	ResetNagCounter;
 
 	return CWinApp::InitInstance();
-}
-
-BOOL LFNamespaceExtensionApp::GetApplicationPath(CString& Path)
-{
-	// Registry
-	CSettingsStoreSP regSP;
-	CSettingsStore& reg = regSP.Create(TRUE, TRUE);
-
-	if (reg.Open(_T("Software\\liquidFOLDERS\\")))
-		if (reg.Read(_T("InstallLocation"), Path))
-			if (_waccess(Path, 0)==0)
-				return TRUE;
-
-	// Modulpfad probieren
-	Path = theApp.m_PathThisFile;
-	INT pos = Path.ReverseFind('\\');
-	if (pos)
-		Path = Path.Left(pos+1);
-
-	Path.Append(_T("liquidFOLDERS.exe"));
-	if (_waccess(Path, 0)==0)
-		return TRUE;
-
-	// Festen Pfad probieren
-	WCHAR tmpStr[MAX_PATH];
-	if (!SHGetSpecialFolderPath(NULL, tmpStr, CSIDL_PROGRAM_FILES, FALSE))
-		return FALSE;
-
-	Path = tmpStr;
-	Path.Append(_T("\\liquidFOLDERS\\liquidFOLDERS.exe"));
-
-	return (_waccess(Path, 0)==0);
 }
 
 CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
