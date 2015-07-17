@@ -48,21 +48,21 @@ struct LFProgress
 
 // License
 
-struct LFLicenseVersion
+struct LFVersion
 {
 	UINT Major;
 	UINT Minor;
-	UINT Release;
+	UINT Build;
 };
 
 struct LFLicense
 {
-	WCHAR PurchaseID[256];
-	WCHAR ProductID[256];
-	WCHAR PurchaseDate[16];				// Either DD/MM/YYYY or DD.MM.YYYY
-	WCHAR Quantity[8];
-	WCHAR RegName[256];
-	LFLicenseVersion Version;
+	CHAR PurchaseID[256];
+	CHAR ProductID[256];
+	CHAR PurchaseDate[16];				// Either DD/MM/YYYY or DD.MM.YYYY
+	CHAR Quantity[8];
+	CHAR RegName[256];
+	LFVersion Version;
 };
 
 

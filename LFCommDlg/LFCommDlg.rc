@@ -232,11 +232,11 @@ BEGIN
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "Lizenz",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
     LTEXT           "Name:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_NAME,7,117,184,8
+    LTEXT           "X",IDC_REGNAME,7,117,184,8
     LTEXT           "Kaufdatum:",IDC_STATIC,7,130,115,8
     LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
     LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_ID,140,140,51,8
+    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
     LTEXT           "Produkt:",IDC_STATIC,7,155,115,8
     LTEXT           "X",IDC_PRODUCT,7,165,184,9
     LTEXT           "Menge:",IDC_QUANTITYTITLE,140,155,51,8
@@ -979,11 +979,11 @@ BEGIN
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "Licensia",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
     LTEXT           "Nombre:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_NAME,7,117,184,8
+    LTEXT           "X",IDC_REGNAME,7,117,184,8
     LTEXT           "Adquisición:",IDC_STATIC,7,130,115,8
     LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
     LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_ID,140,140,51,8
+    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
     LTEXT           "Producto:",IDC_STATIC,7,155,115,8
     LTEXT           "X",IDC_PRODUCT,7,165,184,9
     LTEXT           "Número:",IDC_QUANTITYTITLE,140,155,51,8
@@ -1734,11 +1734,11 @@ BEGIN
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "Licence",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
     LTEXT           "Nom:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_NAME,7,117,184,8
+    LTEXT           "X",IDC_REGNAME,7,117,184,8
     LTEXT           "Date d'achat:",IDC_STATIC,7,130,115,8
     LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
     LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_ID,140,140,51,8
+    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
     LTEXT           "Produit:",IDC_STATIC,7,155,115,8
     LTEXT           "X",IDC_PRODUCT,7,165,184,9
     LTEXT           "Nombre:",IDC_QUANTITYTITLE,140,155,51,8
@@ -2532,11 +2532,11 @@ BEGIN
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
     CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
     LTEXT           "Name:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_NAME,7,117,184,8
+    LTEXT           "X",IDC_REGNAME,7,117,184,8
     LTEXT           "Purchase date:",IDC_STATIC,7,130,115,8
     LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
     LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_ID,140,140,51,8
+    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
     LTEXT           "Product:",IDC_STATIC,7,155,115,8
     LTEXT           "X",IDC_PRODUCT,7,165,184,9
     LTEXT           "Quantity:",IDC_QUANTITYTITLE,140,155,51,8

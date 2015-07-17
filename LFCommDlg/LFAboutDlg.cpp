@@ -85,16 +85,16 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 void LFAboutDlg::CheckLicenseKey()
 {
-	LFLicense l;
-	if (LFIsLicensed(&l))
+	LFLicense License;
+	if (LFIsLicensed(&License))
 		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
 
-	GetDlgItem(IDC_NAME)->SetWindowText(l.RegName);
-	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(l.PurchaseDate);
-	GetDlgItem(IDC_ID)->SetWindowText(l.PurchaseID);
-	GetDlgItem(IDC_PRODUCT)->SetWindowText(l.ProductID);
+	SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
+	SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);
+	SetWindowTextA(GetDlgItem(IDC_PURCHASEID)->GetSafeHwnd(), License.PurchaseID);
+	SetWindowTextA(GetDlgItem(IDC_PRODUCT)->GetSafeHwnd(), License.ProductID);
 
-	if (wcslen(l.ProductID)>13)
+	if (strlen(License.ProductID)>13)
 	{
 		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_HIDE);
@@ -103,7 +103,7 @@ void LFAboutDlg::CheckLicenseKey()
 	{
 		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_QUANTITY)->SetWindowText(l.Quantity);
+		SetWindowTextA(GetDlgItem(IDC_QUANTITY)->GetSafeHwnd(), License.Quantity);
 	}
 }
 

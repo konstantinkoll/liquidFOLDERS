@@ -16,14 +16,17 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 		return FALSE;
 	}
 
-	SIZE_T sz = GlobalSize(hSrc);
-	hDst = GlobalAlloc(GMEM_MOVEABLE, sz);
+	SIZE_T Size = GlobalSize(hSrc);
+
+	hDst = GlobalAlloc(GMEM_MOVEABLE, Size);
 	if (!hDst)
 		return FALSE;
 
 	void* pSrc = GlobalLock(hSrc);
 	void* pDst = GlobalLock(hDst);
-	memcpy(pDst, pSrc, sz);
+
+	memcpy(pDst, pSrc, Size);
+
 	GlobalUnlock(hSrc);
 	GlobalUnlock(hDst);
 
@@ -46,25 +49,25 @@ INT GetAttributeIconIndex(UINT Attr)
 	return -1;
 }
 
-void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
+void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path)
 {
-	path.Reset();
+	Path.Reset();
 
 	INT l = rect.left;
 	INT t = rect.top;
 	INT w = rect.Width();
 	INT h = rect.Height();
-	INT d = rad<<1;
+	INT d = Radius<<1;
 
-	path.AddArc(l, t, d, d, 180, 90);
-	path.AddLine(l+rad, t, l+w-rad, t);
-	path.AddArc(l+w-d, t, d, d, 270, 90);
-	path.AddLine(l+w, t+rad, l+w, t+h-rad);
-	path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
-	path.AddLine(l+w-rad, t+h, l+rad, t+h);
-	path.AddArc(l, t+h-d, d, d, 90, 90);
-	path.AddLine(l, t+h-rad, l, t+rad);
-	path.CloseFigure();
+	Path.AddArc(l, t, d, d, 180, 90);
+	Path.AddLine(l+Radius, t, l+w-Radius, t);
+	Path.AddArc(l+w-d, t, d, d, 270, 90);
+	Path.AddLine(l+w, t+Radius, l+w, t+h-Radius);
+	Path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
+	Path.AddLine(l+w-Radius, t+h, l+Radius, t+h);
+	Path.AddArc(l, t+h-d, d, d, 90, 90);
+	Path.AddLine(l, t+h-Radius, l, t+Radius);
+	Path.CloseFigure();
 }
 
 void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
@@ -364,27 +367,16 @@ CString GetLatestVersion(CString CurrentVersion)
 {
 	CString VersionIni;
 
-	// Variant
-#ifdef _M_X64
-#define ISET _T(" (x64")
-#else
-#define ISET _T(" (x86")
-#endif
-
-	CurrentVersion += ISET;
-
-	// Licensed?
+	// License
 	if (LFIsLicensed())
 	{
-		CurrentVersion += _T("; licensed");
+		CurrentVersion += _T(" (licensed");
 	}
 	else
 		if (LFIsSharewareExpired())
 		{
-			CurrentVersion += _T("; expired");
+			CurrentVersion += _T(" (expired");
 		}
-
-	CurrentVersion += _T(")");
 
 	// Get available version
 	HINTERNET hSession = WinHttpOpen(_T("liquidFOLDERS/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
@@ -438,31 +430,27 @@ CString GetIniValue(CString Ini, CString Name)
 {
 	while (!Ini.IsEmpty())
 	{
-		INT pos = Ini.Find(L"\n");
-		if (pos==-1)
-			pos = Ini.GetLength()+1;
+		INT Pos = Ini.Find(L"\n");
+		if (Pos==-1)
+			Pos = Ini.GetLength()+1;
 
-		CString Line = Ini.Mid(0, pos-1);
-		Ini.Delete(0, pos+1);
+		CString Line = Ini.Mid(0, Pos-1);
+		Ini.Delete(0, Pos+1);
 
-		pos = Line.Find(L"=");
-		if (pos!=-1)
-			if (Line.Mid(0, pos)==Name)
-				return Line.Mid(pos+1, Line.GetLength()-pos);
+		Pos = Line.Find(L"=");
+		if (Pos!=-1)
+			if (Line.Mid(0, Pos)==Name)
+				return Line.Mid(Pos+1, Line.GetLength()-Pos);
 	}
 
 	return _T("");
 }
 
-struct Version
+void ParseVersion(CString tmpStr, LFVersion* pVersion)
 {
-	UINT Major, Minor, Build;
-};
+	ASSERT(pVersion);
 
-__forceinline INT ParseVersion(CString ver, Version* v)
-{
-	ZeroMemory(v, sizeof(Version));
-	return swscanf_s(ver, L"%u.%u.%u", &v->Major, &v->Minor, &v->Build);
+	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
 }
 
 void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
@@ -499,9 +487,10 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	BOOL UpdateAvailable = FALSE;
 	if (!LatestVersion.IsEmpty())
 	{
-		Version CV;
-		Version LV;
+		LFVersion CV = { 0 };
 		ParseVersion(CurrentVersion, &CV);
+
+		LFVersion LV = { 0 };
 		ParseVersion(LatestVersion, &LV);
 
 		CString IgnoreMSN = LFGetApp()->GetGlobalString(_T("IgnoreUpdateMSN"));

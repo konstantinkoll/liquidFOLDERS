@@ -58,13 +58,13 @@ LFCORE_API BOOL LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount)
 	assert(cCount>=MAX_PATH);
 
 	// Registry
-	HKEY k;
-	if (RegOpenKey(HKEY_LOCAL_MACHINE, L"Software\\liquidFOLDERS\\", &k)==ERROR_SUCCESS)
+	HKEY hKey;
+	if (RegOpenKey(HKEY_LOCAL_MACHINE, L"Software\\liquidFOLDERS\\", &hKey)==ERROR_SUCCESS)
 	{
 		DWORD Size = (DWORD)(cCount*sizeof(WCHAR));
-		LSTATUS Result = RegQueryValueEx(k, L"InstallLocation", 0, NULL, (BYTE*)pStr, &Size);
+		LSTATUS Result = RegQueryValueEx(hKey, L"InstallLocation", 0, NULL, (BYTE*)pStr, &Size);
 
-		RegCloseKey(k);
+		RegCloseKey(hKey);
 
 		if (Result==ERROR_SUCCESS)
 			return TRUE;
@@ -356,6 +356,21 @@ LFCORE_API void LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID)
 	LoadString(LFCoreModuleHandle, ID+IDS_ERR_FIRST, pStr, (INT)cCount);
 }
 
+LFCORE_API void LFErrorBox(UINT ID, HWND hWnd)
+{
+	if (ID>LFCancel)
+	{
+		WCHAR Caption[256];
+		LoadString(LFCoreModuleHandle, IDS_ERRORCAPTION, Caption, 256);
+
+		WCHAR Message[256];
+		LFGetErrorText(Message, 256, ID);
+
+		MessageBox(hWnd, Message, Caption, MB_OK | MB_ICONERROR);
+	}
+}
+
+
 
 
 
@@ -365,14 +380,14 @@ LFCORE_API void LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID)
 
 LFCORE_API void LFCreateSendTo(BOOL force)
 {
-	HKEY k;
-	if (RegCreateKeyA(HKEY_CURRENT_USER, "Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
+	HKEY hKey;
+	if (RegCreateKeyA(HKEY_CURRENT_USER, "Software\\liquidFOLDERS", &hKey)==ERROR_SUCCESS)
 	{
 		BOOL created = FALSE;
 
 		DWORD type;
 		DWORD sz = sizeof(created);
-		if (RegQueryValueExA(k, "SendToCreated", NULL, &type, (BYTE*)created, &sz)==ERROR_SUCCESS)
+		if (RegQueryValueExA(hKey, "SendToCreated", NULL, &type, (BYTE*)created, &sz)==ERROR_SUCCESS)
 		{
 			force |= (created==FALSE);
 		}
@@ -382,8 +397,8 @@ LFCORE_API void LFCreateSendTo(BOOL force)
 		}
 
 		created = TRUE;
-		RegSetValueExA(k, "SendToCreated", 0, REG_DWORD, (BYTE*)&created, sizeof(created));
-		RegCloseKey(k);
+		RegSetValueExA(hKey, "SendToCreated", 0, REG_DWORD, (BYTE*)&created, sizeof(created));
+		RegCloseKey(hKey);
 	}
 
 	if (force)
@@ -407,11 +422,7 @@ LFCORE_API void LFCreateSendTo(BOOL force)
 
 
 
-__forceinline void SetRange(BYTE &var, UINT ID, UINT lo, UINT hi, BYTE val)
-{
-	if ((ID>=lo) && (ID<=hi))
-		var = val;
-}
+#define SETRANGE(Var, ID, Lo, Hi, Val) if ((ID>=Lo) && (ID<=Hi)) Var = Val;
 
 LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 {
@@ -461,14 +472,14 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 	}
 	else
 	{
-		SetRange(Attr.Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
-		SetRange(Attr.Category, ID, LFAttrWidth, LFAttrRoll, LFAttrCategoryVisual);
-		SetRange(Attr.Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
-		SetRange(Attr.Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
-		SetRange(Attr.Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
-		SetRange(Attr.Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
-		SetRange(Attr.Category, ID, LFAttrFrom, LFAttrCustomer, LFAttrCategoryWorkflow);
-		SetRange(Attr.Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
+		SETRANGE(Attr.Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
+		SETRANGE(Attr.Category, ID, LFAttrWidth, LFAttrRoll, LFAttrCategoryVisual);
+		SETRANGE(Attr.Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
+		SETRANGE(Attr.Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
+		SETRANGE(Attr.Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
+		SETRANGE(Attr.Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
+		SETRANGE(Attr.Category, ID, LFAttrFrom, LFAttrCustomer, LFAttrCategoryWorkflow);
+		SETRANGE(Attr.Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
 	}
 
 	// Sorting
@@ -505,6 +516,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 	case LFAttrLikeCount:
 		Attr.ReadOnly = TRUE;
 		break;
+
 	default:
 		Attr.ReadOnly = (Attr.Category==LFAttrCategoryInternal);
 	}
@@ -513,8 +525,11 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID)
 	Attr.FormatRight = (((Attr.Type>=LFTypeUINT) && (Attr.Type!=LFTypeTime)) || (ID==LFAttrStoreID) || (ID==LFAttrFileID));
 
 	// Shell property
-	Attr.ShPropertyMapping = AttrProperties[ID];
-	if (!Attr.ShPropertyMapping.ID)
+	if (AttrProperties[ID].ID)
+	{
+		Attr.ShPropertyMapping = AttrProperties[ID];
+	}
+	else
 	{
 		Attr.ShPropertyMapping.Schema = PropertyLiquidFolders;
 		Attr.ShPropertyMapping.ID = ID;
@@ -597,15 +612,3 @@ LFCORE_API void LFGetSourceName(WCHAR* pStr, UINT ID, BOOL qualified)
 	LoadString(LFCoreModuleHandle, ID+(qualified ? IDS_QSRC_FIRST : IDS_SRC_FIRST), pStr, 256);
 }
 
-LFCORE_API void LFErrorBox(UINT ID, HWND hWnd)
-{
-	if (ID>LFCancel)
-	{
-		WCHAR Caption[256];
-		WCHAR msg[256];
-		LoadString(LFCoreModuleHandle, IDS_ERRORCAPTION, Caption, 256);
-		LFGetErrorText(msg, 256, ID);
-
-		MessageBox(hWnd, msg, Caption, MB_OK | MB_ICONERROR);
-	}
-}

@@ -89,10 +89,10 @@ UINT MakeDefaultStore(LFStoreDescriptor* s)
 
 	UINT Result = LFRegistryError;
 
-	HKEY k;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &k)==ERROR_SUCCESS)
+	HKEY hKey;
+	if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &hKey)==ERROR_SUCCESS)
 	{
-		if (RegSetValueExA(k, "DefaultStore", 0, REG_SZ, (BYTE*)s->StoreID, (DWORD)strlen(s->StoreID))==ERROR_SUCCESS)
+		if (RegSetValueExA(hKey, "DefaultStore", 0, REG_SZ, (BYTE*)s->StoreID, (DWORD)strlen(s->StoreID))==ERROR_SUCCESS)
 		{
 			strcpy_s(DefaultStore, LFKeySize, s->StoreID);
 
@@ -103,7 +103,7 @@ UINT MakeDefaultStore(LFStoreDescriptor* s)
 			Result = LFOk;
 		}
 
-		RegCloseKey(k);
+		RegCloseKey(hKey);
 	}
 
 	return Result;
@@ -200,46 +200,46 @@ BOOL LoadStoreSettingsFromRegistry(CHAR* StoreID, LFStoreDescriptor* s)
 	strcat_s(regkey, 256, "\\");
 	strcat_s(regkey, 256, StoreID);
 
-	HKEY k;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, regkey, &k)==ERROR_SUCCESS)
+	HKEY hKey;
+	if (RegOpenKeyA(HKEY_CURRENT_USER, regkey, &hKey)==ERROR_SUCCESS)
 	{
 		Result = TRUE;
 
 		DWORD sz = sizeof(s->StoreName);
-		if (RegQueryValueEx(k, L"Name", 0, NULL, (BYTE*)&s->StoreName, &sz)!=ERROR_SUCCESS)
+		if (RegQueryValueEx(hKey, L"Name", 0, NULL, (BYTE*)&s->StoreName, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
 		sz = sizeof(s->StoreComment);
-		RegQueryValueEx(k, L"Comment", 0, NULL, (BYTE*)&s->StoreComment, &sz);
+		RegQueryValueEx(hKey, L"Comment", 0, NULL, (BYTE*)&s->StoreComment, &sz);
 
 		sz = sizeof(s->Mode);
-		if (RegQueryValueEx(k, L"Mode", 0, NULL, (BYTE*)&s->Mode, &sz)!=ERROR_SUCCESS)
+		if (RegQueryValueEx(hKey, L"Mode", 0, NULL, (BYTE*)&s->Mode, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
 		sz = sizeof(s->guid);
-		if (RegQueryValueEx(k, L"GUID", 0, NULL, (BYTE*)&s->guid, &sz)!=ERROR_SUCCESS)
+		if (RegQueryValueEx(hKey, L"GUID", 0, NULL, (BYTE*)&s->guid, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
 		sz = sizeof(s->CreationTime);
-		RegQueryValueEx(k, L"CreationTime", 0, NULL, (BYTE*)&s->CreationTime, &sz);
+		RegQueryValueEx(hKey, L"CreationTime", 0, NULL, (BYTE*)&s->CreationTime, &sz);
 
 		sz = sizeof(s->FileTime);
-		RegQueryValueEx(k, L"FileTime", 0, NULL, (BYTE*)&s->FileTime, &sz);
+		RegQueryValueEx(hKey, L"FileTime", 0, NULL, (BYTE*)&s->FileTime, &sz);
 
 		sz = sizeof(s->MaintenanceTime);
-		RegQueryValueEx(k, L"MaintenanceTime", 0, NULL, (BYTE*)&s->MaintenanceTime, &sz);
+		RegQueryValueEx(hKey, L"MaintenanceTime", 0, NULL, (BYTE*)&s->MaintenanceTime, &sz);
 
 		sz = sizeof(s->SynchronizeTime);
-		RegQueryValueEx(k, L"SynchronizeTime", 0, NULL, (BYTE*)&s->SynchronizeTime, &sz);
+		RegQueryValueEx(hKey, L"SynchronizeTime", 0, NULL, (BYTE*)&s->SynchronizeTime, &sz);
 
 		sz = sizeof(s->Flags);
-		if (RegQueryValueEx(k, L"AutoLocation", 0, NULL, (BYTE*)&s->Flags, &sz)!=ERROR_SUCCESS)
+		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&s->Flags, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
 		s->Flags |= LFStoreFlagUnchecked;
 
 		sz = sizeof(s->IndexVersion);
-		if (RegQueryValueEx(k, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
+		if (RegQueryValueEx(hKey, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
 		switch (s->Mode & LFStoreModeIndexMask)
@@ -248,20 +248,20 @@ BOOL LoadStoreSettingsFromRegistry(CHAR* StoreID, LFStoreDescriptor* s)
 			s->Source = LFTypeSourceInternal;
 
 			sz = sizeof(s->DatPath);
-			if (RegQueryValueEx(k, L"Path", 0, NULL, (BYTE*)s->DatPath, &sz)!=ERROR_SUCCESS)
+			if (RegQueryValueEx(hKey, L"Path", 0, NULL, (BYTE*)s->DatPath, &sz)!=ERROR_SUCCESS)
 				if (!(s->Flags & LFStoreFlagAutoLocation))
 					Result = FALSE;
 
 			break;
 		case LFStoreModeIndexHybrid:
 			sz = sizeof(s->LastSeen);
-			RegQueryValueEx(k, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
+			RegQueryValueEx(hKey, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
 		default:
 			sz = sizeof(s->Source);
-			RegQueryValueEx(k, L"Source", 0, NULL, (BYTE*)&s->Source, &sz);
+			RegQueryValueEx(hKey, L"Source", 0, NULL, (BYTE*)&s->Source, &sz);
 		}
 
-		RegCloseKey(k);
+		RegCloseKey(hKey);
 	}
 
 	return Result;
@@ -302,57 +302,57 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 	strcat_s(regkey, 256, "\\");
 	strcat_s(regkey, 256, s->StoreID);
 
-	HKEY k;
-	if (RegCreateKeyA(HKEY_CURRENT_USER, regkey, &k)==ERROR_SUCCESS)
+	HKEY hKey;
+	if (RegCreateKeyA(HKEY_CURRENT_USER, regkey, &hKey)==ERROR_SUCCESS)
 	{
 		Result = LFOk;
 
-		if (RegSetValueEx(k, L"Name", 0, REG_SZ, (BYTE*)s->StoreName, (DWORD)wcslen(s->StoreName)*sizeof(WCHAR))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"Name", 0, REG_SZ, (BYTE*)s->StoreName, (DWORD)wcslen(s->StoreName)*sizeof(WCHAR))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"Comment", 0, REG_SZ, (BYTE*)s->StoreComment, (DWORD)wcslen(s->StoreComment)*sizeof(WCHAR))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"Comment", 0, REG_SZ, (BYTE*)s->StoreComment, (DWORD)wcslen(s->StoreComment)*sizeof(WCHAR))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"Mode", 0, REG_DWORD, (BYTE*)&s->Mode, sizeof(UINT))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"Mode", 0, REG_DWORD, (BYTE*)&s->Mode, sizeof(UINT))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"GUID", 0, REG_BINARY, (BYTE*)&s->guid, sizeof(GUID))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"GUID", 0, REG_BINARY, (BYTE*)&s->guid, sizeof(GUID))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"CreationTime", 0, REG_BINARY, (BYTE*)&s->CreationTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"CreationTime", 0, REG_BINARY, (BYTE*)&s->CreationTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"FileTime", 0, REG_BINARY, (BYTE*)&s->FileTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"FileTime", 0, REG_BINARY, (BYTE*)&s->FileTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"MaintenanceTime", 0, REG_BINARY, (BYTE*)&s->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"MaintenanceTime", 0, REG_BINARY, (BYTE*)&s->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"SynchronizeTime", 0, REG_BINARY, (BYTE*)&s->SynchronizeTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"SynchronizeTime", 0, REG_BINARY, (BYTE*)&s->SynchronizeTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"AutoLocation", 0, REG_DWORD, (BYTE*)&s->Flags, sizeof(UINT))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"AutoLocation", 0, REG_DWORD, (BYTE*)&s->Flags, sizeof(UINT))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(k, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
 		switch (s->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexInternal:
 			if (!(s->Flags & LFStoreFlagAutoLocation))
-				if (RegSetValueEx(k, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(WCHAR))!=ERROR_SUCCESS)
+				if (RegSetValueEx(hKey, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(WCHAR))!=ERROR_SUCCESS)
 					Result = LFRegistryError;
 			break;
 		case LFStoreModeIndexHybrid:
-			if (RegSetValueEx(k, L"LastSeen", 0, REG_SZ, (BYTE*)s->LastSeen, (DWORD)wcslen(s->LastSeen)*sizeof(WCHAR))!=ERROR_SUCCESS)
+			if (RegSetValueEx(hKey, L"LastSeen", 0, REG_SZ, (BYTE*)s->LastSeen, (DWORD)wcslen(s->LastSeen)*sizeof(WCHAR))!=ERROR_SUCCESS)
 				Result = LFRegistryError;
 		default:
-			if (RegSetValueEx(k, L"Source", 0, REG_DWORD, (BYTE*)&s->Source, sizeof(UINT))!=ERROR_SUCCESS)
+			if (RegSetValueEx(hKey, L"Source", 0, REG_DWORD, (BYTE*)&s->Source, sizeof(UINT))!=ERROR_SUCCESS)
 				Result = LFRegistryError;
 		}
 
-		RegCloseKey(k);
+		RegCloseKey(hKey);
 	}
 
 	return Result;
@@ -558,13 +558,13 @@ void InitStoreCache()
 			Initialized = TRUE;
 
 			// Load default store
-			HKEY k;
-			if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &k)==ERROR_SUCCESS)
+			HKEY hKey;
+			if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &hKey)==ERROR_SUCCESS)
 			{
 				DWORD type;
 				DWORD sz = LFKeySize;
-				RegQueryValueExA(k, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
-				RegCloseKey(k);
+				RegQueryValueExA(hKey, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
+				RegCloseKey(hKey);
 			}
 
 			// Stores from registry

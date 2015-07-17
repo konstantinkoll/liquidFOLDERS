@@ -1,6 +1,8 @@
+
 #pragma once
 #include "stdafx.h"
 #include "LF.h"
+
 
 // share*it
 #define LICENSE_ID           "LICENSE_ID"
@@ -10,6 +12,6 @@
 #define LICENSE_VERSION      "LICENSE_VERSION"
 #define LICENSE_NAME         "LICENSE_NAME"
 
-// Interner Gebrauch
-LFCORE_API BOOL LFIsLicensed(LFLicense* License, BOOL Reload);
+
+LFCORE_API BOOL LFIsLicensed(LFLicense* pLicense, BOOL Reload);
 LFCORE_API BOOL LFIsSharewareExpired();

@@ -111,9 +111,9 @@
 #define IDC_CATEGORY4                   21003
 #define IDD_ABOUT                       21100
 #define IDC_VERSIONINFO                 21101
-#define IDC_NAME                        21105
+#define IDC_REGNAME                     21105
 #define IDC_PURCHASEDATE                21106
-#define IDC_ID                          21107
+#define IDC_PURCHASEID                  21107
 #define IDC_PRODUCT                     21108
 #define IDC_QUANTITYTITLE               21109
 #define IDC_QUANTITY                    21110

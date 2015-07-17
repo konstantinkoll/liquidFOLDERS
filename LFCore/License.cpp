@@ -12,7 +12,6 @@
 #pragma warning(pop)
 
 using namespace CryptoPP;
-using namespace std;
 
 
 #pragma data_seg(".shared")
@@ -20,105 +19,95 @@ using namespace std;
 BOOL LicenseRead = FALSE;
 BOOL ExpireRead = FALSE;
 LFLicense LicenseBuffer = { 0 };
-FILETIME ExpireBuffer = { 0, 0 };
+FILETIME ExpireBuffer = { 0 };
 
 #pragma data_seg()
 
 
-void ParseVersion(string& tmpStr, LFLicenseVersion* Version)
+#define BUFSIZE    4096
+
+
+void ParseInput(CHAR* pStr, LFLicense* pLicense)
 {
-	CHAR Point;
+	assert(pLicense);
 
-	stringstream ss(tmpStr);
-	ss >> Version->Major;
-	ss >> Point;
-	ss >> Version->Minor;
-	ss >> Point;
-	ss >> Version->Release;
-}
+	ZeroMemory(pLicense, sizeof(LFLicense));
 
-void ParseInput(string& tmpStr, LFLicense* License)
-{
-	ZeroMemory(License, sizeof(LFLicense));
-
-	stringstream ss(tmpStr);
-	string line;
-
-	while (!ss.eof())
+	while (*pStr)
 	{
-		getline(ss, line);
-		std::string::size_type delimiterPos = line.find_first_of("=");
+		CHAR* Ptr = strstr(pStr, "\n");
+		*Ptr = '\0';
 
-		if (std::string::npos!=delimiterPos)
+		CHAR* Trenner = strchr(pStr, '=');
+		if (Trenner)
 		{
-			std::string name = line.substr(0, delimiterPos);
-			std::string value = line.substr(delimiterPos+1);
+			*(Trenner++) = '\0';
 
-			if (name==LICENSE_ID)
+			if (strcmp(pStr, LICENSE_ID)==0)
 			{
-				MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->PurchaseID, 256);
+				strcpy_s(pLicense->PurchaseID, 256, Trenner);
 			}
 			else
-				if (name==LICENSE_PRODUCT)
+				if (strcmp(pStr, LICENSE_PRODUCT)==0)
 				{
-					MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->ProductID, 256);
+					strcpy_s(pLicense->ProductID, 256, Trenner);
 				}
 				else
-					if (name==LICENSE_DATE)
+					if (strcmp(pStr, LICENSE_DATE)==0)
 					{
-						MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->PurchaseDate, 16);
+						strcpy_s(pLicense->PurchaseDate, 256, Trenner);
 					}
 					else
-						if (name==LICENSE_QUANTITY)
+						if (strcmp(pStr, LICENSE_QUANTITY)==0)
 						{
-							MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->Quantity, 8);
+							strcpy_s(pLicense->Quantity, 256, Trenner);
 						}
 						else
-							if (name==LICENSE_NAME)
+							if (strcmp(pStr, LICENSE_NAME)==0)
 							{
-								MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->RegName, 256);
+								strcpy_s(pLicense->RegName, 256, Trenner);
 							}
 							else
-								if (name==LICENSE_VERSION)
+								if (strcmp(pStr, LICENSE_VERSION)==0)
 								{
-									ParseVersion(value, &License->Version);
+									sscanf_s(Trenner, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
 								}
 		}
+
+		pStr = Ptr+1;
 	}
 }
 
-BOOL ReadCodedLicense(string& Message)
+__forceinline BOOL ReadCodedLicense(CHAR* pStr, SIZE_T cCount)
 {
 	BOOL Result = FALSE;
 
-	HKEY k;
-	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
+	HKEY hKey;
+	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &hKey)==ERROR_SUCCESS)
 	{
-		CHAR tmpStr[4096];
-		DWORD sz = sizeof(tmpStr);
-		if (RegQueryValueExA(k, "License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
-		{
-			Message = tmpStr;
-			Result = TRUE;
-		}
+		DWORD dwSize = cCount;
+		Result = (RegQueryValueExA(hKey, "License", 0, NULL, (BYTE*)pStr, &dwSize)==ERROR_SUCCESS);
 
-		RegCloseKey(k);
+		RegCloseKey(hKey);
 	}
 
 	return Result;
 }
 
-BOOL GetLicense(LFLicense* License)
+BOOL GetLicense(LFLicense* pLicense)
 {
-	string Message;
-	string Recovered;
+	assert(pLicense);
 
-	if (!ReadCodedLicense(Message))
+	CHAR Message[BUFSIZE];
+	if (!ReadCodedLicense(Message, sizeof(Message)))
 		return FALSE;
 
 	// Setup
 	Integer n("745495196278906388636775394847083621342948184497620571684486911233963026358348142924980767925246631723125776567861840016140759057887626699111750486589518844265093743018380979709327527515518976285922706516923147828076538170972730183425557516081175385650534524185881211094278086683594714172177608841889993609400198766281044688600596754569489192345101979343468669802344086907480228591789172201629911453850773648840583343122891763767764228796196156401170554177938285696830486894331437834556251102634591813052294727051913850611273897873094152049052538993868633785883333899830540017013351013051436649700047349078185669990895492280131774298910733408039488338775031855217004993409862255738766029617966149166800537682141977654630013676816397200968712319762658485930029154225302095517962261669873874532952773591788024202484800434032440378140651213784614438189252406134607226451954778487476382220064125800227678929995859762762265522856822435862521744384622820138233752235289143337592718212618381294424731866372596352871531111041688119666919042905495747876323829528637851924273124345938360066547750112529335899447558317824780247359979724026700097382563761302560657179092084838455014801002071816886727980707589178515801870998113718231400298837471.");
 	Integer e("17.");
+
+	CHAR Recovered[BUFSIZE];
+	ZeroMemory(Recovered, sizeof(Recovered));
 
 	// Verify and recover
 	RSASS<PSSR, SHA256>::Verifier Verifier(n, e);
@@ -128,7 +117,7 @@ BOOL GetLicense(LFLicense* License)
 		StringSource(Message, TRUE,
 			new Base64Decoder(
 				new SignatureVerificationFilter(Verifier,
-					new StringSink(Recovered),
+					new ArraySink((BYTE*)Recovered, BUFSIZE-1),
 					SignatureVerificationFilter::THROW_EXCEPTION | SignatureVerificationFilter::PUT_MESSAGE)));
 	}
 	catch(CryptoPP::Exception /*&e*/)
@@ -136,12 +125,15 @@ BOOL GetLicense(LFLicense* License)
 		return FALSE;
 	}
 
-	ParseInput(Recovered, License);
+	ParseInput(Recovered, pLicense);
+
 	return TRUE;
 }
 
-LFCORE_API BOOL LFIsLicensed(LFLicense* License, BOOL Reload)
+LFCORE_API BOOL LFIsLicensed(LFLicense* pLicense, BOOL Reload)
 {
+	assert(pLicense);
+
 	// Setup
 	if (!LicenseRead || Reload)
 	{
@@ -151,10 +143,10 @@ LFCORE_API BOOL LFIsLicensed(LFLicense* License, BOOL Reload)
 			return FALSE;
 	}
 
-	if (License)
-		*License = LicenseBuffer;
+	if (pLicense)
+		*pLicense = LicenseBuffer;
 
-	return (wcsncmp(LicenseBuffer.ProductID, L"liquidFOLDERS", 13)==0) && (LicenseBuffer.Version.Major>=0);
+	return strncmp(LicenseBuffer.ProductID, "liquidFOLDERS", 13)==0;
 }
 
 LFCORE_API BOOL LFIsSharewareExpired()
@@ -169,25 +161,25 @@ LFCORE_API BOOL LFIsSharewareExpired()
 
 		BOOL Result = FALSE;
 
-		HKEY k;
-		if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
+		HKEY hKey;
+		if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &hKey)==ERROR_SUCCESS)
 		{
 			DWORD sz = sizeof(DWORD);
-			if (RegQueryValueExA(k, "Seed", 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &sz)==ERROR_SUCCESS)
+			if (RegQueryValueExA(hKey, "Seed", 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &sz)==ERROR_SUCCESS)
 			{
 				sz = sizeof(DWORD);
-				if (RegQueryValueExA(k, "Envelope", 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
+				if (RegQueryValueExA(hKey, "Envelope", 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
 					Result = TRUE;
 			}
 
 			if (!Result)
 			{
 				GetSystemTimeAsFileTime(&ExpireBuffer);
-				RegSetValueExA(k, "Seed", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
-				RegSetValueExA(k, "Envelope", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
+				RegSetValueExA(hKey, "Seed", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
+				RegSetValueExA(hKey, "Envelope", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
 			}
 
-			RegCloseKey(k);
+			RegCloseKey(hKey);
 		}
 	}
 

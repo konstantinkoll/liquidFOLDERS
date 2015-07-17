@@ -58,6 +58,18 @@ LFCORE_API void __stdcall LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT 
 // Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
 LFCORE_API void __stdcall LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID);
 
+// Anzeigen eines Fehlers (LFError...) in aktueller Sprache
+LFCORE_API void __stdcall LFErrorBox(UINT nID, HWND hWnd=NULL);
+
+
+// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
+// Die gespeicherten Lizenzinformationen finden sich in License
+LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FALSE);
+
+// Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
+// und keine ordnungsgemäße Lizenz vorliegt
+LFCORE_API BOOL __stdcall LFIsSharewareExpired();
+
 
 
 // LFVariantData
@@ -329,8 +341,6 @@ LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, UINT ID);
 LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, UINT ID, BOOL qualified);
 
 
-// Anzeigen eines Fehlers (LFError...) in aktueller Sprache
-LFCORE_API void __stdcall LFErrorBox(UINT ID, HWND hWnd=NULL);
 
 
 
@@ -451,16 +461,6 @@ LFCORE_API void __stdcall LFTransactionAddToSearchResult(LFTransactionList* il, 
 
 
 
-
-
-
-// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
-// Die gespeicherten Lizenzinformationen finden sich in License
-LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* License=NULL, BOOL Reload=FALSE);
-
-// Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
-// und keine ordnungsgemäße Lizenz vorliegt
-LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 
 
 

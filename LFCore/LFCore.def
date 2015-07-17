@@ -14,6 +14,9 @@ EXPORTS
 	LFGetLogicalVolumes @8
 	LFInitProgress @9
 	LFGetErrorText @10
+	LFErrorBox @11
+	LFIsLicensed @12
+	LFIsSharewareExpired @13
 	
 	LFFourCCToString @100
 	LFUINTToString @101

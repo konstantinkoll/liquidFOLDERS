@@ -53,7 +53,7 @@
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
 
 INT GetAttributeIconIndex(UINT Attr);
-void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
+void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path);
 void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
 BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
