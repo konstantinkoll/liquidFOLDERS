@@ -65,6 +65,7 @@
 #define IDS_DROPTIP                     1029
 #define IDS_ASCENDING                   1030
 #define IDS_DESCENDING                  1031
+#define IDS_DEFAULTSTORE                1032
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_SOURCE                1100
 #define IDS_VATTR_DRIVELETTER           1101

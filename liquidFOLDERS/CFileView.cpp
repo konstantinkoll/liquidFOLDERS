@@ -526,8 +526,7 @@ CMenu* CFileView::GetSendToMenu()
 	UINT nID = 0xFF00;
 	if (LFDefaultStoreAvailable())
 	{
-		WCHAR tmpStr[256];
-		LFGetDefaultStoreName(tmpStr, 256);
+		CString tmpStr((LPCSTR)IDS_DEFAULTSTORE);
 		AppendSendToItem(pMenu, nID, tmpStr, (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy, m_SendToItems);
 		Added = TRUE;
 

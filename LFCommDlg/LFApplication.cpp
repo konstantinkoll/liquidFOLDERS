@@ -322,7 +322,15 @@ BOOL LFApplication::InitInstance()
 	LFInitialize();
 
 	// SendTo-Link erzeugen
-	LFCreateSendTo();
+	WCHAR Path[MAX_PATH];
+	if (SHGetSpecialFolderPath(NULL, Path, CSIDL_SENDTO, TRUE))
+	{
+		wcscat_s(Path, MAX_PATH, L"\\liquidFOLDERS.LFSendTo");
+
+		HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hFile!=INVALID_HANDLE_VALUE)
+			CloseHandle(hFile);
+	}
 
 	// Registry
 	SetRegistryKey(_T(""));

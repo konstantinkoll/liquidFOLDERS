@@ -419,17 +419,17 @@ LFCORE_API void LFSizeToString(const INT64 i, WCHAR* pStr, SIZE_T cCount)
 	StrFormatByteSize(i, pStr, (UINT)cCount);
 }
 
-LFCORE_API void LFFractionToString(const LFFraction frac, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	if ((frac.Num==0) || (frac.Denum==0))
+	if ((f.Num==0) || (f.Denum==0))
 	{
 		pStr[0] = L'\0';
 	}
 	else
 	{
-		swprintf(pStr, cCount, L"%u/%u", frac.Num, frac.Denum);
+		swprintf(pStr, cCount, L"%u/%u", f.Num, f.Denum);
 	}
 }
 

@@ -351,7 +351,7 @@ struct LFContextDescriptor
 	WCHAR Name[256];
 	WCHAR Comment[256];
 	BOOL AllowGroups;
-	unsigned long AllowedAttributes[(LFAttributeCount+31)>>5];
+	UINT AllowedAttributes[(LFAttributeCount+31)>>5];
 };
 
 #define LFIsAttributeAllowed(CD, Attr) (CD.AllowedAttributes[Attr>>5] & 1<<(Attr & 0x1F))

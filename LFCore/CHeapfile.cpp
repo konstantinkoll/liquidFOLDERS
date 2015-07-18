@@ -190,7 +190,7 @@ void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 	}
 }
 
-__forceinline void CHeapfile::AllocBuffer()
+void CHeapfile::AllocBuffer()
 {
 	assert(Hdr.ElementSize);
 
@@ -205,7 +205,7 @@ __forceinline void CHeapfile::AllocBuffer()
 	FirstInBuffer = LastInBuffer = -1;
 }
 
-__forceinline BOOL CHeapfile::OpenFile()
+BOOL CHeapfile::OpenFile()
 {
 	if (hFile==INVALID_HANDLE_VALUE)
 		hFile = CreateFile(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);

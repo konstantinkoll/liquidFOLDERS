@@ -42,10 +42,7 @@ LFSendTo::LFSendTo()
 
 void LFSendTo::GetExtensionTargetInfo(CSendToExtensionTargetInfo& info)
 {
-	WCHAR Name[256];
-	LFGetDefaultStoreName(Name, 256);
-
-	info.description = Name;
+	info.description = _T("liquidFOLDERS");
 	info.iconFile = theApp.m_PathApplication;
 	info.iconIndex = 0;
 }

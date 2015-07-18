@@ -68,9 +68,6 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 
 	// Shell-API initalisieren
 	CoInitialize(NULL);
-
-	// Link-Datei schreiben
-	LFCreateSendTo();
 }
 
 LFNamespaceExtensionApp::~LFNamespaceExtensionApp()

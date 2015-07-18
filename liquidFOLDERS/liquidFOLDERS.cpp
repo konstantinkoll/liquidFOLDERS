@@ -229,14 +229,6 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 			return NULL;
 		}
 
-		// Installation
-		if (wcscmp(CmdLine, L"/INSTALL")==0)
-		{
-			LFCreateSendTo();
-
-			return NULL;
-		}
-
 		// Store properties
 		if (wcscmp(CmdLine, L"/STOREPROPERTIES")==0)
 			if (StoreID[0]!=L'\0')

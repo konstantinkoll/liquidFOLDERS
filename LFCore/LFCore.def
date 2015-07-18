@@ -15,9 +15,14 @@ EXPORTS
 	LFInitProgress @9
 	LFGetErrorText @10
 	LFErrorBox @11
-	LFIsLicensed @12
-	LFIsSharewareExpired @13
-	
+	LFGetAttrCategoryName @12
+	LFGetAttributeInfo @13
+	LFGetSourceName @14
+	LFGetItemCategoryInfo @15
+	LFGetContextInfo @16
+	LFIsLicensed @17
+	LFIsSharewareExpired @18
+
 	LFFourCCToString @100
 	LFUINTToString @101
 	LFSizeToString @102

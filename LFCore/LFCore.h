@@ -71,6 +71,22 @@ LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FAL
 LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 
 
+// Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
+LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, UINT ID);
+
+// Informationen über ein Attribut zurückliefern
+LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID);
+
+// Name einer Datenquelle in aktueller Sprache zurückliefern
+LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, UINT ID, BOOL Qualified);
+
+// Informationen über eine Kategorie zurückliefern
+LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDescriptor, UINT ID);
+
+// Informationen über ein Attribut zurückliefern
+LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID);
+
+
 
 // LFVariantData
 //
@@ -82,10 +98,10 @@ LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCo
 LFCORE_API void __stdcall LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine 64-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFSizeToString(const INT64 pItemDescriptor, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFSizeToString(const INT64 i, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert einen Bruch in eine Zeichenkette
-LFCORE_API void __stdcall LFFractionToString(const LFFraction frac, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine Double-Zahl in eine Zeichenkette
 LFCORE_API void __stdcall LFDoubleToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount);
@@ -316,34 +332,6 @@ LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* p
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, UINT ID);
-
-// Name einer Datenquelle in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, UINT ID, BOOL qualified);
-
-
-
-
-
 //
 // Stores
 //
@@ -399,9 +387,6 @@ LFCORE_API BOOL __stdcall LFDefaultStoreAvailable();
 // Gibt die ID des aktuellen Default Stores zurück
 LFCORE_API BOOL __stdcall LFGetDefaultStore(CHAR* StoreID);
 
-// Gibt den Standardnamen des Default Stores zurück
-LFCORE_API void __stdcall LFGetDefaultStoreName(WCHAR* name, SIZE_T cCount);
-
 // Gibt die Anzahl aller Stores zurück
 LFCORE_API UINT __stdcall LFGetStoreCount();
 
@@ -430,10 +415,6 @@ LFCORE_API UINT __stdcall LFTransactionRename(CHAR* StoreID, CHAR* FileID, WCHAR
 // Importiert Dateien in den Store
 LFCORE_API void __stdcall LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescriptor* it, BOOL recursive, BOOL move, LFProgress* pProgress=NULL);
 
-
-// LFTransactionList
-//
-
 // Ändert bei allen Einträgen in tl bis zu 3 Attributwerte
 LFCORE_API void __stdcall LFTransactionUpdate(LFTransactionList* tl, LFVariantData* v1, LFVariantData* v2=NULL, LFVariantData* v3=NULL);
 
@@ -454,31 +435,3 @@ LFCORE_API void __stdcall LFTransactionImport(CHAR* key, LFTransactionList* il, 
 
 // Fügt die angegebenen Dateien zum Suchergebnis hinzu
 LFCORE_API void __stdcall LFTransactionAddToSearchResult(LFTransactionList* il, LFSearchResult* sr);
-
-
-
-
-
-
-
-
-
-
-// Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
-// im SendTo-Ordner des Benutzers
-// Wenn force==FALSE wird der Link nur beim ersten Aufruf erzeugt
-LFCORE_API void __stdcall LFCreateSendTo(BOOL force=FALSE);
-
-
-
-
-// Informationen über ein Attribut zurückliefern
-LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& Attr, UINT ID);
-
-// Informationen über ein Attribut zurückliefern
-LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ctx, UINT ID);
-
-// Informationen über eine Kategorie zurückliefern
-LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, UINT ID);
-
-

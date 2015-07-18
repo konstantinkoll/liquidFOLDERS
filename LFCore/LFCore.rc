@@ -163,7 +163,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Standard-Store"
     IDS_RATING1             "Schlecht"
     IDS_RATING2             "Ausreichend"
     IDS_RATING3             "Gut"
@@ -433,7 +432,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Default Store"
     IDS_RATING1             "Poor"
     IDS_RATING2             "Fair"
     IDS_RATING3             "Good"
@@ -702,7 +700,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Store predeterminado"
     IDS_RATING1             "Pobre"
     IDS_RATING2             "Aceptable"
     IDS_RATING3             "Bueno"
@@ -973,7 +970,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Store défaut"
     IDS_RATING1             "Mauvais"
     IDS_RATING2             "Suffisant"
     IDS_RATING3             "Bien"

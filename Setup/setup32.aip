@@ -232,15 +232,15 @@
     <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="300" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
     <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the selected features" TextStyle="TitleFont" Order="400" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
     <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
+    <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ExitDialog#Bitmap"/>
     <ROW Dialog_="ExitDialog" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="&amp;Close" TextStyle="DlgFont8" Order="200" TextLocId="Azure.Control.Text.ExitDialog#Finish" MsiKey="ExitDialog#Finish" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="0" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="ExitDialog#Back" Options="1"/>
@@ -446,7 +446,6 @@
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
-    <ROW Action="SendTo" Type="210" Source="liquidFOLDERS.exe" Target="/INSTALL"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
     <ROW Dialog="ErrorDlg" HCentering="50" VCentering="50" Width="300" Height="115" Attributes="65539" Title="Installer Information" TitleLocId="Dialog.ErrorDlg" MsiKey="ErrorDlg"/>
@@ -479,7 +478,6 @@
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="InstallFinalize" Sequence="6599" SeqType="0" MsiKey="InstallFinalize"/>
-    <ROW Action="SendTo" Condition="( NOT Installed ) AND ( NOT (($liquidFOLDERS.exe = 2) AND (?liquidFOLDERS.exe = 3)) )" Sequence="6600"/>
     <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
