@@ -74,8 +74,8 @@ IDB_SOURCEICONS         BITMAP                  "res\\SourceIcons.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,0,0
- PRODUCTVERSION 1,8,0,0
+ FILEVERSION 1,8,1,0
+ PRODUCTVERSION 1,8,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -92,13 +92,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "1.8.0"
+            VALUE "FileVersion", "1.8.1"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2015 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.8.0"
+            VALUE "ProductVersion", "1.8.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -412,6 +412,7 @@ BEGIN
     IDS_DROPTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
     IDS_ASCENDING           "Aufsteigend"
     IDS_DESCENDING          "Absteigend"
+    IDS_DEFAULTSTORE        "Standard-Store"
 END
 
 STRINGTABLE 
@@ -836,6 +837,7 @@ BEGIN
     IDS_DROPTIP             "Pega filas aquí para importarlas\na liquidFOLDERS"
     IDS_ASCENDING           "Ascendente"
     IDS_DESCENDING          "Descendiente"
+    IDS_DEFAULTSTORE        "Store predeterminado"
 END
 
 STRINGTABLE 
@@ -1260,6 +1262,7 @@ BEGIN
     IDS_DROPTIP             "Ici afiu de importer\ndans liquidFOLDERS"
     IDS_ASCENDING           "Montant"
     IDS_DESCENDING          "Descendant"
+    IDS_DEFAULTSTORE        "Store défaut"
 END
 
 STRINGTABLE 
@@ -1735,6 +1738,7 @@ BEGIN
     IDS_DROPTIP             "Drop files here to import\nthem into liquidFOLDERS"
     IDS_ASCENDING           "Ascending"
     IDS_DESCENDING          "Descending"
+    IDS_DEFAULTSTORE        "Default Store"
 END
 
 STRINGTABLE 

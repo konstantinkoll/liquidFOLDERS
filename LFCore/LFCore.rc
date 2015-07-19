@@ -51,8 +51,8 @@ IDI_OVR_DEFAULT         ICON                    "res\\OVR_Default.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,0,0
- PRODUCTVERSION 1,8,0,0
+ FILEVERSION 1,8,1,0
+ PRODUCTVERSION 1,8,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,13 +69,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "1.8.0"
+            VALUE "FileVersion", "1.8.1"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2015 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.8.0"
+            VALUE "ProductVersion", "1.8.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -163,7 +163,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Standard-Store"
     IDS_RATING1             "Schlecht"
     IDS_RATING2             "Ausreichend"
     IDS_RATING3             "Gut"
@@ -433,7 +432,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Default Store"
     IDS_RATING1             "Poor"
     IDS_RATING2             "Fair"
     IDS_RATING3             "Good"
@@ -702,7 +700,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Store predeterminado"
     IDS_RATING1             "Pobre"
     IDS_RATING2             "Aceptable"
     IDS_RATING3             "Bueno"
@@ -973,7 +970,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Store défaut"
     IDS_RATING1             "Mauvais"
     IDS_RATING2             "Suffisant"
     IDS_RATING3             "Bien"
