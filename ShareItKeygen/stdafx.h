@@ -7,6 +7,7 @@
 
 #include "targetver.h"
 
+#define LFCORE_API
 #include "License.h"
 
 #include <stdio.h>

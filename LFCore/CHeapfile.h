@@ -7,15 +7,15 @@
 // CHeapfile
 //
 
-#define MaxBufferSize          262144
-#define HeapSignature         "LFIDX"
+#define MaxBufferSize     262144
+#define HeapSignature     "LFIDX"
 
 #define HeapOk                      0
-#define HeapNoAccess                1
-#define HeapError                   2
-#define HeapCreated                 3
-#define HeapCannotCreate            4
-#define HeapMaintenanceRequired     5
+#define HeapCreated                 1
+#define HeapMaintenanceRequired     2
+#define HeapNoAccess                3
+#define HeapError                   4
+#define HeapCannotCreate            5
 
 struct HeapfileHeader
 {
@@ -32,49 +32,48 @@ public:
 	CHeapfile(WCHAR* Path, BYTE TableID);
 	~CHeapfile();
 
-	void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
-
-	void CloseFile();
-	BOOL FindNext(INT& Next, void*& Ptr);
-	BOOL FindKey(CHAR* Key, INT& Next, void*& Ptr);
-	void Add(LFItemDescriptor* i);
-	void Update(LFItemDescriptor* i, void* Ptr);
-	void Update(LFItemDescriptor* i, INT& Next);
-	void Update(LFItemDescriptor* i);
-	void Invalidate(void* Ptr);
-	void Invalidate(CHAR* Key, INT& Next);
-	void Invalidate(LFItemDescriptor* i);
 	UINT GetItemCount();
-	UINT GetElementSize();
 	UINT GetRequiredElementSize();
-	UINT GetRequiredDiscSize();
-	BOOL Compact();
-	void MakeDirty(BOOL NeedsCompaction=FALSE);
+	UINT GetRequiredFileSize();
 
-	UINT OpenStatus;
+	void MakeDirty(BOOL NeedsCompaction=FALSE);
+	BOOL FindNext(INT& Next, void*& Ptr);
+	BOOL FindKey(CHAR* FileID, INT& Next, void*& Ptr);
+	void Add(LFItemDescriptor* pItemDescriptor);
+	void Update(LFItemDescriptor* pItemDescriptor, void* Ptr);
+	void Update(LFItemDescriptor* pItemDescriptor, INT& Next);
+	void Update(LFItemDescriptor* pItemDescriptor);
+	void Invalidate(void* Ptr);
+	void Invalidate(CHAR* FileID, INT& Next);
+	void Invalidate(LFItemDescriptor* pItemDescriptor);
+	void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescriptor);
+	BOOL Compact();
+
+	UINT m_OpenStatus;
 
 protected:
-	BYTE m_TableID;
-	void* Buffer;
-	HeapfileHeader Hdr;
-	UINT RequestedElementSize;
-	UINT KeyOffset;
-	UINT BufferSize;
-	INT ItemCount;
-	INT FirstInBuffer;
-	INT LastInBuffer;
-	BOOL BufferNeedsWriteback;
-	BOOL HeaderNeedsWriteback;
-
 	void AllocBuffer();
-	BOOL OpenFile();
-	BOOL WriteHeader();
-	BOOL Writeback();
+	void CloseFile();
 	void ElementToBuffer(INT ID);
+	BOOL WriteHeader();
+	void Flush();
+
+	HeapfileHeader m_Header;
+	BYTE m_TableID;
+	UINT m_RequiredElementSize;
+	UINT m_KeyOffset;
+
+	void* m_pBuffer;
+	UINT m_ItemCount;
+	UINT m_BufferCount;
+	INT m_FirstInBuffer;
+	INT m_LastInBuffer;
+	BOOL m_BufferNeedsWriteback;
+	BOOL m_HeaderNeedsWriteback;
 
 private:
-	void GetAttribute(void* PtrDst, UINT offset, UINT Attr, LFItemDescriptor* i);
+	void GetAttribute(void* PtrDst, UINT Offset, UINT Attr, LFItemDescriptor* pItemDescriptor);
 
-	WCHAR IdxFilename[MAX_PATH];
+	WCHAR m_Filename[MAX_PATH];
 	HANDLE hFile;
 };

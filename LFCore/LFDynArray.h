@@ -48,8 +48,7 @@ LFDynArray<T>::LFDynArray()
 template <typename T>
 LFDynArray<T>::~LFDynArray()
 {
-	if (m_Items)
-		free(m_Items);
+	free(m_Items);
 }
 
 template <typename T>

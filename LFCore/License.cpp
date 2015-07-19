@@ -85,7 +85,7 @@ __forceinline BOOL ReadCodedLicense(CHAR* pStr, SIZE_T cCount)
 	HKEY hKey;
 	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &hKey)==ERROR_SUCCESS)
 	{
-		DWORD dwSize = cCount;
+		DWORD dwSize = (DWORD)cCount;
 		Result = (RegQueryValueExA(hKey, "License", 0, NULL, (BYTE*)pStr, &dwSize)==ERROR_SUCCESS);
 
 		RegCloseKey(hKey);
@@ -132,8 +132,6 @@ BOOL GetLicense(LFLicense* pLicense)
 
 LFCORE_API BOOL LFIsLicensed(LFLicense* pLicense, BOOL Reload)
 {
-	assert(pLicense);
-
 	// Setup
 	if (!LicenseRead || Reload)
 	{

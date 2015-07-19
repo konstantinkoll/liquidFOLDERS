@@ -120,7 +120,7 @@ struct LFVideoAttributes
 struct LFIdxTableEntry
 {
 	UINT Attr;
-	INT Offset;
+	INT_PTR Offset;
 };
 
 struct LFIdxTable

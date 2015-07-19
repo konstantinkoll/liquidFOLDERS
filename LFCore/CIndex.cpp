@@ -156,9 +156,9 @@ BOOL CIndex::LoadTable(UINT TableID, UINT* Result)
 		Tables[TableID] = new CHeapfile(IdxPath, (BYTE)TableID);
 
 	if (Result)
-		*Result = Tables[TableID]->OpenStatus;
+		*Result = Tables[TableID]->m_OpenStatus;
 
-	return (Tables[TableID]->OpenStatus!=HeapError) && (Tables[TableID]->OpenStatus!=HeapNoAccess) && (Tables[TableID]->OpenStatus!=HeapCannotCreate);
+	return (Tables[TableID]->m_OpenStatus!=HeapError) && (Tables[TableID]->m_OpenStatus!=HeapNoAccess) && (Tables[TableID]->m_OpenStatus!=HeapCannotCreate);
 }
 
 BOOL CIndex::Create()
@@ -176,7 +176,7 @@ BOOL CIndex::Create()
 UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 {
 	#define COMPACT(idx) \
-	if (!DirFreeSpace(IdxPath, Tables[idx]->GetRequiredDiscSize())) \
+	if (!DirFreeSpace(IdxPath, Tables[idx]->GetRequiredFileSize())) \
 		return LFNotEnoughFreeDiscSpace; \
 	if (!Tables[idx]->Compact()) \
 		return LFIndexRepairError;
@@ -196,12 +196,6 @@ UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 		LoadTable(a, &tRes[a]);
 		switch (tRes[a])
 		{
-		case HeapNoAccess:
-			return LFIndexAccessError;
-		case HeapError:
-			return LFIndexRepairError;
-		case HeapCannotCreate:
-			return Writeable ? LFIndexCreateError : LFDriveWriteProtected;
 		case HeapCreated:
 			if (a==IDXTABLE_MASTER)
 				return LFIndexRepairError;	// TODO
@@ -210,8 +204,15 @@ UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 		case HeapMaintenanceRequired:
 			COMPACT(a);
 			*pRepaired = UpdateContexts = TRUE;
-			tRes[a] = Tables[a]->OpenStatus;
+			tRes[a] = Tables[a]->m_OpenStatus;
 			break;
+
+		case HeapNoAccess:
+			return LFIndexAccessError;
+		case HeapError:
+			return LFIndexRepairError;
+		case HeapCannotCreate:
+			return Writeable ? LFIndexCreateError : LFDriveWriteProtected;
 		}
 
 		RecordSize += Tables[a]->GetRequiredElementSize();
@@ -302,8 +303,8 @@ UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 		{
 			COMPACT(a);
 
-			*pRepaired |= (tRes[a]!=Tables[a]->OpenStatus);
-			tRes[a] = Tables[a]->OpenStatus;
+			*pRepaired |= (tRes[a]!=Tables[a]->m_OpenStatus);
+			tRes[a] = Tables[a]->m_OpenStatus;
 
 			// Progress
 			if (pProgress)

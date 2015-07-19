@@ -65,7 +65,7 @@ void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, WCHAR* Name)
 					Size.QuadPart = 0;
 					GetFileSizeEx(hFile, &Size);
 
-					ASSERT(size.HighPart==0);
+					ASSERT(Size.HighPart==0);
 
 					m_hShellLink = GlobalAlloc(GMEM_MOVEABLE, Size.LowPart);
 					if (m_hShellLink)

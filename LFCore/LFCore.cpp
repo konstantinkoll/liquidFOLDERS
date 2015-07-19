@@ -77,7 +77,7 @@ LFCORE_API BOOL LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount)
 	}
 
 	// Selbes Verzeichnis wie die DLL
-	GetModuleFileName(LFCoreModuleHandle, pStr, cCount);
+	GetModuleFileName(LFCoreModuleHandle, pStr, (DWORD)cCount);
 	if (GetLastError()==ERROR_SUCCESS)
 	{
 		WCHAR* Ptr = wcsrchr(pStr, L'\\');
