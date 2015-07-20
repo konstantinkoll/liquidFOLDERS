@@ -746,10 +746,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_Unknown.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\STR_USB.ico"
 				>
 			</File>

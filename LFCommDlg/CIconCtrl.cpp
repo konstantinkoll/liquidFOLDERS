@@ -55,8 +55,8 @@ void CIconCtrl::SetCoreIcon(UINT nID, BOOL Center)
 {
 	CRect rect;
 	GetClientRect(rect);
-	INT sz = min(rect.Width(), rect.Height());
-	INT IconSize = (sz>=128) ? 128 : (sz>=96) ? 96 : (sz>=48) ? 48 : (sz>=32) ? 32 : (sz>=24) ? 24 : 16;
+	INT Size = min(rect.Width(), rect.Height());
+	INT IconSize = (Size>=128) ? 128 : (Size>=96) ? 96 : (Size>=48) ? 48 : (Size>=32) ? 32 : (Size>=24) ? 24 : 16;
 
 	SetIcon((HICON)LoadImage(GetModuleHandle(_T("LFCORE.DLL")), MAKEINTRESOURCE(nID), IMAGE_ICON, IconSize, IconSize, LR_SHARED), IconSize, IconSize, Center);
 }

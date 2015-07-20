@@ -2,24 +2,23 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFCore.rc
 //
-#define IDI_STR_UNKNOWN                 1
-#define IDI_STR_LIQUIDFOLDERS           2
-#define IDI_STR_WINDOWS                 3
-#define IDI_STR_1394                    4
-#define IDI_STR_USB                     5
-#define IDI_STR_DROPBOX                 6
-#define IDI_STR_FACEBOOK                7
-#define IDI_STR_FLICKR                  8
-#define IDI_STR_INSTAGRAM               9
-#define IDI_STR_PINTEREST               10
-#define IDI_STR_SOUNDCLOUD              11
-#define IDI_STR_TWITTER                 12
-#define IDI_STR_YOUTUBE                 13
-#define IDI_FLD_DEFAULT                 14
-#define IDI_FLD_ALL                     15
-#define IDI_OVR_DEFAULT                 16
-#define IDI_LASTICON                    16
-#define IDI_LASTSTOREICON               13
+#define IDI_STR_LIQUIDFOLDERS           1
+#define IDI_STR_WINDOWS                 2
+#define IDI_STR_1394                    3
+#define IDI_STR_USB                     4
+#define IDI_STR_DROPBOX                 5
+#define IDI_STR_FACEBOOK                6
+#define IDI_STR_FLICKR                  7
+#define IDI_STR_INSTAGRAM               8
+#define IDI_STR_PINTEREST               9
+#define IDI_STR_SOUNDCLOUD              10
+#define IDI_STR_TWITTER                 11
+#define IDI_STR_YOUTUBE                 12
+#define IDI_FLD_DEFAULT                 13
+#define IDI_FLD_ALL                     14
+#define IDI_OVR_DEFAULT                 15
+#define IDI_LASTICON                    15
+#define IDI_LASTSTOREICON               12
 #define IDS_NEWSTORE                    1000
 #define IDS_LASTSEEN                    1001
 #define IDS_SEENON                      1002

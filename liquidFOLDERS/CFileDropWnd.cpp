@@ -13,7 +13,7 @@
 CFileDropWnd::CFileDropWnd()
 	: CGlassWindow()
 {
-	m_StoreValid = m_StoreMounted = m_Hover = FALSE;
+	m_StoreMounted = m_Hover = FALSE;
 }
 
 BOOL CFileDropWnd::Create(CHAR* StoreID)
@@ -119,7 +119,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetTopMost(theApp.m_FileDropAlwaysOnTop);
 
 	// Store
-	SendMessage(theApp.p_MessageIDs->StoresChanged);
+	OnUpdateStore(NULL, NULL);
 
 	// Initialize Drop
 	m_DropTarget.SetOwner(this);
@@ -148,9 +148,9 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	CGlassWindow::OnEraseBkgnd(&dc);
 
 	// Icon
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_UNKNOWN)-1,
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, LFGetStoreIcon(&m_Store)-1,
 		CPoint(rectLayout.left+(rectLayout.Width()-128)/2-1, rectLayout.top+10), CSize(128, 128),
-		CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+		CLR_NONE, CLR_NONE, m_StoreMounted ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rectLayout);
@@ -305,15 +305,14 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 {
 	ASSERT(wParam);
 
-	if (m_StoreValid)
-		if (strcmp((CHAR*)wParam, m_StoreID)==0)
-		{
-			if (IsIconic())
-				ShowWindow(SW_RESTORE);
+	if (strcmp((CHAR*)wParam, m_StoreID)==0)
+	{
+		if (IsIconic())
+			ShowWindow(SW_RESTORE);
 
-			SetForegroundWindow();
-			return 24878;
-		}
+		SetForegroundWindow();
+		return 24878;
+	}
 
 	return NULL;
 }
@@ -354,22 +353,22 @@ void CFileDropWnd::OnStoreProperties()
 
 void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = m_StoreValid;
+	BOOL b = TRUE;
 	CHAR StoreID[LFKeySize];
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_STORE_MAKEDEFAULT:
 		LFGetDefaultStore(StoreID);
-		b &= (strcmp(m_Store.StoreID, StoreID)!=0);
+		b = (strcmp(m_Store.StoreID, StoreID)!=0);
 		break;
 
 	case IDM_STORE_IMPORTFOLDER:
-		b &= m_StoreMounted;
+		b = m_StoreMounted;
 		break;
 
 	case IDM_STORE_SHORTCUT:
-		b &= ((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
+		b = ((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
 		break;
 
 	case IDM_STORE_RENAME:
@@ -383,19 +382,14 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	m_StoreValid = (LFGetStoreSettings(m_StoreID, &m_Store)==LFOk);
-	if (m_StoreValid)
-	{
-		m_StoreMounted = LFIsStoreMounted(&m_Store);
-		m_Label = m_Store.StoreName;
-
-		SetWindowText(m_Label);
-		Invalidate();
-	}
-	else
-	{
+	if (LFGetStoreSettings(m_StoreID, &m_Store)!=LFOk)
 		PostMessage(WM_CLOSE);
-	}
+
+	m_StoreMounted = LFIsStoreMounted(&m_Store);
+	m_Label = m_Store.StoreName;
+
+	SetWindowText(m_Label);
+	Invalidate();
 
 	return NULL;
 }

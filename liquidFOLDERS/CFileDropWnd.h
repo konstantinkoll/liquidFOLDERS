@@ -51,7 +51,6 @@ protected:
 	LFStoreDescriptor m_Store;
 	CString m_Label;
 	BOOL m_AlwaysOnTop;
-	BOOL m_StoreValid;
 	BOOL m_StoreMounted;
 	BOOL m_Hover;
 };

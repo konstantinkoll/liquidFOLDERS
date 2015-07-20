@@ -44,7 +44,7 @@ void CStoreButton::SetStoreType(UINT StoreType)
 
 	m_IconSize = (h>=128) ? 128 : (h>=96) ? 96 : 48;
 	p_Icons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : (m_IconSize==96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
-	m_IconID = StoreType;
+	m_IconID = StoreType-1;
 
 	Invalidate();
 }

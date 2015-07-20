@@ -112,8 +112,6 @@ BOOL LFCreateStoreDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
 
-	m_wndIcon.SetCoreIcon(2);
-
 	m_wndAutoPath.SetCheck(TRUE);
 
 	m_wndExplorerList.SetImageList(&LFGetApp()->m_SystemImageListSmall, LVSIL_SMALL);
@@ -147,7 +145,7 @@ void LFCreateStoreDlg::OnUpdate()
 
 	m_wndMakeSearchable.EnableWindow(Source!=LFTypeSourceInternal);
 
-	m_wndIcon.SetCoreIcon(Source+1);
+	m_wndIcon.SetCoreIcon(Source);
 }
 
 void LFCreateStoreDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)

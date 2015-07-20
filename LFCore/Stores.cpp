@@ -412,7 +412,7 @@ LFCORE_API BOOL LFIsStoreMounted(LFStoreDescriptor* s)
 
 LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* s)
 {
-	return s ? s->Source+1 : IDI_STR_UNKNOWN;
+	return s->Source;
 }
 
 LFCORE_API UINT LFCreateStore(LFStoreDescriptor* s)

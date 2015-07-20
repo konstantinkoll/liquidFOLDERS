@@ -28,7 +28,6 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_STR_UNKNOWN         ICON                    "res\\STR_Unknown.ico"
 IDI_STR_LIQUIDFOLDERS   ICON                    "res\\STR_liquidFOLDERS.ico"
 IDI_STR_WINDOWS         ICON                    "res\\STR_Windows.ico"
 IDI_STR_1394            ICON                    "res\\STR_1394.ico"

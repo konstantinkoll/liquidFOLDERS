@@ -824,10 +824,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\STR_Unknown.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores\STR_Windows.ico"
 				>
 			</File>
