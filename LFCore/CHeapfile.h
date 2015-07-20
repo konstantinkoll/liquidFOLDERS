@@ -68,11 +68,11 @@ protected:
 	UINT m_BufferCount;
 	INT m_FirstInBuffer;
 	INT m_LastInBuffer;
-	BOOL m_BufferNeedsWriteback;
 	BOOL m_HeaderNeedsWriteback;
+	BOOL m_BufferNeedsWriteback;
 
 private:
-	void GetAttribute(void* PtrDst, UINT Offset, UINT Attr, LFItemDescriptor* pItemDescriptor);
+	void GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor);
 
 	WCHAR m_Filename[MAX_PATH];
 	HANDLE hFile;

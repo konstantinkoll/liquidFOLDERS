@@ -218,8 +218,6 @@ protected:
 	CPoint m_DragPos;
 
 private:
-	void AppendString(UINT Attr, CString& Str, WCHAR* tmpStr);
-	void AppendAttribute(LFItemDescriptor* i, UINT Attr, CString& Str);
 	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);
 	void DestroyEdit(BOOL Accept=FALSE);
 

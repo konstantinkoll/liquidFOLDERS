@@ -12,9 +12,9 @@
 void Compress(HANDLE hFile, WCHAR cDrive)
 {
 	// NTFS compression
-	BY_HANDLE_FILE_INFORMATION fi;
-	if (GetFileInformationByHandle(hFile, &fi))
-		if ((fi.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED)==0)
+	BY_HANDLE_FILE_INFORMATION FileInformation;
+	if (GetFileInformationByHandle(hFile, &FileInformation))
+		if ((FileInformation.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED)==0)
 		{
 			WCHAR Root[4] = L" :\\";
 			Root[0] = cDrive;
@@ -53,11 +53,11 @@ CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 	m_ItemCount = 0;
 	m_BufferNeedsWriteback = m_HeaderNeedsWriteback = FALSE;
 
-	// Datei
+	// Filename
 	wcscpy_s(m_Filename, MAX_PATH, Path);
 	wcscat_s(m_Filename, MAX_PATH, LFIndexTables[TableID].FileName);
 
-	// Tabelle
+	// Table
 	m_TableID = TableID;
 	m_RequiredElementSize = LFIndexTables[TableID].Size;
 
@@ -68,7 +68,7 @@ CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 		m_RequiredElementSize += LFKeySize;
 	}
 
-	// Datei öffnen
+	// Open file
 	hFile = OPENFILE(OPEN_ALWAYS);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
@@ -86,7 +86,7 @@ CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 
 	if (Size.QuadPart>=sizeof(HeapfileHeader))
 	{
-		// Ausreichende Dateigröße
+		// Sufficient file size
 		DWORD Read;
 		if (!ReadFile(hFile, &m_Header, sizeof(HeapfileHeader), &Read, NULL))
 		{
@@ -94,15 +94,15 @@ CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 			return;
 		}
 
-		// Bei ungültigem Header muss die Heapdatei neu angelegt werden
+		// Header invalid: (re)create file
 		if ((Read!=sizeof(HeapfileHeader)) || (strcmp(m_Header.ID, HeapSignature)!=0))
 			goto Create;
 
-		// Header verarbeiten
+		// Process header
 		m_ItemCount = (UINT)((Size.QuadPart-sizeof(HeapfileHeader))/m_Header.ElementSize);
 		m_OpenStatus = (m_Header.Version<CURIDXVERSION) ? HeapMaintenanceRequired : HeapOk;
 
-		// Anpassungen für andere Index-Versionen und Tupelgrößen
+		// Adjustments for other tuple sizes
 		if (m_Header.ElementSize!=m_RequiredElementSize)
 		{
 			if (m_KeyOffset==m_RequiredElementSize-LFKeySize)
@@ -114,10 +114,8 @@ CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 	}
 	else
 	{
-		// Zu kleine Dateigröße
-
 Create:
-		// Heapfile neu anlegen
+		// (Re)create file
 		ZeroMemory(&m_Header, sizeof(HeapfileHeader));
 		strcpy_s(m_Header.ID, sizeof(m_Header.ID), HeapSignature);
 		m_Header.ElementSize = m_RequiredElementSize;
@@ -350,6 +348,7 @@ void CHeapfile::Add(LFItemDescriptor* pItemDescriptor)
 	}
 
 	MakeDirty();
+
 	m_ItemCount++;
 }
 
@@ -379,6 +378,7 @@ void CHeapfile::Update(LFItemDescriptor* pItemDescriptor)
 	assert(pItemDescriptor);
 
 	INT ID = 0;
+
 	Update(pItemDescriptor, ID);
 }
 
@@ -408,10 +408,11 @@ void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
 	assert(pItemDescriptor);
 
 	INT ID = 0;
+
 	Invalidate(pItemDescriptor->CoreAttributes.FileID, ID);
 }
 
-__forceinline void CHeapfile::GetAttribute(void* PtrDst, UINT Offset, UINT Attr, LFItemDescriptor* pItemDescriptor)
+__forceinline void CHeapfile::GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor)
 {
 	assert(PtrDst);
 	assert(Attr<LFAttributeCount);
@@ -449,6 +450,7 @@ void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescr
 	}
 }
 
+
 // Compaction
 
 BOOL CHeapfile::Compact()
@@ -456,88 +458,98 @@ BOOL CHeapfile::Compact()
 	if ((!m_Header.NeedsCompaction) && (m_OpenStatus!=HeapMaintenanceRequired))
 		return TRUE;
 
-	WCHAR BufFilename[MAX_PATH];
-	wcscpy_s(BufFilename, MAX_PATH, m_Filename);
-	wcscat_s(BufFilename, MAX_PATH, L".part");
+	// Temporary filename
+	WCHAR TempFilename[MAX_PATH];
+	wcscpy_s(TempFilename, MAX_PATH, m_Filename);
+	wcscat_s(TempFilename, MAX_PATH, L".part");
 
-	HANDLE hOutput = CreateFile(BufFilename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-	if (hOutput==INVALID_HANDLE_VALUE)
+	// Open temporary file
+	HANDLE hTempFile = OPENFILE(CREATE_ALWAYS);
+	if (hTempFile==INVALID_HANDLE_VALUE)
 		return FALSE;
 
-	Compress(hOutput, BufFilename[0]);
+	Compress(hTempFile, TempFilename[0]);
 
-	HeapfileHeader NewHdr = m_Header;
-	NewHdr.ElementSize = max(m_Header.ElementSize, m_RequiredElementSize);
-	NewHdr.NeedsCompaction = FALSE;
-	NewHdr.Version = CURIDXVERSION;
+	// Temporary header
+	HeapfileHeader TempHeader = m_Header;
+	TempHeader.ElementSize = max(m_Header.ElementSize, m_RequiredElementSize);
+	TempHeader.NeedsCompaction = FALSE;
 
-	#define ABORT { CloseHandle(hOutput); DeleteFile(BufFilename); return FALSE; }
+	if (CURIDXVERSION>TempHeader.Version)
+		TempHeader.Version = CURIDXVERSION;
+
+	#define ABORT { CloseHandle(hTempFile); DeleteFile(TempFilename); return FALSE; }
 
 	DWORD Written;
-	if (!WriteFile(hOutput, &NewHdr, sizeof(HeapfileHeader), &Written, NULL))
+	if (!WriteFile(hTempFile, &TempHeader, sizeof(HeapfileHeader), &Written, NULL))
 		ABORT
-	if (sizeof(HeapfileHeader)!=Written)
+	if (Written!=sizeof(HeapfileHeader))
 		ABORT
+
+	// Copy (and enlarge) tuples
+	BYTE* pTempBuffer = (BYTE*)malloc(TempHeader.ElementSize);
+	ZeroMemory(pTempBuffer, TempHeader.ElementSize);
+
+	INT TempCount = 0;
 
 	INT Next = 0;
-	INT Count = 0;
 	void* Ptr;
-	BOOL Result = TRUE;
-	CHAR* tmpBuf = (CHAR*)malloc(NewHdr.ElementSize);
-	ZeroMemory(tmpBuf, NewHdr.ElementSize);
 
-	while (Result)
+	while (FindNext(Next, Ptr))
 	{
-		Result = FindNext(Next, Ptr);
-
-		if (Result)
+		if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
 		{
-			if ((NewHdr.ElementSize>m_Header.ElementSize) && (m_KeyOffset==m_Header.ElementSize-LFKeySize))
-			{
-				memcpy_s(tmpBuf, NewHdr.ElementSize, Ptr, m_Header.ElementSize-LFKeySize);
+			memcpy(pTempBuffer, Ptr, m_Header.ElementSize-LFKeySize);
 
-				CHAR* P = (CHAR*)Ptr+m_Header.ElementSize-LFKeySize;
-				memcpy(tmpBuf+NewHdr.ElementSize-LFKeySize, P, LFKeySize);
-			}
-			else
-			{
-				memcpy_s(tmpBuf, NewHdr.ElementSize, Ptr, m_Header.ElementSize);
-			}
-
-			if (!WriteFile(hOutput, tmpBuf, NewHdr.ElementSize, &Written, NULL))
-				ABORT
-			if (NewHdr.ElementSize!=Written)
-				ABORT
-
-			Count++;
+			// Move keys to end of tuple
+			memcpy(pTempBuffer+TempHeader.ElementSize-LFKeySize, (BYTE*)Ptr+m_Header.ElementSize-LFKeySize, LFKeySize);
 		}
+		else
+		{
+			memcpy(pTempBuffer, Ptr, m_Header.ElementSize);
+		}
+
+		if (!WriteFile(hTempFile, pTempBuffer, TempHeader.ElementSize, &Written, NULL))
+			ABORT
+		if (Written!=TempHeader.ElementSize)
+			ABORT
+
+		TempCount++;
 	};
 
-	free(tmpBuf);
 	m_HeaderNeedsWriteback = FALSE;
-	CloseHandle(hOutput);
 	CloseFile();
 
+	free(pTempBuffer);
+
+	CloseHandle(hTempFile);
+
+	// Temporary file becomes heapfile
 	if (!DeleteFile(m_Filename))
 		return FALSE;
-	if (!MoveFile(BufFilename, m_Filename))
+
+	if (!MoveFile(TempFilename, m_Filename))
 		return FALSE;
 
+	// Process new header
 	if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
-		m_KeyOffset = NewHdr.ElementSize-LFKeySize;
+		m_KeyOffset = TempHeader.ElementSize-LFKeySize;
 
-	m_Header = NewHdr;
+	m_Header = TempHeader;
+	m_ItemCount = TempCount;
+
 	AllocBuffer();
-	m_FirstInBuffer = m_LastInBuffer = -1;
-	m_ItemCount = Count;
 
+	// Open file
 	hFile = OPENFILE(OPEN_EXISTING);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
 		m_OpenStatus = HeapNoAccess;
+
 		return FALSE;
 	}
 
 	m_OpenStatus = HeapOk;
+
 	return TRUE;
 }

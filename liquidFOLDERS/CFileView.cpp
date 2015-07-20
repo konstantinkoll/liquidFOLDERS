@@ -75,8 +75,8 @@ void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, 
 #define GetItemData(Index)     ((FVItemData*)(m_ItemData+Index*m_DataSize))
 #define IsSelected(Index)      GetItemData(Index)->Selected
 #define ChangedItem(Index)     { InvalidateItem(Index); GetParent()->SendMessage(WM_UPDATESELECTION); }
-#define ChangedItems()       { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
-#define FooterMargin         8
+#define ChangedItems()         { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
+#define FooterMargin           8
 
 CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableTooltipOnVirtual)
 	: CWnd()
