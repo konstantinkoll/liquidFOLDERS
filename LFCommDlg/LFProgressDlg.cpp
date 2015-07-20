@@ -104,6 +104,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 	// Progress bar
 	ASSERT(pProgress->ProgressState>=LFProgressWorking);
 	ASSERT(pProgress->ProgressState<=LFProgressCancelled);
+
 	m_wndProgress.SendMessage(0x410, pProgress->ProgressState);
 	m_wndProgress.RedrawWindow();
 

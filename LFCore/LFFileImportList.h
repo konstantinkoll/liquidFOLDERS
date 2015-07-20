@@ -16,7 +16,7 @@ public:
 	LFFileImportList();
 
 	BOOL AddPath(WCHAR* Path);
-	void Resolve(BOOL Recursive);
+	void Resolve(BOOL Recursive, LFProgress* pProgress=NULL);
 	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
 
 	UINT m_FileCount;

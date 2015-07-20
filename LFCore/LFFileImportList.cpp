@@ -61,8 +61,19 @@ BOOL LFFileImportList::AddPath(WCHAR* Path)
 	return LFDynArray::AddItem(Item);
 }
 
-void LFFileImportList::Resolve(BOOL Recursive)
+void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 {
+	// Init progress
+	if (pProgress)
+	{
+		wcscpy_s(pProgress->Object, 256,m_Items[0].Path);
+
+		pProgress->MinorCount = 1;
+		pProgress->MinorCurrent = 0;
+		SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+	}
+
+	// Resolve
 	UINT Index = 0;
 
 	while (Index<m_ItemCount)
@@ -104,12 +115,23 @@ void LFFileImportList::Resolve(BOOL Recursive)
 
 					FindClose(hFind);
 
+					// Update
+					if (pProgress)
+					{
+						pProgress->MinorCount = m_ItemCount;
+						SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+					}
+
 					m_Items[Index].Processed = TRUE;
 				}
 		}
 
 		Index++;
 	}
+
+	// Progress
+	if (pProgress)
+		pProgress->MinorCount = m_ItemCount;
 }
 
 void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)

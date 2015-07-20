@@ -750,6 +750,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 void CFileView::GetPersistentData(FVPersistentData& Data)
 {
 	ZeroMemory(&Data, sizeof(Data));
+
 	Data.FocusItem = m_FocusItem;
 	Data.HScrollPos = m_HScrollPos;
 	Data.VScrollPos = m_VScrollPos;
@@ -879,7 +880,9 @@ void CFileView::ResetScrollbars()
 	{
 		ScrollWindow(0, m_VScrollPos);
 		ScrollWindow(m_HScrollPos, 0);
+
 		m_VScrollPos = m_HScrollPos = 0;
+
 		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 	}
@@ -937,28 +940,28 @@ void CFileView::AdjustScrollbars()
 
 CString CFileView::GetLabel(LFItemDescriptor* i)
 {
-	CString label = i->CoreAttributes.FileName;
+	CString Label = i->CoreAttributes.FileName;
 
 	switch (i->Type & LFTypeMask)
 	{
 	case LFTypeVolume:
-		label += _T(" (");
-		label += i->CoreAttributes.FileID[0];
-		label += _T(":)");
+		Label += _T(" (");
+		Label += i->CoreAttributes.FileID[0];
+		Label += _T(":)");
 
 		break;
 
 	case LFTypeFile:
 		if (((!m_HideFileExt) || (i->CoreAttributes.FileName[0]==L'\0')) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
 		{
-			label += _T(".");
-			label += i->CoreAttributes.FileFormat;
+			Label += _T(".");
+			Label += i->CoreAttributes.FileFormat;
 		}
 
 		break;
 	}
 
-	return label;
+	return Label;
 }
 
 BOOL CFileView::BeginDragDrop()

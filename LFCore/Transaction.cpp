@@ -66,18 +66,7 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescr
 	OPEN_STORE(StoreID, TRUE, il->m_LastError = Result);
 
 	// Progress, prepare import list
-	if (pProgress)
-	{
-		wcscpy_s(pProgress->Object, 256, il->m_Items[0].Path);
-		pProgress->MinorCount = 1;
-		pProgress->MinorCurrent = 0;
-		SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
-	}
-
-	il->Resolve(recursive);
-
-	if (pProgress)
-		pProgress->MinorCount = il->m_ItemCount;
+	il->Resolve(recursive, pProgress);
 
 	// Process
 	for (UINT a=0; a<il->m_ItemCount; a++)
