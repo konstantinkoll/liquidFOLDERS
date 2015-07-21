@@ -204,8 +204,8 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	DestroyEdit();
 	m_TooltipCtrl.Deactivate();
 
-	void* Victim = m_ItemData;
-	UINT VictimAllocated = m_ItemDataAllocated;
+	void* pVictim = m_ItemData;
+	SIZE_T VictimAllocated = m_ItemDataAllocated;
 
 	m_Nothing = TRUE;
 
@@ -217,10 +217,10 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 		m_AllowMultiSelect = (pCookedFiles->m_Context!=LFContextStores);
 #endif
 
-		SIZE_T sz = pCookedFiles->m_ItemCount*m_DataSize;
-		m_ItemData = (BYTE*)malloc(sz);
+		SIZE_T Size = pCookedFiles->m_ItemCount*m_DataSize;
+		m_ItemData = (BYTE*)malloc(Size);
 		m_ItemDataAllocated = pCookedFiles->m_ItemCount;
-		ZeroMemory(m_ItemData, sz);
+		ZeroMemory(m_ItemData, Size);
 
 		if (VictimAllocated)
 		{
@@ -230,11 +230,10 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 			{
 				FVItemData* d = GetItemData(a);
 
-				BYTE* v = (BYTE*)Victim;
-				v += ((BYTE*)d)-((BYTE*)m_ItemData);
+				BYTE* pVictimData = (BYTE*)pVictim+(((BYTE*)d)-((BYTE*)m_ItemData));
 
 				if ((m_AllowMultiSelect) || ((INT)a==RetainSelection))
-					d->Selected = ((FVItemData*)v)->Selected;
+					d->Selected = ((FVItemData*)pVictimData)->Selected;
 			}
 		}
 
@@ -263,7 +262,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	m_EditLabel = -1;
 	SetSearchResult(pRawFiles, pCookedFiles, Data);
 
-	free(Victim);
+	free(pVictim);
 
 	if (p_CookedFiles)
 	{
@@ -762,10 +761,10 @@ void CFileView::EditLabel(INT Index)
 
 	if ((m_EnableLabelEdit) && (p_CookedFiles) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
 	{
-		LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
-		if (((Item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeVolume) ||
-			((Item->Type & LFTypeMask)==LFTypeStore) ||
-			((Item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
+		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+		if (((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeVolume) ||
+			((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) ||
+			((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
 		{
 			m_EditLabel = Index;
 			InvalidateItem(Index);
@@ -780,7 +779,7 @@ void CFileView::EditLabel(INT Index)
 
 			p_Edit = new CEdit();
 			p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
-			p_Edit->SetWindowText(Item->CoreAttributes.FileName);
+			p_Edit->SetWindowText(pItemDescriptor->CoreAttributes.FileName);
 			p_Edit->SetFont(&theApp.m_DefaultFont);
 			p_Edit->SetFocus();
 			p_Edit->SetSel(0, -1);
@@ -1038,13 +1037,13 @@ void CFileView::DestroyEdit(BOOL Accept)
 	{
 		INT Item = m_EditLabel;
 
-		CEdit* victim = p_Edit;
+		CEdit* pVictim = p_Edit;
 		p_Edit = NULL;
 
 		CString Name;
-		victim->GetWindowText(Name);
-		victim->DestroyWindow();
-		delete victim;
+		pVictim->GetWindowText(Name);
+		pVictim->DestroyWindow();
+		delete pVictim;
 
 		if ((Accept) && (!Name.IsEmpty()) && (Item!=-1))
 			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)Item, (LPARAM)Name.GetBuffer());
