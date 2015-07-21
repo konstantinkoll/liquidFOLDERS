@@ -43,7 +43,7 @@ void ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize
 // CHeapFile
 //
 
-#define OPENFILE(Disposition) CreateFile(m_Filename, GENERIC_READ | GENERIC_WRITE, 0, NULL, Disposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+#define OPENFILE(Name, Disposition) CreateFile(Name, GENERIC_READ | GENERIC_WRITE, 0, NULL, Disposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
 CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 {
@@ -69,7 +69,7 @@ CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 	}
 
 	// Open file
-	hFile = OPENFILE(OPEN_ALWAYS);
+	hFile = OPENFILE(m_Filename, OPEN_ALWAYS);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
 		m_OpenStatus = HeapNoAccess;
@@ -464,7 +464,7 @@ BOOL CHeapfile::Compact()
 	wcscat_s(TempFilename, MAX_PATH, L".part");
 
 	// Open temporary file
-	HANDLE hTempFile = OPENFILE(CREATE_ALWAYS);
+	HANDLE hTempFile = OPENFILE(TempFilename, CREATE_ALWAYS);
 	if (hTempFile==INVALID_HANDLE_VALUE)
 		return FALSE;
 
@@ -541,7 +541,7 @@ BOOL CHeapfile::Compact()
 	AllocBuffer();
 
 	// Open file
-	hFile = OPENFILE(OPEN_EXISTING);
+	hFile = OPENFILE(m_Filename, OPEN_EXISTING);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
 		m_OpenStatus = HeapNoAccess;
