@@ -6,10 +6,110 @@
 #include "LFCommDlg.h"
 
 
+// CStoreList
+//
+
+void CStoreList::AddColumn(INT ID, UINT Attr)
+{
+	CExplorerList::AddColumn(ID, LFGetApp()->m_Attributes[Attr].Name, LFGetApp()->m_Attributes[Attr].RecommendedWidth, LFGetApp()->m_Attributes[Attr].FormatRight);
+}
+
+void CStoreList::AddStoreColumns()
+{
+	AddColumn(0, LFAttrFileName);
+	AddColumn(1, LFAttrComments);
+	AddColumn(2, LFAttrDescription);
+	AddColumn(3, LFAttrCreationTime);
+	AddColumn(4, LFAttrStoreID);
+}
+
+void CStoreList::AddItemCategories()
+{
+	for (UINT a=0; a<LFItemCategoryCount; a++)
+		AddCategory(a, LFGetApp()->m_ItemCategories[a].Caption, LFGetApp()->m_ItemCategories[a].Hint);
+}
+
+void CStoreList::SetSearchResult(LFSearchResult* pResult)
+{
+	DeleteAllItems();
+
+	if (pResult)
+	{
+		LFSortSearchResult(pResult, LFAttrFileName, FALSE);
+		LFErrorBox(pResult->m_LastError, GetParent()->GetSafeHwnd());
+
+		static UINT puColumns[2] = { 1, 2 };
+
+		LVITEM lvi;
+		ZeroMemory(&lvi, sizeof(lvi));
+
+		lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_COLUMNS | LVIF_STATE;
+		lvi.stateMask = LVIS_CUT | LVIS_OVERLAYMASK;
+		lvi.cColumns = 2;
+		lvi.puColumns = puColumns;
+
+		for (UINT a=0; a<pResult->m_ItemCount; a++)
+		{
+			lvi.iItem = a;
+			lvi.pszText = pResult->m_Items[a]->CoreAttributes.FileName;
+			lvi.iImage = pResult->m_Items[a]->IconID-1;
+			lvi.iGroupId = pResult->m_Items[a]->CategoryID;
+			lvi.state = ((pResult->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (pResult->m_Items[a]->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
+			INT Index = InsertItem(&lvi);
+
+			WCHAR tmpStr[256];
+			SetItemText(Index, 1, pResult->m_Items[a]->CoreAttributes.Comments);
+			SetItemText(Index, 2, pResult->m_Items[a]->Description);
+
+			LFAttributeToString(pResult->m_Items[a], LFAttrCreationTime, tmpStr, 256);
+			SetItemText(Index, 3, tmpStr);
+
+			LFAttributeToString(pResult->m_Items[a], LFAttrStoreID, tmpStr, 256);
+			SetItemText(Index, 4, tmpStr);
+		}
+	}
+
+	if (GetView()==LV_VIEW_DETAILS)
+		for (UINT a=0; a<5; a++)
+			SetColumnWidth(a, LVSCW_AUTOSIZE);
+}
+
+
+BEGIN_MESSAGE_MAP(CStoreList, CExplorerList)
+	ON_WM_KEYDOWN()
+END_MESSAGE_MAP()
+
+void CStoreList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	switch(nChar)
+	{
+	case VK_F2:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+		{
+			EditLabel(GetNextItem(-1, LVIS_SELECTED | LVIS_FOCUSED));
+			return;
+		}
+
+		break;
+
+	case VK_DELETE:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+		{
+			GetOwner()->SendMessage(WM_COMMAND, IDM_STORE_DELETE);
+			return;
+		}
+
+		break;
+	}
+
+	CExplorerList::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
 // LFChooseStoreDlg
 //
 
-#define GetSelectedStore() m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
+#define GetSelectedStore() m_wndStoreList.GetNextItem(-1, LVIS_SELECTED)
 
 LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, BOOL Mounted)
 	: LFDialog(IDD_CHOOSESTORE, pParentWnd)
@@ -36,7 +136,7 @@ void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 
 void LFChooseStoreDlg::AdjustLayout()
 {
-	if (!IsWindow(m_wndExplorerList))
+	if (!IsWindow(m_wndStoreList))
 		return;
 
 	CRect rect;
@@ -49,8 +149,8 @@ void LFChooseStoreDlg::AdjustLayout()
 		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
-	INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? 15 : 4;
-	m_wndExplorerList.SetWindowPos(NULL, rect.left+BorderLeft, rect.top+ExplorerHeight, rect.Width()-BorderLeft, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? m_wndStoreList.IsGroupViewEnabled() ? 2 : 15 : 4;
+	m_wndStoreList.SetWindowPos(NULL, rect.left+BorderLeft, rect.top+ExplorerHeight, rect.Width()-BorderLeft, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()
@@ -70,6 +170,7 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
 	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_STORELIST, OnRequestTooltipData)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnUpdateStores)
@@ -94,17 +195,18 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 
 	CRect rect;
 	rect.SetRectEmpty();
-	m_wndExplorerList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS | LVS_SINGLESEL, rect, this, IDC_STORELIST);
+	m_wndStoreList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_EDITLABELS, rect, this, IDC_STORELIST);
 
-	m_wndExplorerList.SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&LFGetApp()->m_CoreImageListExtraLarge, LVSIL_NORMAL);
+	m_wndStoreList.SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
+	m_wndStoreList.SetImageList(&LFGetApp()->m_CoreImageListExtraLarge, LVSIL_NORMAL);
 
-	m_wndExplorerList.AddStoreColumns();
-	m_wndExplorerList.AddItemCategories();
-	m_wndExplorerList.SetMenus(IDM_STORE, FALSE, IDM_STORES);
-	m_wndExplorerList.EnableGroupView(LFGetApp()->OSVersion>OS_XP);
-	m_wndExplorerList.SetView(LV_VIEW_TILE);
-	m_wndExplorerList.SetFocus();
+	m_wndStoreList.AddStoreColumns();
+	m_wndStoreList.AddItemCategories();
+	m_wndStoreList.SetMenus(IDM_STORE, FALSE, IDM_STORES);
+	m_wndStoreList.EnableGroupView(LFGetApp()->OSVersion>OS_XP);
+	m_wndStoreList.SetView(LV_VIEW_TILE);
+	m_wndStoreList.SetItemsPerRow(3);
+	m_wndStoreList.SetFocus();
 
 	SendMessage(LFGetApp()->p_MessageIDs->StoresChanged);
 
@@ -130,7 +232,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	CHAR StoreID[LFKeySize] = "";
 	if (m_pResult)
 	{
-		INT Index = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
+		INT Index = m_wndStoreList.GetNextItem(-1, LVIS_SELECTED);
 		if (Index!=-1)
 			strcpy_s(StoreID, LFKeySize, m_pResult->m_Items[Index]->StoreID);
 
@@ -141,7 +243,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	m_pResult = LFQuery(filter);
 	LFFreeFilter(filter);
 
-	m_wndExplorerList.SetSearchResult(m_pResult);
+	m_wndStoreList.SetSearchResult(m_pResult);
 
 	if (!m_Mounted)
 	{
@@ -156,7 +258,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		if (((Index==-1) && (m_pResult->m_Items[a]->Type & LFTypeDefault)) || (!strcmp(StoreID, m_pResult->m_Items[a]->StoreID)))
 			Index = a;
 
-	m_wndExplorerList.SetItemState(Index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	m_wndStoreList.SetItemState(Index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 
 	return NULL;
 }
@@ -202,6 +304,24 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 }
 
+void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
+
+	if (pTooltipData->Item!=-1)
+	{
+		CString tmpStr;
+		GetHintForStore(m_pResult->m_Items[pTooltipData->Item], tmpStr);
+
+		wcscpy_s(pTooltipData->Text, 4096, tmpStr);
+		pTooltipData->hIcon = LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(m_pResult->m_Items[pTooltipData->Item]->IconID-1);
+
+		pTooltipData->Show = TRUE;
+	}
+
+	*pResult = 0;
+}
+
 
 void LFChooseStoreDlg::OnStoreMakeDefault()
 {
@@ -229,10 +349,10 @@ void LFChooseStoreDlg::OnStoreRename()
 	INT Index = GetSelectedStore();
 	if (Index!=-1)
 	{
-		if (GetFocus()!=&m_wndExplorerList)
-			m_wndExplorerList.SetFocus();
+		if (GetFocus()!=&m_wndStoreList)
+			m_wndStoreList.SetFocus();
 
-		m_wndExplorerList.EditLabel(Index);
+		m_wndStoreList.EditLabel(Index);
 	}
 }
 
@@ -271,7 +391,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			break;
 
 		case IDM_STORE_RENAME:
-			b = (m_wndExplorerList.GetEditControl()==NULL);
+			b = (m_wndStoreList.GetEditControl()==NULL);
 			break;
 		}
 	}

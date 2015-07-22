@@ -25,5 +25,6 @@ protected:
 
 	LFViewParameters* p_View;
 	UINT m_Context;
+	CExplorerList m_wndSortAttribute;
 	CComboBox m_wndSortDirection;
 };

@@ -24,6 +24,8 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnUpdate();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
+
 	afx_msg void OnVolumeFormat();
 	afx_msg void OnVolumeEject();
 	afx_msg void OnVolumeProperties();

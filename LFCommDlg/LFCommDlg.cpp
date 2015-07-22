@@ -166,6 +166,8 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 {
 	ASSERT(Caption);
 
+	dc.SetBkMode(TRANSPARENT);
+
 	rect.DeflateRect(LFCategoryPadding, LFCategoryPadding);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
@@ -206,6 +208,91 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 		}
 
 	dc.SelectObject(pOldFont);
+}
+
+void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Themed, BOOL WinFocused, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+{
+	dc.SetBkMode(TRANSPARENT);
+
+	if (hThemeList)
+	{
+		dc.SetTextColor(TextColor==(COLORREF)-1 ? 0x000000 : TextColor);
+
+		if (Hot | Selected)
+		{
+			const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, !WinFocused ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+			UINT State = 0;
+			if (Hot)
+				State |= 1;
+			if (Selected)
+				State |= 2;
+			LFGetApp()->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
+		}
+
+		if (WinFocused && Focused)
+			switch (LFGetApp()->OSVersion)
+			{
+			case OS_Vista:
+				if (ShowFocusRect)
+				{
+					CRect rect(rectItem);
+					rect.DeflateRect(1, 1);
+
+					dc.SetBkColor(0xFFFFFF);
+					dc.DrawFocusRect(rect);
+				}
+
+				break;
+
+			case OS_Seven:
+				if (!Selected)
+				{
+					CRect rect(rectItem);
+					rect.bottom--;
+					rect.right--;
+
+					Graphics g(dc);
+					g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+					GraphicsPath path;
+					CreateRoundRectangle(rect, 2, path);
+
+					Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
+					g.DrawPath(&pen, &path);
+				}
+
+				break;
+
+			case OS_Eight:
+				if (!Selected)
+					dc.Draw3dRect(rectItem, 0xCEA27D, 0xCEA27D);
+
+				break;
+			}
+	}
+	else
+	{
+		if (Selected)
+		{
+			dc.FillSolidRect(rectItem, GetSysColor(WinFocused ? COLOR_HIGHLIGHT : COLOR_3DFACE));
+			dc.SetTextColor(GetSysColor(WinFocused ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT));
+			dc.SetBkColor(0x000000);
+		}
+		else
+		{
+			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+			dc.SetBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+			if (!Focused)
+				dc.SetBkMode(OPAQUE);
+		}
+
+		if (WinFocused && Focused)
+			dc.DrawFocusRect(rectItem);
+
+		if (TextColor!=(COLORREF)-1 && !Selected)
+			dc.SetTextColor(TextColor);
+	}
 }
 
 void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)

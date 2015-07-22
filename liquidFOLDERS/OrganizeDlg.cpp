@@ -20,6 +20,7 @@ void OrganizeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	LFAttributeListDlg::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_SORTATTRIBUTE, m_wndSortAttribute);
 	DDX_Check(pDX, IDC_AUTODIRS, p_View->AutoDirs);
 	DDX_Control(pDX, IDC_SORTDIRECTION, m_wndSortDirection);
 
@@ -60,6 +61,7 @@ BOOL OrganizeDlg::OnInitDialog()
 	// Combobox füllen
 	ENSURE(text.LoadString(IDS_ASCENDING));
 	m_wndSortDirection.AddString(text);
+
 	ENSURE(text.LoadString(IDS_DESCENDING));
 	m_wndSortDirection.AddString(text);
 

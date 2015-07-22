@@ -11,7 +11,7 @@
 // CListView
 //
 
-#define GetItemData(Index)                    ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
+#define GetItemData(Index)                  ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING                             2
 #define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), rect, DT_END_ELLIPSIS | format);
 #define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
@@ -320,7 +320,6 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 	case LFViewSmallIcons:
 	case LFViewPreview:
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
-		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
@@ -332,7 +331,6 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 
 	case LFViewDetails:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i);
 
 		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
 		rectLabel.left = rectIcon.right+PADDING;
@@ -376,18 +374,17 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 
 	case LFViewList:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+PADDING;
-		DrawLabel(dc, rectLabel, i, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+		DrawLabel(dc, rectLabel, i, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 		break;
+
 	case LFViewTiles:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
@@ -426,7 +423,6 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 
 	case LFViewStrips:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
@@ -507,7 +503,6 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		rectIcon.top = rectLeft.top+1;
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
-		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
@@ -536,9 +531,11 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 
 		break;
 	}
+
+	DrawIcon(dc, rectIcon, i);
 }
 
-void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
+__forceinline void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 {
 	INT SysIconIndex = -1;
 	CHAR Path[4];
@@ -603,7 +600,7 @@ void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr,
 	}
 }
 
-void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed)
+__forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed)
 {
 	WCHAR tmpStr[4][256];
 	UINT Cnt = 0;

@@ -107,6 +107,7 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	// Titelleiste
 	CString text;
 	GetWindowText(text);
+
 	CString Caption;
 	Caption.Format(text, theApp.m_Contexts[m_Context].Name);
 	SetWindowText(Caption);

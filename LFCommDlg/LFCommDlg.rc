@@ -251,13 +251,13 @@ BEGIN
     PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,199,160,184,14
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Store wählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,413,260,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 277, 196
@@ -537,7 +537,7 @@ BEGIN
     LTEXT           "Suchbegriff (in allen Eigenschaften):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Weitere Bedingungen",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
-    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
     PUSHBUTTON      "Bedingung &hinzufügen...",IDM_CONDITIONLIST_ADD,7,226,110,14,WS_GROUP
     DEFPUSHBUTTON   "Speichern",IDOK,57,256,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,117,256,50,14,WS_GROUP
@@ -610,7 +610,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 463
+        RIGHTMARGIN, 513
         TOPMARGIN, 7
         BOTTOMMARGIN, 274
     END
@@ -838,13 +838,13 @@ BEGIN
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen?"
     IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
-    IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
-    IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
-    IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
+    IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
+    IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
 END
 
@@ -998,13 +998,13 @@ BEGIN
     PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,199,160,184,14
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Seleccionar store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,413,260,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 277, 196
@@ -1277,7 +1277,7 @@ BEGIN
     LTEXT           "Buscar término (todas propriedades):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Otras condiciones",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
-    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
     PUSHBUTTON      "&Añadir condición...",IDM_CONDITIONLIST_ADD,7,226,100,14,WS_GROUP
     DEFPUSHBUTTON   "Guardar",IDOK,57,256,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,117,256,50,14,WS_GROUP
@@ -1340,7 +1340,6 @@ BEGIN
 END
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -1360,7 +1359,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 463
+        RIGHTMARGIN, 513
         TOPMARGIN, 7
         BOTTOMMARGIN, 274
     END
@@ -1593,13 +1592,13 @@ BEGIN
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
     IDS_DELETESTORE_CAPTION "Eliminar store «%s»"
-    IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
-    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
-    IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
+    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
+    IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
 END
 
@@ -1753,13 +1752,13 @@ BEGIN
     PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,199,160,184,14
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Choisissez un store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,413,260,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 287, 196
@@ -2053,7 +2052,7 @@ BEGIN
     LTEXT           "Mot de recherches (tous le qualités):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Autres conditions",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
-    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
     PUSHBUTTON      "&Ajouter condition...",IDM_CONDITIONLIST_ADD,7,226,100,14,WS_GROUP
     DEFPUSHBUTTON   "Sauvegarder",IDOK,57,256,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,117,256,50,14,WS_GROUP
@@ -2113,7 +2112,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 463
+        RIGHTMARGIN, 513
         TOPMARGIN, 7
         BOTTOMMARGIN, 274
     END
@@ -2341,13 +2340,13 @@ BEGIN
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété?"
     IDS_DELETESTORE_CAPTION "Effacez le store «%s»"
-    IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
-    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
-    IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
+    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
+    IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
 END
 
@@ -2551,13 +2550,13 @@ BEGIN
     PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,199,160,184,14
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Choose store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,356,260,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,413,260,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 277, 196
@@ -2830,7 +2829,7 @@ BEGIN
     LTEXT           "Search term (in all propeties):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Other conditions",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
-    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
     PUSHBUTTON      "A&dd condition...",IDM_CONDITIONLIST_ADD,7,226,90,14,WS_GROUP
     DEFPUSHBUTTON   "Save",IDOK,57,256,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,117,256,50,14,WS_GROUP
@@ -2912,7 +2911,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 463
+        RIGHTMARGIN, 513
         TOPMARGIN, 7
         BOTTOMMARGIN, 274
     END
@@ -3137,13 +3136,13 @@ BEGIN
     IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property?"
     IDS_DELETESTORE_CAPTION "Delete store “%s”"
-    IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
-    IDS_FORMAT_CAPTION      "You cannot format volume %c:"
-    IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
+    IDS_FORMAT_CAPTION      "You cannot format volume %c:"
+    IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
 END
 

@@ -28,13 +28,13 @@ void LFAttributeListDlg::TestAttribute(UINT /*Attr*/, BOOL& Add, BOOL& Check)
 	Check = FALSE;
 }
 
-void LFAttributeListDlg::PrepareListCtrl(CListCtrl* li, BOOL Check)
+void LFAttributeListDlg::PrepareListCtrl(CListCtrl* pListCtrl, BOOL Check)
 {
 	const UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS | (Check ? LVS_EX_CHECKBOXES : 0);
-	li->SetExtendedStyle(li->GetExtendedStyle() | dwExStyle);
-	li->ModifyStyle(0, LVS_SHAREIMAGELISTS);
+	pListCtrl->SetExtendedStyle(pListCtrl->GetExtendedStyle() | dwExStyle);
+	pListCtrl->ModifyStyle(0, LVS_SHAREIMAGELISTS);
 
-	li->SetImageList(&m_AttributeIcons, LVSIL_SMALL);
+	pListCtrl->SetImageList(&m_AttributeIcons, LVSIL_SMALL);
 }
 
 void LFAttributeListDlg::PrepareListCtrl(INT nID, BOOL Check)
@@ -42,7 +42,7 @@ void LFAttributeListDlg::PrepareListCtrl(INT nID, BOOL Check)
 	PrepareListCtrl((CListCtrl*)GetDlgItem(nID), Check);
 }
 
-void LFAttributeListDlg::AddAttribute(CListCtrl* li, UINT Attr)
+void LFAttributeListDlg::AddAttribute(CListCtrl* pListCtrl, UINT Attr)
 {
 	BOOL Add;
 	BOOL Check;
@@ -56,9 +56,9 @@ void LFAttributeListDlg::AddAttribute(CListCtrl* li, UINT Attr)
 	lvi.lParam = (LPARAM)Attr;
 	lvi.pszText = LFGetApp()->m_Attributes[Attr].Name;
 	lvi.iImage = GetAttributeIconIndex(Attr);
-	lvi.iItem = li->GetItemCount();
+	lvi.iItem = pListCtrl->GetItemCount();
 
-	li->SetCheck(li->InsertItem(&lvi), Check);
+	pListCtrl->SetCheck(pListCtrl->InsertItem(&lvi), Check);
 }
 
 void LFAttributeListDlg::AddAttribute(UINT nID, UINT Attr)
@@ -66,23 +66,23 @@ void LFAttributeListDlg::AddAttribute(UINT nID, UINT Attr)
 	AddAttribute((CListCtrl*)GetDlgItem(nID), Attr);
 }
 
-void LFAttributeListDlg::FinalizeListCtrl(CListCtrl* li, INT Focus, BOOL Sort)
+void LFAttributeListDlg::FinalizeListCtrl(CListCtrl* pListCtrl, INT Focus, BOOL Sort)
 {
-	li->SetColumnWidth(0, LVSCW_AUTOSIZE);
+	pListCtrl->SetColumnWidth(0, LVSCW_AUTOSIZE);
 
 	if (Sort)
-		li->SortItems(MyCompareProc, 0);
+		pListCtrl->SortItems(MyCompareProc, 0);
 
 	INT select = 0;
 	if (Focus!=-1)
-		for (UINT a=0; a<(UINT)li->GetItemCount(); a++)
-			if ((INT)li->GetItemData(a)==Focus)
+		for (UINT a=0; a<(UINT)pListCtrl->GetItemCount(); a++)
+			if ((INT)pListCtrl->GetItemData(a)==Focus)
 			{
 				select = a;
 				break;
 			}
 
-	li->SetItemState(select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	pListCtrl->SetItemState(select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
 void LFAttributeListDlg::FinalizeListCtrl(UINT nID, INT Focus, BOOL Sort)
@@ -90,14 +90,14 @@ void LFAttributeListDlg::FinalizeListCtrl(UINT nID, INT Focus, BOOL Sort)
 	FinalizeListCtrl((CListCtrl*)GetDlgItem(nID), Focus, Sort);
 }
 
-void LFAttributeListDlg::PopulateListCtrl(CListCtrl* li, BOOL Check, INT Focus, BOOL Sort)
+void LFAttributeListDlg::PopulateListCtrl(CListCtrl* pListCtrl, BOOL Check, INT Focus, BOOL Sort)
 {
-	PrepareListCtrl(li, Check);
+	PrepareListCtrl(pListCtrl, Check);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		AddAttribute(li, a);
+		AddAttribute(pListCtrl, a);
 
-	FinalizeListCtrl(li, Focus, Sort);
+	FinalizeListCtrl(pListCtrl, Focus, Sort);
 }
 
 void LFAttributeListDlg::PopulateListCtrl(INT nID, BOOL Check, INT Focus, BOOL Sort)

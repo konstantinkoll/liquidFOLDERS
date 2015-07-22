@@ -345,10 +345,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CConditionList.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CExplorerList.cpp"
 				>
 			</File>
@@ -918,10 +914,6 @@
 			>
 			<File
 				RelativePath=".\CCategory.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CConditionList.h"
 				>
 			</File>
 			<File

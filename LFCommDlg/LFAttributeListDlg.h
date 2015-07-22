@@ -18,13 +18,13 @@ public:
 protected:
 	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
 
-	void PrepareListCtrl(CListCtrl* li, BOOL Check);
+	void PrepareListCtrl(CListCtrl* pListCtrl, BOOL Check);
 	void PrepareListCtrl(INT nID, BOOL Check);
-	void FinalizeListCtrl(CListCtrl* li, INT Focus=-1, BOOL Sort=TRUE);
+	void FinalizeListCtrl(CListCtrl* pListCtrl, INT Focus=-1, BOOL Sort=TRUE);
 	void FinalizeListCtrl(UINT nID, INT Focus=-1, BOOL Sort=TRUE);
-	void AddAttribute(CListCtrl* li, UINT Attr);
+	void AddAttribute(CListCtrl* pListCtrl, UINT Attr);
 	void AddAttribute(UINT nID, UINT Attr);
-	void PopulateListCtrl(CListCtrl* li, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
+	void PopulateListCtrl(CListCtrl* pListCtrl, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
 	void PopulateListCtrl(INT nID, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
 
 	afx_msg BOOL OnInitDialog();

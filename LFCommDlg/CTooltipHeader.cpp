@@ -163,7 +163,7 @@ void CTooltipHeader::OnPaint()
 				{
 					if (Themed)
 					{
-						const BOOL Hover = (m_PressedItem==-1) && ((m_TrackItem==a) || (m_HoverItem==a));
+						const BOOL Hover = (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a)));
 
 						if (Hover || (m_PressedItem==a))
 						{

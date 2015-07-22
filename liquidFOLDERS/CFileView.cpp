@@ -794,83 +794,10 @@ BOOL CFileView::IsEditing()
 
 void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 {
-	BOOL Hot = (m_HotItem==Index);
-	BOOL Selected = IsSelected(Index);
-
-	if (hThemeList)
-	{
-		dc.SetTextColor((p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : 0x000000);
-
-		if (Hot | Selected)
-		{
-			const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-			UINT State = 0;
-			if (Hot)
-				State |= 1;
-			if (Selected)
-				State |= 2;
-			theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
-		}
-
-		if ((GetFocus()==this) && (m_FocusItem==Index))
-			switch (theApp.OSVersion)
-			{
-			case OS_Vista:
-				if (m_ShowFocusRect)
-				{
-					CRect rect(rectItem);
-					rect.DeflateRect(1, 1);
-
-					dc.SetBkColor(0xFFFFFF);
-					dc.DrawFocusRect(rect);
-				}
-
-				break;
-
-			case OS_Seven:
-			case OS_Eight:
-				if (!Selected)
-				{
-					CRect rect(rectItem);
-					rect.bottom--;
-					rect.right--;
-
-					Graphics g(dc);
-					g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-					GraphicsPath path;
-					CreateRoundRectangle(rect, 2, path);
-
-					Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
-					g.DrawPath(&pen, &path);
-				}
-
-				break;
-			}
-	}
-	else
-	{
-		if (Selected)
-		{
-			dc.FillSolidRect(rectItem, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE));
-			dc.SetTextColor(GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT));
-			dc.SetBkColor(0x000000);
-		}
-		else
-		{
-			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-			dc.SetBkColor(0xFFFFFF);
-		}
-
-		if ((Index==m_FocusItem) && (GetFocus()==this))
-			dc.DrawFocusRect(rectItem);
-
-		if (!Selected)
-			if (p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing)
-			{
-				dc.SetTextColor(0x0000FF);
-			}
-	}
+	DrawListItemBackground(dc, rectItem, hThemeList, Themed, GetFocus()==this,
+		m_HotItem==Index, m_FocusItem==Index, IsSelected(Index),
+		(p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
+		m_ShowFocusRect);
 }
 
 void CFileView::ResetScrollbars()

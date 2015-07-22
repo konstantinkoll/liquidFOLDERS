@@ -3,8 +3,31 @@
 //
 
 #pragma once
-#include "CConditionList.h"
+#include "CExplorerList.h"
 #include "LFDialog.h"
+
+
+// CConditionList
+//
+
+class CConditionList : public CExplorerList
+{
+public:
+	CConditionList();
+
+	void InsertItem(LFFilterCondition* c);
+	void SetItem(INT nItem, LFFilterCondition* c);
+
+protected:
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
+	void FinishItem(INT Index, LFFilterCondition* c);
+
+	CString m_Compare[LFFilterCompareCount];
+};
 
 
 // LFEditFilterDlg
@@ -33,8 +56,10 @@ protected:
 	CHAR m_StoreID[LFKeySize];
 	LFFilter* p_Filter;
 	LFDynArray<LFFilterCondition> m_Conditions;
+
+	CImageListTransparent m_AttributeIcons;
 	CButton m_wndAllStores;
 	CButton m_wndThisStore;
 	CEdit m_wndSearchterm;
-	CConditionList m_wndList;
+	CConditionList m_wndConditionList;
 };

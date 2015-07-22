@@ -100,6 +100,7 @@ BEGIN_MESSAGE_MAP(LFCreateStoreDlg, LFDialog)
 	ON_BN_CLICKED(IDC_AUTOPATH, OnUpdate)
 	ON_BN_CLICKED(IDC_VOLUMEPATH, OnUpdate)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VOLUMELIST, OnItemChanged)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_VOLUMELIST, OnRequestTooltipData)
 	ON_COMMAND(IDM_VOLUME_FORMAT, OnVolumeFormat)
 	ON_COMMAND(IDM_VOLUME_EJECT, OnVolumeEject)
 	ON_COMMAND(IDM_VOLUME_PROPERTIES, OnVolumeProperties)
@@ -117,6 +118,8 @@ BOOL LFCreateStoreDlg::OnInitDialog()
 	m_wndExplorerList.SetImageList(&LFGetApp()->m_SystemImageListSmall, LVSIL_SMALL);
 	m_wndExplorerList.SetImageList(&LFGetApp()->m_SystemImageListExtraLarge, LVSIL_NORMAL);
 	m_wndExplorerList.SetMenus(IDM_VOLUME);
+	m_wndExplorerList.SetView(LV_VIEW_ICON);
+	m_wndExplorerList.SetItemsPerRow(3);
 
 	UpdateVolumes();
 
@@ -155,6 +158,29 @@ void LFCreateStoreDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	if ((pNMListView->uChanged & LVIF_STATE) && ((pNMListView->uOldState & LVIS_SELECTED) || (pNMListView->uNewState & LVIS_SELECTED)))
 		OnUpdate();
 }
+
+void LFCreateStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
+
+	if (pTooltipData->Item!=-1)
+	{
+		WCHAR szVolumeRoot[] = L" :\\";
+		szVolumeRoot[0] = m_DriveLetters[pTooltipData->Item];
+
+		SHFILEINFO sfi;
+		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
+		{
+			wcscpy_s(pTooltipData->Text, 4096, sfi.szTypeName);
+			pTooltipData->hIcon = LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(sfi.iIcon);
+
+			pTooltipData->Show = TRUE;
+		}
+	}
+
+	*pResult = 0;
+}
+
 
 void LFCreateStoreDlg::OnVolumeFormat()
 {

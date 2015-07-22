@@ -1,7 +1,6 @@
 
 #pragma once
 #include "CCategory.h"
-#include "CConditionList.h"
 #include "CExplorerList.h"
 #include "CExplorerNotification.h"
 #include "CExplorerTree.h"
@@ -59,6 +58,7 @@ BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed);
+void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Themed, BOOL WinFocused, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT request=-1);
 
 void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr);

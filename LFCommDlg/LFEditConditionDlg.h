@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CExplorerList.h"
 #include "CPropertyEdit.h"
 #include "LFAttributeListDlg.h"
 
@@ -29,7 +30,7 @@ protected:
 
 private:
 	CHAR m_StoreID[LFKeySize];
-	CListCtrl m_wndAttribute;
+	CExplorerList m_wndAttribute;
 	CComboBox m_wndCompare;
 	CPropertyEdit m_wndEdit;
 };
