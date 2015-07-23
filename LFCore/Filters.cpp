@@ -138,7 +138,7 @@ LFCORE_API UINT LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCH
 		if (Result==LFOk)
 			if (StoreFilter(Filename, pFilter))
 			{
-				SetAttributesFromFile(pItemDescriptor, Filename);
+				SetAttributesFromFile(pItemDescriptor, Filename, FALSE);
 
 				if (idx1)
 					idx1->AddItem(pItemDescriptor);

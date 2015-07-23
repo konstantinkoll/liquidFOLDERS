@@ -31,8 +31,8 @@ EXPORTS
 	LFGeoCoordinateToString @105
 	LFGeoCoordinatesToString @106
 	LFTimeToString @107
-	LFDurationToString @108
-	LFBitrateToString @109
+	LFBitrateToString @108
+	LFDurationToString @109
 	LFMegapixelToString @110
 	LFAttributeToString @111
 	LFInitVariantData @112

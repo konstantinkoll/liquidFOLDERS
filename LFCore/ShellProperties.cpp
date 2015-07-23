@@ -310,7 +310,7 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 		}
 }
 
-void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename)
+void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, BOOL ShellProperties)
 {
 	assert(pItemDescriptor);
 	assert(Filename);
@@ -339,6 +339,9 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename)
 	pItemDescriptor->CoreAttributes.SlaveID = ContextSlaves[pItemDescriptor->CoreAttributes.ContextID];
 
 	// Shell properties
+	if (!ShellProperties)
+		return;
+
 	LPITEMIDLIST pidlFQ;
 	if (SUCCEEDED(SHParseDisplayName(Filename, NULL, &pidlFQ, 0, NULL)))
 	{

@@ -179,6 +179,18 @@ public:
 };
 
 
+// CPropertySize
+//
+
+class CPropertySize : public CProperty
+{
+public:
+	CPropertySize(LFVariantData* pData);
+
+	virtual CString GetValidChars();
+};
+
+
 // CPropertyDuration
 //
 

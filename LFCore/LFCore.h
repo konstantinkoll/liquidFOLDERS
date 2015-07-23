@@ -115,11 +115,11 @@ LFCORE_API void __stdcall LFGeoCoordinatesToString(const LFGeoCoordinates c, WCH
 // Konvertiert eine Zeit in eine Zeichenkette
 LFCORE_API void __stdcall LFTimeToString(const FILETIME t, WCHAR* pStr, SIZE_T cCount, BOOL IncludeTime=TRUE);
 
-// Konvertiert eine Zeitdauer in eine Zeichenkette
-LFCORE_API void __stdcall LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount);
-
 // Konvertiert eine Bitrate in eine Zeichenkette
 LFCORE_API void __stdcall LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount);
+
+// Konvertiert eine Zeitdauer in eine Zeichenkette
+LFCORE_API void __stdcall LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine Megapixel-Angabe in eine Zeichenkette
 LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount);

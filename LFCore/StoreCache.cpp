@@ -441,7 +441,8 @@ void SetStoreAttributes(LFStoreDescriptor* s)
 	assert(((s->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((s->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
 
 	// Source
-	s->Source = ((s->Mode & LFStoreModeBackendMask)==LFStoreModeBackendInternal) ? LFTypeSourceInternal : (s->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift;
+	if (s->Source==LFTypeSourceUnknown)
+		s->Source = ((s->Mode & LFStoreModeBackendMask)==LFStoreModeBackendInternal) ? LFTypeSourceInternal : (s->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift;
 
 	// Store name and source of mounted volume
 	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)

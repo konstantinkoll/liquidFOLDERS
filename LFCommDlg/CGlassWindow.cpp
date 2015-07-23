@@ -27,14 +27,22 @@ BOOL CGlassWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
 	rect.DeflateRect(32, 32);
 
-	if ((sz.cx!=0) && (sz.cy!=0))
+	if ((sz.cx<0) || (sz.cy<0))
 	{
-		rect.left = (rect.left+rect.right)/2 - sz.cx;
-		rect.right = rect.left + sz.cx;
+		rect.left = rect.right-rect.Width()/3;
+		rect.top = rect.bottom-rect.Height()/2;
 
-		rect.top = (rect.top+rect.bottom)/2 - sz.cy;
-		rect.bottom = rect.top + sz.cy;
+		rect.OffsetRect(16, 16);
 	}
+	else
+		if ((sz.cx>0) && (sz.cy>0))
+		{
+			rect.left = (rect.left+rect.right)/2 - sz.cx;
+			rect.right = rect.left + sz.cx;
+
+			rect.top = (rect.top+rect.bottom)/2 - sz.cy;
+			rect.bottom = rect.top + sz.cy;
+		}
 
 	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
 		dwStyle | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
@@ -45,7 +53,7 @@ BOOL CGlassWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 
 	if (m_WindowPlacement.length==sizeof(m_WindowPlacement))
 	{
-		if ((sz.cx!=0) && (sz.cy!=0))
+		if ((sz.cx>0) && (sz.cy>0))
 		{
 			m_WindowPlacement.rcNormalPosition.right = m_WindowPlacement.rcNormalPosition.left + sz.cx;
 			m_WindowPlacement.rcNormalPosition.bottom = m_WindowPlacement.rcNormalPosition.top + sz.cy;

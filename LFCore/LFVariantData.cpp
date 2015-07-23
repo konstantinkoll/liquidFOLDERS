@@ -85,8 +85,8 @@ extern const SIZE_T AttrSizes[LFTypeCount] = {
 	sizeof(UINT),				// LFTypeFlags
 	sizeof(LFGeoCoordinates),	// LFTypeGeoCoordinates
 	sizeof(FILETIME),			// LFTypeTime
-	sizeof(UINT32),				// LFTypeDuration
 	sizeof(UINT),				// LFTypeBitrate,
+	sizeof(UINT),				// LFTypeDuration
 	sizeof(DOUBLE)				// LFTypeMegapixel
 };
 
@@ -128,8 +128,8 @@ BOOL IsNullValue(UINT Type, const void* v)
 
 	case LFTypeFourCC:
 	case LFTypeUINT:
-	case LFTypeDuration:
 	case LFTypeBitrate:
+	case LFTypeDuration:
 		return (*(UINT*)v)==0;
 
 	case LFTypeRating:
@@ -297,12 +297,12 @@ void ToString(const void* v, UINT Type, WCHAR* pStr, SIZE_T cCount)
 			LFTimeToString(*((FILETIME*)v), pStr, cCount);
 			return;
 
-		case LFTypeDuration:
-			LFDurationToString(*((UINT*)v), pStr, cCount);
-			return;
-
 		case LFTypeBitrate:
 			LFBitrateToString(*((UINT*)v), pStr, cCount);
+			return;
+
+		case LFTypeDuration:
+			LFDurationToString(*((UINT*)v), pStr, cCount);
 			return;
 
 		case LFTypeMegapixel:
@@ -494,6 +494,20 @@ LFCORE_API void LFTimeToString(const FILETIME t, WCHAR* pStr, SIZE_T cCount, BOO
 	}
 }
 
+LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount)
+{
+	assert(pStr);
+
+	if (r==0)
+	{
+		*pStr = L'\0';
+	}
+	else
+	{
+		swprintf(pStr, cCount, L"%u kBit/s", (r+500)/1000);
+	}
+}
+
 LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
@@ -507,20 +521,6 @@ LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount)
 	else
 	{
 		swprintf(pStr, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
-	}
-}
-
-LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount)
-{
-	assert(pStr);
-
-	if (r==0)
-	{
-		*pStr = L'\0';
-	}
-	else
-	{
-		swprintf(pStr, cCount, L"%u kBit/s", (r+500)/1000);
 	}
 }
 
@@ -604,7 +604,10 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 
 	if (pStr)
 	{
-		SIZE_T sz = wcslen(pStr);
+		SIZE_T Size = wcslen(pStr);
+
+		WCHAR Buffer[256];
+		WCHAR* Ptr;
 
 		INT LatDeg;
 		INT LatMin;
@@ -655,11 +658,11 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 			}
 
 			if ((pStr[0]>=L'0') && (pStr[0]<=L'5'))
-				if (sz<=2)
+				if (Size<=2)
 				{
 					v.Rating = (BYTE)((pStr[0]-L'0')*2);
 
-					if (sz==2)
+					if (Size==2)
 						if (pStr[1]==L'½')
 							v.Rating++;
 
@@ -667,15 +670,15 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 					return;
 				}
 
-			if ((sz>=1) && (sz<=5))
+			if ((Size>=1) && (Size<=5))
 			{
 				BOOL Same = TRUE;
-				for (UINT a=1; a<sz; a++)
+				for (UINT a=1; a<Size; a++)
 					Same &= (pStr[a]==pStr[a-1]);
 
 				if (Same)
 				{
-					v.Rating = (BYTE)(sz*2);
+					v.Rating = (BYTE)(Size*2);
 					v.IsNull = FALSE;
 					return;
 				}
@@ -689,9 +692,63 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 
 			break;
 
+		case LFTypeSize:
+			for (Ptr=Buffer; *pStr; pStr++)
+				switch (*pStr)
+				{
+				case L'0':
+				case L'1':
+				case L'2':
+				case L'3':
+				case L'4':
+				case L'5':
+				case L'6':
+				case L'7':
+				case L'8':
+				case L'9':
+					*(Ptr++) = *pStr;
+
+				case L'.':
+				case L',':
+				case L'\'':
+					break;
+
+				default:
+					goto Abort;
+				}
+
+Abort:
+			*Ptr = L'\0';
+
+			if (swscanf_s(Buffer, L"%I64d", &v.INT64)==1)
+			{
+				v.IsNull = FALSE;
+
+				while (*pStr==L' ')
+					pStr++;
+
+				if ((_wcsicmp(pStr, L"KB")==0) || (_wcsicmp(pStr, L"K")==0))
+				{
+					v.INT64 *= 1024;
+				}
+				else
+					if ((_wcsicmp(pStr, L"MB")==0) || (_wcsicmp(pStr, L"M")==0))
+					{
+						v.INT64 *= 1024*1024;
+					}
+					else
+						if ((_wcsicmp(pStr, L"GB")==0) || (_wcsicmp(pStr, L"G")==0))
+						{
+							v.INT64 *= 1024*1024*1024;
+						}
+			}
+
+			break;
+
 		case LFTypeFraction:
 			if (swscanf_s(pStr, L"%u/%u", &v.Fraction.Num, &v.Fraction.Denum)==2)
 				v.IsNull = FALSE;
+
 			break;
 
 		case LFTypeDouble:
@@ -816,19 +873,19 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 
 			break;
 
-		case LFTypeDuration:
-			if (swscanf_s(pStr, L"%u:%u:%u", &Hour, &Min, &Sec)==3)
+		case LFTypeBitrate:
+			if (swscanf_s(pStr, L"%u", &v.Bitrate)==1)
 			{
-				v.Duration = 1000*(Hour*3600+Min*60+Sec);
+				v.Bitrate *= 1000;
 				v.IsNull = FALSE;
 			}
 
 			break;
 
-		case LFTypeBitrate:
-			if (swscanf_s(pStr, L"%u", &v.Bitrate)==1)
+		case LFTypeDuration:
+			if (swscanf_s(pStr, L"%u:%u:%u", &Hour, &Min, &Sec)==3)
 			{
-				v.Bitrate *= 1000;
+				v.Duration = 1000*(Hour*3600+Min*60+Sec);
 				v.IsNull = FALSE;
 			}
 

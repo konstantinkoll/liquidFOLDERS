@@ -65,8 +65,11 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 		break;
 
 	case LFTypeUINT:
-	case LFTypeSize:
 		pProperty = new CPropertyNumber(pData);
+		break;
+
+	case LFTypeSize:
+		pProperty = new CPropertySize(pData);
 		break;
 
 	case LFTypeDuration:
@@ -633,6 +636,20 @@ CPropertyNumber::CPropertyNumber(LFVariantData* pData)
 CString CPropertyNumber::GetValidChars()
 {
 	return _T("0123456789");
+}
+
+
+// CPropertySize
+//
+
+CPropertySize::CPropertySize(LFVariantData* pData)
+	: CProperty(pData)
+{
+}
+
+CString CPropertySize::GetValidChars()
+{
+	return _T("0123456789 KkMmGgBb");
 }
 
 
