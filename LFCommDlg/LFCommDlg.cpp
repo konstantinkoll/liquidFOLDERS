@@ -457,7 +457,7 @@ CString GetLatestVersion(CString CurrentVersion)
 	// License
 	if (LFIsLicensed())
 	{
-		CurrentVersion += _T(" (licensed");
+		CurrentVersion += _T(" (licensed)");
 	}
 	else
 		if (LFIsSharewareExpired())

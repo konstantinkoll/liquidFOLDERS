@@ -172,20 +172,40 @@ BOOL CMainWnd::CreateFilter(WCHAR* FileName)
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 {
 	// Filter
-	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
+	if (pMsg->message==WM_KEYDOWN)
 	{
-		theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
+		// Set Focus
+		if ((pMsg->wParam=='F') && (GetKeyState(VK_CONTROL)<0))
+		{
+			m_wndSearch.SetFocus();
 
-		LFFilter* pFilter = LFAllocFilter();
-		pFilter->Mode = LFFilterModeSearch;
-		m_wndSearch.GetWindowText(pFilter->Searchterm, 256);
+			return TRUE;
+		}
 
-		SendMessage(WM_NAVIGATETO, (WPARAM)pFilter);
-
-		if (!m_IsClipboard)
+		// Lose Focus
+		if ((pMsg->wParam==VK_ESCAPE) && (pMsg->hwnd==m_wndSearch))
+		{
 			m_wndMainView.SetFocus();
 
-		return TRUE;
+			return TRUE;
+		}
+
+		// Start search
+		if ((pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
+		{
+			theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
+
+			LFFilter* pFilter = LFAllocFilter();
+			pFilter->Mode = LFFilterModeSearch;
+			m_wndSearch.GetWindowText(pFilter->Searchterm, 256);
+
+			SendMessage(WM_NAVIGATETO, (WPARAM)pFilter);
+
+			if (!m_IsClipboard)
+				m_wndMainView.SetFocus();
+
+			return TRUE;
+		}
 	}
 
 	// X-Buttons
