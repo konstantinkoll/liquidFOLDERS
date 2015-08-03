@@ -73,16 +73,16 @@ void LFAttributeListDlg::FinalizeListCtrl(CListCtrl* pListCtrl, INT Focus, BOOL 
 	if (Sort)
 		pListCtrl->SortItems(MyCompareProc, 0);
 
-	INT select = 0;
+	INT Select = 0;
 	if (Focus!=-1)
 		for (UINT a=0; a<(UINT)pListCtrl->GetItemCount(); a++)
 			if ((INT)pListCtrl->GetItemData(a)==Focus)
 			{
-				select = a;
+				Select = a;
 				break;
 			}
 
-	pListCtrl->SetItemState(select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	pListCtrl->SetItemState(Select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
 void LFAttributeListDlg::FinalizeListCtrl(UINT nID, INT Focus, BOOL Sort)

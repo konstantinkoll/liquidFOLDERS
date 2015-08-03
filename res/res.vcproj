@@ -480,14 +480,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\LFAttrLocationName_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\LFAttrLocationName_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\LFAttrPriority_16.png"
 				>
 			</File>
@@ -557,6 +549,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\LFAttrTitle_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrURL_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrURL_32.png"
 				>
 			</File>
 			<File
@@ -1001,6 +1001,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\JumpToLocation_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Key_Tiny.ico"
 			>
 		</File>
@@ -1022,10 +1026,6 @@
 		</File>
 		<File
 			RelativePath=".\Location_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath="LocationGPS_Tiny.ico"
 			>
 		</File>
 		<File

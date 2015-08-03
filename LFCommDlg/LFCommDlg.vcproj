@@ -679,6 +679,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\JumpToLocation_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Key_Tiny.ico"
 				>
 			</File>
@@ -704,10 +708,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Location_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\LocationGPS_Tiny.ico"
 				>
 			</File>
 			<File
