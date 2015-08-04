@@ -232,11 +232,11 @@ UINT CCalendarView::StartOfMonth(UINT Month)
 
 void CCalendarView::GetMonthSize(LPSIZE Size)
 {
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
-	m_ColumnWidth = dc->GetTextExtent(_T("00")).cx+2*PADDING;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
+	m_ColumnWidth = pDC->GetTextExtent(_T("00")).cx+2*PADDING;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	Size->cx = 7*m_ColumnWidth+6*COLUMNGUTTER;
 	Size->cy = m_FontHeight[1]+4*LFCategoryPadding+6*(m_FontHeight[0]+2*PADDING-1)+1;

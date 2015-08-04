@@ -177,11 +177,11 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	for (UINT a=0; a<LFErrorCount; a++)
 		LFGetErrorText(m_ErrorText[a], 256, a);
 
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_LargeFont);
-	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_LargeFont);
+	m_FontHeight = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	m_ItemHeight = max(48, 4*m_FontHeight);
 

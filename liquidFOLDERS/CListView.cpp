@@ -761,13 +761,13 @@ INT CListView::GetMaxLabelWidth(INT Max)
 
 	if (p_CookedFiles)
 	{
-		CDC* dc = GetWindowDC();
-		CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+		CDC* pDC = GetWindowDC();
+		CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
 			CString label = GetLabel(p_CookedFiles->m_Items[a]);
-			INT cx = dc->GetTextExtent(label).cx;
+			INT cx = pDC->GetTextExtent(label).cx;
 
 			if (cx>Width)
 			{
@@ -781,8 +781,8 @@ INT CListView::GetMaxLabelWidth(INT Max)
 			}
 		}
 	
-		dc->SelectObject(pOldFont);
-		ReleaseDC(dc);
+		pDC->SelectObject(pOldFont);
+		ReleaseDC(pDC);
 	}
 
 	return Width;
@@ -794,14 +794,14 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 
 	if (p_CookedFiles)
 	{
-		CDC* dc = GetWindowDC();
-		CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+		CDC* pDC = GetDC();
+		CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
 			WCHAR tmpStr[256];
 			LFAttributeToString(p_CookedFiles->m_Items[a], Col, tmpStr, 256);
-			INT cx = dc->GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
+			INT cx = pDC->GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
 
 			if (cx>Width)
 			{
@@ -815,8 +815,8 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 			}
 		}
 	
-		dc->SelectObject(pOldFont);
-		ReleaseDC(dc);
+		pDC->SelectObject(pOldFont);
+		ReleaseDC(pDC);
 	}
 
 	return Width;

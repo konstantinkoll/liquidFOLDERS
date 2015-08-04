@@ -774,13 +774,13 @@ void CInspectorGrid::Init()
 	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
 	m_TooltipCtrl.Create(this);
 
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_LargeFont);
-	m_FontHeight[1] = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectStockObject(DEFAULT_GUI_FONT);
-	m_FontHeight[0] = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetWindowDC();
+	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_LargeFont);
+	m_FontHeight[1] = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectStockObject(DEFAULT_GUI_FONT);
+	m_FontHeight[0] = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	m_RowHeight = max(m_FontHeight[0]+2, 16);
 	m_IconSize = (m_RowHeight>=27) ? 27 : (m_RowHeight>=22) ? 22 : 16;
@@ -851,11 +851,11 @@ void CInspectorGrid::AddProperty(CProperty* pProperty, UINT Category, WCHAR* Nam
 	wcscpy_s(tmpName, 256, Name);
 	wcscat_s(tmpName, 256, L":");
 
-	CDC* dc = GetWindowDC();
-	CGdiObject* pOldFont = dc->SelectStockObject(DEFAULT_GUI_FONT);
-	prop.LabelWidth = dc->GetTextExtent(tmpName).cx;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetDC();
+	CGdiObject* pOldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
+	prop.LabelWidth = pDC->GetTextExtent(tmpName).cx;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	m_Properties.AddItem(prop);
 

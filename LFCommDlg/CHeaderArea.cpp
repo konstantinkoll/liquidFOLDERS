@@ -69,14 +69,14 @@ UINT CHeaderArea::GetPreferredHeight()
 {
 	UINT h = 2*BORDER+MARGIN;
 
-	CDC* dc = GetDC();
-	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_CaptionFont);
-	h += dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(LFGetApp()->m_DefaultFont);
-	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_CaptionFont);
+	h += pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(LFGetApp()->m_DefaultFont);
+	m_FontHeight = pDC->GetTextExtent(_T("Wy")).cy;
 	h += m_FontHeight;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	return max(h, max(60, (UINT)m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN+MARGIN/2));
 }

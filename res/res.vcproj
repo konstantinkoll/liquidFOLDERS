@@ -121,18 +121,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="optipng"
-			>
-			<File
-				RelativePath=".\optipng\optipng.bat"
-				>
-			</File>
-			<File
-				RelativePath=".\optipng\optipng.exe"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Ribbon"
 			>
 			<File
@@ -884,6 +872,90 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Update"
+			>
+			<File
+				RelativePath=".\Update\UpdateIATA_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateIATA_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateImportantBugfix_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateImportantBugfix_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNetwork_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNetwork_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNewFeatues_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNewFeatues_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdatePerformance_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdatePerformance_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurity7_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurity7_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurityVista_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurityVista_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSmallBugfix_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSmallBugfix_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateUI_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateUI_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateVisualization_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateVisualization_32.png"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\About_Tiny.ico"
 			>
@@ -986,14 +1058,6 @@
 		</File>
 		<File
 			RelativePath="Info.ico"
-			>
-		</File>
-		<File
-			RelativePath="Inspector_Black.png"
-			>
-		</File>
-		<File
-			RelativePath="Inspector_Grey.png"
 			>
 		</File>
 		<File

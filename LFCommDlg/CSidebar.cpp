@@ -104,11 +104,11 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	}
 	else
 	{
-		CDC* dc = GetDC();
-		CFont* pOldFont = dc->SelectObject(Selectable ? &LFGetApp()->m_LargeFont : &afxGlobalData.fontBold);
-		sz = dc->GetTextExtent(i.Caption);
-		dc->SelectObject(pOldFont);
-		ReleaseDC(dc);
+		CDC* pDC = GetDC();
+		CFont* pOldFont = pDC->SelectObject(Selectable ? &LFGetApp()->m_LargeFont : &afxGlobalData.fontBold);
+		sz = pDC->GetTextExtent(i.Caption);
+		pDC->SelectObject(pOldFont);
+		ReleaseDC(pDC);
 
 		if (Selectable)
 		{
@@ -263,11 +263,11 @@ INT CSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (m_ShowNumbers)
 	{
-		CDC* dc = GetDC();
-		CFont* pOldFont = dc->SelectObject(&afxGlobalData.fontBold);
-		m_NumberWidth = dc->GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
-		dc->SelectObject(pOldFont);
-		ReleaseDC(dc);
+		CDC* pDC = GetDC();
+		CFont* pOldFont = pDC->SelectObject(&afxGlobalData.fontBold);
+		m_NumberWidth = pDC->GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
+		pDC->SelectObject(pOldFont);
+		ReleaseDC(pDC);
 	}
 
 	return 0;

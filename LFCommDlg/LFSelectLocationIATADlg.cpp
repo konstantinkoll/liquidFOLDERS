@@ -22,11 +22,11 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParent
 {
 	m_nIDTemplate = nIDTemplate;
 
-	m_LastCountrySelected = LFGetApp()->GetGlobalInt(_T("IATALastCountrySelected"), 0);
-	m_LastSortColumn = LFGetApp()->GetGlobalInt(_T("IATALastSortColumn"), 0);
-	m_LastSortDirection = LFGetApp()->GetGlobalInt(_T("IATALastSortDirection"), FALSE);
-	m_OverwriteName = AllowOverwriteName ? LFGetApp()->GetGlobalInt(_T("IATAOverwriteName"), TRUE) : FALSE;
-	m_OverwriteGPS = AllowOverwriteGPS ? LFGetApp()->GetGlobalInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
+	m_LastCountrySelected = LFGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
+	m_LastSortColumn = LFGetApp()->GetInt(_T("IATALastSortColumn"), 0);
+	m_LastSortDirection = LFGetApp()->GetInt(_T("IATALastSortDirection"), FALSE);
+	m_OverwriteName = AllowOverwriteName ? LFGetApp()->GetInt(_T("IATAOverwriteName"), TRUE) : FALSE;
+	m_OverwriteGPS = AllowOverwriteGPS ? LFGetApp()->GetInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
 	m_AllowOverwriteName = AllowOverwriteName;
 	m_AllowOverwriteGPS = AllowOverwriteGPS;
 
@@ -53,13 +53,13 @@ void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		LFGetApp()->WriteGlobalInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
-		LFGetApp()->WriteGlobalInt(_T("IATALastSortColumn"), m_LastSortColumn);
-		LFGetApp()->WriteGlobalInt(_T("IATALastSortDirection"), m_LastSortDirection);
+		LFGetApp()->WriteInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
+		LFGetApp()->WriteInt(_T("IATALastSortColumn"), m_LastSortColumn);
+		LFGetApp()->WriteInt(_T("IATALastSortDirection"), m_LastSortDirection);
 		if (m_AllowOverwriteName)
-			LFGetApp()->WriteGlobalInt(_T("IATAOverwriteName"), m_OverwriteName);
+			LFGetApp()->WriteInt(_T("IATAOverwriteName"), m_OverwriteName);
 		if (m_AllowOverwriteGPS)
-			LFGetApp()->WriteGlobalInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
+			LFGetApp()->WriteInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
 	}
 }
 

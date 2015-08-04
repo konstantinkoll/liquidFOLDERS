@@ -164,8 +164,6 @@ protected:
 	CList<ResourceCacheItem> m_ResourceCache;
 	UINT m_NagCounter;
 
-	CString GetGlobalRegPath();
-
 	afx_msg void OnAppPurchase();
 	afx_msg void OnAppEnterLicenseKey();
 	afx_msg void OnAppSupport();

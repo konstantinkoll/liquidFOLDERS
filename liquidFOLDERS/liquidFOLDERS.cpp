@@ -48,7 +48,7 @@ END_MESSAGE_MAP()
 CLiquidFoldersApp::CLiquidFoldersApp()
 	: LFApplication(theAppID)
 {
-	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.StoreManager.NewWindow"));
+	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.NewWindow"));
 	m_NagCounter = 3;
 	m_AppInitialized = FALSE;
 }
@@ -81,7 +81,7 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	// AppID
 	if (m_ShellLibLoaded)
-		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.StoreManager");
+		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS");
 
 	// RestartManager
 	if (m_KernelLibLoaded)

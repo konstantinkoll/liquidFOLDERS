@@ -40,7 +40,6 @@ IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
 // PNG
 //
 
-IDB_INSPECTOR           PNG                     "res\\Inspector_Grey.png"
 IDB_MULTIPLE            PNG                     "res\\Multiple.png"
 IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
 IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
@@ -365,8 +364,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_PANE_FILTER          "Blendet den Filter ein oder aus.\nFilter"
-    ID_PANE_INSPECTOR       "Blendet den Inspektor ein oder aus.\nInspektor"
+    ID_PANE_FILTER          "Blendet die Filter-Leiste ein oder aus.\nFilter"
+    ID_PANE_INSPECTOR       "Blendet die Eigenschaften-Leiste ein oder aus.\nEigenschaften"
 END
 
 STRINGTABLE 
@@ -792,7 +791,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_PANE_FILTER          "Abre y cierra el panel de filtros.\nFiltro"
-    ID_PANE_INSPECTOR       "Abre y cierra el inspector del panel.\nInspector"
+    ID_PANE_INSPECTOR       "Abre y cierra el panel de propriedades.\nPropriedades"
 END
 
 STRINGTABLE 
@@ -1217,7 +1216,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_PANE_FILTER          "Insère le filtre ou masque le filtre.\nFiltre"
-    ID_PANE_INSPECTOR       "Insère le filtre ou masque l'inspecteur.\nInspecteur"
+    ID_PANE_INSPECTOR       "Insère le filtre ou masque les propriétés.\nPropriétés"
 END
 
 STRINGTABLE 
@@ -1693,7 +1692,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_PANE_FILTER          "Opens and closes the filter pane.\nFilter"
-    ID_PANE_INSPECTOR       "Opens and closes the inspector pane.\nInspector"
+    ID_PANE_INSPECTOR       "Opens and closes the properties pane.\nProperties"
 END
 
 STRINGTABLE 

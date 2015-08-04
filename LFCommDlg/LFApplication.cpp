@@ -12,7 +12,8 @@
 // LFApplication
 //
 
-#define ResetNagCounter     m_NagCounter = 0;
+#define RESETNAGCOUNTER     m_NagCounter = 0;
+#define GLOBALREGPATH       _T("SOFTWARE\\liquidFOLDERS\\")
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
@@ -24,18 +25,20 @@ END_MESSAGE_MAP()
 
 void PlayRegSound(CString Identifier)
 {
-	CString strFile;
-	CString strKey = _T("AppEvents\\Schemes\\");
-	strKey += Identifier;
-	strKey += _T("\\.current");
+	CString strKey;
+	strKey.Format(_T("AppEvents\\Schemes\\%s\\.current"), Identifier);
 
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
 
 	if (reg.Open(strKey))
+	{
+		CString strFile;
+
 		if (reg.Read(_T(""), strFile))
 			if (!strFile.IsEmpty())
 				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
+	}
 }
 
 
@@ -291,30 +294,30 @@ BOOL LFApplication::InitInstance()
 	// Fonts
 	CString face = GetDefaultFontFace();
 
-	INT sz = 8;
+	INT Size = 8;
 	LOGFONT lf;
 	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
-		sz = abs(lf.lfHeight);
+		Size = abs(lf.lfHeight);
 
-	m_DefaultFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_DefaultFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_BoldFont.CreateFont(-sz, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
+	m_BoldFont.CreateFont(-Size, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_ItalicFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
+	m_ItalicFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_SmallFont.CreateFont(-(sz-2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_SmallFont.CreateFont(-(Size-2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		(sz<=11) ? _T("Tahoma") : face);
-	m_LargeFont.CreateFont(-(sz+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		(Size<=11) ? _T("Tahoma") : face);
+	m_LargeFont.CreateFont(-(Size+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_CaptionFont.CreateFont(-(sz+11), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_CaptionFont.CreateFont(-(Size+11), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		_T("Letter Gothic"));
-	m_UACFont.CreateFont(-(sz+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_UACFont.CreateFont(-(Size+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
 
@@ -335,7 +338,7 @@ BOOL LFApplication::InitInstance()
 	// Registry
 	SetRegistryKey(_T(""));
 
-	ResetNagCounter;
+	RESETNAGCOUNTER;
 
 	// Beim ersten Mal Standard-Store erzeugen
 	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
@@ -407,7 +410,7 @@ BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 			CString tmpStr((LPCSTR)IDS_NOLICENSE);
 
 			MessageBox(pWndParent ? pWndParent->GetSafeHwnd() : GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
-			ResetNagCounter;
+			RESETNAGCOUNTER;
 
 			return TRUE;
 		}
@@ -474,20 +477,6 @@ void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 }
 
 
-CString LFApplication::GetGlobalRegPath()
-{
-	CString strReg = _T("SOFTWARE\\");
-
-	CString strRegKey = m_pszRegistryKey;
-	if (!strRegKey.IsEmpty())
-	{
-		strReg += strRegKey;
-		strReg += _T("\\");
-	}
-
-	return strReg;
-}
-
 INT LFApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault)
 {
 	ENSURE(lpszEntry);
@@ -497,7 +486,7 @@ INT LFApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault)
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
 
-	if (reg.Open(GetGlobalRegPath()))
+	if (reg.Open(GLOBALREGPATH))
 		reg.Read(lpszEntry, nRet);
 
 	return nRet;
@@ -513,7 +502,7 @@ CString LFApplication::GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault)
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
 
-	if (reg.Open(GetGlobalRegPath()))
+	if (reg.Open(GLOBALREGPATH))
 		reg.Read(lpszEntry, strRet);
 
 	return strRet;
@@ -526,7 +515,7 @@ BOOL LFApplication::WriteGlobalInt(LPCTSTR lpszEntry, INT nValue)
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, FALSE);
 
-	if (reg.CreateKey(GetGlobalRegPath()))
+	if (reg.CreateKey(GLOBALREGPATH))
 		return reg.Write(lpszEntry, nValue);
 
 	return FALSE;
@@ -540,7 +529,7 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, FALSE);
 
-	if (reg.CreateKey(GetGlobalRegPath()))
+	if (reg.CreateKey(GLOBALREGPATH))
 		return reg.Write(lpszEntry, lpszValue);
 
 	return FALSE;

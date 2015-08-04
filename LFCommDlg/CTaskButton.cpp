@@ -76,11 +76,11 @@ INT CTaskButton::GetPreferredWidth()
 
 	if (!m_Caption.IsEmpty())
 	{
-		CDC* dc = GetDC();
-		HFONT hOldFont = (HFONT)dc->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
-		l += dc->GetTextExtent(m_Caption).cx;
-		dc->SelectObject(hOldFont);
-		ReleaseDC(dc);
+		CDC* pDC = GetDC();
+		HFONT hOldFont = (HFONT)pDC->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
+		l += pDC->GetTextExtent(m_Caption).cx;
+		pDC->SelectObject(hOldFont);
+		ReleaseDC(pDC);
 	}
 
 	return l;

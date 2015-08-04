@@ -78,6 +78,8 @@ IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 IDB_STOREBACKUP         BITMAP                  "res\\StoreBackup_32.bmp"
 IDB_STORESYNCHRONIZE    BITMAP                  "res\\StoreSynchronize_32.bmp"
 IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
+IDB_UPDATEICONS_16      BITMAP                  "res\\UpdateIcons_16.bmp"
+IDB_UPDATEICONS_32      BITMAP                  "res\\UpdateIcons_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -472,7 +474,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,113,96,100,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
-    LTEXT           "Eine neue Version von liquidFOLDERS steht zum Herunterladen bereit.",IDC_STATIC,7,50,206,16
+    LTEXT           "Eine neue Version von liquidFOLDERS steht zum Herunterladen bereit:",IDC_STATIC,7,50,206,16
     CONTROL         "Dieses Update &ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,206,10
     CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
@@ -864,6 +866,19 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_UPDATE_SECUTIRYPATCH "Behebt kritische Sicherheitslücken"
+    IDS_UPDATE_IMPORTANTBUGFIX "Wichtige Fehlerbehebungen"
+    IDS_UPDATE_NETWORKAPI   "Aktualisierter Zugriff auf Cloud-Dienste"
+    IDS_UPDATE_NEWFEATURE   "Neue Funktionen"
+    IDS_UPDATE_NEWVISUALIZATION "Neue Visualisierungen"
+    IDS_UPDATE_UI           "Verbesserte Benutzeroberfläche"
+    IDS_UPDATE_SMALLBUGFIX  "Kleine Fehlerbehebungen"
+    IDS_UPDATE_IATA         "Aktualisierte Ortsdatenbank"
+    IDS_UPDATE_PERFORMANCE  "Leistungsverbesserungen"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
 END
 
@@ -1204,17 +1219,17 @@ BEGIN
     PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,110,14
 END
 
-IDD_UPDATE DIALOGEX 0, 0, 220, 118
+IDD_UPDATE DIALOGEX 0, 0, 220, 110
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Actualización disponible"
 CLASS "UpdateDlg"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Descargarla ahora",IDOK,123,96,90,14,WS_GROUP
+    DEFPUSHBUTTON   "Descargarla ahora",IDOK,123,88,90,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
-    LTEXT           "Una actualización de liquidFOLDERS está disponible.",IDC_STATIC,7,50,206,16
-    CONTROL         "&Ignorar actualización",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
-    CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
+    LTEXT           "Una actualización de liquidFOLDERS está disponible:",IDC_STATIC,7,50,206,16
+    CONTROL         "&Ignorar actualización",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,206,10
+    CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,93,110,9
 END
 
 IDD_ADDSTORE DIALOGEX 0, 0, 640, 406
@@ -1459,7 +1474,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 213
         TOPMARGIN, 7
-        BOTTOMMARGIN, 110
+        BOTTOMMARGIN, 102
     END
 
     IDD_ADDSTORE, DIALOG
@@ -1987,7 +2002,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Télécharger maintenant",IDOK,113,96,100,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
-    LTEXT           "Une nouvelle version de liquidFOLDERS est prête pour télécharger.",IDC_STATIC,7,50,206,16
+    LTEXT           "Une nouvelle version de liquidFOLDERS est prête pour télécharger:",IDC_STATIC,7,50,206,16
     CONTROL         "&Ignorer cette version",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
     CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
@@ -2756,17 +2771,17 @@ BEGIN
     PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,140,80,14
 END
 
-IDD_UPDATE DIALOGEX 0, 0, 220, 118
+IDD_UPDATE DIALOGEX 0, 0, 220, 110
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update available"
 CLASS "UpdateDlg"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Download now",IDOK,133,96,80,14,WS_GROUP
+    DEFPUSHBUTTON   "Download now",IDOK,133,88,80,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
-    LTEXT           "A new version of liquidFOLDERS is available for download.",IDC_STATIC,7,50,206,16
-    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
-    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,120,9
+    LTEXT           "A new version of liquidFOLDERS is available for download:",IDC_STATIC,7,50,206,8
+    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,206,10
+    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,93,120,9
 END
 
 IDD_ADDSTORE DIALOGEX 0, 0, 640, 406
@@ -3011,7 +3026,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 213
         TOPMARGIN, 7
-        BOTTOMMARGIN, 110
+        BOTTOMMARGIN, 102
     END
 
     IDD_ADDSTORE, DIALOG
@@ -3158,6 +3173,19 @@ BEGIN
     IDS_COMPARE_ISBELOWEQUAL "is at most"
     IDS_COMPARE_ENDSWITH    "ends with"
     IDS_COMPARE_CONTAINS    "contains"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
+    IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
+    IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
+    IDS_UPDATE_NEWFEATURE   "New features"
+    IDS_UPDATE_NEWVISUALIZATION "New visualizations"
+    IDS_UPDATE_UI           "UI improvements"
+    IDS_UPDATE_SMALLBUGFIX  "Minor bugfixes"
+    IDS_UPDATE_IATA         "Updated IATA airport database"
+    IDS_UPDATE_PERFORMANCE  "Performance improvements"
 END
 
 STRINGTABLE 

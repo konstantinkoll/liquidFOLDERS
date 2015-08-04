@@ -67,12 +67,12 @@ void CHeaderButton::SetValue(CString Value, BOOL ShowDropdown, BOOL Repaint)
 
 void CHeaderButton::GetPreferredSize(CSize& sz, UINT& CaptionWidth)
 {
-	CDC* dc = GetDC();
-	HFONT hOldFont = (HFONT)dc->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
-	sz = dc->GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
-	m_CaptionWidth = CaptionWidth = m_Caption.IsEmpty() ? 0 : dc->GetTextExtent(m_Caption+_T(":")).cx;
-	dc->SelectObject(hOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetDC();
+	HFONT hOldFont = (HFONT)pDC->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
+	sz = pDC->GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
+	m_CaptionWidth = CaptionWidth = m_Caption.IsEmpty() ? 0 : pDC->GetTextExtent(m_Caption+_T(":")).cx;
+	pDC->SelectObject(hOldFont);
+	ReleaseDC(pDC);
 
 	sz.cx += m_ShowDropdown ? 3*BORDER+14 : 2*BORDER+5;
 	sz.cy += 2*BORDER;

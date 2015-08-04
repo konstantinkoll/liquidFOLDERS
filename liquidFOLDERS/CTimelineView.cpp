@@ -626,11 +626,11 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_CaptionHeight = max(cy, m_FontHeight[1]+m_FontHeight[3]+BORDER/2);
 
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&theApp.m_BoldFont);
-	m_LabelWidth = dc->GetTextExtent(_T("8888")).cx+2*BORDER;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&theApp.m_BoldFont);
+	m_LabelWidth = pDC->GetTextExtent(_T("8888")).cx+2*BORDER;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	return 0;
 }

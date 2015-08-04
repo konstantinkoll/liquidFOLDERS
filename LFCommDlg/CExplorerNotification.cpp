@@ -148,11 +148,11 @@ void CExplorerNotification::AdjustLayout()
 	{
 		CSize sz;
 
-		CDC* dc = GetDC();
-		HGDIOBJ hOldFont = dc->SelectStockObject(DEFAULT_GUI_FONT);
-		sz = dc->GetTextExtent(m_CommandText);
-		dc->SelectObject(hOldFont);
-		ReleaseDC(dc);
+		CDC* pDC = GetDC();
+		HGDIOBJ hOldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
+		sz = pDC->GetTextExtent(m_CommandText);
+		pDC->SelectObject(hOldFont);
+		ReleaseDC(pDC);
 
 		const UINT Height = MulDiv(11, HIWORD(GetDialogBaseUnits()), 8)+1;
 		const UINT Width = sz.cx+Height+BORDERX;

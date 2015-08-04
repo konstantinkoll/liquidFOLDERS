@@ -48,6 +48,8 @@
 #define IDB_SANTA                       20135
 #define IDB_LIQUIDFOLDERS_64            20136
 #define IDB_LIQUIDFOLDERS_128           20137
+#define IDB_UPDATEICONS_16              20138
+#define IDB_UPDATEICONS_32              20139
 #define IDI_RESET_NORMAL                20200
 #define IDI_RESET_HOT                   20201
 #define IDI_RESET_PRESSED               20202
@@ -104,7 +106,17 @@
 #define IDS_COMPARE_ISBELOWEQUAL        20407
 #define IDS_COMPARE_ENDSWITH            20408
 #define IDS_COMPARE_CONTAINS            20409
-#define IDF_LETTERGOTHIC                20500
+#define IDS_UPDATE_FIRST                20500
+#define IDS_UPDATE_SECUTIRYPATCH        20500
+#define IDS_UPDATE_IMPORTANTBUGFIX      20501
+#define IDS_UPDATE_NETWORKAPI           20502
+#define IDS_UPDATE_NEWFEATURE           20503
+#define IDS_UPDATE_NEWVISUALIZATION     20504
+#define IDS_UPDATE_UI                   20505
+#define IDS_UPDATE_SMALLBUGFIX          20506
+#define IDS_UPDATE_IATA                 20507
+#define IDS_UPDATE_PERFORMANCE          20508
+#define IDF_LETTERGOTHIC                20600
 #define IDC_CATEGORY1                   21000
 #define IDC_CATEGORY2                   21001
 #define IDC_CATEGORY3                   21002

@@ -513,7 +513,7 @@ CString GetLatestVersion(CString CurrentVersion)
 	return VersionIni;
 }
 
-CString GetIniValue(CString Ini, CString Name)
+CString GetIniValue(CString Ini, const CString Name)
 {
 	while (!Ini.IsEmpty())
 	{
@@ -533,11 +533,61 @@ CString GetIniValue(CString Ini, CString Name)
 	return _T("");
 }
 
-void ParseVersion(CString tmpStr, LFVersion* pVersion)
+void ParseVersion(const CString tmpStr, LFVersion* pVersion)
 {
 	ASSERT(pVersion);
 
 	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
+}
+
+BOOL IsVersionLater(LFVersion& LatestVersion, LFVersion& CurrentVersion)
+{
+	return ((LatestVersion.Major>CurrentVersion.Major) ||
+		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor>CurrentVersion.Minor)) ||
+		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor==CurrentVersion.Minor) && (LatestVersion.Build>CurrentVersion.Build)));
+}
+
+BOOL IsLaterFeature(const CString VersionIni, const CString Name, LFVersion& CurrentVersion)
+{
+	LFVersion FeatureVersion = { 0 };
+
+	ParseVersion(GetIniValue(VersionIni, Name), &FeatureVersion);
+
+	return IsVersionLater(FeatureVersion, CurrentVersion);
+}
+
+DWORD GetFeatures(const CString VersionIni, LFVersion& CurrentVersion)
+{
+	DWORD Features = 0;
+
+	if (IsLaterFeature(VersionIni, _T("SecurityPatch"), CurrentVersion))
+		Features |= UPDATE_SECUTIRYPATCH;
+
+	if (IsLaterFeature(VersionIni, _T("ImportantBugfix"), CurrentVersion))
+		Features |= UPDATE_IMPORTANTBUGFIX;
+
+	if (IsLaterFeature(VersionIni, _T("NetworkAPI"), CurrentVersion))
+		Features |= UPDATE_NETWORKAPI;
+
+	if (IsLaterFeature(VersionIni, _T("NewFeature"), CurrentVersion))
+		Features |= UPDATE_NEWFEATURE;
+
+	if (IsLaterFeature(VersionIni, _T("NewVisualization"), CurrentVersion))
+		Features |= UPDATE_NEWVISUALIZATION;
+
+	if (IsLaterFeature(VersionIni, _T("UI"), CurrentVersion))
+		Features |= UPDATE_UI;
+
+	if (IsLaterFeature(VersionIni, _T("SmallBugfix"), CurrentVersion))
+		Features |= UPDATE_SMALLBUGFIX;
+
+	if (IsLaterFeature(VersionIni, _T("IATA"), CurrentVersion))
+		Features |= UPDATE_IATA;
+
+	if (IsLaterFeature(VersionIni, _T("Performance"), CurrentVersion))
+		Features |= UPDATE_PERFORMANCE;
+
+	return Features;
 }
 
 void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
@@ -545,6 +595,9 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	// Obtain current version from instance version resource
 	CString CurrentVersion;
 	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
+
+	LFVersion CV = { 0 };
+	ParseVersion(CurrentVersion, &CV);
 
 	// Check due?
 	BOOL Check = Force;
@@ -554,6 +607,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	// Perform check
 	CString LatestVersion = LFGetApp()->GetGlobalString(_T("LatestUpdateVersion"));
 	CString LatestMSN = LFGetApp()->GetGlobalString(_T("LatestUpdateMSN"));
+	DWORD LatestFeatures = LFGetApp()->GetGlobalInt(_T("LatestUpdateFeatures"));
 
 	if (Check)
 	{
@@ -564,9 +618,11 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 		{
 			LatestVersion = GetIniValue(VersionIni, _T("Version"));
 			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
+			LatestFeatures = GetFeatures(VersionIni, CV);
 
 			LFGetApp()->WriteGlobalString(_T("LatestUpdateVersion"), LatestVersion);
 			LFGetApp()->WriteGlobalString(_T("LatestUpdateMSN"), LatestMSN);
+			LFGetApp()->WriteGlobalInt(_T("LatestUpdateFeatures"), LatestFeatures);
 		}
 	}
 
@@ -574,18 +630,12 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	BOOL UpdateAvailable = FALSE;
 	if (!LatestVersion.IsEmpty())
 	{
-		LFVersion CV = { 0 };
-		ParseVersion(CurrentVersion, &CV);
-
 		LFVersion LV = { 0 };
 		ParseVersion(LatestVersion, &LV);
 
 		CString IgnoreMSN = LFGetApp()->GetGlobalString(_T("IgnoreUpdateMSN"));
 
-		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) &&
-			((LV.Major>CV.Major) ||
-			((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
-			((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build)));
+		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) && IsVersionLater(LV, CV);
 	}
 
 	// Result
@@ -596,7 +646,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			if (LFGetApp()->m_pUpdateNotification)
 				LFGetApp()->m_pUpdateNotification->DestroyWindow();
 
-			LFUpdateDlg dlg(LatestVersion, LatestMSN, pParentWnd);
+			LFUpdateDlg dlg(LatestVersion, LatestMSN, LatestFeatures, pParentWnd);
 			dlg.DoModal();
 		}
 		else
@@ -606,7 +656,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			}
 			else
 			{
-				LFGetApp()->m_pUpdateNotification = new LFUpdateDlg(LatestVersion, LatestMSN);
+				LFGetApp()->m_pUpdateNotification = new LFUpdateDlg(LatestVersion, LatestMSN, LatestFeatures);
 				LFGetApp()->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
 				LFGetApp()->m_pUpdateNotification->ShowWindow(SW_SHOW);
 			}

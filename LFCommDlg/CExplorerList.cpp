@@ -75,11 +75,11 @@ void CExplorerList::Init()
 	if (pHeader)
 		VERIFY(m_wndHeader.SubclassWindow(pHeader->m_hWnd));
 
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_DefaultFont);
-	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_DefaultFont);
+	m_FontHeight = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	CRect rect;
 	GetWindowRect(rect);

@@ -899,6 +899,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\UpdateIcons_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\ViewOptions_Tiny.ico"
 				>
 			</File>

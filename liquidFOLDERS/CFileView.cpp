@@ -1037,17 +1037,17 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (m_EnableScrolling)
 		ResetScrollbars();
 
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
-	m_FontHeight[0] = m_RowHeight = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(&theApp.m_LargeFont);
-	m_FontHeight[1] = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectStockObject(DEFAULT_GUI_FONT);
-	m_FontHeight[2] = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(&theApp.m_SmallFont);
-	m_FontHeight[3] = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetWindowDC();
+	CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
+	m_FontHeight[0] = m_RowHeight = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(&theApp.m_LargeFont);
+	m_FontHeight[1] = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectStockObject(DEFAULT_GUI_FONT);
+	m_FontHeight[2] = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(&theApp.m_SmallFont);
+	m_FontHeight[3] = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	return 0;
 }
@@ -1285,7 +1285,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					case LFTypeFile:
 						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview) && (theApp.m_Views[m_Context].Mode!=LFViewTimeline))
 						{
-							CDC* pDC = GetWindowDC();
+							CDC* pDC = GetDC();
 							hIcon = theApp.m_ThumbnailCache.GetThumbnailIcon(i, pDC);
 							ReleaseDC(pDC);
 						}

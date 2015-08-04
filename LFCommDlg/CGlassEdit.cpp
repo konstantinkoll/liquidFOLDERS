@@ -70,11 +70,11 @@ INT CGlassEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 	}
 
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&LFGetApp()->m_DefaultFont);
-	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_DefaultFont);
+	m_FontHeight = pDC->GetTextExtent(_T("Wy")).cy;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	m_ClientAreaTopOffset = max(0, (GetPreferredHeight()-BORDER-m_FontHeight)/2-2);
 	SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);

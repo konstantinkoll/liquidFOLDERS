@@ -114,18 +114,18 @@ void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs
 	m_IsEmpty = FALSE;
 	m_Breadcrumbs.m_ItemCount = 0;
 
-	CDC* dc = GetDC();
-	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
 
-	AddFilter(ActiveFilter, dc);
+	AddFilter(ActiveFilter, pDC);
 	while (Breadcrumbs)
 	{
-		AddFilter(Breadcrumbs->filter, dc);
+		AddFilter(Breadcrumbs->filter, pDC);
 		Breadcrumbs = Breadcrumbs->next;
 	}
 
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
 	AdjustLayout();
 }

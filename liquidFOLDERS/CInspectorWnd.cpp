@@ -12,7 +12,6 @@
 CIconHeader::CIconHeader()
 	: CInspectorHeader()
 {
-	m_Empty.Load(IDB_INSPECTOR, _T("PNG"));
 	m_Multiple.Load(IDB_MULTIPLE, _T("PNG"));
 
 	ENSURE(m_strUnused.LoadString(IDS_NOITEMSSELECTED));
@@ -41,9 +40,8 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 
 	switch (m_Status)
 	{
-	case IconEmpty:
 	case IconMultiple:
-		g.DrawImage((m_Status==IconEmpty) ? m_Empty.m_pBitmap : m_Multiple.m_pBitmap, cx, cy);
+		g.DrawImage(m_Multiple.m_pBitmap, cx, cy);
 		break;
 
 	case IconCore:
@@ -63,6 +61,10 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 
 	CRect rectText(rect);
 	rectText.top += 128+6;
+
+	if (m_Status==IconEmpty)
+		rectText.OffsetRect(0, -128);
+
 	dc.DrawText(m_strDescription, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_CENTER | DT_NOPREFIX);
 
 	if (Themed)
@@ -176,11 +178,8 @@ void CInspectorWnd::AdjustLayout()
 
 void CInspectorWnd::SaveSettings()
 {
-	CString oldBase = theApp.GetRegistryBase();
-	theApp.SetRegistryBase(_T("Inspector"));
-	theApp.WriteInt(_T("ShowInternal"), m_ShowInternal);
-	theApp.WriteInt(_T("SortAlphabetic"), m_SortAlphabetic);
-	theApp.SetRegistryBase(oldBase);
+	theApp.WriteInt(_T("InspectorShowInternal"), m_ShowInternal);
+	theApp.WriteInt(_T("InspectorSortAlphabetic"), m_SortAlphabetic);
 }
 
 void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
@@ -512,11 +511,8 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGlassPane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	CString oldBase = theApp.GetRegistryBase();
-	theApp.SetRegistryBase(_T("Inspector"));
-	m_ShowInternal = theApp.GetInt(_T("ShowInternal"), FALSE);
-	m_SortAlphabetic = theApp.GetInt(_T("SortAlphabetic"), FALSE);
-	theApp.SetRegistryBase(oldBase);
+	m_ShowInternal = theApp.GetInt(_T("InspectorShowInternal"), FALSE);
+	m_SortAlphabetic = theApp.GetInt(_T("InspectorSortAlphabetic"), FALSE);
 
 	if (!m_wndGrid.Create(this, 1, &m_IconHeader))
 		return -1;
