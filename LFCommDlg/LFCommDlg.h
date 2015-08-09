@@ -1,6 +1,7 @@
 
 #pragma once
 #include "CCategory.h"
+#include "CDesktopDimmer.h"
 #include "CExplorerList.h"
 #include "CExplorerNotification.h"
 #include "CExplorerTree.h"

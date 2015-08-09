@@ -12,6 +12,12 @@
 LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL UAC)
 	: CDialog(nIDTemplate, pParentWnd)
 {
+	if (UAC)
+	{
+		m_wndDesktopDimmer.Create(this);
+		m_pParentWnd = &m_wndDesktopDimmer;
+	}
+
 	m_nIDTemplate = nIDTemplate;
 	m_UAC = UAC;
 
@@ -213,6 +219,8 @@ BOOL LFDialog::OnInitDialog()
 
 void LFDialog::OnDestroy()
 {
+	m_wndDesktopDimmer.SendMessage(WM_DESTROY);
+
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
 

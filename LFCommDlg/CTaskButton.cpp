@@ -134,9 +134,9 @@ void CTaskButton::OnPaint()
 	BOOL Selected = (GetState() & 4);
 
 	// Background
-	HBRUSH brush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-	if (brush)
-		FillRect(dc, rect, brush);
+	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
+	if (hBrush)
+		FillRect(dc, rect, hBrush);
 
 	// Button
 	BOOL Themed = IsCtrlThemed();

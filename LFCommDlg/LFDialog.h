@@ -53,4 +53,5 @@ private:
 	CWnd* p_BottomLeftControl;
 	CList<CWnd*> m_BottomRightControls;
 	CPoint m_LastSize;
+	CDesktopDimmer m_wndDesktopDimmer;
 };
