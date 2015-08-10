@@ -6,7 +6,7 @@
 #include "LFCommDlg.h"
 
 
-void DDX_StoreButton(CDataExchange* pDX, int nIDC, CStoreButton &rControl, UINT SourceType)
+void DDX_StoreButton(CDataExchange* pDX, INT nIDC, CStoreButton &rControl, UINT SourceType)
 {
 	DDX_Control(pDX, nIDC, rControl);
 
@@ -27,10 +27,6 @@ CStoreButton::CStoreButton()
 	m_IconSize = 0;
 	m_IconID = -1;
 	m_Hover = FALSE;
-}
-
-void CStoreButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
-{
 }
 
 void CStoreButton::SetStoreType(UINT StoreType)
@@ -99,7 +95,7 @@ void CStoreButton::OnPaint()
 		rectBounds.right--;
 		rectBounds.bottom--;
 
-		// Inner Border
+		// Inner border
 		rectBounds.DeflateRect(1, 1);
 
 		if (Selected)

@@ -148,7 +148,7 @@ BOOL CMainWnd::CreateStore(CHAR* RootStore)
 
 	m_BreadcrumbBack = new BreadcrumbItem();
 	ZeroMemory(m_BreadcrumbBack, sizeof(BreadcrumbItem));
-	m_BreadcrumbBack->filter = GetRootFilter();
+	m_BreadcrumbBack->pFilter = GetRootFilter();
 
 	m_pActiveFilter = GetRootFilter(RootStore);
 

@@ -175,7 +175,7 @@ BOOL LFEditFilterDlg::OnInitDialog()
 	m_wndConditionList.AddColumn(0, L"");
 	m_wndConditionList.AddColumn(1, L"");
 
-	m_wndConditionList.SetMenus(IDM_CONDITIONLIST);
+	m_wndConditionList.SetMenus(IDM_CONDITION, TRUE, IDM_CONDITIONLIST);
 	m_wndConditionList.SetView(LV_VIEW_TILE);
 	m_wndConditionList.SetItemsPerRow(1, 2);
 

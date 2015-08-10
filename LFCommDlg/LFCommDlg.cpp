@@ -188,7 +188,7 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 		}
 		else
 		{
-			CPen pen(PS_SOLID, 1, GetSysColor(COLOR_WINDOWTEXT));
+			CPen pen(PS_SOLID, 1, GetSysColor(COLOR_3DSHADOW));
 
 			CPen* pOldPen = dc.SelectObject(&pen);
 			dc.MoveTo(rectLine.right, rect.top+(rectLine.Height()+1)/2);

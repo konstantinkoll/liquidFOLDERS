@@ -1496,17 +1496,8 @@ void CInspectorGrid::OnPaint()
 				}
 				else
 				{
-					COLORREF c1 = Pressed ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
-					COLORREF c2 = Pressed ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
-					COLORREF c3 = Pressed ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
-					COLORREF c4 = Pressed ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
-
-					dc.FillSolidRect(rectButton, c2);
-
-					CRect rectBorder(rectButton);
-					dc.Draw3dRect(rectBorder, c1, c4);
-					rectBorder.DeflateRect(1, 1);
-					dc.Draw3dRect(rectBorder, c2, c3);
+					dc.FillSolidRect(rectButton, GetSysColor(COLOR_3DFACE));
+					dc.DrawEdge(rectButton, Pressed ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 				}
 
 				rectButton.bottom -= 4;

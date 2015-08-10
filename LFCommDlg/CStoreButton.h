@@ -13,8 +13,6 @@ class CStoreButton : public CButton
 public:
 	CStoreButton();
 
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-
 	void SetStoreType(UINT StoreType);
 
 protected:
@@ -34,4 +32,4 @@ private:
 	BOOL m_Hover;
 };
 
-void DDX_StoreButton(CDataExchange* pDX, int nIDC, CStoreButton& rControl, UINT SourceType);
+void DDX_StoreButton(CDataExchange* pDX, INT nIDC, CStoreButton& rControl, UINT SourceType);

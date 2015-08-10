@@ -222,16 +222,7 @@ void CTooltipHeader::OnPaint()
 					}
 					else
 					{
-						COLORREF c1 = (m_PressedItem==a) ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
-						COLORREF c2 = (m_PressedItem==a) ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
-						COLORREF c3 = (m_PressedItem==a) ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
-						COLORREF c4 = (m_PressedItem==a) ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
-
-						dc.Draw3dRect(rectItem, c1, c4);
-						rectItem.DeflateRect(1, 1);
-						dc.Draw3dRect(rectItem, c2, c3);
-						rectItem.InflateRect(1, 1);
-
+						dc.DrawEdge(rectItem, m_PressedItem==a ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 						rectItem.right--;
 					}
 

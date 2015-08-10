@@ -55,10 +55,6 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	return CButton::PreTranslateMessage(pMsg);
 }
 
-void CTaskButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
-{
-}
-
 void CTaskButton::SetIconID(INT IconID, INT OverlayID)
 {
 	m_IconID = IconID;
@@ -69,21 +65,21 @@ void CTaskButton::SetIconID(INT IconID, INT OverlayID)
 
 INT CTaskButton::GetPreferredWidth()
 {
-	INT l = 2*(BORDER+2)+1;
+	INT Width = 2*(BORDER+2)+1;
 
 	if ((p_Icons) && (m_IconID!=-1))
-		l += m_IconSize+(m_Caption.IsEmpty() ? 0 : BORDER);
+		Width += m_IconSize+(m_Caption.IsEmpty() ? 0 : BORDER);
 
 	if (!m_Caption.IsEmpty())
 	{
 		CDC* pDC = GetDC();
 		HFONT hOldFont = (HFONT)pDC->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
-		l += pDC->GetTextExtent(m_Caption).cx;
+		Width += pDC->GetTextExtent(m_Caption).cx;
 		pDC->SelectObject(hOldFont);
 		ReleaseDC(pDC);
 	}
 
-	return l;
+	return Width;
 }
 
 
@@ -180,7 +176,7 @@ void CTaskButton::OnPaint()
 				g.DrawPath(&pen, &path);
 			}
 
-			// Outer Border
+			// Outer border
 			rectBounds.InflateRect(1, 1);
 			CreateRoundRectangle(rectBounds, 2, path);
 
@@ -193,17 +189,7 @@ void CTaskButton::OnPaint()
 	else
 	{
 		if ((Selected) || (m_Hover))
-		{
-			COLORREF c1 = Selected ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
-			COLORREF c2 = Selected ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
-			COLORREF c3 = Selected ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
-			COLORREF c4 = Selected ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
-
-			CRect rectBorder(rect);
-			dc.Draw3dRect(rectBorder, c1, c4);
-			rectBorder.DeflateRect(1, 1);
-			dc.Draw3dRect(rectBorder, c2, c3);
-		}
+			dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 
 		if (Focused)
 		{

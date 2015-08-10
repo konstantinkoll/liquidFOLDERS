@@ -87,6 +87,7 @@ BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
 		if (pWnd)
 			pWnd->SetFocus();
+
 		return TRUE;
 	}
 

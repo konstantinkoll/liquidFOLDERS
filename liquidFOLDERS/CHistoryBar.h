@@ -9,13 +9,13 @@
 
 struct BreadcrumbItem
 {
-	BreadcrumbItem* next;
-	LFFilter* filter;
+	BreadcrumbItem* pNext;
+	LFFilter* pFilter;
 	FVPersistentData Data;
 };
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* filter, FVPersistentData& Data);
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** filter, FVPersistentData* Data);
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* pFilter, FVPersistentData& Data);
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** ppFilter, FVPersistentData* Data);
 void DeleteBreadcrumbs(BreadcrumbItem** bi);
 
 

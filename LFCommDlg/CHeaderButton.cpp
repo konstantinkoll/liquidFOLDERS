@@ -197,16 +197,7 @@ void CHeaderButton::OnPaint()
 		if ((Selected) || (m_Hover))
 		{
 			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-
-			COLORREF c1 = Selected ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
-			COLORREF c2 = Selected ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
-			COLORREF c3 = Selected ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
-			COLORREF c4 = Selected ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
-
-			CRect rectBorder(rect);
-			dc.Draw3dRect(rectBorder, c1, c4);
-			rectBorder.DeflateRect(1, 1);
-			dc.Draw3dRect(rectBorder, c2, c3);
+			dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 		}
 
 		if (Focused)

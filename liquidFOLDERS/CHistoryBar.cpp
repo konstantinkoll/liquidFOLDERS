@@ -13,27 +13,28 @@
 #define VIEW       -2
 #define RELOAD     -1
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* filter, FVPersistentData& Data)
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* pFilter, FVPersistentData& Data)
 {
 	BreadcrumbItem* add = new BreadcrumbItem;
-	add->next = *bi;
-	add->filter = filter;
+	add->pNext = *bi;
+	add->pFilter = pFilter;
 	add->Data = Data;
 	*bi = add;
 }
 
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** filter, FVPersistentData* Data)
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** ppFilter, FVPersistentData* Data)
 {
-	*filter = NULL;
+	*ppFilter = NULL;
 	ZeroMemory(Data, sizeof(FVPersistentData));
 
 	if (*bi)
 	{
-		*filter = (*bi)->filter;
+		*ppFilter = (*bi)->pFilter;
 		*Data = (*bi)->Data;
-		BreadcrumbItem* victim = *bi;
-		*bi = (*bi)->next;
-		delete victim;
+
+		BreadcrumbItem* pVictim = *bi;
+		*bi = (*bi)->pNext;
+		delete pVictim;
 	}
 }
 
@@ -41,10 +42,11 @@ void DeleteBreadcrumbs(BreadcrumbItem** bi)
 {
 	while (*bi)
 	{
-		BreadcrumbItem* victim = *bi;
-		*bi = (*bi)->next;
-		LFFreeFilter(victim->filter);
-		delete victim;
+		BreadcrumbItem* pVictim = *bi;
+		*bi = (*bi)->pNext;
+
+		LFFreeFilter(pVictim->pFilter);
+		delete pVictim;
 	}
 }
 
@@ -120,8 +122,8 @@ void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs
 	AddFilter(ActiveFilter, pDC);
 	while (Breadcrumbs)
 	{
-		AddFilter(Breadcrumbs->filter, pDC);
-		Breadcrumbs = Breadcrumbs->next;
+		AddFilter(Breadcrumbs->pFilter, pDC);
+		Breadcrumbs = Breadcrumbs->pNext;
 	}
 
 	pDC->SelectObject(pOldFont);
@@ -329,14 +331,7 @@ void CHistoryBar::OnPaint()
 				}
 				else
 				{
-					COLORREF c1 = Pressed ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
-					COLORREF c2 = Pressed ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
-					COLORREF c3 = Pressed ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
-					COLORREF c4 = Pressed ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
-
-					dc.Draw3dRect(rectItem, c1, c4);
-					rectItem.DeflateRect(1, 1);
-					dc.Draw3dRect(rectItem, c2, c3);
+					dc.DrawEdge(rectItem, Pressed ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 				}
 
 			rectItemText.DeflateRect(MARGIN, 0);
