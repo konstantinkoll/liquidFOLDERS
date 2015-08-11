@@ -125,10 +125,6 @@ void CTaskButton::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	// State
-	BOOL Focused = (GetState() & 8);
-	BOOL Selected = (GetState() & 4);
-
 	// Background
 	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
 	if (hBrush)
@@ -136,71 +132,9 @@ void CTaskButton::OnPaint()
 
 	// Button
 	BOOL Themed = IsCtrlThemed();
-	if (Themed)
-	{
-		if ((Focused) || (Selected) || (m_Hover))
-		{
-			Graphics g(dc);
-			g.SetSmoothingMode(SmoothingModeNone);
+	BOOL Selected = (GetState() & 4);
 
-			CRect rectBounds(rect);
-			rectBounds.right--;
-			rectBounds.bottom--;
-
-			// Inner Border
-			rectBounds.DeflateRect(1, 1);
-
-			if (Selected)
-			{
-				SolidBrush brush(Color(0x20, 0x50, 0x57, 0x62));
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width()+1, rectBounds.Height()+1);
-			}
-			else
-				if (m_Hover)
-				{
-					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
-
-					SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
-					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
-				}
-
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
-			GraphicsPath path;
-
-			if (!Selected)
-			{
-				CreateRoundRectangle(rectBounds, 1, path);
-
-				Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
-				g.DrawPath(&pen, &path);
-			}
-
-			// Outer border
-			rectBounds.InflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
-			g.DrawPath(&pen, &path);
-		}
-
-		dc.SetTextColor(m_Hover ? 0x404040 : 0x333333);
-	}
-	else
-	{
-		if ((Selected) || (m_Hover))
-			dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
-
-		if (Focused)
-		{
-			CRect rectFocus(rect);
-			rectFocus.DeflateRect(2, 2);
-			dc.SetTextColor(0x000000);
-			dc.DrawFocusRect(rectFocus);
-		}
-
-		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-	}
+	DrawLightButtonBackground(dc, rect, Themed, GetState() & 8, Selected, m_Hover);
 
 	// Content
 	CRect rectText(rect);
@@ -226,6 +160,8 @@ void CTaskButton::OnPaint()
 	}
 
 	// Text
+	dc.SetTextColor(Themed ? m_Hover ? 0x404040 : 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
+
 	HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
 	dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	dc.SelectObject(hOldFont);

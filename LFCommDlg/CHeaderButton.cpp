@@ -143,73 +143,10 @@ void CHeaderButton::OnPaint()
 	// Button
 	BOOL Themed = IsCtrlThemed();
 
-	CRect rectText(rect);
-	if (Themed)
-	{
-		if ((Focused) || (Selected) || (m_Hover))
-		{
-			Graphics g(dc);
-			g.SetSmoothingMode(SmoothingModeNone);
-
-			CRect rectBounds(rect);
-			rectBounds.right--;
-			rectBounds.bottom--;
-
-			// Inner Border
-			rectBounds.DeflateRect(1, 1);
-
-			if (Selected)
-			{
-				SolidBrush brush(Color(0x20, 0x50, 0x57, 0x62));
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width()+1, rectBounds.Height()+1);
-			}
-			else
-				if (m_Hover)
-				{
-					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
-
-					SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
-					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
-				}
-
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
-			GraphicsPath path;
-
-			if (!Selected)
-			{
-				CreateRoundRectangle(rectBounds, 1, path);
-
-				Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
-				g.DrawPath(&pen, &path);
-			}
-
-			// Outer Border
-			rectBounds.InflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
-			g.DrawPath(&pen, &path);
-		}
-	}
-	else
-	{
-		if ((Selected) || (m_Hover))
-		{
-			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-			dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
-		}
-
-		if (Focused)
-		{
-			CRect rectFocus(rect);
-			rectFocus.DeflateRect(2, 2);
-			dc.SetTextColor(0x000000);
-			dc.DrawFocusRect(rectFocus);
-		}
-	}
+	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_Hover);
 
 	// Content
+	CRect rectText(rect);
 	rectText.DeflateRect(BORDER+2, BORDER);
 	if (Selected)
 		rectText.OffsetRect(1, 1);
