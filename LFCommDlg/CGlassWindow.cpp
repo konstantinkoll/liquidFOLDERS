@@ -82,6 +82,9 @@ LRESULT CGlassWindow::DefWindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 
 BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 {
+	if ((pMsg->message==WM_SYSKEYDOWN) && (pMsg->wParam==VK_MENU))
+		return TRUE;
+
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
 		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
