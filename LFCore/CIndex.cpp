@@ -589,44 +589,6 @@ void CIndex::ResolvePhysicalLocations(LFTransactionList* tl)
 	END_ITERATEMASTER();
 }
 
-UINT CIndex::Rename(CHAR* FileID, WCHAR* NewName)
-{
-	assert(FileID);
-	assert(NewName);
-
-	START_FINDMASTER(, LFIndexRepairError, FileID);
-	REMOVE_STATS();
-
-	UINT Result = LFOk;
-	if (PtrM->Flags & LFFlagLink)
-	{
-		wcscpy_s(PtrM->FileName, 256, NewName);
-		PtrM->Flags &= ~(LFFlagMissing | LFFlagNew);
-	}
-	else
-	{
-		Result = RenamePhysicalFile(PtrM, NewName);
-		switch (Result)
-		{
-		case LFOk:
-			PtrM->Flags &= ~LFFlagMissing;
-			break;
-		case LFNoFileBody:
-			PtrM->Flags |= LFFlagMissing;
-		}
-
-		PtrM->Flags &= ~LFFlagNew;
-	}
-
-	Tables[IDXTABLE_MASTER]->MakeDirty();
-
-	ADD_STATS();
-	return Result;
-
-	END_FINDMASTER();
-	return LFIllegalKey;
-}
-
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* Result)
 {
 	assert(f);

@@ -24,7 +24,6 @@ public:
 	void Archive(LFTransactionList* tl);
 	void Delete(LFTransactionList* tl, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
 	void ResolvePhysicalLocations(LFTransactionList* tl);
-	UINT Rename(CHAR* FileID, WCHAR* NewName);
 	void Retrieve(LFFilter* f, LFSearchResult* Result);
 	void AddToSearchResult(LFTransactionList* il, LFSearchResult* Result);
 	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFTransactionList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress=NULL);

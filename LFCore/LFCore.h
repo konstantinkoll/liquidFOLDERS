@@ -401,12 +401,6 @@ LFCORE_API UINT __stdcall LFGetStores(CHAR** IDs, UINT* count);
 
 
 
-//
-// Transaktionen
-//
-
-// Benennt die Datei um
-LFCORE_API UINT __stdcall LFTransactionRename(CHAR* StoreID, CHAR* FileID, WCHAR* NewName);
 
 
 // LFFileImportList

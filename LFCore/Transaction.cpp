@@ -13,25 +13,6 @@
 extern LFMessageIDs LFMessages;
 
 
-LFCORE_API UINT LFTransactionRename(CHAR* StoreID, CHAR* FileID, WCHAR* NewName)
-{
-	assert(StoreID);
-	assert(FileID);
-	assert(NewName);
-
-	OPEN_STORE(StoreID, TRUE,);
-
-	if (idx1)
-		Result = idx1->Rename(FileID, NewName);
-
-	if ((idx2) && (Result==LFOk))
-		Result = idx2->Rename(FileID, NewName);
-
-	CLOSE_STORE();
-	return Result;
-}
-
-
 // LFFileImportList
 //
 

@@ -274,7 +274,18 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 {
-	UINT Result = LFTransactionRename(m_pItem->StoreID, m_pItem->CoreAttributes.FileID, e.newName.GetBuffer());
+	LFTransactionList* pTransactionList = LFAllocTransactionList();
+	LFAddTransactionItem(pTransactionList, m_pItem);
+
+	LFVariantData v;
+	LFInitVariantData(v, LFAttrFileName);
+	wcscpy_s(v.UnicodeString, 256, e.newName.GetBuffer());
+
+	LFTransactionUpdate(pTransactionList, &v);
+
+	UINT Result = pTransactionList->m_LastError;
+	LFFreeTransactionList(pTransactionList);
+
 	if (Result==LFOk)
 	{
 		wcscpy_s(m_pItem->CoreAttributes.FileName, 256, e.newName);
