@@ -1240,15 +1240,15 @@ BEGIN
     CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,11,11,622,15
     CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,11,105,622,15
     PUSHBUTTON      "Crea un nuevo store para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Pinterest-Konto als Store hinzu.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Soundcloud-Konto als Store hinzu.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Twitter-Konto als Store hinzu.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una carpeta existente como store.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Dropbox como store.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Facebook como store.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Flickr como store.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Instagram como store.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Pinterest como store.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Soundcloud como store.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Twitter como store.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de YouTube como store.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
     DEFPUSHBUTTON   "Listo",IDOK,583,384,50,14,WS_GROUP
     LTEXT           "",IDC_STATUS,11,386,570,8
 END
@@ -1629,6 +1629,19 @@ BEGIN
     IDS_COMPARE_ISBELOWEQUAL "es lo más"
     IDS_COMPARE_ENDSWITH    "termina con"
     IDS_COMPARE_CONTAINS    "contiene"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
+    IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
+    IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
+    IDS_UPDATE_NEWFEATURE   "New features"
+    IDS_UPDATE_NEWVISUALIZATION "New visualizations"
+    IDS_UPDATE_UI           "UI improvements"
+    IDS_UPDATE_SMALLBUGFIX  "Minor bugfixes"
+    IDS_UPDATE_IATA         "Updated IATA airport database"
+    IDS_UPDATE_PERFORMANCE  "Performance improvements"
 END
 
 STRINGTABLE 
@@ -2015,15 +2028,15 @@ BEGIN
     CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,11,11,622,15
     CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,11,105,622,15
     PUSHBUTTON      "Crée un nouveau store pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,11,26,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Pinterest-Konto als Store hinzu.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Soundcloud-Konto als Store hinzu.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Twitter-Konto als Store hinzu.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un dossier existant comme store.",IDC_ADDSTORE_WINDOWS,222,26,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Dropbox comme store.",IDC_ADDSTORE_DROPBOX,11,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Facebook comme store.",IDC_ADDSTORE_FACEBOOK,222,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Flickr comme store.",IDC_ADDSTORE_FLICKR,433,120,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Instagram comme store.",IDC_ADDSTORE_INSTAGRAM,11,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Pinterest comme store.",IDC_ADDSTORE_PINTEREST,222,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Soundcloud comme store.",IDC_ADDSTORE_SOUNDCLOUD,433,205,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Twitter comme store.",IDC_ADDSTORE_TWITTER,11,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte YouTube comme store.",IDC_ADDSTORE_YOUTUBE,222,290,200,74,BS_MULTILINE | NOT WS_TABSTOP
     DEFPUSHBUTTON   "Fini",IDOK,583,384,50,14,WS_GROUP
     LTEXT           "",IDC_STATUS,11,386,570,8
 END
@@ -2377,6 +2390,19 @@ BEGIN
     IDS_COMPARE_ISBELOWEQUAL "est tout au plus"
     IDS_COMPARE_ENDSWITH    "finit sur"
     IDS_COMPARE_CONTAINS    "contient"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
+    IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
+    IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
+    IDS_UPDATE_NEWFEATURE   "New features"
+    IDS_UPDATE_NEWVISUALIZATION "New visualizations"
+    IDS_UPDATE_UI           "UI improvements"
+    IDS_UPDATE_SMALLBUGFIX  "Minor bugfixes"
+    IDS_UPDATE_IATA         "Updated IATA airport database"
+    IDS_UPDATE_PERFORMANCE  "Performance improvements"
 END
 
 STRINGTABLE 
