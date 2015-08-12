@@ -87,7 +87,10 @@ void LFAboutDlg::CheckLicenseKey()
 {
 	LFLicense License;
 	if (LFIsLicensed(&License))
+	{
 		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
+		Invalidate();
+	}
 
 	SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
 	SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);

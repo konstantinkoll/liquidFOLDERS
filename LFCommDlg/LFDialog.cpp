@@ -76,6 +76,38 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"));
 		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, Line);
+
+		// Sunken button
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+		CWnd* pChildWnd = GetWindow(GW_CHILD);
+
+		while (pChildWnd)
+		{
+			if (pChildWnd->SendMessage(WM_GETDLGCODE) & (DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
+			{
+				DWORD dwStyle = pChildWnd->GetStyle();
+				if (dwStyle & WS_VISIBLE)
+					if (((dwStyle & BS_TYPEMASK)==BS_PUSHBUTTON) || ((dwStyle & BS_TYPEMASK)==BS_DEFPUSHBUTTON))
+					{
+						CRect rectBounds;
+						pChildWnd->GetWindowRect(&rectBounds);
+						ScreenToClient(&rectBounds);
+
+						GraphicsPath path;
+						CreateRoundRectangle(rectBounds, 3, path);
+
+						LinearGradientBrush brush1(Point(0, rectBounds.top), Point(0, rectBounds.bottom+1), Color(0x0C, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+						g.FillPath(&brush1, &path);
+
+						LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom+1), Color(0x00, 0xFF, 0xFF, 0xFF), Color(0xFF, 0xFF, 0xFF, 0xFF));
+						g.FillPath(&brush2, &path);
+					}
+			}
+
+			pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
+		}
 	}
 	else
 	{
@@ -164,6 +196,13 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 
 	if (m_UAC)
 		lpRect->top = m_UACHeight;
+}
+
+void LFDialog::Invalidate(BOOL bErase)
+{
+	m_BackBufferL = m_BackBufferH = 0;
+
+	CDialog::Invalidate(bErase);
 }
 
 
@@ -298,8 +337,6 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 	}
 
 	AdjustLayout();
-
-	m_BackBufferL = m_BackBufferH = 0;
 	Invalidate();
 }
 

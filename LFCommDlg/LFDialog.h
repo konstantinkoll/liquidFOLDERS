@@ -18,6 +18,7 @@ public:
 	virtual void AdjustLayout();
 
 	void GetLayoutRect(LPRECT lpRect) const;
+	void Invalidate(BOOL bErase=TRUE);
 
 protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
