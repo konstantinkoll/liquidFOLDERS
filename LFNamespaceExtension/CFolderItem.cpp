@@ -510,7 +510,7 @@ void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
 	{
 		e.overlayIconType = NSEOIT_Custom;
 		e.iconFile = theApp.m_PathCoreFile;
-		e.iconIndex = IDI_OVR_DEFAULT;
+		e.iconIndex = IDI_OVR_DEFAULT-1;
 	}
 	else
 	{
