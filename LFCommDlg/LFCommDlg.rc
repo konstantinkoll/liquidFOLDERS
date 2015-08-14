@@ -1633,15 +1633,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
-    IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
-    IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
-    IDS_UPDATE_NEWFEATURE   "New features"
-    IDS_UPDATE_NEWVISUALIZATION "New visualizations"
-    IDS_UPDATE_UI           "UI improvements"
-    IDS_UPDATE_SMALLBUGFIX  "Minor bugfixes"
-    IDS_UPDATE_IATA         "Updated IATA airport database"
-    IDS_UPDATE_PERFORMANCE  "Performance improvements"
+    IDS_UPDATE_SECUTIRYPATCH "Parches de seguridad importantes"
+    IDS_UPDATE_IMPORTANTBUGFIX "Correcciones de errores importantes"
+    IDS_UPDATE_NETWORKAPI   "Actualizado el acceso a los servicios en la nube"
+    IDS_UPDATE_NEWFEATURE   "Nuevas funciones"
+    IDS_UPDATE_NEWVISUALIZATION "Nuevas visualizaciones"
+    IDS_UPDATE_UI           "Mejoras de interfaz de usuario"
+    IDS_UPDATE_SMALLBUGFIX  "Correcciones de errores menores"
+    IDS_UPDATE_IATA         "Actualizado base de datos de ubicación"
+    IDS_UPDATE_PERFORMANCE  "Mejoras de rendimiento"
 END
 
 STRINGTABLE 
@@ -2394,15 +2394,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
-    IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
-    IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
-    IDS_UPDATE_NEWFEATURE   "New features"
-    IDS_UPDATE_NEWVISUALIZATION "New visualizations"
-    IDS_UPDATE_UI           "UI improvements"
-    IDS_UPDATE_SMALLBUGFIX  "Minor bugfixes"
-    IDS_UPDATE_IATA         "Updated IATA airport database"
-    IDS_UPDATE_PERFORMANCE  "Performance improvements"
+    IDS_UPDATE_SECUTIRYPATCH "Correctifs de sécurité importants"
+    IDS_UPDATE_IMPORTANTBUGFIX "Corrections importantes"
+    IDS_UPDATE_NETWORKAPI   "Mise à jour l'accès à des services de nuage"
+    IDS_UPDATE_NEWFEATURE   "Nouvelles fonctionnalités"
+    IDS_UPDATE_NEWVISUALIZATION "Nouvelles visualisations"
+    IDS_UPDATE_UI           "Améliorations de l'interface"
+    IDS_UPDATE_SMALLBUGFIX  "Corrections"
+    IDS_UPDATE_IATA         "Mis à jour la base de données de localisation"
+    IDS_UPDATE_PERFORMANCE  "Amélioration des performances"
 END
 
 STRINGTABLE 
