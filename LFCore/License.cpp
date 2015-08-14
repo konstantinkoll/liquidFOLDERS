@@ -29,6 +29,7 @@ FILETIME ExpireBuffer = { 0 };
 
 void ParseInput(CHAR* pStr, LFLicense* pLicense)
 {
+	assert(pStr);
 	assert(pLicense);
 
 	ZeroMemory(pLicense, sizeof(LFLicense));
@@ -99,6 +100,7 @@ BOOL GetLicense(LFLicense* pLicense)
 	assert(pLicense);
 
 	CHAR Message[BUFSIZE];
+	ZeroMemory(Message, sizeof(Message));
 	if (!ReadCodedLicense(Message, sizeof(Message)))
 		return FALSE;
 

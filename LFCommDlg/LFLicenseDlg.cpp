@@ -20,10 +20,10 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		CString key;
-		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(key);
+		CString Key;
+		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(Key);
 
-		LFGetApp()->WriteGlobalString(_T("License"), key);
+		LFGetApp()->WriteGlobalString(_T("License"), Key);
 
 		CString Caption;
 		CString Message;
@@ -100,8 +100,8 @@ void LFLicenseDlg::OnLoadLicense()
 
 void LFLicenseDlg::OnChange()
 {
-	CString key;
-	GetDlgItem(IDC_LICENSEKEY)->GetWindowText(key);
+	CString Key;
+	GetDlgItem(IDC_LICENSEKEY)->GetWindowText(Key);
 
-	GetDlgItem(IDOK)->EnableWindow(!key.IsEmpty());
+	GetDlgItem(IDOK)->EnableWindow(!Key.IsEmpty());
 }
