@@ -229,7 +229,6 @@ void CHeaderButton::OnSetFocus(CWnd* pOldWnd)
 	Invalidate();
 }
 
-
 void CHeaderButton::OnKillFocus(CWnd* pNewWnd)
 {
 	CButton::OnKillFocus(pNewWnd);

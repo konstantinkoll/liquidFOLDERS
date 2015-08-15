@@ -10,7 +10,7 @@ void DDX_StoreButton(CDataExchange* pDX, INT nIDC, CStoreButton &rControl, UINT 
 {
 	DDX_Control(pDX, nIDC, rControl);
 
-	rControl.ModifyStyle(0, BS_OWNERDRAW);
+	rControl.ModifyStyle(BS_TYPEMASK, BS_OWNERDRAW);
 	rControl.SetStoreType(SourceType);
 }
 
@@ -29,9 +29,13 @@ CStoreButton::CStoreButton()
 	m_Hover = FALSE;
 }
 
+void CStoreButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
+{
+}
+
 void CStoreButton::SetStoreType(UINT StoreType)
 {
-	LFGetSourceName(m_Caption, StoreType, FALSE);
+	LFGetSourceName(m_Caption, 256, StoreType, FALSE);
 
 	CRect rectClient;
 	GetClientRect(rectClient);
@@ -89,68 +93,93 @@ void CStoreButton::OnPaint()
 	if (Themed)
 	{
 		Graphics g(dc);
-		g.SetSmoothingMode(SmoothingModeNone);
 
 		CRect rectBounds(rect);
-		rectBounds.right--;
-		rectBounds.bottom--;
+		g.SetSmoothingMode(SmoothingModeNone);
 
 		// Inner border
-		rectBounds.DeflateRect(1, 1);
+		rectBounds.DeflateRect(2, 2);
 
 		if (Selected)
 		{
-			dc.FillSolidRect(rect, 0xEEE9E5);
+		/*	dc.FillSolidRect(rectBounds, Selected ? 0xF0D197 : 0xFDE2B0);
+
+
+			LinearGradientBrush brush5(Point(0, rectBounds.top-1), Point(0, (rectBounds.top+rectBounds.bottom)/2), Color(0xC0, 0xFF, 0xFF, 0xFF), Color(0x80, 0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush5, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
+
+			if (Selected)
+			{
+			}*/
+//						COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
+//						COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
+
+			dc.FillSolidRect(rectBounds, 0xF6E4C2);
+
+			LinearGradientBrush brush3(Point(0, rectBounds.top), Point(0, rectBounds.top+4), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+			g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), 4);
 		}
 		else
-			if (Focused)
-			{
-				LinearGradientBrush brush(Point(0, rectBounds.top+rectBounds.Height()*3/5), Point(0, rectBounds.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top+rectBounds.Height()*3/5+1, rectBounds.Width()+1, rectBounds.Height()+1);
-			}
-			else
-			{
-				dc.FillSolidRect(rect, 0xFEFDFD);
-			}
+		{
+			dc.FillSolidRect(rectBounds, m_Hover ? 0xEFECEC : 0xF7F4F4);
+
+			LinearGradientBrush brush3(Point(0, rectBounds.top-1), Point(0, (rectBounds.top+rectBounds.bottom)/2), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
+
+			LinearGradientBrush brush4(Point(0, rectBounds.bottom-4), Point(0, rectBounds.bottom+1), Color(0x00, 0x00, 0x00, 0x00), Color(m_Hover ? 0x18 : 0x10, 0x00, 0x00, 0x00));
+			g.FillRectangle(&brush4, rectBounds.left, rectBounds.bottom-3, rectBounds.Width(), 3);
+		}
 
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		rectBounds.left--;
+		rectBounds.top--;
+
 		GraphicsPath path;
-
-		if (!Selected)
-		{
-			CreateRoundRectangle(rectBounds, 1, path);
-
-			Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
-			g.DrawPath(&pen, &path);
-		}
-
-		rectBounds.InflateRect(1, 1);
 		CreateRoundRectangle(rectBounds, 2, path);
 
-		if (m_Hover || Focused || Selected)
+		if (Focused)
 		{
-			Pen pen(Color(0xB1, 0xB4, 0xB9));
+			Pen pen(Color(0x32, 0x75, 0xA7));
 			g.DrawPath(&pen, &path);
+
+			rectBounds.DeflateRect(1, 1);
+			CreateRoundRectangle(rectBounds, 2, path);
+
+			Pen pen2(Color(0xC0, 0x48, 0xD8, 0xFB));
+			g.DrawPath(&pen2, &path);
+
+			rectBounds.InflateRect(1, 1);
 		}
 		else
+			if (m_Hover)
+			{
+			Pen pen(Color(0xAC, 0xAF, 0xB4));
+			g.DrawPath(&pen, &path);
+			}
+			else
 		{
-			Pen pen(Color(0xED, 0xED, 0xEE));
+			Pen pen(Color(0xBE, 0xBE, 0xBE));
 			g.DrawPath(&pen, &path);
 		}
 	}
 	else
 	{
-		if (Selected)
-			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+		dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+		dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 
 		if (Focused)
 		{
+			CRect rectFocus(rect);
+			rectFocus.DeflateRect(2, 2);
 			dc.SetTextColor(0x000000);
-			dc.DrawFocusRect(rect);
+			dc.DrawFocusRect(rectFocus);
 		}
 	}
 
 	// Content
+	dc.SetTextColor(IsWindowEnabled() ? Themed ? m_Hover || Focused | Selected ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
+
 	CRect rectText(rect);
 	rectText.DeflateRect(BORDER+1, BORDER);
 	if (Selected)
@@ -181,12 +210,10 @@ void CStoreButton::OnPaint()
 
 	rectText.top += (rectText.Height()-HeightCaption-rectHint.Height())/2;
 
-	dc.SetTextColor(IsWindowEnabled() ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
 	dc.SelectObject(&LFGetApp()->m_LargeFont);
 	dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS);
 	rectText.top += HeightCaption;
 
-	dc.SetTextColor(IsWindowEnabled() ? Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
 	dc.SelectObject(&LFGetApp()->m_DefaultFont);
 	dc.DrawText(Hint, rectText, DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
 
@@ -194,6 +221,8 @@ void CStoreButton::OnPaint()
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
+	DeleteDC(dc.Detach());
+	DeleteObject(MemBitmap.Detach());
 }
 
 void CStoreButton::OnMouseMove(UINT nFlags, CPoint point)

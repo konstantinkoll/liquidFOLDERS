@@ -13,6 +13,8 @@ class CStoreButton : public CButton
 public:
 	CStoreButton();
 
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+
 	void SetStoreType(UINT StoreType);
 
 protected:

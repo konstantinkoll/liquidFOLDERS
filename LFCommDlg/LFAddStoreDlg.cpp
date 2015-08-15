@@ -11,82 +11,20 @@
 // LFAddStoreDlg
 //
 
-#define BORDER     12
-
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ADDSTORE, pParentWnd)
 {
-	p_Icons = NULL;
 }
 
-void LFAddStoreDlg::DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Hover, BOOL Themed)
+void LFAddStoreDlg::DoDataExchange(CDataExchange* pDX)
 {
-	if ((lpDrawItemStruct->CtlID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (lpDrawItemStruct->CtlID<=IDC_ADDSTORE_YOUTUBE))
-	{
-		UINT StoreType;
-		switch (lpDrawItemStruct->CtlID)
-		{
-		case IDC_ADDSTORE_LIQUIDFOLDERS:
-			StoreType = LFTypeSourceInternal;
-			break;
+	LFDialog::DoDataExchange(pDX);
 
-		case IDC_ADDSTORE_WINDOWS:
-			StoreType = LFTypeSourceWindows;
-			break;
+	DDX_StoreButton(pDX, IDC_ADDSTORE_LIQUIDFOLDERS, m_wndStoreButtons[0], LFTypeSourceInternal);
+	DDX_StoreButton(pDX, IDC_ADDSTORE_WINDOWS, m_wndStoreButtons[1], LFTypeSourceWindows);
 
-		default:
-			StoreType = LFTypeSourceDropbox+lpDrawItemStruct->CtlID-IDC_ADDSTORE_DROPBOX;
-		}
-
-		// Content
-		CRect rectText(lpDrawItemStruct->rcItem);
-	rectText.DeflateRect(BORDER+1, BORDER);
-	if (lpDrawItemStruct->itemState & ODS_SELECTED)
-		rectText.OffsetRect(1, 1);
-
-	// Icon
-	if (p_Icons)
-	{
-		CPoint pt(rectText.left, rectText.top+(rectText.Height()-m_IconSize)/2);
-		p_Icons->DrawEx(&dc, StoreType-1, pt, CSize(m_IconSize, m_IconSize), CLR_NONE, 0xFFFFFF, IsWindowEnabled() ? ILD_TRANSPARENT : ILD_BLEND25);
-
-		rectText.left += m_IconSize+BORDER;
-	}
-
-	// Text
-	WCHAR Caption[256];
-	LFGetSourceName(Caption, 256, StoreType, FALSE);
-
-	WCHAR Hint[256];
-	::GetWindowText(lpDrawItemStruct->hwndItem, Hint, 256);
-
-	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
-
-	INT HeightCaption = dc.GetTextExtent(Caption).cy;
-	HeightCaption += HeightCaption/2;
-
-	dc.SelectObject(&LFGetApp()->m_DefaultFont);
-
-	CRect rectHint(rectText);
-	dc.DrawText(Hint, rectHint, DT_CALCRECT | DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-	rectText.top += (rectText.Height()-HeightCaption-rectHint.Height())/2;
-
-	dc.SetTextColor(IsWindowEnabled() ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
-	dc.SelectObject(&LFGetApp()->m_LargeFont);
-	dc.DrawText(Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS);
-	rectText.top += HeightCaption;
-
-	dc.SetTextColor(IsWindowEnabled() ? Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
-	dc.SelectObject(&LFGetApp()->m_DefaultFont);
-	dc.DrawText(Hint, rectText, DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-	dc.SelectObject(pOldFont);
-	}
-	else
-	{
-		LFDialog::DrawButtonForeground(dc, lpDrawItemStruct, Hover, Themed);
-	}
+	for (UINT a=0; a<8; a++)
+		DDX_StoreButton(pDX, IDC_ADDSTORE_DROPBOX+a, m_wndStoreButtons[a+2], LFTypeSourceDropbox+a);
 }
 
 void LFAddStoreDlg::CheckInternetConnection()
@@ -99,8 +37,8 @@ void LFAddStoreDlg::CheckInternetConnection()
 #endif
 
 	m_wndCategory[1].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
-	//for (UINT a=0; a<8; a++)
-	//	m_wndStoreButtons[a+2].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
+	for (UINT a=0; a<8; a++)
+		m_wndStoreButtons[a+2].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
 }
 
 
@@ -119,15 +57,6 @@ BOOL LFAddStoreDlg::OnInitDialog()
 	// Categories
 	m_wndCategory[0].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryLocal].Caption);
 	m_wndCategory[1].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryRemote].Caption);
-
-	// Buttons
-	CRect rectButton;
-	GetDlgItem(IDC_ADDSTORE_LIQUIDFOLDERS)->GetClientRect(rectButton);
-
-	INT Height = rectButton.Height()-2*BORDER;
-
-	m_IconSize = (Height>=128) ? 128 : (Height>=96) ? 96 : 48;
-	p_Icons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : (m_IconSize==96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
 
 	// Internet
 	CheckInternetConnection();

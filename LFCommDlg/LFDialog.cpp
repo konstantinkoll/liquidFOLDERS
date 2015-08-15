@@ -258,7 +258,8 @@ BOOL LFDialog::OnInitDialog()
 
 void LFDialog::OnDestroy()
 {
-	m_wndDesktopDimmer.SendMessage(WM_DESTROY);
+	if (IsWindow(m_wndDesktopDimmer))
+		m_wndDesktopDimmer.SendMessage(WM_DESTROY);
 
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
@@ -377,17 +378,17 @@ void LFDialog::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMe
 {
 	ASSERT(pPopupMenu);
 
-	CCmdUI state;
-	state.m_pMenu = state.m_pParentMenu = pPopupMenu;
-	state.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+	CCmdUI State;
+	State.m_pMenu = State.m_pParentMenu = pPopupMenu;
+	State.m_nIndexMax = pPopupMenu->GetMenuItemCount();
 
-	ASSERT(!state.m_pOther);
-	ASSERT(state.m_pMenu);
+	ASSERT(!State.m_pOther);
+	ASSERT(State.m_pMenu);
 
-	for (state.m_nIndex=0; state.m_nIndex<state.m_nIndexMax; state.m_nIndex++)
+	for (State.m_nIndex=0; State.m_nIndex<State.m_nIndexMax; State.m_nIndex++)
 	{
-		state.m_nID = pPopupMenu->GetMenuItemID(state.m_nIndex);
-		if ((state.m_nID) && (state.m_nID!=(UINT)-1))
-			state.DoUpdate(this, FALSE);
+		State.m_nID = pPopupMenu->GetMenuItemID(State.m_nIndex);
+		if ((State.m_nID) && (State.m_nID!=(UINT)-1))
+			State.DoUpdate(this, FALSE);
 	}
 }

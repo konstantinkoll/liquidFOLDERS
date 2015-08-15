@@ -55,6 +55,10 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	return CButton::PreTranslateMessage(pMsg);
 }
 
+void CTaskButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
+{
+}
+
 void CTaskButton::SetIconID(INT IconID, INT OverlayID)
 {
 	m_IconID = IconID;
@@ -216,7 +220,6 @@ void CTaskButton::OnSetFocus(CWnd* pOldWnd)
 	CButton::OnSetFocus(pOldWnd);
 	Invalidate();
 }
-
 
 void CTaskButton::OnKillFocus(CWnd* pNewWnd)
 {
