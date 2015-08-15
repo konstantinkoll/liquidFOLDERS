@@ -210,12 +210,12 @@ LFApplication::LFApplication(GUID& AppID)
 
 	// Get attribute category names
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		LFGetAttrCategoryName(m_AttrCategoryNames[a], a);
+		LFGetAttrCategoryName(m_AttrCategoryNames[a], 256, a);
 
 	// Get data source information
 	for (UINT a=0; a<LFSourceCount; a++)
 		for (UINT b=0; b<2; b++)
-			LFGetSourceName(m_SourceNames[a][b], a, b==1);
+			LFGetSourceName(m_SourceNames[a][b], 256, a, b==1);
 
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)

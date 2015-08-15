@@ -72,13 +72,13 @@ LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 
 
 // Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, UINT ID);
+LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, SIZE_T cCount, UINT ID);
 
 // Informationen über ein Attribut zurückliefern
 LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID);
 
 // Name einer Datenquelle in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, UINT ID, BOOL Qualified);
+LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, SIZE_T cCount, UINT ID, BOOL Qualified);
 
 // Informationen über eine Kategorie zurückliefern
 LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDescriptor, UINT ID);

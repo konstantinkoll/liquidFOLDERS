@@ -56,7 +56,7 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 
 	// Get attribute category names
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		LFGetAttrCategoryName(m_AttrCategoryNames[a], a);
+		LFGetAttrCategoryName(m_AttrCategoryNames[a], 256, a);
 
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)

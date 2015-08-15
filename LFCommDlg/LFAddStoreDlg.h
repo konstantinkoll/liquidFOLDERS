@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CStoreButton.h"
 #include "LFDialog.h"
 
 
@@ -15,9 +14,9 @@ class LFAddStoreDlg : public LFDialog
 public:
 	LFAddStoreDlg(CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
+	virtual void DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Hover, BOOL Themed);
+
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -26,8 +25,9 @@ protected:
 	afx_msg void OnBtnWindows();
 	DECLARE_MESSAGE_MAP()
 
-	CStoreButton m_wndStoreButtons[10];
-
 private:
 	void CheckInternetConnection();
+
+	CImageList* p_Icons;
+	INT m_IconSize;
 };
