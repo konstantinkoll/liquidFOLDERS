@@ -122,7 +122,7 @@ void CTooltipHeader::OnPaint()
 		g.DrawImage(pDivider->m_pBitmap, (rectParent.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetParent()->GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
 	}
 
-	const UINT Line = rect.Height()*2/5;
+	const INT Line = rect.Height()*2/5;
 	LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0x00, 0x00, 0x00, 0x00), Color(0x40, 0x00, 0x00, 0x00));
 	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(0x40, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
 
@@ -161,59 +161,20 @@ void CTooltipHeader::OnPaint()
 
 				if (lpBuffer[0]!=L'\0')
 				{
+					CRect rectBounds(rectItem);
+
 					if (Themed)
 					{
-						const BOOL Hover = (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a)));
+						rectBounds.InflateRect(1, 0);
 
-						if (Hover || (m_PressedItem==a))
-						{
-							CRect rectBounds(rectItem);
-							rectBounds.InflateRect(1, 0);
+						if (rectBounds.left<0)
+							rectBounds.left = 0;
+					}
 
-							if (rectBounds.left<0)
-								rectBounds.left = 0;
+					DrawSubitemBackground(dc, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
 
-							COLORREF clr = LFGetApp()->OSVersion==OS_Eight ? Hover ? 0xEDC093 : 0xDAA026 : Hover ? 0xB17F3C : 0x8B622C;
-							dc.Draw3dRect(rectBounds, clr, clr);
-
-							rectBounds.DeflateRect(1, 1);
-
-							if (LFGetApp()->OSVersion==OS_Eight)
-							{
-								dc.FillSolidRect(rectBounds, Hover ? 0xF8F0E1 : 0xF0E1C3);
-							}
-							else
-								if (m_PressedItem==a)
-								{
-									dc.FillSolidRect(rectBounds, 0xF6E4C2);
-
-									INT y = (rectBounds.top+rectBounds.bottom)/2;
-
-									LinearGradientBrush brush2(Point(rectBounds.left, y-1), Point(rectBounds.left, rectBounds.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
-									g.FillRectangle(&brush2, rectBounds.left, y, rectBounds.Width(), rectBounds.bottom-y);
-
-									LinearGradientBrush brush3(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.top+2), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-									g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), 2);
-
-									LinearGradientBrush brush4(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left+2, rectBounds.top), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-									g.FillRectangle(&brush4, rectBounds.left, rectBounds.top, 2, rectBounds.Height());
-								}
-								else
-								{
-									LinearGradientBrush brush1(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
-									g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
-
-									rectBounds.DeflateRect(1, 1);
-									INT y = (rectBounds.top+rectBounds.bottom)/2;
-
-									LinearGradientBrush brush2(Point(rectBounds.left, rectBounds.top-1), Point(rectBounds.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
-									g.FillRectangle(&brush2, rectBounds.left, rectBounds.top, rectBounds.Width(), y-rectBounds.top);
-
-									LinearGradientBrush brush3(Point(rectBounds.left, y-1), Point(rectBounds.left, rectBounds.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
-									g.FillRectangle(&brush3, rectBounds.left, y, rectBounds.Width(), rectBounds.bottom-y);
-								}
-							}
-
+					if (Themed)
+					{
 						if (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP))
 							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
 
@@ -222,7 +183,6 @@ void CTooltipHeader::OnPaint()
 					}
 					else
 					{
-						dc.DrawEdge(rectItem, m_PressedItem==a ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 						rectItem.right--;
 					}
 
@@ -247,7 +207,6 @@ void CTooltipHeader::OnPaint()
 						break;
 					}
 
-					dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 					dc.DrawText(lpBuffer, rectItem, nFormat);
 
 					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))

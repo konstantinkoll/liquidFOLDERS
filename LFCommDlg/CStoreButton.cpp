@@ -79,10 +79,6 @@ void CStoreButton::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	// State
-	BOOL Focused = (GetState() & 8);
-	BOOL Selected = (GetState() & 4);
-
 	// Background
 	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
 	if (hBrush)
@@ -90,96 +86,11 @@ void CStoreButton::OnPaint()
 
 	// Button
 	BOOL Themed = IsCtrlThemed();
-	if (Themed)
-	{
-		Graphics g(dc);
+	BOOL Selected = (GetState() & 4);
 
-		CRect rectBounds(rect);
-		g.SetSmoothingMode(SmoothingModeNone);
-
-		// Inner border
-		rectBounds.DeflateRect(2, 2);
-
-		if (Selected)
-		{
-		/*	dc.FillSolidRect(rectBounds, Selected ? 0xF0D197 : 0xFDE2B0);
-
-
-			LinearGradientBrush brush5(Point(0, rectBounds.top-1), Point(0, (rectBounds.top+rectBounds.bottom)/2), Color(0xC0, 0xFF, 0xFF, 0xFF), Color(0x80, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush5, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
-
-			if (Selected)
-			{
-			}*/
-//						COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
-//						COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
-
-			dc.FillSolidRect(rectBounds, 0xF6E4C2);
-
-			LinearGradientBrush brush3(Point(0, rectBounds.top), Point(0, rectBounds.top+4), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), 4);
-		}
-		else
-		{
-			dc.FillSolidRect(rectBounds, m_Hover ? 0xEFECEC : 0xF7F4F4);
-
-			LinearGradientBrush brush3(Point(0, rectBounds.top-1), Point(0, (rectBounds.top+rectBounds.bottom)/2), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
-
-			LinearGradientBrush brush4(Point(0, rectBounds.bottom-4), Point(0, rectBounds.bottom+1), Color(0x00, 0x00, 0x00, 0x00), Color(m_Hover ? 0x18 : 0x10, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush4, rectBounds.left, rectBounds.bottom-3, rectBounds.Width(), 3);
-		}
-
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-		rectBounds.left--;
-		rectBounds.top--;
-
-		GraphicsPath path;
-		CreateRoundRectangle(rectBounds, 2, path);
-
-		if (Focused)
-		{
-			Pen pen(Color(0x32, 0x75, 0xA7));
-			g.DrawPath(&pen, &path);
-
-			rectBounds.DeflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			Pen pen2(Color(0xC0, 0x48, 0xD8, 0xFB));
-			g.DrawPath(&pen2, &path);
-
-			rectBounds.InflateRect(1, 1);
-		}
-		else
-			if (m_Hover)
-			{
-			Pen pen(Color(0xAC, 0xAF, 0xB4));
-			g.DrawPath(&pen, &path);
-			}
-			else
-		{
-			Pen pen(Color(0xBE, 0xBE, 0xBE));
-			g.DrawPath(&pen, &path);
-		}
-	}
-	else
-	{
-		dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-		dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
-
-		if (Focused)
-		{
-			CRect rectFocus(rect);
-			rectFocus.DeflateRect(2, 2);
-			dc.SetTextColor(0x000000);
-			dc.DrawFocusRect(rectFocus);
-		}
-	}
+	DrawWhiteButtonBackground(dc, rect, Themed, GetState() & 8, Selected, m_Hover);
 
 	// Content
-	dc.SetTextColor(IsWindowEnabled() ? Themed ? m_Hover || Focused | Selected ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
-
 	CRect rectText(rect);
 	rectText.DeflateRect(BORDER+1, BORDER);
 	if (Selected)
@@ -195,6 +106,9 @@ void CStoreButton::OnPaint()
 	}
 
 	// Text
+	if (!IsWindowEnabled())
+		dc.SetTextColor(GetSysColor(COLOR_GRAYTEXT));
+
 	CString Hint;
 	GetWindowText(Hint);
 
@@ -255,7 +169,6 @@ void CStoreButton::OnSetFocus(CWnd* pOldWnd)
 	CButton::OnSetFocus(pOldWnd);
 	Invalidate();
 }
-
 
 void CStoreButton::OnKillFocus(CWnd* pNewWnd)
 {

@@ -232,8 +232,11 @@ void CExplorerNotification::OnPaint()
 	rect.DeflateRect(1, 1);
 
 	Graphics g(dc);
-	LinearGradientBrush brush(Point(0, 0), Point(rect.Width()+1, 0), Color(255, m_FirstCol & 0xFF, (m_FirstCol>>8) & 0xFF, (m_FirstCol>>16) & 0xFF), Color(255, m_SecondCol & 0xFF, (m_SecondCol>>8) & 0xFF, (m_SecondCol>>16) & 0xFF));
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+	LinearGradientBrush brush(Point(0, 0), Point(rect.Width(), 0), Color(255, m_FirstCol & 0xFF, (m_FirstCol>>8) & 0xFF, (m_FirstCol>>16) & 0xFF), Color(255, m_SecondCol & 0xFF, (m_SecondCol>>8) & 0xFF, (m_SecondCol>>16) & 0xFF));
 	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_GradientCY);
+
 	rect.top += m_GradientCY;
 	rect.left += BORDERX;
 

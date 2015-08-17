@@ -197,32 +197,34 @@ void CHistoryBar::OnPaint()
 		Graphics g(dc);
 
 		CRect rectBounds(rectContent);
-		rectBounds.right--;
-		rectBounds.bottom--;
-
 		rectContent.DeflateRect(2, 2);
-		SolidBrush brush1(Color(Alpha, 0xFF, 0xFF, 0xFF));
 
+		SolidBrush brush1(Color(Alpha, 0xFF, 0xFF, 0xFF));
 		g.FillRectangle(&brush1, rectContent.left, rectContent.top, rectContent.Width(), rectContent.Height());
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		GraphicsPath path;
 		CreateRoundRectangle(rectBounds, 2, path);
+
 		Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
 		g.DrawPath(&pen, &path);
+
 		rectBounds.DeflateRect(1, 1);
 
 		if (LFGetApp()->OSVersion==OS_Eight)
 		{
 			CreateRoundRectangle(rectBounds, 0, path);
+
 			Pen pen(Color(0x40, 0x38, 0x38, 0x38));
 			g.DrawPath(&pen, &path);
 		}
 		else
 		{
 			CreateRoundRectangle(rectBounds, 1, path);
+
 			LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
 			pen.SetBrush(&brush2);
+
 			g.DrawPath(&pen, &path);
 		}
 	}
@@ -244,8 +246,6 @@ void CHistoryBar::OnPaint()
 
 	// Breadcrumbs
 	CFont* pOldFont;
-	COLORREF c1 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000;
-	COLORREF c2 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_3DSHADOW) : 0x808080;
 
 	if (m_IsEmpty)
 	{
@@ -253,100 +253,45 @@ void CHistoryBar::OnPaint()
 		rectText.DeflateRect(BORDER, 0);
 
 		pOldFont = dc.SelectObject(&theApp.m_ItalicFont);
-		dc.SetTextColor(c2);
+		dc.SetTextColor(pCtrlSite->GetDesign()==GWD_DEFAULT ? GetSysColor(COLOR_3DSHADOW) : 0x808080);
 		dc.DrawText(m_EmptyHint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
 		pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-		dc.SetTextColor(c1);
+		dc.SetTextColor(pCtrlSite->GetDesign()==GWD_DEFAULT ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000);
 
 		for (UINT a=0; a<m_Breadcrumbs.m_ItemCount; a++)
 		{
 			// Item
-			HistoryItem* hi = &m_Breadcrumbs.m_Items[a];
+			HistoryItem* pHistoryItem = &m_Breadcrumbs.m_Items[a];
 
 			CRect rectItem(rectContent);
-			rectItem.left = hi->Left;
-			rectItem.right = hi->Right;
+			rectItem.left = pHistoryItem->Left;
+			rectItem.right = pHistoryItem->Right;
+
 			CRect rectItemText(rectItem);
 
 			if (rectItem.left<BORDER/2)
 				rectItem.left = BORDER/2;
 
-			BOOL Hover = (m_Hover==(INT)a) && (m_Pressed==NOPART);
-			BOOL Pressed = (m_Hover==(INT)a) && (m_Pressed==(INT)a);
-			if (Hover || Pressed)
-				if (Themed)
-				{
-					if (LFGetApp()->OSVersion==OS_Eight)
-					{
-						COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
-						COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
+			BOOL Selected = (m_Hover==(INT)a) && (m_Pressed==(INT)a);
 
-						CRect rectBounds(rectItem);
-						dc.Draw3dRect(rectBounds, colBorder, colBorder);
-						rectBounds.DeflateRect(1, 0);
-						dc.FillSolidRect(rectBounds, colInner);
-					}
-					else
-					{
-						COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
-						dc.FillSolidRect(rectItem.left, rectItem.top, 1, rectItem.Height(), clr);
-						dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), clr);
-
-						Graphics g(dc);
-						rectItem.DeflateRect(1, 0);
-
-						if (Hover)
-						{
-							LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
-							g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
-
-							rectItem.DeflateRect(1, 1);
-							INT y = (rectItem.top+rectItem.bottom)/2;
-
-							LinearGradientBrush brush2(Point(rectItem.left, rectItem.top-1), Point(rectItem.left, y-1), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
-							g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), y-rectItem.top);
-
-							LinearGradientBrush brush3(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
-							g.FillRectangle(&brush3, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
-						}
-						else
-						{
-							dc.FillSolidRect(rectItem, 0xF6E4C2);
-
-							INT y = (rectItem.top+rectItem.bottom)/2;
-
-							LinearGradientBrush brush2(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
-							g.FillRectangle(&brush2, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
-
-							LinearGradientBrush brush3(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-							g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), 2);
-
-							LinearGradientBrush brush4(Point(rectItem.left, rectItem.top), Point(rectItem.left+2, rectItem.top), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-							g.FillRectangle(&brush4, rectItem.left, rectItem.top, 2, rectItem.Height());
-						}
-					}
-				}
-				else
-				{
-					dc.DrawEdge(rectItem, Pressed ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
-				}
+			DrawSubitemBackground(dc, rectItem, Themed, Selected, (m_Hover==(INT)a) && (m_Pressed==NOPART), TRUE);
 
 			rectItemText.DeflateRect(MARGIN, 0);
 			if (rectItemText.left<BORDER/2)
 				rectItemText.left = BORDER/2;
-			if (Pressed)
+			if (Selected)
 				rectItemText.OffsetRect(1, 1);
 
-			dc.DrawText(hi->Name, (INT)wcslen(hi->Name), rectItemText, DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
+			dc.DrawText(pHistoryItem->Name, (INT)wcslen(pHistoryItem->Name), rectItemText, DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
 
 			// Arrow
 			if (a>0)
 			{
 				CRect rectArrow(rectContent);
-				rectArrow.left = hi->Right;
+				rectArrow.left = pHistoryItem->Right;
 				rectArrow.right = m_Breadcrumbs.m_Items[a-1].Left;
 
 				INT cy = rectArrow.Height()/4;

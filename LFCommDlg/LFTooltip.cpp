@@ -202,8 +202,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, const CString& strCaption, CStr
 
 	CRgn rgn;
 	m_Themed = IsCtrlThemed();
-	m_Flat = m_Themed && (LFGetApp()->OSVersion>=OS_Eight);
-	if (m_Themed && !m_Flat)
+	if (m_Themed)
 	{
 		rgn.CreateRoundRectRgn(0, 0, Size.cx+1, Size.cy+1, 3, 3);
 	}
@@ -277,38 +276,45 @@ void LFTooltip::OnPaint()
 	CRect rect(rectClient);
 	rect.DeflateRect(1, 1);
 
+	Graphics g(dc);
+
 	// Background
-	if (m_Flat || (m_Themed && (LFGetApp()->OSVersion==OS_XP)))
+	if (m_Themed)
 	{
-		dc.FillSolidRect(rect, 0xFFFFFF);
+		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+		LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xF2, 0xF4, 0xF7));
+		g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
 	}
 	else
-		if (m_Themed)
-		{
-			Graphics g(dc);
-			LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xE4, 0xE4, 0xF0));
-			g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
-		}
-		else
-		{
-			dc.FillSolidRect(rect, GetSysColor(COLOR_INFOBK));
-		}
+	{
+		dc.FillSolidRect(rect, GetSysColor(COLOR_INFOBK));
+	}
 
 	// Border
-	COLORREF clrLine = m_Themed ? 0x767676 : GetSysColor(COLOR_INFOTEXT);
-	COLORREF clrText = m_Themed ? m_Flat ? 0x575757 : 0x4C4C4C : GetSysColor(COLOR_INFOTEXT);
+	COLORREF clrLine = m_Themed ? 0x97908B : GetSysColor(COLOR_INFOTEXT);
+	COLORREF clrText = m_Themed ? 0x505050 : GetSysColor(COLOR_INFOTEXT);
 
 	dc.Draw3dRect(rectClient, clrLine, clrLine);
 
-	if (m_Themed && !m_Flat)
+	if (m_Themed)
 	{
 		COLORREF clr = (clrLine>>1) | 0x808080;
 		dc.SetPixel(rectClient.left+1, rectClient.top+1, clr);
 		dc.SetPixel(rectClient.right-2, rectClient.top+1, clr);
 
-		clr = ((clrLine>>1) & 0x7F7F7F) + 0x727278;
+		clr = ((clrLine>>1) & 0x7F7F7F) + 0x7B7A79;
 		dc.SetPixel(rectClient.left+1, rectClient.bottom-2, clr);
 		dc.SetPixel(rectClient.right-2, rectClient.bottom-2, clr);
+
+		GraphicsPath path;
+		CreateRoundRectangle(rect, 1, path);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
+		g.DrawPath(&pen, &path);
 	}
 
 	// Interior

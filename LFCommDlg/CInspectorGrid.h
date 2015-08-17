@@ -293,7 +293,6 @@ protected:
 
 	LFDynArray<Property> m_Properties;
 	PropertyCategory m_Categories[LFAttrCategoryCount];
-	HTHEME hThemeButton;
 	HTHEME hThemeList;
 	HICON hIconResetNormal;
 	HICON hIconResetHot;

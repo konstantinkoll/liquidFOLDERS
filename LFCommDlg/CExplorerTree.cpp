@@ -966,11 +966,12 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 	*pResult = FALSE;
 
-	CEdit* edit = GetEditControl();
-	if (edit)
+	CEdit* pWndEdit = GetEditControl();
+	if (pWndEdit)
 	{
 		CString Name;
-		edit->GetWindowText(Name);
+		pWndEdit->GetWindowText(Name);
+
 		if (!Name.IsEmpty())
 		{
 			IShellFolder* pParentFolder = NULL;

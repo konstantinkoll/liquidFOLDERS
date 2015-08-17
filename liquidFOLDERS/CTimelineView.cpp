@@ -324,11 +324,10 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 	Color sCol(0x0A, 0x00, 0x00, 0x00);
 	if (Themed)
 	{
-		CRect rectBorder(rectItem);
-		rectBorder.left++;
-		rectBorder.top++;
+		CRect rectShadow(rectItem);
+		rectShadow.OffsetRect(1, 1);
 
-		CreateRoundRectangle(rectBorder, 2, path);
+		CreateRoundRectangle(rectShadow, 2, path);
 
 		Pen pen(sCol);
 		g.DrawPath(&pen, &path);
@@ -662,10 +661,13 @@ void CTimelineView::OnPaint()
 
 	if (Themed)
 	{
-		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE+1), Color(0xFF, 0xFF, 0xFF), Color(0xE9, 0xEA, 0xED));
+		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFF, 0xFF, 0xFF), Color(0xE9, 0xEA, 0xED));
 		g.FillRectangle(&brush, Rect(0, 0, rect.Width(), WHITE));
 	}
 
+	g.SetPixelOffsetMode(PixelOffsetModeNone);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Items
@@ -714,6 +716,7 @@ void CTimelineView::OnPaint()
 					{
 						CRect rect(d->Hdr.Rect);
 						rect.OffsetRect(0, -m_VScrollPos);
+
 						if (IntersectRect(&rectIntersect, rect, rectUpdate))
 							DrawItem(dc, g, rect, a, Themed);
 					}

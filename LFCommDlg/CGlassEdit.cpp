@@ -134,7 +134,7 @@ void CGlassEdit::OnNcPaint()
 
 	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rect);
-	const BYTE Alpha = (LFGetApp()->OSVersion==OS_Eight) ? 0xFF : (m_Hover || (GetFocus()==this)) ? (pCtrlSite->GetDesign()==GWD_THEMED) ? 0xFF : 0xF0 : 0xD0;
+	const BYTE Alpha = (LFGetApp()->OSVersion==OS_Eight) ? 0xFF : (GetFocus()==this) ? (pCtrlSite->GetDesign()==GWD_THEMED) ? 0xFF : 0xF0 : m_Hover ? 0xF0 : 0xD0;
 
 	Graphics g(dc);
 	g.ExcludeClip(Rect(rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height()));
@@ -143,31 +143,34 @@ void CGlassEdit::OnNcPaint()
 	if (IsCtrlThemed())
 	{
 		CRect rectBounds(rect);
-		rectBounds.right--;
-		rectBounds.bottom--;
-
 		rectContent.DeflateRect(2, 2);
+
 		SolidBrush brush1(Color(Alpha, 0xFF, 0xFF, 0xFF));
 		g.FillRectangle(&brush1, rectContent.left, rectContent.top, rectContent.Width(), rectContent.Height());
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		GraphicsPath path;
 		CreateRoundRectangle(rectBounds, 2, path);
+
 		Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
 		g.DrawPath(&pen, &path);
+
 		rectBounds.DeflateRect(1, 1);
 
 		if (LFGetApp()->OSVersion==OS_Eight)
 		{
 			CreateRoundRectangle(rectBounds, 0, path);
+
 			Pen pen(Color(0x40, 0x38, 0x38, 0x38));
 			g.DrawPath(&pen, &path);
 		}
 		else
 		{
 			CreateRoundRectangle(rectBounds, 1, path);
+
 			LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
 			pen.SetBrush(&brush2);
+
 			g.DrawPath(&pen, &path);
 		}
 	}
@@ -222,16 +225,18 @@ void CGlassEdit::OnNcPaint()
 	}
 
 	// Set alpha
-	BITMAP bmp;
-	GetObject(hBitmap, sizeof(BITMAP), &bmp);
-	BYTE* pBits = ((BYTE*)bmp.bmBits)+4*(rectContent.top*rect.Width()+rectContent.left);
-	for (INT row=rectContent.top; row<rectContent.bottom; row++)
+	BITMAP Bitmap;
+	GetObject(hBitmap, sizeof(BITMAP), &Bitmap);
+	BYTE* pBits = ((BYTE*)Bitmap.bmBits)+4*(rectContent.top*rect.Width()+rectContent.left);
+
+	for (INT Row=rectContent.top; Row<rectContent.bottom; Row++)
 	{
-		for (INT col=rectContent.left; col<rectContent.right; col++)
+		for (INT Column=rectContent.left; Column<rectContent.right; Column++)
 		{
 			*(pBits+3) = Alpha;
 			pBits += 4;
 		}
+
 		pBits += 4*(rect.Width()-rectContent.Width());
 	}
 

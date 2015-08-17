@@ -721,7 +721,7 @@ CInspectorGrid::CInspectorGrid()
 	m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
-	hThemeList = hThemeButton = NULL;
+	hThemeList = NULL;
 	hIconResetNormal = hIconResetHot = hIconResetPressed = NULL;
 	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
 	m_HotItem = m_SelectedItem = m_EditItem = -1;
@@ -759,14 +759,11 @@ void CInspectorGrid::PreSubclassWindow()
 void CInspectorGrid::Init()
 {
 	if (LFGetApp()->m_ThemeLibLoaded)
-	{
-		hThemeButton = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (LFGetApp()->OSVersion>=OS_Vista)
 		{
 			LFGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
 			hThemeList = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
-	}
 
 	ResetScrollbars();
 	CreateFonts();
@@ -1312,13 +1309,14 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 	{
 		INT Item = m_EditItem;
 
-		CEdit* victim = p_Edit;
+		CEdit* pVictim = p_Edit;
 		p_Edit = NULL;
 
 		CString Value;
-		victim->GetWindowText(Value);
-		victim->DestroyWindow();
-		delete victim;
+		pVictim->GetWindowText(Value);
+
+		pVictim->DestroyWindow();
+		delete pVictim;
 
 		if ((Accept) && (Item!=-1))
 			m_Properties.m_Items[Item].pProperty->OnSetString(Value);
@@ -1363,8 +1361,6 @@ void CInspectorGrid::OnDestroy()
 {
 	CPropertyHolder::OnDestroy();
 
-	if (hThemeButton)
-		LFGetApp()->zCloseThemeData(hThemeButton);
 	if (hThemeList)
 		LFGetApp()->zCloseThemeData(hThemeList);
 
@@ -1376,12 +1372,9 @@ LRESULT CInspectorGrid::OnThemeChanged()
 {
 	if (LFGetApp()->m_ThemeLibLoaded)
 	{
-		if (hThemeButton)
-			LFGetApp()->zCloseThemeData(hThemeButton);
 		if (hThemeList)
 			LFGetApp()->zCloseThemeData(hThemeList);
 
-		hThemeButton = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (LFGetApp()->OSVersion>=OS_Vista)
 			hThemeList = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
@@ -1484,27 +1477,16 @@ void CInspectorGrid::OnPaint()
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
 				rectLabel.right -= rectButton.Width()+GUTTER;
 
-				BOOL Hot = ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON);
-				BOOL Pressed = Hot && m_PartPressed;
-
-				if (hThemeButton)
-				{
+				if (Themed)
 					rectButton.InflateRect(1, 1);
 
-					UINT State = Pressed ? PBS_PRESSED : Hot ? PBS_HOT : PBS_NORMAL;
-					LFGetApp()->zDrawThemeBackground(hThemeButton, dc, BP_PUSHBUTTON, State, &rectButton, NULL);
-				}
-				else
-				{
-					dc.FillSolidRect(rectButton, GetSysColor(COLOR_3DFACE));
-					dc.DrawEdge(rectButton, Pressed ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
-				}
+				BOOL Pressed = m_PartPressed && (m_HotPart==PARTBUTTON);
 
-				rectButton.bottom -= 4;
+				DrawWhiteButtonBackground(dc, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON), TRUE);
+
 				if (Pressed)
 					rectButton.OffsetRect(1, 1);
 
-				dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 			}
 

@@ -77,32 +77,21 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"));
 		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, Line);
 
-		// Sunken button
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-		g.SetPixelOffsetMode(PixelOffsetModeHalf);
-
 		CWnd* pChildWnd = GetWindow(GW_CHILD);
 
 		while (pChildWnd)
 		{
-			if (pChildWnd->SendMessage(WM_GETDLGCODE) & (DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
+			if (pChildWnd->SendMessage(WM_GETDLGCODE) & (DLGC_BUTTON | DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
 			{
 				DWORD dwStyle = pChildWnd->GetStyle();
 				if (dwStyle & WS_VISIBLE)
-					if (((dwStyle & BS_TYPEMASK)==BS_PUSHBUTTON) || ((dwStyle & BS_TYPEMASK)==BS_DEFPUSHBUTTON))
+					if (((dwStyle & BS_TYPEMASK)==BS_PUSHBUTTON) || ((dwStyle & BS_TYPEMASK)==BS_DEFPUSHBUTTON) || ((dwStyle & BS_TYPEMASK)==BS_OWNERDRAW))
 					{
 						CRect rectBounds;
 						pChildWnd->GetWindowRect(&rectBounds);
 						ScreenToClient(&rectBounds);
 
-						GraphicsPath path;
-						CreateRoundRectangle(rectBounds, 3, path);
-
-						LinearGradientBrush brush1(Point(0, rectBounds.top), Point(0, rectBounds.bottom+1), Color(0x0C, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
-						g.FillPath(&brush1, &path);
-
-						LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom+1), Color(0x00, 0xFF, 0xFF, 0xFF), Color(0xFF, 0xFF, 0xFF, 0xFF));
-						g.FillPath(&brush2, &path);
+						DrawWhiteButtonBorder(g, rectBounds);
 					}
 			}
 
@@ -121,6 +110,8 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		{
 			CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIV, _T("PNG"));
 			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, btn.bottom+borders.Height()+1);
+
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 			LinearGradientBrush brush2(Point(0, 0), Point(m_BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
 			g.FillRectangle(&brush2, 0, 0, m_BackBufferL, m_UACHeight);
@@ -228,8 +219,6 @@ BOOL LFDialog::OnInitDialog()
 		m_UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
 		m_ShieldSize = (m_UACHeight<24) ? 16 : (m_UACHeight<32) ? 24 : (m_UACHeight<48) ? 32 : 48;
 		hIconShield = (HICON)LoadImage(AfxGetResourceHandle(), (LFGetApp()->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_ShieldSize, m_ShieldSize, LR_SHARED);
-
-		LFGetApp()->PlayWarningSound();
 
 		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist

@@ -314,6 +314,7 @@ void CSidebar::OnPaint()
 	const COLORREF colCp = Themed ? 0x998981 : GetSysColor(COLOR_3DFACE);
 
 	Graphics g(dc);
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	dc.FillSolidRect(rect, colBg);
@@ -375,7 +376,7 @@ void CSidebar::OnPaint()
 							CreateRoundRectangle(rectNumber, 6, path);
 
 							Matrix m1;
-							m1.Translate(3.0f, 3.0f);
+							m1.Translate(3.5f, 3.5f);
 							path.Transform(&m1);
 
 							SolidBrush brushShadow(Color(0x40, 0x00, 0x00, 0x00));

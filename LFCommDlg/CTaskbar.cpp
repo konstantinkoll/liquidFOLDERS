@@ -208,7 +208,9 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			const UINT line = (rect.Height()-2)*2/5;
 
 			Graphics g(dc);
-			LinearGradientBrush brush(Point(0, line-1), Point(0, rect.bottom-1), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+			LinearGradientBrush brush(Point(0, line), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
 
 			if (GetParent()->GetStyle() & WS_BORDER)
 			{
@@ -226,6 +228,7 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 
 		if (hBackgroundBrush)
 			DeleteObject(hBackgroundBrush);
+
 		hBackgroundBrush = CreatePatternBrush(m_BackBuffer);
 	}
 	else

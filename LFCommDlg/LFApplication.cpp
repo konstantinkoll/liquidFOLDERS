@@ -292,7 +292,7 @@ BOOL LFApplication::InitInstance()
 	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
 
 	// Fonts
-	CString face = GetDefaultFontFace();
+	CString Face = GetDefaultFontFace();
 
 	INT Size = 8;
 	LOGFONT lf;
@@ -301,25 +301,25 @@ BOOL LFApplication::InitInstance()
 
 	m_DefaultFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_BoldFont.CreateFont(-Size, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_ItalicFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_SmallFont.CreateFont(-(Size-2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		(Size<=11) ? _T("Tahoma") : face);
+		(Size<=11) ? _T("Tahoma") : Face);
 	m_LargeFont.CreateFont(-(Size+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_CaptionFont.CreateFont(-(Size+11), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		_T("Letter Gothic"));
 	m_UACFont.CreateFont(-(Size+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 
 	// liquidFOLDERS initalisieren
 	LFInitialize();
@@ -420,10 +420,7 @@ BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 
 CString LFApplication::GetDefaultFontFace()
 {
-	LOGFONT lf;
-	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0);
-
-	return lf.lfFaceName;
+	return _T("Arial");
 }
 
 void LFApplication::SendMail(CString Subject)
