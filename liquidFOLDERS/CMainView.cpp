@@ -442,7 +442,7 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolvePhysica
 		if (ResolvePhysicalLocations)
 		{
 			LFTransactionResolvePhysicalLocations(pTransactionList, IncludePIDL);
-			LFErrorBox(pTransactionList->m_LastError, GetSafeHwnd());
+			LFErrorBox(this, pTransactionList->m_LastError);
 		}
 	}
 
@@ -996,7 +996,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 
 		LFDoWithProgress(WorkerImportFromStore, &wp.Hdr, this);
 
-		LFErrorBox(wp.TransactionList->m_LastError, GetSafeHwnd());
+		LFErrorBox(this, wp.TransactionList->m_LastError);
 		LFFreeTransactionList(wp.TransactionList);
 	}
 	else
@@ -1434,7 +1434,7 @@ void CMainView::OnStoreMakeDefault()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFErrorBox(LFMakeDefaultStore(p_CookedFiles->m_Items[Index]->StoreID), GetSafeHwnd());
+		LFErrorBox(this, LFMakeDefaultStore(p_CookedFiles->m_Items[Index]->StoreID));
 }
 
 void CMainView::OnStoreImportFolder()
@@ -1546,7 +1546,7 @@ void CMainView::OnFileOpenWith()
 		}
 		else
 		{
-			LFErrorBox(Result, GetSafeHwnd());
+			LFErrorBox(this, Result);
 		}
 	}
 }

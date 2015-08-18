@@ -151,10 +151,14 @@ public:
 	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons=FALSE);
 	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR Verb);
-	static void PlayStandardSound();
+	static void PlayAsteriskSound();
+	static void PlayDefaultSound();
+	static void PlayErrorSound();
 	static void PlayNavigateSound();
-	static void PlayWarningSound();
+	static void PlayNotificationSound();
+	static void PlayQuestionSound();
 	static void PlayTrashSound();
+	static void PlayWarningSound();
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();

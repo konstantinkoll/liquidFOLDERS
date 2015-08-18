@@ -93,8 +93,7 @@ void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 		if (tdlg.DoModal()!=IDCANCEL)
 		{
 			LFDoWithProgress(WorkerImportFromWindows, (LFWorkerParameters*)&wp, pParentWnd);
-
-			LFErrorBox(wp.FileImportList->m_LastError, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
+			LFErrorBox(pParentWnd, wp.FileImportList->m_LastError);
 		}
 
 		LFFreeItemDescriptor(wp.Template);
@@ -108,7 +107,7 @@ void LFRunMaintenance(CWnd* pParentWnd)
 	ZeroMemory(&wp, sizeof(wp));
 
 	LFDoWithProgress(WorkerStoreMaintenance, &wp.Hdr, pParentWnd);
-	LFErrorBox(wp.MaintenanceList->m_LastError, pParentWnd->GetSafeHwnd());
+	LFErrorBox(pParentWnd, wp.MaintenanceList->m_LastError);
 
 	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, pParentWnd);
 	dlg.DoModal();
@@ -120,16 +119,16 @@ void LFDeleteStore(CHAR* StoreID, CWnd* pParentWnd)
 	UINT Result = LFGetStoreSettings(StoreID, &Store);
 	if (Result!=LFOk)
 	{
-		LFErrorBox(Result, pParentWnd->GetSafeHwnd());
+		LFErrorBox(pParentWnd, Result);
 		return;
 	}
 
-	// Messagebox
+	// LFMessageBox
 	CString Caption;
 	Caption.Format(IDS_DELETESTORE_CAPTION, Store.StoreName);
 	CString Msg((LPCSTR)IDS_DELETESTORE_MSG);
 
-	if (pParentWnd->MessageBox(Msg, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
+	if (LFMessageBox(pParentWnd, Msg, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
 		return;
 
 	// Dialogbox nur zeigen, wenn der Store gemountet ist
@@ -145,5 +144,5 @@ void LFDeleteStore(CHAR* StoreID, CWnd* pParentWnd)
 	strcpy_s(wp.StoreID, LFKeySize, Store.StoreID);
 
 	LFDoWithProgress(WorkerStoreDelete, &wp.Hdr, pParentWnd);
-	LFErrorBox(wp.Result, pParentWnd->GetSafeHwnd());
+	LFErrorBox(pParentWnd, wp.Result);
 }

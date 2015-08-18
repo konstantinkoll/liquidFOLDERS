@@ -39,9 +39,15 @@ void LFDialog::DoDataExchange(CDataExchange* pDX)
 
 CWnd* LFDialog::GetBottomWnd() const
 {
-	CWnd* pBottomWnd = GetDlgItem(IDOK);
+	CWnd* pBottomWnd = m_BottomRightControls.GetHead();
+
 	if (!pBottomWnd)
-		pBottomWnd = GetDlgItem(IDCANCEL);
+	{
+		pBottomWnd = GetDlgItem(IDOK);
+
+		if (!pBottomWnd)
+			pBottomWnd = GetDlgItem(IDCANCEL);
+	}
 
 	return pBottomWnd;
 }
@@ -123,10 +129,10 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
 		}
 
-		DrawIconEx(dc, borders.right, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc, borders.right-m_ShieldSize/16, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
 
 		CRect rectText(rect);
-		rectText.left = borders.right+m_ShieldSize;
+		rectText.left = borders.right+borders.right/4+m_ShieldSize;
 		rectText.bottom = m_UACHeight;
 
 		CString tmpStr((LPCSTR)IDS_UACMESSAGE);

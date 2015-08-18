@@ -83,6 +83,28 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
+{
+	LFDialog::OnEraseBkgnd(dc, g, rect);
+
+	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, m_IconTop);
+	if (p_Santa)
+		g.DrawImage(p_Santa->m_pBitmap, -6, m_IconTop-10);
+
+	CRect r(rect);
+	r.top = m_CaptionTop;
+	r.left = (p_Santa ? 178 : 148)-1;
+
+	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
+
+	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
+	dc.SetTextColor(IsCtrlThemed() ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetBkMode(TRANSPARENT);
+	dc.DrawText(m_AppName, r, fmt);
+
+	dc.SelectObject(pOldFont);
+}
+
 void LFAboutDlg::CheckLicenseKey()
 {
 	LFLicense License;
@@ -196,28 +218,6 @@ void LFAboutDlg::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
-{
-	LFDialog::OnEraseBkgnd(dc, g, rect);
-
-	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, m_IconTop);
-	if (p_Santa)
-		g.DrawImage(p_Santa->m_pBitmap, -6, m_IconTop-10);
-
-	CRect r(rect);
-	r.top = m_CaptionTop;
-	r.left = (p_Santa ? 178 : 148)-1;
-
-	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
-
-	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
-	dc.SetTextColor(IsCtrlThemed() ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName, r, fmt);
-
-	dc.SelectObject(pOldFont);
 }
 
 void LFAboutDlg::OnEnableAutoUpdate()

@@ -31,13 +31,13 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 		{
 			ENSURE(Caption.LoadString(IDS_LICENSEVALID_CAPTION));
 			ENSURE(Message.LoadString(IDS_LICENSEVALID_MSG));
-			MessageBox(Message, Caption, MB_ICONINFORMATION);
+			LFMessageBox(this, Message, Caption, MB_ICONINFORMATION);
 		}
 		else
 		{
 			ENSURE(Caption.LoadString(IDS_ERROR));
 			ENSURE(Message.LoadString(IDS_INVALIDLICENSE));
-			MessageBox(Message, Caption, MB_ICONWARNING);
+			LFMessageBox(this, Message, Caption, MB_ICONWARNING);
 
 			pDX->Fail();
 		}
@@ -72,7 +72,7 @@ void LFLicenseDlg::OnLoadLicense()
 		CStdioFile f;
 		if (!f.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
 		{
-			LFErrorBox(LFDriveNotReady);
+			LFErrorBox(this, LFDriveNotReady);
 		}
 		else
 		{
@@ -86,7 +86,7 @@ void LFLicenseDlg::OnLoadLicense()
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(LFDriveNotReady);
+				LFErrorBox(this, LFDriveNotReady);
 			}
 
 			f.Close();

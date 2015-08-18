@@ -87,7 +87,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 	UINT Result = LFGetStores(&Keys, &StoreCount);
 	if (Result!=LFOk)
 	{
-		LFErrorBox(Result, GetSafeHwnd());
+		LFErrorBox(this, Result);
 		return;
 	}
 
@@ -103,7 +103,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 		CStdioFile f;
 		if (!f.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
 		{
-			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+			LFErrorBox(this, LFDriveNotReady);
 		}
 		else
 		{
@@ -169,7 +169,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+				LFErrorBox(this, LFDriveNotReady);
 			}
 
 			f.Close();

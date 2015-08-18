@@ -13,7 +13,7 @@ LFDropTarget::LFDropTarget()
 {
 	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_pDropTargetHelper);
 
-	p_Owner = NULL;
+	p_OwnerWnd = NULL;
 	m_StoreIDValid = m_SkipTemplate = m_AllowChooseStore = m_IsDragging = FALSE;
 	p_Filter = NULL;
 	p_SearchResult = NULL;
@@ -24,9 +24,9 @@ void LFDropTarget::SetDragging(BOOL IsDragging)
 	m_IsDragging = IsDragging;
 }
 
-void LFDropTarget::SetOwner(CWnd* pOwner)
+void LFDropTarget::SetOwner(CWnd* pOwnerWnd)
 {
-	p_Owner = pOwner;
+	p_OwnerWnd = pOwnerWnd;
 }
 
 void LFDropTarget::SetStore(CHAR* StoreID, BOOL AllowChooseStore)
@@ -78,15 +78,15 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 
 	LFDoWithProgress(WorkerImportFromWindows, &wp.Hdr, pWnd);
 	UINT Result = wp.FileImportList->m_LastError;
-	LFErrorBox(Result, pWnd->GetSafeHwnd());
+	LFErrorBox(pWnd, Result);
 
 	LFFreeFileImportList(wp.FileImportList);
 
 	if (wp.Template)
 		LFFreeItemDescriptor(wp.Template);
 
-	if (p_Owner)
-		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
+	if (p_OwnerWnd)
+		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
 	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
@@ -104,7 +104,7 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 
 	LFDoWithProgress(WorkerImportFromStore, &wp.Hdr, pWnd);
 	UINT Result = wp.TransactionList->m_LastError;
-	LFErrorBox(Result, pWnd->GetSafeHwnd());
+	LFErrorBox(pWnd, Result);
 
 	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
 	FORMATETC fmt;
@@ -123,8 +123,8 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 
 	LFFreeTransactionList(wp.TransactionList);
 
-	if (p_Owner)
-		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
+	if (p_OwnerWnd)
+		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
 	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
@@ -142,11 +142,11 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 
 	LFTransactionAddToSearchResult(tl, p_SearchResult);
 	UINT Result = tl->m_LastError;
-	LFErrorBox(Result, pWnd->GetSafeHwnd());
+	LFErrorBox(pWnd, Result);
 	LFFreeTransactionList(tl);
 
-	if (p_Owner)
-		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped);
+	if (p_OwnerWnd)
+		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
 	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
@@ -180,7 +180,7 @@ STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState
 	if (m_pDropTargetHelper)
 	{
 		POINT pt = { ptl.x, ptl.y };
-		m_pDropTargetHelper->DragEnter(p_Owner ? p_Owner->GetSafeHwnd() : NULL, pDataObject, &pt, *pdwEffect);
+		m_pDropTargetHelper->DragEnter(p_OwnerWnd->GetSafeHwnd(), pDataObject, &pt, *pdwEffect);
 	}
 
 	COleDataObject dobj;
@@ -222,8 +222,8 @@ STDMETHODIMP LFDropTarget::DragLeave()
 
 STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
 {
-	if (p_Owner)
-		p_Owner->ActivateTopParent();
+	if (p_OwnerWnd)
+		p_OwnerWnd->ActivateTopParent();
 
 	if (m_pDropTargetHelper)
 	{
@@ -235,7 +235,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 		return E_INVALIDARG;
 
 	// Allowed?
-	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, p_Owner, TRUE))
+	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, p_OwnerWnd, TRUE))
 		return E_INVALIDARG;
 
 	// Data object
@@ -249,7 +249,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 		return E_INVALIDARG;
 
 	// Fenster
-	CWnd* pWnd = p_Owner ? p_Owner : CWnd::GetForegroundWindow();
+	CWnd* pWnd = p_OwnerWnd ? p_OwnerWnd : CWnd::GetForegroundWindow();
 
 	// Clipboard
 	if (p_SearchResult)
@@ -267,7 +267,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 	if (StoreID[0]=='\0')
 		if (!LFDefaultStoreAvailable())
 		{
-			LFErrorBox(LFNoDefaultStore, pWnd->GetSafeHwnd());
+			LFErrorBox(pWnd, LFNoDefaultStore);
 			return E_INVALIDARG;
 		}
 

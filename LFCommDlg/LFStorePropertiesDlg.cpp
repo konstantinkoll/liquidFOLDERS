@@ -61,17 +61,17 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		UINT Result = LFSetStoreAttributes(m_Store.StoreID, Name.GetBuffer(), Comment.GetBuffer());
 		if (Result!=LFOk)
 		{
-			LFErrorBox(Result, GetSafeHwnd());
+			LFErrorBox(this, Result);
 			return TRUE;
 		}
 
 		if (pPage->m_wndMakeDefault.IsWindowEnabled() && pPage->m_wndMakeDefault.GetCheck())
-			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID), GetSafeHwnd());
+			LFErrorBox(this, LFMakeDefaultStore(m_Store.StoreID));
 
 		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==((m_Store.Mode & LFStoreModeIndexMask)>=LFStoreModeIndexHybrid));
 
 		if (pPage->m_wndMakeSearchable.IsWindowVisible())
-			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE), GetSafeHwnd());
+			LFErrorBox(this, LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE));
 	}
 
 	return CPropertySheet::OnCommand(wParam, lParam);

@@ -54,7 +54,7 @@ void CFileDropWnd::SetTopMost(BOOL AlwaysOnTop)
 {
 	theApp.m_FileDropAlwaysOnTop = m_AlwaysOnTop = AlwaysOnTop;
 
-	SetWindowPos(AlwaysOnTop ? &wndTopMost : &wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+	SetWindowPos(AlwaysOnTop ? &wndTopMost : &wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu)
@@ -327,7 +327,7 @@ void CFileDropWnd::OnStoreOpen()
 
 void CFileDropWnd::OnStoreMakeDefault()
 {
-	LFErrorBox(LFMakeDefaultStore(m_Store.StoreID), GetSafeHwnd());
+	LFErrorBox(this, LFMakeDefaultStore(m_Store.StoreID));
 }
 
 void CFileDropWnd::OnStoreImportFolder()

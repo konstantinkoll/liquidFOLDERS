@@ -35,6 +35,7 @@
 #include "LFGotoYearDlg.h"
 #include "LFItemTemplateDlg.h"
 #include "LFLicenseDlg.h"
+#include "LFMessageBoxDlg.h"
 #include "LFProgressDlg.h"
 #include "LFSelectLocationGPSDlg.h"
 #include "LFSelectLocationIATADlg.h"
@@ -47,6 +48,9 @@
 #include "Workers.h"
 
 #define LFGetApp() ((LFApplication*)AfxGetApp())
+
+#define MB_ICONREADY      0x00000050L
+#define MB_ICONSHIELD     0x00000060L
 
 #define LFCategoryPadding     2
 
@@ -73,3 +77,6 @@ void GetHintForStore(LFItemDescriptor* i, CString& Str);
 
 void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
 void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
+
+INT LFMessageBox(CWnd* pParentWnd, CString Text, CString Caption, UINT Type);
+void LFErrorBox(CWnd* pParentWnd, UINT Result);

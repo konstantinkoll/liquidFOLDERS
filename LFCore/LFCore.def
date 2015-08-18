@@ -14,7 +14,7 @@ EXPORTS
 	LFGetLogicalVolumes @8
 	LFInitProgress @9
 	LFGetErrorText @10
-	LFErrorBox @11
+	LFCoreErrorBox @11
 	LFGetAttrCategoryName @12
 	LFGetAttributeInfo @13
 	LFGetSourceName @14

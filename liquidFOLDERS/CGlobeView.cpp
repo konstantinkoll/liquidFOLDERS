@@ -1383,7 +1383,7 @@ void CGlobeView::OnGoogleEarth()
 	FILE *fStream;
 	if (_tfopen_s(&fStream, szTempName, _T("wt,ccs=UTF-8")))
 	{
-		LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+		LFErrorBox(this, LFDriveNotReady);
 	}
 	else
 	{
@@ -1430,7 +1430,7 @@ void CGlobeView::OnGoogleEarth()
 		}
 		catch(CFileException ex)
 		{
-			LFErrorBox(LFDriveNotReady);
+			LFErrorBox(this, LFDriveNotReady);
 			f.Close();
 		}
 	}

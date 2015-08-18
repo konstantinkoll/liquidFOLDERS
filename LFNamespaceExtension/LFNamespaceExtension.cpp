@@ -146,7 +146,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 	if (StoreID[0]=='\0')
 		if (!LFDefaultStoreAvailable())
 		{
-			LFErrorBox(LFNoDefaultStore, GetForegroundWindow());
+			LFCoreErrorBox(LFNoDefaultStore);
 			return DROPEFFECT_NONE;
 		}
 
@@ -159,7 +159,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 
 		LFTransactionImport(StoreID, tl, Move==TRUE);
 		UINT Result = tl->m_LastError;
-		LFErrorBox(Result, GetForegroundWindow());
+		LFCoreErrorBox(Result);
 
 		// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
 		FORMATETC fmt;
@@ -195,7 +195,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 		{
 			LFTransactionImport(StoreID, il, NULL, TRUE, Move==TRUE);
 			Result = il->m_LastError;
-			LFErrorBox(Result, GetForegroundWindow());
+			LFCoreErrorBox(Result);
 		}
 
 		LFFreeFileImportList(il);

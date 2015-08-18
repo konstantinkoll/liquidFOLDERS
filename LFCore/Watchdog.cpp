@@ -22,12 +22,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam
 				{
 				case SHCNE_DRIVEADD:
 				case SHCNE_MEDIAINSERTED:
-					LFErrorBox(MountVolume((CHAR)Path[0]));
+					LFCoreErrorBox(MountVolume((CHAR)Path[0]));
 					break;
 
 				case SHCNE_MEDIAREMOVED:
 				case SHCNE_DRIVEREMOVED:
-					LFErrorBox(UnmountVolume((CHAR)Path[0]));
+					LFCoreErrorBox(UnmountVolume((CHAR)Path[0]));
 					break;
 				}
 

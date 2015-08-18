@@ -1083,7 +1083,7 @@ void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 	if (!AttributeSortableInView(Attr, m_ViewParameters.Mode))
 	{
 		CString Message((LPCSTR)IDS_ATTRIBUTENOTSORTABLE);
-		MessageBox(Message, theApp.m_Attributes[Attr].Name, MB_OK | MB_ICONWARNING);
+		LFMessageBox(this, Message, theApp.m_Attributes[Attr].Name, MB_OK | MB_ICONWARNING);
 	
 		return;
 	}

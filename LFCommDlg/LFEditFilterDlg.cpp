@@ -210,7 +210,7 @@ void LFEditFilterDlg::OnSave()
 		CWaitCursor csr;
 
 		UINT Result = LFSaveFilter(dlg.m_StoreID, CreateFilter(), dlg.m_FileName, dlg.m_Comments);
-		LFErrorBox(Result, GetSafeHwnd());
+		LFErrorBox(this, Result);
 
 		if (Result==LFOk)
 			EndDialog(IDOK);

@@ -107,7 +107,7 @@ void LFAddStoreDlg::OnBtnLiquidfolders()
 
 void LFAddStoreDlg::OnBtnWindows()
 {
-	MessageBox(L"Coming soon!");
+	LFMessageBox(this, L"Coming soon!", L"", 0);
 	return;
 
 	CString Caption;
@@ -122,6 +122,6 @@ void LFAddStoreDlg::OnBtnWindows()
 		CWaitCursor csr;
 		UINT Result = LFOk;
 
-		LFErrorBox(Result, GetSafeHwnd());
+		LFErrorBox(this, Result);
 	}
 }

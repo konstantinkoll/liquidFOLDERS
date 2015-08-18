@@ -56,7 +56,7 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 		}
 
 		CWaitCursor csr;
-		LFErrorBox(LFCreateStore(&Store), GetSafeHwnd());
+		LFErrorBox(this, LFCreateStore(&Store));
 	}
 }
 

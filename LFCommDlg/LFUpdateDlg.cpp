@@ -293,13 +293,13 @@ BOOL LFUpdateDlg::OnInitDialog()
 	// Stil
 	if (m_NotificationWindow)
 	{
-		LFGetApp()->PlayWarningSound();
+		LFGetApp()->PlayNotificationSound();
 
 		UpdateFrame(TRUE);
 	}
 	else
 	{
-		LFGetApp()->PlayStandardSound();
+		LFGetApp()->PlayAsteriskSound();
 
 		GetDlgItem(IDC_IGNOREUPDATE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_HIDE)->ShowWindow(SW_HIDE);

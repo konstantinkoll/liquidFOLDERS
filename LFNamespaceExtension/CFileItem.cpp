@@ -292,7 +292,7 @@ BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 	}
 	else
 	{
-		LFErrorBox(Result);
+		LFCoreErrorBox(Result);
 	}
 
 	return (Result==LFOk);
@@ -429,7 +429,7 @@ LPSTREAM CFileItem::GetStream()
 	UINT Result = LFGetFileLocation(m_pItem, Path, MAX_PATH, TRUE, FALSE);
 	if (Result!=LFOk)
 	{
-		LFErrorBox(Result);
+		LFCoreErrorBox(Result);
 	}
 	else
 	{

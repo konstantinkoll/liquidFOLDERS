@@ -59,7 +59,7 @@ LFCORE_API void __stdcall LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT 
 LFCORE_API void __stdcall LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID);
 
 // Anzeigen eines Fehlers (LFError...) in aktueller Sprache
-LFCORE_API void __stdcall LFErrorBox(UINT nID, HWND hWnd=NULL);
+LFCORE_API void __stdcall LFCoreErrorBox(UINT nID, HWND hWnd=NULL);
 
 
 // Gibt TRUE zurück, wenn diese Installation freigeschaltet ist

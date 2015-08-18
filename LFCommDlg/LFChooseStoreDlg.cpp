@@ -36,7 +36,7 @@ void CStoreList::SetSearchResult(LFSearchResult* pResult)
 	if (pResult)
 	{
 		LFSortSearchResult(pResult, LFAttrFileName, FALSE);
-		LFErrorBox(pResult->m_LastError, GetParent()->GetSafeHwnd());
+		LFErrorBox(this, pResult->m_LastError);
 
 		static UINT puColumns[2] = { 1, 2 };
 
@@ -297,7 +297,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			wcsncpy_s(value.UnicodeString, 256, pDispInfo->item.pszText, 255);
 
 			LFTransactionUpdate(pTransactionList, &value);
-			LFErrorBox(pTransactionList->m_LastError, GetSafeHwnd());
+			LFErrorBox(this, pTransactionList->m_LastError);
 
 			LFFreeTransactionList(pTransactionList);
 			*pResult = TRUE;
@@ -327,7 +327,7 @@ void LFChooseStoreDlg::OnStoreMakeDefault()
 {
 	INT Index = GetSelectedStore();
 	if (Index!=-1)
-		LFErrorBox(LFMakeDefaultStore(m_pResult->m_Items[Index]->StoreID), GetSafeHwnd());
+		LFErrorBox(this, LFMakeDefaultStore(m_pResult->m_Items[Index]->StoreID));
 }
 
 void LFChooseStoreDlg::OnStoreShortcut()

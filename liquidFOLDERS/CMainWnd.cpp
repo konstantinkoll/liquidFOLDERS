@@ -712,7 +712,7 @@ void CMainWnd::OnItemOpen()
 						}
 						else
 						{
-							LFErrorBox(Result, GetSafeHwnd());
+							LFErrorBox(this, Result);
 						}
 					}
 
@@ -831,7 +831,7 @@ void CMainWnd::OnExportMetadata()
 		FILE *fStream;
 		if (_tfopen_s(&fStream, dlg.GetPathName(), _T("wt,ccs=UTF-8")))
 		{
-			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+			LFErrorBox(this, LFDriveNotReady);
 		}
 		else
 		{
@@ -850,7 +850,7 @@ void CMainWnd::OnExportMetadata()
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+				LFErrorBox(this, LFDriveNotReady);
 			}
 			pFilter.Close();
 		}

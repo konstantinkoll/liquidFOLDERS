@@ -57,8 +57,6 @@ public:
 
 	BOOL m_FileDropAlwaysOnTop;
 
-	BOOL m_MigrationExpandAll;
-
 protected:
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);

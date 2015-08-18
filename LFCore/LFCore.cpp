@@ -356,7 +356,7 @@ LFCORE_API void LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID)
 	LoadString(LFCoreModuleHandle, IDS_ERR_FIRST+ID, pStr, (INT)cCount);
 }
 
-LFCORE_API void LFErrorBox(UINT ID, HWND hWnd)
+LFCORE_API void LFCoreErrorBox(UINT ID, HWND hWnd)
 {
 	if (ID>LFCancel)
 	{
@@ -365,6 +365,9 @@ LFCORE_API void LFErrorBox(UINT ID, HWND hWnd)
 
 		WCHAR Message[256];
 		LFGetErrorText(Message, 256, ID);
+
+		if (!hWnd)
+			hWnd = GetForegroundWindow();
 
 		MessageBox(hWnd, Message, Caption, MB_OK | MB_ICONERROR);
 	}

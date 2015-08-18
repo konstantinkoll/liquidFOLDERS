@@ -1853,7 +1853,7 @@ void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 					CString Caption((LPCSTR)IDS_DELETEPROPERTY_CAPTION);
 					CString Message((LPCSTR)IDS_DELETEPROPERTY_MSG);
 
-					DoReset = (MessageBox(Message, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
+					DoReset = (LFMessageBox(this, Message, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
 				}
 
 				if (DoReset)

@@ -26,7 +26,7 @@ END_MESSAGE_MAP()
 void PlayRegSound(CString Identifier)
 {
 	CString strKey;
-	strKey.Format(_T("AppEvents\\Schemes\\%s\\.current"), Identifier);
+	strKey.Format(_T("AppEvents\\Schemes\\%s\\.Current"), Identifier);
 
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
@@ -352,7 +352,7 @@ BOOL LFApplication::InitInstance()
 		Store.Flags = LFStoreFlagAutoLocation;
 		Store.Mode = LFStoreModeIndexInternal | LFStoreModeBackendInternal;
 
-		LFErrorBox(LFCreateStore(&Store));
+		LFErrorBox(CWnd::GetForegroundWindow(), LFCreateStore(&Store));
 	}
 
 	return TRUE;
@@ -409,7 +409,7 @@ BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 		{
 			CString tmpStr((LPCSTR)IDS_NOLICENSE);
 
-			MessageBox(pWndParent ? pWndParent->GetSafeHwnd() : GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
+			LFMessageBox(pWndParent, tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
 			RESETNAGCOUNTER;
 
 			return TRUE;
@@ -605,9 +605,9 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 		{
 			CString Caption;
 			Caption.Format(IDS_FORMAT_CAPTION, cVolume);
-			CString text((LPCSTR)IDS_FORMAT_MSG);
+			CString Text((LPCSTR)IDS_FORMAT_MSG);
 
-			MessageBox(m_pMainWnd->GetSafeHwnd(), text, Caption, MB_ICONWARNING);
+			LFMessageBox(m_pMainWnd, Text, Caption, MB_ICONWARNING);
 
 			return;
 		}
@@ -652,9 +652,19 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 }
 
 
-void LFApplication::PlayStandardSound()
+void LFApplication::PlayAsteriskSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\SystemAsterisk"));
+}
+
+void LFApplication::PlayDefaultSound()
 {
 	PlayRegSound(_T("Apps\\.Default\\.Default"));
+}
+
+void LFApplication::PlayErrorSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\SystemHand"));
 }
 
 void LFApplication::PlayNavigateSound()
@@ -662,15 +672,26 @@ void LFApplication::PlayNavigateSound()
 	PlayRegSound(_T("Apps\\Explorer\\Navigating"));
 }
 
-void LFApplication::PlayWarningSound()
+void LFApplication::PlayNotificationSound()
 {
 	PlayRegSound(_T("Apps\\Explorer\\SecurityBand"));
+}
+
+void LFApplication::PlayQuestionSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\SystemQuestion"));
 }
 
 void LFApplication::PlayTrashSound()
 {
 	PlayRegSound(_T("Apps\\Explorer\\EmptyRecycleBin"));
 }
+
+void LFApplication::PlayWarningSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\SystemExclamation"));
+}
+
 
 void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
 {

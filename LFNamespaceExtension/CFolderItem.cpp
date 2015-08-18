@@ -262,7 +262,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 
 	if (Result->m_LastError!=LFOk)
 	{
-		LFErrorBox(Result->m_LastError, GetForegroundWindow());
+		LFCoreErrorBox(Result->m_LastError);
 		LFFreeSearchResult(Result);
 		return;
 	}
@@ -682,7 +682,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 			CFolderItem* folder = AS(temp, CFolderItem);
 
 			UINT Result = LFMakeDefaultStore(folder->Attrs.StoreID);
-			LFErrorBox(Result, GetForegroundWindow());
+			LFCoreErrorBox(Result);
 			return (Result==LFOk);
 		}
 
@@ -1156,7 +1156,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE, TRUE);
 			if (Result!=LFOk)
 			{
-				LFErrorBox(Result, GetForegroundWindow());
+				LFCoreErrorBox(Result);
 			}
 			else
 				if (ShellExecute(e.hWnd, _T("open"), Path, _T(""), _T(""), SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
@@ -1216,7 +1216,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		Result = TRUE;
 	}
 
-	LFErrorBox(tl->m_LastError, GetForegroundWindow());
+	LFCoreErrorBox(tl->m_LastError);
 	LFFreeTransactionList(tl);
 
 	return Result;
@@ -1234,7 +1234,7 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 		}
 		else
 		{
-			LFErrorBox(Result, GetForegroundWindow());
+			LFCoreErrorBox(Result);
 		}
 
 		return (Result==LFOk);
@@ -1493,7 +1493,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE, TRUE);
 			if (Result!=LFOk)
 			{
-				LFErrorBox(Result, GetForegroundWindow());
+				LFCoreErrorBox(Result);
 			}
 			else
 			{

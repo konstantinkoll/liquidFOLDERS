@@ -517,6 +517,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFMessageBoxDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFProgressDlg.cpp"
 				>
 			</File>
@@ -780,6 +784,10 @@
 			</File>
 			<File
 				RelativePath=".\res\QueryEdit_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Question.ico"
 				>
 			</File>
 			<File
@@ -1102,6 +1110,10 @@
 			</File>
 			<File
 				RelativePath=".\LFLicenseDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFMessageBoxDlg.h"
 				>
 			</File>
 			<File

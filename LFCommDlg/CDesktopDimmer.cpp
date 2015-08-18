@@ -73,7 +73,7 @@ INT CDesktopDimmer::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!hHook)
 		hHook = SetWindowsHookEx(WH_KEYBOARD_LL, &LowLevelKeyboardProc, GetModuleHandle(NULL), 0);
 
-	LFGetApp()->PlayWarningSound();
+	LFGetApp()->PlayNotificationSound();
 
 	return 0;
 }

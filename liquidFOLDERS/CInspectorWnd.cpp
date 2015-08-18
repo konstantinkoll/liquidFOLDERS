@@ -620,7 +620,7 @@ void CInspectorWnd::OnExportSummary()
 		FILE *fStream;
 		if (_tfopen_s(&fStream, dlg.GetPathName(), _T("wt,ccs=UTF-8")))
 		{
-			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+			LFErrorBox(this, LFDriveNotReady);
 		}
 		else
 		{
@@ -634,7 +634,7 @@ void CInspectorWnd::OnExportSummary()
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+				LFErrorBox(this, LFDriveNotReady);
 			}
 			f.Close();
 		}

@@ -132,7 +132,6 @@ BOOL CLiquidFoldersApp::InitInstance()
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_FileDropAlwaysOnTop = GetInt(_T("FileDropAlwaysOnTop"), TRUE);
-	m_MigrationExpandAll = GetInt(_T("MigrationExpandAll"), FALSE);
 
 	for (UINT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
@@ -312,7 +311,6 @@ INT CLiquidFoldersApp::ExitInstance()
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
 		WriteInt(_T("FileDropAlwaysOnTop"), m_FileDropAlwaysOnTop);
-		WriteInt(_T("MigrationExpandAll"), m_MigrationExpandAll);
 	}
 
 	return LFApplication::ExitInstance();

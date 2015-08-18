@@ -98,8 +98,9 @@ IDI_SEARCH              ICON                    "res\\Search.ico"
 IDI_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
 IDD_CREATESTORE         ICON                    "res\\CreateStore_Tiny.ico"
 32513                   ICON                    "res\\Error.ico"
-32516                   ICON                    "res\\Info.ico"
+32514                   ICON                    "res\\Question.ico"
 32515                   ICON                    "res\\Warning.ico"
+32516                   ICON                    "res\\Info.ico"
 32518                   ICON                    "res\\Shield_7.ico"
 IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
 IDI_READY               ICON                    "res\\Ready.ico"
@@ -129,6 +130,40 @@ IDI_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 //
 
 IDF_LETTERGOTHIC        TTF                     "res\\Letter_Gothic.ttf"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MESSAGEBOX DIALOGEX 0, 0, 180, 55
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "X",IDC_BUTTON3,123,33,50,14,WS_GROUP
+    PUSHBUTTON      "X",IDC_BUTTON1,7,33,50,14,WS_GROUP
+    PUSHBUTTON      "X",IDC_BUTTON2,65,33,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_MESSAGEBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 173
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -141,82 +176,6 @@ IDF_LETTERGOTHIC        TTF                     "res\\Letter_Gothic.ttf"
 LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDM_STORE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
-        MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
-        MENUITEM SEPARATOR
-        MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
-        MENUITEM "&Löschen",                    IDM_STORE_DELETE
-        MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
-    END
-END
-
-IDM_STORES MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Store &hinzufügen...",        IDM_STORES_ADD
-    END
-END
-
-IDM_ITEMTEMPLATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Alphabetisch sortieren",     IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Zurücksetzen",               IDM_ITEMTEMPLATE_RESET
-    END
-END
-
-IDM_CONDITION MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Löschen",                    IDM_CONDITION_DELETE
-    END
-END
-
-IDM_UPDATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Wiederherstellen",           IDM_UPDATE_RESTORE
-    END
-END
-
-IDM_CONDITIONLIST MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
-    END
-END
-
-IDM_VOLUME MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
-        MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_VOLUME_PROPERTIES
-    END
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -779,6 +738,82 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
+        MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
+        MENUITEM "&Löschen",                    IDM_STORE_DELETE
+        MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_STORES MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Store &hinzufügen...",        IDM_STORES_ADD
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Alphabetisch sortieren",     IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Zurücksetzen",               IDM_ITEMTEMPLATE_RESET
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Löschen",                    IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Wiederherstellen",           IDM_UPDATE_RESTORE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
+        MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_VOLUME_PROPERTIES
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -901,82 +936,6 @@ END
 LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDM_STORE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
-        MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
-        MENUITEM SEPARATOR
-        MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
-        MENUITEM "&Eliminar",                   IDM_STORE_DELETE
-        MENUITEM "&Renombrar",                  IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
-    END
-END
-
-IDM_STORES MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Adjuntar store...",          IDM_STORES_ADD
-    END
-END
-
-IDM_ITEMTEMPLATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Ordenar &alfabéticamente",    IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Resetaurar",                 IDM_ITEMTEMPLATE_RESET
-    END
-END
-
-IDM_CONDITION MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "E&ditar...",                  IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Eliminar",                   IDM_CONDITION_DELETE
-    END
-END
-
-IDM_UPDATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Restaurar",                  IDM_UPDATE_RESTORE
-    END
-END
-
-IDM_CONDITIONLIST MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Añadir condición...",        IDM_CONDITIONLIST_ADD
-    END
-END
-
-IDM_VOLUME MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
-        MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
-    END
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1546,6 +1505,82 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
+        MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
+        MENUITEM "&Eliminar",                   IDM_STORE_DELETE
+        MENUITEM "&Renombrar",                  IDM_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_STORES MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Adjuntar store...",          IDM_STORES_ADD
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Ordenar &alfabéticamente",    IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Resetaurar",                 IDM_ITEMTEMPLATE_RESET
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "E&ditar...",                  IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restaurar",                  IDM_UPDATE_RESTORE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Añadir condición...",        IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
+        MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -1668,82 +1703,6 @@ END
 LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDM_STORE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
-        MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
-        MENUITEM SEPARATOR
-        MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
-        MENUITEM "&Effacer",                    IDM_STORE_DELETE
-        MENUITEM "&Renommer",                   IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
-    END
-END
-
-IDM_STORES MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Ajouter store...",           IDM_STORES_ADD
-    END
-END
-
-IDM_ITEMTEMPLATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Classer alphabétique",       IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Remise",                     IDM_ITEMTEMPLATE_RESET
-    END
-END
-
-IDM_CONDITION MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Modifier...",                IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Effacer",                    IDM_CONDITION_DELETE
-    END
-END
-
-IDM_UPDATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Restaurer",                  IDM_UPDATE_RESTORE
-    END
-END
-
-IDM_CONDITIONLIST MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
-    END
-END
-
-IDM_VOLUME MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
-        MENUITEM "&Éjecter",                    IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
-    END
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2307,6 +2266,82 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
+        MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
+        MENUITEM "&Effacer",                    IDM_STORE_DELETE
+        MENUITEM "&Renommer",                   IDM_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_STORES MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Ajouter store...",           IDM_STORES_ADD
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Classer alphabétique",       IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Remise",                     IDM_ITEMTEMPLATE_RESET
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Modifier...",                IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restaurer",                  IDM_UPDATE_RESTORE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
+        MENUITEM "&Éjecter",                    IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -2479,82 +2514,6 @@ END
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDM_STORE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
-        MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
-        MENUITEM SEPARATOR
-        MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
-        MENUITEM "&Delete",                     IDM_STORE_DELETE
-        MENUITEM "&Rename",                     IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
-    END
-END
-
-IDM_STORES MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Add store...",               IDM_STORES_ADD
-    END
-END
-
-IDM_ITEMTEMPLATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Sort alphabetically",        IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Reset",                      IDM_ITEMTEMPLATE_RESET
-    END
-END
-
-IDM_CONDITION MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Edit...",                    IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     IDM_CONDITION_DELETE
-    END
-END
-
-IDM_UPDATE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Restore",                    IDM_UPDATE_RESTORE
-    END
-END
-
-IDM_CONDITIONLIST MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
-    END
-END
-
-IDM_VOLUME MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
-        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "P&roperties",                 IDM_VOLUME_PROPERTIES
-    END
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3112,6 +3071,82 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
+        MENUITEM "&Delete",                     IDM_STORE_DELETE
+        MENUITEM "&Rename",                     IDM_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_STORES MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Add store...",               IDM_STORES_ADD
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Sort alphabetically",        IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Reset",                      IDM_ITEMTEMPLATE_RESET
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Edit...",                    IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restore",                    IDM_UPDATE_RESTORE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
+        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "P&roperties",                 IDM_VOLUME_PROPERTIES
+    END
+END
 
 
 /////////////////////////////////////////////////////////////////////////////

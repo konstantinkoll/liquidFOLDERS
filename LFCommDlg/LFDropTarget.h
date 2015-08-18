@@ -15,7 +15,7 @@ public:
 	LFDropTarget();
 
 	void SetDragging(BOOL IsDragging);
-	void SetOwner(CWnd* pOwner);
+	void SetOwner(CWnd* pOwnerWnd);
 	void SetFilter(LFFilter* pFilter, BOOL AllowChooseStore=TRUE);
 	void SetStore(CHAR* StoreID, BOOL AllowChooseStore=TRUE);
 	void SetSearchResult(LFSearchResult* pSearchResult);
@@ -44,7 +44,7 @@ protected:
 	IDropTargetHelper* m_pDropTargetHelper;
 	LFFilter* p_Filter;
 	LFSearchResult* p_SearchResult;
-	CWnd* p_Owner;
+	CWnd* p_OwnerWnd;
 	CHAR m_StoreID[LFKeySize];
 	BOOL m_StoreIDValid;
 	BOOL m_SkipTemplate;

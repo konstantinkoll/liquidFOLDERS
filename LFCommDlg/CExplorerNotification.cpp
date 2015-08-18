@@ -107,7 +107,7 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 	Invalidate();
 
 	if (Type!=ENT_READY)
-		LFGetApp()->PlayWarningSound();
+		LFGetApp()->PlayNotificationSound();
 
 	m_Dismissed = FALSE;
 }

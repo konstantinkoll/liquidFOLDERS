@@ -913,6 +913,49 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			CString Caption((LPCSTR)IDS_UPDATE);
 			CString Text((LPCSTR)IDS_UPDATENOTAVAILABLE);
 
-			MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONINFORMATION | MB_OK);
+			LFMessageBox(pParentWnd, Text, Caption, MB_ICONREADY | MB_OK);
 		}
+}
+
+
+INT LFMessageBox(CWnd* pParentWnd, CString Text, CString Caption, UINT Type)
+{
+	LFMessageBoxDlg dlg(pParentWnd, Text, Caption, Type);
+
+	return (INT)dlg.DoModal();
+}
+
+void LFErrorBox(CWnd* pParentWnd, UINT Result)
+{
+	if (Result>LFCancel)
+	{
+		// Texts
+		CString Caption((LPCSTR)IDS_ERROR);
+
+		WCHAR Message[256];
+		LFGetErrorText(Message, 256, Result);
+
+		// Type
+		UINT Type = MB_OK;
+
+		switch(Result)
+		{
+		case LFOk:
+			Type |= MB_ICONREADY;
+
+			break;
+
+		case LFCancel:
+		case LFDriveWriteProtected:
+		case LFIndexAccessError:
+			Type |= MB_ICONWARNING;
+
+			break;
+
+		default:
+			Type |= MB_ICONERROR;
+		}
+
+		LFMessageBox(pParentWnd, Message, Caption, Type);
+	}
 }
