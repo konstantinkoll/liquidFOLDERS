@@ -45,9 +45,9 @@ protected:
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT Index);
 	void SelectItem(INT Index);
+	void PrepareBitmaps();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
@@ -73,5 +73,4 @@ protected:
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages* p_Icons;
 	INT m_IconSize;
-	HBITMAP hShadow;
 };

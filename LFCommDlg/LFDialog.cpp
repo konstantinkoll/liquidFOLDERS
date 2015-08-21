@@ -256,8 +256,7 @@ void LFDialog::OnDestroy()
 	if (IsWindow(m_wndDesktopDimmer))
 		m_wndDesktopDimmer.SendMessage(WM_DESTROY);
 
-	if (hBackgroundBrush)
-		DeleteObject(hBackgroundBrush);
+	DeleteObject(hBackgroundBrush);
 
 	CDialog::OnDestroy();
 }
@@ -267,36 +266,30 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 	CRect rect;
 	GetClientRect(rect);
 
-	CDC dc;
-	dc.CreateCompatibleDC(pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap* pOldBitmap;
 	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
 	{
 		m_BackBufferL = rect.Width();
 		m_BackBufferH = rect.Height();
 
-		m_BackBuffer.DeleteObject();
-		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		CDC dc;
+		dc.CreateCompatibleDC(pDC);
+		dc.SetBkMode(TRANSPARENT);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		Graphics g(dc);
-		g.SetCompositingMode(CompositingModeSourceOver);
 
 		OnEraseBkgnd(dc, g, rect);
 
-		if (hBackgroundBrush)
-			DeleteObject(hBackgroundBrush);
-		hBackgroundBrush = CreatePatternBrush(m_BackBuffer);
-	}
-	else
-	{
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		dc.SelectObject(pOldBitmap);
+
+		DeleteObject(hBackgroundBrush);
+		hBackgroundBrush = CreatePatternBrush(MemBitmap);
 	}
 
-	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
+	FillRect(*pDC, rect, hBackgroundBrush);
 
 	return TRUE;
 }

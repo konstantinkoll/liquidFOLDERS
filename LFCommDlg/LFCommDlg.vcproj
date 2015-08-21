@@ -867,6 +867,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\SidebarBackground.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\SidebarShadow.bmp"
 				>
 			</File>

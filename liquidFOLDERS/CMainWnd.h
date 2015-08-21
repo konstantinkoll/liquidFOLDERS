@@ -92,8 +92,8 @@ protected:
 	CGlassEdit m_wndSearch;
 	CContextSidebar m_wndContextSidebar;
 	CMainView m_wndMainView;
-	BreadcrumbItem* m_BreadcrumbBack;
-	BreadcrumbItem* m_BreadcrumbForward;
+	BreadcrumbItem* m_pBreadcrumbBack;
+	BreadcrumbItem* m_pBreadcrumbForward;
 	LFFilter* m_pActiveFilter;
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;

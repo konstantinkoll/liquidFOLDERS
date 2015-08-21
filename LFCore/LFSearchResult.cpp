@@ -203,6 +203,7 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 			case LFAttrLocationGPS:
 				m_Context = LFContextSubfolderLocation;
 				break;
+
 			default:
 				if (AttrTypes[pFilter->ConditionList->AttrData.Attr]==LFTypeTime)
 					m_Context = LFContextSubfolderDay;
@@ -215,9 +216,11 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 		case LFFilterModeStores:
 			m_Context = LFContextStores;
 			break;
+
 		case LFFilterModeDirectoryTree:
 			m_Context = pFilter->ContextID;
 			break;
+
 		case LFFilterModeSearch:
 			m_Context = (pFilter->Options.IsPersistent || (pFilter->Searchterm[0]!=L'\0') || (pFilter->ConditionList!=NULL)) ? LFContextSearch : pFilter->ContextID;
 			break;

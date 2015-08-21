@@ -47,7 +47,6 @@ private:
 	HICON hIconShield;
 	INT m_ShieldSize;
 	INT m_UACHeight;
-	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;

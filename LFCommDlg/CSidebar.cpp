@@ -9,8 +9,13 @@
 // CSidebar
 //
 
-#define BORDER     6
-#define SHADOW     10
+#define BACKGROUNDTOP     400
+#define BORDER            6
+#define SHADOW            10
+
+HBITMAP hShadow = NULL;
+HBRUSH hBackgroundTop = NULL;
+HBRUSH hBackgroundBottom = NULL;
 
 CSidebar::CSidebar()
 	: CWnd()
@@ -19,7 +24,6 @@ CSidebar::CSidebar()
 	m_SelectedItem = m_HotItem = -1;
 	m_Hover = m_Keyboard = m_ShowNumbers = FALSE;
 	p_Icons = NULL;
-	hShadow = NULL;
 }
 
 BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID, BOOL ShowNumbers)
@@ -81,6 +85,7 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	i.Selectable = Selectable;
 	i.CmdID = CmdID;
 	i.IconID = IconID;
+
 	if (Caption)
 		if (Selectable)
 		{
@@ -89,42 +94,43 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 		}
 		else
 		{
-			for (WCHAR* pDst=i.Caption; *Caption;)
+			for (WCHAR* pDst=i.Caption; *Caption; )
 				*(pDst++) = (WCHAR)towupper(*(Caption++));
 		}
-	if (Hint)
+
+		if (Hint)
 		wcscpy_s(i.Hint, 256, Hint);
 
-	// Maße
-	CSize sz;
+	// Metrik
+	CSize Size;
 
 	if (i.Caption[0]==L'\0')
 	{
-		sz.cy = BORDER;
+		Size.cy = BORDER+2;
 	}
 	else
 	{
 		CDC* pDC = GetDC();
 		CFont* pOldFont = pDC->SelectObject(Selectable ? &LFGetApp()->m_LargeFont : &afxGlobalData.fontBold);
-		sz = pDC->GetTextExtent(i.Caption);
+		Size = pDC->GetTextExtent(i.Caption);
 		pDC->SelectObject(pOldFont);
 		ReleaseDC(pDC);
 
 		if (Selectable)
 		{
-			sz.cx += m_IconSize+3*BORDER+m_NumberWidth+SHADOW/2;
-			sz.cy = max(m_IconSize, sz.cy) + 2*BORDER;
+			Size.cx += m_IconSize+3*BORDER+m_NumberWidth+SHADOW/2;
+			Size.cy = max(m_IconSize, Size.cy) + 2*BORDER;
 		}
 		else
 		{
-			sz.cx += 2*BORDER+SHADOW/2;
-			sz.cy += BORDER;
+			Size.cx += 2*BORDER+SHADOW/2;
+			Size.cy += BORDER+2;
 		}
 
 	}
 
-	m_Width = max(m_Width, sz.cx);
-	i.Height = sz.cy;
+	m_Width = max(m_Width, Size.cx);
+	i.Height = Size.cy;
 
 	m_Items.AddItem(i);
 }
@@ -236,10 +242,69 @@ CString CSidebar::AppendTooltip(UINT /*CmdID*/)
 	return _T("");
 }
 
+void CSidebar::PrepareBitmaps()
+{
+	if (!hShadow)
+		hShadow = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
+
+	if (!hBackgroundTop)
+	{
+		CGdiPlusBitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_SIDEBARBACKGROUND, _T("PNG"));
+
+		CDC* pDC = GetDC();
+
+		CDC dc;
+		dc.CreateCompatibleDC(pDC);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+		Graphics g(dc);
+
+		TextureBrush brush1(pTexture->m_pBitmap);
+		g.FillRectangle(&brush1, 0, 0, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+
+		LinearGradientBrush brush2(Point(0, 0), Point(0, BACKGROUNDTOP), Color(0x30, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush2, 0, 0, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+
+		dc.SelectObject(pOldBitmap);
+		ReleaseDC(pDC);
+
+		hBackgroundTop = CreatePatternBrush(MemBitmap);
+	}
+
+	if (!hBackgroundBottom)
+	{
+		CGdiPlusBitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_SIDEBARBACKGROUND, _T("PNG"));
+
+		CDC* pDC = GetDC();
+
+		CDC dc;
+		dc.CreateCompatibleDC(pDC);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+		Graphics g(dc);
+
+		TextureBrush brush1(pTexture->m_pBitmap);
+		g.FillRectangle(&brush1, 0, 0, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+
+		SolidBrush brush2(Color(0x60, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush2, 0, 0, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+
+		dc.SelectObject(pOldBitmap);
+		ReleaseDC(pDC);
+
+		hBackgroundBottom = CreatePatternBrush(MemBitmap);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CSidebar, CWnd)
 	ON_WM_CREATE()
-	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -257,10 +322,9 @@ INT CSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	hShadow = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
-
 	m_TooltipCtrl.Create(this);
 
+	// Metrik
 	if (m_ShowNumbers)
 	{
 		CDC* pDC = GetDC();
@@ -270,14 +334,11 @@ INT CSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		ReleaseDC(pDC);
 	}
 
+	// Texturen
+	if (IsCtrlThemed())
+		PrepareBitmaps();
+
 	return 0;
-}
-
-void CSidebar::OnDestroy()
-{
-	DeleteObject(hShadow);
-
-	CWnd::OnDestroy();
 }
 
 BOOL CSidebar::OnEraseBkgnd(CDC* /*pDC*/)
@@ -306,18 +367,27 @@ void CSidebar::OnPaint()
 	// Background
 	BOOL Themed = IsCtrlThemed();
 
-	const COLORREF colBg = Themed ? 0x4A3932 : GetSysColor(COLOR_3DDKSHADOW);
-	const COLORREF colLi = Themed ? 0x55453C : GetSysColor(COLOR_3DSHADOW);
-	const COLORREF colDa = Themed ? 0x382B25 : 0x000000;
-	const COLORREF colSe = Themed ? 0x3F2F29 : 0x000000;
-	const COLORREF colTx = Themed ? 0xDACCC4 : GetSysColor(COLOR_3DFACE);
-	const COLORREF colCp = Themed ? 0x998981 : GetSysColor(COLOR_3DFACE);
+	if (Themed)
+	{
+		PrepareBitmaps();
+
+		FillRect(dc, CRect(rect.left, rect.top, rect.right, BACKGROUNDTOP), hBackgroundTop);
+
+		if (rect.Height()>BACKGROUNDTOP)
+			FillRect(dc, CRect(rect.left, BACKGROUNDTOP, rect.right, rect.bottom), hBackgroundBottom);
+	}
+	else
+	{
+		FillRect(dc, rect, (HBRUSH)GetStockObject(DKGRAY_BRUSH));
+	}
+
+	const COLORREF colTex = Themed ? 0xDACCC4 : GetSysColor(COLOR_3DFACE);
+	const COLORREF colSel = Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT);
+	const COLORREF colCap = Themed ? 0xF0F0F0 : GetSysColor(COLOR_3DFACE);
+	const COLORREF colNum = Themed ? 0x998981 : GetSysColor(COLOR_3DSHADOW);
 
 	Graphics g(dc);
 	g.SetPixelOffsetMode(PixelOffsetModeHalf);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-	dc.FillSolidRect(rect, colBg);
 
 	// Items
 	CRect rectIntersect;
@@ -328,24 +398,65 @@ void CSidebar::OnPaint()
 			CRect rectItem(m_Items.m_Items[a].Rect);
 
 			// Background
-			if (m_SelectedItem!=(INT)a)
+			if (Themed)
 			{
 				if (m_Items.m_Items[a].Selectable)
 				{
-					dc.FillSolidRect(rectItem.left, rectItem.top, rectItem.Width(), 1, colLi);
-				}
-				else
-					if (Themed)
+					if ((a==0) || m_Items.m_Items[a-1].Selectable)
 					{
-						LinearGradientBrush brush(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom-1), Color(0x43, 0x4A, 0x5E), Color(0x39, 0x40, 0x52));
-						g.FillRectangle(&brush, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height()-1);
+						LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x20, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+						g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), 2);
+					}
+					else
+					{
+						LinearGradientBrush brush2(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+8), Color(0x80, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+						g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), 8);
 					}
 
-				dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, colDa);
+					if ((a==m_Items.m_ItemCount-1) || m_Items.m_Items[a+1].Selectable)
+					{
+						LinearGradientBrush brush2(Point(rectItem.left, rectItem.bottom-3), Point(rectItem.left, rectItem.bottom), Color(0x00, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
+						g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-2, rectItem.Width(), 2);
+					}
+					else
+					{
+						SolidBrush brush2(Color(0x68, 0x00, 0x00, 0x00));
+						g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-1, rectItem.Width(), 1);
+					}
+
+					if (m_SelectedItem==(INT)a)
+					{
+						LinearGradientBrush brush3(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom-1), Color(0xC0, 0x60, 0xA0, 0xFF), Color(0xC0, 0x30, 0x78, 0xFF));
+						g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height()-1);
+
+						SolidBrush brush4(Color(0x40, 0xFF, 0xFF, 0xFF));
+						g.FillRectangle(&brush4, rectItem.left, rectItem.top, rectItem.Width(), 1);
+					}
+				}
+				else
+				{
+					SolidBrush brush1(Color(0x68, 0x00, 0x00, 0x00));
+					g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
+
+					SolidBrush brush2(Color(0x80, 0x00, 0x00, 0x00));
+					g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-1, rectItem.Width(), 1);
+
+					SolidBrush brush3(Color(0x28, 0xFF, 0xFF, 0xFF));
+					g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), 1);
+				}
 			}
 			else
 			{
-				dc.FillSolidRect(rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height(), colSe);
+				if (!m_Items.m_Items[a].Selectable)
+				{
+					dc.FillSolidRect(rectItem.left, rectItem.top, rectItem.Width(), 1, GetSysColor(COLOR_WINDOWTEXT));
+					dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, GetSysColor(COLOR_WINDOWTEXT));
+				}
+				else
+					if (m_SelectedItem==(INT)a)
+					{
+						dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
+					}
 			}
 
 			// Icon
@@ -372,6 +483,8 @@ void CSidebar::OnPaint()
 					{
 						if (Themed)
 						{
+							g.SetSmoothingMode(SmoothingModeAntiAlias);
+
 							GraphicsPath path;
 							CreateRoundRectangle(rectNumber, 6, path);
 
@@ -379,8 +492,11 @@ void CSidebar::OnPaint()
 							m1.Translate(3.5f, 3.5f);
 							path.Transform(&m1);
 
-							SolidBrush brushShadow(Color(0x40, 0x00, 0x00, 0x00));
-							g.FillPath(&brushShadow, &path);
+							if (m_SelectedItem!=(INT)a)
+							{
+								SolidBrush brushShadow(Color(0x40, 0x00, 0x00, 0x00));
+								g.FillPath(&brushShadow, &path);
+							}
 
 							Matrix m2;
 							m2.Translate(-2.5f, -2.5f);
@@ -391,6 +507,8 @@ void CSidebar::OnPaint()
 
 							Pen pen(Color(0xFF, 0xFF, 0xFF), 2.0f);
 							g.DrawPath(&pen, &path);
+
+							g.SetSmoothingMode(SmoothingModeNone);
 
 							rectNumber.right += 3;
 							rectNumber.bottom++;
@@ -405,7 +523,7 @@ void CSidebar::OnPaint()
 					}
 					else
 					{
-						dc.SetTextColor(colCp);
+						dc.SetTextColor((m_SelectedItem==(INT)a) ? colSel : colNum);
 
 						rectNumber.top += 6;
 					}
@@ -430,13 +548,14 @@ void CSidebar::OnPaint()
 					dc.SelectObject(pOldFont);
 				}
 
-				dc.SetTextColor((m_HotItem==(INT)a) || ((m_SelectedItem==(INT)a) && (m_HotItem==-1)) ? 0xFFFFFF : colTx);
+				dc.SetTextColor((m_HotItem==(INT)a) || (m_SelectedItem==(INT)a) ? colSel : colTex);
 			}
 			else
 			{
 				rectItem.left += BORDER;
 				rectItem.bottom -= 2;
-				dc.SetTextColor(colCp);
+
+				dc.SetTextColor(colCap);
 			}
 
 			// Text
@@ -444,16 +563,19 @@ void CSidebar::OnPaint()
 			{
 				CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].Selectable ? &LFGetApp()->m_LargeFont : &afxGlobalData.fontBold);
 
-				if (Themed)
+				if (!m_Items.m_Items[a].Selectable)
 				{
-					rectItem.OffsetRect(1, 1);
-
-					COLORREF col = dc.SetTextColor(0x000000);
-					dc.DrawText(m_Items.m_Items[a].Caption, rectItem, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
-					dc.SetTextColor(col);
-
-					rectItem.OffsetRect(-1, -1);
+					rectItem.OffsetRect(0, 1);
 				}
+				else
+					if (Themed && (m_SelectedItem!=(INT)a))
+					{
+						rectItem.OffsetRect(1, 1);
+						COLORREF col = dc.SetTextColor(0x000000);
+						dc.DrawText(m_Items.m_Items[a].Caption, rectItem, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+						dc.SetTextColor(col);
+						rectItem.OffsetRect(-1, -1);
+					}
 
 				dc.DrawText(m_Items.m_Items[a].Caption, rectItem, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
@@ -461,9 +583,22 @@ void CSidebar::OnPaint()
 			}
 		}
 
+	// Untere Begrenzung
 	if (m_Items.m_ItemCount)
-		dc.FillSolidRect(rect.left, m_Items.m_Items[m_Items.m_ItemCount-1].Rect.bottom, rect.Width(), 1, colLi);
+	{
+		CRect rectItem(m_Items.m_Items[m_Items.m_ItemCount-1].Rect);
 
+		if (Themed)
+		{
+			LinearGradientBrush brush1(Point(rectItem.left, rectItem.bottom), Point(rectItem.left, rectItem.bottom+2), Color(0x20, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush1, rectItem.left, rectItem.bottom, rectItem.Width(), 2);
+		}
+		else
+		{
+		}
+	}
+
+	// Schatten
 	if (Themed)
 	{
 		HDC hdcMem = CreateCompatibleDC(dc);

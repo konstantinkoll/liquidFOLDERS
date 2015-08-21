@@ -102,7 +102,7 @@ CMainWnd::CMainWnd()
 {
 	m_pActiveFilter = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
-	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
+	m_pBreadcrumbBack = m_pBreadcrumbForward = NULL;
 	m_ShowFilterPane = FALSE;
 }
 
@@ -115,8 +115,8 @@ CMainWnd::~CMainWnd()
 		LFFreeSearchResult(m_pCookedFiles);
 	LFFreeSearchResult(m_pRawFiles);
 
-	DeleteBreadcrumbs(&m_BreadcrumbBack);
-	DeleteBreadcrumbs(&m_BreadcrumbForward);
+	DeleteBreadcrumbs(&m_pBreadcrumbBack);
+	DeleteBreadcrumbs(&m_pBreadcrumbForward);
 }
 
 BOOL CMainWnd::Create(BOOL IsClipboard)
@@ -146,9 +146,9 @@ BOOL CMainWnd::CreateStore(CHAR* RootStore)
 {
 	ASSERT(RootStore);
 
-	m_BreadcrumbBack = new BreadcrumbItem();
-	ZeroMemory(m_BreadcrumbBack, sizeof(BreadcrumbItem));
-	m_BreadcrumbBack->pFilter = GetRootFilter();
+	m_pBreadcrumbBack = new BreadcrumbItem();
+	ZeroMemory(m_pBreadcrumbBack, sizeof(BreadcrumbItem));
+	m_pBreadcrumbBack->pFilter = GetRootFilter();
 
 	m_pActiveFilter = GetRootFilter(RootStore);
 
@@ -213,13 +213,13 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 		switch (pMsg->wParam & (MK_XBUTTON1 | MK_XBUTTON2))
 		{
 		case MK_XBUTTON1:
-			if (m_BreadcrumbBack)
+			if (m_pBreadcrumbBack)
 				SendMessage(WM_COMMAND, ID_NAV_BACK);
 
 			return TRUE;
 
 		case MK_XBUTTON2:
-			if (m_BreadcrumbForward)
+			if (m_pBreadcrumbForward)
 				SendMessage(WM_COMMAND, ID_NAV_FORWARD);
 
 			return TRUE;
@@ -310,19 +310,19 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	if (m_pActiveFilter)
 		if (NavMode==NAVMODE_NORMAL)
 		{
-			DeleteBreadcrumbs(&m_BreadcrumbForward);
+			DeleteBreadcrumbs(&m_pBreadcrumbForward);
 
 			FVPersistentData Data;
 			m_wndMainView.GetPersistentData(Data);
 
 			if ((pFilter->Options.IsPersistent || (pFilter->Mode==LFFilterModeSearch)) && (!pFilter->Options.IsSubfolder))
-				while ((m_BreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || (m_pActiveFilter->Mode==LFFilterModeSearch)) : FALSE))
+				while ((m_pBreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || (m_pActiveFilter->Mode==LFFilterModeSearch)) : FALSE))
 				{
 					LFFreeFilter(m_pActiveFilter);
-					ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
+					ConsumeBreadcrumbItem(&m_pBreadcrumbBack, &m_pActiveFilter, &Data);
 				}
 
-			AddBreadcrumbItem(&m_BreadcrumbBack, m_pActiveFilter, Data);
+			AddBreadcrumbItem(&m_pBreadcrumbBack, m_pActiveFilter, Data);
 		}
 		else
 		{
@@ -374,7 +374,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 void CMainWnd::UpdateHistory()
 {
 	if (!m_IsClipboard)
-		m_wndHistory.SetHistory(m_pActiveFilter, m_BreadcrumbBack);
+		m_wndHistory.SetHistory(m_pActiveFilter, m_pBreadcrumbBack);
 
 	if (m_pActiveFilter)
 		m_wndSearch.SetWindowText(m_pActiveFilter->Searchterm);
@@ -540,8 +540,8 @@ LRESULT CMainWnd::OnNavigateBack(WPARAM wParam, LPARAM /*lParam*/)
 
 		for (UINT a=0; a<(UINT)wParam; a++)
 		{
-			AddBreadcrumbItem(&m_BreadcrumbForward, pFilter, Data);
-			ConsumeBreadcrumbItem(&m_BreadcrumbBack, &pFilter, &Data);
+			AddBreadcrumbItem(&m_pBreadcrumbForward, pFilter, Data);
+			ConsumeBreadcrumbItem(&m_pBreadcrumbBack, &pFilter, &Data);
 		}
 
 		NavigateTo(pFilter, NAVMODE_HISTORY, &Data);
@@ -561,8 +561,8 @@ void CMainWnd::OnNavigateForward()
 		m_wndMainView.GetPersistentData(Data);
 		m_pActiveFilter = NULL;
 
-		AddBreadcrumbItem(&m_BreadcrumbBack, pFilter, Data);
-		ConsumeBreadcrumbItem(&m_BreadcrumbForward, &pFilter, &Data);
+		AddBreadcrumbItem(&m_pBreadcrumbBack, pFilter, Data);
+		ConsumeBreadcrumbItem(&m_pBreadcrumbForward, &pFilter, &Data);
 
 		NavigateTo(pFilter, NAVMODE_HISTORY, &Data);
 	}
@@ -584,37 +584,37 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 {
 	nID -= IDM_NAV_SWITCHCONTEXT;
 
-	DeleteBreadcrumbs(&m_BreadcrumbForward);
+	DeleteBreadcrumbs(&m_pBreadcrumbForward);
 
 	if (m_wndMainView.GetContext()==LFContextStores)
 	{
 FilterFromScratch:
 		LFFilter* pFilter = LFAllocFilter();
 		pFilter->Mode = LFFilterModeSearch;
-		pFilter->ContextID = (UCHAR)nID;
+		pFilter->ContextID = (BYTE)nID;
 
 		NavigateTo(pFilter);
 	}
 	else
 		if (m_pActiveFilter)
 		{
-			while ((m_BreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder) : FALSE))
+			while ((m_pBreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder) : FALSE))
 			{
 				LFFreeFilter(m_pActiveFilter);
 
 				FVPersistentData Data;
-				ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
+				ConsumeBreadcrumbItem(&m_pBreadcrumbBack, &m_pActiveFilter, &Data);
 			}
 
 			if (!m_pActiveFilter)
 				goto FilterFromScratch;
 
 			LFFilter* pFilter = LFAllocFilter(m_pActiveFilter);
-			pFilter->ContextID = (UCHAR)nID;
+			pFilter->ContextID = (BYTE)nID;
 			if (pFilter->StoreID[0]=='\0')
 				pFilter->OriginalName[0] = L'\0';
 
-			NavigateTo(pFilter, m_BreadcrumbBack ? NAVMODE_RELOAD : NAVMODE_NORMAL);
+			NavigateTo(pFilter, m_pBreadcrumbBack ? NAVMODE_RELOAD : NAVMODE_NORMAL);
 		}
 
 	// Slide the filter pane away
@@ -628,11 +628,11 @@ void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_NAV_BACK:
-		b &= (m_BreadcrumbBack!=NULL);
+		b &= (m_pBreadcrumbBack!=NULL);
 		break;
 
 	case ID_NAV_FORWARD:
-		b &= (m_BreadcrumbForward!=NULL);
+		b &= (m_pBreadcrumbForward!=NULL);
 		break;
 	}
 
@@ -923,8 +923,14 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	if (!m_IsClipboard)
 	{
-		const INT ctx = m_wndMainView.GetContext();
-		m_wndContextSidebar.SetSelection(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0, m_wndMainView.GetStoreID());
+		INT Context = m_wndMainView.GetContext();
+		if (Context>LFLastQueryContext)
+		{
+			const BOOL IsSubfolder = m_pActiveFilter ? m_pActiveFilter->Options.IsSubfolder : FALSE;
+			Context = (IsSubfolder || (Context==LFContextSearch)) ? m_pActiveFilter->ContextID : -1;
+		}
+
+		m_wndContextSidebar.SetSelection(IDM_NAV_SWITCHCONTEXT+Context, m_wndMainView.GetStoreID());
 	}
 
 	if ((pVictim) && (pVictim!=m_pRawFiles))

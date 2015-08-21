@@ -50,6 +50,7 @@
 #define IDB_LIQUIDFOLDERS_128           20137
 #define IDB_UPDATEICONS_16              20138
 #define IDB_UPDATEICONS_32              20139
+#define IDB_SIDEBARBACKGROUND           20140
 #define IDI_RESET_NORMAL                20200
 #define IDI_RESET_HOT                   20201
 #define IDI_RESET_PRESSED               20202

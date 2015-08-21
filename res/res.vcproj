@@ -1269,6 +1269,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\SidebarBackground.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SidebarBackground_Original.png"
+			>
+		</File>
+		<File
 			RelativePath=".\SidebarShadow.bmp"
 			>
 		</File>
