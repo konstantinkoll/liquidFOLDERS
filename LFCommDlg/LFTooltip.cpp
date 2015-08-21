@@ -229,6 +229,7 @@ void LFTooltip::Deactivate()
 {
 	m_strCaption.Empty();
 	m_strText.Empty();
+
 	if (m_Icon)
 	{
 		DestroyIcon(m_Icon);
@@ -281,10 +282,14 @@ void LFTooltip::OnPaint()
 	// Background
 	if (m_Themed)
 	{
+		INT y = (rect.top+rect.bottom)*3/5;
+
+		dc.FillSolidRect(rect.left, rect.top, rect.Width(), y, 0xFFFFFF);
+
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-		LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xF2, 0xF4, 0xF7));
-		g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
+		LinearGradientBrush brush(Point(0, y), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xF2, 0xF4, 0xF7));
+		g.FillRectangle(&brush, rect.left, y, rect.Width(), rect.Height()-y+1);
 	}
 	else
 	{
