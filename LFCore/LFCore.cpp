@@ -41,7 +41,6 @@ LFCORE_API void LFInitialize()
 	LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
 	LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");
 	LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");
-	LFMessages.VolumesChanged = RegisterWindowMessageA("liquidFOLDERS.VolumesChanged");
 	LFMessages.StatisticsChanged = RegisterWindowMessageA("liquidFOLDERS.StatisticsChanged");
 
 	InitMutex();

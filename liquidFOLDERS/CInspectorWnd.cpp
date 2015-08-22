@@ -315,15 +315,6 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 	// Attribute
 	switch (m_TypeID)
 	{
-	case LFTypeVolume:
-		m_Count++;
-		AddValue(i, LFAttrFileName, TRUE);
-		AddValue(i, LFAttrDescription);
-		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
-		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
-
-		break;
-
 	case LFTypeStore:
 		m_Count++;
 
@@ -388,10 +379,6 @@ void CInspectorWnd::UpdateFinish()
 	UINT SID = 0;
 	switch (m_TypeID)
 	{
-	case LFTypeVolume:
-		SID = IDS_DRIVES_SINGULAR;
-		break;
-
 	case LFTypeStore:
 		SID = IDS_STORES_SINGULAR;
 		break;
@@ -436,21 +423,6 @@ void CInspectorWnd::UpdateFinish()
 				{
 					m_IconHeader.SetPreview(p_LastItem, m_TypeName);
 				}
-
-			break;
-
-		case LFTypeVolume:
-			if (m_AttributeStatus[AttrDriveLetter]==StatusMultiple)
-			{
-				m_IconHeader.SetMultiple(m_TypeName);
-			}
-			else
-			{
-				CHAR Path[4];
-				strcpy_s(Path, 4, " :\\");
-				Path[0] = m_AttributeValues[AttrDriveLetter].AnsiString[0];
-				m_IconHeader.SetFormatIcon(Path, m_TypeName);
-			}
 
 			break;
 

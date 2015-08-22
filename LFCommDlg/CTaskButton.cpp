@@ -69,7 +69,7 @@ void CTaskButton::SetIconID(INT IconID, INT OverlayID)
 
 INT CTaskButton::GetPreferredWidth()
 {
-	INT Width = 2*(BORDER+2)+1;
+	INT Width = 2*(BORDER+2);
 
 	if ((p_Icons) && (m_IconID!=-1))
 		Width += m_IconSize+(m_Caption.IsEmpty() ? 0 : BORDER);

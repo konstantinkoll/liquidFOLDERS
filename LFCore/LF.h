@@ -75,7 +75,6 @@ struct LFMessageIDs
 	UINT StoresChanged;
 	UINT StoreAttributesChanged;
 	UINT DefaultStoreChanged;
-	UINT VolumesChanged;
 	UINT StatisticsChanged;
 };
 
@@ -130,10 +129,9 @@ struct LFAirport
 
 #define LFItemCategoryLocal       0
 #define LFItemCategoryRemote      1
-#define LFItemCategoryVolumes     2
-#define LFItemCategoryNight       3
+#define LFItemCategoryNight       2
 
-#define LFItemCategoryCount       4
+#define LFItemCategoryCount       3
 
 
 // Context descriptor
@@ -389,9 +387,6 @@ struct LFStatistics
 
 struct LFFilterOptions
 {
-	// For LFFilterModeStores
-	BOOL AddVolumes;						// If TRUE, volumes are added
-
 	// For LFFilterModeDirectoryTree and above
 	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
 	BOOL IsSubfolder;						// If TRUE, you are already inside a grouped subdirectory
@@ -479,11 +474,10 @@ struct LFCoreAttributes
 #define LFTypeGhosted              0x04000000
 #define LFTypeShortcutAllowed      0x08000000
 
-#define LFTypeVolume               0x00000000	// Volatile
-#define LFTypeStore                0x10000000
-#define LFTypeFile                 0x20000000
-#define LFTypeFolder               0x30000000
-#define LFTypeMask                 0xF0000000
+#define LFTypeStore                0x00000000	// Volatile
+#define LFTypeFile                 0x40000000
+#define LFTypeFolder               0x80000000
+#define LFTypeMask                 0xC0000000
 
 #define LFFlagTrash                0x0001		// Persistent, DO NOT CHANGE
 #define LFFlagNew                  0x0002

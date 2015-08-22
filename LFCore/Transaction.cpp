@@ -126,37 +126,6 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescr
 // LFTransactionList
 //
 
-void UpdateVolume(LFTransactionList* tl, UINT idx, LFVariantData* v)
-{
-	UINT Result = LFIllegalAttribute;
-
-	if (v->Attr==LFAttrFileName)
-	{
-		WCHAR szVolumeRoot[4] = L" :\\";
-		szVolumeRoot[0] = tl->m_Items[idx].pItemDescriptor->CoreAttributes.FileID[0];
-
-		Result = SetVolumeLabel(szVolumeRoot, v->UnicodeString) ? LFOk : LFDriveNotReady;
-
-		if (Result==LFOk)
-			wcscpy_s(tl->m_Items[idx].pItemDescriptor->CoreAttributes.FileName, 256, v->UnicodeString);
-	}
-	else
-	{
-		Result = LFIllegalAttribute;
-	}
-
-	if (Result==LFOk)
-	{
-		tl->m_Modified = TRUE;
-	}
-	else
-	{
-		tl->m_LastError = tl->m_Items[idx].LastError = Result;
-	}
-
-	tl->m_Items[idx].Processed = TRUE;
-}
-
 void UpdateStore(LFTransactionList* tl, UINT idx, LFVariantData* v, BOOL& Updated)
 {
 	UINT Result = LFIllegalAttribute;
@@ -200,13 +169,6 @@ LFCORE_API void LFTransactionUpdate(LFTransactionList* tl, LFVariantData* v1, LF
 		if (tl->m_Items[a].LastError==LFOk)
 			switch (tl->m_Items[a].pItemDescriptor->Type & LFTypeMask)
 			{
-			case LFTypeVolume:
-				UpdateVolume(tl, a, v1);
-				if (v2)
-					UpdateVolume(tl, a, v2);
-				if (v3)
-					UpdateVolume(tl, a, v3);
-				break;
 			case LFTypeStore:
 				UpdateStore(tl, a, v1, StoresUpdated);
 				if (v2)

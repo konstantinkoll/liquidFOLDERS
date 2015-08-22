@@ -106,7 +106,6 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Auf diesem Computer gespeicherte Dateien"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern."
-    IDS_ITEMCATEGORY_VOLUMES "Geräte mit Wechselmedien"
     IDS_ITEMCATEGORY_NIGHT  "Nacht\nBis 6 Uhr"
 END
 
@@ -375,7 +374,6 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Files stored on this computer"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Network location\nThese stores reside on other computers."
-    IDS_ITEMCATEGORY_VOLUMES "Devices with removable storage"
     IDS_ITEMCATEGORY_NIGHT  "Night\nUntil 6am"
 END
 
@@ -643,7 +641,6 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Archivos almacenados en este equipo"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Ubicación de red\nEstos stores residen en otras computadoras."
-    IDS_ITEMCATEGORY_VOLUMES "Dispositivos con almacenamiento extraible"
     IDS_ITEMCATEGORY_NIGHT  "Noche\nHasta 6am"
 END
 
@@ -912,8 +909,6 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Fichiers enregistrés sur cet ordinateur"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs."
-    IDS_ITEMCATEGORY_VOLUMES 
-                            "Périphériques utilisant des supports de stockage amovibles"
     IDS_ITEMCATEGORY_NIGHT  "Nuit\nJusqu'à 6 heures"
 END
 

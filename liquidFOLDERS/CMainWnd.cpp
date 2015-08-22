@@ -10,7 +10,6 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 {
 	LFFilter* pFilter = LFAllocFilter();
 	pFilter->Mode = RootStore ? LFFilterModeDirectoryTree : LFFilterModeStores;
-	pFilter->Options.AddVolumes = TRUE;
 
 	if (RootStore)
 	{
@@ -57,10 +56,6 @@ void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* i)
 	{
 	case LFTypeStore:
 		Type = _T("store");
-		break;
-
-	case LFTypeVolume:
-		Type = _T("volume");
 		break;
 
 	case LFTypeFolder:
@@ -425,7 +420,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->VolumesChanged, OnVolumesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StatisticsChanged, OnStatisticsChanged)
 END_MESSAGE_MAP()
 
@@ -688,10 +682,6 @@ void CMainWnd::OnItemOpen()
 
 				switch (i->Type & LFTypeMask)
 				{
-				case LFTypeVolume:
-					theApp.ExecuteExplorerContextMenu(i->CoreAttributes.FileID[0], "open");
-					break;
-
 				case LFTypeFile:
 					if (strcmp(i->CoreAttributes.FileFormat, "filter")==0)
 					{
@@ -986,15 +976,6 @@ LRESULT CMainWnd::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 			{
 				PostMessage(WM_RELOAD);
 			}
-
-	return NULL;
-}
-
-LRESULT CMainWnd::OnVolumesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	if (m_pCookedFiles)
-		if (m_pCookedFiles->m_Context==LFContextStores)
-			PostMessage(WM_RELOAD);
 
 	return NULL;
 }

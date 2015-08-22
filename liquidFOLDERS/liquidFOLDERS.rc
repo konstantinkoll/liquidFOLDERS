@@ -422,13 +422,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_VATTR_SOURCE        "Quelle"
-    IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_SYNCHRONIZETIME "Zuletzt synchronisiert"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
@@ -847,13 +842,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_VATTR_SOURCE        "Origen"
-    IDS_VATTR_DRIVELETTER   "Unidad"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_SYNCHRONIZETIME "Sincronizado"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
@@ -1272,13 +1262,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_VATTR_SOURCE        "Source"
-    IDS_VATTR_DRIVELETTER   "Lettre aux lecteurs"
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_SYNCHRONIZETIME "Synchronisée"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
     IDS_VATTR_IATA_COUNTRY  "Territoire"
@@ -1748,13 +1733,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_VATTR_SOURCE        "Source"
-    IDS_VATTR_DRIVELETTER   "Drive letter"
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_SYNCHRONIZETIME "Synchronized"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"

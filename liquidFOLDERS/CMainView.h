@@ -86,11 +86,6 @@ protected:
 
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnVolumeFormat();
-	afx_msg void OnVolumeEject();
-	afx_msg void OnVolumeProperties();
-	afx_msg void OnUpdateVolumeCommands(CCmdUI* pCmdUI);
-
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreImportFolder();
 	afx_msg void OnStoreShortcut();
@@ -140,7 +135,6 @@ private:
 	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData);
 
 	CTaskButton* p_FilterButton;
-	CTaskButton* p_OpenButton;
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;
 	CHeaderButton* p_ViewButton;

@@ -48,7 +48,7 @@ CMainView::CMainView()
 	p_wndFileView = NULL;
 	p_Filter = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
-	p_FilterButton = p_OpenButton = p_InspectorButton = NULL;
+	p_FilterButton = p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
 	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
@@ -403,7 +403,6 @@ void CMainView::AddTransactionItem(LFTransactionList* pTransactionList, LFItemDe
 {
 	switch (pItemDescriptor->Type & LFTypeMask)
 	{
-	case LFTypeVolume:
 	case LFTypeStore:
 	case LFTypeFile:
 		LFAddTransactionItem(pTransactionList, pItemDescriptor, UserData);
@@ -600,11 +599,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
-	ON_COMMAND(IDM_VOLUME_FORMAT, OnVolumeFormat)
-	ON_COMMAND(IDM_VOLUME_EJECT, OnVolumeEject)
-	ON_COMMAND(IDM_VOLUME_PROPERTIES, OnVolumeProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_FORMAT, IDM_VOLUME_PROPERTIES, OnUpdateVolumeCommands)
-
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
@@ -658,28 +652,25 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
 
-	#define OpenIconFolder       16
-	#define OpenIconExplorer     17
-	p_OpenButton = m_wndTaskbar.AddButton(IDM_ITEM_OPEN, OpenIconFolder);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16);
 
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 18, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 26);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 18);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 19);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 20);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 23);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 24);
 
-	#define InspectorIconVisible     27
-	#define InspectorIconHidden      28
+	#define InspectorIconVisible     25
+	#define InspectorIconHidden      26
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 27, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 28, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 30, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -1362,64 +1353,13 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 	if (Index!=-1)
 	{
 		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_ITEM_OPEN:
 			b = (pItemDescriptor->NextFilter!=NULL) ||
-				((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile) ||
-				((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
+				((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
 
-			if (p_OpenButton)
-				p_OpenButton->SetIconID((pItemDescriptor->Type & LFTypeMask)==LFTypeVolume ? OpenIconExplorer : OpenIconFolder);
-
-			break;
-		}
-	}
-
-	pCmdUI->Enable(b);
-}
-
-
-// Volume
-
-void CMainView::OnVolumeFormat()
-{
-	INT Index = GetSelectedItem();
-	if (Index!=-1)
-		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0], "format");
-}
-
-void CMainView::OnVolumeEject()
-{
-	INT Index = GetSelectedItem();
-	if (Index!=-1)
-		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0], "eject");
-}
-
-void CMainView::OnVolumeProperties()
-{
-	INT Index = GetSelectedItem();
-	if (Index!=-1)
-		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[Index]->CoreAttributes.FileID[0], "properties");
-}
-
-void CMainView::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
-{
-	BOOL b = FALSE;
-
-	INT Index = GetSelectedItem();
-	if (Index!=-1)
-	{
-		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
-		switch (pCmdUI->m_nID)
-		{
-		case IDM_VOLUME_FORMAT:
-		case IDM_VOLUME_EJECT:
-			b = ((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
-			break;
-
-		case IDM_VOLUME_PROPERTIES:
-			b = ((pItemDescriptor->Type & LFTypeMask)==LFTypeVolume);
 			break;
 		}
 	}

@@ -842,8 +842,6 @@ STRINGTABLE
 BEGIN
     IDS_STORES_SINGULAR     "%u Store"
     IDS_STORES_PLURAL       "%u Stores"
-    IDS_DRIVES_SINGULAR     "%u Laufwerk"
-    IDS_DRIVES_PLURAL       "%u Laufwerke"
     IDS_FILES_SINGULAR      "%u Datei"
     IDS_FILES_PLURAL        "%u Dateien"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
@@ -1609,8 +1607,6 @@ STRINGTABLE
 BEGIN
     IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
-    IDS_DRIVES_SINGULAR     "%u unidad"
-    IDS_DRIVES_PLURAL       "%u unidas"
     IDS_FILES_SINGULAR      "%u archivo"
     IDS_FILES_PLURAL        "%u archivos"
     IDS_INVALIDLICENSE      "La licencia que usted ha ingresado no es válida o ha expirado!"
@@ -2370,8 +2366,6 @@ STRINGTABLE
 BEGIN
     IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
-    IDS_DRIVES_SINGULAR     "%u lecteur"
-    IDS_DRIVES_PLURAL       "%u lecteurs"
     IDS_FILES_SINGULAR      "%u fichier"
     IDS_FILES_PLURAL        "%u fichiers"
     IDS_INVALIDLICENSE      "La licence entrée est non valable ou s'est terminée!"
@@ -3179,8 +3173,6 @@ STRINGTABLE
 BEGIN
     IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
-    IDS_DRIVES_SINGULAR     "%u volume"
-    IDS_DRIVES_PLURAL       "%u volumes"
     IDS_FILES_SINGULAR      "%u file"
     IDS_FILES_PLURAL        "%u files"
     IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"

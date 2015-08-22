@@ -204,22 +204,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\DriveProperties_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\DriveProperties_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Explorer_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Explorer_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\File_16.png"
 				>
 			</File>

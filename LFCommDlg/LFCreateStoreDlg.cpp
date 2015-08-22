@@ -10,11 +10,13 @@
 // LFCreateStoreDlg
 //
 
+#define WM_VOLUMECHANGE     WM_USER+5
 #define GetSelectedVolume() m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
 
 LFCreateStoreDlg::LFCreateStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_CREATESTORE, pParentWnd)
 {
+	m_SHChangeNotifyRegister = 0;
 }
 
 void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
@@ -97,16 +99,18 @@ void LFCreateStoreDlg::UpdateVolumes()
 
 
 BEGIN_MESSAGE_MAP(LFCreateStoreDlg, LFDialog)
+	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_AUTOPATH, OnUpdate)
 	ON_BN_CLICKED(IDC_VOLUMEPATH, OnUpdate)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VOLUMELIST, OnItemChanged)
 	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_VOLUMELIST, OnRequestTooltipData)
+	ON_MESSAGE(WM_VOLUMECHANGE, OnVolumeChange)
+
 	ON_COMMAND(IDM_VOLUME_FORMAT, OnVolumeFormat)
 	ON_COMMAND(IDM_VOLUME_EJECT, OnVolumeEject)
 	ON_COMMAND(IDM_VOLUME_PROPERTIES, OnVolumeProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_FORMAT, IDM_VOLUME_PROPERTIES, OnUpdateVolumeCommands)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->VolumesChanged, OnVolumesChanged)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnVolumesChanged)
+
 END_MESSAGE_MAP()
 
 BOOL LFCreateStoreDlg::OnInitDialog()
@@ -123,7 +127,21 @@ BOOL LFCreateStoreDlg::OnInitDialog()
 
 	UpdateVolumes();
 
+	// Benachrichtigung, wenn sich Laufwerke ändern
+	SHChangeNotifyEntry shCNE = { NULL, TRUE };
+	m_SHChangeNotifyRegister = SHChangeNotifyRegister(GetSafeHwnd(), SHCNRF_ShellLevel,
+		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
+		WM_VOLUMECHANGE, 1, &shCNE);
+
 	return TRUE;
+}
+
+void LFCreateStoreDlg::OnDestroy()
+{
+	if (m_SHChangeNotifyRegister)
+		SHChangeNotifyDeregister(m_SHChangeNotifyRegister);
+
+	LFDialog::OnDestroy();
 }
 
 void LFCreateStoreDlg::OnUpdate()
@@ -181,6 +199,13 @@ void LFCreateStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
+LRESULT LFCreateStoreDlg::OnVolumeChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	UpdateVolumes();
+
+	return NULL;
+}
+
 
 void LFCreateStoreDlg::OnVolumeFormat()
 {
@@ -224,11 +249,4 @@ void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
-}
-
-LRESULT LFCreateStoreDlg::OnVolumesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	UpdateVolumes();
-
-	return NULL;
 }

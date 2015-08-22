@@ -357,11 +357,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 					break;
 
 				case LFAttrFileCount:
-					if (((i->Type & LFTypeMask)==LFTypeVolume) || ((i->Type & LFTypeMask)==LFTypeFile))
-						continue;
-
-				case LFAttrFileSize:
-					if ((i->Type & LFTypeMask)==LFTypeVolume)
+					if ((i->Type & LFTypeMask)==LFTypeFile)
 						continue;
 				}
 
@@ -395,7 +391,6 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		switch (i->Type & LFTypeMask)
 		{
 		case LFTypeStore:
-		case LFTypeVolume:
 			Rows[1] = LFAttrComments;
 			Rows[2] = LFAttrDescription;
 			Rows[3] = -1;
@@ -438,7 +433,6 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		switch (i->Type & LFTypeMask)
 		{
 		case LFTypeStore:
-		case LFTypeVolume:
 			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
 
@@ -538,13 +532,11 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 __forceinline void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 {
 	INT SysIconIndex = -1;
-	CHAR Path[4];
 
 #define JUMBOICON (m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview)
 
-	switch (i->Type & LFTypeMask)
+	if ((i->Type & LFTypeMask)==LFTypeFile)
 	{
-	case LFTypeFile:
 		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview))
 			if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, i))
 				return;
@@ -556,26 +548,11 @@ __forceinline void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i
 		}
 
 		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(i->CoreAttributes.FileFormat);
-
-		break;
-
-	case LFTypeVolume:
-		strcpy_s(Path, 4, " :\\");
-		Path[0] = i->CoreAttributes.FileID[0];
-
-		if (JUMBOICON)
-		{
-			theApp.m_FileFormats.DrawJumboIcon(dc, rect, Path, i->Type & LFTypeGhosted);
-			return;
-		}
-
-		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(Path);
-
-		break;
 	}
 
 	const UINT List = (SysIconIndex>=0) ? 1 : 0;
 	const INT IconID = (List==1) ? SysIconIndex : i->IconID-1;
+
 	if (IconID>=0)
 	{
 		rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);

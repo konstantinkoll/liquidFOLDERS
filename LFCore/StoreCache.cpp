@@ -905,10 +905,6 @@ Finish:
 			SendLFNotifyMessage(LFMessages.StoresChanged);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 		}
-		else
-		{
-			SendLFNotifyMessage(LFMessages.VolumesChanged);
-		}
 
 	return Result;
 }
@@ -992,10 +988,6 @@ UINT UnmountVolume(CHAR cVolume, BOOL InternalCall)
 			for (UINT a=0; a<NotifyCount; a++)
 				SendShellNotifyMessage(NotifyTypes[a] ? SHCNE_RMDIR : SHCNE_UPDATEITEM, NotifyIDs[a]);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		}
-		else
-		{
-			SendLFNotifyMessage(LFMessages.VolumesChanged);
 		}
 
 	return Result;

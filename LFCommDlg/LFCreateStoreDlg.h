@@ -22,15 +22,17 @@ protected:
 	void UpdateVolumes();
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnDestroy();
 	afx_msg void OnUpdate();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnVolumeChange(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnVolumeFormat();
 	afx_msg void OnVolumeEject();
 	afx_msg void OnVolumeProperties();
 	afx_msg void OnUpdateVolumeCommands(CCmdUI* pCmdUI);
-	afx_msg LRESULT OnVolumesChanged(WPARAM wParam, LPARAM lParam);
+
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -39,4 +41,5 @@ private:
 	CButton m_wndAutoPath;
 	CButton m_wndMakeSearchable;
 	CExplorerList m_wndExplorerList;
+	ULONG m_SHChangeNotifyRegister;
 };

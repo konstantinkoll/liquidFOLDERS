@@ -124,7 +124,7 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 		else
 		{
 			Size.cx += 2*BORDER+SHADOW/2;
-			Size.cy += BORDER+2;
+			Size.cy += BORDER+1;
 		}
 
 	}
@@ -523,9 +523,9 @@ void CSidebar::OnPaint()
 					}
 					else
 					{
-						dc.SetTextColor((m_SelectedItem==(INT)a) ? colSel : colNum);
+						rectNumber.top += 5;
 
-						rectNumber.top += 6;
+						dc.SetTextColor((m_SelectedItem==(INT)a) ? colSel : colNum);
 					}
 
 					CString tmpStr;

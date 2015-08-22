@@ -15,7 +15,6 @@ public:
 	void SetMetadataFromFilter(LFFilter* pFilter);
 	BOOL AddItem(LFItemDescriptor* i);
 	BOOL AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor);
-	void AddVolumes();
 	void RemoveItem(UINT Index, BOOL UpdateCount=TRUE);
 	void RemoveFlaggedItems(BOOL UpdateCount=TRUE);
 	void KeepRange(INT First, INT Last);

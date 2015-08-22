@@ -168,8 +168,8 @@ BOOL LFMessageBoxDlg::OnInitDialog()
 		m_rectText.left += m_IconSize+borders.x;
 	}
 
-	if (borders.x+m_rectText.right>rectScreen.Width()*5/8)
-		m_rectText.right = rectScreen.Width()*5/8-borders.x;
+	if (2*borders.x+m_rectText.right>rectScreen.Width()*5/8)
+		m_rectText.right = rectScreen.Width()*5/8-2*borders.x;
 
 	CDC* pDC = GetDC();
 	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_DefaultFont);
@@ -184,7 +184,7 @@ BOOL LFMessageBoxDlg::OnInitDialog()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	INT DiffX = max(0, m_rectText.right+borders.x-rectClient.Width());
+	INT DiffX = max(0, m_rectText.right+2*borders.x-rectClient.Width());
 	INT DiffY = max(0, max(m_IconSize+2*borders.y, m_rectText.bottom+borders.y)-rectLayout.bottom);
 
 	CRect rectWindow;

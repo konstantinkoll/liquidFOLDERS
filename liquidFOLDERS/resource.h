@@ -67,12 +67,11 @@
 #define IDS_DEFAULTSTORE                1032
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_SOURCE                1100
-#define IDS_VATTR_DRIVELETTER           1101
-#define IDS_VATTR_MAINTENANCETIME       1102
-#define IDS_VATTR_SYNCHRONIZETIME       1103
-#define IDS_VATTR_LASTSEEN              1104
-#define IDS_VATTR_IATA_NAME             1105
-#define IDS_VATTR_IATA_COUNTRY          1106
+#define IDS_VATTR_MAINTENANCETIME       1101
+#define IDS_VATTR_SYNCHRONIZETIME       1102
+#define IDS_VATTR_LASTSEEN              1103
+#define IDS_VATTR_IATA_NAME             1104
+#define IDS_VATTR_IATA_COUNTRY          1105
 #define IDD_CHOOSEDETAILS               2000
 #define IDC_VIEWATTRIBUTES              2001
 #define IDC_CHECKALL                    2002

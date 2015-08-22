@@ -31,7 +31,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam
 					break;
 				}
 
-		return 0;
+		return NULL;
 	}
 
 	return DefWindowProc(hWnd, Message, wParam, lParam);
@@ -61,16 +61,9 @@ void InitWatchdog()
 	if (hWndWatchdog)
 	{
 		// Benachrichtigung, wenn sich Laufwerke ändern
-		LPITEMIDLIST pidl;
-		if (SHGetSpecialFolderLocation(hWndWatchdog, CSIDL_DESKTOP, &pidl)==NOERROR)
-		{
-			SHChangeNotifyEntry shCNE;
-			shCNE.pidl = pidl;
-			shCNE.fRecursive = TRUE;
-
-			ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWndWatchdog, SHCNRF_ShellLevel,
-				SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
-				WM_USER, 1, &shCNE);
-		}
+		SHChangeNotifyEntry shCNE = { NULL, TRUE };
+		ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWndWatchdog, SHCNRF_ShellLevel,
+			SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
+			WM_USER, 1, &shCNE);
 	}
 }

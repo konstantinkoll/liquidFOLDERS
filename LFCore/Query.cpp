@@ -50,12 +50,10 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 	FILETIME Time2;
 	ULARGE_INTEGER ULI1;
 	ULARGE_INTEGER ULI2;
-
-
-	WCHAR* conditionarray;
-	WCHAR condition[256];
-	WCHAR* tagarray;
-	WCHAR tag[256];
+	WCHAR* pConditionArray;
+	WCHAR Condition[256];
+	WCHAR* pTagArray;
+	WCHAR Tag[256];
 
 	switch (pFilterCondition->AttrData.Type)
 	{
@@ -99,21 +97,25 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		switch (pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			tagarray = (WCHAR*)v;
-			while (GetNextTag(&tagarray, tag, 256))
-				if (_wcsicmp(tag, pFilterCondition->AttrData.UnicodeArray)==0)
+			pTagArray = (WCHAR*)v;
+			while (GetNextTag(&pTagArray, Tag, 256))
+				if (_wcsicmp(Tag, pFilterCondition->AttrData.UnicodeArray)==0)
 					return TRUE;
+
 			return FALSE;
+
 		case LFFilterCompareContains:
-			conditionarray = pFilterCondition->AttrData.UnicodeArray;
-			while (GetNextTag(&conditionarray, condition, 256))
+			pConditionArray = pFilterCondition->AttrData.UnicodeArray;
+			while (GetNextTag(&pConditionArray, Condition, 256))
 			{
-				tagarray = (WCHAR*)v;
-				while (GetNextTag(&tagarray, tag, 256))
-					if (_wcsicmp(tag, condition)==0)
+				pTagArray = (WCHAR*)v;
+				while (GetNextTag(&pTagArray, Tag, 256))
+					if (_wcsicmp(Tag, Condition)==0)
 						return TRUE;
 			}
+
 			return FALSE;
+
 		default:
 			return FALSE;
 		}
@@ -476,14 +478,9 @@ void RetrieveStore(CHAR* StoreID, LFFilter* f, LFSearchResult* sr)
 	CLOSE_STORE();
 }
 
-void QueryStores(LFFilter* pFilter, LFSearchResult* pSearchResult)
+void QueryStores(LFSearchResult* pSearchResult)
 {
 	pSearchResult->m_HasCategories = TRUE;
-
-	// Volumes
-	if (pFilter)
-		if (pFilter->Options.AddVolumes)
-			pSearchResult->AddVolumes();
 
 	// Stores
 	if (GetMutexForStores())
@@ -548,7 +545,7 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 
 	if (!pFilter)
 	{
-		QueryStores(pFilter, pSearchResult);
+		QueryStores(pSearchResult);
 	}
 	else
 	{
@@ -568,15 +565,18 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 		switch (pFilter->Mode)
 		{
 		case LFFilterModeStores:
-			QueryStores(pFilter, pSearchResult);
+			QueryStores(pSearchResult);
+
 			break;
 
 		case LFFilterModeDirectoryTree:
 			QueryTree(pFilter, pSearchResult);
+
 			break;
 
 		case LFFilterModeSearch:
 			QuerySearch(pFilter, pSearchResult);
+
 			break;
 
 		default:

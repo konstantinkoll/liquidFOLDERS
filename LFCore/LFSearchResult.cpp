@@ -297,50 +297,6 @@ BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 	return FALSE;
 }
 
-void LFSearchResult::AddVolumes()
-{
-	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL);
-	BOOL HideVolumesWithNoMedia = LFHideVolumesWithNoMedia();
-
-	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
-	{
-		if ((VolumesOnSystem & 1)==0)
-			continue;
-
-		WCHAR szVolumeRoot[] = L" :\\";
-		szVolumeRoot[0] = cVolume;
-
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
-		{
-			if ((!sfi.dwAttributes) && HideVolumesWithNoMedia)
-				continue;
-
-			SIZE_T Len = wcslen(sfi.szDisplayName);
-			if (Len>=5)
-				if ((sfi.szDisplayName[Len-5]==L' ') && (sfi.szDisplayName[Len-4]==L'(') && (sfi.szDisplayName[Len-2]==L':') && (sfi.szDisplayName[Len-1]==L')'))
-					sfi.szDisplayName[Len-5] = L'\0';
-
-			LFItemDescriptor* pItemDesciptor = LFAllocItemDescriptor();
-			pItemDesciptor->Type = LFTypeVolume;
-			if (!sfi.dwAttributes)
-				pItemDesciptor->Type |= LFTypeGhosted | LFTypeNotMounted;
-			
-			pItemDesciptor->CategoryID = LFItemCategoryVolumes;
-			SetAttribute(pItemDesciptor, LFAttrFileName, sfi.szDisplayName);
-
-			CHAR FileID[] = " :";
-			FileID[0] = cVolume;
-
-			SetAttribute(pItemDesciptor, LFAttrFileID, FileID);
-			SetAttribute(pItemDesciptor, LFAttrDescription, sfi.szTypeName);
-
-			if (!AddItem(pItemDesciptor))
-				LFFreeItemDescriptor(pItemDesciptor);
-		}
-	}
-}
-
 void LFSearchResult::RemoveItem(UINT Index, BOOL UpdateCount)
 {
 	assert(Index<m_ItemCount);
@@ -389,11 +345,6 @@ INT LFSearchResult::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Att
 	// Kategorien
 	if ((m_HasCategories) && (i1->CategoryID!=i2->CategoryID))
 		return (INT)i1->CategoryID-(INT)i2->CategoryID;
-
-	// Wenn zwei Laufwerke anhand des Namens verglichen werden sollen, Laufwerksbuchstaben nehmen
-	if (((i1->Type & LFTypeMask)==LFTypeVolume) && ((i2->Type & LFTypeMask)==LFTypeVolume))
-		if (Attr==LFAttrFileName)
-			Attr = LFAttrFileID;
 
 	// Dateien mit NULL-Werten oder leeren Strings im gewünschten Attribut hinten einsortieren
 	const UINT Type = AttrTypes[Attr];

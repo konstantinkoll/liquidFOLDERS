@@ -652,14 +652,16 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
 	switch (Item->Type & LFTypeMask)
 	{
-	case LFTypeVolume:
-		pMenu->LoadMenu(IDM_VOLUME);
-		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-		break;
-
 	case LFTypeStore:
 		pMenu->LoadMenu(IDM_STORE);
 		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+		break;
+
+	case LFTypeFolder:
+		if ((Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1))
+			pMenu->LoadMenu(IDM_FOLDER);
+
 		break;
 
 	case LFTypeFile:
@@ -674,10 +676,6 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 		}
 
 		break;
-
-	case LFTypeFolder:
-		if ((Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1))
-			pMenu->LoadMenu(IDM_FOLDER);
 	}
 
 	if (!IsMenu(*pMenu))
@@ -762,8 +760,7 @@ void CFileView::EditLabel(INT Index)
 	if ((m_EnableLabelEdit) && (p_CookedFiles) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
 	{
 		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
-		if (((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeVolume) ||
-			((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) ||
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) ||
 			((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
 		{
 			m_EditLabel = Index;
@@ -868,24 +865,12 @@ CString CFileView::GetLabel(LFItemDescriptor* i)
 {
 	CString Label = i->CoreAttributes.FileName;
 
-	switch (i->Type & LFTypeMask)
-	{
-	case LFTypeVolume:
-		Label += _T(" (");
-		Label += i->CoreAttributes.FileID[0];
-		Label += _T(":)");
-
-		break;
-
-	case LFTypeFile:
+	if ((i->Type & LFTypeMask)==LFTypeFile)
 		if (((!m_HideFileExt) || (i->CoreAttributes.FileName[0]==L'\0')) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			Label += _T(".");
 			Label += i->CoreAttributes.FileFormat;
 		}
-
-		break;
-	}
 
 	return Label;
 }
@@ -906,12 +891,17 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 
 	switch (i->Type & LFTypeMask)
 	{
-	case LFTypeVolume:
-		AppendTooltipAttribute(i, LFAttrDescription, Hint);
-		break;
-
 	case LFTypeStore:
 		GetHintForStore(i, Hint);
+		break;
+
+	case LFTypeFolder:
+		AppendTooltipAttribute(i, LFAttrComments, Hint);
+		AppendTooltipAttribute(i, LFAttrDescription, Hint);
+
+		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+			AppendTooltipString(LFAttrComments, Hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+
 		break;
 
 	case LFTypeFile:
@@ -942,15 +932,6 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendTooltipAttribute(i, LFAttrCreationTime, Hint);
 		AppendTooltipAttribute(i, LFAttrFileTime, Hint);
 		AppendTooltipAttribute(i, LFAttrFileSize, Hint);
-
-		break;
-
-	case LFTypeFolder:
-		AppendTooltipAttribute(i, LFAttrComments, Hint);
-		AppendTooltipAttribute(i, LFAttrDescription, Hint);
-
-		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-			AppendTooltipString(LFAttrComments, Hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 
 		break;
 	}
@@ -1276,10 +1257,10 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 				if (!m_TooltipCtrl.IsWindowVisible() && m_EnableTooltip)
 				{
 					FormatData fd;
-					CHAR Path[4];
 					HICON hIcon = NULL;
 
 					LFItemDescriptor* i = p_CookedFiles->m_Items[m_HotItem];
+
 					switch (i->Type & LFTypeMask)
 					{
 					case LFTypeFile:
@@ -1291,13 +1272,6 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 						}
 
 						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
-
-						break;
-
-					case LFTypeVolume:
-						strcpy_s(Path, 4, " :\\");
-						Path[0] = i->CoreAttributes.FileID[0];
-						theApp.m_FileFormats.Lookup(Path, fd);
 
 						break;
 
