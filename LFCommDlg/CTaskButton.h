@@ -3,19 +3,19 @@
 //
 
 #pragma once
+#include "CHoverButton.h"
 #include "LFTooltip.h"
 
 
 // CTaskButton
 //
 
-class CTaskButton : public CButton
+class CTaskButton : public CHoverButton
 {
 public:
 	CTaskButton();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons=NULL, INT IconSize=0, INT IconID=-1);
 	void SetIconID(INT IconID, INT OverlayID=-1);
@@ -23,13 +23,9 @@ public:
 
 protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -41,5 +37,4 @@ private:
 	INT m_IconSize;
 	INT m_IconID;
 	INT m_OverlayID;
-	BOOL m_Hover;
 };

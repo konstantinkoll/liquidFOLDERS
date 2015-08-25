@@ -11,13 +11,13 @@
 #include "CGlassWindow.h"
 #include "CHeaderArea.h"
 #include "CHeaderButton.h"
+#include "CHoverButton.h"
 #include "CIconCtrl.h"
 #include "CImageListTransparent.h"
 #include "CInspectorGrid.h"
 #include "CMapPreviewCtrl.h"
 #include "CPropertyEdit.h"
 #include "CSidebar.h"
-#include "CStoreButton.h"
 #include "CStorePanel.h"
 #include "CTagList.h"
 #include "CTaskbar.h"
@@ -67,7 +67,7 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Th
 void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal=FALSE);
 void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover);
 void DrawWhiteButtonBorder(Graphics& g, CRect rect, BOOL IncludeBottom=TRUE);
-void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL DrawBorder=FALSE);
+void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled=FALSE, BOOL DrawBorder=FALSE);
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
 

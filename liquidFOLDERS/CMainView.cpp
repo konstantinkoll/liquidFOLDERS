@@ -633,7 +633,6 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.SetOwner(GetOwner());
 
-	#define FilterIconOverlay     35
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, 0, TRUE, FALSE, TRUE);
 
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 1);
@@ -671,6 +670,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 28, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 29, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ABOUT, 30, TRUE, TRUE);
+	#define FilterIconOverlay        31
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());

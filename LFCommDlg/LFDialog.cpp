@@ -6,6 +6,24 @@
 #include "LFCommDlg.h"
 
 
+BOOL IsPushbutton(CWnd* pWnd, BOOL CheckVisible=TRUE)
+{
+	if (pWnd->SendMessage(WM_GETDLGCODE) & (DLGC_BUTTON | DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
+	{
+		DWORD dwStyle = pWnd->GetStyle();
+
+		if (CheckVisible && !(dwStyle & WS_VISIBLE))
+			return FALSE;
+		
+		dwStyle &= BS_TYPEMASK;
+		if ((dwStyle==BS_PUSHBUTTON) || (dwStyle==BS_DEFPUSHBUTTON) || (dwStyle==BS_OWNERDRAW))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 // LFDialog
 //
 
@@ -21,10 +39,33 @@ LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL UAC)
 	m_nIDTemplate = nIDTemplate;
 	m_UAC = UAC;
 
+	m_ShowKeyboardCues = FALSE;
+	SystemParametersInfo(SPI_GETKEYBOARDCUES, 0, &m_ShowKeyboardCues, 0);
+
 	hIconShield = NULL;
 	hBackgroundBrush = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
 	p_BottomLeftControl = NULL;
+}
+
+BOOL LFDialog::PreTranslateMessage(MSG* pMsg)
+{
+	if ((pMsg->message==WM_SYSKEYDOWN) && (!m_ShowKeyboardCues))
+	{
+		m_ShowKeyboardCues = TRUE;
+
+		CWnd* pChildWnd = GetWindow(GW_CHILD);
+
+		while (pChildWnd)
+		{
+			if (IsPushbutton(pChildWnd))
+				pChildWnd->Invalidate();
+
+			pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
+		}
+	}
+
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 void LFDialog::DoDataExchange(CDataExchange* pDX)
@@ -61,16 +102,16 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		return;
 	}
 
-	CRect borders(0, 0, 7, 7);
-	MapDialogRect(&borders);
+	CRect rectBorders(0, 0, 7, 7);
+	MapDialogRect(&rectBorders);
 
 	CRect btn;
 	pBottomWnd->GetWindowRect(&btn);
 	ScreenToClient(&btn);
 
-	CRect layout;
-	GetLayoutRect(layout);
-	INT Line = layout.bottom;
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+	INT Line = rectLayout.bottom;
 
 	BOOL Themed = IsCtrlThemed();
 
@@ -87,18 +128,13 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		while (pChildWnd)
 		{
-			if (pChildWnd->SendMessage(WM_GETDLGCODE) & (DLGC_BUTTON | DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
+			if (IsPushbutton(pChildWnd))
 			{
-				DWORD dwStyle = pChildWnd->GetStyle();
-				if (dwStyle & WS_VISIBLE)
-					if (((dwStyle & BS_TYPEMASK)==BS_PUSHBUTTON) || ((dwStyle & BS_TYPEMASK)==BS_DEFPUSHBUTTON) || ((dwStyle & BS_TYPEMASK)==BS_OWNERDRAW))
-					{
-						CRect rectBounds;
-						pChildWnd->GetWindowRect(&rectBounds);
-						ScreenToClient(&rectBounds);
+				CRect rectBounds;
+				pChildWnd->GetWindowRect(&rectBounds);
+				ScreenToClient(&rectBounds);
 
-						DrawWhiteButtonBorder(g, rectBounds);
-					}
+				DrawWhiteButtonBorder(g, rectBounds);
 			}
 
 			pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
@@ -115,7 +151,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		if (Themed)
 		{
 			CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIV, _T("PNG"));
-			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, btn.bottom+borders.Height()+1);
+			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, btn.bottom+rectBorders.Height()+1);
 
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
@@ -129,10 +165,10 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
 		}
 
-		DrawIconEx(dc, borders.right-m_ShieldSize/16, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc, rectBorders.right-m_ShieldSize/16, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
 
 		CRect rectText(rect);
-		rectText.left = borders.right+borders.right/4+m_ShieldSize;
+		rectText.left = rectBorders.right+rectBorders.right/4+m_ShieldSize;
 		rectText.bottom = m_UACHeight;
 
 		CString tmpStr((LPCSTR)IDS_UACMESSAGE);
@@ -183,13 +219,13 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 	if (!pBottomWnd)
 		return;
 
-	CRect borders(0, 0, 7, 7);
-	MapDialogRect(&borders);
+	CRect rectBorders(0, 0, 7, 7);
+	MapDialogRect(&rectBorders);
 
-	CRect btn;
-	pBottomWnd->GetWindowRect(&btn);
-	ScreenToClient(&btn);
-	lpRect->bottom = btn.top-borders.Height()-2;
+	CRect rectButton;
+	pBottomWnd->GetWindowRect(&rectButton);
+	ScreenToClient(&rectButton);
+	lpRect->bottom = rectButton.top-rectBorders.Height()-2;
 
 	if (m_UAC)
 		lpRect->top = m_UACHeight;
@@ -202,6 +238,56 @@ void LFDialog::Invalidate(BOOL bErase)
 	CDialog::Invalidate(bErase);
 }
 
+void LFDialog::DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected)
+{
+	CRect rect(lpDrawItemStruct->rcItem);
+	rect.DeflateRect(2, 2);
+	if (Selected)
+		rect.OffsetRect(1, 1);
+
+	WCHAR Caption[256];
+	::GetWindowText(lpDrawItemStruct->hwndItem, Caption, 256);
+
+	UINT nFormat = DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_END_ELLIPSIS;
+	if (!m_ShowKeyboardCues)
+		nFormat |= DT_HIDEPREFIX;
+
+	CFont* pOldFont = dc.SelectObject(GetFont());
+	dc.DrawText(Caption, rect, nFormat);
+	dc.SelectObject(pOldFont);
+}
+
+void LFDialog::DrawButton(LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	CRect rect(lpDrawItemStruct->rcItem);
+
+	CDC dc;
+	dc.Attach(CreateCompatibleDC(lpDrawItemStruct->hDC));
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.Attach(CreateCompatibleBitmap(lpDrawItemStruct->hDC, rect.Width(), rect.Height()));
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	// State
+	BOOL Focused = lpDrawItemStruct->itemState & ODS_FOCUS;
+	BOOL Selected = lpDrawItemStruct->itemState & ODS_SELECTED;
+
+	// Background
+	HBRUSH hBrush = (HBRUSH)SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem);
+	if (hBrush)
+		FillRect(dc, rect, hBrush);
+
+	// Button
+	DrawWhiteButtonBackground(dc, rect, IsCtrlThemed(), Focused, Selected, ::SendMessage(lpDrawItemStruct->hwndItem, WM_ISHOVER, NULL, NULL), lpDrawItemStruct->itemState & ODS_DISABLED);
+	DrawButtonForeground(dc, lpDrawItemStruct, Selected);
+
+	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
+	DeleteDC(dc.Detach());
+	DeleteObject(MemBitmap.Detach());
+}
+
 
 BEGIN_MESSAGE_MAP(LFDialog, CDialog)
 	ON_WM_DESTROY()
@@ -211,6 +297,7 @@ BEGIN_MESSAGE_MAP(LFDialog, CDialog)
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_CTLCOLOR()
 	ON_WM_INITMENUPOPUP()
+	ON_WM_DRAWITEM()
 END_MESSAGE_MAP()
 
 BOOL LFDialog::OnInitDialog()
@@ -248,11 +335,36 @@ BOOL LFDialog::OnInitDialog()
 	AddBottomRightControl(IDOK);
 	AddBottomRightControl(IDCANCEL);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	// Subclass all buttons
+	CWnd* pChildWnd = GetWindow(GW_CHILD);
+
+	while (pChildWnd)
+	{
+		if (IsPushbutton(pChildWnd, FALSE))
+		{
+			CHoverButton* pButton = new CHoverButton();
+			pButton->SubclassWindow(pChildWnd->GetSafeHwnd());
+			pButton->ModifyStyle(BS_TYPEMASK, BS_OWNERDRAW);
+
+			m_Buttons.AddTail(pButton);
+		}
+
+		pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
+	}
+
+	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
 void LFDialog::OnDestroy()
 {
+	for (POSITION p=m_Buttons.GetHeadPosition(); p;)
+	{
+		CHoverButton* pButton = m_Buttons.GetNext(p);
+
+		pButton->UnsubclassWindow();
+		delete pButton;
+	}
+
 	if (IsWindow(m_wndDesktopDimmer))
 		m_wndDesktopDimmer.SendMessage(WM_DESTROY);
 
@@ -378,5 +490,17 @@ void LFDialog::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMe
 		State.m_nID = pPopupMenu->GetMenuItemID(State.m_nIndex);
 		if ((State.m_nID) && (State.m_nID!=(UINT)-1))
 			State.DoUpdate(this, FALSE);
+	}
+}
+
+void LFDialog::OnDrawItem(INT /*nIDCtl*/, LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	switch (lpDrawItemStruct->CtlType)
+	{
+	case ODT_BUTTON:
+		if ((GetWindowLong(lpDrawItemStruct->hwndItem, GWL_STYLE) & BS_TYPEMASK)==BS_OWNERDRAW)
+			DrawButton(lpDrawItemStruct);
+
+		break;
 	}
 }

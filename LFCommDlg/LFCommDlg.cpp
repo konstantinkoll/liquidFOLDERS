@@ -452,7 +452,7 @@ void DrawWhiteButtonBorder(Graphics& g, CRect rect, BOOL IncludeBottom)
 	}
 }
 
-void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL DrawBorder)
+void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled, BOOL DrawBorder)
 {
 	if (Themed)
 	{
@@ -472,21 +472,24 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 		{
 			dc.FillSolidRect(rectBounds, 0xEDEAE9);
 
-			LinearGradientBrush brush3(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.top+2), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), 2);
+			LinearGradientBrush brush1(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.top+2), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+			g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width(), 2);
 
-			LinearGradientBrush brush4(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left+2, rectBounds.top), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush4, rectBounds.left, rectBounds.top, 2, rectBounds.Height());
+			LinearGradientBrush brush2(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left+2, rectBounds.top), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+			g.FillRectangle(&brush2, rectBounds.left, rectBounds.top, 1, rectBounds.Height());
 		}
 		else
 		{
 			dc.FillSolidRect(rectBounds, Hover ? 0xEFECEC : 0xF7F4F4);
 
-			LinearGradientBrush brush3(Point(0, rectBounds.top), Point(0, (rectBounds.top+rectBounds.bottom)/2), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
+			LinearGradientBrush brush1(Point(0, rectBounds.top+1), Point(0, (rectBounds.top+rectBounds.bottom)/2+1), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(Disabled ? 0x00 : 0x40, 0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2);
 
-			LinearGradientBrush brush4(Point(0, rectBounds.bottom-3), Point(0, rectBounds.bottom), Color(0x00, 0x00, 0x00, 0x00), Color(Hover ? 0x20 : 0x10, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush4, rectBounds.left, rectBounds.bottom-3, rectBounds.Width(), 3);
+			if (!Disabled)
+			{
+				LinearGradientBrush brush2(Point(0, rectBounds.bottom-3), Point(0, rectBounds.bottom), Color(0x00, 0x00, 0x00, 0x00), Color(Hover ? 0x20 : 0x10, 0x00, 0x00, 0x00));
+				g.FillRectangle(&brush2, rectBounds.left, rectBounds.bottom-3, rectBounds.Width(), 3);
+			}
 		}
 
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
@@ -522,6 +525,12 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 				Pen pen(Color(0xBC, 0xBD, 0xBE));
 				g.DrawPath(&pen, &path);
 			}
+
+/*		rectBounds.top++;
+		CreateRoundRectangle(rectBounds, 2, path);
+
+		LinearGradientBrush brush(Point(0, rectBounds.top), Point(0, rectBounds.top+3), Color(0x80, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), 3);*/
 	}
 	else
 	{
@@ -537,7 +546,7 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 		}
 	}
 
-	dc.SetTextColor(Themed ? Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(Themed ? Disabled ? 0xA0A0A0 : Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT));
 }
 
 

@@ -1482,7 +1482,7 @@ void CInspectorGrid::OnPaint()
 
 				BOOL Pressed = m_PartPressed && (m_HotPart==PARTBUTTON);
 
-				DrawWhiteButtonBackground(dc, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON), TRUE);
+				DrawWhiteButtonBackground(dc, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON), FALSE, TRUE);
 
 				if (Pressed)
 					rectButton.OffsetRect(1, 1);

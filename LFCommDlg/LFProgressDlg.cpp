@@ -54,7 +54,7 @@ BOOL LFProgressDlg::OnInitDialog()
 		CreateThread(NULL, 0, p_ThreadProc, p_Parameters, 0, NULL);
 	}
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
 void LFProgressDlg::OnDestroy()

@@ -56,10 +56,10 @@ void LFBrowseForFolderDlg::AdjustLayout()
 		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
-	CRect borders(0, 0, 7, 7);
-	MapDialogRect(&borders);
+	CRect rectBorders(0, 0, 7, 7);
+	MapDialogRect(&rectBorders);
 
-	m_wndExplorerTree.SetWindowPos(NULL, rect.left+borders.Width(), rect.top+ExplorerHeight, rect.Width()-borders.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndExplorerTree.SetWindowPos(NULL, rect.left+rectBorders.Width(), rect.top+ExplorerHeight, rect.Width()-rectBorders.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 

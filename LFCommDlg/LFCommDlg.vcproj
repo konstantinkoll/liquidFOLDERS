@@ -385,6 +385,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CHoverButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CIconCtrl.cpp"
 				>
 			</File>
@@ -414,10 +418,6 @@
 			</File>
 			<File
 				RelativePath=".\CSidebar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CStoreButton.cpp"
 				>
 			</File>
 			<File
@@ -981,6 +981,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CHoverButton.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CIconCtrl.h"
 				>
 			</File>
@@ -1010,10 +1014,6 @@
 			</File>
 			<File
 				RelativePath=".\CSidebar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CStoreButton.h"
 				>
 			</File>
 			<File

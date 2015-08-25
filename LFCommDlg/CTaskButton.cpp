@@ -12,9 +12,8 @@
 #define BORDER     4
 
 CTaskButton::CTaskButton()
-	: CButton()
+	: CHoverButton()
 {
-	m_Hover = FALSE;
 }
 
 BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID)
@@ -29,7 +28,7 @@ BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString To
 
 	CRect rect;
 	rect.SetRectEmpty();
-	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
+	return CHoverButton::Create(TooltipHeader, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
 }
 
 BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
@@ -52,11 +51,7 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CButton::PreTranslateMessage(pMsg);
-}
-
-void CTaskButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
-{
+	return CHoverButton::PreTranslateMessage(pMsg);
 }
 
 void CTaskButton::SetIconID(INT IconID, INT OverlayID)
@@ -87,31 +82,22 @@ INT CTaskButton::GetPreferredWidth()
 }
 
 
-BEGIN_MESSAGE_MAP(CTaskButton, CButton)
+BEGIN_MESSAGE_MAP(CTaskButton, CHoverButton)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
-	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 INT CTaskButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CButton::OnCreate(lpCreateStruct)==-1)
+	if (CHoverButton::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	// Tooltip
 	m_TooltipCtrl.Create(this);
 
 	return 0;
-}
-
-BOOL CTaskButton::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CTaskButton::OnPaint()
@@ -174,31 +160,11 @@ void CTaskButton::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CTaskButton::OnMouseMove(UINT nFlags, CPoint point)
-{
-	CButton::OnMouseMove(nFlags, point);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-		Invalidate();
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-}
-
 void CTaskButton::OnMouseLeave()
 {
 	m_TooltipCtrl.Deactivate();
-	m_Hover = FALSE;
-	Invalidate();
 
-	CButton::OnMouseLeave();
+	CHoverButton::OnMouseLeave();
 }
 
 void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
@@ -213,16 +179,4 @@ void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
 		{
 			m_TooltipCtrl.Deactivate();
 		}
-}
-
-void CTaskButton::OnSetFocus(CWnd* pOldWnd)
-{
-	CButton::OnSetFocus(pOldWnd);
-	Invalidate();
-}
-
-void CTaskButton::OnKillFocus(CWnd* pNewWnd)
-{
-	CButton::OnKillFocus(pNewWnd);
-	Invalidate();
 }

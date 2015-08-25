@@ -11,20 +11,70 @@
 // LFAddStoreDlg
 //
 
+#define BORDER     10
+
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ADDSTORE, pParentWnd)
 {
 }
 
-void LFAddStoreDlg::DoDataExchange(CDataExchange* pDX)
+void LFAddStoreDlg::DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected)
 {
-	LFDialog::DoDataExchange(pDX);
+	if ((lpDrawItemStruct->CtlID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (lpDrawItemStruct->CtlID<=IDC_ADDSTORE_YOUTUBE))
+	{
+		static const UINT Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
+			LFTypeSourceDropbox, LFTypeSourceFacebook, LFTypeSourceFlickr, LFTypeSourceInstagram,
+			LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
+		
+		UINT Source = lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
 
-	DDX_StoreButton(pDX, IDC_ADDSTORE_LIQUIDFOLDERS, m_wndStoreButtons[0], LFTypeSourceInternal);
-	DDX_StoreButton(pDX, IDC_ADDSTORE_WINDOWS, m_wndStoreButtons[1], LFTypeSourceWindows);
+		WCHAR Caption[256];
+		LFGetSourceName(Caption, 256, Types[Source], FALSE);
 
-	for (UINT a=0; a<8; a++)
-		DDX_StoreButton(pDX, IDC_ADDSTORE_DROPBOX+a, m_wndStoreButtons[a+2], LFTypeSourceDropbox+a);
+		WCHAR Hint[256];
+		::GetWindowText(lpDrawItemStruct->hwndItem, Hint, 256);
+
+		CRect rect(lpDrawItemStruct->rcItem);;
+
+		INT Height = rect.Height()-2*BORDER;
+		INT IconSize = (Height>=128) ? 128 : (Height>=96) ? 96 : 48;
+		CImageList* pIcons = (IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : (IconSize==96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
+
+		if (Selected)
+			rect.OffsetRect(1, 1);
+
+		// Icon
+		CPoint pt(rect.left+BORDER, rect.top+(rect.Height()-IconSize)/2);
+		pIcons->DrawEx(&dc, Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
+
+		rect.left += IconSize+BORDER;
+		rect.DeflateRect(BORDER, BORDER);
+
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
+
+		INT HeightCaption = dc.GetTextExtent(Caption).cy;
+		HeightCaption += HeightCaption/2;
+
+		dc.SelectObject(&LFGetApp()->m_DefaultFont);
+
+		CRect rectHint(rect);
+		dc.DrawText(Hint, rectHint, DT_CALCRECT | DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+		rect.top += (rect.Height()-HeightCaption-rectHint.Height())/2;
+
+		dc.SelectObject(&LFGetApp()->m_LargeFont);
+		dc.DrawText(Caption, rect, DT_SINGLELINE | DT_END_ELLIPSIS);
+		rect.top += HeightCaption;
+
+		dc.SelectObject(&LFGetApp()->m_DefaultFont);
+		dc.DrawText(Hint, rect, DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+		dc.SelectObject(pOldFont);
+	}
+	else
+	{
+		LFDialog::DrawButtonForeground(dc, lpDrawItemStruct, Selected);
+	}
 }
 
 void LFAddStoreDlg::CheckInternetConnection()
@@ -37,8 +87,8 @@ void LFAddStoreDlg::CheckInternetConnection()
 #endif
 
 	m_wndCategory[1].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
-	for (UINT a=0; a<8; a++)
-		m_wndStoreButtons[a+2].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
+	for (UINT nCtlID=IDC_ADDSTORE_DROPBOX; nCtlID<=IDC_ADDSTORE_YOUTUBE; nCtlID++)
+		GetDlgItem(nCtlID)->ShowWindow(Connected ? SW_SHOW : SW_HIDE);
 }
 
 

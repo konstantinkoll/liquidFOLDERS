@@ -75,7 +75,6 @@ __forceinline void LFMessageBoxDlg::SetButton(UINT nResID, HINSTANCE hInstance, 
 		if ((m_Type & MB_DEFMASK)>>8==cButtons++)
 		{
 			SetDefID(nCommand);
-			pWnd->SendMessage(BM_SETSTYLE, BS_DEFPUSHBUTTON);
 			pWnd->SetFocus();
 		}
 	}
@@ -160,16 +159,16 @@ BOOL LFMessageBoxDlg::OnInitDialog()
 	m_rectText.SetRect(14, 14, 292, 10000);
 	MapDialogRect(m_rectText);
 
-	CPoint borders(m_rectText.left/2, m_rectText.top);
+	CPoint rectBorders(m_rectText.left/2, m_rectText.top);
 
 	if (hIcon)
 	{
 		m_IconPos = m_rectText.TopLeft();
-		m_rectText.left += m_IconSize+borders.x;
+		m_rectText.left += m_IconSize+rectBorders.x;
 	}
 
-	if (2*borders.x+m_rectText.right>rectScreen.Width()*5/8)
-		m_rectText.right = rectScreen.Width()*5/8-2*borders.x;
+	if (2*rectBorders.x+m_rectText.right>rectScreen.Width()*5/8)
+		m_rectText.right = rectScreen.Width()*5/8-2*rectBorders.x;
 
 	CDC* pDC = GetDC();
 	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_DefaultFont);
@@ -177,15 +176,15 @@ BOOL LFMessageBoxDlg::OnInitDialog()
 	pDC->SelectObject(pOldFont);
 	ReleaseDC(pDC);
 
-	if (borders.y+m_rectText.bottom>rectScreen.Height()*3/4)
-		m_rectText.bottom = rectScreen.Height()*3/4-borders.y;
+	if (rectBorders.y+m_rectText.bottom>rectScreen.Height()*3/4)
+		m_rectText.bottom = rectScreen.Height()*3/4-rectBorders.y;
 
 	// Fenstergröße anpassen
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	INT DiffX = max(0, m_rectText.right+2*borders.x-rectClient.Width());
-	INT DiffY = max(0, max(m_IconSize+2*borders.y, m_rectText.bottom+borders.y)-rectLayout.bottom);
+	INT DiffX = max(0, m_rectText.right+2*rectBorders.x-rectClient.Width());
+	INT DiffY = max(0, max(m_IconSize+2*rectBorders.y, m_rectText.bottom+rectBorders.y)-rectLayout.bottom);
 
 	CRect rectWindow;
 	GetWindowRect(rectWindow);
