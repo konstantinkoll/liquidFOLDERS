@@ -682,7 +682,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 			pProgress->MinorCurrent = 0;
 			pProgress->NoMinorCounter = TRUE;
 			wcscpy_s(pProgress->Object, 256, slot->StoreName);
-			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			if (UpdateProgress(pProgress))
 			{
 				ReleaseMutexForStores();
 				ReleaseMutexForStore(StoreLock);
@@ -721,7 +721,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 			if (pProgress)
 			{
 				pProgress->MinorCurrent++;
-				SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+				UpdateProgress(pProgress);
 			}
 
 			if (victim.IdxPathAux[0]!=L'\0')
@@ -743,7 +743,7 @@ LFCORE_API UINT LFDeleteStore(CHAR* StoreID, LFProgress* pProgress)
 		if (pProgress)
 		{
 			pProgress->MinorCurrent++;
-			SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+			UpdateProgress(pProgress);
 		}
 	}
 	else
@@ -764,7 +764,7 @@ UINT RunMaintenance(LFStoreDescriptor* s, BOOL Scheduled, LFProgress* pProgress)
 		pProgress->MinorCount = IndexMaintenanceSteps+2;
 		pProgress->MinorCurrent = 0;
 		wcscpy_s(pProgress->Object, 256, s->StoreName);
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			return LFCancel;
 	}
 
@@ -780,7 +780,7 @@ UINT RunMaintenance(LFStoreDescriptor* s, BOOL Scheduled, LFProgress* pProgress)
 	{
 		pProgress->MinorCurrent++;
 		pProgress->NoMinorCounter = TRUE;
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			return LFCancel;
 	}
 
@@ -829,7 +829,7 @@ UINT RunMaintenance(LFStoreDescriptor* s, BOOL Scheduled, LFProgress* pProgress)
 	if (pProgress)
 	{
 		pProgress->MinorCurrent++;
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			return LFCancel;
 	}
 

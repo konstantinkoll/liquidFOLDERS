@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFFileImportList.h"
+#include "Mutex.h"
 #include <assert.h>
 
 
@@ -70,7 +71,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 
 		pProgress->MinorCount = 1;
 		pProgress->MinorCurrent = 0;
-		SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+		UpdateProgress(pProgress);
 	}
 
 	// Resolve
@@ -119,7 +120,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 					if (pProgress)
 					{
 						pProgress->MinorCount = m_ItemCount;
-						SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+						UpdateProgress(pProgress);
 					}
 
 					m_Items[Index].Processed = TRUE;
@@ -147,7 +148,7 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 		if (Result>LFCancel)
 			pProgress->ProgressState = LFProgressError;
 
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			m_LastError = LFCancel;
 	}
 }

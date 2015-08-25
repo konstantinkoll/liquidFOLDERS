@@ -13,3 +13,4 @@ BOOL GetMutexForStores();
 void ReleaseMutexForStores();
 BOOL GetMutexForStore(LFStoreDescriptor* pStoreDescriptor, HMUTEX* hMutex);
 void ReleaseMutexForStore(HMUTEX hMutex);
+DWORD_PTR UpdateProgress(LFProgress* pProgress);

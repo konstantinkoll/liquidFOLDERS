@@ -58,7 +58,7 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescr
 			if (pProgress)
 			{
 				wcscpy_s(pProgress->Object, 256, il->m_Items[a].Path);
-				if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+				if (UpdateProgress(pProgress))
 				{
 					il->m_LastError = LFCancel;
 					break;
@@ -113,7 +113,7 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescr
 	if (pProgress)
 	{
 		pProgress->Object[0] = L'\0';
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			il->m_LastError = LFCancel;
 	}
 
@@ -402,7 +402,7 @@ LFCORE_API void LFTransactionImport(CHAR* key, LFTransactionList* il, BOOL move,
 	if (pProgress)
 	{
 		pProgress->Object[0] = L'\0';
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			il->m_LastError = LFCancel;
 	}
 

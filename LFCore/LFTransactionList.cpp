@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFTransactionList.h"
+#include "Mutex.h"
 #include <assert.h>
 
 
@@ -158,7 +159,7 @@ void LFTransactionList::SetError(CHAR* StoreID, UINT Result, LFProgress* pProgre
 		if (Result>LFCancel)
 			pProgress->ProgressState = LFProgressError;
 
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			m_LastError = LFCancel;
 	}
 }
@@ -176,7 +177,7 @@ void LFTransactionList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 		if (Result>LFCancel)
 			pProgress->ProgressState = LFProgressError;
 
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			m_LastError = LFCancel;
 	}
 }

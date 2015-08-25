@@ -7,6 +7,8 @@
 HMUTEX MutexStores;
 
 
+// Mutex
+
 void InitMutex()
 {
 	MutexStores = CreateMutexA(NULL, FALSE, MUTEX_STORES);
@@ -61,4 +63,17 @@ void ReleaseMutexForStore(HANDLE hMutex)
 	assert(hMutex);
 
 	ReleaseMutex(hMutex);
+}
+
+
+// Calling UI threads
+
+DWORD_PTR UpdateProgress(LFProgress* pProgress)
+{
+	DWORD_PTR Result;
+
+	if (SendMessageTimeout(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL, SMTO_ABORTIFHUNG, 5000, &Result))
+		return Result;
+
+	return TRUE;
 }

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "CIndex.h"
 #include "LFItemDescriptor.h"
+#include "Mutex.h"
 #include "Query.h"
 #include "ShellProperties.h"
 #include "StoreCache.h"
@@ -221,7 +222,7 @@ UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 		if (pProgress)
 		{
 			pProgress->MinorCurrent++;
-			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			if (UpdateProgress(pProgress))
 				return LFCancel;
 		}
 	}
@@ -293,7 +294,7 @@ UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 	if (pProgress)
 	{
 		pProgress->MinorCurrent++;
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 			return LFCancel;
 	}
 
@@ -310,7 +311,7 @@ UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 			if (pProgress)
 			{
 				pProgress->MinorCurrent++;
-				if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+				if (UpdateProgress(pProgress))
 					return LFCancel;
 			}
 		}
@@ -548,7 +549,7 @@ void CIndex::Delete(LFTransactionList* tl, BOOL PutInTrash, LFProgress* pProgres
 	if (pProgress)
 	{
 		wcscpy_s(pProgress->Object, 256, PtrM->FileName);
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 		{
 			tl->m_LastError = LFCancel;
 			return;
@@ -670,7 +671,7 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 	if (pProgress)
 	{
 		wcscpy_s(pProgress->Object, 256, PtrM->FileName);
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		if (UpdateProgress(pProgress))
 		{
 			il->m_LastError = LFCancel;
 			return;
