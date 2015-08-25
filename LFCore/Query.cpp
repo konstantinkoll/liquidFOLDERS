@@ -20,7 +20,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 	assert(pFilterCondition->AttrData.Type==AttrTypes[pFilterCondition->AttrData.Attr]);
 	assert(pFilterCondition->AttrData.Type<LFTypeCount);
 
-	switch (pFilterCondition->Compare)
+	switch(pFilterCondition->Compare)
 	{
 	case LFFilterCompareIgnore:
 		return TRUE;
@@ -55,10 +55,10 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 	WCHAR* pTagArray;
 	WCHAR Tag[256];
 
-	switch (pFilterCondition->AttrData.Type)
+	switch(pFilterCondition->AttrData.Type)
 	{
 	case LFTypeUnicodeString:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 			if (pFilterCondition->AttrData.Attr==LFAttrFileName)
@@ -94,7 +94,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeUnicodeArray:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 			pTagArray = (WCHAR*)v;
@@ -121,7 +121,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeAnsiString:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 			if (pFilterCondition->AttrData.Attr==LFAttrURL)
@@ -157,7 +157,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeFourCC:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
@@ -171,7 +171,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeRating:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 			return CRatingCategorizer::GetRatingCategory(*(BYTE*)v)==CRatingCategorizer::GetRatingCategory(pFilterCondition->AttrData.Rating);
@@ -194,7 +194,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 
 	case LFTypeUINT:
 	case LFTypeDuration:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 			if (pFilterCondition->AttrData.Type==LFTypeDuration)
@@ -217,7 +217,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeSize:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 			return CSizeCategorizer::GetSizeCategory(*(INT64*)v)==CSizeCategorizer::GetSizeCategory(pFilterCondition->AttrData.INT64);
@@ -239,7 +239,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeFraction:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
@@ -254,7 +254,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 
 	case LFTypeDouble:
 	case LFTypeMegapixel:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
@@ -274,7 +274,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeGeoCoordinates:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
@@ -288,7 +288,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeTime:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
@@ -324,7 +324,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeBitrate:
-		switch (pFilterCondition->Compare)
+		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
@@ -368,7 +368,7 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 			return FALSE;
 
 		if ((pFilter->ContextID) || (pCoreAttributes->ContextID==LFContextFilters))
-			switch (pFilter->ContextID)
+			switch(pFilter->ContextID)
 			{
 			case LFContextFavorites:
 				if (!pCoreAttributes->Rating)
@@ -443,7 +443,7 @@ BOOL PassesFilter(LFItemDescriptor* i, LFFilter* pFilter)
 	LFFilterCondition* pFilterCondition = pFilter->ConditionList;
 	while (pFilterCondition)
 	{
-		switch (pFilterCondition->AttrData.Attr)
+		switch(pFilterCondition->AttrData.Attr)
 		{
 		case LFAttrDimension:
 			if (!CheckCondition(&i->Dimension, pFilterCondition))
@@ -562,7 +562,7 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 			}
 
 		// Query
-		switch (pFilter->Mode)
+		switch(pFilter->Mode)
 		{
 		case LFFilterModeStores:
 			QueryStores(pSearchResult);

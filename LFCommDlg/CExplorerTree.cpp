@@ -11,8 +11,8 @@ INT CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	ExplorerTreeItemData* pItem1 = (ExplorerTreeItemData*)lParam1;
 	ExplorerTreeItemData* pItem2 = (ExplorerTreeItemData*)lParam2;
 
-	HRESULT hr = ((IShellFolder*)lParamSort)->CompareIDs(0, pItem1->pidlRel, pItem2->pidlRel);
-	return FAILED(hr) ? 0 : (short)SCODE_CODE(GetScode(hr));
+	HRESULT hResult = ((IShellFolder*)lParamSort)->CompareIDs(0, pItem1->pidlRel, pItem2->pidlRel);
+	return FAILED(hResult) ? 0 : (SHORT)SCODE_CODE(GetScode(hResult));
 }
 
 
@@ -45,7 +45,7 @@ CExplorerTree::CExplorerTree()
 	m_Hover = FALSE;
 	m_HoverItem = NULL;
 	m_ExplorerStyle = FALSE;
-	m_ulSHChangeNotifyRegister = NULL;
+	m_SHChangeNotifyRegister = NULL;
 }
 
 void CExplorerTree::PreSubclassWindow()
@@ -62,7 +62,7 @@ void CExplorerTree::PreSubclassWindow()
 
 	// Benachrichtigung, wenn sich Items ändern
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
-	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
+	m_SHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_ShellLevel | SHCNRF_NewDelivery,
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED |
 			SHCNE_MKDIR | SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
@@ -422,7 +422,7 @@ void CExplorerTree::UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlPar
 	}
 }
 
-void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
+void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2)
 {
 	CList<HTREEITEM> lstItems;
 	HTREEITEM hItem = GetRootItem();
@@ -448,10 +448,9 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDeskto
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Path1)==0)
 				{
-					ULONG chEaten;
-					ULONG dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
-					LPITEMIDLIST pidlFQ = NULL;
-					if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path2, &chEaten, &pidlFQ, &dwAttributes)))
+					const SFGAOF dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
+					LPITEMIDLIST pidlFQ;
+					if (SUCCEEDED(SHParseDisplayName(Path2, NULL, &pidlFQ, dwAttributes, NULL)))
 					{
 						IShellFolder* pParentFolder = NULL;
 						LPCITEMIDLIST pidlRel = NULL;
@@ -617,8 +616,8 @@ END_MESSAGE_MAP()
 
 void CExplorerTree::OnDestroy()
 {
-	if (m_ulSHChangeNotifyRegister)
-		VERIFY(SHChangeNotifyDeregister(m_ulSHChangeNotifyRegister));
+	if (m_SHChangeNotifyRegister)
+		VERIFY(SHChangeNotifyDeregister(m_SHChangeNotifyRegister));
 
 	CTreeCtrl::OnDestroy();
 }
@@ -1009,16 +1008,17 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 {
-	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
+	PIDLIST_ABSOLUTE* pidls;
+	LONG Event;
+	HANDLE hNotifyLock = SHChangeNotification_Lock((HANDLE)wParam, (DWORD)lParam, &pidls, &Event);
+
+	if (!hNotifyLock)
+		return NULL;
 
 	WCHAR Path1[MAX_PATH] = L"";
 	WCHAR Path2[MAX_PATH] = L"";
 	WCHAR Parent1[MAX_PATH] = L"";
 	WCHAR Parent2[MAX_PATH] = L"";
-
-	IShellFolder* pDesktop = NULL;
-	if (FAILED(SHGetDesktopFolder(&pDesktop)))
-		return NULL;
 
 	SHGetPathFromIDList(pidls[0], Path1);
 
@@ -1041,7 +1041,7 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 	BOOL NotifyOwner = FALSE;
 
-	switch (lParam)
+	switch (Event)
 	{
 	case SHCNE_MKDIR:
 		if ((Path1[0]!='\0') && (Parent1[0]!='\0') && (wcscmp(Path1, Parent1)!=0))
@@ -1063,7 +1063,7 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
 			if (wcscmp(Parent1, Parent2)==0)
 			{
-				UpdatePath(Path1, Path2, pDesktop);
+				UpdatePath(Path1, Path2);
 			}
 			else
 			{
@@ -1080,12 +1080,12 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		wcscpy_s(Path2, MAX_PATH, Parent1);
 		wcscat_s(Path2, MAX_PATH, L"\\desktop.ini");
 		if (wcscmp(Path1, Path2)==0)
-			UpdatePath(Parent1, Parent1, pDesktop);
+			UpdatePath(Parent1, Parent1);
 
 		break;
 	}
 
-	pDesktop->Release();
+	SHChangeNotification_Unlock(hNotifyLock);
 
 	if (NotifyOwner)
 	{

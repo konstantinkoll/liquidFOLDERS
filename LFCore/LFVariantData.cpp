@@ -117,7 +117,7 @@ BOOL IsNullValue(UINT Type, const void* v)
 
 	assert(Type<LFTypeCount);
 
-	switch (Type)
+	switch(Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
@@ -164,7 +164,7 @@ INT CompareValues(UINT Type, const void* v1, const void* v2, BOOL CaseSensitive)
 	DOUBLE d1;
 	DOUBLE d2;
 
-	switch (Type)
+	switch(Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
@@ -225,7 +225,7 @@ void ToString(const void* v, UINT Type, WCHAR* pStr, SIZE_T cCount)
 	assert(pStr);
 
 	if (v)
-		switch (Type)
+		switch(Type)
 		{
 		case LFTypeUnicodeString:
 		case LFTypeUnicodeArray:
@@ -320,7 +320,7 @@ BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, SIZE_T cCount)
 
 	while (**ppUnicodeArray!=L'\0')
 	{
-		switch (**ppUnicodeArray)
+		switch(**ppUnicodeArray)
 		{
 		case L' ':
 		case L'.':
@@ -558,7 +558,7 @@ LFCORE_API void LFClearVariantData(LFVariantData& v)
 
 	v.IsNull = TRUE;
 
-	switch (v.Type)
+	switch(v.Type)
 	{
 	case LFTypeDouble:
 		v.Double = 0;
@@ -631,7 +631,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 		UINT Min;
 		UINT Sec;
 
-		switch (v.Type)
+		switch(v.Type)
 		{
 		case LFTypeUnicodeString:
 			wcscpy_s(v.UnicodeString, 256, pStr);
@@ -694,7 +694,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& v, WCHAR* pStr)
 
 		case LFTypeSize:
 			for (Ptr=Buffer; *pStr; pStr++)
-				switch (*pStr)
+				switch(*pStr)
 				{
 				case L'0':
 				case L'1':
@@ -782,7 +782,7 @@ Abort:
 		case LFTypeTime:
 			ZeroMemory(&stLocal, sizeof(stLocal));
 
-			switch (swscanf_s(pStr, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
+			switch(swscanf_s(pStr, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
 			{
 			case 1:
 			case 2:
@@ -919,7 +919,7 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v)
 		assert(v.Type==AttrTypes[v.Attr]);
 		assert(v.Type<LFTypeCount);
 
-		switch (AttrTypes[v.Attr])
+		switch(AttrTypes[v.Attr])
 		{
 		case LFTypeUnicodeString:
 		case LFTypeUnicodeArray:
@@ -1020,7 +1020,7 @@ LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 			{
 				BOOL First = TRUE;
 				for (WCHAR* Ptr=Tag; *Ptr; Ptr++)
-					switch (*Ptr)
+					switch(*Ptr)
 					{
 					case L' ':
 					case L'.':

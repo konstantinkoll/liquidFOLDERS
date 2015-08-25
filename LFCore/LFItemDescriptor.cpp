@@ -41,7 +41,7 @@ SIZE_T GetAttributeMaxCharacterCount(UINT Attr)
 	assert(Attr<LFAttributeCount);
 	assert((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray) || (AttrTypes[Attr]==LFTypeAnsiString));
 
-	switch (Attr)
+	switch(Attr)
 	{
 	case LFAttrStoreID:
 	case LFAttrFileID:
@@ -72,7 +72,7 @@ __forceinline SIZE_T GetAttributeSize(UINT Attr, const void* v)
 	assert(Attr<LFAttributeCount);
 	assert(AttrTypes[Attr]<LFTypeCount);
 
-	switch (AttrTypes[Attr])
+	switch(AttrTypes[Attr])
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
@@ -104,7 +104,7 @@ void SetAttribute(LFItemDescriptor* i, UINT Attr, const void* v)
 		i->AttributeValues[Attr] = malloc(Size);
 
 	// Kopieren
-	switch (AttrTypes[Attr])
+	switch(AttrTypes[Attr])
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:

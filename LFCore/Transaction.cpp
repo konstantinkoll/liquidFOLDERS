@@ -130,7 +130,7 @@ void UpdateStore(LFTransactionList* tl, UINT idx, LFVariantData* v, BOOL& Update
 {
 	UINT Result = LFIllegalAttribute;
 
-	switch (v->Attr)
+	switch(v->Attr)
 	{
 	case LFAttrFileName:
 		Result = LFSetStoreAttributes(tl->m_Items[idx].pItemDescriptor->StoreID, v->UnicodeString, NULL, TRUE);
@@ -167,7 +167,7 @@ LFCORE_API void LFTransactionUpdate(LFTransactionList* tl, LFVariantData* v1, LF
 	// Process
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if (tl->m_Items[a].LastError==LFOk)
-			switch (tl->m_Items[a].pItemDescriptor->Type & LFTypeMask)
+			switch(tl->m_Items[a].pItemDescriptor->Type & LFTypeMask)
 			{
 			case LFTypeStore:
 				UpdateStore(tl, a, v1, StoresUpdated);

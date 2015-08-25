@@ -524,7 +524,7 @@ LFCORE_API UINT LFMakeStoreSearchable(CHAR* StoreID, BOOL Searchable)
 
 		#define EXIT(Result) { ReleaseMutexForStore(StoreLock); ReleaseMutexForStores(); return Result; }
 
-		switch (slot->Mode & LFStoreModeIndexMask)
+		switch(slot->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexHybrid:
 			if (Searchable)

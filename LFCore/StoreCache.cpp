@@ -237,7 +237,7 @@ BOOL LoadStoreSettingsFromRegistry(CHAR* StoreID, LFStoreDescriptor* s)
 		if (RegQueryValueEx(hKey, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
-		switch (s->Mode & LFStoreModeIndexMask)
+		switch(s->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexInternal:
 			s->Source = LFTypeSourceInternal;
@@ -332,7 +332,7 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		if (RegSetValueEx(hKey, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		switch (s->Mode & LFStoreModeIndexMask)
+		switch(s->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexInternal:
 			if (!(s->Flags & LFStoreFlagAutoLocation))
@@ -938,7 +938,7 @@ UINT UnmountVolume(CHAR cVolume, BOOL InternalCall)
 					continue;
 				}
 
-				switch (StoreCache[a].Mode & LFStoreModeIndexMask)
+				switch(StoreCache[a].Mode & LFStoreModeIndexMask)
 				{
 				case LFStoreModeIndexHybrid:
 					StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = L'\0';

@@ -45,7 +45,7 @@ protected:
 	BOOL DeletePath(LPWSTR Path);
 	BOOL AddPath(LPWSTR Path, LPWSTR Parent);
 	void UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
-	void UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop);
+	void UpdatePath(LPWSTR Path1, LPWSTR Path2);
 
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -72,6 +72,6 @@ protected:
 	CString m_RootPath;
 
 private:
-	ULONG m_ulSHChangeNotifyRegister;
+	ULONG m_SHChangeNotifyRegister;
 	CString m_strBuffer;
 };

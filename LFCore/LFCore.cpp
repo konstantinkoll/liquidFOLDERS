@@ -253,7 +253,7 @@ BYTE GetVolumeBus(CHAR cVolume)
 LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
 {
 	if ((cVolume>='A') && (cVolume<='Z'))
-		switch (GetVolumeBus(cVolume))
+		switch(GetVolumeBus(cVolume))
 		{
 		case BusType1394:
 			return LFTypeSource1394;
@@ -290,7 +290,7 @@ LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 			uVolumeType = GetDriveTypeA(szVolumeRoot);
 
 			if (uVolumeType==DRIVE_FIXED)
-				switch (GetVolumeBus(cVolume))
+				switch(GetVolumeBus(cVolume))
 				{
 				case BusType1394:
 				case BusTypeUsb:
@@ -301,7 +301,7 @@ LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 			VolumeTypes[cVolume-'A'] = uVolumeType;
 		}
 
-		switch (uVolumeType)
+		switch(uVolumeType)
 		{
 		case DRIVE_FIXED:
 			if (!(Mask & LFGLV_INTERNAL))
@@ -445,7 +445,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	AttributeDescriptor.PreferDescendingSort = (AttributeDescriptor.Type==LFTypeRating) || (AttributeDescriptor.Type==LFTypeTime) || (AttributeDescriptor.Type==LFTypeMegapixel);
 
 	// Read only
-	switch (ID)
+	switch(ID)
 	{
 	case LFAttrDescription:
 	case LFAttrCreationTime:
@@ -524,7 +524,7 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 	ALLOWATTRIBUTE(LFAttrStoreID);
 	ALLOWATTRIBUTE(LFAttrComments);
 
-	switch (ID)
+	switch(ID)
 	{
 	case LFContextStores:
 		ALLOWATTRIBUTE(LFAttrDescription);

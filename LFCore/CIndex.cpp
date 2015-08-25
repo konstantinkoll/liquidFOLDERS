@@ -194,7 +194,7 @@ UINT CIndex::Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 	for (UINT a=0; a<IDXTABLECOUNT; a++)
 	{
 		LoadTable(a, &tRes[a]);
-		switch (tRes[a])
+		switch(tRes[a])
 		{
 		case HeapCreated:
 			if (a==IDXTABLE_MASTER)
@@ -474,7 +474,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* v1, LFVariantData* v2,
 		if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
 		{
 			UINT Result = RenamePhysicalFile(PtrM, i->CoreAttributes.FileName);
-			switch (Result)
+			switch(Result)
 			{
 			case LFOk:
 				i->CoreAttributes.Flags &= ~LFFlagMissing;

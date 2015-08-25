@@ -172,7 +172,7 @@ BYTE GetPerceivedContext(CHAR* Extension)
 	PERCEIVED Type;
 	PERCEIVEDFLAG Flag;
 	if (AssocGetPerceivedType(ExtensionW, &Type, &Flag, NULL)==S_OK)
-		switch (Type)
+		switch(Type)
 		{
 		case PERCEIVED_TYPE_IMAGE:
 			return LFContextPictures;
@@ -252,7 +252,7 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 	VARIANT Value = { 0 };
 	
 	if (SUCCEEDED(pParentFolder->GetDetailsEx(pidlRel, &Column, &Value)))
-		switch (Value.vt)
+		switch(Value.vt)
 		{
 		case VT_BSTR:
 			if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
@@ -274,7 +274,7 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 
 		case VT_I8:
 		case VT_UI8:
-			switch (AttrTypes[Attr])
+			switch(AttrTypes[Attr])
 			{
 			case LFTypeSize:
 				SetAttribute(pItemDescriptor, Attr, &Value.ullVal);

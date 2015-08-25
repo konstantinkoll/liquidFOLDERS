@@ -196,7 +196,7 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 		{
 			m_GroupAttribute = pFilter->Options.GroupAttribute;
 
-			switch (pFilter->ConditionList->AttrData.Attr)
+			switch(pFilter->ConditionList->AttrData.Attr)
 			{
 			case LFAttrLocationName:
 			case LFAttrLocationIATA:
@@ -211,7 +211,7 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 		}
 	}
 	else
-		switch (pFilter->Mode)
+		switch(pFilter->Mode)
 		{
 		case LFFilterModeStores:
 			m_Context = LFContextStores;
@@ -261,7 +261,7 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* i)
 	if (!LFDynArray::AddItem(i))
 		return FALSE;
 
-	switch (i->Type & LFTypeMask)
+	switch(i->Type & LFTypeMask)
 	{
 	case LFTypeStore:
 		m_StoreCount++;
@@ -501,7 +501,7 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 	// Choose categorizer
 	CCategorizer* pCategorizer = NULL;
 
-	switch (Attr)
+	switch(Attr)
 	{
 	case LFAttrLocationIATA:
 		pCategorizer = new CIATACategorizer();
@@ -519,7 +519,7 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 		}
 
 	default:
-		switch (AttrTypes[Attr])
+		switch(AttrTypes[Attr])
 		{
 		case LFTypeRating:
 			pCategorizer = new CRatingCategorizer(Attr);
@@ -627,7 +627,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 		{
 			BOOL First = TRUE;
 			for (WCHAR* Ptr=Tag; *Ptr; Ptr++)
-				switch (*Ptr)
+				switch(*Ptr)
 				{
 				case L' ':
 				case L',':

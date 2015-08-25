@@ -108,10 +108,10 @@ BOOL CNameCategorizer::GetNamePrefix(WCHAR* FullName, WCHAR* pBuffer)
 
 		P2 = &FullName[wcslen(FullName)-1];
 		while (P2>FullName)
-			switch (Zustand)
+			switch(Zustand)
 			{
 			case 1:
-				switch (*P2)
+				switch(*P2)
 				{
 				case L'0':
 				case L'1':

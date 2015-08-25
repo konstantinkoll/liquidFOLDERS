@@ -129,7 +129,7 @@ BOOL LFCreateStoreDlg::OnInitDialog()
 
 	// Benachrichtigung, wenn sich Laufwerke ändern
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
-	m_SHChangeNotifyRegister = SHChangeNotifyRegister(GetSafeHwnd(), SHCNRF_ShellLevel,
+	m_SHChangeNotifyRegister = SHChangeNotifyRegister(GetSafeHwnd(), SHCNRF_ShellLevel | SHCNRF_NewDelivery,
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
 		WM_VOLUMECHANGE, 1, &shCNE);
 
@@ -139,7 +139,7 @@ BOOL LFCreateStoreDlg::OnInitDialog()
 void LFCreateStoreDlg::OnDestroy()
 {
 	if (m_SHChangeNotifyRegister)
-		SHChangeNotifyDeregister(m_SHChangeNotifyRegister);
+		VERIFY(SHChangeNotifyDeregister(m_SHChangeNotifyRegister));
 
 	LFDialog::OnDestroy();
 }

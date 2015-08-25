@@ -14,22 +14,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam
 {
 	if (Message==WM_USER)
 	{
-		WCHAR Path[MAX_PATH];
+		PIDLIST_ABSOLUTE* pidls;
+		LONG Event;
+		HANDLE hNotifyLock = SHChangeNotification_Lock((HANDLE)wParam, (DWORD)lParam, &pidls, &Event);
 
-		if (SHGetPathFromIDList(*((LPCITEMIDLIST*)wParam), Path))
-			if ((Path[0]>=L'A') && (Path[0]<=L'Z'))
-				switch(lParam)
-				{
-				case SHCNE_DRIVEADD:
-				case SHCNE_MEDIAINSERTED:
-					LFCoreErrorBox(MountVolume((CHAR)Path[0]));
-					break;
+		if (hNotifyLock)
+		{
+			WCHAR Path[MAX_PATH];
+			if (SHGetPathFromIDList(pidls[0], Path))
+				if ((Path[0]>=L'A') && (Path[0]<=L'Z'))
+					switch(Event)
+					{
+					case SHCNE_DRIVEADD:
+					case SHCNE_MEDIAINSERTED:
+						LFCoreErrorBox(MountVolume((CHAR)Path[0]));
+						break;
 
-				case SHCNE_MEDIAREMOVED:
-				case SHCNE_DRIVEREMOVED:
-					LFCoreErrorBox(UnmountVolume((CHAR)Path[0]));
-					break;
-				}
+					case SHCNE_MEDIAREMOVED:
+					case SHCNE_DRIVEREMOVED:
+						LFCoreErrorBox(UnmountVolume((CHAR)Path[0]));
+						break;
+					}
+
+			SHChangeNotification_Unlock(hNotifyLock);
+		}
 
 		return NULL;
 	}
@@ -62,7 +70,7 @@ void InitWatchdog()
 	{
 		// Benachrichtigung, wenn sich Laufwerke ändern
 		SHChangeNotifyEntry shCNE = { NULL, TRUE };
-		ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWndWatchdog, SHCNRF_ShellLevel,
+		ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWndWatchdog, SHCNRF_ShellLevel | SHCNRF_NewDelivery,
 			SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
 			WM_USER, 1, &shCNE);
 	}
