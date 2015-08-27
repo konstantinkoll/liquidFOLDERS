@@ -9,153 +9,31 @@
 // LFTooltip
 //
 
-LFTooltip::LFTooltip()
-	: CWnd()
+#define MARGIN           4
+#define BORDER           8
+#define SHADOWSIZE       8
+#define SHADOWOFFSET     -SHADOWSIZE/2
+
+BOOL LFTooltip::Create()
 {
-	m_Icon = NULL;
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+
+	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_LAYERED, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
 }
 
-BOOL LFTooltip::Create(CWnd* pWndParent)
+void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
 {
-	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_SAVEBITS;
-	BOOL bDropShadow;
-	SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
-	if (bDropShadow)
-		nClassStyle |= CS_DROPSHADOW;
-
-	CString className = AfxRegisterWndClass(nClassStyle, LFGetApp()->LoadStandardCursor(IDC_ARROW));
-	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, className, _T(""), WS_POPUP, 0, 0, 0, 0, pWndParent->GetSafeHwnd(), NULL);
-}
-
-BOOL LFTooltip::PreTranslateMessage(MSG* pMsg)
-{
-	if ((pMsg->message>=WM_MOUSEFIRST) && (pMsg->message<=WM_MOUSELAST))
-	{
-		if (pMsg->message!=WM_MOUSEMOVE)
-			Hide();
-
-		CPoint pt(LOWORD(pMsg->lParam), HIWORD(pMsg->lParam));
-		MapWindowPoints(GetParent(), &pt, 1);
-		LPARAM lParam = MAKELPARAM(pt.x, pt.y);
-
-		GetParent()->SendMessage(pMsg->message, pMsg->wParam, lParam);
-		return TRUE;
-	}
-
-	return CWnd::PreTranslateMessage(pMsg);
-}
-
-void LFTooltip::Track(CPoint point, HICON hIcon, const CString& strCaption, CString strText)
-{
-	if (!GetSafeHwnd())
-		return;
-
-	if ((m_strText==strText) && (m_strCaption==strCaption))
-		return;
+	ASSERT(IsWindow(m_hWnd));
 
 	if (IsWindowVisible())
-		Hide();
-	if (m_Icon)
-		DestroyIcon(m_Icon);
+		HideTooltip();
 
-	m_Icon = hIcon;
-	m_szIcon = CSize(0, 0);
-	m_strCaption = strCaption;
-	m_strText = strText;
-	m_TextHeight = 0;
-
-	if (hIcon)
-	{
-		ICONINFO IconInfo;
-		if (GetIconInfo(hIcon, &IconInfo))
-		{
-			BITMAP Bitmap;
-			if (GetObject(IconInfo.hbmColor, sizeof(Bitmap), &Bitmap))
-				m_szIcon = CSize(Bitmap.bmWidth, Bitmap.bmHeight);
-		}
-	}
-
-	// Size
-	CSize Size(0, 0);
-	CClientDC dc(this);
-
-	if (!strCaption.IsEmpty())
-	{
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
-		CSize szText = dc.GetTextExtent(strCaption);
-		Size.cx = max(Size.cx, szText.cx);
-		Size.cy += szText.cy;
-		m_TextHeight = max(m_TextHeight, szText.cy);
-		dc.SelectObject(pOldFont);
-
-		if (!strText.IsEmpty())
-			Size.cy += AFX_TEXT_MARGIN;
-	}
-
-	if (!strText.IsEmpty())
-	{
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
-
-		while (!strText.IsEmpty())
-		{
-			CString Line;
-			INT Pos = strText.Find('\n');
-			if (Pos==-1)
-			{
-				Line = strText;
-				strText.Empty();
-			}
-			else
-			{
-				Line = strText.Left(Pos);
-				strText.Delete(0, Pos+1);
-			}
-
-			if (!Line.IsEmpty())
-			{
-				CSize szText = dc.GetTextExtent(Line);
-				Size.cx = max(Size.cx, szText.cx);
-				Size.cy += szText.cy;
-
-				m_TextHeight = max(m_TextHeight, szText.cy);
-			}
-		}
-
-		dc.SelectObject(pOldFont);
-	}
-
-	if (hIcon)
-	{
-		Size.cx += m_szIcon.cx+2*AFX_TEXT_MARGIN;
-		Size.cy = max(Size.cy, m_szIcon.cy);
-	}
-
-	Size.cx += 2*(AFX_TEXT_MARGIN+3);
-	Size.cy += 2*(AFX_TEXT_MARGIN+2)+1;
-	if (Size.cx>m_TextHeight*40)
-		Size.cx = m_TextHeight*40;
-
-	// Position
-	CRect rect;
-	rect.top = point.y+18;
-	rect.bottom = rect.top+Size.cy;
-
-	if (GetParent()->GetExStyle() & WS_EX_LAYOUTRTL)
-	{
-		rect.left = point.x-Size.cx;
-		rect.right = point.x;
-	}
-	else
-	{
-		rect.left = point.x;
-		rect.right = point.x+Size.cx;
-	}
-
+	// Get screen size
 	MONITORINFO mi;
 	mi.cbSize = sizeof(MONITORINFO);
 
 	CRect rectScreen;
-	if (GetMonitorInfo(MonitorFromPoint(rect.TopLeft(), MONITOR_DEFAULTTONEAREST), &mi))
+	if (GetMonitorInfo(MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST), &mi))
 	{
 		rectScreen = mi.rcWork;
 	}
@@ -164,212 +42,286 @@ void LFTooltip::Track(CPoint point, HICON hIcon, const CString& strCaption, CStr
 		SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
 	}
 
-	if (rect.Width()>rectScreen.Width())
-	{
-		rect.left = rectScreen.left;
-		rect.right = rectScreen.right;
-	}
-	else 
-		if (rect.right>rectScreen.right)
-		{
-			rect.right = rectScreen.right;
-			rect.left = rect.right-Size.cx;
-		}
-		else
-			if (rect.left<rectScreen.left)
-			{
-				rect.left = rectScreen.left;
-				rect.right = rect.left+Size.cx;
-			}
+	rectScreen.DeflateRect(2, 2);
 
-	if (rect.Height()>rectScreen.Height())
-	{
-		rect.top = rectScreen.top;
-		rect.bottom = rectScreen.bottom;
-	}
-	else
-		if (rect.bottom>rectScreen.bottom)
-		{
-			rect.bottom = point.y-1;
-			rect.top = rect.bottom-Size.cy;
-		}
-		else
-			if (rect.top<rectScreen.top)
-			{
-				rect.top = rectScreen.top;
-				rect.bottom = rect.top+Size.cy;
-			}
+	// Calculate size of tooltip
+	CSize Size(0, 0);
+	BITMAP Bitmap = { 0 };
 
-	CRgn rgn;
-	m_Themed = IsCtrlThemed();
-	if (m_Themed)
-	{
-		rgn.CreateRoundRectRgn(0, 0, Size.cx+1, Size.cy+1, 3, 3);
-	}
-	else
-	{
-		rgn.CreateRectRgn(0, 0, Size.cx, Size.cy);
-	}
-	SetWindowRgn(rgn, FALSE);
-
-	SetWindowPos(&wndTop, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOOWNERZORDER);
-	ShowWindow(SW_SHOWNOACTIVATE);
-
-	Invalidate();
-	UpdateWindow();
-}
-
-void LFTooltip::Hide()
-{
-	if (IsWindow(m_hWnd))
-		ShowWindow(SW_HIDE);
-}
-
-void LFTooltip::Deactivate()
-{
-	m_strCaption.Empty();
-	m_strText.Empty();
-
-	if (m_Icon)
-	{
-		DestroyIcon(m_Icon);
-		m_Icon = NULL;
-	}
-
-	Hide();
-}
-
-
-BEGIN_MESSAGE_MAP(LFTooltip, CWnd)
-	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
-END_MESSAGE_MAP()
-
-void LFTooltip::OnDestroy()
-{
-	if (m_Icon)
-		DestroyIcon(m_Icon);
-
-	CWnd::OnDestroy();
-}
-
-BOOL LFTooltip::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
-void LFTooltip::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rectClient;
-	GetClientRect(rectClient);
+	HDC hDC = ::GetDC(NULL);
 
 	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
+	dc.Attach(CreateCompatibleDC(hDC));
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+	::ReleaseDC(NULL, hDC);
 
-	CRect rect(rectClient);
-	rect.DeflateRect(1, 1);
+	INT TextHeight = 0;
+	if (!strCaption.IsEmpty())
+	{
+		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
+		CSize sz = dc.GetTextExtent(strCaption);
+		dc.SelectObject(pOldFont);
+
+		Size.cx = max(Size.cx, sz.cx);
+		Size.cy += sz.cy;
+		TextHeight = max(TextHeight, sz.cy);
+
+		if (!strText.IsEmpty())
+			Size.cy += MARGIN;
+	}
+
+	if (!strText.IsEmpty())
+	{
+		CRect rectText(rectScreen);
+
+		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
+		dc.DrawText(strText, rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
+		dc.SelectObject(pOldFont);
+
+		Size.cx = max(Size.cx, rectText.Width());
+		Size.cy += rectText.Height();
+		TextHeight = max(TextHeight, rectText.Height());
+	}
+
+	if (hIcon)
+	{
+		ICONINFO IconInfo;
+		if (GetIconInfo(hIcon, &IconInfo))
+			if (GetObject(IconInfo.hbmColor, sizeof(Bitmap), &Bitmap))
+			{
+				Size.cx += Bitmap.bmWidth+2*MARGIN;
+				Size.cy = max(Size.cy, Bitmap.bmHeight);
+			}
+	}
+	else
+		if (hBitmap)
+		{
+			if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
+			{
+				Size.cx += Bitmap.bmWidth+2*MARGIN;
+				Size.cy = max(Size.cy, Bitmap.bmHeight);
+			}
+		}
+
+	Size.cx += 2*BORDER;
+	Size.cy += 2*BORDER;
+
+	if (Size.cx>TextHeight*40)
+		Size.cx = TextHeight*40;
+
+	// Position
+	CRect rectWindow(point.x, point.y+18-SHADOWOFFSET, point.x+Size.cx, point.y+18+Size.cy-SHADOWOFFSET);
+
+	if (rectWindow.Width()>rectScreen.Width())
+	{
+		rectWindow.left = rectScreen.left;
+		rectWindow.right = rectScreen.right;
+	}
+	else 
+		if (rectWindow.right>rectScreen.right)
+		{
+			rectWindow.right = rectScreen.right;
+			rectWindow.left = rectWindow.right-Size.cx;
+		}
+		else
+			if (rectWindow.left<rectScreen.left)
+			{
+				rectWindow.left = rectScreen.left;
+				rectWindow.right = rectWindow.left+Size.cx;
+			}
+
+	if (rectWindow.Height()>rectScreen.Height())
+	{
+		rectWindow.top = rectScreen.top;
+		rectWindow.bottom = rectScreen.bottom;
+	}
+	else
+		if (rectWindow.bottom>rectScreen.bottom)
+		{
+			rectWindow.bottom = point.y-1;
+			rectWindow.top = rectWindow.bottom-Size.cy;
+		}
+		else
+			if (rectWindow.top<rectScreen.top)
+			{
+				rectWindow.top = rectScreen.top;
+				rectWindow.bottom = rectWindow.top+Size.cy;
+			}
+
+	rectWindow.InflateRect(SHADOWSIZE, SHADOWSIZE);
+	rectWindow.bottom += SHADOWOFFSET;
+
+	// Prepare paint
+	HBITMAP hWindowBitmap = CreateTransparentBitmap(rectWindow.Width(), rectWindow.Height());
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hWindowBitmap);
+
+	CRect rectBitmap(0, 0, rectWindow.Width(), rectWindow.Height());
+	CRect rect(rectBitmap);
 
 	Graphics g(dc);
 
-	// Background
-	if (m_Themed)
-	{
-		INT y = (rect.top+rect.bottom)*3/5;
+	// Draw background
+	CRect rectAlpha;
 
-		dc.FillSolidRect(rect.left, rect.top, rect.Width(), y, 0xFFFFFF);
+	BOOL Themed = IsCtrlThemed();
+	if (Themed)
+	{
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		for (UINT a=0; a<SHADOWSIZE; a++)
+		{
+			GraphicsPath path;
+			CreateRoundRectangle(rect, SHADOWSIZE+5-a, path);
+
+			Pen pen(Color((BYTE)(((a+1)*(a+1)*(a+1)>>2)), 0x00, 0x00, 0x00));
+			g.DrawPath(&pen, &path);
+
+			rect.DeflateRect(1, 1);
+		}
+
+		rect.top += SHADOWOFFSET;
+		rect.DeflateRect(1, 1);
 
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-		LinearGradientBrush brush(Point(0, y), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xF2, 0xF4, 0xF7));
-		g.FillRectangle(&brush, rect.left, y, rect.Width(), rect.Height()-y+1);
+		const INT y1 = 6;
+		const INT y2 = (rect.Height()-y1)*2/5;
+
+		LinearGradientBrush brush1(Point(0, rect.top), Point(0, rect.bottom-y2), Color(0x32, 0x32, 0x32), Color(0x2C, 0x2C, 0x2C));
+		g.FillRectangle(&brush1, rect.left+2, rect.top, rect.Width()-4, 1);
+		g.FillRectangle(&brush1, rect.left+1, rect.top+1, rect.Width()-2, 1);
+		g.FillRectangle(&brush1, rect.left, rect.top+2, rect.Width(), rect.Height()-y2-2);
+
+		LinearGradientBrush brush2(Point(0, rect.bottom-y2), Point(0, rect.bottom), Color(0x2C, 0x2C, 0x2C), Color(0x0C, 0x0C, 0x0C));
+		g.FillRectangle(&brush2, rect.left, rect.bottom-y2, rect.Width(), y2-2);
+		g.FillRectangle(&brush2, rect.left+1, rect.bottom-2, rect.Width()-2, 1);
+		g.FillRectangle(&brush2, rect.left+2, rect.bottom-1, rect.Width()-4, 1);
+
+		LinearGradientBrush brush3(Point(0, rect.top), Point(0, rect.top+y1), Color(0x30, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush3, rect.left+2, rect.top, rect.Width()-4, 1);
+		g.FillRectangle(&brush3, rect.left+1, rect.top+1, rect.Width()-2, 1);
+		g.FillRectangle(&brush3, rect.left, rect.top+2, rect.Width(), y1-2);
+
+		GraphicsPath pathInner;
+		CreateRoundRectangle(rect, 4, pathInner);
+
+		rect.InflateRect(1, 1);
+		GraphicsPath pathOuter;
+		CreateRoundRectangle(rect, 5, pathOuter);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+
+		Pen pen(Color(0x00, 0x00, 0x00));
+		g.DrawPath(&pen, &pathOuter);
+
+		LinearGradientBrush brush4(Point(0, rect.top), Point(0, rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x18, 0xFF, 0xFF, 0xFF));
+
+		pen.SetBrush(&brush4);
+		g.DrawPath(&pen, &pathInner);
+
+		rect.DeflateRect(BORDER, BORDER);
+		rectAlpha = rect;
 	}
 	else
 	{
+		rect.DeflateRect(SHADOWSIZE+1, SHADOWSIZE+1);
+		rect.top += SHADOWOFFSET;
+
 		dc.FillSolidRect(rect, GetSysColor(COLOR_INFOBK));
+
+		rect.InflateRect(1, 1);
+		dc.Draw3dRect(rect, GetSysColor(COLOR_INFOTEXT), GetSysColor(COLOR_INFOTEXT));
+
+		rectAlpha = rect;
+		rect.DeflateRect(BORDER, BORDER);
 	}
 
-	// Border
-	COLORREF clrLine = m_Themed ? 0x97908B : GetSysColor(COLOR_INFOTEXT);
-	COLORREF clrText = m_Themed ? 0x505050 : GetSysColor(COLOR_INFOTEXT);
+	// Draw interior
+	dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_INFOTEXT));
 
-	dc.Draw3dRect(rectClient, clrLine, clrLine);
-
-	if (m_Themed)
+	if (hIcon)
 	{
-		COLORREF clr = (clrLine>>1) | 0x808080;
-		dc.SetPixel(rectClient.left+1, rectClient.top+1, clr);
-		dc.SetPixel(rectClient.right-2, rectClient.top+1, clr);
-
-		clr = ((clrLine>>1) & 0x7F7F7F) + 0x7B7A79;
-		dc.SetPixel(rectClient.left+1, rectClient.bottom-2, clr);
-		dc.SetPixel(rectClient.right-2, rectClient.bottom-2, clr);
-
-		GraphicsPath path;
-		CreateRoundRectangle(rect, 1, path);
-
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-		Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
-		g.DrawPath(&pen, &path);
+		DrawIconEx(dc, rect.left, rect.top, hIcon, Bitmap.bmWidth, Bitmap.bmHeight, 0, NULL, DI_NORMAL);
+		rect.left += Bitmap.bmWidth+2*MARGIN;
 	}
-
-	// Interior
-	rect.DeflateRect(AFX_TEXT_MARGIN+2, AFX_TEXT_MARGIN+1);
-	dc.SetTextColor(clrText);
-
-	if (m_Icon)
-	{
-		DrawIconEx(dc, rect.left, rect.top, m_Icon, m_szIcon.cx, m_szIcon.cy, 0, NULL, DI_NORMAL);
-		rect.left += m_szIcon.cx+2*AFX_TEXT_MARGIN;
-	}
-
-	if (!m_strCaption.IsEmpty())
-	{
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
-		dc.DrawText(m_strCaption, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-		rect.top += dc.GetTextExtent(m_strCaption).cy+AFX_TEXT_MARGIN;
-		dc.SelectObject(pOldFont);
-	}
-
-	if (!m_strText.IsEmpty())
-	{
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
-		CString strText = m_strText;
-
-		while (!strText.IsEmpty())
+	else
+		if (hBitmap)
 		{
-			CString Line;
-			INT pos = strText.Find('\n');
-			if (pos==-1)
+			CDC dcBitmap;
+			dcBitmap.CreateCompatibleDC(&dc);
+			HBITMAP hOldBitmap = (HBITMAP)SelectObject(dcBitmap, hBitmap);
+
+			if (Bitmap.bmBitsPixel==32)
 			{
-				Line = strText;
-				strText.Empty();
+				dc.AlphaBlend(rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, &dcBitmap, 0, 0, Bitmap.bmWidth, Bitmap.bmHeight, BF);
 			}
 			else
 			{
-				Line = strText.Left(pos);
-				strText.Delete(0, pos+1);
+				dc.BitBlt(rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, &dcBitmap, 0, 0, SRCCOPY);
+
+				Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
+				g.DrawRectangle(&pen, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight);
 			}
 
-			if (!Line.IsEmpty())
-			{
-				dc.DrawText(Line, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-				rect.top += m_TextHeight;
-			}
+			SelectObject(dcBitmap, hOldBitmap);
+
+			rect.left += Bitmap.bmWidth+2*MARGIN;
 		}
 
+	if (!strCaption.IsEmpty())
+	{
+		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
+		dc.DrawText(strCaption, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		rect.top += dc.GetTextExtent(strCaption).cy+MARGIN;
 		dc.SelectObject(pOldFont);
 	}
 
-	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
+	if (!strText.IsEmpty())
+	{
+		if (Themed)
+			dc.SetTextColor(0xF0F0F0);
+
+		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
+		dc.DrawText(strText, rect, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
+		dc.SelectObject(pOldFont);
+	}
+
+	// Fix alpha channel messed up by GDI
+	GetObject(hWindowBitmap, sizeof(Bitmap), &Bitmap);
+
+	for (LONG Row=rectAlpha.top; Row<rectAlpha.bottom; Row++)
+	{
+		BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+rectAlpha.left*4+3;
+
+		for (LONG Column=rectAlpha.left; Column<rectAlpha.right; Column++)
+		{
+			*Ptr = 0xFF;
+
+			Ptr += 4;
+		}
+	}
+
+	// Update system-managed bitmap of window
+	POINT pt = { 0, 0 };
+	SIZE sz = { rectWindow.Width(), rectWindow.Height() };
+	UpdateLayeredWindow(&dc, &pt, &sz, &dc, &pt, 0x000000, &BF, ULW_ALPHA);
+
+	// Clean up
+	dc.SelectObject(hOldBitmap);
+	dc.DeleteDC();
+
+	DestroyIcon(hIcon);
+	DeleteObject(hBitmap);
+	DeleteObject(hWindowBitmap);
+
+	// Show Window
+	SetWindowPos(&wndTop, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), SWP_NOACTIVATE | SWP_NOOWNERZORDER);
+	ShowWindow(SW_SHOWNOACTIVATE);
+}
+
+void LFTooltip::HideTooltip()
+{
+	if (IsWindow(m_hWnd))
+		ShowWindow(SW_HIDE);
 }

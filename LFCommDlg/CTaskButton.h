@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CHoverButton.h"
-#include "LFTooltip.h"
 
 
 // CTaskButton
@@ -22,7 +21,6 @@ public:
 	INT GetPreferredWidth();
 
 protected:
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -32,7 +30,6 @@ private:
 	CString m_Caption;
 	CString m_TooltipHeader;
 	CString m_TooltipHint;
-	LFTooltip m_TooltipCtrl;
 	CMFCToolBarImages* p_Icons;
 	INT m_IconSize;
 	INT m_IconID;

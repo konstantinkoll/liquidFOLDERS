@@ -416,6 +416,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 
 		if (Item!=m_FocusItem)
 		{
+			m_ShowFocusRect = TRUE;
 			SetFocusItem(Item, GetKeyState(VK_SHIFT)<0);
 
 			CPoint pt;
@@ -592,6 +593,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 
 		if (Item!=m_FocusItem)
 		{
+			m_ShowFocusRect = TRUE;
 			SetFocusItem(Item, GetKeyState(VK_SHIFT)<0);
 
 			CPoint pt;
@@ -659,6 +661,7 @@ void CGridView::OnPaint()
 						{
 							DrawItemBackground(dc, rect, a, Themed);
 							DrawItem(dc, rect, a, Themed);
+							DrawItemForeground(dc, rect, a, Themed);
 						}
 					}
 				}

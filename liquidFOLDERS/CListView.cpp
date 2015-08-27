@@ -14,7 +14,7 @@
 #define GetItemData(Index)                  ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING                             2
 #define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), rect, DT_END_ELLIPSIS | format);
-#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
+#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && !d->Hdr.Selected) dc.SetTextColor(0x808080);
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
@@ -25,8 +25,6 @@
 #define RIGHTCOLUMN                         215
 #define MAXAUTOWIDTH                        400
 #define MINWIDTH                            32
-
-static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
@@ -325,6 +323,13 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 			break;
 
 		rectLabel.top += m_IconSize[0].cy+PADDING;
+
+		if (Themed)
+		{
+			rectLabel.left++;
+			rectLabel.right--;
+		}
+
 		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
 
 		break;

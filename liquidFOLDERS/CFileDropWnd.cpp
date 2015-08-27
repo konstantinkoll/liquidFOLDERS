@@ -43,7 +43,7 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -94,9 +94,6 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Aero
 	MARGINS Margins = { -1, -1, -1, -1 };
 	UseGlasBackground(Margins);
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
 
 	// SC_xxx muss sich im Bereich der Systembefehle befinden.
 	ASSERT((SC_ALWAYSONTOP & 0xFFF0)==SC_ALWAYSONTOP);
@@ -228,7 +225,7 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 void CFileDropWnd::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 	m_Hover = FALSE;
 
 	CGlassWindow::OnMouseLeave();
@@ -238,20 +235,17 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		if (!m_TooltipCtrl.IsWindowVisible())
+		if (!LFGetApp()->IsTooltipVisible())
 		{
 			CString Caption((LPCSTR)IDR_FILEDROP);
 			CString Hint((LPCSTR)IDS_DROPTIP);
 
-			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point,
-				(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FILEDROP), IMAGE_ICON, 48, 48, LR_SHARED),
-				Caption, Hint);
+			LFGetApp()->ShowTooltip(this, point, Caption, Hint, (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FILEDROP), IMAGE_ICON, 48, 48, LR_SHARED));
 		}
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 	}
 }
 

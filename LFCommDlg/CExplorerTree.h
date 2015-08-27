@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LFTooltip.h"
 
 
 // CExplorerTree
@@ -63,7 +62,6 @@ protected:
 	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
-	LFTooltip m_TooltipCtrl;
 	IContextMenu2* m_pContextMenu2;
 	BOOL m_OnlyFilesystem;
 	BOOL m_Hover;

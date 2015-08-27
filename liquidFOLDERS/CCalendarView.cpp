@@ -291,6 +291,9 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 		CString tmpStr;
 		tmpStr.Format(_T("%u"), Day+1);
 
+		if (m_Months[Month].Matrix[Day]!=EMPTY)
+			DrawItemForeground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
+
 		rectItem.right -= PADDING;
 		dc.DrawText(tmpStr, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
 		rectItem.right += PADDING;

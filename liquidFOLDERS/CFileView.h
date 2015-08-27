@@ -145,15 +145,14 @@ protected:
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT Index);
 	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
+	void DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);
 	BOOL BeginDragDrop();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
-	afx_msg void OnSysColorChange();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -189,7 +188,6 @@ protected:
 	BYTE* m_ItemData;
 	UINT m_ItemDataAllocated;
 	BOOL m_Nothing;
-	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
 	INT m_FontHeight[4];

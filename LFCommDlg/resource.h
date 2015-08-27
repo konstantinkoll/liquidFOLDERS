@@ -52,10 +52,11 @@
 #define IDB_UPDATEICONS_32              20139
 #define IDB_SIDEBARBACKGROUND           20140
 #define IDI_RESET_NORMAL                20200
-#define IDI_RESET_HOT                   20201
-#define IDI_RESET_PRESSED               20202
-#define IDI_SEARCH                      20203
-#define IDI_STOREPROPERTIES             20204
+#define IDI_RESET_SELECTED              20201
+#define IDI_RESET_HOT                   20202
+#define IDI_RESET_PRESSED               20203
+#define IDI_SEARCH                      20204
+#define IDI_STOREPROPERTIES             20205
 #define IDS_PURCHASEURL                 20300
 #define IDS_UPDATEURL                   20301
 #define IDS_ABOUTURL                    20302

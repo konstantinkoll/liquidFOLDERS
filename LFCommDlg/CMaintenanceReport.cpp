@@ -48,7 +48,7 @@ BOOL CMaintenanceReport::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -171,8 +171,6 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	ResetScrollbars();
-
-	m_TooltipCtrl.Create(this);
 
 	for (UINT a=0; a<LFErrorCount; a++)
 		LFGetErrorText(m_ErrorText[a], 256, a);
@@ -342,15 +340,15 @@ void CMaintenanceReport::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
-			m_TooltipCtrl.Deactivate();
+		if ((LFGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
+			LFGetApp()->HideTooltip();
 
 	m_HotItem = Item;
 }
 
 void CMaintenanceReport::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 
 	m_Hover = FALSE;
 	m_HotItem = -1;
@@ -361,7 +359,7 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
 		if (m_HotItem!=-1)
-			if (!m_TooltipCtrl.IsWindowVisible())
+			if (!LFGetApp()->IsTooltipVisible())
 			{
 				LFStoreDescriptor Store;
 				if (LFGetStoreSettings(p_MaintenanceList->m_Items[m_HotItem].StoreID, &Store)==LFOk)
@@ -371,10 +369,7 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 					CString Hint;
 					GetHintForStore(i, Hint);
 
-					HICON hIcon = LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
-
-					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, i->CoreAttributes.FileName, Hint);
+					LFGetApp()->ShowTooltip(this, point, i->CoreAttributes.FileName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1));
 
 					LFFreeItemDescriptor(i);
 				}
@@ -382,7 +377,7 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;
@@ -408,7 +403,7 @@ BOOL CMaintenanceReport::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_ItemHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);

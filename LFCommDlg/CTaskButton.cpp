@@ -47,7 +47,7 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -83,22 +83,10 @@ INT CTaskButton::GetPreferredWidth()
 
 
 BEGIN_MESSAGE_MAP(CTaskButton, CHoverButton)
-	ON_WM_CREATE()
 	ON_WM_PAINT()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 END_MESSAGE_MAP()
-
-INT CTaskButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CHoverButton::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
-
-	return 0;
-}
 
 void CTaskButton::OnPaint()
 {
@@ -162,7 +150,7 @@ void CTaskButton::OnPaint()
 
 void CTaskButton::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 
 	CHoverButton::OnMouseLeave();
 }
@@ -172,11 +160,10 @@ void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
 	if (!m_TooltipHeader.IsEmpty())
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 		{
-			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, NULL, m_TooltipHint.IsEmpty() ? _T("") : m_TooltipHeader, m_TooltipHint.IsEmpty() ? m_TooltipHeader : m_TooltipHint);
+			LFGetApp()->ShowTooltip(this, point, m_TooltipHint.IsEmpty() ? _T("") : m_TooltipHeader, m_TooltipHint.IsEmpty() ? m_TooltipHeader : m_TooltipHint);
 		}
 		else
 		{
-			m_TooltipCtrl.Deactivate();
+			LFGetApp()->HideTooltip();
 		}
 }

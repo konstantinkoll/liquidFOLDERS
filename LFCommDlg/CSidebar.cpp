@@ -70,7 +70,7 @@ BOOL CSidebar::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -322,8 +322,6 @@ INT CSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_TooltipCtrl.Create(this);
-
 	// Metrik
 	if (m_ShowNumbers)
 	{
@@ -426,7 +424,7 @@ void CSidebar::OnPaint()
 
 					if (m_SelectedItem==(INT)a)
 					{
-						LinearGradientBrush brush3(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom-1), Color(0xC0, 0x60, 0xA0, 0xFF), Color(0xC0, 0x30, 0x78, 0xFF));
+						LinearGradientBrush brush3(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom-1), Color(0xC0, 0x20, 0xA0, 0xFF), Color(0xC0, 0x10, 0x78, 0xFF));
 						g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height()-1);
 
 						SolidBrush brush4(Color(0x40, 0xFF, 0xFF, 0xFF));
@@ -640,8 +638,8 @@ void CSidebar::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
-			m_TooltipCtrl.Deactivate();
+		if ((LFGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
+			LFGetApp()->HideTooltip();
 
 	if (m_HotItem!=Item)
 	{
@@ -660,7 +658,7 @@ void CSidebar::OnMouseMove(UINT nFlags, CPoint point)
 
 void CSidebar::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 	InvalidateItem(m_SelectedItem);
 	InvalidateItem(m_HotItem);
 
@@ -673,7 +671,7 @@ void CSidebar::OnMouseHover(UINT nFlags, CPoint point)
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
 		if (m_HotItem!=-1)
-			if (!m_TooltipCtrl.IsWindowVisible())
+			if (!LFGetApp()->IsTooltipVisible())
 			{
 				INT Index = m_Items.m_Items[m_HotItem].IconID;
 				HICON hIcon = (Index!=-1) ? m_LargeIcons.ExtractIcon(Index) : NULL;
@@ -683,13 +681,12 @@ void CSidebar::OnMouseHover(UINT nFlags, CPoint point)
 				if (!Hint.IsEmpty() && !Append.IsEmpty())
 					Hint += _T("\n");
 
-				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, m_Items.m_Items[m_HotItem].Caption, Hint+Append);
+				LFGetApp()->ShowTooltip(this, point, m_Items.m_Items[m_HotItem].Caption, Hint+Append, hIcon);
 			}
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;

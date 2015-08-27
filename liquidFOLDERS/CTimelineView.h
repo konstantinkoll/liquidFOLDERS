@@ -56,7 +56,7 @@ protected:
 	SIZE m_IconSize;
 
 private:
-	void DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed);
+	void DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
 
 	CImageListTransparent m_AttributeIcons;
 	LFDynArray<ItemCategory> m_Categories;

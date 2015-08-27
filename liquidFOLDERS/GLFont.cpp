@@ -108,9 +108,9 @@ UINT GLFont::Render(CHAR* pStr, INT x, INT y, SIZE_T cCount)
 
 	while ((cCount-->0) && (*pStr))
 	{
-		CHAR Ch = *pStr++;
+		UCHAR Ch = *pStr++;
 
-		x += (Ch==' ') ? m_Spacing : (Ch>32) ? RenderChar((UCHAR)Ch-32, x, y, Height) : 0;
+		x += (Ch==' ') ? m_Spacing : (Ch>32) ? RenderChar(Ch-32, x, y, Height) : 0;
 	}
 
 	glEnd();
@@ -146,6 +146,7 @@ UINT GLFont::Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount)
 		case 8211:
 			Ch = 150;
 			break;
+
 		case 2014:
 		case 8212:
 			Ch = 151;
@@ -199,7 +200,7 @@ UINT GLFont::GetTextWidth(CHAR* pStr, SIZE_T cCount)
 
 	while ((cCount-->0) && (*pStr))
 	{
-		CHAR Ch = *pStr++;
+		UCHAR Ch = *pStr++;
 
 		Width += (Ch==' ') ? m_Spacing : (Ch>32) ? (TexCoords[Ch-32][2]-TexCoords[Ch-32][0])*m_TexSize : 0;
 	}

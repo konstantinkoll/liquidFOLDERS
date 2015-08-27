@@ -6,6 +6,7 @@
 #include "resource.h"
 #include "CGdiPlusBitmap.h"
 #include "LFCore.h"
+#include "LFTooltip.h"
 #include <uxtheme.h>
 
 #define RatingBitmapWidth      88
@@ -150,6 +151,9 @@ public:
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons=FALSE);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
+	BOOL IsTooltipVisible();
+	void HideTooltip();
 	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR Verb);
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();
@@ -165,6 +169,7 @@ public:
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 
 protected:
+	LFTooltip m_wndTooltip;
 	CList<ResourceCacheItem> m_ResourceCache;
 	UINT m_NagCounter;
 

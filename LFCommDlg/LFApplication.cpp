@@ -340,6 +340,9 @@ BOOL LFApplication::InitInstance()
 
 	RESETNAGCOUNTER;
 
+	// Tooltip
+	m_wndTooltip.Create();
+
 	// Beim ersten Mal Standard-Store erzeugen
 	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
 	{
@@ -594,6 +597,30 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* 
 
 	if (!OnlyStoreIcons)
 		li->SetOverlayImage(IDI_OVR_DEFAULT-1, 1);
+}
+
+
+void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
+{
+	ASSERT(IsWindow(m_wndTooltip));
+	ASSERT(pCallerWnd);
+
+	pCallerWnd->ClientToScreen(&point);
+	m_wndTooltip.ShowTooltip(point, strCaption, strText, hIcon, hBitmap);
+}
+
+BOOL LFApplication::IsTooltipVisible()
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	return m_wndTooltip.IsWindowVisible();
+}
+
+void LFApplication::HideTooltip()
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	m_wndTooltip.HideTooltip();
 }
 
 

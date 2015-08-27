@@ -60,7 +60,6 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
 
-	LFTooltip m_TooltipCtrl;
 	LFDynArray<SidebarItem> m_Items;
 	INT m_Width;
 	INT m_SelectedItem;

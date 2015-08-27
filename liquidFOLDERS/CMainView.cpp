@@ -588,8 +588,8 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI(IDM_STORES_ADD, OnUpdateStoresCommands)
 	ON_UPDATE_COMMAND_UI(IDM_STORES_REPAIRCORRUPTEDINDEX, OnUpdateStoresCommands)
 
-	ON_COMMAND(IDM_NEW_REMOVENEW, OnNewRemoveNew)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_NEW_REMOVENEW, IDM_NEW_REMOVENEW, OnUpdateNewCommands)
+	ON_COMMAND(IDM_NEW_CLEARNEW, OnNewClearNew)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_NEW_CLEARNEW, IDM_NEW_CLEARNEW, OnUpdateNewCommands)
 
 	ON_COMMAND(IDM_TRASH_EMPTY, OnTrashEmpty)
 	ON_COMMAND(IDM_TRASH_RESTOREALL, OnTrashRestoreAll)
@@ -636,7 +636,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, 0, TRUE, FALSE, TRUE);
 
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 1);
-	m_wndTaskbar.AddButton(IDM_NEW_REMOVENEW, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 5);
@@ -1269,7 +1269,7 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 // New
 
-void CMainView::OnNewRemoveNew()
+void CMainView::OnNewClearNew()
 {
 	LFVariantData v;
 	LFInitVariantData(v, LFAttrFlags);

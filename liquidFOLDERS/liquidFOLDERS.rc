@@ -128,7 +128,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Markierung „Neu“ &entfernen", IDM_NEW_REMOVENEW
+        MENUITEM "Markierung „Neu“ &entfernen", IDM_NEW_CLEARNEW
     END
 END
 
@@ -443,7 +443,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Entfernt bei allen Dateien die Markierung als kürzlich importierte Datei.\nMarkierung „Neu“ entfernen"
+    IDM_NEW_CLEARNEW        "Entfernt bei allen Dateien die Markierung als kürzlich importierte Datei.\nMarkierung „Neu“ entfernen"
 END
 
 STRINGTABLE 
@@ -551,7 +551,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Eliminar «Nuevo» attributo", IDM_NEW_REMOVENEW
+        MENUITEM "&Eliminar «Nuevo» attributo", IDM_NEW_CLEARNEW
     END
 END
 
@@ -863,7 +863,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Elimina la designación de archivo recién importado de todos los archivos.\nEliminar «Nuevo» attributo"
+    IDM_NEW_CLEARNEW        "Elimina la designación de archivo recién importado de todos los archivos.\nEliminar «Nuevo» attributo"
 END
 
 STRINGTABLE 
@@ -971,7 +971,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Enlever le marquage «Nouveau»", IDM_NEW_REMOVENEW
+        MENUITEM "&Enlever le marquage «Nouveau»", IDM_NEW_CLEARNEW
     END
 END
 
@@ -1283,7 +1283,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Éloigne à tous les fichiers le marquage comme le fichier récemment importé.\nEnlever le marquage «Nouveau»"
+    IDM_NEW_CLEARNEW        "Éloigne à tous les fichiers le marquage comme le fichier récemment importé.\nEnlever le marquage «Nouveau»"
 END
 
 STRINGTABLE 
@@ -1441,7 +1441,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Remove “New” flag",          IDM_NEW_REMOVENEW
+        MENUITEM "&Clear “New” flag",           IDM_NEW_CLEARNEW
     END
 END
 
@@ -1754,7 +1754,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Removes the designation as recently imported file from all files.\nRemove “New” flag"
+    IDM_NEW_CLEARNEW        "Clears the designation as recently imported file from all files.\nClear “New” flag"
 END
 
 STRINGTABLE 

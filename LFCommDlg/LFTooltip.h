@@ -13,26 +13,8 @@
 class LFTooltip : public CWnd
 {
 public:
-	LFTooltip();
+	BOOL Create();
 
-	virtual BOOL Create(CWnd* pWndParent);
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
-	void Track(CPoint point, HICON hIcon, const CString& strCaption, CString strText);
-	void Deactivate();
-
-protected:
-	void Hide();
-
-	BOOL m_Themed;
-	HICON m_Icon;
-	CSize m_szIcon;
-	CString m_strCaption;
-	CString m_strText;
-	INT m_TextHeight;
-
-	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
-	DECLARE_MESSAGE_MAP()
+	void ShowTooltip(CPoint point, const CString& strCaption, const CString& strText, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
+	void HideTooltip();
 };

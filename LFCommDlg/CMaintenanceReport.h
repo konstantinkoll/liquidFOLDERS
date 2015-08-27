@@ -4,7 +4,6 @@
 
 #pragma once
 #include "LFCore.h"
-#include "LFTooltip.h"
 
 
 // CMaintenanceReport
@@ -43,7 +42,6 @@ protected:
 	HICON hIconReady;
 	HICON hIconWarning;
 	HICON hIconError;
-	LFTooltip m_TooltipCtrl;
 	INT m_FontHeight;
 	INT m_ItemHeight;
 	INT m_IconSize;

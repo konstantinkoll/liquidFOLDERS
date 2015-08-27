@@ -17,6 +17,7 @@ public:
 	~CThumbnailCache();
 
 	BOOL DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* i);
+	HBITMAP GetThumbnailBitmap(LFItemDescriptor* i, CDC* pDC);
 	HICON GetThumbnailIcon(LFItemDescriptor* i, CDC* pDC);
 
 protected:

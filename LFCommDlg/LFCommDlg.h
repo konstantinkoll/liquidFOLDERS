@@ -42,7 +42,6 @@
 #include "LFStoreDataObject.h"
 #include "LFStoreMaintenanceDlg.h"
 #include "LFStorePropertiesDlg.h"
-#include "LFTooltip.h"
 #include "LFTransactionDataObject.h"
 #include "LFUpdateDlg.h"
 #include "Workers.h"
@@ -54,16 +53,20 @@
 
 #define LFCategoryPadding     2
 
+extern BLENDFUNCTION BF;
+
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
 
 INT GetAttributeIconIndex(UINT Attr);
 void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
-void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path);
+void CreateRoundRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path);
+void CreateReflectionRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path);
 BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed);
-void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Themed, BOOL WinFocused, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
+void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
+void DrawListItemForeground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected);
 void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal=FALSE);
 void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover);
 void DrawWhiteButtonBorder(Graphics& g, CRect rect, BOOL IncludeBottom=TRUE);

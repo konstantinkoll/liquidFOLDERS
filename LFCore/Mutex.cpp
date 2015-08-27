@@ -63,6 +63,7 @@ void ReleaseMutexForStore(HANDLE hMutex)
 	assert(hMutex);
 
 	ReleaseMutex(hMutex);
+	CloseHandle(hMutex);
 }
 
 

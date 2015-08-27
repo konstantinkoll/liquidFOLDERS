@@ -81,6 +81,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 					d->pTitle = GetAttribute(d, i, LFAttrTitle, PRV_TITLE);
 
 					break;
+
 				case LFTypeFolder:
 					d->Preview |= PRV_COMMENTS;
 					d->pComments = NULL;
@@ -165,7 +166,9 @@ Restart:
 						d->Preview |= PRV_THUMBS;
 						PreviewCount = 1;
 					}
+
 					break;
+
 				case LFTypeFolder:
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
@@ -176,6 +179,7 @@ Restart:
 							PreviewCount++;
 						}
 					}
+
 					break;
 				}
 
@@ -229,30 +233,30 @@ Restart:
 				CurRow[0] = CurRow[1] = ic.Rect.bottom+GUTTER;
 			}
 
-			INT c = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
-			d->Arrow = m_TwoColumns ? 1-(BYTE)c*2 : 0;
+			INT Column = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
+			d->Arrow = m_TwoColumns ? 1-(BYTE)Column*2 : 0;
 			d->ArrowOffs = 0;
 			d->Hdr.RectInflate = d->Arrow ? ARROWSIZE+1 : 0;
 
-			if (abs(CurRow[c]-LastRow)<2*ARROWSIZE)
+			if (abs(CurRow[Column]-LastRow)<2*ARROWSIZE)
 				if (h>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
 				{
 					d->ArrowOffs = 2*GUTTER;
 				}
 				else
 				{
-					CurRow[c] += GUTTER;
+					CurRow[Column] += GUTTER;
 				}
 
-			d->Hdr.Rect.left = (c==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
-			d->Hdr.Rect.top = CurRow[c];
+			d->Hdr.Rect.left = (Column==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
+			d->Hdr.Rect.top = CurRow[Column];
 			d->Hdr.Rect.right = d->Hdr.Rect.left+m_ItemWidth;
 			d->Hdr.Rect.bottom = d->Hdr.Rect.top+h;
 
-			LastRow = CurRow[c];
-			CurRow[c] += h+GUTTER;
+			LastRow = CurRow[Column];
+			CurRow[Column] += h+GUTTER;
 
-			if ((CurRow[c]>rect.Height()) && (!HasScrollbars))
+			if ((CurRow[Column]>rect.Height()) && (!HasScrollbars))
 			{
 				HasScrollbars = TRUE;
 				rect.right -= GetSystemMetrics(SM_CXVSCROLL);
@@ -279,30 +283,22 @@ RECT CTimelineView::GetLabelRect(INT Index)
 	return rect;
 }
 
-void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed)
+void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, BOOL Themed)
 {
-	if (Themed && (theApp.OSVersion!=OS_Eight))
+	if (Themed)
 	{
 		GraphicsPath path;
 		CreateRoundRectangle(rectCategory, 4, path);
-	
-		Matrix m;
-		m.Translate(0.5, 0.5);
-		path.Transform(&m);
 
-		SolidBrush brush(Color(0xFF, tlCol & 0xFF, (tlCol>>8) & 0xFF, (tlCol>>16) & 0xFF));
+		SolidBrush brush(Color(0xC1, 0xC1, 0xC1));
 		g.FillPath(&brush, &path);
 	}
 	else
 	{
-		dc.FillSolidRect(rectCategory, tlCol);
+		dc.FillSolidRect(rectCategory, GetSysColor(COLOR_3DSHADOW));
 	}
 
-	CRect rectText(rectCategory);
-	if (Themed)
-		rectText.OffsetRect(1, 1);
-
-	dc.DrawText(ic->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
+	dc.DrawText(ic->Caption, -1, rectCategory, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
 
 void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, BOOL Themed)
@@ -313,72 +309,45 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 	BOOL Hot = (m_HotItem==Index);
 	BOOL Selected = d->Hdr.Selected;
 
-	COLORREF brCol = Hot ? GetSysColor(COLOR_HIGHLIGHT) : Themed ? 0xD5D1D0 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF bkCol = hThemeList ? 0xFFFFFF : Selected ? GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE) : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-	COLORREF txCol = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF atCol = Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT);
-	COLORREF cpCol = (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? i->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
-
 	// Shadow
 	GraphicsPath path;
-	Color sCol(0x0A, 0x00, 0x00, 0x00);
+	Color sCol(0x0C, 0x00, 0x00, 0x00);
+
 	if (Themed)
 	{
 		CRect rectShadow(rectItem);
 		rectShadow.OffsetRect(1, 1);
 
-		CreateRoundRectangle(rectShadow, 2, path);
+		CreateRoundRectangle(rectShadow, 3, path);
 
 		Pen pen(sCol);
 		g.DrawPath(&pen, &path);
 	}
 
 	// Background
-	CRect rect(rectItem);
-	rect.DeflateRect(1, 1);
-	dc.FillSolidRect(rect, bkCol);
+	if ((!Themed || !Hot) && !Selected)
+	{
+		CRect rect(rectItem);
+		rect.DeflateRect(1, 1);
 
-	if (hThemeList)
-	{
-		rect.InflateRect(1, 1);
-		DrawItemBackground(dc, rect, Index, Themed);
-	}
-	else
-	{
-		if (Selected)
+		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+		if (Themed)
 		{
-			cpCol = txCol = atCol = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
-			dc.SetTextColor(txCol);
-			dc.SetBkColor(0x000000);
+			Matrix m;
+			m.Translate(-1.0, -1.0);
+			path.Transform(&m);
+
+			Pen pen(Color(0xD0, 0xD1, 0xD5));
+			g.DrawPath(&pen, &path);
 		}
 		else
 		{
-			dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-			dc.SetBkColor(0xFFFFFF);
+			dc.Draw3dRect(rectItem, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 		}
-
-		if ((Index==m_FocusItem) && (GetFocus()==this))
-			dc.DrawFocusRect(rect);
 	}
 
-	// Border
-	if (Themed && (theApp.OSVersion!=OS_Eight))
-	{
-		CRect rectBorder(rectItem);
-		rectBorder.right--;
-		rectBorder.bottom--;
-
-		Matrix m;
-		m.Translate(-1.0, -1.0);
-		path.Transform(&m);
-
-		Pen pen(Color(brCol & 0xFF, (brCol>>8) & 0xFF, (brCol>>16) & 0xFF));
-		g.DrawPath(&pen, &path);
-	}
-	else
-	{
-		dc.Draw3dRect(rectItem, brCol, brCol);
-	}
+	DrawItemBackground(dc, rectItem, Index, Themed);
 
 	// Arrows
 	if (d->Arrow)
@@ -387,7 +356,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 		INT Start = rectItem->top+(m_CaptionHeight+BORDER)/2-ARROWSIZE+d->ArrowOffs;
 		INT y = Start;
 
-		COLORREF ptCol = hThemeList ? dc.GetPixel(Base, y) : brCol;
+		COLORREF ptCol = dc.GetPixel(Base, y);
 
 		for (INT a=-ARROWSIZE; a<=ARROWSIZE; a++)
 		{
@@ -406,12 +375,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 		{
 			INT Offs = d->Arrow>0 ? 0 : 1;
 
-			g.SetSmoothingMode(SmoothingModeNone);
-
 			Pen pen(sCol);
 			g.DrawLine(&pen, Base+(ARROWSIZE+1)*d->Arrow, Start+ARROWSIZE+1, Base+d->Arrow+1-Offs, Start+2*ARROWSIZE+Offs);
-
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
 		}
 	}
 
@@ -433,7 +398,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 	rectText.left += m_IconSize.cx+BORDER;
 	rectText.bottom = rectText.top+m_FontHeight[0];
 
-	dc.SetTextColor(cpCol);
+	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? Selected ? 0xFFFFFF : i->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	if ((i->Type & LFTypeMask)!=LFTypeFolder)
 	{
 		dc.DrawText(GetLabel(i), rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
@@ -452,16 +417,17 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 	WCHAR tmpBuf[256];
 	LFAttributeToString(i, ((i->Type & LFTypeMask)==LFTypeFile) ? m_ViewParameters.SortBy : LFAttrFileName, tmpBuf, 256);
 
+	if (!Selected)
+		dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
+
 	CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
-	dc.SetTextColor(txCol);
 	dc.DrawText(tmpBuf, -1, rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
-	dc.SelectObject(pOldFont);
 
 	// Preview
 	if (d->Preview)
 	{
-		if (!Themed || !Selected)
-			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Themed ? 0xE5E5E5 : GetSysColor(COLOR_3DFACE));
+		if (Themed)
+			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Themed ? Selected ? 0xFFFFFF : 0xE5E5E5 : GetSysColor(Selected ? COLOR_HIGHLIGHTTEXT : COLOR_3DFACE));
 
 		// Source
 		INT BottomHeight = 0;
@@ -474,11 +440,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 			theApp.m_SourceIcons.DrawEx(&dc, (i->Type & LFTypeSourceMask)-2, CPoint(rectSource.left, rectSource.top), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
 			rectSource.left += m_IconSize.cx+BORDER;
-
-			CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
-			dc.SetTextColor(txCol);
 			dc.DrawText(theApp.m_SourceNames[i->Type & LFTypeSourceMask][0], -1, rectSource, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
-			dc.SelectObject(pOldFont);
 
 			if (d->Preview & PRV_THUMBS)
 			{
@@ -494,6 +456,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 				}
 		}
 
+		dc.SelectObject(pOldFont);
+
 		// Attributes
 		if (d->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 		{
@@ -503,7 +467,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 			if (d->Preview & PRV_ALBUM)
 				rectAttr.left = rectItem->left+m_IconSize.cx+2*BORDER;
 
-			dc.SetTextColor(atCol);
+			if (!Selected)
+				dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 
 			if (d->Preview & PRV_TITLE)
 			{
@@ -588,6 +553,10 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 			}
 		}
 	}
+	else
+	{
+		dc.SelectObject(pOldFont);
+	}
 }
 
 void CTimelineView::ScrollWindow(INT dx, INT dy)
@@ -653,22 +622,19 @@ void CTimelineView::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	Graphics g(dc);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Background
 	BOOL Themed = IsCtrlThemed();
-	COLORREF bkCol = Themed ? 0xEDEAE9 : GetSysColor(COLOR_3DFACE);
-	dc.FillSolidRect(rect, bkCol);
+	dc.FillSolidRect(rect, Themed ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
 
 	if (Themed)
 	{
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFF, 0xFF, 0xFF), Color(0xE9, 0xEA, 0xED));
+		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFF, 0xFF, 0xFF), Color(0xF4, 0xF5, 0xF8));
 		g.FillRectangle(&brush, Rect(0, 0, rect.Width(), WHITE));
 	}
-
-	g.SetPixelOffsetMode(PixelOffsetModeNone);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Items
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
@@ -688,9 +654,8 @@ void CTimelineView::OnPaint()
 		RECT rectIntersect;
 
 		// Timeline
-		COLORREF tlCol = Themed ? 0xC1C1C1 : GetSysColor(COLOR_3DSHADOW);
 		if (m_TwoColumns)
-			dc.FillSolidRect(rect.Width()/2-1, -m_VScrollPos, 2, m_ScrollHeight, tlCol);
+			dc.FillSolidRect(rect.Width()/2-1, -m_VScrollPos, 2, m_ScrollHeight, Themed ? 0xC1C1C1 : GetSysColor(COLOR_3DSHADOW));
 
 		CFont* pOldFont = dc.SelectObject(&theApp.m_BoldFont);
 
@@ -701,10 +666,12 @@ void CTimelineView::OnPaint()
 			CRect rect(m_Categories.m_Items[a].Rect);
 			rect.OffsetRect(0, -m_VScrollPos);
 			if (IntersectRect(&rectIntersect, rect, rectUpdate))
-				DrawCategory(dc, g, rect, &m_Categories.m_Items[a], tlCol, Themed);
+				DrawCategory(dc, g, rect, &m_Categories.m_Items[a], Themed);
 		}
 
 		dc.SelectObject(pOldFont);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
 
 		// Items
 		if (p_CookedFiles)
@@ -757,6 +724,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 
 			break;
+
 		case VK_RIGHT:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -778,6 +746,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 
 			break;
+
 		case VK_UP:
 			for (INT a=Item-1; a>=0; a--)
 			{
@@ -790,6 +759,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 
 			break;
+
 		case VK_PRIOR:
 			for (INT a=Item-1; a>=0; a--)
 			{
@@ -803,6 +773,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 
 			break;
+
 		case VK_DOWN:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -815,6 +786,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 
 			break;
+
 		case VK_NEXT:
 			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			{
@@ -828,6 +800,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 
 			break;
+
 		case VK_HOME:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
@@ -851,6 +824,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 
 			break;
+
 		case VK_END:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
@@ -878,6 +852,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		if (Item!=m_FocusItem)
 		{
+			m_ShowFocusRect = TRUE;
 			SetFocusItem(Item, GetKeyState(VK_SHIFT)<0);
 
 			CPoint pt;

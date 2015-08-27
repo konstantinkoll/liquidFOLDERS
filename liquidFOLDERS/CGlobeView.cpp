@@ -560,30 +560,30 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	// Farben
 	BOOL Selected = d->Hdr.Selected;
 
-	COLORREF brCol = Hot ? GetSysColor(COLOR_HIGHLIGHT) : Themed ? 0xD5D1D0 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF bkCol = hThemeList ? 0xFFFFFF : Selected ? GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE) : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-	COLORREF txCol = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF atCol = Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT);
-	COLORREF cpCol = Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF clrBorder = Themed ? (Focused && m_ShowFocusRect && (GetFocus()==this)) || Selected ? 0xE08010 : Hot ? 0xF0C08A : 0xD5D1D0 : GetSysColor(Selected ? COLOR_HIGHLIGHT : COLOR_3DSHADOW);
+	COLORREF clrBackground = Themed ? 0xFFFFFF : GetSysColor(Selected ? COLOR_HIGHLIGHT : COLOR_WINDOW);
+	COLORREF clrText = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
+	COLORREF clrAttr = Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF clrCaption = Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT);
 
-	if (d->Hdr.Selected && (!hThemeList))
-		cpCol = txCol = atCol = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
+	if (d->Hdr.Selected)
+		clrCaption = clrText = clrAttr = Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT);
 
 	GLfloat BorderColor[4];
-	ColorRef2GLColor(&BorderColor[0], brCol);
+	ColorRef2GLColor(&BorderColor[0], clrBorder);
 	GLfloat BaseColor[4];
-	ColorRef2GLColor(&BaseColor[0], bkCol);
+	ColorRef2GLColor(&BaseColor[0], clrBackground);
 	GLfloat TextColor[4];
-	ColorRef2GLColor(&TextColor[0], txCol);
+	ColorRef2GLColor(&TextColor[0], clrText);
 	GLfloat CaptionColor[4];
-	ColorRef2GLColor(&CaptionColor[0], cpCol);
+	ColorRef2GLColor(&CaptionColor[0], clrCaption);
 	GLfloat AttrColor[4];
-	ColorRef2GLColor(&AttrColor[0], atCol);
+	ColorRef2GLColor(&AttrColor[0], clrAttr);
 
 	// Schatten
 	if (Themed)
 	{
-		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha*(10.0f/256.0f));
+		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha*(12.0f/256.0f));
 		glBegin(GL_LINES);
 		glVertex2i(x+1, y+Height+1);
 		glVertex2i(x+Width, y+Height+1);
@@ -595,47 +595,35 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	}
 
 	// Innen
-	if (hThemeList && (Hot | Selected))
+	if (Themed && (Hot | Selected))
 	{
-		if (LFGetApp()->OSVersion==OS_Eight)
-		{
-			const COLORREF ColorRef = Hot ? Selected ? 0xF3E0B8 : 0xFBF3E5 : (GetFocus()==this) ? 0xF6E8CB : 0xF7F7F7;
+		const COLORREF TopColorRef = Selected ? 0xFFA020 : 0xFFFCF9;
+		const COLORREF BottomColorRef = Selected ? 0xE08010 : 0xFAEBE0;
 
-			ColorRef2GLColor(&BaseColor[0], ColorRef);
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
+		GLfloat TopColor[4];
+		ColorRef2GLColor(&TopColor[0], TopColorRef);
+		GLfloat BottomColor[4];
+		ColorRef2GLColor(&BottomColor[0], BottomColorRef);
 
-			glRecti(x, y, x+Width, y+Height);
-		}
-		else
-		{
-			const COLORREF TopColorRef = Hot ? Selected ? 0xFCEBDC : 0xFDFBFA : (GetFocus()==this) ? 0xFEF4EB : 0xF8F8F8;
-			const COLORREF BottomColorRef = Hot ? Selected ? 0xFCDBC1 : 0xFDF3EB : (GetFocus()==this) ? 0xFEE4CF : 0xE5E5E5;
+		glBegin(GL_QUADS);
+		glColor4f(TopColor[0], TopColor[1], TopColor[2], d->Alpha);
+		glVertex2i(x, y);
+		glVertex2i(x+Width, y);
+		glColor4f(BottomColor[0], BottomColor[1], BottomColor[2], d->Alpha);
+		glVertex2i(x+Width, y+Height);
+		glVertex2i(x, y+Height);
+		glEnd();
 
-			GLfloat TopColor[4];
-			ColorRef2GLColor(&TopColor[0], TopColorRef);
-			GLfloat BottomColor[4];
-			ColorRef2GLColor(&BottomColor[0], BottomColorRef);
+		glColor4f(1.0f, 1.0f, 1.0f, ((Hot && !Selected) ? 0x60 : 0x48)*d->Alpha/256.0f);
+		glBegin(GL_LINE_LOOP);
+		glVertex2i(x, y);
+		glVertex2i(x+Width-1, y);
+		glVertex2i(x+Width-1, y+Height-1);
+		glVertex2i(x, y+Height-1);
+		glEnd();
 
-			glBegin(GL_QUADS);
-			glColor4f(TopColor[0], TopColor[1], TopColor[2], d->Alpha);
-			glVertex2i(x, y);
-			glVertex2i(x+Width, y);
-			glColor4f(BottomColor[0], BottomColor[1], BottomColor[2], d->Alpha);
-			glVertex2i(x+Width, y+Height);
-			glVertex2i(x, y+Height);
-			glEnd();
-
-			glColor4f(1.0f, 1.0f, 1.0f, d->Alpha*0.2f);
-			glBegin(GL_LINE_LOOP);
-			glVertex2i(x, y);
-			glVertex2i(x+Width-1, y);
-			glVertex2i(x+Width-1, y+Height-1);
-			glVertex2i(x, y+Height-1);
-			glEnd();
-
-			ColorRef2GLColor(&BaseColor[0], top>0 ? TopColorRef : BottomColorRef);
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
-		}
+		ColorRef2GLColor(&BaseColor[0], top>0 ? TopColorRef : BottomColorRef);
+		glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
 	}
 	else
 	{
@@ -645,8 +633,8 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 
 	glBegin(GL_TRIANGLES);
 	glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
-	glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-2), d->ScreenPoint[1]+(ARROWSIZE-2)*top);
-	glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-2), d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+	glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-1), d->ScreenPoint[1]+(ARROWSIZE-1)*top);
+	glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-1), d->ScreenPoint[1]+(ARROWSIZE-1)*top);
 	glEnd();
 
 	// Rand
@@ -705,21 +693,6 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	glVertex2i(x+Width-1, y+Height-1);
 	glVertex2i(x+Width-1, y+Height);
 	glEnd();
-
-	// Focus
-	if ((Focused) && (GetFocus()==this) && (!hThemeList))
-	{
-		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);
-		glEnable(GL_LINE_STIPPLE);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(x, y);
-		glVertex2i(x+Width-1, y);
-		glVertex2i(x+Width-1, y+Height-1);
-		glVertex2i(x, y+Height-1);
-		glEnd();
-		glDisable(GL_LINE_STIPPLE);
-	}
 
 	x += 5;
 	y += 2;
@@ -806,7 +779,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	// Hintergrund
 	GLfloat BackColor[4];
-	ColorRef2GLColor(BackColor, Themed ? 0xEDEAE9 : GetSysColor(COLOR_WINDOW));
+	ColorRef2GLColor(BackColor, Themed ? 0xF8F5F4 : GetSysColor(COLOR_WINDOW));
 	glFogfv(GL_FOG_COLOR, BackColor);
 
 	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
@@ -1186,7 +1159,7 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 
 	if (zDelta<0)
 	{

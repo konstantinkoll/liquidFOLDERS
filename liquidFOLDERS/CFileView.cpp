@@ -93,7 +93,6 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
 	m_Hover = m_BeginDragDrop = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
-	hThemeList = NULL;
 
 	m_EnableScrolling = EnableScrolling;
 	m_EnableHover = EnableHover;
@@ -166,7 +165,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -176,7 +175,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 {
 	DestroyEdit();
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 
 	if (Context>=0)
 		m_Context = Context;
@@ -202,7 +201,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall)
 {
 	DestroyEdit();
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 
 	void* pVictim = m_ItemData;
 	SIZE_T VictimAllocated = m_ItemDataAllocated;
@@ -791,10 +790,16 @@ BOOL CFileView::IsEditing()
 
 void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 {
-	DrawListItemBackground(dc, rectItem, hThemeList, Themed, GetFocus()==this,
+	DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
 		m_HotItem==Index, m_FocusItem==Index, IsSelected(Index),
 		(p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
 		m_ShowFocusRect);
+}
+
+void CFileView::DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
+{
+	DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this,
+		m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
 }
 
 void CFileView::ResetScrollbars()
@@ -970,9 +975,6 @@ void CFileView::ScrollWindow(INT dx, INT dy)
 
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
-	ON_WM_DESTROY()
-	ON_WM_THEMECHANGED()
-	ON_WM_SYSCOLORCHANGE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
@@ -1006,15 +1008,6 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_TooltipCtrl.Create(this);
-
-	if (theApp.m_ThemeLibLoaded)
-		if (theApp.OSVersion>=OS_Vista)
-		{
-			theApp.zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-		}
-
 	if (m_EnableScrolling)
 		ResetScrollbars();
 
@@ -1031,33 +1024,6 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ReleaseDC(pDC);
 
 	return 0;
-}
-
-void CFileView::OnDestroy()
-{
-	if (hThemeList)
-		theApp.zCloseThemeData(hThemeList);
-
-	CWnd::OnDestroy();
-}
-
-LRESULT CFileView::OnThemeChanged()
-{
-	if (theApp.m_ThemeLibLoaded)
-	{
-		if (hThemeList)
-			theApp.zCloseThemeData(hThemeList);
-
-		if (theApp.OSVersion>=OS_Vista)
-			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-	}
-
-	return TRUE;
-}
-
-void CFileView::OnSysColorChange()
-{
-	Invalidate();
 }
 
 BOOL CFileView::OnEraseBkgnd(CDC* /*pDC*/)
@@ -1220,8 +1186,8 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 			TrackMouseEvent(&tme);
 		}
 		else
-			if ((m_TooltipCtrl.IsWindowVisible()) && (Index!=m_HotItem))
-				m_TooltipCtrl.Deactivate();
+			if ((LFGetApp()->IsTooltipVisible()) && (Index!=m_HotItem))
+				LFGetApp()->HideTooltip();
 
 		if (m_HotItem!=Index)
 		{
@@ -1236,7 +1202,7 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 
 void CFileView::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 	InvalidateItem(m_HotItem);
 
 	m_Hover = FALSE;
@@ -1250,14 +1216,15 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 		if ((m_HotItem!=-1) && (!IsEditing()))
 			if (m_HotItem==m_EditLabel)
 			{
-				m_TooltipCtrl.Deactivate();
+				LFGetApp()->HideTooltip();
 				EditLabel(m_EditLabel);
 			}
 			else
-				if (!m_TooltipCtrl.IsWindowVisible() && m_EnableTooltip)
+				if (!LFGetApp()->IsTooltipVisible() && m_EnableTooltip)
 				{
 					FormatData fd;
 					HICON hIcon = NULL;
+					HBITMAP hBitmap = NULL;
 
 					LFItemDescriptor* i = p_CookedFiles->m_Items[m_HotItem];
 
@@ -1267,7 +1234,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview) && (theApp.m_Views[m_Context].Mode!=LFViewTimeline))
 						{
 							CDC* pDC = GetDC();
-							hIcon = theApp.m_ThumbnailCache.GetThumbnailIcon(i, pDC);
+							hBitmap = theApp.m_ThumbnailCache.GetThumbnailBitmap(i, pDC);
 							ReleaseDC(pDC);
 						}
 
@@ -1284,17 +1251,16 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 						fd.SysIconIndex = -1;
 					}
 
-					if (!hIcon)
+					if (!hIcon && !hBitmap)
 						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
 
-					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, GetLabel(i), GetHint(i, fd.FormatName));
+					LFGetApp()->ShowTooltip(this, point, GetLabel(i), GetHint(i, fd.FormatName), hIcon, hBitmap);
 				}
 	}
 	else
 	{
 Leave:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;
@@ -1352,12 +1318,6 @@ void CFileView::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if ((!m_ShowFocusRect) && (theApp.OSVersion==OS_Vista))
-	{
-		m_ShowFocusRect = TRUE;
-		InvalidateItem(m_FocusItem);
-	}
-
 	switch(nChar)
 	{
 	case 'A':
@@ -1385,8 +1345,9 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 
 	case VK_F2:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			EditLabel(m_FocusItem);
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0) && (m_FocusItem!=-1))
+			if (IsSelected(m_FocusItem))
+				EditLabel(m_FocusItem);
 
 		break;
 

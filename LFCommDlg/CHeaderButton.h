@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CHoverButton.h"
-#include "LFTooltip.h"
 
 
 // CHeaderButton
@@ -26,7 +25,6 @@ public:
 	void GetCaption(CString& Caption, UINT& CaptionWidth);
 
 protected:
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -37,7 +35,6 @@ private:
 	CString m_Caption;
 	CString m_Hint;
 	CString m_Value;
-	LFTooltip m_TooltipCtrl;
 	UINT m_CaptionWidth;
 	BOOL m_ShowDropdown;
 };

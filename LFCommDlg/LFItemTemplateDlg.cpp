@@ -129,7 +129,7 @@ void LFItemTemplateDlg::AdjustLayout()
 		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
-	m_wndInspectorGrid.SetWindowPos(NULL, rect.left+13, rect.top+ExplorerHeight, rect.Width()-13, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndInspectorGrid.SetWindowPos(NULL, rect.left+12, rect.top+ExplorerHeight, rect.Width()-12, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 

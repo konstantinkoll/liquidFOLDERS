@@ -687,7 +687,7 @@ void CInspectorHeader::DrawHeader(CDC& /*dc*/, CRect /*rect*/, BOOL /*Themed*/)
 
 extern INT GetAttributeIconIndex(UINT Attr);
 
-#define GUTTER         3
+#define GUTTER         4
 #define PADDING        2
 
 #define NOPART         0
@@ -721,8 +721,7 @@ CInspectorGrid::CInspectorGrid()
 	m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
-	hThemeList = NULL;
-	hIconResetNormal = hIconResetHot = hIconResetPressed = NULL;
+	hIconResetNormal = hIconResetSelected = hIconResetHot = hIconResetPressed = NULL;
 	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
 	m_HotItem = m_SelectedItem = m_EditItem = -1;
 	m_HotPart = NOPART;
@@ -758,18 +757,10 @@ void CInspectorGrid::PreSubclassWindow()
 
 void CInspectorGrid::Init()
 {
-	if (LFGetApp()->m_ThemeLibLoaded)
-		if (LFGetApp()->OSVersion>=OS_Vista)
-		{
-			LFGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-			hThemeList = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-		}
-
 	ResetScrollbars();
 	CreateFonts();
 
 	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
-	m_TooltipCtrl.Create(this);
 
 	CDC* pDC = GetWindowDC();
 	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_LargeFont);
@@ -782,6 +773,7 @@ void CInspectorGrid::Init()
 	m_RowHeight = max(m_FontHeight[0]+2, 16);
 	m_IconSize = (m_RowHeight>=27) ? 27 : (m_RowHeight>=22) ? 22 : 16;
 	hIconResetNormal = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+	hIconResetSelected = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_SELECTED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 	hIconResetHot = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 	hIconResetPressed = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 }
@@ -825,7 +817,7 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -857,9 +849,6 @@ void CInspectorGrid::AddProperty(CProperty* pProperty, UINT Category, WCHAR* Nam
 	m_Properties.AddItem(prop);
 
 	MakeSortArrayDirty();
-
-	if (!IsWindow(m_TooltipCtrl))
-		m_TooltipCtrl.Create(this);
 
 	DestroyEdit();
 }
@@ -1243,7 +1232,7 @@ void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 		InvalidateItem(Attr3);
 	}
 
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 
 	UpdateWindow();
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
@@ -1329,7 +1318,6 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 BEGIN_MESSAGE_MAP(CInspectorGrid, CPropertyHolder)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_THEMECHANGED()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -1361,25 +1349,8 @@ void CInspectorGrid::OnDestroy()
 {
 	CPropertyHolder::OnDestroy();
 
-	if (hThemeList)
-		LFGetApp()->zCloseThemeData(hThemeList);
-
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		delete m_Properties.m_Items[a].pProperty;
-}
-
-LRESULT CInspectorGrid::OnThemeChanged()
-{
-	if (LFGetApp()->m_ThemeLibLoaded)
-	{
-		if (hThemeList)
-			LFGetApp()->zCloseThemeData(hThemeList);
-
-		if (LFGetApp()->OSVersion>=OS_Vista)
-			hThemeList = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-	}
-
-	return TRUE;
 }
 
 BOOL CInspectorGrid::OnEraseBkgnd(CDC* /*pDC*/)
@@ -1412,7 +1383,7 @@ void CInspectorGrid::OnPaint()
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		if (m_Categories[a].Top!=-1)
 		{
-			CRect rect(1, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos);
+			CRect rect(2, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos);
 			DrawCategory(dc, rect, LFGetApp()->m_AttrCategoryNames[a], NULL, Themed);
 		}
 
@@ -1425,36 +1396,21 @@ void CInspectorGrid::OnPaint()
 		if (pProp->Visible)
 		{
 			RECT rectProp = GetItemRect(a);
+			BOOL Selected = ((INT)a==m_SelectedItem) && (GetFocus()==this);
 
-			COLORREF clr1 = pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW);
-			COLORREF clr2 = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 			if ((INT)a!=m_EditItem)
-				if (hThemeList)
-				{
-					const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-					UINT State = 0;
-					if ((INT)a==m_HotItem)
-						State |= 1;
-					if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
-						State |= 2;
-					if (State)
-						LFGetApp()->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], &rectProp, &rectProp);
-				}
-				else
-				{
-					if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
-					{
-						dc.FillSolidRect(&rectProp, GetSysColor(COLOR_HIGHLIGHT));
-						dc.SetTextColor(0x000000);
-						dc.SetBkColor(0xFFFFFF);
-						dc.DrawFocusRect(&rectProp);
+			{
+				DrawListItemBackground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HotItem, Selected, Selected);
+				DrawListItemForeground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HotItem, Selected, Selected);
+			}
+			else
+			{
+				dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+			}
 
-						clr1 = clr2 = GetSysColor(COLOR_HIGHLIGHTTEXT);
-					}
-				}
+			COLORREF clr = dc.SetTextColor(Selected ? dc.GetTextColor() : pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
 
 			CRect rectLabel(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
-			dc.SetTextColor(clr1);
 			dc.DrawText(CString(pProp->Name)+_T(":"), rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 
 			rectLabel.left = rectLabel.right+GUTTER;
@@ -1463,7 +1419,7 @@ void CInspectorGrid::OnPaint()
 			if ((pProp->Editable) && (pProp->pProperty->CanDelete()))
 			{
 				INT Offs = (rectLabel.Height()-m_IconSize)/2;
-				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : Selected ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 				rectLabel.right -= m_IconSize+Offs+GUTTER+2;
 			}
 			else
@@ -1490,7 +1446,7 @@ void CInspectorGrid::OnPaint()
 				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 			}
 
-			dc.SetTextColor(clr2);
+			dc.SetTextColor(clr);
 			pProp->pProperty->DrawValue(dc, rectLabel);
 		}
 	}
@@ -1612,8 +1568,8 @@ void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
-			m_TooltipCtrl.Deactivate();
+		if ((LFGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
+			LFGetApp()->HideTooltip();
 
 	if (!Dragging)
 	{
@@ -1641,7 +1597,7 @@ void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 
 void CInspectorGrid::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 	InvalidateItem(m_HotItem);
 
 	m_Hover = FALSE;
@@ -1654,7 +1610,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
 		if ((m_HotItem!=-1) && !p_Edit)
-			if (!m_TooltipCtrl.IsWindowVisible())
+			if (!LFGetApp()->IsTooltipVisible())
 			{
 				Property* pProp = &m_Properties.m_Items[m_HotItem];
 				ASSERT(pProp);
@@ -1665,13 +1621,12 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
 
-				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, pProp->Name, tmpStr);
+				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, hIcon);
 			}
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;
@@ -1697,7 +1652,7 @@ BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)(m_RowHeight+1)*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);

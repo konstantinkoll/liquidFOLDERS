@@ -8,6 +8,9 @@
 #include <winhttp.h>
 
 
+BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+
+
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 {
 	if (!hSrc)
@@ -84,23 +87,30 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CS
 	}
 }
 
-void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path)
+void CreateRoundRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
+{
+	INT d = Radius*2+1;
+	INT r = pRect->right-d-1;
+	INT b = pRect->bottom-d-1;
+
+	Path.Reset();
+	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
+	Path.AddArc(r, pRect->top, d, d, 270, 90);
+	Path.AddArc(r-1, b-1, d+1, d+1, 0, 90);
+	Path.AddArc(pRect->left, b-1, d+1, d+1, 90, 90);
+	Path.CloseFigure();
+}
+
+void CreateReflectionRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
 {
 	Path.Reset();
 
-	INT l = rect.left;
-	INT t = rect.top;
-	INT w = rect.Width()-1;
-	INT h = rect.Height()-1;
-	INT d = Radius<<1;
+	INT d = Radius*2+1;
+	INT h = pRect->bottom-pRect->top-1;
+	INT w = min((INT)(h*1.681), pRect->right-pRect->left-1);
 
-	Path.AddArc(l, t, d, d, 180, 90);
-	Path.AddLine(l+Radius, t, l+w-Radius, t);
-	Path.AddArc(l+w-d, t, d, d, 270, 90);
-	Path.AddLine(l+w, t+Radius, l+w, t+h-Radius);
-	Path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
-	Path.AddLine(l+w-Radius, t+h, l+Radius, t+h);
-	Path.AddArc(l, t+h-d, d, d, 90, 90);
+	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
+	Path.AddArc(pRect->left, pRect->top, 2*w, 2*h, 270, -90);
 	Path.CloseFigure();
 }
 
@@ -210,61 +220,72 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 	dc.SelectObject(pOldFont);
 }
 
-void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Themed, BOOL WinFocused, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+void DrawReflection(Graphics& g, CRect &rect)
 {
-	dc.SetBkMode(TRANSPARENT);
+	GraphicsPath pathReflection;
+	CreateReflectionRectangle(rect, 2, pathReflection);
 
-	if (hThemeList)
+	LinearGradientBrush brush(Point(rect.left, rect.top), Point(rect.left+min((INT)(rect.Height()*1.681), rect.Width()), rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x10, 0xFF, 0xFF, 0xFF));
+	g.FillPath(&brush, &pathReflection);
+}
+
+void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+{
+	if (Themed)
 	{
-		dc.SetTextColor(TextColor==(COLORREF)-1 ? 0x000000 : TextColor);
-
-		if (Hot | Selected)
+		if (Hover || Focused || Selected)
 		{
-			const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, !WinFocused ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-			UINT State = 0;
-			if (Hot)
-				State |= 1;
+			dc.SetTextColor(Selected ? 0xFFFFFF : 0x000000);
+
+			Graphics g(dc);
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+			GraphicsPath pathOuter;
+			CreateRoundRectangle(rectItem, 3, pathOuter);
+
+			CRect rect(rectItem);
+			rect.DeflateRect(1, 1);
+
+			GraphicsPath pathInner;
+			CreateRoundRectangle(rect, 2, pathInner);
+
 			if (Selected)
-				State |= 2;
-			LFGetApp()->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
-		}
-
-		if (WinFocused && Focused)
-			switch (LFGetApp()->OSVersion)
 			{
-			case OS_Vista:
-				if (ShowFocusRect)
-				{
-					CRect rect(rectItem);
-					rect.DeflateRect(1, 1);
-
-					dc.SetBkColor(0xFFFFFF);
-					dc.DrawFocusRect(rect);
-				}
-
-				break;
-
-			case OS_Seven:
-				if (!Selected)
-				{
-					Graphics g(dc);
-					g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-					GraphicsPath path;
-					CreateRoundRectangle(rectItem, 2, path);
-
-					Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
-					g.DrawPath(&pen, &path);
-				}
-
-				break;
-
-			case OS_Eight:
-				if (!Selected)
-					dc.Draw3dRect(rectItem, 0xCEA27D, 0xCEA27D);
-
-				break;
+				LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0x20, 0xA0, 0xFF), Color(0x10, 0x80, 0xE0));
+				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 			}
+			else
+				if (Hover)
+				{
+					LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0xF9, 0xFC, 0xFF), Color(0xE0, 0xEB, 0xFA));
+					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
+				}
+
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
+			g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+			if ((ShowFocusRect && WinFocused) || Hover || Selected)
+				if ((Focused && ShowFocusRect && WinFocused) || Selected)
+				{
+					Pen pen1(Color(0x10, 0x80, 0xE0));
+					g.DrawPath(&pen1, &pathOuter);
+				}
+				else
+				{
+					Pen pen1(Color(0x8A, 0xC0, 0xF0));
+					g.DrawPath(&pen1, &pathOuter);
+				}
+
+			if (Hover || Selected)
+			{
+				Pen pen2(Color((Hover && !Selected) ? 0x60 : 0x48, 0xFF, 0xFF, 0xFF));
+				g.DrawPath(&pen2, &pathInner);
+			}
+		}
+		else
+		{
+			dc.SetTextColor(0x000000);
+		}
 	}
 	else
 	{
@@ -276,11 +297,8 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Th
 		}
 		else
 		{
-			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-			dc.SetBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-
-			if (!Focused)
-				dc.SetBkMode(OPAQUE);
+			dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+			dc.SetBkColor(GetSysColor(COLOR_WINDOW));
 		}
 
 		if (WinFocused && Focused)
@@ -288,6 +306,20 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Th
 
 		if (TextColor!=(COLORREF)-1 && !Selected)
 			dc.SetTextColor(TextColor);
+	}
+}
+
+void DrawListItemForeground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL /*WinFocused*/, BOOL Hover, BOOL /*Focused*/, BOOL Selected)
+{
+	if (Themed && (Hover || Selected))
+	{
+		Graphics g(dc);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		CRect rect(rectItem);
+		rect.DeflateRect(1, 1);
+
+		DrawReflection(g, rect);
 	}
 }
 
@@ -497,40 +529,36 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 		rectBounds.InflateRect(1, 1);
 
-		GraphicsPath path;
-		CreateRoundRectangle(rectBounds, 2, path);
+		GraphicsPath pathOuter;
+		CreateRoundRectangle(rectBounds, 2, pathOuter);
 
 		if (Focused || Selected)
 		{
-			Pen pen(Color(0x80, 0x83, 0x97));
-			g.DrawPath(&pen, &path);
-
 			if (!Selected && !Hover)
 			{
 				rectBounds.DeflateRect(1, 1);
-				CreateRoundRectangle(rectBounds, 1, path);
 
-				pen.SetColor(Color(0xC0, 0xFF, 0xFF, 0xFF));
-				g.DrawPath(&pen, &path);
+				GraphicsPath pathInner;
+				CreateRoundRectangle(rectBounds, 1, pathInner);
+
+				Pen pen(Color(0xC0, 0xFF, 0xFF, 0xFF));
+				g.DrawPath(&pen, &pathInner);
 			}
+
+			Pen pen(Color(0x80, 0x83, 0x97));
+			g.DrawPath(&pen, &pathOuter);
 		}
 		else
 			if (Hover)
 			{
 				Pen pen(Color(0xA6, 0xAB, 0xB2));
-				g.DrawPath(&pen, &path);
+				g.DrawPath(&pen, &pathOuter);
 			}
 			else
 			{
 				Pen pen(Color(0xBC, 0xBD, 0xBE));
-				g.DrawPath(&pen, &path);
+				g.DrawPath(&pen, &pathOuter);
 			}
-
-/*		rectBounds.top++;
-		CreateRoundRectangle(rectBounds, 2, path);
-
-		LinearGradientBrush brush(Point(0, rectBounds.top), Point(0, rectBounds.top+3), Color(0x80, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
-		g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), 3);*/
 	}
 	else
 	{
@@ -546,7 +574,7 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 		}
 	}
 
-	dc.SetTextColor(Themed ? Disabled ? 0xA0A0A0 : Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT));
+	dc.SetTextColor(Themed ? Disabled ? 0xA0A0A0 : Focused || Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT));
 }
 
 
@@ -717,7 +745,7 @@ CString GetLatestVersion(CString CurrentVersion)
 	else
 		if (LFIsSharewareExpired())
 		{
-			CurrentVersion += _T(" (expired");
+			CurrentVersion += _T(" (expired)");
 		}
 
 	// Get available version

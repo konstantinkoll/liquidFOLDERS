@@ -9,8 +9,6 @@
 // CThumbnailCache
 //
 
-const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-
 CThumbnailCache::~CThumbnailCache()
 {
 	DeleteObject(hBitmapFrame);
@@ -140,19 +138,30 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 	return TRUE;
 }
 
-HICON CThumbnailCache::GetThumbnailIcon(LFItemDescriptor* i, CDC* pDC)
+HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* i, CDC* pDC)
 {
-	HICON hIcon = NULL;
-
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
-	dc.SetBkMode(TRANSPARENT);
 
 	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	CRect rect(0, 0, 128, 128);
 	if (DrawJumboThumbnail(dc, rect, i))
+		return (HBITMAP)dc.SelectObject(hOldBitmap);
+
+	dc.SelectObject(hOldBitmap);
+	DeleteObject(hBitmap);
+
+	return NULL;
+}
+
+HICON CThumbnailCache::GetThumbnailIcon(LFItemDescriptor* i, CDC* pDC)
+{
+	HICON hIcon = NULL;
+
+	HBITMAP hBitmap = GetThumbnailBitmap(i, pDC);
+	if (hBitmap)
 	{
 		ICONINFO ii;
 		ZeroMemory(&ii, sizeof(ii));
@@ -161,10 +170,8 @@ HICON CThumbnailCache::GetThumbnailIcon(LFItemDescriptor* i, CDC* pDC)
 		ii.hbmMask = hBitmap;
 
 		hIcon = CreateIconIndirect(&ii);
+		DeleteObject(hBitmap);
 	}
-
-	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBitmap);
 
 	return hIcon;
 }

@@ -217,23 +217,23 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
 	TagcloudItemData* d = GetItemData(Index);
 
-	COLORREF color = m_ViewParameters.TagcloudUseColors ? d->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF clr = m_ViewParameters.TagcloudUseColors ? d->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
-	if ((d->Hdr.Hdr.Selected) && (!hThemeList))
+	if ((d->Hdr.Hdr.Selected) && !Themed)
 	{
-		color = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
+		clr = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
 	}
 	else
 		if (m_ViewParameters.TagcloudUseOpacity)
 		{
 			const COLORREF back = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-			color = ((color & 0xFF)*d->Alpha + (back & 0xFF)*(255-d->Alpha))>>8 |
-				((((color>>8) & 0xFF)*d->Alpha + ((back>>8) & 0xFF)*(255-d->Alpha)) & 0xFF00) |
-				((((color>>16) & 0xFF)*d->Alpha + ((back>>16) & 0xFF)*(255-d->Alpha))<<8) & 0xFF0000;
+			clr = ((clr & 0xFF)*d->Alpha + (back & 0xFF)*(255-d->Alpha))>>8 |
+				((((clr>>8) & 0xFF)*d->Alpha + ((back>>8) & 0xFF)*(255-d->Alpha)) & 0xFF00) |
+				((((clr>>16) & 0xFF)*d->Alpha + ((back>>16) & 0xFF)*(255-d->Alpha))<<8) & 0xFF0000;
 		}
 
 	CFont* pOldFont = dc.SelectObject(GetFont(Index));
-	dc.SetTextColor(color);
+	dc.SetTextColor(clr);
 	dc.DrawText(i->CoreAttributes.FileName, rectItem, TextFormat | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 }

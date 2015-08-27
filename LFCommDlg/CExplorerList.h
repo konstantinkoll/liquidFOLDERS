@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CTooltipHeader.h"
-#include "LFTooltip.h"
 
 
 // CExplorerList
@@ -50,9 +49,6 @@ protected:
 	void DrawItem(INT nID, CDC* pDC);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -61,8 +57,6 @@ protected:
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	LFTooltip m_TooltipCtrl;
-	HTHEME hThemeList;
 	INT m_ItemsPerRow;
 	INT m_ColumnsPerTile;
 	BOOL m_Hover;

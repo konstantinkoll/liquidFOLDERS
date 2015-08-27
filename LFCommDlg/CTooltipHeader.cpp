@@ -45,7 +45,7 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 	case WM_NCMBUTTONUP:
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -57,9 +57,6 @@ void CTooltipHeader::Init()
 	SetFont(&LFGetApp()->m_DefaultFont);
 
 	m_SortIndicators.Create(IDB_SORTINDICATORS, 7, 4);
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
 }
 
 
@@ -273,15 +270,15 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (m_HoverItem!=m_TooltipItem))
-			m_TooltipCtrl.Deactivate();
+		if ((LFGetApp()->IsTooltipVisible()) && (m_HoverItem!=m_TooltipItem))
+			LFGetApp()->HideTooltip();
 
 	CHeaderCtrl::OnMouseMove(nFlags, point);
 }
 
 void CTooltipHeader::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 	m_Hover = FALSE;
 	m_HoverItem = -1;
 
@@ -297,7 +294,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 
 		m_TooltipItem = HitTest(&htt);
 		if (m_TooltipItem!=-1)
-			if (!m_TooltipCtrl.IsWindowVisible())
+			if (!LFGetApp()->IsTooltipVisible())
 			{
 				HDITEMW i;
 				WCHAR TooltipTextBuffer[256];
@@ -307,15 +304,12 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 
 				if (GetItem(m_TooltipItem, &i))
 					if (TooltipTextBuffer[0]!=L'\0')
-					{
-						ClientToScreen(&point);
-						m_TooltipCtrl.Track(point, NULL, _T(""), TooltipTextBuffer);
-					}
+						LFGetApp()->ShowTooltip(this, point, _T(""), TooltipTextBuffer);
 			}
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;

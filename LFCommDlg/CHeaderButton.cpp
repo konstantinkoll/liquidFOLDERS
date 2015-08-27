@@ -45,7 +45,7 @@ BOOL CHeaderButton::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -85,23 +85,11 @@ void CHeaderButton::GetCaption(CString& Caption, UINT& CaptionWidth)
 
 
 BEGIN_MESSAGE_MAP(CHeaderButton, CHoverButton)
-	ON_WM_CREATE()
 	ON_WM_PAINT()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
-
-INT CHeaderButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CHoverButton::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
-
-	return 0;
-}
 
 void CHeaderButton::OnPaint()
 {
@@ -171,7 +159,7 @@ void CHeaderButton::OnPaint()
 
 void CHeaderButton::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 
 	CHoverButton::OnMouseLeave();
 }
@@ -181,12 +169,11 @@ void CHeaderButton::OnMouseHover(UINT nFlags, CPoint point)
 	if (!m_Hint.IsEmpty())
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 		{
-			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, NULL, m_Caption, m_Hint);
+			LFGetApp()->ShowTooltip(this, point, m_Caption, m_Hint);
 		}
 		else
 		{
-			m_TooltipCtrl.Deactivate();
+			LFGetApp()->HideTooltip();
 		}
 }
 

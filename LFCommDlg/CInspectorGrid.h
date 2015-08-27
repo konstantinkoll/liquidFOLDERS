@@ -5,7 +5,6 @@
 #pragma once
 #include "CImageListTransparent.h"
 #include "LFCore.h"
-#include "LFTooltip.h"
 
 
 // CPropertyHolder
@@ -273,7 +272,6 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg LRESULT OnThemeChanged();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
@@ -293,11 +291,10 @@ protected:
 
 	LFDynArray<Property> m_Properties;
 	PropertyCategory m_Categories[LFAttrCategoryCount];
-	HTHEME hThemeList;
 	HICON hIconResetNormal;
+	HICON hIconResetSelected;
 	HICON hIconResetHot;
 	HICON hIconResetPressed;
-	LFTooltip m_TooltipCtrl;
 	CInspectorHeader* m_pHeader;
 	CMFCMaskedEdit* p_Edit;
 	INT m_FontHeight[2];

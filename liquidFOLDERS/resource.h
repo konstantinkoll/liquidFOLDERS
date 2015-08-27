@@ -95,7 +95,7 @@
 #define IDC_CROSSHAIRS                  2210
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 4000
 #define IDM_NEW                         4100
-#define IDM_NEW_REMOVENEW               4101
+#define IDM_NEW_CLEARNEW                4101
 #define IDM_TRASH                       4200
 #define IDM_TRASH_EMPTY                 4201
 #define IDM_TRASH_RESTOREALL            4202

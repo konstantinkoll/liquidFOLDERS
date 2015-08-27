@@ -50,8 +50,7 @@ CExplorerTree::CExplorerTree()
 
 void CExplorerTree::PreSubclassWindow()
 {
-	m_TooltipCtrl.Create(this);
-
+	// Icons
 	SetImageList(&LFGetApp()->m_SystemImageListSmall, 0);
 
 	// Schrift
@@ -140,7 +139,7 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 	case WM_NCMBUTTONUP:
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 		break;
 	}
 
@@ -803,15 +802,15 @@ void CExplorerTree::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && ((hItem!=m_HoverItem) || (!(uFlags & TVHT_ONITEM))))
-			m_TooltipCtrl.Deactivate();
+		if ((LFGetApp()->IsTooltipVisible()) && ((hItem!=m_HoverItem) || (!(uFlags & TVHT_ONITEM))))
+			LFGetApp()->HideTooltip();
 
 	CTreeCtrl::OnMouseMove(nFlags, point);
 }
 
 void CExplorerTree::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	LFGetApp()->HideTooltip();
 	m_Hover = FALSE;
 
 	CTreeCtrl::OnMouseLeave();
@@ -824,7 +823,7 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 		UINT uFlags;
 		m_HoverItem = HitTest(point, &uFlags);
 		if ((m_HoverItem) && (uFlags & TVHT_ONITEM) && (!GetEditControl()))
-			if (!m_TooltipCtrl.IsWindowVisible())
+			if (!LFGetApp()->IsTooltipVisible())
 			{
 				TVITEM tvItem;
 				ZeroMemory(&tvItem, sizeof(tvItem));
@@ -840,13 +839,12 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 				CString Hint;
 				TooltipDataFromPIDL(pItem->pidlFQ, &LFGetApp()->m_SystemImageListExtraLarge, hIcon, Caption, Hint);
 
-				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, Caption, Hint);
+				LFGetApp()->ShowTooltip(this, point, Caption, Hint, hIcon);
 			}
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		LFGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;
