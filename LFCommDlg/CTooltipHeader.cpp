@@ -54,8 +54,6 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 
 void CTooltipHeader::Init()
 {
-	SetFont(&LFGetApp()->m_DefaultFont);
-
 	m_SortIndicators.Create(IDB_SORTINDICATORS, 7, 4);
 }
 

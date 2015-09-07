@@ -15,7 +15,6 @@
 #include "CIconCtrl.h"
 #include "CImageListTransparent.h"
 #include "CInspectorGrid.h"
-#include "CMapPreviewCtrl.h"
 #include "CPropertyEdit.h"
 #include "CSidebar.h"
 #include "CStorePanel.h"
@@ -77,6 +76,8 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
 void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr);
 void AppendTooltipAttribute(LFItemDescriptor* i, UINT Attr, CString& Str);
 void GetHintForStore(LFItemDescriptor* i, CString& Str);
+
+HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height);
 
 void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
 void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);

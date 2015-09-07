@@ -115,5 +115,5 @@ BOOL LFAttributeListDlg::OnInitDialog()
 
 	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }

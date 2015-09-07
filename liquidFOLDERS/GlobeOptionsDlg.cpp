@@ -67,7 +67,7 @@ BOOL GlobeOptionsDlg::OnInitDialog()
 	// Fadenkreuz
 	OnViewport();
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
 
 void GlobeOptionsDlg::OnViewport()

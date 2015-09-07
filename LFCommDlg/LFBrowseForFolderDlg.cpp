@@ -93,7 +93,7 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 
 	AdjustLayout();
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
 
 void LFBrowseForFolderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)

@@ -194,7 +194,7 @@ BOOL LFEditFilterDlg::OnInitDialog()
 		}
 	}
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
 
 void LFEditFilterDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)

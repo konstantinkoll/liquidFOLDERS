@@ -1053,10 +1053,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\JumpToLocation_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Key_Tiny.ico"
 			>
 		</File>
@@ -1330,10 +1326,6 @@
 		</File>
 		<File
 			RelativePath=".\Tools.png"
-			>
-		</File>
-		<File
-			RelativePath=".\ViewOptions_Tiny.ico"
 			>
 		</File>
 		<File

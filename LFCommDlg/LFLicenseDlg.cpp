@@ -56,7 +56,7 @@ BOOL LFLicenseDlg::OnInitDialog()
 
 	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&LFGetApp()->m_DefaultFont);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
 
 void LFLicenseDlg::OnLoadLicense()

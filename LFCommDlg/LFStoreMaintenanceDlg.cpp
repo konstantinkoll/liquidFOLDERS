@@ -68,7 +68,7 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 
 	AdjustLayout();
 
-	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
 
 void LFStoreMaintenanceDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)

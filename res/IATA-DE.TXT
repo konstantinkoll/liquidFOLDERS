@@ -7086,7 +7086,7 @@ SJI     San Jose, Philippinen;4;12*21'41"N, 121*2'48"E
 SJJ     Sarajevo, Bosnien;4;43*49'28"N, 18*19'53"E
 SJK     Sao Jose dos Lampos, Brasilien;4;23*13'41"S, 45*51'46"W
 SJL     Sao Gabriel, Brasilien;4;0*8'54"S, 66*59'8"W
-SJM     San Juan de la Mar, Dom. Republik;4;18*49'1"N, 71*16'59"W
+SJM     San Juan de la Maguana, Dom. Republik;4;18*49'1"N, 71*16'59"W
 SJN     St. Johns, USA;4;34*31'7"N, 109*22'44"W
 SJO     San Jose, Costa Rica;4;9*59'38"N, 84*12'32"W
 SJP     Sao Jose do Rio Preto, Brasilien;4;20*48'60"S, 49*24'23"W
@@ -7201,7 +7201,7 @@ SNT     Sabana de Torres, Kolumbien;4;7*22'60"N, 73*30'20"W
 SNU     Santa Clara, Kuba;4;22*29'32"N, 79*56'37"W
 SNV     Santa Elena, Venezuela;5;4*33'17"N, 61*8'42"W
 SNW     Sandoway, Burma;4;18*27'39"N, 94*18'0"E
-SNX     Sabana de La Mar, Dom. Republik;4;19*2'60"N, 69*22'1"W
+SNX     Sabana de Mar, Dom. Republik;4;19*2'60"N, 69*22'1"W
 SNY     Sidney, USA;4;41*6'5"N, 102*59'7"W
 SNZ     Santa Cruz, Brasilien;4;22*55'56"S, 43*43'9"W
 SOA     Soc Trang, Vietnam;5;9*37'0"S, 105*50'0"E

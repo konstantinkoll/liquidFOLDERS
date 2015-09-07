@@ -1290,7 +1290,7 @@ void CGlobeView::OnContextMenu(CWnd* pWnd, CPoint pos)
 
 void CGlobeView::OnJumpToLocation()
 {
-	LFSelectLocationIATADlg dlg(IDD_JUMPTOIATA, this);
+	LFSelectLocationIATADlg dlg(FALSE, this);
 
 	if (dlg.DoModal()==IDOK)
 	{

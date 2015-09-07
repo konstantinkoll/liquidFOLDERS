@@ -1,3 +1,4 @@
+
 // Countries
 #define CountryCount_EN 223
 LFCountry Countries_EN[CountryCount_EN] = {
@@ -6786,7 +6787,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  23, "SJJ", "", "Sarajevo", { -43.824444, 18.331389 } },
 	{  25, "SJK", "", "Sao Jose dos Lampos", { 23.228056, -45.862778 } },
 	{  25, "SJL", "", "Sao Gabriel", { 0.148333, -66.985556 } },
-	{  52, "SJM", "", "San Juan de la Mar", { -18.816944, -71.283056 } },
+	{  52, "SJM", "", "San Juan de la Maguana", { -18.816944, -71.283056 } },
 	{ 212, "SJN", "", "St. Johns", { -34.518611, -109.378889 } },
 	{  45, "SJO", "", "San Jose", { -9.993889, -84.208889 } },
 	{  25, "SJP", "", "Sao Jose do Rio Preto", { 20.816667, -49.406389 } },
@@ -6900,7 +6901,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  47, "SNU", "", "Santa Clara", { -22.492222, -79.943611 } },
 	{ 215, "SNV", "", "Santa Elena", { -4.554722, -61.145000 } },
 	{  31, "SNW", "", "Sandoway", { -18.460833, 94.300000 } },
-	{  52, "SNX", "", "Sabana de La Mar", { -19.050000, -69.366944 } },
+	{  52, "SNX", "", "Sabana de Mar", { -19.050000, -69.366944 } },
 	{ 212, "SNY", "", "Sidney", { -41.101389, -102.985278 } },
 	{  25, "SNZ", "", "Santa Cruz", { 22.932222, -43.719167 } },
 	{ 216, "SOA", "", "Soc Trang", { 9.616667, 105.833333 } },

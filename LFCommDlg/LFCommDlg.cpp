@@ -210,7 +210,7 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 		if (Hint[0]!=L'\0')
 		{
 			if (Themed)
-				dc.SetTextColor(((dc.GetTextColor()>>1) & 0x7F7F7F) | 0x808080);
+				dc.SetTextColor(0xE69980);
 
 			rect.top += rectLine.Height();
 			dc.SelectObject(&LFGetApp()->m_DefaultFont);
@@ -235,8 +235,6 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocus
 	{
 		if (Hover || Focused || Selected)
 		{
-			dc.SetTextColor(Selected ? 0xFFFFFF : 0x000000);
-
 			Graphics g(dc);
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
@@ -282,10 +280,8 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocus
 				g.DrawPath(&pen2, &pathInner);
 			}
 		}
-		else
-		{
-			dc.SetTextColor(0x000000);
-		}
+
+		dc.SetTextColor(Selected ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
 	}
 	else
 	{
@@ -690,6 +686,109 @@ void GetHintForStore(LFItemDescriptor* i, CString& Str)
 		AppendTooltipString(LFAttrComments, Str, LFGetApp()->m_SourceNames[i->Type & LFTypeSourceMask][1]);
 }
 
+
+// IATA
+//
+
+HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
+{
+	ASSERT(pAirport);
+
+	// Create bitmap
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+
+	BITMAPINFOHEADER bmi = { sizeof(bmi) };
+	bmi.biWidth = Width;
+	bmi.biHeight = Height;
+	bmi.biPlanes = 1;
+	bmi.biBitCount = 24;
+
+	BYTE* pbData = NULL;
+	HBITMAP hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+	// Draw
+	Graphics g(dc);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+
+	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"));
+	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"));
+
+	INT L = pMap->m_pBitmap->GetWidth();
+	INT H = pMap->m_pBitmap->GetHeight();
+	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*L)/360.0);
+	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*H)/180.0);
+	INT PosX = -LocX+Width/2;
+	INT PosY = -LocY+Height/2;
+	if (PosY>1)
+	{
+		PosY = 1;
+	}
+	else
+		if (PosY<(INT)Height-H)
+		{
+			PosY = Height-H;
+		}
+
+	if (PosX>1)
+		g.DrawImage(pMap->m_pBitmap, PosX-L, PosY, L, H);
+
+	g.DrawImage(pMap->m_pBitmap, PosX, PosY, L, H);
+
+	if (PosX<(INT)Width-L)
+		g.DrawImage(pMap->m_pBitmap, PosX+L, PosY, L, H);
+
+	LocX += PosX-pIndicator->m_pBitmap->GetWidth()/2+1;
+	LocY += PosY-pIndicator->m_pBitmap->GetHeight()/2+1;
+	g.DrawImage(pIndicator->m_pBitmap, LocX, LocY);
+
+	// Pfad erstellen
+	FontFamily fontFamily(LFGetApp()->GetDefaultFontFace());
+	WCHAR pszBuf[4];
+	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
+
+	StringFormat StrFormat;
+	GraphicsPath TextPath;
+	TextPath.AddString(pszBuf, -1, &fontFamily, FontStyleRegular, 21, Point(0, 0), &StrFormat);
+
+	// Pfad verschieben
+	Rect rt;
+	TextPath.GetBounds(&rt);
+
+	INT FntX = LocX+pIndicator->m_pBitmap->GetWidth();
+	INT FntY = LocY-rt.Y;
+
+	if (FntY<10)
+	{
+		FntY = 10;
+	}
+	else
+		if (FntY+rt.Height+10>(INT)Height)
+		{
+			FntY = Height-rt.Height-10;
+		}
+
+	Matrix m;
+	m.Translate((REAL)FntX, (REAL)FntY-1.0f);
+	TextPath.Transform(&m);
+
+	// Text
+	Pen pen(Color(0x00, 0x00, 0x00), 3.5);
+	pen.SetLineJoin(LineJoinRound);
+	g.DrawPath(&pen, &TextPath);
+
+	SolidBrush brush(Color(0xFF, 0xFF, 0xFF));
+	g.FillPath(&brush, &TextPath);
+
+	dc.SelectObject(hOldBitmap);
+
+	return hBitmap;
+}
+
+
+// Update
 
 void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
 {

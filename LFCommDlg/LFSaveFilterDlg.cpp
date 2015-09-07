@@ -57,7 +57,7 @@ BOOL LFSaveFilterDlg::OnInitDialog()
 	// OK-Button
 	OnChange();
 
-	return TRUE;
+	return FALSE;
 }
 
 void LFSaveFilterDlg::OnChooseStore()

@@ -18,7 +18,7 @@ BOOL LFTooltip::Create()
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_LAYERED, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
+	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_LAYERED | WS_EX_TRANSPARENT, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
 }
 
 void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
@@ -48,13 +48,9 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	CSize Size(0, 0);
 	BITMAP Bitmap = { 0 };
 
-	HDC hDC = ::GetDC(NULL);
-
 	CDC dc;
-	dc.Attach(CreateCompatibleDC(hDC));
+	dc.CreateCompatibleDC(NULL);
 	dc.SetBkMode(TRANSPARENT);
-
-	::ReleaseDC(NULL, hDC);
 
 	INT TextHeight = 0;
 	if (!strCaption.IsEmpty())
@@ -315,7 +311,7 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	DeleteObject(hBitmap);
 	DeleteObject(hWindowBitmap);
 
-	// Show Window
+	// Show window
 	SetWindowPos(&wndTop, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), SWP_NOACTIVATE | SWP_NOOWNERZORDER);
 	ShowWindow(SW_SHOWNOACTIVATE);
 }

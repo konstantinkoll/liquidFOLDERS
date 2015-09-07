@@ -13,51 +13,69 @@ __forceinline void Swap(LFAirport*& Eins, LFAirport*& Zwei)
 	Zwei = Temp;
 }
 
+void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, CString Value)
+{
+	if (!Value.IsEmpty())
+	{
+		CString Name((LPCSTR)ResID);
+
+		wcscat_s(pStr, cCount, Name);
+		wcscat_s(pStr, cCount, L": ");
+		wcscat_s(pStr, cCount, Value);
+		wcscat_s(pStr, cCount, L"\n");
+	}
+}
+
+void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, CHAR* pValue)
+{
+	WCHAR tmpStr[4096];
+	MultiByteToWideChar(CP_ACP, 0, pValue, -1, tmpStr, 4096);
+
+	AppendAttribute(pStr, cCount, ResID, tmpStr);
+}
+
 
 // LFSelectLocationIATADlg
 //
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
-	: CDialog(nIDTemplate, pParentWnd)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd, CHAR* Airport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
+	: LFDialog(IDD_SELECTIATA, pParentWnd)
 {
-	m_nIDTemplate = nIDTemplate;
+	m_IsPropertyDialog = IsPropertyDialog;
+	m_AllowOverwriteName = AllowOverwriteName;
+	m_AllowOverwriteGPS = AllowOverwriteGPS;
 
 	m_LastCountrySelected = LFGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
 	m_LastSortColumn = LFGetApp()->GetInt(_T("IATALastSortColumn"), 0);
 	m_LastSortDirection = LFGetApp()->GetInt(_T("IATALastSortDirection"), FALSE);
 	m_OverwriteName = AllowOverwriteName ? LFGetApp()->GetInt(_T("IATAOverwriteName"), TRUE) : FALSE;
 	m_OverwriteGPS = AllowOverwriteGPS ? LFGetApp()->GetInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
-	m_AllowOverwriteName = AllowOverwriteName;
-	m_AllowOverwriteGPS = AllowOverwriteGPS;
 
-	if (Airport)
-	{
-		if (!LFIATAGetAirportByCode(Airport, &p_Airport))
-			p_Airport = NULL;
-	}
-	else
-	{
-		p_Airport = NULL;
-	}
+	p_Airport = NULL;
+	LFIATAGetAirportByCode(Airport, &p_Airport);
 }
 
 void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_MAP_PREVIEW, m_wndMap);
-	DDX_Control(pDX, IDC_AIRPORTS, m_wndList);
-	if (m_nIDTemplate==IDD_SELECTIATA)
-	{
-		DDX_Check(pDX, IDC_REPLACE_NAME, m_OverwriteName);
-		DDX_Check(pDX, IDC_REPLACE_GPS, m_OverwriteGPS);
-	}
+	LFDialog::DoDataExchange(pDX);
+
+	DDX_Control(pDX, IDC_AIRPORTS, m_wndAirportList);
+	DDX_Check(pDX, IDC_REPLACE_NAME, m_OverwriteName);
+	DDX_Check(pDX, IDC_REPLACE_GPS, m_OverwriteGPS);
 
 	if (pDX->m_bSaveAndValidate)
 	{
+		INT Index = m_wndAirportList.GetNextItem(-1, LVIS_SELECTED);
+		if (Index!=-1)
+			p_Airport = p_Airports[Index];
+
 		LFGetApp()->WriteInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
 		LFGetApp()->WriteInt(_T("IATALastSortColumn"), m_LastSortColumn);
 		LFGetApp()->WriteInt(_T("IATALastSortDirection"), m_LastSortDirection);
+
 		if (m_AllowOverwriteName)
 			LFGetApp()->WriteInt(_T("IATAOverwriteName"), m_OverwriteName);
+
 		if (m_AllowOverwriteGPS)
 			LFGetApp()->WriteInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
 	}
@@ -70,11 +88,11 @@ INT LFSelectLocationIATADlg::Compare(INT n1, INT n2)
 	switch (m_LastSortColumn)
 	{
 	case 0:
-		Result = strcmp(m_Airports[n1]->Code, m_Airports[n2]->Code);
+		Result = strcmp(p_Airports[n1]->Code, p_Airports[n2]->Code);
 		break;
 
 	case 1:
-		Result = strcmp(m_Airports[n1]->Name, m_Airports[n2]->Name);
+		Result = strcmp(p_Airports[n1]->Name, p_Airports[n2]->Name);
 		break;
 	}
 
@@ -94,7 +112,7 @@ void LFSelectLocationIATADlg::Heap(INT Wurzel, INT Anzahl)
 				Index++;
 		if (Compare(Wurzel, Index)<0)
 		{
-			Swap(m_Airports[Wurzel], m_Airports[Index]);
+			Swap(p_Airports[Wurzel], p_Airports[Index]);
 			Wurzel = Index;
 		}
 		else
@@ -106,18 +124,18 @@ void LFSelectLocationIATADlg::Heap(INT Wurzel, INT Anzahl)
 
 void LFSelectLocationIATADlg::Sort()
 {
-	if (m_nAirports>1)
+	if (m_AirportCount>1)
 	{
-		for (INT a=m_nAirports/2-1; a>=0; a--)
-			Heap(a, m_nAirports);
-		for (INT a=m_nAirports-1; a>0; a--)
+		for (INT a=m_AirportCount/2-1; a>=0; a--)
+			Heap(a, m_AirportCount);
+		for (INT a=m_AirportCount-1; a>0; a--)
 		{
-			Swap(m_Airports[0], m_Airports[a]);
+			Swap(p_Airports[0], p_Airports[a]);
 			Heap(0, a);
 		}
 	}
 
-	CHeaderCtrl* pHeaderCtrl = m_wndList.GetHeaderCtrl();
+	CHeaderCtrl* pHeaderCtrl = m_wndAirportList.GetHeaderCtrl();
 
 	HDITEM Item;
 	ZeroMemory(&Item, sizeof(Item));
@@ -134,136 +152,115 @@ void LFSelectLocationIATADlg::Sort()
 		pHeaderCtrl->SetItem(a, &Item);
 	}
 
-	INT sel = 0;
+	INT Selected = 0;
 	if (p_Airport)
-	{
-		for (INT a=0; a<m_nAirports; a++)
-			if (m_Airports[a]==p_Airport)
+		for (INT a=0; a<m_AirportCount; a++)
+			if (p_Airports[a]==p_Airport)
 			{
-				sel = a;
+				Selected = a;
 				break;
 			}
-	}
-	m_wndList.SetItemState(sel, LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	m_wndList.SetItemState(sel, LVIS_SELECTED, LVIS_SELECTED);
-	m_wndList.EnsureVisible(sel, FALSE);
+
+	m_wndAirportList.SetItemState(Selected, LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	m_wndAirportList.SetItemState(Selected, LVIS_SELECTED, LVIS_SELECTED);
+	m_wndAirportList.EnsureVisible(Selected, FALSE);
 }
 
-void LFSelectLocationIATADlg::LoadCountry(UINT country)
+void LFSelectLocationIATADlg::LoadCountry(UINT Country)
 {
-	m_wndList.SetRedraw(FALSE);
-	m_wndList.SetItemCount(0);
+	m_AirportCount = 0;
 
-	m_nAirports = 0;
+	INT Index = LFIATAGetNextAirportByCountry(Country, -1, &p_Airports[m_AirportCount]);
+	while ((Index!=-1) && (m_AirportCount<MaxAirportsPerCountry))
+		Index = LFIATAGetNextAirportByCountry(Country, Index, &p_Airports[++m_AirportCount]);
 
-	INT Index = LFIATAGetNextAirportByCountry(country, -1, &m_Airports[m_nAirports]);
-	while ((Index!=-1) && (m_nAirports<MaxAirportsPerCountry))
-		Index = LFIATAGetNextAirportByCountry(country, Index, &m_Airports[++m_nAirports]);
-
-	m_wndList.SetItemCount(m_nAirports);
+	m_wndAirportList.SetItemCount(m_AirportCount);
 	Sort();
 
-	m_wndList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-	m_wndList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
+	m_wndAirportList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
 
-	m_wndList.SetRedraw(TRUE);
-	m_wndList.Invalidate();
-
-	UpdatePreview();
-}
-
-void LFSelectLocationIATADlg::UpdatePreview()
-{
-	INT Index = m_wndList.GetNextItem(-1, LVIS_SELECTED);
-
-	p_Airport = m_Airports[Index];
-	m_wndMap.Update(p_Airport);
-
-	LFGeoCoordinatesToString(p_Airport->Location, m_Buffer, 256, FALSE);
-	GetDlgItem(IDC_GPSLOCATION)->SetWindowText(m_Buffer);
+	CRect rect;
+	m_wndAirportList.GetClientRect(rect);
+	m_wndAirportList.SetColumnWidth(1, rect.Width()-m_wndAirportList.GetColumnWidth(0));
 }
 
 
-BEGIN_MESSAGE_MAP(LFSelectLocationIATADlg, CDialog)
-	ON_NOTIFY(NM_CUSTOMDRAW, IDC_AIRPORTS, OnCustomDraw)
-	ON_NOTIFY(LVN_GETDISPINFO, IDC_AIRPORTS, OnGetDispInfo)
-	ON_NOTIFY(NM_DBLCLK, IDC_AIRPORTS, OnDoubleClick)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_AIRPORTS, OnItemChanged)
-	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
+BEGIN_MESSAGE_MAP(LFSelectLocationIATADlg, LFDialog)
 	ON_CONTROL(CBN_SELCHANGE, IDC_COUNTRY, OnSelectCountry)
-	ON_NOTIFY(NM_CLICK, IDC_REPORTERROR, OnReportError)
+	ON_NOTIFY(NM_DBLCLK, IDC_AIRPORTS, OnDoubleClick)
+	ON_NOTIFY(LVN_GETDISPINFO, IDC_AIRPORTS, OnGetDispInfo)
+	ON_NOTIFY(REQUEST_TEXTCOLOR, IDC_AIRPORTS, OnRequestTextColor)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_AIRPORTS, OnRequestTooltipData)
+	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
 END_MESSAGE_MAP()
 
 BOOL LFSelectLocationIATADlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	if (!m_IsPropertyDialog)
+		m_nIDTemplate = IDD_SELECTGPS;
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LFGetApp()->LoadDialogIcon(m_nIDTemplate);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
+	LFDialog::OnInitDialog();
 
 	// Combobox füllen
-	CComboBox* c = (CComboBox*)GetDlgItem(IDC_COUNTRY);
+	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_COUNTRY);
 	UINT cCount = LFIATAGetCountryCount();
 	for (UINT a=0; a<cCount; a++)
 	{
-		CString tmpStr(&LFIATAGetCountry(a)->Name[0]);
-		c->AddString(tmpStr);
+		CString tmpStr(LFIATAGetCountry(a)->Name);
+		pComboBox->AddString(tmpStr);
 	}
 
 	// Liste konfigurieren
-	m_wndList.SetExtendedStyle(m_wndList.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
-
-	CString tmpStr;
-
-	LV_COLUMN lvc;
-	ZeroMemory(&lvc, sizeof(lvc));
-	lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.fmt = LVCFMT_LEFT;
-
-	ENSURE(tmpStr.LoadString(IDS_AIRPORT_CODE));
-	lvc.pszText = tmpStr.GetBuffer();
-	m_wndList.InsertColumn(0, &lvc);
+	CString tmpStr((LPCSTR)IDS_AIRPORT_CODE);
+	m_wndAirportList.AddColumn(0, tmpStr.GetBuffer());
 
 	ENSURE(tmpStr.LoadString(IDS_AIRPORT_LOCATION));
-	lvc.pszText = tmpStr.GetBuffer();
-	lvc.iSubItem = 1;
-	m_wndList.InsertColumn(1, &lvc);
+	m_wndAirportList.AddColumn(1, tmpStr.GetBuffer());
 
 	// Init
-	UINT country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
-	tmpStr = LFIATAGetCountry(country)->Name;
-	c->SelectString(-1, tmpStr);
-	LoadCountry(country);
+	UINT Country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
+	tmpStr = LFIATAGetCountry(Country)->Name;
+	pComboBox->SelectString(-1, tmpStr);
+	LoadCountry(Country);
 
-	if (m_nIDTemplate==IDD_SELECTIATA)
+	if (p_Airport)
+		m_wndAirportList.SetFocus();
+
+	// Optionen
+	GetDlgItem(IDC_REPLACE_NAME)->EnableWindow(m_AllowOverwriteName);
+	GetDlgItem(IDC_REPLACE_GPS)->EnableWindow(m_AllowOverwriteGPS);
+
+	if (!m_IsPropertyDialog)
 	{
-		GetDlgItem(IDC_REPLACE_NAME)->EnableWindow(m_AllowOverwriteName);
-		GetDlgItem(IDC_REPLACE_GPS)->EnableWindow(m_AllowOverwriteGPS);
+		m_wndCategory[2].ShowWindow(SW_HIDE);
+
+		GetDlgItem(IDC_REPLACE_NAME)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_REPLACE_GPS)->ShowWindow(SW_HIDE);
+
+		CRect rectBottom;
+		GetDlgItem(IDC_REPLACE_GPS)->GetWindowRect(&rectBottom);
+		ScreenToClient(&rectBottom);
+
+		CRect rectWindow;
+		m_wndAirportList.GetWindowRect(&rectWindow);
+		ScreenToClient(&rectWindow);
+
+		m_wndAirportList.SetWindowPos(NULL, 0, 0, rectWindow.Width(), rectBottom.bottom-rectWindow.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 
-	return TRUE;
+	return FALSE;
 }
 
-void LFSelectLocationIATADlg::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
+void LFSelectLocationIATADlg::OnSelectCountry()
 {
-	NMLVCUSTOMDRAW* pLVCD = (NMLVCUSTOMDRAW*)pNMHDR;
-	*pResult = CDRF_DODEFAULT;
+	m_LastCountrySelected = ((CComboBox*)GetDlgItem(IDC_COUNTRY))->GetCurSel();
 
-	if (CDDS_PREPAINT==pLVCD->nmcd.dwDrawStage)
-	{
-		*pResult = CDRF_NOTIFYITEMDRAW;
-	}
-	else
-		if (CDDS_ITEMPREPAINT==pLVCD->nmcd.dwDrawStage)
-		{
-			INT Index = (INT)pLVCD->nmcd.dwItemSpec;
+	LoadCountry(m_LastCountrySelected);
+}
 
-			if (strcmp(m_Airports[Index]->Code, m_Airports[Index]->MetroCode)==0)
-				pLVCD->clrText = 0xFF0000;
-		}
+void LFSelectLocationIATADlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+{
+	PostMessage(WM_COMMAND, (WPARAM)IDOK);
 }
 
 void LFSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
@@ -275,33 +272,56 @@ void LFSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-		CHAR* src = (pItem->iSubItem==0) ? &m_Airports[Index]->Code[0] : &m_Airports[Index]->Name[0];
-		MultiByteToWideChar(CP_ACP, 0, src, -1, m_Buffer, 256);
-		pItem->pszText = (LPWSTR)m_Buffer;
+		CHAR* pChar = (pItem->iSubItem==0) ? p_Airports[Index]->Code : p_Airports[Index]->Name;
+		MultiByteToWideChar(CP_ACP, 0, pChar, -1, pItem->pszText, 256);
 	}
 }
 
-void LFSelectLocationIATADlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+void LFSelectLocationIATADlg::OnRequestTextColor(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	PostMessage(WM_COMMAND, (WPARAM)IDOK);
+	NM_TEXTCOLOR* pTextColor = (NM_TEXTCOLOR*)pNMHDR;
+
+	if (pTextColor->Item!=-1)
+	{
+		const LFAirport* pAirport = p_Airports[pTextColor->Item];
+
+		if (strcmp(pAirport->Code, pAirport->MetroCode)==0)
+			pTextColor->Color = 0x208040;
+	}
+
+	*pResult = 0;
 }
 
-void LFSelectLocationIATADlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+void LFSelectLocationIATADlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
-	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
-		UpdatePreview();
+	if (pTooltipData->Item!=-1)
+	{
+		LFAirport* pAirport = p_Airports[pTooltipData->Item];
+
+		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_NAME, pAirport->Name);
+		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_COUNTRY, LFIATAGetCountry(pAirport->CountryID)->Name);
+
+		WCHAR tmpStr[256];
+		LFGeoCoordinatesToString(pAirport->Location, tmpStr, 256, FALSE);
+		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_LOCATION, tmpStr);
+
+		pTooltipData->hBitmap = LFIATACreateAirportMap(pAirport, 192, 192);
+		pTooltipData->Show = TRUE;
+	}
+
+	*pResult = 0;
 }
 
 void LFSelectLocationIATADlg::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NMLISTVIEW *pLV = (NMLISTVIEW*)pNMHDR;
-	INT col = pLV->iItem;
+	INT Column = pLV->iItem;
 
-	if (col!=(INT)m_LastSortColumn)
+	if (Column!=(INT)m_LastSortColumn)
 	{
-		m_LastSortColumn = col;
+		m_LastSortColumn = Column;
 		m_LastSortDirection = FALSE;
 	}
 	else
@@ -309,36 +329,8 @@ void LFSelectLocationIATADlg::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)
 		m_LastSortDirection = !m_LastSortDirection;
 	}
 
-	m_wndList.SetRedraw(FALSE);
-
 	Sort();
-
-	m_wndList.SetRedraw(TRUE);
-	m_wndList.Invalidate();
-
-	*pResult = 0;
-}
-
-void LFSelectLocationIATADlg::OnSelectCountry()
-{
-	m_LastCountrySelected = ((CComboBox*)GetDlgItem(IDC_COUNTRY))->GetCurSel();
-	LoadCountry(m_LastCountrySelected);
-}
-
-void LFSelectLocationIATADlg::OnReportError(NMHDR* /*pNMHDR*/, LRESULT* pResult)
-{
-	CString Subject = _T("IATA database error");
-
-	INT Index = m_wndList.GetNextItem(-1, LVIS_SELECTED);
-	if (Index!=-1)
-	{
-		CString Code(m_Airports[Index]->Code);
-		CString Name(m_Airports[Index]->Name);
-		CString Country(&LFIATAGetCountry(m_Airports[Index]->CountryID)->Name[0]);
-		Subject += _T(": ")+Code+_T(" (")+Name+_T(", ")+Country+_T(")");
-	}
-
-	LFGetApp()->SendMail(Subject);
+	m_wndAirportList.Invalidate();
 
 	*pResult = 0;
 }

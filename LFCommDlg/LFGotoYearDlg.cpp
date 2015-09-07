@@ -63,5 +63,5 @@ BOOL LFGotoYearDlg::OnInitDialog()
 	m_wndEdit.SetValidChars(_T("0123456789"));
 	m_wndEdit.SetSel(0, 3);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }

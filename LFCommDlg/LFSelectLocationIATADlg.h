@@ -3,7 +3,8 @@
 //
 
 #pragma once
-#include "CMapPreviewCtrl.h"
+#include "CExplorerList.h"
+#include "LFDialog.h"
 
 
 // LFSelectLocationIATADlg
@@ -11,45 +12,42 @@
 
 #define MaxAirportsPerCountry   2500
 
-class LFSelectLocationIATADlg : public CDialog
+class LFSelectLocationIATADlg : public LFDialog
 {
 public:
-	LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd=NULL, CHAR* Airport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
+	LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd=NULL, CHAR* Airport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	LFAirport* p_Airport;
-	UINT m_LastCountrySelected;
-	UINT m_LastSortColumn;
-	BOOL m_LastSortDirection;
 	BOOL m_OverwriteName;
 	BOOL m_OverwriteGPS;
 
 protected:
 	void Sort();
-	void LoadCountry(UINT country);
-	void UpdatePreview();
+	void LoadCountry(UINT Country);
+
+	afx_msg BOOL OnInitDialog();
+	afx_msg void OnSelectCountry();
+	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRequestTextColor(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSortItems(NMHDR* pNMHDR, LRESULT* pResult);
+	DECLARE_MESSAGE_MAP()
+
+	BOOL m_IsPropertyDialog;
+	BOOL m_AllowOverwriteName;
+	BOOL m_AllowOverwriteGPS;
+	UINT m_LastCountrySelected;
+	UINT m_LastSortColumn;
+	BOOL m_LastSortDirection;
+
+	CExplorerList m_wndAirportList;
+	LFAirport* p_Airports[MaxAirportsPerCountry];
+	INT m_AirportCount;
 
 private:
 	INT Compare(INT n1, INT n2);
 	void Heap(INT Wurzel, INT Anzahl);
-
-	afx_msg BOOL OnInitDialog();
-	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnSortItems(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnSelectCountry();
-	afx_msg void OnReportError(NMHDR* pNMHDR, LRESULT* pResult);
-	DECLARE_MESSAGE_MAP()
-
-	CListCtrl m_wndList;
-	CMapPreviewCtrl m_wndMap;
-	LFAirport* m_Airports[MaxAirportsPerCountry];
-	INT m_nAirports;
-	UINT m_nIDTemplate;
-	WCHAR m_Buffer[256];
-	BOOL m_AllowOverwriteName;
-	BOOL m_AllowOverwriteGPS;
 };

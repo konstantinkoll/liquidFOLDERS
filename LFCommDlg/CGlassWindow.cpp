@@ -236,6 +236,7 @@ INT CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	LFGetApp()->HideTooltip();
 	LFGetApp()->AddFrame(this);
 
 	OnCompositionChanged();
@@ -248,6 +249,8 @@ INT CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CGlassWindow::OnClose()
 {
+	LFGetApp()->HideTooltip();
+
 	if (GetStyle() & WS_OVERLAPPEDWINDOW)
 	{
 		m_WindowPlacement.length = sizeof(m_WindowPlacement);

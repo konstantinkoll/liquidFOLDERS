@@ -68,6 +68,9 @@ LFCORE_API BOOL LFIATAGetAirportByCode(CHAR* Code, LFAirport** ppAirport)
 	if (!Code)
 		return FALSE;
 
+	if (strlen(Code)!=3)
+		return FALSE;
+
 	INT First = 0;
 	INT Last = (INT)LFIATAGetAirportCount()-1;
 

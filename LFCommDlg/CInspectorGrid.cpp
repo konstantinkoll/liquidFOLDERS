@@ -517,7 +517,7 @@ void CPropertyIATA::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
+	LFSelectLocationIATADlg dlg(TRUE, NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
 
 	if (dlg.DoModal()==IDOK)
 		if (dlg.p_Airport)

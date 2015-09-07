@@ -133,7 +133,7 @@ BOOL LFCreateStoreDlg::OnInitDialog()
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
 		WM_VOLUMECHANGE, 1, &shCNE);
 
-	return TRUE;
+	return FALSE;
 }
 
 void LFCreateStoreDlg::OnDestroy()

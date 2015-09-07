@@ -352,11 +352,15 @@ BOOL LFDialog::OnInitDialog()
 		pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
 	}
 
-	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	LFGetApp()->HideTooltip();
+
+	return FALSE;
 }
 
 void LFDialog::OnDestroy()
 {
+	LFGetApp()->HideTooltip();
+
 	for (POSITION p=m_Buttons.GetHeadPosition(); p;)
 	{
 		CHoverButton* pButton = m_Buttons.GetNext(p);

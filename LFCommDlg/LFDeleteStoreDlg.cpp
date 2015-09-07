@@ -46,7 +46,7 @@ BOOL LFDeleteStoreDlg::OnInitDialog()
 	Caption.Format(text, m_Store.StoreName);
 	SetWindowText(Caption);
 
-	return TRUE;
+	return FALSE;
 }
 
 void LFDeleteStoreDlg::SetOkButton()

@@ -175,7 +175,7 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	AdjustLayout();
 	AddBottomRightControl(IDC_SKIP);
 
-	return TRUE;
+	return FALSE;
 }
 
 void LFItemTemplateDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)

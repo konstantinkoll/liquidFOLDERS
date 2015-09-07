@@ -142,7 +142,7 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_USETIME))->SetCheck(m_UseTime);
 	m_wndTime.EnableWindow(m_UseTime);
 
-	return TRUE;
+	return FALSE;
 }
 
 void LFEditTimeDlg::OnUseTime()

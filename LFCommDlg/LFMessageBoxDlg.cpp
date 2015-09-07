@@ -229,7 +229,7 @@ BOOL LFMessageBoxDlg::OnInitDialog()
 			pMenu->EnableMenuItem (SC_CLOSE, MF_BYCOMMAND | MF_GRAYED);
 	}
 
-	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
 
 void LFMessageBoxDlg::OnDestroy()

@@ -61,7 +61,7 @@ BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
 
 void CExplorerList::Init()
 {
-	ModifyStyle(0, LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
+	ModifyStyle(0, WS_CLIPCHILDREN | LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
 	CHeaderCtrl* pHeader = GetHeaderCtrl();
@@ -251,7 +251,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	}
 
 	// Item
-	WCHAR Text[256]=L"Test";
+	WCHAR Text[256];
 	UINT Columns[4];
 
 	LVITEM Item;
@@ -307,7 +307,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 		if ((this->GetEditControl()) && (State & LVIS_FOCUSED))
 			break;
 
-		rectLabel.right = rectLabel.left+m_Columns[0].cx-6*PADDING;
+		rectLabel.right = rectLabel.left+m_Columns[0].cx-5*PADDING;
 		rectLabel.left = rectIcon.right+5*PADDING-2;
 		DrawLabel(dc, rectLabel, Text, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
@@ -320,7 +320,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 			GetItem(&Item);
 
 			rectLabel.right += m_Columns[a].cx;
-			rectLabel.left = rectLabel.right-m_Columns[a].cx+11*PADDING+1;
+			rectLabel.left = rectLabel.right-m_Columns[a].cx+11*PADDING-2;
 
 			dc.DrawText(Item.pszText, rectLabel, DT_END_ELLIPSIS | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | ((m_Columns[a].fmt & LVCFMT_JUSTIFYMASK)==LVCFMT_RIGHT ? DT_RIGHT : DT_LEFT));
 		}
@@ -476,7 +476,7 @@ void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
 				GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
 
 				if (tag.Show)
-					LFGetApp()->ShowTooltip(this, point, GetItemText(m_TooltipItem, 0), tag.Text, tag.hIcon);
+					LFGetApp()->ShowTooltip(this, point, GetItemText(m_TooltipItem, 0), tag.Text, tag.hIcon, tag.hBitmap);
 			}
 	}
 	else
@@ -569,7 +569,7 @@ void CExplorerList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 		else
 		{
-			m_IconSize = 16;
+			m_IconSize = 0;
 		}
 
 		*pResult = CDRF_NOTIFYITEMDRAW;

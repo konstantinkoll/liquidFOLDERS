@@ -309,7 +309,7 @@ BOOL LFUpdateDlg::OnInitDialog()
 	CheckInternetConnection();
 	SetTimer(1, 1000, NULL);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
 
 void LFUpdateDlg::OnDestroy()

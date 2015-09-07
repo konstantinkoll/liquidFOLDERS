@@ -77,7 +77,11 @@ void CCategory::OnPaint()
 	WCHAR tmpStr[256];
 	GetWindowText(tmpStr, 256);
 
-	DrawCategory(dc, rectText, tmpStr, NULL, IsCtrlThemed());
+	WCHAR* pChar = wcschr(tmpStr, L'\n');
+	if (pChar)
+		*(pChar++) = L'\0';
+
+	DrawCategory(dc, rectText, tmpStr, pChar, IsCtrlThemed());
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);

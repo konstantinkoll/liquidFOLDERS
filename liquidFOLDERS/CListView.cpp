@@ -891,6 +891,8 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
 		return -1;
 
+	m_wndHeader.SetFont(&LFGetApp()->m_DefaultFont);
+
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		HDITEM HdItem;

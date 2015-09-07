@@ -25,6 +25,7 @@ struct NM_TOOLTIPDATA
 	INT Item;
 	BOOL Show;
 	HICON hIcon;
+	HBITMAP hBitmap;
 	WCHAR Text[4096];
 };
 

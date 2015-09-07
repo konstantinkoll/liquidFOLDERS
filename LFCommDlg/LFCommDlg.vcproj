@@ -405,10 +405,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMapPreviewCtrl.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CMapSelectionCtrl.cpp"
 				>
 			</File>
@@ -687,10 +683,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\JumpToLocation_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Key_Tiny.ico"
 				>
 			</File>
@@ -927,10 +919,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\ViewOptions_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Warning.ico"
 				>
 			</File>
@@ -1002,10 +990,6 @@
 			</File>
 			<File
 				RelativePath=".\CMaintenanceReport.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMapPreviewCtrl.h"
 				>
 			</File>
 			<File
