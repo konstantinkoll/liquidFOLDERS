@@ -405,7 +405,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMapSelectionCtrl.cpp"
+				RelativePath=".\CMapCtrl.cpp"
 				>
 			</File>
 			<File
@@ -993,7 +993,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMapSelectionCtrl.h"
+				RelativePath=".\CMapCtrl.h"
 				>
 			</File>
 			<File

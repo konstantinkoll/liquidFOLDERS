@@ -237,22 +237,21 @@ BEGIN
     LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,181,263,8
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "GPS-Koordinaten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,258,274,50,14,WS_GROUP
-    PUSHBUTTON      "Zurücksetzen",IDC_RESET,315,274,65,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,387,274,50,14,WS_GROUP
-    GROUPBOX        "Koordinaten",IDC_STATIC,7,7,430,35,WS_GROUP
-    GROUPBOX        "Karte",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,247,9
-    EDITTEXT        IDC_LATITUDE,39,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Breite:",IDC_STATIC,14,21,23,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Länge:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,416,192
+    LTEXT           "Breite:",IDC_STATIC,7,254,32,8
+    EDITTEXT        IDC_LATITUDE,40,252,60,14,ES_AUTOHSCROLL
+    LTEXT           "Länge:",IDC_STATIC,7,272,31,9
+    EDITTEXT        IDC_LONGITUDE,40,270,60,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,315,300,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,373,300,50,14,WS_GROUP
+    CONTROL         "Karte\nKlicken Sie auf die Karte, um einen Ort festzulegen.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,416,25
+    CONTROL         "Koordinaten",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
 IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
@@ -566,9 +565,9 @@ BEGIN
     IDD_SELECTGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 437
+        RIGHTMARGIN, 423
         TOPMARGIN, 7
-        BOTTOMMARGIN, 288
+        BOTTOMMARGIN, 314
     END
 
     IDD_SELECTIATA, DIALOG
@@ -711,6 +710,16 @@ END
 //
 // Menu
 //
+
+IDM_SELECTGPS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&IATA-Code...",               IDM_SELECTGPS_IATA
+        MENUITEM SEPARATOR
+        MENUITEM "&Zurücksetzen",               IDM_SELECTGPS_RESET
+    END
+END
 
 IDM_STORE MENU 
 BEGIN
@@ -963,26 +972,25 @@ BEGIN
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,67,153,145,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,15
     LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,51,263,17
-    LTEXT           "Usted da permiso de eliminar el store al elegir «Eliminar» en la parte de abajo y luego dar click en «Eliminar ahora».",IDC_STATIC,7,81,263,17
+    LTEXT           "Usted da permiso de eliminar el store al elegir «Eliminar» en la parte de abajo y luego dar clic en «Eliminar ahora».",IDC_STATIC,7,81,263,17
     LTEXT           "Esta ventana previene que usted elimine accidentalmente muchos archivos.",IDC_STATIC,7,181,263,8
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Seleccionar ubicación GPS"
+CAPTION "Ubicación GPS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,273,274,50,14,WS_GROUP
-    PUSHBUTTON      "Resetaurar",IDC_RESET,330,274,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,387,274,50,14,WS_GROUP
-    GROUPBOX        "Coordenadas",IDC_STATIC,7,7,430,35,WS_GROUP
-    GROUPBOX        "Mapa",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,263,9
-    EDITTEXT        IDC_LATITUDE,41,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Latitud:",IDC_STATIC,14,21,25,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Longitud:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,416,192
+    LTEXT           "Latitud:",IDC_STATIC,7,254,37,8
+    EDITTEXT        IDC_LATITUDE,45,252,60,14,ES_AUTOHSCROLL
+    LTEXT           "Longitud:",IDC_STATIC,7,272,36,9
+    EDITTEXT        IDC_LONGITUDE,45,270,60,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,315,300,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,373,300,50,14,WS_GROUP
+    CONTROL         "Mapa\nHaga clic en el mapa para establecer a una ubicación.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,416,25
+    CONTROL         "Coordenadas",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
 IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
@@ -1298,9 +1306,9 @@ BEGIN
     IDD_SELECTGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 437
+        RIGHTMARGIN, 423
         TOPMARGIN, 7
-        BOTTOMMARGIN, 288
+        BOTTOMMARGIN, 314
     END
 
     IDD_SELECTIATA, DIALOG
@@ -1448,6 +1456,16 @@ END
 //
 // Menu
 //
+
+IDM_SELECTGPS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Código de &IATA...",          IDM_SELECTGPS_IATA
+        MENUITEM SEPARATOR
+        MENUITEM "&Restaurar",                  IDM_SELECTGPS_RESET
+    END
+END
 
 IDM_STORE MENU 
 BEGIN
@@ -1704,22 +1722,21 @@ BEGIN
     LTEXT           "Cette fenêtre empêche l'effacement non intentionnel de beaucoup de fichiers.",IDC_STATIC,7,181,273,8
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Choisissez l'endroit GPS"
+CAPTION "Coordonnées GPS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,273,274,50,14,WS_GROUP
-    PUSHBUTTON      "Remise",IDC_RESET,330,274,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,387,274,50,14,WS_GROUP
-    GROUPBOX        "Coordonnées",IDC_STATIC,7,7,430,35,WS_GROUP
-    GROUPBOX        "Carte",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,263,9
-    EDITTEXT        IDC_LATITUDE,46,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Latitude:",IDC_STATIC,14,21,30,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Longitude:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,416,192
+    LTEXT           "Latitude:",IDC_STATIC,7,254,42,8
+    EDITTEXT        IDC_LATITUDE,50,252,60,14,ES_AUTOHSCROLL
+    LTEXT           "Longitude:",IDC_STATIC,7,272,41,9
+    EDITTEXT        IDC_LONGITUDE,50,270,60,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,315,300,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,373,300,50,14,WS_GROUP
+    CONTROL         "Carte\nCliquez sur la carte pour accéder à un endroit.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,416,25
+    CONTROL         "Coordonnées",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
 IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
@@ -2034,9 +2051,9 @@ BEGIN
     IDD_SELECTGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 437
+        RIGHTMARGIN, 423
         TOPMARGIN, 7
-        BOTTOMMARGIN, 288
+        BOTTOMMARGIN, 314
     END
 
     IDD_SELECTIATA, DIALOG
@@ -2179,6 +2196,16 @@ END
 //
 // Menu
 //
+
+IDM_SELECTGPS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Code d'aéroport &IATA...",    IDM_SELECTGPS_IATA
+        MENUITEM SEPARATOR
+        MENUITEM "&Remise",                     IDM_SELECTGPS_RESET
+    END
+END
 
 IDM_STORE MENU 
 BEGIN
@@ -2485,22 +2512,21 @@ BEGIN
     LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,181,263,8
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Select GPS location"
+CAPTION "GPS location"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,273,274,50,14,WS_GROUP
-    PUSHBUTTON      "Reset",IDC_RESET,330,274,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,387,274,50,14,WS_GROUP
-    GROUPBOX        "Coordinates",IDC_STATIC,7,7,430,35,WS_GROUP
-    GROUPBOX        "Map",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,263,9
-    EDITTEXT        IDC_LATITUDE,46,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Latitude:",IDC_STATIC,14,21,30,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
-    LTEXT           "Longitude:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,416,192
+    LTEXT           "Latitude:",IDC_STATIC,7,254,42,8
+    EDITTEXT        IDC_LATITUDE,50,252,60,14,ES_AUTOHSCROLL
+    LTEXT           "Longitude:",IDC_STATIC,7,272,41,9
+    EDITTEXT        IDC_LONGITUDE,50,270,60,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,315,300,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,373,300,50,14,WS_GROUP
+    CONTROL         "Map\nClick on the map to select a location.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,416,25
+    CONTROL         "Coordinates",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
 IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
@@ -2816,9 +2842,9 @@ BEGIN
     IDD_SELECTGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 437
+        RIGHTMARGIN, 423
         TOPMARGIN, 7
-        BOTTOMMARGIN, 288
+        BOTTOMMARGIN, 314
     END
 
     IDD_SELECTIATA, DIALOG
@@ -2958,6 +2984,16 @@ END
 //
 // Menu
 //
+
+IDM_SELECTGPS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&IATA code...",               IDM_SELECTGPS_IATA
+        MENUITEM SEPARATOR
+        MENUITEM "&Reset",                      IDM_SELECTGPS_RESET
+    END
+END
 
 IDM_STORE MENU 
 BEGIN

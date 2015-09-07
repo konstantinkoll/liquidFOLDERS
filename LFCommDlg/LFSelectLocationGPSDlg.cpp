@@ -36,15 +36,17 @@ DOUBLE StringToCoord(CString str)
 // LFSelectLocationGPSDlg
 //
 
-LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(const LFGeoCoordinates Location, CWnd* pParentWnd)
-	: CDialog(IDD_SELECTGPS, pParentWnd)
+LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(const LFGeoCoordinates& Location, CWnd* pParentWnd)
+	: LFDialog(IDD_SELECTGPS, pParentWnd)
 {
 	m_Location = Location;
 }
 
 void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_MAP_SELECTION, m_Map);
+	LFDialog::DoDataExchange(pDX);
+
+	DDX_Control(pDX, IDC_MAP, m_wndMap);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -59,84 +61,87 @@ void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, CDialog)
-	ON_WM_DESTROY()
-	ON_WM_TIMER()
-	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP_SELECTION, OnUpdateEdit)
-	ON_BN_CLICKED(IDC_RESET, OnReset)
+BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, LFDialog)
+	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP, OnUpdateEdit)
 	ON_EN_KILLFOCUS(IDC_LATITUDE, OnLatitudeChanged)
 	ON_EN_KILLFOCUS(IDC_LONGITUDE, OnLongitudeChanged)
+
+	ON_COMMAND(IDM_SELECTGPS_IATA, OnIATA)
+	ON_COMMAND(IDM_SELECTGPS_RESET, OnReset)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTGPS_IATA, IDM_SELECTGPS_RESET, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 BOOL LFSelectLocationGPSDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	LFDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LFGetApp()->LoadDialogIcon(IDD_SELECTGPS);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
+	m_wndMap.SetLocation(m_Location);
+	m_wndMap.SetMenu(IDM_SELECTGPS);
 
-	m_Map.SetGeoCoordinates(m_Location);
-	SetTimer(1, 500, NULL);
-
-	return TRUE;
-}
-
-void LFSelectLocationGPSDlg::OnDestroy()
-{
-	KillTimer(1);
-
-	CDialog::OnDestroy();
-}
-
-void LFSelectLocationGPSDlg::OnTimer(UINT_PTR nIDEvent)
-{
-	if (nIDEvent==1)
-		m_Map.OnBlink();
-
-	CDialog::OnTimer(nIDEvent);
-
-	// Eat bogus WM_TIMER messages
-	MSG msg;
-	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
+	return FALSE;
 }
 
 void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	tagGPSDATA* pTag = (tagGPSDATA*)pNMHDR;
-	m_Location = *pTag->pCoord;
+	NM_GPSDATA* pTag = (NM_GPSDATA*)pNMHDR;
+
+	m_Location = *pTag->pLocation;
 
 	WCHAR tmpStr[256];
 	LFGeoCoordinateToString(m_Location.Latitude, tmpStr, 256, TRUE, FALSE);
 	GetDlgItem(IDC_LATITUDE)->SetWindowText(tmpStr);
+
 	LFGeoCoordinateToString(m_Location.Longitude, tmpStr, 256, FALSE, FALSE);
 	GetDlgItem(IDC_LONGITUDE)->SetWindowText(tmpStr);
 
 	*pResult = 0;
 }
 
-void LFSelectLocationGPSDlg::OnReset()
-{
-	m_Location.Latitude = m_Location.Longitude = 0.0;
-	EndDialog(IDOK);
-}
-
 void LFSelectLocationGPSDlg::OnLatitudeChanged()
 {
 	CString strLat;
 	GetDlgItem(IDC_LATITUDE)->GetWindowText(strLat);
+
 	m_Location.Latitude = StringToCoord(strLat);
 
-	m_Map.SetGeoCoordinates(m_Location);
+	m_wndMap.SetLocation(m_Location);
 }
 
 void LFSelectLocationGPSDlg::OnLongitudeChanged()
 {
 	CString strLon;
 	GetDlgItem(IDC_LONGITUDE)->GetWindowText(strLon);
+
 	m_Location.Longitude = StringToCoord(strLon);
 
-	m_Map.SetGeoCoordinates(m_Location);
+	m_wndMap.SetLocation(m_Location);
+}
+
+
+void LFSelectLocationGPSDlg::OnIATA()
+{
+	LFSelectLocationIATADlg dlg(FALSE, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		m_Location = dlg.p_Airport->Location;
+
+		m_wndMap.SetLocation(m_Location);
+	}
+}
+
+void LFSelectLocationGPSDlg::OnReset()
+{
+	m_Location.Latitude = m_Location.Longitude = 0.0;
+
+	m_wndMap.SetLocation(m_Location);
+}
+
+void LFSelectLocationGPSDlg::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = TRUE;
+
+	if (pCmdUI->m_nID==IDM_SELECTGPS_RESET)
+		b &= (m_Location.Latitude!=0) || (m_Location.Longitude!=0);
+
+	pCmdUI->Enable(b);
 }

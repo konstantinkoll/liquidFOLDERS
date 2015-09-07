@@ -209,8 +209,7 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 	if (Hint)
 		if (Hint[0]!=L'\0')
 		{
-			if (Themed)
-				dc.SetTextColor(0xE69980);
+			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE));
 
 			rect.top += rectLine.Height();
 			dc.SelectObject(&LFGetApp()->m_DefaultFont);

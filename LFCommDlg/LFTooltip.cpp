@@ -25,9 +25,6 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 {
 	ASSERT(IsWindow(m_hWnd));
 
-	if (IsWindowVisible())
-		HideTooltip();
-
 	// Get screen size
 	MONITORINFO mi;
 	mi.cbSize = sizeof(MONITORINFO);
@@ -298,10 +295,15 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 		}
 	}
 
+	// Show window
+	if (!IsWindowVisible())
+		SetWindowPos(&wndTop, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_SHOWWINDOW);
+
 	// Update system-managed bitmap of window
-	POINT pt = { 0, 0 };
+	POINT ptDst = { rectWindow.left, rectWindow.top };
 	SIZE sz = { rectWindow.Width(), rectWindow.Height() };
-	UpdateLayeredWindow(&dc, &pt, &sz, &dc, &pt, 0x000000, &BF, ULW_ALPHA);
+	POINT ptSrc = { 0, 0 };
+	UpdateLayeredWindow(&dc, &ptDst, &sz, &dc, &ptSrc, 0x000000, &BF, ULW_ALPHA);
 
 	// Clean up
 	dc.SelectObject(hOldBitmap);
@@ -310,10 +312,6 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	DestroyIcon(hIcon);
 	DeleteObject(hBitmap);
 	DeleteObject(hWindowBitmap);
-
-	// Show window
-	SetWindowPos(&wndTop, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), SWP_NOACTIVATE | SWP_NOOWNERZORDER);
-	ShowWindow(SW_SHOWNOACTIVATE);
 }
 
 void LFTooltip::HideTooltip()
