@@ -10,7 +10,7 @@
 
 
 #define DISTANCE        39.0f
-#define ARROWSIZE       9
+#define ARROWSIZE       8
 #define PI              3.14159265358979323846
 #define ANIMLENGTH      200
 #define MOVEDELAY       10
@@ -215,25 +215,25 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 		if (p_CookedFiles->m_ItemCount)
 			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 			{
-				LFGeoCoordinates coord = { 0.0, 0.0 };
+				LFGeoCoordinates Location = { 0.0, 0.0 };
 				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
 				{
-					LFAirport* airport;
-					if (LFIATAGetAirportByCode((CHAR*)p_CookedFiles->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
-						coord = airport->Location;
+					LFAirport* pAirport;
+					if (LFIATAGetAirportByCode((CHAR*)p_CookedFiles->m_Items[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
+						Location = pAirport->Location;
 				}
 				else
 					if (p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
 					{
 						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy].Type==LFTypeGeoCoordinates);
-						coord = *((LFGeoCoordinates*)p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
+						Location = *((LFGeoCoordinates*)p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
 					}
 
-				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
+				if ((Location.Latitude!=0.0) || (Location.Longitude!=0))
 				{
 					GlobeItemData* d = GetItemData(a);
-					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
-					LFGeoCoordinatesToString(coord, d->CoordString, 32, FALSE);
+					CalculateWorldCoords(Location.Latitude, Location.Longitude, d->World);
+					LFGeoCoordinatesToString(Location, d->CoordString, 32, FALSE);
 					wcscpy_s(d->DescriptionString, 32, p_CookedFiles->m_Items[a]->Description);
 
 					d->Hdr.Valid = TRUE;
@@ -533,20 +533,20 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	UINT W2 = m_Fonts[0].GetTextWidth(Subcaption);
 	UINT W3 = m_Fonts[0].GetTextWidth(Coordinates);
 	UINT W4 = m_Fonts[0].GetTextWidth(Description);
-	UINT Width = max(W1, max(W2, max(W3, W4)))+12;
+	UINT Width = max(W1, max(W2, max(W3, W4)))+11;
 
 	// Höhe
-	UINT Height = 7;
+	UINT Height = 8;
 	Height += m_Fonts[1].GetTextHeight(Caption);
 	Height += m_Fonts[0].GetTextHeight(Subcaption);
 	Height += m_Fonts[0].GetTextHeight(Coordinates);
 	Height += m_Fonts[0].GetTextHeight(Description);
 
 	// Position
-	INT top = (d->ScreenPoint[1]<m_Height/2) ? -1 : 1;
+	INT Top = (d->ScreenPoint[1]<m_Height/2) ? -1 : 1;
 
 	INT x = d->Hdr.Rect.left = d->ScreenPoint[0]-ARROWSIZE-(((INT)Width-2*ARROWSIZE)*(m_Width-d->ScreenPoint[0])/m_Width);
-	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? (INT)Height : 0);
+	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*Top-(Top<0 ? (INT)Height : 0);
 	d->Hdr.Rect.right = x+Width;
 	d->Hdr.Rect.bottom = y+Height;
 
@@ -585,12 +585,12 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	{
 		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha*(12.0f/256.0f));
 		glBegin(GL_LINES);
-		glVertex2i(x+1, y+Height+1);
-		glVertex2i(x+Width, y+Height+1);
-		glVertex2i(x+Width+1, y+1);
-		glVertex2i(x+Width+1, y+Height);
-		glVertex2i(x+Width, y+Height);
-		glVertex2i(x+Width+1, y+Height);
+		glVertex2i(x+2, y+Height);
+		glVertex2i(x+Width-1, y+Height);
+		glVertex2i(x+Width, y+2);
+		glVertex2i(x+Width, y+Height-1);
+		glVertex2i(x+Width-1, y+Height-1);
+		glVertex2i(x+Width, y+Height-1);
 		glEnd();
 	}
 
@@ -607,95 +607,110 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 
 		glBegin(GL_QUADS);
 		glColor4f(TopColor[0], TopColor[1], TopColor[2], d->Alpha);
-		glVertex2i(x, y);
-		glVertex2i(x+Width, y);
+		glVertex2i(x+1, y+1);
+		glVertex2i(x+Width-1, y+1);
 		glColor4f(BottomColor[0], BottomColor[1], BottomColor[2], d->Alpha);
-		glVertex2i(x+Width, y+Height);
-		glVertex2i(x, y+Height);
+		glVertex2i(x+Width-1, y+Height-1);
+		glVertex2i(x+1, y+Height-1);
 		glEnd();
 
 		glColor4f(1.0f, 1.0f, 1.0f, ((Hot && !Selected) ? 0x60 : 0x48)*d->Alpha/256.0f);
 		glBegin(GL_LINE_LOOP);
-		glVertex2i(x, y);
-		glVertex2i(x+Width-1, y);
-		glVertex2i(x+Width-1, y+Height-1);
-		glVertex2i(x, y+Height-1);
+		glVertex2i(x+1, y+1);
+		glVertex2i(x+Width-2, y+1);
+		glVertex2i(x+Width-2, y+Height-2);
+		glVertex2i(x+1, y+Height-2);
 		glEnd();
 
-		ColorRef2GLColor(&BaseColor[0], top>0 ? TopColorRef : BottomColorRef);
+		ColorRef2GLColor(&BaseColor[0], Top>0 ? TopColorRef : BottomColorRef);
 		glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
 	}
 	else
 	{
 		glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
-		glRecti(x, y, x+Width, y+Height);
+		glRecti(x+1, y+1, x+Width-1, y+Height-1);
 	}
 
+	// Pfeil
 	glBegin(GL_TRIANGLES);
-	glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
-	glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-1), d->ScreenPoint[1]+(ARROWSIZE-1)*top);
-	glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-1), d->ScreenPoint[1]+(ARROWSIZE-1)*top);
+	if (Top>0)
+	{
+		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
+		glVertex2i(d->ScreenPoint[0]+ARROWSIZE+1, d->ScreenPoint[1]+ARROWSIZE);
+		glVertex2i(d->ScreenPoint[0]-ARROWSIZE, d->ScreenPoint[1]+ARROWSIZE);
+	}
+	else
+	{
+		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
+		glVertex2i(d->ScreenPoint[0]+ARROWSIZE, d->ScreenPoint[1]-ARROWSIZE);
+		glVertex2i(d->ScreenPoint[0]-ARROWSIZE, d->ScreenPoint[1]-ARROWSIZE);
+	}
 	glEnd();
 
 	// Rand
 	glBegin(GL_LINES);
 	glColor4f(BorderColor[0], BorderColor[1], BorderColor[2], d->Alpha);
-	glVertex2i(x-1, y+1);					// Links
-	glVertex2i(x-1, y+Height-1);
-	glVertex2i(x+Width, y+1);				// Rechts
-	glVertex2i(x+Width, y+Height-1);
-	if (top>0)
-	{
-		glVertex2i(x+1, y+Height);			// Unten
-		glVertex2i(x+Width-1, y+Height);
+	glVertex2i(x, y+2);					// Links
+	glVertex2i(x, y+Height-2);
+	glVertex2i(x+Width-1, y+2);			// Rechts
+	glVertex2i(x+Width-1, y+Height-2);
 
+	if (Top>0)
+	{
+		glVertex2i(x+2, y+Height-1);	// Unten
+		glVertex2i(x+Width-2, y+Height-1);
 		glEnd();
+
 		glBegin(GL_LINE_STRIP);
-		glVertex2i(x+1, y-1);
-		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-2), y-1);
-		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]-top);
-		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-2), y-1);
-		glVertex2i(x+Width-1, y-1);
+		glVertex2i(x+2, y);
+		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-1), y);
+		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]-1);
+		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-1), y);
+		glVertex2i(x+Width-2, y);
 	}
 	else
 	{
-		glVertex2i(x+1, y-1);				// Oben
-		glVertex2i(x+Width-1, y-1);
-
+		glVertex2i(x+2, y);				// Oben
+		glVertex2i(x+Width-2, y);
 		glEnd();
+
 		glBegin(GL_LINE_STRIP);
-		glVertex2i(x+1, y+Height);
-		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-2), y+Height);
+		glVertex2i(x+2, y+Height-1);
+		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-1), y+Height-1);
 		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
-		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-2), y+Height);
-		glVertex2i(x+Width-1, y+Height);
+		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-1), y+Height-1);
+		glVertex2i(x+Width-2, y+Height-1);
 	}
 	glEnd();
 
 	glColor4f(BorderColor[0], BorderColor[1], BorderColor[2], d->Alpha*0.5f);
+
 	glBegin(GL_POINTS);
-	glVertex2i(x-1, y);						// Oben links
-	glVertex2i(x, y);
-	glVertex2i(x, y-1);
+	glVertex2i(x, y+1);					// Oben links
+	glVertex2i(x+1, y+1);
+	glVertex2i(x+1, y);
 	glEnd();
+
 	glBegin(GL_POINTS);
-	glVertex2i(x-1, y+Height-1);			// Unten links
-	glVertex2i(x, y+Height-1);
-	glVertex2i(x, y+Height);
+	glVertex2i(x, y+Height-2);			// Unten links
+	glVertex2i(x+1, y+Height-2);
+	glVertex2i(x+1, y+Height-1);
 	glEnd();
+
 	glBegin(GL_POINTS);
-	glVertex2i(x+Width, y);					// Oben rechts
-	glVertex2i(x+Width-1, y);
-	glVertex2i(x+Width-1, y-1);
+	glVertex2i(x+Width-1, y+1);			// Oben rechts
+	glVertex2i(x+Width-2, y+1);
+	glVertex2i(x+Width-2, y);
 	glEnd();
+
 	glBegin(GL_POINTS);
-	glVertex2i(x+Width, y+Height-1);		// Unten rechts
-	glVertex2i(x+Width-1, y+Height-1);
-	glVertex2i(x+Width-1, y+Height);
+	glVertex2i(x+Width-1, y+Height-2);	// Unten rechts
+	glVertex2i(x+Width-2, y+Height-2);
+	glVertex2i(x+Width-2, y+Height-1);
 	glEnd();
 
 	x += 5;
-	y += 2;
+	y += 3;
 
 	glColor4f(CaptionColor[0], CaptionColor[1], CaptionColor[2], d->Alpha);
 	y += m_Fonts[1].Render(Caption, x, y, cCaption);
