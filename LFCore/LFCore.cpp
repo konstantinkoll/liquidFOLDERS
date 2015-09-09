@@ -40,6 +40,7 @@ LFCORE_API void LFInitialize()
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
 
+	LFMessages.UpdateProgress = RegisterWindowMessageA("liquidFOLDERS.UpdateProgress");
 	LFMessages.ItemsDropped = RegisterWindowMessageA("liquidFOLDERS.ItemsDropped");
 	LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
 	LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");

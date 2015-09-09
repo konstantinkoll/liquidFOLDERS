@@ -5,6 +5,7 @@
 
 
 HMUTEX MutexStores;
+extern LFMessageIDs LFMessages;
 
 
 // Mutex
@@ -73,7 +74,7 @@ DWORD_PTR UpdateProgress(LFProgress* pProgress)
 {
 	DWORD_PTR Result;
 
-	if (SendMessageTimeout(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL, SMTO_ABORTIFHUNG, 5000, &Result))
+	if (SendMessageTimeout(pProgress->hWnd, LFMessages.UpdateProgress, (WPARAM)pProgress, NULL, SMTO_ABORTIFHUNG, 5000, &Result))
 		return Result;
 
 	return TRUE;

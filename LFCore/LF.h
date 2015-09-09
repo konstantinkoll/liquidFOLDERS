@@ -26,8 +26,6 @@ struct LIQUIDFILES
 
 // Progress Message
 
-#define WM_UPDATEPROGRESS       WM_USER
-
 #define LFProgressWorking       1
 #define LFProgressError         2
 #define LFProgressCancelled     3
@@ -70,8 +68,8 @@ struct LFLicense
 
 struct LFMessageIDs
 {
+	UINT UpdateProgress;
 	UINT ItemsDropped;
-
 	UINT StoresChanged;
 	UINT StoreAttributesChanged;
 	UINT DefaultStoreChanged;

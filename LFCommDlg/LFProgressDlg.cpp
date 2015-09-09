@@ -33,7 +33,7 @@ void LFProgressDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(LFProgressDlg, LFDialog)
 	ON_WM_DESTROY()
 	ON_COMMAND(IDCANCEL, OnCancel)
-	ON_MESSAGE(WM_UPDATEPROGRESS, OnUpdateProgress)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->UpdateProgress, OnUpdateProgress)
 END_MESSAGE_MAP()
 
 BOOL LFProgressDlg::OnInitDialog()
@@ -90,6 +90,9 @@ void LFProgressDlg::OnCancel()
 LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 {
 	LFProgress* pProgress = (LFProgress*)wParam;
+
+	if (!pProgress)
+		return NULL;
 
 	if (m_Abort)
 	{
