@@ -295,10 +295,6 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 		}
 	}
 
-	// Show window
-	if (!IsWindowVisible())
-		SetWindowPos(&wndTop, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_SHOWWINDOW);
-
 	// Update system-managed bitmap of window
 	POINT ptDst = { rectWindow.left, rectWindow.top };
 	SIZE sz = { rectWindow.Width(), rectWindow.Height() };
@@ -312,6 +308,10 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	DestroyIcon(hIcon);
 	DeleteObject(hBitmap);
 	DeleteObject(hWindowBitmap);
+
+	// Show window
+	if (!IsWindowVisible())
+		ShowWindow(SW_SHOWNOACTIVATE);
 }
 
 void LFTooltip::HideTooltip()
