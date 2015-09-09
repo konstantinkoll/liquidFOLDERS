@@ -91,6 +91,9 @@ extern const SIZE_T AttrSizes[LFTypeCount] = {
 };
 
 
+#pragma comment(lib, "shlwapi.lib")
+
+
 // Interne Methoden
 //
 

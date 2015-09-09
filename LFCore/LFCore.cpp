@@ -31,6 +31,9 @@ UINT VolumeTypes[26] = { DRIVE_UNKNOWN };
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
 
+#pragma comment(lib, "shlwapi.lib")
+
+
 LFCORE_API void LFInitialize()
 {
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));

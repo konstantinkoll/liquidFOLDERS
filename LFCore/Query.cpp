@@ -11,6 +11,9 @@
 #include <shlwapi.h>
 
 
+#pragma comment(lib, "shlwapi.lib")
+
+
 BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 {
 	assert(pFilterCondition);

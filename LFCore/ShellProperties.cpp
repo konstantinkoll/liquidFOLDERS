@@ -16,41 +16,41 @@ extern const BYTE AttrTypes[];
 
 #pragma pack(push,1)
 
-static const GUID PropertyStorage =
+static const FMTID PropertyStorage =
 	{ 0xB725F130, 0x47EF, 0x101A, { 0xA5, 0xF1, 0x02, 0x60, 0x8C, 0x9E, 0xEB, 0xAC } };
-static const GUID PropertyQuery =
+static const FMTID PropertyQuery =
 	{ 0x49691C90, 0x7E17, 0x101A, { 0xA9, 0x1C, 0x08, 0x00, 0x2B, 0x2E, 0xCD, 0xA9 } };
-static const GUID PropertySummary =
+static const FMTID PropertySummary =
 	{ 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } };
-static const GUID PropertyDocuments =
+static const FMTID PropertyDocuments =
 	{ 0xD5CDD502, 0x2e9c, 0x101B, { 0x93, 0x97, 0x08, 0x00, 0x2B, 0x2C, 0xF9, 0xAE } };
-static const GUID PropertyImage =
+static const FMTID PropertyImage =
 	{ 0x6444048F, 0x4c8b, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const GUID PropertyAudio =
+static const FMTID PropertyAudio =
 	{ 0x64440490, 0x4C8B, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const GUID PropertyVideo =
+static const FMTID PropertyVideo =
 	{ 0x64440491, 0x4C8B, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const GUID PropertyMedia =
+static const FMTID PropertyMedia =
 	{ 0x64440492, 0x4C8B, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const GUID PropertyPhoto =
+static const FMTID PropertyPhoto =
 	{ 0x14B81DA1, 0x0135, 0x4D31, { 0x96, 0xD9, 0x6C, 0xBF, 0xC9, 0x67, 0x1A, 0x99 } };
-static const GUID PropertyMusic =
+static const FMTID PropertyMusic =
 	{ 0x56A3372E, 0xCE9C, 0x11D2, { 0x9F, 0x0E, 0x00, 0x60, 0x97, 0xC6, 0x86, 0xF6 } };
-static const GUID PropertyVersion =
+static const FMTID PropertyVersion =
 	{ 0x0CEF7D53, 0xFA64, 0x11D1, { 0xA2, 0x03, 0x00, 0x00, 0xF8, 0x1F, 0xED, 0xEE } };
-static const GUID PropertyUnnamed1 =
+static const FMTID PropertyUnnamed1 =
 	{ 0x3F8472B5, 0xE0AF, 0x4DB2, { 0x80, 0x71, 0xC5, 0x3F, 0xE7, 0x6A, 0xE7, 0xCE } };
-static const GUID PropertyUnnamed2 =
+static const FMTID PropertyUnnamed2 =
 	{ 0x72FAB781, 0xACDA, 0x43E5, { 0xB1, 0x55, 0xB2, 0x43, 0x4F, 0x85, 0xE6, 0x78 } };
-static const GUID PropertyUnnamed3 =
+static const FMTID PropertyUnnamed3 =
 	{ 0xE3E0584C, 0xB788, 0x4A5A, { 0xBB, 0x20, 0x7F, 0x5A, 0x44, 0xC9, 0xAC, 0xDD } };
-static const GUID PropertyUnnamed4 =
+static const FMTID PropertyUnnamed4 =
 	{ 0x2E4B640D, 0x5019, 0x46D8, { 0x88, 0x81, 0x55, 0x41, 0x4C, 0xC5, 0xCA, 0xA0 } };
-static const GUID PropertyUnnamed5 =
+static const FMTID PropertyUnnamed5 =
 	{ 0x2CBAA8F5, 0xD81F, 0x47CA, { 0xB1, 0x7A, 0xF8, 0xD8, 0x22, 0x30, 0x01, 0x31 } };
-static const GUID PropertyUnnamed6 =
+static const FMTID PropertyUnnamed6 =
 	{ 0x43F8D7B7, 0xA444, 0x4F87, { 0x93, 0x83, 0x52, 0x27, 0x1C, 0x9B, 0x91, 0x5C } };
-static const GUID PropertyUnnamed7 =
+static const FMTID PropertyUnnamed7 =
 	{ 0x276D7BB0, 0x5B34, 0x4FB0, { 0xAA, 0x4B, 0x15, 0x8E, 0xD1, 0x2A, 0x18, 0x09 } };
 
 static const BYTE ContextSlaves[LFLastQueryContext+1] = {
@@ -135,6 +135,10 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 #pragma pack(pop)
 
 #pragma data_seg()
+
+
+#pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "shlwapi.lib")
 
 
 BYTE GetHardcodedContext(CHAR* Extension)
@@ -310,12 +314,75 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 		}
 }
 
-void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, BOOL ShellProperties)
+void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LFItemDescriptor* pItemDescriptor)
+{
+	IPropertyStorage *pPropertyStorage;
+	if (SUCCEEDED(pPropertySetStorage->Open(Schema, STGM_READ | STGM_SHARE_EXCLUSIVE, &pPropertyStorage)))
+	{
+		PROPSPEC PropertySpec;
+		PropertySpec.ulKind = PRSPEC_PROPID;
+
+		for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
+			if (AttrProperties[Attr].Schema==Schema)
+			{
+				PropertySpec.propid = AttrProperties[Attr].ID;
+
+				PROPVARIANT Value;
+				if (pPropertyStorage->ReadMultiple(1, &PropertySpec, &Value)==S_OK)
+					switch(Value.vt)
+					{
+					case VT_BSTR:
+						if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+							SetAttribute(pItemDescriptor, Attr, Value.pbstrVal);
+
+						break;
+
+					case VT_LPWSTR:
+						if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+							SetAttribute(pItemDescriptor, Attr, Value.pwszVal);
+
+						break;
+
+					case VT_LPSTR:
+						if (AttrTypes[Attr]==LFTypeAnsiString)
+							SetAttribute(pItemDescriptor, Attr, Value.pszVal);
+
+						if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+						{
+							WCHAR tmpStr[256];
+							MultiByteToWideChar(CP_ACP, 0, Value.pszVal, -1, tmpStr, 256);
+
+							SetAttribute(pItemDescriptor, Attr, tmpStr);
+						}
+
+						break;
+
+					case VT_DATE:
+						if (AttrTypes[Attr]==LFTypeTime)
+						{
+							SYSTEMTIME st;
+							FILETIME ft;
+
+							VariantTimeToSystemTime(Value.date, &st);
+							SystemTimeToFileTime(&st, &ft);
+							SetAttribute(pItemDescriptor, Attr, &ft);
+						}
+
+						break;
+					}
+			}
+
+		pPropertyStorage->Release();
+	}
+}
+
+void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, BOOL Metadata)
 {
 	assert(pItemDescriptor);
 	assert(Filename);
 
-	// Standard-Attribute des Dateisystems
+	// Standard attributes
+	//
 	WIN32_FIND_DATA ffd;
 	HANDLE hFind = FindFirstFile(Filename, &ffd);
 
@@ -338,10 +405,12 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, B
 
 	pItemDescriptor->CoreAttributes.SlaveID = ContextSlaves[pItemDescriptor->CoreAttributes.ContextID];
 
-	// Shell properties
-	if (!ShellProperties)
+	// Exit if no additional metadata is requested
+	if (!Metadata)
 		return;
 
+	// Shell properties
+	//
 	LPITEMIDLIST pidlFQ;
 	if (SUCCEEDED(SHParseDisplayName(Filename, NULL, &pidlFQ, 0, NULL)))
 	{
@@ -369,6 +438,20 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, B
 		}
 
 		CoTaskMemFree(pidlFQ);
+	}
+
+	// OLE structured storage
+	//
+	IPropertySetStorage* pPropertySetStorage;
+	if (SUCCEEDED(StgOpenStorageEx(Filename, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
+	{
+		GetOLEProperties(pPropertySetStorage, PropertyDocuments, pItemDescriptor);
+		GetOLEProperties(pPropertySetStorage, PropertyMedia, pItemDescriptor);
+		GetOLEProperties(pPropertySetStorage, PropertyMusic, pItemDescriptor);
+		GetOLEProperties(pPropertySetStorage, PropertyPhoto, pItemDescriptor);
+		GetOLEProperties(pPropertySetStorage, PropertySummary, pItemDescriptor);
+
+		pPropertySetStorage->Release();
 	}
 
 	// TODO: weitere Attribute durch eigene Metadaten-Bibliothek

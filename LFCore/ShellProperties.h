@@ -8,4 +8,4 @@ static const GUID PropertyLiquidFolders = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 
 
 void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL Force=FALSE);
 void SetNameExtAddFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename);
-void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, BOOL ShellProperties=TRUE);
+void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, BOOL Metadata=TRUE);

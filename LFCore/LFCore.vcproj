@@ -70,7 +70,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
@@ -153,7 +152,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
@@ -240,7 +238,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
@@ -330,7 +327,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="LFCore.def"
 				DelayLoadDLLs=""
