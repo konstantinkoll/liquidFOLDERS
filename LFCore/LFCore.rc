@@ -50,8 +50,8 @@ IDI_OVR_DEFAULT         ICON                    "res\\OVR_Default.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,5,0
- PRODUCTVERSION 1,8,5,0
+ FILEVERSION 1,8,6,0
+ PRODUCTVERSION 1,8,6,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,13 +68,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "1.8.5"
+            VALUE "FileVersion", "1.8.6"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2015 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.8.5"
+            VALUE "ProductVersion", "1.8.6"
         END
     END
     BLOCK "VarFileInfo"
