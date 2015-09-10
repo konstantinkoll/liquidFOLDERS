@@ -18,7 +18,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID);
 	UINT GetPreferredHeight();
-	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL SupressCaption=FALSE);
+	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL ForceSmall=FALSE);
 	void AdjustLayout();
 
 protected:
@@ -35,7 +35,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CMFCToolBarImages m_Icons;
+	CMFCToolBarImages m_ButtonIcons;
+	CMFCToolBarImages m_TooltipIcons;
 	INT m_IconSize;
 	CList<CTaskButton*> m_ButtonsLeft;
 	CList<CTaskButton*> m_ButtonsRight;

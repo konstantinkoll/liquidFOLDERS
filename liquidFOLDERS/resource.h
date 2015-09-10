@@ -3,8 +3,8 @@
 // Used by liquidFOLDERS.rc
 //
 #define SC_ALWAYSONTOP                  0x10
-#define IDB_TASKS_16                    131
-#define IDB_TASKS_32                    132
+#define IDB_TASKS_16                    130
+#define IDB_TASKS_32                    131
 #define IDB_GLOBEICONS_RGB              132
 #define IDB_GLOBEICONS_ALPHA            133
 #define IDB_BLUEMARBLE_1024             134

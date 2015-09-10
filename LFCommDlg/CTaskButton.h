@@ -12,13 +12,11 @@
 class CTaskButton : public CHoverButton
 {
 public:
-	CTaskButton();
-
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons=NULL, INT IconSize=0, INT IconID=-1);
+	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CMFCToolBarImages* pButtonIcons, CMFCToolBarImages* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
 	void SetIconID(INT IconID, INT OverlayID=-1);
-	INT GetPreferredWidth();
+	INT GetPreferredWidth(BOOL Small=FALSE);
 
 protected:
 	afx_msg void OnPaint();
@@ -26,12 +24,16 @@ protected:
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
-private:
+	CMFCToolBarImages* p_ButtonIcons;
+	CMFCToolBarImages* p_TooltipIcons;
 	CString m_Caption;
-	CString m_TooltipHeader;
-	CString m_TooltipHint;
-	CMFCToolBarImages* p_Icons;
-	INT m_IconSize;
+	CString m_Hint;
+	BOOL m_Small;
 	INT m_IconID;
 	INT m_OverlayID;
+
+private:
+	INT m_IconSize;
+	BOOL m_ForceSmall;
+	BOOL m_HideIcon;
 };

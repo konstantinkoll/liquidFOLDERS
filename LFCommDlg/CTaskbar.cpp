@@ -25,8 +25,15 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT n
 	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
 
 	m_IconSize = abs(lf.lfHeight)>=24 ? 32 : 16;
-	m_Icons.SetImageSize(CSize(m_IconSize, m_IconSize));
-	m_Icons.Load(m_IconSize==32 ? LargeResID : SmallResID);
+
+	m_ButtonIcons.SetImageSize(CSize(m_IconSize, m_IconSize));
+	m_ButtonIcons.Load(m_IconSize==32 ? LargeResID : SmallResID);
+
+	if (m_IconSize<32)
+	{
+		m_TooltipIcons.SetImageSize(CSize(32, 32));
+		m_TooltipIcons.Load(LargeResID);
+	}
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
@@ -48,39 +55,39 @@ UINT CTaskbar::GetPreferredHeight()
 	return 4*BORDER+max(m_IconSize-2, abs(lf.lfHeight))+(IsCtrlThemed() ? 4 : 3);
 }
 
-CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL SupressCaption)
+CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL ForceSmall)
 {
 	CString Caption((LPCSTR)nID);
 	CString Hint;
 
-	INT pos = Caption.Find(L'\n');
-	if (pos!=-1)
+	INT Pos = Caption.Find(L'\n');
+	if (Pos!=-1)
 	{
-		Hint = Caption.Left(pos);
-		Caption.Delete(0, pos+1);
+		Hint = Caption.Left(Pos);
+		Caption.Delete(0, Pos+1);
 
 		if (Hint.GetLength()>40)
 		{
-			pos = Hint.Find(L' ', Hint.GetLength()/2);
-			if (pos!=-1)
-				Hint.SetAt(pos, L'\n');
+			Pos = Hint.Find(L' ', Hint.GetLength()/2);
+			if (Pos!=-1)
+				Hint.SetAt(Pos, L'\n');
 		}
 	}
 
-	CTaskButton* btn = new CTaskButton();
-	btn->Create(this, nID, AddRight || SupressCaption ? _T("") : Caption, Caption, Hint, &m_Icons, m_IconSize,
-		ForceIcon || AddRight || SupressCaption || (LFGetApp()->OSVersion<OS_Seven) ? IconID : -1);
+	CTaskButton* pTaskButton = new CTaskButton();
+	pTaskButton->Create(this, nID, Caption, Hint, &m_ButtonIcons, m_IconSize<32 ? &m_TooltipIcons : &m_ButtonIcons, m_IconSize,
+		IconID, AddRight | ForceSmall, !ForceIcon && (LFGetApp()->OSVersion>=OS_Seven));
 
 	if (AddRight)
 	{
-		m_ButtonsRight.AddHead(btn);
+		m_ButtonsRight.AddHead(pTaskButton);
 	}
 	else
 	{
-		m_ButtonsLeft.AddTail(btn);
+		m_ButtonsLeft.AddTail(pTaskButton);
 	}
 
-	return btn;
+	return pTaskButton;
 }
 
 void CTaskbar::AdjustLayout()
@@ -96,48 +103,58 @@ void CTaskbar::AdjustLayout()
 	INT RPos = rect.right+2*BORDER-BORDERLEFT;
 	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
 	{
-		CTaskButton* btn = m_ButtonsRight.GetNext(p);
-		if (btn->IsWindowEnabled())
+		CTaskButton* pTaskButton = m_ButtonsRight.GetNext(p);
+		if (pTaskButton->IsWindowEnabled())
 		{
-			INT l = btn->GetPreferredWidth();
+			INT l = pTaskButton->GetPreferredWidth();
 			RPos -= l+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
-				btn->SetWindowPos(NULL, RPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				btn->ShowWindow(SW_SHOW);
+				pTaskButton->SetWindowPos(NULL, RPos, Row, l, h, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE);
 			}
 			else
 			{
-				btn->ShowWindow(SW_HIDE);
+				pTaskButton->ShowWindow(SW_HIDE);
 			}
 		}
 		else
 		{
-			btn->ShowWindow(SW_HIDE);
+			pTaskButton->ShowWindow(SW_HIDE);
 		}
 	}
+
+	UINT FirstSmall = m_ButtonsLeft.GetCount();
+
+Nochmal:
+	UINT Count = 0;
 
 	INT LPos = rect.left+BORDERLEFT-BORDER;
 	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
 	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		if (btn->IsWindowEnabled())
+		CTaskButton* pTaskButton = m_ButtonsLeft.GetNext(p);
+		if (pTaskButton->IsWindowEnabled())
 		{
-			INT l = btn->GetPreferredWidth();
+			INT l = pTaskButton->GetPreferredWidth(Count++>=FirstSmall);
 			if (LPos+l+BORDERLEFT-BORDER<RPos)
 			{
-				btn->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				btn->ShowWindow(SW_SHOW);
+				pTaskButton->SetWindowPos(NULL, LPos, Row, l, h, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE);
+				pTaskButton->ShowWindow(SW_SHOW);
 			}
 			else
 			{
-				btn->ShowWindow(SW_HIDE);
+				if (FirstSmall>0)
+				{
+					FirstSmall--;
+					goto Nochmal;
+				}
+
+				pTaskButton->ShowWindow(SW_HIDE);
 			}
 			LPos += l+BORDERLEFT;
 		}
 		else
 		{
-			btn->ShowWindow(SW_HIDE);
+			pTaskButton->ShowWindow(SW_HIDE);
 		}
 	}
 

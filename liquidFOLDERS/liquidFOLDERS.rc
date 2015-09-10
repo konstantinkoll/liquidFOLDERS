@@ -487,7 +487,7 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_JUMPTOLOCATION 
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
-    IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergößern"
+    IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergrößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
 END
 
