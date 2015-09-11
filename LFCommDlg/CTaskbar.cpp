@@ -180,20 +180,19 @@ void CTaskbar::OnDestroy()
 {
 	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
 	{
-		CTaskButton* btn = m_ButtonsRight.GetNext(p);
-		btn->DestroyWindow();
-		delete btn;
+		CTaskButton* pTaskButton = m_ButtonsRight.GetNext(p);
+		pTaskButton->DestroyWindow();
+		delete pTaskButton;
 	}
 
 	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
 	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		btn->DestroyWindow();
-		delete btn;
+		CTaskButton* pTaskButton = m_ButtonsLeft.GetNext(p);
+		pTaskButton->DestroyWindow();
+		delete pTaskButton;
 	}
 
-	if (hBackgroundBrush)
-		DeleteObject(hBackgroundBrush);
+	DeleteObject(hBackgroundBrush);
 
 	CWnd::OnDestroy();
 }

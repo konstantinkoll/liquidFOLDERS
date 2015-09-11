@@ -347,7 +347,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 		}
 	}
 
-	DrawItemBackground(dc, rectItem, Index, Themed);
+	DrawItemBackground(dc, rectItem, Index, Themed, FALSE);
 
 	// Arrows
 	if (d->Arrow)

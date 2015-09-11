@@ -100,11 +100,16 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_EnableShiftSelection = EnableShiftSelection;
 	m_EnableLabelEdit = EnableLabelEdit;
 	m_EnableTooltipOnVirtual = EnableTooltipOnVirtual;
+
+	ZeroMemory(&m_Bitmaps, sizeof(m_Bitmaps));
 }
 
 CFileView::~CFileView()
 {
 	DestroyEdit();
+
+	for (UINT a=0; a<2; a++)
+		DeleteObject(m_Bitmaps[a].hBitmap);
 
 	if (m_ItemData)
 		free(m_ItemData);
@@ -788,18 +793,89 @@ BOOL CFileView::IsEditing()
 	return (p_Edit!=NULL);
 }
 
-void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
+void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
-		m_HotItem==Index, m_FocusItem==Index, IsSelected(Index),
-		(p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
-		m_ShowFocusRect);
+	if (Cached && Themed & IsSelected(Index))
+	{
+		CDC MemDC;
+		MemDC.CreateCompatibleDC(&dc);
+
+		HBITMAP hOldBitmap;
+
+		INT Width = rectItem->right-rectItem->left;
+		INT Height = rectItem->bottom-rectItem->top;
+
+		if ((m_Bitmaps[BM_SELECTED].Width!=Width) || (m_Bitmaps[BM_SELECTED].Height!=Height))
+		{
+			DeleteObject(m_Bitmaps[BM_SELECTED].hBitmap);
+
+			m_Bitmaps[BM_SELECTED].Width = Width;
+			m_Bitmaps[BM_SELECTED].Height = Height;
+			m_Bitmaps[BM_SELECTED].hBitmap = CreateCompatibleBitmap(dc, Width, Height);
+
+			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_SELECTED].hBitmap);
+
+			MemDC.FillSolidRect(0, 0, Width, Height, 0xFFFFFF);
+			DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
+		}
+		else
+		{
+			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_SELECTED].hBitmap);
+		}
+
+		dc.BitBlt(rectItem->left, rectItem->top, Width, Height, &MemDC, 0, 0, SRCCOPY);
+		MemDC.SelectObject(hOldBitmap);
+
+		dc.SetTextColor((p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : 0xFFFFFF);
+	}
+	else
+	{
+		DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
+			m_HotItem==Index, m_FocusItem==Index, IsSelected(Index),
+			(p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
+			m_ShowFocusRect);
+	}
 }
 
-void CFileView::DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
+void CFileView::DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this,
-		m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
+	if (((m_HotItem!=Index) && !IsSelected(Index)) || !Themed)
+		return;
+
+	if (Cached)
+	{
+		CDC MemDC;
+		MemDC.CreateCompatibleDC(&dc);
+
+		HBITMAP hOldBitmap;
+
+		INT Width = rectItem->right-rectItem->left;
+		INT Height = rectItem->bottom-rectItem->top;
+
+		if ((m_Bitmaps[BM_REFLECTION].Width!=Width) || (m_Bitmaps[BM_REFLECTION].Height!=Height))
+		{
+			DeleteObject(m_Bitmaps[BM_REFLECTION].hBitmap);
+
+			m_Bitmaps[BM_REFLECTION].Width = Width;
+			m_Bitmaps[BM_REFLECTION].Height = Height;
+			m_Bitmaps[BM_REFLECTION].hBitmap = CreateTransparentBitmap(Width, Height);
+
+			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_REFLECTION].hBitmap);
+
+			DrawListItemForeground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
+		}
+		else
+		{
+			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_REFLECTION].hBitmap);
+		}
+
+		AlphaBlend(dc, rectItem->left, rectItem->top, Width, Height, MemDC, 0, 0, Width, Height, BF);
+		MemDC.SelectObject(hOldBitmap);
+	}
+	else
+	{
+		DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
+	}
 }
 
 void CFileView::ResetScrollbars()

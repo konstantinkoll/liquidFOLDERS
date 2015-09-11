@@ -100,6 +100,15 @@ struct ItemCategory
 	RECT Rect;
 };
 
+// Theming
+
+struct CachedSelectionBitmap
+{
+	HBITMAP hBitmap;
+	INT Width;
+	INT Height;
+};
+
 
 // CFileView
 //
@@ -108,6 +117,9 @@ struct ItemCategory
 #define WM_SELECTALL          WM_USER+101
 #define WM_SELECTNONE         WM_USER+102
 #define WM_RENAMEITEM         WM_USER+103
+
+#define BM_REFLECTION         0
+#define BM_SELECTED           1
 
 class CFileView : public CWnd
 {
@@ -144,8 +156,8 @@ protected:
 
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT Index);
-	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
-	void DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
+	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
+	void DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);
@@ -219,6 +231,7 @@ private:
 	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);
 	void DestroyEdit(BOOL Accept=FALSE);
 
+	CachedSelectionBitmap m_Bitmaps[2];
 	CEdit* p_Edit;
 	SendToItemData m_SendToItems[256];
 };
