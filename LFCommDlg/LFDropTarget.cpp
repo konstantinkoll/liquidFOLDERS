@@ -137,13 +137,13 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 	CWaitCursor csr;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	LFTransactionList* tl = LFAllocTransactionList(hLiquid);
+	LFTransactionList* pTransactionList = LFAllocTransactionList(hLiquid);
 	GlobalUnlock(hgLiquid);
 
-	LFTransactionAddToSearchResult(tl, p_SearchResult);
-	UINT Result = tl->m_LastError;
+	LFDoTransaction(pTransactionList, LFTransactionTypeAddToSearchResult, NULL, (UINT_PTR)p_SearchResult);
+	UINT Result = pTransactionList->m_LastError;
 	LFErrorBox(pWnd, Result);
-	LFFreeTransactionList(tl);
+	LFFreeTransactionList(pTransactionList);
 
 	if (p_OwnerWnd)
 		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);

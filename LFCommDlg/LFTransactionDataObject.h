@@ -12,7 +12,7 @@
 class LFTransactionDataObject : public IDataObject
 {
 public:
-	LFTransactionDataObject(LFTransactionList* tl);
+	LFTransactionDataObject(LFTransactionList* pTransactionList);
 
 	LFTransactionList* GetTransactionList();
 

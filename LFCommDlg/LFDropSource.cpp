@@ -11,6 +11,7 @@
 
 LFDropSource::LFDropSource()
 {
+	m_lRefCount = 1;
 	m_LastEffect = DROPEFFECT_NONE;
 }
 

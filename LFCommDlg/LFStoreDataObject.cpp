@@ -135,8 +135,10 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFStoreDataObject::Release()
 	{
 		if (m_hDescriptor)
 			GlobalFree(m_hDescriptor);
+
 		if (m_hShellLink)
 			GlobalFree(m_hShellLink);
+
 		delete this;
 		return 0;
 	}
@@ -148,6 +150,7 @@ STDMETHODIMP LFStoreDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMediu
 {
 	if ((!pFormatEtc) || (!pMedium))
 		return DV_E_FORMATETC;
+
 	if ((pFormatEtc->tymed & TYMED_HGLOBAL)==0)
 		return DV_E_FORMATETC;
 

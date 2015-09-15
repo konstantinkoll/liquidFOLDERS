@@ -9,11 +9,11 @@
 // LFTransactionDataObject
 //
 
-LFTransactionDataObject::LFTransactionDataObject(LFTransactionList* tl)
+LFTransactionDataObject::LFTransactionDataObject(LFTransactionList* pTransactionList)
 {
 	m_lRefCount = 1;
-	m_hDropFiles = LFCreateDropFiles(tl);
-	m_hLiquidFiles = LFCreateLiquidFiles(tl);
+	m_hDropFiles = LFCreateDropFiles(pTransactionList);
+	m_hLiquidFiles = LFCreateLiquidFiles(pTransactionList);
 }
 
 LFTransactionList* LFTransactionDataObject::GetTransactionList()
@@ -46,8 +46,10 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFTransactionDataObject::Release()
 	{
 		if (m_hDropFiles)
 			GlobalFree(m_hDropFiles);
+
 		if (m_hLiquidFiles)
 			GlobalFree(m_hLiquidFiles);
+
 		delete this;
 		return 0;
 	}
@@ -59,6 +61,7 @@ STDMETHODIMP LFTransactionDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 {
 	if ((!pFormatEtc) || (!pMedium))
 		return DV_E_FORMATETC;
+
 	if ((pFormatEtc->tymed & TYMED_HGLOBAL)==0)
 		return DV_E_FORMATETC;
 
@@ -116,6 +119,7 @@ STDMETHODIMP LFTransactionDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 	{
 		if (m_hDropFiles)
 			GlobalFree(m_hDropFiles);
+
 		m_hDropFiles = pMedium->hGlobal;
 		return S_OK;
 	}
@@ -124,6 +128,7 @@ STDMETHODIMP LFTransactionDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 	{
 		if (m_hLiquidFiles)
 			GlobalFree(m_hLiquidFiles);
+
 		m_hLiquidFiles = pMedium->hGlobal;
 		return S_OK;
 	}
