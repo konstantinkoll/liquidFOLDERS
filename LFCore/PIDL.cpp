@@ -47,7 +47,7 @@ LPITEMIDLIST ConcatenatePIDLs(LPITEMIDLIST pidl1, LPITEMIDLIST pidl2)
 	return pidlNew;
 }
 
-BOOL GetPIDLsForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate)
+BOOL GetPIDLsForStore(CHAR* pStoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate)
 {
 	assert(ppidl);
 	assert(ppidlDelegate);
@@ -58,12 +58,12 @@ BOOL GetPIDLsForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDel
 	WCHAR Path[MAX_PATH];
 	wcscpy_s(Path, MAX_PATH, L"::{3F2D914F-FE57-414F-9F88-A377C7841DA4}");
 
-	if (StoreID)
+	if (pStoreID)
 	{
 		const SIZE_T cCount = 41;
 
 		wcscat_s(Path, MAX_PATH, L"\\");
-		MultiByteToWideChar(CP_ACP, 0, StoreID, -1, &Path[cCount], MAX_PATH-cCount);
+		MultiByteToWideChar(CP_ACP, 0, pStoreID, -1, &Path[cCount], MAX_PATH-cCount);
 	}
 
 	// Main PIDL
@@ -73,7 +73,7 @@ BOOL GetPIDLsForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDel
 	LPITEMIDLIST pidlMyComputer;
 	if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_DRIVES, &pidlMyComputer)))
 	{
-		if (!StoreID)
+		if (!pStoreID)
 		{
 			*ppidlDelegate = pidlMyComputer;
 			Result = TRUE;
@@ -122,4 +122,21 @@ BOOL GetPIDLsForStore(CHAR* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDel
 	}
 
 	return Result;
+}
+
+void SendShellNotifyMessage(UINT Msg, CHAR* pStoreID, LPITEMIDLIST pidlOld, LPITEMIDLIST pidlOldDelegate)
+{
+	LPITEMIDLIST pidl;
+	LPITEMIDLIST pidlDelegate;
+	if (GetPIDLsForStore(pStoreID, &pidl, &pidlDelegate))
+	{
+		SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, pidlOld ? pidlOld : pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
+		CoTaskMemFree(pidl);
+
+		if (pidlDelegate)
+		{
+			SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, pidlOldDelegate ? pidlOldDelegate : pidlDelegate, (Msg==SHCNE_RENAMEFOLDER) ? pidlDelegate : NULL);
+			CoTaskMemFree(pidlDelegate);
+		}
+	}
 }

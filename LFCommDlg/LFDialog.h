@@ -45,7 +45,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CCategory m_wndCategory[4];
-	UINT m_nIDTemplate;
 	BOOL m_UAC;
 	BOOL m_ShowKeyboardCues;
 

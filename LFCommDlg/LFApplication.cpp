@@ -343,21 +343,6 @@ BOOL LFApplication::InitInstance()
 	// Tooltip
 	m_wndTooltip.Create();
 
-	// Beim ersten Mal Standard-Store erzeugen
-	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
-	{
-		WriteGlobalInt(_T("FirstRun"), 0);
-
-		// Lokalen Store erstellen
-		LFStoreDescriptor Store;
-		ZeroMemory(&Store, sizeof(Store));
-
-		Store.Flags = LFStoreFlagAutoLocation;
-		Store.Mode = LFStoreModeIndexInternal | LFStoreModeBackendInternal;
-
-		LFErrorBox(CWnd::GetForegroundWindow(), LFCreateStore(&Store));
-	}
-
 	return TRUE;
 }
 
@@ -583,20 +568,21 @@ HANDLE LFApplication::LoadFontFromResource(UINT nID)
 	return Result;
 }
 
-void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons)
+void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList, BOOL OnlyStoreIcons)
 {
-	li->Create(size, size, ILC_COLOR32 | ILC_MASK, IDI_LASTICON, 1);
-
 	const UINT Last = OnlyStoreIcons ? IDI_LASTSTOREICON : IDI_LASTICON;
+
+	pImageList->Create(Size, Size, ILC_COLOR32 | ILC_MASK, Last, 1);
+
 	for (UINT a=1; a<=Last; a++)
 	{
-		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(a), IMAGE_ICON, size, size, LR_DEFAULTCOLOR);
-		li->Add(ic);
-		DestroyIcon(ic);
+		HICON hIcon = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(a), IMAGE_ICON, Size, Size, LR_DEFAULTCOLOR);
+		pImageList->Add(hIcon);
+		DestroyIcon(hIcon);
 	}
 
 	if (!OnlyStoreIcons)
-		li->SetOverlayImage(IDI_OVR_DEFAULT-1, 1);
+		pImageList->SetOverlayImage(IDI_OVR_DEFAULT-1, 1);
 }
 
 

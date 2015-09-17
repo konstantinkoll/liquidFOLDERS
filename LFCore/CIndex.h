@@ -10,34 +10,42 @@
 
 #define IndexMaintenanceSteps     (IDXTABLECOUNT*2+1)
 
+class CStore;
+
 class CIndex
 {
 public:
-	CIndex(LFStoreDescriptor* _slot, BOOL ForMainIndex);
+	CIndex(CStore* pStore, BOOL IsMainIndex, UINT StoreDataSize);
 	~CIndex();
 
-	BOOL Create();
-	UINT Check(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress=NULL);
-	UINT AddItem(LFItemDescriptor* i);
-	BOOL UpdateSystemFlags(LFItemDescriptor* i, BOOL Exists, BOOL RemoveNew);
-	void Update(LFTransactionList* tl, LFVariantData* v1, LFVariantData* v2=NULL, LFVariantData* v3=NULL);
-	void Archive(LFTransactionList* tl);
-	void Delete(LFTransactionList* tl, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
-	void ResolvePhysicalLocations(LFTransactionList* tl);
-	void Retrieve(LFFilter* f, LFSearchResult* Result);
-	void AddToSearchResult(LFTransactionList* il, LFSearchResult* Result);
-	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFTransactionList* il, LFStoreDescriptor* slotSrc, BOOL move, LFProgress* pProgress=NULL);
+	// Index management
+	BOOL Initialize();
+	UINT MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress=NULL);
+
+	// Operations on index only
+	UINT Add(LFItemDescriptor* pItemDescriptor);
+	void Query(LFFilter* pFilter, LFSearchResult* pSearchResult);
+	void AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResult* pSearchResult);
+	void ResolveLocations(LFTransactionList* pTransactionList);
+	void SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgress* pProgress=NULL);
+	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
+	void UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FILETIME* pTransactionTime);
+
+	// Operations with callbacks to CStore object
+	void Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
+	void Delete(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
 protected:
-	BOOL LoadTable(UINT TableID, UINT* Result=NULL);
+	BOOL LoadTable(UINT TableID, UINT* pResult=NULL);
 	void AddFileToStatistics(LFCoreAttributes* PtrM);
 	void RemoveFileFromStatistics(LFCoreAttributes* PtrM);
-	UINT RenamePhysicalFile(LFCoreAttributes* PtrM, WCHAR* NewName);
-	UINT DeletePhysicalFile(LFCoreAttributes* PtrM);
+
+	CStore* p_Store;
+	LFStoreDescriptor* p_StoreDescriptor;
+	BOOL m_IsMainIndex;
+	UINT m_AdditionalDataSize;
+	CHeapfile* m_pTable[IDXTABLECOUNT];
 
 private:
-	CHeapfile* Tables[IDXTABLECOUNT];
-	LFStoreDescriptor* slot;
-	BOOL TrackStats;
-	WCHAR IdxPath[MAX_PATH];
+	WCHAR m_IdxPath[MAX_PATH];
 };

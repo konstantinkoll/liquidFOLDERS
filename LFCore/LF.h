@@ -282,11 +282,7 @@ struct LFVariantData
 		INT64 INT64;
 		LFFraction Fraction;
 		DOUBLE Double;
-		struct
-		{
-			UINT Flags;
-			UINT Mask;
-		} Flags;
+		UINT Flags;
 		LFGeoCoordinates GeoCoordinates;
 		FILETIME Time;
 		UINT Duration;
@@ -484,6 +480,7 @@ struct LFCoreAttributes
 #define LFFlagArchive              0x0010
 
 #define LFMaxSlaveSize             3236			// Check if new attributes are attached
+#define LFMaxStoreDataSize         sizeof(WCHAR)*MAX_PATH
 
 struct LFItemDescriptor
 {
@@ -512,6 +509,7 @@ struct LFItemDescriptor
 	// Must be last in struct in this order, as zero-filling depends on it
 	LFCoreAttributes CoreAttributes;
 	BYTE SlaveData[LFMaxSlaveSize];
+	BYTE StoreData[LFMaxStoreDataSize];
 };
 
 
@@ -523,7 +521,7 @@ struct LFItemDescriptor
 #define LFStoreModeIndexMask             0x0F
 
 #define LFStoreModeBackendInternal       0x00000000
-#define LFStoreModeBackendNTFS           0x02000000
+#define LFStoreModeBackendWindows        0x02000000
 #define LFStoreModeBackendDropbox        0x05000000
 #define LFStoreModeBackendFacebook       0x06000000
 #define LFStoreModeBackendFlickr         0x07000000
@@ -535,17 +533,16 @@ struct LFItemDescriptor
 #define LFStoreModeBackendShift          24
 #define LFStoreModeBackendMask           0xFF000000
 
-#define LFStoreFlagAutoLocation          1
-#define LFStoreFlagUnchecked             2
+#define LFStoreFlagAutoLocation          0x01
 
 struct LFStoreDescriptor
 {
 	CHAR StoreID[LFKeySize];
 	WCHAR StoreName[256];
 	WCHAR LastSeen[256];
-	WCHAR StoreComment[256];
+	WCHAR Comments[256];
 	UINT Mode;
-	GUID guid;
+	GUID UniqueID;
 	UINT Flags;
 	FILETIME CreationTime;
 	FILETIME FileTime;
@@ -561,6 +558,21 @@ struct LFStoreDescriptor
 };
 
 
+// Transaction types
+
+#define LFTransactionTypeAddToSearchResult     0x000
+#define LFTransactionTypeResolveLocations      0x001
+#define LFTransactionTypeSendTo                0x002
+
+#define LFTransactionTypeArchive               0x100
+#define LFTransactionTypePutInTrash            0x101
+#define LFTransactionTypeRestore               0x102
+#define LFTransactionTypeUpdate                0x103
+#define LFTransactionTypeDelete                0x104
+
+#define LFTransactionTypeLastReadonly          0x0FF
+
+
 // Error codes
 
 #define LFOk                         0
@@ -574,7 +586,7 @@ struct LFStoreDescriptor
 #define LFIllegalPhysicalPath        8
 #define LFRegistryError              9
 #define LFAccessError                10
-#define LFIllegalKey                 11
+#define LFIllegalID                  11
 #define LFNoDefaultStore             12
 #define LFTooManyStores              13
 #define LFStoreNotMounted            14

@@ -13,12 +13,8 @@ struct LFFileImportListItem
 class LFFileImportList : public LFDynArray<LFFileImportListItem>
 {
 public:
-	LFFileImportList();
-
 	BOOL AddPath(WCHAR* Path);
 	void Resolve(BOOL Recursive, LFProgress* pProgress=NULL);
 	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
-
-	UINT m_FileCount;
-	INT64 m_FileSize;
+	UINT DoFileImport(BOOL Recursive, CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
 };

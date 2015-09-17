@@ -39,11 +39,11 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 
 		CRect rect(0, 0, 128, 128);
 
-		BITMAP bm;
-		GetObject(td.hBitmap, sizeof(bm), &bm);
+		BITMAP Bitmap;
+		GetObject(td.hBitmap, sizeof(Bitmap), &Bitmap);
 
-		BOOL DrawFrame = ((i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos)) || ((bm.bmWidth==118) && (bm.bmHeight==118));
-		BOOL DrawShadow = !DrawFrame && (bm.bmWidth>=4) && (bm.bmWidth<=118) && (bm.bmHeight>=4) && (bm.bmHeight<=118);
+		BOOL DrawFrame = ((i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos)) || ((Bitmap.bmWidth==118) && (Bitmap.bmHeight==118));
+		BOOL DrawShadow = !DrawFrame && (Bitmap.bmWidth>=4) && (Bitmap.bmWidth<=118) && (Bitmap.bmHeight>=4) && (Bitmap.bmHeight<=118);
 
 		HDC hdcMem = CreateCompatibleDC(dc);
 		HBITMAP hOldBitmap2 = (HBITMAP)SelectObject(hdcMem, td.hBitmap);
@@ -64,19 +64,19 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 			SelectObject(hdcMem, hOldBitmap);
 		}
 
-		rect.left += max((128-bm.bmWidth)/2-1, 0);
-		rect.right = rect.left+bm.bmWidth;
-		rect.top += max((128-bm.bmHeight)/2-1, 0);
-		rect.bottom = rect.top+bm.bmHeight;
+		rect.left += max((128-Bitmap.bmWidth)/2-1, 0);
+		rect.right = rect.left+Bitmap.bmWidth;
+		rect.top += max((128-Bitmap.bmHeight)/2-1, 0);
+		rect.bottom = rect.top+Bitmap.bmHeight;
 
 		// Thumbnail
-		if (DrawFrame || DrawShadow || (bm.bmBitsPixel!=32))
+		if (DrawFrame || DrawShadow || (Bitmap.bmBitsPixel!=32))
 		{
-			BitBlt(dc, rect.left, rect.top, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
+			BitBlt(dc, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
 		}
 		else
 		{
-			AlphaBlend(dc, rect.left, rect.top, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, BF);
+			AlphaBlend(dc, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, hdcMem, 0, 0, Bitmap.bmWidth, Bitmap.bmHeight, BF);
 		}
 
 		// Shadow
@@ -90,11 +90,11 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 
 			HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmapShadow);
 
-			AlphaBlend(dc, rect.left-2, rect.top-2, 2+bm.bmWidth, 2, hdcMem, 0, 0, 2+bm.bmWidth, 2, BF);
-			AlphaBlend(dc, rect.left-2, rect.top+bm.bmHeight, 2+bm.bmWidth, 4, hdcMem, 0, 124, 2+bm.bmWidth, 4, BF);
-			AlphaBlend(dc, rect.left-2, rect.top, 2, bm.bmHeight, hdcMem, 0, 4, 2, bm.bmHeight, BF);
-			AlphaBlend(dc, rect.left+bm.bmWidth, rect.top-2, 4, 2+bm.bmHeight, hdcMem, 124, 0, 4, 2+bm.bmHeight, BF);
-			AlphaBlend(dc, rect.left+bm.bmWidth, rect.top+bm.bmHeight, 4, 4, hdcMem, 124, 124, 4, 4, BF);
+			AlphaBlend(dc, rect.left-2, rect.top-2, 2+Bitmap.bmWidth, 2, hdcMem, 0, 0, 2+Bitmap.bmWidth, 2, BF);
+			AlphaBlend(dc, rect.left-2, rect.top+Bitmap.bmHeight, 2+Bitmap.bmWidth, 4, hdcMem, 0, 124, 2+Bitmap.bmWidth, 4, BF);
+			AlphaBlend(dc, rect.left-2, rect.top, 2, Bitmap.bmHeight, hdcMem, 0, 4, 2, Bitmap.bmHeight, BF);
+			AlphaBlend(dc, rect.left+Bitmap.bmWidth, rect.top-2, 4, 2+Bitmap.bmHeight, hdcMem, 124, 0, 4, 2+Bitmap.bmHeight, BF);
+			AlphaBlend(dc, rect.left+Bitmap.bmWidth, rect.top+Bitmap.bmHeight, 4, 4, hdcMem, 124, 124, 4, 4, BF);
 
 			SelectObject(hdcMem, hOldBitmap);
 		}

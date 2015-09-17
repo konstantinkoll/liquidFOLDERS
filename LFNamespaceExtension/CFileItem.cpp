@@ -277,11 +277,11 @@ BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 	LFTransactionList* pTransactionList = LFAllocTransactionList();
 	LFAddTransactionItem(pTransactionList, m_pItem);
 
-	LFVariantData v;
-	LFInitVariantData(v, LFAttrFileName);
-	wcscpy_s(v.UnicodeString, 256, e.newName.GetBuffer());
+	LFVariantData Value;
+	LFInitVariantData(Value, LFAttrFileName);
+	wcscpy_s(Value.UnicodeString, 256, e.newName.GetBuffer());
 
-	LFTransactionUpdate(pTransactionList, &v);
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, 0, &Value);
 
 	UINT Result = pTransactionList->m_LastError;
 	LFFreeTransactionList(pTransactionList);
@@ -426,7 +426,7 @@ LPSTREAM CFileItem::GetStream()
 	LPSTREAM ret = NULL;
 
 	WCHAR Path[MAX_PATH];
-	UINT Result = LFGetFileLocation(m_pItem, Path, MAX_PATH, TRUE, FALSE);
+	UINT Result = LFGetFileLocation(m_pItem, Path, MAX_PATH, FALSE);
 	if (Result!=LFOk)
 	{
 		LFCoreErrorBox(Result);
@@ -497,7 +497,7 @@ BOOL CFileItem::SetShellLink(IShellLink* pShellLink)
 	ASSERT(pShellLink);
 
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(m_pItem, Path, MAX_PATH, TRUE, FALSE)==LFOk)
+	if (LFGetFileLocation(m_pItem, Path, MAX_PATH, FALSE)==LFOk)
 	{
 		WCHAR Ext[LFExtSize+1] = L".*";
 		WCHAR* LastBackslash = wcsrchr(Path, L'\\');

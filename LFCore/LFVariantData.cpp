@@ -962,19 +962,9 @@ LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData& v)
 	assert(v.Type==AttrTypes[v.Attr]);
 	assert(v.Type<LFTypeCount);
 
-	// Special treatment for flags
-	if (v.Attr==LFAttrFlags)
-	{
-		v.Flags.Mask &= LFFlagArchive | LFFlagTrash;
-		v.Flags.Flags &= v.Flags.Mask;
-
-		i->CoreAttributes.Flags &= ~v.Flags.Mask;
-		i->CoreAttributes.Flags |= v.Flags.Flags;
-	}
-	else
-	{
+	// Flags can only be managed by the system
+	if (v.Type!=LFTypeFlags)
 		SetAttribute(i, v.Attr, &v.Value);
-	}
 }
 
 LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)

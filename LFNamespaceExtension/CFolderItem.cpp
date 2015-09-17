@@ -487,11 +487,11 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 	CHAR key[LFKeySize];
 	WideCharToMultiByte(CP_ACP, 0, e.displayName, -1, key, LFKeySize, NULL, NULL);
 
-	LFStoreDescriptor store;
-	if (LFGetStoreSettings(key, &store)!=LFOk)
+	LFStoreDescriptor Store;
+	if (LFGetStoreSettings(key, &Store)!=LFOk)
 		return NULL;
 
-	return new CFolderItem(LEVELSTORES, LFAllocItemDescriptorEx(&store));
+	return new CFolderItem(LEVELSTORES, LFAllocItemDescriptorEx(&Store));
 }
 
 
@@ -681,7 +681,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		{
 			CFolderItem* folder = AS(temp, CFolderItem);
 
-			UINT Result = LFMakeDefaultStore(folder->Attrs.StoreID);
+			UINT Result = LFSetDefaultStore(folder->Attrs.StoreID);
 			LFCoreErrorBox(Result);
 			return (Result==LFOk);
 		}
@@ -1153,7 +1153,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE, TRUE);
+			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE);
 			if (Result!=LFOk)
 			{
 				LFCoreErrorBox(Result);
@@ -1207,7 +1207,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 
 	if (tl->m_ItemCount)
 	{
-		LFTransactionDelete(tl);
+		LFDoTransaction(tl, LFTransactionTypePutInTrash);
 
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if ((tl->m_Items[a].Processed) && (tl->m_Items[a].LastError==LFOk))
@@ -1490,7 +1490,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE, TRUE);
+			UINT Result = LFGetFileLocation(AS(item, CFileItem)->m_pItem, Path, MAX_PATH, TRUE);
 			if (Result!=LFOk)
 			{
 				LFCoreErrorBox(Result);

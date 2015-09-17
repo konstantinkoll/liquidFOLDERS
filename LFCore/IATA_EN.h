@@ -228,7 +228,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8629
+#define AirportCount_EN 8630
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3832,6 +3832,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 168, "KLC", "", "Kaolack", { -14.146944, -16.051389 } },
 	{ 163, "KLD", "", "Tver", { -47.183056, 42.166944 } },
 	{ 100, "KLE", "", "Kaele", { -10.092500, 14.445556 } },
+	{ 163, "KLF", "", "Grabtsevo", { -54.546667, 36.368889 } },
 	{ 212, "KLG", "", "Kalskag", { -61.536389, -160.341389 } },
 	{  87, "KLH", "", "Kolhapur", { -16.664722, 74.289444 } },
 	{  43, "KLI", "", "Kotakoli", { -4.157500, 21.650833 } },

@@ -2,8 +2,11 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFFileImportList.h"
-#include "Mutex.h"
+#include "Stores.h"
 #include <assert.h>
+
+
+extern LFMessageIDs LFMessages;
 
 
 LFCORE_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
@@ -30,24 +33,22 @@ LFCORE_API void LFFreeFileImportList(LFFileImportList* pFileImportList)
 	delete pFileImportList;
 }
 
-LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* Path)
+LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* pPath)
 {
 	assert(pFileImportList);
-	assert(Path);
+	assert(pPath);
 
-	return pFileImportList->AddPath(Path);
+	return pFileImportList->AddPath(pPath);
+}
+
+LFCORE_API UINT LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+{
+	return pFileImportList->DoFileImport(Recursive, pStoreID, pItemTemplate, Move, pProgress);
 }
 
 
 // LFFileImportList
 //
-
-LFFileImportList::LFFileImportList()
-	: LFDynArray()
-{
-	m_FileCount = 0;
-	m_FileSize = 0;
-}
 
 BOOL LFFileImportList::AddPath(WCHAR* Path)
 {
@@ -137,7 +138,10 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 
 void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 {
-	m_Items[Index].LastError = m_LastError = Result;
+	if (Result!=LFOk)
+		m_LastError = Result;
+
+	m_Items[Index].LastError = Result;
 	m_Items[Index].Processed = TRUE;
 
 	if (pProgress)
@@ -151,4 +155,75 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 		if (UpdateProgress(pProgress))
 			m_LastError = LFCancel;
 	}
+}
+
+UINT LFFileImportList::DoFileImport(BOOL Recursive, CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+{
+	UINT Result;
+
+	// Store
+	CHAR StoreID[LFKeySize] = "";
+	if (pStoreID)
+		strcpy_s(StoreID, LFKeySize, pStoreID);
+
+	if (StoreID[0]=='\0')
+		if ((Result=LFGetDefaultStore(StoreID))!=LFOk)
+			return Result;
+
+	CStore* pStore;
+	if ((Result=OpenStore(StoreID, TRUE, &pStore))==LFOk)
+	{
+		// Resolve
+		Resolve(Recursive, pProgress);
+
+		// Process files
+		for (UINT a=0; a<m_ItemCount; a++)
+		{
+			if (!m_Items[a].Processed)
+			{
+				// Progress
+				if (pProgress)
+				{
+					wcscpy_s(pProgress->Object, 256, m_Items[a].Path);
+					if (UpdateProgress(pProgress))
+					{
+						m_LastError = LFCancel;
+						break;
+					}
+				}
+
+				// Metadata
+				LFItemDescriptor* pItemDescriptor = LFCloneItemDescriptor(pItemTemplate);
+
+				SetError(a, pStore->ImportFile(m_Items[a].Path, pItemDescriptor, Move), pProgress);
+	
+				LFFreeItemDescriptor(pItemDescriptor);
+			}
+			else
+			{
+				// Resolved paths
+				if (pProgress)
+					pProgress->MinorCurrent++;
+			}
+
+			// Progress
+			if (pProgress)
+				if (pProgress->UserAbort)
+					break;
+		}
+
+		delete pStore;
+	}
+
+	// Finish
+	if (pProgress)
+	{
+		pProgress->Object[0] = L'\0';
+		if (UpdateProgress(pProgress))
+			m_LastError = LFCancel;
+	}
+
+	SendLFNotifyMessage(LFMessages.StatisticsChanged);
+
+	return Result;
 }

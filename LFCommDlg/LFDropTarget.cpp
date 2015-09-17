@@ -59,12 +59,12 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	// Template füllen
 	if (!m_SkipTemplate)
 	{
-		wp.Template = LFAllocItemDescriptor();
+		wp.pItemTemplate = LFAllocItemDescriptor();
 
-		LFItemTemplateDlg dlg(wp.Template, wp.StoreID, pWnd, m_AllowChooseStore, p_Filter);
+		LFItemTemplateDlg dlg(wp.pItemTemplate, wp.StoreID, pWnd, m_AllowChooseStore, p_Filter);
 		if (dlg.DoModal()==IDCANCEL)
 		{
-			LFFreeItemDescriptor(wp.Template);
+			LFFreeItemDescriptor(wp.pItemTemplate);
 			return E_ABORT;
 		}
 
@@ -73,17 +73,17 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	}
 
 	HDROP hDrop = (HDROP)GlobalLock(hgDrop);
-	wp.FileImportList = LFAllocFileImportList(hDrop);
+	wp.pFileImportList = LFAllocFileImportList(hDrop);
 	GlobalUnlock(hgDrop);
 
-	LFDoWithProgress(WorkerImportFromWindows, &wp.Hdr, pWnd);
-	UINT Result = wp.FileImportList->m_LastError;
+	LFDoWithProgress(WorkerImport, &wp.Hdr, pWnd);
+	UINT Result = wp.pFileImportList->m_LastError;
 	LFErrorBox(pWnd, Result);
 
-	LFFreeFileImportList(wp.FileImportList);
+	LFFreeFileImportList(wp.pFileImportList);
 
-	if (wp.Template)
-		LFFreeItemDescriptor(wp.Template);
+	if (wp.pItemTemplate)
+		LFFreeItemDescriptor(wp.pItemTemplate);
 
 	if (p_OwnerWnd)
 		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
@@ -99,11 +99,11 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	wp.TransactionList = LFAllocTransactionList(hLiquid);
+	wp.pTransactionList = LFAllocTransactionList(hLiquid);
 	GlobalUnlock(hgLiquid);
 
-	LFDoWithProgress(WorkerImportFromStore, &wp.Hdr, pWnd);
-	UINT Result = wp.TransactionList->m_LastError;
+	LFDoWithProgress(WorkerSendTo, &wp.Hdr, pWnd);
+	UINT Result = wp.pTransactionList->m_LastError;
 	LFErrorBox(pWnd, Result);
 
 	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
@@ -117,11 +117,11 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	STGMEDIUM stg;
 	ZeroMemory(&stg, sizeof(stg));
 	stg.tymed = TYMED_HGLOBAL;
-	stg.hGlobal = LFCreateLiquidFiles(wp.TransactionList);
+	stg.hGlobal = LFCreateLiquidFiles(wp.pTransactionList);
 
 	pDataObject->SetData(&fmt, &stg, FALSE);
 
-	LFFreeTransactionList(wp.TransactionList);
+	LFFreeTransactionList(wp.pTransactionList);
 
 	if (p_OwnerWnd)
 		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
@@ -188,6 +188,7 @@ STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState
 
 	if (dobj.GetGlobalData(LFGetApp()->CF_HLIQUID))
 		goto Allowed;
+
 	if ((!p_SearchResult) && (dobj.GetGlobalData(CF_HDROP)))
 		goto Allowed;
 
@@ -264,10 +265,12 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 	strcpy_s(StoreID, LFKeySize, p_Filter ? p_Filter->StoreID : m_StoreIDValid ? m_StoreID : "");
 
 	// Wenn Default-Store gewünscht: verfügbar ?
+	UINT Result;
 	if (StoreID[0]=='\0')
-		if (!LFDefaultStoreAvailable())
+		if ((Result=LFGetDefaultStore())!=LFOk)
 		{
-			LFErrorBox(pWnd, LFNoDefaultStore);
+			LFErrorBox(pWnd, Result);
+
 			return E_INVALIDARG;
 		}
 

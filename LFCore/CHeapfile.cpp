@@ -45,9 +45,10 @@ void ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize
 
 #define OPENFILE(Name, Disposition) CreateFile(Name, GENERIC_READ | GENERIC_WRITE, 0, NULL, Disposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
-CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
+CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize)
 {
 	assert(sizeof(HeapfileHeader)==512);
+	assert((TableID!=IDXTABLE_MASTER) || (StoreDataSize==0));
 
 	m_pBuffer = NULL;
 	m_ItemCount = 0;
@@ -59,7 +60,8 @@ CHeapfile::CHeapfile(WCHAR* Path, BYTE TableID)
 
 	// Table
 	m_TableID = TableID;
-	m_RequiredElementSize = LFIndexTables[TableID].Size;
+	m_StoreDataSize = (TableID==IDXTABLE_MASTER) ? StoreDataSize : 0;
+	m_RequiredElementSize = LFIndexTables[TableID].Size+StoreDataSize;
 
 	m_KeyOffset = (TableID==IDXTABLE_MASTER) ? offsetof(LFCoreAttributes, FileID) : 0;
 	if (m_KeyOffset==0)
@@ -120,6 +122,7 @@ Create:
 		strcpy_s(m_Header.ID, sizeof(m_Header.ID), HeapSignature);
 		m_Header.ElementSize = m_RequiredElementSize;
 		m_Header.Version = CURIDXVERSION;
+		m_Header.StoreDataSize = m_StoreDataSize;
 
 		m_HeaderNeedsWriteback = TRUE;
 
@@ -155,9 +158,14 @@ UINT CHeapfile::GetRequiredElementSize()
 	return max(m_Header.ElementSize, m_RequiredElementSize);
 }
 
-UINT CHeapfile::GetRequiredFileSize()
+UINT64 CHeapfile::GetRequiredFileSize()
 {
 	return GetRequiredElementSize()*m_ItemCount+sizeof(HeapfileHeader);
+}
+
+void* CHeapfile::GetStoreData(void* Ptr)
+{
+	return (m_TableID==IDXTABLE_MASTER) && (m_Header.StoreDataSize) ? (BYTE*)Ptr+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
 }
 
 
@@ -437,7 +445,11 @@ void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescr
 
 	if (m_TableID==IDXTABLE_MASTER)
 	{
-		ZeroCopy(PtrDst, m_Header.ElementSize, &pItemDescriptor->CoreAttributes, sizeof(LFCoreAttributes));
+		SIZE_T DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
+		ZeroCopy(PtrDst, DataSize, &pItemDescriptor->CoreAttributes, sizeof(LFCoreAttributes));
+
+		if (m_Header.StoreDataSize)
+			ZeroCopy((BYTE*)PtrDst+DataSize, m_Header.StoreDataSize, &pItemDescriptor->StoreData, LFMaxStoreDataSize);
 	}
 	else
 	{
@@ -473,6 +485,7 @@ BOOL CHeapfile::Compact()
 	// Temporary header
 	HeapfileHeader TempHeader = m_Header;
 	TempHeader.ElementSize = max(m_Header.ElementSize, m_RequiredElementSize);
+	TempHeader.StoreDataSize = m_StoreDataSize;
 	TempHeader.NeedsCompaction = FALSE;
 
 	if (CURIDXVERSION>TempHeader.Version)
@@ -487,6 +500,10 @@ BOOL CHeapfile::Compact()
 		ABORT
 
 	// Copy (and enlarge) tuples
+	SIZE_T PaddedDataSize = m_Header.StoreDataSize;
+	if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
+		PaddedDataSize += LFKeySize;
+
 	BYTE* pTempBuffer = (BYTE*)malloc(TempHeader.ElementSize);
 	ZeroMemory(pTempBuffer, TempHeader.ElementSize);
 
@@ -497,17 +514,10 @@ BOOL CHeapfile::Compact()
 
 	while (FindNext(Next, Ptr))
 	{
-		if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
-		{
-			memcpy(pTempBuffer, Ptr, m_Header.ElementSize-LFKeySize);
+		memcpy(pTempBuffer, Ptr, m_Header.ElementSize-PaddedDataSize);
 
-			// Move keys to end of tuple
-			memcpy(pTempBuffer+TempHeader.ElementSize-LFKeySize, (BYTE*)Ptr+m_Header.ElementSize-LFKeySize, LFKeySize);
-		}
-		else
-		{
-			memcpy(pTempBuffer, Ptr, m_Header.ElementSize);
-		}
+		if (PaddedDataSize)
+			memcpy(pTempBuffer+TempHeader.ElementSize-PaddedDataSize, (BYTE*)Ptr+m_Header.ElementSize-PaddedDataSize, PaddedDataSize);
 
 		if (!WriteFile(hTempFile, pTempBuffer, TempHeader.ElementSize, &Written, NULL))
 			ABORT

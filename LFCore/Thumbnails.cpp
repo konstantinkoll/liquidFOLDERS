@@ -12,7 +12,7 @@ extern OSVERSIONINFO osInfo;
 LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 {
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(i, Path, MAX_PATH, TRUE, FALSE)!=LFOk)
+	if (LFGetFileLocation(i, Path, MAX_PATH, FALSE)!=LFOk)
 		return NULL;
 
 	HBITMAP hBitmap = NULL;
@@ -127,7 +127,7 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 	if ((BitmapSrc.bmWidth!=256) || (BitmapSrc.bmHeight!=256) || (BitmapSrc.bmBitsPixel!=32))
 		return hBitmap;
 
-	BYTE* pBitsSrc = ((BYTE*)BitmapSrc.bmBits);
+	BYTE* pBitsSrc = (BYTE*)BitmapSrc.bmBits;
 	BYTE* pBitsDst;
 
 	// Neue Bitmap erzeugen

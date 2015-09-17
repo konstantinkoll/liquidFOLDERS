@@ -13,28 +13,30 @@
 #define HeapOk                      0
 #define HeapCreated                 1
 #define HeapMaintenanceRequired     2
-#define HeapNoAccess                3
-#define HeapError                   4
-#define HeapCannotCreate            5
+#define HeapNoAccess                3	// Fatal error condition
+#define HeapError                   4	// Fatal error condition
+#define HeapCannotCreate            5	// Fatal error condition
 
 struct HeapfileHeader
 {
 	CHAR ID[6];
-	UINT ElementSize;
+	UINT ElementSize;					// Includes StoreDataSize
 	UINT Version;
 	BOOL NeedsCompaction;
-	BYTE Fill[492];			// Auf 512 Byte
+	UINT StoreDataSize;					// Part of ElementSize
+	BYTE Fill[488];						// Pad to 512 byte
 };
 
 class CHeapfile
 {
 public:
-	CHeapfile(WCHAR* Path, BYTE TableID);
+	CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize=0);
 	~CHeapfile();
 
 	UINT GetItemCount();
 	UINT GetRequiredElementSize();
-	UINT GetRequiredFileSize();
+	UINT64 GetRequiredFileSize();
+	void* GetStoreData(void* Ptr);
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);
 	BOOL FindNext(INT& Next, void*& Ptr);
@@ -59,8 +61,9 @@ protected:
 	void Flush();
 
 	HeapfileHeader m_Header;
-	BYTE m_TableID;
+	UINT m_TableID;
 	UINT m_RequiredElementSize;
+	UINT m_StoreDataSize;
 	UINT m_KeyOffset;
 
 	void* m_pBuffer;

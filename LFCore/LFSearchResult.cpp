@@ -5,7 +5,6 @@
 #include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
 #include "LFVariantData.h"
-#include "StoreCache.h"
 #include <assert.h>
 #include <algorithm>
 #include <hash_map>

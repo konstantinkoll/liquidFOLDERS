@@ -150,7 +150,7 @@ public:
 	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA);
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
-	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li, BOOL OnlyStoreIcons=FALSE);
+	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList, BOOL OnlyStoreIcons=FALSE);
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
 	BOOL IsTooltipVisible();
 	void HideTooltip();

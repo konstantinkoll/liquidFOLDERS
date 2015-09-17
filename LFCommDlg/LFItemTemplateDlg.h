@@ -14,7 +14,7 @@
 class LFItemTemplateDlg : public LFDialog
 {
 public:
-	LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* StoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
+	LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* pStoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void AdjustLayout();

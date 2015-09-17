@@ -32,13 +32,11 @@ BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallI
 	m_ShowNumbers = ShowNumbers;
 
 	// Load icons
-	m_LargeIcons.SetImageSize(CSize(32, 32));
 	if (LargeIconsID)
-		m_LargeIcons.Load(LargeIconsID);
+		m_LargeIcons.Load(LargeIconsID, 32);
 
-	m_SmallIcons.SetImageSize(CSize(16, 16));
 	if (SmallIconsID)
-		m_SmallIcons.Load(SmallIconsID);
+		m_SmallIcons.Load(SmallIconsID, 16);
 
 	LOGFONT lf;
 	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
@@ -463,12 +461,7 @@ void CSidebar::OnPaint()
 				rectItem.DeflateRect(BORDER, BORDER);
 
 				if (m_Items.m_Items[a].IconID!=-1)
-				{
-					CAfxDrawState ds;
-					p_Icons->PrepareDrawImage(ds);
-					p_Icons->Draw(&dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID);
-					p_Icons->EndDrawImage(ds);
-				}
+					p_Icons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, m_SelectedItem!=(INT)a);
 
 				rectItem.left += m_IconSize+BORDER;
 

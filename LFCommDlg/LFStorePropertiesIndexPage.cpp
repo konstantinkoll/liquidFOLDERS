@@ -44,7 +44,7 @@ LRESULT LFStorePropertiesIndexPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lP
 		GetDlgItem(IDC_DATPATH)->SetWindowText(p_Store->DatPath);
 
 		OLECHAR szGUID[MAX_PATH];
-		StringFromGUID2(p_Store->guid, szGUID, MAX_PATH);
+		StringFromGUID2(p_Store->UniqueID, szGUID, MAX_PATH);
 		GetDlgItem(IDC_GUID)->SetWindowText(szGUID);
 
 		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(p_Store->IdxPathMain);

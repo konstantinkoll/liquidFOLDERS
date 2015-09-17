@@ -66,19 +66,6 @@ BOOL LFEditTimeDlg::OnInitDialog()
 
 	SetWindowText(LFGetApp()->m_Attributes[p_Data->Attr].Name);
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	INT Index = GetAttributeIconIndex(p_Data->Attr);
-	if (Index!=-1)
-	{
-		CImageListTransparent AttributeIcons;
-		AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
-
-		HICON hIcon = AttributeIcons.ExtractIcon(Index);
-		SetIcon(hIcon, FALSE);
-		SetIcon(hIcon, TRUE);
-	}
-
 	// Größe
 	CRect rect;
 	m_wndCalendar.GetMinReqRect(&rect);

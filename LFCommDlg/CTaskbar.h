@@ -35,8 +35,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CMFCToolBarImages m_ButtonIcons;
-	CMFCToolBarImages m_TooltipIcons;
+	CIcons m_ButtonIcons;
+	CIcons m_TooltipIcons;
 	INT m_IconSize;
 	CList<CTaskButton*> m_ButtonsLeft;
 	CList<CTaskButton*> m_ButtonsRight;

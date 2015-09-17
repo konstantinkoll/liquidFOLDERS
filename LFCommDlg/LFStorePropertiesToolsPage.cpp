@@ -42,11 +42,6 @@ LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore
 	p_StoreValid = pStoreValid;
 }
 
-void LFStorePropertiesToolsPage::DoDataExchange(CDataExchange* pDX)
-{
-	DDX_Control(pDX, IDC_ICONMAINTENANCE, m_wndIconMaintenance);
-}
-
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesToolsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_RUNMAINTENANCE, OnRunMaintenance)
@@ -59,8 +54,6 @@ END_MESSAGE_MAP()
 BOOL LFStorePropertiesToolsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-
-	m_wndIconMaintenance.SetSmallIcon(AfxGetResourceHandle(), IDD_STOREMAINTENANCE);
 
 	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_MaskMaintenance);
 	GetDlgItem(IDC_SYNCHRONIZED)->GetWindowText(m_MaskSynchronized);
@@ -82,9 +75,9 @@ void LFStorePropertiesToolsPage::OnRunSynchronize()
 
 void LFStorePropertiesToolsPage::OnRunBackup()
 {
-	CHAR* Keys;
-	UINT StoreCount;
-	UINT Result = LFGetStores(&Keys, &StoreCount);
+	CHAR* pStoreIDs;
+	UINT Count;
+	UINT Result = LFGetAllStores(&pStoreIDs, &Count);
 	if (Result!=LFOk)
 	{
 		LFErrorBox(this, Result);
@@ -111,57 +104,57 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 			{
 				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
 
-				CHAR* Ptr = Keys;
-				for (UINT a=0; a<StoreCount; a++)
+				CHAR* Ptr = pStoreIDs;
+				for (UINT a=0; a<Count; a++)
 				{
-					LFStoreDescriptor s;
-					if (LFGetStoreSettings(Ptr, &s)==LFOk)
-						if ((s.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+					LFStoreDescriptor Store;
+					if (LFGetStoreSettings(Ptr, &Store)==LFOk)
+						if ((Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 						{
 							// Header
 							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
-							tmpStr += s.StoreID;
+							tmpStr += Store.StoreID;
 							f.WriteString(tmpStr+_T("]\n"));
 
 							// Name
-							tmpStr = s.StoreName;
+							tmpStr = Store.StoreName;
 							CEscape(tmpStr);
 							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
 
 							// Mode
-							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.Mode);
+							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), Store.Mode);
 							f.WriteString(tmpStr);
 
 							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.Flags & LFStoreFlagAutoLocation);
+							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), Store.Flags & LFStoreFlagAutoLocation);
 							f.WriteString(tmpStr);
 
-							if ((s.Flags & LFStoreFlagAutoLocation)==0)
+							if ((Store.Flags & LFStoreFlagAutoLocation)==0)
 							{
 								// Path
-								tmpStr = s.DatPath;
+								tmpStr = Store.DatPath;
 								CEscape(tmpStr);
 								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
 							}
 
 							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.guid, sizeof(s.guid))+_T("\n"));
+							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&Store.UniqueID, sizeof(Store.UniqueID))+_T("\n"));
 
 							// IndexVersion
-							tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), s.IndexVersion);
+							tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), Store.IndexVersion);
 							f.WriteString(tmpStr);
 
 							// CreationTime
-							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
+							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&Store.CreationTime, sizeof(Store.CreationTime))+_T("\n"));
 
 							// FileTime
-							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
+							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&Store.FileTime, sizeof(Store.FileTime))+_T("\n"));
 
 							// MaintenanceTime
-							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((BYTE*)&s.MaintenanceTime, sizeof(s.MaintenanceTime))+_T("\n"));
+							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((BYTE*)&Store.MaintenanceTime, sizeof(Store.MaintenanceTime))+_T("\n"));
 
 							// SynchronizeTime
-							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((BYTE*)&s.SynchronizeTime, sizeof(s.SynchronizeTime))+_T("\n"));
+							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((BYTE*)&Store.SynchronizeTime, sizeof(Store.SynchronizeTime))+_T("\n"));
 						}
 
 					Ptr += LFKeySize;
@@ -176,7 +169,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 		}
 	}
 
-	free(Keys);
+	free(pStoreIDs);
 }
 
 LRESULT LFStorePropertiesToolsPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)

@@ -101,7 +101,7 @@
 #define IDS_ERR_ILLEGALPHYSFOLDER       1408
 #define IDS_ERR_REGISTRY                1409
 #define IDS_ERR_ACCESS                  1410
-#define IDS_ERR_ILLEGALKEY              1411
+#define IDS_ERR_ILLEGALID               1411
 #define IDS_ERR_NODEFAULTSTORE          1412
 #define IDS_ERR_TOOMANYSTORES           1413
 #define IDS_ERR_STORENOTMOUNTED         1414

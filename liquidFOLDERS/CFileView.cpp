@@ -527,7 +527,7 @@ CMenu* CFileView::GetSendToMenu()
 
 	// Stores
 	UINT nID = 0xFF00;
-	if (LFDefaultStoreAvailable())
+	if (LFGetDefaultStore()==LFOk)
 	{
 		CString tmpStr((LPCSTR)IDS_DEFAULTSTORE);
 		AppendSendToItem(pMenu, nID, tmpStr, (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy, m_SendToItems);
@@ -1006,8 +1006,17 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendTooltipAttribute(i, LFAttrDuration, Hint);
 		AppendTooltipAttribute(i, LFAttrHashtags, Hint);
 		AppendTooltipAttribute(i, LFAttrPages, Hint);
-		AppendTooltipAttribute(i, LFAttrWidth, Hint);
-		AppendTooltipAttribute(i, LFAttrHeight, Hint);
+
+		if (i->AttributeValues[LFAttrDimension])
+		{
+			LFAttributeToString(i, LFAttrDimension, tmpStr, 256);
+
+			WCHAR Resolution[256];
+			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)i->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)i->AttributeValues[LFAttrWidth]));
+
+			AppendTooltipString(LFAttrDimension, Hint, Resolution);
+		}
+
 		AppendTooltipAttribute(i, LFAttrEquipment, Hint);
 		AppendTooltipAttribute(i, LFAttrBitrate, Hint);
 		AppendTooltipAttribute(i, LFAttrCreationTime, Hint);

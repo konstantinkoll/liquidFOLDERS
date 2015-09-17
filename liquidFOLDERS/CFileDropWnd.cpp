@@ -321,7 +321,7 @@ void CFileDropWnd::OnStoreOpen()
 
 void CFileDropWnd::OnStoreMakeDefault()
 {
-	LFErrorBox(this, LFMakeDefaultStore(m_Store.StoreID));
+	LFErrorBox(this, LFSetDefaultStore(m_Store.StoreID));
 }
 
 void CFileDropWnd::OnStoreImportFolder()
@@ -353,8 +353,9 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_STORE_MAKEDEFAULT:
-		LFGetDefaultStore(StoreID);
-		b = (strcmp(m_Store.StoreID, StoreID)!=0);
+		if (LFGetDefaultStore(StoreID)==LFOk)
+			b = strcmp(m_Store.StoreID, StoreID)!=0;
+
 		break;
 
 	case IDM_STORE_IMPORTFOLDER:

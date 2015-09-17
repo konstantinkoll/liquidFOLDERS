@@ -76,8 +76,9 @@ IDB_PRIORITY10          BITMAP                  "res\\Priority10.bmp"
 IDB_ATTRIBUTEICONS_16   BITMAP                  "res\\Attributes_16.bmp"
 IDB_ATTRIBUTEICONS_32   BITMAP                  "res\\Attributes_32.bmp"
 IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
-IDB_STOREBACKUP         BITMAP                  "res\\StoreBackup_32.bmp"
 IDB_STORESYNCHRONIZE    BITMAP                  "res\\StoreSynchronize_32.bmp"
+IDB_STOREMAINTENANCE    BITMAP                  "res\\StoreMaintenance_32.bmp"
+IDB_STOREBACKUP         BITMAP                  "res\\StoreBackup_32.bmp"
 IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 IDB_UPDATEICONS_16      BITMAP                  "res\\UpdateIcons_16.bmp"
 IDB_UPDATEICONS_32      BITMAP                  "res\\UpdateIcons_32.bmp"
@@ -97,8 +98,6 @@ IDI_RESET_SELECTED      ICON                    "res\\Reset_Selected.ico"
 IDI_RESET_HOT           ICON                    "res\\Reset_Hot.ico"
 IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed.ico"
 IDI_SEARCH              ICON                    "res\\Search.ico"
-IDI_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
-IDD_CREATESTORE         ICON                    "res\\CreateStore_Tiny.ico"
 32513                   ICON                    "res\\Error.ico"
 32514                   ICON                    "res\\Question.ico"
 32515                   ICON                    "res\\Warning.ico"
@@ -106,24 +105,6 @@ IDD_CREATESTORE         ICON                    "res\\CreateStore_Tiny.ico"
 32518                   ICON                    "res\\Shield_7.ico"
 IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
 IDI_READY               ICON                    "res\\Ready.ico"
-IDD_ABOUT               ICON                    "res\\About_Tiny.ico"
-IDD_ADDSTORE            ICON                    "res\\StoreAdd_Tiny.ico"
-IDD_CHOOSESTORE         ICON                    "res\\Stores_Tiny.ico"
-IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
-IDD_SELECTGPS           ICON                    "res\\Location_Tiny.ico"
-IDD_LICENSE             ICON                    "res\\Key_Tiny.ico"
-IDD_ITEMTEMPLATE        ICON                    "res\\TagFiles_Tiny.ico"
-IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Small.ico"
-IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
-IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
-IDD_PROGRESS            ICON                    "res\\Progress_Tiny.ico"
-IDD_EDITCONDITION       ICON                    "res\\QueryEdit_Tiny.ico"
-IDD_EDITFILTER          ICON                    "res\\FilterEdit_Tiny.ico"
-IDD_SAVEFILTER          ICON                    "res\\FilterSave_Tiny.ico"
-IDD_GOTOYEAR            ICON                    "res\\GotoYear_Tiny.ico"
-IDI_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
-IDI_ORGANIZE            ICON                    "res\\Organize_Tiny.ico"
-IDI_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -349,7 +330,7 @@ BEGIN
     LTEXT           "Name:",IDC_STATIC,85,5,50,8
     EDITTEXT        IDC_STORENAME,140,3,168,14,ES_AUTOHSCROLL
     LTEXT           "Kommentar:",IDC_STATIC,85,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,140,23,168,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,140,23,168,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
     LTEXT           "Inhalt:",IDC_STATIC,3,51,80,8
     LTEXT           "X",IDC_CONTENTS,85,51,223,8,SS_ENDELLIPSIS
@@ -369,18 +350,18 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAP
 CAPTION "Extras"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Wartungsarbeiten",IDC_STATIC,4,3,301,53
-    CONTROL         "",IDC_ICONMAINTENANCE,"CIconCtrl",WS_GROUP,9,13,25,36
-    LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,40,13,258,8
-    LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,39,35,120,14
-    GROUPBOX        "Synchronisation",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
-    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
-    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,39,93,120,14
+    GROUPBOX        "Synchronisation",IDC_STATIC,4,3,301,53
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,14,258,8
+    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,39,36,120,14
+    GROUPBOX        "Wartungsarbeiten",IDC_STATIC,4,61,301,53
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,40,71,258,8
+    LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,39,93,120,14
     GROUPBOX        "Einstellungen",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20134,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,39,140,120,14
 END
@@ -519,7 +500,7 @@ BEGIN
     LTEXT           "Name:",IDC_STATIC,49,26,50,8
     EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
     LTEXT           "Kommentar:",IDC_STATIC,49,46,50,8
-    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,103,44,180,14,ES_AUTOHSCROLL
     CONTROL         "Speicherort",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
     CONTROL         "&Automatisch wählen",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
     CONTROL         "Auf diesem &Laufwerk speichern:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10
@@ -1080,7 +1061,7 @@ BEGIN
     LTEXT           "Nombre:",IDC_STATIC,65,5,50,8
     EDITTEXT        IDC_STORENAME,119,3,189,14,ES_AUTOHSCROLL
     LTEXT           "Comentarios:",IDC_STATIC,65,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,119,23,189,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,119,23,189,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
     LTEXT           "Contenido:",IDC_STATIC,3,51,60,8
     LTEXT           "X",IDC_CONTENTS,66,51,242,8,SS_ENDELLIPSIS
@@ -1119,20 +1100,20 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAP
 CAPTION "Ferramentas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_ICONMAINTENANCE,"CIconCtrl",WS_GROUP,9,13,25,36
-    GROUPBOX        "Mantenimiento",IDC_STATIC,4,3,301,53
-    LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,40,13,258,8
-    LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,39,35,110,14
-    GROUPBOX        "Sincronización",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
-    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
-    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,39,93,110,14
+    GROUPBOX        "Sincronización",IDC_STATIC,4,3,301,53
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    LTEXT           "Sincroniza el store para los datos.",IDC_STATIC,40,14,258,8
+    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,39,36,120,14
+    GROUPBOX        "Mantenimiento",IDC_STATIC,4,61,301,53
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,40,71,258,8
+    LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,39,93,120,14
     GROUPBOX        "Configuraciones",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20134,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,40,129,258,8
-    PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,110,14
+    PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,120,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110
@@ -1251,7 +1232,7 @@ BEGIN
     LTEXT           "Nombre:",IDC_STATIC,49,26,50,8
     EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
     LTEXT           "Comentarios:",IDC_STATIC,49,46,50,8
-    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,103,44,180,14,ES_AUTOHSCROLL
     CONTROL         "Ubicación",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
     CONTROL         "Elegir &automaticamente",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
     CONTROL         "Guardar en &unidad:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10
@@ -1848,7 +1829,7 @@ BEGIN
     LTEXT           "Nom:",IDC_STATIC,75,5,50,8
     EDITTEXT        IDC_STORENAME,130,3,178,14,ES_AUTOHSCROLL
     LTEXT           "Commentaire:",IDC_STATIC,75,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,130,23,178,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,130,23,178,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
     LTEXT           "Contenu:",IDC_STATIC,3,51,70,8
     LTEXT           "X",IDC_CONTENTS,75,51,233,8,SS_ENDELLIPSIS
@@ -1886,18 +1867,18 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAP
 CAPTION "Outils"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_ICONMAINTENANCE,"CIconCtrl",WS_GROUP,9,13,25,36
-    GROUPBOX        "Travails d'entretien",IDC_STATIC,4,3,301,53
-    LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,40,13,258,8
-    LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Exécuter des &travails d'entretien",IDC_RUNMAINTENANCE,39,35,130,14
-    GROUPBOX        "Synchronisation ",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
-    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,40,71,258,8
-    LTEXT           "Finalement synchronisée: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,39,93,130,14
+    GROUPBOX        "Synchronisation",IDC_STATIC,4,3,301,53
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,40,14,258,8
+    LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,39,36,130,14
+    GROUPBOX        "Travails d'entretien",IDC_STATIC,4,61,301,53
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,40,71,258,8
+    LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Exécuter des &travails d'entretien",IDC_RUNMAINTENANCE,39,93,130,14
     GROUPBOX        "Paramètres",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20134,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Sauvegarde les &paramètres",IDC_RUNBACKUP,39,140,130,14
 END
@@ -2005,7 +1986,7 @@ BEGIN
     LTEXT           "Nom:",IDC_STATIC,49,26,50,8
     EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
     LTEXT           "Commentaire:",IDC_STATIC,49,46,50,8
-    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,103,44,180,14,ES_AUTOHSCROLL
     CONTROL         "Endroit",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
     CONTROL         "Choisissez &automatiquement",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
     CONTROL         "Sauvegarder en &lecteur:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10
@@ -2616,7 +2597,7 @@ BEGIN
     LTEXT           "Name:",IDC_STATIC,55,5,50,8
     EDITTEXT        IDC_STORENAME,110,3,198,14,ES_AUTOHSCROLL
     LTEXT           "Comments:",IDC_STATIC,55,25,50,8
-    EDITTEXT        IDC_STORECOMMENT,110,23,198,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,110,23,198,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
     LTEXT           "Contents:",IDC_STATIC,3,51,50,8
     LTEXT           "X",IDC_CONTENTS,55,51,253,8,SS_ENDELLIPSIS
@@ -2655,18 +2636,18 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAP
 CAPTION "Tools"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_ICONMAINTENANCE,"CIconCtrl",WS_GROUP,9,13,25,36
-    GROUPBOX        "Maintenance",IDC_STATIC,4,3,301,53
-    LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,40,13,258,8
-    LTEXT           "Last maintenance on this store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,39,35,80,14
-    GROUPBOX        "Synchronization",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
-    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,40,71,258,8
-    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,39,93,80,14
+    GROUPBOX        "Synchronization",IDC_STATIC,4,3,301,53
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,40,14,258,8
+    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,39,36,80,14
+    GROUPBOX        "Maintenance",IDC_STATIC,4,61,301,53
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,40,71,258,8
+    LTEXT           "Last maintenance on this store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,39,93,80,14
     GROUPBOX        "Settings",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20134,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Saves the settings of all stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,140,80,14
 END
@@ -2787,7 +2768,7 @@ BEGIN
     LTEXT           "Name:",IDC_STATIC,49,26,50,8
     EDITTEXT        IDC_STORENAME,104,24,179,14,ES_AUTOHSCROLL
     LTEXT           "Comments:",IDC_STATIC,49,46,50,8
-    EDITTEXT        IDC_STORECOMMENT,103,44,180,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,103,44,180,14,ES_AUTOHSCROLL
     CONTROL         "Location",IDC_CATEGORY2,"CCategory",WS_GROUP,7,69,276,15
     CONTROL         "Choose &automatically",IDC_AUTOPATH,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,86,276,10
     CONTROL         "Keep on this &volume:",IDC_VOLUMEPATH,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,97,276,10

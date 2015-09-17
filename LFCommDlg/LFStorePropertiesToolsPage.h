@@ -14,12 +14,9 @@ class LFStorePropertiesToolsPage : public CPropertyPage
 public:
 	LFStorePropertiesToolsPage(LFStoreDescriptor* pStore, BOOL* pStoreValid);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
 	LFStoreDescriptor* p_Store;
 	BOOL* p_StoreValid;
-	CIconCtrl m_wndIconMaintenance;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnRunMaintenance();

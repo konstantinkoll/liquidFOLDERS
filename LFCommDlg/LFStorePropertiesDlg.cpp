@@ -17,7 +17,7 @@ LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd)
 {
 	if (LFGetStoreSettings(StoreID, &m_Store)==LFOk)
 	{
-		m_StoreID = m_Store.guid;
+		m_StoreID = m_Store.UniqueID;
 		m_StoreValid = TRUE;
 	}
 	else
@@ -53,12 +53,13 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
 		const LFStorePropertiesGeneralPage* pPage = (LFStorePropertiesGeneralPage*)m_pPages[0];
 
-		CString Name;
-		pPage->m_wndStoreName.GetWindowText(Name);
-		CString Comment;
-		pPage->m_wndStoreComment.GetWindowText(Comment);
+		WCHAR StoreName[256];
+		pPage->m_wndStoreName.GetWindowText(StoreName, 256);
 
-		UINT Result = LFSetStoreAttributes(m_Store.StoreID, Name.GetBuffer(), Comment.GetBuffer());
+		WCHAR Comment[256];
+		pPage->m_wndStoreComment.GetWindowText(Comment, 256);
+
+		UINT Result = LFSetStoreAttributes(m_Store.StoreID, StoreName, Comment);
 		if (Result!=LFOk)
 		{
 			LFErrorBox(this, Result);
@@ -66,12 +67,12 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		}
 
 		if (pPage->m_wndMakeDefault.IsWindowEnabled() && pPage->m_wndMakeDefault.GetCheck())
-			LFErrorBox(this, LFMakeDefaultStore(m_Store.StoreID));
+			LFErrorBox(this, LFSetDefaultStore(m_Store.StoreID));
 
 		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==((m_Store.Mode & LFStoreModeIndexMask)>=LFStoreModeIndexHybrid));
 
 		if (pPage->m_wndMakeSearchable.IsWindowVisible())
-			LFErrorBox(this, LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE));
+			LFErrorBox(this, LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()));
 	}
 
 	return CPropertySheet::OnCommand(wParam, lParam);
@@ -79,7 +80,7 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void LFStorePropertiesDlg::UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	m_StoreValid = (LFGetStoreSettings(m_StoreID, &m_Store)==LFOk);
+	m_StoreValid = (LFGetStoreSettingsEx(m_StoreID, &m_Store)==LFOk);
 	GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
 
 	for (UINT a=0; a<m_PageCount; a++)
@@ -98,12 +99,6 @@ END_MESSAGE_MAP()
 BOOL LFStorePropertiesDlg::OnInitDialog()
 {
 	CPropertySheet::OnInitDialog();
-
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LFGetApp()->LoadDialogIcon(IDI_STOREPROPERTIES);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
 
 	// Titel
 	CString title;

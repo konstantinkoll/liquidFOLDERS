@@ -324,21 +324,21 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		AddValue(i, LFAttrFileCount);
 		AddValue(i, LFAttrFileSize);
 
-		LFStoreDescriptor s;
-		LFGetStoreSettings(i->StoreID, &s);
+		LFStoreDescriptor Store;
+		LFGetStoreSettings(i->StoreID, &Store);
 
-		AddValueVirtual(AttrSource, theApp.m_SourceNames[s.Source][0]);
+		AddValueVirtual(AttrSource, theApp.m_SourceNames[Store.Source][0]);
 
 		WCHAR tmpStr[256];
-		LFTimeToString(s.MaintenanceTime, tmpStr, 256);
+		LFTimeToString(Store.MaintenanceTime, tmpStr, 256);
 		AddValueVirtual(AttrMaintenanceTime, tmpStr);
 
-		LFTimeToString(s.SynchronizeTime, tmpStr, 256);
+		LFTimeToString(Store.SynchronizeTime, tmpStr, 256);
 		if (tmpStr[0]!=L'\0')
 			AddValueVirtual(AttrSynchronizeTime, tmpStr);
 
-		if ((s.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-			AddValueVirtual(AttrLastSeen, s.LastSeen);
+		if ((Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+			AddValueVirtual(AttrLastSeen, Store.LastSeen);
 
 		break;
 	case LFTypeFile:

@@ -11,7 +11,7 @@
 
 #define BORDER     4
 
-BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CMFCToolBarImages* pButtonIcons, CMFCToolBarImages* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon)
+BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon)
 {
 	m_Caption = Caption;
 	m_Hint = Hint;
@@ -127,16 +127,11 @@ void CTaskButton::OnPaint()
 	// Icon
 	if (p_ButtonIcons && (!m_HideIcon || m_Small))
 	{
-		CAfxDrawState ds;
-		p_ButtonIcons->PrepareDrawImage(ds);
-
 		CPoint pt(rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1));
-		p_ButtonIcons->Draw(&dc, pt.x, pt.y, m_IconID);
+		p_ButtonIcons->Draw(dc, pt.x, pt.y, m_IconID);
 
 		if (m_OverlayID!=-1)
-			p_ButtonIcons->Draw(&dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
-
-		p_ButtonIcons->EndDrawImage(ds);
+			p_ButtonIcons->Draw(dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
 
 		rectText.left += m_IconSize+BORDER;
 	}

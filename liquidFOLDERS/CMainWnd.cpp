@@ -15,9 +15,9 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 	{
 		strcpy_s(pFilter->StoreID, LFKeySize, RootStore);
 
-		LFStoreDescriptor s;
-		if (LFGetStoreSettings(RootStore, &s)==LFOk)
-			wcscpy_s(pFilter->OriginalName, 256, s.StoreName);
+		LFStoreDescriptor Store;
+		if (LFGetStoreSettings(RootStore, &Store)==LFOk)
+			wcscpy_s(pFilter->OriginalName, 256, Store.StoreName);
 	}
 	else
 	{
@@ -694,7 +694,7 @@ void CMainWnd::OnItemOpen()
 					}
 					else
 					{
-						Result = LFGetFileLocation(i, Path, MAX_PATH, TRUE, TRUE);
+						Result = LFGetFileLocation(i, Path, MAX_PATH, TRUE);
 						if (Result==LFOk)
 						{
 							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)

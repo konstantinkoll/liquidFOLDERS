@@ -88,6 +88,60 @@ LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescripto
 
 
 
+// Stores
+//
+
+// Gibt die ID des aktuellen Standard-Stores zurück
+LFCORE_API UINT __stdcall LFGetDefaultStore(CHAR* pStoreID=NULL);
+
+// Macht einen Store zum Standard-Store
+LFCORE_API UINT __stdcall LFSetDefaultStore(CHAR* pStoreID);
+
+// Gibt die Anzahl aller Stores zurück
+LFCORE_API UINT __stdcall LFGetStoreCount();
+
+// Gibt die IDs aller Stores zurück
+LFCORE_API UINT __stdcall LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount);
+
+// Gibt die Daten eines Stores zurück
+LFCORE_API UINT __stdcall LFGetStoreSettings(CHAR* pStoreID, LFStoreDescriptor* pStoreDescriptor);
+LFCORE_API UINT __stdcall LFGetStoreSettingsEx(GUID UniqueID, LFStoreDescriptor* pStoreDescriptor);
+
+// Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
+LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
+
+
+// Gibt die ID für das Icon eines Stores zurück
+#define LFGetStoreIcon(pStoreDescriptor) (pStoreDescriptor)->Source
+
+// Prüft, ob ein Store angeschlossen ist
+#define LFIsStoreMounted(pStoreDescriptor) ((pStoreDescriptor)->DatPath[0]!=L'\0')
+
+// Erzeugt einen neuen Store
+LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName=NULL, WCHAR* pComments=NULL, CHAR cVolume='\0', BOOL MakeSearchable=FALSE);
+LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, LFProgress* pProgress=NULL);
+
+// Macht einen Store offline durchsuchbar
+LFCORE_API UINT __stdcall LFMakeStoreSearchable(CHAR* pStoreID, BOOL Searchable=TRUE);
+
+// Löscht einen bestehenden Store
+LFCORE_API UINT __stdcall LFDeleteStore(CHAR* pStoreID, LFProgress* pProgress=NULL);
+
+// Setzt Namen und Kommentar eines Stores
+// Ist pName oder pComment NULL, so wird der jeweilige Wert nicht verändert
+LFCORE_API UINT __stdcall LFSetStoreAttributes(CHAR* pStoreID, WCHAR* pName, WCHAR* pComment);
+
+// Startet geplante Wartungsarbeiten für alle Stores
+LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProgress=NULL);
+
+// Gibt den physischen Pfad einer Datei zurück
+LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount, BOOL RemoveNew, BOOL CheckExists=TRUE);
+
+// Importiert Dateien
+LFCORE_API UINT __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
+
+
+
 // LFVariantData
 //
 
@@ -185,7 +239,7 @@ LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* pItemDescriptor);
 LFCORE_API LFFilter* __stdcall LFLoadFilterEx(WCHAR* pFilename);
 
 // Speichert einen Filter in einem Store ab
-LFCORE_API UINT __stdcall LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComments=NULL);
+LFCORE_API UINT __stdcall LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComment=NULL);
 
 // Neue LFFilterCondition erzeugen
 LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
@@ -231,6 +285,9 @@ LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionLi
 // Handle zu LIQUIDFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
 LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* pTransactionList);
 
+// Transaktion ausführen
+LFCORE_API void __stdcall LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, LFVariantData* pVariantData1=NULL, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
+
 
 // Neue Datei-Importliste erzeugen
 LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
@@ -239,7 +296,7 @@ LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
 LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* pFileImportList);
 
 // String zur LFFileImportList hinzufügen
-LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* Path);
+LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* pPath);
 
 
 // Existierende LFMaintenanceList freigeben
@@ -287,7 +344,7 @@ LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult
 
 // Statistik
 // - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
-LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID);
+LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID=NULL);
 
 
 
@@ -305,7 +362,7 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);
 //
 
 // Speichert pShellLink auf dem Desktop ab
-LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* LinkFilename);
+LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFilename);
 
 // Liefert einen ShellLink für den angegebenen Store
 LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* pItemDescriptor);
@@ -313,119 +370,3 @@ LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* pItemDe
 // Erzeugt auf dem Desktop eine Verknüpfung mit dem angegebenen Store
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFItemDescriptor* pItemDescriptor);
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* pStoreDescriptor);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-// Stores
-//
-
-// Gibt den physischen Pfad einer Datei zurück
-LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* dst, SIZE_T cCount, BOOL CheckExists, BOOL RemoveNew, BOOL Extended=FALSE);
-
-// Gibt die Daten eines Stores zurück
-LFCORE_API UINT __stdcall LFGetStoreSettings(CHAR* StoreID, LFStoreDescriptor* s);
-LFCORE_API UINT __stdcall LFGetStoreSettings(GUID guid, LFStoreDescriptor* s);
-
-// Gibt die ID für das Icon eines Stores zurück
-LFCORE_API UINT __stdcall LFGetStoreIcon(LFStoreDescriptor* s);
-
-// Prüft, ob ein Store angeschlossen ist
-LFCORE_API BOOL __stdcall LFIsStoreMounted(LFStoreDescriptor* s);
-
-// Legt einen neuen Store an
-// - Eingabeparameter interner Store:
-//   - StoreName: optional (wird ggf. durch Standardname ersetzt)
-//   - Comment: optional
-//   - IndexMode: erforderlich
-//   - AutoLocation: erforderlich
-//   - DatPath: erforderlich, wenn AutoLocation==TRUE
-//   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
-// - Eingabeparameter Hybrid-Store und externer Store:
-//   - StoreName: optional (wird ggf. durch Standardname ersetzt)
-//   - Comment: optional
-//   - IndexMode: erforderlich
-//   - DatPath: erforderlich
-//   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
-LFCORE_API UINT LFCreateStore(LFStoreDescriptor* s);
-
-// Macht den internen Store zum Default Store
-LFCORE_API UINT __stdcall LFMakeDefaultStore(CHAR* StoreID);
-
-// Macht den externen Store zum Hybrid-Store
-LFCORE_API UINT __stdcall LFMakeStoreSearchable(CHAR* StoreID, BOOL Searchable=TRUE);
-
-// Setzt Namen und Kommentar eines Stores
-// Ist name oder comment NULL, so wird der jeweilige Wert nicht verändert
-LFCORE_API UINT __stdcall LFSetStoreAttributes(CHAR* StoreID, WCHAR* name, WCHAR* comment, BOOL InternalCall=FALSE);
-
-// Löscht einen bestehenden Store
-LFCORE_API UINT __stdcall LFDeleteStore(CHAR* StoreID, LFProgress* pProgress=NULL);
-
-// Startet geplante Wartungsarbeiten für alle Stores
-LFCORE_API LFMaintenanceList* __stdcall LFStoreMaintenance(LFProgress* pProgress=NULL);
-
-// Gibt an, ob ein Default Stores verfügbar ist
-LFCORE_API BOOL __stdcall LFDefaultStoreAvailable();
-
-// Gibt die ID des aktuellen Default Stores zurück
-LFCORE_API BOOL __stdcall LFGetDefaultStore(CHAR* StoreID);
-
-// Gibt die Anzahl aller Stores zurück
-LFCORE_API UINT __stdcall LFGetStoreCount();
-
-// Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
-LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
-
-// Gibt die IDs aller Stores zurück
-LFCORE_API UINT __stdcall LFGetStores(CHAR** IDs, UINT* count);
-
-
-
-
-
-
-
-
-// LFFileImportList
-//
-
-// Importiert Dateien in den Store
-LFCORE_API void __stdcall LFTransactionImport(CHAR* key, LFFileImportList* il, LFItemDescriptor* it, BOOL recursive, BOOL move, LFProgress* pProgress=NULL);
-
-// Ändert bei allen Einträgen in tl bis zu 3 Attributwerte
-LFCORE_API void __stdcall LFTransactionUpdate(LFTransactionList* tl, LFVariantData* v1, LFVariantData* v2=NULL, LFVariantData* v3=NULL);
-
-// Archiviert alle Dateien in tl
-LFCORE_API void __stdcall LFTransactionArchive(LFTransactionList* tl);
-
-// Löscht alle Dateien in tl
-LFCORE_API void __stdcall LFTransactionDelete(LFTransactionList* tl, BOOL PutInTrash=TRUE, LFProgress* pProgress=NULL);
-
-// Stellt alle Dateien in tl wieder her, sofern nicht entgültig gelöscht
-LFCORE_API void __stdcall LFTransactionRestore(LFTransactionList* tl, UINT Flags);
-
-// Physische Orte auflösen
-LFCORE_API void __stdcall LFTransactionResolvePhysicalLocations(LFTransactionList* tl, BOOL IncludePIDL=FALSE);
-
-// Importiert Dateien in den Store
-LFCORE_API void __stdcall LFTransactionImport(CHAR* key, LFTransactionList* il, BOOL move, LFProgress* pProgress=NULL);
-
-// Fügt die angegebenen Dateien zum Suchergebnis hinzu
-LFCORE_API void __stdcall LFTransactionAddToSearchResult(LFTransactionList* il, LFSearchResult* sr);

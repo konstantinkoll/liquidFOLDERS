@@ -9,13 +9,13 @@
 // LFItemTemplateDlg
 //
 
-LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* StoreID, CWnd* pParentWnd, BOOL AllowChooseStore, LFFilter* pFilter)
+LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* pStoreID, CWnd* pParentWnd, BOOL AllowChooseStore, LFFilter* pFilter)
 	: LFDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
-	ASSERT(StoreID);
+	ASSERT(pStoreID);
 
 	m_pItem = pItem;
-	strcpy_s(m_StoreID, LFKeySize, StoreID);
+	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 	m_AllowChooseStore = AllowChooseStore;
 	m_SortAlphabetic = FALSE;
 
@@ -260,9 +260,9 @@ LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	if (LFGetStoreSettings(m_StoreID, &Store)==LFOk)
 	{
 		CString tmpStr;
-		if (Store.StoreComment[0]!=L'\0')
+		if (Store.Comments[0]!=L'\0')
 		{
-			tmpStr = Store.StoreComment;
+			tmpStr = Store.Comments;
 		}
 		else
 		{

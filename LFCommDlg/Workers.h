@@ -7,20 +7,20 @@ struct WorkerParameters
 	LFWorkerParameters Hdr;
 	CHAR StoreID[LFKeySize];
 	BOOL DeleteSource;
-	LFItemDescriptor* Template;
+	LFItemDescriptor* pItemTemplate;
 	union
 	{
-		LFFileImportList* FileImportList;
-		LFMaintenanceList* MaintenanceList;
-		LFTransactionList* TransactionList;
+		LFFileImportList* pFileImportList;
+		LFMaintenanceList* pMaintenanceList;
+		LFTransactionList* pTransactionList;
 		UINT Result;
 	};
 };
 
 DWORD WINAPI WorkerStoreMaintenance(void* lParam);
 DWORD WINAPI WorkerStoreDelete(void* lParam);
-DWORD WINAPI WorkerImportFromStore(void* lParam);
-DWORD WINAPI WorkerImportFromWindows(void* lParam);
+DWORD WINAPI WorkerSendTo(void* lParam);
+DWORD WINAPI WorkerImport(void* lParam);
 DWORD WINAPI WorkerDelete(void* lParam);
 
 void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);

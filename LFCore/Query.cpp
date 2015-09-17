@@ -3,10 +3,8 @@
 #include "Categorizers.h"
 #include "LFCore.h"
 #include "LFVariantData.h"
-#include "Mutex.h"
 #include "Query.h"
 #include "Stores.h"
-#include "StoreCache.h"
 #include <assert.h>
 #include <shlwapi.h>
 
@@ -362,12 +360,13 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 	{
 		const LFCoreAttributes* pCoreAttributes = (LFCoreAttributes*)pTableData;
 
-		// Only show archived files when filter queries archive
-		if ((pCoreAttributes->Flags & LFFlagArchive) && (pFilter->ContextID!=LFContextArchive))
-			return FALSE;
-
 		// Only show trashed files when filter queries trashcan
 		if ((pCoreAttributes->Flags & LFFlagTrash) && (pFilter->ContextID!=LFContextTrash))
+			return FALSE;
+
+		// Only show archived files when filter queries archive
+		if ((pCoreAttributes->Flags & LFFlagArchive) && (pFilter->ContextID!=LFContextArchive) &&
+			(((pCoreAttributes->Flags & LFFlagTrash)==0) || (pFilter->ContextID!=LFContextTrash)))
 			return FALSE;
 
 		if ((pFilter->ContextID) || (pCoreAttributes->ContextID==LFContextFilters))
@@ -376,21 +375,25 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 			case LFContextFavorites:
 				if (!pCoreAttributes->Rating)
 					return FALSE;
+
 				break;
 
 			case LFContextNew:
 				if (!(pCoreAttributes->Flags & LFFlagNew))
 					return FALSE;
+
 				break;
 
 			case LFContextArchive:
 				if (!(pCoreAttributes->Flags & LFFlagArchive))
 					return FALSE;
+
 				break;
 
 			case LFContextTrash:
 				if (!(pCoreAttributes->Flags & LFFlagTrash))
 					return FALSE;
+
 				break;
 
 			case LFContextFilters:
@@ -471,74 +474,53 @@ BOOL PassesFilter(LFItemDescriptor* i, LFFilter* pFilter)
 // Query helpers
 //
 
-void RetrieveStore(CHAR* StoreID, LFFilter* f, LFSearchResult* sr)
+void QueryStore(CHAR* StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
-	OPEN_STORE(StoreID, FALSE, sr->m_LastError = Result);
+	CStore* pStore;
 
-	if (idx1)
-		idx1->Retrieve(f, sr);
+	if (OpenStore(StoreID, FALSE, &pStore)==LFOk)
+		pStore->Query(pFilter, pSearchResult);
 
-	CLOSE_STORE();
-}
-
-void QueryStores(LFSearchResult* pSearchResult)
-{
-	pSearchResult->m_HasCategories = TRUE;
-
-	// Stores
-	if (GetMutexForStores())
-	{
-		AddStoresToSearchResult(pSearchResult);
-		ReleaseMutexForStores();
-	}
-	else
-	{
-		pSearchResult->m_LastError = LFMutexError;
-	}
+	delete pStore;
 }
 
 __forceinline void QueryTree(LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
-	RetrieveStore(pFilter->StoreID, pFilter, pSearchResult);
+	QueryStore(pFilter->StoreID, pFilter, pSearchResult);
 }
 
 __forceinline void QuerySearch(LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
-	if (pFilter->StoreID[0]=='\0')
+	if (pFilter->StoreID[0])
 	{
-		// All stores
-		if (!GetMutexForStores())
-		{
-			pSearchResult->m_LastError = LFMutexError;
+		// Single store
+		QueryStore(pFilter->StoreID, pFilter, pSearchResult);
+	}
+	else
+	{
+		CHAR* pStoreIDs;
+		UINT Count;
+		if ((pSearchResult->m_LastError=LFGetAllStores(&pStoreIDs, &Count))!=LFOk)
 			return;
-		}
-
-		CHAR* IDs;
-		UINT Count = FindStores(&IDs);
-		ReleaseMutexForStores();
 
 		if (Count)
 		{
-			CHAR* Ptr = IDs;
+			CHAR* Ptr = pStoreIDs;
 			for (UINT a=0; a<Count; a++)
 			{
-				RetrieveStore(Ptr, pFilter, pSearchResult);
+				QueryStore(Ptr, pFilter, pSearchResult);
 
 				Ptr += LFKeySize;
 			}
 
-			free(IDs);
+			free(pStoreIDs);
 		}
-	}
-	else
-	{
-		// Single store
-		RetrieveStore(pFilter->StoreID, pFilter, pSearchResult);
 	}
 }
 
 
 // Public functions
+//
 
 LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 {
@@ -552,18 +534,6 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 	}
 	else
 	{
-		// Ggf. Default Store einsetzen
-		if ((pFilter->StoreID[0]=='\0') && (pFilter->Mode==LFFilterModeDirectoryTree))
-			if (LFDefaultStoreAvailable())
-			{
-				LFGetDefaultStore(pFilter->StoreID);
-			}
-			else
-			{
-				pSearchResult->m_LastError = LFNoDefaultStore;
-				goto Finish;
-			}
-
 		// Query
 		switch(pFilter->Mode)
 		{
@@ -573,6 +543,10 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 			break;
 
 		case LFFilterModeDirectoryTree:
+			if ((pFilter->StoreID[0]=='\0') && (pFilter->Mode==LFFilterModeDirectoryTree))
+				if ((pSearchResult->m_LastError=LFGetDefaultStore(pFilter->StoreID))!=LFOk)
+					goto Finish;
+
 			QueryTree(pFilter, pSearchResult);
 
 			break;
@@ -613,59 +587,4 @@ LFCORE_API LFSearchResult* LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchR
 	pSearchResult->m_QueryTime = GetTickCount()-Start;
 
 	return pSearchResult;
-}
-
-LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
-{
-	LFStatistics* pStatistics = new LFStatistics;
-	ZeroMemory(pStatistics, sizeof(LFStatistics));
-
-	if (!StoreID)
-	{
-		pStatistics->LastError = LFIllegalKey;
-
-		return pStatistics;
-	}
-
-	if (!GetMutexForStores())
-	{
-		pStatistics->LastError = LFMutexError;
-
-		return pStatistics;
-	}
-
-	// All stores
-	CHAR* IDs;
-	UINT Count = FindStores(&IDs);
-	ReleaseMutexForStores();
-
-	if (Count)
-	{
-		CHAR* Ptr = IDs;
-		for (UINT a=0; a<Count; a++)
-		{
-			if ((*StoreID=='\0') || (strcmp(Ptr, StoreID)==0))
-			{
-				HANDLE StoreLock = NULL;
-				LFStoreDescriptor* pSlot = FindStore(Ptr, &StoreLock);
-
-				if (pSlot)
-				{
-					for (UINT b=0; b<=min(LFLastQueryContext, 31); b++)
-					{
-						pStatistics->FileCount[b] += pSlot->FileCount[b];
-						pStatistics->FileSize[b] += pSlot->FileSize[b];
-					}
-
-					ReleaseMutexForStore(StoreLock);
-				}
-			}
-
-			Ptr += LFKeySize;
-		}
-
-		free(IDs);
-	}
-
-	return pStatistics;
 }

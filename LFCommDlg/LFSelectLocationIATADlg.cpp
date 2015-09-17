@@ -196,9 +196,6 @@ END_MESSAGE_MAP()
 
 BOOL LFSelectLocationIATADlg::OnInitDialog()
 {
-	if (!m_IsPropertyDialog)
-		m_nIDTemplate = IDD_SELECTGPS;
-
 	LFDialog::OnInitDialog();
 
 	// Combobox füllen

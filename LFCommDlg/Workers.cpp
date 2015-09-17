@@ -18,7 +18,7 @@ DWORD WINAPI WorkerStoreMaintenance(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	wp->MaintenanceList = LFStoreMaintenance(&p);
+	wp->pMaintenanceList = LFScheduledMaintenance(&p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -32,20 +32,20 @@ DWORD WINAPI WorkerStoreDelete(void* lParam)
 	LF_WORKERTHREAD_FINISH();
 }
 
-DWORD WINAPI WorkerImportFromStore(void* lParam)
+DWORD WINAPI WorkerSendTo(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	LFTransactionImport(wp->StoreID, wp->TransactionList, wp->DeleteSource==TRUE, &p);
+	LFDoTransaction(wp->pTransactionList, LFTransactionTypeSendTo, &p, (UINT_PTR)wp->StoreID);
 
 	LF_WORKERTHREAD_FINISH();
 }
 
-DWORD WINAPI WorkerImportFromWindows(void* lParam)
+DWORD WINAPI WorkerImport(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, TRUE, wp->DeleteSource==TRUE, &p);
+	LFDoFileImport(wp->pFileImportList, TRUE, wp->StoreID, wp->pItemTemplate, wp->DeleteSource, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -54,7 +54,7 @@ DWORD WINAPI WorkerDelete(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	LFTransactionDelete(wp->TransactionList, FALSE, &p);
+	LFDoTransaction(wp->pTransactionList, LFTransactionTypeDelete, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -82,22 +82,22 @@ void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 	{
 		WorkerParameters wp;
 		ZeroMemory(&wp, sizeof(wp));
-		wp.FileImportList = LFAllocFileImportList();
-		LFAddImportPath(wp.FileImportList, dlg.m_FolderPath);
+		wp.pFileImportList = LFAllocFileImportList();
+		LFAddImportPath(wp.pFileImportList, dlg.m_FolderPath);
 		strcpy_s(wp.StoreID, LFKeySize, StoreID);
 		wp.DeleteSource = dlg.m_DeleteSource;
 
 		// Template füllen
-		wp.Template = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(wp.Template, StoreID, pParentWnd, TRUE);
+		wp.pItemTemplate = LFAllocItemDescriptor();
+		LFItemTemplateDlg tdlg(wp.pItemTemplate, StoreID, pParentWnd, TRUE);
 		if (tdlg.DoModal()!=IDCANCEL)
 		{
-			LFDoWithProgress(WorkerImportFromWindows, (LFWorkerParameters*)&wp, pParentWnd);
-			LFErrorBox(pParentWnd, wp.FileImportList->m_LastError);
+			LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
+			LFErrorBox(pParentWnd, wp.pFileImportList->m_LastError);
 		}
 
-		LFFreeItemDescriptor(wp.Template);
-		LFFreeFileImportList(wp.FileImportList);
+		LFFreeItemDescriptor(wp.pItemTemplate);
+		LFFreeFileImportList(wp.pFileImportList);
 	}
 }
 
@@ -107,9 +107,9 @@ void LFRunMaintenance(CWnd* pParentWnd)
 	ZeroMemory(&wp, sizeof(wp));
 
 	LFDoWithProgress(WorkerStoreMaintenance, &wp.Hdr, pParentWnd);
-	LFErrorBox(pParentWnd, wp.MaintenanceList->m_LastError);
+	LFErrorBox(pParentWnd, wp.pMaintenanceList->m_LastError);
 
-	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, pParentWnd);
+	LFStoreMaintenanceDlg dlg(wp.pMaintenanceList, pParentWnd);
 	dlg.DoModal();
 }
 

@@ -386,6 +386,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStore.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CStoreInternal.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CStoreWindows.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dllmain.cpp"
 				>
 				<FileConfiguration
@@ -424,6 +436,10 @@
 						CompileAsManaged="0"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\FileSystem.cpp"
+				>
 			</File>
 			<File
 				RelativePath=".\Filters.cpp"
@@ -530,19 +546,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\StoreCache.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Thumbnails.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Transaction.cpp"
 				>
 			</File>
 			<File
@@ -569,6 +577,22 @@
 			</File>
 			<File
 				RelativePath=".\ContextTable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CStore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CStoreInternal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CStoreWindows.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FileSystem.h"
 				>
 			</File>
 			<File
@@ -660,10 +684,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StoreCache.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores.h"
 				>
 			</File>
@@ -673,10 +693,6 @@
 			</File>
 			<File
 				RelativePath=".\Thumbnails.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Transaction.h"
 				>
 			</File>
 			<File

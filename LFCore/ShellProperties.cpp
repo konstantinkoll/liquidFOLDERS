@@ -213,14 +213,15 @@ void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL Force)
 }
 
 
-void SetNameExtAddFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename)
+void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pFilename)
 {
+	// Type
 	pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeMask) | LFTypeFile;
 
 	// Name
 	WCHAR Name[256];
-	WCHAR* Ptr = wcsrchr(Filename, L'\\');
-	wcscpy_s(Name, 256, Ptr ? Ptr+1 : Filename);
+	WCHAR* Ptr = wcsrchr(pFilename, L'\\');
+	wcscpy_s(Name, 256, Ptr ? Ptr+1 : pFilename);
 
 	// Erweiterung
 	WCHAR* LastExt = wcsrchr(Name, L'.');
@@ -242,11 +243,6 @@ void SetNameExtAddFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename)
 	}
 
 	SetAttribute(pItemDescriptor, LFAttrFileName, Name);
-
-	// Hinzugefügt
-	FILETIME ft;
-	GetSystemTimeAsFileTime(&ft);
-	SetAttribute(pItemDescriptor, LFAttrAddTime, &ft);
 }
 
 
@@ -376,15 +372,15 @@ void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LF
 	}
 }
 
-void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, BOOL Metadata)
+void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL Metadata)
 {
 	assert(pItemDescriptor);
-	assert(Filename);
+	assert(pPath);
 
 	// Standard attributes
 	//
 	WIN32_FIND_DATA ffd;
-	HANDLE hFind = FindFirstFile(Filename, &ffd);
+	HANDLE hFind = FindFirstFile(pPath, &ffd);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
@@ -406,13 +402,13 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, B
 	pItemDescriptor->CoreAttributes.SlaveID = ContextSlaves[pItemDescriptor->CoreAttributes.ContextID];
 
 	// Exit if no additional metadata is requested
-	if (!Metadata)
+	if (!Metadata || !pItemDescriptor->CoreAttributes.SlaveID)
 		return;
 
 	// Shell properties
 	//
 	LPITEMIDLIST pidlFQ;
-	if (SUCCEEDED(SHParseDisplayName(Filename, NULL, &pidlFQ, 0, NULL)))
+	if (SUCCEEDED(SHParseDisplayName(pPath, NULL, &pidlFQ, 0, NULL)))
 	{
 		IShellFolder2* pParentFolder;
 		LPCITEMIDLIST pidlRel;
@@ -443,7 +439,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* Filename, B
 	// OLE structured storage
 	//
 	IPropertySetStorage* pPropertySetStorage;
-	if (SUCCEEDED(StgOpenStorageEx(Filename, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
+	if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
 	{
 		GetOLEProperties(pPropertySetStorage, PropertyDocuments, pItemDescriptor);
 		GetOLEProperties(pPropertySetStorage, PropertyMedia, pItemDescriptor);

@@ -30,14 +30,12 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		LFStoreDescriptor Store;
-		ZeroMemory(&Store, sizeof(Store));
+		WCHAR StoreName[256];
+		GetDlgItem(IDC_STORENAME)->GetWindowText(StoreName, 256);
 
-		Store.Mode = LFStoreModeBackendInternal;
-
-		GetDlgItem(IDC_STORENAME)->GetWindowText(Store.StoreName, 256);
-		GetDlgItem(IDC_STORECOMMENT)->GetWindowText(Store.StoreComment, 256);
-
+		WCHAR Comments[256];
+		GetDlgItem(IDC_COMMENTS)->GetWindowText(Comments, 256);
+		
 		CHAR cVolume = '\0';
 		if (!m_wndAutoPath.GetCheck())
 		{
@@ -46,19 +44,8 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 				cVolume = m_DriveLetters[Index];
 		}
 
-		if (cVolume)
-		{
-			Store.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceUnknown) ? LFStoreModeIndexInternal : m_wndMakeSearchable.GetCheck() ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
-			swprintf_s(Store.DatPath, MAX_PATH, L"%c:\\", cVolume);
-		}
-		else
-		{
-			Store.Mode |= LFStoreModeIndexInternal;
-			Store.Flags |= LFStoreFlagAutoLocation;
-		}
-
 		CWaitCursor csr;
-		LFErrorBox(this, LFCreateStore(&Store));
+		LFErrorBox(this, LFCreateStoreLiquidfolders(StoreName, Comments, cVolume, m_wndMakeSearchable.GetCheck()));
 	}
 }
 

@@ -64,6 +64,8 @@ void LFProgressDlg::OnDestroy()
 		m_pTaskbarList3->SetProgressState(GetSafeHwnd(), TBPF_NOPROGRESS);
 		m_pTaskbarList3->Release();
 	}
+
+	LFDialog::OnDestroy();
 }
 
 void LFProgressDlg::OnCancel()

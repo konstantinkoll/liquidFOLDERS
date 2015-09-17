@@ -35,10 +35,10 @@ public:
 	void SelectNone();
 
 protected:
-	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolvePhysicalLocations=FALSE, BOOL IncludePIDL=FALSE);
+	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolveLocations=FALSE, BOOL IncludePIDL=FALSE);
 	void RemoveTransactedItems(LFTransactionList* pTransactionList);
 	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
-	BOOL RestoreFiles(UINT Flags, BOOL All=FALSE);
+	void RestoreFiles(BOOL All=FALSE);
 	BOOL UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

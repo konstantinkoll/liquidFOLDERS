@@ -3826,6 +3826,7 @@ KLB     Kalabo, Sambia;4;14*58'59"S, 22*37'59"E
 KLC     Kaolack, Senegal;4;14*8'49"N, 16*3'5"W
 KLD     Tver, Russland;4;47*10'59"N, 42*10'1"E
 KLE     Kaele, Kamerun;4;10*5'33"N, 14*26'44"E
+KLF     Grabtsevo, Russland;5;54*32'48"N, 36*22'8"E
 KLG     Kalskag, USA;4;61*32'11"N, 160*20'29"W
 KLH     Kolhapur, Indien;4;16*39'53"N, 74*17'22"E
 KLI     Kotakoli, Kongo;4;4*9'27"N, 21*39'3"E

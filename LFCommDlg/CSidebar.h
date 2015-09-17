@@ -68,8 +68,8 @@ protected:
 	BOOL m_Hover;
 	BOOL m_Keyboard;
 	BOOL m_ShowNumbers;
-	CMFCToolBarImages m_SmallIcons;
-	CMFCToolBarImages m_LargeIcons;
-	CMFCToolBarImages* p_Icons;
+	CIcons m_SmallIcons;
+	CIcons m_LargeIcons;
+	CIcons* p_Icons;
 	INT m_IconSize;
 };

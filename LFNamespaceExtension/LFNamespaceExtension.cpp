@@ -143,10 +143,12 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 		return DROPEFFECT_NONE;
 
 	// Wenn Default-Store gewünscht: verfügbar ?
+	UINT Result;
 	if (StoreID[0]=='\0')
-		if (!LFDefaultStoreAvailable())
+		if ((Result=LFGetDefaultStore())!=LFOk)
 		{
-			LFCoreErrorBox(LFNoDefaultStore);
+			LFCoreErrorBox(Result);
+
 			return DROPEFFECT_NONE;
 		}
 
@@ -157,7 +159,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 		LFTransactionList* tl = LFAllocTransactionList(hLiquid);
 		GlobalUnlock(hgLiquid);
 
-		LFTransactionImport(StoreID, tl, Move==TRUE);
+		LFDoTransaction(tl, LFTransactionTypeSendTo, NULL, (UINT_PTR)StoreID);
 		UINT Result = tl->m_LastError;
 		LFCoreErrorBox(Result);
 
@@ -193,7 +195,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 		}
 		else
 		{
-			LFTransactionImport(StoreID, il, NULL, TRUE, Move==TRUE);
+			LFDoFileImport(il, TRUE, StoreID, NULL, Move);
 			Result = il->m_LastError;
 			LFCoreErrorBox(Result);
 		}

@@ -1,24 +1,22 @@
 
 #include "stdafx.h"
+#include "FileSystem.h"
 #include "LFCore.h"
 #include "Shortcuts.h"
-#include "StoreCache.h"
-#include "Stores.h"
 #include <assert.h>
 
 
 extern HMODULE LFCoreModuleHandle;
-extern OSVERSIONINFO osInfo;
 
 
-LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* LinkFilename)
+LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFilename)
 {
 	// Get the fully qualified file name for the link file
 	WCHAR PathDesktop[MAX_PATH];
 	if (SHGetSpecialFolderPath(NULL, PathDesktop, CSIDL_DESKTOPDIRECTORY, FALSE))
 	{
 		WCHAR SanitizedLinkFilename[MAX_PATH];
-		SanitizeFileName(SanitizedLinkFilename, MAX_PATH, LinkFilename);
+		SanitizeFileName(SanitizedLinkFilename, MAX_PATH, pLinkFilename);
 
 		WCHAR PathLink[2*MAX_PATH];
 		WCHAR NumberStr[16] = L"";
@@ -80,7 +78,7 @@ LFCORE_API IShellLink* LFGetShortcutForStore(LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
-	return (pItemDescriptor->Type & LFTypeStore) ? GetShortcutForStore(pItemDescriptor->StoreID, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->IconID) : NULL;
+	return (pItemDescriptor->Type & LFTypeMask)==LFTypeStore ? GetShortcutForStore(pItemDescriptor->StoreID, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->IconID) : NULL;
 }
 
 LFCORE_API void LFCreateDesktopShortcutForStore(LFItemDescriptor* pItemDescriptor)
@@ -100,7 +98,7 @@ LFCORE_API void LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* pStoreDescr
 {
 	assert(pStoreDescriptor);
 
-	IShellLink* pShellLink = GetShortcutForStore(pStoreDescriptor->StoreID, pStoreDescriptor->StoreComment, LFGetStoreIcon(pStoreDescriptor));
+	IShellLink* pShellLink = GetShortcutForStore(pStoreDescriptor->StoreID, pStoreDescriptor->Comments, LFGetStoreIcon(pStoreDescriptor));
 	if (pShellLink)
 	{
 		LFCreateDesktopShortcut(pShellLink, pStoreDescriptor->StoreName);

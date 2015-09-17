@@ -228,30 +228,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FilterEdit_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FilterEdit_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FilterSave_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FilterSave_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Folder_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Folder_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Globe_FitToWindow_16.png"
 				>
 			</File>
@@ -564,27 +540,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Organize_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Organize_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Picture_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\Picture_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\QueryEdit_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\QueryEdit_32.png"
 				>
 			</File>
 			<File
@@ -636,14 +596,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\StoreCreate_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\StoreCreate_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\StoreDefault_16.png"
 				>
 			</File>
@@ -689,22 +641,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Support_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Table_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Table_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\TagFiles_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\TagFiles_32.png"
 				>
 			</File>
 			<File
@@ -941,19 +877,11 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\About_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\AppLogo.ico"
 			>
 		</File>
 		<File
 			RelativePath=".\Clipboard_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\CreateStore_Tiny.ico"
 			>
 		</File>
 		<File
@@ -989,23 +917,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\FilterEdit_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\FilterPane_16.png"
 			>
 		</File>
 		<File
 			RelativePath=".\FilterPane_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\FilterSave_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Folder_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1025,15 +941,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\GlobeOptions_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Google Earth.png"
-			>
-		</File>
-		<File
-			RelativePath=".\GotoYear_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1053,10 +961,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Key_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\liquidFOLDERS.ico"
 			>
 		</File>
@@ -1070,10 +974,6 @@
 		</File>
 		<File
 			RelativePath=".\liquidFOLDERS_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Location_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1098,18 +998,6 @@
 		</File>
 		<File
 			RelativePath="Multiple.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Organize_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Plane.png"
-			>
-		</File>
-		<File
-			RelativePath="Plane_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1154,18 +1042,6 @@
 		</File>
 		<File
 			RelativePath=".\Priority9.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Progress.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Progress_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\QueryEdit_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1281,11 +1157,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\StoreMaintenance_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\StoreManager_Small.ico"
+			RelativePath=".\StoreMaintenance_32.bmp"
 			>
 		</File>
 		<File
@@ -1293,23 +1165,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Stores_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\StoreSynchronize_32.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Table_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\TagFiles_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Tags_Tiny.ico"
 			>
 		</File>
 		<File

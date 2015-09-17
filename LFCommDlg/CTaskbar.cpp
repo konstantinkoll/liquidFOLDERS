@@ -26,14 +26,10 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT n
 
 	m_IconSize = abs(lf.lfHeight)>=24 ? 32 : 16;
 
-	m_ButtonIcons.SetImageSize(CSize(m_IconSize, m_IconSize));
-	m_ButtonIcons.Load(m_IconSize==32 ? LargeResID : SmallResID);
+	m_ButtonIcons.Load(m_IconSize==32 ? LargeResID : SmallResID, m_IconSize);
 
 	if (m_IconSize<32)
-	{
-		m_TooltipIcons.SetImageSize(CSize(32, 32));
-		m_TooltipIcons.Load(LargeResID);
-	}
+		m_TooltipIcons.Load(LargeResID, 32);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 

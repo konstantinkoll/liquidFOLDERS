@@ -7,10 +7,9 @@
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
-#include "Mutex.h"
 #include "resource.h"
 #include "ShellProperties.h"
-#include "StoreCache.h"
+#include "Stores.h"
 #include "Watchdog.h"
 #include <assert.h>
 #include <shlwapi.h>
@@ -49,7 +48,7 @@ LFCORE_API void LFInitialize()
 
 	InitMutex();
 	InitAirportDatabase();
-	InitStoreCache();
+	InitStores();
 	InitWatchdog();
 }
 
@@ -387,7 +386,7 @@ LFCORE_API void LFGetAttrCategoryName(WCHAR* pStr, SIZE_T cCount, UINT ID)
 {
 	assert(pStr);
 
-	LoadString(LFCoreModuleHandle, IDS_ATTRCATEGORY_FIRST+ID, pStr, cCount);
+	LoadString(LFCoreModuleHandle, IDS_ATTRCATEGORY_FIRST+ID, pStr, (INT)cCount);
 }
 
 LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID)
@@ -500,7 +499,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 LFCORE_API void LFGetSourceName(WCHAR* pStr, SIZE_T cCount, UINT ID, BOOL Qualified)
 {
-	LoadString(LFCoreModuleHandle, (Qualified ? IDS_QSRC_FIRST : IDS_SRC_FIRST)+ID, pStr, cCount);
+	LoadString(LFCoreModuleHandle, (Qualified ? IDS_QSRC_FIRST : IDS_SRC_FIRST)+ID, pStr, (INT)cCount);
 }
 
 LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDescriptor, UINT ID)

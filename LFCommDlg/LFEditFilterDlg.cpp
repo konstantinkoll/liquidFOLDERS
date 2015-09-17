@@ -147,8 +147,8 @@ BOOL LFEditFilterDlg::OnInitDialog()
 	BOOL InStore = FALSE;
 	if (m_StoreID[0]!='\0')
 	{
-		LFStoreDescriptor s;
-		if (LFGetStoreSettings(m_StoreID, &s)==LFOk)
+		LFStoreDescriptor Store;
+		if (LFGetStoreSettings(m_StoreID, &Store)==LFOk)
 		{
 			InStore = TRUE;
 
@@ -156,7 +156,7 @@ BOOL LFEditFilterDlg::OnInitDialog()
 			m_wndThisStore.GetWindowText(tmpStr);
 
 			tmpStr.Append(_T(" ("));
-			tmpStr.Append(s.StoreName);
+			tmpStr.Append(Store.StoreName);
 			tmpStr.Append(_T(")"));
 
 			m_wndThisStore.SetWindowText(tmpStr);

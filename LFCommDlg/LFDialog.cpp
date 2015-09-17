@@ -36,7 +36,6 @@ LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL UAC)
 		m_pParentWnd = &m_wndDesktopDimmer;
 	}
 
-	m_nIDTemplate = nIDTemplate;
 	m_UAC = UAC;
 
 	m_ShowKeyboardCues = FALSE;
@@ -304,8 +303,6 @@ BOOL LFDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	HICON hIcon = NULL;
-
 	if (m_UAC)
 	{
 		// Schild
@@ -316,17 +313,21 @@ BOOL LFDialog::OnInitDialog()
 		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
 		if (LFGetApp()->OSVersion>OS_Vista)
-			hIcon = LFGetApp()->LoadDialogIcon(32518);
+		{
+			HICON hIcon = LFGetApp()->LoadDialogIcon(32518);
+
+			SetIcon(hIcon, FALSE);
+			SetIcon(hIcon, TRUE);
+		}
 	}
 	else
-	{
-		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-		hIcon = LFGetApp()->LoadDialogIcon(m_nIDTemplate);
-	}
+		if (GetStyle() & WS_SIZEBOX)
+		{
+			HICON hIcon = LFGetApp()->LoadDialogIcon(IDR_APPLICATION);
 
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
+			SetIcon(hIcon, FALSE);
+			SetIcon(hIcon, TRUE);
+		}
 
 	CRect rect;
 	GetClientRect(rect);

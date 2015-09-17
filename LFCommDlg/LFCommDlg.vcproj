@@ -393,6 +393,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CIcons.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
@@ -615,10 +619,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\About_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Attributes_16.bmp"
 				>
 			</File>
@@ -628,10 +628,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Clipboard_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\CreateStore_Tiny.ico"
 				>
 			</File>
 			<File
@@ -659,31 +655,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FilterEdit_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FilterSave_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Folder_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\GlobeOptions_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\GotoYear_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Info.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Key_Tiny.ico"
 				>
 			</File>
 			<File
@@ -707,23 +679,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Location_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\LocationIndicator_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\res\LocationIndicator_8.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Organize_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Plane_Tiny.ico"
 				>
 			</File>
 			<File
@@ -768,14 +728,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Priority9.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Progress_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\QueryEdit_Tiny.ico"
 				>
 			</File>
 			<File
@@ -875,39 +827,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\StoreAdd_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\StoreBackup_32.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\res\StoreMaintenance_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\StoreProperties_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Stores_Tiny.ico"
+				RelativePath=".\res\StoreMaintenance_32.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\res\StoreSynchronize_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Table_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\TagFiles_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tags_Tiny.ico"
 				>
 			</File>
 			<File
@@ -978,6 +906,10 @@
 			</File>
 			<File
 				RelativePath=".\CIconCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CIcons.h"
 				>
 			</File>
 			<File

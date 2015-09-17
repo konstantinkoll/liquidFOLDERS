@@ -3,11 +3,11 @@
 #include "Filters.h"
 #include "LFCore.h"
 #include "LFVariantData.h"
-#include "Mutex.h"
-#include "ShellProperties.h"
 #include "Stores.h"
-#include "StoreCache.h"
 #include <assert.h>
+
+
+extern LFMessageIDs LFMessages;
 
 
 LFCORE_API LFFilter* LFAllocFilter(LFFilter* pFilter)
@@ -54,8 +54,8 @@ LFCORE_API void LFFreeFilter(LFFilter* pFilter)
 
 LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* pItemDescriptor)
 {
-	WCHAR Path[2*MAX_PATH];
-	if (LFGetFileLocation(pItemDescriptor, Path, 2*MAX_PATH, TRUE, TRUE, TRUE)!=LFOk)
+	WCHAR Path[MAX_PATH];
+	if (LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, TRUE)!=LFOk)
 		return NULL;
 
 	LFFilter* pFilter = LoadFilter(Path, pItemDescriptor->StoreID);
@@ -72,8 +72,8 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 	if (!GetMutexForStores())
 		return NULL;
 
-	WCHAR Path[2*MAX_PATH];
-	wcscpy_s(Path, 2*MAX_PATH, pFilename);
+	WCHAR Path[MAX_PATH];
+	wcscpy_s(Path, MAX_PATH, pFilename);
 
 	WCHAR* Ptr = wcsrchr(Path, L'\\');
 	if (Ptr)
@@ -104,64 +104,44 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 	return pFilter;
 }
 
-LFCORE_API UINT LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComments)
+LFCORE_API UINT LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComment)
 {
 	assert(StoreID);
 	assert(pFilter);
 	assert(pName);
+
+	UINT Result;
 
 	// Store finden
 	CHAR Store[LFKeySize];
 	strcpy_s(Store, LFKeySize, StoreID);
 
 	if (Store[0]=='\0')
-		if (!LFGetDefaultStore(Store))
-			return LFNoDefaultStore;
+		if ((Result=LFGetDefaultStore(Store))!=LFOk)
+			return Result;
 
-	// Store öffnen
-	CIndex* idx1;
-	CIndex* idx2;
-	LFStoreDescriptor* slot;
-	HANDLE StoreLock = NULL;
-	UINT Result = OpenStore(Store, TRUE, idx1, idx2, &slot, &StoreLock);
-	if (Result==LFOk)
+	CStore* pStore;
+	if ((Result=OpenStore(StoreID, TRUE, &pStore))==LFOk)
 	{
 		LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
+		pItemDescriptor->Type = LFTypeFile;
+
 		SetAttribute(pItemDescriptor, LFAttrFileName, pName);
 		SetAttribute(pItemDescriptor, LFAttrFileFormat, "filter");
-		if (pComments)
-			SetAttribute(pItemDescriptor, LFAttrComments, pComments);
 
-		WCHAR Filename[2*MAX_PATH];
-		Result = PrepareImport(slot, pItemDescriptor, Filename, 2*MAX_PATH);
+		if (pComment)
+			SetAttribute(pItemDescriptor, LFAttrComments, pComment);
+
+		WCHAR Path[2*MAX_PATH];
+		if ((Result=pStore->PrepareImport(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
+			Result = pStore->CommitImport(pItemDescriptor, StoreFilter(Path, pFilter), Path);
+
+		delete pItemDescriptor;
+		delete pStore;
+
 		if (Result==LFOk)
-			if (StoreFilter(Filename, pFilter))
-			{
-				SetAttributesFromFile(pItemDescriptor, Filename, FALSE);
-
-				if (idx1)
-					idx1->AddItem(pItemDescriptor);
-				if (idx2)
-					idx2->AddItem(pItemDescriptor);
-			}
-			else
-			{
-				WCHAR* Ptr = wcsrchr(Filename, L'\\');
-				if (Ptr)
-					*(++Ptr) = L'\0';
-
-				RemoveDir(Filename);
-				Result = LFIllegalPhysicalPath;
-			}
-
-		LFFreeItemDescriptor(pItemDescriptor);
-
-		if (idx1)
-			delete idx1;
-		if (idx2)
-			delete idx2;
-		ReleaseMutexForStore(StoreLock);
+			SendLFNotifyMessage(LFMessages.StatisticsChanged);
 	}
 
 	return Result;

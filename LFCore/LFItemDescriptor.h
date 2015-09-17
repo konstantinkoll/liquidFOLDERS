@@ -4,8 +4,8 @@
 
 
 SIZE_T GetAttributeMaxCharacterCount(UINT Attr);
-SIZE_T GetAttributeSize(UINT Attr, const void* v);
-void SetAttribute(LFItemDescriptor* i, UINT Attr, const void* v);
+SIZE_T GetAttributeSize(UINT Attr, const void* Value);
+void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Value);
 
 LFItemDescriptor* AllocFolderDescriptor();
-void AttachSlave(LFItemDescriptor* i, BYTE SlaveID, void* pSlaveData);
+void AttachSlave(LFItemDescriptor* pItemDescriptor, BYTE SlaveID, void* pSlaveData);

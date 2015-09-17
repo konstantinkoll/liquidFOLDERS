@@ -13,6 +13,7 @@
 #include "CHeaderButton.h"
 #include "CHoverButton.h"
 #include "CIconCtrl.h"
+#include "CIcons.h"
 #include "CImageListTransparent.h"
 #include "CInspectorGrid.h"
 #include "CPropertyEdit.h"

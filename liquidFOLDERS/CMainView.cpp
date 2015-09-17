@@ -197,16 +197,16 @@ void CMainView::SetHeader()
 			Hint = tmpStr;
 		}
 
-		LFStoreDescriptor s;
+		LFStoreDescriptor Store;
 		WCHAR* pHint = (m_Context>LFContextAllFiles) ? p_CookedFiles->m_Hint : NULL;
 
 		if ((m_Context<=LFLastQueryContext) && (m_StoreIDValid) && (!pHint))
-			if (LFGetStoreSettings(m_StoreID, &s)==LFOk)
+			if (LFGetStoreSettings(m_StoreID, &Store)==LFOk)
 			{
-				wcscpy_s(p_RawFiles->m_Name, 256, s.StoreName);
-				wcscpy_s(p_CookedFiles->m_Name, 256, s.StoreName);
+				wcscpy_s(p_RawFiles->m_Name, 256, Store.StoreName);
+				wcscpy_s(p_CookedFiles->m_Name, 256, Store.StoreName);
 
-				pHint = s.StoreComment;
+				pHint = Store.Comments;
 			}
 
 		if (pHint)
@@ -417,7 +417,7 @@ void CMainView::AddTransactionItem(LFTransactionList* pTransactionList, LFItemDe
 	}
 }
 
-LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolvePhysicalLocations, BOOL IncludePIDL)
+LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolveLocations, BOOL IncludePIDL)
 {
 	LFTransactionList* pTransactionList = LFAllocTransactionList();
 
@@ -438,9 +438,9 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolvePhysica
 			}
 		}
 
-		if (ResolvePhysicalLocations)
+		if (ResolveLocations)
 		{
-			LFTransactionResolvePhysicalLocations(pTransactionList, IncludePIDL);
+			LFDoTransaction(pTransactionList, LFTransactionTypeResolveLocations, NULL, IncludePIDL);
 			LFErrorBox(this, pTransactionList->m_LastError);
 		}
 	}
@@ -472,13 +472,13 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 	{
 		CWaitCursor csr;
 
-		LFTransactionDelete(pTransactionList, TRUE);
+		LFDoTransaction(pTransactionList, LFTransactionTypePutInTrash);
 	}
 	else
 	{
 		WorkerParameters wp;
 		ZeroMemory(&wp, sizeof(wp));
-		wp.TransactionList = pTransactionList;
+		wp.pTransactionList = pTransactionList;
 
 		LFDoWithProgress(WorkerDelete, &wp.Hdr, this);
 	}
@@ -494,21 +494,18 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 	return Modified;
 }
 
-BOOL CMainView::RestoreFiles(UINT Flags, BOOL All)
+void CMainView::RestoreFiles(BOOL All)
 {
 	CWaitCursor csr;
 
 	LFTransactionList* pTransactionList = BuildTransactionList(All);
-	LFTransactionRestore(pTransactionList, Flags);
+	LFDoTransaction(pTransactionList, LFTransactionTypeRestore);
 	RemoveTransactedItems(pTransactionList);
 
 	if (pTransactionList->m_LastError>LFCancel)
 		ShowNotification(ENT_ERROR, pTransactionList->m_LastError);
 
-	BOOL Changes = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
-
-	return Changes;
 }
 
 BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3)
@@ -516,31 +513,15 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 	CWaitCursor csr;
 
 	LFTransactionList* pTransactionList = BuildTransactionList();
-	LFTransactionUpdate(pTransactionList, Value1, Value2, Value3);
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, Value1, Value2, Value3);
 
 	if (p_wndFileView)
-	{
-		BOOL Deselected = FALSE;
-
-		for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
-			if (pTransactionList->m_Items[a].LastError!=LFOk)
-			{
-				p_wndFileView->SelectItem((INT)pTransactionList->m_Items[a].UserData, FALSE, TRUE);
-				Deselected = TRUE;
-			}
-
 		if (pTransactionList->m_Modified)
 		{
 			FVPersistentData Data;
 			GetPersistentData(Data);
 			UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data, FALSE);
 		}
-		if (Deselected)
-		{
-			p_wndFileView->Invalidate();
-			OnUpdateSelection();
-		}
-	}
 
 	if (pTransactionList->m_LastError>LFCancel)
 		ShowNotification(ENT_ERROR, pTransactionList->m_LastError);
@@ -895,7 +876,7 @@ void CMainView::OnBeginDragDrop()
 		if (Index!=-1)
 		{
 			LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
-			if ((pItemDescriptor->Type & LFTypeStore) && (pItemDescriptor->Type & LFTypeShortcutAllowed))
+			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) && (pItemDescriptor->Type & LFTypeShortcutAllowed))
 			{
 				m_DropTarget.SetDragging(TRUE);
 
@@ -941,14 +922,14 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	LFTransactionList* pTransactionList = LFAllocTransactionList();
 	LFAddTransactionItem(pTransactionList, p_CookedFiles->m_Items[(UINT)wParam]);
 
-	LFVariantData value;
-	value.Attr = LFAttrFileName;
-	value.Type = LFTypeUnicodeString;
-	value.IsNull = FALSE;
+	LFVariantData Value;
+	Value.Attr = LFAttrFileName;
+	Value.Type = LFTypeUnicodeString;
+	Value.IsNull = FALSE;
 
-	wcsncpy_s(value.UnicodeString, 256, (WCHAR*)lParam, 255);
+	wcsncpy_s(Value.UnicodeString, 256, (WCHAR*)lParam, 255);
 
-	LFTransactionUpdate(pTransactionList, &value);
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &Value);
 
 	if (pTransactionList->m_Modified)
 	{
@@ -973,7 +954,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 	{
 		WorkerParameters wp;
 		ZeroMemory(&wp, sizeof(wp));
-		wp.TransactionList = BuildTransactionList();
+		wp.pTransactionList = BuildTransactionList();
 		strcpy_s(wp.StoreID, LFKeySize, pItemData->StoreID);
 
 		if (strcmp(wp.StoreID, "CHOOSE")==0)
@@ -985,10 +966,10 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 			strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
 		}
 
-		LFDoWithProgress(WorkerImportFromStore, &wp.Hdr, this);
+		LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
 
-		LFErrorBox(this, wp.TransactionList->m_LastError);
-		LFFreeTransactionList(wp.TransactionList);
+		LFErrorBox(this, wp.pTransactionList->m_LastError);
+		LFFreeTransactionList(wp.pTransactionList);
 	}
 	else
 	{
@@ -1271,22 +1252,7 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnNewClearNew()
 {
-	LFVariantData v;
-	LFInitVariantData(v, LFAttrFlags);
-	v.Flags.Flags = 0;
-	v.Flags.Mask = LFFlagNew;
-	v.IsNull = FALSE;
-
-	CWaitCursor csr;
-
-	LFTransactionList* pTransactionList = BuildTransactionList(TRUE);
-	LFTransactionUpdate(pTransactionList, &v);
-	RemoveTransactedItems(pTransactionList);
-
-	if (pTransactionList->m_LastError>LFCancel)
-		ShowNotification(ENT_ERROR, pTransactionList->m_LastError);
-
-	LFFreeTransactionList(pTransactionList);
+	RestoreFiles(TRUE);
 }
 
 void CMainView::OnUpdateNewCommands(CCmdUI* pCmdUI)
@@ -1299,7 +1265,7 @@ void CMainView::OnUpdateNewCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnTrashRestoreAll()
 {
-	RestoreFiles(LFFlagTrash, TRUE);
+	RestoreFiles(TRUE);
 }
 
 void CMainView::OnTrashEmpty()
@@ -1374,7 +1340,7 @@ void CMainView::OnStoreMakeDefault()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFErrorBox(this, LFMakeDefaultStore(p_CookedFiles->m_Items[Index]->StoreID));
+		LFErrorBox(this, LFSetDefaultStore(p_CookedFiles->m_Items[Index]->StoreID));
 }
 
 void CMainView::OnStoreImportFolder()
@@ -1476,7 +1442,7 @@ void CMainView::OnFileOpenWith()
 	if (Index!=-1)
 	{
 		WCHAR Path[MAX_PATH];
-		UINT Result = LFGetFileLocation(p_CookedFiles->m_Items[Index], Path, MAX_PATH, TRUE, TRUE);
+		UINT Result = LFGetFileLocation(p_CookedFiles->m_Items[Index], Path, MAX_PATH, TRUE);
 		if (Result==LFOk)
 		{
 			WCHAR Cmd[300];
@@ -1553,6 +1519,7 @@ void CMainView::OnFileRemove()
 
 	for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
 		pTransactionList->m_Items[a].Processed = TRUE;
+
 	RemoveTransactedItems(pTransactionList);
 
 	LFFreeTransactionList(pTransactionList);
@@ -1563,7 +1530,7 @@ void CMainView::OnFileArchive()
 	LFTransactionList* pTransactionList = BuildTransactionList();
 
 	CWaitCursor csr;
-	LFTransactionArchive(pTransactionList);
+	LFDoTransaction(pTransactionList, LFTransactionTypeArchive);
 	RemoveTransactedItems(pTransactionList);
 
 	LFFreeTransactionList(pTransactionList);
@@ -1629,7 +1596,7 @@ void CMainView::OnFileProperties()
 
 void CMainView::OnFileRestore()
 {
-	RestoreFiles((m_Context==LFContextArchive) ? LFFlagArchive : (m_Context==LFContextTrash) ? LFFlagTrash : 0);
+	RestoreFiles();
 }
 
 void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)

@@ -24,7 +24,7 @@ void LFStorePropertiesGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_STOREICON, m_wndIcon);
 	DDX_Control(pDX, IDC_STORENAME, m_wndStoreName);
-	DDX_Control(pDX, IDC_STORECOMMENT, m_wndStoreComment);
+	DDX_Control(pDX, IDC_COMMENTS, m_wndStoreComment);
 	DDX_Control(pDX, IDC_MAKEDEFAULT, m_wndMakeDefault);
 	DDX_Control(pDX, IDC_MAKESEARCHABLE, m_wndMakeSearchable);
 }
@@ -64,7 +64,7 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 		if (m_wndStoreName.LineLength()==0)
 			m_wndStoreName.SetWindowText(p_Store->StoreName);
 		if (m_wndStoreComment.LineLength()==0)
-			m_wndStoreComment.SetWindowText(p_Store->StoreComment);
+			m_wndStoreComment.SetWindowText(p_Store->Comments);
 
 		WCHAR tmpStr[256];
 		LFCombineFileCountSize(p_Store->FileCount[LFContextAllFiles], p_Store->FileSize[LFContextAllFiles], tmpStr, 256);
@@ -79,7 +79,7 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(p_Store->LastSeen);
 
 		CHAR StoreID[LFKeySize];
-		if (LFGetDefaultStore(StoreID))
+		if (LFGetDefaultStore(StoreID)==LFOk)
 			m_wndMakeDefault.SetCheck(strcmp(p_Store->StoreID, StoreID)==0);
 	}
 

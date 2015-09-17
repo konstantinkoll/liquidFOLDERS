@@ -215,7 +215,15 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 		if (wcscmp(CmdLine, L"/FILEDROP")==0)
 		{
 			if (StoreID[0]=='\0')
-				LFGetDefaultStore(StoreID);
+			{
+				UINT Result = LFGetDefaultStore(StoreID);
+				if (Result!=LFOk)
+				{
+					LFErrorBox(CWnd::GetForegroundWindow(), Result);
+
+					return NULL;
+				}
+			}
 
 			return GetFileDrop(StoreID);
 		}
