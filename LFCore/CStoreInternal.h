@@ -14,8 +14,10 @@ public:
 	// Non-Index operations
 	virtual UINT PrepareDelete();
 
-protected:
 	// Callbacks
 	virtual UINT CreateDirectories();
+	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount);
+
+protected:
 	virtual UINT DeleteDirectories();
 };

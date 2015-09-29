@@ -157,21 +157,19 @@ void LFAddStoreDlg::OnBtnLiquidfolders()
 
 void LFAddStoreDlg::OnBtnWindows()
 {
-	LFMessageBox(this, L"Coming soon!", L"", 0);
-	return;
-
 	CString Caption;
 	GetWindowText(Caption);
 	CString Hint;
 	GetDlgItem(IDC_ADDSTORE_WINDOWS)->GetWindowText(Hint);
 
 	LFBrowseForFolderDlg dlg(this, Caption, Hint);
-	if (dlg.DoModal()==LFOk)
+	if (dlg.DoModal()==IDOK)
 	{
-		// TODO
-		CWaitCursor csr;
-		UINT Result = LFOk;
+		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
+		wcscpy_s(wp.Path, MAX_PATH, dlg.m_FolderPath);
 
-		LFErrorBox(this, Result);
+		LFDoWithProgress(WorkerCreateStoreWindows, (LFWorkerParameters*)&wp, this);
+		LFErrorBox(this, wp.Result);
 	}
 }

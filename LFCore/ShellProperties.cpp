@@ -438,16 +438,19 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 
 	// OLE structured storage
 	//
-	IPropertySetStorage* pPropertySetStorage;
-	if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
+	if (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments)
 	{
-		GetOLEProperties(pPropertySetStorage, PropertyDocuments, pItemDescriptor);
-		GetOLEProperties(pPropertySetStorage, PropertyMedia, pItemDescriptor);
-		GetOLEProperties(pPropertySetStorage, PropertyMusic, pItemDescriptor);
-		GetOLEProperties(pPropertySetStorage, PropertyPhoto, pItemDescriptor);
-		GetOLEProperties(pPropertySetStorage, PropertySummary, pItemDescriptor);
+		IPropertySetStorage* pPropertySetStorage;
+		if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
+		{
+			GetOLEProperties(pPropertySetStorage, PropertyDocuments, pItemDescriptor);
+			GetOLEProperties(pPropertySetStorage, PropertyMedia, pItemDescriptor);
+			GetOLEProperties(pPropertySetStorage, PropertyMusic, pItemDescriptor);
+			GetOLEProperties(pPropertySetStorage, PropertyPhoto, pItemDescriptor);
+			GetOLEProperties(pPropertySetStorage, PropertySummary, pItemDescriptor);
 
-		pPropertySetStorage->Release();
+			pPropertySetStorage->Release();
+		}
 	}
 
 	// TODO: weitere Attribute durch eigene Metadaten-Bibliothek

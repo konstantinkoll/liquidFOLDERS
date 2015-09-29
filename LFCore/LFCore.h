@@ -131,6 +131,9 @@ LFCORE_API UINT __stdcall LFDeleteStore(CHAR* pStoreID, LFProgress* pProgress=NU
 // Ist pName oder pComment NULL, so wird der jeweilige Wert nicht verändert
 LFCORE_API UINT __stdcall LFSetStoreAttributes(CHAR* pStoreID, WCHAR* pName, WCHAR* pComment);
 
+// Synchronisiert einen Store
+LFCORE_API UINT __stdcall LFSynchronizeStore(CHAR* pStoreID, LFProgress* pProgress=NULL);
+
 // Startet geplante Wartungsarbeiten für alle Stores
 LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProgress=NULL);
 
@@ -216,7 +219,7 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 //
 
 // Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL, void* pStoreData=NULL, SIZE_T StoreDataSize=0);
 
 // Neuen LFItemDescriptor für Store erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);

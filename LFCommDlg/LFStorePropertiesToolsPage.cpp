@@ -44,8 +44,8 @@ LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore
 
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesToolsPage, CPropertyPage)
-	ON_BN_CLICKED(IDC_RUNMAINTENANCE, OnRunMaintenance)
 	ON_BN_CLICKED(IDC_RUNSYNCHRONIZE, OnRunSynchronize)
+	ON_BN_CLICKED(IDC_RUNMAINTENANCE, OnRunMaintenance)
 	ON_BN_CLICKED(IDC_RUNBACKUP, OnRunBackup)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
@@ -64,13 +64,14 @@ BOOL LFStorePropertiesToolsPage::OnInitDialog()
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
+void LFStorePropertiesToolsPage::OnRunSynchronize()
+{
+	LFRunSynchronization(p_Store->StoreID, this);
+}
+
 void LFStorePropertiesToolsPage::OnRunMaintenance()
 {
 	LFRunMaintenance(this);
-}
-
-void LFStorePropertiesToolsPage::OnRunSynchronize()
-{
 }
 
 void LFStorePropertiesToolsPage::OnRunBackup()
@@ -126,10 +127,10 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 							f.WriteString(tmpStr);
 
 							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), Store.Flags & LFStoreFlagAutoLocation);
+							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), Store.AutoLocation);
 							f.WriteString(tmpStr);
 
-							if ((Store.Flags & LFStoreFlagAutoLocation)==0)
+							if (!Store.AutoLocation)
 							{
 								// Path
 								tmpStr = Store.DatPath;
@@ -174,7 +175,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 
 LRESULT LFStorePropertiesToolsPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	BOOL CanSynchronize = FALSE;	//TODO
+	const BOOL CanSynchronize = (p_Store->Mode & LFStoreModeBackendMask)>LFStoreModeBackendInternal;
 
 	GetDlgItem(IDC_SYNCHRONIZED)->EnableWindow(CanSynchronize);
 	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize);

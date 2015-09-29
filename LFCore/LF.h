@@ -466,7 +466,9 @@ struct LFCoreAttributes
 #define LFTypeDefault              0x01000000	// Volatile
 #define LFTypeNotMounted           0x02000000
 #define LFTypeGhosted              0x04000000
-#define LFTypeShortcutAllowed      0x08000000
+
+#define LFTypeShortcutAllowed      0x00000100	// Volatile
+#define LFTypeSynchronizeAllowed   0x00000200
 
 #define LFTypeStore                0x00000000	// Volatile
 #define LFTypeFile                 0x40000000
@@ -533,8 +535,6 @@ struct LFItemDescriptor
 #define LFStoreModeBackendShift          24
 #define LFStoreModeBackendMask           0xFF000000
 
-#define LFStoreFlagAutoLocation          0x01
-
 struct LFStoreDescriptor
 {
 	CHAR StoreID[LFKeySize];
@@ -543,18 +543,19 @@ struct LFStoreDescriptor
 	WCHAR Comments[256];
 	UINT Mode;
 	GUID UniqueID;
-	UINT Flags;
+	UINT Reserved;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	FILETIME MaintenanceTime;
 	UINT IndexVersion;
 	WCHAR DatPath[MAX_PATH];
 	FILETIME SynchronizeTime;
-	WCHAR IdxPathMain[MAX_PATH];				// Volatile
+	WCHAR IdxPathMain[MAX_PATH];				// Volatile, must be first
 	WCHAR IdxPathAux[MAX_PATH];					// Volatile
 	UINT Source;								// Volatile
 	UINT FileCount[32];							// Volatile
 	INT64 FileSize[32];							// Volatile
+	BOOL AutoLocation;							// Volatile
 };
 
 

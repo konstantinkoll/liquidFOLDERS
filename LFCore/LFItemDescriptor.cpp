@@ -124,13 +124,16 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Valu
 // LFItemDescriptor
 //
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes, void* pStoreData, SIZE_T StoreDataSize)
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
 	ZeroMemory(pItemDescriptor, sizeof(LFItemDescriptor)-LFMaxSlaveSize-(pCoreAttributes ? sizeof(LFCoreAttributes) : 0));
 
 	if (pCoreAttributes)
 		pItemDescriptor->CoreAttributes = *pCoreAttributes;
+
+	if (pStoreData)
+		memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, pStoreData, StoreDataSize);
 
 	pItemDescriptor->FirstAggregate = pItemDescriptor->LastAggregate = -1;
 	pItemDescriptor->RefCount = 1;
@@ -165,6 +168,9 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 
 	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 		pItemDescriptor->Type |= LFTypeShortcutAllowed;
+
+	if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)!=LFStoreModeBackendInternal)
+		pItemDescriptor->Type |= LFTypeSynchronizeAllowed;
 
 	pItemDescriptor->CategoryID = (pStoreDescriptor->Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
 	pItemDescriptor->IconID = LFGetStoreIcon(pStoreDescriptor);

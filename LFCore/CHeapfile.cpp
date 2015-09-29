@@ -48,7 +48,7 @@ void ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize
 CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize)
 {
 	assert(sizeof(HeapfileHeader)==512);
-	assert((TableID!=IDXTABLE_MASTER) || (StoreDataSize==0));
+	assert((TableID==IDXTABLE_MASTER) || (StoreDataSize==0));
 
 	m_pBuffer = NULL;
 	m_ItemCount = 0;
@@ -445,7 +445,7 @@ void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescr
 
 	if (m_TableID==IDXTABLE_MASTER)
 	{
-		SIZE_T DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
+		INT_PTR DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
 		ZeroCopy(PtrDst, DataSize, &pItemDescriptor->CoreAttributes, sizeof(LFCoreAttributes));
 
 		if (m_Header.StoreDataSize)

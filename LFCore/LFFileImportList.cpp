@@ -57,6 +57,15 @@ BOOL LFFileImportList::AddPath(WCHAR* Path)
 	LFFileImportListItem Item;
 
 	wcscpy_s(Item.Path, MAX_PATH, Path);
+
+	// Remove trailing backslash
+	if (Item.Path[0]!=L'\0')
+	{
+		WCHAR* Ptr = &Item.Path[wcslen(Item.Path)-1];
+		if (*Ptr==L'\\')
+			*Ptr = L'\0';
+	}
+
 	Item.LastError = LFOk;
 	Item.Processed = FALSE;
 
@@ -136,6 +145,13 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 		pProgress->MinorCount = m_ItemCount;
 }
 
+WCHAR* LFFileImportList::GetFileName(UINT Index)
+{
+	WCHAR* Ptr = wcsrchr(m_Items[Index].Path, L'\\');
+
+	return Ptr ? Ptr+1 : m_Items[Index].Path;
+}
+
 void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 {
 	if (Result!=LFOk)
@@ -146,7 +162,7 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 
 	if (pProgress)
 	{
-		wcscpy_s(pProgress->Object, 256, m_Items[Index].Path);
+		wcscpy_s(pProgress->Object, 256, GetFileName(Index));
 		pProgress->MinorCurrent++;
 
 		if (Result>LFCancel)
@@ -184,7 +200,8 @@ UINT LFFileImportList::DoFileImport(BOOL Recursive, CHAR* pStoreID, LFItemDescri
 				// Progress
 				if (pProgress)
 				{
-					wcscpy_s(pProgress->Object, 256, m_Items[a].Path);
+					wcscpy_s(pProgress->Object, 256, GetFileName(a));
+
 					if (UpdateProgress(pProgress))
 					{
 						m_LastError = LFCancel;

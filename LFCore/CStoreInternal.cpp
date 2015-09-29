@@ -2,7 +2,11 @@
 #include "stdafx.h"
 #include "CStoreInternal.h"
 #include "FileSystem.h"
+#include "Stores.h"
 #include <assert.h>
+
+
+extern CHAR KeyChars[38];
 
 
 // CStoreInternal
@@ -62,4 +66,43 @@ UINT CStoreInternal::DeleteDirectories()
 		Result = DeleteDirectory(p_StoreDescriptor->DatPath) ? LFOk : LFDriveNotReady;
 
 	return Result;
+}
+
+UINT CStoreInternal::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount)
+{
+	assert(pItemDescriptor);
+	assert(pPath);
+	assert(cCount>=2*MAX_PATH);
+
+	UINT Result;
+
+	if ((Result=CStore::PrepareImport(pItemDescriptor, pPath, cCount))!=LFOk)
+		return Result;
+
+	// FileID
+	pItemDescriptor->CoreAttributes.FileID[0] = RAND_CHAR();
+	ZeroMemory(&pItemDescriptor->CoreAttributes.FileID[1], LFKeySize-1);
+
+	// 1st directory level
+	GetInternalFilePath(&pItemDescriptor->CoreAttributes, pPath, cCount);
+
+	Result = CreateDirectory(pPath);
+	if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
+		return LFIllegalPhysicalPath;
+
+	// 2nd directory level
+	do
+	{
+		for (UINT a=1; a<LFKeySize-1; a++)
+			pItemDescriptor->CoreAttributes.FileID[a] = RAND_CHAR();
+
+		GetInternalFilePath(&pItemDescriptor->CoreAttributes, pPath, cCount);
+	}
+	while (FileExists(pPath));
+
+	Result = CreateDirectory(pPath);
+	if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
+		return LFIllegalPhysicalPath;
+
+	return GetFileLocation(pItemDescriptor, pPath, cCount);
 }

@@ -174,7 +174,7 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_SYNCHRONIZE, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 END_MESSAGE_MAP()
 
 BOOL LFChooseStoreDlg::OnInitDialog()
@@ -385,6 +385,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			b = !(Item->Type & LFTypeDefault);
 			break;
 
+		case IDM_STORE_SYNCHRONIZE:
 		case IDM_STORE_IMPORTFOLDER:
 			b = FALSE;
 			break;

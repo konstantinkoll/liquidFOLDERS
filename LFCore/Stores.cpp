@@ -37,16 +37,8 @@ LFStoreDescriptor StoreCache[MAXSTORES];
 #pragma comment(linker, "/SECTION:.stores,RWS")
 
 
-#define STOREDESCRIPTORFILESIZE sizeof(LFStoreDescriptor)- \
-	sizeof(LFStoreDescriptor().IdxPathMain)-sizeof(LFStoreDescriptor().IdxPathAux)- \
-	sizeof(LFStoreDescriptor().Source)- \
-	sizeof(LFStoreDescriptor().FileCount)-sizeof(LFStoreDescriptor().FileSize)
-#define STOREDESCRIPTORREQUIREDFILESIZE STOREDESCRIPTORFILESIZE- \
-	sizeof(LFStoreDescriptor().SynchronizeTime)
-
-
-
-
+#define STOREDESCRIPTORFILESIZE             offsetof(LFStoreDescriptor, IdxPathMain)
+#define STOREDESCRIPTORREQUIREDFILESIZE     offsetof(LFStoreDescriptor, SynchronizeTime)
 
 
 // Persistance
@@ -114,22 +106,22 @@ BOOL LoadStoreSettingsFromRegistry(CHAR* StoreID, LFStoreDescriptor* s)
 		sz = sizeof(s->SynchronizeTime);
 		RegQueryValueEx(hKey, L"SynchronizeTime", 0, NULL, (BYTE*)&s->SynchronizeTime, &sz);
 
-		sz = sizeof(s->Flags);
-		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&s->Flags, &sz)!=ERROR_SUCCESS)
+		sz = sizeof(s->AutoLocation);
+		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&s->AutoLocation, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
 		sz = sizeof(s->IndexVersion);
 		if (RegQueryValueEx(hKey, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
 			Result = FALSE;
 
+		s->Source = s->Mode >> LFStoreModeBackendShift;
+
 		switch(s->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexInternal:
-			s->Source = LFTypeSourceInternal;
-
 			sz = sizeof(s->DatPath);
 			if (RegQueryValueEx(hKey, L"Path", 0, NULL, (BYTE*)s->DatPath, &sz)!=ERROR_SUCCESS)
-				if (!(s->Flags & LFStoreFlagAutoLocation))
+				if (!(s->AutoLocation))
 					Result = FALSE;
 
 			break;
@@ -211,7 +203,7 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		if (RegSetValueEx(hKey, L"SynchronizeTime", 0, REG_BINARY, (BYTE*)&s->SynchronizeTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(hKey, L"AutoLocation", 0, REG_DWORD, (BYTE*)&s->Flags, sizeof(UINT))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(UINT))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
 		if (RegSetValueEx(hKey, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
@@ -220,7 +212,7 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		switch(s->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexInternal:
-			if (!(s->Flags & LFStoreFlagAutoLocation))
+			if (!s->AutoLocation)
 				if (RegSetValueEx(hKey, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(WCHAR))!=ERROR_SUCCESS)
 					Result = LFRegistryError;
 			break;
@@ -321,19 +313,43 @@ void SetStoreAttributes(LFStoreDescriptor* s)
 				s->Source = LFGetSourceForVolume(s->DatPath[0] & 0xFF);
 		}
 
-	// Get automatic data path
-	if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (s->Flags & LFStoreFlagAutoLocation))
-		GetAutoPath(s, s->DatPath);
-
-	// Main index is always subdir of store
-	if (((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || (LFIsStoreMounted(s)))
+	// Paths
+	if ((s->Mode & LFStoreModeBackendMask)==LFStoreModeBackendWindows)
 	{
-		wcscpy_s(s->IdxPathMain, MAX_PATH, s->DatPath);
-		wcscat_s(s->IdxPathMain, MAX_PATH, L"INDEX\\");
+		if (LFIsStoreMounted(s))
+		{
+			UINT Source = LFGetSourceForVolume((CHAR)s->DatPath[0]);
+			if ((Source==LFTypeSourceUSB) || (Source==LFTypeSource1394))
+			{
+				wcsncpy_s(s->IdxPathMain, MAX_PATH, s->DatPath, 3);
+				AppendGUID(s, s->IdxPathMain);
+			}
+			else
+			{
+				GetAutoPath(s, s->IdxPathMain);
+			}
+		}
+		else
+		{
+			s->IdxPathMain[0] = L'\0';
+		}
 	}
 	else
 	{
-		s->IdxPathMain[0] = L'\0';
+		// Get automatic data path
+		if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && s->AutoLocation)
+			GetAutoPath(s, s->DatPath);
+
+		// Main index
+		if (((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || (LFIsStoreMounted(s)))
+		{
+			wcscpy_s(s->IdxPathMain, MAX_PATH, s->DatPath);
+			wcscat_s(s->IdxPathMain, MAX_PATH, L"INDEX\\");
+		}
+		else
+		{
+			s->IdxPathMain[0] = L'\0';
+		}
 	}
 
 	// Set aux index for local hybrid stores
@@ -494,7 +510,7 @@ UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
 					slot->DatPath[0] = cVolume;
 
 					SetStoreAttributes(slot);
-// Achtung, Bug: Index muss ggf. kopiert werden!!!
+
 					if (!OnInitialize)
 					{
 						CStore* pStore;
@@ -815,6 +831,35 @@ UINT OpenStore(CHAR* StoreID, BOOL WriteAccess, CStore** ppStore)
 	return Result;
 }
 
+UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pProgress=NULL)
+{
+	assert(pStoreDescriptor);
+
+	SetStoreAttributes(pStoreDescriptor);
+
+	UINT Result = UpdateStoreInCache(pStoreDescriptor);
+	if (Result==LFOk)
+	{
+		CStore* pStore;
+		if ((Result=GetStore(pStoreDescriptor->StoreID, &pStore))==LFOk)
+		{
+			Result = pStore->Initialize(pProgress);
+			delete pStore;
+		}
+
+		ReleaseMutexForStores();
+
+		SendLFNotifyMessage(LFMessages.StoresChanged);
+		SendShellNotifyMessage(SHCNE_UPDATEDIR);
+	}
+	else
+	{
+		ReleaseMutexForStores();
+	}
+
+	return Result;
+}
+
 
 // Operations
 //
@@ -955,41 +1000,39 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, 
 	}
 	else
 	{
-		Store.Flags = LFStoreFlagAutoLocation;
+		Store.AutoLocation = TRUE;
 	}
 
-	SetStoreAttributes(&Store);
-
-	// Initialize store
-	UINT Result = UpdateStoreInCache(&Store);
-	if (Result==LFOk)
-	{
-		CStore* pStore;
-		if ((Result=GetStore(Store.StoreID, &pStore))==LFOk)
-		{
-			Result = pStore->Initialize();
-			delete pStore;
-		}
-
-		ReleaseMutexForStores();
-
-		SendLFNotifyMessage(LFMessages.StoresChanged);
-		SendShellNotifyMessage(SHCNE_UPDATEDIR);
-	}
-	else
-	{
-		ReleaseMutexForStores();
-	}
-
-	return Result;
+	return CommitInitializeStore(&Store);
 }
 
 LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, LFProgress* pProgress)
 {
+	assert(pPath);
+
 	LFStoreDescriptor Store;
 	GetDescriptorForNewStore(&Store);
 
-	return LFMutexError;
+	UINT Source = LFGetSourceForVolume((CHAR)*pPath);
+	Store.Mode = LFStoreModeBackendWindows | ((Source==LFTypeSourceUSB) || (Source==LFTypeSource1394) ? LFStoreModeIndexExternal : LFStoreModeIndexInternal);
+
+	// Set data
+	BOOL TrailingBackslash = (pPath[wcslen(pPath)-1]==L'\\');
+
+	wcscpy_s(Store.DatPath, 256, pPath);
+	if (!TrailingBackslash)
+		wcscat_s(Store.DatPath, MAX_PATH, L"\\");
+
+	wcscpy_s(Store.StoreName, 256, pPath);
+
+	if (TrailingBackslash)
+		Store.StoreName[wcslen(Store.StoreName)-1] = L'\0';
+
+	WCHAR* Ptr = wcsrchr(Store.StoreName, L'\\');
+	if (Ptr)
+		wcscpy_s(Store.StoreName, 256, Ptr+1);
+
+	return CommitInitializeStore(&Store, pProgress);
 }
 
 LFCORE_API UINT LFMakeStoreSearchable(CHAR* pStoreID, BOOL Searchable)
@@ -1208,6 +1251,21 @@ LFCORE_API UINT LFSetStoreAttributes(CHAR* pStoreID, WCHAR* pName, WCHAR* pComme
 
 	CoTaskMemFree(pidlOld);
 	CoTaskMemFree(pidlOldDelegate);
+
+	return Result;
+}
+
+LFCORE_API UINT LFSynchronizeStore(CHAR* pStoreID, LFProgress* pProgress)
+{
+	assert(pStoreID);
+
+	CStore* pStore;
+	UINT Result;
+	if ((Result=OpenStore(pStoreID, TRUE, &pStore))==LFOk)
+	{
+		Result = pStore->Synchronize(FALSE, pProgress);
+		delete pStore;
+	}
 
 	return Result;
 }
@@ -1448,7 +1506,7 @@ void InitStores()
 			if (RegOpenKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
 			{
 				DWORD Type;
-				DWORD Size = LFKeySize-1;
+				DWORD Size = LFKeySize;
 				RegQueryValueExA(hKey, "DefaultStore", NULL, &Type, (BYTE*)DefaultStore, &Size);
 				RegCloseKey(hKey);
 			}

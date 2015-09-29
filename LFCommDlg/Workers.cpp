@@ -14,6 +14,24 @@
 #define LF_WORKERTHREAD_FINISH() LF_WORKERTHREAD_FINISH_EX(LFOk);
 #define LF_WORKERTHREAD_FINISH_EX(Result) CoUninitialize(); PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL); return Result;
 
+DWORD WINAPI WorkerCreateStoreWindows(void* lParam)
+{
+	LF_WORKERTHREAD_START(lParam);
+
+	wp->Result = LFCreateStoreWindows(wp->Path, &p);
+
+	LF_WORKERTHREAD_FINISH();
+}
+
+DWORD WINAPI WorkerStoreSynchronize(void* lParam)
+{
+	LF_WORKERTHREAD_START(lParam);
+
+	wp->Result = LFSynchronizeStore(wp->StoreID, &p);
+
+	LF_WORKERTHREAD_FINISH();
+}
+
 DWORD WINAPI WorkerStoreMaintenance(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
@@ -68,7 +86,7 @@ void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pP
 	dlg.DoModal();
 }
 
-void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
+void LFImportFolder(CHAR* pStoreID, CWnd* pParentWnd)
 {
 	// Allowed?
 	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
@@ -84,12 +102,12 @@ void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 		ZeroMemory(&wp, sizeof(wp));
 		wp.pFileImportList = LFAllocFileImportList();
 		LFAddImportPath(wp.pFileImportList, dlg.m_FolderPath);
-		strcpy_s(wp.StoreID, LFKeySize, StoreID);
+		strcpy_s(wp.StoreID, LFKeySize, pStoreID);
 		wp.DeleteSource = dlg.m_DeleteSource;
 
 		// Template füllen
 		wp.pItemTemplate = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(wp.pItemTemplate, StoreID, pParentWnd, TRUE);
+		LFItemTemplateDlg tdlg(wp.pItemTemplate, pStoreID, pParentWnd, TRUE);
 		if (tdlg.DoModal()!=IDCANCEL)
 		{
 			LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
@@ -99,6 +117,16 @@ void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 		LFFreeItemDescriptor(wp.pItemTemplate);
 		LFFreeFileImportList(wp.pFileImportList);
 	}
+}
+
+void LFRunSynchronization(CHAR* pStoreID, CWnd* pParentWnd)
+{
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	strcpy_s(wp.StoreID, LFKeySize, pStoreID);
+
+	LFDoWithProgress(WorkerStoreSynchronize, &wp.Hdr, pParentWnd);
+	LFErrorBox(pParentWnd, wp.Result);
 }
 
 void LFRunMaintenance(CWnd* pParentWnd)
@@ -113,10 +141,10 @@ void LFRunMaintenance(CWnd* pParentWnd)
 	dlg.DoModal();
 }
 
-void LFDeleteStore(CHAR* StoreID, CWnd* pParentWnd)
+void LFDeleteStore(CHAR* pStoreID, CWnd* pParentWnd)
 {
 	LFStoreDescriptor Store;
-	UINT Result = LFGetStoreSettings(StoreID, &Store);
+	UINT Result = LFGetStoreSettings(pStoreID, &Store);
 	if (Result!=LFOk)
 	{
 		LFErrorBox(pParentWnd, Result);

@@ -28,11 +28,13 @@ public:
 	void AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResult* pSearchResult);
 	void ResolveLocations(LFTransactionList* pTransactionList);
 	void SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgress* pProgress=NULL);
+	BOOL ExistingFileID(CHAR* pFileID);
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
 	void UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FILETIME* pTransactionTime);
 
 	// Operations with callbacks to CStore object
 	void Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
+	UINT Synchronize(LFProgress* pProgress=NULL);
 	void Delete(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
 protected:

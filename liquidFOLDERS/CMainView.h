@@ -86,6 +86,7 @@ protected:
 
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnStoreSynchronize();
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreImportFolder();
 	afx_msg void OnStoreShortcut();

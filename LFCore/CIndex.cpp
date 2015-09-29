@@ -46,7 +46,7 @@
 	if (m_IsMainIndex) RemoveFileFromStatistics(PtrM);
 
 #define BUILD_ITEMDESCRIPTOR() \
-	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(PtrM); \
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize); \
 	pItemDescriptor->Type = Type; \
 	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
 
@@ -518,6 +518,21 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgr
 	pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalID, pProgress);
 }
 
+BOOL CIndex::ExistingFileID(CHAR* pFileID)
+{
+	assert(pItemDescriptor);
+
+	BOOL Result = FALSE;
+
+	START_FINDMASTER(, FALSE, pFileID);
+
+	Result = TRUE;
+
+	END_FINDMASTER();
+
+	return Result;
+}
+
 BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew)
 {
 	assert(pItemDescriptor);
@@ -636,7 +651,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	// Phys. Datei umbenennen ?
 	if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
 	{
-		Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor->CoreAttributes.FileName);
+		Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
 
 		switch(Result)
 		{
@@ -649,6 +664,9 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 
 		default:
 			wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, PtrM->FileName);
+
+			if (m_AdditionalDataSize)
+				memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize);
 		}
 	}
 
@@ -675,6 +693,44 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 
 	// Invalid items
 	pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalID);
+}
+
+UINT CIndex::Synchronize(LFProgress* pProgress)
+{
+	assert(pTransactionList);
+
+	UINT Result = LFOk;
+
+	START_ITERATEALL(, LFIndexTableLoadError);
+
+	// Progress
+	if (pProgress)
+	{
+		wcscpy_s(pProgress->Object, 256, PtrM->FileName);
+		if (UpdateProgress(pProgress))
+			return LFCancel;
+	}
+
+	if (p_Store->SynchronizeFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pProgress))
+	{
+	}
+	else
+	{
+		LOAD_SLAVE();
+		m_pTable[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
+		DISCARD_SLAVE();
+
+		REMOVE_STATS();
+		m_pTable[IDXTABLE_MASTER]->Invalidate(PtrM);
+	}
+
+	if (pProgress)
+		if (pProgress->UserAbort)
+			return LFCancel;
+
+	END_ITERATEALL();
+
+	return Result;
 }
 
 void CIndex::Delete(LFTransactionList* pTransactionList, LFProgress* pProgress)

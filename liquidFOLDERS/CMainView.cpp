@@ -580,13 +580,14 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
+	ON_COMMAND(IDM_STORE_SYNCHRONIZE, OnStoreSynchronize)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_SYNCHRONIZE, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
 	ON_COMMAND(IDM_FILE_OPENBROWSER, OnFileOpenBrowser)
@@ -635,23 +636,24 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16);
 
 	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 18);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 19);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 23);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 24);
+	m_wndTaskbar.AddButton(IDM_STORE_SYNCHRONIZE, 18);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 20);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 24);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 25);
 
-	#define InspectorIconVisible     25
-	#define InspectorIconHidden      26
+	#define InspectorIconVisible     26
+	#define InspectorIconHidden      27
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 27, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 28, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 30, TRUE, TRUE);
-	#define FilterIconOverlay        31
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 28, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 31, TRUE, TRUE);
+	#define FilterIconOverlay        32
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -1336,6 +1338,17 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 
 // Store
 
+void CMainView::OnStoreSynchronize()
+{
+	INT Index = GetSelectedItem();
+	if (Index!=-1)
+	{
+		LFRunSynchronization(p_CookedFiles->m_Items[Index]->StoreID, this);
+
+		GetOwner()->PostMessage(WM_RELOAD);
+	}
+}
+
 void CMainView::OnStoreMakeDefault()
 {
 	INT Index = GetSelectedItem();
@@ -1403,6 +1416,10 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore)
 				switch (pCmdUI->m_nID)
 				{
+				case IDM_STORE_SYNCHRONIZE:
+					b = (pItemDescriptor->Type & LFTypeSynchronizeAllowed);
+					break;
+
 				case IDM_STORE_MAKEDEFAULT:
 					b = !(pItemDescriptor->Type & LFTypeDefault);
 					break;

@@ -431,6 +431,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORE_SYNCHRONIZE   "Synchronisiert den Store mit der Datenquelle.\nSynchronisieren"
     IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
     IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
     IDM_STORES_ADD          "Fügt einen neuen Store für Ihre Dateien hinzu.\nStore hinzufügen..."
@@ -851,6 +852,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORE_SYNCHRONIZE   "Sincroniza el store para los datos.\nSincronizar"
     IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
     IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
     IDM_STORES_ADD          "Adjuntar un store para sus archivos.\nAdjuntar store..."
@@ -1271,6 +1273,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORE_SYNCHRONIZE   "Synchroniser le store avec sa source de données.\nSynchroniser"
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
     IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
     IDM_STORES_ADD          "Ajouter un store pour vos fichiers.\nAjouter un store..."
@@ -1742,6 +1745,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORE_SYNCHRONIZE   "Synchronizes the store with its data source.\nSynchronize"
     IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_ADD          "Add a store for your files.\nAdd store..."

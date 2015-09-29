@@ -16,14 +16,14 @@ extern CHAR KeyChars[38];
 #define ABORT(Result)       { if (pProgress) pProgress->ProgressState = LFProgressError; return Result; }
 #define FASTEST_INDEX()     ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid)
 
-CStore::CStore(LFStoreDescriptor* pStoreDescriptor, HANDLE hMutexForStore, UINT StoreDataSize)
+CStore::CStore(LFStoreDescriptor* pStoreDescriptor, HANDLE hMutexForStore, UINT AdditionalDataSize)
 {
 	assert(pStoreDescriptor);
 	assert(hMutexForStore);
 
 	p_StoreDescriptor = pStoreDescriptor;
 	hMutex = hMutexForStore;
-	m_AdditionalDataSize = StoreDataSize;
+	m_AdditionalDataSize = AdditionalDataSize;
 	m_pIndexMain = m_pIndexAux = NULL;
 	m_WriteAccess = FALSE;
 }
@@ -96,7 +96,7 @@ UINT CStore::Initialize(LFProgress* pProgress)
 		return Result;
 
 	// Synchronize
-	if ((Result=Synchronize(pProgress))!=LFOk)
+	if ((Result=Synchronize(TRUE, pProgress))!=LFOk)
 		return Result;
 
 	// Done
@@ -148,10 +148,10 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 			return LFCancel;
 	}
 
-	// Open index and check
+	// Open index and check (always open main index: MountVolume relies on copying the main index for hybrid indexes)
 	BOOL Repaired = FALSE;
 
-	CIndex* pIndex = new CIndex(this, FASTEST_INDEX(), m_AdditionalDataSize);
+	CIndex* pIndex = new CIndex(this, LFIsStoreMounted(p_StoreDescriptor), m_AdditionalDataSize);
 	Result = pIndex->MaintenanceAndStatistics(Scheduled, &Repaired, pProgress);
 	delete pIndex;
 
@@ -166,11 +166,10 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 	// Clone index for hybrid indexing
 	if (((p_StoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid) && LFIsStoreMounted(p_StoreDescriptor))
 	{
-		if (!DirectoryWriteable(p_StoreDescriptor->IdxPathMain))
+		if (!DirectoryWriteable(p_StoreDescriptor->IdxPathAux))
 			ABORT(LFDriveWriteProtected);
 
-		Result = CopyDirectory(p_StoreDescriptor->IdxPathAux, p_StoreDescriptor->IdxPathMain);
-		if (Result!=LFOk)
+		if ((Result=CopyDirectory(p_StoreDescriptor->IdxPathMain, p_StoreDescriptor->IdxPathAux))!=LFOk)
 			ABORT(Result);
 	}
 
@@ -215,7 +214,7 @@ UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SI
 // Index operations
 //
 
-UINT CStore::Synchronize(LFProgress* /*pProgress*/)
+UINT CStore::Synchronize(BOOL /*OnInitialize*/, LFProgress* /*pProgress*/)
 {
 	return LFOk;
 }
@@ -248,62 +247,15 @@ BOOL CStore::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 	return Result;
 }
 
-UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount)
-{
-	assert(pItemDescriptor);
-	assert(pPath);
-	assert(cCount>=2*MAX_PATH);
-
-	if (!LFIsStoreMounted(p_StoreDescriptor))
-		return LFStoreNotMounted;
-
-	if (!m_WriteAccess)
-		return LFIndexAccessError;
-
-	// Randomize
-	SYSTEMTIME st;
-	GetSystemTime(&st);
-	srand(st.wMilliseconds*rand());
-
-	// StoreID
-	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
-
-	// FileID
-	pItemDescriptor->CoreAttributes.FileID[0] = RAND_CHAR();
-	ZeroMemory(&pItemDescriptor->CoreAttributes.FileID[1], LFKeySize-1);
-
-	// 1st directory level
-	GetInternalFilePath(&pItemDescriptor->CoreAttributes, pPath, cCount);
-
-	DWORD Result = CreateDirectory(pPath);
-	if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
-		return LFIllegalPhysicalPath;
-
-	// 2nd directory level
-	do
-	{
-		for (UINT a=1; a<LFKeySize-1; a++)
-			pItemDescriptor->CoreAttributes.FileID[a] = RAND_CHAR();
-
-		GetInternalFilePath(&pItemDescriptor->CoreAttributes, pPath, cCount);
-	}
-	while (FileExists(pPath));
-
-	Result = CreateDirectory(pPath);
-	if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
-		return LFIllegalPhysicalPath;
-
-	return GetFileLocation(pItemDescriptor, pPath, cCount);
-}
-
-UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, WCHAR* pPath)
+UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, WCHAR* pPath, BOOL OnInitialize)
 {
 	assert(pItemDescriptor);
 	assert(m_pIndexMain);
 
 	if (Commit)
 	{
-		pItemDescriptor->CoreAttributes.Flags |= LFFlagNew;
+		if (!OnInitialize)
+			pItemDescriptor->CoreAttributes.Flags |= LFFlagNew;
 
 		// Time added
 		FILETIME ft;
@@ -502,8 +454,33 @@ UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, void* /*pStoreDa
 	return LFOk;
 }
 
-UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCHAR* pNewName)
+UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* /*pPath*/, SIZE_T /*cCount*/)
 {
+	assert(pItemDescriptor);
+
+	if (!LFIsStoreMounted(p_StoreDescriptor))
+		return LFStoreNotMounted;
+
+	if (!m_WriteAccess)
+		return LFIndexAccessError;
+
+	// StoreID
+	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
+
+	// Randomize
+	SYSTEMTIME st;
+	GetSystemTime(&st);
+	srand(st.wMilliseconds*rand());
+
+	return LFOk;
+}
+
+UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor)
+{
+	assert(pCoreAttributes);
+	assert(pStoreData);
+	assert(pItemDescriptor);
+
 	if (!LFIsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
@@ -513,23 +490,17 @@ UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCH
 	WCHAR Path1[2*MAX_PATH];
 	GetFileLocation(pCoreAttributes, pStoreData, Path1, 2*MAX_PATH);
 
-	WCHAR OldName[256];
-	wcscpy_s(OldName, 256, pCoreAttributes->FileName);
-	wcscpy_s(pCoreAttributes->FileName, 256, pNewName);
-
 	WCHAR Path2[2*MAX_PATH];
-	GetFileLocation(pCoreAttributes, pStoreData, Path2, 2*MAX_PATH);
+	GetFileLocation(pItemDescriptor, Path2, 2*MAX_PATH);
 
-	UINT Result = FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : LFCannotRenameFile : LFNoFileBody;
-
-	if (Result!=LFOk)
-		wcscpy_s(pCoreAttributes->FileName, 256, OldName);
-
-	return Result;
+	return FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : LFCannotRenameFile : LFNoFileBody;
 }
 
 UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
 {
+	assert(pCoreAttributes);
+	assert(pStoreData);
+
 	if (!LFIsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
@@ -548,6 +519,12 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
 
 	DWORD Error = GetLastError();
 	return (Error==ERROR_NO_MORE_FILES) || (Error==ERROR_FILE_NOT_FOUND) || (Error==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
+}
+
+BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, void* /*pStoreData*/, LFProgress* /*pProgress*/)
+{
+	// Always keep file
+	return TRUE;
 }
 
 
@@ -570,4 +547,19 @@ void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath
 	wcscat_s(pPath, cCount, p_StoreDescriptor->DatPath);
 	wcscat_s(pPath, cCount, Buffer1);
 	wcscat_s(pPath, cCount, Buffer2);
+}
+
+void CStore::CreateNewFileID(CHAR* pFileID)
+{
+	assert(pFileID);
+	assert(m_pIndexMain);
+
+	pFileID[LFKeySize-1] = '\0';
+
+	do
+	{
+		for (UINT a=0; a<LFKeySize-1; a++)
+			pFileID[a] = RAND_CHAR();
+	}
+	while (m_pIndexMain->ExistingFileID(pFileID));
 }
