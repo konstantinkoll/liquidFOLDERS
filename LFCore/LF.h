@@ -463,12 +463,19 @@ struct LFCoreAttributes
 #define LFTypeSourceYouTube        0x0000000C
 #define LFTypeSourceMask           0x000000FF
 
+#define LFTypeBadgeError           0x00000100	// Must match Windows image list
+#define LFTypeBadgeDefault         0x00000200
+#define LFTypeBadgeNew             0x00000300
+#define LFTypeBadgeEmpty           0x00000400
+#define LFTypeBadgeMask            0x00000F00
+
+#define LFTypeShortcutAllowed      0x00001000	// Volatile
+#define LFTypeSynchronizeAllowed   0x00002000
+#define LFTypeCapabilitiesMask     0x00003000
+
 #define LFTypeDefault              0x01000000	// Volatile
 #define LFTypeNotMounted           0x02000000
 #define LFTypeGhosted              0x04000000
-
-#define LFTypeShortcutAllowed      0x00000100	// Volatile
-#define LFTypeSynchronizeAllowed   0x00000200
 
 #define LFTypeStore                0x00000000	// Volatile
 #define LFTypeFile                 0x40000000
@@ -508,10 +515,12 @@ struct LFItemDescriptor
 	// Pointer to attribute values
 	void* AttributeValues[LFAttributeCount];
 
+	// Internal data from store
+	BYTE StoreData[LFMaxStoreDataSize];
+
 	// Must be last in struct in this order, as zero-filling depends on it
 	LFCoreAttributes CoreAttributes;
 	BYTE SlaveData[LFMaxSlaveSize];
-	BYTE StoreData[LFMaxStoreDataSize];
 };
 
 

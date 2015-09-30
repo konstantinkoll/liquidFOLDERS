@@ -54,7 +54,7 @@ void CStoreList::SetSearchResult(LFSearchResult* pSearchResult)
 			lvi.pszText = pSearchResult->m_Items[a]->CoreAttributes.FileName;
 			lvi.iImage = pSearchResult->m_Items[a]->IconID-1;
 			lvi.iGroupId = pSearchResult->m_Items[a]->CategoryID;
-			lvi.state = ((pSearchResult->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (pSearchResult->m_Items[a]->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
+			lvi.state = ((pSearchResult->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (pSearchResult->m_Items[a]->Type & LFTypeBadgeMask);
 			INT Index = InsertItem(&lvi);
 
 			WCHAR tmpStr[256];

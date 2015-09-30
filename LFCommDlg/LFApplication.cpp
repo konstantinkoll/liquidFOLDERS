@@ -204,7 +204,7 @@ LFApplication::LFApplication(GUID& AppID)
 		ImageList_GetIconSize(m_SystemImageListExtraLarge, &cx, &cy);
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListExtraLarge);
 
-		ExtractCoreIcons(hModIcons, 96, &m_CoreImageListHuge, TRUE);
+		ExtractCoreIcons(hModIcons, 96, &m_CoreImageListHuge);
 		ExtractCoreIcons(hModIcons, 128, &m_CoreImageListJumbo);
 	}
 
@@ -568,21 +568,21 @@ HANDLE LFApplication::LoadFontFromResource(UINT nID)
 	return Result;
 }
 
-void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList, BOOL OnlyStoreIcons)
+void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList)
 {
-	const UINT Last = OnlyStoreIcons ? IDI_LASTSTOREICON : IDI_LASTICON;
+	pImageList->Create(Size, Size, ILC_COLOR32 | ILC_MASK, IDI_LASTICON, 1);
 
-	pImageList->Create(Size, Size, ILC_COLOR32 | ILC_MASK, Last, 1);
-
-	for (UINT a=1; a<=Last; a++)
+	for (UINT a=1; a<=IDI_LASTICON; a++)
 	{
 		HICON hIcon = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(a), IMAGE_ICON, Size, Size, LR_DEFAULTCOLOR);
 		pImageList->Add(hIcon);
 		DestroyIcon(hIcon);
 	}
 
-	if (!OnlyStoreIcons)
-		pImageList->SetOverlayImage(IDI_OVR_DEFAULT-1, 1);
+	pImageList->SetOverlayImage(IDI_OVR_ERROR-1, 1);
+	pImageList->SetOverlayImage(IDI_OVR_DEFAULT-1, 2);
+	pImageList->SetOverlayImage(IDI_OVR_NEW-1, 3);
+	pImageList->SetOverlayImage(IDI_OVR_EMPTY-1, 4);
 }
 
 

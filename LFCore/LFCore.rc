@@ -42,7 +42,7 @@ IDI_STR_TWITTER         ICON                    "res\\STR_Twitter.ico"
 IDI_STR_YOUTUBE         ICON                    "res\\STR_YouTube.ico"
 IDI_FLD_DEFAULT         ICON                    "res\\FLD_Default.ico"
 IDI_FLD_ALL             ICON                    "res\\FLD_All.ico"
-IDI_OVR_DEFAULT         ICON                    "res\\OVR_Default.ico"
+IDI_OVR_ERROR           ICON                    "res\\OVR_Error.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -95,6 +95,17 @@ END
 LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_OVR_DEFAULT         ICON                    "res\\OVR_Default_DE.ico"
+IDI_OVR_NEW             ICON                    "res\\OVR_New_DE.ico"
+IDI_OVR_EMPTY           ICON                    "res\\OVR_Empty_DE.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -157,12 +168,12 @@ BEGIN
     IDS_FILECOUNT_SINGULAR  "%u Datei (%s)"
     IDS_FILECOUNT_PLURAL    "%u Dateien (%s)"
     IDS_ERRORCAPTION        "Fehler"
+    IDS_RATING1             "Schlecht"
+    IDS_RATING2             "Ausreichend"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_RATING1             "Schlecht"
-    IDS_RATING2             "Ausreichend"
     IDS_RATING3             "Gut"
     IDS_RATING4             "Ausgezeichnet"
     IDS_RATING5             "Exzellent"
@@ -176,13 +187,13 @@ BEGIN
     IDS_SIZE3               "Mittel (< 1 MB)"
     IDS_SIZE4               "Groß (< 16 MB)"
     IDS_SIZE5               "Sehr groß (< 128 MB)"
+    IDS_SIZE6               "Riesig (128 MB und größer)"
+    IDS_DURATION1           "Kürzer als 5 Sekunden"
+    IDS_DURATION2           "5-10 Sekunden"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SIZE6               "Riesig (128 MB und größer)"
-    IDS_DURATION1           "Kürzer als 5 Sekunden"
-    IDS_DURATION2           "5-10 Sekunden"
     IDS_DURATION3           "10-30 Sekunden"
     IDS_DURATION4           "30-60 Sekunden"
     IDS_DURATION5           "1-2 Minuten"
@@ -356,273 +367,6 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Englisch (neutral) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE 
-BEGIN
-    IDS_ITEMCATEGORY_LOCALSTORES "Files stored on this computer"
-    IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Network location\nThese stores reside on other computers."
-    IDS_ITEMCATEGORY_NIGHT  "Night\nUntil 6am"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTRCATEGORY_BASIC  "Basic"
-    IDS_ATTRCATEGORY_GEOTAGGING "Geotagging"
-    IDS_ATTRCATEGORY_VISUAL "Visual"
-    IDS_ATTRCATEGORY_PHOTOGRAPHIC "Photos"
-    IDS_ATTRCATEGORY_AUDIO  "Audio"
-    IDS_ATTRCATEGORY_TIMEBASED "Timebased"
-    IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographic"
-    IDS_ATTRCATEGORY_WORKFLOW "Workflow"
-    IDS_ATTRCATEGORY_INTERNAL "Internal use"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_CONTEXT_ALLFILES    "All files"
-    IDS_CONTEXT_FAVORITES   "Favorites\nAll files which are rated"
-    IDS_CONTEXT_AUDIO       "Audio"
-    IDS_CONTEXT_PICTURES    "Pictures"
-    IDS_CONTEXT_VIDEOS      "Videos"
-    IDS_CONTEXT_DOCUMENTS   "Documents\nOffice documents"
-    IDS_CONTEXT_CONTACTS    "Contacts"
-    IDS_CONTEXT_MESSAGES    "Messages"
-    IDS_CONTEXT_EVENTS      "Events"
-    IDS_CONTEXT_NEW         "New files\nRecently imported files"
-    IDS_CONTEXT_ARCHIVE     "Archive\nArchived files"
-    IDS_CONTEXT_TRASH       "Trash\nDeleted files"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_CONTEXT_FILTERS     "Filters\nUser-defined filters"
-    IDS_CONTEXT_SEARCH      "Search result"
-    IDS_CONTEXT_STORES      "Stores"
-    IDS_CONTEXT_CLIPBOARD   "Clipboard"
-    IDS_CONTEXT_SUBFOLDER_DEFAULT "Subfolder"
-    IDS_CONTEXT_SUBFOLDER_DAY "Day"
-    IDS_CONTEXT_SUBFOLDER_LOCATION "Location"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_NEWSTORE            "New store"
-    IDS_LASTSEEN            "Last mounted from %s"
-    IDS_SEENON              "Mounted on %s"
-    IDS_FILECOUNT_SINGULAR  "%u file (%s)"
-    IDS_FILECOUNT_PLURAL    "%u files (%s)"
-    IDS_ERRORCAPTION        "Error"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_RATING1             "Poor"
-    IDS_RATING2             "Fair"
-    IDS_RATING3             "Good"
-    IDS_RATING4             "Great"
-    IDS_RATING5             "Awesome"
-    IDS_PRIORITY1           "Lowest"
-    IDS_PRIORITY2           "Low"
-    IDS_PRIORITY3           "Average"
-    IDS_PRIORITY4           "High"
-    IDS_PRIORITY5           "Urgent"
-    IDS_SIZE1               "Tiny (< 32 KB)"
-    IDS_SIZE2               "Small (< 128 KB)"
-    IDS_SIZE3               "Medium (< 1 MB)"
-    IDS_SIZE4               "Large (< 16 MB)"
-    IDS_SIZE5               "Very large (< 128 MB)"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_SIZE6               "Huge (128 MB and above)"
-    IDS_DURATION1           "Shorter than 5 seconds"
-    IDS_DURATION2           "5-10 seconds"
-    IDS_DURATION3           "10-30 seconds"
-    IDS_DURATION4           "30-60 seconds"
-    IDS_DURATION5           "1-2 minutes"
-    IDS_DURATION6           "2-3 minutes"
-    IDS_DURATION7           "3-5 minutes"
-    IDS_DURATION8           "5-15 minutes"
-    IDS_DURATION9           "15-30 minutes"
-    IDS_DURATION10          "30-45 minutes"
-    IDS_DURATION11          "45-60 minutes"
-    IDS_DURATION12          "60-90 minutes"
-    IDS_DURATION13          "90-120 minutes"
-    IDS_DURATION14          "Longer than 2 hours"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ERR_OK              "OK"
-    IDS_ERR_CANCEL          "Canceled"
-    IDS_ERR_MEMORY          "Memory error"
-    IDS_ERR_ILLEGALQUERY    "The filter describes an illegal request."
-    IDS_ERR_ILLEGALSTOREDESCRIPTOR "The store settings are not valid."
-    IDS_ERR_STORENOTFOUND   "The selected store is not mounted or not present."
-    IDS_ERR_DRIVENOTREADY   "The drive is not ready!"
-    IDS_ERR_DRIVEWRITEPROTECTED "The drive is write protected."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ERR_ILLEGALPHYSFOLDER "The physical folder is not accessible."
-    IDS_ERR_REGISTRY        "The registry cannot be accessed."
-    IDS_ERR_ACCESS          "The physical folder is not accessible. Please check the access rights of the store's directory."
-    IDS_ERR_ILLEGALID       "The store or file ID is illegal."
-    IDS_ERR_NODEFAULTSTORE  "There is no default store right now."
-    IDS_ERR_TOOMANYSTORES   "The maximum number of stores has already been created."
-    IDS_ERR_STORENOTMOUNTED "The store is not mounted right now."
-    IDS_ERR_MUTEX           "liquidFOLDERS is currently blocked by another process."
-    IDS_ERR_ILLEGALATTRIBUTE 
-                            "At least one of the selected items does not possesss the property."
-    IDS_ERR_ILLEGALITEMTYPE "At least one of the selected items does not support this operation."
-    IDS_ERR_ILLEGALVALUE    "At least one of the property values is illegal."
-    IDS_ERR_INDEXLOAD       "An index table cannot be loaded. Please run scheduled maintenance."
-    IDS_ERR_INDEXREPAIR     "The store index is damaged and could not be repaired (write protected disc?)."
-    IDS_ERR_INDEXACCESS     "The store cannot be accessed. Please check the access rights of the store's directory."
-    IDS_ERR_INDEXCREATE     "The store index cannot be created (write protected disc?)."
-    IDS_ERR_NOTENOUGHSPACE  "There is not enough free disc space."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ERR_FILEIMPORT      "Some files cannot be imported because they are still in use."
-    IDS_ERR_FILEDELETE      "Some files cannot be deleted because they are still in use."
-    IDS_ERR_FILERENAME      "Some files cannot be renamed."
-    IDS_ERR_INDEXCOPY       "The index cannot be updated (write protected disc?)."
-    IDS_ERR_NOFILEBODY      "The actual file body is not present in the store."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_FILENAME       "Name"
-    IDS_ATTR_STOREID        "Store ID"
-    IDS_ATTR_FILEID         "File ID"
-    IDS_ATTR_COMMENTS       "Comments"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_DESCRIPTION    "Description"
-    IDS_ATTR_CREATIONTIME   "Created"
-    IDS_ATTR_FILETIME       "Modified"
-    IDS_ATTR_ADDTIME        "Added"
-    IDS_ATTR_DELETETIME     "Deleted"
-    IDS_ATTR_ARCHIVETIME    "Archived"
-    IDS_ATTR_FILEFORMAT     "File format"
-    IDS_ATTR_FILECOUNT      "File count"
-    IDS_ATTR_FILESIZE       "Size"
-    IDS_ATTR_FLAGS          "Flags"
-    IDS_ATTR_URL            "URL"
-    IDS_ATTR_HASHTAGS       "Hashtags"
-    IDS_ATTR_RATING         "Rating"
-    IDS_ATTR_PRIORITY       "Priority"
-    IDS_ATTR_LOCATIONNAME   "Location name"
-    IDS_ATTR_LOCATIONIATA   "IATA airport code"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_LOCATIONGPS    "GPS location"
-    IDS_ATTR_WIDTH          "Width"
-    IDS_ATTR_HEIGHT         "Height"
-    IDS_ATTR_DIMENSION      "Dimension"
-    IDS_ATTR_ASPECTRATIO    "Aspect ratio"
-    IDS_ATTR_VIDEOCODEC     "Video codec"
-    IDS_ATTR_ROLL           "Roll"
-    IDS_ATTR_EXPOSURE       "Exposure"
-    IDS_ATTR_FOCUS          "Focus"
-    IDS_ATTR_APERTURE       "Aperture"
-    IDS_ATTR_CHIP           "Chip"
-    IDS_ATTR_ALBUM          "Album"
-    IDS_ATTR_CHANNELS       "Channels"
-    IDS_ATTR_SAMPLERATE     "Sample rate"
-    IDS_ATTR_AUDIOCODEC     "Audio codec"
-    IDS_ATTR_DURATION       "Duration"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_BITRATE        "Bitrate"
-    IDS_ATTR_ARTIST         "Artist or author"
-    IDS_ATTR_TITLE          "Title"
-    IDS_ATTR_COPYRIGHT      "Copyright"
-    IDS_ATTR_ISBN           "ISBN"
-    IDS_ATTR_LANGUAGE       "Language"
-    IDS_ATTR_PAGES          "Page count"
-    IDS_ATTR_RECORDINGTIME  "Recorded"
-    IDS_ATTR_RECORDINGEQUIPMENT "Equipment"
-    IDS_ATTR_SIGNATURE      "Signature"
-    IDS_ATTR_FROM           "From"
-    IDS_ATTR_TO             "To"
-    IDS_ATTR_RESPONSIBLE    "Responsible"
-    IDS_ATTR_DUETIME        "Due"
-    IDS_ATTR_DONETIME       "Done"
-    IDS_ATTR_CUSTOMER       "Customer or client"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_LIKECOUNT      "Likes"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_SRC_UNKNOWN         "Unknown"
-    IDS_SRC_LIQUIDFOLDERS   "liquidFOLDERS"
-    IDS_SRC_WINDOWS         "Windows folder"
-    IDS_SRC_1394            "1394 drive"
-    IDS_SRC_USB             "USB drive"
-    IDS_SRC_DROPBOX         "Dropbox"
-    IDS_SRC_FACEBOOK        "Facebook"
-    IDS_SRC_FLICKR          "Flickr"
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
-    IDS_SRC_YOUTUBE         "YouTube"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_QSRC_UNKNOWN        "Unknown source"
-    IDS_QSRC_LIQUIDFOLDERS  "Managed by liquidFOLDERS"
-    IDS_QSRC_WINDOWS        "In Windows file system"
-    IDS_QSRC_1394           "On local 1394 drive"
-    IDS_QSRC_USB            "On local USB drive"
-    IDS_QSRC_DROPBOX        "On Dropbox"
-    IDS_QSRC_FACEBOOK       "On Facebook"
-    IDS_QSRC_FLICKR         "On Flickr"
-    IDS_QSRC_INSTAGRAM      "On Instagram"
-    IDS_QSRC_PINTEREST      "On Pinterest"
-    IDS_QSRC_SOUNDCLOUD     "On SoundCloud"
-    IDS_QSRC_TWITTER        "On Twitter"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_QSRC_YOUTUBE        "On YouTube"
-END
-
-#endif    // Englisch (neutral) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
 // Spanisch (neutral) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
@@ -630,6 +374,17 @@ END
 LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_OVR_DEFAULT         ICON                    "res\\OVR_Default.ico"
+IDI_OVR_NEW             ICON                    "res\\OVR_New_ES.ico"
+IDI_OVR_EMPTY           ICON                    "res\\OVR_Empty_ES.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -692,12 +447,12 @@ BEGIN
     IDS_FILECOUNT_SINGULAR  "%u archivo (%s)"
     IDS_FILECOUNT_PLURAL    "%u archivos (%s)"
     IDS_ERRORCAPTION        "Error"
+    IDS_RATING1             "Pobre"
+    IDS_RATING2             "Aceptable"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_RATING1             "Pobre"
-    IDS_RATING2             "Aceptable"
     IDS_RATING3             "Bueno"
     IDS_RATING4             "Sensacional"
     IDS_RATING5             "Formidable"
@@ -711,13 +466,13 @@ BEGIN
     IDS_SIZE3               "Mediano (< 1 MB)"
     IDS_SIZE4               "Grande (< 16 MB)"
     IDS_SIZE5               "Extra grande (< 128 MB)"
+    IDS_SIZE6               "Enorme (128 MB y arriba de)"
+    IDS_DURATION1           "Menos de 5 segundos"
+    IDS_DURATION2           "5-10 segundos"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SIZE6               "Enorme (128 MB y arriba de)"
-    IDS_DURATION1           "Menos de 5 segundos"
-    IDS_DURATION2           "5-10 segundos"
     IDS_DURATION3           "10-30 segundos"
     IDS_DURATION4           "30-60 segundos"
     IDS_DURATION5           "1-2 minutos"
@@ -901,6 +656,17 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_OVR_DEFAULT         ICON                    "res\\OVR_Default_FR.ico"
+IDI_OVR_NEW             ICON                    "res\\OVR_New_FR.ico"
+IDI_OVR_EMPTY           ICON                    "res\\OVR_Empty_FR.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -960,12 +726,12 @@ BEGIN
     IDS_FILECOUNT_SINGULAR  "%u fichier (%s)"
     IDS_FILECOUNT_PLURAL    "%u fichiers (%s)"
     IDS_ERRORCAPTION        "Erreur"
+    IDS_RATING1             "Mauvais"
+    IDS_RATING2             "Suffisant"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_RATING1             "Mauvais"
-    IDS_RATING2             "Suffisant"
     IDS_RATING3             "Bien"
     IDS_RATING4             "De manière distinguée"
     IDS_RATING5             "Excellent"
@@ -979,13 +745,13 @@ BEGIN
     IDS_SIZE3               "Moyen (< 1 MB)"
     IDS_SIZE4               "Grand (< 16 MB)"
     IDS_SIZE5               "Énorme (< 128 MB)"
+    IDS_SIZE6               "Immense (et supérieur à 128 MB)"
+    IDS_DURATION1           "Moins de 5 secondes"
+    IDS_DURATION2           "5-10 secondes"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SIZE6               "Immense (et supérieur à 128 MB)"
-    IDS_DURATION1           "Moins de 5 secondes"
-    IDS_DURATION2           "5-10 secondes"
     IDS_DURATION3           "10-30 secondes"
     IDS_DURATION4           "30-60 secondes"
     IDS_DURATION5           "1-2 minutes"
@@ -1193,6 +959,284 @@ END
 #endif    // APSTUDIO_INVOKED
 
 #endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_OVR_DEFAULT         ICON                    "res\\OVR_Default_EN.ico"
+IDI_OVR_NEW             ICON                    "res\\OVR_New_EN.ico"
+IDI_OVR_EMPTY           ICON                    "res\\OVR_Empty_EN.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ITEMCATEGORY_LOCALSTORES "Files stored on this computer"
+    IDS_ITEMCATEGORY_REMOTESTORES 
+                            "Network location\nThese stores reside on other computers."
+    IDS_ITEMCATEGORY_NIGHT  "Night\nUntil 6am"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ATTRCATEGORY_BASIC  "Basic"
+    IDS_ATTRCATEGORY_GEOTAGGING "Geotagging"
+    IDS_ATTRCATEGORY_VISUAL "Visual"
+    IDS_ATTRCATEGORY_PHOTOGRAPHIC "Photos"
+    IDS_ATTRCATEGORY_AUDIO  "Audio"
+    IDS_ATTRCATEGORY_TIMEBASED "Timebased"
+    IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographic"
+    IDS_ATTRCATEGORY_WORKFLOW "Workflow"
+    IDS_ATTRCATEGORY_INTERNAL "Internal use"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXT_ALLFILES    "All files"
+    IDS_CONTEXT_FAVORITES   "Favorites\nAll files which are rated"
+    IDS_CONTEXT_AUDIO       "Audio"
+    IDS_CONTEXT_PICTURES    "Pictures"
+    IDS_CONTEXT_VIDEOS      "Videos"
+    IDS_CONTEXT_DOCUMENTS   "Documents\nOffice documents"
+    IDS_CONTEXT_CONTACTS    "Contacts"
+    IDS_CONTEXT_MESSAGES    "Messages"
+    IDS_CONTEXT_EVENTS      "Events"
+    IDS_CONTEXT_NEW         "New files\nRecently imported files"
+    IDS_CONTEXT_ARCHIVE     "Archive\nArchived files"
+    IDS_CONTEXT_TRASH       "Trash\nDeleted files"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXT_FILTERS     "Filters\nUser-defined filters"
+    IDS_CONTEXT_SEARCH      "Search result"
+    IDS_CONTEXT_STORES      "Stores"
+    IDS_CONTEXT_CLIPBOARD   "Clipboard"
+    IDS_CONTEXT_SUBFOLDER_DEFAULT "Subfolder"
+    IDS_CONTEXT_SUBFOLDER_DAY "Day"
+    IDS_CONTEXT_SUBFOLDER_LOCATION "Location"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NEWSTORE            "New store"
+    IDS_LASTSEEN            "Last mounted from %s"
+    IDS_SEENON              "Mounted on %s"
+    IDS_FILECOUNT_SINGULAR  "%u file (%s)"
+    IDS_FILECOUNT_PLURAL    "%u files (%s)"
+    IDS_ERRORCAPTION        "Error"
+    IDS_RATING1             "Poor"
+    IDS_RATING2             "Fair"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_RATING3             "Good"
+    IDS_RATING4             "Great"
+    IDS_RATING5             "Awesome"
+    IDS_PRIORITY1           "Lowest"
+    IDS_PRIORITY2           "Low"
+    IDS_PRIORITY3           "Average"
+    IDS_PRIORITY4           "High"
+    IDS_PRIORITY5           "Urgent"
+    IDS_SIZE1               "Tiny (< 32 KB)"
+    IDS_SIZE2               "Small (< 128 KB)"
+    IDS_SIZE3               "Medium (< 1 MB)"
+    IDS_SIZE4               "Large (< 16 MB)"
+    IDS_SIZE5               "Very large (< 128 MB)"
+    IDS_SIZE6               "Huge (128 MB and above)"
+    IDS_DURATION1           "Shorter than 5 seconds"
+    IDS_DURATION2           "5-10 seconds"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DURATION3           "10-30 seconds"
+    IDS_DURATION4           "30-60 seconds"
+    IDS_DURATION5           "1-2 minutes"
+    IDS_DURATION6           "2-3 minutes"
+    IDS_DURATION7           "3-5 minutes"
+    IDS_DURATION8           "5-15 minutes"
+    IDS_DURATION9           "15-30 minutes"
+    IDS_DURATION10          "30-45 minutes"
+    IDS_DURATION11          "45-60 minutes"
+    IDS_DURATION12          "60-90 minutes"
+    IDS_DURATION13          "90-120 minutes"
+    IDS_DURATION14          "Longer than 2 hours"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ERR_OK              "OK"
+    IDS_ERR_CANCEL          "Canceled"
+    IDS_ERR_MEMORY          "Memory error"
+    IDS_ERR_ILLEGALQUERY    "The filter describes an illegal request."
+    IDS_ERR_ILLEGALSTOREDESCRIPTOR "The store settings are not valid."
+    IDS_ERR_STORENOTFOUND   "The selected store is not mounted or not present."
+    IDS_ERR_DRIVENOTREADY   "The drive is not ready!"
+    IDS_ERR_DRIVEWRITEPROTECTED "The drive is write protected."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ERR_ILLEGALPHYSFOLDER "The physical folder is not accessible."
+    IDS_ERR_REGISTRY        "The registry cannot be accessed."
+    IDS_ERR_ACCESS          "The physical folder is not accessible. Please check the access rights of the store's directory."
+    IDS_ERR_ILLEGALID       "The store or file ID is illegal."
+    IDS_ERR_NODEFAULTSTORE  "There is no default store right now."
+    IDS_ERR_TOOMANYSTORES   "The maximum number of stores has already been created."
+    IDS_ERR_STORENOTMOUNTED "The store is not mounted right now."
+    IDS_ERR_MUTEX           "liquidFOLDERS is currently blocked by another process."
+    IDS_ERR_ILLEGALATTRIBUTE 
+                            "At least one of the selected items does not possesss the property."
+    IDS_ERR_ILLEGALITEMTYPE "At least one of the selected items does not support this operation."
+    IDS_ERR_ILLEGALVALUE    "At least one of the property values is illegal."
+    IDS_ERR_INDEXLOAD       "An index table cannot be loaded. Please run scheduled maintenance."
+    IDS_ERR_INDEXREPAIR     "The store index is damaged and could not be repaired (write protected disc?)."
+    IDS_ERR_INDEXACCESS     "The store cannot be accessed. Please check the access rights of the store's directory."
+    IDS_ERR_INDEXCREATE     "The store index cannot be created (write protected disc?)."
+    IDS_ERR_NOTENOUGHSPACE  "There is not enough free disc space."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ERR_FILEIMPORT      "Some files cannot be imported because they are still in use."
+    IDS_ERR_FILEDELETE      "Some files cannot be deleted because they are still in use."
+    IDS_ERR_FILERENAME      "Some files cannot be renamed."
+    IDS_ERR_INDEXCOPY       "The index cannot be updated (write protected disc?)."
+    IDS_ERR_NOFILEBODY      "The actual file body is not present in the store."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ATTR_FILENAME       "Name"
+    IDS_ATTR_STOREID        "Store ID"
+    IDS_ATTR_FILEID         "File ID"
+    IDS_ATTR_COMMENTS       "Comments"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ATTR_DESCRIPTION    "Description"
+    IDS_ATTR_CREATIONTIME   "Created"
+    IDS_ATTR_FILETIME       "Modified"
+    IDS_ATTR_ADDTIME        "Added"
+    IDS_ATTR_DELETETIME     "Deleted"
+    IDS_ATTR_ARCHIVETIME    "Archived"
+    IDS_ATTR_FILEFORMAT     "File format"
+    IDS_ATTR_FILECOUNT      "File count"
+    IDS_ATTR_FILESIZE       "Size"
+    IDS_ATTR_FLAGS          "Flags"
+    IDS_ATTR_URL            "URL"
+    IDS_ATTR_HASHTAGS       "Hashtags"
+    IDS_ATTR_RATING         "Rating"
+    IDS_ATTR_PRIORITY       "Priority"
+    IDS_ATTR_LOCATIONNAME   "Location name"
+    IDS_ATTR_LOCATIONIATA   "IATA airport code"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ATTR_LOCATIONGPS    "GPS location"
+    IDS_ATTR_WIDTH          "Width"
+    IDS_ATTR_HEIGHT         "Height"
+    IDS_ATTR_DIMENSION      "Dimension"
+    IDS_ATTR_ASPECTRATIO    "Aspect ratio"
+    IDS_ATTR_VIDEOCODEC     "Video codec"
+    IDS_ATTR_ROLL           "Roll"
+    IDS_ATTR_EXPOSURE       "Exposure"
+    IDS_ATTR_FOCUS          "Focus"
+    IDS_ATTR_APERTURE       "Aperture"
+    IDS_ATTR_CHIP           "Chip"
+    IDS_ATTR_ALBUM          "Album"
+    IDS_ATTR_CHANNELS       "Channels"
+    IDS_ATTR_SAMPLERATE     "Sample rate"
+    IDS_ATTR_AUDIOCODEC     "Audio codec"
+    IDS_ATTR_DURATION       "Duration"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ATTR_BITRATE        "Bitrate"
+    IDS_ATTR_ARTIST         "Artist or author"
+    IDS_ATTR_TITLE          "Title"
+    IDS_ATTR_COPYRIGHT      "Copyright"
+    IDS_ATTR_ISBN           "ISBN"
+    IDS_ATTR_LANGUAGE       "Language"
+    IDS_ATTR_PAGES          "Page count"
+    IDS_ATTR_RECORDINGTIME  "Recorded"
+    IDS_ATTR_RECORDINGEQUIPMENT "Equipment"
+    IDS_ATTR_SIGNATURE      "Signature"
+    IDS_ATTR_FROM           "From"
+    IDS_ATTR_TO             "To"
+    IDS_ATTR_RESPONSIBLE    "Responsible"
+    IDS_ATTR_DUETIME        "Due"
+    IDS_ATTR_DONETIME       "Done"
+    IDS_ATTR_CUSTOMER       "Customer or client"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ATTR_LIKECOUNT      "Likes"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SRC_UNKNOWN         "Unknown"
+    IDS_SRC_LIQUIDFOLDERS   "liquidFOLDERS"
+    IDS_SRC_WINDOWS         "Windows folder"
+    IDS_SRC_1394            "1394 drive"
+    IDS_SRC_USB             "USB drive"
+    IDS_SRC_DROPBOX         "Dropbox"
+    IDS_SRC_FACEBOOK        "Facebook"
+    IDS_SRC_FLICKR          "Flickr"
+    IDS_SRC_INSTAGRAM       "Instagram"
+    IDS_SRC_PINTEREST       "Pinterest"
+    IDS_SRC_SOUNDCLOUD      "SoundCloud"
+    IDS_SRC_TWITTER         "Twitter"
+    IDS_SRC_YOUTUBE         "YouTube"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_QSRC_UNKNOWN        "Unknown source"
+    IDS_QSRC_LIQUIDFOLDERS  "Managed by liquidFOLDERS"
+    IDS_QSRC_WINDOWS        "In Windows file system"
+    IDS_QSRC_1394           "On local 1394 drive"
+    IDS_QSRC_USB            "On local USB drive"
+    IDS_QSRC_DROPBOX        "On Dropbox"
+    IDS_QSRC_FACEBOOK       "On Facebook"
+    IDS_QSRC_FLICKR         "On Flickr"
+    IDS_QSRC_INSTAGRAM      "On Instagram"
+    IDS_QSRC_PINTEREST      "On Pinterest"
+    IDS_QSRC_SOUNDCLOUD     "On SoundCloud"
+    IDS_QSRC_TWITTER        "On Twitter"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_QSRC_YOUTUBE        "On YouTube"
+END
+
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

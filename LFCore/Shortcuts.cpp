@@ -9,25 +9,25 @@
 extern HMODULE LFCoreModuleHandle;
 
 
-LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFilename)
+LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFileName)
 {
 	// Get the fully qualified file name for the link file
 	WCHAR PathDesktop[MAX_PATH];
 	if (SHGetSpecialFolderPath(NULL, PathDesktop, CSIDL_DESKTOPDIRECTORY, FALSE))
 	{
-		WCHAR SanitizedLinkFilename[MAX_PATH];
-		SanitizeFileName(SanitizedLinkFilename, MAX_PATH, pLinkFilename);
+		WCHAR SanitizedLinkFileName[MAX_PATH];
+		SanitizeFileName(SanitizedLinkFileName, MAX_PATH, pLinkFileName);
 
 		WCHAR PathLink[2*MAX_PATH];
 		WCHAR NumberStr[16] = L"";
 		UINT Number = 1;
 
-		// Check if link file exists; otherwise append number
+		// Check if link file exists; if yes append number
 		do
 		{
 			wcscpy_s(PathLink, 2*MAX_PATH, PathDesktop);
 			wcscat_s(PathLink, 2*MAX_PATH, L"\\");
-			wcscat_s(PathLink, 2*MAX_PATH, SanitizedLinkFilename);
+			wcscat_s(PathLink, 2*MAX_PATH, SanitizedLinkFileName);
 			wcscat_s(PathLink, 2*MAX_PATH, NumberStr);
 			wcscat_s(PathLink, 2*MAX_PATH, L".lnk");
 

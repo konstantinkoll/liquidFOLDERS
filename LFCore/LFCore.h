@@ -365,7 +365,7 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);
 //
 
 // Speichert pShellLink auf dem Desktop ab
-LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFilename);
+LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFileName);
 
 // Liefert einen ShellLink für den angegebenen Store
 LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* pItemDescriptor);

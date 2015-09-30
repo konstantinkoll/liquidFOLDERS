@@ -189,12 +189,12 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	}
 	else
 	{
-		HGDIOBJ oldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
+		HGDIOBJ hOldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 		dc.DrawText(m_Label, rtext, nFormat);
 
-		dc.SelectObject(oldFont);
+		dc.SelectObject(hOldFont);
 	}
 
 	pDC->BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);

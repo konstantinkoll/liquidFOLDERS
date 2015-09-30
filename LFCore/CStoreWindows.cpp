@@ -108,6 +108,40 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 
 	UINT Result;
 
+	// StoreData
+	WCHAR* Ptr = (WCHAR*)&pItemDescriptor->StoreData;
+	if (*Ptr==L'\0')
+	{
+		WCHAR SanitizedFileName[MAX_PATH];
+		SanitizeFileName(SanitizedFileName, MAX_PATH, pItemDescriptor->CoreAttributes.FileName);
+
+		WCHAR Path[2*MAX_PATH];
+		WCHAR NumberStr[16] = L"";
+		UINT Number = 1;
+
+		// Check if file exists; if yes append number
+		do
+		{
+			wcscpy_s(Ptr, MAX_PATH, SanitizedFileName);
+			wcscat_s(Ptr, 2*MAX_PATH, NumberStr);
+
+			if (pItemDescriptor->CoreAttributes.FileFormat[0])
+			{
+				WCHAR Buffer[LFExtSize];
+				MultiByteToWideChar(CP_ACP, 0, pItemDescriptor->CoreAttributes.FileFormat, -1, Buffer, LFExtSize);
+
+				wcscat_s(Ptr, MAX_PATH, L".");
+				wcscat_s(Ptr, MAX_PATH, Buffer);
+			}
+
+			swprintf(NumberStr, 16, L" (%u)", ++Number);
+
+			if ((Result=GetFileLocation(&pItemDescriptor->CoreAttributes, Ptr, Path, 2*MAX_PATH))!=LFOk)
+				return Result;
+		}
+		while (_waccess(Path, 0)==0);
+	}
+
 	if ((Result=CStore::PrepareImport(pItemDescriptor, pPath, cCount))!=LFOk)
 		return Result;
 

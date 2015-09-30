@@ -16,9 +16,11 @@
 #define IDI_STR_YOUTUBE                 12
 #define IDI_FLD_DEFAULT                 13
 #define IDI_FLD_ALL                     14
-#define IDI_OVR_DEFAULT                 15
-#define IDI_LASTICON                    15
-#define IDI_LASTSTOREICON               12
+#define IDI_OVR_ERROR                   15
+#define IDI_OVR_DEFAULT                 16
+#define IDI_OVR_NEW                     17
+#define IDI_OVR_EMPTY                   18
+#define IDI_LASTICON                    18
 #define IDS_NEWSTORE                    1000
 #define IDS_LASTSEEN                    1001
 #define IDS_SEENON                      1002
@@ -206,7 +208,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

@@ -791,6 +791,62 @@
 				RelativePath=".\Overlays\OVR_Default.ico"
 				>
 			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Default_DE.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Default_EN.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Default_FR.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Empty.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Empty_DE.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Empty_EN.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Empty_ES.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Empty_FR.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_Error.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_New.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_New_DE.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_New_EN.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_New_ES.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Overlays\OVR_New_FR.ico"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Update"

@@ -561,7 +561,7 @@ __forceinline void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i
 	if (IconID>=0)
 	{
 		rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
-		m_Icons[List]->DrawEx(&dc, IconID, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, ((i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (i->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0));
+		m_Icons[List]->DrawEx(&dc, IconID, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, ((i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (i->Type & LFTypeBadgeMask));
 	}
 }
 
