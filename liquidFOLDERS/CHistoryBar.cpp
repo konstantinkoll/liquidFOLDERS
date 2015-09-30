@@ -254,7 +254,7 @@ void CHistoryBar::OnPaint()
 
 		pOldFont = dc.SelectObject(&theApp.m_ItalicFont);
 		dc.SetTextColor(pCtrlSite->GetDesign()==GWD_DEFAULT ? GetSysColor(COLOR_3DSHADOW) : 0x808080);
-		dc.DrawText(m_EmptyHint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+		dc.DrawText(m_EmptyHint, rectText, DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
@@ -285,7 +285,7 @@ void CHistoryBar::OnPaint()
 			if (Selected)
 				rectItemText.OffsetRect(1, 1);
 
-			dc.DrawText(pHistoryItem->Name, (INT)wcslen(pHistoryItem->Name), rectItemText, DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
+			dc.DrawText(pHistoryItem->Name, (INT)wcslen(pHistoryItem->Name), rectItemText, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
 
 			// Arrow
 			if (a>0)
