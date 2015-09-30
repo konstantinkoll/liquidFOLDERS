@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="7.7" version="11.8" Modules="enterprise" RootPath="..*" Language="en" Id="{8FCF12AE-6582-4D6A-B3AB-2127ECB20E96}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="7.7" version="11.8" Modules="enterprise" RootPath="..*" Language="en" Id="{1C3C25C4-C01D-4308-BCB5-73A292D55371}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="UpdaterComponent;SerValComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent;MsiDirectEditorComponent"/>
   </COMPONENT>
@@ -20,7 +20,7 @@
     <ROW Property="AI_ThemeStyle" Value="head" MultiBuildValue="DefaultBuild:nohead" MsiKey="AI_ThemeStyle"/>
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="2" MultiBuildValue="DefaultBuild:1"/>
-    <ROW Property="ARPCOMMENTS" Value="[|ProductName] 32 Bit installer"/>
+    <ROW Property="ARPCOMMENTS" Value="[|ProductName] 64 Bit installer"/>
     <ROW Property="ARPCONTACT" Value="support@liquidfolders.net"/>
     <ROW Property="ARPHELPLINK" Value="http://liquidfolders.net/support/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
@@ -39,10 +39,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{C27F3565-6574-43A1-A5CC-D201A3B68A9F} 3082:{332068F9-9580-4170-B86C-2ED2D3785618} 1036:{EFEC7F23-1EF5-4B13-B58D-963CEE9C7ADA} 1031:{745BDD2E-8FD7-4A2D-9A20-2F911D052C10} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{A311397A-EEF9-4140-9364-7DA6A2DB9FBE} 3082:{D4918058-A346-4A23-96D0-334C7447B89C} 1036:{5AEA24F8-EE5A-420D-981A-B37414BC6C3C} 1031:{330B019E-38A0-43C3-9D57-62D377AA579A} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.9.9" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.8.7" Type="32"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
@@ -50,12 +50,12 @@
     <ROW Property="UpgradeCode" Value="{67BB0890-A341-4E87-90D6-AEB28804E142}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT64" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT64Display" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT64" MultiBuildValue="DefaultBuild:Windows XP x64, Windows XP x64 Service Pack 1" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT64Display" MultiBuildValue="DefaultBuild:Windows XP x64, Windows XP x64 Service Pack 1" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86" ValueLocId="-"/>
     <ATTRIBUTE name="DeletedRows" value="MinBackground@ExitBackground@ShortcutLogoIcon@TabBackground@CompleteSetupIcon@InstallLogoIcon@OptionsLogoIcon@AI_CF_TITLE_TEXT_STYLE@WaitLogoItem@InstallerIcon@LicenseAgreeLogoIcon@AI_LOG_CHECKBOX@DlgTitleFont"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
@@ -66,44 +66,53 @@
     <ROW Directory="Microsoft_DIR" Directory_Parent="AppDataFolder" DefaultDir="Micros~1|Microsoft"/>
     <ROW Directory="Quick_Launch_DIR" Directory_Parent="Internet_Explorer_DIR" DefaultDir="QuickL~1|Quick Launch"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
-    <ROW Directory="SystemFolder" Directory_Parent="TARGETDIR" DefaultDir="System~1|SystemFolder" IsPseudoRoot="1"/>
+    <ROW Directory="System64Folder" Directory_Parent="TARGETDIR" DefaultDir="System~1|System64Folder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_CustomARPName" ComponentId="{4F878DDA-81E5-41DE-8AEE-05ED6EAA8A70}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
-    <ROW Component="AI_DisableModify" ComponentId="{84D9DDFB-8798-4DB9-8DC3-731640A61DF6}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
-    <ROW Component="LFCore.dll" ComponentId="{9B505893-2785-4480-9EE6-750BCF0B75F5}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
-    <ROW Component="Quick_Launch" ComponentId="{080B8FC6-9147-46E6-9677-B7193EFC2628}" Directory_="Quick_Launch_DIR" Attributes="0"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{3A61D486-8EE1-477B-A3E0-0F8FA36DBA0A}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="liquidFOLDERS" ComponentId="{408FDB56-26F6-420F-BBA4-20858FBA253B}" Directory_="APPDIR" Attributes="4" KeyPath="AIShRegAnswer"/>
-    <ROW Component="liquidFOLDERS.exe" ComponentId="{3AED5813-23BF-4E11-9FFF-68893E948630}" Directory_="APPDIR" Attributes="0" KeyPath="liquidFOLDERS.exe"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{B2F25C9C-1476-4A5C-AF39-E55B4E59EB4A}" Directory_="APPDIR" Attributes="260" KeyPath="DisplayName" Options="1"/>
+    <ROW Component="AI_DisableModify" ComponentId="{DE5D2EB3-F13C-4FE9-AB16-B27A9C50959D}" Directory_="APPDIR" Attributes="260" KeyPath="NoModify" Options="1"/>
+    <ROW Component="LFCore.dll" ComponentId="{708111CC-8E9D-48B0-90E1-035CE45D68EE}" Directory_="System64Folder" Attributes="768" KeyPath="LFCore.dll"/>
+    <ROW Component="LFNamespaceExtension.dll" ComponentId="{F256B12E-DAD9-42B0-932A-0E835700AA89}" Directory_="APPDIR" Attributes="768" KeyPath="LFNamespaceExtension.dll"/>
+    <ROW Component="Quick_Launch" ComponentId="{824A193C-BD1B-490B-9E7F-AA7F6C98372D}" Directory_="Quick_Launch_DIR" Attributes="768"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{B2E9C933-6ED7-45F4-9358-07EA8D258913}" Directory_="SHORTCUTDIR" Attributes="768"/>
+    <ROW Component="liquidFOLDERS" ComponentId="{0A04AAF7-EFBC-440C-8A01-64AFB0A0081D}" Directory_="APPDIR" Attributes="772" KeyPath="AIShRegAnswer"/>
+    <ROW Component="liquidFOLDERS.exe" ComponentId="{45727770-2F88-41B5-8203-81C0B2F3108C}" Directory_="APPDIR" Attributes="768" KeyPath="liquidFOLDERS.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify LFCore.dll Quick_Launch SHORTCUTDIR liquidFOLDERS liquidFOLDERS.exe"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify LFCore.dll LFNamespaceExtension.dll Quick_Launch SHORTCUTDIR liquidFOLDERS liquidFOLDERS.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" NextFile="liquidFOLDERS.exe"/>
-    <ROW File="liquidFOLDERS.exe" Component_="liquidFOLDERS.exe" FileName="StoreM~1.exe|liquidFOLDERS.exe" Attributes="0" SourcePath="Release\Win32\liquidFOLDERS.exe" SelfReg="false"/>
+    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\x64\LFCore.dll" SelfReg="false" NextFile="LFNamespaceExtension.dll"/>
+    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\x64\LFNamespaceExtension.dll" SelfReg="false" NextFile="liquidFOLDERS.exe"/>
+    <ROW File="liquidFOLDERS.exe" Component_="liquidFOLDERS.exe" FileName="StoreM~1.exe|liquidFOLDERS.exe" Attributes="0" SourcePath="Release\x64\liquidFOLDERS.exe" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
     <ROW RemoveFile="__1" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveRegComponent">
+    <ROW RemoveReg="_" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
+    <ROW RemoveReg="__1" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
     <ROW RemoveReg="__2" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
+    <ROW RemoveReg="__3" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
+    <ROW RemoveReg="__4" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
     <ROW RemoveReg="__6" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
     <ROW RemoveReg="__9" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
+    <ROW RemoveReg="__10" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
+    <ROW RemoveReg="__11" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
+    <ROW RemoveReg="__13" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="h" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" EulaPathLocId="*"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS32" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaMethod="1" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExeMetadata="LegalCopyright:© 2009-[|AI_CURRENT_YEAR] [|Manufacturer]" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS64" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaMethod="1" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExeMetadata="LegalCopyright:© 2009-[|AI_CURRENT_YEAR] [|Manufacturer]" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" MsiPackageType="x64" UACExecutionLevel="2"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.CacheComponent">
-    <ATTRIBUTE name="CacheIndex" value="setup32.txt"/>
+    <ATTRIBUTE name="CacheIndex" value="setup64.txt"/>
     <ATTRIBUTE name="Folder" value="Temp"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
@@ -437,7 +446,7 @@
     <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFiles64Folder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
@@ -484,19 +493,19 @@
     <ROW Action="ExecuteAction" Sequence="1299" SeqType="0" MsiKey="ExecuteAction"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
-    <ROW Condition="( Version9X OR (VersionNT AND (NOT VersionNT64)) )" Description="[ProductName] cannot be installed on [WindowsTypeNT64Display]" DescriptionLocId="AI.LaunchCondition.NoNT64" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="( Version9X OR VersionNT64 OR ( VersionNT AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 4))) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &gt;= 1))) OR VersionNT64) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &lt;&gt; 1))) OR VersionNT64) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="( Version9X OR ( NOT VersionNT64 ) OR ( VersionNT64 AND ((VersionNT64 &lt;&gt; 502) OR (((VersionNT64 = 502) AND (ServicePackLevel &gt;= 1)) OR (MsiNTProductType &lt;&gt; 1))) AND ((VersionNT64 &lt;&gt; 502) OR (((VersionNT64 = 502) AND (ServicePackLevel &lt;&gt; 1)) OR (MsiNTProductType &lt;&gt; 1))) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT64Display]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT64" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="( Version9X OR VersionNT64 )" Description="[ProductName] cannot be installed on [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoNT" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]" DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiMergeModsComponent">
-    <ROW Module="Microsoft_VC90_CRT_x86.msm" Path="Setup\MSM_x86\Microsoft_VC90_CRT_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
-    <ROW Module="Microsoft_VC90_MFCLOC_x86.msm" Path="Setup\MSM_x86\Microsoft_VC90_MFCLOC_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
-    <ROW Module="Microsoft_VC90_MFC_x86.msm" Path="Setup\MSM_x86\Microsoft_VC90_MFC_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
-    <ROW Module="policy_9_0_Microsoft_VC90_CRT_x86.msm" Path="Setup\MSM_x86\policy_9_0_Microsoft_VC90_CRT_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
-    <ROW Module="policy_9_0_Microsoft_VC90_MFCLOC_x86.msm" Path="Setup\MSM_x86\policy_9_0_Microsoft_VC90_MFCLOC_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
-    <ROW Module="policy_9_0_Microsoft_VC90_MFC_x86.msm" Path="Setup\MSM_x86\policy_9_0_Microsoft_VC90_MFC_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
+    <ROW Module="Microsoft_VC90_CRT_x86_x64.msm" Path="Setup\MSM_x64\Microsoft_VC90_CRT_x86_x64.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
+    <ROW Module="Microsoft_VC90_MFCLOC_x86_x64.msm" Path="Setup\MSM_x64\Microsoft_VC90_MFCLOC_x86_x64.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
+    <ROW Module="Microsoft_VC90_MFC_x86_x64.msm" Path="Setup\MSM_x64\Microsoft_VC90_MFC_x86_x64.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
+    <ROW Module="policy_9_0_Microsoft_VC90_CRT_x86_x64.msm" Path="Setup\MSM_x64\policy_9_0_Microsoft_VC90_CRT_x86_x64.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
+    <ROW Module="policy_9_0_Microsoft_VC90_MFCLOC_x86_x64.msm" Path="Setup\MSM_x64\policy_9_0_Microsoft_VC90_MFCLOC_x86_x64.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
+    <ROW Module="policy_9_0_Microsoft_VC90_MFC_x86_x64.msm" Path="Setup\MSM_x64\policy_9_0_Microsoft_VC90_MFC_x86_x64.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRadioButtonComponent">
     <ROW Property="AppsShutdownOption" Order="1" Value="All" X="0" Y="0" Width="390" Height="30" Text="Automatically &amp;close applications and attempt to restart them after setup is complete" TextLocId="RadioButton.Text.AppsShutdownOption#1" MsiKey="AppsShutdownOption#1"/>
@@ -511,39 +520,91 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
     <ROW Registry="AIShRegAnswer" Root="-1" Key="Software\Caphyon\Advanced Installer\Installs\[ProductCode]" Name="AIShRegAnswer" Value="[AI_SHORTCUTSREG]" Component_="liquidFOLDERS"/>
     <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="liquidFOLDERS"/>
+    <ROW Registry="Attributes" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="Attributes" Value="#3087008004" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="CheckUpdate" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Run" Name="liquidFOLDERS" Value="&quot;[#liquidFOLDERS.exe]&quot; /CHECKUPDATE" Component_="liquidFOLDERS.exe"/>
     <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Comments" Value="[ARPCOMMENTS]" Component_="AI_CustomARPName"/>
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Contact" Value="[ARPCONTACT]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayName" Value="[AI_PRODUCTNAME_ARP]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayVersion" Value="[ProductVersion]" Component_="AI_CustomARPName"/>
     <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="EstimatedSize" Value="#[AI_ARP_SIZE]" Component_="AI_CustomARPName"/>
+    <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.ContextMenu" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.RootFolder" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_2" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="*" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_3" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="*" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_4" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_5" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="HelpLink" Value="[ARPHELPLINK]" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="HelpTelephone" Value="[ARPHELPTELEPHONE]" Component_="AI_CustomARPName"/>
+    <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
-    <ROW Registry="New_Value" Root="0" Key="LFFilterfile\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,14" Component_="liquidFOLDERS.exe"/>
+    <ROW Registry="NeverShowExt" Root="0" Key="LFSendTofile" Name="NeverShowExt" Value="#0" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="New_Value" Root="0" Key="LFFilterfile\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,14" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
     <ROW Registry="NoRepair" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoRepair" Value="#1" Component_="AI_CustomARPName"/>
+    <ROW Registry="PerceivedType" Root="0" Key=".LFSendTo" Name="PerceivedType" Value="system" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="PinToNameSpaceTree" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="PinToNameSpaceTree" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Publisher" Value="[Manufacturer]" Component_="AI_CustomARPName"/>
+    <ROW Registry="SortOrderIndex" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="SortOrderIndex" Value="#64" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="StoreManager" Root="2" Key="Software\liquidFOLDERS" Name="InstallLocation" Value="[#liquidFOLDERS.exe]" Component_="liquidFOLDERS.exe"/>
+    <ROW Registry="System.DescriptionID" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.DescriptionID" Value="#20" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.ItemType" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.ItemType" Value="Folder" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.ItemTypeText" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.ItemTypeText" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.PerceivedType" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PerceivedType" Value="#8" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.PropList.DetailsPaneNullSelect" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelect" Value="prop:" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.PropList.DetailsPaneNullSelectTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelectTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.PropList.PreviewTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.PreviewTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="ThreadingModel_2" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLInfoAbout" Value="[ARPURLINFOABOUT]" Component_="AI_CustomARPName"/>
     <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLUpdateInfo" Value="[ARPURLUPDATEINFO]" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#1" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#7" Component_="AI_CustomARPName"/>
-    <ROW Registry="__23" Root="0" Key=".filter" Value="LFFilterfile" Component_="liquidFOLDERS.exe"/>
-    <ROW Registry="__24" Root="0" Key="LFFilterfile\shell\open\command" Value="[#liquidFOLDERS.exe] &quot;%1&quot;" Component_="liquidFOLDERS.exe"/>
+    <ROW Registry="WantsFORPARSING" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="WantsFORPARSING" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="_" Root="0" Key=".LFSendTo" Value="LFSendTofile" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__1" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Value="LFNamespaceExtension.SendTo" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__10" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ProgID" Value="LFNamespaceExtension.RootFolder" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__15" Root="0" Key="LFNamespaceExtension.RootFolder" Value="LFNamespaceExtension.RootFolder" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__16" Root="0" Key="LFNamespaceExtension.RootFolder\CLSID" Value="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__17" Root="0" Key="LFNamespaceExtension.SendTo" Value="LFNamespaceExtension.SendTo" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__18" Root="0" Key="LFNamespaceExtension.SendTo\CLSID" Value="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__19" Root="0" Key="LFSendTofile\DefaultIcon" Value="&quot;[#liquidFOLDERS.exe]&quot;,0" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__2" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__20" Root="0" Key="LFSendTofile\Shellex\DropHandler" Value="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__21" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__22" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__23" Root="0" Key=".filter" Value="LFFilterfile" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__24" Root="0" Key="LFFilterfile\shell\open\command" Value="[#liquidFOLDERS.exe] &quot;%1&quot;" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__3" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}\ProgID" Value="LFNamespaceExtension.SendTo" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__7" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__8" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\DefaultIcon" Value="[#liquidFOLDERS.exe],0" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__9" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
-    <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="SystemFolder" InstallMode="2"/>
+    <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="System64Folder" InstallMode="2"/>
+    <ROW FileKey="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFNamespaceExtension.dll" DirProperty="System64Folder" InstallMode="3"/>
     <ROW FileKey="_" Component_="liquidFOLDERS" DirProperty="APPDIR" InstallMode="2"/>
     <ROW FileKey="__1" Component_="liquidFOLDERS" DirProperty="SHORTCUTDIR" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveRegComponent">
-    <ROW RemoveRegistry="__2" Root="2" Key="Software\liquidFOLDERS" Name="-" Component_="liquidFOLDERS.exe"/>
-    <ROW RemoveRegistry="__6" Root="0" Key="LFFilterfile" Name="-" Component_="liquidFOLDERS.exe"/>
-    <ROW RemoveRegistry="__9" Root="0" Key=".filter" Name="-" Component_="liquidFOLDERS.exe"/>
+    <ROW RemoveRegistry="_" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__10" Root="0" Key=".LFSendTo" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__11" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__12" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__13" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__14" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__2" Root="2" Key="Software\liquidFOLDERS" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__3" Root="0" Key="LFSendTofile" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__4" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__6" Root="0" Key="LFFilterfile" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__7" Root="0" Key="Folder\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__8" Root="0" Key="Drive\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__9" Root="0" Key=".filter" Name="-" Component_="LFNamespaceExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="StoreManager" Directory_="Quick_Launch_DIR" Name="StoreM~1|StoreManager" Component_="liquidFOLDERS.exe" Target="[#liquidFOLDERS.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
