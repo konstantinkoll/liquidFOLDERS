@@ -660,29 +660,29 @@ void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr)
 		}
 }
 
-void AppendTooltipAttribute(LFItemDescriptor* i, UINT Attr, CString& Str)
+void AppendTooltipAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, CString& Str)
 {
 	WCHAR tmpStr[256];
-	LFAttributeToString(i, Attr, tmpStr, 256);
+	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
 	AppendTooltipString(Attr, Str, tmpStr);
 }
 
-void GetHintForStore(LFItemDescriptor* i, CString& Str)
+void GetHintForStore(LFItemDescriptor* pItemDescriptor, CString& Str)
 {
 	WCHAR tmpStr[256];
 
-	AppendTooltipAttribute(i, LFAttrComments, Str);
+	AppendTooltipAttribute(pItemDescriptor, LFAttrComments, Str);
 
-	LFCombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize, tmpStr, 256);
+	LFCombineFileCountSize(pItemDescriptor->AggregateCount, pItemDescriptor->CoreAttributes.FileSize, tmpStr, 256);
 	AppendTooltipString(LFAttrDescription, Str, tmpStr);
 
-	AppendTooltipAttribute(i, LFAttrCreationTime, Str);
-	AppendTooltipAttribute(i, LFAttrFileTime, Str);
+	AppendTooltipAttribute(pItemDescriptor, LFAttrCreationTime, Str);
+	AppendTooltipAttribute(pItemDescriptor, LFAttrFileTime, Str);
 
-	AppendTooltipAttribute(i, LFAttrDescription, Str);
+	AppendTooltipAttribute(pItemDescriptor, LFAttrDescription, Str);
 
-	if (((i->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(i->Type & LFStoreNotMounted)))
-		AppendTooltipString(LFAttrComments, Str, LFGetApp()->m_SourceNames[i->Type & LFTypeSourceMask][1]);
+	if (((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(pItemDescriptor->Type & LFStoreNotMounted)))
+		AppendTooltipString(LFAttrComments, Str, LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
 }
 
 

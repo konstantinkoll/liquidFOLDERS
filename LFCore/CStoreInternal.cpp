@@ -62,8 +62,9 @@ UINT CStoreInternal::DeleteDirectories()
 		return Result;
 
 	// Delete data directory
-	if (p_StoreDescriptor->DatPath[0]!=L'\0')
-		Result = DeleteDirectory(p_StoreDescriptor->DatPath) ? LFOk : LFDriveNotReady;
+	if ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if (p_StoreDescriptor->DatPath[0]!=L'\0')
+			Result = DeleteDirectory(p_StoreDescriptor->DatPath) ? LFOk : LFDriveNotReady;
 
 	return Result;
 }

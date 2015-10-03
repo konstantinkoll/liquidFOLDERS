@@ -972,6 +972,61 @@ LFCORE_API BOOL LFStoresOnVolume(CHAR cVolume)
 	return Result;
 }
 
+LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
+{
+	assert(pStoreDescriptor);
+
+	if (pType)
+	{
+		*pType = LFTypeStore | pStoreDescriptor->Source;
+
+		// Empty?
+		if (!pStoreDescriptor->FileCount[LFContextAllFiles])
+			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeEmpty;
+
+		// New?
+		FILETIME CurrentTime;
+		GetSystemTimeAsFileTime(&CurrentTime);
+
+		ULARGE_INTEGER ULI1;
+		ULARGE_INTEGER ULI2;
+
+		ULI1.LowPart = CurrentTime.dwLowDateTime;
+		ULI1.HighPart = CurrentTime.dwHighDateTime;
+		ULI2.LowPart = pStoreDescriptor->CreationTime.dwLowDateTime;
+		ULI2.HighPart = pStoreDescriptor->CreationTime.dwHighDateTime;
+
+		if (ULI1.QuadPart<ULI2.QuadPart+(ULONGLONG)86400*10*1000*1000)
+			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeNew;
+
+		// Default store?
+		if (GetMutexForStores())
+		{
+			if (strcmp(pStoreDescriptor->StoreID, DefaultStore)==0)
+				*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeDefault | LFTypeDefault;
+
+			ReleaseMutexForStores();
+		}
+
+		// Wrong index version?
+		if (pStoreDescriptor->IndexVersion<CURIDXVERSION)
+			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeError;
+
+		// Mounted?
+		if (!LFIsStoreMounted(pStoreDescriptor))
+			*pType |= LFTypeNotMounted | LFTypeGhosted;
+
+		// Capabilities
+		if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+			*pType |= LFTypeShortcutAllowed;
+
+		if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)!=LFStoreModeBackendInternal)
+			*pType |= LFTypeSynchronizeAllowed;
+	}
+
+	return pStoreDescriptor->Source;
+}
+
 LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, CHAR cVolume, BOOL MakeSearchable)
 {
 	if (!GetMutexForStores())

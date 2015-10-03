@@ -61,10 +61,9 @@
 #define IDS_FILETYPES                   1026
 #define IDS_HOUSEKEEPING                1027
 #define IDS_SEARCHTERM                  1028
-#define IDS_DROPTIP                     1029
-#define IDS_ASCENDING                   1030
-#define IDS_DESCENDING                  1031
-#define IDS_DEFAULTSTORE                1032
+#define IDS_ASCENDING                   1029
+#define IDS_DESCENDING                  1030
+#define IDS_DEFAULTSTORE                1031
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_SOURCE                1100
 #define IDS_VATTR_MAINTENANCETIME       1101

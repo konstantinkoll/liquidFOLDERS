@@ -13,7 +13,7 @@
 CFileDropWnd::CFileDropWnd()
 	: CGlassWindow()
 {
-	m_StoreMounted = m_Hover = FALSE;
+	m_Hover = FALSE;
 }
 
 BOOL CFileDropWnd::Create(CHAR* StoreID)
@@ -73,17 +73,21 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_WM_CONTEXTMENU()
 	ON_WM_SYSCOMMAND()
 	ON_MESSAGE(WM_OPENFILEDROP, OnOpenFileDrop)
+
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnStoreOpen)
+	ON_COMMAND(IDM_STORE_SYNCHRONIZE, OnStoreSynchronize)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPENNEWWINDOW, OnUpdateStoreCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_SYNCHRONIZE, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StatisticsChanged, OnUpdateStore)
 END_MESSAGE_MAP()
 
 INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -145,14 +149,14 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	CGlassWindow::OnEraseBkgnd(&dc);
 
 	// Icon
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, LFGetStoreIcon(&m_Store)-1,
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1,
 		CPoint(rectLayout.left+(rectLayout.Width()-128)/2-1, rectLayout.top+10), CSize(128, 128),
-		CLR_NONE, CLR_NONE, m_StoreMounted ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeNotMounted) ? m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
 
 	// Text
-	CRect rtext(rectLayout);
-	rtext.top += 130;
-	rtext.bottom -= 10;
+	CRect rectText(rectLayout);
+	rectText.top += 130;
+	rectText.bottom -= 10;
 
 	const UINT nFormat = DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX;
 
@@ -163,9 +167,10 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 		if (lf.lfHeight<-15)
 			lf.lfHeight = -15;
 
-		CFont titleFont;
-		titleFont.CreateFontIndirect(&lf);
-		CFont* oldFont = dc.SelectObject(&titleFont);
+		CFont TitleFont;
+		TitleFont.CreateFontIndirect(&lf);
+
+		CFont* pOldFont = dc.SelectObject(&TitleFont);
 
 		if (m_IsAeroWindow)
 		{
@@ -174,25 +179,25 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 			opts.iGlowSize = 15;
 
 			if (theApp.zDrawThemeTextEx)
-				theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, m_Label, -1, nFormat, rtext, &opts);
+				theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, m_Store.StoreName, -1, nFormat, rectText, &opts);
 		}
 		else
 		{
 			theApp.zDrawThemeText(hTheme, dc, WP_CAPTION, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE,
-				m_Label, -1, nFormat, 0, rtext);
+				m_Store.StoreName, -1, nFormat, 0, rectText);
 
 			dc.SetTextColor(GetSysColor(COLOR_CAPTIONTEXT));
-			dc.DrawText(m_Label, rtext, nFormat);
+			dc.DrawText(m_Store.StoreName, -1, rectText, nFormat);
 		}
 
-		dc.SelectObject(oldFont);
+		dc.SelectObject(pOldFont);
 	}
 	else
 	{
 		HGDIOBJ hOldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-		dc.DrawText(m_Label, rtext, nFormat);
+		dc.DrawText(m_Store.StoreName, -1, rectText, nFormat);
 
 		dc.SelectObject(hOldFont);
 	}
@@ -237,10 +242,14 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 	{
 		if (!LFGetApp()->IsTooltipVisible())
 		{
-			CString Caption((LPCSTR)IDR_FILEDROP);
-			CString Hint((LPCSTR)IDS_DROPTIP);
+			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&m_Store);
 
-			LFGetApp()->ShowTooltip(this, point, Caption, Hint, (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FILEDROP), IMAGE_ICON, 48, 48, LR_SHARED));
+			CString Hint;
+			GetHintForStore(pItemDescriptor, Hint);
+
+			LFGetApp()->ShowTooltip(this, point, m_Store.StoreName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(m_StoreIcon-1));
+
+			LFFreeItemDescriptor(pItemDescriptor);
 		}
 	}
 	else
@@ -319,6 +328,11 @@ void CFileDropWnd::OnStoreOpen()
 	pFrame->ShowWindow(SW_SHOW);
 }
 
+void CFileDropWnd::OnStoreSynchronize()
+{
+	LFRunSynchronization(m_StoreID, this);
+}
+
 void CFileDropWnd::OnStoreMakeDefault()
 {
 	LFErrorBox(this, LFSetDefaultStore(m_Store.StoreID));
@@ -348,22 +362,23 @@ void CFileDropWnd::OnStoreProperties()
 void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = TRUE;
-	CHAR StoreID[LFKeySize];
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_STORE_MAKEDEFAULT:
-		if (LFGetDefaultStore(StoreID)==LFOk)
-			b = strcmp(m_Store.StoreID, StoreID)!=0;
+	case IDM_STORE_SYNCHRONIZE:
+		b = (m_StoreType & LFTypeSynchronizeAllowed);
+		break;
 
+	case IDM_STORE_MAKEDEFAULT:
+		b = !(m_StoreType & LFTypeDefault);
 		break;
 
 	case IDM_STORE_IMPORTFOLDER:
-		b = m_StoreMounted;
+		b = !(m_StoreType & LFTypeNotMounted);
 		break;
 
 	case IDM_STORE_SHORTCUT:
-		b = ((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
+		b = (m_StoreType & LFTypeShortcutAllowed);
 		break;
 
 	case IDM_STORE_RENAME:
@@ -380,10 +395,9 @@ LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	if (LFGetStoreSettings(m_StoreID, &m_Store)!=LFOk)
 		PostMessage(WM_CLOSE);
 
-	m_StoreMounted = LFIsStoreMounted(&m_Store);
-	m_Label = m_Store.StoreName;
+	m_StoreIcon = LFGetStoreIcon(&m_Store, &m_StoreType);
 
-	SetWindowText(m_Label);
+	SetWindowText(m_Store.StoreName);
 	Invalidate();
 
 	return NULL;

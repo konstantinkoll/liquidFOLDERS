@@ -112,7 +112,7 @@ LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
 
 
 // Gibt die ID für das Icon eines Stores zurück
-#define LFGetStoreIcon(pStoreDescriptor) (pStoreDescriptor)->Source
+LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
 
 // Prüft, ob ein Store angeschlossen ist
 #define LFIsStoreMounted(pStoreDescriptor) ((pStoreDescriptor)->DatPath[0]!=L'\0')

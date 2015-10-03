@@ -75,8 +75,8 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
 
 void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr);
-void AppendTooltipAttribute(LFItemDescriptor* i, UINT Attr, CString& Str);
-void GetHintForStore(LFItemDescriptor* i, CString& Str);
+void AppendTooltipAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, CString& Str);
+void GetHintForStore(LFItemDescriptor* pItemDescriptor, CString& Str);
 
 HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height);
 

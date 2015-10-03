@@ -34,6 +34,7 @@ protected:
 	afx_msg LRESULT OnOpenFileDrop(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnStoreOpen();
+	afx_msg void OnStoreSynchronize();
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreImportFolder();
 	afx_msg void OnStoreShortcut();
@@ -49,8 +50,8 @@ protected:
 	LFDropTarget m_DropTarget;
 	LFTooltip m_TooltipCtrl;
 	LFStoreDescriptor m_Store;
-	CString m_Label;
+	UINT m_StoreIcon;
+	UINT m_StoreType;
 	BOOL m_AlwaysOnTop;
-	BOOL m_StoreMounted;
 	BOOL m_Hover;
 };

@@ -364,14 +364,14 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 				LFStoreDescriptor Store;
 				if (LFGetStoreSettings(p_MaintenanceList->m_Items[m_HotItem].StoreID, &Store)==LFOk)
 				{
-					LFItemDescriptor* i = LFAllocItemDescriptorEx(&Store);
+					LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&Store);
 
 					CString Hint;
-					GetHintForStore(i, Hint);
+					GetHintForStore(pItemDescriptor, Hint);
 
-					LFGetApp()->ShowTooltip(this, point, i->CoreAttributes.FileName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1));
+					LFGetApp()->ShowTooltip(this, point, pItemDescriptor->CoreAttributes.FileName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1));
 
-					LFFreeItemDescriptor(i);
+					LFFreeItemDescriptor(pItemDescriptor);
 				}
 			}
 	}

@@ -520,7 +520,7 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgr
 
 BOOL CIndex::ExistingFileID(CHAR* pFileID)
 {
-	assert(pItemDescriptor);
+	assert(pFileID);
 
 	BOOL Result = FALSE;
 
@@ -697,8 +697,6 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 
 UINT CIndex::Synchronize(LFProgress* pProgress)
 {
-	assert(pTransactionList);
-
 	UINT Result = LFOk;
 
 	START_ITERATEALL(, LFIndexTableLoadError);

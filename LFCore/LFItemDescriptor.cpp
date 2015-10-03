@@ -154,60 +154,18 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 {
 	assert(pStoreDescriptor);
 
-	const BOOL IsMounted = LFIsStoreMounted(pStoreDescriptor);
-
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
-	pItemDescriptor->Type = LFTypeStore | pStoreDescriptor->Source;
-
-	// Empty?
-	if (!pStoreDescriptor->FileCount[LFContextAllFiles])
-		pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeBadgeMask) | LFTypeBadgeEmpty;
-
-	// New?
-	FILETIME CurrentTime;
-	GetSystemTimeAsFileTime(&CurrentTime);
-
-	ULARGE_INTEGER ULI1;
-	ULARGE_INTEGER ULI2;
-
-	ULI1.LowPart = CurrentTime.dwLowDateTime;
-	ULI1.HighPart = CurrentTime.dwHighDateTime;
-	ULI2.LowPart = pStoreDescriptor->CreationTime.dwLowDateTime;
-	ULI2.HighPart = pStoreDescriptor->CreationTime.dwHighDateTime;
-
-	if (ULI1.QuadPart<ULI2.QuadPart+(ULONGLONG)86400*10*1000*1000)
-		pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeBadgeMask) | LFTypeBadgeNew;
-
-	// Default store?
-	if (strcmp(pStoreDescriptor->StoreID, DefaultStore)==0)
-		pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeBadgeMask) | LFTypeBadgeDefault | LFTypeDefault;
-
-	// Wrong index version?
-	if (pStoreDescriptor->IndexVersion<CURIDXVERSION)
-		pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeBadgeMask) | LFTypeBadgeError;
-
-	// Mounted?
-	if (!IsMounted)
-		pItemDescriptor->Type |= LFTypeNotMounted | LFTypeGhosted;
-
-	// Capabilities
-	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		pItemDescriptor->Type |= LFTypeShortcutAllowed;
-
-	if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)!=LFStoreModeBackendInternal)
-		pItemDescriptor->Type |= LFTypeSynchronizeAllowed;
-
-	// Category and icon
+	// Category, icon and type
 	pItemDescriptor->CategoryID = (pStoreDescriptor->Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
-	pItemDescriptor->IconID = LFGetStoreIcon(pStoreDescriptor);
+	pItemDescriptor->IconID = LFGetStoreIcon(pStoreDescriptor, &pItemDescriptor->Type);
 
 	// Description
 	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if (wcscmp(pStoreDescriptor->LastSeen, L"")!=0)
 		{
 			WCHAR LastSeen[256];
-			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SEENON : IDS_LASTSEEN, LastSeen, 256);
+			LoadString(LFCoreModuleHandle, LFIsStoreMounted(pStoreDescriptor) ? IDS_SEENON : IDS_LASTSEEN, LastSeen, 256);
 
 			wsprintf(pItemDescriptor->Description, LastSeen, pStoreDescriptor->LastSeen);
 		}

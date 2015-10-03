@@ -1342,11 +1342,7 @@ void CMainView::OnStoreSynchronize()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-	{
 		LFRunSynchronization(p_CookedFiles->m_Items[Index]->StoreID, this);
-
-		GetOwner()->PostMessage(WM_RELOAD);
-	}
 }
 
 void CMainView::OnStoreMakeDefault()
@@ -1368,6 +1364,7 @@ void CMainView::OnStoreImportFolder()
 		if (m_StoreIDValid)
 		{
 			LFImportFolder(m_StoreID, this);
+
 			GetOwner()->PostMessage(WM_RELOAD);
 		}
 }

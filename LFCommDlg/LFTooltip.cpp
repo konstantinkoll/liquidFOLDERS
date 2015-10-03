@@ -301,6 +301,9 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	POINT ptSrc = { 0, 0 };
 	UpdateLayeredWindow(&dc, &ptDst, &sz, &dc, &ptSrc, 0x000000, &BF, ULW_ALPHA);
 
+	// TopMost
+	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
 	// Clean up
 	dc.SelectObject(hOldBitmap);
 	dc.DeleteDC();

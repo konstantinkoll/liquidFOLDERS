@@ -982,6 +982,10 @@ LRESULT CMainWnd::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 
 LRESULT CMainWnd::OnStatisticsChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
+	if (m_pCookedFiles)
+		if (m_pCookedFiles->m_Context==LFContextStores)
+			PostMessage(WM_RELOAD);
+
 	PostMessage(WM_UPDATENUMBERS);
 
 	return NULL;

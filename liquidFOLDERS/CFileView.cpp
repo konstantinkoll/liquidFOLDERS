@@ -1278,7 +1278,9 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			if (m_EnableHover)
 				InvalidateItem(m_HotItem);
+
 			m_HotItem = Index;
+
 			if (m_EnableHover)
 				InvalidateItem(m_HotItem);
 		}
