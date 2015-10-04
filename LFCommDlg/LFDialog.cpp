@@ -149,9 +149,6 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	{
 		if (Themed)
 		{
-			CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIV, _T("PNG"));
-			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, btn.bottom+rectBorders.Height()+1);
-
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 			LinearGradientBrush brush2(Point(0, 0), Point(m_BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));

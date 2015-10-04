@@ -13,7 +13,7 @@ public:
 	~LFSearchResult();
 
 	void SetMetadataFromFilter(LFFilter* pFilter);
-	BOOL AddItem(LFItemDescriptor* i);
+	BOOL AddItem(LFItemDescriptor* pItemDescriptor);
 	BOOL AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor);
 	void RemoveItem(UINT Index, BOOL UpdateCount=TRUE);
 	void RemoveFlaggedItems(BOOL UpdateCount=TRUE);

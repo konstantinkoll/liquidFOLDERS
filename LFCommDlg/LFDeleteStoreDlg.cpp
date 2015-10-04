@@ -28,7 +28,7 @@ END_MESSAGE_MAP()
 BOOL LFDeleteStoreDlg::OnInitDialog()
 {
 	// Store prüfen
-	SendMessage(LFGetApp()->p_MessageIDs->StoresChanged);
+	OnStoresChanged(NULL, NULL);
 
 	LFDialog::OnInitDialog();
 
@@ -38,12 +38,16 @@ BOOL LFDeleteStoreDlg::OnInitDialog()
 	// Fette Überschrift
 	GetDlgItem(IDC_CAPTION)->SetFont(&LFGetApp()->m_BoldFont);
 
+	// Nuke
+	if ((m_Store.Mode & LFStoreModeBackendMask)>LFStoreModeBackendInternal)
+		GetDlgItem(IDC_NUKEMESSAGE)->ShowWindow(SW_HIDE);
+
 	// Titelleiste
-	CString text;
-	GetWindowText(text);
+	CString Mask;
+	GetWindowText(Mask);
 
 	CString Caption;
-	Caption.Format(text, m_Store.StoreName);
+	Caption.Format(Mask, m_Store.StoreName);
 	SetWindowText(Caption);
 
 	return FALSE;
@@ -58,7 +62,9 @@ LRESULT LFDeleteStoreDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (LFGetStoreSettings(m_StoreID, &m_Store)!=LFOk)
 	{
+		// Prevent desktop dimming and sound
 		m_UAC = FALSE;
+
 		EndDialog(IDCANCEL);
 	}
 

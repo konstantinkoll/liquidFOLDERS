@@ -36,7 +36,6 @@ IDB_EARTHMAP            JPG                     "res\\Earthmap.jpg"
 // PNG
 //
 
-IDB_DIV                 PNG                     "res\\Div.png"
 IDB_DIVDOWN             PNG                     "res\\DivDown.png"
 IDB_DIVUP               PNG                     "res\\DivUp.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
@@ -203,19 +202,18 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 277, 196
+IDD_DELETESTORE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Angeschlossenen Store „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Abbrechen",IDCANCEL,220,153,50,14,WS_GROUP
+    LTEXT           "Soll der Store wirklich gelöscht werden?",IDC_CAPTION,7,31,263,15
+    LTEXT           "Da der gewählte Store zur Zeit angeschlossen ist, werden alle\nDateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_NUKEMESSAGE,7,51,263,17
+    LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“\nauswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,263,17
     CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,62,10
     CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,61,10
     PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,47,153,165,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Soll der Store wirklich gelöscht werden?",IDC_CAPTION,7,31,263,15
-    LTEXT           "Da der gewählte Store zur Zeit angeschlossen ist, werden alle\nDateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,51,263,17
-    LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“\nauswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,263,17
-    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,181,263,8
 END
 
 IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
@@ -540,7 +538,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 189
+        BOTTOMMARGIN, 167
     END
 
     IDD_SELECTGPS, DIALOG
@@ -943,19 +941,18 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 277, 196
+IDD_DELETESTORE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eliminar store conectado «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Cancelar",IDCANCEL,220,153,50,14,WS_GROUP
+    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,15
+    LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_NUKEMESSAGE,7,51,263,17
+    LTEXT           "Usted da permiso de eliminar el store al elegir «Eliminar» en la parte de abajo y luego dar clic en «Eliminar ahora».",IDC_STATIC,7,81,263,17
     CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,72,10
     CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,72,10
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,67,153,145,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,15
-    LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,51,263,17
-    LTEXT           "Usted da permiso de eliminar el store al elegir «Eliminar» en la parte de abajo y luego dar clic en «Eliminar ahora».",IDC_STATIC,7,81,263,17
-    LTEXT           "Esta ventana previene que usted elimine accidentalmente muchos archivos.",IDC_STATIC,7,181,263,8
 END
 
 IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
@@ -1282,7 +1279,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 189
+        BOTTOMMARGIN, 167
     END
 
     IDD_SELECTGPS, DIALOG
@@ -1690,19 +1687,18 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 287, 196
+IDD_DELETESTORE DIALOGEX 0, 0, 287, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Effacez le store monté sur «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Annuler",IDCANCEL,230,153,50,14,WS_GROUP
+    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,273,15
+    LTEXT           "Comme le store est actuellement monté, vous perdrez tous les\nfichiers à l'intérieur de ce store sans option de récupération!",IDC_NUKEMESSAGE,7,51,273,17
+    LTEXT           "Pour l'effacement vous donnez votre approbation en choisir\n«Effacer» et, ensuite, en cliquer sur «Effacer maintenant»:",IDC_STATIC,7,81,273,17
     CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,67,10
     CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,67,10
     PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,7,153,215,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,273,15
-    LTEXT           "Comme le store est actuellement monté, vous perdrez tous les\nfichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,51,273,17
-    LTEXT           "Pour l'effacement vous donnez votre approbation en choisir\n«Effacer» et, ensuite, en cliquer sur «Effacer maintenant»:",IDC_STATIC,7,81,273,17
-    LTEXT           "Cette fenêtre empêche l'effacement non intentionnel de beaucoup de fichiers.",IDC_STATIC,7,181,273,8
 END
 
 IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
@@ -2028,7 +2024,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 280
         TOPMARGIN, 7
-        BOTTOMMARGIN, 189
+        BOTTOMMARGIN, 167
     END
 
     IDD_SELECTGPS, DIALOG
@@ -2481,19 +2477,18 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,463,260,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 277, 196
+IDD_DELETESTORE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Delete mounted store “%s”"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Cancel",IDCANCEL,220,153,50,14,WS_GROUP
+    LTEXT           "Please confirm that you really want to delete the selected store.",IDC_CAPTION,7,31,263,15
+    LTEXT           "Since the store is currently mounted, you will lose\nall files inside that store without recovery option!",IDC_NUKEMESSAGE,7,51,263,17
+    LTEXT           "You give permission to delete the store by choosing “Delete”\nbelow, and then click on the button “Delete now”.",IDC_STATIC,7,81,263,17
     CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,62,10
     CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,61,10
     PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,37,153,175,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Please confirm that you really want to delete the selected store.",IDC_CAPTION,7,31,263,15
-    LTEXT           "Since the store is currently mounted, you will lose\nall files inside that store without recovery option!",IDC_STATIC,7,51,263,17
-    LTEXT           "You give permission to delete the store by choosing “Delete”\nbelow, and then click on the button “Delete now”.",IDC_STATIC,7,81,263,17
-    LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,181,263,8
 END
 
 IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
@@ -2820,7 +2815,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 189
+        BOTTOMMARGIN, 167
     END
 
     IDD_SELECTGPS, DIALOG
@@ -2983,7 +2978,7 @@ IDM_STORE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "S&ynchronize"                 IDM_STORE_SYNCHRONIZE
+        MENUITEM "S&ynchronize",                IDM_STORE_SYNCHRONIZE
         MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
         MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR

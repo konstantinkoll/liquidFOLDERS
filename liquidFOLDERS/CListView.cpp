@@ -12,7 +12,7 @@
 //
 
 #define GetItemData(Index)                  ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
-#define PADDING                             2
+#define PADDING                             3
 #define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), rect, DT_END_ELLIPSIS | format);
 #define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && !d->Hdr.Selected) dc.SetTextColor(0x808080);
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
@@ -540,8 +540,10 @@ __forceinline void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i
 
 #define JUMBOICON (m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview)
 
-	if ((i->Type & LFTypeMask)==LFTypeFile)
+	if (!i->IconID)
 	{
+		ASSERT((i->Type & LFTypeMask)==LFTypeFile);
+
 		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview))
 			if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, i))
 				return;

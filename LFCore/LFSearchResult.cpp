@@ -253,21 +253,25 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 	wcscpy_s(pFilter->ResultName, 256, m_Name);
 }
 
-BOOL LFSearchResult::AddItem(LFItemDescriptor* i)
+BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 {
-	assert(i);
+	assert(pItemDescriptor);
 
-	if (!LFDynArray::AddItem(i))
+	if (!LFDynArray::AddItem(pItemDescriptor))
 		return FALSE;
 
-	switch(i->Type & LFTypeMask)
+	switch(pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
 		m_StoreCount++;
 		break;
+
 	case LFTypeFile:
+		if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
+			pItemDescriptor->IconID = IDI_FLD_ALL;
+
 		m_FileCount++;
-		m_FileSize += i->CoreAttributes.FileSize;
+		m_FileSize += pItemDescriptor->CoreAttributes.FileSize;
 		break;
 	}
 

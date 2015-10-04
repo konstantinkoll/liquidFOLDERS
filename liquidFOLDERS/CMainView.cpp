@@ -622,7 +622,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 5);
-	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 7, TRUE);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 8, TRUE);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 9);
@@ -633,7 +633,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
 
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16, TRUE);
 
 	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORE_SYNCHRONIZE, 18);
