@@ -6,6 +6,28 @@
 #include "liquidFOLDERS.h"
 
 
+void MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy)
+{
+	BITMAP Bitmap;
+	GetObject(hBitmap, sizeof(Bitmap), &Bitmap);
+
+	if ((Bitmap.bmBitsPixel==32) && (Bitmap.bmBits))
+	{
+		// Alpha-Kanal auf 0xFF setzen
+		for (INT Row=y; Row<y+cy; Row++)
+		{
+			BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
+
+			for (INT Column=cx; Column>0; Column--)
+			{
+				*Ptr = 0xFF;
+				Ptr += 4;
+			}
+		}
+	}
+}
+
+
 // CThumbnailCache
 //
 
@@ -15,18 +37,18 @@ CThumbnailCache::~CThumbnailCache()
 	DeleteObject(hBitmapShadow);
 }
 
-HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
+HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 {
 	ThumbnailData td;
 
-	if (m_Thumbnails.Lookup(i, td))
+	if (m_Thumbnails.Lookup(pItemDescriptor, td))
 		return td.hBitmap;
-	if (m_NoThumbnails.Lookup(i, td))
+	if (m_NoThumbnails.Lookup(pItemDescriptor, td))
 		return td.hBitmap;
 
-	strcpy_s(td.StoreID, LFKeySize, i->StoreID);
-	strcpy_s(td.FileID, LFKeySize, i->CoreAttributes.FileID);
-	td.hBitmap = LFGetThumbnail(i, CSize(118, 118));
+	strcpy_s(td.StoreID, LFKeySize, pItemDescriptor->StoreID);
+	strcpy_s(td.FileID, LFKeySize, pItemDescriptor->CoreAttributes.FileID);
+	td.hBitmap = LFGetThumbnail(pItemDescriptor, CSize(118, 118));
 
 	if (td.hBitmap)
 	{
@@ -42,7 +64,7 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 		BITMAP Bitmap;
 		GetObject(td.hBitmap, sizeof(Bitmap), &Bitmap);
 
-		BOOL DrawFrame = ((i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos)) || ((Bitmap.bmWidth==118) && (Bitmap.bmHeight==118));
+		BOOL DrawFrame = ((pItemDescriptor->CoreAttributes.ContextID>=LFContextPictures) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos)) || ((Bitmap.bmWidth==118) && (Bitmap.bmHeight==118));
 		BOOL DrawShadow = !DrawFrame && (Bitmap.bmWidth>=4) && (Bitmap.bmWidth<=118) && (Bitmap.bmHeight>=4) && (Bitmap.bmHeight<=118);
 
 		HDC hdcMem = CreateCompatibleDC(dc);
@@ -73,6 +95,7 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 		if (DrawFrame || DrawShadow || (Bitmap.bmBitsPixel!=32))
 		{
 			BitBlt(dc, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
+			MakeBitmapSolid(hBitmap, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight);
 		}
 		else
 		{
@@ -117,11 +140,11 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 	return td.hBitmap;
 }
 
-BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* i)
+BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor)
 {
-	ASSERT((i->Type & LFTypeMask)==LFTypeFile);
+	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
-	HBITMAP hBitmap = Lookup(i);
+	HBITMAP hBitmap = Lookup(pItemDescriptor);
 	if (!hBitmap)
 		return FALSE;
 
@@ -130,6 +153,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
+	//dc.FillSolidRect(rect.left, rect.top, 128, 128, 0);
 	AlphaBlend(dc, rect.left, rect.top, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
 	SelectObject(hdcMem, hOldBitmap);
@@ -138,7 +162,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 	return TRUE;
 }
 
-HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* i, CDC* pDC)
+HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, CDC* pDC)
 {
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
@@ -147,7 +171,7 @@ HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* i, CDC* pDC)
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	CRect rect(0, 0, 128, 128);
-	if (DrawJumboThumbnail(dc, rect, i))
+	if (DrawJumboThumbnail(dc, rect, pItemDescriptor))
 		return (HBITMAP)dc.SelectObject(hOldBitmap);
 
 	dc.SelectObject(hOldBitmap);
@@ -156,11 +180,11 @@ HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* i, CDC* pDC)
 	return NULL;
 }
 
-HICON CThumbnailCache::GetThumbnailIcon(LFItemDescriptor* i, CDC* pDC)
+HICON CThumbnailCache::GetThumbnailIcon(LFItemDescriptor* pItemDescriptor, CDC* pDC)
 {
 	HICON hIcon = NULL;
 
-	HBITMAP hBitmap = GetThumbnailBitmap(i, pDC);
+	HBITMAP hBitmap = GetThumbnailBitmap(pItemDescriptor, pDC);
 	if (hBitmap)
 	{
 		ICONINFO ii;

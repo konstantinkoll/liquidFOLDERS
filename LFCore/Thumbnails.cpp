@@ -61,61 +61,6 @@ Finish:
 		CoTaskMemFree(pidlFQ);
 	}
 
-	if (hBitmap)
-	{
-		BITMAP Bitmap;
-		GetObject(hBitmap, sizeof(Bitmap), &Bitmap);
-
-		// Manche Handler (z.B. Adobe Acrobat) setzen den gesamten Alpha-Kanal auf 0x00.
-		// In diesem Fall ist die gesamte Bitmap opak.
-		// Achtung! Bitmap.bmBits kann NULL sein!
-		if ((Bitmap.bmBitsPixel==32) && (Bitmap.bmBits))
-		{
-			// Prüfen, ob mindesetens ein Alpha-Wert ungleich 0x00 ist
-			for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
-			{
-				BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+3;
-
-				for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
-				{
-					if (*Ptr)
-						goto BitmapOk;
-	
-					Ptr += 4;
-				}
-			}
-
-			// Alpha-Kanal auf 0xFF setzen
-			for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
-			{
-				BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+3;
-
-				for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
-				{
-					*Ptr = 0xFF;
-
-					Ptr += 4;
-				}
-			}
-		}
-BitmapOk:
-
-		// Manche Handler liefern größere Vorschaubilder als angefordert
-		// Beispiel: TTF-Dateien unter Windows 7 (immer 256x256)
-		// Vorschaubilder mit einer Größe von 256x256 werden auf 128x128 herunterskaliert.
-		// Die UI sorgt dafür, das Thumbnails mit einer Größe von 128x128 ohne Rahmen und Schatten dargestellt werden.
-		if ((Bitmap.bmWidth>sz.cx) || (Bitmap.bmHeight>sz.cy))
-			if ((Bitmap.bmWidth==256) && (Bitmap.bmHeight==256) && (Bitmap.bmBitsPixel==32))
-			{
-				hBitmap = LFQuarter256Bitmap(hBitmap);
-			}
-			else
-			{
-				DeleteObject(hBitmap);
-				hBitmap = NULL;
-			}
-	}
-
 	return hBitmap;
 }
 

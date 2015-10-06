@@ -258,13 +258,35 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, WCHAR*
 			pItemDescriptor->CoreAttributes.Flags |= LFFlagNew;
 
 		// Time added
-		FILETIME ft;
-		GetSystemTimeAsFileTime(&ft);
-		SetAttribute(pItemDescriptor, LFAttrAddTime, &ft);
+		FILETIME Time;
+		GetSystemTimeAsFileTime(&Time);
+		SetAttribute(pItemDescriptor, LFAttrAddTime, &Time);
 
 		// Metadata
 		if (pPath)
 			SetAttributesFromFile(pItemDescriptor, pPath);
+
+		// Roll
+		if ((pItemDescriptor->CoreAttributes.ContextID==LFContextPictures) || (pItemDescriptor->CoreAttributes.ContextID==LFContextVideos))
+		{
+			WCHAR Roll[MAX_PATH];
+			wcscpy_s(Roll, MAX_PATH, pPath);
+
+			WCHAR* Ptr = wcsrchr(Roll, L'\\');
+			if (Ptr)
+			{
+				*(Ptr+1) = L'\0';
+
+				if (wcscmp(Roll, p_StoreDescriptor->DatPath)!=0)
+				{
+					*Ptr = L'\0';
+
+					Ptr = wcsrchr(Roll, L'\\');
+					if (Ptr)
+						SetAttribute(pItemDescriptor, LFAttrRoll, Ptr+1);
+				}
+			}
+		}
 
 		// Commit
 		UINT Result = m_pIndexMain->Add(pItemDescriptor);
