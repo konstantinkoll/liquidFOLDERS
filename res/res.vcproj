@@ -1205,19 +1205,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\StoreAdd_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\StoreBackup_32.bmp"
 			>
 		</File>
 		<File
 			RelativePath=".\StoreMaintenance_32.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\StoreProperties_Tiny.ico"
 			>
 		</File>
 		<File

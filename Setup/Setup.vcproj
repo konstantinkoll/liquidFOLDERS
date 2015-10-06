@@ -207,15 +207,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\setup32old.aip"
-			>
-		</File>
-		<File
 			RelativePath=".\setup64.aip"
-			>
-		</File>
-		<File
-			RelativePath=".\setup64old.aip"
 			>
 		</File>
 		<File
