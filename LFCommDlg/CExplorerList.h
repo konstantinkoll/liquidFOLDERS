@@ -46,10 +46,13 @@ public:
 protected:
 	virtual void Init();
 
+	void SetWidgetSize();
 	void AdjustLayout(INT ListWidth);
 	void DrawItem(INT nID, CDC* pDC);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -63,6 +66,8 @@ protected:
 	BOOL m_Hover;
 	INT m_HoverItem;
 	INT m_TooltipItem;
+	HTHEME hThemeButton;
+	CSize m_CheckboxSize;
 
 private:
 	void DrawIcon(CDC* pDC, CRect& rect, LVITEM& Item, UINT State);

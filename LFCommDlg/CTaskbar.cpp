@@ -272,7 +272,7 @@ LRESULT CTaskbar::OnThemeChanged()
 	m_BackBufferL = m_BackBufferH = 0;
 	AdjustLayout();
 
-	return TRUE;
+	return NULL;
 }
 
 HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

@@ -110,11 +110,14 @@ void CTooltipHeader::OnPaint()
 	{
 		dc.FillSolidRect(rect, 0xFFFFFF);
 
-		CRect rectParent;
-		GetParent()->GetClientRect(rectParent);
-
 		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"));
-		g.DrawImage(pDivider->m_pBitmap, (rectParent.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetParent()->GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
+
+		Graphics g(dc);
+		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
+	}
+	else
+	{
+		dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 	}
 
 	const INT Line = rect.Height()*2/5;
@@ -271,6 +274,9 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		if ((LFGetApp()->IsTooltipVisible()) && (m_HoverItem!=m_TooltipItem))
 			LFGetApp()->HideTooltip();
 
+	if (m_PressedItem==-1)
+		Invalidate();
+
 	CHeaderCtrl::OnMouseMove(nFlags, point);
 }
 
@@ -281,6 +287,7 @@ void CTooltipHeader::OnMouseLeave()
 	m_HoverItem = -1;
 
 	CHeaderCtrl::OnMouseLeave();
+	Invalidate();
 }
 
 void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)

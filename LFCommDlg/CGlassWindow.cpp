@@ -326,7 +326,7 @@ LRESULT CGlassWindow::OnThemeChanged()
 	SetTheme();
 	AdjustLayout();
 
-	return TRUE;
+	return NULL;
 }
 
 void CGlassWindow::OnCompositionChanged()

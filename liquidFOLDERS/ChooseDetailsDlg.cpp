@@ -105,11 +105,11 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	LFAttributeListDlg::OnInitDialog();
 
 	// Titelleiste
-	CString text;
-	GetWindowText(text);
+	CString Text;
+	GetWindowText(Text);
 
 	CString Caption;
-	Caption.Format(text, theApp.m_Contexts[m_Context].Name);
+	Caption.Format(Text, theApp.m_Contexts[m_Context].Name);
 	SetWindowText(Caption);
 
 	// Kontrollelemente einstellen

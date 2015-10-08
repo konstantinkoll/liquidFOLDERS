@@ -21,6 +21,7 @@ CExplorerList::CExplorerList()
 	m_ColumnCount = 1;
 	m_Hover = FALSE;
 	m_HoverItem = m_TooltipItem = -1;
+	hThemeButton = NULL;
 }
 
 void CExplorerList::PreSubclassWindow()
@@ -74,10 +75,30 @@ void CExplorerList::Init()
 	pDC->SelectObject(pOldFont);
 	ReleaseDC(pDC);
 
+	if (LFGetApp()->m_ThemeLibLoaded)
+		hThemeButton = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+
+	SetWidgetSize();
+
 	CRect rect;
 	GetWindowRect(rect);
 
 	AdjustLayout(rect.Width());
+}
+
+void CExplorerList::SetWidgetSize()
+{
+	if (hThemeButton)
+	{
+		HDC hDC = ::GetDC(NULL);
+		LFGetApp()->zGetThemePartSize(hThemeButton, hDC, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &m_CheckboxSize);
+		::ReleaseDC(NULL, hDC);
+	}
+	else
+	{
+		m_CheckboxSize.cx = GetSystemMetrics(SM_CXMENUCHECK);
+		m_CheckboxSize.cy = GetSystemMetrics(SM_CYMENUCHECK);
+	}
 }
 
 BOOL CExplorerList::SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags)
@@ -266,10 +287,36 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	Item.mask = LVIF_IMAGE | LVIF_TEXT | LVIF_COLUMNS;
 	GetItem(&Item);
 
-	// Zeichnen
+	// Paint
 	CRect rectIcon(rect);
 	CRect rectLabel(rect);
 
+	// Checkbox
+	if (GetExtendedStyle() & LVS_EX_CHECKBOXES)
+		if ((m_View==LV_VIEW_SMALLICON) || (m_View==LV_VIEW_LIST) || (m_View==LV_VIEW_DETAILS))
+		{
+			CRect rectButton(rectIcon.TopLeft(), m_CheckboxSize);
+			rectButton.OffsetRect(2*PADDING, (rectIcon.Height()-m_CheckboxSize.cy)/2);
+
+			if (hThemeButton)
+			{
+				INT uiStyle = (GetHotItem()==nID) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
+				if (GetCheck(nID))
+					uiStyle += 4;
+
+				LFGetApp()->zDrawThemeBackground(hThemeButton, dc, BP_CHECKBOX, uiStyle, rectButton, rectButton);
+			}
+			else
+			{
+				UINT uiStyle = GetCheck(nID) ? DFCS_CHECKED : DFCS_BUTTONCHECK;
+				dc.DrawFrameControl(rectButton, DFC_BUTTON, uiStyle);
+			}
+
+			rectIcon.left += m_CheckboxSize.cx+3*PADDING;
+			rectLabel.left += m_CheckboxSize.cx+3*PADDING;
+		}
+
+	// Item
 	CFont* pOldFont = dc.SelectObject(GetFont());
 
 	switch (m_View)
@@ -396,6 +443,8 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
+	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -411,6 +460,29 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	Init();
 
 	return 0;
+}
+
+void CExplorerList::OnDestroy()
+{
+	if (hThemeButton)
+		LFGetApp()->zCloseThemeData(hThemeButton);
+
+	CListCtrl::OnDestroy();
+}
+
+LRESULT CExplorerList::OnThemeChanged()
+{
+	if (LFGetApp()->m_ThemeLibLoaded)
+	{
+		if (hThemeButton)
+			LFGetApp()->zCloseThemeData(hThemeButton);
+
+		hThemeButton = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+	}
+
+	SetWidgetSize();
+
+	return NULL;
 }
 
 void CExplorerList::OnMouseMove(UINT nFlags, CPoint point)

@@ -632,6 +632,19 @@ void CGridView::OnPaint()
 	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	dc.FillSolidRect(rect, bkCol);
 
+	if (m_HeaderHeight>0)
+		if (Themed)
+		{
+			CGdiPlusBitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP, _T("PNG"));
+
+			Graphics g(dc);
+			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetScrollPos(SB_HORZ), m_HeaderHeight-(INT)pDivider->m_pBitmap->GetHeight());
+		}
+		else
+		{
+			dc.FillSolidRect(0, 0, rect.Width(), m_HeaderHeight, GetSysColor(COLOR_3DFACE));
+		}
+
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 	if (m_Nothing)

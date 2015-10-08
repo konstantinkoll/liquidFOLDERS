@@ -268,7 +268,7 @@ UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s)
 	strcat_s(regkey, 256, "\\");
 	strcat_s(regkey, 256, s->StoreID);
 
-	LRESULT lres = RegDeleteKeyA(HKEY_CURRENT_USER, regkey);
+	LSTATUS lres = RegDeleteKeyA(HKEY_CURRENT_USER, regkey);
 	return (lres==ERROR_SUCCESS) || (lres==ERROR_FILE_NOT_FOUND) ? LFOk: LFRegistryError;
 }
 

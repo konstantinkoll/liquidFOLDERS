@@ -285,7 +285,7 @@ LRESULT CHeaderArea::OnThemeChanged()
 {
 	AdjustLayout();
 
-	return TRUE;
+	return NULL;
 }
 
 HBRUSH CHeaderArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

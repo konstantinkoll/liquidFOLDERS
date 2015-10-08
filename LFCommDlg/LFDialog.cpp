@@ -447,7 +447,7 @@ LRESULT LFDialog::OnThemeChanged()
 {
 	m_BackBufferL = m_BackBufferH = 0;
 
-	return TRUE;
+	return NULL;
 }
 
 void LFDialog::OnSysColorChange()

@@ -1083,6 +1083,7 @@ void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 		p_ViewParameters->SortBy = Attr;
 		p_ViewParameters->Descending = theApp.m_Attributes[Attr].PreferDescendingSort;
 	}
+
 	theApp.UpdateSortOptions(m_Context);
 
 	*pResult = NULL;

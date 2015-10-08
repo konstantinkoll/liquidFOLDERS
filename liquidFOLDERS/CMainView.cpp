@@ -537,7 +537,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
-	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_LBUTTONDOWN()
@@ -697,13 +696,6 @@ BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
 	return TRUE;
 }
 
-LRESULT CMainView::OnThemeChanged()
-{
-	if (theApp.OSVersion==OS_Vista)
-		SendMessage(WM_SETALERT, (WPARAM)m_Alerted);
-
-	return TRUE;
-}
 void CMainView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
