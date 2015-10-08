@@ -628,6 +628,11 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 		(pVariantData2 ? (pVariantData2->Attr>LFLastCoreAttribute) : FALSE) ||
 		(pVariantData3 ? (pVariantData3->Attr>LFLastCoreAttribute) : FALSE);
 
+	const BOOL Rename =
+		(pVariantData1 ? (pVariantData1->Attr==LFAttrFileName) : FALSE) ||
+		(pVariantData2 ? (pVariantData2->Attr==LFAttrFileName) : FALSE) ||
+		(pVariantData3 ? (pVariantData3->Attr==LFAttrFileName) : FALSE);
+
 	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError),);
 	IN_TRANSACTIONLIST(pTransactionList);
 	REMOVE_STATS();
@@ -649,26 +654,27 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	UINT Result = LFOk;
 
 	// Phys. Datei umbenennen ?
-	if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
-	{
-		Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
-
-		switch(Result)
+	if (Rename)
+		if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
 		{
-		case LFOk:
-			pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
-			break;
+			Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
 
-		case LFNoFileBody:
-			pItemDescriptor->CoreAttributes.Flags |= LFFlagMissing;
+			switch(Result)
+			{
+			case LFOk:
+				pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
+				break;
 
-		default:
-			wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, PtrM->FileName);
+			case LFNoFileBody:
+				pItemDescriptor->CoreAttributes.Flags |= LFFlagMissing;
 
-			if (m_AdditionalDataSize)
-				memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize);
+			default:
+				wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, PtrM->FileName);
+
+				if (m_AdditionalDataSize)
+					memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize);
+			}
 		}
-	}
 
 	// Master
 	m_pTable[IDXTABLE_MASTER]->Update(pItemDescriptor, PtrM);
