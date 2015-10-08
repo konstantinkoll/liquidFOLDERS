@@ -248,14 +248,25 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 		if (Scheduled)
 			if ((!(PtrM->Flags & LFFlagLink)) && LFIsStoreMounted(p_StoreDescriptor))
 			{
-				UINT Flags = FileExists(Path) ? 0 : LFFlagMissing;
+				WIN32_FIND_DATA FindFileData;
+				BOOL Exists = FileExists(Path, &FindFileData);
 
+				// Update metadata
+				if (Exists)
+				{
+					SetFromFindData(PtrM, &FindFileData);
+
+					m_pTable[IDXTABLE_MASTER]->MakeDirty();
+				}
+
+				// Update flags
+				UINT Flags = Exists ? 0 : LFFlagMissing;
 				if ((Flags & LFFlagMissing)!=(PtrM->Flags & LFFlagMissing))
 				{
 					PtrM->Flags = (PtrM->Flags & ~LFFlagMissing) | Flags;
-					m_pTable[IDXTABLE_MASTER]->MakeDirty();
-
 					*pRepaired = TRUE;
+
+					m_pTable[IDXTABLE_MASTER]->MakeDirty();
 				}
 			}
 
@@ -717,6 +728,7 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 
 	if (p_Store->SynchronizeFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pProgress))
 	{
+		m_pTable[IDXTABLE_MASTER]->MakeDirty();
 	}
 	else
 	{

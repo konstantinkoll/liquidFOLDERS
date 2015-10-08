@@ -233,6 +233,7 @@ BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pSt
 	WCHAR Path[2*MAX_PATH];
 	GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH);
 
+	// Find in import list
 	if (m_pFileImportList)
 		for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
 			if (!m_pFileImportList->m_Items[a].Processed)
@@ -251,5 +252,15 @@ BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pSt
 					break;
 				}
 
-	return FileExists(Path);
+	// Find file body, update metadata
+	WIN32_FIND_DATA FindFileData;
+	if (FileExists(Path, &FindFileData))
+	{
+		// Update metadata
+		SetFromFindData(pCoreAttributes, &FindFileData);
+
+		return TRUE;
+	}
+
+	return FALSE;
 }

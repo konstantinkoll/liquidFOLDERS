@@ -6,7 +6,7 @@
 void SanitizeFileName(WCHAR* pDstName, SIZE_T cCount, WCHAR* pSrcName);
 void AppendGUID(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath, WCHAR* pSuffix=L"\\");
 void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath);
-BOOL FileExists(LPWSTR lpPath);
+BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData=NULL);
 BOOL RequiredSpaceAvailable(LPWSTR lpPath, UINT64 Required);
 BOOL DirectoryWriteable(LPWSTR lpPath);
 DWORD CreateDirectory(LPWSTR lpPath);

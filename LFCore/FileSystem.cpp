@@ -46,10 +46,14 @@ void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath)
 	AppendGUID(pStoreDescriptor, pPath);
 }
 
-BOOL FileExists(LPWSTR lpPath)
+BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData)
 {
 	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind = FindFirstFile(lpPath, &FindFileData);
+
+	if (!pFindData)
+		pFindData = &FindFileData;
+
+	HANDLE hFind = FindFirstFile(lpPath, pFindData);
 
 	BOOL Result = (hFind!=INVALID_HANDLE_VALUE);
 	if (Result)

@@ -215,6 +215,9 @@ void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL Force)
 
 void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pFilename)
 {
+	assert(pItemDescriptor);
+	assert(pFilename);
+
 	// Type
 	pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeMask) | LFTypeFile;
 
@@ -243,6 +246,17 @@ void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pFilename)
 	}
 
 	SetAttribute(pItemDescriptor, LFAttrFileName, Name);
+}
+
+
+void SetFromFindData(LFCoreAttributes* pCoreAttributes, WIN32_FIND_DATA* pFindData)
+{
+	assert(pCoreAttributes);
+	assert(pFindData);
+
+	pCoreAttributes->FileSize = (((INT64)pFindData->nFileSizeHigh) << 32) | pFindData->nFileSizeLow;
+	pCoreAttributes->CreationTime = pFindData->ftCreationTime;
+	pCoreAttributes->FileTime = pFindData->ftLastWriteTime;
 }
 
 
@@ -379,17 +393,11 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 
 	// Standard attributes
 	//
-	WIN32_FIND_DATA ffd;
-	HANDLE hFind = FindFirstFile(pPath, &ffd);
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind = FindFirstFile(pPath, &FindFileData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
-	{
-		INT64 Size = (((INT64)ffd.nFileSizeHigh) << 32) | ffd.nFileSizeLow;
-		SetAttribute(pItemDescriptor, LFAttrFileSize, &Size);
-
-		SetAttribute(pItemDescriptor, LFAttrCreationTime, &ffd.ftCreationTime);
-		SetAttribute(pItemDescriptor, LFAttrFileTime, &ffd.ftLastWriteTime);
-	}
+		SetFromFindData(&pItemDescriptor->CoreAttributes, &FindFileData);
 
 	FindClose(hFind);
 
