@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "CStoreInternal.h"
 #include "FileSystem.h"
+#include "LFCore.h"
+#include "LFVariantData.h"
 #include "Stores.h"
 #include <assert.h>
 

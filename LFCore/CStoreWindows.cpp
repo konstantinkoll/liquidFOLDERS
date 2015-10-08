@@ -148,7 +148,36 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 	// File ID
 	CreateNewFileID(pItemDescriptor->CoreAttributes.FileID);
 
-	return CStore::GetFileLocation(pItemDescriptor, pPath, cCount);
+	// Location
+	if ((Result=CStore::GetFileLocation(pItemDescriptor, pPath, cCount))!=LFOk)
+		return Result;
+
+	// Roll
+	LFVariantData Value;
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrRoll, Value);
+
+	if (LFIsNullVariantData(Value))
+	{
+		WCHAR Roll[2*MAX_PATH];
+		wcscpy_s(Roll, 2*MAX_PATH, &pPath[4]);
+
+		WCHAR* Ptr = wcsrchr(Roll, L'\\');
+		if (Ptr)
+		{
+			*(Ptr+1) = L'\0';
+
+			if (wcscmp(Roll, p_StoreDescriptor->DatPath)!=0)
+			{
+				*Ptr = L'\0';
+
+				Ptr = wcsrchr(Roll, L'\\');
+				if (Ptr)
+					SetAttribute(pItemDescriptor, LFAttrRoll, Ptr+1);
+			}
+		}
+	}
+
+	return LFOk;
 }
 
 UINT CStoreWindows::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor)
