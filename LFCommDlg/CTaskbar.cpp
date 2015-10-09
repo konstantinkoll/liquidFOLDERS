@@ -119,7 +119,7 @@ void CTaskbar::AdjustLayout()
 		}
 	}
 
-	UINT FirstSmall = m_ButtonsLeft.GetCount();
+	UINT FirstSmall = (UINT)m_ButtonsLeft.GetCount();
 
 Nochmal:
 	UINT Count = 0;

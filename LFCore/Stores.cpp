@@ -380,7 +380,7 @@ UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* pStoreDescriptor)
 	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
 
 	CHAR Key[256];
-	GetRegistryKey(Key, pStoreDescriptor->StoreID);
+	GetRegistryKey(pStoreDescriptor->StoreID, Key);
 
 	LSTATUS lStatus = RegDeleteKeyA(HKEY_CURRENT_USER, Key);
 

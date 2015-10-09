@@ -275,7 +275,7 @@ void LFDialog::DrawButton(LPDRAWITEMSTRUCT lpDrawItemStruct)
 		FillRect(dc, rect, hBrush);
 
 	// Button
-	DrawWhiteButtonBackground(dc, rect, IsCtrlThemed(), Focused, Selected, ::SendMessage(lpDrawItemStruct->hwndItem, WM_ISHOVER, NULL, NULL), lpDrawItemStruct->itemState & ODS_DISABLED);
+	DrawWhiteButtonBackground(dc, rect, IsCtrlThemed(), Focused, Selected, (BOOL)::SendMessage(lpDrawItemStruct->hwndItem, WM_ISHOVER, NULL, NULL), lpDrawItemStruct->itemState & ODS_DISABLED);
 	DrawButtonForeground(dc, lpDrawItemStruct, Selected);
 
 	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);

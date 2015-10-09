@@ -387,6 +387,8 @@ UINT CStore::CreateDirectories()
 
 		if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
+
+		SetFileAttributes(p_StoreDescriptor->IdxPathMain, FILE_ATTRIBUTE_HIDDEN);
 	}
 
 	// Create aux index path
@@ -403,6 +405,8 @@ UINT CStore::CreateDirectories()
 
 		if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
+
+		SetFileAttributes(p_StoreDescriptor->IdxPathAux, FILE_ATTRIBUTE_HIDDEN);
 	}
 
 	return LFOk;
