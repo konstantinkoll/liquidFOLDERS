@@ -28,7 +28,8 @@ public:
 	INT GetViewID();
 	void DismissNotification();
 	void ShowNotification(UINT Type, CString Message, UINT Command=0);
-	void ShowNotification(UINT Type, UINT ResID, UINT Command=0);
+	void ShowNotification(UINT Type, UINT Result, UINT Command=0);
+	void ShowNotification(UINT Result);
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
 	void GetPersistentData(FVPersistentData& Data);

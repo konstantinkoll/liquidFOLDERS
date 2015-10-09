@@ -313,12 +313,21 @@ void CMainView::ShowNotification(UINT Type, CString Message, UINT Command)
 	m_wndExplorerNotification.SetNotification(Type, Message, Command);
 }
 
-void CMainView::ShowNotification(UINT Type, UINT ResID, UINT Command)
+void CMainView::ShowNotification(UINT Type, UINT Result, UINT Command)
 {
-	WCHAR tmpStr[256];
-	LFGetErrorText(tmpStr, 256, ResID);
+	if (Result!=LFOk)
+	{
+		WCHAR tmpStr[256];
+		LFGetErrorText(tmpStr, 256, Result);
 
-	ShowNotification(Type, tmpStr, Command);
+		ShowNotification(Type, tmpStr, Command);
+	}
+}
+
+void CMainView::ShowNotification(UINT Result)
+{
+	if (Result!=LFOk)
+		ShowNotification((Result==LFCancel) ? ENT_WARNING : ENT_ERROR, Result);
 }
 
 void CMainView::AdjustLayout()
@@ -441,7 +450,7 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolveLocatio
 		if (ResolveLocations)
 		{
 			LFDoTransaction(pTransactionList, LFTransactionTypeResolveLocations, NULL, IncludePIDL);
-			LFErrorBox(this, pTransactionList->m_LastError);
+			ShowNotification(pTransactionList->m_LastError);
 		}
 	}
 
@@ -485,8 +494,7 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 
 	RemoveTransactedItems(pTransactionList);
 
-	if (pTransactionList->m_LastError>LFCancel)
-		ShowNotification(ENT_ERROR, pTransactionList->m_LastError);
+	ShowNotification(pTransactionList->m_LastError);
 
 	BOOL Modified = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
@@ -502,8 +510,7 @@ void CMainView::RestoreFiles(BOOL All)
 	LFDoTransaction(pTransactionList, LFTransactionTypeRestore);
 	RemoveTransactedItems(pTransactionList);
 
-	if (pTransactionList->m_LastError>LFCancel)
-		ShowNotification(ENT_ERROR, pTransactionList->m_LastError);
+	ShowNotification(pTransactionList->m_LastError);
 
 	LFFreeTransactionList(pTransactionList);
 }
@@ -523,8 +530,7 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 			UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data, FALSE);
 		}
 
-	if (pTransactionList->m_LastError>LFCancel)
-		ShowNotification(ENT_ERROR, pTransactionList->m_LastError);
+	ShowNotification(pTransactionList->m_LastError);
 
 	BOOL Changes = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
@@ -892,7 +898,7 @@ void CMainView::OnBeginDragDrop()
 
 	// Alle anderen Kontexte
 	LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
-	if (pTransactionList->m_ItemCount)
+	if (pTransactionList->m_LastError==LFOk)
 	{
 		m_DropTarget.SetDragging(TRUE);
 
@@ -932,8 +938,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 		UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data);
 	}
 
-	if (pTransactionList->m_LastError>LFCancel)
-		ShowNotification(ENT_ERROR, pTransactionList->m_LastError);
+	ShowNotification(pTransactionList->m_LastError);
 
 	BOOL changes = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
@@ -962,7 +967,8 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 
 		LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
 
-		LFErrorBox(this, wp.pTransactionList->m_LastError);
+		ShowNotification(wp.pTransactionList->m_LastError);
+
 		LFFreeTransactionList(wp.pTransactionList);
 	}
 	else
@@ -1538,6 +1544,8 @@ void CMainView::OnFileArchive()
 	CWaitCursor csr;
 	LFDoTransaction(pTransactionList, LFTransactionTypeArchive);
 	RemoveTransactedItems(pTransactionList);
+
+	ShowNotification(pTransactionList->m_LastError);
 
 	LFFreeTransactionList(pTransactionList);
 }

@@ -270,7 +270,6 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 		if ((Result=LFGetDefaultStore())!=LFOk)
 		{
 			LFErrorBox(pWnd, Result);
-
 			return E_INVALIDARG;
 		}
 
