@@ -85,3 +85,4 @@ void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
 
 INT LFMessageBox(CWnd* pParentWnd, CString Text, CString Caption, UINT Type);
 void LFErrorBox(CWnd* pParentWnd, UINT Result);
+BOOL LFNagScreen(CWnd* pParentWnd=NULL);

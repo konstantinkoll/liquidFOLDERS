@@ -1094,3 +1094,17 @@ void LFErrorBox(CWnd* pParentWnd, UINT Result)
 		LFMessageBox(pParentWnd, Message, Caption, Type);
 	}
 }
+
+BOOL LFNagScreen(CWnd* pParentWnd)
+{
+	if (!LFIsLicensed())
+		if (LFIsSharewareExpired())
+		{
+			CString tmpStr((LPCSTR)IDS_NOLICENSE);
+			LFMessageBox(pParentWnd, tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP);
+
+			return FALSE;
+		}
+
+	return TRUE;
+}

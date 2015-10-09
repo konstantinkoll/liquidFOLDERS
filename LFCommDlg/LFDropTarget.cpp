@@ -236,7 +236,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 		return E_INVALIDARG;
 
 	// Allowed?
-	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, p_OwnerWnd, TRUE))
+	if (!LFNagScreen(p_OwnerWnd))
 		return E_INVALIDARG;
 
 	// Data object

@@ -148,9 +148,6 @@ BOOL CLiquidFoldersApp::InitInstance()
 			LFAddStoreDlg dlg(pFrame);
 			dlg.DoModal();
 		}
-		else
-			if (!LFIsLicensed())
-				ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 	}
 
 	m_AppInitialized = TRUE;

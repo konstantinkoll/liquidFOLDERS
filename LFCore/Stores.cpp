@@ -41,524 +41,6 @@ LFStoreDescriptor StoreCache[MAXSTORES];
 #define STOREDESCRIPTORREQUIREDFILESIZE     offsetof(LFStoreDescriptor, SynchronizeTime)
 
 
-// Persistance
-//
-
-UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, WCHAR* fn)
-{
-	assert(s);
-
-	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
-		return LFIllegalStoreDescriptor;
-
-	if (!LFIsStoreMounted(s))
-		return LFStoreNotMounted;
-
-	wcsncpy_s(fn, MAX_PATH, s->DatPath, 3);		// .store file is always in root directory
-	AppendGUID(s, fn, L".store");
-
-	return LFOk;
-}
-
-BOOL LoadStoreSettingsFromRegistry(CHAR* StoreID, LFStoreDescriptor* s)
-{
-	assert(StoreID);
-	assert(s);
-
-	BOOL Result = FALSE;
-	ZeroMemory(s, sizeof(LFStoreDescriptor));
-	strcpy_s(s->StoreID, LFKeySize, StoreID);
-
-	CHAR regkey[256];
-	strcpy_s(regkey, 256, LFSTORESHIVE);
-	strcat_s(regkey, 256, "\\");
-	strcat_s(regkey, 256, StoreID);
-
-	HKEY hKey;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, regkey, &hKey)==ERROR_SUCCESS)
-	{
-		Result = TRUE;
-
-		DWORD sz = sizeof(s->StoreName);
-		if (RegQueryValueEx(hKey, L"Name", 0, NULL, (BYTE*)&s->StoreName, &sz)!=ERROR_SUCCESS)
-			Result = FALSE;
-
-		sz = sizeof(s->Comments);
-		RegQueryValueEx(hKey, L"Comment", 0, NULL, (BYTE*)&s->Comments, &sz);
-
-		sz = sizeof(s->Mode);
-		if (RegQueryValueEx(hKey, L"Mode", 0, NULL, (BYTE*)&s->Mode, &sz)!=ERROR_SUCCESS)
-			Result = FALSE;
-
-		sz = sizeof(s->UniqueID);
-		if (RegQueryValueEx(hKey, L"GUID", 0, NULL, (BYTE*)&s->UniqueID, &sz)!=ERROR_SUCCESS)
-			Result = FALSE;
-
-		sz = sizeof(s->CreationTime);
-		RegQueryValueEx(hKey, L"CreationTime", 0, NULL, (BYTE*)&s->CreationTime, &sz);
-
-		sz = sizeof(s->FileTime);
-		RegQueryValueEx(hKey, L"FileTime", 0, NULL, (BYTE*)&s->FileTime, &sz);
-
-		sz = sizeof(s->MaintenanceTime);
-		RegQueryValueEx(hKey, L"MaintenanceTime", 0, NULL, (BYTE*)&s->MaintenanceTime, &sz);
-
-		sz = sizeof(s->SynchronizeTime);
-		RegQueryValueEx(hKey, L"SynchronizeTime", 0, NULL, (BYTE*)&s->SynchronizeTime, &sz);
-
-		sz = sizeof(s->AutoLocation);
-		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&s->AutoLocation, &sz)!=ERROR_SUCCESS)
-			Result = FALSE;
-
-		sz = sizeof(s->IndexVersion);
-		if (RegQueryValueEx(hKey, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
-			Result = FALSE;
-
-		s->Source = s->Mode >> LFStoreModeBackendShift;
-
-		switch(s->Mode & LFStoreModeIndexMask)
-		{
-		case LFStoreModeIndexInternal:
-			sz = sizeof(s->DatPath);
-			if (RegQueryValueEx(hKey, L"Path", 0, NULL, (BYTE*)s->DatPath, &sz)!=ERROR_SUCCESS)
-				if (!(s->AutoLocation))
-					Result = FALSE;
-
-			break;
-		case LFStoreModeIndexHybrid:
-			sz = sizeof(s->LastSeen);
-			RegQueryValueEx(hKey, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
-		default:
-			sz = sizeof(s->Source);
-			RegQueryValueEx(hKey, L"Source", 0, NULL, (BYTE*)&s->Source, &sz);
-		}
-
-		RegCloseKey(hKey);
-	}
-
-	return Result;
-}
-
-BOOL LoadStoreSettingsFromFile(WCHAR* fn, LFStoreDescriptor* s)
-{
-	assert(fn);
-	assert(fn[0]!=L'\0');
-	assert(s);
-
-	HANDLE hFile = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-	if (hFile==INVALID_HANDLE_VALUE)
-		return FALSE;
-
-	ZeroMemory(s, sizeof(LFStoreDescriptor));
-
-	DWORD wmRead;
-	BOOL Result = (ReadFile(hFile, s, STOREDESCRIPTORFILESIZE, &wmRead, NULL)==TRUE);
-	Result &= (wmRead>=STOREDESCRIPTORREQUIREDFILESIZE);
-	CloseHandle(hFile);
-
-	return Result;
-}
-
-UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
-{
-	assert(s);
-
-	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexExternal)
-		return LFIllegalStoreDescriptor;
-
-	// Registry-Zugriff
-	UINT Result = LFRegistryError;
-
-	CHAR regkey[256];
-	strcpy_s(regkey, 256, LFSTORESHIVE);
-	strcat_s(regkey, 256, "\\");
-	strcat_s(regkey, 256, s->StoreID);
-
-	HKEY hKey;
-	if (RegCreateKeyA(HKEY_CURRENT_USER, regkey, &hKey)==ERROR_SUCCESS)
-	{
-		Result = LFOk;
-
-		if (RegSetValueEx(hKey, L"Name", 0, REG_SZ, (BYTE*)s->StoreName, (DWORD)wcslen(s->StoreName)*sizeof(WCHAR))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"Comment", 0, REG_SZ, (BYTE*)s->Comments, (DWORD)wcslen(s->Comments)*sizeof(WCHAR))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"Mode", 0, REG_DWORD, (BYTE*)&s->Mode, sizeof(UINT))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"GUID", 0, REG_BINARY, (BYTE*)&s->UniqueID, sizeof(GUID))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"CreationTime", 0, REG_BINARY, (BYTE*)&s->CreationTime, sizeof(FILETIME))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"FileTime", 0, REG_BINARY, (BYTE*)&s->FileTime, sizeof(FILETIME))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"MaintenanceTime", 0, REG_BINARY, (BYTE*)&s->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"SynchronizeTime", 0, REG_BINARY, (BYTE*)&s->SynchronizeTime, sizeof(FILETIME))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(UINT))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		if (RegSetValueEx(hKey, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
-			Result = LFRegistryError;
-
-		switch(s->Mode & LFStoreModeIndexMask)
-		{
-		case LFStoreModeIndexInternal:
-			if (!s->AutoLocation)
-				if (RegSetValueEx(hKey, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(WCHAR))!=ERROR_SUCCESS)
-					Result = LFRegistryError;
-			break;
-		case LFStoreModeIndexHybrid:
-			if (RegSetValueEx(hKey, L"LastSeen", 0, REG_SZ, (BYTE*)s->LastSeen, (DWORD)wcslen(s->LastSeen)*sizeof(WCHAR))!=ERROR_SUCCESS)
-				Result = LFRegistryError;
-		default:
-			if (RegSetValueEx(hKey, L"Source", 0, REG_DWORD, (BYTE*)&s->Source, sizeof(UINT))!=ERROR_SUCCESS)
-				Result = LFRegistryError;
-		}
-
-		RegCloseKey(hKey);
-	}
-
-	return Result;
-}
-
-UINT SaveStoreSettingsToFile(LFStoreDescriptor* s)
-{
-	assert(s);
-
-	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
-		return LFIllegalStoreDescriptor;
-
-	WCHAR fn[MAX_PATH];
-	UINT Result = GetKeyFileFromStoreDescriptor(s, fn);
-	if (Result!=LFOk)
-		return Result;
-
-	HANDLE hFile = CreateFile(fn, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
-	if (hFile==INVALID_HANDLE_VALUE)
-		return (GetLastError()==5) ? LFAccessError : LFDriveNotReady;
-
-	DWORD wmWritten;
-	Result = WriteFile(hFile, s, STOREDESCRIPTORFILESIZE, &wmWritten, NULL) ? LFOk : LFDriveNotReady;
-	if (wmWritten!=STOREDESCRIPTORFILESIZE)
-		Result = LFDriveNotReady;
-
-	CloseHandle(hFile);
-
-	return Result;
-}
-
-UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s)
-{
-	assert(s);
-
-	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexExternal)
-		return LFIllegalStoreDescriptor;
-
-	CHAR regkey[256];
-	strcpy_s(regkey, 256, LFSTORESHIVE);
-	strcat_s(regkey, 256, "\\");
-	strcat_s(regkey, 256, s->StoreID);
-
-	LSTATUS lres = RegDeleteKeyA(HKEY_CURRENT_USER, regkey);
-	return (lres==ERROR_SUCCESS) || (lres==ERROR_FILE_NOT_FOUND) ? LFOk: LFRegistryError;
-}
-
-UINT DeleteStoreSettingsFromFile(LFStoreDescriptor* s)
-{
-	assert(s);
-
-	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
-		return LFIllegalStoreDescriptor;
-
-	WCHAR fn[MAX_PATH];
-	UINT Result = GetKeyFileFromStoreDescriptor(s, fn);
-	if (Result!=LFOk)
-		return Result;
-
-	return DeleteFile(fn) ? LFOk : (GetLastError()==5) ? LFAccessError : LFDriveNotReady;
-}
-
-
-
-void SetStoreAttributes(LFStoreDescriptor* s)
-{
-	assert(s);
-	assert(((s->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((s->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
-
-	// Source
-	if (s->Source==LFTypeSourceUnknown)
-		s->Source = ((s->Mode & LFStoreModeBackendMask)==LFStoreModeBackendInternal) ? LFTypeSourceInternal : (s->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift;
-
-	// Store name and source of mounted volume
-	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if (LFIsStoreMounted(s))
-		{
-			WCHAR szVolumeRoot[] = L" :\\";
-			szVolumeRoot[0] = s->DatPath[0];
-
-			SHFILEINFO sfi;
-			if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
-				wcscpy_s(s->LastSeen, 256, sfi.szDisplayName);
-
-			if ((s->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendWindows)
-				s->Source = LFGetSourceForVolume(s->DatPath[0] & 0xFF);
-		}
-
-	// Paths
-	if ((s->Mode & LFStoreModeBackendMask)==LFStoreModeBackendWindows)
-	{
-		if (LFIsStoreMounted(s))
-		{
-			UINT Source = LFGetSourceForVolume((CHAR)s->DatPath[0]);
-			if ((Source==LFTypeSourceUSB) || (Source==LFTypeSource1394))
-			{
-				wcsncpy_s(s->IdxPathMain, MAX_PATH, s->DatPath, 3);
-				AppendGUID(s, s->IdxPathMain);
-			}
-			else
-			{
-				GetAutoPath(s, s->IdxPathMain);
-			}
-		}
-		else
-		{
-			s->IdxPathMain[0] = L'\0';
-		}
-	}
-	else
-	{
-		// Get automatic data path
-		if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && s->AutoLocation)
-			GetAutoPath(s, s->DatPath);
-
-		// Main index
-		if (((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || (LFIsStoreMounted(s)))
-		{
-			wcscpy_s(s->IdxPathMain, MAX_PATH, s->DatPath);
-			wcscat_s(s->IdxPathMain, MAX_PATH, L"INDEX\\");
-		}
-		else
-		{
-			s->IdxPathMain[0] = L'\0';
-		}
-	}
-
-	// Set aux index for local hybrid stores
-	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
-	{
-		GetAutoPath(s, s->IdxPathAux);
-		wcscat_s(s->IdxPathAux, MAX_PATH, L"INDEX\\");
-	}
-	else
-	{
-		s->IdxPathAux[0] = L'\0';
-	}
-}
-
-UINT UpdateStoreInCache(LFStoreDescriptor* s, BOOL UpdateFileTime, BOOL MakeDefault)
-{
-	assert(s);
-
-	// Set file time
-	GetSystemTimeAsFileTime(UpdateFileTime ? &s->FileTime : &s->MaintenanceTime);
-
-	// Find in cache
-	LFStoreDescriptor* slot = FindStore(s->StoreID);
-	if (!slot)
-		if (StoreCount==MAXSTORES)
-			return LFTooManyStores;
-
-	UINT Result = LFOk;
-	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		Result = SaveStoreSettingsToRegistry(s);
-	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if ((Result==LFOk) && (LFIsStoreMounted(s)))
-			Result = SaveStoreSettingsToFile(s);
-
-	if (Result==LFOk)
-	{
-		// Update cache
-		if (slot)
-		{
-			*slot = *s;
-		}
-		else
-		{
-			StoreCache[StoreCount++] = *s;
-		}
-
-		// Make default store if s is the sole store
-		if ((MakeDefault) || (DefaultStore[0]=='\0'))
-			Result = MakeDefaultStore(s);
-	}
-
-	return Result;
-}
-
-UINT DeleteStoreFromCache(LFStoreDescriptor* s)
-{
-	LFStoreDescriptor victim = *s;
-
-	// Remove from cache
-	for (UINT a=0; a<StoreCount; a++)
-		if (strcmp(StoreCache[a].StoreID, s->StoreID)==0)
-		{
-			if (a<StoreCount-1)
-			{
-				HANDLE MoveLock;
-				if (!GetMutexForStore(&StoreCache[StoreCount-1], &MoveLock))
-					return LFMutexError;
-
-				StoreCache[a] = StoreCache[--StoreCount];
-				ReleaseMutexForStore(MoveLock);
-			}
-			else
-			{
-				StoreCount--;
-			}
-			break;
-		}
-
-	// Choose new default store
-	if (strcmp(victim.StoreID, DefaultStore)==0)
-		ChooseNewDefaultStore();
-
-	// Remove persistent records
-	UINT Result = LFOk;
-	if ((victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		Result = DeleteStoreSettingsFromRegistry(&victim);
-	if ((victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if ((Result==LFOk) && (LFIsStoreMounted(&victim)))
-			Result = DeleteStoreSettingsFromFile(&victim);
-
-	return Result;
-}
-
-
-
-UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
-{
-	assert(cVolume>='A');
-	assert(cVolume<='Z');
-
-	WCHAR Mask[] = L" :\\*.store";
-	Mask[0] = cVolume;
-	BOOL ChangeOccured = FALSE;
-	UINT Result = LFOk;
-
-	WIN32_FIND_DATA ffd;
-	HANDLE hFind = FindFirstFile(Mask, &ffd);
-
-	if (hFind!=INVALID_HANDLE_VALUE)
-		do
-		{
-			// Vollständigen Dateinamen zusammensetzen
-			WCHAR f[MAX_PATH] = L" :\\";
-			f[0] = cVolume;
-			wcscat_s(f, MAX_PATH, ffd.cFileName);
-
-			LFStoreDescriptor Store;
-			if (LoadStoreSettingsFromFile(f, &Store)==TRUE)
-			{
-				if (!GetMutexForStores())
-				{
-					Result = LFMutexError;
-					continue;
-				}
-
-				// Lokal gültigen Schlüssel eintragen
-				CreateNewStoreID(Store.StoreID);
-
-				// Store mit der selben GUID suchen
-				LFStoreDescriptor* slot = FindStore(Store.UniqueID);
-				if (slot)
-				{
-					// Name, Kommentar und Dateizeit aktualisieren
-					wcscpy_s(slot->StoreName, 256, Store.StoreName);
-					wcscpy_s(slot->Comments, 256, Store.Comments);
-					slot->FileTime = Store.FileTime;
-				}
-				else
-				{
-					// Nicht gefunden: der Store wird hier als externer Store behandelt
-					Store.Mode = (Store.Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
-
-					// Zum Cache hinzufügen
-					if (StoreCount<MAXSTORES)
-					{
-						StoreCache[StoreCount] = Store;
-						slot = &StoreCache[StoreCount++];		// Slot zeigt auf Eintrag
-					}
-					else
-					{
-						Result = LFTooManyStores;
-					}
-				}
-
-				if (slot)
-				{
-					wcscpy_s(slot->DatPath, MAX_PATH, Store.DatPath);
-					slot->DatPath[0] = cVolume;
-
-					SetStoreAttributes(slot);
-
-					if (!OnInitialize)
-					{
-						CStore* pStore;
-						if (GetStore(slot, &pStore)==LFOk)
-						{
-							Result = pStore->MaintenanceAndStatistics();
-							delete pStore;
-						}
-					}
-
-					ChangeOccured = TRUE;
-
-					if ((slot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
-					{
-						// Hybrid-Stores in der Registry abspeichern, damit LastSeen aktualisiert wird
-						SaveStoreSettingsToRegistry(slot);
-
-						if (!OnInitialize)
-							SendShellNotifyMessage(SHCNE_UPDATEITEM, slot->StoreID);
-					}
-
-				}
-
-				ReleaseMutexForStores();
-			}
-		}
-		while (FindNextFile(hFind, &ffd));
-
-	FindClose(hFind);
-
-	if (!OnInitialize)
-		if (ChangeOccured)
-		{
-			SendLFNotifyMessage(LFMessages.StoresChanged);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		}
-
-	return Result;
-}
-
-
-
-
-
-
-
-// NEU
-
 // Cache access
 //
 
@@ -655,6 +137,410 @@ LFStoreDescriptor* FindStore(WCHAR* pDatPath, HMUTEX* phMutex)
 		}
 
 	return NULL;
+}
+
+
+// Persistence
+//
+
+void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+	assert(((pStoreDescriptor->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((pStoreDescriptor->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
+
+	// Source
+	if (pStoreDescriptor->Source==LFTypeSourceUnknown)
+		pStoreDescriptor->Source = ((pStoreDescriptor->Mode & LFStoreModeBackendMask)==LFStoreModeBackendInternal) ? LFTypeSourceInternal : (pStoreDescriptor->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift;
+
+	// Store name and source of mounted volume
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if (LFIsStoreMounted(pStoreDescriptor))
+		{
+			WCHAR szVolumeRoot[] = L" :\\";
+			szVolumeRoot[0] = pStoreDescriptor->DatPath[0];
+
+			SHFILEINFO sfi;
+			if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
+				wcscpy_s(pStoreDescriptor->LastSeen, 256, sfi.szDisplayName);
+
+			if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendWindows)
+				pStoreDescriptor->Source = LFGetSourceForVolume(pStoreDescriptor->DatPath[0] & 0xFF);
+		}
+
+	// Paths
+	if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)==LFStoreModeBackendWindows)
+	{
+		if (LFIsStoreMounted(pStoreDescriptor))
+		{
+			UINT Source = LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0]);
+			if ((Source==LFTypeSourceUSB) || (Source==LFTypeSource1394))
+			{
+				wcsncpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath, 3);
+				AppendGUID(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
+			}
+			else
+			{
+				GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
+			}
+		}
+		else
+		{
+			pStoreDescriptor->IdxPathMain[0] = L'\0';
+		}
+	}
+	else
+	{
+		// Get automatic data path
+		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && pStoreDescriptor->AutoLocation)
+			GetAutoPath(pStoreDescriptor, pStoreDescriptor->DatPath);
+
+		// Main index
+		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || (LFIsStoreMounted(pStoreDescriptor)))
+		{
+			wcscpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath);
+			wcscat_s(pStoreDescriptor->IdxPathMain, MAX_PATH, L"INDEX\\");
+		}
+		else
+		{
+			pStoreDescriptor->IdxPathMain[0] = L'\0';
+		}
+	}
+
+	// Set aux index for local hybrid stores
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
+	{
+		GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathAux);
+		wcscat_s(pStoreDescriptor->IdxPathAux, MAX_PATH, L"INDEX\\");
+	}
+	else
+	{
+		pStoreDescriptor->IdxPathAux[0] = L'\0';
+	}
+}
+
+void GetRegistryKey(CHAR* pStoreID, CHAR* pKey)
+{
+	assert(pStoreID);
+	assert(pKey);
+
+	strcpy_s(pKey, 256, LFSTORESHIVE);
+	strcat_s(pKey, 256, "\\");
+	strcat_s(pKey, 256, pStoreID);
+}
+
+BOOL LoadStoreSettingsFromRegistry(CHAR* pStoreID, LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreID);
+	assert(pStoreDescriptor);
+
+	BOOL Result = FALSE;
+
+	CHAR Key[256];
+	GetRegistryKey(pStoreID, Key);
+
+	HKEY hKey;
+	if (RegOpenKeyA(HKEY_CURRENT_USER, Key, &hKey)==ERROR_SUCCESS)
+	{
+		ZeroMemory(pStoreDescriptor, sizeof(LFStoreDescriptor));
+		strcpy_s(pStoreDescriptor->StoreID, LFKeySize, pStoreID);
+
+		Result = TRUE;
+
+		DWORD Size = sizeof(pStoreDescriptor->StoreName);
+		if (RegQueryValueEx(hKey, L"Name", 0, NULL, (BYTE*)&pStoreDescriptor->StoreName, &Size)!=ERROR_SUCCESS)
+			Result = FALSE;
+
+		Size = sizeof(pStoreDescriptor->Comments);
+		RegQueryValueEx(hKey, L"Comment", 0, NULL, (BYTE*)&pStoreDescriptor->Comments, &Size);
+
+		Size = sizeof(pStoreDescriptor->Mode);
+		if (RegQueryValueEx(hKey, L"Mode", 0, NULL, (BYTE*)&pStoreDescriptor->Mode, &Size)!=ERROR_SUCCESS)
+			Result = FALSE;
+
+		Size = sizeof(pStoreDescriptor->UniqueID);
+		if (RegQueryValueEx(hKey, L"GUID", 0, NULL, (BYTE*)&pStoreDescriptor->UniqueID, &Size)!=ERROR_SUCCESS)
+			Result = FALSE;
+
+		Size = sizeof(pStoreDescriptor->CreationTime);
+		RegQueryValueEx(hKey, L"CreationTime", 0, NULL, (BYTE*)&pStoreDescriptor->CreationTime, &Size);
+
+		Size = sizeof(pStoreDescriptor->FileTime);
+		RegQueryValueEx(hKey, L"FileTime", 0, NULL, (BYTE*)&pStoreDescriptor->FileTime, &Size);
+
+		Size = sizeof(pStoreDescriptor->MaintenanceTime);
+		RegQueryValueEx(hKey, L"MaintenanceTime", 0, NULL, (BYTE*)&pStoreDescriptor->MaintenanceTime, &Size);
+
+		Size = sizeof(pStoreDescriptor->SynchronizeTime);
+		RegQueryValueEx(hKey, L"SynchronizeTime", 0, NULL, (BYTE*)&pStoreDescriptor->SynchronizeTime, &Size);
+
+		Size = sizeof(pStoreDescriptor->AutoLocation);
+		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&pStoreDescriptor->AutoLocation, &Size)!=ERROR_SUCCESS)
+			Result = FALSE;
+
+		Size = sizeof(pStoreDescriptor->IndexVersion);
+		if (RegQueryValueEx(hKey, L"IndexVersion", 0, NULL, (BYTE*)&pStoreDescriptor->IndexVersion, &Size)!=ERROR_SUCCESS)
+			Result = FALSE;
+
+		switch (pStoreDescriptor->Mode & LFStoreModeIndexMask)
+		{
+		case LFStoreModeIndexInternal:
+			Size = sizeof(pStoreDescriptor->DatPath);
+			if (RegQueryValueEx(hKey, L"Path", 0, NULL, (BYTE*)pStoreDescriptor->DatPath, &Size)!=ERROR_SUCCESS)
+				Result &= pStoreDescriptor->AutoLocation;
+
+			break;
+
+		case LFStoreModeIndexHybrid:
+			Size = sizeof(pStoreDescriptor->LastSeen);
+			RegQueryValueEx(hKey, L"LastSeen", 0, NULL, (BYTE*)&pStoreDescriptor->LastSeen, &Size);
+
+		default:
+			Size = sizeof(pStoreDescriptor->Source);
+			RegQueryValueEx(hKey, L"Source", 0, NULL, (BYTE*)&pStoreDescriptor->Source, &Size);
+		}
+
+		RegCloseKey(hKey);
+	}
+
+	return Result;
+}
+
+UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
+
+	UINT Result = LFRegistryError;
+
+	CHAR Key[256];
+	GetRegistryKey(pStoreDescriptor->StoreID, Key);
+
+	HKEY hKey;
+	if (RegCreateKeyA(HKEY_CURRENT_USER, Key, &hKey)==ERROR_SUCCESS)
+	{
+		Result = LFOk;
+
+		if (RegSetValueEx(hKey, L"Name", 0, REG_SZ, (BYTE*)pStoreDescriptor->StoreName, (DWORD)wcslen(pStoreDescriptor->StoreName)*sizeof(WCHAR))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"Comment", 0, REG_SZ, (BYTE*)pStoreDescriptor->Comments, (DWORD)wcslen(pStoreDescriptor->Comments)*sizeof(WCHAR))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"Mode", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->Mode, sizeof(UINT))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"GUID", 0, REG_BINARY, (BYTE*)&pStoreDescriptor->UniqueID, sizeof(GUID))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"CreationTime", 0, REG_BINARY, (BYTE*)&pStoreDescriptor->CreationTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"FileTime", 0, REG_BINARY, (BYTE*)&pStoreDescriptor->FileTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"MaintenanceTime", 0, REG_BINARY, (BYTE*)&pStoreDescriptor->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"SynchronizeTime", 0, REG_BINARY, (BYTE*)&pStoreDescriptor->SynchronizeTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"AutoLocation", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->AutoLocation, sizeof(UINT))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		if (RegSetValueEx(hKey, L"IndexVersion", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
+			Result = LFRegistryError;
+
+		switch(pStoreDescriptor->Mode & LFStoreModeIndexMask)
+		{
+		case LFStoreModeIndexInternal:
+			if (!pStoreDescriptor->AutoLocation)
+				if (RegSetValueEx(hKey, L"Path", 0, REG_SZ, (BYTE*)pStoreDescriptor->DatPath, (DWORD)wcslen(pStoreDescriptor->DatPath)*sizeof(WCHAR))!=ERROR_SUCCESS)
+					Result = LFRegistryError;
+
+			break;
+
+		case LFStoreModeIndexHybrid:
+			if (RegSetValueEx(hKey, L"LastSeen", 0, REG_SZ, (BYTE*)pStoreDescriptor->LastSeen, (DWORD)wcslen(pStoreDescriptor->LastSeen)*sizeof(WCHAR))!=ERROR_SUCCESS)
+				Result = LFRegistryError;
+
+		default:
+			if (RegSetValueEx(hKey, L"Source", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->Source, sizeof(UINT))!=ERROR_SUCCESS)
+				Result = LFRegistryError;
+		}
+
+		RegCloseKey(hKey);
+	}
+
+	return Result;
+}
+
+UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
+
+	CHAR Key[256];
+	GetRegistryKey(Key, pStoreDescriptor->StoreID);
+
+	LSTATUS lStatus = RegDeleteKeyA(HKEY_CURRENT_USER, Key);
+
+	return (lStatus==ERROR_SUCCESS) || (lStatus==ERROR_FILE_NOT_FOUND) ? LFOk: LFRegistryError;
+}
+
+
+UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath)
+{
+	assert(pStoreDescriptor);
+	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
+	assert(pPath);
+
+	if (!LFIsStoreMounted(pStoreDescriptor))
+		return LFStoreNotMounted;
+
+	wcsncpy_s(pPath, MAX_PATH, pStoreDescriptor->DatPath, 3);		// .store file is always in root directory
+	AppendGUID(pStoreDescriptor, pPath, L".store");
+
+	return LFOk;
+}
+
+BOOL LoadStoreSettingsFromFile(WCHAR* pPath, LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pPath);
+	assert(pPath[0]!=L'\0');
+	assert(pStoreDescriptor);
+
+	HANDLE hFile = CreateFile(pPath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+	if (hFile==INVALID_HANDLE_VALUE)
+		return FALSE;
+
+	ZeroMemory(pStoreDescriptor, sizeof(LFStoreDescriptor));
+
+	DWORD wmRead;
+	BOOL Result = ReadFile(hFile, pStoreDescriptor, STOREDESCRIPTORFILESIZE, &wmRead, NULL);
+	Result &= (wmRead>=STOREDESCRIPTORREQUIREDFILESIZE);
+
+	CloseHandle(hFile);
+
+	return Result;
+}
+
+UINT SaveStoreSettingsToFile(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
+
+	UINT Result;
+	WCHAR Path[MAX_PATH];
+	if ((Result=GetKeyFileFromStoreDescriptor(pStoreDescriptor, Path))!=LFOk)
+		return Result;
+
+	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
+	if (hFile==INVALID_HANDLE_VALUE)
+		return (GetLastError()==ERROR_ACCESS_DENIED) ? LFAccessError : LFDriveNotReady;
+
+	DWORD wmWritten;
+	Result = WriteFile(hFile, pStoreDescriptor, STOREDESCRIPTORFILESIZE, &wmWritten, NULL) ? LFOk : LFDriveNotReady;
+	if (wmWritten!=STOREDESCRIPTORFILESIZE)
+		Result = LFDriveNotReady;
+
+	CloseHandle(hFile);
+
+	return Result;
+}
+
+UINT DeleteStoreSettingsFromFile(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
+
+	UINT Result;
+	WCHAR Path[MAX_PATH];
+	if ((Result=GetKeyFileFromStoreDescriptor(pStoreDescriptor, Path))!=LFOk)
+		return Result;
+
+	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFAccessError : LFDriveNotReady;
+}
+
+UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime, BOOL MakeDefault)
+{
+	assert(pStoreDescriptor);
+
+	// Update time
+	GetSystemTimeAsFileTime(UpdateFileTime ? &pStoreDescriptor->FileTime : &pStoreDescriptor->MaintenanceTime);
+
+	// Find in cache
+	LFStoreDescriptor* pSlot = FindStore(pStoreDescriptor->StoreID);
+
+	if (!pSlot)
+		if (StoreCount==MAXSTORES)
+			return LFTooManyStores;
+
+	// Save to registry and/or file
+	UINT Result = LFOk;
+
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+		Result = SaveStoreSettingsToRegistry(pStoreDescriptor);
+
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if ((Result==LFOk) && (LFIsStoreMounted(pStoreDescriptor)))
+			Result = SaveStoreSettingsToFile(pStoreDescriptor);
+
+	// Cache
+	if (Result==LFOk)
+	{
+		// Add or update
+		(pSlot ? *pSlot : StoreCache[StoreCount++]) = *pStoreDescriptor;
+
+		// Make default store
+		if (MakeDefault || (DefaultStore[0]=='\0'))
+			Result = MakeDefaultStore(pStoreDescriptor);
+	}
+
+	return Result;
+}
+
+UINT DeleteStoreFromCache(LFStoreDescriptor* pStoreDescriptor)
+{
+	LFStoreDescriptor Victim = *pStoreDescriptor;
+
+	// Remove from cache
+	for (UINT a=0; a<StoreCount; a++)
+		if (strcmp(StoreCache[a].StoreID, pStoreDescriptor->StoreID)==0)
+		{
+			if (a<StoreCount-1)
+			{
+				// Swap with last in cache (store needs to be locked first)
+				HMUTEX hMutex;
+				if (!GetMutexForStore(&StoreCache[StoreCount-1], &hMutex))
+					return LFMutexError;
+
+				StoreCache[a] = StoreCache[--StoreCount];
+				ReleaseMutexForStore(hMutex);
+			}
+			else
+			{
+				// Victim is the last store in cache
+				StoreCount--;
+			}
+
+			break;
+		}
+
+	// Choose new default store
+	if (strcmp(Victim.StoreID, DefaultStore)==0)
+		ChooseNewDefaultStore();
+
+	// Remove persistent records
+	UINT Result = LFOk;
+
+	if ((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+		Result = DeleteStoreSettingsFromRegistry(&Victim);
+
+	if ((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if ((Result==LFOk) && (LFIsStoreMounted(&Victim)))
+			Result = DeleteStoreSettingsFromFile(&Victim);
+
+	return Result;
 }
 
 
@@ -835,7 +721,7 @@ UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pPro
 {
 	assert(pStoreDescriptor);
 
-	SetStoreAttributes(pStoreDescriptor);
+	CompleteStoreSettings(pStoreDescriptor);
 
 	UINT Result = UpdateStoreInCache(pStoreDescriptor);
 	if (Result==LFOk)
@@ -1114,7 +1000,7 @@ LFCORE_API UINT LFMakeStoreSearchable(CHAR* pStoreID, BOOL Searchable)
 					{
 						// Convert to external index
 						pStoreDescriptor->Mode = (pStoreDescriptor->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
-						SetStoreAttributes(pStoreDescriptor);
+						CompleteStoreSettings(pStoreDescriptor);
 
 						if ((Result=UpdateStoreInCache(pStoreDescriptor))==LFOk)
 						{
@@ -1144,7 +1030,7 @@ LFCORE_API UINT LFMakeStoreSearchable(CHAR* pStoreID, BOOL Searchable)
 
 				// Convert to hybrid index
 				pStoreDescriptor->Mode = (pStoreDescriptor->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexHybrid;
-				SetStoreAttributes(pStoreDescriptor);
+				CompleteStoreSettings(pStoreDescriptor);
 
 				if ((Result=UpdateStoreInCache(pStoreDescriptor))==LFOk)
 					if ((Result=pStore->CreateDirectories())==LFOk)
@@ -1164,6 +1050,8 @@ LFCORE_API UINT LFMakeStoreSearchable(CHAR* pStoreID, BOOL Searchable)
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 		}
 	}
+
+	ReleaseMutexForStores();
 
 	return Result;
 }
@@ -1520,7 +1408,7 @@ __forceinline void LoadRegistry()
 				DWORD Size = 255;
 				if (RegEnumKeyA(hKey, a, ID, Size)==ERROR_SUCCESS)
 					if (LoadStoreSettingsFromRegistry(ID, &StoreCache[StoreCount]))
-						SetStoreAttributes(&StoreCache[StoreCount++]);
+						CompleteStoreSettings(&StoreCache[StoreCount++]);
 			}
 	}
 
@@ -1603,6 +1491,120 @@ void InitStores()
 
 // Volume handling
 //
+
+UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
+{
+	assert(cVolume>='A');
+	assert(cVolume<='Z');
+
+	UINT Result = LFOk;
+	BOOL ChangeOccured = FALSE;
+
+	WCHAR Mask[] = L" :\\*.store";
+	Mask[0] = cVolume;
+
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind = FindFirstFile(Mask, &FindFileData);
+
+	if (hFind!=INVALID_HANDLE_VALUE)
+		do
+		{
+			// Vollständigen Dateinamen zusammensetzen
+			WCHAR Path[MAX_PATH] = L" :\\";
+			Path[0] = cVolume;
+			wcscat_s(Path, MAX_PATH, FindFileData.cFileName);
+
+			LFStoreDescriptor Store;
+			if (LoadStoreSettingsFromFile(Path, &Store))
+			{
+				if (!GetMutexForStores())
+				{
+					Result = LFMutexError;
+					continue;
+				}
+
+				// Lokal gültigen Schlüssel eintragen
+				CreateNewStoreID(Store.StoreID);
+
+				// Store mit der selben GUID suchen
+				LFStoreDescriptor* pSlot = FindStore(Store.UniqueID);
+				if (pSlot)
+				{
+					// Name, Kommentar und Dateizeit aktualisieren
+					wcscpy_s(pSlot->StoreName, 256, Store.StoreName);
+					wcscpy_s(pSlot->Comments, 256, Store.Comments);
+					pSlot->FileTime = Store.FileTime;
+					/*pSlot->MaintenanceTime = Store.MaintenanceTime;
+					pSlot->SynchronizeTime = Store.SynchronizeTime;*/
+
+					// Set store index mode to hybrid
+					pSlot->Mode = (pSlot->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexHybrid;
+				}
+				else
+				{
+					// Set store index mode to external
+					Store.Mode = (Store.Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
+
+					// Add to cache
+					if (StoreCount<MAXSTORES)
+					{
+						StoreCache[StoreCount] = Store;
+						pSlot = &StoreCache[StoreCount++];		// Slot zeigt auf Eintrag
+					}
+					else
+					{
+						Result = LFTooManyStores;
+					}
+				}
+
+				// Store is in cache
+				if (pSlot)
+				{
+					ChangeOccured = TRUE;
+
+					// Set data path
+					wcscpy_s(pSlot->DatPath, MAX_PATH, Store.DatPath);
+					pSlot->DatPath[0] = cVolume;
+
+					CompleteStoreSettings(pSlot);
+
+					// Run quick maintenance
+					if (!OnInitialize)
+					{
+						CStore* pStore;
+						if (GetStore(pSlot, &pStore)==LFOk)
+						{
+							Result = pStore->MaintenanceAndStatistics();
+							delete pStore;
+						}
+					}
+
+					// Update "Last seen" in registry for hybrid stores
+					if ((pSlot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
+					{
+						SaveStoreSettingsToRegistry(pSlot);
+
+						if (!OnInitialize)
+							SendShellNotifyMessage(SHCNE_UPDATEITEM, pSlot->StoreID);
+					}
+				}
+
+				ReleaseMutexForStores();
+			}
+		}
+		while (FindNextFile(hFind, &FindFileData));
+
+	FindClose(hFind);
+
+	if (!OnInitialize)
+		if (ChangeOccured)
+		{
+			SendLFNotifyMessage(LFMessages.StoresChanged);
+			SendShellNotifyMessage(SHCNE_UPDATEDIR);
+		}
+
+	return Result;
+}
 
 UINT UnmountVolume(CHAR cVolume)
 {

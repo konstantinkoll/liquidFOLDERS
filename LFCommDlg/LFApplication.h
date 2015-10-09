@@ -17,11 +17,6 @@
 #define OS_Seven                2
 #define OS_Eight                3
 
-#define NAG_NOTLICENSED         0
-#define NAG_EXPIRED             1
-#define NAG_COUNTER             0
-#define NAG_FORCE               2
-
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
 typedef HTHEME(__stdcall* PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
@@ -139,7 +134,6 @@ public:
 
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
-	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL, BOOL Abort=FALSE);
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
 	BOOL IsAttributeAllowed(INT Context, INT Attr);

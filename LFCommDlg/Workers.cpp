@@ -89,7 +89,7 @@ void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pP
 void LFImportFolder(CHAR* pStoreID, CWnd* pParentWnd)
 {
 	// Allowed?
-	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
+	if (!LFNagScreen(pParentWnd))
 		return;
 
 	CString Caption((LPCSTR)IDS_IMPORTFOLDER_CAPTION);
@@ -121,6 +121,10 @@ void LFImportFolder(CHAR* pStoreID, CWnd* pParentWnd)
 
 void LFRunSynchronization(CHAR* pStoreID, CWnd* pParentWnd)
 {
+	// Allowed?
+	if (!LFNagScreen(pParentWnd))
+		return;
+
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
 	strcpy_s(wp.StoreID, LFKeySize, pStoreID);

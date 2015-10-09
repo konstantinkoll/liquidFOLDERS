@@ -188,8 +188,6 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 		// Start search
 		if ((pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
 		{
-			theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
-
 			LFFilter* pFilter = LFAllocFilter();
 			pFilter->Mode = LFFilterModeSearch;
 			m_wndSearch.GetWindowText(pFilter->Searchterm, 256);
@@ -686,11 +684,9 @@ void CMainWnd::OnItemOpen()
 					if (strcmp(i->CoreAttributes.FileFormat, "filter")==0)
 					{
 						LFFilter* pFilter = LFLoadFilter(i);
+
 						if (pFilter)
-						{
-							theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
 							NavigateTo(pFilter);
-						}
 					}
 					else
 					{
@@ -925,9 +921,6 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	if ((pVictim) && (pVictim!=m_pRawFiles))
 		LFFreeSearchResult(pVictim);
-
-	if (m_pCookedFiles->m_LastError<=LFCancel)
-		theApp.ShowNagScreen(NAG_EXPIRED, this);
 
 	return m_pCookedFiles->m_LastError;
 }

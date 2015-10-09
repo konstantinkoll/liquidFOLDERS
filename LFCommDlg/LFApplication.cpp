@@ -390,22 +390,6 @@ void LFApplication::KillFrame(CWnd* pVictim)
 	}
 }
 
-BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
-{
-	if ((Level & NAG_EXPIRED) ? LFIsSharewareExpired() : !LFIsLicensed())
-		if ((Level & NAG_FORCE) || (++m_NagCounter)>5)
-		{
-			CString tmpStr((LPCSTR)IDS_NOLICENSE);
-
-			LFMessageBox(pWndParent, tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
-			RESETNAGCOUNTER;
-
-			return TRUE;
-		}
-
-	return FALSE;
-}
-
 CString LFApplication::GetDefaultFontFace()
 {
 	return _T("Arial");
