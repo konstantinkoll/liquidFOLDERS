@@ -19,7 +19,7 @@ struct SidebarItem
 	WCHAR Hint[256];
 	INT Height;
 	UINT Number;
-	BOOL NumberInRed;
+	COLORREF Color;
 };
 
 class CSidebar : public CWnd
@@ -32,7 +32,7 @@ public:
 	virtual CString AppendTooltip(UINT CmdID);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID, BOOL ShowNumbers);
-	void AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed=FALSE);
+	void AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, COLORREF Color=(COLORREF)-1);
 	void AddCaption(WCHAR* Caption=NULL);
 	void AddCaption(UINT ResID);
 	void ResetNumbers();
@@ -41,7 +41,7 @@ public:
 	void SetSelection(UINT CmdID=0);
 
 protected:
-	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed=FALSE);
+	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, COLORREF Color=(COLORREF)-1);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT Index);
 	void SelectItem(INT Index);

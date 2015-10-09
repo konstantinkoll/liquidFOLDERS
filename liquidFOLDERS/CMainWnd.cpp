@@ -464,7 +464,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			break;
 		}
 
-		m_wndContextSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) || (a==LFContextTrash));
+		m_wndContextSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
 	}
 
 	// Hauptansicht erstellen

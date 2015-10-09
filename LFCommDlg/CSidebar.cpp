@@ -75,7 +75,7 @@ BOOL CSidebar::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed)
+void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, COLORREF Color)
 {
 	// Hinzufügen
 	SidebarItem i;
@@ -88,7 +88,7 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 		if (Selectable)
 		{
 			wcscpy_s(i.Caption, 256, Caption);
-			i.NumberInRed = NumberInRed;
+			i.Color = Color;
 		}
 		else
 		{
@@ -133,14 +133,14 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	m_Items.AddItem(i);
 }
 
-void CSidebar::AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed)
+void CSidebar::AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, COLORREF Color)
 {
-	AddItem(TRUE, CmdID, IconID, Caption, Hint, NumberInRed);
+	AddItem(TRUE, CmdID, IconID, Caption, Hint, Color);
 }
 
 void CSidebar::AddCaption(WCHAR* Caption)
 {
-	AddItem(FALSE, 0, -1, Caption, L"", FALSE);
+	AddItem(FALSE, 0, -1, Caption, L"");
 }
 
 void CSidebar::AddCaption(UINT ResID)
@@ -470,7 +470,8 @@ void CSidebar::OnPaint()
 				{
 					CRect rectNumber(rectItem.right-m_NumberWidth+BORDER/2, rectItem.top-2, rectItem.right-BORDER/2-SHADOW/2, rectItem.bottom);
 
-					if (m_Items.m_Items[a].NumberInRed)
+					const COLORREF clr = m_Items.m_Items[a].Color;
+					if (clr!=(COLORREF)-1)
 					{
 						if (Themed)
 						{
@@ -493,8 +494,8 @@ void CSidebar::OnPaint()
 							m2.Translate(-2.5f, -2.5f);
 							path.Transform(&m2);
 
-							SolidBrush brushRed(Color(0xFF, 0, 0));
-							g.FillPath(&brushRed, &path);
+							SolidBrush brushFill(Color(clr & 0xFF, (clr>>8) & 0xFF, (clr>>16) & 0xFF));
+							g.FillPath(&brushFill, &path);
 
 							Pen pen(Color(0xFF, 0xFF, 0xFF), 2.0f);
 							g.DrawPath(&pen, &path);
@@ -534,8 +535,8 @@ void CSidebar::OnPaint()
 							tmpStr.Format(_T("%d"), m_Items.m_Items[a].Number);
 						}
 
-					CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].NumberInRed ? &afxGlobalData.fontBold : &LFGetApp()->m_SmallFont);
-					dc.DrawText(tmpStr, rectNumber, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (m_Items.m_Items[a].NumberInRed ? DT_CENTER : DT_RIGHT));
+					CFont* pOldFont = dc.SelectObject(clr!=(COLORREF)-1 ? &afxGlobalData.fontBold : &LFGetApp()->m_SmallFont);
+					dc.DrawText(tmpStr, rectNumber, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (clr!=(COLORREF)-1 ? DT_CENTER : DT_RIGHT));
 					dc.SelectObject(pOldFont);
 				}
 
