@@ -348,7 +348,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 	return TRUE;
 }
 
-BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& CheckSearchterm)
+BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& CheckSearchterm, BYTE& SearchtermContainsLetters)
 {
 	assert(TableID>=0);
 	assert(TableID<IDXTABLECOUNT);
@@ -425,8 +425,31 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 		CheckSearchterm = TRUE;
 
 	if (!CheckSearchterm)
+	{
+		// Check if searchterm contains letters: if yes, do not compare times
+		if (!SearchtermContainsLetters)
+		{
+			SearchtermContainsLetters = 1;
+
+			WCHAR* Ptr = pFilter->Searchterm;
+			while (*Ptr)
+			{
+				if (((*Ptr>=L'A') && (*Ptr<=L'Z')) || ((*Ptr>=L'a') && (*Ptr<=L'z')))
+				{
+					SearchtermContainsLetters = 2;
+					break;
+				}
+
+				Ptr++;
+			}
+		}
+
+		// Compare attributes
 		for (UINT a=0; a<pTable->cTableEntries; a++)
-			if (pTable->pTableEntries[a].Attr!=LFAttrFileID)
+		{
+			const UINT Attr = pTable->pTableEntries[a].Attr;
+
+			if ((Attr!=LFAttrFileID) && ((SearchtermContainsLetters<2) || AttrContainsLetters[AttrTypes[Attr]]))
 			{
 				WCHAR tmpStr[256];
 				ToString((BYTE*)pTableData+pTable->pTableEntries[a].Offset, AttrTypes[pTable->pTableEntries[a].Attr], tmpStr, 256);
@@ -437,13 +460,15 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 					break;
 				}
 			}
+		}
+	}
 
 	return CheckSearchterm || ((TableID==IDXTABLE_MASTER) && (((LFCoreAttributes*)pTableData)->SlaveID!=0));
 }
 
-BOOL PassesFilter(LFItemDescriptor* i, LFFilter* pFilter)
+BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter)
 {
-	assert(i);
+	assert(pItemDescriptor);
 	assert(pFilter);
 
 	LFFilterCondition* pFilterCondition = pFilter->ConditionList;
@@ -452,13 +477,13 @@ BOOL PassesFilter(LFItemDescriptor* i, LFFilter* pFilter)
 		switch(pFilterCondition->AttrData.Attr)
 		{
 		case LFAttrDimension:
-			if (!CheckCondition(&i->Dimension, pFilterCondition))
+			if (!CheckCondition(&pItemDescriptor->Dimension, pFilterCondition))
 				return FALSE;
 
 			break;
 
 		case LFAttrAspectRatio:
-			if (!CheckCondition(&i->AspectRatio, pFilterCondition))
+			if (!CheckCondition(&pItemDescriptor->AspectRatio, pFilterCondition))
 				return FALSE;
 
 			break;

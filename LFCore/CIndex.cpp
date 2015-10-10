@@ -375,10 +375,12 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	assert(pFilter->Mode>=LFFilterModeDirectoryTree);
 	assert(pSearchResult);
 
+	BYTE SearchtermContainsLetters = 0;
+
 	START_ITERATEALL(pSearchResult->m_LastError = LFIndexTableLoadError,);
 
 	BOOL CheckSearchterm = FALSE;
-	if (!PassesFilter(IDXTABLE_MASTER, PtrM, pFilter, CheckSearchterm))
+	if (!PassesFilter(IDXTABLE_MASTER, PtrM, pFilter, CheckSearchterm, SearchtermContainsLetters))
 		continue;
 
 	UINT Result = LFOk;
@@ -389,7 +391,7 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
 		LOAD_SLAVE();
 
 		if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-			if (!PassesFilter(PtrM->SlaveID, PtrS, pFilter, CheckSearchterm))
+			if (!PassesFilter(PtrM->SlaveID, PtrS, pFilter, CheckSearchterm, SearchtermContainsLetters))
 				continue;
 
 		DISCARD_SLAVE();
