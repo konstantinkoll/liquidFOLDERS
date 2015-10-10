@@ -590,7 +590,7 @@ FilterFromScratch:
 	else
 		if (m_pActiveFilter)
 		{
-			while ((m_pBreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder) : FALSE))
+			while ((m_pBreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder || (m_pActiveFilter->Mode==LFFilterModeSearch)) : FALSE))
 			{
 				LFFreeFilter(m_pActiveFilter);
 
@@ -599,6 +599,9 @@ FilterFromScratch:
 			}
 
 			if (!m_pActiveFilter)
+				goto FilterFromScratch;
+
+			if (m_pActiveFilter->Mode==LFFilterModeStores)
 				goto FilterFromScratch;
 
 			LFFilter* pFilter = LFAllocFilter(m_pActiveFilter);

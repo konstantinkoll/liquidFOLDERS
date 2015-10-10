@@ -719,12 +719,12 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			{
 				CString tmpCaption(theApp.m_Attributes[Attr].Name);
 				tmpCaption += _T(": ");
-				dc.DrawText(tmpCaption, rectText, DT_LEFT | DT_SINGLELINE);
+				dc.DrawText(tmpCaption, rectText, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 				rectText.left += dc.GetTextExtent(tmpCaption).cx;
 			}
 
 			SwitchColor(dc, d);
-			dc.DrawText(tmpStr, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+			dc.DrawText(tmpStr, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 			dc.SetTextColor(oldColor);
 		}
 		else
