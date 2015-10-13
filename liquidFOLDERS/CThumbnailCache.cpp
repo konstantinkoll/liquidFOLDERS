@@ -52,6 +52,9 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 
 	if (td.hBitmap)
 	{
+		// Ggf. Bitmap vierteln
+		td.hBitmap = LFQuarter256Bitmap(td.hBitmap);
+
 		// Thumbnail dekorieren
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
