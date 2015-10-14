@@ -253,7 +253,7 @@ LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, U
 
 
 // Neues Suchergebnis mit Kontext Context erzeugen
-LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(INT Context);
+LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(BYTE Context);
 
 // Existierendes LFSearchResult freigeben
 LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* pSearchResult);

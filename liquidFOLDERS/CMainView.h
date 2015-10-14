@@ -51,7 +51,6 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnAdjustLayout();
-	afx_msg LRESULT OnSetAlert(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnUpdateSelection();
 	afx_msg void OnBeginDragDrop();
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
@@ -135,7 +134,6 @@ private:
 	void AdjustLayout();
 	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData);
 
-	CTaskButton* p_FilterButton;
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;
 	CHeaderButton* p_ViewButton;

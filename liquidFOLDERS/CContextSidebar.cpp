@@ -71,6 +71,4 @@ void CContextSidebar::OnUpdateNumbers()
 
 	for (UINT a=0; a<=LFLastQueryContext; a++)
 		SetNumber(IDM_NAV_SWITCHCONTEXT+a, m_pStatistics->FileCount[a]);
-
-	GetOwner()->SendMessage(WM_SETALERT, (WPARAM)(m_pStatistics->FileCount[LFContextNew] || m_pStatistics->FileCount[LFContextTrash]));
 }

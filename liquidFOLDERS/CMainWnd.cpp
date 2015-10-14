@@ -98,7 +98,7 @@ CMainWnd::CMainWnd()
 	m_pActiveFilter = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
 	m_pBreadcrumbBack = m_pBreadcrumbForward = NULL;
-	m_ShowFilterPane = FALSE;
+	m_ShowFilterPane = m_AlwaysShowFilterPane = FALSE;
 }
 
 CMainWnd::~CMainWnd()
@@ -246,33 +246,39 @@ void CMainWnd::AdjustLayout()
 
 	const UINT HistoryHeight = m_wndHistory.GetPreferredHeight();
 	const UINT SearchWidth = max(150, (rect.Width()-JournalWidth)/4);
-	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-SearchWidth-14, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndSearch.SetWindowPos(NULL, rect.right-SearchWidth, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, SearchWidth, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-SearchWidth-14, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
+	m_wndSearch.SetWindowPos(NULL, rect.right-SearchWidth, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, SearchWidth, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
 
-	INT FilterWidth = 0;
-	if (m_ShowFilterPane)
+	INT FilterWidth = max(32, m_wndContextSidebar.GetPreferredWidth());
+	m_AlwaysShowFilterPane = (FilterWidth<=rect.Width()/5);
+	m_ShowFilterPane &= !m_AlwaysShowFilterPane;
+
+	if (m_ShowFilterPane || m_AlwaysShowFilterPane)
 	{
-		FilterWidth = max(32, m_wndContextSidebar.GetPreferredWidth());
-		m_wndContextSidebar.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, FilterWidth, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+		m_wndContextSidebar.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, FilterWidth, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW | SWP_NOREDRAW);
 	}
 	else
 	{
 		m_wndContextSidebar.ShowWindow(SW_HIDE);
+		FilterWidth = 0;
 	}
 
-	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width()-(m_AlwaysShowFilterPane ? FilterWidth : 0), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
+
+	Invalidate();
+	RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE | RDW_ALLCHILDREN);
 }
 
-BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
+BOOL CMainWnd::AddClipItem(LFItemDescriptor* pItemDescriptor)
 {
 	ASSERT(m_IsClipboard);
 
 	for (UINT a=0; a<m_pRawFiles->m_ItemCount; a++)
-		if ((strcmp(i->StoreID, m_pRawFiles->m_Items[a]->StoreID)==0) &&
-			(strcmp(i->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
+		if ((strcmp(pItemDescriptor->StoreID, m_pRawFiles->m_Items[a]->StoreID)==0) &&
+			(strcmp(pItemDescriptor->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
-	LFAddItem(m_pRawFiles, LFCloneItemDescriptor(i));
+	LFAddItem(m_pRawFiles, LFCloneItemDescriptor(pItemDescriptor));
 
 	return TRUE;
 }
@@ -375,7 +381,7 @@ void CMainWnd::UpdateHistory()
 
 void CMainWnd::HideFilterPane()
 {
-	if (m_ShowFilterPane)
+	if (m_ShowFilterPane && !m_AlwaysShowFilterPane)
 	{
 		OnToggleFilterPane();
 		UpdateWindow();
@@ -386,6 +392,7 @@ void CMainWnd::HideFilterPane()
 BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_GETMINMAXINFO()
 	ON_WM_SETFOCUS()
 
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
@@ -396,6 +403,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnUpdateNavCommands)
 
 	ON_COMMAND(ID_PANE_FILTER, OnToggleFilterPane)
+	ON_UPDATE_COMMAND_UI(ID_PANE_FILTER, OnUpdatePaneCommands)
 
 	ON_COMMAND(IDM_FILTERS_CREATENEW, OnFiltersCreateNew)
 
@@ -408,7 +416,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
 	ON_MESSAGE_VOID(WM_UPDATENUMBERS, OnUpdateNumbers)
-	ON_MESSAGE(WM_SETALERT, OnSetAlert)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
@@ -500,6 +507,17 @@ void CMainWnd::OnDestroy()
 
 	if (theApp.p_Clipboard==this)
 		theApp.p_Clipboard = NULL;
+}
+
+void CMainWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	CGlassWindow::OnGetMinMaxInfo(lpMMI);
+
+	if (IsWindow(m_wndContextSidebar) && !m_IsClipboard)
+		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y,
+			m_wndContextSidebar.GetMinHeight()+GetSystemMetrics(SM_CYCAPTION)+50+
+			((m_Margins.cyTopHeight>0) ? m_Margins.cyTopHeight : 0)+
+			((m_Margins.cyBottomHeight>0) ? m_Margins.cyBottomHeight : 0));
 }
 
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -635,7 +653,7 @@ void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 }
 
 
-// Filter pane
+// Pane coommands
 
 void CMainWnd::OnToggleFilterPane()
 {
@@ -647,6 +665,11 @@ void CMainWnd::OnToggleFilterPane()
 
 	if (m_ShowFilterPane)
 		m_wndContextSidebar.SetFocus();
+}
+
+void CMainWnd::OnUpdatePaneCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!m_AlwaysShowFilterPane && !m_IsClipboard);
 }
 
 
@@ -884,11 +907,6 @@ void CMainWnd::OnUpdateNumbers()
 		m_wndContextSidebar.PostMessage(WM_UPDATENUMBERS);
 }
 
-LRESULT CMainWnd::OnSetAlert(WPARAM wParam, LPARAM /*lParam*/)
-{
-	return m_wndMainView.SendMessage(WM_SETALERT, wParam);
-}
-
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 {
 	LFSearchResult* pVictim = m_pCookedFiles;
@@ -914,10 +932,9 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	{
 		INT Context = m_wndMainView.GetContext();
 		if (Context>LFLastQueryContext)
-		{
-			const BOOL IsSubfolder = m_pActiveFilter ? m_pActiveFilter->Options.IsSubfolder : FALSE;
-			Context = (IsSubfolder || (Context==LFContextSearch)) ? m_pActiveFilter->ContextID : -1;
-		}
+			if (m_pActiveFilter)
+				if (m_pActiveFilter->Options.IsSubfolder && (m_pBreadcrumbBack!=NULL))
+					Context = m_pBreadcrumbBack->pFilter->ResultContext;
 
 		m_wndContextSidebar.SetSelection(IDM_NAV_SWITCHCONTEXT+Context, m_wndMainView.GetStoreID());
 	}

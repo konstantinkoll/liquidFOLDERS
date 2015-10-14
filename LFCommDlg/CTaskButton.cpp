@@ -21,7 +21,6 @@ BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hi
 	m_IconID = IconID;
 	m_ForceSmall = ForceSmall;
 	m_HideIcon = HideIcon;
-	m_OverlayID = -1;
 
 	CRect rect;
 	rect.SetRectEmpty();
@@ -51,10 +50,9 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	return CHoverButton::PreTranslateMessage(pMsg);
 }
 
-void CTaskButton::SetIconID(INT IconID, INT OverlayID)
+void CTaskButton::SetIconID(INT IconID)
 {
 	m_IconID = IconID;
-	m_OverlayID = OverlayID;
 
 	Invalidate();
 }
@@ -127,12 +125,7 @@ void CTaskButton::OnPaint()
 	// Icon
 	if (p_ButtonIcons && (!m_HideIcon || m_Small))
 	{
-		CPoint pt(rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1));
-		p_ButtonIcons->Draw(dc, pt.x, pt.y, m_IconID);
-
-		if (m_OverlayID!=-1)
-			p_ButtonIcons->Draw(dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
-
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1), m_IconID);
 		rectText.left += m_IconSize+BORDER;
 	}
 

@@ -401,6 +401,7 @@ struct LFFilter
 {
 	WCHAR OriginalName[256];
 	WCHAR ResultName[256];
+	BYTE ResultContext;
 	UINT Mode;
 	LFFilterOptions Options;
 

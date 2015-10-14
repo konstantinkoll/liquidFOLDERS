@@ -7,7 +7,7 @@
 class LFSearchResult : public LFDynArray<LFItemDescriptor*>
 {
 public:
-	LFSearchResult(UINT Context);
+	LFSearchResult(BYTE Context);
 	LFSearchResult(LFFilter* pFilter);
 	LFSearchResult(LFSearchResult* pSearchResult);
 	~LFSearchResult();
@@ -25,7 +25,7 @@ public:
 	WCHAR m_Name[256];
 	WCHAR m_Hint[256];
 	DWORD m_QueryTime;
-	UINT m_Context;
+	BYTE m_Context;
 	UINT m_GroupAttribute;
 
 	BOOL m_RawCopy;

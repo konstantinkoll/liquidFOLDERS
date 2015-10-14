@@ -15,7 +15,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
-	void SetIconID(INT IconID, INT OverlayID=-1);
+	void SetIconID(INT IconID);
 	INT GetPreferredWidth(BOOL Small=FALSE);
 
 protected:
@@ -30,7 +30,6 @@ protected:
 	CString m_Hint;
 	BOOL m_Small;
 	INT m_IconID;
-	INT m_OverlayID;
 
 private:
 	INT m_IconSize;

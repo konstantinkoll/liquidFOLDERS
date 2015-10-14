@@ -11,12 +11,13 @@ struct BreadcrumbItem
 {
 	BreadcrumbItem* pNext;
 	LFFilter* pFilter;
+	INT ContextID;
 	FVPersistentData Data;
 };
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* pFilter, FVPersistentData& Data);
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** ppFilter, FVPersistentData* Data);
-void DeleteBreadcrumbs(BreadcrumbItem** bi);
+void AddBreadcrumbItem(BreadcrumbItem** pBreadcrumbItem, LFFilter* pFilter, FVPersistentData& Data);
+void ConsumeBreadcrumbItem(BreadcrumbItem** pBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* Data);
+void DeleteBreadcrumbs(BreadcrumbItem** pBreadcrumbItem);
 
 
 // CHistoryBar

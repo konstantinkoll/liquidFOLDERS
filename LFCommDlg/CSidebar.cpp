@@ -174,10 +174,14 @@ INT CSidebar::GetPreferredWidth()
 	return m_Width;
 }
 
+INT CSidebar::GetMinHeight()
+{
+	return m_Items.m_Items[m_Items.m_ItemCount-1].Rect.bottom;
+}
+
 void CSidebar::SetSelection(UINT CmdID)
 {
 	m_SelectedItem = m_HotItem = -1;
-	m_HotItem = 0;
 	m_Hover = FALSE;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)

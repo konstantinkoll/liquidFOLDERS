@@ -13,37 +13,37 @@
 #define VIEW       -2
 #define RELOAD     -1
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* pFilter, FVPersistentData& Data)
+void AddBreadcrumbItem(BreadcrumbItem** ppBreadcrumbItem, LFFilter* pFilter, FVPersistentData& Data)
 {
 	BreadcrumbItem* add = new BreadcrumbItem;
-	add->pNext = *bi;
+	add->pNext = *ppBreadcrumbItem;
 	add->pFilter = pFilter;
 	add->Data = Data;
-	*bi = add;
+	*ppBreadcrumbItem = add;
 }
 
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** ppFilter, FVPersistentData* Data)
+void ConsumeBreadcrumbItem(BreadcrumbItem** ppBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* Data)
 {
 	*ppFilter = NULL;
 	ZeroMemory(Data, sizeof(FVPersistentData));
 
-	if (*bi)
+	if (*ppBreadcrumbItem)
 	{
-		*ppFilter = (*bi)->pFilter;
-		*Data = (*bi)->Data;
+		*ppFilter = (*ppBreadcrumbItem)->pFilter;
+		*Data = (*ppBreadcrumbItem)->Data;
 
-		BreadcrumbItem* pVictim = *bi;
-		*bi = (*bi)->pNext;
+		BreadcrumbItem* pVictim = *ppBreadcrumbItem;
+		*ppBreadcrumbItem = (*ppBreadcrumbItem)->pNext;
 		delete pVictim;
 	}
 }
 
-void DeleteBreadcrumbs(BreadcrumbItem** bi)
+void DeleteBreadcrumbs(BreadcrumbItem** ppBreadcrumbItem)
 {
-	while (*bi)
+	while (*ppBreadcrumbItem)
 	{
-		BreadcrumbItem* pVictim = *bi;
-		*bi = (*bi)->pNext;
+		BreadcrumbItem* pVictim = *ppBreadcrumbItem;
+		*ppBreadcrumbItem = (*ppBreadcrumbItem)->pNext;
 
 		LFFreeFilter(pVictim->pFilter);
 		delete pVictim;

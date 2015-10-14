@@ -48,7 +48,7 @@ CMainView::CMainView()
 	p_wndFileView = NULL;
 	p_Filter = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
-	p_FilterButton = p_InspectorButton = NULL;
+	p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
 	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
@@ -549,7 +549,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
-	ON_MESSAGE(WM_SETALERT, OnSetAlert)
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 	ON_MESSAGE_VOID(WM_BEGINDRAGDROP, OnBeginDragDrop)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
@@ -557,7 +556,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
 	ON_COMMAND(ID_PANE_INSPECTOR, OnToggleInspector)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTER, ID_PANE_INSPECTOR, OnUpdatePaneCommands)
+	ON_UPDATE_COMMAND_UI(ID_PANE_INSPECTOR, OnUpdatePaneCommands)
 
 	ON_COMMAND(IDM_ORGANIZE_OPTIONS, OnSortOptions)
 	ON_COMMAND(IDM_ORGANIZE_TOGGLEAUTODIRS, OnToggleAutoDirs)
@@ -620,8 +619,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.SetOwner(GetOwner());
 
-	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, 0, TRUE, FALSE, TRUE);
-
+	m_wndTaskbar.AddButton(ID_PANE_FILTER, 0, TRUE, FALSE, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 1);
 	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
@@ -835,16 +833,6 @@ void CMainView::OnAdjustLayout()
 		AdjustLayout();
 }
 
-LRESULT CMainView::OnSetAlert(WPARAM wParam, LPARAM /*lParam*/)
-{
-	m_Alerted = (wParam!=0);
-
-	if (p_FilterButton)
-		p_FilterButton->SetIconID(0, m_Alerted ? FilterIconOverlay : -1);
-
-	return NULL;
-}
-
 void CMainView::OnUpdateSelection()
 {
 	m_wndInspector.UpdateStart();
@@ -1045,20 +1033,7 @@ void CMainView::OnToggleInspector()
 
 void CMainView::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
-
-	switch (pCmdUI->m_nID)
-	{
-	case ID_PANE_FILTER:
-		b = !m_IsClipboard;
-		break;
-
-	case ID_PANE_INSPECTOR:
-		b = TRUE;
-		break;
-	}
-
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(TRUE);
 }
 
 

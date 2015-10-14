@@ -17,7 +17,7 @@ extern UINT VolumeTypes[];
 extern void LoadTwoStrings(HINSTANCE hInstance, UINT uID, WCHAR* lpBuffer1, INT cchBufferMax1, WCHAR* lpBuffer, INT cchBufferMax);
 
 
-LFCORE_API LFSearchResult* LFAllocSearchResult(INT Context)
+LFCORE_API LFSearchResult* LFAllocSearchResult(BYTE Context)
 {
 	assert(Context>=0);
 	assert(Context<LFContextCount);
@@ -101,7 +101,7 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 // LFSearchResult
 //
 
-LFSearchResult::LFSearchResult(UINT Context)
+LFSearchResult::LFSearchResult(BYTE Context)
 	: LFDynArray()
 {
 	assert(Context<LFContextCount);
@@ -251,6 +251,7 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 	}
 
 	wcscpy_s(pFilter->ResultName, 256, m_Name);
+	pFilter->ResultContext = m_Context;
 }
 
 BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)

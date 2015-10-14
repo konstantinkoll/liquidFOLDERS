@@ -41,7 +41,7 @@ public:
 	BOOL CreateStore(CHAR* RootStore);
 	BOOL CreateFilter(LFFilter* pFilter);
 	BOOL CreateFilter(WCHAR* FileName);
-	BOOL AddClipItem(LFItemDescriptor* i);
+	BOOL AddClipItem(LFItemDescriptor* pItemDescriptor);
 
 protected:
 	BOOL Create(BOOL IsClipboard);
@@ -51,6 +51,7 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 	afx_msg void OnNavigateBack();
@@ -61,6 +62,7 @@ protected:
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnToggleFilterPane();
+	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnFiltersCreateNew();
 
@@ -75,7 +77,6 @@ protected:
 	afx_msg void OnUpdateViewOptions();
 	afx_msg void OnUpdateSortOptions();
 	afx_msg void OnUpdateNumbers();
-	afx_msg LRESULT OnSetAlert(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
 	afx_msg void OnUpdateFooter();
 
@@ -97,8 +98,9 @@ protected:
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;
 	BOOL m_ShowFilterPane;
+	BOOL m_AlwaysShowFilterPane;
 
 private:
-	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
+	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory();
 };

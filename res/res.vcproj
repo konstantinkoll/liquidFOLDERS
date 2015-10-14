@@ -1033,19 +1033,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\LocationIndicator_12.png"
-			>
-		</File>
-		<File
 			RelativePath=".\LocationIndicator_16.png"
 			>
 		</File>
 		<File
 			RelativePath=".\LocationIndicator_64.png"
-			>
-		</File>
-		<File
-			RelativePath=".\LocationIndicator_8.png"
 			>
 		</File>
 		<File

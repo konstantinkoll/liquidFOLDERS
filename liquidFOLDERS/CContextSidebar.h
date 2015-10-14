@@ -10,7 +10,6 @@
 //
 
 #define WM_UPDATENUMBERS     WM_USER+209
-#define WM_SETALERT          WM_USER+210
 
 class CContextSidebar : public CSidebar
 {
