@@ -302,13 +302,13 @@ void CGlassEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 HBRUSH CGlassEdit::CtlColor(CDC* pDC, UINT /*nCtlColor*/)
 {
-	HBRUSH hbr = NULL;
+	HBRUSH hBrush = NULL;
 
 	if (!IsCtrlThemed() && (GetFocus()!=this))
 	{
 		pDC->SetDCBrushColor(GetSysColor(COLOR_3DFACE));
-		hbr = (HBRUSH)GetStockObject(DC_BRUSH);
+		hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
 	}
 
-	return hbr;
+	return hBrush;
 }

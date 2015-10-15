@@ -53,6 +53,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnSearchSetFocus();
 
 	afx_msg void OnNavigateBack();
 	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam=NULL);

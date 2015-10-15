@@ -394,6 +394,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_WM_DESTROY()
 	ON_WM_GETMINMAXINFO()
 	ON_WM_SETFOCUS()
+	ON_EN_SETFOCUS(3, OnSearchSetFocus)
 
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
@@ -527,6 +528,11 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 
 	if (IsWindow(m_wndMainView))
 		m_wndMainView.SetFocus();
+}
+
+void CMainWnd::OnSearchSetFocus()
+{
+	m_wndSearch.PostMessage(EM_SETSEL, (WPARAM)0, (LPARAM)-1);
 }
 
 
