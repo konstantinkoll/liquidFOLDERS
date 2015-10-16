@@ -174,23 +174,6 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 			*pSpace = L'\0';
 		}
 
-		// About
-		if (wcscmp(CmdLine, L"/ABOUT")==0)
-		{
-			OnAppAbout();
-
-			return NULL;
-		}
-
-		// Add store
-		if (wcscmp(CmdLine, L"/ADDSTORE")==0)
-		{
-			LFAddStoreDlg dlg(CWnd::GetForegroundWindow());
-			dlg.DoModal();
-
-			return NULL;
-		}
-
 		// Update
 		if (wcscmp(CmdLine, L"/CHECKUPDATE")==0)
 		{
@@ -198,15 +181,6 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 			return NULL;
 		}
-
-		// Delete store
-		if (wcscmp(CmdLine, L"/DELETESTORE")==0)
-			if (StoreID[0]!=L'\0')
-			{
-				LFDeleteStore(StoreID, CWnd::GetForegroundWindow());
-
-				return NULL;
-			}
 
 		// FileDrop
 		if (wcscmp(CmdLine, L"/FILEDROP")==0)
@@ -224,24 +198,6 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 			return GetFileDrop(StoreID);
 		}
-
-		// Import folder
-		if (wcscmp(CmdLine, L"/IMPORTFOLDER")==0)
-		{
-			LFImportFolder(StoreID, CWnd::GetForegroundWindow());
-
-			return NULL;
-		}
-
-		// Store properties
-		if (wcscmp(CmdLine, L"/STOREPROPERTIES")==0)
-			if (StoreID[0]!=L'\0')
-			{
-				LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());
-				dlg.DoModal();
-
-				return NULL;
-			}
 
 		// Key or IATA code
 		if ((wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL) && (wcschr(CmdLine, L'/')==NULL))

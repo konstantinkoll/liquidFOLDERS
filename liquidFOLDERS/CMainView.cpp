@@ -1203,8 +1203,12 @@ void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnStoresAdd()
 {
-	LFAddStoreDlg dlg(this);
-	dlg.DoModal();
+	// Allowed?
+	if (LFNagScreen(this))
+	{
+		LFAddStoreDlg dlg(this);
+		dlg.DoModal();
+	}
 }
 
 void CMainView::OnStoresMaintainAll()
