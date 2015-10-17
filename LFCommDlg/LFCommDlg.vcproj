@@ -835,6 +835,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\TooltipBackground.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\UpdateIcons_16.bmp"
 				>
 			</File>

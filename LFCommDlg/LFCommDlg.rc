@@ -44,6 +44,7 @@ IDB_SANTA               PNG                     "res\\Santa.png"
 IDB_LIQUIDFOLDERS_64    PNG                     "res\\liquidFOLDERS_64.png"
 IDB_LIQUIDFOLDERS_128   PNG                     "res\\liquidFOLDERS_128.png"
 IDB_SIDEBARBACKGROUND   PNG                     "res\\SidebarBackground.png"
+IDB_TOOLTIPBACKGROUND   PNG                     "res\\TooltipBackground.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //

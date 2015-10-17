@@ -196,21 +196,24 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 		g.FillRectangle(&brush3, rect.left+1, rect.top+1, rect.Width()-2, 1);
 		g.FillRectangle(&brush3, rect.left, rect.top+2, rect.Width(), y1-2);
 
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+
 		GraphicsPath pathInner;
 		CreateRoundRectangle(rect, 4, pathInner);
+
+		TextureBrush brush4(LFGetApp()->GetCachedResourceImage(IDB_TOOLTIPBACKGROUND, _T("PNG"))->m_pBitmap);
+		g.FillPath(&brush4, &pathInner);
 
 		rect.InflateRect(1, 1);
 		GraphicsPath pathOuter;
 		CreateRoundRectangle(rect, 5, pathOuter);
 
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
-
 		Pen pen(Color(0x00, 0x00, 0x00));
 		g.DrawPath(&pen, &pathOuter);
 
-		LinearGradientBrush brush4(Point(0, rect.top), Point(0, rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x18, 0xFF, 0xFF, 0xFF));
+		LinearGradientBrush brush5(Point(0, rect.top), Point(0, rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x18, 0xFF, 0xFF, 0xFF));
 
-		pen.SetBrush(&brush4);
+		pen.SetBrush(&brush5);
 		g.DrawPath(&pen, &pathInner);
 
 		rect.DeflateRect(BORDER, BORDER);

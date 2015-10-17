@@ -48,6 +48,7 @@
 #define IDB_UPDATEICONS_16              20139
 #define IDB_UPDATEICONS_32              20140
 #define IDB_SIDEBARBACKGROUND           20141
+#define IDB_TOOLTIPBACKGROUND           20142
 #define IDI_RESET_NORMAL                20200
 #define IDI_RESET_SELECTED              20201
 #define IDI_RESET_HOT                   20202

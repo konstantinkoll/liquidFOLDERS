@@ -1225,6 +1225,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\TooltipBackground.png"
+			>
+		</File>
+		<File
 			RelativePath="Warning.ico"
 			>
 		</File>
