@@ -126,7 +126,6 @@ BOOL CLiquidFoldersApp::InitInstance()
 		m_nTextureSize = m_nMaxTextureSize;
 
 	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
-	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
@@ -266,7 +265,6 @@ INT CLiquidFoldersApp::ExitInstance()
 		WriteInt(_T("TextureSize"), m_nTextureSize);
 		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 		WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
-		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);

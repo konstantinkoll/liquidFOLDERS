@@ -91,7 +91,6 @@ private:
 	CPoint m_CursorPos;
 
 	GLint m_GlobeModel;
-	BOOL m_IsHQModel;
 	INT m_CurrentGlobeTexture;
 
 	GLfloat m_Scale;

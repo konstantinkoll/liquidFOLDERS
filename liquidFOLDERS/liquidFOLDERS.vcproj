@@ -606,11 +606,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Globe_High.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Globe_Low.h"
+				RelativePath=".\Globe.h"
 				>
 			</File>
 			<File

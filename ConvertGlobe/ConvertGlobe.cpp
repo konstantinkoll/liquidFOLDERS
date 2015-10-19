@@ -27,7 +27,7 @@ struct Poly
 };
 Poly Polygons[10000];
 
-void ConvertFile(CString Suffix)
+void ConvertFile()
 {
 	CString tmpStr;
 
@@ -37,7 +37,7 @@ void ConvertFile(CString Suffix)
 
 	// Einlesen
 	CStdioFile input;
-	input.Open(path+"..\\..\\res\\Globe_"+Suffix+".asc", CFile::modeRead | CFile::typeText);
+	input.Open(path+"..\\..\\res\\Globe.asc", CFile::modeRead | CFile::typeText);
 
 	while (input.ReadString(tmpStr))
 	{
@@ -80,11 +80,11 @@ void ConvertFile(CString Suffix)
 
 	// Ausgeben
 	CStdioFile output;
-	output.Open(path+"..\\..\\StoreManager\\Globe_"+Suffix+".h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
+	output.Open(path+"..\\..\\liquidFOLDERS\\Globe.h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
 
-	tmpStr.Format("static UINT Globe%sCount = %u;\n", Suffix, PolyCount*3);
+	tmpStr.Format("static UINT GlobeCount = %u;\n", PolyCount*3);
 	output.WriteString(tmpStr);
-	tmpStr.Format("static FLOAT Globe%sNodes[] = {\n", Suffix);
+	tmpStr.Format("static FLOAT GlobeNodes[] = {\n");
 	output.WriteString(tmpStr);
 	for (UINT a=0; a<PolyCount; a++)
 	{
@@ -162,8 +162,7 @@ INT _tmain(INT /*argc*/, TCHAR* /*argv[]*/, TCHAR* /*envp[]*/)
 	path = szPathName;
 
 	// Konvertieren
-	ConvertFile("High");
-	ConvertFile("Low");
+	ConvertFile();
 
 	return 0;
 }

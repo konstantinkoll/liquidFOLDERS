@@ -1,5 +1,5 @@
-static UINT GlobeHighCount = 18252;
-static FLOAT GlobeHighNodes[] = {
+static UINT GlobeCount = 18252;
+static FLOAT GlobeNodes[] = {
 	0.249900f, 0.500000f, 0.000000f, -1.003577f, 0.000000f,
 	0.256654f, 0.492205f, 0.042561f, -1.002373f, -0.024573f,
 	0.249900f, 0.515594f, 0.000000f, -1.002373f, 0.049147f,

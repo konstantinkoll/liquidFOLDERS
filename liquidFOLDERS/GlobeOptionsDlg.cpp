@@ -25,7 +25,6 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXTURESIZE, m_wndTextureSize);
 	DDX_Control(pDX, IDC_VIEWPORT, m_wndViewport);
 
-	DDX_Check(pDX, IDC_HQMODEL, theApp.m_GlobeHQModel);
 	DDX_Check(pDX, IDC_LIGHTING, theApp.m_GlobeLighting);
 	DDX_Check(pDX, IDC_ATMOSPHERE, theApp.m_GlobeAtmosphere);
 	DDX_Check(pDX, IDC_SPOTS, p_View->GlobeShowSpots);

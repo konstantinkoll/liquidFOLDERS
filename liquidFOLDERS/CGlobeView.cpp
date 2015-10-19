@@ -200,11 +200,8 @@ void CGlobeView::SetViewOptions(BOOL Force)
 
 	PrepareTexture();
 
-	if (Force || (m_IsHQModel!=theApp.m_GlobeHQModel))
-	{
+	if (Force)
 		PrepareModel();
-		m_IsHQModel = theApp.m_GlobeHQModel;
-	}
 }
 
 void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
@@ -308,26 +305,26 @@ BOOL CGlobeView::CursorOnGlobe(CPoint point)
 
 void CGlobeView::UpdateCursor()
 {
-	LPCTSTR csr;
+	LPCTSTR Cursor;
 	if (m_Grabbed)
 	{
-		csr = IDC_HAND;
+		Cursor = IDC_HAND;
 	}
 	else
 	{
-		csr = IDC_ARROW;
+		Cursor = IDC_ARROW;
 
 		if (CursorOnGlobe(m_CursorPos))
 			if (ItemAtPosition(m_CursorPos)==-1)
-				csr = IDC_HAND;
+				Cursor = IDC_HAND;
 	}
 
-	if (csr!=lpszCursorName)
+	if (Cursor!=lpszCursorName)
 	{
-		hCursor = theApp.LoadStandardCursor(csr);
+		hCursor = theApp.LoadStandardCursor(Cursor);
 
 		SetCursor(hCursor);
-		lpszCursorName = csr;
+		lpszCursorName = Cursor;
 	}
 }
 
@@ -338,10 +335,8 @@ void CGlobeView::UpdateCursor()
 __forceinline void CGlobeView::PrepareModel()
 {
 	// 3D-Modelle einbinden
-	#include "Globe_Low.h"
-	#include "Globe_High.h"
-	UINT Count = (theApp.m_GlobeHQModel ? GlobeHighCount : GlobeLowCount);
-	GLfloat* Nodes = (theApp.m_GlobeHQModel ? &GlobeHighNodes[0] : &GlobeLowNodes[0]);
+	#include "Globe.h"
+	GLfloat* pNodes = GlobeNodes;
 
 	// Display-Liste für das 3D-Modell erstellen
 	m_LockUpdate = TRUE;
@@ -355,15 +350,15 @@ __forceinline void CGlobeView::PrepareModel()
 	glBegin(GL_TRIANGLES);
 
 	UINT Pos = 0;
-	for (UINT a=0; a<Count; a++)
+	for (UINT a=0; a<GlobeCount; a++)
 	{
-		GLfloat s = Nodes[Pos++];
-		GLfloat t = Nodes[Pos++];
+		GLfloat s = pNodes[Pos++];
+		GLfloat t = pNodes[Pos++];
 		glTexCoord2f(s, t);
 
-		GLfloat x = Nodes[Pos++];
-		GLfloat y = Nodes[Pos++];
-		GLfloat z = Nodes[Pos++];
+		GLfloat x = pNodes[Pos++];
+		GLfloat y = pNodes[Pos++];
+		GLfloat z = pNodes[Pos++];
 		glNormal3f(x, y, z);
 		glVertex3f(x, y, z);
 	}

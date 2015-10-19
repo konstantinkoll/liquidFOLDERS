@@ -49,7 +49,6 @@ public:
 	UINT m_InspectorWidth;
 
 	BOOL m_CalendarShowCaptions;
-	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
 	BOOL m_GlobeShowViewport;

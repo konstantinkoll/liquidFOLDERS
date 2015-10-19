@@ -981,19 +981,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Globe_High.3ds"
+			RelativePath=".\Globe.3ds"
 			>
 		</File>
 		<File
-			RelativePath=".\Globe_High.asc"
-			>
-		</File>
-		<File
-			RelativePath=".\Globe_Low.3ds"
-			>
-		</File>
-		<File
-			RelativePath=".\Globe_Low.asc"
+			RelativePath=".\Globe.asc"
 			>
 		</File>
 		<File
