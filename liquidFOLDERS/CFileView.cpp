@@ -1012,7 +1012,7 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 			LFAttributeToString(i, LFAttrDimension, tmpStr, 256);
 
 			WCHAR Resolution[256];
-			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)i->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)i->AttributeValues[LFAttrWidth]));
+			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)i->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)i->AttributeValues[LFAttrHeight]));
 
 			AppendTooltipString(LFAttrDimension, Hint, Resolution);
 		}
