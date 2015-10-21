@@ -176,6 +176,8 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 	// Timestamp maintenance
 	if (Scheduled || Repaired)
 	{
+		p_StoreDescriptor->Flags &= ~LFStoreFlagsError;
+
 		if (Repaired)
 			p_StoreDescriptor->IndexVersion = CURIDXVERSION;
 

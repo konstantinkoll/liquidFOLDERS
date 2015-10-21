@@ -545,6 +545,9 @@ struct LFItemDescriptor
 #define LFStoreModeBackendShift          24
 #define LFStoreModeBackendMask           0xFF000000
 
+#define LFStoreFlagsAutoLocation         1
+#define LFStoreFlagsError                2
+
 struct LFStoreDescriptor
 {
 	CHAR StoreID[LFKeySize];
@@ -553,7 +556,7 @@ struct LFStoreDescriptor
 	WCHAR Comments[256];
 	UINT Mode;
 	GUID UniqueID;
-	UINT Reserved;
+	UINT Flags;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	FILETIME MaintenanceTime;
@@ -565,7 +568,6 @@ struct LFStoreDescriptor
 	UINT Source;								// Volatile
 	UINT FileCount[32];							// Volatile
 	INT64 FileSize[32];							// Volatile
-	BOOL AutoLocation;							// Volatile
 };
 
 

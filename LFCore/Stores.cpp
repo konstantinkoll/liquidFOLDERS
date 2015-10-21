@@ -191,7 +191,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 	else
 	{
 		// Get automatic data path
-		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && pStoreDescriptor->AutoLocation)
+		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (pStoreDescriptor->Flags & LFStoreFlagsAutoLocation))
 			GetAutoPath(pStoreDescriptor, pStoreDescriptor->DatPath);
 
 		// Main index
@@ -273,9 +273,11 @@ BOOL LoadStoreSettingsFromRegistry(CHAR* pStoreID, LFStoreDescriptor* pStoreDesc
 		Size = sizeof(pStoreDescriptor->SynchronizeTime);
 		RegQueryValueEx(hKey, L"SynchronizeTime", 0, NULL, (BYTE*)&pStoreDescriptor->SynchronizeTime, &Size);
 
-		Size = sizeof(pStoreDescriptor->AutoLocation);
-		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&pStoreDescriptor->AutoLocation, &Size)!=ERROR_SUCCESS)
+		Size = sizeof(pStoreDescriptor->Flags);
+		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&pStoreDescriptor->Flags, &Size)!=ERROR_SUCCESS)
 			Result = FALSE;
+
+		pStoreDescriptor->Flags &= LFStoreFlagsAutoLocation;
 
 		Size = sizeof(pStoreDescriptor->IndexVersion);
 		if (RegQueryValueEx(hKey, L"IndexVersion", 0, NULL, (BYTE*)&pStoreDescriptor->IndexVersion, &Size)!=ERROR_SUCCESS)
@@ -286,7 +288,7 @@ BOOL LoadStoreSettingsFromRegistry(CHAR* pStoreID, LFStoreDescriptor* pStoreDesc
 		case LFStoreModeIndexInternal:
 			Size = sizeof(pStoreDescriptor->DatPath);
 			if (RegQueryValueEx(hKey, L"Path", 0, NULL, (BYTE*)pStoreDescriptor->DatPath, &Size)!=ERROR_SUCCESS)
-				Result &= pStoreDescriptor->AutoLocation;
+				Result &= ((pStoreDescriptor->Flags & LFStoreFlagsAutoLocation)!=0);
 
 			break;
 
@@ -344,7 +346,7 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* pStoreDescriptor)
 		if (RegSetValueEx(hKey, L"SynchronizeTime", 0, REG_BINARY, (BYTE*)&pStoreDescriptor->SynchronizeTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		if (RegSetValueEx(hKey, L"AutoLocation", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->AutoLocation, sizeof(UINT))!=ERROR_SUCCESS)
+		if (RegSetValueEx(hKey, L"AutoLocation", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->Flags, sizeof(UINT))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
 		if (RegSetValueEx(hKey, L"IndexVersion", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
@@ -353,7 +355,7 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* pStoreDescriptor)
 		switch(pStoreDescriptor->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexInternal:
-			if (!pStoreDescriptor->AutoLocation)
+			if ((pStoreDescriptor->Flags & LFStoreFlagsAutoLocation)==0)
 				if (RegSetValueEx(hKey, L"Path", 0, REG_SZ, (BYTE*)pStoreDescriptor->DatPath, (DWORD)wcslen(pStoreDescriptor->DatPath)*sizeof(WCHAR))!=ERROR_SUCCESS)
 					Result = LFRegistryError;
 
@@ -894,8 +896,8 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 			ReleaseMutexForStores();
 		}
 
-		// Wrong index version?
-		if (pStoreDescriptor->IndexVersion<CURIDXVERSION)
+		// Error?
+		if (pStoreDescriptor->Flags & LFStoreFlagsError)
 			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeError;
 
 		// Mounted?
@@ -941,7 +943,7 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, 
 	}
 	else
 	{
-		Store.AutoLocation = TRUE;
+		Store.Flags |= LFStoreFlagsAutoLocation;
 	}
 
 	return CommitInitializeStore(&Store);

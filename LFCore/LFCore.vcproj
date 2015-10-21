@@ -754,6 +754,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\OVR_Error_DE.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\OVR_Error_EN.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\OVR_Error_ES.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\OVR_Error_FR.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\OVR_New_DE.ico"
 				>
 			</File>

@@ -127,10 +127,10 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 							f.WriteString(tmpStr);
 
 							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), Store.AutoLocation);
+							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), Store.Flags & LFStoreFlagsAutoLocation);
 							f.WriteString(tmpStr);
 
-							if (!Store.AutoLocation)
+							if ((Store.Flags & LFStoreFlagsAutoLocation)==0)
 							{
 								// Path
 								tmpStr = Store.DatPath;

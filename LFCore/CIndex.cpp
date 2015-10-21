@@ -189,13 +189,21 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 			break;
 
 		case HeapNoAccess:
+			p_StoreDescriptor->Flags |= LFStoreFlagsError;
 			return LFIndexAccessError;
 
 		case HeapError:
+			p_StoreDescriptor->Flags |= LFStoreFlagsError;
 			return LFIndexRepairError;
 
 		case HeapCannotCreate:
-			return Writeable ? LFIndexCreateError : LFDriveWriteProtected;
+			if (Writeable)
+			{
+				p_StoreDescriptor->Flags |= LFStoreFlagsError;
+				return LFIndexCreateError;
+			}
+
+			return LFDriveWriteProtected;
 		}
 
 		// Max. record size for one file

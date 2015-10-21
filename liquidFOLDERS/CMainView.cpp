@@ -1218,10 +1218,17 @@ void CMainView::OnStoresMaintainAll()
 
 void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_CookedFiles) && (m_Context==LFContextStores);
+	BOOL b = (p_CookedFiles!=NULL);
 
-	if (pCmdUI->m_nID==IDM_STORES_REPAIRCORRUPTEDINDEX)
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_STORES_REPAIRCORRUPTEDINDEX:
 		b &= (LFGetStoreCount()>0);
+		break;
+
+	default:
+		b &= (m_Context==LFContextStores);
+	}
 
 	pCmdUI->Enable(b);
 }
