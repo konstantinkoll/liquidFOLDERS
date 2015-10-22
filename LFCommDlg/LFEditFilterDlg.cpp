@@ -190,7 +190,7 @@ BOOL LFEditFilterDlg::OnInitDialog()
 			m_Conditions.AddItem(*pFilterCondition);
 			m_wndConditionList.InsertItem(pFilterCondition);
 
-			pFilterCondition = pFilterCondition->Next;
+			pFilterCondition = pFilterCondition->pNext;
 		}
 	}
 

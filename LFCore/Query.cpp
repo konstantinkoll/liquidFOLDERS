@@ -417,7 +417,7 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 				if (!CheckCondition((BYTE*)pTableData+pTable->pTableEntries[a].Offset, pFilterCondition))
 					return FALSE;
 
-		pFilterCondition = pFilterCondition->Next;
+		pFilterCondition = pFilterCondition->pNext;
 	}
 
 	// Searchterm
@@ -489,7 +489,7 @@ BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter)
 			break;
 		}
 
-		pFilterCondition = pFilterCondition->Next;
+		pFilterCondition = pFilterCondition->pNext;
 	}
 
 	return TRUE;

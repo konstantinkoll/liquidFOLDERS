@@ -392,7 +392,7 @@ struct LFFilterOptions
 
 struct LFFilterCondition
 {
-	LFFilterCondition* Next;
+	LFFilterCondition* pNext;
 	LFVariantData AttrData;					// Never use for LFAttrDesciption or LFAttrStoreID
 	BYTE Compare;
 };

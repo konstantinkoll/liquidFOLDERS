@@ -24,7 +24,7 @@ LFCORE_API LFFilter* LFAllocFilter(LFFilter* pFilter)
 		{
 			pNewFilter->ConditionList = LFAllocFilterCondition(pFilterCondition->Compare, pFilterCondition->AttrData, pNewFilter->ConditionList);
 
-			pFilterCondition = pFilterCondition->Next;
+			pFilterCondition = pFilterCondition->pNext;
 		}
 	}
 	else
@@ -43,7 +43,7 @@ LFCORE_API void LFFreeFilter(LFFilter* pFilter)
 		while (pFilterCondition)
 		{
 			LFFilterCondition* pVictim = pFilterCondition;
-			pFilterCondition = pFilterCondition->Next;
+			pFilterCondition = pFilterCondition->pNext;
 
 			LFFreeFilterCondition(pVictim);
 		}
@@ -152,7 +152,7 @@ LFCORE_API LFFilterCondition* LFAllocFilterCondition(BYTE Compare, LFVariantData
 {
 	LFFilterCondition* pFilterCondition = new LFFilterCondition;
 
-	pFilterCondition->Next = pNext;
+	pFilterCondition->pNext = pNext;
 	pFilterCondition->AttrData = v;
 	pFilterCondition->Compare = Compare;
 
@@ -163,7 +163,7 @@ LFCORE_API LFFilterCondition* LFAllocFilterConditionEx(BYTE Compare, UINT Attr, 
 {
 	LFFilterCondition* pFilterCondition = new LFFilterCondition;
 
-	pFilterCondition->Next = pNext;
+	pFilterCondition->pNext = pNext;
 	pFilterCondition->AttrData.Attr = Attr;
 	pFilterCondition->AttrData.Type = (Attr<LFAttributeCount) ? AttrTypes[Attr] : LFTypeUnicodeString;
 	pFilterCondition->AttrData.IsNull = FALSE;
@@ -219,7 +219,7 @@ LFFilter* LoadFilter(WCHAR* pFilename, CHAR* StoreID)
 
 		LFFilterCondition* pFilterCondition = new LFFilterCondition;
 		memcpy_s(pFilterCondition, sizeof(LFFilterCondition), &Condition, sizeof(Condition));
-		pFilterCondition->Next = pFilter->ConditionList;
+		pFilterCondition->pNext = pFilter->ConditionList;
 
 		pFilter->ConditionList = pFilterCondition;
 	}
@@ -252,7 +252,7 @@ BOOL StoreFilter(WCHAR* pFilename, LFFilter* pFilter)
 	{
 		Header.cConditions++;
 
-		pFilterCondition = pFilterCondition->Next;
+		pFilterCondition = pFilterCondition->pNext;
 	}
 
 	BOOL Result = FALSE;
@@ -269,7 +269,7 @@ BOOL StoreFilter(WCHAR* pFilename, LFFilter* pFilter)
 				if (!WriteFile(hFile, pFilterCondition, sizeof(LFFilterCondition), &Written, NULL))
 					break;
 
-				pFilterCondition = pFilterCondition->Next;
+				pFilterCondition = pFilterCondition->pNext;
 			}
 
 			Result = TRUE;

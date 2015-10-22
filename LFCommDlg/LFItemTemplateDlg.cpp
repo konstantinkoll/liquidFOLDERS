@@ -55,20 +55,20 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* pStoreID, CW
 
 	if (pFilter)
 	{
-		LFFilterCondition* pCondition = pFilter->ConditionList;
-		while (pCondition)
+		LFFilterCondition* pFilterCondition = pFilter->ConditionList;
+		while (pFilterCondition)
 		{
-			if (pCondition->Compare==LFFilterCompareSubfolder)
+			if (pFilterCondition->Compare==LFFilterCompareSubfolder)
 			{
-				UINT Attr = pCondition->AttrData.Attr;
+				UINT Attr = pFilterCondition->AttrData.Attr;
 				if ((!LFGetApp()->m_Attributes[Attr].ReadOnly) && (Attr!=LFAttrFileName))
 				{
-					ASSERT(m_AttributeValues[Attr].Type==pCondition->AttrData.Type);
-					m_AttributeValues[Attr] = pCondition->AttrData;
+					ASSERT(m_AttributeValues[Attr].Type==pFilterCondition->AttrData.Type);
+					m_AttributeValues[Attr] = pFilterCondition->AttrData;
 				}
 			}
 
-			pCondition = pCondition->Next;
+			pFilterCondition = pFilterCondition->pNext;
 		}
 	}
 

@@ -102,7 +102,7 @@ void CGlassPane::OnNcPaint()
 		dc.FillSolidRect(0, 1, GRIPPER, 1, 0xF3F3F3);
 
 		ASSERT(GRIPPER==4);
-		BYTE Colors[] = { 0xF8, 0xC0, 0xE0, 0xF0 };
+		BYTE Colors[] = { 0xF8, 0xB8, 0xD8, 0xF0 };
 		INT Line = rectWindow.Height()*3/5;
 
 		Graphics g(dc);
