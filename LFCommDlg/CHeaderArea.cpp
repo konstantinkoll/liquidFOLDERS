@@ -211,10 +211,10 @@ void CHeaderArea::OnPaint()
 			if (m_Shadow)
 			{
 				SolidBrush brush1(Color(0x18, 0x00, 0x00, 0x00));
-				g.FillRectangle(&brush1, 1, 0, rect.Width()-1, 1);
+				g.FillRectangle(&brush1, 0, 0, rect.Width(), 1);
 
 				SolidBrush brush2(Color(0x0C, 0x00, 0x00, 0x00));
-				g.FillRectangle(&brush2, 2, 1, rect.Width()-2, 1);
+				g.FillRectangle(&brush2, 0, 1, rect.Width(), 1);
 			}
 		}
 		else
