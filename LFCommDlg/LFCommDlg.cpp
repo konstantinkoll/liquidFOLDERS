@@ -572,6 +572,25 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 	dc.SetTextColor(Themed ? Disabled ? 0xA0A0A0 : Focused || Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT));
 }
 
+void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected, BOOL ShowKeyboardCues)
+{
+	CRect rect(lpDrawItemStruct->rcItem);
+	rect.DeflateRect(2, 2);
+	if (Selected)
+		rect.OffsetRect(1, 1);
+
+	WCHAR Caption[256];
+	::GetWindowText(lpDrawItemStruct->hwndItem, Caption, 256);
+
+	UINT nFormat = DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_END_ELLIPSIS;
+	if (!ShowKeyboardCues)
+		nFormat |= DT_HIDEPREFIX;
+
+	HFONT hOldFont = (HFONT)dc.SelectObject((HFONT)::SendMessage(lpDrawItemStruct->hwndItem, WM_GETFONT, NULL, NULL));
+	dc.DrawText(Caption, rect, nFormat);
+	dc.SelectObject(hOldFont);
+}
+
 
 void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
 {

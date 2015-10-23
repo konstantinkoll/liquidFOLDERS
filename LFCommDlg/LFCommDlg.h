@@ -23,6 +23,7 @@
 #include "CTaskbar.h"
 #include "CTaskButton.h"
 #include "CTooltipHeader.h"
+#include "CWhiteButton.h"
 #include "LFAboutDlg.h"
 #include "LFAddStoreDlg.h"
 #include "LFApplication.h"
@@ -71,6 +72,7 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover);
 void DrawWhiteButtonBorder(Graphics& g, CRect rect, BOOL IncludeBottom=TRUE);
 void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled=FALSE, BOOL DrawBorder=FALSE);
+void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected, BOOL ShowKeyboardCues=FALSE);
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
 

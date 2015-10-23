@@ -188,7 +188,7 @@ INT CExplorerNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CRect rect;
 	rect.SetRectEmpty();
-	if (!m_CommandButton.Create(_T(""), WS_CHILD | WS_DISABLED | WS_GROUP | WS_TABSTOP, rect, this, 1))
+	if (!m_CommandButton.Create(_T(""), WS_CHILD | WS_DISABLED | WS_GROUP | WS_TABSTOP | BS_OWNERDRAW, rect, this, 1))
 		return -1;
 
 	m_CommandButton.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));

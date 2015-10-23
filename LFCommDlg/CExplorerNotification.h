@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CWhiteButton.h"
 
 
 // CExplorerNotification
@@ -53,7 +54,7 @@ private:
 	CRect m_RectClose;
 	BOOL m_CloseHover;
 	BOOL m_ClosePressed;
-	CButton m_CommandButton;
+	CWhiteButton m_CommandButton;
 	CString m_CommandText;
 	UINT m_Command;
 	UINT m_RightMargin;

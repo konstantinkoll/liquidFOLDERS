@@ -236,21 +236,7 @@ void LFDialog::Invalidate(BOOL bErase)
 
 void LFDialog::DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected)
 {
-	CRect rect(lpDrawItemStruct->rcItem);
-	rect.DeflateRect(2, 2);
-	if (Selected)
-		rect.OffsetRect(1, 1);
-
-	WCHAR Caption[256];
-	::GetWindowText(lpDrawItemStruct->hwndItem, Caption, 256);
-
-	UINT nFormat = DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_END_ELLIPSIS;
-	if (!m_ShowKeyboardCues)
-		nFormat |= DT_HIDEPREFIX;
-
-	CFont* pOldFont = dc.SelectObject(GetFont());
-	dc.DrawText(Caption, rect, nFormat);
-	dc.SelectObject(pOldFont);
+	DrawWhiteButtonForeground(dc, lpDrawItemStruct, Selected, m_ShowKeyboardCues);
 }
 
 void LFDialog::DrawButton(LPDRAWITEMSTRUCT lpDrawItemStruct)
