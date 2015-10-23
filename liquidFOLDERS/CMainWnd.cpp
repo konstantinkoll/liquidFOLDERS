@@ -659,7 +659,7 @@ void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 }
 
 
-// Pane coommands
+// Pane commands
 
 void CMainWnd::OnToggleFilterPane()
 {
