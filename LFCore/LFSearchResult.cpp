@@ -101,43 +101,30 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 // LFSearchResult
 //
 
-LFSearchResult::LFSearchResult(BYTE Context)
+LFSearchResult::LFSearchResult()
 	: LFDynArray()
+{
+	m_QueryTime = 0;
+	m_Context = LFContextAllFiles;
+	m_GroupAttribute = LFAttrFileName;
+
+	m_RawCopy = TRUE;
+	m_HasCategories = FALSE;
+
+	m_FileCount = m_StoreCount = 0;
+	m_FileSize = 0;
+
+	m_AutoContext = LFContextAuto;
+}
+
+LFSearchResult::LFSearchResult(BYTE Context)
 {
 	assert(Context<LFContextCount);
 
+	LFSearchResult();
+
 	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+Context, m_Name, 256, m_Hint, 256);
-	m_QueryTime = 0;
 	m_Context = Context;
-	m_GroupAttribute = LFAttrFileName;
-
-	m_RawCopy = TRUE;
-	m_HasCategories = FALSE;
-
-	m_FileCount = m_StoreCount = 0;
-	m_FileSize = 0;
-}
-
-LFSearchResult::LFSearchResult(LFFilter* pFilter)
-{
-	m_QueryTime = 0;
-
-	m_RawCopy = TRUE;
-	m_GroupAttribute = LFAttrFileName;
-	m_HasCategories = FALSE;
-
-	m_FileCount = m_StoreCount = 0;
-	m_FileSize = 0;
-
-	if (pFilter)
-	{
-		SetMetadataFromFilter(pFilter);
-	}
-	else
-	{
-		LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+LFContextStores, m_Name, 256, m_Hint, 256);
-		m_Context = LFContextStores;
-	}
 }
 
 LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
@@ -159,6 +146,8 @@ LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
 	m_StoreCount = pSearchResult->m_StoreCount;
 	m_FileCount = pSearchResult->m_FileCount;
 	m_FileSize = pSearchResult->m_FileSize;
+
+	m_AutoContext = pSearchResult->m_AutoContext;
 
 	if (pSearchResult->m_ItemCount)
 	{
@@ -183,9 +172,15 @@ LFSearchResult::~LFSearchResult()
 			LFFreeItemDescriptor(m_Items[a]);
 }
 
-void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
+void LFSearchResult::FinishQuery(LFFilter* pFilter)
 {
-	assert(pFilter);
+	if (!pFilter)
+	{
+		LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+LFContextStores, m_Name, 256, m_Hint, 256);
+		m_Context = LFContextStores;
+
+		return;
+	}
 
 	if (pFilter->Options.IsSubfolder)
 	{
@@ -217,11 +212,11 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* pFilter)
 			break;
 
 		case LFFilterModeDirectoryTree:
-			m_Context = pFilter->ContextID;
+			m_Context = (pFilter->QueryContext==LFContextAuto) ? (m_AutoContext==LFContextAuto) ? LFContextAllFiles : m_AutoContext : pFilter->QueryContext;
 			break;
 
 		case LFFilterModeSearch:
-			m_Context = (pFilter->Options.IsPersistent || (pFilter->Searchterm[0]!=L'\0') || (pFilter->ConditionList!=NULL)) ? LFContextSearch : pFilter->ContextID;
+			m_Context = (pFilter->Options.IsPersistent || (pFilter->Searchterm[0]!=L'\0') || (pFilter->ConditionList!=NULL)) ? LFContextSearch : pFilter->QueryContext;
 			break;
 		}
 
@@ -271,6 +266,19 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 		if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
 			pItemDescriptor->IconID = IDI_FLD_ALL;
 
+		switch (m_AutoContext)
+		{
+		case LFContextAuto:
+			m_AutoContext = pItemDescriptor->CoreAttributes.ContextID;
+
+		case LFContextAllFiles:
+			break;
+
+		default:
+			if (m_AutoContext!=pItemDescriptor->CoreAttributes.ContextID)
+				m_AutoContext = LFContextAllFiles;
+		}
+
 		m_FileCount++;
 		m_FileSize += pItemDescriptor->CoreAttributes.FileSize;
 		break;
@@ -283,20 +291,22 @@ BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreDescriptor);
 
-	LFItemDescriptor* pItemDesciptor = LFAllocItemDescriptorEx(pStoreDescriptor);
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
 
-	if (AddItem(pItemDesciptor))
+	if (AddItem(pItemDescriptor))
 	{
-		pItemDesciptor->NextFilter = LFAllocFilter();
+		pItemDescriptor->NextFilter = LFAllocFilter();
 
-		pItemDesciptor->NextFilter->Mode = LFFilterModeDirectoryTree;
-		strcpy_s(pItemDesciptor->NextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
-		wcscpy_s(pItemDesciptor->NextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
+		pItemDescriptor->NextFilter->Mode = LFFilterModeDirectoryTree;
+		pItemDescriptor->NextFilter->QueryContext = LFContextAuto;
+
+		strcpy_s(pItemDescriptor->NextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
+		wcscpy_s(pItemDescriptor->NextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
 
 		return TRUE;
 	}
 
-	LFFreeItemDescriptor(pItemDesciptor);
+	LFFreeItemDescriptor(pItemDescriptor);
 
 	return FALSE;
 }

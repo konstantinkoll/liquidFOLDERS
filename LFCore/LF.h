@@ -167,6 +167,8 @@ struct LFItemCategoryDescriptor
 #define LFLastQueryContext             12
 #define LFContextCount                 19
 
+#define LFContextAuto                  0xFF	// Internal use only
+
 
 // Attributes
 
@@ -406,7 +408,7 @@ struct LFFilter
 	LFFilterOptions Options;
 
 	CHAR StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
-	BYTE ContextID;							// For LFFilterModeDirectoryTree and above
+	BYTE QueryContext;						// For LFFilterModeDirectoryTree and above
 	WCHAR Searchterm[256];					// For LFFilterModeDirectoryTree and above
 	LFFilterCondition* ConditionList;		// For LFFilterModeDirectoryTree and above
 };

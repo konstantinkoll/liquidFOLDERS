@@ -7,12 +7,12 @@
 class LFSearchResult : public LFDynArray<LFItemDescriptor*>
 {
 public:
+	LFSearchResult();
 	LFSearchResult(BYTE Context);
-	LFSearchResult(LFFilter* pFilter);
 	LFSearchResult(LFSearchResult* pSearchResult);
 	~LFSearchResult();
 
-	void SetMetadataFromFilter(LFFilter* pFilter);
+	void FinishQuery(LFFilter* pFilter);
 	BOOL AddItem(LFItemDescriptor* pItemDescriptor);
 	BOOL AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor);
 	void RemoveItem(UINT Index, BOOL UpdateCount=TRUE);
@@ -34,6 +34,9 @@ public:
 	UINT m_StoreCount;
 	UINT m_FileCount;
 	INT64 m_FileSize;
+
+protected:
+	BYTE m_AutoContext;
 
 private:
 	INT Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Attr, BOOL Descending);

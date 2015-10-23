@@ -607,7 +607,7 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 FilterFromScratch:
 		LFFilter* pFilter = LFAllocFilter();
 		pFilter->Mode = LFFilterModeSearch;
-		pFilter->ContextID = (BYTE)nID;
+		pFilter->QueryContext = (BYTE)nID;
 
 		NavigateTo(pFilter);
 	}
@@ -629,7 +629,7 @@ FilterFromScratch:
 				goto FilterFromScratch;
 
 			LFFilter* pFilter = LFAllocFilter(m_pActiveFilter);
-			pFilter->ContextID = (BYTE)nID;
+			pFilter->QueryContext = (BYTE)nID;
 			if (pFilter->StoreID[0]=='\0')
 				pFilter->OriginalName[0] = L'\0';
 

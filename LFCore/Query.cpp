@@ -361,16 +361,16 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 		const LFCoreAttributes* pCoreAttributes = (LFCoreAttributes*)pTableData;
 
 		// Only show trashed files when filter queries trashcan
-		if ((pCoreAttributes->Flags & LFFlagTrash) && (pFilter->ContextID!=LFContextTrash))
+		if ((pCoreAttributes->Flags & LFFlagTrash) && (pFilter->QueryContext!=LFContextTrash))
 			return FALSE;
 
 		// Only show archived files when filter queries archive
-		if ((pCoreAttributes->Flags & LFFlagArchive) && (pFilter->ContextID!=LFContextArchive) &&
-			(((pCoreAttributes->Flags & LFFlagTrash)==0) || (pFilter->ContextID!=LFContextTrash)))
+		if ((pCoreAttributes->Flags & LFFlagArchive) && (pFilter->QueryContext!=LFContextArchive) &&
+			(((pCoreAttributes->Flags & LFFlagTrash)==0) || (pFilter->QueryContext!=LFContextTrash)))
 			return FALSE;
 
-		if ((pFilter->ContextID) || (pCoreAttributes->ContextID==LFContextFilters))
-			switch(pFilter->ContextID)
+		if (((pFilter->QueryContext!=LFContextAllFiles) && (pFilter->QueryContext!=LFContextAuto)) || (pCoreAttributes->ContextID==LFContextFilters))
+			switch(pFilter->QueryContext)
 			{
 			case LFContextFavorites:
 				if (!pCoreAttributes->Rating)
@@ -401,7 +401,7 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 					return FALSE;
 
 			default:
-				if (pFilter->ContextID!=pCoreAttributes->ContextID)
+				if (pFilter->QueryContext!=pCoreAttributes->ContextID)
 					return FALSE;
 			}
 	}
@@ -551,7 +551,7 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 {
 	DWORD Start = GetTickCount();
 
-	LFSearchResult* pSearchResult = new LFSearchResult(pFilter);
+	LFSearchResult* pSearchResult = new LFSearchResult();
 
 	if (!pFilter)
 	{
@@ -587,6 +587,7 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 	}
 
 Finish:
+	pSearchResult->FinishQuery(pFilter);
 	pSearchResult->m_QueryTime = GetTickCount()-Start;
 
 	return pSearchResult;
@@ -601,7 +602,7 @@ LFCORE_API LFSearchResult* LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchR
 	{
 		pSearchResult->m_LastError = LFOk;
 		pSearchResult->KeepRange(First, Last);
-		pSearchResult->SetMetadataFromFilter(pFilter);
+		pSearchResult->FinishQuery(pFilter);
 	}
 	else
 	{
