@@ -511,7 +511,7 @@ void CSidebar::OnPaint()
 						}
 						else
 						{
-							dc.FillSolidRect(rectNumber, 0x0000FF);
+							dc.FillSolidRect(rectNumber, clr);
 							dc.Draw3dRect(rectNumber, 0xFFFFFF, 0xFFFFFF);
 						}
 

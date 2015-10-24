@@ -975,9 +975,9 @@ LFCORE_API void LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, U
 LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& Value)
 {
 	assert(pItemDescriptor);
-	assert(pValue.Attr<LFAttributeCount);
-	assert(pValue.Type==AttrTypes[pValue.Attr]);
-	assert(pValue.Type<LFTypeCount);
+	assert(Value.Attr<LFAttributeCount);
+	assert(Value.Type==AttrTypes[Value.Attr]);
+	assert(Value.Type<LFTypeCount);
 
 	// Flags can only be managed by the system
 	if (Value.Type!=LFTypeFlags)

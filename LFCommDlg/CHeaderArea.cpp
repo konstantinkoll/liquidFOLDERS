@@ -121,16 +121,16 @@ void CHeaderArea::AdjustLayout()
 	GetClientRect(rect);
 
 	m_RightEdge = rect.right;
-	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN/2)/2-1);
+	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN/2)/2);
 
 	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
 	{
-		CHeaderButton* btn = m_Buttons.GetNext(p);
+		CHeaderButton* pHeaderButton = m_Buttons.GetNext(p);
 
 		CSize sz;
 		UINT CaptionWidth;
-		btn->GetPreferredSize(sz, CaptionWidth);
-		btn->SetWindowPos(NULL, rect.right-sz.cx-BORDERLEFT, Row, sz.cx, sz.cy, SWP_NOZORDER | SWP_NOACTIVATE);
+		pHeaderButton->GetPreferredSize(sz, CaptionWidth);
+		pHeaderButton->SetWindowPos(NULL, rect.right-sz.cx-BORDERLEFT, Row, sz.cx, sz.cy, SWP_NOZORDER | SWP_NOACTIVATE);
 
 		m_RightEdge = min(m_RightEdge, rect.right-sz.cx-(INT)CaptionWidth-BORDER-BORDERLEFT-MARGIN);
 
@@ -228,25 +228,7 @@ void CHeaderArea::OnPaint()
 			dc.FillSolidRect(rectFill, GetSysColor(COLOR_3DFACE));
 		}
 
-		dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
-
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_CaptionFont);
-		CSize sz = dc.GetTextExtent(m_Caption);
-		CRect rectText(BORDERLEFT, BORDER, m_RightEdge, BORDER+sz.cy);
-		dc.DrawText(m_Caption, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		if (Themed)
-		{
-			dc.SelectObject(&LFGetApp()->m_DefaultFont);
-		}
-		else
-		{
-			dc.SelectStockObject(DEFAULT_GUI_FONT);
-		}
-
-		sz = dc.GetTextExtent(m_Hint);
-		rectText.SetRect(BORDERLEFT, rect.bottom-sz.cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
-		dc.DrawText(m_Hint, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? LFGetApp()->m_DefaultFont.m_hObject : (HFONT)GetStockObject(DEFAULT_GUI_FONT));
 
 		dc.SetTextColor(Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
 
@@ -266,7 +248,19 @@ void CHeaderArea::OnPaint()
 			dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
 
-		dc.SelectObject(pOldFont);
+		if (m_RightEdge-BORDERLEFT>=32)
+		{
+			dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+
+			CRect rectText(BORDERLEFT, rect.bottom-dc.GetTextExtent(m_Hint).cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
+			dc.DrawText(m_Hint, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+			dc.SelectObject(&LFGetApp()->m_CaptionFont);
+			rectText.top = BORDER;
+			dc.DrawText(m_Caption, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		}
+
+		dc.SelectObject(hOldFont);
 
 		if (hBackgroundBrush)
 			DeleteObject(hBackgroundBrush);

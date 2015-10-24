@@ -14,6 +14,7 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 	if (RootStore)
 	{
 		strcpy_s(pFilter->StoreID, LFKeySize, RootStore);
+		pFilter->QueryContext = LFContextAuto;
 
 		LFStoreDescriptor Store;
 		if (LFGetStoreSettings(RootStore, &Store)==LFOk)

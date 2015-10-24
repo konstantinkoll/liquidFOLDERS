@@ -85,16 +85,19 @@ LRESULT CGlassPane::OnNcHitTest(CPoint point)
 
 void CGlassPane::OnNcPaint()
 {
-	CWindowDC dc(this);
+	CWindowDC pDC(this);
 
-	CRect rectClient;
-	GetClientRect(rectClient);
-	ClientToScreen(rectClient);
+	CRect rect;
+	GetWindowRect(&rect);
+	rect.OffsetRect(-rect.left, -rect.top);
 
-	CRect rectWindow;
-	GetWindowRect(&rectWindow);
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
 
-	rectWindow.OffsetRect(-rectWindow.left, -rectWindow.top);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	if (IsCtrlThemed())
 	{
@@ -103,7 +106,7 @@ void CGlassPane::OnNcPaint()
 
 		ASSERT(GRIPPER==4);
 		BYTE Colors[] = { 0x88, 0xC8, 0xE8, 0xF8 };
-		INT Line = rectWindow.Height()*2/5;
+		INT Line = rect.Height()*2/5;
 
 		Graphics g(dc);
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
@@ -115,14 +118,17 @@ void CGlassPane::OnNcPaint()
 			LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0xFF, 0xFF, 0xFF), Color(clr, clr, clr));
 			g.FillRectangle(&brush1, a, 2, 1, Line-2);
 
-			LinearGradientBrush brush2(Point(0, Line), Point(0, rectWindow.Height()), Color(clr, clr, clr), Color(0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush2, a, Line, 1, rectWindow.Height()-Line);
+			LinearGradientBrush brush2(Point(0, Line), Point(0, rect.Height()), Color(clr, clr, clr), Color(0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush2, a, Line, 1, rect.Height()-Line);
 		}
 	}
 	else
 	{
-		dc.FillSolidRect(rectWindow.left, rectWindow.top, GRIPPER, rectWindow.Height(), GetSysColor(COLOR_3DFACE));
+		dc.FillSolidRect(rect.left, rect.top, GRIPPER, rect.Height(), GetSysColor(COLOR_3DFACE));
 	}
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
 }
 
 BOOL CGlassPane::OnEraseBkgnd(CDC* pDC)
