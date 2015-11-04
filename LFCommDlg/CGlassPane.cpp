@@ -96,7 +96,7 @@ void CGlassPane::OnNcPaint()
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	MemBitmap.CreateCompatibleBitmap(&pDC, GRIPPER, rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	if (IsCtrlThemed())
@@ -127,7 +127,7 @@ void CGlassPane::OnNcPaint()
 		dc.FillSolidRect(rect.left, rect.top, GRIPPER, rect.Height(), GetSysColor(COLOR_3DFACE));
 	}
 
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	pDC.BitBlt(m_IsLeft ? rect.Width()-GRIPPER : 0, 0, GRIPPER, rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
 }
 
