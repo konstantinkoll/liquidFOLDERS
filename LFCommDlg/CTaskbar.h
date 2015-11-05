@@ -40,7 +40,6 @@ private:
 	INT m_IconSize;
 	CList<CTaskButton*> m_ButtonsLeft;
 	CList<CTaskButton*> m_ButtonsRight;
-	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;

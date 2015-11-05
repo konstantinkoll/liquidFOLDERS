@@ -198,39 +198,40 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 	CRect rect;
 	GetClientRect(rect);
 
-	CDC dc;
-	dc.CreateCompatibleDC(pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap* pOldBitmap;
 	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
 	{
 		m_BackBufferL = rect.Width();
 		m_BackBufferH = rect.Height();
 
-		m_BackBuffer.DeleteObject();
-		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		DeleteObject(hBackgroundBrush);
+
+		CDC dc;
+		dc.CreateCompatibleDC(pDC);
+		dc.SetBkMode(TRANSPARENT);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		if (IsCtrlThemed())
 		{
 			dc.FillSolidRect(0, 0, rect.Width(), rect.Height()-1, 0xFFFFFF);
 			dc.FillSolidRect(0, rect.bottom-1, rect.Width(), 1, 0x97908B);
 
-			const UINT line = (rect.Height()-2)*2/5;
+			const UINT Line = (rect.Height()-2)*2/5;
 
 			Graphics g(dc);
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-			LinearGradientBrush brush(Point(0, line), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
+			LinearGradientBrush brush(Point(0, Line), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
 
 			if (GetParent()->GetStyle() & WS_BORDER)
 			{
-				g.FillRectangle(&brush, 0, line, rect.right, rect.bottom-line-1);
+				g.FillRectangle(&brush, 0, Line, rect.right, rect.bottom-Line-1);
 			}
 			else
 			{
-				g.FillRectangle(&brush, 1, line, rect.right-2, rect.bottom-line-1);
+				g.FillRectangle(&brush, 1, Line, rect.right-2, rect.bottom-Line-1);
 			}
 		}
 		else
@@ -238,17 +239,11 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 		}
 
-		if (hBackgroundBrush)
-			DeleteObject(hBackgroundBrush);
+		dc.SelectObject(pOldBitmap);
 
-		hBackgroundBrush = CreatePatternBrush(m_BackBuffer);
-	}
-	else
-	{
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		hBackgroundBrush = CreatePatternBrush(MemBitmap);
 	}
 
-	dc.SelectObject(pOldBitmap);
 	return TRUE;
 }
 
