@@ -29,15 +29,15 @@ BOOL CreateGlobalMemory(const void* pSrc, SIZE_T sz, HGLOBAL& hDst)
 // LFStoreDataObject
 //
 
-LFStoreDataObject::LFStoreDataObject(LFItemDescriptor* i)
+LFStoreDataObject::LFStoreDataObject(LFItemDescriptor* pItemDescriptor)
 {
 	m_lRefCount = 1;
 	m_hDescriptor = m_hShellLink = NULL;
 
-	IShellLink* pShellLink = LFGetShortcutForStore(i);
+	IShellLink* pShellLink = LFGetShortcutForStore(pItemDescriptor);
 	if (pShellLink)
 	{
-		CreateGlobals(pShellLink, i->CoreAttributes.FileName);
+		CreateGlobals(pShellLink, pItemDescriptor->CoreAttributes.FileName);
 		pShellLink->Release();
 	}
 }

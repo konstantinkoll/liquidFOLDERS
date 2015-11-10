@@ -60,7 +60,7 @@ void CMapCtrl::SetMenu(UINT BackgroundMenuID, BOOL HighlightFirst)
 	m_HighlightFirst = HighlightFirst;
 }
 
-void CMapCtrl::LocationFromPoint(CPoint point, DOUBLE& Latitude, DOUBLE& Longitude)
+void CMapCtrl::LocationFromPoint(const CPoint& point, DOUBLE& Latitude, DOUBLE& Longitude) const
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -78,7 +78,7 @@ void CMapCtrl::LocationFromPoint(CPoint point, DOUBLE& Latitude, DOUBLE& Longitu
 		Longitude = 180.0;
 }
 
-void CMapCtrl::PointFromLocation(INT& PosX, INT& PosY)
+void CMapCtrl::PointFromLocation(INT& PosX, INT& PosY) const
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -87,7 +87,7 @@ void CMapCtrl::PointFromLocation(INT& PosX, INT& PosY)
 	PosY = (INT)(m_Location.Latitude+90)*rect.Height()/180;
 }
 
-void CMapCtrl::SetLocation(CPoint point)
+void CMapCtrl::SetLocation(const CPoint& point)
 {
 	LocationFromPoint(point, m_Location.Latitude, m_Location.Longitude);
 

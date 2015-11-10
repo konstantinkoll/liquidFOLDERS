@@ -4,20 +4,21 @@
 
 #include "stdafx.h"
 #include "liquidFOLDERS.h"
+#include "CContextSidebar.h"
 
 
-LFFilter* GetRootFilter(CHAR* RootStore=NULL)
+LFFilter* GetRootFilter(CHAR* pRootStore=NULL)
 {
 	LFFilter* pFilter = LFAllocFilter();
-	pFilter->Mode = RootStore ? LFFilterModeDirectoryTree : LFFilterModeStores;
+	pFilter->Mode = pRootStore ? LFFilterModeDirectoryTree : LFFilterModeStores;
 
-	if (RootStore)
+	if (pRootStore)
 	{
-		strcpy_s(pFilter->StoreID, LFKeySize, RootStore);
+		strcpy_s(pFilter->StoreID, LFKeySize, pRootStore);
 		pFilter->QueryContext = LFContextAuto;
 
 		LFStoreDescriptor Store;
-		if (LFGetStoreSettings(RootStore, &Store)==LFOk)
+		if (LFGetStoreSettings(pRootStore, &Store)==LFOk)
 			wcscpy_s(pFilter->OriginalName, 256, Store.StoreName);
 	}
 	else
@@ -28,17 +29,17 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 	return pFilter;
 }
 
-void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* i)
+void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor)
 {
 	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
 	{
-		LFVariantData v;
-		LFGetAttributeVariantDataEx(i, Attr, v);
+		LFVariantData Value;
+		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, Value);
 
-		if (!LFIsNullVariantData(v))
+		if (!LFIsNullVariantData(Value))
 		{
 			WCHAR tmpBuf[256];
-			LFVariantDataToString(v, tmpBuf, 256);
+			LFVariantDataToString(Value, tmpBuf, 256);
 
 			CString tmpStr(theApp.m_Attributes[Attr].Name);
 			tmpStr.Append(_T(": "));
@@ -50,10 +51,10 @@ void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* i)
 	}
 }
 
-void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* i)
+void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor)
 {
 	CString Type(_T("unknown"));
-	switch (i->Type & LFTypeMask)
+	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
 		Type = _T("store");
@@ -73,7 +74,7 @@ void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* i)
 	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
 	{
 		LFVariantData v;
-		LFGetAttributeVariantDataEx(i, Attr, v);
+		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, v);
 
 		if (!LFIsNullVariantData(v))
 		{
@@ -95,11 +96,11 @@ void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* i)
 //
 
 CMainWnd::CMainWnd()
+	: CBackstageWnd()
 {
 	m_pActiveFilter = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
 	m_pBreadcrumbBack = m_pBreadcrumbForward = NULL;
-	m_ShowFilterPane = m_AlwaysShowFilterPane = FALSE;
 }
 
 CMainWnd::~CMainWnd()
@@ -123,7 +124,7 @@ BOOL CMainWnd::Create(BOOL IsClipboard)
 
 	CString Caption((LPCSTR)(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, IsClipboard ? _T("Clipboard") : _T("Main"), IsClipboard ? CSize(-1, -1) : CSize(0, 0));
+	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, IsClipboard ? _T("Clipboard") : _T("Main"), IsClipboard ? CSize(-1, -1) : CSize(0, 0));
 }
 
 BOOL CMainWnd::CreateClipboard()
@@ -138,15 +139,15 @@ BOOL CMainWnd::CreateRoot()
 	return Create(FALSE);
 }
 
-BOOL CMainWnd::CreateStore(CHAR* RootStore)
+BOOL CMainWnd::CreateStore(CHAR* pRootStore)
 {
-	ASSERT(RootStore);
+	ASSERT(pRootStore);
 
 	m_pBreadcrumbBack = new BreadcrumbItem();
 	ZeroMemory(m_pBreadcrumbBack, sizeof(BreadcrumbItem));
 	m_pBreadcrumbBack->pFilter = GetRootFilter();
 
-	m_pActiveFilter = GetRootFilter(RootStore);
+	m_pActiveFilter = GetRootFilter(pRootStore);
 
 	return Create(FALSE);
 }
@@ -158,9 +159,9 @@ BOOL CMainWnd::CreateFilter(LFFilter* pFilter)
 	return pFilter ? Create(FALSE) : FALSE;
 }
 
-BOOL CMainWnd::CreateFilter(WCHAR* FileName)
+BOOL CMainWnd::CreateFilter(WCHAR* pFileName)
 {
-	m_pActiveFilter = LFLoadFilterEx(FileName);
+	m_pActiveFilter = LFLoadFilterEx(pFileName);
 
 	return m_pActiveFilter ? Create(FALSE) : FALSE;
 }
@@ -169,38 +170,39 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 {
 	// Filter
 	if (pMsg->message==WM_KEYDOWN)
-	{
-		// Set Focus
-		if ((pMsg->wParam=='F') && (GetKeyState(VK_CONTROL)<0))
+		if (IsWindow(m_wndSearch))
 		{
-			m_wndSearch.SetFocus();
+			// Set focus
+			if ((pMsg->wParam=='F') && (GetKeyState(VK_CONTROL)<0))
+			{
+				m_wndSearch.SetFocus();
 
-			return TRUE;
-		}
+				return TRUE;
+			}
 
-		// Lose Focus
-		if ((pMsg->wParam==VK_ESCAPE) && (pMsg->hwnd==m_wndSearch))
-		{
-			m_wndMainView.SetFocus();
-
-			return TRUE;
-		}
-
-		// Start search
-		if ((pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
-		{
-			LFFilter* pFilter = LFAllocFilter();
-			pFilter->Mode = LFFilterModeSearch;
-			m_wndSearch.GetWindowText(pFilter->Searchterm, 256);
-
-			SendMessage(WM_NAVIGATETO, (WPARAM)pFilter);
-
-			if (!m_IsClipboard)
+			// Lose focus
+			if ((pMsg->wParam==VK_ESCAPE) && (pMsg->hwnd==m_wndSearch))
+			{
 				m_wndMainView.SetFocus();
 
-			return TRUE;
+				return TRUE;
+			}
+
+			// Start search
+			if ((pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
+			{
+				LFFilter* pFilter = LFAllocFilter();
+				pFilter->Mode = LFFilterModeSearch;
+				m_wndSearch.GetWindowText(pFilter->Searchterm, 256);
+
+				SendMessage(WM_NAVIGATETO, (WPARAM)pFilter);
+
+				if (!m_IsClipboard)
+					m_wndMainView.SetFocus();
+
+				return TRUE;
+			}
 		}
-	}
 
 	// X-Buttons
 	if (pMsg->message==WM_XBUTTONDOWN)
@@ -219,7 +221,7 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 			return TRUE;
 		}
 
-	return CGlassWindow::PreTranslateMessage(pMsg);
+	return CBackstageWnd::PreTranslateMessage(pMsg);
 }
 
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -228,46 +230,52 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 	if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return CGlassWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return CBackstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CMainWnd::AdjustLayout()
+BOOL CMainWnd::GetLayoutRect(LPRECT lpRect) const
 {
-	if (!IsWindow(m_wndJournalButton))
-		return;
-	if (!IsWindow(m_wndMainView))
-		return;
+	CBackstageWnd::GetLayoutRect(lpRect);
 
-	CRect rect;
-	GetLayoutRect(rect);
-
-	const UINT JournalHeight = m_wndJournalButton.GetPreferredHeight();
-	const UINT JournalWidth = m_wndJournalButton.GetPreferredWidth();
-	m_wndJournalButton.SetWindowPos(NULL, rect.left+1, rect.top+(m_Margins.cyTopHeight-JournalHeight-2)/2, JournalWidth, JournalHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-
-	const UINT HistoryHeight = m_wndHistory.GetPreferredHeight();
-	const UINT SearchWidth = max(150, (rect.Width()-JournalWidth)/4);
-	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-SearchWidth-14, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
-	m_wndSearch.SetWindowPos(NULL, rect.right-SearchWidth, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, SearchWidth, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
-
-	INT FilterWidth = max(32, m_wndContextSidebar.GetPreferredWidth());
-	m_AlwaysShowFilterPane = (FilterWidth<=rect.Width()/5);
-	m_ShowFilterPane &= !m_AlwaysShowFilterPane;
-
-	if (m_ShowFilterPane || m_AlwaysShowFilterPane)
+	if (!m_IsClipboard)
 	{
-		m_wndContextSidebar.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, FilterWidth, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW | SWP_NOREDRAW);
-	}
-	else
-	{
-		m_wndContextSidebar.ShowWindow(SW_HIDE);
-		FilterWidth = 0;
+		INT BarHeight = 2*BACKSTAGEBORDER+CBackstageBar::GetPreferredHeight();
+
+		if (BarHeight>lpRect->top)
+			lpRect->top = BarHeight;
+
+		lpRect->top += GetCaptionHeight(FALSE);
 	}
 
-	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width()-(m_AlwaysShowFilterPane ? FilterWidth : 0), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
+	return TRUE;
+}
 
-	Invalidate();
-	RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE | RDW_ALLCHILDREN);
+void CMainWnd::AdjustLayout(CRect rectLayout, UINT nFlags)
+{
+	CSize CaptionButtonMargins;
+	GetCaptionButtonMargins(&CaptionButtonMargins);
+
+	if (!m_IsClipboard)
+	{
+		ASSERT(IsWindow(m_wndJournalButton));
+		ASSERT(IsWindow(m_wndHistory));
+		ASSERT(IsWindow(m_wndSearch));
+
+		CRect rectClient;
+		GetClientRect(rectClient);
+
+		const UINT CaptionHeight = GetCaptionHeight(FALSE);
+		const UINT BarHeight = CBackstageBar::GetPreferredHeight();
+
+		const UINT JournalWidth = m_wndJournalButton.GetPreferredWidth();
+		m_wndJournalButton.SetWindowPos(NULL, BACKSTAGEBORDER, CaptionHeight+(rectLayout.top-CaptionHeight-BarHeight)/2, JournalWidth, BarHeight, nFlags);
+
+		const UINT SearchWidth = max(250, (rectClient.right-CaptionButtonMargins.cx-JournalWidth)/3);
+		m_wndHistory.SetWindowPos(NULL, BACKSTAGEBORDER*2+JournalWidth, CaptionHeight+(rectLayout.top-CaptionHeight-BarHeight)/2, rectClient.right-CaptionButtonMargins.cx-JournalWidth-SearchWidth-4*BACKSTAGEBORDER, BarHeight, nFlags);
+		m_wndSearch.SetWindowPos(NULL, rectClient.right-CaptionButtonMargins.cx-SearchWidth-BACKSTAGEBORDER, CaptionHeight+(rectLayout.top-CaptionHeight-BarHeight)/2, SearchWidth, BarHeight, nFlags);
+	}
+
+	m_wndMainView.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), rectLayout.Height(), nFlags);
 }
 
 BOOL CMainWnd::AddClipItem(LFItemDescriptor* pItemDescriptor)
@@ -302,7 +310,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	if (NavMode<NAVMODE_RELOAD)
 	{
 		// Slide the filter pane away
-		HideFilterPane();
+		HideSidebar();
 
 		theApp.PlayNavigateSound();
 	}
@@ -361,7 +369,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	OnCookFiles((WPARAM)Data);
 	UpdateHistory();
 
-	if (m_pCookedFiles->m_LastError>LFCancel)
+	if (m_pCookedFiles->m_LastError!=LFCancel)
 	{
 		m_wndMainView.ShowNotification(m_pCookedFiles->m_LastError==LFDriveWriteProtected ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, (m_pCookedFiles->m_LastError==LFIndexAccessError) || (m_pCookedFiles->m_LastError==LFIndexTableLoadError) ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
 	}
@@ -380,17 +388,8 @@ void CMainWnd::UpdateHistory()
 		m_wndSearch.SetWindowText(m_pActiveFilter->Searchterm);
 }
 
-void CMainWnd::HideFilterPane()
-{
-	if (m_ShowFilterPane && !m_AlwaysShowFilterPane)
-	{
-		OnToggleFilterPane();
-		UpdateWindow();
-	}
-}
 
-
-BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
+BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_GETMINMAXINFO()
@@ -404,9 +403,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnUpdateNavCommands)
 
-	ON_COMMAND(ID_PANE_FILTER, OnToggleFilterPane)
-	ON_UPDATE_COMMAND_UI(ID_PANE_FILTER, OnUpdatePaneCommands)
-
 	ON_COMMAND(IDM_FILTERS_CREATENEW, OnFiltersCreateNew)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
@@ -417,7 +413,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_MESSAGE(WM_CONTEXTVIEWCOMMAND, OnContextViewCommand)
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
-	ON_MESSAGE_VOID(WM_UPDATENUMBERS, OnUpdateNumbers)
+	ON_MESSAGE_VOID(WM_UPDATECOUNTS, OnUpdateCounts)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
@@ -432,68 +428,66 @@ END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
+	if (CBackstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	// History
-	if (!m_wndHistory.Create(this, 2))
-		return -1;
-
-	// Journal-Button
-	if (!m_wndJournalButton.Create(this, 1, m_wndHistory.GetPreferredHeight()))
-		return -1;
-
-	// Suchbegriff
-	CString tmpStr((LPCSTR)IDS_SEARCHTERM);
-	if (!m_wndSearch.Create(this, 3, tmpStr, TRUE))
-		return -1;
-
-	// Sidebar
-	if (!m_wndContextSidebar.Create(this, 4))
-		return -1;
-
-	for (UINT a=0; a<=LFLastQueryContext; a++)
+	if (!m_IsClipboard)
 	{
-		switch (a)
+		// Journal-Button
+		if (!m_wndJournalButton.Create(this, 1))
+			return -1;
+
+		// History
+		if (!m_wndHistory.Create(this, 2))
+			return -1;
+
+		// Suchbegriff
+		CString tmpStr((LPCSTR)IDS_SEARCHTERM);
+		if (!m_wndSearch.Create(this, 3, tmpStr))
+			return -1;
+
+		// Sidebar
+		CContextSidebar* pSidebarWnd = new CContextSidebar();
+		if (pSidebarWnd->Create(this, 4))
 		{
-		case 2:
-			m_wndContextSidebar.AddCaption(IDS_FILETYPES);
-			break;
+			for (UINT a=0; a<=LFLastQueryContext; a++)
+			{
+				switch (a)
+				{
+				case 2:
+					pSidebarWnd->AddCaption(IDS_FILETYPES);
+					break;
 
-		case LFContextDocuments:
-			m_wndContextSidebar.AddCaption();
-			break;
+				case LFContextDocuments:
+					pSidebarWnd->AddCaption();
+					break;
 
-		case LFLastGroupContext+1:
-			m_wndContextSidebar.AddCaption(IDS_HOUSEKEEPING);
-			break;
+				case LFLastGroupContext+1:
+					pSidebarWnd->AddCaption(IDS_HOUSEKEEPING);
+					break;
 
-		case LFContextFilters:
-			m_wndContextSidebar.AddCaption(theApp.m_Contexts[LFContextFilters].Name);
-			break;
+				case LFContextFilters:
+					pSidebarWnd->AddCaption(theApp.m_Contexts[LFContextFilters].Name);
+					break;
+				}
+
+				pSidebarWnd->AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
+			}
+
+			SetSidebar(pSidebarWnd);
 		}
-
-		m_wndContextSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
 	}
 
 	// Hauptansicht erstellen
 	if (!m_wndMainView.Create(this, 5, m_IsClipboard))
 		return -1;
 
-	// Aero
-	MARGINS Margins = { 0, 0, max(m_wndJournalButton.GetPreferredHeight()+8, m_wndHistory.GetPreferredHeight()+11), 0 };
-	UseGlasBackground(Margins);
-
-	m_GlasChildren.AddTail(&m_wndJournalButton);
-	m_GlasChildren.AddTail(&m_wndHistory);
-	m_GlasChildren.AddTail(&m_wndSearch);
-
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
 	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(m_pActiveFilter);
 	OnCookFiles();
 	UpdateHistory();
 
-	AdjustLayout();
+	CBackstageWnd::AdjustLayout();
 	SetFocus();
 
 	// Clipboard
@@ -505,7 +499,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMainWnd::OnDestroy()
 {
-	CGlassWindow::OnDestroy();
+	CBackstageWnd::OnDestroy();
 
 	if (theApp.p_Clipboard==this)
 		theApp.p_Clipboard = NULL;
@@ -513,13 +507,16 @@ void CMainWnd::OnDestroy()
 
 void CMainWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	CGlassWindow::OnGetMinMaxInfo(lpMMI);
+	CBackstageWnd::OnGetMinMaxInfo(lpMMI);
 
-	if (IsWindow(m_wndContextSidebar) && !m_IsClipboard)
-		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y,
-			m_wndContextSidebar.GetMinHeight()+GetSystemMetrics(SM_CYCAPTION)+50+
-			((m_Margins.cyTopHeight>0) ? m_Margins.cyTopHeight : 0)+
-			((m_Margins.cyBottomHeight>0) ? m_Margins.cyBottomHeight : 0));
+	if (IsWindow(*m_pSidebarWnd))
+	{
+		CRect rect;
+		m_pSidebarWnd->GetWindowRect(rect);
+		ScreenToClient(rect);
+
+		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, rect.top+m_pSidebarWnd->GetMinHeight()+BACKSTAGERADIUS+2+2);
+	}
 }
 
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -638,7 +635,7 @@ FilterFromScratch:
 		}
 
 	// Slide the filter pane away
-	HideFilterPane();
+	HideSidebar();
 }
 
 void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
@@ -660,31 +657,11 @@ void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 }
 
 
-// Pane commands
-
-void CMainWnd::OnToggleFilterPane()
-{
-	if (m_ShowFilterPane)
-		SetFocus();
-
-	m_ShowFilterPane = !m_ShowFilterPane;
-	AdjustLayout();
-
-	if (m_ShowFilterPane)
-		m_wndContextSidebar.SetFocus();
-}
-
-void CMainWnd::OnUpdatePaneCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(!m_AlwaysShowFilterPane && !m_IsClipboard);
-}
-
-
 // Create new filter
 
 void CMainWnd::OnFiltersCreateNew()
 {
-	HideFilterPane();
+	HideSidebar();
 
 	LFEditFilterDlg dlg(this, m_pActiveFilter ? m_pActiveFilter->StoreID : NULL);
 	if (dlg.DoModal()==IDOK)
@@ -699,34 +676,34 @@ void CMainWnd::OnItemOpen()
 	INT Index = m_wndMainView.GetSelectedItem();
 	if (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
 
-		if (i->NextFilter)
+		if (pItemDescriptor->NextFilter)
 		{
-			NavigateTo(LFAllocFilter(i->NextFilter), NAVMODE_NORMAL, NULL, i->FirstAggregate, i->LastAggregate);
+			NavigateTo(LFAllocFilter(pItemDescriptor->NextFilter), NAVMODE_NORMAL, NULL, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
 		}
 		else
-			if (!(i->Type & LFTypeNotMounted))
+			if (!(pItemDescriptor->Type & LFTypeNotMounted))
 			{
 				WCHAR Path[MAX_PATH];
 				UINT Result;
 
-				switch (i->Type & LFTypeMask)
+				switch (pItemDescriptor->Type & LFTypeMask)
 				{
 				case LFTypeFile:
-					if (strcmp(i->CoreAttributes.FileFormat, "filter")==0)
+					if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
 					{
-						LFFilter* pFilter = LFLoadFilter(i);
+						LFFilter* pFilter = LFLoadFilter(pItemDescriptor);
 
 						if (pFilter)
 							NavigateTo(pFilter);
 					}
 					else
 					{
-						Result = LFGetFileLocation(i, Path, MAX_PATH, TRUE);
+						Result = LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, TRUE);
 						if (Result==LFOk)
 						{
-							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOWNORMAL)==(HINSTANCE)SE_ERR_NOASSOC)
 								SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
 						}
 						else
@@ -746,12 +723,12 @@ void CMainWnd::OnItemOpenNewWindow()
 	INT Index = m_wndMainView.GetSelectedItem();
 	if (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
 
-		ASSERT((i->Type & LFTypeMask)==LFTypeStore);
+		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 
 		CMainWnd* pFrame = new CMainWnd();
-		pFrame->CreateStore(i->StoreID);
+		pFrame->CreateStore(pItemDescriptor->StoreID);
 		pFrame->ShowWindow(SW_SHOW);
 	}
 }
@@ -763,10 +740,10 @@ void CMainWnd::OnItemOpenFileDrop()
 		INT Index = m_wndMainView.GetSelectedItem();
 		if (Index!=-1)
 		{
-			LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
+			LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
 
-			ASSERT((i->Type & LFTypeMask)==LFTypeStore);
-			theApp.GetFileDrop(i->StoreID);
+			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
+			theApp.GetFileDrop(pItemDescriptor->StoreID);
 		}
 	}
 	else
@@ -784,7 +761,7 @@ LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)
 }
 
 
-void CMainWnd::WriteMetadataTXT(CStdioFile& pFilter)
+void CMainWnd::WriteMetadataTXT(CStdioFile& pFilter) const
 {
 #define Spacer { if (First) { First = FALSE; } else { pFilter.WriteString(_T("\n")); } }
 
@@ -792,11 +769,11 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& pFilter)
 	INT Index = m_wndMainView.GetNextSelectedItem(-1);
 	while (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
 
-		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 		{
-			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
 			{
 				Spacer;
 				WriteTXTItem(pFilter, m_pRawFiles->m_Items[a]);
@@ -805,29 +782,29 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& pFilter)
 		else
 		{
 			Spacer;
-			WriteTXTItem(pFilter, i);
+			WriteTXTItem(pFilter, pItemDescriptor);
 		}
 
 		Index = m_wndMainView.GetNextSelectedItem(Index);
 	}
 }
 
-void CMainWnd::WriteMetadataXML(CStdioFile& pFilter)
+void CMainWnd::WriteMetadataXML(CStdioFile& pFilter) const
 {
 	pFilter.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\">\n<items>\n"));
 
 	INT Index = m_wndMainView.GetNextSelectedItem(-1);
 	while (Index!=-1)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[Index];
-		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 		{
-			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
 				WriteXMLItem(pFilter, m_pRawFiles->m_Items[a]);
 		}
 		else
 		{
-			WriteXMLItem(pFilter, i);
+			WriteXMLItem(pFilter, pItemDescriptor);
 		}
 
 		Index = m_wndMainView.GetNextSelectedItem(Index);
@@ -908,10 +885,10 @@ void CMainWnd::OnUpdateSortOptions()
 	OnCookFiles((WPARAM)&Data);
 }
 
-void CMainWnd::OnUpdateNumbers()
+void CMainWnd::OnUpdateCounts()
 {
-	if (IsWindow(m_wndContextSidebar))
-		m_wndContextSidebar.PostMessage(WM_UPDATENUMBERS);
+	if (m_pSidebarWnd)
+		m_pSidebarWnd->PostMessage(WM_UPDATECOUNTS);
 }
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
@@ -943,7 +920,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 				if (m_pActiveFilter->Options.IsSubfolder && (m_pBreadcrumbBack!=NULL))
 					Context = m_pBreadcrumbBack->pFilter->ResultContext;
 
-		m_wndContextSidebar.SetSelection(IDM_NAV_SWITCHCONTEXT+Context, m_wndMainView.GetStoreID());
+		((CContextSidebar*)m_pSidebarWnd)->SetSelection(IDM_NAV_SWITCHCONTEXT+Context, m_wndMainView.GetStoreID());
 	}
 
 	if ((pVictim) && (pVictim!=m_pRawFiles))
@@ -979,7 +956,7 @@ LRESULT CMainWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 			PostMessage(WM_RELOAD);
 
 	if (m_wndMainView.GetStoreID()[0]=='\0')
-		PostMessage(WM_UPDATENUMBERS);
+		PostMessage(WM_UPDATECOUNTS);
 
 	return NULL;
 }
@@ -1006,7 +983,7 @@ LRESULT CMainWnd::OnStatisticsChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		if (m_pCookedFiles->m_Context==LFContextStores)
 			PostMessage(WM_RELOAD);
 
-	PostMessage(WM_UPDATENUMBERS);
+	PostMessage(WM_UPDATECOUNTS);
 
 	return NULL;
 }

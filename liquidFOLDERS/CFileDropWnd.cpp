@@ -10,21 +10,35 @@
 // CFileDropWnd
 //
 
+#define BORDER          4
+#define MARGIN          15
+#define ICONOFFSETX     5
+#define ICONOFFSETY     4
+#define FONTOFFSETY     3
+
 CFileDropWnd::CFileDropWnd()
-	: CGlassWindow()
+	: CBackstageWnd()
 {
+	m_rectIcon.SetRectEmpty();
 	m_Hover = FALSE;
 }
 
-BOOL CFileDropWnd::Create(CHAR* StoreID)
+BOOL CFileDropWnd::Create(const CHAR* pStoreID)
 {
-	strcpy_s(m_StoreID, LFKeySize, StoreID);
+	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
 
 	CString Caption((LPCSTR)IDR_FILEDROP);
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX, className, Caption, _T("FileDrop"), CSize(164, 210));
+	CSize Size;
+	GetCaptionButtonMargins(&Size);
+
+	INT Width = 2*BACKSTAGEBORDER+128-1;
+	INT Height = Size.cy+BACKSTAGEBORDER+128-12+MARGIN+theApp.m_DefaultFont.GetFontHeight()+FONTOFFSETY;
+	m_rectIcon.SetRect((Width-128)/2+ICONOFFSETX, Size.cy+ICONOFFSETY, (Width-128)/2+ICONOFFSETX+128-9, Height-BACKSTAGEBORDER-FONTOFFSETY);
+
+	return CBackstageWnd::Create(WS_MINIMIZEBOX, className, Caption, _T("FileDrop"), CSize(Width, Height));
 }
 
 BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
@@ -47,14 +61,65 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CGlassWindow::PreTranslateMessage(pMsg);
+	return CBackstageWnd::PreTranslateMessage(pMsg);
+}
+
+void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
+{
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	// Background
+	CBackstageWnd::DefWindowProc(WM_PAINT, NULL, NULL);
+
+	FillRect(dc, rect, (HBRUSH)SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
+
+	// Icon
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1, 
+		CPoint(m_rectIcon.left-ICONOFFSETX, m_rectIcon.top-ICONOFFSETY), CSize(128, 128),
+		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeNotMounted) ? ILD_BLEND25 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
+
+	// Text
+	CRect rectText(m_rectIcon);
+	rectText.top = m_rectIcon.bottom-theApp.m_DefaultFont.GetFontHeight()-1;
+
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
+
+	if (IsCtrlThemed())
+	{
+		dc.SetTextColor(0x000000);
+		dc.DrawText(m_Store.StoreName, -1, rectText, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+
+		dc.SetTextColor(m_Hover ? 0xFFFFFF : 0xDACCC4);
+	}
+	else
+	{
+		dc.SetTextColor(0xFFFFFF);
+	}
+
+	rectText.OffsetRect(0, 1);
+	dc.DrawText(m_Store.StoreName, -1, rectText, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+
+	dc.SelectObject(pOldFont);
+
+	const INT CaptionHeight = GetCaptionHeight();
+
+	pDC.BitBlt(0, CaptionHeight, rect.Width(), rect.Height()-CaptionHeight, &dc, 0, CaptionHeight, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
+
+	PaintCaption(pDC, rect);
 }
 
 void CFileDropWnd::SetTopMost(BOOL AlwaysOnTop)
 {
 	theApp.m_FileDropAlwaysOnTop = m_AlwaysOnTop = AlwaysOnTop;
 
-	SetWindowPos(AlwaysOnTop ? &wndTopMost : &wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+	SetWindowPos(AlwaysOnTop ? &wndTopMost : &wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu)
@@ -62,9 +127,8 @@ void CFileDropWnd::SetTopMost(BOOL AlwaysOnTop)
 }
 
 
-BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
+BEGIN_MESSAGE_MAP(CFileDropWnd, CBackstageWnd)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -92,12 +156,8 @@ END_MESSAGE_MAP()
 
 INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
+	if (CBackstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
-
-	// Aero
-	MARGINS Margins = { -1, -1, -1, -1 };
-	UseGlasBackground(Margins);
 
 	// SC_xxx muss sich im Bereich der Systembefehle befinden.
 	ASSERT((SC_ALWAYSONTOP & 0xFFF0)==SC_ALWAYSONTOP);
@@ -110,19 +170,15 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CString tmpStr((LPCSTR)SC_ALWAYSONTOP);
 		pSysMenu->InsertMenu(SC_CLOSE, MF_STRING | MF_BYCOMMAND | (m_AlwaysOnTop ? MF_CHECKED : 0), SC_ALWAYSONTOP, tmpStr);
 		pSysMenu->InsertMenu(SC_CLOSE, MF_SEPARATOR | MF_BYCOMMAND);
-
-		// Überflüssige Einträge löschen
-		pSysMenu->DeleteMenu(SC_MAXIMIZE, MF_BYCOMMAND);
-		pSysMenu->DeleteMenu(SC_SIZE, MF_BYCOMMAND);
 	}
 
-	// TopMose
+	// TopMost
 	SetTopMost(theApp.m_FileDropAlwaysOnTop);
 
 	// Store
 	OnUpdateStore(NULL, NULL);
 
-	// Initialize Drop
+	// Initialize DropTarget
 	m_DropTarget.SetOwner(this);
 	m_DropTarget.SetStore(m_StoreID, FALSE);
 	RegisterDragDrop(GetSafeHwnd(), &m_DropTarget);
@@ -130,117 +186,48 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
+void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CRect rectClient;
-	GetClientRect(rectClient);
+	CBackstageWnd::OnMouseMove(nFlags, point);
 
-	CRect rectLayout;
-	GetLayoutRect(rectLayout);
-
-	CDC dc;
-	dc.CreateCompatibleDC(pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	HBITMAP hBitmap = CreateTransparentBitmap(rectClient.Width(), rectClient.Height());
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
-
-	// Hintergrund
-	CGlassWindow::OnEraseBkgnd(&dc);
-
-	// Icon
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1,
-		CPoint(rectLayout.left+(rectLayout.Width()-128)/2-1, rectLayout.top+10), CSize(128, 128),
-		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeNotMounted) ? m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
-
-	// Text
-	CRect rectText(rectLayout);
-	rectText.top += 130;
-	rectText.bottom -= 10;
-
-	const UINT nFormat = DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX;
-
-	if ((m_IsAeroWindow) || (hTheme))
+	BOOL Hover = m_rectIcon.PtInRect(point);
+	if (Hover!=m_Hover)
 	{
-		LOGFONT lf;
-		theApp.zGetThemeSysFont(hTheme, TMT_CAPTIONFONT, &lf);
-		if (lf.lfHeight<-15)
-			lf.lfHeight = -15;
-
-		CFont TitleFont;
-		TitleFont.CreateFontIndirect(&lf);
-
-		CFont* pOldFont = dc.SelectObject(&TitleFont);
-
-		if (m_IsAeroWindow)
+		if (Hover)
 		{
-			DTTOPTS opts = { sizeof(DTTOPTS) };
-			opts.dwFlags = DTT_COMPOSITED | DTT_GLOWSIZE | DTT_TEXTCOLOR;
-			opts.iGlowSize = 15;
-
-			if (theApp.zDrawThemeTextEx)
-				theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, m_Store.StoreName, -1, nFormat, rectText, &opts);
+			TRACKMOUSEEVENT tme;
+			ZeroMemory(&tme, sizeof(tme));
+			tme.cbSize = sizeof(TRACKMOUSEEVENT);
+			tme.dwFlags = TME_LEAVE | TME_HOVER;
+			tme.dwHoverTime = LFHOVERTIME;
+			tme.hwndTrack = m_hWnd;
+			TrackMouseEvent(&tme);
 		}
 		else
 		{
-			theApp.zDrawThemeText(hTheme, dc, WP_CAPTION, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE,
-				m_Store.StoreName, -1, nFormat, 0, rectText);
-
-			dc.SetTextColor(GetSysColor(COLOR_CAPTIONTEXT));
-			dc.DrawText(m_Store.StoreName, -1, rectText, nFormat);
+			LFGetApp()->HideTooltip();
 		}
 
-		dc.SelectObject(pOldFont);
+		m_Hover = Hover;
+		Invalidate();
 	}
-	else
-	{
-		HGDIOBJ hOldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
-
-		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-		dc.DrawText(m_Store.StoreName, -1, rectText, nFormat);
-
-		dc.SelectObject(hOldFont);
-	}
-
-	pDC->BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBitmap);
-
-	return TRUE;
-}
-
-void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
-{
-	if (!m_Hover)
-	{
-		TRACKMOUSEEVENT tme;
-		ZeroMemory(&tme, sizeof(tme));
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-
-		m_Hover = TRUE;
-	}
-
-	CGlassWindow::OnMouseMove(nFlags, point);
 }
 
 void CFileDropWnd::OnMouseLeave()
 {
-	LFGetApp()->HideTooltip();
-	m_Hover = FALSE;
+	CBackstageWnd::OnMouseLeave();
 
-	CGlassWindow::OnMouseLeave();
+	LFGetApp()->HideTooltip();
+
+	m_Hover = FALSE;
+	Invalidate();
 }
 
 void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		if (!LFGetApp()->IsTooltipVisible())
+		if (!LFGetApp()->IsTooltipVisible() && m_Hover)
 		{
 			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&m_Store);
 
@@ -260,7 +247,8 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 
 void CFileDropWnd::OnNcLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
-	OnStoreOpen();
+	if (m_Hover)
+		OnStoreOpen();
 }
 
 void CFileDropWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
@@ -271,9 +259,6 @@ void CFileDropWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
-	CMenu menu;
-	ENSURE(menu.LoadMenu(IDM_STORE));
-
 	if ((pos.x<0) || (pos.y<0))
 	{
 		CRect rect;
@@ -284,24 +269,45 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		ClientToScreen(&pos);
 	}
 
-	CMenu* pPopup = menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
+	CPoint point(pos);
+	ScreenToClient(&point);
 
-	pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+	if (m_rectIcon.PtInRect(point))
+	{
+		// Store
+		CMenu menu;
+		ENSURE(menu.LoadMenu(IDM_STORE));
 
-	CString tmpStr((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW);
-	pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
+		CMenu* pPopup = menu.GetSubMenu(0);
+		ASSERT_VALID(pPopup);
 
-	pPopup->SetDefaultItem(IDM_ITEM_OPENNEWWINDOW);
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
+		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW);
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
+
+		pPopup->SetDefaultItem(IDM_ITEM_OPENNEWWINDOW);
+		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
+
+		return;
+	}
+
+	// System menu
+	CMenu* pMenu = GetSystemMenu(FALSE);
+	if (pMenu)
+		SendMessage(WM_SYSCOMMAND, (WPARAM)pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, pos.x, pos.y, this));
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
 {
-	CGlassWindow::OnSysCommand(nID, lParam);
-
 	if ((nID & 0xFFF0)==SC_ALWAYSONTOP)
+	{
 		SetTopMost(!m_AlwaysOnTop);
+	}
+	else
+	{
+		CBackstageWnd::OnSysCommand(nID, lParam);
+	}
 }
 
 LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)

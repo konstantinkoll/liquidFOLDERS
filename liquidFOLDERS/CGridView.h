@@ -37,7 +37,7 @@ public:
 	CGridView(UINT DataSize=sizeof(GridItemData), BOOL EnableLabelEdit=TRUE);
 
 protected:
-	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)=0;
+	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)=0;
 
 	void AddItemCategory(WCHAR* Caption, WCHAR* Name);
 	void ResetItemCategories();
@@ -55,5 +55,5 @@ private:
 	void HandleHorizontalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void HandleVerticalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
 
-	LFDynArray<ItemCategory> m_Categories;
+	LFDynArray<ItemCategory, LFItemCategoryCount, 4> m_Categories;
 };

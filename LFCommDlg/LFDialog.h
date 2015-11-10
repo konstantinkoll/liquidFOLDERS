@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CCategory.h"
+#include "LFCore.h"
 
 
 // LFDialog
@@ -36,8 +37,8 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSysColorChange();
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
@@ -52,12 +53,12 @@ private:
 	HICON hIconShield;
 	INT m_ShieldSize;
 	INT m_UACHeight;
+	LFDynArray<CHoverButton*, 8, 8> m_Buttons;
+	LFDynArray<CWnd*, 2, 2> m_BottomRightControls;
+	CWnd* p_BottomLeftControl;
+	CPoint m_LastSize;
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
-	CWnd* p_BottomLeftControl;
-	CList<CWnd*> m_BottomRightControls;
-	CPoint m_LastSize;
-	CList<CHoverButton*> m_Buttons;
 	CDesktopDimmer m_wndDesktopDimmer;
 };

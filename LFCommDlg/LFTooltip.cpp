@@ -12,27 +12,33 @@
 #define MARGIN           4
 #define BORDER           8
 #define SHADOWSIZE       8
-#define SHADOWOFFSET     -SHADOWSIZE/2
+#define SHADOWOFFSET     -SHADOWSIZE/2+1
+
+LFTooltip::LFTooltip()
+	: CWnd()
+{
+	m_ContentRect.SetRectEmpty();
+}
 
 BOOL LFTooltip::Create()
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_LAYERED | WS_EX_TRANSPARENT, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
+	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_LAYERED, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
 }
 
-void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
+void LFTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
 {
 	ASSERT(IsWindow(m_hWnd));
 
 	// Get screen size
-	MONITORINFO mi;
-	mi.cbSize = sizeof(MONITORINFO);
+	MONITORINFO MonitorInfo;
+	MonitorInfo.cbSize = sizeof(MONITORINFO);
 
 	CRect rectScreen;
-	if (GetMonitorInfo(MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST), &mi))
+	if (GetMonitorInfo(MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST), &MonitorInfo))
 	{
-		rectScreen = mi.rcWork;
+		rectScreen = MonitorInfo.rcWork;
 	}
 	else
 	{
@@ -52,7 +58,7 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	INT TextHeight = 0;
 	if (!strCaption.IsEmpty())
 	{
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallBoldFont);
 		CSize sz = dc.GetTextExtent(strCaption);
 		dc.SelectObject(pOldFont);
 
@@ -68,7 +74,7 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	{
 		CRect rectText(rectScreen);
 
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallFont);
 		dc.DrawText(strText, rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
 		dc.SelectObject(pOldFont);
 
@@ -81,21 +87,24 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	{
 		ICONINFO IconInfo;
 		if (GetIconInfo(hIcon, &IconInfo))
+		{
 			if (GetObject(IconInfo.hbmColor, sizeof(Bitmap), &Bitmap))
 			{
-				Size.cx += (Bitmap.bmWidth==34 ? 32 : Bitmap.bmWidth)+2*MARGIN;
+				Size.cx += Bitmap.bmWidth+2*MARGIN;
 				Size.cy = max(Size.cy, Bitmap.bmHeight);
 			}
+
+			DeleteObject(IconInfo.hbmColor);
+			DeleteObject(IconInfo.hbmMask);
+		}
 	}
 	else
 		if (hBitmap)
-		{
 			if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
 			{
 				Size.cx += Bitmap.bmWidth+2*MARGIN;
 				Size.cy = max(Size.cy, Bitmap.bmHeight);
 			}
-		}
 
 	Size.cx += 2*BORDER;
 	Size.cy += 2*BORDER;
@@ -142,8 +151,16 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 				rectWindow.bottom = rectWindow.top+Size.cy;
 			}
 
-	rectWindow.InflateRect(SHADOWSIZE, SHADOWSIZE);
-	rectWindow.bottom += SHADOWOFFSET;
+	m_ContentRect = rectWindow;
+
+	BOOL Themed = IsCtrlThemed();
+	if (Themed)
+	{
+		m_ContentRect.OffsetRect(0, SHADOWOFFSET);
+
+		rectWindow.InflateRect(SHADOWSIZE, SHADOWSIZE);
+		rectWindow.bottom += SHADOWOFFSET;
+	}
 
 	// Prepare paint
 	HBITMAP hWindowBitmap = CreateTransparentBitmap(rectWindow.Width(), rectWindow.Height());
@@ -157,7 +174,6 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	// Draw background
 	CRect rectAlpha;
 
-	BOOL Themed = IsCtrlThemed();
 	if (Themed)
 	{
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -167,7 +183,7 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 			GraphicsPath path;
 			CreateRoundRectangle(rect, SHADOWSIZE+5-a, path);
 
-			Pen pen(Color((BYTE)(((a+1)*(a+1)*(a+1)>>2)), 0x00, 0x00, 0x00));
+			Pen pen(Color((BYTE)(((a+2)*(a+2)*(a+2)/6)), 0x00, 0x00, 0x00));
 			g.DrawPath(&pen, &path);
 
 			rect.DeflateRect(1, 1);
@@ -201,7 +217,7 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 		GraphicsPath pathInner;
 		CreateRoundRectangle(rect, 4, pathInner);
 
-		TextureBrush brush4(LFGetApp()->GetCachedResourceImage(IDB_TOOLTIPBACKGROUND, _T("PNG"))->m_pBitmap);
+		TextureBrush brush4(LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_TOOLTIP, _T("PNG"))->m_pBitmap);
 		g.FillPath(&brush4, &pathInner);
 
 		rect.InflateRect(1, 1);
@@ -221,9 +237,7 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	}
 	else
 	{
-		rect.DeflateRect(SHADOWSIZE+1, SHADOWSIZE+1);
-		rect.top += SHADOWOFFSET;
-
+		rect.DeflateRect(1, 1);
 		dc.FillSolidRect(rect, GetSysColor(COLOR_INFOBK));
 
 		rect.InflateRect(1, 1);
@@ -267,9 +281,11 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 
 	if (!strCaption.IsEmpty())
 	{
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallBoldFont);
 		dc.DrawText(strCaption, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-		rect.top += dc.GetTextExtent(strCaption).cy+MARGIN;
+
+		rect.top += LFGetApp()->m_SmallBoldFont.GetFontHeight()+MARGIN;
+
 		dc.SelectObject(pOldFont);
 	}
 
@@ -278,7 +294,7 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 		if (Themed)
 			dc.SetTextColor(0xF0F0F0);
 
-		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallFont);
 		dc.DrawText(strText, rect, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 		dc.SelectObject(pOldFont);
 	}
@@ -300,16 +316,15 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 
 	// Update system-managed bitmap of window
 	POINT ptDst = { rectWindow.left, rectWindow.top };
-	SIZE sz = { rectWindow.Width(), rectWindow.Height() };
+	SIZE szWindow = { rectWindow.Width(), rectWindow.Height() };
 	POINT ptSrc = { 0, 0 };
-	UpdateLayeredWindow(&dc, &ptDst, &sz, &dc, &ptSrc, 0x000000, &BF, ULW_ALPHA);
+	UpdateLayeredWindow(&dc, &ptDst, &szWindow, &dc, &ptSrc, 0x000000, &BF, ULW_ALPHA);
 
 	// TopMost
 	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
 	// Clean up
 	dc.SelectObject(hOldBitmap);
-	dc.DeleteDC();
 
 	DestroyIcon(hIcon);
 	DeleteObject(hBitmap);
@@ -322,6 +337,30 @@ void LFTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 
 void LFTooltip::HideTooltip()
 {
+	m_ContentRect.SetRectEmpty();
+
 	if (IsWindow(m_hWnd))
 		ShowWindow(SW_HIDE);
+}
+
+
+BEGIN_MESSAGE_MAP(LFTooltip, CWnd)
+	ON_WM_NCHITTEST()
+	ON_WM_MOUSEMOVE()
+END_MESSAGE_MAP()
+
+LRESULT LFTooltip::OnNcHitTest(CPoint point)
+{
+	LRESULT HitTest = CWnd::OnNcHitTest(point);
+
+	if (HitTest==HTCLIENT)
+		if (!m_ContentRect.PtInRect(point))
+			HitTest = HTTRANSPARENT;
+
+	return HitTest;
+}
+
+void LFTooltip::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
+{
+	HideTooltip();
 }

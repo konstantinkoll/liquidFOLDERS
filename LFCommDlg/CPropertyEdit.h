@@ -47,7 +47,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetAttribute(UINT Attr);
-	void SetData(LFVariantData* pData);
+	void SetData(const LFVariantData* pData);
 
 	BOOL m_IsValid;
 	BOOL m_IsEmpty;

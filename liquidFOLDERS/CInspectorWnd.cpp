@@ -25,12 +25,12 @@ CIconHeader::~CIconHeader()
 	FreeItem();
 }
 
-INT CIconHeader::GetPreferredHeight()
+INT CIconHeader::GetPreferredHeight() const
 {
 	return 128+24;
 }
 
-void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
+void CIconHeader::DrawHeader(CDC& dc, const CRect& rect, BOOL Themed)
 {
 	const INT cx = (rect.Width()-128)/2;
 	const INT cy = rect.top+4;
@@ -94,7 +94,7 @@ void CIconHeader::SetEmpty()
 	FreeItem();
 }
 
-void CIconHeader::SetMultiple(CString Description)
+void CIconHeader::SetMultiple(const CString& Description)
 {
 	m_Status = IconMultiple;
 	m_strDescription = Description;
@@ -102,7 +102,7 @@ void CIconHeader::SetMultiple(CString Description)
 	FreeItem();
 }
 
-void CIconHeader::SetCoreIcon(INT IconID, CString Description)
+void CIconHeader::SetCoreIcon(INT IconID, const CString& Description)
 {
 	m_Status = IconCore;
 	m_IconID = IconID;
@@ -111,7 +111,7 @@ void CIconHeader::SetCoreIcon(INT IconID, CString Description)
 	FreeItem();
 }
 
-void CIconHeader::SetFormatIcon(CHAR* FileFormat, CString Description)
+void CIconHeader::SetFormatIcon(CHAR* FileFormat, const CString& Description)
 {
 	ASSERT(FileFormat);
 
@@ -122,16 +122,16 @@ void CIconHeader::SetFormatIcon(CHAR* FileFormat, CString Description)
 	FreeItem();
 }
 
-void CIconHeader::SetPreview(LFItemDescriptor* i, CString Description)
+void CIconHeader::SetPreview(LFItemDescriptor* pItemDescriptor, const CString& Description)
 {
-	ASSERT(i);
+	ASSERT(pItemDescriptor);
 
 	m_Status = IconPreview;
 	m_strDescription = Description;
-	strcpy_s(m_FileFormat, LFExtSize, i->CoreAttributes.FileFormat);
+	strcpy_s(m_FileFormat, LFExtSize, pItemDescriptor->CoreAttributes.FileFormat);
 
 	FreeItem();
-	m_pItem = LFCloneItemDescriptor(i);
+	m_pItem = LFCloneItemDescriptor(pItemDescriptor);
 }
 
 
@@ -152,7 +152,7 @@ void CStoreManagerGrid::ScrollWindow(INT /*dx*/, INT /*dy*/)
 #define StatusMultiple     2
 
 CInspectorWnd::CInspectorWnd()
-	: CGlassPane()
+	: CFrontstagePane()
 {
 	m_Count = 0;
 	p_LastItem = NULL;
@@ -168,12 +168,9 @@ CInspectorWnd::CInspectorWnd()
 	}
 }
 
-void CInspectorWnd::AdjustLayout()
+void CInspectorWnd::AdjustLayout(CRect rectLayout)
 {
-	CRect rectClient;
-	GetClientRect(rectClient);
-
-	m_wndGrid.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndGrid.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInspectorWnd::SaveSettings()
@@ -182,14 +179,14 @@ void CInspectorWnd::SaveSettings()
 	theApp.WriteInt(_T("InspectorSortAlphabetic"), m_SortAlphabetic);
 }
 
-void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
+void CInspectorWnd::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL Editable)
 {
 	m_AttributeEditable[Attr] |= Editable;
 
-	if (i->AttributeValues[Attr])
+	if (pItemDescriptor->AttributeValues[Attr])
 	{
 		LFVariantData v;
-		LFGetAttributeVariantDataEx(i, Attr, v);
+		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, v);
 
 		INT Cmp;
 
@@ -241,7 +238,7 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 	}
 }
 
-void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
+void CInspectorWnd::AddValueVirtual(UINT Attr, const CHAR* Value)
 {
 	WCHAR tmpStr[256];
 	MultiByteToWideChar(CP_ACP, 0, Value, -1, tmpStr, 256);
@@ -249,7 +246,7 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
 	AddValueVirtual(Attr, &tmpStr[0]);
 }
 
-void CInspectorWnd::AddValueVirtual(UINT Attr, WCHAR* Value)
+void CInspectorWnd::AddValueVirtual(UINT Attr, const WCHAR* Value)
 {
 	switch (m_AttributeStatus[Attr])
 	{
@@ -289,9 +286,9 @@ void CInspectorWnd::UpdateStart()
 	}
 }
 
-void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
+void CInspectorWnd::UpdateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles)
 {
-	p_LastItem = i;
+	p_LastItem = pItemDescriptor;
 
 	// Icon
 	if (m_IconStatus<StatusMultiple)
@@ -299,18 +296,18 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		{
 		case StatusUnused:
 			m_IconStatus = StatusUsed;
-			m_IconID = i->IconID;
+			m_IconID = pItemDescriptor->IconID;
 			break;
 
 		case StatusUsed:
-			if (m_IconID!=i->IconID)
+			if (m_IconID!=pItemDescriptor->IconID)
 				m_IconStatus = StatusMultiple;
 
 			break;
 		}
 
 	// Typ
-	m_TypeID = (i->Type & LFTypeMask);
+	m_TypeID = (pItemDescriptor->Type & LFTypeMask);
 
 	// Attribute
 	switch (m_TypeID)
@@ -319,13 +316,13 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		m_Count++;
 
 		for (UINT a=0; a<=LFAttrFileTime; a++)
-			AddValue(i, a, !theApp.m_Attributes[a].ReadOnly);
+			AddValue(pItemDescriptor, a, !theApp.m_Attributes[a].ReadOnly);
 
-		AddValue(i, LFAttrFileCount);
-		AddValue(i, LFAttrFileSize);
+		AddValue(pItemDescriptor, LFAttrFileCount);
+		AddValue(pItemDescriptor, LFAttrFileSize);
 
 		LFStoreDescriptor Store;
-		LFGetStoreSettings(i->StoreID, &Store);
+		LFGetStoreSettings(pItemDescriptor->StoreID, &Store);
 
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[Store.Source][0]);
 
@@ -346,17 +343,17 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (a!=LFAttrDescription)
-				AddValue(i, a, !theApp.m_Attributes[a].ReadOnly);
-		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][0]);
+				AddValue(pItemDescriptor, a, !theApp.m_Attributes[a].ReadOnly);
+		AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0]);
 
 		break;
 
 	case LFTypeFolder:
-		m_Count += i->AggregateCount;
+		m_Count += pItemDescriptor->AggregateCount;
 
-		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 		{
-			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
 			{
 				for (UINT b=0; b<LFAttributeCount; b++)
 					AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b].ReadOnly);
@@ -366,7 +363,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		else
 		{
 			for (UINT a=LFAttrFileName; a<LFAttributeCount; a++)
-				AddValue(i, a);
+				AddValue(pItemDescriptor, a);
 		}
 
 		break;
@@ -466,7 +463,7 @@ void CInspectorWnd::UpdateFinish()
 }
 
 
-BEGIN_MESSAGE_MAP(CInspectorWnd, CGlassPane)
+BEGIN_MESSAGE_MAP(CInspectorWnd, CFrontstagePane)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
@@ -480,7 +477,7 @@ END_MESSAGE_MAP()
 
 INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlassPane::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstagePane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	m_ShowInternal = theApp.GetInt(_T("InspectorShowInternal"), FALSE);
@@ -491,6 +488,7 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndGrid.SetAlphabeticMode(m_SortAlphabetic);
 	m_wndGrid.AddAttributes(m_AttributeValues);
+
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)
 		m_wndGrid.AddProperty(new CProperty(&m_AttributeValues[a]), LFAttrCategoryInternal, m_AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
 

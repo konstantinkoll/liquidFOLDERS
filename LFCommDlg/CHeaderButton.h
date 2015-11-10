@@ -20,9 +20,9 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint);
-	void SetValue(CString Value, BOOL ShowDropdown=TRUE, BOOL Repaint=TRUE);
-	void GetPreferredSize(CSize& sz, UINT& CaptionWidth);
-	void GetCaption(CString& Caption, UINT& CaptionWidth);
+	void SetValue(LPCWSTR Value, BOOL ShowDropdown=TRUE, BOOL Repaint=TRUE);
+	void GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth);
+	void GetCaption(CString& Caption, INT& CaptionWidth) const;
 
 protected:
 	afx_msg void OnPaint();
@@ -35,6 +35,6 @@ private:
 	CString m_Caption;
 	CString m_Hint;
 	CString m_Value;
-	UINT m_CaptionWidth;
+	INT m_CaptionWidth;
 	BOOL m_ShowDropdown;
 };

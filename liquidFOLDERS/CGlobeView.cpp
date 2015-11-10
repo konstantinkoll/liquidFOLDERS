@@ -32,7 +32,7 @@ __forceinline double decToRad(double dec)
 	return dec*(PI/180.0);
 }
 
-__forceinline void MatrixMul(GLfloat Result[4][4], GLfloat Left[4][4], GLfloat Right[4][4])
+__forceinline void MatrixMul(GLfloat Result[4][4], const GLfloat Left[4][4], const GLfloat Right[4][4])
 {
 	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
 	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];
@@ -184,7 +184,7 @@ CGlobeView::CGlobeView()
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
 {
 	return CFileView::Create(pParentWnd, nID, rect, pRawFiles, pCookedFiles, Data, nClassStyle | CS_OWNDC);
 }
@@ -242,7 +242,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 			m_GlobeCurrent = Data->Location;
 }
 
-INT CGlobeView::ItemAtPosition(CPoint point)
+INT CGlobeView::ItemAtPosition(CPoint point) const
 {
 	if (!p_CookedFiles)
 		return -1;
@@ -287,7 +287,7 @@ CMenu* CGlobeView::GetItemContextMenu(INT Index)
 	return pMenu;
 }
 
-void CGlobeView::GetPersistentData(FVPersistentData& Data)
+void CGlobeView::GetPersistentData(FVPersistentData& Data) const
 {
 	CFileView::GetPersistentData(Data);
 
@@ -295,12 +295,12 @@ void CGlobeView::GetPersistentData(FVPersistentData& Data)
 	Data.LocationValid = TRUE;
 }
 
-BOOL CGlobeView::CursorOnGlobe(CPoint point)
+BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const
 {
-	GLfloat distX = point.x-(GLfloat)m_Width/2;
-	GLfloat distY = point.y-(GLfloat)m_Height/2;
+	GLfloat DistX = point.x-(GLfloat)m_Width/2;
+	GLfloat DistY = point.y-(GLfloat)m_Height/2;
 
-	return distX*distX+distY*distY<m_Radius*m_Radius;
+	return DistX*DistX + DistY*DistY < m_Radius*m_Radius;
 }
 
 void CGlobeView::UpdateCursor()
@@ -436,7 +436,7 @@ __forceinline void CGlobeView::Normalize()
 		m_GlobeTarget.Longitude -= 360.0f;
 }
 
-__forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4])
+__forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4])
 {
 	GLfloat SizeX = m_Width/2.0f;
 	GLfloat SizeY = m_Height/2.0f;
@@ -926,7 +926,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			CalcAndDrawLabel(Themed);
 
 	// Statuszeile
-	const INT Height = m_FontHeight[0]+1;
+	const INT Height = theApp.m_DefaultFont.GetFontHeight()+1;
 	if (m_Height>=Height)
 		DrawStatusBar(Height, 0xFFFFFF, Themed);
 
@@ -1409,7 +1409,7 @@ void CGlobeView::OnGoogleEarth()
 			f.WriteString(_T("</Document>\n</kml>\n"));
 			f.Close();
 
-			ShellExecute(m_hWnd, _T("open"), szTempName, NULL, NULL, SW_SHOW);
+			ShellExecute(m_hWnd, _T("open"), szTempName, NULL, NULL, SW_SHOWNORMAL);
 		}
 		catch(CFileException ex)
 		{

@@ -22,7 +22,11 @@ LFCORE_API LFSearchResult* LFAllocSearchResult(BYTE Context)
 	assert(Context>=0);
 	assert(Context<LFContextCount);
 
-	return new LFSearchResult(Context);
+	LFSearchResult* pSearchResult = new LFSearchResult(Context);
+
+	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+Context, pSearchResult->m_Name, 256, pSearchResult->m_Hint, 256);
+
+	return pSearchResult;
 }
 
 LFCORE_API void LFFreeSearchResult(LFSearchResult* pSearchResult)
@@ -101,11 +105,15 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 // LFSearchResult
 //
 
-LFSearchResult::LFSearchResult()
+LFSearchResult::LFSearchResult(BYTE Context)
 	: LFDynArray()
 {
+	assert(Context<LFContextCount);
+
+	m_LastError = LFOk;
+
 	m_QueryTime = 0;
-	m_Context = LFContextAllFiles;
+	m_Context = Context;
 	m_GroupAttribute = LFAttrFileName;
 
 	m_RawCopy = TRUE;
@@ -115,16 +123,8 @@ LFSearchResult::LFSearchResult()
 	m_FileSize = 0;
 
 	m_AutoContext = LFContextAuto;
-}
 
-LFSearchResult::LFSearchResult(BYTE Context)
-{
-	assert(Context<LFContextCount);
-
-	LFSearchResult();
-
-	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+Context, m_Name, 256, m_Hint, 256);
-	m_Context = Context;
+//	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+Context, m_Name, 256, m_Hint, 256);
 }
 
 LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
@@ -354,16 +354,16 @@ void LFSearchResult::KeepRange(INT First, INT Last)
 		RemoveItem((UINT)a);
 }
 
-INT LFSearchResult::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Attr, BOOL Descending)
+INT LFSearchResult::Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const
 {
 	// Kategorien
-	if ((m_HasCategories) && (i1->CategoryID!=i2->CategoryID))
-		return (INT)i1->CategoryID-(INT)i2->CategoryID;
+	if ((m_HasCategories) && (pItem1->CategoryID!=pItem2->CategoryID))
+		return (INT)pItem1->CategoryID-(INT)pItem2->CategoryID;
 
 	// Dateien mit NULL-Werten oder leeren Strings im gewünschten Attribut hinten einsortieren
 	const UINT Type = AttrTypes[Attr];
-	BOOL i1Null = IsNullValue(Type, i1->AttributeValues[Attr]);
-	BOOL i2Null = IsNullValue(Type, i2->AttributeValues[Attr]);
+	BOOL i1Null = IsNullValue(Type, pItem1->AttributeValues[Attr]);
+	BOOL i2Null = IsNullValue(Type, pItem2->AttributeValues[Attr]);
 
 	if (i1Null!=i2Null)
 		return (INT)i1Null-(INT)i2Null;
@@ -373,7 +373,7 @@ INT LFSearchResult::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Att
 
 	if ((!i1Null) && (!i2Null))
 	{
-		Compare = CompareValues(Type, i1->AttributeValues[Attr], i2->AttributeValues[Attr], FALSE);
+		Compare = CompareValues(Type, pItem1->AttributeValues[Attr], pItem2->AttributeValues[Attr], FALSE);
 
 		// Ggf. Reihenfolge umkehren
 		if (Descending)
@@ -382,20 +382,20 @@ INT LFSearchResult::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Att
 
 	// Dateien gleich bzgl. Attribut? Dann nach Name und notfalls FileID vergleichen für stabiles Ergebnis
 	if ((Compare==0) && (Attr!=LFAttrFileName))
-		Compare = _wcsicmp(i1->CoreAttributes.FileName, i2->CoreAttributes.FileName);
+		Compare = _wcsicmp(pItem1->CoreAttributes.FileName, pItem2->CoreAttributes.FileName);
 
 	if ((Compare==0) && (Attr!=LFAttrStoreID))
-		Compare = strcmp(i1->StoreID, i2->StoreID);
+		Compare = strcmp(pItem1->StoreID, pItem2->StoreID);
 
 	if ((Compare==0) && (Attr!=LFAttrFileID))
-		Compare = strcmp(i1->CoreAttributes.FileID, i2->CoreAttributes.FileID);
+		Compare = strcmp(pItem1->CoreAttributes.FileID, pItem2->CoreAttributes.FileID);
 
 	return Compare;
 }
 
 void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending)
 {
-	LFItemDescriptor* i = m_Items[Wurzel];
+	LFItemDescriptor* pItemDescriptor = m_Items[Wurzel];
 	UINT Parent = Wurzel;
 	UINT Child;
 
@@ -410,10 +410,10 @@ void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BO
 
 	if (Child==Anz)
 	{
-		if (Compare(m_Items[--Child], i, Attr, Descending)>=0)
+		if (Compare(m_Items[--Child], pItemDescriptor, Attr, Descending)>=0)
 		{
 			m_Items[Parent] = m_Items[Child];
-			m_Items[Child] = i;
+			m_Items[Child] = pItemDescriptor;
 
 			return;
 		}
@@ -425,9 +425,9 @@ void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BO
 		if (Parent==Wurzel)
 			return;
 
-		if (Compare(m_Items[Parent], i, Attr, Descending)>=0)
+		if (Compare(m_Items[Parent], pItemDescriptor, Attr, Descending)>=0)
 		{
-			m_Items[Parent] = i;
+			m_Items[Parent] = pItemDescriptor;
 
 			return;
 		}
@@ -439,14 +439,14 @@ void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BO
 	{
 		Parent = (Child-1)/2;
 
-		if (Compare(m_Items[Parent], i, Attr, Descending)>=0)
+		if (Compare(m_Items[Parent], pItemDescriptor, Attr, Descending)>=0)
 			break;
 
 		m_Items[Child] = m_Items[Parent];
 		Child = Parent;
 	}
 
-	m_Items[Child] = i;
+	m_Items[Child] = pItemDescriptor;
 }
 
 void LFSearchResult::Sort(UINT Attr, BOOL Descending)

@@ -16,7 +16,7 @@ public:
 	GLTexture();
 	virtual ~GLTexture();
 
-	GLuint GetID();
+	GLuint GetID() const;
 	void SetTexture(UINT Width, UINT Height, UINT BPP, void* pData);
 
 protected:

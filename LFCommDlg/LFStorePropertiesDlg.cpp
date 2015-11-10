@@ -12,10 +12,10 @@
 // LFStorePropertiesDlg
 //
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd)
+LFStorePropertiesDlg::LFStorePropertiesDlg(const CHAR* pStoreID, CWnd* pParentWnd)
 	: CPropertySheet(_T(""), pParentWnd)
 {
-	if (LFGetStoreSettings(StoreID, &m_Store)==LFOk)
+	if (LFGetStoreSettings(pStoreID, &m_Store)==LFOk)
 	{
 		m_StoreID = m_Store.UniqueID;
 		m_StoreValid = TRUE;

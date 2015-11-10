@@ -50,11 +50,11 @@ LFCORE_API BOOL LFAddTransactionItem(LFTransactionList* pTransactionList, LFItem
 	return pTransactionList->AddItem(pItemDescriptor, UserData);
 }
 
-LFCORE_API BOOL LFAddTransactionItemEx(LFTransactionList* pTransactionList, CHAR* StoreID, CHAR* FileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
+LFCORE_API BOOL LFAddTransactionItemEx(LFTransactionList* pTransactionList, const CHAR* pStoreID, const CHAR* pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
 {
 	assert(pTransactionList);
 
-	return pTransactionList->AddItem(StoreID, FileID, pItemDescriptor, UserData);
+	return pTransactionList->AddItem(pStoreID, pFileID, pItemDescriptor, UserData);
 }
 
 LFCORE_API HGLOBAL LFCreateDropFiles(LFTransactionList* pTransactionList)
@@ -85,6 +85,7 @@ LFCORE_API void LFDoTransaction(LFTransactionList* pTransactionList, UINT Transa
 LFTransactionList::LFTransactionList()
 	: LFDynArray()
 {
+	m_LastError = LFOk;
 	m_Modified = m_Resolved = FALSE;
 }
 
@@ -121,15 +122,15 @@ BOOL LFTransactionList::AddItem(LFItemDescriptor* pItemDescriptor, UINT_PTR User
 	return TRUE;
 }
 
-BOOL LFTransactionList::AddItem(CHAR* StoreID, CHAR* FileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
+BOOL LFTransactionList::AddItem(const CHAR* pStoreID, const CHAR* pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
 {
-	assert(StoreID);
-	assert(FileID);
+	assert(pStoreID);
+	assert(pFileID);
 
 	LFTransactionListItem Item;
 
-	strcpy_s(Item.StoreID, LFKeySize, StoreID);
-	strcpy_s(Item.FileID, LFKeySize, FileID);
+	strcpy_s(Item.StoreID, LFKeySize, pStoreID);
+	strcpy_s(Item.FileID, LFKeySize, pFileID);
 	Item.pItemDescriptor = pItemDescriptor;
 	Item.UserData = UserData;
 
@@ -148,14 +149,14 @@ BOOL LFTransactionList::AddItem(CHAR* StoreID, CHAR* FileID, LFItemDescriptor* p
 	return TRUE;
 }
 
-void LFTransactionList::SetError(CHAR* StoreID, UINT Result, LFProgress* pProgress)
+void LFTransactionList::SetError(const CHAR* pStoreID, UINT Result, LFProgress* pProgress)
 {
 	if (Result==LFOk)
 		m_Modified = TRUE;
 
 	for (UINT a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
-			if (strcmp(m_Items[a].StoreID, StoreID)==0)
+			if (strcmp(m_Items[a].StoreID, pStoreID)==0)
 			{
 				if (Result!=LFOk)
 					m_LastError = Result;

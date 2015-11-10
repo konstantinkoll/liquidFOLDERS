@@ -188,9 +188,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
 	m_wndHeaderArea.SetText(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, FALSE);
 
-	CRect rect;
-	rect.SetRectEmpty();
-	m_wndStoreList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_EDITLABELS, rect, this, IDC_STORELIST);
+	m_wndStoreList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_EDITLABELS, CRect(0, 0, 0, 0), this, IDC_STORELIST);
 
 	m_wndStoreList.SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
 	m_wndStoreList.SetImageList(&LFGetApp()->m_CoreImageListExtraLarge, LVSIL_NORMAL);
@@ -222,6 +220,7 @@ void LFChooseStoreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 	CRect rect;
 	GetWindowRect(rect);
+
 	if (rect.Width())
 		lpMMI->ptMinTrackSize.x = lpMMI->ptMaxTrackSize.x = rect.Width();
 

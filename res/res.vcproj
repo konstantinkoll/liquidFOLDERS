@@ -741,50 +741,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Journal"
-			>
-			<File
-				RelativePath=".\Journal\Journal_Disabled0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Disabled1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Frame0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Frame1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Hot0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Hot1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Normal0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Normal1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Pressed0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Journal\Journal_Pressed1.png"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Overlays"
 			>
 			<File
@@ -953,7 +909,39 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Arrow.svg"
+			>
+		</File>
+		<File
+			RelativePath=".\Arrow_Left.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Arrow_Right.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Background_DarkLinen (Original).png"
+			>
+		</File>
+		<File
+			RelativePath=".\Background_DarkLinen.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Background_Tooltip.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Clipboard_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Close.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Close.svg"
 			>
 		</File>
 		<File
@@ -1046,6 +1034,18 @@
 		</File>
 		<File
 			RelativePath=".\LocationIndicator_64.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Maximize.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Minimize.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Minimize.svg"
 			>
 		</File>
 		<File
@@ -1157,6 +1157,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Reset.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\Reset_Hot.ico"
 			>
 		</File>
@@ -1173,11 +1177,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Santa.png"
+			RelativePath=".\Restore.ico"
 			>
 		</File>
 		<File
-			RelativePath=".\Search.ico"
+			RelativePath=".\Santa.png"
 			>
 		</File>
 		<File
@@ -1186,14 +1190,6 @@
 		</File>
 		<File
 			RelativePath=".\Shield_Vista.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\SidebarBackground.png"
-			>
-		</File>
-		<File
-			RelativePath=".\SidebarBackground_Original.png"
 			>
 		</File>
 		<File
@@ -1230,10 +1226,6 @@
 		</File>
 		<File
 			RelativePath=".\Tools.png"
-			>
-		</File>
-		<File
-			RelativePath=".\TooltipBackground.png"
 			>
 		</File>
 		<File

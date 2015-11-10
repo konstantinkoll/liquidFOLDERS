@@ -107,19 +107,17 @@ INT CFormatCache::GetSysIconIndex(CHAR* FileFormat)
 	return fd.SysIconIndex;
 }
 
-void CFormatCache::DrawJumboIcon(CDC& dc, CRect& rect, CHAR* FileFormat, BOOL Ghosted)
+void CFormatCache::DrawJumboIcon(CDC& dc, const CRect& rect, CHAR* FileFormat, BOOL Ghosted)
 {
 	FormatData fd;
 	Lookup(FileFormat, fd);
 
 	if (theApp.OSVersion<OS_Vista)
 	{
-		rect.OffsetRect((rect.Width()-m_ExtraLargeCX)/2, (rect.Height()-m_ExtraLargeCY)/2);
-		theApp.m_SystemImageListExtraLarge.DrawEx(&dc, fd.SysIconIndex, rect.TopLeft(), CSize(m_ExtraLargeCX, m_ExtraLargeCY), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
+		theApp.m_SystemImageListExtraLarge.DrawEx(&dc, fd.SysIconIndex, CPoint(rect.left+(rect.Width()-m_ExtraLargeCX)/2, rect.top+(rect.Height()-m_ExtraLargeCY)/2), CSize(m_ExtraLargeCX, m_ExtraLargeCY), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 	else
 	{
-		rect.OffsetRect((rect.Width()-128)/2, (rect.Height()-128)/2);
-		m_SystemIcons128.DrawEx(&dc, fd.IconIndex128, rect.TopLeft(), CSize(128, 128), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
+		m_SystemIcons128.DrawEx(&dc, fd.IconIndex128, CPoint(rect.left+(rect.Width()-128)/2, rect.top+(rect.Height()-128)/2), CSize(128, 128), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 }

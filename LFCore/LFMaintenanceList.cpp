@@ -16,6 +16,12 @@ LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* pMaintenanceList)
 // LFMaintenanceList
 //
 
+LFMaintenanceList::LFMaintenanceList()
+	: LFDynArray()
+{
+	m_LastError = LFOk;
+}
+
 BOOL LFMaintenanceList::AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UINT Result, UINT Icon)
 {
 	assert(Name);

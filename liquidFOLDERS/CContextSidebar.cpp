@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CContextSidebar.h"
 #include "liquidFOLDERS.h"
 
 
@@ -10,7 +11,7 @@
 //
 
 CContextSidebar::CContextSidebar()
-	: CSidebar()
+	: CBackstageSidebar()
 {
 	m_StoreID[0] = '\0';
 	m_pStatistics = NULL;
@@ -24,7 +25,7 @@ CContextSidebar::~CContextSidebar()
 
 BOOL CContextSidebar::Create(CWnd* pParentWnd, UINT nID)
 {
-	return CSidebar::Create(pParentWnd, nID, IDB_CONTEXTS_32, IDB_CONTEXTS_16, TRUE);
+	return CBackstageSidebar::Create(pParentWnd, nID, IDB_CONTEXTS_32, IDB_CONTEXTS_16, TRUE);
 }
 
 CString CContextSidebar::AppendTooltip(UINT CmdID)
@@ -50,25 +51,25 @@ void CContextSidebar::SetSelection(UINT CmdID, CHAR* StoreID)
 	if ((strcmp(StoreID, m_StoreID)!=0) || !m_Initialized)
 	{
 		strcpy_s(m_StoreID, LFKeySize, StoreID);
-		OnUpdateNumbers();
+		OnUpdateCounts();
 
 		m_Initialized = TRUE;
 	}
 
-	CSidebar::SetSelection(CmdID);
+	CBackstageSidebar::SetSelection(CmdID);
 }
 
 
-BEGIN_MESSAGE_MAP(CContextSidebar, CSidebar)
-	ON_MESSAGE_VOID(WM_UPDATENUMBERS, OnUpdateNumbers)
+BEGIN_MESSAGE_MAP(CContextSidebar, CBackstageSidebar)
+	ON_MESSAGE_VOID(WM_UPDATECOUNTS, OnUpdateCounts)
 END_MESSAGE_MAP()
 
-void CContextSidebar::OnUpdateNumbers()
+void CContextSidebar::OnUpdateCounts()
 {
 	delete m_pStatistics;
 
 	m_pStatistics = LFQueryStatistics(m_StoreID);
 
 	for (UINT a=0; a<=LFLastQueryContext; a++)
-		SetNumber(IDM_NAV_SWITCHCONTEXT+a, m_pStatistics->FileCount[a]);
+		SetCount(IDM_NAV_SWITCHCONTEXT+a, m_pStatistics->FileCount[a]);
 }

@@ -9,7 +9,7 @@
 // LFItemTemplateDlg
 //
 
-LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, CHAR* pStoreID, CWnd* pParentWnd, BOOL AllowChooseStore, LFFilter* pFilter)
+LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const CHAR* pStoreID, CWnd* pParentWnd, BOOL AllowChooseStore, LFFilter* pFilter)
 	: LFDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
 	ASSERT(pStoreID);

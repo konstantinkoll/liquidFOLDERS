@@ -38,18 +38,11 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 
 // CLiquidFoldersApp
 
-BEGIN_MESSAGE_MAP(CLiquidFoldersApp, LFApplication)
-	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-END_MESSAGE_MAP()
-
-
 // CLiquidFoldersApp-Erstellung
 
 CLiquidFoldersApp::CLiquidFoldersApp()
 	: LFApplication(theAppID)
 {
-	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.NewWindow"));
-	m_NagCounter = 3;
 	m_AppInitialized = FALSE;
 }
 
@@ -304,14 +297,8 @@ CWnd* CLiquidFoldersApp::GetFileDrop(CHAR* StoreID)
 	return pFrame;
 }
 
-void CLiquidFoldersApp::OnAppAbout()
-{
-	LFAboutDlg dlg(m_pActiveWnd ? m_pActiveWnd : CWnd::GetForegroundWindow());
-	dlg.DoModal();
-}
 
-
-__forceinline BOOL CLiquidFoldersApp::IsViewAllowed(INT Context, INT View)
+__forceinline BOOL CLiquidFoldersApp::IsViewAllowed(INT Context, INT View) const
 {
 	ASSERT(View>=0);
 	ASSERT(View<=31);
@@ -319,23 +306,23 @@ __forceinline BOOL CLiquidFoldersApp::IsViewAllowed(INT Context, INT View)
 	return m_AllowedViews[Context] & (1<<View);
 }
 
-BOOL CLiquidFoldersApp::SanitizeSortBy(LFViewParameters* vp, INT context)
+BOOL CLiquidFoldersApp::SanitizeSortBy(LFViewParameters* pViewParameters, INT Context) const
 {
 	BOOL Modified = FALSE;
 
 	// Enforce valid view mode
-	if ((vp->Mode>=LFViewCount) || (!IsViewAllowed(context, vp->Mode)))
+	if ((pViewParameters->Mode>=LFViewCount) || (!IsViewAllowed(Context, pViewParameters->Mode)))
 	{
-		vp->Mode = LFViewTiles;
+		pViewParameters->Mode = LFViewTiles;
 		Modified = TRUE;
 	}
 
 	// Choose other view mode if neccessary
-	if (!AttributeSortableInView(vp->SortBy, vp->Mode))
+	if (!AttributeSortableInView(pViewParameters->SortBy, pViewParameters->Mode))
 		for (UINT a=0; a<LFViewCount; a++)
-			if (IsViewAllowed(context, a) && (AttributeSortableInView(vp->SortBy, a)))
+			if (IsViewAllowed(Context, a) && (AttributeSortableInView(pViewParameters->SortBy, a)))
 			{
-				vp->Mode = (a<=LFViewTiles) ? LFViewTiles : a;
+				pViewParameters->Mode = (a<=LFViewTiles) ? LFViewTiles : a;
 				Modified = TRUE;
 				break;
 			}
@@ -343,23 +330,23 @@ BOOL CLiquidFoldersApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 	return Modified;
 }
 
-BOOL CLiquidFoldersApp::SanitizeViewMode(LFViewParameters* vp, INT context)
+BOOL CLiquidFoldersApp::SanitizeViewMode(LFViewParameters* pViewParameters, INT Context) const
 {
 	BOOL Modified = FALSE;
 
 	// Enforce valid view mode
-	if ((vp->Mode>=LFViewCount) || (!IsViewAllowed(context, vp->Mode)))
+	if ((pViewParameters->Mode>=LFViewCount) || (!IsViewAllowed(Context, pViewParameters->Mode)))
 	{
-		vp->Mode = LFViewTiles;
+		pViewParameters->Mode = LFViewTiles;
 		Modified = TRUE;
 	}
 
 	// Choose other sorting if neccessary
-	if (!AttributeSortableInView(vp->SortBy, vp->Mode))
+	if (!AttributeSortableInView(pViewParameters->SortBy, pViewParameters->Mode))
 		for (UINT a=0; a<LFAttributeCount; a++)
-			if (AttributeSortableInView(a, vp->Mode))
+			if (AttributeSortableInView(a, pViewParameters->Mode))
 			{
-				vp->SortBy = a;
+				pViewParameters->SortBy = a;
 				Modified = TRUE;
 				break;
 			}
@@ -393,63 +380,58 @@ void CLiquidFoldersApp::Reload(INT Context)
 
 // Registry and view settings
 
-void CLiquidFoldersApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
-{
-	UINT sz;
-	LPBYTE buf = NULL;
-	CWinAppEx::GetBinary(lpszEntry, &buf, &sz);
-	if (buf)
-	{
-		if (sz<size)
-			size = sz;
-		memcpy_s(pData, size, buf, size);
-		free(buf);
-	}
-}
-
-void CLiquidFoldersApp::LoadViewOptions(UINT context)
+void CLiquidFoldersApp::LoadViewOptions(UINT Context)
 {
 	CString base;
-	base.Format(_T("Settings\\Context%u"), context);
+	base.Format(_T("Settings\\Context%u"), Context);
 	SetRegistryBase(base);
 
 	UINT DefaultMode = LFViewTiles;
 	UINT DefaultSortBy = LFAttrFileName;
 	BOOL DefaultDescending = FALSE;
-	switch (context)
+
+	switch (Context)
 	{
 	case LFContextFavorites:
 		DefaultSortBy = LFAttrRating;
 		DefaultDescending = TRUE;
 		break;
+
 	case LFContextAllFiles:
 	case LFContextPictures:
 	case LFContextVideos:
 		DefaultMode = LFViewTimeline;
 		DefaultSortBy = LFAttrCreationTime;
 		break;
+
 	case LFContextAudio:
 		DefaultMode = LFViewLargeIcons;
 		DefaultSortBy = LFAttrArtist;
 		break;
+
 	case LFContextNew:
 		DefaultSortBy = LFAttrAddTime;
 		break;
+
 	case LFContextArchive:
 		DefaultSortBy = LFAttrArchiveTime;
 		DefaultMode = LFViewDetails;
 		break;
+
 	case LFContextSubfolderDay:
 		DefaultMode = LFViewPreview;
 		break;
+
 	case LFContextTrash:
 		DefaultSortBy = LFAttrDeleteTime;
 		DefaultDescending = TRUE;
 		break;
+
 	case LFContextSearch:
 	case LFContextClipboard:
 		DefaultMode = LFViewContent;
 		break;
+
 	case LFContextStores:
 		DefaultMode = LFViewLargeIcons;
 		break;
@@ -457,87 +439,90 @@ void CLiquidFoldersApp::LoadViewOptions(UINT context)
 
 	if (GetInt(_T("Version"), 0)==ViewParametersVersion)
 	{
-		m_Views[context].Mode = GetInt(_T("Mode"), DefaultMode);
-		m_Views[context].SortBy = GetInt(_T("SortBy"), DefaultSortBy);
-		m_Views[context].Descending = GetInt(_T("Descending"), DefaultDescending);
-		m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
+		m_Views[Context].Mode = GetInt(_T("Mode"), DefaultMode);
+		m_Views[Context].SortBy = GetInt(_T("SortBy"), DefaultSortBy);
+		m_Views[Context].Descending = GetInt(_T("Descending"), DefaultDescending);
+		m_Views[Context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
 	}
 	else
 	{
-		m_Views[context].Mode = DefaultMode;
-		m_Views[context].SortBy = DefaultSortBy;
-		m_Views[context].Descending = DefaultDescending;
-		m_Views[context].AutoDirs = TRUE;
+		m_Views[Context].Mode = DefaultMode;
+		m_Views[Context].SortBy = DefaultSortBy;
+		m_Views[Context].Descending = DefaultDescending;
+		m_Views[Context].AutoDirs = TRUE;
 	}
 
-	m_Views[context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
-	m_Views[context].GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
-	m_Views[context].GlobeZoom = GetInt(_T("GlobeZoom"), 600);
-	m_Views[context].GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
-	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
-	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
-	m_Views[context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
-	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
-	m_Views[context].TagcloudShowRare = GetInt(_T("TagcloudShowRare"), TRUE);
-	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
-	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
-	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
+	m_Views[Context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
+	m_Views[Context].GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
+	m_Views[Context].GlobeZoom = GetInt(_T("GlobeZoom"), 600);
+	m_Views[Context].GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
+	m_Views[Context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
+	m_Views[Context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
+	m_Views[Context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
+	m_Views[Context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
+	m_Views[Context].TagcloudShowRare = GetInt(_T("TagcloudShowRare"), TRUE);
+	m_Views[Context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
+	m_Views[Context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
+	m_Views[Context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
 
-	if ((m_Views[context].Mode>=LFViewCount) || (!IsViewAllowed(context, m_Views[context].Mode)))
-		m_Views[context].Mode = DefaultMode;
-	if (!IsAttributeAllowed(context, m_Views[context].SortBy))
-		m_Views[context].SortBy = DefaultSortBy;
+	if ((m_Views[Context].Mode>=LFViewCount) || (!IsViewAllowed(Context, m_Views[Context].Mode)))
+		m_Views[Context].Mode = DefaultMode;
+
+	if (!IsAttributeAllowed(Context, m_Views[Context].SortBy))
+		m_Views[Context].SortBy = DefaultSortBy;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		m_Views[context].ColumnOrder[a] = a;
-		if (IsAttributeAllowed(context, a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
+		m_Views[Context].ColumnOrder[a] = a;
+
+		if (IsAttributeAllowed(Context, a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
 		{
-			m_Views[context].ColumnWidth[a] = m_Attributes[a].RecommendedWidth;
+			m_Views[Context].ColumnWidth[a] = m_Attributes[a].RecommendedWidth;
 		}
 		else
 		{
-			m_Views[context].ColumnWidth[a] = 0;
+			m_Views[Context].ColumnWidth[a] = 0;
 		}
 	}
-	GetBinary(_T("ColumnOrder"), &m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
-	GetBinary(_T("ColumnWidth"), &m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
+
+	GetBinary(_T("ColumnOrder"), &m_Views[Context].ColumnOrder, sizeof(m_Views[Context].ColumnOrder));
+	GetBinary(_T("ColumnWidth"), &m_Views[Context].ColumnWidth, sizeof(m_Views[Context].ColumnWidth));
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (!LFIsAttributeAllowed(m_Contexts[context], a))
-			m_Views[context].ColumnWidth[a] = 0;
+		if (!LFIsAttributeAllowed(m_Contexts[Context], a))
+			m_Views[Context].ColumnWidth[a] = 0;
 
-	m_Views[context].AutoDirs &= (m_Contexts[context].AllowGroups) || (context>=LFContextSubfolderDefault);
+	m_Views[Context].AutoDirs &= (m_Contexts[Context].AllowGroups) || (Context>=LFContextSubfolderDefault);
 
 	SetRegistryBase(_T("Settings"));
 }
 
-void CLiquidFoldersApp::SaveViewOptions(UINT context)
+void CLiquidFoldersApp::SaveViewOptions(UINT Context)
 {
 	CString base;
-	base.Format(_T("Settings\\Context%u"), context);
+	base.Format(_T("Settings\\Context%u"), Context);
 	SetRegistryBase(base);
 
 	WriteInt(_T("Version"), ViewParametersVersion);
-	WriteInt(_T("Mode"), m_Views[context].Mode);
-	WriteInt(_T("SortBy"), m_Views[context].SortBy);
-	WriteInt(_T("Descending"), m_Views[context].Descending);
-	WriteInt(_T("AutoDirs"), m_Views[context].AutoDirs);
-	WriteInt(_T("GlobeLatitude"), m_Views[context].GlobeLatitude);
-	WriteInt(_T("GlobeLongitude"), m_Views[context].GlobeLongitude);
-	WriteInt(_T("GlobeZoom"), m_Views[context].GlobeZoom);
-	WriteInt(_T("GlobeShowSpots"), m_Views[context].GlobeShowSpots);
-	WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
-	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
-	WriteInt(_T("GlobeShowDescription"), m_Views[context].GlobeShowDescription);
-	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
-	WriteInt(_T("TagcloudShowRare"), m_Views[context].TagcloudShowRare);
-	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
-	WriteInt(_T("TagcloudUseColors"), m_Views[context].TagcloudUseColors);
-	WriteInt(_T("TagcloudUseOpacity"), m_Views[context].TagcloudUseOpacity);
+	WriteInt(_T("Mode"), m_Views[Context].Mode);
+	WriteInt(_T("SortBy"), m_Views[Context].SortBy);
+	WriteInt(_T("Descending"), m_Views[Context].Descending);
+	WriteInt(_T("AutoDirs"), m_Views[Context].AutoDirs);
+	WriteInt(_T("GlobeLatitude"), m_Views[Context].GlobeLatitude);
+	WriteInt(_T("GlobeLongitude"), m_Views[Context].GlobeLongitude);
+	WriteInt(_T("GlobeZoom"), m_Views[Context].GlobeZoom);
+	WriteInt(_T("GlobeShowSpots"), m_Views[Context].GlobeShowSpots);
+	WriteInt(_T("GlobeShowAirportNames"), m_Views[Context].GlobeShowAirportNames);
+	WriteInt(_T("GlobeShowGPS"), m_Views[Context].GlobeShowGPS);
+	WriteInt(_T("GlobeShowDescription"), m_Views[Context].GlobeShowDescription);
+	WriteInt(_T("TagcloudSortCanonical"), m_Views[Context].TagcloudCanonical);
+	WriteInt(_T("TagcloudShowRare"), m_Views[Context].TagcloudShowRare);
+	WriteInt(_T("TagcloudUseSize"), m_Views[Context].TagcloudUseSize);
+	WriteInt(_T("TagcloudUseColors"), m_Views[Context].TagcloudUseColors);
+	WriteInt(_T("TagcloudUseOpacity"), m_Views[Context].TagcloudUseOpacity);
 
-	WriteBinary(_T("ColumnOrder"), (LPBYTE)m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
-	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
+	WriteBinary(_T("ColumnOrder"), (LPBYTE)m_Views[Context].ColumnOrder, sizeof(m_Views[Context].ColumnOrder));
+	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[Context].ColumnWidth, sizeof(m_Views[Context].ColumnWidth));
 
 	SetRegistryBase(_T("Settings"));
 }

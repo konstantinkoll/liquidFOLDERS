@@ -23,7 +23,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
+	static void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
 	void FinishItem(INT Index, LFFilterCondition* c);
 
 	CString m_Compare[LFFilterCompareCount];
@@ -55,7 +55,7 @@ protected:
 
 	CHAR m_StoreID[LFKeySize];
 	LFFilter* p_Filter;
-	LFDynArray<LFFilterCondition> m_Conditions;
+	LFDynArray<LFFilterCondition, 4, 4> m_Conditions;
 
 	CImageListTransparent m_AttributeIcons;
 	CButton m_wndAllStores;

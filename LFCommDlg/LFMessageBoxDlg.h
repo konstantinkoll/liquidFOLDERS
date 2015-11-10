@@ -13,7 +13,7 @@
 class LFMessageBoxDlg : public LFDialog
 {
 public:
-	LFMessageBoxDlg(CWnd* pParentWnd, CString Text, CString Caption, UINT Type);
+	LFMessageBoxDlg(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type);
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 

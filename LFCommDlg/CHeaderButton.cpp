@@ -24,9 +24,7 @@ BOOL CHeaderButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString 
 	m_Caption = Caption;
 	m_Hint = Hint;
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CHoverButton::Create(_T(""), WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
+	return CHoverButton::Create(_T(""), WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CHeaderButton::PreTranslateMessage(MSG* pMsg)
@@ -52,7 +50,7 @@ BOOL CHeaderButton::PreTranslateMessage(MSG* pMsg)
 	return CHoverButton::PreTranslateMessage(pMsg);
 }
 
-void CHeaderButton::SetValue(CString Value, BOOL ShowDropdown, BOOL Repaint)
+void CHeaderButton::SetValue(LPCWSTR Value, BOOL ShowDropdown, BOOL Repaint)
 {
 	m_Value = Value;
 	m_ShowDropdown = ShowDropdown;
@@ -61,26 +59,27 @@ void CHeaderButton::SetValue(CString Value, BOOL ShowDropdown, BOOL Repaint)
 		GetParent()->SendMessage(WM_ADJUSTLAYOUT);
 }
 
-void CHeaderButton::GetPreferredSize(CSize& sz, UINT& CaptionWidth)
+void CHeaderButton::GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth)
 {
-	CDC* pDC = GetDC();
-	HFONT hOldFont = (HFONT)pDC->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
-	sz = pDC->GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
-	m_CaptionWidth = CaptionWidth = m_Caption.IsEmpty() ? 0 : pDC->GetTextExtent(m_Caption+_T(":")).cx;
-	pDC->SelectObject(hOldFont);
-	ReleaseDC(pDC);
+	*lpSize = LFGetApp()->m_DefaultFont.GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
 
-	sz.cx += m_ShowDropdown ? 3*BORDER+14 : 2*BORDER+5;
-	sz.cy += 2*BORDER;
-}
+	lpSize->cx += m_ShowDropdown ? 3*BORDER+14 : 2*BORDER+5;
+	lpSize->cy += 2*BORDER;
 
-void CHeaderButton::GetCaption(CString& Caption, UINT& CaptionWidth)
-{
-	Caption = m_Caption;
+	CString Caption(m_Caption);
 	if (!Caption.IsEmpty())
 		Caption += _T(":");
 
+	m_CaptionWidth = CaptionWidth = LFGetApp()->m_DefaultFont.GetTextExtent(Caption).cx;
+}
+
+void CHeaderButton::GetCaption(CString& Caption, INT& CaptionWidth) const
+{
+	Caption = m_Caption;
 	CaptionWidth = m_CaptionWidth;
+
+	if (!Caption.IsEmpty())
+		Caption += _T(":");
 }
 
 
@@ -111,9 +110,7 @@ void CHeaderButton::OnPaint()
 	BOOL Selected = (GetState() & 4);
 
 	// Background
-	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-	if (hBrush)
-		FillRect(dc, rect, hBrush);
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	// Button
 	BOOL Themed = IsCtrlThemed();
@@ -123,6 +120,7 @@ void CHeaderButton::OnPaint()
 	// Content
 	CRect rectText(rect);
 	rectText.DeflateRect(BORDER+2, BORDER);
+
 	if (Selected)
 		rectText.OffsetRect(1, 1);
 
@@ -130,9 +128,9 @@ void CHeaderButton::OnPaint()
 	COLORREF clrText = Themed ? m_Hover ? 0xCC6633 : 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT);
 	dc.SetTextColor(clrText);
 
-	HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 	dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-	dc.SelectObject(hOldFont);
+	dc.SelectObject(pOldFont);
 
 	// Icon
 	if (m_ShowDropdown)

@@ -32,9 +32,7 @@ void CWhiteButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	BOOL Selected = lpDrawItemStruct->itemState & ODS_SELECTED;
 
 	// Background
-	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem);
-	if (hBrush)
-		FillRect(dc, rect, hBrush);
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
 
 	Graphics g(dc);
 	DrawWhiteButtonBorder(g, rect);

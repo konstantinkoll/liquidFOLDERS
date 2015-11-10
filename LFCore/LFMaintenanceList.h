@@ -13,8 +13,12 @@ struct LFMaintenanceListItem
 	UINT Icon;
 };
 
-class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem>
+class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem, 16, 16>
 {
 public:
+	LFMaintenanceList();
+
 	BOOL AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UINT Result, UINT Icon);
+
+	UINT m_LastError;
 };

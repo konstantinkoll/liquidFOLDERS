@@ -23,7 +23,7 @@ protected:
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	LFViewParameters* p_View;
+	LFViewParameters* p_ViewParameters;
 	UINT m_Context;
 	CExplorerList m_wndSortAttribute;
 	CComboBox m_wndSortDirection;

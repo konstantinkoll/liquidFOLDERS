@@ -30,9 +30,9 @@ public:
 protected:
 	virtual void Init();
 
-	void LocationFromPoint(CPoint point, DOUBLE& Latitude, DOUBLE& Longitude);
-	void PointFromLocation(INT& PosX, INT& PosY);
-	void SetLocation(CPoint point);
+	void LocationFromPoint(const CPoint& point, DOUBLE& Latitude, DOUBLE& Longitude) const;
+	void PointFromLocation(INT& PosX, INT& PosY) const;
+	void SetLocation(const CPoint& point);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

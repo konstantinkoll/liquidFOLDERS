@@ -3,13 +3,15 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 #include "CHeaderButton.h"
+#include "LFCore.h"
 
 
 // CHeaderArea
 //
 
-class CHeaderArea : public CWnd
+class CHeaderArea : public CFrontstageWnd
 {
 public:
 	CHeaderArea();
@@ -18,7 +20,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL Shadow=FALSE);
-	void SetText(CString Caption, CString Hint, BOOL Repaint=TRUE);
+	void SetText(LPCWSTR Caption, LPCWSTR Hint, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();
 	CHeaderButton* AddButton(UINT nID=0);
 
@@ -35,14 +37,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	BOOL m_Shadow;
-	UINT m_FontHeight;
-	CList<CHeaderButton*> m_Buttons;
+	LFDynArray<CHeaderButton*, 2, 2> m_Buttons;
 	CString m_Caption;
 	CString m_Hint;
 	INT m_RightEdge;
 
 private:
-	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;

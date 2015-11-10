@@ -13,7 +13,7 @@
 class LFSaveFilterDlg : public LFDialog
 {
 public:
-	LFSaveFilterDlg(CWnd* pParentWnd=NULL, CHAR* StoreID=NULL, BOOL AllowChooseStore=FALSE, WCHAR* FileName=NULL, WCHAR* Comments=NULL);
+	LFSaveFilterDlg(CWnd* pParentWnd=NULL, const CHAR* pStoreID=NULL, BOOL AllowChooseStore=FALSE, LPCWSTR FileName=NULL, LPCWSTR Comments=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

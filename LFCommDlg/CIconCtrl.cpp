@@ -96,9 +96,7 @@ void CIconCtrl::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-	if (hBrush)
-		FillRect(dc, rect, hBrush);
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	if (m_Icon)
 		DrawIconEx(dc, 0, m_Center ? (rect.Height()-m_IconSizeY)/2 : 0, m_Icon, m_IconSizeX, m_IconSizeY, 0, NULL, DI_NORMAL);

@@ -680,46 +680,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Journal_Disabled0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Disabled1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Frame0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Frame1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Hot0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Hot1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Normal0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Normal1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Pressed0.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Journal_Pressed1.png"
-				>
-			</File>
-			<File
 				RelativePath=".\liquidFOLDERS.rc"
 				>
 			</File>

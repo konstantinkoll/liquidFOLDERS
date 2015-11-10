@@ -14,16 +14,15 @@ public:
 	GLFont();
 	~GLFont();
 
-	BOOL Create(CString Face, UINT Size, BOOL Bold=FALSE, BOOL Italic=FALSE);
 	BOOL Create(CFont* pFont);
-	UINT Render(CHAR* pStr, INT x, INT y, SIZE_T cCount=-1);
-	UINT Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount=-1);
-	UINT GetTextWidth(CHAR* pStr, SIZE_T cCount=-1);
-	UINT GetTextWidth(WCHAR* pStr, SIZE_T cCount=-1);
-	UINT GetTextHeight(void* pStr);
+	UINT Render(CHAR* pStr, INT x, INT y, SIZE_T cCount=-1) const;
+	UINT Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount=-1) const;
+	UINT GetTextWidth(CHAR* pStr, SIZE_T cCount=-1) const;
+	UINT GetTextWidth(WCHAR* pStr, SIZE_T cCount=-1) const;
+	UINT GetTextHeight(void* pStr) const;
 
 protected:
-	UINT RenderChar(UCHAR Ch, INT x, INT y, UINT& Height);
+	UINT RenderChar(UCHAR Ch, INT x, INT y, UINT& Height) const;
 
 private:
 	GLfloat TexCoords[256-32][4];

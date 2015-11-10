@@ -23,7 +23,7 @@ GLTexture::~GLTexture()
 		glDeleteTextures(1, &m_ID);
 }
 
-GLuint GLTexture::GetID()
+GLuint GLTexture::GetID() const
 {
 	return m_ID;
 }

@@ -121,46 +121,46 @@ struct CachedSelectionBitmap
 #define BM_REFLECTION         0
 #define BM_SELECTED           1
 
-class CFileView : public CWnd
+class CFileView : public CFrontstageWnd
 {
 public:
 	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableTooltipOnVirtual=TRUE);
 	virtual ~CFileView();
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
-	virtual void GetPersistentData(FVPersistentData& Data);
+	virtual void GetPersistentData(FVPersistentData& Data) const;
 	virtual void EditLabel(INT Index);
-	virtual BOOL IsEditing();
 
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall=FALSE);
-	INT GetFocusItem();
-	INT GetSelectedItem();
-	INT GetNextSelectedItem(INT Index);
+	INT GetFocusItem() const;
+	INT GetSelectedItem() const;
+	INT GetNextSelectedItem(INT Index) const;
 	void SelectItem(INT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
 	void EnsureVisible(INT Index);
-	BOOL MultiSelectAllowed();
+	BOOL MultiSelectAllowed() const;
+	BOOL IsEditing() const;
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT Index);
-	virtual INT ItemAtPosition(CPoint point);
+	virtual RECT GetLabelRect(INT Index) const;
+	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
-	virtual CMenu* GetSendToMenu();
 	virtual CMenu* GetItemContextMenu(INT Index);
 	virtual void ScrollWindow(INT dx, INT dy);
 
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
-	RECT GetItemRect(INT Index);
-	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
-	void DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
+	RECT GetItemRect(INT Index) const;
+	CMenu* GetSendToMenu();
+	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
+	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void ResetScrollbars();
 	void AdjustScrollbars();
-	CString GetLabel(LFItemDescriptor* i);
+	CString GetLabel(LFItemDescriptor* pItemDescriptor) const;
 	BOOL BeginDragDrop();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -200,9 +200,7 @@ protected:
 	BYTE* m_ItemData;
 	UINT m_ItemDataAllocated;
 	BOOL m_Nothing;
-	LFTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
-	INT m_FontHeight[4];
 	BOOL m_EnableScrolling;
 	BOOL m_EnableHover;
 	BOOL m_EnableTooltip;
@@ -228,7 +226,7 @@ protected:
 	CPoint m_DragPos;
 
 private:
-	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);
+	CString GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName=NULL) const;
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	CachedSelectionBitmap m_Bitmaps[2];

@@ -3,13 +3,15 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 #include "CTaskButton.h"
+#include "LFCore.h"
 
 
 // CTaskbar
 //
 
-class CTaskbar : public CWnd
+class CTaskbar : public CFrontstageWnd
 {
 public:
 	CTaskbar();
@@ -31,16 +33,14 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	CIcons m_ButtonIcons;
 	CIcons m_TooltipIcons;
 	INT m_IconSize;
-	CList<CTaskButton*> m_ButtonsLeft;
-	CList<CTaskButton*> m_ButtonsRight;
-	INT m_BackBufferL;
+	UINT m_FirstRight;
+	LFDynArray<CTaskButton*, 8, 8> m_Buttons;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
 };

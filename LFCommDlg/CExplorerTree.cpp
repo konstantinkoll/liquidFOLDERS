@@ -67,7 +67,7 @@ void CExplorerTree::PreSubclassWindow()
 		WM_SHELLCHANGE, 1, &shCNE);
 }
 
-LPITEMIDLIST CExplorerTree::GetSelectedPIDL()
+LPITEMIDLIST CExplorerTree::GetSelectedPIDL() const
 {
 	HTREEITEM hItem = GetSelectedItem();
 	if (!hItem)
@@ -84,9 +84,10 @@ LPITEMIDLIST CExplorerTree::GetSelectedPIDL()
 	return pItem->pidlFQ;
 }
 
-BOOL CExplorerTree::GetSelectedPath(LPWSTR Path)
+BOOL CExplorerTree::GetSelectedPath(LPWSTR Path) const
 {
 	LPITEMIDLIST pidl = GetSelectedPIDL();
+
 	return pidl ? SHGetPathFromIDList(pidl, Path) : FALSE;
 }
 
@@ -146,7 +147,7 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 	return CTreeCtrl::PreTranslateMessage(pMsg);
 }
 
-CString CExplorerTree::OnGetItemText(ExplorerTreeItemData* pItem)
+CString CExplorerTree::OnGetItemText(ExplorerTreeItemData* pItem) const
 {
 	ASSERT(pItem);
 
@@ -157,7 +158,7 @@ CString CExplorerTree::OnGetItemText(ExplorerTreeItemData* pItem)
 	return _T("?");
 }
 
-INT CExplorerTree::OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected)
+INT CExplorerTree::OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const
 {
 	ASSERT(pItem);
 
@@ -197,7 +198,7 @@ HTREEITEM CExplorerTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, U
 	return CTreeCtrl::InsertItem(&tvInsert);
 }
 
-HTREEITEM CExplorerTree::InsertItem(WCHAR* Path, HTREEITEM hParent)
+HTREEITEM CExplorerTree::InsertItem(LPCWSTR Path, HTREEITEM hParent)
 {
 	const SFGAOF dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
 
@@ -230,7 +231,7 @@ void CExplorerTree::PopulateTree()
 	}
 	else
 	{
-		hItem = InsertItem(m_RootPath.GetBuffer());
+		hItem = InsertItem(m_RootPath);
 		Select(hItem, TVGN_CARET);
 	}
 
@@ -238,7 +239,7 @@ void CExplorerTree::PopulateTree()
 		Expand(hItem, TVE_EXPAND);
 }
 
-BOOL CExplorerTree::ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path)
+BOOL CExplorerTree::ChildrenContainPath(HTREEITEM hParentItem, LPCWSTR Path) const
 {
 	HTREEITEM hItem = GetChildItem(hParentItem);
 
@@ -265,7 +266,7 @@ BOOL CExplorerTree::ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path)
 	return FALSE;
 }
 
-BOOL CExplorerTree::DeletePath(LPWSTR Path)
+BOOL CExplorerTree::DeletePath(LPCWSTR Path)
 {
 	BOOL Deleted = FALSE;
 
@@ -337,7 +338,7 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 	return Deleted;
 }
 
-BOOL CExplorerTree::AddPath(LPWSTR Path, LPWSTR Parent)
+BOOL CExplorerTree::AddPath(LPCWSTR Path, LPCWSTR Parent)
 {
 	BOOL Added = FALSE;
 
@@ -421,7 +422,7 @@ void CExplorerTree::UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlPar
 	}
 }
 
-void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2)
+void CExplorerTree::UpdatePath(LPCWSTR Path1, LPCWSTR Path2)
 {
 	CList<HTREEITEM> lstItems;
 	HTREEITEM hItem = GetRootItem();
@@ -487,7 +488,7 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2)
 	}
 }
 
-void CExplorerTree::SetRootPath(CString RootPath)
+void CExplorerTree::SetRootPath(LPCWSTR RootPath)
 {
 	if (RootPath!=m_RootPath)
 	{
@@ -686,11 +687,11 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 	else
 	{
-		CPoint ptClient(point);
-		ScreenToClient(&ptClient);
+		CPoint pt(point);
+		ScreenToClient(&pt);
 
 		UINT nFlags;
-		hItem = HitTest(ptClient, &nFlags);
+		hItem = HitTest(pt, &nFlags);
 		if ((!hItem) || (!(nFlags & TVHT_ONITEM)))
 			return;
 	}

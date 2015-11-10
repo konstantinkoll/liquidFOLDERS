@@ -1,0 +1,1030 @@
+
+// CBackstageWnd.cpp: Implementierung der Klasse CBackstageWnd
+//
+
+#include "stdafx.h"
+#include "LFCommDlg.h"
+#include <dwmapi.h>
+
+
+BOOL IsBackstageControl(CWnd* pWnd)
+{
+	DWORD dwStyle = pWnd->GetStyle();
+	if (!(dwStyle & WS_VISIBLE))
+		return FALSE;
+
+	return ((dwStyle & WS_BORDER) || (pWnd->SendMessage(WM_GETDLGCODE) & DLGC_HASSETSEL));
+}
+
+
+// CBackstageWnd
+//
+
+#define BACKGROUNDTOP     100
+#define GRIPPEREDGE       4
+#define TOPALPHA          0x10
+#define BOTTOMALPHA       0x50
+
+HBRUSH hBackgroundTop = NULL;
+HBRUSH hBackgroundBottom = NULL;
+
+CBackstageWnd::CBackstageWnd()
+	: CWnd()
+{
+	hAccelerator = NULL;
+	m_pSidebarWnd = NULL;
+	m_ShowCaption = m_ShowExpireCaption = m_ShowSidebar = m_SidebarAlwaysVisible = FALSE;
+	m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
+	hBackgroundBrush = NULL;
+}
+
+BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, CSize sz, BOOL ShowCaption)
+{
+	m_PlacementPrefix = lpszPlacementPrefix;
+	m_ShowCaption = ShowCaption;
+	m_ShowExpireCaption = LFIsSharewareExpired();
+
+	CRect rect;
+	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
+	rect.DeflateRect(32, 32);
+
+	if ((sz.cx<0) || (sz.cy<0))
+	{
+		rect.left = rect.right-rect.Width()/3;
+		rect.top = rect.bottom-rect.Height()/2;
+
+		rect.OffsetRect(16, 16);
+	}
+	else
+		if ((sz.cx>0) && (sz.cy>0))
+		{
+			rect.left = (rect.left+rect.right)/2 - sz.cx;
+			rect.right = rect.left + sz.cx;
+
+			rect.top = (rect.top+rect.bottom)/2 - sz.cy;
+			rect.bottom = rect.top + sz.cy;
+		}
+
+	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
+		dwStyle | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
+		return FALSE;
+
+	OnCompositionChanged();
+
+	// Placement
+	WINDOWPLACEMENT WindowPlacement;
+	LFGetApp()->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &WindowPlacement, sizeof(WindowPlacement));
+
+	if (WindowPlacement.length==sizeof(WindowPlacement))
+	{
+		if ((sz.cx>0) && (sz.cy>0))
+		{
+			WindowPlacement.rcNormalPosition.right = WindowPlacement.rcNormalPosition.left + sz.cx;
+			WindowPlacement.rcNormalPosition.bottom = WindowPlacement.rcNormalPosition.top + sz.cy;
+		}
+
+		SetWindowPlacement(&WindowPlacement);
+
+		if (IsIconic())
+			ShowWindow(SW_RESTORE);
+	}
+
+	UpdateRegion();
+
+	if (!(dwStyle & WS_THICKFRAME))
+		AdjustLayout();
+
+	return TRUE;
+}
+
+BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
+{
+	if ((pMsg->message==WM_SYSKEYDOWN) && (pMsg->wParam==VK_MENU))
+		return TRUE;
+
+	if (pMsg->message==WM_KEYDOWN)
+	{
+		CWnd* pWnd;
+		BOOL WindowManagement = (LFGetApp()->OSVersion<=OS_Vista) && ((GetKeyState(VK_LWIN)<0) || (GetKeyState(VK_RWIN)<0));
+
+		switch (pMsg->wParam)
+		{
+		case VK_TAB:
+			if ((pWnd=GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0))!=NULL)
+				pWnd->SetFocus();
+
+			return TRUE;
+
+		// Simulate Aero Snap on Windows XP and Vista
+
+		case VK_UP:
+			if (WindowManagement && (IsIconic() || (GetStyle() & WS_THICKFRAME)))
+			{
+				ShowWindow(IsIconic() ? SW_RESTORE : SW_MAXIMIZE);
+
+				return TRUE;
+			}
+
+			break;
+
+		case VK_DOWN:
+			if (WindowManagement && (IsZoomed() || (GetStyle() & WS_MINIMIZEBOX)))
+			{
+				ShowWindow(IsZoomed() ? SW_RESTORE : SW_MINIMIZE);
+
+				return TRUE;
+			}
+
+			break;
+
+		case VK_LEFT:
+		case VK_RIGHT:
+			if (WindowManagement && !IsZoomed() && !IsIconic() && (GetStyle() & WS_THICKFRAME))
+			{
+				CRect rect;
+				if (SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0))
+				{
+					if (pMsg->wParam==VK_LEFT)
+					{
+						rect.right -= rect.Width()/2;
+					}
+					else
+					{
+						rect.left += rect.Width()/2;
+					}
+
+					SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+
+					return TRUE;
+				}
+			}
+
+			break;
+		}
+	}
+
+	if (hAccelerator)
+		if ((pMsg->message>=WM_KEYFIRST) && (pMsg->message<=WM_KEYLAST))
+			if (TranslateAccelerator(m_hWnd, hAccelerator, pMsg))
+				return TRUE;
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
+LRESULT CBackstageWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// Prevent default caption bar from drawn
+	if (message==WM_SETTEXT)
+	{
+		LONG lStyle = GetWindowLong(m_hWnd, GWL_STYLE);
+		SetWindowLong(m_hWnd, GWL_STYLE, lStyle & ~WS_VISIBLE);
+
+		CWnd::WindowProc(message, wParam, lParam);
+
+		SetWindowLong(m_hWnd, GWL_STYLE, lStyle);
+
+		InvalidateCaption();
+
+		return NULL;
+	}
+
+	return CWnd::WindowProc(message, wParam, lParam);
+}
+
+BOOL CBackstageWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
+
+	return LFGetApp()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}
+
+void CBackstageWnd::SetSidebar(CBackstageSidebar* pSidebarWnd)
+{
+	ASSERT(pSidebarWnd);
+	ASSERT(!m_pSidebarWnd);
+
+	m_pSidebarWnd = pSidebarWnd;
+}
+
+INT CBackstageWnd::GetCaptionHeight(BOOL IncludeBottomMargin) const
+{
+	return (m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0;
+}
+
+void CBackstageWnd::GetCaptionButtonMargins(LPSIZE lpSize) const
+{
+	ASSERT(lpSize);
+
+	lpSize->cx = 0;
+	lpSize->cy = BACKSTAGEBORDER;
+
+	m_wndWidgets.AddWidgetSize(lpSize);
+
+	if (lpSize->cy<BACKSTAGERADIUS+1)
+		lpSize->cy = BACKSTAGERADIUS+1;
+}
+
+
+BOOL CBackstageWnd::GetLayoutRect(LPRECT lpRect) const
+{
+	ASSERT(lpRect);
+
+	GetClientRect(lpRect);
+
+	CSize Size;
+	GetCaptionButtonMargins(&Size);
+	lpRect->top = max(GetCaptionHeight(), Size.cy);
+
+	if (m_pSidebarWnd)
+		if (m_ShowSidebar || m_SidebarAlwaysVisible)
+		{
+			lpRect->left += m_pSidebarWnd->GetPreferredWidth();
+
+			if (!m_SidebarAlwaysVisible)
+				lpRect->right += m_pSidebarWnd->GetPreferredWidth();
+		}
+
+	return FALSE;
+}
+
+void CBackstageWnd::AdjustLayout(CRect /*rectLayout*/, UINT /*nFlags*/)
+{
+}
+
+void CBackstageWnd::AdjustLayout(UINT nFlags)
+{
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	// Sidebar
+	CRect rectLayout;
+
+	if (m_pSidebarWnd)
+	{
+		if ((m_SidebarAlwaysVisible=(m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5))==TRUE)
+			m_ShowSidebar = FALSE;
+
+		GetLayoutRect(rectLayout);
+
+		if (m_ShowSidebar || m_SidebarAlwaysVisible)
+		{
+			m_pSidebarWnd->SetWindowPos(NULL, 0, rectLayout.top, m_pSidebarWnd->GetPreferredWidth(), rectLayout.bottom-rectLayout.top, nFlags | (!m_pSidebarWnd->IsWindowVisible() ? SWP_SHOWWINDOW : 0));
+		}
+		else
+		{
+			m_pSidebarWnd->ShowWindow(SW_HIDE);
+		}
+	}
+	else
+	{
+		GetLayoutRect(rectLayout);
+	}
+
+	// Widgets
+	CSize Size(0, 0);
+	m_wndWidgets.AddWidgetSize(&Size);
+
+	m_wndWidgets.SetWindowPos(NULL, rectClient.right-Size.cx, -1, Size.cx+1, Size.cy+1, nFlags);
+
+	// Frontstage
+	AdjustLayout(rectLayout, nFlags);
+}
+
+void CBackstageWnd::UpdateBackground()
+{
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	if ((m_BackBufferL!=rectClient.Width()) || (m_BackBufferH!=rectClient.Height()))
+	{
+		m_BackBufferL = rectClient.Width();
+		m_BackBufferH = rectClient.Height();
+
+		DeleteObject(hBackgroundBrush);
+
+		if (IsCtrlThemed())
+		{
+			// Background
+			PrepareBitmaps();
+
+			CDC dc;
+			dc.CreateCompatibleDC(NULL);
+			dc.SetBkMode(TRANSPARENT);
+
+			HBITMAP hBitmap = CreateTransparentBitmap(m_BackBufferL, m_BackBufferH);
+			HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+			Graphics g(dc);
+			g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+			FillRect(dc, CRect(0, 0, m_BackBufferL, BACKGROUNDTOP), hBackgroundTop);
+
+			if (m_BackBufferH>BACKGROUNDTOP)
+				FillRect(dc, CRect(0, BACKGROUNDTOP, m_BackBufferL, m_BackBufferH), hBackgroundBottom);
+
+			// Top border
+			INT Width = 0;
+
+			if (m_ShowSidebar || m_SidebarAlwaysVisible)
+				Width = m_pSidebarWnd->GetPreferredWidth();
+
+			CRect rectLayout;
+			if (GetLayoutRect(rectLayout))
+				Width = m_BackBufferL;
+
+			if (Width)
+			{
+				g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+				LinearGradientBrush brush(Point(0, rectLayout.top-3), Point(0, rectLayout.top), Color(0x00, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
+				g.FillRectangle(&brush, 0, rectLayout.top-2, Width, 2);
+			}
+
+			// Child windows
+			CWnd* pChildWnd = GetWindow(GW_CHILD);
+
+			while (pChildWnd)
+			{
+				if (IsBackstageControl(pChildWnd))
+				{
+					CRect rectBounds;
+					pChildWnd->GetWindowRect(rectBounds);
+					ScreenToClient(rectBounds);
+
+					if (pChildWnd==&m_wndWidgets)
+					{
+						rectBounds.top -= BACKSTAGERADIUS;
+						rectBounds.right += BACKSTAGERADIUS;
+					}
+
+					DrawBackstageBorder(g, rectBounds);
+				}
+
+				pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
+			}
+
+			// Top reflection
+			GraphicsPath path;
+			Pen pen(Color(0x00, 0x00, 0x00));
+
+			for (UINT a=0; a<3; a++)
+			{
+				CreateRoundTop(CRect(0, a, m_BackBufferL, BACKSTAGERADIUS-3+a), BACKSTAGERADIUS-3-a, path);
+
+				LinearGradientBrush brush(Point(0, a-1), Point(0, BACKSTAGERADIUS+a-2), Color(0x40>>a, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+
+				pen.SetBrush(&brush);
+				g.DrawPath(&pen, &path);
+			}
+
+			// Outline
+			CRect rectOutline(-1, -1, m_BackBufferL+1, m_BackBufferH+1);
+			if (!IsZoomed())
+			{
+				CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
+
+				pen.SetColor(Color(0x00, 0x00, 0x00));
+				g.DrawPath(&pen, &path);
+			}
+			else
+			{
+				CreateRoundTop(rectOutline, BACKSTAGERADIUS, path);
+
+				path.AddLine(m_BackBufferL, -1, -1, -1);
+				path.CloseFigure();
+
+				SolidBrush brush(Color(0, 0, 0));
+				g.FillPath(&brush, &path);
+			}
+
+			dc.SelectObject(hOldBitmap);
+
+			hBackgroundBrush = CreatePatternBrush(hBitmap);
+			DeleteObject(hBitmap);
+		}
+		else
+		{
+			hBackgroundBrush = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
+		}
+	}
+}
+
+void CBackstageWnd::PaintBackground(CPaintDC& pDC, CRect rect)
+{
+	PaintCaption(pDC, rect);
+
+	FillRect(pDC, rect, hBackgroundBrush);
+}
+
+void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
+{
+	if (m_ShowCaption || m_ShowExpireCaption)
+	{
+		const INT CaptionHeight = GetCaptionHeight();
+
+		CRect rectCaption(0, 0, rect.Width(), CaptionHeight);
+
+		CDC dc;
+		dc.CreateCompatibleDC(&pDC);
+		dc.SetBkMode(TRANSPARENT);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(&pDC, rectCaption.Width(), rectCaption.Height());
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+		BOOL Themed = IsCtrlThemed();
+
+		// Background
+		FillRect(dc, rectCaption, hBackgroundBrush);
+
+		// Caption
+		CString strCaption;
+
+		if (m_ShowExpireCaption)
+		{
+			ENSURE(strCaption.LoadString(IDS_EXPIRECAPTION));
+		}
+		else
+		{
+			GetWindowText(strCaption);
+		}
+
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallBoldFont);
+
+		CSize Size;
+		GetCaptionButtonMargins(&Size);
+
+		CRect rectText(rectCaption);
+		rectText.left = BACKSTAGERADIUS+2;
+		rectText.right -= Size.cx+BACKSTAGERADIUS;
+
+		if (Themed)
+		{
+			dc.SetTextColor(0x000000);
+			dc.DrawText(strCaption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+		}
+
+		rectText.OffsetRect(0, 1);
+
+		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4040F0 : 0xDACCC4 : m_ShowExpireCaption ? 0x0000FF : GetSysColor(COLOR_3DFACE));
+		dc.DrawText(strCaption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+
+		dc.SelectObject(pOldFont);
+
+		pDC.BitBlt(0, 0, rectCaption.Width(), CaptionHeight, &dc, 0, 0, SRCCOPY);
+		dc.SelectObject(pOldBitmap);
+
+		rect.top += CaptionHeight;
+	}
+}
+
+void CBackstageWnd::InvalidateCaption()
+{
+	if (m_ShowCaption)
+	{
+		CRect rect;
+		GetClientRect(rect);
+
+		rect.bottom = GetCaptionHeight();
+
+		InvalidateRect(rect);
+	}
+}
+
+void CBackstageWnd::UpdateRegion(INT cx, INT cy)
+{
+	if (IsZoomed() || !IsCtrlThemed())
+	{
+		m_RegionWidth = m_RegionHeight = 0;
+		SetWindowRgn(NULL, TRUE);
+	}
+	else
+	{
+		if ((cx==-1) || (cy==-1))
+		{
+			CRect rectWindow;
+			GetWindowRect(rectWindow);
+
+			cx = rectWindow.Width();
+			cy = rectWindow.Height();
+		}
+
+		if ((cx!=m_RegionWidth) || (cy!=m_RegionHeight))
+		{
+			SetWindowRgn(CreateRoundRectRgn(0, 0, cx+1, cy+1, 2*(BACKSTAGERADIUS-3), 2*(BACKSTAGERADIUS-3)), TRUE);
+
+			m_RegionWidth = cx;
+			m_RegionHeight = cy;
+		}
+	}
+}
+
+void CBackstageWnd::PostNcDestroy()
+{
+	delete this;
+}
+
+void CBackstageWnd::HideSidebar()
+{
+	if (m_pSidebarWnd && m_ShowSidebar && !m_SidebarAlwaysVisible)
+		OnBackstageToggleSidebar();
+}
+
+void CBackstageWnd::PrepareBitmaps()
+{
+	if (!hBackgroundTop)
+	{
+		CGdiPlusBitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN, _T("PNG"));
+
+		CDC* pDC = GetDC();
+
+		CDC dc;
+		dc.CreateCompatibleDC(pDC);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+		Graphics g(dc);
+
+		TextureBrush brush1(pTexture->m_pBitmap);
+		g.FillRectangle(&brush1, 0, 0, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+
+		LinearGradientBrush brush2(Point(0, 0), Point(0, BACKGROUNDTOP), Color(TOPALPHA, 0x00, 0x00, 0x00), Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush2, 0, 0, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+
+		dc.SelectObject(pOldBitmap);
+		ReleaseDC(pDC);
+
+		hBackgroundTop = CreatePatternBrush(MemBitmap);
+	}
+
+	if (!hBackgroundBottom)
+	{
+		CGdiPlusBitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN, _T("PNG"));
+
+		CDC* pDC = GetDC();
+
+		CDC dc;
+		dc.CreateCompatibleDC(pDC);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+		Graphics g(dc);
+
+		TextureBrush brush1(pTexture->m_pBitmap);
+		g.FillRectangle(&brush1, 0, 0, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+
+		SolidBrush brush2(Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush2, 0, 0, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+
+		dc.SelectObject(pOldBitmap);
+		ReleaseDC(pDC);
+
+		hBackgroundBottom = CreatePatternBrush(MemBitmap);
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
+	ON_WM_CREATE()
+	ON_WM_CLOSE()
+	ON_WM_DESTROY()
+	ON_MESSAGE(WM_NCCALCSIZE, OnNcCalcSize)
+	ON_WM_NCHITTEST()
+	ON_WM_NCPAINT()
+	ON_WM_NCACTIVATE()
+	ON_MESSAGE(WM_GETTITLEBARINFOEX, OnGetTitleBarInfoEx)
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
+	ON_WM_THEMECHANGED()
+	ON_WM_DWMCOMPOSITIONCHANGED()
+	ON_WM_CTLCOLOR()
+	ON_WM_WINDOWPOSCHANGING()
+	ON_WM_WINDOWPOSCHANGED()
+	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
+	ON_WM_RBUTTONUP()
+	ON_WM_INITMENUPOPUP()
+	ON_REGISTERED_MESSAGE(LFGetApp()->m_LicenseActivatedMsg, OnLicenseActivated)
+	ON_REGISTERED_MESSAGE(LFGetApp()->m_WakeupMsg, OnWakeup)
+	ON_WM_COPYDATA()
+
+	ON_COMMAND(IDM_BACKSTAGE_TOGGLESIDEBAR, OnBackstageToggleSidebar)
+	ON_UPDATE_COMMAND_UI(IDM_BACKSTAGE_TOGGLESIDEBAR, OnUpdateBackstageCommands)
+END_MESSAGE_MAP()
+
+INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	LFGetApp()->HideTooltip();
+	LFGetApp()->AddFrame(this);
+
+	// System menu
+	if (!(GetStyle() & WS_THICKFRAME))
+	{
+		CMenu* pSysMenu = GetSystemMenu(FALSE);
+		if (pSysMenu)
+		{
+			pSysMenu->DeleteMenu(SC_MAXIMIZE, MF_BYCOMMAND);
+			pSysMenu->DeleteMenu(SC_SIZE, MF_BYCOMMAND);
+		}
+	}
+
+	// Textures
+	if (IsCtrlThemed())
+		PrepareBitmaps();
+
+	// Shadow
+	m_wndShadow.Create();
+
+	// Widets
+	m_wndWidgets.Create(this, (UINT)-1);
+
+	return 0;
+}
+
+void CBackstageWnd::OnClose()
+{
+	WINDOWPLACEMENT WindowPlacement;
+	WindowPlacement.length = sizeof(WindowPlacement);
+
+	if (GetWindowPlacement(&WindowPlacement))
+		LFGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
+
+	CWnd::OnClose();
+}
+
+void CBackstageWnd::OnDestroy()
+{
+	LFGetApp()->HideTooltip();
+
+	if (m_pSidebarWnd)
+	{
+		m_pSidebarWnd->DestroyWindow();
+		delete m_pSidebarWnd;
+	}
+
+	DeleteObject(hBackgroundBrush);
+
+	CWnd::OnDestroy();
+
+	LFGetApp()->KillFrame(this);
+}
+
+LRESULT CBackstageWnd::OnNcCalcSize(WPARAM wParam, LPARAM lParam)
+{
+	NCCALCSIZE_PARAMS* lpncsp = (NCCALCSIZE_PARAMS*)lParam;
+
+	if (IsZoomed())
+	{
+		INT cx = GetSystemMetrics(SM_CXFRAME);
+		lpncsp->rgrc[0].left += cx;
+		lpncsp->rgrc[0].right -= cx;
+
+		INT cy = GetSystemMetrics(SM_CYFRAME);
+		lpncsp->rgrc[0].top += cy;
+		lpncsp->rgrc[0].bottom -= cy;
+	}
+	else
+		if (!IsCtrlThemed())
+		{
+			lpncsp->rgrc[0].left++;
+			lpncsp->rgrc[0].right--;
+			lpncsp->rgrc[0].top++;
+			lpncsp->rgrc[0].bottom--;
+		}
+
+	if (wParam)
+		if ((lpncsp->rgrc[0].bottom>=0) && (lpncsp->rgrc[0].right>=0))
+		{
+			BOOL IsCompositionEnabled = FALSE;
+			if (LFGetApp()->m_DwmLibLoaded)
+				LFGetApp()->zDwmIsCompositionEnabled(&IsCompositionEnabled);
+
+			if (!IsCompositionEnabled)
+			{
+				ZeroMemory(&lpncsp->rgrc[1], 2*sizeof(RECT));
+				return WVR_VALIDRECTS;
+			}
+		}
+
+	return 0;
+}
+
+LRESULT CBackstageWnd::OnNcHitTest(CPoint point)
+{
+	LRESULT HitTest = CWnd::OnNcHitTest(point);
+
+	if ((HitTest==HTCLIENT) || (HitTest==HTCLOSE) || (HitTest==HTMINBUTTON) || (HitTest==HTMAXBUTTON))
+	{
+		if (!IsZoomed() && (GetStyle() & WS_THICKFRAME))
+		{
+			CRect rectWindow;
+			GetWindowRect(rectWindow);
+
+			BOOL Top = (point.y<rectWindow.top+BACKSTAGEGRIPPER);
+			BOOL Bottom = (point.y>=rectWindow.bottom-BACKSTAGEGRIPPER);
+			BOOL Left = (point.x<rectWindow.left+GRIPPEREDGE*BACKSTAGEGRIPPER);
+			BOOL Right = (point.x>=rectWindow.right-GRIPPEREDGE*BACKSTAGEGRIPPER);
+
+			if (Top)
+				return (Left==Right) ? HTTOP : Left ? HTTOPLEFT : HTTOPRIGHT;
+
+			if (Bottom)
+				return (Left==Right) ? HTBOTTOM : Left ? HTBOTTOMLEFT : HTBOTTOMRIGHT;
+
+			Top = (point.y<rectWindow.top+GRIPPEREDGE*BACKSTAGEGRIPPER);
+			Bottom = (point.y>=rectWindow.bottom-GRIPPEREDGE*BACKSTAGEGRIPPER);
+			Left = (point.x<rectWindow.left+BACKSTAGEGRIPPER);
+			Right = (point.x>=rectWindow.right-BACKSTAGEGRIPPER);
+
+			if (Left)
+				return (Top==Bottom) ? HTLEFT : Top ? HTTOPLEFT : HTBOTTOMLEFT;
+
+			if (Right)
+				return (Top==Bottom) ? HTRIGHT : Top ? HTTOPRIGHT : HTBOTTOMRIGHT;
+		}
+
+		if (GetAsyncKeyState(VK_LBUTTON))
+			HitTest = HTCAPTION;
+	}
+
+	return HitTest;
+}
+
+void CBackstageWnd::OnNcPaint()
+{
+	if (!IsCtrlThemed())
+	{
+		CWindowDC pDC(this);
+
+		CRect rect;
+		GetWindowRect(rect);
+		rect.OffsetRect(-rect.left, -rect.top);
+
+		pDC.Draw3dRect(rect, 0x000000, 0x000000);
+	}
+}
+
+BOOL CBackstageWnd::OnNcActivate(BOOL /*bActivate*/)
+{
+	return TRUE;
+}
+
+void CBackstageWnd::OnNcLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+{
+	if (!IsZoomed())
+		SendMessage(WM_SYSCOMMAND, SC_MOVE | 2);
+}
+
+
+LRESULT CBackstageWnd::OnGetTitleBarInfoEx(WPARAM /*wParam*/, LPARAM lParam)
+{
+	LPTITLEBARINFOEX pTitleBarInfo = (LPTITLEBARINFOEX)lParam;
+
+	if (pTitleBarInfo->cbSize>=sizeof(TITLEBARINFOEX))
+	{
+		ZeroMemory(&pTitleBarInfo->rcTitleBar, sizeof(RECT));
+
+		pTitleBarInfo->rgstate[2] = pTitleBarInfo->rgstate[3] = pTitleBarInfo->rgstate[5] = STATE_SYSTEM_INVISIBLE | STATE_SYSTEM_UNAVAILABLE;
+		ZeroMemory(&pTitleBarInfo->rgrect, sizeof(RECT)*(CCHILDREN_TITLEBAR+1));
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+BOOL CBackstageWnd::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
+}
+
+void CBackstageWnd::OnPaint()
+{
+	CPaintDC pDC(this);
+
+	if (!hBackgroundBrush)
+		UpdateBackground();
+
+	CRect rect;
+	GetClientRect(rect);
+
+	PaintBackground(pDC, rect);
+}
+
+LRESULT CBackstageWnd::OnThemeChanged()
+{
+	AdjustLayout();
+
+	m_BackBufferL = m_BackBufferH = 0;
+	UpdateBackground();
+
+	m_RegionWidth = m_RegionHeight = 0;
+	UpdateRegion();
+
+	return NULL;
+}
+
+void CBackstageWnd::OnCompositionChanged()
+{
+	if (LFGetApp()->m_DwmLibLoaded)
+	{
+		BOOL ForceDisabled = TRUE;
+		LFGetApp()->zDwmSetWindowAttribute(m_hWnd, DWMWA_TRANSITIONS_FORCEDISABLED, &ForceDisabled, sizeof(ForceDisabled));
+
+		DWMNCRENDERINGPOLICY NCRP = DWMNCRP_DISABLED;
+		LFGetApp()->zDwmSetWindowAttribute(m_hWnd, DWMWA_NCRENDERING_POLICY, &NCRP, sizeof(NCRP));
+	}
+}
+
+HBRUSH CBackstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if (hBackgroundBrush)
+		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_EDIT))
+		{
+			CRect rect;
+
+			if (nCtlColor==CTLCOLOR_EDIT)
+			{
+				pDC->SetTextColor(0xDACCC4);
+
+				pWnd->GetClientRect(rect);
+				pWnd->ClientToScreen(rect);
+			}
+			else
+			{
+				pWnd->GetWindowRect(rect);
+			}
+
+			ScreenToClient(rect);
+
+			pDC->SetBkMode(TRANSPARENT);	// For CBackstageEdit
+			pDC->SetBrushOrg(-rect.left, -rect.top);
+
+			hBrush = hBackgroundBrush;
+		}
+
+	return hBrush;
+}
+
+void CBackstageWnd::OnWindowPosChanging(WINDOWPOS* lpwndpos)
+{
+	CRect rect;
+	if (SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0))
+	{
+		CPoint pt;
+		if (GetCursorPos(&pt))
+		{
+			if (pt.y<rect.top+20)
+			{
+			}
+		}
+	}
+
+	// Windows who are above the upper screen edge minus default caption bar height get repositioned,
+	// so do not allow this in the first place (Windows XP)
+	if (lpwndpos->y<0)
+		lpwndpos->y = 0;
+
+	CWnd::OnWindowPosChanging(lpwndpos);
+
+	if (!(lpwndpos->flags & (SWP_NOCLIENTSIZE | SWP_NOSIZE)))
+		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && ((lpwndpos->cx>m_RegionWidth) || (lpwndpos->cy>m_RegionHeight)))
+			UpdateRegion(lpwndpos->cx, lpwndpos->cy);
+}
+
+void CBackstageWnd::OnWindowPosChanged(WINDOWPOS* lpwndpos)
+{
+	if (IsWindowVisible())
+		m_wndShadow.Update(this, CRect(lpwndpos->x, lpwndpos->y, lpwndpos->x+lpwndpos->cx, lpwndpos->y+lpwndpos->cy));
+
+	if (!(lpwndpos->flags & (SWP_NOCLIENTSIZE | SWP_NOSIZE)))
+	{
+		AdjustLayout(SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
+		UpdateBackground();
+
+		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
+
+		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && (lpwndpos->cx<=m_RegionWidth) && (lpwndpos->cy<=m_RegionHeight))
+			UpdateRegion(lpwndpos->cx, lpwndpos->cy);
+
+		RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN);
+	}
+}
+
+void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	CWnd::OnGetMinMaxInfo(lpMMI);
+
+	if (GetStyle() & WS_THICKFRAME)
+	{
+		lpMMI->ptMinTrackSize.x = 640;
+		lpMMI->ptMinTrackSize.y = 384;
+	}
+	else
+	{
+		lpMMI->ptMinTrackSize.x = lpMMI->ptMinTrackSize.y = 3*BACKSTAGERADIUS;
+	}
+}
+
+void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	ClientToScreen(&point);
+
+	CMenu* pSysMenu = GetSystemMenu(FALSE);
+	if (pSysMenu)
+	{
+		pSysMenu->EnableMenuItem(SC_MAXIMIZE, MF_BYCOMMAND | (IsZoomed() ? MF_GRAYED : MF_ENABLED));
+		pSysMenu->EnableMenuItem(SC_MINIMIZE, MF_BYCOMMAND | (IsIconic() ? MF_GRAYED : MF_ENABLED));
+		pSysMenu->EnableMenuItem(SC_MOVE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
+		pSysMenu->EnableMenuItem(SC_RESTORE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_ENABLED : MF_GRAYED));
+		pSysMenu->EnableMenuItem(SC_SIZE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
+
+		SendMessage(WM_SYSCOMMAND, (WPARAM)pSysMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this));
+	}
+}
+
+void CBackstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
+{
+	ASSERT(pPopupMenu);
+
+	CCmdUI State;
+	State.m_pMenu = State.m_pParentMenu = pPopupMenu;
+	State.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+
+	ASSERT(!State.m_pOther);
+	ASSERT(State.m_pMenu);
+
+	for (State.m_nIndex=0; State.m_nIndex<State.m_nIndexMax; State.m_nIndex++)
+	{
+		State.m_nID = pPopupMenu->GetMenuItemID(State.m_nIndex);
+		if ((State.m_nID) && (State.m_nID!=(UINT)-1))
+			State.DoUpdate(this, FALSE);
+	}
+}
+
+LRESULT CBackstageWnd::OnLicenseActivated(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	m_ShowExpireCaption = LFIsSharewareExpired();
+
+	AdjustLayout(SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
+
+	m_BackBufferL = m_BackBufferH = 0;
+	UpdateBackground();
+
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
+
+	return NULL;
+}
+
+LRESULT CBackstageWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	return 24878;
+}
+
+BOOL CBackstageWnd::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
+{
+	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
+		return FALSE;
+
+	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
+	if (cds.AppID!=LFGetApp()->m_AppID)
+		return FALSE;
+
+	LFGetApp()->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
+
+	return TRUE;
+}
+
+
+// Backstage commands
+
+void CBackstageWnd::OnBackstageToggleSidebar()
+{
+	ASSERT(m_pSidebarWnd);
+	ASSERT(!m_SidebarAlwaysVisible);
+
+	if (m_ShowSidebar)
+		SetFocus();
+
+	m_ShowSidebar = !m_ShowSidebar;
+	AdjustLayout();
+
+	if (m_ShowSidebar)
+		m_pSidebarWnd->SetFocus();
+}
+
+void CBackstageWnd::OnUpdateBackstageCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pSidebarWnd && !m_SidebarAlwaysVisible);
+}

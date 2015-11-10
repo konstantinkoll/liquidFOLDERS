@@ -14,9 +14,10 @@
 #define MARGIN         4
 
 CHeaderArea::CHeaderArea()
-	: CWnd()
+	: CFrontstageWnd()
 {
-	m_FontHeight = m_RightEdge = 0;
+	hBackgroundBrush = NULL;
+	m_BackBufferL = m_BackBufferH = m_RightEdge = 0;
 }
 
 BOOL CHeaderArea::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
@@ -25,9 +26,7 @@ BOOL CHeaderArea::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
+	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CHeaderArea::OnCommand(WPARAM wParam, LPARAM lParam)
@@ -39,7 +38,7 @@ BOOL CHeaderArea::OnCommand(WPARAM wParam, LPARAM lParam)
 		if (pWnd)
 		{
 			CRect rectWindow;
-			pWnd->GetWindowRect(&rectWindow);
+			pWnd->GetWindowRect(rectWindow);
 
 			TrackPopupMenu(hMenu, TPM_RIGHTALIGN | TPM_RIGHTBUTTON, rectWindow.right, rectWindow.bottom, 0, GetOwner()->GetSafeHwnd(), NULL);
 			return TRUE;
@@ -53,7 +52,7 @@ BOOL CHeaderArea::OnCommand(WPARAM wParam, LPARAM lParam)
 	}
 }
 
-void CHeaderArea::SetText(CString Caption, CString Hint, BOOL Repaint)
+void CHeaderArea::SetText(LPCWSTR Caption, LPCWSTR Hint, BOOL Repaint)
 {
 	m_Caption = Caption;
 	m_Hint = Hint;
@@ -67,18 +66,9 @@ void CHeaderArea::SetText(CString Caption, CString Hint, BOOL Repaint)
 
 UINT CHeaderArea::GetPreferredHeight()
 {
-	UINT h = 2*BORDER+MARGIN;
+	UINT Height = 2*BORDER+MARGIN+LFGetApp()->m_CaptionFont.GetFontHeight()+LFGetApp()->m_DefaultFont.GetFontHeight();
 
-	CDC* pDC = GetDC();
-	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_CaptionFont);
-	h += pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectObject(LFGetApp()->m_DefaultFont);
-	m_FontHeight = pDC->GetTextExtent(_T("Wy")).cy;
-	h += m_FontHeight;
-	pDC->SelectObject(pOldFont);
-	ReleaseDC(pDC);
-
-	return max(h, max(60, (UINT)m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN+MARGIN/2));
+	return max(Height, max(60, (UINT)m_Buttons.m_ItemCount*(LFGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN+MARGIN/2));
 }
 
 CHeaderButton* CHeaderArea::AddButton(UINT nID)
@@ -90,61 +80,57 @@ CHeaderButton* CHeaderArea::AddButton(UINT nID)
 	{
 		ENSURE(Caption.LoadString(nID));
 
-		INT pos = Caption.Find(L'\n');
-		if (pos!=-1)
+		INT Pos = Caption.Find(L'\n');
+		if (Pos!=-1)
 		{
-			Hint = Caption.Left(pos);
-			Caption.Delete(0, pos+1);
+			Hint = Caption.Left(Pos);
+			Caption.Delete(0, Pos+1);
 
 			if (Hint.GetLength()>40)
 			{
-				pos = Hint.Find(L' ', Hint.GetLength()/2);
-				if (pos!=-1)
-					Hint.SetAt(pos, L'\n');
+				Pos = Hint.Find(L' ', Hint.GetLength()/2);
+				if (Pos!=-1)
+					Hint.SetAt(Pos, L'\n');
 			}
 		}
 	}
 
-	CHeaderButton* btn = new CHeaderButton();
-	btn->Create(this, nID, Caption, Hint);
+	CHeaderButton* pHeaderButton = new CHeaderButton();
+	pHeaderButton->Create(this, nID, Caption, Hint);
 
-	m_Buttons.AddTail(btn);
+	m_Buttons.AddItem(pHeaderButton);
 
-	return btn;
+	return pHeaderButton;
 }
 
 void CHeaderArea::AdjustLayout()
 {
-	SetRedraw(FALSE);
-
 	CRect rect;
 	GetClientRect(rect);
 
 	m_RightEdge = rect.right;
-	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN/2)/2);
+	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.m_ItemCount*(LFGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN/2)/2);
 
-	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CHeaderButton* pHeaderButton = m_Buttons.GetNext(p);
+		CHeaderButton* pHeaderButton = m_Buttons.m_Items[a];
 
-		CSize sz;
-		UINT CaptionWidth;
-		pHeaderButton->GetPreferredSize(sz, CaptionWidth);
-		pHeaderButton->SetWindowPos(NULL, rect.right-sz.cx-BORDERLEFT, Row, sz.cx, sz.cy, SWP_NOZORDER | SWP_NOACTIVATE);
+		CSize Size;
+		INT CaptionWidth;
+		pHeaderButton->GetPreferredSize(&Size, CaptionWidth);
+		pHeaderButton->SetWindowPos(NULL, rect.right-Size.cx-BORDERLEFT, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
-		m_RightEdge = min(m_RightEdge, rect.right-sz.cx-(INT)CaptionWidth-BORDER-BORDERLEFT-MARGIN);
+		m_RightEdge = min(m_RightEdge, rect.right-Size.cx-(INT)CaptionWidth-BORDER-BORDERLEFT-MARGIN);
 
-		Row += sz.cy+MARGIN/2;
+		Row += Size.cy+MARGIN/2;
 	}
 
 	m_BackBufferL = m_BackBufferH = 0;
-
-	SetRedraw(TRUE);
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 }
 
 
-BEGIN_MESSAGE_MAP(CHeaderArea, CWnd)
+BEGIN_MESSAGE_MAP(CHeaderArea, CFrontstageWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -158,17 +144,16 @@ END_MESSAGE_MAP()
 
 void CHeaderArea::OnDestroy()
 {
-	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CHeaderButton* btn = m_Buttons.GetNext(p);
-		btn->DestroyWindow();
-		delete btn;
+		CHeaderButton* pHeaderButton = m_Buttons.m_Items[a];
+		pHeaderButton->DestroyWindow();
+		delete pHeaderButton;
 	}
 
-	CWnd::OnDestroy();
+	DeleteObject(hBackgroundBrush);
 
-	if (hBackgroundBrush)
-		DeleteObject(hBackgroundBrush);
+	CFrontstageWnd::OnDestroy();
 }
 
 BOOL CHeaderArea::OnEraseBkgnd(CDC* /*pDC*/)
@@ -183,24 +168,24 @@ void CHeaderArea::OnPaint()
 	CRect rect;
 	GetClientRect(rect);
 
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	BOOL Themed = IsCtrlThemed();
-
-	CBitmap* pOldBitmap;
 	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
 	{
 		m_BackBufferL = rect.Width();
 		m_BackBufferH = rect.Height();
 
-		m_BackBuffer.DeleteObject();
-		m_BackBuffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		DeleteObject(hBackgroundBrush);
+
+		CDC dc;
+		dc.CreateCompatibleDC(&pDC);
+		dc.SetBkMode(TRANSPARENT);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		Graphics g(dc);
 
+		BOOL Themed = IsCtrlThemed();
 		if (Themed)
 		{
 			dc.FillSolidRect(rect, 0xFFFFFF);
@@ -228,21 +213,21 @@ void CHeaderArea::OnPaint()
 			dc.FillSolidRect(rectFill, GetSysColor(COLOR_3DFACE));
 		}
 
-		HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? LFGetApp()->m_DefaultFont.m_hObject : (HFONT)GetStockObject(DEFAULT_GUI_FONT));
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
 		dc.SetTextColor(Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
 
-		for (POSITION p=m_Buttons.GetHeadPosition(); p; )
+		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 		{
-			CHeaderButton* btn = m_Buttons.GetNext(p);
+			const CHeaderButton* pHeaderButton = m_Buttons.m_Items[a];
 
 			CRect rect;
-			btn->GetWindowRect(&rect);
-			ScreenToClient(&rect);
+			pHeaderButton->GetWindowRect(rect);
+			ScreenToClient(rect);
 
 			CString Caption;
-			UINT CaptionWidth;
-			btn->GetCaption(Caption, CaptionWidth);
+			INT CaptionWidth;
+			pHeaderButton->GetCaption(Caption, CaptionWidth);
 
 			CRect rectCaption(rect.left-CaptionWidth-MARGIN, rect.top, rect.left, rect.bottom);
 			dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
@@ -260,19 +245,13 @@ void CHeaderArea::OnPaint()
 			dc.DrawText(m_Caption, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
 
-		dc.SelectObject(hOldFont);
+		dc.SelectObject(pOldFont);
+		dc.SelectObject(pOldBitmap);
 
-		if (hBackgroundBrush)
-			DeleteObject(hBackgroundBrush);
-		hBackgroundBrush = CreatePatternBrush(m_BackBuffer);
-	}
-	else
-	{
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		hBackgroundBrush = CreatePatternBrush(MemBitmap);
 	}
 
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
+	FillRect(pDC, rect, hBackgroundBrush);
 }
 
 LRESULT CHeaderArea::OnThemeChanged()
@@ -285,21 +264,21 @@ LRESULT CHeaderArea::OnThemeChanged()
 HBRUSH CHeaderArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
-	{
-		CRect rc;
-		pWnd->GetWindowRect(&rc);
-		ScreenToClient(&rc);
+	if (hBackgroundBrush)
+		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+		{
+			CRect rect;
+			pWnd->GetWindowRect(rect);
+			ScreenToClient(rect);
 
-		pDC->SetBkMode(TRANSPARENT);
-		pDC->SetBrushOrg(-rc.left, -rc.top);
+			pDC->SetBrushOrg(-rect.left, -rect.top);
 
-		hbr = hBackgroundBrush;
-	}
+			hBrush = hBackgroundBrush;
+		}
 
-	return hbr;
+	return hBrush;
 }
 
 void CHeaderArea::OnLButtonDown(UINT nFlags, CPoint point)
@@ -318,7 +297,7 @@ void CHeaderArea::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CHeaderArea::OnSize(UINT nType, INT cx, INT cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CFrontstageWnd::OnSize(nType, cx, cy);
 
 	AdjustLayout();
 }

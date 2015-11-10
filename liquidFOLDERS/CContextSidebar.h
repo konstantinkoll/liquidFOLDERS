@@ -9,9 +9,9 @@
 // CContextSidebar
 //
 
-#define WM_UPDATENUMBERS     WM_USER+209
+#define WM_UPDATECOUNTS     WM_USER+209
 
-class CContextSidebar : public CSidebar
+class CContextSidebar : public CBackstageSidebar
 {
 friend class CSidebarCommand;
 
@@ -25,7 +25,7 @@ public:
 	void SetSelection(UINT CmdID, CHAR* StoreID);
 
 protected:
-	afx_msg void OnUpdateNumbers();
+	afx_msg void OnUpdateCounts();
 	DECLARE_MESSAGE_MAP()
 
 	CHAR m_StoreID[LFKeySize];

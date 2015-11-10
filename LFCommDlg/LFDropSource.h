@@ -26,7 +26,7 @@ public:
 
 	END_INTERFACE
 
-	DWORD GetLastEffect();
+	DWORD GetLastEffect() const;
 
 protected:
 	LONG m_lRefCount;

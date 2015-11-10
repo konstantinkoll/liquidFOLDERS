@@ -95,7 +95,7 @@ LFCORE_API BOOL LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount)
 	return FALSE;
 }
 
-LFCORE_API LFMessageIDs* LFGetMessageIDs()
+LFCORE_API const LFMessageIDs* LFGetMessageIDs()
 {
 	return &LFMessages;
 }

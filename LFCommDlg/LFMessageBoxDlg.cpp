@@ -11,7 +11,7 @@
 
 #define TEXTFLAGS     DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS | DT_WORDBREAK
 
-LFMessageBoxDlg::LFMessageBoxDlg(CWnd* pParentWnd, CString Text, CString Caption, UINT Type)
+LFMessageBoxDlg::LFMessageBoxDlg(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
 	: LFDialog(IDD_MESSAGEBOX, pParentWnd)
 {
 	ASSERT((Type & (MB_HELP | MB_TASKMODAL | MB_DEFAULT_DESKTOP_ONLY | MB_RIGHT | MB_RTLREADING | MB_SERVICE_NOTIFICATION))==0);

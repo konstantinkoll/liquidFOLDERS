@@ -12,7 +12,7 @@
 class LFStoreDataObject : public IDataObject
 {
 public:
-	LFStoreDataObject(LFItemDescriptor* i);
+	LFStoreDataObject(LFItemDescriptor* pItemDescriptor);
 
 	BEGIN_INTERFACE
 

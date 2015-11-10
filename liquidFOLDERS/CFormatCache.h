@@ -26,7 +26,7 @@ public:
 	void Remove(WCHAR* Path);
 	CString GetTypeName(CHAR* FileFormat);
 	INT GetSysIconIndex(CHAR* FileFormat);
-	void DrawJumboIcon(CDC& dc, CRect& rect, CHAR* FileFormat, BOOL Ghosted=FALSE);
+	void DrawJumboIcon(CDC& dc, const CRect& rect, CHAR* FileFormat, BOOL Ghosted=FALSE);
 
 protected:
 	INT ConvertIcon(INT SysIconIndex);

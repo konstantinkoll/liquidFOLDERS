@@ -46,11 +46,11 @@ LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
 	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT | TIME_NOSECONDS, &st, NULL, tmpStr, 256);
 	wcscat_s(m_Build, 256, tmpStr);
 
-	GetSystemTime(&st);
+	GetLocalTime(&st);
 	p_Santa = (st.wMonth==12) ? LFGetApp()->GetCachedResourceImage(IDB_SANTA, _T("PNG")) : NULL;
 	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"));
 
-	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
+	GetFileVersion(AfxGetInstanceHandle(), m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
 
 	ENSURE(m_AppName.LoadString(IDR_APPLICATION));
@@ -89,18 +89,18 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, m_IconTop);
 	if (p_Santa)
-		g.DrawImage(p_Santa->m_pBitmap, -6, m_IconTop-10);
+		g.DrawImage(p_Santa->m_pBitmap, -7, m_IconTop-8);
 
-	CRect r(rect);
-	r.top = m_CaptionTop;
-	r.left = (p_Santa ? 178 : 148)-1;
+	CRect rectText(rect);
+	rectText.top = m_CaptionTop;
+	rectText.left = (p_Santa ? 178 : 148)-1;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(IsCtrlThemed() ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName, r, fmt);
+	dc.DrawText(m_AppName, rectText, fmt);
 
 	dc.SelectObject(pOldFont);
 }
@@ -154,8 +154,8 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	// Version
 	CRect rectWnd;
-	m_wndVersionInfo.GetWindowRect(&rectWnd);
-	ScreenToClient(&rectWnd);
+	m_wndVersionInfo.GetWindowRect(rectWnd);
+	ScreenToClient(rectWnd);
 
 #ifdef _M_X64
 #define ISET _T(" (x64)")
@@ -165,9 +165,11 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	CString Caption;
 	m_wndVersionInfo.GetWindowText(Caption);
-	CString text;
-	text.Format(Caption, m_Version+ISET, m_Build, m_Copyright);
-	m_wndVersionInfo.SetWindowText(text);
+
+	CString Text;
+	Text.Format(Caption, m_Version+ISET, m_Build, m_Copyright);
+
+	m_wndVersionInfo.SetWindowText(Text);
 
 	// Hintergrund
 	const INT Height = rectWnd.Height()-16;
@@ -175,13 +177,8 @@ BOOL LFAboutDlg::OnInitDialog()
 	const INT HeightCaption = 4*LineGap;
 	const INT HeightVersion = 2*LineGap;
 
-	m_CaptionFont.CreateFont(HeightCaption, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, _T("Letter Gothic"));
-
-	m_VersionFont.CreateFont(HeightVersion, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
+	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
 	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-LineGap-3*HeightVersion)/2-8;
@@ -238,7 +235,7 @@ void LFAboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	CString URL((LPCSTR)IDS_ABOUTURL);
 
-	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
+	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 
 	*pResult = 0;
 }

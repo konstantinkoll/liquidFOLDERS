@@ -27,7 +27,7 @@ public:
 
 	UINT MaintenanceAndStatistics(BOOL Scheduled=FALSE, LFProgress* pProgress=NULL);
 	void ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress=NULL);
-	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount);
+	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount) const;
 
 	// Index operations
 	virtual UINT Synchronize(BOOL OnInitialize=FALSE, LFProgress* pProgress=NULL);
@@ -47,14 +47,14 @@ public:
 protected:
 	// Callbacks
 	virtual UINT DeleteDirectories();
-	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCHAR* pPath, SIZE_T cCount);
+	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCHAR* pPath, SIZE_T cCount) const;
 	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor);
 	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData);
 	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFProgress* pProgress=NULL);
 
 	// Aux functions
-	void GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath, SIZE_T cCount);
-	void CreateNewFileID(CHAR* pFileID);
+	void GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath, SIZE_T cCount) const;
+	void CreateNewFileID(CHAR* pFileID) const;
 
 	UINT m_AdditionalDataSize;
 	CIndex* m_pIndexMain;

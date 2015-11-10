@@ -244,8 +244,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_FILEIMPORT      "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind."
-    IDS_ERR_FILEDELETE      "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
+    IDS_ERR_FILEIMPORT      "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind oder Sie nicht die nötigen Zugriffsrechte haben."
+    IDS_ERR_FILEDELETE      "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind oder Sie nicht die nötigen Zugriffsrechte haben."
     IDS_ERR_FILERENAME      "Einige Dateien können nicht umbenannt werden."
     IDS_ERR_INDEXCOPY       "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt?)."
     IDS_ERR_NOFILEBODY      "Der eigentliche Dateikörper befindet sich nicht im Store."
@@ -524,8 +524,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_FILEIMPORT      "Algunos archivos no pueden ser importados porque aún se encuentran en uso."
-    IDS_ERR_FILEDELETE      "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso."
+    IDS_ERR_FILEIMPORT      "Algunos archivos no pueden ser importados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
+    IDS_ERR_FILEDELETE      "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
     IDS_ERR_FILERENAME      "Algunos archivos no pueden ser renombrados."
     IDS_ERR_INDEXCOPY       "El índice no puede ser actualizado (¿disco protegido contra escritura?)."
     IDS_ERR_NOFILEBODY      "El cuerpo actual del archivo no está presente en el store."
@@ -805,8 +805,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_FILEIMPORT      "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage."
-    IDS_ERR_FILEDELETE      "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage."
+    IDS_ERR_FILEIMPORT      "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage ou si vous ne disposez pas des droits d'accès requis."
+    IDS_ERR_FILEDELETE      "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage ou si vous ne disposez pas des droits d'accès requis."
     IDS_ERR_FILERENAME      "Certains fichiers ne peuvent pas être renommées."
     IDS_ERR_INDEXCOPY       "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture?)."
     IDS_ERR_NOFILEBODY      "Le véritable corps de fichier ne se trouve pas dans le store."
@@ -1121,8 +1121,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_FILEIMPORT      "Some files cannot be imported because they are still in use."
-    IDS_ERR_FILEDELETE      "Some files cannot be deleted because they are still in use."
+    IDS_ERR_FILEIMPORT      "Some files cannot be imported because they are still in use or you don't have the neccessary permissions."
+    IDS_ERR_FILEDELETE      "Some files cannot be deleted because they are still in use or you don't have the neccessary permissions."
     IDS_ERR_FILERENAME      "Some files cannot be renamed."
     IDS_ERR_INDEXCOPY       "The index cannot be updated (write protected disc?)."
     IDS_ERR_NOFILEBODY      "The actual file body is not present in the store."

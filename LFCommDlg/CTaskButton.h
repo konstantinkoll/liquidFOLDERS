@@ -14,7 +14,7 @@ class CTaskButton : public CHoverButton
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
+	BOOL Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
 	void SetIconID(INT IconID);
 	INT GetPreferredWidth(BOOL Small=FALSE);
 

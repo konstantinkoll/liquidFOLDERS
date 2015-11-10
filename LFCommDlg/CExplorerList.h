@@ -36,10 +36,9 @@ public:
 
 	virtual void PreSubclassWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual BOOL SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags);
 
-	void AddCategory(INT ID, CString Name, CString Hint=_T(""), BOOL Collapsible=FALSE);
-	void AddColumn(INT ID, LPWSTR Name, INT Width=100, BOOL Right=FALSE);
+	void AddCategory(INT ID, LPCWSTR Name, LPCWSTR Hint=_T(""), BOOL Collapsible=FALSE);
+	void AddColumn(INT ID, LPCWSTR Name, INT Width=100, BOOL Right=FALSE);
 	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
 	void SetItemsPerRow(INT ItemsPerRow, INT ColumnsPerTile=3);
 
@@ -56,7 +55,8 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
+	afx_msg void OnWindowPosChanged(WINDOWPOS* lpwndpos);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
@@ -78,7 +78,6 @@ private:
 	BOOL m_HighlightFirst;
 	UINT m_BackgroundMenuID;
 
-	UINT m_FontHeight;
 	INT m_ColumnCount;
 	LVCOLUMN m_Columns[16];
 	CImageList* p_ImageList;

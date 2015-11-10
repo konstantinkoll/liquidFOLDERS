@@ -10,12 +10,12 @@
 // LFDeleteStoreDlg
 //
 
-LFDeleteStoreDlg::LFDeleteStoreDlg(CHAR* StoreID, CWnd* pParentWnd)
+LFDeleteStoreDlg::LFDeleteStoreDlg(const CHAR* pStoreID, CWnd* pParentWnd)
 	: LFDialog(IDD_DELETESTORE, pParentWnd, TRUE)
 {
-	ASSERT(StoreID);
+	ASSERT(pStoreID);
 
-	strcpy_s(m_StoreID, LFKeySize, StoreID);
+	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 }
 
 
@@ -36,7 +36,7 @@ BOOL LFDeleteStoreDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_KEEP))->SetCheck(TRUE);
 
 	// Fette Überschrift
-	GetDlgItem(IDC_CAPTION)->SetFont(&LFGetApp()->m_BoldFont);
+	GetDlgItem(IDC_CAPTION)->SetFont(&LFGetApp()->m_DialogBoldFont);
 
 	// Nuke
 	if ((m_Store.Mode & LFStoreModeBackendMask)>LFStoreModeBackendInternal)

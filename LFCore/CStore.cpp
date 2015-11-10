@@ -204,7 +204,7 @@ void CStore::ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgres
 	pMaintenanceList->AddItem(p_StoreDescriptor->StoreName, p_StoreDescriptor->Comments, p_StoreDescriptor->StoreID, MaintenanceAndStatistics(TRUE, pProgress), LFGetStoreIcon(p_StoreDescriptor));
 }
 
-UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount)
+UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount) const
 {
 	assert(pItemDescriptor);
 	assert(pPath);
@@ -279,7 +279,11 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, WCHAR*
 	else
 	{
 		// Revert
-		return DeleteFile(&pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData);
+		UINT Result = DeleteFile(&pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData);
+		if (Result==LFCannotDeleteFile)
+			Result = LFCannotImportFile;
+
+		return Result;
 	}
 }
 
@@ -433,7 +437,7 @@ UINT CStore::DeleteDirectories()
 	return LFOk;
 }
 
-UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, void* /*pStoreData*/, WCHAR* pPath, SIZE_T cCount)
+UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, void* /*pStoreData*/, WCHAR* pPath, SIZE_T cCount) const
 {
 	assert(pCoreAttributes);
 	assert(pPath);
@@ -537,7 +541,7 @@ BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, void* /*pSto
 // Aux functions
 //
 
-void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath, SIZE_T cCount)
+void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath, SIZE_T cCount) const
 {
 	assert(pCoreAttributes);
 	assert(pPath);
@@ -555,7 +559,7 @@ void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath
 	wcscat_s(pPath, cCount, Buffer2);
 }
 
-void CStore::CreateNewFileID(CHAR* pFileID)
+void CStore::CreateNewFileID(CHAR* pFileID) const
 {
 	assert(pFileID);
 	assert(m_pIndexMain);

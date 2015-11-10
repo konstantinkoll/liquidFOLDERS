@@ -341,6 +341,30 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CBackstageBar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageEdit.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageShadow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageSidebar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWidgets.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCategory.cpp"
 				>
 			</File>
@@ -361,19 +385,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFrontstagePane.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CFrontstageWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGdiPlusBitmap.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlassEdit.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlassPane.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlassWindow.cpp"
 				>
 			</File>
 			<File
@@ -414,10 +434,6 @@
 			</File>
 			<File
 				RelativePath=".\CPropertyEdit.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CSidebar.cpp"
 				>
 			</File>
 			<File
@@ -506,6 +522,10 @@
 			</File>
 			<File
 				RelativePath=".\LFEditTimeDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFFont.cpp"
 				>
 			</File>
 			<File
@@ -623,6 +643,14 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\res\Arrow_Left.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Arrow_Right.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Attributes_16.bmp"
 				>
 			</File>
@@ -631,7 +659,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Background_DarkLinen.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Background_Tooltip.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Clipboard_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Close.ico"
 				>
 			</File>
 			<File
@@ -684,6 +724,10 @@
 			</File>
 			<File
 				RelativePath=".\res\LocationIndicator_8.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Minimize.ico"
 				>
 			</File>
 			<File
@@ -803,19 +847,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Search.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Shield_7.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\res\Shield_Vista.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\SidebarBackground.png"
 				>
 			</File>
 			<File
@@ -839,10 +875,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\TooltipBackground.png"
-				>
-			</File>
-			<File
 				RelativePath=".\res\UpdateIcons_16.bmp"
 				>
 			</File>
@@ -860,6 +892,30 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CBackstageBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageEdit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageShadow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageSidebar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWidgets.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWnd.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CCategory.h"
 				>
@@ -881,19 +937,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFrontstagePane.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CFrontstageWnd.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CGdiPlusBitmap.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlassEdit.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlassPane.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlassWindow.h"
 				>
 			</File>
 			<File
@@ -934,10 +986,6 @@
 			</File>
 			<File
 				RelativePath=".\CPropertyEdit.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CSidebar.h"
 				>
 			</File>
 			<File
@@ -1030,6 +1078,10 @@
 			</File>
 			<File
 				RelativePath=".\LFEditTimeDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFFont.h"
 				>
 			</File>
 			<File

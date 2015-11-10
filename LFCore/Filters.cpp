@@ -10,7 +10,7 @@
 extern LFMessageIDs LFMessages;
 
 
-LFCORE_API LFFilter* LFAllocFilter(LFFilter* pFilter)
+LFCORE_API LFFilter* LFAllocFilter(const LFFilter* pFilter)
 {
 	LFFilter* pNewFilter = new LFFilter;
 
@@ -87,9 +87,9 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 		Ptr = pFilename;
 	}
 
-	LFStoreDescriptor* slot = FindStore(Path);
+	LFStoreDescriptor* pStoreDescriptor = FindStore(Path);
 
-	LFFilter* pFilter = LoadFilter(pFilename, slot ? slot->StoreID : "");
+	LFFilter* pFilter = LoadFilter(pFilename, pStoreDescriptor ? pStoreDescriptor->StoreID : "");
 	if (pFilter)
 	{
 		wcscpy_s(pFilter->OriginalName, 256, Ptr);
@@ -104,9 +104,9 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 	return pFilter;
 }
 
-LFCORE_API UINT LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComment)
+LFCORE_API UINT LFSaveFilter(const CHAR* pStoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComment)
 {
-	assert(StoreID);
+	assert(pStoreID);
 	assert(pFilter);
 	assert(pName);
 
@@ -114,14 +114,14 @@ LFCORE_API UINT LFSaveFilter(CHAR* StoreID, LFFilter* pFilter, WCHAR* pName, WCH
 
 	// Store finden
 	CHAR Store[LFKeySize];
-	strcpy_s(Store, LFKeySize, StoreID);
+	strcpy_s(Store, LFKeySize, pStoreID);
 
 	if (Store[0]=='\0')
 		if ((Result=LFGetDefaultStore(Store))!=LFOk)
 			return Result;
 
 	CStore* pStore;
-	if ((Result=OpenStore(StoreID, TRUE, &pStore))==LFOk)
+	if ((Result=OpenStore(Store, TRUE, &pStore))==LFOk)
 	{
 		LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 

@@ -5,6 +5,7 @@
 #pragma once
 #include "CGdiPlusBitmap.h"
 #include "LFDialog.h"
+#include "LFFont.h"
 
 
 // LFUpdateDlg
@@ -23,7 +24,7 @@
 class LFUpdateDlg : public LFDialog
 {
 public:
-	LFUpdateDlg(CString Version, CString MSN, DWORD Features, CWnd* pParentWnd=NULL);
+	LFUpdateDlg(const CString& Version, const CString& MSN, DWORD Features, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -60,8 +61,8 @@ private:
 
 	CGdiPlusBitmap* m_pLogo;
 	CImageListTransparent m_UpdateIcons;
-	CFont m_CaptionFont;
-	CFont m_VersionFont;
+	LFFont m_CaptionFont;
+	LFFont m_VersionFont;
 	INT m_CaptionTop;
 	INT m_IconTop;
 	INT m_FeaturesTop;

@@ -13,8 +13,8 @@
 
 #define GetItemData(Index)                  ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING                             3
-#define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), rect, DT_END_ELLIPSIS | format);
-#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && !d->Hdr.Selected) dc.SetTextColor(0x808080);
+#define DrawLabel(dc, rect, pItemDescriptor, format)      dc.DrawText(GetLabel(pItemDescriptor), rect, DT_END_ELLIPSIS | format);
+#define SwitchColor(dc, d)                  if ((Themed) && (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing)) && !d->Hdr.Selected) dc.SetTextColor(0x808080);
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
@@ -122,17 +122,17 @@ void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 			GridItemData* d = GetItemData(a);
 			d->Hdr.Valid = TRUE;
 
-			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
-			if ((i->Type & LFTypeMask)==LFTypeFile)
+			LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[a];
+			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 				if (!p_CookedFiles->m_HasCategories)
 					if (p_CookedFiles->m_Context==LFContextSubfolderDay)
 					{
 						SYSTEMTIME stUTC;
 						SYSTEMTIME stLocal;
-						FileTimeToSystemTime((FILETIME*)i->AttributeValues[p_CookedFiles->m_GroupAttribute], &stUTC);
+						FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[p_CookedFiles->m_GroupAttribute], &stUTC);
 						SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
-						i->CategoryID = stLocal.wHour<6 ? LFItemCategoryNight : LFItemCategoryCount+stLocal.wHour-6;
+						pItemDescriptor->CategoryID = stLocal.wHour<6 ? LFItemCategoryNight : LFItemCategoryCount+stLocal.wHour-6;
 						m_HasCategories = TRUE;
 					}
 		}
@@ -191,7 +191,7 @@ void CListView::AdjustLayout()
 {
 	// Header
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 
 	WINDOWPOS wp;
 	HDLAYOUT HdLayout;
@@ -204,16 +204,18 @@ void CListView::AdjustLayout()
 	m_HeaderHeight = wp.cy;
 
 	// Items
-	GVArrange gva = { 0, 0, 15-PADDING, 2, PADDING, 1, -1 };
+	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
+
+	GVArrange gva = { 0, 0, 15-PADDING, 3, PADDING, 1, -1 };
 
 	switch (m_ViewParameters.Mode)
 	{
 	case LFViewLargeIcons:
 	case LFViewSmallIcons:
 	case LFViewPreview:
-		gva.cx = max(m_IconSize[0].cx, m_FontHeight[0]*10);
-		gva.cy = m_IconSize[0].cy+m_FontHeight[0]*2+PADDING;
-		gva.guttery = 1;
+		gva.cx = max(m_IconSize[0].cx, FontHeight*10);
+		gva.cy = m_IconSize[0].cy+FontHeight*2+PADDING;
+		gva.gutterx = gva.guttery = 3;
 
 		ArrangeHorizontal(gva);
 
@@ -221,9 +223,11 @@ void CListView::AdjustLayout()
 
 	case LFViewList:
 		gva.cx = m_IconSize[0].cx+PADDING+GetMaxLabelWidth(240-m_IconSize[0].cx-PADDING);
+
 		if (gva.cx<140)
 			gva.cx = 140;
-		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
+
+		gva.cy = max(m_IconSize[0].cy, FontHeight);
 		gva.gutterx = 6;
 
 		ArrangeVertical(gva);
@@ -232,17 +236,19 @@ void CListView::AdjustLayout()
 
 	case LFViewDetails:
 		gva.cx = -2*gva.padding;
+
 		for (UINT a=0; a<LFAttributeCount; a++)
 			gva.cx += m_ViewParameters.ColumnWidth[a];
-		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
+
+		gva.cy = max(m_IconSize[0].cy, FontHeight);
 
 		ArrangeHorizontal(gva, FALSE, TRUE);
 
 		break;
 
 	case LFViewTiles:
-		gva.cx = 15*m_FontHeight[0];
-		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]*3+max(m_FontHeight[0], 18));
+		gva.cx = 15*FontHeight;
+		gva.cy = max(m_IconSize[0].cy, FontHeight*3+max(FontHeight, 18));
 		gva.gutterx = gva.guttery = 3;
 
 		ArrangeHorizontal(gva, FALSE);
@@ -250,7 +256,7 @@ void CListView::AdjustLayout()
 		break;
 
 	case LFViewStrips:
-		gva.cy = 2+max(m_IconSize[0].cy, max(m_FontHeight[0]*3+m_FontHeight[1], m_FontHeight[0]*2+max(m_FontHeight[0], 18)*2+1));
+		gva.cy = 2+max(m_IconSize[0].cy, max(FontHeight*3+theApp.m_LargeFont.GetFontHeight(), FontHeight*2+max(FontHeight, 18)*2+1));
 
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
 
@@ -269,7 +275,7 @@ void CListView::AdjustLayout()
 	m_wndHeader.Invalidate();
 }
 
-RECT CListView::GetLabelRect(INT Index)
+RECT CListView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
@@ -295,9 +301,9 @@ RECT CListView::GetLabelRect(INT Index)
 	return rect;
 }
 
-void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
+void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
-	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
+	LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
 	GridItemData* d = GetItemData(Index);
 	INT Rows[4];
 	BOOL Right = FALSE;
@@ -311,6 +317,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 	CRect rectLabel(rect);
 	CRect rectLeft(rect);
 	CRect rectRight(rect);
+
+	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
 
 	switch (m_ViewParameters.Mode)
 	{
@@ -330,7 +338,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 			rectLabel.right--;
 		}
 
-		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
+		DrawLabel(dc, rectLabel, pItemDescriptor, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
 
 		break;
 
@@ -340,7 +348,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
 		rectLabel.left = rectIcon.right+PADDING;
 
-		GetClientRect(&rectClient);
+		GetClientRect(rectClient);
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
@@ -362,12 +370,12 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 					break;
 
 				case LFAttrFileCount:
-					if ((i->Type & LFTypeMask)==LFTypeFile)
+					if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 						continue;
 				}
 
 				if ((rectLabel.left<=rectClient.right) && (rectLabel.right>=rectClient.left))
-					DrawColumn(dc, rectLabel, i, Attr);
+					DrawColumn(dc, rectLabel, pItemDescriptor, Attr);
 			}
 		}
 
@@ -380,7 +388,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+PADDING;
-		DrawLabel(dc, rectLabel, i, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+		DrawLabel(dc, rectLabel, pItemDescriptor, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 		break;
 
@@ -390,10 +398,10 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
-		rectLabel.left += m_IconSize[0].cx+m_FontHeight[0]/2;
+		rectLabel.left += m_IconSize[0].cx+FontHeight/2;
 
 		Rows[0] = LFAttrFileName;
-		switch (i->Type & LFTypeMask)
+		switch (pItemDescriptor->Type & LFTypeMask)
 		{
 		case LFTypeStore:
 			Rows[1] = LFAttrComments;
@@ -417,7 +425,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 			break;
 		}
 
-		DrawTileRows(dc, rectLabel, i, d, Rows, Themed);
+		DrawTileRows(dc, rectLabel, pItemDescriptor, d, Rows, Themed);
 
 		break;
 
@@ -427,32 +435,32 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
-		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
+		rectLeft.left += m_IconSize[0].cx+FontHeight/2;
 		rectLeft.top++;
-		Right = (rect.Width()>600) && (((i->Type & LFTypeMask)==LFTypeStore) || ((i->Type & LFTypeMask)==LFTypeFile));
+		Right = (rect.Width()>600) && (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) || ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile));
 		if (Right)
 			rectLeft.right -= RIGHTCOLUMN+2*PADDING;
 
-		DrawProperty(dc, rectLeft, i, d, LFAttrFileName, Themed);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrFileName, Themed);
 
-		switch (i->Type & LFTypeMask)
+		switch (pItemDescriptor->Type & LFTypeMask)
 		{
 		case LFTypeStore:
-			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
-			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+			DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrComments, Themed);
+			DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrDescription, Themed);
 
 			break;
 
 		case LFTypeFile:
-			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
-			DrawProperty(dc, rectLeft, i, d, LFAttrHashtags, Themed);
-			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
+			DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrComments, Themed);
+			DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrHashtags, Themed);
+			DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrFileFormat, Themed);
 
 			break;
 
 		case LFTypeFolder:
-			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
-			DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
+			DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrDescription, Themed);
+			DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrFileSize, Themed);
 
 			break;
 
@@ -461,21 +469,21 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		if (Right)
 		{
 			rectRight.left = rectLeft.right+2*PADDING;
-			rectRight.top += 1+m_FontHeight[1]-m_FontHeight[0];
+			rectRight.top += 1+theApp.m_LargeFont.GetFontHeight()-FontHeight;
 
-			switch (i->Type & LFTypeMask)
+			switch (pItemDescriptor->Type & LFTypeMask)
 			{
 			case LFTypeStore:
-				DrawProperty(dc, rectRight, i, d, LFAttrCreationTime, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
+				DrawProperty(dc, rectRight, pItemDescriptor, d, LFAttrCreationTime, Themed);
+				DrawProperty(dc, rectRight, pItemDescriptor, d, LFAttrFileTime, Themed);
 
 				break;
 
 			case LFTypeFile:
-				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrFileSize, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrRating, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrPriority, Themed);
+				DrawProperty(dc, rectRight, pItemDescriptor, d, LFAttrFileTime, Themed);
+				DrawProperty(dc, rectRight, pItemDescriptor, d, LFAttrFileSize, Themed);
+				DrawProperty(dc, rectRight, pItemDescriptor, d, LFAttrRating, Themed);
+				DrawProperty(dc, rectRight, pItemDescriptor, d, LFAttrPriority, Themed);
 
 				break;
 			}
@@ -484,10 +492,10 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		break;
 
 	case LFViewContent:
-		if (i->AttributeValues[LFAttrRating])
+		if (pItemDescriptor->AttributeValues[LFAttrRating])
 		{
-			UCHAR Rating = *((UCHAR*)i->AttributeValues[LFAttrRating]);
-			if (((i->Type & LFTypeMask)==LFTypeFile) || (Rating))
+			UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[LFAttrRating]);
+			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (Rating))
 			{
 				rectIcon.left += (m_IconSize[0].cx-88)/2;
 				rectIcon.bottom -= 9;
@@ -506,89 +514,88 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
-		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
+		rectLeft.left += m_IconSize[0].cx+FontHeight/2;
 		rectLeft.top++;
 
-		DrawProperty(dc, rectLeft, i, d, LFAttrFileName, Themed);
-		DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrArtist, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrTitle, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrAlbum, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrRecordingTime, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrRoll, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrDuration, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrHashtags, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrPages, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrWidth, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrHeight, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrEquipment, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrBitrate, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrCreationTime, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrFileTime, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrFileName, Themed);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrComments, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrDescription, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrArtist, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrTitle, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrAlbum, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrRecordingTime, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrRoll, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrDuration, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrHashtags, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrPages, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrWidth, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrHeight, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrEquipment, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrBitrate, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrCreationTime, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrFileTime, Themed, FALSE);
+		DrawProperty(dc, rectLeft, pItemDescriptor, d, LFAttrFileSize, Themed, FALSE);
 
 		break;
 	}
 
-	DrawIcon(dc, rectIcon, i);
+	DrawIcon(dc, rectIcon, pItemDescriptor);
 }
 
-__forceinline void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
+__forceinline void CListView::DrawIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor)
 {
 	INT SysIconIndex = -1;
 
 #define JUMBOICON (m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview)
 
-	if (!i->IconID)
+	if (!pItemDescriptor->IconID)
 	{
-		ASSERT((i->Type & LFTypeMask)==LFTypeFile);
+		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
 		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview))
-			if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, i))
+			if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, pItemDescriptor))
 				return;
 
 		if (JUMBOICON)
 		{
-			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
+			theApp.m_FileFormats.DrawJumboIcon(dc, rect, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
 			return;
 		}
 
-		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(i->CoreAttributes.FileFormat);
+		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(pItemDescriptor->CoreAttributes.FileFormat);
 	}
 
 	const UINT List = (SysIconIndex>=0) ? 1 : 0;
-	const INT IconID = (List==1) ? SysIconIndex : i->IconID-1;
+	const INT IconID = (List==1) ? SysIconIndex : pItemDescriptor->IconID-1;
 
 	if (IconID>=0)
-	{
-		rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
-		m_Icons[List]->DrawEx(&dc, IconID, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, ((i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (i->Type & LFTypeBadgeMask));
-	}
+		m_Icons[List]->DrawEx(&dc, IconID, CPoint(rect.left+(rect.Width()-m_IconSize[List].cx)/2, rect.top+(rect.Height()-m_IconSize[List].cy)/2), m_IconSize[List], CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
 }
 
-void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, SIZE_T cCount)
+void CListView::AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* tmpStr, SIZE_T cCount)
 {
 	switch (Attr)
 	{
 	case LFAttrFileName:
-		wcsncpy_s(tmpStr, cCount, GetLabel(i), 255);
+		wcsncpy_s(tmpStr, cCount, GetLabel(pItemDescriptor), 255);
 		break;
 
 	case LFAttrFileFormat:
-		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats.GetTypeName(i->CoreAttributes.FileFormat));
+		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat));
 		break;
 
 	default:
-		LFAttributeToString(i, Attr, tmpStr, cCount);
+		LFAttributeToString(pItemDescriptor, Attr, tmpStr, cCount);
 	}
 }
 
-__forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed)
+__forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* d, INT* Rows, BOOL Themed)
 {
 	WCHAR tmpStr[4][256];
 	UINT Cnt = 0;
 	UINT Height = 0;
+
+	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
 
 	for (UINT a=0; a<4; a++)
 	{
@@ -602,31 +609,31 @@ __forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescripto
 		else
 			if (Rows[a]!=-1)
 			{
-				AttributeToString(i, Rows[a], tmpStr[a], 256);
+				AttributeToString(pItemDescriptor, Rows[a], tmpStr[a], 256);
 				if (tmpStr[a][0]!=L'\0')
 				{
 					Cnt++;
-					Height += m_FontHeight[0];
+					Height += FontHeight;
 				}
 			}
 	}
 
 	rect.top += (rect.Height()-Height)/2;
-	rect.bottom = rect.top+max(m_FontHeight[0], 18);
+	rect.bottom = rect.top+max(FontHeight, 18);
 
 	for (UINT a=0; a<4; a++)
 	{
 		if (Rows[a]==LFAttrRating)
 		{
 			PrepareBlend();
-			Blend(dc, rect, i->CoreAttributes.Rating, theApp.m_RatingBitmaps);
+			Blend(dc, rect, pItemDescriptor->CoreAttributes.Rating, theApp.m_RatingBitmaps);
 			rect.OffsetRect(0, 18);
 		}
 		else
 			if (tmpStr[a][0]!=L'\0')
 			{
 				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-				rect.OffsetRect(0, m_FontHeight[0]);
+				rect.OffsetRect(0, FontHeight);
 			}
 
 		if (Rows[a]==LFAttrFileName)
@@ -634,14 +641,14 @@ __forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescripto
 	}
 }
 
-__forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
+__forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	if (theApp.m_Attributes[Attr].Type==LFTypeRating)
 	{
-		if (i->AttributeValues[Attr])
+		if (pItemDescriptor->AttributeValues[Attr])
 		{
-			UCHAR Rating = *((UCHAR*)i->AttributeValues[Attr]);
-			if (((i->Type & LFTypeMask)==LFTypeFile) || (Rating))
+			UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[Attr]);
+			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (Rating))
 			{
 				PrepareBlend();
 				if (Attr==LFAttrRating)
@@ -658,7 +665,7 @@ __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor*
 	else
 	{
 		WCHAR tmpStr[256];
-		AttributeToString(i, Attr, tmpStr, 256);
+		AttributeToString(pItemDescriptor, Attr, tmpStr, 256);
 		if (tmpStr[0]!=L'\0')
 		{
 			CRect rectText(rect);
@@ -671,7 +678,7 @@ __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor*
 	}
 }
 
-void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed, BOOL AlwaysNewRow)
+void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* d, UINT Attr, BOOL Themed, BOOL AlwaysNewRow)
 {
 	CFont* pOldFont;
 
@@ -679,10 +686,10 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 	{
 	case LFAttrFileName:
 		pOldFont = dc.SelectObject(&theApp.m_LargeFont);
-		DrawLabel(dc, rect, i, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+		DrawLabel(dc, rect, pItemDescriptor, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 		dc.SelectObject(pOldFont);
 
-		rect.top += m_FontHeight[1];
+		rect.top += theApp.m_LargeFont.GetFontHeight();
 
 		break;
 
@@ -692,11 +699,11 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			PrepareBlend();
 			if (Attr==LFAttrRating)
 			{
-				Blend(dc, rect, i->CoreAttributes.Rating, theApp.m_RatingBitmaps);
+				Blend(dc, rect, pItemDescriptor->CoreAttributes.Rating, theApp.m_RatingBitmaps);
 			}
 			else
 			{
-				Blend(dc, rect, i->CoreAttributes.Priority, theApp.m_PriorityBitmaps);
+				Blend(dc, rect, pItemDescriptor->CoreAttributes.Priority, theApp.m_PriorityBitmaps);
 			}
 		}
 
@@ -706,10 +713,11 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 
 	default:
 		WCHAR tmpStr[256];
-		AttributeToString(i, Attr, tmpStr, 256);
+		AttributeToString(pItemDescriptor, Attr, tmpStr, 256);
+
 		if (tmpStr[0]!=L'\0')
 		{
-			if (rect.top>rect.bottom-m_FontHeight[0])
+			if (rect.top>rect.bottom-theApp.m_DefaultFont.GetFontHeight())
 				return;
 
 			COLORREF oldColor = dc.GetTextColor();
@@ -719,7 +727,9 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			{
 				CString tmpCaption(theApp.m_Attributes[Attr].Name);
 				tmpCaption += _T(": ");
+
 				dc.DrawText(tmpCaption, rectText, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
 				rectText.left += dc.GetTextExtent(tmpCaption).cx;
 			}
 
@@ -733,7 +743,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 				return;
 		}
 
-		rect.top += m_FontHeight[0];
+		rect.top += theApp.m_DefaultFont.GetFontHeight();
 
 		break;
 	}
@@ -778,15 +788,17 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 
 	if (p_CookedFiles)
 	{
-		CDC* pDC = GetDC();
-		CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
+
+		CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
 			WCHAR tmpStr[256];
 			LFAttributeToString(p_CookedFiles->m_Items[a], Col, tmpStr, 256);
-			INT cx = pDC->GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
 
+			const INT cx = dc.GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
 			if (cx>Width)
 			{
 				Width = cx;
@@ -799,8 +811,7 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 			}
 		}
 	
-		pDC->SelectObject(pOldFont);
-		ReleaseDC(pDC);
+		dc.SelectObject(pOldFont);
 	}
 
 	return Width;
@@ -823,7 +834,7 @@ void CListView::AutosizeColumn(UINT Col)
 void CListView::SortCategories(LFSearchResult* Result)
 {
 	ASSERT(Result);
-	LFDynArray<LFItemDescriptor*> Buckets[LFItemCategoryCount+18];
+	LFDynArray<LFItemDescriptor*, 128, 128> Buckets[LFItemCategoryCount+18];
 
 	for (UINT a=0; a<Result->m_ItemCount; a++)
 		Buckets[Result->m_Items[a]->CategoryID].AddItem(Result->m_Items[a]);
@@ -840,12 +851,22 @@ void CListView::ScrollWindow(INT dx, INT dy)
 	GetClientRect(rect);
 	rect.top = m_HeaderHeight;
 
-	ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
+	if (IsCtrlThemed() && (dy!=0))
+	{
+		rect.bottom -= BACKSTAGERADIUS;
+
+		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
+		RedrawWindow(CRect(rect.left, rect.bottom, rect.right, rect.bottom+BACKSTAGERADIUS), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	}
+	else
+	{
+		ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
+	}
 
 	if (IsWindow(m_wndHeader))
 	{
 		CRect rectWindow;
-		GetWindowRect(&rectWindow);
+		GetWindowRect(rectWindow);
 
 		WINDOWPOS wp;
 		HDLAYOUT HdLayout;
@@ -887,10 +908,7 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGridView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HIDDEN | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER;
-	CRect rect;
-	rect.SetRectEmpty();
-	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
+	if (!m_wndHeader.Create( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HIDDEN | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, CRect(0, 0, 0, 0), this, 1))
 		return -1;
 
 	m_wndHeader.SetFont(&LFGetApp()->m_DefaultFont);
@@ -921,11 +939,11 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (LFIsAttributeAllowed(theApp.m_Contexts[m_Context], a)))
 				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_DETAILS_TOGGLEATTRIBUTE+a, theApp.m_Attributes[a].Name);
 
-		CPoint ptClient(point);
-		ScreenToClient(&ptClient);
+		CPoint pt(point);
+		ScreenToClient(&pt);
 
 		HDHITTESTINFO htt;
-		htt.pt = ptClient;
+		htt.pt = pt;
 		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);

@@ -13,7 +13,7 @@
 #define BORDERY     10
 
 CExplorerNotification::CExplorerNotification()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	m_Dismissed = TRUE;
 	hIcon = NULL;
@@ -30,17 +30,15 @@ BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_BORDER, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_BORDER, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
-UINT CExplorerNotification::GetPreferredHeight()
+UINT CExplorerNotification::GetPreferredHeight() const
 {
 	return m_GradientCY+2*BORDERY+m_IconCY+2;
 }
 
-void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Command)
+void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT Command)
 {
 	switch (Type)
 	{
@@ -134,28 +132,24 @@ void CExplorerNotification::DismissNotification()
 void CExplorerNotification::AdjustLayout()
 {
 	// Close button
-	CSize sz = CMenuImages::Size();
+	CSize Size = CMenuImages::Size();
+
 	GetClientRect(m_RectClose);
 	CRect rectClient(m_RectClose);
 
 	m_RectClose.top += m_GradientCY+BORDERY+1;
-	m_RectClose.bottom = m_RectClose.top+sz.cy;
+	m_RectClose.bottom = m_RectClose.top+Size.cy;
 	m_RectClose.right -= BORDERY-1;
-	m_RectClose.left = m_RectClose.right-sz.cx;
+	m_RectClose.left = m_RectClose.right-Size.cx;
 
 	// Command button
 	if (m_Command)
 	{
-		CSize sz;
-
-		CDC* pDC = GetDC();
-		HGDIOBJ hOldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
-		sz = pDC->GetTextExtent(m_CommandText);
-		pDC->SelectObject(hOldFont);
-		ReleaseDC(pDC);
+		Size = LFGetApp()->m_DialogFont.GetTextExtent(m_CommandText);
 
 		const UINT Height = MulDiv(11, HIWORD(GetDialogBaseUnits()), 8)+1;
-		const UINT Width = sz.cx+Height+BORDERX;
+		const UINT Width = Size.cx+Height+BORDERX;
+
 		m_RightMargin = m_RectClose.left-BORDERX-Width;
 
 		m_CommandButton.SetWindowPos(NULL, m_RightMargin, m_GradientCY+1+(rectClient.Height()-m_GradientCY-2-Height)/2, Width, Height, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -167,7 +161,7 @@ void CExplorerNotification::AdjustLayout()
 }
 
 
-BEGIN_MESSAGE_MAP(CExplorerNotification, CWnd)
+BEGIN_MESSAGE_MAP(CExplorerNotification, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
@@ -183,15 +177,13 @@ END_MESSAGE_MAP()
 
 INT CExplorerNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	CRect rect;
-	rect.SetRectEmpty();
-	if (!m_CommandButton.Create(_T(""), WS_CHILD | WS_DISABLED | WS_GROUP | WS_TABSTOP | BS_OWNERDRAW, rect, this, 1))
+	if (!m_CommandButton.Create(_T(""), WS_CHILD | WS_DISABLED | WS_GROUP | WS_TABSTOP | BS_OWNERDRAW, CRect(0, 0, 0, 0), this, 1))
 		return -1;
 
-	m_CommandButton.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+	m_CommandButton.SetFont(&LFGetApp()->m_DialogFont);
 
 	return 0;
 }
@@ -226,7 +218,7 @@ void CExplorerNotification::OnPaint()
 
 	BOOL Themed = IsCtrlThemed();
 
-	dc.FillSolidRect(rectClient, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	FillRect(dc, rectClient, (HBRUSH)SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	CRect rect(rectClient);
 	rect.DeflateRect(1, 1);
@@ -323,13 +315,13 @@ void CExplorerNotification::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 HBRUSH CExplorerNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	pDC->SetBkMode(TRANSPARENT);
 	pDC->SetDCBrushColor(IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-	hbr = (HBRUSH)GetStockObject(DC_BRUSH);
 
-	return hbr;
+	hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
+
+	return hBrush;
 }
 
 void CExplorerNotification::OnButtonClicked()

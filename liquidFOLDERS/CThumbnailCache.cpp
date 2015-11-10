@@ -59,7 +59,7 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
 
-		HBITMAP hBitmap = CreateTransparentBitmap(256, 256);
+		HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 		HBITMAP hOldBitmap1 = (HBITMAP)dc.SelectObject(hBitmap);
 
 		CRect rect(0, 0, 128, 128);
@@ -143,7 +143,7 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 	return td.hBitmap;
 }
 
-BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor)
+BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor)
 {
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
@@ -151,13 +151,11 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 	if (!hBitmap)
 		return FALSE;
 
-	rect.OffsetRect((rect.Width()-128)/2, (rect.Height()-128)/2);
-
 	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
 	//dc.FillSolidRect(rect.left, rect.top, 128, 128, 0);
-	AlphaBlend(dc, rect.left, rect.top, 128, 128, hdcMem, 0, 0, 128, 128, BF);
+	AlphaBlend(dc, rect.left+(rect.Width()-128)/2, rect.top+(rect.Height()-128)/2, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
 	SelectObject(hdcMem, hOldBitmap);
 	DeleteDC(hdcMem);

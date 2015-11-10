@@ -32,9 +32,9 @@ protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
-	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
+	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed);
 
-	CFont* GetFont(INT Index);
+	LFFont* GetFont(INT Index);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSortValue();
@@ -46,5 +46,5 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	CFont m_Fonts[20];
+	LFFont m_Fonts[20];
 };

@@ -96,7 +96,7 @@ void CStorePanel::PreSubclassWindow()
 	ModifyStyle(0, WS_DISABLED);
 }
 
-void CStorePanel::SetStore(CHAR* StoreID)
+void CStorePanel::SetStore(const CHAR* StoreID)
 {
 	if (p_Item)
 	{
@@ -114,7 +114,7 @@ void CStorePanel::SetStore(CHAR* StoreID)
 	Invalidate();
 }
 
-BOOL CStorePanel::IsValidStore()
+BOOL CStorePanel::IsValidStore() const
 {
 	return p_Item!=NULL;
 }
@@ -146,13 +146,12 @@ void CStorePanel::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-	if (hBrush)
-		FillRect(dc, rect, hBrush);
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	if (p_Item)
 	{
 		p_Icons->DrawEx(&dc, p_Item->IconID-1, CPoint(0, (rect.Height()-m_IconSizeY)/2+1), CSize(m_IconSizeX, m_IconSizeY), CLR_NONE, dc.GetBkColor(), (p_Item->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
+
 		if (p_Item->Type & LFTypeGhosted)
 			dc.SetTextColor(GetSysColor(COLOR_GRAYTEXT));
 
@@ -162,30 +161,36 @@ void CStorePanel::OnPaint()
 		tmpStr += _T(": ");
 		tmpStr += Buffer;
 
-		CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
-		INT cy = dc.GetTextExtent(_T("Wy")).cy;
+		CONST INT FontHeight = LFGetApp()->m_DialogFont.GetFontHeight();
 
-		INT rows = 2;
+		INT Rows = 2;
+
 		if (p_Item->CoreAttributes.Comments[0]!=L'\0')
-			rows++;
-		if (p_Item->Description[0]!=L'\0')
-			rows++;
+			Rows++;
 
-		INT y = max(0, (rect.Height()-rows*cy)/2);
-		CRect rectText(m_IconSizeX+GUTTER, y, rect.right, y+cy);
+		if (p_Item->Description[0]!=L'\0')
+			Rows++;
+
+		const INT Height = max(0, (rect.Height()-Rows*FontHeight)/2);
+		CRect rectText(m_IconSizeX+GUTTER, Height, rect.right, Height+FontHeight);
+
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DialogFont);
 
 		dc.DrawText(p_Item->CoreAttributes.FileName, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
-		rectText.OffsetRect(0, cy);
+		rectText.OffsetRect(0, FontHeight);
+
 		if (p_Item->CoreAttributes.Comments[0]!=L'\0')
 		{
 			dc.DrawText(p_Item->CoreAttributes.Comments, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
-			rectText.OffsetRect(0, cy);
+			rectText.OffsetRect(0, FontHeight);
 		}
+
 		if (p_Item->Description[0]!=L'\0')
 		{
 			dc.DrawText(p_Item->Description, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
-			rectText.OffsetRect(0, cy);
+			rectText.OffsetRect(0, FontHeight);
 		}
+
 		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 
 		dc.SelectObject(pOldFont);

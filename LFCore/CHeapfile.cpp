@@ -148,22 +148,22 @@ CHeapfile::~CHeapfile()
 	free(m_pBuffer);
 }
 
-UINT CHeapfile::GetItemCount()
+UINT CHeapfile::GetItemCount() const
 {
 	return m_ItemCount;
 }
 
-UINT CHeapfile::GetRequiredElementSize()
+UINT CHeapfile::GetRequiredElementSize() const
 {
 	return max(m_Header.ElementSize, m_RequiredElementSize);
 }
 
-UINT64 CHeapfile::GetRequiredFileSize()
+UINT64 CHeapfile::GetRequiredFileSize() const
 {
 	return GetRequiredElementSize()*m_ItemCount+sizeof(HeapfileHeader);
 }
 
-void* CHeapfile::GetStoreData(void* Ptr)
+void* CHeapfile::GetStoreData(void* Ptr) const
 {
 	return (m_TableID==IDXTABLE_MASTER) && (m_Header.StoreDataSize) ? (BYTE*)Ptr+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
 }

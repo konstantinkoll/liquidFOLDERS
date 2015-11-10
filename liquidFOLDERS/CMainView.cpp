@@ -44,6 +44,7 @@ void CreateShortcut(LFTransactionListItem* pItem)
 #define FileViewID     3
 
 CMainView::CMainView()
+	: CFrontstageWnd()
 {
 	p_wndFileView = NULL;
 	p_Filter = NULL;
@@ -60,9 +61,7 @@ BOOL CMainView::Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard)
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, rect, pParentWnd, nID);
+	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -80,7 +79,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 	if (theApp.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return CFrontstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
@@ -283,7 +282,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		OnUpdateSelection();
 }
 
-BOOL CMainView::StoreIDValid()
+BOOL CMainView::StoreIDValid() const
 {
 	return m_StoreIDValid;
 }
@@ -293,12 +292,12 @@ CHAR* CMainView::GetStoreID()
 	return m_StoreID;
 }
 
-INT CMainView::GetContext()
+INT CMainView::GetContext() const
 {
 	return m_Context;
 }
 
-INT CMainView::GetViewID()
+INT CMainView::GetViewID() const
 {
 	return m_ViewID;
 }
@@ -308,7 +307,7 @@ void CMainView::DismissNotification()
 	m_wndExplorerNotification.DismissNotification();
 }
 
-void CMainView::ShowNotification(UINT Type, CString Message, UINT Command)
+void CMainView::ShowNotification(UINT Type, const CString& Message, UINT Command)
 {
 	m_wndExplorerNotification.SetNotification(Type, Message, Command);
 }
@@ -330,27 +329,18 @@ void CMainView::ShowNotification(UINT Result)
 		ShowNotification((Result==LFCancel) ? ENT_WARNING : ENT_ERROR, Result);
 }
 
-void CMainView::AdjustLayout()
+void CMainView::AdjustLayout(UINT nFlags)
 {
-	if (!IsWindow(m_wndTaskbar))
-		return;
-	if (!IsWindow(m_wndExplorerNotification))
-		return;
-	if (!IsWindow(m_wndHeaderArea))
-		return;
-	if (!IsWindow(m_wndInspector))
-		return;
-
 	m_Resizing = TRUE;
 
 	CRect rect;
 	GetClientRect(rect);
 
 	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
-	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, nFlags);
 
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
-	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, SWP_NOACTIVATE);
+	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
 
 	const INT MaxWidth = (rect.Width()-128)/2;
 	INT InspectorWidth = 0;
@@ -362,35 +352,37 @@ void CMainView::AdjustLayout()
 		if (m_ShowInspectorPane)
 		{
 			m_wndInspector.SetMaxWidth(MaxWidth);
-			m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+			m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, nFlags | (!m_wndInspector.IsWindowVisible() ? SWP_SHOWWINDOW : 0));
 		}
 		else
 		{
-			m_wndInspector.ShowWindow(SW_HIDE);
+			if (m_wndInspector.IsWindowVisible())
+				m_wndInspector.ShowWindow(SW_HIDE);
+
 			InspectorWidth = 0;
 		}
 	}
 
 	const UINT ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
-	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, ExplorerHeight, nFlags);
 
 	if (p_wndFileView)
-		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width()-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width()-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, nFlags);
 
 	m_Resizing = FALSE;
 }
 
-INT CMainView::GetSelectedItem()
+INT CMainView::GetSelectedItem() const
 {
 	return p_wndFileView ? p_wndFileView->GetSelectedItem() : -1;
 }
 
-INT CMainView::GetNextSelectedItem(INT n)
+INT CMainView::GetNextSelectedItem(INT Index) const
 {
-	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(n) : -1;
+	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(Index) : -1;
 }
 
-void CMainView::GetPersistentData(FVPersistentData& Data)
+void CMainView::GetPersistentData(FVPersistentData& Data) const
 {
 	if (p_wndFileView)
 	{
@@ -408,7 +400,7 @@ void CMainView::SelectNone()
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 }
 
-void CMainView::AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
+void CMainView::AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData) const
 {
 	switch (pItemDescriptor->Type & LFTypeMask)
 	{
@@ -539,7 +531,7 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 }
 
 
-BEGIN_MESSAGE_MAP(CMainView, CWnd)
+BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
@@ -610,7 +602,7 @@ END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	// Taskbar
@@ -619,7 +611,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.SetOwner(GetOwner());
 
-	m_wndTaskbar.AddButton(ID_PANE_FILTER, 0, TRUE, FALSE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_TOGGLESIDEBAR, 0, TRUE, FALSE, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 1);
 	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
@@ -652,10 +644,10 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	#define InspectorIconHidden      27
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 28, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 28, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 31, TRUE, TRUE);
 	#define FilterIconOverlay        32
 
 	// Drop target
@@ -692,7 +684,7 @@ void CMainView::OnDestroy()
 		delete p_wndFileView;
 	}
 
-	CWnd::OnDestroy();
+	CFrontstageWnd::OnDestroy();
 }
 
 BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
@@ -702,8 +694,9 @@ BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CMainView::OnSize(UINT nType, INT cx, INT cy)
 {
-	CWnd::OnSize(nType, cx, cy);
-	AdjustLayout();
+	CFrontstageWnd::OnSize(nType, cx, cy);
+
+	AdjustLayout(SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
 }
 
 void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -731,7 +724,7 @@ void CMainView::OnRButtonUp(UINT nFlags, CPoint point)
 	if (p_wndFileView)
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 
-	CWnd::OnRButtonUp(nFlags, point);
+	CFrontstageWnd::OnRButtonUp(nFlags, point);
 }
 
 void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
@@ -1446,7 +1439,8 @@ void CMainView::OnFileOpenWith()
 			WCHAR Cmd[300];
 			wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
 			wcscat_s(Cmd, 300, Path);
-			ShellExecute(GetSafeHwnd(), _T("open"), _T("rundll32.exe"), Cmd, Path, SW_SHOW);
+
+			ShellExecute(GetSafeHwnd(), _T("open"), _T("rundll32.exe"), Cmd, Path, SW_SHOWNORMAL);
 		}
 		else
 		{
@@ -1459,7 +1453,7 @@ void CMainView::OnFileOpenBrowser()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		ShellExecuteA(GetSafeHwnd(), "open", p_CookedFiles->m_Items[Index]->CoreAttributes.URL, NULL, NULL, SW_SHOW);
+		ShellExecuteA(GetSafeHwnd(), "open", p_CookedFiles->m_Items[Index]->CoreAttributes.URL, NULL, NULL, SW_SHOWNORMAL);
 }
 
 void CMainView::OnFileEdit()

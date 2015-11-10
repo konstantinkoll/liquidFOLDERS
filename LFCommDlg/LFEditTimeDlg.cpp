@@ -71,14 +71,14 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	m_wndCalendar.GetMinReqRect(&rect);
 
 	CRect rectCalendar;
-	m_wndCalendar.GetWindowRect(&rectCalendar);
+	m_wndCalendar.GetWindowRect(rectCalendar);
 
 	INT GrowX = rect.Width()-rectCalendar.Width();
 	INT GrowY = rect.Height()-rectCalendar.Height();
 
-#define GrowXY(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
-#define GrowX(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
-#define GrowXMoveY(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE); }
+#define GrowXY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
+#define GrowX(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
+#define GrowXMoveY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE); }
 
 	GrowXY(this);
 	GrowX(GetDlgItem(IDC_CATEGORY1));

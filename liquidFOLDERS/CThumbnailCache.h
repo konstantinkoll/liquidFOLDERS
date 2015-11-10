@@ -16,7 +16,7 @@ class CThumbnailCache
 public:
 	~CThumbnailCache();
 
-	BOOL DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor);
+	BOOL DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor);
 	HBITMAP GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, CDC* pDC);
 	HICON GetThumbnailIcon(LFItemDescriptor* pItemDescriptor, CDC* pDC);
 

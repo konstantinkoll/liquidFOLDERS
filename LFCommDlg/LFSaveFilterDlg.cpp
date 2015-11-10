@@ -10,10 +10,10 @@
 // LFSaveFilterDlg
 //
 
-LFSaveFilterDlg::LFSaveFilterDlg(CWnd* pParentWnd, CHAR* StoreID, BOOL AllowChooseStore, WCHAR* FileName, WCHAR* Comments)
+LFSaveFilterDlg::LFSaveFilterDlg(CWnd* pParentWnd, const CHAR* pStoreID, BOOL AllowChooseStore, LPCWSTR FileName, LPCWSTR Comments)
 	: LFDialog(IDD_SAVEFILTER, pParentWnd)
 {
-	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
+	strcpy_s(m_StoreID, LFKeySize, pStoreID ? pStoreID : "");
 	wcscpy_s(m_FileName, 256, FileName ? FileName : L"");
 	wcscpy_s(m_Comments, 256, Comments ? Comments : L"");
 	m_AllowChooseStore = AllowChooseStore;

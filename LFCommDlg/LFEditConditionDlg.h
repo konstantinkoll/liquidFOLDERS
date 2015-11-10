@@ -14,7 +14,7 @@
 class LFEditConditionDlg : public LFAttributeListDlg
 {
 public:
-	LFEditConditionDlg(CWnd* pParentWnd=NULL, CHAR* StoreID=NULL, LFFilterCondition* pCondition=NULL);
+	LFEditConditionDlg(CWnd* pParentWnd=NULL, const CHAR* pStoreID=NULL, LFFilterCondition* pCondition=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

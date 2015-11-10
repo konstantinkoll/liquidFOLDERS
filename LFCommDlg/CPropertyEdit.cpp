@@ -19,10 +19,7 @@ BOOL CPropertyDisplay::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CPropertyDisplay::SetProperty(CProperty* pProperty)
@@ -120,6 +117,7 @@ BOOL CPropertyDisplay::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Mes
 	ScreenToClient(&point);
 
 	SetCursor(p_Property->SetCursor(point.x));
+
 	return TRUE;
 }
 
@@ -171,9 +169,7 @@ BOOL CPropertyEdit::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CPropertyEdit::PreSubclassWindow()
@@ -190,12 +186,7 @@ void CPropertyEdit::Init()
 	ModifyStyle(0, WS_CLIPCHILDREN);
 	ModifyStyleEx(0, WS_EX_CONTROLPARENT);
 
-	CreateFonts();
-
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_TABSTOP;
-	CRect rect;
-	rect.SetRectEmpty();
-	m_wndButton.Create(_T("..."), dwStyle, rect, this, 3);
+	m_wndButton.Create(_T("..."), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_TABSTOP, CRect(0, 0, 0, 0), this, 3);
 	m_wndButton.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 }
 
@@ -258,19 +249,18 @@ void CPropertyEdit::CreateProperty()
 
 	p_Property = CPropertyHolder::CreateProperty(&m_Data);
 
-	CRect rect;
-	rect.SetRectEmpty();
-
 	if (p_Property->OnClickValue(-1))
 	{
 		m_pWndEdit = new CMFCMaskedEdit();
-		m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL, rect, this, 1);
+		m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 1);
+
 		if (!p_Property->m_Multiple)
 		{
 			WCHAR tmpStr[256];
 			p_Property->ToString(tmpStr, 256);
 			m_pWndEdit->SetWindowText(tmpStr);
 		}
+
 		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
 		p_Property->SetEditMask(m_pWndEdit);
 		m_pWndEdit->SetLimitText(LFGetApp()->m_Attributes[m_Data.Attr].cCharacters);
@@ -319,7 +309,7 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 	}
 }
 
-void CPropertyEdit::SetData(LFVariantData* pData)
+void CPropertyEdit::SetData(const LFVariantData* pData)
 {
 	ASSERT(pData);
 

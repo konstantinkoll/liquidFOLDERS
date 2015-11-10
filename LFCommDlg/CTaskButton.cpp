@@ -11,7 +11,7 @@
 
 #define BORDER     4
 
-BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon)
+BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon)
 {
 	m_Caption = Caption;
 	m_Hint = Hint;
@@ -22,9 +22,7 @@ BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hi
 	m_ForceSmall = ForceSmall;
 	m_HideIcon = HideIcon;
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CHoverButton::Create(Caption, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
+	return CHoverButton::Create(Caption, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
@@ -72,13 +70,7 @@ INT CTaskButton::GetPreferredWidth(BOOL Small)
 	}
 
 	if (!m_Small)
-	{
-		CDC* pDC = GetDC();
-		HFONT hOldFont = (HFONT)pDC->SelectObject(IsCtrlThemed() ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
-		Width += pDC->GetTextExtent(m_Caption).cx;
-		pDC->SelectObject(hOldFont);
-		ReleaseDC(pDC);
-	}
+		Width += LFGetApp()->m_DefaultFont.GetTextExtent(m_Caption).cx;
 
 	return Width;
 }
@@ -106,9 +98,7 @@ void CTaskButton::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Background
-	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-	if (hBrush)
-		FillRect(dc, rect, hBrush);
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	// Button
 	BOOL Themed = IsCtrlThemed();
@@ -134,9 +124,9 @@ void CTaskButton::OnPaint()
 	{
 		dc.SetTextColor(Themed ? m_Hover ? 0x404040 : 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
 
-		HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? LFGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
-		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-		dc.SelectObject(hOldFont);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
+		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX);
+		dc.SelectObject(pOldFont);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

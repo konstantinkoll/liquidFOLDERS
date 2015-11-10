@@ -471,7 +471,7 @@ LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, SIZE_T cCou
 		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
 }
 
-LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, WCHAR* pStr, SIZE_T cCount, BOOL FillZero)
+LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates& c, WCHAR* pStr, SIZE_T cCount, BOOL FillZero)
 {
 	assert(pStr);
 
@@ -597,12 +597,12 @@ LFCORE_API void LFClearVariantData(LFVariantData& pValue)
 	}
 }
 
-LFCORE_API BOOL LFIsNullVariantData(LFVariantData& Value)
+LFCORE_API BOOL LFIsNullVariantData(const LFVariantData& Value)
 {
 	return Value.IsNull ? TRUE : IsNullValue(Value.Type, &Value.Value);
 }
 
-LFCORE_API void LFVariantDataToString(LFVariantData& Value, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFVariantDataToString(const LFVariantData& Value, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -618,7 +618,7 @@ LFCORE_API void LFVariantDataToString(LFVariantData& Value, WCHAR* pStr, SIZE_T 
 	}
 }
 
-LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, WCHAR* pStr)
+LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr)
 {
 	LFClearVariantData(pValue);
 
@@ -972,7 +972,7 @@ LFCORE_API void LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, U
 	LFGetAttributeVariantData(pItemDescriptor, pValue);
 }
 
-LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& Value)
+LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& Value)
 {
 	assert(pItemDescriptor);
 	assert(Value.Attr<LFAttributeCount);

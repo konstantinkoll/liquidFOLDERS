@@ -10,7 +10,7 @@
 // CMainView
 //
 
-class CMainView : public CWnd
+class CMainView : public CFrontstageWnd
 {
 friend class CInspectorWnd;
 
@@ -22,17 +22,17 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard);
 	void UpdateViewOptions();
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
-	BOOL StoreIDValid();
+	BOOL StoreIDValid() const;
 	CHAR* GetStoreID();
-	INT GetContext();
-	INT GetViewID();
+	INT GetContext() const;
+	INT GetViewID() const;
 	void DismissNotification();
-	void ShowNotification(UINT Type, CString Message, UINT Command=0);
+	void ShowNotification(UINT Type, const CString& Message, UINT Command=0);
 	void ShowNotification(UINT Type, UINT Result, UINT Command=0);
 	void ShowNotification(UINT Result);
-	INT GetSelectedItem();
-	INT GetNextSelectedItem(INT n);
-	void GetPersistentData(FVPersistentData& Data);
+	INT GetSelectedItem() const;
+	INT GetNextSelectedItem(INT Index) const;
+	void GetPersistentData(FVPersistentData& Data) const;
 	void SelectNone();
 
 protected:
@@ -131,8 +131,8 @@ private:
 	BOOL CreateFileView(UINT ViewID, FVPersistentData* Data);
 	void SetHeaderButtons();
 	void SetHeader();
-	void AdjustLayout();
-	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData);
+	void AdjustLayout(UINT nFlags=SWP_NOACTIVATE | SWP_NOZORDER);
+	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData) const;
 
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;

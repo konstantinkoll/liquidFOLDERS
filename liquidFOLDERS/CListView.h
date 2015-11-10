@@ -19,8 +19,8 @@ protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT Index);
-	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
+	virtual RECT GetLabelRect(INT Index) const;
+	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void ScrollWindow(INT dx, INT dy);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -42,11 +42,11 @@ protected:
 
 private:
 	void AdjustHeader(BOOL bShow);
-	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i);
-	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, SIZE_T cCount);
-	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed);
-	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr);
-	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed, BOOL AlwaysNewRow=TRUE);
+	void DrawIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor);
+	void AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* tmpStr, SIZE_T cCount);
+	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* d, INT* Rows, BOOL Themed);
+	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, UINT Attr);
+	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* d, UINT Attr, BOOL Themed, BOOL AlwaysNewRow=TRUE);
 	INT GetMaxLabelWidth(INT Max);
 	INT GetMaxColumnWidth(UINT Col, INT Max);
 	void AutosizeColumn(UINT Col);

@@ -330,7 +330,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 	return LFOk;
 }
 
-void CIndex::AddFileToStatistics(LFCoreAttributes* PtrM)
+void CIndex::AddFileToStatistics(LFCoreAttributes* PtrM) const
 {
 	assert(p_StoreDescriptor);
 	assert(PtrM);
@@ -339,7 +339,7 @@ void CIndex::AddFileToStatistics(LFCoreAttributes* PtrM)
 	COUNT_FILE(ADD_FILE);
 }
 
-void CIndex::RemoveFileFromStatistics(LFCoreAttributes* PtrM)
+void CIndex::RemoveFileFromStatistics(LFCoreAttributes* PtrM) const
 {
 	assert(p_StoreDescriptor);
 	assert(PtrM);

@@ -12,7 +12,7 @@
 class LFStorePropertiesDlg : public CPropertySheet
 {
 public:
-	LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd=NULL);
+	LFStorePropertiesDlg(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 

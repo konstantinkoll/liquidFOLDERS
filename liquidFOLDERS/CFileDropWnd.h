@@ -10,20 +10,20 @@
 
 #define WM_OPENFILEDROP     WM_USER+211
 
-class CFileDropWnd : public CGlassWindow
+class CFileDropWnd : public CBackstageWnd
 {
 public:
 	CFileDropWnd();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual void PaintBackground(CPaintDC& pDC, CRect rect);
 
-	BOOL Create(CHAR* StoreID);
+	BOOL Create(const CHAR* pStoreID);
 
 protected:
 	void SetTopMost(BOOL AlwaysOnTop);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -48,8 +48,8 @@ protected:
 
 	CHAR m_StoreID[LFKeySize];
 	LFDropTarget m_DropTarget;
-	LFTooltip m_TooltipCtrl;
 	LFStoreDescriptor m_Store;
+	CRect m_rectIcon;
 	UINT m_StoreIcon;
 	UINT m_StoreType;
 	BOOL m_AlwaysOnTop;

@@ -29,10 +29,12 @@ void LFDropTarget::SetOwner(CWnd* pOwnerWnd)
 	p_OwnerWnd = pOwnerWnd;
 }
 
-void LFDropTarget::SetStore(CHAR* StoreID, BOOL AllowChooseStore)
+void LFDropTarget::SetStore(const CHAR* pStoreID, BOOL AllowChooseStore)
 {
+	ASSERT(pStoreID);
+
 	p_Filter = NULL;
-	strcpy_s(m_StoreID, LFKeySize, StoreID);
+	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 	m_StoreIDValid = TRUE;
 	m_AllowChooseStore = AllowChooseStore;
 }
@@ -49,11 +51,13 @@ void LFDropTarget::SetSearchResult(LFSearchResult* pSearchResult)
 	p_SearchResult = pSearchResult;
 }
 
-__forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
+__forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, const CHAR* pStoreID, CWnd* pWnd) const
 {
+	ASSERT(pStoreID);
+
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, StoreID);
+	strcpy_s(wp.StoreID, LFKeySize, pStoreID);
 	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
 	// Template füllen
@@ -91,11 +95,13 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
 
-__forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
+__forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, const CHAR* pStoreID, CWnd* pWnd) const
 {
+	ASSERT(pStoreID);
+
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, StoreID);
+	strcpy_s(wp.StoreID, LFKeySize, pStoreID);
 	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
@@ -129,7 +135,7 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
 
-__forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
+__forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd) const
 {
 	if (!hgLiquid)
 		return E_INVALIDARG;

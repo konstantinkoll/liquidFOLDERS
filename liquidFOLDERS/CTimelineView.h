@@ -38,10 +38,10 @@ public:
 protected:
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT Index);
+	virtual RECT GetLabelRect(INT Index) const;
 	virtual void ScrollWindow(INT dx, INT dy);
 
-	void DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, BOOL Themed);
+	void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
@@ -56,10 +56,10 @@ protected:
 	SIZE m_IconSize;
 
 private:
-	void DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
+	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* ic, BOOL Themed);
 
 	CImageListTransparent m_AttributeIcons;
-	LFDynArray<ItemCategory> m_Categories;
+	LFDynArray<ItemCategory, 8, 8> m_Categories;
 	CString m_FilesSingular;
 	CString m_FilesPlural;
 };

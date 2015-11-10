@@ -9,12 +9,12 @@
 // GlobeOptionsDlg
 //
 
-GlobeOptionsDlg::GlobeOptionsDlg(LFViewParameters* View, UINT Context, CWnd* pParentWnd)
+GlobeOptionsDlg::GlobeOptionsDlg(LFViewParameters* pViewParameters, UINT Context, CWnd* pParentWnd)
 	: LFDialog(IDD_GLOBEOPTIONS, pParentWnd)
 {
-	ASSERT(View);
+	ASSERT(pViewParameters);
 
-	p_View = View;
+	p_ViewParameters = pViewParameters;
 	m_Context = Context;
 }
 
@@ -27,10 +27,10 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Check(pDX, IDC_LIGHTING, theApp.m_GlobeLighting);
 	DDX_Check(pDX, IDC_ATMOSPHERE, theApp.m_GlobeAtmosphere);
-	DDX_Check(pDX, IDC_SPOTS, p_View->GlobeShowSpots);
-	DDX_Check(pDX, IDC_AIRPORTNAMES, p_View->GlobeShowAirportNames);
-	DDX_Check(pDX, IDC_GPSCOORDINATES, p_View->GlobeShowGPS);
-	DDX_Check(pDX, IDC_DESCRIPTION, p_View->GlobeShowDescription);
+	DDX_Check(pDX, IDC_SPOTS, p_ViewParameters->GlobeShowSpots);
+	DDX_Check(pDX, IDC_AIRPORTNAMES, p_ViewParameters->GlobeShowAirportNames);
+	DDX_Check(pDX, IDC_GPSCOORDINATES, p_ViewParameters->GlobeShowGPS);
+	DDX_Check(pDX, IDC_DESCRIPTION, p_ViewParameters->GlobeShowDescription);
 	DDX_Check(pDX, IDC_VIEWPORT, theApp.m_GlobeShowViewport);
 	DDX_Check(pDX, IDC_CROSSHAIRS, theApp.m_GlobeShowCrosshairs);
 
@@ -57,7 +57,7 @@ BOOL GlobeOptionsDlg::OnInitDialog()
 	m_wndTextureSize.SetCurSel(theApp.m_nTextureSize);
 
 	// Inaktive Elemente
-	if (p_View->SortBy!=LFAttrLocationIATA)
+	if (p_ViewParameters->SortBy!=LFAttrLocationIATA)
 	{
 		GetDlgItem(IDC_AIRPORTNAMES)->EnableWindow(FALSE);
 		GetDlgItem(IDC_GPSCOORDINATES)->EnableWindow(FALSE);

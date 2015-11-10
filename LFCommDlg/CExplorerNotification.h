@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 #include "CWhiteButton.h"
 
 
@@ -15,14 +16,14 @@
 #define ENT_SHIELD      4
 #define ENT_ERROR       5
 
-class CExplorerNotification : public CWnd
+class CExplorerNotification : public CFrontstageWnd
 {
 public:
 	CExplorerNotification();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	UINT GetPreferredHeight();
-	void SetNotification(UINT Type, CString Text, UINT Command=0);
+	UINT GetPreferredHeight() const;
+	void SetNotification(UINT Type, const CString& Text, UINT Command=0);
 	void DismissNotification();
 
 protected:

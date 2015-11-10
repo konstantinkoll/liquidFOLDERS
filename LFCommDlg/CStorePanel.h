@@ -17,8 +17,8 @@ public:
 
 	virtual void PreSubclassWindow();
 
-	void SetStore(CHAR* StoreID);
-	BOOL IsValidStore();
+	void SetStore(const CHAR* StoreID);
+	BOOL IsValidStore() const;
 
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

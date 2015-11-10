@@ -31,14 +31,14 @@ public:
 	CIconHeader();
 	~CIconHeader();
 
-	virtual INT GetPreferredHeight();
-	virtual void DrawHeader(CDC& dc, CRect rect, BOOL Themed);
+	virtual INT GetPreferredHeight() const;
+	virtual void DrawHeader(CDC& dc, const CRect& rect, BOOL Themed);
 
 	void SetEmpty();
-	void SetMultiple(CString Description=_T(""));
-	void SetCoreIcon(INT IconID, CString Description=_T(""));
-	void SetFormatIcon(CHAR* FileFormat, CString Description=_T(""));
-	void SetPreview(LFItemDescriptor* i, CString Description=_T(""));
+	void SetMultiple(const CString& Description=_T(""));
+	void SetCoreIcon(INT IconID, const CString& Description=_T(""));
+	void SetFormatIcon(CHAR* FileFormat, const CString& Description=_T(""));
+	void SetPreview(LFItemDescriptor* pItemDescriptor, const CString& Description=_T(""));
 
 protected:
 	void FreeItem();
@@ -66,16 +66,16 @@ protected:
 // CInspectorWnd
 //
 
-class CInspectorWnd : public CGlassPane
+class CInspectorWnd : public CFrontstagePane
 {
 public:
 	CInspectorWnd();
 
-	virtual void AdjustLayout();
+	virtual void AdjustLayout(CRect rectLayout);
 	virtual void SaveSettings();
 
 	void UpdateStart();
-	void UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles);
+	void UpdateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
 	void UpdateFinish();
 
 protected:
@@ -97,9 +97,9 @@ protected:
 	LFItemDescriptor* p_LastItem;
 
 private:
-	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=FALSE);
-	void AddValueVirtual(UINT Attr, CHAR* Value);
-	void AddValueVirtual(UINT Attr, WCHAR* Value);
+	void AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL Editable=FALSE);
+	void AddValueVirtual(UINT Attr, const CHAR* Value);
+	void AddValueVirtual(UINT Attr, const WCHAR* Value);
 
 	UINT m_Count;
 	UINT m_IconID;

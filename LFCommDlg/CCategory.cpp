@@ -66,9 +66,7 @@ void CCategory::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Background
-	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-	if (hBrush)
-		FillRect(dc, rect, hBrush);
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	// Caption
 	CRect rectText(rect);

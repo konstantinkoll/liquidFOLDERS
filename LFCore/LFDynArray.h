@@ -1,77 +1,67 @@
 
 #pragma once
-#include <assert.h>
-
-#define DYN_FIRSTALLOC          1024
-#define DYN_SUBSEQUENTALLOC     1024
 
 
-template <typename T>
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
 class LFDynArray
 {
 public:
 	LFDynArray();
 	~LFDynArray();
 
-	BOOL AddItem(T i);
+	BOOL AddItem(T Item);
 	BOOL InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE);
-	BOOL InsertItems(UINT Pos, T* pData, UINT Count=1);
 	void DeleteItems(UINT Pos, UINT Count=1);
 
 	T* m_Items;
 	UINT m_ItemCount;
-	UINT m_LastError;
 
 protected:
 	UINT m_Allocated;
 };
 
 
-#define INITLFDYNARRAY() \
-	if (!m_Items) \
-	{ \
-		m_Items = (T*)malloc(DYN_FIRSTALLOC*sizeof(T)); \
-		if (!m_Items) \
-			return FALSE; \
-		m_Allocated = DYN_FIRSTALLOC; \
-	}
-
-
-template <typename T>
-LFDynArray<T>::LFDynArray()
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+LFDynArray<T, FirstAlloc, SubsequentAlloc>::LFDynArray()
 {
 	m_Items = NULL;
 	m_ItemCount = m_Allocated = 0;
-	m_LastError = LFOk;
 }
 
-template <typename T>
-LFDynArray<T>::~LFDynArray()
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+LFDynArray<T, FirstAlloc, SubsequentAlloc>::~LFDynArray()
 {
 	free(m_Items);
 }
 
-template <typename T>
-BOOL LFDynArray<T>::AddItem(T i)
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+BOOL LFDynArray<T, FirstAlloc, SubsequentAlloc>::AddItem(T Item)
 {
-	INITLFDYNARRAY()
-
-	if (m_ItemCount==m_Allocated)
+	if (!m_Items)
 	{
-		m_Items = (T*)realloc(m_Items, (m_Allocated+DYN_SUBSEQUENTALLOC)*sizeof(T));
+		m_Items = (T*)malloc(FirstAlloc*sizeof(T));
 		if (!m_Items)
 			return FALSE;
 
-		m_Allocated += DYN_SUBSEQUENTALLOC;
+		m_Allocated = FirstAlloc;
 	}
+	else
+		if (m_ItemCount==m_Allocated)
+		{
+			m_Items = (T*)realloc(m_Items, (m_Allocated+SubsequentAlloc)*sizeof(T));
+			if (!m_Items)
+				return FALSE;
 
-	m_Items[m_ItemCount++] = i;
+			m_Allocated += SubsequentAlloc;
+		}
+
+	m_Items[m_ItemCount++] = Item;
 
 	return TRUE;
 }
 
-template <typename T>
-BOOL LFDynArray<T>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+BOOL LFDynArray<T, FirstAlloc, SubsequentAlloc>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
 {
 	if (!Count)
 		return TRUE;
@@ -79,17 +69,25 @@ BOOL LFDynArray<T>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
 	if (Pos>m_ItemCount+1)
 		return FALSE;
 
-	INITLFDYNARRAY()
-
-	if (m_ItemCount<m_Allocated+Count)
+	if (!m_Items)
 	{
-		const UINT Add = (Count+DYN_SUBSEQUENTALLOC-1) & ~(DYN_SUBSEQUENTALLOC-1);
-		m_Items = (T*)realloc(m_Items, (m_Allocated+Add)*sizeof(T));
+		const UINT Size = max(FirstAlloc, Count);
+		m_Items = (T*)malloc(Size*sizeof(T));
 		if (!m_Items)
 			return FALSE;
 
-		m_Allocated += Add;
+		m_Allocated = Size;
 	}
+	else
+		if (m_ItemCount<m_Allocated+Count)
+		{
+			const UINT Size = max(SubsequentAlloc, Count);
+			m_Items = (T*)realloc(m_Items, (m_Allocated+Size)*sizeof(T));
+			if (!m_Items)
+				return FALSE;
+
+			m_Allocated += Size;
+		}
 
 	for (INT a=((INT)(m_ItemCount))-1; a>=(INT)Pos; a--)
 		m_Items[a+Count] = m_Items[a];
@@ -102,21 +100,8 @@ BOOL LFDynArray<T>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
 	return TRUE;
 }
 
-template <typename T>
-BOOL LFDynArray<T>::InsertItems(UINT Pos, T* pData, UINT Count=1)
-{
-	assert(pData);
-
-	if (!InsertEmpty(Pos, Count, FALSE))
-		return FALSE;
-
-	memcpy_s(m_Items[Pos], sizeof(T)*Count, pData, sizeof(T)*Count);
-
-	return TRUE;
-}
-
-template <typename T>
-void LFDynArray<T>::DeleteItems(UINT Pos, UINT Count=1)
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+void LFDynArray<T, FirstAlloc, SubsequentAlloc>::DeleteItems(UINT Pos, UINT Count=1)
 {
 	if (!Count)
 		return;

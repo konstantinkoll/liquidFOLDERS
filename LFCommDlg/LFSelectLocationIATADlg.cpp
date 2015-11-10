@@ -13,7 +13,7 @@ __forceinline void Swap(LFAirport*& Eins, LFAirport*& Zwei)
 	Zwei = Temp;
 }
 
-void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, CString Value)
+void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CString& Value)
 {
 	if (!Value.IsEmpty())
 	{
@@ -26,19 +26,16 @@ void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, CString Value)
 	}
 }
 
-void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, CHAR* pValue)
+void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
 {
-	WCHAR tmpStr[4096];
-	MultiByteToWideChar(CP_ACP, 0, pValue, -1, tmpStr, 4096);
-
-	AppendAttribute(pStr, cCount, ResID, tmpStr);
+	AppendAttribute(pStr, cCount, ResID, CString(pValue));
 }
 
 
 // LFSelectLocationIATADlg
 //
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd, CHAR* Airport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd, const CHAR* pAirport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
 	: LFDialog(IDD_SELECTIATA, pParentWnd)
 {
 	m_IsPropertyDialog = IsPropertyDialog;
@@ -52,7 +49,7 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pP
 	m_OverwriteGPS = AllowOverwriteGPS ? LFGetApp()->GetInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
 
 	p_Airport = NULL;
-	LFIATAGetAirportByCode(Airport, &p_Airport);
+	LFIATAGetAirportByCode(pAirport, &p_Airport);
 }
 
 void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
@@ -200,6 +197,7 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 
 	// Combobox füllen
 	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_COUNTRY);
+
 	UINT cCount = LFIATAGetCountryCount();
 	for (UINT a=0; a<cCount; a++)
 	{
@@ -209,10 +207,10 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 
 	// Liste konfigurieren
 	CString tmpStr((LPCSTR)IDS_AIRPORT_CODE);
-	m_wndAirportList.AddColumn(0, tmpStr.GetBuffer());
+	m_wndAirportList.AddColumn(0, tmpStr);
 
 	ENSURE(tmpStr.LoadString(IDS_AIRPORT_LOCATION));
-	m_wndAirportList.AddColumn(1, tmpStr.GetBuffer());
+	m_wndAirportList.AddColumn(1, tmpStr);
 
 	// Init
 	UINT Country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
@@ -235,12 +233,12 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 		GetDlgItem(IDC_REPLACE_GPS)->ShowWindow(SW_HIDE);
 
 		CRect rectBottom;
-		GetDlgItem(IDC_REPLACE_GPS)->GetWindowRect(&rectBottom);
-		ScreenToClient(&rectBottom);
+		GetDlgItem(IDC_REPLACE_GPS)->GetWindowRect(rectBottom);
+		ScreenToClient(rectBottom);
 
 		CRect rectWindow;
-		m_wndAirportList.GetWindowRect(&rectWindow);
-		ScreenToClient(&rectWindow);
+		m_wndAirportList.GetWindowRect(rectWindow);
+		ScreenToClient(rectWindow);
 
 		m_wndAirportList.SetWindowPos(NULL, 0, 0, rectWindow.Width(), rectBottom.bottom-rectWindow.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 	}

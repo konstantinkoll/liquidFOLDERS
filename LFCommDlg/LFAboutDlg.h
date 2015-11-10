@@ -5,6 +5,7 @@
 #pragma once
 #include "CGdiPlusBitmap.h"
 #include "LFDialog.h"
+#include "LFFont.h"
 
 
 // LFAboutDlg
@@ -35,8 +36,8 @@ private:
 
 	CGdiPlusBitmap* p_Santa;
 	CGdiPlusBitmap* p_Logo;
-	CFont m_CaptionFont;
-	CFont m_VersionFont;
+	LFFont m_CaptionFont;
+	LFFont m_VersionFont;
 	INT m_CaptionTop;
 	INT m_IconTop;
 	CString m_Version;

@@ -23,7 +23,7 @@ protected:
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	void AdjustLayout();
-	void DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed);
+	void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -42,7 +42,6 @@ protected:
 	HICON hIconReady;
 	HICON hIconWarning;
 	HICON hIconError;
-	INT m_FontHeight;
 	INT m_ItemHeight;
 	INT m_IconSize;
 	INT m_BadgeSize;

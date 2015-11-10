@@ -41,7 +41,7 @@ LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* pPath)
 	return pFileImportList->AddPath(pPath);
 }
 
-LFCORE_API UINT LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+LFCORE_API UINT LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
 	return pFileImportList->DoFileImport(Recursive, pStoreID, pItemTemplate, Move, pProgress);
 }
@@ -49,6 +49,12 @@ LFCORE_API UINT LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive
 
 // LFFileImportList
 //
+
+LFFileImportList::LFFileImportList()
+	: LFDynArray()
+{
+	m_LastError = LFOk;
+}
 
 BOOL LFFileImportList::AddPath(WCHAR* Path)
 {
@@ -173,7 +179,7 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 	}
 }
 
-UINT LFFileImportList::DoFileImport(BOOL Recursive, CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+UINT LFFileImportList::DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
 	UINT Result;
 

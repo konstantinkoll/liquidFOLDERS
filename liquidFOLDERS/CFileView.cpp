@@ -79,7 +79,7 @@ void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, 
 #define FooterMargin           8
 
 CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableTooltipOnVirtual)
-	: CWnd()
+	: CFrontstageWnd()
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
 
@@ -89,7 +89,8 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_ItemDataAllocated = 0;
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextAllFiles;
-	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_FontHeight[2] = m_FontHeight[3] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
+	m_HeaderHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
+	m_RowHeight = LFGetApp()->m_DefaultFont.GetFontHeight();
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
 	m_Hover = m_BeginDragDrop = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
@@ -115,7 +116,7 @@ CFileView::~CFileView()
 		free(m_ItemData);
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
 {
 	CString className = AfxRegisterWndClass(nClassStyle, theApp.LoadStandardCursor(IDC_ARROW));
 
@@ -123,11 +124,12 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* p
 	if (m_EnableScrolling)
 		dwStyle |= WS_HSCROLL | WS_VSCROLL;
 
-	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
+	if (!CFrontstageWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
 		return FALSE;
 
 	UpdateViewOptions(pCookedFiles ? pCookedFiles->m_Context : LFContextAllFiles, TRUE);
 	UpdateSearchResult(pRawFiles, pCookedFiles, Data, TRUE);
+
 	return TRUE;
 }
 
@@ -174,7 +176,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CWnd::PreTranslateMessage(pMsg);
+	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
 void CFileView::UpdateViewOptions(INT Context, BOOL Force)
@@ -184,6 +186,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 
 	if (Context>=0)
 		m_Context = Context;
+
 	p_ViewParameters = &theApp.m_Views[m_Context];
 
 	m_BeginDragDrop = FALSE;
@@ -215,11 +218,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 
 	if (pCookedFiles)
 	{
-#ifdef DEBUG
-		m_AllowMultiSelect = TRUE;
-#else
 		m_AllowMultiSelect = (pCookedFiles->m_Context!=LFContextStores);
-#endif
 
 		SIZE_T Size = pCookedFiles->m_ItemCount*m_DataSize;
 		m_ItemData = (BYTE*)malloc(Size);
@@ -314,7 +313,7 @@ void CFileView::AdjustLayout()
 	Invalidate();
 }
 
-INT CFileView::GetFocusItem()
+INT CFileView::GetFocusItem() const
 {
 	if (p_CookedFiles)
 	{
@@ -325,7 +324,7 @@ INT CFileView::GetFocusItem()
 	return -1;
 }
 
-INT CFileView::GetSelectedItem()
+INT CFileView::GetSelectedItem() const
 {
 	if (p_CookedFiles)
 		if (p_CookedFiles->m_ItemCount)
@@ -337,7 +336,7 @@ INT CFileView::GetSelectedItem()
 	return -1;
 }
 
-INT CFileView::GetNextSelectedItem(INT Index)
+INT CFileView::GetNextSelectedItem(INT Index) const
 {
 	if (p_CookedFiles)
 	{
@@ -376,7 +375,7 @@ void CFileView::EnsureVisible(INT Index)
 		return;
 
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	RECT rectItem = GetItemRect(Index);
 
@@ -427,7 +426,7 @@ void CFileView::EnsureVisible(INT Index)
 	}
 }
 
-BOOL CFileView::MultiSelectAllowed()
+BOOL CFileView::MultiSelectAllowed() const
 {
 	return m_AllowMultiSelect;
 }
@@ -460,7 +459,7 @@ void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 	EnsureVisible(m_FocusItem);
 }
 
-RECT CFileView::GetItemRect(INT Index)
+RECT CFileView::GetItemRect(INT Index) const
 {
 	RECT rect = { 0, 0, 0, 0 };
 
@@ -474,12 +473,12 @@ RECT CFileView::GetItemRect(INT Index)
 	return rect;
 }
 
-RECT CFileView::GetLabelRect(INT Index)
+RECT CFileView::GetLabelRect(INT Index) const
 {
 	return GetItemRect(Index);
 }
 
-INT CFileView::ItemAtPosition(CPoint point)
+INT CFileView::ItemAtPosition(CPoint point) const
 {
 	if (p_CookedFiles)
 	{
@@ -748,7 +747,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	return pMenu;
 }
 
-void CFileView::GetPersistentData(FVPersistentData& Data)
+void CFileView::GetPersistentData(FVPersistentData& Data) const
 {
 	ZeroMemory(&Data, sizeof(Data));
 
@@ -771,11 +770,13 @@ void CFileView::EditLabel(INT Index)
 			InvalidateItem(Index);
 			EnsureVisible(Index);
 
+			const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
+
 			CRect rect(GetLabelRect(Index));
-			if (rect.Height()>m_FontHeight[0]+4)
+			if (rect.Height()>FontHeight+4)
 			{
-				rect.top += (rect.Height()-m_FontHeight[0]-4)/2;
-				rect.bottom = rect.top+m_FontHeight[0]+4;
+				rect.top += (rect.Height()-FontHeight-4)/2;
+				rect.bottom = rect.top+FontHeight+4;
 			}
 
 			p_Edit = new CEdit();
@@ -788,12 +789,12 @@ void CFileView::EditLabel(INT Index)
 	}
 }
 
-BOOL CFileView::IsEditing()
+BOOL CFileView::IsEditing() const
 {
 	return (p_Edit!=NULL);
 }
 
-void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
+void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
 	if (Cached && Themed & IsSelected(Index))
 	{
@@ -837,7 +838,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT Index, BOOL The
 	}
 }
 
-void CFileView::DrawItemForeground(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
+void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
 	if (((m_HotItem!=Index) && !IsSelected(Index)) || !Themed)
 		return;
@@ -898,7 +899,7 @@ void CFileView::AdjustScrollbars()
 		return;
 
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 
 	BOOL HScroll = FALSE;
 	if (m_ScrollWidth>rect.Width())
@@ -942,15 +943,15 @@ void CFileView::AdjustScrollbars()
 		Invalidate();
 }
 
-CString CFileView::GetLabel(LFItemDescriptor* i)
+CString CFileView::GetLabel(LFItemDescriptor* pItemDescriptor) const
 {
-	CString Label = i->CoreAttributes.FileName;
+	CString Label = pItemDescriptor->CoreAttributes.FileName;
 
-	if ((i->Type & LFTypeMask)==LFTypeFile)
-		if (((!m_HideFileExt) || (i->CoreAttributes.FileName[0]==L'\0')) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
+	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
+		if (((!m_HideFileExt) || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			Label += _T(".");
-			Label += i->CoreAttributes.FileFormat;
+			Label += pItemDescriptor->CoreAttributes.FileFormat;
 		}
 
 	return Label;
@@ -965,63 +966,63 @@ BOOL CFileView::BeginDragDrop()
 	return TRUE;
 }
 
-CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
+CString CFileView::GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName) const
 {
 	WCHAR tmpStr[256];
 	CString Hint;
 
-	switch (i->Type & LFTypeMask)
+	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
-		GetHintForStore(i, Hint);
+		GetHintForStore(pItemDescriptor, Hint);
 		break;
 
 	case LFTypeFolder:
-		AppendTooltipAttribute(i, LFAttrComments, Hint);
-		AppendTooltipAttribute(i, LFAttrDescription, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrComments, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrDescription, Hint);
 
-		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-			AppendTooltipString(LFAttrComments, Hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+			AppendTooltipString(LFAttrComments, Hint, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
 
 		break;
 
 	case LFTypeFile:
-		AppendTooltipAttribute(i, LFAttrComments, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrComments, Hint);
 		AppendTooltipString(LFAttrFileFormat, Hint, FormatName);
 
-		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
 		{
 			tmpStr[0] = L' ';
-			wcscpy_s(&tmpStr[1], 255, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+			wcscpy_s(&tmpStr[1], 255, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
 			tmpStr[1] = (WCHAR)towlower(tmpStr[1]);
 
 			Hint += tmpStr;
 		}
 
-		AppendTooltipAttribute(i, LFAttrArtist, Hint);
-		AppendTooltipAttribute(i, LFAttrTitle, Hint);
-		AppendTooltipAttribute(i, LFAttrAlbum, Hint);
-		AppendTooltipAttribute(i, LFAttrRecordingTime, Hint);
-		AppendTooltipAttribute(i, LFAttrRoll, Hint);
-		AppendTooltipAttribute(i, LFAttrDuration, Hint);
-		AppendTooltipAttribute(i, LFAttrHashtags, Hint);
-		AppendTooltipAttribute(i, LFAttrPages, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrArtist, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrTitle, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrAlbum, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrRecordingTime, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrRoll, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrDuration, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrHashtags, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrPages, Hint);
 
-		if (i->AttributeValues[LFAttrDimension])
+		if (pItemDescriptor->AttributeValues[LFAttrDimension])
 		{
-			LFAttributeToString(i, LFAttrDimension, tmpStr, 256);
+			LFAttributeToString(pItemDescriptor, LFAttrDimension, tmpStr, 256);
 
 			WCHAR Resolution[256];
-			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)i->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)i->AttributeValues[LFAttrHeight]));
+			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
 
 			AppendTooltipString(LFAttrDimension, Hint, Resolution);
 		}
 
-		AppendTooltipAttribute(i, LFAttrEquipment, Hint);
-		AppendTooltipAttribute(i, LFAttrBitrate, Hint);
-		AppendTooltipAttribute(i, LFAttrCreationTime, Hint);
-		AppendTooltipAttribute(i, LFAttrFileTime, Hint);
-		AppendTooltipAttribute(i, LFAttrFileSize, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrEquipment, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrBitrate, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrCreationTime, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrFileTime, Hint);
+		AppendTooltipAttribute(pItemDescriptor, LFAttrFileSize, Hint);
 
 		break;
 	}
@@ -1044,7 +1045,7 @@ void CFileView::DestroyEdit(BOOL Accept)
 		delete pVictim;
 
 		if ((Accept) && (!Name.IsEmpty()) && (Item!=-1))
-			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)Item, (LPARAM)Name.GetBuffer());
+			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)Item, (LPARAM)(LPCWSTR)Name);
 	}
 
 	m_EditLabel = -1;
@@ -1054,11 +1055,23 @@ void CFileView::ScrollWindow(INT dx, INT dy)
 {
 	ASSERT(m_EnableScrolling);
 
-	CWnd::ScrollWindow(dx, dy);
+	if (IsCtrlThemed() && (dy!=0))
+	{
+		CRect rect;
+		GetClientRect(rect);
+		rect.bottom -= BACKSTAGERADIUS;
+
+		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
+		RedrawWindow(CRect(rect.left, rect.bottom, rect.right, rect.bottom+BACKSTAGERADIUS), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	}
+	else
+	{
+		CFrontstageWnd::ScrollWindow(dx, dy);
+	}
 }
 
 
-BEGIN_MESSAGE_MAP(CFileView, CWnd)
+BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
@@ -1090,23 +1103,11 @@ END_MESSAGE_MAP()
 
 INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	if (m_EnableScrolling)
 		ResetScrollbars();
-
-	CDC* pDC = GetWindowDC();
-	CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
-	m_FontHeight[0] = m_RowHeight = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectObject(&theApp.m_LargeFont);
-	m_FontHeight[1] = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectStockObject(DEFAULT_GUI_FONT);
-	m_FontHeight[2] = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectObject(&theApp.m_SmallFont);
-	m_FontHeight[3] = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectObject(pOldFont);
-	ReleaseDC(pDC);
 
 	return 0;
 }
@@ -1118,9 +1119,7 @@ BOOL CFileView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
-	SetRedraw(FALSE);
-	CWnd::OnSize(nType, cx, cy);
-	SetRedraw(TRUE);
+	CFrontstageWnd::OnSize(nType, cx, cy);
 
 	AdjustLayout();
 }
@@ -1128,7 +1127,7 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	SCROLLINFO si;
 
@@ -1184,15 +1183,15 @@ void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		if (p_Edit)
 		{
 			CRect rect;
-			p_Edit->GetWindowRect(&rect);
-			ScreenToClient(&rect);
+			p_Edit->GetWindowRect(rect);
+			ScreenToClient(rect);
 
 			rect.OffsetRect(0, -nInc);
 			p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
-	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
+	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -1245,7 +1244,7 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		UpdateWindow();
 	}
 
-	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
+	CFrontstageWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CFileView::OnMouseMove(UINT nFlags, CPoint point)
@@ -1361,7 +1360,8 @@ Leave:
 BOOL CFileView::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
+
 	if (!rect.PtInRect(pt))
 		return FALSE;
 
@@ -1387,7 +1387,8 @@ BOOL CFileView::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 void CFileView::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
+
 	if (!rect.PtInRect(pt))
 		return;
 
@@ -1464,7 +1465,7 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 
 	default:
-		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		CFrontstageWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 }
 
@@ -1587,7 +1588,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 	}
 
 	GetParent()->UpdateWindow();
-	CWnd::OnRButtonUp(nFlags, point);
+	CFrontstageWnd::OnRButtonUp(nFlags, point);
 }
 
 void CFileView::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -1616,6 +1617,7 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		if (Index!=-1)
 		{
 			FVItemData* d = GetItemData(Index);
+
 			point.x = d->Rect.left-m_HScrollPos;
 			point.y = d->Rect.bottom-m_VScrollPos+(INT)m_HeaderHeight+1;
 			ClientToScreen(&point);
@@ -1623,10 +1625,10 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 	else
 	{
-		CPoint ptClient(point);
-		ScreenToClient(&ptClient);
+		CPoint pt(point);
+		ScreenToClient(&pt);
 
-		Index = ItemAtPosition(ptClient);
+		Index = ItemAtPosition(pt);
 	}
 
 	if (Index==-1)

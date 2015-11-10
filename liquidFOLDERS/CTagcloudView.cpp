@@ -27,8 +27,10 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 
 	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize) || (m_ViewParameters.TagcloudUseColors!=p_ViewParameters->TagcloudUseColors))
 		Changes = 1;
+
 	if ((Force) || (m_ViewParameters.TagcloudCanonical!=p_ViewParameters->TagcloudCanonical))
 		Changes = 2;
+
 	if ((Force) || (m_ViewParameters.TagcloudShowRare!=p_ViewParameters->TagcloudShowRare))
 		Changes = 2;
 
@@ -41,9 +43,11 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 		case 2:
 			SetSearchResult(p_RawFiles, p_CookedFiles, NULL);
 			GetOwner()->PostMessage(WM_COMMAND, WM_UPDATESELECTION);
+
 		case 1:
 			AdjustLayout();
 			break;
+
 		case 0:
 			Invalidate();
 			break;
@@ -101,6 +105,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 					{
 						d->FontSize = (20*(d->Cnt-Minimum))/Delta;
 						d->Alpha = 56+(200*(d->Cnt-Minimum))/Delta;
+
 						if (d->Alpha<128)
 						{
 							d->Color = 0xFF0000 | ((128-d->Alpha)<<9);
@@ -128,17 +133,17 @@ void CTagcloudView::AdjustLayout()
 		CClientDC dc(this);
 
 		CRect rectWindow;
-		GetWindowRect(&rectWindow);
+		GetWindowRect(rectWindow);
 
 		if (!rectWindow.Width())
 			return;
 
-#define CenterRow(last) for (UINT b=rowstart; b<=last; b++) \
+#define CenterRow(last) for (UINT b=RowStart; b<=last; b++) \
 	{ \
 		TagcloudItemData* d = GetItemData(b); \
 		if (d->Hdr.Hdr.Valid) \
 		{ \
-			OffsetRect(&d->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (rowheight-(d->Hdr.Hdr.Rect.bottom-d->Hdr.Hdr.Rect.top))/2); \
+			OffsetRect(&d->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (RowHeight-(d->Hdr.Hdr.Rect.bottom-d->Hdr.Hdr.Rect.top))/2); \
 			if (d->Hdr.Hdr.Rect.right>m_ScrollWidth) \
 				m_ScrollWidth = d->Hdr.Hdr.Rect.right; \
 			if (d->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
@@ -159,12 +164,12 @@ void CTagcloudView::AdjustLayout()
 Restart:
 		m_ScrollWidth = m_ScrollHeight = 0;
 
-		INT col = 0;
-		INT row = 0;
+		INT Column = 0;
+		INT Row = 0;
 		INT x = 0;
 		INT y = GUTTER;
-		INT rowheight = 0;
-		INT rowstart = 0;
+		INT RowHeight = 0;
+		INT RowStart = 0;
 
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
@@ -180,23 +185,25 @@ Restart:
 
 				if (x+rect.Width()+2*GUTTER>rectWindow.Width())
 				{
-					col = 0;
-					row++;
-					y += rowheight+GUTTER;
+					Column = 0;
+					Row++;
+					y += RowHeight+GUTTER;
+
 					if (a)
 						CenterRow(a-1);
+
 					x = 0;
-					rowstart = a;
-					rowheight = 0;
+					RowStart = a;
+					RowHeight = 0;
 				}
 
 				rect.MoveToXY(x, y);
-				d->Hdr.Column = col++;
-				d->Hdr.Row = row;
+				d->Hdr.Column = Column++;
+				d->Hdr.Row = Row;
 				d->Hdr.Hdr.Rect = rect;
 
 				x += rect.Width()+GUTTER;
-				rowheight = max(rowheight, rect.Height());
+				RowHeight = max(RowHeight, rect.Height());
 			}
 		}
 
@@ -209,10 +216,11 @@ Restart:
 	}
 
 	m_GridArrange = GRIDARRANGE_HORIZONTAL;
+
 	CFileView::AdjustLayout();
 }
 
-void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
+void CTagcloudView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
 	TagcloudItemData* d = GetItemData(Index);
@@ -233,7 +241,7 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
 	}
 
 	CFont* pOldFont = dc.SelectObject(GetFont(Index));
-	dc.DrawText(i->CoreAttributes.FileName, rectItem, TextFormat | DT_CENTER | DT_VCENTER);
+	dc.DrawText(i->CoreAttributes.FileName, (LPRECT)rectItem, TextFormat | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 }
 
@@ -245,7 +253,7 @@ CMenu* CTagcloudView::GetViewContextMenu()
 	return pMenu;
 }
 
-CFont* CTagcloudView::GetFont(INT Index)
+LFFont* CTagcloudView::GetFont(INT Index)
 {
 	return &m_Fonts[(m_ViewParameters.TagcloudUseSize ? GetItemData(Index)->FontSize : DefaultFontSize)];
 }
@@ -267,11 +275,8 @@ INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGridView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	CString Face = theApp.GetDefaultFontFace();
 	for (INT a=0; a<20; a++)
-		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
-			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY,
-			DEFAULT_PITCH | FF_DONTCARE, Face);
+		m_Fonts[a].CreateFont(a*2+10, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY);
 
 	return 0;
 }

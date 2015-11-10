@@ -29,20 +29,20 @@ class CGlobeView : public CFileView
 public:
 	CGlobeView();
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, CRect rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
-	virtual void GetPersistentData(FVPersistentData& Data);
+	virtual void GetPersistentData(FVPersistentData& Data) const;
 
 protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
-	virtual INT ItemAtPosition(CPoint point);
+	virtual INT ItemAtPosition(CPoint point) const;
 	virtual CMenu* GetItemContextMenu(INT Index);
 
 	void PrepareModel();
 	void PrepareTexture();
 	void Normalize();
-	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
+	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
 	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
 	void DrawStatusBar(INT Height, COLORREF BarColor, BOOL Themed);
@@ -83,7 +83,7 @@ protected:
 	GLFont m_Fonts[2];
 
 private:
-	BOOL CursorOnGlobe(CPoint point);
+	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
 
 	LPCTSTR lpszCursorName;

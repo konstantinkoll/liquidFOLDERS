@@ -20,7 +20,7 @@ public:
 
 protected:
 	// Callbacks
-	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCHAR* pPath, SIZE_T cCount);
+	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCHAR* pPath, SIZE_T cCount) const;
 	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor);
 	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData);
 	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFProgress* pProgress=NULL);

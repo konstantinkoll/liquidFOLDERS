@@ -15,7 +15,7 @@ LFDropSource::LFDropSource()
 	m_LastEffect = DROPEFFECT_NONE;
 }
 
-DWORD LFDropSource::GetLastEffect()
+DWORD LFDropSource::GetLastEffect() const
 {
 	return m_LastEffect;
 }

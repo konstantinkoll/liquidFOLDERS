@@ -43,16 +43,6 @@ IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
 IDB_MULTIPLE            PNG                     "res\\Multiple.png"
 IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
 IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
-IDB_JOURNAL_FRAME0      PNG                     "res\\Journal_Frame0.png"
-IDB_JOURNAL_FRAME1      PNG                     "res\\Journal_Frame1.png"
-IDB_JOURNAL_NORMAL0     PNG                     "res\\Journal_Normal0.png"
-IDB_JOURNAL_NORMAL1     PNG                     "res\\Journal_Normal1.png"
-IDB_JOURNAL_HOT0        PNG                     "res\\Journal_Hot0.png"
-IDB_JOURNAL_HOT1        PNG                     "res\\Journal_Hot1.png"
-IDB_JOURNAL_PRESSED0    PNG                     "res\\Journal_Pressed0.png"
-IDB_JOURNAL_PRESSED1    PNG                     "res\\Journal_Pressed1.png"
-IDB_JOURNAL_DISABLED0   PNG                     "res\\Journal_Disabled0.png"
-IDB_JOURNAL_DISABLED1   PNG                     "res\\Journal_Disabled1.png"
 IDB_THUMBNAIL_FRAME     PNG                     "res\\Thumbnail_Frame.png"
 IDB_THUMBNAIL_SHADOW    PNG                     "res\\Thumbnail_Shadow.png"
 
@@ -363,7 +353,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_PANE_FILTER          "Blendet die Filter-Leiste ein oder aus.\nFilter"
     ID_PANE_INSPECTOR       "Blendet die Eigenschaften-Leiste ein oder aus.\nEigenschaften"
 END
 
@@ -402,7 +391,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
     IDS_AUTOMATIC           "Automatisch wählen"
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
@@ -787,7 +775,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_PANE_FILTER          "Abre y cierra el panel de filtros.\nFiltro"
     ID_PANE_INSPECTOR       "Abre y cierra el panel de propriedades.\nPropriedades"
 END
 
@@ -825,7 +812,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
     IDS_AUTOMATIC           "Escoger automaticamente"
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
@@ -1210,8 +1196,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_PANE_FILTER          "Insère le filtre ou masque le filtre.\nFiltre"
-    ID_PANE_INSPECTOR       "Insère le filtre ou masque les propriétés.\nPropriétés"
+    ID_PANE_INSPECTOR       "Insère ou masque les propriétés.\nPropriétés"
 END
 
 STRINGTABLE 
@@ -1248,7 +1233,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
     IDS_AUTOMATIC           "Choisir automatiquement"
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
@@ -1684,7 +1668,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_PANE_FILTER          "Opens and closes the filter pane.\nFilter"
     ID_PANE_INSPECTOR       "Opens and closes the properties pane.\nProperties"
 END
 
@@ -1722,7 +1705,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NONAVIGATION        "This window does not support any navigation."
     IDS_AUTOMATIC           "Choose automatically"
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"

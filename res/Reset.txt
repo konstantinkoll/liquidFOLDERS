@@ -1,0 +1,1 @@
+Outline: #000000 in 20, 40 and 80 opacity

@@ -69,12 +69,6 @@ void CExplorerList::Init()
 	if (pHeader)
 		VERIFY(m_wndHeader.SubclassWindow(pHeader->m_hWnd));
 
-	CDC* pDC = GetDC();
-	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_DefaultFont);
-	m_FontHeight = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectObject(pOldFont);
-	ReleaseDC(pDC);
-
 	if (LFGetApp()->m_ThemeLibLoaded)
 		hThemeButton = LFGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 
@@ -90,9 +84,10 @@ void CExplorerList::SetWidgetSize()
 {
 	if (hThemeButton)
 	{
-		HDC hDC = ::GetDC(NULL);
-		LFGetApp()->zGetThemePartSize(hThemeButton, hDC, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &m_CheckboxSize);
-		::ReleaseDC(NULL, hDC);
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
+
+		LFGetApp()->zGetThemePartSize(hThemeButton, dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &m_CheckboxSize);
 	}
 	else
 	{
@@ -101,28 +96,7 @@ void CExplorerList::SetWidgetSize()
 	}
 }
 
-BOOL CExplorerList::SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags)
-{
-	CRect rect;
-	GetWindowRect(rect);
-
-	if (cx<rect.Width())
-	{
-		AdjustLayout(cx);
-
-		return CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
-	}
-	else
-	{
-		BOOL Result = CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
-
-		AdjustLayout(cx);
-
-		return Result;
-	}
-}
-
-void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsible)
+void CExplorerList::AddCategory(INT ID, LPCWSTR Name, LPCWSTR Hint, BOOL Collapsible)
 {
 	LVGROUP lvg;
 	ZeroMemory(&lvg, sizeof(lvg));
@@ -131,13 +105,13 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.iGroupId = ID;
-	lvg.pszHeader = Name.GetBuffer();
+	lvg.pszHeader = (LPWSTR)Name;
 
 	if (LFGetApp()->OSVersion>=OS_Vista)
 	{
-		if (!Hint.IsEmpty())
+		if (Hint[0]!=L'\0')
 		{
-			lvg.pszSubtitle = Hint.GetBuffer();
+			lvg.pszSubtitle = (LPWSTR)Hint;
 			lvg.mask |= LVGF_SUBTITLE;
 		}
 
@@ -152,11 +126,11 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 	InsertGroup(ID, &lvg);
 }
 
-void CExplorerList::AddColumn(INT ID, LPWSTR Name, INT Width, BOOL Right)
+void CExplorerList::AddColumn(INT ID, LPCWSTR Name, INT Width, BOOL Right)
 {
 	LV_COLUMN lvc;
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.pszText = Name;
+	lvc.pszText = (LPWSTR)Name;
 	lvc.cx = Width;
 	lvc.fmt = Right ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	lvc.iSubItem = ID;
@@ -397,10 +371,12 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 				cCount++;
 		}
 
+		const INT FontHeight = LFGetApp()->m_DefaultFont.GetFontHeight();
+
 		rectLabel.left += m_IconSize+7*PADDING;
 		rectLabel.right -= 2*PADDING;
-		rectLabel.top += (rect.Height()-cCount*m_FontHeight)/2;
-		rectLabel.bottom = rectLabel.top+m_FontHeight;
+		rectLabel.top += (rect.Height()-cCount*FontHeight)/2;
+		rectLabel.bottom = rectLabel.top+FontHeight;
 
 		Item.iSubItem = 0;
 		Item.pszText = Text;
@@ -419,7 +395,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 			if (*Item.pszText)
 			{
-				rectLabel.OffsetRect(0, m_FontHeight);
+				rectLabel.OffsetRect(0, FontHeight);
 				dc.DrawText(Item.pszText, rectLabel, DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 			}
 		}
@@ -448,6 +424,8 @@ BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_WM_WINDOWPOSCHANGING()
+	ON_WM_WINDOWPOSCHANGED()
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
 END_MESSAGE_MAP()
@@ -563,6 +541,24 @@ void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
 	tme.dwHoverTime = LFHOVERTIME;
 	tme.hwndTrack = GetSafeHwnd();
 	TrackMouseEvent(&tme);
+}
+
+void CExplorerList::OnWindowPosChanging(WINDOWPOS* lpwndpos)
+{
+	CRect rectWindow;
+	GetWindowRect(rectWindow);
+
+	if (lpwndpos->cx<rectWindow.Width())
+		AdjustLayout(lpwndpos->cx);
+
+	CListCtrl::OnWindowPosChanging(lpwndpos);
+}
+
+void CExplorerList::OnWindowPosChanged(WINDOWPOS* lpwndpos)
+{
+	CListCtrl::OnWindowPosChanged(lpwndpos);
+
+	AdjustLayout(lpwndpos->cx);
 }
 
 void CExplorerList::OnContextMenu(CWnd* pWnd, CPoint pos)

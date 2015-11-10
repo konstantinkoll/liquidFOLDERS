@@ -30,14 +30,16 @@ EXPORTS
 	LFGetStoreSettings @104
 	LFGetStoreSettingsEx @105
 	LFStoresOnVolume @106
-	LFCreateStoreLiquidfolders @107
-	LFCreateStoreWindows @108
-	LFMakeStoreSearchable @109
-	LFDeleteStore @110
-	LFSetStoreAttributes @111
-	LFScheduledMaintenance @112
-	LFGetFileLocation @113
-	LFDoFileImport @114
+	LFGetStoreIcon @107
+	LFCreateStoreLiquidfolders @108
+	LFCreateStoreWindows @109
+	LFMakeStoreSearchable @110
+	LFDeleteStore @111
+	LFSetStoreAttributes @112
+	LFSynchronizeStore @113
+	LFScheduledMaintenance @114
+	LFGetFileLocation @115
+	LFDoFileImport @116
 
 	LFFourCCToString @200
 	LFUINTToString @201

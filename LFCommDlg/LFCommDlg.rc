@@ -43,8 +43,8 @@ IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
 IDB_SANTA               PNG                     "res\\Santa.png"
 IDB_LIQUIDFOLDERS_64    PNG                     "res\\liquidFOLDERS_64.png"
 IDB_LIQUIDFOLDERS_128   PNG                     "res\\liquidFOLDERS_128.png"
-IDB_SIDEBARBACKGROUND   PNG                     "res\\SidebarBackground.png"
-IDB_TOOLTIPBACKGROUND   PNG                     "res\\TooltipBackground.png"
+IDB_BACKGROUND_DARKLINEN PNG                     "res\\Background_DarkLinen.png"
+IDB_BACKGROUND_TOOLTIP  PNG                     "res\\Background_Tooltip.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -93,11 +93,16 @@ IDB_UPDATEICONS_32      BITMAP                  "res\\UpdateIcons_32.bmp"
 IDR_APPLICATION         ICON                    "res\\liquidFOLDERS.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
 IDR_FILEDROP            ICON                    "res\\FileDrop_Small.ico"
+IDI_MINIMIZE            ICON                    "res\\Minimize.ico"
+IDI_MAXIMIZE            ICON                    "res\\Maximize.ico"
+IDI_RESTORE             ICON                    "res\\Restore.ico"
+IDI_CLOSE               ICON                    "res\\Close.ico"
+IDI_ARROW_LEFT          ICON                    "res\\Arrow_Left.ico"
+IDI_ARROW_RIGHT         ICON                    "res\\Arrow_Right.ico"
 IDI_RESET_NORMAL        ICON                    "res\\Reset_Normal.ico"
 IDI_RESET_SELECTED      ICON                    "res\\Reset_Selected.ico"
 IDI_RESET_HOT           ICON                    "res\\Reset_Hot.ico"
 IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed.ico"
-IDI_SEARCH              ICON                    "res\\Search.ico"
 32513                   ICON                    "res\\Error.ico"
 32514                   ICON                    "res\\Question.ico"
 32515                   ICON                    "res\\Warning.ico"
@@ -824,6 +829,7 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d Stores gewartet"
     IDS_REGFILEFILTER       "Registrierungsdatei"
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
+    IDS_EXPIRECAPTION       "Unregistrierte Kopie – bitte erwerben Sie eine Lizenz!"
     IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
@@ -875,14 +881,13 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
-    ID_APP_PURCHASE         "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
-    ID_APP_ENTERLICENSEKEY  "Öffnet ein Fenster zum Freischalten von liquidFOLDERS.\nLizenzschlüssel eingeben"
+    IDM_BACKSTAGE_TOGGLESIDEBAR 
+                            "Blendet die Seitenleiste ein oder aus.\nSeitenleiste"
+    IDM_BACKSTAGE_PURCHASE  "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
+    IDM_BACKSTAGE_ENTERLICENSEKEY 
+                            "Öffnet ein Fenster zum Freischalten von liquidFOLDERS.\nLizenzschlüssel eingeben"
+    IDM_BACKSTAGE_SUPPORT   "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
+    IDM_BACKSTAGE_ABOUT     "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -1570,6 +1575,7 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores inspeccionar"
     IDS_REGFILEFILTER       "Archivo de Registro"
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
+    IDS_EXPIRECAPTION       "Copia no registrada – compre una licencia por fovor!"
     IDS_XOFY_SINGULAR       "%u de %u"
     IDS_XOFY_PLURAL         "%u de %u"
     IDS_UPDATE              "Actualización"
@@ -1621,14 +1627,13 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Visualiza información y configuración de liquidFOLDERS.\nAcerca de liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
-    ID_APP_PURCHASE         "Abre su navegador estándar visualizando una página a través de la cual usted puede adquirir la licencia.\nAdquirir licencia"
-    ID_APP_ENTERLICENSEKEY  "Abre una ventana para ver e ingresar su licencia.\nDictar licencia"
+    IDM_BACKSTAGE_TOGGLESIDEBAR 
+                            "Abre y cierra la a barra lateral.\nBarra lateral"
+    IDM_BACKSTAGE_PURCHASE  "Abre su navegador estándar visualizando una página a través de la cual usted puede adquirir la licencia.\nAdquirir licencia"
+    IDM_BACKSTAGE_ENTERLICENSEKEY 
+                            "Abre una ventana para ver e ingresar su licencia.\nDictar licencia"
+    IDM_BACKSTAGE_SUPPORT   "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
+    IDM_BACKSTAGE_ABOUT     "Visualiza información y configuración de liquidFOLDERS.\nAcerca de liquidFOLDERS"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -2310,6 +2315,7 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores revisée"
     IDS_REGFILEFILTER       "Fichier de Registre"
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
+    IDS_EXPIRECAPTION       "Copie non enregistée – acheter une license s'il vous plaît!"
     IDS_XOFY_SINGULAR       "%u sur %u"
     IDS_XOFY_PLURAL         "%u sur %u"
     IDS_UPDATE              "Mise á jour"
@@ -2361,14 +2367,13 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
-    ID_APP_PURCHASE         "Ouvre le standard-browser avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
-    ID_APP_ENTERLICENSEKEY  "Ouvre une fenêtre pour la déverrouillage de liquidFOLDERS.\nDonner clé de licence"
+    IDM_BACKSTAGE_TOGGLESIDEBAR 
+                            "Insère ou masque le panneau latéral.\nPanneau latéral"
+    IDM_BACKSTAGE_PURCHASE  "Ouvre le standard-browser avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
+    IDM_BACKSTAGE_ENTERLICENSEKEY 
+                            "Ouvre une fenêtre pour la déverrouillage de liquidFOLDERS.\nDonner clé de licence"
+    IDM_BACKSTAGE_SUPPORT   "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
+    IDM_BACKSTAGE_ABOUT     "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
 END
 
 #endif    // Französisch (neutral) resources
@@ -3098,6 +3103,7 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores serviced"
     IDS_REGFILEFILTER       "Registry file"
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
+    IDS_EXPIRECAPTION       "Unregistered copy—please purchase a license!"
     IDS_XOFY_SINGULAR       "%u of %u"
     IDS_XOFY_PLURAL         "%u of %u"
     IDS_UPDATE              "Update"
@@ -3149,14 +3155,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Shows liquidFOLDERS information and settings.\nAbout liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
-    ID_APP_PURCHASE         "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
-    ID_APP_ENTERLICENSEKEY  "Opens a window to enter your license key.\nEnter license key"
+    IDM_BACKSTAGE_TOGGLESIDEBAR "Toggles the sidebar.\nSidebar"
+    IDM_BACKSTAGE_PURCHASE  "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
+    IDM_BACKSTAGE_ENTERLICENSEKEY 
+                            "Opens a window to enter your license key.\nEnter license key"
+    IDM_BACKSTAGE_SUPPORT   "Opens your standard mail software to contact customer support.\nContact support"
+    IDM_BACKSTAGE_ABOUT     "Shows liquidFOLDERS information and settings.\nAbout liquidFOLDERS"
 END
 
 #endif    // Englisch (USA) resources

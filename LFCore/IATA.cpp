@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "IATA.h"
+#include <assert.h>
 
 
 #pragma data_seg(".shared")
@@ -30,7 +31,7 @@ LFCORE_API UINT LFIATAGetAirportCount()
 	return UseGermanDB ? AirportCount_DE : AirportCount_EN;
 }
 
-LFCORE_API LFCountry* LFIATAGetCountry(UINT CountryID)
+LFCORE_API const LFCountry* LFIATAGetCountry(UINT CountryID)
 {
 	assert(CountryID<LFIATAGetCountryCount());
 
@@ -63,7 +64,7 @@ LFCORE_API INT LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport
 	return Last;
 }
 
-LFCORE_API BOOL LFIATAGetAirportByCode(CHAR* Code, LFAirport** ppAirport)
+LFCORE_API BOOL LFIATAGetAirportByCode(const CHAR* Code, LFAirport** ppAirport)
 {
 	if (!Code)
 		return FALSE;

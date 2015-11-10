@@ -29,6 +29,8 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 		CString Message;
 		if (LFIsLicensed(NULL, TRUE))
 		{
+			::PostMessage(HWND_BROADCAST, LFGetApp()->m_LicenseActivatedMsg, NULL, NULL);
+
 			ENSURE(Caption.LoadString(IDS_LICENSEVALID_CAPTION));
 			ENSURE(Message.LoadString(IDS_LICENSEVALID_MSG));
 			LFMessageBox(this, Message, Caption, MB_ICONINFORMATION);

@@ -15,7 +15,7 @@
 class LFSelectLocationIATADlg : public LFDialog
 {
 public:
-	LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd=NULL, CHAR* Airport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
+	LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd=NULL, const CHAR* pAirport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

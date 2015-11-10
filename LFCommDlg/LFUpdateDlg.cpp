@@ -17,7 +17,7 @@ static const GUID TrayIcon = { 0x7091D760, 0xA474, 0x4C14, { 0x86, 0xB0, 0x2B, 0
 #define WM_TRAYMENU     WM_USER+6
 #define MARGIN          4
 
-LFUpdateDlg::LFUpdateDlg(CString Version, CString MSN, DWORD Features, CWnd* pParentWnd)
+LFUpdateDlg::LFUpdateDlg(const CString& Version, const CString& MSN, DWORD Features, CWnd* pParentWnd)
 	: LFDialog(IDD_UPDATE, pParentWnd)
 {
 	m_NotificationWindow = (pParentWnd==NULL);
@@ -68,42 +68,42 @@ void LFUpdateDlg::UpdateFrame(BOOL bMove)
 	SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
 
 	// Glass frame
-	BOOL IsAeroWindow = FALSE;
-	if (LFGetApp()->m_AeroLibLoaded)
-		LFGetApp()->zDwmIsCompositionEnabled(&IsAeroWindow);
+	BOOL IsCompositionEnabled = FALSE;
+	if (LFGetApp()->m_DwmLibLoaded)
+		LFGetApp()->zDwmIsCompositionEnabled(&IsCompositionEnabled);
 
 	// Settings
-	LONG cl = GetClassLong(GetSafeHwnd(), GCL_STYLE);
-	cl &= ~CS_DROPSHADOW;
-	if (!IsAeroWindow && bDropShadow)
-		cl |= CS_DROPSHADOW;
-	SetClassLong(GetSafeHwnd(), GCL_STYLE, cl);
+	LONG ClassStyle = GetClassLong(GetSafeHwnd(), GCL_STYLE);
+	ClassStyle &= ~CS_DROPSHADOW;
+	if (!IsCompositionEnabled && bDropShadow)
+		ClassStyle |= CS_DROPSHADOW;
+	SetClassLong(GetSafeHwnd(), GCL_STYLE, ClassStyle);
 
-	LONG ws = GetWindowLong(GetSafeHwnd(), GWL_STYLE);
-	ws &= ~(WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
-	ws |= WS_POPUPWINDOW;
-	if (IsAeroWindow)
-		ws |= WS_THICKFRAME;
-	SetWindowLong(GetSafeHwnd(), GWL_STYLE, ws);
+	LONG WindowStyle = GetWindowLong(GetSafeHwnd(), GWL_STYLE);
+	WindowStyle &= ~(WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
+	WindowStyle |= WS_POPUPWINDOW;
+	if (IsCompositionEnabled)
+		WindowStyle |= WS_THICKFRAME;
+	SetWindowLong(GetSafeHwnd(), GWL_STYLE, WindowStyle);
 
-	LONG es = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
-	es &= ~WS_EX_DLGMODALFRAME;
-	es |= WS_EX_TOOLWINDOW;
-	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, es);
+	LONG ExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
+	ExtendedStyle &= ~WS_EX_DLGMODALFRAME;
+	ExtendedStyle |= WS_EX_TOOLWINDOW;
+	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, ExtendedStyle);
 
 	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
-	AdjustWindowRectEx(rectClient, ws, FALSE, es);
+	AdjustWindowRectEx(rectClient, WindowStyle, FALSE, ExtendedStyle);
 
 	if (bMove)
 	{
-		MONITORINFO mi;
-		mi.cbSize = sizeof(MONITORINFO);
+		MONITORINFO MonitorInfo;
+		MonitorInfo.cbSize = sizeof(MONITORINFO);
 
 		CRect rectScreen;
-		if (GetMonitorInfo(MonitorFromPoint(CPoint(0, 0), MONITOR_DEFAULTTONEAREST), &mi))
+		if (GetMonitorInfo(MonitorFromPoint(CPoint(0, 0), MONITOR_DEFAULTTONEAREST), &MonitorInfo))
 		{
-			rectScreen = mi.rcWork;
+			rectScreen = MonitorInfo.rcWork;
 		}
 		else
 		{
@@ -168,10 +168,10 @@ void LFUpdateDlg::ShowMenu()
 	pPopup->SetMenuItemInfo(0, &mii, TRUE);
 	pPopup->SetDefaultItem(0, TRUE);
 
-	POINT pos;
-	GetCursorPos(&pos);
+	CPoint pt;
+	GetCursorPos(&pt);
 
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, this);
 }
 
 void LFUpdateDlg::EndDialog(INT nResult)
@@ -222,8 +222,8 @@ BOOL LFUpdateDlg::OnInitDialog()
 
 	// Version
 	CRect rectWnd;
-	m_wndVersionInfo.GetWindowRect(&rectWnd);
-	ScreenToClient(&rectWnd);
+	m_wndVersionInfo.GetWindowRect(rectWnd);
+	ScreenToClient(rectWnd);
 
 	CString Caption;
 	m_wndVersionInfo.GetWindowText(Caption);
@@ -239,13 +239,8 @@ BOOL LFUpdateDlg::OnInitDialog()
 	const INT HeightCaption = 4*LineGap;
 	const INT HeightVersion = 2*LineGap;
 
-	m_CaptionFont.CreateFont(HeightCaption, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, _T("Letter Gothic"));
-
-	m_VersionFont.CreateFont(HeightVersion, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
+	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
 	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-HeightVersion)/2-9;
@@ -257,7 +252,7 @@ BOOL LFUpdateDlg::OnInitDialog()
 
 	// Feature-Liste
 	GetDlgItem(IDC_IGNOREUPDATE)->GetWindowRect(rectWnd);
-	ScreenToClient(&rectWnd);
+	ScreenToClient(rectWnd);
 
 	if (m_Features)
 	{
@@ -269,12 +264,7 @@ BOOL LFUpdateDlg::OnInitDialog()
 			if (Features & 1)
 				Count++;
 
-		CDC* pDC = GetDC();
-		HFONT hOldFont = (HFONT)pDC->SelectStockObject(DEFAULT_GUI_FONT);
-		m_FeatureItemHeight = pDC->GetTextExtent(_T("Wy")).cy>14 ? 32 : Count<=3 ? 32 : 16;
-		pDC->SelectObject(hOldFont);
-		ReleaseDC(pDC);
-
+		m_FeatureItemHeight = LFGetApp()->m_DialogFont.GetFontHeight()>14 ? 32 : Count<=3 ? 32 : 16;
 		m_UpdateIcons.Create(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight, m_FeatureItemHeight);
 
 		DynamicHeight += Count*(m_FeatureItemHeight+MARGIN)+m_FeaturesLeft;
@@ -434,7 +424,7 @@ void LFUpdateDlg::OnDownload()
 {
 	CString URL((LPCSTR)IDS_UPDATEURL);
 
-	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
+	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 
 	EndDialog(IDOK);
 }

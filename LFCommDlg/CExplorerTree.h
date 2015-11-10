@@ -24,27 +24,27 @@ public:
 
 	virtual void PreSubclassWindow();
 
-	LPITEMIDLIST GetSelectedPIDL();
-	BOOL GetSelectedPath(LPWSTR Path);
+	LPITEMIDLIST GetSelectedPIDL() const;
+	BOOL GetSelectedPath(LPWSTR Path) const;
 	void PopulateTree();
-	void SetRootPath(CString RootPath);
+	void SetRootPath(LPCWSTR RootPath);
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
 
 protected:
 	virtual LRESULT WindowProc(UINT Message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	CString OnGetItemText(ExplorerTreeItemData* pItem);
-	INT OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected);
+	CString OnGetItemText(ExplorerTreeItemData* pItem) const;
+	INT OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const;
 	HTREEITEM InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULONG dwAttributes=SFGAO_HASSUBFOLDER, HTREEITEM hParent=TVI_ROOT);
-	HTREEITEM InsertItem(WCHAR* Path, HTREEITEM hParent=TVI_ROOT);
+	HTREEITEM InsertItem(LPCWSTR Path, HTREEITEM hParent=TVI_ROOT);
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
-	BOOL ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path);
-	BOOL DeletePath(LPWSTR Path);
-	BOOL AddPath(LPWSTR Path, LPWSTR Parent);
+	BOOL ChildrenContainPath(HTREEITEM hParentItem, LPCWSTR Path) const;
+	BOOL DeletePath(LPCWSTR Path);
+	BOOL AddPath(LPCWSTR Path, LPCWSTR Parent);
 	void UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
-	void UpdatePath(LPWSTR Path1, LPWSTR Path2);
+	void UpdatePath(LPCWSTR Path1, LPCWSTR Path2);
 
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

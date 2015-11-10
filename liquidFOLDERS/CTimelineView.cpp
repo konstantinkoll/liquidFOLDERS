@@ -124,7 +124,7 @@ void CTimelineView::AdjustLayout()
 	}
 
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 
 	BOOL HasScrollbars = FALSE;
 
@@ -186,32 +186,42 @@ Restart:
 				d->PreviewRows = m_PreviewColumns ? max(1, min(PreviewCount/m_PreviewColumns, m_PreviewColumns)) : 1;
 			}
 
-			INT h = 2*BORDER+m_CaptionHeight;
+			const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
+
+			INT Height = 2*BORDER+m_CaptionHeight;
+
 			if (d->Preview)
-				h += BORDER/2+BORDER;
+				Height += BORDER/2+BORDER;
+
 			if (d->Preview & PRV_TITLE)
-				h += m_FontHeight[0];
+				Height += FontHeight;
+
 			if (d->Preview & PRV_ALBUM)
-				h += m_FontHeight[0];
+				Height += FontHeight;
+
 			if (d->Preview & PRV_COMMENTS)
 			{
-				h += m_FontHeight[0];
+				Height += FontHeight;
+
 				if (d->Preview & PRV_THUMBS)
-					h += BORDER/2;
+					Height += BORDER/2;
 			}
+
 			if (d->Preview & PRV_THUMBS)
-				h += (128+BORDER)*d->PreviewRows-BORDER;
+				Height += (128+BORDER)*d->PreviewRows-BORDER;
+
 			if (d->Preview & PRV_SOURCE)
 			{
-				h += min(m_FontHeight[3], 16);
+				Height += min(theApp.m_SmallFont.GetFontHeight(), 16);
+
 				if (d->Preview & PRV_THUMBS)
 				{
-					h += BORDER/2;
+					Height += BORDER/2;
 				}
 				else
 					if (d->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 					{
-						h += 2*BORDER;
+						Height += 2*BORDER;
 					}
 			}
 
@@ -227,7 +237,7 @@ Restart:
 				ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
 				ic.Rect.right = ic.Rect.left+m_LabelWidth;
 				ic.Rect.top = max(CurRow[0], CurRow[1]);
-				ic.Rect.bottom = ic.Rect.top+2*BORDER+m_FontHeight[0];
+				ic.Rect.bottom = ic.Rect.top+2*BORDER+FontHeight;
 				m_Categories.AddItem(ic);
 
 				CurRow[0] = CurRow[1] = ic.Rect.bottom+GUTTER;
@@ -239,7 +249,7 @@ Restart:
 			d->Hdr.RectInflate = d->Arrow ? ARROWSIZE+1 : 0;
 
 			if (abs(CurRow[Column]-LastRow)<2*ARROWSIZE)
-				if (h>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
+				if (Height>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
 				{
 					d->ArrowOffs = 2*GUTTER;
 				}
@@ -251,10 +261,10 @@ Restart:
 			d->Hdr.Rect.left = (Column==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
 			d->Hdr.Rect.top = CurRow[Column];
 			d->Hdr.Rect.right = d->Hdr.Rect.left+m_ItemWidth;
-			d->Hdr.Rect.bottom = d->Hdr.Rect.top+h;
+			d->Hdr.Rect.bottom = d->Hdr.Rect.top+Height;
 
 			LastRow = CurRow[Column];
-			CurRow[Column] += h+GUTTER;
+			CurRow[Column] += Height+GUTTER;
 
 			if ((CurRow[Column]>rect.Height()) && (!HasScrollbars))
 			{
@@ -271,19 +281,19 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
-RECT CTimelineView::GetLabelRect(INT Index)
+RECT CTimelineView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
 	rect.left += 2*BORDER+m_IconSize.cx-5;
 	rect.top += BORDER-2;
 	rect.right -= BORDER-2;
-	rect.bottom = rect.top+m_FontHeight[0]+4;
+	rect.bottom = rect.top+theApp.m_DefaultFont.GetFontHeight()+4;
 
 	return rect;
 }
 
-void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, BOOL Themed)
+void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* ic, BOOL Themed)
 {
 	if (Themed)
 	{
@@ -298,16 +308,18 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, Item
 		dc.FillSolidRect(rectCategory, GetSysColor(COLOR_3DSHADOW));
 	}
 
-	dc.DrawText(ic->Caption, -1, rectCategory, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
+	dc.DrawText(ic->Caption, -1, (LPRECT)rectCategory, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
 
-void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, BOOL Themed)
+void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	TimelineItemData* d = GetItemData(Index);
 	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
 
 	BOOL Hot = (m_HotItem==Index);
 	BOOL Selected = d->Hdr.Selected;
+
+	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
 
 	// Shadow
 	GraphicsPath path;
@@ -396,7 +408,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 
 	// Caption
 	rectText.left += m_IconSize.cx+BORDER;
-	rectText.bottom = rectText.top+m_FontHeight[0];
+	rectText.bottom = rectText.top+FontHeight;
 
 	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? Selected ? 0xFFFFFF : i->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	if ((i->Type & LFTypeMask)!=LFTypeFolder)
@@ -412,7 +424,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 	}
 
 	rectText.top = rectText.bottom+BORDER/2;
-	rectText.bottom = rectText.top+m_FontHeight[3];
+	rectText.bottom = rectText.top+theApp.m_SmallFont.GetFontHeight();
 
 	WCHAR tmpBuf[256];
 	LFAttributeToString(i, ((i->Type & LFTypeMask)==LFTypeFile) ? m_ViewParameters.SortBy : LFAttrFileName, tmpBuf, 256);
@@ -433,7 +445,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 		INT BottomHeight = 0;
 		if (d->Preview & PRV_SOURCE)
 		{
-			BottomHeight = min(m_FontHeight[3], 16);
+			BottomHeight = min(theApp.m_SmallFont.GetFontHeight(), 16);
 			CRect rectSource(rectItem->left+BORDER, rectItem->bottom-BORDER-BottomHeight, rectItem->right-BORDER, 0);
 			rectSource.bottom = rectSource.top+BottomHeight;
 
@@ -462,7 +474,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 		if (d->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 		{
 			CRect rectAttr(rectItem->left+BORDER+2, rectText.bottom+BORDER+BORDER/2, rectItem->right-BORDER, 0);
-			rectAttr.bottom = rectAttr.top+m_FontHeight[0];
+			rectAttr.bottom = rectAttr.top+FontHeight;
 
 			if (d->Preview & PRV_ALBUM)
 				rectAttr.left = rectItem->left+m_IconSize.cx+2*BORDER;
@@ -485,7 +497,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 					wcscat_s(tmpStr, 513, d->pTitle);
 
 				dc.DrawText(tmpStr, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
-				rectAttr.OffsetRect(0, m_FontHeight[0]);
+				rectAttr.OffsetRect(0, FontHeight);
 			}
 
 			if (d->Preview & PRV_ALBUM)
@@ -496,9 +508,9 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT Index, B
 
 				INT Index = GetAttributeIconIndex(LFAttrAlbum);
 				if (Index>=0)
-					m_AttributeIcons.DrawEx(&dc, Index, CPoint(rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(m_FontHeight[0]-16)/2), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+					m_AttributeIcons.DrawEx(&dc, Index, CPoint(rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(FontHeight-16)/2), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
-				rectAttr.OffsetRect(0, m_FontHeight[0]);
+				rectAttr.OffsetRect(0, FontHeight);
 			}
 
 			if (d->Preview & PRV_COMMENTS)
@@ -592,13 +604,8 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_IconSize.cx = cx;
 	m_IconSize.cy = cy;
 
-	m_CaptionHeight = max(cy, m_FontHeight[1]+m_FontHeight[3]+BORDER/2);
-
-	CDC* pDC = GetDC();
-	CFont* pOldFont = pDC->SelectObject(&theApp.m_BoldFont);
-	m_LabelWidth = pDC->GetTextExtent(_T("8888")).cx+2*BORDER;
-	pDC->SelectObject(pOldFont);
-	ReleaseDC(pDC);
+	m_CaptionHeight = max(cy, theApp.m_LargeFont.GetFontHeight()+theApp.m_SmallFont.GetFontHeight()+BORDER/2);
+	m_LabelWidth = theApp.m_SmallBoldFont.GetTextExtent(_T("8888")).cx+2*BORDER;
 
 	return 0;
 }
@@ -626,6 +633,7 @@ void CTimelineView::OnPaint()
 
 	// Background
 	BOOL Themed = IsCtrlThemed();
+
 	dc.FillSolidRect(rect, Themed ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
 
 	if (Themed)
@@ -657,7 +665,7 @@ void CTimelineView::OnPaint()
 		if (m_TwoColumns)
 			dc.FillSolidRect(rect.Width()/2-1, -m_VScrollPos, 2, m_ScrollHeight, Themed ? 0xC1C1C1 : GetSysColor(COLOR_3DSHADOW));
 
-		CFont* pOldFont = dc.SelectObject(&theApp.m_BoldFont);
+		CFont* pOldFont = dc.SelectObject(&theApp.m_SmallBoldFont);
 
 		dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
 
@@ -690,6 +698,8 @@ void CTimelineView::OnPaint()
 				}
 	}
 
+	DrawWindowEdge(g, Themed);
+
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
@@ -702,7 +712,7 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (p_CookedFiles)
 	{
 		CRect rect;
-		GetClientRect(&rect);
+		GetClientRect(rect);
 
 		INT Item = m_FocusItem;
 		INT left = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.left;

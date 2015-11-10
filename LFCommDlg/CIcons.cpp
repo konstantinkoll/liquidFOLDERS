@@ -25,10 +25,9 @@ void CIcons::Load(UINT nID, CSize Size)
 
 	hBitmap = (HBITMAP)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	m_Size = Size;
-	m_ShadowSize = min(Size.cx, Size.cy)/12;
 
 	PreMultiplyAlpha(hBitmap);
-	CreateShadows(hBitmap);
+	CreateShadow(hBitmap);
 }
 
 void CIcons::Load(UINT nID, INT Size)
@@ -36,7 +35,7 @@ void CIcons::Load(UINT nID, INT Size)
 	Load(nID, CSize(Size, Size));
 }
 
-void CIcons::Draw(CDC& dc, INT x, INT y, UINT nImage, BOOL Shadow)
+void CIcons::Draw(CDC& dc, INT x, INT y, UINT nImage, BOOL Shadow) const
 {
 	CDC dcMem;
 	dcMem.CreateCompatibleDC(&dc);
@@ -46,15 +45,7 @@ void CIcons::Draw(CDC& dc, INT x, INT y, UINT nImage, BOOL Shadow)
 	if (Shadow)
 	{
 		hOldBitmap = (HBITMAP)dcMem.SelectObject(hBitmapShadow);
-
-		BLENDFUNCTION BFShadow = BF;
-
-		for (INT Offset=1; Offset<=m_ShadowSize; Offset++)
-		{
-			BFShadow.SourceConstantAlpha = 0xFF >> Offset;
-			dc.AlphaBlend(x+Offset, y+Offset, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BFShadow);
-		}
-
+		dc.AlphaBlend(x, y-1, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BF);
 		dcMem.SelectObject(hBitmap);
 	}
 	else
@@ -66,17 +57,17 @@ void CIcons::Draw(CDC& dc, INT x, INT y, UINT nImage, BOOL Shadow)
 	dcMem.SelectObject(hOldBitmap);
 }
 
-HICON CIcons::ExtractIcon(UINT nImage)
+HICON CIcons::ExtractIcon(UINT nImage) const
 {
 	HICON hIcon = NULL;
 
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
 
-	HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx+m_ShadowSize, m_Size.cy+m_ShadowSize);
+	HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx, m_Size.cy+1);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-	Draw(dc, 0, 0, nImage, TRUE);
+	Draw(dc, 0, 1, nImage, TRUE);
 
 	dc.SelectObject(hOldBitmap);
 
@@ -114,7 +105,7 @@ void CIcons::PreMultiplyAlpha(HBITMAP hBitmap)
 	}
 }
 
-void CIcons::CreateShadows(HBITMAP hBitmap)
+void CIcons::CreateShadow(HBITMAP hBitmap)
 {
 	BITMAP Bitmap;
 	if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
@@ -137,12 +128,12 @@ void CIcons::CreateShadows(HBITMAP hBitmap)
 		if (GetObject(hBitmapShadow, sizeof(Bitmap), &Bitmap))
 		{
 			const LONG Length = Bitmap.bmWidth*Bitmap.bmHeight;
-			RGBQUAD* pBits = (RGBQUAD*)Bitmap.bmBits;
+			COLORREF* Ptr = (COLORREF*)Bitmap.bmBits;
 
 			for (LONG Count=0; Count<Length; Count++)
 			{
-				pBits->rgbRed = pBits->rgbGreen = pBits->rgbBlue = 0;
-				pBits++;
+				*Ptr &= 0xFF000000;
+				Ptr++;
 			}
 		}
 	}

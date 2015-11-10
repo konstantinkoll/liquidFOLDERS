@@ -4,11 +4,10 @@
 #include "LFDynArray.h"
 
 
-class LFSearchResult : public LFDynArray<LFItemDescriptor*>
+class LFSearchResult : public LFDynArray<LFItemDescriptor*, 64, 2048>
 {
 public:
-	LFSearchResult();
-	LFSearchResult(BYTE Context);
+	LFSearchResult(BYTE Context=LFContextAllFiles);
 	LFSearchResult(LFSearchResult* pSearchResult);
 	~LFSearchResult();
 
@@ -21,6 +20,8 @@ public:
 	void Sort(UINT Attr, BOOL Descending);
 	void Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter);
 	void GroupArray(UINT Attr, LFFilter* pFilter);
+
+	UINT m_LastError;
 
 	WCHAR m_Name[256];
 	WCHAR m_Hint[256];
@@ -39,7 +40,7 @@ protected:
 	BYTE m_AutoContext;
 
 private:
-	INT Compare(LFItemDescriptor* i1, LFItemDescriptor* i2, UINT Attr, BOOL Descending);
+	INT Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const;
 	void Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending);
 	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupOne, LFFilter* pFilter);
 };

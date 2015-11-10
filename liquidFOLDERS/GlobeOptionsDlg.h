@@ -12,7 +12,7 @@
 class GlobeOptionsDlg : public LFDialog
 {
 public:
-	GlobeOptionsDlg(LFViewParameters* View, UINT Context, CWnd* pParentWnd=NULL);
+	GlobeOptionsDlg(LFViewParameters* pViewParameters, UINT Context, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -21,7 +21,7 @@ protected:
 	afx_msg void OnViewport();
 	DECLARE_MESSAGE_MAP()
 
-	LFViewParameters* p_View;
+	LFViewParameters* p_ViewParameters;
 	UINT m_Context;
 
 private:

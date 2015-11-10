@@ -9,23 +9,21 @@
 // CTaskbar
 //
 
-#define BORDERLEFT     16
-#define BORDER         4
+#define BORDERLEFT       16
+#define BORDER           4
+#define TEXTUREWIDTH     16
 
 CTaskbar::CTaskbar()
-	: CWnd()
+	: CFrontstageWnd()
 {
+	m_FirstRight = (UINT)-1;
+	m_BackBufferH = 0;
 	hBackgroundBrush = NULL;
-	m_BackBufferL = m_BackBufferH = 0;
 }
 
 BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID)
 {
-	LOGFONT lf;
-	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
-
-	m_IconSize = abs(lf.lfHeight)>=24 ? 32 : 16;
-
+	m_IconSize = LFGetApp()->m_DefaultFont.GetFontHeight()>=24 ? 32 : 16;
 	m_ButtonIcons.Load(m_IconSize==32 ? LargeResID : SmallResID, m_IconSize);
 
 	if (m_IconSize<32)
@@ -33,9 +31,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT n
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
+	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
@@ -74,39 +70,37 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	pTaskButton->Create(this, nID, Caption, Hint, &m_ButtonIcons, m_IconSize<32 ? &m_TooltipIcons : &m_ButtonIcons, m_IconSize,
 		IconID, AddRight | ForceSmall, !ForceIcon && (LFGetApp()->OSVersion>=OS_Seven));
 
-	if (AddRight)
-	{
-		m_ButtonsRight.AddHead(pTaskButton);
-	}
-	else
-	{
-		m_ButtonsLeft.AddTail(pTaskButton);
-	}
+	if (AddRight && (m_FirstRight==-1))
+		m_FirstRight = m_Buttons.m_ItemCount;
+
+	m_Buttons.AddItem(pTaskButton);
 
 	return pTaskButton;
 }
 
 void CTaskbar::AdjustLayout()
 {
-	SetRedraw(FALSE);
+	if (!m_Buttons.m_ItemCount)
+		return;
 
 	CRect rect;
 	GetClientRect(rect);
 
 	INT Row = BORDER-1;
-	INT h = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
+	INT Height = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
 
 	INT RPos = rect.right+2*BORDER-BORDERLEFT;
-	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
+
+	for (UINT a=m_Buttons.m_ItemCount-1; a>=m_FirstRight; a--)
 	{
-		CTaskButton* pTaskButton = m_ButtonsRight.GetNext(p);
+		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
-			INT l = pTaskButton->GetPreferredWidth();
-			RPos -= l+BORDER;
+			const INT Width = pTaskButton->GetPreferredWidth();
+			RPos -= Width+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
-				pTaskButton->SetWindowPos(NULL, RPos, Row, l, h, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE);
+				pTaskButton->SetWindowPos(NULL, RPos, Row, Width, Height, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 			}
 			else
 			{
@@ -119,21 +113,21 @@ void CTaskbar::AdjustLayout()
 		}
 	}
 
-	UINT FirstSmall = (UINT)m_ButtonsLeft.GetCount();
+	UINT FirstSmall = min(m_Buttons.m_ItemCount, m_FirstRight);
 
 Nochmal:
 	UINT Count = 0;
 
 	INT LPos = rect.left+BORDERLEFT-BORDER;
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
+	for (UINT a=0; a<min(m_Buttons.m_ItemCount, m_FirstRight); a++)
 	{
-		CTaskButton* pTaskButton = m_ButtonsLeft.GetNext(p);
+		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
-			INT l = pTaskButton->GetPreferredWidth(Count++>=FirstSmall);
-			if (LPos+l+BORDERLEFT-BORDER<RPos)
+			const INT Width = pTaskButton->GetPreferredWidth(Count++>=FirstSmall);
+			if (LPos+Width+BORDERLEFT-BORDER<RPos)
 			{
-				pTaskButton->SetWindowPos(NULL, LPos, Row, l, h, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE);
+				pTaskButton->SetWindowPos(NULL, LPos, Row, Width, Height, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 				pTaskButton->ShowWindow(SW_SHOW);
 			}
 			else
@@ -146,7 +140,8 @@ Nochmal:
 
 				pTaskButton->ShowWindow(SW_HIDE);
 			}
-			LPos += l+BORDERLEFT;
+
+			LPos += Width+BORDERLEFT;
 		}
 		else
 		{
@@ -154,12 +149,11 @@ Nochmal:
 		}
 	}
 
-	SetRedraw(TRUE);
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 }
 
 
-BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
+BEGIN_MESSAGE_MAP(CTaskbar, CFrontstageWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -169,81 +163,24 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_CONTEXTMENU()
-	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 void CTaskbar::OnDestroy()
 {
-	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CTaskButton* pTaskButton = m_ButtonsRight.GetNext(p);
-		pTaskButton->DestroyWindow();
-		delete pTaskButton;
-	}
-
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* pTaskButton = m_ButtonsLeft.GetNext(p);
+		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
 		pTaskButton->DestroyWindow();
 		delete pTaskButton;
 	}
 
 	DeleteObject(hBackgroundBrush);
 
-	CWnd::OnDestroy();
+	CFrontstageWnd::OnDestroy();
 }
 
-BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
+BOOL CTaskbar::OnEraseBkgnd(CDC* /*pDC*/)
 {
-	CRect rect;
-	GetClientRect(rect);
-
-	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
-	{
-		m_BackBufferL = rect.Width();
-		m_BackBufferH = rect.Height();
-
-		DeleteObject(hBackgroundBrush);
-
-		CDC dc;
-		dc.CreateCompatibleDC(pDC);
-		dc.SetBkMode(TRANSPARENT);
-
-		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-		if (IsCtrlThemed())
-		{
-			dc.FillSolidRect(0, 0, rect.Width(), rect.Height()-1, 0xFFFFFF);
-			dc.FillSolidRect(0, rect.bottom-1, rect.Width(), 1, 0x97908B);
-
-			const UINT Line = (rect.Height()-2)*2/5;
-
-			Graphics g(dc);
-			g.SetPixelOffsetMode(PixelOffsetModeHalf);
-
-			LinearGradientBrush brush(Point(0, Line), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
-
-			if (GetParent()->GetStyle() & WS_BORDER)
-			{
-				g.FillRectangle(&brush, 0, Line, rect.right, rect.bottom-Line-1);
-			}
-			else
-			{
-				g.FillRectangle(&brush, 1, Line, rect.right-2, rect.bottom-Line-1);
-			}
-		}
-		else
-		{
-			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-		}
-
-		dc.SelectObject(pOldBitmap);
-
-		hBackgroundBrush = CreatePatternBrush(MemBitmap);
-	}
-
 	return TRUE;
 }
 
@@ -254,17 +191,57 @@ void CTaskbar::OnPaint()
 	CRect rect;
 	GetClientRect(rect);
 
-	FillRect(pDC, rect, hBackgroundBrush);
+	if (IsCtrlThemed())
+	{
+		if (m_BackBufferH!=rect.Height())
+		{
+			m_BackBufferH = rect.Height();
+
+			DeleteObject(hBackgroundBrush);
+
+			CDC dc;
+			dc.CreateCompatibleDC(&pDC);
+			dc.SetBkMode(TRANSPARENT);
+
+			CBitmap MemBitmap;
+			MemBitmap.CreateCompatibleBitmap(&pDC, TEXTUREWIDTH, rect.Height());
+			CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+			const UINT Line = (rect.Height()-2)*2/5;
+
+			dc.FillSolidRect(0, 0, TEXTUREWIDTH, Line, 0xFFFFFF);
+			dc.FillSolidRect(0, rect.bottom-1, TEXTUREWIDTH, 1, 0x97908B);
+
+			Graphics g(dc);
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+			LinearGradientBrush brush(Point(0, Line), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
+			g.FillRectangle(&brush, 0, Line, TEXTUREWIDTH, rect.bottom-Line-1);
+
+			dc.SelectObject(pOldBitmap);
+
+			hBackgroundBrush = CreatePatternBrush(MemBitmap);
+		}
+
+		FillRect(pDC, rect, hBackgroundBrush);
+	}
+	else
+	{
+		DeleteObject(hBackgroundBrush);
+		hBackgroundBrush = NULL;
+
+		pDC.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+	}
 }
 
 void CTaskbar::OnSysColorChange()
 {
-	m_BackBufferL = m_BackBufferH = 0;
+	m_BackBufferH = 0;
 }
 
 LRESULT CTaskbar::OnThemeChanged()
 {
-	m_BackBufferL = m_BackBufferH = 0;
+	m_BackBufferH = 0;
 	AdjustLayout();
 
 	return NULL;
@@ -273,26 +250,26 @@ LRESULT CTaskbar::OnThemeChanged()
 HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
-	{
-		CRect rc;
-		pWnd->GetWindowRect(&rc);
-		ScreenToClient(&rc);
+	if (hBackgroundBrush)
+		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+		{
+			CRect rect;
+			pWnd->GetWindowRect(rect);
+			ScreenToClient(rect);
 
-		pDC->SetBkMode(TRANSPARENT);
-		pDC->SetBrushOrg(-rc.left, -rc.top);
+			pDC->SetBrushOrg(-rect.left, -rect.top);
 
-		hbr = hBackgroundBrush;
-	}
+			hBrush = hBackgroundBrush;
+		}
 
-	return hbr;
+	return hBrush;
 }
 
 void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CFrontstageWnd::OnSize(nType, cx, cy);
 	OnIdleUpdateCmdUI();
 	AdjustLayout();
 }
@@ -301,32 +278,17 @@ void CTaskbar::OnIdleUpdateCmdUI()
 {
 	BOOL Update = FALSE;
 
-	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CTaskButton* btn = m_ButtonsRight.GetNext(p);
-		BOOL Enabled = btn->IsWindowEnabled();
+		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		BOOL Enabled = pTaskButton->IsWindowEnabled();
 
 		CCmdUI cmdUI;
-		cmdUI.m_nID = btn->GetDlgCtrlID();
-		cmdUI.m_pOther = btn;
+		cmdUI.m_nID = pTaskButton->GetDlgCtrlID();
+		cmdUI.m_pOther = pTaskButton;
 		cmdUI.DoUpdate(GetOwner(), TRUE);
 
-		if (btn->IsWindowEnabled()!=Enabled)
-			Update = TRUE;
-	}
-
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		BOOL Enabled = btn->IsWindowEnabled();
-
-		CCmdUI cmdUI;
-		cmdUI.m_nID = btn->GetDlgCtrlID();
-		cmdUI.m_pOther = btn;
-		cmdUI.DoUpdate(GetOwner(), TRUE);
-
-		if (btn->IsWindowEnabled()!=Enabled)
-			Update = TRUE;
+		Update |= (pTaskButton->IsWindowEnabled()!=Enabled);
 	}
 
 	if (Update)
@@ -349,23 +311,15 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	if (!menu.CreatePopupMenu())
 		return;
 
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		if (btn->IsWindowEnabled())
-		{
-			CString tmpStr;
-			btn->GetWindowText(tmpStr);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
-		}
-	}
+	BOOL NeedsSeparator = FALSE;
 
-	BOOL NeedsSeparator = menu.GetMenuItemCount();
-
-	for (POSITION p=m_ButtonsRight.GetTailPosition(); p; )
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CTaskButton* btn = m_ButtonsRight.GetPrev(p);
-		if (btn->IsWindowEnabled())
+		if ((INT)a==m_FirstRight)
+			NeedsSeparator = TRUE;
+
+		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		if (pTaskButton->IsWindowEnabled())
 		{
 			if (NeedsSeparator)
 			{
@@ -374,23 +328,11 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 			}
 
 			CString tmpStr;
-			btn->GetWindowText(tmpStr);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
+			pTaskButton->GetWindowText(tmpStr);
+
+			menu.AppendMenu(0, pTaskButton->GetDlgCtrlID(), _T("&")+tmpStr);
 		}
 	}
 
 	menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
-}
-
-void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		if (btn->IsWindowEnabled())
-		{
-			btn->SetFocus();
-			break;
-		}
-	}
 }

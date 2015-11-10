@@ -4,6 +4,7 @@
 #include "LFCore.h"
 #include "LFVariantData.h"
 #include "Query.h"
+#include <assert.h>
 
 
 extern HMODULE LFCoreModuleHandle;
@@ -18,27 +19,27 @@ CCategorizer::CCategorizer(UINT Attr)
 	m_Attr = Attr;
 }
 
-BOOL CCategorizer::IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CCategorizer::IsEqual(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	if ((!i1->AttributeValues[m_Attr]) || (!i2->AttributeValues[m_Attr]))
-		return i1->AttributeValues[m_Attr]==i2->AttributeValues[m_Attr];
+	if ((!pItemDescriptor1->AttributeValues[m_Attr]) || (!pItemDescriptor2->AttributeValues[m_Attr]))
+		return pItemDescriptor1->AttributeValues[m_Attr]==pItemDescriptor2->AttributeValues[m_Attr];
 
-	return CompareItems(i1, i2);
+	return CompareItems(pItemDescriptor1, pItemDescriptor2);
 }
 
-LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* pFilter)
+LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter) const
 {
 	LFItemDescriptor* pFolder = AllocFolderDescriptor();
 
-	if (i->AttributeValues[m_Attr])
+	if (pItemDescriptor->AttributeValues[m_Attr])
 	{
 		pFolder->NextFilter = LFAllocFilter(pFilter);
 		pFolder->NextFilter->Options.IsSubfolder = TRUE;
 		pFolder->NextFilter->Options.GroupAttribute = m_Attr;
-		pFolder->NextFilter->ConditionList = GetCondition(i, pFolder->NextFilter->ConditionList);
+		pFolder->NextFilter->ConditionList = GetCondition(pItemDescriptor, pFolder->NextFilter->ConditionList);
 
 		// CustomizeFolder benötigt Filter-Bedingung aus GetCondition()
-		CustomizeFolder(pFolder, i);
+		CustomizeFolder(pFolder, pItemDescriptor);
 
 		wcscpy_s(pFolder->NextFilter->OriginalName, 256, pFolder->CoreAttributes.FileName);
 	}
@@ -46,21 +47,21 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* pFilter
 	return pFolder;
 }
 
-BOOL CCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	return CompareValues(AttrTypes[m_Attr], i1->AttributeValues[m_Attr], i2->AttributeValues[m_Attr], m_Attr>0)==0;
+	return CompareValues(AttrTypes[m_Attr], pItemDescriptor1->AttributeValues[m_Attr], pItemDescriptor2->AttributeValues[m_Attr], m_Attr>0)==0;
 }
 
-LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext)
+LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
 	LFFilterCondition* c = LFAllocFilterConditionEx(m_Attr ? LFFilterCompareSubfolder : LFFilterCompareIsEqual, m_Attr, pNext);
 
-	LFGetAttributeVariantData(i, c->AttrData);
+	LFGetAttributeVariantData(pItemDescriptor, c->AttrData);
 
 	return c;
 }
 
-void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* /*i*/)
+void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* /*pItemDescriptor*/) const
 {
 	LFSetAttributeVariantData(pFolder, pFolder->NextFilter->ConditionList->AttrData);
 
@@ -160,25 +161,25 @@ Ende:
 	return (P1!=NULL);
 }
 
-BOOL CNameCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CNameCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrTypes[m_Attr]==LFTypeUnicodeString);
 
 	WCHAR Prefix1[256];
-	BOOL Result1 = GetNamePrefix((WCHAR*)i1->AttributeValues[m_Attr], Prefix1);
+	BOOL Result1 = GetNamePrefix((WCHAR*)pItemDescriptor1->AttributeValues[m_Attr], Prefix1);
 
 	WCHAR Prefix2[256];
-	BOOL Result2 = GetNamePrefix((WCHAR*)i2->AttributeValues[m_Attr], Prefix2);
+	BOOL Result2 = GetNamePrefix((WCHAR*)pItemDescriptor2->AttributeValues[m_Attr], Prefix2);
 
 	return (Result1 & Result2) ? wcscmp(Prefix1, Prefix2)==0 : FALSE;
 }
 
-LFFilterCondition* CNameCategorizer::GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext)
+LFFilterCondition* CNameCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
 	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	if (!GetNamePrefix((WCHAR*)i->AttributeValues[m_Attr], c->AttrData.UnicodeString))
-		LFGetAttributeVariantData(i, c->AttrData);
+	if (!GetNamePrefix((WCHAR*)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.UnicodeString))
+		LFGetAttributeVariantData(pItemDescriptor, c->AttrData);
 
 	return c;
 }
@@ -202,24 +203,24 @@ void CURLCategorizer::GetServer(CHAR* URL, CHAR* Server, SIZE_T cCount)
 	strncpy_s(Server, cCount, URL, Pos ? Pos-URL : cCount);
 }
 
-BOOL CURLCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CURLCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrTypes[m_Attr]==LFTypeAnsiString);
 
 	CHAR Server1[256];
-	GetServer((CHAR*)i1->AttributeValues[m_Attr], Server1, 256);
+	GetServer((CHAR*)pItemDescriptor1->AttributeValues[m_Attr], Server1, 256);
 
 	CHAR Server2[256];
-	GetServer((CHAR*)i2->AttributeValues[m_Attr], Server2, 256);
+	GetServer((CHAR*)pItemDescriptor2->AttributeValues[m_Attr], Server2, 256);
 
 	return strcmp(Server1, Server2)==0;
 }
 
-LFFilterCondition* CURLCategorizer::GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext)
+LFFilterCondition* CURLCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
 	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	GetServer((CHAR*)i->AttributeValues[m_Attr], c->AttrData.AnsiString, 256);
+	GetServer((CHAR*)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.AnsiString, 256);
 
 	return c;
 }
@@ -233,12 +234,12 @@ CIATACategorizer::CIATACategorizer()
 {
 }
 
-void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
+void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
-	assert(i->AttributeValues[m_Attr]);
+	assert(pItemDescriptor->AttributeValues[m_Attr]);
 
 	LFAirport* pAirport;
-	if (LFIATAGetAirportByCode((CHAR*)i->AttributeValues[m_Attr], &pAirport))
+	if (LFIATAGetAirportByCode((CHAR*)pItemDescriptor->AttributeValues[m_Attr], &pAirport))
 	{
 		// Ortsname in ANSI
 		CHAR tmpStr1[256];
@@ -267,7 +268,7 @@ void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescript
 	}
 	else
 	{
-		CCategorizer::CustomizeFolder(pFolder, i);
+		CCategorizer::CustomizeFolder(pFolder, pItemDescriptor);
 	}
 }
 
@@ -285,18 +286,18 @@ __forceinline BYTE CRatingCategorizer::GetRatingCategory(const BYTE Rating)
 	return (Rating==1) ? 1 : Rating>>1;
 }
 
-BOOL CRatingCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CRatingCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrTypes[m_Attr]==LFTypeRating);
 
-	return GetRatingCategory(*((BYTE*)i1->AttributeValues[m_Attr]))==GetRatingCategory(*((BYTE*)i2->AttributeValues[m_Attr]));
+	return GetRatingCategory(*((BYTE*)pItemDescriptor1->AttributeValues[m_Attr]))==GetRatingCategory(*((BYTE*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
 
-void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
+void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
-	assert(i->AttributeValues[m_Attr]);
+	assert(pItemDescriptor->AttributeValues[m_Attr]);
 
-	BYTE Rating = GetRatingCategory(*((BYTE*)i->AttributeValues[m_Attr]));
+	BYTE Rating = GetRatingCategory(*((BYTE*)pItemDescriptor->AttributeValues[m_Attr]));
 
 	WCHAR Name[256];
 	LoadString(LFCoreModuleHandle, ((m_Attr==LFAttrRating) ? IDS_RATING1 : IDS_PRIORITY1)+Rating-1, Name, 256);
@@ -320,22 +321,22 @@ UINT CSizeCategorizer::GetSizeCategory(const INT64 Size)
 	return (Size<32*1024) ? 0 : (Size<128*1024) ? 1 : (Size<1024*1024) ? 2: (Size<16384*1024) ? 3 : (Size<131072*1024) ? 4 : 5;
 }
 
-BOOL CSizeCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CSizeCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrTypes[m_Attr]==LFTypeSize);
 
-	return GetSizeCategory(*((INT64*)i1->AttributeValues[m_Attr]))==GetSizeCategory(*((INT64*)i2->AttributeValues[m_Attr]));
+	return GetSizeCategory(*((INT64*)pItemDescriptor1->AttributeValues[m_Attr]))==GetSizeCategory(*((INT64*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
 
-void CSizeCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
+void CSizeCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
-	assert(i->AttributeValues[m_Attr]);
+	assert(pItemDescriptor->AttributeValues[m_Attr]);
 
 	WCHAR Name[256];
-	LoadString(LFCoreModuleHandle, IDS_SIZE1+GetSizeCategory(*((INT64*)i->AttributeValues[m_Attr])), Name, 256);
+	LoadString(LFCoreModuleHandle, IDS_SIZE1+GetSizeCategory(*((INT64*)pItemDescriptor->AttributeValues[m_Attr])), Name, 256);
 	SetAttribute(pFolder, LFAttrFileName, Name);
 
-	SetAttribute(pFolder, m_Attr, i->AttributeValues[m_Attr]);
+	SetAttribute(pFolder, m_Attr, pItemDescriptor->AttributeValues[m_Attr]);
 }
 
 
@@ -366,24 +367,24 @@ void CDateCategorizer::GetDay(const FILETIME* Time, LPFILETIME Day)
 	SystemTimeToFileTime(&stUTC, Day);
 }
 
-BOOL CDateCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CDateCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrTypes[m_Attr]==LFTypeTime);
 
 	SYSTEMTIME stLocal1;
-	GetDate((FILETIME*)i1->AttributeValues[m_Attr], &stLocal1);
+	GetDate((FILETIME*)pItemDescriptor1->AttributeValues[m_Attr], &stLocal1);
 
 	SYSTEMTIME stLocal2;
-	GetDate((FILETIME*)i2->AttributeValues[m_Attr], &stLocal2);
+	GetDate((FILETIME*)pItemDescriptor2->AttributeValues[m_Attr], &stLocal2);
 
 	return (stLocal1.wDay==stLocal2.wDay) && (stLocal1.wMonth==stLocal2.wMonth) && (stLocal1.wYear==stLocal2.wYear);
 }
 
-LFFilterCondition* CDateCategorizer::GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext)
+LFFilterCondition* CDateCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
 	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	GetDay((FILETIME*)i->AttributeValues[m_Attr], &c->AttrData.Time);
+	GetDay((FILETIME*)pItemDescriptor->AttributeValues[m_Attr], &c->AttrData.Time);
 
 	return c;
 }
@@ -441,22 +442,22 @@ UINT CDurationCategorizer::GetDurationCategory(const UINT Duration)
 	return 13;
 }
 
-BOOL CDurationCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CDurationCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrTypes[m_Attr]==LFTypeDuration);
 
-	return GetDurationCategory(*((UINT*)i1->AttributeValues[m_Attr]))==GetDurationCategory(*((UINT*)i2->AttributeValues[m_Attr]));
+	return GetDurationCategory(*((UINT*)pItemDescriptor1->AttributeValues[m_Attr]))==GetDurationCategory(*((UINT*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
 
-void CDurationCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
+void CDurationCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
-	assert(i->AttributeValues[m_Attr]);
+	assert(pItemDescriptor->AttributeValues[m_Attr]);
 
 	WCHAR Name[256];
-	LoadString(LFCoreModuleHandle, IDS_DURATION1+GetDurationCategory(*((UINT*)i->AttributeValues[m_Attr])), Name, 256);
+	LoadString(LFCoreModuleHandle, IDS_DURATION1+GetDurationCategory(*((UINT*)pItemDescriptor->AttributeValues[m_Attr])), Name, 256);
 	SetAttribute(pFolder, LFAttrFileName, Name);
 
-	SetAttribute(pFolder, m_Attr, i->AttributeValues[m_Attr]);
+	SetAttribute(pFolder, m_Attr, pItemDescriptor->AttributeValues[m_Attr]);
 }
 
 
@@ -468,19 +469,19 @@ CMegapixelCategorizer::CMegapixelCategorizer(UINT Attr)
 {
 }
 
-BOOL CMegapixelCategorizer::CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2)
+BOOL CMegapixelCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrTypes[m_Attr]==LFTypeMegapixel);
 
-	return (UINT)*(DOUBLE*)i1->AttributeValues[m_Attr]==(UINT)*(DOUBLE*)i2->AttributeValues[m_Attr];
+	return (UINT)*(DOUBLE*)pItemDescriptor1->AttributeValues[m_Attr]==(UINT)*(DOUBLE*)pItemDescriptor2->AttributeValues[m_Attr];
 }
 
 
-void CMegapixelCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i)
+void CMegapixelCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
-	assert(i->AttributeValues[m_Attr]);
+	assert(pItemDescriptor->AttributeValues[m_Attr]);
 
-	UINT Dimension = (UINT)*(DOUBLE*)i->AttributeValues[m_Attr];
+	UINT Dimension = (UINT)*(DOUBLE*)pItemDescriptor->AttributeValues[m_Attr];
 
 	WCHAR Name[256];
 	swprintf_s(Name, 256, L"%u Megapixel", Dimension);

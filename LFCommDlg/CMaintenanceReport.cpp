@@ -27,9 +27,7 @@ BOOL CMaintenanceReport::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CMaintenanceReport::PreTranslateMessage(MSG* pMsg)
@@ -100,7 +98,7 @@ void CMaintenanceReport::AdjustLayout()
 	Invalidate();
 }
 
-void CMaintenanceReport::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Themed)
+void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed) const
 {
 	LFMaintenanceListItem* pItem = &p_MaintenanceList->m_Items[Index];
 
@@ -132,20 +130,22 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPRECT rectItem, INT Index, BOOL Them
 	rect.right -= m_BadgeSize+BORDER-2;
 
 	// Text
-	WCHAR* pDescription = (pItem->Result==LFOk) ? pItem->Comments : m_ErrorText[pItem->Result];
+	LPCWSTR pDescription = (pItem->Result==LFOk) ? pItem->Comments : m_ErrorText[pItem->Result];
 
 	CRect rectText(rect);
 	dc.DrawText(pDescription, -1, rectText, DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_WORDBREAK);
 
-	if (rectText.Height()>3*m_FontHeight)
-		rectText.bottom = rectText.top+3*m_FontHeight;
+	const INT FontHeight = LFGetApp()->m_DefaultFont.GetFontHeight();
 
-	rect.top += (rect.Height()-rectText.Height()-m_FontHeight)/2-1;
+	if (rectText.Height()>3*FontHeight)
+		rectText.bottom = rectText.top+3*FontHeight;
+
+	rect.top += (rect.Height()-rectText.Height()-FontHeight)/2-1;
 
 	dc.SetTextColor(hIcon!=hIconReady ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(pItem->Name, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 
-	rect.top += m_FontHeight;
+	rect.top += FontHeight;
 
 	dc.SetTextColor(hIcon!=hIconReady ? 0x0000FF : Themed ? 0x808080 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(pDescription, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_WORDBREAK);
@@ -175,13 +175,7 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	for (UINT a=0; a<LFErrorCount; a++)
 		LFGetErrorText(m_ErrorText[a], 256, a);
 
-	CDC* pDC = GetDC();
-	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_LargeFont);
-	m_FontHeight = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectObject(pOldFont);
-	ReleaseDC(pDC);
-
-	m_ItemHeight = max(48, 4*m_FontHeight);
+	m_ItemHeight = max(48, 4*LFGetApp()->m_DefaultFont.GetFontHeight());
 
 	IMAGEINFO ii;
 	LFGetApp()->m_SystemImageListLarge.GetImageInfo(0, &ii);
@@ -255,7 +249,7 @@ void CMaintenanceReport::OnSize(UINT nType, INT cx, INT cy)
 void CMaintenanceReport::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	SCROLLINFO si;
 
@@ -391,7 +385,7 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 BOOL CMaintenanceReport::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 	if (!rect.PtInRect(pt))
 		return FALSE;
 

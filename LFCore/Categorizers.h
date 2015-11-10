@@ -13,13 +13,13 @@ class CCategorizer
 public:
 	CCategorizer(UINT Attr);
 
-	LFItemDescriptor* GetFolder(LFItemDescriptor* i, LFFilter* pFilter);
-	BOOL IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	LFItemDescriptor* GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter) const;
+	BOOL IsEqual(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext);
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
 
 	UINT m_Attr;
 };
@@ -36,8 +36,8 @@ public:
 	static BOOL GetNamePrefix(WCHAR* FullName, WCHAR* pBuffer);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
 };
 
 
@@ -52,8 +52,8 @@ public:
 	static void GetServer(CHAR* URL, CHAR* Server, SIZE_T cCount);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
 };
 
 
@@ -66,7 +66,7 @@ public:
 	CIATACategorizer();
 
 protected:
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i);
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -81,8 +81,8 @@ public:
 	static BYTE GetRatingCategory(const BYTE Rating);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -97,8 +97,8 @@ public:
 	static UINT GetSizeCategory(const INT64 Size);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -114,8 +114,8 @@ public:
 	static void GetDay(const FILETIME* Time, LPFILETIME Day);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i, LFFilterCondition* pNext);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
 };
 
 
@@ -130,8 +130,8 @@ public:
 	static UINT GetDurationCategory(const UINT Duration);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -144,6 +144,6 @@ public:
 	CMegapixelCategorizer(UINT Attr);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* i1, LFItemDescriptor* i2);
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* i);
+	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
 };

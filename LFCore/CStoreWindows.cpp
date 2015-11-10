@@ -85,7 +85,7 @@ Finish:
 	return Result;
 }
 
-UINT CStoreWindows::GetFileLocation(LFCoreAttributes* /*pCoreAttributes*/, void* pStoreData, WCHAR* pPath, SIZE_T cCount)
+UINT CStoreWindows::GetFileLocation(LFCoreAttributes* /*pCoreAttributes*/, void* pStoreData, WCHAR* pPath, SIZE_T cCount) const
 {
 	assert(pStoreData);
 	assert(pPath);

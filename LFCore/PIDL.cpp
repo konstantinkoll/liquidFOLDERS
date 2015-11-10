@@ -47,7 +47,7 @@ LPITEMIDLIST ConcatenatePIDLs(LPITEMIDLIST pidl1, LPITEMIDLIST pidl2)
 	return pidlNew;
 }
 
-BOOL GetPIDLsForStore(CHAR* pStoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate)
+BOOL GetPIDLsForStore(const CHAR* pStoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate)
 {
 	assert(ppidl);
 	assert(ppidlDelegate);
@@ -124,7 +124,7 @@ BOOL GetPIDLsForStore(CHAR* pStoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDe
 	return Result;
 }
 
-void SendShellNotifyMessage(UINT Msg, CHAR* pStoreID, LPITEMIDLIST pidlOld, LPITEMIDLIST pidlOldDelegate)
+void SendShellNotifyMessage(UINT Msg, const CHAR* pStoreID, LPITEMIDLIST pidlOld, LPITEMIDLIST pidlOldDelegate)
 {
 	LPITEMIDLIST pidl;
 	LPITEMIDLIST pidlDelegate;

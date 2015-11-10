@@ -87,30 +87,40 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CS
 	}
 }
 
-void CreateRoundRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
+void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
 	INT d = Radius*2+1;
-	INT r = pRect->right-d-1;
-	INT b = pRect->bottom-d-1;
+	INT r = lpRect->right-d-1;
+	INT b = lpRect->bottom-d-1;
 
 	Path.Reset();
-	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
-	Path.AddArc(r, pRect->top, d, d, 270, 90);
+	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
+	Path.AddArc(r, lpRect->top, d, d, 270, 90);
 	Path.AddArc(r-1, b-1, d+1, d+1, 0, 90);
-	Path.AddArc(pRect->left, b-1, d+1, d+1, 90, 90);
+	Path.AddArc(lpRect->left, b-1, d+1, d+1, 90, 90);
 	Path.CloseFigure();
 }
 
-void CreateReflectionRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
+void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
+{
+	INT d = Radius*2+1;
+	INT r = lpRect->right-d-1;
+
+	Path.Reset();
+	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
+	Path.AddArc(r, lpRect->top, d, d, 270, 90);
+}
+
+void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
 	Path.Reset();
 
 	INT d = Radius*2+1;
-	INT h = pRect->bottom-pRect->top-1;
-	INT w = min((INT)(h*1.681), pRect->right-pRect->left-1);
+	INT h = lpRect->bottom-lpRect->top-1;
+	INT w = min((INT)(h*1.681), lpRect->right-lpRect->left-1);
 
-	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
-	Path.AddArc(pRect->left, pRect->top, 2*w, 2*h, 270, -90);
+	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
+	Path.AddArc(lpRect->left, lpRect->top, 2*w, 2*h, 270, -90);
 	Path.CloseFigure();
 }
 
@@ -131,11 +141,7 @@ HBITMAP CreateTransparentBitmap(LONG Width, LONG Height)
 	DIB.bmiHeader.biBitCount = 32;
 	DIB.bmiHeader.biCompression = BI_RGB;
 
-	HDC hDC = GetDC(NULL);
-	HBITMAP hBitmap = CreateDIBSection(hDC, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
-	ReleaseDC(NULL, hDC);
-
-	return hBitmap;
+	return CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
 }
 
 void DrawControlBorder(CWnd* pWnd)
@@ -171,7 +177,7 @@ void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
+void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed)
 {
 	ASSERT(Caption);
 
@@ -219,16 +225,16 @@ void DrawCategory(CDC& dc, CRect rect, WCHAR* Caption, WCHAR* Hint, BOOL Themed)
 	dc.SelectObject(pOldFont);
 }
 
-void DrawReflection(Graphics& g, CRect &rect)
+void DrawReflection(Graphics& g, LPCRECT lpRect)
 {
 	GraphicsPath pathReflection;
-	CreateReflectionRectangle(rect, 2, pathReflection);
+	CreateReflectionRectangle(lpRect, 2, pathReflection);
 
-	LinearGradientBrush brush(Point(rect.left, rect.top), Point(rect.left+min((INT)(rect.Height()*1.681), rect.Width()), rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x10, 0xFF, 0xFF, 0xFF));
+	LinearGradientBrush brush(Point(lpRect->left, lpRect->top), Point(lpRect->left+min((INT)((lpRect->bottom-lpRect->top)*1.681), lpRect->right-lpRect->left), lpRect->bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x10, 0xFF, 0xFF, 0xFF));
 	g.FillPath(&brush, &pathReflection);
 }
 
-void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
 {
 	if (Themed)
 	{
@@ -304,7 +310,7 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocus
 	}
 }
 
-void DrawListItemForeground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL /*WinFocused*/, BOOL Hover, BOOL /*Focused*/, BOOL Selected)
+void DrawListItemForeground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL /*WinFocused*/, BOOL Hover, BOOL /*Focused*/, BOOL Selected)
 {
 	if (Themed && (Hover || Selected))
 	{
@@ -323,64 +329,51 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 	if (Hover || Selected)
 		if (Themed)
 		{
-			if (LFGetApp()->OSVersion==OS_Eight)
-			{
-				COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
-				COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
+			COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
 
-				CRect rectBounds(rect);
-				dc.Draw3dRect(rectBounds, colBorder, colBorder);
-				rectBounds.DeflateRect(1, 0);
-				dc.FillSolidRect(rectBounds, colInner);
+			if (ClipHorizontal)
+			{
+				dc.FillSolidRect(rect.left, rect.top, 1, rect.Height(), clr);
+				dc.FillSolidRect(rect.right-1, rect.top, 1, rect.Height(), clr);
+				rect.DeflateRect(1, 0);
 			}
 			else
 			{
-				COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
+				dc.Draw3dRect(rect, clr, clr);
+				rect.DeflateRect(1, 1);
+			}
 
-				if (ClipHorizontal)
-				{
-					dc.FillSolidRect(rect.left, rect.top, 1, rect.Height(), clr);
-					dc.FillSolidRect(rect.right-1, rect.top, 1, rect.Height(), clr);
-					rect.DeflateRect(1, 0);
-				}
-				else
-				{
-					dc.Draw3dRect(rect, clr, clr);
-					rect.DeflateRect(1, 1);
-				}
+			Graphics g(dc);
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-				Graphics g(dc);
-				g.SetPixelOffsetMode(PixelOffsetModeHalf);
+			if (Hover)
+			{
+				LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
+				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 
-				if (Hover)
-				{
-					LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
-					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
+				rect.DeflateRect(1, 1);
+				INT y = (rect.top+rect.bottom)/2;
 
-					rect.DeflateRect(1, 1);
-					INT y = (rect.top+rect.bottom)/2;
+				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
+				g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
 
-					LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
-					g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
+				LinearGradientBrush brush3(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
+				g.FillRectangle(&brush3, rect.left, y, rect.Width(), rect.bottom-y);
+			}
+			else
+			{
+				dc.FillSolidRect(rect, 0xF6E4C2);
 
-					LinearGradientBrush brush3(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
-					g.FillRectangle(&brush3, rect.left, y, rect.Width(), rect.bottom-y);
-				}
-				else
-				{
-					dc.FillSolidRect(rect, 0xF6E4C2);
+				INT y = (rect.top+rect.bottom)/2;
 
-					INT y = (rect.top+rect.bottom)/2;
+				LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
+				g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
 
-					LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
-					g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
+				LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+				g.FillRectangle(&brush3, rect.left, rect.top, rect.Width(), 2);
 
-					LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-					g.FillRectangle(&brush3, rect.left, rect.top, rect.Width(), 2);
-
-					LinearGradientBrush brush4(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-					g.FillRectangle(&brush4, rect.left, rect.top, 2, rect.Height());
-				}
+				LinearGradientBrush brush4(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+				g.FillRectangle(&brush4, rect.left, rect.top, 2, rect.Height());
 			}
 		}
 		else
@@ -389,6 +382,128 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 		}
 
 	dc.SetTextColor(Themed ? Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+}
+
+void DrawBackstageBorder(Graphics& g, CRect rect)
+{
+	rect.left++;
+	rect.top++;
+
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+	GraphicsPath path;
+	CreateRoundRectangle(rect, 3, path);
+
+	SolidBrush brush1(Color(0x80, 0x00, 0x00, 0x00));
+	g.FillPath(&brush1, &path);
+
+	rect.left--;
+	rect.top--;
+
+	g.SetPixelOffsetMode(PixelOffsetModeNone);
+	CreateRoundTop(rect, 4, path);
+
+	LinearGradientBrush brush2(Point(0, rect.top-1), Point(0, rect.top+5), Color(0xF0, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+
+	Pen pen(Color(0x00, 0x00, 0x00));
+	pen.SetBrush(&brush2);
+	g.DrawPath(&pen, &path);
+
+	CreateRoundRectangle(rect, 4, path);
+
+	LinearGradientBrush brush3(Point(0, rect.top-1), Point(0, rect.bottom), Color(0x00, 0xFF, 0xFF, 0xFF), Color(0x38, 0xFF, 0xFF, 0xFF));
+
+	pen.SetBrush(&brush3);
+	g.DrawPath(&pen, &path);
+}
+
+void DrawBackstageSelection(CDC& dc, Graphics& g, const CRect& rect, BOOL Selected, BOOL Themed)
+{
+	if (Selected)
+	{
+		if (Themed)
+		{
+			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom-1), Color(0xC0, 0x20, 0xA0, 0xFF), Color(0xC0, 0x10, 0x78, 0xFF));
+			g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height()-1);
+
+			SolidBrush brush2(Color(0x40, 0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), 1);
+
+			SolidBrush brush3(Color(0x18, 0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush3, rect.left, rect.top+1, 1, rect.Height()-3);
+			g.FillRectangle(&brush3, rect.right-1, rect.top+1, 1, rect.Height()-3);
+			g.FillRectangle(&brush3, rect.left, rect.bottom-2, rect.Width(), 1);
+
+			dc.SetTextColor(0xFFFFFF);
+		}
+		else
+		{
+			dc.FillSolidRect(rect, GetSysColor(COLOR_HIGHLIGHT));
+			dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
+		}
+	}
+	else
+	{
+		dc.SetTextColor(Themed ? 0xDACCC4 : GetSysColor(COLOR_3DFACE));
+	}
+}
+
+void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover, BOOL Pressed, BOOL Enabled, BOOL Themed, BOOL Red)
+{
+	if (Pressed && Enabled)
+	{
+		if (Themed)
+		{
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
+
+			GraphicsPath path;
+			CreateRoundRectangle(rect, 3, path);
+
+			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Red ? Color(0xB0, 0xFF, 0x00, 0x00) : Color(0xE0, 0x20, 0xA0, 0xFF), Red ? Color(0xA0, 0xFF, 0x00, 0x00) : Color(0xE0, 0x10, 0x78, 0xFF));
+			g.FillPath(&brush1, &path);
+
+			Pen pen(Red ? Color(0x80, 0x60, 0x00, 0x00) : Color(0x80, 0x06, 0x2D, 0x60));
+			g.DrawPath(&pen, &path);
+
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+			rect.left++;
+			rect.top++;
+			rect.bottom = rect.top+rect.Height()/2;
+
+			if (Red)
+			{
+				CreateRoundRectangle(rect, 2, path);
+
+				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0x60, 0xFF, 0xFF, 0xFF), Color(0x20, 0xFF, 0xFF, 0xFF));
+				g.FillPath(&brush2, &path);
+			}
+			else
+			{
+				g.SetPixelOffsetMode(PixelOffsetModeNone);
+
+				rect.right--;
+				CreateRoundTop(rect, 2, path);
+
+				Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
+				g.DrawPath(&pen, &path);
+			}
+
+			dc.SetTextColor(0xFFFFFF);
+		}
+		else
+		{
+			rect.top++;
+			dc.FillSolidRect(rect, Red ? 0x0000FF : GetSysColor(COLOR_HIGHLIGHT));
+
+			dc.SetTextColor(Red ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
+		}
+	}
+	else
+	{
+		dc.SetTextColor(Enabled ? Hover ? 0xFFFFFF : Themed ? 0xDACCC4 : GetSysColor(COLOR_3DFACE) : Themed ? 0x998981 : GetSysColor(COLOR_3DSHADOW));
+	}
 }
 
 void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover)
@@ -400,22 +515,21 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 			Graphics g(dc);
 
 			// Inner Border
-			CRect rectBounds(rect);
-			rectBounds.DeflateRect(1, 1);
+			rect.DeflateRect(1, 1);
 
 			if (Selected)
 			{
 				SolidBrush brush(Color(0x20, 0x50, 0x57, 0x62));
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
+				g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
 			}
 			else
 				if (Hover)
 				{
 					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
+					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height()/2);
 
 					SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
-					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+1, rectBounds.Width(), rectBounds.Height()-rectBounds.Height()/2);
+					g.FillRectangle(&brush2, rect.left, rect.top+rect.Height()/2+1, rect.Width(), rect.Height()-rect.Height()/2);
 				}
 
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -423,15 +537,15 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 			if (!Selected)
 			{
-				CreateRoundRectangle(rectBounds, 1, path);
+				CreateRoundRectangle(rect, 1, path);
 
 				Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
 				g.DrawPath(&pen, &path);
 			}
 
 			// Outer Border
-			rectBounds.InflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 2, path);
+			rect.InflateRect(1, 1);
+			CreateRoundRectangle(rect, 2, path);
 
 			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
 			g.DrawPath(&pen, &path);
@@ -447,22 +561,22 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 		if (Focused)
 		{
-			CRect rectFocus(rect);
-			rectFocus.DeflateRect(2, 2);
+			rect.DeflateRect(2, 2);
+
 			dc.SetTextColor(0x000000);
-			dc.DrawFocusRect(rectFocus);
+			dc.DrawFocusRect(rect);
 		}
 	}
 }
 
-void DrawWhiteButtonBorder(Graphics& g, CRect rect, BOOL IncludeBottom)
+void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom)
 {
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	GraphicsPath path;
-	CreateRoundRectangle(rect, 3, path);
+	CreateRoundRectangle(lpRect, 3, path);
 
-	LinearGradientBrush brush1(Point(0, rect.top-1), Point(0, rect.bottom), Color(0x0C, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+	LinearGradientBrush brush1(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x0C, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
 
 	Pen pen(Color(0x00, 0x00, 0x00));
 	pen.SetBrush(&brush1);
@@ -471,7 +585,7 @@ void DrawWhiteButtonBorder(Graphics& g, CRect rect, BOOL IncludeBottom)
 
 	if (IncludeBottom)
 	{
-		LinearGradientBrush brush2(Point(0, rect.top-1), Point(0, rect.bottom), Color(0x00, 0xFF, 0xFF, 0xFF), Color(0xFF, 0xFF, 0xFF, 0xFF));
+		LinearGradientBrush brush2(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x00, 0xFF, 0xFF, 0xFF), Color(0xFF, 0xFF, 0xFF, 0xFF));
 
 		pen.SetBrush(&brush2);
 
@@ -492,49 +606,48 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 		g.SetSmoothingMode(SmoothingModeNone);
 
 		// Inner border
-		CRect rectBounds(rect);
-		rectBounds.DeflateRect(2, 2);
+		rect.DeflateRect(2, 2);
 
 		if (Selected)
 		{
-			dc.FillSolidRect(rectBounds, 0xEDEAE9);
+			dc.FillSolidRect(rect, 0xEDEAE9);
 
-			LinearGradientBrush brush1(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.top+2), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width(), 2);
+			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+			g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), 2);
 
-			LinearGradientBrush brush2(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left+2, rectBounds.top), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush2, rectBounds.left, rectBounds.top, 1, rectBounds.Height());
+			LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+			g.FillRectangle(&brush2, rect.left, rect.top, 1, rect.Height());
 		}
 		else
 		{
-			dc.FillSolidRect(rectBounds, Hover ? 0xEFECEC : 0xF7F4F4);
+			dc.FillSolidRect(rect, Hover ? 0xEFECEC : 0xF7F4F4);
 
-			LinearGradientBrush brush1(Point(0, rectBounds.top+1), Point(0, (rectBounds.top+rectBounds.bottom)/2+1), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(Disabled ? 0x00 : 0x40, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2);
+			LinearGradientBrush brush1(Point(0, rect.top+1), Point(0, (rect.top+rect.bottom)/2+1), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(Disabled ? 0x00 : 0x40, 0xFF, 0xFF, 0xFF));
+			g.FillRectangle(&brush1, rect.left, rect.top+1, rect.Width(), rect.Height()/2);
 
 			if (!Disabled)
 			{
-				LinearGradientBrush brush2(Point(0, rectBounds.bottom-3), Point(0, rectBounds.bottom), Color(0x00, 0x00, 0x00, 0x00), Color(Hover ? 0x20 : 0x10, 0x00, 0x00, 0x00));
-				g.FillRectangle(&brush2, rectBounds.left, rectBounds.bottom-3, rectBounds.Width(), 3);
+				LinearGradientBrush brush2(Point(0, rect.bottom-3), Point(0, rect.bottom), Color(0x00, 0x00, 0x00, 0x00), Color(Hover ? 0x20 : 0x10, 0x00, 0x00, 0x00));
+				g.FillRectangle(&brush2, rect.left, rect.bottom-3, rect.Width(), 3);
 			}
 		}
 
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		rectBounds.InflateRect(1, 1);
+		rect.InflateRect(1, 1);
 
 		GraphicsPath pathOuter;
-		CreateRoundRectangle(rectBounds, 2, pathOuter);
+		CreateRoundRectangle(rect, 2, pathOuter);
 
 		if (Focused || Selected)
 		{
 			if (!Selected && !Hover)
 			{
-				rectBounds.DeflateRect(1, 1);
+				rect.DeflateRect(1, 1);
 
 				GraphicsPath pathInner;
-				CreateRoundRectangle(rectBounds, 1, pathInner);
+				CreateRoundRectangle(rect, 1, pathInner);
 
 				Pen pen(Color(0xC0, 0xFF, 0xFF, 0xFF));
 				g.DrawPath(&pen, &pathInner);
@@ -562,10 +675,10 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 		if (Focused)
 		{
-			CRect rectFocus(rect);
-			rectFocus.DeflateRect(2, 2);
+			rect.DeflateRect(2, 2);
+
 			dc.SetTextColor(0x000000);
-			dc.DrawFocusRect(rectFocus);
+			dc.DrawFocusRect(rect);
 		}
 	}
 
@@ -576,6 +689,7 @@ void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL 
 {
 	CRect rect(lpDrawItemStruct->rcItem);
 	rect.DeflateRect(2, 2);
+
 	if (Selected)
 		rect.OffsetRect(1, 1);
 
@@ -613,10 +727,12 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
 		AddCompare(pComboBox, IDS_COMPARE_BEGINSWITH, LFFilterCompareBeginsWith);
 		AddCompare(pComboBox, IDS_COMPARE_ENDSWITH, LFFilterCompareEndsWith);
+
 		break;
 
 	case LFTypeUnicodeArray:
 		AddCompare(pComboBox, IDS_COMPARE_CONTAINS, LFFilterCompareContains);
+
 		break;
 
 	case LFTypeFourCC:
@@ -625,6 +741,7 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	case LFTypeGeoCoordinates:
 		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
+
 		break;
 
 	case LFTypeRating:
@@ -639,6 +756,7 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISABOVEEQUAL, LFFilterCompareIsAboveOrEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISBELOWEQUAL, LFFilterCompareIsBelowOrEqual);
+
 		break;
 	}
 
@@ -669,6 +787,7 @@ void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr)
 		{
 			if (!Str.IsEmpty())
 				Str += _T("\n");
+
 			if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat) && (Attr!=LFAttrDescription))
 			{
 				Str += LFGetApp()->m_Attributes[Attr].Name;
@@ -683,6 +802,7 @@ void AppendTooltipAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, CStrin
 {
 	WCHAR tmpStr[256];
 	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
+
 	AppendTooltipString(Attr, Str, tmpStr);
 }
 
@@ -763,7 +883,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	g.DrawImage(pIndicator->m_pBitmap, LocX, LocY);
 
 	// Pfad erstellen
-	FontFamily fontFamily(LFGetApp()->GetDefaultFontFace());
+	FontFamily fontFamily(_T("Arial"));
 	WCHAR pszBuf[4];
 	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
 
@@ -808,10 +928,10 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 
 // Update
 
-void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
+void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 {
-	if (Version)
-		Version->Empty();
+	Version.Empty();
+
 	if (Copyright)
 		Copyright->Empty();
 
@@ -832,15 +952,15 @@ void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
 				LPVOID valPtr = NULL;
 				LPCWSTR valData = NULL;
 
-				if (Version)
-					if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
-					{
-						VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-						Version->Format(_T("%u.%u.%u"), 
-							(UINT)((pFinfo->dwProductVersionMS >> 16) & 0xFF),
-							(UINT)((pFinfo->dwProductVersionMS) & 0xFF),
-							(UINT)((pFinfo->dwProductVersionLS >> 16) & 0xFF));
-					}
+				if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
+				{
+					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
+					Version.Format(_T("%u.%u.%u"), 
+						(UINT)((pFinfo->dwProductVersionMS >> 16) & 0xFF),
+						(UINT)((pFinfo->dwProductVersionMS) & 0xFF),
+						(UINT)((pFinfo->dwProductVersionLS >> 16) & 0xFF));
+				}
+
 				if (Copyright)
 					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
@@ -913,7 +1033,7 @@ CString GetLatestVersion(CString CurrentVersion)
 	return VersionIni;
 }
 
-CString GetIniValue(CString Ini, const CString Name)
+CString GetIniValue(CString Ini, const CString& Name)
 {
 	while (!Ini.IsEmpty())
 	{
@@ -933,14 +1053,14 @@ CString GetIniValue(CString Ini, const CString Name)
 	return _T("");
 }
 
-void ParseVersion(const CString tmpStr, LFVersion* pVersion)
+void ParseVersion(const CString& tmpStr, LFVersion* pVersion)
 {
 	ASSERT(pVersion);
 
 	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
 }
 
-BOOL IsVersionLater(LFVersion& LatestVersion, LFVersion& CurrentVersion)
+BOOL IsVersionLater(const LFVersion& LatestVersion, const LFVersion& CurrentVersion)
 {
 	return ((LatestVersion.Major>CurrentVersion.Major) ||
 		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor>CurrentVersion.Minor)) ||
@@ -956,7 +1076,7 @@ BOOL IsLaterFeature(const CString VersionIni, const CString Name, LFVersion& Cur
 	return IsVersionLater(FeatureVersion, CurrentVersion);
 }
 
-DWORD GetFeatures(const CString VersionIni, LFVersion& CurrentVersion)
+DWORD GetFeatures(const CString& VersionIni, LFVersion& CurrentVersion)
 {
 	DWORD Features = 0;
 
@@ -994,7 +1114,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 {
 	// Obtain current version from instance version resource
 	CString CurrentVersion;
-	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
+	GetFileVersion(AfxGetResourceHandle(), CurrentVersion);
 
 	LFVersion CV = { 0 };
 	ParseVersion(CurrentVersion, &CV);
@@ -1072,7 +1192,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 }
 
 
-INT LFMessageBox(CWnd* pParentWnd, CString Text, CString Caption, UINT Type)
+INT LFMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
 {
 	LFMessageBoxDlg dlg(pParentWnd, Text, Caption, Type);
 
@@ -1120,7 +1240,8 @@ BOOL LFNagScreen(CWnd* pParentWnd)
 		if (LFIsSharewareExpired())
 		{
 			CString tmpStr((LPCSTR)IDS_NOLICENSE);
-			LFMessageBox(pParentWnd, tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP);
+			if (LFMessageBox(pParentWnd, tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP)==IDOK)
+				LFGetApp()->OnBackstagePurchase();
 
 			return FALSE;
 		}

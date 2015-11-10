@@ -12,37 +12,16 @@
 //
 
 CPropertyHolder::CPropertyHolder()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	m_StoreIDValid = FALSE;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
 
-void CPropertyHolder::SetStore(CHAR* StoreID)
+void CPropertyHolder::SetStore(const CHAR* pStoreID)
 {
-	m_StoreIDValid = (StoreID!=NULL);
-	strcpy_s(m_StoreID, LFKeySize, m_StoreIDValid ? StoreID : "");
-}
-
-void CPropertyHolder::CreateFonts()
-{
-	if (m_BoldFont.GetSafeHandle())
-		m_BoldFont.DeleteObject();
-	if (m_ItalicFont.GetSafeHandle())
-		m_ItalicFont.DeleteObject();
-
-	CFont* pFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-	ASSERT_VALID(pFont);
-
-	LOGFONT lf;
-	pFont->GetLogFont(&lf);
-	lf.lfWeight = FW_BOLD;
-	m_BoldFont.CreateFontIndirect(&lf);
-
-	pFont->GetLogFont(&lf);
-	lf.lfItalic = TRUE;
-	m_ItalicFont.CreateFontIndirect(&lf);
+	strcpy_s(m_StoreID, LFKeySize, ((m_StoreIDValid=(pStoreID!=NULL))==TRUE) ? pStoreID : "");
 }
 
 CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
@@ -93,7 +72,7 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 }
 
 
-BEGIN_MESSAGE_MAP(CPropertyHolder, CWnd)
+BEGIN_MESSAGE_MAP(CPropertyHolder, CFrontstageWnd)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
@@ -129,7 +108,7 @@ CProperty::CProperty(LFVariantData* pData)
 	ZeroMemory(&m_RangeSecond, sizeof(m_RangeSecond));
 }
 
-void CProperty::ToString(WCHAR* tmpStr, INT nCount)
+void CProperty::ToString(WCHAR* tmpStr, INT nCount) const
 {
 	ASSERT(p_Parent);
 
@@ -160,36 +139,37 @@ void CProperty::ToString(WCHAR* tmpStr, INT nCount)
 		}
 }
 
-void CProperty::DrawValue(CDC& dc, CRect rect)
+void CProperty::DrawValue(CDC& dc, LPCRECT lpRect) const
 {
 	ASSERT(p_Parent);
 
 	WCHAR tmpStr[256];
 	ToString(tmpStr, 256);
 
-	CFont* pOldFont = m_Multiple ? dc.SelectObject(&p_Parent->m_ItalicFont) : m_Modified ? dc.SelectObject(&p_Parent->m_BoldFont) : NULL;
-	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
+	CFont* pOldFont = m_Multiple ? dc.SelectObject(&LFGetApp()->m_DialogItalicFont) : m_Modified ? dc.SelectObject(&LFGetApp()->m_DialogBoldFont) : NULL;
+	dc.DrawText(tmpStr, -1, (LPRECT)lpRect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
+
 	if (pOldFont)
 		dc.SelectObject(pOldFont);
 }
 
-HCURSOR CProperty::SetCursor(INT /*x*/)
+HCURSOR CProperty::SetCursor(INT /*x*/) const
 {
 	ASSERT(p_Parent);
 
 	return LFGetApp()->LoadStandardCursor(IDC_IBEAM);
 }
 
-CString CProperty::GetValidChars()
+CString CProperty::GetValidChars() const
 {
 	return _T("");
 }
 
-void CProperty::SetEditMask(CMFCMaskedEdit* /*pEdit*/)
+void CProperty::SetEditMask(CMFCMaskedEdit* /*pEdit*/) const
 {
 }
 
-void CProperty::OnSetString(CString Value)
+void CProperty::OnSetString(CString& Value) const
 {
 	Value.Trim();
 	if (p_Data->Attr==LFAttrLanguage)
@@ -231,17 +211,17 @@ void CProperty::OnClickButton()
 {
 }
 
-BOOL CProperty::CanDelete()
+BOOL CProperty::CanDelete() const
 {
 	return (p_Data->Attr!=LFAttrFileName) && ((!LFIsNullVariantData(*p_Data)) || m_Multiple);
 }
 
-BOOL CProperty::HasButton()
+BOOL CProperty::HasButton() const
 {
 	return FALSE;
 }
 
-BOOL CProperty::WantsChars()
+BOOL CProperty::WantsChars() const
 {
 	return FALSE;
 }
@@ -281,7 +261,7 @@ void CProperty::ResetModified()
 	m_Modified = FALSE;
 }
 
-LFVariantData* CProperty::GetData()
+LFVariantData* CProperty::GetData() const
 {
 	return p_Data;
 }
@@ -300,7 +280,7 @@ CPropertyTags::CPropertyTags(LFVariantData* pData)
 {
 }
 
-BOOL CPropertyTags::HasButton()
+BOOL CPropertyTags::HasButton() const
 {
 	return TRUE;
 }
@@ -331,7 +311,7 @@ CPropertyRating::CPropertyRating(LFVariantData* pData)
 {
 }
 
-void CPropertyRating::DrawValue(CDC& dc, CRect rect)
+void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
 {
 	ASSERT(p_Parent);
 
@@ -339,28 +319,28 @@ void CPropertyRating::DrawValue(CDC& dc, CRect rect)
 	UCHAR level = m_Multiple ? m_ShowRange ? m_RangeSecond.Rating : 0 : p_Data->Rating;
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? LFGetApp()->m_RatingBitmaps[level] : LFGetApp()->m_PriorityBitmaps[level]);
 
-	INT w = min(rect.Width()-6, RatingBitmapWidth);
-	INT h = min(rect.Height(), RatingBitmapHeight);
+	INT w = min(lpRect->right-lpRect->left-6, RatingBitmapWidth);
+	INT h = min(lpRect->bottom-lpRect->top, RatingBitmapHeight);
 	BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-	AlphaBlend(dc, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF);
+	AlphaBlend(dc, lpRect->left+6, lpRect->top+(lpRect->bottom-lpRect->top-h)/2, w, h, hdcMem, 0, 0, w, h, BF);
 
 	SelectObject(hdcMem, hOldBitmap);
 	DeleteDC(hdcMem);
 }
 
-HCURSOR CPropertyRating::SetCursor(INT x)
+HCURSOR CPropertyRating::SetCursor(INT x) const
 {
 	ASSERT(p_Parent);
 
 	return LFGetApp()->LoadStandardCursor(x<6 ? IDC_HAND : ((x<RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
 }
 
-BOOL CPropertyRating::CanDelete()
+BOOL CPropertyRating::CanDelete() const
 {
 	return FALSE;
 }
 
-BOOL CPropertyRating::WantsChars()
+BOOL CPropertyRating::WantsChars() const
 {
 	return TRUE;
 }
@@ -442,17 +422,17 @@ CPropertyIATA::CPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName,
 	p_LocationGPS = pLocationGPS;
 }
 
-CString CPropertyIATA::GetValidChars()
+CString CPropertyIATA::GetValidChars() const
 {
 	return _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
 }
 
-BOOL CPropertyIATA::HasButton()
+BOOL CPropertyIATA::HasButton() const
 {
 	return TRUE;
 }
 
-void CPropertyIATA::OnSetString(CString Value)
+void CPropertyIATA::OnSetString(CString Value) const
 {
 	LFAirport* pAirportOld = NULL;
 	if (!m_Multiple)
@@ -557,16 +537,16 @@ CPropertyGPS::CPropertyGPS(LFVariantData* pData)
 {
 }
 
-HCURSOR CPropertyGPS::SetCursor(INT /*x*/)
+BOOL CPropertyGPS::HasButton() const
+{
+	return TRUE;
+}
+
+HCURSOR CPropertyGPS::SetCursor(INT /*x*/) const
 {
 	ASSERT(p_Parent);
 
 	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
-}
-
-BOOL CPropertyGPS::HasButton()
-{
-	return TRUE;
 }
 
 BOOL CPropertyGPS::OnClickValue(INT /*x*/)
@@ -597,16 +577,16 @@ CPropertyTime::CPropertyTime(LFVariantData* pData)
 {
 }
 
-HCURSOR CPropertyTime::SetCursor(INT /*x*/)
+BOOL CPropertyTime::HasButton() const
+{
+	return TRUE;
+}
+
+HCURSOR CPropertyTime::SetCursor(INT /*x*/) const
 {
 	ASSERT(p_Parent);
 
 	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
-}
-
-BOOL CPropertyTime::HasButton()
-{
-	return TRUE;
 }
 
 BOOL CPropertyTime::OnClickValue(INT /*x*/)
@@ -633,7 +613,7 @@ CPropertyNumber::CPropertyNumber(LFVariantData* pData)
 {
 }
 
-CString CPropertyNumber::GetValidChars()
+CString CPropertyNumber::GetValidChars() const
 {
 	return _T("0123456789");
 }
@@ -647,7 +627,7 @@ CPropertySize::CPropertySize(LFVariantData* pData)
 {
 }
 
-CString CPropertySize::GetValidChars()
+CString CPropertySize::GetValidChars() const
 {
 	return _T("0123456789 KkMmGgBb");
 }
@@ -661,24 +641,11 @@ CPropertyDuration::CPropertyDuration(LFVariantData* pData)
 {
 }
 
-void CPropertyDuration::SetEditMask(CMFCMaskedEdit *pEdit)
+void CPropertyDuration::SetEditMask(CMFCMaskedEdit *pEdit) const
 {
 	pEdit->EnableMask(_T("DD DD DD"), _T("__:__:__"), _T('0'), _T("0123456789"));
 	pEdit->EnableGetMaskedCharsOnly(FALSE);
 	pEdit->SetWindowText(_T("00:00:00"));
-}
-
-
-// CInspectorHeader
-//
-
-INT CInspectorHeader::GetPreferredHeight()
-{
-	return 0;
-}
-
-void CInspectorHeader::DrawHeader(CDC& /*dc*/, CRect /*rect*/, BOOL /*Themed*/)
-{
 }
 
 
@@ -741,9 +708,7 @@ BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeade
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CInspectorGrid::PreSubclassWindow()
@@ -758,20 +723,12 @@ void CInspectorGrid::PreSubclassWindow()
 void CInspectorGrid::Init()
 {
 	ResetScrollbars();
-	CreateFonts();
 
 	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
 
-	CDC* pDC = GetWindowDC();
-	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_LargeFont);
-	m_FontHeight[1] = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectStockObject(DEFAULT_GUI_FONT);
-	m_FontHeight[0] = pDC->GetTextExtent(_T("Wy")).cy;
-	pDC->SelectObject(pOldFont);
-	ReleaseDC(pDC);
+	m_RowHeight = max(LFGetApp()->m_DialogFont.GetFontHeight()+2, 16);
+	m_IconSize = (m_RowHeight>=27) ? 25 : (m_RowHeight>=22) ? 20 : (m_RowHeight>=18) ? 16 : 14;
 
-	m_RowHeight = max(m_FontHeight[0]+2, 16);
-	m_IconSize = (m_RowHeight>=27) ? 27 : (m_RowHeight>=22) ? 22 : 16;
 	hIconResetNormal = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 	hIconResetSelected = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_SELECTED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 	hIconResetHot = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
@@ -824,7 +781,7 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 	return CPropertyHolder::PreTranslateMessage(pMsg);
 }
 
-void CInspectorGrid::AddProperty(CProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable)
+void CInspectorGrid::AddProperty(CProperty* pProperty, UINT Category, LPCWSTR Name, BOOL Editable)
 {
 	pProperty->SetParent(this);
 
@@ -875,6 +832,7 @@ void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
 
 	m_SortAlphabetic = SortAlphabetic;
 	MakeSortArrayDirty();
+
 	AdjustLayout();
 	EnsureVisible(m_SelectedItem);
 }
@@ -891,14 +849,14 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 	m_Properties.m_Items[nID].pProperty->ResetModified();
 }
 
-CString CInspectorGrid::GetName(UINT nID)
+CString CInspectorGrid::GetName(UINT nID) const
 {
 	ASSERT(nID<m_Properties.m_ItemCount);
 
 	return m_Properties.m_Items[nID].Name;
 }
 
-CString CInspectorGrid::GetValue(UINT nID)
+CString CInspectorGrid::GetValue(UINT nID) const
 {
 	ASSERT(nID<m_Properties.m_ItemCount);
 
@@ -908,24 +866,26 @@ CString CInspectorGrid::GetValue(UINT nID)
 	return tmpStr;
 }
 
-RECT CInspectorGrid::GetItemRect(INT Item)
+RECT CInspectorGrid::GetItemRect(INT Item) const
 {
 	RECT rect = { 0, 0, 0, 0 };
 
 	if ((Item>=0) && (Item<(INT)m_Properties.m_ItemCount))
 		{
 			GetClientRect(&rect);
+
 			rect.top = m_Properties.m_Items[Item].Top-1;
 			rect.bottom = m_Properties.m_Items[Item].Bottom+1;
 			rect.left++;
 			rect.right--;
+
 			OffsetRect(&rect, 0, -m_VScrollPos);
 		}
 
 	return rect;
 }
 
-INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
+INT CInspectorGrid::HitTest(const CPoint& point, UINT* PartID) const
 {
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
@@ -996,7 +956,7 @@ void CInspectorGrid::EnsureVisible(INT Item)
 		return;
 
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	RECT rectItem = GetItemRect(Item);
 
@@ -1070,7 +1030,7 @@ void CInspectorGrid::AdjustScrollbars()
 		Invalidate();
 }
 
-INT CInspectorGrid::Compare(INT Eins, INT Zwei)
+INT CInspectorGrid::Compare(INT Eins, INT Zwei) const
 {
 	Property* pEins = &m_Properties.m_Items[m_pSortArray[Eins]];
 	Property* pZwei = &m_Properties.m_Items[m_pSortArray[Zwei]];
@@ -1155,6 +1115,8 @@ void CInspectorGrid::AdjustLayout()
 	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : PADDING+1;
 	INT Category = -1;
 
+	const INT FontHeight = LFGetApp()->m_LargeFont.GetFontHeight();
+
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
 		Property* pProp = &m_Properties.m_Items[m_pSortArray[a]];
@@ -1162,10 +1124,13 @@ void CInspectorGrid::AdjustLayout()
 		if ((!m_SortAlphabetic) && (pProp->Visible) && ((INT)pProp->Category!=Category))
 		{
 			Category = pProp->Category;
-			INT Spacer = (m_ScrollHeight==1) ? -PADDING : 8;
+
+			const INT Spacer = (m_ScrollHeight==1) ? -PADDING : 8;
+
 			m_Categories[Category].Top = m_ScrollHeight+Spacer;
-			m_Categories[Category].Bottom = m_ScrollHeight+m_FontHeight[1]+2*LFCategoryPadding+Spacer;
-			m_ScrollHeight += m_FontHeight[1]+2*PADDING+Spacer+1;
+			m_Categories[Category].Bottom = m_ScrollHeight+FontHeight+2*LFCategoryPadding+Spacer;
+
+			m_ScrollHeight += FontHeight+2*PADDING+Spacer+1;
 		}
 
 		pProp->Top = pProp->Visible ? m_ScrollHeight : -1;
@@ -1272,18 +1237,24 @@ void CInspectorGrid::EditProperty(UINT Attr)
 
 			p_Edit = new CMFCMaskedEdit();
 			p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
+
 			if (!pProp->pProperty->m_Multiple)
 			{
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
 				p_Edit->SetWindowText(tmpStr);
 			}
+
 			p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
+
 			pProp->pProperty->SetEditMask(p_Edit);
+
 			if (Attr<LFAttributeCount)
 				p_Edit->SetLimitText(LFGetApp()->m_Attributes[Attr].cCharacters);
-			p_Edit->SetFont(&m_BoldFont);
+
+			p_Edit->SetFont(&LFGetApp()->m_DialogBoldFont);
 			p_Edit->SetFocus();
+
 			return;
 		}
 
@@ -1458,6 +1429,8 @@ void CInspectorGrid::OnPaint()
 		m_pHeader->DrawHeader(dc, rectHeader, Themed);
 	}
 
+	DrawWindowEdge(dc, Themed);
+
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
@@ -1471,8 +1444,8 @@ void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 	if (p_Edit)
 	{
 		CRect rect;
-		p_Edit->GetWindowRect(&rect);
-		ScreenToClient(&rect);
+		p_Edit->GetWindowRect(rect);
+		ScreenToClient(rect);
 
 		rect.left = m_LabelWidth+GUTTER;
 		rect.right = cx-1;
@@ -1483,7 +1456,7 @@ void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	SCROLLINFO si;
 
@@ -1539,8 +1512,8 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		if (p_Edit)
 		{
 			CRect rect;
-			p_Edit->GetWindowRect(&rect);
-			ScreenToClient(&rect);
+			p_Edit->GetWindowRect(rect);
+			ScreenToClient(rect);
 
 			rect.OffsetRect(0, -nInc);
 			p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
@@ -1640,7 +1613,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 	if (!rect.PtInRect(pt))
 		return FALSE;
 
@@ -1871,6 +1844,7 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Messa
 	}
 
 	SetCursor(LFGetApp()->LoadStandardCursor(IDC_ARROW));
+
 	return TRUE;
 }
 

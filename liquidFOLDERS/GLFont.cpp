@@ -25,16 +25,6 @@ GLFont::~GLFont()
 		glDeleteTextures(1, &m_TexID);
 }
 
-BOOL GLFont::Create(CString Face, UINT Size, BOOL Bold, BOOL Italic)
-{
-	CFont Font;
-	Font.CreateFont(-(INT)Size, 0, 0, 0, Bold ? FW_BOLD : FW_NORMAL, (BYTE)Italic, 0, 0, ANSI_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-
-	return Create(&Font);
-}
-
 BOOL GLFont::Create(CFont* pFont)
 {
 	CDC dc;
@@ -90,7 +80,7 @@ BOOL GLFont::Create(CFont* pFont)
 	return Result==SUCCESS;
 }
 
-UINT GLFont::Render(CHAR* pStr, INT x, INT y, SIZE_T cCount)
+UINT GLFont::Render(CHAR* pStr, INT x, INT y, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;
@@ -120,7 +110,7 @@ UINT GLFont::Render(CHAR* pStr, INT x, INT y, SIZE_T cCount)
 	return Height;
 }
 
-UINT GLFont::Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount)
+UINT GLFont::Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;
@@ -163,7 +153,7 @@ UINT GLFont::Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount)
 	return Height;
 }
 
-UINT GLFont::RenderChar(UCHAR Ch, INT x, INT y, UINT& Height)
+UINT GLFont::RenderChar(UCHAR Ch, INT x, INT y, UINT& Height) const
 {
 	GLfloat tx1 = TexCoords[Ch][0];
 	GLfloat ty1 = TexCoords[Ch][1];
@@ -188,7 +178,7 @@ UINT GLFont::RenderChar(UCHAR Ch, INT x, INT y, UINT& Height)
 	return w;
 }
 
-UINT GLFont::GetTextWidth(CHAR* pStr, SIZE_T cCount)
+UINT GLFont::GetTextWidth(CHAR* pStr, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;
@@ -208,7 +198,7 @@ UINT GLFont::GetTextWidth(CHAR* pStr, SIZE_T cCount)
 	return (UINT)Width;
 }
 
-UINT GLFont::GetTextWidth(WCHAR* pStr, SIZE_T cCount)
+UINT GLFont::GetTextWidth(WCHAR* pStr, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;
@@ -240,7 +230,7 @@ UINT GLFont::GetTextWidth(WCHAR* pStr, SIZE_T cCount)
 	return (UINT)Width;
 }
 
-UINT GLFont::GetTextHeight(void* pStr)
+UINT GLFont::GetTextHeight(void* pStr) const
 {
 	ASSERT(pStr);
 

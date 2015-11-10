@@ -11,24 +11,13 @@
 #define IDB_BLUEMARBLE_2048             135
 #define IDB_BLUEMARBLE_4096             136
 #define IDB_BLUEMARBLE_8192             137
-#define IDB_JOURNAL_FRAME0              138
-#define IDB_JOURNAL_FRAME1              139
-#define IDB_JOURNAL_NORMAL0             140
-#define IDB_JOURNAL_NORMAL1             141
-#define IDB_JOURNAL_HOT0                142
-#define IDB_JOURNAL_HOT1                143
-#define IDB_JOURNAL_PRESSED0            144
-#define IDB_JOURNAL_PRESSED1            145
-#define IDB_JOURNAL_DISABLED0           146
-#define IDB_JOURNAL_DISABLED1           147
-#define IDB_MULTIPLE                    148
-#define IDB_CONTEXTS_16                 149
-#define IDB_CONTEXTS_32                 150
-#define IDB_THUMBNAIL_SHADOW            151
-#define IDB_THUMBNAIL_FRAME             152
-#define IDB_SOURCEICONS                 153
-#define ID_PANE_FILTER                  400
-#define ID_PANE_INSPECTOR               401
+#define IDB_MULTIPLE                    138
+#define IDB_CONTEXTS_16                 139
+#define IDB_CONTEXTS_32                 140
+#define IDB_THUMBNAIL_SHADOW            141
+#define IDB_THUMBNAIL_FRAME             142
+#define IDB_SOURCEICONS                 143
+#define ID_PANE_INSPECTOR               400
 #define ID_NAV_BACK                     500
 #define ID_NAV_FORWARD                  501
 #define ID_NAV_RELOAD                   502
@@ -56,14 +45,13 @@
 #define IDS_NOITEMSSELECTED             1021
 #define IDS_YOULOOKAT                   1022
 #define IDS_NOTHINGTODISPLAY            1023
-#define IDS_NONAVIGATION                1024
-#define IDS_AUTOMATIC                   1025
-#define IDS_FILETYPES                   1026
-#define IDS_HOUSEKEEPING                1027
-#define IDS_SEARCHTERM                  1028
-#define IDS_ASCENDING                   1029
-#define IDS_DESCENDING                  1030
-#define IDS_DEFAULTSTORE                1031
+#define IDS_AUTOMATIC                   1024
+#define IDS_FILETYPES                   1025
+#define IDS_HOUSEKEEPING                1026
+#define IDS_SEARCHTERM                  1027
+#define IDS_ASCENDING                   1028
+#define IDS_DESCENDING                  1029
+#define IDS_DEFAULTSTORE                1030
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_SOURCE                1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -169,7 +157,6 @@
 #define IDM_VIEW_TIMELINE               7010
 #define IDM_VIEW_GLOBE                  7011
 #define IDM_VIEW_TAGCLOUD               7012
-#define IDC_COMBO1                      8025
 
 // Next default values for new objects
 // 

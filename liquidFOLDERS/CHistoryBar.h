@@ -23,46 +23,15 @@ void DeleteBreadcrumbs(BreadcrumbItem** pBreadcrumbItem);
 // CHistoryBar
 //
 
-struct HistoryItem
-{
-	WCHAR Name[256];
-	INT Width;
-	INT Left;
-	INT Right;
-};
-
-class CHistoryBar : public CWnd
+class CHistoryBar : public CBackstageBar
 {
 public:
-	CHistoryBar();
-
-	BOOL Create(CGlassWindow* pParentWnd, UINT nID);
-	UINT GetPreferredHeight();
-	void SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs);
+	BOOL Create(CWnd* pParentWnd, UINT nID);
+	void SetHistory(const LFFilter* pFilter, BreadcrumbItem* pBreadcrumbItem);
 
 protected:
-	INT HitTest(CPoint point);
-	void AdjustLayout();
+	virtual void DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed) const;
+	virtual void OnClickButton(INT Index) const;
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
-	afx_msg LRESULT OnThemeChanged();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	DECLARE_MESSAGE_MAP()
-
-	BOOL m_IsEmpty;
-	CString m_EmptyHint;
-	INT m_Hover;
-	INT m_Pressed;
-	LFDynArray<HistoryItem> m_Breadcrumbs;
-
-private:
-	void AddFilter(LFFilter* Filter, CDC* pDC);
+	void AddItem(const LFFilter* pFilter, CDC& dc);
 };

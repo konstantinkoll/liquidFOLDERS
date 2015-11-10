@@ -39,8 +39,8 @@ public:
 
 protected:
 	BOOL LoadTable(UINT TableID, UINT* pResult=NULL);
-	void AddFileToStatistics(LFCoreAttributes* PtrM);
-	void RemoveFileFromStatistics(LFCoreAttributes* PtrM);
+	void AddFileToStatistics(LFCoreAttributes* PtrM) const;
+	void RemoveFileFromStatistics(LFCoreAttributes* PtrM) const;
 
 	CStore* p_Store;
 	LFStoreDescriptor* p_StoreDescriptor;

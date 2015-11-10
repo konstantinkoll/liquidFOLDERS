@@ -50,12 +50,9 @@ void LFAddStoreDlg::DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStr
 		rect.left += IconSize+BORDER;
 		rect.DeflateRect(BORDER, BORDER);
 
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
+		const INT HeightCaption = LFGetApp()->m_LargeFont.GetFontHeight()*3/2;
 
-		INT HeightCaption = dc.GetTextExtent(Caption).cy;
-		HeightCaption += HeightCaption/2;
-
-		dc.SelectObject(&LFGetApp()->m_DefaultFont);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
 		CRect rectHint(rect);
 		dc.DrawText(Hint, rectHint, DT_CALCRECT | DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);

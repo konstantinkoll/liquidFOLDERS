@@ -33,10 +33,10 @@ public:
 	CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize=0);
 	~CHeapfile();
 
-	UINT GetItemCount();
-	UINT GetRequiredElementSize();
-	UINT64 GetRequiredFileSize();
-	void* GetStoreData(void* Ptr);
+	UINT GetItemCount() const;
+	UINT GetRequiredElementSize() const;
+	UINT64 GetRequiredFileSize() const;
+	void* GetStoreData(void* Ptr) const;
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);
 	BOOL FindNext(INT& Next, void*& Ptr);

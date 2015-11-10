@@ -28,7 +28,7 @@ public:
 	CMainWnd* GetClipboard();
 	CWnd* GetFileDrop(CHAR* StoreID);
 
-	BOOL IsViewAllowed(INT Context, INT View);
+	BOOL IsViewAllowed(INT Context, INT View) const;
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
@@ -57,14 +57,10 @@ public:
 	BOOL m_FileDropAlwaysOnTop;
 
 protected:
-	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
-	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-	void LoadViewOptions(UINT context);
-	void SaveViewOptions(UINT context);
-
-	afx_msg void OnAppAbout();
-	DECLARE_MESSAGE_MAP()
+	BOOL SanitizeSortBy(LFViewParameters* pViewParameters, INT Context) const;
+	BOOL SanitizeViewMode(LFViewParameters* pViewParameters, INT Context) const;
+	void LoadViewOptions(UINT Context);
+	void SaveViewOptions(UINT Context);
 
 	BOOL m_AppInitialized;
 };

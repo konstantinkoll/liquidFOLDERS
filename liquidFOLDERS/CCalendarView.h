@@ -30,7 +30,7 @@ public:
 	CCalendarView();
 
 	virtual CMenu* GetViewContextMenu();
-	virtual void GetPersistentData(FVPersistentData& Data);
+	virtual void GetPersistentData(FVPersistentData& Data) const;
 
 protected:
 	virtual void SetViewOptions(BOOL Force);
@@ -38,10 +38,10 @@ protected:
 	virtual void AdjustLayout();
 
 	void SetYear(UINT Year);
-	UINT DaysOfMonth(UINT Month);
-	UINT StartOfMonth(UINT Month);
-	void GetMonthSize(LPSIZE Size);
-	void DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed);
+	UINT DaysOfMonth(UINT Month) const;
+	UINT StartOfMonth(UINT Month) const;
+	void GetMonthSize(LPSIZE lpSize);
+	void DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
@@ -62,5 +62,5 @@ protected:
 	BOOL m_ShowCaptions;
 
 private:
-	BOOL IsLeapYear();
+	BOOL IsLeapYear() const;
 };

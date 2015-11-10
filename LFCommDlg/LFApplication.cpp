@@ -16,11 +16,11 @@
 #define GLOBALREGPATH       _T("SOFTWARE\\liquidFOLDERS\\")
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
-	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
-	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
-	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppCommands)
+	ON_COMMAND(IDM_BACKSTAGE_PURCHASE, OnBackstagePurchase)
+	ON_COMMAND(IDM_BACKSTAGE_ENTERLICENSEKEY, OnBackstageEnterLicenseKey)
+	ON_COMMAND(IDM_BACKSTAGE_SUPPORT, OnBackstageSupport)
+	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_PURCHASE, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
 END_MESSAGE_MAP()
 
 void PlayRegSound(CString Identifier)
@@ -67,8 +67,11 @@ LFApplication::LFApplication(GUID& AppID)
 	// DLL-Hijacking verhindern
 	SetDllDirectory(_T(""));
 
-	// Nachrichten
+	// Messages
 	p_MessageIDs = LFGetMessageIDs();
+	m_LicenseActivatedMsg = RegisterWindowMessage(_T("liquidFOLDERS.LicenseActivated"));
+	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.NewWindow"));
+	m_NagCounter = 3;
 
 	// Themes
 	hModThemes = LoadLibrary(_T("UXTHEME.DLL"));
@@ -78,15 +81,10 @@ LFApplication::LFApplication(GUID& AppID)
 		zOpenThemeData = (PFNOPENTHEMEDATA)GetProcAddress(hModThemes, "OpenThemeData");
 		zCloseThemeData = (PFNCLOSETHEMEDATA)GetProcAddress(hModThemes, "CloseThemeData");
 		zDrawThemeBackground = (PFNDRAWTHEMEBACKGROUND)GetProcAddress(hModThemes, "DrawThemeBackground");
-		zDrawThemeText = (PFNDRAWTHEMETEXT)GetProcAddress(hModThemes, "DrawThemeText");
-		zDrawThemeTextEx = (PFNDRAWTHEMETEXTEX)GetProcAddress(hModThemes, "DrawThemeTextEx");
-		zGetThemeSysFont = (PFNGETTHEMESYSFONT)GetProcAddress(hModThemes, "GetThemeSysFont");
-		zGetThemeSysColor = (PFNGETTHEMESYSCOLOR)GetProcAddress(hModThemes, "GetThemeSysColor");
 		zGetThemePartSize = (PFNGETTHEMEPARTSIZE)GetProcAddress(hModThemes, "GetThemePartSize");
-		zSetWindowThemeAttribute = (PFNSETWINDOWTHEMEATTRIBUTE)GetProcAddress(hModThemes, "SetWindowThemeAttribute");
 		zIsAppThemed = (PFNISAPPTHEMED)GetProcAddress(hModThemes, "IsAppThemed");
 
-		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zDrawThemeText && zGetThemeSysFont && zGetThemeSysColor && zGetThemePartSize && zIsAppThemed);
+		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zGetThemePartSize && zIsAppThemed);
 		if (m_ThemeLibLoaded)
 		{
 			FreeLibrary(hModThemes);
@@ -99,12 +97,7 @@ LFApplication::LFApplication(GUID& AppID)
 		zOpenThemeData = NULL;
 		zCloseThemeData = NULL;
 		zDrawThemeBackground = NULL;
-		zDrawThemeText = NULL;
-		zDrawThemeTextEx = NULL;
-		zGetThemeSysFont = NULL;
-		zGetThemeSysColor = NULL;
 		zGetThemePartSize = NULL;
-		zSetWindowThemeAttribute = NULL;
 		zIsAppThemed = NULL;
 
 		m_ThemeLibLoaded = FALSE;
@@ -115,11 +108,10 @@ LFApplication::LFApplication(GUID& AppID)
 	if (hModAero)
 	{
 		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModAero, "DwmIsCompositionEnabled");
-		zDwmExtendFrameIntoClientArea = (PFNDWMEXTENDFRAMEINTOCLIENTAREA)GetProcAddress(hModAero, "DwmExtendFrameIntoClientArea");
-		zDwmDefWindowProc = (PFNDWMDEFWINDOWPROC)GetProcAddress(hModAero, "DwmDefWindowProc");
+		zDwmSetWindowAttribute = (PFNDWMSETWINDOWATTRIBUTE)GetProcAddress(hModAero, "DwmSetWindowAttribute");
 
-		m_AeroLibLoaded = (zDwmIsCompositionEnabled && zDwmExtendFrameIntoClientArea && zDwmDefWindowProc);
-		if (!m_AeroLibLoaded)
+		m_DwmLibLoaded = (zDwmIsCompositionEnabled && zDwmSetWindowAttribute);
+		if (!m_DwmLibLoaded)
 		{
 			FreeLibrary(hModAero);
 			hModAero = NULL;
@@ -128,10 +120,9 @@ LFApplication::LFApplication(GUID& AppID)
 	else
 	{
 		zDwmIsCompositionEnabled = NULL;
-		zDwmExtendFrameIntoClientArea = NULL;
-		zDwmDefWindowProc = NULL;
+		zDwmSetWindowAttribute = NULL;
 
-		m_AeroLibLoaded = FALSE;
+		m_DwmLibLoaded = FALSE;
 	}
 
 	// Shell
@@ -178,10 +169,13 @@ LFApplication::LFApplication(GUID& AppID)
 	IImageList* il;
 	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&il)))
 		m_SystemImageListSmall.Attach((HIMAGELIST)il);
+
 	if (SUCCEEDED(SHGetImageList(SHIL_LARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListLarge.Attach((HIMAGELIST)il);
+
 	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
+
 	if (OSVersion>=OS_Vista)
 		if (SUCCEEDED(SHGetImageList(SHIL_JUMBO, IID_IImageList, (void**)&il)))
 			m_SystemImageListJumbo.Attach((HIMAGELIST)il);
@@ -234,12 +228,16 @@ LFApplication::~LFApplication()
 {
 	if (hModThemes)
 		FreeLibrary(hModThemes);
+
 	if (hModAero)
 		FreeLibrary(hModAero);
+
 	if (hModShell)
 		FreeLibrary(hModShell);
+
 	if (hModKernel)
 		FreeLibrary(hModKernel);
+
 	if (hFontLetterGothic)
 		RemoveFontMemResourceEx(hFontLetterGothic);
 
@@ -292,34 +290,36 @@ BOOL LFApplication::InitInstance()
 	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
 
 	// Fonts
-	CString Face = GetDefaultFontFace();
+	INT Size = 11;
+	LOGFONT LogFont;
+	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &LogFont, 0))
+		Size = max(abs(LogFont.lfHeight), 11);
 
-	INT Size = 8;
-	LOGFONT lf;
-	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
-		Size = abs(lf.lfHeight);
+	afxGlobalData.fontTooltip.GetLogFont(&LogFont);
 
-	m_DefaultFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_BoldFont.CreateFont(-Size, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_ItalicFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_SmallFont.CreateFont(-(Size-2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		(Size<=11) ? _T("Tahoma") : Face);
-	m_LargeFont.CreateFont(-(Size+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_CaptionFont.CreateFont(-(Size+11), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		_T("Letter Gothic"));
-	m_UACFont.CreateFont(-(Size+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
+	m_DefaultFont.CreateFont(-Size);
+	m_ItalicFont.CreateFont(-Size, CLEARTYPE_QUALITY, FW_NORMAL, 1);
+	m_SmallFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_NORMAL, 0, _T("Segoe UI"));
+	m_SmallBoldFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_BOLD, 0, _T("Segoe UI"));
+	m_LargeFont.CreateFont(-Size*7/6);
+	m_CaptionFont.CreateFont(-Size*2, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_UACFont.CreateFont(-Size*3/2);
+
+	CFont* pDialogFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+	ASSERT_VALID(pDialogFont);
+
+	pDialogFont->GetLogFont(&LogFont);
+	LogFont.lfItalic = 0;
+	LogFont.lfWeight = FW_NORMAL;
+
+	m_DialogFont.CreateFontIndirect(&LogFont);
+
+	LogFont.lfWeight = FW_BOLD;
+	m_DialogBoldFont.CreateFontIndirect(&LogFont);
+
+	LogFont.lfItalic = 1;
+	LogFont.lfWeight = FW_NORMAL;
+	m_DialogItalicFont.CreateFontIndirect(&LogFont);
 
 	// liquidFOLDERS initalisieren
 	LFInitialize();
@@ -353,13 +353,14 @@ CWnd* LFApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
 
 INT LFApplication::ExitInstance()
 {
-	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
-		delete m_ResourceCache.GetNext(p).pImage;
+	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
+		delete m_ResourceCache.m_Items[a].pImage;
 
 	GdiplusShutdown(m_gdiplusToken);
 
 	if (hModThemes)
 		FreeLibrary(hModThemes);
+
 	if (hModAero)
 		FreeLibrary(hModAero);
 
@@ -390,21 +391,16 @@ void LFApplication::KillFrame(CWnd* pVictim)
 	}
 }
 
-CString LFApplication::GetDefaultFontFace()
-{
-	return _T("Arial");
-}
-
-void LFApplication::SendMail(CString Subject)
+void LFApplication::SendMail(CString Subject) const
 {
 	CString URL = _T("mailto:support@liquidfolders.net");
 	if (!Subject.IsEmpty())
 		URL += _T("?subject=")+Subject;
 
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 }
 
-BOOL LFApplication::IsAttributeAllowed(INT Context, INT Attr)
+BOOL LFApplication::IsAttributeAllowed(INT Context, INT Attr) const
 {
 	ASSERT(Context>=0);
 	ASSERT(Context<=LFContextCount);
@@ -413,40 +409,7 @@ BOOL LFApplication::IsAttributeAllowed(INT Context, INT Attr)
 }
 
 
-void LFApplication::OnAppSupport()
-{
-	SendMail();
-}
-
-void LFApplication::OnAppPurchase()
-{
-	CString URL((LPCSTR)IDS_PURCHASEURL);
-
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::OnAppEnterLicenseKey()
-{
-	LFLicenseDlg dlg(m_pActiveWnd);
-	dlg.DoModal();
-}
-
-void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case ID_APP_PURCHASE:
-	case ID_APP_ENTERLICENSEKEY:
-		pCmdUI->Enable(!LFIsLicensed());
-		break;
-
-	default:
-		pCmdUI->Enable(TRUE);
-	}
-}
-
-
-INT LFApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault)
+INT LFApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault) const
 {
 	ENSURE(lpszEntry);
 
@@ -461,7 +424,7 @@ INT LFApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault)
 	return nRet;
 }
 
-CString LFApplication::GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault)
+CString LFApplication::GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault) const
 {
 	ENSURE(lpszEntry);
 	ENSURE(lpszDefault);
@@ -477,7 +440,7 @@ CString LFApplication::GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault)
 	return strRet;
 }
 
-BOOL LFApplication::WriteGlobalInt(LPCTSTR lpszEntry, INT nValue)
+BOOL LFApplication::WriteGlobalInt(LPCTSTR lpszEntry, INT nValue) const
 {
 	ENSURE(lpszEntry);
 
@@ -490,7 +453,7 @@ BOOL LFApplication::WriteGlobalInt(LPCTSTR lpszEntry, INT nValue)
 	return FALSE;
 }
 
-BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
+BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue) const
 {
 	ENSURE(lpszEntry);
 	ENSURE(lpszValue);
@@ -506,19 +469,16 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 
 CGdiPlusBitmap* LFApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType)
 {
-	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
-	{
-		ResourceCacheItem Item = m_ResourceCache.GetNext(p);
-
-		if (Item.nID==nID)
-			return Item.pImage;
-	}
+	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
+		if (m_ResourceCache.m_Items[a].nID==nID)
+			return m_ResourceCache.m_Items[a].pImage;
 
 	ResourceCacheItem Item;
 	Item.pImage = new CGdiPlusBitmapResource(nID, pType, AfxGetResourceHandle());
 	Item.nID = nID;
 
-	m_ResourceCache.AddTail(Item);
+	m_ResourceCache.AddItem(Item);
+
 	return Item.pImage;
 }
 
@@ -570,16 +530,16 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* 
 }
 
 
-void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
+void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
 {
 	ASSERT(IsWindow(m_wndTooltip));
 	ASSERT(pCallerWnd);
 
 	pCallerWnd->ClientToScreen(&point);
-	m_wndTooltip.ShowTooltip(point, strCaption, strText, hIcon, hBitmap);
+	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
 }
 
-BOOL LFApplication::IsTooltipVisible()
+BOOL LFApplication::IsTooltipVisible() const
 {
 	ASSERT(IsWindow(m_wndTooltip));
 
@@ -690,21 +650,22 @@ void LFApplication::PlayWarningSound()
 }
 
 
-void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
+void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval) const
 {
 	if (EnableAutoUpdate)
 		*EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
+
 	if (Interval)
 		*Interval = GetGlobalInt(_T("UpdateCheckInterval"), 0);
 }
 
-void LFApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
+void LFApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval) const
 {
 	WriteGlobalInt(_T("EnableAutoUpdate"), EnableAutoUpdate);
 	WriteGlobalInt(_T("UpdateCheckInterval"), Interval);
 }
 
-BOOL LFApplication::IsUpdateCheckDue()
+BOOL LFApplication::IsUpdateCheckDue() const
 {
 	BOOL EnableAutoUpdate;
 	INT Interval;
@@ -756,16 +717,54 @@ BOOL LFApplication::IsUpdateCheckDue()
 	return FALSE;
 }
 
-void LFApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
+void LFApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
 {
-	UINT sz;
-	LPBYTE buf = NULL;
-	CWinAppEx::GetBinary(lpszEntry, &buf, &sz);
-	if (buf)
+	UINT Bytes;
+	LPBYTE pBuffer = NULL;
+	CWinAppEx::GetBinary(lpszEntry, &pBuffer, &Bytes);
+
+	if (pBuffer)
 	{
-		if (sz<size)
-			size = sz;
-		memcpy_s(pData, size, buf, size);
-		free(buf);
+		memcpy_s(pData, Size, pBuffer, min(Size, Bytes));
+		free(pBuffer);
+	}
+}
+
+
+void LFApplication::OnBackstagePurchase()
+{
+	CString URL((LPCSTR)IDS_PURCHASEURL);
+
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
+}
+
+void LFApplication::OnBackstageEnterLicenseKey()
+{
+	LFLicenseDlg dlg(m_pActiveWnd);
+	dlg.DoModal();
+}
+
+void LFApplication::OnBackstageSupport()
+{
+	SendMail();
+}
+
+void LFApplication::OnBackstageAbout()
+{
+	LFAboutDlg dlg(m_pActiveWnd);
+	dlg.DoModal();
+}
+
+void LFApplication::OnUpdateBackstageCommands(CCmdUI* pCmdUI)
+{
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_BACKSTAGE_PURCHASE:
+	case IDM_BACKSTAGE_ENTERLICENSEKEY:
+		pCmdUI->Enable(!LFIsLicensed());
+		break;
+
+	default:
+		pCmdUI->Enable(TRUE);
 	}
 }
