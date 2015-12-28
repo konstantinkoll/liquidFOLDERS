@@ -27,35 +27,23 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// JPG
+// RCDATA
 //
 
-IDB_BLUEMARBLE_1024     JPG                     "res\\BlueMarble_1024.jpg"
-IDB_BLUEMARBLE_2048     JPG                     "res\\BlueMarble_2048.jpg"
-IDB_BLUEMARBLE_4096     JPG                     "res\\BlueMarble_4096.jpg"
-IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// PNG
-//
-
-IDB_MULTIPLE            PNG                     "res\\Multiple.png"
-IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
-IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
-IDB_THUMBNAIL_FRAME     PNG                     "res\\Thumbnail_Frame.png"
-IDB_THUMBNAIL_SHADOW    PNG                     "res\\Thumbnail_Shadow.png"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_TASKS_16            BITMAP                  "res\\Tasks_16.bmp"
-IDB_TASKS_32            BITMAP                  "res\\Tasks_32.bmp"
-IDB_CONTEXTS_16         BITMAP                  "res\\Contexts_16.bmp"
-IDB_CONTEXTS_32         BITMAP                  "res\\Contexts_32.bmp"
-IDB_SOURCEICONS         BITMAP                  "res\\SourceIcons.bmp"
+IDB_TASKS_16            RCDATA                  "res\\Tasks_16.png"
+IDB_TASKS_32            RCDATA                  "res\\Tasks_32.png"
+IDB_GLOBEICONS_RGB      RCDATA                  "res\\GlobeIcons_RGB.png"
+IDB_GLOBEICONS_ALPHA    RCDATA                  "res\\GlobeIcons_Alpha.png"
+IDB_BLUEMARBLE_1024     RCDATA                  "res\\BlueMarble_1024.jpg"
+IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
+IDB_BLUEMARBLE_4096     RCDATA                  "res\\BlueMarble_4096.jpg"
+IDB_BLUEMARBLE_8192     RCDATA                  "res\\BlueMarble_8192.jpg"
+IDB_MULTIPLE            RCDATA                  "res\\Multiple.png"
+IDB_CONTEXTS_16         RCDATA                  "res\\Contexts_16.png"
+IDB_CONTEXTS_32         RCDATA                  "res\\Contexts_32.png"
+IDB_THUMBNAIL_FRAME     RCDATA                  "res\\Thumbnail_Frame.png"
+IDB_THUMBNAIL_SHADOW    RCDATA                  "res\\Thumbnail_Shadow.png"
+IDB_SOURCEICONS         RCDATA                  "res\\SourceIcons.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //

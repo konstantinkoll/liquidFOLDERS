@@ -24,7 +24,7 @@ LFUpdateDlg::LFUpdateDlg(const CString& Version, const CString& MSN, DWORD Featu
 	m_CaptionTop = m_IconTop = m_FeaturesTop = m_FeaturesLeft = m_FeatureItemHeight = 0;
 	m_Connected = TRUE;
 
-	m_pLogo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_64, _T("PNG"));
+	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_64);
 
 	m_Version = Version;
 	m_MSN = MSN;
@@ -265,7 +265,7 @@ BOOL LFUpdateDlg::OnInitDialog()
 				Count++;
 
 		m_FeatureItemHeight = LFGetApp()->m_DialogFont.GetFontHeight()>14 ? 32 : Count<=3 ? 32 : 16;
-		m_UpdateIcons.Create(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight, m_FeatureItemHeight);
+		m_UpdateIcons.Load(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight);
 
 		DynamicHeight += Count*(m_FeatureItemHeight+MARGIN)+m_FeaturesLeft;
 	}
@@ -339,24 +339,22 @@ void LFUpdateDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	LFDialog::OnEraseBkgnd(dc, g, rect);
 
 	// Logo
-	g.DrawImage(m_pLogo->m_pBitmap, 9, m_IconTop);
+	g.DrawImage(p_Logo, 9, m_IconTop);
 
-	CRect r(rect);
-	r.top = m_CaptionTop;
-	r.left = 82-2;
+	CRect rectLine(rect);
+	rectLine.top = m_CaptionTop;
+	rectLine.left = 82-2;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
-	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(IsCtrlThemed() ? 0xCB3300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName, r, fmt);
+	dc.DrawText(m_AppName, rectLine, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 	// Features
-	r.top = m_FeaturesTop;
-	r.bottom = m_FeaturesTop+m_FeatureItemHeight;
-	r.left = m_FeaturesLeft;
-	r.right -= m_FeaturesLeft;
+	rectLine.top = m_FeaturesTop;
+	rectLine.bottom = m_FeaturesTop+m_FeatureItemHeight;
+	rectLine.left = m_FeaturesLeft;
+	rectLine.right -= m_FeaturesLeft;
 
 	dc.SelectStockObject(DEFAULT_GUI_FONT);
 
@@ -365,9 +363,9 @@ void LFUpdateDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		{
 			INT Index = a ? a+1 : LFGetApp()->OSVersion==OS_Vista ? 1 : 0;
 
-			m_UpdateIcons.Draw(&dc, Index, r.TopLeft(), ILD_TRANSPARENT);
+			m_UpdateIcons.Draw(dc, rectLine.left, rectLine.top, Index);
 
-			CRect rectText(r);
+			CRect rectText(rectLine);
 			rectText.left += m_FeatureItemHeight+MARGIN+MARGIN/2;
 
 			CString Text((LPCSTR)IDS_UPDATE_FIRST+a);
@@ -375,7 +373,7 @@ void LFUpdateDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			dc.SetTextColor(a<3 ? 0x0000FF : GetSysColor(COLOR_WINDOWTEXT));
 			dc.DrawText(Text, rectText, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
 
-			r.OffsetRect(0, m_FeatureItemHeight+MARGIN);
+			rectLine.OffsetRect(0, m_FeatureItemHeight+MARGIN);
 		}
 
 	dc.SelectObject(pOldFont);

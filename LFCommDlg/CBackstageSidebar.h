@@ -33,7 +33,7 @@ public:
 	virtual void AdjustLayout();
 	virtual CString AppendTooltip(UINT CmdID);
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID, BOOL ShowCounts=FALSE);
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID, BOOL ShowCounts=FALSE);
 	void AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color=(COLORREF)-1);
 	void AddCaption(LPCWSTR Caption=NULL);
 	void AddCaption(UINT ResID);
@@ -49,7 +49,6 @@ protected:
 	void InvalidateItem(INT Index);
 	void SelectItem(INT Index);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -63,6 +62,9 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
 
+	CIcons* p_ButtonIcons;
+	CIcons* p_TooltipIcons;
+	INT m_IconSize;
 	LFDynArray<SidebarItem, 8, 8> m_Items;
 	INT m_Width;
 	INT m_SelectedItem;
@@ -71,8 +73,4 @@ protected:
 	BOOL m_Hover;
 	BOOL m_Keyboard;
 	BOOL m_ShowCounts;
-	CIcons m_SmallIcons;
-	CIcons m_LargeIcons;
-	CIcons* p_Icons;
-	INT m_IconSize;
 };

@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CImageListTransparent.h"
 
 
 // CTooltipHeader
@@ -31,10 +30,10 @@ public:
 protected:
 	virtual void Init();
 
-	CImageListTransparent m_SortIndicators;
 	BOOL m_Hover;
 	INT m_HoverItem;
 	INT m_PressedItem;
 	INT m_TrackItem;
 	INT m_TooltipItem;
+	static CIcons m_SortIndicators;
 };

@@ -116,16 +116,17 @@ void LFEditFilterDlg::DoDataExchange(CDataExchange* pDX)
 
 LFFilter* LFEditFilterDlg::CreateFilter()
 {
-	LFFilter* f = LFAllocFilter();
-	f->Mode = LFFilterModeSearch;
-	f->Options.IsPersistent = TRUE;
-	strcpy_s(f->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
-	m_wndSearchterm.GetWindowText(f->Searchterm, 256);
+	LFFilter* pFilter = LFAllocFilter();
+	pFilter->Mode = LFFilterModeSearch;
+	pFilter->Options.IsPersistent = TRUE;
+
+	strcpy_s(pFilter->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
+	m_wndSearchterm.GetWindowText(pFilter->Searchterm, 256);
 
 	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
-		f->ConditionList = LFAllocFilterCondition(m_Conditions.m_Items[a].Compare, m_Conditions.m_Items[a].AttrData, f->ConditionList);
+		pFilter->ConditionList = LFAllocFilterCondition(m_Conditions.m_Items[a].Compare, m_Conditions.m_Items[a].AttrData, pFilter->ConditionList);
 
-	return f;
+	return pFilter;
 }
 
 
@@ -169,11 +170,12 @@ BOOL LFEditFilterDlg::OnInitDialog()
 	m_wndThisStore.EnableWindow(InStore);
 
 	// List
-	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
+	LFGetApp()->m_LargeAttributeIcons.Load(IDB_ATTRIBUTEICONS_32, 32);
+	m_AttributeIcons.Attach(LFGetApp()->m_LargeAttributeIcons.ExtractImageList());
 	m_wndConditionList.SetImageList(&m_AttributeIcons, LVSIL_NORMAL);
 
-	m_wndConditionList.AddColumn(0, L"");
-	m_wndConditionList.AddColumn(1, L"");
+	m_wndConditionList.AddColumn(0);
+	m_wndConditionList.AddColumn(1);
 
 	m_wndConditionList.SetMenus(IDM_CONDITION, TRUE, IDM_CONDITIONLIST);
 	m_wndConditionList.SetView(LV_VIEW_TILE);

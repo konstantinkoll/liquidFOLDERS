@@ -43,6 +43,9 @@ void CreateShortcut(LFTransactionListItem* pItem)
 
 #define FileViewID     3
 
+CIcons CMainView::m_LargeIcons;
+CIcons CMainView::m_SmallIcons;
+
 CMainView::CMainView()
 	: CFrontstageWnd()
 {
@@ -606,7 +609,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Taskbar
-	if (!m_wndTaskbar.Create(this, IDB_TASKS_32, IDB_TASKS_16, 1))
+	if (!m_wndTaskbar.Create(this, m_LargeIcons, IDB_TASKS_32, m_SmallIcons, IDB_TASKS_16, 1))
 		return -1;
 
 	m_wndTaskbar.SetOwner(GetOwner());

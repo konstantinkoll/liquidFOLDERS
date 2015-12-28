@@ -38,7 +38,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 
 // CLiquidFoldersApp
 
-// CLiquidFoldersApp-Erstellung
+CLiquidFoldersApp theApp;
 
 CLiquidFoldersApp::CLiquidFoldersApp()
 	: LFApplication(theAppID)
@@ -46,13 +46,6 @@ CLiquidFoldersApp::CLiquidFoldersApp()
 	m_AppInitialized = FALSE;
 }
 
-
-// Das einzige CLiquidFoldersApp-Objekt
-
-CLiquidFoldersApp theApp;
-
-
-// CLiquidFoldersApp-Initialisierung
 
 BOOL CLiquidFoldersApp::InitInstance()
 {
@@ -128,19 +121,10 @@ BOOL CLiquidFoldersApp::InitInstance()
 	for (UINT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
-	m_SourceIcons.Create(IDB_SOURCEICONS);
-
 	CWnd* pFrame = OpenCommandLine(__argc>1 ? CmdLine : NULL);
-	if (pFrame)
-	{
-		LFCheckForUpdate();
 
-		if (LFGetStoreCount()==0)
-		{
-			LFAddStoreDlg dlg(pFrame);
-			dlg.DoModal();
-		}
-	}
+	if (pFrame)
+		LFCheckForUpdate();
 
 	m_AppInitialized = TRUE;
 

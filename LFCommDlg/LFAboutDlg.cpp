@@ -47,8 +47,8 @@ LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
 	wcscat_s(m_Build, 256, tmpStr);
 
 	GetLocalTime(&st);
-	p_Santa = (st.wMonth==12) ? LFGetApp()->GetCachedResourceImage(IDB_SANTA, _T("PNG")) : NULL;
-	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"));
+	p_Santa = (st.wMonth==12) ? LFGetApp()->GetCachedResourceImage(IDB_SANTA) : NULL;
+	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128);
 
 	GetFileVersion(AfxGetInstanceHandle(), m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
@@ -87,9 +87,9 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	LFDialog::OnEraseBkgnd(dc, g, rect);
 
-	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, m_IconTop);
+	g.DrawImage(p_Logo, p_Santa ? 39 : 9, m_IconTop);
 	if (p_Santa)
-		g.DrawImage(p_Santa->m_pBitmap, -7, m_IconTop-8);
+		g.DrawImage(p_Santa, -7, m_IconTop-8);
 
 	CRect rectText(rect);
 	rectText.top = m_CaptionTop;
@@ -97,10 +97,9 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
-	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(IsCtrlThemed() ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName, rectText, fmt);
+	dc.DrawText(m_AppName, rectText, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 	dc.SelectObject(pOldFont);
 }

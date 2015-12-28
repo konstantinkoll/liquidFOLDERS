@@ -26,28 +26,6 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// JPG
-//
-
-IDB_EARTHMAP            JPG                     "res\\Earthmap.jpg"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// PNG
-//
-
-IDB_DIVDOWN             PNG                     "res\\DivDown.png"
-IDB_DIVUP               PNG                     "res\\DivUp.png"
-IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
-IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
-IDB_SANTA               PNG                     "res\\Santa.png"
-IDB_LIQUIDFOLDERS_64    PNG                     "res\\liquidFOLDERS_64.png"
-IDB_LIQUIDFOLDERS_128   PNG                     "res\\liquidFOLDERS_128.png"
-IDB_BACKGROUND_DARKLINEN PNG                     "res\\Background_DarkLinen.png"
-IDB_BACKGROUND_TOOLTIP  PNG                     "res\\Background_Tooltip.png"
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Bitmap
 //
 
@@ -73,15 +51,10 @@ IDB_PRIORITY7           BITMAP                  "res\\Priority7.bmp"
 IDB_PRIORITY8           BITMAP                  "res\\Priority8.bmp"
 IDB_PRIORITY9           BITMAP                  "res\\Priority9.bmp"
 IDB_PRIORITY10          BITMAP                  "res\\Priority10.bmp"
-IDB_ATTRIBUTEICONS_16   BITMAP                  "res\\Attributes_16.bmp"
-IDB_ATTRIBUTEICONS_32   BITMAP                  "res\\Attributes_32.bmp"
-IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 IDB_STORESYNCHRONIZE    BITMAP                  "res\\StoreSynchronize_32.bmp"
 IDB_STOREMAINTENANCE    BITMAP                  "res\\StoreMaintenance_32.bmp"
 IDB_STOREBACKUP         BITMAP                  "res\\StoreBackup_32.bmp"
 IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
-IDB_UPDATEICONS_16      BITMAP                  "res\\UpdateIcons_16.bmp"
-IDB_UPDATEICONS_32      BITMAP                  "res\\UpdateIcons_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -113,10 +86,25 @@ IDI_READY               ICON                    "res\\Ready.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// TTF
+// RCDATA
 //
 
-IDF_LETTERGOTHIC        TTF                     "res\\Letter_Gothic.ttf"
+IDB_EARTHMAP            RCDATA                  "res\\Earthmap.jpg"
+IDB_DIVDOWN             RCDATA                  "res\\DivDown.png"
+IDB_DIVUP               RCDATA                  "res\\DivUp.png"
+IDB_LOCATIONINDICATOR_8 RCDATA                  "res\\LocationIndicator_8.png"
+IDB_LOCATIONINDICATOR_16 RCDATA                  "res\\LocationIndicator_16.png"
+IDB_ATTRIBUTEICONS_16   RCDATA                  "res\\AttributeIcons_16.png"
+IDB_ATTRIBUTEICONS_32   RCDATA                  "res\\AttributeIcons_32.png"
+IDB_SORTINDICATORS      RCDATA                  "res\\SortIndicators.png"
+IDB_SANTA               RCDATA                  "res\\Santa.png"
+IDB_LIQUIDFOLDERS_64    RCDATA                  "res\\liquidFOLDERS_64.png"
+IDB_LIQUIDFOLDERS_128   RCDATA                  "res\\liquidFOLDERS_128.png"
+IDB_UPDATEICONS_16      RCDATA                  "res\\UpdateIcons_16.png"
+IDB_UPDATEICONS_32      RCDATA                  "res\\UpdateIcons_32.png"
+IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
+IDB_BACKGROUND_TOOLTIP  RCDATA                  "res\\Background_Tooltip.png"
+IDF_LETTERGOTHIC        RCDATA                  "res\\Letter_Gothic.ttf"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -169,34 +157,34 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 214
+IDD_ABOUT DIALOGEX 0, 0, 400, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Über liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,333,192,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,285,192,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,343,192,50,14,WS_GROUP
     CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt am %s Uhr.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
-    CONTROL         "Lizenz",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
+    CONTROL         "Lizenz",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
     LTEXT           "Name:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_REGNAME,7,117,184,8
-    LTEXT           "Kaufdatum:",IDC_STATIC,7,130,115,8
-    LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
-    LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
-    LTEXT           "Produkt:",IDC_STATIC,7,155,115,8
-    LTEXT           "X",IDC_PRODUCT,7,165,184,9
-    LTEXT           "Menge:",IDC_QUANTITYTITLE,140,155,51,8
-    LTEXT           "X",IDC_QUANTITY,140,165,51,8
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,108,184,66,WS_GROUP
-    CONTROL         "Updates",IDC_CATEGORY2,"CCategory",WS_GROUP,199,91,184,15
+    LTEXT           "X",IDC_REGNAME,7,117,189,8
+    LTEXT           "Kaufdatum:",IDC_STATIC,7,130,125,8
+    LTEXT           "X",IDC_PURCHASEDATE,7,140,125,8
+    LTEXT           "ID:",IDC_STATIC,145,130,51,8
+    LTEXT           "X",IDC_PURCHASEID,145,140,51,8
+    LTEXT           "Produkt:",IDC_STATIC,7,155,125,8
+    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "Menge:",IDC_QUANTITYTITLE,145,155,51,8
+    LTEXT           "X",IDC_QUANTITY,145,165,51,8
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
+    CONTROL         "Updates",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Automatisch nach &Updates suchen",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,199,108,184,10
-    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,209,120,174,10
-    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,131,174,10
-    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,142,174,10
-    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,199,160,184,14,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
+    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,214,120,179,10
+    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,131,179,10
+    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,142,179,10
+    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,204,160,189,14,WS_GROUP
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
@@ -526,7 +514,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 383
+        RIGHTMARGIN, 393
         TOPMARGIN, 7
         BOTTOMMARGIN, 206
     END
@@ -841,11 +829,11 @@ BEGIN
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen?"
-    IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
     IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
     IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
     IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
@@ -908,34 +896,34 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 214
+IDD_ABOUT DIALOGEX 0, 0, 400, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Acera liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,333,192,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,285,192,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,343,192,50,14,WS_GROUP
     CONTROL         "Desarrollado de <a>liquidFOLDERS</a> en Alemania.\nVersion %s, %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
-    CONTROL         "Licensia",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
+    CONTROL         "Licensia",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
     LTEXT           "Nombre:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_REGNAME,7,117,184,8
-    LTEXT           "Adquisición:",IDC_STATIC,7,130,115,8
-    LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
-    LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
-    LTEXT           "Producto:",IDC_STATIC,7,155,115,8
-    LTEXT           "X",IDC_PRODUCT,7,165,184,9
-    LTEXT           "Número:",IDC_QUANTITYTITLE,140,155,51,8
-    LTEXT           "X",IDC_QUANTITY,140,165,51,8
-    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,108,184,66,WS_GROUP
-    CONTROL         "Actualizacione",IDC_CATEGORY2,"CCategory",WS_GROUP,199,91,184,15
+    LTEXT           "X",IDC_REGNAME,7,117,189,8
+    LTEXT           "Adquisición:",IDC_STATIC,7,130,125,8
+    LTEXT           "X",IDC_PURCHASEDATE,7,140,125,8
+    LTEXT           "ID:",IDC_STATIC,145,130,51,8
+    LTEXT           "X",IDC_PURCHASEID,145,140,51,8
+    LTEXT           "Producto:",IDC_STATIC,7,158,125,8
+    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "Número:",IDC_QUANTITYTITLE,145,155,51,8
+    LTEXT           "X",IDC_QUANTITY,145,165,51,8
+    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
+    CONTROL         "Actualizacione",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Buscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,199,108,184,10
-    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,209,120,174,10
-    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,131,174,10
-    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,142,174,10
-    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,199,162,184,14,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
+    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,214,120,179,10
+    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,131,179,10
+    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,142,179,10
+    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,204,160,189,14,WS_GROUP
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
@@ -1267,7 +1255,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 383
+        RIGHTMARGIN, 393
         TOPMARGIN, 7
         BOTTOMMARGIN, 206
     END
@@ -1587,11 +1575,11 @@ BEGIN
     IDS_STOREPROPERTIES     "Propiedades de «%s»"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
-    IDS_DELETESTORE_CAPTION "Eliminar store «%s»"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_CAPTION "Eliminar store «%s»"
     IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
     IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
     IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
@@ -1654,34 +1642,34 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 214
+IDD_ABOUT DIALOGEX 0, 0, 400, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Concernant liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,333,192,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,285,192,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,343,192,50,14,WS_GROUP
     CONTROL         "Développée par <a>liquidFOLDERS</a> en Allemagne.\nVersion %s, crée %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
-    CONTROL         "Licence",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
+    CONTROL         "Licence",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
     LTEXT           "Nom:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_REGNAME,7,117,184,8
-    LTEXT           "Date d'achat:",IDC_STATIC,7,130,115,8
-    LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
-    LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
-    LTEXT           "Produit:",IDC_STATIC,7,155,115,8
-    LTEXT           "X",IDC_PRODUCT,7,165,184,9
-    LTEXT           "Nombre:",IDC_QUANTITYTITLE,140,155,51,8
-    LTEXT           "X",IDC_QUANTITY,140,165,51,8
-    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,108,184,66,WS_GROUP
-    CONTROL         "Mises à jour",IDC_CATEGORY2,"CCategory",WS_GROUP,199,91,184,15
+    LTEXT           "X",IDC_REGNAME,7,117,189,8
+    LTEXT           "Date d'achat:",IDC_STATIC,7,130,125,8
+    LTEXT           "X",IDC_PURCHASEDATE,7,140,125,8
+    LTEXT           "ID:",IDC_STATIC,145,130,51,8
+    LTEXT           "X",IDC_PURCHASEID,145,140,51,8
+    LTEXT           "Produit:",IDC_STATIC,7,155,125,8
+    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "Nombre:",IDC_QUANTITYTITLE,145,155,51,8
+    LTEXT           "X",IDC_QUANTITY,145,165,51,8
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
+    CONTROL         "Mises à jour",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Chercher automatiquement des &mises á jour",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,199,108,184,10
-    CONTROL         "Chaque &jour",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,209,120,174,10
-    CONTROL         "Chaque &semaine",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,131,174,10
-    CONTROL         "&Mensuellement",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,142,174,10
-    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,199,160,184,14,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
+    CONTROL         "Chaque &jour",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,214,120,179,10
+    CONTROL         "Chaque &semaine",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,131,179,10
+    CONTROL         "&Mensuellement",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,142,179,10
+    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,204,160,189,14,WS_GROUP
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
@@ -2012,7 +2000,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 383
+        RIGHTMARGIN, 393
         TOPMARGIN, 7
         BOTTOMMARGIN, 206
     END
@@ -2327,11 +2315,11 @@ BEGIN
     IDS_STOREPROPERTIES     "Qualités de «%s»"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété?"
-    IDS_DELETESTORE_CAPTION "Effacez le store «%s»"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_CAPTION "Effacez le store «%s»"
     IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
     IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
     IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
@@ -2444,34 +2432,34 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 390, 214
+IDD_ABOUT DIALOGEX 0, 0, 400, 214
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,275,192,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,333,192,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,285,192,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,343,192,50,14,WS_GROUP
     CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
-    CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,184,15
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
+    CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
     LTEXT           "Name:",IDC_STATIC,7,107,184,8
-    LTEXT           "X",IDC_REGNAME,7,117,184,8
-    LTEXT           "Purchase date:",IDC_STATIC,7,130,115,8
-    LTEXT           "X",IDC_PURCHASEDATE,7,140,115,8
-    LTEXT           "ID:",IDC_STATIC,140,130,51,8
-    LTEXT           "X",IDC_PURCHASEID,140,140,51,8
-    LTEXT           "Product:",IDC_STATIC,7,155,115,8
-    LTEXT           "X",IDC_PRODUCT,7,165,184,9
-    LTEXT           "Quantity:",IDC_QUANTITYTITLE,140,155,51,8
-    LTEXT           "X",IDC_QUANTITY,140,165,51,8
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,108,184,66,WS_GROUP
-    CONTROL         "Updates",IDC_CATEGORY2,"CCategory",WS_GROUP,199,91,184,15
+    LTEXT           "X",IDC_REGNAME,7,117,189,8
+    LTEXT           "Purchase date:",IDC_STATIC,7,130,125,8
+    LTEXT           "X",IDC_PURCHASEDATE,7,140,125,8
+    LTEXT           "ID:",IDC_STATIC,145,130,51,8
+    LTEXT           "X",IDC_PURCHASEID,145,140,51,8
+    LTEXT           "Product:",IDC_STATIC,7,155,125,8
+    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "Quantity:",IDC_QUANTITYTITLE,145,155,51,8
+    LTEXT           "X",IDC_QUANTITY,145,165,51,8
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
+    CONTROL         "Updates",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,199,108,184,10
-    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,209,120,174,10
-    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,131,174,10
-    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,209,142,174,10
-    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,199,160,184,14,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
+    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,214,120,179,10
+    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,131,179,10
+    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,142,179,10
+    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,204,160,189,14,WS_GROUP
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
@@ -2803,7 +2791,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 383
+        RIGHTMARGIN, 393
         TOPMARGIN, 7
         BOTTOMMARGIN, 206
     END
@@ -3115,11 +3103,11 @@ BEGIN
     IDS_STOREPROPERTIES     "Properties of “%s”"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property?"
-    IDS_DELETESTORE_CAPTION "Delete store “%s”"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DELETESTORE_CAPTION "Delete store “%s”"
     IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
     IDS_FORMAT_CAPTION      "You cannot format volume %c:"
     IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."

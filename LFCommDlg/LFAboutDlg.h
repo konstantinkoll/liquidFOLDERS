@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CGdiPlusBitmap.h"
 #include "LFDialog.h"
 #include "LFFont.h"
 
@@ -34,8 +33,8 @@ private:
 	void CheckLicenseKey();
 	void CheckInternetConnection();
 
-	CGdiPlusBitmap* p_Santa;
-	CGdiPlusBitmap* p_Logo;
+	Bitmap* p_Santa;
+	Bitmap* p_Logo;
 	LFFont m_CaptionFont;
 	LFFont m_VersionFont;
 	INT m_CaptionTop;

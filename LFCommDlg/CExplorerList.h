@@ -37,8 +37,8 @@ public:
 	virtual void PreSubclassWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	void AddCategory(INT ID, LPCWSTR Name, LPCWSTR Hint=_T(""), BOOL Collapsible=FALSE);
-	void AddColumn(INT ID, LPCWSTR Name, INT Width=100, BOOL Right=FALSE);
+	void AddCategory(INT ID, LPCWSTR Name, LPCWSTR Hint=L"", BOOL Collapsible=FALSE);
+	void AddColumn(INT ID, LPCWSTR Name=L"", INT Width=100, BOOL Right=FALSE);
 	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
 	void SetItemsPerRow(INT ItemsPerRow, INT ColumnsPerTile=3);
 

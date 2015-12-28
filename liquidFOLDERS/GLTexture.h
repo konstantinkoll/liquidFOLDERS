@@ -45,9 +45,9 @@ class GLTextureGdiPlusBitmap : public GLTextureBitmap
 {
 public:
 	GLTextureGdiPlusBitmap();
-	GLTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture);
+	GLTextureGdiPlusBitmap(Bitmap* pTexture);
 
-	void SetTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture);
+	void SetTextureGdiPlusBitmap(Bitmap* pTexture);
 };
 
 
@@ -58,9 +58,9 @@ class GLTextureCombine : public GLTextureGdiPlusBitmap
 {
 public:
 	GLTextureCombine();
-	GLTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1);
+	GLTextureCombine(Bitmap* pTexture0, Bitmap* pTexture1);
 
-	void SetTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1);
+	void SetTextureCombine(Bitmap* pTexture0, Bitmap* pTexture1);
 };
 
 
@@ -74,5 +74,5 @@ public:
 
 private:
 	static UINT m_nIDLoaded;
-	static IPicture* p_BlueMarble;
+	static IPicture* m_pBlueMarble;
 };

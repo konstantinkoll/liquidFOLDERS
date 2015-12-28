@@ -43,7 +43,6 @@ public:
 protected:
 	void FreeItem();
 
-	CGdiPlusBitmapResource m_Multiple;
 	CString m_strUnused;
 	CString m_strDescription;
 	UINT m_Status;

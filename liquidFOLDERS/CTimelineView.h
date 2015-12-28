@@ -58,7 +58,6 @@ protected:
 private:
 	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* ic, BOOL Themed);
 
-	CImageListTransparent m_AttributeIcons;
 	LFDynArray<ItemCategory, 8, 8> m_Categories;
 	CString m_FilesSingular;
 	CString m_FilesPlural;

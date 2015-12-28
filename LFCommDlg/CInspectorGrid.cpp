@@ -317,7 +317,7 @@ void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
 
 	HDC hdcMem = CreateCompatibleDC(dc);
 	UCHAR level = m_Multiple ? m_ShowRange ? m_RangeSecond.Rating : 0 : p_Data->Rating;
-	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? LFGetApp()->m_RatingBitmaps[level] : LFGetApp()->m_PriorityBitmaps[level]);
+	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? LFGetApp()->hRatingBitmaps[level] : LFGetApp()->hPriorityBitmaps[level]);
 
 	INT w = min(lpRect->right-lpRect->left-6, RatingBitmapWidth);
 	INT h = min(lpRect->bottom-lpRect->top, RatingBitmapHeight);
@@ -652,8 +652,6 @@ void CPropertyDuration::SetEditMask(CMFCMaskedEdit *pEdit) const
 // CInspectorGrid
 //
 
-extern INT GetAttributeIconIndex(UINT Attr);
-
 #define GUTTER         4
 #define PADDING        2
 
@@ -662,6 +660,8 @@ extern INT GetAttributeIconIndex(UINT Attr);
 #define PARTVALUE      2
 #define PARTBUTTON     3
 #define PARTRESET      4
+
+extern INT GetAttributeIconIndex(UINT Attr);
 
 CInspectorGrid::CInspectorGrid()
 	: CPropertyHolder()
@@ -724,7 +724,7 @@ void CInspectorGrid::Init()
 {
 	ResetScrollbars();
 
-	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
+	LFGetApp()->m_LargeAttributeIcons.Load(IDB_ATTRIBUTEICONS_32, 32);
 
 	m_RowHeight = max(LFGetApp()->m_DialogFont.GetFontHeight()+2, 16);
 	m_IconSize = (m_RowHeight>=27) ? 25 : (m_RowHeight>=22) ? 20 : (m_RowHeight>=18) ? 16 : 14;
@@ -1536,7 +1536,7 @@ void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwHoverTime = HOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
@@ -1585,16 +1585,12 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 		if ((m_HotItem!=-1) && !p_Edit)
 			if (!LFGetApp()->IsTooltipVisible())
 			{
-				Property* pProp = &m_Properties.m_Items[m_HotItem];
-				ASSERT(pProp);
-
-				INT Index = GetAttributeIconIndex(m_HotItem);
-				HICON hIcon = (Index!=-1) ? m_AttributeIcons.ExtractIcon(Index) : NULL;
+				const Property* pProp = &m_Properties.m_Items[m_HotItem];
 
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
 
-				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, hIcon);
+				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, LFGetApp()->m_LargeAttributeIcons.ExtractIcon(GetAttributeIconIndex(m_HotItem)));
 			}
 	}
 	else
@@ -1605,7 +1601,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = LFHOVERTIME;
+	tme.dwHoverTime = HOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
 }

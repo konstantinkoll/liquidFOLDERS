@@ -9,6 +9,8 @@
 // CTooltipHeader
 //
 
+CIcons CTooltipHeader::m_SortIndicators;
+
 CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
@@ -54,7 +56,7 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 
 void CTooltipHeader::Init()
 {
-	m_SortIndicators.Create(IDB_SORTINDICATORS, 7, 4);
+	m_SortIndicators.Load(IDB_SORTINDICATORS, CSize(7, 4));
 }
 
 
@@ -113,8 +115,8 @@ void CTooltipHeader::OnPaint()
 		CRect rectParent;
 		GetParent()->GetClientRect(rectParent);
 
-		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"));
-		g.DrawImage(pDivider->m_pBitmap, (rectParent.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetParent()->GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
+		Bitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP);
+		g.DrawImage(pDivider, (rectParent.Width()-(INT)pDivider->GetWidth())/2+GetParent()->GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->GetHeight());
 	}
 	else
 	{
@@ -175,7 +177,7 @@ void CTooltipHeader::OnPaint()
 					if (Themed)
 					{
 						if (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP))
-							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
+							m_SortIndicators.Draw(dc, rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2, (hdi.fmt & HDF_SORTUP) ? 0 : 1);
 
 						rectItem.bottom -= 3;
 						rectItem.top = rectItem.bottom-dc.GetTextExtent(_T("Wy")).cy;
@@ -210,17 +212,19 @@ void CTooltipHeader::OnPaint()
 
 					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
 					{
+						INT Left;
+
 						if ((hdi.fmt & HDF_JUSTIFYMASK)==HDF_RIGHT)
 						{
-							rectItem.left = rectItem.right-dc.GetTextExtent(lpBuffer, (INT)wcslen(lpBuffer)).cx-9;
+							Left = rectItem.right-dc.GetTextExtent(lpBuffer, (INT)wcslen(lpBuffer)).cx-9;
 						}
 						else
 						{
-							rectItem.left += dc.GetTextExtent(lpBuffer, (INT)wcslen(lpBuffer)).cx+2;
+							Left = rectItem.left+dc.GetTextExtent(lpBuffer, (INT)wcslen(lpBuffer)).cx+2;
 						}
 
-						if ((rectItem.left>1) && (rectItem.left+5<rectItem.right))
-							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 2 : 3, CPoint(rectItem.left, rectItem.top+(rectItem.Height()-3)/2), ILD_TRANSPARENT);
+						if ((Left>rectItem.left) && (Left+5<rectItem.right))
+							m_SortIndicators.Draw(dc, Left, rectItem.top+(rectItem.Height()-3)/2, (hdi.fmt & HDF_SORTUP) ? 2 : 3);
 					}
 				}
 			}
@@ -267,7 +271,7 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		ZeroMemory(&tme, sizeof(tme));
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwHoverTime = HOVERTIME;
 		tme.hwndTrack = GetSafeHwnd();
 		TrackMouseEvent(&tme);
 	}
@@ -322,7 +326,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 	ZeroMemory(&tme, sizeof(tme));
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = LFHOVERTIME;
+	tme.dwHoverTime = HOVERTIME;
 	tme.hwndTrack = GetSafeHwnd();
 	TrackMouseEvent(&tme);
 }

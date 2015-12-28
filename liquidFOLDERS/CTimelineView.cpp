@@ -449,7 +449,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			CRect rectSource(rectItem->left+BORDER, rectItem->bottom-BORDER-BottomHeight, rectItem->right-BORDER, 0);
 			rectSource.bottom = rectSource.top+BottomHeight;
 
-			theApp.m_SourceIcons.DrawEx(&dc, (i->Type & LFTypeSourceMask)-2, CPoint(rectSource.left, rectSource.top), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+			theApp.m_SourceIcons.Draw(dc, rectSource.left, rectSource.top, (i->Type & LFTypeSourceMask)-2);
 
 			rectSource.left += m_IconSize.cx+BORDER;
 			dc.DrawText(theApp.m_SourceNames[i->Type & LFTypeSourceMask][0], -1, rectSource, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
@@ -506,9 +506,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 				dc.DrawText(d->pAlbum, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-				INT Index = GetAttributeIconIndex(LFAttrAlbum);
-				if (Index>=0)
-					m_AttributeIcons.DrawEx(&dc, Index, CPoint(rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(FontHeight-16)/2), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+				theApp.m_SmallAttributeIcons.Draw(dc, rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(FontHeight-16)/2, GetAttributeIconIndex(LFAttrAlbum));
 
 				rectAttr.OffsetRect(0, FontHeight);
 			}
@@ -595,8 +593,11 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
+	// Icons
+	theApp.m_SmallAttributeIcons.Load(IDB_ATTRIBUTEICONS_16, 16);
+	theApp.m_SourceIcons.Load(IDB_SOURCEICONS, 16);
 
+	// Core image list
 	INT cx = 16;
 	INT cy = 16;
 

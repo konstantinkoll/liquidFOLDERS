@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "CGdiPlusBitmap.h"
+#include "CIcons.h"
 #include "LFDialog.h"
 #include "LFFont.h"
 
@@ -59,8 +59,8 @@ private:
 	void UpdateDownloadButton();
 	void CheckInternetConnection();
 
-	CGdiPlusBitmap* m_pLogo;
-	CImageListTransparent m_UpdateIcons;
+	Bitmap* p_Logo;
+	CIcons m_UpdateIcons;
 	LFFont m_CaptionFont;
 	LFFont m_VersionFont;
 	INT m_CaptionTop;

@@ -217,7 +217,7 @@ void LFTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 		GraphicsPath pathInner;
 		CreateRoundRectangle(rect, 4, pathInner);
 
-		TextureBrush brush4(LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_TOOLTIP, _T("PNG"))->m_pBitmap);
+		TextureBrush brush4(LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_TOOLTIP));
 		g.FillPath(&brush4, &pathInner);
 
 		rect.InflateRect(1, 1);

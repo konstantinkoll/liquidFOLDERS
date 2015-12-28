@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CImageListTransparent.h"
 #include "LFDialog.h"
 
 
@@ -30,6 +29,5 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
 
-private:
-	CImageListTransparent m_AttributeIcons;
+	CImageList m_AttributeIcons;
 };

@@ -12,8 +12,6 @@
 CIconHeader::CIconHeader()
 	: CInspectorHeader()
 {
-	m_Multiple.Load(IDB_MULTIPLE, _T("PNG"));
-
 	ENSURE(m_strUnused.LoadString(IDS_NOITEMSSELECTED));
 	m_strDescription = m_strUnused;
 	m_Status = IconEmpty;
@@ -41,7 +39,7 @@ void CIconHeader::DrawHeader(CDC& dc, const CRect& rect, BOOL Themed)
 	switch (m_Status)
 	{
 	case IconMultiple:
-		g.DrawImage(m_Multiple.m_pBitmap, cx, cy);
+		g.DrawImage(LFGetApp()->GetCachedResourceImage(IDB_MULTIPLE), cx, cy);
 		break;
 
 	case IconCore:

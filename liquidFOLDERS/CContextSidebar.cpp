@@ -10,6 +10,9 @@
 // CContextSidebar
 //
 
+CIcons CContextSidebar::m_LargeIcons;
+CIcons CContextSidebar::m_SmallIcons;
+
 CContextSidebar::CContextSidebar()
 	: CBackstageSidebar()
 {
@@ -25,7 +28,7 @@ CContextSidebar::~CContextSidebar()
 
 BOOL CContextSidebar::Create(CWnd* pParentWnd, UINT nID)
 {
-	return CBackstageSidebar::Create(pParentWnd, nID, IDB_CONTEXTS_32, IDB_CONTEXTS_16, TRUE);
+	return CBackstageSidebar::Create(pParentWnd, m_LargeIcons, IDB_CONTEXTS_32, m_SmallIcons, IDB_CONTEXTS_16, nID, TRUE);
 }
 
 CString CContextSidebar::AppendTooltip(UINT CmdID)

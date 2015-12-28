@@ -91,15 +91,15 @@ GLTextureGdiPlusBitmap::GLTextureGdiPlusBitmap()
 {
 }
 
-GLTextureGdiPlusBitmap::GLTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture)
+GLTextureGdiPlusBitmap::GLTextureGdiPlusBitmap(Bitmap* pTexture)
 {
 	SetTextureGdiPlusBitmap(pTexture);
 }
 
-void GLTextureGdiPlusBitmap::SetTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture)
+void GLTextureGdiPlusBitmap::SetTextureGdiPlusBitmap(Bitmap* pTexture)
 {
-	HBITMAP hBitmap;
-	pTexture->m_pBitmap->GetHBITMAP(NULL, &hBitmap);
+	HBITMAP hBitmap = NULL;
+	pTexture->GetHBITMAP(NULL, &hBitmap);
 
 	if (hBitmap)
 	{
@@ -109,25 +109,25 @@ void GLTextureGdiPlusBitmap::SetTextureGdiPlusBitmap(CGdiPlusBitmap* pTexture)
 }
 
 
-// GLTextureGdiPlusBitmap
+// GLTextureCombine
 //
 
 GLTextureCombine::GLTextureCombine()
 {
 }
 
-GLTextureCombine::GLTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1)
+GLTextureCombine::GLTextureCombine(Bitmap* pTexture0, Bitmap* pTexture1)
 {
 	SetTextureCombine(pTexture0, pTexture1);
 }
 
-void GLTextureCombine::SetTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitmap* pTexture1)
+void GLTextureCombine::SetTextureCombine(Bitmap* pTexture0, Bitmap* pTexture1)
 {
-	HBITMAP hBitmap0;
-	pTexture0->m_pBitmap->GetHBITMAP(NULL, &hBitmap0);
+	HBITMAP hBitmap0 = NULL;
+	pTexture0->GetHBITMAP(NULL, &hBitmap0);
 
-	HBITMAP hBitmap1;
-	pTexture1->m_pBitmap->GetHBITMAP(NULL, &hBitmap1);
+	HBITMAP hBitmap1 = NULL;
+	pTexture1->GetHBITMAP(NULL, &hBitmap1);
 
 	if (hBitmap1)
 	{
@@ -166,7 +166,7 @@ void GLTextureCombine::SetTextureCombine(CGdiPlusBitmap* pTexture0, CGdiPlusBitm
 //
 
 UINT GLTextureBlueMarble::m_nIDLoaded = 0;
-IPicture* GLTextureBlueMarble::p_BlueMarble = NULL;
+IPicture* GLTextureBlueMarble::m_pBlueMarble = NULL;
 
 GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 {
@@ -174,46 +174,47 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 
 	if (m_nIDLoaded!=nID)
 	{
-		if (m_nIDLoaded)
+		if (m_pBlueMarble)
 		{
-			p_BlueMarble->Release();
-			p_BlueMarble = NULL;
+			m_pBlueMarble->Release();
+			m_pBlueMarble = NULL;
 
-			m_nIDLoaded = 0;
+			m_nIDLoaded = nID;
 		}
 
-		HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(nID), L"JPG");
-		if (!hResource)
-			return;
+		HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), RT_RCDATA);
+		if (hResource)
+		{
+			HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
+			if (hMemory)
+			{
+				LPVOID pResourceData = LockResource(hMemory);
+				if (pResourceData)
+				{
+					DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
+					if (Size)
+					{
+						IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
 
-		HGLOBAL hMemory = LoadResource(NULL, hResource);
-		if (!hMemory)
-			return;
+						OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&m_pBlueMarble);
 
-		LPVOID pResourceData = LockResource(hMemory);
-		if (!pResourceData)
-			return;
+						pStream->Release();
+					}
+				}
 
-		DWORD Size = SizeofResource(NULL, hResource);
-		if (!Size)
-			return;
+				UnlockResource(hMemory);
+			}
+		}
 
-		IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
-		OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&p_BlueMarble);
-
-		pStream->Release();
-
-		UnlockResource(hMemory);
-
-		if (p_BlueMarble)
+		if (m_pBlueMarble)
 			m_nIDLoaded = nID;
 	}
 
-	if (p_BlueMarble)
+	if (m_pBlueMarble)
 	{
-		HBITMAP hBitmap = NULL;
+		HBITMAP hBitmap;
 
-		if (SUCCEEDED(p_BlueMarble->get_Handle((OLE_HANDLE*)&hBitmap)))
+		if (SUCCEEDED(m_pBlueMarble->get_Handle((OLE_HANDLE*)&hBitmap)))
 			SetTextureBitmap(hBitmap);
 	}
 }

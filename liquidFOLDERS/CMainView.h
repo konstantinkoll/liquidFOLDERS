@@ -109,6 +109,8 @@ protected:
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
 	CTaskbar m_wndTaskbar;
 	CHeaderArea m_wndHeaderArea;
 	CFileView* p_wndFileView;

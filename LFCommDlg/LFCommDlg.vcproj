@@ -393,10 +393,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGdiPlusBitmap.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CHeaderArea.cpp"
 				>
 			</File>
@@ -414,10 +410,6 @@
 			</File>
 			<File
 				RelativePath=".\CIcons.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
 			<File
@@ -651,11 +643,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Attributes_16.bmp"
+				RelativePath=".\res\AttributeIcons_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Attributes_32.bmp"
+				RelativePath=".\res\AttributeIcons_32.png"
 				>
 			</File>
 			<File
@@ -724,6 +716,10 @@
 			</File>
 			<File
 				RelativePath=".\res\LocationIndicator_8.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Maximize.ico"
 				>
 			</File>
 			<File
@@ -843,6 +839,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Restore.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Santa.png"
 				>
 			</File>
@@ -859,7 +859,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\SortIndicators.bmp"
+				RelativePath=".\res\SortIndicators.png"
 				>
 			</File>
 			<File
@@ -875,11 +875,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\UpdateIcons_16.bmp"
+				RelativePath=".\res\UpdateIcons_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\UpdateIcons_32.bmp"
+				RelativePath=".\res\UpdateIcons_32.png"
 				>
 			</File>
 			<File
@@ -945,10 +945,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGdiPlusBitmap.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CHeaderArea.h"
 				>
 			</File>
@@ -966,10 +962,6 @@
 			</File>
 			<File
 				RelativePath=".\CIcons.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CImageListTransparent.h"
 				>
 			</File>
 			<File

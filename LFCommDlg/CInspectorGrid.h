@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CImageListTransparent.h"
 #include "LFCore.h"
 
 
@@ -314,5 +313,4 @@ private:
 	void CreateSortArray();
 
 	INT* m_pSortArray;
-	CImageListTransparent m_AttributeIcons;
 };

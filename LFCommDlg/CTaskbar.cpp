@@ -16,18 +16,28 @@
 CTaskbar::CTaskbar()
 	: CFrontstageWnd()
 {
+	p_ButtonIcons = p_TooltipIcons = NULL;
 	m_FirstRight = (UINT)-1;
 	m_BackBufferH = 0;
 	hBackgroundBrush = NULL;
 }
 
-BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID)
+BOOL CTaskbar::Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID)
 {
 	m_IconSize = LFGetApp()->m_DefaultFont.GetFontHeight()>=24 ? 32 : 16;
-	m_ButtonIcons.Load(m_IconSize==32 ? LargeResID : SmallResID, m_IconSize);
 
 	if (m_IconSize<32)
-		m_TooltipIcons.Load(LargeResID, 32);
+	{
+		p_ButtonIcons = &SmallIcons;
+		p_ButtonIcons->Load(SmallResID, m_IconSize);
+	}
+	else
+	{
+		p_ButtonIcons = &LargeIcons;
+	}
+
+	p_TooltipIcons = &LargeIcons;
+	p_TooltipIcons->Load(LargeResID, 32);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
@@ -39,12 +49,9 @@ BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
 	return (BOOL)GetOwner()->SendMessage(WM_COMMAND, wParam, lParam);
 }
 
-UINT CTaskbar::GetPreferredHeight()
+UINT CTaskbar::GetPreferredHeight() const
 {
-	LOGFONT lf;
-	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
-
-	return 4*BORDER+max(m_IconSize-2, abs(lf.lfHeight))+(IsCtrlThemed() ? 4 : 3);
+	return 4*BORDER+max(m_IconSize-2, LFGetApp()->m_DefaultFont.GetFontHeight())+(IsCtrlThemed() ? 4 : 3);
 }
 
 CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL ForceSmall)
@@ -67,8 +74,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	}
 
 	CTaskButton* pTaskButton = new CTaskButton();
-	pTaskButton->Create(this, nID, Caption, Hint, &m_ButtonIcons, m_IconSize<32 ? &m_TooltipIcons : &m_ButtonIcons, m_IconSize,
-		IconID, AddRight | ForceSmall, !ForceIcon && (LFGetApp()->OSVersion>=OS_Seven));
+	pTaskButton->Create(this, nID, Caption, Hint, p_ButtonIcons, p_TooltipIcons, m_IconSize, IconID, AddRight | ForceSmall, !ForceIcon);
 
 	if (AddRight && (m_FirstRight==-1))
 		m_FirstRight = m_Buttons.m_ItemCount;

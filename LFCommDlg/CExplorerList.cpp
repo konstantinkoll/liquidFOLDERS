@@ -483,7 +483,7 @@ void CExplorerList::OnMouseMove(UINT nFlags, CPoint point)
 		ZeroMemory(&tme, sizeof(tme));
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwHoverTime = HOVERTIME;
 		tme.hwndTrack = GetSafeHwnd();
 		TrackMouseEvent(&tme);
 	}
@@ -538,7 +538,7 @@ void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
 	ZeroMemory(&tme, sizeof(tme));
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = LFHOVERTIME;
+	tme.dwHoverTime = HOVERTIME;
 	tme.hwndTrack = GetSafeHwnd();
 	TrackMouseEvent(&tme);
 }

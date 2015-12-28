@@ -4,7 +4,7 @@
 
 #pragma once
 #include "resource.h"
-#include "CGdiPlusBitmap.h"
+#include "CIcons.h"
 #include "LFCore.h"
 #include "LFFont.h"
 #include "LFTooltip.h"
@@ -43,7 +43,7 @@ struct CDS_Wakeup
 
 struct ResourceCacheItem
 {
-	CGdiPlusBitmapResource* pImage;
+	Bitmap* pImage;
 	UINT nID;
 };
 
@@ -75,8 +75,8 @@ public:
 	CImageList m_CoreImageListExtraLarge;
 	CImageList m_CoreImageListHuge;
 	CImageList m_CoreImageListJumbo;
-	HBITMAP m_RatingBitmaps[LFMaxRating+1];
-	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
+	HBITMAP hRatingBitmaps[LFMaxRating+1];
+	HBITMAP hPriorityBitmaps[LFMaxRating+1];
 	LFFont m_DefaultFont;
 	LFFont m_ItalicFont;
 	LFFont m_SmallFont;
@@ -96,7 +96,8 @@ public:
 	CLIPFORMAT CF_HLIQUID;
 	CList<CWnd*> m_pMainFrames;
 	LFUpdateDlg* m_pUpdateNotification;
-	LFTooltip m_wndTooltip;
+	CIcons m_LargeAttributeIcons;
+	CIcons m_SmallAttributeIcons;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;
@@ -122,13 +123,14 @@ public:
 
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
-	void SendMail(CString Subject=_T("")) const;
+	void SendMail(const CString& Subject=_T("")) const;
 	BOOL IsAttributeAllowed(INT Context, INT Attr) const;
 	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0) const;
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T("")) const;
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue) const;
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue) const;
-	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA);
+	Bitmap* GetResourceImage(UINT nID) const;
+	Bitmap* GetCachedResourceImage(UINT nID);
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList);
@@ -150,20 +152,20 @@ public:
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
 
 	afx_msg void OnBackstagePurchase();
+protected:
 	afx_msg void OnBackstageEnterLicenseKey();
 	afx_msg void OnBackstageSupport();
 	afx_msg void OnBackstageAbout();
 	afx_msg void OnUpdateBackstageCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-protected:
+	LFTooltip m_wndTooltip;
 	LFDynArray<ResourceCacheItem, 16, 4> m_ResourceCache;
-	UINT m_NagCounter;
 
 private:
 	ULONG_PTR m_gdiplusToken;
 	HMODULE hModThemes;
-	HMODULE hModAero;
+	HMODULE hModDwm;
 	HMODULE hModShell;
 	HMODULE hModKernel;
 	HANDLE hFontLetterGothic;

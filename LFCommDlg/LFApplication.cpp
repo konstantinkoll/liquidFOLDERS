@@ -9,20 +9,6 @@
 #include <mmsystem.h>
 
 
-// LFApplication
-//
-
-#define RESETNAGCOUNTER     m_NagCounter = 0;
-#define GLOBALREGPATH       _T("SOFTWARE\\liquidFOLDERS\\")
-
-BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
-	ON_COMMAND(IDM_BACKSTAGE_PURCHASE, OnBackstagePurchase)
-	ON_COMMAND(IDM_BACKSTAGE_ENTERLICENSEKEY, OnBackstageEnterLicenseKey)
-	ON_COMMAND(IDM_BACKSTAGE_SUPPORT, OnBackstageSupport)
-	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_PURCHASE, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
-END_MESSAGE_MAP()
-
 void PlayRegSound(CString Identifier)
 {
 	CString strKey;
@@ -42,7 +28,10 @@ void PlayRegSound(CString Identifier)
 }
 
 
-// LFApplication-Erstellung
+// LFApplication
+//
+
+#define GLOBALREGPATH       _T("SOFTWARE\\liquidFOLDERS\\")
 
 LFApplication::LFApplication(GUID& AppID)
 {
@@ -71,7 +60,6 @@ LFApplication::LFApplication(GUID& AppID)
 	p_MessageIDs = LFGetMessageIDs();
 	m_LicenseActivatedMsg = RegisterWindowMessage(_T("liquidFOLDERS.LicenseActivated"));
 	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.NewWindow"));
-	m_NagCounter = 3;
 
 	// Themes
 	hModThemes = LoadLibrary(_T("UXTHEME.DLL"));
@@ -104,17 +92,17 @@ LFApplication::LFApplication(GUID& AppID)
 	}
 
 	// Aero
-	hModAero = LoadLibrary(_T("DWMAPI.DLL"));
-	if (hModAero)
+	hModDwm = LoadLibrary(_T("DWMAPI.DLL"));
+	if (hModDwm)
 	{
-		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModAero, "DwmIsCompositionEnabled");
-		zDwmSetWindowAttribute = (PFNDWMSETWINDOWATTRIBUTE)GetProcAddress(hModAero, "DwmSetWindowAttribute");
+		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModDwm, "DwmIsCompositionEnabled");
+		zDwmSetWindowAttribute = (PFNDWMSETWINDOWATTRIBUTE)GetProcAddress(hModDwm, "DwmSetWindowAttribute");
 
 		m_DwmLibLoaded = (zDwmIsCompositionEnabled && zDwmSetWindowAttribute);
 		if (!m_DwmLibLoaded)
 		{
-			FreeLibrary(hModAero);
-			hModAero = NULL;
+			FreeLibrary(hModDwm);
+			hModDwm = NULL;
 		}
 	}
 	else
@@ -229,8 +217,8 @@ LFApplication::~LFApplication()
 	if (hModThemes)
 		FreeLibrary(hModThemes);
 
-	if (hModAero)
-		FreeLibrary(hModAero);
+	if (hModDwm)
+		FreeLibrary(hModDwm);
 
 	if (hModShell)
 		FreeLibrary(hModShell);
@@ -243,13 +231,11 @@ LFApplication::~LFApplication()
 
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{
-		DeleteObject(m_RatingBitmaps[a]);
-		DeleteObject(m_PriorityBitmaps[a]);
+		DeleteObject(hRatingBitmaps[a]);
+		DeleteObject(hPriorityBitmaps[a]);
 	}
 }
 
-
-// LFApplication-Initialisierung
 
 BOOL LFApplication::InitInstance()
 {
@@ -282,8 +268,8 @@ BOOL LFApplication::InitInstance()
 	// Rating and Priority bitmaps
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{
-		m_RatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
-		m_PriorityBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_PRIORITY0+a));
+		hRatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
+		hPriorityBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_PRIORITY0+a));
 	}
 
 	// Eingebettete Schrift
@@ -338,8 +324,6 @@ BOOL LFApplication::InitInstance()
 	// Registry
 	SetRegistryKey(_T(""));
 
-	RESETNAGCOUNTER;
-
 	// Tooltip
 	m_wndTooltip.Create();
 
@@ -361,8 +345,8 @@ INT LFApplication::ExitInstance()
 	if (hModThemes)
 		FreeLibrary(hModThemes);
 
-	if (hModAero)
-		FreeLibrary(hModAero);
+	if (hModDwm)
+		FreeLibrary(hModDwm);
 
 	return CWinAppEx::ExitInstance();
 }
@@ -391,7 +375,7 @@ void LFApplication::KillFrame(CWnd* pVictim)
 	}
 }
 
-void LFApplication::SendMail(CString Subject) const
+void LFApplication::SendMail(const CString& Subject) const
 {
 	CString URL = _T("mailto:support@liquidfolders.net");
 	if (!Subject.IsEmpty())
@@ -467,49 +451,87 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue) cons
 	return FALSE;
 }
 
-CGdiPlusBitmap* LFApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType)
+Bitmap* LFApplication::GetResourceImage(UINT nID) const
+{
+	Bitmap* pBitmap = NULL;
+
+	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), RT_RCDATA);
+	if (hResource)
+	{
+		HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
+		if (hMemory)
+		{
+			LPVOID pResourceData = LockResource(hMemory);
+			if (pResourceData)
+			{
+				DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
+				if (Size)
+				{
+					IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
+
+					pBitmap = Gdiplus::Bitmap::FromStream(pStream);
+
+					pStream->Release();
+				}
+			}
+
+			UnlockResource(hMemory);
+		}
+	}
+
+	return pBitmap;
+}
+
+Bitmap* LFApplication::GetCachedResourceImage(UINT nID)
 {
 	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
 		if (m_ResourceCache.m_Items[a].nID==nID)
 			return m_ResourceCache.m_Items[a].pImage;
 
-	ResourceCacheItem Item;
-	Item.pImage = new CGdiPlusBitmapResource(nID, pType, AfxGetResourceHandle());
-	Item.nID = nID;
+	Bitmap* pBitmap = GetResourceImage(nID);;
+	if (pBitmap)
+	{
+		ResourceCacheItem Item;
+		Item.pImage = pBitmap;
+		Item.nID = nID;
 
-	m_ResourceCache.AddItem(Item);
+		m_ResourceCache.AddItem(Item);
+	}
 
-	return Item.pImage;
+	return pBitmap;
 }
 
 HICON LFApplication::LoadDialogIcon(UINT nID)
 {
-	return (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, 16, 16, LR_SHARED);
+	return (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED);
 }
 
 HANDLE LFApplication::LoadFontFromResource(UINT nID)
 {
-	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), L"TTF");
-	if (!hResource)
-		return NULL;
+	HANDLE hFont = NULL;
 
-	HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
-	if (!hMemory)
-		return NULL;
+	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), RT_RCDATA);
+	if (hResource)
+	{
+		HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
+		if (hMemory)
+		{
+			LPVOID pResourceData = LockResource(hMemory);
+			if (pResourceData)
+			{
+				DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
+				if (Size)
+				{
+					DWORD nFonts;
+					hFont = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
+				}
+			}
 
-	LPVOID pResourceData = LockResource(hMemory);
-	if (!pResourceData)
-		return NULL;
+			UnlockResource(hMemory);
+		}
+	}
 
-	DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
-	if (!Size)
-		return NULL;
-
-	DWORD nFonts;
-	HANDLE Result = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
-
-	UnlockResource(hMemory);
-	return Result;
+	return hFont;
 }
 
 void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList)
@@ -730,6 +752,14 @@ void LFApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
 	}
 }
 
+
+BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
+	ON_COMMAND(IDM_BACKSTAGE_PURCHASE, OnBackstagePurchase)
+	ON_COMMAND(IDM_BACKSTAGE_ENTERLICENSEKEY, OnBackstageEnterLicenseKey)
+	ON_COMMAND(IDM_BACKSTAGE_SUPPORT, OnBackstageSupport)
+	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_PURCHASE, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
+END_MESSAGE_MAP()
 
 void LFApplication::OnBackstagePurchase()
 {

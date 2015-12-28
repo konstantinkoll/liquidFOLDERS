@@ -18,23 +18,35 @@ HBITMAP hShadow = NULL;
 CBackstageSidebar::CBackstageSidebar()
 	: CFrontstageWnd()
 {
+	p_ButtonIcons = p_TooltipIcons = NULL;
 	m_Width = m_CountWidth = m_IconSize = 0;
 	m_SelectedItem = m_HotItem = -1;
 	m_Hover = m_Keyboard = m_ShowCounts = FALSE;
-	p_Icons = NULL;
 }
 
-BOOL CBackstageSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID, BOOL ShowCounts)
+BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID, BOOL ShowCounts)
 {
+	// Load icons
+	m_IconSize = LFGetApp()->m_DefaultFont.GetFontHeight()>=24 ? 32 : 16;
+
+	if (m_IconSize<32)
+	{
+		p_ButtonIcons = &SmallIcons;
+		p_ButtonIcons->Load(SmallResID, m_IconSize);
+	}
+	else
+	{
+		p_ButtonIcons = &LargeIcons;
+	}
+
+	p_TooltipIcons = &LargeIcons;
+	p_TooltipIcons->Load(LargeResID, 32);
+
 	// Sidebar with numbers?
 	m_ShowCounts = ShowCounts;
 
-	// Load icons
-	if (LargeIconsID)
-		m_LargeIcons.Load(LargeIconsID, 32);
-
-	if (SmallIconsID)
-		m_SmallIcons.Load(SmallIconsID, 16);
+	if (ShowCounts)
+		m_CountWidth = LFGetApp()->m_SmallBoldFont.GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
 
 	// Create
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
@@ -236,7 +248,6 @@ CString CBackstageSidebar::AppendTooltip(UINT /*CmdID*/)
 
 
 BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
-	ON_WM_CREATE()
 	ON_WM_NCHITTEST()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -249,22 +260,6 @@ BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_KEYDOWN()
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
-
-INT CBackstageSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Icons
-	m_IconSize = LFGetApp()->m_DefaultFont.GetFontHeight()>=24 ? 32 : 16;
-	p_Icons = (m_IconSize==32) ? &m_LargeIcons : &m_SmallIcons;
-
-	// Metrik
-	if (m_ShowCounts)
-		m_CountWidth = LFGetApp()->m_SmallBoldFont.GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
-
-	return 0;
-}
 
 LRESULT CBackstageSidebar::OnNcHitTest(CPoint point)
 {
@@ -381,7 +376,7 @@ void CBackstageSidebar::OnPaint()
 				rectItem.DeflateRect(BORDER, BORDER);
 
 				if (m_Items.m_Items[a].IconID!=-1)
-					p_Icons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, m_SelectedItem!=(INT)a);
+					p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && (m_SelectedItem!=(INT)a));
 
 				rectItem.left += m_IconSize+BORDER;
 
@@ -552,7 +547,7 @@ void CBackstageSidebar::OnMouseMove(UINT nFlags, CPoint point)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwHoverTime = HOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
@@ -592,15 +587,14 @@ void CBackstageSidebar::OnMouseHover(UINT nFlags, CPoint point)
 		if (m_HotItem!=-1)
 			if (!LFGetApp()->IsTooltipVisible())
 			{
-				INT Index = m_Items.m_Items[m_HotItem].IconID;
-				HICON hIcon = (Index!=-1) ? m_LargeIcons.ExtractIcon(Index) : NULL;
+				const SidebarItem* pSidebarItem = &m_Items.m_Items[m_HotItem];
 
-				CString Hint = m_Items.m_Items[m_HotItem].Hint;
-				CString Append = AppendTooltip(m_Items.m_Items[m_HotItem].CmdID);
+				CString Hint(pSidebarItem->Hint);
+				CString Append = AppendTooltip(pSidebarItem->CmdID);
 				if (!Hint.IsEmpty() && !Append.IsEmpty())
 					Hint += _T("\n");
 
-				LFGetApp()->ShowTooltip(this, point, m_Items.m_Items[m_HotItem].Caption, Hint+Append, hIcon);
+				LFGetApp()->ShowTooltip(this, point, m_Items.m_Items[m_HotItem].Caption, Hint+Append, p_TooltipIcons->ExtractIcon(pSidebarItem->IconID));
 			}
 	}
 	else
@@ -611,7 +605,7 @@ void CBackstageSidebar::OnMouseHover(UINT nFlags, CPoint point)
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = LFHOVERTIME;
+	tme.dwHoverTime = HOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
 }

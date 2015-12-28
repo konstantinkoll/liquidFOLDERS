@@ -49,6 +49,7 @@ void LFAttributeListDlg::AddAttribute(CExplorerList* pExplorerList, UINT Attr)
 	BOOL Add;
 	BOOL Check;
 	TestAttribute(Attr , Add, Check);
+
 	if (!Add)
 		return;
 
@@ -118,7 +119,8 @@ BOOL LFAttributeListDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
 
-	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
+	LFGetApp()->m_SmallAttributeIcons.Load(IDB_ATTRIBUTEICONS_16, 16);
+	m_AttributeIcons.Attach(LFGetApp()->m_SmallAttributeIcons.ExtractImageList());
 
 	return FALSE;
 }

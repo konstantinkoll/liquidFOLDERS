@@ -851,11 +851,11 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"));
-	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"));
+	Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP);
+	Bitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16);
 
-	INT L = pMap->m_pBitmap->GetWidth();
-	INT H = pMap->m_pBitmap->GetHeight();
+	INT L = pMap->GetWidth();
+	INT H = pMap->GetHeight();
 	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*L)/360.0);
 	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*H)/180.0);
 	INT PosX = -LocX+Width/2;
@@ -870,17 +870,14 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 			PosY = Height-H;
 		}
 
-	if (PosX>1)
-		g.DrawImage(pMap->m_pBitmap, PosX-L, PosY, L, H);
+	ImageAttributes ImgAttr;
+	ImgAttr.SetWrapMode(WrapModeTile);
 
-	g.DrawImage(pMap->m_pBitmap, PosX, PosY, L, H);
+	g.DrawImage(pMap, Rect(0, 0, Width, Height), -PosX, -PosY, Width, Height, UnitPixel, &ImgAttr);
 
-	if (PosX<(INT)Width-L)
-		g.DrawImage(pMap->m_pBitmap, PosX+L, PosY, L, H);
-
-	LocX += PosX-pIndicator->m_pBitmap->GetWidth()/2+1;
-	LocY += PosY-pIndicator->m_pBitmap->GetHeight()/2+1;
-	g.DrawImage(pIndicator->m_pBitmap, LocX, LocY);
+	LocX += PosX-pIndicator->GetWidth()/2+1;
+	LocY += PosY-pIndicator->GetHeight()/2+1;
+	g.DrawImage(pIndicator, LocX, LocY);
 
 	// Pfad erstellen
 	FontFamily fontFamily(_T("Arial"));
@@ -895,7 +892,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	Rect rt;
 	TextPath.GetBounds(&rt);
 
-	INT FntX = LocX+pIndicator->m_pBitmap->GetWidth();
+	INT FntX = LocX+pIndicator->GetWidth();
 	INT FntY = LocY-rt.Y;
 
 	if (FntY<10)

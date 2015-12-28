@@ -18,8 +18,8 @@ public:
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-	BOOL Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID);
-	UINT GetPreferredHeight();
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID);
+	UINT GetPreferredHeight() const;
 	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL ForceSmall=FALSE);
 	void AdjustLayout();
 
@@ -36,8 +36,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CIcons m_ButtonIcons;
-	CIcons m_TooltipIcons;
+	CIcons* p_ButtonIcons;
+	CIcons* p_TooltipIcons;
 	INT m_IconSize;
 	UINT m_FirstRight;
 	LFDynArray<CTaskButton*, 8, 8> m_Buttons;

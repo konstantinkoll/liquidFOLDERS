@@ -639,10 +639,10 @@ void CGridView::OnPaint()
 	if (m_HeaderHeight>0)
 		if (Themed)
 		{
-			CGdiPlusBitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP, _T("PNG"));
+			Bitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP);
 
 			Graphics g(dc);
-			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetScrollPos(SB_HORZ), m_HeaderHeight-(INT)pDivider->m_pBitmap->GetHeight());
+			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+GetScrollPos(SB_HORZ), m_HeaderHeight-(INT)pDivider->GetHeight());
 		}
 		else
 		{

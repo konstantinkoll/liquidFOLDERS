@@ -28,6 +28,8 @@ protected:
 	afx_msg void OnUpdateCounts();
 	DECLARE_MESSAGE_MAP()
 
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
 	CHAR m_StoreID[LFKeySize];
 	LFStatistics* m_pStatistics;
 

@@ -535,7 +535,7 @@ void CBackstageWnd::PrepareBitmaps()
 {
 	if (!hBackgroundTop)
 	{
-		CGdiPlusBitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN, _T("PNG"));
+		Bitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN);
 
 		CDC* pDC = GetDC();
 
@@ -543,16 +543,16 @@ void CBackstageWnd::PrepareBitmaps()
 		dc.CreateCompatibleDC(pDC);
 
 		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->GetWidth(), BACKGROUNDTOP);
 		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		Graphics g(dc);
 
-		TextureBrush brush1(pTexture->m_pBitmap);
-		g.FillRectangle(&brush1, 0, 0, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+		TextureBrush brush1(pTexture);
+		g.FillRectangle(&brush1, 0, 0, pTexture->GetWidth(), BACKGROUNDTOP);
 
 		LinearGradientBrush brush2(Point(0, 0), Point(0, BACKGROUNDTOP), Color(TOPALPHA, 0x00, 0x00, 0x00), Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
-		g.FillRectangle(&brush2, 0, 0, pTexture->m_pBitmap->GetWidth(), BACKGROUNDTOP);
+		g.FillRectangle(&brush2, 0, 0, pTexture->GetWidth(), BACKGROUNDTOP);
 
 		dc.SelectObject(pOldBitmap);
 		ReleaseDC(pDC);
@@ -562,7 +562,7 @@ void CBackstageWnd::PrepareBitmaps()
 
 	if (!hBackgroundBottom)
 	{
-		CGdiPlusBitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN, _T("PNG"));
+		Bitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN);
 
 		CDC* pDC = GetDC();
 
@@ -570,16 +570,16 @@ void CBackstageWnd::PrepareBitmaps()
 		dc.CreateCompatibleDC(pDC);
 
 		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->GetWidth(), pTexture->GetHeight());
 		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		Graphics g(dc);
 
-		TextureBrush brush1(pTexture->m_pBitmap);
-		g.FillRectangle(&brush1, 0, 0, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+		TextureBrush brush1(pTexture);
+		g.FillRectangle(&brush1, 0, 0, pTexture->GetWidth(), pTexture->GetHeight());
 
 		SolidBrush brush2(Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
-		g.FillRectangle(&brush2, 0, 0, pTexture->m_pBitmap->GetWidth(), pTexture->m_pBitmap->GetHeight());
+		g.FillRectangle(&brush2, 0, 0, pTexture->GetWidth(), pTexture->GetHeight());
 
 		dc.SelectObject(pOldBitmap);
 		ReleaseDC(pDC);

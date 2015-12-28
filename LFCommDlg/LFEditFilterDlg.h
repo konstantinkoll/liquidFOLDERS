@@ -57,9 +57,9 @@ protected:
 	LFFilter* p_Filter;
 	LFDynArray<LFFilterCondition, 4, 4> m_Conditions;
 
-	CImageListTransparent m_AttributeIcons;
 	CButton m_wndAllStores;
 	CButton m_wndThisStore;
 	CEdit m_wndSearchterm;
 	CConditionList m_wndConditionList;
+	CImageList m_AttributeIcons;
 };

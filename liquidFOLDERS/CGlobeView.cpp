@@ -1071,7 +1071,7 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Fonts[1].Create(&theApp.m_LargeFont);
 
 	// Icons
-	m_pTextureIcons = new GLTextureCombine(LFGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_RGB, _T("PNG")), LFGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_ALPHA, _T("PNG")));
+	m_pTextureIcons = new GLTextureCombine(LFGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_RGB), LFGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_ALPHA));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
@@ -1194,7 +1194,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwHoverTime = HOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}

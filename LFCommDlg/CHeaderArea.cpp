@@ -190,8 +190,8 @@ void CHeaderArea::OnPaint()
 		{
 			dc.FillSolidRect(rect, 0xFFFFFF);
 
-			CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP, _T("PNG"));
-			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, rect.Height()-(INT)pDivider->m_pBitmap->GetHeight());
+			Bitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP);
+			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2, rect.Height()-(INT)pDivider->GetHeight());
 
 			if (m_Shadow)
 			{

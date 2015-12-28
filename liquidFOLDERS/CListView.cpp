@@ -271,7 +271,7 @@ void CListView::AdjustLayout()
 	}
 
 	// Header
-	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 	m_wndHeader.Invalidate();
 }
 
@@ -502,7 +502,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 				rectIcon.top = rectIcon.bottom-18;
 
 				PrepareBlend();
-				Blend(dc, rectIcon, Rating, theApp.m_RatingBitmaps);
+				Blend(dc, rectIcon, Rating, theApp.hRatingBitmaps);
 			}
 		}
 
@@ -626,7 +626,7 @@ __forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescripto
 		if (Rows[a]==LFAttrRating)
 		{
 			PrepareBlend();
-			Blend(dc, rect, pItemDescriptor->CoreAttributes.Rating, theApp.m_RatingBitmaps);
+			Blend(dc, rect, pItemDescriptor->CoreAttributes.Rating, theApp.hRatingBitmaps);
 			rect.OffsetRect(0, 18);
 		}
 		else
@@ -653,11 +653,11 @@ __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor*
 				PrepareBlend();
 				if (Attr==LFAttrRating)
 				{
-					Blend(dc, rect, Rating, theApp.m_RatingBitmaps);
+					Blend(dc, rect, Rating, theApp.hRatingBitmaps);
 				}
 				else
 				{
-					Blend(dc, rect, Rating, theApp.m_PriorityBitmaps);
+					Blend(dc, rect, Rating, theApp.hPriorityBitmaps);
 				}
 			}
 		}
@@ -699,11 +699,11 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescri
 			PrepareBlend();
 			if (Attr==LFAttrRating)
 			{
-				Blend(dc, rect, pItemDescriptor->CoreAttributes.Rating, theApp.m_RatingBitmaps);
+				Blend(dc, rect, pItemDescriptor->CoreAttributes.Rating, theApp.hRatingBitmaps);
 			}
 			else
 			{
-				Blend(dc, rect, pItemDescriptor->CoreAttributes.Priority, theApp.m_PriorityBitmaps);
+				Blend(dc, rect, pItemDescriptor->CoreAttributes.Priority, theApp.hPriorityBitmaps);
 			}
 		}
 
@@ -851,19 +851,7 @@ void CListView::ScrollWindow(INT dx, INT dy)
 	GetClientRect(rect);
 	rect.top = m_HeaderHeight;
 
-	if (IsCtrlThemed() && (dy!=0))
-	{
-		rect.bottom -= BACKSTAGERADIUS;
-
-		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
-		RedrawWindow(CRect(rect.left, rect.bottom, rect.right, rect.bottom+BACKSTAGERADIUS), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
-	}
-
-	if (IsWindow(m_wndHeader))
+	if (IsWindow(m_wndHeader) && (dx!=0))
 	{
 		CRect rectWindow;
 		GetWindowRect(rectWindow);
@@ -877,12 +865,22 @@ void CListView::ScrollWindow(INT dx, INT dy)
 		wp.x = 13-PADDING;
 		wp.y = 0;
 
-		m_wndHeader.SetRedraw(FALSE);
-		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
-		m_wndHeader.SetRedraw(TRUE);
-		m_wndHeader.Invalidate();
+		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+		m_wndHeader.RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 
 		InvalidateRect(CRect(rect.left, 0, rect.right, m_HeaderHeight));
+	}
+
+	if (IsCtrlThemed() && (dy!=0))
+	{
+		rect.bottom -= BACKSTAGERADIUS;
+
+		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
+		RedrawWindow(CRect(rect.left, rect.bottom, rect.right, rect.bottom+BACKSTAGERADIUS), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	}
+	else
+	{
+		ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
 	}
 }
 

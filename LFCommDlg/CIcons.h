@@ -15,11 +15,11 @@ public:
 
 	void Load(UINT nID, CSize Size);
 	void Load(UINT nID, INT Size=16);
-	void Draw(CDC& dc, INT x, INT y, UINT nImage, BOOL Shadow=FALSE) const;
-	HICON ExtractIcon(UINT nImage) const;
+	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Shadow=FALSE) const;
+	HICON ExtractIcon(INT nImage) const;
+	HIMAGELIST ExtractImageList() const;
 
 protected:
-	void PreMultiplyAlpha(HBITMAP hBitmap);
 	void CreateShadow(HBITMAP hBitmap);
 
 	HBITMAP hBitmap;

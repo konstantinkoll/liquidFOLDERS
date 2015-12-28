@@ -110,6 +110,7 @@ CMainWnd::~CMainWnd()
 
 	if (m_pCookedFiles!=m_pRawFiles)
 		LFFreeSearchResult(m_pCookedFiles);
+
 	LFFreeSearchResult(m_pRawFiles);
 
 	DeleteBreadcrumbs(&m_pBreadcrumbBack);

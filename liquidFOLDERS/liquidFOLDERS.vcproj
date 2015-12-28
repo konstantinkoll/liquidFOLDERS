@@ -664,11 +664,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Contexts_16.bmp"
+				RelativePath=".\res\Contexts_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Contexts_32.bmp"
+				RelativePath=".\res\Contexts_32.png"
 				>
 			</File>
 			<File
@@ -688,15 +688,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\SourceIcons.bmp"
+				RelativePath=".\res\SourceIcons.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Tasks_16.bmp"
+				RelativePath=".\res\Tasks_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Tasks_32.bmp"
+				RelativePath=".\res\Tasks_32.png"
 				>
 			</File>
 			<File

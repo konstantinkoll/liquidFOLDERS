@@ -109,8 +109,8 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	{
 		dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFFFFFF);
 
-		CGdiPlusBitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"));
-		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, Line);
+		Bitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVDOWN);
+		g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2, Line);
 
 		// Child windows
 		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
