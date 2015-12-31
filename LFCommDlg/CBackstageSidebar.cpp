@@ -20,7 +20,7 @@ CBackstageSidebar::CBackstageSidebar()
 {
 	p_ButtonIcons = p_TooltipIcons = NULL;
 	m_Width = m_CountWidth = m_IconSize = 0;
-	m_SelectedItem = m_HotItem = -1;
+	m_SelectedItem = m_HotItem = m_PressedItem = -1;
 	m_Hover = m_Keyboard = m_ShowCounts = FALSE;
 }
 
@@ -183,7 +183,7 @@ INT CBackstageSidebar::GetMinHeight()
 
 void CBackstageSidebar::SetSelection(UINT CmdID)
 {
-	m_SelectedItem = m_HotItem = -1;
+	m_SelectedItem = m_HotItem = m_PressedItem = -1;
 	m_Hover = FALSE;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
@@ -212,14 +212,14 @@ void CBackstageSidebar::InvalidateItem(INT Index)
 		InvalidateRect(&m_Items.m_Items[Index].Rect);
 }
 
-void CBackstageSidebar::SelectItem(INT Index)
+void CBackstageSidebar::PressItem(INT Index)
 {
-	if (Index!=m_SelectedItem)
+	if (Index!=m_PressedItem)
 	{
 		InvalidateItem(m_SelectedItem);
-		InvalidateItem(Index);
-
-		m_SelectedItem = Index;
+		InvalidateItem(m_PressedItem);
+		m_PressedItem = Index;
+		InvalidateItem(m_PressedItem);
 	}
 }
 
@@ -259,6 +259,7 @@ BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
 	ON_WM_CONTEXTMENU()
+	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 LRESULT CBackstageSidebar::OnNcHitTest(CPoint point)
@@ -318,6 +319,8 @@ void CBackstageSidebar::OnPaint()
 		{
 			CRect rectItem(m_Items.m_Items[a].Rect);
 
+			const BOOL Highlight = (m_PressedItem!=-1) ? m_PressedItem==(INT)a : m_SelectedItem==(INT)a;
+
 			// Background
 			if (m_Items.m_Items[a].Selectable)
 			{
@@ -346,7 +349,7 @@ void CBackstageSidebar::OnPaint()
 					}
 				}
 
-				DrawBackstageSelection(dc, g, rectItem, m_SelectedItem==(INT)a, Themed);
+				DrawBackstageSelection(dc, g, rectItem, Highlight, Themed);
 			}
 			else
 			{
@@ -376,7 +379,7 @@ void CBackstageSidebar::OnPaint()
 				rectItem.DeflateRect(BORDER, BORDER);
 
 				if (m_Items.m_Items[a].IconID!=-1)
-					p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && (m_SelectedItem!=(INT)a));
+					p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && !Highlight);
 
 				rectItem.left += m_IconSize+BORDER;
 
@@ -399,7 +402,7 @@ void CBackstageSidebar::OnPaint()
 							m1.Translate(3.5f, 3.5f);
 							path.Transform(&m1);
 
-							if (m_SelectedItem!=(INT)a)
+							if (!Highlight)
 							{
 								SolidBrush brushShadow(Color(0x40, 0x00, 0x00, 0x00));
 								g.FillPath(&brushShadow, &path);
@@ -432,7 +435,7 @@ void CBackstageSidebar::OnPaint()
 					{
 						rectCount.top += 5;
 
-						dc.SetTextColor((m_SelectedItem==(INT)a) ? colSel : colNum);
+						dc.SetTextColor(Highlight ? colSel : colNum);
 					}
 
 					CString tmpStr;
@@ -455,7 +458,7 @@ void CBackstageSidebar::OnPaint()
 					dc.SelectObject(pOldFont);
 				}
 
-				dc.SetTextColor((m_HotItem==(INT)a) || (m_SelectedItem==(INT)a) ? colSel : colTex);
+				dc.SetTextColor((m_HotItem==(INT)a) || Highlight ? colSel : colTex);
 			}
 			else
 			{
@@ -475,7 +478,7 @@ void CBackstageSidebar::OnPaint()
 					rectItem.OffsetRect(0, 1);
 				}
 				else
-					if (Themed && (m_SelectedItem!=(INT)a))
+					if (Themed && !Highlight)
 					{
 						rectItem.OffsetRect(0, -1);
 						COLORREF col = dc.SetTextColor(0x000000);
@@ -557,14 +560,13 @@ void CBackstageSidebar::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (m_HotItem!=Item)
 	{
-		InvalidateItem(m_SelectedItem);
 		InvalidateItem(m_HotItem);
 		m_HotItem = Item;
 		InvalidateItem(m_HotItem);
 	}
 
-	if ((nFlags & MK_LBUTTON) && (Item!=-1))
-		SelectItem(Item);
+	if (nFlags & MK_LBUTTON)
+		PressItem(Item);
 
 	if (nFlags & MK_RBUTTON)
 		SetFocus();
@@ -575,9 +577,13 @@ void CBackstageSidebar::OnMouseLeave()
 	LFGetApp()->HideTooltip();
 	InvalidateItem(m_SelectedItem);
 	InvalidateItem(m_HotItem);
+	InvalidateItem(m_PressedItem);
 
 	m_Hover = FALSE;
 	m_HotItem = -1;
+	
+	if (!m_Keyboard)
+		m_PressedItem = -1;
 }
 
 void CBackstageSidebar::OnMouseHover(UINT nFlags, CPoint point)
@@ -614,9 +620,7 @@ void CBackstageSidebar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
 
-	INT Item = ItemAtPosition(point);
-	if (Item!=-1)
-		SelectItem(Item);
+	PressItem(ItemAtPosition(point));
 }
 
 void CBackstageSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
@@ -624,7 +628,7 @@ void CBackstageSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	INT Item = ItemAtPosition(point);
 	if (Item!=-1)
 	{
-		SelectItem(Item);
+		PressItem(Item);
 
 		GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Item].CmdID);
 	}
@@ -632,7 +636,7 @@ void CBackstageSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	INT Index = m_SelectedItem;
+	INT Index = (m_PressedItem!=-1) ? m_PressedItem : m_SelectedItem;
 
 	switch (nChar)
 	{
@@ -647,8 +651,9 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
 			if (m_Items.m_Items[a].Selectable)
 			{
-				SelectItem(a);
+				PressItem(a);
 				m_Keyboard = TRUE;
+
 				break;
 			}
 
@@ -658,8 +663,9 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
 			if (m_Items.m_Items[a].Selectable)
 			{
-				SelectItem(a);
+				PressItem(a);
 				m_Keyboard = TRUE;
+
 				break;
 			}
 
@@ -672,8 +678,9 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				Index = m_Items.m_ItemCount-1;
 			if (m_Items.m_Items[Index].Selectable)
 			{
-				SelectItem(Index);
+				PressItem(Index);
 				m_Keyboard = TRUE;
+
 				break;
 			}
 		}
@@ -688,8 +695,9 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 			if (m_Items.m_Items[Index].Selectable)
 			{
-				SelectItem(Index);
+				PressItem(Index);
 				m_Keyboard = TRUE;
+
 				break;
 			}
 		}
@@ -702,4 +710,13 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CBackstageSidebar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
 {
+}
+
+void CBackstageSidebar::OnKillFocus(CWnd* /*pNewWnd*/)
+{
+	if (m_Keyboard)
+	{
+		PressItem(-1);
+		m_Keyboard = FALSE;
+	}
 }

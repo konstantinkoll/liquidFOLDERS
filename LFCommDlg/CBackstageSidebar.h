@@ -47,7 +47,7 @@ protected:
 	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color=(COLORREF)-1);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT Index);
-	void SelectItem(INT Index);
+	void PressItem(INT Index);
 
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -60,6 +60,7 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
 
 	CIcons* p_ButtonIcons;
@@ -69,6 +70,7 @@ protected:
 	INT m_Width;
 	INT m_SelectedItem;
 	INT m_HotItem;
+	INT m_PressedItem;
 	INT m_CountWidth;
 	BOOL m_Hover;
 	BOOL m_Keyboard;

@@ -1498,26 +1498,19 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 				SetFocusItem(Index, nFlags & MK_SHIFT);
 			}
 	}
-	else
-	{
-		if (GetFocus()!=this)
-			SetFocus();
-	}
+
+	if (GetFocus()!=this)
+		SetFocus();
 }
 
 void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
-	if (Index!=-1)
-	{
-		if (GetFocus()!=this)
-			SetFocus();
-	}
-	else
-	{
-		if (!(nFlags & MK_CONTROL) || (!m_AllowMultiSelect))
+	if (!(nFlags & MK_CONTROL) || (!m_AllowMultiSelect))
+		if (ItemAtPosition(point)==-1)
 			OnSelectNone();
-	}
+
+	if (GetFocus()!=this)
+		SetFocus();
 
 	m_BeginDragDrop = FALSE;
 }
