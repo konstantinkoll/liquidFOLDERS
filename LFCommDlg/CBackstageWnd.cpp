@@ -879,18 +879,6 @@ HBRUSH CBackstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 void CBackstageWnd::OnWindowPosChanging(WINDOWPOS* lpwndpos)
 {
-	CRect rect;
-	if (SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0))
-	{
-		CPoint pt;
-		if (GetCursorPos(&pt))
-		{
-			if (pt.y<rect.top+20)
-			{
-			}
-		}
-	}
-
 	// Windows who are above the upper screen edge minus default caption bar height get repositioned,
 	// so do not allow this in the first place (Windows XP)
 	if (lpwndpos->y<0)
