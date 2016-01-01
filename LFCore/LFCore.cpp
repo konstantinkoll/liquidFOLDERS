@@ -192,9 +192,6 @@ void LoadStringEnglish(UINT ID, WCHAR* lpBuffer, INT cchBufferMax)
 			Ptr += lpStr[Ptr]+1;
 			nStr++;
 		}
-
-		UnlockResource(lpStr);
-		FreeResource(hGlobal);
 	}
 }
 

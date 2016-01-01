@@ -655,7 +655,7 @@ void CTimelineView::OnPaint()
 
 		CString tmpStr((LPCSTR)IDS_NOTHINGTODISPLAY);
 
-		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE));
+		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
 		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 	}
 	else
@@ -674,6 +674,7 @@ void CTimelineView::OnPaint()
 		{
 			CRect rect(m_Categories.m_Items[a].Rect);
 			rect.OffsetRect(0, -m_VScrollPos);
+
 			if (IntersectRect(&rectIntersect, rect, rectUpdate))
 				DrawCategory(dc, g, rect, &m_Categories.m_Items[a], Themed);
 		}

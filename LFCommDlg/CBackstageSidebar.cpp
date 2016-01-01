@@ -98,7 +98,7 @@ void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR
 				*(pDst++) = (WCHAR)towupper(*(Caption++));
 		}
 
-		if (Hint)
+	if (Hint)
 		wcscpy_s(Item.Hint, 256, Hint);
 
 	// Metrik
@@ -366,8 +366,8 @@ void CBackstageSidebar::OnPaint()
 				}
 				else
 				{
-					dc.FillSolidRect(rectItem.left, rectItem.top, rectItem.Width(), 1, GetSysColor(COLOR_WINDOWTEXT));
-					dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, GetSysColor(COLOR_WINDOWTEXT));
+					dc.FillSolidRect(rectItem.left, rectItem.top, rectItem.Width(), 1, 0x000000);
+					dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, 0x000000);
 				}
 			}
 

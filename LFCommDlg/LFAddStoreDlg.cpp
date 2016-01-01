@@ -88,19 +88,8 @@ void LFAddStoreDlg::CheckInternetConnection()
 		GetDlgItem(nCtlID)->ShowWindow(Connected ? SW_SHOW : SW_HIDE);
 }
 
-
-BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
-	ON_WM_DESTROY()
-	ON_WM_TIMER()
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
-	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
-	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
-END_MESSAGE_MAP()
-
-BOOL LFAddStoreDlg::OnInitDialog()
+BOOL LFAddStoreDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	// Categories
 	m_wndCategory[0].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryLocal].Caption);
 	m_wndCategory[1].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryRemote].Caption);
@@ -112,8 +101,17 @@ BOOL LFAddStoreDlg::OnInitDialog()
 	// Status
 	OnUpdateStores(NULL, NULL);
 
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
+	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
+	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
+END_MESSAGE_MAP()
 
 void LFAddStoreDlg::OnDestroy()
 {

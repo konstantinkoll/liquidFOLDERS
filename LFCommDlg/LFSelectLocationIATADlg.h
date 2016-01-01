@@ -17,17 +17,17 @@ class LFSelectLocationIATADlg : public LFDialog
 public:
 	LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd=NULL, const CHAR* pAirport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	LFAirport* p_Airport;
 	BOOL m_OverwriteName;
 	BOOL m_OverwriteGPS;
 
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	void Sort();
 	void LoadCountry(UINT Country);
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnSelectCountry();
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);

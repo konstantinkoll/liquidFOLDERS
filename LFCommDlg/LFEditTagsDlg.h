@@ -14,12 +14,12 @@ class LFEditTagsDlg : public CDialog
 public:
 	LFEditTagsDlg(CString Tags, CWnd* pParentWnd=NULL, CHAR* StoreID=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	CString m_Tags;
 
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL OnInitDialog();
+
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnAddTags();

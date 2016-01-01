@@ -21,6 +21,13 @@ CBackstageShadow::CBackstageShadow()
 	ZeroMemory(&m_wndTopLeft, sizeof(m_wndTopLeft));
 }
 
+CBackstageShadow::~CBackstageShadow()
+{
+	for (UINT a=0; a<4; a++)
+		if (IsWindow(m_wndShadow[a]))
+			m_wndShadow[a].DestroyWindow();
+}
+
 BOOL CBackstageShadow::Create()
 {
 	CString className = AfxRegisterWndClass(0);
@@ -28,7 +35,8 @@ BOOL CBackstageShadow::Create()
 	BOOL Result = TRUE;
 
 	for (UINT a=0; a<4; a++)
-		m_wndShadow[a].CreateEx(WS_EX_NOACTIVATE | WS_EX_LAYERED | WS_EX_TRANSPARENT, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
+		if (!m_wndShadow[a].CreateEx(WS_EX_NOACTIVATE | WS_EX_LAYERED | WS_EX_TRANSPARENT, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL))
+			Result = FALSE;
 
 	return Result;
 }
@@ -42,12 +50,11 @@ __forceinline void CBackstageShadow::Update(UINT nID, CDC& dc, POINT ptSrc, SIZE
 	CPoint ptDst(ptSrc.x+rectWindow.left, ptSrc.y+rectWindow.top);
 	m_wndShadow[nID].UpdateLayeredWindow(&dc, &ptDst, &szWindow, &dc, &ptSrc, 0x000000, &BF, ULW_ALPHA);
 
-	m_wndShadow[nID].SetWindowPos(pBackstageWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_SHOWWINDOW);
+	m_wndShadow[nID].SetWindowPos(pBackstageWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 }
 
 void CBackstageShadow::Update(CWnd* pBackstageWnd, CRect rectWindow)
 {
-	ASSERT(IsWindow(m_hWnd));
 	ASSERT(pBackstageWnd);
 
 	rectWindow.InflateRect(SIDEWIDTH, SIDEWIDTH);
@@ -107,13 +114,12 @@ void CBackstageShadow::Update(CWnd* pBackstageWnd, CRect rectWindow)
 	{
 		// Move behind window
 		for (UINT a=0; a<4; a++)
-			m_wndShadow[a].SetWindowPos(pBackstageWnd, rectWindow.left+m_wndTopLeft[a].x, rectWindow.top+m_wndTopLeft[a].y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER | (Visible ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
+			m_wndShadow[a].SetWindowPos(pBackstageWnd, rectWindow.left+m_wndTopLeft[a].x, rectWindow.top+m_wndTopLeft[a].y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | (Visible ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 	}
 }
 
 void CBackstageShadow::Update(CWnd* pBackstageWnd)
 {
-	ASSERT(IsWindow(m_hWnd));
 	ASSERT(pBackstageWnd);
 
 	CRect rectWindow;

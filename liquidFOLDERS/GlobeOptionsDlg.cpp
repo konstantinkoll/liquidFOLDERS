@@ -38,15 +38,8 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 		theApp.m_nTextureSize = m_wndTextureSize.GetCurSel();
 }
 
-
-BEGIN_MESSAGE_MAP(GlobeOptionsDlg, LFDialog)
-	ON_BN_CLICKED(IDC_VIEWPORT, OnViewport)
-END_MESSAGE_MAP()
-
-BOOL GlobeOptionsDlg::OnInitDialog()
+BOOL GlobeOptionsDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	// Texturgröße
 	CString tmpStr((LPCSTR)IDS_AUTOMATIC);
 	m_wndTextureSize.AddString(tmpStr);
@@ -66,8 +59,13 @@ BOOL GlobeOptionsDlg::OnInitDialog()
 	// Fadenkreuz
 	OnViewport();
 
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(GlobeOptionsDlg, LFDialog)
+	ON_BN_CLICKED(IDC_VIEWPORT, OnViewport)
+END_MESSAGE_MAP()
 
 void GlobeOptionsDlg::OnViewport()
 {

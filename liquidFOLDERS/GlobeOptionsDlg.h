@@ -14,10 +14,10 @@ class GlobeOptionsDlg : public LFDialog
 public:
 	GlobeOptionsDlg(LFViewParameters* pViewParameters, UINT Context, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnViewport();
 	DECLARE_MESSAGE_MAP()
 

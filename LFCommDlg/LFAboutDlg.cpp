@@ -26,7 +26,7 @@
 #define COMPILE_DAY        ((__DATE__[4]==' ' ? 0 : __DATE__[4]-'0')*10+(__DATE__[5]-'0'))
 
 LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
-	: LFDialog(IDD_ABOUT, pParentWnd)
+	: LFDialog(IDD_ABOUT, pParentWnd, TRUE)
 {
 	m_CaptionTop = m_IconTop = 0;
 
@@ -83,22 +83,23 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
+void LFAboutDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 {
-	LFDialog::OnEraseBkgnd(dc, g, rect);
+	LFDialog::PaintOnBackground(dc, g, rectLayout);
 
-	g.DrawImage(p_Logo, p_Santa ? 39 : 9, m_IconTop);
+	// Icon
+	g.DrawImage(p_Logo, rectLayout.left+(p_Santa ? 39 : 9), rectLayout.top+m_IconTop);
 	if (p_Santa)
-		g.DrawImage(p_Santa, -7, m_IconTop-8);
+		g.DrawImage(p_Santa, rectLayout.left-7, rectLayout.top+m_IconTop-8);
 
-	CRect rectText(rect);
-	rectText.top = m_CaptionTop;
-	rectText.left = (p_Santa ? 178 : 148)-1;
+	// Caption
+	CRect rectText(rectLayout);
+	rectText.left = rectLayout.left+(p_Santa ? 177 : 147);
+	rectText.top = rectLayout.top+m_CaptionTop;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	dc.SetTextColor(IsCtrlThemed() ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(m_AppName, rectText, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 	dc.SelectObject(pOldFont);
@@ -137,20 +138,8 @@ void LFAboutDlg::CheckInternetConnection()
 	GetDlgItem(IDC_UPDATENOW)->EnableWindow(InternetGetConnectedState(&Flags, 0));
 }
 
-
-BEGIN_MESSAGE_MAP(LFAboutDlg, LFDialog)
-	ON_WM_DESTROY()
-	ON_WM_TIMER()
-	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
-	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
-	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
-	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
-END_MESSAGE_MAP()
-
-BOOL LFAboutDlg::OnInitDialog()
+BOOL LFAboutDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	// Version
 	CRect rectWnd;
 	m_wndVersionInfo.GetWindowRect(rectWnd);
@@ -176,15 +165,18 @@ BOOL LFAboutDlg::OnInitDialog()
 	const INT HeightCaption = 4*LineGap;
 	const INT HeightVersion = 2*LineGap;
 
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
 	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
 	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-LineGap-3*HeightVersion)/2-8;
-	m_IconTop = rectWnd.top+(rectWnd.bottom-124)/2-8;
+	m_CaptionTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-HeightCaption-LineGap-3*HeightVersion)/2-4;
+	m_IconTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-124)/2-4;
 
-	rectWnd.left = p_Santa ? 178 : 148;
-	rectWnd.top = m_CaptionTop+HeightCaption+LineGap;
+	rectWnd.left = rectLayout.left+(p_Santa ? 178 : 148);
+	rectWnd.top = rectLayout.top+m_CaptionTop+HeightCaption+LineGap;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Lizenz
@@ -196,6 +188,16 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	return FALSE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFAboutDlg, LFDialog)
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
+	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
+	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
+	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
+END_MESSAGE_MAP()
 
 void LFAboutDlg::OnDestroy()
 {

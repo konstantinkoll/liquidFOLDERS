@@ -55,7 +55,7 @@ void CIconHeader::DrawHeader(CDC& dc, const CRect& rect, BOOL Themed)
 		break;
 	}
 
-	dc.SetTextColor(m_Status==IconEmpty ? Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE) : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(m_Status==IconEmpty ? Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW) : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	CRect rectText(rect);
 	rectText.top += 128+6;

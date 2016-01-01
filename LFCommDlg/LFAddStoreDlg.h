@@ -17,7 +17,8 @@ public:
 	virtual void DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected);
 
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual BOOL InitDialog();
+
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);

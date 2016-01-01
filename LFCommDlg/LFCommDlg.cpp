@@ -181,8 +181,6 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 {
 	ASSERT(Caption);
 
-	dc.SetBkMode(TRANSPARENT);
-
 	rect.DeflateRect(LFCategoryPadding, LFCategoryPadding);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
@@ -215,7 +213,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 	if (Hint)
 		if (Hint[0]!=L'\0')
 		{
-			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE));
+			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
 
 			rect.top += rectLine.Height();
 			dc.SelectObject(&LFGetApp()->m_DefaultFont);
@@ -1174,7 +1172,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			else
 			{
 				LFGetApp()->m_pUpdateNotification = new LFUpdateDlg(LatestVersion, LatestMSN, LatestFeatures);
-				LFGetApp()->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
+				LFGetApp()->m_pUpdateNotification->Create();
 				LFGetApp()->m_pUpdateNotification->ShowWindow(SW_SHOW);
 			}
 	}

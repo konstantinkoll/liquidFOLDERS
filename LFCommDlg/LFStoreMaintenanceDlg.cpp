@@ -24,33 +24,22 @@ LFStoreMaintenanceDlg::~LFStoreMaintenanceDlg()
 		LFFreeMaintenanceList(m_pMaintenanceList);
 }
 
-void LFStoreMaintenanceDlg::AdjustLayout()
+void LFStoreMaintenanceDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	if (!IsWindow(m_wndMaintenanceReport))
-		return;
-
-	CRect rect;
-	GetLayoutRect(rect);
+	LFDialog::AdjustLayout(rectLayout, nFlags);
 
 	UINT ExplorerHeight = 0;
 	if (IsWindow(m_wndHeaderArea))
 	{
 		ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
-		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	m_wndMaintenanceReport.SetWindowPos(NULL, rect.left, rect.top+ExplorerHeight, rect.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndMaintenanceReport.SetWindowPos(NULL, rectLayout.left, rectLayout.top+ExplorerHeight, rectLayout.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 }
 
-
-BEGIN_MESSAGE_MAP(LFStoreMaintenanceDlg, LFDialog)
-	ON_WM_GETMINMAXINFO()
-END_MESSAGE_MAP()
-
-BOOL LFStoreMaintenanceDlg::OnInitDialog()
+BOOL LFStoreMaintenanceDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	CString Caption((LPCSTR)IDS_STOREMAINTENANCE_CAPTION);
 
 	CString Mask;
@@ -66,10 +55,13 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 	m_wndMaintenanceReport.SetMaintenanceList(m_pMaintenanceList);
 	m_wndMaintenanceReport.SetFocus();
 
-	AdjustLayout();
-
 	return FALSE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFStoreMaintenanceDlg, LFDialog)
+	ON_WM_GETMINMAXINFO()
+END_MESSAGE_MAP()
 
 void LFStoreMaintenanceDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {

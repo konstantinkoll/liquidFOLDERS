@@ -12,7 +12,7 @@
 #define TEXTFLAGS     DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS | DT_WORDBREAK
 
 LFMessageBoxDlg::LFMessageBoxDlg(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
-	: LFDialog(IDD_MESSAGEBOX, pParentWnd)
+	: LFDialog(IDD_MESSAGEBOX, pParentWnd, TRUE)
 {
 	ASSERT((Type & (MB_HELP | MB_TASKMODAL | MB_DEFAULT_DESKTOP_ONLY | MB_RIGHT | MB_RTLREADING | MB_SERVICE_NOTIFICATION))==0);
 	ASSERT((Type & MB_TYPEMASK)<=MB_CANCELTRYCONTINUE);
@@ -41,19 +41,22 @@ BOOL LFMessageBoxDlg::PreTranslateMessage(MSG* pMsg)
 	return LFDialog::PreTranslateMessage(pMsg);
 }
 
-void LFMessageBoxDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
+void LFMessageBoxDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 {
-	LFDialog::OnEraseBkgnd(dc, g, rect);
+	LFDialog::PaintOnBackground(dc, g, rectLayout);
 
 	// Icon
 	if (hIcon)
-		DrawIconEx(dc, m_IconPos.x, m_IconPos.y, hIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc, rectLayout.left+m_IconPos.x, rectLayout.top+m_IconPos.y, hIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 
 	// Text
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
-	dc.SetTextColor(0x000000);
-	dc.DrawText(m_Text, m_rectText, TEXTFLAGS);
+	CRect rectText(m_RectText);
+	rectText.OffsetRect(rectLayout.TopLeft());
+
+	dc.SetTextColor(IsCtrlThemed() ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.DrawText(m_Text, rectText, TEXTFLAGS);
 
 	dc.SelectObject(pOldFont);
 }
@@ -84,16 +87,8 @@ __forceinline void LFMessageBoxDlg::SetButton(UINT nResID, HINSTANCE hInstance, 
 	}
 }
 
-
-BEGIN_MESSAGE_MAP(LFMessageBoxDlg, LFDialog)
-	ON_WM_DESTROY()
-	ON_COMMAND_RANGE(IDOK, IDCONTINUE, OnButtonClicked)
-END_MESSAGE_MAP()
-
-BOOL LFMessageBoxDlg::OnInitDialog()
+BOOL LFMessageBoxDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	AddBottomRightControl(IDC_BUTTON1);
 	AddBottomRightControl(IDC_BUTTON2);
 	AddBottomRightControl(IDC_BUTTON3);
@@ -156,47 +151,47 @@ BOOL LFMessageBoxDlg::OnInitDialog()
 	CRect rectScreen;
 	SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
 
-	m_rectText.SetRect(14, 14, 292, 10000);
-	MapDialogRect(m_rectText);
+	m_RectText.SetRect(14, 14, 292, 10000);
+	MapDialogRect(m_RectText);
 
-	CPoint rectBorders(m_rectText.left/2, m_rectText.top);
+	CPoint rectBorders(m_RectText.left/2, m_RectText.top);
 
 	if (hIcon)
 	{
-		m_IconPos = m_rectText.TopLeft();
-		m_rectText.left += m_IconSize+rectBorders.x;
+		m_IconPos = m_RectText.TopLeft();
+		m_RectText.left += m_IconSize+rectBorders.x;
 	}
 
-	if (2*rectBorders.x+m_rectText.right>rectScreen.Width()*5/8)
-		m_rectText.right = rectScreen.Width()*5/8-2*rectBorders.x;
+	if (2*rectBorders.x+m_RectText.right>rectScreen.Width()*5/8)
+		m_RectText.right = rectScreen.Width()*5/8-2*rectBorders.x;
 
 	CDC* pDC = GetDC();
 	CFont* pOldFont = pDC->SelectObject(&LFGetApp()->m_DefaultFont);
-	pDC->DrawText(m_Text, m_rectText, TEXTFLAGS | DT_CALCRECT);
+	pDC->DrawText(m_Text, m_RectText, TEXTFLAGS | DT_CALCRECT);
 	pDC->SelectObject(pOldFont);
 	ReleaseDC(pDC);
 
-	if (rectBorders.y+m_rectText.bottom>rectScreen.Height()*3/4)
-		m_rectText.bottom = rectScreen.Height()*3/4-rectBorders.y;
+	if (2*rectBorders.y+m_RectText.bottom>rectScreen.Height()*3/4)
+		m_RectText.bottom = rectScreen.Height()*3/4-rectBorders.y;
 
 	// Fenstergröße anpassen
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	INT DiffX = max(0, m_rectText.right+2*rectBorders.x-rectClient.Width());
-	INT DiffY = max(0, max(m_IconSize+2*rectBorders.y, m_rectText.bottom+rectBorders.y)-rectLayout.bottom);
+	INT DiffX = max(0, m_RectText.right+2*rectBorders.x-rectLayout.Width());
+	INT DiffY = max(0, max(m_IconSize, m_RectText.Height())+2*rectBorders.y-rectLayout.Height()+(rectClient.Height()-m_BottomDivider));
 
 	CRect rectWindow;
 	GetWindowRect(rectWindow);
-	SetWindowPos(NULL, 0, 0, rectWindow.Width()+DiffX, rectWindow.Height()+DiffY, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+	SetWindowPos(NULL, 0, 0, rectWindow.Width()+DiffX, rectWindow.Height()+DiffY, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
-	if (m_IconSize>m_rectText.Height())
+	if (m_IconSize>m_RectText.Height())
 	{
-		m_rectText.OffsetRect(0, (m_IconSize-m_rectText.Height())/2);
+		m_RectText.OffsetRect(0, (m_IconSize-m_RectText.Height())/2);
 	}
 	else
 	{
-		m_IconPos.y += (m_rectText.Height()-m_IconSize)/2;
+		m_IconPos.y += (m_RectText.Height()-m_IconSize)/2;
 	}
 
 	// Buttons
@@ -220,17 +215,14 @@ BOOL LFMessageBoxDlg::OnInitDialog()
 	if (m_Type & MB_SETFOREGROUND)
 		SetForegroundWindow();
 
-	// Systemmenü
-	if (((m_Type & MB_TYPEMASK)==MB_ABORTRETRYIGNORE) || ((m_Type & MB_TYPEMASK)==MB_YESNO))
-	{
-		CMenu* pMenu = GetSystemMenu(FALSE);
-
-		if (pMenu)
-			pMenu->EnableMenuItem (SC_CLOSE, MF_BYCOMMAND | MF_GRAYED);
-	}
-
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFMessageBoxDlg, LFDialog)
+	ON_WM_DESTROY()
+	ON_COMMAND_RANGE(IDOK, IDCONTINUE, OnButtonClicked)
+END_MESSAGE_MAP()
 
 void LFMessageBoxDlg::OnDestroy()
 {

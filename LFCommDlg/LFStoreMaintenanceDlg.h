@@ -16,10 +16,10 @@ public:
 	LFStoreMaintenanceDlg(LFMaintenanceList* pMaintenanceList, CWnd* pParentWnd=NULL);
 	~LFStoreMaintenanceDlg();
 
-	virtual void AdjustLayout();
-
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	DECLARE_MESSAGE_MAP()
 

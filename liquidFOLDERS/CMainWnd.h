@@ -34,7 +34,6 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
-	virtual void AdjustLayout(CRect rectLayout, UINT nFlags);
 
 	BOOL CreateClipboard();
 	BOOL CreateRoot();
@@ -44,6 +43,9 @@ public:
 	BOOL AddClipItem(LFItemDescriptor* pItemDescriptor);
 
 protected:
+	virtual INT GetCaptionHeight(BOOL IncludeBottomMargin=TRUE) const;
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
+
 	BOOL Create(BOOL IsClipboard);
 	void WriteMetadataTXT(CStdioFile& f) const;
 	void WriteMetadataXML(CStdioFile& f) const;

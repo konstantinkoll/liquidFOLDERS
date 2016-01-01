@@ -16,12 +16,12 @@ class LFCreateStoreDlg : public LFDialog
 public:
 	LFCreateStoreDlg(CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	void UpdateVolumes();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg void OnUpdate();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);

@@ -726,32 +726,27 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 
 __forceinline void CGlobeView::DrawStatusBar(INT Height, COLORREF BarColor, BOOL Themed)
 {
-	WCHAR Copyright[] = L"© NASA's Earth Observatory";
-	INT CopyrightWidth = (INT)m_Fonts[0].GetTextWidth(Copyright);
-	if (m_Width<CopyrightWidth)
+	if (!theApp.m_GlobeShowViewport)
 		return;
 
 	WCHAR Viewpoint[256] = L"";
-	INT ViewpointWidth = -1;
-	if (theApp.m_GlobeShowViewport)
-	{
-		WCHAR Coord[256];
-		LFGeoCoordinates c;
-		c.Latitude = -m_GlobeCurrent.Latitude;
-		c.Longitude = (m_GlobeCurrent.Longitude>180.0) ? 360-m_GlobeCurrent.Longitude : -m_GlobeCurrent.Longitude;
-		LFGeoCoordinatesToString(c, Coord, 256, TRUE);
 
-		swprintf(Viewpoint, 256, m_YouLookAt, Coord);
+	WCHAR Coord[256];
+	LFGeoCoordinates c;
+	c.Latitude = -m_GlobeCurrent.Latitude;
+	c.Longitude = (m_GlobeCurrent.Longitude>180.0) ? 360-m_GlobeCurrent.Longitude : -m_GlobeCurrent.Longitude;
+	LFGeoCoordinatesToString(c, Coord, 256, TRUE);
 
-		ViewpointWidth = (INT)m_Fonts[0].GetTextWidth(Viewpoint);
-		if (m_Width<CopyrightWidth+ViewpointWidth+48)
-			ViewpointWidth = -1;
-	}
+	swprintf(Viewpoint, 256, m_YouLookAt, Coord);
+
+	UINT ViewpointWidth = (INT)m_Fonts[0].GetTextWidth(Viewpoint);
+	if (m_Width<(INT)ViewpointWidth)
+		return;
 
 	// Kante
 	GLfloat BackColor[4];
 	ColorRef2GLColor(BackColor, BarColor);
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.9f);
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.85f);
 	glBegin(GL_LINES);
 	glVertex2i(0, m_Height-Height);
 	glVertex2i(m_Width, m_Height-Height);
@@ -766,11 +761,7 @@ __forceinline void CGlobeView::DrawStatusBar(INT Height, COLORREF BarColor, BOOL
 	ColorRef2GLColor(TextColor, Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
 	glColor4f(TextColor[0], TextColor[1], TextColor[2], 1.0f);
 
-	INT Gutter = (ViewpointWidth>0) ? (m_Width-CopyrightWidth-ViewpointWidth)/3 : (m_Width-CopyrightWidth)/2;
-
-	m_Fonts[0].Render(Copyright, Gutter, m_Height-Height);
-	if (ViewpointWidth>0)
-		m_Fonts[0].Render(Viewpoint, m_Width-ViewpointWidth-Gutter, m_Height-Height);
+	m_Fonts[0].Render(Viewpoint, (m_Width-ViewpointWidth)/2, m_Height-Height);
 }
 
 void CGlobeView::DrawScene(BOOL InternalCall)
@@ -779,6 +770,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	{
 		if (m_LockUpdate)
 			return;
+
 		m_LockUpdate = TRUE;
 	}
 

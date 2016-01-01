@@ -12,7 +12,7 @@
 const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
 
 LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
-	: LFDialog(IDD_PROGRESS, pParentWnd)
+	: LFDialog(IDD_PROGRESS, pParentWnd, TRUE)
 {
 	m_Abort = FALSE;
 	m_pTaskbarList3 = NULL;
@@ -29,17 +29,8 @@ void LFProgressDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESSBAR, m_wndProgress);
 }
 
-
-BEGIN_MESSAGE_MAP(LFProgressDlg, LFDialog)
-	ON_WM_DESTROY()
-	ON_COMMAND(IDCANCEL, OnCancel)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->UpdateProgress, OnUpdateProgress)
-END_MESSAGE_MAP()
-
-BOOL LFProgressDlg::OnInitDialog()
+BOOL LFProgressDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	GetDlgItem(IDC_CAPTION)->SetWindowText(_T(""));
 	GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(_T(""));
 
@@ -54,8 +45,15 @@ BOOL LFProgressDlg::OnInitDialog()
 		CreateThread(NULL, 0, p_ThreadProc, p_Parameters, 0, NULL);
 	}
 
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFProgressDlg, LFDialog)
+	ON_WM_DESTROY()
+	ON_COMMAND(IDCANCEL, OnCancel)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->UpdateProgress, OnUpdateProgress)
+END_MESSAGE_MAP()
 
 void LFProgressDlg::OnDestroy()
 {

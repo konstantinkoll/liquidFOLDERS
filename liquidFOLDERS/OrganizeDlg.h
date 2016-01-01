@@ -14,12 +14,11 @@ class OrganizeDlg : public LFAttributeListDlg
 public:
 	OrganizeDlg(UINT Context, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
+	virtual BOOL InitDialog();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 

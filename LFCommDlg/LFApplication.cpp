@@ -259,12 +259,6 @@ BOOL LFApplication::InitInstance()
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
-	// Dialog classes
-	WNDCLASS wc;
-	GetClassInfo(AfxGetInstanceHandle(), _T("#32770"), &wc);
-	wc.lpszClassName = _T("UpdateDlg");
-	AfxRegisterClass(&wc);
-
 	// Rating and Priority bitmaps
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{
@@ -474,8 +468,6 @@ Bitmap* LFApplication::GetResourceImage(UINT nID) const
 					pStream->Release();
 				}
 			}
-
-			UnlockResource(hMemory);
 		}
 	}
 
@@ -526,8 +518,6 @@ HANDLE LFApplication::LoadFontFromResource(UINT nID)
 					hFont = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
 				}
 			}
-
-			UnlockResource(hMemory);
 		}
 	}
 

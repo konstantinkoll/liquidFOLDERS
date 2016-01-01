@@ -15,7 +15,7 @@ extern INT GetAttributeIconIndex(UINT Attr);
 #define BORDER         10
 
 CMaintenanceReport::CMaintenanceReport()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	p_MaintenanceList = NULL;
 	m_ItemHeight = m_VScrollMax = m_VScrollPos = m_IconSize = 0;
@@ -27,7 +27,7 @@ BOOL CMaintenanceReport::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CMaintenanceReport::PreTranslateMessage(MSG* pMsg)
@@ -50,7 +50,7 @@ BOOL CMaintenanceReport::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CWnd::PreTranslateMessage(pMsg);
+	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
 void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
@@ -152,7 +152,7 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL The
 }
 
 
-BEGIN_MESSAGE_MAP(CMaintenanceReport, CWnd)
+BEGIN_MESSAGE_MAP(CMaintenanceReport, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -167,7 +167,7 @@ END_MESSAGE_MAP()
 
 INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	ResetScrollbars();
@@ -236,13 +236,15 @@ void CMaintenanceReport::OnPaint()
 		dc.SelectObject(pOldFont);
 	}
 
+	DrawWindowEdge(dc, Themed);
+
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
 }
 
 void CMaintenanceReport::OnSize(UINT nType, INT cx, INT cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CFrontstageWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
@@ -303,7 +305,7 @@ void CMaintenanceReport::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 		SetScrollInfo(SB_VERT, &si);
 	}
 
-	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
+	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CMaintenanceReport::OnMouseMove(UINT /*nFlags*/, CPoint point)

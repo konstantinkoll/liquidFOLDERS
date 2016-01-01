@@ -64,14 +64,23 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	return CBackstageWnd::PreTranslateMessage(pMsg);
 }
 
+BOOL CFileDropWnd::GetLayoutRect(LPRECT lpRect) const
+{
+	CBackstageWnd::GetLayoutRect(lpRect);
+
+	return FALSE;
+}
+
 void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 {
+	PaintCaption(pDC, rect);
+
 	CDC dc;
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.bottom);
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Background
@@ -107,9 +116,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 
 	dc.SelectObject(pOldFont);
 
-	const INT CaptionHeight = GetCaptionHeight();
-
-	pDC.BitBlt(0, CaptionHeight, rect.Width(), rect.Height()-CaptionHeight, &dc, 0, CaptionHeight, SRCCOPY);
+	pDC.BitBlt(0, rect.top, rect.Width(), rect.bottom, &dc, 0, rect.top, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
 
 	PaintCaption(pDC, rect);

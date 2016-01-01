@@ -281,7 +281,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
 	rectItem.DeflateRect(EXTRA, 0);
 
 	// Matrix
-	COLORREF clrDay = Themed ? 0xA8A8A8 : GetSysColor(COLOR_3DFACE);
+	COLORREF clrDay = Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW);
 
 	UINT Column = m_Months[Month].SOM;
 	UINT Row = 0;

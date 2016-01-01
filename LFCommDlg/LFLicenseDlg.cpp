@@ -46,20 +46,20 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+BOOL LFLicenseDlg::InitDialog()
+{
+	LFDialog::InitDialog();
+
+	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&LFGetApp()->m_DefaultFont);
+
+	return TRUE;
+}
+
 
 BEGIN_MESSAGE_MAP(LFLicenseDlg, LFDialog)
 	ON_BN_CLICKED(IDC_LOADLICENSE, OnLoadLicense)
 	ON_EN_CHANGE(IDC_LICENSEKEY, OnChange)
 END_MESSAGE_MAP()
-
-BOOL LFLicenseDlg::OnInitDialog()
-{
-	LFDialog::OnInitDialog();
-
-	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&LFGetApp()->m_DefaultFont);
-
-	return FALSE;
-}
 
 void LFLicenseDlg::OnLoadLicense()
 {

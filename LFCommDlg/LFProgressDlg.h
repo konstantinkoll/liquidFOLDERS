@@ -20,10 +20,10 @@ class LFProgressDlg : public LFDialog
 public:
 	LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnDestroy();
 	afx_msg void OnCancel();
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam, LPARAM lParam);

@@ -201,6 +201,10 @@ void CHeaderArea::OnPaint()
 				SolidBrush brush2(Color(0x0C, 0x00, 0x00, 0x00));
 				g.FillRectangle(&brush2, 0, 1, rect.Width(), 1);
 			}
+			else
+			{
+				dc.FillSolidRect(0, 0, rect.Width(), 1, 0xFFFFFF);
+			}
 		}
 		else
 		{

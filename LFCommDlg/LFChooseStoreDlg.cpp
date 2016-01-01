@@ -128,23 +128,20 @@ void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFChooseStoreDlg::AdjustLayout()
+void LFChooseStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	if (!IsWindow(m_wndStoreList))
-		return;
-
-	CRect rect;
-	GetLayoutRect(rect);
+	LFDialog::AdjustLayout(rectLayout, nFlags);
 
 	UINT ExplorerHeight = 0;
 	if (IsWindow(m_wndHeaderArea))
 	{
 		ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
-		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? m_wndStoreList.IsGroupViewEnabled() ? 2 : 15 : 4;
-	m_wndStoreList.SetWindowPos(NULL, rect.left+BorderLeft, rect.top+ExplorerHeight, rect.Width()-BorderLeft, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	const INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? m_wndStoreList.IsGroupViewEnabled() ? 2 : 15 : 4;
+
+	m_wndStoreList.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top+ExplorerHeight, rectLayout.Width()-BorderLeft, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()
@@ -158,29 +155,8 @@ void LFChooseStoreDlg::UpdateOkButton()
 	GetDlgItem(IDOK)->EnableWindow(b);
 }
 
-
-BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
-	ON_WM_DESTROY()
-	ON_WM_GETMINMAXINFO()
-	ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
-	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
-	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_STORELIST, OnRequestTooltipData)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStores)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnUpdateStores)
-	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
-	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
-	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
-	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_SYNCHRONIZE, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
-END_MESSAGE_MAP()
-
-BOOL LFChooseStoreDlg::OnInitDialog()
+BOOL LFChooseStoreDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	CString Hint;
 	if (m_Mounted)
 		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
@@ -202,10 +178,28 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	m_wndStoreList.SetFocus();
 
 	OnUpdateStores(NULL, NULL);
-	AdjustLayout();
 
 	return FALSE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
+	ON_WM_DESTROY()
+	ON_WM_GETMINMAXINFO()
+	ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_STORELIST, OnRequestTooltipData)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnUpdateStores)
+	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
+	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
+	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
+	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
+	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_SYNCHRONIZE, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+END_MESSAGE_MAP()
 
 void LFChooseStoreDlg::OnDestroy()
 {
@@ -218,11 +212,13 @@ void LFChooseStoreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	LFDialog::OnGetMinMaxInfo(lpMMI);
 
-	CRect rect;
-	GetWindowRect(rect);
+	if (IsWindowVisible())
+	{
+		CRect rect;
+		GetWindowRect(rect);
 
-	if (rect.Width())
 		lpMMI->ptMinTrackSize.x = lpMMI->ptMaxTrackSize.x = rect.Width();
+	}
 
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
 }

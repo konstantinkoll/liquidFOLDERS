@@ -101,9 +101,10 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 	CPropertySheet::OnInitDialog();
 
 	// Titel
-	CString title;
-	title.Format(IDS_STOREPROPERTIES, m_Store.StoreName);
-	SetWindowText(title);
+	CString Title;
+	Title.Format(IDS_STOREPROPERTIES, m_Store.StoreName);
+
+	SetWindowText(Title);
 
 	// Button
 	GetDlgItem(IDOK)->EnableWindow(m_StoreValid);

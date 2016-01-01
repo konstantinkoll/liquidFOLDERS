@@ -47,26 +47,27 @@ void LFEditConditionDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 	Check = FALSE;
 }
 
-
-BEGIN_MESSAGE_MAP(LFEditConditionDlg, LFAttributeListDlg)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_COMPAREATTRIBUTE, OnItemChanged)
-	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
-END_MESSAGE_MAP()
-
-BOOL LFEditConditionDlg::OnInitDialog()
+BOOL LFEditConditionDlg::InitDialog()
 {
-	LFAttributeListDlg::OnInitDialog();
+	LFAttributeListDlg::InitDialog();
 
 	// Bedingung
 	m_wndEdit.SetData(&m_Condition.AttrData);
+
 	if (m_StoreID[0]!='\0')
 		m_wndEdit.SetStore(m_StoreID);
 
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.AttrData.Attr);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFEditConditionDlg, LFAttributeListDlg)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_COMPAREATTRIBUTE, OnItemChanged)
+	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
+END_MESSAGE_MAP()
 
 void LFEditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 {

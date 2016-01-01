@@ -41,37 +41,25 @@ void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFBrowseForFolderDlg::AdjustLayout()
+void LFBrowseForFolderDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	if (!IsWindow(m_wndExplorerTree))
-		return;
-
-	CRect rect;
-	GetLayoutRect(rect);
+	LFDialog::AdjustLayout(rectLayout, nFlags);
 
 	UINT ExplorerHeight = 0;
 	if (IsWindow(m_wndHeaderArea))
 	{
 		ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
-		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
 	CRect rectBorders(0, 0, 7, 7);
 	MapDialogRect(&rectBorders);
 
-	m_wndExplorerTree.SetWindowPos(NULL, rect.left+rectBorders.Width(), rect.top+ExplorerHeight, rect.Width()-rectBorders.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndExplorerTree.SetWindowPos(NULL, rectLayout.left+rectBorders.Width(), rectLayout.top+ExplorerHeight, rectLayout.Width()-rectBorders.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 }
 
-
-BEGIN_MESSAGE_MAP(LFBrowseForFolderDlg, LFDialog)
-	ON_WM_GETMINMAXINFO()
-	ON_NOTIFY(TVN_SELCHANGED, IDC_SHELLTREE, OnSelectionChanged)
-END_MESSAGE_MAP()
-
-BOOL LFBrowseForFolderDlg::OnInitDialog()
+BOOL LFBrowseForFolderDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	if ((!m_Caption.IsEmpty()) || (!m_Hint.IsEmpty()))
 	{
 		m_wndHeaderArea.Create(this, IDC_HEADERAREA);
@@ -90,11 +78,16 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 
 	m_wndExplorerTree.SetOnlyFilesystem(TRUE);
 	m_wndExplorerTree.PopulateTree();
-
-	AdjustLayout();
+	m_wndExplorerTree.SetFocus();
 
 	return FALSE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFBrowseForFolderDlg, LFDialog)
+	ON_WM_GETMINMAXINFO()
+	ON_NOTIFY(TVN_SELCHANGED, IDC_SHELLTREE, OnSelectionChanged)
+END_MESSAGE_MAP()
 
 void LFBrowseForFolderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {

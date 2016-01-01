@@ -16,14 +16,14 @@ class LFItemTemplateDlg : public LFDialog
 public:
 	LFItemTemplateDlg(LFItemDescriptor* pItem, const CHAR* pStoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual void AdjustLayout();
-
 	CHAR m_StoreID[LFKeySize];
 	LFItemDescriptor* m_pItem;
 
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 

@@ -33,19 +33,8 @@ void LFSaveFilterDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-
-BEGIN_MESSAGE_MAP(LFSaveFilterDlg, LFDialog)
-	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
-	ON_EN_CHANGE(IDC_FILENAME, OnChange)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-END_MESSAGE_MAP()
-
-BOOL LFSaveFilterDlg::OnInitDialog()
+BOOL LFSaveFilterDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	// Store
 	GetDlgItem(IDC_CHOOSESTORE)->EnableWindow(m_AllowChooseStore);
 	OnStoresChanged(NULL, NULL);
@@ -57,8 +46,17 @@ BOOL LFSaveFilterDlg::OnInitDialog()
 	// OK-Button
 	OnChange();
 
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFSaveFilterDlg, LFDialog)
+	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
+	ON_EN_CHANGE(IDC_FILENAME, OnChange)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+END_MESSAGE_MAP()
 
 void LFSaveFilterDlg::OnChooseStore()
 {
@@ -74,8 +72,8 @@ void LFSaveFilterDlg::OnChange()
 {
 	CString tmpStr;
 	m_wndEdit.GetWindowText(tmpStr);
-	tmpStr.Trim();
 
+	tmpStr.Trim();
 	GetDlgItem(IDOK)->EnableWindow(m_wndStorePanel.IsValidStore() && !tmpStr.IsEmpty());
 }
 

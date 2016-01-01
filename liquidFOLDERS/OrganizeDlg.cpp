@@ -39,14 +39,9 @@ void OrganizeDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 	Check = FALSE;
 }
 
-
-BEGIN_MESSAGE_MAP(OrganizeDlg, LFAttributeListDlg)
-	ON_NOTIFY(NM_DBLCLK, IDC_SORTATTRIBUTE, OnDoubleClick)
-END_MESSAGE_MAP()
-
-BOOL OrganizeDlg::OnInitDialog()
+BOOL OrganizeDlg::InitDialog()
 {
-	LFAttributeListDlg::OnInitDialog();
+	LFAttributeListDlg::InitDialog();
 
 	// Titelleiste
 	CString text;
@@ -74,8 +69,13 @@ BOOL OrganizeDlg::OnInitDialog()
 	if (p_ViewParameters->Mode>LFViewPreview)
 		GetDlgItem(IDC_SORTDIRECTION)->EnableWindow(FALSE);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(OrganizeDlg, LFAttributeListDlg)
+	ON_NOTIFY(NM_DBLCLK, IDC_SORTATTRIBUTE, OnDoubleClick)
+END_MESSAGE_MAP()
 
 void OrganizeDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {

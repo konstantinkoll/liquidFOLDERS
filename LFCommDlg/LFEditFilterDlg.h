@@ -38,12 +38,12 @@ class LFEditFilterDlg : public LFDialog
 public:
 	LFEditFilterDlg(CWnd* pParentWnd=NULL, CHAR* StoreID=NULL, LFFilter* pFilter=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	LFFilter* CreateFilter();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnSave();
 

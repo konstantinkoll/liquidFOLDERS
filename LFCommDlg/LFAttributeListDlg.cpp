@@ -111,16 +111,10 @@ void LFAttributeListDlg::PopulateListCtrl(INT nID, BOOL Check, INT Focus, BOOL S
 	PopulateListCtrl((CExplorerList*)GetDlgItem(nID), Check, Focus, Sort);
 }
 
-
-BEGIN_MESSAGE_MAP(LFAttributeListDlg, LFDialog)
-END_MESSAGE_MAP()
-
-BOOL LFAttributeListDlg::OnInitDialog()
+BOOL LFAttributeListDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	LFGetApp()->m_SmallAttributeIcons.Load(IDB_ATTRIBUTEICONS_16, 16);
 	m_AttributeIcons.Attach(LFGetApp()->m_SmallAttributeIcons.ExtractImageList());
 
-	return FALSE;
+	return TRUE;
 }

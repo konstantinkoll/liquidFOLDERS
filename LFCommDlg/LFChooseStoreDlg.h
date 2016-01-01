@@ -36,15 +36,15 @@ class LFChooseStoreDlg : public LFDialog
 public:
 	LFChooseStoreDlg(CWnd* pParentWnd=NULL, BOOL Mounted=TRUE);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual void AdjustLayout();
-
 	CHAR m_StoreID[LFKeySize];
 
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
+	virtual BOOL InitDialog();
+
 	void UpdateOkButton();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);

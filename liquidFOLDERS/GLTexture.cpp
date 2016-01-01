@@ -201,8 +201,6 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 						pStream->Release();
 					}
 				}
-
-				UnlockResource(hMemory);
 			}
 		}
 

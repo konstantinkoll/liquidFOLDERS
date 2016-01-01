@@ -15,12 +15,12 @@ class LFSelectLocationGPSDlg : public LFDialog
 public:
 	LFSelectLocationGPSDlg(const LFGeoCoordinates& Location, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	LFGeoCoordinates m_Location;
 
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLatitudeChanged();
 	afx_msg void OnLongitudeChanged();

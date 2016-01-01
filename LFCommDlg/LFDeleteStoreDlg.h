@@ -16,8 +16,9 @@ public:
 	LFDeleteStoreDlg(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
 
 protected:
-	afx_msg BOOL OnInitDialog();
-	afx_msg void SetOkButton();
+	virtual BOOL InitDialog();
+
+	afx_msg void OnUpdateOkButton();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

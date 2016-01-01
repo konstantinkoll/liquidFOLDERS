@@ -14,13 +14,11 @@ class LFGotoYearDlg : public LFDialog
 public:
 	LFGotoYearDlg(UINT Year, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	UINT m_Year;
 
 protected:
-	afx_msg BOOL OnInitDialog();
-	DECLARE_MESSAGE_MAP()
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
 
 private:
 	CMFCMaskedEdit m_wndEdit;

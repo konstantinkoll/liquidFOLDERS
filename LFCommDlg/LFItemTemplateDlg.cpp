@@ -114,42 +114,22 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFItemTemplateDlg::AdjustLayout()
+void LFItemTemplateDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	if (!IsWindow(m_wndInspectorGrid))
-		return;
-
-	CRect rect;
-	GetLayoutRect(rect);
+	LFDialog::AdjustLayout(rectLayout, nFlags);
 
 	UINT ExplorerHeight = 0;
 	if (IsWindow(m_wndHeaderArea))
 	{
 		ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
-		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	m_wndInspectorGrid.SetWindowPos(NULL, rect.left+12, rect.top+ExplorerHeight, rect.Width()-12, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+12, rectLayout.top+ExplorerHeight, rectLayout.Width()-12, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 }
 
-
-BEGIN_MESSAGE_MAP(LFItemTemplateDlg, LFDialog)
-	ON_WM_GETMINMAXINFO()
-	ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
-	ON_COMMAND(IDM_ITEMTEMPLATE_TOGGLESORT, OnToggleSort)
-	ON_COMMAND(IDM_ITEMTEMPLATE_RESET, OnReset)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_ITEMTEMPLATE_TOGGLESORT, IDM_ITEMTEMPLATE_RESET, OnUpdateCommands)
-	ON_BN_CLICKED(IDC_SKIP, OnSkip)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-END_MESSAGE_MAP()
-
-BOOL LFItemTemplateDlg::OnInitDialog()
+BOOL LFItemTemplateDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
 
 	if (m_AllowChooseStore)
@@ -172,20 +152,36 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !LFGetApp()->m_Attributes[a].ReadOnly, (!LFGetApp()->m_Attributes[a].ReadOnly) && (a!=LFAttrFileName));
 
-	AdjustLayout();
 	AddBottomRightControl(IDC_SKIP);
 
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFItemTemplateDlg, LFDialog)
+	ON_WM_GETMINMAXINFO()
+	ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
+	ON_COMMAND(IDM_ITEMTEMPLATE_TOGGLESORT, OnToggleSort)
+	ON_COMMAND(IDM_ITEMTEMPLATE_RESET, OnReset)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_ITEMTEMPLATE_TOGGLESORT, IDM_ITEMTEMPLATE_RESET, OnUpdateCommands)
+	ON_BN_CLICKED(IDC_SKIP, OnSkip)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+END_MESSAGE_MAP()
 
 void LFItemTemplateDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	LFDialog::OnGetMinMaxInfo(lpMMI);
 
-	CRect rect;
-	GetWindowRect(rect);
-	if (rect.Width())
+	if (IsWindowVisible())
+	{
+		CRect rect;
+		GetWindowRect(rect);
+
 		lpMMI->ptMinTrackSize.x = lpMMI->ptMaxTrackSize.x = rect.Width();
+	}
 
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
 }

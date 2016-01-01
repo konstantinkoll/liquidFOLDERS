@@ -55,15 +55,8 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-
-BEGIN_MESSAGE_MAP(LFEditTimeDlg, LFDialog)
-	ON_BN_CLICKED(IDC_USETIME, OnUseTime)
-END_MESSAGE_MAP()
-
-BOOL LFEditTimeDlg::OnInitDialog()
+BOOL LFEditTimeDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	SetWindowText(LFGetApp()->m_Attributes[p_Data->Attr].Name);
 
 	// Größe
@@ -76,9 +69,9 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	INT GrowX = rect.Width()-rectCalendar.Width();
 	INT GrowY = rect.Height()-rectCalendar.Height();
 
-#define GrowXY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
-#define GrowX(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
-#define GrowXMoveY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE); }
+#define GrowXY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
+#define GrowX(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
+#define GrowXMoveY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
 
 	GrowXY(this);
 	GrowX(GetDlgItem(IDC_CATEGORY1));
@@ -129,8 +122,13 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_USETIME))->SetCheck(m_UseTime);
 	m_wndTime.EnableWindow(m_UseTime);
 
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFEditTimeDlg, LFDialog)
+	ON_BN_CLICKED(IDC_USETIME, OnUseTime)
+END_MESSAGE_MAP()
 
 void LFEditTimeDlg::OnUseTime()
 {

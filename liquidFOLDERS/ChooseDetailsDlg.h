@@ -15,12 +15,11 @@ class ChooseDetailsDlg : public LFAttributeListDlg
 public:
 	ChooseDetailsDlg(UINT Context, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
+	virtual BOOL InitDialog();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnMoveUp();
 	afx_msg void OnMoveDown();

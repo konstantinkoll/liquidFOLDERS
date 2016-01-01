@@ -16,6 +16,7 @@ public:
 
 protected:
 	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
+	virtual BOOL InitDialog();
 
 	void PrepareListCtrl(CExplorerList* pExplorerList, BOOL Check);
 	void PrepareListCtrl(INT nID, BOOL Check);
@@ -25,9 +26,6 @@ protected:
 	void AddAttribute(UINT nID, UINT Attr);
 	void PopulateListCtrl(CExplorerList* pExplorerList, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
 	void PopulateListCtrl(INT nID, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
-
-	afx_msg BOOL OnInitDialog();
-	DECLARE_MESSAGE_MAP()
 
 	CImageList m_AttributeIcons;
 };

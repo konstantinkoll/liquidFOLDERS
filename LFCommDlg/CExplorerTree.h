@@ -47,6 +47,7 @@ protected:
 	void UpdatePath(LPCWSTR Path1, LPCWSTR Path2);
 
 	afx_msg void OnDestroy();
+	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);

@@ -16,14 +16,13 @@ class LFEditConditionDlg : public LFAttributeListDlg
 public:
 	LFEditConditionDlg(CWnd* pParentWnd=NULL, const CHAR* pStoreID=NULL, LFFilterCondition* pCondition=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	LFFilterCondition m_Condition;
 
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
+	virtual BOOL InitDialog();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnPropertyChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()

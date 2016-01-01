@@ -3,13 +3,14 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 #include "LFCore.h"
 
 
 // CMaintenanceReport
 //
 
-class CMaintenanceReport : public CWnd
+class CMaintenanceReport : public CFrontstageWnd
 {
 public:
 	CMaintenanceReport();

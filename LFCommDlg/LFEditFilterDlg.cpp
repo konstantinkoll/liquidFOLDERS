@@ -129,23 +129,11 @@ LFFilter* LFEditFilterDlg::CreateFilter()
 	return pFilter;
 }
 
-
-BEGIN_MESSAGE_MAP(LFEditFilterDlg, LFDialog)
-	ON_BN_CLICKED(IDM_CONDITIONLIST_ADD, OnAddCondition)
-	ON_BN_CLICKED(IDOK, OnSave)
-	ON_NOTIFY(NM_DBLCLK, IDC_CONDITIONLIST, OnDoubleClick)
-
-	ON_COMMAND(IDM_CONDITION_EDIT, OnEditCondition)
-	ON_COMMAND(IDM_CONDITION_DELETE, OnDeleteCondition)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_CONDITION_EDIT, IDM_CONDITION_DELETE, OnUpdateCommands)
-END_MESSAGE_MAP()
-
-BOOL LFEditFilterDlg::OnInitDialog()
+BOOL LFEditFilterDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	// Store-Namen einsetzen
 	BOOL InStore = FALSE;
+
 	if (m_StoreID[0]!='\0')
 	{
 		LFStoreDescriptor Store;
@@ -196,8 +184,19 @@ BOOL LFEditFilterDlg::OnInitDialog()
 		}
 	}
 
-	return FALSE;
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(LFEditFilterDlg, LFDialog)
+	ON_BN_CLICKED(IDM_CONDITIONLIST_ADD, OnAddCondition)
+	ON_BN_CLICKED(IDOK, OnSave)
+	ON_NOTIFY(NM_DBLCLK, IDC_CONDITIONLIST, OnDoubleClick)
+
+	ON_COMMAND(IDM_CONDITION_EDIT, OnEditCondition)
+	ON_COMMAND(IDM_CONDITION_DELETE, OnDeleteCondition)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_CONDITION_EDIT, IDM_CONDITION_DELETE, OnUpdateCommands)
+END_MESSAGE_MAP()
 
 void LFEditFilterDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {

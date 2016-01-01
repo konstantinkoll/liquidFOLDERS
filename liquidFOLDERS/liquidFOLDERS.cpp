@@ -122,9 +122,12 @@ BOOL CLiquidFoldersApp::InitInstance()
 		LoadViewOptions(a);
 
 	CWnd* pFrame = OpenCommandLine(__argc>1 ? CmdLine : NULL);
-
 	if (pFrame)
+	{
+		pFrame->RedrawWindow(NULL, NULL, RDW_UPDATENOW);
+
 		LFCheckForUpdate();
+	}
 
 	m_AppInitialized = TRUE;
 

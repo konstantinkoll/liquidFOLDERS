@@ -91,18 +91,9 @@ void ChooseDetailsDlg::SwapItems(INT FocusItem, INT NewPos)
 	m_ShowAttributes.SetItemState(NewPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
-
-BEGIN_MESSAGE_MAP(ChooseDetailsDlg, LFAttributeListDlg)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VIEWATTRIBUTES, OnSelectionChange)
-	ON_COMMAND(IDC_MOVEUP, OnMoveUp)
-	ON_COMMAND(IDC_MOVEDOWN, OnMoveDown)
-	ON_COMMAND(IDC_CHECKALL, OnCheckAll)
-	ON_COMMAND(IDC_UNCHECKALL, OnUncheckAll)
-END_MESSAGE_MAP()
-
-BOOL ChooseDetailsDlg::OnInitDialog()
+BOOL ChooseDetailsDlg::InitDialog()
 {
-	LFAttributeListDlg::OnInitDialog();
+	LFAttributeListDlg::InitDialog();
 
 	// Titelleiste
 	CString Text;
@@ -125,8 +116,17 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 
 	FinalizeListCtrl(&m_ShowAttributes, -1, FALSE);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(ChooseDetailsDlg, LFAttributeListDlg)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VIEWATTRIBUTES, OnSelectionChange)
+	ON_COMMAND(IDC_MOVEUP, OnMoveUp)
+	ON_COMMAND(IDC_MOVEDOWN, OnMoveDown)
+	ON_COMMAND(IDC_CHECKALL, OnCheckAll)
+	ON_COMMAND(IDC_UNCHECKALL, OnUncheckAll)
+END_MESSAGE_MAP()
 
 void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 {

@@ -47,21 +47,16 @@ void LFGotoYearDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-
-BEGIN_MESSAGE_MAP(LFGotoYearDlg, LFDialog)
-END_MESSAGE_MAP()
-
-BOOL LFGotoYearDlg::OnInitDialog()
+BOOL LFGotoYearDlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	// Eingabezeile
 	CString tmpStr;
 	tmpStr.Format(_T("%u"), m_Year);
+
 	m_wndEdit.SetWindowText(tmpStr);
 	m_wndEdit.SetLimitText(4);
 	m_wndEdit.SetValidChars(_T("0123456789"));
 	m_wndEdit.SetSel(0, 3);
 
-	return FALSE;
+	return TRUE;
 }

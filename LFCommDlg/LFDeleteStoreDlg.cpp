@@ -11,26 +11,17 @@
 //
 
 LFDeleteStoreDlg::LFDeleteStoreDlg(const CHAR* pStoreID, CWnd* pParentWnd)
-	: LFDialog(IDD_DELETESTORE, pParentWnd, TRUE)
+	: LFDialog(IDD_DELETESTORE, pParentWnd, TRUE, TRUE)
 {
 	ASSERT(pStoreID);
 
 	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 }
 
-
-BEGIN_MESSAGE_MAP(LFDeleteStoreDlg, LFDialog)
-	ON_BN_CLICKED(IDC_KEEP, SetOkButton)
-	ON_BN_CLICKED(IDC_DELETE, SetOkButton)
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
-END_MESSAGE_MAP()
-
-BOOL LFDeleteStoreDlg::OnInitDialog()
+BOOL LFDeleteStoreDlg::InitDialog()
 {
 	// Store prüfen
 	OnStoresChanged(NULL, NULL);
-
-	LFDialog::OnInitDialog();
 
 	// Radiobutton setzen
 	((CButton*)GetDlgItem(IDC_KEEP))->SetCheck(TRUE);
@@ -50,10 +41,17 @@ BOOL LFDeleteStoreDlg::OnInitDialog()
 	Caption.Format(Mask, m_Store.StoreName);
 	SetWindowText(Caption);
 
-	return FALSE;
+	return TRUE;
 }
 
-void LFDeleteStoreDlg::SetOkButton()
+
+BEGIN_MESSAGE_MAP(LFDeleteStoreDlg, LFDialog)
+	ON_BN_CLICKED(IDC_KEEP, OnUpdateOkButton)
+	ON_BN_CLICKED(IDC_DELETE, OnUpdateOkButton)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
+END_MESSAGE_MAP()
+
+void LFDeleteStoreDlg::OnUpdateOkButton()
 {
 	GetDlgItem(IDOK)->EnableWindow(GetCheckedRadioButton(IDC_KEEP, IDC_DELETE)==IDC_DELETE);
 }

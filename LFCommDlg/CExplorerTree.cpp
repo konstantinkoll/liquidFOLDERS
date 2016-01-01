@@ -599,6 +599,7 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_DESTROY()
+	ON_WM_NCHITTEST()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_CONTEXTMENU()
@@ -620,6 +621,21 @@ void CExplorerTree::OnDestroy()
 		VERIFY(SHChangeNotifyDeregister(m_SHChangeNotifyRegister));
 
 	CTreeCtrl::OnDestroy();
+}
+
+LRESULT CExplorerTree::OnNcHitTest(CPoint point)
+{
+	CRect rectWindow;
+	GetAncestor(GA_ROOT)->GetWindowRect(rectWindow);
+
+	if (!rectWindow.PtInRect(point))
+		return HTNOWHERE;
+
+	if ((point.x<rectWindow.left+BACKSTAGEGRIPPER) || (point.x>=rectWindow.right-BACKSTAGEGRIPPER) ||
+		(point.y<rectWindow.top+BACKSTAGEGRIPPER) || (point.y>=rectWindow.bottom-BACKSTAGEGRIPPER))
+		return HTTRANSPARENT;
+
+	return CTreeCtrl::OnNcHitTest(point);
 }
 
 BOOL CExplorerTree::OnEraseBkgnd(CDC* /*pDC*/)

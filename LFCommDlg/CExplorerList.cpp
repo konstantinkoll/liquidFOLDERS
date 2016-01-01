@@ -420,6 +420,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_NCHITTEST()
 	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -446,6 +447,21 @@ void CExplorerList::OnDestroy()
 		LFGetApp()->zCloseThemeData(hThemeButton);
 
 	CListCtrl::OnDestroy();
+}
+
+LRESULT CExplorerList::OnNcHitTest(CPoint point)
+{
+	CRect rectWindow;
+	GetAncestor(GA_ROOT)->GetWindowRect(rectWindow);
+
+	if (!rectWindow.PtInRect(point))
+		return HTNOWHERE;
+
+	if ((point.x<rectWindow.left+BACKSTAGEGRIPPER) || (point.x>=rectWindow.right-BACKSTAGEGRIPPER) ||
+		(point.y<rectWindow.top+BACKSTAGEGRIPPER) || (point.y>=rectWindow.bottom-BACKSTAGEGRIPPER))
+		return HTTRANSPARENT;
+
+	return CListCtrl::OnNcHitTest(point);
 }
 
 LRESULT CExplorerList::OnThemeChanged()

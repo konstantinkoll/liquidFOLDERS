@@ -12,6 +12,7 @@ class CBackstageShadow
 {
 public:
 	CBackstageShadow();
+	~CBackstageShadow();
 
 	BOOL Create();
 	void Update(CWnd* pBackstageWnd, CRect rectWindow);

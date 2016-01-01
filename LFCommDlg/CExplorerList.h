@@ -51,6 +51,7 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();

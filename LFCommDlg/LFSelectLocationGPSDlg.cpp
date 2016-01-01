@@ -60,6 +60,14 @@ void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+BOOL LFSelectLocationGPSDlg::InitDialog()
+{
+	m_wndMap.SetLocation(m_Location);
+	m_wndMap.SetMenu(IDM_SELECTGPS);
+
+	return TRUE;
+}
+
 
 BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, LFDialog)
 	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP, OnUpdateEdit)
@@ -70,16 +78,6 @@ BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, LFDialog)
 	ON_COMMAND(IDM_SELECTGPS_RESET, OnReset)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTGPS_IATA, IDM_SELECTGPS_RESET, OnUpdateCommands)
 END_MESSAGE_MAP()
-
-BOOL LFSelectLocationGPSDlg::OnInitDialog()
-{
-	LFDialog::OnInitDialog();
-
-	m_wndMap.SetLocation(m_Location);
-	m_wndMap.SetMenu(IDM_SELECTGPS);
-
-	return FALSE;
-}
 
 void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {

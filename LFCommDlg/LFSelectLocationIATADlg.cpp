@@ -181,20 +181,8 @@ void LFSelectLocationIATADlg::LoadCountry(UINT Country)
 	m_wndAirportList.SetColumnWidth(1, rect.Width()-m_wndAirportList.GetColumnWidth(0));
 }
 
-
-BEGIN_MESSAGE_MAP(LFSelectLocationIATADlg, LFDialog)
-	ON_CONTROL(CBN_SELCHANGE, IDC_COUNTRY, OnSelectCountry)
-	ON_NOTIFY(NM_DBLCLK, IDC_AIRPORTS, OnDoubleClick)
-	ON_NOTIFY(LVN_GETDISPINFO, IDC_AIRPORTS, OnGetDispInfo)
-	ON_NOTIFY(REQUEST_TEXTCOLOR, IDC_AIRPORTS, OnRequestTextColor)
-	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_AIRPORTS, OnRequestTooltipData)
-	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
-END_MESSAGE_MAP()
-
-BOOL LFSelectLocationIATADlg::OnInitDialog()
+BOOL LFSelectLocationIATADlg::InitDialog()
 {
-	LFDialog::OnInitDialog();
-
 	// Combobox füllen
 	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_COUNTRY);
 
@@ -243,8 +231,18 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 		m_wndAirportList.SetWindowPos(NULL, 0, 0, rectWindow.Width(), rectBottom.bottom-rectWindow.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 
-	return FALSE;
+	return p_Airport!=NULL;
 }
+
+
+BEGIN_MESSAGE_MAP(LFSelectLocationIATADlg, LFDialog)
+	ON_CONTROL(CBN_SELCHANGE, IDC_COUNTRY, OnSelectCountry)
+	ON_NOTIFY(NM_DBLCLK, IDC_AIRPORTS, OnDoubleClick)
+	ON_NOTIFY(LVN_GETDISPINFO, IDC_AIRPORTS, OnGetDispInfo)
+	ON_NOTIFY(REQUEST_TEXTCOLOR, IDC_AIRPORTS, OnRequestTextColor)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_AIRPORTS, OnRequestTooltipData)
+	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
+END_MESSAGE_MAP()
 
 void LFSelectLocationIATADlg::OnSelectCountry()
 {

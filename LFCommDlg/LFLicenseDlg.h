@@ -16,8 +16,8 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnLoadLicense();
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()

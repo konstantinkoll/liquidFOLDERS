@@ -14,10 +14,10 @@ class LFEditTimeDlg : public LFDialog
 public:
 	LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnUseTime();
 	DECLARE_MESSAGE_MAP()
 

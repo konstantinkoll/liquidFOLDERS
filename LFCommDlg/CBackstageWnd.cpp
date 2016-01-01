@@ -28,13 +28,16 @@ BOOL IsBackstageControl(CWnd* pWnd)
 HBRUSH hBackgroundTop = NULL;
 HBRUSH hBackgroundBottom = NULL;
 
-CBackstageWnd::CBackstageWnd()
+CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	: CWnd()
 {
+	m_IsDialog = m_ShowCaption = IsDialog;
+	m_WantsBitmap = WantsBitmap;
+
 	hAccelerator = NULL;
 	m_pSidebarWnd = NULL;
-	m_ShowCaption = m_ShowExpireCaption = m_ShowSidebar = m_SidebarAlwaysVisible = FALSE;
-	m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
+	m_ShowExpireCaption = m_ShowSidebar = m_SidebarAlwaysVisible = FALSE;
+	m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
 	hBackgroundBrush = NULL;
 }
 
@@ -69,8 +72,6 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 		dwStyle | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
 		return FALSE;
 
-	OnCompositionChanged();
-
 	// Placement
 	WINDOWPLACEMENT WindowPlacement;
 	LFGetApp()->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &WindowPlacement, sizeof(WindowPlacement));
@@ -89,11 +90,6 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 			ShowWindow(SW_RESTORE);
 	}
 
-	UpdateRegion();
-
-	if (!(dwStyle & WS_THICKFRAME))
-		AdjustLayout();
-
 	return TRUE;
 }
 
@@ -110,10 +106,15 @@ BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
 		switch (pMsg->wParam)
 		{
 		case VK_TAB:
-			if ((pWnd=GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0))!=NULL)
-				pWnd->SetFocus();
+			if (!m_IsDialog)
+			{
+				if ((pWnd=GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0))!=NULL)
+					pWnd->SetFocus();
 
-			return TRUE;
+				return TRUE;
+			}
+
+			break;
 
 		// Simulate Aero Snap on Windows XP and Vista
 
@@ -207,11 +208,6 @@ void CBackstageWnd::SetSidebar(CBackstageSidebar* pSidebarWnd)
 	m_pSidebarWnd = pSidebarWnd;
 }
 
-INT CBackstageWnd::GetCaptionHeight(BOOL IncludeBottomMargin) const
-{
-	return (m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0;
-}
-
 void CBackstageWnd::GetCaptionButtonMargins(LPSIZE lpSize) const
 {
 	ASSERT(lpSize);
@@ -225,16 +221,20 @@ void CBackstageWnd::GetCaptionButtonMargins(LPSIZE lpSize) const
 		lpSize->cy = BACKSTAGERADIUS+1;
 }
 
+INT CBackstageWnd::GetCaptionHeight(BOOL IncludeBottomMargin) const
+{
+	CSize Size;
+	GetCaptionButtonMargins(&Size);
+
+	return max((m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0, Size.cy);
+}
 
 BOOL CBackstageWnd::GetLayoutRect(LPRECT lpRect) const
 {
 	ASSERT(lpRect);
 
 	GetClientRect(lpRect);
-
-	CSize Size;
-	GetCaptionButtonMargins(&Size);
-	lpRect->top = max(GetCaptionHeight(), Size.cy);
+	lpRect->top = GetCaptionHeight();
 
 	if (m_pSidebarWnd)
 		if (m_ShowSidebar || m_SidebarAlwaysVisible)
@@ -245,10 +245,10 @@ BOOL CBackstageWnd::GetLayoutRect(LPRECT lpRect) const
 				lpRect->right += m_pSidebarWnd->GetPreferredWidth();
 		}
 
-	return FALSE;
+	return TRUE;
 }
 
-void CBackstageWnd::AdjustLayout(CRect /*rectLayout*/, UINT /*nFlags*/)
+void CBackstageWnd::AdjustLayout(const CRect& /*rectLayout*/, UINT /*nFlags*/)
 {
 }
 
@@ -262,14 +262,14 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 
 	if (m_pSidebarWnd)
 	{
-		if ((m_SidebarAlwaysVisible=(m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5))==TRUE)
+		if ((m_SidebarAlwaysVisible=(m_IsDialog || (m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5)))==TRUE)
 			m_ShowSidebar = FALSE;
 
 		GetLayoutRect(rectLayout);
 
 		if (m_ShowSidebar || m_SidebarAlwaysVisible)
 		{
-			m_pSidebarWnd->SetWindowPos(NULL, 0, rectLayout.top, m_pSidebarWnd->GetPreferredWidth(), rectLayout.bottom-rectLayout.top, nFlags | (!m_pSidebarWnd->IsWindowVisible() ? SWP_SHOWWINDOW : 0));
+			m_pSidebarWnd->SetWindowPos(NULL, 0, rectLayout.top, m_pSidebarWnd->GetPreferredWidth(), rectLayout.bottom-rectLayout.top, nFlags | /*(!m_pSidebarWnd->IsWindowVisible() ?*/ SWP_SHOWWINDOW /*: 0*/);
 		}
 		else
 		{
@@ -291,6 +291,10 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 	AdjustLayout(rectLayout, nFlags);
 }
 
+void CBackstageWnd::PaintOnBackground(CDC& /*dc*/, Graphics& /*g*/, const CRect& /*rectLayout*/)
+{
+}
+
 void CBackstageWnd::UpdateBackground()
 {
 	CRect rectClient;
@@ -303,11 +307,9 @@ void CBackstageWnd::UpdateBackground()
 
 		DeleteObject(hBackgroundBrush);
 
-		if (IsCtrlThemed())
+		BOOL Themed = IsCtrlThemed();
+		if (m_WantsBitmap || Themed)
 		{
-			// Background
-			PrepareBitmaps();
-
 			CDC dc;
 			dc.CreateCompatibleDC(NULL);
 			dc.SetBkMode(TRANSPARENT);
@@ -317,85 +319,136 @@ void CBackstageWnd::UpdateBackground()
 
 			Graphics g(dc);
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-			FillRect(dc, CRect(0, 0, m_BackBufferL, BACKGROUNDTOP), hBackgroundTop);
-
-			if (m_BackBufferH>BACKGROUNDTOP)
-				FillRect(dc, CRect(0, BACKGROUNDTOP, m_BackBufferL, m_BackBufferH), hBackgroundBottom);
-
-			// Top border
-			INT Width = 0;
-
-			if (m_ShowSidebar || m_SidebarAlwaysVisible)
-				Width = m_pSidebarWnd->GetPreferredWidth();
-
-			CRect rectLayout;
-			if (GetLayoutRect(rectLayout))
-				Width = m_BackBufferL;
-
-			if (Width)
+			if (Themed)
 			{
-				g.SetPixelOffsetMode(PixelOffsetModeHalf);
+				// Prepare textures
+				PrepareBitmaps();
 
-				LinearGradientBrush brush(Point(0, rectLayout.top-3), Point(0, rectLayout.top), Color(0x00, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
-				g.FillRectangle(&brush, 0, rectLayout.top-2, Width, 2);
-			}
+				// Layout width
+				INT LayoutWidth = 0;
 
-			// Child windows
-			CWnd* pChildWnd = GetWindow(GW_CHILD);
+				if (m_ShowSidebar || m_SidebarAlwaysVisible)
+					LayoutWidth = m_pSidebarWnd->GetPreferredWidth();
 
-			while (pChildWnd)
-			{
-				if (IsBackstageControl(pChildWnd))
+				CRect rectLayout;
+				if (GetLayoutRect(rectLayout))
+					LayoutWidth = m_BackBufferL;
+
+				// Background
+				const INT TextureHeight = /*m_IsDialog ? rectLayout.top :*/ m_BackBufferH;
+
+				FillRect(dc, CRect(0, 0, m_BackBufferL, min(TextureHeight, BACKGROUNDTOP)), hBackgroundTop);
+
+				if (TextureHeight>BACKGROUNDTOP)
+					FillRect(dc, CRect(0, BACKGROUNDTOP, m_BackBufferL, TextureHeight), hBackgroundBottom);
+
+				if (m_IsDialog)
 				{
-					CRect rectBounds;
-					pChildWnd->GetWindowRect(rectBounds);
-					ScreenToClient(rectBounds);
+					dc.FillSolidRect(rectLayout, 0xFFFFFF);
 
-					if (pChildWnd==&m_wndWidgets)
-					{
-						rectBounds.top -= BACKSTAGERADIUS;
-						rectBounds.right += BACKSTAGERADIUS;
-					}
+					Bitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVDOWN);
 
-					DrawBackstageBorder(g, rectBounds);
+					const INT X = (rectLayout.Width()-(INT)pDivider->GetWidth())/2;
+					g.DrawImage(pDivider, rectLayout.left+max(0, X), m_BottomDivider, max(0, -X), 0, min(rectLayout.Width(), (INT)pDivider->GetWidth()), pDivider->GetHeight(), UnitPixel);
 				}
 
-				pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
-			}
+				// Top border
+				if (LayoutWidth)
+				{
+					LinearGradientBrush brush(Point(0, rectLayout.top-3), Point(0, rectLayout.top), Color(0x00, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
+					g.FillRectangle(&brush, 0, rectLayout.top-2, LayoutWidth, 2);
+				}
 
-			// Top reflection
-			GraphicsPath path;
-			Pen pen(Color(0x00, 0x00, 0x00));
+				PaintOnBackground(dc, g, rectLayout);
 
-			for (UINT a=0; a<3; a++)
-			{
-				CreateRoundTop(CRect(0, a, m_BackBufferL, BACKSTAGERADIUS-3+a), BACKSTAGERADIUS-3-a, path);
+				// Child windows
+				CWnd* pChildWnd = GetWindow(GW_CHILD);
 
-				LinearGradientBrush brush(Point(0, a-1), Point(0, BACKSTAGERADIUS+a-2), Color(0x40>>a, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+				while (pChildWnd)
+				{
+					if (IsBackstageControl(pChildWnd))
+					{
+						CRect rectBounds;
+						pChildWnd->GetWindowRect(rectBounds);
+						ScreenToClient(rectBounds);
 
-				pen.SetBrush(&brush);
-				g.DrawPath(&pen, &path);
-			}
+						if (!m_IsDialog || (rectBounds.bottom<rectLayout.top))
+						{
+							if (pChildWnd==&m_wndWidgets)
+							{
+								rectBounds.top -= BACKSTAGERADIUS;
+								rectBounds.right += BACKSTAGERADIUS;
+							}
 
-			// Outline
-			CRect rectOutline(-1, -1, m_BackBufferL+1, m_BackBufferH+1);
-			if (!IsZoomed())
-			{
-				CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
+							DrawBackstageBorder(g, rectBounds);
+						}
+					}
 
-				pen.SetColor(Color(0x00, 0x00, 0x00));
-				g.DrawPath(&pen, &path);
+					pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
+				}
+
+				// Top reflection
+				GraphicsPath path;
+				Pen pen(Color(0x00, 0x00, 0x00));
+
+				for (UINT a=0; a<3; a++)
+				{
+					CreateRoundTop(CRect(0, a, m_BackBufferL, BACKSTAGERADIUS-3+a), BACKSTAGERADIUS-3-a, path);
+
+					LinearGradientBrush brush(Point(0, a-1), Point(0, BACKSTAGERADIUS+a-2), Color(0x40>>a, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+
+					pen.SetBrush(&brush);
+					g.DrawPath(&pen, &path);
+				}
+
+				// Outline
+				CRect rectOutline(-1, -1, m_BackBufferL+1, m_BackBufferH+1);
+				if (!IsZoomed())
+				{
+					CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
+
+					pen.SetColor(Color(0x00, 0x00, 0x00));
+					g.DrawPath(&pen, &path);
+				}
+				else
+				{
+					CreateRoundTop(rectOutline, BACKSTAGERADIUS, path);
+
+					path.AddLine(m_BackBufferL, -1, -1, -1);
+					path.CloseFigure();
+
+					SolidBrush brush(Color(0, 0, 0));
+					g.FillPath(&brush, &path);
+				}
 			}
 			else
 			{
-				CreateRoundTop(rectOutline, BACKSTAGERADIUS, path);
+				CRect rectLayout;
+				GetLayoutRect(rectLayout);
 
-				path.AddLine(m_BackBufferL, -1, -1, -1);
-				path.CloseFigure();
+				if (m_IsDialog)
+				{
+					FillRect(dc, CRect(0, 0, m_BackBufferL, rectLayout.top), (HBRUSH)GetStockObject(DKGRAY_BRUSH));
+					FillRect(dc, CRect(0, rectLayout.top, rectLayout.left, rectLayout.bottom), (HBRUSH)GetStockObject(DKGRAY_BRUSH));
 
-				SolidBrush brush(Color(0, 0, 0));
-				g.FillPath(&brush, &path);
+					if (m_BottomDivider)
+					{
+						dc.FillSolidRect(rectLayout.left, rectLayout.top, rectLayout.Width(), m_BottomDivider-rectLayout.top, GetSysColor(COLOR_WINDOW));
+						dc.FillSolidRect(rectLayout.left, m_BottomDivider, rectLayout.Width(), m_BackBufferH-m_BottomDivider, GetSysColor(COLOR_3DFACE));
+					}
+					else
+					{
+						dc.FillSolidRect(rectLayout, GetSysColor(COLOR_WINDOW));
+					}
+				}
+				else
+				{
+					FillRect(dc, CRect(0, 0, m_BackBufferL, m_BackBufferH), (HBRUSH)GetStockObject(DKGRAY_BRUSH));
+				}
+
+				PaintOnBackground(dc, g, rectLayout);
 			}
 
 			dc.SelectObject(hOldBitmap);
@@ -405,7 +458,7 @@ void CBackstageWnd::UpdateBackground()
 		}
 		else
 		{
-			hBackgroundBrush = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
+			hBackgroundBrush = NULL;
 		}
 	}
 }
@@ -414,7 +467,35 @@ void CBackstageWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 {
 	PaintCaption(pDC, rect);
 
-	FillRect(pDC, rect, hBackgroundBrush);
+	if (m_IsDialog)
+	{
+		if (hBackgroundBrush)
+		{
+			FillRect(pDC, rect, hBackgroundBrush);
+		}
+		else
+		{
+			CRect rectLayout;
+			GetLayoutRect(rectLayout);
+
+			FillRect(pDC, CRect(0, rect.top, m_BackBufferL, rectLayout.top), (HBRUSH)GetStockObject(BLACK_BRUSH));
+			FillRect(pDC, CRect(0, rectLayout.top, rectLayout.left, rectLayout.bottom), (HBRUSH)GetStockObject(DKGRAY_BRUSH));
+
+			if (m_BottomDivider)
+			{
+				pDC.FillSolidRect(rectLayout.left, rectLayout.top, rectLayout.Width(), m_BottomDivider-rectLayout.top, GetSysColor(COLOR_WINDOW));
+				pDC.FillSolidRect(rectLayout.left, m_BottomDivider, rectLayout.Width(), m_BackBufferH-m_BottomDivider, GetSysColor(COLOR_3DFACE));
+			}
+			else
+			{
+				pDC.FillSolidRect(rectLayout, GetSysColor(COLOR_WINDOW));
+			}
+		}
+	}
+	else
+	{
+		FillRect(pDC, rect, hBackgroundBrush ? hBackgroundBrush : (HBRUSH)GetStockObject(DKGRAY_BRUSH));
+	}
 }
 
 void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
@@ -436,7 +517,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		BOOL Themed = IsCtrlThemed();
 
 		// Background
-		FillRect(dc, rectCaption, hBackgroundBrush);
+		FillRect(dc, rectCaption, hBackgroundBrush ? hBackgroundBrush : (HBRUSH)GetStockObject(DKGRAY_BRUSH));
 
 		// Caption
 		CString strCaption;
@@ -455,9 +536,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		CSize Size;
 		GetCaptionButtonMargins(&Size);
 
-		CRect rectText(rectCaption);
-		rectText.left = BACKSTAGERADIUS+2;
-		rectText.right -= Size.cx+BACKSTAGERADIUS;
+		CRect rectText(BACKSTAGERADIUS+2, -1, rect.Width()-Size.cx-BACKSTAGERADIUS, CaptionHeight-1);
 
 		if (Themed)
 		{
@@ -467,7 +546,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 
 		rectText.OffsetRect(0, 1);
 
-		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4040F0 : 0xDACCC4 : m_ShowExpireCaption ? 0x0000FF : GetSysColor(COLOR_3DFACE));
+		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4040F0 : IsWindowEnabled() ? 0xDACCC4 : 0x998981 : m_ShowExpireCaption ? 0x0000FF : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
 		dc.DrawText(strCaption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 		dc.SelectObject(pOldFont);
@@ -496,8 +575,12 @@ void CBackstageWnd::UpdateRegion(INT cx, INT cy)
 {
 	if (IsZoomed() || !IsCtrlThemed())
 	{
-		m_RegionWidth = m_RegionHeight = 0;
-		SetWindowRgn(NULL, TRUE);
+		if (m_RegionWidth || m_RegionHeight)
+		{
+			SetWindowRgn(NULL, TRUE);
+
+			m_RegionWidth = m_RegionHeight = 0;
+		}
 	}
 	else
 	{
@@ -522,7 +605,8 @@ void CBackstageWnd::UpdateRegion(INT cx, INT cy)
 
 void CBackstageWnd::PostNcDestroy()
 {
-	delete this;
+	if (!m_IsDialog)
+		delete this;
 }
 
 void CBackstageWnd::HideSidebar()
@@ -548,11 +632,10 @@ void CBackstageWnd::PrepareBitmaps()
 
 		Graphics g(dc);
 
-		TextureBrush brush1(pTexture);
-		g.FillRectangle(&brush1, 0, 0, pTexture->GetWidth(), BACKGROUNDTOP);
+		g.DrawImage(pTexture, 0, 0);
 
-		LinearGradientBrush brush2(Point(0, 0), Point(0, BACKGROUNDTOP), Color(TOPALPHA, 0x00, 0x00, 0x00), Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
-		g.FillRectangle(&brush2, 0, 0, pTexture->GetWidth(), BACKGROUNDTOP);
+		LinearGradientBrush brush(Point(0, 0), Point(0, BACKGROUNDTOP), Color(TOPALPHA, 0x00, 0x00, 0x00), Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush, 0, 0, pTexture->GetWidth(), BACKGROUNDTOP);
 
 		dc.SelectObject(pOldBitmap);
 		ReleaseDC(pDC);
@@ -575,11 +658,10 @@ void CBackstageWnd::PrepareBitmaps()
 
 		Graphics g(dc);
 
-		TextureBrush brush1(pTexture);
-		g.FillRectangle(&brush1, 0, 0, pTexture->GetWidth(), pTexture->GetHeight());
+		g.DrawImage(pTexture, 0, 0);
 
-		SolidBrush brush2(Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
-		g.FillRectangle(&brush2, 0, 0, pTexture->GetWidth(), pTexture->GetHeight());
+		SolidBrush brush(Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush, 0, 0, pTexture->GetWidth(), pTexture->GetHeight());
 
 		dc.SelectObject(pOldBitmap);
 		ReleaseDC(pDC);
@@ -600,6 +682,7 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
 	ON_MESSAGE(WM_GETTITLEBARINFOEX, OnGetTitleBarInfoEx)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_MESSAGE(WM_SETFONT, OnSetFont)
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_CTLCOLOR()
@@ -625,15 +708,25 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	LFGetApp()->HideTooltip();
 	LFGetApp()->AddFrame(this);
 
+	ModifyStyle(0, WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+
 	// System menu
-	if (!(GetStyle() & WS_THICKFRAME))
+	CMenu* pSysMenu = GetSystemMenu(FALSE);
+	if (pSysMenu)
 	{
-		CMenu* pSysMenu = GetSystemMenu(FALSE);
-		if (pSysMenu)
+		if (!(GetStyle() & WS_THICKFRAME))
 		{
 			pSysMenu->DeleteMenu(SC_MAXIMIZE, MF_BYCOMMAND);
 			pSysMenu->DeleteMenu(SC_SIZE, MF_BYCOMMAND);
 		}
+		else
+		{
+			if (!(GetStyle() & WS_MAXIMIZEBOX))
+				pSysMenu->DeleteMenu(SC_MAXIMIZE, MF_BYCOMMAND);
+		}
+
+		if (!(GetStyle() & WS_MINIMIZEBOX))
+			pSysMenu->DeleteMenu(SC_MINIMIZE, MF_BYCOMMAND);
 	}
 
 	// Textures
@@ -646,16 +739,26 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Widets
 	m_wndWidgets.Create(this, (UINT)-1);
 
+	// Finish
+	OnCompositionChanged();
+	UpdateRegion();
+
+	if (m_IsDialog || (!(GetStyle() & WS_THICKFRAME)))
+		AdjustLayout();
+
 	return 0;
 }
 
 void CBackstageWnd::OnClose()
 {
-	WINDOWPLACEMENT WindowPlacement;
-	WindowPlacement.length = sizeof(WindowPlacement);
+	if (!m_IsDialog)
+	{
+		WINDOWPLACEMENT WindowPlacement;
+		WindowPlacement.length = sizeof(WindowPlacement);
 
-	if (GetWindowPlacement(&WindowPlacement))
-		LFGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
+		if (GetWindowPlacement(&WindowPlacement))
+			LFGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
+	}
 
 	CWnd::OnClose();
 }
@@ -751,8 +854,21 @@ LRESULT CBackstageWnd::OnNcHitTest(CPoint point)
 				return (Top==Bottom) ? HTRIGHT : Top ? HTTOPRIGHT : HTBOTTOMRIGHT;
 		}
 
+		HitTest = HTCLIENT;
 		if (GetAsyncKeyState(VK_LBUTTON))
-			HitTest = HTCAPTION;
+			if (m_IsDialog)
+			{
+				CRect rectLayout;
+				GetLayoutRect(rectLayout);
+				ClientToScreen(rectLayout);
+
+				if ((point.x<rectLayout.left) || (point.y<rectLayout.top))
+					HitTest = HTCAPTION;
+			}
+			else
+			{
+				HitTest = HTCAPTION;
+			}
 	}
 
 	return HitTest;
@@ -774,13 +890,9 @@ void CBackstageWnd::OnNcPaint()
 
 BOOL CBackstageWnd::OnNcActivate(BOOL /*bActivate*/)
 {
-	return TRUE;
-}
+	InvalidateCaption();
 
-void CBackstageWnd::OnNcLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
-{
-	if (!IsZoomed())
-		SendMessage(WM_SYSCOMMAND, SC_MOVE | 2);
+	return TRUE;
 }
 
 
@@ -808,15 +920,19 @@ BOOL CBackstageWnd::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CBackstageWnd::OnPaint()
 {
-	CPaintDC pDC(this);
+	UpdateBackground();
 
-	if (!hBackgroundBrush)
-		UpdateBackground();
+	CPaintDC pDC(this);
 
 	CRect rect;
 	GetClientRect(rect);
 
 	PaintBackground(pDC, rect);
+}
+
+LRESULT CBackstageWnd::OnSetFont(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	return NULL;
 }
 
 LRESULT CBackstageWnd::OnThemeChanged()
@@ -826,7 +942,7 @@ LRESULT CBackstageWnd::OnThemeChanged()
 	m_BackBufferL = m_BackBufferH = 0;
 	UpdateBackground();
 
-	m_RegionWidth = m_RegionHeight = 0;
+	m_RegionWidth = m_RegionHeight = -1;
 	UpdateRegion();
 
 	return NULL;
@@ -849,30 +965,55 @@ HBRUSH CBackstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (hBackgroundBrush)
-		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_EDIT))
+	//if (hBackgroundBrush)
+	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_EDIT))
+	{
+		if (hBackgroundBrush)
 		{
 			CRect rect;
 
 			if (nCtlColor==CTLCOLOR_EDIT)
 			{
-				pDC->SetTextColor(0xDACCC4);
+				if (!m_IsDialog)
+				{
+					pDC->SetBkMode(TRANSPARENT);
+					pDC->SetTextColor(0xDACCC4);
+				}
 
 				pWnd->GetClientRect(rect);
 				pWnd->ClientToScreen(rect);
 			}
 			else
 			{
+				pDC->SetTextColor(0x000000);
+
 				pWnd->GetWindowRect(rect);
 			}
 
 			ScreenToClient(rect);
-
-			pDC->SetBkMode(TRANSPARENT);	// For CBackstageEdit
 			pDC->SetBrushOrg(-rect.left, -rect.top);
 
 			hBrush = hBackgroundBrush;
 		}
+		else
+			if ((pWnd==&m_wndWidgets) || (pWnd==m_pSidebarWnd) || !m_IsDialog)
+			{
+				hBrush = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
+			}
+			else
+			{
+				CRect rect;
+
+				pWnd->GetWindowRect(rect);
+				ScreenToClient(rect);
+				pDC->SetDCBrushColor(GetSysColor(rect.top>=m_BottomDivider ? COLOR_3DFACE : COLOR_WINDOW));
+
+				hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
+			}
+
+		if (nCtlColor!=CTLCOLOR_EDIT)
+			pDC->SetBkMode(TRANSPARENT);
+	}
 
 	return hBrush;
 }
@@ -889,6 +1030,10 @@ void CBackstageWnd::OnWindowPosChanging(WINDOWPOS* lpwndpos)
 	if (!(lpwndpos->flags & (SWP_NOCLIENTSIZE | SWP_NOSIZE)))
 		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && ((lpwndpos->cx>m_RegionWidth) || (lpwndpos->cy>m_RegionHeight)))
 			UpdateRegion(lpwndpos->cx, lpwndpos->cy);
+
+	// Handle Z order for backstage dialog windows
+	if (!IsWindowEnabled())
+		lpwndpos->flags |= SWP_NOZORDER;
 }
 
 void CBackstageWnd::OnWindowPosChanged(WINDOWPOS* lpwndpos)
@@ -899,7 +1044,9 @@ void CBackstageWnd::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 	if (!(lpwndpos->flags & (SWP_NOCLIENTSIZE | SWP_NOSIZE)))
 	{
 		AdjustLayout(SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
-		UpdateBackground();
+
+		if (IsWindowVisible())
+			UpdateBackground();
 
 		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 
@@ -914,15 +1061,16 @@ void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	CWnd::OnGetMinMaxInfo(lpMMI);
 
-	if (GetStyle() & WS_THICKFRAME)
-	{
-		lpMMI->ptMinTrackSize.x = 640;
-		lpMMI->ptMinTrackSize.y = 384;
-	}
-	else
-	{
-		lpMMI->ptMinTrackSize.x = lpMMI->ptMinTrackSize.y = 3*BACKSTAGERADIUS;
-	}
+	if (!m_IsDialog)
+		if (GetStyle() & WS_THICKFRAME)
+		{
+			lpMMI->ptMinTrackSize.x = 640;
+			lpMMI->ptMinTrackSize.y = 384;
+		}
+		else
+		{
+			lpMMI->ptMinTrackSize.x = lpMMI->ptMinTrackSize.y = 3*BACKSTAGERADIUS;
+		}
 }
 
 void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
