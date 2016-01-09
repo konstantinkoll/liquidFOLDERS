@@ -349,7 +349,7 @@ void CBackstageSidebar::OnPaint()
 					}
 				}
 
-				DrawBackstageSelection(dc, g, rectItem, Highlight, Themed);
+				DrawBackstageSelection(dc, g, rectItem, Highlight, TRUE, Themed);
 			}
 			else
 			{

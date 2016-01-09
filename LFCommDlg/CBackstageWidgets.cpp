@@ -14,6 +14,14 @@ CBackstageWidgets::CBackstageWidgets()
 {
 }
 
+void CBackstageWidgets::SetEnabled(BOOL Enabled)
+{
+	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
+		m_BarItems.m_Items[a].Enabled = Enabled;
+
+	Invalidate();
+}
+
 void CBackstageWidgets::AddWidgetSize(LPSIZE lpSize) const
 {
 	ASSERT(lpSize);

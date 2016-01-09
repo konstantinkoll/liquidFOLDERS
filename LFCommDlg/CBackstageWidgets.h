@@ -16,6 +16,7 @@ class CBackstageWidgets : public CBackstageBar
 public:
 	CBackstageWidgets();
 
+	void SetEnabled(BOOL Enable);
 	void AddWidgetSize(LPSIZE lpSize) const;
 
 protected:

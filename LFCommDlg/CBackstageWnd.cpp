@@ -890,6 +890,8 @@ void CBackstageWnd::OnNcPaint()
 
 BOOL CBackstageWnd::OnNcActivate(BOOL /*bActivate*/)
 {
+	m_wndWidgets.SetEnabled(IsWindowEnabled());
+
 	InvalidateCaption();
 
 	return TRUE;

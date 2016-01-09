@@ -416,9 +416,9 @@ void DrawBackstageBorder(Graphics& g, CRect rect)
 	g.DrawPath(&pen, &path);
 }
 
-void DrawBackstageSelection(CDC& dc, Graphics& g, const CRect& rect, BOOL Selected, BOOL Themed)
+void DrawBackstageSelection(CDC& dc, Graphics& g, const CRect& rect, BOOL Selected, BOOL Enabled, BOOL Themed)
 {
-	if (Selected)
+	if (Selected && Enabled)
 	{
 		if (Themed)
 		{
@@ -443,7 +443,7 @@ void DrawBackstageSelection(CDC& dc, Graphics& g, const CRect& rect, BOOL Select
 	}
 	else
 	{
-		dc.SetTextColor(Themed ? 0xDACCC4 : GetSysColor(COLOR_3DFACE));
+		dc.SetTextColor(Enabled ? Themed ? 0xDACCC4 : GetSysColor(COLOR_3DFACE) : Themed ? 0x998981 : GetSysColor(COLOR_3DSHADOW));
 	}
 }
 
