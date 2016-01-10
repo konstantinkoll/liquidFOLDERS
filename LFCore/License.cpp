@@ -164,19 +164,19 @@ LFCORE_API BOOL LFIsSharewareExpired()
 		HKEY hKey;
 		if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &hKey)==ERROR_SUCCESS)
 		{
-			DWORD sz = sizeof(DWORD);
-			if (RegQueryValueExA(hKey, "Seed", 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &sz)==ERROR_SUCCESS)
+			DWORD dwSize = sizeof(DWORD);
+			if (RegQueryValueEx(hKey, L"Seed", 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &dwSize)==ERROR_SUCCESS)
 			{
-				sz = sizeof(DWORD);
-				if (RegQueryValueExA(hKey, "Envelope", 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
+				dwSize = sizeof(DWORD);
+				if (RegQueryValueEx(hKey, L"Envelope", 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &dwSize)==ERROR_SUCCESS)
 					Result = TRUE;
 			}
 
 			if (!Result)
 			{
 				GetSystemTimeAsFileTime(&ExpireBuffer);
-				RegSetValueExA(hKey, "Seed", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
-				RegSetValueExA(hKey, "Envelope", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
+				RegSetValueEx(hKey, L"Seed", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
+				RegSetValueEx(hKey, L"Envelope", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
 			}
 
 			RegCloseKey(hKey);
@@ -189,7 +189,7 @@ LFCORE_API BOOL LFIsSharewareExpired()
 
 	ULARGE_INTEGER FirstInstall;
 	FirstInstall.HighPart = ExpireBuffer.dwHighDateTime;
-	FirstInstall.LowPart = ExpireBuffer.dwHighDateTime;
+	FirstInstall.LowPart = ExpireBuffer.dwLowDateTime;
 
 	ULARGE_INTEGER Now;
 	Now.HighPart = ft.dwHighDateTime;

@@ -1231,15 +1231,14 @@ void LFErrorBox(CWnd* pParentWnd, UINT Result)
 
 BOOL LFNagScreen(CWnd* pParentWnd)
 {
-	if (!LFIsLicensed())
-		if (LFIsSharewareExpired())
-		{
-			CString tmpStr((LPCSTR)IDS_NOLICENSE);
-			if (LFMessageBox(pParentWnd, tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP)==IDOK)
-				LFGetApp()->OnBackstagePurchase();
+	if (LFIsSharewareExpired())
+	{
+		CString tmpStr((LPCSTR)IDS_NOLICENSE);
+		if (LFMessageBox(pParentWnd, tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP)==IDOK)
+			LFGetApp()->OnBackstagePurchase();
 
-			return FALSE;
-		}
+		return FALSE;
+	}
 
 	return TRUE;
 }

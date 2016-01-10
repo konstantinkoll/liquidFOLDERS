@@ -60,8 +60,8 @@ LFCORE_API BOOL LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount)
 	HKEY hKey;
 	if (RegOpenKey(HKEY_LOCAL_MACHINE, L"Software\\liquidFOLDERS\\", &hKey)==ERROR_SUCCESS)
 	{
-		DWORD Size = (DWORD)(cCount*sizeof(WCHAR));
-		LSTATUS Result = RegQueryValueEx(hKey, L"InstallLocation", 0, NULL, (BYTE*)pStr, &Size);
+		DWORD dwSize = (DWORD)(cCount*sizeof(WCHAR));
+		LSTATUS Result = RegQueryValueEx(hKey, L"InstallLocation", 0, NULL, (BYTE*)pStr, &dwSize);
 
 		RegCloseKey(hKey);
 
@@ -128,8 +128,8 @@ LFCORE_API BOOL LFHideFileExt()
 	HKEY hKey;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &hKey)==ERROR_SUCCESS)
 	{
-		DWORD sz = sizeof(HideFileExt);
-		RegQueryValueEx(hKey, L"HideFileExt", 0, NULL, (LPBYTE)&HideFileExt, &sz);
+		DWORD dwSize = sizeof(HideFileExt);
+		RegQueryValueEx(hKey, L"HideFileExt", 0, NULL, (LPBYTE)&HideFileExt, &dwSize);
 
 		RegCloseKey(hKey);
 	}
@@ -144,8 +144,8 @@ LFCORE_API BOOL LFHideVolumesWithNoMedia()
 	HKEY hKey;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &hKey)==ERROR_SUCCESS)
 	{
-		DWORD sz = sizeof(HideVolumesWithNoMedia);
-		RegQueryValueEx(hKey, L"HideVolumesWithNoMedia", 0, NULL, (LPBYTE)&HideVolumesWithNoMedia, &sz);
+		DWORD dwSize = sizeof(HideVolumesWithNoMedia);
+		RegQueryValueEx(hKey, L"HideVolumesWithNoMedia", 0, NULL, (LPBYTE)&HideVolumesWithNoMedia, &dwSize);
 
 		RegCloseKey(hKey);
 	}
