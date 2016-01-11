@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CContextSidebar.h"
 #include "CJournalButton.h"
 #include "CHistoryBar.h"
 #include "CMainView.h"
@@ -86,6 +87,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	BOOL m_IsClipboard;
+	CContextSidebar m_wndSidebar;
 	CJournalButton m_wndJournalButton;
 	CHistoryBar m_wndHistory;
 	CBackstageEdit m_wndSearch;

@@ -19,9 +19,34 @@ CBackstageSidebar::CBackstageSidebar()
 	: CFrontstageWnd()
 {
 	p_ButtonIcons = p_TooltipIcons = NULL;
-	m_Width = m_CountWidth = m_IconSize = 0;
+	m_Width = max(BACKSTAGERADIUS, SHADOW);
+	m_CountWidth = m_IconSize = 0;
 	m_SelectedItem = m_HotItem = m_PressedItem = -1;
 	m_Hover = m_Keyboard = m_ShowCounts = FALSE;
+}
+
+BOOL CBackstageSidebar::Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts)
+{
+	// Sidebar with numbers?
+	m_ShowCounts = ShowCounts;
+
+	if (ShowCounts)
+		m_CountWidth = LFGetApp()->m_SmallBoldFont.GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
+
+	// Create
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+
+	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
+}
+
+BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts)
+{
+	m_IconSize = SmallIcons.GetIconSize();
+
+	p_ButtonIcons = &SmallIcons;
+	p_TooltipIcons = &LargeIcons;
+
+	return Create(pParentWnd, nID, ShowCounts);
 }
 
 BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID, BOOL ShowCounts)
@@ -42,16 +67,7 @@ BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeR
 	p_TooltipIcons = &LargeIcons;
 	p_TooltipIcons->Load(LargeResID, 32);
 
-	// Sidebar with numbers?
-	m_ShowCounts = ShowCounts;
-
-	if (ShowCounts)
-		m_CountWidth = LFGetApp()->m_SmallBoldFont.GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
-
-	// Create
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
-
-	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return Create(pParentWnd, nID, ShowCounts);
 }
 
 BOOL CBackstageSidebar::PreTranslateMessage(MSG* pMsg)
@@ -138,6 +154,17 @@ void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, LPCW
 
 void CBackstageSidebar::AddCaption(LPCWSTR Caption)
 {
+	ASSERT(Caption);
+
+	if (m_Items.m_ItemCount)
+		if (!m_Items.m_Items[m_Items.m_ItemCount-1].Selectable)
+		{
+			if (*Caption==L'\0')
+				return;
+
+			m_Items.m_ItemCount--;
+		}
+
 	AddItem(FALSE, 0, -1, Caption, L"");
 }
 
@@ -271,7 +298,7 @@ LRESULT CBackstageSidebar::OnNcHitTest(CPoint point)
 		CRect rectWindow;
 		GetWindowRect(rectWindow);
 
-		if (point.y>=rectWindow.top+m_Items.m_Items[m_Items.m_ItemCount-1].Rect.bottom)
+		if (!m_Items.m_ItemCount || (point.y>=rectWindow.top+m_Items.m_Items[m_Items.m_ItemCount-1].Rect.bottom))
 			HitTest = HTTRANSPARENT;
 	}
 

@@ -743,7 +743,7 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	OnCompositionChanged();
 	UpdateRegion();
 
-	if (m_IsDialog || (!(GetStyle() & WS_THICKFRAME)))
+	if (!m_IsDialog && (!(GetStyle() & WS_THICKFRAME)))
 		AdjustLayout();
 
 	return 0;
@@ -766,12 +766,6 @@ void CBackstageWnd::OnClose()
 void CBackstageWnd::OnDestroy()
 {
 	LFGetApp()->HideTooltip();
-
-	if (m_pSidebarWnd)
-	{
-		m_pSidebarWnd->DestroyWindow();
-		delete m_pSidebarWnd;
-	}
 
 	DeleteObject(hBackgroundBrush);
 

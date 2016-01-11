@@ -33,6 +33,8 @@ public:
 	virtual void AdjustLayout();
 	virtual CString AppendTooltip(UINT CmdID);
 
+	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts=FALSE);
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts=FALSE);
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID, BOOL ShowCounts=FALSE);
 	void AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color=(COLORREF)-1);
 	void AddCaption(LPCWSTR Caption=NULL);

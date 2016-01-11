@@ -453,34 +453,33 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			return -1;
 
 		// Sidebar
-		CContextSidebar* pSidebarWnd = new CContextSidebar();
-		if (pSidebarWnd->Create(this, 4))
+		if (m_wndSidebar.Create(this, 4))
 		{
 			for (UINT a=0; a<=LFLastQueryContext; a++)
 			{
 				switch (a)
 				{
 				case 2:
-					pSidebarWnd->AddCaption(IDS_FILETYPES);
+					m_wndSidebar.AddCaption(IDS_FILETYPES);
 					break;
 
 				case LFContextDocuments:
-					pSidebarWnd->AddCaption();
+					m_wndSidebar.AddCaption();
 					break;
 
 				case LFLastGroupContext+1:
-					pSidebarWnd->AddCaption(IDS_HOUSEKEEPING);
+					m_wndSidebar.AddCaption(IDS_HOUSEKEEPING);
 					break;
 
 				case LFContextFilters:
-					pSidebarWnd->AddCaption(theApp.m_Contexts[LFContextFilters].Name);
+					m_wndSidebar.AddCaption(theApp.m_Contexts[LFContextFilters].Name);
 					break;
 				}
 
-				pSidebarWnd->AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
+				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
 			}
 
-			SetSidebar(pSidebarWnd);
+			SetSidebar(&m_wndSidebar);
 		}
 	}
 

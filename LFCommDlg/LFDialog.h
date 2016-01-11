@@ -33,6 +33,7 @@ protected:
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 	virtual void PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout);
 	virtual void DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected);
+	virtual BOOL InitSidebar();
 	virtual BOOL InitDialog();
 
 	void MapDialogRect(LPRECT lpRect) const;

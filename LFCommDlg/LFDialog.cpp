@@ -12,7 +12,7 @@ BOOL CompareClassName(HWND hWnd, LPCTSTR lpszClassName)
 	ASSERT(IsWindow(hWnd));
 
 	TCHAR szTemp[32];
-	GetClassName(hWnd, szTemp, _countof(szTemp));
+	GetClassName(hWnd, szTemp, 32);
 
 	return CompareStringW(MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT), NORM_IGNORECASE, szTemp, -1, lpszClassName, -1)==CSTR_EQUAL;
 }
@@ -301,6 +301,11 @@ void LFDialog::DrawButton(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	DeleteObject(MemBitmap.Detach());
 }
 
+BOOL LFDialog::InitSidebar()
+{
+	return TRUE;
+}
+
 BOOL LFDialog::InitDialog()
 {
 	return TRUE;
@@ -419,6 +424,14 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		return FALSE;
 	}
 
+	// Sidebar
+	if (!InitSidebar())
+	{
+		EndDialog(-1);
+
+		return FALSE;
+	}
+
 	// Is UAC dialog?
 	if (m_UAC)
 	{
@@ -484,8 +497,7 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	BOOL bSetFocus = InitDialog();
 
 	// Layout
-	if (GetStyle() & WS_SIZEBOX)
-		CBackstageWnd::AdjustLayout();
+	CBackstageWnd::AdjustLayout();
 
 	return bSetFocus;
 }
