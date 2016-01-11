@@ -496,18 +496,12 @@ void CBackstageSidebar::OnPaint()
 		}
 
 	// Untere Begrenzung
-	if (m_Items.m_ItemCount)
+	if (Themed && m_Items.m_ItemCount)
 	{
 		CRect rectItem(m_Items.m_Items[m_Items.m_ItemCount-1].Rect);
 
-		if (Themed)
-		{
-			LinearGradientBrush brush1(Point(rectItem.left, rectItem.bottom), Point(rectItem.left, rectItem.bottom+2), Color(0x20, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush1, rectItem.left, rectItem.bottom, rectItem.Width(), 2);
-		}
-		else
-		{
-		}
+		LinearGradientBrush brush1(Point(rectItem.left, rectItem.bottom), Point(rectItem.left, rectItem.bottom+2), Color(0x20, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush1, rectItem.left, rectItem.bottom, rectItem.Width(), 2);
 	}
 
 	// Schatten
@@ -519,10 +513,9 @@ void CBackstageSidebar::OnPaint()
 		HDC hdcMem = CreateCompatibleDC(dc);
 		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hShadow);
 
-		BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 		AlphaBlend(dc, rect.right-SHADOW, 0, SHADOW, 5, hdcMem, 0, 0, SHADOW, 5, BF);
 
-		for (INT y=5; y<rect.Height(); y++)
+		for (INT y=5; y<rect.bottom; y++)
 			AlphaBlend(dc, rect.right-SHADOW, y, SHADOW, 1, hdcMem, 0, 4, SHADOW, 1, BF);
 
 		SelectObject(hdcMem, hOldBitmap);

@@ -236,7 +236,7 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 
 INT CMainWnd::GetCaptionHeight(BOOL IncludeBottomMargin) const
 {
-	return (m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0;
+	return m_IsClipboard ? CBackstageWnd::GetCaptionHeight(IncludeBottomMargin) : (m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0;
 }
 
 BOOL CMainWnd::GetLayoutRect(LPRECT lpRect) const
