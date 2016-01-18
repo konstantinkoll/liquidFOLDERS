@@ -5,7 +5,6 @@
 #include "FileSystem.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
-#include "PIDL.h"
 #include "Stores.h"
 #include <assert.h>
 
@@ -566,12 +565,6 @@ UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor)
 			strcpy_s(DefaultStore, LFKeySize, pStoreDescriptor->StoreID);
 
 			Result = LFOk;
-
-			// Notifications
-			SendShellNotifyMessage(SHCNE_UPDATEITEM, DefaultStore);
-
-			if (OldDefaultStore[0]!='\0')
-				SendShellNotifyMessage(SHCNE_UPDATEITEM, OldDefaultStore);
 		}
 
 		RegCloseKey(hKey);
@@ -738,7 +731,6 @@ UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pPro
 		ReleaseMutexForStores();
 
 		SendLFNotifyMessage(LFMessages.StoresChanged);
-		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 	else
 	{
@@ -1046,11 +1038,7 @@ LFCORE_API UINT LFMakeStoreSearchable(const CHAR* pStoreID, BOOL Searchable)
 
 		// Notifications
 		if (Result==LFOk)
-		{
 			SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
-			SendShellNotifyMessage(pStoreDescriptor ? SHCNE_UPDATEITEM : SHCNE_RMDIR, pStoreID);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		}
 	}
 
 	ReleaseMutexForStores();
@@ -1104,8 +1092,6 @@ LFCORE_API UINT LFDeleteStore(const CHAR* pStoreID, LFProgress* pProgress)
 					ReleaseMutexForStores();
 
 					SendLFNotifyMessage(LFMessages.StoresChanged);
-					SendShellNotifyMessage(SHCNE_RMDIR, Victim.StoreID);
-					SendShellNotifyMessage(SHCNE_UPDATEDIR);
 
 					// Progress
 					if (pProgress)
@@ -1156,10 +1142,6 @@ LFCORE_API UINT LFSetStoreAttributes(const CHAR* pStoreID, WCHAR* pName, WCHAR* 
 	if (!GetMutexForStores())
 		return LFMutexError;
 
-	LPITEMIDLIST pidlOld;
-	LPITEMIDLIST pidlOldDelegate;
-	GetPIDLsForStore(pStoreID, &pidlOld, &pidlOldDelegate);
-
 	UINT Result;
 	LFStoreDescriptor* pStoreDescriptor = FindStore(pStoreID);
 	if (pStoreDescriptor)
@@ -1180,22 +1162,7 @@ LFCORE_API UINT LFSetStoreAttributes(const CHAR* pStoreID, WCHAR* pName, WCHAR* 
 	ReleaseMutexForStores();
 
 	if (Result==LFOk)
-	{
 		SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
-
-		if (pComment)
-			SendShellNotifyMessage(SHCNE_UPDATEITEM, pStoreID);
-
-		if (pName)
-		{
-			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, pStoreID, pidlOld);
-			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, pStoreID, pidlOldDelegate);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		}
-	}
-
-	CoTaskMemFree(pidlOld);
-	CoTaskMemFree(pidlOldDelegate);
 
 	return Result;
 }
@@ -1583,12 +1550,7 @@ UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
 
 					// Update "Last seen" in registry for hybrid stores
 					if ((pSlot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
-					{
 						SaveStoreSettingsToRegistry(pSlot);
-
-						if (!OnInitialize)
-							SendShellNotifyMessage(SHCNE_UPDATEITEM, pSlot->StoreID);
-					}
 				}
 
 				ReleaseMutexForStores();
@@ -1598,12 +1560,8 @@ UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
 
 	FindClose(hFind);
 
-	if (!OnInitialize)
-		if (ChangeOccured)
-		{
-			SendLFNotifyMessage(LFMessages.StoresChanged);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		}
+	if (!OnInitialize && ChangeOccured)
+		SendLFNotifyMessage(LFMessages.StoresChanged);
 
 	return Result;
 }
@@ -1686,13 +1644,7 @@ UINT UnmountVolume(CHAR cVolume)
 	ReleaseMutexForStores();
 
 	if (ChangeOccured)
-	{
 		SendLFNotifyMessage(LFMessages.StoresChanged);
-
-		for (UINT a=0; a<NotifyCount; a++)
-			SendShellNotifyMessage(NotifyTypes[a] ? SHCNE_RMDIR : SHCNE_UPDATEITEM, NotifyIDs[a]);
-		SendShellNotifyMessage(SHCNE_UPDATEDIR);
-	}
 
 	return Result;
 }

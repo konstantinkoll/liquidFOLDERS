@@ -139,9 +139,12 @@ void LFChooseStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	const INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? m_wndStoreList.IsGroupViewEnabled() ? 2 : 15 : 4;
+	if (IsWindow(m_wndStoreList))
+	{
+		const INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? m_wndStoreList.IsGroupViewEnabled() ? 2 : 15 : 4;
 
-	m_wndStoreList.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top+ExplorerHeight, rectLayout.Width()-BorderLeft, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+		m_wndStoreList.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top+ExplorerHeight, rectLayout.Width()-BorderLeft, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+	}
 }
 
 void LFChooseStoreDlg::UpdateOkButton()

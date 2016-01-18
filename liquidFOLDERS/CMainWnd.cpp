@@ -491,8 +491,6 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(m_pActiveFilter);
 	OnCookFiles();
 	UpdateHistory();
-
-	CBackstageWnd::AdjustLayout();
 	SetFocus();
 
 	// Clipboard

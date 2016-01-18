@@ -90,6 +90,9 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 			ShowWindow(SW_RESTORE);
 	}
 
+	// Layout
+	AdjustLayout();
+
 	return TRUE;
 }
 
@@ -743,9 +746,6 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	OnCompositionChanged();
 	UpdateRegion();
 
-	if (!m_IsDialog && (!(GetStyle() & WS_THICKFRAME)))
-		AdjustLayout();
-
 	return 0;
 }
 
@@ -1034,22 +1034,23 @@ void CBackstageWnd::OnWindowPosChanging(WINDOWPOS* lpwndpos)
 
 void CBackstageWnd::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 {
-	if (IsWindowVisible())
-		m_wndShadow.Update(this, CRect(lpwndpos->x, lpwndpos->y, lpwndpos->x+lpwndpos->cx, lpwndpos->y+lpwndpos->cy));
+	m_wndShadow.Update(this, CRect(lpwndpos->x, lpwndpos->y, lpwndpos->x+lpwndpos->cx, lpwndpos->y+lpwndpos->cy));
 
-	if (!(lpwndpos->flags & (SWP_NOCLIENTSIZE | SWP_NOSIZE)))
+	if (!IsIconic() && !(lpwndpos->flags & (SWP_NOCLIENTSIZE | SWP_NOSIZE)))
 	{
 		AdjustLayout(SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
 		if (IsWindowVisible())
+		{
 			UpdateBackground();
-
-		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
+			RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
+		}
 
 		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && (lpwndpos->cx<=m_RegionWidth) && (lpwndpos->cy<=m_RegionHeight))
 			UpdateRegion(lpwndpos->cx, lpwndpos->cy);
 
-		RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN);
+		if (IsWindowVisible())
+			RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN);
 	}
 }
 

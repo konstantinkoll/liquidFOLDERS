@@ -1,4 +1,4 @@
-
+f
 // LFProgressDlg.cpp: Implementierung der Klasse LFProgressDlg
 //
 
@@ -97,6 +97,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 	if (m_Abort)
 	{
 		pProgress->UserAbort = TRUE;
+
 		if (pProgress->ProgressState==LFProgressWorking)
 			pProgress->ProgressState = LFProgressCancelled;
 	}

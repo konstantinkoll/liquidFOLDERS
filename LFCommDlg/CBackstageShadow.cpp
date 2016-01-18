@@ -41,7 +41,7 @@ BOOL CBackstageShadow::Create()
 	return Result;
 }
 
-__forceinline void CBackstageShadow::Update(UINT nID, CDC& dc, POINT ptSrc, SIZE szWindow, CWnd* pBackstageWnd, const CRect& rectWindow)
+void CBackstageShadow::Update(UINT nID, CDC& dc, POINT ptSrc, SIZE szWindow, CWnd* pBackstageWnd, const CRect& rectWindow)
 {
 	ASSERT(nID<4);
 

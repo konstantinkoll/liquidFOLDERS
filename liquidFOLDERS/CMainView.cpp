@@ -345,12 +345,12 @@ void CMainView::AdjustLayout(UINT nFlags)
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
 
-	const INT MaxWidth = (rect.Width()-128)/2;
 	INT InspectorWidth = 0;
+
+	const INT MaxWidth = (rect.Width()-128)/2;
 	if (MaxWidth>0)
 	{
-		theApp.m_InspectorWidth = max(32, m_wndInspector.GetPreferredWidth());
-		InspectorWidth = theApp.m_InspectorWidth = min(MaxWidth, (INT)theApp.m_InspectorWidth);
+		InspectorWidth = theApp.m_InspectorWidth = min(MaxWidth, max(m_wndInspector.GetMinWidth(), m_wndInspector.GetPreferredWidth()));
 
 		if (m_ShowInspectorPane)
 		{

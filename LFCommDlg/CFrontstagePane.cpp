@@ -14,7 +14,7 @@
 CFrontstagePane::CFrontstagePane()
 	: CFrontstageWnd()
 {
-	m_MaxWidth = 128+GRIPPER;
+	m_MaxWidth = 140;
 }
 
 BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth)
@@ -31,6 +31,11 @@ void CFrontstagePane::AdjustLayout(CRect /*rectLayout*/)
 {
 }
 
+INT CFrontstagePane::GetMinWidth()
+{
+	return 140+GRIPPER;
+}
+
 INT CFrontstagePane::GetPreferredWidth() const
 {
 	return m_PreferredWidth;
@@ -38,7 +43,7 @@ INT CFrontstagePane::GetPreferredWidth() const
 
 void CFrontstagePane::SetMaxWidth(INT MaxWidth)
 {
-	m_MaxWidth = MaxWidth-GRIPPER;
+	m_MaxWidth = max(MaxWidth, GetMinWidth())-GRIPPER;
 }
 
 void CFrontstagePane::GetLayoutRect(LPRECT lpRect) const
@@ -151,6 +156,6 @@ void CFrontstagePane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	CFrontstageWnd::OnGetMinMaxInfo(lpMMI);
 
-	lpMMI->ptMinTrackSize.x = 140+GRIPPER;
+	lpMMI->ptMinTrackSize.x = GetMinWidth();
 	lpMMI->ptMaxTrackSize.x = m_MaxWidth+GRIPPER;
 }

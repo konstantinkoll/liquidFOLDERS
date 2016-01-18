@@ -35,7 +35,8 @@ void LFStoreMaintenanceDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	m_wndMaintenanceReport.SetWindowPos(NULL, rectLayout.left, rectLayout.top+ExplorerHeight, rectLayout.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+	if (IsWindow(m_wndMaintenanceReport))
+		m_wndMaintenanceReport.SetWindowPos(NULL, rectLayout.left, rectLayout.top+ExplorerHeight, rectLayout.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 }
 
 BOOL LFStoreMaintenanceDlg::InitDialog()

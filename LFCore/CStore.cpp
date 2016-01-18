@@ -13,7 +13,7 @@ extern CHAR KeyChars[38];
 // CStore
 //
 
-#define ABORT(Result)       { if (pProgress) pProgress->ProgressState = LFProgressError; return Result; }
+#define ABORT(Result)       { if (pProgress) pProgress->ProgressState = (Result>LFCancel) ? LFProgressError : LFProgressCancelled; return Result; }
 #define FASTEST_INDEX()     ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid)
 
 CStore::CStore(LFStoreDescriptor* pStoreDescriptor, HANDLE hMutexForStore, UINT AdditionalDataSize)

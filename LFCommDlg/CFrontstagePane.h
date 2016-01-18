@@ -17,6 +17,7 @@ public:
 	virtual void AdjustLayout(CRect rectLayout);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth);
+	static INT GetMinWidth();
 	INT GetPreferredWidth() const;
 	void SetMaxWidth(INT MaxWidth);
 	void GetLayoutRect(LPRECT lpRect) const;

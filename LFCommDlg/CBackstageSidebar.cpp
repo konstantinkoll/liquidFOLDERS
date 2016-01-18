@@ -312,6 +312,9 @@ BOOL CBackstageSidebar::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CBackstageSidebar::OnPaint()
 {
+	CRect rectUpdate;
+	GetUpdateRect(rectUpdate);
+
 	CPaintDC pDC(this);
 
 	CRect rect;
@@ -339,10 +342,10 @@ void CBackstageSidebar::OnPaint()
 	g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 	// Items
-	CRect rectIntersect;
-
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (IntersectRect(&rectIntersect, &m_Items.m_Items[a].Rect, &pDC.m_ps.rcPaint))
+	{
+		RECT rectIntersect;
+		if (IntersectRect(&rectIntersect, &m_Items.m_Items[a].Rect, rectUpdate))
 		{
 			CRect rectItem(m_Items.m_Items[a].Rect);
 
@@ -521,6 +524,7 @@ void CBackstageSidebar::OnPaint()
 				dc.SelectObject(pOldFont);
 			}
 		}
+	}
 
 	// Untere Begrenzung
 	if (Themed && m_Items.m_ItemCount)
@@ -540,10 +544,10 @@ void CBackstageSidebar::OnPaint()
 		HDC hdcMem = CreateCompatibleDC(dc);
 		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hShadow);
 
-		AlphaBlend(dc, rect.right-SHADOW, 0, SHADOW, 5, hdcMem, 0, 0, SHADOW, 5, BF);
+		AlphaBlend(dc, rect.right-SHADOW, 0, SHADOW, 10, hdcMem, 0, 0, SHADOW, 10, BF);
 
-		for (INT y=5; y<rect.bottom; y++)
-			AlphaBlend(dc, rect.right-SHADOW, y, SHADOW, 1, hdcMem, 0, 4, SHADOW, 1, BF);
+		for (INT y=10; y<rect.bottom; y+=6)
+			AlphaBlend(dc, rect.right-SHADOW, y, SHADOW, 6, hdcMem, 0, 4, SHADOW, 6, BF);
 
 		SelectObject(hdcMem, hOldBitmap);
 		DeleteDC(hdcMem);

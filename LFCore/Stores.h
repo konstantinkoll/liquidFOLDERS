@@ -11,7 +11,7 @@
 
 #define RAND_CHAR()     KeyChars[rand()%sizeof(KeyChars)]
 
-#define SendLFNotifyMessage(Message)     SendMessage(HWND_BROADCAST, Message, NULL, NULL);
+#define SendLFNotifyMessage(Message)     SendNotifyMessage(HWND_BROADCAST, Message, NULL, NULL);
 
 
 void CreateNewStoreID(CHAR* pStoreID);

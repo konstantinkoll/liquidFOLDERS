@@ -37,7 +37,7 @@ public:
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts=FALSE);
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID, BOOL ShowCounts=FALSE);
 	void AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color=(COLORREF)-1);
-	void AddCaption(LPCWSTR Caption=NULL);
+	void AddCaption(LPCWSTR Caption=L"");
 	void AddCaption(UINT ResID);
 	void ResetCounts();
 	void SetCount(UINT CmdID, UINT Count);

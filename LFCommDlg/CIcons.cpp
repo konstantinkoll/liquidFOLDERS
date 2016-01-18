@@ -129,7 +129,7 @@ INT CIcons::AddIcon(CImageList& ImageList, INT nImage)
 
 void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Shadow)
 {
-	ASSERT(nImage<m_IconCount);
+	ASSERT(nImage<(INT)m_IconCount);
 
 	if (nImage>=0)
 	{
@@ -158,7 +158,7 @@ void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Shadow)
 
 HICON CIcons::ExtractIcon(INT nImage)
 {
-	ASSERT(nImage<m_IconCount);
+	ASSERT(nImage<(INT)m_IconCount);
 
 	HICON hIcon = NULL;
 

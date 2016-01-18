@@ -52,10 +52,13 @@ void LFBrowseForFolderDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	CRect rectBorders(0, 0, 7, 7);
-	MapDialogRect(&rectBorders);
+	if (IsWindow(m_wndExplorerTree))
+	{
+		CRect rectBorders(0, 0, 7, 7);
+		MapDialogRect(&rectBorders);
 
-	m_wndExplorerTree.SetWindowPos(NULL, rectLayout.left+rectBorders.Width(), rectLayout.top+ExplorerHeight, rectLayout.Width()-rectBorders.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+		m_wndExplorerTree.SetWindowPos(NULL, rectLayout.left+rectBorders.Width(), rectLayout.top+ExplorerHeight, rectLayout.Width()-rectBorders.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+	}
 }
 
 BOOL LFBrowseForFolderDlg::InitDialog()
