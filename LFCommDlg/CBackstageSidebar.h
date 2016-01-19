@@ -8,6 +8,20 @@
 #include "LFCore.h"
 
 
+// CSidebarCmdUI
+//
+
+class CSidebarCmdUI : public CCmdUI
+{
+public:
+	CSidebarCmdUI();
+
+	virtual void Enable(BOOL bOn=TRUE);
+
+	BOOL m_Enabled;
+};
+
+
 // CBackstageSidebar
 //
 
@@ -15,6 +29,7 @@ struct SidebarItem
 {
 	RECT Rect;
 	BOOL Selectable;
+	BOOL Enabled;
 	UINT CmdID;
 	INT IconID;
 	WCHAR Caption[256];
@@ -61,6 +76,7 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()

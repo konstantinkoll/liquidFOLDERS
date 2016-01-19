@@ -4,24 +4,27 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFEditTagsDlg.h"
+#include "LFEditHashtagsDlg.h"
 #include "LFEditTimeDlg.h"
 
 
 // CPropertyHolder
 //
 
+CString CPropertyHolder::m_MultipleValues;
+
 CPropertyHolder::CPropertyHolder()
 	: CFrontstageWnd()
 {
-	m_StoreIDValid = FALSE;
-
-	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
+	if (m_MultipleValues.IsEmpty())
+		ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
 
 void CPropertyHolder::SetStore(const CHAR* pStoreID)
 {
-	strcpy_s(m_StoreID, LFKeySize, ((m_StoreIDValid=(pStoreID!=NULL))==TRUE) ? pStoreID : "");
+	ASSERT(pStoreID);
+
+	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 }
 
 CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
@@ -289,14 +292,15 @@ void CPropertyTags::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTagsDlg dlg(m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
-
+	LFEditHashtagsDlg dlg(m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreID, p_Parent);
 	if (dlg.DoModal()==IDOK)
 	{
-		wcscpy_s(p_Data->UnicodeArray, 256, dlg.m_Tags);
-		p_Data->IsNull = FALSE;
+		WCHAR Buffer[4096];
+		wcscpy_s(Buffer, 4096, dlg.m_Hashtags);
+		LFSanitizeUnicodeArray(Buffer, 4096);
 
-		LFSanitizeUnicodeArray(p_Data->UnicodeArray, 256);
+		wcscpy_s(p_Data->UnicodeArray, 256, Buffer);
+		p_Data->IsNull = FALSE;
 
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}

@@ -23,6 +23,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetSelection(UINT CmdID, CHAR* StoreID);
+	UINT GetFileCount(UINT Context);
 
 protected:
 	afx_msg void OnUpdateCounts();

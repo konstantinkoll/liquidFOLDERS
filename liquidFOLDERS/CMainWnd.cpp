@@ -405,9 +405,10 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
-	ON_COMMAND_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnNavigateSwitchContext)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnUpdateNavCommands)
+
+	ON_COMMAND_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnSwitchContext)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnUpdateSwitchContextCommands)
 
 	ON_COMMAND(IDM_FILTERS_CREATENEW, OnFiltersCreateNew)
 
@@ -597,7 +598,28 @@ void CMainWnd::OnNavigateReload()
 	}
 }
 
-void CMainWnd::OnNavigateSwitchContext(UINT nID)
+void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = !m_IsClipboard;
+
+	switch (pCmdUI->m_nID)
+	{
+	case ID_NAV_BACK:
+		b &= (m_pBreadcrumbBack!=NULL);
+		break;
+
+	case ID_NAV_FORWARD:
+		b &= (m_pBreadcrumbForward!=NULL);
+		break;
+	}
+
+	pCmdUI->Enable(b);
+}
+
+
+// Switch context
+
+void CMainWnd::OnSwitchContext(UINT nID)
 {
 	nID -= IDM_NAV_SWITCHCONTEXT;
 
@@ -641,20 +663,16 @@ FilterFromScratch:
 	HideSidebar();
 }
 
-void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
+void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)
 {
+	ASSERT(pCmdUI->m_nID>=IDM_NAV_SWITCHCONTEXT);
+	ASSERT(pCmdUI->m_nID<=IDM_NAV_SWITCHCONTEXT+LFLastQueryContext);
+
 	BOOL b = !m_IsClipboard;
 
-	switch (pCmdUI->m_nID)
-	{
-	case ID_NAV_BACK:
-		b &= (m_pBreadcrumbBack!=NULL);
-		break;
-
-	case ID_NAV_FORWARD:
-		b &= (m_pBreadcrumbForward!=NULL);
-		break;
-	}
+	UINT Context = pCmdUI->m_nID-IDM_NAV_SWITCHCONTEXT;
+	if ((Context!=LFContextAllFiles) && (Context!=LFContextFilters))
+		b &= m_wndSidebar.GetFileCount(Context)>0;
 
 	pCmdUI->Enable(b);
 }

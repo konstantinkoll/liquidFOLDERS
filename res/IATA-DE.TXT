@@ -4453,7 +4453,7 @@ LTH     Lathrop Wells, USA
 LTK     Latakia, Syrien;4;35*24'4"N, 35*56'55"E
 LTL     Lastourville, Gabun;4;0*49'36"S, 12*44'55"E
 LTM     Lethem, Guyana;4;3*22'22"N, 59*47'22"W
-LTN LON London (Luton), Groﬂbritannien;4;51*52'29"N, 0*22'6"E
+LTN LON London (Luton), Groﬂbritannien;4;51*52'29"N, 0*22'6"W
 LTO     Loreto, Mexiko;4;25*59'21"N, 111*20'54"W
 LTP     Lyndhurst, Australien;4;19*11'45"S, 144*22'16"E
 LTQ     Le Touquet, Frankreich;4;50*30'53"N, 1*37'39"E

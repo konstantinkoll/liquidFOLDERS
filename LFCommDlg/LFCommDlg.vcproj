@@ -433,10 +433,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTagList.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CTaskbar.cpp"
 				>
 			</File>
@@ -509,7 +505,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFEditTagsDlg.cpp"
+				RelativePath=".\LFEditHashtagsDlg.cpp"
 				>
 			</File>
 			<File
@@ -985,10 +981,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTagList.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CTaskbar.h"
 				>
 			</File>
@@ -1065,7 +1057,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFEditTagsDlg.h"
+				RelativePath=".\LFEditHashtagsDlg.h"
 				>
 			</File>
 			<File

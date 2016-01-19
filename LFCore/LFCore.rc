@@ -49,8 +49,8 @@ IDI_FLD_ALL             ICON                    "res\\FLD_All.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,3,0
- PRODUCTVERSION 2,1,3,0
+ FILEVERSION 2,1,4,0
+ PRODUCTVERSION 2,1,4,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -67,13 +67,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.1.3"
+            VALUE "FileVersion", "2.1.4"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2016 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.1.3"
+            VALUE "ProductVersion", "2.1.4"
         END
     END
     BLOCK "VarFileInfo"
@@ -837,7 +837,7 @@ BEGIN
     IDS_ATTR_RATING         "Estimation"
     IDS_ATTR_PRIORITY       "Priorité"
     IDS_ATTR_LOCATIONNAME   "Nom d'endroit"
-    IDS_ATTR_LOCATIONIATA   "Code d'aéroport d'IATA"
+    IDS_ATTR_LOCATIONIATA   "Code d'aéroport IATA"
 END
 
 STRINGTABLE 

@@ -89,11 +89,11 @@ IDI_READY               ICON                    "res\\Ready.ico"
 // RCDATA
 //
 
-IDB_EARTHMAP            RCDATA                  "res\\Earthmap.jpg"
 IDB_DIVDOWN             RCDATA                  "res\\DivDown.png"
 IDB_DIVUP               RCDATA                  "res\\DivUp.png"
 IDB_LOCATIONINDICATOR_8 RCDATA                  "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 RCDATA                  "res\\LocationIndicator_16.png"
+IDB_EARTHMAP            RCDATA                  "res\\Earthmap.jpg"
 IDB_ATTRIBUTEICONS_16   RCDATA                  "res\\AttributeIcons_16.png"
 IDB_ATTRIBUTEICONS_32   RCDATA                  "res\\AttributeIcons_32.png"
 IDB_SORTINDICATORS      RCDATA                  "res\\SortIndicators.png"
@@ -229,7 +229,7 @@ END
 
 IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "IATA-Code"
+CAPTION "IATA Flughafen-Code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
@@ -252,20 +252,21 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,237,278,50,14,WS_GROUP
 END
 
-IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
+IDD_EDITHASHTAGS DIALOGEX 0, 0, 420, 246
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Schlagworte bearbeiten"
+CAPTION "Hashtags"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Eingetragene Schlagworte",IDC_STATIC,7,7,334,54
-    EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Schlagworte werden durch Leerzeichen oder Kommata getrennt.\nMehrere Worte können mit Anführungszeichen zusammengefasst werden.",IDC_STATIC,14,39,319,17
-    GROUPBOX        "Vorschläge",IDC_STATIC,7,68,334,149
-    LTEXT           "Diese Schlagworte wurden bereits an Dateien innerhalb des selben Stores vergeben (klicken Sie auf ein Schlagwort, um es hinzuzufügen):",IDC_STATIC,14,79,260,16
-    PUSHBUTTON      "&Hinzufügen",IDC_ADDTAGS,279,80,55,14,WS_DISABLED
-    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,320,109
-    DEFPUSHBUTTON   "OK",IDOK,234,224,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,291,224,50,14,WS_GROUP
+    CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
+    CONTROL         "Hashtags aus &allen Stores zeigen",IDC_HASHTAGSFROMALLSTORES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
+    EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,363,224,50,14,WS_GROUP
+    CONTROL         "Vorschläge\nDiese Hashtags wurden bereits vergeben.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,406,25
+    CONTROL         "Neue Hashtags\nHashtags werden durch Leerzeichen oder Kommata getrennt. Mehrere Worte können mit Anführungszeichen zu einem Hashtag zusammengefasst werden.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,155,406,35
 END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 248, 316
@@ -558,10 +559,10 @@ BEGIN
         BOTTOMMARGIN, 292
     END
 
-    IDD_EDITTAGS, DIALOG
+    IDD_EDITHASHTAGS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 341
+        RIGHTMARGIN, 413
         TOPMARGIN, 7
         BOTTOMMARGIN, 238
     END
@@ -825,7 +826,7 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
-    IDS_UPDATENOTAVAILABLE  "Ihr liquidFOLDERS ist aktuell."
+    IDS_UPDATENOTAVAILABLE  "Ihr liquidFOLDERS ist auf dem neuesten Stand."
     IDS_AIRPORT_NAME        "Name"
     IDS_AIRPORT_COUNTRY     "Land"
     IDS_AIRPORT_CODE        "IATA-Code"
@@ -972,7 +973,7 @@ END
 
 IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Código de IATA"
+CAPTION "Código de aeropuerto IATA"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
@@ -1009,20 +1010,21 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,191,318,50,14,WS_GROUP
 END
 
-IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
+IDD_EDITHASHTAGS DIALOGEX 0, 0, 420, 246
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Editar etiquetas"
+CAPTION "Etiquetas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Etiquetas",IDC_STATIC,7,7,334,54
-    EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Las etiquetas están separadas por espacios ó comas.\nMúltiples palabras pueden ser combinadas dentro de una etiqueta usando comillas.",IDC_STATIC,14,39,319,17
-    GROUPBOX        "Sugerencias",IDC_STATIC,7,68,334,149
-    LTEXT           "Éstas etiquetas ya han sido asignadas a archivos dentro de este store (dar click en una etiqueta para añadirla):",IDC_STATIC,14,79,240,16
-    PUSHBUTTON      "&Añadir etiquetas",IDC_ADDTAGS,259,80,75,14,WS_DISABLED
-    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,320,109
-    DEFPUSHBUTTON   "OK",IDOK,234,224,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,291,224,50,14,WS_GROUP
+    CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
+    CONTROL         "Mostrar etiquetas de todos los stores",IDC_HASHTAGSFROMALLSTORES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
+    EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,363,224,50,14,WS_GROUP
+    CONTROL         "Ofertas\nÉstas etiquetas ya han sido asignadas.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,406,25
+    CONTROL         "Nuevas etiquetas\nLas etiquetas están separadas por espacios ó comas. Múltiples palabras pueden ser combinadas dentro de una etiqueta usando comillas.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,155,406,35
 END
 
 IDD_EDITTIME DIALOGEX 0, 0, 134, 218
@@ -1305,10 +1307,10 @@ BEGIN
         BOTTOMMARGIN, 332
     END
 
-    IDD_EDITTAGS, DIALOG
+    IDD_EDITHASHTAGS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 341
+        RIGHTMARGIN, 413
         TOPMARGIN, 7
         BOTTOMMARGIN, 238
     END
@@ -1776,20 +1778,21 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,191,318,50,14,WS_GROUP
 END
 
-IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
+IDD_EDITHASHTAGS DIALOGEX 0, 0, 420, 246
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Adapter des mots-clé"
+CAPTION "Mots-dièse"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Des mots-clé enregistrés",IDC_STATIC,7,7,334,54
-    EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Des mots-clé sont séparés par l'interligne ou les virgules.\nPlusieurs mots peuvent être résumés avec le guillemet.",IDC_STATIC,14,39,319,17
-    GROUPBOX        "Des propositions",IDC_STATIC,7,68,334,149
-    LTEXT           "Ces mots-clé étaient déjà donnés à des fichiers dans même stores (cliquez sur un mot-clé pour l'ajouter):",IDC_STATIC,14,79,260,16
-    PUSHBUTTON      "&Ajouter",IDC_ADDTAGS,279,80,55,14,WS_DISABLED
-    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,320,109
-    DEFPUSHBUTTON   "OK",IDOK,234,224,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,291,224,50,14,WS_GROUP
+    CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
+    CONTROL         "Voir mots-dièse de &tous les stores",IDC_HASHTAGSFROMALLSTORES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
+    EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,363,224,50,14,WS_GROUP
+    CONTROL         "Propositions\nCes mots-dièse étaient déjà donnés.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,406,25
+    CONTROL         "Nouveaux mots-dièse\nDes mots-dièse sont séparés par l'interligne ou les virgules. Plusieurs mots peuvent être résumés avec le guillemet.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,155,406,35
 END
 
 IDD_EDITTIME DIALOGEX 0, 0, 134, 218
@@ -2065,10 +2068,10 @@ BEGIN
         BOTTOMMARGIN, 332
     END
 
-    IDD_EDITTAGS, DIALOG
+    IDD_EDITHASHTAGS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 341
+        RIGHTMARGIN, 413
         TOPMARGIN, 7
         BOTTOMMARGIN, 238
     END
@@ -2511,7 +2514,7 @@ END
 
 IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "IATA code"
+CAPTION "IATA airport code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
@@ -2526,20 +2529,21 @@ BEGIN
     CONTROL         "Options",IDC_CATEGORY3,"CCategory",WS_GROUP,7,282,175,15
 END
 
-IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
+IDD_EDITHASHTAGS DIALOGEX 0, 0, 420, 246
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Edit tags"
+CAPTION "Hashtags"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Tags",IDC_STATIC,7,7,334,54
-    EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Tags are separated by blanks or commas.\nMultiple words can be combined into one tag using quotation marks.",IDC_STATIC,14,39,319,17
-    GROUPBOX        "Suggestions",IDC_STATIC,7,68,334,149
-    LTEXT           "These tags have already been assigned to files inside this store (click on a tag to add it):",IDC_STATIC,14,79,260,16
-    PUSHBUTTON      "&Add tags",IDC_ADDTAGS,279,80,55,14,WS_DISABLED
-    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,320,109
-    DEFPUSHBUTTON   "OK",IDOK,234,224,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,291,224,50,14,WS_GROUP
+    CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
+    CONTROL         "View for hashtags from &all stores",IDC_HASHTAGSFROMALLSTORES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
+    EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,363,224,50,14,WS_GROUP
+    CONTROL         "Suggestions\nThese hashtags are already in use.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,406,25
+    CONTROL         "New hashtags\nHashtags are separated by blanks or commas. Multiple words can be combined into one hashtag with quotation marks.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,155,406,35
 END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 248, 316
@@ -2834,10 +2838,10 @@ BEGIN
         BOTTOMMARGIN, 350
     END
 
-    IDD_EDITTAGS, DIALOG
+    IDD_EDITHASHTAGS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 341
+        RIGHTMARGIN, 413
         TOPMARGIN, 7
         BOTTOMMARGIN, 238
     END

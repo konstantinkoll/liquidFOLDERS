@@ -54,9 +54,6 @@ void CExplorerTree::PreSubclassWindow()
 	SetImageList(&LFGetApp()->m_SystemImageListSmall, 0);
 
 	// Schrift
-	LOGFONT lf;
-	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
-	SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(LFGetApp()->OSVersion<OS_Vista ? 2 : 6)));
 	SetFont(&LFGetApp()->m_DefaultFont, FALSE);
 
 	// Benachrichtigung, wenn sich Items ändern
@@ -67,7 +64,7 @@ void CExplorerTree::PreSubclassWindow()
 		WM_SHELLCHANGE, 1, &shCNE);
 }
 
-LPITEMIDLIST CExplorerTree::GetSelectedPIDL() const
+LPCITEMIDLIST CExplorerTree::GetSelectedPIDL() const
 {
 	HTREEITEM hItem = GetSelectedItem();
 	if (!hItem)
@@ -80,13 +77,12 @@ LPITEMIDLIST CExplorerTree::GetSelectedPIDL() const
 	if (!GetItem(&tvItem))
 		return NULL;
 
-	ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
-	return pItem->pidlFQ;
+	return ((ExplorerTreeItemData*)tvItem.lParam)->pidlFQ;
 }
 
 BOOL CExplorerTree::GetSelectedPath(LPWSTR Path) const
 {
-	LPITEMIDLIST pidl = GetSelectedPIDL();
+	LPCITEMIDLIST pidl = GetSelectedPIDL();
 
 	return pidl ? SHGetPathFromIDList(pidl, Path) : FALSE;
 }
@@ -147,7 +143,7 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 	return CTreeCtrl::PreTranslateMessage(pMsg);
 }
 
-CString CExplorerTree::OnGetItemText(ExplorerTreeItemData* pItem) const
+CString CExplorerTree::GetItemText(ExplorerTreeItemData* pItem) const
 {
 	ASSERT(pItem);
 
@@ -158,7 +154,7 @@ CString CExplorerTree::OnGetItemText(ExplorerTreeItemData* pItem) const
 	return _T("?");
 }
 
-INT CExplorerTree::OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const
+INT CExplorerTree::GetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const
 {
 	ASSERT(pItem);
 
@@ -184,10 +180,10 @@ HTREEITEM CExplorerTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, U
 	pItem->dwAttributes = dwAttributes;
 	tvItem.lParam = (LPARAM)pItem;
 
-	CString strItem = OnGetItemText(pItem);
+	CString strItem = GetItemText(pItem);
 	tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
-	tvItem.iImage = OnGetItemIcon(pItem, FALSE);
-	tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
+	tvItem.iImage = GetItemIcon(pItem, FALSE);
+	tvItem.iSelectedImage = GetItemIcon(pItem, TRUE);
 	tvItem.cChildren = (dwAttributes & SFGAO_HASSUBFOLDER);
 
 	TV_INSERTSTRUCT tvInsert;
@@ -463,10 +459,10 @@ void CExplorerTree::UpdatePath(LPCWSTR Path1, LPCWSTR Path2)
 							pItem->pidlRel = LFGetApp()->GetShellManager()->CopyItem(pidlRel);
 							pItem->dwAttributes = dwAttributes;
 
-							CString strItem = OnGetItemText(pItem);
+							CString strItem = GetItemText(pItem);
 							tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
-							tvItem.iImage = OnGetItemIcon(pItem, FALSE);
-							tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
+							tvItem.iImage = GetItemIcon(pItem, FALSE);
+							tvItem.iSelectedImage = GetItemIcon(pItem, TRUE);
 
 							SetItem(&tvItem);
 							UpdateChildPIDLs(hItem, pidlFQ);
@@ -1016,7 +1012,7 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (*pResult)
 	{
-		m_strBuffer = OnGetItemText(pItem);
+		m_strBuffer = GetItemText(pItem);
 		pNMTreeView->item.pszText = m_strBuffer.GetBuffer(m_strBuffer.GetLength());
 	}
 }
@@ -1039,8 +1035,10 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 	wcscpy_s(Parent1, MAX_PATH, Path1);
 	WCHAR* Ptr = wcsrchr(Parent1, L'\\');
+
 	if (Ptr<=&Parent1[2])
 		Ptr = &Parent1[3];
+
 	*Ptr = '\0';
 
 	if (pidls[1])
@@ -1049,8 +1047,10 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 		wcscpy_s(Parent2, MAX_PATH, Path2);
 		Ptr = wcsrchr(Parent2, L'\\');
+
 		if (Ptr<=&Parent2[2])
 			Ptr = &Parent2[3];
+
 		*Ptr = '\0';
 	}
 

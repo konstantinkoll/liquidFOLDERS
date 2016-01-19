@@ -41,28 +41,29 @@ EXPORTS
 	LFGetFileLocation @115
 	LFDoFileImport @116
 
-	LFFourCCToString @200
-	LFUINTToString @201
-	LFSizeToString @202
-	LFFractionToString @203
-	LFDoubleToString @204
-	LFGeoCoordinateToString @205
-	LFGeoCoordinatesToString @206
-	LFTimeToString @207
-	LFBitrateToString @208
-	LFDurationToString @209
-	LFMegapixelToString @210
-	LFAttributeToString @211
-	LFInitVariantData @212
-	LFClearVariantData @213
-	LFIsNullVariantData @214
-	LFVariantDataToString @215
-	LFVariantDataFromString @216
-	LFCompareVariantData @217
-	LFGetAttributeVariantData @218
-	LFGetAttributeVariantDataEx @219
-	LFSetAttributeVariantData @220
-	LFSanitizeUnicodeArray @221
+	LFContainsHashtag @200
+	LFFourCCToString @201
+	LFUINTToString @202
+	LFSizeToString @203
+	LFFractionToString @204
+	LFDoubleToString @205
+	LFGeoCoordinateToString @206
+	LFGeoCoordinatesToString @207
+	LFTimeToString @208
+	LFBitrateToString @209
+	LFDurationToString @210
+	LFMegapixelToString @211
+	LFAttributeToString @212
+	LFInitVariantData @213
+	LFClearVariantData @214
+	LFIsNullVariantData @215
+	LFVariantDataToString @216
+	LFVariantDataFromString @217
+	LFCompareVariantData @218
+	LFGetAttributeVariantData @219
+	LFGetAttributeVariantDataEx @220
+	LFSetAttributeVariantData @221
+	LFSanitizeUnicodeArray @222
 
 	LFAllocItemDescriptor @300
 	LFAllocItemDescriptorEx @301

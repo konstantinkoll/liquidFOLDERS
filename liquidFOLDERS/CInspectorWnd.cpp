@@ -455,7 +455,7 @@ void CInspectorWnd::UpdateFinish()
 			&m_AttributeRangeFirst[a], &m_AttributeRangeSecond[a]);
 
 	// Store
-	m_wndGrid.SetStore(m_AttributeStatus[LFAttrStoreID]==StatusUsed ? m_AttributeValues[LFAttrStoreID].AnsiString : NULL);
+	m_wndGrid.SetStore(m_AttributeStatus[LFAttrStoreID]==StatusUsed ? m_AttributeValues[LFAttrStoreID].AnsiString : "");
 
 	m_wndGrid.AdjustLayout();
 }

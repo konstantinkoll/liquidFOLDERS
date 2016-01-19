@@ -51,10 +51,8 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 	FILETIME Time2;
 	ULARGE_INTEGER ULI1;
 	ULARGE_INTEGER ULI2;
-	WCHAR* pConditionArray;
-	WCHAR Condition[256];
-	WCHAR* pTagArray;
-	WCHAR Tag[256];
+	WCHAR* pHashtagArray;
+	WCHAR Hashtag[256];
 
 	switch(pFilterCondition->AttrData.Type)
 	{
@@ -98,22 +96,13 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		switch(pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			pTagArray = (WCHAR*)v;
-			while (GetNextTag(&pTagArray, Tag, 256))
-				if (_wcsicmp(Tag, pFilterCondition->AttrData.UnicodeArray)==0)
-					return TRUE;
-
-			return FALSE;
+			return LFContainsHashtag((WCHAR*)v, pFilterCondition->AttrData.UnicodeString);
 
 		case LFFilterCompareContains:
-			pConditionArray = pFilterCondition->AttrData.UnicodeArray;
-			while (GetNextTag(&pConditionArray, Condition, 256))
-			{
-				pTagArray = (WCHAR*)v;
-				while (GetNextTag(&pTagArray, Tag, 256))
-					if (_wcsicmp(Tag, Condition)==0)
-						return TRUE;
-			}
+			pHashtagArray = pFilterCondition->AttrData.UnicodeArray;
+			while (GetNextHashtag(&pHashtagArray, Hashtag, 256))
+				if (LFContainsHashtag((WCHAR*)v, Hashtag))
+					return TRUE;
 
 			return FALSE;
 

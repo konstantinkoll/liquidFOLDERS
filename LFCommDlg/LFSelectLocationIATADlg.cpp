@@ -107,6 +107,7 @@ void LFSelectLocationIATADlg::Heap(INT Wurzel, INT Anzahl)
 		if (Index+1<Anzahl)
 			if (Compare(Index, Index+1)<0)
 				Index++;
+
 		if (Compare(Wurzel, Index)<0)
 		{
 			Swap(p_Airports[Wurzel], p_Airports[Index]);
@@ -125,6 +126,7 @@ void LFSelectLocationIATADlg::Sort()
 	{
 		for (INT a=m_AirportCount/2-1; a>=0; a--)
 			Heap(a, m_AirportCount);
+
 		for (INT a=m_AirportCount-1; a>0; a--)
 		{
 			Swap(p_Airports[0], p_Airports[a]);

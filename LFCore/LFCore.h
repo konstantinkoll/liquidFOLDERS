@@ -148,6 +148,9 @@ LFCORE_API UINT __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL
 // LFVariantData
 //
 
+// Prüft, ob ein Hashtag in einem Unicode-Array enthalten ist
+LFCORE_API BOOL LFContainsHashtag(WCHAR* pUnicodeArray, WCHAR* pHashtag);
+
 // Konvertiert einen FourCC in eine Zeichenkette
 LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCount);
 

@@ -30,10 +30,10 @@ void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 
 	// Attribut nur dann freigeben, wenn es nicht im statischer Teil des LFItemDescriptor liegt
 	if ((pItemDescriptor->AttributeValues[Attr]) && !IsStaticAttribute(pItemDescriptor, Attr))
-		{
-			free(pItemDescriptor->AttributeValues[Attr]);
-			pItemDescriptor->AttributeValues[Attr] = NULL;
-		}
+	{
+		free(pItemDescriptor->AttributeValues[Attr]);
+		pItemDescriptor->AttributeValues[Attr] = NULL;
+	}
 }
 
 SIZE_T GetAttributeMaxCharacterCount(UINT Attr)

@@ -61,8 +61,10 @@ protected:
 	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();
-	afx_msg void OnNavigateSwitchContext(UINT nID);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnSwitchContext(UINT nID);
+	afx_msg void OnUpdateSwitchContextCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnFiltersCreateNew();
 

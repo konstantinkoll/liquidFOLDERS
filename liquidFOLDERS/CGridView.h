@@ -37,7 +37,7 @@ public:
 	CGridView(UINT DataSize=sizeof(GridItemData), BOOL EnableLabelEdit=TRUE);
 
 protected:
-	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)=0;
+	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)=NULL;
 
 	void AddItemCategory(WCHAR* Caption, WCHAR* Name);
 	void ResetItemCategories();

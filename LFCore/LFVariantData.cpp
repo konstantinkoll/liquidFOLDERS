@@ -333,7 +333,7 @@ void ToString(const void* pValue, UINT Type, WCHAR* pStr, SIZE_T cCount)
 	*pStr = L'\0';
 }
 
-BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, SIZE_T cCount)
+BOOL GetNextHashtag(WCHAR** ppUnicodeArray, WCHAR* pHashtag, SIZE_T cCount)
 {
 	WCHAR* Start = NULL;
 	BOOL InQuotation = FALSE;
@@ -352,7 +352,7 @@ BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, SIZE_T cCount)
 		case L'|':
 			if ((Start) && (!InQuotation))
 			{
-				wcsncpy_s(Tag, cCount, Start, ((*ppUnicodeArray)++)-Start);
+				wcsncpy_s(pHashtag, cCount, Start, ((*ppUnicodeArray)++)-Start);
 
 				return TRUE;
 			}
@@ -364,7 +364,7 @@ BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, SIZE_T cCount)
 			{
 				if (Start)
 				{
-					wcsncpy_s(Tag, cCount, Start, ((*ppUnicodeArray)++)-Start);
+					wcsncpy_s(pHashtag, cCount, Start, ((*ppUnicodeArray)++)-Start);
 
 					return TRUE;
 				}
@@ -388,10 +388,23 @@ BOOL GetNextTag(WCHAR** ppUnicodeArray, WCHAR* Tag, SIZE_T cCount)
 
 	if (Start)
 	{
-		wcscpy_s(Tag, cCount, Start);
+		wcscpy_s(pHashtag, cCount, Start);
 
 		return TRUE;
 	}
+
+	return FALSE;
+}
+
+LFCORE_API BOOL LFContainsHashtag(WCHAR* pUnicodeArray, WCHAR* pHashtag)
+{
+	assert(pUnicodeArray);
+	assert(pHashtag);
+
+	WCHAR Hashtag[256];
+	while (GetNextHashtag(&pUnicodeArray, Hashtag, 256))
+		if (_wcsicmp(Hashtag, pHashtag)==0)
+			return TRUE;
 
 	return FALSE;
 }
@@ -918,8 +931,10 @@ LFCORE_API INT LFCompareVariantData(LFVariantData& Value1, LFVariantData& Value2
 {
 	if (Value1.IsNull && Value2.IsNull)
 		return 0;
+
 	if (Value1.IsNull)
 		return -1;
+
 	if (Value2.IsNull)
 		return 1;
 
@@ -990,46 +1005,46 @@ LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;
 	Hashtags Tags;
 
-	WCHAR Tag[259];
-	WCHAR* Tagarray = pBuffer;
-	while (GetNextTag(&Tagarray, Tag, 256))
+	WCHAR Hashtag[259];
+	WCHAR* pHashtagArray = pBuffer;
+	while (GetNextHashtag(&pHashtagArray, Hashtag, 256))
 	{
-		std::wstring Key(Tag);
+		std::wstring Key(Hashtag);
 		transform(Key.begin(), Key.end(), Key.begin(), towlower);
 
 		Hashtags::iterator Location = Tags.find(Key);
 		if (Location==Tags.end())
 		{
-			Tags[Key] = TagItem(Tag, FALSE);
+			Tags[Key] = TagItem(Hashtag, FALSE);
 		}
 		else
 			if (!Location->second.second)
-				if (Location->second.first.compare(Tag)!=0)
+				if (Location->second.first.compare(Hashtag)!=0)
 					Location->second.second = TRUE;
 	}
 
 	pBuffer[0] = L'\0';
 	for (Hashtags::iterator it=Tags.begin(); it!=Tags.end(); it++)
 	{
-		wcscpy_s(Tag, 259, pBuffer[0]!=L'\0' ? L" " : L"");
+		wcscpy_s(Hashtag, 259, pBuffer[0]!=L'\0' ? L" " : L"");
 
 		if (it->second.first.find_first_of(L" .,:;?!|")!=std::wstring::npos)
 		{
-			wcscat_s(Tag, 259, L"\"");
-			wcscat_s(Tag, 259, it->second.first.c_str());
-			wcscat_s(Tag, 259, L"\"");
+			wcscat_s(Hashtag, 259, L"\"");
+			wcscat_s(Hashtag, 259, it->second.first.c_str());
+			wcscat_s(Hashtag, 259, L"\"");
 		}
 		else
 		{
-			wcscat_s(Tag, 259, it->second.first.c_str());
+			wcscat_s(Hashtag, 259, it->second.first.c_str());
 		}
 
-		if (wcslen(pBuffer)+wcslen(Tag)<=255)
+		if (wcslen(pBuffer)+wcslen(Hashtag)<=255)
 		{
 			if (it->second.second)
 			{
 				BOOL First = TRUE;
-				for (WCHAR* Ptr=Tag; *Ptr; Ptr++)
+				for (WCHAR* Ptr=Hashtag; *Ptr; Ptr++)
 					switch(*Ptr)
 					{
 					case L' ':
@@ -1051,7 +1066,7 @@ LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 					}
 			}
 
-			wcscat_s(pBuffer, cCount, Tag);
+			wcscat_s(pBuffer, cCount, Hashtag);
 		}
 	}
 }

@@ -98,9 +98,6 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 
 BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
 {
-	if ((pMsg->message==WM_SYSKEYDOWN) && (pMsg->wParam==VK_MENU))
-		return TRUE;
-
 	if (pMsg->message==WM_KEYDOWN)
 	{
 		CWnd* pWnd;
@@ -961,7 +958,6 @@ HBRUSH CBackstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	//if (hBackgroundBrush)
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_EDIT))
 	{
 		if (hBackgroundBrush)
@@ -1091,18 +1087,19 @@ void CBackstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*b
 {
 	ASSERT(pPopupMenu);
 
-	CCmdUI State;
-	State.m_pMenu = State.m_pParentMenu = pPopupMenu;
-	State.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+	CCmdUI cmdUI;
+	cmdUI.m_pMenu = cmdUI.m_pParentMenu = pPopupMenu;
+	cmdUI.m_nIndexMax = pPopupMenu->GetMenuItemCount();
 
-	ASSERT(!State.m_pOther);
-	ASSERT(State.m_pMenu);
+	ASSERT(!cmdUI.m_pOther);
+	ASSERT(cmdUI.m_pMenu);
 
-	for (State.m_nIndex=0; State.m_nIndex<State.m_nIndexMax; State.m_nIndex++)
+	for (cmdUI.m_nIndex=0; cmdUI.m_nIndex<cmdUI.m_nIndexMax; cmdUI.m_nIndex++)
 	{
-		State.m_nID = pPopupMenu->GetMenuItemID(State.m_nIndex);
-		if ((State.m_nID) && (State.m_nID!=(UINT)-1))
-			State.DoUpdate(this, FALSE);
+		cmdUI.m_nID = pPopupMenu->GetMenuItemID(cmdUI.m_nIndex);
+
+		if ((cmdUI.m_nID) && (cmdUI.m_nID!=(UINT)-1))
+			cmdUI.DoUpdate(this, FALSE);
 	}
 }
 

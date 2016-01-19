@@ -93,6 +93,16 @@ BOOL LFDialog::Create()
 
 BOOL LFDialog::PreTranslateMessage(MSG* pMsg)
 {
+	// Keyboard cues
+	if ((pMsg->message==WM_SYSKEYDOWN) && (!m_ShowKeyboardCues))
+	{
+		m_ShowKeyboardCues = TRUE;
+
+		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
+			m_Buttons.m_Items[a]->Invalidate();
+	}
+
+	// Main window
 	if (CBackstageWnd::PreTranslateMessage(pMsg))
 		return TRUE;
 
@@ -108,15 +118,6 @@ BOOL LFDialog::PreTranslateMessage(MSG* pMsg)
 
 			return TRUE;
 		}
-	}
-
-	// Keyboard cues
-	if ((pMsg->message==WM_SYSKEYDOWN) && (!m_ShowKeyboardCues))
-	{
-		m_ShowKeyboardCues = TRUE;
-
-		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
-			m_Buttons.m_Items[a]->Invalidate();
 	}
 
 	// Filter both messages to dialog and from children

@@ -24,7 +24,7 @@ public:
 
 	virtual void PreSubclassWindow();
 
-	LPITEMIDLIST GetSelectedPIDL() const;
+	LPCITEMIDLIST GetSelectedPIDL() const;
 	BOOL GetSelectedPath(LPWSTR Path) const;
 	void PopulateTree();
 	void SetRootPath(LPCWSTR RootPath);
@@ -34,8 +34,8 @@ protected:
 	virtual LRESULT WindowProc(UINT Message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	CString OnGetItemText(ExplorerTreeItemData* pItem) const;
-	INT OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const;
+	CString GetItemText(ExplorerTreeItemData* pItem) const;
+	INT GetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const;
 	HTREEITEM InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULONG dwAttributes=SFGAO_HASSUBFOLDER, HTREEITEM hParent=TVI_ROOT);
 	HTREEITEM InsertItem(LPCWSTR Path, HTREEITEM hParent=TVI_ROOT);
 	BOOL GetChildItems(HTREEITEM hParentItem);

@@ -20,10 +20,10 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		CString Key;
-		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(Key);
+		CString LicenseKey;
+		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(LicenseKey);
 
-		LFGetApp()->WriteGlobalString(_T("License"), Key);
+		LFGetApp()->WriteGlobalString(_T("License"), LicenseKey);
 
 		CString Caption;
 		CString Message;
@@ -69,7 +69,7 @@ void LFLicenseDlg::OnLoadLicense()
 	CFileDialog dlg(TRUE, _T(".lic"), NULL, OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, tmpStr, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		CString key;
+		CString LicenseKey;
 
 		CStdioFile f;
 		if (!f.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
@@ -80,11 +80,11 @@ void LFLicenseDlg::OnLoadLicense()
 		{
 			try
 			{
-				CString line;
+				CString Line;
 
-				UINT lines = 0;
-				while ((f.ReadString(line)) && (lines++<128))
-					key.Append(line+_T("\r\n"));
+				UINT cLines = 0;
+				while ((f.ReadString(Line)) && (cLines++<128))
+					LicenseKey.Append(Line+_T("\r\n"));
 			}
 			catch(CFileException ex)
 			{
@@ -93,7 +93,7 @@ void LFLicenseDlg::OnLoadLicense()
 
 			f.Close();
 
-			GetDlgItem(IDC_LICENSEKEY)->SetWindowText(key);
+			GetDlgItem(IDC_LICENSEKEY)->SetWindowText(LicenseKey);
 			GetDlgItem(IDOK)->EnableWindow(TRUE);
 			GetDlgItem(IDOK)->SetFocus();
 		}
@@ -102,8 +102,8 @@ void LFLicenseDlg::OnLoadLicense()
 
 void LFLicenseDlg::OnChange()
 {
-	CString Key;
-	GetDlgItem(IDC_LICENSEKEY)->GetWindowText(Key);
+	CString LicenseKey;
+	GetDlgItem(IDC_LICENSEKEY)->GetWindowText(LicenseKey);
 
-	GetDlgItem(IDOK)->EnableWindow(!Key.IsEmpty());
+	GetDlgItem(IDOK)->EnableWindow(!LicenseKey.IsEmpty());
 }

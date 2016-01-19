@@ -123,8 +123,6 @@ LFSearchResult::LFSearchResult(BYTE Context)
 	m_FileSize = 0;
 
 	m_AutoContext = LFContextAuto;
-
-//	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+Context, m_Name, 256, m_Hint, 256);
 }
 
 LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
@@ -595,25 +593,25 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 	{
 		BOOL Remove = FALSE;
 
-		WCHAR* TagArray = (WCHAR*)m_Items[a]->AttributeValues[Attr];
-		if (TagArray)
+		WCHAR* pHashtagArray = (WCHAR*)m_Items[a]->AttributeValues[Attr];
+		if (pHashtagArray)
 		{
-			WCHAR Tag[256];
-			while (GetNextTag(&TagArray, Tag, 256))
+			WCHAR Hashtag[256];
+			while (GetNextHashtag(&pHashtagArray, Hashtag, 256))
 			{
-				std::wstring Key(Tag);
+				std::wstring Key(Hashtag);
 				transform(Key.begin(), Key.end(), Key.begin(), towlower);
 
 				Hashtags::iterator Location = Tags.find(Key);
 				if (Location==Tags.end())
 				{
-					TagItem Item = { Tag, FALSE, 1, 0, 0 };
+					TagItem Item = { Hashtag, FALSE, 1, m_Items[a]->CoreAttributes.FileSize, m_Items[a]->Type & LFTypeSourceMask };
 					Tags[Key] = Item;
 				}
 				else
 				{
 					if (!Location->second.Multiple)
-						if (Location->second.Name.compare(Tag)!=0)
+						if (Location->second.Name.compare(Hashtag)!=0)
 							Location->second.Multiple = TRUE;
 
 					if ((m_Items[a]->Type & LFTypeSourceMask)!=Location->second.Source)
@@ -634,13 +632,13 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 
 	for (Hashtags::iterator it=Tags.begin(); it!=Tags.end(); it++)
 	{
-		WCHAR Tag[256];
-		wcscpy_s(Tag, 256, it->second.Name.c_str());
+		WCHAR Hashtag[256];
+		wcscpy_s(Hashtag, 256, it->second.Name.c_str());
 
 		if (it->second.Multiple)
 		{
 			BOOL First = TRUE;
-			for (WCHAR* Ptr=Tag; *Ptr; Ptr++)
+			for (WCHAR* Ptr=Hashtag; *Ptr; Ptr++)
 				switch(*Ptr)
 				{
 				case L' ':
@@ -662,18 +660,18 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 		LFItemDescriptor* pFolder = AllocFolderDescriptor();
 		pFolder->AggregateCount = it->second.Count;
 
-		SetAttribute(pFolder, LFAttrFileName, Tag);
+		SetAttribute(pFolder, LFAttrFileName, Hashtag);
 		SetAttribute(pFolder, LFAttrFileSize, &it->second.Size);
-		SetAttribute(pFolder, Attr, Tag);
+		SetAttribute(pFolder, Attr, Hashtag);
 		LFCombineFileCountSize(pFolder->AggregateCount, it->second.Size, pFolder->Description, 256);
 
 		pFolder->NextFilter = LFAllocFilter(pFilter);
 		pFolder->NextFilter->Options.IsSubfolder = TRUE;
 
-		wcscpy_s(pFolder->NextFilter->OriginalName, 256, Tag);
+		wcscpy_s(pFolder->NextFilter->OriginalName, 256, Hashtag);
 
 		LFFilterCondition* pFilterCondition = LFAllocFilterConditionEx(LFFilterCompareSubfolder, Attr, pFolder->NextFilter->ConditionList);
-		wcscpy_s(pFilterCondition->AttrData.UnicodeArray, 256, Tag);
+		wcscpy_s(pFilterCondition->AttrData.UnicodeArray, 256, Hashtag);
 
 		pFolder->NextFilter->ConditionList = pFilterCondition;
 

@@ -30,10 +30,10 @@ void LFAttributeListDlg::TestAttribute(UINT /*Attr*/, BOOL& Add, BOOL& Check)
 
 void LFAttributeListDlg::PrepareListCtrl(CExplorerList* pExplorerList, BOOL Check)
 {
-	const UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS | (Check ? LVS_EX_CHECKBOXES : 0);
-	pExplorerList->SetExtendedStyle(pExplorerList->GetExtendedStyle() | dwExStyle);
+	if (Check)
+		pExplorerList->SetExtendedStyle(pExplorerList->GetExtendedStyle() | LVS_EX_CHECKBOXES);
 
-	pExplorerList->AddColumn(0, _T(""));
+	pExplorerList->AddColumn(0);
 
 	pExplorerList->ModifyStyle(0, LVS_SHAREIMAGELISTS);
 	pExplorerList->SetImageList(&m_AttributeIcons, LVSIL_SMALL);

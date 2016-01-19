@@ -35,8 +35,7 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
 
-	CString m_MultipleValues;
-	BOOL m_StoreIDValid;
+	static CString m_MultipleValues;
 	CHAR m_StoreID[LFKeySize];
 };
 
@@ -205,7 +204,7 @@ class CInspectorHeader
 {
 public:
 	virtual INT GetPreferredHeight() const=0;
-	virtual void DrawHeader(CDC& dc, const CRect& rect, BOOL Themed)=0;
+	virtual void DrawHeader(CDC& dc, const CRect& rect, BOOL Themed)=NULL;
 };
 
 

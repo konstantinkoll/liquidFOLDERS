@@ -21,7 +21,6 @@
 #include "CInspectorGrid.h"
 #include "CPropertyEdit.h"
 #include "CStorePanel.h"
-#include "CTagList.h"
 #include "CTaskbar.h"
 #include "CTaskButton.h"
 #include "CTooltipHeader.h"

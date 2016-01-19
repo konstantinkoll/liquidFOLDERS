@@ -63,7 +63,7 @@ BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
 void CExplorerList::Init()
 {
 	ModifyStyle(0, WS_CLIPCHILDREN | LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
-	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_AUTOCHECKSELECT | LVS_EX_JUSTIFYCOLUMNS);
 
 	CHeaderCtrl* pHeader = GetHeaderCtrl();
 	if (pHeader)

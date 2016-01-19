@@ -6,6 +6,22 @@
 #include "LFCommDlg.h"
 
 
+// CDialogCmdUI
+//
+
+CSidebarCmdUI::CSidebarCmdUI()
+	: CCmdUI()
+{
+	m_Enabled = FALSE;
+}
+
+void CSidebarCmdUI::Enable(BOOL bOn)
+{
+	m_Enabled = bOn;
+	m_bEnableChanged = TRUE;
+}
+
+
 // CBackstageSidebar
 //
 
@@ -245,6 +261,11 @@ void CBackstageSidebar::PressItem(INT Index)
 	{
 		InvalidateItem(m_SelectedItem);
 		InvalidateItem(m_PressedItem);
+
+		if (Index!=-1)
+			if (!m_Items.m_Items[Index].Enabled)
+				Index = -1;
+
 		m_PressedItem = Index;
 		InvalidateItem(m_PressedItem);
 	}
@@ -285,6 +306,7 @@ BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
+	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_CONTEXTMENU()
 	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
@@ -488,7 +510,7 @@ void CBackstageSidebar::OnPaint()
 					dc.SelectObject(pOldFont);
 				}
 
-				dc.SetTextColor((m_HotItem==(INT)a) || Highlight ? colSel : colTex);
+				dc.SetTextColor(Highlight ? colSel : m_Items.m_Items[a].Enabled ? (m_HotItem==(INT)a) ? colSel : colTex : colNum);
 			}
 			else
 			{
@@ -654,7 +676,8 @@ void CBackstageSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	{
 		PressItem(Item);
 
-		GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Item].CmdID);
+		if (m_Items.m_Items[Item].Enabled)
+			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Item].CmdID);
 	}
 }
 
@@ -673,7 +696,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_HOME:
 		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
-			if (m_Items.m_Items[a].Selectable)
+			if (m_Items.m_Items[a].Selectable && m_Items.m_Items[a].Enabled)
 			{
 				PressItem(a);
 				m_Keyboard = TRUE;
@@ -685,7 +708,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_END:
 		for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
-			if (m_Items.m_Items[a].Selectable)
+			if (m_Items.m_Items[a].Selectable && m_Items.m_Items[a].Enabled)
 			{
 				PressItem(a);
 				m_Keyboard = TRUE;
@@ -700,7 +723,8 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			if (--Index<0)
 				Index = m_Items.m_ItemCount-1;
-			if (m_Items.m_Items[Index].Selectable)
+
+			if (m_Items.m_Items[Index].Selectable && m_Items.m_Items[Index].Enabled)
 			{
 				PressItem(Index);
 				m_Keyboard = TRUE;
@@ -717,7 +741,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (++Index>=(INT)m_Items.m_ItemCount)
 				Index = 0;
 
-			if (m_Items.m_Items[Index].Selectable)
+			if (m_Items.m_Items[Index].Selectable && m_Items.m_Items[Index].Enabled)
 			{
 				PressItem(Index);
 				m_Keyboard = TRUE;
@@ -730,6 +754,23 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 
 	CFrontstageWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CBackstageSidebar::OnIdleUpdateCmdUI()
+{
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		if (m_Items.m_Items[a].Selectable)
+		{
+			CSidebarCmdUI cmdUI;
+			cmdUI.m_nID = m_Items.m_Items[a].CmdID;
+			cmdUI.DoUpdate(GetOwner(), TRUE);
+
+			if (m_Items.m_Items[a].Enabled!=cmdUI.m_Enabled)
+			{
+				m_Items.m_Items[a].Enabled = cmdUI.m_Enabled;
+				InvalidateItem(a);
+			}
+		}
 }
 
 void CBackstageSidebar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)

@@ -825,7 +825,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Beleuchtung mit FESTER Lichtquelle
 	if (theApp.m_GlobeLighting)
 	{
-		GLfloat lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+		GLfloat lAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 		GLfloat lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		GLfloat lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
