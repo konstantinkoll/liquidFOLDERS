@@ -228,7 +228,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8630
+#define AirportCount_DE 8631
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -4341,6 +4341,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 126, "LOM", "", "Lagos de Moreno", { -21.350000, -101.933056 } },
 	{  63, "LON", "LON", "London", { -51.578111, 0.001389 } },
 	{   3, "LOO", "", "Laghouat", { -33.764444, 2.928333 } },
+	{  74, "LOP", "", "Lombok", { 8.757222, 116.276667 } },
 	{  25, "LOQ", "", "Lobatze", { 25.183056, 25.666944 } },
 	{ 210, "LOR", "", "Fort Rucker (Lowe Army Heliport)", { -31.355833, -85.751111 } },
 	{ 143, "LOS", "", "Lagos", { -6.577500, 3.321111 } },

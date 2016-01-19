@@ -4365,6 +4365,7 @@ LOL     Lovelock, USA;4;40*3'59"N, 118*33'55"W
 LOM     Lagos de Moreno, Mexiko;4;21*21'0"N, 101*55'59"W
 LON LON London, Groﬂbritannien
 LOO     Laghouat, Algerien;4;33*45'52"N, 2*55'42"E
+LOP     Lombok, Indonesien;5;8*45'26"S, 116*16'36"E
 LOQ     Lobatze, Botswana;4;25*10'59"S, 25*40'1"E
 LOR     Fort Rucker (Lowe Army Heliport), USA;4;31*21'21"N, 85*45'4"W
 LOS     Lagos, Nigeria;4;6*34'39"N, 3*19'16"E
