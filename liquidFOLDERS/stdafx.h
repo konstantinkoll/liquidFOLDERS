@@ -15,22 +15,17 @@
 
 #include "targetver.h"
 
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // einige CString-Konstruktoren sind explizit
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
 
-// Deaktiviert das Ausblenden einiger häufiger und oft ignorierter Warnungen durch MFC
+#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
 #define _AFX_ALL_WARNINGS
 
-#include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
-#include <afxext.h>         // MFC-Erweiterungen
-
-
-#ifndef _AFX_NO_OLE_SUPPORT
-#include <afxdtctl.h>           // MFC-Unterstützung für allgemeine Steuerelemente von Internet Explorer 4
-#endif
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>             // MFC-Unterstützung für allgemeine Windows-Steuerelemente
-#endif // _AFX_NO_AFXCMN_SUPPORT
-
+#include <afxwin.h>             // MFC-Kern- und -Standardkomponenten
+#include <afxext.h>             // MFC-Erweiterungen
 #include <afxcontrolbars.h>     // MFC-Unterstützung für Multifunktionsleisten und Steuerleisten
 
 
@@ -41,6 +36,7 @@ using namespace Gdiplus;
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#define GL_RESCALE_NORMAL                    0x803A
 #define GL_BGR                               0x80E0
 #define GL_BGRA                              0x80E1
 #define GL_GENERATE_MIPMAP_SGIS              0x8191
