@@ -157,13 +157,14 @@ LFCORE_API BOOL LFIsSharewareExpired()
 	// Setup
 	if (!ExpireRead)
 	{
+		GetSystemTimeAsFileTime(&ExpireBuffer);
 		ExpireRead = TRUE;
 
-		BOOL Result = FALSE;
-
 		HKEY hKey;
-		if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &hKey)==ERROR_SUCCESS)
+		if (RegCreateKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &hKey)==ERROR_SUCCESS)
 		{
+			BOOL Result = FALSE;
+
 			DWORD dwSize = sizeof(DWORD);
 			if (RegQueryValueEx(hKey, L"Seed", 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &dwSize)==ERROR_SUCCESS)
 			{
@@ -174,7 +175,6 @@ LFCORE_API BOOL LFIsSharewareExpired()
 
 			if (!Result)
 			{
-				GetSystemTimeAsFileTime(&ExpireBuffer);
 				RegSetValueEx(hKey, L"Seed", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
 				RegSetValueEx(hKey, L"Envelope", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
 			}

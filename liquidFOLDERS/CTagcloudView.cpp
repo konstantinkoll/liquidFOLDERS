@@ -71,16 +71,16 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
-			TagcloudItemData* d = GetItemData(a);
+			TagcloudItemData* pData = GetItemData(a);
 
 			if ((i->Type & LFTypeMask)==LFTypeFolder)
-				d->Cnt = i->AggregateCount;
+				pData->Cnt = i->AggregateCount;
 
-			d->Hdr.Hdr.Valid = d->Cnt;
-			if (d->Hdr.Hdr.Valid)
+			pData->Hdr.Hdr.Valid = pData->Cnt;
+			if (pData->Hdr.Hdr.Valid)
 			{
-				Minimum = (Minimum==-1) ? d->Cnt : min(Minimum, d->Cnt);
-				Maximum = (Maximum==-1) ? d->Cnt : max(Maximum, d->Cnt);
+				Minimum = (Minimum==-1) ? pData->Cnt : min(Minimum, pData->Cnt);
+				Maximum = (Maximum==-1) ? pData->Cnt : max(Maximum, pData->Cnt);
 			}
 		}
 
@@ -88,36 +88,36 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 		INT Delta = Maximum-Minimum+1;
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			TagcloudItemData* d = GetItemData(a);
-			if (d->Hdr.Hdr.Valid)
-				if ((!m_ViewParameters.TagcloudShowRare) && (Delta>1) && (d->Cnt==Minimum))
+			TagcloudItemData* pData = GetItemData(a);
+			if (pData->Hdr.Hdr.Valid)
+				if ((!m_ViewParameters.TagcloudShowRare) && (Delta>1) && (pData->Cnt==Minimum))
 				{
-					ZeroMemory(d, sizeof(TagcloudItemData));
+					ZeroMemory(pData, sizeof(TagcloudItemData));
 				}
 				else
 					if (Delta==1)
 					{
-						d->FontSize = 19;
-						d->Alpha = 255;
-						d->Color = 0xFF0000;
+						pData->FontSize = 19;
+						pData->Alpha = 255;
+						pData->Color = 0xFF0000;
 					}
 					else
 					{
-						d->FontSize = (20*(d->Cnt-Minimum))/Delta;
-						d->Alpha = 56+(200*(d->Cnt-Minimum))/Delta;
+						pData->FontSize = (20*(pData->Cnt-Minimum))/Delta;
+						pData->Alpha = 56+(200*(pData->Cnt-Minimum))/Delta;
 
-						if (d->Alpha<128)
+						if (pData->Alpha<128)
 						{
-							d->Color = 0xFF0000 | ((128-d->Alpha)<<9);
+							pData->Color = 0xFF0000 | ((128-pData->Alpha)<<9);
 						}
 						else
-							if (d->Alpha<192)
+							if (pData->Alpha<192)
 							{
-								d->Color = (0xFF0000-(d->Alpha-128)*0x020000) | ((d->Alpha-128)*2);
+								pData->Color = (0xFF0000-(pData->Alpha-128)*0x020000) | ((pData->Alpha-128)*2);
 							}
 							else
 							{
-								d->Color = (0x800000-(d->Alpha-192)*0x020000) | (0x000080+(d->Alpha-192)*2);
+								pData->Color = (0x800000-(pData->Alpha-192)*0x020000) | (0x000080+(pData->Alpha-192)*2);
 							}
 					}
 		}
@@ -140,15 +140,15 @@ void CTagcloudView::AdjustLayout()
 
 #define CenterRow(last) for (UINT b=RowStart; b<=last; b++) \
 	{ \
-		TagcloudItemData* d = GetItemData(b); \
-		if (d->Hdr.Hdr.Valid) \
+		TagcloudItemData* pData = GetItemData(b); \
+		if (pData->Hdr.Hdr.Valid) \
 		{ \
-			OffsetRect(&d->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (RowHeight-(d->Hdr.Hdr.Rect.bottom-d->Hdr.Hdr.Rect.top))/2); \
-			if (d->Hdr.Hdr.Rect.right>m_ScrollWidth) \
-				m_ScrollWidth = d->Hdr.Hdr.Rect.right; \
-			if (d->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
+			OffsetRect(&pData->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (RowHeight-(pData->Hdr.Hdr.Rect.bottom-pData->Hdr.Hdr.Rect.top))/2); \
+			if (pData->Hdr.Hdr.Rect.right>m_ScrollWidth) \
+				m_ScrollWidth = pData->Hdr.Hdr.Rect.right; \
+			if (pData->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
 			{ \
-				m_ScrollHeight = d->Hdr.Hdr.Rect.bottom-1; \
+				m_ScrollHeight = pData->Hdr.Hdr.Rect.bottom-1; \
 				if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) \
 				{ \
 					HasScrollbars = TRUE; \
@@ -173,8 +173,8 @@ Restart:
 
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			TagcloudItemData* d = GetItemData(a);
-			if (d->Hdr.Hdr.Valid)
+			TagcloudItemData* pData = GetItemData(a);
+			if (pData->Hdr.Hdr.Valid)
 			{
 				LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
@@ -198,9 +198,9 @@ Restart:
 				}
 
 				rect.MoveToXY(x, y);
-				d->Hdr.Column = Column++;
-				d->Hdr.Row = Row;
-				d->Hdr.Hdr.Rect = rect;
+				pData->Hdr.Column = Column++;
+				pData->Hdr.Row = Row;
+				pData->Hdr.Hdr.Rect = rect;
 
 				x += rect.Width()+GUTTER;
 				RowHeight = max(RowHeight, rect.Height());
@@ -223,18 +223,18 @@ Restart:
 void CTagcloudView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
-	TagcloudItemData* d = GetItemData(Index);
+	TagcloudItemData* pData = GetItemData(Index);
 
-	if (!d->Hdr.Hdr.Selected)
+	if (!pData->Hdr.Hdr.Selected)
 	{
-		COLORREF clr = m_ViewParameters.TagcloudUseColors ? d->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+		COLORREF clr = m_ViewParameters.TagcloudUseColors ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
 		if (m_ViewParameters.TagcloudUseOpacity)
 		{
 			const COLORREF clrBack = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-			clr = ((clr & 0xFF)*d->Alpha + (clrBack & 0xFF)*(255-d->Alpha))>>8 |
-				((((clr>>8) & 0xFF)*d->Alpha + ((clrBack>>8) & 0xFF)*(255-d->Alpha)) & 0xFF00) |
-				((((clr>>16) & 0xFF)*d->Alpha + ((clrBack>>16) & 0xFF)*(255-d->Alpha))<<8) & 0xFF0000;
+			clr = ((clr & 0xFF)*pData->Alpha + (clrBack & 0xFF)*(255-pData->Alpha))>>8 |
+				((((clr>>8) & 0xFF)*pData->Alpha + ((clrBack>>8) & 0xFF)*(255-pData->Alpha)) & 0xFF00) |
+				((((clr>>16) & 0xFF)*pData->Alpha + ((clrBack>>16) & 0xFF)*(255-pData->Alpha))<<8) & 0xFF0000;
 		}
 
 		dc.SetTextColor(clr);

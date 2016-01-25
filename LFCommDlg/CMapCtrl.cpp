@@ -170,7 +170,7 @@ BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
 
 		Graphics g(dc);
 
-		Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP);
+		Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
 		g.DrawImage(pMap, 0, 0, rect.Width(), rect.Height());
 
 		dc.SelectObject(pOldBitmap);
@@ -211,9 +211,7 @@ void CMapCtrl::OnPaint()
 		PointFromLocation(PosX, PosY);
 
 		Graphics g(dc);
-
-		Bitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8);
-		g.DrawImage(pIndicator, PosX-(INT)pIndicator->GetWidth()/2, PosY-(INT)pIndicator->GetHeight()/2);
+		DrawLocationIndicator(g, PosX-4, PosY-4, 8);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

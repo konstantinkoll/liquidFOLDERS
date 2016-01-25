@@ -32,18 +32,17 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 IDB_TASKS_16            RCDATA                  "res\\Tasks_16.png"
 IDB_TASKS_32            RCDATA                  "res\\Tasks_32.png"
-IDB_GLOBEICONS_RGB      RCDATA                  "res\\GlobeIcons_RGB.png"
-IDB_GLOBEICONS_ALPHA    RCDATA                  "res\\GlobeIcons_Alpha.png"
-IDB_BLUEMARBLE_1024     RCDATA                  "res\\BlueMarble_1024.jpg"
-IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
-IDB_BLUEMARBLE_4096     RCDATA                  "res\\BlueMarble_4096.jpg"
-IDB_BLUEMARBLE_8192     RCDATA                  "res\\BlueMarble_8192.jpg"
 IDB_MULTIPLE            RCDATA                  "res\\Multiple.png"
 IDB_CONTEXTS_16         RCDATA                  "res\\Contexts_16.png"
 IDB_CONTEXTS_32         RCDATA                  "res\\Contexts_32.png"
 IDB_THUMBNAIL_FRAME     RCDATA                  "res\\Thumbnail_Frame.png"
 IDB_THUMBNAIL_SHADOW    RCDATA                  "res\\Thumbnail_Shadow.png"
 IDB_SOURCEICONS         RCDATA                  "res\\SourceIcons.png"
+IDB_BLUEMARBLE_1024     RCDATA                  "res\\BlueMarble_1024.jpg"
+IDB_BLUEMARBLE_8192     RCDATA                  "res\\BlueMarble_8192.jpg"
+IDB_CLOUDS_1024         RCDATA                  "res\\Clouds_1024.jpg"
+IDB_CLOUDS_2048         RCDATA                  "res\\Clouds_2048.jpg"
+IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -270,26 +269,24 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,232,288,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 230
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Globus-Einstellungen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,208,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,103,208,50,14
+    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,103,157,50,14
     CONTROL         "3D-Einstellungen (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
-    LTEXT           "Texturgröße:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_TEXTURESIZE,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Beleuchtung",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,44,146,10
-    CONTROL         "&Atmosphäre",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,146,10
+    LTEXT           "3D-Modell:",IDC_STATIC,7,26,54,8
+    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Texturgröße:",IDC_STATIC,7,43,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Komprimieren",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
     CONTROL         "Objekte",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
     CONTROL         "&Orte markieren",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
     CONTROL         "&Flughafen-Namen zeigen",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
     CONTROL         "&GPS-Koordinaten zeigen",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
     CONTROL         "Be&schreibung zeigen",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
-    CONTROL         "Sonstiges",IDC_CATEGORY3,"CCategory",WS_GROUP,7,152,146,15
-    CONTROL         "&Kamera-Perspektive zeigen",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,170,146,10
-    CONTROL         "Fa&denkreuz zeigen",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,182,146,10
 END
 
 
@@ -323,7 +320,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 153
         TOPMARGIN, 7
-        BOTTOMMARGIN, 222
+        BOTTOMMARGIN, 171
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -373,19 +370,22 @@ BEGIN
     IDS_ATTRIBUTENOTSORTABLE 
                             "Diese Eigenschaft ist zur Sortierung nicht geeignet."
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
-    IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
+    IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
+    IDS_FILETYPES           "Dateitypen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_AUTOMATIC           "Automatisch wählen"
-    IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
     IDS_SEARCHTERM          "Alle Stores durchsuchen"
     IDS_ASCENDING           "Aufsteigend"
     IDS_DESCENDING          "Absteigend"
     IDS_DEFAULTSTORE        "Standard-Store"
+    IDS_QUALITY_LOW         "Niedrig"
+    IDS_QUALITY_MEDIUM      "Mittel"
+    IDS_QUALITY_HIGH        "Hoch"
+    IDS_QUALITY_ULTRA       "Ultra"
 END
 
 STRINGTABLE 
@@ -692,27 +692,25 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,232,288,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 230
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configuraciones de globo"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,208,50,14
-    PUSHBUTTON      "Cancelar",IDCANCEL,103,208,50,14
+    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,103,157,50,14
     CONTROL         "Configuraciones 3D (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
-    LTEXT           "Dimensión:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_TEXTURESIZE,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Iluminación",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,44,146,10
-    CONTROL         "&Atmósfera",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,146,10
+    LTEXT           "Modelo 3D:",IDC_STATIC,7,26,54,8
+    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Texturas:",IDC_STATIC,7,43,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Comprimir",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
     CONTROL         "Objetos",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
     CONTROL         "Marcar &ubicaciones",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
     CONTROL         "Mostrar &nombres de aeropuertos",IDC_AIRPORTNAMES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
     CONTROL         "Mostrar &coordenadas GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
     CONTROL         "Mostrar &descripción",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
-    CONTROL         "Varios",IDC_CATEGORY3,"CCategory",WS_GROUP,7,152,146,15
-    CONTROL         "Mostrar &vista de cámara",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,170,146,10
-    CONTROL         "Mostrar puntos de&mira",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,182,146,10
 END
 
 
@@ -745,7 +743,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 153
         TOPMARGIN, 7
-        BOTTOMMARGIN, 222
+        BOTTOMMARGIN, 171
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -794,19 +792,22 @@ BEGIN
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "Esta propiedad no es adecuada para clasificar."
     IDS_NOITEMSSELECTED     "Objetos no seleccionados"
-    IDS_YOULOOKAT           "Usted está viendo %s"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
+    IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
+    IDS_FILETYPES           "Tipos de archivo"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_AUTOMATIC           "Escoger automaticamente"
-    IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
     IDS_SEARCHTERM          "Buscar todo los stores"
     IDS_ASCENDING           "Ascendente"
     IDS_DESCENDING          "Descendiente"
     IDS_DEFAULTSTORE        "Store predeterminado"
+    IDS_QUALITY_LOW         "Bajo"
+    IDS_QUALITY_MEDIUM      "Medio"
+    IDS_QUALITY_HIGH        "Alto"
+    IDS_QUALITY_ULTRA       "Ultra"
 END
 
 STRINGTABLE 
@@ -1114,26 +1115,24 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,232,288,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 230
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Paramètres du globe"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,208,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,103,208,50,14
-    CONTROL         "3D-paramètres (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
-    LTEXT           "Texture:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_TEXTURESIZE,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Éclairag&e",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,44,146,10
-    CONTROL         "&Atmosphère",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,146,10
+    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,103,157,50,14
+    CONTROL         "Paramètres 3D (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
+    LTEXT           "Modèle 3D:",IDC_STATIC,7,26,54,8
+    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Textures:",IDC_STATIC,7,43,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Compresser",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
     CONTROL         "Objets",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
     CONTROL         "&Sélectionner des lieux",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
     CONTROL         "Indiquer &noms d'aéroport",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
     CONTROL         "Indiquer &coordonnées-GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
     CONTROL         "Indiquer &descriptions",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
-    CONTROL         "Divers",IDC_CATEGORY3,"CCategory",WS_GROUP,7,152,146,15
-    CONTROL         "Indiquer &perspective de caméra",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,170,146,10
-    CONTROL         "Indiquer &réticule",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,182,146,10
 END
 
 
@@ -1166,7 +1165,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 153
         TOPMARGIN, 7
-        BOTTOMMARGIN, 222
+        BOTTOMMARGIN, 171
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1215,19 +1214,22 @@ BEGIN
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "Cette qualité ne convient pas au triage."
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
-    IDS_YOULOOKAT           "Vous regardez %s"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
+    IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
+    IDS_FILETYPES           "Types de fichiers"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_AUTOMATIC           "Choisir automatiquement"
-    IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
     IDS_SEARCHTERM          "Recherche tous le stores"
     IDS_ASCENDING           "Montant"
     IDS_DESCENDING          "Descendant"
     IDS_DEFAULTSTORE        "Store défaut"
+    IDS_QUALITY_LOW         "Faible"
+    IDS_QUALITY_MEDIUM      "Moyens"
+    IDS_QUALITY_HIGH        "Haut"
+    IDS_QUALITY_ULTRA       "Ultra"
 END
 
 STRINGTABLE 
@@ -1586,26 +1588,24 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,232,288,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 230
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Globe settings"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,208,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,103,208,50,14
+    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,103,157,50,14
     CONTROL         "3D settings (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
-    LTEXT           "Texture size:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_TEXTURESIZE,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Lighting",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,44,146,10
-    CONTROL         "&Atmosphere",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,146,10
+    LTEXT           "3D model:",IDC_STATIC,7,26,54,8
+    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Texture size:",IDC_STATIC,7,43,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Compress",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
     CONTROL         "Objects",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
     CONTROL         "Mark &locations",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
     CONTROL         "Show &airport names",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
-    CONTROL         "Show &GPS ccordinates",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
+    CONTROL         "Show &GPS coordinates",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
     CONTROL         "Show &description",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
-    CONTROL         "Miscellaneous",IDC_CATEGORY3,"CCategory",WS_GROUP,7,152,146,15
-    CONTROL         "Show &camera viewport",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,170,146,10
-    CONTROL         "Show cross&hairs",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,182,146,10
 END
 
 
@@ -1638,7 +1638,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 153
         TOPMARGIN, 7
-        BOTTOMMARGIN, 222
+        BOTTOMMARGIN, 171
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1687,19 +1687,22 @@ BEGIN
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
-    IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
+    IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
+    IDS_FILETYPES           "File types"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_AUTOMATIC           "Choose automatically"
-    IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
     IDS_SEARCHTERM          "Search all stores"
     IDS_ASCENDING           "Ascending"
     IDS_DESCENDING          "Descending"
     IDS_DEFAULTSTORE        "Default Store"
+    IDS_QUALITY_LOW         "Low"
+    IDS_QUALITY_MEDIUM      "Medium"
+    IDS_QUALITY_HIGH        "High"
+    IDS_QUALITY_ULTRA       "Ultra"
 END
 
 STRINGTABLE 

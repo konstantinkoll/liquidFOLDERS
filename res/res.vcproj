@@ -945,10 +945,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Crosshair.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Div.png"
 			>
 		</File>
@@ -985,14 +981,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Globe.3ds"
-			>
-		</File>
-		<File
-			RelativePath=".\Globe.asc"
-			>
-		</File>
-		<File
 			RelativePath=".\Google Earth.png"
 			>
 		</File>
@@ -1026,14 +1014,6 @@
 		</File>
 		<File
 			RelativePath=".\liquidFOLDERS_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\LocationIndicator_16.png"
-			>
-		</File>
-		<File
-			RelativePath=".\LocationIndicator_64.png"
 			>
 		</File>
 		<File

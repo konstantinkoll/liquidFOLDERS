@@ -144,6 +144,20 @@ HBITMAP CreateTransparentBitmap(LONG Width, LONG Height)
 	return CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
 }
 
+void DrawLocationIndicator(Graphics& g, INT x, INT y, INT sz)
+{
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+	REAL Radius = (REAL)sz/8.0f;
+	Rect rect(x+(INT)(0.5f*Radius), y+(INT)(0.5f*Radius), sz-(INT)Radius-1, sz-(INT)Radius-1);
+
+	SolidBrush brush(Color(0xFF, 0x00, 0x00));
+	g.FillEllipse(&brush, rect);
+
+	Pen pen(Color(0xFF, 0xFF, 0xFF), Radius);
+	g.DrawEllipse(&pen, rect);
+}
+
 void DrawControlBorder(CWnd* pWnd)
 {
 	CRect rect;
@@ -849,8 +863,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP);
-	Bitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16);
+	Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
 
 	INT L = pMap->GetWidth();
 	INT H = pMap->GetHeight();
@@ -873,9 +886,9 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 
 	g.DrawImage(pMap, Rect(0, 0, Width, Height), -PosX, -PosY, Width, Height, UnitPixel, &ImgAttr);
 
-	LocX += PosX-pIndicator->GetWidth()/2+1;
-	LocY += PosY-pIndicator->GetHeight()/2+1;
-	g.DrawImage(pIndicator, LocX, LocY);
+	LocX += PosX-8;
+	LocY += PosY-8;
+	DrawLocationIndicator(g, LocX, LocY, 16);
 
 	// Pfad erstellen
 	FontFamily fontFamily(_T("Arial"));
@@ -890,7 +903,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	Rect rt;
 	TextPath.GetBounds(&rt);
 
-	INT FntX = LocX+pIndicator->GetWidth();
+	INT FntX = LocX+16;
 	INT FntY = LocY-rt.Y;
 
 	if (FntY<10)

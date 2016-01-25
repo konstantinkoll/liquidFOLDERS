@@ -449,6 +449,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GLFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GLRenderer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFAboutDlg.cpp"
 				>
 			</File>
@@ -655,6 +663,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\BlueMarble_2048.jpg"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Clipboard_Small.ico"
 				>
 			</File>
@@ -668,10 +680,6 @@
 			</File>
 			<File
 				RelativePath=".\res\DivUp.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Earthmap.jpg"
 				>
 			</File>
 			<File
@@ -704,14 +712,6 @@
 			</File>
 			<File
 				RelativePath=".\res\liquidFOLDERS_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\LocationIndicator_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\LocationIndicator_8.png"
 				>
 			</File>
 			<File
@@ -994,6 +994,14 @@
 			</File>
 			<File
 				RelativePath=".\CWhiteButton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GLFont.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GLRenderer.h"
 				>
 			</File>
 			<File

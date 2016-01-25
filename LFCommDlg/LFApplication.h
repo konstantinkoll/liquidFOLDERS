@@ -5,6 +5,7 @@
 #pragma once
 #include "resource.h"
 #include "CIcons.h"
+#include "GLRenderer.h"
 #include "LFCore.h"
 #include "LFFont.h"
 #include "LFTooltip.h"
@@ -98,6 +99,9 @@ public:
 	LFUpdateDlg* m_pUpdateNotification;
 	CIcons m_LargeAttributeIcons;
 	CIcons m_SmallAttributeIcons;
+	GLModelQuality m_ModelQuality;
+	GLTextureQuality m_TextureQuality;
+	BOOL m_TextureCompress;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;
@@ -170,3 +174,17 @@ private:
 	HMODULE hModKernel;
 	HANDLE hFontLetterGothic;
 };
+
+inline BOOL LFApplication::IsTooltipVisible() const
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	return m_wndTooltip.IsWindowVisible();
+}
+
+inline void LFApplication::HideTooltip()
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	m_wndTooltip.HideTooltip();
+}

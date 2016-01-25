@@ -209,12 +209,7 @@ void CBackstageSidebar::SetCount(UINT CmdID, UINT Count)
 		}
 }
 
-INT CBackstageSidebar::GetPreferredWidth()
-{
-	return m_Width;
-}
-
-INT CBackstageSidebar::GetMinHeight()
+INT CBackstageSidebar::GetMinHeight() const
 {
 	INT Height = m_Items.m_Items[m_Items.m_ItemCount-1].Rect.bottom;
 

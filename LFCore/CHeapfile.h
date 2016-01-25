@@ -80,3 +80,8 @@ private:
 	WCHAR m_Filename[MAX_PATH];
 	HANDLE hFile;
 };
+
+inline UINT CHeapfile::GetItemCount() const
+{
+	return m_ItemCount;
+}

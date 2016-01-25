@@ -148,11 +148,6 @@ CHeapfile::~CHeapfile()
 	free(m_pBuffer);
 }
 
-UINT CHeapfile::GetItemCount() const
-{
-	return m_ItemCount;
-}
-
 UINT CHeapfile::GetRequiredElementSize() const
 {
 	return max(m_Header.ElementSize, m_RequiredElementSize);

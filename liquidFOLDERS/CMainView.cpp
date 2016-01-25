@@ -285,36 +285,6 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		OnUpdateSelection();
 }
 
-BOOL CMainView::StoreIDValid() const
-{
-	return m_StoreIDValid;
-}
-
-CHAR* CMainView::GetStoreID()
-{
-	return m_StoreID;
-}
-
-INT CMainView::GetContext() const
-{
-	return m_Context;
-}
-
-INT CMainView::GetViewID() const
-{
-	return m_ViewID;
-}
-
-void CMainView::DismissNotification()
-{
-	m_wndExplorerNotification.DismissNotification();
-}
-
-void CMainView::ShowNotification(UINT Type, const CString& Message, UINT Command)
-{
-	m_wndExplorerNotification.SetNotification(Type, Message, Command);
-}
-
 void CMainView::ShowNotification(UINT Type, UINT Result, UINT Command)
 {
 	if (Result!=LFOk)
@@ -366,23 +336,13 @@ void CMainView::AdjustLayout(UINT nFlags)
 		}
 	}
 
-	const UINT ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
-	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, ExplorerHeight, nFlags);
+	const UINT HeaderHeight = m_wndHeaderArea.GetPreferredHeight();
+	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, HeaderHeight, nFlags);
 
 	if (p_wndFileView)
-		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width()-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, nFlags);
+		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+HeaderHeight, rect.Width()-InspectorWidth, rect.Height()-HeaderHeight-TaskHeight, nFlags);
 
 	m_Resizing = FALSE;
-}
-
-INT CMainView::GetSelectedItem() const
-{
-	return p_wndFileView ? p_wndFileView->GetSelectedItem() : -1;
-}
-
-INT CMainView::GetNextSelectedItem(INT Index) const
-{
-	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(Index) : -1;
 }
 
 void CMainView::GetPersistentData(FVPersistentData& Data) const

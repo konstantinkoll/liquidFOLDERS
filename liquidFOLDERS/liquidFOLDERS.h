@@ -11,7 +11,7 @@
 
 
 // CLiquidFoldersApp:
-// Siehe StoreManager.cpp für die Implementierung dieser Klasse
+// Siehe liquidFOLDERS.cpp für die Implementierung dieser Klasse
 //
 
 #define ViewParametersVersion     2
@@ -42,17 +42,10 @@ public:
 	LFViewParameters m_Views[LFContextCount];
 	UINT m_AllowedViews[LFContextCount];
 
-	UINT m_nTextureSize;
-	UINT m_nMaxTextureSize;
-
 	BOOL m_ShowInspectorPane;
 	UINT m_InspectorWidth;
 
 	BOOL m_CalendarShowCaptions;
-	BOOL m_GlobeLighting;
-	BOOL m_GlobeAtmosphere;
-	BOOL m_GlobeShowViewport;
-	BOOL m_GlobeShowCrosshairs;
 
 	BOOL m_FileDropAlwaysOnTop;
 
@@ -64,5 +57,10 @@ protected:
 
 	BOOL m_AppInitialized;
 };
+
+inline void CLiquidFoldersApp::Reload(INT Context)
+{
+	Broadcast(Context, -1, WM_RELOAD);
+}
 
 extern CLiquidFoldersApp theApp;

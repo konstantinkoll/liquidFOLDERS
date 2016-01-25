@@ -84,7 +84,7 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	// Pfad zu Google Earth
 	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\Google\\Google Earth Plus"), 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwType = REG_SZ;
 		WCHAR lszValue[256];
@@ -98,24 +98,17 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
+
+	m_ModelQuality = (GLModelQuality)GetInt(_T("ModelQuality"), MODELULTRA);
+	m_TextureQuality = (GLTextureQuality)GetInt(_T("TextureQuality"), TEXTUREMEDIUM);
+	m_TextureCompress = GetInt(_T("TextureCompress"), FALSE);
+
 	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), TRUE);
-
-	m_InspectorWidth = GetInt(_T("InspectorWidth"), 200);
-	if (m_InspectorWidth<32)
-		m_InspectorWidth = 32;
-
-	m_nTextureSize = GetInt(_T("TextureSize"), LFTextureAuto);
-	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
-	if (m_nTextureSize<0)
-		m_nTextureSize = 0;
-	if (m_nTextureSize>m_nMaxTextureSize)
-		m_nTextureSize = m_nMaxTextureSize;
+	m_InspectorWidth = GetInt(_T("InspectorWidth"), 220);
+	if (m_InspectorWidth<140)
+		m_InspectorWidth = 140;
 
 	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
-	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
-	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
-	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
-	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_FileDropAlwaysOnTop = GetInt(_T("FileDropAlwaysOnTop"), TRUE);
 
 	for (UINT a=0; a<LFContextCount; a++)
@@ -240,16 +233,15 @@ INT CLiquidFoldersApp::ExitInstance()
 			SaveViewOptions(a);
 
 		SetRegistryBase(_T("Settings"));
+
+		WriteInt(_T("ModelQuality"), m_ModelQuality);
+		WriteInt(_T("TextureQuality"), m_TextureQuality);
+		WriteInt(_T("TexturCompress"), m_TextureCompress);
+
 		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
 		WriteInt(_T("InspectorWidth"), m_InspectorWidth);
-		WriteInt(_T("TextureSize"), m_nTextureSize);
-		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+
 		WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
-		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
-		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
-		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
-		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
-		WriteInt(_T("FileDropAlwaysOnTop"), m_FileDropAlwaysOnTop);
 	}
 
 	return LFApplication::ExitInstance();
@@ -359,11 +351,6 @@ void CLiquidFoldersApp::UpdateViewOptions(INT Context, INT View)
 	Broadcast(Context, Modified ? -1 : View, Modified ? WM_UPDATESORTOPTIONS : WM_UPDATEVIEWOPTIONS);
 }
 
-void CLiquidFoldersApp::Reload(INT Context)
-{
-	Broadcast(Context, -1, WM_RELOAD);
-}
-
 
 // Registry and view settings
 
@@ -444,7 +431,7 @@ void CLiquidFoldersApp::LoadViewOptions(UINT Context)
 	m_Views[Context].GlobeZoom = GetInt(_T("GlobeZoom"), 600);
 	m_Views[Context].GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
 	m_Views[Context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
-	m_Views[Context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
+	m_Views[Context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), FALSE);
 	m_Views[Context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
 	m_Views[Context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
 	m_Views[Context].TagcloudShowRare = GetInt(_T("TagcloudShowRare"), TRUE);

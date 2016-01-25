@@ -128,11 +128,6 @@ BOOL CMainWnd::Create(BOOL IsClipboard)
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, IsClipboard ? _T("Clipboard") : _T("Main"), IsClipboard ? CSize(-1, -1) : CSize(0, 0));
 }
 
-BOOL CMainWnd::CreateClipboard()
-{
-	return Create(TRUE);
-}
-
 BOOL CMainWnd::CreateRoot()
 {
 	m_pActiveFilter = GetRootFilter();
@@ -661,6 +656,8 @@ FilterFromScratch:
 
 	// Slide the filter pane away
 	HideSidebar();
+
+	SetFocus();
 }
 
 void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)

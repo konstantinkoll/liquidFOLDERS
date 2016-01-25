@@ -9,8 +9,6 @@
 // CFrontstagePane
 //
 
-#define GRIPPER     4
-
 CFrontstagePane::CFrontstagePane()
 	: CFrontstageWnd()
 {
@@ -31,19 +29,9 @@ void CFrontstagePane::AdjustLayout(CRect /*rectLayout*/)
 {
 }
 
-INT CFrontstagePane::GetMinWidth()
-{
-	return 140+GRIPPER;
-}
-
-INT CFrontstagePane::GetPreferredWidth() const
-{
-	return m_PreferredWidth;
-}
-
 void CFrontstagePane::SetMaxWidth(INT MaxWidth)
 {
-	m_MaxWidth = max(MaxWidth, GetMinWidth())-GRIPPER;
+	m_MaxWidth = max(MaxWidth, GetMinWidth())-PANEGRIPPER;
 }
 
 void CFrontstagePane::GetLayoutRect(LPRECT lpRect) const
@@ -52,11 +40,11 @@ void CFrontstagePane::GetLayoutRect(LPRECT lpRect) const
 
 	if (m_IsLeft)
 	{
-		lpRect->right -= GRIPPER;
+		lpRect->right -= PANEGRIPPER;
 	}
 	else
 	{
-		lpRect->left += GRIPPER;
+		lpRect->left += PANEGRIPPER;
 	}
 }
 
@@ -103,24 +91,24 @@ void CFrontstagePane::OnPaint()
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, GRIPPER, rect.Height());
+	MemBitmap.CreateCompatibleBitmap(&pDC, PANEGRIPPER, rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	if (IsCtrlThemed())
 	{
-		dc.FillSolidRect(0, 0, GRIPPER, 1, 0xE7E7E7);
-		dc.FillSolidRect(0, 1, GRIPPER, 1, 0xF3F3F3);
+		dc.FillSolidRect(0, 0, PANEGRIPPER, 1, 0xE7E7E7);
+		dc.FillSolidRect(0, 1, PANEGRIPPER, 1, 0xF3F3F3);
 
-		ASSERT(GRIPPER==4);
+		ASSERT(PANEGRIPPER==4);
 		BYTE Colors[] = { 0x88, 0xC8, 0xE8, 0xF8 };
 		INT Line = rect.Height()*2/5;
 
 		Graphics g(dc);
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-		for (INT a=0; a<GRIPPER; a++)
+		for (INT a=0; a<PANEGRIPPER; a++)
 		{
-			const BYTE clr = Colors[m_IsLeft ? GRIPPER-1-a : a];
+			const BYTE clr = Colors[m_IsLeft ? PANEGRIPPER-1-a : a];
 
 			LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0xFF, 0xFF, 0xFF), Color(clr, clr, clr));
 			g.FillRectangle(&brush1, a, 2, 1, Line-2);
@@ -131,10 +119,10 @@ void CFrontstagePane::OnPaint()
 	}
 	else
 	{
-		dc.FillSolidRect(rect.left, rect.top, GRIPPER, rect.Height(), GetSysColor(COLOR_3DFACE));
+		dc.FillSolidRect(rect.left, rect.top, PANEGRIPPER, rect.Height(), GetSysColor(COLOR_3DFACE));
 	}
 
-	pDC.BitBlt(m_IsLeft ? rect.Width()-GRIPPER : 0, 0, GRIPPER, rect.Height(), &dc, 0, 0, SRCCOPY);
+	pDC.BitBlt(m_IsLeft ? rect.Width()-PANEGRIPPER : 0, 0, PANEGRIPPER, rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
 }
 
@@ -150,6 +138,8 @@ void CFrontstagePane::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout(rectLayout);
 
 	GetParent()->PostMessage(WM_ADJUSTLAYOUT);
+
+	Invalidate();
 }
 
 void CFrontstagePane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
@@ -157,5 +147,5 @@ void CFrontstagePane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	CFrontstageWnd::OnGetMinMaxInfo(lpMMI);
 
 	lpMMI->ptMinTrackSize.x = GetMinWidth();
-	lpMMI->ptMaxTrackSize.x = m_MaxWidth+GRIPPER;
+	lpMMI->ptMaxTrackSize.x = m_MaxWidth+PANEGRIPPER;
 }

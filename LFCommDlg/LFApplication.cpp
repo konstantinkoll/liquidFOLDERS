@@ -551,20 +551,6 @@ void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& C
 	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
 }
 
-BOOL LFApplication::IsTooltipVisible() const
-{
-	ASSERT(IsWindow(m_wndTooltip));
-
-	return m_wndTooltip.IsWindowVisible();
-}
-
-void LFApplication::HideTooltip()
-{
-	ASSERT(IsWindow(m_wndTooltip));
-
-	m_wndTooltip.HideTooltip();
-}
-
 
 void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 {

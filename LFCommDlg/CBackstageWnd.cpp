@@ -536,7 +536,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		CSize Size;
 		GetCaptionButtonMargins(&Size);
 
-		CRect rectText(BACKSTAGERADIUS+2, -1, rect.Width()-Size.cx-BACKSTAGERADIUS, CaptionHeight-1);
+		CRect rectText(BACKSTAGERADIUS, -1, rect.Width()-Size.cx-BACKSTAGERADIUS, CaptionHeight-1);
 
 		if (Themed)
 		{

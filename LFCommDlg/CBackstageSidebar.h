@@ -56,8 +56,8 @@ public:
 	void AddCaption(UINT ResID);
 	void ResetCounts();
 	void SetCount(UINT CmdID, UINT Count);
-	INT GetPreferredWidth();
-	INT GetMinHeight();
+	INT GetPreferredWidth() const;
+	INT GetMinHeight() const;
 	void SetSelection(UINT CmdID=0);
 
 protected:
@@ -94,3 +94,8 @@ protected:
 	BOOL m_Keyboard;
 	BOOL m_ShowCounts;
 };
+
+inline INT CBackstageSidebar::GetPreferredWidth() const
+{
+	return m_Width;
+}

@@ -76,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
 				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="true"
@@ -165,7 +165,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
 				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="true"
@@ -260,7 +260,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
 				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="false"
@@ -358,7 +358,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
 				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="false"
@@ -440,7 +440,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CInspectorWnd.cpp"
+				RelativePath=".\CInspectorPane.cpp"
 				>
 			</File>
 			<File
@@ -472,15 +472,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GLFont.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\GlobeOptionsDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GLTexture.cpp"
 				>
 			</File>
 			<File
@@ -570,7 +562,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CInspectorWnd.h"
+				RelativePath=".\CInspectorPane.h"
 				>
 			</File>
 			<File
@@ -602,19 +594,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GLFont.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Globe.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GlobeOptionsDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GLTexture.h"
 				>
 			</File>
 			<File
@@ -652,15 +632,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\BlueMarble_2048.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_4096.jpg"
-				>
-			</File>
-			<File
 				RelativePath=".\res\BlueMarble_8192.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Clouds_1024.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Clouds_2048.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Clouds_4096.jpg"
 				>
 			</File>
 			<File
@@ -669,14 +653,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Contexts_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\GlobeIcons_Alpha.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\GlobeIcons_RGB.png"
 				>
 			</File>
 			<File

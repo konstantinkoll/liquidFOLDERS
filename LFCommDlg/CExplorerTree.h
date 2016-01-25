@@ -74,3 +74,8 @@ private:
 	ULONG m_SHChangeNotifyRegister;
 	CString m_strBuffer;
 };
+
+inline void CExplorerTree::SetOnlyFilesystem(BOOL OnlyFilesystem)
+{
+	m_OnlyFilesystem = OnlyFilesystem;
+}

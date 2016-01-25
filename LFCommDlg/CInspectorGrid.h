@@ -79,6 +79,16 @@ protected:
 	LFVariantData m_RangeSecond;
 };
 
+inline void CProperty::ResetModified()
+{
+	m_Modified = FALSE;
+}
+
+inline LFVariantData* CProperty::GetData() const
+{
+	return p_Data;
+}
+
 
 // CPropertyTags
 //

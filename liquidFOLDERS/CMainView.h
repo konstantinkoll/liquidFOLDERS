@@ -4,7 +4,7 @@
 
 #pragma once
 #include "CFileView.h"
-#include "CInspectorWnd.h"
+#include "CInspectorPane.h"
 
 
 // CMainView
@@ -12,7 +12,7 @@
 
 class CMainView : public CFrontstageWnd
 {
-friend class CInspectorWnd;
+friend class CInspectorPane;
 
 public:
 	CMainView();
@@ -114,7 +114,7 @@ protected:
 	CTaskbar m_wndTaskbar;
 	CHeaderArea m_wndHeaderArea;
 	CFileView* p_wndFileView;
-	CInspectorWnd m_wndInspector;
+	CInspectorPane m_wndInspector;
 	CExplorerNotification m_wndExplorerNotification;
 	LFDropTarget m_DropTarget;
 	LFFilter* p_Filter;
@@ -141,3 +141,43 @@ private:
 	CHeaderButton* p_ViewButton;
 	BOOL m_Resizing;
 };
+
+inline BOOL CMainView::StoreIDValid() const
+{
+	return m_StoreIDValid;
+}
+
+inline CHAR* CMainView::GetStoreID()
+{
+	return m_StoreID;
+}
+
+inline INT CMainView::GetContext() const
+{
+	return m_Context;
+}
+
+inline INT CMainView::GetViewID() const
+{
+	return m_ViewID;
+}
+
+inline void CMainView::DismissNotification()
+{
+	m_wndExplorerNotification.DismissNotification();
+}
+
+inline void CMainView::ShowNotification(UINT Type, const CString& Message, UINT Command)
+{
+	m_wndExplorerNotification.SetNotification(Type, Message, Command);
+}
+
+inline INT CMainView::GetSelectedItem() const
+{
+	return p_wndFileView ? p_wndFileView->GetSelectedItem() : -1;
+}
+
+inline INT CMainView::GetNextSelectedItem(INT Index) const
+{
+	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(Index) : -1;
+}

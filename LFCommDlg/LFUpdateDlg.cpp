@@ -118,7 +118,7 @@ void LFUpdateDlg::UpdatePosition()
 	CRect rectWindow;
 	GetWindowRect(rectWindow);
 
-	SetWindowPos(&wndTopMost, rectScreen.right-rectWindow.Width(), rectScreen.bottom-rectWindow.Height(), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+	SetWindowPos(&wndTopMost, rectScreen.right-rectWindow.Width()-1, rectScreen.bottom-rectWindow.Height()-1, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 }
 
 BOOL LFUpdateDlg::AddTrayIcon()

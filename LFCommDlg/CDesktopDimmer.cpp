@@ -52,6 +52,7 @@ BOOL CDesktopDimmer::Create(CWnd* pParentWnd)
 
 	CRect rect;
 	GetDesktopWindow()->GetWindowRect(rect);
+
 	return CWnd::CreateEx(WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, className, _T(""), WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_POPUP, rect, pParentWnd, 0);
 }
 

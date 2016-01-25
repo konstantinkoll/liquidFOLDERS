@@ -259,16 +259,6 @@ void CProperty::SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariant
 	}
 }
 
-void CProperty::ResetModified()
-{
-	m_Modified = FALSE;
-}
-
-LFVariantData* CProperty::GetData() const
-{
-	return p_Data;
-}
-
 BOOL CProperty::OnPushChar(UINT /*ch*/)
 {
 	return FALSE;

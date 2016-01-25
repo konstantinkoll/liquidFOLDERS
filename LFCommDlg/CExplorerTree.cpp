@@ -493,11 +493,6 @@ void CExplorerTree::SetRootPath(LPCWSTR RootPath)
 	}
 }
 
-void CExplorerTree::SetOnlyFilesystem(BOOL OnlyFilesystem)
-{
-	m_OnlyFilesystem = OnlyFilesystem;
-}
-
 BOOL CExplorerTree::GetChildItems(HTREEITEM hParentItem)
 {
 	CWaitCursor csr;

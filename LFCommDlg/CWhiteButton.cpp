@@ -12,7 +12,6 @@
 CWhiteButton::CWhiteButton()
 	: CHoverButton()
 {
-	m_Hover = FALSE;
 }
 
 void CWhiteButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)

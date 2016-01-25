@@ -5,7 +5,6 @@
 #pragma once
 #include "CFileView.h"
 #include "GLFont.h"
-#include "GLTexture.h"
 
 
 // Item Data
@@ -39,20 +38,14 @@ protected:
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual CMenu* GetItemContextMenu(INT Index);
 
-	void PrepareModel();
-	void PrepareTexture();
-	void Normalize();
 	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
-	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
-	void DrawStatusBar(INT Height, COLORREF BarColor, BOOL Themed);
-	void DrawScene(BOOL InternalCall=FALSE);
+	void DrawLabel(GlobeItemData* pData, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
@@ -74,29 +67,34 @@ protected:
 
 	GlobeParameters m_GlobeTarget;
 	GlobeParameters m_GlobeCurrent;
-	CClientDC* m_pDC;
-	HGLRC hRC;
-	INT m_Width;
-	INT m_Height;
-	GLTexture* m_pTextureGlobe;
-	GLTexture* m_pTextureIcons;
+	GLRenderContext m_RenderContext;
+
+	GLuint m_nGlobeModel;
+	GLuint m_nTextureBlueMarble;
+	GLuint m_nTextureClouds;
+	GLuint m_nTextureLocationIndicator;
+
 	GLFont m_Fonts[2];
+
+	GLcolor m_AttrColor;
+	GLcolor m_BottomColorHot;
+	GLcolor m_BottomColorSelected;
+	GLcolor m_CaptionColor;
+	GLcolor m_SelectedColor;
+	GLcolor m_TextColor;
+	GLcolor m_TopColorHot;
+	GLcolor m_TopColorSelected;
 
 private:
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
+	void RenderScene(BOOL Themed);
 
 	LPCTSTR lpszCursorName;
 	HCURSOR hCursor;
 	CPoint m_CursorPos;
 
-	GLint m_GlobeModel;
-	INT m_CurrentGlobeTexture;
-
-	GLfloat m_Scale;
-	GLfloat m_Radius;
-	GLfloat m_FogStart;
-	GLfloat m_FogEnd;
+	GLfloat m_GlobeRadius;
 	UINT m_AnimCounter;
 	GLfloat m_AnimStartLatitude;
 	GLfloat m_AnimStartLongitude;
@@ -106,6 +104,4 @@ private:
 
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;
-	BOOL m_LockUpdate;
-	CString m_YouLookAt;
 };

@@ -9,6 +9,8 @@
 // CFrontstagePane
 //
 
+#define PANEGRIPPER     4
+
 class CFrontstagePane : public CFrontstageWnd
 {
 public:
@@ -34,3 +36,13 @@ protected:
 	INT m_PreferredWidth;
 	INT m_MaxWidth;
 };
+
+inline INT CFrontstagePane::GetMinWidth()
+{
+	return 140+PANEGRIPPER;
+}
+
+inline INT CFrontstagePane::GetPreferredWidth() const
+{
+	return m_PreferredWidth;
+}

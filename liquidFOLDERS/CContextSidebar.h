@@ -23,7 +23,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetSelection(UINT CmdID, CHAR* StoreID);
-	UINT GetFileCount(UINT Context);
+	UINT GetFileCount(UINT Context) const;
 
 protected:
 	afx_msg void OnUpdateCounts();
@@ -38,3 +38,11 @@ private:
 	UINT m_ThreadID;
 	BOOL m_Initialized;
 };
+
+
+inline UINT CContextSidebar::GetFileCount(UINT Context) const
+{
+	ASSERT(Context<=LFLastQueryContext);
+
+	return m_pStatistics ? m_pStatistics->FileCount[Context] : 0;
+}

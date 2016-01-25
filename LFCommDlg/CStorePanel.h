@@ -30,3 +30,8 @@ protected:
 	CImageList* p_Icons;
 	LFItemDescriptor* p_Item;
 };
+
+inline BOOL CStorePanel::IsValidStore() const
+{
+	return p_Item!=NULL;
+}

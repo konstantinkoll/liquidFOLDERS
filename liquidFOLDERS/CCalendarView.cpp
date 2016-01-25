@@ -57,12 +57,12 @@ void CCalendarView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 			if (i->AttributeValues[m_ViewParameters.SortBy])
 				if (*((INT64*)i->AttributeValues[m_ViewParameters.SortBy]))
 				{
-					CalendarItemData* d = GetItemData(a);
-					d->Hdr.Valid = TRUE;
+					CalendarItemData* pData = GetItemData(a);
+					pData->Hdr.Valid = TRUE;
 
 					SYSTEMTIME stUTC;
 					FileTimeToSystemTime((FILETIME*)i->AttributeValues[m_ViewParameters.SortBy], &stUTC);
-					SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &d->Time);
+					SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &pData->Time);
 				}
 		}
 
@@ -152,19 +152,19 @@ Restart:
 
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			CalendarItemData* d = GetItemData(a);
-			if (d->Time.wYear==m_Year)
+			CalendarItemData* pData = GetItemData(a);
+			if (pData->Time.wYear==m_Year)
 			{
-				ASSERT(d->Time.wMonth<=12);
-				ASSERT(d->Time.wDay<=31);
-				CalendarMonth* m = &m_Months[d->Time.wMonth-1];
+				ASSERT(pData->Time.wMonth<=12);
+				ASSERT(pData->Time.wDay<=31);
+				CalendarMonth* m = &m_Months[pData->Time.wMonth-1];
 
-				UINT Day = d->Time.wDay-1;
+				UINT Day = pData->Time.wDay-1;
 				m->Matrix[Day] = a;
 
 				Day += m->SOM;
 
-				const LPRECT lpRect = &d->Hdr.Rect;
+				const LPRECT lpRect = &pData->Hdr.Rect;
 
 				lpRect->left = m->Rect.left+LFCategoryPadding+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
 				lpRect->top = m->Rect.top+theApp.m_LargeFont.GetFontHeight()+2*LFCategoryPadding+(Day/7)*(FontHeight+2*PADDING-1);

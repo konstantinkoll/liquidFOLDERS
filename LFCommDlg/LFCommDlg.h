@@ -25,6 +25,8 @@
 #include "CTaskButton.h"
 #include "CTooltipHeader.h"
 #include "CWhiteButton.h"
+#include "GLFont.h"
+#include "GLRenderer.h"
 #include "LFAboutDlg.h"
 #include "LFAddStoreDlg.h"
 #include "LFApplication.h"
@@ -67,6 +69,7 @@ void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
 void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
 BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
+void DrawLocationIndicator(Graphics& g, INT x, INT y, INT sz=16);
 void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed);
 void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);

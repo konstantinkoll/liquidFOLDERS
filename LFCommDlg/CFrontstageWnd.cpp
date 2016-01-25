@@ -38,8 +38,12 @@ void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
 
 void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed)
 {
-	Graphics g(dc);
-	DrawWindowEdge(g, Themed);
+	if (Themed)
+	{
+		Graphics g(dc);
+
+		DrawWindowEdge(g, Themed);
+	}
 }
 
 

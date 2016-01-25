@@ -233,3 +233,14 @@ private:
 	CEdit* p_Edit;
 	SendToItemData m_SendToItems[256];
 };
+
+
+inline BOOL CFileView::MultiSelectAllowed() const
+{
+	return m_AllowMultiSelect;
+}
+
+inline BOOL CFileView::IsEditing() const
+{
+	return (p_Edit!=NULL);
+}

@@ -62,13 +62,6 @@ void CContextSidebar::SetSelection(UINT CmdID, CHAR* StoreID)
 	CBackstageSidebar::SetSelection(CmdID);
 }
 
-UINT CContextSidebar::GetFileCount(UINT Context)
-{
-	ASSERT(Context<=LFLastQueryContext);
-
-	return m_pStatistics ? m_pStatistics->FileCount[Context] : 0;
-}
-
 
 BEGIN_MESSAGE_MAP(CContextSidebar, CBackstageSidebar)
 	ON_MESSAGE_VOID(WM_UPDATECOUNTS, OnUpdateCounts)
