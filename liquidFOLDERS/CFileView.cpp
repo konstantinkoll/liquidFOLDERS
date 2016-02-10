@@ -815,6 +815,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 		}
 
 		dc.BitBlt(rectItem->left, rectItem->top, Width, Height, &MemDC, 0, 0, SRCCOPY);
+
 		MemDC.SelectObject(hOldBitmap);
 
 		dc.SetTextColor((p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : 0xFFFFFF);

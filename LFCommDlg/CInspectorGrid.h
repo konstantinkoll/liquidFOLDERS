@@ -132,7 +132,7 @@ public:
 
 	virtual CString GetValidChars() const;
 	virtual BOOL HasButton() const;
-	virtual void OnSetString(CString Value) const;
+	virtual void OnSetString(CString& Value) const;
 	virtual void OnClickButton();
 
 protected:

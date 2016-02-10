@@ -239,6 +239,7 @@ void CMaintenanceReport::OnPaint()
 	DrawWindowEdge(dc, Themed);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
 	dc.SelectObject(pOldBitmap);
 }
 

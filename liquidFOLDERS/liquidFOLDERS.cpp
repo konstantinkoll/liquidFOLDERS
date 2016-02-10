@@ -322,13 +322,24 @@ BOOL CLiquidFoldersApp::SanitizeViewMode(LFViewParameters* pViewParameters, INT 
 
 	// Choose other sorting if neccessary
 	if (!AttributeSortableInView(pViewParameters->SortBy, pViewParameters->Mode))
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (AttributeSortableInView(a, pViewParameters->Mode))
-			{
-				pViewParameters->SortBy = a;
-				Modified = TRUE;
-				break;
-			}
+	{
+		switch (pViewParameters->Mode)
+		{
+		case LFViewTimeline:
+			pViewParameters->SortBy = LFAttrFileTime;
+			break;
+
+		default:
+			for (UINT a=0; a<LFAttributeCount; a++)
+				if (AttributeSortableInView(a, pViewParameters->Mode))
+				{
+					pViewParameters->SortBy = a;
+					break;
+				}
+		}
+
+		Modified = TRUE;
+	}
 
 	return Modified;
 }

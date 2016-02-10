@@ -41,6 +41,7 @@ void CWhiteButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	DrawWhiteButtonForeground(dc, lpDrawItemStruct, Selected);
 
 	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);
+
 	dc.SelectObject(pOldBitmap);
 	DeleteDC(dc.Detach());
 	DeleteObject(MemBitmap.Detach());

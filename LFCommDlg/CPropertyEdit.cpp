@@ -81,7 +81,8 @@ void CPropertyDisplay::OnPaint()
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	pDC.SelectObject(pOldBitmap);
+
+	dc.SelectObject(pOldBitmap);
 }
 
 void CPropertyDisplay::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

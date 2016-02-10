@@ -123,6 +123,7 @@ void CFrontstagePane::OnPaint()
 	}
 
 	pDC.BitBlt(m_IsLeft ? rect.Width()-PANEGRIPPER : 0, 0, PANEGRIPPER, rect.Height(), &dc, 0, 0, SRCCOPY);
+
 	dc.SelectObject(pOldBitmap);
 }
 

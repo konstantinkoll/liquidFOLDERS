@@ -552,6 +552,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		dc.SelectObject(pOldFont);
 
 		pDC.BitBlt(0, 0, rectCaption.Width(), CaptionHeight, &dc, 0, 0, SRCCOPY);
+
 		dc.SelectObject(pOldBitmap);
 
 		rect.top += CaptionHeight;

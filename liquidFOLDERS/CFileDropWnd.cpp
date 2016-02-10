@@ -117,6 +117,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	dc.SelectObject(pOldFont);
 
 	pDC.BitBlt(0, rect.top, rect.Width(), rect.bottom, &dc, 0, rect.top, SRCCOPY);
+
 	dc.SelectObject(pOldBitmap);
 
 	PaintCaption(pDC, rect);

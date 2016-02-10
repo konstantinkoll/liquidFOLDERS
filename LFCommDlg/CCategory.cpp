@@ -82,5 +82,6 @@ void CCategory::OnPaint()
 	DrawCategory(dc, rectText, tmpStr, pChar, IsCtrlThemed());
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
 	dc.SelectObject(pOldBitmap);
 }

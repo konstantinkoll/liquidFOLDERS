@@ -102,5 +102,6 @@ void CIconCtrl::OnPaint()
 		DrawIconEx(dc, 0, m_Center ? (rect.Height()-m_IconSizeY)/2 : 0, m_Icon, m_IconSizeX, m_IconSizeY, 0, NULL, DI_NORMAL);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
 	dc.SelectObject(pOldBitmap);
 }

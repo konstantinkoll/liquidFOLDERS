@@ -426,7 +426,7 @@ BOOL CPropertyIATA::HasButton() const
 	return TRUE;
 }
 
-void CPropertyIATA::OnSetString(CString Value) const
+void CPropertyIATA::OnSetString(CString& Value) const
 {
 	LFAirport* pAirportOld = NULL;
 	if (!m_Multiple)
@@ -1426,6 +1426,7 @@ void CInspectorGrid::OnPaint()
 	DrawWindowEdge(dc, Themed);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
 }
