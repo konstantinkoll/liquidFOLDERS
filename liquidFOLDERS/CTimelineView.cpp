@@ -7,16 +7,16 @@
 #include "liquidFOLDERS.h"
 
 
-WCHAR* GetAttribute(TimelineItemData* pData, LFItemDescriptor* i, UINT Attr, UINT Mask)
+WCHAR* GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, UINT Attr, UINT Mask)
 {
 	ASSERT(theApp.m_Attributes[Attr].Type==LFTypeUnicodeString);
 
-	if (i->AttributeValues[Attr])
-		if (*((WCHAR*)i->AttributeValues[Attr]))
+	if (pItemDesciptor->AttributeValues[Attr])
+		if (*((WCHAR*)pItemDesciptor->AttributeValues[Attr]))
 		{
 			pData->Preview |= Mask;
 
-			return (WCHAR*)i->AttributeValues[Attr];
+			return (WCHAR*)pItemDesciptor->AttributeValues[Attr];
 		}
 
 	return NULL;
@@ -26,11 +26,12 @@ WCHAR* GetAttribute(TimelineItemData* pData, LFItemDescriptor* i, UINT Attr, UIN
 // CTimelineView
 //
 
-#define ARROWSIZE     6
-#define BORDER        6
-#define GUTTER        14
-#define MIDDLE        24
-#define WHITE         100
+#define ARROWSIZE       6
+#define BORDER          6
+#define GUTTER          14
+#define MIDDLE          24
+#define MAXFILELIST     10
+#define WHITE           100
 
 #define GetItemData(Index)     ((TimelineItemData*)(m_ItemData+(Index)*m_DataSize))
 #define UsePreview(i)          ((!(i->Type & LFTypeNotMounted)) && (i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
@@ -86,6 +87,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 					pData->Preview |= PRV_COMMENTS;
 					pData->pComments = NULL;
 
+					// Comments
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
 						LFItemDescriptor* i = p_RawFiles->m_Items[b];
@@ -157,6 +159,7 @@ Restart:
 			else
 			{
 				INT PreviewCount = 0;
+				pData->ListCount = 0;
 
 				switch (i->Type & LFTypeMask)
 				{
@@ -177,6 +180,11 @@ Restart:
 						{
 							pData->Preview |= PRV_THUMBS;
 							PreviewCount++;
+						}
+						else
+						{
+							pData->Preview |= PRV_FOLDER;
+							pData->ListCount++;
 						}
 					}
 
@@ -203,23 +211,31 @@ Restart:
 			{
 				Height += FontHeight;
 
-				if (pData->Preview & PRV_THUMBS)
+				if (pData->Preview & (PRV_THUMBS | PRV_FOLDER))
 					Height += BORDER/2;
 			}
 
 			if (pData->Preview & PRV_THUMBS)
 				Height += (128+BORDER)*pData->PreviewRows-BORDER;
 
-			if (pData->Preview & PRV_SOURCE)
+			if (pData->Preview & PRV_FOLDER)
 			{
-				Height += min(theApp.m_SmallFont.GetFontHeight(), 16);
+				Height += min(MAXFILELIST, pData->ListCount)*theApp.m_SmallFont.GetFontHeight()-BORDER/2;
 
 				if (pData->Preview & PRV_THUMBS)
+					Height += BORDER;
+			}
+
+			if (pData->Preview & PRV_SOURCE)
+			{
+				Height += max(theApp.m_SmallFont.GetFontHeight(), 16);
+
+				if ((pData->Preview & (PRV_FOLDER | PRV_THUMBS))==PRV_THUMBS)
 				{
 					Height += BORDER/2;
 				}
 				else
-					if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
+					if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS | PRV_FOLDER))
 					{
 						Height += 2*BORDER;
 					}
@@ -439,13 +455,13 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	if (pData->Preview)
 	{
 		if (Themed)
-			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Themed ? Selected ? 0xFFFFFF : 0xE5E5E5 : GetSysColor(Selected ? COLOR_HIGHLIGHTTEXT : COLOR_3DFACE));
+			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
 
 		// Source
 		INT BottomHeight = 0;
 		if (pData->Preview & PRV_SOURCE)
 		{
-			BottomHeight = min(theApp.m_SmallFont.GetFontHeight(), 16);
+			BottomHeight = max(theApp.m_SmallFont.GetFontHeight(), 16);
 			CRect rectSource(rectItem->left+BORDER, rectItem->bottom-BORDER-BottomHeight, rectItem->right-BORDER, 0);
 			rectSource.bottom = rectSource.top+BottomHeight;
 
@@ -454,18 +470,42 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			rectSource.left += m_IconSize.cx+BORDER;
 			dc.DrawText(theApp.m_SourceNames[i->Type & LFTypeSourceMask][0], -1, rectSource, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
 
-			if (pData->Preview & PRV_THUMBS)
+			if ((pData->Preview & (PRV_FOLDER | PRV_THUMBS))==PRV_THUMBS)
 			{
 				BottomHeight += BORDER/2;
 			}
 			else
-				if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
+				if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS | PRV_FOLDER))
 				{
-					if (!Themed || !Selected)
-						dc.FillSolidRect(rectItem->left+BORDER+1, rectSource.top-BORDER, m_ItemWidth-2*BORDER-2, 1, Themed ? 0xE5E5E5 : GetSysColor(COLOR_3DFACE));
+					if (Themed)
+						dc.FillSolidRect(rectItem->left+BORDER+1, rectSource.top-BORDER, m_ItemWidth-2*BORDER-2, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
 
 					BottomHeight += 2*BORDER;
 				}
+		}
+
+		// Folder
+		if (pData->Preview & PRV_FOLDER)
+		{
+			const INT FontHeight = theApp.m_SmallFont.GetFontHeight();
+
+			INT ListCount = min(MAXFILELIST, pData->ListCount);
+			BottomHeight += ListCount*FontHeight;
+
+			CRect rectFilename(rectItem->left+BORDER+1, rectItem->bottom-BORDER-BottomHeight, rectItem->right-BORDER, rectItem->bottom-BORDER-BottomHeight+FontHeight);
+
+			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+				if (!UsePreview(p_RawFiles->m_Items[a]))
+				{
+					dc.DrawText(GetLabel(p_RawFiles->m_Items[a]), rectFilename, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+
+					if (!--ListCount)
+						break;
+
+					rectFilename.OffsetRect(0, FontHeight);
+				}
+
+			BottomHeight += BORDER/2;
 		}
 
 		dc.SelectObject(pOldFont);

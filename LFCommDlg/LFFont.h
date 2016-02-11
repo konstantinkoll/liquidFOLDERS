@@ -33,3 +33,8 @@ private:
 	CFont::CreatePointFontIndirect;
 #pragma warning(pop)
 };
+
+inline INT LFFont::GetFontHeight() const
+{
+	return m_FontHeight;
+}

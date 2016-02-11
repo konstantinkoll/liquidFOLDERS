@@ -36,11 +36,6 @@ BOOL LFFont::CreateFontIndirect(const LOGFONT* lpLogFont)
 	return Result;
 }
 
-INT LFFont::GetFontHeight() const
-{
-	return m_FontHeight;
-}
-
 CSize LFFont::GetTextExtent(LPCTSTR lpszString) const
 {
 	CDC dc;
