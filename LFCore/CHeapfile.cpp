@@ -1,35 +1,13 @@
 
 #include "stdafx.h"
 #include "CHeapfile.h"
+#include "FileSystem.h"
 #include "IndexTables.h"
 #include <assert.h>
 #include <io.h>
 #include <malloc.h>
 #include <stdio.h>
-#include <winioctl.h>
 
-
-void Compress(HANDLE hFile, WCHAR cDrive)
-{
-	// NTFS compression
-	BY_HANDLE_FILE_INFORMATION FileInformation;
-	if (GetFileInformationByHandle(hFile, &FileInformation))
-		if ((FileInformation.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED)==0)
-		{
-			WCHAR Root[4] = L" :\\";
-			Root[0] = cDrive;
-
-			DWORD Flags;
-			if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
-				if (Flags & FS_FILE_COMPRESSION)
-				{
-					USHORT Mode = COMPRESSION_FORMAT_LZNT1;
-					DWORD Returned;
-
-					DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
-				}
-		}
-}
 
 void ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize)
 {
@@ -133,7 +111,7 @@ Create:
 		}
 
 		SetEndOfFile(hFile);
-		Compress(hFile, m_Filename[0]);
+		CompressFile(hFile, m_Filename[0]);
 
 		m_OpenStatus = HeapCreated;
 	}
@@ -475,7 +453,7 @@ BOOL CHeapfile::Compact()
 	if (hTempFile==INVALID_HANDLE_VALUE)
 		return FALSE;
 
-	Compress(hTempFile, TempFilename[0]);
+	CompressFile(hTempFile, TempFilename[0]);
 
 	// Temporary header
 	HeapfileHeader TempHeader = m_Header;

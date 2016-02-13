@@ -326,6 +326,8 @@ BOOL CLiquidFoldersApp::SanitizeViewMode(LFViewParameters* pViewParameters, INT 
 		switch (pViewParameters->Mode)
 		{
 		case LFViewTimeline:
+			ASSERT(AttributeSortableInView(LFAttrFileTime, LFViewTimeline));
+
 			pViewParameters->SortBy = LFAttrFileTime;
 			break;
 

@@ -4,6 +4,7 @@
 #include "LF.h"
 #include <assert.h>
 #include <shlobj.h>
+#include <winioctl.h>
 
 
 void SanitizeFileName(WCHAR* pDstName, SIZE_T cCount, WCHAR* pSrcName)
@@ -60,6 +61,35 @@ BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData)
 		FindClose(hFind);
 
 	return Result;
+}
+
+void CompressFile(HANDLE hFile, WCHAR cDrive)
+{
+	BY_HANDLE_FILE_INFORMATION FileInformation;
+	if (GetFileInformationByHandle(hFile, &FileInformation))
+		if ((FileInformation.dwFileAttributes & (FILE_ATTRIBUTE_ENCRYPTED | FILE_ATTRIBUTE_COMPRESSED))==0)
+		{
+			WCHAR Root[4] = L" :\\";
+			Root[0] = cDrive;
+
+			DWORD Flags;
+			if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
+				if (Flags & FS_FILE_COMPRESSION)
+				{
+					USHORT Mode = COMPRESSION_FORMAT_LZNT1;
+					DWORD Returned;
+
+					DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
+				}
+		}
+}
+
+void HideFile(WCHAR* pPath)
+{
+	DWORD dwFileAttributes = GetFileAttributes(pPath);
+
+	if (dwFileAttributes!=INVALID_FILE_ATTRIBUTES)
+		SetFileAttributes(pPath, dwFileAttributes | FILE_ATTRIBUTE_HIDDEN);
 }
 
 BOOL RequiredSpaceAvailable(LPWSTR lpPath, UINT64 Required)
