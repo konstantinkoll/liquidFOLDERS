@@ -179,9 +179,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
-        MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
-        MENUITEM SEPARATOR
         MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "&Größe anpassen\tPos1",       IDM_GLOBE_AUTOSIZE
     END
 END
 
@@ -604,9 +603,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Configuraciones de &globo...", IDM_GLOBE_SETTINGS
-        MENUITEM "Ajustar globo para &adaptar", IDM_GLOBE_AUTOSIZE
-        MENUITEM SEPARATOR
         MENUITEM "Seleccionar &ubicación...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Ajustar globo para &adaptar\tInicio", IDM_GLOBE_AUTOSIZE
     END
 END
 
@@ -1026,9 +1024,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Paramètres du &globe...",     IDM_GLOBE_SETTINGS
-        MENUITEM "&Adapter la donnée",          IDM_GLOBE_AUTOSIZE
-        MENUITEM SEPARATOR
         MENUITEM "Choisissez l'&endroit...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "&Adapter à la fenêtre\tOrigine", IDM_GLOBE_AUTOSIZE
     END
 END
 
@@ -1498,9 +1495,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Globe &settings...",          IDM_GLOBE_SETTINGS
-        MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
-        MENUITEM SEPARATOR
         MENUITEM "Jump to &location...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Size globe to &fit\tHome",    IDM_GLOBE_AUTOSIZE
     END
 END
 

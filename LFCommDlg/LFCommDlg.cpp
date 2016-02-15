@@ -917,7 +917,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 		}
 
 	Matrix m;
-	m.Translate((REAL)FntX, (REAL)FntY-1.0f);
+	m.Translate((Gdiplus::REAL)FntX, (Gdiplus::REAL)(FntY-1));
 	TextPath.Transform(&m);
 
 	// Text

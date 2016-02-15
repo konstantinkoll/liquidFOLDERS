@@ -64,7 +64,7 @@ CGlobeView::CGlobeView()
 	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
 	m_CursorPos.x = m_CursorPos.y = 0;
 
-	m_nTextureBlueMarble = m_nTextureClouds = m_nTextureLocationIndicator = m_nGlobeModel = 0;
+	m_nTextureBlueMarble = m_nTextureClouds = m_nTextureLocationIndicator = m_nGlobeModel = m_nHaloModel = 0;
 	m_GlobeRadius = m_Momentum = 0.0f;
 	m_Grabbed = FALSE;
 	m_AnimCounter = m_MoveCounter = 0;
@@ -666,6 +666,41 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	GLfloat ScaleY = (m_RenderContext.Height>m_RenderContext.Width) ? (GLfloat)m_RenderContext.Height/(GLfloat)(m_RenderContext.Width+1) : 1.0f;
 	glFrustum(-ScaleX*DOLLY, ScaleX*DOLLY, -ScaleY*DOLLY, ScaleY*DOLLY, 1.0f, 1000.0f);
 
+	// Halo
+	if (min(theApp.m_ModelQuality, theRenderer.m_MaxModelQuality)>=MODELHIGH)
+	{
+		if (!m_nHaloModel)
+		{
+			m_nHaloModel = glGenLists(1);
+			glNewList(m_nHaloModel, GL_COMPILE);
+
+			GLcolor HaloColor;
+			theRenderer.ColorRef2GLColor(HaloColor, BackColor[1]>=0.5f ? 0xFFFFFF : 0xFFD8C0);
+
+			const GLfloat Radius = (BackColor[1]>=0.5f) ? 1.125f : 1.0125f;
+
+			glBegin(GL_QUAD_STRIP);
+
+			for (UINT a=0; a<=256; a++)
+			{
+				const GLfloat Winkel = 2*PI*a/256;
+				const GLfloat X = sin(Winkel);
+				const GLfloat Y = cos(Winkel);
+
+				theRenderer.SetColor(HaloColor);
+				glVertex3f(0.0f, X, Y);
+	
+				theRenderer.SetColor(HaloColor, 0.0f);
+				glVertex3f(0.0f, X*Radius, Y*Radius);
+			}
+
+			glEnd();
+			glEndList();
+		}
+
+		glCallList(m_nHaloModel);
+	}
+
 	// Lighting
 	if (min(theApp.m_ModelQuality, theRenderer.m_MaxModelQuality)>=MODELMEDIUM)
 	{
@@ -697,10 +732,10 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	if (min(theApp.m_ModelQuality, theRenderer.m_MaxModelQuality)>=MODELHIGH)
 	{
 		glEnable(GL_FOG);
-		glFogf(GL_FOG_START, Distance-0.375f);
-		glFogf(GL_FOG_END, Distance-0.05f);
+		glFogf(GL_FOG_START, Distance-0.5f);
+		glFogf(GL_FOG_END, Distance+0.35f);
 
-		const GLfloat FogColor[4] = { 0.71f, 0.87f, 0.94f, 1.0f };
+		const GLfloat FogColor[4] = { 0.65f, 0.75f, 0.95f, 1.0f };
 		glFogfv(GL_FOG_COLOR, FogColor);
 	}
 
@@ -906,7 +941,8 @@ void CGlobeView::OnDestroy()
 		glDeleteTextures(1, &m_nTextureClouds);
 		glDeleteTextures(1, &m_nTextureLocationIndicator);
 
-		// Model
+		// Models
+		glDeleteLists(m_nHaloModel, 1);
 		glDeleteLists(m_nGlobeModel, 1);
 	}
 
@@ -1091,16 +1127,18 @@ void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 	case VK_ADD:
 	case VK_OEM_PLUS:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			OnZoomIn();
-
+	case VK_PRIOR:
+		OnZoomIn();
 		break;
 
 	case VK_SUBTRACT:
 	case VK_OEM_MINUS:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			OnZoomOut();
+	case VK_NEXT:
+		OnZoomOut();
+		break;
 
+	case VK_HOME:
+		OnAutosize();
 		break;
 
 	case 'L':

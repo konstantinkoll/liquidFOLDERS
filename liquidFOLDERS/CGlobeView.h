@@ -69,6 +69,7 @@ protected:
 	GlobeParameters m_GlobeCurrent;
 	GLRenderContext m_RenderContext;
 
+	GLuint m_nHaloModel;
 	GLuint m_nGlobeModel;
 	GLuint m_nTextureBlueMarble;
 	GLuint m_nTextureClouds;

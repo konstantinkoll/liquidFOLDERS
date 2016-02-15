@@ -91,7 +91,7 @@ LFApplication::LFApplication(GUID& AppID)
 		m_ThemeLibLoaded = FALSE;
 	}
 
-	// Aero
+	// DWM
 	hModDwm = LoadLibrary(_T("DWMAPI.DLL"));
 	if (hModDwm)
 	{

@@ -491,11 +491,21 @@ BOOL GLRenderer::CreateRenderContext(CWnd* pWnd, GLRenderContext& RenderContext)
 		return FALSE;
 
 	if (!SetupPixelFormat(*RenderContext.pDC, PFD_DOUBLEBUFFER | PFD_TYPE_RGBA))
+	{
+		delete RenderContext.pDC;
+		RenderContext.pDC = NULL;
+
 		return FALSE;
+	}
 
 	RenderContext.hRC = wglCreateContext(*RenderContext.pDC);
 	if (!RenderContext.hRC)
+	{
+		delete RenderContext.pDC;
+		RenderContext.pDC = NULL;
+
 		return FALSE;
+	}
 
 	MakeCurrent(RenderContext);
 
