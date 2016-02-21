@@ -410,56 +410,82 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 	pItemDescriptor->CoreAttributes.SlaveID = ContextSlaves[pItemDescriptor->CoreAttributes.ContextID];
 
 	// Exit if no additional metadata is requested
-	if (!Metadata || !pItemDescriptor->CoreAttributes.SlaveID)
+	if (!pItemDescriptor->CoreAttributes.SlaveID)
 		return;
 
-	// Shell properties
-	//
-	LPITEMIDLIST pidlFQ;
-	if (SUCCEEDED(SHParseDisplayName(pPath, NULL, &pidlFQ, 0, NULL)))
+	if (Metadata)
 	{
-		IShellFolder2* pParentFolder;
-		LPCITEMIDLIST pidlRel;
-		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
+		// Shell properties
+		//
+		LPITEMIDLIST pidlFQ;
+		if (SUCCEEDED(SHParseDisplayName(pPath, NULL, &pidlFQ, 0, NULL)))
 		{
-			for (UINT a=0; a<LFAttributeCount; a++)
-				if ((AttrProperties[a].ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
-					GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].Schema, AttrProperties[a].ID, pItemDescriptor, a);
+			IShellFolder2* pParentFolder;
+			LPCITEMIDLIST pidlRel;
+			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
+			{
+				for (UINT a=0; a<LFAttributeCount; a++)
+					if ((AttrProperties[a].ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
+						GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].Schema, AttrProperties[a].ID, pItemDescriptor, a);
 
-			// Besondere Eigenschaften
-			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 4, pItemDescriptor, LFAttrBitrate);
-			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 5, pItemDescriptor, LFAttrSamplerate);
-			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 7, pItemDescriptor, LFAttrChannels);
-			GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 10, pItemDescriptor, LFAttrAudioCodec);
+				// Besondere Eigenschaften
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 4, pItemDescriptor, LFAttrBitrate);
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 5, pItemDescriptor, LFAttrSamplerate);
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 7, pItemDescriptor, LFAttrChannels);
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 10, pItemDescriptor, LFAttrAudioCodec);
 
-			GetShellProperty(pParentFolder, pidlRel, PropertyPhoto, 36867, pItemDescriptor, LFAttrRecordingTime);
+				GetShellProperty(pParentFolder, pidlRel, PropertyPhoto, 36867, pItemDescriptor, LFAttrRecordingTime);
 
-			GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 3, pItemDescriptor, LFAttrWidth);
-			GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 4, pItemDescriptor, LFAttrHeight);
-			GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 8, pItemDescriptor, LFAttrBitrate);
+				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 3, pItemDescriptor, LFAttrWidth);
+				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 4, pItemDescriptor, LFAttrHeight);
+				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 8, pItemDescriptor, LFAttrBitrate);
 
-			pParentFolder->Release();
+				pParentFolder->Release();
+			}
+
+			CoTaskMemFree(pidlFQ);
 		}
 
-		CoTaskMemFree(pidlFQ);
+		// OLE structured storage
+		//
+		if (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments)
+		{
+			IPropertySetStorage* pPropertySetStorage;
+			if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
+			{
+				GetOLEProperties(pPropertySetStorage, PropertyDocuments, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, PropertyMedia, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, PropertyMusic, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, PropertyPhoto, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, PropertySummary, pItemDescriptor);
+
+				pPropertySetStorage->Release();
+			}
+		}
+
+		// TODO: weitere Attribute durch eigene Metadaten-Bibliothek
 	}
 
-	// OLE structured storage
+	// Audio properties from filename
 	//
-	if (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments)
+	if (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio)
 	{
-		IPropertySetStorage* pPropertySetStorage;
-		if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
-		{
-			GetOLEProperties(pPropertySetStorage, PropertyDocuments, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, PropertyMedia, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, PropertyMusic, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, PropertyPhoto, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, PropertySummary, pItemDescriptor);
+		WCHAR* pSeparator = wcsstr(pItemDescriptor->CoreAttributes.FileName, L" – ");
+		SIZE_T SeparatorLength = 3;
 
-			pPropertySetStorage->Release();
+		if (!pSeparator)
+		{
+			pSeparator = wcschr(pItemDescriptor->CoreAttributes.FileName, L'—');
+			SeparatorLength = 1;
+		}
+
+		if (pSeparator)
+		{
+			WCHAR Artist[256];
+			wcsncpy_s(Artist, 256, pItemDescriptor->CoreAttributes.FileName, pSeparator-pItemDescriptor->CoreAttributes.FileName);
+
+			SetAttribute(pItemDescriptor, LFAttrArtist, Artist);
+			SetAttribute(pItemDescriptor, LFAttrTitle, pSeparator+SeparatorLength);
 		}
 	}
-
-	// TODO: weitere Attribute durch eigene Metadaten-Bibliothek
 }
