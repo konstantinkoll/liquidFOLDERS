@@ -63,7 +63,7 @@ BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
 void CExplorerList::Init()
 {
 	ModifyStyle(0, WS_CLIPCHILDREN | LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
-	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_AUTOCHECKSELECT | LVS_EX_JUSTIFYCOLUMNS);
+	SetExtendedStyle((GetExtendedStyle() & ~LVS_EX_AUTOCHECKSELECT) | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS);
 
 	CHeaderCtrl* pHeader = GetHeaderCtrl();
 	if (pHeader)
@@ -253,7 +253,6 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	ZeroMemory(&Item, sizeof(Item));
 
 	Item.iItem = nID;
-	Item.iSubItem = 0;
 	Item.pszText = Text;
 	Item.cchTextMax = sizeof(Text)/sizeof(WCHAR);
 	Item.puColumns = Columns;

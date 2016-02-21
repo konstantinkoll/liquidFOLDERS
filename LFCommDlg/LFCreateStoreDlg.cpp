@@ -16,6 +16,7 @@
 LFCreateStoreDlg::LFCreateStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_CREATESTORE, pParentWnd)
 {
+	m_Result = LFCancel;
 	m_SHChangeNotifyRegister = 0;
 }
 
@@ -30,8 +31,7 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		WCHAR StoreName[256];
-		GetDlgItem(IDC_STORENAME)->GetWindowText(StoreName, 256);
+		GetDlgItem(IDC_STORENAME)->GetWindowText(m_StoreName);
 
 		WCHAR Comments[256];
 		GetDlgItem(IDC_COMMENTS)->GetWindowText(Comments, 256);
@@ -45,7 +45,7 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 		}
 
 		CWaitCursor csr;
-		LFErrorBox(this, LFCreateStoreLiquidfolders(StoreName, Comments, cVolume, m_wndMakeSearchable.GetCheck()));
+		m_Result = LFCreateStoreLiquidfolders(m_StoreName.GetBuffer(), Comments, cVolume, m_wndMakeSearchable.GetCheck());
 	}
 }
 

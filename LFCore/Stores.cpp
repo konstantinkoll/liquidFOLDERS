@@ -941,7 +941,7 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, 
 	return CommitInitializeStore(&Store);
 }
 
-LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, LFProgress* pProgress)
+LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, WCHAR* pStoreName, LFProgress* pProgress)
 {
 	assert(pPath);
 
@@ -951,13 +951,14 @@ LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, LFProgress* pProgress)
 	UINT Source = LFGetSourceForVolume((CHAR)*pPath);
 	Store.Mode = LFStoreModeBackendWindows | ((Source==LFTypeSourceUSB) || (Source==LFTypeSource1394) ? LFStoreModeIndexExternal : LFStoreModeIndexInternal);
 
-	// Set data
+	// Set path
 	BOOL TrailingBackslash = (pPath[wcslen(pPath)-1]==L'\\');
 
 	wcscpy_s(Store.DatPath, 256, pPath);
 	if (!TrailingBackslash)
 		wcscat_s(Store.DatPath, MAX_PATH, L"\\");
 
+	// Create name
 	wcscpy_s(Store.StoreName, 256, pPath);
 
 	if (TrailingBackslash)
@@ -966,6 +967,17 @@ LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, LFProgress* pProgress)
 	WCHAR* Ptr = wcsrchr(Store.StoreName, L'\\');
 	if (Ptr)
 		wcscpy_s(Store.StoreName, 256, Ptr+1);
+
+	// Retrieve or store created name
+	if (pStoreName)
+		if (*pStoreName)
+		{
+			wcscpy_s(Store.StoreName, 256, pStoreName);
+		}
+		else
+		{
+			wcscpy_s(pStoreName, 256, Store.StoreName);
+		}
 
 	return CommitInitializeStore(&Store, pProgress);
 }

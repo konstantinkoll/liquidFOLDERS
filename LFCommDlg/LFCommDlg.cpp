@@ -187,6 +187,7 @@ void DrawControlBorder(CWnd* pWnd)
 		}
 
 	dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
+
 	rect.DeflateRect(1, 1);
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
@@ -304,8 +305,8 @@ void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocu
 	{
 		if (Selected)
 		{
-			dc.FillSolidRect(rectItem, GetSysColor(WinFocused ? COLOR_HIGHLIGHT : COLOR_3DFACE));
-			dc.SetTextColor(GetSysColor(WinFocused ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT));
+			dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
+			dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
 			dc.SetBkColor(0x000000);
 		}
 		else
@@ -1139,7 +1140,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 	if (Check)
 	{
-		CWaitCursor wait;
+		CWaitCursor csr;
 		CString VersionIni = GetLatestVersion(CurrentVersion);
 
 		if (!VersionIni.IsEmpty())
@@ -1163,7 +1164,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 		CString IgnoreMSN = LFGetApp()->GetGlobalString(_T("IgnoreUpdateMSN"));
 
-		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) && IsVersionLater(LV, CV);
+		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || Force) && IsVersionLater(LV, CV);
 	}
 
 	// Result
@@ -1195,7 +1196,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			CString Caption((LPCSTR)IDS_UPDATE);
 			CString Text((LPCSTR)IDS_UPDATENOTAVAILABLE);
 
-			LFMessageBox(pParentWnd, Text, Caption, MB_ICONREADY | MB_OK);
+			LFMessageBox(pParentWnd, Text, Caption, MB_ICONINFORMATION | MB_OK);
 		}
 }
 

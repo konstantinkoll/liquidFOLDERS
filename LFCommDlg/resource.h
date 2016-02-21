@@ -106,6 +106,7 @@
 #define IDS_FORMAT_CAPTION              20338
 #define IDS_FORMAT_MSG                  20339
 #define IDS_ILLEGALYEAR                 20340
+#define IDS_STORECREATED                20341
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401

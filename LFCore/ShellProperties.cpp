@@ -466,9 +466,9 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 		// TODO: weitere Attribute durch eigene Metadaten-Bibliothek
 	}
 
-	// Audio properties from filename
+	// Properties from filename
 	//
-	if (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio)
+	if ((pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos))
 	{
 		WCHAR* pSeparator = wcsstr(pItemDescriptor->CoreAttributes.FileName, L" – ");
 		SIZE_T SeparatorLength = 3;
@@ -481,11 +481,23 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 
 		if (pSeparator)
 		{
-			WCHAR Artist[256];
-			wcsncpy_s(Artist, 256, pItemDescriptor->CoreAttributes.FileName, pSeparator-pItemDescriptor->CoreAttributes.FileName);
+			// Artist or Roll
+			WCHAR Value[256];
+			wcsncpy_s(Value, 256, pItemDescriptor->CoreAttributes.FileName, pSeparator-pItemDescriptor->CoreAttributes.FileName);
 
-			SetAttribute(pItemDescriptor, LFAttrArtist, Artist);
-			SetAttribute(pItemDescriptor, LFAttrTitle, pSeparator+SeparatorLength);
+			for (WCHAR* pChar=Value; pChar; pChar++)
+				if (*pChar>=L'A')
+				{
+					const UINT Attr = (pItemDescriptor->CoreAttributes.ContextID>LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrRoll) ? LFAttrRoll : LFAttrArtist;
+					SetAttribute(pItemDescriptor, Attr, Value);
+
+					break;
+				}
+
+			// Title
+			WCHAR* pTitle = pSeparator+SeparatorLength;
+			if (*pTitle)
+				SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
 		}
 	}
 }

@@ -6,6 +6,7 @@ struct WorkerParameters
 {
 	LFWorkerParameters Hdr;
 	CHAR StoreID[LFKeySize];
+	WCHAR StoreName[256];
 	BOOL DeleteSource;
 	LFItemDescriptor* pItemTemplate;
 	WCHAR Path[MAX_PATH];

@@ -96,9 +96,6 @@ void CFrontstagePane::OnPaint()
 
 	if (IsCtrlThemed())
 	{
-		dc.FillSolidRect(0, 0, PANEGRIPPER, 1, 0xE7E7E7);
-		dc.FillSolidRect(0, 1, PANEGRIPPER, 1, 0xF3F3F3);
-
 		ASSERT(PANEGRIPPER==4);
 		BYTE Colors[] = { 0x88, 0xC8, 0xE8, 0xF8 };
 		INT Line = rect.Height()*2/5;
@@ -111,11 +108,13 @@ void CFrontstagePane::OnPaint()
 			const BYTE clr = Colors[m_IsLeft ? PANEGRIPPER-1-a : a];
 
 			LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0xFF, 0xFF, 0xFF), Color(clr, clr, clr));
-			g.FillRectangle(&brush1, a, 2, 1, Line-2);
+			g.FillRectangle(&brush1, a, 0, 1, Line);
 
 			LinearGradientBrush brush2(Point(0, Line), Point(0, rect.Height()), Color(clr, clr, clr), Color(0xFF, 0xFF, 0xFF));
 			g.FillRectangle(&brush2, a, Line, 1, rect.Height()-Line);
 		}
+
+		CTaskbar::DrawTaskbarShadow(g, rect);
 	}
 	else
 	{

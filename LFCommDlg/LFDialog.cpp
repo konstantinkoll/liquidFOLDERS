@@ -142,6 +142,8 @@ void LFDialog::SetBottomLeftControl(CWnd* pChildWnd)
 
 	m_BottomLeftControl.pChildWnd = pChildWnd;
 
+	//pChildWnd->ModifyStyle(0, WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+
 	pChildWnd->GetWindowRect(&m_BottomLeftControl.rectClient);
 	ScreenToClient(&m_BottomLeftControl.rectClient);
 }
@@ -463,9 +465,13 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		{
 			CHoverButton* pButton = new CHoverButton();
 			pButton->SubclassWindow(pChildWnd->GetSafeHwnd());
-			pButton->ModifyStyle(BS_TYPEMASK, BS_OWNERDRAW);
+			pButton->ModifyStyle(BS_TYPEMASK, BS_OWNERDRAW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 
 			m_Buttons.AddItem(pButton);
+		}
+		else
+		{
+			pChildWnd->ModifyStyle(0, WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 		}
 
 		pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);

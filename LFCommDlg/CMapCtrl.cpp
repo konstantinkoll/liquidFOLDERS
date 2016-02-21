@@ -120,8 +120,9 @@ void CMapCtrl::SendUpdateMsg()
 BEGIN_MESSAGE_MAP(CMapCtrl, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
+	ON_WM_NCCALCSIZE()
 	ON_WM_NCPAINT()
+	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -148,6 +149,19 @@ void CMapCtrl::OnDestroy()
 	DeleteObject(hBackgroundBrush);
 
 	CWnd::OnDestroy();
+}
+
+void CMapCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
+{
+	lpncsp->rgrc[0].top += 2;
+	lpncsp->rgrc[0].left += 2;
+	lpncsp->rgrc[0].bottom -= 2;
+	lpncsp->rgrc[0].right -= 2;
+}
+
+void CMapCtrl::OnNcPaint()
+{
+	DrawControlBorder(this);
 }
 
 BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
@@ -180,11 +194,6 @@ BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
 	}
 
 	return TRUE;
-}
-
-void CMapCtrl::OnNcPaint()
-{
-	DrawControlBorder(this);
 }
 
 void CMapCtrl::OnPaint()

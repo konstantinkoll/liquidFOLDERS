@@ -22,6 +22,7 @@ public:
 	UINT GetPreferredHeight() const;
 	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL ForceSmall=FALSE);
 	void AdjustLayout();
+	static void DrawTaskbarShadow(Graphics& g, const CRect& rectClient);
 
 protected:
 	afx_msg void OnDestroy();

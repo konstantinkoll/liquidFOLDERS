@@ -30,6 +30,8 @@ void LFAttributeListDlg::TestAttribute(UINT /*Attr*/, BOOL& Add, BOOL& Check)
 
 void LFAttributeListDlg::PrepareListCtrl(CExplorerList* pExplorerList, BOOL Check)
 {
+	ASSERT(pExplorerList);
+
 	if (Check)
 		pExplorerList->SetExtendedStyle(pExplorerList->GetExtendedStyle() | LVS_EX_CHECKBOXES);
 
@@ -46,6 +48,8 @@ void LFAttributeListDlg::PrepareListCtrl(INT nID, BOOL Check)
 
 void LFAttributeListDlg::AddAttribute(CExplorerList* pExplorerList, UINT Attr)
 {
+	ASSERT(pExplorerList);
+
 	BOOL Add;
 	BOOL Check;
 	TestAttribute(Attr , Add, Check);
@@ -71,6 +75,8 @@ void LFAttributeListDlg::AddAttribute(UINT nID, UINT Attr)
 
 void LFAttributeListDlg::FinalizeListCtrl(CExplorerList* pExplorerList, INT Focus, BOOL Sort)
 {
+	ASSERT(pExplorerList);
+
 	pExplorerList->SetColumnWidth(0, LVSCW_AUTOSIZE);
 
 	if (Sort)
@@ -98,6 +104,8 @@ void LFAttributeListDlg::FinalizeListCtrl(UINT nID, INT Focus, BOOL Sort)
 
 void LFAttributeListDlg::PopulateListCtrl(CExplorerList* pExplorerList, BOOL Check, INT Focus, BOOL Sort)
 {
+	ASSERT(pExplorerList);
+
 	PrepareListCtrl(pExplorerList, Check);
 
 	for (UINT a=0; a<LFAttributeCount; a++)

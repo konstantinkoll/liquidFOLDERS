@@ -110,25 +110,16 @@ void LFAboutDlg::CheckLicenseKey()
 	LFLicense License;
 	if (LFIsLicensed(&License))
 	{
-		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
-		Invalidate();
-	}
-
-	SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
-	SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);
-	SetWindowTextA(GetDlgItem(IDC_PURCHASEID)->GetSafeHwnd(), License.PurchaseID);
-	SetWindowTextA(GetDlgItem(IDC_PRODUCT)->GetSafeHwnd(), License.ProductID);
-
-	if (strlen(License.ProductID)>13)
-	{
-		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_HIDE);
-	}
-	else
-	{
-		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
+		SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
+		SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);
+		SetWindowTextA(GetDlgItem(IDC_PURCHASEID)->GetSafeHwnd(), License.PurchaseID);
+		SetWindowTextA(GetDlgItem(IDC_PRODUCT)->GetSafeHwnd(), License.ProductID);
 		SetWindowTextA(GetDlgItem(IDC_QUANTITY)->GetSafeHwnd(), License.Quantity);
+
+		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
+
+		m_BackBufferL = m_BackBufferH = 0;
+		Invalidate();
 	}
 }
 
@@ -244,7 +235,6 @@ void LFAboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 void LFAboutDlg::OnEnterLicenseKey()
 {
 	LFLicenseDlg dlg(this);
-	dlg.DoModal();
-
-	CheckLicenseKey();
+	if (dlg.DoModal()==IDOK)
+		CheckLicenseKey();
 }

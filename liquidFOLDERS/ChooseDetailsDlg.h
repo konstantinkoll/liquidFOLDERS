@@ -27,8 +27,8 @@ protected:
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
 
-	CExplorerList m_ShowAttributes;
-	LFViewParameters* p_View;
+	CExplorerList m_wndAttributes;
+	LFViewParameters* p_ViewParamters;
 	UINT m_Context;
 
 private:

@@ -16,6 +16,9 @@ class LFCreateStoreDlg : public LFDialog
 public:
 	LFCreateStoreDlg(CWnd* pParentWnd=NULL);
 
+	UINT m_Result;
+	CString m_StoreName;
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();

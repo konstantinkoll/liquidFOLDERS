@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CExplorerNotification.h"
 #include "LFDialog.h"
 
 
@@ -14,10 +15,14 @@ class LFAddStoreDlg : public LFDialog
 public:
 	LFAddStoreDlg(CWnd* pParentWnd=NULL);
 
+	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 	virtual void DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected);
 
 protected:
 	virtual BOOL InitDialog();
+
+	void ShowResult(UINT Result, const CString StoreName);
 
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -25,6 +30,8 @@ protected:
 	afx_msg void OnBtnLiquidfolders();
 	afx_msg void OnBtnWindows();
 	DECLARE_MESSAGE_MAP()
+
+	CExplorerNotification m_wndExplorerNotification;
 
 private:
 	void CheckInternetConnection();

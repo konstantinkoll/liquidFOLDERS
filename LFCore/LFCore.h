@@ -119,7 +119,7 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType=
 
 // Erzeugt einen neuen Store
 LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName=NULL, WCHAR* pComments=NULL, CHAR cVolume='\0', BOOL MakeSearchable=FALSE);
-LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, LFProgress* pProgress=NULL);
+LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, WCHAR* pStoreName=NULL, LFProgress* pProgress=NULL);
 
 // Macht einen Store offline durchsuchbar
 LFCORE_API UINT __stdcall LFMakeStoreSearchable(const CHAR* pStoreID, BOOL Searchable=TRUE);
@@ -212,6 +212,9 @@ LFCORE_API void __stdcall LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDes
 
 // Attributwert setzen
 LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& v);
+
+// Prüfen, ob ein Attributwert existiert
+LFCORE_API BOOL __stdcall LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr);
 
 // Entfernt doppelte Eintäge in einem Unicode-Array
 LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);

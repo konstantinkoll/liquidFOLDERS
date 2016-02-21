@@ -50,8 +50,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,5,0
- PRODUCTVERSION 2,1,5,0
+ FILEVERSION 2,1,6,0
+ PRODUCTVERSION 2,1,6,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,13 +68,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.1.5"
+            VALUE "FileVersion", "2.1.6"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2016 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.1.5"
+            VALUE "ProductVersion", "2.1.6"
         END
     END
     BLOCK "VarFileInfo"
@@ -301,7 +301,6 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 189
-        VERTGUIDE, 92
         TOPMARGIN, 7
         BOTTOMMARGIN, 268
     END
@@ -323,6 +322,21 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_ORGANIZE DLGINIT
+BEGIN
+    IDC_SORTDIRECTION, 0x403, 12, 0
+0x7541, 0x7366, 0x6574, 0x6769, 0x6e65, 0x0064, 
+    IDC_SORTDIRECTION, 0x403, 11, 0
+0x6241, 0x7473, 0x6965, 0x6567, 0x646e, "\000" 
+    0
+END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -371,15 +385,13 @@ BEGIN
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
-    IDS_FILETYPES           "Dateitypen"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
     IDS_SEARCHTERM          "Alle Stores durchsuchen"
-    IDS_ASCENDING           "Aufsteigend"
-    IDS_DESCENDING          "Absteigend"
     IDS_DEFAULTSTORE        "Standard-Store"
     IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
@@ -749,6 +761,21 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog Info
+//
+
+IDD_ORGANIZE DLGINIT
+BEGIN
+    IDC_SORTDIRECTION, 0x403, 11, 0
+0x7341, 0x6563, 0x646e, 0x6e65, 0x6574, "\000" 
+    IDC_SORTDIRECTION, 0x403, 12, 0
+0x6544, 0x6373, 0x6e65, 0x6564, 0x746e, 0x0065, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -792,15 +819,13 @@ BEGIN
     IDS_NOITEMSSELECTED     "Objetos no seleccionados"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
-    IDS_FILETYPES           "Tipos de archivo"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
     IDS_SEARCHTERM          "Buscar todo los stores"
-    IDS_ASCENDING           "Ascendente"
-    IDS_DESCENDING          "Descendiente"
     IDS_DEFAULTSTORE        "Store predeterminado"
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
@@ -1170,6 +1195,21 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog Info
+//
+
+IDD_ORGANIZE DLGINIT
+BEGIN
+    IDC_SORTDIRECTION, 0x403, 10, 0
+0x7341, 0x6563, 0x646e, 0x6e61, 0x0074, 
+    IDC_SORTDIRECTION, 0x403, 11, 0
+0x6544, 0x6373, 0x6e65, 0x6164, 0x746e, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -1213,15 +1253,13 @@ BEGIN
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
     IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
-    IDS_FILETYPES           "Types de fichiers"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
     IDS_SEARCHTERM          "Recherche tous le stores"
-    IDS_ASCENDING           "Montant"
-    IDS_DESCENDING          "Descendant"
     IDS_DEFAULTSTORE        "Store défaut"
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
@@ -1642,6 +1680,21 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog Info
+//
+
+IDD_ORGANIZE DLGINIT
+BEGIN
+    IDC_SORTDIRECTION, 0x403, 10, 0
+0x7341, 0x6563, 0x646e, 0x6e69, 0x0067, 
+    IDC_SORTDIRECTION, 0x403, 11, 0
+0x6544, 0x6373, 0x6e65, 0x6964, 0x676e, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -1685,15 +1738,13 @@ BEGIN
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
-    IDS_FILETYPES           "File types"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
     IDS_SEARCHTERM          "Search all stores"
-    IDS_ASCENDING           "Ascending"
-    IDS_DESCENDING          "Descending"
     IDS_DEFAULTSTORE        "Default Store"
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"

@@ -40,11 +40,15 @@ UINT CExplorerNotification::GetPreferredHeight() const
 
 void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT Command)
 {
+	LPWSTR nIconID = NULL;
+
 	switch (Type)
 	{
 	case ENT_READY:
 		m_FirstCol = 0x00E600;
 		m_SecondCol = 0x00AF00;
+
+		nIconID = MAKEINTRESOURCE(IDI_READY);
 
 		break;
 
@@ -52,7 +56,7 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 		m_FirstCol = 0xFF8E6F;
 		m_SecondCol = 0xF26120;
 
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_INFORMATION), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+		nIconID = IDI_INFORMATION;
 
 		break;
 
@@ -60,7 +64,7 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
 
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_WARNING), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+		nIconID = IDI_WARNING;
 
 		break;
 
@@ -68,7 +72,7 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
 
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), (LFGetApp()->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+		nIconID = (LFGetApp()->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD;
 
 		break;
 
@@ -76,18 +80,21 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 		m_FirstCol = 0x0000E6;
 		m_SecondCol = 0x0000AF;
 
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ERROR), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+		nIconID = IDI_ERROR;
 	}
 
 	m_Text = Text;
+
+	if (nIconID)
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nIconID), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
 
 	if (Command)
 	{
 		ENSURE(m_CommandText.LoadString(Command));
 
-		INT pos = m_CommandText.Find(L'\n');
-		if (pos!=-1)
-			m_CommandText.Delete(0, pos+1);
+		INT Pos = m_CommandText.Find(L'\n');
+		if (Pos!=-1)
+			m_CommandText.Delete(0, Pos+1);
 
 		m_CommandButton.SetWindowText(m_CommandText);
 		m_CommandButton.EnableWindow(TRUE);
@@ -116,6 +123,7 @@ void CExplorerNotification::DismissNotification()
 	{
 		ReleaseCapture();
 		ShowWindow(SW_HIDE);
+
 		m_CommandButton.EnableWindow(FALSE);
 		m_Command = 0;
 

@@ -44,22 +44,18 @@ BOOL OrganizeDlg::InitDialog()
 	LFAttributeListDlg::InitDialog();
 
 	// Titelleiste
-	CString text;
-	GetWindowText(text);
+	CString Text;
+	GetWindowText(Text);
+
 	CString Caption;
-	Caption.Format(text, theApp.m_Contexts[m_Context].Name);
+	Caption.Format(Text, theApp.m_Contexts[m_Context].Name);
+
 	SetWindowText(Caption);
 
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_SORTATTRIBUTE, FALSE, p_ViewParameters->SortBy);
 
 	// Combobox füllen
-	ENSURE(text.LoadString(IDS_ASCENDING));
-	m_wndSortDirection.AddString(text);
-
-	ENSURE(text.LoadString(IDS_DESCENDING));
-	m_wndSortDirection.AddString(text);
-
 	m_wndSortDirection.SetCurSel(p_ViewParameters->Descending ? 1 : 0);
 
 	// Ggf. Elemente deaktivieren

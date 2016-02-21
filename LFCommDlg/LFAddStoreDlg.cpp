@@ -18,6 +18,20 @@ LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 {
 }
 
+BOOL LFAddStoreDlg::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	if ((nID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (nID<=IDC_ADDSTORE_YOUTUBE))
+		m_wndExplorerNotification.DismissNotification();
+
+	return LFDialog::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}
+
+void LFAddStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
+{
+	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
+	m_wndExplorerNotification.SetWindowPos(&wndTop, rectLayout.left+32, rectLayout.bottom-NotificationHeight+1, rectLayout.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
+}
+
 void LFAddStoreDlg::DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected)
 {
 	if ((lpDrawItemStruct->CtlID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (lpDrawItemStruct->CtlID<=IDC_ADDSTORE_YOUTUBE))
@@ -84,8 +98,32 @@ void LFAddStoreDlg::CheckInternetConnection()
 #endif
 
 	m_wndCategory[1].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
+
 	for (UINT nCtlID=IDC_ADDSTORE_DROPBOX; nCtlID<=IDC_ADDSTORE_YOUTUBE; nCtlID++)
 		GetDlgItem(nCtlID)->ShowWindow(Connected ? SW_SHOW : SW_HIDE);
+}
+
+void LFAddStoreDlg::ShowResult(UINT Result, const CString StoreName)
+{
+	if (Result>LFCancel)
+	{
+		LFErrorBox(this, Result);
+	}
+	else
+		if (Result==LFOk)
+		{
+			CString Text;
+			Text.Format(IDS_STORECREATED, StoreName);
+
+			m_wndExplorerNotification.SetNotification(ENT_READY, Text);
+		}
+		else
+		{
+			WCHAR Text[256];
+			LFGetErrorText(Text, 256, Result);
+
+			m_wndExplorerNotification.SetNotification(ENT_WARNING, Text);
+		}
 }
 
 BOOL LFAddStoreDlg::InitDialog()
@@ -98,7 +136,12 @@ BOOL LFAddStoreDlg::InitDialog()
 	CheckInternetConnection();
 	SetTimer(1, 1000, NULL);
 
+	// Notification
+	m_wndExplorerNotification.Create(this, 1);
+
 	// Status
+	SetBottomLeftControl(IDC_STATUS);
+
 	OnUpdateStores(NULL, NULL);
 
 	return TRUE;
@@ -147,13 +190,15 @@ LRESULT LFAddStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 void LFAddStoreDlg::OnBtnLiquidfolders()
 {
 	LFCreateStoreDlg dlg(this);
-	dlg.DoModal();
+	if (dlg.DoModal()==IDOK)
+		ShowResult(dlg.m_Result, dlg.m_StoreName);
 }
 
 void LFAddStoreDlg::OnBtnWindows()
 {
 	CString Caption;
 	GetWindowText(Caption);
+
 	CString Hint;
 	GetDlgItem(IDC_ADDSTORE_WINDOWS)->GetWindowText(Hint);
 
@@ -165,6 +210,7 @@ void LFAddStoreDlg::OnBtnWindows()
 		wcscpy_s(wp.Path, MAX_PATH, dlg.m_FolderPath);
 
 		LFDoWithProgress(WorkerCreateStoreWindows, (LFWorkerParameters*)&wp, this);
-		LFErrorBox(this, wp.Result);
+
+		ShowResult(wp.Result, wp.StoreName);
 	}
 }

@@ -25,21 +25,19 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 
 		LFGetApp()->WriteGlobalString(_T("License"), LicenseKey);
 
-		CString Caption;
-		CString Message;
 		if (LFIsLicensed(NULL, TRUE))
 		{
 			::PostMessage(HWND_BROADCAST, LFGetApp()->m_LicenseActivatedMsg, NULL, NULL);
 
-			ENSURE(Caption.LoadString(IDS_LICENSEVALID_CAPTION));
-			ENSURE(Message.LoadString(IDS_LICENSEVALID_MSG));
-			LFMessageBox(this, Message, Caption, MB_ICONINFORMATION);
+			CString Caption((LPCSTR)IDS_LICENSEVALID_CAPTION);
+			CString Message((LPCSTR)IDS_LICENSEVALID_MSG);
+			LFMessageBox(this, Message, Caption, MB_ICONINFORMATION | MB_OK);
 		}
 		else
 		{
-			ENSURE(Caption.LoadString(IDS_ERROR));
-			ENSURE(Message.LoadString(IDS_INVALIDLICENSE));
-			LFMessageBox(this, Message, Caption, MB_ICONWARNING);
+			CString Caption((LPCSTR)IDS_ERROR);
+			CString Message((LPCSTR)IDS_INVALIDLICENSE);
+			LFMessageBox(this, Message, Caption, MB_ICONWARNING | MB_OK);
 
 			pDX->Fail();
 		}
@@ -48,8 +46,6 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL LFLicenseDlg::InitDialog()
 {
-	LFDialog::InitDialog();
-
 	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&LFGetApp()->m_DefaultFont);
 
 	return TRUE;

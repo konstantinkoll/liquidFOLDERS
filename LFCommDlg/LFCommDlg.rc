@@ -165,6 +165,7 @@ BEGIN
     CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt am %s Uhr.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
     CONTROL         "Lizenz",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,7,107,184,8
     LTEXT           "X",IDC_REGNAME,7,117,189,8
     LTEXT           "Kaufdatum:",IDC_STATIC,7,130,125,8
@@ -172,10 +173,9 @@ BEGIN
     LTEXT           "ID:",IDC_STATIC,145,130,51,8
     LTEXT           "X",IDC_PURCHASEID,145,140,51,8
     LTEXT           "Produkt:",IDC_STATIC,7,155,125,8
-    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "X",IDC_PRODUCT,7,165,125,8
     LTEXT           "Menge:",IDC_QUANTITYTITLE,145,155,51,8
     LTEXT           "X",IDC_QUANTITY,145,165,51,8
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     CONTROL         "Updates",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Automatisch nach &Updates suchen",IDC_ENABLEAUTOUPDATE,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
@@ -342,17 +342,17 @@ CAPTION "Extras"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Synchronisation",IDC_STATIC,4,3,301,53
-    CONTROL         20032,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
     LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,14,258,8
     LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,39,36,120,14
     GROUPBOX        "Wartungsarbeiten",IDC_STATIC,4,61,301,53
-    CONTROL         20033,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
     LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,40,71,258,8
     LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,39,93,120,14
     GROUPBOX        "Einstellungen",IDC_STATIC,4,118,301,42
-    CONTROL         20034,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,39,140,120,14
 END
@@ -384,28 +384,28 @@ BEGIN
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "Eine neue Version von liquidFOLDERS steht zum Herunterladen bereit:",IDC_STATIC,7,50,206,16
     CONTROL         "Dieses Update &ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,206,10
-    CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
+    CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,99,100,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 636, 402
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 393
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Store hinzufügen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,622,15
-    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Erstellt einen neuen Store für Ihre Dateien.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,218,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,218,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,429,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,7,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Pinterest-Konto als Store hinzu.",IDC_ADDSTORE_PINTEREST,218,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Soundcloud-Konto als Store hinzu.",IDC_ADDSTORE_SOUNDCLOUD,429,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Twitter-Konto als Store hinzu.",IDC_ADDSTORE_TWITTER,7,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,218,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    DEFPUSHBUTTON   "Fertig",IDOK,579,380,50,14,WS_GROUP
-    LTEXT           "",IDC_STATUS,7,386,570,8
+    PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Pinterest-Konto als Store hinzu.",IDC_ADDSTORE_PINTEREST,214,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Soundcloud-Konto als Store hinzu.",IDC_ADDSTORE_SOUNDCLOUD,421,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein Twitter-Konto als Store hinzu.",IDC_ADDSTORE_TWITTER,7,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein YouTube-Konto als Store hinzu.",IDC_ADDSTORE_YOUTUBE,214,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Fertig",IDOK,571,371,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,7,374,562,8
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -626,9 +626,9 @@ BEGIN
     IDD_ADDSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 629
+        RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 394
+        BOTTOMMARGIN, 385
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -841,6 +841,7 @@ BEGIN
     IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
     IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
+    IDS_STORECREATED        "Der Store „%s“ wurde hinzugefügt."
 END
 
 STRINGTABLE 
@@ -909,6 +910,7 @@ BEGIN
     CONTROL         "Desarrollado de <a>liquidFOLDERS</a> en Alemania.\nVersion %s, %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
     CONTROL         "Licensia",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
+    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     LTEXT           "Nombre:",IDC_STATIC,7,107,184,8
     LTEXT           "X",IDC_REGNAME,7,117,189,8
     LTEXT           "Adquisición:",IDC_STATIC,7,130,125,8
@@ -916,10 +918,9 @@ BEGIN
     LTEXT           "ID:",IDC_STATIC,145,130,51,8
     LTEXT           "X",IDC_PURCHASEID,145,140,51,8
     LTEXT           "Producto:",IDC_STATIC,7,158,125,8
-    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "X",IDC_PRODUCT,7,165,125,8
     LTEXT           "Número:",IDC_QUANTITYTITLE,145,155,51,8
     LTEXT           "X",IDC_QUANTITY,145,165,51,8
-    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     CONTROL         "Actualizacione",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Buscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
@@ -1097,17 +1098,17 @@ CAPTION "Ferramentas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Sincronización",IDC_STATIC,4,3,301,53
-    CONTROL         20032,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
     LTEXT           "Sincroniza el store para los datos.",IDC_STATIC,40,14,258,8
     LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,39,36,120,14
     GROUPBOX        "Mantenimiento",IDC_STATIC,4,61,301,53
-    CONTROL         20033,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
     LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,40,71,258,8
     LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,39,93,120,14
     GROUPBOX        "Configuraciones",IDC_STATIC,4,118,301,42
-    CONTROL         20034,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,120,14
 END
@@ -1121,28 +1122,28 @@ BEGIN
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "Una actualización de liquidFOLDERS está disponible:",IDC_STATIC,7,50,206,16
     CONTROL         "&Ignorar actualización",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,206,10
-    CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,93,110,9
+    CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,91,110,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 636, 402
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 393
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Adjuntar store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,622,15
-    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Crea un nuevo store para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Adjunta una carpeta existente como store.",IDC_ADDSTORE_WINDOWS,218,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una carpeta existente como store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adjunta una cuenta de Dropbox como store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de Facebook como store.",IDC_ADDSTORE_FACEBOOK,218,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de Flickr como store.",IDC_ADDSTORE_FLICKR,429,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de Instagram como store.",IDC_ADDSTORE_INSTAGRAM,7,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de Pinterest como store.",IDC_ADDSTORE_PINTEREST,218,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de Soundcloud como store.",IDC_ADDSTORE_SOUNDCLOUD,429,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de Twitter como store.",IDC_ADDSTORE_TWITTER,7,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de YouTube como store.",IDC_ADDSTORE_YOUTUBE,218,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    DEFPUSHBUTTON   "Listo",IDOK,579,380,50,14,WS_GROUP
-    LTEXT           "",IDC_STATUS,7,386,570,8
+    PUSHBUTTON      "Adjunta una cuenta de Facebook como store.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Flickr como store.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Instagram como store.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Pinterest como store.",IDC_ADDSTORE_PINTEREST,214,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Soundcloud como store.",IDC_ADDSTORE_SOUNDCLOUD,421,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de Twitter como store.",IDC_ADDSTORE_TWITTER,7,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una cuenta de YouTube como store.",IDC_ADDSTORE_YOUTUBE,214,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Listo",IDOK,571,371,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,7,374,562,8
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -1364,9 +1365,9 @@ BEGIN
     IDD_ADDSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 629
+        RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 394
+        BOTTOMMARGIN, 385
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -1587,6 +1588,7 @@ BEGIN
     IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
     IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
+    IDS_STORECREATED        "Se añadió el store «%s»."
 END
 
 STRINGTABLE 
@@ -1655,6 +1657,7 @@ BEGIN
     CONTROL         "Développée par <a>liquidFOLDERS</a> en Allemagne.\nVersion %s, crée %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
     CONTROL         "Licence",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     LTEXT           "Nom:",IDC_STATIC,7,107,184,8
     LTEXT           "X",IDC_REGNAME,7,117,189,8
     LTEXT           "Date d'achat:",IDC_STATIC,7,130,125,8
@@ -1662,10 +1665,9 @@ BEGIN
     LTEXT           "ID:",IDC_STATIC,145,130,51,8
     LTEXT           "X",IDC_PURCHASEID,145,140,51,8
     LTEXT           "Produit:",IDC_STATIC,7,155,125,8
-    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "X",IDC_PRODUCT,7,165,125,8
     LTEXT           "Nombre:",IDC_QUANTITYTITLE,145,155,51,8
     LTEXT           "X",IDC_QUANTITY,145,165,51,8
-    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     CONTROL         "Mises à jour",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Chercher automatiquement des &mises á jour",IDC_ENABLEAUTOUPDATE,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
@@ -1864,17 +1866,17 @@ CAPTION "Outils"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Synchronisation",IDC_STATIC,4,3,301,53
-    CONTROL         20032,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
     LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,40,14,258,8
     LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,39,36,130,14
     GROUPBOX        "Travails d'entretien",IDC_STATIC,4,61,301,53
-    CONTROL         20033,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
     LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,40,71,258,8
     LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Exécuter des &travails d'entretien",IDC_RUNMAINTENANCE,39,93,130,14
     GROUPBOX        "Paramètres",IDC_STATIC,4,118,301,42
-    CONTROL         20034,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Sauvegarde les &paramètres",IDC_RUNBACKUP,39,140,130,14
 END
@@ -1888,28 +1890,28 @@ BEGIN
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "Une nouvelle version de liquidFOLDERS est prête pour télécharger:",IDC_STATIC,7,50,206,16
     CONTROL         "&Ignorer cette version",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
-    CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
+    CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,99,100,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 636, 402
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 393
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ajouter store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,622,15
-    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Crée un nouveau store pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Ajoute un dossier existant comme store.",IDC_ADDSTORE_WINDOWS,218,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un dossier existant comme store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Ajoute un compte Dropbox comme store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte Facebook comme store.",IDC_ADDSTORE_FACEBOOK,218,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte Flickr comme store.",IDC_ADDSTORE_FLICKR,429,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte Instagram comme store.",IDC_ADDSTORE_INSTAGRAM,7,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte Pinterest comme store.",IDC_ADDSTORE_PINTEREST,218,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte Soundcloud comme store.",IDC_ADDSTORE_SOUNDCLOUD,429,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte Twitter comme store.",IDC_ADDSTORE_TWITTER,7,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte YouTube comme store.",IDC_ADDSTORE_YOUTUBE,218,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    DEFPUSHBUTTON   "Fini",IDOK,579,380,50,14,WS_GROUP
-    LTEXT           "",IDC_STATUS,7,386,570,8
+    PUSHBUTTON      "Ajoute un compte Facebook comme store.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Flickr comme store.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Instagram comme store.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Pinterest comme store.",IDC_ADDSTORE_PINTEREST,214,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Soundcloud comme store.",IDC_ADDSTORE_SOUNDCLOUD,421,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte Twitter comme store.",IDC_ADDSTORE_TWITTER,7,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un compte YouTube comme store.",IDC_ADDSTORE_YOUTUBE,214,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Fini",IDOK,571,371,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,7,374,562,8
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -2125,9 +2127,9 @@ BEGIN
     IDD_ADDSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 629
+        RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 394
+        BOTTOMMARGIN, 385
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -2332,6 +2334,7 @@ BEGIN
     IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
     IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
+    IDS_STORECREATED        "Le store «%s» a été ajouté."
 END
 
 STRINGTABLE 
@@ -2450,6 +2453,7 @@ BEGIN
     CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
     CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,7,107,184,8
     LTEXT           "X",IDC_REGNAME,7,117,189,8
     LTEXT           "Purchase date:",IDC_STATIC,7,130,125,8
@@ -2457,10 +2461,9 @@ BEGIN
     LTEXT           "ID:",IDC_STATIC,145,130,51,8
     LTEXT           "X",IDC_PURCHASEID,145,140,51,8
     LTEXT           "Product:",IDC_STATIC,7,155,125,8
-    LTEXT           "X",IDC_PRODUCT,7,165,189,9
+    LTEXT           "X",IDC_PRODUCT,7,165,125,8
     LTEXT           "Quantity:",IDC_QUANTITYTITLE,145,155,51,8
     LTEXT           "X",IDC_QUANTITY,145,165,51,8
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,108,189,66,WS_GROUP
     CONTROL         "Updates",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
     CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,108,189,10
@@ -2638,17 +2641,17 @@ CAPTION "Tools"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Synchronization",IDC_STATIC,4,3,301,53
-    CONTROL         20032,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
     LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,40,14,258,8
     LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,39,36,80,14
     GROUPBOX        "Maintenance",IDC_STATIC,4,61,301,53
-    CONTROL         20033,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
     LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,40,71,258,8
     LTEXT           "Last maintenance on this store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,39,93,80,14
     GROUPBOX        "Settings",IDC_STATIC,4,118,301,42
-    CONTROL         20034,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Saves the settings of all stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,140,80,14
 END
@@ -2662,28 +2665,28 @@ BEGIN
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "A new version of liquidFOLDERS is available for download:",IDC_STATIC,7,50,206,8
     CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,206,10
-    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,93,120,9
+    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,91,120,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 636, 402
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 393
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,622,15
-    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,622,15
+    CONTROL         "X",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
+    CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Creates a new store for your files.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Adds an existing directory as store.",IDC_ADDSTORE_WINDOWS,218,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds an existing directory as store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adds a Dropbox account as store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds a Facebook account as store.",IDC_ADDSTORE_FACEBOOK,218,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds a Flickr account as store.",IDC_ADDSTORE_FLICKR,429,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds an Instagram account as store.",IDC_ADDSTORE_INSTAGRAM,7,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds a Pinterest account as store.",IDC_ADDSTORE_PINTEREST,218,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds an Soundcloud account as store.",IDC_ADDSTORE_SOUNDCLOUD,429,201,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds a Twitter account as store.",IDC_ADDSTORE_TWITTER,7,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds a YouTube account as store.",IDC_ADDSTORE_YOUTUBE,218,286,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    DEFPUSHBUTTON   "Done",IDOK,579,380,50,14,WS_GROUP
-    LTEXT           "",IDC_STATUS,7,386,570,8
+    PUSHBUTTON      "Adds a Facebook account as store.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Flickr account as store.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds an Instagram account as store.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Pinterest account as store.",IDC_ADDSTORE_PINTEREST,214,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds an Soundcloud account as store.",IDC_ADDSTORE_SOUNDCLOUD,421,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a Twitter account as store.",IDC_ADDSTORE_TWITTER,7,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a YouTube account as store.",IDC_ADDSTORE_YOUTUBE,214,280,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Done",IDOK,571,371,50,14,WS_GROUP
+    LTEXT           "",IDC_STATUS,7,374,562,8
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -2905,9 +2908,9 @@ BEGIN
     IDD_ADDSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 629
+        RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 394
+        BOTTOMMARGIN, 385
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -3120,6 +3123,7 @@ BEGIN
     IDS_FORMAT_CAPTION      "You cannot format volume %c:"
     IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
+    IDS_STORECREATED        "The store “%s” was added."
 END
 
 STRINGTABLE 

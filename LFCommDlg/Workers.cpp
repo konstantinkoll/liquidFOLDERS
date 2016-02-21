@@ -18,7 +18,7 @@ DWORD WINAPI WorkerCreateStoreWindows(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	wp->Result = LFCreateStoreWindows(wp->Path, &p);
+	wp->Result = LFCreateStoreWindows(wp->Path, wp->StoreName, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }

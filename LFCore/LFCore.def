@@ -63,7 +63,8 @@ EXPORTS
 	LFGetAttributeVariantData @219
 	LFGetAttributeVariantDataEx @220
 	LFSetAttributeVariantData @221
-	LFSanitizeUnicodeArray @222
+	LFIsNullAttribute @222
+	LFSanitizeUnicodeArray @223
 
 	LFAllocItemDescriptor @300
 	LFAllocItemDescriptorEx @301
