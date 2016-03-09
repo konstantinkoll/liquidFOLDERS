@@ -874,13 +874,10 @@ void CFileView::ResetScrollbars()
 {
 	if (m_EnableScrolling)
 	{
-		ScrollWindow(0, m_VScrollPos);
-		ScrollWindow(m_HScrollPos, 0);
+		ScrollWindow(m_HScrollPos, m_VScrollPos);
 
-		m_VScrollPos = m_HScrollPos = 0;
-
-		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
-		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+		SetScrollPos(SB_VERT, m_VScrollPos=0);
+		SetScrollPos(SB_HORZ, m_HScrollPos=0);
 	}
 }
 
@@ -889,6 +886,7 @@ void CFileView::AdjustScrollbars()
 	if (!m_EnableScrolling)
 		return;
 
+	// Dimensions
 	CRect rect;
 	GetWindowRect(rect);
 
@@ -898,12 +896,14 @@ void CFileView::AdjustScrollbars()
 		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
 		HScroll = TRUE;
 	}
+
 	if (m_ScrollHeight>rect.Height()-(INT)m_HeaderHeight)
 		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
+
 	if ((m_ScrollWidth>rect.Width()) && (!HScroll))
 		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
 
-	INT OldVScrollPos = m_VScrollPos;
+	// Set vertical bars
 	m_VScrollMax = max(0, m_ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 
@@ -912,26 +912,18 @@ void CFileView::AdjustScrollbars()
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Height()-m_HeaderHeight;
-	si.nMin = 0;
 	si.nMax = m_ScrollHeight-1;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
 
-	INT OldHScrollPos = m_HScrollPos;
+	// Set horizontal bars
 	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
 
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(SCROLLINFO);
-	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Width();
-	si.nMin = 0;
 	si.nMax = m_ScrollWidth-1;
 	si.nPos = m_HScrollPos;
 	SetScrollInfo(SB_HORZ, &si);
-
-	if ((OldVScrollPos!=m_VScrollPos) || (OldHScrollPos!=m_HScrollPos))
-		Invalidate();
 }
 
 CString CFileView::GetLabel(LFItemDescriptor* pItemDescriptor) const

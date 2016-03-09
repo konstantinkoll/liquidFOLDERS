@@ -158,8 +158,6 @@ protected:
 	CMenu* GetSendToMenu();
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
-	void ResetScrollbars();
-	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* pItemDescriptor) const;
 	BOOL BeginDragDrop();
 
@@ -226,6 +224,8 @@ protected:
 	CPoint m_DragPos;
 
 private:
+	void ResetScrollbars();
+	void AdjustScrollbars();
 	CString GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName=NULL) const;
 	void DestroyEdit(BOOL Accept=FALSE);
 

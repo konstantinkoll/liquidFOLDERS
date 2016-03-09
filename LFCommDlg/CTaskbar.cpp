@@ -9,8 +9,8 @@
 // CTaskbar
 //
 
-#define BORDERLEFT       16
 #define BORDER           4
+#define BORDERLEFT       16
 #define TEXTUREWIDTH     16
 
 CTaskbar::CTaskbar()
@@ -160,6 +160,8 @@ Nochmal:
 
 void CTaskbar::DrawTaskbarShadow(Graphics& g, const CRect& rectClient)
 {
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
 	SolidBrush brush1(Color(0x18, 0x00, 0x00, 0x00));
 	g.FillRectangle(&brush1, 0, 0, rectClient.Width(), 1);
 

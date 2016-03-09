@@ -114,13 +114,11 @@ BOOL CLiquidFoldersApp::InitInstance()
 	for (UINT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
-	CWnd* pFrame = OpenCommandLine(__argc>1 ? CmdLine : NULL);
-	if (pFrame)
-	{
-		pFrame->RedrawWindow(NULL, NULL, RDW_UPDATENOW);
+	LFCheckForUpdate();
 
-		LFCheckForUpdate();
-	}
+	CWnd* pFrameWnd = OpenCommandLine(__argc>1 ? CmdLine : NULL);
+	if (pFrameWnd)
+		pFrameWnd->ShowWindow(SW_SHOW);
 
 	m_AppInitialized = TRUE;
 
@@ -148,11 +146,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 		// Update
 		if (wcscmp(CmdLine, L"/CHECKUPDATE")==0)
-		{
-			LFCheckForUpdate();
-
 			return NULL;
-		}
 
 		// FileDrop
 		if (wcscmp(CmdLine, L"/FILEDROP")==0)
@@ -179,11 +173,10 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 			{
 				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, StoreID, LFKeySize, NULL, NULL);
 
-				CMainWnd* pFrame = new CMainWnd();
-				pFrame->CreateStore(StoreID);
-				pFrame->ShowWindow(SW_SHOW);
+				CMainWnd* pFrameWnd = new CMainWnd();
+				pFrameWnd->CreateStore(StoreID);
 	
-				return pFrame;
+				return pFrameWnd;
 			}
 
 			// IATA airport code
@@ -192,37 +185,34 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 				CHAR Code[4];
 				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, Code, 4, NULL, NULL);
 
-				LFFilter* f = LFAllocFilter();
-				f->Mode = LFFilterModeSearch;
-				f->ConditionList = LFAllocFilterConditionEx(LFFilterCompareIsEqual, LFAttrLocationIATA);
-				strcpy_s(f->ConditionList->AttrData.AnsiString, 256, Code);
+				LFFilter* pFilter = LFAllocFilter();
+				pFilter->Mode = LFFilterModeSearch;
+				pFilter->ConditionList = LFAllocFilterConditionEx(LFFilterCompareIsEqual, LFAttrLocationIATA);
+				strcpy_s(pFilter->ConditionList->AttrData.AnsiString, 256, Code);
 
 				LFAirport* pAirport = NULL;
 				if (LFIATAGetAirportByCode(Code, &pAirport))
-					MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, f->OriginalName, 256);
+					MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, pFilter->OriginalName, 256);
 
-				CMainWnd* pFrame = new CMainWnd();
-				pFrame->CreateFilter(f);
-				pFrame->ShowWindow(SW_SHOW);
+				CMainWnd* pFrameWnd = new CMainWnd();
+				pFrameWnd->CreateFilter(pFilter);
 	
-				return pFrame;
+				return pFrameWnd;
 			}
 		}
 
 		// Filter
-		CMainWnd* pFrame = new CMainWnd();
-		pFrame->CreateFilter(CmdLine);
-		pFrame->ShowWindow(SW_SHOW);
+		CMainWnd* pFrameWnd = new CMainWnd();
+		pFrameWnd->CreateFilter(CmdLine);
 
-		return pFrame;
+		return pFrameWnd;
 	}
 
 	// Root
-	CMainWnd* pFrame = new CMainWnd();
-	pFrame->CreateRoot();
-	pFrame->ShowWindow(SW_SHOW);
+	CMainWnd* pFrameWnd = new CMainWnd();
+	pFrameWnd->CreateRoot();
 
-	return pFrame;
+	return pFrameWnd;
 }
 
 INT CLiquidFoldersApp::ExitInstance()
@@ -264,16 +254,16 @@ CWnd* CLiquidFoldersApp::GetFileDrop(CHAR* StoreID)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 	{
-		CWnd* pFrame = m_pMainFrames.GetNext(p);
-		if (pFrame->SendMessage(WM_OPENFILEDROP, (WPARAM)StoreID)==24878)
-			return pFrame;
+		CWnd* pFrameWnd = m_pMainFrames.GetNext(p);
+		if (pFrameWnd->SendMessage(WM_OPENFILEDROP, (WPARAM)StoreID)==24878)
+			return pFrameWnd;
 	}
 
-	CFileDropWnd* pFrame = new CFileDropWnd();
-	pFrame->Create(StoreID);
-	pFrame->ShowWindow(SW_SHOW);
+	CFileDropWnd* pFrameWnd = new CFileDropWnd();
+	pFrameWnd->Create(StoreID);
+	pFrameWnd->ShowWindow(SW_SHOW);
 
-	return pFrame;
+	return pFrameWnd;
 }
 
 

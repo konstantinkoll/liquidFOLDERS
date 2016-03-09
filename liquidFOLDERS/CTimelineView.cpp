@@ -338,7 +338,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
 
 	// Shadow
-	GraphicsPath path;
+	GraphicsPath Path;
 	Color sCol(0x0C, 0x00, 0x00, 0x00);
 
 	if (Themed)
@@ -346,10 +346,10 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		CRect rectShadow(rectItem);
 		rectShadow.OffsetRect(1, 1);
 
-		CreateRoundRectangle(rectShadow, 3, path);
+		CreateRoundRectangle(rectShadow, 3, Path);
 
 		Pen pen(sCol);
-		g.DrawPath(&pen, &path);
+		g.DrawPath(&pen, &Path);
 	}
 
 	// Background
@@ -364,10 +364,10 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		{
 			Matrix m;
 			m.Translate(-1.0, -1.0);
-			path.Transform(&m);
+			Path.Transform(&m);
 
 			Pen pen(Color(0xD0, 0xD1, 0xD5));
-			g.DrawPath(&pen, &path);
+			g.DrawPath(&pen, &Path);
 		}
 		else
 		{

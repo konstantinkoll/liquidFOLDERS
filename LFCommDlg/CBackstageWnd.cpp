@@ -41,7 +41,7 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	hBackgroundBrush = NULL;
 }
 
-BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, CSize sz, BOOL ShowCaption)
+BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, const CSize& Size, BOOL ShowCaption)
 {
 	m_PlacementPrefix = lpszPlacementPrefix;
 	m_ShowCaption = ShowCaption;
@@ -51,7 +51,7 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
 	rect.DeflateRect(32, 32);
 
-	if ((sz.cx<0) || (sz.cy<0))
+	if ((Size.cx<0) || (Size.cy<0))
 	{
 		rect.left = rect.right-rect.Width()/3;
 		rect.top = rect.bottom-rect.Height()/2;
@@ -59,13 +59,13 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 		rect.OffsetRect(16, 16);
 	}
 	else
-		if ((sz.cx>0) && (sz.cy>0))
+		if ((Size.cx>0) && (Size.cy>0))
 		{
-			rect.left = (rect.left+rect.right)/2 - sz.cx;
-			rect.right = rect.left + sz.cx;
+			rect.left = (rect.left+rect.right)/2-Size.cx;
+			rect.right = rect.left+Size.cx;
 
-			rect.top = (rect.top+rect.bottom)/2 - sz.cy;
-			rect.bottom = rect.top + sz.cy;
+			rect.top = (rect.top+rect.bottom)/2-Size.cy;
+			rect.bottom = rect.top+Size.cy;
 		}
 
 	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
@@ -78,16 +78,15 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 
 	if (WindowPlacement.length==sizeof(WindowPlacement))
 	{
-		if ((sz.cx>0) && (sz.cy>0))
+		WindowPlacement.showCmd = SW_HIDE;
+
+		if ((Size.cx>0) && (Size.cy>0))
 		{
-			WindowPlacement.rcNormalPosition.right = WindowPlacement.rcNormalPosition.left + sz.cx;
-			WindowPlacement.rcNormalPosition.bottom = WindowPlacement.rcNormalPosition.top + sz.cy;
+			WindowPlacement.rcNormalPosition.right = WindowPlacement.rcNormalPosition.left+Size.cx;
+			WindowPlacement.rcNormalPosition.bottom = WindowPlacement.rcNormalPosition.top+Size.cy;
 		}
 
 		SetWindowPlacement(&WindowPlacement);
-
-		if (IsIconic())
-			ShowWindow(SW_RESTORE);
 	}
 
 	// Layout
@@ -680,6 +679,7 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
 	ON_WM_NCACTIVATE()
+	ON_WM_ENABLE()
 	ON_MESSAGE(WM_GETTITLEBARINFOEX, OnGetTitleBarInfoEx)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -880,15 +880,17 @@ void CBackstageWnd::OnNcPaint()
 	}
 }
 
-BOOL CBackstageWnd::OnNcActivate(BOOL /*bActivate*/)
+BOOL CBackstageWnd::OnNcActivate(BOOL /*bActive*/)
 {
-	m_wndWidgets.SetEnabled(IsWindowEnabled());
-
-	InvalidateCaption();
-
 	return TRUE;
 }
 
+void CBackstageWnd::OnEnable(BOOL bEnable)
+{
+	m_wndWidgets.SetEnabled(bEnable);
+
+	InvalidateCaption();
+}
 
 LRESULT CBackstageWnd::OnGetTitleBarInfoEx(WPARAM /*wParam*/, LPARAM lParam)
 {

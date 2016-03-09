@@ -300,9 +300,9 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	// Open new window if current window is not navigable
 	if (m_IsClipboard)
 	{
-		CMainWnd* pFrame = new CMainWnd();
-		pFrame->CreateFilter(pFilter);
-		pFrame->ShowWindow(SW_SHOW);
+		CMainWnd* pFrameWnd = new CMainWnd();
+		pFrameWnd->CreateFilter(pFilter);
+		pFrameWnd->ShowWindow(SW_SHOW);
 
 		return;
 	}
@@ -745,9 +745,9 @@ void CMainWnd::OnItemOpenNewWindow()
 
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 
-		CMainWnd* pFrame = new CMainWnd();
-		pFrame->CreateStore(pItemDescriptor->StoreID);
-		pFrame->ShowWindow(SW_SHOW);
+		CMainWnd* pFrameWnd = new CMainWnd();
+		pFrameWnd->CreateStore(pItemDescriptor->StoreID);
+		pFrameWnd->ShowWindow(SW_SHOW);
 	}
 }
 
