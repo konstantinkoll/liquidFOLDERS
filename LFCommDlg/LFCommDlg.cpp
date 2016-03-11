@@ -196,7 +196,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 {
 	ASSERT(Caption);
 
-	rect.DeflateRect(LFCategoryPadding, LFCategoryPadding);
+	rect.DeflateRect(0, LFCATEGORYPADDING);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_LargeFont);
 	dc.SetTextColor(Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
@@ -204,7 +204,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 
 	CRect rectLine(rect);
 	dc.DrawText(Caption, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT | DT_NOPREFIX);
-	rectLine.right += 2*LFCategoryPadding;
+	rectLine.right += 2*LFCATEGORYPADDING;
 
 	if (rectLine.right<=rect.right)
 		if (Themed)

@@ -9,8 +9,7 @@
 // CExplorerNotification
 //
 
-#define BORDERX     8
-#define BORDERY     10
+#define BORDER     BACKSTAGEBORDER
 
 CExplorerNotification::CExplorerNotification()
 	: CFrontstageWnd()
@@ -35,7 +34,7 @@ BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
 
 UINT CExplorerNotification::GetPreferredHeight() const
 {
-	return m_GradientCY+2*BORDERY+m_IconCY+2;
+	return m_GradientCY+2*BORDER+m_IconCY+2;
 }
 
 void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT Command)
@@ -96,14 +95,14 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 		if (Pos!=-1)
 			m_CommandText.Delete(0, Pos+1);
 
-		m_CommandButton.SetWindowText(m_CommandText);
-		m_CommandButton.EnableWindow(TRUE);
-		m_CommandButton.ShowWindow(SW_SHOW);
+		m_wndCommandButton.SetWindowText(m_CommandText);
+		m_wndCommandButton.EnableWindow(TRUE);
+		m_wndCommandButton.ShowWindow(SW_SHOW);
 	}
 	else
 	{
-		m_CommandButton.ShowWindow(SW_HIDE);
-		m_CommandButton.EnableWindow(FALSE);
+		m_wndCommandButton.ShowWindow(SW_HIDE);
+		m_wndCommandButton.EnableWindow(FALSE);
 	}
 	m_Command = Command;
 
@@ -124,7 +123,7 @@ void CExplorerNotification::DismissNotification()
 		ReleaseCapture();
 		ShowWindow(SW_HIDE);
 
-		m_CommandButton.EnableWindow(FALSE);
+		m_wndCommandButton.EnableWindow(FALSE);
 		m_Command = 0;
 
 		if (hIcon)
@@ -145,9 +144,9 @@ void CExplorerNotification::AdjustLayout()
 	GetClientRect(m_RectClose);
 	CRect rectClient(m_RectClose);
 
-	m_RectClose.top += m_GradientCY+BORDERY+1;
+	m_RectClose.top += m_GradientCY+BORDER+1;
 	m_RectClose.bottom = m_RectClose.top+Size.cy;
-	m_RectClose.right -= BORDERY-1;
+	m_RectClose.right -= BORDER-1;
 	m_RectClose.left = m_RectClose.right-Size.cx;
 
 	// Command button
@@ -156,11 +155,11 @@ void CExplorerNotification::AdjustLayout()
 		Size = LFGetApp()->m_DialogFont.GetTextExtent(m_CommandText);
 
 		const UINT Height = MulDiv(11, HIWORD(GetDialogBaseUnits()), 8)+1;
-		const UINT Width = Size.cx+Height+BORDERX;
+		const UINT Width = Size.cx+Height+BORDER;
 
-		m_RightMargin = m_RectClose.left-BORDERX-Width;
+		m_RightMargin = m_RectClose.left-BORDER-Width;
 
-		m_CommandButton.SetWindowPos(NULL, m_RightMargin, m_GradientCY+1+(rectClient.Height()-m_GradientCY-2-Height)/2, Width, Height, SWP_NOACTIVATE | SWP_NOZORDER);
+		m_wndCommandButton.SetWindowPos(NULL, m_RightMargin, m_GradientCY+1+(rectClient.Height()-m_GradientCY-2-Height)/2, Width, Height, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 	else
 	{
@@ -188,10 +187,10 @@ INT CExplorerNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	if (!m_CommandButton.Create(_T(""), WS_CHILD | WS_DISABLED | WS_GROUP | WS_TABSTOP | BS_OWNERDRAW, CRect(0, 0, 0, 0), this, 1))
+	if (!m_wndCommandButton.Create(_T(""), this, 1))
 		return -1;
 
-	m_CommandButton.SetFont(&LFGetApp()->m_DialogFont);
+	m_wndCommandButton.SetFont(&LFGetApp()->m_DialogFont);
 
 	return 0;
 }
@@ -238,17 +237,17 @@ void CExplorerNotification::OnPaint()
 	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_GradientCY);
 
 	rect.top += m_GradientCY;
-	rect.left += BORDERX;
+	rect.left += BORDER;
 
 	if (hIcon)
 	{
 		DrawIconEx(dc, rect.left, rect.top+(rect.Height()-m_IconCY)/2, hIcon, m_IconCX, m_IconCY, 0, NULL, DI_NORMAL);
-		rect.left += BORDERX+m_IconCX;
+		rect.left += BORDER+m_IconCX;
 	}
 
 	CMenuImages::Draw(&dc, CMenuImages::IdClose, m_RectClose, (!Themed || m_ClosePressed) ? CMenuImages::ImageDkGray : m_CloseHover ? CMenuImages::ImageGray : CMenuImages::ImageLtGray);
 
-	rect.right = m_RightMargin-BORDERX;
+	rect.right = m_RightMargin-BORDER;
 	CRect rectText(rect);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);

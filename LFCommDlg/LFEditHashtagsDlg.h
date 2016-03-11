@@ -21,7 +21,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();
 
-	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pSearchResult);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnUpdateAssignedHashtags();
 	DECLARE_MESSAGE_MAP()
 

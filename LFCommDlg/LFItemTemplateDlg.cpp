@@ -125,7 +125,8 @@ void LFItemTemplateDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+12, rectLayout.top+ExplorerHeight, rectLayout.Width()-12, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+	const INT BorderLeft = BACKSTAGEBORDER;
+	m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top+ExplorerHeight, rectLayout.Width()-BorderLeft, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 }
 
 BOOL LFItemTemplateDlg::InitDialog()

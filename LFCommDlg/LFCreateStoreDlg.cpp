@@ -166,6 +166,7 @@ void LFCreateStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
+	*pResult = FALSE;
 	if (pTooltipData->Item!=-1)
 	{
 		WCHAR szVolumeRoot[] = L" :\\";
@@ -174,14 +175,12 @@ void LFCreateStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
-			wcscpy_s(pTooltipData->Text, 4096, sfi.szTypeName);
+			wcscpy_s(pTooltipData->Hint, 4096, sfi.szTypeName);
 			pTooltipData->hIcon = LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(sfi.iIcon);
 
-			pTooltipData->Show = TRUE;
+			*pResult = TRUE;
 		}
 	}
-
-	*pResult = 0;
 }
 
 LRESULT LFCreateStoreDlg::OnVolumeChange(WPARAM /*wParam*/, LPARAM /*lParam*/)

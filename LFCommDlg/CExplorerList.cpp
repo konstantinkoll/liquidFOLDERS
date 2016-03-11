@@ -538,10 +538,8 @@ void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
 				tag.hdr.idFrom = GetDlgCtrlID();
 				tag.Item = m_TooltipItem;
 
-				GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
-
-				if (tag.Show)
-					LFGetApp()->ShowTooltip(this, point, GetItemText(m_TooltipItem, 0), tag.Text, tag.hIcon, tag.hBitmap);
+				if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
+					LFGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : GetItemText(m_TooltipItem, 0), tag.Hint, tag.hIcon, tag.hBitmap);
 			}
 	}
 	else

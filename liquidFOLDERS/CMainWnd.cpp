@@ -369,8 +369,11 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 
 	OnCookFiles((WPARAM)Data);
 	UpdateHistory();
+}
 
-	if (m_pCookedFiles->m_LastError!=LFCancel)
+void CMainWnd::UpdateHistory()
+{
+	if (m_pCookedFiles->m_LastError>LFCancel)
 	{
 		m_wndMainView.ShowNotification(m_pCookedFiles->m_LastError==LFDriveWriteProtected ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, (m_pCookedFiles->m_LastError==LFIndexAccessError) || (m_pCookedFiles->m_LastError==LFIndexTableLoadError) ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
 	}
@@ -378,10 +381,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	{
 		m_wndMainView.DismissNotification();
 	}
-}
 
-void CMainWnd::UpdateHistory()
-{
 	if (!m_IsClipboard)
 		m_wndHistory.SetHistory(m_pActiveFilter, m_pBreadcrumbBack);
 

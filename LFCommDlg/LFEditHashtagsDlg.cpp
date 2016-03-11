@@ -72,18 +72,20 @@ BEGIN_MESSAGE_MAP(LFEditHashtagsDlg, LFDialog)
 	ON_BN_CLICKED(IDC_HASHTAGSFROMALLSTORES, OnUpdateAssignedHashtags)
 END_MESSAGE_MAP()
 
-void LFEditHashtagsDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pSearchResult)
+void LFEditHashtagsDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
 	if (pTooltipData->Item!=-1)
 	{
-		m_wndAssignedHashtags.GetItemText(pTooltipData->Item, 1, pTooltipData->Text, 4096);
+		m_wndAssignedHashtags.GetItemText(pTooltipData->Item, 1, pTooltipData->Hint, 4096);
 
-		pTooltipData->Show = TRUE;
+		*pResult = TRUE;
 	}
-
-	*pSearchResult = 0;
+	else
+	{
+		*pResult = FALSE;
+	}
 }
 
 void LFEditHashtagsDlg::OnUpdateAssignedHashtags()

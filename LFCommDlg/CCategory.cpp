@@ -69,9 +69,6 @@ void CCategory::OnPaint()
 	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	// Caption
-	CRect rectText(rect);
-	rectText.InflateRect(LFCategoryPadding, 0);
-
 	WCHAR tmpStr[256];
 	GetWindowText(tmpStr, 256);
 
@@ -79,7 +76,7 @@ void CCategory::OnPaint()
 	if (pChar)
 		*(pChar++) = L'\0';
 
-	DrawCategory(dc, rectText, tmpStr, pChar, IsCtrlThemed());
+	DrawCategory(dc, rect, tmpStr, pChar, IsCtrlThemed());
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 

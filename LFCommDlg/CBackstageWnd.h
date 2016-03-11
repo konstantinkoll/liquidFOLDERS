@@ -30,7 +30,7 @@ public:
 	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
 	virtual void PostNcDestroy();
 
-	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), const CSize& Size=CSize(0, 0), BOOL ShowCaption=FALSE);
+	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), CSize sz=CSize(0, 0), BOOL ShowCaption=FALSE);
 	void SetSidebar(CBackstageSidebar* pSidebarWnd);
 	void GetCaptionButtonMargins(LPSIZE lpSize) const;
 	void HideSidebar();
@@ -53,8 +53,7 @@ protected:
 	afx_msg LRESULT OnNcCalcSize(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnNcPaint();
-	afx_msg BOOL OnNcActivate(BOOL bActive);
-	afx_msg void OnEnable(BOOL bEnable);
+	afx_msg BOOL OnNcActivate(BOOL bActivate);
 	afx_msg LRESULT OnGetTitleBarInfoEx(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();

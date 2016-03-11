@@ -12,7 +12,7 @@
 
 #define GetItemData(Index)     ((CalendarItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING                2
-#define MARGINLEFT             15-PADDING
+#define MARGIN                 BACKSTAGEBORDER
 #define GUTTER                 20
 #define COLUMNGUTTER           8
 #define EXTRA                  (COLUMNGUTTER/2)
@@ -104,10 +104,10 @@ Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
 
 	INT Column = 0;
-	INT x = MARGINLEFT;
-	INT y = MARGINLEFT;
+	INT x = MARGIN;
+	INT y = MARGIN;
 
-	INT MonthsPerRow = (rectWindow.Width()-MARGINLEFT+GUTTER)/(sz.cx+GUTTER);
+	INT MonthsPerRow = (rectWindow.Width()-2*MARGIN+GUTTER-1)/(sz.cx+GUTTER);
 	MonthsPerRow = (MonthsPerRow<1) ? 1 : (MonthsPerRow==5) ? 4 : ((MonthsPerRow>6) && (MonthsPerRow<12)) ? 6 : MonthsPerRow;
 
 	for (UINT a=0; a<12; a++)
@@ -127,9 +127,9 @@ Restart:
 		if (lpRect->right>m_ScrollWidth)
 			m_ScrollWidth = lpRect->right-1;
 
-		if (lpRect->bottom>m_ScrollHeight)
+		if (lpRect->bottom+MARGIN>m_ScrollHeight)
 		{
-			m_ScrollHeight = lpRect->bottom;
+			m_ScrollHeight = lpRect->bottom+MARGIN;
 			if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars))
 			{
 				HasScrollbars = TRUE;
@@ -141,7 +141,7 @@ Restart:
 		if (++Column>=MonthsPerRow)
 		{
 			Column = 0;
-			x = MARGINLEFT;
+			x = MARGIN;
 			y += sz.cy+GUTTER;
 		}
 	}
@@ -166,11 +166,11 @@ Restart:
 
 				const LPRECT lpRect = &pData->Hdr.Rect;
 
-				lpRect->left = m->Rect.left+LFCategoryPadding+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
-				lpRect->top = m->Rect.top+theApp.m_LargeFont.GetFontHeight()+2*LFCategoryPadding+(Day/7)*(FontHeight+2*PADDING-1);
+				lpRect->left = m->Rect.left+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
+				lpRect->top = m->Rect.top+theApp.m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING+(Day/7)*(FontHeight+2*PADDING-1);
 
 				if (m_ShowCaptions)
-					lpRect->top += FontHeight+LFCategoryPadding;
+					lpRect->top += FontHeight+LFCATEGORYPADDING;
 
 				lpRect->right = lpRect->left+m_ColumnWidth;
 				lpRect->bottom = lpRect->top+FontHeight+2*PADDING;
@@ -245,7 +245,7 @@ void CCalendarView::GetMonthSize(LPSIZE lpSize)
 	m_ColumnWidth = theApp.m_DefaultFont.GetTextExtent(_T("00")).cx+2*PADDING;
 
 	lpSize->cx = 7*m_ColumnWidth+6*COLUMNGUTTER;
-	lpSize->cy = theApp.m_LargeFont.GetFontHeight()+4*LFCategoryPadding+6*(theApp.m_DefaultFont.GetFontHeight()+2*PADDING-1)+1;
+	lpSize->cy = theApp.m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING+6*(theApp.m_DefaultFont.GetFontHeight()+2*PADDING-1)+1;
 
 	if (m_ShowCaptions)
 		lpSize->cy += theApp.m_DefaultFont.GetFontHeight();
@@ -262,7 +262,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
 	swprintf_s(ic.Caption, 256, m_Months[Month].Name, m_Year);
 	DrawCategory(dc, lpRect, ic.Caption, ic.Hint, Themed);
 
-	lpRect->top += theApp.m_LargeFont.GetFontHeight()+LFCategoryPadding;
+	lpRect->top += theApp.m_LargeFont.GetFontHeight()+LFCATEGORYPADDING;
 	CRect rectItem(0, lpRect->top, m_ColumnWidth+2*EXTRA, lpRect->top+FontHeight+2*PADDING);
 
 	// Days
@@ -270,14 +270,14 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
 	{
 		for (UINT a=0; a<7; a++)
 		{
-			rectItem.MoveToX(lpRect->left+LFCategoryPadding+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
+			rectItem.MoveToX(lpRect->left+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
 			dc.DrawText(m_Days[a], rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER | DT_TOP);
 		}
 
-		lpRect->top += FontHeight+LFCategoryPadding;
+		lpRect->top += FontHeight+LFCATEGORYPADDING;
 	}
 
-	lpRect->top += LFCategoryPadding;
+	lpRect->top += LFCATEGORYPADDING;
 	rectItem.DeflateRect(EXTRA, 0);
 
 	// Matrix
@@ -288,7 +288,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
 
 	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
-		rectItem.MoveToXY(lpRect->left+LFCategoryPadding+Column*(m_ColumnWidth+COLUMNGUTTER), lpRect->top+Row*(FontHeight+2*PADDING-1));
+		rectItem.MoveToXY(lpRect->left+Column*(m_ColumnWidth+COLUMNGUTTER), lpRect->top+Row*(FontHeight+2*PADDING-1));
 
 		if (m_Months[Month].Matrix[Day]!=EMPTY)
 		{
@@ -302,12 +302,12 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
 		CString tmpStr;
 		tmpStr.Format(_T("%u"), Day+1);
 
-		if (m_Months[Month].Matrix[Day]!=EMPTY)
-			DrawItemForeground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
-
 		rectItem.right -= PADDING;
 		dc.DrawText(tmpStr, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
 		rectItem.right += PADDING;
+
+		if (m_Months[Month].Matrix[Day]!=EMPTY)
+			DrawItemForeground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
 
 		if (++Column>=7)
 		{

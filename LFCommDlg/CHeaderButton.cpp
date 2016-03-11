@@ -9,7 +9,7 @@
 // CHeaderButton
 //
 
-#define BORDER     4
+#define MARGIN     4
 
 CHeaderButton::CHeaderButton()
 	: CHoverButton()
@@ -19,35 +19,12 @@ CHeaderButton::CHeaderButton()
 	m_ShowDropdown = TRUE;
 }
 
-BOOL CHeaderButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint)
+BOOL CHeaderButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint)
 {
 	m_Caption = Caption;
 	m_Hint = Hint;
 
-	return CHoverButton::Create(_T(""), WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
-}
-
-BOOL CHeaderButton::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CHoverButton::PreTranslateMessage(pMsg);
+	return CHoverButton::Create(Caption, pParentWnd, nID);
 }
 
 void CHeaderButton::SetValue(LPCWSTR Value, BOOL ShowDropdown, BOOL Repaint)
@@ -63,8 +40,8 @@ void CHeaderButton::GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth)
 {
 	*lpSize = LFGetApp()->m_DefaultFont.GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
 
-	lpSize->cx += m_ShowDropdown ? 3*BORDER+14 : 2*BORDER+5;
-	lpSize->cy += 2*BORDER;
+	lpSize->cx += m_ShowDropdown ? 3*MARGIN+14 : 2*MARGIN+5;
+	lpSize->cy += 2*MARGIN;
 
 	CString Caption(m_Caption);
 	if (!Caption.IsEmpty())
@@ -85,9 +62,8 @@ void CHeaderButton::GetCaption(CString& Caption, INT& CaptionWidth) const
 
 BEGIN_MESSAGE_MAP(CHeaderButton, CHoverButton)
 	ON_WM_PAINT()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_CONTEXTMENU()
+	ON_NOTIFY_REFLECT(REQUEST_TOOLTIP_DATA, OnRequestTooltipData)
 END_MESSAGE_MAP()
 
 void CHeaderButton::OnPaint()
@@ -106,8 +82,8 @@ void CHeaderButton::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
-	BOOL Focused = (GetState() & 8);
-	BOOL Selected = (GetState() & 4);
+	const BOOL Focused = (GetState() & 8);
+	const BOOL Selected = (GetState() & 4);
 
 	// Background
 	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
@@ -119,7 +95,7 @@ void CHeaderButton::OnPaint()
 
 	// Content
 	CRect rectText(rect);
-	rectText.DeflateRect(BORDER+2, BORDER);
+	rectText.DeflateRect(MARGIN+2, MARGIN);
 
 	if (Selected)
 		rectText.OffsetRect(1, 1);
@@ -156,26 +132,6 @@ void CHeaderButton::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CHeaderButton::OnMouseLeave()
-{
-	LFGetApp()->HideTooltip();
-
-	CHoverButton::OnMouseLeave();
-}
-
-void CHeaderButton::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if (!m_Hint.IsEmpty())
-		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-		{
-			LFGetApp()->ShowTooltip(this, point, m_Caption, m_Hint);
-		}
-		else
-		{
-			LFGetApp()->HideTooltip();
-		}
-}
-
 void CHeaderButton::OnContextMenu(CWnd* pWnd, CPoint pos)
 {
 	if (m_ShowDropdown)
@@ -186,4 +142,14 @@ void CHeaderButton::OnContextMenu(CWnd* pWnd, CPoint pos)
 	{
 		CHoverButton::OnContextMenu(pWnd, pos);
 	}
+}
+
+void CHeaderButton::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
+
+	wcscpy_s(pTooltipData->Caption, 256, m_Caption);
+	wcscpy_s(pTooltipData->Hint, 4096, m_Hint);
+
+	*pResult = TRUE;
 }

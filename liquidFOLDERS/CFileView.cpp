@@ -786,15 +786,15 @@ void CFileView::EditLabel(INT Index)
 
 void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	if (Cached && Themed & IsSelected(Index))
+	if (Cached && Themed && IsSelected(Index))
 	{
 		CDC MemDC;
 		MemDC.CreateCompatibleDC(&dc);
 
 		HBITMAP hOldBitmap;
 
-		INT Width = rectItem->right-rectItem->left;
-		INT Height = rectItem->bottom-rectItem->top;
+		const INT Width = rectItem->right-rectItem->left;
+		const INT Height = rectItem->bottom-rectItem->top;
 
 		if ((m_Bitmaps[BM_SELECTED].Width!=Width) || (m_Bitmaps[BM_SELECTED].Height!=Height))
 		{
@@ -841,8 +841,8 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 		HBITMAP hOldBitmap;
 
-		INT Width = rectItem->right-rectItem->left;
-		INT Height = rectItem->bottom-rectItem->top;
+		const INT Width = rectItem->right-rectItem->left;
+		const INT Height = rectItem->bottom-rectItem->top;
 
 		if ((m_Bitmaps[BM_REFLECTION].Width!=Width) || (m_Bitmaps[BM_REFLECTION].Height!=Height))
 		{
@@ -862,6 +862,7 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 		}
 
 		AlphaBlend(dc, rectItem->left, rectItem->top, Width, Height, MemDC, 0, 0, Width, Height, BF);
+
 		MemDC.SelectObject(hOldBitmap);
 	}
 	else

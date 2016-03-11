@@ -32,7 +32,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 	virtual void PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout);
-	virtual void DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected);
 	virtual BOOL InitSidebar();
 	virtual BOOL InitDialog();
 
@@ -47,18 +46,16 @@ protected:
 	void SetBottomLeftControl(UINT nID);
 	void AddBottomRightControl(CWnd* pChildWnd);
 	void AddBottomRightControl(UINT nID);
-	void DrawButton(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	afx_msg LRESULT OnInitDialog(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDestroy();
-	afx_msg void OnDrawItem(INT nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 	afx_msg void OnOK();
 	afx_msg void OnCancel();
 	DECLARE_MESSAGE_MAP()
 
 	LPCTSTR m_lpszTemplateName;
 	CWnd* p_ParentWnd;
-	CCategory m_wndCategory[4];
+	CCategory m_wndCategory[12];
 	BOOL m_UAC;
 	BOOL m_ShowKeyboardCues;
 
@@ -67,7 +64,7 @@ private:
 	HICON hIconShield;
 	INT m_ShieldSize;
 	INT m_UACHeight;
-	LFDynArray<CHoverButton*, 8, 8> m_Buttons;
+	LFDynArray<CWhiteButton*, 8, 8> m_Buttons;
 	LFDynArray<DialogControl, 2, 2> m_BottomRightControls;
 	DialogControl m_BottomLeftControl;
 	CPoint m_LastSize;

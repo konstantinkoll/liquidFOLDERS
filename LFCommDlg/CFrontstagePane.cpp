@@ -91,14 +91,21 @@ void CFrontstagePane::OnPaint()
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, PANEGRIPPER, rect.Height());
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	if (IsCtrlThemed())
+	BOOL Themed = IsCtrlThemed();
+
+	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+	const INT GripperLeft = m_IsLeft ? rect.right-PANEGRIPPER : 0;
+
+	if (Themed)
 	{
 		ASSERT(PANEGRIPPER==4);
 		BYTE Colors[] = { 0x88, 0xC8, 0xE8, 0xF8 };
-		INT Line = rect.Height()*2/5;
+
+		const INT Line = rect.Height()*2/5;
 
 		Graphics g(dc);
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
@@ -108,20 +115,20 @@ void CFrontstagePane::OnPaint()
 			const BYTE clr = Colors[m_IsLeft ? PANEGRIPPER-1-a : a];
 
 			LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0xFF, 0xFF, 0xFF), Color(clr, clr, clr));
-			g.FillRectangle(&brush1, a, 0, 1, Line);
+			g.FillRectangle(&brush1, GripperLeft+a, 0, 1, Line);
 
 			LinearGradientBrush brush2(Point(0, Line), Point(0, rect.Height()), Color(clr, clr, clr), Color(0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush2, a, Line, 1, rect.Height()-Line);
+			g.FillRectangle(&brush2, GripperLeft+a, Line, 1, rect.Height()-Line);
 		}
 
 		CTaskbar::DrawTaskbarShadow(g, rect);
 	}
 	else
 	{
-		dc.FillSolidRect(rect.left, rect.top, PANEGRIPPER, rect.Height(), GetSysColor(COLOR_3DFACE));
+		dc.FillSolidRect(GripperLeft, rect.top, PANEGRIPPER, rect.Height(), GetSysColor(COLOR_3DFACE));
 	}
 
-	pDC.BitBlt(m_IsLeft ? rect.Width()-PANEGRIPPER : 0, 0, PANEGRIPPER, rect.Height(), &dc, 0, 0, SRCCOPY);
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(pOldBitmap);
 }

@@ -9,26 +9,6 @@
 // CExplorerList
 //
 
-#define REQUEST_TEXTCOLOR        1
-#define REQUEST_TOOLTIP_DATA     2
-
-struct NM_TEXTCOLOR
-{
-	NMHDR hdr;
-	INT Item;
-	COLORREF Color;
-};
-
-struct NM_TOOLTIPDATA
-{
-	NMHDR hdr;
-	INT Item;
-	BOOL Show;
-	HICON hIcon;
-	HBITMAP hBitmap;
-	WCHAR Text[4096];
-};
-
 class CExplorerList : public CListCtrl
 {
 public:

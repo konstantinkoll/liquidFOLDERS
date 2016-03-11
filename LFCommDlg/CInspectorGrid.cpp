@@ -646,8 +646,8 @@ void CPropertyDuration::SetEditMask(CMFCMaskedEdit *pEdit) const
 // CInspectorGrid
 //
 
-#define GUTTER         4
-#define PADDING        2
+#define BORDER     2
+#define MARGIN     2
 
 #define NOPART         0
 #define PARTLABEL      1
@@ -870,8 +870,7 @@ RECT CInspectorGrid::GetItemRect(INT Item) const
 
 			rect.top = m_Properties.m_Items[Item].Top-1;
 			rect.bottom = m_Properties.m_Items[Item].Bottom+1;
-			rect.left++;
-			rect.right--;
+			rect.right -= MARGIN;
 
 			OffsetRect(&rect, 0, -m_VScrollPos);
 		}
@@ -888,30 +887,30 @@ INT CInspectorGrid::HitTest(const CPoint& point, UINT* PartID) const
 		{
 			if (PartID)
 			{
-				if (point.x<m_LabelWidth+GUTTER)
+				if (point.x<m_LabelWidth+BORDER)
 				{
 					*PartID = PARTLABEL;
 					return a;
 				}
 
 				Property* pProp = &m_Properties.m_Items[a];
-				CRect rectPart(m_LabelWidth+GUTTER, pProp->Top-m_VScrollPos, rect.right+1, pProp->Bottom-m_VScrollPos);
+				CRect rectPart(m_LabelWidth+BORDER, pProp->Top-m_VScrollPos, rect.right+1, pProp->Bottom-m_VScrollPos);
 
 				if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a!=m_EditItem))
 				{
 					INT Offs = (rectPart.Height()-m_IconSize)/2;
-					CRect rectReset(rectPart.right-m_IconSize-Offs-2, rectPart.top+Offs, rectPart.right-Offs-2, rectPart.top+Offs+m_IconSize);
+					CRect rectReset(rectPart.right-m_IconSize-Offs-1, rectPart.top+Offs, rectPart.right-Offs-1, rectPart.top+Offs+m_IconSize);
 					if (rectReset.PtInRect(point))
 					{
 						*PartID = PARTRESET;
 						return a;
 					}
 
-					rectPart.right -= m_IconSize+Offs+GUTTER+2;
+					rectPart.right -= m_IconSize+Offs+BORDER+2;
 				}
 				else
 				{
-					rectPart.right -= GUTTER-1;
+					rectPart.right -= BORDER;
 				}
 
 				if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a!=m_EditItem))
@@ -1106,7 +1105,7 @@ void CInspectorGrid::AdjustLayout()
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
 	m_LabelWidth = 0;
-	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : PADDING+1;
+	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : MARGIN+1;
 	INT Category = -1;
 
 	const INT FontHeight = LFGetApp()->m_LargeFont.GetFontHeight();
@@ -1119,12 +1118,12 @@ void CInspectorGrid::AdjustLayout()
 		{
 			Category = pProp->Category;
 
-			const INT Spacer = (m_ScrollHeight==1) ? -PADDING : 8;
+			const INT Spacer = (m_ScrollHeight==1) ? -MARGIN : 8;
 
 			m_Categories[Category].Top = m_ScrollHeight+Spacer;
-			m_Categories[Category].Bottom = m_ScrollHeight+FontHeight+2*LFCategoryPadding+Spacer;
+			m_Categories[Category].Bottom = m_ScrollHeight+FontHeight+2*LFCATEGORYPADDING+Spacer;
 
-			m_ScrollHeight += FontHeight+2*PADDING+Spacer+1;
+			m_ScrollHeight += FontHeight+2*MARGIN+Spacer+1;
 		}
 
 		pProp->Top = pProp->Visible ? m_ScrollHeight : -1;
@@ -1139,7 +1138,7 @@ void CInspectorGrid::AdjustLayout()
 		}
 	}
 
-	m_LabelWidth += GUTTER;
+	m_LabelWidth += 2*BORDER;
 
 	CRect rect;
 	GetClientRect(rect);
@@ -1227,7 +1226,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 			RECT rect = GetItemRect(Attr);
 			rect.top += 2;
 			rect.bottom -=2;
-			rect.left += m_LabelWidth+GUTTER-1;
+			rect.left += m_LabelWidth+BORDER-1;
 
 			p_Edit = new CMFCMaskedEdit();
 			p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
@@ -1343,17 +1342,12 @@ void CInspectorGrid::OnPaint()
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
 	// Categories
-	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
-
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		if (m_Categories[a].Top!=-1)
-		{
-			CRect rect(2, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos);
-			DrawCategory(dc, rect, LFGetApp()->m_AttrCategoryNames[a], NULL, Themed);
-		}
+			DrawCategory(dc, CRect(0, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos), LFGetApp()->m_AttrCategoryNames[a], NULL, Themed);
 
 	// Items
-	dc.SelectStockObject(DEFAULT_GUI_FONT);
+	HFONT hOldFont = (HFONT)dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
@@ -1375,28 +1369,29 @@ void CInspectorGrid::OnPaint()
 
 			COLORREF clr = dc.SetTextColor(Selected ? dc.GetTextColor() : pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
 
-			CRect rectLabel(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
+			CRect rectLabel(BORDER, pProp->Top-m_VScrollPos, m_LabelWidth-BORDER, pProp->Bottom-m_VScrollPos);
 			dc.DrawText(CString(pProp->Name)+_T(":"), rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 
-			rectLabel.left = rectLabel.right+GUTTER;
+			rectLabel.left = rectLabel.right+2*BORDER;
 			rectLabel.right = rect.Width();
 
 			if ((pProp->Editable) && (pProp->pProperty->CanDelete()))
 			{
 				INT Offs = (rectLabel.Height()-m_IconSize)/2;
 				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : Selected ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
-				rectLabel.right -= m_IconSize+Offs+GUTTER+2;
+				rectLabel.right -= m_IconSize+Offs+BORDER+2;
 			}
 			else
 			{
-				rectLabel.right -= GUTTER-1;
+				rectLabel.right -= BORDER-1;
 			}
 
 			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a==m_HotItem) && ((INT)a!=m_EditItem))
 			{
 				CRect rectButton(rectLabel);
+				rectButton.right -= BORDER;
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
-				rectLabel.right -= rectButton.Width()+GUTTER;
+				rectLabel.right -= rectButton.Width()+BORDER;
 
 				if (Themed)
 					rectButton.InflateRect(1, 1);
@@ -1427,7 +1422,7 @@ void CInspectorGrid::OnPaint()
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
-	dc.SelectObject(pOldFont);
+	dc.SelectObject(hOldFont);
 	dc.SelectObject(pOldBitmap);
 }
 
@@ -1442,7 +1437,7 @@ void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 		p_Edit->GetWindowRect(rect);
 		ScreenToClient(rect);
 
-		rect.left = m_LabelWidth+GUTTER;
+		rect.left = m_LabelWidth+BORDER;
 		rect.right = cx-1;
 		p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 	}
@@ -1790,7 +1785,7 @@ void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 			Property* pProp = &m_Properties.m_Items[Item];
 
 			if (pProp->Editable)
-				if (pProp->pProperty->OnClickValue(point.x-m_LabelWidth-GUTTER))
+				if (pProp->pProperty->OnClickValue(point.x-m_LabelWidth-BORDER))
 					EditProperty(Item);
 		}
 }
@@ -1829,7 +1824,7 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Messa
 
 		if (pProp->Editable)
 		{
-			SetCursor(pProp->pProperty->SetCursor(point.x-m_LabelWidth-GUTTER));
+			SetCursor(pProp->pProperty->SetCursor(point.x-m_LabelWidth-BORDER));
 			return TRUE;
 		}
 	}

@@ -14,6 +14,7 @@
 #define DefaultFontSize        2
 #define TextFormat             DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
 #define GUTTER                 3
+#define MARGIN                 BACKSTAGEBORDER
 
 
 CTagcloudView::CTagcloudView()
@@ -146,9 +147,9 @@ void CTagcloudView::AdjustLayout()
 			OffsetRect(&pData->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (RowHeight-(pData->Hdr.Hdr.Rect.bottom-pData->Hdr.Hdr.Rect.top))/2); \
 			if (pData->Hdr.Hdr.Rect.right>m_ScrollWidth) \
 				m_ScrollWidth = pData->Hdr.Hdr.Rect.right; \
-			if (pData->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
+			if (pData->Hdr.Hdr.Rect.bottom+MARGIN>m_ScrollHeight) \
 			{ \
-				m_ScrollHeight = pData->Hdr.Hdr.Rect.bottom-1; \
+				m_ScrollHeight = pData->Hdr.Hdr.Rect.bottom+MARGIN; \
 				if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) \
 				{ \
 					HasScrollbars = TRUE; \
@@ -167,7 +168,7 @@ Restart:
 		INT Column = 0;
 		INT Row = 0;
 		INT x = 0;
-		INT y = GUTTER;
+		INT y = MARGIN;
 		INT RowHeight = 0;
 		INT RowStart = 0;
 
@@ -178,12 +179,12 @@ Restart:
 			{
 				LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
-				CRect rect(0, 0, rectWindow.Width()-2*GUTTER-10, 128);
+				CRect rect(0, 0, rectWindow.Width()-2*MARGIN, 128);
 				dc.SelectObject(GetFont(a));
 				dc.DrawText(i->CoreAttributes.FileName, rect, TextFormat | DT_CALCRECT);
 				rect.InflateRect(5, 4);
 
-				if (x+rect.Width()+2*GUTTER>rectWindow.Width())
+				if (x+rect.Width()+2*MARGIN>rectWindow.Width())
 				{
 					Column = 0;
 					Row++;
@@ -276,7 +277,7 @@ INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	for (INT a=0; a<20; a++)
-		m_Fonts[a].CreateFont(a*2+10, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY);
+		m_Fonts[a].CreateFont(a*2+10, a>=6 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY);
 
 	return 0;
 }

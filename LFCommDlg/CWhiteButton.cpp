@@ -27,18 +27,26 @@ void CWhiteButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
-	BOOL Focused = lpDrawItemStruct->itemState & ODS_FOCUS;
-	BOOL Selected = lpDrawItemStruct->itemState & ODS_SELECTED;
+	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
+	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
 
 	// Background
 	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
 
-	Graphics g(dc);
-	DrawWhiteButtonBorder(g, rect);
-
 	// Button
 	DrawWhiteButtonBackground(dc, rect, IsCtrlThemed(), Focused, Selected, m_Hover, lpDrawItemStruct->itemState & ODS_DISABLED);
-	DrawWhiteButtonForeground(dc, lpDrawItemStruct, Selected);
+
+	NM_DRAWBUTTONFOREGROUND tag;
+	ZeroMemory(&tag, sizeof(tag));
+
+	tag.hdr.code = REQUEST_DRAWBUTTONFOREGROUND;
+	tag.hdr.hwndFrom = m_hWnd;
+	tag.hdr.idFrom = GetDlgCtrlID();
+	tag.lpDrawItemStruct = lpDrawItemStruct;
+	tag.pDC = &dc;
+
+	if (!GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
+		DrawWhiteButtonForeground(dc, lpDrawItemStruct, Selected);
 
 	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);
 

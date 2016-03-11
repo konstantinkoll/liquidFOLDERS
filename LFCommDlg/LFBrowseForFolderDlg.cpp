@@ -54,10 +54,8 @@ void LFBrowseForFolderDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 	if (IsWindow(m_wndExplorerTree))
 	{
-		CRect rectBorders(0, 0, 7, 7);
-		MapDialogRect(&rectBorders);
-
-		m_wndExplorerTree.SetWindowPos(NULL, rectLayout.left+rectBorders.Width(), rectLayout.top+ExplorerHeight, rectLayout.Width()-rectBorders.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+		const INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? BACKSTAGEBORDER-3 : BACKSTAGEBORDER-2;
+		m_wndExplorerTree.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top+ExplorerHeight, rectLayout.Width()-BorderLeft, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 	}
 }
 

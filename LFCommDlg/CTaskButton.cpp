@@ -22,30 +22,7 @@ BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, con
 	m_ForceSmall = ForceSmall;
 	m_HideIcon = HideIcon;
 
-	return CHoverButton::Create(Caption, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
-}
-
-BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CHoverButton::PreTranslateMessage(pMsg);
+	return CHoverButton::Create(Caption, pParentWnd, nID);
 }
 
 void CTaskButton::SetIconID(INT IconID)
@@ -78,8 +55,7 @@ INT CTaskButton::GetPreferredWidth(BOOL Small)
 
 BEGIN_MESSAGE_MAP(CTaskButton, CHoverButton)
 	ON_WM_PAINT()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
+	ON_NOTIFY_REFLECT(REQUEST_TOOLTIP_DATA, OnRequestTooltipData)
 END_MESSAGE_MAP()
 
 void CTaskButton::OnPaint()
@@ -133,21 +109,13 @@ void CTaskButton::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CTaskButton::OnMouseLeave()
+void CTaskButton::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LFGetApp()->HideTooltip();
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
-	CHoverButton::OnMouseLeave();
-}
+	wcscpy_s(pTooltipData->Caption, 256, m_Caption);
+	wcscpy_s(pTooltipData->Hint, 4096, m_Hint);
+	pTooltipData->hIcon = p_TooltipIcons->ExtractIcon(m_IconID);
 
-void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		LFGetApp()->ShowTooltip(this, point, m_Caption, m_Hint, p_TooltipIcons->ExtractIcon(m_IconID));
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
+	*pResult = TRUE;
 }

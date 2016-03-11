@@ -56,7 +56,35 @@
 #define MB_ICONREADY      0x00000050L
 #define MB_ICONSHIELD     0x00000060L
 
-#define LFCategoryPadding     2
+#define LFCATEGORYPADDING     2
+
+#define REQUEST_TEXTCOLOR                1
+#define REQUEST_TOOLTIP_DATA             2
+#define REQUEST_DRAWBUTTONFOREGROUND     3
+
+struct NM_TEXTCOLOR
+{
+	NMHDR hdr;
+	INT Item;
+	COLORREF Color;
+};
+
+struct NM_TOOLTIPDATA
+{
+	NMHDR hdr;
+	INT Item;
+	WCHAR Caption[256];
+	WCHAR Hint[4096];
+	HICON hIcon;
+	HBITMAP hBitmap;
+};
+
+struct NM_DRAWBUTTONFOREGROUND
+{
+	NMHDR hdr;
+	LPDRAWITEMSTRUCT lpDrawItemStruct;
+	CDC* pDC;
+};
 
 extern BLENDFUNCTION BF;
 

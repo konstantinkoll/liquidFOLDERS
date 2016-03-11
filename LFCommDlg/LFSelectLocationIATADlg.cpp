@@ -295,18 +295,21 @@ void LFSelectLocationIATADlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResu
 	{
 		LFAirport* pAirport = p_Airports[pTooltipData->Item];
 
-		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_NAME, pAirport->Name);
-		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_COUNTRY, LFIATAGetCountry(pAirport->CountryID)->Name);
+		AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, pAirport->Name);
+		AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, LFIATAGetCountry(pAirport->CountryID)->Name);
 
 		WCHAR tmpStr[256];
 		LFGeoCoordinatesToString(pAirport->Location, tmpStr, 256, FALSE);
-		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_LOCATION, tmpStr);
+		AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_LOCATION, tmpStr);
 
 		pTooltipData->hBitmap = LFIATACreateAirportMap(pAirport, 192, 192);
-		pTooltipData->Show = TRUE;
-	}
 
-	*pResult = 0;
+		*pResult = TRUE;
+	}
+	else
+	{
+		*pResult = FALSE;
+	}
 }
 
 void LFSelectLocationIATADlg::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)

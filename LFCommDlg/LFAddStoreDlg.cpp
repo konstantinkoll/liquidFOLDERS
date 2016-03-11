@@ -20,8 +20,9 @@ LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 
 BOOL LFAddStoreDlg::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	if ((nID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (nID<=IDC_ADDSTORE_YOUTUBE))
-		m_wndExplorerNotification.DismissNotification();
+	if (nCode==BN_CLICKED)
+		if ((nID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (nID<=IDC_ADDSTORE_YOUTUBE))
+			m_wndExplorerNotification.DismissNotification();
 
 	return LFDialog::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
@@ -30,62 +31,6 @@ void LFAddStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rectLayout.left+32, rectLayout.bottom-NotificationHeight+1, rectLayout.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
-}
-
-void LFAddStoreDlg::DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected)
-{
-	if ((lpDrawItemStruct->CtlID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (lpDrawItemStruct->CtlID<=IDC_ADDSTORE_YOUTUBE))
-	{
-		static const UINT Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
-			LFTypeSourceDropbox, LFTypeSourceFacebook, LFTypeSourceFlickr, LFTypeSourceInstagram,
-			LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
-		
-		UINT Source = lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
-
-		WCHAR Caption[256];
-		LFGetSourceName(Caption, 256, Types[Source], FALSE);
-
-		WCHAR Hint[256];
-		::GetWindowText(lpDrawItemStruct->hwndItem, Hint, 256);
-
-		CRect rect(lpDrawItemStruct->rcItem);;
-
-		INT Height = rect.Height()-2*BORDER;
-		INT IconSize = (Height>=128) ? 128 : (Height>=96) ? 96 : 48;
-		CImageList* pIcons = (IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : (IconSize==96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
-
-		if (Selected)
-			rect.OffsetRect(1, 1);
-
-		// Icon
-		CPoint pt(rect.left+BORDER, rect.top+(rect.Height()-IconSize)/2);
-		pIcons->DrawEx(&dc, Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
-
-		rect.left += IconSize+BORDER;
-		rect.DeflateRect(BORDER, BORDER);
-
-		const INT HeightCaption = LFGetApp()->m_LargeFont.GetFontHeight()*3/2;
-
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
-
-		CRect rectHint(rect);
-		dc.DrawText(Hint, rectHint, DT_CALCRECT | DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		rect.top += (rect.Height()-HeightCaption-rectHint.Height())/2;
-
-		dc.SelectObject(&LFGetApp()->m_LargeFont);
-		dc.DrawText(Caption, rect, DT_SINGLELINE | DT_END_ELLIPSIS);
-		rect.top += HeightCaption;
-
-		dc.SelectObject(&LFGetApp()->m_DefaultFont);
-		dc.DrawText(Hint, rect, DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		dc.SelectObject(pOldFont);
-	}
-	else
-	{
-		LFDialog::DrawButtonForeground(dc, lpDrawItemStruct, Selected);
-	}
 }
 
 void LFAddStoreDlg::CheckInternetConnection()
@@ -144,6 +89,8 @@ BOOL LFAddStoreDlg::InitDialog()
 
 	OnUpdateStores(NULL, NULL);
 
+		ShowResult(LFCancel, L"Test");
+
 	return TRUE;
 }
 
@@ -151,6 +98,7 @@ BOOL LFAddStoreDlg::InitDialog()
 BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
+	ON_NOTIFY_RANGE(REQUEST_DRAWBUTTONFOREGROUND, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_YOUTUBE, OnDrawButtonForeground)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
 	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
@@ -173,6 +121,59 @@ void LFAddStoreDlg::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
+}
+
+void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_DRAWBUTTONFOREGROUND* pDrawButtonForeground = (NM_DRAWBUTTONFOREGROUND*)pNMHDR;
+
+	static const UINT Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
+		LFTypeSourceDropbox, LFTypeSourceFacebook, LFTypeSourceFlickr, LFTypeSourceInstagram,
+		LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
+
+	const UINT Source = pDrawButtonForeground->lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
+
+	WCHAR Caption[256];
+	LFGetSourceName(Caption, 256, Types[Source], FALSE);
+
+	WCHAR Hint[256];
+	::GetWindowText(pDrawButtonForeground->lpDrawItemStruct->hwndItem, Hint, 256);
+
+	CRect rect(pDrawButtonForeground->lpDrawItemStruct->rcItem);
+
+	INT Height = rect.Height()-2*BORDER;
+	INT IconSize = (Height>=128) ? 128 : (Height>=96) ? 96 : 48;
+	CImageList* pIcons = (IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : (IconSize==96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
+
+	if (pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_SELECTED)
+		rect.OffsetRect(1, 1);
+
+	// Icon
+	CPoint pt(rect.left+BORDER, rect.top+(rect.Height()-IconSize)/2);
+	pIcons->DrawEx(pDrawButtonForeground->pDC, Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
+
+	rect.left += IconSize+BORDER;
+	rect.DeflateRect(BORDER, BORDER);
+
+	const INT HeightCaption = LFGetApp()->m_LargeFont.GetFontHeight()*3/2;
+
+	CFont* pOldFont = pDrawButtonForeground->pDC->SelectObject(&LFGetApp()->m_DefaultFont);
+
+	CRect rectHint(rect);
+	pDrawButtonForeground->pDC->DrawText(Hint, rectHint, DT_CALCRECT | DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+	rect.top += (rect.Height()-HeightCaption-rectHint.Height())/2;
+
+	pDrawButtonForeground->pDC->SelectObject(&LFGetApp()->m_LargeFont);
+	pDrawButtonForeground->pDC->DrawText(Caption, rect, DT_SINGLELINE | DT_END_ELLIPSIS);
+	rect.top += HeightCaption;
+
+	pDrawButtonForeground->pDC->SelectObject(&LFGetApp()->m_DefaultFont);
+	pDrawButtonForeground->pDC->DrawText(Hint, rect, DT_WORDBREAK | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+	pDrawButtonForeground->pDC->SelectObject(pOldFont);
+
+	*pResult = TRUE;
 }
 
 LRESULT LFAddStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)

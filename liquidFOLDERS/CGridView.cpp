@@ -101,7 +101,7 @@ Restart:
 
 				lpRect->left = lpRect->right = x;
 				lpRect->top = y;
-				lpRect->bottom = lpRect->top+2*LFCategoryPadding+theApp.m_LargeFont.GetFontHeight();
+				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight();
 
 				if (m_Categories.m_Items[Category].Hint[0]!=L'\0')
 					lpRect->bottom += theApp.m_DefaultFont.GetFontHeight();;
@@ -168,7 +168,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	INT Top = gva.my;
 	if (m_HasCategories)
-		Top += 2*LFCategoryPadding+theApp.m_LargeFont.GetFontHeight();+4;
+		Top += 2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight()+4;
 
 	const INT cx = gva.cx+2*gva.padding;
 	const INT cy = gva.cy+2*gva.padding;
@@ -212,7 +212,7 @@ Restart:
 				const LPRECT lpRect = &m_Categories.m_Items[Category].Rect;
 				lpRect->left = x;
 				lpRect->top = gva.my;
-				lpRect->bottom = lpRect->top+2*LFCategoryPadding+theApp.m_LargeFont.GetFontHeight();
+				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight();
 			}
 
 		GridItemData* pData = GetItemData(a);

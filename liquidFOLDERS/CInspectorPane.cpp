@@ -162,7 +162,8 @@ CInspectorPane::CInspectorPane()
 
 void CInspectorPane::AdjustLayout(CRect rectLayout)
 {
-	m_wndGrid.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	const INT BorderLeft = BACKSTAGEBORDER-PANEGRIPPER;
+	m_wndGrid.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top, rectLayout.Width()-BorderLeft, rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInspectorPane::SaveSettings()

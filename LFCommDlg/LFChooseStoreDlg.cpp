@@ -141,8 +141,7 @@ void LFChooseStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 	if (IsWindow(m_wndStoreList))
 	{
-		const INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? m_wndStoreList.IsGroupViewEnabled() ? 2 : 15 : 4;
-
+		const INT BorderLeft = (LFGetApp()->OSVersion==OS_XP) ? m_wndStoreList.IsGroupViewEnabled() ? BACKSTAGEBORDER-15 : BACKSTAGEBORDER+1 : BACKSTAGEBORDER-2;
 		m_wndStoreList.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top+ExplorerHeight, rectLayout.Width()-BorderLeft, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 	}
 }
@@ -278,11 +277,11 @@ void LFChooseStoreDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pSearchResult*/)
 		UpdateOkButton();
 }
 
-void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pSearchResult)
+void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 
-	*pSearchResult = FALSE;
+	*pResult = FALSE;
 
 	if ((m_pSearchResult) && (pDispInfo->item.pszText))
 		if (pDispInfo->item.pszText[0]!=L'\0')
@@ -303,11 +302,11 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pSearchResult)
 			LFErrorBox(this, pTransactionList->m_LastError);
 
 			LFFreeTransactionList(pTransactionList);
-			*pSearchResult = TRUE;
+			*pResult = TRUE;
 		}
 }
 
-void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pSearchResult)
+void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
@@ -316,13 +315,15 @@ void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pSearchResul
 		CString tmpStr;
 		GetHintForStore(m_pSearchResult->m_Items[pTooltipData->Item], tmpStr);
 
-		wcscpy_s(pTooltipData->Text, 4096, tmpStr);
+		wcscpy_s(pTooltipData->Hint, 4096, tmpStr);
 		pTooltipData->hIcon = LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(m_pSearchResult->m_Items[pTooltipData->Item]->IconID-1);
 
-		pTooltipData->Show = TRUE;
+		*pResult = TRUE;
 	}
-
-	*pSearchResult = 0;
+	else
+	{
+		*pResult = FALSE;
+	}
 }
 
 

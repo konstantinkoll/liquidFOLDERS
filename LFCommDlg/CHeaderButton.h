@@ -17,18 +17,15 @@ class CHeaderButton : public CHoverButton
 public:
 	CHeaderButton();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
-	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint);
+	BOOL Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint);
 	void SetValue(LPCWSTR Value, BOOL ShowDropdown=TRUE, BOOL Repaint=TRUE);
 	void GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth);
 	void GetCaption(CString& Caption, INT& CaptionWidth) const;
 
 protected:
 	afx_msg void OnPaint();
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 private:

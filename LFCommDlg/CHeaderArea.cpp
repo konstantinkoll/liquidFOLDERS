@@ -9,9 +9,8 @@
 // CHeaderArea
 //
 
-#define BORDERLEFT     16
-#define BORDER         10
-#define MARGIN         4
+#define BORDER     BACKSTAGEBORDER
+#define MARGIN     4
 
 CHeaderArea::CHeaderArea()
 	: CFrontstageWnd()
@@ -118,9 +117,9 @@ void CHeaderArea::AdjustLayout()
 		CSize Size;
 		INT CaptionWidth;
 		pHeaderButton->GetPreferredSize(&Size, CaptionWidth);
-		pHeaderButton->SetWindowPos(NULL, rect.right-Size.cx-BORDERLEFT, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+		pHeaderButton->SetWindowPos(NULL, rect.right-Size.cx-BORDER+6, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
-		m_RightEdge = min(m_RightEdge, rect.right-Size.cx-(INT)CaptionWidth-BORDER-BORDERLEFT-MARGIN);
+		m_RightEdge = min(m_RightEdge, rect.right-Size.cx-(INT)CaptionWidth-2*BORDER-MARGIN+6);
 
 		Row += Size.cy+MARGIN/2;
 	}
@@ -233,11 +232,11 @@ void CHeaderArea::OnPaint()
 			dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
 
-		if (m_RightEdge-BORDERLEFT>=32)
+		if (m_RightEdge-BORDER>=32)
 		{
 			dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 
-			CRect rectText(BORDERLEFT, rect.bottom-dc.GetTextExtent(m_Hint).cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
+			CRect rectText(BORDER, rect.bottom-dc.GetTextExtent(m_Hint).cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
 			dc.DrawText(m_Hint, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 			dc.SelectObject(&LFGetApp()->m_CaptionFont);

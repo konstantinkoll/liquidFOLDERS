@@ -206,7 +206,7 @@ void CListView::AdjustLayout()
 	// Items
 	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
 
-	GVArrange gva = { 0, 0, 15-PADDING, 3, PADDING, 1, -1 };
+	GVArrange gva = { 0, 0, BACKSTAGEBORDER, BACKSTAGEBORDER, PADDING, 1, -1 };
 
 	switch (m_ViewParameters.Mode)
 	{
@@ -230,6 +230,9 @@ void CListView::AdjustLayout()
 		gva.cy = max(m_IconSize[0].cy, FontHeight);
 		gva.gutterx = 6;
 
+		if (!m_HasCategories)
+			gva.my = 0;
+
 		ArrangeVertical(gva);
 
 		break;
@@ -241,6 +244,9 @@ void CListView::AdjustLayout()
 			gva.cx += m_ViewParameters.ColumnWidth[a];
 
 		gva.cy = max(m_IconSize[0].cy, FontHeight);
+
+		if (!m_HasCategories)
+			gva.my = 0;
 
 		ArrangeHorizontal(gva, FALSE, TRUE);
 

@@ -137,6 +137,14 @@
 #define IDC_CATEGORY2                   21005
 #define IDC_CATEGORY3                   21006
 #define IDC_CATEGORY4                   21007
+#define IDC_CATEGORY5                   21008
+#define IDC_CATEGORY6                   21009
+#define IDC_CATEGORY7                   21010
+#define IDC_CATEGORY8                   21011
+#define IDC_CATEGORY9                   21012
+#define IDC_CATEGORY10                  21013
+#define IDC_CATEGORY11                  21014
+#define IDC_CATEGORY12                  21015
 #define IDD_ABOUT                       21100
 #define IDC_VERSIONINFO                 21101
 #define IDC_REGNAME                     21105

@@ -12,16 +12,13 @@
 class CTaskButton : public CHoverButton
 {
 public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
 	BOOL Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
 	void SetIconID(INT IconID);
 	INT GetPreferredWidth(BOOL Small=FALSE);
 
 protected:
 	afx_msg void OnPaint();
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 	CIcons* p_ButtonIcons;

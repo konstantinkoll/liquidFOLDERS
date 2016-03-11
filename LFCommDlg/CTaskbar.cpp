@@ -10,7 +10,8 @@
 //
 
 #define BORDER           4
-#define BORDERLEFT       16
+#define BORDERLEFT       (BACKSTAGEBORDER-(BORDER+2))
+#define MARGIN           16
 #define TEXTUREWIDTH     16
 
 CTaskbar::CTaskbar()
@@ -95,7 +96,7 @@ void CTaskbar::AdjustLayout()
 	INT Row = BORDER-1;
 	INT Height = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
 
-	INT RPos = rect.right+2*BORDER-BORDERLEFT;
+	INT RPos = rect.right+BORDER-BORDERLEFT;
 
 	for (UINT a=m_Buttons.m_ItemCount-1; a>=m_FirstRight; a--)
 	{
@@ -124,14 +125,14 @@ void CTaskbar::AdjustLayout()
 Nochmal:
 	UINT Count = 0;
 
-	INT LPos = rect.left+BORDERLEFT-BORDER;
+	INT LPos = rect.left+BORDERLEFT;
 	for (UINT a=0; a<min(m_Buttons.m_ItemCount, m_FirstRight); a++)
 	{
 		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
 			const INT Width = pTaskButton->GetPreferredWidth(Count++>=FirstSmall);
-			if (LPos+Width+BORDERLEFT-BORDER<RPos)
+			if (LPos+Width+MARGIN<RPos)
 			{
 				pTaskButton->SetWindowPos(NULL, LPos, Row, Width, Height, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 				pTaskButton->ShowWindow(SW_SHOW);
@@ -147,7 +148,7 @@ Nochmal:
 				pTaskButton->ShowWindow(SW_HIDE);
 			}
 
-			LPos += Width+BORDERLEFT;
+			LPos += Width+MARGIN;
 		}
 		else
 		{

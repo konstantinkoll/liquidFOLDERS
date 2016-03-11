@@ -17,7 +17,6 @@ public:
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
-	virtual void DrawButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected);
 
 protected:
 	virtual BOOL InitDialog();
@@ -26,6 +25,7 @@ protected:
 
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnDrawButtonForeground(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnBtnLiquidfolders();
 	afx_msg void OnBtnWindows();

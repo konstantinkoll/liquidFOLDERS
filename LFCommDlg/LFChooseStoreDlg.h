@@ -47,10 +47,10 @@ protected:
 
 	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
-	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pSearchResult);
-	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pSearchResult);
-	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pSearchResult);
-	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pSearchResult);
+	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 

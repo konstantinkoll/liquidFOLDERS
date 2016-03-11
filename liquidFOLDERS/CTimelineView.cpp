@@ -26,10 +26,10 @@ WCHAR* GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, U
 // CTimelineView
 //
 
-#define ARROWSIZE       6
-#define BORDER          6
-#define GUTTER          14
-#define MIDDLE          24
+#define ARROWSIZE       (GUTTER-4)
+#define GUTTER          BACKSTAGEBORDER
+#define MARGIN          6
+#define MIDDLE          (2*GUTTER+2)
 #define MAXFILELIST     10
 #define WHITE           100
 
@@ -137,12 +137,12 @@ Restart:
 	WORD Year = st.wYear;
 
 	m_Categories.m_ItemCount = 0;
-	m_TwoColumns = rect.Width()-2*GUTTER-MIDDLE-7*BORDER>=512;
+	m_TwoColumns = rect.Width()-2*GUTTER-MIDDLE-7*MARGIN>=512;
 	m_ItemWidth = m_TwoColumns ? (rect.Width()-MIDDLE)/2-GUTTER : rect.Width()-2*GUTTER;
-	m_PreviewColumns = (m_ItemWidth-BORDER)/(128+BORDER);
+	m_PreviewColumns = (m_ItemWidth-MARGIN)/(128+MARGIN);
 
-	INT CurRow[2] = { GUTTER, GUTTER };
-	INT LastRow = 0;
+	INT CurRow[2] = { GUTTER+1, GUTTER+1 };
+	INT LastRow = -10;
 
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 	{
@@ -152,7 +152,7 @@ Restart:
 		{
 			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
-			if (m_ItemWidth<2*BORDER+128)
+			if (m_ItemWidth<2*MARGIN+128)
 			{
 				pData->Preview &= ~PRV_THUMBS;
 			}
@@ -196,10 +196,10 @@ Restart:
 
 			const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
 
-			INT Height = 2*BORDER+m_CaptionHeight;
+			INT Height = 2*MARGIN+m_CaptionHeight;
 
 			if (pData->Preview)
-				Height += BORDER/2+BORDER;
+				Height += MARGIN/2+MARGIN;
 
 			if (pData->Preview & PRV_TITLE)
 				Height += FontHeight;
@@ -212,18 +212,18 @@ Restart:
 				Height += FontHeight;
 
 				if (pData->Preview & (PRV_THUMBS | PRV_FOLDER))
-					Height += BORDER/2;
+					Height += MARGIN/2;
 			}
 
 			if (pData->Preview & PRV_THUMBS)
-				Height += (128+BORDER)*pData->PreviewRows-BORDER;
+				Height += (128+MARGIN)*pData->PreviewRows-MARGIN;
 
 			if (pData->Preview & PRV_FOLDER)
 			{
-				Height += min(MAXFILELIST, pData->ListCount)*theApp.m_SmallFont.GetFontHeight()-BORDER/2;
+				Height += min(MAXFILELIST, pData->ListCount)*theApp.m_SmallFont.GetFontHeight()-MARGIN/2;
 
 				if (pData->Preview & PRV_THUMBS)
-					Height += BORDER;
+					Height += MARGIN;
 			}
 
 			if (pData->Preview & PRV_SOURCE)
@@ -232,12 +232,12 @@ Restart:
 
 				if ((pData->Preview & (PRV_FOLDER | PRV_THUMBS))==PRV_THUMBS)
 				{
-					Height += BORDER/2;
+					Height += MARGIN/2;
 				}
 				else
 					if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS | PRV_FOLDER))
 					{
-						Height += 2*BORDER;
+						Height += 2*MARGIN;
 					}
 			}
 
@@ -253,7 +253,7 @@ Restart:
 				ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
 				ic.Rect.right = ic.Rect.left+m_LabelWidth;
 				ic.Rect.top = max(CurRow[0], CurRow[1]);
-				ic.Rect.bottom = ic.Rect.top+2*BORDER+FontHeight;
+				ic.Rect.bottom = ic.Rect.top+2*MARGIN+FontHeight;
 				m_Categories.AddItem(ic);
 
 				CurRow[0] = CurRow[1] = ic.Rect.bottom+GUTTER;
@@ -265,13 +265,13 @@ Restart:
 			pData->Hdr.RectInflate = pData->Arrow ? ARROWSIZE+1 : 0;
 
 			if (abs(CurRow[Column]-LastRow)<2*ARROWSIZE)
-				if (Height>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
+				if (Height>(m_CaptionHeight+MARGIN)/2+ARROWSIZE+MARGIN+2*GUTTER)
 				{
 					pData->ArrowOffs = 2*GUTTER;
 				}
 				else
 				{
-					CurRow[Column] += GUTTER;
+					CurRow[Column] += GUTTER+1;
 				}
 
 			pData->Hdr.Rect.left = (Column==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
@@ -280,7 +280,7 @@ Restart:
 			pData->Hdr.Rect.bottom = pData->Hdr.Rect.top+Height;
 
 			LastRow = CurRow[Column];
-			CurRow[Column] += Height+GUTTER;
+			CurRow[Column] += Height+GUTTER+1;
 
 			if ((CurRow[Column]>rect.Height()) && (!HasScrollbars))
 			{
@@ -301,9 +301,9 @@ RECT CTimelineView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
-	rect.left += 2*BORDER+m_IconSize.cx-5;
-	rect.top += BORDER-2;
-	rect.right -= BORDER-2;
+	rect.left += 2*MARGIN+m_IconSize.cx-5;
+	rect.top += MARGIN-2;
+	rect.right -= MARGIN-2;
 	rect.bottom = rect.top+theApp.m_DefaultFont.GetFontHeight()+4;
 
 	return rect;
@@ -381,7 +381,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	if (pData->Arrow)
 	{
 		INT Base = (pData->Arrow==1) ? rectItem->right-1 : rectItem->left;
-		INT Start = rectItem->top+(m_CaptionHeight+BORDER)/2-ARROWSIZE+pData->ArrowOffs;
+		INT Start = rectItem->top+(m_CaptionHeight+MARGIN)/2-ARROWSIZE+pData->ArrowOffs;
 		INT y = Start;
 
 		COLORREF ptCol = dc.GetPixel(Base, y);
@@ -410,7 +410,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 	// Icon
 	CRect rectText(rectItem);
-	rectText.DeflateRect(BORDER, BORDER);
+	rectText.DeflateRect(MARGIN, MARGIN);
 
 	const UINT nStyle = ((i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (i->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
 	if ((i->Type & LFTypeMask)==LFTypeFile)
@@ -423,7 +423,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	}
 
 	// Caption
-	rectText.left += m_IconSize.cx+BORDER;
+	rectText.left += m_IconSize.cx+MARGIN;
 	rectText.bottom = rectText.top+FontHeight;
 
 	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? Selected ? 0xFFFFFF : i->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
@@ -439,7 +439,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		dc.DrawText(tmpStr, -1, rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
 
-	rectText.top = rectText.bottom+BORDER/2;
+	rectText.top = rectText.bottom+MARGIN/2;
 	rectText.bottom = rectText.top+theApp.m_SmallFont.GetFontHeight();
 
 	WCHAR tmpBuf[256];
@@ -455,32 +455,32 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	if (pData->Preview)
 	{
 		if (Themed)
-			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
+			dc.FillSolidRect(rectItem->left+MARGIN+1, rectText.bottom+MARGIN/2, m_ItemWidth-2*MARGIN-2, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
 
 		// Source
 		INT BottomHeight = 0;
 		if (pData->Preview & PRV_SOURCE)
 		{
 			BottomHeight = max(theApp.m_SmallFont.GetFontHeight(), 16);
-			CRect rectSource(rectItem->left+BORDER, rectItem->bottom-BORDER-BottomHeight, rectItem->right-BORDER, 0);
+			CRect rectSource(rectItem->left+MARGIN, rectItem->bottom-MARGIN-BottomHeight, rectItem->right-MARGIN, 0);
 			rectSource.bottom = rectSource.top+BottomHeight;
 
 			theApp.m_SourceIcons.Draw(dc, rectSource.left, rectSource.top, (i->Type & LFTypeSourceMask)-2);
 
-			rectSource.left += m_IconSize.cx+BORDER;
+			rectSource.left += m_IconSize.cx+MARGIN;
 			dc.DrawText(theApp.m_SourceNames[i->Type & LFTypeSourceMask][0], -1, rectSource, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
 
 			if ((pData->Preview & (PRV_FOLDER | PRV_THUMBS))==PRV_THUMBS)
 			{
-				BottomHeight += BORDER/2;
+				BottomHeight += MARGIN/2;
 			}
 			else
 				if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS | PRV_FOLDER))
 				{
 					if (Themed)
-						dc.FillSolidRect(rectItem->left+BORDER+1, rectSource.top-BORDER, m_ItemWidth-2*BORDER-2, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
+						dc.FillSolidRect(rectItem->left+MARGIN+1, rectSource.top-MARGIN, m_ItemWidth-2*MARGIN-2, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
 
-					BottomHeight += 2*BORDER;
+					BottomHeight += 2*MARGIN;
 				}
 		}
 
@@ -492,7 +492,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			INT ListCount = min(MAXFILELIST, pData->ListCount);
 			BottomHeight += ListCount*FontHeight;
 
-			CRect rectFilename(rectItem->left+BORDER+1, rectItem->bottom-BORDER-BottomHeight, rectItem->right-BORDER, rectItem->bottom-BORDER-BottomHeight+FontHeight);
+			CRect rectFilename(rectItem->left+MARGIN+1, rectItem->bottom-MARGIN-BottomHeight, rectItem->right-MARGIN, rectItem->bottom-MARGIN-BottomHeight+FontHeight);
 
 			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 				if (!UsePreview(p_RawFiles->m_Items[a]))
@@ -505,7 +505,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 					rectFilename.OffsetRect(0, FontHeight);
 				}
 
-			BottomHeight += BORDER/2;
+			BottomHeight += MARGIN/2;
 		}
 
 		dc.SelectObject(pOldFont);
@@ -513,11 +513,11 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		// Attributes
 		if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 		{
-			CRect rectAttr(rectItem->left+BORDER+2, rectText.bottom+BORDER+BORDER/2, rectItem->right-BORDER, 0);
+			CRect rectAttr(rectItem->left+MARGIN+2, rectText.bottom+MARGIN+MARGIN/2, rectItem->right-MARGIN, 0);
 			rectAttr.bottom = rectAttr.top+FontHeight;
 
 			if (pData->Preview & PRV_ALBUM)
-				rectAttr.left = rectItem->left+m_IconSize.cx+2*BORDER;
+				rectAttr.left = rectItem->left+m_IconSize.cx+2*MARGIN;
 
 			if (!Selected)
 				dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
@@ -546,7 +546,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 				dc.DrawText(pData->pAlbum, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-				theApp.m_SmallAttributeIcons.Draw(dc, rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(FontHeight-16)/2, GetAttributeIconIndex(LFAttrAlbum));
+				theApp.m_SmallAttributeIcons.Draw(dc, rectAttr.left-MARGIN-m_IconSize.cx, rectAttr.top-(FontHeight-16)/2, GetAttributeIconIndex(LFAttrAlbum));
 
 				rectAttr.OffsetRect(0, FontHeight);
 			}
@@ -563,8 +563,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		if (pData->Preview & PRV_THUMBS)
 		{
 			CRect rectPreview(rectItem);
-			rectPreview.DeflateRect(BORDER, BORDER);
-			rectPreview.top = rectPreview.bottom-BottomHeight-pData->PreviewRows*(128+BORDER)+BORDER;
+			rectPreview.DeflateRect(MARGIN, MARGIN);
+			rectPreview.top = rectPreview.bottom-BottomHeight-pData->PreviewRows*(128+MARGIN)+MARGIN;
 			rectPreview.bottom = rectPreview.top+128;
 			rectPreview.left++;
 			rectPreview.right = rectPreview.left+128;
@@ -584,10 +584,10 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 							if (!theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, ri))
 								theApp.m_FileFormats.DrawJumboIcon(dc, rect, ri->CoreAttributes.FileFormat, ri->Type & LFTypeGhosted);
 
-							rectPreview.OffsetRect(128+BORDER, 0);
+							rectPreview.OffsetRect(128+MARGIN, 0);
 							if (++Cols==m_PreviewColumns)
 							{
-								rectPreview.OffsetRect(-(128+BORDER)*m_PreviewColumns, 128+BORDER);
+								rectPreview.OffsetRect(-(128+MARGIN)*m_PreviewColumns, 128+MARGIN);
 								Cols = 0;
 
 								if (++Rows==pData->PreviewRows)
@@ -645,8 +645,8 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_IconSize.cx = cx;
 	m_IconSize.cy = cy;
 
-	m_CaptionHeight = max(cy, theApp.m_LargeFont.GetFontHeight()+theApp.m_SmallFont.GetFontHeight()+BORDER/2);
-	m_LabelWidth = theApp.m_SmallBoldFont.GetTextExtent(_T("8888")).cx+2*BORDER;
+	m_CaptionHeight = max(cy, theApp.m_LargeFont.GetFontHeight()+theApp.m_SmallFont.GetFontHeight()+MARGIN/2);
+	m_LabelWidth = theApp.m_SmallBoldFont.GetTextExtent(_T("8888")).cx+2*MARGIN;
 
 	return 0;
 }
@@ -697,6 +697,8 @@ void CTimelineView::OnPaint()
 
 		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
 		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
 	}
 	else
 	{
@@ -720,8 +722,6 @@ void CTimelineView::OnPaint()
 		}
 
 		dc.SelectObject(pOldFont);
-
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
 
 		// Items
 		if (p_CookedFiles)
