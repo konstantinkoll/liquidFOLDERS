@@ -21,7 +21,7 @@ public:
 	INT AddIcon(HICON hIcon);
 	INT AddIcon(CImageList& ImageList, INT nImage);
 	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Shadow=FALSE);
-	HICON ExtractIcon(INT nImage);
+	HICON ExtractIcon(INT nImage, BOOL Shadow=FALSE);
 	HIMAGELIST ExtractImageList() const;
 
 protected:

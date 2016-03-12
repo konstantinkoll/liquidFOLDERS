@@ -43,6 +43,7 @@ CLiquidFoldersApp theApp;
 CLiquidFoldersApp::CLiquidFoldersApp()
 	: LFApplication(theAppID)
 {
+	p_ClipboardWnd = NULL;
 	m_AppInitialized = FALSE;
 }
 
@@ -116,9 +117,7 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	LFCheckForUpdate();
 
-	CWnd* pFrameWnd = OpenCommandLine(__argc>1 ? CmdLine : NULL);
-	if (pFrameWnd)
-		pFrameWnd->ShowWindow(SW_SHOW);
+	OpenCommandLine(__argc>1 ? CmdLine : NULL);
 
 	m_AppInitialized = TRUE;
 
@@ -175,7 +174,8 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 				CMainWnd* pFrameWnd = new CMainWnd();
 				pFrameWnd->CreateStore(StoreID);
-	
+				pFrameWnd->ShowWindow(SW_SHOW);
+
 				return pFrameWnd;
 			}
 
@@ -196,7 +196,8 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 				CMainWnd* pFrameWnd = new CMainWnd();
 				pFrameWnd->CreateFilter(pFilter);
-	
+				pFrameWnd->ShowWindow(SW_SHOW);
+
 				return pFrameWnd;
 			}
 		}
@@ -204,6 +205,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 		// Filter
 		CMainWnd* pFrameWnd = new CMainWnd();
 		pFrameWnd->CreateFilter(CmdLine);
+		pFrameWnd->ShowWindow(SW_SHOW);
 
 		return pFrameWnd;
 	}
@@ -211,6 +213,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 	// Root
 	CMainWnd* pFrameWnd = new CMainWnd();
 	pFrameWnd->CreateRoot();
+	pFrameWnd->ShowWindow(SW_SHOW);
 
 	return pFrameWnd;
 }
@@ -240,14 +243,14 @@ INT CLiquidFoldersApp::ExitInstance()
 
 CMainWnd* CLiquidFoldersApp::GetClipboard()
 {
-	if (!p_Clipboard)
+	if (!p_ClipboardWnd)
 	{
-		p_Clipboard = new CMainWnd();
-		p_Clipboard->CreateClipboard();
-		p_Clipboard->ShowWindow(SW_SHOW);
+		p_ClipboardWnd = new CMainWnd();
+		p_ClipboardWnd->CreateClipboard();
+		p_ClipboardWnd->ShowWindow(SW_SHOW);
 	}
 
-	return p_Clipboard;
+	return p_ClipboardWnd;
 }
 
 CWnd* CLiquidFoldersApp::GetFileDrop(CHAR* StoreID)

@@ -14,11 +14,11 @@ __forceinline void CalculateWorldCoords(DOUBLE LatitudeDeg, DOUBLE LongitudeDeg,
 	const DOUBLE LatitudeRad = -theRenderer.DegToRad(LatitudeDeg);
 	const DOUBLE LongitudeRad = theRenderer.DegToRad(LongitudeDeg);
 
-	const DOUBLE d = cos(LatitudeRad);
+	const DOUBLE D = cos(LatitudeRad);
 
-	Result[0] = (GLfloat)(sin(LongitudeRad)*d);
+	Result[0] = (GLfloat)(sin(LongitudeRad)*D);
 	Result[1] = (GLfloat)(sin(LatitudeRad));
-	Result[2] = (GLfloat)(cos(LongitudeRad)*d);
+	Result[2] = (GLfloat)(cos(LongitudeRad)*D);
 }
 
 void WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDescriptor, UINT Attr)
@@ -250,19 +250,19 @@ __forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], c
 		{
 			pData->Alpha = 0.0f;
 
-			GLfloat z = ModelView[0][2]*pData->World[0] + ModelView[1][2]*pData->World[1] + ModelView[2][2]*pData->World[2];
-			if (z>BLENDOUT)
+			GLfloat Z = ModelView[0][2]*pData->World[0] + ModelView[1][2]*pData->World[1] + ModelView[2][2]*pData->World[2];
+			if (Z>BLENDOUT)
 			{
-				const GLfloat w = MVP[0][3]*pData->World[0] + MVP[1][3]*pData->World[1] + MVP[2][3]*pData->World[2] + MVP[3][3];
-				const GLfloat x = (MVP[0][0]*pData->World[0] + MVP[1][0]*pData->World[1] + MVP[2][0]*pData->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5f;
-				const GLfloat y = -(MVP[0][1]*pData->World[0] + MVP[1][1]*pData->World[1] + MVP[2][1]*pData->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5f;
+				const GLfloat W = MVP[0][3]*pData->World[0] + MVP[1][3]*pData->World[1] + MVP[2][3]*pData->World[2] + MVP[3][3];
+				const GLfloat X = (MVP[0][0]*pData->World[0] + MVP[1][0]*pData->World[1] + MVP[2][0]*pData->World[2] + MVP[3][0])*SizeX/W + SizeX + 0.5f;
+				const GLfloat Y = -(MVP[0][1]*pData->World[0] + MVP[1][1]*pData->World[1] + MVP[2][1]*pData->World[2] + MVP[3][1])*SizeY/W + SizeY + 0.5f;
 
-				pData->ScreenPoint[0] = (INT)x;
-				pData->ScreenPoint[1] = (INT)y;
-				pData->Alpha = (z<BLENDIN) ? (GLfloat)((z-BLENDOUT)/(BLENDIN-BLENDOUT)) : 1.0f;
+				pData->ScreenPoint[0] = (INT)X;
+				pData->ScreenPoint[1] = (INT)Y;
+				pData->Alpha = (Z<BLENDIN) ? (GLfloat)((Z-BLENDOUT)/(BLENDIN-BLENDOUT)) : 1.0f;
 
 				if (m_ViewParameters.GlobeShowSpots)
-					theRenderer.DrawIcon(x, y, 6.0f+8.0f*pData->Alpha, pData->Alpha);
+					theRenderer.DrawIcon(X, Y, 6.0f+8.0f*pData->Alpha, pData->Alpha);
 			}
 		}
 	}
@@ -328,7 +328,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, UINT cCaption, WC
 	UINT W2 = m_Fonts[0].GetTextWidth(Subcaption);
 	UINT W3 = m_Fonts[0].GetTextWidth(Coordinates);
 	UINT W4 = m_Fonts[0].GetTextWidth(Description);
-	UINT Width = max(W1, max(W2, max(W3, W4)))+11;
+	UINT Width = max(2*ARROWSIZE, max(W1, max(W2, max(W3, W4)))+11);
 
 	// Height
 	UINT Height = 8;
@@ -850,14 +850,14 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
 
-	// 2D overay
+	// 2D overlay
 	//
 	theRenderer.Project2D();
 
-	// Koordinaten bestimmen und Spots zeichnen
 	if (p_CookedFiles && !m_Nothing)
 		if (p_CookedFiles->m_ItemCount)
 		{
+			// Draw locations
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, m_nTextureLocationIndicator);
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -867,12 +867,10 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 			glEnd();
 
 			glDisable(GL_TEXTURE_2D);
-		}
 
-	// Draw label
-	if (p_CookedFiles && !m_Nothing)
-		if (p_CookedFiles->m_ItemCount)
+			// Draw label
 			CalcAndDrawLabel(Themed);
+		}
 
 	theRenderer.EndRender(this, m_RenderContext, Themed);
 }
@@ -1175,7 +1173,6 @@ void CGlobeView::OnContextMenu(CWnd* pWnd, CPoint pos)
 void CGlobeView::OnJumpToLocation()
 {
 	LFSelectLocationIATADlg dlg(FALSE, this);
-
 	if (dlg.DoModal()==IDOK)
 	{
 		ASSERT(dlg.p_Airport);
@@ -1221,7 +1218,6 @@ void CGlobeView::OnAutosize()
 void CGlobeView::OnSettings()
 {
 	GlobeOptionsDlg dlg(p_ViewParameters, this);
-
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateViewOptions(-1, LFViewGlobe);
 }

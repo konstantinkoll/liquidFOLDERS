@@ -86,6 +86,13 @@ struct NM_DRAWBUTTONFOREGROUND
 	CDC* pDC;
 };
 
+struct PROGRESSDATA
+{
+	ULONGLONG ullCompleted;
+	ULONGLONG ullTotal;
+	TBPFLAG tbpFlags;
+};
+
 extern BLENDFUNCTION BF;
 
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
@@ -111,17 +118,48 @@ void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom=TRUE)
 void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled=FALSE, BOOL DrawBorder=FALSE);
 void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected, BOOL ShowKeyboardCues=FALSE);
 
+
+// liquidFOLDERS
+
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
 
 void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr);
 void AppendTooltipAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, CString& Str);
 void GetHintForStore(LFItemDescriptor* pItemDescriptor, CString& Str);
 
+
+// IATA database
+
 HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height);
+
+
+// Update
 
 void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright=NULL);
 void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
 
+
+// MessageBox
+
 INT LFMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type);
 void LFErrorBox(CWnd* pParentWnd, UINT Result);
 BOOL LFNagScreen(CWnd* pParentWnd=NULL);
+
+
+// Progress
+
+inline LRESULT LFSetTaskbarProgress(CWnd* pWnd, ULONGLONG ullCompleted, ULONGLONG ullTotal, TBPFLAG tbpFlags=TBPF_NORMAL)
+{
+	ASSERT(pWnd);
+
+	PROGRESSDATA pd = { ullCompleted, ullTotal, tbpFlags };
+
+	return pWnd->GetTopLevelParent()->SendMessage(LFGetApp()->m_SetProgressMsg, (WPARAM)pWnd->GetSafeHwnd(), (LPARAM)&pd);
+}
+
+inline LRESULT LFHideTaskbarProgress(CWnd* pWnd)
+{
+	ASSERT(pWnd);
+
+	return LFSetTaskbarProgress(pWnd, 0, 0, TBPF_NOPROGRESS);
+}

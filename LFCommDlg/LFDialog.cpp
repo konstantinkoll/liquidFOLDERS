@@ -417,7 +417,7 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	while (pChildWnd)
 	{
-		if (pChildWnd!=&m_wndWidgets)
+		if ((pChildWnd!=&m_wndWidgets) && (pChildWnd!=m_pSidebarWnd))
 		{
 			pChildWnd->GetWindowRect(rectWnd);
 			ScreenToClient(rectWnd);

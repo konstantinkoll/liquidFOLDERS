@@ -89,8 +89,6 @@ BOOL LFAddStoreDlg::InitDialog()
 
 	OnUpdateStores(NULL, NULL);
 
-		ShowResult(LFCancel, L"Test");
-
 	return TRUE;
 }
 

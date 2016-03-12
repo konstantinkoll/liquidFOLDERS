@@ -683,6 +683,8 @@ void CTimelineView::OnPaint()
 
 		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFF, 0xFF, 0xFF), Color(0xF4, 0xF5, 0xF8));
 		g.FillRectangle(&brush, Rect(0, 0, rect.Width(), WHITE));
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
 	}
 
 	// Items
@@ -697,8 +699,6 @@ void CTimelineView::OnPaint()
 
 		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
 		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
 	}
 	else
 	{

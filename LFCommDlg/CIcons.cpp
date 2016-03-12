@@ -156,7 +156,7 @@ void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Shadow)
 	}
 }
 
-HICON CIcons::ExtractIcon(INT nImage)
+HICON CIcons::ExtractIcon(INT nImage, BOOL Shadow)
 {
 	ASSERT(nImage<(INT)m_IconCount);
 
@@ -167,10 +167,10 @@ HICON CIcons::ExtractIcon(INT nImage)
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
 
-		HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx, m_Size.cy+1);
+		HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx, m_Size.cy+(Shadow ? 1 : 0));
 		HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-		Draw(dc, 0, 1, nImage, TRUE);
+		Draw(dc, 0, Shadow ? 1 : 0, nImage, Shadow);
 
 		dc.SelectObject(hOldBitmap);
 

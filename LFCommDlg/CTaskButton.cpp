@@ -91,7 +91,7 @@ void CTaskButton::OnPaint()
 	// Icon
 	if (p_ButtonIcons && (!m_HideIcon || m_Small))
 	{
-		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1), m_IconID);
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 1 : 0), m_IconID);
 		rectText.left += m_IconSize+BORDER;
 	}
 
@@ -115,7 +115,7 @@ void CTaskButton::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 	wcscpy_s(pTooltipData->Caption, 256, m_Caption);
 	wcscpy_s(pTooltipData->Hint, 4096, m_Hint);
-	pTooltipData->hIcon = p_TooltipIcons->ExtractIcon(m_IconID);
+	pTooltipData->hIcon = p_TooltipIcons->ExtractIcon(m_IconID, IsCtrlThemed());
 
 	*pResult = TRUE;
 }

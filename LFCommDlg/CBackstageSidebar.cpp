@@ -642,7 +642,7 @@ void CBackstageSidebar::OnMouseHover(UINT nFlags, CPoint point)
 				if (!Hint.IsEmpty() && !Append.IsEmpty())
 					Hint += _T("\n");
 
-				LFGetApp()->ShowTooltip(this, point, m_Items.m_Items[m_HotItem].Caption, Hint+Append, p_TooltipIcons->ExtractIcon(pSidebarItem->IconID));
+				LFGetApp()->ShowTooltip(this, point, m_Items.m_Items[m_HotItem].Caption, Hint+Append, p_TooltipIcons->ExtractIcon(pSidebarItem->IconID, IsCtrlThemed()));
 			}
 	}
 	else

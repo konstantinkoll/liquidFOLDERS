@@ -491,7 +491,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Clipboard
 	if (m_IsClipboard)
-		theApp.p_Clipboard = this;
+		theApp.p_ClipboardWnd = this;
 
 	return 0;
 }
@@ -500,8 +500,8 @@ void CMainWnd::OnDestroy()
 {
 	CBackstageWnd::OnDestroy();
 
-	if (theApp.p_Clipboard==this)
-		theApp.p_Clipboard = NULL;
+	if (theApp.p_ClipboardWnd==this)
+		theApp.p_ClipboardWnd = NULL;
 }
 
 void CMainWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)

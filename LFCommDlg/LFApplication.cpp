@@ -31,7 +31,7 @@ void PlayRegSound(CString Identifier)
 // LFApplication
 //
 
-#define GLOBALREGPATH       _T("SOFTWARE\\liquidFOLDERS\\")
+#define GLOBALREGPATH     _T("SOFTWARE\\liquidFOLDERS\\")
 
 LFApplication::LFApplication(GUID& AppID)
 {
@@ -58,7 +58,9 @@ LFApplication::LFApplication(GUID& AppID)
 
 	// Messages
 	p_MessageIDs = LFGetMessageIDs();
+	m_TaskbarButtonCreated = RegisterWindowMessage(_T("TaskbarButtonCreated"));
 	m_LicenseActivatedMsg = RegisterWindowMessage(_T("liquidFOLDERS.LicenseActivated"));
+	m_SetProgressMsg = RegisterWindowMessage(_T("liquidFOLDERS.SetProgress"));
 	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.NewWindow"));
 
 	// Themes
@@ -153,6 +155,26 @@ LFApplication::LFApplication(GUID& AppID)
 		m_KernelLibLoaded = FALSE;
 	}
 
+	// User
+	hModUser = LoadLibrary(_T("USER32.DLL"));
+	if (hModUser)
+	{
+		zChangeWindowMessageFilter = (PFNCHANGEWINDOWMESSAGEFILTER)GetProcAddress(hModKernel, "ChangeWindowMessageFilter");
+
+		m_UserLibLoaded = (zChangeWindowMessageFilter!=NULL);
+		if (!m_UserLibLoaded)
+		{
+			FreeLibrary(hModUser);
+			hModUser = NULL;
+		}
+	}
+	else
+	{
+		zChangeWindowMessageFilter = NULL;
+
+		m_UserLibLoaded = FALSE;
+	}
+
 	// System image lists
 	IImageList* il;
 	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&il)))
@@ -226,14 +248,11 @@ LFApplication::~LFApplication()
 	if (hModKernel)
 		FreeLibrary(hModKernel);
 
+	if (hModUser)
+		FreeLibrary(hModUser);
+
 	if (hFontLetterGothic)
 		RemoveFontMemResourceEx(hFontLetterGothic);
-
-	for (UINT a=0; a<=LFMaxRating; a++)
-	{
-		DeleteObject(hRatingBitmaps[a]);
-		DeleteObject(hPriorityBitmaps[a]);
-	}
 }
 
 
@@ -241,7 +260,7 @@ BOOL LFApplication::InitInstance()
 {
 	// GDI+ initalisieren
 	GdiplusStartupInput gdiplusStartupInput;
-	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+	GdiplusStartup(&m_GdiPlusToken, &gdiplusStartupInput, NULL);
 
 	// InitCommonControlsEx() ist für Windows XP erforderlich, wenn ein Anwendungsmanifest
 	// die Verwendung von ComCtl32.dll Version 6 oder höher zum Aktivieren
@@ -256,10 +275,10 @@ BOOL LFApplication::InitInstance()
 	if (!CWinAppEx::InitInstance())
 		return FALSE;
 
-	// OLE Initialisieren
+	// OLE initialisieren
 	ENSURE(AfxOleInit());
 
-	// Rating and Priority bitmaps
+	// Rating and priority bitmaps
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{
 		hRatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
@@ -334,13 +353,13 @@ INT LFApplication::ExitInstance()
 	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
 		delete m_ResourceCache.m_Items[a].pImage;
 
-	GdiplusShutdown(m_gdiplusToken);
+	GdiplusShutdown(m_GdiPlusToken);
 
-	if (hModThemes)
-		FreeLibrary(hModThemes);
-
-	if (hModDwm)
-		FreeLibrary(hModDwm);
+	for (UINT a=0; a<=LFMaxRating; a++)
+	{
+		DeleteObject(hRatingBitmaps[a]);
+		DeleteObject(hPriorityBitmaps[a]);
+	}
 
 	return CWinAppEx::ExitInstance();
 }

@@ -4,7 +4,6 @@
 
 #pragma once
 #include "LFDialog.h"
-#include "ITaskbarList3.h"
 
 
 // LFProgressDlg
@@ -24,14 +23,13 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();
 
-	afx_msg void OnDestroy();
+	afx_msg void OnOK();
 	afx_msg void OnCancel();
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	CString m_XofY_Singular;
 	CString m_XofY_Plural;
-	ITaskbarList3* m_pTaskbarList3;
 
 private:
 	BOOL m_Abort;

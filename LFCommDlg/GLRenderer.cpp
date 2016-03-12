@@ -270,6 +270,7 @@ GLuint GLRenderer::CreateGlobe(UINT cx) const
 	//
 	GLuint Index = glGenLists(1);
 	glNewList(Index, GL_COMPILE);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_TRIANGLES);
 
 	// Top
@@ -533,12 +534,12 @@ BOOL GLRenderer::CreateRenderContext(CWnd* pWnd, GLRenderContext& RenderContext)
 
 			glGenRenderbuffers(1, &RenderContext.rbColorMultisample);
 			glBindRenderbuffer(GL_RENDERBUFFER_EXT, RenderContext.rbColorMultisample);
-			glRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 4/*m_MaxSamples*/, GL_RGBA8, RenderContext.MaxWidth, RenderContext.MaxHeight);
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, m_MaxSamples, GL_RGBA8, RenderContext.MaxWidth, RenderContext.MaxHeight);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, RenderContext.rbColorMultisample);
 
 			glGenRenderbuffers(1, &RenderContext.rbDepthMultisample);
 			glBindRenderbuffer(GL_RENDERBUFFER_EXT, RenderContext.rbDepthMultisample);
-			glRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 4/*m_MaxSamples*/, GL_DEPTH_COMPONENT, RenderContext.MaxWidth, RenderContext.MaxHeight);
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, m_MaxSamples, GL_DEPTH_COMPONENT, RenderContext.MaxWidth, RenderContext.MaxHeight);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, RenderContext.rbDepthMultisample);
 		}
 
@@ -559,6 +560,8 @@ BOOL GLRenderer::CreateRenderContext(CWnd* pWnd, GLRenderContext& RenderContext)
 
 	glFogi(GL_FOG_MODE, GL_LINEAR);
 	glHint(GL_FOG_HINT, GL_NICEST);
+
+	glDepthFunc(GL_LEQUAL);
 
 	return TRUE;
 }

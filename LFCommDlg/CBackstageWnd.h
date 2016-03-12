@@ -6,15 +6,16 @@
 #include "CBackstageShadow.h"
 #include "CBackstageSidebar.h"
 #include "CBackstageWidgets.h"
+#include "ITaskbarList3.h"
 
 
 // CBackstageWnd
 //
 
-#define BACKSTAGEGRIPPER           4
 #define BACKSTAGERADIUS            11
-#define BACKSTAGEBORDER            9
+#define BACKSTAGEBORDER            11
 #define BACKSTAGECAPTIONMARGIN     4
+#define BACKSTAGEGRIPPER           4
 
 #define SWP_NOCLIENTSIZE     0x0800
 #define SWP_NOCLIENTMOVE     0x1000
@@ -30,7 +31,7 @@ public:
 	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
 	virtual void PostNcDestroy();
 
-	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), CSize sz=CSize(0, 0), BOOL ShowCaption=FALSE);
+	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), const CSize& Size=CSize(0, 0), BOOL ShowCaption=FALSE);
 	void SetSidebar(CBackstageSidebar* pSidebarWnd);
 	void GetCaptionButtonMargins(LPSIZE lpSize) const;
 	void HideSidebar();
@@ -53,7 +54,8 @@ protected:
 	afx_msg LRESULT OnNcCalcSize(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnNcPaint();
-	afx_msg BOOL OnNcActivate(BOOL bActivate);
+	afx_msg BOOL OnNcActivate(BOOL bActive);
+	afx_msg void OnEnable(BOOL bEnable);
 	afx_msg LRESULT OnGetTitleBarInfoEx(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -66,7 +68,9 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
+	afx_msg LRESULT OnTaskbarButtonCreated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLicenseActivated(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnSetProgress(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 
@@ -95,4 +99,5 @@ private:
 	INT m_RegionWidth;
 	INT m_RegionHeight;
 	BOOL m_IsDialog;
+	ITaskbarList3* m_pTaskbarList3;
 };

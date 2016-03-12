@@ -34,7 +34,7 @@ public:
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
 
-	CMainWnd* p_Clipboard;
+	CMainWnd* p_ClipboardWnd;
 	CString m_PathGoogleEarth;
 	CFormatCache m_FileFormats;
 	CThumbnailCache m_ThumbnailCache;

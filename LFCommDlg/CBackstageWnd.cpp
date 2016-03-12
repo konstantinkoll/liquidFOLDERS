@@ -28,6 +28,8 @@ BOOL IsBackstageControl(CWnd* pWnd)
 HBRUSH hBackgroundTop = NULL;
 HBRUSH hBackgroundBottom = NULL;
 
+const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
+
 CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	: CWnd()
 {
@@ -39,9 +41,10 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	m_ShowExpireCaption = m_ShowSidebar = m_SidebarAlwaysVisible = FALSE;
 	m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
 	hBackgroundBrush = NULL;
+	m_pTaskbarList3 = NULL;
 }
 
-BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, CSize sz, BOOL ShowCaption)
+BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, const CSize& Size, BOOL ShowCaption)
 {
 	m_PlacementPrefix = lpszPlacementPrefix;
 	m_ShowCaption = ShowCaption;
@@ -51,7 +54,7 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
 	rect.DeflateRect(32, 32);
 
-	if ((sz.cx<0) || (sz.cy<0))
+	if ((Size.cx<0) || (Size.cy<0))
 	{
 		rect.left = rect.right-rect.Width()/3;
 		rect.top = rect.bottom-rect.Height()/2;
@@ -59,13 +62,13 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 		rect.OffsetRect(16, 16);
 	}
 	else
-		if ((sz.cx>0) && (sz.cy>0))
+		if ((Size.cx>0) && (Size.cy>0))
 		{
-			rect.left = (rect.left+rect.right)/2 - sz.cx;
-			rect.right = rect.left + sz.cx;
+			rect.left = (rect.left+rect.right)/2-Size.cx;
+			rect.right = rect.left+Size.cx;
 
-			rect.top = (rect.top+rect.bottom)/2 - sz.cy;
-			rect.bottom = rect.top + sz.cy;
+			rect.top = (rect.top+rect.bottom)/2-Size.cy;
+			rect.bottom = rect.top+Size.cy;
 		}
 
 	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
@@ -78,16 +81,15 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 
 	if (WindowPlacement.length==sizeof(WindowPlacement))
 	{
-		if ((sz.cx>0) && (sz.cy>0))
+		WindowPlacement.showCmd = SW_HIDE;
+
+		if ((Size.cx>0) && (Size.cy>0))
 		{
-			WindowPlacement.rcNormalPosition.right = WindowPlacement.rcNormalPosition.left + sz.cx;
-			WindowPlacement.rcNormalPosition.bottom = WindowPlacement.rcNormalPosition.top + sz.cy;
+			WindowPlacement.rcNormalPosition.right = WindowPlacement.rcNormalPosition.left+Size.cx;
+			WindowPlacement.rcNormalPosition.bottom = WindowPlacement.rcNormalPosition.top+Size.cy;
 		}
 
 		SetWindowPlacement(&WindowPlacement);
-
-		if (IsIconic())
-			ShowWindow(SW_RESTORE);
 	}
 
 	// Layout
@@ -536,7 +538,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		CSize Size;
 		GetCaptionButtonMargins(&Size);
 
-		CRect rectText(BACKSTAGERADIUS, -1, rect.Width()-Size.cx-BACKSTAGERADIUS, CaptionHeight-1);
+		CRect rectText(BACKSTAGEBORDER, -1, rect.Width()-Size.cx-BACKSTAGEBORDER, CaptionHeight-1);
 
 		if (Themed)
 		{
@@ -680,6 +682,7 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
 	ON_WM_NCACTIVATE()
+	ON_WM_ENABLE()
 	ON_MESSAGE(WM_GETTITLEBARINFOEX, OnGetTitleBarInfoEx)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -693,7 +696,9 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
 	ON_WM_INITMENUPOPUP()
+	ON_REGISTERED_MESSAGE(LFGetApp()->m_TaskbarButtonCreated, OnTaskbarButtonCreated)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_LicenseActivatedMsg, OnLicenseActivated)
+	ON_REGISTERED_MESSAGE(LFGetApp()->m_SetProgressMsg, OnSetProgress)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_WakeupMsg, OnWakeup)
 	ON_WM_COPYDATA()
 
@@ -740,6 +745,10 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Widets
 	m_wndWidgets.Create(this, (UINT)-1);
 
+	// Message filter
+	if (LFGetApp()->zChangeWindowMessageFilter)
+		LFGetApp()->zChangeWindowMessageFilter(GetSafeHwnd(), LFGetApp()->m_TaskbarButtonCreated, MSGFLT_ADD);
+
 	// Finish
 	OnCompositionChanged();
 	UpdateRegion();
@@ -764,6 +773,9 @@ void CBackstageWnd::OnClose()
 void CBackstageWnd::OnDestroy()
 {
 	LFGetApp()->HideTooltip();
+
+	if (m_pTaskbarList3)
+		m_pTaskbarList3->Release();
 
 	DeleteObject(hBackgroundBrush);
 
@@ -880,15 +892,17 @@ void CBackstageWnd::OnNcPaint()
 	}
 }
 
-BOOL CBackstageWnd::OnNcActivate(BOOL /*bActivate*/)
+BOOL CBackstageWnd::OnNcActivate(BOOL /*bActive*/)
 {
-	m_wndWidgets.SetEnabled(IsWindowEnabled());
-
-	InvalidateCaption();
-
 	return TRUE;
 }
 
+void CBackstageWnd::OnEnable(BOOL bEnable)
+{
+	m_wndWidgets.SetEnabled(bEnable);
+
+	InvalidateCaption();
+}
 
 LRESULT CBackstageWnd::OnGetTitleBarInfoEx(WPARAM /*wParam*/, LPARAM lParam)
 {
@@ -1104,6 +1118,29 @@ void CBackstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*b
 	}
 }
 
+LRESULT CBackstageWnd::OnTaskbarButtonCreated(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (LFGetApp()->OSVersion>=OS_Seven)
+	{
+		if (m_pTaskbarList3)
+		{
+			m_pTaskbarList3->Release();
+			m_pTaskbarList3 = NULL;
+		}
+
+		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void**)&m_pTaskbarList3);
+
+		if (m_pTaskbarList3)
+			if (FAILED(m_pTaskbarList3->HrInit()))
+			{
+				m_pTaskbarList3->Release();
+				m_pTaskbarList3 = NULL;
+			}
+	}
+
+	return NULL;
+}
+
 LRESULT CBackstageWnd::OnLicenseActivated(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	m_ShowExpireCaption = LFIsSharewareExpired();
@@ -1118,6 +1155,26 @@ LRESULT CBackstageWnd::OnLicenseActivated(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	return NULL;
 }
 
+LRESULT CBackstageWnd::OnSetProgress(WPARAM /*wParam*/, LPARAM lParam)
+{
+	PROGRESSDATA* pProgress = (PROGRESSDATA*)lParam;
+
+	if (m_pTaskbarList3)
+		if (pProgress)
+		{
+			m_pTaskbarList3->SetProgressState(GetSafeHwnd(), pProgress->tbpFlags);
+
+			if (pProgress->tbpFlags>=TBPF_NORMAL)
+				m_pTaskbarList3->SetProgressValue(GetSafeHwnd(), pProgress->ullCompleted, pProgress->ullTotal);
+		}
+		else
+		{
+			m_pTaskbarList3->SetProgressState(GetSafeHwnd(), TBPF_NOPROGRESS);
+		}
+
+	return NULL;
+}
+
 LRESULT CBackstageWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	return 24878;
@@ -1128,11 +1185,11 @@ BOOL CBackstageWnd::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
 		return FALSE;
 
-	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
-	if (cds.AppID!=LFGetApp()->m_AppID)
+	CDS_Wakeup* pCDS = (CDS_Wakeup*)pCopyDataStruct->lpData;
+	if (pCDS->AppID!=LFGetApp()->m_AppID)
 		return FALSE;
 
-	LFGetApp()->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
+	LFGetApp()->OpenCommandLine(pCDS->Command[0] ? pCDS->Command : NULL);
 
 	return TRUE;
 }

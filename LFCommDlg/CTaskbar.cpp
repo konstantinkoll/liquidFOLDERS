@@ -52,7 +52,7 @@ BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
 
 UINT CTaskbar::GetPreferredHeight() const
 {
-	return 4*BORDER+max(m_IconSize-2, LFGetApp()->m_DefaultFont.GetFontHeight())+(IsCtrlThemed() ? 4 : 3);
+	return 4*BORDER+max(m_IconSize, LFGetApp()->m_DefaultFont.GetFontHeight()-2)+(IsCtrlThemed() ? 3 : 2);
 }
 
 CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL ForceSmall)

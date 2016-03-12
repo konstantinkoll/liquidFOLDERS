@@ -30,11 +30,13 @@ typedef BOOL (__stdcall* PFNISTHEMEACTIVE)();
 typedef BOOL (__stdcall* PFNISAPPTHEMED)();
 
 typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
-typedef HRESULT(__stdcall* PFNDWMSETWINDOWATTRIBUTE)(HWND hwnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute);
+typedef HRESULT(__stdcall* PFNDWMSETWINDOWATTRIBUTE)(HWND hWnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute);
 
 typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR AppID);
 
 typedef HRESULT(__stdcall* PFNREGISTERAPPLICATIONRESTART)(PCWSTR CommandLine, DWORD Flags);
+
+typedef HRESULT(__stdcall* PFNCHANGEWINDOWMESSAGEFILTER)(HWND hWnd, UINT message, DWORD action);
 
 struct CDS_Wakeup
 {
@@ -60,66 +62,6 @@ class LFApplication : public CWinAppEx
 public:
 	LFApplication(GUID& AppID);
 	virtual ~LFApplication();
-
-	const LFMessageIDs* p_MessageIDs;
-	WCHAR m_AttrCategoryNames[LFAttrCategoryCount][256];
-	WCHAR m_SourceNames[LFSourceCount][2][256];
-	LFAttributeDescriptor m_Attributes[LFAttributeCount];
-	LFContextDescriptor m_Contexts[LFContextCount];
-	LFItemCategoryDescriptor m_ItemCategories[LFItemCategoryCount];
-	CImageList m_SystemImageListSmall;
-	CImageList m_SystemImageListLarge;
-	CImageList m_SystemImageListExtraLarge;
-	CImageList m_SystemImageListJumbo;
-	CImageList m_CoreImageListSmall;
-	CImageList m_CoreImageListLarge;
-	CImageList m_CoreImageListExtraLarge;
-	CImageList m_CoreImageListHuge;
-	CImageList m_CoreImageListJumbo;
-	HBITMAP hRatingBitmaps[LFMaxRating+1];
-	HBITMAP hPriorityBitmaps[LFMaxRating+1];
-	LFFont m_DefaultFont;
-	LFFont m_ItalicFont;
-	LFFont m_SmallFont;
-	LFFont m_SmallBoldFont;
-	LFFont m_LargeFont;
-	LFFont m_CaptionFont;
-	LFFont m_UACFont;
-	LFFont m_DialogFont;
-	LFFont m_DialogBoldFont;
-	LFFont m_DialogItalicFont;
-	UINT OSVersion;
-	UINT m_LicenseActivatedMsg;
-	UINT m_WakeupMsg;
-	GUID m_AppID;
-	CLIPFORMAT CF_FILEDESCRIPTOR;
-	CLIPFORMAT CF_FILECONTENTS;
-	CLIPFORMAT CF_HLIQUID;
-	CList<CWnd*> m_pMainFrames;
-	LFUpdateDlg* m_pUpdateNotification;
-	CIcons m_LargeAttributeIcons;
-	CIcons m_SmallAttributeIcons;
-	GLModelQuality m_ModelQuality;
-	GLTextureQuality m_TextureQuality;
-	BOOL m_TextureCompress;
-
-	PFNSETWINDOWTHEME zSetWindowTheme;
-	PFNOPENTHEMEDATA zOpenThemeData;
-	PFNCLOSETHEMEDATA zCloseThemeData;
-	PFNDRAWTHEMEBACKGROUND zDrawThemeBackground;
-	PFNGETTHEMEPARTSIZE zGetThemePartSize;
-	PFNISAPPTHEMED zIsAppThemed;
-	BOOL m_ThemeLibLoaded;
-
-	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
-	PFNDWMSETWINDOWATTRIBUTE zDwmSetWindowAttribute;
-	BOOL m_DwmLibLoaded;
-
-	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
-	BOOL m_ShellLibLoaded;
-
-	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
-	BOOL m_KernelLibLoaded;
 
 	virtual BOOL InitInstance();
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
@@ -155,6 +97,71 @@ public:
 	BOOL IsUpdateCheckDue() const;
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
 
+	const LFMessageIDs* p_MessageIDs;
+	WCHAR m_AttrCategoryNames[LFAttrCategoryCount][256];
+	WCHAR m_SourceNames[LFSourceCount][2][256];
+	LFAttributeDescriptor m_Attributes[LFAttributeCount];
+	LFContextDescriptor m_Contexts[LFContextCount];
+	LFItemCategoryDescriptor m_ItemCategories[LFItemCategoryCount];
+	CImageList m_SystemImageListSmall;
+	CImageList m_SystemImageListLarge;
+	CImageList m_SystemImageListExtraLarge;
+	CImageList m_SystemImageListJumbo;
+	CImageList m_CoreImageListSmall;
+	CImageList m_CoreImageListLarge;
+	CImageList m_CoreImageListExtraLarge;
+	CImageList m_CoreImageListHuge;
+	CImageList m_CoreImageListJumbo;
+	HBITMAP hRatingBitmaps[LFMaxRating+1];
+	HBITMAP hPriorityBitmaps[LFMaxRating+1];
+	LFFont m_DefaultFont;
+	LFFont m_ItalicFont;
+	LFFont m_SmallFont;
+	LFFont m_SmallBoldFont;
+	LFFont m_LargeFont;
+	LFFont m_CaptionFont;
+	LFFont m_UACFont;
+	LFFont m_DialogFont;
+	LFFont m_DialogBoldFont;
+	LFFont m_DialogItalicFont;
+	UINT OSVersion;
+	UINT m_TaskbarButtonCreated;
+	UINT m_LicenseActivatedMsg;
+	UINT m_SetProgressMsg;
+	UINT m_WakeupMsg;
+	GUID m_AppID;
+	CLIPFORMAT CF_FILEDESCRIPTOR;
+	CLIPFORMAT CF_FILECONTENTS;
+	CLIPFORMAT CF_HLIQUID;
+	CList<CWnd*> m_pMainFrames;
+	LFUpdateDlg* m_pUpdateNotification;
+	CIcons m_LargeAttributeIcons;
+	CIcons m_SmallAttributeIcons;
+	GLModelQuality m_ModelQuality;
+	GLTextureQuality m_TextureQuality;
+	BOOL m_TextureCompress;
+
+	PFNSETWINDOWTHEME zSetWindowTheme;
+	PFNOPENTHEMEDATA zOpenThemeData;
+	PFNCLOSETHEMEDATA zCloseThemeData;
+	PFNDRAWTHEMEBACKGROUND zDrawThemeBackground;
+	PFNGETTHEMEPARTSIZE zGetThemePartSize;
+	PFNISAPPTHEMED zIsAppThemed;
+	BOOL m_ThemeLibLoaded;
+
+	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
+	PFNDWMSETWINDOWATTRIBUTE zDwmSetWindowAttribute;
+	BOOL m_DwmLibLoaded;
+
+	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
+	BOOL m_ShellLibLoaded;
+
+	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
+	BOOL m_KernelLibLoaded;
+
+	PFNCHANGEWINDOWMESSAGEFILTER zChangeWindowMessageFilter;
+	BOOL m_UserLibLoaded;
+
 	afx_msg void OnBackstagePurchase();
 protected:
 	afx_msg void OnBackstageEnterLicenseKey();
@@ -167,11 +174,12 @@ protected:
 	LFDynArray<ResourceCacheItem, 16, 4> m_ResourceCache;
 
 private:
-	ULONG_PTR m_gdiplusToken;
+	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;
 	HMODULE hModShell;
 	HMODULE hModKernel;
+	HMODULE hModUser;
 	HANDLE hFontLetterGothic;
 };
 
