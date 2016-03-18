@@ -7,30 +7,6 @@
 #include <afxpriv.h>
 
 
-BOOL CompareClassName(HWND hWnd, LPCTSTR lpszClassName)
-{
-	ASSERT(IsWindow(hWnd));
-
-	TCHAR szTemp[32];
-	GetClassName(hWnd, szTemp, 32);
-
-	return CompareStringW(MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT), NORM_IGNORECASE, szTemp, -1, lpszClassName, -1)==CSTR_EQUAL;
-}
-
-BOOL IsPushbutton(CWnd* pWnd)
-{
-	if (pWnd->SendMessage(WM_GETDLGCODE) & (DLGC_BUTTON | DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
-	{
-		DWORD dwStyle = pWnd->GetStyle() & BS_TYPEMASK;
-
-		if ((dwStyle==BS_PUSHBUTTON) || (dwStyle==BS_DEFPUSHBUTTON) || (dwStyle==BS_OWNERDRAW))
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-
 // LFDialog
 //
 
@@ -269,7 +245,7 @@ void LFDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 	}
 }
 
-BOOL LFDialog::InitSidebar()
+BOOL LFDialog::InitSidebar(LPSIZE /*pszTabArea*/)
 {
 	return TRUE;
 }
@@ -365,6 +341,34 @@ void LFDialog::EndDialog(INT nResult)
 	::EndDialog(m_hWnd, nResult);
 }
 
+BOOL LFDialog::IsPushbutton(CWnd* pWnd)
+{
+	if (pWnd->SendMessage(WM_GETDLGCODE) & (DLGC_BUTTON | DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
+	{
+		DWORD dwStyle = pWnd->GetStyle() & BS_TYPEMASK;
+
+		if ((dwStyle==BS_PUSHBUTTON) || (dwStyle==BS_DEFPUSHBUTTON) || (dwStyle==BS_OWNERDRAW))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+BOOL LFDialog::CompareClassName(LPCTSTR lpszClassName1, LPCTSTR lpszClassName2)
+{
+	return CompareStringW(MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT), NORM_IGNORECASE, lpszClassName1, -1, lpszClassName2, -1)==CSTR_EQUAL;
+}
+
+BOOL LFDialog::CompareClassName(HWND hWnd, LPCTSTR lpszClassName)
+{
+	ASSERT(IsWindow(hWnd));
+
+	TCHAR szTemp[32];
+	GetClassName(hWnd, szTemp, 32);
+
+	return CompareClassName(szTemp, lpszClassName);
+}
+
 
 BEGIN_MESSAGE_MAP(LFDialog, CBackstageWnd)
 	ON_MESSAGE(WM_INITDIALOG, OnInitDialog)
@@ -383,16 +387,17 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		return FALSE;
 	}
 
-	// Transfer data into the dialog from member variables
-	if (!UpdateData(FALSE))
+	// Sidebar
+	CSize szTabArea(0, 0);
+	if (!InitSidebar(&szTabArea))
 	{
 		EndDialog(-1);
 
 		return FALSE;
 	}
 
-	// Sidebar
-	if (!InitSidebar())
+	// Transfer data into the dialog from member variables
+	if (!UpdateData(FALSE))
 	{
 		EndDialog(-1);
 
@@ -442,27 +447,27 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	}
 
 	// Adjust dialog size for new non-client area
-	BOOL ThickFrame = GetStyle() & WS_SIZEBOX;
-	INT DiffX = -2*GetSystemMetrics(ThickFrame ? SM_CXFRAME : SM_CXFIXEDFRAME)+SidebarWidth;
-	INT DiffY = -2*GetSystemMetrics(ThickFrame ? SM_CYFRAME : SM_CYFIXEDFRAME)-GetSystemMetrics(SM_CYCAPTION)+CaptionHeight;
-
-	if (!IsCtrlThemed())
-	{
-		// Non-Client area of 1px height/width
-		DiffX += 2;
-		DiffY += 2;
-	}
+	const INT BorderSize = IsCtrlThemed() ? 0 : 2;
+	const BOOL ThickFrame = GetStyle() & WS_SIZEBOX;
+	const INT DiffX = -2*GetSystemMetrics(ThickFrame ? SM_CXFRAME : SM_CXFIXEDFRAME)+SidebarWidth;
+	const INT DiffY = -2*GetSystemMetrics(ThickFrame ? SM_CYFRAME : SM_CYFIXEDFRAME)-GetSystemMetrics(SM_CYCAPTION)+CaptionHeight;
 
 	GetWindowRect(rectWnd);
-	SetWindowPos(NULL, 0, 0, rectWnd.Width()+DiffX, rectWnd.Height()+DiffY, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+	SetWindowPos(NULL, 0, 0, rectWnd.Width()+DiffX+BorderSize, rectWnd.Height()+DiffY+BorderSize, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
 	// Bottom area
+	AddBottomRightControl(IDOK);
+	AddBottomRightControl(IDCANCEL);
+
+	if (szTabArea.cx || szTabArea.cy)
+	{
+		GetWindowRect(rectWnd);
+		SetWindowPos(NULL, 0, 0, SidebarWidth+szTabArea.cx+BorderSize, rectWnd.Height()+szTabArea.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+	}
+
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 	m_LastSize = CPoint(rectLayout.Width(), rectLayout.Height());
-
-	AddBottomRightControl(IDOK);
-	AddBottomRightControl(IDCANCEL);
 
 	// Call derived virtual function
 	BOOL bSetFocus = InitDialog();

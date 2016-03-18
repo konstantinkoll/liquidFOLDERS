@@ -903,15 +903,15 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 		if (strcmp(wp.StoreID, "CHOOSE")==0)
 		{
 			LFChooseStoreDlg dlg(this);
-			if (dlg.DoModal()!=IDOK)
-				return NULL;
+			if (dlg.DoModal()==IDOK)
+			{
+				strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
 
-			strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
+				LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
+
+				ShowNotification(wp.pTransactionList->m_LastError);
+			}
 		}
-
-		LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
-
-		ShowNotification(wp.pTransactionList->m_LastError);
 
 		LFFreeTransactionList(wp.pTransactionList);
 	}

@@ -52,7 +52,7 @@ BOOL CBackstageSidebar::Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts)
 	// Create
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_GROUP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts)
@@ -109,7 +109,7 @@ BOOL CBackstageSidebar::PreTranslateMessage(MSG* pMsg)
 	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
-void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color)
+void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color)
 {
 	// Hinzufügen
 	SidebarItem Item;
@@ -129,9 +129,6 @@ void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR
 			for (WCHAR* pDst=Item.Caption; *Caption; )
 				*(pDst++) = (WCHAR)towupper(*(Caption++));
 		}
-
-	if (Hint)
-		wcscpy_s(Item.Hint, 256, Hint);
 
 	// Metrik
 	CSize Size;
@@ -163,9 +160,9 @@ void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR
 	m_Items.AddItem(Item);
 }
 
-void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color)
+void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color)
 {
-	AddItem(TRUE, CmdID, IconID, Caption, Hint, Color);
+	AddItem(TRUE, CmdID, IconID, Caption, Color);
 }
 
 void CBackstageSidebar::AddCaption(LPCWSTR Caption)
@@ -181,7 +178,7 @@ void CBackstageSidebar::AddCaption(LPCWSTR Caption)
 			m_Items.m_ItemCount--;
 		}
 
-	AddItem(FALSE, 0, -1, Caption, L"");
+	AddItem(FALSE, 0, -1, Caption);
 }
 
 void CBackstageSidebar::AddCaption(UINT ResID)
@@ -284,11 +281,6 @@ void CBackstageSidebar::AdjustLayout()
 	Invalidate();
 }
 
-CString CBackstageSidebar::AppendTooltip(UINT /*CmdID*/)
-{
-	return _T("");
-}
-
 
 BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_NCHITTEST()
@@ -300,6 +292,7 @@ BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_GETDLGCODE()
 	ON_WM_KEYDOWN()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_CONTEXTMENU()
@@ -420,15 +413,18 @@ void CBackstageSidebar::OnPaint()
 
 			rectItem.left += BORDERLEFT;
 
-			// Icon
 			if (m_Items.m_Items[a].Selectable)
 			{
 				rectItem.DeflateRect(BORDER, BORDER);
 
-				if (m_Items.m_Items[a].IconID!=-1)
-					p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && !Highlight);
+				// Icon
+				if (m_IconSize)
+				{
+					if (m_Items.m_Items[a].IconID!=-1)
+						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && !Highlight);
 
-				rectItem.left += m_IconSize+BORDER;
+					rectItem.left += m_IconSize+BORDER;
+				}
 
 				// Count
 				if (m_ShowCounts && (m_Items.m_Items[a].Count))
@@ -578,6 +574,8 @@ void CBackstageSidebar::OnPaint()
 void CBackstageSidebar::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFrontstageWnd::OnSize(nType, cx, cy);
+
+	OnIdleUpdateCmdUI();
 	AdjustLayout();
 }
 
@@ -637,12 +635,16 @@ void CBackstageSidebar::OnMouseHover(UINT nFlags, CPoint point)
 			{
 				const SidebarItem* pSidebarItem = &m_Items.m_Items[m_HotItem];
 
-				CString Hint(pSidebarItem->Hint);
-				CString Append = AppendTooltip(pSidebarItem->CmdID);
-				if (!Hint.IsEmpty() && !Append.IsEmpty())
-					Hint += _T("\n");
+				NM_TOOLTIPDATA tag;
+				ZeroMemory(&tag, sizeof(tag));
 
-				LFGetApp()->ShowTooltip(this, point, m_Items.m_Items[m_HotItem].Caption, Hint+Append, p_TooltipIcons->ExtractIcon(pSidebarItem->IconID, IsCtrlThemed()));
+				tag.hdr.code = REQUEST_TOOLTIP_DATA;
+				tag.hdr.hwndFrom = m_hWnd;
+				tag.hdr.idFrom = GetDlgCtrlID();
+				tag.Item = pSidebarItem->CmdID;
+
+				if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
+					LFGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : pSidebarItem->Caption, tag.Hint, tag.hIcon ? tag.hIcon : (pSidebarItem->IconID!=-1) && (p_TooltipIcons!=NULL) ? p_TooltipIcons->ExtractIcon(pSidebarItem->IconID, IsCtrlThemed()) : NULL, tag.hBitmap);
 			}
 	}
 	else
@@ -675,6 +677,11 @@ void CBackstageSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		if (m_Items.m_Items[Item].Enabled)
 			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Item].CmdID);
 	}
+}
+
+UINT CBackstageSidebar::OnGetDlgCode()
+{
+	return DLGC_WANTARROWS;
 }
 
 void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

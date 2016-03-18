@@ -27,66 +27,24 @@ BOOL CHeaderButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, c
 	return CHoverButton::Create(Caption, pParentWnd, nID);
 }
 
-void CHeaderButton::SetValue(LPCWSTR Value, BOOL ShowDropdown, BOOL Repaint)
+void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
-	m_Value = Value;
-	m_ShowDropdown = ShowDropdown;
-
-	if (Repaint)
-		GetParent()->SendMessage(WM_ADJUSTLAYOUT);
-}
-
-void CHeaderButton::GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth)
-{
-	*lpSize = LFGetApp()->m_DefaultFont.GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
-
-	lpSize->cx += m_ShowDropdown ? 3*MARGIN+14 : 2*MARGIN+5;
-	lpSize->cy += 2*MARGIN;
-
-	CString Caption(m_Caption);
-	if (!Caption.IsEmpty())
-		Caption += _T(":");
-
-	m_CaptionWidth = CaptionWidth = LFGetApp()->m_DefaultFont.GetTextExtent(Caption).cx;
-}
-
-void CHeaderButton::GetCaption(CString& Caption, INT& CaptionWidth) const
-{
-	Caption = m_Caption;
-	CaptionWidth = m_CaptionWidth;
-
-	if (!Caption.IsEmpty())
-		Caption += _T(":");
-}
-
-
-BEGIN_MESSAGE_MAP(CHeaderButton, CHoverButton)
-	ON_WM_PAINT()
-	ON_WM_CONTEXTMENU()
-	ON_NOTIFY_REFLECT(REQUEST_TOOLTIP_DATA, OnRequestTooltipData)
-END_MESSAGE_MAP()
-
-void CHeaderButton::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
+	CRect rect(lpDrawItemStruct->rcItem);
 
 	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
+	dc.Attach(CreateCompatibleDC(lpDrawItemStruct->hDC));
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	MemBitmap.Attach(CreateCompatibleBitmap(lpDrawItemStruct->hDC, rect.Width(), rect.Height()));
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
-	const BOOL Focused = (GetState() & 8);
-	const BOOL Selected = (GetState() & 4);
+	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
+	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
 
 	// Background
-	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
 
 	// Button
 	BOOL Themed = IsCtrlThemed();
@@ -127,10 +85,50 @@ void CHeaderButton::OnPaint()
 		dc.SelectObject(pOldPen);
 	}
 
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);
 
 	dc.SelectObject(pOldBitmap);
+	DeleteDC(dc.Detach());
+	DeleteObject(MemBitmap.Detach());
 }
+
+void CHeaderButton::SetValue(LPCWSTR Value, BOOL ShowDropdown, BOOL Repaint)
+{
+	m_Value = Value;
+	m_ShowDropdown = ShowDropdown;
+
+	if (Repaint)
+		GetParent()->SendMessage(WM_ADJUSTLAYOUT);
+}
+
+void CHeaderButton::GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth)
+{
+	*lpSize = LFGetApp()->m_DefaultFont.GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
+
+	lpSize->cx += m_ShowDropdown ? 3*MARGIN+14 : 2*MARGIN+5;
+	lpSize->cy += 2*MARGIN;
+
+	CString Caption(m_Caption);
+	if (!Caption.IsEmpty())
+		Caption += _T(":");
+
+	m_CaptionWidth = CaptionWidth = LFGetApp()->m_DefaultFont.GetTextExtent(Caption).cx;
+}
+
+void CHeaderButton::GetCaption(CString& Caption, INT& CaptionWidth) const
+{
+	Caption = m_Caption;
+	CaptionWidth = m_CaptionWidth;
+
+	if (!Caption.IsEmpty())
+		Caption += _T(":");
+}
+
+
+BEGIN_MESSAGE_MAP(CHeaderButton, CHoverButton)
+	ON_WM_CONTEXTMENU()
+	ON_NOTIFY_REFLECT(REQUEST_TOOLTIP_DATA, OnRequestTooltipData)
+END_MESSAGE_MAP()
 
 void CHeaderButton::OnContextMenu(CWnd* pWnd, CPoint pos)
 {

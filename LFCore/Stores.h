@@ -19,6 +19,7 @@ LFStoreDescriptor* FindStore(const CHAR* pStoreID, HMUTEX* phMutex=NULL);
 LFStoreDescriptor* FindStore(const GUID UniqueID, HMUTEX* phMutex=NULL);
 LFStoreDescriptor* FindStore(const WCHAR* pDatPath, HMUTEX* phMutex=NULL);
 
+UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor);
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime=TRUE, BOOL MakeDefault=FALSE);
 
 UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);

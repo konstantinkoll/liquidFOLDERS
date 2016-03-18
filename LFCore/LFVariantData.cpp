@@ -1002,7 +1002,7 @@ LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, con
 LFCORE_API BOOL LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	assert(pItemDescriptor);
-	assert(Value.Attr<LFAttributeCount);
+	assert(Attr<LFAttributeCount);
 
 	return IsNullValue(AttrTypes[Attr], pItemDescriptor->AttributeValues[Attr]);
 }

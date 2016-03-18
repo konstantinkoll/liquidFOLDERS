@@ -78,6 +78,8 @@ UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
 
 	GetSystemTimeAsFileTime(&p_StoreDescriptor->SynchronizeTime);
 
+	Result = SaveStoreSettings(p_StoreDescriptor);
+
 Finish:
 	LFFreeFileImportList(m_pFileImportList);
 	m_pFileImportList = NULL;

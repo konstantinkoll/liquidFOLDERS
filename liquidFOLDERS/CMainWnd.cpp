@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "liquidFOLDERS.h"
-#include "CContextSidebar.h"
 
 
 LFFilter* GetRootFilter(CHAR* pRootStore=NULL)
@@ -95,16 +94,24 @@ void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor)
 // CMainWnd
 //
 
+CIcons CMainWnd::m_LargeIcons;
+CIcons CMainWnd::m_SmallIcons;
+
 CMainWnd::CMainWnd()
 	: CBackstageWnd()
 {
 	m_pActiveFilter = NULL;
-	m_pRawFiles = m_pCookedFiles = NULL;
 	m_pBreadcrumbBack = m_pBreadcrumbForward = NULL;
+	m_pRawFiles = m_pCookedFiles = NULL;
+	m_pStatistics = NULL;
+	m_StatisticsID[0] = '\0';
 }
 
 CMainWnd::~CMainWnd()
 {
+	DeleteBreadcrumbs(&m_pBreadcrumbBack);
+	DeleteBreadcrumbs(&m_pBreadcrumbForward);
+
 	if (m_pActiveFilter)
 		LFFreeFilter(m_pActiveFilter);
 
@@ -113,8 +120,7 @@ CMainWnd::~CMainWnd()
 
 	LFFreeSearchResult(m_pRawFiles);
 
-	DeleteBreadcrumbs(&m_pBreadcrumbBack);
-	DeleteBreadcrumbs(&m_pBreadcrumbForward);
+	delete m_pStatistics;
 }
 
 BOOL CMainWnd::Create(BOOL IsClipboard)
@@ -426,6 +432,8 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StatisticsChanged, OnStatisticsChanged)
+
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, 4, OnRequestTooltipData)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -449,7 +457,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			return -1;
 
 		// Sidebar
-		if (m_wndSidebar.Create(this, 4))
+		if (m_wndSidebar.Create(this, m_LargeIcons, IDB_CONTEXTS_32, m_SmallIcons, IDB_CONTEXTS_16, 4, TRUE))
 		{
 			for (UINT a=0; a<=LFLastQueryContext; a++)
 			{
@@ -472,7 +480,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					break;
 				}
 
-				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
+				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
 			}
 
 			SetSidebar(&m_wndSidebar);
@@ -669,7 +677,7 @@ void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)
 
 	UINT Context = pCmdUI->m_nID-IDM_NAV_SWITCHCONTEXT;
 	if ((Context!=LFContextAllFiles) && (Context!=LFContextFilters))
-		b &= m_wndSidebar.GetFileCount(Context)>0;
+		b &= m_pStatistics ? m_pStatistics->FileCount[Context]>0 : FALSE;
 
 	pCmdUI->Enable(b);
 }
@@ -905,8 +913,13 @@ void CMainWnd::OnUpdateSortOptions()
 
 void CMainWnd::OnUpdateCounts()
 {
+	delete m_pStatistics;
+
+	m_pStatistics = LFQueryStatistics(m_wndMainView.GetStoreID());
+
 	if (m_pSidebarWnd)
-		m_pSidebarWnd->PostMessage(WM_UPDATECOUNTS);
+		for (UINT a=0; a<=LFLastQueryContext; a++)
+			m_pSidebarWnd->SetCount(IDM_NAV_SWITCHCONTEXT+a, m_pStatistics->FileCount[a]);
 }
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
@@ -938,7 +951,17 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 				if (m_pActiveFilter->Options.IsSubfolder && (m_pBreadcrumbBack!=NULL))
 					Context = m_pBreadcrumbBack->pFilter->ResultContext;
 
-		((CContextSidebar*)m_pSidebarWnd)->SetSelection(IDM_NAV_SWITCHCONTEXT+Context, m_wndMainView.GetStoreID());
+		if (m_pSidebarWnd)
+		{
+			if ((strcmp(m_StatisticsID, m_wndMainView.GetStoreID())!=0) || !m_pStatistics)
+			{
+				strcpy_s(m_StatisticsID, LFKeySize, m_wndMainView.GetStoreID());
+
+				OnUpdateCounts();
+			}
+
+			m_pSidebarWnd->SetSelection(IDM_NAV_SWITCHCONTEXT+Context);
+		}
 	}
 
 	if ((pVictim) && (pVictim!=m_pRawFiles))
@@ -1004,4 +1027,26 @@ LRESULT CMainWnd::OnStatisticsChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	PostMessage(WM_UPDATECOUNTS);
 
 	return NULL;
+}
+
+
+void CMainWnd::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
+
+	const UINT Context = pTooltipData->Item-IDM_NAV_SWITCHCONTEXT;
+
+	wcscpy_s(pTooltipData->Hint, 4096, theApp.m_Contexts[Context].Comment);
+
+	if (m_pStatistics && (Context<=LFLastQueryContext))
+		if (m_pStatistics->FileCount[Context])
+		{
+			if (pTooltipData->Hint[0])
+				wcscat_s(pTooltipData->Hint, 4096, L"\n");
+
+			SIZE_T Length = wcslen(pTooltipData->Hint);
+			LFCombineFileCountSize(m_pStatistics->FileCount[Context], m_pStatistics->FileSize[Context], &pTooltipData->Hint[Length], 4096-Length);
+		}
+
+	*pResult = TRUE;
 }

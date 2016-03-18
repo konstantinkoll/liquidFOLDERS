@@ -288,6 +288,7 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFrontstageWnd::OnSize(nType, cx, cy);
+
 	OnIdleUpdateCmdUI();
 	AdjustLayout();
 }

@@ -25,6 +25,60 @@ BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, con
 	return CHoverButton::Create(Caption, pParentWnd, nID);
 }
 
+void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	CRect rect(lpDrawItemStruct->rcItem);
+
+	CDC dc;
+	dc.Attach(CreateCompatibleDC(lpDrawItemStruct->hDC));
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.Attach(CreateCompatibleBitmap(lpDrawItemStruct->hDC, rect.Width(), rect.Height()));
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	// State
+	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
+	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
+
+	// Background
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
+
+	// Button
+	BOOL Themed = IsCtrlThemed();
+
+	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_Hover);
+
+	// Content
+	CRect rectText(rect);
+	rectText.DeflateRect(BORDER+2, BORDER);
+	if (Selected)
+		rectText.OffsetRect(1, 1);
+
+	// Icon
+	if (p_ButtonIcons && (!m_HideIcon || m_Small))
+	{
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 1 : 0), m_IconID);
+		rectText.left += m_IconSize+BORDER;
+	}
+
+	// Text
+	if (!m_Small)
+	{
+		dc.SetTextColor(Themed ? m_Hover ? 0x404040 : 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
+
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
+		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX);
+		dc.SelectObject(pOldFont);
+	}
+
+	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldBitmap);
+	DeleteDC(dc.Detach());
+	DeleteObject(MemBitmap.Detach());
+}
+
 void CTaskButton::SetIconID(INT IconID)
 {
 	m_IconID = IconID;
@@ -54,60 +108,8 @@ INT CTaskButton::GetPreferredWidth(BOOL Small)
 
 
 BEGIN_MESSAGE_MAP(CTaskButton, CHoverButton)
-	ON_WM_PAINT()
 	ON_NOTIFY_REFLECT(REQUEST_TOOLTIP_DATA, OnRequestTooltipData)
 END_MESSAGE_MAP()
-
-void CTaskButton::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	// Background
-	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
-
-	// Button
-	BOOL Themed = IsCtrlThemed();
-	BOOL Selected = (GetState() & 4);
-
-	DrawLightButtonBackground(dc, rect, Themed, GetState() & 8, Selected, m_Hover);
-
-	// Content
-	CRect rectText(rect);
-	rectText.DeflateRect(BORDER+2, BORDER);
-	if (Selected)
-		rectText.OffsetRect(1, 1);
-
-	// Icon
-	if (p_ButtonIcons && (!m_HideIcon || m_Small))
-	{
-		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 1 : 0), m_IconID);
-		rectText.left += m_IconSize+BORDER;
-	}
-
-	// Text
-	if (!m_Small)
-	{
-		dc.SetTextColor(Themed ? m_Hover ? 0x404040 : 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
-
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
-		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX);
-		dc.SelectObject(pOldFont);
-	}
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
-}
 
 void CTaskButton::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {

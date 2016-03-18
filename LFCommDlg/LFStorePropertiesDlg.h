@@ -4,33 +4,41 @@
 
 #pragma once
 #include "LFCore.h"
+#include "LFTabbedDialog.h"
 
 
 // LFStorePropertiesDlg
 //
 
-class LFStorePropertiesDlg : public CPropertySheet
+class LFStorePropertiesDlg : public LFTabbedDialog
 {
 public:
 	LFStorePropertiesDlg(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-
 protected:
-	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDestroy();
-	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnStatisticsChanged(WPARAM wParam, LPARAM lParam);
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitSidebar(LPSIZE pszTabArea);
+	virtual BOOL InitDialog();
+
+	afx_msg void OnRunMaintenance();
+	afx_msg void OnRunSynchronize();
+	afx_msg void OnRunBackup();
+
+	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
-	CPropertyPage* m_pPages[3];
-	UINT m_PageCount;
 	LFStoreDescriptor m_Store;
 	BOOL m_StoreValid;
+	static UINT m_LastTab;
+
+	CIconCtrl m_wndIcon;
+	CEdit m_wndStoreName;
+	CEdit m_wndStoreComment;
+	CButton m_wndMakeDefault;
+	CButton m_wndMakeSearchable;
+
 
 private:
-	void UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam);
-
-	_GUID m_StoreID;
-};
+	_GUID m_StoreUniqueID;
+	CString m_MaskMaintenance;
+	CString m_MaskSynchronized;};

@@ -13,6 +13,14 @@
 
 #define BORDER     10
 
+const UINT Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
+		LFTypeSourceDropbox, LFTypeSourceFacebook, LFTypeSourceFlickr, LFTypeSourceInstagram,
+		LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
+
+const UINT nHints[] = { IDS_ADDSTORE_LIQUIDFOLDERS, IDS_ADDSTORE_WINDOWS,
+		IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE,
+		IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE };
+
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ADDSTORE, pParentWnd)
 {
@@ -29,8 +37,11 @@ BOOL LFAddStoreDlg::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERIN
 
 void LFAddStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
-	m_wndExplorerNotification.SetWindowPos(&wndTop, rectLayout.left+32, rectLayout.bottom-NotificationHeight+1, rectLayout.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
+	if (IsWindow(m_wndExplorerNotification))
+	{
+		const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
+		m_wndExplorerNotification.SetWindowPos(&wndTop, rectLayout.left+32, rectLayout.bottom-NotificationHeight+1, rectLayout.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
+	}
 }
 
 void LFAddStoreDlg::CheckInternetConnection()
@@ -97,7 +108,10 @@ BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
 	ON_NOTIFY_RANGE(REQUEST_DRAWBUTTONFOREGROUND, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_YOUTUBE, OnDrawButtonForeground)
+	ON_NOTIFY_RANGE(REQUEST_TOOLTIP_DATA, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_YOUTUBE, OnRequestTooltipData)
+
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
+
 	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
 END_MESSAGE_MAP()
@@ -125,11 +139,8 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 {
 	NM_DRAWBUTTONFOREGROUND* pDrawButtonForeground = (NM_DRAWBUTTONFOREGROUND*)pNMHDR;
 
-	static const UINT Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
-		LFTypeSourceDropbox, LFTypeSourceFacebook, LFTypeSourceFlickr, LFTypeSourceInstagram,
-		LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
-
 	const UINT Source = pDrawButtonForeground->lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
+	ASSERT(Source<=LFSourceCount);
 
 	WCHAR Caption[256];
 	LFGetSourceName(Caption, 256, Types[Source], FALSE);
@@ -174,6 +185,20 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	*pResult = TRUE;
 }
 
+void LFAddStoreDlg::OnRequestTooltipData(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
+
+	const UINT Source = nCtrlID-IDC_ADDSTORE_LIQUIDFOLDERS;
+	ASSERT(Source<=LFSourceCount);
+
+	LFGetSourceName(pTooltipData->Caption, 256, Types[Source], FALSE);
+	ENSURE(LoadString(AfxGetResourceHandle(), nHints[Source], pTooltipData->Hint, 4096));
+
+	*pResult = TRUE;
+}
+
+
 LRESULT LFAddStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	UINT StoreCount = LFGetStoreCount();
@@ -185,6 +210,7 @@ LRESULT LFAddStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	return NULL;
 }
+
 
 void LFAddStoreDlg::OnBtnLiquidfolders()
 {

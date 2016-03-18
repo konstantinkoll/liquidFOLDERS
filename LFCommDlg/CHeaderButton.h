@@ -18,6 +18,9 @@ public:
 	CHeaderButton();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint);
+
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+
 	void SetValue(LPCWSTR Value, BOOL ShowDropdown=TRUE, BOOL Repaint=TRUE);
 	void GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth);
 	void GetCaption(CString& Caption, INT& CaptionWidth) const;

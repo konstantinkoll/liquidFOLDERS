@@ -47,6 +47,7 @@
 #include "LFStoreDataObject.h"
 #include "LFStoreMaintenanceDlg.h"
 #include "LFStorePropertiesDlg.h"
+#include "LFTabbedDialog.h"
 #include "LFTransactionDataObject.h"
 #include "LFUpdateDlg.h"
 #include "Workers.h"

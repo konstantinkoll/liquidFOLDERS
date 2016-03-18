@@ -13,11 +13,13 @@ class CTaskButton : public CHoverButton
 {
 public:
 	BOOL Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
+
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+
 	void SetIconID(INT IconID);
 	INT GetPreferredWidth(BOOL Small=FALSE);
 
 protected:
-	afx_msg void OnPaint();
 	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 

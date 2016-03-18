@@ -569,15 +569,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStorePropertiesGeneralPage.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStorePropertiesIndexPage.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStorePropertiesToolsPage.cpp"
+				RelativePath=".\LFTabbedDialog.cpp"
 				>
 			</File>
 			<File
@@ -871,6 +863,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\StPatrick_128.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StPatrick_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\UpdateIcons_16.png"
 				>
 			</File>
@@ -1121,15 +1121,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStorePropertiesGeneralPage.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStorePropertiesIndexPage.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStorePropertiesToolsPage.h"
+				RelativePath=".\LFTabbedDialog.h"
 				>
 			</File>
 			<File

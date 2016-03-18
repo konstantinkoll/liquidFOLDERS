@@ -94,9 +94,11 @@ IDB_DIVUP               RCDATA                  "res\\DivUp.png"
 IDB_ATTRIBUTEICONS_16   RCDATA                  "res\\AttributeIcons_16.png"
 IDB_ATTRIBUTEICONS_32   RCDATA                  "res\\AttributeIcons_32.png"
 IDB_SORTINDICATORS      RCDATA                  "res\\SortIndicators.png"
-IDB_SANTA               RCDATA                  "res\\Santa.png"
 IDB_LIQUIDFOLDERS_64    RCDATA                  "res\\liquidFOLDERS_64.png"
 IDB_LIQUIDFOLDERS_128   RCDATA                  "res\\liquidFOLDERS_128.png"
+IDB_SANTA               RCDATA                  "res\\Santa.png"
+IDB_STPATRICK_64        RCDATA                  "res\\StPatrick_64.png"
+IDB_STPATRICK_128       RCDATA                  "res\\StPatrick_128.png"
 IDB_UPDATEICONS_16      RCDATA                  "res\\UpdateIcons_16.png"
 IDB_UPDATEICONS_32      RCDATA                  "res\\UpdateIcons_32.png"
 IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
@@ -118,6 +120,14 @@ BEGIN
     PUSHBUTTON      "X",IDC_BUTTON2,65,33,50,14,WS_GROUP
 END
 
+IDD_TABBEDDIALOG DIALOGEX 0, 0, 122, 30
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "X",IDOK,7,8,50,14,WS_GROUP
+    PUSHBUTTON      "X",IDCANCEL,65,8,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -133,6 +143,14 @@ BEGIN
         RIGHTMARGIN, 173
         TOPMARGIN, 7
         BOTTOMMARGIN, 47
+    END
+
+    IDD_TABBEDDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 22
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -312,67 +330,69 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Allgemein"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,70,35
-    LTEXT           "Name:",IDC_STATIC,85,5,50,8
-    EDITTEXT        IDC_STORENAME,140,3,168,14,ES_AUTOHSCROLL
-    LTEXT           "Kommentar:",IDC_STATIC,85,25,50,8
-    EDITTEXT        IDC_COMMENTS,140,23,168,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Inhalt:",IDC_STATIC,3,51,80,8
-    LTEXT           "X",IDC_CONTENTS,85,51,223,8,SS_ENDELLIPSIS
-    LTEXT           "Erzeugt am:",IDC_STATIC,3,61,80,8
-    LTEXT           "X",IDC_CREATED,85,61,223,8,SS_ENDELLIPSIS
-    LTEXT           "Geändert am:",IDC_STATIC,3,71,80,8
-    LTEXT           "X",IDC_UPDATED,85,71,223,8,SS_ENDELLIPSIS
-    LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENCAPTION,3,81,80,8
-    LTEXT           "X",IDC_LASTSEEN,85,81,223,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
-    CONTROL         "Als &Standard-Store setzen",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
-    CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
+    CONTROL         "Allgemein",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
+    LTEXT           "Name:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    LTEXT           "Kommentar:",IDC_STATIC,49,45,50,8
+    EDITTEXT        IDC_COMMENTS,104,43,225,14,ES_AUTOHSCROLL
+    CONTROL         "Eigenschaften",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    LTEXT           "Inhalt:",IDC_STATIC,7,83,80,8
+    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
+    LTEXT           "Erzeugt am:",IDC_STATIC,7,92,80,8
+    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
+    LTEXT           "Geändert am:",IDC_STATIC,7,102,80,8
+    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
+    CONTROL         "Einstellungen",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
+    CONTROL         "Als &Standard-Store setzen",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Extras"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Synchronisation",IDC_STATIC,4,3,301,53
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
-    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,14,258,8
-    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,39,36,120,14
-    GROUPBOX        "Wartungsarbeiten",IDC_STATIC,4,61,301,53
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
-    LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,40,71,258,8
-    LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,39,93,120,14
-    GROUPBOX        "Einstellungen",IDC_STATIC,4,118,301,42
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
-    LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,40,129,258,8
-    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,39,140,120,14
+    CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
+    LTEXT           "Synchronisiert den Store mit seiner Datenquelle.",IDC_STATIC,35,23,294,8
+    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,35,45,120,14
+    CONTROL         "Wartungsarbeiten",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
+    LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,35,85,294,8
+    LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,35,107,120,14
+    CONTROL         "Einstellungen sichern",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
+    LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,35,147,294,8
+    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,35,158,120,14
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Index"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "GUID:",IDC_STATIC,3,3,55,8
-    LTEXT           "X",IDC_GUID,65,3,243,8,SS_ENDELLIPSIS
-    LTEXT           "Datenpfad:",IDC_STATIC,3,13,55,8
-    LTEXT           "X",IDC_DATPATH,65,13,243,8,SS_PATHELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
-    LTEXT           "Hauptindex:",IDC_STATIC,3,35,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,65,35,243,8,SS_PATHELLIPSIS
-    LTEXT           "Hilfsindex:",IDC_IDXPATHAUXCAPTION,3,45,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,65,45,243,8,SS_PATHELLIPSIS
-    LTEXT           "Index-Version:",IDC_STATIC,3,55,55,8
-    LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
+    CONTROL         "ID und Pfad",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
+    LTEXT           "GUID:",IDC_STATIC,7,24,55,8
+    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
+    LTEXT           "Datenpfad:",IDC_STATIC,7,34,55,8
+    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
+    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
+    LTEXT           "Hauptindex:",IDC_STATIC,7,69,55,8
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
+    LTEXT           "Hilfsindex:",IDC_IDXPATHAUXCAPTION,7,79,55,8
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
+    LTEXT           "Index-Version:",IDC_STATIC,7,89,55,8
+    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
@@ -593,26 +613,26 @@ BEGIN
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 126
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 305
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 162
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 173
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 63
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
     END
 
     IDD_UPDATE, DIALOG
@@ -842,6 +862,10 @@ BEGIN
     IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
     IDS_STORECREATED        "Der Store „%s“ wurde hinzugefügt."
+    IDS_ADDSTORE_LIQUIDFOLDERS 
+                            "Erstellt einen neuen Speicherort für Ihre Dateien.\nBeim Importieren werden Dateien dorthin kopiert."
+    IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dadurch nicht verändert."
+    IDS_ADDSTORE_WEBSERVICE "Verbindet liquidFOLDERS mit Ihrem Benutzerkonto."
 END
 
 STRINGTABLE 
@@ -1049,68 +1073,70 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Geral"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,50,35
-    LTEXT           "Nombre:",IDC_STATIC,65,5,50,8
-    EDITTEXT        IDC_STORENAME,119,3,189,14,ES_AUTOHSCROLL
-    LTEXT           "Comentarios:",IDC_STATIC,65,25,50,8
-    EDITTEXT        IDC_COMMENTS,119,23,189,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Contenido:",IDC_STATIC,3,51,60,8
-    LTEXT           "X",IDC_CONTENTS,66,51,242,8,SS_ENDELLIPSIS
-    LTEXT           "Creado:",IDC_STATIC,3,61,60,8
-    LTEXT           "X",IDC_CREATED,65,61,243,8,SS_ENDELLIPSIS
-    LTEXT           "Modificado:",IDC_STATIC,3,71,60,8
-    LTEXT           "X",IDC_UPDATED,65,71,243,8,SS_ENDELLIPSIS
-    LTEXT           "Última entrada:",IDC_LASTSEENCAPTION,3,81,60,8
-    LTEXT           "X",IDC_LASTSEEN,65,81,243,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
-    CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
-    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
+    CONTROL         "Geral",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
+    LTEXT           "Nombre:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    LTEXT           "Comentarios:",IDC_STATIC,49,45,50,8
+    EDITTEXT        IDC_COMMENTS,104,43,225,14,ES_AUTOHSCROLL
+    CONTROL         "Propiedades",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    LTEXT           "Contenido:",IDC_STATIC,7,83,80,8
+    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
+    LTEXT           "Creado:",IDC_STATIC,7,92,80,8
+    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
+    LTEXT           "Modificado:",IDC_STATIC,7,102,80,8
+    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    LTEXT           "Última entrada:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
+    CONTROL         "Ajustes",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
+    CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Hacer búsquedas mientras no está conectado",IDC_MAKESEARCHABLE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Índice"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "GUID:",IDC_STATIC,3,3,55,8
-    LTEXT           "X",IDC_GUID,65,3,243,8,SS_ENDELLIPSIS
-    LTEXT           "Ruta de datos:",IDC_STATIC,3,13,55,8
-    LTEXT           "X",IDC_DATPATH,65,13,243,8,SS_PATHELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
-    LTEXT           "Índice principal:",IDC_STATIC,3,35,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,65,35,243,8,SS_PATHELLIPSIS
-    LTEXT           "Índice auxiliar:",IDC_IDXPATHAUXCAPTION,3,45,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,65,45,243,8,SS_PATHELLIPSIS
-    LTEXT           "Versión índice:",IDC_STATIC,3,55,55,8
-    LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
+    CONTROL         "Identificación y carpeta",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
+    LTEXT           "GUID:",IDC_STATIC,7,24,55,8
+    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
+    LTEXT           "Carpeta:",IDC_STATIC,7,34,55,8
+    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
+    CONTROL         "Índice",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
+    LTEXT           "Índice principal:",IDC_STATIC,7,69,55,8
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
+    LTEXT           "Índice auxiliar:",IDC_IDXPATHAUXCAPTION,7,79,55,8
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
+    LTEXT           "Versión índice:",IDC_STATIC,7,89,55,8
+    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Ferramentas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Sincronización",IDC_STATIC,4,3,301,53
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
-    LTEXT           "Sincroniza el store para los datos.",IDC_STATIC,40,14,258,8
-    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,39,36,120,14
-    GROUPBOX        "Mantenimiento",IDC_STATIC,4,61,301,53
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
-    LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,40,71,258,8
-    LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,39,93,120,14
-    GROUPBOX        "Configuraciones",IDC_STATIC,4,118,301,42
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
-    LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,40,129,258,8
-    PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,120,14
+    CONTROL         "Sincronización",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
+    LTEXT           "Sincroniza el store para los datos.",IDC_STATIC,35,23,294,8
+    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,35,45,120,14
+    CONTROL         "Mantenimiento",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
+    LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,35,85,294,8
+    LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,35,107,120,14
+    CONTROL         "Configuraciones",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
+    LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,35,147,294,8
+    PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,35,158,120,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110
@@ -1332,26 +1358,26 @@ BEGIN
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 126
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 63
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 305
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 162
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 173
     END
 
     IDD_UPDATE, DIALOG
@@ -1589,6 +1615,10 @@ BEGIN
     IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
     IDS_STORECREATED        "Se añadió el store «%s»."
+    IDS_ADDSTORE_LIQUIDFOLDERS 
+                            "Se crea una nueva ubicación para sus archivos.\nLos archivos importados se copiarán allí."
+    IDS_ADDSTORE_WINDOWS    "Índices una carpeta de Windows existente.\nSus archivos no serán modificados."
+    IDS_ADDSTORE_WEBSERVICE "Se conecta liquidFOLDERS con su cuenta de usuario."
 END
 
 STRINGTABLE 
@@ -1818,67 +1848,69 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Général"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,60,35
-    LTEXT           "Nom:",IDC_STATIC,75,5,50,8
-    EDITTEXT        IDC_STORENAME,130,3,178,14,ES_AUTOHSCROLL
-    LTEXT           "Commentaire:",IDC_STATIC,75,25,50,8
-    EDITTEXT        IDC_COMMENTS,130,23,178,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Contenu:",IDC_STATIC,3,51,70,8
-    LTEXT           "X",IDC_CONTENTS,75,51,233,8,SS_ENDELLIPSIS
-    LTEXT           "Temp de création:",IDC_STATIC,3,61,70,8
-    LTEXT           "X",IDC_CREATED,75,61,233,8,SS_ENDELLIPSIS
-    LTEXT           "Changé le:",IDC_STATIC,3,71,70,8
-    LTEXT           "X",IDC_UPDATED,75,71,233,8,SS_ENDELLIPSIS
-    LTEXT           "Dernier vu:",IDC_LASTSEENCAPTION,3,81,70,8
-    LTEXT           "X",IDC_LASTSEEN,75,81,233,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
-    CONTROL         "Faites &standard",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
-    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
+    CONTROL         "Général",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
+    LTEXT           "Nom:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    LTEXT           "Commentaire:",IDC_STATIC,49,45,50,8
+    EDITTEXT        IDC_COMMENTS,104,43,225,14,ES_AUTOHSCROLL
+    CONTROL         "Propriétés",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    LTEXT           "Contenu:",IDC_STATIC,7,83,80,8
+    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
+    LTEXT           "Temp de création:",IDC_STATIC,7,92,80,8
+    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
+    LTEXT           "Changé le:",IDC_STATIC,7,102,80,8
+    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    LTEXT           "Dernier vu:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
+    CONTROL         "Paramètres",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
+    CONTROL         "Faites &standard",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Index"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "GUID:",IDC_STATIC,3,3,60,8
-    LTEXT           "X",IDC_GUID,70,3,238,8,SS_ENDELLIPSIS
-    LTEXT           "Données:",IDC_STATIC,3,13,60,8
-    LTEXT           "X",IDC_DATPATH,70,13,238,8,SS_PATHELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
-    LTEXT           "Index principal:",IDC_STATIC,3,35,60,8
-    LTEXT           "X",IDC_IDXPATHMAIN,70,35,238,8,SS_PATHELLIPSIS
-    LTEXT           "Index auxiliaire:",IDC_IDXPATHAUXCAPTION,3,45,60,8
-    LTEXT           "X",IDC_IDXPATHAUX,70,45,238,8,SS_PATHELLIPSIS
-    LTEXT           "Version de index:",IDC_STATIC,3,55,60,8
-    LTEXT           "X",IDC_IDXVERSION,70,55,238,8,SS_ENDELLIPSIS
+    CONTROL         "ID et dossier",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
+    LTEXT           "GUID:",IDC_STATIC,7,24,55,8
+    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
+    LTEXT           "Données:",IDC_STATIC,7,34,55,8
+    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
+    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
+    LTEXT           "Index principal:",IDC_STATIC,7,69,55,8
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
+    LTEXT           "Index auxiliaire:",IDC_IDXPATHAUXCAPTION,7,79,55,8
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
+    LTEXT           "Version de index:",IDC_STATIC,7,89,55,8
+    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Outils"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Synchronisation",IDC_STATIC,4,3,301,53
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
-    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,40,14,258,8
-    LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,39,36,130,14
-    GROUPBOX        "Travails d'entretien",IDC_STATIC,4,61,301,53
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
-    LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,40,71,258,8
-    LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Exécuter des &travails d'entretien",IDC_RUNMAINTENANCE,39,93,130,14
-    GROUPBOX        "Paramètres",IDC_STATIC,4,118,301,42
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
-    LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,40,129,258,8
-    PUSHBUTTON      "Sauvegarde les &paramètres",IDC_RUNBACKUP,39,140,130,14
+    CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
+    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,35,23,294,8
+    LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,35,45,120,14
+    CONTROL         "Travails d'entretien",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
+    LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,35,85,294,8
+    LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Exécuter &travails d'entretien",IDC_RUNMAINTENANCE,35,107,120,14
+    CONTROL         "Einstellungen sichern",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
+    LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,35,147,294,8
+    PUSHBUTTON      "Sauvegarde &paramètres",IDC_RUNBACKUP,35,158,120,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
@@ -2094,26 +2126,26 @@ BEGIN
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 126
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 63
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 305
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 162
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 173
     END
 
     IDD_UPDATE, DIALOG
@@ -2335,6 +2367,10 @@ BEGIN
     IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
     IDS_STORECREATED        "Le store «%s» a été ajouté."
+    IDS_ADDSTORE_LIQUIDFOLDERS 
+                            "Crée un nouvel emplacement pour vos fichiers.\nLes fichiers importés seront copiés là."
+    IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas modifiés."
+    IDS_ADDSTORE_WEBSERVICE "Connecte liquidFOLDERS à votre compte."
 END
 
 STRINGTABLE 
@@ -2592,68 +2628,70 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "General"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,3,3,40,35
-    LTEXT           "Name:",IDC_STATIC,55,5,50,8
-    EDITTEXT        IDC_STORENAME,110,3,198,14,ES_AUTOHSCROLL
-    LTEXT           "Comments:",IDC_STATIC,55,25,50,8
-    EDITTEXT        IDC_COMMENTS,110,23,198,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Contents:",IDC_STATIC,3,51,50,8
-    LTEXT           "X",IDC_CONTENTS,55,51,253,8,SS_ENDELLIPSIS
-    LTEXT           "Created:",IDC_STATIC,3,61,50,8
-    LTEXT           "X",IDC_CREATED,55,61,253,8,SS_ENDELLIPSIS
-    LTEXT           "Modified:",IDC_STATIC,3,71,50,8
-    LTEXT           "X",IDC_UPDATED,55,71,253,8,SS_ENDELLIPSIS
-    LTEXT           "Last seen:",IDC_LASTSEENCAPTION,3,81,50,8
-    LTEXT           "X",IDC_LASTSEEN,55,81,253,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
-    CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
-    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
+    CONTROL         "General",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
+    LTEXT           "Name:",IDC_STATIC,49,26,50,8
+    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    LTEXT           "Comments:",IDC_STATIC,49,45,50,8
+    EDITTEXT        IDC_COMMENTS,104,43,225,14,ES_AUTOHSCROLL
+    CONTROL         "Properties",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    LTEXT           "Contents:",IDC_STATIC,7,83,80,8
+    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
+    LTEXT           "Created:",IDC_STATIC,7,92,80,8
+    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
+    LTEXT           "Modified:",IDC_STATIC,7,102,80,8
+    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    LTEXT           "Last seen:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
+    CONTROL         "Settings",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
+    CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Make &searchable while not connectede",IDC_MAKESEARCHABLE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Index"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "GUID:",IDC_STATIC,3,3,55,8
-    LTEXT           "X",IDC_GUID,65,3,243,8,SS_ENDELLIPSIS
-    LTEXT           "Data path:",IDC_STATIC,3,13,55,8
-    LTEXT           "X",IDC_DATPATH,65,13,243,8,SS_PATHELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
-    LTEXT           "Main index:",IDC_STATIC,3,35,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,65,35,243,8,SS_PATHELLIPSIS
-    LTEXT           "Aux. index:",IDC_IDXPATHAUXCAPTION,3,45,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,65,45,243,8,SS_PATHELLIPSIS
-    LTEXT           "Index version:",IDC_STATIC,3,55,55,8
-    LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
+    CONTROL         "ID and path",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
+    LTEXT           "GUID:",IDC_STATIC,7,24,55,8
+    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
+    LTEXT           "Data path:",IDC_STATIC,7,34,55,8
+    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
+    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
+    LTEXT           "Main index:",IDC_STATIC,7,69,55,8
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
+    LTEXT           "Aux. index:",IDC_IDXPATHAUXCAPTION,7,79,55,8
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
+    LTEXT           "Index version:",IDC_STATIC,7,89,55,8
+    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Tools"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Synchronization",IDC_STATIC,4,3,301,53
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,9,15,21,20
-    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,40,14,258,8
-    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,40,24,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,39,36,80,14
-    GROUPBOX        "Maintenance",IDC_STATIC,4,61,301,53
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,9,71,21,20
-    LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,40,71,258,8
-    LTEXT           "Last maintenance on this store: %s",IDC_MAINTENANCE,40,81,258,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,39,93,80,14
-    GROUPBOX        "Settings",IDC_STATIC,4,118,301,42
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
-    LTEXT           "Saves the settings of all stores.",IDC_STATIC,40,129,258,8
-    PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,140,80,14
+    CONTROL         "Synchronization",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
+    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,35,23,294,8
+    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,35,45,100,14
+    CONTROL         "Maintenance",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
+    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
+    LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,35,85,294,8
+    LTEXT           "Last maintenance of this store: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,35,107,100,14
+    CONTROL         "Save settings",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
+    LTEXT           "Saves the settings of all stores.",IDC_STATIC,35,147,294,8
+    PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,35,158,100,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110
@@ -2875,26 +2913,26 @@ BEGIN
 
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 126
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 308
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 63
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 305
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 162
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 329
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 173
     END
 
     IDD_UPDATE, DIALOG
@@ -3124,6 +3162,10 @@ BEGIN
     IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
     IDS_STORECREATED        "The store “%s” was added."
+    IDS_ADDSTORE_LIQUIDFOLDERS 
+                            "Creates a new storage location for your files.\nImported files will be copied there."
+    IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be modified by this."
+    IDS_ADDSTORE_WEBSERVICE "Links liquidFOLDERS to your account."
 END
 
 STRINGTABLE 

@@ -462,6 +462,22 @@ UINT DeleteStoreSettingsFromFile(LFStoreDescriptor* pStoreDescriptor)
 	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFAccessError : LFDriveNotReady;
 }
 
+UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+
+	UINT Result = LFOk;
+
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+		Result = SaveStoreSettingsToRegistry(pStoreDescriptor);
+
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if ((Result==LFOk) && (LFIsStoreMounted(pStoreDescriptor)))
+			Result = SaveStoreSettingsToFile(pStoreDescriptor);
+
+	return Result;
+}
+
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime, BOOL MakeDefault)
 {
 	assert(pStoreDescriptor);
@@ -477,14 +493,7 @@ UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime
 			return LFTooManyStores;
 
 	// Save to registry and/or file
-	UINT Result = LFOk;
-
-	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		Result = SaveStoreSettingsToRegistry(pStoreDescriptor);
-
-	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if ((Result==LFOk) && (LFIsStoreMounted(pStoreDescriptor)))
-			Result = SaveStoreSettingsToFile(pStoreDescriptor);
+	UINT Result = SaveStoreSettings(pStoreDescriptor);
 
 	// Cache
 	if (Result==LFOk)
@@ -1189,6 +1198,9 @@ LFCORE_API UINT LFSynchronizeStore(const CHAR* pStoreID, LFProgress* pProgress)
 	{
 		Result = pStore->Synchronize(FALSE, pProgress);
 		delete pStore;
+
+		if (Result==LFOk)
+			SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
 	}
 
 	return Result;
@@ -1349,8 +1361,8 @@ LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
 			{
 				for (UINT Context=0; Context<=min(LFLastQueryContext, 31); Context++)
 				{
-					pStatistics->FileCount[Context] += pStoreDescriptor->FileCount[Context];
-					pStatistics->FileSize[Context] += pStoreDescriptor->FileSize[Context];
+					pStatistics->FileCount[Context] = pStoreDescriptor->FileCount[Context];
+					pStatistics->FileSize[Context] = pStoreDescriptor->FileSize[Context];
 				}
 
 				ReleaseMutexForStore(StoreLock);
@@ -1515,8 +1527,8 @@ UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
 					wcscpy_s(pSlot->StoreName, 256, Store.StoreName);
 					wcscpy_s(pSlot->Comments, 256, Store.Comments);
 					pSlot->FileTime = Store.FileTime;
-					/*pSlot->MaintenanceTime = Store.MaintenanceTime;
-					pSlot->SynchronizeTime = Store.SynchronizeTime;*/
+					pSlot->MaintenanceTime = Store.MaintenanceTime;
+					pSlot->SynchronizeTime = Store.SynchronizeTime;
 
 					// Set store index mode to hybrid
 					pSlot->Mode = (pSlot->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexHybrid;

@@ -5,6 +5,8 @@
 #pragma once
 #include "CBackstageWnd.h"
 #include "CCategory.h"
+#include "CDesktopDimmer.h"
+#include "CWhiteButton.h"
 #include "LFCore.h"
 
 
@@ -32,7 +34,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 	virtual void PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout);
-	virtual BOOL InitSidebar();
+	virtual BOOL InitSidebar(LPSIZE pszTabArea);
 	virtual BOOL InitDialog();
 
 	void MapDialogRect(LPRECT lpRect) const;
@@ -47,6 +49,9 @@ protected:
 	void AddBottomRightControl(CWnd* pChildWnd);
 	void AddBottomRightControl(UINT nID);
 
+	static BOOL CompareClassName(LPCTSTR lpszClassName1, LPCTSTR lpszClassName2);
+	static BOOL CompareClassName(HWND hWnd, LPCTSTR lpszClassName);
+
 	afx_msg LRESULT OnInitDialog(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDestroy();
 	afx_msg void OnOK();
@@ -60,6 +65,8 @@ protected:
 	BOOL m_ShowKeyboardCues;
 
 private:
+	static BOOL IsPushbutton(CWnd* pWnd);
+
 	HWND hWndTop;
 	HICON hIconShield;
 	INT m_ShieldSize;

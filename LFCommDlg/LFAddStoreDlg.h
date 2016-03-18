@@ -26,7 +26,10 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnDrawButtonForeground(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRequestTooltipData(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
+
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
+
 	afx_msg void OnBtnLiquidfolders();
 	afx_msg void OnBtnWindows();
 	DECLARE_MESSAGE_MAP()

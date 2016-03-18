@@ -48,7 +48,7 @@ LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
 
 	GetLocalTime(&st);
 	p_Santa = (st.wMonth==12) ? LFGetApp()->GetCachedResourceImage(IDB_SANTA) : NULL;
-	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128);
+	p_Logo = LFGetApp()->GetCachedResourceImage((st.wMonth==3) && (st.wDay==17) ? IDB_STPATRICK_128 : IDB_LIQUIDFOLDERS_128);
 
 	GetFileVersion(AfxGetInstanceHandle(), m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));

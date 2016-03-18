@@ -5,7 +5,7 @@
 #pragma once
 #include "CFrontstageWnd.h"
 #include "CIcons.h"
-#include "LFCore.h"
+#include "LFDynArray.h"
 
 
 // CSidebarCmdUI
@@ -33,7 +33,6 @@ struct SidebarItem
 	UINT CmdID;
 	INT IconID;
 	WCHAR Caption[256];
-	WCHAR Hint[256];
 	INT Height;
 	UINT Count;
 	COLORREF Color;
@@ -46,12 +45,11 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void AdjustLayout();
-	virtual CString AppendTooltip(UINT CmdID);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts=FALSE);
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts=FALSE);
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID, BOOL ShowCounts=FALSE);
-	void AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color=(COLORREF)-1);
+	void AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color=(COLORREF)-1);
 	void AddCaption(LPCWSTR Caption=L"");
 	void AddCaption(UINT ResID);
 	void ResetCounts();
@@ -61,7 +59,7 @@ public:
 	void SetSelection(UINT CmdID=0);
 
 protected:
-	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, LPCWSTR Hint, COLORREF Color=(COLORREF)-1);
+	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color=(COLORREF)-1);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT Index);
 	void PressItem(INT Index);
@@ -75,6 +73,7 @@ protected:
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg UINT OnGetDlgCode();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);

@@ -408,10 +408,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CContextSidebar.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CFileDropWnd.cpp"
 				>
 			</File>
@@ -527,10 +523,6 @@
 			>
 			<File
 				RelativePath=".\CCalendarView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CContextSidebar.h"
 				>
 			</File>
 			<File

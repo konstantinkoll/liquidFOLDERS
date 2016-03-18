@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CContextSidebar.h"
 #include "CJournalButton.h"
 #include "CHistoryBar.h"
 #include "CMainView.h"
@@ -12,9 +11,9 @@
 // CMainWnd
 //
 
-#define NAVMODE_NORMAL            0
-#define NAVMODE_HISTORY           1
-#define NAVMODE_RELOAD            2
+#define NAVMODE_NORMAL      0
+#define NAVMODE_HISTORY     1
+#define NAVMODE_RELOAD      2
 
 #define WM_CONTEXTVIEWCOMMAND     WM_USER+200
 #define WM_UPDATEVIEWOPTIONS      WM_USER+201
@@ -25,6 +24,7 @@
 #define WM_NAVIGATETO             WM_USER+206
 #define WM_SENDTO                 WM_USER+207
 #define WM_BEGINDRAGDROP          WM_USER+208
+#define WM_UPDATECOUNTS           WM_USER+209
 
 class CMainWnd : public CBackstageWnd
 {
@@ -86,10 +86,14 @@ protected:
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStatisticsChanged(WPARAM wParam, LPARAM lParam);
+
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
 	BOOL m_IsClipboard;
-	CContextSidebar m_wndSidebar;
+	CBackstageSidebar m_wndSidebar;
 	CJournalButton m_wndJournalButton;
 	CHistoryBar m_wndHistory;
 	CBackstageEdit m_wndSearch;
@@ -99,10 +103,13 @@ protected:
 	LFFilter* m_pActiveFilter;
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;
+	LFStatistics* m_pStatistics;
 
 private:
 	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory();
+
+	CHAR m_StatisticsID[LFKeySize];
 };
 
 inline BOOL CMainWnd::CreateClipboard()
