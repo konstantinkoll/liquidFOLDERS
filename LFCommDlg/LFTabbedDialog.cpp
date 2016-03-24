@@ -144,8 +144,22 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 
 void LFTabbedDialog::ShowTab(UINT Index)
 {
+	BOOL First = TRUE;
+
 	for (UINT a=0; a<m_ControlsOnTab.m_ItemCount; a++)
-		::ShowWindow(m_ControlsOnTab.m_Items[a].hWnd, m_ControlsOnTab.m_Items[a].Index==Index ? SW_SHOW : SW_HIDE);
+	{
+		const HWND hWnd = m_ControlsOnTab.m_Items[a].hWnd;
+		const BOOL Show = (m_ControlsOnTab.m_Items[a].Index==Index);
+
+		::ShowWindow(hWnd, Show ? SW_SHOW : SW_HIDE);
+
+		if (First && Show && (::GetWindowLong(hWnd, GWL_STYLE) & WS_TABSTOP))
+			if (::IsWindowEnabled(hWnd))
+			{
+				::SetFocus(hWnd);
+				First = FALSE;
+			}
+	}
 }
 
 void LFTabbedDialog::SelectTab(UINT Index)
@@ -193,7 +207,7 @@ BOOL LFTabbedDialog::InitDialog()
 	// First tab
 	SelectTab(p_LastTab ? *p_LastTab : 0);
 
-	return TRUE;
+	return FALSE;
 }
 
 

@@ -107,8 +107,7 @@ BOOL LFStorePropertiesDlg::InitSidebar(LPSIZE pszTabArea)
 
 BOOL LFStorePropertiesDlg::InitDialog()
 {
-	if (!LFTabbedDialog::InitDialog())
-		return FALSE;
+	BOOL Result =LFTabbedDialog::InitDialog();
 
 	// Caption
 	CString Caption;
@@ -134,7 +133,7 @@ BOOL LFStorePropertiesDlg::InitDialog()
 
 	OnUpdateStore(NULL, NULL);
 
-	return TRUE;
+	return Result;
 }
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, LFTabbedDialog)

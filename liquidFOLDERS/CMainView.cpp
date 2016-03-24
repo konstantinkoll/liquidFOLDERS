@@ -780,6 +780,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	// Go!
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+
 	delete pMenu;
 }
 

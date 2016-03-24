@@ -965,14 +965,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\FilterPane_16.png"
-			>
-		</File>
-		<File
-			RelativePath=".\FilterPane_32.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Google Earth.png"
 			>
 		</File>
@@ -1165,6 +1157,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Sidebar_16.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Sidebar_32.png"
+			>
+		</File>
+		<File
 			RelativePath=".\SidebarShadow.bmp"
 			>
 		</File>
@@ -1185,11 +1185,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\StPatrick_128.png"
-			>
-		</File>
-		<File
-			RelativePath=".\StPatrick_64.png"
+			RelativePath=".\StPatrick.png"
 			>
 		</File>
 		<File

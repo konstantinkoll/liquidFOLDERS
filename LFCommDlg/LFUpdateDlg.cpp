@@ -24,9 +24,7 @@ LFUpdateDlg::LFUpdateDlg(const CString& Version, const CString& MSN, DWORD Featu
 	m_CaptionTop = m_IconTop = m_FeaturesTop = m_FeaturesLeft = m_FeatureItemHeight = 0;
 	m_Connected = TRUE;
 
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	p_Logo = LFGetApp()->GetCachedResourceImage((st.wMonth==3) && (st.wDay==17) ? IDB_STPATRICK_64 : IDB_LIQUIDFOLDERS_64);
+	p_Logo = LFGetApp()->GetCachedResourceImage(IDB_LIQUIDFOLDERS_64);
 
 	m_Version = Version;
 	m_MSN = MSN;

@@ -179,6 +179,7 @@ BEGIN_MESSAGE_MAP(CTaskbar, CFrontstageWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
@@ -291,6 +292,16 @@ void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 
 	OnIdleUpdateCmdUI();
 	AdjustLayout();
+}
+
+void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
+		if (m_Buttons.m_Items[a]->IsWindowEnabled())
+		{
+			m_Buttons.m_Items[a]->SetFocus();
+			break;
+		}
 }
 
 void CTaskbar::OnIdleUpdateCmdUI()

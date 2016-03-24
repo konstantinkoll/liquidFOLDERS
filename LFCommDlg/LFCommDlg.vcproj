@@ -863,11 +863,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\StPatrick_128.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\StPatrick_64.png"
+				RelativePath=".\res\StPatrick.png"
 				>
 			</File>
 			<File

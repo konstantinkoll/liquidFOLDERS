@@ -231,7 +231,7 @@ UINT CStore::ImportFile(WCHAR* pPath, LFItemDescriptor* pItemDescriptor, BOOL Mo
 	UINT Result;
 	WCHAR Path[2*MAX_PATH];
 	if ((Result=PrepareImport(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
-		CommitImport(pItemDescriptor, (Result=(Move ? MoveFile(pPath, Path) : CopyFile(pPath, Path, FALSE)) ? LFOk : LFCannotImportFile)==LFOk, Metadata ? pPath : NULL);
+		CommitImport(pItemDescriptor, (Result=(Move ? MoveFile(pPath, Path) : CopyFile(pPath, Path, FALSE)) ? LFOk : LFCannotImportFile)==LFOk, Metadata ? Move ? Path : pPath : NULL);
 
 	return Result;
 }

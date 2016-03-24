@@ -44,12 +44,11 @@
 #define IDB_LIQUIDFOLDERS_64            20031
 #define IDB_LIQUIDFOLDERS_128           20032
 #define IDB_SANTA                       20033
-#define IDB_STPATRICK_64                20034
-#define IDB_STPATRICK_128               20035
-#define IDB_UPDATEICONS_16              20036
-#define IDB_UPDATEICONS_32              20037
-#define IDB_BACKGROUND_DARKLINEN        20038
-#define IDB_BACKGROUND_TOOLTIP          20039
+#define IDB_STPATRICK                   20034
+#define IDB_UPDATEICONS_16              20035
+#define IDB_UPDATEICONS_32              20036
+#define IDB_BACKGROUND_DARKLINEN        20037
+#define IDB_BACKGROUND_TOOLTIP          20038
 #define IDB_BLUEMARBLE_1024             20090
 #define IDB_BLUEMARBLE_2048             20091
 #define IDB_BLUEMARBLE_8192             20092

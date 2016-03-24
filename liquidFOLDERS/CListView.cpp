@@ -912,10 +912,8 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGridView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	if (!m_wndHeader.Create( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HIDDEN | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, CRect(0, 0, 0, 0), this, 1))
+	if (!m_wndHeader.Create(this, 1))
 		return -1;
-
-	m_wndHeader.SetFont(&LFGetApp()->m_DefaultFont);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
@@ -951,6 +949,7 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+
 		return;
 	}
 

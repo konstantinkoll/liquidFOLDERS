@@ -692,6 +692,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 	case VK_RETURN:
 	case VK_EXECUTE:
+	case VK_SPACE:
 		if (Index!=-1)
 			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Index].CmdID);
 

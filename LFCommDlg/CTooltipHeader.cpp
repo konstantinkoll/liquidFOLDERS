@@ -14,8 +14,15 @@ CIcons CTooltipHeader::m_SortIndicators;
 CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
-	m_Hover = FALSE;
+	m_Hover = m_Shadow = FALSE;
 	m_HoverItem = m_PressedItem = m_TrackItem = m_TooltipItem = -1;
+}
+
+BOOL CTooltipHeader::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
+{
+	m_Shadow = Shadow;
+
+	return CHeaderCtrl::Create(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CTooltipHeader::PreSubclassWindow()
@@ -57,6 +64,14 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 void CTooltipHeader::Init()
 {
 	m_SortIndicators.Load(IDB_SORTINDICATORS, CSize(7, 4));
+
+	SetFont(&LFGetApp()->m_DefaultFont);
+}
+
+void CTooltipHeader::SetShadow(BOOL Shadow)
+{
+	m_Shadow = Shadow;
+	Invalidate();
 }
 
 
@@ -231,9 +246,12 @@ void CTooltipHeader::OnPaint()
 		}
 	}
 
-	dc.SelectObject(pOldFont);
+	if (m_Shadow)
+		CTaskbar::DrawTaskbarShadow(g, rect);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
 }
 
