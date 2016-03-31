@@ -163,10 +163,10 @@ void CTaskbar::DrawTaskbarShadow(Graphics& g, const CRect& rectClient)
 {
 	g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-	SolidBrush brush1(Color(0x18, 0x00, 0x00, 0x00));
+	SolidBrush brush1(Color(0x18000000));
 	g.FillRectangle(&brush1, 0, 0, rectClient.Width(), 1);
 
-	SolidBrush brush2(Color(0x0C, 0x00, 0x00, 0x00));
+	SolidBrush brush2(Color(0x0C000000));
 	g.FillRectangle(&brush2, 0, 1, rectClient.Width(), 1);
 }
 
@@ -234,7 +234,7 @@ void CTaskbar::OnPaint()
 			Graphics g(dc);
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-			LinearGradientBrush brush(Point(0, Line), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
+			LinearGradientBrush brush(Point(0, Line), Point(0, rect.bottom), Color(0xFFFFFFFF), Color(0xFFE5E9EE));
 			g.FillRectangle(&brush, 0, Line, TEXTUREWIDTH, rect.bottom-Line-1);
 
 			dc.SelectObject(pOldBitmap);

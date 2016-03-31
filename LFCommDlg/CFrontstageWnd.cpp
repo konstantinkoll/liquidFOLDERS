@@ -30,7 +30,7 @@ void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
 			GraphicsPath path;
 			CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
 
-			Pen pen(Color(0x00, 0x00, 0x00));
+			Pen pen(Color(0xFF000000));
 			g.DrawPath(&pen, &path);
 		}
 	}

@@ -144,17 +144,41 @@ HBITMAP CreateTransparentBitmap(LONG Width, LONG Height)
 	return CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
 }
 
+HBITMAP CreateTruecolorBitmap(LONG Width, LONG Height)
+{
+	BITMAPINFO DIB;
+	ZeroMemory(&DIB, sizeof(DIB));
+
+	DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	DIB.bmiHeader.biWidth = Width;
+	DIB.bmiHeader.biHeight = -Height;
+	DIB.bmiHeader.biPlanes = 1;
+	DIB.bmiHeader.biBitCount = 24;
+	DIB.bmiHeader.biCompression = BI_RGB;
+
+	return CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
+}
+
+CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height)
+{
+	CBitmap* pBitmap = new CBitmap();
+	pBitmap->Attach(CreateTruecolorBitmap(Width, Height));
+	pBitmap->SetBitmapDimension(Width, Height);
+
+	return pBitmap;
+}
+
 void DrawLocationIndicator(Graphics& g, INT x, INT y, INT sz)
 {
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	REAL Radius = (REAL)sz/8.0f;
+	Gdiplus::REAL Radius = (Gdiplus::REAL)sz/8.0f;
 	Rect rect(x+(INT)(0.5f*Radius), y+(INT)(0.5f*Radius), sz-(INT)Radius-1, sz-(INT)Radius-1);
 
-	SolidBrush brush(Color(0xFF, 0x00, 0x00));
+	SolidBrush brush(Color(0xFFFF0000));
 	g.FillEllipse(&brush, rect);
 
-	Pen pen(Color(0xFF, 0xFF, 0xFF), Radius);
+	Pen pen(Color(0xFFFFFFFF), Radius);
 	g.DrawEllipse(&pen, rect);
 }
 
@@ -212,7 +236,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 			Graphics g(dc);
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 	
-			LinearGradientBrush brush(Point(rectLine.right, rectLine.top), Point(rect.right, rectLine.top), Color(0xFF, 0xE2, 0xE2, 0xE2), Color(0x00, 0xE2, 0xE2, 0xE2));
+			LinearGradientBrush brush(Point(rectLine.right, rectLine.top), Point(rect.right, rectLine.top), Color(0xFFE2E2E2), Color(0x00E2E2E2));
 			g.FillRectangle(&brush, rectLine.right, rectLine.top+(rectLine.Height()+1)/2, rect.right-rectLine.right, 1);
 		}
 		else
@@ -243,7 +267,7 @@ void DrawReflection(Graphics& g, LPCRECT lpRect)
 	GraphicsPath pathReflection;
 	CreateReflectionRectangle(lpRect, 2, pathReflection);
 
-	LinearGradientBrush brush(Point(lpRect->left, lpRect->top), Point(lpRect->left+min((INT)((lpRect->bottom-lpRect->top)*1.681), lpRect->right-lpRect->left), lpRect->bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x10, 0xFF, 0xFF, 0xFF));
+	LinearGradientBrush brush(Point(lpRect->left, lpRect->top), Point(lpRect->left+min((INT)((lpRect->bottom-lpRect->top)*1.681), lpRect->right-lpRect->left), lpRect->bottom), Color(0x28FFFFFF), Color(0x10FFFFFF));
 	g.FillPath(&brush, &pathReflection);
 }
 
@@ -267,13 +291,13 @@ void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocu
 
 			if (Selected)
 			{
-				LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0x20, 0xA0, 0xFF), Color(0x10, 0x80, 0xE0));
+				LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0xFF20A0FF), Color(0xFF1080E0));
 				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 			}
 			else
 				if (Hover)
 				{
-					LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0xF9, 0xFC, 0xFF), Color(0xE0, 0xEB, 0xFA));
+					LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0xFFF9FCFF), Color(0xFFE0EBFA));
 					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 				}
 
@@ -283,18 +307,18 @@ void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocu
 			if ((ShowFocusRect && WinFocused) || Hover || Selected)
 				if ((Focused && ShowFocusRect && WinFocused) || Selected)
 				{
-					Pen pen1(Color(0x10, 0x80, 0xE0));
+					Pen pen1(Color(0xFF1080E0));
 					g.DrawPath(&pen1, &pathOuter);
 				}
 				else
 				{
-					Pen pen1(Color(0x8A, 0xC0, 0xF0));
+					Pen pen1(Color(0xFF8AC0F0));
 					g.DrawPath(&pen1, &pathOuter);
 				}
 
 			if (Hover || Selected)
 			{
-				Pen pen2(Color((Hover && !Selected) ? 0x60 : 0x48, 0xFF, 0xFF, 0xFF));
+				Pen pen2(Color(((Hover && !Selected) ? 0x60000000 : 0x48000000) | 0xFFFFFF));
 				g.DrawPath(&pen2, &pathInner);
 			}
 		}
@@ -361,16 +385,16 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 
 			if (Hover)
 			{
-				LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
+				LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0xFFFAFDFE), Color(0xFFE8F5FC));
 				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 
 				rect.DeflateRect(1, 1);
 				INT y = (rect.top+rect.bottom)/2;
 
-				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
+				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xFFEAF6FD), Color(0xFFD7EFFC));
 				g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
 
-				LinearGradientBrush brush3(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
+				LinearGradientBrush brush3(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xFFBDE6FD), Color(0xFFA6D9F4));
 				g.FillRectangle(&brush3, rect.left, y, rect.Width(), rect.bottom-y);
 			}
 			else
@@ -379,13 +403,13 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 
 				INT y = (rect.top+rect.bottom)/2;
 
-				LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
+				LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xFFA9D9F2), Color(0xFF90CBEB));
 				g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
 
-				LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+				LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20163145), Color(0x00163145));
 				g.FillRectangle(&brush3, rect.left, rect.top, rect.Width(), 2);
 
-				LinearGradientBrush brush4(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+				LinearGradientBrush brush4(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20163145), Color(0x00163145));
 				g.FillRectangle(&brush4, rect.left, rect.top, 2, rect.Height());
 			}
 		}
@@ -408,7 +432,7 @@ void DrawBackstageBorder(Graphics& g, CRect rect)
 	GraphicsPath path;
 	CreateRoundRectangle(rect, 3, path);
 
-	SolidBrush brush1(Color(0x80, 0x00, 0x00, 0x00));
+	SolidBrush brush1(Color(0x80000000));
 	g.FillPath(&brush1, &path);
 
 	rect.left--;
@@ -417,15 +441,15 @@ void DrawBackstageBorder(Graphics& g, CRect rect)
 	g.SetPixelOffsetMode(PixelOffsetModeNone);
 	CreateRoundTop(rect, 4, path);
 
-	LinearGradientBrush brush2(Point(0, rect.top-1), Point(0, rect.top+5), Color(0xF0, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+	LinearGradientBrush brush2(Point(0, rect.top-1), Point(0, rect.top+5), Color(0xF0000000), Color(0x00000000));
 
-	Pen pen(Color(0x00, 0x00, 0x00));
+	Pen pen(Color(0xFF000000));
 	pen.SetBrush(&brush2);
 	g.DrawPath(&pen, &path);
 
 	CreateRoundRectangle(rect, 4, path);
 
-	LinearGradientBrush brush3(Point(0, rect.top-1), Point(0, rect.bottom), Color(0x00, 0xFF, 0xFF, 0xFF), Color(0x38, 0xFF, 0xFF, 0xFF));
+	LinearGradientBrush brush3(Point(0, rect.top-1), Point(0, rect.bottom), Color(0x00FFFFFF), Color(0x38FFFFFF));
 
 	pen.SetBrush(&brush3);
 	g.DrawPath(&pen, &path);
@@ -437,13 +461,13 @@ void DrawBackstageSelection(CDC& dc, Graphics& g, const CRect& rect, BOOL Select
 	{
 		if (Themed)
 		{
-			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom-1), Color(0xC0, 0x20, 0xA0, 0xFF), Color(0xC0, 0x10, 0x78, 0xFF));
+			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom-1), Color(0xC020A0FF), Color(0xC01078FF));
 			g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height()-1);
 
-			SolidBrush brush2(Color(0x40, 0xFF, 0xFF, 0xFF));
+			SolidBrush brush2(Color(0x40FFFFFF));
 			g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), 1);
 
-			SolidBrush brush3(Color(0x18, 0xFF, 0xFF, 0xFF));
+			SolidBrush brush3(Color(0x18FFFFFF));
 			g.FillRectangle(&brush3, rect.left, rect.top+1, 1, rect.Height()-3);
 			g.FillRectangle(&brush3, rect.right-1, rect.top+1, 1, rect.Height()-3);
 			g.FillRectangle(&brush3, rect.left, rect.bottom-2, rect.Width(), 1);
@@ -473,10 +497,10 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 			GraphicsPath path;
 			CreateRoundRectangle(rect, 3, path);
 
-			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Red ? Color(0xB0, 0xFF, 0x00, 0x00) : Color(0xE0, 0x20, 0xA0, 0xFF), Red ? Color(0xA0, 0xFF, 0x00, 0x00) : Color(0xE0, 0x10, 0x78, 0xFF));
+			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Red ? Color(0xB0FF0000) : Color(0xE020A0FF), Red ? Color(0xA0FF0000) : Color(0xE01078FF));
 			g.FillPath(&brush1, &path);
 
-			Pen pen(Red ? Color(0x80, 0x60, 0x00, 0x00) : Color(0x80, 0x06, 0x2D, 0x60));
+			Pen pen(Red ? Color(0x80600000) : Color(0x80062D60));
 			g.DrawPath(&pen, &path);
 
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
@@ -489,7 +513,7 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 			{
 				CreateRoundRectangle(rect, 2, path);
 
-				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0x60, 0xFF, 0xFF, 0xFF), Color(0x20, 0xFF, 0xFF, 0xFF));
+				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0x60FFFFFF), Color(0x20FFFFFF));
 				g.FillPath(&brush2, &path);
 			}
 			else
@@ -499,7 +523,7 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 				rect.right--;
 				CreateRoundTop(rect, 2, path);
 
-				Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
+				Pen pen(Color(0x40FFFFFF));
 				g.DrawPath(&pen, &path);
 			}
 
@@ -532,16 +556,16 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 			if (Selected)
 			{
-				SolidBrush brush(Color(0x20, 0x50, 0x57, 0x62));
+				SolidBrush brush(Color(0x20505762));
 				g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
 			}
 			else
 				if (Hover)
 				{
-					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
+					SolidBrush brush1(Color(0x40FFFFFF));
 					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height()/2);
 
-					SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
+					SolidBrush brush2(Color(0x28A0AFC3));
 					g.FillRectangle(&brush2, rect.left, rect.top+rect.Height()/2+1, rect.Width(), rect.Height()-rect.Height()/2);
 				}
 
@@ -552,7 +576,7 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 			{
 				CreateRoundRectangle(rect, 1, path);
 
-				Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
+				Pen pen(Color(0x80FFFFFF));
 				g.DrawPath(&pen, &path);
 			}
 
@@ -560,7 +584,7 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 			rect.InflateRect(1, 1);
 			CreateRoundRectangle(rect, 2, path);
 
-			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
+			Pen pen(Color(0x70505762));
 			g.DrawPath(&pen, &path);
 		}
 	}
@@ -589,16 +613,16 @@ void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom)
 	GraphicsPath path;
 	CreateRoundRectangle(lpRect, 3, path);
 
-	LinearGradientBrush brush1(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x0C, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+	LinearGradientBrush brush1(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x0C000000), Color(0x00000000));
 
-	Pen pen(Color(0x00, 0x00, 0x00));
+	Pen pen(Color(0x00000000));
 	pen.SetBrush(&brush1);
 
 	g.DrawPath(&pen, &path);
 
 	if (IncludeBottom)
 	{
-		LinearGradientBrush brush2(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x00, 0xFF, 0xFF, 0xFF), Color(0xFF, 0xFF, 0xFF, 0xFF));
+		LinearGradientBrush brush2(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x00FFFFFF), Color(0xFFFFFFFF));
 
 		pen.SetBrush(&brush2);
 
@@ -625,22 +649,22 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 		{
 			dc.FillSolidRect(rect, 0xEDEAE9);
 
-			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20000000), Color(0x00000000));
 			g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), 2);
 
-			LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+			LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20000000), Color(0x00000000));
 			g.FillRectangle(&brush2, rect.left, rect.top, 1, rect.Height());
 		}
 		else
 		{
 			dc.FillSolidRect(rect, Hover ? 0xEFECEC : 0xF7F4F4);
 
-			LinearGradientBrush brush1(Point(0, rect.top+1), Point(0, (rect.top+rect.bottom)/2+1), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(Disabled ? 0x00 : 0x40, 0xFF, 0xFF, 0xFF));
+			LinearGradientBrush brush1(Point(0, rect.top+1), Point(0, (rect.top+rect.bottom)/2+1), Color(0xFFFFFFFF), Color((Disabled ? 0x00000000 : 0x40000000) | 0xFFFFFF));
 			g.FillRectangle(&brush1, rect.left, rect.top+1, rect.Width(), rect.Height()/2);
 
 			if (!Disabled)
 			{
-				LinearGradientBrush brush2(Point(0, rect.bottom-3), Point(0, rect.bottom), Color(0x00, 0x00, 0x00, 0x00), Color(Hover ? 0x20 : 0x10, 0x00, 0x00, 0x00));
+				LinearGradientBrush brush2(Point(0, rect.bottom-3), Point(0, rect.bottom), Color(0x00000000), Color(Hover ? 0x20000000 : 0x10000000));
 				g.FillRectangle(&brush2, rect.left, rect.bottom-3, rect.Width(), 3);
 			}
 		}
@@ -662,22 +686,22 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 				GraphicsPath pathInner;
 				CreateRoundRectangle(rect, 1, pathInner);
 
-				Pen pen(Color(0xC0, 0xFF, 0xFF, 0xFF));
+				Pen pen(Color(0xC0FFFFFF));
 				g.DrawPath(&pen, &pathInner);
 			}
 
-			Pen pen(Color(0x80, 0x83, 0x97));
+			Pen pen(Color(0xFF808397));
 			g.DrawPath(&pen, &pathOuter);
 		}
 		else
 			if (Hover)
 			{
-				Pen pen(Color(0xA6, 0xAB, 0xB2));
+				Pen pen(Color(0xFFA6ABB2));
 				g.DrawPath(&pen, &pathOuter);
 			}
 			else
 			{
-				Pen pen(Color(0xBC, 0xBD, 0xBE));
+				Pen pen(Color(0xFFBCBDBE));
 				g.DrawPath(&pen, &pathOuter);
 			}
 	}
@@ -922,11 +946,11 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	TextPath.Transform(&m);
 
 	// Text
-	Pen pen(Color(0x00, 0x00, 0x00), 3.5);
+	Pen pen(Color(0xFF000000), 3.5);
 	pen.SetLineJoin(LineJoinRound);
 	g.DrawPath(&pen, &TextPath);
 
-	SolidBrush brush(Color(0xFF, 0xFF, 0xFF));
+	SolidBrush brush(Color(0xFFFFFFFF));
 	g.FillPath(&brush, &TextPath);
 
 	dc.SelectObject(hOldBitmap);

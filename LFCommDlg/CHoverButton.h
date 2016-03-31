@@ -8,8 +8,6 @@
 // CHoverButton
 //
 
-#define WM_ISHOVER     WM_USER+7
-
 class CHoverButton : public CButton
 {
 public:
@@ -26,7 +24,6 @@ protected:
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg LRESULT OnIsHover(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	BOOL m_Hover;

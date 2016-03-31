@@ -654,7 +654,7 @@ void CGridView::OnPaint()
 	if (m_Nothing)
 	{
 		CRect rectText(rect);
-		rectText.top += m_HeaderHeight+6;
+		rectText.top += m_HeaderHeight+BACKSTAGEBORDER;
 
 		CString tmpStr((LPCSTR)IDS_NOTHINGTODISPLAY);
 

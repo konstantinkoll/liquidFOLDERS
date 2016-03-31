@@ -139,10 +139,10 @@ void CTooltipHeader::OnPaint()
 	}
 
 	const INT Line = rect.Height()*2/5;
-	LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0x00, 0x00, 0x00, 0x00), Color(0x40, 0x00, 0x00, 0x00));
-	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(0x40, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+	LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0x00000000), Color(0x40000000));
+	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(0x40000000), Color(0x00000000));
 
-	Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
+	Pen pen(Color(0x80FFFFFF));
 
 	for (INT a=0; a<GetItemCount(); a++)
 	{

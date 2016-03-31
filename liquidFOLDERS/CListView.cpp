@@ -199,7 +199,7 @@ void CListView::AdjustLayout()
 	HdLayout.pwpos = &wp;
 	m_wndHeader.Layout(&HdLayout);
 
-	wp.x = 13-PADDING;
+	wp.x = BACKSTAGEBORDER-1;
 	wp.y = 0;
 	m_HeaderHeight = wp.cy;
 
@@ -868,7 +868,7 @@ void CListView::ScrollWindow(INT dx, INT dy)
 		HdLayout.pwpos = &wp;
 		m_wndHeader.Layout(&HdLayout);
 
-		wp.x = 13-PADDING;
+		wp.x = BACKSTAGEBORDER-1;
 		wp.y = 0;
 
 		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);

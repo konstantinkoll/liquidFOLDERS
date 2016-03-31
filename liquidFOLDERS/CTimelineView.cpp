@@ -316,7 +316,7 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, Ite
 		GraphicsPath path;
 		CreateRoundRectangle(rectCategory, 4, path);
 
-		SolidBrush brush(Color(0xC1, 0xC1, 0xC1));
+		SolidBrush brush(Color(0xFFC1C1C1));
 		g.FillPath(&brush, &path);
 	}
 	else
@@ -339,7 +339,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 	// Shadow
 	GraphicsPath Path;
-	Color sCol(0x0C, 0x00, 0x00, 0x00);
+	Color sCol(0x0C000000);
 
 	if (Themed)
 	{
@@ -366,7 +366,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			m.Translate(-1.0, -1.0);
 			Path.Transform(&m);
 
-			Pen pen(Color(0xD0, 0xD1, 0xD5));
+			Pen pen(Color(0xFFD0D1D5));
 			g.DrawPath(&pen, &Path);
 		}
 		else
@@ -681,7 +681,7 @@ void CTimelineView::OnPaint()
 	{
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFF, 0xFF, 0xFF), Color(0xF4, 0xF5, 0xF8));
+		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
 		g.FillRectangle(&brush, Rect(0, 0, rect.Width(), WHITE));
 
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
@@ -693,7 +693,7 @@ void CTimelineView::OnPaint()
 	if (m_Nothing)
 	{
 		CRect rectText(rect);
-		rectText.top += m_HeaderHeight+6;
+		rectText.top += m_HeaderHeight+BACKSTAGEBORDER;
 
 		CString tmpStr((LPCSTR)IDS_NOTHINGTODISPLAY);
 

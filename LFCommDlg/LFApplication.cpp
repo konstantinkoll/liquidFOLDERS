@@ -350,6 +350,8 @@ CWnd* LFApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
 
 INT LFApplication::ExitInstance()
 {
+	m_wndTooltip.DestroyWindow();
+
 	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
 		delete m_ResourceCache.m_Items[a].pImage;
 

@@ -51,7 +51,6 @@ BEGIN_MESSAGE_MAP(CHoverButton, CButton)
 	ON_WM_MOUSEHOVER()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_MESSAGE(WM_ISHOVER, OnIsHover)
 END_MESSAGE_MAP()
 
 BOOL CHoverButton::OnEraseBkgnd(CDC* /*pDC*/)
@@ -120,9 +119,4 @@ void CHoverButton::OnKillFocus(CWnd* pNewWnd)
 	CButton::OnKillFocus(pNewWnd);
 
 	Invalidate();
-}
-
-LRESULT CHoverButton::OnIsHover(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	return m_Hover;
 }

@@ -359,7 +359,7 @@ void CBackstageWnd::UpdateBackground()
 				// Top border
 				if (LayoutWidth)
 				{
-					LinearGradientBrush brush(Point(0, rectLayout.top-3), Point(0, rectLayout.top), Color(0x00, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
+					LinearGradientBrush brush(Point(0, rectLayout.top-3), Point(0, rectLayout.top), Color(0x00000000), Color(0x60000000));
 					g.FillRectangle(&brush, 0, rectLayout.top-2, LayoutWidth, 2);
 				}
 
@@ -393,13 +393,13 @@ void CBackstageWnd::UpdateBackground()
 
 				// Top reflection
 				GraphicsPath path;
-				Pen pen(Color(0x00, 0x00, 0x00));
+				Pen pen(Color(0xFF000000));
 
 				for (UINT a=0; a<3; a++)
 				{
 					CreateRoundTop(CRect(0, a, m_BackBufferL, BACKSTAGERADIUS-3+a), BACKSTAGERADIUS-3-a, path);
 
-					LinearGradientBrush brush(Point(0, a-1), Point(0, BACKSTAGERADIUS+a-2), Color(0x40>>a, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+					LinearGradientBrush brush(Point(0, a-1), Point(0, BACKSTAGERADIUS+a-2), Color((0x40000000>>a) | 0xFFFFFF), Color(0x00FFFFFF));
 
 					pen.SetBrush(&brush);
 					g.DrawPath(&pen, &path);
@@ -411,7 +411,7 @@ void CBackstageWnd::UpdateBackground()
 				{
 					CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
 
-					pen.SetColor(Color(0x00, 0x00, 0x00));
+					pen.SetColor(Color(0xFF000000));
 					g.DrawPath(&pen, &path);
 				}
 				else
@@ -421,7 +421,7 @@ void CBackstageWnd::UpdateBackground()
 					path.AddLine(m_BackBufferL, -1, -1, -1);
 					path.CloseFigure();
 
-					SolidBrush brush(Color(0, 0, 0));
+					SolidBrush brush(Color(0xFF000000));
 					g.FillPath(&brush, &path);
 				}
 			}
@@ -637,7 +637,7 @@ void CBackstageWnd::PrepareBitmaps()
 
 		g.DrawImage(pTexture, 0, 0);
 
-		LinearGradientBrush brush(Point(0, 0), Point(0, BACKGROUNDTOP), Color(TOPALPHA, 0x00, 0x00, 0x00), Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
+		LinearGradientBrush brush(Point(0, 0), Point(0, BACKGROUNDTOP), Color(TOPALPHA<<24), Color(BOTTOMALPHA<<24));
 		g.FillRectangle(&brush, 0, 0, pTexture->GetWidth(), BACKGROUNDTOP);
 
 		dc.SelectObject(pOldBitmap);
@@ -663,7 +663,7 @@ void CBackstageWnd::PrepareBitmaps()
 
 		g.DrawImage(pTexture, 0, 0);
 
-		SolidBrush brush(Color(BOTTOMALPHA, 0x00, 0x00, 0x00));
+		SolidBrush brush(Color(BOTTOMALPHA<<24));
 		g.FillRectangle(&brush, 0, 0, pTexture->GetWidth(), pTexture->GetHeight());
 
 		dc.SelectObject(pOldBitmap);

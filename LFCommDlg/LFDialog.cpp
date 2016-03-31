@@ -218,7 +218,7 @@ void LFDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 		{
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-			LinearGradientBrush brush2(Point(rectLayout.left, 0), Point(rectLayout.right, 0), Color(4, 80, 130), Color(28, 120, 133));
+			LinearGradientBrush brush2(Point(rectLayout.left, 0), Point(rectLayout.right, 0), Color(0xFF045082), Color(0xFF1C7885));
 			g.FillRectangle(&brush2, rectLayout.left, rectLayout.top, rectLayout.Width(), m_UACHeight);
 			dc.SetTextColor(0xFFFFFF);
 		}

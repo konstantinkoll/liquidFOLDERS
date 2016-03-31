@@ -667,18 +667,21 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 		switch(pValue.Type)
 		{
 		case LFTypeUnicodeString:
-			wcscpy_s(pValue.UnicodeString, 256, pStr);
+			wcsncpy_s(pValue.UnicodeString, 256, pStr, 255);
+
 			pValue.IsNull = FALSE;
 			break;
 
 		case LFTypeUnicodeArray:
-			wcscpy_s(pValue.UnicodeArray, 256, pStr);
+			wcsncpy_s(pValue.UnicodeArray, 256, pStr, 255);
 			LFSanitizeUnicodeArray(pValue.UnicodeArray, 256);
+
 			pValue.IsNull = FALSE;
 			break;
 
 		case LFTypeAnsiString:
 			WideCharToMultiByte(CP_ACP, 0, pStr, -1, pValue.AnsiString, 256, NULL, NULL);
+
 			pValue.IsNull = FALSE;
 			break;
 

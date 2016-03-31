@@ -327,23 +327,30 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetRadio(m_ViewParameters.TagcloudCanonical);
 		if (!pCmdUI->m_pMenu)
 			b = !m_ViewParameters.TagcloudCanonical && !m_Nothing;
+
 		break;
+
 	case IDM_TAGCLOUD_SORTCOUNT:
 		pCmdUI->SetRadio(!m_ViewParameters.TagcloudCanonical);
 		if (!pCmdUI->m_pMenu)
 			b = m_ViewParameters.TagcloudCanonical && !m_Nothing;
+
 		break;
 	case IDM_TAGCLOUD_SHOWRARE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudShowRare);
 		break;
+
 	case IDM_TAGCLOUD_USESIZE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseSize);
 		break;
+
 	case IDM_TAGCLOUD_USECOLORS:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseColors);
 		break;
+
 	case IDM_TAGCLOUD_USEOPACITY:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseOpacity);
+		break;
 	}
 
 	pCmdUI->Enable(b);

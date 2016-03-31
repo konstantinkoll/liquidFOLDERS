@@ -63,6 +63,9 @@
 #define REQUEST_TOOLTIP_DATA             2
 #define REQUEST_DRAWBUTTONFOREGROUND     3
 
+#define COLORREF2RGB(clr)             (0xFF000000 | ((clr & 0xFF)<<16) | (clr & 0xFF00) | (clr>>16))
+#define COLORREF2ARGB(clr, alpha)     ((alpha<<24) | ((clr & 0xFF)<<16) | (clr & 0xFF00) | (clr>>16))
+
 struct NM_TEXTCOLOR
 {
 	NMHDR hdr;
@@ -105,6 +108,8 @@ void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
 void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
 BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
+HBITMAP CreateTruecolorBitmap(LONG Width, LONG Height);
+CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height);
 void DrawLocationIndicator(Graphics& g, INT x, INT y, INT sz=16);
 void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed);

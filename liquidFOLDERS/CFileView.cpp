@@ -363,6 +363,7 @@ void CFileView::SelectItem(INT Index, BOOL Select, BOOL InternalCall)
 		if (pData->Valid)
 		{
 			pData->Selected = Select;
+
 			if (!InternalCall)
 				ChangedItem(Index);
 		}
@@ -1565,6 +1566,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 	}
 
 	GetParent()->UpdateWindow();
+
 	CFrontstageWnd::OnRButtonUp(nFlags, point);
 }
 

@@ -84,7 +84,7 @@ void CBackstageShadow::Update(CWnd* pBackstageWnd, CRect rectWindow)
 		{
 			CreateRoundRectangle(rect, BACKSTAGERADIUS+1+SHADOWSIZE-a, path);
 
-			Pen pen(Color((BYTE)(((a+3)*(a+4)*(a+3)>>6)), 0x00, 0x00, 0x00));
+			Pen pen(Color((BYTE)(((a+3)*(a+4)*(a+3)>>6))<<24));
 			g.DrawPath(&pen, &path);
 
 			rect.DeflateRect(1, 1);
@@ -93,7 +93,7 @@ void CBackstageShadow::Update(CWnd* pBackstageWnd, CRect rectWindow)
 		rect.top -= SHADOWOFFSET;
 		CreateRoundRectangle(rect, BACKSTAGERADIUS, path);
 
-		Pen pen(Color(0x00, 0x00, 0x00));
+		Pen pen(Color(0xFF000000));
 		g.DrawPath(&pen, &path);
 
 		// Update system-managed bitmap of window

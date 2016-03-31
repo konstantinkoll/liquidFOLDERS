@@ -368,23 +368,23 @@ void CBackstageSidebar::OnPaint()
 				{
 					if ((a==0) || m_Items.m_Items[a-1].Selectable)
 					{
-						LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x20, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+						LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
 						g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), 2);
 					}
 					else
 					{
-						LinearGradientBrush brush2(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+8), Color(0x80, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+						LinearGradientBrush brush2(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+8), Color(0x80000000), Color(0x00000000));
 						g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), 8);
 					}
 
 					if ((a==m_Items.m_ItemCount-1) || m_Items.m_Items[a+1].Selectable)
 					{
-						LinearGradientBrush brush2(Point(rectItem.left, rectItem.bottom-3), Point(rectItem.left, rectItem.bottom), Color(0x00, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
+						LinearGradientBrush brush2(Point(rectItem.left, rectItem.bottom-3), Point(rectItem.left, rectItem.bottom), Color(0x00000000), Color(0x60000000));
 						g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-2, rectItem.Width(), 2);
 					}
 					else
 					{
-						SolidBrush brush2(Color(0x68, 0x00, 0x00, 0x00));
+						SolidBrush brush2(Color(0x68000000));
 						g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-1, rectItem.Width(), 1);
 					}
 				}
@@ -395,13 +395,13 @@ void CBackstageSidebar::OnPaint()
 			{
 				if (Themed)
 				{
-					SolidBrush brush1(Color(0x68, 0x00, 0x00, 0x00));
+					SolidBrush brush1(Color(0x68000000));
 					g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
 
-					SolidBrush brush2(Color(0x80, 0x00, 0x00, 0x00));
+					SolidBrush brush2(Color(0x80000000));
 					g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-1, rectItem.Width(), 1);
 
-					SolidBrush brush3(Color(0x28, 0xFF, 0xFF, 0xFF));
+					SolidBrush brush3(Color(0x28FFFFFF));
 					g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), 1);
 				}
 				else
@@ -447,7 +447,7 @@ void CBackstageSidebar::OnPaint()
 
 							if (!Highlight)
 							{
-								SolidBrush brushShadow(Color(0x40, 0x00, 0x00, 0x00));
+								SolidBrush brushShadow(Color(0x40000000));
 								g.FillPath(&brushShadow, &path);
 							}
 
@@ -455,10 +455,13 @@ void CBackstageSidebar::OnPaint()
 							m2.Translate(-2.5f, -2.5f);
 							path.Transform(&m2);
 
-							SolidBrush brushFill(Color(clr & 0xFF, (clr>>8) & 0xFF, (clr>>16) & 0xFF));
+							Color clrFill;
+							clrFill.SetFromCOLORREF(clr);
+
+							SolidBrush brushFill(clrFill);
 							g.FillPath(&brushFill, &path);
 
-							Pen pen(Color(0xFF, 0xFF, 0xFF), 2.0f);
+							Pen pen(Color(0xFFFFFFFF), 2.0f);
 							g.DrawPath(&pen, &path);
 
 							g.SetSmoothingMode(SmoothingModeNone);
@@ -544,7 +547,7 @@ void CBackstageSidebar::OnPaint()
 	{
 		CRect rectItem(m_Items.m_Items[m_Items.m_ItemCount-1].Rect);
 
-		LinearGradientBrush brush1(Point(rectItem.left, rectItem.bottom), Point(rectItem.left, rectItem.bottom+2), Color(0x20, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		LinearGradientBrush brush1(Point(rectItem.left, rectItem.bottom), Point(rectItem.left, rectItem.bottom+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
 		g.FillRectangle(&brush1, rectItem.left, rectItem.bottom, rectItem.Width(), 2);
 	}
 

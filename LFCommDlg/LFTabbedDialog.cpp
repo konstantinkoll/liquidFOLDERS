@@ -132,6 +132,8 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 							pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);
 						}
 
+						wndTemp.DestroyWindow();
+
 						Result = AddTab(Caption);
 					}
 				}
