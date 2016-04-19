@@ -851,12 +851,8 @@ void CListView::SortCategories(LFSearchResult* Result)
 			Result->m_Items[Ptr++] = Buckets[a].m_Items[b];
 }
 
-void CListView::ScrollWindow(INT dx, INT dy)
+void CListView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
 {
-	CRect rect;
-	GetClientRect(rect);
-	rect.top = m_HeaderHeight;
-
 	if (IsWindow(m_wndHeader) && (dx!=0))
 	{
 		CRect rectWindow;
@@ -874,20 +870,13 @@ void CListView::ScrollWindow(INT dx, INT dy)
 		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 		m_wndHeader.RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 
+		CRect rect;
+		GetClientRect(rect);
+
 		InvalidateRect(CRect(rect.left, 0, rect.right, m_HeaderHeight));
 	}
 
-	if (IsCtrlThemed() && (dy!=0))
-	{
-		rect.bottom -= BACKSTAGERADIUS;
-
-		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
-		RedrawWindow(CRect(rect.left, rect.bottom, rect.right, rect.bottom+BACKSTAGERADIUS), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
-	}
+	CGridView::ScrollWindow(dx, dy, lpRect, lpClipRect);
 }
 
 

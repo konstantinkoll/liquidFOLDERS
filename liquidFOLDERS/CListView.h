@@ -21,7 +21,7 @@ protected:
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
 	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed);
-	virtual void ScrollWindow(INT dx, INT dy);
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);

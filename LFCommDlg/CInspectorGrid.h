@@ -260,7 +260,7 @@ public:
 
 protected:
 	virtual void Init();
-	virtual void ScrollWindow(INT dx, INT dy);
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 
 	RECT GetItemRect(INT Item) const;

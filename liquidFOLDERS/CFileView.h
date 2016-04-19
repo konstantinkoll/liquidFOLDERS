@@ -151,7 +151,7 @@ protected:
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
 	virtual CMenu* GetItemContextMenu(INT Index);
-	virtual void ScrollWindow(INT dx, INT dy);
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT Index) const;

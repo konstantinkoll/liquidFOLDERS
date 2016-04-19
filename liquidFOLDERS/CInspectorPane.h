@@ -58,7 +58,7 @@ protected:
 class CStoreManagerGrid : public CInspectorGrid
 {
 protected:
-	virtual void ScrollWindow(INT dx, INT dy);
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 };
 
 

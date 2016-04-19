@@ -246,7 +246,7 @@ void CTooltipHeader::OnPaint()
 		}
 	}
 
-	if (m_Shadow)
+	if (m_Shadow && Themed)
 		CTaskbar::DrawTaskbarShadow(g, rect);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

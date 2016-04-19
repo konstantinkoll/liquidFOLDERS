@@ -609,7 +609,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	}
 }
 
-void CTimelineView::ScrollWindow(INT dx, INT dy)
+void CTimelineView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
 {
 	if (IsCtrlThemed())
 	{
@@ -617,7 +617,7 @@ void CTimelineView::ScrollWindow(INT dx, INT dy)
 	}
 	else
 	{
-		CFileView::ScrollWindow(dx, dy);
+		CFileView::ScrollWindow(dx, dy, lpRect, lpClipRect);
 	}
 }
 

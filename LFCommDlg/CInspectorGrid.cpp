@@ -1164,9 +1164,9 @@ void CInspectorGrid::AdjustLayout()
 	Invalidate();
 }
 
-void CInspectorGrid::ScrollWindow(INT dx, INT dy)
+void CInspectorGrid::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
 {
-	CWnd::ScrollWindow(dx, dy);
+	CWnd::ScrollWindow(dx, dy, lpRect, lpClipRect);
 }
 
 void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)

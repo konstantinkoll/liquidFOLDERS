@@ -1036,14 +1036,17 @@ void CFileView::DestroyEdit(BOOL Accept)
 	m_EditLabel = -1;
 }
 
-void CFileView::ScrollWindow(INT dx, INT dy)
+void CFileView::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpClipRect*/)
 {
 	ASSERT(m_EnableScrolling);
 
+	CRect rect;
+	GetClientRect(rect);
+
+	rect.top = m_HeaderHeight;
+
 	if (IsCtrlThemed() && (dy!=0))
 	{
-		CRect rect;
-		GetClientRect(rect);
 		rect.bottom -= BACKSTAGERADIUS;
 
 		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
@@ -1051,7 +1054,7 @@ void CFileView::ScrollWindow(INT dx, INT dy)
 	}
 	else
 	{
-		CFrontstageWnd::ScrollWindow(dx, dy);
+		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
 	}
 }
 

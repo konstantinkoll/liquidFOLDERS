@@ -130,9 +130,22 @@ void CIconHeader::SetPreview(LFItemDescriptor* pItemDescriptor, const CString& D
 // CStoreManagerGrid
 //
 
-void CStoreManagerGrid::ScrollWindow(INT /*dx*/, INT /*dy*/)
+void CStoreManagerGrid::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
 {
-	Invalidate();
+	if (IsCtrlThemed())
+	{
+		CRect rect;
+		GetClientRect(rect);
+
+		rect.top += 2;
+
+		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
+		RedrawWindow(CRect(rect.left, 0, rect.right, 2), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	}
+	else
+	{
+		CInspectorGrid::ScrollWindow(dx, dy, lpRect, lpClipRect);
+	}
 }
 
 
