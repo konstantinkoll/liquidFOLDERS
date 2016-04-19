@@ -86,37 +86,42 @@ void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pP
 	dlg.DoModal();
 }
 
-void LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd)
+BOOL LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd)
 {
-	// Allowed?
-	if (!LFNagScreen(pParentWnd))
-		return;
+	BOOL Result = FALSE;
 
-	CString Caption((LPCSTR)IDS_IMPORTFOLDER_CAPTION);
-	CString Hint((LPCSTR)IDS_IMPORTFOLDER_HINT);
-
-	LFBrowseForFolderDlg dlg(pParentWnd, Caption, Hint, TRUE, TRUE, _T(""));
-	if (dlg.DoModal()==IDOK)
+	if (LFNagScreen(pParentWnd))
 	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		wp.pFileImportList = LFAllocFileImportList();
-		LFAddImportPath(wp.pFileImportList, dlg.m_FolderPath);
-		strcpy_s(wp.StoreID, LFKeySize, pStoreID);
-		wp.DeleteSource = dlg.m_DeleteSource;
+		CString Caption((LPCSTR)IDS_IMPORTFOLDER_CAPTION);
+		CString Hint((LPCSTR)IDS_IMPORTFOLDER_HINT);
 
-		// Template füllen
-		wp.pItemTemplate = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(wp.pItemTemplate, pStoreID, pParentWnd, TRUE);
-		if (tdlg.DoModal()!=IDCANCEL)
+		LFBrowseForFolderDlg dlg(pParentWnd, Caption, Hint, TRUE, TRUE, _T(""));
+		if (dlg.DoModal()==IDOK)
 		{
-			LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
-			LFErrorBox(pParentWnd, wp.pFileImportList->m_LastError);
-		}
+			WorkerParameters wp;
+			ZeroMemory(&wp, sizeof(wp));
+			wp.pFileImportList = LFAllocFileImportList();
+			LFAddImportPath(wp.pFileImportList, dlg.m_FolderPath);
+			strcpy_s(wp.StoreID, LFKeySize, pStoreID);
+			wp.DeleteSource = dlg.m_DeleteSource;
 
-		LFFreeItemDescriptor(wp.pItemTemplate);
-		LFFreeFileImportList(wp.pFileImportList);
+			// Template füllen
+			wp.pItemTemplate = LFAllocItemDescriptor();
+			LFItemTemplateDlg tdlg(wp.pItemTemplate, pStoreID, pParentWnd, TRUE);
+			if (tdlg.DoModal()!=IDCANCEL)
+			{
+				LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
+				LFErrorBox(pParentWnd, wp.pFileImportList->m_LastError);
+
+				Result = TRUE;
+			}
+
+			LFFreeItemDescriptor(wp.pItemTemplate);
+			LFFreeFileImportList(wp.pFileImportList);
+		}
 	}
+
+	return Result;
 }
 
 void LFRunSynchronization(const CHAR* pStoreID, CWnd* pParentWnd)
