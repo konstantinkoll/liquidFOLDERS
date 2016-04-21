@@ -13,11 +13,11 @@
 
 #define BORDER     10
 
-const UINT Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
+const UINT LFAddStoreDlg::m_Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
 		LFTypeSourceDropbox, LFTypeSourceFacebook, LFTypeSourceFlickr, LFTypeSourceInstagram,
 		LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
 
-const UINT nHints[] = { IDS_ADDSTORE_LIQUIDFOLDERS, IDS_ADDSTORE_WINDOWS,
+const UINT LFAddStoreDlg::m_nHints[] = { IDS_ADDSTORE_LIQUIDFOLDERS, IDS_ADDSTORE_WINDOWS,
 		IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE,
 		IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE };
 
@@ -143,7 +143,7 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	ASSERT(Source<=LFSourceCount);
 
 	WCHAR Caption[256];
-	LFGetSourceName(Caption, 256, Types[Source], FALSE);
+	LFGetSourceName(Caption, 256, m_Types[Source], FALSE);
 
 	WCHAR Hint[256];
 	::GetWindowText(pDrawButtonForeground->lpDrawItemStruct->hwndItem, Hint, 256);
@@ -159,7 +159,7 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 
 	// Icon
 	CPoint pt(rect.left+BORDER, rect.top+(rect.Height()-IconSize)/2);
-	pIcons->DrawEx(pDrawButtonForeground->pDC, Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
+	pIcons->DrawEx(pDrawButtonForeground->pDC, m_Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
 
 	rect.left += IconSize+BORDER;
 	rect.DeflateRect(BORDER, BORDER);
@@ -192,8 +192,8 @@ void LFAddStoreDlg::OnRequestTooltipData(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* p
 	const UINT Source = nCtrlID-IDC_ADDSTORE_LIQUIDFOLDERS;
 	ASSERT(Source<=LFSourceCount);
 
-	LFGetSourceName(pTooltipData->Caption, 256, Types[Source], FALSE);
-	ENSURE(LoadString(AfxGetResourceHandle(), nHints[Source], pTooltipData->Hint, 4096));
+	LFGetSourceName(pTooltipData->Caption, 256, m_Types[Source], FALSE);
+	ENSURE(LoadString(AfxGetResourceHandle(), m_nHints[Source], pTooltipData->Hint, 4096));
 
 	*pResult = TRUE;
 }

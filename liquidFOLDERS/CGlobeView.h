@@ -89,6 +89,7 @@ protected:
 private:
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
+	void WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	void RenderScene(BOOL Themed);
 
 	LPCTSTR lpszCursorName;

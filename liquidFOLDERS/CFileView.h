@@ -76,7 +76,9 @@ struct FVPersistentData
 
 struct SendToItemData
 {
-	HBITMAP hBitmap;
+	HICON hIcon;
+	INT cx;
+	INT cy;
 	BOOL IsStore;
 	CHAR StoreID[LFKeySize];
 	WCHAR Path[MAX_PATH];
@@ -181,6 +183,8 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
+	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
+	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
@@ -224,6 +228,7 @@ protected:
 	CPoint m_DragPos;
 
 private:
+	void AppendSendToItem(CMenu* pMenu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName=NULL) const;

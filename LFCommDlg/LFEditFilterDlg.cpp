@@ -158,8 +158,8 @@ BOOL LFEditFilterDlg::InitDialog()
 	m_wndThisStore.EnableWindow(InStore);
 
 	// List
-	LFGetApp()->m_LargeAttributeIcons.Load(IDB_ATTRIBUTEICONS_32, 32);
-	m_AttributeIcons.Attach(LFGetApp()->m_LargeAttributeIcons.ExtractImageList());
+	LFGetApp()->LoadAttributeIconsLarge();
+	m_AttributeIcons.Attach(LFGetApp()->m_AttributeIconsLarge.ExtractImageList());
 	m_wndConditionList.SetImageList(&m_AttributeIcons, LVSIL_NORMAL);
 
 	m_wndConditionList.AddColumn(0);

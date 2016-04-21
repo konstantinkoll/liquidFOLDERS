@@ -718,7 +718,7 @@ void CInspectorGrid::Init()
 {
 	ResetScrollbars();
 
-	LFGetApp()->m_LargeAttributeIcons.Load(IDB_ATTRIBUTEICONS_32, 32);
+	LFGetApp()->LoadAttributeIconsLarge();
 
 	m_RowHeight = max(LFGetApp()->m_DialogFont.GetFontHeight()+2, 16);
 	m_IconSize = (m_RowHeight>=27) ? 25 : (m_RowHeight>=22) ? 20 : (m_RowHeight>=18) ? 16 : 14;
@@ -1580,7 +1580,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
 
-				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, LFGetApp()->m_LargeAttributeIcons.ExtractIcon(GetAttributeIconIndex(m_HotItem)));
+				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, LFGetApp()->m_AttributeIconsLarge.ExtractIcon(GetAttributeIconIndex(m_HotItem)));
 			}
 	}
 	else

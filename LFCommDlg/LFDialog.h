@@ -7,7 +7,7 @@
 #include "CCategory.h"
 #include "CDesktopDimmer.h"
 #include "CWhiteButton.h"
-#include "LFCore.h"
+#include "LFDynArray.h"
 
 
 // LFDialog

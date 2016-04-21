@@ -49,6 +49,8 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
+	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnAdjustLayout();
 	afx_msg void OnUpdateSelection();
@@ -135,6 +137,7 @@ private:
 	void SetHeader();
 	void AdjustLayout(UINT nFlags=SWP_NOACTIVATE | SWP_NOZORDER);
 	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData) const;
+	static void CreateShortcut(LFTransactionListItem* pItem);
 
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;

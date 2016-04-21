@@ -17,7 +17,6 @@
 #define OS_XP                   0
 #define OS_Vista                1
 #define OS_Seven                2
-#define OS_Eight                3
 
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
@@ -83,6 +82,8 @@ public:
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
 	BOOL IsTooltipVisible() const;
 	void HideTooltip();
+	INT LoadAttributeIconsSmall();
+	INT LoadAttributeIconsLarge();
 	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR Verb);
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();
@@ -135,8 +136,8 @@ public:
 	CLIPFORMAT CF_HLIQUID;
 	CList<CWnd*> m_pMainFrames;
 	LFUpdateDlg* m_pUpdateNotification;
-	CIcons m_LargeAttributeIcons;
-	CIcons m_SmallAttributeIcons;
+	CIcons m_AttributeIconsLarge;
+	CIcons m_AttributeIconsSmall;
 	GLModelQuality m_ModelQuality;
 	GLTextureQuality m_TextureQuality;
 	BOOL m_TextureCompress;
@@ -174,6 +175,8 @@ protected:
 	LFDynArray<ResourceCacheItem, 16, 4> m_ResourceCache;
 
 private:
+	static void PlayRegSound(const CString& Identifier);
+
 	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;
@@ -195,4 +198,14 @@ inline void LFApplication::HideTooltip()
 	ASSERT(IsWindow(m_wndTooltip));
 
 	m_wndTooltip.HideTooltip();
+}
+
+inline INT LFApplication::LoadAttributeIconsSmall()
+{
+	return m_AttributeIconsSmall.LoadSmall(IDB_ATTRIBUTEICONS_16);
+}
+
+inline INT LFApplication::LoadAttributeIconsLarge()
+{
+	return m_AttributeIconsLarge.Load(IDB_ATTRIBUTEICONS_16, LI_FORTOOLTIPS);
 }

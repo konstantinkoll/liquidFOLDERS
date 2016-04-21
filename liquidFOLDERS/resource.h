@@ -3,14 +3,22 @@
 // Used by liquidFOLDERS.rc
 //
 #define SC_ALWAYSONTOP                  0x10
-#define IDB_TASKS_16                    130
-#define IDB_TASKS_32                    131
-#define IDB_MULTIPLE                    132
-#define IDB_CONTEXTS_16                 133
-#define IDB_CONTEXTS_32                 134
-#define IDB_THUMBNAIL_SHADOW            135
-#define IDB_THUMBNAIL_FRAME             136
-#define IDB_SOURCEICONS                 137
+#define IDB_CONTEXTS_16                 130
+#define IDB_CONTEXTS_24                 131
+#define IDB_CONTEXTS_32                 132
+#define IDB_CONTEXTS_48                 133
+#define IDB_CONTEXTS_64                 134
+#define IDB_TASKS_16                    135
+#define IDB_TASKS_24                    136
+#define IDB_TASKS_32                    137
+#define IDB_TASKS_48                    138
+#define IDB_TASKS_64                    139
+#define IDB_SOURCES_16                  140
+#define IDB_SOURCES_24                  141
+#define IDB_SOURCES_32                  142
+#define IDB_MULTIPLE                    143
+#define IDB_THUMBNAIL_SHADOW            144
+#define IDB_THUMBNAIL_FRAME             145
 #define ID_PANE_INSPECTOR               400
 #define ID_NAV_BACK                     500
 #define ID_NAV_FORWARD                  501

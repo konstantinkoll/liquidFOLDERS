@@ -55,12 +55,14 @@ protected:
 	INT m_ItemWidth;
 	INT m_LabelWidth;
 	INT m_PreviewColumns;
-	SIZE m_IconSize;
+	INT m_IconSize;
 
 private:
+	static WCHAR* GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, UINT Attr, UINT Mask);
 	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* ic, BOOL Themed);
 
 	LFDynArray<ItemCategory, 8, 8> m_Categories;
-	CString m_FilesSingular;
-	CString m_FilesPlural;
+	static CString m_FilesSingular;
+	static CString m_FilesPlural;
+	static CIcons m_SourceIcons;
 };

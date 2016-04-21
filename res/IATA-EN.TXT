@@ -2461,7 +2461,7 @@ GAJ     Yamagata, Japan;4;38*24'43"N, 140*22'17"E
 GAK     Gakona, USA
 GAL     Galena, USA;4;64*44'10"N, 156*56'15"W
 GAM     Gambell, USA;4;63*46'0"N, 171*43'58"W
-GAN     Gan Island, Maldives;4;0*41'36"S, 73*9'20"E
+GAN     Gan, Maldives;4;0*41'36"S, 73*9'20"E
 GAO     Guantanamo (Los Canos), Cuba;4;20*5'8"N, 75*9'30"W
 GAP     Gusap, New Guinea;4;6*3'0"S, 145*56'60"E
 GAQ     Gao, Mali;4;16*14'54"N, 0*0'20"E
@@ -2603,6 +2603,7 @@ GJT     Grand Junction, USA;4;39*7'21"N, 108*31'36"W
 GKA     Goroka, New Guinea;4;6*4'54"S, 145*23'31"E
 GKE     Geilenkirchen, Germany;4;50*57'39"N, 6*2'33"E
 GKH     Gorkha, Nepal;4;28*2'60"N, 84*28'59"E
+GKK     Koodoo, Maldives;5;0*43'51"N, 73*25'59"E
 GKL     Great Keppel Island, Australia;4;23*11'10"S, 150*56'35"E
 GKN     Gulkana, USA;4;62*9'18"N, 145*27'16"W
 GKO     Congoboumba, Gabun;4;0*4'59"S, 11*28'1"E
@@ -3705,6 +3706,7 @@ KDJ     N'Djole, Gabun;4;0*10'59"S, 10*45'0"E
 KDK     Kodiak (Municipal Airport), USA;4;57*48'21"N, 152*22'26"W
 KDL     Kardla, Estonia;4;58*59'27"N, 22*49'51"E
 KDN     N'Dende, Gabun;4;2*24'0"S, 11*22'1"E
+KDO     Kadhdhoo, Maldives;5;1*51'33"N, 73*31'19"E
 KDP     Kandep, New Guinea;4;5*49'59"S, 143*30'0"E
 KDR     Kandrian, New Guinea;4;6*10'59"S, 149*31'59"E
 KDS     Kamaran Downs, Australia;4;24*19'59"S, 139*10'1"E

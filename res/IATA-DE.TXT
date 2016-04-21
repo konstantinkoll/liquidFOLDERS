@@ -2461,7 +2461,7 @@ GAJ     Yamagata, Japan;4;38*24'43"N, 140*22'17"E
 GAK     Gakona, USA
 GAL     Galena, USA;4;64*44'10"N, 156*56'15"W
 GAM     Gambell, USA;4;63*46'0"N, 171*43'58"W
-GAN     Gan Island, Maledieven;4;0*41'36"S, 73*9'20"E
+GAN     Gan, Malediven;4;0*41'36"S, 73*9'20"E
 GAO     Guantanamo (Los Canos), Kuba;4;20*5'8"N, 75*9'30"W
 GAP     Gusap, Neu-Guinea;4;6*3'0"S, 145*56'60"E
 GAQ     Gao, Mali;4;16*14'54"N, 0*0'20"E
@@ -2603,6 +2603,7 @@ GJT     Grand Junction, USA;4;39*7'21"N, 108*31'36"W
 GKA     Goroka, Neu-Guinea;4;6*4'54"S, 145*23'31"E
 GKE     Geilenkirchen, Deutschland;4;50*57'39"N, 6*2'33"E
 GKH     Gorkha, Nepal;4;28*2'60"N, 84*28'59"E
+GKK     Koodoo, Malediven;5;0*43'51"N, 73*25'59"E
 GKL     Great Keppel Island, Australien;4;23*11'10"S, 150*56'35"E
 GKN     Gulkana, USA;4;62*9'18"N, 145*27'16"W
 GKO     Kongoboumba, Gabun;4;0*4'59"S, 11*28'1"E
@@ -2829,7 +2830,7 @@ HAM     Hamburg, Deutschland;4;53*37'49"N, 9*59'18"E
 HAN     Hanoi, Vietnam;4;21*13'16"N, 105*48'26"E
 HAO     Hamilton, USA;4;39*21'50"N, 84*31'19"W
 HAP     Whitsunday Kontiki Resort, Australien;4;20*20'2"S, 148*50'56"E
-HAQ     Hanimaadhoo, Maledieven;5;6*45'0"N, 73*9'0"E
+HAQ     Hanimaadhoo, Malediven;5;6*45'0"N, 73*9'0"E
 HAR     Harrisburg, USA;4;40*13'2"N, 76*51'5"W
 HAS     Hail, Saudi-Arabien;4;27*26'17"N, 41*41'11"E
 HAT     Heathlands, Australien;4;11*44'13"S, 142*34'39"E
@@ -3705,6 +3706,7 @@ KDJ     N'Djole, Gabun;4;0*10'59"S, 10*45'0"E
 KDK     Kodiak (Municipal Airport), USA;4;57*48'21"N, 152*22'26"W
 KDL     Kardla, Estland;4;58*59'27"N, 22*49'51"E
 KDN     N'Dende, Gabun;4;2*24'0"S, 11*22'1"E
+KDO     Kadhdhoo, Malediven;5;1*51'33"N, 73*31'19"E
 KDP     Kandep, Neu-Guinea;4;5*49'59"S, 143*30'0"E
 KDR     Kandrian, Neu-Guinea;4;6*10'59"S, 149*31'59"E
 KDS     Kamaran Downs, Australien;4;24*19'59"S, 139*10'1"E
@@ -4827,7 +4829,7 @@ MLA     Malta, Malta;4;35*51'27"N, 14*28'39"E
 MLB     Melbourne, USA;4;28*6'10"N, 80*38'43"W
 MLC     McAlester, USA;4;34*52'57"N, 95*47'0"W
 MLD     Malad City, USA;4;42*10'14"N, 112*17'22"W
-MLE     Male, Maledieven;4;4*11'31"N, 73*31'45"E
+MLE     Male, Malediven;4;4*11'31"N, 73*31'45"E
 MLF     Milford, USA;4;38*25'36"N, 113*0'45"W
 MLG     Malang, Indonesien;4;7*55'36"S, 112*42'52"E
 MLH     Mulhouse, Frankreich;4;47*32'60"N, 7*34'59"E

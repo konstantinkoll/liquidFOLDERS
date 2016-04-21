@@ -4,7 +4,7 @@
 
 #pragma once
 #include "LFApplication.h"
-#include "LFCore.h"
+#include "LFDynArray.h"
 
 
 // CBackstageBar
@@ -71,5 +71,7 @@ protected:
 	BOOL m_ReverseOrder;
 
 private:
+	static HBITMAP LoadMaskedIcon(UINT nID, INT Size, COLORREF clr=0xFFFFFF);
+
 	LFFont* p_Font;
 };

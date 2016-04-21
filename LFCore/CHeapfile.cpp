@@ -9,15 +9,6 @@
 #include <stdio.h>
 
 
-void ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize)
-{
-	memcpy(pDst, pSrc, min(DstSize, SrcSize));
-
-	if (DstSize>SrcSize)
-		ZeroMemory((BYTE*)pDst+SrcSize, DstSize-SrcSize);
-}
-
-
 // CHeapFile
 //
 
@@ -393,7 +384,20 @@ void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
 	Invalidate(pItemDescriptor->CoreAttributes.FileID, ID);
 }
 
-__forceinline void CHeapfile::GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor)
+void CHeapfile::ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize)
+{
+	assert(pDst);
+	assert(pSrc);
+	assert(SrcSize);
+	assert(DstSize);
+
+	memcpy(pDst, pSrc, min(DstSize, SrcSize));
+
+	if (DstSize>SrcSize)
+		ZeroMemory((BYTE*)pDst+SrcSize, DstSize-SrcSize);
+}
+
+__forceinline void CHeapfile::GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(PtrDst);
 	assert(Attr<LFAttributeCount);

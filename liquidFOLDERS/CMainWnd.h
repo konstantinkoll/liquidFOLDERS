@@ -56,6 +56,8 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSearchSetFocus();
+	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
+	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
 
 	afx_msg void OnNavigateBack();
 	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam=NULL);
@@ -106,8 +108,11 @@ protected:
 	LFStatistics* m_pStatistics;
 
 private:
+	static LFFilter* GetRootFilter(CHAR* pRootStore=NULL);
 	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory();
+	static void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
+	static void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
 
 	CHAR m_StatisticsID[LFKeySize];
 };

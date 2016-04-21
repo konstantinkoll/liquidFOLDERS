@@ -6,7 +6,7 @@
 #include "LFCommDlg.h"
 
 
-static INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
+INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
 {
 	return wcscmp(LFGetApp()->m_Attributes[(INT)lParam1].Name, LFGetApp()->m_Attributes[(INT)lParam2].Name);
 }
@@ -121,8 +121,8 @@ void LFAttributeListDlg::PopulateListCtrl(INT nID, BOOL Check, INT Focus, BOOL S
 
 BOOL LFAttributeListDlg::InitDialog()
 {
-	LFGetApp()->m_SmallAttributeIcons.Load(IDB_ATTRIBUTEICONS_16, 16);
-	m_AttributeIcons.Attach(LFGetApp()->m_SmallAttributeIcons.ExtractImageList());
+	LFGetApp()->LoadAttributeIconsSmall();
+	m_AttributeIcons.Attach(LFGetApp()->m_AttributeIconsSmall.ExtractImageList());
 
 	return TRUE;
 }

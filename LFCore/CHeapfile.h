@@ -75,7 +75,8 @@ protected:
 	BOOL m_BufferNeedsWriteback;
 
 private:
-	void GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor);
+	static void ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize);
+	void GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
 
 	WCHAR m_Filename[MAX_PATH];
 	HANDLE hFile;

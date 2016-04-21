@@ -5,7 +5,7 @@
 #pragma once
 #include "CFrontstageWnd.h"
 #include "CTaskButton.h"
-#include "LFCore.h"
+#include "LFDynArray.h"
 
 
 // CTaskbar
@@ -18,7 +18,7 @@ public:
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID);
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID);
 	UINT GetPreferredHeight() const;
 	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL ForceSmall=FALSE);
 	void AdjustLayout();

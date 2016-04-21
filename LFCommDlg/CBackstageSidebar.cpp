@@ -57,31 +57,27 @@ BOOL CBackstageSidebar::Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts)
 
 BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts)
 {
+	// Set icons
+	p_ButtonIcons = &SmallIcons;
+	p_ButtonIcons->SetGammaMode(TRUE);
+
 	m_IconSize = SmallIcons.GetIconSize();
 
-	p_ButtonIcons = &SmallIcons;
 	p_TooltipIcons = &LargeIcons;
 
 	return Create(pParentWnd, nID, ShowCounts);
 }
 
-BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID, BOOL ShowCounts)
+BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID, BOOL ShowCounts)
 {
 	// Load icons
-	m_IconSize = LFGetApp()->m_DefaultFont.GetFontHeight()>=24 ? 32 : 16;
+	p_ButtonIcons = &SmallIcons;
+	p_ButtonIcons->SetGammaMode(TRUE);
 
-	if (m_IconSize<32)
-	{
-		p_ButtonIcons = &SmallIcons;
-		p_ButtonIcons->Load(SmallResID, m_IconSize);
-	}
-	else
-	{
-		p_ButtonIcons = &LargeIcons;
-	}
+	m_IconSize = SmallIcons.Load(ResID);
 
 	p_TooltipIcons = &LargeIcons;
-	p_TooltipIcons->Load(LargeResID, 32);
+	LargeIcons.Load(ResID, LI_FORTOOLTIPS);
 
 	return Create(pParentWnd, nID, ShowCounts);
 }
@@ -359,7 +355,9 @@ void CBackstageSidebar::OnPaint()
 		{
 			CRect rectItem(m_Items.m_Items[a].Rect);
 
+			const BOOL Enabled = m_Items.m_Items[a].Enabled;
 			const BOOL Highlight = (m_PressedItem!=-1) ? m_PressedItem==(INT)a : m_SelectedItem==(INT)a;
+			const BOOL Hot = Enabled && !Highlight && (m_HotItem==(INT)a);
 
 			// Background
 			if (m_Items.m_Items[a].Selectable)
@@ -421,7 +419,7 @@ void CBackstageSidebar::OnPaint()
 				if (m_IconSize)
 				{
 					if (m_Items.m_Items[a].IconID!=-1)
-						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && !Highlight);
+						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && Hot, Themed && !Highlight);
 
 					rectItem.left += m_IconSize+BORDER;
 				}
@@ -504,7 +502,7 @@ void CBackstageSidebar::OnPaint()
 					dc.SelectObject(pOldFont);
 				}
 
-				dc.SetTextColor(Highlight ? colSel : m_Items.m_Items[a].Enabled ? (m_HotItem==(INT)a) ? colSel : colTex : colNum);
+				dc.SetTextColor(Highlight || Hot ? colSel : Enabled ? colTex : colNum);
 			}
 			else
 			{

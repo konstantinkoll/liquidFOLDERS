@@ -364,7 +364,7 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 					LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&Store);
 
 					CString Hint;
-					GetHintForStore(pItemDescriptor, Hint);
+					GetHintForStore(Hint, pItemDescriptor);
 
 					LFGetApp()->ShowTooltip(this, point, pItemDescriptor->CoreAttributes.FileName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1));
 

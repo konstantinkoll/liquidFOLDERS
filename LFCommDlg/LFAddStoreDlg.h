@@ -34,6 +34,8 @@ protected:
 	afx_msg void OnBtnWindows();
 	DECLARE_MESSAGE_MAP()
 
+	static const UINT m_Types[10];
+	static const UINT m_nHints[10];
 	CExplorerNotification m_wndExplorerNotification;
 
 private:

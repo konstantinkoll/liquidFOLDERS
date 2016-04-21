@@ -6,32 +6,6 @@
 #include "LFCommDlg.h"
 
 
-__forceinline void Swap(LFAirport*& Eins, LFAirport*& Zwei)
-{
-	LFAirport* Temp = Eins;
-	Eins = Zwei;
-	Zwei = Temp;
-}
-
-void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CString& Value)
-{
-	if (!Value.IsEmpty())
-	{
-		CString Name((LPCSTR)ResID);
-
-		wcscat_s(pStr, cCount, Name);
-		wcscat_s(pStr, cCount, L": ");
-		wcscat_s(pStr, cCount, Value);
-		wcscat_s(pStr, cCount, L"\n");
-	}
-}
-
-void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
-{
-	AppendAttribute(pStr, cCount, ResID, CString(pValue));
-}
-
-
 // LFSelectLocationIATADlg
 //
 
@@ -295,12 +269,12 @@ void LFSelectLocationIATADlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResu
 	{
 		LFAirport* pAirport = p_Airports[pTooltipData->Item];
 
-		AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, pAirport->Name);
-		AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, LFIATAGetCountry(pAirport->CountryID)->Name);
+		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, pAirport->Name);
+		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, LFIATAGetCountry(pAirport->CountryID)->Name);
 
 		WCHAR tmpStr[256];
 		LFGeoCoordinatesToString(pAirport->Location, tmpStr, 256, FALSE);
-		AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_LOCATION, tmpStr);
+		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_LOCATION, tmpStr);
 
 		pTooltipData->hBitmap = LFIATACreateAirportMap(pAirport, 192, 192);
 

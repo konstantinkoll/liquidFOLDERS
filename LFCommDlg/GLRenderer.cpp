@@ -53,8 +53,10 @@ BOOL GLRenderer::Initialize()
 		return TRUE;
 
 	// Create dummy window
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+
 	CWnd wndDummy;
-	wndDummy.CreateEx(0, _T(""), _T(""), WS_POPUP, CRect(0, 0, 16, 16), NULL, 0);
+	wndDummy.CreateEx(0, className, _T(""), WS_POPUP, CRect(0, 0, 16, 16), NULL, 0);
 
 	// Get DC
 	HDC hDC = GetDC(wndDummy);
@@ -140,6 +142,7 @@ BOOL GLRenderer::Initialize()
 	}
 
 	ReleaseDC(wndDummy, hDC);
+	wndDummy.DestroyWindow();
 
 	return m_Initialized;
 }

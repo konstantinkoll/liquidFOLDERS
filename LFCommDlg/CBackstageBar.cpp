@@ -6,58 +6,6 @@
 #include "LFCommDlg.h"
 
 
-HBITMAP LoadMaskedIcon(UINT nID, INT Size, COLORREF clr=0xFFFFFF)
-{
-	// RGB to BGR
-	clr = (_byteswap_ulong(clr) >> 8) | 0xFF000000;
-
-	HBITMAP hBitmap = CreateTransparentBitmap(Size, Size);
-
-	// Get mask from icon
-	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, Size, Size, LR_SHARED);
-
-	CDC dc;
-	dc.CreateCompatibleDC(NULL);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
-
-	DrawIconEx(dc, 0, 0, hIcon, Size, Size, 0, NULL, DI_NORMAL);
-	DestroyIcon(hIcon);
-
-	dc.SelectObject(hOldBitmap);
-
-	// Set colors
-	BITMAP Bitmap;
-	if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
-		for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
-		{
-			BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row;
-
-			for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
-			{
-				const BYTE Alpha = *(Ptr+3);
-
-				switch (Alpha)
-				{
-				case 0xFF:
-					*((COLORREF*)Ptr) = clr;
-
-				case 0x00:
-					break;
-
-				default:
-					*Ptr = (clr & 0xFF)*Alpha/255;
-					*(Ptr+1) = ((clr>>8) & 0xFF)*Alpha/255;
-					*(Ptr+2) = (BYTE)(clr>>16)*Alpha/255;
-				}
-
-				Ptr += 4;
-			}
-		}
-
-	return hBitmap;
-}
-
-
 // CBackstageBar
 //
 
@@ -225,6 +173,57 @@ INT CBackstageBar::HitTest(const CPoint& point) const
 						return a;
 
 	return VIEW;
+}
+
+HBITMAP CBackstageBar::LoadMaskedIcon(UINT nID, INT Size, COLORREF clr)
+{
+	// RGB to BGR
+	clr = (_byteswap_ulong(clr) >> 8) | 0xFF000000;
+
+	HBITMAP hBitmap = CreateTransparentBitmap(Size, Size);
+
+	// Get mask from icon
+	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, Size, Size, LR_SHARED);
+
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+	DrawIconEx(dc, 0, 0, hIcon, Size, Size, 0, NULL, DI_NORMAL);
+	DestroyIcon(hIcon);
+
+	dc.SelectObject(hOldBitmap);
+
+	// Set colors
+	BITMAP Bitmap;
+	if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
+		for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
+		{
+			BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row;
+
+			for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
+			{
+				const BYTE Alpha = *(Ptr+3);
+
+				switch (Alpha)
+				{
+				case 0xFF:
+					*((COLORREF*)Ptr) = clr;
+
+				case 0x00:
+					break;
+
+				default:
+					*Ptr = (clr & 0xFF)*Alpha/255;
+					*(Ptr+1) = ((clr>>8) & 0xFF)*Alpha/255;
+					*(Ptr+2) = (BYTE)(clr>>16)*Alpha/255;
+				}
+
+				Ptr += 4;
+			}
+		}
+
+	return hBitmap;
 }
 
 void CBackstageBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL /*Themed*/) const

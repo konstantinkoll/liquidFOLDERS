@@ -6,33 +6,6 @@
 #include "LFCommDlg.h"
 
 
-DOUBLE StringToCoord(CString str)
-{
-	INT Deg;
-	INT Min;
-	INT Sec;
-	WCHAR Ch;
-	DOUBLE Result = 0.0;
-
-	INT Scanned = swscanf_s(str.GetBuffer(), L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
-
-	if (Scanned>=1)
-		Result += Deg;
-	if (Scanned>=2)
-		Result += abs(Min)/60.0;
-	if (Scanned>=3)
-		Result += abs(Sec)/3600.0;
-	if (Scanned>=4)
-		if ((Ch==L'N') || (Ch==L'W'))
-			Result = -Result;
-
-	if ((Result<-180.0) || (Result>180.0))
-		Result = 0.0;
-
-	return Result;
-}
-
-
 // LFSelectLocationGPSDlg
 //
 
@@ -66,6 +39,35 @@ BOOL LFSelectLocationGPSDlg::InitDialog()
 	m_wndMap.SetMenu(IDM_SELECTGPS);
 
 	return TRUE;
+}
+
+DOUBLE LFSelectLocationGPSDlg::StringToCoord(LPCWSTR Str)
+{
+	INT Deg;
+	INT Min;
+	INT Sec;
+	WCHAR Ch;
+	DOUBLE Result = 0.0;
+
+	INT Scanned = swscanf_s(Str, L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
+
+	if (Scanned>=1)
+		Result += Deg;
+
+	if (Scanned>=2)
+		Result += abs(Min)/60.0;
+
+	if (Scanned>=3)
+		Result += abs(Sec)/3600.0;
+
+	if (Scanned>=4)
+		if ((Ch==L'N') || (Ch==L'W'))
+			Result = -Result;
+
+	if ((Result<-180.0) || (Result>180.0))
+		Result = 0.0;
+
+	return Result;
 }
 
 

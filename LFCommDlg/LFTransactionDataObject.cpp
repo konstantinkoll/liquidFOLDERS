@@ -72,6 +72,7 @@ STDMETHODIMP LFTransactionDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 
 		pMedium->tymed = TYMED_HGLOBAL;
 		pMedium->pUnkForRelease = NULL;
+
 		return S_OK;
 	}
 
@@ -82,6 +83,7 @@ STDMETHODIMP LFTransactionDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 
 		pMedium->tymed = TYMED_HGLOBAL;
 		pMedium->pUnkForRelease = NULL;
+
 		return S_OK;
 	}
 
@@ -110,8 +112,10 @@ STDMETHODIMP LFTransactionDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 {
 	if ((!pFormatEtc) || (!pMedium))
 		return E_INVALIDARG;
+
 	if ((pFormatEtc->tymed!=TYMED_HGLOBAL) || (pMedium->tymed!=TYMED_HGLOBAL))
 		return DV_E_TYMED;
+
 	if (!pMedium->hGlobal)
 		return E_INVALIDARG;
 

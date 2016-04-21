@@ -6,30 +6,29 @@
 #include "liquidFOLDERS.h"
 
 
-void MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy)
+// CThumbnailCache
+//
+
+void CThumbnailCache::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy)
 {
 	BITMAP Bitmap;
 	GetObject(hBitmap, sizeof(Bitmap), &Bitmap);
 
-	if ((Bitmap.bmBitsPixel==32) && (Bitmap.bmBits))
-	{
-		// Alpha-Kanal auf 0xFF setzen
-		for (INT Row=y; Row<y+cy; Row++)
-		{
-			BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
+	ASSERT(Bitmap.bmBitsPixel==32);
+	ASSERT(Bitmap.bmBits);
 
-			for (INT Column=cx; Column>0; Column--)
-			{
-				*Ptr = 0xFF;
-				Ptr += 4;
-			}
+	// Alpha-Kanal auf 0xFF setzen
+	for (INT Row=y; Row<y+cy; Row++)
+	{
+		BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
+
+		for (INT Column=cx; Column>0; Column--)
+		{
+			*Ptr = 0xFF;
+			Ptr += 4;
 		}
 	}
 }
-
-
-// CThumbnailCache
-//
 
 HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 {

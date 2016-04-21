@@ -12,32 +12,6 @@
 #include "OrganizeDlg.h"
 
 
-void CreateShortcut(LFTransactionListItem* pItem)
-{
-	// Get a pointer to the IShellLink interface
-	IShellLink* pShellLink = NULL;
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
-	{
-		WCHAR Ext[LFExtSize+1] = L".*";
-		WCHAR* Ptr = wcsrchr(pItem->Path, L'\\');
-		if (!Ptr)
-			Ptr = pItem->Path;
-
-		WCHAR* LastExt = wcsrchr(Ptr, L'.');
-		if (LastExt)
-			wcscpy_s(Ext, LFExtSize+1, LastExt);
-
-		pShellLink->SetIDList(pItem->pidlFQ);
-		pShellLink->SetIconLocation(Ext, 0);
-		pShellLink->SetShowCmd(SW_SHOWNORMAL);
-
-		LFCreateDesktopShortcut(pShellLink, pItem->pItemDescriptor->CoreAttributes.FileName);
-
-		pShellLink->Release();
-	}
-}
-
-
 // CMainView
 //
 
@@ -151,6 +125,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 
 		p_wndFileView = pNewView;
 		p_wndFileView->SetOwner(GetOwner());
+
 		if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
 			p_wndFileView->SetFocus();
 
@@ -493,6 +468,31 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 	return Changes;
 }
 
+void CMainView::CreateShortcut(LFTransactionListItem* pItem)
+{
+	// Get a pointer to the IShellLink interface
+	IShellLink* pShellLink = NULL;
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
+	{
+		WCHAR Ext[LFExtSize+1] = L".*";
+		WCHAR* Ptr = wcsrchr(pItem->Path, L'\\');
+		if (!Ptr)
+			Ptr = pItem->Path;
+
+		WCHAR* LastExt = wcsrchr(Ptr, L'.');
+		if (LastExt)
+			wcscpy_s(Ext, LFExtSize+1, LastExt);
+
+		pShellLink->SetIDList(pItem->pidlFQ);
+		pShellLink->SetIconLocation(Ext, 0);
+		pShellLink->SetShowCmd(SW_SHOWNORMAL);
+
+		LFCreateDesktopShortcut(pShellLink, pItem->pItemDescriptor->CoreAttributes.FileName);
+
+		pShellLink->Release();
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_WM_CREATE()
@@ -502,6 +502,8 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONUP()
+	ON_WM_MEASUREITEM()
+	ON_WM_DRAWITEM()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
@@ -569,7 +571,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Taskbar
-	if (!m_wndTaskbar.Create(this, m_LargeIcons, IDB_TASKS_32, m_SmallIcons, IDB_TASKS_16, 1))
+	if (!m_wndTaskbar.Create(this, m_LargeIcons, m_SmallIcons, IDB_TASKS_16, 1))
 		return -1;
 
 	m_wndTaskbar.SetOwner(GetOwner());
@@ -688,6 +690,18 @@ void CMainView::OnRButtonUp(UINT nFlags, CPoint point)
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 
 	CFrontstageWnd::OnRButtonUp(nFlags, point);
+}
+
+void CMainView::OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis)
+{
+	if (p_wndFileView)
+		p_wndFileView->SendMessage(WM_MEASUREITEM, (WPARAM)nIDCtl, (LPARAM)lpmis);
+}
+
+void CMainView::OnDrawItem(INT nIDCtl, LPDRAWITEMSTRUCT lpdis)
+{
+	if (p_wndFileView)
+		p_wndFileView->SendMessage(WM_DRAWITEM, (WPARAM)nIDCtl, (LPARAM)lpdis);
 }
 
 void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)

@@ -23,22 +23,14 @@ CTaskbar::CTaskbar()
 	hBackgroundBrush = NULL;
 }
 
-BOOL CTaskbar::Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID)
+BOOL CTaskbar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID)
 {
-	m_IconSize = LFGetApp()->m_DefaultFont.GetFontHeight()>=24 ? 32 : 16;
-
-	if (m_IconSize<32)
-	{
-		p_ButtonIcons = &SmallIcons;
-		p_ButtonIcons->Load(SmallResID, m_IconSize);
-	}
-	else
-	{
-		p_ButtonIcons = &LargeIcons;
-	}
+	// Load icons
+	p_ButtonIcons = &SmallIcons;
+	m_IconSize = SmallIcons.Load(ResID);
 
 	p_TooltipIcons = &LargeIcons;
-	p_TooltipIcons->Load(LargeResID, 32);
+	LargeIcons.Load(ResID, LI_FORTOOLTIPS);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 

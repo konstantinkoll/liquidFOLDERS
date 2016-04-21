@@ -19,6 +19,7 @@ public:
 	HICON GetThumbnailIcon(LFItemDescriptor* pItemDescriptor, CDC* pDC);
 
 protected:
+	void MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy);
 	HBITMAP Lookup(LFItemDescriptor* pItemDescriptor);
 
 	ThumbnailList<2048> m_Thumbnails;

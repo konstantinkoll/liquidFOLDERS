@@ -240,7 +240,7 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&m_Store);
 
 			CString Hint;
-			GetHintForStore(pItemDescriptor, Hint);
+			GetHintForStore(Hint, pItemDescriptor);
 
 			LFGetApp()->ShowTooltip(this, point, m_Store.StoreName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(m_StoreIcon-1));
 

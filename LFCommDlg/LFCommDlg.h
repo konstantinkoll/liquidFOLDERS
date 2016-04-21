@@ -129,9 +129,9 @@ void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL 
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
 
-void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr);
-void AppendTooltipAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, CString& Str);
-void GetHintForStore(LFItemDescriptor* pItemDescriptor, CString& Str);
+void AppendAttribute(CString& Str, UINT Attr, WCHAR* tmpStr);
+void AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr);
+void GetHintForStore(CString& Str, LFItemDescriptor* pItemDescriptor);
 
 
 // IATA database

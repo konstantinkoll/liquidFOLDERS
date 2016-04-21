@@ -55,11 +55,15 @@ void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 {
 	LFTabbedDialog::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_STOREICON, m_wndIcon);
+	DDX_Control(pDX, IDC_STOREICON, m_wndStoreIcon);
 	DDX_Control(pDX, IDC_STORENAME, m_wndStoreName);
 	DDX_Control(pDX, IDC_COMMENTS, m_wndStoreComment);
 	DDX_Control(pDX, IDC_MAKEDEFAULT, m_wndMakeDefault);
 	DDX_Control(pDX, IDC_MAKESEARCHABLE, m_wndMakeSearchable);
+
+	DDX_Control(pDX, IDC_SYNCHRONIZEICON, m_wndSynchronizeIcon);
+	DDX_Control(pDX, IDC_MAINTENANCEICON, m_wndMaintenanceIcon);
+	DDX_Control(pDX, IDC_BACKUPICON, m_wndBackupIcon);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -115,12 +119,17 @@ BOOL LFStorePropertiesDlg::InitDialog()
 
 	SetWindowText(Caption);
 
+	// Icons
+	m_wndSynchronizeIcon.SetTaskIcon(AfxGetResourceHandle(), IDI_STORESYNCHRONIZE);
+	m_wndMaintenanceIcon.SetTaskIcon(AfxGetResourceHandle(), IDI_STOREMAINTENANCE);
+	m_wndBackupIcon.SetTaskIcon(AfxGetResourceHandle(), IDI_STOREBACKUP);
+
 	// Masks
 	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_MaskMaintenance);
 	GetDlgItem(IDC_SYNCHRONIZED)->GetWindowText(m_MaskSynchronized);
 
 	// Store
-	m_wndIcon.SetCoreIcon(LFGetStoreIcon(&m_Store));
+	m_wndStoreIcon.SetCoreIcon(LFGetStoreIcon(&m_Store));
 
 	if ((m_Store.Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 	{

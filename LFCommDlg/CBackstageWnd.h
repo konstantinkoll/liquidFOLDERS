@@ -94,6 +94,7 @@ protected:
 	CBackstageWidgets m_wndWidgets;
 
 private:
+	static BOOL IsBackstageControl(CWnd* pWnd);
 	void PrepareBitmaps();
 
 	INT m_RegionWidth;

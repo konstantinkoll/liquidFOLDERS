@@ -9,36 +9,6 @@
 #include <math.h>
 
 
-__forceinline void CalculateWorldCoords(DOUBLE LatitudeDeg, DOUBLE LongitudeDeg, GLfloat Result[])
-{
-	const DOUBLE LatitudeRad = -theRenderer.DegToRad(LatitudeDeg);
-	const DOUBLE LongitudeRad = theRenderer.DegToRad(LongitudeDeg);
-
-	const DOUBLE D = cos(LatitudeRad);
-
-	Result[0] = (GLfloat)(sin(LongitudeRad)*D);
-	Result[1] = (GLfloat)(sin(LatitudeRad));
-	Result[2] = (GLfloat)(cos(LongitudeRad)*D);
-}
-
-void WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDescriptor, UINT Attr)
-{
-	WCHAR tmpStr[256];
-	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
-
-	if (tmpStr[0]!='\0')
-	{
-		f.WriteString(_T("&lt;b&gt;"));
-		f.WriteString(theApp.m_Attributes[Attr].Name);
-		f.WriteString(_T("&lt;/b&gt;: "));
-		f.WriteString(tmpStr);
-		f.WriteString(_T("&lt;br&gt;"));
-	}
-}
-
-
-
-
 // CGlobeView
 //
 
@@ -128,7 +98,15 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 				{
 					GlobeItemData* pData = GetItemData(a);
 
-					CalculateWorldCoords(Location.Latitude, Location.Longitude, pData->World);
+					// Calculate world coordinates
+					const DOUBLE LatitudeRad = -theRenderer.DegToRad(Location.Latitude);
+					const DOUBLE LongitudeRad = theRenderer.DegToRad(Location.Longitude);
+
+					const DOUBLE D = cos(LatitudeRad);
+
+					pData->World[0] = (GLfloat)(sin(LongitudeRad)*D);
+					pData->World[1] = (GLfloat)(sin(LatitudeRad));
+					pData->World[2] = (GLfloat)(cos(LongitudeRad)*D);
 
 					LFGeoCoordinatesToString(Location, pData->CoordString, 32, FALSE);
 					wcscpy_s(pData->DescriptionString, 32, p_CookedFiles->m_Items[a]->Description);
@@ -227,6 +205,21 @@ void CGlobeView::UpdateCursor()
 
 		SetCursor(hCursor);
 		lpszCursorName = Cursor;
+	}
+}
+
+void CGlobeView::WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDescriptor, UINT Attr)
+{
+	WCHAR tmpStr[256];
+	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
+
+	if (tmpStr[0]!='\0')
+	{
+		f.WriteString(_T("&lt;b&gt;"));
+		f.WriteString(theApp.m_Attributes[Attr].Name);
+		f.WriteString(_T("&lt;/b&gt;: "));
+		f.WriteString(tmpStr);
+		f.WriteString(_T("&lt;br&gt;"));
 	}
 }
 

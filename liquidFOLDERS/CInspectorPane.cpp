@@ -9,11 +9,15 @@
 // CIconHeader
 //
 
+CString CIconHeader::m_strNoItemsSelected;
+
 CIconHeader::CIconHeader()
 	: CInspectorHeader()
 {
-	ENSURE(m_strUnused.LoadString(IDS_NOITEMSSELECTED));
-	m_strDescription = m_strUnused;
+	if (m_strNoItemsSelected.IsEmpty())
+		ENSURE(m_strNoItemsSelected.LoadString(IDS_NOITEMSSELECTED));
+
+	m_strDescription = m_strNoItemsSelected;
 	m_Status = IconEmpty;
 	m_pItem = NULL;
 }
@@ -81,7 +85,7 @@ void CIconHeader::FreeItem()
 void CIconHeader::SetEmpty()
 {
 	m_Status = IconEmpty;
-	m_strDescription = m_strUnused;
+	m_strDescription = m_strNoItemsSelected;
 
 	FreeItem();
 }
@@ -156,14 +160,17 @@ void CStoreManagerGrid::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpC
 #define StatusUsed         1
 #define StatusMultiple     2
 
+CString CInspectorPane::m_AttributeVirtualNames[AttrCount-LFAttributeCount];
+
 CInspectorPane::CInspectorPane()
 	: CFrontstagePane()
 {
 	m_Count = 0;
 	p_LastItem = NULL;
 
-	for (UINT a=0; a<AttrCount-LFAttributeCount; a++)
-		ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
+	if (m_AttributeVirtualNames[0].IsEmpty())
+		for (UINT a=0; a<AttrCount-LFAttributeCount; a++)
+			ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
 
 	for (UINT a=0; a<AttrCount; a++)
 	{

@@ -232,8 +232,8 @@ BOOL LFUpdateDlg::InitDialog()
 			if (Features & 1)
 				Count++;
 
-		m_FeatureItemHeight = LFGetApp()->m_DialogFont.GetFontHeight()>14 ? 32 : Count<=3 ? 32 : 16;
-		m_UpdateIcons.Load(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight);
+		const INT IconSize = m_UpdateIcons.Load(IDB_UPDATEICONS_16, (Count<=3) ? LI_FORTOOLTIPS : LI_SLIGHTLYLARGER);
+		m_FeatureItemHeight = max(LFGetApp()->m_DialogFont.GetFontHeight(), IconSize);
 
 		DynamicHeight += Count*(m_FeatureItemHeight+MARGIN)+m_FeaturesLeft;
 	}

@@ -343,6 +343,73 @@ void LFTooltip::HideTooltip()
 		ShowWindow(SW_HIDE);
 }
 
+void LFTooltip::AppendAttribute(CString& Str, const CString& Name, const CString& Value)
+{
+	if (!Value.IsEmpty())
+	{
+		if (!Str.IsEmpty())
+			Str.Append(_T("\n"));
+
+		if (!Name.IsEmpty())
+		{
+			Str.Append(Name);
+			Str.Append(_T(": "));
+		}
+
+		Str.Append(Value);
+	}
+}
+
+void LFTooltip::AppendAttribute(CString& Str, UINT ResID, const CString& Value)
+{
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(Str, Name, Value);
+}
+
+void LFTooltip::AppendAttribute(CString& Str, UINT ResID, LPCSTR pValue)
+{
+	ASSERT(pValue);
+
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(Str, Name, CString(pValue));
+}
+
+void LFTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, const CString& Name, const CString& Value)
+{
+	ASSERT(pStr);
+
+	if (!Value.IsEmpty())
+	{
+		if (*pStr)
+			wcscat_s(pStr, cCount, L"\n");
+
+		if (!Name.IsEmpty())
+		{
+			wcscat_s(pStr, cCount, Name);
+			wcscat_s(pStr, cCount, L": ");
+		}
+
+		wcscat_s(pStr, cCount, Value);
+	}
+}
+
+void LFTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CString& Value)
+{
+	ASSERT(pStr);
+
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(pStr, cCount, Name, Value);
+}
+
+void LFTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
+{
+	ASSERT(pStr);
+	ASSERT(pValue);
+
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(pStr, cCount, Name, CString(pValue));
+}
+
 
 BEGIN_MESSAGE_MAP(LFTooltip, CWnd)
 	ON_WM_NCHITTEST()

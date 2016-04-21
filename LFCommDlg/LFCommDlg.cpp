@@ -39,11 +39,10 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 
 INT GetAttributeIconIndex(UINT Attr)
 {
-	static const UINT IconPosition[] = { LFAttrFileName, LFAttrStoreID, LFAttrFileID, LFAttrTitle, LFAttrCreationTime,
-		LFAttrAddTime, LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrArchiveTime,
-		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComments, LFAttrDuration,
-		LFAttrLanguage, LFAttrDimension, LFAttrWidth, LFAttrHeight, LFAttrAspectRatio, LFAttrHashtags, LFAttrAlbum,
-		LFAttrPriority, LFAttrURL, LFAttrISBN, LFAttrEquipment, LFAttrChannels, LFAttrCustomer, LFAttrLikeCount };
+	static const UINT IconPosition[] = { LFAttrFileName, LFAttrTitle, LFAttrCreationTime, LFAttrAddTime, LFAttrFileTime,
+		LFAttrDueTime, LFAttrDoneTime, LFAttrArchiveTime, LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll,
+		LFAttrArtist, LFAttrComments, LFAttrDuration, LFAttrDimension, LFAttrAspectRatio, LFAttrHashtags, LFAttrAlbum,
+		LFAttrURL, LFAttrISBN, LFAttrEquipment, LFAttrCustomer, LFAttrResponsible };
 
 	for (UINT a=0; a<sizeof(IconPosition)/sizeof(UINT); a++)
 		if (IconPosition[a]==Attr)
@@ -817,48 +816,35 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 }
 
 
-void AppendTooltipString(UINT Attr, CString& Str, WCHAR* tmpStr)
+void AppendAttribute(CString& Str, UINT Attr, WCHAR* tmpStr)
 {
 	if (tmpStr)
-		if (tmpStr[0]!=L'\0')
-		{
-			if (!Str.IsEmpty())
-				Str += _T("\n");
-
-			if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat) && (Attr!=LFAttrDescription))
-			{
-				Str += LFGetApp()->m_Attributes[Attr].Name;
-				Str += _T(": ");
-			}
-
-			Str += tmpStr;
-		}
+		LFTooltip::AppendAttribute(Str, (Attr==LFAttrComments) || (Attr==LFAttrFileFormat) || (Attr==LFAttrDescription) ? L"" : LFGetApp()->m_Attributes[Attr].Name, tmpStr);
 }
 
-void AppendTooltipAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, CString& Str)
+void AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	WCHAR tmpStr[256];
 	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
 
-	AppendTooltipString(Attr, Str, tmpStr);
+	AppendAttribute(Str, Attr, tmpStr);
 }
 
-void GetHintForStore(LFItemDescriptor* pItemDescriptor, CString& Str)
+void GetHintForStore(CString& Str, LFItemDescriptor* pItemDescriptor)
 {
+	ASSERT(pItemDescriptor);
+
 	WCHAR tmpStr[256];
-
-	AppendTooltipAttribute(pItemDescriptor, LFAttrComments, Str);
-
 	LFCombineFileCountSize(pItemDescriptor->AggregateCount, pItemDescriptor->CoreAttributes.FileSize, tmpStr, 256);
-	AppendTooltipString(LFAttrDescription, Str, tmpStr);
 
-	AppendTooltipAttribute(pItemDescriptor, LFAttrCreationTime, Str);
-	AppendTooltipAttribute(pItemDescriptor, LFAttrFileTime, Str);
-
-	AppendTooltipAttribute(pItemDescriptor, LFAttrDescription, Str);
+	AppendAttribute(Str, pItemDescriptor, LFAttrComments);
+	LFTooltip::AppendAttribute(Str, _T(""), tmpStr);
+	AppendAttribute(Str, pItemDescriptor, LFAttrCreationTime);
+	AppendAttribute(Str, pItemDescriptor, LFAttrFileTime);
+	AppendAttribute(Str, pItemDescriptor, LFAttrDescription);
 
 	if (((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(pItemDescriptor->Type & LFStoreNotMounted)))
-		AppendTooltipString(LFAttrComments, Str, LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
+		LFTooltip::AppendAttribute(Str, _T(""), LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
 }
 
 

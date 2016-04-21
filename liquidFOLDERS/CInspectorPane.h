@@ -43,7 +43,7 @@ public:
 protected:
 	void FreeItem();
 
-	CString m_strUnused;
+	static CString m_strNoItemsSelected;
 	CString m_strDescription;
 	UINT m_Status;
 	INT m_IconID;
@@ -110,6 +110,6 @@ private:
 	LFVariantData m_AttributeValues[AttrCount];
 	LFVariantData m_AttributeRangeFirst[AttrCount];
 	LFVariantData m_AttributeRangeSecond[AttrCount];
-	CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
+	static CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
 	CString m_TypeName;
 };

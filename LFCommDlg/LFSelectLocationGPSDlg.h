@@ -31,5 +31,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	static DOUBLE StringToCoord(LPCWSTR Str);
+
 	CMapCtrl m_wndMap;
 };

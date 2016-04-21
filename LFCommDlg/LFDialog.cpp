@@ -345,7 +345,7 @@ BOOL LFDialog::IsPushbutton(CWnd* pWnd)
 {
 	if (pWnd->SendMessage(WM_GETDLGCODE) & (DLGC_BUTTON | DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON))
 	{
-		DWORD dwStyle = pWnd->GetStyle() & BS_TYPEMASK;
+		const DWORD dwStyle = pWnd->GetStyle() & BS_TYPEMASK;
 
 		if ((dwStyle==BS_PUSHBUTTON) || (dwStyle==BS_DEFPUSHBUTTON) || (dwStyle==BS_OWNERDRAW))
 			return TRUE;

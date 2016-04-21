@@ -7,16 +7,6 @@
 #include <dwmapi.h>
 
 
-BOOL IsBackstageControl(CWnd* pWnd)
-{
-	DWORD dwStyle = pWnd->GetStyle();
-	if (!(dwStyle & WS_VISIBLE))
-		return FALSE;
-
-	return ((dwStyle & WS_BORDER) || (pWnd->SendMessage(WM_GETDLGCODE) & DLGC_HASSETSEL));
-}
-
-
 // CBackstageWnd
 //
 
@@ -291,6 +281,18 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 
 	// Frontstage
 	AdjustLayout(rectLayout, nFlags);
+}
+
+BOOL CBackstageWnd::IsBackstageControl(CWnd* pWnd)
+{
+	ASSERT(pWnd);
+
+	const DWORD dwStyle = pWnd->GetStyle();
+
+	if (!(dwStyle & WS_VISIBLE))
+		return FALSE;
+
+	return ((dwStyle & WS_BORDER) || (pWnd->SendMessage(WM_GETDLGCODE) & DLGC_HASSETSEL));
 }
 
 void CBackstageWnd::PaintOnBackground(CDC& /*dc*/, Graphics& /*g*/, const CRect& /*rectLayout*/)

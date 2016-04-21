@@ -12,11 +12,10 @@ class CIconCtrl : public CWnd
 {
 public:
 	CIconCtrl();
-	~CIconCtrl();
 
 	void SetIcon(HICON hIcon, INT cx, INT cy, BOOL Center=TRUE);
 	void SetCoreIcon(UINT nID, BOOL Center=TRUE);
-	void SetSmallIcon(HINSTANCE hInst, UINT nID, BOOL Center=FALSE);
+	void SetTaskIcon(HINSTANCE hInst, UINT nID, BOOL Center=FALSE);
 
 protected:
 	HICON m_Icon;

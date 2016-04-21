@@ -24,11 +24,6 @@ void CJournalUI::Enable(BOOL bOn)
 // CJournalButton
 //
 
-CJournalButton::CJournalButton()
-	: CBackstageBar()
-{
-}
-
 void CJournalButton::OnClickButton(INT Index) const
 {
 	GetOwner()->PostMessage(WM_COMMAND, m_BarItems.m_Items[Index].Command);

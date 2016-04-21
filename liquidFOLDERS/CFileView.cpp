@@ -25,49 +25,6 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 	return b;
 }
 
-HBITMAP IconToBitmap(HICON hIcon, INT cx, INT cy)
-{
-	if (!hIcon)
-		return NULL;
-
-	HDC hDC = CreateCompatibleDC(NULL);
-
-	HBITMAP hBitmap = CreateTransparentBitmap(cx, cy);
-	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hDC, hBitmap);
-
-	if (theApp.OSVersion==OS_XP)
-	{
-		CRect rect(0, 0, cx, cy);
-		FillRect(hDC, rect, (HBRUSH)GetSysColorBrush(COLOR_MENU));
-	}
-
-	DrawIconEx(hDC, 0, 0, hIcon, cx, cy, 0, NULL, DI_NORMAL);
-
-	SelectObject(hDC, hOldBitmap);
-	DeleteDC(hDC);
-
-	return hBitmap;
-}
-
-void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy, SendToItemData* id)
-{
-	UINT Index = nID % 0xFF;
-
-	pMenu->AppendMenu(MF_STRING, nID, lpszNewItem);
-
-	if (hIcon)
-	{
-		id[Index].hBitmap = IconToBitmap(hIcon, cx, cy);
-		DestroyIcon(hIcon);
-
-		MENUITEMINFO mii;
-		mii.cbSize = sizeof(mii);
-		mii.fMask = MIIM_BITMAP;
-		mii.hbmpItem = id[Index].hBitmap;
-		SetMenuItemInfo(*pMenu, pMenu->GetMenuItemCount()-1, TRUE, &mii);
-	}
-}
-
 
 // CFileView
 //
@@ -76,7 +33,7 @@ void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, 
 #define IsSelected(Index)      GetItemData(Index)->Selected
 #define ChangedItem(Index)     { InvalidateItem(Index); GetParent()->SendMessage(WM_UPDATESELECTION); }
 #define ChangedItems()         { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
-#define FooterMargin           8
+#define FIRSTSENDTO            0xFF00
 
 CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableTooltipOnVirtual)
 	: CFrontstageWnd()
@@ -504,6 +461,27 @@ CMenu* CFileView::GetViewContextMenu()
 	return NULL;
 }
 
+void CFileView::AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy)
+{
+	const UINT Index = nID % 0xFF;
+
+	pMenu->AppendMenu(MF_STRING, nID, lpszNewItem);
+
+	if (hIcon)
+	{
+		m_SendToItems[Index].hIcon = hIcon;
+		m_SendToItems[Index].cx = cx;
+		m_SendToItems[Index].cy = cy;
+
+		MENUITEMINFO mii;
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_BITMAP;
+		mii.hbmpItem = HBMMENU_CALLBACK;
+
+		SetMenuItemInfo(*pMenu, pMenu->GetMenuItemCount()-1, TRUE, &mii);
+	}
+}
+
 CMenu* CFileView::GetSendToMenu()
 {
 	CMenu* pMenu = new CMenu();
@@ -521,14 +499,14 @@ CMenu* CFileView::GetSendToMenu()
 	BOOL Added = FALSE;
 
 	// Stores
-	UINT nID = 0xFF00;
+	UINT nID = FIRSTSENDTO;
 	if (LFGetDefaultStore()==LFOk)
 	{
 		CString tmpStr((LPCSTR)IDS_DEFAULTSTORE);
-		AppendSendToItem(pMenu, nID, tmpStr, (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy, m_SendToItems);
+		AppendSendToItem(pMenu, nID, tmpStr, (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy);
 		Added = TRUE;
 
-		INT Index = (nID++) & 0xFF;
+		const UINT Index = (nID++) & 0xFF;
 		m_SendToItems[Index].IsStore = TRUE;
 		strcpy_s(m_SendToItems[Index].StoreID, LFKeySize, "");
 	}
@@ -536,17 +514,16 @@ CMenu* CFileView::GetSendToMenu()
 	if (LFGetStoreCount())
 	{
 		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_CHOOSESTORE);
-		AppendSendToItem(pMenu, nID, tmpStr, NULL, cx, cy, m_SendToItems);
+		AppendSendToItem(pMenu, nID, tmpStr, NULL, cx, cy);
 		Added = TRUE;
 
-		INT Index = (nID++) & 0xFF;
+		const UINT Index = (nID++) & 0xFF;
 		m_SendToItems[Index].IsStore = TRUE;
 		strcpy_s(m_SendToItems[Index].StoreID, LFKeySize, "CHOOSE");
 	}
 
-
 	// SendTo shortcuts
-	nID = 0xFF40;
+	nID = FIRSTSENDTO+0x40;
 	if (Added)
 	{
 		pMenu->AppendMenu(MF_SEPARATOR);
@@ -591,10 +568,10 @@ CMenu* CFileView::GetSendToMenu()
 					SHFILEINFO sfi;
 					if (SHGetFileInfo(Dst, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX | SHGFI_SMALLICON))
 					{
-						AppendSendToItem(pMenu, nID, Name, theApp.m_SystemImageListSmall.ExtractIcon(sfi.iIcon), cx, cy, m_SendToItems);
+						AppendSendToItem(pMenu, nID, Name, theApp.m_SystemImageListSmall.ExtractIcon(sfi.iIcon), cx, cy);
 						Added = TRUE;
 
-						INT Index = (nID++) & 0xFF;
+						const UINT Index = (nID++) & 0xFF;
 						m_SendToItems[Index].IsStore = FALSE;
 						wcscpy_s(m_SendToItems[Index].Path, MAX_PATH, Dst);
 					}
@@ -631,9 +608,9 @@ CMenu* CFileView::GetSendToMenu()
 				Added = FALSE;
 			}
 
-			AppendSendToItem(pMenu, nID, sfi.szDisplayName, sfi.hIcon, cx, cy, m_SendToItems);
+			AppendSendToItem(pMenu, nID, sfi.szDisplayName, sfi.hIcon, cx, cy);
 
-			INT Index = (nID++) & 0xFF;
+			const UINT Index = (nID++) & 0xFF;
 			m_SendToItems[Index].IsStore = FALSE;
 			wcscpy_s(m_SendToItems[Index].Path, MAX_PATH, szDriveRoot);
 		}
@@ -959,21 +936,21 @@ CString CFileView::GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName)
 	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
-		GetHintForStore(pItemDescriptor, Hint);
+		GetHintForStore(Hint, pItemDescriptor);
 		break;
 
 	case LFTypeFolder:
-		AppendTooltipAttribute(pItemDescriptor, LFAttrComments, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrDescription, Hint);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
 
 		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-			AppendTooltipString(LFAttrComments, Hint, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
+			AppendAttribute(Hint, LFAttrComments, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
 
 		break;
 
 	case LFTypeFile:
-		AppendTooltipAttribute(pItemDescriptor, LFAttrComments, Hint);
-		AppendTooltipString(LFAttrFileFormat, Hint, FormatName);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
+		AppendAttribute(Hint, LFAttrFileFormat, FormatName);
 
 		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
 		{
@@ -984,14 +961,14 @@ CString CFileView::GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName)
 			Hint += tmpStr;
 		}
 
-		AppendTooltipAttribute(pItemDescriptor, LFAttrArtist, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrTitle, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrAlbum, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrRecordingTime, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrRoll, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrDuration, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrHashtags, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrPages, Hint);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrArtist);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrTitle);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrAlbum);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrRecordingTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrRoll);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrDuration);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrHashtags);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrPages);
 
 		if (pItemDescriptor->AttributeValues[LFAttrDimension])
 		{
@@ -1000,14 +977,14 @@ CString CFileView::GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName)
 			WCHAR Resolution[256];
 			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
 
-			AppendTooltipString(LFAttrDimension, Hint, Resolution);
+			AppendAttribute(Hint, LFAttrDimension, Resolution);
 		}
 
-		AppendTooltipAttribute(pItemDescriptor, LFAttrEquipment, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrBitrate, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrCreationTime, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrFileTime, Hint);
-		AppendTooltipAttribute(pItemDescriptor, LFAttrFileSize, Hint);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrEquipment);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrBitrate);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrCreationTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrFileTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrFileSize);
 
 		break;
 	}
@@ -1021,11 +998,14 @@ void CFileView::DestroyEdit(BOOL Accept)
 	{
 		INT Item = m_EditLabel;
 
+		CString Name;
+		p_Edit->GetWindowText(Name);
+
+		// Destroying the edit control will release its focus, in turn causing DestroyEdit()
+		// to be called. To prevent an infinite recursion, we set p_Edit to NULL first.
 		CEdit* pVictim = p_Edit;
 		p_Edit = NULL;
 
-		CString Name;
-		pVictim->GetWindowText(Name);
 		pVictim->DestroyWindow();
 		delete pVictim;
 
@@ -1079,6 +1059,8 @@ BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_WM_SETCURSOR()
+	ON_WM_MEASUREITEM()
+	ON_WM_DRAWITEM()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_SELECTALL, OnSelectAll)
 	ON_MESSAGE_VOID(WM_SELECTNONE, OnSelectNone)
@@ -1586,7 +1568,41 @@ void CFileView::OnKillFocus(CWnd* /*pNewWnd*/)
 BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	SetCursor(theApp.LoadStandardCursor(p_CookedFiles ? IDC_ARROW : IDC_WAIT));
+
 	return TRUE;
+}
+
+void CFileView::OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis)
+{
+	if ((lpmis==NULL) || (lpmis->CtlType!=ODT_MENU))
+	{
+		CFrontstageWnd::OnMeasureItem(nIDCtl, lpmis);
+
+		return;
+	}
+
+	if ((lpmis->itemID>=FIRSTSENDTO) && (lpmis->itemID<=FIRSTSENDTO+0xFF))
+	{
+		lpmis->itemWidth = GetSystemMetrics(SM_CXSMICON)*5/4;
+		lpmis->itemHeight = GetSystemMetrics(SM_CYSMICON);
+	}
+}
+
+void CFileView::OnDrawItem(INT nIDCtl, LPDRAWITEMSTRUCT lpdis)
+{
+	if ((lpdis==NULL) || (lpdis->CtlType!=ODT_MENU))
+	{
+		CFrontstageWnd::OnDrawItem(nIDCtl, lpdis);
+
+		return;
+	}
+
+	if ((lpdis->itemID>=FIRSTSENDTO) && (lpdis->itemID<=FIRSTSENDTO+0xFF))
+	{
+		const UINT Index = lpdis->itemID % 0xFF;
+
+		DrawIconEx(lpdis->hDC, lpdis->rcItem.left, lpdis->rcItem.top, m_SendToItems[Index].hIcon, m_SendToItems[Index].cx, m_SendToItems[Index].cy, 0, NULL, DI_NORMAL);
+	}
 }
 
 void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
@@ -1630,15 +1646,15 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			ASSERT_VALID(pPopup);
 
 			idCmd = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, GetOwner(), NULL);
+
 			delete pMenu;
 		}
 
 		for (UINT a=0; a<256; a++)
-			if (m_SendToItems[a].hBitmap)
-				DeleteObject(m_SendToItems[a].hBitmap);
+			DestroyIcon(m_SendToItems[a].hIcon);
 
 		if (idCmd)
-			if (idCmd<0xFF00)
+			if (idCmd<FIRSTSENDTO)
 			{
 				GetOwner()->SendMessage(WM_COMMAND, (WPARAM)idCmd);
 			}

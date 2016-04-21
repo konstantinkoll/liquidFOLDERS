@@ -5,7 +5,7 @@
 #pragma once
 #include "CFrontstageWnd.h"
 #include "CHeaderButton.h"
-#include "LFCore.h"
+#include "LFDynArray.h"
 
 
 // CHeaderArea

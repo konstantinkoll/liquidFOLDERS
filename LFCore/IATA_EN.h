@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8650
+#define AirportCount_EN 8652
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  65, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2573,7 +2573,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  95, "GAJ", "", "Yamagata", { -38.411944, 140.371389 } },
 	{ 211, "GAL", "", "Galena", { -64.736111, -156.937500 } },
 	{ 211, "GAM", "", "Gambell", { -63.766667, -171.732778 } },
-	{ 118, "GAN", "", "Gan Island", { 0.693333, 73.155556 } },
+	{ 118, "GAN", "", "Gan", { 0.693333, 73.155556 } },
 	{  47, "GAO", "", "Guantanamo (Los Canos)", { -20.085556, -75.158333 } },
 	{ 142, "GAP", "", "Gusap", { 6.050000, 145.950000 } },
 	{ 119, "GAQ", "", "Gao", { -16.248333, 0.005556 } },
@@ -2705,6 +2705,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 142, "GKA", "", "Goroka", { 6.081667, 145.391944 } },
 	{  69, "GKE", "", "Geilenkirchen", { -50.960833, 6.042500 } },
 	{ 138, "GKH", "", "Gorkha", { -28.050000, 84.483056 } },
+	{ 118, "GKK", "", "Koodoo", { -0.730833, 73.433056 } },
 	{   8, "GKL", "", "Great Keppel Island", { 23.186111, 150.943056 } },
 	{ 211, "GKN", "", "Gulkana", { -62.155000, -145.454444 } },
 	{  66, "GKO", "", "Congoboumba", { 0.083056, 11.466944 } },
@@ -3717,6 +3718,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 211, "KDK", "", "Kodiak (Municipal Airport)", { -57.805833, -152.373889 } },
 	{  58, "KDL", "", "Kardla", { -58.990833, 22.830833 } },
 	{  66, "KDN", "", "N'Dende", { 2.400000, 11.366944 } },
+	{ 118, "KDO", "", "Kadhdhoo", { -1.859167, 73.521944 } },
 	{ 142, "KDP", "", "Kandep", { 5.833056, 143.500000 } },
 	{ 142, "KDR", "", "Kandrian", { 6.183056, 149.533056 } },
 	{   8, "KDS", "", "Kamaran Downs", { 24.333056, 139.166944 } },

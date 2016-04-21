@@ -313,7 +313,7 @@ void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 	if (pTooltipData->Item!=-1)
 	{
 		CString tmpStr;
-		GetHintForStore(m_pSearchResult->m_Items[pTooltipData->Item], tmpStr);
+		GetHintForStore(tmpStr, m_pSearchResult->m_Items[pTooltipData->Item]);
 
 		wcscpy_s(pTooltipData->Hint, 4096, tmpStr);
 		pTooltipData->hIcon = LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(m_pSearchResult->m_Items[pTooltipData->Item]->IconID-1);

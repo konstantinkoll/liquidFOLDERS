@@ -38,7 +38,6 @@ public:
 	CString m_PathGoogleEarth;
 	CFormatCache m_FileFormats;
 	CThumbnailCache m_ThumbnailCache;
-	CIcons m_SourceIcons;
 	LFViewParameters m_Views[LFContextCount];
 	UINT m_AllowedViews[LFContextCount];
 

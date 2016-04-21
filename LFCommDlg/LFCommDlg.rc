@@ -51,9 +51,6 @@ IDB_PRIORITY7           BITMAP                  "res\\Priority7.bmp"
 IDB_PRIORITY8           BITMAP                  "res\\Priority8.bmp"
 IDB_PRIORITY9           BITMAP                  "res\\Priority9.bmp"
 IDB_PRIORITY10          BITMAP                  "res\\Priority10.bmp"
-IDB_STORESYNCHRONIZE    BITMAP                  "res\\StoreSynchronize_32.bmp"
-IDB_STOREMAINTENANCE    BITMAP                  "res\\StoreMaintenance_32.bmp"
-IDB_STOREBACKUP         BITMAP                  "res\\StoreBackup_32.bmp"
 IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,6 +73,9 @@ IDI_RESET_NORMAL        ICON                    "res\\Reset_Normal.ico"
 IDI_RESET_SELECTED      ICON                    "res\\Reset_Selected.ico"
 IDI_RESET_HOT           ICON                    "res\\Reset_Hot.ico"
 IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed.ico"
+IDI_STORESYNCHRONIZE    ICON                    "res\\StoreSynchronize.ico"
+IDI_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance.ico"
+IDI_STOREBACKUP         ICON                    "res\\StoreBackup.ico"
 32513                   ICON                    "res\\Error.ico"
 32514                   ICON                    "res\\Question.ico"
 32515                   ICON                    "res\\Warning.ico"
@@ -91,17 +91,23 @@ IDI_READY               ICON                    "res\\Ready.ico"
 
 IDB_DIVDOWN             RCDATA                  "res\\DivDown.png"
 IDB_DIVUP               RCDATA                  "res\\DivUp.png"
-IDB_ATTRIBUTEICONS_16   RCDATA                  "res\\AttributeIcons_16.png"
-IDB_ATTRIBUTEICONS_32   RCDATA                  "res\\AttributeIcons_32.png"
 IDB_SORTINDICATORS      RCDATA                  "res\\SortIndicators.png"
 IDB_LIQUIDFOLDERS_64    RCDATA                  "res\\liquidFOLDERS_64.png"
 IDB_LIQUIDFOLDERS_128   RCDATA                  "res\\liquidFOLDERS_128.png"
 IDB_SANTA               RCDATA                  "res\\Santa.png"
 IDB_STPATRICK           RCDATA                  "res\\StPatrick.png"
 IDB_UPDATEICONS_16      RCDATA                  "res\\UpdateIcons_16.png"
+IDB_UPDATEICONS_24      RCDATA                  "res\\UpdateIcons_24.png"
 IDB_UPDATEICONS_32      RCDATA                  "res\\UpdateIcons_32.png"
+IDB_UPDATEICONS_48      RCDATA                  "res\\UpdateIcons_48.png"
+IDB_UPDATEICONS_64      RCDATA                  "res\\UpdateIcons_64.png"
 IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
 IDB_BACKGROUND_TOOLTIP  RCDATA                  "res\\Background_Tooltip.png"
+IDB_ATTRIBUTEICONS_16   RCDATA                  "res\\AttributeIcons_16.png"
+IDB_ATTRIBUTEICONS_24   RCDATA                  "res\\AttributeIcons_24.png"
+IDB_ATTRIBUTEICONS_32   RCDATA                  "res\\AttributeIcons_32.png"
+IDB_ATTRIBUTEICONS_48   RCDATA                  "res\\AttributeIcons_48.png"
+IDB_ATTRIBUTEICONS_64   RCDATA                  "res\\AttributeIcons_64.png"
 IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
 IDF_LETTERGOTHIC        RCDATA                  "res\\Letter_Gothic.ttf"
 
@@ -354,25 +360,25 @@ BEGIN
     CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Extras"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
-    LTEXT           "Synchronisiert den Store mit seiner Datenquelle.",IDC_STATIC,35,23,294,8
-    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,35,45,120,14
+    CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
+    LTEXT           "Synchronisiert den Store mit seiner Datenquelle.",IDC_STATIC,43,23,286,8
+    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,43,45,120,14
     CONTROL         "Wartungsarbeiten",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
-    LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,35,85,294,8
-    LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,35,107,120,14
+    CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
+    LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,43,85,286,8
+    LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,43,107,120,14
     CONTROL         "Einstellungen sichern",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
-    LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,35,147,294,8
-    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,35,158,120,14
+    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
+    LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,43,147,286,8
+    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,43,158,120,14
 END
 
 IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
@@ -623,7 +629,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 329
         TOPMARGIN, 7
-        BOTTOMMARGIN, 173
+        BOTTOMMARGIN, 179
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
@@ -811,14 +817,14 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/de/"
     IDS_ERROR               "Fehler"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STORES_SINGULAR     "%u Store"
     IDS_STORES_PLURAL       "%u Stores"
     IDS_FILES_SINGULAR      "%u Datei"
     IDS_FILES_PLURAL        "%u Dateien"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
     IDS_LICFILEFILTER       "Lizenzdateien"
     IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
@@ -831,14 +837,14 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
     IDS_CHOOSESTORE_HINT    "Nur angeschlossene Stores können ausgewählt werden."
     IDS_STOREMAINTENANCE_CAPTION "Bericht"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%d Store gewartet"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d Stores gewartet"
     IDS_REGFILEFILTER       "Registrierungsdatei"
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPIRECAPTION       "Unregistrierte Kopie – bitte erwerben Sie eine Lizenz!"
     IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
@@ -851,14 +857,14 @@ BEGIN
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
     IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
     IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
     IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
     IDS_STORECREATED        "Der Store „%s“ wurde hinzugefügt."
     IDS_ADDSTORE_LIQUIDFOLDERS 
@@ -873,6 +879,10 @@ BEGIN
     IDS_COMPARE_ISNULL      "ist nicht gesetzt"
     IDS_COMPARE_SUBFOLDER   "ist der Unterordner"
     IDS_COMPARE_ISEQUAL     "ist gleich"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_COMPARE_ISNOTEQUAL  "ist ungleich"
     IDS_COMPARE_ISABOVEEQUAL "ist mindestens"
     IDS_COMPARE_BEGINSWITH  "fängt an mit"
@@ -883,7 +893,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Behebt kritische Sicherheitslücken"
+    IDS_UPDATE_SECURITYPATCH "Behebt kritische Sicherheitslücken"
     IDS_UPDATE_IMPORTANTBUGFIX "Wichtige Fehlerbehebungen"
     IDS_UPDATE_NETWORKAPI   "Aktualisierter Zugriff auf Cloud-Dienste"
     IDS_UPDATE_NEWFEATURE   "Neue Funktionen"
@@ -1117,25 +1127,25 @@ BEGIN
     LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Ferramentas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Sincronización",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
-    LTEXT           "Sincroniza el store para los datos.",IDC_STATIC,35,23,294,8
-    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,35,45,120,14
+    CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
+    LTEXT           "Sincroniza el store para los datos.",IDC_STATIC,43,23,286,8
+    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,43,45,120,14
     CONTROL         "Mantenimiento",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
-    LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,35,85,294,8
-    LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,35,107,120,14
-    CONTROL         "Configuraciones",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
-    LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,35,147,294,8
-    PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,35,158,120,14
+    CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
+    LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,43,85,286,8
+    LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,43,107,120,14
+    CONTROL         "Guardar configuraciones",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
+    LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,43,147,286,8
+    PUSHBUTTON      "Guardar &configuraciones",IDC_RUNBACKUP,43,158,120,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110
@@ -1376,7 +1386,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 329
         TOPMARGIN, 7
-        BOTTOMMARGIN, 173
+        BOTTOMMARGIN, 179
     END
 
     IDD_UPDATE, DIALOG
@@ -1564,14 +1574,14 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/es/"
     IDS_ERROR               "Error"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
     IDS_FILES_SINGULAR      "%u archivo"
     IDS_FILES_PLURAL        "%u archivos"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_INVALIDLICENSE      "La licencia que usted ha ingresado no es válida o ha expirado!"
     IDS_LICFILEFILTER       "Archivos de licencia"
     IDS_LICENSEVALID_CAPTION "Licencia válida"
@@ -1584,14 +1594,14 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
     IDS_STOREMAINTENANCE_CAPTION "Reporte"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store inspeccionar"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores inspeccionar"
     IDS_REGFILEFILTER       "Archivo de Registro"
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPIRECAPTION       "Copia no registrada – compre una licencia por fovor!"
     IDS_XOFY_SINGULAR       "%u de %u"
     IDS_XOFY_PLURAL         "%u de %u"
@@ -1604,14 +1614,14 @@ BEGIN
     IDS_STOREPROPERTIES     "Propiedades de «%s»"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETESTORE_CAPTION "Eliminar store «%s»"
     IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
     IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
     IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
     IDS_STORECREATED        "Se añadió el store «%s»."
     IDS_ADDSTORE_LIQUIDFOLDERS 
@@ -1626,6 +1636,10 @@ BEGIN
     IDS_COMPARE_ISNULL      "no está establecido"
     IDS_COMPARE_SUBFOLDER   "es subcarpeta"
     IDS_COMPARE_ISEQUAL     "igual"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_COMPARE_ISNOTEQUAL  "no es igual"
     IDS_COMPARE_ISABOVEEQUAL "es por lo menos"
     IDS_COMPARE_BEGINSWITH  "comienza con"
@@ -1636,7 +1650,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Parches de seguridad importantes"
+    IDS_UPDATE_SECURITYPATCH "Parches de seguridad importantes"
     IDS_UPDATE_IMPORTANTBUGFIX "Correcciones de errores importantes"
     IDS_UPDATE_NETWORKAPI   "Actualizado el acceso a los servicios en la nube"
     IDS_UPDATE_NEWFEATURE   "Nuevas funciones"
@@ -1891,25 +1905,25 @@ BEGIN
     LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Outils"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
-    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,35,23,294,8
-    LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,35,45,120,14
+    CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
+    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,43,23,286,8
+    LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,43,45,120,14
     CONTROL         "Travails d'entretien",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
-    LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,35,85,294,8
-    LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Exécuter &travails d'entretien",IDC_RUNMAINTENANCE,35,107,120,14
-    CONTROL         "Einstellungen sichern",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
-    LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,35,147,294,8
-    PUSHBUTTON      "Sauvegarde &paramètres",IDC_RUNBACKUP,35,158,120,14
+    CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
+    LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,43,85,286,8
+    LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Exécuter &travails d'entretien",IDC_RUNMAINTENANCE,43,107,120,14
+    CONTROL         "Sauvegarder paramètres",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
+    LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,43,147,286,8
+    PUSHBUTTON      "Sauvegarde &paramètres",IDC_RUNBACKUP,43,158,120,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
@@ -2144,7 +2158,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 329
         TOPMARGIN, 7
-        BOTTOMMARGIN, 173
+        BOTTOMMARGIN, 179
     END
 
     IDD_UPDATE, DIALOG
@@ -2316,14 +2330,14 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/fr/"
     IDS_ERROR               "Erreur"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
     IDS_FILES_SINGULAR      "%u fichier"
     IDS_FILES_PLURAL        "%u fichiers"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_INVALIDLICENSE      "La licence entrée est non valable ou s'est terminée!"
     IDS_LICFILEFILTER       "Fichiers de licence"
     IDS_LICENSEVALID_CAPTION "La licence est acceptée"
@@ -2336,14 +2350,14 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
     IDS_STOREMAINTENANCE_CAPTION "Rapport"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store revisé"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores revisée"
     IDS_REGFILEFILTER       "Fichier de Registre"
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPIRECAPTION       "Copie non enregistée – acheter une license s'il vous plaît!"
     IDS_XOFY_SINGULAR       "%u sur %u"
     IDS_XOFY_PLURAL         "%u sur %u"
@@ -2356,14 +2370,14 @@ BEGIN
     IDS_STOREPROPERTIES     "Qualités de «%s»"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETESTORE_CAPTION "Effacez le store «%s»"
     IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
     IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
     IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
     IDS_STORECREATED        "Le store «%s» a été ajouté."
     IDS_ADDSTORE_LIQUIDFOLDERS 
@@ -2378,6 +2392,10 @@ BEGIN
     IDS_COMPARE_ISNULL      "n'est pas mis"
     IDS_COMPARE_SUBFOLDER   "est le sous-dossier"
     IDS_COMPARE_ISEQUAL     "est même"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_COMPARE_ISNOTEQUAL  "est différent"
     IDS_COMPARE_ISABOVEEQUAL "est au moins"
     IDS_COMPARE_BEGINSWITH  "commence avec"
@@ -2388,7 +2406,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Correctifs de sécurité importants"
+    IDS_UPDATE_SECURITYPATCH "Correctifs de sécurité importants"
     IDS_UPDATE_IMPORTANTBUGFIX "Corrections importantes"
     IDS_UPDATE_NETWORKAPI   "Mise à jour l'accès à des services de nuage"
     IDS_UPDATE_NEWFEATURE   "Nouvelles fonctionnalités"
@@ -2672,25 +2690,25 @@ BEGIN
     LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 180
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Tools"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Synchronization",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
-    CONTROL         20027,IDC_STATIC,"Static",SS_BITMAP,8,23,21,20
-    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,35,23,294,8
-    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,35,33,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,35,45,100,14
+    CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
+    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,43,23,286,8
+    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,43,45,100,14
     CONTROL         "Maintenance",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
-    CONTROL         20028,IDC_STATIC,"Static",SS_BITMAP,8,85,21,20
-    LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,35,85,294,8
-    LTEXT           "Last maintenance of this store: %s",IDC_MAINTENANCE,35,95,294,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,35,107,100,14
-    CONTROL         "Save settings",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
-    CONTROL         20029,IDC_STATIC,"Static",SS_BITMAP,8,148,21,20
-    LTEXT           "Saves the settings of all stores.",IDC_STATIC,35,147,294,8
-    PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,35,158,100,14
+    CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
+    LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,43,85,286,8
+    LTEXT           "Last maintenance of this store: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,43,107,100,14
+    CONTROL         "Backup settings",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
+    LTEXT           "Saves the settings of all stores.",IDC_STATIC,43,147,286,8
+    PUSHBUTTON      "Backup &settingsn",IDC_RUNBACKUP,43,158,100,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110
@@ -3111,14 +3129,14 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/en/"
     IDS_ERROR               "Error"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
     IDS_FILES_SINGULAR      "%u file"
     IDS_FILES_PLURAL        "%u files"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"
     IDS_LICFILEFILTER       "License files"
     IDS_LICENSEVALID_CAPTION "License valid"
@@ -3131,14 +3149,14 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
     IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
     IDS_STOREMAINTENANCE_CAPTION "Report"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store serviced"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores serviced"
     IDS_REGFILEFILTER       "Registry file"
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPIRECAPTION       "Unregistered copy—please purchase a license!"
     IDS_XOFY_SINGULAR       "%u of %u"
     IDS_XOFY_PLURAL         "%u of %u"
@@ -3151,14 +3169,14 @@ BEGIN
     IDS_STOREPROPERTIES     "Properties of “%s”"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETESTORE_CAPTION "Delete store “%s”"
     IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
     IDS_FORMAT_CAPTION      "You cannot format volume %c:"
     IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
     IDS_STORECREATED        "The store “%s” was added."
     IDS_ADDSTORE_LIQUIDFOLDERS 
@@ -3173,6 +3191,10 @@ BEGIN
     IDS_COMPARE_ISNULL      "is not set"
     IDS_COMPARE_SUBFOLDER   "is the subfolder"
     IDS_COMPARE_ISEQUAL     "equals"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_COMPARE_ISNOTEQUAL  "does not equal"
     IDS_COMPARE_ISABOVEEQUAL "is at least"
     IDS_COMPARE_BEGINSWITH  "begins with"
@@ -3183,7 +3205,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
+    IDS_UPDATE_SECURITYPATCH "Important security patches"
     IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
     IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
     IDS_UPDATE_NEWFEATURE   "New features"

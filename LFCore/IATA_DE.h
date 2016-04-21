@@ -116,7 +116,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 	{ 111, "Madagaskar" },
 	{ 112, "Malawi" },
 	{ 113, "Malaysia" },
-	{ 114, "Maledieven" },
+	{ 114, "Malediven" },
 	{ 115, "Mali" },
 	{ 116, "Malta" },
 	{ 117, "Marianen" },
@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8649
+#define AirportCount_DE 8651
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2573,7 +2573,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  81, "GAJ", "", "Yamagata", { -38.411944, 140.371389 } },
 	{ 209, "GAL", "", "Galena", { -64.736111, -156.937500 } },
 	{ 209, "GAM", "", "Gambell", { -63.766667, -171.732778 } },
-	{ 114, "GAN", "", "Gan Island", { 0.693333, 73.155556 } },
+	{ 114, "GAN", "", "Gan", { 0.693333, 73.155556 } },
 	{  99, "GAO", "", "Guantanamo (Los Canos)", { -20.085556, -75.158333 } },
 	{ 136, "GAP", "", "Gusap", { 6.050000, 145.950000 } },
 	{ 115, "GAQ", "", "Gao", { -16.248333, 0.005556 } },
@@ -2705,6 +2705,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 136, "GKA", "", "Goroka", { 6.081667, 145.391944 } },
 	{  40, "GKE", "", "Geilenkirchen", { -50.960833, 6.042500 } },
 	{ 135, "GKH", "", "Gorkha", { -28.050000, 84.483056 } },
+	{ 114, "GKK", "", "Koodoo", { -0.730833, 73.433056 } },
 	{  11, "GKL", "", "Great Keppel Island", { 23.186111, 150.943056 } },
 	{ 209, "GKN", "", "Gulkana", { -62.155000, -145.454444 } },
 	{  54, "GKO", "", "Kongoboumba", { 0.083056, 11.466944 } },
@@ -3717,6 +3718,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "KDK", "", "Kodiak (Municipal Airport)", { -57.805833, -152.373889 } },
 	{  47, "KDL", "", "Kardla", { -58.990833, 22.830833 } },
 	{  54, "KDN", "", "N'Dende", { 2.400000, 11.366944 } },
+	{ 114, "KDO", "", "Kadhdhoo", { -1.859167, 73.521944 } },
 	{ 136, "KDP", "", "Kandep", { 5.833056, 143.500000 } },
 	{ 136, "KDR", "", "Kandrian", { 6.183056, 149.533056 } },
 	{  11, "KDS", "", "Kamaran Downs", { 24.333056, 139.166944 } },

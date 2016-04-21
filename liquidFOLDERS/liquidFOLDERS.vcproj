@@ -644,7 +644,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Contexts_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Contexts_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Contexts_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Contexts_64.png"
 				>
 			</File>
 			<File
@@ -656,7 +668,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\SourceIcons.png"
+				RelativePath=".\res\Sources_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Sources_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Sources_32.png"
 				>
 			</File>
 			<File
@@ -664,7 +684,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Tasks_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Tasks_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Tasks_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Tasks_64.png"
 				>
 			</File>
 			<File

@@ -6,15 +6,6 @@
 #include "liquidFOLDERS.h"
 
 
-void fmtcpy(CHAR* Dst, CHAR* Src)
-{
-	ASSERT(Src);
-	ASSERT(Dst);
-
-	do *(Dst++) = (CHAR)toupper(*Src); while (*(Src++));
-}
-
-
 // CFormatCache
 //
 
@@ -65,7 +56,9 @@ void CFormatCache::Lookup(CHAR* FileFormat, FormatData& fd)
 		if (FileFormat[0]!='\0')
 		{
 			CHAR Key[LFExtSize];
-			fmtcpy(Key, FileFormat);
+			
+			CHAR* Ptr = Key;
+			do *(Ptr++) = (CHAR)toupper(*FileFormat); while (*(FileFormat++));
 
 			if (m_Cache.Lookup(Key, fd))
 				return;

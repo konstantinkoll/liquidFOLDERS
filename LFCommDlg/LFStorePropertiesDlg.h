@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CIconCtrl.h"
 #include "LFCore.h"
 #include "LFTabbedDialog.h"
 
@@ -31,14 +32,18 @@ protected:
 	BOOL m_StoreValid;
 	static UINT m_LastTab;
 
-	CIconCtrl m_wndIcon;
+	CIconCtrl m_wndStoreIcon;
 	CEdit m_wndStoreName;
 	CEdit m_wndStoreComment;
 	CButton m_wndMakeDefault;
 	CButton m_wndMakeSearchable;
 
+	CIconCtrl m_wndSynchronizeIcon;
+	CIconCtrl m_wndMaintenanceIcon;
+	CIconCtrl m_wndBackupIcon;
 
 private:
 	_GUID m_StoreUniqueID;
 	CString m_MaskMaintenance;
-	CString m_MaskSynchronized;};
+	CString m_MaskSynchronized;
+};

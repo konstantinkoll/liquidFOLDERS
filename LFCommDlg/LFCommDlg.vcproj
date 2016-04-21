@@ -851,15 +851,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\StoreBackup_32.bmp"
+				RelativePath=".\res\StoreBackup.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\StoreMaintenance_32.bmp"
+				RelativePath=".\res\StoreMaintenance.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\StoreSynchronize_32.bmp"
+				RelativePath=".\res\StoreSynchronize.ico"
 				>
 			</File>
 			<File
@@ -871,7 +871,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\UpdateIcons_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\UpdateIcons_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_64.png"
 				>
 			</File>
 			<File

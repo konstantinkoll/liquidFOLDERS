@@ -35,12 +35,6 @@ CIconCtrl::CIconCtrl()
 	m_IconSizeX = m_IconSizeY = 0;
 }
 
-CIconCtrl::~CIconCtrl()
-{
-	if (m_Icon)
-		DestroyIcon(m_Icon);
-}
-
 void CIconCtrl::SetIcon(HICON hIcon, INT cx, INT cy, BOOL Center)
 {
 	m_Icon = hIcon;
@@ -61,12 +55,12 @@ void CIconCtrl::SetCoreIcon(UINT nID, BOOL Center)
 	SetIcon((HICON)LoadImage(GetModuleHandle(_T("LFCORE.DLL")), MAKEINTRESOURCE(nID), IMAGE_ICON, IconSize, IconSize, LR_SHARED), IconSize, IconSize, Center);
 }
 
-void CIconCtrl::SetSmallIcon(HINSTANCE hInst, UINT nID, BOOL Center)
+void CIconCtrl::SetTaskIcon(HINSTANCE hInst, UINT nID, BOOL Center)
 {
 	CRect rect;
 	GetClientRect(rect);
-	INT sz = min(rect.Width(), rect.Height());
-	INT IconSize = (sz>=32) ? 32 : 16;
+	INT Size = min(rect.Width(), rect.Height());
+	INT IconSize = (Size>=64) ? 64 : (Size>=48) ? 48 : (Size>=32) ? 32 : (Size>=24) ? 24 : 16;
 
 	SetIcon((HICON)LoadImage(hInst, MAKEINTRESOURCE(nID), IMAGE_ICON, IconSize, IconSize, LR_SHARED), IconSize, IconSize, Center);
 }
@@ -98,8 +92,7 @@ void CIconCtrl::OnPaint()
 
 	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
-	if (m_Icon)
-		DrawIconEx(dc, 0, m_Center ? (rect.Height()-m_IconSizeY)/2 : 0, m_Icon, m_IconSizeX, m_IconSizeY, 0, NULL, DI_NORMAL);
+	DrawIconEx(dc, 0, m_Center ? (rect.Height()-m_IconSizeY)/2 : 0, m_Icon, m_IconSizeX, m_IconSizeY, 0, NULL, DI_NORMAL);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 

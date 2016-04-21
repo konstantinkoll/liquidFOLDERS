@@ -9,25 +9,6 @@
 #include <mmsystem.h>
 
 
-void PlayRegSound(CString Identifier)
-{
-	CString strKey;
-	strKey.Format(_T("AppEvents\\Schemes\\%s\\.Current"), Identifier);
-
-	CSettingsStoreSP regSP;
-	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
-
-	if (reg.Open(strKey))
-	{
-		CString strFile;
-
-		if (reg.Read(_T(""), strFile))
-			if (!strFile.IsEmpty())
-				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
-	}
-}
-
-
 // LFApplication
 //
 
@@ -46,7 +27,7 @@ LFApplication::LFApplication(GUID& AppID)
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
-	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==1)) ? OS_Seven : OS_Eight;
+	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : OS_Seven;
 
 	// Clipboard
 	CF_FILEDESCRIPTOR = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_FILEDESCRIPTOR);
@@ -197,15 +178,21 @@ LFApplication::LFApplication(GUID& AppID)
 		INT cx = GetSystemMetrics(SM_CXSMICON);
 		INT cy = GetSystemMetrics(SM_CYSMICON);
 		ImageList_GetIconSize(m_SystemImageListSmall, &cx, &cy);
+
+		cy = (cy<=16) ? 16 : (cy<=24) ? 24 : (cy<=32) ? 32 : (cy<=48) ? 48 : 96;
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListSmall);
 
 		cx = GetSystemMetrics(SM_CXICON);
 		cy = GetSystemMetrics(SM_CYICON);
 		ImageList_GetIconSize(m_SystemImageListLarge, &cx, &cy);
+
+		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : 96;
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListLarge);
 
 		cx = cy = 48;
 		ImageList_GetIconSize(m_SystemImageListExtraLarge, &cx, &cy);
+
+		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : 96;
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListExtraLarge);
 
 		ExtractCoreIcons(hModIcons, 96, &m_CoreImageListHuge);
@@ -294,12 +281,10 @@ BOOL LFApplication::InitInstance()
 	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &LogFont, 0))
 		Size = max(abs(LogFont.lfHeight), 11);
 
-	afxGlobalData.fontTooltip.GetLogFont(&LogFont);
-
 	m_DefaultFont.CreateFont(-Size);
 	m_ItalicFont.CreateFont(-Size, CLEARTYPE_QUALITY, FW_NORMAL, 1);
-	m_SmallFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_NORMAL, 0, _T("Segoe UI"));
-	m_SmallBoldFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_BOLD, 0, _T("Segoe UI"));
+	m_SmallFont.CreateFont(-(Size*2/3+3), CLEARTYPE_QUALITY, FW_NORMAL, 0, _T("Segoe UI"));
+	m_SmallBoldFont.CreateFont(-(Size*2/3+3), CLEARTYPE_QUALITY, FW_BOLD, 0, _T("Segoe UI"));
 	m_LargeFont.CreateFont(-Size*7/6);
 	m_CaptionFont.CreateFont(-Size*2, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
 	m_UACFont.CreateFont(-Size*3/2);
@@ -627,6 +612,24 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 	}
 }
 
+
+void LFApplication::PlayRegSound(const CString& Identifier)
+{
+	CString strKey;
+	strKey.Format(_T("AppEvents\\Schemes\\%s\\.Current"), Identifier);
+
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
+
+	if (reg.Open(strKey))
+	{
+		CString strFile;
+
+		if (reg.Read(_T(""), strFile))
+			if (!strFile.IsEmpty())
+				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
+	}
+}
 
 void LFApplication::PlayAsteriskSound()
 {

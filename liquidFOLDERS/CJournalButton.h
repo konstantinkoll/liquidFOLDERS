@@ -25,9 +25,6 @@ public:
 
 class CJournalButton : public CBackstageBar
 {
-public:
-	CJournalButton();
-
 protected:
 	virtual void OnClickButton(INT Index) const;
 
