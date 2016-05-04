@@ -185,6 +185,9 @@ void CTooltipHeader::OnPaint()
 
 						if (rectBounds.left<0)
 							rectBounds.left = 0;
+
+						if (m_Shadow)
+							rectBounds.top--;
 					}
 
 					DrawSubitemBackground(dc, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
