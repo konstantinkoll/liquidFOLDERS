@@ -179,20 +179,20 @@ LFApplication::LFApplication(GUID& AppID)
 		INT cy = GetSystemMetrics(SM_CYSMICON);
 		ImageList_GetIconSize(m_SystemImageListSmall, &cx, &cy);
 
-		cy = (cy<=16) ? 16 : (cy<=24) ? 24 : (cy<=32) ? 32 : (cy<=48) ? 48 : 96;
+		cy = (cy<=16) ? 16 : (cy<=24) ? 24 : (cy<=32) ? 32 : (cy<=48) ? 48 : (cy<=64) ? 64 : 96;
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListSmall);
 
 		cx = GetSystemMetrics(SM_CXICON);
 		cy = GetSystemMetrics(SM_CYICON);
 		ImageList_GetIconSize(m_SystemImageListLarge, &cx, &cy);
 
-		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : 96;
+		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : (cy<=64) ? 64 : 96;
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListLarge);
 
 		cx = cy = 48;
 		ImageList_GetIconSize(m_SystemImageListExtraLarge, &cx, &cy);
 
-		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : 96;
+		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : (cy<=64) ? 64 : 96;
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListExtraLarge);
 
 		ExtractCoreIcons(hModIcons, 96, &m_CoreImageListHuge);

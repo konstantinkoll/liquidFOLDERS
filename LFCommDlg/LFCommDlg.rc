@@ -62,7 +62,7 @@ IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 // remains consistent on all systems.
 IDR_APPLICATION         ICON                    "res\\liquidFOLDERS.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
-IDR_FILEDROP            ICON                    "res\\FileDrop_Small.ico"
+IDR_FILEDROP            ICON                    "res\\FileDrop.ico"
 IDI_MINIMIZE            ICON                    "res\\Minimize.ico"
 IDI_MAXIMIZE            ICON                    "res\\Maximize.ico"
 IDI_RESTORE             ICON                    "res\\Restore.ico"

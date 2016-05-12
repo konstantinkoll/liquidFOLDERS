@@ -2253,7 +2253,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\FileDrop_Small.ico"
+			RelativePath=".\FileDrop.ico"
 			>
 		</File>
 		<File
@@ -2282,10 +2282,6 @@
 		</File>
 		<File
 			RelativePath=".\liquidFOLDERS_64.png"
-			>
-		</File>
-		<File
-			RelativePath=".\liquidFOLDERS_Tiny.ico"
 			>
 		</File>
 		<File

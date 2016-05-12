@@ -710,10 +710,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\OVR_Default.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\OVR_Default_DE.ico"
 				>
 			</File>
@@ -739,10 +735,6 @@
 			</File>
 			<File
 				RelativePath=".\res\OVR_Empty_FR.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\OVR_Error.ico"
 				>
 			</File>
 			<File
