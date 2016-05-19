@@ -710,6 +710,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\OVR_Default.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\OVR_Default_DE.ico"
 				>
 			</File>
