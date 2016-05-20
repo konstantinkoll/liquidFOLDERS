@@ -338,7 +338,7 @@ INT LFApplication::ExitInstance()
 	m_wndTooltip.DestroyWindow();
 
 	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
-		delete m_ResourceCache.m_Items[a].pImage;
+		delete m_ResourceCache[a].pImage;
 
 	GdiplusShutdown(m_GdiPlusToken);
 
@@ -483,8 +483,8 @@ Bitmap* LFApplication::GetResourceImage(UINT nID) const
 Bitmap* LFApplication::GetCachedResourceImage(UINT nID)
 {
 	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
-		if (m_ResourceCache.m_Items[a].nID==nID)
-			return m_ResourceCache.m_Items[a].pImage;
+		if (m_ResourceCache[a].nID==nID)
+			return m_ResourceCache[a].pImage;
 
 	Bitmap* pBitmap = GetResourceImage(nID);;
 	if (pBitmap)

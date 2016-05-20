@@ -1,5 +1,6 @@
 
 #pragma once
+#include <assert.h>
 
 
 template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
@@ -12,11 +13,13 @@ public:
 	BOOL AddItem(T Item);
 	BOOL InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE);
 	void DeleteItems(UINT Pos, UINT Count=1);
+	const T& operator[](const SIZE_T Index) const;
+	T& operator[](const SIZE_T Index);
 
-	T* m_Items;
 	UINT m_ItemCount;
 
 protected:
+	T* m_Items;
 	UINT m_Allocated;
 };
 
@@ -110,4 +113,22 @@ void LFDynArray<T, FirstAlloc, SubsequentAlloc>::DeleteItems(UINT Pos, UINT Coun
 		m_Items[a] = m_Items[a+Count];
 
 	m_ItemCount -= Count;
+}
+
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+const T& LFDynArray<T, FirstAlloc, SubsequentAlloc>::operator[](const SIZE_T Index) const
+{
+	assert(Index<m_ItemCount);
+	assert(m_Items);
+
+	return m_Items[Index];
+}
+
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+T& LFDynArray<T, FirstAlloc, SubsequentAlloc>::operator[](const SIZE_T Index)
+{
+	assert(Index<m_ItemCount);
+	assert(m_Items);
+
+	return m_Items[Index];
 }

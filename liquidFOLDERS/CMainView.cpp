@@ -350,7 +350,7 @@ void CMainView::AddTransactionItem(LFTransactionList* pTransactionList, LFItemDe
 	case LFTypeFolder:
 		if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
-				LFAddTransactionItem(pTransactionList, p_RawFiles->m_Items[a], UserData);
+				LFAddTransactionItem(pTransactionList, (*p_RawFiles)[a], UserData);
 
 		break;
 	}
@@ -365,14 +365,14 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolveLocatio
 		if (All)
 		{
 			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-				AddTransactionItem(pTransactionList, p_CookedFiles->m_Items[a], a);
+				AddTransactionItem(pTransactionList, (*p_CookedFiles)[a], a);
 		}
 		else
 		{
 			INT Index = GetNextSelectedItem(-1);
 			while (Index!=-1)
 			{
-				AddTransactionItem(pTransactionList, p_CookedFiles->m_Items[Index], Index);
+				AddTransactionItem(pTransactionList, (*p_CookedFiles)[Index], Index);
 				Index = GetNextSelectedItem(Index);
 			}
 		}
@@ -393,8 +393,8 @@ void CMainView::RemoveTransactedItems(LFTransactionList* pTransactionList)
 		return;
 
 	for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
-		if ((pTransactionList->m_Items[a].LastError==LFOk) && (pTransactionList->m_Items[a].Processed))
-			pTransactionList->m_Items[a].pItemDescriptor->RemoveFlag = TRUE;
+		if (((*pTransactionList)[a].LastError==LFOk) && ((*pTransactionList)[a].Processed))
+			(*pTransactionList)[a].pItemDescriptor->RemoveFlag = TRUE;
 
 	LFRemoveFlaggedItems(p_RawFiles);
 
@@ -813,7 +813,7 @@ void CMainView::OnUpdateSelection()
 
 	while (Index>=0)
 	{
-		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		m_wndInspector.UpdateAdd(pItemDescriptor, p_RawFiles);
 
 		m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
@@ -834,7 +834,7 @@ void CMainView::OnBeginDragDrop()
 		INT Index = GetSelectedItem();
 		if (Index!=-1)
 		{
-			LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) && (pItemDescriptor->Type & LFTypeShortcutAllowed))
 			{
 				m_DropTarget.SetDragging(TRUE);
@@ -879,7 +879,7 @@ void CMainView::OnBeginDragDrop()
 LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 {
 	LFTransactionList* pTransactionList = LFAllocTransactionList();
-	LFAddTransactionItem(pTransactionList, p_CookedFiles->m_Items[(UINT)wParam]);
+	LFAddTransactionItem(pTransactionList, (*p_CookedFiles)[(UINT)wParam]);
 
 	LFVariantData Value;
 	Value.Attr = LFAttrFileName;
@@ -1253,7 +1253,7 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
-		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_FILTERS_EDIT:
@@ -1275,7 +1275,7 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
-		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
 		switch (pCmdUI->m_nID)
 		{
@@ -1297,14 +1297,14 @@ void CMainView::OnStoreSynchronize()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFRunSynchronization(p_CookedFiles->m_Items[Index]->StoreID, this);
+		LFRunSynchronization((*p_CookedFiles)[Index]->StoreID, this);
 }
 
 void CMainView::OnStoreMakeDefault()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFErrorBox(this, LFSetDefaultStore(p_CookedFiles->m_Items[Index]->StoreID));
+		LFErrorBox(this, LFSetDefaultStore((*p_CookedFiles)[Index]->StoreID));
 }
 
 void CMainView::OnStoreImportFolder()
@@ -1313,7 +1313,7 @@ void CMainView::OnStoreImportFolder()
 	{
 		INT Index = GetSelectedItem();
 		if (Index!=-1)
-			LFImportFolder(p_CookedFiles->m_Items[Index]->StoreID, this);
+			LFImportFolder((*p_CookedFiles)[Index]->StoreID, this);
 	}
 	else
 		if (m_StoreIDValid)
@@ -1327,14 +1327,14 @@ void CMainView::OnStoreShortcut()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFCreateDesktopShortcutForStore(p_CookedFiles->m_Items[Index]);
+		LFCreateDesktopShortcutForStore((*p_CookedFiles)[Index]);
 }
 
 void CMainView::OnStoreDelete()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFDeleteStore(p_CookedFiles->m_Items[Index]->StoreID, this);
+		LFDeleteStore((*p_CookedFiles)[Index]->StoreID, this);
 }
 
 void CMainView::OnStoreRename()
@@ -1349,7 +1349,7 @@ void CMainView::OnStoreProperties()
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
-		LFStorePropertiesDlg dlg(p_CookedFiles->m_Items[Index]->StoreID, this);
+		LFStorePropertiesDlg dlg((*p_CookedFiles)[Index]->StoreID, this);
 		dlg.DoModal();
 	}
 }
@@ -1363,7 +1363,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		INT Index = GetSelectedItem();
 		if (Index!=-1)
 		{
-			LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore)
 				switch (pCmdUI->m_nID)
 				{
@@ -1410,7 +1410,7 @@ void CMainView::OnFileOpenWith()
 	if (Index!=-1)
 	{
 		WCHAR Path[MAX_PATH];
-		UINT Result = LFGetFileLocation(p_CookedFiles->m_Items[Index], Path, MAX_PATH, TRUE);
+		UINT Result = LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH, TRUE);
 		if (Result==LFOk)
 		{
 			WCHAR Cmd[300];
@@ -1430,16 +1430,16 @@ void CMainView::OnFileOpenBrowser()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		ShellExecuteA(GetSafeHwnd(), "open", p_CookedFiles->m_Items[Index]->CoreAttributes.URL, NULL, NULL, SW_SHOWNORMAL);
+		ShellExecuteA(GetSafeHwnd(), "open", (*p_CookedFiles)[Index]->CoreAttributes.URL, NULL, NULL, SW_SHOWNORMAL);
 }
 
 void CMainView::OnFileEdit()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		if (strcmp(p_CookedFiles->m_Items[Index]->CoreAttributes.FileFormat, "filter")==0)
+		if (strcmp((*p_CookedFiles)[Index]->CoreAttributes.FileFormat, "filter")==0)
 		{
-			LFFilter* pFilter = LFLoadFilter(p_CookedFiles->m_Items[Index]);
+			LFFilter* pFilter = LFLoadFilter((*p_CookedFiles)[Index]);
 
 			LFEditFilterDlg dlg(this, pFilter ? pFilter->StoreID[0]!='\0' ? pFilter->StoreID : m_StoreID : m_StoreID, pFilter);
 			if (dlg.DoModal()==IDOK)
@@ -1457,7 +1457,7 @@ void CMainView::OnFileRemember()
 	INT Index = GetNextSelectedItem(-1);
 	while (Index!=-1)
 	{
-		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		switch (pItemDescriptor->Type & LFTypeMask)
 		{
 		case LFTypeFile:
@@ -1469,7 +1469,7 @@ void CMainView::OnFileRemember()
 		case LFTypeFolder:
 			if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 				for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
-					if (pClipboard->AddClipItem(p_RawFiles->m_Items[a]))
+					if (pClipboard->AddClipItem((*p_RawFiles)[a]))
 						changes = TRUE;
 
 			break;
@@ -1487,7 +1487,7 @@ void CMainView::OnFileRemove()
 	LFTransactionList* pTransactionList = BuildTransactionList();
 
 	for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
-		pTransactionList->m_Items[a].Processed = TRUE;
+		(*pTransactionList)[a].Processed = TRUE;
 
 	RemoveTransactedItems(pTransactionList);
 
@@ -1531,8 +1531,8 @@ void CMainView::OnFileShortcut()
 	{
 		CWaitCursor csr;
 		for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
-			if ((pTransactionList->m_Items[a].LastError==LFOk) && (pTransactionList->m_Items[a].Processed))
-				CreateShortcut(&pTransactionList->m_Items[a]);
+			if (((*pTransactionList)[a].LastError==LFOk) && ((*pTransactionList)[a].Processed))
+				CreateShortcut(&(*pTransactionList)[a]);
 	}
 
 	LFFreeTransactionList(pTransactionList);
@@ -1575,7 +1575,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	BOOL b = FALSE;
 
 	INT Index = GetSelectedItem();
-	LFItemDescriptor* pItemDescriptor = (Index==-1) ? NULL : p_CookedFiles->m_Items[Index];
+	LFItemDescriptor* pItemDescriptor = (Index==-1) ? NULL : (*p_CookedFiles)[Index];
 
 	switch (pCmdUI->m_nID)
 	{

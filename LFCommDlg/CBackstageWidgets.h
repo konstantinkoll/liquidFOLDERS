@@ -20,7 +20,7 @@ public:
 	void AddWidgetSize(LPSIZE lpSize) const;
 
 protected:
-	virtual void DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed) const;
+	virtual void DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed);
 	virtual void OnClickButton(INT Index) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

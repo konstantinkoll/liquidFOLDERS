@@ -625,7 +625,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 
 	CMenu* pMenu = new CMenu();
 
-	LFItemDescriptor* Item = p_CookedFiles->m_Items[Index];
+	LFItemDescriptor* Item = (*p_CookedFiles)[Index];
 	switch (Item->Type & LFTypeMask)
 	{
 	case LFTypeStore:
@@ -735,7 +735,7 @@ void CFileView::EditLabel(INT Index)
 
 	if ((m_EnableLabelEdit) && (p_CookedFiles) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
 	{
-		LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) ||
 			((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
 		{
@@ -796,13 +796,13 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 		MemDC.SelectObject(hOldBitmap);
 
-		dc.SetTextColor((p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : 0xFFFFFF);
+		dc.SetTextColor(((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : 0xFFFFFF);
 	}
 	else
 	{
 		DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
 			m_HotItem==Index, m_FocusItem==Index, IsSelected(Index),
-			(p_CookedFiles->m_Items[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
+			((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
 			m_ShowFocusRect);
 	}
 }
@@ -1282,7 +1282,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					HICON hIcon = NULL;
 					HBITMAP hBitmap = NULL;
 
-					LFItemDescriptor* i = p_CookedFiles->m_Items[m_HotItem];
+					LFItemDescriptor* i = (*p_CookedFiles)[m_HotItem];
 
 					switch (i->Type & LFTypeMask)
 					{

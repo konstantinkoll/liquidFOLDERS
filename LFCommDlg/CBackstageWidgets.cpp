@@ -17,7 +17,7 @@ CBackstageWidgets::CBackstageWidgets()
 void CBackstageWidgets::SetEnabled(BOOL Enabled)
 {
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
-		m_BarItems.m_Items[a].Enabled = Enabled;
+		m_BarItems[a].Enabled = Enabled;
 
 	Invalidate();
 }
@@ -37,19 +37,19 @@ void CBackstageWidgets::AddWidgetSize(LPSIZE lpSize) const
 	}
 }
 
-void CBackstageWidgets::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed) const
+void CBackstageWidgets::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed)
 {
-	INT IconID = m_BarItems.m_Items[Index].IconID;
+	INT IconID = m_BarItems[Index].IconID;
 
 	if ((IconID==BACKSTAGEICON_MAXIMIZE) || (IconID==BACKSTAGEICON_RESTORE))
-		m_BarItems.m_Items[Index].IconID = (GetParent()->GetStyle() & WS_MAXIMIZE) ? BACKSTAGEICON_RESTORE : BACKSTAGEICON_MAXIMIZE;
+		m_BarItems[Index].IconID = (GetParent()->GetStyle() & WS_MAXIMIZE) ? BACKSTAGEICON_RESTORE : BACKSTAGEICON_MAXIMIZE;
 
 	CBackstageBar::DrawItem(dc, rectItem, Index, State, Themed);
 }
 
 void CBackstageWidgets::OnClickButton(INT Index) const
 {
-	UINT Command = m_BarItems.m_Items[Index].Command;
+	UINT Command = m_BarItems[Index].Command;
 
 	if ((Command==SC_MAXIMIZE) && (GetParent()->GetStyle() & WS_MAXIMIZE))
 		Command = SC_RESTORE;

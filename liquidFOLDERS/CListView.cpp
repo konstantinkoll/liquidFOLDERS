@@ -122,7 +122,7 @@ void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 			GridItemData* pData = GetItemData(a);
 			pData->Hdr.Valid = TRUE;
 
-			LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[a];
+			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 				if (!p_CookedFiles->m_HasCategories)
 					if (p_CookedFiles->m_Context==LFContextSubfolderDay)
@@ -309,7 +309,7 @@ RECT CListView::GetLabelRect(INT Index) const
 
 void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
-	LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[Index];
+	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	GridItemData* pData = GetItemData(Index);
 	INT Rows[4];
 	BOOL Right = FALSE;
@@ -766,7 +766,7 @@ INT CListView::GetMaxLabelWidth(INT Max)
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
-			CString label = GetLabel(p_CookedFiles->m_Items[a]);
+			CString label = GetLabel((*p_CookedFiles)[a]);
 			INT cx = pDC->GetTextExtent(label).cx;
 
 			if (cx>Width)
@@ -802,7 +802,7 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
 			WCHAR tmpStr[256];
-			LFAttributeToString(p_CookedFiles->m_Items[a], Col, tmpStr, 256);
+			LFAttributeToString((*p_CookedFiles)[a], Col, tmpStr, 256);
 
 			const INT cx = dc.GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
 			if (cx>Width)
@@ -837,18 +837,18 @@ void CListView::AutosizeColumn(UINT Col)
 	m_ViewParameters.ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col];
 }
 
-void CListView::SortCategories(LFSearchResult* Result)
+void CListView::SortCategories(LFSearchResult* pSearchResult)
 {
-	ASSERT(Result);
+	ASSERT(pSearchResult);
 	LFDynArray<LFItemDescriptor*, 128, 128> Buckets[LFItemCategoryCount+18];
 
-	for (UINT a=0; a<Result->m_ItemCount; a++)
-		Buckets[Result->m_Items[a]->CategoryID].AddItem(Result->m_Items[a]);
+	for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
+		Buckets[(*pSearchResult)[a]->CategoryID].AddItem((*pSearchResult)[a]);
 
 	UINT Ptr = 0;
 	for (UINT a=0; a<LFItemCategoryCount+18; a++)
 		for (UINT b=0; b<Buckets[a].m_ItemCount; b++)
-			Result->m_Items[Ptr++] = Buckets[a].m_Items[b];
+			(*pSearchResult)[Ptr++] = Buckets[a][b];
 }
 
 void CListView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)

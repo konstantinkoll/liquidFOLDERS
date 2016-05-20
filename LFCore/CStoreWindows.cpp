@@ -36,7 +36,7 @@ UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
 
 	for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
 	{
-		if (!m_pFileImportList->m_Items[a].Processed)
+		if (!(*m_pFileImportList)[a].Processed)
 		{
 			// Progress
 			if (pProgress)
@@ -51,14 +51,14 @@ UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
 			}
 
 			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
-			SetNameExtFromFile(pItemDescriptor, m_pFileImportList->m_Items[a].Path);
+			SetNameExtFromFile(pItemDescriptor, (*m_pFileImportList)[a].Path);
 
-			wcscpy_s((WCHAR*)pItemDescriptor->StoreData, MAX_PATH, &m_pFileImportList->m_Items[a].Path[wcslen(p_StoreDescriptor->DatPath)]);
+			wcscpy_s((WCHAR*)pItemDescriptor->StoreData, MAX_PATH, &(*m_pFileImportList)[a].Path[wcslen(p_StoreDescriptor->DatPath)]);
 
 			UINT Result;
 			WCHAR Path[2*MAX_PATH];
 			if ((Result=PrepareImport(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
-				CommitImport(pItemDescriptor, TRUE, m_pFileImportList->m_Items[a].Path, OnInitialize);
+				CommitImport(pItemDescriptor, TRUE, (*m_pFileImportList)[a].Path, OnInitialize);
 
 			LFFreeItemDescriptor(pItemDescriptor);
 
@@ -238,10 +238,10 @@ BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pSt
 	// Find in import list
 	if (m_pFileImportList)
 		for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
-			if (!m_pFileImportList->m_Items[a].Processed)
-				if (wcscmp(&Path[4], m_pFileImportList->m_Items[a].Path)==0)
+			if (!(*m_pFileImportList)[a].Processed)
+				if (wcscmp(&Path[4], (*m_pFileImportList)[a].Path)==0)
 				{
-					m_pFileImportList->m_Items[a].Processed = TRUE;
+					(*m_pFileImportList)[a].Processed = TRUE;
 
 					// Progress
 					if (pProgress)

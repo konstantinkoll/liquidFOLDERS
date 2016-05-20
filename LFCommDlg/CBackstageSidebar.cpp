@@ -166,7 +166,7 @@ void CBackstageSidebar::AddCaption(LPCWSTR Caption)
 	ASSERT(Caption);
 
 	if (m_Items.m_ItemCount)
-		if (!m_Items.m_Items[m_Items.m_ItemCount-1].Selectable)
+		if (!m_Items[m_Items.m_ItemCount-1].Selectable)
 		{
 			if (*Caption==L'\0')
 				return;
@@ -185,7 +185,7 @@ void CBackstageSidebar::AddCaption(UINT ResID)
 void CBackstageSidebar::ResetCounts()
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		m_Items.m_Items[a].Count = 0;
+		m_Items[a].Count = 0;
 
 	Invalidate();
 }
@@ -193,9 +193,9 @@ void CBackstageSidebar::ResetCounts()
 void CBackstageSidebar::SetCount(UINT CmdID, UINT Count)
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items.m_Items[a].CmdID==CmdID)
+		if (m_Items[a].CmdID==CmdID)
 		{
-			m_Items.m_Items[a].Count = Count;
+			m_Items[a].Count = Count;
 			InvalidateItem(a);
 
 			break;
@@ -204,7 +204,7 @@ void CBackstageSidebar::SetCount(UINT CmdID, UINT Count)
 
 INT CBackstageSidebar::GetMinHeight() const
 {
-	INT Height = m_Items.m_Items[m_Items.m_ItemCount-1].Rect.bottom;
+	INT Height = m_Items[m_Items.m_ItemCount-1].Rect.bottom;
 
 	if (IsCtrlThemed())
 		Height += 2;
@@ -218,7 +218,7 @@ void CBackstageSidebar::SetSelection(UINT CmdID)
 	m_Hover = FALSE;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if ((m_Items.m_Items[a].Selectable) && (m_Items.m_Items[a].CmdID==CmdID))
+		if ((m_Items[a].Selectable) && (m_Items[a].CmdID==CmdID))
 		{
 			m_SelectedItem = a;
 			break;
@@ -230,8 +230,8 @@ void CBackstageSidebar::SetSelection(UINT CmdID)
 INT CBackstageSidebar::ItemAtPosition(CPoint point)
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items.m_Items[a].Selectable)
-			if (PtInRect(&m_Items.m_Items[a].Rect, point))
+		if (m_Items[a].Selectable)
+			if (PtInRect(&m_Items[a].Rect, point))
 				return a;
 
 	return -1;
@@ -240,7 +240,7 @@ INT CBackstageSidebar::ItemAtPosition(CPoint point)
 void CBackstageSidebar::InvalidateItem(INT Index)
 {
 	if (Index!=-1)
-		InvalidateRect(&m_Items.m_Items[Index].Rect);
+		InvalidateRect(&m_Items[Index].Rect);
 }
 
 void CBackstageSidebar::PressItem(INT Index)
@@ -251,7 +251,7 @@ void CBackstageSidebar::PressItem(INT Index)
 		InvalidateItem(m_PressedItem);
 
 		if (Index!=-1)
-			if (!m_Items.m_Items[Index].Enabled)
+			if (!m_Items[Index].Enabled)
 				Index = -1;
 
 		m_PressedItem = Index;
@@ -267,11 +267,11 @@ void CBackstageSidebar::AdjustLayout()
 	INT y = 0;
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
-		m_Items.m_Items[a].Rect.top = y;
-		y = m_Items.m_Items[a].Rect.bottom = y+m_Items.m_Items[a].Height;
+		m_Items[a].Rect.top = y;
+		y = m_Items[a].Rect.bottom = y+m_Items[a].Height;
 
-		m_Items.m_Items[a].Rect.left = 0;
-		m_Items.m_Items[a].Rect.right = rect.Width();
+		m_Items[a].Rect.left = 0;
+		m_Items[a].Rect.right = rect.Width();
 	}
 
 	Invalidate();
@@ -304,7 +304,7 @@ LRESULT CBackstageSidebar::OnNcHitTest(CPoint point)
 		CRect rectWindow;
 		GetWindowRect(rectWindow);
 
-		if (!m_Items.m_ItemCount || (point.y>=rectWindow.top+m_Items.m_Items[m_Items.m_ItemCount-1].Rect.bottom))
+		if (!m_Items.m_ItemCount || (point.y>=rectWindow.top+m_Items[m_Items.m_ItemCount-1].Rect.bottom))
 			HitTest = HTTRANSPARENT;
 	}
 
@@ -351,20 +351,20 @@ void CBackstageSidebar::OnPaint()
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		RECT rectIntersect;
-		if (IntersectRect(&rectIntersect, &m_Items.m_Items[a].Rect, rectUpdate))
+		if (IntersectRect(&rectIntersect, &m_Items[a].Rect, rectUpdate))
 		{
-			CRect rectItem(m_Items.m_Items[a].Rect);
+			CRect rectItem(m_Items[a].Rect);
 
-			const BOOL Enabled = m_Items.m_Items[a].Enabled;
+			const BOOL Enabled = m_Items[a].Enabled;
 			const BOOL Highlight = (m_PressedItem!=-1) ? m_PressedItem==(INT)a : m_SelectedItem==(INT)a;
 			const BOOL Hot = Enabled && !Highlight && (m_HotItem==(INT)a);
 
 			// Background
-			if (m_Items.m_Items[a].Selectable)
+			if (m_Items[a].Selectable)
 			{
 				if (Themed)
 				{
-					if ((a==0) || m_Items.m_Items[a-1].Selectable)
+					if ((a==0) || m_Items[a-1].Selectable)
 					{
 						LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
 						g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), 2);
@@ -375,7 +375,7 @@ void CBackstageSidebar::OnPaint()
 						g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), 8);
 					}
 
-					if ((a==m_Items.m_ItemCount-1) || m_Items.m_Items[a+1].Selectable)
+					if ((a==m_Items.m_ItemCount-1) || m_Items[a+1].Selectable)
 					{
 						LinearGradientBrush brush2(Point(rectItem.left, rectItem.bottom-3), Point(rectItem.left, rectItem.bottom), Color(0x00000000), Color(0x60000000));
 						g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-2, rectItem.Width(), 2);
@@ -411,25 +411,25 @@ void CBackstageSidebar::OnPaint()
 
 			rectItem.left += BORDERLEFT;
 
-			if (m_Items.m_Items[a].Selectable)
+			if (m_Items[a].Selectable)
 			{
 				rectItem.DeflateRect(BORDER, BORDER);
 
 				// Icon
 				if (m_IconSize)
 				{
-					if (m_Items.m_Items[a].IconID!=-1)
-						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID, Themed && Hot, Themed && !Highlight);
+					if (m_Items[a].IconID!=-1)
+						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items[a].IconID, Themed && Hot, Themed && !Highlight);
 
 					rectItem.left += m_IconSize+BORDER;
 				}
 
 				// Count
-				if (m_ShowCounts && (m_Items.m_Items[a].Count))
+				if (m_ShowCounts && (m_Items[a].Count))
 				{
 					CRect rectCount(rectItem.right-m_CountWidth+BORDER/2, rectItem.top-2, rectItem.right-BORDER/2-SHADOW/2, rectItem.bottom);
 
-					const COLORREF clr = m_Items.m_Items[a].Color;
+					const COLORREF clr = m_Items[a].Color;
 					if (clr!=(COLORREF)-1)
 					{
 						if (Themed)
@@ -483,18 +483,18 @@ void CBackstageSidebar::OnPaint()
 					}
 
 					CString tmpStr;
-					if (m_Items.m_Items[a].Count>=1000000)
+					if (m_Items[a].Count>=1000000)
 					{
-						tmpStr.Format(_T("%dm"), m_Items.m_Items[a].Count/1000000);
+						tmpStr.Format(_T("%dm"), m_Items[a].Count/1000000);
 					}
 					else
-						if (m_Items.m_Items[a].Count>=1000)
+						if (m_Items[a].Count>=1000)
 						{
-							tmpStr.Format(_T("%dk"), m_Items.m_Items[a].Count/1000);
+							tmpStr.Format(_T("%dk"), m_Items[a].Count/1000);
 						}
 						else
 						{
-							tmpStr.Format(_T("%d"), m_Items.m_Items[a].Count);
+							tmpStr.Format(_T("%d"), m_Items[a].Count);
 						}
 
 					CFont* pOldFont = dc.SelectObject(clr!=(COLORREF)-1 ? &LFGetApp()->m_SmallBoldFont : &LFGetApp()->m_SmallFont);
@@ -513,11 +513,11 @@ void CBackstageSidebar::OnPaint()
 			}
 
 			// Text
-			if (m_Items.m_Items[a].Caption[0])
+			if (m_Items[a].Caption[0])
 			{
-				CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].Selectable ? &LFGetApp()->m_LargeFont : &LFGetApp()->m_SmallBoldFont);
+				CFont* pOldFont = dc.SelectObject(m_Items[a].Selectable ? &LFGetApp()->m_LargeFont : &LFGetApp()->m_SmallBoldFont);
 
-				if (!m_Items.m_Items[a].Selectable)
+				if (!m_Items[a].Selectable)
 				{
 					rectItem.OffsetRect(0, 1);
 				}
@@ -527,13 +527,13 @@ void CBackstageSidebar::OnPaint()
 						rectItem.OffsetRect(0, -1);
 						COLORREF col = dc.SetTextColor(0x000000);
 
-						dc.DrawText(m_Items.m_Items[a].Caption, rectItem, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+						dc.DrawText(m_Items[a].Caption, rectItem, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 						rectItem.OffsetRect(0, 1);
 						dc.SetTextColor(col);
 					}
 
-				dc.DrawText(m_Items.m_Items[a].Caption, rectItem, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+				dc.DrawText(m_Items[a].Caption, rectItem, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 				dc.SelectObject(pOldFont);
 			}
@@ -543,7 +543,7 @@ void CBackstageSidebar::OnPaint()
 	// Untere Begrenzung
 	if (Themed && m_Items.m_ItemCount)
 	{
-		CRect rectItem(m_Items.m_Items[m_Items.m_ItemCount-1].Rect);
+		CRect rectItem(m_Items[m_Items.m_ItemCount-1].Rect);
 
 		LinearGradientBrush brush1(Point(rectItem.left, rectItem.bottom), Point(rectItem.left, rectItem.bottom+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
 		g.FillRectangle(&brush1, rectItem.left, rectItem.bottom, rectItem.Width(), 2);
@@ -634,7 +634,7 @@ void CBackstageSidebar::OnMouseHover(UINT nFlags, CPoint point)
 		if (m_HotItem!=-1)
 			if (!LFGetApp()->IsTooltipVisible())
 			{
-				const SidebarItem* pSidebarItem = &m_Items.m_Items[m_HotItem];
+				const SidebarItem* pSidebarItem = &m_Items[m_HotItem];
 
 				NM_TOOLTIPDATA tag;
 				ZeroMemory(&tag, sizeof(tag));
@@ -675,8 +675,8 @@ void CBackstageSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	{
 		PressItem(Item);
 
-		if (m_Items.m_Items[Item].Enabled)
-			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Item].CmdID);
+		if (m_Items[Item].Enabled)
+			GetOwner()->PostMessage(WM_COMMAND, m_Items[Item].CmdID);
 	}
 }
 
@@ -695,13 +695,13 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_EXECUTE:
 	case VK_SPACE:
 		if (Index!=-1)
-			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Index].CmdID);
+			GetOwner()->PostMessage(WM_COMMAND, m_Items[Index].CmdID);
 
 		return;
 
 	case VK_HOME:
 		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
-			if (m_Items.m_Items[a].Selectable && m_Items.m_Items[a].Enabled)
+			if (m_Items[a].Selectable && m_Items[a].Enabled)
 			{
 				PressItem(a);
 				m_Keyboard = TRUE;
@@ -713,7 +713,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_END:
 		for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
-			if (m_Items.m_Items[a].Selectable && m_Items.m_Items[a].Enabled)
+			if (m_Items[a].Selectable && m_Items[a].Enabled)
 			{
 				PressItem(a);
 				m_Keyboard = TRUE;
@@ -729,7 +729,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (--Index<0)
 				Index = m_Items.m_ItemCount-1;
 
-			if (m_Items.m_Items[Index].Selectable && m_Items.m_Items[Index].Enabled)
+			if (m_Items[Index].Selectable && m_Items[Index].Enabled)
 			{
 				PressItem(Index);
 				m_Keyboard = TRUE;
@@ -746,7 +746,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (++Index>=(INT)m_Items.m_ItemCount)
 				Index = 0;
 
-			if (m_Items.m_Items[Index].Selectable && m_Items.m_Items[Index].Enabled)
+			if (m_Items[Index].Selectable && m_Items[Index].Enabled)
 			{
 				PressItem(Index);
 				m_Keyboard = TRUE;
@@ -764,15 +764,15 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CBackstageSidebar::OnIdleUpdateCmdUI()
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items.m_Items[a].Selectable)
+		if (m_Items[a].Selectable)
 		{
 			CSidebarCmdUI cmdUI;
-			cmdUI.m_nID = m_Items.m_Items[a].CmdID;
+			cmdUI.m_nID = m_Items[a].CmdID;
 			cmdUI.DoUpdate(GetOwner(), TRUE);
 
-			if (m_Items.m_Items[a].Enabled!=cmdUI.m_Enabled)
+			if (m_Items[a].Enabled!=cmdUI.m_Enabled)
 			{
-				m_Items.m_Items[a].Enabled = cmdUI.m_Enabled;
+				m_Items[a].Enabled = cmdUI.m_Enabled;
 				InvalidateItem(a);
 			}
 		}

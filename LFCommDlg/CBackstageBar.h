@@ -40,7 +40,7 @@ public:
 	UINT GetPreferredWidth() const;
 
 protected:
-	virtual void DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed) const;
+	virtual void DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed);
 	virtual void OnClickButton(INT Index) const=0;
 
 	void Reset();

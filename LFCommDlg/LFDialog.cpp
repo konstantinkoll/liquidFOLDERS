@@ -75,7 +75,7 @@ BOOL LFDialog::PreTranslateMessage(MSG* pMsg)
 		m_ShowKeyboardCues = TRUE;
 
 		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
-			m_Buttons.m_Items[a]->Invalidate();
+			m_Buttons[a]->Invalidate();
 	}
 
 	// Main window
@@ -109,7 +109,7 @@ void LFDialog::DoDataExchange(CDataExchange* pDX)
 
 CWnd* LFDialog::GetBottomWnd() const
 {
-	return m_BottomRightControls.m_ItemCount ? m_BottomRightControls.m_Items[0].pChildWnd : NULL;
+	return m_BottomRightControls.m_ItemCount ? m_BottomRightControls[0].pChildWnd : NULL;
 }
 
 void LFDialog::SetBottomLeftControl(CWnd* pChildWnd)
@@ -169,7 +169,7 @@ void LFDialog::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 	// Move bottom right controls
 	for (UINT a=0; a<m_BottomRightControls.m_ItemCount; a++)
 	{
-		DialogControl* pDialogControl = &m_BottomRightControls.m_Items[a];
+		DialogControl* pDialogControl = &m_BottomRightControls[a];
 
 		OffsetRect(&pDialogControl->rectClient, ptDiff.x, ptDiff.y);
 		pDialogControl->pChildWnd->SetWindowPos(NULL, pDialogControl->rectClient.left, pDialogControl->rectClient.top, 0, 0, nFlags | SWP_NOSIZE);
@@ -201,10 +201,10 @@ void LFDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
 
 		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
-			if (m_Buttons.m_Items[a]->IsWindowVisible())
+			if (m_Buttons[a]->IsWindowVisible())
 			{
 				CRect rectBounds;
-				m_Buttons.m_Items[a]->GetWindowRect(rectBounds);
+				m_Buttons[a]->GetWindowRect(rectBounds);
 				ScreenToClient(rectBounds);
 
 				DrawWhiteButtonBorder(g, rectBounds);
@@ -482,7 +482,7 @@ void LFDialog::OnDestroy()
 {
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CWhiteButton* pButton = m_Buttons.m_Items[a];
+		CWhiteButton* pButton = m_Buttons[a];
 
 		pButton->UnsubclassWindow();
 		delete pButton;

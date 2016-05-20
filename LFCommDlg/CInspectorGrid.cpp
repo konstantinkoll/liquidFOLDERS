@@ -837,17 +837,17 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 
 	DestroyEdit();
 
-	m_Properties.m_Items[nID].Editable = Editable;
-	m_Properties.m_Items[nID].Visible = Visible;
-	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple, pRangeFirst, pRangeSecond);
-	m_Properties.m_Items[nID].pProperty->ResetModified();
+	m_Properties[nID].Editable = Editable;
+	m_Properties[nID].Visible = Visible;
+	m_Properties[nID].pProperty->SetMultiple(Multiple, pRangeFirst, pRangeSecond);
+	m_Properties[nID].pProperty->ResetModified();
 }
 
 CString CInspectorGrid::GetName(UINT nID) const
 {
 	ASSERT(nID<m_Properties.m_ItemCount);
 
-	return m_Properties.m_Items[nID].Name;
+	return m_Properties[nID].Name;
 }
 
 CString CInspectorGrid::GetValue(UINT nID) const
@@ -855,7 +855,7 @@ CString CInspectorGrid::GetValue(UINT nID) const
 	ASSERT(nID<m_Properties.m_ItemCount);
 
 	WCHAR tmpStr[256];
-	m_Properties.m_Items[nID].pProperty->ToString(tmpStr, 256);
+	m_Properties[nID].pProperty->ToString(tmpStr, 256);
 
 	return tmpStr;
 }
@@ -868,8 +868,8 @@ RECT CInspectorGrid::GetItemRect(INT Item) const
 		{
 			GetClientRect(&rect);
 
-			rect.top = m_Properties.m_Items[Item].Top-1;
-			rect.bottom = m_Properties.m_Items[Item].Bottom+1;
+			rect.top = m_Properties[Item].Top-1;
+			rect.bottom = m_Properties[Item].Bottom+1;
 			rect.right -= MARGIN;
 
 			OffsetRect(&rect, 0, -m_VScrollPos);
@@ -893,7 +893,7 @@ INT CInspectorGrid::HitTest(const CPoint& point, UINT* PartID) const
 					return a;
 				}
 
-				Property* pProp = &m_Properties.m_Items[a];
+				const Property* pProp = &m_Properties[a];
 				CRect rectPart(m_LabelWidth+BORDER, pProp->Top-m_VScrollPos, rect.right+1, pProp->Bottom-m_VScrollPos);
 
 				if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a!=m_EditItem))
@@ -982,7 +982,7 @@ void CInspectorGrid::SelectItem(INT Item)
 	if ((Item==m_SelectedItem) || (Item==-1))
 		return;
 
-	if (!m_Properties.m_Items[Item].Visible)
+	if (!m_Properties[Item].Visible)
 		return;
 
 	InvalidateItem(m_SelectedItem);
@@ -1025,8 +1025,8 @@ void CInspectorGrid::AdjustScrollbars()
 
 INT CInspectorGrid::Compare(INT Eins, INT Zwei) const
 {
-	Property* pEins = &m_Properties.m_Items[m_pSortArray[Eins]];
-	Property* pZwei = &m_Properties.m_Items[m_pSortArray[Zwei]];
+	const Property* pEins = &m_Properties[m_pSortArray[Eins]];
+	const Property* pZwei = &m_Properties[m_pSortArray[Zwei]];
 
 	if (m_SortAlphabetic)
 		return wcscmp(pEins->Name, pZwei->Name);
@@ -1112,7 +1112,7 @@ void CInspectorGrid::AdjustLayout()
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
-		Property* pProp = &m_Properties.m_Items[m_pSortArray[a]];
+		Property* pProp = &m_Properties[m_pSortArray[a]];
 
 		if ((!m_SortAlphabetic) && (pProp->Visible) && ((INT)pProp->Category!=Category))
 		{
@@ -1148,12 +1148,12 @@ void CInspectorGrid::AdjustLayout()
 	if (m_SelectedItem==-1)
 		m_SelectedItem = 0;
 
-	if (!m_Properties.m_Items[m_SelectedItem].Visible)
+	if (!m_Properties[m_SelectedItem].Visible)
 	{
 		m_SelectedItem = -1;
 
 		for (UINT a=0; a<m_Properties.m_ItemCount; a++)
-			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			if (m_Properties[m_pSortArray[a]].Visible)
 			{
 				m_SelectedItem = m_pSortArray[a];
 				break;
@@ -1173,20 +1173,20 @@ void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 {
 	if (Attr1!=-1)
 	{
-		m_Properties.m_Items[Attr1].pProperty->m_Modified = TRUE;
-		m_Properties.m_Items[Attr1].pProperty->m_Multiple = FALSE;
+		m_Properties[Attr1].pProperty->m_Modified = TRUE;
+		m_Properties[Attr1].pProperty->m_Multiple = FALSE;
 		InvalidateItem(Attr1);
 	}
 	if (Attr2!=-1)
 	{
-		m_Properties.m_Items[Attr2].pProperty->m_Modified = TRUE;
-		m_Properties.m_Items[Attr2].pProperty->m_Multiple = FALSE;
+		m_Properties[Attr2].pProperty->m_Modified = TRUE;
+		m_Properties[Attr2].pProperty->m_Multiple = FALSE;
 		InvalidateItem(Attr2);
 	}
 	if (Attr3!=-1)
 	{
-		m_Properties.m_Items[Attr3].pProperty->m_Modified = TRUE;
-		m_Properties.m_Items[Attr3].pProperty->m_Multiple = FALSE;
+		m_Properties[Attr3].pProperty->m_Modified = TRUE;
+		m_Properties[Attr3].pProperty->m_Multiple = FALSE;
 		InvalidateItem(Attr3);
 	}
 
@@ -1200,10 +1200,10 @@ void CInspectorGrid::ResetProperty(UINT Attr)
 {
 	ASSERT(Attr<m_Properties.m_ItemCount);
 
-	if ((m_Properties.m_Items[Attr].Editable) && (Attr!=LFAttrFileName))
+	if ((m_Properties[Attr].Editable) && (Attr!=LFAttrFileName))
 	{
-		LFClearVariantData(*m_Properties.m_Items[Attr].pProperty->GetData());
-		m_Properties.m_Items[Attr].pProperty->m_Modified = TRUE;
+		LFClearVariantData(*m_Properties[Attr].pProperty->GetData());
+		m_Properties[Attr].pProperty->m_Modified = TRUE;
 
 		NotifyOwner((SHORT)Attr);
 	}
@@ -1214,7 +1214,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 	ASSERT(Attr<m_Properties.m_ItemCount);
 	m_EditItem = -1;
 
-	Property* pProp = &m_Properties.m_Items[Attr];
+	Property* pProp = &m_Properties[Attr];
 	if (pProp->Editable)
 	{
 		if (pProp->pProperty->OnClickValue(-1))
@@ -1272,7 +1272,7 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 		delete pVictim;
 
 		if ((Accept) && (Item!=-1))
-			m_Properties.m_Items[Item].pProperty->OnSetString(Value);
+			m_Properties[Item].pProperty->OnSetString(Value);
 	}
 
 	m_EditItem = -1;
@@ -1314,7 +1314,7 @@ void CInspectorGrid::OnDestroy()
 	CPropertyHolder::OnDestroy();
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
-		delete m_Properties.m_Items[a].pProperty;
+		delete m_Properties[a].pProperty;
 }
 
 BOOL CInspectorGrid::OnEraseBkgnd(CDC* /*pDC*/)
@@ -1351,7 +1351,7 @@ void CInspectorGrid::OnPaint()
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
-		Property* pProp = &m_Properties.m_Items[a];
+		Property* pProp = &m_Properties[a];
 		if (pProp->Visible)
 		{
 			RECT rectProp = GetItemRect(a);
@@ -1575,7 +1575,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 		if ((m_HotItem!=-1) && !p_Edit)
 			if (!LFGetApp()->IsTooltipVisible())
 			{
-				const Property* pProp = &m_Properties.m_Items[m_HotItem];
+				const Property* pProp = &m_Properties[m_HotItem];
 
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
@@ -1652,7 +1652,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 	case VK_HOME:
 		for (UINT a=0; a<m_Properties.m_ItemCount; a++)
-			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			if (m_Properties[m_pSortArray[a]].Visible)
 			{
 				SelectItem(m_pSortArray[a]);
 				break;
@@ -1668,7 +1668,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				SelectItem(Last);
 				break;
 			}
-			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			if (m_Properties[m_pSortArray[a]].Visible)
 				Last = m_pSortArray[a];
 		}
 
@@ -1682,7 +1682,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				SelectItem(Last);
 				break;
 			}
-			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			if (m_Properties[m_pSortArray[a]].Visible)
 				Last = m_pSortArray[a];
 		}
 
@@ -1690,7 +1690,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_END:
 		for (INT a=m_Properties.m_ItemCount-1; a>=0; a--)
-			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			if (m_Properties[m_pSortArray[a]].Visible)
 			{
 				SelectItem(m_pSortArray[a]);
 				break;
@@ -1701,9 +1701,9 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_EXECUTE:
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)<0) && (m_SelectedItem!=-1))
-			if (m_Properties.m_Items[m_SelectedItem].pProperty->HasButton())
+			if (m_Properties[m_SelectedItem].pProperty->HasButton())
 			{
-				m_Properties.m_Items[m_SelectedItem].pProperty->OnClickButton();
+				m_Properties[m_SelectedItem].pProperty->OnClickButton();
 				break;
 			}
 
@@ -1736,9 +1736,9 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	default:
 		if (m_SelectedItem!=-1)
 		{
-			Property* pProp = &m_Properties.m_Items[m_SelectedItem];
+			Property* pProp = &m_Properties[m_SelectedItem];
 			if ((pProp->Editable) && (pProp->pProperty->WantsChars()))
-				if (m_Properties.m_Items[m_SelectedItem].pProperty->OnPushChar(nChar))
+				if (m_Properties[m_SelectedItem].pProperty->OnPushChar(nChar))
 					break;
 		}
 
@@ -1776,13 +1776,13 @@ void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 			else
 				if (Part==PARTBUTTON)
 				{
-					m_Properties.m_Items[Item].pProperty->OnClickButton();
+					m_Properties[Item].pProperty->OnClickButton();
 				}
 	}
 	else
 		if ((Item==m_SelectedItem) && (Item!=-1) && (Part==PARTVALUE))
 		{
-			Property* pProp = &m_Properties.m_Items[Item];
+			Property* pProp = &m_Properties[Item];
 
 			if (pProp->Editable)
 				if (pProp->pProperty->OnClickValue(point.x-m_LabelWidth-BORDER))
@@ -1820,7 +1820,7 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Messa
 
 	if ((Item!=-1) && (Part==PARTVALUE))
 	{
-		Property* pProp = &m_Properties.m_Items[Item];
+		Property* pProp = &m_Properties[Item];
 
 		if (pProp->Editable)
 		{

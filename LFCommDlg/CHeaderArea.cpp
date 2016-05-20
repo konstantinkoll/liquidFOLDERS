@@ -112,7 +112,7 @@ void CHeaderArea::AdjustLayout()
 
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CHeaderButton* pHeaderButton = m_Buttons.m_Items[a];
+		CHeaderButton* pHeaderButton = m_Buttons[a];
 
 		CSize Size;
 		INT CaptionWidth;
@@ -145,7 +145,7 @@ void CHeaderArea::OnDestroy()
 {
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CHeaderButton* pHeaderButton = m_Buttons.m_Items[a];
+		CHeaderButton* pHeaderButton = m_Buttons[a];
 		pHeaderButton->DestroyWindow();
 		delete pHeaderButton;
 	}
@@ -218,7 +218,7 @@ void CHeaderArea::OnPaint()
 
 		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 		{
-			const CHeaderButton* pHeaderButton = m_Buttons.m_Items[a];
+			const CHeaderButton* pHeaderButton = m_Buttons[a];
 
 			CRect rect;
 			pHeaderButton->GetWindowRect(rect);

@@ -92,7 +92,7 @@ void CTaskbar::AdjustLayout()
 
 	for (UINT a=m_Buttons.m_ItemCount-1; a>=m_FirstRight; a--)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
 			const INT Width = pTaskButton->GetPreferredWidth();
@@ -120,7 +120,7 @@ Nochmal:
 	INT LPos = rect.left+BORDERLEFT;
 	for (UINT a=0; a<min(m_Buttons.m_ItemCount, m_FirstRight); a++)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
 			const INT Width = pTaskButton->GetPreferredWidth(Count++>=FirstSmall);
@@ -180,7 +180,7 @@ void CTaskbar::OnDestroy()
 {
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		pTaskButton->DestroyWindow();
 		delete pTaskButton;
 	}
@@ -289,9 +289,9 @@ void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
-		if (m_Buttons.m_Items[a]->IsWindowEnabled())
+		if (m_Buttons[a]->IsWindowEnabled())
 		{
-			m_Buttons.m_Items[a]->SetFocus();
+			m_Buttons[a]->SetFocus();
 			break;
 		}
 }
@@ -302,7 +302,7 @@ void CTaskbar::OnIdleUpdateCmdUI()
 
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		BOOL Enabled = pTaskButton->IsWindowEnabled();
 
 		CCmdUI cmdUI;
@@ -340,7 +340,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		if ((INT)a==m_FirstRight)
 			NeedsSeparator = TRUE;
 
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
 			if (NeedsSeparator)

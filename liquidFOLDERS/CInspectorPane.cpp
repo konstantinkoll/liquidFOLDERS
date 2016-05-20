@@ -369,8 +369,8 @@ void CInspectorPane::UpdateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult
 			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
 			{
 				for (UINT b=0; b<LFAttributeCount; b++)
-					AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b].ReadOnly);
-				AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
+					AddValue((*pRawFiles)[a], b, !theApp.m_Attributes[b].ReadOnly);
+				AddValueVirtual(AttrSource, theApp.m_SourceNames[(*pRawFiles)[a]->Type & LFTypeSourceMask][0]);
 			}
 		}
 		else

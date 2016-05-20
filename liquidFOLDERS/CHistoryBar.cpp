@@ -92,7 +92,7 @@ void CHistoryBar::SetHistory(const LFFilter* pFilter, BreadcrumbItem* pBreadcrum
 	AdjustLayout();
 }
 
-void CHistoryBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT /*State*/, BOOL Themed) const
+void CHistoryBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT /*State*/, BOOL Themed)
 {
 	// Arrow
 	if (Index)
@@ -118,7 +118,7 @@ void CHistoryBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT /*State*/,
 
 	// Label
 	rectItem.DeflateRect(MARGIN, 0);
-	dc.DrawText(m_BarItems.m_Items[Index].Name, -1, rectItem, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
+	dc.DrawText(m_BarItems[Index].Name, -1, rectItem, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
 }
 
 void CHistoryBar::OnClickButton(INT Index) const

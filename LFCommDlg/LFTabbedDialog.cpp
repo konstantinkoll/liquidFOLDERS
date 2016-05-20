@@ -150,8 +150,8 @@ void LFTabbedDialog::ShowTab(UINT Index)
 
 	for (UINT a=0; a<m_ControlsOnTab.m_ItemCount; a++)
 	{
-		const HWND hWnd = m_ControlsOnTab.m_Items[a].hWnd;
-		const BOOL Show = (m_ControlsOnTab.m_Items[a].Index==Index);
+		const HWND hWnd = m_ControlsOnTab[a].hWnd;
+		const BOOL Show = (m_ControlsOnTab[a].Index==Index);
 
 		::ShowWindow(hWnd, Show ? SW_SHOW : SW_HIDE);
 

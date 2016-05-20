@@ -53,7 +53,7 @@ void CCalendarView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 	if (p_CookedFiles)
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
+			LFItemDescriptor* i = (*p_CookedFiles)[a];
 			if (i->AttributeValues[m_ViewParameters.SortBy])
 				if (*((INT64*)i->AttributeValues[m_ViewParameters.SortBy]))
 				{

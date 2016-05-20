@@ -50,7 +50,7 @@ private:
 	INT GetMaxLabelWidth(INT Max);
 	INT GetMaxColumnWidth(UINT Col, INT Max);
 	void AutosizeColumn(UINT Col);
-	void SortCategories(LFSearchResult* Result);
+	void SortCategories(LFSearchResult* pSearchResult);
 
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];

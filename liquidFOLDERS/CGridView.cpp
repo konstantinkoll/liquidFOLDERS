@@ -35,7 +35,7 @@ void CGridView::AddItemCategory(WCHAR* Caption, WCHAR* Hint)
 void CGridView::ResetItemCategories()
 {
 	for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-		ZeroMemory(&m_Categories.m_Items[a].Rect, sizeof(RECT));
+		ZeroMemory(&m_Categories[a].Rect, sizeof(RECT));
 }
 
 void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak, BOOL MaxWidth)
@@ -83,7 +83,7 @@ Restart:
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 	{
 		if (m_HasCategories)
-			if ((INT)p_CookedFiles->m_Items[a]->CategoryID!=Category)
+			if ((INT)(*p_CookedFiles)[a]->CategoryID!=Category)
 			{
 				if (x>gva.mx)
 				{
@@ -95,15 +95,15 @@ Restart:
 				if (y>gva.my)
 					y += 8;
 
-				Category = p_CookedFiles->m_Items[a]->CategoryID;
+				Category = (*p_CookedFiles)[a]->CategoryID;
 
-				const LPRECT lpRect = &m_Categories.m_Items[Category].Rect;
+				const LPRECT lpRect = &m_Categories[Category].Rect;
 
 				lpRect->left = lpRect->right = x;
 				lpRect->top = y;
 				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight();
 
-				if (m_Categories.m_Items[Category].Hint[0]!=L'\0')
+				if (m_Categories[Category].Hint[0]!=L'\0')
 					lpRect->bottom += theApp.m_DefaultFont.GetFontHeight();;
 
 				y = lpRect->bottom+4;
@@ -146,8 +146,8 @@ Restart:
 
 	// Adjust categories to calculated width
 	for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-		if (m_Categories.m_Items[a].Rect.right)
-			m_Categories.m_Items[a].Rect.right = max(m_ScrollWidth, rectWindow.Width())-2;
+		if (m_Categories[a].Rect.right)
+			m_Categories[a].Rect.right = max(m_ScrollWidth, rectWindow.Width())-2;
 
 	m_GridArrange = GRIDARRANGE_HORIZONTAL;
 	CFileView::AdjustLayout();
@@ -188,12 +188,12 @@ Restart:
 
 	INT Category = -1;
 	INT LastLeft = x;
-#define FINISHCATEGORY if (Category!=-1) { m_Categories.m_Items[Category].Rect.right = LastLeft+cx; }
+#define FINISHCATEGORY if (Category!=-1) { m_Categories[Category].Rect.right = LastLeft+cx; }
 
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 	{
 		if (m_HasCategories)
-			if ((INT)p_CookedFiles->m_Items[a]->CategoryID!=Category)
+			if ((INT)(*p_CookedFiles)[a]->CategoryID!=Category)
 			{
 				FINISHCATEGORY;
 
@@ -207,9 +207,9 @@ Restart:
 				if (x>gva.mx)
 					x += 8;
 
-				Category = p_CookedFiles->m_Items[a]->CategoryID;
+				Category = (*p_CookedFiles)[a]->CategoryID;
 
-				const LPRECT lpRect = &m_Categories.m_Items[Category].Rect;
+				const LPRECT lpRect = &m_Categories[Category].Rect;
 				lpRect->left = x;
 				lpRect->top = gva.my;
 				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight();
@@ -686,10 +686,10 @@ void CGridView::OnPaint()
 				if (m_HasCategories)
 					for (UINT a=0; a<m_Categories.m_ItemCount; a++)
 					{
-						CRect rect(m_Categories.m_Items[a].Rect);
+						CRect rect(m_Categories[a].Rect);
 						rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 						if (IntersectRect(&rectIntersect, rect, rectUpdate))
-							DrawCategory(dc, rect, m_Categories.m_Items[a].Caption, m_Categories.m_Items[a].Hint, Themed);
+							DrawCategory(dc, rect, m_Categories[a].Caption, m_Categories[a].Hint, Themed);
 					}
 			}
 

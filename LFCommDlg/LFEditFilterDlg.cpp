@@ -124,7 +124,7 @@ LFFilter* LFEditFilterDlg::CreateFilter()
 	m_wndSearchterm.GetWindowText(pFilter->Searchterm, 256);
 
 	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
-		pFilter->ConditionList = LFAllocFilterCondition(m_Conditions.m_Items[a].Compare, m_Conditions.m_Items[a].AttrData, pFilter->ConditionList);
+		pFilter->ConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].AttrData, pFilter->ConditionList);
 
 	return pFilter;
 }
@@ -236,10 +236,10 @@ void LFEditFilterDlg::OnEditCondition()
 	INT Index = m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
 	if (Index!=-1)
 	{
-		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions.m_Items[Index]);
+		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions[Index]);
 		if (dlg.DoModal()==IDOK)
 		{
-			m_Conditions.m_Items[Index] = dlg.m_Condition;
+			m_Conditions[Index] = dlg.m_Condition;
 			m_wndConditionList.SetItem(Index, &dlg.m_Condition);
 		}
 
@@ -254,7 +254,7 @@ void LFEditFilterDlg::OnDeleteCondition()
 	{
 		m_Conditions.m_ItemCount--;
 		for (INT a=Index; a<(INT)m_Conditions.m_ItemCount; a++)
-			m_Conditions.m_Items[a] = m_Conditions.m_Items[a+1];
+			m_Conditions[a] = m_Conditions[a+1];
 
 		m_wndConditionList.DeleteItem(Index);
 		m_wndConditionList.Arrange(LVA_ALIGNTOP);

@@ -26,7 +26,7 @@ void CJournalUI::Enable(BOOL bOn)
 
 void CJournalButton::OnClickButton(INT Index) const
 {
-	GetOwner()->PostMessage(WM_COMMAND, m_BarItems.m_Items[Index].Command);
+	GetOwner()->PostMessage(WM_COMMAND, m_BarItems[Index].Command);
 }
 
 
@@ -53,11 +53,11 @@ void CJournalButton::OnIdleUpdateCmdUI()
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 	{
 		CJournalUI cmdUI;
-		cmdUI.m_nID = m_BarItems.m_Items[a].Command;
+		cmdUI.m_nID = m_BarItems[a].Command;
 		cmdUI.DoUpdate(GetOwner(), FALSE);
 
-		Update |= (cmdUI.m_Enabled!=m_BarItems.m_Items[a].Enabled);
-		m_BarItems.m_Items[a].Enabled = cmdUI.m_Enabled;
+		Update |= (cmdUI.m_Enabled!=m_BarItems[a].Enabled);
+		m_BarItems[a].Enabled = cmdUI.m_Enabled;
 	}
 
 	if (Update)

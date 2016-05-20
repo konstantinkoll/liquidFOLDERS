@@ -94,9 +94,9 @@
 	UINT ItemID = 0; \
 	for (; ItemID<pTransactionList->m_ItemCount; ItemID++) \
 	{ \
-		if ((pTransactionList->m_Items[ItemID].LastError==LFOk) && \
-			(strcmp(pTransactionList->m_Items[ItemID].StoreID, p_StoreDescriptor->StoreID)==0) && \
-			(strcmp(pTransactionList->m_Items[ItemID].FileID, PtrM->FileID)==0)) \
+		if (((*pTransactionList)[ItemID].LastError==LFOk) && \
+			(strcmp((*pTransactionList)[ItemID].StoreID, p_StoreDescriptor->StoreID)==0) && \
+			(strcmp((*pTransactionList)[ItemID].FileID, PtrM->FileID)==0)) \
 			goto Exists; \
 	} \
 	continue; \
@@ -457,7 +457,7 @@ void CIndex::ResolveLocations(LFTransactionList* pTransactionList)
 	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError),);
 	IN_TRANSACTIONLIST(pTransactionList);
 
-	pTransactionList->SetError(ItemID, p_Store->GetFileLocation(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pTransactionList->m_Items[ItemID].Path, 2*MAX_PATH));
+	pTransactionList->SetError(ItemID, p_Store->GetFileLocation(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), (*pTransactionList)[ItemID].Path, 2*MAX_PATH));
 
 	END_ITERATEMASTER();
 }
@@ -658,7 +658,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	IN_TRANSACTIONLIST(pTransactionList);
 	REMOVE_STATS();
 
-	LFItemDescriptor* pItemDescriptor = pTransactionList->m_Items[ItemID].pItemDescriptor;
+	LFItemDescriptor* pItemDescriptor = (*pTransactionList)[ItemID].pItemDescriptor;
 	assert(pItemDescriptor);
 
 	// Remove "New" flag

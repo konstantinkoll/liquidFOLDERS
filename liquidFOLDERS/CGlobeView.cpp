@@ -83,15 +83,15 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
 				{
 					LFAirport* pAirport;
-					if (LFIATAGetAirportByCode((CHAR*)p_CookedFiles->m_Items[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
+					if (LFIATAGetAirportByCode((CHAR*)(*p_CookedFiles)[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
 						Location = pAirport->Location;
 				}
 				else
-					if (p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
+					if ((*p_CookedFiles)[a]->AttributeValues[m_ViewParameters.SortBy])
 					{
 						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy].Type==LFTypeGeoCoordinates);
 
-						Location = *((LFGeoCoordinates*)p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
+						Location = *((LFGeoCoordinates*)(*p_CookedFiles)[a]->AttributeValues[m_ViewParameters.SortBy]);
 					}
 
 				if ((Location.Latitude!=0.0) || (Location.Longitude!=0))
@@ -109,7 +109,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 					pData->World[2] = (GLfloat)(cos(LongitudeRad)*D);
 
 					LFGeoCoordinatesToString(Location, pData->CoordString, 32, FALSE);
-					wcscpy_s(pData->DescriptionString, 32, p_CookedFiles->m_Items[a]->Description);
+					wcscpy_s(pData->DescriptionString, 32, (*p_CookedFiles)[a]->Description);
 
 					pData->Hdr.Valid = TRUE;
 					pData->Hdr.RectInflate = ARROWSIZE;
@@ -271,7 +271,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 			if (pData->Alpha>0.0f)
 			{
 				// Beschriftung
-				WCHAR* Caption = p_CookedFiles->m_Items[a]->CoreAttributes.FileName;
+				WCHAR* Caption = (*p_CookedFiles)[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(Caption);
 
 				WCHAR* Subcaption = NULL;
@@ -1248,20 +1248,20 @@ void CGlobeView::OnGoogleEarth()
 			INT Index = GetNextSelectedItem(-1);
 			while (Index>-1)
 			{
-				LFGeoCoordinates Location = p_CookedFiles->m_Items[Index]->CoreAttributes.LocationGPS;
+				LFGeoCoordinates Location = (*p_CookedFiles)[Index]->CoreAttributes.LocationGPS;
 				if ((Location.Latitude!=0) || (Location.Longitude!=0))
 				{
 					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString(p_CookedFiles->m_Items[Index]->CoreAttributes.FileName);
+					f.WriteString((*p_CookedFiles)[Index]->CoreAttributes.FileName);
 					f.WriteString(_T("</name>\n<description>"));
 
-					WriteGoogleAttribute(f, p_CookedFiles->m_Items[Index], LFAttrLocationName);
-					WriteGoogleAttribute(f, p_CookedFiles->m_Items[Index], LFAttrLocationIATA);
-					WriteGoogleAttribute(f, p_CookedFiles->m_Items[Index], LFAttrLocationGPS);
-					WriteGoogleAttribute(f, p_CookedFiles->m_Items[Index], LFAttrArtist);
-					WriteGoogleAttribute(f, p_CookedFiles->m_Items[Index], LFAttrRoll);
-					WriteGoogleAttribute(f, p_CookedFiles->m_Items[Index], LFAttrRecordingTime);
-					WriteGoogleAttribute(f, p_CookedFiles->m_Items[Index], LFAttrComments);
+					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrLocationName);
+					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrLocationIATA);
+					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrLocationGPS);
+					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrArtist);
+					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrRoll);
+					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrRecordingTime);
+					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrComments);
 
 					f.WriteString(_T("&lt;div&gt;</description>\n<styleUrl>#Location</styleUrl>\n"));
 

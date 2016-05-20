@@ -105,7 +105,7 @@ void CBackstageBar::AdjustLayout()
 
 	// Reset width
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
-		m_BarItems.m_Items[a].Width = 0;
+		m_BarItems[a].Width = 0;
 
 	INT UnallocatedWidth = rect.Width()-2-(m_BarItems.m_ItemCount-1)*m_Spacer;
 
@@ -116,7 +116,7 @@ Iterate:
 
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 	{
-		INT Diff = m_BarItems.m_Items[a].PreferredWidth-m_BarItems.m_Items[a].Width;
+		INT Diff = m_BarItems[a].PreferredWidth-m_BarItems[a].Width;
 
 		if (Diff>0)
 		{
@@ -132,9 +132,9 @@ Iterate:
 		if (Chunk>0)
 		{
 			for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
-				if (m_BarItems.m_Items[a].Width<m_BarItems.m_Items[a].PreferredWidth)
+				if (m_BarItems[a].Width<m_BarItems[a].PreferredWidth)
 				{
-					m_BarItems.m_Items[a].Width += Chunk;
+					m_BarItems[a].Width += Chunk;
 					UnallocatedWidth -= Chunk;
 				}
 
@@ -146,7 +146,7 @@ Iterate:
 	INT Left = 1;
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 	{
-		BarItem* pBarItem = &m_BarItems.m_Items[m_ReverseOrder ? m_BarItems.m_ItemCount-a-1 : a];
+		BarItem* pBarItem = &m_BarItems[m_ReverseOrder ? m_BarItems.m_ItemCount-a-1 : a];
 
 		pBarItem->Left = Left;
 		pBarItem->Right = pBarItem->Left+pBarItem->Width;
@@ -168,8 +168,8 @@ INT CBackstageBar::HitTest(const CPoint& point) const
 	if ((point.y>=1) && (point.y<rect.bottom-1))
 		for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 			if ((m_Pressed<0) || (m_Pressed==(INT)a))
-				if (m_BarItems.m_Items[a].Enabled)
-					if ((point.x>=m_BarItems.m_Items[a].Left) && (point.x<m_BarItems.m_Items[a].Right))
+				if (m_BarItems[a].Enabled)
+					if ((point.x>=m_BarItems[a].Left) && (point.x<m_BarItems[a].Right))
 						return a;
 
 	return VIEW;
@@ -226,11 +226,11 @@ HBITMAP CBackstageBar::LoadMaskedIcon(UINT nID, INT Size, COLORREF clr)
 	return hBitmap;
 }
 
-void CBackstageBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL /*Themed*/) const
+void CBackstageBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL /*Themed*/)
 {
 	ASSERT(State<3);
 
-	const INT IconID = m_BarItems.m_Items[Index].IconID;
+	const INT IconID = m_BarItems[Index].IconID;
 	if ((IconID>=0) && (IconID<6))
 	{
 		// Icon
@@ -303,7 +303,7 @@ void CBackstageBar::OnPaint()
 
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 	{
-		const BarItem* pBarItem = &m_BarItems.m_Items[a];
+		const BarItem* pBarItem = &m_BarItems[a];
 		CRect rectItem(pBarItem->Left, 0, pBarItem->Right, rect.bottom-1);
 
 		DrawBackstageButtonBackground(dc, g, rectItem, m_Hover==(INT)a, m_Pressed==(INT)a, pBarItem->Enabled, Themed, pBarItem->Red);

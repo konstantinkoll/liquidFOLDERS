@@ -227,8 +227,8 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* pItemDescriptor)
 	ASSERT(m_IsClipboard);
 
 	for (UINT a=0; a<m_pRawFiles->m_ItemCount; a++)
-		if ((strcmp(pItemDescriptor->StoreID, m_pRawFiles->m_Items[a]->StoreID)==0) &&
-			(strcmp(pItemDescriptor->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
+		if ((strcmp(pItemDescriptor->StoreID, (*m_pRawFiles)[a]->StoreID)==0) &&
+			(strcmp(pItemDescriptor->CoreAttributes.FileID, (*m_pRawFiles)[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
 	LFAddItem(m_pRawFiles, LFCloneItemDescriptor(pItemDescriptor));
@@ -713,7 +713,7 @@ void CMainWnd::OnItemOpen()
 	INT Index = m_wndMainView.GetSelectedItem();
 	if (Index!=-1)
 	{
-		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
 
 		if (pItemDescriptor->NextFilter)
 		{
@@ -760,7 +760,7 @@ void CMainWnd::OnItemOpenNewWindow()
 	INT Index = m_wndMainView.GetSelectedItem();
 	if (Index!=-1)
 	{
-		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
 
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 
@@ -777,7 +777,7 @@ void CMainWnd::OnItemOpenFileDrop()
 		INT Index = m_wndMainView.GetSelectedItem();
 		if (Index!=-1)
 		{
-			LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
+			LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
 
 			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 			theApp.GetFileDrop(pItemDescriptor->StoreID);
@@ -806,14 +806,14 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& pFilter) const
 	INT Index = m_wndMainView.GetNextSelectedItem(-1);
 	while (Index!=-1)
 	{
-		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
 
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 		{
 			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
 			{
 				Spacer;
-				WriteTXTItem(pFilter, m_pRawFiles->m_Items[a]);
+				WriteTXTItem(pFilter, (*m_pRawFiles)[a]);
 			}
 		}
 		else
@@ -833,11 +833,11 @@ void CMainWnd::WriteMetadataXML(CStdioFile& pFilter) const
 	INT Index = m_wndMainView.GetNextSelectedItem(-1);
 	while (Index!=-1)
 	{
-		LFItemDescriptor* pItemDescriptor = m_pCookedFiles->m_Items[Index];
+		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 		{
 			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
-				WriteXMLItem(pFilter, m_pRawFiles->m_Items[a]);
+				WriteXMLItem(pFilter, (*m_pRawFiles)[a]);
 		}
 		else
 		{

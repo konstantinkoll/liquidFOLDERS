@@ -71,7 +71,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 		// Find items
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
+			LFItemDescriptor* i = (*p_CookedFiles)[a];
 			TagcloudItemData* pData = GetItemData(a);
 
 			if ((i->Type & LFTypeMask)==LFTypeFolder)
@@ -177,7 +177,7 @@ Restart:
 			TagcloudItemData* pData = GetItemData(a);
 			if (pData->Hdr.Hdr.Valid)
 			{
-				LFItemDescriptor* i = p_CookedFiles->m_Items[a];
+				LFItemDescriptor* i = (*p_CookedFiles)[a];
 
 				CRect rect(0, 0, rectWindow.Width()-2*MARGIN, 128);
 				dc.SelectObject(GetFont(a));
@@ -223,7 +223,7 @@ Restart:
 
 void CTagcloudView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
-	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
+	LFItemDescriptor* i = (*p_CookedFiles)[Index];
 	TagcloudItemData* pData = GetItemData(Index);
 
 	if (!pData->Hdr.Hdr.Selected)

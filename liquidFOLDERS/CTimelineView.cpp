@@ -57,7 +57,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TimelineItemData* pData = GetItemData(a);
-			LFItemDescriptor* pItemDescriptor = p_CookedFiles->m_Items[a];
+			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 
 			LFVariantData v;
 			LFGetAttributeVariantDataEx(pItemDescriptor, m_ViewParameters.SortBy, v);
@@ -96,7 +96,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 					// Comments
 					for (INT b=pItemDescriptor->FirstAggregate; b<=pItemDescriptor->LastAggregate; b++)
 					{
-						LFItemDescriptor* pItemDescriptor = p_RawFiles->m_Items[b];
+						LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[b];
 
 						ASSERT(theApp.m_Attributes[LFAttrRoll].Type==LFTypeUnicodeString);
 
@@ -156,7 +156,7 @@ Restart:
 
 		if (pData->Hdr.Valid)
 		{
-			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
+			LFItemDescriptor* i = (*p_CookedFiles)[a];
 
 			if (m_ItemWidth<2*MARGIN+128)
 			{
@@ -181,7 +181,7 @@ Restart:
 				case LFTypeFolder:
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
-						LFItemDescriptor* i = p_RawFiles->m_Items[b];
+						LFItemDescriptor* i = (*p_RawFiles)[b];
 						if (UsePreview(i))
 						{
 							pData->Preview |= PRV_THUMBS;
@@ -336,7 +336,7 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, Ite
 void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	TimelineItemData* pData = GetItemData(Index);
-	LFItemDescriptor* i = p_CookedFiles->m_Items[Index];
+	LFItemDescriptor* i = (*p_CookedFiles)[Index];
 
 	BOOL Hot = (m_HotItem==Index);
 	BOOL Selected = pData->Hdr.Selected;
@@ -501,9 +501,9 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			CRect rectFilename(rectItem->left+MARGIN+1, rectItem->bottom-MARGIN-BottomHeight, rectItem->right-MARGIN, rectItem->bottom-MARGIN-BottomHeight+FontHeight);
 
 			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
-				if (!UsePreview(p_RawFiles->m_Items[a]))
+				if (!UsePreview((*p_RawFiles)[a]))
 				{
-					dc.DrawText(GetLabel(p_RawFiles->m_Items[a]), rectFilename, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+					dc.DrawText(GetLabel((*p_RawFiles)[a]), rectFilename, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 
 					if (!--ListCount)
 						break;
@@ -583,7 +583,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 				for (INT a=LFMaxRating; a>=0; a--)
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
-						LFItemDescriptor* ri = p_RawFiles->m_Items[b];
+						LFItemDescriptor* ri = (*p_RawFiles)[b];
 						if (UsePreview(ri) && (ri->CoreAttributes.Rating==a))
 						{
 							CRect rect(rectPreview);
@@ -713,11 +713,11 @@ void CTimelineView::OnPaint()
 
 		for (UINT a=0; a<m_Categories.m_ItemCount; a++)
 		{
-			CRect rect(m_Categories.m_Items[a].Rect);
+			CRect rect(m_Categories[a].Rect);
 			rect.OffsetRect(0, -m_VScrollPos);
 
 			if (IntersectRect(&rectIntersect, rect, rectUpdate))
-				DrawCategory(dc, g, rect, &m_Categories.m_Items[a], Themed);
+				DrawCategory(dc, g, rect, &m_Categories[a], Themed);
 		}
 
 		dc.SelectObject(pOldFont);

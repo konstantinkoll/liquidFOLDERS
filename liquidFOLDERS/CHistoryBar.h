@@ -30,7 +30,7 @@ public:
 	void SetHistory(const LFFilter* pFilter, BreadcrumbItem* pBreadcrumbItem);
 
 protected:
-	virtual void DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed) const;
+	virtual void DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed);
 	virtual void OnClickButton(INT Index) const;
 
 	void AddItem(const LFFilter* pFilter, CDC& dc);

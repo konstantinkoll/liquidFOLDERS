@@ -100,7 +100,7 @@ void CMaintenanceReport::AdjustLayout()
 
 void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed) const
 {
-	LFMaintenanceListItem* pItem = &p_MaintenanceList->m_Items[Index];
+	LFMaintenanceListItem* pItem = &(*p_MaintenanceList)[Index];
 
 	CRect rect(rectItem);
 
@@ -359,7 +359,7 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 			if (!LFGetApp()->IsTooltipVisible())
 			{
 				LFStoreDescriptor Store;
-				if (LFGetStoreSettings(p_MaintenanceList->m_Items[m_HotItem].StoreID, &Store)==LFOk)
+				if (LFGetStoreSettings((*p_MaintenanceList)[m_HotItem].StoreID, &Store)==LFOk)
 				{
 					LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&Store);
 

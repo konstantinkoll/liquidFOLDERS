@@ -81,11 +81,11 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 	// Special treatment for missing GPS location
 	if (Attr==LFAttrLocationGPS)
 		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-			if (IsNullValue(AttrTypes[LFAttrLocationGPS], pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationGPS]))
+			if (IsNullValue(AttrTypes[LFAttrLocationGPS], (*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS]))
 			{
 				LFAirport* pAirport;
-				if (LFIATAGetAirportByCode((CHAR*)pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
-					pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &pAirport->Location;
+				if (LFIATAGetAirportByCode((CHAR*)(*pSearchResult)[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
+					(*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS] = &pAirport->Location;
 			}
 
 	pSearchResult->Sort(Attr, Descending);
@@ -96,7 +96,7 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 	// Revert to old GPS location
 	if (Attr==LFAttrLocationGPS)
 		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-			pSearchResult->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &pSearchResult->m_Items[a]->CoreAttributes.LocationGPS;
+			(*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS] = &(*pSearchResult)[a]->CoreAttributes.LocationGPS;
 
 	return pCookedFiles;
 }
