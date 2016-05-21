@@ -28,7 +28,7 @@ CBackstageBar::CBackstageBar(BOOL Small)
 		if (m_IconSize>27)
 			m_IconSize = 27;
 
-		m_ButtonSize = m_IconSize+6;
+		m_ButtonSize = m_IconSize+8;
 	}
 	else
 	{
@@ -78,7 +78,7 @@ void CBackstageBar::Reset()
 	m_Hover = m_Pressed = NOPART;
 }
 
-void CBackstageBar::AddItem(UINT Command, INT IconID, INT PreferredWidth, BOOL Red, WCHAR* pName)
+void CBackstageBar::AddItem(UINT Command, INT IconID, INT PreferredWidth, BOOL Red, WCHAR* pName, BOOL Enabled)
 {
 	BarItem Item;
 	ZeroMemory(&Item, sizeof(Item));
@@ -87,7 +87,7 @@ void CBackstageBar::AddItem(UINT Command, INT IconID, INT PreferredWidth, BOOL R
 	Item.IconID = IconID;
 	Item.PreferredWidth = PreferredWidth ? PreferredWidth : m_ButtonSize;
 	Item.Red = Red;
-	Item.Enabled = TRUE;
+	Item.Enabled = Enabled;
 
 	if (pName)
 		wcscpy_s(Item.Name, 256, pName);

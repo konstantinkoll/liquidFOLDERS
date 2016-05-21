@@ -25,7 +25,7 @@ void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
 
 			rectOutline.InflateRect(1, 1);
 
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
+			g.SetSmoothingMode(LFGetApp()->m_SmoothingModeAntiAlias8x8);
 
 			GraphicsPath path;
 			CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);

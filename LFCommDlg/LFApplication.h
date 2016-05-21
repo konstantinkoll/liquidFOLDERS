@@ -126,6 +126,7 @@ public:
 	LFFont m_DialogBoldFont;
 	LFFont m_DialogItalicFont;
 	UINT OSVersion;
+	SmoothingMode m_SmoothingModeAntiAlias8x8;
 	UINT m_TaskbarButtonCreated;
 	UINT m_LicenseActivatedMsg;
 	UINT m_SetProgressMsg;

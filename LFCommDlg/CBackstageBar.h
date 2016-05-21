@@ -44,7 +44,7 @@ protected:
 	virtual void OnClickButton(INT Index) const=0;
 
 	void Reset();
-	void AddItem(UINT Command, INT IconID, INT PreferredWidth=0, BOOL Red=FALSE, WCHAR* pName=NULL);
+	void AddItem(UINT Command, INT IconID, INT PreferredWidth=0, BOOL Red=FALSE, WCHAR* pName=NULL, BOOL Enabled=TRUE);
 	void AdjustLayout();
 	INT HitTest(const CPoint& point) const;
 

@@ -9,10 +9,10 @@
 extern OSVERSIONINFO osInfo;
 
 
-LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
+LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 {
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(i, Path, MAX_PATH, FALSE)!=LFOk)
+	if (LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, FALSE)!=LFOk)
 		return NULL;
 
 	HBITMAP hBitmap = NULL;

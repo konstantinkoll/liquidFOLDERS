@@ -4,16 +4,20 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
+#include <math.h>
 
 
 // CBackstageShadow
 //
 
-#define SHADOWSIZE       20
-#define SHADOWOFFSET     SHADOWSIZE/2-2
-#define SIDEWIDTH        (SHADOWSIZE+1)
-#define TOPHEIGHT        (SIDEWIDTH-SHADOWOFFSET+BACKSTAGERADIUS)
-#define BOTTOMHEIGHT     (SIDEWIDTH+BACKSTAGERADIUS)
+#define SHADOWSIZE          19
+#define SHADOWOFFSET        (SHADOWSIZE/2-1)
+#define SHADOWSIDEWIDTH     (SHADOWSIZE+1)
+#define SHADOWCORNER        (SHADOWSIDEWIDTH+BACKSTAGERADIUS)
+#define TOPHEIGHT           (SHADOWCORNER-SHADOWOFFSET)
+#define BOTTOMHEIGHT        SHADOWCORNER
+
+BYTE* CBackstageShadow::m_pShadowCorner = NULL;
 
 CBackstageShadow::CBackstageShadow()
 {
@@ -30,6 +34,18 @@ CBackstageShadow::~CBackstageShadow()
 
 BOOL CBackstageShadow::Create()
 {
+	// Corner mask
+	if (!m_pShadowCorner)
+	{
+		m_pShadowCorner = new BYTE[SHADOWCORNER*SHADOWCORNER];
+		BYTE* pByte = m_pShadowCorner;
+
+		for (INT Row=SHADOWCORNER-1; Row>=0; Row--)
+			for (INT Column=SHADOWCORNER-1; Column>=0; Column--)
+				*(pByte++) = CalcOpacity(SHADOWSIZE-sqrt((DOUBLE)(Row*Row+Column*Column))+BACKSTAGERADIUS);
+	}
+
+	// Create transparent windows
 	CString className = AfxRegisterWndClass(0);
 
 	BOOL Result = TRUE;
@@ -57,7 +73,7 @@ void CBackstageShadow::Update(CWnd* pBackstageWnd, CRect rectWindow)
 {
 	ASSERT(pBackstageWnd);
 
-	rectWindow.InflateRect(SIDEWIDTH, SIDEWIDTH);
+	rectWindow.InflateRect(SHADOWSIDEWIDTH, SHADOWSIDEWIDTH);
 	rectWindow.top += SHADOWOFFSET;
 
 	// Show window
@@ -65,44 +81,49 @@ void CBackstageShadow::Update(CWnd* pBackstageWnd, CRect rectWindow)
 
 	if (Visible && ((rectWindow.Width()!=m_Width) || (rectWindow.Height()!=m_Height)))
 	{
+		m_Width = rectWindow.Width();
+		m_Height = rectWindow.Height();
+
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
 
 		// Prepare paint
-		HBITMAP hWindowBitmap = CreateTransparentBitmap(rectWindow.Width(), rectWindow.Height());
+		HBITMAP hWindowBitmap = CreateTransparentBitmap(m_Width, m_Height);
 		HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hWindowBitmap);
 
-		CRect rectBitmap(0, 0, rectWindow.Width(), rectWindow.Height());
-		CRect rect(rectBitmap);
-
-		Graphics g(dc);
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-		GraphicsPath path;
+		BITMAP Bitmap;
+		GetObject(hWindowBitmap, sizeof(Bitmap), &Bitmap);
 
 		for (UINT a=0; a<SHADOWSIZE; a++)
 		{
-			CreateRoundRectangle(rect, BACKSTAGERADIUS+1+SHADOWSIZE-a, path);
+			BYTE Opacity = CalcOpacity(a);
 
-			Pen pen(Color((BYTE)(((a+3)*(a+4)*(a+3)>>6))<<24));
-			g.DrawPath(&pen, &path);
+			if (a<SHADOWSIZE-SHADOWOFFSET)
+				HorizontalLine(Bitmap, a, m_Width-2*SHADOWCORNER, Opacity);
 
-			rect.DeflateRect(1, 1);
+			HorizontalLine(Bitmap, m_Height-a-1, m_Width-2*SHADOWCORNER, Opacity);
+			VerticalLine(Bitmap, a, m_Height-2*SHADOWCORNER+SHADOWOFFSET, Opacity);
+			VerticalLine(Bitmap, m_Width-a-1, m_Height-2*SHADOWCORNER+SHADOWOFFSET, Opacity);
 		}
 
-		rect.top -= SHADOWOFFSET;
+		CornersTop(Bitmap, m_Width);
+		CornersBottom(Bitmap, m_Width, m_Height);
+
+		CRect rect(SHADOWSIZE, SHADOWSIZE-SHADOWOFFSET, m_Width-SHADOWSIZE, m_Height-SHADOWSIZE);
+
+		Graphics g(dc);
+		g.SetSmoothingMode(LFGetApp()->m_SmoothingModeAntiAlias8x8);
+
+		GraphicsPath path;
 		CreateRoundRectangle(rect, BACKSTAGERADIUS, path);
 
 		Pen pen(Color(0xFF000000));
 		g.DrawPath(&pen, &path);
 
 		// Update system-managed bitmap of window
-		m_Width = rectWindow.Width();
-		m_Height = rectWindow.Height();
-
 		Update(0, dc, CPoint(0, 0), CSize(m_Width, TOPHEIGHT), pBackstageWnd, rectWindow);
-		Update(1, dc, CPoint(0, TOPHEIGHT), CSize(SIDEWIDTH, m_Height-TOPHEIGHT-BOTTOMHEIGHT),pBackstageWnd, rectWindow);
-		Update(2, dc, CPoint(m_Width-SIDEWIDTH, TOPHEIGHT), CSize(SIDEWIDTH, m_Height-TOPHEIGHT-BOTTOMHEIGHT), pBackstageWnd, rectWindow);
+		Update(1, dc, CPoint(0, TOPHEIGHT), CSize(SHADOWSIDEWIDTH, m_Height-TOPHEIGHT-BOTTOMHEIGHT),pBackstageWnd, rectWindow);
+		Update(2, dc, CPoint(m_Width-SHADOWSIDEWIDTH, TOPHEIGHT), CSize(SHADOWSIDEWIDTH, m_Height-TOPHEIGHT-BOTTOMHEIGHT), pBackstageWnd, rectWindow);
 		Update(3, dc, CPoint(0, m_Height-BOTTOMHEIGHT), CSize(m_Width, BOTTOMHEIGHT), pBackstageWnd, rectWindow);
 
 		// Clean up
@@ -126,4 +147,70 @@ void CBackstageShadow::Update(CWnd* pBackstageWnd)
 	pBackstageWnd->GetWindowRect(rectWindow);
 
 	Update(pBackstageWnd, rectWindow);
+}
+
+void CBackstageShadow::HorizontalLine(const BITMAP& Bitmap, UINT Row, UINT Width, BYTE Opacity)
+{
+	RGBQUAD* pRGBQUAD = (RGBQUAD*)((BYTE*)Bitmap.bmBits+Row*Bitmap.bmWidthBytes+SHADOWCORNER*4);
+
+	for (UINT Column=0; Column<Width; Column++)
+		(pRGBQUAD++)->rgbReserved = Opacity;
+}
+
+void CBackstageShadow::VerticalLine(const BITMAP& Bitmap, UINT Column, UINT Height, BYTE Opacity)
+{
+	BYTE* pByte = (BYTE*)Bitmap.bmBits+(SHADOWCORNER-SHADOWOFFSET)*Bitmap.bmWidthBytes+Column*4+3;
+
+	for (UINT Row=0; Row<Height; Row++)
+	{
+		*pByte = Opacity;
+
+		pByte += Bitmap.bmWidthBytes;
+	}
+}
+
+inline void CBackstageShadow::CornersTop(const BITMAP& Bitmap, UINT Width)
+{
+	ASSERT(m_pShadowCorner);
+
+	BYTE* pByteSrc = m_pShadowCorner;
+	BYTE* pByteLeft = (BYTE*)Bitmap.bmBits+3;
+	BYTE* pByteRight = pByteLeft+(Width-1)*4;
+
+	for (UINT Row=0; Row<SHADOWCORNER; Row++)
+	{
+		for (UINT Column=0; Column<SHADOWCORNER; Column++)
+		{
+			*pByteLeft = *pByteRight = *(pByteSrc++);
+
+			pByteLeft += 4;
+			pByteRight -= 4;
+		}
+
+		pByteLeft += Bitmap.bmWidthBytes-(SHADOWCORNER*4);
+		pByteRight += Bitmap.bmWidthBytes+(SHADOWCORNER*4);
+	}
+}
+
+inline void CBackstageShadow::CornersBottom(const BITMAP& Bitmap, UINT Width, UINT Height)
+{
+	ASSERT(m_pShadowCorner);
+
+	BYTE* pByteSrc = m_pShadowCorner;
+	BYTE* pByteLeft = (BYTE*)Bitmap.bmBits+(Height-1)*Bitmap.bmWidthBytes+3;
+	BYTE* pByteRight = pByteLeft+(Width-1)*4;
+
+	for (UINT Row=0; Row<SHADOWCORNER; Row++)
+	{
+		for (UINT Column=0; Column<SHADOWCORNER; Column++)
+		{
+			*pByteLeft = *pByteRight = *(pByteSrc++);
+
+			pByteLeft += 4;
+			pByteRight -= 4;
+		}
+
+		pByteLeft -= Bitmap.bmWidthBytes+(SHADOWCORNER*4);
+		pByteRight -= Bitmap.bmWidthBytes-(SHADOWCORNER*4);
+	}
 }

@@ -693,16 +693,10 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 			g.DrawPath(&pen, &pathOuter);
 		}
 		else
-			if (Hover)
-			{
-				Pen pen(Color(0xFFA6ABB2));
-				g.DrawPath(&pen, &pathOuter);
-			}
-			else
-			{
-				Pen pen(Color(0xFFBCBDBE));
-				g.DrawPath(&pen, &pathOuter);
-			}
+		{
+			Pen pen(Color(Hover ? 0xFFA6ABB2 : 0xFFBCBDBE));
+			g.DrawPath(&pen, &pathOuter);
+		}
 	}
 	else
 	{

@@ -205,7 +205,7 @@ void CBackstageWnd::GetCaptionButtonMargins(LPSIZE lpSize) const
 	ASSERT(lpSize);
 
 	lpSize->cx = 0;
-	lpSize->cy = BACKSTAGEBORDER;
+	lpSize->cy = BACKSTAGEBORDER-2;
 
 	m_wndWidgets.AddWidgetSize(lpSize);
 
