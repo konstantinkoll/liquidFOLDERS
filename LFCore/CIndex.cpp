@@ -32,11 +32,12 @@
 		else \
 		{ \
 			Ops(LFContextAllFiles); \
+			if (PtrM->ContextID!=LFContextAllFiles) \
+				Ops(PtrM->ContextID); \
 			if (PtrM->Rating) \
 				Ops(LFContextFavorites); \
 			if (PtrM->Flags & LFFlagNew) \
 				Ops(LFContextNew); \
-			Ops(PtrM->ContextID); \
 		}
 
 #define ADD_STATS() \
