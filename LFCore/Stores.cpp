@@ -1201,6 +1201,8 @@ LFCORE_API UINT LFSynchronizeStore(const CHAR* pStoreID, LFProgress* pProgress)
 
 		if (Result==LFOk)
 			SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
+
+		SendLFNotifyMessage(LFMessages.StatisticsChanged);
 	}
 
 	return Result;
