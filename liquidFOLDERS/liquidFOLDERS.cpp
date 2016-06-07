@@ -229,7 +229,7 @@ INT CLiquidFoldersApp::ExitInstance()
 
 		WriteInt(_T("ModelQuality"), m_ModelQuality);
 		WriteInt(_T("TextureQuality"), m_TextureQuality);
-		WriteInt(_T("TexturCompress"), m_TextureCompress);
+		WriteInt(_T("TextureCompress"), m_TextureCompress);
 
 		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
 		WriteInt(_T("InspectorWidth"), m_InspectorWidth);

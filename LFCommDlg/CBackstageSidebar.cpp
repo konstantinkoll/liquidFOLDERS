@@ -39,6 +39,7 @@ CBackstageSidebar::CBackstageSidebar()
 	m_CountWidth = m_IconSize = 0;
 	m_SelectedItem = m_HotItem = m_PressedItem = -1;
 	m_Hover = m_Keyboard = m_ShowCounts = FALSE;
+	m_ShowShadow = TRUE;
 }
 
 BOOL CBackstageSidebar::Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts)
@@ -158,6 +159,20 @@ void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR
 
 void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color)
 {
+	ASSERT(Caption);
+
+	AddItem(TRUE, CmdID, IconID, Caption, Color);
+}
+
+void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, COLORREF Color)
+{
+	CString Caption;
+	ENSURE(Caption.LoadString(CmdID));
+
+	INT Pos = Caption.Find(L'\n');
+	if (Pos!=-1)
+		Caption.Delete(0, Pos+1);
+
 	AddItem(TRUE, CmdID, IconID, Caption, Color);
 }
 
@@ -355,7 +370,7 @@ void CBackstageSidebar::OnPaint()
 		{
 			CRect rectItem(m_Items[a].Rect);
 
-			const BOOL Enabled = m_Items[a].Enabled;
+			const BOOL Enabled = m_Items[a].Enabled && GetParent()->IsWindowEnabled();
 			const BOOL Highlight = (m_PressedItem!=-1) ? m_PressedItem==(INT)a : m_SelectedItem==(INT)a;
 			const BOOL Hot = Enabled && !Highlight && (m_HotItem==(INT)a);
 
@@ -366,24 +381,36 @@ void CBackstageSidebar::OnPaint()
 				{
 					if ((a==0) || m_Items[a-1].Selectable)
 					{
-						LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
-						g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), 2);
+						LinearGradientBrush brush3(Point(0, rectItem.top), Point(0, rectItem.top+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
+						g.FillRectangle(&brush3, 0, rectItem.top, rectItem.right, 2);
 					}
 					else
 					{
-						LinearGradientBrush brush2(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+8), Color(0x80000000), Color(0x00000000));
-						g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), 8);
+						LinearGradientBrush brush4(Point(0, rectItem.top), Point(0, rectItem.top+8), Color(0x80000000), Color(0x00000000));
+
+						if (m_ShowShadow)
+						{
+							g.FillRectangle(&brush4, 0, rectItem.top, rectItem.right, 8);
+						}
+						else
+						{
+							for (UINT a=0; a<8; a++)
+							{
+								g.FillRectangle(&brush4, 0, rectItem.top+a, rectItem.right-a/4-1, 1);
+
+								SolidBrush brush5(Color((4-(a & 3))*(8-a)*0x04000000));
+								g.FillRectangle(&brush5, rectItem.right-a/4-1, rectItem.top+a, 1, 1);
+							}
+						}
 					}
 
-					if ((a==m_Items.m_ItemCount-1) || m_Items[a+1].Selectable)
+					LinearGradientBrush brush6(Point(0, rectItem.bottom-3), Point(0, rectItem.bottom), Color(0x00000000), Color(0x60000000));
+					g.FillRectangle(&brush6, 0, rectItem.bottom-2, rectItem.right, 2);
+
+					if ((a<m_Items.m_ItemCount-1) && (!m_Items[a+1].Selectable))
 					{
-						LinearGradientBrush brush2(Point(rectItem.left, rectItem.bottom-3), Point(rectItem.left, rectItem.bottom), Color(0x00000000), Color(0x60000000));
-						g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-2, rectItem.Width(), 2);
-					}
-					else
-					{
-						SolidBrush brush2(Color(0x68000000));
-						g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-1, rectItem.Width(), 1);
+						SolidBrush brush7(Color(0x28000000));
+						g.FillRectangle(&brush7, 0, rectItem.bottom-1, rectItem.right, 1);
 					}
 				}
 
@@ -394,18 +421,22 @@ void CBackstageSidebar::OnPaint()
 				if (Themed)
 				{
 					SolidBrush brush1(Color(0x68000000));
-					g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
+					g.FillRectangle(&brush1, 0, rectItem.top, rectItem.right, rectItem.Height());
 
 					SolidBrush brush2(Color(0x80000000));
-					g.FillRectangle(&brush2, rectItem.left, rectItem.bottom-1, rectItem.Width(), 1);
+					g.FillRectangle(&brush2, rectItem.right-1, rectItem.top, 1, rectItem.Height()-1);
+					g.FillRectangle(&brush2, 0, rectItem.bottom-1, rectItem.right, 1);
 
 					SolidBrush brush3(Color(0x28FFFFFF));
-					g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), 1);
+					g.FillRectangle(&brush3, 0, rectItem.top, rectItem.right, 1);
 				}
 				else
 				{
-					dc.FillSolidRect(rectItem.left, rectItem.top, rectItem.Width(), 1, 0x000000);
-					dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, 0x000000);
+					dc.FillSolidRect(0, rectItem.top, rectItem.right, 1, 0x000000);
+					dc.FillSolidRect(0, rectItem.bottom-1, rectItem.right, 1, 0x000000);
+
+					if (!m_ShowShadow)
+						dc.FillSolidRect(rectItem.right-1, rectItem.top+1, 1, rectItem.Height()-2, 0x000000);
 				}
 			}
 
@@ -540,31 +571,34 @@ void CBackstageSidebar::OnPaint()
 		}
 	}
 
-	// Untere Begrenzung
-	if (Themed && m_Items.m_ItemCount)
-	{
-		CRect rectItem(m_Items[m_Items.m_ItemCount-1].Rect);
-
-		LinearGradientBrush brush1(Point(rectItem.left, rectItem.bottom), Point(rectItem.left, rectItem.bottom+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
-		g.FillRectangle(&brush1, rectItem.left, rectItem.bottom, rectItem.Width(), 2);
-	}
-
-	// Schatten
 	if (Themed)
 	{
-		if (!hShadow)
-			hShadow = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
+		// Bottom border
+		if (m_Items.m_ItemCount)
+		{
+			CRect rectItem(m_Items[m_Items.m_ItemCount-1].Rect);
 
-		HDC hdcMem = CreateCompatibleDC(dc);
-		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hShadow);
+			LinearGradientBrush brush1(Point(0, rectItem.bottom), Point(0, rectItem.bottom+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
+			g.FillRectangle(&brush1, 0, rectItem.bottom, rectItem.right, 2);
+		}
 
-		AlphaBlend(dc, rect.right-SHADOW, 0, SHADOW, 10, hdcMem, 0, 0, SHADOW, 10, BF);
+		// Shadow
+		if (m_ShowShadow)
+		{
+			if (!hShadow)
+				hShadow = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
 
-		for (INT y=10; y<rect.bottom; y+=6)
-			AlphaBlend(dc, rect.right-SHADOW, y, SHADOW, 6, hdcMem, 0, 4, SHADOW, 6, BF);
+			HDC hdcMem = CreateCompatibleDC(dc);
+			HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hShadow);
 
-		SelectObject(hdcMem, hOldBitmap);
-		DeleteDC(hdcMem);
+			AlphaBlend(dc, rect.right-SHADOW, 0, SHADOW, 10, hdcMem, 0, 0, SHADOW, 10, BF);
+
+			for (INT y=10; y<rect.bottom; y+=6)
+				AlphaBlend(dc, rect.right-SHADOW, y, SHADOW, 6, hdcMem, 0, 4, SHADOW, 6, BF);
+
+			SelectObject(hdcMem, hOldBitmap);
+			DeleteDC(hdcMem);
+		}
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

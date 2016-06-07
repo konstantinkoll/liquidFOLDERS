@@ -16,11 +16,7 @@ CCategory::CCategory()
 	ZeroMemory(&wndcls, sizeof(wndcls));
 	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
-	wndcls.hIcon = NULL;
 	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
-	wndcls.hbrBackground = NULL;
-	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CCategory";
 
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CCategory", &wndcls)))

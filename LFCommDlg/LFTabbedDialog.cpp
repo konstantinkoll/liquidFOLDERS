@@ -116,17 +116,19 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 
 							// Append tab hint
 							if (CompareClassName(szClassName, _T("CCategory")))
+							{
+								TCHAR* pChar = wcschr(szWindowText, L'\n');
+								if (pChar)
+									*pChar = L'\0';
+
 								if (Caption!=szWindowText)
 								{
 									if (m_TabHints[m_TabCount][0])
 										wcscat_s(m_TabHints[m_TabCount], 4096, L"\n");
 
-									TCHAR* pChar = wcschr(szWindowText, L'\n');
-									if (pChar)
-										*(pChar++) = L'\0';
-
 									wcscat_s(m_TabHints[m_TabCount], 4096, szWindowText);
 								}
+							}
 
 							// Next
 							pChildWnd = pChildWnd->GetWindow(GW_HWNDNEXT);

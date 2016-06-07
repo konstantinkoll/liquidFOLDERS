@@ -62,7 +62,6 @@ protected:
 	CWnd* p_ParentWnd;
 	CCategory m_wndCategory[12];
 	BOOL m_UAC;
-	BOOL m_ShowKeyboardCues;
 
 private:
 	static BOOL IsPushbutton(CWnd* pWnd);

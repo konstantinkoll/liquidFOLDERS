@@ -40,6 +40,8 @@ struct SidebarItem
 
 class CBackstageSidebar : public CFrontstageWnd
 {
+friend class CBackstageWnd;
+
 public:
 	CBackstageSidebar();
 
@@ -47,9 +49,10 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts=FALSE);
-	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts=FALSE);
-	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID, BOOL ShowCounts=FALSE);
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts);
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID, BOOL ShowCounts);
 	void AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color=(COLORREF)-1);
+	void AddCommand(UINT CmdID, INT IconID, COLORREF Color=(COLORREF)-1);
 	void AddCaption(LPCWSTR Caption=L"");
 	void AddCaption(UINT ResID);
 	void ResetCounts();
@@ -60,6 +63,7 @@ public:
 
 protected:
 	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color=(COLORREF)-1);
+	void SetShadow(BOOL ShowShadow);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT Index);
 	void PressItem(INT Index);
@@ -92,9 +96,19 @@ protected:
 	BOOL m_Hover;
 	BOOL m_Keyboard;
 	BOOL m_ShowCounts;
+	BOOL m_ShowShadow;
 };
 
 inline INT CBackstageSidebar::GetPreferredWidth() const
 {
 	return m_Width;
+}
+
+inline void CBackstageSidebar::SetShadow(BOOL ShowShadow)
+{
+	if (m_ShowShadow!=ShowShadow)
+	{
+		m_ShowShadow = ShowShadow;
+		Invalidate();
+	}
 }

@@ -27,9 +27,6 @@ LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL WantsBitmap, BOOL UA
 
 	m_UAC = UAC;
 
-	m_ShowKeyboardCues = FALSE;
-	SystemParametersInfo(SPI_GETKEYBOARDCUES, 0, &m_ShowKeyboardCues, 0);
-
 	hIconShield = NULL;
 	hBackgroundBrush = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
@@ -69,15 +66,6 @@ BOOL LFDialog::Create()
 
 BOOL LFDialog::PreTranslateMessage(MSG* pMsg)
 {
-	// Keyboard cues
-	if ((pMsg->message==WM_SYSKEYDOWN) && (!m_ShowKeyboardCues))
-	{
-		m_ShowKeyboardCues = TRUE;
-
-		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
-			m_Buttons[a]->Invalidate();
-	}
-
 	// Main window
 	if (CBackstageWnd::PreTranslateMessage(pMsg))
 		return TRUE;

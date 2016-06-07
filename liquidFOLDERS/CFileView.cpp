@@ -1282,19 +1282,19 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					HICON hIcon = NULL;
 					HBITMAP hBitmap = NULL;
 
-					LFItemDescriptor* i = (*p_CookedFiles)[m_HotItem];
+					LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HotItem];
 
-					switch (i->Type & LFTypeMask)
+					switch (pItemDescriptor->Type & LFTypeMask)
 					{
 					case LFTypeFile:
 						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview) && (theApp.m_Views[m_Context].Mode!=LFViewTimeline))
 						{
 							CDC* pDC = GetDC();
-							hBitmap = theApp.m_ThumbnailCache.GetThumbnailBitmap(i, pDC);
+							hBitmap = theApp.m_ThumbnailCache.GetThumbnailBitmap(pItemDescriptor, pDC);
 							ReleaseDC(pDC);
 						}
 
-						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
+						theApp.m_FileFormats.Lookup(pItemDescriptor->CoreAttributes.FileFormat, fd);
 
 						break;
 
@@ -1308,9 +1308,9 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					}
 
 					if (!hIcon && !hBitmap)
-						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
+						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1);
 
-					LFGetApp()->ShowTooltip(this, point, GetLabel(i), GetHint(i, fd.FormatName), hIcon, hBitmap);
+					LFGetApp()->ShowTooltip(this, point, GetLabel(pItemDescriptor), GetHint(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
 				}
 	}
 	else

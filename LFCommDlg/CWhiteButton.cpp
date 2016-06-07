@@ -46,7 +46,7 @@ void CWhiteButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	tag.pDC = &dc;
 
 	if (!GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
-		DrawWhiteButtonForeground(dc, lpDrawItemStruct, Selected);
+		DrawWhiteButtonForeground(dc, lpDrawItemStruct, Selected, (GetParent()->SendMessage(WM_QUERYUISTATE) & UISF_HIDEACCEL)==0);
 
 	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);
 

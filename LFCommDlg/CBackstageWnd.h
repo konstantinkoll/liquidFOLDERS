@@ -44,7 +44,7 @@ protected:
 
 	void UpdateBackground();
 	void PaintCaption(CPaintDC& pDC, CRect& rect);
-	void InvalidateCaption();
+	void InvalidateCaption(BOOL Background=FALSE);
 	void UpdateRegion(INT cx=-1, INT cy=-1);
 	void AdjustLayout(UINT nFlags=SWP_NOACTIVATE | SWP_NOZORDER);
 

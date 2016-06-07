@@ -643,7 +643,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\AttributeIcons_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\AttributeIcons_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\AttributeIcons_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\AttributeIcons_64.png"
 				>
 			</File>
 			<File

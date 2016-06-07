@@ -257,11 +257,13 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 		if ((m_SidebarAlwaysVisible=(m_IsDialog || (m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5)))==TRUE)
 			m_ShowSidebar = FALSE;
 
-		GetLayoutRect(rectLayout);
+		const BOOL HasDocumentSheet = GetLayoutRect(rectLayout);
+		m_ShowSidebar |= !HasDocumentSheet;
+		m_pSidebarWnd->SetShadow(HasDocumentSheet);
 
 		if (m_ShowSidebar || m_SidebarAlwaysVisible)
 		{
-			m_pSidebarWnd->SetWindowPos(NULL, 0, rectLayout.top, m_pSidebarWnd->GetPreferredWidth(), rectLayout.bottom-rectLayout.top, nFlags | /*(!m_pSidebarWnd->IsWindowVisible() ?*/ SWP_SHOWWINDOW /*: 0*/);
+			m_pSidebarWnd->SetWindowPos(NULL, 0, rectLayout.top, m_pSidebarWnd->GetPreferredWidth(), rectLayout.bottom-rectLayout.top, nFlags | SWP_SHOWWINDOW);
 		}
 		else
 		{
@@ -359,7 +361,7 @@ void CBackstageWnd::UpdateBackground()
 				}
 
 				// Top border
-				if (LayoutWidth)
+				if (LayoutWidth>0)
 				{
 					LinearGradientBrush brush(Point(0, rectLayout.top-3), Point(0, rectLayout.top), Color(0x00000000), Color(0x60000000));
 					g.FillRectangle(&brush, 0, rectLayout.top-2, LayoutWidth, 2);
@@ -563,7 +565,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 	}
 }
 
-void CBackstageWnd::InvalidateCaption()
+void CBackstageWnd::InvalidateCaption(BOOL Background)
 {
 	if (m_ShowCaption)
 	{
@@ -571,6 +573,9 @@ void CBackstageWnd::InvalidateCaption()
 		GetClientRect(rect);
 
 		rect.bottom = GetCaptionHeight();
+
+		if (Background)
+			m_BackBufferL = m_BackBufferH = 0;
 
 		InvalidateRect(rect);
 	}
@@ -904,6 +909,9 @@ void CBackstageWnd::OnEnable(BOOL bEnable)
 	m_wndWidgets.SetEnabled(bEnable);
 
 	InvalidateCaption();
+
+	if (m_pSidebarWnd)
+		m_pSidebarWnd->Invalidate();
 }
 
 LRESULT CBackstageWnd::OnGetTitleBarInfoEx(WPARAM /*wParam*/, LPARAM lParam)
