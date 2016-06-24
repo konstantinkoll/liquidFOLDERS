@@ -343,12 +343,10 @@ void CBackstageWnd::UpdateBackground()
 					LayoutWidth = m_BackBufferL;
 
 				// Background
-				const INT TextureHeight = /*m_IsDialog ? rectLayout.top :*/ m_BackBufferH;
+				FillRect(dc, CRect(0, 0, m_BackBufferL, min(m_BackBufferH, BACKGROUNDTOP)), hBackgroundTop);
 
-				FillRect(dc, CRect(0, 0, m_BackBufferL, min(TextureHeight, BACKGROUNDTOP)), hBackgroundTop);
-
-				if (TextureHeight>BACKGROUNDTOP)
-					FillRect(dc, CRect(0, BACKGROUNDTOP, m_BackBufferL, TextureHeight), hBackgroundBottom);
+				if (m_BackBufferH>BACKGROUNDTOP)
+					FillRect(dc, CRect(0, BACKGROUNDTOP, m_BackBufferL, m_BackBufferH), hBackgroundBottom);
 
 				if (m_IsDialog)
 				{

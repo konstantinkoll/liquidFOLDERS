@@ -642,7 +642,7 @@ void CGridView::OnPaint()
 			Bitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP);
 
 			Graphics g(dc);
-			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+GetScrollPos(SB_HORZ), m_HeaderHeight-(INT)pDivider->GetHeight());
+			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+GetScrollPos(SB_HORZ)+BACKSTAGEBORDER-1, m_HeaderHeight-(INT)pDivider->GetHeight());
 		}
 		else
 		{
