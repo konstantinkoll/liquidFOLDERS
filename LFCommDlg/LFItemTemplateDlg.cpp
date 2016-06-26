@@ -134,13 +134,7 @@ BOOL LFItemTemplateDlg::InitDialog()
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
 
 	if (m_AllowChooseStore)
-	{
-		CHeaderButton* pButton = m_wndHeaderArea.AddButton();
-		pButton->SetDlgCtrlID(IDC_CHOOSESTORE);
-
-		CString tmpStr((LPCSTR)IDC_CHOOSESTORE);
-		pButton->SetValue(tmpStr, FALSE);
-	}
+		m_wndHeaderArea.AddButton(IDC_CHOOSESTORE);
 
 	// Store
 	OnStoresChanged(NULL, NULL);
@@ -163,10 +157,13 @@ BEGIN_MESSAGE_MAP(LFItemTemplateDlg, LFDialog)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
+	ON_BN_CLICKED(IDC_SKIP, OnSkip)
+
 	ON_COMMAND(IDM_ITEMTEMPLATE_TOGGLESORT, OnToggleSort)
 	ON_COMMAND(IDM_ITEMTEMPLATE_RESET, OnReset)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_ITEMTEMPLATE_TOGGLESORT, IDM_ITEMTEMPLATE_RESET, OnUpdateCommands)
-	ON_BN_CLICKED(IDC_SKIP, OnSkip)
+	ON_UPDATE_COMMAND_UI(IDC_CHOOSESTORE, OnUpdateCommands)
+
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -223,6 +220,12 @@ void LFItemTemplateDlg::OnChooseStore()
 	}
 }
 
+void LFItemTemplateDlg::OnSkip()
+{
+	EndDialog(IDC_SKIP);
+}
+
+
 void LFItemTemplateDlg::OnToggleSort()
 {
 	m_SortAlphabetic = !m_SortAlphabetic;
@@ -245,11 +248,6 @@ void LFItemTemplateDlg::OnUpdateCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(TRUE);
 }
 
-
-void LFItemTemplateDlg::OnSkip()
-{
-	EndDialog(IDC_SKIP);
-}
 
 LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {

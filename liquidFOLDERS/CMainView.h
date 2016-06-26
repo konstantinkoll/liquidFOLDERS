@@ -115,7 +115,7 @@ protected:
 	static CIcons m_SmallIcons;
 	CTaskbar m_wndTaskbar;
 	CHeaderArea m_wndHeaderArea;
-	CFileView* p_wndFileView;
+	CFileView* m_pWndFileView;
 	CInspectorPane m_wndInspector;
 	CExplorerNotification m_wndExplorerNotification;
 	LFDropTarget m_DropTarget;
@@ -177,10 +177,10 @@ inline void CMainView::ShowNotification(UINT Type, const CString& Message, UINT 
 
 inline INT CMainView::GetSelectedItem() const
 {
-	return p_wndFileView ? p_wndFileView->GetSelectedItem() : -1;
+	return m_pWndFileView ? m_pWndFileView->GetSelectedItem() : -1;
 }
 
 inline INT CMainView::GetNextSelectedItem(INT Index) const
 {
-	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(Index) : -1;
+	return m_pWndFileView ? m_pWndFileView->GetNextSelectedItem(Index) : -1;
 }

@@ -112,14 +112,17 @@ void CHeaderArea::AdjustLayout()
 
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CHeaderButton* pHeaderButton = m_Buttons[a];
-
 		CSize Size;
 		INT CaptionWidth;
-		pHeaderButton->GetPreferredSize(&Size, CaptionWidth);
-		pHeaderButton->SetWindowPos(NULL, rect.right-Size.cx-BORDER+6, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+		m_Buttons[a]->GetPreferredSize(&Size, CaptionWidth);
 
-		m_RightEdge = min(m_RightEdge, rect.right-Size.cx-(INT)CaptionWidth-2*BORDER-MARGIN+6);
+		INT RightEdge = rect.right-Size.cx-BORDER+6;
+		m_Buttons[a]->SetWindowPos(NULL, RightEdge, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+
+		if (CaptionWidth)
+			RightEdge -= MARGIN;
+
+		m_RightEdge = min(m_RightEdge, RightEdge-BORDER);
 
 		Row += Size.cy+MARGIN/2;
 	}
@@ -138,6 +141,7 @@ BEGIN_MESSAGE_MAP(CHeaderArea, CFrontstageWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONUP()
 	ON_WM_SIZE()
+	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 END_MESSAGE_MAP()
 
@@ -228,8 +232,11 @@ void CHeaderArea::OnPaint()
 			INT CaptionWidth;
 			pHeaderButton->GetCaption(Caption, CaptionWidth);
 
-			CRect rectCaption(rect.left-CaptionWidth-MARGIN, rect.top, rect.left, rect.bottom);
-			dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			if (CaptionWidth)
+			{
+				CRect rectCaption(rect.left-CaptionWidth-MARGIN, rect.top, rect.left, rect.bottom);
+				dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			}
 		}
 
 		if (m_RightEdge-BORDER>=32)
@@ -298,7 +305,29 @@ void CHeaderArea::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFrontstageWnd::OnSize(nType, cx, cy);
 
+	OnIdleUpdateCmdUI();
 	AdjustLayout();
+}
+
+void CHeaderArea::OnIdleUpdateCmdUI()
+{
+	BOOL Update = FALSE;
+
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
+	{
+		CHeaderButton* pHeaderButton = m_Buttons[a];
+		BOOL Enabled = pHeaderButton->IsWindowEnabled();
+
+		CCmdUI cmdUI;
+		cmdUI.m_nID = pHeaderButton->GetDlgCtrlID();
+		cmdUI.m_pOther = pHeaderButton;
+		cmdUI.DoUpdate(GetOwner(), TRUE);
+
+		Update |= (pHeaderButton->IsWindowEnabled()!=Enabled);
+	}
+
+	if (Update)
+		AdjustLayout();
 }
 
 void CHeaderArea::OnAdjustLayout()

@@ -320,20 +320,23 @@ void CTagcloudView::OnUseOpacity()
 
 void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = TRUE;
+
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_TAGCLOUD_SORTVALUE:
 		pCmdUI->SetRadio(m_ViewParameters.TagcloudCanonical);
+
 		if (!pCmdUI->m_pMenu)
-			b = !m_ViewParameters.TagcloudCanonical && !m_Nothing;
+			bEnable = !m_ViewParameters.TagcloudCanonical && !m_Nothing;
 
 		break;
 
 	case IDM_TAGCLOUD_SORTCOUNT:
 		pCmdUI->SetRadio(!m_ViewParameters.TagcloudCanonical);
+
 		if (!pCmdUI->m_pMenu)
-			b = m_ViewParameters.TagcloudCanonical && !m_Nothing;
+			bEnable = m_ViewParameters.TagcloudCanonical && !m_Nothing;
 
 		break;
 	case IDM_TAGCLOUD_SHOWRARE:
@@ -353,5 +356,5 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

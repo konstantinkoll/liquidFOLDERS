@@ -136,7 +136,7 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 				wcscat_s(Ptr, MAX_PATH, Buffer);
 			}
 
-			swprintf(NumberStr, 16, L" (%u)", ++Number);
+			swprintf_s(NumberStr, 16, L" (%u)", ++Number);
 
 			if ((Result=GetFileLocation(&pItemDescriptor->CoreAttributes, Ptr, Path, 2*MAX_PATH))!=LFOk)
 				return Result;

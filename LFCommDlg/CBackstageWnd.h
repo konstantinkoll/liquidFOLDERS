@@ -84,6 +84,7 @@ protected:
 	BOOL m_WantsBitmap;
 	BOOL m_ShowSidebar;
 	BOOL m_SidebarAlwaysVisible;
+	BOOL m_ForceSidebarAlwaysVisible;
 	BOOL m_ShowCaption;
 	BOOL m_ShowExpireCaption;
 	INT m_BottomDivider;

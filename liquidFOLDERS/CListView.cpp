@@ -992,12 +992,12 @@ void CListView::OnChooseDetails()
 
 void CListView::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (m_ViewParameters.Mode==LFViewDetails);
+	BOOL bEnable = (m_ViewParameters.Mode==LFViewDetails);
 
 	if (pCmdUI->m_nID==IDM_DETAILS_AUTOSIZE)
-		b &= (m_HeaderItemClicked!=-1);
+		bEnable &= (m_HeaderItemClicked!=-1);
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)

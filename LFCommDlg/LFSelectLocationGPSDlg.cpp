@@ -138,10 +138,10 @@ void LFSelectLocationGPSDlg::OnReset()
 
 void LFSelectLocationGPSDlg::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = TRUE;
 
 	if (pCmdUI->m_nID==IDM_SELECTGPS_RESET)
-		b &= (m_Location.Latitude!=0) || (m_Location.Longitude!=0);
+		bEnable &= (m_Location.Latitude!=0) || (m_Location.Longitude!=0);
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

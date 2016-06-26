@@ -31,7 +31,7 @@ LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFile
 			wcscat_s(PathLink, 2*MAX_PATH, NumberStr);
 			wcscat_s(PathLink, 2*MAX_PATH, L".lnk");
 
-			swprintf(NumberStr, 16, L" (%u)", ++Number);
+			swprintf_s(NumberStr, 16, L" (%u)", ++Number);
 		}
 		while (_waccess(PathLink, 0)==0);
 

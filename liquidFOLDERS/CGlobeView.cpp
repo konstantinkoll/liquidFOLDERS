@@ -1289,30 +1289,30 @@ void CGlobeView::OnGoogleEarth()
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (m_RenderContext.hRC!=NULL);
+	BOOL bEnable = (m_RenderContext.hRC!=NULL);
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GLOBE_ZOOMIN:
-		b &= m_GlobeTarget.Zoom>0;
+		bEnable &= m_GlobeTarget.Zoom>0;
 		break;
 
 	case IDM_GLOBE_ZOOMOUT:
-		b &= m_GlobeTarget.Zoom<1000;
+		bEnable &= m_GlobeTarget.Zoom<1000;
 		break;
 
 	case IDM_GLOBE_AUTOSIZE:
-		b &= m_GlobeTarget.Zoom!=600;
+		bEnable &= m_GlobeTarget.Zoom!=600;
 		break;
 
 	case IDM_GLOBE_SETTINGS:
-		b = TRUE;
+		bEnable = TRUE;
 		break;
 
 	case IDM_GLOBE_GOOGLEEARTH:
-		b &= (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
+		bEnable &= (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

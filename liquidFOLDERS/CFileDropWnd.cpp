@@ -375,32 +375,32 @@ void CFileDropWnd::OnStoreProperties()
 
 void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = TRUE;
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_STORE_SYNCHRONIZE:
-		b = (m_StoreType & LFTypeSynchronizeAllowed);
+		bEnable = (m_StoreType & LFTypeSynchronizeAllowed);
 		break;
 
 	case IDM_STORE_MAKEDEFAULT:
-		b = !(m_StoreType & LFTypeDefault);
+		bEnable = !(m_StoreType & LFTypeDefault);
 		break;
 
 	case IDM_STORE_IMPORTFOLDER:
-		b = !(m_StoreType & LFTypeNotMounted);
+		bEnable = !(m_StoreType & LFTypeNotMounted);
 		break;
 
 	case IDM_STORE_SHORTCUT:
-		b = (m_StoreType & LFTypeShortcutAllowed);
+		bEnable = (m_StoreType & LFTypeShortcutAllowed);
 		break;
 
 	case IDM_STORE_RENAME:
-		b = FALSE;
+		bEnable = FALSE;
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 

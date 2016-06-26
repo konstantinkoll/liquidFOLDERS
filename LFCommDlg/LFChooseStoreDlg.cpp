@@ -148,13 +148,13 @@ void LFChooseStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 void LFChooseStoreDlg::UpdateOkButton()
 {
-	INT Index = GetSelectedStore();
-	BOOL b = (Index!=-1);
+	const INT Index = GetSelectedStore();
+	BOOL bEnable = (Index!=-1);
 
-	if (m_Mounted && b)
-		b &= !((*m_pSearchResult)[Index]->Type & LFTypeNotMounted);
+	if (m_Mounted && bEnable)
+		bEnable &= !((*m_pSearchResult)[Index]->Type & LFTypeNotMounted);
 
-	GetDlgItem(IDOK)->EnableWindow(b);
+	GetDlgItem(IDOK)->EnableWindow(bEnable);
 }
 
 BOOL LFChooseStoreDlg::InitDialog()
@@ -372,34 +372,34 @@ void LFChooseStoreDlg::OnStoreProperties()
 
 void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL bEnable = FALSE;
 
 	INT Index = GetSelectedStore();
 	if (Index!=-1)
 	{
 		LFItemDescriptor* Item = (*m_pSearchResult)[Index];
-		b = ((Item->Type & LFTypeMask)==LFTypeStore);
+		bEnable = ((Item->Type & LFTypeMask)==LFTypeStore);
 
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_STORE_MAKEDEFAULT:
-			b = !(Item->Type & LFTypeDefault);
+			bEnable = !(Item->Type & LFTypeDefault);
 			break;
 
 		case IDM_STORE_SYNCHRONIZE:
 		case IDM_STORE_IMPORTFOLDER:
-			b = FALSE;
+			bEnable = FALSE;
 			break;
 
 		case IDM_STORE_SHORTCUT:
-			b = (Item->Type & LFTypeShortcutAllowed);
+			bEnable = (Item->Type & LFTypeShortcutAllowed);
 			break;
 
 		case IDM_STORE_RENAME:
-			b = (m_wndStoreList.GetEditControl()==NULL);
+			bEnable = (m_wndStoreList.GetEditControl()==NULL);
 			break;
 		}
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

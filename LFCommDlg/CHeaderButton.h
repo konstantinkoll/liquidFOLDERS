@@ -21,7 +21,7 @@ public:
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
-	void SetValue(LPCWSTR Value, BOOL ShowDropdown=TRUE, BOOL Repaint=TRUE);
+	void SetValue(LPCWSTR Value, BOOL Repaint=TRUE);
 	void GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth);
 	void GetCaption(CString& Caption, INT& CaptionWidth) const;
 

@@ -14,14 +14,12 @@
 CHeaderButton::CHeaderButton()
 	: CHoverButton()
 {
-	m_Hover = FALSE;
-	m_Value = _T("?");
-	m_ShowDropdown = TRUE;
+	m_Hover = m_ShowDropdown = FALSE;
 }
 
 BOOL CHeaderButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint)
 {
-	m_Caption = Caption;
+	m_Caption = m_Value = Caption;
 	m_Hint = Hint;
 
 	return CHoverButton::Create(Caption, pParentWnd, nID);
@@ -40,6 +38,7 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
+	const BOOL Disabled = (lpDrawItemStruct->itemState & ODS_DISABLED);
 	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
 	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
 
@@ -59,7 +58,7 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 		rectText.OffsetRect(1, 1);
 
 	// Text
-	COLORREF clrText = Themed ? m_Hover ? 0xCC6633 : 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF clrText = Themed ? Disabled ? 0xA4A2A0 : m_Hover ? 0xCC6633 : 0xCC3300 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT);
 	dc.SetTextColor(clrText);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
@@ -92,10 +91,10 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	DeleteObject(MemBitmap.Detach());
 }
 
-void CHeaderButton::SetValue(LPCWSTR Value, BOOL ShowDropdown, BOOL Repaint)
+void CHeaderButton::SetValue(LPCWSTR Value, BOOL Repaint)
 {
 	m_Value = Value;
-	m_ShowDropdown = ShowDropdown;
+	m_ShowDropdown = TRUE;
 
 	if (Repaint)
 		GetParent()->SendMessage(WM_ADJUSTLAYOUT);
@@ -103,16 +102,25 @@ void CHeaderButton::SetValue(LPCWSTR Value, BOOL ShowDropdown, BOOL Repaint)
 
 void CHeaderButton::GetPreferredSize(LPSIZE lpSize, INT& CaptionWidth)
 {
+	ASSERT(lpSize);
+
 	*lpSize = LFGetApp()->m_DefaultFont.GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
 
 	lpSize->cx += m_ShowDropdown ? 3*MARGIN+14 : 2*MARGIN+5;
 	lpSize->cy += 2*MARGIN;
 
-	CString Caption(m_Caption);
-	if (!Caption.IsEmpty())
-		Caption += _T(":");
+	if (m_ShowDropdown)
+	{
+		CString Caption(m_Caption);
+		if (!Caption.IsEmpty())
+			Caption += _T(":");
 
-	m_CaptionWidth = CaptionWidth = LFGetApp()->m_DefaultFont.GetTextExtent(Caption).cx;
+		m_CaptionWidth = CaptionWidth = LFGetApp()->m_DefaultFont.GetTextExtent(Caption).cx;
+	}
+	else
+	{
+		m_CaptionWidth = CaptionWidth = 0;
+	}
 }
 
 void CHeaderButton::GetCaption(CString& Caption, INT& CaptionWidth) const

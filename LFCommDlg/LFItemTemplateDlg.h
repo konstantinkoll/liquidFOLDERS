@@ -28,11 +28,12 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	afx_msg void OnChooseStore();
+	afx_msg void OnSkip();
+
 	afx_msg void OnToggleSort();
 	afx_msg void OnReset();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnSkip();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

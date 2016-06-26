@@ -23,7 +23,7 @@ CIcons CMainView::m_SmallIcons;
 CMainView::CMainView()
 	: CFrontstageWnd()
 {
-	p_wndFileView = NULL;
+	m_pWndFileView = NULL;
 	p_Filter = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
 	p_InspectorButton = NULL;
@@ -44,8 +44,8 @@ BOOL CMainView::Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard)
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The file view gets the command first
-	if (p_wndFileView)
-		if (p_wndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	if (m_pWndFileView)
+		if (m_pWndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
 	// Check Inspector
@@ -109,9 +109,9 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	if (pNewView)
 	{
 		CRect rect;
-		if (p_wndFileView)
+		if (m_pWndFileView)
 		{
-			p_wndFileView->GetWindowRect(rect);
+			m_pWndFileView->GetWindowRect(rect);
 			ScreenToClient(rect);
 		}
 		else
@@ -121,15 +121,15 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 
 		pNewView->Create(this, FileViewID, rect, p_RawFiles, p_CookedFiles, Data);
 
-		CFileView* pVictim = p_wndFileView;
+		CFileView* pVictim = m_pWndFileView;
 
-		p_wndFileView = pNewView;
-		p_wndFileView->SetOwner(GetOwner());
+		m_pWndFileView = pNewView;
+		m_pWndFileView->SetOwner(GetOwner());
 
 		if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
-			p_wndFileView->SetFocus();
+			m_pWndFileView->SetFocus();
 
-		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
+		RegisterDragDrop(m_pWndFileView->GetSafeHwnd(), &m_DropTarget);
 
 		if (pVictim)
 		{
@@ -146,7 +146,7 @@ void CMainView::SetHeaderButtons()
 	ASSERT(p_OrganizeButton);
 	ASSERT(p_ViewButton);
 
-	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy].Name, TRUE, FALSE);
+	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy].Name, FALSE);
 
 	CString tmpStr((LPCSTR)IDM_VIEW_FIRST+m_ViewID);
 	p_ViewButton->SetValue(tmpStr);
@@ -202,12 +202,12 @@ void CMainView::SetHeader()
 
 void CMainView::UpdateViewOptions()
 {
-	if (p_wndFileView)
+	if (m_pWndFileView)
 	{
 		FVPersistentData Data;
 		GetPersistentData(Data);
 		if (!CreateFileView(theApp.m_Views[m_Context].Mode, &Data))
-			p_wndFileView->UpdateViewOptions(m_Context);
+			m_pWndFileView->UpdateViewOptions(m_Context);
 
 		SetHeaderButtons();
 	}
@@ -231,11 +231,11 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 
 	if (!pCookedFiles)
 	{
-		if (p_wndFileView)
-			p_wndFileView->UpdateSearchResult(NULL, NULL, NULL);
+		if (m_pWndFileView)
+			m_pWndFileView->UpdateSearchResult(NULL, NULL, NULL);
 
 		RevokeDragDrop(m_wndHeaderArea.GetSafeHwnd());
-		RevokeDragDrop(p_wndFileView->GetSafeHwnd());
+		RevokeDragDrop(m_pWndFileView->GetSafeHwnd());
 	}
 	else
 	{
@@ -243,13 +243,13 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 
 		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, Data))
 		{
-			p_wndFileView->UpdateViewOptions(m_Context);
-			p_wndFileView->UpdateSearchResult(pRawFiles, pCookedFiles, Data);
+			m_pWndFileView->UpdateViewOptions(m_Context);
+			m_pWndFileView->UpdateSearchResult(pRawFiles, pCookedFiles, Data);
 		}
 
 		m_DropTarget.SetFilter(pFilter);
 		RegisterDragDrop(m_wndHeaderArea.GetSafeHwnd(), &m_DropTarget);
-		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
+		RegisterDragDrop(m_pWndFileView->GetSafeHwnd(), &m_DropTarget);
 	}
 
 	if (m_IsClipboard)
@@ -314,17 +314,17 @@ void CMainView::AdjustLayout(UINT nFlags)
 	const UINT HeaderHeight = m_wndHeaderArea.GetPreferredHeight();
 	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, HeaderHeight, nFlags);
 
-	if (p_wndFileView)
-		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+HeaderHeight, rect.Width()-InspectorWidth, rect.Height()-HeaderHeight-TaskHeight, nFlags);
+	if (m_pWndFileView)
+		m_pWndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+HeaderHeight, rect.Width()-InspectorWidth, rect.Height()-HeaderHeight-TaskHeight, nFlags);
 
 	m_Resizing = FALSE;
 }
 
 void CMainView::GetPersistentData(FVPersistentData& Data) const
 {
-	if (p_wndFileView)
+	if (m_pWndFileView)
 	{
-		p_wndFileView->GetPersistentData(Data);
+		m_pWndFileView->GetPersistentData(Data);
 	}
 	else
 	{
@@ -334,8 +334,8 @@ void CMainView::GetPersistentData(FVPersistentData& Data) const
 
 void CMainView::SelectNone()
 {
-	if (p_wndFileView)
-		p_wndFileView->SendMessage(WM_SELECTNONE);
+	if (m_pWndFileView)
+		m_pWndFileView->SendMessage(WM_SELECTNONE);
 }
 
 void CMainView::AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData) const
@@ -452,7 +452,7 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 	LFTransactionList* pTransactionList = BuildTransactionList();
 	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, Value1, Value2, Value3);
 
-	if (p_wndFileView)
+	if (m_pWndFileView)
 		if (pTransactionList->m_Modified)
 		{
 			FVPersistentData Data;
@@ -519,6 +519,8 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_COMMAND(IDM_ORGANIZE_TOGGLEAUTODIRS, OnToggleAutoDirs)
 	ON_UPDATE_COMMAND_UI(IDM_ORGANIZE_OPTIONS, OnUpdateHeaderCommands)
 	ON_UPDATE_COMMAND_UI(IDM_ORGANIZE_TOGGLEAUTODIRS, OnUpdateHeaderCommands)
+	ON_UPDATE_COMMAND_UI(IDM_VIEW, OnUpdateHeaderCommands)
+	ON_UPDATE_COMMAND_UI(IDM_ORGANIZE, OnUpdateHeaderCommands)
 	ON_MESSAGE(WM_GETMENU, OnGetMenu)
 	ON_COMMAND_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnSort)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnUpdateSortCommands)
@@ -643,10 +645,10 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMainView::OnDestroy()
 {
-	if (p_wndFileView)
+	if (m_pWndFileView)
 	{
-		p_wndFileView->DestroyWindow();
-		delete p_wndFileView;
+		m_pWndFileView->DestroyWindow();
+		delete m_pWndFileView;
 	}
 
 	CFrontstageWnd::OnDestroy();
@@ -666,10 +668,10 @@ void CMainView::OnSize(UINT nType, INT cx, INT cy)
 
 void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	if (p_wndFileView)
-		if (p_wndFileView->IsWindowEnabled())
+	if (m_pWndFileView)
+		if (m_pWndFileView->IsWindowEnabled())
 		{
-			p_wndFileView->SetFocus();
+			m_pWndFileView->SetFocus();
 			return;
 		}
 
@@ -678,35 +680,35 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 
 void CMainView::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
-	if (p_wndFileView)
-		p_wndFileView->SendMessage(WM_SELECTNONE);
+	if (m_pWndFileView)
+		m_pWndFileView->SendMessage(WM_SELECTNONE);
 
 	SetFocus();
 }
 
 void CMainView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	if (p_wndFileView)
-		p_wndFileView->SendMessage(WM_SELECTNONE);
+	if (m_pWndFileView)
+		m_pWndFileView->SendMessage(WM_SELECTNONE);
 
 	CFrontstageWnd::OnRButtonUp(nFlags, point);
 }
 
 void CMainView::OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis)
 {
-	if (p_wndFileView)
-		p_wndFileView->SendMessage(WM_MEASUREITEM, (WPARAM)nIDCtl, (LPARAM)lpmis);
+	if (m_pWndFileView)
+		m_pWndFileView->SendMessage(WM_MEASUREITEM, (WPARAM)nIDCtl, (LPARAM)lpmis);
 }
 
 void CMainView::OnDrawItem(INT nIDCtl, LPDRAWITEMSTRUCT lpdis)
 {
-	if (p_wndFileView)
-		p_wndFileView->SendMessage(WM_DRAWITEM, (WPARAM)nIDCtl, (LPARAM)lpdis);
+	if (m_pWndFileView)
+		m_pWndFileView->SendMessage(WM_DRAWITEM, (WPARAM)nIDCtl, (LPARAM)lpdis);
 }
 
 void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	if (!p_wndFileView)
+	if (!m_pWndFileView)
 		return;
 
 	if ((point.x<0) || (point.y<0))
@@ -750,7 +752,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		break;
 
 	default:
-		pMenu = p_wndFileView->GetViewContextMenu();
+		pMenu = m_pWndFileView->GetViewContextMenu();
 	}
 
 	// Create empty menu
@@ -783,7 +785,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 
 	// Insert "Select all" command
-	if (p_wndFileView->MultiSelectAllowed())
+	if (m_pWndFileView->MultiSelectAllowed())
 	{
 		if (pPopup->GetMenuItemCount())
 			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
@@ -1189,19 +1191,19 @@ void CMainView::OnStoresMaintainAll()
 
 void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_CookedFiles!=NULL);
+	BOOL bEnable = (p_CookedFiles!=NULL);
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_STORES_REPAIRCORRUPTEDINDEX:
-		b &= (LFGetStoreCount()>0);
+		bEnable &= (LFGetStoreCount()>0);
 		break;
 
 	default:
-		b &= (m_Context==LFContextStores);
+		bEnable &= (m_Context==LFContextStores);
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 
@@ -1233,14 +1235,14 @@ void CMainView::OnTrashEmpty()
 
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (m_Context==LFContextTrash) && (p_CookedFiles) ? p_CookedFiles->m_ItemCount : FALSE;
+	BOOL bEnable = (m_Context==LFContextTrash) && (p_CookedFiles) ? p_CookedFiles->m_ItemCount : FALSE;
 
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
 		if (pCmdUI->m_nID==IDM_TRASH_RESTOREALL)
-			b = FALSE;
+			bEnable = FALSE;
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 
@@ -1248,7 +1250,7 @@ void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (m_Context==LFContextFilters);
+	BOOL bEnable = (m_Context==LFContextFilters);
 
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
@@ -1257,12 +1259,12 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_FILTERS_EDIT:
-			b &= ((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+			bEnable &= ((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
 			break;
 		}
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 
@@ -1270,7 +1272,7 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL bEnable = FALSE;
 
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
@@ -1280,14 +1282,14 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_ITEM_OPEN:
-			b = (pItemDescriptor->NextFilter!=NULL) ||
+			bEnable = (pItemDescriptor->NextFilter!=NULL) ||
 				((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
 
 			break;
 		}
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 
@@ -1340,8 +1342,8 @@ void CMainView::OnStoreDelete()
 void CMainView::OnStoreRename()
 {
 	INT Index = GetSelectedItem();
-	if ((Index!=-1) && (p_wndFileView))
-		p_wndFileView->EditLabel(Index);
+	if ((Index!=-1) && (m_pWndFileView))
+		m_pWndFileView->EditLabel(Index);
 }
 
 void CMainView::OnStoreProperties()
@@ -1356,7 +1358,7 @@ void CMainView::OnStoreProperties()
 
 void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL bEnable = FALSE;
 
 	if (m_Context==LFContextStores)
 	{
@@ -1368,37 +1370,37 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				switch (pCmdUI->m_nID)
 				{
 				case IDM_STORE_SYNCHRONIZE:
-					b = (pItemDescriptor->Type & LFTypeSynchronizeAllowed);
+					bEnable = (pItemDescriptor->Type & LFTypeSynchronizeAllowed);
 					break;
 
 				case IDM_STORE_MAKEDEFAULT:
-					b = !(pItemDescriptor->Type & LFTypeDefault);
+					bEnable = !(pItemDescriptor->Type & LFTypeDefault);
 					break;
 
 				case IDM_STORE_IMPORTFOLDER:
-					b = !(pItemDescriptor->Type & LFTypeNotMounted);
+					bEnable = !(pItemDescriptor->Type & LFTypeNotMounted);
 					break;
 
 				case IDM_STORE_SHORTCUT:
-					b = (pItemDescriptor->Type & LFTypeShortcutAllowed);
+					bEnable = (pItemDescriptor->Type & LFTypeShortcutAllowed);
 					break;
 
 				case IDM_STORE_RENAME:
-					b = !p_wndFileView->IsEditing();
+					bEnable = !m_pWndFileView->IsEditing();
 					break;
 
 				default:
-					b = TRUE;
+					bEnable = TRUE;
 				}
 		}
 	}
 	else
 	{
 		if (pCmdUI->m_nID==IDM_STORE_IMPORTFOLDER)
-			b = m_StoreIDValid && (m_Context<=LFLastGroupContext);
+			bEnable = m_StoreIDValid && (m_Context<=LFLastGroupContext);
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 
@@ -1547,8 +1549,8 @@ void CMainView::OnFileDelete()
 void CMainView::OnFileRename()
 {
 	INT Index = GetSelectedItem();
-	if ((Index!=-1) && (p_wndFileView))
-		p_wndFileView->EditLabel(Index);
+	if ((Index!=-1) && (m_pWndFileView))
+		m_pWndFileView->EditLabel(Index);
 }
 
 void CMainView::OnFileProperties()
@@ -1572,66 +1574,66 @@ void CMainView::OnFileRestore()
 
 void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL bEnable = FALSE;
 
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	LFItemDescriptor* pItemDescriptor = (Index==-1) ? NULL : (*p_CookedFiles)[Index];
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_FILE_OPENWITH:
 		if (pItemDescriptor)
-			b = ((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile) && (pItemDescriptor->CoreAttributes.ContextID!=LFContextFilters);
+			bEnable = ((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile) && (pItemDescriptor->CoreAttributes.ContextID!=LFContextFilters);
 
 		break;
 
 	case IDM_FILE_OPENBROWSER:
 		if (pItemDescriptor)
-			b = ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) && (pItemDescriptor->CoreAttributes.URL[0]!='\0');
+			bEnable = ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) && (pItemDescriptor->CoreAttributes.URL[0]!='\0');
 
 		break;
 
 	case IDM_FILE_EDIT:
 		if (pItemDescriptor)
-			b = ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) && (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters);
+			bEnable = ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) && (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters);
 
 		break;
 
 	case IDM_FILE_REMEMBER:
-		b = m_FilesSelected && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
+		bEnable = m_FilesSelected && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
 		break;
 
 	case IDM_FILE_REMOVE:
-		b = m_FilesSelected && (m_Context==LFContextClipboard);
+		bEnable = m_FilesSelected && (m_Context==LFContextClipboard);
 		break;
 
 	case IDM_FILE_ARCHIVE:
-		b = m_FilesSelected && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
+		bEnable = m_FilesSelected && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
 		break;
 
 	case IDM_FILE_COPY:
 	case IDM_FILE_SHORTCUT:
 	case IDM_FILE_DELETE:
-		b = m_FilesSelected;
+		bEnable = m_FilesSelected;
 		break;
 
 	case IDM_FILE_RENAME:
 		if ((pItemDescriptor) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
-			b = ((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
+			bEnable = ((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
 
-		if (p_wndFileView)
-			b &= !p_wndFileView->IsEditing();
+		if (m_pWndFileView)
+			bEnable &= !m_pWndFileView->IsEditing();
 
 		break;
 
 	case IDM_FILE_PROPERTIES:
-		b = m_FilesSelected && !m_ShowInspectorPane;
+		bEnable = m_FilesSelected && !m_ShowInspectorPane;
 		break;
 
 	case IDM_FILE_RESTORE:
-		b = m_FilesSelected && ((m_Context==LFContextArchive) || (m_Context==LFContextTrash));
+		bEnable = m_FilesSelected && ((m_Context==LFContextArchive) || (m_Context==LFContextTrash));
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

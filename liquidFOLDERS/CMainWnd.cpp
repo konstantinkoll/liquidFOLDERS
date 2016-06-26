@@ -267,8 +267,9 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 			FVPersistentData Data;
 			m_wndMainView.GetPersistentData(Data);
 
+			// Goto root
 			if ((pFilter->Options.IsPersistent || (pFilter->Mode==LFFilterModeSearch)) && (!pFilter->Options.IsSubfolder))
-				while ((m_pBreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || (m_pActiveFilter->Mode==LFFilterModeSearch)) : FALSE))
+				while ((m_pBreadcrumbBack!=NULL) && (m_pActiveFilter!=NULL))
 				{
 					LFFreeFilter(m_pActiveFilter);
 					ConsumeBreadcrumbItem(&m_pBreadcrumbBack, &m_pActiveFilter, &Data);
@@ -614,20 +615,20 @@ void CMainWnd::OnNavigateReload()
 
 void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = !m_IsClipboard;
+	BOOL bEnable = !m_IsClipboard;
 
 	switch (pCmdUI->m_nID)
 	{
 	case ID_NAV_BACK:
-		b &= (m_pBreadcrumbBack!=NULL);
+		bEnable &= (m_pBreadcrumbBack!=NULL);
 		break;
 
 	case ID_NAV_FORWARD:
-		b &= (m_pBreadcrumbForward!=NULL);
+		bEnable &= (m_pBreadcrumbForward!=NULL);
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 
@@ -639,39 +640,34 @@ void CMainWnd::OnSwitchContext(UINT nID)
 
 	DeleteBreadcrumbs(&m_pBreadcrumbForward);
 
-	if (m_wndMainView.GetContext()==LFContextStores)
+	// Exit persistent filter or subfolder
+	while ((m_pBreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder) : FALSE))
 	{
-FilterFromScratch:
-		LFFilter* pFilter = LFAllocFilter();
-		pFilter->Mode = LFFilterModeSearch;
-		pFilter->QueryContext = (BYTE)nID;
+		LFFreeFilter(m_pActiveFilter);
 
-		NavigateTo(pFilter);
+		FVPersistentData Data;
+		ConsumeBreadcrumbItem(&m_pBreadcrumbBack, &m_pActiveFilter, &Data);
+	}
+
+	// Create filter
+	LFFilter* pFilter = LFAllocFilter();
+	pFilter->QueryContext = (BYTE)nID;
+
+	if (m_pActiveFilter)
+	{
+		strcpy_s(pFilter->StoreID, LFKeySize, m_pActiveFilter->StoreID);
+
+		if (pFilter->StoreID[0])
+			wcscpy_s(pFilter->OriginalName, LFKeySize, m_pActiveFilter->OriginalName);
+
+		pFilter->Mode = (m_pActiveFilter->Mode>LFFilterModeStores) ? m_pActiveFilter->Mode : LFFilterModeSearch;
 	}
 	else
-		if (m_pActiveFilter)
-		{
-			while ((m_pBreadcrumbBack!=NULL) && ((m_pActiveFilter!=NULL) ? (m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder || (m_pActiveFilter->Mode==LFFilterModeSearch)) : FALSE))
-			{
-				LFFreeFilter(m_pActiveFilter);
+	{
+		pFilter->Mode = LFFilterModeSearch;
+	}
 
-				FVPersistentData Data;
-				ConsumeBreadcrumbItem(&m_pBreadcrumbBack, &m_pActiveFilter, &Data);
-			}
-
-			if (!m_pActiveFilter)
-				goto FilterFromScratch;
-
-			if (m_pActiveFilter->Mode==LFFilterModeStores)
-				goto FilterFromScratch;
-
-			LFFilter* pFilter = LFAllocFilter(m_pActiveFilter);
-			pFilter->QueryContext = (BYTE)nID;
-			if (pFilter->StoreID[0]=='\0')
-				pFilter->OriginalName[0] = L'\0';
-
-			NavigateTo(pFilter, m_pBreadcrumbBack ? NAVMODE_RELOAD : NAVMODE_NORMAL);
-		}
+	NavigateTo(pFilter, m_pBreadcrumbBack ? NAVMODE_RELOAD : NAVMODE_NORMAL);
 
 	// Slide the filter pane away
 	HideSidebar();
@@ -684,13 +680,13 @@ void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)
 	ASSERT(pCmdUI->m_nID>=IDM_NAV_SWITCHCONTEXT);
 	ASSERT(pCmdUI->m_nID<=IDM_NAV_SWITCHCONTEXT+LFLastQueryContext);
 
-	BOOL b = !m_IsClipboard;
+	BOOL bEnable = !m_IsClipboard;
 
-	UINT Context = pCmdUI->m_nID-IDM_NAV_SWITCHCONTEXT;
+	const UINT Context = pCmdUI->m_nID-IDM_NAV_SWITCHCONTEXT;
 	if ((Context!=LFContextAllFiles) && (Context!=LFContextFilters))
-		b &= m_pStatistics ? m_pStatistics->FileCount[Context]>0 : FALSE;
+		bEnable &= m_pStatistics ? m_pStatistics->FileCount[Context]>0 : FALSE;
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 

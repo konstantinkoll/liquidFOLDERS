@@ -441,7 +441,7 @@ LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount)
 	}
 	else
 	{
-		swprintf(pStr, cCount, L"%u", u);
+		swprintf_s(pStr, cCount, L"%u", u);
 	}
 }
 
@@ -462,7 +462,7 @@ LFCORE_API void LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCoun
 	}
 	else
 	{
-		swprintf(pStr, cCount, L"%u/%u", f.Num, f.Denum);
+		swprintf_s(pStr, cCount, L"%u/%u", f.Num, f.Denum);
 	}
 }
 
@@ -470,14 +470,14 @@ LFCORE_API void LFDoubleToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	swprintf(pStr, cCount, L"%.2lf", d);
+	swprintf_s(pStr, cCount, L"%.2lf", d);
 }
 
 LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
 {
 	assert(pStr);
 
-	swprintf(pStr, cCount, FillZero ? L"%03u°%02u\'%02u\"%c" : L"%u°%u\'%u\"%c",
+	swprintf_s(pStr, cCount, FillZero ? L"%03u°%02u\'%02u\"%c" : L"%u°%u\'%u\"%c",
 		(UINT)(fabs(c)+ROUNDOFF),
 		(UINT)GetMinutes(c),
 		(UINT)(GetSeconds(c)+0.5),
@@ -537,7 +537,7 @@ LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount)
 	}
 	else
 	{
-		swprintf(pStr, cCount, L"%u kBit/s", (r+500)/1000);
+		swprintf_s(pStr, cCount, L"%u kBit/s", (r+500)/1000);
 	}
 }
 
@@ -553,7 +553,7 @@ LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount)
 	}
 	else
 	{
-		swprintf(pStr, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+		swprintf_s(pStr, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
 	}
 }
 
@@ -561,7 +561,7 @@ LFCORE_API void LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	swprintf(pStr, cCount, L"%.1lf Megapixel", d);
+	swprintf_s(pStr, cCount, L"%.1lf Megapixel", d);
 }
 
 LFCORE_API void LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, SIZE_T cCount)

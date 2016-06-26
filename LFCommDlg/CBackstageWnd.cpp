@@ -29,6 +29,7 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	hAccelerator = NULL;
 	m_pSidebarWnd = NULL;
 	m_ShowExpireCaption = m_ShowSidebar = m_SidebarAlwaysVisible = FALSE;
+	m_ForceSidebarAlwaysVisible = IsDialog;
 	m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
 	hBackgroundBrush = NULL;
 	m_pTaskbarList3 = NULL;
@@ -40,49 +41,67 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 	m_ShowCaption = ShowCaption;
 	m_ShowExpireCaption = LFIsSharewareExpired();
 
+	// Get size of work area
 	CRect rect;
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
-	rect.DeflateRect(32, 32);
 
-	if ((Size.cx<0) || (Size.cy<0))
-	{
-		rect.left = rect.right-rect.Width()/3;
-		rect.top = rect.bottom-rect.Height()/2;
-
-		rect.OffsetRect(16, 16);
-	}
-	else
-		if ((Size.cx>0) && (Size.cy>0))
-		{
-			rect.left = (rect.left+rect.right)/2-Size.cx;
-			rect.right = rect.left+Size.cx;
-
-			rect.top = (rect.top+rect.bottom)/2-Size.cy;
-			rect.bottom = rect.top+Size.cy;
-		}
-
-	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
-		dwStyle | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
-		return FALSE;
-
-	// Placement
+	// Window placement
 	WINDOWPLACEMENT WindowPlacement;
 	LFGetApp()->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &WindowPlacement, sizeof(WindowPlacement));
 
 	if (WindowPlacement.length==sizeof(WindowPlacement))
 	{
-		WindowPlacement.showCmd = SW_HIDE;
-
 		if ((Size.cx>0) && (Size.cy>0))
 		{
+			if (WindowPlacement.rcNormalPosition.left+Size.cx>rect.right)
+				WindowPlacement.rcNormalPosition.left = rect.right-Size.cx;
+
+			if (WindowPlacement.rcNormalPosition.top+Size.cy>rect.bottom)
+				WindowPlacement.rcNormalPosition.top = rect.bottom-Size.cy;
+
 			WindowPlacement.rcNormalPosition.right = WindowPlacement.rcNormalPosition.left+Size.cx;
 			WindowPlacement.rcNormalPosition.bottom = WindowPlacement.rcNormalPosition.top+Size.cy;
 		}
 
-		SetWindowPlacement(&WindowPlacement);
+		if (WindowPlacement.showCmd!=SW_MAXIMIZE)
+		{
+			rect.SetRect(WindowPlacement.rcNormalPosition.left, WindowPlacement.rcNormalPosition.top, WindowPlacement.rcNormalPosition.right, WindowPlacement.rcNormalPosition.bottom);
+
+			WindowPlacement.showCmd = SW_HIDE;
+		}
+	}
+	else
+	{
+		// Adjust work area
+		rect.DeflateRect(32, 32);
+
+		if ((Size.cx<0) || (Size.cy<0))
+		{
+			rect.left = rect.right-rect.Width()/3;
+			rect.top = rect.bottom-rect.Height()/2;
+
+			rect.OffsetRect(16, 16);
+		}
+		else
+			if ((Size.cx>0) && (Size.cy>0))
+			{
+				rect.left = (rect.left+rect.right)/2-Size.cx;
+				rect.right = rect.left+Size.cx;
+
+				rect.top = (rect.top+rect.bottom)/2-Size.cy;
+				rect.bottom = rect.top+Size.cy;
+			}
 	}
 
-	// Layout
+	// Create window
+	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
+		dwStyle | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
+		return FALSE;
+
+	if (WindowPlacement.length==sizeof(WindowPlacement))
+		SetWindowPlacement(&WindowPlacement);
+
+	// Adjust layout
 	AdjustLayout();
 
 	return TRUE;
@@ -254,7 +273,7 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 
 	if (m_pSidebarWnd)
 	{
-		if ((m_SidebarAlwaysVisible=(m_IsDialog || (m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5)))==TRUE)
+		if ((m_SidebarAlwaysVisible=(m_ForceSidebarAlwaysVisible || (m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5)))==TRUE)
 			m_ShowSidebar = FALSE;
 
 		const BOOL HasDocumentSheet = GetLayoutRect(rectLayout);

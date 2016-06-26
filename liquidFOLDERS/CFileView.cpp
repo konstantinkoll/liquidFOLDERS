@@ -8,21 +8,21 @@
 
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 {
-	BOOL b = theApp.m_Attributes[Attr].Sortable;
+	BOOL bSortable = theApp.m_Attributes[Attr].Sortable;
 
 	switch (ViewMode)
 	{
 	case LFViewCalendar:
 	case LFViewTimeline:
-		b &= (theApp.m_Attributes[Attr].Type==LFTypeTime);
+		bSortable &= (theApp.m_Attributes[Attr].Type==LFTypeTime);
 		break;
 
 	case LFViewGlobe:
-		b &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr].Type==LFTypeGeoCoordinates));
+		bSortable &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr].Type==LFTypeGeoCoordinates));
 		break;
 	}
 
-	return b;
+	return bSortable;
 }
 
 
@@ -1703,20 +1703,20 @@ void CFileView::OnSelectInvert()
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = TRUE;
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_SELECTALL:
 	case IDM_SELECTINVERT:
-		b &= m_AllowMultiSelect;
+		bEnable &= m_AllowMultiSelect;
 
 	case IDM_SELECTNONE:
-		b &= p_CookedFiles ? (p_CookedFiles->m_ItemCount!=NULL) : FALSE;
+		bEnable &= p_CookedFiles ? (p_CookedFiles->m_ItemCount!=NULL) : FALSE;
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
 
 void CFileView::OnDestroyEdit()

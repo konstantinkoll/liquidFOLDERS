@@ -214,7 +214,7 @@ void LFCreateStoreDlg::OnVolumeProperties()
 
 void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL bEnable = FALSE;
 
 	INT Index = GetSelectedVolume();
 	if (Index!=-1)
@@ -223,14 +223,14 @@ void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 		{
 		case IDM_VOLUME_FORMAT:
 		case IDM_VOLUME_EJECT:
-			b = LFGetSourceForVolume(m_DriveLetters[Index])!=LFTypeSourceUnknown;
+			bEnable = LFGetSourceForVolume(m_DriveLetters[Index])!=LFTypeSourceUnknown;
 			break;
 
 		case IDM_VOLUME_PROPERTIES:
-			b = TRUE;
+			bEnable = TRUE;
 			break;
 		}
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

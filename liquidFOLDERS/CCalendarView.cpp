@@ -436,7 +436,7 @@ void CCalendarView::OnGoToYear()
 
 void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = TRUE;
 
 	switch (pCmdUI->m_nID)
 	{
@@ -445,13 +445,13 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_CALENDAR_PREVYEAR:
-		b = (m_Year>MINYEAR);
+		bEnable = (m_Year>MINYEAR);
 		break;
 
 	case IDM_CALENDAR_NEXTYEAR:
-		b = (m_Year<MAXYEAR);
+		bEnable = (m_Year<MAXYEAR);
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

@@ -263,15 +263,15 @@ void LFEditFilterDlg::OnDeleteCondition()
 
 void LFEditFilterDlg::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = TRUE;
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_CONDITION_EDIT:
 	case IDM_CONDITION_DELETE:
-		b = (m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED)!=-1);
+		bEnable = (m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED)!=-1);
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

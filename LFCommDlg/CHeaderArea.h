@@ -17,7 +17,6 @@ public:
 	CHeaderArea();
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL Shadow=FALSE);
 	void SetText(LPCWSTR Caption, LPCWSTR Hint, BOOL Repaint=TRUE);
@@ -25,6 +24,8 @@ public:
 	CHeaderButton* AddButton(UINT nID=0);
 
 protected:
+	void AdjustLayout();
+
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -33,6 +34,7 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnAdjustLayout();
 	DECLARE_MESSAGE_MAP()
 

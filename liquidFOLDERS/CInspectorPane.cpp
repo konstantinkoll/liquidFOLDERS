@@ -626,7 +626,7 @@ void CInspectorPane::OnExportSummary()
 
 void CInspectorPane::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = TRUE;
 
 	switch (pCmdUI->m_nID)
 	{
@@ -640,9 +640,9 @@ void CInspectorPane::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	case IDM_INSPECTOR_EXPORTSUMMARY:
 	case IDM_INSPECTOR_EXPORTMETADATA:
-		b = m_Count;
+		bEnable = m_Count;
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

@@ -808,7 +808,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Store wählen..."
+    IDC_CHOOSESTORE         "Wählt einen anderen Store als Speicherort aus.\nStore wählen..."
 END
 
 STRINGTABLE 
@@ -1565,7 +1565,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Seleccionar store..."
+    IDC_CHOOSESTORE         "Seleccionar un store diferente para estos archivos.\nSeleccionar store..."
 END
 
 STRINGTABLE 
@@ -2321,7 +2321,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Choisissez le store..."
+    IDC_CHOOSESTORE         "Choisissez un autre store pour ces fichiers.\nChoisissez le store..."
 END
 
 STRINGTABLE 
@@ -3120,7 +3120,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Choose store..."
+    IDC_CHOOSESTORE         "Choose a different store for these files.\nChoose store..."
 END
 
 STRINGTABLE 
