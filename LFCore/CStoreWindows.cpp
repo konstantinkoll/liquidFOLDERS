@@ -239,7 +239,7 @@ BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pSt
 	if (m_pFileImportList)
 		for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
 			if (!(*m_pFileImportList)[a].Processed)
-				if (wcscmp(&Path[4], (*m_pFileImportList)[a].Path)==0)
+				if (_wcsicmp(&Path[4], (*m_pFileImportList)[a].Path)==0)
 				{
 					(*m_pFileImportList)[a].Processed = TRUE;
 

@@ -40,7 +40,6 @@ protected:
 private:
 	CIcons* p_ButtonIcons;
 	CIcons* p_TooltipIcons;
-	INT m_IconSize;
 	UINT m_FirstRight;
 	LFDynArray<CTaskButton*, 8, 8> m_Buttons;
 	INT m_BackBufferH;

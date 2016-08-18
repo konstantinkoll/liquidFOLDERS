@@ -46,7 +46,6 @@ public:
 	CBackstageSidebar();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts=FALSE);
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts);
@@ -67,6 +66,7 @@ protected:
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT Index);
 	void PressItem(INT Index);
+	void AdjustLayout();
 
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

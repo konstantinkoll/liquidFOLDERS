@@ -27,7 +27,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, 
 {
 	// Load icons
 	p_ButtonIcons = &SmallIcons;
-	m_IconSize = SmallIcons.Load(ResID);
+	SmallIcons.Load(ResID);
 
 	p_TooltipIcons = &LargeIcons;
 	LargeIcons.Load(ResID, LI_FORTOOLTIPS);
@@ -44,7 +44,7 @@ BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
 
 UINT CTaskbar::GetPreferredHeight() const
 {
-	return 4*BORDER+max(m_IconSize, LFGetApp()->m_DefaultFont.GetFontHeight()-2)+(IsCtrlThemed() ? 3 : 2);
+	return 4*BORDER+max(p_ButtonIcons->GetIconSize(), LFGetApp()->m_DefaultFont.GetFontHeight()-2)+(IsCtrlThemed() ? 3 : 2);
 }
 
 CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL ForceSmall)
@@ -67,7 +67,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	}
 
 	CTaskButton* pTaskButton = new CTaskButton();
-	pTaskButton->Create(this, nID, Caption, Hint, p_ButtonIcons, p_TooltipIcons, m_IconSize, IconID, AddRight | ForceSmall, !ForceIcon);
+	pTaskButton->Create(this, nID, Caption, Hint, p_ButtonIcons, p_TooltipIcons, IconID, AddRight | ForceSmall, !ForceIcon);
 
 	if (AddRight && (m_FirstRight==-1))
 		m_FirstRight = m_Buttons.m_ItemCount;

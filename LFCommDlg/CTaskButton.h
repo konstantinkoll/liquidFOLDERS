@@ -12,7 +12,7 @@
 class CTaskButton : public CHoverButton
 {
 public:
-	BOOL Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
+	BOOL Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconID, BOOL ForceSmall, BOOL HideIcon);
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
@@ -27,11 +27,10 @@ protected:
 	CIcons* p_TooltipIcons;
 	CString m_Caption;
 	CString m_Hint;
-	BOOL m_Small;
 	INT m_IconID;
+	BOOL m_Small;
 
 private:
-	INT m_IconSize;
 	BOOL m_ForceSmall;
 	BOOL m_HideIcon;
 };

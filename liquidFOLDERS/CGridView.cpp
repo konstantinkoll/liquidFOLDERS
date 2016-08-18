@@ -72,12 +72,12 @@ Restart:
 
 	INT Category = -1;
 
-	INT gutter = 0;
+	INT Gutter = 0;
 	if ((Justify) && (!ForceBreak))
 	{
 		INT Width = (rectWindow.Width()-gva.mx-gva.gutterx);
 		INT cColumns = Width/(cx+gva.gutterx);
-		gutter = cColumns>1 ? (Width-cx-gva.gutterx)/(cColumns-1)-(cx+gva.gutterx) : 0;
+		Gutter = cColumns>1 ? (Width-cx-gva.gutterx)/(cColumns-1)-(cx+gva.gutterx) : 0;
 	}
 
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)

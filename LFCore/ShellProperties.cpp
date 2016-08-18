@@ -254,9 +254,22 @@ void SetFromFindData(LFCoreAttributes* pCoreAttributes, WIN32_FIND_DATA* pFindDa
 	assert(pCoreAttributes);
 	assert(pFindData);
 
+	// Set attributes
 	pCoreAttributes->FileSize = (((INT64)pFindData->nFileSizeHigh) << 32) | pFindData->nFileSizeLow;
 	pCoreAttributes->CreationTime = pFindData->ftCreationTime;
 	pCoreAttributes->FileTime = pFindData->ftLastWriteTime;
+
+	// Adjust files with modification time older than creation time
+	ULARGE_INTEGER CreationTime;
+	CreationTime.LowPart = pCoreAttributes->CreationTime.dwLowDateTime;
+	CreationTime.HighPart = pCoreAttributes->CreationTime.dwHighDateTime;
+
+	ULARGE_INTEGER FileTime;
+	FileTime.LowPart = pCoreAttributes->FileTime.dwLowDateTime;
+	FileTime.HighPart = pCoreAttributes->FileTime.dwHighDateTime;
+
+	if (CreationTime.QuadPart>FileTime.QuadPart)
+		pCoreAttributes->CreationTime = pCoreAttributes->FileTime;
 }
 
 

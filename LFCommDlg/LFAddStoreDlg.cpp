@@ -149,13 +149,12 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	::GetWindowText(pDrawButtonForeground->lpDrawItemStruct->hwndItem, Hint, 256);
 
 	CRect rect(pDrawButtonForeground->lpDrawItemStruct->rcItem);
+	if (pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_SELECTED)
+		rect.OffsetRect(1, 1);
 
 	INT Height = rect.Height()-2*BORDER;
 	INT IconSize = (Height>=128) ? 128 : (Height>=96) ? 96 : 48;
 	CImageList* pIcons = (IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : (IconSize==96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
-
-	if (pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_SELECTED)
-		rect.OffsetRect(1, 1);
 
 	// Icon
 	CPoint pt(rect.left+BORDER, rect.top+(rect.Height()-IconSize)/2);
