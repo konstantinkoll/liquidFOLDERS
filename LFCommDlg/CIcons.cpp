@@ -19,7 +19,7 @@ BYTE CIcons::m_GammaTableLightBackground[256];
 
 CIcons::CIcons()
 {
-	hBitmapNormal =hBitmapShadow = hBitmapHot = NULL;
+	hBitmapNormal = hBitmapShadow = hBitmapHot = hBitmapDisabled = NULL;
 	m_MaxIcons = m_IconCount = 0;
 	m_UseDarkBackgroundGamma = FALSE;
 }
@@ -29,6 +29,7 @@ CIcons::~CIcons()
 	DeleteObject(hBitmapNormal);
 	DeleteObject(hBitmapShadow);
 	DeleteObject(hBitmapHot);
+	DeleteObject(hBitmapDisabled);
 }
 
 void CIcons::Load(UINT nID, CSize Size)
@@ -171,14 +172,20 @@ INT CIcons::AddIcon(CImageList& ImageList, INT nImage)
 	return -1;
 }
 
-void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot, BOOL Shadow)
+void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot, BOOL Disabled, BOOL Shadow)
 {
 	ASSERT(nImage<(INT)m_IconCount);
 
 	if (nImage>=0)
 	{
-		if (Hot || Shadow)
-			Finish();
+		if (Shadow)
+			CreateIconsShadow();
+
+		if (Hot)
+			CreateIconsHot();
+
+		if (Disabled)
+			CreateIconsDisabled();
 
 		CDC dcMem;
 		dcMem.CreateCompatibleDC(&dc);
@@ -189,11 +196,11 @@ void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot, BOOL Shadow)
 		{
 			hOldBitmap = (HBITMAP)dcMem.SelectObject(hBitmapShadow);
 			dc.AlphaBlend(x, y-1, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BF);
-			dcMem.SelectObject(Hot ? hBitmapHot : hBitmapNormal);
+			dcMem.SelectObject(Disabled ? hBitmapDisabled : Hot ? hBitmapHot : hBitmapNormal);
 		}
 		else
 		{
-			hOldBitmap = (HBITMAP)dcMem.SelectObject(Hot ? hBitmapHot : hBitmapNormal);
+			hOldBitmap = (HBITMAP)dcMem.SelectObject(Disabled ? hBitmapDisabled : Hot ? hBitmapHot : hBitmapNormal);
 		}
 
 		dc.AlphaBlend(x, y, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BF);
@@ -210,7 +217,7 @@ HICON CIcons::ExtractIcon(INT nImage, BOOL Shadow)
 	if (nImage>=0)
 	{
 		if (Shadow)
-			Finish();
+			CreateIconsShadow();
 
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
@@ -218,7 +225,7 @@ HICON CIcons::ExtractIcon(INT nImage, BOOL Shadow)
 		HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx, m_Size.cy+(Shadow ? 1 : 0));
 		HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-		Draw(dc, 0, Shadow ? 1 : 0, nImage, FALSE, Shadow);
+		Draw(dc, 0, Shadow ? 1 : 0, nImage, FALSE, FALSE, Shadow);
 
 		dc.SelectObject(hOldBitmap);
 
@@ -278,11 +285,10 @@ HBITMAP CIcons::CreateCopy()
 	return hBitmapCopy;
 }
 
-void CIcons::Finish()
+void CIcons::CreateIconsShadow()
 {
 	ASSERT(hBitmapNormal);
 
-	// Shadow
 	if (!hBitmapShadow)
 	{
 		hBitmapShadow = CreateCopy();
@@ -298,8 +304,12 @@ void CIcons::Finish()
 				*(Ptr++) &= 0xFF000000;
 		}
 	}
+}
 
-	// Hot
+void CIcons::CreateIconsHot()
+{
+	ASSERT(hBitmapNormal);
+
 	if (!hBitmapHot)
 	{
 		// Gamma table
@@ -315,7 +325,7 @@ void CIcons::Finish()
 			}
 		}
 
-		// Applay HOTGAMMA
+		// Applay gamma
 		hBitmapHot = CreateCopy();
 		ASSERT(hBitmapHot);
 
@@ -328,9 +338,37 @@ void CIcons::Finish()
 
 			for (LONG Count=0; Count<Length; Count++)
 			{
-				Ptr->rgbRed = pGammaTable[Ptr->rgbRed];
-				Ptr->rgbGreen = pGammaTable[Ptr->rgbGreen];
 				Ptr->rgbBlue = pGammaTable[Ptr->rgbBlue];
+				Ptr->rgbGreen = pGammaTable[Ptr->rgbGreen];
+				Ptr->rgbRed = pGammaTable[Ptr->rgbRed];
+
+				Ptr++;
+			}
+		}
+	}
+}
+
+void CIcons::CreateIconsDisabled()
+{
+	ASSERT(hBitmapNormal);
+
+	if (!hBitmapDisabled)
+	{
+		hBitmapDisabled = CreateCopy();
+		ASSERT(hBitmapDisabled);
+
+		BITMAP Bitmap;
+		if (GetObject(hBitmapDisabled, sizeof(Bitmap), &Bitmap))
+		{
+			const LONG Length = Bitmap.bmWidth*Bitmap.bmHeight;
+			RGBQUAD* Ptr = (RGBQUAD*)Bitmap.bmBits;
+
+			for (LONG Count=0; Count<Length; Count++)
+			{
+				const BYTE Value = (Ptr->rgbBlue+4*Ptr->rgbRed+5*Ptr->rgbGreen)/30;
+
+				Ptr->rgbBlue = Ptr->rgbGreen = Ptr->rgbRed = Value;
+				Ptr->rgbReserved /= 3;
 
 				Ptr++;
 			}

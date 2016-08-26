@@ -14,6 +14,7 @@ public:
 	CHoverButton();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	BOOL Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nID);
 

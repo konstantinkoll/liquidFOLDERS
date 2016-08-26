@@ -56,7 +56,7 @@ LFFileImportList::LFFileImportList()
 	m_LastError = LFOk;
 }
 
-BOOL LFFileImportList::AddPath(WCHAR* Path)
+BOOL LFFileImportList::AddPath(WCHAR* Path, WIN32_FIND_DATA* pFindFileData)
 {
 	assert(Path);
 
@@ -70,6 +70,17 @@ BOOL LFFileImportList::AddPath(WCHAR* Path)
 		WCHAR* Ptr = &Item.Path[wcslen(Item.Path)-1];
 		if (*Ptr==L'\\')
 			*Ptr = L'\0';
+	}
+
+	// FindFileData
+	if (pFindFileData)
+	{
+		Item.FindFileData = *pFindFileData;
+		Item.FindFileDataPresent = TRUE;
+	}
+	else
+	{
+		Item.FindFileDataPresent = TRUE;
 	}
 
 	Item.LastError = LFOk;
@@ -125,7 +136,14 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 								wcscat_s(Filename, MAX_PATH, L"\\");
 								wcscat_s(Filename, MAX_PATH, FindFileData.cFileName);
 
-								AddPath(Filename);
+								AddPath(Filename, &FindFileData);
+
+								// Update
+								if (pProgress)
+								{
+									pProgress->MinorCount = m_ItemCount;
+									UpdateProgress(pProgress);
+								}
 							}
 						}
 						while (FindNextFile(hFind, &FindFileData)!=0);
@@ -149,6 +167,80 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 	// Progress
 	if (pProgress)
 		pProgress->MinorCount = m_ItemCount;
+}
+
+void LFFileImportList::Heap(UINT Wurzel, const UINT Anz)
+{
+	LFFileImportListItem Item = m_Items[Wurzel];
+	UINT Parent = Wurzel;
+	UINT Child;
+
+	while ((Child=(Parent+1)*2)<Anz)
+	{
+		if (_wcsicmp(m_Items[Child-1].Path, m_Items[Child].Path)>0)
+			Child--;
+
+		m_Items[Parent] = m_Items[Child];
+		Parent = Child;
+	}
+
+	if (Child==Anz)
+	{
+		if (_wcsicmp(m_Items[--Child].Path, Item.Path)>=0)
+		{
+			m_Items[Parent] = m_Items[Child];
+			m_Items[Child] = Item;
+
+			return;
+		}
+
+		Child = Parent;
+	}
+	else
+	{
+		if (Parent==Wurzel)
+			return;
+
+		if (_wcsicmp(m_Items[Parent].Path, Item.Path)>=0)
+		{
+			m_Items[Parent] = Item;
+
+			return;
+		}
+
+		Child = (Parent-1)/2;
+	}
+
+	while (Child!=Wurzel)
+	{
+		Parent = (Child-1)/2;
+
+		if (_wcsicmp(m_Items[Parent].Path, Item.Path)>=0)
+			break;
+
+		m_Items[Child] = m_Items[Parent];
+		Child = Parent;
+	}
+
+	m_Items[Child] = Item;
+}
+
+void LFFileImportList::Sort()
+{
+	if (m_ItemCount>1)
+	{
+		for (INT a=m_ItemCount/2-1; a>=0; a--)
+			Heap(a, m_ItemCount);
+
+		for (INT a=m_ItemCount-1; a>0; a--)
+		{
+			LFFileImportListItem Temp = m_Items[0];
+			m_Items[0] = m_Items[a];
+			m_Items[a] = Temp;
+
+			Heap(0, a);
+		}
+	}
 }
 
 WCHAR* LFFileImportList::GetFileName(UINT Index)

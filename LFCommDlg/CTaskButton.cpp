@@ -37,6 +37,7 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
+	const BOOL Disabled = (lpDrawItemStruct->itemState & ODS_DISABLED);
 	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
 	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
 
@@ -59,7 +60,7 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	{
 		const INT IconSize = p_ButtonIcons->GetIconSize();
 
-		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-IconSize)/2+(Selected ? 1 : 0), m_IconID, m_Hover);
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-IconSize)/2+(Selected ? 1 : 0), m_IconID, m_Hover, Disabled);
 		rectText.left += IconSize+BORDER;
 	}
 

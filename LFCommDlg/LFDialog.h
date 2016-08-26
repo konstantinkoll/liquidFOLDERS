@@ -6,7 +6,7 @@
 #include "CBackstageWnd.h"
 #include "CCategory.h"
 #include "CDesktopDimmer.h"
-#include "CWhiteButton.h"
+#include "CHoverButton.h"
 #include "LFDynArray.h"
 
 
@@ -70,7 +70,7 @@ private:
 	HICON hIconShield;
 	INT m_ShieldSize;
 	INT m_UACHeight;
-	LFDynArray<CWhiteButton*, 8, 8> m_Buttons;
+	LFDynArray<CHoverButton*, 8, 8> m_Buttons;
 	LFDynArray<DialogControl, 2, 2> m_BottomRightControls;
 	DialogControl m_BottomLeftControl;
 	CPoint m_LastSize;

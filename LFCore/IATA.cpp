@@ -77,12 +77,12 @@ LFCORE_API BOOL LFIATAGetAirportByCode(const CHAR* Code, LFAirport** ppAirport)
 
 	while (First<=Last)
 	{
-		INT Mid = (First+Last)/2;
+		const INT Mid = (First+Last)/2;
 
 		*ppAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
 
 		INT Result = strcmp((*ppAirport)->Code, Code);
-		if (Result==0)
+		if (!Result)
 			return TRUE;
 
 		if (Result<0)

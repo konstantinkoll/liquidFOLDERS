@@ -333,6 +333,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 	case LFTransactionTypeArchive:
 		m_pIndexMain->UpdateItemState(pTransactionList, LFFlagArchive, &TransactionTime);
+
 		if (m_pIndexAux)
 			m_pIndexAux->UpdateItemState(pTransactionList, LFFlagArchive, &TransactionTime);
 
@@ -340,6 +341,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 	case LFTransactionTypePutInTrash:
 		m_pIndexMain->UpdateItemState(pTransactionList, LFFlagTrash, &TransactionTime);
+
 		if (m_pIndexAux)
 			m_pIndexAux->UpdateItemState(pTransactionList, LFFlagTrash, &TransactionTime);
 
@@ -347,6 +349,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 	case LFTransactionTypeRestore:
 		m_pIndexMain->UpdateItemState(pTransactionList, 0, &TransactionTime);
+
 		if (m_pIndexAux)
 			m_pIndexAux->UpdateItemState(pTransactionList, 0, &TransactionTime);
 
@@ -354,6 +357,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 	case LFTransactionTypeUpdate:
 		m_pIndexMain->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3);
+
 		if (m_pIndexAux)
 			m_pIndexAux->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3);
 
@@ -361,6 +365,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 	case LFTransactionTypeDelete:
 		m_pIndexMain->Delete(pTransactionList, pProgress);
+
 		if (m_pIndexAux)
 			m_pIndexAux->Delete(pTransactionList, pProgress);
 
@@ -531,7 +536,7 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
 	return (Error==ERROR_NO_MORE_FILES) || (Error==ERROR_FILE_NOT_FOUND) || (Error==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
 }
 
-BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, void* /*pStoreData*/, LFProgress* /*pProgress*/)
+BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, void* /*pStoreData*/)
 {
 	// Always keep file
 	return TRUE;

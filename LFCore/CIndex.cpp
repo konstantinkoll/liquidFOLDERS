@@ -668,8 +668,10 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	// Update attributes
 	if (pVariantData1)
 		LFSetAttributeVariantData(pItemDescriptor, *pVariantData1);
+
 	if (pVariantData2)
 		LFSetAttributeVariantData(pItemDescriptor, *pVariantData2);
+
 	if (pVariantData3)
 		LFSetAttributeVariantData(pItemDescriptor, *pVariantData3);
 
@@ -737,9 +739,17 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 			return LFCancel;
 	}
 
-	if (p_Store->SynchronizeFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pProgress))
+	if (p_Store->SynchronizeFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM)))
 	{
 		m_pTable[IDXTABLE_MASTER]->MakeDirty();
+
+		// Progress
+		if (pProgress)
+		{
+			pProgress->MinorCurrent++;
+			if (UpdateProgress(pProgress))
+				return LFCancel;
+		}
 	}
 	else
 	{
@@ -749,11 +759,12 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 
 		REMOVE_STATS();
 		m_pTable[IDXTABLE_MASTER]->Invalidate(PtrM);
-	}
 
-	if (pProgress)
-		if (pProgress->UserAbort)
-			return LFCancel;
+		// Progress
+		if (pProgress)
+			if (pProgress->UserAbort)
+				return LFCancel;
+	}
 
 	END_ITERATEALL();
 
@@ -795,6 +806,7 @@ void CIndex::Delete(LFTransactionList* pTransactionList, LFProgress* pProgress)
 
 	pTransactionList->SetError(ItemID, Result, pProgress);
 
+	// Progress
 	if (pProgress)
 		if (pProgress->UserAbort)
 			return;

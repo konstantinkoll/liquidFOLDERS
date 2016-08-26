@@ -420,7 +420,7 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 		if (IsPushbutton(pChildWnd))
 		{
-			CWhiteButton* pButton = new CWhiteButton();
+			CHoverButton* pButton = new CHoverButton();
 			pButton->SubclassWindow(pChildWnd->GetSafeHwnd());
 			pButton->ModifyStyle(BS_TYPEMASK, BS_OWNERDRAW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 
@@ -470,7 +470,7 @@ void LFDialog::OnDestroy()
 {
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CWhiteButton* pButton = m_Buttons[a];
+		CHoverButton* pButton = m_Buttons[a];
 
 		pButton->UnsubclassWindow();
 		delete pButton;

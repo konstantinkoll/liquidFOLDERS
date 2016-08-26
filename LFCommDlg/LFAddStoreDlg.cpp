@@ -138,19 +138,19 @@ void LFAddStoreDlg::OnTimer(UINT_PTR nIDEvent)
 void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_DRAWBUTTONFOREGROUND* pDrawButtonForeground = (NM_DRAWBUTTONFOREGROUND*)pNMHDR;
+	LPDRAWITEMSTRUCT lpDrawItemStruct = pDrawButtonForeground->lpDrawItemStruct;
 
-	const UINT Source = pDrawButtonForeground->lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
+	// Content
+	CRect rect(lpDrawItemStruct->rcItem);
+
+	const UINT Source = lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
 	ASSERT(Source<=LFSourceCount);
 
 	WCHAR Caption[256];
 	LFGetSourceName(Caption, 256, m_Types[Source], FALSE);
 
 	WCHAR Hint[256];
-	::GetWindowText(pDrawButtonForeground->lpDrawItemStruct->hwndItem, Hint, 256);
-
-	CRect rect(pDrawButtonForeground->lpDrawItemStruct->rcItem);
-	if (pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_SELECTED)
-		rect.OffsetRect(1, 1);
+	::GetWindowText(lpDrawItemStruct->hwndItem, Hint, 256);
 
 	INT Height = rect.Height()-2*BORDER;
 	INT IconSize = (Height>=128) ? 128 : (Height>=96) ? 96 : 48;
@@ -158,11 +158,12 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 
 	// Icon
 	CPoint pt(rect.left+BORDER, rect.top+(rect.Height()-IconSize)/2);
-	pIcons->DrawEx(pDrawButtonForeground->pDC, m_Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, pDrawButtonForeground->lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
+	pIcons->DrawEx(pDrawButtonForeground->pDC, m_Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
 
 	rect.left += IconSize+BORDER;
 	rect.DeflateRect(BORDER, BORDER);
 
+	// Text
 	const INT HeightCaption = LFGetApp()->m_LargeFont.GetFontHeight()*3/2;
 
 	CFont* pOldFont = pDrawButtonForeground->pDC->SelectObject(&LFGetApp()->m_DefaultFont);

@@ -28,7 +28,7 @@ public:
 	INT AddIcon(HICON hIcon);
 	INT AddIcon(CImageList& ImageList, INT nImage);
 	void SetGammaMode(BOOL UseDarkBackgroundGamma);
-	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot=FALSE, BOOL Shadow=FALSE);
+	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot=FALSE, BOOL Disabled=FALSE, BOOL Shadow=FALSE);
 	HICON ExtractIcon(INT nImage, BOOL Shadow=FALSE);
 	HIMAGELIST ExtractImageList() const;
 
@@ -38,11 +38,14 @@ protected:
 	HBITMAP hBitmapNormal;
 	HBITMAP hBitmapShadow;
 	HBITMAP hBitmapHot;
+	HBITMAP hBitmapDisabled;
 	CSize m_Size;
 
 private:
 	HBITMAP CreateCopy();
-	void Finish();
+	void CreateIconsShadow();
+	void CreateIconsHot();
+	void CreateIconsDisabled();
 
 	UINT m_IconCount;
 	UINT m_MaxIcons;

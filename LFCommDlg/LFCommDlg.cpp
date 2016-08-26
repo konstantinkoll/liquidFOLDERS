@@ -715,13 +715,10 @@ void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 	dc.SetTextColor(Themed ? Disabled ? 0xA0A0A0 : Focused || Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT));
 }
 
-void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected, BOOL ShowKeyboardCues)
+void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL ShowKeyboardCues)
 {
 	CRect rect(lpDrawItemStruct->rcItem);
 	rect.DeflateRect(2, 2);
-
-	if (Selected)
-		rect.OffsetRect(1, 1);
 
 	WCHAR Caption[256];
 	::GetWindowText(lpDrawItemStruct->hwndItem, Caption, 256);

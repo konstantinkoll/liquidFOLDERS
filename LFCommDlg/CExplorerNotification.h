@@ -4,7 +4,7 @@
 
 #pragma once
 #include "CFrontstageWnd.h"
-#include "CWhiteButton.h"
+#include "CHoverButton.h"
 
 
 // CExplorerNotification
@@ -55,7 +55,7 @@ private:
 	CRect m_RectClose;
 	BOOL m_CloseHover;
 	BOOL m_ClosePressed;
-	CWhiteButton m_wndCommandButton;
+	CHoverButton m_wndCommandButton;
 	CString m_CommandText;
 	UINT m_Command;
 	UINT m_RightMargin;

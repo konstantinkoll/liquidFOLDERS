@@ -12,6 +12,7 @@ f
 LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
 	: LFDialog(IDD_PROGRESS, pParentWnd, TRUE)
 {
+	ZeroMemory(&m_Progress, sizeof(m_Progress));
 	m_Abort = FALSE;
 
 	p_ThreadProc = pThreadProc;
@@ -26,6 +27,65 @@ void LFProgressDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESSBAR, m_wndProgress);
 }
 
+void LFProgressDlg::UpdateProgress()
+{
+	CSingleLock ProgressLock(&m_Mutex);
+	ProgressLock.Lock();
+
+	// Caption
+	GetDlgItem(IDC_CAPTION)->SetWindowText(m_Progress.Object);
+
+	// Progress bar
+	ASSERT(m_Progress.ProgressState>=LFProgressWorking);
+	ASSERT(m_Progress.ProgressState<=LFProgressCancelled);
+
+	m_wndProgress.SendMessage(0x410, m_Progress.ProgressState);
+	//m_wndProgress.RedrawWindow();
+
+	UINT nUpper;
+	UINT nPos;
+	UINT nCurrent;
+	UINT nOf;
+
+	ASSERT(m_Progress.MinorCount>0);
+	ASSERT(m_Progress.MinorCurrent>=0);
+	ASSERT(m_Progress.MinorCurrent<=m_Progress.MinorCount);
+
+	if (m_Progress.MajorCount>0)
+	{
+		ASSERT(m_Progress.MajorCount>0);
+		ASSERT(m_Progress.MajorCurrent>=0);
+		ASSERT(m_Progress.MajorCurrent<max(1, m_Progress.MajorCount));
+
+		nUpper = m_Progress.MajorCount*128;
+		nPos = m_Progress.MajorCurrent*128+(m_Progress.MinorCurrent*128)/m_Progress.MinorCount;
+		nCurrent = m_Progress.MajorCurrent+1;
+		nOf = m_Progress.MajorCount;
+	}
+	else
+	{
+		nUpper = m_Progress.MinorCount;
+		nPos = m_Progress.MinorCurrent;
+		nCurrent = m_Progress.MinorCurrent+1;
+		nOf = m_Progress.NoMinorCounter ? 0 : m_Progress.MinorCount;
+	}
+
+	m_wndProgress.SetRange32(0, nUpper);
+	m_wndProgress.SetPos(nPos);
+
+	// Taskbar
+	LFSetTaskbarProgress(this, nPos, nUpper, m_Progress.ProgressState==LFProgressError ? TBPF_ERROR : m_Progress.ProgressState==LFProgressCancelled ? TBPF_PAUSED : TBPF_NORMAL);
+
+	// Counter
+	CString tmpStr(_T(""));
+	if ((nCurrent<=nOf) && (!m_Abort))
+		tmpStr.Format(nOf==1 ? m_XofY_Singular : m_XofY_Plural, nCurrent, nOf);
+
+	GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(tmpStr);
+
+	ProgressLock.Unlock();
+}
+
 BOOL LFProgressDlg::InitDialog()
 {
 	if (p_ThreadProc)
@@ -36,15 +96,38 @@ BOOL LFProgressDlg::InitDialog()
 		CreateThread(NULL, 0, p_ThreadProc, p_Parameters, 0, NULL);
 	}
 
+	SetTimer(1, 25, NULL);
+
 	return TRUE;
 }
 
 
 BEGIN_MESSAGE_MAP(LFProgressDlg, LFDialog)
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
 	ON_COMMAND(IDOK, OnOK)
 	ON_COMMAND(IDCANCEL, OnCancel)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->UpdateProgress, OnUpdateProgress)
 END_MESSAGE_MAP()
+
+void LFProgressDlg::OnDestroy()
+{
+	KillTimer(1);
+
+	LFDialog::OnDestroy();
+}
+
+void LFProgressDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent==1)
+		UpdateProgress();
+
+	LFDialog::OnTimer(nIDEvent);
+
+	// Eat bogus WM_TIMER messages
+	MSG msg;
+	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
+}
 
 void LFProgressDlg::OnOK()
 {
@@ -77,6 +160,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 	if (!pProgress)
 		return NULL;
 
+	// Handle abort
 	if (m_Abort)
 	{
 		pProgress->UserAbort = TRUE;
@@ -85,60 +169,13 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 			pProgress->ProgressState = LFProgressCancelled;
 	}
 
-	// Caption
-	GetDlgItem(IDC_CAPTION)->SetWindowText(pProgress->Object);
+	// Copy progress data
+	CSingleLock ProgressLock(&m_Mutex);
+	ProgressLock.Lock();
 
-	// Progress bar
-	ASSERT(pProgress->ProgressState>=LFProgressWorking);
-	ASSERT(pProgress->ProgressState<=LFProgressCancelled);
+	m_Progress = *pProgress;
 
-	m_wndProgress.SendMessage(0x410, pProgress->ProgressState);
-	m_wndProgress.RedrawWindow();
-
-	UINT nUpper;
-	UINT nPos;
-	UINT nCurrent;
-	UINT nOf;
-
-	ASSERT(pProgress->MinorCount>0);
-	ASSERT(pProgress->MinorCurrent>=0);
-	ASSERT(pProgress->MinorCurrent<=pProgress->MinorCount);
-
-	if (pProgress->MajorCount>0)
-	{
-		ASSERT(pProgress->MajorCount>0);
-		ASSERT(pProgress->MajorCurrent>=0);
-		ASSERT(pProgress->MajorCurrent<max(1, pProgress->MajorCount));
-
-		nUpper = pProgress->MajorCount*128;
-		nPos = pProgress->MajorCurrent*128+(pProgress->MinorCurrent*128)/pProgress->MinorCount;
-		nCurrent = pProgress->MajorCurrent+1;
-		nOf = pProgress->MajorCount;
-	}
-	else
-	{
-		nUpper = pProgress->MinorCount;
-		nPos = pProgress->MinorCurrent;
-		nCurrent = pProgress->MinorCurrent+1;
-		nOf = pProgress->NoMinorCounter ? 0 : pProgress->MinorCount;
-	}
-
-	m_wndProgress.SetRange32(0, nUpper);
-	m_wndProgress.SetPos(nPos);
-
-	// Taskbar
-	LFSetTaskbarProgress(this, nPos, nUpper, pProgress->ProgressState==LFProgressError ? TBPF_ERROR : pProgress->ProgressState==LFProgressCancelled ? TBPF_PAUSED : TBPF_NORMAL);
-
-	// Counter
-	CString tmpStr(_T(""));
-	if ((nCurrent<=nOf) && (!m_Abort))
-		tmpStr.Format(nOf==1 ? m_XofY_Singular : m_XofY_Plural, nCurrent, nOf);
-
-	if (m_LastCounter!=tmpStr)
-	{
-		GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(tmpStr);
-		m_LastCounter = tmpStr;
-	}
+	ProgressLock.Unlock();
 
 	return m_Abort;
 }

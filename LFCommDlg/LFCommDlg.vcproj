@@ -445,10 +445,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CWhiteButton.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\GLFont.cpp"
 				>
 			</File>
@@ -1010,10 +1006,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CWhiteButton.h"
 				>
 			</File>
 			<File

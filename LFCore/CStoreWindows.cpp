@@ -26,10 +26,17 @@ UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
 	// Resolve
 	m_pFileImportList->Resolve(TRUE, pProgress);
 
+	// Sort for binary search
+	m_pFileImportList->Sort();
+
 	// Synchronize with index
 	UINT Result;
 	if ((Result=m_pIndexMain->Synchronize(pProgress))!=LFOk)
 		goto Finish;
+
+	if (m_pIndexAux)
+		if ((Result=m_pIndexAux->Synchronize(pProgress))!=LFOk)
+			goto Finish;
 
 	// Import new files
 	Result = m_pFileImportList->m_LastError;
@@ -76,6 +83,7 @@ UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
 		}
 	}
 
+	// Update store data
 	GetSystemTimeAsFileTime(&p_StoreDescriptor->SynchronizeTime);
 
 	Result = SaveStoreSettings(p_StoreDescriptor);
@@ -230,38 +238,46 @@ UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreDa
 	return (Error==ERROR_NO_MORE_FILES) || (Error==ERROR_FILE_NOT_FOUND) || (Error==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
 }
 
-BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFProgress* pProgress)
+BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
 {
+	assert(m_pFileImportList);
+
 	WCHAR Path[2*MAX_PATH];
 	GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH);
 
-	// Find in import list
-	if (m_pFileImportList)
-		for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
-			if (!(*m_pFileImportList)[a].Processed)
-				if (_wcsicmp(&Path[4], (*m_pFileImportList)[a].Path)==0)
-				{
-					(*m_pFileImportList)[a].Processed = TRUE;
+	// Find in import list using binary search
+	INT First = 0;
+	INT Last = (INT)m_pFileImportList->m_ItemCount;
 
-					// Progress
-					if (pProgress)
-					{
-						pProgress->MinorCurrent++;
-
-						UpdateProgress(pProgress);
-					}
-
-					break;
-				}
-
-	// Find file body, update metadata
-	WIN32_FIND_DATA FindFileData;
-	if (FileExists(Path, &FindFileData))
+	while (First<=Last)
 	{
-		// Update metadata
-		SetFromFindData(pCoreAttributes, &FindFileData);
+		const INT Mid = (First+Last)/2;
+		LFFileImportListItem* pItem = &(*m_pFileImportList)[Mid];
 
-		return TRUE;
+		const INT Result = _wcsicmp(&Path[4], pItem->Path);
+		if (!Result)
+		{
+			if (!pItem->Processed)
+			{
+				// Update metadata
+				assert(pItem->FindFileDataPresent);
+
+				SetFromFindData(pCoreAttributes, &pItem->FindFileData);
+
+				pItem->Processed = TRUE;
+			}
+
+			return TRUE;
+		}
+
+		if (Result<0)
+		{
+			Last = Mid-1;
+		}
+		else
+		{
+			First = Mid+1;
+		}
 	}
 
 	return FALSE;

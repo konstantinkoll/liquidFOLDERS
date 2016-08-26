@@ -23,6 +23,10 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();
 
+	void UpdateProgress();
+
+	afx_msg void OnDestroy();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnOK();
 	afx_msg void OnCancel();
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam, LPARAM lParam);
@@ -32,9 +36,10 @@ protected:
 	CString m_XofY_Plural;
 
 private:
-	BOOL m_Abort;
 	LPTHREAD_START_ROUTINE p_ThreadProc;
 	LFWorkerParameters* p_Parameters;
+	CMutex m_Mutex;
+	LFProgress m_Progress;
 	CProgressCtrl m_wndProgress;
-	CString m_LastCounter;
+	BOOL m_Abort;
 };
