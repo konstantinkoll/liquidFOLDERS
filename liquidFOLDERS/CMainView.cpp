@@ -49,7 +49,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 			return TRUE;
 
 	// Check Inspector
-	if (m_wndInspector.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	if (m_wndInspectorPane.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
 	// Check application commands
@@ -290,32 +290,32 @@ void CMainView::AdjustLayout(UINT nFlags)
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight+1, rect.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
 
-	INT InspectorWidth = 0;
+	INT InspectorPaneWidth = 0;
 
 	const INT MaxWidth = (rect.Width()-128)/2;
 	if (MaxWidth>0)
 	{
-		InspectorWidth = theApp.m_InspectorWidth = min(MaxWidth, max(m_wndInspector.GetMinWidth(), m_wndInspector.GetPreferredWidth()));
+		InspectorPaneWidth = theApp.m_InspectorPaneWidth = min(MaxWidth, max(m_wndInspectorPane.GetMinWidth(), m_wndInspectorPane.GetPreferredWidth()));
 
 		if (m_ShowInspectorPane)
 		{
-			m_wndInspector.SetMaxWidth(MaxWidth);
-			m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, nFlags | (!m_wndInspector.IsWindowVisible() ? SWP_SHOWWINDOW : 0));
+			m_wndInspectorPane.SetMaxWidth(MaxWidth);
+			m_wndInspectorPane.SetWindowPos(NULL, rect.right-InspectorPaneWidth, rect.top+TaskHeight, InspectorPaneWidth, rect.Height()-TaskHeight, nFlags | (!m_wndInspectorPane.IsWindowVisible() ? SWP_SHOWWINDOW : 0));
 		}
 		else
 		{
-			if (m_wndInspector.IsWindowVisible())
-				m_wndInspector.ShowWindow(SW_HIDE);
+			if (m_wndInspectorPane.IsWindowVisible())
+				m_wndInspectorPane.ShowWindow(SW_HIDE);
 
-			InspectorWidth = 0;
+			InspectorPaneWidth = 0;
 		}
 	}
 
 	const UINT HeaderHeight = m_wndHeaderArea.GetPreferredHeight();
-	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, HeaderHeight, nFlags);
+	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorPaneWidth, HeaderHeight, nFlags);
 
 	if (m_pWndFileView)
-		m_pWndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+HeaderHeight, rect.Width()-InspectorWidth, rect.Height()-HeaderHeight-TaskHeight, nFlags);
+		m_pWndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+HeaderHeight, rect.Width()-InspectorPaneWidth, rect.Height()-HeaderHeight-TaskHeight, nFlags);
 
 	m_Resizing = FALSE;
 }
@@ -630,10 +630,10 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_ViewButton = m_wndHeaderArea.AddButton(IDM_VIEW);
 
 	// Inspector
-	if (!m_wndInspector.Create(this, 4, FALSE, theApp.m_InspectorWidth))
+	if (!m_wndInspectorPane.Create(this, 4, FALSE, theApp.m_InspectorPaneWidth, TRUE))
 		return -1;
 
-	m_wndInspector.SetOwner(GetOwner());
+	m_wndInspectorPane.SetOwner(GetOwner());
 	m_ShowInspectorPane = theApp.m_ShowInspectorPane;
 
 	// Explorer notification
@@ -808,7 +808,7 @@ void CMainView::OnAdjustLayout()
 
 void CMainView::OnUpdateSelection()
 {
-	m_wndInspector.UpdateStart();
+	m_wndInspectorPane.UpdateStart();
 
 	INT Index = GetNextSelectedItem(-1);
 	m_FilesSelected = FALSE;
@@ -816,7 +816,7 @@ void CMainView::OnUpdateSelection()
 	while (Index>=0)
 	{
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-		m_wndInspector.UpdateAdd(pItemDescriptor, p_RawFiles);
+		m_wndInspectorPane.UpdateAdd(pItemDescriptor, p_RawFiles);
 
 		m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
 			(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1));
@@ -824,7 +824,7 @@ void CMainView::OnUpdateSelection()
 		Index = GetNextSelectedItem(Index);
 	}
 
-	m_wndInspector.UpdateFinish();
+	m_wndInspectorPane.UpdateFinish();
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 }
 
@@ -1564,7 +1564,7 @@ void CMainView::OnFileProperties()
 		AdjustLayout();
 	}
 
-	m_wndInspector.SetFocus();
+	m_wndInspectorPane.SetFocus();
 }
 
 void CMainView::OnFileRestore()

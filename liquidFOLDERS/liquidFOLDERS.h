@@ -42,7 +42,7 @@ public:
 	UINT m_AllowedViews[LFContextCount];
 
 	BOOL m_ShowInspectorPane;
-	UINT m_InspectorWidth;
+	UINT m_InspectorPaneWidth;
 
 	BOOL m_CalendarShowCaptions;
 

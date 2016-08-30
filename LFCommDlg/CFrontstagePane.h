@@ -18,7 +18,7 @@ public:
 
 	virtual void AdjustLayout(CRect rectLayout);
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth);
+	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth, BOOL Shadow=FALSE);
 	static INT GetMinWidth();
 	INT GetPreferredWidth() const;
 	void SetMaxWidth(INT MaxWidth);
@@ -35,6 +35,7 @@ protected:
 	BOOL m_IsLeft;
 	INT m_PreferredWidth;
 	INT m_MaxWidth;
+	BOOL m_Shadow;
 };
 
 inline INT CFrontstagePane::GetMinWidth()

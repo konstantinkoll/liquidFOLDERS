@@ -100,8 +100,10 @@ BOOL LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd)
 		{
 			WorkerParameters wp;
 			ZeroMemory(&wp, sizeof(wp));
+
 			wp.pFileImportList = LFAllocFileImportList();
 			LFAddImportPath(wp.pFileImportList, dlg.m_FolderPath);
+
 			strcpy_s(wp.StoreID, LFKeySize, pStoreID);
 			wp.DeleteSource = dlg.m_DeleteSource;
 

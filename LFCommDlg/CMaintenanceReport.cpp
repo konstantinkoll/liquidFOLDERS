@@ -27,7 +27,7 @@ BOOL CMaintenanceReport::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CMaintenanceReport::PreTranslateMessage(MSG* pMsg)
@@ -63,8 +63,7 @@ void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
 void CMaintenanceReport::ResetScrollbars()
 {
 	ScrollWindow(0, m_VScrollPos);
-	m_VScrollPos = 0;
-	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+	SetScrollPos(SB_VERT, m_VScrollPos=0);
 }
 
 void CMaintenanceReport::AdjustScrollbars()
@@ -298,12 +297,7 @@ void CMaintenanceReport::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_VScrollPos;
-		SetScrollInfo(SB_VERT, &si);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 	}
 
 	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -404,7 +398,7 @@ BOOL CMaintenanceReport::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 
 		ScreenToClient(&pt);
 		OnMouseMove(nFlags, pt);

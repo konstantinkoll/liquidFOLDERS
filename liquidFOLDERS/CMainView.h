@@ -116,7 +116,7 @@ protected:
 	CTaskbar m_wndTaskbar;
 	CHeaderArea m_wndHeaderArea;
 	CFileView* m_pWndFileView;
-	CInspectorPane m_wndInspector;
+	CInspectorPane m_wndInspectorPane;
 	CExplorerNotification m_wndExplorerNotification;
 	LFDropTarget m_DropTarget;
 	LFFilter* p_Filter;

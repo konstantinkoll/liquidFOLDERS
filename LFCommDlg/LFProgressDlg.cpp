@@ -40,7 +40,6 @@ void LFProgressDlg::UpdateProgress()
 	ASSERT(m_Progress.ProgressState<=LFProgressCancelled);
 
 	m_wndProgress.SendMessage(0x410, m_Progress.ProgressState);
-	//m_wndProgress.RedrawWindow();
 
 	UINT nUpper;
 	UINT nPos;
@@ -83,6 +82,8 @@ void LFProgressDlg::UpdateProgress()
 
 	GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(tmpStr);
 
+	m_Update = FALSE;
+
 	ProgressLock.Unlock();
 }
 
@@ -119,7 +120,7 @@ void LFProgressDlg::OnDestroy()
 
 void LFProgressDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	if (nIDEvent==1)
+	if ((nIDEvent==1) && m_Update)
 		UpdateProgress();
 
 	LFDialog::OnTimer(nIDEvent);
@@ -174,6 +175,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 	ProgressLock.Lock();
 
 	m_Progress = *pProgress;
+	m_Update = TRUE;
 
 	ProgressLock.Unlock();
 

@@ -77,11 +77,7 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchRe
 {
 	CString className = AfxRegisterWndClass(nClassStyle, theApp.LoadStandardCursor(IDC_ARROW));
 
-	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
-	if (m_EnableScrolling)
-		dwStyle |= WS_HSCROLL | WS_VSCROLL;
-
-	if (!CFrontstageWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
+	if (!CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, rect, pParentWnd, nID))
 		return FALSE;
 
 	UpdateViewOptions(pCookedFiles ? pCookedFiles->m_Context : LFContextAllFiles, TRUE);
@@ -337,13 +333,12 @@ void CFileView::EnsureVisible(INT Index)
 
 	RECT rectItem = GetItemRect(Index);
 
-	SCROLLINFO si;
-	INT nInc;
-
 	// Vertikal
-	nInc = 0;
+	INT nInc = 0;
+
 	if (rectItem.bottom>rect.Height())
 		nInc = rectItem.bottom-rect.Height();
+
 	if (rectItem.top<nInc+(INT)m_HeaderHeight)
 		nInc = rectItem.top-(INT)m_HeaderHeight;
 
@@ -352,20 +347,17 @@ void CFileView::EnsureVisible(INT Index)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_VScrollPos;
-		SetScrollInfo(SB_VERT, &si);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 	}
 
 	// Horizontal
 	if (m_ViewParameters.Mode!=LFViewDetails)
 	{
 		nInc = 0;
+
 		if (rectItem.right>rect.Width())
 			nInc = rectItem.right-rect.Width();
+
 		if (rectItem.left<nInc)
 			nInc = rectItem.left;
 
@@ -374,12 +366,7 @@ void CFileView::EnsureVisible(INT Index)
 		{
 			m_HScrollPos += nInc;
 			ScrollWindow(-nInc, 0);
-	
-			ZeroMemory(&si, sizeof(si));
-			si.cbSize = sizeof(SCROLLINFO);
-			si.fMask = SIF_POS;
-			si.nPos = m_HScrollPos;
-			SetScrollInfo(SB_HORZ, &si);
+			SetScrollPos(SB_HORZ, m_HScrollPos);
 		}
 	}
 }
@@ -1143,12 +1130,7 @@ void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_VScrollPos;
-		SetScrollInfo(SB_VERT, &si);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 
 		if (p_Edit)
 		{
@@ -1204,12 +1186,7 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_HScrollPos += nInc;
 		ScrollWindow(-nInc, 0);
-
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_HScrollPos;
-		SetScrollInfo(SB_HORZ, &si);
+		SetScrollPos(SB_HORZ, m_HScrollPos);
 
 		UpdateWindow();
 	}
@@ -1345,7 +1322,7 @@ BOOL CFileView::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 
 		ScreenToClient(&pt);
 		OnMouseMove(nFlags, pt);
@@ -1367,7 +1344,7 @@ void CFileView::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	{
 		m_HScrollPos += nInc;
 		ScrollWindow(-nInc, 0);
-		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+		SetScrollPos(SB_HORZ, m_HScrollPos);
 
 		ScreenToClient(&pt);
 		OnMouseMove(nFlags, pt);

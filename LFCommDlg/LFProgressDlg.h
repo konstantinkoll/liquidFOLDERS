@@ -42,4 +42,5 @@ private:
 	LFProgress m_Progress;
 	CProgressCtrl m_wndProgress;
 	BOOL m_Abort;
+	BOOL m_Update;
 };

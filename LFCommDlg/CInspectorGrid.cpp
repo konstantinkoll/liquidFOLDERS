@@ -698,7 +698,7 @@ BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeade
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CInspectorGrid::PreSubclassWindow()
@@ -949,13 +949,12 @@ void CInspectorGrid::EnsureVisible(INT Item)
 
 	RECT rectItem = GetItemRect(Item);
 
-	SCROLLINFO si;
-	INT nInc;
-
 	// Vertikal
-	nInc = 0;
+	INT nInc = 0;
+
 	if (rectItem.bottom>rect.Height())
 		nInc = rectItem.bottom-rect.Height();
+
 	if (rectItem.top<nInc)
 		nInc = rectItem.top;
 
@@ -964,12 +963,7 @@ void CInspectorGrid::EnsureVisible(INT Item)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_VScrollPos;
-		SetScrollInfo(SB_VERT, &si);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 	}
 }
 
@@ -992,8 +986,7 @@ void CInspectorGrid::SelectItem(INT Item)
 void CInspectorGrid::ResetScrollbars()
 {
 	ScrollWindow(0, m_VScrollPos);
-	m_VScrollPos = 0;
-	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+	SetScrollPos(SB_VERT, m_VScrollPos=0);
 }
 
 void CInspectorGrid::AdjustScrollbars()
@@ -1488,12 +1481,7 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_VScrollPos;
-		SetScrollInfo(SB_VERT, &si);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 
 		if (p_Edit)
 		{
@@ -1611,7 +1599,7 @@ BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+		SetScrollPos(SB_VERT, m_VScrollPos);
 
 		ScreenToClient(&pt);
 		OnMouseMove(nFlags, pt);

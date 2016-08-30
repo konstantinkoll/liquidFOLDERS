@@ -133,7 +133,7 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 		do
 		{
 			wcscpy_s(Ptr, MAX_PATH, SanitizedFileName);
-			wcscat_s(Ptr, 2*MAX_PATH, NumberStr);
+			wcscat_s(Ptr, MAX_PATH, NumberStr);
 
 			if (pItemDescriptor->CoreAttributes.FileFormat[0])
 			{

@@ -15,10 +15,11 @@ CFrontstagePane::CFrontstagePane()
 	m_MaxWidth = 140;
 }
 
-BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth)
+BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth, BOOL Shadow)
 {
 	m_IsLeft = IsLeft;
 	m_PreferredWidth = PreferredWidth;
+	m_Shadow = Shadow;
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
@@ -121,7 +122,8 @@ void CFrontstagePane::OnPaint()
 			g.FillRectangle(&brush2, GripperLeft+a, Line, 1, rect.Height()-Line);
 		}
 
-		CTaskbar::DrawTaskbarShadow(g, rect);
+		if (m_Shadow)
+			CTaskbar::DrawTaskbarShadow(g, rect);
 	}
 	else
 	{

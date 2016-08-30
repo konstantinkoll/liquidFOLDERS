@@ -105,9 +105,9 @@ BOOL CLiquidFoldersApp::InitInstance()
 	m_TextureCompress = GetInt(_T("TextureCompress"), FALSE);
 
 	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), TRUE);
-	m_InspectorWidth = GetInt(_T("InspectorWidth"), 220);
-	if (m_InspectorWidth<140)
-		m_InspectorWidth = 140;
+	m_InspectorPaneWidth = GetInt(_T("InspectorPaneWidth"), 220);
+	if (m_InspectorPaneWidth<140)
+		m_InspectorPaneWidth = 140;
 
 	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
 	m_FileDropAlwaysOnTop = GetInt(_T("FileDropAlwaysOnTop"), TRUE);
@@ -232,7 +232,7 @@ INT CLiquidFoldersApp::ExitInstance()
 		WriteInt(_T("TextureCompress"), m_TextureCompress);
 
 		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
-		WriteInt(_T("InspectorWidth"), m_InspectorWidth);
+		WriteInt(_T("InspectorPaneWidth"), m_InspectorPaneWidth);
 
 		WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
 	}

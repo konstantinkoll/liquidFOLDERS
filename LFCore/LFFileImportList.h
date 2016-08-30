@@ -5,7 +5,7 @@
 
 struct LFFileImportListItem
 {
-	WCHAR Path[2*MAX_PATH];
+	WCHAR Path[MAX_PATH];
 	UINT LastError;
 	BOOL Processed;
 	WIN32_FIND_DATA FindFileData;

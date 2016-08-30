@@ -80,7 +80,7 @@ BOOL LFFileImportList::AddPath(WCHAR* Path, WIN32_FIND_DATA* pFindFileData)
 	}
 	else
 	{
-		Item.FindFileDataPresent = TRUE;
+		Item.FindFileDataPresent = FALSE;
 	}
 
 	Item.LastError = LFOk;
@@ -94,7 +94,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 	// Init progress
 	if (pProgress)
 	{
-		wcscpy_s(pProgress->Object, 256,m_Items[0].Path);
+		wcscpy_s(pProgress->Object, 256, m_Items[0].Path);
 
 		pProgress->MinorCount = 1;
 		pProgress->MinorCurrent = 0;
@@ -108,7 +108,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 	{
 		if (!m_Items[Index].Processed)
 		{
-			DWORD Attr = GetFileAttributes(m_Items[Index].Path);
+			DWORD Attr = m_Items[Index].FindFileDataPresent ? m_Items[Index].FindFileData.dwFileAttributes : GetFileAttributes(m_Items[Index].Path);
 			if (Attr==INVALID_FILE_ATTRIBUTES)
 			{
 				m_Items[Index].Processed = TRUE;
@@ -129,22 +129,23 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 						{
 							if (((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL | FILE_ATTRIBUTE_SYSTEM))==0) &&
 								(wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0) &&
-								((!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) || (Recursive)))
-							{
-								WCHAR Filename[MAX_PATH];
-								wcscpy_s(Filename, MAX_PATH, m_Items[Index].Path);
-								wcscat_s(Filename, MAX_PATH, L"\\");
-								wcscat_s(Filename, MAX_PATH, FindFileData.cFileName);
-
-								AddPath(Filename, &FindFileData);
-
-								// Update
-								if (pProgress)
+								(((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0) || Recursive) &&
+								(wcslen(m_Items[Index].Path)+wcslen(FindFileData.cFileName)+1<MAX_PATH))
 								{
-									pProgress->MinorCount = m_ItemCount;
-									UpdateProgress(pProgress);
+									WCHAR Filename[MAX_PATH];
+									wcscpy_s(Filename, MAX_PATH, m_Items[Index].Path);
+									wcscat_s(Filename, MAX_PATH, L"\\");
+									wcscat_s(Filename, MAX_PATH, FindFileData.cFileName);
+
+									AddPath(Filename, &FindFileData);
+
+									// Update
+									if (pProgress)
+									{
+										pProgress->MinorCount = m_ItemCount;
+										UpdateProgress(pProgress);
+									}
 								}
-							}
 						}
 						while (FindNextFile(hFind, &FindFileData)!=0);
 

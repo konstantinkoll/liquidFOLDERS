@@ -120,7 +120,7 @@ void CHeaderArea::AdjustLayout()
 		m_Buttons[a]->SetWindowPos(NULL, RightEdge, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
 		if (CaptionWidth)
-			RightEdge -= MARGIN;
+			RightEdge -= CaptionWidth+MARGIN;
 
 		m_RightEdge = min(m_RightEdge, RightEdge-BORDER);
 

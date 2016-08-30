@@ -62,7 +62,7 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	dc.SetTextColor(clrText);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
-	dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+	dc.DrawText(m_Value, rectText, DT_HIDEPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 
 	// Icon

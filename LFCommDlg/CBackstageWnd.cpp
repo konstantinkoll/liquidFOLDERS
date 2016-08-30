@@ -175,6 +175,7 @@ BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 
+	// Accelerators
 	if (hAccelerator)
 		if ((pMsg->message>=WM_KEYFIRST) && (pMsg->message<=WM_KEYLAST))
 			if (TranslateAccelerator(m_hWnd, hAccelerator, pMsg))
