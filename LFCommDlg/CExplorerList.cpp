@@ -327,8 +327,8 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 		if ((this->GetEditControl()) && (State & LVIS_FOCUSED))
 			break;
 
-		rectLabel.right = rectLabel.left+m_Columns[0].cx-5*PADDING;
-		rectLabel.left = rectIcon.right+5*PADDING-2;
+		rectLabel.right = rectLabel.left+m_Columns[0].cx-5*PADDING+1;
+		rectLabel.left = rectIcon.right+5*PADDING-3;
 		DrawLabel(dc, rectLabel, Text, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 		Item.mask = LVIF_TEXT;

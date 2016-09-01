@@ -26,7 +26,7 @@ public:
 	virtual INT ExitInstance();
 
 	CMainWnd* GetClipboard();
-	CWnd* GetFileDrop(CHAR* StoreID);
+	CWnd* GetFileDrop(LPCSTR StoreID);
 
 	BOOL IsViewAllowed(INT Context, INT View) const;
 	void Broadcast(INT Context, INT View, UINT cmdMsg);

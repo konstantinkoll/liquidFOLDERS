@@ -38,9 +38,8 @@ public:
 
 	BOOL CreateClipboard();
 	BOOL CreateRoot();
-	BOOL CreateStore(CHAR* pRootStore);
+	BOOL CreateStore(const CHAR* StoreID);
 	BOOL CreateFilter(LFFilter* pFilter);
-	BOOL CreateFilter(WCHAR* pFileName);
 	BOOL AddClipItem(LFItemDescriptor* pItemDescriptor);
 
 protected:
@@ -108,7 +107,8 @@ protected:
 	LFStatistics* m_pStatistics;
 
 private:
-	static LFFilter* GetRootFilter(CHAR* pRootStore=NULL);
+	static LFFilter* GetRootFilter();
+	LPCSTR GetStatisticsID() const;
 	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory();
 	static void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);

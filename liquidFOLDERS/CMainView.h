@@ -23,7 +23,7 @@ public:
 	void UpdateViewOptions();
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
 	BOOL StoreIDValid() const;
-	CHAR* GetStoreID();
+	LPCSTR GetStoreID() const;
 	INT GetContext() const;
 	INT GetViewID() const;
 	void DismissNotification();
@@ -150,7 +150,7 @@ inline BOOL CMainView::StoreIDValid() const
 	return m_StoreIDValid;
 }
 
-inline CHAR* CMainView::GetStoreID()
+inline LPCSTR CMainView::GetStoreID() const
 {
 	return m_StoreID;
 }

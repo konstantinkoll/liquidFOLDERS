@@ -40,7 +40,7 @@ protected:
 
 inline INT CFrontstagePane::GetMinWidth()
 {
-	return 140+PANEGRIPPER;
+	return 240+PANEGRIPPER;
 }
 
 inline INT CFrontstagePane::GetPreferredWidth() const

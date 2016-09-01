@@ -50,6 +50,7 @@ void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed)
 BEGIN_MESSAGE_MAP(CFrontstageWnd, CWnd)
 	ON_MESSAGE(WM_NCCALCSIZE, OnNcCalcSize)
 	ON_WM_NCHITTEST()
+	ON_WM_INITMENUPOPUP()
 END_MESSAGE_MAP()
 
 LRESULT CFrontstageWnd::OnNcCalcSize(WPARAM wParam, LPARAM lParam)
@@ -80,4 +81,23 @@ LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)
 		return HTTRANSPARENT;
 
 	return CWnd::OnNcHitTest(point);
+}
+
+void CFrontstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
+{
+	ASSERT(pPopupMenu);
+
+	CCmdUI state;
+	state.m_pMenu = state.m_pParentMenu = pPopupMenu;
+	state.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+
+	ASSERT(!state.m_pOther);
+	ASSERT(state.m_pMenu);
+
+	for (state.m_nIndex=0; state.m_nIndex<state.m_nIndexMax; state.m_nIndex++)
+	{
+		state.m_nID = pPopupMenu->GetMenuItemID(state.m_nIndex);
+		if ((state.m_nID) && (state.m_nID!=(UINT)-1))
+			state.DoUpdate(this, FALSE);
+	}
 }

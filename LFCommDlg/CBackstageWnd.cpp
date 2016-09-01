@@ -885,19 +885,13 @@ LRESULT CBackstageWnd::OnNcHitTest(CPoint point)
 
 		HitTest = HTCLIENT;
 		if (GetAsyncKeyState(VK_LBUTTON))
-			if (m_IsDialog)
-			{
-				CRect rectLayout;
-				GetLayoutRect(rectLayout);
-				ClientToScreen(rectLayout);
+		{
+			ScreenToClient(&point);
 
-				if ((point.x<rectLayout.left) || (point.y<rectLayout.top))
-					HitTest = HTCAPTION;
-			}
-			else
-			{
+			CRect rectLayout;
+			if (!GetLayoutRect(rectLayout) || (point.x<rectLayout.left) || (point.y<rectLayout.top))
 				HitTest = HTCAPTION;
-			}
+		}
 	}
 
 	return HitTest;
@@ -1111,6 +1105,12 @@ void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
+	// Do not show context menu on document sheet
+	CRect rectLayout;
+	if (GetLayoutRect(rectLayout))
+		if ((point.x>=rectLayout.left) && (point.y>=rectLayout.top))
+			return;
+
 	ClientToScreen(&point);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);

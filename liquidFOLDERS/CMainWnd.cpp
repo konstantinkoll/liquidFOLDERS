@@ -56,53 +56,51 @@ BOOL CMainWnd::CreateRoot()
 	return Create(FALSE);
 }
 
-BOOL CMainWnd::CreateStore(CHAR* pRootStore)
+BOOL CMainWnd::CreateStore(const CHAR* StoreID)
 {
-	ASSERT(pRootStore);
+	ASSERT(StoreID);
+
+	LFFilter* pFilter = LFAllocFilter();
+	pFilter->Mode = LFFilterModeDirectoryTree;
+	strcpy_s(pFilter->StoreID, LFKeySize, StoreID);
+	pFilter->QueryContext = LFContextAuto;
+
+	LFStoreDescriptor Store;
+	if (LFGetStoreSettings(StoreID, &Store)==LFOk)
+		wcscpy_s(pFilter->OriginalName, 256, Store.StoreName);
+
+	return CreateFilter(pFilter);
+}
+
+BOOL CMainWnd::CreateFilter(LFFilter* pFilter)
+{
+	if (!pFilter)
+		return FALSE;
+
+	m_pActiveFilter = pFilter;
 
 	m_pBreadcrumbBack = new BreadcrumbItem();
 	ZeroMemory(m_pBreadcrumbBack, sizeof(BreadcrumbItem));
 	m_pBreadcrumbBack->pFilter = GetRootFilter();
 
-	m_pActiveFilter = GetRootFilter(pRootStore);
-
 	return Create(FALSE);
 }
 
-BOOL CMainWnd::CreateFilter(LFFilter* pFilter)
-{
-	m_pActiveFilter = pFilter;
-
-	return pFilter ? Create(FALSE) : FALSE;
-}
-
-BOOL CMainWnd::CreateFilter(WCHAR* pFileName)
-{
-	m_pActiveFilter = LFLoadFilterEx(pFileName);
-
-	return m_pActiveFilter ? Create(FALSE) : FALSE;
-}
-
-LFFilter* CMainWnd::GetRootFilter(CHAR* pRootStore)
+LFFilter* CMainWnd::GetRootFilter()
 {
 	LFFilter* pFilter = LFAllocFilter();
-	pFilter->Mode = pRootStore ? LFFilterModeDirectoryTree : LFFilterModeStores;
+	pFilter->Mode = LFFilterModeStores;
 
-	if (pRootStore)
-	{
-		strcpy_s(pFilter->StoreID, LFKeySize, pRootStore);
-		pFilter->QueryContext = LFContextAuto;
-
-		LFStoreDescriptor Store;
-		if (LFGetStoreSettings(pRootStore, &Store)==LFOk)
-			wcscpy_s(pFilter->OriginalName, 256, Store.StoreName);
-	}
-	else
-	{
-		wcscpy_s(pFilter->ResultName, 256, theApp.m_Contexts[LFContextStores].Name);
-	}
+	wcscpy_s(pFilter->ResultName, 256, theApp.m_Contexts[LFContextStores].Name);
 
 	return pFilter;
+}
+
+LPCSTR CMainWnd::GetStatisticsID() const
+{
+	ASSERT(m_pActiveFilter);
+
+	return (m_pActiveFilter->Mode<LFFilterModeSearch) && IsWindow(m_wndMainView) ? m_wndMainView.GetStoreID() : "";
 }
 
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
@@ -922,7 +920,7 @@ void CMainWnd::OnUpdateCounts()
 {
 	delete m_pStatistics;
 
-	m_pStatistics = LFQueryStatistics(m_wndMainView.GetStoreID());
+	m_pStatistics = LFQueryStatistics(m_StatisticsID);
 
 	if (m_pSidebarWnd)
 		for (UINT a=0; a<=LFLastQueryContext; a++)
@@ -960,9 +958,9 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 		if (m_pSidebarWnd)
 		{
-			if ((strcmp(m_StatisticsID, m_wndMainView.GetStoreID())!=0) || !m_pStatistics)
+			if ((strcmp(m_StatisticsID, GetStatisticsID())!=0) || !m_pStatistics)
 			{
-				strcpy_s(m_StatisticsID, LFKeySize, m_wndMainView.GetStoreID());
+				strcpy_s(m_StatisticsID, LFKeySize, GetStatisticsID());
 
 				OnUpdateCounts();
 			}

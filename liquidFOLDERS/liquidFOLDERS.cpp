@@ -204,7 +204,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 		// Filter
 		CMainWnd* pFrameWnd = new CMainWnd();
-		pFrameWnd->CreateFilter(CmdLine);
+		pFrameWnd->CreateFilter(LFLoadFilterEx(CmdLine));
 		pFrameWnd->ShowWindow(SW_SHOW);
 
 		return pFrameWnd;
@@ -253,7 +253,7 @@ CMainWnd* CLiquidFoldersApp::GetClipboard()
 	return p_ClipboardWnd;
 }
 
-CWnd* CLiquidFoldersApp::GetFileDrop(CHAR* StoreID)
+CWnd* CLiquidFoldersApp::GetFileDrop(LPCSTR StoreID)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 	{

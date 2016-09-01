@@ -156,5 +156,5 @@ void CFrontstagePane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	CFrontstageWnd::OnGetMinMaxInfo(lpMMI);
 
 	lpMMI->ptMinTrackSize.x = GetMinWidth();
-	lpMMI->ptMaxTrackSize.x = m_MaxWidth+PANEGRIPPER;
+	lpMMI->ptMaxTrackSize.x = max(GetMinWidth(), m_MaxWidth+PANEGRIPPER);
 }

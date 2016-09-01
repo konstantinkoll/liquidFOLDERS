@@ -292,7 +292,7 @@ void CMainView::AdjustLayout(UINT nFlags)
 
 	INT InspectorPaneWidth = 0;
 
-	const INT MaxWidth = (rect.Width()-128)/2;
+	const INT MaxWidth = max(m_wndInspectorPane.GetMinWidth(), (rect.Width()-128)/2);
 	if (MaxWidth>0)
 	{
 		InspectorPaneWidth = theApp.m_InspectorPaneWidth = min(MaxWidth, max(m_wndInspectorPane.GetMinWidth(), m_wndInspectorPane.GetPreferredWidth()));

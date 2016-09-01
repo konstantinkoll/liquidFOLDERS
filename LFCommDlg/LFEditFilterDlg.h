@@ -36,7 +36,7 @@ private:
 class LFEditFilterDlg : public LFDialog
 {
 public:
-	LFEditFilterDlg(CWnd* pParentWnd=NULL, CHAR* StoreID=NULL, LFFilter* pFilter=NULL);
+	LFEditFilterDlg(CWnd* pParentWnd=NULL, const CHAR* StoreID=NULL, LFFilter* pFilter=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

@@ -17,5 +17,6 @@ public:
 protected:
 	afx_msg LRESULT OnNcCalcSize(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
+	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	DECLARE_MESSAGE_MAP()
 };
