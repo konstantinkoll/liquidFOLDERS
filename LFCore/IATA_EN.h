@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8652
+#define AirportCount_EN 8653
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  65, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2901,6 +2901,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{   0, "GZI", "", "Ghazni", { -33.533056, 68.416944 } },
 	{ 120, "GZM", "", "Gozo", { -36.027222, 14.272778 } },
 	{ 173, "GZO", "", "Gizo", { 8.097778, 156.863611 } },
+	{ 201, "GZP", "", "Gazipasa", { -36.300278, 32.293611 } },
 	{ 211, "GZS", "", "Pulaski", { -35.153611, -87.056944 } },
 	{ 201, "GZT", "", "Gaziantep", { -36.947222, 37.478611 } },
 	{ 148, "HAA", "", "Hasvik", { -70.486667, 22.139722 } },

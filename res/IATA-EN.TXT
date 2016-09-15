@@ -2812,6 +2812,7 @@ GYY CHI Gary, USA;4;41*36'59"N, 87*24'46"W
 GZI     Ghazni, Afghanistan;4;33*31'59"N, 68*25'1"E
 GZM     Gozo, Malta;4;36*1'38"N, 14*16'22"E
 GZO     Gizo, Solomons;4;8*5'52"S, 156*51'49"E
+GZP     Gazipasa, Turkey;5;36*18'1"N, 32*17'37"E
 GZS     Pulaski, USA;4;35*9'13"N, 87*3'25"W
 GZT     Gaziantep, Turkey;4;36*56'50"N, 37*28'43"E
 HAA     Hasvik, Norway;4;70*29'12"N, 22*8'23"E
