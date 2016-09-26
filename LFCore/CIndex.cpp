@@ -31,7 +31,8 @@
 		} \
 		else \
 		{ \
-			Ops(LFContextAllFiles); \
+			if (PtrM->ContextID!=LFContextFilters) \
+				Ops(LFContextAllFiles); \
 			if (PtrM->ContextID!=LFContextAllFiles) \
 				Ops(PtrM->ContextID); \
 			if (PtrM->Rating) \

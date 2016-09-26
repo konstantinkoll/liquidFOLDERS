@@ -1200,6 +1200,7 @@ CEA     Wichita (Cessna Airfield), USA;4;37*38'55"N, 97*15'2"W
 CEB     Cebu, Philippinen;4;10*18'27"N, 123*58'46"E
 CEC     Crescent City, USA;4;41*46'49"N, 124*14'12"W
 CED     Ceduna, Australien;4;32*7'50"S, 133*42'35"E
+CEE     Cherepovets, Russland;5;59*16'36"N, 38*1'42"E
 CEF     Springfield/Chicopee, USA;4;42*11'38"N, 72*32'5"W
 CEG     Chester, Groﬂbritannien;4;53*10'41"N, 2*58'40"W
 CEH     Chengteh, China
@@ -2504,6 +2505,7 @@ GCK     Garden City, USA;4;37*55'39"N, 100*43'28"W
 GCM     Grand Cayman, Cayman-Inseln;4;19*17'34"N, 81*21'28"W
 GCN     Grand Canyon (National Park Airport), USA;4;35*57'8"N, 112*8'49"W
 GCT     Guthrie Center, USA;4;41*41'16"N, 94*26'7"W
+GCW     Grand Canyon West, USA;5;35*59'25"N, 113*48'59"W
 GCY     Greeneville, USA;4;36*11'35"N, 82*48'54"W
 GDA     Gounda, Zentralafrikanische Republik;4;9*19'1"N, 21*10'59"E
 GDC     Greenville (Donaldson Center Airport), USA;4;34*45'30"N, 82*22'35"W
@@ -3706,6 +3708,7 @@ KDI     Kendari, Indonesien;4;4*4'54"S, 122*25'6"E
 KDJ     N'Djole, Gabun;4;0*10'59"S, 10*45'0"E
 KDK     Kodiak (Municipal Airport), USA;4;57*48'21"N, 152*22'26"W
 KDL     Kardla, Estland;4;58*59'27"N, 22*49'51"E
+KDM     Kaadedhdhoo, Malediven;5;0*29'18"N, 72*59'46"E
 KDN     N'Dende, Gabun;4;2*24'0"S, 11*22'1"E
 KDO     Kadhdhoo, Malediven;5;1*51'33"N, 73*31'19"E
 KDP     Kandep, Neu-Guinea;4;5*49'59"S, 143*30'0"E

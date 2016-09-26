@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8653
+#define AirportCount_EN 8656
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  65, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1388,6 +1388,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 155, "CEB", "", "Cebu", { -10.307500, 123.979444 } },
 	{ 211, "CEC", "", "Crescent City", { -41.780278, -124.236667 } },
 	{   8, "CED", "", "Ceduna", { 32.130556, 133.709722 } },
+	{ 162, "CEE", "", "Cherepovets", { -59.276667, 38.028333 } },
 	{ 211, "CEF", "", "Springfield/Chicopee", { -42.193889, -72.534722 } },
 	{ 209, "CEG", "", "Chester", { -53.178056, -2.977778 } },
 	{ 195, "CEI", "", "Chiang Rai", { -19.952222, 99.883056 } },
@@ -2613,6 +2614,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  36, "GCM", "", "Grand Cayman", { -19.292778, -81.357778 } },
 	{ 211, "GCN", "", "Grand Canyon (National Park Airport)", { -35.952222, -112.146944 } },
 	{ 211, "GCT", "", "Guthrie Center", { -41.687778, -94.435278 } },
+	{ 211, "GCW", "", "Grand Canyon West", { -35.990278, -113.816389 } },
 	{ 211, "GCY", "", "Greeneville", { -36.193056, -82.815000 } },
 	{  37, "GDA", "", "Gounda", { -9.316944, 21.183056 } },
 	{ 211, "GDC", "", "Greenville (Donaldson Center Airport)", { -34.758333, -82.376389 } },
@@ -3718,6 +3720,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "KDJ", "", "N'Djole", { 0.183056, 10.750000 } },
 	{ 211, "KDK", "", "Kodiak (Municipal Airport)", { -57.805833, -152.373889 } },
 	{  58, "KDL", "", "Kardla", { -58.990833, 22.830833 } },
+	{ 118, "KDM", "", "Kaadedhdhoo", { -0.488333, 72.996111 } },
 	{  66, "KDN", "", "N'Dende", { 2.400000, 11.366944 } },
 	{ 118, "KDO", "", "Kadhdhoo", { -1.859167, 73.521944 } },
 	{ 142, "KDP", "", "Kandep", { 5.833056, 143.500000 } },
