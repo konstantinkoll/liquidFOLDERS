@@ -108,11 +108,11 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Valu
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		wcscpy_s((WCHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (WCHAR*)Value);
+		wcsncpy_s((WCHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (WCHAR*)Value, (Size/sizeof(WCHAR))-1);
 		break;
 
 	case LFTypeAnsiString:
-		strcpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (CHAR*)Value);
+		strncpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (CHAR*)Value, (Size/sizeof(CHAR))-1);
 		break;
 
 	default:
