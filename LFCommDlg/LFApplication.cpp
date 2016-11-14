@@ -99,26 +99,6 @@ LFApplication::LFApplication(GUID& AppID)
 		m_DwmLibLoaded = FALSE;
 	}
 
-	// Shell
-	hModShell = LoadLibrary(_T("SHELL32.DLL"));
-	if (hModShell)
-	{
-		zSetCurrentProcessExplicitAppUserModelID = (PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)GetProcAddress(hModShell, "SetCurrentProcessExplicitAppUserModelID");
-
-		m_ShellLibLoaded = (zSetCurrentProcessExplicitAppUserModelID!=NULL);
-		if (!m_ShellLibLoaded)
-		{
-			FreeLibrary(hModShell);
-			hModShell = NULL;
-		}
-	}
-	else
-	{
-		zSetCurrentProcessExplicitAppUserModelID = NULL;
-
-		m_ShellLibLoaded = FALSE;
-	}
-
 	// Kernel
 	hModKernel = LoadLibrary(_T("KERNEL32.DLL"));
 	if (hModKernel)

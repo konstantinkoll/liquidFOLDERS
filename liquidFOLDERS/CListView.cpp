@@ -13,7 +13,7 @@
 
 #define GetItemData(Index)                  ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING                             3
-#define DrawLabel(dc, rect, pItemDescriptor, format)      dc.DrawText(GetLabel(pItemDescriptor), rect, DT_END_ELLIPSIS | format);
+#define DrawLabel(dc, rect, pItemDescriptor, format)      dc.DrawText(GetLabel(pItemDescriptor), rect, DT_END_ELLIPSIS | DT_NOPREFIX | format);
 #define SwitchColor(dc, d)                  if ((Themed) && (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing)) && !pData->Hdr.Selected) dc.SetTextColor(0x808080);
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
@@ -344,7 +344,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 			rectLabel.right--;
 		}
 
-		DrawLabel(dc, rectLabel, pItemDescriptor, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
+		DrawLabel(dc, rectLabel, pItemDescriptor, DT_CENTER | DT_WORDBREAK);
 
 		break;
 
@@ -394,7 +394,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+PADDING;
-		DrawLabel(dc, rectLabel, pItemDescriptor, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+		DrawLabel(dc, rectLabel, pItemDescriptor, DT_VCENTER | DT_LEFT | DT_SINGLELINE);
 
 		break;
 
@@ -692,7 +692,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescri
 	{
 	case LFAttrFileName:
 		pOldFont = dc.SelectObject(&theApp.m_LargeFont);
-		DrawLabel(dc, rect, pItemDescriptor, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+		DrawLabel(dc, rect, pItemDescriptor, DT_LEFT | DT_SINGLELINE);
 		dc.SelectObject(pOldFont);
 
 		rect.top += theApp.m_LargeFont.GetFontHeight();

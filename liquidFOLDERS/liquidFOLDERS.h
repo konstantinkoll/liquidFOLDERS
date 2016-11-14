@@ -35,7 +35,7 @@ public:
 	void Reload(INT Context);
 
 	CMainWnd* p_ClipboardWnd;
-	CString m_PathGoogleEarth;
+	WCHAR m_PathGoogleEarth[MAX_PATH];
 	CFormatCache m_FileFormats;
 	CThumbnailCache m_ThumbnailCache;
 	LFViewParameters m_Views[LFContextCount];

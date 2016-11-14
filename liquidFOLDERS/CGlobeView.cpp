@@ -1217,7 +1217,7 @@ void CGlobeView::OnSettings()
 
 void CGlobeView::OnGoogleEarth()
 {
-	if (theApp.m_PathGoogleEarth.IsEmpty())
+	if (theApp.m_PathGoogleEarth[0]==L'\0')
 		return;
 
 	// Dateinamen finden
@@ -1310,7 +1310,7 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_GLOBE_GOOGLEEARTH:
-		bEnable &= (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
+		bEnable &= (GetNextSelectedItem(-1)!=-1) && (theApp.m_PathGoogleEarth[0]!=L'\0');
 		break;
 	}
 

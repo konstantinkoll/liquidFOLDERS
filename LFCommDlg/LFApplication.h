@@ -31,8 +31,6 @@ typedef BOOL (__stdcall* PFNISAPPTHEMED)();
 typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
 typedef HRESULT(__stdcall* PFNDWMSETWINDOWATTRIBUTE)(HWND hWnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute);
 
-typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR AppID);
-
 typedef HRESULT(__stdcall* PFNREGISTERAPPLICATIONRESTART)(PCWSTR CommandLine, DWORD Flags);
 
 typedef HRESULT(__stdcall* PFNCHANGEWINDOWMESSAGEFILTER)(HWND hWnd, UINT message, DWORD action);
@@ -154,9 +152,6 @@ public:
 	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
 	PFNDWMSETWINDOWATTRIBUTE zDwmSetWindowAttribute;
 	BOOL m_DwmLibLoaded;
-
-	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
-	BOOL m_ShellLibLoaded;
 
 	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
 	BOOL m_KernelLibLoaded;
