@@ -130,7 +130,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 							if (((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL | FILE_ATTRIBUTE_SYSTEM))==0) &&
 								(wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0) &&
 								(((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0) || Recursive) &&
-								(wcslen(m_Items[Index].Path)+wcslen(FindFileData.cFileName)+1<MAX_PATH))
+								(wcslen(m_Items[Index].Path)+wcslen(FindFileData.cFileName)<MAX_PATH-1))
 								{
 									WCHAR Filename[MAX_PATH];
 									wcscpy_s(Filename, MAX_PATH, m_Items[Index].Path);

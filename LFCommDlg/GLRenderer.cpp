@@ -73,6 +73,11 @@ BOOL GLRenderer::Initialize()
 			p_Vendor = (CHAR*)glGetString(GL_VENDOR);
 			p_Version = (CHAR*)glGetString(GL_VERSION);
 
+			UINT VersionMajor = 0;
+			UINT VersionMinor = 0;
+			if (p_Version)
+				sscanf_s(p_Version, "%u.%u", &VersionMajor, &VersionMinor);
+
 			// Hardware info
 			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_MaxTextureSize);
 			glGetIntegerv(GL_MAX_TEXTURE_UNITS, &m_TextureUnits);
@@ -117,7 +122,7 @@ BOOL GLRenderer::Initialize()
 			m_SupportsMultisample = m_SupportsFramebuffer && m_SupportsFramebufferMultisample && (glRenderbufferStorageMultisample!=NULL) && (glBlitFramebuffer!=NULL);
 
 			m_MaxModelQuality = m_SupportsGlobeClouds ? MODELULTRA : MODELHIGH;
-			m_MaxTextureQuality = (m_MaxTextureSize>=8192) ? TEXTUREULTRA : (m_MaxTextureSize>=4096) ? TEXTUREMEDIUM : TEXTURELOW;
+			m_MaxTextureQuality = (VersionMajor>=3) && (m_MaxTextureSize>=8192) ? TEXTUREULTRA : (m_MaxTextureSize>=4096) ? TEXTUREMEDIUM : TEXTURELOW;
 
 			if (m_MaxTextureQuality==TEXTUREULTRA)
 			{
@@ -363,7 +368,7 @@ GLuint GLRenderer::CreateTexture(UINT Width, UINT Height, UINT BPP, void* pData,
 		// No mipmap
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, BPP, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, pData);
+		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, Width, Height, 0, PixelMode, GL_UNSIGNED_BYTE, pData);
 	}
 
 	return nID;

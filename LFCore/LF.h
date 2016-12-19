@@ -24,7 +24,7 @@ struct LIQUIDFILES
 };
 
 
-// Progress Message
+// Progress message
 
 #define LFProgressWorking       1
 #define LFProgressError         2

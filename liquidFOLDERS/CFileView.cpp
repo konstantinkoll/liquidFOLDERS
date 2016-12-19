@@ -125,7 +125,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
+		theApp.HideTooltip();
 		break;
 	}
 
@@ -135,7 +135,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 {
 	DestroyEdit();
-	LFGetApp()->HideTooltip();
+	theApp.HideTooltip();
 
 	if (Context>=0)
 		m_Context = Context;
@@ -162,7 +162,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall)
 {
 	DestroyEdit();
-	LFGetApp()->HideTooltip();
+	theApp.HideTooltip();
 
 	void* pVictim = m_ItemData;
 	SIZE_T VictimAllocated = m_ItemDataAllocated;
@@ -1218,7 +1218,7 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 		}
 		else
 			if ((LFGetApp()->IsTooltipVisible()) && (Index!=m_HotItem))
-				LFGetApp()->HideTooltip();
+				theApp.HideTooltip();
 
 		if (m_HotItem!=Index)
 		{
@@ -1235,8 +1235,8 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 
 void CFileView::OnMouseLeave()
 {
-	LFGetApp()->HideTooltip();
 	InvalidateItem(m_HotItem);
+	theApp.HideTooltip();
 
 	m_Hover = FALSE;
 	m_HotItem = -1;
@@ -1249,7 +1249,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 		if ((m_HotItem!=-1) && (!IsEditing()))
 			if (m_HotItem==m_EditLabel)
 			{
-				LFGetApp()->HideTooltip();
+				theApp.HideTooltip();
 				EditLabel(m_EditLabel);
 			}
 			else
@@ -1287,13 +1287,13 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					if (!hIcon && !hBitmap)
 						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1);
 
-					LFGetApp()->ShowTooltip(this, point, GetLabel(pItemDescriptor), GetHint(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
+					theApp.ShowTooltip(this, point, GetLabel(pItemDescriptor), GetHint(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
 				}
 	}
 	else
 	{
 Leave:
-		LFGetApp()->HideTooltip();
+		theApp.HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;
