@@ -263,7 +263,7 @@ LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
 
 		}
 
-	return LFTypeSourceUnknown;
+	return LFTypeSourceInternal;
 }
 
 LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)

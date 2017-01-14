@@ -131,7 +131,7 @@ void LFCreateStoreDlg::OnDestroy()
 
 void LFCreateStoreDlg::OnUpdate()
 {
-	UINT Source = LFTypeSourceUnknown;
+	UINT Source = LFTypeSourceInternal;
 
 	if (!m_wndAutoPath.GetCheck())
 	{
@@ -146,11 +146,7 @@ void LFCreateStoreDlg::OnUpdate()
 		m_wndExplorerList.EnableWindow(FALSE);
 	}
 
-	if (Source==LFTypeSourceUnknown)
-		Source = LFTypeSourceInternal;
-
 	m_wndMakeSearchable.EnableWindow(Source!=LFTypeSourceInternal);
-
 	m_wndIcon.SetCoreIcon(Source);
 }
 
@@ -223,7 +219,7 @@ void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 		{
 		case IDM_VOLUME_FORMAT:
 		case IDM_VOLUME_EJECT:
-			bEnable = LFGetSourceForVolume(m_DriveLetters[Index])!=LFTypeSourceUnknown;
+			bEnable = LFGetSourceForVolume(m_DriveLetters[Index])>LFTypeSourceInternal;
 			break;
 
 		case IDM_VOLUME_PROPERTIES:

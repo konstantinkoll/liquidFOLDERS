@@ -845,7 +845,7 @@ void CMainView::OnBeginDragDrop()
 				LFDropSource* pDropSource = new LFDropSource();
 
 				DWORD dwEffect;
-				SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY , &dwEffect);
+				SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY, &dwEffect);
 
 				pDropSource->Release();
 				pDataObject->Release();
@@ -867,7 +867,7 @@ void CMainView::OnBeginDragDrop()
 		LFDropSource* pDropSource = new LFDropSource();
 
 		DWORD dwEffect;
-		SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY , &dwEffect);
+		SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY, &dwEffect);
 
 		pDropSource->Release();
 		pDataObject->Release();

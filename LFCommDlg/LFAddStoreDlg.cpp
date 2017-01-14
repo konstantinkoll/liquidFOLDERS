@@ -18,7 +18,7 @@ const UINT LFAddStoreDlg::m_Types[] = { LFTypeSourceInternal, LFTypeSourceWindow
 		LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
 
 const UINT LFAddStoreDlg::m_nHints[] = { IDS_ADDSTORE_LIQUIDFOLDERS, IDS_ADDSTORE_WINDOWS,
-		IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE,
+		IDS_ADDSTORE_DROPBOX, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE,
 		IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE };
 
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
@@ -44,8 +44,17 @@ void LFAddStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 	}
 }
 
-void LFAddStoreDlg::CheckInternetConnection()
+void LFAddStoreDlg::CheckSources(BOOL ForceAll)
 {
+	// Dropbox
+	if (ForceAll)
+		m_Dropbox.CheckForDropbox();
+
+	BOOL IsDropboxAvailable = m_Dropbox.IsDropboxAvailable();
+
+	GetDlgItem(IDC_ADDSTORE_DROPBOX)->ShowWindow(IsDropboxAvailable ? SW_SHOW : SW_HIDE);
+
+	// Internet
 	DWORD Flags;
 	BOOL Connected = InternetGetConnectedState(&Flags, 0);
 
@@ -53,10 +62,11 @@ void LFAddStoreDlg::CheckInternetConnection()
 	Connected = FALSE;
 #endif
 
-	m_wndCategory[1].ShowWindow(Connected ? SW_SHOW : SW_HIDE);
-
-	for (UINT nCtlID=IDC_ADDSTORE_DROPBOX; nCtlID<=IDC_ADDSTORE_YOUTUBE; nCtlID++)
+	for (UINT nCtlID=IDC_ADDSTORE_FACEBOOK; nCtlID<=IDC_ADDSTORE_YOUTUBE; nCtlID++)
 		GetDlgItem(nCtlID)->ShowWindow(Connected ? SW_SHOW : SW_HIDE);
+
+	// Category
+	m_wndCategory[1].ShowWindow(IsDropboxAvailable | Connected ? SW_SHOW : SW_HIDE);
 }
 
 void LFAddStoreDlg::ShowResult(UINT Result, const CString StoreName)
@@ -89,7 +99,7 @@ BOOL LFAddStoreDlg::InitDialog()
 	m_wndCategory[1].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryRemote].Caption);
 
 	// Internet
-	CheckInternetConnection();
+	CheckSources();
 	SetTimer(1, 1000, NULL);
 
 	// Notification
@@ -103,10 +113,24 @@ BOOL LFAddStoreDlg::InitDialog()
 	return TRUE;
 }
 
+void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path)
+{
+	ASSERT(Path);
+
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	wcscpy_s(wp.Path, MAX_PATH, Path);
+
+	LFDoWithProgress(WorkerCreateStoreWindows, (LFWorkerParameters*)&wp, this);
+
+	ShowResult(wp.Result, wp.StoreName);
+}
+
 
 BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
+	ON_WM_ACTIVATE()
 	ON_NOTIFY_RANGE(REQUEST_DRAWBUTTONFOREGROUND, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_YOUTUBE, OnDrawButtonForeground)
 	ON_NOTIFY_RANGE(REQUEST_TOOLTIP_DATA, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_YOUTUBE, OnRequestTooltipData)
 
@@ -114,6 +138,7 @@ BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 
 	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
+	ON_BN_CLICKED(IDC_ADDSTORE_DROPBOX, OnBtnDropbox)
 END_MESSAGE_MAP()
 
 void LFAddStoreDlg::OnDestroy()
@@ -126,13 +151,21 @@ void LFAddStoreDlg::OnDestroy()
 void LFAddStoreDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	if (nIDEvent==1)
-		CheckInternetConnection();
+		CheckSources();
 
 	LFDialog::OnTimer(nIDEvent);
 
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
+}
+
+void LFAddStoreDlg::OnActivate(UINT nState, CWnd* /*pWndOther*/, BOOL /*bMinimized*/)
+{
+#ifndef DEBUG
+	if (nState!=WA_INACTIVE)
+		CheckSources(TRUE);
+#endif
 }
 
 void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRESULT* pResult)
@@ -229,13 +262,12 @@ void LFAddStoreDlg::OnBtnWindows()
 
 	LFBrowseForFolderDlg dlg(this, Caption, Hint);
 	if (dlg.DoModal()==IDOK)
-	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		wcscpy_s(wp.Path, MAX_PATH, dlg.m_FolderPath);
+		AddWindowsPathAsStore(dlg.m_FolderPath);
+}
 
-		LFDoWithProgress(WorkerCreateStoreWindows, (LFWorkerParameters*)&wp, this);
-
-		ShowResult(wp.Result, wp.StoreName);
-	}
+void LFAddStoreDlg::OnBtnDropbox()
+{
+	LFDropboxDlg dlg(m_Dropbox, this);
+	if (dlg.DoModal()==IDOK)
+		AddWindowsPathAsStore(dlg.m_FolderPath);
 }

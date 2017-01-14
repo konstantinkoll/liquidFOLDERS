@@ -147,9 +147,9 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 	assert(pStoreDescriptor);
 	assert(((pStoreDescriptor->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((pStoreDescriptor->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
 
-	// Source
+	// Source: only set if unknown to retain USB/IEEE1394 icons when unmounted
 	if (pStoreDescriptor->Source==LFTypeSourceUnknown)
-		pStoreDescriptor->Source = ((pStoreDescriptor->Mode & LFStoreModeBackendMask)==LFStoreModeBackendInternal) ? LFTypeSourceInternal : (pStoreDescriptor->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift;
+		pStoreDescriptor->Source = max(LFTypeSourceInternal, (pStoreDescriptor->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift);
 
 	// Store name and source of mounted volume
 	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
@@ -163,7 +163,12 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 				wcscpy_s(pStoreDescriptor->LastSeen, 256, sfi.szDisplayName);
 
 			if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendWindows)
-				pStoreDescriptor->Source = LFGetSourceForVolume(pStoreDescriptor->DatPath[0] & 0xFF);
+			{
+				UINT Source = LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0]);
+
+				if (Source>LFTypeSourceInternal)
+					pStoreDescriptor->Source = Source;
+			}
 		}
 
 	// Paths
@@ -171,8 +176,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 	{
 		if (LFIsStoreMounted(pStoreDescriptor))
 		{
-			UINT Source = LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0]);
-			if ((Source==LFTypeSourceUSB) || (Source==LFTypeSource1394))
+			if (LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0])>LFTypeSourceInternal)
 			{
 				wcsncpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath, 3);
 				AppendGUID(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
@@ -180,6 +184,17 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 			else
 			{
 				GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
+			}
+
+			// Is it a Dropbox directory?
+			if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
+			{
+				WCHAR szDropbox[MAX_PATH];
+				wcscpy_s(szDropbox, MAX_PATH, pStoreDescriptor->DatPath);
+				wcscat_s(szDropbox, MAX_PATH, L".dropbox");
+
+				if (FileExists(szDropbox))
+					pStoreDescriptor->Source = LFTypeSourceDropbox;
 			}
 		}
 		else
@@ -648,6 +663,10 @@ LFCORE_API UINT LFSetDefaultStore(const CHAR* pStoreID)
 		if (Result==LFOk)
 			SendLFNotifyMessage(LFMessages.DefaultStoreChanged);
 	}
+	else
+	{
+		ReleaseMutexForStores();
+	}
 
 	return Result;
 }
@@ -913,7 +932,7 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 			*pType |= LFTypeSynchronizeAllowed;
 	}
 
-	return pStoreDescriptor->Source;
+	return max(LFTypeSourceInternal, pStoreDescriptor->Source);
 }
 
 LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, CHAR cVolume, BOOL MakeSearchable)
@@ -957,8 +976,7 @@ LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, WCHAR* pStoreName, LFProgress
 	LFStoreDescriptor Store;
 	GetDescriptorForNewStore(&Store);
 
-	UINT Source = LFGetSourceForVolume((CHAR)*pPath);
-	Store.Mode = LFStoreModeBackendWindows | ((Source==LFTypeSourceUSB) || (Source==LFTypeSource1394) ? LFStoreModeIndexExternal : LFStoreModeIndexInternal);
+	Store.Mode = LFStoreModeBackendWindows | (LFGetSourceForVolume((CHAR)*pPath)>LFTypeSourceInternal ? LFStoreModeIndexExternal : LFStoreModeIndexInternal);
 
 	// Set path
 	BOOL TrailingBackslash = (pPath[wcslen(pPath)-1]==L'\\');

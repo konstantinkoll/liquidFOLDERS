@@ -5,6 +5,7 @@
 #pragma once
 #include "CExplorerNotification.h"
 #include "LFDialog.h"
+#include "Dropbox.h"
 
 
 // LFAddStoreDlg
@@ -25,6 +26,7 @@ protected:
 
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
 	afx_msg void OnDrawButtonForeground(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRequestTooltipData(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -32,6 +34,7 @@ protected:
 
 	afx_msg void OnBtnLiquidfolders();
 	afx_msg void OnBtnWindows();
+	afx_msg void OnBtnDropbox();
 	DECLARE_MESSAGE_MAP()
 
 	static const UINT m_Types[10];
@@ -39,5 +42,8 @@ protected:
 	CExplorerNotification m_wndExplorerNotification;
 
 private:
-	void CheckInternetConnection();
+	void CheckSources(BOOL ForceAll=FALSE);
+	void AddWindowsPathAsStore(LPCWSTR Path);
+
+	Dropbox m_Dropbox;
 };

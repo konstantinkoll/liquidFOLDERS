@@ -32,6 +32,7 @@ IDI_STR_LIQUIDFOLDERS   ICON                    "res\\STR_liquidFOLDERS.ico"
 IDI_STR_WINDOWS         ICON                    "res\\STR_Windows.ico"
 IDI_STR_1394            ICON                    "res\\STR_1394.ico"
 IDI_STR_USB             ICON                    "res\\STR_USB.ico"
+IDI_STR_NETHOOD         ICON                    "res\\STR_Nethood.ico"
 IDI_STR_DROPBOX         ICON                    "res\\STR_Dropbox.ico"
 IDI_STR_FACEBOOK        ICON                    "res\\STR_Facebook.ico"
 IDI_STR_FLICKR          ICON                    "res\\STR_Flickr.ico"
@@ -116,7 +117,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Auf diesem Computer gespeicherte Dateien"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern."
+                            "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern oder werden mit ihnen synchronisiert."
     IDS_ITEMCATEGORY_NIGHT  "Nacht\nBis 6 Uhr"
 END
 
@@ -331,6 +332,7 @@ BEGIN
     IDS_SRC_WINDOWS         "Windows-Verzeichnis"
     IDS_SRC_1394            "1394-Laufwerk"
     IDS_SRC_USB             "USB-Laufwerk"
+    IDS_SRC_NETHOOD         "Netzlaufwerk"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
@@ -348,6 +350,7 @@ BEGIN
     IDS_QSRC_WINDOWS        "Im Windows-Dateisystem"
     IDS_QSRC_1394           "Auf lokalem 1394-Laufwerk"
     IDS_QSRC_USB            "Auf lokalem USB-Laufwerk"
+    IDS_QSRC_NETHOOD        "Auf Netzlaufwerk"
     IDS_QSRC_DROPBOX        "Auf Dropbox"
     IDS_QSRC_FACEBOOK       "Auf Facebook"
     IDS_QSRC_FLICKR         "Auf Flickr"
@@ -396,7 +399,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Archivos almacenados en este equipo"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Ubicación de red\nEstos stores residen en otras computadoras."
+                            "Ubicación de red\nEstos stores residen en otras computadoras o sincronizarse con ellas."
     IDS_ITEMCATEGORY_NIGHT  "Noche\nHasta 6am"
 END
 
@@ -611,6 +614,7 @@ BEGIN
     IDS_SRC_WINDOWS         "Carpeta de Windows"
     IDS_SRC_1394            "Unidad de 1394"
     IDS_SRC_USB             "Unidad de USB"
+    IDS_SRC_NETHOOD         "Unidad de red"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
@@ -628,6 +632,7 @@ BEGIN
     IDS_QSRC_WINDOWS        "En carpeta de Windows"
     IDS_QSRC_1394           "En unidad local de 1394"
     IDS_QSRC_USB            "En unidad local de USB"
+    IDS_QSRC_NETHOOD        "En unidad de red"
     IDS_QSRC_DROPBOX        "En Dropbox"
     IDS_QSRC_FACEBOOK       "En Facebook"
     IDS_QSRC_FLICKR         "En Flickr"
@@ -676,7 +681,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Fichiers enregistrés sur cet ordinateur"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs."
+                            "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs ou être synchronisés avec eux."
     IDS_ITEMCATEGORY_NIGHT  "Nuit\nJusqu'à 6 heures"
 END
 
@@ -892,6 +897,7 @@ BEGIN
     IDS_SRC_WINDOWS         "Dossier de Windows"
     IDS_SRC_1394            "Lecteur 1394"
     IDS_SRC_USB             "Lecteur USB"
+    IDS_SRC_NETHOOD         "Lecteur réseau"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
@@ -909,6 +915,7 @@ BEGIN
     IDS_QSRC_WINDOWS        "Dans dossier de Windows"
     IDS_QSRC_1394           "En lecteur local de 1394"
     IDS_QSRC_USB            "En lecteur local de USB"
+    IDS_QSRC_NETHOOD        "En lecteur réseau"
     IDS_QSRC_DROPBOX        "En Dropbox"
     IDS_QSRC_FACEBOOK       "En Facebook"
     IDS_QSRC_FLICKR         "En Flickr"
@@ -994,7 +1001,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Files stored on this computer"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Network location\nThese stores reside on other computers."
+                            "Network location\nThese stores saved to or synchronized with other computers."
     IDS_ITEMCATEGORY_NIGHT  "Night\nUntil 6am"
 END
 
@@ -1206,8 +1213,9 @@ BEGIN
     IDS_SRC_UNKNOWN         "Unknown"
     IDS_SRC_LIQUIDFOLDERS   "liquidFOLDERS"
     IDS_SRC_WINDOWS         "Windows folder"
-    IDS_SRC_1394            "1394 drive"
-    IDS_SRC_USB             "USB drive"
+    IDS_SRC_1394            "1394 volume"
+    IDS_SRC_USB             "USB volume"
+    IDS_SRC_NETHOOD         "Network volume"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
@@ -1225,6 +1233,7 @@ BEGIN
     IDS_QSRC_WINDOWS        "In Windows file system"
     IDS_QSRC_1394           "On local 1394 drive"
     IDS_QSRC_USB            "On local USB drive"
+    IDS_QSRC_NETHOOD        "On network volume"
     IDS_QSRC_DROPBOX        "On Dropbox"
     IDS_QSRC_FACEBOOK       "On Facebook"
     IDS_QSRC_FLICKR         "On Flickr"

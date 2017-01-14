@@ -10,7 +10,7 @@
 // LFEditHashtagsDlg
 //
 
-LFEditHashtagsDlg::LFEditHashtagsDlg(CString Hashtags, CHAR* pStoreID, CWnd* pParentWnd)
+LFEditHashtagsDlg::LFEditHashtagsDlg(const CString& Hashtags, CHAR* pStoreID, CWnd* pParentWnd)
 	: LFDialog(IDD_EDITHASHTAGS, pParentWnd)
 {
 	ASSERT(pStoreID);

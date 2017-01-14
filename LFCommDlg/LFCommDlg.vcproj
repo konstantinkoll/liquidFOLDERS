@@ -417,6 +417,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CItemPanel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CMaintenanceReport.cpp"
 				>
 			</File>
@@ -426,10 +430,6 @@
 			</File>
 			<File
 				RelativePath=".\CPropertyEdit.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CStorePanel.cpp"
 				>
 			</File>
 			<File
@@ -445,11 +445,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Dropbox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GLFont.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\GLRenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\jsmn.cpp"
 				>
 			</File>
 			<File
@@ -490,6 +498,10 @@
 			</File>
 			<File
 				RelativePath=".\LFDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDropboxDlg.cpp"
 				>
 			</File>
 			<File
@@ -981,6 +993,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CItemPanel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CMaintenanceReport.h"
 				>
 			</File>
@@ -990,10 +1006,6 @@
 			</File>
 			<File
 				RelativePath=".\CPropertyEdit.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CStorePanel.h"
 				>
 			</File>
 			<File
@@ -1009,6 +1021,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Dropbox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GLFont.h"
 				>
 			</File>
@@ -1018,6 +1034,10 @@
 			</File>
 			<File
 				RelativePath=".\ITaskbarList3.h"
+				>
+			</File>
+			<File
+				RelativePath=".\jsmn.h"
 				>
 			</File>
 			<File
@@ -1058,6 +1078,10 @@
 			</File>
 			<File
 				RelativePath=".\LFDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDropboxDlg.h"
 				>
 			</File>
 			<File

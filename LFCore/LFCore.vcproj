@@ -798,6 +798,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\STR_Nethood.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\STR_Pinterest.ico"
 				>
 			</File>

@@ -421,7 +421,7 @@ BEGIN
     CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Erstellt einen neuen Store für Ihre Dateien.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Fügt ein Dropbox-Konto als Store hinzu.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Fügt ein lokales Dropbox-Verzeichnis als Store hinzu.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Fügt ein Facebook-Konto als Store hinzu.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Fügt ein Flickr-Konto als Store hinzu.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Fügt ein Instagram-Konto als Store hinzu.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -446,7 +446,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Ziel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,185,37
+    CONTROL         "",IDC_DESTINATION,"CItemPanel",WS_GROUP,7,22,185,37
     PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,195,34,75,14
 END
 
@@ -523,6 +523,20 @@ BEGIN
     CONTROL         "Offline &durchsuchbar machen",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
     DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,233,204,50,14,WS_GROUP
+END
+
+IDD_DROPBOX DIALOGEX 0, 0, 252, 157
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dropbox"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Privat",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_DROPBOX_PERSONAL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Hinzufügen",IDC_DROPBOX_ADDPERSONAL,195,34,50,14
+    CONTROL         "Geschäftlich",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_DROPBOX_BUSINESS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "H&inzufügen",IDC_DROPBOX_ADDBUSINESS,195,95,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
 
@@ -703,6 +717,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 218
     END
+
+    IDD_DROPBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 150
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -870,7 +892,9 @@ BEGIN
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Erstellt einen neuen Speicherort für Ihre Dateien.\nBeim Importieren werden Dateien dorthin kopiert."
     IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dadurch nicht verändert."
+    IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
     IDS_ADDSTORE_WEBSERVICE "Verbindet liquidFOLDERS mit Ihrem Benutzerkonto."
+    IDS_SUBSCRIPTION        "Abo"
 END
 
 STRINGTABLE 
@@ -922,7 +946,7 @@ END
 /////////////////////////////////////////////////////////////////////////////
 // Spanisch (neutral) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
 #ifdef _WIN32
 LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
@@ -1169,7 +1193,7 @@ BEGIN
     CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Crea un nuevo store para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Adjunta una carpeta existente como store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adjunta una cuenta de Dropbox como store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adjunta una carpeta local de Dropbox como store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adjunta una cuenta de Facebook como store.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adjunta una cuenta de Flickr como store.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adjunta una cuenta de Instagram como store.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -1194,7 +1218,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Destino",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,180,37
+    CONTROL         "",IDC_DESTINATION,"CItemPanel",WS_GROUP,7,22,180,37
     PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,190,34,80,14
 END
 
@@ -1221,7 +1245,7 @@ BEGIN
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Otras condiciones",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
     CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,105,160,115
-    PUSHBUTTON      "&Añadir condición...",IDM_CONDITIONLIST_ADD,7,226,100,14,WS_GROUP
+    PUSHBUTTON      "&Adjuntar condición...",IDM_CONDITIONLIST_ADD,7,226,100,14,WS_GROUP
     DEFPUSHBUTTON   "Guardar",IDOK,57,256,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,117,256,50,14,WS_GROUP
 END
@@ -1280,6 +1304,20 @@ CAPTION "Mantenimiento programado"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,237,278,50,14,WS_GROUP
+END
+
+IDD_DROPBOX DIALOGEX 0, 0, 252, 157
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dropbox"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Personalemente",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_DROPBOX_PERSONAL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Adjuntar",IDC_DROPBOX_ADDPERSONAL,195,34,50,14
+    CONTROL         "Negocios",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_DROPBOX_BUSINESS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "A&djuntar",IDC_DROPBOX_ADDBUSINESS,195,95,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
 
@@ -1460,6 +1498,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 292
     END
+
+    IDD_DROPBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 150
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1535,7 +1581,7 @@ IDM_CONDITIONLIST MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Añadir condición...",        IDM_CONDITIONLIST_ADD
+        MENUITEM "&Adjuntar condición...",       IDM_CONDITIONLIST_ADD
     END
 END
 
@@ -1626,8 +1672,10 @@ BEGIN
     IDS_STORECREATED        "Se añadió el store «%s»."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Se crea una nueva ubicación para sus archivos.\nLos archivos importados se copiarán allí."
-    IDS_ADDSTORE_WINDOWS    "Índices una carpeta de Windows existente.\nSus archivos no serán modificados."
+    IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no serán modificados."
+    IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no serán modificados."
     IDS_ADDSTORE_WEBSERVICE "Se conecta liquidFOLDERS con su cuenta de usuario."
+    IDS_SUBSCRIPTION        "Suscripción"
 END
 
 STRINGTABLE 
@@ -1947,7 +1995,7 @@ BEGIN
     CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Crée un nouveau store pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Ajoute un dossier existant comme store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Ajoute un compte Dropbox comme store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Ajoute un dossier local de Dropbox comme store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Ajoute un compte Facebook comme store.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Ajoute un compte Flickr comme store.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Ajoute un compte Instagram comme store.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -1972,7 +2020,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Destination",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,175,37
+    CONTROL         "",IDC_DESTINATION,"CItemPanel",WS_GROUP,7,22,175,37
     PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,185,34,85,14
 END
 
@@ -2036,6 +2084,20 @@ BEGIN
     CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
     DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,233,204,50,14,WS_GROUP
+END
+
+IDD_DROPBOX DIALOGEX 0, 0, 252, 157
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dropbox"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Personnellement",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_DROPBOX_PERSONAL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Ajouter",IDC_DROPBOX_ADDPERSONAL,195,34,50,14
+    CONTROL         "Entreprise",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_DROPBOX_BUSINESS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "A&jouter",IDC_DROPBOX_ADDBUSINESS,195,95,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
 
@@ -2216,6 +2278,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 218
     END
+
+    IDD_DROPBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 150
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2383,7 +2453,9 @@ BEGIN
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Crée un nouvel emplacement pour vos fichiers.\nLes fichiers importés seront copiés là."
     IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas modifiés."
+    IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas modifiés."
     IDS_ADDSTORE_WEBSERVICE "Connecte liquidFOLDERS à votre compte."
+    IDS_SUBSCRIPTION        "Abonnement"
 END
 
 STRINGTABLE 
@@ -2635,14 +2707,14 @@ BEGIN
     CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
 END
 
-IDD_PROGRESS DIALOGEX 0, 0, 623, 82
+IDD_PROGRESS DIALOGEX 0, 0, 249, 82
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Cancel",IDCANCEL,566,60,50,14
-    CONTROL         "",IDC_CAPTION,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,7,609,8
-    CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",PBS_SMOOTH,7,19,609,14
-    CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,609,8
+    PUSHBUTTON      "Cancel",IDCANCEL,192,60,50,14
+    CONTROL         "",IDC_CAPTION,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,7,235,8
+    CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",PBS_SMOOTH,7,19,235,14
+    CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
 IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
@@ -2732,7 +2804,7 @@ BEGIN
     CONTROL         "X",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Creates a new store for your files.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Adds an existing directory as store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE | NOT WS_TABSTOP
-    PUSHBUTTON      "Adds a Dropbox account as store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
+    PUSHBUTTON      "Adds a local Dropbox directoy as store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adds a Facebook account as store.",IDC_ADDSTORE_FACEBOOK,214,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adds a Flickr account as store.",IDC_ADDSTORE_FLICKR,421,116,200,74,BS_MULTILINE | NOT WS_TABSTOP
     PUSHBUTTON      "Adds an Instagram account as store.",IDC_ADDSTORE_INSTAGRAM,7,198,200,74,BS_MULTILINE | NOT WS_TABSTOP
@@ -2757,7 +2829,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Destination",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,7,22,185,37
+    CONTROL         "",IDC_DESTINATION,"CItemPanel",WS_GROUP,7,22,185,37
     PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,195,34,75,14
 END
 
@@ -2845,6 +2917,20 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,237,278,50,14,WS_GROUP
 END
 
+IDD_DROPBOX DIALOGEX 0, 0, 252, 157
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dropbox"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Personal",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_DROPBOX_PERSONAL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Add",IDC_DROPBOX_ADDPERSONAL,195,34,50,14
+    CONTROL         "Business",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_DROPBOX_BUSINESS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "A&dd",IDC_DROPBOX_ADDBUSINESS,195,95,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,195,136,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2923,7 +3009,7 @@ BEGIN
     IDD_PROGRESS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 616
+        RIGHTMARGIN, 242
         TOPMARGIN, 7
         BOTTOMMARGIN, 74
     END
@@ -3014,6 +3100,14 @@ BEGIN
         RIGHTMARGIN, 287
         TOPMARGIN, 7
         BOTTOMMARGIN, 292
+    END
+
+    IDD_DROPBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 150
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -3182,7 +3276,9 @@ BEGIN
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Creates a new storage location for your files.\nImported files will be copied there."
     IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be modified by this."
+    IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox application.\nYour files will not be modified by this."
     IDS_ADDSTORE_WEBSERVICE "Links liquidFOLDERS to your account."
+    IDS_SUBSCRIPTION        "Subscription"
 END
 
 STRINGTABLE 

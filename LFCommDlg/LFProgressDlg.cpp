@@ -13,7 +13,7 @@ LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParamet
 	: LFDialog(IDD_PROGRESS, pParentWnd, TRUE)
 {
 	ZeroMemory(&m_Progress, sizeof(m_Progress));
-	m_Abort = FALSE;
+	m_Abort = m_Update = FALSE;
 
 	p_ThreadProc = pThreadProc;
 	p_Parameters = pParameters;

@@ -1556,6 +1556,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Sources\Nethood_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\Nethood_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\Nethood_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Sources\Paypal_16.png"
 				>
 			</File>

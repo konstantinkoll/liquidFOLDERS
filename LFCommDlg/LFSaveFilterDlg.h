@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "CStorePanel.h"
+#include "CItemPanel.h"
 #include "LFDialog.h"
 
 
@@ -29,8 +29,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	BOOL m_AllowChooseStore;
+	BOOL m_IsValidStore;
 
 private:
-	CStorePanel m_wndStorePanel;
+	CItemPanel m_wndStorePanel;
 	CEdit m_wndEdit;
 };

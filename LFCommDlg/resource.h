@@ -116,7 +116,9 @@
 #define IDS_STORECREATED                20241
 #define IDS_ADDSTORE_LIQUIDFOLDERS      20242
 #define IDS_ADDSTORE_WINDOWS            20243
-#define IDS_ADDSTORE_WEBSERVICE         20244
+#define IDS_ADDSTORE_DROPBOX            20244
+#define IDS_ADDSTORE_WEBSERVICE         20245
+#define IDS_SUBSCRIPTION                20246
 #define IDS_COMPARE_FIRST               20300
 #define IDS_COMPARE_IGNORE              20300
 #define IDS_COMPARE_ISNULL              20301
@@ -139,6 +141,7 @@
 #define IDS_UPDATE_IATA                 20407
 #define IDS_UPDATE_PERFORMANCE          20408
 #define IDF_LETTERGOTHIC                20500
+#define IDC_SYNCHRONIZEICON             20831
 #define IDD_MESSAGEBOX                  21000
 #define IDD_TABBEDDIALOG                21001
 #define IDC_BUTTON1                     21002
@@ -273,7 +276,6 @@
 #define IDC_MAKEDEFAULT                 22818
 #define IDC_MAKESEARCHABLE              22819
 #define IDD_STOREPROPERTIES_TOOLS       22830
-#define IDC_SYNCHRONIZEICON             20831
 #define IDC_SYNCHRONIZED                22832
 #define IDC_RUNSYNCHRONIZE              22833
 #define IDC_MAINTENANCEICON             22834
@@ -296,11 +298,16 @@
 #define IDM_VOLUME_FORMAT               22981
 #define IDM_VOLUME_EJECT                22982
 #define IDM_VOLUME_PROPERTIES           22983
-#define IDD_UPDATE                      23000
-#define IDC_IGNOREUPDATE                23001
-#define IDC_HIDE                        23002
-#define IDM_UPDATE                      23090
-#define IDM_UPDATE_RESTORE              23091
+#define IDD_DROPBOX                     23000
+#define IDC_DROPBOX_PERSONAL            23001
+#define IDC_DROPBOX_ADDPERSONAL         23002
+#define IDC_DROPBOX_BUSINESS            23003
+#define IDC_DROPBOX_ADDBUSINESS         23004
+#define IDD_UPDATE                      23100
+#define IDC_IGNOREUPDATE                23101
+#define IDC_HIDE                        23102
+#define IDM_UPDATE                      23190
+#define IDM_UPDATE_RESTORE              23191
 #define IDI_SHIELD_VISTA                32519
 #define IDI_READY                       32520
 

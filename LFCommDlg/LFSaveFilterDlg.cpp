@@ -17,6 +17,7 @@ LFSaveFilterDlg::LFSaveFilterDlg(CWnd* pParentWnd, const CHAR* pStoreID, BOOL Al
 	wcscpy_s(m_FileName, 256, FileName ? FileName : L"");
 	wcscpy_s(m_Comments, 256, Comments ? Comments : L"");
 	m_AllowChooseStore = AllowChooseStore;
+	m_IsValidStore = FALSE;
 }
 
 void LFSaveFilterDlg::DoDataExchange(CDataExchange* pDX)
@@ -74,12 +75,13 @@ void LFSaveFilterDlg::OnChange()
 	m_wndEdit.GetWindowText(tmpStr);
 
 	tmpStr.Trim();
-	GetDlgItem(IDOK)->EnableWindow(m_wndStorePanel.IsValidStore() && !tmpStr.IsEmpty());
+	GetDlgItem(IDOK)->EnableWindow(m_IsValidStore && !tmpStr.IsEmpty());
 }
 
 LRESULT LFSaveFilterDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	m_wndStorePanel.SetStore(m_StoreID);
+	m_IsValidStore = m_wndStorePanel.SetItem(m_StoreID);
+
 	OnChange();
 
 	return NULL;
