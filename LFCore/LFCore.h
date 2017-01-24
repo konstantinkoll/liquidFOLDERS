@@ -16,12 +16,10 @@
 // Kernfunktionalität
 //
 
-#define LFGLV_INTERNAL            1
-#define LFGLV_EXTERNAL            2
-#define LFGLV_BOTH                3
-#define LFGLV_NETWORK             4
-#define LFGLV_INCLUDEFLOPPIES     8
-#define LFGLV_ALL                 15
+#define LFGLV_INTERNAL     1
+#define LFGLV_EXTERNAL     2
+#define LFGLV_NETWORK      4
+#define LFGLV_FLOPPIES     8
 
 
 // liquidFOLDERS initalisieren
@@ -48,7 +46,7 @@ LFCORE_API BOOL __stdcall LFHideVolumesWithNoMedia();
 LFCORE_API UINT __stdcall LFGetSourceForVolume(CHAR cVolume);
 
 // Wie Win32-Funktion GetLogicalVolumes(), allerdings selektiv (s.o.)
-LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_BOTH);
+LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_INTERNAL | LFGLV_EXTERNAL | LFGLV_NETWORK);
 
 
 // Initalisiert eine LFProgress-Datenstruktur

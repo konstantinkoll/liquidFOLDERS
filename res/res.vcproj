@@ -140,11 +140,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Stores\STR_iCloud.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Stores\STR_Instagram.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\Stores\STR_liquidFOLDERS.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Nethood.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_OneDrive.ico"
 				>
 			</File>
 			<File
@@ -1565,6 +1577,18 @@
 			</File>
 			<File
 				RelativePath=".\Sources\Nethood_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\OneDrive_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\OneDrive_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\OneDrive_32.png"
 				>
 			</File>
 			<File

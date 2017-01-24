@@ -383,7 +383,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 UINT CStore::CreateDirectories()
 {
 	// Create data path
-	if (p_StoreDescriptor->DatPath[0]!=L'\0')
+	if (wcslen(p_StoreDescriptor->DatPath)>3)
 	{
 		DWORD Result = CreateDirectory(p_StoreDescriptor->DatPath);
 

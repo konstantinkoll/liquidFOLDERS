@@ -23,10 +23,10 @@ void SanitizeFileName(WCHAR* pDstName, SIZE_T cCount, WCHAR* pSrcName)
 	}
 }
 
-void AppendGUID(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath, WCHAR* pSuffix)
+void AppendGUID(WCHAR* pPath, LFStoreDescriptor* pStoreDescriptor, WCHAR* pSuffix)
 {
-	assert(pStoreDescriptor);
 	assert(pPath);
+	assert(pStoreDescriptor);
 	assert(pSuffix);
 
 	WCHAR szGUID[MAX_PATH];
@@ -44,7 +44,7 @@ void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath)
 
 	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, L"Stores", pPath);
 	wcscat_s(pPath, MAX_PATH, L"\\");
-	AppendGUID(pStoreDescriptor, pPath);
+	AppendGUID(pPath, pStoreDescriptor);
 }
 
 BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData)
@@ -105,7 +105,7 @@ BOOL DirectoryWriteable(LPWSTR lpPath)
 	wcscpy_s(Path, MAX_PATH, lpPath);
 	wcscat_s(Path, MAX_PATH, L"LF_TEST.BIN");
 
-	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 		return FALSE;
 

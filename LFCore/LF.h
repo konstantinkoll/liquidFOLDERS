@@ -123,6 +123,16 @@ struct LFAirport
 #pragma pack(pop)
 
 
+// Volumes
+
+struct LFVolumeDescriptor
+{
+	BOOL Mounted;
+	UINT LogicalVolumeType;
+	UINT Source;
+};
+
+
 // Item categories
 
 #define LFItemCategoryLocal       0
@@ -446,7 +456,7 @@ struct LFCoreAttributes
 
 // Sources
 
-#define LFSourceCount              14
+#define LFSourceCount              16
 
 
 // Item structure
@@ -458,13 +468,15 @@ struct LFCoreAttributes
 #define LFTypeSourceUSB            0x00000004
 #define LFTypeSourceNethood        0x00000005
 #define LFTypeSourceDropbox        0x00000006
-#define LFTypeSourceFacebook       0x00000007
-#define LFTypeSourceFlickr         0x00000008
-#define LFTypeSourceInstagram      0x00000009
-#define LFTypeSourcePinterest      0x0000000A
-#define LFTypeSourceSoundCloud     0x0000000B
-#define LFTypeSourceTwitter        0x0000000C
-#define LFTypeSourceYouTube        0x0000000D
+#define LFTypeSourceICloud         0x00000007
+#define LFTypeSourceOneDrive       0x00000008
+#define LFTypeSourceFacebook       0x0000000A
+#define LFTypeSourceFlickr         0x0000000B
+#define LFTypeSourceInstagram      0x0000000C
+#define LFTypeSourcePinterest      0x0000000D
+#define LFTypeSourceSoundCloud     0x0000000E
+#define LFTypeSourceTwitter        0x0000000F
+#define LFTypeSourceYouTube        0x00000010
 #define LFTypeSourceMask           0x000000FF
 
 #define LFTypeBadgeError           0x00000100	// Must match Windows image list
@@ -537,13 +549,13 @@ struct LFItemDescriptor
 
 #define LFStoreModeBackendInternal       0x00000000
 #define LFStoreModeBackendWindows        0x02000000
-#define LFStoreModeBackendFacebook       0x07000000
-#define LFStoreModeBackendFlickr         0x08000000
-#define LFStoreModeBackendInstagram      0x09000000
-#define LFStoreModeBackendPinterest      0x0A000000
-#define LFStoreModeBackendSoundCloud     0x0B000000
-#define LFStoreModeBackendTwitter        0x0C000000
-#define LFStoreModeBackendYouTube        0x0D000000
+#define LFStoreModeBackendFacebook       0x09000000
+#define LFStoreModeBackendFlickr         0x0A000000
+#define LFStoreModeBackendInstagram      0x0B000000
+#define LFStoreModeBackendPinterest      0x0C000000
+#define LFStoreModeBackendSoundCloud     0x0D000000
+#define LFStoreModeBackendTwitter        0x0E000000
+#define LFStoreModeBackendYouTube        0x0F000000
 #define LFStoreModeBackendShift          24
 #define LFStoreModeBackendMask           0xFF000000
 

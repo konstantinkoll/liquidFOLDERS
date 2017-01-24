@@ -48,9 +48,12 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_Context = LFContextAllFiles;
 	m_HeaderHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
 	m_RowHeight = LFGetApp()->m_DefaultFont.GetFontHeight();
+	m_ColWidth = HorizontalScrollWidth;
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
 	m_Hover = m_BeginDragDrop = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
+	m_TypingBuffer[0] = L'\0';
+	m_TypingTicks = 0;
 
 	m_EnableScrolling = EnableScrolling;
 	m_EnableHover = EnableHover;
@@ -215,7 +218,6 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	}
 
 	m_BeginDragDrop = FALSE;
-	m_EditLabel = -1;
 	SetSearchResult(pRawFiles, pCookedFiles, Data);
 
 	free(pVictim);
@@ -570,7 +572,7 @@ CMenu* CFileView::GetSendToMenu()
 	}
 
 	// Volumes
-	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK | LFGLV_INCLUDEFLOPPIES);
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK | LFGLV_FLOPPIES);
 	DWORD VolumesWOFloppies = LFGetLogicalVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK);
 	BOOL HideVolumesWithNoMedia = LFHideVolumesWithNoMedia();
 
@@ -1001,6 +1003,7 @@ void CFileView::DestroyEdit(BOOL Accept)
 	}
 
 	m_EditLabel = -1;
+	m_TypingBuffer[0] = L'\0';
 }
 
 void CFileView::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpClipRect*/)
@@ -1037,6 +1040,7 @@ BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEHWHEEL()
+	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
@@ -1163,12 +1167,12 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	case SB_PAGEUP:
 	case SB_LINEUP:
-		nInc = -64;
+		nInc = -m_ColWidth;
 		break;
 
 	case SB_PAGEDOWN:
 	case SB_LINEDOWN:
-		nInc = 64;
+		nInc = m_ColWidth;
 		break;
 
 	case SB_THUMBTRACK:
@@ -1349,6 +1353,45 @@ void CFileView::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 		ScreenToClient(&pt);
 		OnMouseMove(nFlags, pt);
 	}
+}
+
+void CFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if ((GetKeyState(VK_CONTROL)>=0) && (nChar>=32) && (m_EditLabel==-1))
+	{
+		if (p_CookedFiles)
+			if (p_CookedFiles->m_ItemCount>1)
+			{
+				// Reset typing buffer?
+				DWORD Ticks = GetTickCount();
+				if (Ticks-m_TypingTicks>=1000)
+					m_TypingBuffer[0] = L'\0';
+
+				m_TypingTicks = Ticks;
+
+				// Concatenate typing buffer
+				WCHAR TypingBuffer[256];
+				wcscpy_s(TypingBuffer, 256, m_TypingBuffer);
+
+				WCHAR Letter[2] = { (WCHAR)nChar, L'\0' };
+				wcscat_s(TypingBuffer, 256, Letter);
+
+				INT FocusItem = m_FocusItem;
+
+				for (UINT a=0; a<p_CookedFiles->m_ItemCount-1; a++, FocusItem++)
+					if (_wcsnicmp(TypingBuffer, (*p_CookedFiles)[FocusItem]->CoreAttributes.FileName, wcslen(TypingBuffer))==0)
+					{
+						wcscpy_s(m_TypingBuffer, 256, TypingBuffer);
+						SetFocusItem(FocusItem, FALSE);
+
+						return;
+					}
+			}
+
+		LFGetApp()->PlayDefaultSound();
+	}
+
+	CFrontstageWnd::OnChar(nChar, nRepCnt, nFlags);
 }
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

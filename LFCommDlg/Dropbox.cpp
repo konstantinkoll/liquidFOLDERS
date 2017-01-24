@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "LFCommDlg.h"
 #include "Dropbox.h"
 #include <shlobj.h>
 
@@ -19,6 +20,11 @@ Dropbox::Dropbox()
 
 void Dropbox::CheckForDropbox()
 {
+	// Dropbox only runs on Windows Vista or newer
+	if (LFGetApp()->OSVersion<OS_Vista)
+		return;
+
+	// Scan for configuration file
 	WCHAR Path[MAX_PATH];
 
 	// Roaming

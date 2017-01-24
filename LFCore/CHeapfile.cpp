@@ -453,7 +453,7 @@ BOOL CHeapfile::Compact()
 	wcscat_s(TempFilename, MAX_PATH, L".part");
 
 	// Open temporary file
-	HANDLE hTempFile = OPENFILE(TempFilename, CREATE_ALWAYS);
+	HANDLE hTempFile = OPENFILE(TempFilename, OPEN_ALWAYS);
 	if (hTempFile==INVALID_HANDLE_VALUE)
 		return FALSE;
 

@@ -11,7 +11,7 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
-extern UINT VolumeTypes[26];
+extern LFVolumeDescriptor Volumes[26];
 
 
 #define LFSTORESHIVE     "Software\\liquidFOLDERS\\Stores"
@@ -179,7 +179,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 			if (LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0])>LFTypeSourceInternal)
 			{
 				wcsncpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath, 3);
-				AppendGUID(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
+				AppendGUID(pStoreDescriptor->IdxPathMain, pStoreDescriptor);
 			}
 			else
 			{
@@ -414,7 +414,7 @@ UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, WCHAR* p
 		return LFStoreNotMounted;
 
 	wcsncpy_s(pPath, MAX_PATH, pStoreDescriptor->DatPath, 3);		// .store file is always in root directory
-	AppendGUID(pStoreDescriptor, pPath, L".store");
+	AppendGUID(pPath, pStoreDescriptor, L".store");
 
 	return LFOk;
 }
@@ -450,7 +450,7 @@ UINT SaveStoreSettingsToFile(LFStoreDescriptor* pStoreDescriptor)
 	if ((Result=GetKeyFileFromStoreDescriptor(pStoreDescriptor, Path))!=LFOk)
 		return Result;
 
-	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
+	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 		return (GetLastError()==ERROR_ACCESS_DENIED) ? LFAccessError : LFDriveNotReady;
 
@@ -579,7 +579,7 @@ UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor)
 	UINT Result = LFRegistryError;
 
 	HKEY hKey;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
+	if (RegCreateKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
 	{
 		if (RegSetValueExA(hKey, "DefaultStore", 0, REG_SZ, (BYTE*)pStoreDescriptor->StoreID, LFKeySize-1)==ERROR_SUCCESS)
 		{
@@ -616,7 +616,7 @@ void ChooseNewDefaultStore()
 		DefaultStore[0] = '\0';
 
 		HKEY hKey;
-		if (RegOpenKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
+		if (RegCreateKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
 		{
 			RegDeleteValue(hKey, L"DefaultStore");
 			RegCloseKey(hKey);
@@ -957,7 +957,7 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, 
 	if (cVolume)
 	{
 		swprintf_s(Store.DatPath, MAX_PATH, L"%c:\\", cVolume);
-		AppendGUID(&Store, Store.DatPath);
+		AppendGUID(Store.DatPath, &Store);
 
 		Store.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceUnknown) ? LFStoreModeIndexInternal : MakeSearchable ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
 	}
@@ -1406,7 +1406,7 @@ LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
 __forceinline void LoadRegistry()
 {
 	HKEY hKey;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
+	if (RegCreateKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD Subkeys;
 		if (RegQueryInfoKey(hKey, NULL, 0, NULL, &Subkeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL)==ERROR_SUCCESS)
@@ -1430,7 +1430,7 @@ __forceinline void LoadRegistry()
 
 __forceinline void MountExternalVolumes()
 {
-	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL);
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK);
 	WCHAR szVolumeRoot[4] = L" :\\";
 
 	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
@@ -1459,7 +1459,7 @@ void InitStores()
 			ZeroMemory(DefaultStore, sizeof(DefaultStore));
 
 			HKEY hKey;
-			if (RegOpenKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
+			if (RegCreateKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
 			{
 				DWORD Type;
 				DWORD Size = LFKeySize;
@@ -1550,12 +1550,14 @@ UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
 					pSlot->MaintenanceTime = Store.MaintenanceTime;
 					pSlot->SynchronizeTime = Store.SynchronizeTime;
 
-					// Set store index mode to hybrid
-					pSlot->Mode = (pSlot->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexHybrid;
+					// Do NOT set the store index mode to hybrid to avoid errors when mounting a drive twice!
+					// This can occur when the same network volume is mounted as two different drives.
+					// When the store had hybrid indexing before, this setting is maintained as only some
+					// data is copied from the .store file on disc.
 				}
 				else
 				{
-					// Set store index mode to external
+					// Set store index mode to external - this is the only option when the store wasn't known before
 					Store.Mode = (Store.Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
 
 					// Add to cache
@@ -1622,11 +1624,7 @@ UINT UnmountVolume(CHAR cVolume)
 
 	BOOL ChangeOccured = FALSE;
 	BOOL RemovedDefaultStore = FALSE;
-	VolumeTypes[cVolume-'A'] = DRIVE_UNKNOWN;
-
-	CHAR NotifyIDs[MAXSTORES][LFKeySize];
-	BOOL NotifyTypes[MAXSTORES];
-	UINT NotifyCount = 0;
+	Volumes[cVolume-'A'].Mounted = FALSE;
 
 	for (UINT a=0; a<StoreCount; a++)
 		if (StoreCache[a].DatPath[0]==cVolume)
@@ -1642,22 +1640,13 @@ UINT UnmountVolume(CHAR cVolume)
 			RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
 			ChangeOccured = TRUE;
 
+			// Unmount
 			if ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 			{
-				// Notification
-				strcpy_s(NotifyIDs[NotifyCount], LFKeySize, StoreCache[a].StoreID);
-				NotifyTypes[NotifyCount++] = FALSE;
-
-				// Unmount
 				StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = L'\0';
 			}
 			else
 			{
-				// Notification
-				strcpy_s(NotifyIDs[NotifyCount], LFKeySize, StoreCache[a].StoreID);
-				NotifyTypes[NotifyCount++] = TRUE;
-
-				// Unmount
 				if (a<StoreCount-1)
 				{
 					HANDLE hMutexMove;

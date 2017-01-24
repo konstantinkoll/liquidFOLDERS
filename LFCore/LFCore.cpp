@@ -24,7 +24,7 @@ extern LFShellProperty AttrProperties[];
 #pragma data_seg(".shared")
 
 LFMessageIDs LFMessages;
-UINT VolumeTypes[26] = { DRIVE_UNKNOWN };
+LFVolumeDescriptor Volumes[26];
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
@@ -35,6 +35,8 @@ UINT VolumeTypes[26] = { DRIVE_UNKNOWN };
 
 LFCORE_API void LFInitialize()
 {
+	ZeroMemory(&Volumes, sizeof(Volumes));
+
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
@@ -223,12 +225,15 @@ void LoadTwoStrings(HINSTANCE hInstance, UINT ID, WCHAR* lpBuffer1, INT cchBuffe
 
 BYTE GetVolumeBus(CHAR cVolume)
 {
+	assert(cVolume>='A');
+	assert(cVolume<='Z');
+
 	BYTE VolumeBus = BusTypeMaxReserved;
 
-	CHAR szBuf[MAX_PATH] = "\\\\?\\ :";
-	szBuf[4] = cVolume;
+	WCHAR szDevice[7] = L"\\\\?\\ :";
+	szDevice[4] = cVolume;
 
-	HANDLE hDevice = CreateFileA(szBuf, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
+	HANDLE hDevice = CreateFile(szDevice, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
 	if (hDevice!=INVALID_HANDLE_VALUE)
 	{
 		STORAGE_ADAPTER_DESCRIPTOR OutBuffer;
@@ -250,80 +255,95 @@ BYTE GetVolumeBus(CHAR cVolume)
 	return VolumeBus;
 }
 
-LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
+void GetVolumeInformation(CHAR cVolume, BOOL ForceAvailable=FALSE)
 {
-	if ((cVolume>='A') && (cVolume<='Z'))
+	assert(cVolume>='A');
+	assert(cVolume<='Z');
+
+	const UINT VolumeID = cVolume-'A';
+
+	// Already mounted?
+	if (Volumes[VolumeID].Mounted)
+		return;
+
+	// Check if volume exists
+	if (!ForceAvailable)
+		if ((GetLogicalDrives() & (1<<VolumeID))==0)
+			return;
+
+	Volumes[VolumeID].Mounted = TRUE;
+	Volumes[VolumeID].LogicalVolumeType = LFGLV_INTERNAL;
+	Volumes[VolumeID].Source = LFTypeSourceInternal;
+
+	// Detect drive type and volume source
+	CHAR szRoot[] = " :\\";
+	szRoot[0] = cVolume;
+
+	switch(GetDriveTypeA(szRoot))
+	{
+	case DRIVE_REMOVABLE:
+		Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
+
+	case DRIVE_FIXED:
 		switch(GetVolumeBus(cVolume))
 		{
 		case BusType1394:
-			return LFTypeSource1394;
+			Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
+			Volumes[VolumeID].Source = LFTypeSource1394;
+			break;
 
 		case BusTypeUsb:
-			return LFTypeSourceUSB;
-
+			Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
+			Volumes[VolumeID].Source = LFTypeSourceUSB;
+			break;
 		}
 
-	return LFTypeSourceInternal;
+		break;
+
+	case DRIVE_REMOTE:
+		Volumes[VolumeID].LogicalVolumeType = LFGLV_NETWORK;
+		Volumes[VolumeID].Source = LFTypeSourceNethood;
+		break;
+
+	default:
+		Volumes[VolumeID].LogicalVolumeType = 0;
+	}
+}
+
+LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
+{
+	assert(cVolume>='A');
+	assert(cVolume<='Z');
+
+	GetVolumeInformation(cVolume);
+
+	const UINT VolumeID = cVolume-'A';
+
+	return Volumes[VolumeID].Mounted ? Volumes[VolumeID].Source : LFTypeSourceUnknown;
 }
 
 LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 {
 	DWORD VolumesOnSystem = GetLogicalDrives();
-	if ((Mask & LFGLV_INCLUDEFLOPPIES)==0)
+	if ((Mask & LFGLV_FLOPPIES)==0)
 		VolumesOnSystem &= ~3;
 
-	DWORD Index = 1;
-	CHAR szVolumeRoot[] = " :\\";
+	DWORD Index = 4;
 
-	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, Index<<=1)
+	for (CHAR cVolume='C'; cVolume<='Z'; cVolume++, Index<<=1)
 	{
+		const UINT VolumeID = cVolume-'A';
+
 		if ((VolumesOnSystem & Index)==0)
 		{
-			VolumeTypes[cVolume-'A'] = DRIVE_UNKNOWN;
+			Volumes[VolumeID].Mounted = FALSE;
 			continue;
 		}
 
-		UINT uVolumeType = VolumeTypes[cVolume-'A'];
-		if (uVolumeType==DRIVE_UNKNOWN)
-		{
-			szVolumeRoot[0] = cVolume;
-			uVolumeType = GetDriveTypeA(szVolumeRoot);
+		GetVolumeInformation(cVolume, TRUE);
 
-			if (uVolumeType==DRIVE_FIXED)
-				switch(GetVolumeBus(cVolume))
-				{
-				case BusType1394:
-				case BusTypeUsb:
-					uVolumeType = DRIVE_REMOVABLE;
-					break;
-				}
-
-			VolumeTypes[cVolume-'A'] = uVolumeType;
-		}
-
-		switch(uVolumeType)
-		{
-		case DRIVE_FIXED:
-			if (!(Mask & LFGLV_INTERNAL))
-				VolumesOnSystem &= ~Index;
-
-			break;
-
-		case DRIVE_REMOVABLE:
-			if (!(Mask & LFGLV_EXTERNAL))
-				VolumesOnSystem &= ~Index;
-
-			break;
-
-		case DRIVE_REMOTE:
-			if (!(Mask & LFGLV_NETWORK))
-				VolumesOnSystem &= ~Index;
-
-			break;
-
-		default:
+		if ((Mask & Volumes[VolumeID].LogicalVolumeType)==0)
 			VolumesOnSystem &= ~Index;
-		}
 	}
 
 	return VolumesOnSystem;

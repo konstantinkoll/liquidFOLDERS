@@ -34,6 +34,8 @@ IDI_STR_1394            ICON                    "res\\STR_1394.ico"
 IDI_STR_USB             ICON                    "res\\STR_USB.ico"
 IDI_STR_NETHOOD         ICON                    "res\\STR_Nethood.ico"
 IDI_STR_DROPBOX         ICON                    "res\\STR_Dropbox.ico"
+IDI_STR_ICLOUD          ICON                    "res\\STR_iCloud.ico"
+IDI_STR_ONEDRIVE        ICON                    "res\\STR_OneDrive.ico"
 IDI_STR_FACEBOOK        ICON                    "res\\STR_Facebook.ico"
 IDI_STR_FLICKR          ICON                    "res\\STR_Flickr.ico"
 IDI_STR_INSTAGRAM       ICON                    "res\\STR_Instagram.ico"
@@ -50,8 +52,8 @@ IDI_FLD_ALL             ICON                    "res\\FLD_All.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,20,0
- PRODUCTVERSION 2,1,20,0
+ FILEVERSION 2,1,21,0
+ PRODUCTVERSION 2,1,21,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.1.20"
+            VALUE "FileVersion", "2.1.21"
             VALUE "InternalName", "LFCore"
-            VALUE "LegalCopyright", "© 2009-2016 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.1.20"
+            VALUE "ProductVersion", "2.1.21"
         END
     END
     BLOCK "VarFileInfo"
@@ -332,8 +334,10 @@ BEGIN
     IDS_SRC_WINDOWS         "Windows-Verzeichnis"
     IDS_SRC_1394            "1394-Laufwerk"
     IDS_SRC_USB             "USB-Laufwerk"
-    IDS_SRC_NETHOOD         "Netzlaufwerk"
+    IDS_SRC_NETHOOD         "Netzwerklaufwerk"
     IDS_SRC_DROPBOX         "Dropbox"
+    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
     IDS_SRC_INSTAGRAM       "Instagram"
@@ -350,8 +354,10 @@ BEGIN
     IDS_QSRC_WINDOWS        "Im Windows-Dateisystem"
     IDS_QSRC_1394           "Auf lokalem 1394-Laufwerk"
     IDS_QSRC_USB            "Auf lokalem USB-Laufwerk"
-    IDS_QSRC_NETHOOD        "Auf Netzlaufwerk"
+    IDS_QSRC_NETHOOD        "Auf Netzwerklaufwerk"
     IDS_QSRC_DROPBOX        "Auf Dropbox"
+    IDS_QSRC_ICLOUD         "Auf iCloud"
+    IDS_QSRC_ONEDRIVE       "Auf OneDrive"
     IDS_QSRC_FACEBOOK       "Auf Facebook"
     IDS_QSRC_FLICKR         "Auf Flickr"
     IDS_QSRC_INSTAGRAM      "Auf Instagram"
@@ -616,6 +622,8 @@ BEGIN
     IDS_SRC_USB             "Unidad de USB"
     IDS_SRC_NETHOOD         "Unidad de red"
     IDS_SRC_DROPBOX         "Dropbox"
+    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
     IDS_SRC_INSTAGRAM       "Instagram"
@@ -634,6 +642,8 @@ BEGIN
     IDS_QSRC_USB            "En unidad local de USB"
     IDS_QSRC_NETHOOD        "En unidad de red"
     IDS_QSRC_DROPBOX        "En Dropbox"
+    IDS_QSRC_ICLOUD         "En iCloud"
+    IDS_QSRC_ONEDRIVE       "En OneDrive"
     IDS_QSRC_FACEBOOK       "En Facebook"
     IDS_QSRC_FLICKR         "En Flickr"
     IDS_QSRC_INSTAGRAM      "En Instagram"
@@ -899,6 +909,8 @@ BEGIN
     IDS_SRC_USB             "Lecteur USB"
     IDS_SRC_NETHOOD         "Lecteur réseau"
     IDS_SRC_DROPBOX         "Dropbox"
+    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
     IDS_SRC_INSTAGRAM       "Instagram"
@@ -913,21 +925,23 @@ BEGIN
     IDS_QSRC_UNKNOWN        "Source inconnu"
     IDS_QSRC_LIQUIDFOLDERS  "Administrée de liquidFOLDERS"
     IDS_QSRC_WINDOWS        "Dans dossier de Windows"
-    IDS_QSRC_1394           "En lecteur local de 1394"
-    IDS_QSRC_USB            "En lecteur local de USB"
-    IDS_QSRC_NETHOOD        "En lecteur réseau"
-    IDS_QSRC_DROPBOX        "En Dropbox"
-    IDS_QSRC_FACEBOOK       "En Facebook"
-    IDS_QSRC_FLICKR         "En Flickr"
-    IDS_QSRC_INSTAGRAM      "En Instagram"
-    IDS_QSRC_PINTEREST      "En Pinterest"
-    IDS_QSRC_SOUNDCLOUD     "En SoundCloud"
-    IDS_QSRC_TWITTER        "En Twitter"
+    IDS_QSRC_1394           "Sur lecteur local de 1394"
+    IDS_QSRC_USB            "Sur lecteur local de USB"
+    IDS_QSRC_NETHOOD        "Sur lecteur réseau"
+    IDS_QSRC_DROPBOX        "Dans Dropbox"
+    IDS_QSRC_ICLOUD         "Dans iCloud"
+    IDS_QSRC_ONEDRIVE       "Dans OneDrive"
+    IDS_QSRC_FACEBOOK       "Dans Facebook"
+    IDS_QSRC_FLICKR         "Dans Flickr"
+    IDS_QSRC_INSTAGRAM      "Dans Instagram"
+    IDS_QSRC_PINTEREST      "Dans Pinterest"
+    IDS_QSRC_SOUNDCLOUD     "Dans SoundCloud"
+    IDS_QSRC_TWITTER        "Dans Twitter"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_QSRC_YOUTUBE        "En YouTube"
+    IDS_QSRC_YOUTUBE        "Dans YouTube"
 END
 
 #endif    // Französisch (neutral) resources
@@ -1217,6 +1231,8 @@ BEGIN
     IDS_SRC_USB             "USB volume"
     IDS_SRC_NETHOOD         "Network volume"
     IDS_SRC_DROPBOX         "Dropbox"
+    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
     IDS_SRC_INSTAGRAM       "Instagram"
@@ -1235,6 +1251,8 @@ BEGIN
     IDS_QSRC_USB            "On local USB drive"
     IDS_QSRC_NETHOOD        "On network volume"
     IDS_QSRC_DROPBOX        "On Dropbox"
+    IDS_QSRC_ICLOUD         "On iCloud"
+    IDS_QSRC_ONEDRIVE       "On OneDrive"
     IDS_QSRC_FACEBOOK       "On Facebook"
     IDS_QSRC_FLICKR         "On Flickr"
     IDS_QSRC_INSTAGRAM      "On Instagram"

@@ -790,6 +790,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\STR_iCloud.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\STR_Instagram.ico"
 				>
 			</File>
@@ -799,6 +803,10 @@
 			</File>
 			<File
 				RelativePath=".\res\STR_Nethood.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_OneDrive.ico"
 				>
 			</File>
 			<File

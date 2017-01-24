@@ -8,20 +8,22 @@
 
 // View IDs
 
-#define LFViewLargeIcons     0
-#define LFViewSmallIcons     1
-#define LFViewList           2
-#define LFViewDetails        3
-#define LFViewTiles          4
-#define LFViewStrips         5
-#define LFViewContent        6
-#define LFViewPreview        7
-#define LFViewCalendar       8
-#define LFViewTimeline       9
-#define LFViewGlobe         10
-#define LFViewTagcloud      11
+#define LFViewLargeIcons           0
+#define LFViewSmallIcons           1
+#define LFViewList                 2
+#define LFViewDetails              3
+#define LFViewTiles                4
+#define LFViewStrips               5
+#define LFViewContent              6
+#define LFViewPreview              7
+#define LFViewCalendar             8
+#define LFViewTimeline             9
+#define LFViewGlobe               10
+#define LFViewTagcloud            11
 
-#define LFViewCount         12
+#define LFViewCount               12
+
+#define HorizontalScrollWidth     64
 
 
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode);
@@ -174,6 +176,7 @@ protected:
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
@@ -222,10 +225,13 @@ protected:
 	INT m_VScrollPos;
 	INT m_HScrollMax;
 	INT m_VScrollMax;
+	INT m_ColWidth;
 	INT m_RowHeight;
 	BOOL m_Hover;
 	BOOL m_BeginDragDrop;
 	CPoint m_DragPos;
+	WCHAR m_TypingBuffer[256];
+	DWORD m_TypingTicks;
 
 private:
 	void AppendSendToItem(CMenu* pMenu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);

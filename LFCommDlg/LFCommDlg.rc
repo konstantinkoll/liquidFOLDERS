@@ -1581,7 +1581,7 @@ IDM_CONDITIONLIST MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Adjuntar condición...",       IDM_CONDITIONLIST_ADD
+        MENUITEM "&Adjuntar condición...",      IDM_CONDITIONLIST_ADD
     END
 END
 
@@ -2739,7 +2739,7 @@ BEGIN
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Settings",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
     CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
-    CONTROL         "Make &searchable while not connectede",IDC_MAKESEARCHABLE,
+    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 

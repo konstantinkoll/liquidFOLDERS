@@ -58,6 +58,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	const INT cy = gva.cy+2*gva.padding;
 	ASSERT(cx>0);
 	ASSERT(cy>0);
+	m_ColWidth = 64;
 	m_RowHeight = cy+gva.guttery;
 
 	BOOL HasScrollbars = FALSE;
@@ -174,6 +175,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	const INT cy = gva.cy+2*gva.padding;
 	ASSERT(cx>0);
 	ASSERT(cy>0);
+	m_ColWidth = cx+gva.gutterx;
 	m_RowHeight = cy+gva.guttery;
 
 	BOOL HasScrollbars = FALSE;
