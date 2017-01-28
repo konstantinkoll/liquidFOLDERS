@@ -1015,7 +1015,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Files stored on this computer"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Network location\nThese stores saved to or synchronized with other computers."
+                            "Network location\nThese stores are saved on or synchronized with other computers."
     IDS_ITEMCATEGORY_NIGHT  "Night\nUntil 6am"
 END
 

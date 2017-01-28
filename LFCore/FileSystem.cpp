@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "FileSystem.h"
-#include "LF.h"
+#include "LFCore.h"
 #include <assert.h>
 #include <shlobj.h>
 #include <winioctl.h>
@@ -49,6 +49,8 @@ void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath)
 
 BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData)
 {
+	assert(lpPath);
+
 	WIN32_FIND_DATA FindFileData;
 
 	if (!pFindData)
@@ -61,6 +63,18 @@ BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData)
 		FindClose(hFind);
 
 	return Result;
+}
+
+BOOL DirectoryExists(LPWSTR lpPath)
+{
+	assert(lpPath);
+
+	WIN32_FIND_DATA FindFileData;
+	if (FileExists(lpPath, &FindFileData))
+		if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			return TRUE;
+
+	return FALSE;
 }
 
 void CompressFile(HANDLE hFile, WCHAR cDrive)

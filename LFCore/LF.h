@@ -123,6 +123,17 @@ struct LFAirport
 #pragma pack(pop)
 
 
+// OneDrive
+
+struct LFOneDrivePaths
+{
+	WCHAR OneDrive[MAX_PATH];
+	WCHAR CameraRoll[MAX_PATH];
+	WCHAR Documents[MAX_PATH];
+	WCHAR Pictures[MAX_PATH];
+};
+
+
 // Volumes
 
 struct LFVolumeDescriptor

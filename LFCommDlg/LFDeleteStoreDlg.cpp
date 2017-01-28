@@ -63,7 +63,7 @@ LRESULT LFDeleteStoreDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		// Prevent desktop dimming and sound
 		m_UAC = FALSE;
 
-		EndDialog(IDCANCEL);
+		OnCancel();
 	}
 
 	return NULL;

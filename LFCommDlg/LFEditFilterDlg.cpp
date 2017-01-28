@@ -214,7 +214,7 @@ void LFEditFilterDlg::OnSave()
 		LFErrorBox(this, Result);
 
 		if (Result==LFOk)
-			EndDialog(IDOK);
+			OnOK();
 	}
 }
 

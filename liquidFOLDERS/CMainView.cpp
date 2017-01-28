@@ -1179,6 +1179,8 @@ void CMainView::OnStoresAdd()
 	// Allowed?
 	if (LFNagScreen(this))
 	{
+		CWaitCursor csr;
+
 		LFAddStoreDlg dlg(this);
 		dlg.DoModal();
 	}

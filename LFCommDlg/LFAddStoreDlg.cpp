@@ -13,13 +13,8 @@
 
 #define BORDER     10
 
-const UINT LFAddStoreDlg::m_Types[] = { LFTypeSourceInternal, LFTypeSourceWindows,
-		LFTypeSourceDropbox, LFTypeSourceFacebook, LFTypeSourceFlickr, LFTypeSourceInstagram,
-		LFTypeSourcePinterest, LFTypeSourceSoundCloud, LFTypeSourceTwitter, LFTypeSourceYouTube };
-
-const UINT LFAddStoreDlg::m_nHints[] = { IDS_ADDSTORE_LIQUIDFOLDERS, IDS_ADDSTORE_WINDOWS,
-		IDS_ADDSTORE_DROPBOX, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE,
-		IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE, IDS_ADDSTORE_WEBSERVICE };
+const UINT LFAddStoreDlg::m_Sources[] = { LFTypeSourceInternal, LFTypeSourceWindows,
+	LFTypeSourceDropbox, LFTypeSourceICloud, LFTypeSourceOneDrive };
 
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ADDSTORE, pParentWnd)
@@ -28,9 +23,8 @@ LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 
 BOOL LFAddStoreDlg::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	if (nCode==BN_CLICKED)
-		if ((nID>=IDC_ADDSTORE_LIQUIDFOLDERS) && (nID<=IDC_ADDSTORE_YOUTUBE))
-			m_wndExplorerNotification.DismissNotification();
+	if ((nCode==BN_CLICKED) && (nID>=IDC_ADDSTORE_LIQUIDFOLDERS))
+		m_wndExplorerNotification.DismissNotification();
 
 	return LFDialog::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
@@ -44,29 +38,11 @@ void LFAddStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 	}
 }
 
-void LFAddStoreDlg::CheckSources(BOOL ForceAll)
+void LFAddStoreDlg::CheckSources()
 {
-	// Dropbox
-	if (ForceAll)
-		m_Dropbox.CheckForDropbox();
-
-	BOOL IsDropboxAvailable = m_Dropbox.IsDropboxAvailable();
-
-	GetDlgItem(IDC_ADDSTORE_DROPBOX)->ShowWindow(IsDropboxAvailable ? SW_SHOW : SW_HIDE);
-
-	// Internet
-	DWORD Flags;
-	BOOL Connected = InternetGetConnectedState(&Flags, 0);
-
-#ifndef DEBUG
-	Connected = FALSE;
-#endif
-
-	for (UINT nCtlID=IDC_ADDSTORE_FACEBOOK; nCtlID<=IDC_ADDSTORE_YOUTUBE; nCtlID++)
-		GetDlgItem(nCtlID)->ShowWindow(Connected ? SW_SHOW : SW_HIDE);
-
-	// Category
-	m_wndCategory[1].ShowWindow(IsDropboxAvailable | Connected ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_ADDSTORE_DROPBOX)->EnableWindow(m_Dropbox.CheckForDropbox());
+	GetDlgItem(IDC_ADDSTORE_ICLOUD)->EnableWindow(m_ICloud.CheckForICloud());
+	GetDlgItem(IDC_ADDSTORE_ONEDRIVE)->EnableWindow(m_OneDrive.CheckForOneDrive());
 }
 
 void LFAddStoreDlg::ShowResult(UINT Result, const CString StoreName)
@@ -98,9 +74,8 @@ BOOL LFAddStoreDlg::InitDialog()
 	m_wndCategory[0].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryLocal].Caption);
 	m_wndCategory[1].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryRemote].Caption);
 
-	// Internet
+	// Sources
 	CheckSources();
-	SetTimer(1, 1000, NULL);
 
 	// Notification
 	m_wndExplorerNotification.Create(this, 1);
@@ -113,13 +88,15 @@ BOOL LFAddStoreDlg::InitDialog()
 	return TRUE;
 }
 
-void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path)
+void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path, LPCWSTR StoreName)
 {
 	ASSERT(Path);
+	ASSERT(StoreName);
 
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
 	wcscpy_s(wp.Path, MAX_PATH, Path);
+	wcscpy_s(wp.StoreName, MAX_PATH, StoreName);
 
 	LFDoWithProgress(WorkerCreateStoreWindows, (LFWorkerParameters*)&wp, this);
 
@@ -128,43 +105,24 @@ void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path)
 
 
 BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
-	ON_WM_DESTROY()
-	ON_WM_TIMER()
 	ON_WM_ACTIVATE()
-	ON_NOTIFY_RANGE(REQUEST_DRAWBUTTONFOREGROUND, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_YOUTUBE, OnDrawButtonForeground)
-	ON_NOTIFY_RANGE(REQUEST_TOOLTIP_DATA, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_YOUTUBE, OnRequestTooltipData)
+	ON_NOTIFY_RANGE(REQUEST_DRAWBUTTONFOREGROUND, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_ONEDRIVE, OnDrawButtonForeground)
+	ON_NOTIFY_RANGE(REQUEST_TOOLTIP_DATA, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_ONEDRIVE, OnRequestTooltipData)
 
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
 
 	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
 	ON_BN_CLICKED(IDC_ADDSTORE_DROPBOX, OnBtnDropbox)
+	ON_BN_CLICKED(IDC_ADDSTORE_ICLOUD, OnBtnICloud)
+	ON_BN_CLICKED(IDC_ADDSTORE_ONEDRIVE, OnBtnOneDrive)
 END_MESSAGE_MAP()
-
-void LFAddStoreDlg::OnDestroy()
-{
-	KillTimer(1);
-
-	LFDialog::OnDestroy();
-}
-
-void LFAddStoreDlg::OnTimer(UINT_PTR nIDEvent)
-{
-	if (nIDEvent==1)
-		CheckSources();
-
-	LFDialog::OnTimer(nIDEvent);
-
-	// Eat bogus WM_TIMER messages
-	MSG msg;
-	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
 
 void LFAddStoreDlg::OnActivate(UINT nState, CWnd* /*pWndOther*/, BOOL /*bMinimized*/)
 {
 #ifndef DEBUG
 	if (nState!=WA_INACTIVE)
-		CheckSources(TRUE);
+		CheckSources();
 #endif
 }
 
@@ -176,11 +134,11 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	// Content
 	CRect rect(lpDrawItemStruct->rcItem);
 
-	const UINT Source = lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
+	const UINT nID = lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
 	ASSERT(Source<=LFSourceCount);
 
 	WCHAR Caption[256];
-	LFGetSourceName(Caption, 256, m_Types[Source], FALSE);
+	LFGetSourceName(Caption, 256, m_Sources[nID], FALSE);
 
 	WCHAR Hint[256];
 	::GetWindowText(lpDrawItemStruct->hwndItem, Hint, 256);
@@ -191,7 +149,7 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 
 	// Icon
 	CPoint pt(rect.left+BORDER, rect.top+(rect.Height()-IconSize)/2);
-	pIcons->DrawEx(pDrawButtonForeground->pDC, m_Types[Source]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
+	pIcons->DrawEx(pDrawButtonForeground->pDC, m_Sources[nID]-1, pt, CSize(IconSize, IconSize), CLR_NONE, 0xFFFFFF, lpDrawItemStruct->itemState & ODS_DISABLED ? ILD_BLEND25 : ILD_TRANSPARENT);
 
 	rect.left += IconSize+BORDER;
 	rect.DeflateRect(BORDER, BORDER);
@@ -222,11 +180,11 @@ void LFAddStoreDlg::OnRequestTooltipData(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* p
 {
 	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
-	const UINT Source = nCtrlID-IDC_ADDSTORE_LIQUIDFOLDERS;
-	ASSERT(Source<=LFSourceCount);
+	const UINT nID = nCtrlID-IDC_ADDSTORE_LIQUIDFOLDERS;
+	ASSERT(nID<=LFSourceCount);
 
-	LFGetSourceName(pTooltipData->Caption, 256, m_Types[Source], FALSE);
-	ENSURE(LoadString(AfxGetResourceHandle(), m_nHints[Source], pTooltipData->Hint, 4096));
+	LFGetSourceName(pTooltipData->Caption, 256, m_Sources[nID], FALSE);
+	ENSURE(LoadString(AfxGetResourceHandle(), nID+IDS_ADDSTORE_LIQUIDFOLDERS, pTooltipData->Hint, 4096));
 
 	*pResult = TRUE;
 }
@@ -268,6 +226,20 @@ void LFAddStoreDlg::OnBtnWindows()
 void LFAddStoreDlg::OnBtnDropbox()
 {
 	LFDropboxDlg dlg(m_Dropbox, this);
+	if (dlg.DoModal()==IDOK)
+		AddWindowsPathAsStore(dlg.m_FolderPath);
+}
+
+void LFAddStoreDlg::OnBtnICloud()
+{
+	LFICloudDlg dlg(m_ICloud, this);
+	if (dlg.DoModal()==IDOK)
+		AddWindowsPathAsStore(dlg.m_FolderPath, L"iCloud");
+}
+
+void LFAddStoreDlg::OnBtnOneDrive()
+{
+	LFOneDriveDlg dlg(m_OneDrive, this);
 	if (dlg.DoModal()==IDOK)
 		AddWindowsPathAsStore(dlg.m_FolderPath);
 }

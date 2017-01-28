@@ -386,6 +386,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Cloud.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CStore.cpp"
 				>
 			</File>
@@ -569,6 +573,10 @@
 			</File>
 			<File
 				RelativePath=".\CIndex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Cloud.h"
 				>
 			</File>
 			<File

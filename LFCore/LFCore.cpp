@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "FileSystem.h"
 #include "IATA.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"

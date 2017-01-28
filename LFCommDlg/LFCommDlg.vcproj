@@ -457,6 +457,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ICloud.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\jsmn.cpp"
 				>
 			</File>
@@ -537,6 +541,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFICloudDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFItemTemplateDlg.cpp"
 				>
 			</File>
@@ -546,6 +554,10 @@
 			</File>
 			<File
 				RelativePath=".\LFMessageBoxDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFOneDriveDlg.cpp"
 				>
 			</File>
 			<File
@@ -590,6 +602,10 @@
 			</File>
 			<File
 				RelativePath=".\LFUpdateDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OneDrive.cpp"
 				>
 			</File>
 			<File
@@ -1033,6 +1049,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ICloud.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ITaskbarList3.h"
 				>
 			</File>
@@ -1117,6 +1137,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFICloudDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFItemTemplateDlg.h"
 				>
 			</File>
@@ -1126,6 +1150,10 @@
 			</File>
 			<File
 				RelativePath=".\LFMessageBoxDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFOneDriveDlg.h"
 				>
 			</File>
 			<File
@@ -1170,6 +1198,10 @@
 			</File>
 			<File
 				RelativePath=".\LFUpdateDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OneDrive.h"
 				>
 			</File>
 			<File

@@ -444,8 +444,8 @@ LRESULT LFDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	SetWindowPos(NULL, 0, 0, rectWnd.Width()+DiffX+BorderSize, rectWnd.Height()+DiffY+BorderSize, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
 	// Bottom area
-	AddBottomRightControl(IDOK);
 	AddBottomRightControl(IDCANCEL);
+	AddBottomRightControl(IDOK);
 
 	if (szTabArea.cx || szTabArea.cy)
 	{

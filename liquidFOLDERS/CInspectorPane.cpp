@@ -266,7 +266,7 @@ void CInspectorPane::AddValueVirtual(UINT Attr, const WCHAR* Value)
 	case StatusUnused:
 		m_AttributeStatus[Attr] = StatusUsed;
 		m_AttributeVisible[Attr] = TRUE;
-		wcscpy_s(m_AttributeValues[Attr].UnicodeString, 256, Value);
+		wcsncpy_s(m_AttributeValues[Attr].UnicodeString, 256, Value, 255);
 
 		break;
 
@@ -551,8 +551,8 @@ LRESULT CInspectorPane::OnPropertyChanged(WPARAM wParam, LPARAM lParam)
 		LFAirport* pAirport;
 		if (LFIsNullVariantData(m_AttributeValues[AttrIATA]))
 		{
-			wcscpy_s(m_AttributeValues[AttrIATAAirportName].UnicodeString, 256, L"");
-			wcscpy_s(m_AttributeValues[AttrIATAAirportCountry].UnicodeString, 256, L"");
+			m_AttributeValues[AttrIATAAirportName].UnicodeString[0] = L'\0';
+			m_AttributeValues[AttrIATAAirportCountry].UnicodeString[0] = L'\0';
 		}
 		else
 			if (LFIATAGetAirportByCode(m_AttributeValues[AttrIATA].AnsiString, &pAirport))

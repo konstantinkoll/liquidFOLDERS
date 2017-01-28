@@ -24,7 +24,7 @@ void LFSaveFilterDlg::DoDataExchange(CDataExchange* pDX)
 {
 	LFDialog::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_DESTINATION, m_wndStorePanel);
+	DDX_Control(pDX, IDC_ITEMPANEL, m_wndStorePanel);
 	DDX_Control(pDX, IDC_FILENAME, m_wndEdit);
 
 	if (pDX->m_bSaveAndValidate)

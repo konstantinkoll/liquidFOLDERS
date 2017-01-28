@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFDropboxDlg.h"
 
 
 // LFDropboxDlg
@@ -13,7 +12,7 @@
 LFDropboxDlg::LFDropboxDlg(const Dropbox& Dropbox, CWnd* pParentWnd)
 	: LFDialog(IDD_DROPBOX, pParentWnd)
 {
-	m_DropboxData = Dropbox.m_Data;
+	m_DropboxData = Dropbox.m_DropboxData;
 	m_FolderPath[0] = L'\0';
 }
 
@@ -50,7 +49,7 @@ void LFDropboxDlg::OnAddPersonal()
 
 	wcscpy_s(m_FolderPath, MAX_PATH, m_DropboxData.Paths[0]);
 
-	EndDialog(IDOK);
+	OnOK();
 }
 
 void LFDropboxDlg::OnAddBusiness()
@@ -59,5 +58,5 @@ void LFDropboxDlg::OnAddBusiness()
 
 	wcscpy_s(m_FolderPath, MAX_PATH, m_DropboxData.Paths[1]);
 
-	EndDialog(IDOK);
+	OnOK();
 }

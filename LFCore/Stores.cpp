@@ -186,15 +186,58 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 				GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
 			}
 
-			// Is it a Dropbox directory?
-			if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
-			{
-				WCHAR szDropbox[MAX_PATH];
-				wcscpy_s(szDropbox, MAX_PATH, pStoreDescriptor->DatPath);
-				wcscat_s(szDropbox, MAX_PATH, L".dropbox");
+			// Dropbox
+			WCHAR szPath[MAX_PATH];
+			wcscpy_s(szPath, MAX_PATH, pStoreDescriptor->DatPath);
+			wcscat_s(szPath, MAX_PATH, L".dropbox");
 
-				if (FileExists(szDropbox))
-					pStoreDescriptor->Source = LFTypeSourceDropbox;
+			if (FileExists(szPath))
+				pStoreDescriptor->Source = LFTypeSourceDropbox;
+
+			// iCloud
+			if (LFGetICloudPath(szPath))
+			{
+				wcscat_s(szPath, MAX_PATH, L"\\");
+
+				if (wcsncmp(szPath, pStoreDescriptor->DatPath, wcslen(szPath))==0)
+					pStoreDescriptor->Source = LFTypeSourceICloud;
+			}
+
+			// OneDrive
+			LFOneDrivePaths OneDrivePaths;
+			if (LFGetOneDrivePaths(OneDrivePaths))
+			{
+				// Root path
+				wcscat_s(OneDrivePaths.OneDrive, MAX_PATH, L"\\");
+				if (wcsncmp(OneDrivePaths.OneDrive, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.OneDrive))==0)
+					pStoreDescriptor->Source = LFTypeSourceOneDrive;
+
+				// Camera roll
+				if (OneDrivePaths.CameraRoll[0]!=L'\0')
+				{
+					wcscat_s(OneDrivePaths.CameraRoll, MAX_PATH, L"\\");
+
+					if (wcsncmp(OneDrivePaths.CameraRoll, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.CameraRoll))==0)
+						pStoreDescriptor->Source = LFTypeSourceOneDrive;
+				}
+
+				// Documents
+				if (OneDrivePaths.Documents[0]!=L'\0')
+				{
+					wcscat_s(OneDrivePaths.Documents, MAX_PATH, L"\\");
+
+					if (wcsncmp(OneDrivePaths.Documents, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.Documents))==0)
+						pStoreDescriptor->Source = LFTypeSourceOneDrive;
+				}
+
+				// Pictures
+				if (OneDrivePaths.Pictures[0]!=L'\0')
+				{
+					wcscat_s(OneDrivePaths.Pictures, MAX_PATH, L"\\");
+
+					if (wcsncmp(OneDrivePaths.Pictures, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.Pictures))==0)
+						pStoreDescriptor->Source = LFTypeSourceOneDrive;
+				}
 			}
 		}
 		else

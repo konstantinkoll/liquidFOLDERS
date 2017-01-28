@@ -20,15 +20,16 @@ class Dropbox
 public:
 	Dropbox();
 
-	void CheckForDropbox();
+	BOOL CheckForDropbox();
 	BOOL IsDropboxAvailable() const;
 
-	DropboxData m_Data;
+	DropboxData m_DropboxData;
 
 protected:
 	void LoadDropboxSettings(LPWSTR Path);
 
 private:
+	void Reset();
 	static BOOL Compare(LPCSTR Buffer, jsmntok_t& Token, LPCSTR Str);
 	static void UnescapeString(LPWSTR Dst, LPCSTR Src, SIZE_T Size);
 	BOOL ReadFile(LPWSTR Path, LPSTR Buffer, SIZE_T MaxSize, SIZE_T& Size);
@@ -37,5 +38,10 @@ private:
 
 inline BOOL Dropbox::IsDropboxAvailable() const
 {
-	return (m_Data.Paths[0][0]!=L'\0') || (m_Data.Paths[1][0]!=L'\0');
+	return (m_DropboxData.Paths[0][0]!=L'\0') || (m_DropboxData.Paths[1][0]!=L'\0');
+}
+
+inline void Dropbox::Reset()
+{
+	ZeroMemory(&m_DropboxData, sizeof(m_DropboxData));
 }

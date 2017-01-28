@@ -60,15 +60,6 @@ LFCORE_API void __stdcall LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID);
 LFCORE_API void __stdcall LFCoreErrorBox(UINT nID, HWND hWnd=NULL);
 
 
-// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
-// Die gespeicherten Lizenzinformationen finden sich in License
-LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FALSE);
-
-// Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
-// und keine ordnungsgemäße Lizenz vorliegt
-LFCORE_API BOOL __stdcall LFIsSharewareExpired();
-
-
 // Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
 LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, SIZE_T cCount, UINT ID);
 
@@ -83,6 +74,15 @@ LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCa
 
 // Informationen über ein Attribut zurückliefern
 LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID);
+
+
+// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
+// Die gespeicherten Lizenzinformationen finden sich in License
+LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FALSE);
+
+// Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
+// und keine ordnungsgemäße Lizenz vorliegt
+LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 
 
 
@@ -107,7 +107,6 @@ LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescr
 
 // Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
 LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
-
 
 // Gibt die ID für das Icon eines Stores zurück
 LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
@@ -377,3 +376,15 @@ LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* pItemDe
 // Erzeugt auf dem Desktop eine Verknüpfung mit dem angegebenen Store
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFItemDescriptor* pItemDescriptor);
 LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* pStoreDescriptor);
+
+
+
+// Cloud
+//
+
+// Liefert den Pfad des iCloud-Drive-Ornders zurück
+LFCORE_API BOOL LFGetICloudPath(WCHAR* pPath);
+
+
+// Liefert die Pfade von OneDrive zurück
+LFCORE_API BOOL LFGetOneDrivePaths(LFOneDrivePaths& OneDrivePaths);

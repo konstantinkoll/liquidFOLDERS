@@ -13,16 +13,16 @@
 
 Dropbox::Dropbox()
 {
-	ZeroMemory(&m_Data, sizeof(m_Data));
-
-	CheckForDropbox();
+	Reset();
 }
 
-void Dropbox::CheckForDropbox()
+BOOL Dropbox::CheckForDropbox()
 {
+	Reset();
+
 	// Dropbox only runs on Windows Vista or newer
 	if (LFGetApp()->OSVersion<OS_Vista)
-		return;
+		return FALSE;
 
 	// Scan for configuration file
 	WCHAR Path[MAX_PATH];
@@ -34,6 +34,8 @@ void Dropbox::CheckForDropbox()
 	// Local
 	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, Path)))
 		LoadDropboxSettings(Path);
+
+	return IsDropboxAvailable();
 }
 
 BOOL Dropbox::Compare(LPCSTR Buffer, jsmntok_t& Token, LPCSTR Str)
@@ -150,9 +152,9 @@ void Dropbox::LoadDropboxSettings(LPWSTR Path)
 	for (UINT a=1; a<(UINT)cToken; a++)
 	{
 		if (Compare(Buffer, Token[a], "personal"))
-			ExtractPath(m_Data.Paths[0], m_Data.SubscriptionTypes[0], Buffer, &Token[a+1]);
+			ExtractPath(m_DropboxData.Paths[0], m_DropboxData.SubscriptionTypes[0], Buffer, &Token[a+1]);
 
 		if (Compare(Buffer, Token[a], "business"))
-			ExtractPath(m_Data.Paths[1], m_Data.SubscriptionTypes[1], Buffer, &Token[a+1]);
+			ExtractPath(m_DropboxData.Paths[1], m_DropboxData.SubscriptionTypes[1], Buffer, &Token[a+1]);
 	}
 }

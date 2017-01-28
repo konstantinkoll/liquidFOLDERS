@@ -113,3 +113,7 @@ EXPORTS
 	LFGetShortcutForStore @701
 	LFCreateDesktopShortcutForStore @702
 	LFCreateDesktopShortcutForStoreEx @703
+
+	LFGetICloudPath @800
+	LFGetOneDrivePaths @801
+	
