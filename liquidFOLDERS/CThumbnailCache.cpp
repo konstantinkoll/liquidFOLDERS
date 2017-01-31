@@ -49,6 +49,18 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 		// Ggf. Bitmap vierteln
 		td.hBitmap = LFQuarter256Bitmap(td.hBitmap);
 
+		// Zulässige Größe?
+		BITMAP Bitmap;
+		GetObject(td.hBitmap, sizeof(Bitmap), &Bitmap);
+
+		if ((Bitmap.bmWidth>128) || (Bitmap.bmHeight>128))
+		{
+			td.hBitmap = NULL;
+			m_NoThumbnails.AddItem(td);
+
+			return NULL;
+		}
+
 		// Thumbnail dekorieren
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
@@ -57,9 +69,6 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 		HBITMAP hOldBitmap1 = (HBITMAP)dc.SelectObject(hBitmap);
 
 		CRect rect(0, 0, 128, 128);
-
-		BITMAP Bitmap;
-		GetObject(td.hBitmap, sizeof(Bitmap), &Bitmap);
 
 		BOOL DrawFrame = ((pItemDescriptor->CoreAttributes.ContextID>=LFContextPictures) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos)) || ((Bitmap.bmWidth==118) && (Bitmap.bmHeight==118));
 		BOOL DrawShadow = !DrawFrame && (Bitmap.bmWidth>=4) && (Bitmap.bmWidth<=118) && (Bitmap.bmHeight>=4) && (Bitmap.bmHeight<=118);

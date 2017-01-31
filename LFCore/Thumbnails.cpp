@@ -35,6 +35,7 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 					pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBitmap, &dwAlpha);
 
 					pThumbnailProvider->Release();
+
 					goto Finish;
 				}
 			}
@@ -51,6 +52,7 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 					pExtractImage->Extract(&hBitmap);
 
 				pExtractImage->Release();
+
 				goto Finish;
 			}
 
@@ -69,7 +71,7 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 	BITMAP BitmapSrc;
 	GetObject(hBitmap, sizeof(BitmapSrc), &BitmapSrc);
 
-	if ((BitmapSrc.bmWidth!=256) || (BitmapSrc.bmHeight!=256) || (BitmapSrc.bmBitsPixel!=32))
+	if ((BitmapSrc.bmWidth!=256) || (BitmapSrc.bmHeight!=256) || ((BitmapSrc.bmBitsPixel!=24) && (BitmapSrc.bmBitsPixel!=32)))
 		return hBitmap;
 
 	BYTE* pBitsSrc = (BYTE*)BitmapSrc.bmBits;
@@ -90,20 +92,47 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 	HBITMAP hBitmapNew = CreateDIBSection(hDC, &DIB, DIB_RGB_COLORS, (void**)&pBitsDst, NULL, 0);
 	ReleaseDC(NULL, hDC);
 
-	for (UINT Row=0; Row<128; Row++)
+	switch (BitmapSrc.bmBitsPixel)
 	{
-		for (UINT Column=0; Column<128; Column++)
+	case 32:
+		// True color with alpha channel
+		for (UINT Row=0; Row<128; Row++)
 		{
-			*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+4)+*(pBitsSrc+256*4)+*(pBitsSrc+256*4+4))>>2;
-			*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+5)+*(pBitsSrc+256*4+1)+*(pBitsSrc+256*4+5))>>2;
-			*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+6)+*(pBitsSrc+256*4+2)+*(pBitsSrc+256*4+6))>>2;
-			*(pBitsDst+3) = (*(pBitsSrc+3)+*(pBitsSrc+7)+*(pBitsSrc+256*4+3)+*(pBitsSrc+256*4+7))>>2;
+			for (UINT Column=0; Column<128; Column++)
+			{
+				*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+4)+*(pBitsSrc+256*4)+*(pBitsSrc+256*4+4))>>2;
+				*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+5)+*(pBitsSrc+256*4+1)+*(pBitsSrc+256*4+5))>>2;
+				*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+6)+*(pBitsSrc+256*4+2)+*(pBitsSrc+256*4+6))>>2;
+				*(pBitsDst+3) = (*(pBitsSrc+3)+*(pBitsSrc+7)+*(pBitsSrc+256*4+3)+*(pBitsSrc+256*4+7))>>2;
 
-			pBitsSrc += 8;
-			pBitsDst += 4;
+				pBitsSrc += 8;
+				pBitsDst += 4;
+			}
+
+			pBitsSrc += 256*4;
 		}
 
-		pBitsSrc += 256*4;
+		break;
+
+	case 24:
+		// True color without alpha channel
+		for (UINT Row=0; Row<128; Row++)
+		{
+			for (UINT Column=0; Column<128; Column++)
+			{
+				*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+3)+*(pBitsSrc+256*3)+*(pBitsSrc+256*3+3))>>2;
+				*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+4)+*(pBitsSrc+256*3+1)+*(pBitsSrc+256*3+4))>>2;
+				*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+5)+*(pBitsSrc+256*3+2)+*(pBitsSrc+256*3+5))>>2;
+				*(pBitsDst+3) = 0xFF;
+
+				pBitsSrc += 6;
+				pBitsDst += 4;
+			}
+
+			pBitsSrc += 256*3;
+		}
+
+		break;
 	}
 
 	DeleteObject(hBitmap);
