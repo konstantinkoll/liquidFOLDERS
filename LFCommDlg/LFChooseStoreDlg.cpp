@@ -173,7 +173,7 @@ BOOL LFChooseStoreDlg::InitDialog()
 
 	m_wndStoreList.AddStoreColumns();
 	m_wndStoreList.AddItemCategories();
-	m_wndStoreList.SetMenus(IDM_STORE, FALSE, IDM_STORES);
+	m_wndStoreList.SetMenus(IDM_STORE);
 	m_wndStoreList.EnableGroupView(LFGetApp()->OSVersion>OS_XP);
 	m_wndStoreList.SetView(LV_VIEW_TILE);
 	m_wndStoreList.SetItemsPerRow(3);

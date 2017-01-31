@@ -157,7 +157,7 @@ END_MESSAGE_MAP()
 
 void LFStorePropertiesDlg::OnRunSynchronize()
 {
-	LFRunSynchronization(m_Store.StoreID, this);
+	LFRunSynchronize(m_Store.StoreID, this);
 }
 
 void LFStorePropertiesDlg::OnRunMaintenance()

@@ -131,6 +131,9 @@ LFCORE_API UINT __stdcall LFSetStoreAttributes(const CHAR* pStoreID, WCHAR* pNam
 // Synchronisiert einen Store
 LFCORE_API UINT __stdcall LFSynchronizeStore(const CHAR* pStoreID, LFProgress* pProgress=NULL);
 
+// Synchronisiert alle Stores
+LFCORE_API UINT __stdcall LFSynchronizeStores(LFProgress* pProgress=NULL);
+
 // Startet geplante Wartungsarbeiten für alle Stores
 LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProgress=NULL);
 

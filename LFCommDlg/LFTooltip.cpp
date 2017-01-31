@@ -31,6 +31,9 @@ void LFTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 {
 	ASSERT(IsWindow(m_hWnd));
 
+	if (strCaption.IsEmpty() && strText.IsEmpty())
+		return;
+
 	// Get screen size
 	MONITORINFO MonitorInfo;
 	MonitorInfo.cbSize = sizeof(MONITORINFO);

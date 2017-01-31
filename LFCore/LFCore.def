@@ -37,9 +37,10 @@ EXPORTS
 	LFDeleteStore @111
 	LFSetStoreAttributes @112
 	LFSynchronizeStore @113
-	LFScheduledMaintenance @114
-	LFGetFileLocation @115
-	LFDoFileImport @116
+	LFSynchronizeStores @114
+	LFScheduledMaintenance @115
+	LFGetFileLocation @116
+	LFDoFileImport @117
 
 	LFContainsHashtag @200
 	LFFourCCToString @201

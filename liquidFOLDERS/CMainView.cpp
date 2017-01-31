@@ -528,9 +528,9 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnUpdateViewCommands)
 
 	ON_COMMAND(IDM_STORES_ADD, OnStoresAdd)
-	ON_COMMAND(IDM_STORES_REPAIRCORRUPTEDINDEX, OnStoresMaintainAll)
-	ON_UPDATE_COMMAND_UI(IDM_STORES_ADD, OnUpdateStoresCommands)
-	ON_UPDATE_COMMAND_UI(IDM_STORES_REPAIRCORRUPTEDINDEX, OnUpdateStoresCommands)
+	ON_COMMAND(IDM_STORES_SYNCHRONIZE, OnStoresSynchronize)
+	ON_COMMAND(IDM_STORES_RUNMAINTENANCE, OnStoresRunMaintenance)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_ADD, IDM_STORES_RUNMAINTENANCE, OnUpdateStoresCommands)
 
 	ON_COMMAND(IDM_NEW_CLEARNEW, OnNewClearNew)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_NEW_CLEARNEW, IDM_NEW_CLEARNEW, OnUpdateNewCommands)
@@ -580,32 +580,32 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.AddButton(IDM_BACKSTAGE_TOGGLESIDEBAR, 0, TRUE, FALSE, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 1);
-	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 5);
-	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 7, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 8, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 9);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 10, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 11);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 12);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
+	m_wndTaskbar.AddButton(IDM_STORES_SYNCHRONIZE, 2);
+	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 3, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 6);
+	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 7);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 8, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 10);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 11, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 12);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 13);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 14);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 15);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 16);
 
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16, TRUE);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 17, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_SYNCHRONIZE, 18);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 24);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 25);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 18, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 19);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
 
 	#define InspectorIconVisible     26
 	#define InspectorIconHidden      27
@@ -770,7 +770,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	CString tmpStr;
 
 	// Append "Open as FileDrop" and "Import folder" command when viewing a store
-	if (m_StoreIDValid && (m_Context<=LFLastGroupContext))
+	if (m_StoreIDValid)
 	{
 		if (pPopup->GetMenuItemCount())
 			pPopup->AppendMenu(MF_SEPARATOR | MF_BYPOSITION);
@@ -778,10 +778,13 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
 		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
 
-		pPopup->AppendMenu(MF_SEPARATOR | MF_BYPOSITION);
+		if (m_Context<=LFLastGroupContext)
+		{
+			pPopup->AppendMenu(MF_SEPARATOR | MF_BYPOSITION);
 
-		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_IMPORTFOLDER));
-		pPopup->AppendMenu(MF_POPUP | MF_BYPOSITION, IDM_STORE_IMPORTFOLDER, tmpStr);
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_IMPORTFOLDER));
+			pPopup->AppendMenu(MF_POPUP | MF_BYPOSITION, IDM_STORE_IMPORTFOLDER, tmpStr);
+		}
 	}
 
 	// Insert "Select all" command
@@ -1186,8 +1189,15 @@ void CMainView::OnStoresAdd()
 	}
 }
 
-void CMainView::OnStoresMaintainAll()
+void CMainView::OnStoresSynchronize()
 {
+	LFRunSynchronizeAll(this);
+}
+
+void CMainView::OnStoresRunMaintenance()
+{
+	DismissNotification();
+
 	LFRunMaintenance(this);
 }
 
@@ -1197,12 +1207,17 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_STORES_REPAIRCORRUPTEDINDEX:
-		bEnable &= (LFGetStoreCount()>0);
+	case IDM_STORES_ADD:
+		bEnable &= (m_Context==LFContextStores);
 		break;
 
-	default:
-		bEnable &= (m_Context==LFContextStores);
+	case IDM_STORES_SYNCHRONIZE:
+		bEnable &= (m_Context==LFContextStores) && (LFGetStoreCount()>0);
+		break;
+
+	case IDM_STORES_RUNMAINTENANCE:
+		bEnable &= (LFGetStoreCount()>0);
+		break;
 	}
 
 	pCmdUI->Enable(bEnable);
@@ -1301,7 +1316,7 @@ void CMainView::OnStoreSynchronize()
 {
 	INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFRunSynchronization((*p_CookedFiles)[Index]->StoreID, this);
+		LFRunSynchronize((*p_CookedFiles)[Index]->StoreID, this);
 }
 
 void CMainView::OnStoreMakeDefault()
@@ -1372,7 +1387,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				switch (pCmdUI->m_nID)
 				{
 				case IDM_STORE_SYNCHRONIZE:
-					bEnable = (pItemDescriptor->Type & LFTypeSynchronizeAllowed);
+					bEnable = ((pItemDescriptor->Type & (LFTypeSynchronizeAllowed | LFTypeNotMounted))==LFTypeSynchronizeAllowed);
 					break;
 
 				case IDM_STORE_MAKEDEFAULT:

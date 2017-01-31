@@ -344,7 +344,7 @@ void CFileDropWnd::OnStoreOpen()
 
 void CFileDropWnd::OnStoreSynchronize()
 {
-	LFRunSynchronization(m_StoreID, this);
+	LFRunSynchronize(m_StoreID, this);
 }
 
 void CFileDropWnd::OnStoreMakeDefault()

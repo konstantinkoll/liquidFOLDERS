@@ -58,8 +58,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,21,0
- PRODUCTVERSION 2,1,21,0
+ FILEVERSION 2,1,22,0
+ PRODUCTVERSION 2,1,22,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -76,13 +76,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.1.21"
+            VALUE "FileVersion", "2.1.22"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.1.21"
+            VALUE "ProductVersion", "2.1.22"
         END
     END
     BLOCK "VarFileInfo"
@@ -428,15 +428,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_SYNCHRONIZE   "Synchronisiert den Store mit der Datenquelle.\nSynchronisieren"
     IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
     IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
     IDM_STORES_ADD          "Fügt einen neuen Store für Ihre Dateien hinzu.\nStore hinzufügen..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Wartungsarbeiten durchführen"
+    IDM_STORES_SYNCHRONIZE   "Synchronisiert alle Stores mit ihrer Datenquelle.\nSynchronisieren"
+    IDM_STORES_RUNMAINTENANCE "Wartungsarbeiten durchführen"
 END
 
 STRINGTABLE 
@@ -862,15 +858,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_SYNCHRONIZE   "Sincroniza el store para los datos.\nSincronizar"
     IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
     IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
     IDM_STORES_ADD          "Adjuntar un store para sus archivos.\nAdjuntar store..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Ejecutar mantenimiento"
+    IDM_STORES_SYNCHRONIZE   "Sincroniza todos los stores con su fuente de datos.\nSincronizar"
+    IDM_STORES_RUNMAINTENANCE "Ejecutar mantenimiento"
 END
 
 STRINGTABLE 
@@ -1296,15 +1288,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_SYNCHRONIZE   "Synchroniser le store avec sa source de données.\nSynchroniser"
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
     IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
     IDM_STORES_ADD          "Ajouter un store pour vos fichiers.\nAjouter un store..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Effectuer travails d'entretien"
+    IDM_STORES_SYNCHRONIZE   "Synchroniser tous les stores avec leur source de données.\nSynchroniser"
+    IDM_STORES_RUNMAINTENANCE "Effectuer travails d'entretien"
 END
 
 STRINGTABLE 
@@ -1781,15 +1769,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_SYNCHRONIZE   "Synchronizes the store with its data source.\nSynchronize"
     IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_ADD          "Add a store for your files.\nAdd store..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
+    IDM_STORES_SYNCHRONIZE   "Synchronizes all stores with their data source.\nSynchronize"
+    IDM_STORES_RUNMAINTENANCE "Run maintenance"
 END
 
 STRINGTABLE 

@@ -1269,6 +1269,53 @@ LFCORE_API UINT LFSynchronizeStore(const CHAR* pStoreID, LFProgress* pProgress)
 	return Result;
 }
 
+LFCORE_API UINT LFSynchronizeStores(LFProgress* pProgress)
+{
+	CHAR* pStoreIDs;
+	UINT Count;
+	UINT Result;
+	if ((Result=LFGetAllStores(&pStoreIDs, &Count))!=LFOk)
+		return Result;
+
+	if (Count)
+	{
+		if (pProgress)
+			pProgress->MajorCount = Count;
+
+		CHAR* Ptr = pStoreIDs;
+		for (UINT a=0; a<Count; a++)
+		{
+			CStore* pStore;
+			if ((Result=OpenStore(Ptr, TRUE, &pStore))==LFOk)
+			{
+				Result = pStore->Synchronize(FALSE, pProgress);
+				delete pStore;
+			}
+
+			// Stores which are not mounted do not present an error
+			if (Result==LFStoreNotMounted)
+				Result = LFOk;
+
+			Ptr += LFKeySize;
+
+			if (pProgress)
+			{
+				if (pProgress->UserAbort)
+					break;
+
+				pProgress->MajorCurrent++;
+			}
+		}
+
+		free(pStoreIDs);
+	}
+
+	SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
+	SendLFNotifyMessage(LFMessages.StatisticsChanged);
+
+	return Result;
+}
+
 LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 {
 	LFMaintenanceList* pMaintenanceList = new LFMaintenanceList();

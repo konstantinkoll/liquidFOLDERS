@@ -216,8 +216,18 @@ UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SI
 // Index operations
 //
 
-UINT CStore::Synchronize(BOOL /*OnInitialize*/, LFProgress* /*pProgress*/)
+UINT CStore::Synchronize(BOOL /*OnInitialize*/, LFProgress* pProgress)
 {
+	// Progress
+	if (pProgress)
+	{
+		pProgress->Object[0] = L'\0';
+		pProgress->MinorCount = pProgress->MinorCurrent = 1;
+
+		if (UpdateProgress(pProgress))
+			return LFCancel;
+	}
+
 	return LFOk;
 }
 

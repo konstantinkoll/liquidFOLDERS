@@ -72,8 +72,8 @@ protected:
 	afx_msg void OnUpdateViewCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnStoresAdd();
-	afx_msg void OnStoresMaintainAll();
-	afx_msg void OnStoresShowStatistics();
+	afx_msg void OnStoresSynchronize();
+	afx_msg void OnStoresRunMaintenance();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnNewClearNew();

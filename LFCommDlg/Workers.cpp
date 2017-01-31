@@ -32,6 +32,15 @@ DWORD WINAPI WorkerStoreSynchronize(void* lParam)
 	LF_WORKERTHREAD_FINISH();
 }
 
+DWORD WINAPI WorkerStoreSynchronizeAll(void* lParam)
+{
+	LF_WORKERTHREAD_START(lParam);
+
+	wp->Result = LFSynchronizeStores(&p);
+
+	LF_WORKERTHREAD_FINISH();
+}
+
 DWORD WINAPI WorkerStoreMaintenance(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
@@ -126,17 +135,32 @@ BOOL LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd)
 	return Result;
 }
 
-void LFRunSynchronization(const CHAR* pStoreID, CWnd* pParentWnd)
+void LFRunSynchronize(const CHAR* pStoreID, CWnd* pParentWnd)
 {
 	// Allowed?
 	if (!LFNagScreen(pParentWnd))
 		return;
 
+	// Run
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));
 	strcpy_s(wp.StoreID, LFKeySize, pStoreID);
 
 	LFDoWithProgress(WorkerStoreSynchronize, &wp.Hdr, pParentWnd);
+	LFErrorBox(pParentWnd, wp.Result);
+}
+
+void LFRunSynchronizeAll(CWnd* pParentWnd)
+{
+	// Allowed?
+	if (!LFNagScreen(pParentWnd))
+		return;
+
+	// Run
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+
+	LFDoWithProgress(WorkerStoreSynchronizeAll, &wp.Hdr, pParentWnd);
 	LFErrorBox(pParentWnd, wp.Result);
 }
 

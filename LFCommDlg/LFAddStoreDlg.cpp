@@ -135,7 +135,7 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	CRect rect(lpDrawItemStruct->rcItem);
 
 	const UINT nID = lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
-	ASSERT(Source<=LFSourceCount);
+	ASSERT(nID<=LFSourceCount);
 
 	WCHAR Caption[256];
 	LFGetSourceName(Caption, 256, m_Sources[nID], FALSE);

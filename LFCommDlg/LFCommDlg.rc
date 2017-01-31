@@ -805,6 +805,9 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Store &hinzufügen...",        IDM_STORES_ADD
+        MENUITEM SEPARATOR
+        MENUITEM "S&ynchronisieren",            IDM_STORES_SYNCHRONIZE
+        MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_RUNMAINTENANCE
     END
 END
 
@@ -1200,7 +1203,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Sincronización",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Sincroniza el store para los datos.",IDC_STATIC,43,23,286,8
+    LTEXT           "Sincroniza el store con su fuente de datos.",IDC_STATIC,43,23,286,8
     LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,43,45,120,14
     CONTROL         "Mantenimiento",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
@@ -1628,6 +1631,9 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Adjuntar store...",          IDM_STORES_ADD
+        MENUITEM SEPARATOR
+        MENUITEM "Si&ncronizar",                IDM_STORES_SYNCHRONIZE
+        MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_RUNMAINTENANCE
     END
 END
 
@@ -2450,6 +2456,9 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Ajouter store...",           IDM_STORES_ADD
+        MENUITEM SEPARATOR
+        MENUITEM "S&ynchroniser",               IDM_STORES_SYNCHRONIZE
+        MENUITEM "Exécuter &travails d'entretien", IDM_STORES_RUNMAINTENANCE
     END
 END
 
@@ -3315,6 +3324,9 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Add store...",               IDM_STORES_ADD
+        MENUITEM SEPARATOR
+        MENUITEM "S&ynchronize",                IDM_STORES_SYNCHRONIZE
+        MENUITEM "Run &maintenance",            IDM_STORES_RUNMAINTENANCE
     END
 END
 

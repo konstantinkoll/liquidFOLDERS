@@ -187,6 +187,8 @@
 #define IDM_STORE_PROPERTIES            21287
 #define IDM_STORES                      21290
 #define IDM_STORES_ADD                  21291
+#define IDM_STORES_SYNCHRONIZE          21292
+#define IDM_STORES_RUNMAINTENANCE       21293
 #define IDD_DELETESTORE                 21300
 #define IDC_CAPTION                     21301
 #define IDC_NUKEMESSAGE                 21302
