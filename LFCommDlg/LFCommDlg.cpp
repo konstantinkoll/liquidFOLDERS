@@ -825,11 +825,16 @@ void GetHintForStore(CString& Str, LFItemDescriptor* pItemDescriptor)
 {
 	ASSERT(pItemDescriptor);
 
-	WCHAR tmpStr[256];
-	LFCombineFileCountSize(pItemDescriptor->AggregateCount, pItemDescriptor->CoreAttributes.FileSize, tmpStr, 256);
-
 	AppendAttribute(Str, pItemDescriptor, LFAttrComments);
-	LFTooltip::AppendAttribute(Str, _T(""), tmpStr);
+
+	if (pItemDescriptor->Type & LFTypeMaintained)
+	{
+		WCHAR tmpStr[256];
+		LFCombineFileCountSize(pItemDescriptor->AggregateCount, pItemDescriptor->CoreAttributes.FileSize, tmpStr, 256);
+
+		LFTooltip::AppendAttribute(Str, _T(""), tmpStr);
+	}
+
 	AppendAttribute(Str, pItemDescriptor, LFAttrCreationTime);
 	AppendAttribute(Str, pItemDescriptor, LFAttrFileTime);
 	AppendAttribute(Str, pItemDescriptor, LFAttrDescription);
@@ -1220,25 +1225,7 @@ void LFErrorBox(CWnd* pParentWnd, UINT Result)
 		LFGetErrorText(Message, 256, Result);
 
 		// Type
-		UINT Type = MB_OK;
-
-		switch(Result)
-		{
-		case LFOk:
-			Type |= MB_ICONREADY;
-
-			break;
-
-		case LFCancel:
-		case LFDriveWriteProtected:
-		case LFIndexAccessError:
-			Type |= MB_ICONWARNING;
-
-			break;
-
-		default:
-			Type |= MB_ICONERROR;
-		}
+		const UINT Type = (Result==LFOk) ? MB_ICONREADY : (Result>=LFFirstFatalError) ? MB_ICONERROR : MB_ICONWARNING;
 
 		LFMessageBox(pParentWnd, Message, Caption, Type);
 	}

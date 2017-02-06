@@ -49,7 +49,7 @@
 
 #define BUILD_ITEMDESCRIPTOR() \
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize); \
-	pItemDescriptor->Type = Type; \
+	pItemDescriptor->Type = p_StoreDescriptor->Source | LFTypeFile | (LFIsStoreMounted(p_StoreDescriptor) ? LFTypeMounted : LFTypeGhosted); \
 	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
 
 #define APPEND_ITEMDESCRIPTOR() \
@@ -64,7 +64,7 @@
 	if ((PtrM->SlaveID) && (PtrM->SlaveID<IDXTABLECOUNT)) \
 		if (LoadTable(PtrM->SlaveID)) {
 
-#define DISCARD_SLAVE() } else { Result = LFIndexTableLoadError; }
+#define DISCARD_SLAVE() } else { Result = m_pTable[PtrM->SlaveID]->GetError(); }
 
 #define START_FINDMASTER(AbortOps, AbortRetval, Key) \
 	LOAD_MASTER(AbortOps, AbortRetval); \
@@ -83,8 +83,6 @@
 #define END_ITERATEMASTER() }
 
 #define START_ITERATEALL(AbortOps, AbortRetval) \
-	UINT Type = LFTypeFile | p_StoreDescriptor->Source; \
-	if (!LFIsStoreMounted(p_StoreDescriptor)) Type |= LFTypeNotMounted | LFTypeGhosted; \
 	LOAD_MASTER(AbortOps, AbortRetval); \
 	INT IDs[IDXTABLECOUNT]; ZeroMemory(IDs, sizeof(IDs)); \
 	LFCoreAttributes* PtrM; \
@@ -133,32 +131,25 @@ BOOL CIndex::LoadTable(UINT TableID, UINT* pResult)
 	assert(TableID<IDXTABLECOUNT);
 
 	if (!m_pTable[TableID])
-		m_pTable[TableID] = new CHeapfile(m_IdxPath, (BYTE)TableID, TableID==IDXTABLE_MASTER ? m_AdditionalDataSize : 0);
+		m_pTable[TableID] = new CHeapfile(m_IdxPath, (BYTE)TableID, m_AdditionalDataSize);
 
+	const UINT Result = m_pTable[TableID]->m_OpenStatus;
 	if (pResult)
-		*pResult = m_pTable[TableID]->m_OpenStatus;
+		*pResult = Result;
 
-	return (m_pTable[TableID]->m_OpenStatus<=HeapMaintenanceRequired);
-}
-
-BOOL CIndex::Initialize()
-{
-	BOOL Result = TRUE;
-
-	if (m_IdxPath[0]!=L'\0')
-		for (UINT a=0; a<IDXTABLECOUNT; a++)
-			if (!LoadTable(a))
-				Result = FALSE;
-
-	return Result;
+	return (Result==HeapOk) || (Result==HeapCreated) || (Result==HeapMaintenanceRequired);
 }
 
 UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 {
 	assert(pRepaired);
 
+	// Already performed non-scheduled maintenance?
+	if (!Scheduled && (p_StoreDescriptor->Flags & LFStoreFlagsMaintained))
+		return LFOk;
+
 	// Run scheduled maintenance only when index is writeable because of table compaction
-	BOOL Writeable = DirectoryWriteable(m_IdxPath);
+	const BOOL Writeable = DirectoryWriteable(m_IdxPath);
 	if (Scheduled && !Writeable)
 		return LFDriveWriteProtected;
 
@@ -177,7 +168,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 		{
 		case HeapCreated:
 			if (a==IDXTABLE_MASTER)
-				return LFIndexRepairError;	// TODO: full synchrinizing required
+				return LFIndexRepairError;	// TODO: full synchronizing required
 
 			*pRepaired = SlaveReindex = TRUE;
 
@@ -187,12 +178,14 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 			COMPACT(a);
 
 			*pRepaired = UpdateContexts = TRUE;
-
 			break;
 
 		case HeapNoAccess:
 			p_StoreDescriptor->Flags |= LFStoreFlagsError;
 			return LFIndexAccessError;
+
+		case HeapSharingViolation:
+			return LFSharingViolation1;
 
 		case HeapError:
 			p_StoreDescriptor->Flags |= LFStoreFlagsError;
@@ -294,7 +287,6 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 			if ((PtrM->SlaveID) && (PtrM->SlaveID<IDXTABLECOUNT))
 				if (TableLoadResult[PtrM->SlaveID]==HeapCreated)
 				{
-					const UINT Type = LFTypeFile;
 					BUILD_ITEMDESCRIPTOR();
 
 					SetAttributesFromFile(pItemDescriptor, &Path[4]);	// No fully qualified path allowed, skip prefix
@@ -303,6 +295,8 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 					LFFreeItemDescriptor(pItemDescriptor);
 				}
 	}
+
+	p_StoreDescriptor->Flags |= LFStoreFlagsMaintained;
 
 	// Progress
 	if (pProgress)
@@ -379,15 +373,30 @@ UINT CIndex::Add(LFItemDescriptor* pItemDescriptor)
 	return LFOk;
 }
 
-void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
+void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL UpdateStatistics)
 {
 	assert(pFilter);
 	assert(pFilter->Mode>=LFFilterModeDirectoryTree);
 	assert(pSearchResult);
 
+	BOOL First = TRUE;
 	BYTE SearchtermContainsLetters = 0;
 
-	START_ITERATEALL(pSearchResult->m_LastError = LFIndexTableLoadError,);
+	START_ITERATEALL(pSearchResult->m_LastError = m_pTable[IDXTABLE_MASTER]->GetError(pFilter->StoreID[0]!=L'\0'),);
+
+	if (UpdateStatistics)
+	{
+		// Delay resetting statistics in case of unaccessible index
+		if (First)
+		{
+			ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
+			ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));
+
+			First = FALSE;
+		}
+
+		AddFileToStatistics(PtrM);
+	}
 
 	BOOL CheckSearchterm = FALSE;
 	if (!PassesFilter(IDXTABLE_MASTER, PtrM, pFilter, CheckSearchterm, SearchtermContainsLetters))
@@ -423,12 +432,34 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	END_ITERATEALL();
 }
 
+UINT CIndex::UpdateStatistics()
+{
+	BOOL First = TRUE;
+
+	START_ITERATEALL(, m_pTable[IDXTABLE_MASTER]->GetError());
+
+	// Delay resetting statistics in case of unaccessible index
+	if (First)
+	{
+		ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
+		ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));
+
+		First = FALSE;
+	}
+
+	AddFileToStatistics(PtrM);
+
+	END_ITERATEALL();
+
+	return LFOk;
+}
+
 void CIndex::AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResult* pSearchResult)
 {
 	assert(pTransactionList);
 	assert(pSearchResult);
 
-	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError); pSearchResult->m_LastError = LFIndexTableLoadError, );
+	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()); pSearchResult->m_LastError = m_pTable[IDXTABLE_MASTER]->GetError(), );
 	IN_TRANSACTIONLIST(pTransactionList);
 	BUILD_ITEMDESCRIPTOR();
 
@@ -456,7 +487,7 @@ void CIndex::ResolveLocations(LFTransactionList* pTransactionList)
 		return;
 	}
 
-	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError),);
+	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
 
 	pTransactionList->SetError(ItemID, p_Store->GetFileLocation(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), (*pTransactionList)[ItemID].Path, 2*MAX_PATH));
@@ -501,7 +532,7 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgr
 		return;
 	}
 
-	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError), );
+	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()), );
 	IN_TRANSACTIONLIST(pTransactionList);
 
 	// Progress
@@ -589,7 +620,7 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 	assert(pTransactionTime);
 	assert((Flags & ~(LFFlagArchive | LFFlagTrash))==0);
 
-	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError),);
+	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
 
 	if ((PtrM->Flags & (LFFlagArchive | LFFlagTrash | LFFlagNew))!=Flags)
@@ -656,7 +687,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 		(pVariantData2 ? (pVariantData2->Attr==LFAttrFileName) : FALSE) ||
 		(pVariantData3 ? (pVariantData3->Attr==LFAttrFileName) : FALSE);
 
-	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError),);
+	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
 	REMOVE_STATS();
 
@@ -730,7 +761,7 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 {
 	UINT Result = LFOk;
 
-	START_ITERATEALL(, LFIndexTableLoadError);
+	START_ITERATEALL(, m_pTable[IDXTABLE_MASTER]->GetError());
 
 	// Progress
 	if (pProgress)
@@ -776,7 +807,7 @@ void CIndex::Delete(LFTransactionList* pTransactionList, LFProgress* pProgress)
 {
 	assert(pTransactionList);
 
-	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexTableLoadError),);
+	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
 
 	// Progress

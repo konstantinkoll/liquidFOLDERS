@@ -152,7 +152,7 @@ void LFChooseStoreDlg::UpdateOkButton()
 	BOOL bEnable = (Index!=-1);
 
 	if (m_Mounted && bEnable)
-		bEnable &= !((*m_pSearchResult)[Index]->Type & LFTypeNotMounted);
+		bEnable &= ((*m_pSearchResult)[Index]->Type & LFTypeMounted);
 
 	GetDlgItem(IDOK)->EnableWindow(bEnable);
 }

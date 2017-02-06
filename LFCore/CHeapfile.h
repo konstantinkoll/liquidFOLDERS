@@ -2,6 +2,7 @@
 #pragma once
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
+#include "Mutex.h"
 
 
 // CHeapfile
@@ -10,21 +11,25 @@
 #define MaxBufferSize     262144
 #define HeapSignature     "LFIDX"
 
-#define HeapOk                      0
-#define HeapCreated                 1
-#define HeapMaintenanceRequired     2
-#define HeapNoAccess                3	// Fatal error condition
-#define HeapError                   4	// Fatal error condition
-#define HeapCannotCreate            5	// Fatal error condition
+// Magic values
+#define HeapOk                      FileOk					// 0
+#define HeapSharingViolation        FileSharingViolation	// 1, Fatal error condition
+#define HeapNoAccess                FileNoAccess			// 2, Fatal error condition
+
+// Additional error conditions
+#define HeapCreated                 3
+#define HeapMaintenanceRequired     4
+#define HeapError                   5						// Fatal error condition
+#define HeapCannotCreate            6						// Fatal error condition
 
 struct HeapfileHeader
 {
 	CHAR ID[6];
-	UINT ElementSize;					// Includes StoreDataSize
+	UINT ElementSize;		// Includes StoreDataSize
 	UINT Version;
 	BOOL NeedsCompaction;
-	UINT StoreDataSize;					// Part of ElementSize
-	BYTE Fill[488];						// Pad to 512 byte
+	UINT StoreDataSize;		// Part of ElementSize
+	BYTE Fill[488];			// Pad to 512 byte
 };
 
 class CHeapfile
@@ -37,6 +42,7 @@ public:
 	UINT GetRequiredElementSize() const;
 	UINT64 GetRequiredFileSize() const;
 	void* GetStoreData(void* Ptr) const;
+	UINT GetError(BOOL SingleStore=FALSE);
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);
 	BOOL FindNext(INT& Next, void*& Ptr);

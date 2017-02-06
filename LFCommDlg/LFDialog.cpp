@@ -19,11 +19,13 @@ LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL WantsBitmap, BOOL UA
 	p_ParentWnd = pParentWnd;
 	m_lpszTemplateName = MAKEINTRESOURCE(nIDTemplate);
 
+#ifndef _DEBUG
 	if (UAC)
 	{
 		m_wndDesktopDimmer.Create(this);
 		p_ParentWnd = &m_wndDesktopDimmer;
 	}
+#endif
 
 	m_UAC = UAC;
 
@@ -476,10 +478,12 @@ void LFDialog::OnDestroy()
 		delete pButton;
 	}
 
+#ifndef _DEBUG
 	if (IsWindow(m_wndDesktopDimmer))
 		m_wndDesktopDimmer.SendMessage(WM_DESTROY);
 
 	CBackstageWnd::OnDestroy();
+#endif
 }
 
 void LFDialog::OnOK()

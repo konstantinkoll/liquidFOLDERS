@@ -18,7 +18,7 @@
 #define WHITE           100
 
 #define GetItemData(Index)     ((TimelineItemData*)(m_ItemData+(Index)*m_DataSize))
-#define UsePreview(i)          ((!(i->Type & LFTypeNotMounted)) && (i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
+#define UsePreview(i)          ((i->Type & LFTypeMounted) && (i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
 
 CString CTimelineView::m_FilesSingular;
 CString CTimelineView::m_FilesPlural;

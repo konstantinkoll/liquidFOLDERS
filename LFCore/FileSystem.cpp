@@ -119,7 +119,7 @@ BOOL DirectoryWriteable(LPWSTR lpPath)
 	wcscpy_s(Path, MAX_PATH, lpPath);
 	wcscat_s(Path, MAX_PATH, L"LF_TEST.BIN");
 
-	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFile(Path, GENERIC_WRITE | FILE_SHARE_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 		return FALSE;
 

@@ -27,6 +27,7 @@ public:
 
 	UINT MaintenanceAndStatistics(BOOL Scheduled=FALSE, LFProgress* pProgress=NULL);
 	void ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress=NULL);
+	UINT UpdateStatistics();
 	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount) const;
 
 	// Index operations
@@ -64,3 +65,23 @@ private:
 	HMUTEX hMutex;
 	BOOL m_WriteAccess;
 };
+
+inline void CStore::ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress)
+{
+	pMaintenanceList->AddItem(p_StoreDescriptor->StoreName, p_StoreDescriptor->Comments, p_StoreDescriptor->StoreID, MaintenanceAndStatistics(TRUE, pProgress), LFGetStoreIcon(p_StoreDescriptor));
+}
+
+inline UINT CStore::UpdateStatistics()
+{
+	assert(m_pIndexMain);
+
+	return m_pIndexMain->UpdateStatistics();
+}
+
+inline UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount) const
+{
+	assert(pItemDescriptor);
+	assert(pPath);
+
+	return GetFileLocation(&pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData, pPath, cCount);
+}

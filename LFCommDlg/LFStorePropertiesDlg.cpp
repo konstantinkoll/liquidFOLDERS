@@ -290,8 +290,18 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		if (m_wndStoreComment.LineLength()==0)
 			m_wndStoreComment.SetWindowText(m_Store.Comments);
 
-		LFCombineFileCountSize(m_Store.FileCount[LFContextAllFiles], m_Store.FileSize[LFContextAllFiles], tmpStr, 256);
-		GetDlgItem(IDC_CONTENTS)->SetWindowText(tmpStr);
+		if (m_Store.Flags & LFStoreFlagsMaintained)
+		{
+			GetDlgItem(IDC_CONTENTSLABEL)->EnableWindow(TRUE);
+
+			LFCombineFileCountSize(m_Store.FileCount[LFContextAllFiles], m_Store.FileSize[LFContextAllFiles], tmpStr, 256);
+			GetDlgItem(IDC_CONTENTS)->SetWindowText(tmpStr);
+		}
+		else
+		{
+			GetDlgItem(IDC_CONTENTSLABEL)->EnableWindow(FALSE);
+			GetDlgItem(IDC_CONTENTS)->SetWindowText(_T(""));
+		}
 
 		LFTimeToString(m_Store.CreationTime, tmpStr, 256);
 		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
@@ -299,7 +309,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		LFTimeToString(m_Store.FileTime, tmpStr, 256);
 		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
 
-		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
+		GetDlgItem(IDC_LASTSEENLABEL)->EnableWindow((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(m_Store.LastSeen);
 
 		CHAR StoreID[LFKeySize];

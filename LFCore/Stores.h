@@ -11,7 +11,7 @@
 
 #define RAND_CHAR()     KeyChars[rand()%sizeof(KeyChars)]
 
-#define SendLFNotifyMessage(Message)     SendNotifyMessage(HWND_BROADCAST, Message, NULL, NULL);
+#define SendLFNotifyMessage(Message)     PostMessage(HWND_BROADCAST, Message, NULL, NULL);
 
 
 void CreateNewStoreID(CHAR* pStoreID);
@@ -30,7 +30,7 @@ UINT GetStore(const CHAR* pStoreID, CStore** ppStore);
 UINT OpenStore(const CHAR* pStoreID, BOOL WriteAccess, CStore** ppStore);
 
 void QueryStores(LFSearchResult* pSearchResult);
+void MountVolumes(UINT Mask, BOOL OnInitialize=FALSE);
 void InitStores();
 
-UINT UnmountVolume(CHAR cVolume);
-UINT MountVolume(CHAR cVolume, BOOL OnInitialize=FALSE);
+UINT MountVolume(CHAR cVolume, BOOL Mount=TRUE, BOOL OnInitialize=FALSE);

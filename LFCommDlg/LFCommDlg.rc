@@ -347,13 +347,13 @@ BEGIN
     LTEXT           "Kommentar:",IDC_STATIC,49,45,50,8
     EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
     CONTROL         "Eigenschaften",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
-    LTEXT           "Inhalt:",IDC_STATIC,7,83,80,8
+    LTEXT           "Inhalt:",IDC_CONTENTSLABEL,7,83,80,8
     LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
     LTEXT           "Erzeugt am:",IDC_STATIC,7,92,80,8
     LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
     LTEXT           "Geändert am:",IDC_STATIC,7,102,80,8
     LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
-    LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Einstellungen",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
     CONTROL         "Als &Standard-Store setzen",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
@@ -1163,13 +1163,13 @@ BEGIN
     LTEXT           "Comentarios:",IDC_STATIC,49,45,50,8
     EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
     CONTROL         "Propiedades",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
-    LTEXT           "Contenido:",IDC_STATIC,7,83,80,8
+    LTEXT           "Contenido:",IDC_CONTENTSLABEL,7,83,80,8
     LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
     LTEXT           "Creado:",IDC_STATIC,7,92,80,8
     LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
     LTEXT           "Modificado:",IDC_STATIC,7,102,80,8
     LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
-    LTEXT           "Última entrada:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "Última entrada:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Ajustes",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
     CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
@@ -2011,13 +2011,13 @@ BEGIN
     LTEXT           "Commentaire:",IDC_STATIC,49,45,50,8
     EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
     CONTROL         "Propriétés",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
-    LTEXT           "Contenu:",IDC_STATIC,7,83,80,8
+    LTEXT           "Contenu:",IDC_CONTENTSLABEL,7,83,80,8
     LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
     LTEXT           "Temp de création:",IDC_STATIC,7,92,80,8
     LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
     LTEXT           "Changé le:",IDC_STATIC,7,102,80,8
     LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
-    LTEXT           "Dernier vu:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "Dernier vu:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Paramètres",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
     CONTROL         "Faites &standard",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
@@ -2864,13 +2864,13 @@ BEGIN
     LTEXT           "Comments:",IDC_STATIC,49,45,50,8
     EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
     CONTROL         "Properties",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
-    LTEXT           "Contents:",IDC_STATIC,7,83,80,8
+    LTEXT           "Contents:",IDC_CONTENTSLABEL,7,83,80,8
     LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
     LTEXT           "Created:",IDC_STATIC,7,92,80,8
     LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
     LTEXT           "Modified:",IDC_STATIC,7,102,80,8
     LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
-    LTEXT           "Last seen:",IDC_LASTSEENCAPTION,7,113,80,8
+    LTEXT           "Last seen:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Settings",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
     CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10

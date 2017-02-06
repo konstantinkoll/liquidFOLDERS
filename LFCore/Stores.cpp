@@ -36,8 +36,10 @@ LFStoreDescriptor StoreCache[MAXSTORES];
 #pragma comment(linker, "/SECTION:.stores,RWS")
 
 
-#define STOREDESCRIPTORFILESIZE             offsetof(LFStoreDescriptor, IdxPathMain)
-#define STOREDESCRIPTORREQUIREDFILESIZE     offsetof(LFStoreDescriptor, SynchronizeTime)
+#define STOREDESCRIPTORFILESIZE               offsetof(LFStoreDescriptor, IdxPathMain)
+#define STOREDESCRIPTORREQUIREDFILESIZE       offsetof(LFStoreDescriptor, SynchronizeTime)
+
+#define ResetStoreFlags(pStoreDescriptor)     pStoreDescriptor->Flags &= ~(LFStoreFlagsMaintained | LFStoreFlagsVictim);
 
 
 // Cache access
@@ -334,7 +336,8 @@ BOOL LoadStoreSettingsFromRegistry(CHAR* pStoreID, LFStoreDescriptor* pStoreDesc
 		if (RegQueryValueEx(hKey, L"AutoLocation", 0, NULL, (BYTE*)&pStoreDescriptor->Flags, &Size)!=ERROR_SUCCESS)
 			Result = FALSE;
 
-		pStoreDescriptor->Flags &= LFStoreFlagsAutoLocation;
+		// Reset flags
+		ResetStoreFlags(pStoreDescriptor);
 
 		Size = sizeof(pStoreDescriptor->IndexVersion);
 		if (RegQueryValueEx(hKey, L"IndexVersion", 0, NULL, (BYTE*)&pStoreDescriptor->IndexVersion, &Size)!=ERROR_SUCCESS)
@@ -468,8 +471,8 @@ BOOL LoadStoreSettingsFromFile(WCHAR* pPath, LFStoreDescriptor* pStoreDescriptor
 	assert(pPath[0]!=L'\0');
 	assert(pStoreDescriptor);
 
-	HANDLE hFile = CreateFile(pPath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-	if (hFile==INVALID_HANDLE_VALUE)
+	HANDLE hFile;
+	if (CreateFileConcurrent(pPath, FALSE, OPEN_EXISTING, hFile)!=FileOk)
 		return FALSE;
 
 	ZeroMemory(pStoreDescriptor, sizeof(LFStoreDescriptor));
@@ -479,6 +482,9 @@ BOOL LoadStoreSettingsFromFile(WCHAR* pPath, LFStoreDescriptor* pStoreDescriptor
 	Result &= (wmRead>=STOREDESCRIPTORREQUIREDFILESIZE);
 
 	CloseHandle(hFile);
+
+	// Reset flags
+	ResetStoreFlags(pStoreDescriptor);
 
 	return Result;
 }
@@ -493,9 +499,9 @@ UINT SaveStoreSettingsToFile(LFStoreDescriptor* pStoreDescriptor)
 	if ((Result=GetKeyFileFromStoreDescriptor(pStoreDescriptor, Path))!=LFOk)
 		return Result;
 
-	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
-	if (hFile==INVALID_HANDLE_VALUE)
-		return (GetLastError()==ERROR_ACCESS_DENIED) ? LFAccessError : LFDriveNotReady;
+	HANDLE hFile;
+	if ((Result=CreateFileConcurrent(Path, TRUE, OPEN_ALWAYS, hFile, TRUE))!=FileOk)
+		return (Result==FileSharingViolation) ? LFSharingViolation1 : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : LFDriveNotReady;
 
 	DWORD wmWritten;
 	Result = WriteFile(hFile, pStoreDescriptor, STOREDESCRIPTORFILESIZE, &wmWritten, NULL) ? LFOk : LFDriveNotReady;
@@ -517,7 +523,7 @@ UINT DeleteStoreSettingsFromFile(LFStoreDescriptor* pStoreDescriptor)
 	if ((Result=GetKeyFileFromStoreDescriptor(pStoreDescriptor, Path))!=LFOk)
 		return Result;
 
-	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFAccessError : LFDriveNotReady;
+	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : LFDriveNotReady;
 }
 
 UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor)
@@ -642,16 +648,16 @@ UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor)
 
 void ChooseNewDefaultStore()
 {
-	INT No = -1;
+	INT Slot = -1;
 
 	for (UINT a=0; a<StoreCount; a++)
 		if (strcmp(DefaultStore, StoreCache[a].StoreID)!=0)
-			if ((No==-1) || ((StoreCache[a].Mode & (LFStoreModeBackendMask | LFStoreModeIndexMask))==(LFStoreModeBackendInternal | LFStoreModeIndexInternal)))
-				No = a;
+			if ((Slot==-1) || ((StoreCache[a].Mode & (LFStoreModeBackendMask | LFStoreModeIndexMask))==(LFStoreModeBackendInternal | LFStoreModeIndexInternal)))
+				Slot = a;
 
-	if (No!=-1)
+	if (Slot!=-1)
 	{
-		MakeDefaultStore(&StoreCache[No]);
+		MakeDefaultStore(&StoreCache[Slot]);
 	}
 	else
 	{
@@ -788,6 +794,9 @@ UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pPro
 	assert(pStoreDescriptor);
 
 	CompleteStoreSettings(pStoreDescriptor);
+
+	// The store starts empty
+	pStoreDescriptor->Flags |= LFStoreFlagsMaintained;
 
 	UINT Result = UpdateStoreInCache(pStoreDescriptor);
 	if (Result==LFOk)
@@ -929,11 +938,21 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 
 	if (pType)
 	{
-		*pType = LFTypeStore | pStoreDescriptor->Source;
+		// Basic, Mounted?
+		*pType = pStoreDescriptor->Source | LFTypeStore | (LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted);
 
 		// Empty?
-		if (!pStoreDescriptor->FileCount[LFContextAllFiles])
-			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeEmpty;
+		if (pStoreDescriptor->Flags & LFStoreFlagsMaintained)
+		{
+			*pType |= LFTypeMaintained;
+
+			if (!pStoreDescriptor->FileCount[LFContextAllFiles])
+				*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeEmpty;
+		}
+		else
+		{
+			*pType |= LFTypeGhosted;
+		}
 
 		// New?
 		FILETIME CurrentTime;
@@ -962,10 +981,6 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 		// Error?
 		if (pStoreDescriptor->Flags & LFStoreFlagsError)
 			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeError;
-
-		// Mounted?
-		if (!LFIsStoreMounted(pStoreDescriptor))
-			*pType |= LFTypeNotMounted | LFTypeGhosted;
 
 		// Capabilities
 		if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
@@ -1518,9 +1533,9 @@ __forceinline void LoadRegistry()
 	RegCloseKey(hKey);
 }
 
-__forceinline void MountExternalVolumes()
+void MountVolumes(UINT Mask, BOOL OnInitialize)
 {
-	DWORD VolumesOnSystem = LFGetLogicalVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK);
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(Mask);
 	WCHAR szVolumeRoot[4] = L" :\\";
 
 	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
@@ -1533,7 +1548,7 @@ __forceinline void MountExternalVolumes()
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES))
 			if (sfi.dwAttributes)
-				MountVolume(cVolume, TRUE);
+				MountVolume(cVolume, TRUE, OnInitialize);
 	}
 }
 
@@ -1562,19 +1577,22 @@ void InitStores()
 			LoadRegistry();
 
 			// Mount external volumes
-			MountExternalVolumes();
+			MountVolumes(LFGLV_EXTERNAL | LFGLV_NETWORK, TRUE);
 
-			// Run maintenance, set default store
+			// Run non-scheduled maintenance, set default store
 			BOOL DefaultStoreOk = FALSE;
 
 			for (UINT a=0; a<StoreCount; a++)
 			{
 				// Maintenance
-				CStore* pStore;
-				if (GetStore(&StoreCache[a], &pStore)==LFOk)
+				if ((StoreCache[a].Flags & LFStoreFlagsMaintained)==0)
 				{
-					pStore->MaintenanceAndStatistics();
-					delete pStore;
+					CStore* pStore;
+					if (GetStore(&StoreCache[a], &pStore)==LFOk)
+					{
+						pStore->MaintenanceAndStatistics();
+						delete pStore;
+					}
 				}
 
 				// Default store
@@ -1592,117 +1610,10 @@ void InitStores()
 }
 
 
-// Volume handling
+// Volume mount/unmount
 //
 
-UINT MountVolume(CHAR cVolume, BOOL OnInitialize)
-{
-	assert(cVolume>='A');
-	assert(cVolume<='Z');
-
-	UINT Result = LFOk;
-	BOOL ChangeOccured = FALSE;
-
-	WCHAR Mask[] = L" :\\*.store";
-	Mask[0] = cVolume;
-
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind = FindFirstFile(Mask, &FindFileData);
-
-	if (hFind!=INVALID_HANDLE_VALUE)
-		do
-		{
-			// Vollständigen Dateinamen zusammensetzen
-			WCHAR Path[MAX_PATH] = L" :\\";
-			Path[0] = cVolume;
-			wcscat_s(Path, MAX_PATH, FindFileData.cFileName);
-
-			LFStoreDescriptor Store;
-			if (LoadStoreSettingsFromFile(Path, &Store))
-			{
-				if (!GetMutexForStores())
-				{
-					Result = LFMutexError;
-					continue;
-				}
-
-				// Lokal gültigen Schlüssel eintragen
-				CreateNewStoreID(Store.StoreID);
-
-				// Store mit der selben GUID suchen
-				LFStoreDescriptor* pSlot = FindStore(Store.UniqueID);
-				if (pSlot)
-				{
-					// Name, Kommentar und Dateizeit aktualisieren
-					wcscpy_s(pSlot->StoreName, 256, Store.StoreName);
-					wcscpy_s(pSlot->Comments, 256, Store.Comments);
-					pSlot->FileTime = Store.FileTime;
-					pSlot->MaintenanceTime = Store.MaintenanceTime;
-					pSlot->SynchronizeTime = Store.SynchronizeTime;
-
-					// Do NOT set the store index mode to hybrid to avoid errors when mounting a drive twice!
-					// This can occur when the same network volume is mounted as two different drives.
-					// When the store had hybrid indexing before, this setting is maintained as only some
-					// data is copied from the .store file on disc.
-				}
-				else
-				{
-					// Set store index mode to external - this is the only option when the store wasn't known before
-					Store.Mode = (Store.Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
-
-					// Add to cache
-					if (StoreCount<MAXSTORES)
-					{
-						StoreCache[StoreCount] = Store;
-						pSlot = &StoreCache[StoreCount++];		// Slot zeigt auf Eintrag
-					}
-					else
-					{
-						Result = LFTooManyStores;
-					}
-				}
-
-				// Store is in cache
-				if (pSlot)
-				{
-					ChangeOccured = TRUE;
-
-					// Set data path
-					wcscpy_s(pSlot->DatPath, MAX_PATH, Store.DatPath);
-					pSlot->DatPath[0] = cVolume;
-
-					CompleteStoreSettings(pSlot);
-
-					// Run quick maintenance
-					if (!OnInitialize)
-					{
-						CStore* pStore;
-						if (GetStore(pSlot, &pStore)==LFOk)
-						{
-							Result = pStore->MaintenanceAndStatistics();
-							delete pStore;
-						}
-					}
-
-					// Update "Last seen" in registry for hybrid stores
-					if ((pSlot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
-						SaveStoreSettingsToRegistry(pSlot);
-				}
-
-				ReleaseMutexForStores();
-			}
-		}
-		while (FindNextFile(hFind, &FindFileData));
-
-	FindClose(hFind);
-
-	if (!OnInitialize && ChangeOccured)
-		SendLFNotifyMessage(LFMessages.StoresChanged);
-
-	return Result;
-}
-
-UINT UnmountVolume(CHAR cVolume)
+UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 {
 	assert(cVolume>='A');
 	assert(cVolume<='Z');
@@ -1711,13 +1622,141 @@ UINT UnmountVolume(CHAR cVolume)
 		return LFMutexError;
 
 	UINT Result = LFOk;
+	UINT ChangeOccured = 0;
 
-	BOOL ChangeOccured = FALSE;
-	BOOL RemovedDefaultStore = FALSE;
-	Volumes[cVolume-'A'].Mounted = FALSE;
-
+	// Mark all stores on that volume as victim
 	for (UINT a=0; a<StoreCount; a++)
 		if (StoreCache[a].DatPath[0]==cVolume)
+			StoreCache[a].Flags |= LFStoreFlagsVictim;
+
+	// Mount volume
+	if (Mount)
+	{
+		WCHAR Mask[] = L" :\\*.store";
+		Mask[0] = cVolume;
+
+		WIN32_FIND_DATA FindFileData;
+		HANDLE hFind = FindFirstFile(Mask, &FindFileData);
+		if (hFind!=INVALID_HANDLE_VALUE)
+			do
+			{
+				// Construct name of .store file
+				WCHAR Path[MAX_PATH] = L" :\\";
+				Path[0] = cVolume;
+				wcscat_s(Path, MAX_PATH, FindFileData.cFileName);
+
+				LFStoreDescriptor Store;
+				if (LoadStoreSettingsFromFile(Path, &Store))
+				{
+					UINT UpdateStore = 0;
+
+					// Is there a store with the same GUID?
+					LFStoreDescriptor* pSlot = FindStore(Store.UniqueID);
+					if (pSlot)
+					{
+						// Keep this store
+						pSlot->Flags &= ~LFStoreFlagsVictim;
+
+						// Is the .store file newer than the last mount time?
+						if (CompareFileTime(&FindFileData.ftLastWriteTime, &pSlot->MountTime)>0)
+						{
+							// Yes, but just update attributes
+							wcscpy_s(pSlot->StoreName, 256, Store.StoreName);
+							wcscpy_s(pSlot->Comments, 256, Store.Comments);
+							pSlot->FileTime = Store.FileTime;
+							pSlot->MaintenanceTime = Store.MaintenanceTime;
+							pSlot->SynchronizeTime = Store.SynchronizeTime;
+
+							UpdateStore = (pSlot->DatPath[0]==L'\0') ? 2 : 1;
+
+							// Do NOT set the store index mode to hybrid to avoid errors when mounting a drive twice!
+							// This can occur when the a network volume is periodically remounted.
+							// When the store had hybrid indexing before, this setting is maintained as only relevant
+							// attribute data is copied from the .store file on disc.
+						}
+					}
+					else
+					{
+						// Set store index mode to external - this is the only option when the store wasn't known before
+						Store.Mode = (Store.Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
+
+						// Create locally unique key
+						CreateNewStoreID(Store.StoreID);
+
+						// Add to cache
+						if (StoreCount<MAXSTORES)
+						{
+							StoreCache[StoreCount] = Store;
+							pSlot = &StoreCache[StoreCount++];		// Slot zeigt auf Eintrag
+
+							UpdateStore = 2;
+						}
+						else
+						{
+							Result = LFTooManyStores;
+						}
+					}
+
+					// Store needs to be updated
+					if (UpdateStore)
+					{
+						// The store must have a cache slot by now - be ultra-safe!
+						assert(pSlot);
+
+						pSlot->MountTime = FindFileData.ftLastWriteTime;
+						ChangeOccured |= 2;
+
+						// Set data path
+						wcscpy_s(pSlot->DatPath, MAX_PATH, Store.DatPath);
+						pSlot->DatPath[0] = cVolume;
+
+						CompleteStoreSettings(pSlot);
+					}
+
+					// Run non-scheduled maintenance, either when neccessary or on a network volume
+					if (pSlot)
+					{
+						if (!OnInitialize && ((pSlot->Source==LFTypeSourceNethood) || ((pSlot->Flags & LFStoreFlagsMaintained)==0)))
+						{
+							CStore* pStore;
+							if ((Result=GetStore(pSlot, &pStore))==LFOk)
+							{
+								if ((pSlot->Flags & LFStoreFlagsMaintained)==0)
+								{
+									Result = pStore->MaintenanceAndStatistics();
+								}
+								else
+									if ((Result=pStore->Open(FALSE))==LFOk)
+									{
+										Result = pStore->UpdateStatistics();
+									}
+								
+								delete pStore;
+
+								ChangeOccured |= 1;
+							}
+						}
+
+						// Update "Last seen" in registry for hybrid stores when the store is mounted for the first time
+						if ((UpdateStore==2) && ((pSlot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid))
+							SaveStoreSettingsToRegistry(pSlot);
+					}
+				}
+			}
+			while (FindNextFile(hFind, &FindFileData));
+
+		FindClose(hFind);
+	}
+	else
+	{
+		Volumes[cVolume-'A'].Mounted = FALSE;
+	}
+
+	// Remove remaining victims
+	BOOL RemovedDefaultStore = FALSE;
+
+	for (UINT a=0; a<StoreCount; a++)
+		if (StoreCache[a].Flags & LFStoreFlagsVictim)
 		{
 			HANDLE hMutex;
 			if (!GetMutexForStore(&StoreCache[a], &hMutex))
@@ -1730,13 +1769,14 @@ UINT UnmountVolume(CHAR cVolume)
 			RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
 			ChangeOccured = TRUE;
 
-			// Unmount
 			if ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 			{
+				// Unmount
 				StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = L'\0';
 			}
 			else
 			{
+				// Remove from cache
 				if (a<StoreCount-1)
 				{
 					HANDLE hMutexMove;
@@ -1760,14 +1800,15 @@ UINT UnmountVolume(CHAR cVolume)
 			ReleaseMutexForStore(hMutex);
 		}
 
-	// Ggf. anderen Store als neuen Default Store
+	// Choose new default store if neccessary
 	if (RemovedDefaultStore)
 		ChooseNewDefaultStore();
-	
+
 	ReleaseMutexForStores();
 
-	if (ChangeOccured)
-		SendLFNotifyMessage(LFMessages.StoresChanged);
+	// Send notification
+	if (!OnInitialize && ChangeOccured)
+		SendLFNotifyMessage((ChangeOccured & 2) ? LFMessages.StoresChanged : LFMessages.StatisticsChanged);
 
 	return Result;
 }

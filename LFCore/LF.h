@@ -501,8 +501,9 @@ struct LFCoreAttributes
 #define LFTypeCapabilitiesMask     0x00003000
 
 #define LFTypeDefault              0x01000000	// Volatile
-#define LFTypeNotMounted           0x02000000
-#define LFTypeGhosted              0x04000000
+#define LFTypeMounted              0x02000000
+#define LFTypeMaintained           0x04000000
+#define LFTypeGhosted              0x08000000
 
 #define LFTypeStore                0x00000000	// Volatile
 #define LFTypeFile                 0x40000000
@@ -570,8 +571,10 @@ struct LFItemDescriptor
 #define LFStoreModeBackendShift          24
 #define LFStoreModeBackendMask           0xFF000000
 
-#define LFStoreFlagsAutoLocation         1
-#define LFStoreFlagsError                2
+#define LFStoreFlagsAutoLocation         0x00000001
+#define LFStoreFlagsError                0x00000002
+#define LFStoreFlagsMaintained           0x00000004
+#define LFStoreFlagsVictim               0x80000000
 
 struct LFStoreDescriptor
 {
@@ -590,9 +593,10 @@ struct LFStoreDescriptor
 	FILETIME SynchronizeTime;
 	WCHAR IdxPathMain[MAX_PATH];				// Volatile, must be first
 	WCHAR IdxPathAux[MAX_PATH];					// Volatile
+	FILETIME MountTime;							// Volatile
 	UINT Source;								// Volatile
-	UINT FileCount[32];							// Volatile
-	INT64 FileSize[32];							// Volatile
+	UINT FileCount[LFLastQueryContext+1];		// Volatile
+	INT64 FileSize[LFLastQueryContext+1];		// Volatile
 };
 
 
@@ -615,32 +619,35 @@ struct LFStoreDescriptor
 
 #define LFOk                         0
 #define LFCancel                     1
-#define LFMemoryError                2
-#define LFIllegalQuery               3
-#define LFIllegalStoreDescriptor     4
-#define LFStoreNotFound              5
-#define LFDriveNotReady              6
-#define LFDriveWriteProtected        7
-#define LFIllegalPhysicalPath        8
-#define LFRegistryError              9
-#define LFAccessError                10
-#define LFIllegalID                  11
-#define LFNoDefaultStore             12
-#define LFTooManyStores              13
-#define LFStoreNotMounted            14
-#define LFMutexError                 15
-#define LFIllegalAttribute           16
-#define LFIllegalItemType            17
-#define LFIllegalValue               18
-#define LFIndexTableLoadError        19
-#define LFIndexRepairError           20
-#define LFIndexAccessError           21
-#define LFIndexCreateError           22
-#define LFNotEnoughFreeDiscSpace     23
-#define LFCannotImportFile           24
-#define LFCannotDeleteFile           25
-#define LFCannotRenameFile           26
-#define LFCannotCopyIndex            27
-#define LFNoFileBody                 28
+#define LFDriveWriteProtected        2
+#define LFSharingViolation1          3
+#define LFSharingViolation2          4
+#define LFMemoryError                5
+#define LFIllegalQuery               6
+#define LFIllegalStoreDescriptor     7
+#define LFStoreNotFound              8
+#define LFDriveNotReady              9
+#define LFIllegalPhysicalPath        10
+#define LFRegistryError              11
+#define LFNoAccessError              12
+#define LFIllegalID                  13
+#define LFNoDefaultStore             14
+#define LFTooManyStores              15
+#define LFStoreNotMounted            16
+#define LFMutexError                 17
+#define LFIllegalAttribute           18
+#define LFIllegalItemType            19
+#define LFIllegalValue               20
+#define LFIndexTableLoadError        21
+#define LFIndexRepairError           22
+#define LFIndexAccessError           23
+#define LFIndexCreateError           24
+#define LFNotEnoughFreeDiscSpace     25
+#define LFCannotImportFile           26
+#define LFCannotDeleteFile           27
+#define LFCannotRenameFile           28
+#define LFCannotCopyIndex            29
+#define LFNoFileBody                 30
 
-#define LFErrorCount                 29
+#define LFErrorCount                 31
+#define LFFirstFatalError            5

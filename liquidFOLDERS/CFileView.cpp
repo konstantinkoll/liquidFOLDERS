@@ -726,7 +726,7 @@ void CFileView::EditLabel(INT Index)
 	{
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) ||
-			((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
+			((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)))
 		{
 			m_EditLabel = Index;
 			InvalidateItem(Index);
@@ -1371,14 +1371,15 @@ void CFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 				// Concatenate typing buffer
 				WCHAR TypingBuffer[256];
-				wcscpy_s(TypingBuffer, 256, m_TypingBuffer);
+				wcsncpy_s(TypingBuffer, 256, m_TypingBuffer, 254);
 
 				WCHAR Letter[2] = { (WCHAR)nChar, L'\0' };
 				wcscat_s(TypingBuffer, 256, Letter);
 
-				INT FocusItem = m_FocusItem;
+				INT FocusItem = max(m_FocusItem, 0);
 
-				for (UINT a=0; a<p_CookedFiles->m_ItemCount-1; a++, FocusItem++)
+				for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+				{
 					if (_wcsnicmp(TypingBuffer, (*p_CookedFiles)[FocusItem]->CoreAttributes.FileName, wcslen(TypingBuffer))==0)
 					{
 						wcscpy_s(m_TypingBuffer, 256, TypingBuffer);
@@ -1386,6 +1387,10 @@ void CFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 						return;
 					}
+
+					if (++FocusItem>=(INT)p_CookedFiles->m_ItemCount)
+						FocusItem = 0;
+				}
 			}
 
 		LFGetApp()->PlayDefaultSound();

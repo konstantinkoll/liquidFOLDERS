@@ -108,22 +108,7 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL The
 	rect.left += m_IconSize+BORDER;
 
 	// Badge
-	HICON hIcon = hIconError;
-
-	switch (pItem->Result)
-	{
-	case LFOk:
-		hIcon = hIconReady;
-
-		break;
-
-	case LFCancel:
-	case LFDriveWriteProtected:
-	case LFIndexAccessError:
-		hIcon = hIconWarning;
-
-		break;
-	}
+	const HICON hIcon = (pItem->Result==LFOk) ? hIconReady : (pItem->Result<LFFirstFatalError) ? hIconWarning : hIconError;
 
 	DrawIconEx(dc, rect.right-m_BadgeSize+2, rect.top+(rect.Height()-m_BadgeSize)/2, hIcon, m_BadgeSize, m_BadgeSize, 0, NULL, DI_NORMAL);
 	rect.right -= m_BadgeSize+BORDER-2;
@@ -141,7 +126,7 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL The
 
 	rect.top += (rect.Height()-rectText.Height()-FontHeight)/2-1;
 
-	dc.SetTextColor(hIcon!=hIconReady ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(pItem->Name, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 
 	rect.top += FontHeight;

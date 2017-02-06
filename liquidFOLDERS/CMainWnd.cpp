@@ -303,10 +303,10 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	}
 	else
 	{
+		m_pRawFiles = LFQuery(m_pActiveFilter);
+
 		if (pVictim)
 			LFFreeSearchResult(pVictim);
-
-		m_pRawFiles = LFQuery(m_pActiveFilter);
 	}
 
 	OnCookFiles((WPARAM)Data);
@@ -318,7 +318,7 @@ void CMainWnd::UpdateHistory()
 	if (IsWindow(m_wndMainView))
 		if (m_pCookedFiles->m_LastError>LFCancel)
 		{
-			m_wndMainView.ShowNotification(m_pCookedFiles->m_LastError==LFDriveWriteProtected ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, (m_pCookedFiles->m_LastError==LFIndexAccessError) || (m_pCookedFiles->m_LastError==LFIndexTableLoadError) ? IDM_STORES_RUNMAINTENANCE : 0);
+			m_wndMainView.ShowNotification((m_pCookedFiles->m_LastError<=LFFirstFatalError) ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, (m_pCookedFiles->m_LastError==LFIndexAccessError) || (m_pCookedFiles->m_LastError==LFIndexTableLoadError) ? IDM_STORES_RUNMAINTENANCE : 0);
 		}
 		else
 		{
@@ -715,7 +715,7 @@ void CMainWnd::OnItemOpen()
 			NavigateTo(LFAllocFilter(pItemDescriptor->NextFilter), NAVMODE_NORMAL, NULL, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
 		}
 		else
-			if (!(pItemDescriptor->Type & LFTypeNotMounted))
+			if (pItemDescriptor->Type & LFTypeMounted)
 			{
 				WCHAR Path[MAX_PATH];
 				UINT Result;

@@ -120,7 +120,7 @@ END_MESSAGE_MAP()
 
 void LFAddStoreDlg::OnActivate(UINT nState, CWnd* /*pWndOther*/, BOOL /*bMinimized*/)
 {
-#ifndef DEBUG
+#ifndef _DEBUG
 	if (nState!=WA_INACTIVE)
 		CheckSources();
 #endif

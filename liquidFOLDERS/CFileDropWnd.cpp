@@ -91,7 +91,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	// Icon
 	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1, 
 		CPoint(m_rectIcon.left-ICONOFFSETX, m_rectIcon.top-ICONOFFSETY), CSize(128, 128),
-		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeNotMounted) ? ILD_BLEND25 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
+		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeGhosted) ? ILD_BLEND25 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
 
 	// Text
 	CRect rectText(m_rectIcon);
@@ -388,7 +388,7 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_STORE_IMPORTFOLDER:
-		bEnable = !(m_StoreType & LFTypeNotMounted);
+		bEnable = (m_StoreType & LFTypeMounted);
 		break;
 
 	case IDM_STORE_SHORTCUT:

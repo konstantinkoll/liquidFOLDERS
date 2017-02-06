@@ -9,6 +9,7 @@ extern LFMessageIDs LFMessages;
 
 
 // Mutex
+//
 
 void InitMutex()
 {
@@ -17,8 +18,8 @@ void InitMutex()
 
 BOOL GetMutex(HMUTEX hMutex)
 {
-	// Wait for max. 10 seconds
-	DWORD dwWaitResult = WaitForSingleObject(hMutex, 10000);
+	// Wait for max. 2 seconds
+	DWORD dwWaitResult = WaitForSingleObject(hMutex, 2000);
 
 	return ((dwWaitResult==WAIT_OBJECT_0) || (dwWaitResult==WAIT_ABANDONED));
 }
@@ -68,7 +69,42 @@ void ReleaseMutexForStore(HANDLE hMutex)
 }
 
 
+// Files
+//
+
+UINT CreateFileConcurrent(LPCTSTR lpFileName, BOOL WriteAccess, DWORD dwCreationDisposition, HANDLE& hFile, BOOL Hidden)
+{
+#ifndef _DEBUG
+	UINT Tries = 3;		// 3x ~500ms
+#else
+	UINT Tries = 2;		// 2x ~500ms
+#endif
+
+TryAgain:
+	hFile = CreateFile(lpFileName, WriteAccess ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ | FILE_SHARE_READ, 0, NULL, dwCreationDisposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN | (Hidden ? FILE_ATTRIBUTE_HIDDEN : 0), NULL);
+	if (hFile!=INVALID_HANDLE_VALUE)
+		return FileOk;
+
+	// Handle sharing violation
+	if (GetLastError()==ERROR_SHARING_VIOLATION)
+		if (Tries--)
+		{
+			Sleep(500+(rand() & 0x1F));		// 500ms + random
+
+			goto TryAgain;
+		}
+		else
+		{
+			return FileSharingViolation;
+		}
+
+	// All other errors
+	return FileNoAccess;
+}
+
+
 // Calling UI threads
+//
 
 DWORD_PTR UpdateProgress(LFProgress* pProgress)
 {

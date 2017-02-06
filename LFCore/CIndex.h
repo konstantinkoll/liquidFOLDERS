@@ -19,12 +19,12 @@ public:
 	~CIndex();
 
 	// Index management
-	BOOL Initialize();
 	UINT MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress=NULL);
 
 	// Operations on index only
 	UINT Add(LFItemDescriptor* pItemDescriptor);
-	void Query(LFFilter* pFilter, LFSearchResult* pSearchResult);
+	void Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL UpdateStatistics=FALSE);
+	UINT UpdateStatistics();
 	void AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResult* pSearchResult);
 	void ResolveLocations(LFTransactionList* pTransactionList);
 	void SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgress* pProgress=NULL);

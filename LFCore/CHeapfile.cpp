@@ -12,12 +12,9 @@
 // CHeapFile
 //
 
-#define OPENFILE(Name, Disposition) CreateFile(Name, GENERIC_READ | GENERIC_WRITE, 0, NULL, Disposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-
 CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize)
 {
 	assert(sizeof(HeapfileHeader)==512);
-	assert((TableID==IDXTABLE_MASTER) || (StoreDataSize==0));
 
 	m_pBuffer = NULL;
 	m_ItemCount = 0;
@@ -28,27 +25,23 @@ CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize)
 	wcscat_s(m_Filename, MAX_PATH, LFIndexTables[TableID].FileName);
 
 	// Table
-	m_TableID = TableID;
 	m_StoreDataSize = (TableID==IDXTABLE_MASTER) ? StoreDataSize : 0;
-	m_RequiredElementSize = LFIndexTables[TableID].Size+StoreDataSize;
-
-	m_KeyOffset = (TableID==IDXTABLE_MASTER) ? offsetof(LFCoreAttributes, FileID) : 0;
-	if (m_KeyOffset==0)
+	m_RequiredElementSize = LFIndexTables[TableID].Size+m_StoreDataSize;
+	if ((m_TableID=TableID)==IDXTABLE_MASTER)
+	{
+		m_KeyOffset = offsetof(LFCoreAttributes, FileID);
+	}
+	else
 	{
 		m_KeyOffset = m_RequiredElementSize;
 		m_RequiredElementSize += LFKeySize;
 	}
 
 	// Open file
-	hFile = OPENFILE(m_Filename, OPEN_ALWAYS);
-	if (hFile==INVALID_HANDLE_VALUE)
-	{
-		m_OpenStatus = HeapNoAccess;
+	if ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, OPEN_ALWAYS, hFile))!=FileOk)
 		return;
-	}
 
 	LARGE_INTEGER Size;
-
 	if (!GetFileSizeEx(hFile, &Size))
 	{
 		m_OpenStatus = HeapError;
@@ -130,6 +123,26 @@ UINT64 CHeapfile::GetRequiredFileSize() const
 void* CHeapfile::GetStoreData(void* Ptr) const
 {
 	return (m_TableID==IDXTABLE_MASTER) && (m_Header.StoreDataSize) ? (BYTE*)Ptr+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
+}
+
+UINT CHeapfile::GetError(BOOL SingleStore)
+{
+	switch (m_OpenStatus)
+	{
+	case HeapOk:
+	case HeapCreated:
+	case HeapMaintenanceRequired:
+		return LFOk;
+
+	case HeapSharingViolation:
+		return SingleStore ? LFSharingViolation1 : LFSharingViolation2;
+
+	case HeapNoAccess:
+		return LFIndexAccessError;
+
+	default:
+		return LFIndexTableLoadError;
+	}
 }
 
 
@@ -453,8 +466,8 @@ BOOL CHeapfile::Compact()
 	wcscat_s(TempFilename, MAX_PATH, L".part");
 
 	// Open temporary file
-	HANDLE hTempFile = OPENFILE(TempFilename, OPEN_ALWAYS);
-	if (hTempFile==INVALID_HANDLE_VALUE)
+	HANDLE hTempFile;
+	if (CreateFileConcurrent(TempFilename, TRUE, OPEN_ALWAYS, hTempFile)!=FileOk)
 		return FALSE;
 
 	CompressFile(hTempFile, TempFilename[0]);
@@ -527,16 +540,6 @@ BOOL CHeapfile::Compact()
 
 	AllocBuffer();
 
-	// Open file
-	hFile = OPENFILE(m_Filename, OPEN_EXISTING);
-	if (hFile==INVALID_HANDLE_VALUE)
-	{
-		m_OpenStatus = HeapNoAccess;
-
-		return FALSE;
-	}
-
-	m_OpenStatus = HeapOk;
-
-	return TRUE;
+	// Reopen file
+	return ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, OPEN_ALWAYS, hFile))==FileOk);
 }

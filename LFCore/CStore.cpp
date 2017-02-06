@@ -7,6 +7,7 @@
 #include <assert.h>
 
 
+extern LFMessageIDs LFMessages;
 extern CHAR KeyChars[38];
 
 
@@ -198,19 +199,6 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 
 	return LFOk;
 }
-	
-void CStore::ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress)
-{
-	pMaintenanceList->AddItem(p_StoreDescriptor->StoreName, p_StoreDescriptor->Comments, p_StoreDescriptor->StoreID, MaintenanceAndStatistics(TRUE, pProgress), LFGetStoreIcon(p_StoreDescriptor));
-}
-
-UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount) const
-{
-	assert(pItemDescriptor);
-	assert(pPath);
-
-	return GetFileLocation(&pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData, pPath, cCount);
-}
 
 
 // Index operations
@@ -303,8 +291,32 @@ void CStore::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	assert(pFilter);
 	assert(pSearchResult);
 
-	// Read-only operation, just needs main index
-	m_pIndexMain->Query(pFilter, pSearchResult);
+	if (p_StoreDescriptor->Source==LFTypeSourceNethood)
+	{
+		// Keep old copy of statistics
+		UINT FileCount[LFLastQueryContext+1];
+		memcpy_s(FileCount, sizeof(FileCount), p_StoreDescriptor->FileCount, sizeof(FileCount));
+
+		INT64 FileSize[LFLastQueryContext+1];
+		memcpy_s(FileSize, sizeof(FileSize), p_StoreDescriptor->FileSize, sizeof(FileSize));
+
+		// Read-only operation, just needs main index
+		m_pIndexMain->Query(pFilter, pSearchResult, TRUE);
+
+		// Compare old and current statistics, send notify message if needed
+		for (UINT a=0; a<=LFLastQueryContext; a++)
+			if ((FileCount[a]!=p_StoreDescriptor->FileCount[a]) || (FileSize[a]!=p_StoreDescriptor->FileSize[a]))
+			{
+				SendLFNotifyMessage(LFMessages.StatisticsChanged);
+
+				break;
+			}
+	}
+	else
+	{
+		// Read-only operation, just needs main index
+		m_pIndexMain->Query(pFilter, pSearchResult);
+	}
 }
 
 void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3)
@@ -409,7 +421,9 @@ UINT CStore::CreateDirectories()
 		if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
 
-		HideFile(p_StoreDescriptor->IdxPathMain);
+		// Hide directory
+		if (LFGetSourceForVolume((CHAR)p_StoreDescriptor->IdxPathMain[0])!=LFTypeSourceInternal)
+			HideFile(p_StoreDescriptor->IdxPathMain);
 	}
 
 	// Create aux index path
@@ -427,7 +441,9 @@ UINT CStore::CreateDirectories()
 		if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
 
-		HideFile(p_StoreDescriptor->IdxPathAux);
+		// Hide directory
+		if (LFGetSourceForVolume((CHAR)p_StoreDescriptor->IdxPathAux[0])!=LFTypeSourceInternal)
+			HideFile(p_StoreDescriptor->IdxPathAux);
 	}
 
 	return LFOk;

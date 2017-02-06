@@ -1276,7 +1276,7 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_FILTERS_EDIT:
-			bEnable &= ((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+			bEnable &= ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
 			break;
 		}
 	}
@@ -1300,7 +1300,7 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		{
 		case IDM_ITEM_OPEN:
 			bEnable = (pItemDescriptor->NextFilter!=NULL) ||
-				((pItemDescriptor->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+				((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
 
 			break;
 		}
@@ -1387,7 +1387,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				switch (pCmdUI->m_nID)
 				{
 				case IDM_STORE_SYNCHRONIZE:
-					bEnable = ((pItemDescriptor->Type & (LFTypeSynchronizeAllowed | LFTypeNotMounted))==LFTypeSynchronizeAllowed);
+					bEnable = ((pItemDescriptor->Type & (LFTypeSynchronizeAllowed | LFTypeMounted))==(LFTypeSynchronizeAllowed | LFTypeMounted));
 					break;
 
 				case IDM_STORE_MAKEDEFAULT:
@@ -1395,7 +1395,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					break;
 
 				case IDM_STORE_IMPORTFOLDER:
-					bEnable = !(pItemDescriptor->Type & LFTypeNotMounted);
+					bEnable = (pItemDescriptor->Type & LFTypeMounted);
 					break;
 
 				case IDM_STORE_SHORTCUT:
@@ -1600,7 +1600,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_FILE_OPENWITH:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile) && (pItemDescriptor->CoreAttributes.ContextID!=LFContextFilters);
+			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && (pItemDescriptor->CoreAttributes.ContextID!=LFContextFilters);
 
 		break;
 
@@ -1636,7 +1636,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 	case IDM_FILE_RENAME:
 		if ((pItemDescriptor) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
-			bEnable = ((pItemDescriptor->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
+			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
 
 		if (m_pWndFileView)
 			bEnable &= !m_pWndFileView->IsEditing();
