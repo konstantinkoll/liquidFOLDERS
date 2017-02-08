@@ -25,8 +25,7 @@ CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize)
 	wcscat_s(m_Filename, MAX_PATH, LFIndexTables[TableID].FileName);
 
 	// Table
-	m_StoreDataSize = (TableID==IDXTABLE_MASTER) ? StoreDataSize : 0;
-	m_RequiredElementSize = LFIndexTables[TableID].Size+m_StoreDataSize;
+	m_RequiredElementSize = LFIndexTables[TableID].Size+(m_StoreDataSize=(TableID==IDXTABLE_MASTER) ? StoreDataSize : 0);
 	if ((m_TableID=TableID)==IDXTABLE_MASTER)
 	{
 		m_KeyOffset = offsetof(LFCoreAttributes, FileID);

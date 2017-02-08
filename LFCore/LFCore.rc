@@ -52,8 +52,8 @@ IDI_FLD_ALL             ICON                    "res\\FLD_All.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,0,0
- PRODUCTVERSION 2,2,0,0
+ FILEVERSION 2,2,2,0
+ PRODUCTVERSION 2,2,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.2.0"
+            VALUE "FileVersion", "2.2.2"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.2.0"
+            VALUE "ProductVersion", "2.2.2"
         END
     END
     BLOCK "VarFileInfo"
@@ -233,7 +233,7 @@ BEGIN
                             "Auf das physische Verzeichnis kann nicht zugegriffen werden."
     IDS_ERR_REGISTRY        "Auf die Registry kann nicht zugegriffen werden."
     IDS_ERR_NOACCESS        "Auf das physische Verzeichnis kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
-    IDS_ERR_ILLEGALID       "Die Store- oder Datei-ID ist ungültig."
+    IDS_ERR_ILLEGALID       "Der Store oder die Datei ist nicht mehr verfügbar."
     IDS_ERR_NODEFAULTSTORE  "Zur Zeit ist kein Standard-Store festgelegt."
     IDS_ERR_TOOMANYSTORES   "Sie haben bereits die maximale Anzahl an Stores erzeugt!"
     IDS_ERR_STORENOTMOUNTED "Der Store ist zur Zeit nicht angeschlossen."
@@ -523,7 +523,7 @@ BEGIN
     IDS_ERR_ILLEGALPHYSFOLDER "La carpeta física no es accessible."
     IDS_ERR_REGISTRY        "No se puede acceder al registro."
     IDS_ERR_NOACCESS        "La carpeta física no es accessible. Por favor revise los derechos de acceso del directorio del store."
-    IDS_ERR_ILLEGALID       "El ID del store ó del archivo es ilegal."
+    IDS_ERR_ILLEGALID       "El store o archivo ya no está disponible."
     IDS_ERR_NODEFAULTSTORE  "No hay un store predeterminado en este momento."
     IDS_ERR_TOOMANYSTORES   "El número máximo de stores ya ha sido creado."
     IDS_ERR_STORENOTMOUNTED "El store no está conectado en este momento."
@@ -814,7 +814,7 @@ BEGIN
     IDS_ERR_ILLEGALPHYSFOLDER "Il n'y a pas accès au dossier physique."
     IDS_ERR_REGISTRY        "Il n'ya pas accès au registry."
     IDS_ERR_NOACCESS        "Il n'y a pas accès au dossier physique. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
-    IDS_ERR_ILLEGALID       "Le store- ou le fichier-ID est non valable."
+    IDS_ERR_ILLEGALID       "Le store ou fichier n'est plus disponible."
     IDS_ERR_NODEFAULTSTORE  "A présent aucun store de norme n'est fixé."
     IDS_ERR_TOOMANYSTORES   "Vous avez déjà produit le nombre maximum de stores!"
     IDS_ERR_STORENOTMOUNTED "Le store n'est pas relié à présent."
@@ -1140,7 +1140,7 @@ BEGIN
     IDS_ERR_ILLEGALPHYSFOLDER "The physical folder is not accessible."
     IDS_ERR_REGISTRY        "The registry cannot be accessed."
     IDS_ERR_NOACCESS        "The physical folder is not accessible. Please check the access rights of the store's directory."
-    IDS_ERR_ILLEGALID       "The store or file ID is illegal."
+    IDS_ERR_ILLEGALID       "The store or file is not available anymore."
     IDS_ERR_NODEFAULTSTORE  "There is no default store right now."
     IDS_ERR_TOOMANYSTORES   "The maximum number of stores has already been created."
     IDS_ERR_STORENOTMOUNTED "The store is not mounted right now."

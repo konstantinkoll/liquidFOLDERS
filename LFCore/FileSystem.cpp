@@ -113,6 +113,19 @@ BOOL RequiredSpaceAvailable(LPWSTR lpPath, UINT64 Required)
 	return GetDiskFreeSpaceEx(lpPath, &FreeBytesAvailable, NULL, NULL) ? FreeBytesAvailable.QuadPart>=Required : FALSE;
 }
 
+BOOL VolumeWriteable(CHAR cVolume)
+{
+	WCHAR Path[] = L" :\\";
+	Path[0] = cVolume;
+
+	DWORD dwFlags;
+	if (GetVolumeInformation(Path, NULL, 0, NULL, 0, &dwFlags, NULL, 0))
+		if ((dwFlags & FILE_READ_ONLY_VOLUME)==0)
+			return TRUE;
+
+	return FALSE;
+}
+
 BOOL DirectoryWriteable(LPWSTR lpPath)
 {
 	WCHAR Path[MAX_PATH];

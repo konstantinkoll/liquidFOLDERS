@@ -274,7 +274,7 @@ void CMainView::ShowNotification(UINT Type, UINT Result, UINT Command)
 void CMainView::ShowNotification(UINT Result)
 {
 	if (Result!=LFOk)
-		ShowNotification((Result==LFCancel) ? ENT_WARNING : ENT_ERROR, Result);
+		ShowNotification((Result<LFFirstFatalError) ? ENT_WARNING : ENT_ERROR, Result);
 }
 
 void CMainView::AdjustLayout(UINT nFlags)
@@ -904,10 +904,10 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 
 	ShowNotification(pTransactionList->m_LastError);
 
-	BOOL changes = pTransactionList->m_Modified;
+	BOOL Changes = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
 
-	return changes;
+	return Changes;
 }
 
 LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
@@ -1387,7 +1387,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				switch (pCmdUI->m_nID)
 				{
 				case IDM_STORE_SYNCHRONIZE:
-					bEnable = ((pItemDescriptor->Type & (LFTypeSynchronizeAllowed | LFTypeMounted))==(LFTypeSynchronizeAllowed | LFTypeMounted));
+					bEnable = ((pItemDescriptor->Type & (LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable))==(LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable));
 					break;
 
 				case IDM_STORE_MAKEDEFAULT:
@@ -1395,15 +1395,19 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					break;
 
 				case IDM_STORE_IMPORTFOLDER:
-					bEnable = (pItemDescriptor->Type & LFTypeMounted);
+					bEnable = ((pItemDescriptor->Type & (LFTypeMounted | LFTypeWriteable))==(LFTypeMounted | LFTypeWriteable));
 					break;
 
 				case IDM_STORE_SHORTCUT:
 					bEnable = (pItemDescriptor->Type & LFTypeShortcutAllowed);
 					break;
 
+				case IDM_STORE_DELETE:
+					bEnable = (pItemDescriptor->Type & LFTypeWriteable);
+					break;
+
 				case IDM_STORE_RENAME:
-					bEnable = !m_pWndFileView->IsEditing();
+					bEnable = (pItemDescriptor->Type & LFTypeWriteable) && !m_pWndFileView->IsEditing();
 					break;
 
 				default:

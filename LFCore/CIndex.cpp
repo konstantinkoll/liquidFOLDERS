@@ -49,7 +49,7 @@
 
 #define BUILD_ITEMDESCRIPTOR() \
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize); \
-	pItemDescriptor->Type = p_StoreDescriptor->Source | LFTypeFile | (LFIsStoreMounted(p_StoreDescriptor) ? LFTypeMounted : LFTypeGhosted); \
+	pItemDescriptor->Type = StoreFlagsToType(p_StoreDescriptor, LFTypeFile); \
 	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
 
 #define APPEND_ITEMDESCRIPTOR() \
@@ -106,12 +106,13 @@
 // CIndex
 //
 
-CIndex::CIndex(CStore* pStore, BOOL IsMainIndex, UINT StoreDataSize)
+CIndex::CIndex(CStore* pStore, BOOL IsMainIndex, BOOL WriteAccess, UINT StoreDataSize)
 {
 	assert(pStore);
 
 	p_Store = pStore;
 	p_StoreDescriptor = pStore->p_StoreDescriptor;
+	m_WriteAccess = WriteAccess;
 	m_AdditionalDataSize = StoreDataSize;
 
 	ZeroMemory(m_pTable, sizeof(m_pTable));
@@ -140,6 +141,18 @@ BOOL CIndex::LoadTable(UINT TableID, UINT* pResult)
 	return (Result==HeapOk) || (Result==HeapCreated) || (Result==HeapMaintenanceRequired);
 }
 
+BOOL CIndex::Initialize()
+{
+	BOOL Result = TRUE;
+
+	if (m_IdxPath[0]!=L'\0')
+		for (UINT a=0; a<IDXTABLECOUNT; a++)
+			if (!LoadTable(a))
+				Result = FALSE;
+
+	return Result;
+}
+
 UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress)
 {
 	assert(pRepaired);
@@ -148,10 +161,20 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 	if (!Scheduled && (p_StoreDescriptor->Flags & LFStoreFlagsMaintained))
 		return LFOk;
 
-	// Run scheduled maintenance only when index is writeable because of table compaction
-	const BOOL Writeable = DirectoryWriteable(m_IdxPath);
-	if (Scheduled && !Writeable)
-		return LFDriveWriteProtected;
+	// Is the index volume writeable?
+	const BOOL Writeable = VolumeWriteable((CHAR)m_IdxPath[0]);
+	if (Writeable)
+	{
+		p_StoreDescriptor->Flags |= LFStoreFlagsWriteable;
+	}
+	else
+	{
+		p_StoreDescriptor->Flags &= ~LFStoreFlagsWriteable;
+
+		// Run scheduled maintenance only when index is writeable because of table compaction
+		if (Scheduled)
+			return LFDriveWriteProtected;
+	}
 
 	BOOL SlaveReindex = FALSE;
 	BOOL UpdateContexts = FALSE;
@@ -351,6 +374,10 @@ void CIndex::RemoveFileFromStatistics(LFCoreAttributes* PtrM) const
 UINT CIndex::Add(LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
+
+	// Access
+	if (!m_WriteAccess)
+		return LFIndexAccessError;
 
 	// Master
 	if (!LoadTable(IDXTABLE_MASTER))
@@ -591,6 +618,10 @@ BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 {
 	assert(pItemDescriptor);
 
+	// Access
+	if (!m_WriteAccess)
+		return LFIndexAccessError;
+
 	START_FINDMASTER(, Exists, pItemDescriptor->CoreAttributes.FileID);
 
 	if (Exists || (pItemDescriptor->CoreAttributes.Flags & LFFlagLink))
@@ -619,6 +650,13 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 	assert(pTransactionList);
 	assert(pTransactionTime);
 	assert((Flags & ~(LFFlagArchive | LFFlagTrash))==0);
+
+	// Access
+	if (!m_WriteAccess)
+	{
+		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexAccessError);
+		return;
+	}
 
 	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
@@ -676,6 +714,13 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3)
 {
 	assert(pTransactionList);
+
+	// Access
+	if (!m_WriteAccess)
+	{
+		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexAccessError);
+		return;
+	}
 
 	const BOOL IncludeSlave =
 		(pVariantData1 ? (pVariantData1->Attr>LFLastCoreAttribute) : FALSE) ||
@@ -759,6 +804,10 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 
 UINT CIndex::Synchronize(LFProgress* pProgress)
 {
+	// Access
+	if (!m_WriteAccess)
+		return LFIndexAccessError;
+
 	UINT Result = LFOk;
 
 	START_ITERATEALL(, m_pTable[IDXTABLE_MASTER]->GetError());
@@ -806,6 +855,13 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 void CIndex::Delete(LFTransactionList* pTransactionList, LFProgress* pProgress)
 {
 	assert(pTransactionList);
+
+	// Access
+	if (!m_WriteAccess)
+	{
+		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexAccessError);
+		return;
+	}
 
 	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);

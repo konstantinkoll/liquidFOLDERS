@@ -380,7 +380,7 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_STORE_SYNCHRONIZE:
-		bEnable = (m_StoreType & LFTypeSynchronizeAllowed);
+		bEnable = ((m_StoreType & (LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable))==(LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable));
 		break;
 
 	case IDM_STORE_MAKEDEFAULT:
@@ -388,11 +388,15 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_STORE_IMPORTFOLDER:
-		bEnable = (m_StoreType & LFTypeMounted);
+		bEnable = ((m_StoreType & (LFTypeMounted | LFTypeWriteable))==(LFTypeMounted | LFTypeWriteable));
 		break;
 
 	case IDM_STORE_SHORTCUT:
 		bEnable = (m_StoreType & LFTypeShortcutAllowed);
+		break;
+
+	case IDM_STORE_DELETE:
+		bEnable = (m_StoreType & LFTypeWriteable);
 		break;
 
 	case IDM_STORE_RENAME:

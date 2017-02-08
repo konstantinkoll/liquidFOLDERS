@@ -137,18 +137,22 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 		// FileDrop
 		if (wcscmp(CmdLine, L"/FILEDROP")==0)
 		{
-			if (StoreID[0]=='\0')
+			const UINT Result = (StoreID[0]=='\0') ? LFGetDefaultStore(StoreID) : LFOk;
+
+			switch (Result)
 			{
-				UINT Result = LFGetDefaultStore(StoreID);
-				if (Result!=LFOk)
-				{
-					LFErrorBox(CWnd::GetForegroundWindow(), Result);
+			case LFOk:
+				return GetFileDrop(StoreID);
 
-					return NULL;
-				}
+			case LFNoDefaultStore:
+				goto OpenRootWindow;
+
+			default:
+				LFErrorBox(CWnd::GetForegroundWindow(), Result);
+
+				return NULL;
 			}
-
-			return GetFileDrop(StoreID);
+	
 		}
 
 		// Key or IATA code
@@ -198,6 +202,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 	}
 
 	// Root
+OpenRootWindow:
 	CMainWnd* pFrameWnd = new CMainWnd();
 	pFrameWnd->CreateRoot();
 	pFrameWnd->ShowWindow(SW_SHOW);

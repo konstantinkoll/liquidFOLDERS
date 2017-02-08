@@ -42,19 +42,25 @@ UINT CStore::Open(BOOL WriteAccess)
 	assert(m_pIndexMain==NULL);
 	assert(m_pIndexAux==NULL);
 
-	// Write access is only possible when the store is mounted
-	if (WriteAccess && !LFIsStoreMounted(p_StoreDescriptor))
-		return LFStoreNotMounted;
+	// Write access is only possible when the store is mounted and not write-protected
+	if (WriteAccess)
+	{
+		if (!LFIsStoreMounted(p_StoreDescriptor))
+			return LFStoreNotMounted;
+
+		if ((p_StoreDescriptor->Flags & LFStoreFlagsWriteable)==0)
+			return LFDriveWriteProtected;
+	}
 
 	// Open index(es)
 	if (WriteAccess)
 	{
 		// Main index
-		m_pIndexMain = new CIndex(this, TRUE, m_AdditionalDataSize);
+		m_pIndexMain = new CIndex(this, TRUE, TRUE, m_AdditionalDataSize);
 
 		// Aux index for hybrid indexing
 		if ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
-			m_pIndexAux = new CIndex(this, FALSE, m_AdditionalDataSize);
+			m_pIndexAux = new CIndex(this, FALSE, TRUE, m_AdditionalDataSize);
 
 		m_WriteAccess = TRUE;
 	}
@@ -63,7 +69,7 @@ UINT CStore::Open(BOOL WriteAccess)
 		// Select aux store for hybrid indexing:
 		// - Faster access (resides on local harddrive)
 		// - Available even in unmounted state
-		m_pIndexMain = new CIndex(this, FASTEST_INDEX(), m_AdditionalDataSize);
+		m_pIndexMain = new CIndex(this, FASTEST_INDEX(), FALSE, m_AdditionalDataSize);
 	}
 
 	return LFOk;
@@ -92,9 +98,18 @@ UINT CStore::Initialize(LFProgress* pProgress)
 	if ((Result=CreateDirectories())!=LFOk)
 		return Result;
 
-	// Open store (also creates index)
+	// Open store
 	if ((Result=Open(TRUE))!=LFOk)
 		return Result;
+
+	// Initialize index
+	if (m_pIndexMain)
+		if (!m_pIndexMain->Initialize())
+			return LFIndexCreateError;
+
+	if (m_pIndexAux)
+		if (!m_pIndexAux->Initialize())
+			return LFIndexCreateError;
 
 	// Synchronize
 	if ((Result=Synchronize(TRUE, pProgress))!=LFOk)
@@ -152,7 +167,7 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 	// Open index and check (always open main index: MountVolume relies on copying the main index for hybrid indexes)
 	BOOL Repaired = FALSE;
 
-	CIndex* pIndex = new CIndex(this, LFIsStoreMounted(p_StoreDescriptor), m_AdditionalDataSize);
+	CIndex* pIndex = new CIndex(this, LFIsStoreMounted(p_StoreDescriptor), m_AdditionalDataSize, TRUE);
 	Result = pIndex->MaintenanceAndStatistics(Scheduled, &Repaired, pProgress);
 	delete pIndex;
 
@@ -534,7 +549,7 @@ UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFI
 	WCHAR Path2[2*MAX_PATH];
 	GetFileLocation(pItemDescriptor, Path2, 2*MAX_PATH);
 
-	return FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : LFCannotRenameFile : LFNoFileBody;
+	return FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFCannotRenameFile : LFNoFileBody;
 }
 
 UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
@@ -558,8 +573,19 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
 	if (DeleteDirectory(Path))
 		return LFOk;
 
-	DWORD Error = GetLastError();
-	return (Error==ERROR_NO_MORE_FILES) || (Error==ERROR_FILE_NOT_FOUND) || (Error==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
+	switch (GetLastError())
+	{
+	case ERROR_NO_MORE_FILES:
+	case ERROR_FILE_NOT_FOUND:
+	case ERROR_PATH_NOT_FOUND:
+		return LFOk;
+
+	case ERROR_WRITE_PROTECT:
+		return LFDriveWriteProtected;
+
+	default:
+		return LFCannotDeleteFile;
+	}
 }
 
 BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, void* /*pStoreData*/)

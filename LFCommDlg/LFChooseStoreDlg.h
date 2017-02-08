@@ -34,7 +34,7 @@ private:
 class LFChooseStoreDlg : public LFDialog
 {
 public:
-	LFChooseStoreDlg(CWnd* pParentWnd=NULL, BOOL Mounted=TRUE);
+	LFChooseStoreDlg(CWnd* pParentWnd=NULL, BOOL Writeable=TRUE);
 
 	CHAR m_StoreID[LFKeySize];
 
@@ -65,5 +65,5 @@ protected:
 	CHeaderArea m_wndHeaderArea;
 	CStoreList m_wndStoreList;
 	LFSearchResult* m_pSearchResult;
-	BOOL m_Mounted;
+	BOOL m_Writeable;
 };

@@ -496,15 +496,21 @@ struct LFCoreAttributes
 #define LFTypeBadgeEmpty           0x00000400
 #define LFTypeBadgeMask            0x00000F00
 
+// Store capabilities
 #define LFTypeShortcutAllowed      0x00001000	// Volatile
 #define LFTypeSynchronizeAllowed   0x00002000
 #define LFTypeCapabilitiesMask     0x00003000
 
-#define LFTypeDefault              0x01000000	// Volatile
-#define LFTypeMounted              0x02000000
-#define LFTypeMaintained           0x04000000
-#define LFTypeGhosted              0x08000000
+// Store flags
+#define LFTypeMounted              0x00100000	// Volatile
+#define LFTypeMaintained           0x00400000
+#define LFTypeWriteable            0x00800000
 
+// Visual flags
+#define LFTypeDefault              0x01000000	// Volatile
+#define LFTypeGhosted              0x02000000
+
+// Type
 #define LFTypeStore                0x00000000	// Volatile
 #define LFTypeFile                 0x40000000
 #define LFTypeFolder               0x80000000
@@ -573,8 +579,9 @@ struct LFItemDescriptor
 
 #define LFStoreFlagsAutoLocation         0x00000001
 #define LFStoreFlagsError                0x00000002
-#define LFStoreFlagsMaintained           0x00000004
-#define LFStoreFlagsVictim               0x80000000
+#define LFStoreFlagsVictim               0x00000004
+#define LFStoreFlagsMaintained           LFTypeMaintained
+#define LFStoreFlagsWriteable            LFTypeWriteable
 
 struct LFStoreDescriptor
 {

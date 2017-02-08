@@ -481,9 +481,9 @@ void LFDialog::OnDestroy()
 #ifndef _DEBUG
 	if (IsWindow(m_wndDesktopDimmer))
 		m_wndDesktopDimmer.SendMessage(WM_DESTROY);
+#endif
 
 	CBackstageWnd::OnDestroy();
-#endif
 }
 
 void LFDialog::OnOK()

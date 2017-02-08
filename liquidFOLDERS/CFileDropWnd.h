@@ -49,8 +49,8 @@ protected:
 
 	CHAR m_StoreID[LFKeySize];
 	LFDropTarget m_DropTarget;
-	LFStoreDescriptor m_Store;
 	CRect m_rectIcon;
+	LFStoreDescriptor m_Store;
 	UINT m_StoreIcon;
 	UINT m_StoreType;
 	BOOL m_AlwaysOnTop;

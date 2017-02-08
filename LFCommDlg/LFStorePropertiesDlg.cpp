@@ -42,12 +42,10 @@ LFStorePropertiesDlg::LFStorePropertiesDlg(const CHAR* pStoreID, CWnd* pParentWn
 	if (LFGetStoreSettings(pStoreID, &m_Store)==LFOk)
 	{
 		m_StoreUniqueID = m_Store.UniqueID;
-		m_StoreValid = TRUE;
 	}
 	else
 	{
 		ZeroMemory(&m_StoreUniqueID, sizeof(m_StoreUniqueID));
-		m_StoreValid = FALSE;
 	}
 }
 
@@ -111,7 +109,7 @@ BOOL LFStorePropertiesDlg::InitSidebar(LPSIZE pszTabArea)
 
 BOOL LFStorePropertiesDlg::InitDialog()
 {
-	BOOL Result =LFTabbedDialog::InitDialog();
+	BOOL Result = LFTabbedDialog::InitDialog();
 
 	// Caption
 	CString Caption;
@@ -140,6 +138,7 @@ BOOL LFStorePropertiesDlg::InitDialog()
 		m_wndMakeSearchable.SetCheck((m_Store.Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid);
 	}
 
+	// Store
 	OnUpdateStore(NULL, NULL);
 
 	return Result;
@@ -267,17 +266,25 @@ void LFStorePropertiesDlg::OnRunBackup()
 
 LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	GetDlgItem(IDOK)->EnableWindow(m_StoreValid=(LFGetStoreSettingsEx(m_StoreUniqueID, &m_Store)==LFOk));
+	// Get store data
+	if ((m_StoreValid=((LFGetStoreSettingsEx(m_StoreUniqueID, &m_Store)==LFOk)))==TRUE)
+		m_StoreIcon = LFGetStoreIcon(&m_Store, &m_StoreType);
 
+	// Basic settings
 	m_wndStoreName.EnableWindow(m_StoreValid);
 	m_wndStoreComment.EnableWindow(m_StoreValid);
 	m_wndMakeDefault.EnableWindow(m_StoreValid);
 	m_wndMakeSearchable.EnableWindow(m_StoreValid);
 
-	const BOOL CanSynchronize = (m_Store.Mode & LFStoreModeBackendMask)>LFStoreModeBackendInternal;
-	GetDlgItem(IDC_SYNCHRONIZED)->EnableWindow(CanSynchronize);
-	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize);
+	const BOOL Editable = m_StoreValid && (m_StoreType & LFTypeWriteable);
+	GetDlgItem(IDOK)->EnableWindow(Editable);
 
+	// Synchronize
+	const BOOL CanSynchronize = m_StoreType & LFTypeSynchronizeAllowed;
+	GetDlgItem(IDC_SYNCHRONIZED)->EnableWindow(CanSynchronize);
+	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize && Editable);
+
+	// Update properties
 	if (m_StoreValid)
 	{
 		WCHAR tmpStr[256];

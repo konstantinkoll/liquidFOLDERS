@@ -41,9 +41,9 @@ LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* pPath)
 	return pFileImportList->AddPath(pPath);
 }
 
-LFCORE_API UINT LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+LFCORE_API void LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
-	return pFileImportList->DoFileImport(Recursive, pStoreID, pItemTemplate, Move, pProgress);
+	pFileImportList->DoFileImport(Recursive, pStoreID, pItemTemplate, Move, pProgress);
 }
 
 
@@ -273,21 +273,19 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 	}
 }
 
-UINT LFFileImportList::DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+void LFFileImportList::DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
-	UINT Result;
-
 	// Store
 	CHAR StoreID[LFKeySize] = "";
 	if (pStoreID)
 		strcpy_s(StoreID, LFKeySize, pStoreID);
 
 	if (StoreID[0]=='\0')
-		if ((Result=LFGetDefaultStore(StoreID))!=LFOk)
-			return Result;
+		if ((m_LastError=LFGetDefaultStore(StoreID))!=LFOk)
+			return;
 
 	CStore* pStore;
-	if ((Result=OpenStore(StoreID, TRUE, &pStore))==LFOk)
+	if ((m_LastError=OpenStore(StoreID, TRUE, &pStore))==LFOk)
 	{
 		// Resolve
 		Resolve(Recursive, pProgress);
@@ -341,6 +339,4 @@ UINT LFFileImportList::DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItem
 	}
 
 	SendLFNotifyMessage(LFMessages.StatisticsChanged);
-
-	return Result;
 }

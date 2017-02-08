@@ -111,12 +111,12 @@ void CStoreList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 #define GetSelectedStore() m_wndStoreList.GetNextItem(-1, LVIS_SELECTED)
 
-LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, BOOL Mounted)
+LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, BOOL Writeable)
 	: LFDialog(IDD_CHOOSESTORE, pParentWnd)
 {
 	m_StoreID[0] = '\0';
 	m_pSearchResult = NULL;
-	m_Mounted = Mounted;
+	m_Writeable = Writeable;
 }
 
 void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
@@ -151,8 +151,8 @@ void LFChooseStoreDlg::UpdateOkButton()
 	const INT Index = GetSelectedStore();
 	BOOL bEnable = (Index!=-1);
 
-	if (m_Mounted && bEnable)
-		bEnable &= ((*m_pSearchResult)[Index]->Type & LFTypeMounted);
+	if (m_Writeable && bEnable)
+		bEnable &= ((*m_pSearchResult)[Index]->Type & (LFTypeMounted | LFTypeWriteable))==(LFTypeMounted | LFTypeWriteable);
 
 	GetDlgItem(IDOK)->EnableWindow(bEnable);
 }
@@ -160,7 +160,7 @@ void LFChooseStoreDlg::UpdateOkButton()
 BOOL LFChooseStoreDlg::InitDialog()
 {
 	CString Hint;
-	if (m_Mounted)
+	if (m_Writeable)
 		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
 
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
@@ -229,7 +229,9 @@ void LFChooseStoreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
+	// Save selected store
 	CHAR StoreID[LFKeySize] = "";
+
 	if (m_pSearchResult)
 	{
 		INT Index = m_wndStoreList.GetNextItem(-1, LVIS_SELECTED);
@@ -239,13 +241,15 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		LFFreeSearchResult(m_pSearchResult);
 	}
 
+	// Query
 	LFFilter* pFilter = LFAllocFilter();
 	m_pSearchResult = LFQuery(pFilter);
 	LFFreeFilter(pFilter);
 
 	m_wndStoreList.SetSearchResult(m_pSearchResult);
 
-	if (!m_Mounted)
+	// Header
+	if (!m_Writeable)
 	{
 		CString Hint;
 		Hint.Format(m_pSearchResult->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, m_pSearchResult->m_StoreCount);
@@ -253,6 +257,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		m_wndHeaderArea.SetText(LFGetApp()->m_Contexts[LFContextStores].Name, Hint);
 	}
 
+	// Set previously selected store
 	INT Index = -1;
 	for (UINT a=0; a<m_pSearchResult->m_ItemCount; a++)
 		if (((Index==-1) && ((*m_pSearchResult)[a]->Type & LFTypeDefault)) || (!strcmp(StoreID, (*m_pSearchResult)[a]->StoreID)))
@@ -377,13 +382,13 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	INT Index = GetSelectedStore();
 	if (Index!=-1)
 	{
-		LFItemDescriptor* Item = (*m_pSearchResult)[Index];
-		bEnable = ((Item->Type & LFTypeMask)==LFTypeStore);
+		LFItemDescriptor* pItemDescriptor = (*m_pSearchResult)[Index];
+		bEnable = ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_STORE_MAKEDEFAULT:
-			bEnable = !(Item->Type & LFTypeDefault);
+			bEnable = !(pItemDescriptor->Type & LFTypeDefault);
 			break;
 
 		case IDM_STORE_SYNCHRONIZE:
@@ -392,11 +397,15 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			break;
 
 		case IDM_STORE_SHORTCUT:
-			bEnable = (Item->Type & LFTypeShortcutAllowed);
+			bEnable = (pItemDescriptor->Type & LFTypeShortcutAllowed);
+			break;
+
+		case IDM_STORE_DELETE:
+			bEnable = (pItemDescriptor->Type & LFTypeWriteable);
 			break;
 
 		case IDM_STORE_RENAME:
-			bEnable = (m_wndStoreList.GetEditControl()==NULL);
+			bEnable = (pItemDescriptor->Type & LFTypeWriteable) && (m_wndStoreList.GetEditControl()==NULL);
 			break;
 		}
 	}

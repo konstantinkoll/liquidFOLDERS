@@ -15,10 +15,11 @@ class CStore;
 class CIndex
 {
 public:
-	CIndex(CStore* pStore, BOOL IsMainIndex, UINT StoreDataSize);
+	CIndex(CStore* pStore, BOOL IsMainIndex, BOOL WriteAccess, UINT StoreDataSize);
 	~CIndex();
 
 	// Index management
+	BOOL Initialize();
 	UINT MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress=NULL);
 
 	// Operations on index only
@@ -46,6 +47,7 @@ protected:
 	LFStoreDescriptor* p_StoreDescriptor;
 	BOOL m_IsMainIndex;
 	UINT m_AdditionalDataSize;
+	BOOL m_WriteAccess;
 	CHeapfile* m_pTable[IDXTABLECOUNT];
 
 private:

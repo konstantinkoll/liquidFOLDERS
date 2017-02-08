@@ -282,7 +282,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 
 	m_pActiveFilter = pFilter;
 
-	if (NavMode<NAVMODE_RELOAD)
+	if (NavMode<NAVMODE_CONTEXT)
 		m_wndMainView.UpdateSearchResult(NULL, NULL, NULL);
 
 	INT OldContext = -1;
@@ -290,6 +290,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	if (m_pRawFiles)
 	{
 		OldContext = m_pRawFiles->m_Context;
+
 		if (m_pRawFiles!=m_pCookedFiles)
 			pVictim = m_pRawFiles;
 	}
@@ -310,19 +311,20 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 	}
 
 	OnCookFiles((WPARAM)Data);
-	UpdateHistory();
+	UpdateHistory(NavMode);
 }
 
-void CMainWnd::UpdateHistory()
+void CMainWnd::UpdateHistory(UINT NavMode)
 {
 	if (IsWindow(m_wndMainView))
 		if (m_pCookedFiles->m_LastError>LFCancel)
 		{
-			m_wndMainView.ShowNotification((m_pCookedFiles->m_LastError<=LFFirstFatalError) ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, (m_pCookedFiles->m_LastError==LFIndexAccessError) || (m_pCookedFiles->m_LastError==LFIndexTableLoadError) ? IDM_STORES_RUNMAINTENANCE : 0);
+			m_wndMainView.ShowNotification((m_pCookedFiles->m_LastError<LFFirstFatalError) ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, (m_pCookedFiles->m_LastError==LFIndexAccessError) || (m_pCookedFiles->m_LastError==LFIndexTableLoadError) ? IDM_STORES_RUNMAINTENANCE : 0);
 		}
 		else
 		{
-			m_wndMainView.DismissNotification();
+			if (NavMode<NAVMODE_RELOAD)
+				m_wndMainView.DismissNotification();
 		}
 
 	if (!m_IsClipboard)
@@ -495,7 +497,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
 	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(m_pActiveFilter);
 	OnCookFiles();
-	UpdateHistory();
+	UpdateHistory(NAVMODE_NORMAL);
 	SetFocus();
 
 	// Clipboard
@@ -666,7 +668,7 @@ void CMainWnd::OnSwitchContext(UINT nID)
 		pFilter->Mode = LFFilterModeSearch;
 	}
 
-	NavigateTo(pFilter, m_pBreadcrumbBack ? NAVMODE_RELOAD : NAVMODE_NORMAL);
+	NavigateTo(pFilter, m_pBreadcrumbBack ? NAVMODE_CONTEXT : NAVMODE_NORMAL);
 
 	// Slide the filter pane away
 	HideSidebar();

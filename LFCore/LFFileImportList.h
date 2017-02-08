@@ -22,7 +22,7 @@ public:
 	void Sort();
 	WCHAR* GetFileName(UINT Index);
 	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
-	UINT DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
+	void DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
 
 	UINT m_LastError;
 

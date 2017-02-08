@@ -29,6 +29,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	LFStoreDescriptor m_Store;
+	UINT m_StoreIcon;
+	UINT m_StoreType;
 	BOOL m_StoreValid;
 	static UINT m_LastTab;
 

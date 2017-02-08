@@ -11,7 +11,7 @@
 
 #define RAND_CHAR()     KeyChars[rand()%sizeof(KeyChars)]
 
-#define SendLFNotifyMessage(Message)     PostMessage(HWND_BROADCAST, Message, NULL, NULL);
+#define SendLFNotifyMessage(Message)     SendNotifyMessage(HWND_BROADCAST, Message, NULL, NULL);
 
 
 void CreateNewStoreID(CHAR* pStoreID);
@@ -25,6 +25,7 @@ UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime
 UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);
 void ChooseNewDefaultStore();
 
+UINT StoreFlagsToType(LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMutex=NULL);
 UINT GetStore(const CHAR* pStoreID, CStore** ppStore);
 UINT OpenStore(const CHAR* pStoreID, BOOL WriteAccess, CStore** ppStore);

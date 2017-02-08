@@ -39,7 +39,7 @@ LFStoreDescriptor StoreCache[MAXSTORES];
 #define STOREDESCRIPTORFILESIZE               offsetof(LFStoreDescriptor, IdxPathMain)
 #define STOREDESCRIPTORREQUIREDFILESIZE       offsetof(LFStoreDescriptor, SynchronizeTime)
 
-#define ResetStoreFlags(pStoreDescriptor)     pStoreDescriptor->Flags &= ~(LFStoreFlagsMaintained | LFStoreFlagsVictim);
+#define ResetStoreFlags(pStoreDescriptor)     pStoreDescriptor->Flags &= (LFStoreFlagsAutoLocation | LFStoreFlagsError);
 
 
 // Cache access
@@ -501,12 +501,12 @@ UINT SaveStoreSettingsToFile(LFStoreDescriptor* pStoreDescriptor)
 
 	HANDLE hFile;
 	if ((Result=CreateFileConcurrent(Path, TRUE, OPEN_ALWAYS, hFile, TRUE))!=FileOk)
-		return (Result==FileSharingViolation) ? LFSharingViolation1 : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : LFDriveNotReady;
+		return (Result==FileSharingViolation) ? LFSharingViolation1 : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFDriveNotReady;
 
 	DWORD wmWritten;
 	Result = WriteFile(hFile, pStoreDescriptor, STOREDESCRIPTORFILESIZE, &wmWritten, NULL) ? LFOk : LFDriveNotReady;
 	if (wmWritten!=STOREDESCRIPTORFILESIZE)
-		Result = LFDriveNotReady;
+		Result = (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFDriveNotReady;
 
 	CloseHandle(hFile);
 
@@ -523,23 +523,25 @@ UINT DeleteStoreSettingsFromFile(LFStoreDescriptor* pStoreDescriptor)
 	if ((Result=GetKeyFileFromStoreDescriptor(pStoreDescriptor, Path))!=LFOk)
 		return Result;
 
-	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : LFDriveNotReady;
+	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFDriveNotReady;
 }
 
 UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreDescriptor);
 
-	UINT Result = LFOk;
+	UINT Result;
 
 	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		Result = SaveStoreSettingsToRegistry(pStoreDescriptor);
+		if ((Result=SaveStoreSettingsToRegistry(pStoreDescriptor))!=LFOk)
+			return Result;
 
 	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if ((Result==LFOk) && (LFIsStoreMounted(pStoreDescriptor)))
-			Result = SaveStoreSettingsToFile(pStoreDescriptor);
+		if (LFIsStoreMounted(pStoreDescriptor))
+			if ((Result=SaveStoreSettingsToFile(pStoreDescriptor))!=LFOk)
+				return Result;
 
-	return Result;
+	return LFOk;
 }
 
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime, BOOL MakeDefault)
@@ -577,6 +579,17 @@ UINT DeleteStoreFromCache(LFStoreDescriptor* pStoreDescriptor)
 {
 	LFStoreDescriptor Victim = *pStoreDescriptor;
 
+	// Remove persistent records
+	UINT Result;
+
+	if ((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+		if ((Result=DeleteStoreSettingsFromRegistry(&Victim))!=LFOk)
+			return Result;
+
+	if (((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal) && (LFIsStoreMounted(&Victim)))
+		if ((Result=DeleteStoreSettingsFromFile(&Victim))!=LFOk)
+			return Result;
+
 	// Remove from cache
 	for (UINT a=0; a<StoreCount; a++)
 		if (strcmp(StoreCache[a].StoreID, pStoreDescriptor->StoreID)==0)
@@ -604,17 +617,7 @@ UINT DeleteStoreFromCache(LFStoreDescriptor* pStoreDescriptor)
 	if (strcmp(Victim.StoreID, DefaultStore)==0)
 		ChooseNewDefaultStore();
 
-	// Remove persistent records
-	UINT Result = LFOk;
-
-	if ((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		Result = DeleteStoreSettingsFromRegistry(&Victim);
-
-	if ((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if ((Result==LFOk) && (LFIsStoreMounted(&Victim)))
-			Result = DeleteStoreSettingsFromFile(&Victim);
-
-	return Result;
+	return LFOk;
 }
 
 
@@ -724,6 +727,13 @@ LFCORE_API UINT LFSetDefaultStore(const CHAR* pStoreID)
 // Stores
 //
 
+__forceinline UINT StoreFlagsToType(LFStoreDescriptor* pStoreDescriptor, UINT ItemType)
+{
+	assert(pStoreDescriptor);
+
+	return pStoreDescriptor->Source | ItemType | (LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted) | (pStoreDescriptor->Flags & LFStoreFlagsWriteable);
+}
+
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMutex)
 {
 	assert(ppStore);
@@ -798,6 +808,10 @@ UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pPro
 	// The store starts empty
 	pStoreDescriptor->Flags |= LFStoreFlagsMaintained;
 
+	// Writeable?
+	if (VolumeWriteable((CHAR)pStoreDescriptor->IdxPathMain[0]))
+		pStoreDescriptor->Flags |= LFStoreFlagsWriteable;
+	
 	UINT Result = UpdateStoreInCache(pStoreDescriptor);
 	if (Result==LFOk)
 	{
@@ -939,7 +953,7 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 	if (pType)
 	{
 		// Basic, Mounted?
-		*pType = pStoreDescriptor->Source | LFTypeStore | (LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted);
+		*pType = StoreFlagsToType(pStoreDescriptor, LFTypeStore);
 
 		// Empty?
 		if (pStoreDescriptor->Flags & LFStoreFlagsMaintained)
@@ -1414,10 +1428,18 @@ LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 						if (RemoveNew)
 							SendLFNotifyMessage(LFMessages.StatisticsChanged);
 					}
+					else
+					{
+						// Ignore a write protected store - open the file regardless!
+						if (Result==LFDriveWriteProtected)
+							Result = LFOk;
+					}
 
 				if (CheckExists && !Exists)
 					Result = LFNoFileBody;
+
 			}
+
 			if (Result==LFOk)
 				if (wcslen(&Path[4])<=MAX_PATH)
 				{
@@ -1622,7 +1644,8 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 		return LFMutexError;
 
 	UINT Result = LFOk;
-	UINT ChangeOccured = 0;
+	const UINT Source = LFGetSourceForVolume(cVolume);
+	UINT ChangeOccured = 0;		// 1: updated statistics changed, 2: stores changed
 
 	// Mark all stores on that volume as victim
 	for (UINT a=0; a<StoreCount; a++)
@@ -1658,7 +1681,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 						pSlot->Flags &= ~LFStoreFlagsVictim;
 
 						// Is the .store file newer than the last mount time?
-						if (CompareFileTime(&FindFileData.ftLastWriteTime, &pSlot->MountTime)>0)
+						if ((CompareFileTime(&FindFileData.ftLastWriteTime, &pSlot->MountTime)>0) || ((Source!=LFTypeSourceNethood) && ((pSlot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)))
 						{
 							// Yes, but just update attributes
 							wcscpy_s(pSlot->StoreName, 256, Store.StoreName);
@@ -1767,7 +1790,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 
 			// New default store required
 			RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
-			ChangeOccured = TRUE;
+			ChangeOccured |= 2;
 
 			if ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 			{

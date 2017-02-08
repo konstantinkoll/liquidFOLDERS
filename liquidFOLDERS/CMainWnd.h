@@ -13,7 +13,8 @@
 
 #define NAVMODE_NORMAL      0
 #define NAVMODE_HISTORY     1
-#define NAVMODE_RELOAD      2
+#define NAVMODE_CONTEXT     2
+#define NAVMODE_RELOAD      3
 
 #define WM_CONTEXTVIEWCOMMAND     WM_USER+200
 #define WM_UPDATEVIEWOPTIONS      WM_USER+201
@@ -110,7 +111,7 @@ private:
 	static LFFilter* GetRootFilter();
 	LPCSTR GetStatisticsID() const;
 	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
-	void UpdateHistory();
+	void UpdateHistory(UINT NavMode);
 	static void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
 	static void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
 
