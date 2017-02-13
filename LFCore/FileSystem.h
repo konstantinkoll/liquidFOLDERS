@@ -12,7 +12,6 @@ void CompressFile(HANDLE hFile, WCHAR cDrive);
 void HideFile(WCHAR* pPath);
 BOOL RequiredSpaceAvailable(LPWSTR lpPath, UINT64 Required);
 BOOL VolumeWriteable(CHAR cVolume);
-BOOL DirectoryWriteable(LPWSTR lpPath);
 DWORD CreateDirectory(LPWSTR lpPath);
 UINT CopyDirectory(LPWSTR lpPathSrc, LPWSTR lpPathDst);
 BOOL DeleteDirectory(LPWSTR lpPath);

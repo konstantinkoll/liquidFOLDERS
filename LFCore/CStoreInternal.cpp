@@ -33,7 +33,7 @@ UINT CStoreInternal::PrepareDelete()
 		wcscat_s(Path, MAX_PATH, L"*");
 
 		if (FileExists(Path))
-			if (!DirectoryWriteable(p_StoreDescriptor->DatPath))
+			if (!VolumeWriteable((CHAR)p_StoreDescriptor->DatPath[0]))
 				return LFDriveWriteProtected;
 	}
 

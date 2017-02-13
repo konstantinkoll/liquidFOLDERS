@@ -614,8 +614,8 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 
 	CMenu* pMenu = new CMenu();
 
-	LFItemDescriptor* Item = (*p_CookedFiles)[Index];
-	switch (Item->Type & LFTypeMask)
+	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
 		pMenu->LoadMenu(IDM_STORE);
@@ -624,7 +624,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 		break;
 
 	case LFTypeFolder:
-		if ((Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1))
+		if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 			pMenu->LoadMenu(IDM_FOLDER);
 
 		break;
@@ -655,7 +655,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	CString tmpStr;
 
 	if (m_Context!=LFContextTrash)
-		if (((Item->Type & LFTypeMask)==LFTypeFile) || (((Item->Type & LFTypeMask)==LFTypeFolder) && (Item->FirstAggregate!=-1) && (Item->LastAggregate!=-1)))
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1)))
 		{
 			ENSURE(tmpStr.LoadString(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVE : IDS_CONTEXTMENU_REMEMBER));
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVE : IDM_FILE_REMEMBER, tmpStr);
@@ -670,7 +670,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 			delete pSendPopup;
 		}
 
-	switch (Item->Type & LFTypeMask)
+	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
@@ -682,19 +682,19 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 		break;
 
 	case LFTypeFile:
-		if (Item->CoreAttributes.URL[0]!='\0')
-		{
-			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENBROWSER));
-			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENBROWSER, tmpStr);
-		}
-
-		if (Item->CoreAttributes.ContextID==LFContextFilters)
+		if (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters)
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_EDIT));
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_EDIT, tmpStr);
 		}
 		else
 		{
+			if (pItemDescriptor->CoreAttributes.URL[0]!='\0')
+			{
+				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENBROWSER));
+				pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENBROWSER, tmpStr);
+			}
+
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENWITH));
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
 		}

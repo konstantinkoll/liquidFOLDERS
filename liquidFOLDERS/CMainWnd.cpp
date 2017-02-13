@@ -659,7 +659,7 @@ void CMainWnd::OnSwitchContext(UINT nID)
 		strcpy_s(pFilter->StoreID, LFKeySize, m_pActiveFilter->StoreID);
 
 		if (pFilter->StoreID[0])
-			wcscpy_s(pFilter->OriginalName, LFKeySize, m_pActiveFilter->OriginalName);
+			wcscpy_s(pFilter->OriginalName, 256, m_pActiveFilter->OriginalName);
 
 		pFilter->Mode = (m_pActiveFilter->Mode>LFFilterModeStores) ? m_pActiveFilter->Mode : LFFilterModeSearch;
 	}
@@ -717,38 +717,35 @@ void CMainWnd::OnItemOpen()
 			NavigateTo(LFAllocFilter(pItemDescriptor->NextFilter), NAVMODE_NORMAL, NULL, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
 		}
 		else
+		{
+			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+
 			if (pItemDescriptor->Type & LFTypeMounted)
 			{
 				WCHAR Path[MAX_PATH];
 				UINT Result;
 
-				switch (pItemDescriptor->Type & LFTypeMask)
+				if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
 				{
-				case LFTypeFile:
-					if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
-					{
-						LFFilter* pFilter = LFLoadFilter(pItemDescriptor);
+					LFFilter* pFilter = LFLoadFilter(pItemDescriptor);
 
-						if (pFilter)
-							NavigateTo(pFilter);
+					if (pFilter)
+						NavigateTo(pFilter);
+				}
+				else
+				{
+					if ((Result=LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, TRUE))==LFOk)
+					{
+						if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOWNORMAL)==(HINSTANCE)SE_ERR_NOASSOC)
+							SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
 					}
 					else
 					{
-						Result = LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, TRUE);
-						if (Result==LFOk)
-						{
-							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOWNORMAL)==(HINSTANCE)SE_ERR_NOASSOC)
-								SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
-						}
-						else
-						{
-							LFErrorBox(this, Result);
-						}
+						LFErrorBox(this, Result);
 					}
-
-					break;
 				}
 			}
+		}
 	}
 }
 

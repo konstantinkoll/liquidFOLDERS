@@ -58,8 +58,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,3,0
- PRODUCTVERSION 2,2,3,0
+ FILEVERSION 2,2,4,0
+ PRODUCTVERSION 2,2,4,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -76,13 +76,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.2.3"
+            VALUE "FileVersion", "2.2.4"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.2.3"
+            VALUE "ProductVersion", "2.2.4"
         END
     END
     BLOCK "VarFileInfo"
@@ -368,8 +368,8 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
     IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
     IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Im Standard&browser öffnen"
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_OPENFILEDROP "Als File&Drop öffnen"
 END
@@ -799,8 +799,8 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Seleccionar &todo\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Abrir"
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Abrir con &browser"
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_OPENFILEDROP "Abrir por &FileDrop"
 END
@@ -1229,8 +1229,8 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Sélectionner &tout\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Ouvrir avec &navigateur défaut"
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_OPENFILEDROP "Ouvrir comme File&Drop"
 END
@@ -1710,8 +1710,8 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Open"
     IDS_CONTEXTMENU_OPENWITH "Open &with..."
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Open in &browser window"
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
     IDS_CONTEXTMENU_OPENFILEDROP "Open as &FileDrop"
 END

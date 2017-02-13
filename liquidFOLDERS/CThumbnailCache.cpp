@@ -25,6 +25,7 @@ void CThumbnailCache::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT
 		for (INT Column=cx; Column>0; Column--)
 		{
 			*Ptr = 0xFF;
+
 			Ptr += 4;
 		}
 	}
@@ -139,7 +140,6 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescr
 	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
-	//dc.FillSolidRect(rect.left, rect.top, 128, 128, 0);
 	AlphaBlend(dc, rect.left+(rect.Width()-128)/2, rect.top+(rect.Height()-128)/2, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
 	SelectObject(hdcMem, hOldBitmap);

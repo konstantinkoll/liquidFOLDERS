@@ -71,13 +71,47 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 	BITMAP BitmapSrc;
 	GetObject(hBitmap, sizeof(BitmapSrc), &BitmapSrc);
 
-	if ((BitmapSrc.bmWidth!=256) || (BitmapSrc.bmHeight!=256) || ((BitmapSrc.bmBitsPixel!=24) && (BitmapSrc.bmBitsPixel!=32)))
+	if ((BitmapSrc.bmBits==NULL) || (BitmapSrc.bmWidth!=256) || (BitmapSrc.bmHeight!=256) || ((BitmapSrc.bmBitsPixel!=24) && (BitmapSrc.bmBitsPixel!=32)))
 		return hBitmap;
 
 	BYTE* pBitsSrc = (BYTE*)BitmapSrc.bmBits;
-	BYTE* pBitsDst;
 
-	// Neue Bitmap erzeugen
+	// Blt bitmaps without alpha channel
+	if (BitmapSrc.bmBitsPixel==24)
+	{
+		// Create new bitmap
+		BITMAPINFO DIB;
+		ZeroMemory(&DIB, sizeof(DIB));
+
+		DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		DIB.bmiHeader.biWidth = 256;
+		DIB.bmiHeader.biHeight = 256;
+		DIB.bmiHeader.biPlanes = 1;
+		DIB.bmiHeader.biBitCount = 24;
+		DIB.bmiHeader.biCompression = BI_RGB;
+
+		HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (void**)&pBitsSrc, NULL, 0);
+
+		// Blt bitmap to solve mirrored orientation by Foxit reader and others
+		HDC hDCMem = CreateCompatibleDC(NULL);
+		HDC hDC = CreateCompatibleDC(hDCMem);
+
+		HBITMAP hBitmapOld1 = (HBITMAP)SelectObject(hDCMem, hBitmap);
+		HBITMAP hBitmapOld2 = (HBITMAP)SelectObject(hDC, hBitmapNew);
+
+		BitBlt(hDC, 0, 0, 256, 256, hDCMem, 0, 0, SRCCOPY);
+
+		SelectObject(hDCMem, hBitmapOld1);
+		SelectObject(hDC, hBitmapOld2);
+
+		DeleteObject(hBitmap);
+		hBitmap = hBitmapNew;
+
+		ReleaseDC(NULL, hDCMem);
+		ReleaseDC(NULL, hDC);
+	}
+
+	// Create new bitmap
 	BITMAPINFO DIB;
 	ZeroMemory(&DIB, sizeof(DIB));
 
@@ -88,9 +122,8 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 	DIB.bmiHeader.biBitCount = 32;
 	DIB.bmiHeader.biCompression = BI_RGB;
 
-	HDC hDC = GetDC(NULL);
-	HBITMAP hBitmapNew = CreateDIBSection(hDC, &DIB, DIB_RGB_COLORS, (void**)&pBitsDst, NULL, 0);
-	ReleaseDC(NULL, hDC);
+	BYTE* pBitsDst;
+	HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (void**)&pBitsDst, NULL, 0);
 
 	switch (BitmapSrc.bmBitsPixel)
 	{

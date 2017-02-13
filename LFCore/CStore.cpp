@@ -182,7 +182,7 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 	// Clone index for hybrid indexing
 	if (((p_StoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid) && LFIsStoreMounted(p_StoreDescriptor))
 	{
-		if (!DirectoryWriteable(p_StoreDescriptor->IdxPathAux))
+		if (!VolumeWriteable((CHAR)p_StoreDescriptor->IdxPathAux[0]))
 			ABORT(LFDriveWriteProtected);
 
 		if ((Result=CopyDirectory(p_StoreDescriptor->IdxPathMain, p_StoreDescriptor->IdxPathAux))!=LFOk)

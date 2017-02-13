@@ -81,7 +81,7 @@ UINT CreateFileConcurrent(LPCTSTR lpFileName, BOOL WriteAccess, DWORD dwCreation
 #endif
 
 TryAgain:
-	hFile = CreateFile(lpFileName, WriteAccess ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ | FILE_SHARE_READ, 0, NULL, dwCreationDisposition, FILE_FLAG_SEQUENTIAL_SCAN | (Hidden ? FILE_ATTRIBUTE_HIDDEN : FILE_ATTRIBUTE_NORMAL), NULL);
+	hFile = CreateFile(lpFileName, WriteAccess ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ, WriteAccess ? 0 : FILE_SHARE_READ, NULL, dwCreationDisposition, FILE_FLAG_SEQUENTIAL_SCAN | (Hidden ? FILE_ATTRIBUTE_HIDDEN : FILE_ATTRIBUTE_NORMAL), NULL);
 	if (hFile!=INVALID_HANDLE_VALUE)
 		return FileOk;
 

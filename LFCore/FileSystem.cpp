@@ -126,20 +126,20 @@ BOOL VolumeWriteable(CHAR cVolume)
 	return FALSE;
 }
 
-BOOL DirectoryWriteable(LPWSTR lpPath)
+/*BOOL DirectoryWriteable(LPWSTR lpPath)
 {
 	WCHAR Path[MAX_PATH];
 	wcscpy_s(Path, MAX_PATH, lpPath);
 	wcscat_s(Path, MAX_PATH, L"LF_TEST.BIN");
 
-	HANDLE hFile = CreateFile(Path, GENERIC_WRITE | FILE_SHARE_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFile(Path, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 		return FALSE;
 
 	CloseHandle(hFile);
 
 	return DeleteFile(Path);
-}
+}*/
 
 DWORD CreateDirectory(LPWSTR lpPath)
 {
