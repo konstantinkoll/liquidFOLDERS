@@ -812,6 +812,7 @@ UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pPro
 	if (VolumeWriteable((CHAR)pStoreDescriptor->IdxPathMain[0]))
 		pStoreDescriptor->Flags |= LFStoreFlagsWriteable;
 	
+	// Create index
 	UINT Result = UpdateStoreInCache(pStoreDescriptor);
 	if (Result==LFOk)
 	{
