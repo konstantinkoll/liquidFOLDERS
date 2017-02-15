@@ -368,7 +368,7 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
     IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
     IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
-    IDS_CONTEXTMENU_OPENBROWSER "Im Standard&browser öffnen"
+    IDS_CONTEXTMENU_OPENBROWSER "Im Web&browser öffnen"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_OPENFILEDROP "Als File&Drop öffnen"
@@ -449,6 +449,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Öffnet das ausgewählte Objekt.\nÖffnen"
+    IDM_FILE_OPENBROWSER    "Öffnet die ausgewählte Datei im Standard-Webbrowser.\nIm Webbrowser öffnen"
 END
 
 STRINGTABLE 
@@ -799,7 +800,7 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Seleccionar &todo\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Abrir"
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
-    IDS_CONTEXTMENU_OPENBROWSER "Abrir con &browser"
+    IDS_CONTEXTMENU_OPENBROWSER "Abrir con &navegador"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_OPENFILEDROP "Abrir por &FileDrop"
@@ -879,6 +880,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Abre el objeto seleccionado.\nAbrir"
+    IDM_FILE_OPENBROWSER    "Abre el archivo seleccionado con el navegador estándar.\nAbrir con navegador"
 END
 
 STRINGTABLE 
@@ -1229,7 +1231,7 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Sélectionner &tout\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
-    IDS_CONTEXTMENU_OPENBROWSER "Ouvrir avec &navigateur défaut"
+    IDS_CONTEXTMENU_OPENBROWSER "Ouvrir avec &navigateur"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_OPENFILEDROP "Ouvrir comme File&Drop"
@@ -1309,6 +1311,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Ouvre l'objet choisi.\nOuvrir"
+    IDM_FILE_OPENBROWSER    "Ouvre le fichier choisi avec le navigateur défaut.\nOuvrir avec navigateur"
 END
 
 STRINGTABLE 
@@ -1710,7 +1713,7 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Open"
     IDS_CONTEXTMENU_OPENWITH "Open &with..."
-    IDS_CONTEXTMENU_OPENBROWSER "Open in &browser window"
+    IDS_CONTEXTMENU_OPENBROWSER "Open in &browser"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
     IDS_CONTEXTMENU_OPENFILEDROP "Open as &FileDrop"
@@ -1790,6 +1793,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
+    IDM_FILE_OPENBROWSER    "Opens the selected file in your default browser.\nOpen in browser"
 END
 
 STRINGTABLE 

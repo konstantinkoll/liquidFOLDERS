@@ -35,7 +35,7 @@ struct HeapfileHeader
 class CHeapfile
 {
 public:
-	CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize=0);
+	CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize, BOOL Initialize);
 	~CHeapfile();
 
 	UINT GetItemCount() const;

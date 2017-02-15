@@ -127,12 +127,12 @@ CIndex::~CIndex()
 			delete m_pTable[a];
 }
 
-BOOL CIndex::LoadTable(UINT TableID, UINT* pResult)
+BOOL CIndex::LoadTable(UINT TableID, BOOL Initialize, UINT* pResult)
 {
 	assert(TableID<IDXTABLECOUNT);
 
 	if (!m_pTable[TableID])
-		m_pTable[TableID] = new CHeapfile(m_IdxPath, (BYTE)TableID, m_AdditionalDataSize);
+		m_pTable[TableID] = new CHeapfile(m_IdxPath, (BYTE)TableID, m_AdditionalDataSize, Initialize);
 
 	const UINT Result = m_pTable[TableID]->m_OpenStatus;
 	if (pResult)
@@ -147,7 +147,7 @@ BOOL CIndex::Initialize()
 
 	if (m_IdxPath[0]!=L'\0')
 		for (UINT a=0; a<IDXTABLECOUNT; a++)
-			if (!LoadTable(a))
+			if (!LoadTable(a, TRUE))
 				Result = FALSE;
 
 	return Result;
@@ -176,6 +176,8 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 			return LFDriveWriteProtected;
 	}
 
+	p_StoreDescriptor->Flags |= LFStoreFlagsMaintained;
+
 	BOOL SlaveReindex = FALSE;
 	BOOL UpdateContexts = FALSE;
 	UINT TableLoadResult[IDXTABLECOUNT];
@@ -185,17 +187,22 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 	for (UINT a=0; a<IDXTABLECOUNT; a++)
 	{
 		// Load table, but omit return value - we examine the open status directly here
-		LoadTable(a, &TableLoadResult[a]);
+		LoadTable(a, a>IDXTABLE_MASTER, &TableLoadResult[a]);
 
 		switch (TableLoadResult[a])
 		{
 		case HeapCreated:
-			if (a==IDXTABLE_MASTER)
-				return LFIndexRepairError;	// TODO: full synchronizing required
+			if (a>IDXTABLE_MASTER)
+			{
+				*pRepaired = SlaveReindex = TRUE;
+				break;
+			}
 
-			*pRepaired = SlaveReindex = TRUE;
+			// Fall through
 
-			break;
+		case HeapError:
+			p_StoreDescriptor->Flags |= LFStoreFlagsError;
+			return LFIndexRepairError;
 
 		case HeapMaintenanceRequired:
 			COMPACT(a);
@@ -210,15 +217,11 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 		case HeapSharingViolation:
 			return LFSharingViolation1;
 
-		case HeapError:
-			p_StoreDescriptor->Flags |= LFStoreFlagsError;
-			return LFIndexRepairError;
-
 		case HeapCannotCreate:
 			if (Writeable)
 			{
 				p_StoreDescriptor->Flags |= LFStoreFlagsError;
-				return LFIndexCreateError;
+				return (a==IDXTABLE_MASTER) ? LFIndexRepairError : LFIndexCreateError;
 			}
 
 			return LFDriveWriteProtected;
@@ -318,8 +321,6 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 					LFFreeItemDescriptor(pItemDescriptor);
 				}
 	}
-
-	p_StoreDescriptor->Flags |= LFStoreFlagsMaintained;
 
 	// Progress
 	if (pProgress)

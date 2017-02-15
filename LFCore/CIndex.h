@@ -39,7 +39,7 @@ public:
 	void Delete(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
 protected:
-	BOOL LoadTable(UINT TableID, UINT* pResult=NULL);
+	BOOL LoadTable(UINT TableID, BOOL Initialize=FALSE, UINT* pResult=NULL);
 	void AddFileToStatistics(LFCoreAttributes* PtrM) const;
 	void RemoveFileFromStatistics(LFCoreAttributes* PtrM) const;
 

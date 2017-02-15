@@ -597,25 +597,25 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 16);
 
 	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 17, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_OPENBROWSER, 18, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 18, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 19, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 26);
 
-	#define InspectorIconVisible     26
-	#define InspectorIconHidden      27
+	#define InspectorIconVisible     27
+	#define InspectorIconHidden      28
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 28, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 31, TRUE, TRUE);
-	#define FilterIconOverlay        32
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 32, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());

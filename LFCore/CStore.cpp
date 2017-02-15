@@ -167,7 +167,7 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 	// Open index and check (always open main index: MountVolume relies on copying the main index for hybrid indexes)
 	BOOL Repaired = FALSE;
 
-	CIndex* pIndex = new CIndex(this, LFIsStoreMounted(p_StoreDescriptor), m_AdditionalDataSize, TRUE);
+	CIndex* pIndex = new CIndex(this, LFIsStoreMounted(p_StoreDescriptor), TRUE, m_AdditionalDataSize);
 	Result = pIndex->MaintenanceAndStatistics(Scheduled, &Repaired, pProgress);
 	delete pIndex;
 

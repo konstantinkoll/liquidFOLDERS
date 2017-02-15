@@ -12,7 +12,7 @@
 // CHeapFile
 //
 
-CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize)
+CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize, BOOL Initialize)
 {
 	assert(sizeof(HeapfileHeader)==512);
 
@@ -37,8 +37,13 @@ CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize)
 	}
 
 	// Open file
-	if ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, OPEN_ALWAYS, hFile))!=FileOk)
+	if ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, Initialize ? OPEN_ALWAYS : OPEN_EXISTING, hFile))!=FileOk)
+	{
+		if (GetLastError()==ERROR_FILE_NOT_FOUND)
+			m_OpenStatus = HeapCannotCreate;
+
 		return;
+	}
 
 	LARGE_INTEGER Size;
 	if (!GetFileSizeEx(hFile, &Size))
@@ -94,7 +99,7 @@ Create:
 		}
 
 		SetEndOfFile(hFile);
-		CompressFile(hFile, m_Filename[0]);
+		CompressFile(hFile, (CHAR)m_Filename[0]);
 
 		m_OpenStatus = HeapCreated;
 	}
@@ -469,16 +474,14 @@ BOOL CHeapfile::Compact()
 	if (CreateFileConcurrent(TempFilename, TRUE, OPEN_ALWAYS, hTempFile)!=FileOk)
 		return FALSE;
 
-	CompressFile(hTempFile, TempFilename[0]);
+	CompressFile(hTempFile, (CHAR)TempFilename[0]);
 
 	// Temporary header
 	HeapfileHeader TempHeader = m_Header;
 	TempHeader.ElementSize = max(m_Header.ElementSize, m_RequiredElementSize);
 	TempHeader.StoreDataSize = m_StoreDataSize;
 	TempHeader.NeedsCompaction = FALSE;
-
-	if (CURIDXVERSION>TempHeader.Version)
-		TempHeader.Version = CURIDXVERSION;
+	TempHeader.Version = CURIDXVERSION;
 
 	#define ABORT { CloseHandle(hTempFile); DeleteFile(TempFilename); return FALSE; }
 
@@ -540,5 +543,5 @@ BOOL CHeapfile::Compact()
 	AllocBuffer();
 
 	// Reopen file
-	return ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, OPEN_ALWAYS, hFile))==FileOk);
+	return ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, OPEN_EXISTING, hFile))==FileOk);
 }

@@ -7,47 +7,47 @@
 #include <winioctl.h>
 
 
-void SanitizeFileName(WCHAR* pDstName, SIZE_T cCount, WCHAR* pSrcName)
+void SanitizeFileName(LPWSTR lpDstName, SIZE_T cCount, LPCWSTR lpSrcName)
 {
-	assert(pDstName);
-	assert(pSrcName);
+	assert(lpDstName);
+	assert(lpSrcName);
 
-	wcscpy_s(pDstName, cCount, pSrcName);
+	wcscpy_s(lpDstName, cCount, lpSrcName);
 
-	while (*pDstName)
+	while (*lpDstName)
 	{
-		if ((*pDstName<L' ') || (wcschr(L"<>:\"/\\|?*", *pDstName)))
-			*pDstName = L'_';
+		if ((*lpDstName<L' ') || (wcschr(L"<>:\"/\\|?*", *lpDstName)))
+			*lpDstName = L'_';
 
-		pDstName++;
+		lpDstName++;
 	}
 }
 
-void AppendGUID(WCHAR* pPath, LFStoreDescriptor* pStoreDescriptor, WCHAR* pSuffix)
+void AppendGUID(LPWSTR lpPath, LFStoreDescriptor* pStoreDescriptor, WCHAR* pSuffix)
 {
-	assert(pPath);
+	assert(lpPath);
 	assert(pStoreDescriptor);
 	assert(pSuffix);
 
 	WCHAR szGUID[MAX_PATH];
 	if (StringFromGUID2(pStoreDescriptor->UniqueID, szGUID, MAX_PATH))
 	{
-		wcscat_s(pPath, MAX_PATH, szGUID);
-		wcscat_s(pPath, MAX_PATH, pSuffix);
+		wcscat_s(lpPath, MAX_PATH, szGUID);
+		wcscat_s(lpPath, MAX_PATH, pSuffix);
 	}
 }
 
-void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath)
+void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR lpPath)
 {
 	assert(pStoreDescriptor);
-	assert(pPath);
+	assert(lpPath);
 
-	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, L"Stores", pPath);
-	wcscat_s(pPath, MAX_PATH, L"\\");
-	AppendGUID(pPath, pStoreDescriptor);
+	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, L"Stores", lpPath);
+	wcscat_s(lpPath, MAX_PATH, L"\\");
+	AppendGUID(lpPath, pStoreDescriptor);
 }
 
-BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData)
+BOOL FileExists(LPCWSTR lpPath, WIN32_FIND_DATA* pFindData)
 {
 	assert(lpPath);
 
@@ -65,7 +65,7 @@ BOOL FileExists(LPWSTR lpPath, WIN32_FIND_DATA* pFindData)
 	return Result;
 }
 
-BOOL DirectoryExists(LPWSTR lpPath)
+BOOL DirectoryExists(LPCWSTR lpPath)
 {
 	assert(lpPath);
 
@@ -77,14 +77,14 @@ BOOL DirectoryExists(LPWSTR lpPath)
 	return FALSE;
 }
 
-void CompressFile(HANDLE hFile, WCHAR cDrive)
+void CompressFile(HANDLE hFile, CHAR cVolume)
 {
 	BY_HANDLE_FILE_INFORMATION FileInformation;
 	if (GetFileInformationByHandle(hFile, &FileInformation))
 		if ((FileInformation.dwFileAttributes & (FILE_ATTRIBUTE_ENCRYPTED | FILE_ATTRIBUTE_COMPRESSED))==0)
 		{
 			WCHAR Root[4] = L" :\\";
-			Root[0] = cDrive;
+			Root[0] = cVolume;
 
 			DWORD Flags;
 			if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
@@ -98,16 +98,20 @@ void CompressFile(HANDLE hFile, WCHAR cDrive)
 		}
 }
 
-void HideFile(WCHAR* pPath)
+void HideFile(LPCWSTR lpPath)
 {
-	DWORD dwFileAttributes = GetFileAttributes(pPath);
+	assert(lpPath);
+
+	DWORD dwFileAttributes = GetFileAttributes(lpPath);
 
 	if (dwFileAttributes!=INVALID_FILE_ATTRIBUTES)
-		SetFileAttributes(pPath, dwFileAttributes | FILE_ATTRIBUTE_HIDDEN);
+		SetFileAttributes(lpPath, dwFileAttributes | FILE_ATTRIBUTE_HIDDEN);
 }
 
-BOOL RequiredSpaceAvailable(LPWSTR lpPath, UINT64 Required)
+BOOL RequiredSpaceAvailable(LPCWSTR lpPath, UINT64 Required)
 {
+	assert(lpPath);
+
 	ULARGE_INTEGER FreeBytesAvailable;
 
 	return GetDiskFreeSpaceEx(lpPath, &FreeBytesAvailable, NULL, NULL) ? FreeBytesAvailable.QuadPart>=Required : FALSE;
@@ -141,12 +145,14 @@ BOOL VolumeWriteable(CHAR cVolume)
 	return DeleteFile(Path);
 }*/
 
-DWORD CreateDirectory(LPWSTR lpPath)
+DWORD CreateDirectory(LPCWSTR lpPath)
 {
+	assert(lpPath);
+
 	return CreateDirectory(lpPath, NULL) ? ERROR_SUCCESS : GetLastError();
 }
 
-UINT CopyDirectory(LPWSTR lpPathSrc, LPWSTR lpPathDst)
+UINT CopyDirectory(LPCWSTR lpPathSrc, LPCWSTR lpPathDst)
 {
 	UINT Result = LFOk;
 
@@ -186,7 +192,7 @@ UINT CopyDirectory(LPWSTR lpPathSrc, LPWSTR lpPathDst)
 	return Result;
 }
 
-BOOL DeleteDirectory(LPWSTR lpPath)
+BOOL DeleteDirectory(LPCWSTR lpPath)
 {
 	BOOL Result = TRUE;
 

@@ -243,7 +243,7 @@ BEGIN
     IDS_ERR_ILLEGALITEMTYPE "Eines der gewählten Objekte unterstützt diese Operation nicht."
     IDS_ERR_ILLEGALVALUE    "Eine der Eigenschaften hat einen ungültigen Wert."
     IDS_ERR_INDEXLOAD       "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
-    IDS_ERR_INDEXREPAIR     "Der Index ist beschädigt und kann leider nicht repariert werden (Datenträger schreibgeschützt?)."
+    IDS_ERR_INDEXREPAIR     "Der Index ist zu stark beschädigt und kann leider nicht repariert werden."
     IDS_ERR_INDEXACCESS     "Auf den Store kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
 END
 
@@ -533,7 +533,7 @@ BEGIN
     IDS_ERR_ILLEGALITEMTYPE "Al menos uno de los objetos seleccionados no respalda esta operación."
     IDS_ERR_ILLEGALVALUE    "Al menos uno de los valores de propiedad es ilegal."
     IDS_ERR_INDEXLOAD       "Una tabla índice no puede ser cargada. Por favor ejecute un mantenimiento programado."
-    IDS_ERR_INDEXREPAIR     "El índice del store está dañado y no pudo ser reparado (¿disco protegido contra escritura?)."
+    IDS_ERR_INDEXREPAIR     "El índice del store está dañado y no pudo ser reparado."
     IDS_ERR_INDEXACCESS     "No se puede acceder al store. Por favor revise los derechos de acceso del directorio del store."
 END
 
@@ -824,7 +824,7 @@ BEGIN
     IDS_ERR_ILLEGALITEMTYPE "L'un des éléments choisis ne soutient pas cette opération."
     IDS_ERR_ILLEGALVALUE    "L'une des qualités a une valeur non valable."
     IDS_ERR_INDEXLOAD       "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
-    IDS_ERR_INDEXREPAIR     "L'index est endommagé et ne peut pas être réparé malheureusement (Est-ce que le support de données est protégé en écriture?)."
+    IDS_ERR_INDEXREPAIR     "L'index est endommagé et ne peut pas être réparé malheureusement."
     IDS_ERR_INDEXACCESS     "Il n'ya pas accès au store. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
 END
 
@@ -1150,7 +1150,7 @@ BEGIN
     IDS_ERR_ILLEGALITEMTYPE "At least one of the selected items does not support this operation."
     IDS_ERR_ILLEGALVALUE    "At least one of the property values is illegal."
     IDS_ERR_INDEXLOAD       "An index table cannot be loaded. Please run scheduled maintenance."
-    IDS_ERR_INDEXREPAIR     "The store index is damaged and could not be repaired (write protected disc?)."
+    IDS_ERR_INDEXREPAIR     "The store index is damaged and could not be repaired."
     IDS_ERR_INDEXACCESS     "The store cannot be accessed. Please check the access rights of the store's directory."
 END
 

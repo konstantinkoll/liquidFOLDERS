@@ -792,6 +792,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Tasks\Browse_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Browse_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Browse_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Browse_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Browse_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Tasks\CalendarGoTo_16.png"
 				>
 			</File>
