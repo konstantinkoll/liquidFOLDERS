@@ -1,7 +1,8 @@
 
 // Music genres
-#define MusicGenreCount 204
+#define MusicGenreCount 203
 LFMusicGenre MusicGenres[MusicGenreCount] = {
+	{ L"", 0 },
 	{ L"Abstract", 0 },
 	{ L"Acapella", 0 },
 	{ L"Acid Jazz", 0 },

@@ -126,7 +126,7 @@ UINT64 CHeapfile::GetRequiredFileSize() const
 
 void* CHeapfile::GetStoreData(void* Ptr) const
 {
-	return (m_TableID==IDXTABLE_MASTER) && (m_Header.StoreDataSize) ? (BYTE*)Ptr+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
+	return m_Header.StoreDataSize ? (BYTE*)Ptr+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
 }
 
 UINT CHeapfile::GetError(BOOL SingleStore)
@@ -439,7 +439,7 @@ void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescr
 
 	if (m_TableID==IDXTABLE_MASTER)
 	{
-		INT_PTR DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
+		const INT_PTR DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
 		ZeroCopy(PtrDst, DataSize, &pItemDescriptor->CoreAttributes, sizeof(LFCoreAttributes));
 
 		if (m_Header.StoreDataSize)
