@@ -61,7 +61,8 @@ const LFIdxTableEntry LFAudioAttributeEntries[] = {
 	{ LFAttrDuration, offsetof(LFAudioAttributes, Duration) },
 	{ LFAttrBitrate, offsetof(LFAudioAttributes, Bitrate) },
 	{ LFAttrRecordingTime, offsetof(LFAudioAttributes, RecordingTime) },
-	{ LFAttrLanguage, offsetof(LFAudioAttributes, Language) }
+	{ LFAttrLanguage, offsetof(LFAudioAttributes, Language) },
+	{ LFAttrGenre, offsetof(LFAudioAttributes, Genre) }
 };
 
 const LFIdxTableEntry LFPictureAttributeEntries[] = {

@@ -2032,6 +2032,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Attributes\LFAttrGenre_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrGenre_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrGenre_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrGenre_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrGenre_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Attributes\LFAttrHashtags_16.png"
 				>
 			</File>

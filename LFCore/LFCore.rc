@@ -52,8 +52,8 @@ IDI_FLD_ALL             ICON                    "res\\FLD_All.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,4,0
- PRODUCTVERSION 2,2,4,0
+ FILEVERSION 2,2,5,0
+ PRODUCTVERSION 2,2,5,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.2.4"
+            VALUE "FileVersion", "2.2.5"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.2.4"
+            VALUE "ProductVersion", "2.2.5"
         END
     END
     BLOCK "VarFileInfo"
@@ -300,6 +300,7 @@ BEGIN
     IDS_ATTR_APERTURE       "Blende"
     IDS_ATTR_CHIP           "Chip"
     IDS_ATTR_ALBUM          "Album"
+    IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Kanäle"
     IDS_ATTR_SAMPLERATE     "Samplerate"
     IDS_ATTR_AUDIOCODEC     "Audio-Codec"
@@ -590,6 +591,7 @@ BEGIN
     IDS_ATTR_APERTURE       "Apertura"
     IDS_ATTR_CHIP           "Chip"
     IDS_ATTR_ALBUM          "Álbum"
+    IDS_ATTR_GENRE          "Género"
     IDS_ATTR_CHANNELS       "Canales"
     IDS_ATTR_SAMPLERATE     "Nivel de muestra"
     IDS_ATTR_AUDIOCODEC     "Códec de audio"
@@ -881,6 +883,7 @@ BEGIN
     IDS_ATTR_APERTURE       "Ouverture"
     IDS_ATTR_CHIP           "Chip"
     IDS_ATTR_ALBUM          "Album"
+    IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Canaux"
     IDS_ATTR_SAMPLERATE     "Vitesse d'exploration"
     IDS_ATTR_AUDIOCODEC     "Codec d'audio"
@@ -1207,6 +1210,7 @@ BEGIN
     IDS_ATTR_APERTURE       "Aperture"
     IDS_ATTR_CHIP           "Chip"
     IDS_ATTR_ALBUM          "Album"
+    IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Channels"
     IDS_ATTR_SAMPLERATE     "Sample rate"
     IDS_ATTR_AUDIOCODEC     "Audio codec"

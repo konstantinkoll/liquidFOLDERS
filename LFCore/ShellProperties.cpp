@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "ID3.h"
 #include "IndexTables.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
@@ -106,6 +107,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrChip
 
 	{ PropertyMusic, 4 },			// LFAttrAlbum
+	{ PropertyMusic, 11 },			// LFAttrGenre
 	{ PropertyMedia, 7 },			// LFAttrChannels
 	{ PropertyMedia, 5 },			// LFAttrSamplerate
 	{ 0, 0 },						// LFAttrAudioCodec
@@ -277,13 +279,26 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 {
 	SHCOLUMNID Column = { Schema, ID };
 	VARIANT Value = { 0 };
-	
+
 	if (SUCCEEDED(pParentFolder->GetDetailsEx(pidlRel, &Column, &Value)))
 		switch(Value.vt)
 		{
 		case VT_BSTR:
 			if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
 				SetAttribute(pItemDescriptor, Attr, Value.pbstrVal);
+
+			break;
+
+		case 8200:
+			if (Attr==LFAttrGenre)
+			{
+				BSTR HUGEP *pbstr;
+				if (SUCCEEDED(SafeArrayAccessData(Value.parray, (void HUGEP**)&pbstr)))
+				{
+					const UINT Genre = FindMusicGenre(pbstr[0]);
+					SetAttribute(pItemDescriptor, Attr, &Genre);
+				}
+			}
 
 			break;
 
@@ -335,6 +350,20 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 
 			break;
 		}
+
+/*
+
+			if ((Attr==LFAttrGenre) && (Value.vt!=VT_EMPTY))
+			{
+				WCHAR t[256];swprintf_s(t,256,L"%d",Value.vt);MessageBox(NULL,t,0,0);
+				BSTR HUGEP *pbstr;
+				if (SUCCEEDED(SafeArrayAccessData(Value.parray, (void HUGEP**)&pbstr)))
+				{
+					const UINT Genre = FindMusicGenre(pbstr[0]);
+					SetAttribute(pItemDescriptor, Attr, &Genre);
+				}
+			}*/
+
 }
 
 void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LFItemDescriptor* pItemDescriptor)
@@ -392,6 +421,9 @@ void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LF
 						}
 
 						break;
+
+					default:
+						;
 					}
 			}
 

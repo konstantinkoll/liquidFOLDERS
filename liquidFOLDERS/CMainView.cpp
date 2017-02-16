@@ -1082,6 +1082,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 		AppendAttribute(hMenu, LFAttrHashtags);
 		AppendAttribute(hMenu, LFAttrRoll);
 		AppendAttribute(hMenu, LFAttrArtist);
+		AppendAttribute(hMenu, LFAttrGenre);
 		AppendAttribute(hMenu, LFAttrDuration);
 		AppendAttribute(hMenu, LFAttrLanguage);
 

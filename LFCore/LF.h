@@ -123,6 +123,18 @@ struct LFAirport
 #pragma pack(pop)
 
 
+// Music database
+
+#pragma pack(push,1)
+
+struct LFMusicGenre
+{
+	WCHAR Name[23];
+	UINT Icon;
+};
+
+#pragma pack(pop)
+
 // OneDrive
 
 struct LFOneDrivePaths
@@ -228,32 +240,33 @@ struct LFItemCategoryDescriptor
 #define LFAttrChip                     30
 
 #define LFAttrAlbum                    31
-#define LFAttrChannels                 32
-#define LFAttrSamplerate               33
-#define LFAttrAudioCodec               34
+#define LFAttrGenre                    32
+#define LFAttrChannels                 33
+#define LFAttrSamplerate               34
+#define LFAttrAudioCodec               35
 
-#define LFAttrDuration                 35
-#define LFAttrBitrate                  36
+#define LFAttrDuration                 36
+#define LFAttrBitrate                  37
 
-#define LFAttrArtist                   37
-#define LFAttrTitle                    38
-#define LFAttrCopyright                39
-#define LFAttrISBN                     40
-#define LFAttrLanguage                 41
-#define LFAttrPages                    42
-#define LFAttrRecordingTime            43
-#define LFAttrEquipment                44
-#define LFAttrSignature                45
+#define LFAttrArtist                   38
+#define LFAttrTitle                    39
+#define LFAttrCopyright                40
+#define LFAttrISBN                     41
+#define LFAttrLanguage                 42
+#define LFAttrPages                    43
+#define LFAttrRecordingTime            44
+#define LFAttrEquipment                45
+#define LFAttrSignature                46
 
-#define LFAttrFrom                     46
-#define LFAttrTo                       47
-#define LFAttrResponsible              48
-#define LFAttrDueTime                  49
-#define LFAttrDoneTime                 50
-#define LFAttrCustomer                 51
-#define LFAttrLikeCount                52
+#define LFAttrFrom                     47
+#define LFAttrTo                       48
+#define LFAttrResponsible              49
+#define LFAttrDueTime                  50
+#define LFAttrDoneTime                 51
+#define LFAttrCustomer                 52
+#define LFAttrLikeCount                53
 
-#define LFAttributeCount               53
+#define LFAttributeCount               54
 #define LFLastCoreAttribute            20
 
 

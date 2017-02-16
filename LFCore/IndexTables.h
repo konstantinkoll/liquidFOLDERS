@@ -8,7 +8,7 @@
 #define IDXTABLE_MASTER     0
 #define IDXTABLECOUNT       6
 
-#define CURIDXVERSION       2
+#define CURIDXVERSION       3
 
 
 // Slave-ID: 1
@@ -64,6 +64,7 @@ struct LFAudioAttributes
 	UINT Bitrate;
 	FILETIME RecordingTime;
 	CHAR Language[3];
+	UINT Genre;
 };
 
 

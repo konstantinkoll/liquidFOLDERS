@@ -188,29 +188,29 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 	if (!pItemDescriptor)
 		return LFAllocItemDescriptor();
 
-	LFItemDescriptor* i = new LFItemDescriptor;
-	memcpy(i, pItemDescriptor, sizeof(LFItemDescriptor));
+	LFItemDescriptor* pClone = new LFItemDescriptor;
+	memcpy(pClone, pItemDescriptor, sizeof(LFItemDescriptor));
 
-	i->RefCount = 1;
+	pClone->RefCount = 1;
 
 	if (pItemDescriptor->NextFilter)
-		i->NextFilter = LFAllocFilter(pItemDescriptor->NextFilter);
+		pClone->NextFilter = LFAllocFilter(pItemDescriptor->NextFilter);
 
 	// Zeiger anpassen
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (i->AttributeValues[a])
+		if (pClone->AttributeValues[a])
 			if (IsStaticAttribute(pItemDescriptor, a))
 			{
 				INT_PTR Offset = (BYTE*)pItemDescriptor->AttributeValues[a]-(BYTE*)pItemDescriptor;
-				i->AttributeValues[a] = (BYTE*)i+Offset;
+				pClone->AttributeValues[a] = (BYTE*)pClone+Offset;
 			}
 			else
 			{
 				SIZE_T Size = _msize(pItemDescriptor->AttributeValues[a]);
-				memcpy(i->AttributeValues[a] = malloc(Size), pItemDescriptor->AttributeValues[a], Size);
+				memcpy(pClone->AttributeValues[a] = malloc(Size), pItemDescriptor->AttributeValues[a], Size);
 			}
 
-	return i;
+	return pClone;
 }
 
 LFItemDescriptor* AllocFolderDescriptor()

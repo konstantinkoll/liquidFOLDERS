@@ -454,6 +454,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ID3.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\IndexTables.cpp"
 				>
 			</File>
@@ -616,6 +620,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ID3.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IndexTables.h"
 				>
 			</File>
@@ -657,6 +665,10 @@
 			</File>
 			<File
 				RelativePath=".\License.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MusicGenres.h"
 				>
 			</File>
 			<File

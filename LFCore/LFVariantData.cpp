@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "ID3.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
@@ -46,6 +47,7 @@ extern const BYTE AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrChip
 
 	LFTypeUnicodeString,		// LFAttrAlbum
+	LFTypeUINT,					// LFAttrGenre
 	LFTypeUINT,					// LFAttrChannels
 	LFTypeUINT,					// LFAttrSamplerate
 	LFTypeFourCC,				// LFAttrAudioCodec
@@ -564,13 +566,20 @@ LFCORE_API void LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
 	swprintf_s(pStr, cCount, L"%.1lf Megapixel", d);
 }
 
-LFCORE_API void LFAttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* pStr, SIZE_T cCount)
 {
-	assert(i);
+	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
 	assert(AttrTypes[Attr]<LFTypeCount);
 
-	ToString(i->AttributeValues[Attr], AttrTypes[Attr], pStr, cCount);
+	if ((Attr==LFAttrGenre) && (pItemDescriptor->AttributeValues[Attr]))
+	{
+		wcscpy_s(pStr, cCount, GetGenreName(*((UINT*)pItemDescriptor->AttributeValues[Attr])));
+	}
+	else
+	{
+		ToString(pItemDescriptor->AttributeValues[Attr], AttrTypes[Attr], pStr, cCount);
+	}
 }
 
 
@@ -624,11 +633,14 @@ LFCORE_API void LFVariantDataToString(const LFVariantData& Value, WCHAR* pStr, S
 		*pStr = L'\0';
 	}
 	else
-	{
-		assert(Value.Type<LFTypeCount);
-
-		ToString(&Value.Value, Value.Type, pStr, cCount);
-	}
+		if (Value.Attr==LFAttrGenre)
+		{
+			wcscpy_s(pStr, cCount, GetGenreName(Value.UINT32));
+		}
+		else
+		{
+			ToString(&Value.Value, Value.Type, pStr, cCount);
+		}
 }
 
 LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr)

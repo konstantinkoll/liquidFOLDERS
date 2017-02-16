@@ -14,7 +14,7 @@
 // Siehe liquidFOLDERS.cpp für die Implementierung dieser Klasse
 //
 
-#define ViewParametersVersion     2
+#define ViewParametersVersion     3
 
 class CLiquidFoldersApp : public LFApplication
 {
