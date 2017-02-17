@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "LFCore.h"
+#include "resource.h"
 #include <assert.h>
 
 
@@ -62,5 +63,5 @@ LPCWSTR GetGenreName(UINT nID)
 
 UINT GetGenreIcon(UINT nID)
 {
-	return (nID<MusicGenreCount) ? MusicGenres[nID].Icon : IDI_FLD_DEFAULT;
+	return (nID<MusicGenreCount) ? MusicGenres[nID].Icon : IDI_FLD_NOTE;
 }

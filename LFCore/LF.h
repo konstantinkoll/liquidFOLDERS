@@ -444,7 +444,7 @@ struct LFFilter
 	CHAR StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
 	BYTE QueryContext;						// For LFFilterModeDirectoryTree and above
 	WCHAR Searchterm[256];					// For LFFilterModeDirectoryTree and above
-	LFFilterCondition* ConditionList;		// For LFFilterModeDirectoryTree and above
+	LFFilterCondition* pConditionList;		// For LFFilterModeDirectoryTree and above
 };
 
 
@@ -544,7 +544,7 @@ struct LFItemDescriptor
 	UINT Type;
 	UINT CategoryID;
 	UINT IconID;
-	LFFilter* NextFilter;
+	LFFilter* pNextFilter;
 
 	// Internal use only
 	INT FirstAggregate;

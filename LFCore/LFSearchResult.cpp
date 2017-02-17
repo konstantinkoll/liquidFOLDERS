@@ -184,11 +184,11 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 	{
 		m_Context = LFContextSubfolderDefault;
 
-		if (pFilter->ConditionList)
+		if (pFilter->pConditionList)
 		{
 			m_GroupAttribute = pFilter->Options.GroupAttribute;
 
-			switch(pFilter->ConditionList->AttrData.Attr)
+			switch(pFilter->pConditionList->AttrData.Attr)
 			{
 			case LFAttrLocationName:
 			case LFAttrLocationIATA:
@@ -197,7 +197,7 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 				break;
 
 			default:
-				if (AttrTypes[pFilter->ConditionList->AttrData.Attr]==LFTypeTime)
+				if (AttrTypes[pFilter->pConditionList->AttrData.Attr]==LFTypeTime)
 					m_Context = LFContextSubfolderDay;
 			}
 		}
@@ -214,7 +214,7 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 			break;
 
 		case LFFilterModeSearch:
-			m_Context = (pFilter->Options.IsPersistent || (pFilter->Searchterm[0]!=L'\0') || (pFilter->ConditionList!=NULL)) ? LFContextSearch : pFilter->QueryContext;
+			m_Context = (pFilter->Options.IsPersistent || (pFilter->Searchterm[0]!=L'\0') || (pFilter->pConditionList!=NULL)) ? LFContextSearch : pFilter->QueryContext;
 			break;
 		}
 
@@ -293,13 +293,13 @@ BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 
 	if (AddItem(pItemDescriptor))
 	{
-		pItemDescriptor->NextFilter = LFAllocFilter();
+		pItemDescriptor->pNextFilter = LFAllocFilter();
 
-		pItemDescriptor->NextFilter->Mode = LFFilterModeDirectoryTree;
-		pItemDescriptor->NextFilter->QueryContext = LFContextAuto;
+		pItemDescriptor->pNextFilter->Mode = LFFilterModeDirectoryTree;
+		pItemDescriptor->pNextFilter->QueryContext = LFContextAuto;
 
-		strcpy_s(pItemDescriptor->NextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
-		wcscpy_s(pItemDescriptor->NextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
+		strcpy_s(pItemDescriptor->pNextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
+		wcscpy_s(pItemDescriptor->pNextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
 
 		return TRUE;
 	}
@@ -665,15 +665,15 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 		SetAttribute(pFolder, Attr, Hashtag);
 		LFCombineFileCountSize(pFolder->AggregateCount, it->second.Size, pFolder->Description, 256);
 
-		pFolder->NextFilter = LFAllocFilter(pFilter);
-		pFolder->NextFilter->Options.IsSubfolder = TRUE;
+		pFolder->pNextFilter = LFAllocFilter(pFilter);
+		pFolder->pNextFilter->Options.IsSubfolder = TRUE;
 
-		wcscpy_s(pFolder->NextFilter->OriginalName, 256, Hashtag);
+		wcscpy_s(pFolder->pNextFilter->OriginalName, 256, Hashtag);
 
-		LFFilterCondition* pFilterCondition = LFAllocFilterConditionEx(LFFilterCompareSubfolder, Attr, pFolder->NextFilter->ConditionList);
+		LFFilterCondition* pFilterCondition = LFAllocFilterConditionEx(LFFilterCompareSubfolder, Attr, pFolder->pNextFilter->pConditionList);
 		wcscpy_s(pFilterCondition->AttrData.UnicodeArray, 256, Hashtag);
 
-		pFolder->NextFilter->ConditionList = pFilterCondition;
+		pFolder->pNextFilter->pConditionList = pFilterCondition;
 
 		AddItem(pFolder);
 	}

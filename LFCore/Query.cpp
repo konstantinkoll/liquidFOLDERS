@@ -398,7 +398,7 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 	// Check table
 	const LFIdxTable* pTable = &LFIndexTables[TableID];
 
-	LFFilterCondition* pFilterCondition = pFilter->ConditionList;
+	LFFilterCondition* pFilterCondition = pFilter->pConditionList;
 	while (pFilterCondition)
 	{
 		for (UINT a=0; a<pTable->cTableEntries; a++)
@@ -460,7 +460,7 @@ BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter)
 	assert(pItemDescriptor);
 	assert(pFilter);
 
-	LFFilterCondition* pFilterCondition = pFilter->ConditionList;
+	LFFilterCondition* pFilterCondition = pFilter->pConditionList;
 	while (pFilterCondition)
 	{
 		switch(pFilterCondition->AttrData.Attr)

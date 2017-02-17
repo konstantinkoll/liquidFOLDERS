@@ -193,8 +193,8 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 
 	pClone->RefCount = 1;
 
-	if (pItemDescriptor->NextFilter)
-		pClone->NextFilter = LFAllocFilter(pItemDescriptor->NextFilter);
+	if (pItemDescriptor->pNextFilter)
+		pClone->pNextFilter = LFAllocFilter(pItemDescriptor->pNextFilter);
 
 	// Zeiger anpassen
 	for (UINT a=0; a<LFAttributeCount; a++)
@@ -229,7 +229,7 @@ LFCORE_API void LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor)
 
 	if (--pItemDescriptor->RefCount==0)
 	{
-		LFFreeFilter(pItemDescriptor->NextFilter);
+		LFFreeFilter(pItemDescriptor->pNextFilter);
 
 		for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
 			FreeAttribute(pItemDescriptor, a);

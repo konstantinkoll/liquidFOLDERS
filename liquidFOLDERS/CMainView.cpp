@@ -1300,7 +1300,7 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_ITEM_OPEN:
-			bEnable = (pItemDescriptor->NextFilter!=NULL) ||
+			bEnable = (pItemDescriptor->pNextFilter!=NULL) ||
 				((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
 
 			break;

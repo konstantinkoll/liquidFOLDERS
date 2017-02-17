@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "Categorizers.h"
+#include "ID3.h"
 #include "LFCore.h"
 #include "LFVariantData.h"
 #include "Query.h"
@@ -33,15 +34,15 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFF
 
 	if (pItemDescriptor->AttributeValues[m_Attr])
 	{
-		pFolder->NextFilter = LFAllocFilter(pFilter);
-		pFolder->NextFilter->Options.IsSubfolder = TRUE;
-		pFolder->NextFilter->Options.GroupAttribute = m_Attr;
-		pFolder->NextFilter->ConditionList = GetCondition(pItemDescriptor, pFolder->NextFilter->ConditionList);
+		pFolder->pNextFilter = LFAllocFilter(pFilter);
+		pFolder->pNextFilter->Options.IsSubfolder = TRUE;
+		pFolder->pNextFilter->Options.GroupAttribute = m_Attr;
+		pFolder->pNextFilter->pConditionList = GetCondition(pItemDescriptor, pFolder->pNextFilter->pConditionList);
 
 		// CustomizeFolder benötigt Filter-Bedingung aus GetCondition()
 		CustomizeFolder(pFolder, pItemDescriptor);
 
-		wcscpy_s(pFolder->NextFilter->OriginalName, 256, pFolder->CoreAttributes.FileName);
+		wcscpy_s(pFolder->pNextFilter->OriginalName, 256, pFolder->CoreAttributes.FileName);
 	}
 
 	return pFolder;
@@ -54,23 +55,36 @@ BOOL CCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescri
 
 LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
-	LFFilterCondition* c = LFAllocFilterConditionEx(m_Attr ? LFFilterCompareSubfolder : LFFilterCompareIsEqual, m_Attr, pNext);
+	LFFilterCondition* pCondition = LFAllocFilterConditionEx(m_Attr ? LFFilterCompareSubfolder : LFFilterCompareIsEqual, m_Attr, pNext);
 
-	LFGetAttributeVariantData(pItemDescriptor, c->AttrData);
+	LFGetAttributeVariantData(pItemDescriptor, pCondition->AttrData);
 
-	return c;
+	return pCondition;
 }
 
 void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* /*pItemDescriptor*/) const
 {
-	LFSetAttributeVariantData(pFolder, pFolder->NextFilter->ConditionList->AttrData);
+	LFSetAttributeVariantData(pFolder, pFolder->pNextFilter->pConditionList->AttrData);
 
 	if (m_Attr!=LFAttrFileName)
 	{
+		const LFVariantData* pVariant = &pFolder->pNextFilter->pConditionList->AttrData;
+
 		WCHAR Name[256];
-		LFVariantDataToString(pFolder->NextFilter->ConditionList->AttrData, Name, 256);
+		LFVariantDataToString(*pVariant, Name, 256);
 
 		SetAttribute(pFolder, LFAttrFileName, Name);
+
+		switch (m_Attr)
+		{
+/*		case LFAttrArtist:
+			pFolder->IconID = IDI_FLD_NOTE;
+			break;
+*/
+		case LFAttrGenre:
+			pFolder->IconID = GetGenreIcon(pVariant->UINT32);
+			break;
+		}
 	}
 }
 

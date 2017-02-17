@@ -124,7 +124,7 @@ LFFilter* LFEditFilterDlg::CreateFilter()
 	m_wndSearchterm.GetWindowText(pFilter->Searchterm, 256);
 
 	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
-		pFilter->ConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].AttrData, pFilter->ConditionList);
+		pFilter->pConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].AttrData, pFilter->pConditionList);
 
 	return pFilter;
 }
@@ -174,7 +174,7 @@ BOOL LFEditFilterDlg::InitDialog()
 	{
 		m_wndSearchterm.SetWindowText(p_Filter->Searchterm);
 
-		LFFilterCondition* pFilterCondition = p_Filter->ConditionList;
+		LFFilterCondition* pFilterCondition = p_Filter->pConditionList;
 		while (pFilterCondition)
 		{
 			m_Conditions.AddItem(*pFilterCondition);

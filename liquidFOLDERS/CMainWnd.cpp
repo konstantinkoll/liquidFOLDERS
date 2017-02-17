@@ -712,9 +712,9 @@ void CMainWnd::OnItemOpen()
 	{
 		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
 
-		if (pItemDescriptor->NextFilter)
+		if (pItemDescriptor->pNextFilter)
 		{
-			NavigateTo(LFAllocFilter(pItemDescriptor->NextFilter), NAVMODE_NORMAL, NULL, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
+			NavigateTo(LFAllocFilter(pItemDescriptor->pNextFilter), NAVMODE_NORMAL, NULL, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
 		}
 		else
 		{

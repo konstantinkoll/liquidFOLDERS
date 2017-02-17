@@ -17,12 +17,12 @@ LFCORE_API LFFilter* LFAllocFilter(const LFFilter* pFilter)
 	if (pFilter)
 	{
 		*pNewFilter = *pFilter;
-		pNewFilter->ConditionList = NULL;
+		pNewFilter->pConditionList = NULL;
 
-		LFFilterCondition* pFilterCondition = pFilter->ConditionList;
+		LFFilterCondition* pFilterCondition = pFilter->pConditionList;
 		while (pFilterCondition)
 		{
-			pNewFilter->ConditionList = LFAllocFilterCondition(pFilterCondition->Compare, pFilterCondition->AttrData, pNewFilter->ConditionList);
+			pNewFilter->pConditionList = LFAllocFilterCondition(pFilterCondition->Compare, pFilterCondition->AttrData, pNewFilter->pConditionList);
 
 			pFilterCondition = pFilterCondition->pNext;
 		}
@@ -39,7 +39,7 @@ LFCORE_API void LFFreeFilter(LFFilter* pFilter)
 {
 	if (pFilter)
 	{
-		LFFilterCondition* pFilterCondition = pFilter->ConditionList;
+		LFFilterCondition* pFilterCondition = pFilter->pConditionList;
 		while (pFilterCondition)
 		{
 			LFFilterCondition* pVictim = pFilterCondition;
@@ -219,9 +219,9 @@ LFFilter* LoadFilter(WCHAR* pFilename, CHAR* StoreID)
 
 		LFFilterCondition* pFilterCondition = new LFFilterCondition;
 		memcpy_s(pFilterCondition, sizeof(LFFilterCondition), &Condition, sizeof(Condition));
-		pFilterCondition->pNext = pFilter->ConditionList;
+		pFilterCondition->pNext = pFilter->pConditionList;
 
-		pFilter->ConditionList = pFilterCondition;
+		pFilter->pConditionList = pFilterCondition;
 	}
 
 Leave:
@@ -247,7 +247,7 @@ BOOL StoreFilter(WCHAR* pFilename, LFFilter* pFilter)
 	Header.AllStores = (pFilter->StoreID[0]=='\0');
 	wcscpy_s(Header.Searchterm, 256, pFilter->Searchterm);
 
-	LFFilterCondition* pFilterCondition = pFilter->ConditionList;
+	LFFilterCondition* pFilterCondition = pFilter->pConditionList;
 	while (pFilterCondition)
 	{
 		Header.cConditions++;
@@ -263,7 +263,7 @@ BOOL StoreFilter(WCHAR* pFilename, LFFilter* pFilter)
 		DWORD Written;
 		if (WriteFile(hFile, &Header, sizeof(Header), &Written, NULL))
 		{
-			pFilterCondition = pFilter->ConditionList;
+			pFilterCondition = pFilter->pConditionList;
 			while (pFilterCondition)
 			{
 				if (!WriteFile(hFile, pFilterCondition, sizeof(LFFilterCondition), &Written, NULL))

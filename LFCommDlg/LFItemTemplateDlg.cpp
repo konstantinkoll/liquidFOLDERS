@@ -55,7 +55,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const CHAR* pStore
 
 	if (pFilter)
 	{
-		LFFilterCondition* pFilterCondition = pFilter->ConditionList;
+		LFFilterCondition* pFilterCondition = pFilter->pConditionList;
 		while (pFilterCondition)
 		{
 			if (pFilterCondition->Compare==LFFilterCompareSubfolder)
