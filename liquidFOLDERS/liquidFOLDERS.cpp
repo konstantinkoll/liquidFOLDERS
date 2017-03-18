@@ -74,8 +74,8 @@ BOOL CLiquidFoldersApp::InitInstance()
 	{
 		m_AllowedViews[a] = 0;
 
-		UINT cnt = (a==LFContextStores) ? LFViewStrips : ((a<=LFLastGroupContext) || (a==LFContextSearch)) ? LFViewCount-1 : LFViewPreview;
-		for (UINT b=0; b<=cnt; b++)
+		const UINT Count = (a==LFContextStores) ? LFViewLargeIcons : ((a<=LFLastGroupContext) || (a==LFContextSearch)) ? LFViewCount-1 : LFViewPreview;
+		for (UINT b=0; b<=Count; b++)
 			m_AllowedViews[a] |= 1<<b;
 	}
 

@@ -40,6 +40,9 @@ LFCORE_API const LFCountry* LFIATAGetCountry(UINT CountryID)
 
 LFCORE_API INT LFIATAGetNextAirport(INT Last, LFAirport** ppAirport)
 {
+	if (Last<-1)
+		Last = -1;
+
 	if (Last>=(INT)LFIATAGetAirportCount()-1)
 		return -1;
 
@@ -50,6 +53,9 @@ LFCORE_API INT LFIATAGetNextAirport(INT Last, LFAirport** ppAirport)
 
 LFCORE_API INT LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport)
 {
+	if (Last<-1)
+		Last = -1;
+
 	const UINT Count = LFIATAGetAirportCount();
 
 	do

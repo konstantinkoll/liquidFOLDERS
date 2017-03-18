@@ -483,7 +483,6 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	case LFAttrFocus:
 	case LFAttrAperture:
 	case LFAttrChip:
-	case LFAttrGenre:
 	case LFAttrChannels:
 	case LFAttrSamplerate:
 	case LFAttrAudioCodec:

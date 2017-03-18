@@ -9,7 +9,6 @@
 // LFStoreMaintenanceDlg
 //
 
-
 LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* pMaintenanceList, CWnd* pParentWnd)
 	: LFDialog(IDD_STOREMAINTENANCE, pParentWnd)
 {

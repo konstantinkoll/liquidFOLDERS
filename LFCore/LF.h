@@ -130,7 +130,9 @@ struct LFAirport
 struct LFMusicGenre
 {
 	WCHAR Name[23];
-	UINT Icon;
+	UINT IconID;
+	BOOL Primary;
+	BOOL Show;
 };
 
 #pragma pack(pop)

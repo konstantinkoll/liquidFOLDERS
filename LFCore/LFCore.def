@@ -102,14 +102,16 @@ EXPORTS
 	LFIATAGetNextAirport @403
 	LFIATAGetNextAirportByCountry @404
 	LFIATAGetAirportByCode @405
-	
+	LFID3GetNextMusicGenre @406
+	LFID3GetNextMusicGenreByIcon @407
+
 	LFQuery @500
 	LFQueryEx @501
 	LFQueryStatistics @502
 
 	LFGetThumbnail @600
 	LFQuarter256Bitmap @601
-	
+
 	LFCreateDesktopShortcut @700
 	LFGetShortcutForStore @701
 	LFCreateDesktopShortcutForStore @702
@@ -117,4 +119,3 @@ EXPORTS
 
 	LFGetICloudPath @800
 	LFGetOneDrivePaths @801
-	

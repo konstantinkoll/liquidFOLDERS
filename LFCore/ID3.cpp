@@ -63,5 +63,35 @@ LPCWSTR GetGenreName(UINT nID)
 
 UINT GetGenreIcon(UINT nID)
 {
-	return (nID<MusicGenreCount) ? MusicGenres[nID].Icon : IDI_FLD_NOTE;
+	return (nID<MusicGenreCount) ? MusicGenres[nID].IconID : IDI_FLD_NOTE;
+}
+
+LFCORE_API INT LFID3GetNextMusicGenre(INT Last, LFMusicGenre** ppMusicGenre)
+{
+	if (Last<-1)
+		Last = -1;
+
+	if (Last>=MusicGenreCount-1)
+		return -1;
+
+	*ppMusicGenre = &MusicGenres[++Last];
+
+	return Last;
+}
+
+LFCORE_API INT LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, LFMusicGenre** ppMusicGenre)
+{
+	if (Last<-1)
+		Last = -1;
+
+	do
+	{
+		if (Last>=MusicGenreCount-1)
+			return -1;
+
+		*ppMusicGenre = &MusicGenres[++Last];
+	}
+	while ((*ppMusicGenre)->IconID!=IconID);
+
+	return Last;
 }

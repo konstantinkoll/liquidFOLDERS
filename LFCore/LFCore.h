@@ -325,16 +325,28 @@ LFCORE_API UINT __stdcall LFIATAGetAirportCount();
 // Liefert Zeiger auf Territorium zurück
 LFCORE_API const LFCountry* __stdcall LFIATAGetCountry(UINT CountryID);
 
-// Setzt den Zeiger *pBuffer auf den nächsten Flughafen
+// Setzt den Zeiger *ppAirport auf den nächsten Flughafen
 LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport** ppAirport);
 
-// Setzt den Zeiger *pBuffer auf den nächsten Flughafen, der im Territorium CountryID liegt.
-// *pBuffer kann in jedem Fall überschrieben werden.
+// Setzt den Zeiger *ppAirport auf den nächsten Flughafen, der im Territorium CountryID liegt.
+// *ppAirport kann in jedem Fall überschrieben werden.
 LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport);
 
 // Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
 // *pBuffer kann in jedem Fall überschrieben werden.
 LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(const CHAR* Code, LFAirport** ppAirport);
+
+
+
+// ID3
+//
+
+// Setzt den Zeiger *ppMusicGenre auf das nächsten Genre
+LFCORE_API INT LFID3GetNextMusicGenre(INT Last, LFMusicGenre** ppMusicGenre);
+
+// Setzt den Zeiger *ppMusicGenre auf das nächsten Genre mit dem Icon IconID.
+// *ppMusicGenre kann in jedem Fall überschrieben werden.
+LFCORE_API INT LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, LFMusicGenre** ppMusicGenre);
 
 
 

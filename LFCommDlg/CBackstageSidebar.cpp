@@ -292,6 +292,27 @@ void CBackstageSidebar::AdjustLayout()
 	Invalidate();
 }
 
+CString CBackstageSidebar::FormatCount(UINT Count)
+{
+	CString tmpStr;
+
+	if (Count>=1000000)
+	{
+		tmpStr.Format(_T("%um"), Count/1000000);
+	}
+	else
+		if (Count>=1000)
+		{
+			tmpStr.Format(_T("%uk"), Count/1000);
+		}
+		else
+		{
+			tmpStr.Format(_T("%u"), Count);
+		}
+
+	return tmpStr;
+}
+
 
 BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_NCHITTEST()
@@ -513,23 +534,8 @@ void CBackstageSidebar::OnPaint()
 						dc.SetTextColor(Highlight ? colSel : colNum);
 					}
 
-					CString tmpStr;
-					if (m_Items[a].Count>=1000000)
-					{
-						tmpStr.Format(_T("%dm"), m_Items[a].Count/1000000);
-					}
-					else
-						if (m_Items[a].Count>=1000)
-						{
-							tmpStr.Format(_T("%dk"), m_Items[a].Count/1000);
-						}
-						else
-						{
-							tmpStr.Format(_T("%d"), m_Items[a].Count);
-						}
-
 					CFont* pOldFont = dc.SelectObject(clr!=(COLORREF)-1 ? &LFGetApp()->m_SmallBoldFont : &LFGetApp()->m_SmallFont);
-					dc.DrawText(tmpStr, rectCount, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (clr!=(COLORREF)-1 ? DT_CENTER : DT_RIGHT));
+					dc.DrawText(FormatCount(m_Items[a].Count), rectCount, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (clr!=(COLORREF)-1 ? DT_CENTER : DT_RIGHT));
 					dc.SelectObject(pOldFont);
 				}
 

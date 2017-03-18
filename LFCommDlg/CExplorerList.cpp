@@ -237,8 +237,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 	if (IsWindowEnabled())
 	{
-		DrawListItemBackground(dc, rect, Themed, GetFocus()==this,
-			GetHotItem()==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED, tag.Color);
+		DrawListItemBackground(dc, rect, Themed, GetFocus()==this, GetHotItem()==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED, tag.Color);
 	}
 	else
 	{

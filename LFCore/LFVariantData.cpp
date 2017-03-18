@@ -680,21 +680,21 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 		{
 		case LFTypeUnicodeString:
 			wcsncpy_s(pValue.UnicodeString, 256, pStr, 255);
-
 			pValue.IsNull = FALSE;
+
 			break;
 
 		case LFTypeUnicodeArray:
 			wcsncpy_s(pValue.UnicodeArray, 256, pStr, 255);
 			LFSanitizeUnicodeArray(pValue.UnicodeArray, 256);
-
 			pValue.IsNull = FALSE;
+
 			break;
 
 		case LFTypeAnsiString:
 			WideCharToMultiByte(CP_ACP, 0, pStr, -1, pValue.AnsiString, 256, NULL, NULL);
-
 			pValue.IsNull = FALSE;
+
 			break;
 
 		case LFTypeRating:
@@ -702,6 +702,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 			{
 				pValue.Rating = 1;
 				pValue.IsNull = FALSE;
+
 				return;
 			}
 
@@ -715,6 +716,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 							pValue.Rating++;
 
 					pValue.IsNull = FALSE;
+
 					return;
 				}
 
@@ -728,6 +730,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 				{
 					pValue.Rating = (BYTE)(Size*2);
 					pValue.IsNull = FALSE;
+
 					return;
 				}
 			}

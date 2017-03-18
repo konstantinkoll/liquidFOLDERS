@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
+#include "LFEditGenreDlg.h"
 #include "LFEditHashtagsDlg.h"
 #include "LFEditTimeDlg.h"
 
@@ -183,23 +184,7 @@ void CProperty::OnSetString(CString& Value) const
 
 	if (((p_Data->Attr!=LFAttrFileName) || (!Value.IsEmpty())) && (wcscmp(tmpStr, Value.GetBuffer())!=0))
 	{
-		p_Data->IsNull = FALSE;
-
-		switch (p_Data->Type)
-		{
-		case LFTypeUnicodeString:
-			wcsncpy_s(p_Data->UnicodeString, 256, Value, 255);
-			break;
-
-		case LFTypeUnicodeArray:
-			wcsncpy_s(p_Data->UnicodeArray, 256, Value, 255);
-			LFSanitizeUnicodeArray(p_Data->UnicodeArray, 256);
-			break;
-
-		case LFTypeAnsiString:
-			WideCharToMultiByte(CP_ACP, 0, Value, -1, p_Data->AnsiString, 256, NULL, NULL);
-			break;
-		}
+		LFVariantDataFromString(*p_Data, Value);
 
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
@@ -238,7 +223,7 @@ void CProperty::SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariant
 {
 	m_Multiple = Multiple;
 
-	m_ShowRange = Multiple && (pRangeFirst!=NULL) && (pRangeSecond!=NULL);
+	m_ShowRange = Multiple && (pRangeFirst!=NULL) && (pRangeSecond!=NULL) && (p_Data->Attr!=LFAttrGenre);
 
 	if (m_ShowRange)
 	{
@@ -350,8 +335,9 @@ BOOL CPropertyRating::OnClickValue(INT x)
 
 			if (p_Data->Rating!=(UCHAR)Rating)
 			{
-				p_Data->IsNull = FALSE;
 				p_Data->Rating = (UCHAR)Rating;
+				p_Data->IsNull = FALSE;
+
 				p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 			}
 		}
@@ -397,8 +383,9 @@ BOOL CPropertyRating::OnPushChar(UINT nChar)
 
 	if (p_Data->Rating!=(UCHAR)Rating)
 	{
-		p_Data->IsNull = FALSE;
 		p_Data->Rating = (UCHAR)Rating;
+		p_Data->IsNull = FALSE;
+
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
 
@@ -492,7 +479,6 @@ void CPropertyIATA::OnClickButton()
 	ASSERT(p_Parent);
 
 	LFSelectLocationIATADlg dlg(TRUE, NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
-
 	if (dlg.DoModal()==IDOK)
 		if (dlg.p_Airport)
 		{
@@ -516,8 +502,9 @@ void CPropertyIATA::OnClickButton()
 				p_LocationGPS->GeoCoordinates = dlg.p_Airport->Location;
 			}
 
-			p_Data->IsNull = FALSE;
 			strcpy_s(p_Data->AnsiString, 256, dlg.p_Airport->Code);
+			p_Data->IsNull = FALSE;
+
 			p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
 		}
 }
@@ -553,11 +540,11 @@ void CPropertyGPS::OnClickButton()
 	ASSERT(p_Parent);
 
 	LFSelectLocationGPSDlg dlg(p_Data->GeoCoordinates, p_Parent);
-
 	if (dlg.DoModal()==IDOK)
 	{
 		p_Data->GeoCoordinates = dlg.m_Location;
 		p_Data->IsNull = FALSE;
+
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
 }
@@ -593,7 +580,6 @@ void CPropertyTime::OnClickButton()
 	ASSERT(p_Parent);
 
 	LFEditTimeDlg dlg(p_Data, p_Parent);
-
 	if (dlg.DoModal()==IDOK)
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 }
@@ -610,6 +596,30 @@ CPropertyNumber::CPropertyNumber(LFVariantData* pData)
 CString CPropertyNumber::GetValidChars() const
 {
 	return _T("0123456789");
+}
+
+BOOL CPropertyNumber::HasButton() const
+{
+	return (p_Data->Attr==LFAttrGenre);
+}
+
+BOOL CPropertyNumber::OnClickValue(INT /*x*/)
+{
+	return (p_Data->Attr!=LFAttrGenre);
+}
+
+void CPropertyNumber::OnClickButton()
+{
+	ASSERT(p_Parent);
+
+	LFEditGenreDlg dlg(m_Multiple ? 0 : p_Data->UINT32, p_Parent->m_StoreID, p_Parent);
+	if (dlg.DoModal()==IDOK)
+	{
+		p_Data->UINT32 = dlg.GetSelectedGenre();
+		p_Data->IsNull = FALSE;
+
+		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+	}
 }
 
 
@@ -1380,12 +1390,12 @@ void CInspectorGrid::OnPaint()
 				CRect rectButton(rectLabel);
 				rectButton.right -= BORDER;
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
-				rectLabel.right -= rectButton.Width()+BORDER;
+				rectLabel.right -= rectButton.Width()+2*BORDER;
 
 				if (Themed)
 					rectButton.InflateRect(1, 1);
 
-				BOOL Pressed = m_PartPressed && (m_HotPart==PARTBUTTON);
+				const BOOL Pressed = m_PartPressed && (m_HotPart==PARTBUTTON);
 
 				DrawWhiteButtonBackground(dc, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON), FALSE, TRUE);
 

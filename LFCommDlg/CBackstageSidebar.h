@@ -59,6 +59,7 @@ public:
 	INT GetPreferredWidth() const;
 	INT GetMinHeight() const;
 	void SetSelection(UINT CmdID=0);
+	static CString FormatCount(UINT Count);
 
 protected:
 	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color=(COLORREF)-1);

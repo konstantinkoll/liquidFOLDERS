@@ -266,9 +266,9 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 		INT Item = m_FocusItem;
 		INT Column = (Item==-1) ? 0 : GetItemData(Item)->Column;
 		INT Row = (Item==-1) ? 0 : GetItemData(Item)->Row;
-		INT top = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.top;
-		INT bottom = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.bottom;
-		INT tmprow = -1;
+		INT Top = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.top;
+		INT Bottom = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.bottom;
+		INT TmpRow = -1;
 
 		switch (nChar)
 		{
@@ -321,7 +321,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 				if ((pData->Row<=Row) && (pData->Column<=Column) && pData->Hdr.Valid)
 				{
 					Item = a;
-					if (pData->Hdr.Rect.top<=bottom-rect.Height()+(INT)m_HeaderHeight)
+					if (pData->Hdr.Rect.top<=Bottom-rect.Height()+(INT)m_HeaderHeight)
 						break;
 				}
 			}
@@ -349,17 +349,17 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			{
 				GridItemData* pData = GetItemData(a);
 				if (pData->Row!=GetItemData(a-1)->Row)
-					if (pData->Hdr.Rect.bottom>=top+rect.Height()-(INT)m_HeaderHeight)
-						if (tmprow==-1)
+					if (pData->Hdr.Rect.bottom>=Top+rect.Height()-(INT)m_HeaderHeight)
+						if (TmpRow==-1)
 						{
-							tmprow = pData->Row;
+							TmpRow = pData->Row;
 						}
 						else
 						{
-							if (pData->Row>tmprow)
+							if (pData->Row>TmpRow)
 								break;
 						}
-				if (((tmprow==-1) || (pData->Column<=Column)) && pData->Hdr.Valid)
+				if (((TmpRow==-1) || (pData->Column<=Column)) && pData->Hdr.Valid)
 					Item = a;
 			}
 
@@ -443,9 +443,9 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 		INT Item = m_FocusItem;
 		INT Column = (Item==-1) ? 0 : GetItemData(Item)->Column;
 		INT Row = (Item==-1) ? 0 : GetItemData(Item)->Row;
-		INT left = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.left;
-		INT right = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.right;
-		INT tmpcol = -1;
+		INT Left = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.left;
+		INT Right = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.right;
+		INT TmpCol = -1;
 
 		switch (nChar)
 		{
@@ -472,7 +472,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 				if ((pData->Column<=Column) && (pData->Row<=Row) && pData->Hdr.Valid)
 				{
 					Item = a;
-					if (pData->Hdr.Rect.left<=right-rect.Width())
+					if (pData->Hdr.Rect.left<=Right-rect.Width())
 						break;
 				}
 			}
@@ -500,17 +500,17 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			{
 				GridItemData* pData = GetItemData(a);
 				if (pData->Column!=GetItemData(a-1)->Column)
-					if (pData->Hdr.Rect.right>=left+rect.Width())
-						if (tmpcol==-1)
+					if (pData->Hdr.Rect.right>=Left+rect.Width())
+						if (TmpCol==-1)
 						{
-							tmpcol = pData->Column;
+							TmpCol = pData->Column;
 						}
 						else
 						{
-							if (pData->Column>tmpcol)
+							if (pData->Column>TmpCol)
 								break;
 						}
-				if (((tmpcol==-1) || (pData->Row<=Row)) && pData->Hdr.Valid)
+				if (((TmpCol==-1) || (pData->Row<=Row)) && pData->Hdr.Valid)
 					Item = a;
 			}
 

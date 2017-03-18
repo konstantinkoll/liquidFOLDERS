@@ -319,6 +319,8 @@
 #define IDC_HIDE                        23302
 #define IDM_UPDATE                      23390
 #define IDM_UPDATE_RESTORE              23391
+#define IDD_EDITGENRE                   23400
+#define IDC_GENRELIST                   23401
 #define IDI_SHIELD_VISTA                32519
 #define IDI_READY                       32520
 

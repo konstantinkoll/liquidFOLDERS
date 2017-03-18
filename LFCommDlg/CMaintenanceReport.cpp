@@ -11,8 +11,10 @@
 
 extern INT GetAttributeIconIndex(UINT Attr);
 
-#define BORDERLEFT     15
-#define BORDER         10
+#define BORDER       5
+#define MARGIN       10
+#define PADDINGX     BACKSTAGEBORDER-BORDER
+#define PADDINGY     2
 
 CMaintenanceReport::CMaintenanceReport()
 	: CFrontstageWnd()
@@ -91,7 +93,7 @@ void CMaintenanceReport::AdjustScrollbars()
 
 void CMaintenanceReport::AdjustLayout()
 {
-	m_ScrollHeight = p_MaintenanceList ? p_MaintenanceList->m_ItemCount*m_ItemHeight+BORDER : 0;
+	m_ScrollHeight = p_MaintenanceList ? p_MaintenanceList->m_ItemCount*m_ItemHeight+2*BORDER : 0;
 
 	AdjustScrollbars();
 	Invalidate();
@@ -99,19 +101,22 @@ void CMaintenanceReport::AdjustLayout()
 
 void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed) const
 {
+	DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, FALSE, FALSE);
+
 	LFMaintenanceListItem* pItem = &(*p_MaintenanceList)[Index];
 
 	CRect rect(rectItem);
+	rect.DeflateRect(PADDINGX, PADDINGY);
 
 	// Icon
 	p_StoreIcons->Draw(&dc, pItem->Icon-1, CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), ILD_TRANSPARENT);
-	rect.left += m_IconSize+BORDER;
+	rect.left += m_IconSize+MARGIN;
 
 	// Badge
 	const HICON hIcon = (pItem->Result==LFOk) ? hIconReady : (pItem->Result<LFFirstFatalError) ? hIconWarning : hIconError;
 
 	DrawIconEx(dc, rect.right-m_BadgeSize+2, rect.top+(rect.Height()-m_BadgeSize)/2, hIcon, m_BadgeSize, m_BadgeSize, 0, NULL, DI_NORMAL);
-	rect.right -= m_BadgeSize+BORDER-2;
+	rect.right -= m_BadgeSize+MARGIN-2;
 
 	// Text
 	LPCWSTR pDescription = (pItem->Result==LFOk) ? pItem->Comments : m_ErrorText[pItem->Result];
@@ -159,7 +164,7 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	for (UINT a=0; a<LFErrorCount; a++)
 		LFGetErrorText(m_ErrorText[a], 256, a);
 
-	m_ItemHeight = max(48, 4*LFGetApp()->m_DefaultFont.GetFontHeight());
+	m_ItemHeight = max(48, 4*LFGetApp()->m_DefaultFont.GetFontHeight())+2*PADDINGY;
 
 	IMAGEINFO ii;
 	LFGetApp()->m_SystemImageListLarge.GetImageInfo(0, &ii);
@@ -206,7 +211,7 @@ void CMaintenanceReport::OnPaint()
 	{
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
-		CRect rectItem(BORDERLEFT, -m_VScrollPos+BORDER/2, rect.right-BORDER, -m_VScrollPos+BORDER/2+m_ItemHeight);
+		CRect rectItem(BORDER, -m_VScrollPos+BORDER, rect.right-BORDER, -m_VScrollPos+BORDER+m_ItemHeight);
 	
 		for (UINT a=0; a<p_MaintenanceList->m_ItemCount; a++)
 		{
@@ -252,11 +257,11 @@ void CMaintenanceReport::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 		break;
 
 	case SB_LINEUP:
-		nInc = -m_ItemHeight-BORDER-1;
+		nInc = -(INT)m_ItemHeight;
 		break;
 
 	case SB_LINEDOWN:
-		nInc = m_ItemHeight+BORDER+1;
+		nInc = (INT)m_ItemHeight;
 		break;
 
 	case SB_PAGEUP:
@@ -290,18 +295,21 @@ void CMaintenanceReport::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 
 void CMaintenanceReport::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
-	INT Item;
+	INT Index;
 
-	if ((p_MaintenanceList) && (point.x>=BORDERLEFT))
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	if ((p_MaintenanceList) && (point.x>=BORDER) && (point.x<rectClient.right-BORDER))
 	{
-		Item = (point.y+m_VScrollPos-BORDER/2)/m_ItemHeight;
+		Index = (point.y+m_VScrollPos-BORDER)/m_ItemHeight;
 
-		if ((Item<0) || (Item>=(INT)p_MaintenanceList->m_ItemCount))
-			Item = -1;
+		if ((Index<0) || (Index>=(INT)p_MaintenanceList->m_ItemCount))
+			Index = -1;
 	}
 	else
 	{
-		Item = -1;
+		Index = -1;
 	}
 
 	if (!m_Hover)
@@ -316,14 +324,22 @@ void CMaintenanceReport::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((LFGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
+	{
+		if ((LFGetApp()->IsTooltipVisible()) && (Index!=m_HotItem))
 			LFGetApp()->HideTooltip();
+	}
 
-	m_HotItem = Item;
+	if (m_HotItem!=Index)
+	{
+		m_HotItem = Index;
+
+		Invalidate();
+	}
 }
 
 void CMaintenanceReport::OnMouseLeave()
 {
+	Invalidate();
 	LFGetApp()->HideTooltip();
 
 	m_Hover = FALSE;

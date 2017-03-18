@@ -19,6 +19,7 @@ friend class CPropertyRating;
 friend class CPropertyIATA;
 friend class CPropertyGPS;
 friend class CPropertyTime;
+friend class CPropertyNumber;
 
 public:
 	CPropertyHolder();
@@ -180,6 +181,9 @@ public:
 	CPropertyNumber(LFVariantData* pData);
 
 	virtual CString GetValidChars() const;
+	virtual BOOL HasButton() const;
+	virtual BOOL OnClickValue(INT x);
+	virtual void OnClickButton();
 };
 
 

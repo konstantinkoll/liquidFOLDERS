@@ -393,6 +393,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGenreList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CHeaderArea.cpp"
 				>
 			</File>
@@ -522,6 +526,10 @@
 			</File>
 			<File
 				RelativePath=".\LFEditFilterDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFEditGenreDlg.cpp"
 				>
 			</File>
 			<File
@@ -985,6 +993,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGenreList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CHeaderArea.h"
 				>
 			</File>
@@ -1118,6 +1130,10 @@
 			</File>
 			<File
 				RelativePath=".\LFEditFilterDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFEditGenreDlg.h"
 				>
 			</File>
 			<File

@@ -43,9 +43,9 @@ protected:
 	HICON hIconReady;
 	HICON hIconWarning;
 	HICON hIconError;
-	INT m_ItemHeight;
-	INT m_IconSize;
-	INT m_BadgeSize;
+	UINT m_ItemHeight;
+	UINT m_IconSize;
+	UINT m_BadgeSize;
 	INT m_ScrollHeight;
 	INT m_VScrollPos;
 	INT m_VScrollMax;
