@@ -76,8 +76,8 @@ IDI_FLD_WORLDMUSIC      ICON                    "res\\FLD_WorldMusic.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,5,0
- PRODUCTVERSION 2,2,5,0
+ FILEVERSION 2,2,6,0
+ PRODUCTVERSION 2,2,6,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -94,13 +94,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.2.5"
+            VALUE "FileVersion", "2.2.6"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.2.5"
+            VALUE "ProductVersion", "2.2.6"
         END
     END
     BLOCK "VarFileInfo"

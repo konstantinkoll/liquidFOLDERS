@@ -56,7 +56,6 @@ void CListView::SetViewOptions(BOOL Force)
 		{
 		case LFViewLargeIcons:
 		case LFViewContent:
-		case LFViewPreview:
 			m_Icons[0] = &theApp.m_CoreImageListJumbo;
 			m_Icons[1] = (theApp.OSVersion<OS_Vista) ? &theApp.m_SystemImageListExtraLarge : &theApp.m_SystemImageListJumbo;
 
@@ -212,7 +211,6 @@ void CListView::AdjustLayout()
 	{
 	case LFViewLargeIcons:
 	case LFViewSmallIcons:
-	case LFViewPreview:
 		gva.cx = max(m_IconSize[0].cx, FontHeight*10);
 		gva.cy = m_IconSize[0].cy+FontHeight*2+PADDING;
 		gva.gutterx = gva.guttery = 3;
@@ -289,7 +287,6 @@ RECT CListView::GetLabelRect(INT Index) const
 	{
 	case LFViewLargeIcons:
 	case LFViewSmallIcons:
-	case LFViewPreview:
 		rect.top += m_IconSize[0].cy+2*PADDING;
 		break;
 
@@ -330,7 +327,6 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 	{
 	case LFViewLargeIcons:
 	case LFViewSmallIcons:
-	case LFViewPreview:
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
 
 		if (IsEditing() && (Index==m_EditLabel))
@@ -552,19 +548,17 @@ __forceinline void CListView::DrawIcon(CDC& dc, const CRect& rect, LFItemDescrip
 {
 	INT SysIconIndex = -1;
 
-#define JUMBOICON (m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview)
+//#define JUMBOICON 
 
 	if (!pItemDescriptor->IconID)
 	{
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
-		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview))
-			if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, pItemDescriptor))
-				return;
-
-		if (JUMBOICON)
+		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewLargeIcons))
 		{
-			theApp.m_FileFormats.DrawJumboIcon(dc, rect, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
+			if (!theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, pItemDescriptor))
+				theApp.m_FileFormats.DrawJumboIcon(dc, rect, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
+
 			return;
 		}
 

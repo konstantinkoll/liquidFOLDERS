@@ -152,11 +152,10 @@
 #define IDM_VIEW_TILES                  7005
 #define IDM_VIEW_STRIPS                 7006
 #define IDM_VIEW_CONTENT                7007
-#define IDM_VIEW_PREVIEW                7008
-#define IDM_VIEW_CALENDAR               7009
-#define IDM_VIEW_TIMELINE               7010
-#define IDM_VIEW_GLOBE                  7011
-#define IDM_VIEW_TAGCLOUD               7012
+#define IDM_VIEW_CALENDAR               7008
+#define IDM_VIEW_TIMELINE               7009
+#define IDM_VIEW_GLOBE                  7010
+#define IDM_VIEW_TAGCLOUD               7011
 
 // Next default values for new objects
 // 

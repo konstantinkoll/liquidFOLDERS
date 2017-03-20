@@ -72,8 +72,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	case LFViewTiles:
 	case LFViewStrips:
 	case LFViewContent:
-	case LFViewPreview:
-		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
+		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewContent))
 			pNewView = new CListView();
 
 		break;
@@ -1034,7 +1033,7 @@ void CMainView::OnUpdateHeaderCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_ORGANIZE_TOGGLEAUTODIRS:
 		pCmdUI->SetCheck((theApp.m_Views[m_Context].AutoDirs) || (m_Context>=LFContextSubfolderDefault));
-		pCmdUI->Enable((theApp.m_Contexts[m_Context].AllowGroups) && (theApp.m_Views[m_Context].Mode<=LFViewPreview));
+		pCmdUI->Enable((theApp.m_Contexts[m_Context].AllowGroups) && (theApp.m_Views[m_Context].Mode<=LFViewContent));
 		break;
 
 	default:
@@ -1113,7 +1112,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 		for (UINT a=0; a<LFViewCount; a++)
 			if (theApp.IsViewAllowed(m_Context, a))
 			{
-				if ((a>LFViewPreview) && (!Separator))
+				if ((a>LFViewContent) && (!Separator))
 				{
 					AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 					Separator = TRUE;

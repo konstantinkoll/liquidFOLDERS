@@ -59,10 +59,10 @@ BOOL OrganizeDlg::InitDialog()
 	m_wndSortDirection.SetCurSel(p_ViewParameters->Descending ? 1 : 0);
 
 	// Ggf. Elemente deaktivieren
-	if ((p_ViewParameters->Mode>LFViewPreview) || (!theApp.m_Contexts[m_Context].AllowGroups))
+	if ((p_ViewParameters->Mode>LFViewContent) || (!theApp.m_Contexts[m_Context].AllowGroups))
 		GetDlgItem(IDC_AUTODIRS)->EnableWindow(FALSE);
 
-	if (p_ViewParameters->Mode>LFViewPreview)
+	if (p_ViewParameters->Mode>LFViewContent)
 		GetDlgItem(IDC_SORTDIRECTION)->EnableWindow(FALSE);
 
 	return TRUE;

@@ -896,7 +896,7 @@ LRESULT CMainWnd::OnContextViewCommand(WPARAM wParam, LPARAM lParam)
 
 void CMainWnd::OnUpdateViewOptions()
 {
-	if ((m_wndMainView.GetViewID()>LFViewPreview) || (theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewPreview))
+	if ((m_wndMainView.GetViewID()>LFViewContent) || (theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewContent))
 	{
 		m_wndMainView.SelectNone();
 		OnCookFiles();
@@ -934,10 +934,10 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	LFViewParameters* vp = &theApp.m_Views[m_pRawFiles->m_Context];
 	LFAttributeDescriptor* Attr = &theApp.m_Attributes[vp->SortBy];
 
-	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
+	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewContent))
 	{
-		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewPreview) && vp->Descending) || (vp->Mode==LFViewTimeline),
-			((vp->Mode>LFViewPreview) && (vp->Mode!=LFViewTimeline)) || ((Attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
+		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewContent) && vp->Descending) || (vp->Mode==LFViewTimeline),
+			((vp->Mode>LFViewContent) && (vp->Mode!=LFViewTimeline)) || ((Attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			m_pActiveFilter);
 	}
 	else

@@ -58,8 +58,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,5,0
- PRODUCTVERSION 2,2,5,0
+ FILEVERSION 2,2,6,0
+ PRODUCTVERSION 2,2,6,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -76,13 +76,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.2.5"
+            VALUE "FileVersion", "2.2.6"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.2.5"
+            VALUE "ProductVersion", "2.2.6"
         END
     END
     BLOCK "VarFileInfo"
@@ -517,7 +517,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_VIEW_PREVIEW        "Vorschau"
     IDM_VIEW_CALENDAR       "Kalender"
     IDM_VIEW_TIMELINE       "Chronik"
     IDM_VIEW_GLOBE          "Globus"
@@ -948,7 +947,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_VIEW_PREVIEW        "Vista preliminar"
     IDM_VIEW_CALENDAR       "Calendario"
     IDM_VIEW_TIMELINE       "Crónica"
     IDM_VIEW_GLOBE          "Globo"
@@ -1379,7 +1377,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_VIEW_PREVIEW        "Aperçu"
     IDM_VIEW_CALENDAR       "Calendrier"
     IDM_VIEW_TIMELINE       "Chronique"
     IDM_VIEW_GLOBE          "Globe"
@@ -1861,7 +1858,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_VIEW_PREVIEW        "Preview"
     IDM_VIEW_CALENDAR       "Calendar"
     IDM_VIEW_TIMELINE       "Timeline"
     IDM_VIEW_GLOBE          "Globe"

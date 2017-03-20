@@ -74,7 +74,7 @@ BOOL CLiquidFoldersApp::InitInstance()
 	{
 		m_AllowedViews[a] = 0;
 
-		const UINT Count = (a==LFContextStores) ? LFViewLargeIcons : ((a<=LFLastGroupContext) || (a==LFContextSearch)) ? LFViewCount-1 : LFViewPreview;
+		const UINT Count = (a==LFContextStores) ? LFViewLargeIcons : ((a<=LFLastGroupContext) || (a==LFContextSearch)) ? LFViewCount-1 : LFViewContent;
 		for (UINT b=0; b<=Count; b++)
 			m_AllowedViews[a] |= 1<<b;
 	}
@@ -390,8 +390,9 @@ void CLiquidFoldersApp::LoadViewOptions(UINT Context)
 		DefaultMode = LFViewDetails;
 		break;
 
+	case LFContextStores:
 	case LFContextSubfolderDay:
-		DefaultMode = LFViewPreview;
+		DefaultMode = LFViewLargeIcons;
 		break;
 
 	case LFContextTrash:
@@ -402,10 +403,6 @@ void CLiquidFoldersApp::LoadViewOptions(UINT Context)
 	case LFContextSearch:
 	case LFContextClipboard:
 		DefaultMode = LFViewContent;
-		break;
-
-	case LFContextStores:
-		DefaultMode = LFViewLargeIcons;
 		break;
 	}
 

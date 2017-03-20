@@ -15,13 +15,12 @@
 #define LFViewTiles                4
 #define LFViewStrips               5
 #define LFViewContent              6
-#define LFViewPreview              7
-#define LFViewCalendar             8
-#define LFViewTimeline             9
-#define LFViewGlobe               10
-#define LFViewTagcloud            11
+#define LFViewCalendar             7
+#define LFViewTimeline             8
+#define LFViewGlobe                9
+#define LFViewTagcloud            10
 
-#define LFViewCount               12
+#define LFViewCount               11
 
 #define HorizontalScrollWidth     64
 

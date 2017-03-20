@@ -1268,7 +1268,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					switch (pItemDescriptor->Type & LFTypeMask)
 					{
 					case LFTypeFile:
-						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview) && (theApp.m_Views[m_Context].Mode!=LFViewTimeline))
+						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewLargeIcons) && (theApp.m_Views[m_Context].Mode!=LFViewTimeline))
 						{
 							CDC* pDC = GetDC();
 							hBitmap = theApp.m_ThumbnailCache.GetThumbnailBitmap(pItemDescriptor, pDC);
