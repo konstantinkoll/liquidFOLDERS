@@ -377,11 +377,12 @@ void CLiquidFoldersApp::LoadViewOptions(UINT Context)
 		break;
 
 	case LFContextAudio:
-		DefaultMode = LFViewLargeIcons;
+		DefaultMode = LFViewList;
 		DefaultSortBy = LFAttrArtist;
 		break;
 
 	case LFContextNew:
+		DefaultMode = LFViewLargeIcons;
 		DefaultSortBy = LFAttrAddTime;
 		break;
 

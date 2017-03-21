@@ -18,8 +18,8 @@ extern INT GetAttributeIconIndex(UINT Attr);
 CGenreList::CGenreList()
 	: CFrontstageWnd()
 {
-	m_CategoriesHeight = m_FocusItem = m_VScrollMax = m_VScrollPos = 0;
-	m_ItemsHeight = m_HotItem = -1;
+	m_CategoriesHeight = m_VScrollMax = m_VScrollPos = 0;
+	m_ItemsHeight = m_FocusItem = m_HotItem = -1;
 	m_IsFirstItemInCategory = m_Hover = FALSE;
 }
 
@@ -147,6 +147,10 @@ void CGenreList::AdjustLayout()
 
 void CGenreList::EnsureVisible(INT Index)
 {
+	// Only make visible if item is focused
+	if (Index<0)
+		return;
+
 	CRect rect;
 	GetClientRect(rect);
 

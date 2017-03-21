@@ -3,8 +3,9 @@
 // Used by LFCommDlg.rc
 //
 #define IDR_APPLICATION                 128
-#define IDR_FILEDROP                    129
-#define IDR_CLIPBOARD                   130
+#define IDR_CLIPBOARD                   129
+#define IDR_FILEDROP                    130
+#define IDR_PLAYER                      131
 #define IDM_BACKSTAGE_TOGGLESIDEBAR     200
 #define IDM_BACKSTAGE_PURCHASE          201
 #define IDM_BACKSTAGE_ENTERLICENSEKEY   202

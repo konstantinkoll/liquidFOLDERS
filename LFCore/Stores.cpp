@@ -1624,7 +1624,7 @@ void InitStores()
 			}
 
 			// Choose new default store if neccessary
-			if ((!DefaultStoreOk) && (StoreCount))
+			if (!DefaultStoreOk)
 				ChooseNewDefaultStore();
 		}
 

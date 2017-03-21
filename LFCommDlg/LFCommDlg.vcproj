@@ -703,7 +703,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Clipboard_Small.ico"
+				RelativePath=".\res\Clipboard.ico"
 				>
 			</File>
 			<File
@@ -756,6 +756,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Minimize.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Player.ico"
 				>
 			</File>
 			<File

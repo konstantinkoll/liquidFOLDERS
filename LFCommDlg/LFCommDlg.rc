@@ -61,8 +61,9 @@ IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_APPLICATION         ICON                    "res\\liquidFOLDERS.ico"
-IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
+IDR_CLIPBOARD           ICON                    "res\\Clipboard.ico"
 IDR_FILEDROP            ICON                    "res\\FileDrop.ico"
+IDR_PLAYER              ICON                    "res\\Player.ico"
 IDI_MINIMIZE            ICON                    "res\\Minimize.ico"
 IDI_MAXIMIZE            ICON                    "res\\Maximize.ico"
 IDI_RESTORE             ICON                    "res\\Restore.ico"
@@ -884,8 +885,9 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
-    IDR_FILEDROP            "FileDrop"
     IDR_CLIPBOARD           "Zwischenablage"
+    IDR_FILEDROP            "FileDrop"
+    IDR_PLAYER              "Medienwiedergabe"
 END
 
 STRINGTABLE 
@@ -1727,8 +1729,9 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
-    IDR_FILEDROP            "FileDrop"
     IDR_CLIPBOARD           "Portapapeles"
+    IDR_FILEDROP            "FileDrop"
+    IDR_PLAYER              "Reproducción de Medios"
 END
 
 STRINGTABLE 
@@ -2569,8 +2572,9 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
-    IDR_FILEDROP            "FileDrop"
     IDR_CLIPBOARD           "Presse-papiers"
+    IDR_FILEDROP            "FileDrop"
+    IDR_PLAYER              "Lecture Multimédia"
 END
 
 STRINGTABLE 
@@ -3454,8 +3458,9 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
-    IDR_FILEDROP            "FileDrop"
     IDR_CLIPBOARD           "Clipboard"
+    IDR_FILEDROP            "FileDrop"
+    IDR_PLAYER              "Media Player"
 END
 
 STRINGTABLE 
