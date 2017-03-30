@@ -16,7 +16,7 @@ struct BreadcrumbItem
 };
 
 void AddBreadcrumbItem(BreadcrumbItem** pBreadcrumbItem, LFFilter* pFilter, FVPersistentData& Data);
-void ConsumeBreadcrumbItem(BreadcrumbItem** pBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* Data);
+void ConsumeBreadcrumbItem(BreadcrumbItem** pBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* pPersistentData);
 void DeleteBreadcrumbs(BreadcrumbItem** pBreadcrumbItem);
 
 

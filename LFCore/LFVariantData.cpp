@@ -679,13 +679,13 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 		switch(pValue.Type)
 		{
 		case LFTypeUnicodeString:
-			wcsncpy_s(pValue.UnicodeString, 256, pStr, 255);
+			wcsncpy_s(pValue.UnicodeString, 256, pStr, _TRUNCATE);
 			pValue.IsNull = FALSE;
 
 			break;
 
 		case LFTypeUnicodeArray:
-			wcsncpy_s(pValue.UnicodeArray, 256, pStr, 255);
+			wcsncpy_s(pValue.UnicodeArray, 256, pStr, _TRUNCATE);
 			LFSanitizeUnicodeArray(pValue.UnicodeArray, 256);
 			pValue.IsNull = FALSE;
 

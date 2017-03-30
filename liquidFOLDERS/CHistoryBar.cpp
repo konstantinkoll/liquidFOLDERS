@@ -19,15 +19,15 @@ void AddBreadcrumbItem(BreadcrumbItem** ppBreadcrumbItem, LFFilter* pFilter, FVP
 	*ppBreadcrumbItem = pNewItem;
 }
 
-void ConsumeBreadcrumbItem(BreadcrumbItem** ppBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* Data)
+void ConsumeBreadcrumbItem(BreadcrumbItem** ppBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* pPersistentData)
 {
 	*ppFilter = NULL;
-	ZeroMemory(Data, sizeof(FVPersistentData));
+	ZeroMemory(pPersistentData, sizeof(FVPersistentData));
 
 	if (*ppBreadcrumbItem)
 	{
 		*ppFilter = (*ppBreadcrumbItem)->pFilter;
-		*Data = (*ppBreadcrumbItem)->Data;
+		*pPersistentData = (*ppBreadcrumbItem)->Data;
 
 		BreadcrumbItem* pVictim = *ppBreadcrumbItem;
 		*ppBreadcrumbItem = (*ppBreadcrumbItem)->pNext;

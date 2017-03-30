@@ -21,7 +21,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard);
 	void UpdateViewOptions();
-	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
+	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, BOOL UpdateSelection=TRUE);
 	BOOL StoreIDValid() const;
 	LPCSTR GetStoreID() const;
 	INT GetContext() const;
@@ -132,7 +132,7 @@ protected:
 	BOOL m_Alerted;
 
 private:
-	BOOL CreateFileView(UINT ViewID, FVPersistentData* Data);
+	BOOL CreateFileView(UINT ViewID, FVPersistentData* pPersistentData);
 	void SetHeaderButtons();
 	void SetHeader();
 	void AdjustLayout(UINT nFlags=SWP_NOACTIVATE | SWP_NOZORDER);

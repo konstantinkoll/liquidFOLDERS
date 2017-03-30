@@ -301,7 +301,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			Value.Type = LFTypeUnicodeString;
 			Value.IsNull = FALSE;
 
-			wcsncpy_s(Value.UnicodeString, 256, pDispInfo->item.pszText, 255);
+			wcsncpy_s(Value.UnicodeString, 256, pDispInfo->item.pszText, _TRUNCATE);
 
 			LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &Value);
 			LFErrorBox(this, pTransactionList->m_LastError);

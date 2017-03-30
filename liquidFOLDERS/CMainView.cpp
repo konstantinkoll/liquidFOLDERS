@@ -59,7 +59,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 	return CFrontstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
+BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* pPersistentData)
 {
 	CFileView* pNewView = NULL;
 
@@ -118,7 +118,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 			rect.SetRectEmpty();
 		}
 
-		pNewView->Create(this, FileViewID, rect, p_RawFiles, p_CookedFiles, Data);
+		pNewView->Create(this, FileViewID, rect, p_RawFiles, p_CookedFiles, pPersistentData);
 
 		CFileView* pVictim = m_pWndFileView;
 
@@ -212,7 +212,7 @@ void CMainView::UpdateViewOptions()
 	}
 }
 
-void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL UpdateSelection)
+void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL UpdateSelection)
 {
 	p_Filter = pFilter;
 	p_RawFiles = pRawFiles;
@@ -240,10 +240,10 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	{
 		m_Context = pCookedFiles->m_Context;
 
-		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, Data))
+		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, pPersistentData))
 		{
 			m_pWndFileView->UpdateViewOptions(m_Context);
-			m_pWndFileView->UpdateSearchResult(pRawFiles, pCookedFiles, Data);
+			m_pWndFileView->UpdateSearchResult(pRawFiles, pCookedFiles, pPersistentData);
 		}
 
 		m_DropTarget.SetFilter(pFilter);
@@ -890,7 +890,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	Value.Type = LFTypeUnicodeString;
 	Value.IsNull = FALSE;
 
-	wcsncpy_s(Value.UnicodeString, 256, (WCHAR*)lParam, 255);
+	wcsncpy_s(Value.UnicodeString, 256, (WCHAR*)lParam, _TRUNCATE);
 
 	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &Value);
 

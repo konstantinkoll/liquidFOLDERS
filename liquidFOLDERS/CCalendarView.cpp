@@ -13,7 +13,6 @@
 #define GetItemData(Index)     ((CalendarItemData*)(m_ItemData+(Index)*m_DataSize))
 #define PADDING                2
 #define MARGIN                 BACKSTAGEBORDER
-#define GUTTER                 20
 #define COLUMNGUTTER           8
 #define EXTRA                  (COLUMNGUTTER/2)
 #define EMPTY                  ((UINT)-1)
@@ -34,8 +33,8 @@ void CCalendarView::SetViewOptions(BOOL Force)
 		SYSTEMTIME st;
 		GetLocalTime(&st);
 
-		ASSERT(st.wYear>=MINYEAR);
-		ASSERT(st.wYear<=MAXYEAR);
+		ASSERT((st.wYear>=MINYEAR) && (st.wYear<=MAXYEAR));
+
 		m_Year = st.wYear;
 	}
 
@@ -46,35 +45,35 @@ void CCalendarView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CCalendarView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
+void CCalendarView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CFileView::SetSearchResult(pRawFiles, pCookedFiles, Data);
+	CFileView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = (*p_CookedFiles)[a];
-			if (i->AttributeValues[m_ViewParameters.SortBy])
-				if (*((INT64*)i->AttributeValues[m_ViewParameters.SortBy]))
+			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+			if (pItemDescriptor->AttributeValues[m_ViewParameters.SortBy])
+				if (*((INT64*)pItemDescriptor->AttributeValues[m_ViewParameters.SortBy]))
 				{
 					CalendarItemData* pData = GetItemData(a);
 					pData->Hdr.Valid = TRUE;
 
 					SYSTEMTIME stUTC;
-					FileTimeToSystemTime((FILETIME*)i->AttributeValues[m_ViewParameters.SortBy], &stUTC);
+					FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[m_ViewParameters.SortBy], &stUTC);
 					SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &pData->Time);
 				}
 		}
 
-	if (Data)
-		if ((Data->Year>=MINYEAR) && (Data->Year<=MAXYEAR))
-			m_Year = Data->Year;
+	if (pPersistentData)
+		if ((pPersistentData->Year>=MINYEAR) && (pPersistentData->Year<=MAXYEAR))
+			m_Year = pPersistentData->Year;
 }
 
 void CCalendarView::SetYear(UINT Year)
 {
-	ASSERT(Year>=MINYEAR);
-	ASSERT(Year<=MAXYEAR);
+	ASSERT((Year>=MINYEAR) && (Year<=MAXYEAR));
+
 	m_Year = Year;
 
 	if (p_CookedFiles)
@@ -92,6 +91,7 @@ void CCalendarView::AdjustLayout()
 {
 	CRect rectWindow;
 	GetWindowRect(rectWindow);
+
 	if (!rectWindow.Width())
 		return;
 
@@ -107,9 +107,12 @@ Restart:
 	INT x = MARGIN;
 	INT y = MARGIN;
 
-	INT MonthsPerRow = (rectWindow.Width()-2*MARGIN+GUTTER-1)/(sz.cx+GUTTER);
+	INT MonthsPerRow = (rectWindow.Width()-MARGIN)/(sz.cx+MARGIN);
+
+	// Only allow some layouts
 	MonthsPerRow = (MonthsPerRow<1) ? 1 : (MonthsPerRow==5) ? 4 : ((MonthsPerRow>6) && (MonthsPerRow<12)) ? 6 : MonthsPerRow;
 
+	// Layout months
 	for (UINT a=0; a<12; a++)
 	{
 		memset(&m_Months[a].Matrix, EMPTY, sizeof(m_Months[a].Matrix));
@@ -123,33 +126,28 @@ Restart:
 		lpRect->right = x+sz.cx;
 		lpRect->bottom = y+sz.cy;
 
-		x += sz.cx+GUTTER;
+		x += sz.cx+MARGIN;
 		if (lpRect->right>m_ScrollWidth)
 			m_ScrollWidth = lpRect->right-1;
 
 		if (lpRect->bottom+MARGIN>m_ScrollHeight)
-		{
-			m_ScrollHeight = lpRect->bottom+MARGIN;
-			if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars))
+			if (((m_ScrollHeight=lpRect->bottom+MARGIN)>rectWindow.Height()) && (!HasScrollbars))
 			{
 				HasScrollbars = TRUE;
 				rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL);
 				goto Restart;
 			}
-		}
 
 		if (++Column>=MonthsPerRow)
 		{
 			Column = 0;
 			x = MARGIN;
-			y += sz.cy+GUTTER;
+			y += sz.cy+MARGIN;
 		}
 	}
 
+	// Layout days/items
 	if (p_CookedFiles)
-	{
-		const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
-
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			CalendarItemData* pData = GetItemData(a);
@@ -157,25 +155,25 @@ Restart:
 			{
 				ASSERT(pData->Time.wMonth<=12);
 				ASSERT(pData->Time.wDay<=31);
-				CalendarMonth* m = &m_Months[pData->Time.wMonth-1];
+
+				CalendarMonth* pMonth = &m_Months[pData->Time.wMonth-1];
 
 				UINT Day = pData->Time.wDay-1;
-				m->Matrix[Day] = a;
+				pMonth->Matrix[Day] = a;
 
-				Day += m->SOM;
+				Day += pMonth->SOM;
 
 				const LPRECT lpRect = &pData->Hdr.Rect;
 
-				lpRect->left = m->Rect.left+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
-				lpRect->top = m->Rect.top+theApp.m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING+(Day/7)*(FontHeight+2*PADDING-1);
+				lpRect->left = pMonth->Rect.left+(Day%7)*(m_ColumnWidth+COLUMNGUTTER)+CARDPADDING;
+				lpRect->top = pMonth->Rect.top+m_LargeFontHeight+2*LFCATEGORYPADDING+(Day/7)*(m_DefaultFontHeight+2*PADDING-1)+CARDPADDING;
 
 				if (m_ShowCaptions)
-					lpRect->top += FontHeight+LFCATEGORYPADDING;
+					lpRect->top += m_DefaultFontHeight+LFCATEGORYPADDING;
 
 				lpRect->right = lpRect->left+m_ColumnWidth;
-				lpRect->bottom = lpRect->top+FontHeight+2*PADDING;
+				lpRect->bottom = lpRect->top+m_DefaultFontHeight+2*PADDING;
 			}
-		}
 	}
 
 	CFileView::AdjustLayout();
@@ -198,20 +196,21 @@ void CCalendarView::GetPersistentData(FVPersistentData& Data) const
 
 BOOL CCalendarView::IsLeapYear() const
 {
-	if (m_Year&3)
+	if (m_Year & 3)
 		return FALSE;
 
-	if ((m_Year%400)==0)
+	if ((m_Year % 400)==0)
 		return TRUE;
 
-	return (m_Year%100)!=0;
+	return (m_Year % 100)!=0;
 }
 
 UINT CCalendarView::DaysOfMonth(UINT Month) const
 {
+	ASSERT(Month<12);
+
 	static const UINT DOM[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-	ASSERT(Month<12);
 	UINT Days = DOM[Month];
 
 	if (Month==1)
@@ -223,19 +222,20 @@ UINT CCalendarView::DaysOfMonth(UINT Month) const
 
 UINT CCalendarView::StartOfMonth(UINT Month) const
 {
+	ASSERT(Month<12);
+
 	static const UINT SOM[12] = { 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
 
-	ASSERT(Month<12);
-	UINT D = (7-m_FirstDayOfWeek)%7;
+	UINT D = (7-m_FirstDayOfWeek) % 7;
 	UINT M = SOM[Month];
-	UINT Y = ((m_Year%100)+((m_Year%100)/4))%7;
-	UINT C = (3-((m_Year/100)%4))*2;
+	UINT Y = ((m_Year % 100)+((m_Year % 100)/4)) % 7;
+	UINT C = (3-((m_Year/100) % 4))*2;
 
 	if (Month<=1)
 		if (IsLeapYear())
 			D += 6;
 
-	return (D+M+Y+C)%7;
+	return (D+M+Y+C) % 7;
 }
 
 void CCalendarView::GetMonthSize(LPSIZE lpSize)
@@ -244,40 +244,42 @@ void CCalendarView::GetMonthSize(LPSIZE lpSize)
 
 	m_ColumnWidth = theApp.m_DefaultFont.GetTextExtent(_T("00")).cx+2*PADDING;
 
-	lpSize->cx = 7*m_ColumnWidth+6*COLUMNGUTTER;
-	lpSize->cy = theApp.m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING+6*(theApp.m_DefaultFont.GetFontHeight()+2*PADDING-1)+1;
+	lpSize->cx = 7*m_ColumnWidth+6*COLUMNGUTTER+2*CARDPADDING;
+	lpSize->cy = m_LargeFontHeight+2*LFCATEGORYPADDING+6*(m_DefaultFontHeight+2*PADDING-1)+1+2*CARDPADDING;
 
 	if (m_ShowCaptions)
-		lpSize->cy += theApp.m_DefaultFont.GetFontHeight();
+		lpSize->cy += m_DefaultFontHeight+LFCATEGORYPADDING;
 }
 
-void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
+void CCalendarView::DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month, BOOL Themed)
 {
-	ASSERT(GUTTER>COLUMNGUTTER);
+	DrawCardForeground(dc, g, rectMonth, Themed);
 
-	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
+	rectMonth.DeflateRect(CARDPADDING, CARDPADDING);
+	rectMonth.top -= LFCATEGORYPADDING;
 
 	// Header
 	ItemCategory ic = { 0 };
 	swprintf_s(ic.Caption, 256, m_Months[Month].Name, m_Year);
-	DrawCategory(dc, lpRect, ic.Caption, ic.Hint, Themed);
 
-	lpRect->top += theApp.m_LargeFont.GetFontHeight()+LFCATEGORYPADDING;
-	CRect rectItem(0, lpRect->top, m_ColumnWidth+2*EXTRA, lpRect->top+FontHeight+2*PADDING);
+	DrawCategory(dc, rectMonth, ic.Caption, ic.Hint, Themed);
+
+	rectMonth.top += m_LargeFontHeight+2*LFCATEGORYPADDING;
+	CRect rectItem(0, rectMonth.top, m_ColumnWidth+2*EXTRA, rectMonth.top+m_DefaultFontHeight+2*PADDING);
 
 	// Days
 	if (m_ShowCaptions)
 	{
 		for (UINT a=0; a<7; a++)
 		{
-			rectItem.MoveToX(lpRect->left+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
+			rectItem.MoveToX(rectMonth.left+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
 			dc.DrawText(m_Days[a], rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER | DT_TOP);
 		}
 
-		lpRect->top += FontHeight+LFCATEGORYPADDING;
+		rectMonth.top += m_DefaultFontHeight+LFCATEGORYPADDING;
 	}
 
-	lpRect->top += LFCATEGORYPADDING;
+	rectMonth.top += LFCATEGORYPADDING;
 	rectItem.DeflateRect(EXTRA, 0);
 
 	// Matrix
@@ -288,7 +290,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
 
 	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
-		rectItem.MoveToXY(lpRect->left+Column*(m_ColumnWidth+COLUMNGUTTER), lpRect->top+Row*(FontHeight+2*PADDING-1));
+		rectItem.MoveToXY(rectMonth.left+Column*(m_ColumnWidth+COLUMNGUTTER), rectMonth.top+Row*(m_DefaultFontHeight+2*PADDING-1));
 
 		if (m_Months[Month].Matrix[Day]!=EMPTY)
 		{
@@ -314,6 +316,18 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed)
 			Column = 0;
 			Row++;
 		}
+	}
+}
+
+void CCalendarView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
+{
+	if (IsCtrlThemed())
+	{
+		Invalidate();
+	}
+	else
+	{
+		CFileView::ScrollWindow(dx, dy, lpRect, lpClipRect);
 	}
 }
 
@@ -376,10 +390,14 @@ void CCalendarView::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
-	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-	dc.FillSolidRect(rect, bkCol);
+	Graphics g(dc);
 
+	// Background
+	BOOL Themed = IsCtrlThemed();
+
+	DrawCardBackground(dc, g, rect, Themed);
+
+	// Items
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 	RECT rectIntersect;
@@ -390,7 +408,7 @@ void CCalendarView::OnPaint()
 		rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 
 		if (IntersectRect(&rectIntersect, rect, rectUpdate))
-			DrawMonth(dc, rect, a, Themed);
+			DrawMonth(dc, g, rect, a, Themed);
 	}
 
 	DrawWindowEdge(dc, Themed);

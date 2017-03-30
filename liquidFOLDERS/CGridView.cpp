@@ -26,6 +26,7 @@ void CGridView::AddItemCategory(WCHAR* Caption, WCHAR* Hint)
 {
 	ItemCategory ic;
 	ZeroMemory(&ic, sizeof(ic));
+
 	wcscpy_s(ic.Caption, 256, Caption);
 	wcscpy_s(ic.Hint, 256, Hint);
 
@@ -102,10 +103,10 @@ Restart:
 
 				lpRect->left = lpRect->right = x;
 				lpRect->top = y;
-				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight();
+				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+m_LargeFontHeight;
 
 				if (m_Categories[Category].Hint[0]!=L'\0')
-					lpRect->bottom += theApp.m_DefaultFont.GetFontHeight();;
+					lpRect->bottom += m_DefaultFontHeight;
 
 				y = lpRect->bottom+4;
 			}
@@ -169,7 +170,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	INT Top = gva.my;
 	if (m_HasCategories)
-		Top += 2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight()+4;
+		Top += 2*LFCATEGORYPADDING+m_LargeFontHeight+4;
 
 	const INT cx = gva.cx+2*gva.padding;
 	const INT cy = gva.cy+2*gva.padding;
@@ -214,7 +215,7 @@ Restart:
 				const LPRECT lpRect = &m_Categories[Category].Rect;
 				lpRect->left = x;
 				lpRect->top = gva.my;
-				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+theApp.m_LargeFont.GetFontHeight();
+				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+m_LargeFontHeight;
 			}
 
 		GridItemData* pData = GetItemData(a);

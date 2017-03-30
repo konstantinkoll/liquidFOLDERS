@@ -108,9 +108,9 @@ void CListView::SetViewOptions(BOOL Force)
 	AdjustHeader((p_ViewParameters->Mode==LFViewDetails) && (p_CookedFiles));
 }
 
-void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
+void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pRawFiles, pCookedFiles, Data);
+	CGridView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 	{
@@ -203,16 +203,14 @@ void CListView::AdjustLayout()
 	m_HeaderHeight = wp.cy;
 
 	// Items
-	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
-
 	GVArrange gva = { 0, 0, BACKSTAGEBORDER, BACKSTAGEBORDER, PADDING, 1, -1 };
 
 	switch (m_ViewParameters.Mode)
 	{
 	case LFViewLargeIcons:
 	case LFViewSmallIcons:
-		gva.cx = max(m_IconSize[0].cx, FontHeight*10);
-		gva.cy = m_IconSize[0].cy+FontHeight*2+PADDING;
+		gva.cx = max(m_IconSize[0].cx, m_DefaultFontHeight*10);
+		gva.cy = m_IconSize[0].cy+m_DefaultFontHeight*2+PADDING;
 		gva.gutterx = gva.guttery = 3;
 
 		ArrangeHorizontal(gva);
@@ -225,7 +223,7 @@ void CListView::AdjustLayout()
 		if (gva.cx<140)
 			gva.cx = 140;
 
-		gva.cy = max(m_IconSize[0].cy, FontHeight);
+		gva.cy = max(m_IconSize[0].cy, m_DefaultFontHeight);
 		gva.gutterx = 6;
 
 		if (!m_HasCategories)
@@ -241,7 +239,7 @@ void CListView::AdjustLayout()
 		for (UINT a=0; a<LFAttributeCount; a++)
 			gva.cx += m_ViewParameters.ColumnWidth[a];
 
-		gva.cy = max(m_IconSize[0].cy, FontHeight);
+		gva.cy = max(m_IconSize[0].cy, m_DefaultFontHeight);
 
 		if (!m_HasCategories)
 			gva.my = 0;
@@ -251,8 +249,8 @@ void CListView::AdjustLayout()
 		break;
 
 	case LFViewTiles:
-		gva.cx = 15*FontHeight;
-		gva.cy = max(m_IconSize[0].cy, FontHeight*3+max(FontHeight, 18));
+		gva.cx = 15*m_DefaultFontHeight;
+		gva.cy = max(m_IconSize[0].cy, m_DefaultFontHeight*3+max(m_DefaultFontHeight, 18));
 		gva.gutterx = gva.guttery = 3;
 
 		ArrangeHorizontal(gva, FALSE);
@@ -260,7 +258,7 @@ void CListView::AdjustLayout()
 		break;
 
 	case LFViewStrips:
-		gva.cy = 2+max(m_IconSize[0].cy, max(FontHeight*3+theApp.m_LargeFont.GetFontHeight(), FontHeight*2+max(FontHeight, 18)*2+1));
+		gva.cy = 2+max(m_IconSize[0].cy, max(m_DefaultFontHeight*3+m_LargeFontHeight, m_DefaultFontHeight*2+max(m_DefaultFontHeight, 18)*2+1));
 
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
 
@@ -320,8 +318,6 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 	CRect rectLabel(rect);
 	CRect rectLeft(rect);
 	CRect rectRight(rect);
-
-	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
 
 	switch (m_ViewParameters.Mode)
 	{
@@ -400,7 +396,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
-		rectLabel.left += m_IconSize[0].cx+FontHeight/2;
+		rectLabel.left += m_IconSize[0].cx+m_DefaultFontHeight/2;
 
 		Rows[0] = LFAttrFileName;
 		switch (pItemDescriptor->Type & LFTypeMask)
@@ -437,7 +433,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
-		rectLeft.left += m_IconSize[0].cx+FontHeight/2;
+		rectLeft.left += m_IconSize[0].cx+m_DefaultFontHeight/2;
 		rectLeft.top++;
 		Right = (rect.Width()>600) && (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) || ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile));
 		if (Right)
@@ -471,7 +467,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 		if (Right)
 		{
 			rectRight.left = rectLeft.right+2*PADDING;
-			rectRight.top += 1+theApp.m_LargeFont.GetFontHeight()-FontHeight;
+			rectRight.top += 1+m_LargeFontHeight-m_DefaultFontHeight;
 
 			switch (pItemDescriptor->Type & LFTypeMask)
 			{
@@ -516,7 +512,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
-		rectLeft.left += m_IconSize[0].cx+FontHeight/2;
+		rectLeft.left += m_IconSize[0].cx+m_DefaultFontHeight/2;
 		rectLeft.top++;
 
 		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrFileName, Themed);
@@ -548,8 +544,6 @@ __forceinline void CListView::DrawIcon(CDC& dc, const CRect& rect, LFItemDescrip
 {
 	INT SysIconIndex = -1;
 
-//#define JUMBOICON 
-
 	if (!pItemDescriptor->IconID)
 	{
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
@@ -577,7 +571,7 @@ void CListView::AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, 
 	switch (Attr)
 	{
 	case LFAttrFileName:
-		wcsncpy_s(tmpStr, cCount, GetLabel(pItemDescriptor), 255);
+		wcsncpy_s(tmpStr, cCount, GetLabel(pItemDescriptor), _TRUNCATE);
 		break;
 
 	case LFAttrFileFormat:
@@ -595,8 +589,6 @@ __forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescripto
 	UINT Cnt = 0;
 	UINT Height = 0;
 
-	const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
-
 	for (UINT a=0; a<4; a++)
 	{
 		tmpStr[a][0] = L'\0';
@@ -613,13 +605,13 @@ __forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescripto
 				if (tmpStr[a][0]!=L'\0')
 				{
 					Cnt++;
-					Height += FontHeight;
+					Height += m_DefaultFontHeight;
 				}
 			}
 	}
 
 	rect.top += (rect.Height()-Height)/2;
-	rect.bottom = rect.top+max(FontHeight, 18);
+	rect.bottom = rect.top+max(m_DefaultFontHeight, 18);
 
 	for (UINT a=0; a<4; a++)
 	{
@@ -633,7 +625,7 @@ __forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescripto
 			if (tmpStr[a][0]!=L'\0')
 			{
 				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-				rect.OffsetRect(0, FontHeight);
+				rect.OffsetRect(0, m_DefaultFontHeight);
 			}
 
 		if (Rows[a]==LFAttrFileName)
@@ -689,7 +681,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescri
 		DrawLabel(dc, rect, pItemDescriptor, DT_LEFT | DT_SINGLELINE);
 		dc.SelectObject(pOldFont);
 
-		rect.top += theApp.m_LargeFont.GetFontHeight();
+		rect.top += m_LargeFontHeight;
 
 		break;
 
@@ -717,7 +709,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescri
 
 		if (tmpStr[0]!=L'\0')
 		{
-			if (rect.top>rect.bottom-theApp.m_DefaultFont.GetFontHeight())
+			if (rect.top>rect.bottom-m_DefaultFontHeight)
 				return;
 
 			COLORREF oldColor = dc.GetTextColor();
@@ -743,7 +735,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescri
 				return;
 		}
 
-		rect.top += theApp.m_DefaultFont.GetFontHeight();
+		rect.top += m_DefaultFontHeight;
 
 		break;
 	}

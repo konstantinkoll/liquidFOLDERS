@@ -9,6 +9,67 @@
 // CFrontstageWnd
 //
 
+#define WHITE    100
+
+void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed)
+{
+	dc.FillSolidRect(lpRect, Themed ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
+
+	if (Themed)
+	{
+		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
+		g.FillRectangle(&brush, Rect(0, 0, lpRect->right-lpRect->left, WHITE));
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+	}
+}
+
+void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+{
+	// Shadow
+	GraphicsPath Path;
+
+	if (Themed)
+	{
+		CRect rectShadow(lpRect);
+		rectShadow.OffsetRect(1, 1);
+
+		CreateRoundRectangle(rectShadow, 3, Path);
+
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		Pen pen(Color(0x0C000000));
+		g.DrawPath(&pen, &Path);
+	}
+
+	// Background
+	if ((!Themed || !Hot) && !Selected)
+	{
+		CRect rect(lpRect);
+		rect.DeflateRect(1, 1);
+
+		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+		if (Themed)
+		{
+			Matrix m;
+			m.Translate(-1.0, -1.0);
+			Path.Transform(&m);
+
+			Pen pen(Color(0xFFD0D1D5));
+			g.DrawPath(&pen, &Path);
+		}
+		else
+		{
+			dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+		}
+	}
+
+	DrawListItemBackground(dc, lpRect, Themed, GetFocus()==this, Hot, Focused, Selected, TextColor, ShowFocusRect);
+}
+
 void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
 {
 	if (Themed)

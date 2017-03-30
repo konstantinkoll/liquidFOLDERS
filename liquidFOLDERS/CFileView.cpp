@@ -47,7 +47,6 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextAllFiles;
 	m_HeaderHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
-	m_RowHeight = LFGetApp()->m_DefaultFont.GetFontHeight();
 	m_ColWidth = HorizontalScrollWidth;
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
@@ -76,7 +75,7 @@ CFileView::~CFileView()
 		free(m_ItemData);
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
 {
 	CString className = AfxRegisterWndClass(nClassStyle, theApp.LoadStandardCursor(IDC_ARROW));
 
@@ -84,7 +83,7 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchRe
 		return FALSE;
 
 	UpdateViewOptions(pCookedFiles ? pCookedFiles->m_Context : LFContextAllFiles, TRUE);
-	UpdateSearchResult(pRawFiles, pCookedFiles, Data, TRUE);
+	UpdateSearchResult(pRawFiles, pCookedFiles, pPersistentData, TRUE);
 
 	return TRUE;
 }
@@ -162,7 +161,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 	}
 }
 
-void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall)
+void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall)
 {
 	DestroyEdit();
 	theApp.HideTooltip();
@@ -183,7 +182,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 
 		if (VictimAllocated)
 		{
-			INT RetainSelection = Data ? Data->FocusItem : -1;
+			INT RetainSelection = pPersistentData ? pPersistentData->FocusItem : -1;
 
 			for (UINT a=0; a<min(VictimAllocated, pCookedFiles->m_ItemCount); a++)
 			{
@@ -200,9 +199,9 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 		p_ViewParameters = &theApp.m_Views[m_Context];
 		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
 
-		m_FocusItem = Data ? min(Data->FocusItem, (INT)pCookedFiles->m_ItemCount-1) : pCookedFiles->m_ItemCount ? 0 : -1;
-		m_HScrollPos = Data ? Data->HScrollPos : 0;
-		m_VScrollPos = Data ? Data->VScrollPos : 0;
+		m_FocusItem = pPersistentData ? min(pPersistentData->FocusItem, (INT)pCookedFiles->m_ItemCount-1) : pCookedFiles->m_ItemCount ? 0 : -1;
+		m_HScrollPos = pPersistentData ? pPersistentData->HScrollPos : 0;
+		m_VScrollPos = pPersistentData ? pPersistentData->VScrollPos : 0;
 		m_HotItem = -1;
 		m_HideFileExt = LFHideFileExt();
 	}
@@ -218,7 +217,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	}
 
 	m_BeginDragDrop = FALSE;
-	SetSearchResult(pRawFiles, pCookedFiles, Data);
+	SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
 
 	free(pVictim);
 
@@ -732,13 +731,11 @@ void CFileView::EditLabel(INT Index)
 			InvalidateItem(Index);
 			EnsureVisible(Index);
 
-			const INT FontHeight = theApp.m_DefaultFont.GetFontHeight();
-
 			CRect rect(GetLabelRect(Index));
-			if (rect.Height()>FontHeight+4)
+			if (rect.Height()>m_DefaultFontHeight+4)
 			{
-				rect.top += (rect.Height()-FontHeight-4)/2;
-				rect.bottom = rect.top+FontHeight+4;
+				rect.top += (rect.Height()-m_DefaultFontHeight-4)/2;
+				rect.bottom = rect.top+m_DefaultFontHeight+4;
 			}
 
 			p_Edit = new CEdit();
@@ -1066,6 +1063,10 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
+
+	m_LargeFontHeight = theApp.m_LargeFont.GetFontHeight();
+	m_DefaultFontHeight = m_RowHeight = theApp.m_DefaultFont.GetFontHeight();
+	m_SmallFontHeight = theApp.m_SmallFont.GetFontHeight();
 
 	if (m_EnableScrolling)
 		ResetScrollbars();

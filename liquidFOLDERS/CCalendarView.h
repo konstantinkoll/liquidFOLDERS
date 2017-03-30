@@ -34,14 +34,15 @@ public:
 
 protected:
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	void SetYear(UINT Year);
 	UINT DaysOfMonth(UINT Month) const;
 	UINT StartOfMonth(UINT Month) const;
 	void GetMonthSize(LPSIZE lpSize);
-	void DrawMonth(CDC& dc, LPRECT lpRect, INT Month, BOOL Themed);
+	void DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();

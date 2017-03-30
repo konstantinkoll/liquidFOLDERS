@@ -56,9 +56,9 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
+void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pRawFiles, pCookedFiles, Data);
+	CGridView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 	{

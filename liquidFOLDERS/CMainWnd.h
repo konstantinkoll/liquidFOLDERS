@@ -110,7 +110,7 @@ protected:
 private:
 	static LFFilter* GetRootFilter();
 	LPCSTR GetStatisticsID() const;
-	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
+	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* pPersistentData=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory(UINT NavMode);
 	static void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
 	static void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);

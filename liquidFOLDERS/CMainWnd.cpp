@@ -234,7 +234,7 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* pItemDescriptor)
 	return TRUE;
 }
 
-void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
+void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPersistentData, INT FirstAggregate, INT LastAggregate)
 {
 	ASSERT(pFilter);
 
@@ -310,7 +310,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* Dat
 			LFFreeSearchResult(pVictim);
 	}
 
-	OnCookFiles((WPARAM)Data);
+	OnCookFiles((WPARAM)pPersistentData);
 	UpdateHistory(NavMode);
 }
 

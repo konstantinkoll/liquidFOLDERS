@@ -71,7 +71,7 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 
 		CRect rect(0, 0, 128, 128);
 
-		BOOL DrawFrame = ((pItemDescriptor->CoreAttributes.ContextID>=LFContextPictures) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos)) || ((Bitmap.bmWidth==118) && (Bitmap.bmHeight==118));
+		BOOL DrawFrame = ((pItemDescriptor->CoreAttributes.ContextID>=LFContextPictures) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos)) || ((Bitmap.bmWidth<=118) && (Bitmap.bmHeight<=118));
 		BOOL DrawShadow = !DrawFrame && (Bitmap.bmWidth>=4) && (Bitmap.bmWidth<=118) && (Bitmap.bmHeight>=4) && (Bitmap.bmHeight<=118);
 
 		Graphics g(dc);

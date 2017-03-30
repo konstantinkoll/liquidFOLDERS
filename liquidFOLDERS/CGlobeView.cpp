@@ -40,9 +40,9 @@ CGlobeView::CGlobeView()
 	m_AnimCounter = m_MoveCounter = 0;
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
 {
-	return CFileView::Create(pParentWnd, nID, rect, pRawFiles, pCookedFiles, Data, nClassStyle | CS_OWNDC);
+	return CFileView::Create(pParentWnd, nID, rect, pRawFiles, pCookedFiles, pPersistentData, nClassStyle | CS_OWNDC);
 }
 
 void CGlobeView::SetViewOptions(BOOL Force)
@@ -70,9 +70,9 @@ void CGlobeView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
+void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CFileView::SetSearchResult(pRawFiles, pCookedFiles, Data);
+	CFileView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 		if (p_CookedFiles->m_ItemCount)
@@ -116,9 +116,9 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 				}
 			}
 
-	if (Data)
-		if (Data->LocationValid)
-			m_GlobeCurrent = Data->Location;
+	if (pPersistentData)
+		if (pPersistentData->LocationValid)
+			m_GlobeCurrent = pPersistentData->Location;
 }
 
 INT CGlobeView::ItemAtPosition(CPoint point) const

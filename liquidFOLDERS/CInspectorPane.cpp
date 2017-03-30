@@ -266,7 +266,7 @@ void CInspectorPane::AddValueVirtual(UINT Attr, const WCHAR* Value)
 	case StatusUnused:
 		m_AttributeStatus[Attr] = StatusUsed;
 		m_AttributeVisible[Attr] = TRUE;
-		wcsncpy_s(m_AttributeValues[Attr].UnicodeString, 256, Value, 255);
+		wcsncpy_s(m_AttributeValues[Attr].UnicodeString, 256, Value, _TRUNCATE);
 
 		break;
 

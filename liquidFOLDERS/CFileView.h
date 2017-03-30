@@ -130,13 +130,13 @@ public:
 	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableTooltipOnVirtual=TRUE);
 	virtual ~CFileView();
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data) const;
 	virtual void EditLabel(INT Index);
 
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
-	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall=FALSE);
+	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	INT GetFocusItem() const;
 	INT GetSelectedItem() const;
 	INT GetNextSelectedItem(INT Index) const;
@@ -148,7 +148,7 @@ public:
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
 	virtual INT ItemAtPosition(CPoint point) const;
@@ -226,6 +226,9 @@ protected:
 	INT m_VScrollMax;
 	INT m_ColWidth;
 	INT m_RowHeight;
+	INT m_LargeFontHeight;
+	INT m_DefaultFontHeight;
+	INT m_SmallFontHeight;
 	BOOL m_Hover;
 	BOOL m_BeginDragDrop;
 	CPoint m_DragPos;
