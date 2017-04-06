@@ -15,7 +15,7 @@
 
 #define IDXTABLE_DOCUMENTS     1
 
-struct LFDocumentAttributes
+struct DocumentAttributes
 {
 	WCHAR Artist[256];
 	WCHAR Copyright[256];
@@ -35,7 +35,7 @@ struct LFDocumentAttributes
 
 #define IDXTABLE_MESSAGES     2
 
-struct LFMessageAttributes
+struct MessageAttributes
 {
 	CHAR From[256];
 	CHAR To[256];
@@ -51,7 +51,7 @@ struct LFMessageAttributes
 
 #define IDXTABLE_AUDIO     3
 
-struct LFAudioAttributes
+struct AudioAttributes
 {
 	WCHAR Artist[256];
 	WCHAR Copyright[256];
@@ -72,7 +72,7 @@ struct LFAudioAttributes
 
 #define IDXTABLE_PICTURES     4
 
-struct LFPictureAttributes
+struct PictureAttributes
 {
 	WCHAR Artist[256];
 	WCHAR Copyright[256];
@@ -95,7 +95,7 @@ struct LFPictureAttributes
 
 #define IDXTABLE_VIDEOS     5
 
-struct LFVideoAttributes
+struct VideoAttributes
 {
 	WCHAR Artist[256];
 	WCHAR Copyright[256];
@@ -118,19 +118,19 @@ struct LFVideoAttributes
 
 // Data structures
 
-struct LFIdxTableEntry
+struct IdxTableEntry
 {
 	UINT Attr;
 	INT_PTR Offset;
 };
 
-struct LFIdxTable
+struct IdxTable
 {
 	WCHAR FileName[13];
 	UINT Size;
 	UINT cTableEntries;
-	const LFIdxTableEntry* pTableEntries;
+	const IdxTableEntry* pTableEntries;
 };
 
-extern const LFIdxTable LFIndexTables[];
-extern const LFIdxTableEntry LFCoreAttributeEntries[];
+extern const IdxTable IndexTables[];
+extern const IdxTableEntry CoreAttributeEntries[];

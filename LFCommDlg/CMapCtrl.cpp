@@ -262,7 +262,7 @@ void CMapCtrl::OnMouseLeave()
 
 void CMapCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	switch(nChar)
+	switch (nChar)
 	{
 	case VK_DELETE:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))

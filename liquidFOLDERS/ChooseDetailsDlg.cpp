@@ -32,7 +32,8 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
 		{
 			const UINT Attr = (UINT)m_wndAttributes.GetItemData(a);
-			p_ViewParamters->ColumnWidth[Attr] = m_wndAttributes.GetCheck(a) ? OldWidth[Attr] ? OldWidth[Attr] : theApp.m_Attributes[Attr].RecommendedWidth : 0;
+
+			p_ViewParamters->ColumnWidth[Attr] = m_wndAttributes.GetCheck(a) ? OldWidth[Attr] ? OldWidth[Attr] : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth : 0;
 		}
 
 		// Reihenfolge
@@ -52,7 +53,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 void ChooseDetailsDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	Add = LFIsAttributeAllowed(theApp.m_Contexts[m_Context], Attr) && (!theApp.m_Attributes[Attr].AlwaysVisible);
+	Add = LFIsAttributeAllowed(theApp.m_Contexts[m_Context], Attr) && (Attr==LFAttrFileName);
 	Check = (p_ViewParamters->ColumnWidth[Attr]!=0);
 }
 

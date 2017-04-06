@@ -746,7 +746,7 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	pComboBox->SetRedraw(FALSE);
 	pComboBox->ResetContent();
 
-	switch (LFGetApp()->m_Attributes[Attr].Type)
+	switch (LFGetApp()->m_Attributes[Attr].AttrProperties.Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeAnsiString:

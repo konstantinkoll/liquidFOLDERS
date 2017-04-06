@@ -22,10 +22,10 @@ CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize, BOOL Initial
 
 	// Filename
 	wcscpy_s(m_Filename, MAX_PATH, Path);
-	wcscat_s(m_Filename, MAX_PATH, LFIndexTables[TableID].FileName);
+	wcscat_s(m_Filename, MAX_PATH, IndexTables[TableID].FileName);
 
 	// Table
-	m_RequiredElementSize = LFIndexTables[TableID].Size+(m_StoreDataSize=(TableID==IDXTABLE_MASTER) ? StoreDataSize : 0);
+	m_RequiredElementSize = IndexTables[TableID].Size+(m_StoreDataSize=(TableID==IDXTABLE_MASTER) ? StoreDataSize : 0);
 	if ((m_TableID=TableID)==IDXTABLE_MASTER)
 	{
 		m_KeyOffset = offsetof(LFCoreAttributes, FileID);
@@ -451,8 +451,8 @@ void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescr
 
 		ZeroMemory(PtrDst, m_Header.ElementSize-LFKeySize);
 
-		for (UINT a=0; a<LFIndexTables[m_TableID].cTableEntries; a++)
-			GetAttribute(PtrDst, LFIndexTables[m_TableID].pTableEntries[a].Offset, LFIndexTables[m_TableID].pTableEntries[a].Attr, pItemDescriptor);
+		for (UINT a=0; a<IndexTables[m_TableID].cTableEntries; a++)
+			GetAttribute(PtrDst, IndexTables[m_TableID].pTableEntries[a].Offset, IndexTables[m_TableID].pTableEntries[a].Attr, pItemDescriptor);
 	}
 }
 

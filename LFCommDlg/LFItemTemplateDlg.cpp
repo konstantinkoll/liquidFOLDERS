@@ -61,7 +61,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const CHAR* pStore
 			if (pFilterCondition->Compare==LFFilterCompareSubfolder)
 			{
 				UINT Attr = pFilterCondition->AttrData.Attr;
-				if ((!LFGetApp()->m_Attributes[Attr].ReadOnly) && (Attr!=LFAttrFileName))
+				if ((!LFGetApp()->m_Attributes[Attr].AttrProperties.ReadOnly) && (Attr!=LFAttrFileName))
 				{
 					ASSERT(m_AttributeValues[Attr].Type==pFilterCondition->AttrData.Type);
 					m_AttributeValues[Attr] = pFilterCondition->AttrData;
@@ -145,7 +145,7 @@ BOOL LFItemTemplateDlg::InitDialog()
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !LFGetApp()->m_Attributes[a].ReadOnly, (!LFGetApp()->m_Attributes[a].ReadOnly) && (a!=LFAttrFileName));
+		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !LFGetApp()->m_Attributes[a].AttrProperties.ReadOnly, (!LFGetApp()->m_Attributes[a].AttrProperties.ReadOnly) && (a!=LFAttrFileName));
 
 	AddBottomRightControl(IDC_SKIP);
 

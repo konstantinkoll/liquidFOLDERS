@@ -447,7 +447,7 @@ void CLiquidFoldersApp::LoadViewOptions(UINT Context)
 
 		if (IsAttributeAllowed(Context, a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
 		{
-			m_Views[Context].ColumnWidth[a] = m_Attributes[a].RecommendedWidth;
+			m_Views[Context].ColumnWidth[a] = m_Attributes[a].TypeProperties.DefaultColumnWidth;
 		}
 		else
 		{

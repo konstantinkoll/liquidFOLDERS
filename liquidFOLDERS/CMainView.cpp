@@ -205,6 +205,7 @@ void CMainView::UpdateViewOptions()
 	{
 		FVPersistentData Data;
 		GetPersistentData(Data);
+
 		if (!CreateFileView(theApp.m_Views[m_Context].Mode, &Data))
 			m_pWndFileView->UpdateViewOptions(m_Context);
 
@@ -240,7 +241,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	{
 		m_Context = pCookedFiles->m_Context;
 
-		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, pPersistentData))
+		if (!CreateFileView(theApp.m_Views[m_Context].Mode, pPersistentData))
 		{
 			m_pWndFileView->UpdateViewOptions(m_Context);
 			m_pWndFileView->UpdateSearchResult(pRawFiles, pCookedFiles, pPersistentData);
@@ -1138,7 +1139,7 @@ void CMainView::OnSort(UINT nID)
 	if (theApp.m_Views[m_Context].SortBy!=nID)
 	{
 		theApp.m_Views[m_Context].SortBy = nID;
-		theApp.m_Views[m_Context].Descending = theApp.m_Attributes[nID].PreferDescendingSort;
+		theApp.m_Views[m_Context].Descending = theApp.m_Attributes[nID].TypeProperties.PreferDescendingSort;
 		theApp.UpdateSortOptions(m_Context);
 	}
 

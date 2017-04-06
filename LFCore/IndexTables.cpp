@@ -5,7 +5,7 @@
 
 #pragma data_seg(".shared")
 
-extern const LFIdxTableEntry LFCoreAttributeEntries[] = {
+extern const IdxTableEntry CoreAttributeEntries[] = {
 	{ LFAttrFileName, offsetof(LFCoreAttributes, FileName) },
 	{ LFAttrFileID, offsetof(LFCoreAttributes, FileID) },
 	{ LFAttrComments, offsetof(LFCoreAttributes, Comments) },
@@ -26,88 +26,88 @@ extern const LFIdxTableEntry LFCoreAttributeEntries[] = {
 	{ LFAttrLocationGPS, offsetof(LFCoreAttributes, LocationGPS) }
 };
 
-const LFIdxTableEntry LFDocumentAttributeEntries[] = {
-	{ LFAttrArtist, offsetof(LFDocumentAttributes, Artist) },
-	{ LFAttrCopyright, offsetof(LFDocumentAttributes, Copyright) },
-	{ LFAttrTitle, offsetof(LFDocumentAttributes, Title) },
-	{ LFAttrResponsible, offsetof(LFDocumentAttributes, Responsible) },
-	{ LFAttrDueTime, offsetof(LFDocumentAttributes, DueTime) },
-	{ LFAttrDoneTime, offsetof(LFDocumentAttributes, DoneTime) },
-	{ LFAttrSignature, offsetof(LFDocumentAttributes, Signature) },
-	{ LFAttrISBN, offsetof(LFDocumentAttributes, ISBN) },
-	{ LFAttrPages, offsetof(LFDocumentAttributes, Pages) },
-	{ LFAttrLanguage, offsetof(LFDocumentAttributes, Language) },
-	{ LFAttrCustomer, offsetof(LFDocumentAttributes, Customer) }
+const IdxTableEntry DocumentAttributeEntries[] = {
+	{ LFAttrArtist, offsetof(DocumentAttributes, Artist) },
+	{ LFAttrCopyright, offsetof(DocumentAttributes, Copyright) },
+	{ LFAttrTitle, offsetof(DocumentAttributes, Title) },
+	{ LFAttrResponsible, offsetof(DocumentAttributes, Responsible) },
+	{ LFAttrDueTime, offsetof(DocumentAttributes, DueTime) },
+	{ LFAttrDoneTime, offsetof(DocumentAttributes, DoneTime) },
+	{ LFAttrSignature, offsetof(DocumentAttributes, Signature) },
+	{ LFAttrISBN, offsetof(DocumentAttributes, ISBN) },
+	{ LFAttrPages, offsetof(DocumentAttributes, Pages) },
+	{ LFAttrLanguage, offsetof(DocumentAttributes, Language) },
+	{ LFAttrCustomer, offsetof(DocumentAttributes, Customer) }
 };
 
-const LFIdxTableEntry LFMessageAttributeEntries[] = {
-	{ LFAttrFrom, offsetof(LFMessageAttributes, From) },
-	{ LFAttrTo, offsetof(LFMessageAttributes, To) },
-	{ LFAttrTitle, offsetof(LFMessageAttributes, Title) },
-	{ LFAttrLanguage, offsetof(LFMessageAttributes, Language) },
-	{ LFAttrResponsible, offsetof(LFMessageAttributes, Responsible) },
-	{ LFAttrDueTime, offsetof(LFMessageAttributes, DueTime) },
-	{ LFAttrDoneTime, offsetof(LFMessageAttributes, DoneTime) }
+const IdxTableEntry MessageAttributeEntries[] = {
+	{ LFAttrFrom, offsetof(MessageAttributes, From) },
+	{ LFAttrTo, offsetof(MessageAttributes, To) },
+	{ LFAttrTitle, offsetof(MessageAttributes, Title) },
+	{ LFAttrLanguage, offsetof(MessageAttributes, Language) },
+	{ LFAttrResponsible, offsetof(MessageAttributes, Responsible) },
+	{ LFAttrDueTime, offsetof(MessageAttributes, DueTime) },
+	{ LFAttrDoneTime, offsetof(MessageAttributes, DoneTime) }
 };
 
-const LFIdxTableEntry LFAudioAttributeEntries[] = {
-	{ LFAttrArtist, offsetof(LFAudioAttributes, Artist) },
-	{ LFAttrCopyright, offsetof(LFAudioAttributes, Copyright) },
-	{ LFAttrTitle, offsetof(LFAudioAttributes, Title) },
-	{ LFAttrAlbum, offsetof(LFAudioAttributes, Album) },
-	{ LFAttrAudioCodec, offsetof(LFAudioAttributes, AudioCodec) },
-	{ LFAttrChannels, offsetof(LFAudioAttributes, Channels) },
-	{ LFAttrSamplerate, offsetof(LFAudioAttributes, Samplerate) },
-	{ LFAttrDuration, offsetof(LFAudioAttributes, Duration) },
-	{ LFAttrBitrate, offsetof(LFAudioAttributes, Bitrate) },
-	{ LFAttrRecordingTime, offsetof(LFAudioAttributes, RecordingTime) },
-	{ LFAttrLanguage, offsetof(LFAudioAttributes, Language) },
-	{ LFAttrGenre, offsetof(LFAudioAttributes, Genre) }
+const IdxTableEntry AudioAttributeEntries[] = {
+	{ LFAttrArtist, offsetof(AudioAttributes, Artist) },
+	{ LFAttrCopyright, offsetof(AudioAttributes, Copyright) },
+	{ LFAttrTitle, offsetof(AudioAttributes, Title) },
+	{ LFAttrAlbum, offsetof(AudioAttributes, Album) },
+	{ LFAttrAudioCodec, offsetof(AudioAttributes, AudioCodec) },
+	{ LFAttrChannels, offsetof(AudioAttributes, Channels) },
+	{ LFAttrSamplerate, offsetof(AudioAttributes, Samplerate) },
+	{ LFAttrDuration, offsetof(AudioAttributes, Duration) },
+	{ LFAttrBitrate, offsetof(AudioAttributes, Bitrate) },
+	{ LFAttrRecordingTime, offsetof(AudioAttributes, RecordingTime) },
+	{ LFAttrLanguage, offsetof(AudioAttributes, Language) },
+	{ LFAttrGenre, offsetof(AudioAttributes, Genre) }
 };
 
-const LFIdxTableEntry LFPictureAttributeEntries[] = {
-	{ LFAttrArtist, offsetof(LFPictureAttributes, Artist) },
-	{ LFAttrCopyright, offsetof(LFPictureAttributes, Copyright) },
-	{ LFAttrTitle, offsetof(LFPictureAttributes, Title) },
-	{ LFAttrEquipment, offsetof(LFPictureAttributes, Equipment) },
-	{ LFAttrRoll, offsetof(LFPictureAttributes, Roll) },
-	{ LFAttrExposure, offsetof(LFPictureAttributes, Exposure) },
-	{ LFAttrHeight, offsetof(LFPictureAttributes, Height) },
-	{ LFAttrWidth, offsetof(LFPictureAttributes, Width) },
-	{ LFAttrAperture, offsetof(LFPictureAttributes, Aperture) },
-	{ LFAttrFocus, offsetof(LFPictureAttributes, Focus) },
-	{ LFAttrChip, offsetof(LFPictureAttributes, Chip) },
-	{ LFAttrRecordingTime, offsetof(LFPictureAttributes, RecordingTime) },
-	{ LFAttrLanguage, offsetof(LFPictureAttributes, Language) },
-	{ LFAttrCustomer, offsetof(LFPictureAttributes, Customer) }
+const IdxTableEntry PictureAttributeEntries[] = {
+	{ LFAttrArtist, offsetof(PictureAttributes, Artist) },
+	{ LFAttrCopyright, offsetof(PictureAttributes, Copyright) },
+	{ LFAttrTitle, offsetof(PictureAttributes, Title) },
+	{ LFAttrEquipment, offsetof(PictureAttributes, Equipment) },
+	{ LFAttrRoll, offsetof(PictureAttributes, Roll) },
+	{ LFAttrExposure, offsetof(PictureAttributes, Exposure) },
+	{ LFAttrHeight, offsetof(PictureAttributes, Height) },
+	{ LFAttrWidth, offsetof(PictureAttributes, Width) },
+	{ LFAttrAperture, offsetof(PictureAttributes, Aperture) },
+	{ LFAttrFocus, offsetof(PictureAttributes, Focus) },
+	{ LFAttrChip, offsetof(PictureAttributes, Chip) },
+	{ LFAttrRecordingTime, offsetof(PictureAttributes, RecordingTime) },
+	{ LFAttrLanguage, offsetof(PictureAttributes, Language) },
+	{ LFAttrCustomer, offsetof(PictureAttributes, Customer) }
 };
 
-const LFIdxTableEntry LFVideoAttributeEntries[] = {
-	{ LFAttrArtist, offsetof(LFVideoAttributes, Artist) },
-	{ LFAttrCopyright, offsetof(LFVideoAttributes, Copyright) },
-	{ LFAttrTitle, offsetof(LFVideoAttributes, Title) },
-	{ LFAttrEquipment, offsetof(LFVideoAttributes, Equipment) },
-	{ LFAttrRoll, offsetof(LFVideoAttributes, Roll) },
-	{ LFAttrHeight, offsetof(LFVideoAttributes, Height) },
-	{ LFAttrWidth, offsetof(LFVideoAttributes, Width) },
-	{ LFAttrVideoCodec, offsetof(LFVideoAttributes, VideoCodec) },
-	{ LFAttrVideoCodec, offsetof(LFVideoAttributes, VideoCodec) },
-	{ LFAttrChannels, offsetof(LFVideoAttributes, Channels) },
-	{ LFAttrSamplerate, offsetof(LFVideoAttributes, Samplerate) },
-	{ LFAttrDuration, offsetof(LFVideoAttributes, Duration) },
-	{ LFAttrBitrate, offsetof(LFVideoAttributes, Bitrate) },
-	{ LFAttrRecordingTime, offsetof(LFVideoAttributes, RecordingTime) },
-	{ LFAttrLanguage, offsetof(LFVideoAttributes, Language) },
-	{ LFAttrCustomer, offsetof(LFVideoAttributes, Customer) }
+const IdxTableEntry VideoAttributeEntries[] = {
+	{ LFAttrArtist, offsetof(VideoAttributes, Artist) },
+	{ LFAttrCopyright, offsetof(VideoAttributes, Copyright) },
+	{ LFAttrTitle, offsetof(VideoAttributes, Title) },
+	{ LFAttrEquipment, offsetof(VideoAttributes, Equipment) },
+	{ LFAttrRoll, offsetof(VideoAttributes, Roll) },
+	{ LFAttrHeight, offsetof(VideoAttributes, Height) },
+	{ LFAttrWidth, offsetof(VideoAttributes, Width) },
+	{ LFAttrVideoCodec, offsetof(VideoAttributes, VideoCodec) },
+	{ LFAttrVideoCodec, offsetof(VideoAttributes, VideoCodec) },
+	{ LFAttrChannels, offsetof(VideoAttributes, Channels) },
+	{ LFAttrSamplerate, offsetof(VideoAttributes, Samplerate) },
+	{ LFAttrDuration, offsetof(VideoAttributes, Duration) },
+	{ LFAttrBitrate, offsetof(VideoAttributes, Bitrate) },
+	{ LFAttrRecordingTime, offsetof(VideoAttributes, RecordingTime) },
+	{ LFAttrLanguage, offsetof(VideoAttributes, Language) },
+	{ LFAttrCustomer, offsetof(VideoAttributes, Customer) }
 };
 
-extern const LFIdxTable LFIndexTables[IDXTABLECOUNT] = {
-	{ L"Master.idx", sizeof(LFCoreAttributes), sizeof(LFCoreAttributeEntries)/sizeof(LFIdxTableEntry), LFCoreAttributeEntries },
-	{ L"Docs.idx", sizeof(LFDocumentAttributes), sizeof(LFDocumentAttributeEntries)/sizeof(LFIdxTableEntry), LFDocumentAttributeEntries },
-	{ L"Mails.idx", sizeof(LFMessageAttributes), sizeof(LFMessageAttributeEntries)/sizeof(LFIdxTableEntry), LFMessageAttributeEntries },
-	{ L"Audio.idx", sizeof(LFAudioAttributes), sizeof(LFAudioAttributeEntries)/sizeof(LFIdxTableEntry), LFAudioAttributeEntries },
-	{ L"Pictures.idx", sizeof(LFPictureAttributes), sizeof(LFPictureAttributeEntries)/sizeof(LFIdxTableEntry), LFPictureAttributeEntries },
-	{ L"Video.idx", sizeof(LFVideoAttributes), sizeof(LFVideoAttributeEntries)/sizeof(LFIdxTableEntry), LFVideoAttributeEntries }
+extern const IdxTable IndexTables[IDXTABLECOUNT] = {
+	{ L"Master.idx", sizeof(LFCoreAttributes), sizeof(CoreAttributeEntries)/sizeof(IdxTableEntry), CoreAttributeEntries },
+	{ L"Docs.idx", sizeof(DocumentAttributes), sizeof(DocumentAttributeEntries)/sizeof(IdxTableEntry), DocumentAttributeEntries },
+	{ L"Mails.idx", sizeof(MessageAttributes), sizeof(MessageAttributeEntries)/sizeof(IdxTableEntry), MessageAttributeEntries },
+	{ L"Audio.idx", sizeof(AudioAttributes), sizeof(AudioAttributeEntries)/sizeof(IdxTableEntry), AudioAttributeEntries },
+	{ L"Pictures.idx", sizeof(PictureAttributes), sizeof(PictureAttributeEntries)/sizeof(IdxTableEntry), PictureAttributeEntries },
+	{ L"Video.idx", sizeof(VideoAttributes), sizeof(VideoAttributeEntries)/sizeof(IdxTableEntry), VideoAttributeEntries }
 };
 
 #pragma data_seg()

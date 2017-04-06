@@ -1,9 +1,13 @@
 
+#pragma pack(push,1)
+
 struct RegisteredFile
 {
 	CHAR Format[7];
 	BYTE ContextID;
 };
+
+#pragma pack(pop)
 
 static const RegisteredFile Registry[] = {
 	{ "air",    LFContextDocuments },

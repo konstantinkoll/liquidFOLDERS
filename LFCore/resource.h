@@ -204,7 +204,6 @@
 #define IDS_ATTR_DUETIME                1550
 #define IDS_ATTR_DONETIME               1551
 #define IDS_ATTR_CUSTOMER               1552
-#define IDS_ATTR_LIKECOUNT              1553
 #define IDS_SRC_FIRST                   1600
 #define IDS_SRC_UNKNOWN                 1600
 #define IDS_SRC_LIQUIDFOLDERS           1601

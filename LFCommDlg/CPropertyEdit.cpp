@@ -260,7 +260,7 @@ void CPropertyEdit::CreateProperty()
 
 		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
 		p_Property->SetEditMask(m_pWndEdit);
-		m_pWndEdit->SetLimitText(LFGetApp()->m_Attributes[m_Data.Attr].cCharacters);
+		m_pWndEdit->SetLimitText(LFGetApp()->m_Attributes[m_Data.Attr].AttrProperties.cCharacters);
 		m_pWndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	}
 	else
@@ -281,8 +281,9 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 {
 	if ((Attr!=m_Data.Attr) || (!p_Property))
 	{
-		LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[Attr];
-		if (pAttr->Type!=m_Data.Type)
+		const LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[Attr];
+
+		if (pAttr->AttrProperties.Type!=m_Data.Type)
 		{
 			LFInitVariantData(m_Data, Attr);
 		}
@@ -290,14 +291,14 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 		{
 			m_Data.Attr = Attr;
 
-			switch (pAttr->Type)
+			switch (pAttr->AttrProperties.Type)
 			{
 			case LFTypeUnicodeString:
-				m_Data.UnicodeString[pAttr->cCharacters] = L'\0';
+				m_Data.UnicodeString[pAttr->AttrProperties.cCharacters] = L'\0';
 				break;
 
 			case LFTypeAnsiString:
-				m_Data.AnsiString[pAttr->cCharacters] = '\0';
+				m_Data.AnsiString[pAttr->AttrProperties.cCharacters] = '\0';
 				break;
 			}
 		}

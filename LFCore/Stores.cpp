@@ -21,7 +21,7 @@ extern LFVolumeDescriptor Volumes[26];
 #pragma data_seg(".shared")
 
 BOOL Initialized = FALSE;
-CHAR KeyChars[38] = { LFKeyChars };
+CHAR KeyChars[38] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-' };
 
 #pragma data_seg()
 
@@ -412,7 +412,7 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* pStoreDescriptor)
 		if (RegSetValueEx(hKey, L"IndexVersion", 0, REG_DWORD, (BYTE*)&pStoreDescriptor->IndexVersion, sizeof(UINT))!=ERROR_SUCCESS)
 			Result = LFRegistryError;
 
-		switch(pStoreDescriptor->Mode & LFStoreModeIndexMask)
+		switch (pStoreDescriptor->Mode & LFStoreModeIndexMask)
 		{
 		case LFStoreModeIndexInternal:
 			if ((pStoreDescriptor->Flags & LFStoreFlagsAutoLocation)==0)

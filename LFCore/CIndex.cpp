@@ -761,7 +761,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 		{
 			Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
 
-			switch(Result)
+			switch (Result)
 			{
 			case LFOk:
 				pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;

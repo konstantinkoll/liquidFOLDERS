@@ -73,7 +73,7 @@ END_MESSAGE_MAP()
 
 void CConditionList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	switch(nChar)
+	switch (nChar)
 	{
 	case VK_EXECUTE:
 	case VK_RETURN:

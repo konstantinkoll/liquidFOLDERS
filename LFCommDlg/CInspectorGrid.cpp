@@ -33,7 +33,7 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 	LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[pData->Attr];
 	CProperty* pProperty;
 
-	switch (pAttr->Type)
+	switch (pAttr->AttrProperties.Type)
 	{
 	case LFTypeUnicodeArray:
 		pProperty = (pData->Attr==LFAttrHashtags) ? new CPropertyTags(pData) : new CProperty(pData);
@@ -227,7 +227,7 @@ void CProperty::SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariant
 
 	if (m_ShowRange)
 	{
-		UINT Type = LFGetApp()->m_Attributes[p_Data->Attr].Type;
+		const UINT Type = LFGetApp()->m_Attributes[p_Data->Attr].AttrProperties.Type;
 
 		m_ShowRange &= (Type!=LFTypeUnicodeString) && (Type!=LFTypeUnicodeArray) && (Type!=LFTypeAnsiString) && (Type!=LFTypeFourCC) && (Type!=LFTypeFraction) && (Type!=LFTypeFlags);
 	}
@@ -822,7 +822,7 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 		}
 
 		LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[a];
-		AddProperty(pProp, pAttr->Category, pAttr->Name, !pAttr->ReadOnly);
+		AddProperty(pProp, pAttr->AttrProperties.Category, pAttr->Name, !pAttr->AttrProperties.ReadOnly);
 	}
 }
 
@@ -1242,7 +1242,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 			pProp->pProperty->SetEditMask(p_Edit);
 
 			if (Attr<LFAttributeCount)
-				p_Edit->SetLimitText(LFGetApp()->m_Attributes[Attr].cCharacters);
+				p_Edit->SetLimitText(LFGetApp()->m_Attributes[Attr].AttrProperties.cCharacters);
 
 			p_Edit->SetFont(&LFGetApp()->m_DialogBoldFont);
 			p_Edit->SetFocus();
@@ -1642,7 +1642,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	INT Last = m_SelectedItem;
 
-	switch(nChar)
+	switch (nChar)
 	{
 	case VK_HOME:
 		for (UINT a=0; a<m_Properties.m_ItemCount; a++)

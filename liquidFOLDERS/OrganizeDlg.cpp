@@ -35,7 +35,7 @@ void OrganizeDlg::DoDataExchange(CDataExchange* pDX)
 
 void OrganizeDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	Add = LFIsAttributeAllowed(theApp.m_Contexts[m_Context], Attr) && (theApp.m_Attributes[Attr].Sortable);
+	Add = LFIsAttributeAllowed(theApp.m_Contexts[m_Context], Attr) && (theApp.m_Attributes[Attr].TypeProperties.Sortable);
 	Check = FALSE;
 }
 

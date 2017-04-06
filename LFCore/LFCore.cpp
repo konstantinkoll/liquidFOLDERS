@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "FileSystem.h"
 #include "IATA.h"
 #include "LFCore.h"
@@ -19,7 +20,6 @@
 
 HMODULE LFCoreModuleHandle;
 OSVERSIONINFO osInfo;
-extern LFShellProperty AttrProperties[];
 
 
 #pragma data_seg(".shared")
@@ -280,13 +280,13 @@ void GetVolumeInformation(CHAR cVolume, BOOL ForceAvailable=FALSE)
 	CHAR szRoot[] = " :\\";
 	szRoot[0] = cVolume;
 
-	switch(GetDriveTypeA(szRoot))
+	switch (GetDriveTypeA(szRoot))
 	{
 	case DRIVE_REMOVABLE:
 		Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
 
 	case DRIVE_FIXED:
-		switch(GetVolumeBus(cVolume))
+		switch (GetVolumeBus(cVolume))
 		{
 		case BusType1394:
 			Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
@@ -397,7 +397,6 @@ LFCORE_API void LFCoreErrorBox(UINT ID, HWND hWnd)
 // Descriptors
 //
 
-#define SETRANGE(Var, ID, Lo, Hi, Val) if ((ID>=Lo) && (ID<=Hi)) Var = Val;
 #define ALLOWATTRIBUTE(Attr) ContextDescriptor.AllowedAttributes[Attr>>5] |= 1<<(Attr & 0x1F);
 
 LFCORE_API void LFGetAttrCategoryName(WCHAR* pStr, SIZE_T cCount, UINT ID)
@@ -414,11 +413,10 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	if (ID>=LFAttributeCount)
 		return;
 
+	// Name
 	LoadString(LFCoreModuleHandle, IDS_ATTR_FIRST+ID, AttributeDescriptor.Name, 256);
 
-	AttributeDescriptor.AlwaysVisible = (ID==LFAttrFileName);
-	AttributeDescriptor.Type = AttrTypes[ID];
-
+	// XML ID
 	WCHAR Str[256];
 	LoadStringEnglish(ID+IDS_ATTR_FIRST, Str, 256);
 
@@ -436,83 +434,12 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 	*PtrDst = L'\0';
 
-	// Type and character count (where appropriate)
-	if (AttributeDescriptor.Type<=LFTypeAnsiString)
-		AttributeDescriptor.cCharacters = (UINT)GetAttributeMaxCharacterCount(ID);
+	// Properties
+	assert((AttrProperties[ID].Type!=LFAttrFlags) || AttrProperties[ID].ReadOnly);
+	AttributeDescriptor.AttrProperties = AttrProperties[ID];
 
-	// Recommended width
-	static const UINT rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
-	AttributeDescriptor.RecommendedWidth = (ID==LFAttrComments) ? 350 : rWidths[AttributeDescriptor.Type];
-
-	// Category
-	if (ID<=LFAttrRating)
-	{
-		AttributeDescriptor.Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrAddTime) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
-	}
-	else
-	{
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrWidth, LFAttrRoll, LFAttrCategoryVisual);
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrFrom, LFAttrCustomer, LFAttrCategoryWorkflow);
-		SETRANGE(AttributeDescriptor.Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
-	}
-
-	// Sorting
-	AttributeDescriptor.Sortable = (AttributeDescriptor.Type!=LFTypeFlags);
-	AttributeDescriptor.PreferDescendingSort = (AttributeDescriptor.Type==LFTypeRating) || (AttributeDescriptor.Type==LFTypeTime) || (AttributeDescriptor.Type==LFTypeMegapixel);
-
-	// Read only
-	switch(ID)
-	{
-	case LFAttrDescription:
-	case LFAttrCreationTime:
-	case LFAttrFileTime:
-	case LFAttrArchiveTime:
-	case LFAttrFileCount:
-	case LFAttrFileSize:
-	case LFAttrHeight:
-	case LFAttrWidth:
-	case LFAttrDimension:
-	case LFAttrAspectRatio:
-	case LFAttrVideoCodec:
-	case LFAttrExposure:
-	case LFAttrFocus:
-	case LFAttrAperture:
-	case LFAttrChip:
-	case LFAttrChannels:
-	case LFAttrSamplerate:
-	case LFAttrAudioCodec:
-	case LFAttrDuration:
-	case LFAttrBitrate:
-	case LFAttrPages:
-	case LFAttrEquipment:
-	case LFAttrFrom:
-	case LFAttrTo:
-	case LFAttrLikeCount:
-		AttributeDescriptor.ReadOnly = TRUE;
-		break;
-
-	default:
-		AttributeDescriptor.ReadOnly = (AttributeDescriptor.Category==LFAttrCategoryInternal);
-	}
-
-	// Format
-	AttributeDescriptor.FormatRight = (((AttributeDescriptor.Type>=LFTypeUINT) && (AttributeDescriptor.Type!=LFTypeTime)) || (ID==LFAttrStoreID) || (ID==LFAttrFileID));
-
-	// Shell property
-	if (AttrProperties[ID].ID)
-	{
-		AttributeDescriptor.ShPropertyMapping = AttrProperties[ID];
-	}
-	else
-	{
-		AttributeDescriptor.ShPropertyMapping.Schema = PropertyLiquidFolders;
-		AttributeDescriptor.ShPropertyMapping.ID = ID;
-	}
+	assert(AttrProperties[ID].Type<LFTypeCount);
+	AttributeDescriptor.TypeProperties = TypeProperties[AttrProperties[ID].Type];
 }
 
 LFCORE_API void LFGetSourceName(WCHAR* pStr, SIZE_T cCount, UINT ID, BOOL Qualified)
@@ -545,7 +472,7 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 	ALLOWATTRIBUTE(LFAttrStoreID);
 	ALLOWATTRIBUTE(LFAttrComments);
 
-	switch(ID)
+	switch (ID)
 	{
 	case LFContextStores:
 		ALLOWATTRIBUTE(LFAttrDescription);

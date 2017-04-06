@@ -329,7 +329,7 @@ void CInspectorPane::UpdateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult
 		m_Count++;
 
 		for (UINT a=0; a<=LFAttrFileTime; a++)
-			AddValue(pItemDescriptor, a, !theApp.m_Attributes[a].ReadOnly);
+			AddValue(pItemDescriptor, a, !theApp.m_Attributes[a].AttrProperties.ReadOnly);
 
 		AddValue(pItemDescriptor, LFAttrFileCount);
 		AddValue(pItemDescriptor, LFAttrFileSize);
@@ -356,7 +356,7 @@ void CInspectorPane::UpdateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (a!=LFAttrDescription)
-				AddValue(pItemDescriptor, a, !theApp.m_Attributes[a].ReadOnly);
+				AddValue(pItemDescriptor, a, !theApp.m_Attributes[a].AttrProperties.ReadOnly);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0]);
 
 		break;
@@ -369,7 +369,7 @@ void CInspectorPane::UpdateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult
 			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
 			{
 				for (UINT b=0; b<LFAttributeCount; b++)
-					AddValue((*pRawFiles)[a], b, !theApp.m_Attributes[b].ReadOnly);
+					AddValue((*pRawFiles)[a], b, !theApp.m_Attributes[b].AttrProperties.ReadOnly);
 				AddValueVirtual(AttrSource, theApp.m_SourceNames[(*pRawFiles)[a]->Type & LFTypeSourceMask][0]);
 			}
 		}
@@ -465,8 +465,8 @@ void CInspectorPane::UpdateFinish()
 	// Werte aktualisieren
 	for (UINT a=0; a<AttrCount; a++)
 		m_wndGrid.UpdatePropertyState(a, m_AttributeStatus[a]==StatusMultiple,
-			a<LFAttributeCount ? (!theApp.m_Attributes[a].ReadOnly) && m_AttributeEditable[a] : FALSE,
-			m_AttributeVisible[a] & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a].Category!=LFAttrCategoryInternal) : FALSE),
+		a<LFAttributeCount ? (!theApp.m_Attributes[a].AttrProperties.ReadOnly) && m_AttributeEditable[a] : FALSE,
+			m_AttributeVisible[a] & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a].AttrProperties.Category!=LFAttrCategoryInternal) : FALSE),
 			&m_AttributeRangeFirst[a], &m_AttributeRangeSecond[a]);
 
 	// Store

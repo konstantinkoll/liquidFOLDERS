@@ -25,7 +25,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam
 			WCHAR Path[MAX_PATH];
 			if (SHGetPathFromIDList(pidls[0], Path))
 				if ((Path[0]>=L'A') && (Path[0]<=L'Z'))
-					switch(Event)
+					switch (Event)
 					{
 					case SHCNE_DRIVEADD:
 					case SHCNE_MEDIAINSERTED:

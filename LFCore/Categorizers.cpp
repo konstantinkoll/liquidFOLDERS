@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "Categorizers.h"
 #include "ID3.h"
 #include "LFCore.h"
@@ -9,7 +10,6 @@
 
 
 extern HMODULE LFCoreModuleHandle;
-extern const BYTE AttrTypes[];
 
 
 // CCategorizer
@@ -50,7 +50,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFF
 
 BOOL CCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	return CompareValues(AttrTypes[m_Attr], pItemDescriptor1->AttributeValues[m_Attr], pItemDescriptor2->AttributeValues[m_Attr], m_Attr>0)==0;
+	return CompareValues(AttrProperties[m_Attr].Type, pItemDescriptor1->AttributeValues[m_Attr], pItemDescriptor2->AttributeValues[m_Attr], m_Attr>0)==0;
 }
 
 LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
@@ -123,10 +123,10 @@ BOOL CNameCategorizer::GetNamePrefix(WCHAR* FullName, WCHAR* pBuffer)
 
 		P2 = &FullName[wcslen(FullName)-1];
 		while (P2>FullName)
-			switch(Zustand)
+			switch (Zustand)
 			{
 			case 1:
-				switch(*P2)
+				switch (*P2)
 				{
 				case L'0':
 				case L'1':
@@ -177,7 +177,7 @@ Ende:
 
 BOOL CNameCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	assert(AttrTypes[m_Attr]==LFTypeUnicodeString);
+	assert(AttrProperties[m_Attr].Type==LFTypeUnicodeString);
 
 	WCHAR Prefix1[256];
 	BOOL Result1 = GetNamePrefix((WCHAR*)pItemDescriptor1->AttributeValues[m_Attr], Prefix1);
@@ -219,7 +219,7 @@ void CURLCategorizer::GetServer(CHAR* URL, CHAR* Server, SIZE_T cCount)
 
 BOOL CURLCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	assert(AttrTypes[m_Attr]==LFTypeAnsiString);
+	assert(AttrProperties[m_Attr].Type==LFTypeAnsiString);
 
 	CHAR Server1[256];
 	GetServer((CHAR*)pItemDescriptor1->AttributeValues[m_Attr], Server1, 256);
@@ -302,7 +302,7 @@ __forceinline BYTE CRatingCategorizer::GetRatingCategory(const BYTE Rating)
 
 BOOL CRatingCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	assert(AttrTypes[m_Attr]==LFTypeRating);
+	assert(AttrProperties[m_Attr].Type==LFTypeRating);
 
 	return GetRatingCategory(*((BYTE*)pItemDescriptor1->AttributeValues[m_Attr]))==GetRatingCategory(*((BYTE*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
@@ -337,7 +337,7 @@ UINT CSizeCategorizer::GetSizeCategory(const INT64 Size)
 
 BOOL CSizeCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	assert(AttrTypes[m_Attr]==LFTypeSize);
+	assert(AttrProperties[m_Attr].Type==LFTypeSize);
 
 	return GetSizeCategory(*((INT64*)pItemDescriptor1->AttributeValues[m_Attr]))==GetSizeCategory(*((INT64*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
@@ -383,7 +383,7 @@ void CDateCategorizer::GetDay(const FILETIME* Time, LPFILETIME Day)
 
 BOOL CDateCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	assert(AttrTypes[m_Attr]==LFTypeTime);
+	assert(AttrProperties[m_Attr].Type==LFTypeTime);
 
 	SYSTEMTIME stLocal1;
 	GetDate((FILETIME*)pItemDescriptor1->AttributeValues[m_Attr], &stLocal1);
@@ -458,7 +458,7 @@ UINT CDurationCategorizer::GetDurationCategory(const UINT Duration)
 
 BOOL CDurationCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	assert(AttrTypes[m_Attr]==LFTypeDuration);
+	assert(AttrProperties[m_Attr].Type==LFTypeDuration);
 
 	return GetDurationCategory(*((UINT*)pItemDescriptor1->AttributeValues[m_Attr]))==GetDurationCategory(*((UINT*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
@@ -485,7 +485,7 @@ CMegapixelCategorizer::CMegapixelCategorizer(UINT Attr)
 
 BOOL CMegapixelCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
 {
-	assert(AttrTypes[m_Attr]==LFTypeMegapixel);
+	assert(AttrProperties[m_Attr].Type==LFTypeMegapixel);
 
 	return (UINT)*(DOUBLE*)pItemDescriptor1->AttributeValues[m_Attr]==(UINT)*(DOUBLE*)pItemDescriptor2->AttributeValues[m_Attr];
 }

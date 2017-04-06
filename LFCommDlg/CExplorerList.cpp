@@ -627,7 +627,7 @@ void CExplorerList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	CRect rect;
 	GetClientRect(rect);
 
-	switch(lpListViewCustomDraw->nmcd.dwDrawStage)
+	switch (lpListViewCustomDraw->nmcd.dwDrawStage)
 	{
 	case CDDS_PREPAINT:
 		m_View = GetView();

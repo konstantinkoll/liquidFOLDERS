@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
@@ -36,53 +37,22 @@ void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	}
 }
 
-SIZE_T GetAttributeMaxCharacterCount(UINT Attr)
+SIZE_T GetAttributeSize(UINT Attr, const void* Value)
 {
 	assert(Attr<LFAttributeCount);
-	assert((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray) || (AttrTypes[Attr]==LFTypeAnsiString));
+	assert(AttrProperties[Attr].Type<LFTypeCount);
 
-	switch(Attr)
-	{
-	case LFAttrStoreID:
-	case LFAttrFileID:
-		return LFKeySize-1;
-
-	case LFAttrLanguage:
-		return 2;
-
-	case LFAttrLocationIATA:
-		return 3;
-
-	case LFAttrFileFormat:
-		return LFExtSize-1;
-
-	case LFAttrExposure:
-	case LFAttrChip:
-	case LFAttrISBN:
-	case LFAttrSignature:
-		return 31;
-
-	default:
-		return 255;
-	}
-}
-
-__forceinline SIZE_T GetAttributeSize(UINT Attr, const void* Value)
-{
-	assert(Attr<LFAttributeCount);
-	assert(AttrTypes[Attr]<LFTypeCount);
-
-	switch(AttrTypes[Attr])
+	switch (AttrProperties[Attr].Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return (min(GetAttributeMaxCharacterCount(Attr), wcslen((WCHAR*)Value))+1)*sizeof(WCHAR);
+		return (min(AttrProperties[Attr].cCharacters, wcslen((WCHAR*)Value))+1)*sizeof(WCHAR);
 
 	case LFTypeAnsiString:
-		return min(GetAttributeMaxCharacterCount(Attr), strlen((CHAR*)Value))+1;
+		return min(AttrProperties[Attr].cCharacters, strlen((CHAR*)Value))+1;
 
 	default:
-		return AttrSizes[AttrTypes[Attr]];
+		return TypeProperties[AttrProperties[Attr].Type].Size;
 	}
 }
 
@@ -90,7 +60,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Valu
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
-	assert(AttrTypes[Attr]<LFTypeCount);
+	assert(AttrProperties[Attr].Type<LFTypeCount);
 	assert(Value);
 
 	// Altes Attribut freigeben
@@ -104,7 +74,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Valu
 		pItemDescriptor->AttributeValues[Attr] = malloc(Size);
 
 	// Kopieren
-	switch(AttrTypes[Attr])
+	switch (AttrProperties[Attr].Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
@@ -140,8 +110,8 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttrib
 	pItemDescriptor->Dimension = pItemDescriptor->AspectRatio = 0.0;
 
 	// Zeiger auf statische Attributwerte initalisieren
-	for (UINT a=0; a<LFIndexTables[IDXTABLE_MASTER].cTableEntries; a++)
-		pItemDescriptor->AttributeValues[LFCoreAttributeEntries[a].Attr] = (BYTE*)&pItemDescriptor->CoreAttributes+LFCoreAttributeEntries[a].Offset;
+	for (UINT a=0; a<IndexTables[IDXTABLE_MASTER].cTableEntries; a++)
+		pItemDescriptor->AttributeValues[CoreAttributeEntries[a].Attr] = (BYTE*)&pItemDescriptor->CoreAttributes+CoreAttributeEntries[a].Offset;
 
 	pItemDescriptor->AttributeValues[LFAttrStoreID] = &pItemDescriptor->StoreID;
 	pItemDescriptor->AttributeValues[LFAttrDescription] = &pItemDescriptor->Description[0];
@@ -245,9 +215,9 @@ void AttachSlave(LFItemDescriptor* pItemDescriptor, BYTE SlaveID, void* pSlaveDa
 	assert(pSlaveData);
 	assert(pItemDescriptor);
 	assert(pItemDescriptor->CoreAttributes.SlaveID==SlaveID);
-	assert(LFIndexTables[SlaveID].Size<=LFMaxSlaveSize);
+	assert(IndexTables[SlaveID].Size<=LFMaxSlaveSize);
 
-	const LFIdxTable* pTable = &LFIndexTables[SlaveID];
+	const IdxTable* pTable = &IndexTables[SlaveID];
 
 	memcpy(pItemDescriptor->SlaveData, pSlaveData, pTable->Size);
 

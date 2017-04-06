@@ -353,11 +353,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_LIKECOUNT      "Gefällt"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SRC_UNKNOWN         "Unbekannt"
     IDS_SRC_LIQUIDFOLDERS   "liquidFOLDERS"
     IDS_SRC_WINDOWS         "Windows-Verzeichnis"
@@ -640,11 +635,6 @@ BEGIN
     IDS_ATTR_DUETIME        "En tiempo"
     IDS_ATTR_DONETIME       "Finalizado"
     IDS_ATTR_CUSTOMER       "Consumidor ó cliente"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_LIKECOUNT      "Número de gustas"
 END
 
 STRINGTABLE 
@@ -932,11 +922,6 @@ BEGIN
     IDS_ATTR_DUETIME        "Dû le"
     IDS_ATTR_DONETIME       "Fini le"
     IDS_ATTR_CUSTOMER       "Client"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_LIKECOUNT      "Nombre d'aimes"
 END
 
 STRINGTABLE 
@@ -1259,11 +1244,6 @@ BEGIN
     IDS_ATTR_DUETIME        "Due"
     IDS_ATTR_DONETIME       "Done"
     IDS_ATTR_CUSTOMER       "Customer or client"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_ATTR_LIKECOUNT      "Likes"
 END
 
 STRINGTABLE 

@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "ID3.h"
 #include "IndexTables.h"
 #include "LFCore.h"
@@ -10,131 +11,24 @@
 #include <shlwapi.h>
 
 
-extern const BYTE AttrTypes[];
-
-
 #pragma data_seg(".shared")
 
-#pragma pack(push,1)
-
-static const FMTID PropertyStorage =
-	{ 0xB725F130, 0x47EF, 0x101A, { 0xA5, 0xF1, 0x02, 0x60, 0x8C, 0x9E, 0xEB, 0xAC } };
-static const FMTID PropertyQuery =
-	{ 0x49691C90, 0x7E17, 0x101A, { 0xA9, 0x1C, 0x08, 0x00, 0x2B, 0x2E, 0xCD, 0xA9 } };
-static const FMTID PropertySummary =
-	{ 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } };
-static const FMTID PropertyDocuments =
-	{ 0xD5CDD502, 0x2E9C, 0x101B, { 0x93, 0x97, 0x08, 0x00, 0x2B, 0x2C, 0xF9, 0xAE } };
-static const FMTID PropertyImage =
-	{ 0x6444048F, 0x4C8B, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const FMTID PropertyAudio =
-	{ 0x64440490, 0x4C8B, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const FMTID PropertyVideo =
-	{ 0x64440491, 0x4C8B, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const FMTID PropertyMedia =
-	{ 0x64440492, 0x4C8B, 0x11D1, { 0x8B, 0x70, 0x08, 0x00, 0x36, 0xB1, 0x1A, 0x03 } };
-static const FMTID PropertyPhoto =
-	{ 0x14B81DA1, 0x0135, 0x4D31, { 0x96, 0xD9, 0x6C, 0xBF, 0xC9, 0x67, 0x1A, 0x99 } };
-static const FMTID PropertyMusic =
-	{ 0x56A3372E, 0xCE9C, 0x11D2, { 0x9F, 0x0E, 0x00, 0x60, 0x97, 0xC6, 0x86, 0xF6 } };
-static const FMTID PropertyVersion =
-	{ 0x0CEF7D53, 0xFA64, 0x11D1, { 0xA2, 0x03, 0x00, 0x00, 0xF8, 0x1F, 0xED, 0xEE } };
-static const FMTID PropertyUnnamed1 =
-	{ 0x3F8472B5, 0xE0AF, 0x4DB2, { 0x80, 0x71, 0xC5, 0x3F, 0xE7, 0x6A, 0xE7, 0xCE } };
-static const FMTID PropertyUnnamed2 =
-	{ 0x72FAB781, 0xACDA, 0x43E5, { 0xB1, 0x55, 0xB2, 0x43, 0x4F, 0x85, 0xE6, 0x78 } };
-static const FMTID PropertyUnnamed3 =
-	{ 0xE3E0584C, 0xB788, 0x4A5A, { 0xBB, 0x20, 0x7F, 0x5A, 0x44, 0xC9, 0xAC, 0xDD } };
-static const FMTID PropertyUnnamed4 =
-	{ 0x2E4B640D, 0x5019, 0x46D8, { 0x88, 0x81, 0x55, 0x41, 0x4C, 0xC5, 0xCA, 0xA0 } };
-static const FMTID PropertyUnnamed5 =
-	{ 0x2CBAA8F5, 0xD81F, 0x47CA, { 0xB1, 0x7A, 0xF8, 0xD8, 0x22, 0x30, 0x01, 0x31 } };
-static const FMTID PropertyUnnamed6 =
-	{ 0x43F8D7B7, 0xA444, 0x4F87, { 0x93, 0x83, 0x52, 0x27, 0x1C, 0x9B, 0x91, 0x5C } };
-static const FMTID PropertyUnnamed7 =
-	{ 0x276D7BB0, 0x5B34, 0x4FB0, { 0xAA, 0x4B, 0x15, 0x8E, 0xD1, 0x2A, 0x18, 0x09 } };
-
 static const BYTE ContextSlaves[LFLastQueryContext+1] = {
-	IDXTABLE_MASTER,					// LFContextAllFiles
-	IDXTABLE_MASTER,					// LFContextFavorites
-	IDXTABLE_AUDIO,						// LFContextAudio
-	IDXTABLE_PICTURES,					// LFContextPictures
-	IDXTABLE_VIDEOS,					// LFContextVideos
-	IDXTABLE_DOCUMENTS,					// LFContextDocuments
-	IDXTABLE_MASTER,					// LFContextContacts
-	IDXTABLE_MESSAGES,					// LFContextMessages
-	IDXTABLE_MASTER,					// LFContextEvents
-	IDXTABLE_MASTER,					// LFContextNew
-	IDXTABLE_MASTER,					// LFContextTrash
-	IDXTABLE_MASTER						// LFContextFilters
+	IDXTABLE_MASTER,		// LFContextAllFiles
+	IDXTABLE_MASTER,		// LFContextFavorites
+	IDXTABLE_AUDIO,			// LFContextAudio
+	IDXTABLE_PICTURES,		// LFContextPictures
+	IDXTABLE_VIDEOS,		// LFContextVideos
+	IDXTABLE_DOCUMENTS,		// LFContextDocuments
+	IDXTABLE_MASTER,		// LFContextContacts
+	IDXTABLE_MESSAGES,		// LFContextMessages
+	IDXTABLE_MASTER,		// LFContextEvents
+	IDXTABLE_MASTER,		// LFContextNew
+	IDXTABLE_MASTER,		// LFContextTrash
+	IDXTABLE_MASTER			// LFContextFilters
 };
 
 #include "ContextTable.h"
-
-LFShellProperty AttrProperties[LFAttributeCount] = {
-	{ PropertyStorage, 10 },		// LFAttrFileName
-	{ 0, 0 },						// LFAttrStoreID
-	{ PropertyStorage, 8 },			// LFAttrFileID
-	{ PropertySummary, 6 },			// LFAttrComments
-	{ PropertyVersion, 3 },			// LFAttrDescription
-	{ PropertyStorage, 15 },		// LFAttrCreationTime
-	{ PropertyStorage, 14 },		// LFAttrFileTime
-	{ PropertyUnnamed5, 100 },		// LFAttrAddTime
-	{ 0, 0 },						// LFAttrDeleteTime
-	{ PropertyUnnamed6, 100 },		// LFAttrArchiveTime
-	{ PropertyStorage, 4 },			// LFAttrFileFormat
-	{ 0, 0 },						// LFAttrFileCount
-	{ PropertyStorage, 12 },		// LFAttrFileSize
-	{ 0, 0 },						// LFAttrFlags
-	{ PropertyQuery, 9 },			// LFAttrURL
-	{ PropertySummary, 5 },			// LFAttrHashtags
-	{ PropertyMedia, 9 },			// LFAttrRating
-	{ PropertyUnnamed3, 11 },		// LFAttrPriority
-	{ 0, 0 },						// LFAttrLocationName
-	{ 0, 0 },						// LFAttrLocationIATA
-	{ 0, 0 },						// LFAttrLocationGPS
-
-	{ PropertyImage, 3 },			// LFAttrWidth
-	{ PropertyImage, 4 },			// LFAttrHeight
-	{ 0, 0 },						// LFAttrDimension
-	{ 0, 0 },						// LFAttrAspectRatio
-	{ PropertyVideo, 44 },			// LFAttrVideoCodec
-	{ PropertyPhoto, 18248 },		// LFAttrRoll
-
-	{ 0, 0 },						// LFAttrExposure
-	{ 0, 0 },						// LFAttrFocus
-	{ 0, 0 },						// LFAttrAperture
-	{ 0, 0 },						// LFAttrChip
-
-	{ PropertyMusic, 4 },			// LFAttrAlbum
-	{ PropertyMusic, 11 },			// LFAttrGenre
-	{ PropertyMedia, 7 },			// LFAttrChannels
-	{ PropertyMedia, 5 },			// LFAttrSamplerate
-	{ 0, 0 },						// LFAttrAudioCodec
-
-	{ PropertyAudio, 3 },			// LFAttrDuration
-	{ PropertyMedia, 4 },			// LFAttrBitrate
-
-	{ PropertySummary, 4 },			// LFAttrArtist
-	{ PropertySummary, 2 },			// LFAttrTitle
-	{ PropertyMedia, 11 },			// LFAttrCopyright
-	{ 0, 0 },						// LFAttrISBN
-	{ 0, 0 },						// LFAttrLanguage
-	{ PropertyDocuments, 14 },		// LFAttrPages
-	{ PropertyUnnamed4, 100 },		// LFAttrRecordingTime
-	{ PropertyPhoto, 272 },			// LFAttrRecordingEquipment
-	{ 0, 0 },						// LFAttrSignature
-
-	{ 0, 0 },						// LFAttrFrom
-	{ 0, 0 },						// LFAttrTo
-	{ 0, 0 },						// LFAttrResponsible
-	{ PropertyUnnamed1, 100 },		// LFAttrDueTime
-	{ PropertyUnnamed2, 100 },		// LFAttrDoneTime
-	{ PropertyUnnamed7, 100 },		// LFAttrClient
-	{ 0, 0 }						// LFAttrLikeCount
-};
-
-#pragma pack(pop)
 
 #pragma data_seg()
 
@@ -178,7 +72,7 @@ BYTE GetPerceivedContext(CHAR* Extension)
 	PERCEIVED Type;
 	PERCEIVEDFLAG Flag;
 	if (AssocGetPerceivedType(ExtensionW, &Type, &Flag, NULL)==S_OK)
-		switch(Type)
+		switch (Type)
 		{
 		case PERCEIVED_TYPE_IMAGE:
 			return LFContextPictures;
@@ -281,10 +175,10 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 	VARIANT Value = { 0 };
 
 	if (SUCCEEDED(pParentFolder->GetDetailsEx(pidlRel, &Column, &Value)))
-		switch(Value.vt)
+		switch (Value.vt)
 		{
 		case VT_BSTR:
-			if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+			if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))
 				SetAttribute(pItemDescriptor, Attr, Value.pbstrVal);
 
 			break;
@@ -303,20 +197,20 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 			break;
 
 		case VT_I4:
-			if (((AttrTypes[Attr]==LFTypeUINT) || (AttrTypes[Attr]==LFTypeBitrate)) && (Value.intVal>=0))
+			if (((AttrProperties[Attr].Type==LFTypeUINT) || (AttrProperties[Attr].Type==LFTypeBitrate)) && (Value.intVal>=0))
 				SetAttribute(pItemDescriptor, Attr, &Value.intVal);
 
 			break;
 
 		case VT_UI4:
-			if ((AttrTypes[Attr]==LFTypeUINT) || (AttrTypes[Attr]==LFTypeFourCC))
+			if ((AttrProperties[Attr].Type==LFTypeUINT) || (AttrProperties[Attr].Type==LFTypeFourCC))
 				SetAttribute(pItemDescriptor, Attr, &Value.uintVal);
 
 			break;
 
 		case VT_I8:
 		case VT_UI8:
-			switch(AttrTypes[Attr])
+			switch (AttrProperties[Attr].Type)
 			{
 			case LFTypeSize:
 				SetAttribute(pItemDescriptor, Attr, &Value.ullVal);
@@ -332,13 +226,13 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 			break;
 
 		case VT_R8:
-			if (AttrTypes[Attr]==LFTypeDouble)
+			if (AttrProperties[Attr].Type==LFTypeDouble)
 				SetAttribute(pItemDescriptor, Attr, &Value.dblVal);
 
 			break;
 
 		case VT_DATE:
-			if (AttrTypes[Attr]==LFTypeTime)
+			if (AttrProperties[Attr].Type==LFTypeTime)
 			{
 				SYSTEMTIME st;
 				FILETIME ft;
@@ -375,31 +269,31 @@ void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LF
 		PropertySpec.ulKind = PRSPEC_PROPID;
 
 		for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
-			if (AttrProperties[Attr].Schema==Schema)
+			if (AttrProperties[Attr].ShPropertyMapping.Schema==Schema)
 			{
-				PropertySpec.propid = AttrProperties[Attr].ID;
+				PropertySpec.propid = AttrProperties[Attr].ShPropertyMapping.ID;
 
 				PROPVARIANT Value;
 				if (pPropertyStorage->ReadMultiple(1, &PropertySpec, &Value)==S_OK)
-					switch(Value.vt)
+					switch (Value.vt)
 					{
 					case VT_BSTR:
-						if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+						if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))
 							SetAttribute(pItemDescriptor, Attr, Value.pbstrVal);
 
 						break;
 
 					case VT_LPWSTR:
-						if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+						if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))
 							SetAttribute(pItemDescriptor, Attr, Value.pwszVal);
 
 						break;
 
 					case VT_LPSTR:
-						if (AttrTypes[Attr]==LFTypeAnsiString)
+						if (AttrProperties[Attr].Type==LFTypeAnsiString)
 							SetAttribute(pItemDescriptor, Attr, Value.pszVal);
 
-						if ((AttrTypes[Attr]==LFTypeUnicodeString) || (AttrTypes[Attr]==LFTypeUnicodeArray))
+						if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))
 						{
 							WCHAR tmpStr[256];
 							MultiByteToWideChar(CP_ACP, 0, Value.pszVal, -1, tmpStr, 256);
@@ -410,7 +304,7 @@ void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LF
 						break;
 
 					case VT_DATE:
-						if (AttrTypes[Attr]==LFTypeTime)
+						if (AttrProperties[Attr].Type==LFTypeTime)
 						{
 							SYSTEMTIME st;
 							FILETIME ft;
@@ -470,20 +364,20 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
 			{
 				for (UINT a=0; a<LFAttributeCount; a++)
-					if ((AttrProperties[a].ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
-						GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].Schema, AttrProperties[a].ID, pItemDescriptor, a);
+					if ((AttrProperties[a].ShPropertyMapping.ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
+						GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].ShPropertyMapping.Schema, AttrProperties[a].ShPropertyMapping.ID, pItemDescriptor, a);
 
 				// Besondere Eigenschaften
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 4, pItemDescriptor, LFAttrBitrate);
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 5, pItemDescriptor, LFAttrSamplerate);
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 7, pItemDescriptor, LFAttrChannels);
-				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 10, pItemDescriptor, LFAttrAudioCodec);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 4, pItemDescriptor, LFAttrBitrate);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 5, pItemDescriptor, LFAttrSamplerate);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 7, pItemDescriptor, LFAttrChannels);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 10, pItemDescriptor, LFAttrAudioCodec);
 
-				GetShellProperty(pParentFolder, pidlRel, PropertyPhoto, 36867, pItemDescriptor, LFAttrRecordingTime);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyPhoto, 36867, pItemDescriptor, LFAttrRecordingTime);
 
-				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 3, pItemDescriptor, LFAttrWidth);
-				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 4, pItemDescriptor, LFAttrHeight);
-				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 8, pItemDescriptor, LFAttrBitrate);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyVideo, 3, pItemDescriptor, LFAttrWidth);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyVideo, 4, pItemDescriptor, LFAttrHeight);
+				GetShellProperty(pParentFolder, pidlRel, SHPropertyVideo, 8, pItemDescriptor, LFAttrBitrate);
 
 				pParentFolder->Release();
 			}
@@ -498,11 +392,11 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 			IPropertySetStorage* pPropertySetStorage;
 			if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
 			{
-				GetOLEProperties(pPropertySetStorage, PropertyDocuments, pItemDescriptor);
-				GetOLEProperties(pPropertySetStorage, PropertyMedia, pItemDescriptor);
-				GetOLEProperties(pPropertySetStorage, PropertyMusic, pItemDescriptor);
-				GetOLEProperties(pPropertySetStorage, PropertyPhoto, pItemDescriptor);
-				GetOLEProperties(pPropertySetStorage, PropertySummary, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, SHPropertyDocuments, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, SHPropertyMedia, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, SHPropertyMusic, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, SHPropertyPhoto, pItemDescriptor);
+				GetOLEProperties(pPropertySetStorage, SHPropertySummary, pItemDescriptor);
 
 				pPropertySetStorage->Release();
 			}

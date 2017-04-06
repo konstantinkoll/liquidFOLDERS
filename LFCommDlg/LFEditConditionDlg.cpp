@@ -43,7 +43,7 @@ void LFEditConditionDlg::DoDataExchange(CDataExchange* pDX)
 
 void LFEditConditionDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	Add = (Attr!=LFAttrFileID) && (Attr!=LFAttrStoreID) && (Attr!=LFAttrDescription) && (LFGetApp()->m_Attributes[Attr].Type!=LFTypeFlags);
+	Add = (Attr!=LFAttrFileID) && (Attr!=LFAttrStoreID) && (Attr!=LFAttrDescription) && (LFGetApp()->m_Attributes[Attr].AttrProperties.Type!=LFTypeFlags);
 	Check = FALSE;
 }
 

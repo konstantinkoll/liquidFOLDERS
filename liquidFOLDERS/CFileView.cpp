@@ -8,17 +8,17 @@
 
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 {
-	BOOL bSortable = theApp.m_Attributes[Attr].Sortable;
+	BOOL bSortable = theApp.m_Attributes[Attr].TypeProperties.Sortable;
 
 	switch (ViewMode)
 	{
 	case LFViewCalendar:
 	case LFViewTimeline:
-		bSortable &= (theApp.m_Attributes[Attr].Type==LFTypeTime);
+		bSortable &= (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeTime);
 		break;
 
 	case LFViewGlobe:
-		bSortable &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr].Type==LFTypeGeoCoordinates));
+		bSortable &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeGeoCoordinates));
 		break;
 	}
 
@@ -1402,7 +1402,7 @@ void CFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	switch(nChar)
+	switch (nChar)
 	{
 	case 'A':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))

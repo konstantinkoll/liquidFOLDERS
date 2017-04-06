@@ -79,10 +79,8 @@ struct LFMessageIDs
 
 // Globals
 
-#define LFKeySize      16
-#define LFKeyChars     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-'
-
-#define LFExtSize      16
+#define LFKeySize     16
+#define LFExtSize     16
 
 
 // Globe textures
@@ -266,9 +264,8 @@ struct LFItemCategoryDescriptor
 #define LFAttrDueTime                  50
 #define LFAttrDoneTime                 51
 #define LFAttrCustomer                 52
-#define LFAttrLikeCount                53
 
-#define LFAttributeCount               54
+#define LFAttributeCount               53
 #define LFLastCoreAttribute            20
 
 
@@ -346,7 +343,15 @@ struct LFVariantData
 #define LFAttrCategoryCount             9
 
 
-// Shell property
+// Attribute descriptor
+
+
+#define LFAlwaysVisible        1
+#define LFNotSortable          2
+#define LFPreferDescending     4
+#define LFFormatRight          16
+
+#pragma pack(push,1)
 
 struct LFShellProperty
 {
@@ -354,23 +359,33 @@ struct LFShellProperty
 	INT ID;
 };
 
+struct LFAttributeProperties
+{
+	BYTE Type;
+	UINT cCharacters;
+	BYTE Category;
+	BOOL ReadOnly;
+	LFShellProperty ShPropertyMapping;
+};
 
-// Attribute descriptor
+struct LFTypeProperties
+{
+	SIZE_T Size;
+	BOOL ContainsLetters;
+	BOOL Sortable;
+	BOOL PreferDescendingSort;
+	BOOL FormatRight;
+	INT DefaultColumnWidth;
+};
+
+#pragma pack(pop)
 
 struct LFAttributeDescriptor
 {
 	WCHAR Name[256];
 	WCHAR XMLID[256];
-	BOOL AlwaysVisible;
-	BOOL Sortable;
-	BOOL PreferDescendingSort;
-	BOOL ReadOnly;
-	BOOL FormatRight;
-	BYTE Type;
-	BYTE Category;
-	UINT RecommendedWidth;
-	UINT cCharacters;
-	LFShellProperty ShPropertyMapping;
+	LFAttributeProperties AttrProperties;
+	LFTypeProperties TypeProperties;
 };
 
 

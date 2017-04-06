@@ -913,6 +913,7 @@ void CMainWnd::OnUpdateSortOptions()
 
 	FVPersistentData Data;
 	m_wndMainView.GetPersistentData(Data);
+
 	OnCookFiles((WPARAM)&Data);
 }
 
@@ -937,7 +938,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewContent))
 	{
 		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewContent) && vp->Descending) || (vp->Mode==LFViewTimeline),
-			((vp->Mode>LFViewContent) && (vp->Mode!=LFViewTimeline)) || ((Attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
+			((vp->Mode>LFViewContent) && (vp->Mode!=LFViewTimeline)) || ((Attr->AttrProperties.Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			m_pActiveFilter);
 	}
 	else

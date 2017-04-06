@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "Categorizers.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
@@ -69,7 +70,7 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 	}
 
 	// Special treatment for string arrays
-	if (AttrTypes[Attr]==LFTypeUnicodeArray)
+	if (AttrProperties[Attr].Type==LFTypeUnicodeArray)
 	{
 		pSearchResult = new LFSearchResult(pSearchResult);
 		pSearchResult->GroupArray(Attr, pFilter);
@@ -81,7 +82,7 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 	// Special treatment for missing GPS location
 	if (Attr==LFAttrLocationGPS)
 		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-			if (IsNullValue(AttrTypes[LFAttrLocationGPS], (*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS]))
+			if (IsNullValue(AttrProperties[LFAttrLocationGPS].Type, (*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS]))
 			{
 				LFAirport* pAirport;
 				if (LFIATAGetAirportByCode((CHAR*)(*pSearchResult)[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
@@ -188,7 +189,7 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 		{
 			m_GroupAttribute = pFilter->Options.GroupAttribute;
 
-			switch(pFilter->pConditionList->AttrData.Attr)
+			switch (pFilter->pConditionList->AttrData.Attr)
 			{
 			case LFAttrLocationName:
 			case LFAttrLocationIATA:
@@ -197,13 +198,13 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 				break;
 
 			default:
-				if (AttrTypes[pFilter->pConditionList->AttrData.Attr]==LFTypeTime)
+				if (AttrProperties[pFilter->pConditionList->AttrData.Attr].Type==LFTypeTime)
 					m_Context = LFContextSubfolderDay;
 			}
 		}
 	}
 	else
-		switch(pFilter->Mode)
+		switch (pFilter->Mode)
 		{
 		case LFFilterModeStores:
 			m_Context = LFContextStores;
@@ -254,7 +255,7 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 	if (!LFDynArray::AddItem(pItemDescriptor))
 		return FALSE;
 
-	switch(pItemDescriptor->Type & LFTypeMask)
+	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
 		m_StoreCount++;
@@ -359,7 +360,7 @@ INT LFSearchResult::Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, 
 		return (INT)pItem1->CategoryID-(INT)pItem2->CategoryID;
 
 	// Dateien mit NULL-Werten oder leeren Strings im gewünschten Attribut hinten einsortieren
-	const UINT Type = AttrTypes[Attr];
+	const UINT Type = AttrProperties[Attr].Type;
 	BOOL i1Null = IsNullValue(Type, pItem1->AttributeValues[Attr]);
 	BOOL i2Null = IsNullValue(Type, pItem2->AttributeValues[Attr]);
 
@@ -467,7 +468,7 @@ void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 
 UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 {
-	if (((ReadIndex2==ReadIndex1+1) && ((!GroupOne) || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrTypes[Attr], m_Items[ReadIndex1]->AttributeValues[Attr])))
+	if (((ReadIndex2==ReadIndex1+1) && ((!GroupOne) || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
 	{
 		for (UINT a=ReadIndex1; a<ReadIndex2; a++)
 			m_Items[WriteIndex++] = m_Items[a];
@@ -513,7 +514,7 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 	// Choose categorizer
 	CCategorizer* pCategorizer = NULL;
 
-	switch(Attr)
+	switch (Attr)
 	{
 	case LFAttrLocationIATA:
 		pCategorizer = new CIATACategorizer();
@@ -531,7 +532,7 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 		}
 
 	default:
-		switch(AttrTypes[Attr])
+		switch (AttrProperties[Attr].Type)
 		{
 		case LFTypeRating:
 			pCategorizer = new CRatingCategorizer(Attr);
@@ -583,7 +584,7 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 
 void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 {
-	assert(AttrTypes[Attr]==LFTypeUnicodeArray);
+	assert(AttrProperties[Attr].Type==LFTypeUnicodeArray);
 
 	typedef struct { std::wstring Name; BOOL Multiple; UINT Count; INT64 Size; UINT Source; } TagItem;
 	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;
@@ -639,7 +640,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 		{
 			BOOL First = TRUE;
 			for (WCHAR* Ptr=Hashtag; *Ptr; Ptr++)
-				switch(*Ptr)
+				switch (*Ptr)
 				{
 				case L' ':
 				case L',':

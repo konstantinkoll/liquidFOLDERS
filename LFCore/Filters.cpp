@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "Filters.h"
 #include "LFCore.h"
 #include "LFVariantData.h"
@@ -165,7 +166,7 @@ LFCORE_API LFFilterCondition* LFAllocFilterConditionEx(BYTE Compare, UINT Attr, 
 
 	pFilterCondition->pNext = pNext;
 	pFilterCondition->AttrData.Attr = Attr;
-	pFilterCondition->AttrData.Type = (Attr<LFAttributeCount) ? AttrTypes[Attr] : LFTypeUnicodeString;
+	pFilterCondition->AttrData.Type = (Attr<LFAttributeCount) ? AttrProperties[Attr].Type : LFTypeUnicodeString;
 	pFilterCondition->AttrData.IsNull = FALSE;
 	pFilterCondition->Compare = Compare;
 

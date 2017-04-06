@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "ID3.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
@@ -11,104 +12,6 @@
 #include <shlwapi.h>
 
 
-extern const BYTE AttrTypes[LFAttributeCount] = {
-	LFTypeUnicodeString,		// LFAttrFileName
-	LFTypeAnsiString,			// LFAttrStoreID
-	LFTypeAnsiString,			// LFAttrFileID
-	LFTypeUnicodeString,		// LFAttrComment
-	LFTypeUnicodeString,		// LFAttrDescription
-	LFTypeTime,					// LFAttrCreationTime
-	LFTypeTime,					// LFAttrAddTime
-	LFTypeTime,					// LFAttrFileTime
-	LFTypeTime,					// LFAttrDeleteTime
-	LFTypeTime,					// LFAttrArchiveTime
-	LFTypeAnsiString,			// LFAttrFileFormat
-	LFTypeUINT,					// LFAttrFileCount
-	LFTypeSize,					// LFAttrFileSize
-	LFTypeFlags,				// LFAttrFlags
-	LFTypeAnsiString,			// LFAttrURL
-	LFTypeUnicodeArray,			// LFAttrTags
-	LFTypeRating,				// LFAttrRating
-	LFTypeRating,				// LFAttrPriority
-	LFTypeUnicodeString,		// LFAttrLocationName
-	LFTypeAnsiString,			// LFAttrLocationIATA
-	LFTypeGeoCoordinates,		// LFAttrLocationGPS
-
-	LFTypeUINT,					// LFAttrWidth
-	LFTypeUINT,					// LFAttrHeight
-	LFTypeMegapixel,			// LFAttrDimension
-	LFTypeDouble,				// LFAttrAspectRatio
-	LFTypeFourCC,				// LFAttrVideoCodec
-	LFTypeUnicodeString,		// LFAttrRoll
-
-	LFTypeUnicodeString,		// LFAttrExposure
-	LFTypeFraction,				// LFAttrFocus
-	LFTypeFraction,				// LFAttrAperture
-	LFTypeUnicodeString,		// LFAttrChip
-
-	LFTypeUnicodeString,		// LFAttrAlbum
-	LFTypeUINT,					// LFAttrGenre
-	LFTypeUINT,					// LFAttrChannels
-	LFTypeUINT,					// LFAttrSamplerate
-	LFTypeFourCC,				// LFAttrAudioCodec
-
-	LFTypeDuration,				// LFAttrDuration
-	LFTypeBitrate,				// LFAttrBitrate
-
-	LFTypeUnicodeString,		// LFAttrArtist
-	LFTypeUnicodeString,		// LFAttrTitle
-	LFTypeUnicodeString,		// LFAttrCopyright
-	LFTypeAnsiString,			// LFAttrISBN
-	LFTypeAnsiString,			// LFAttrLanguage
-	LFTypeUINT,					// LFAttrPages
-	LFTypeTime,					// LFAttrRecordingTime
-	LFTypeUnicodeString,		// LFAttrRecordingEquipment
-	LFTypeAnsiString,			// LFAttrSignature
-
-	LFTypeAnsiString,			// LFAttrFrom
-	LFTypeAnsiString,			// LFAttrTo
-	LFTypeUnicodeString,		// LFAttrResponsible
-	LFTypeTime,					// LFAttrDueTime
-	LFTypeTime,					// LFAttrDoneTime
-	LFTypeUnicodeString,		// LFAttrCustomer
-	LFTypeUINT					// LFAttrLikeCount
-};
-
-extern const SIZE_T AttrSizes[LFTypeCount] = {
-	0,							// LFTypeUnicodeString
-	0,							// LFTypeUnicodeArray
-	0,							// LFTypeAnsiString
-	sizeof(DWORD),				// LFTypeFourCC
-	sizeof(BYTE),				// LFTypeRating
-	sizeof(UINT),				// LFTypeUINT
-	sizeof(INT64),				// LFTypeSize
-	sizeof(LFFraction),			// LFTypeFraction
-	sizeof(DOUBLE),				// LFTypeDouble
-	sizeof(UINT),				// LFTypeFlags
-	sizeof(LFGeoCoordinates),	// LFTypeGeoCoordinates
-	sizeof(FILETIME),			// LFTypeTime
-	sizeof(UINT),				// LFTypeBitrate,
-	sizeof(UINT),				// LFTypeDuration
-	sizeof(DOUBLE)				// LFTypeMegapixel
-};
-
-extern const BOOL AttrContainsLetters[LFTypeCount] = {
-	TRUE,						// LFTypeUnicodeString
-	TRUE,						// LFTypeUnicodeArray
-	TRUE,						// LFTypeAnsiString
-	TRUE,						// LFTypeFourCC
-	FALSE,						// LFTypeRating
-	FALSE,						// LFTypeUINT
-	TRUE,						// LFTypeSize
-	FALSE,						// LFTypeFraction
-	FALSE,						// LFTypeDouble
-	TRUE,						// LFTypeFlags
-	TRUE,						// LFTypeGeoCoordinates
-	FALSE,						// LFTypeTime
-	TRUE,						// LFTypeBitrate,
-	FALSE,						// LFTypeDuration
-	TRUE						// LFTypeMegapixel
-};
 
 #pragma comment(lib, "shlwapi.lib")
 
@@ -139,7 +42,7 @@ BOOL IsNullValue(UINT Type, const void* pValue)
 
 	assert(Type<LFTypeCount);
 
-	switch(Type)
+	switch (Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
@@ -186,7 +89,7 @@ INT CompareValues(UINT Type, const void* pValue1, const void* pValue2, BOOL Case
 	DOUBLE d1;
 	DOUBLE d2;
 
-	switch(Type)
+	switch (Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
@@ -247,7 +150,7 @@ void ToString(const void* pValue, UINT Type, WCHAR* pStr, SIZE_T cCount)
 	assert(pStr);
 
 	if (pValue)
-		switch(Type)
+		switch (Type)
 		{
 		case LFTypeUnicodeString:
 		case LFTypeUnicodeArray:
@@ -342,7 +245,7 @@ BOOL GetNextHashtag(WCHAR** ppUnicodeArray, WCHAR* pHashtag, SIZE_T cCount)
 
 	while (**ppUnicodeArray!=L'\0')
 	{
-		switch(**ppUnicodeArray)
+		switch (**ppUnicodeArray)
 		{
 		case L' ':
 		case L'.':
@@ -570,7 +473,7 @@ LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
-	assert(AttrTypes[Attr]<LFTypeCount);
+	assert(AttrProperties[Attr].Type<LFTypeCount);
 
 	if ((Attr==LFAttrGenre) && (pItemDescriptor->AttributeValues[Attr]))
 	{
@@ -578,7 +481,7 @@ LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr
 	}
 	else
 	{
-		ToString(pItemDescriptor->AttributeValues[Attr], AttrTypes[Attr], pStr, cCount);
+		ToString(pItemDescriptor->AttributeValues[Attr], AttrProperties[Attr].Type, pStr, cCount);
 	}
 }
 
@@ -589,7 +492,7 @@ LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr
 LFCORE_API void LFInitVariantData(LFVariantData& pValue, UINT Attr)
 {
 	pValue.Attr = Attr;
-	pValue.Type = (Attr<LFAttributeCount) ? AttrTypes[Attr] : LFTypeUnicodeString;
+	pValue.Type = (Attr<LFAttributeCount) ? AttrProperties[Attr].Type : LFTypeUnicodeString;
 
 	LFClearVariantData(pValue);
 }
@@ -600,7 +503,7 @@ LFCORE_API void LFClearVariantData(LFVariantData& pValue)
 
 	pValue.IsNull = TRUE;
 
-	switch(pValue.Type)
+	switch (pValue.Type)
 	{
 	case LFTypeDouble:
 		pValue.Double = 0;
@@ -676,7 +579,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 		UINT Min;
 		UINT Sec;
 
-		switch(pValue.Type)
+		switch (pValue.Type)
 		{
 		case LFTypeUnicodeString:
 			wcsncpy_s(pValue.UnicodeString, 256, pStr, _TRUNCATE);
@@ -745,7 +648,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 
 		case LFTypeSize:
 			for (Ptr=Buffer; *pStr; pStr++)
-				switch(*pStr)
+				switch (*pStr)
 				{
 				case L'0':
 				case L'1':
@@ -833,7 +736,7 @@ Abort:
 		case LFTypeTime:
 			ZeroMemory(&stLocal, sizeof(stLocal));
 
-			switch(swscanf_s(pStr, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
+			switch (swscanf_s(pStr, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
 			{
 			case 1:
 			case 2:
@@ -969,10 +872,10 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFV
 	if (pItemDescriptor->AttributeValues[Value.Attr])
 	{
 		assert(Value.Attr<LFAttributeCount);
-		assert(Value.Type==AttrTypes[Value.Attr]);
+		assert(Value.Type==AttrProperties[Value.Attr].Type);
 		assert(Value.Type<LFTypeCount);
 
-		switch(AttrTypes[Value.Attr])
+		switch (AttrProperties[Value.Attr].Type)
 		{
 		case LFTypeUnicodeString:
 		case LFTypeUnicodeArray:
@@ -984,7 +887,7 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFV
 			break;
 
 		default:
-			memcpy(&Value.Value, pItemDescriptor->AttributeValues[Value.Attr], AttrSizes[AttrTypes[Value.Attr]]);
+			memcpy(&Value.Value, pItemDescriptor->AttributeValues[Value.Attr], TypeProperties[AttrProperties[Value.Attr].Type].Size);
 		}
 
 		Value.IsNull = FALSE;
@@ -1000,7 +903,7 @@ LFCORE_API void LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, U
 	assert(pItemDescriptor);
 
 	pValue.Attr = Attr;
-	pValue.Type = AttrTypes[Attr];
+	pValue.Type = AttrProperties[Attr].Type;
 
 	LFGetAttributeVariantData(pItemDescriptor, pValue);
 }
@@ -1009,7 +912,7 @@ LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, con
 {
 	assert(pItemDescriptor);
 	assert(Value.Attr<LFAttributeCount);
-	assert(Value.Type==AttrTypes[Value.Attr]);
+	assert(Value.Type==AttrProperties[Value.Attr].Type);
 	assert(Value.Type<LFTypeCount);
 
 	// Flags can only be managed by the system
@@ -1022,7 +925,7 @@ LFCORE_API BOOL LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
 
-	return IsNullValue(AttrTypes[Attr], pItemDescriptor->AttributeValues[Attr]);
+	return IsNullValue(AttrProperties[Attr].Type, pItemDescriptor->AttributeValues[Attr]);
 }
 
 LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
@@ -1071,7 +974,7 @@ LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 			{
 				BOOL First = TRUE;
 				for (WCHAR* Ptr=Hashtag; *Ptr; Ptr++)
-					switch(*Ptr)
+					switch (*Ptr)
 					{
 					case L' ':
 					case L'.':
