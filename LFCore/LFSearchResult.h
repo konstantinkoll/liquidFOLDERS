@@ -18,7 +18,7 @@ public:
 	void RemoveFlaggedItems(BOOL UpdateCount=TRUE);
 	void KeepRange(INT First, INT Last);
 	void Sort(UINT Attr, BOOL Descending);
-	void Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter);
+	void Group(UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 	void GroupArray(UINT Attr, LFFilter* pFilter);
 
 	UINT m_LastError;
@@ -27,7 +27,7 @@ public:
 	WCHAR m_Hint[256];
 	DWORD m_QueryTime;
 	BYTE m_Context;
-	UINT m_GroupAttribute;
+	UINT m_IconID;
 
 	BOOL m_RawCopy;
 	BOOL m_HasCategories;
@@ -42,5 +42,5 @@ protected:
 private:
 	INT Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const;
 	void Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending);
-	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupOne, LFFilter* pFilter);
+	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 };

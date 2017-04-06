@@ -19,11 +19,13 @@ protected:
 	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
 	virtual BOOL InitDialog();
 
+	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	LFViewParameters* p_ViewParameters;
 	UINT m_Context;
+	LFContextViewSettings* p_ContextViewSettings;
+
 	CExplorerList m_wndSortAttribute;
 	CComboBox m_wndSortDirection;
 };

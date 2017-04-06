@@ -6,39 +6,25 @@
 #include "LFCommDlg.h"
 
 
-// View IDs
-
-#define LFViewLargeIcons           0
-#define LFViewSmallIcons           1
-#define LFViewList                 2
-#define LFViewDetails              3
-#define LFViewTiles                4
-#define LFViewStrips               5
-#define LFViewContent              6
-#define LFViewCalendar             7
-#define LFViewTimeline             8
-#define LFViewGlobe                9
-#define LFViewTagcloud            10
-
-#define LFViewCount               11
-
-#define HorizontalScrollWidth     64
-
-
-BOOL AttributeSortableInView(UINT Attr, UINT ViewMode);
-
-
 // View parameters
 
-struct LFViewParameters
-{
-	UINT Mode;
-	INT ColumnOrder[LFAttributeCount];
-	INT ColumnWidth[LFAttributeCount];
+#define VIEWSETTINGSVERSION     4
 
+struct LFContextViewSettings
+{
 	UINT SortBy;
 	BOOL Descending;
-	BOOL AutoDirs;
+
+	UINT View;
+	INT ColumnOrder[LFAttributeCount];
+	INT ColumnWidth[LFAttributeCount];
+};
+
+struct LFGlobalViewSettings
+{
+	UINT LastViewSelected[LFAttributeCount];
+
+	BOOL CalendarShowDays;
 
 	INT GlobeLatitude;
 	INT GlobeLongitude;
@@ -96,12 +82,6 @@ struct FVItemData
 	BOOL Valid;
 };
 
-struct ItemCategory
-{
-	WCHAR Caption[256];
-	WCHAR Hint[256];
-	RECT Rect;
-};
 
 // Theming
 
@@ -124,6 +104,8 @@ struct CachedSelectionBitmap
 #define BM_REFLECTION         0
 #define BM_SELECTED           1
 
+#define HORIZONTALSCROLLWIDTH     64
+
 class CFileView : public CFrontstageWnd
 {
 public:
@@ -135,7 +117,7 @@ public:
 	virtual void GetPersistentData(FVPersistentData& Data) const;
 	virtual void EditLabel(INT Index);
 
-	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
+	void UpdateViewSettings(INT Context=-1, BOOL Force=FALSE);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	INT GetFocusItem() const;
 	INT GetSelectedItem() const;
@@ -147,7 +129,7 @@ public:
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void SetViewOptions(BOOL Force);
+	virtual void SetViewSettings(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
@@ -156,6 +138,7 @@ protected:
 	virtual CMenu* GetItemContextMenu(INT Index);
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
+	void ValidateAllItems();
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT Index) const;
 	CMenu* GetSendToMenu();
@@ -163,9 +146,10 @@ protected:
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	CString GetLabel(LFItemDescriptor* pItemDescriptor) const;
 	BOOL BeginDragDrop();
+	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg LRESULT OnThemeChanged();
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -196,8 +180,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	INT m_Context;
-	LFViewParameters m_ViewParameters;
-	LFViewParameters* p_ViewParameters;
+	LFContextViewSettings m_ContextViewSettings;
+	LFGlobalViewSettings m_GlobalViewSettings;
+	LFContextViewSettings* p_ContextViewSettings;
+	LFGlobalViewSettings* p_GlobalViewSettings;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	UINT m_DataSize;
@@ -239,7 +225,6 @@ private:
 	void AppendSendToItem(CMenu* pMenu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
 	void ResetScrollbars();
 	void AdjustScrollbars();
-	CString GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName=NULL) const;
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	CachedSelectionBitmap m_Bitmaps[2];

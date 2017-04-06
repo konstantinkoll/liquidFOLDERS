@@ -29,8 +29,6 @@ BOOL CFileDropWnd::Create(const CHAR* pStoreID)
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
 
-	CString Caption((LPCSTR)IDR_FILEDROP);
-
 	CSize Size;
 	GetCaptionButtonMargins(&Size);
 
@@ -38,7 +36,7 @@ BOOL CFileDropWnd::Create(const CHAR* pStoreID)
 	INT Height = Size.cy+BACKSTAGEBORDER+128-12+MARGIN+theApp.m_DefaultFont.GetFontHeight()+FONTOFFSETY;
 	m_rectIcon.SetRect((Width-128)/2+ICONOFFSETX, Size.cy+ICONOFFSETY, (Width-128)/2+ICONOFFSETX+128-9, Height-BACKSTAGEBORDER-FONTOFFSETY);
 
-	return CBackstageWnd::Create(WS_MINIMIZEBOX, className, Caption, _T("FileDrop"), CSize(Width, Height));
+	return CBackstageWnd::Create(WS_MINIMIZEBOX, className, CString((LPCSTR)IDR_FILEDROP), _T("FileDrop"), CSize(Width, Height));
 }
 
 BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
@@ -57,7 +55,7 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
+		theApp.HideTooltip();
 		break;
 	}
 
@@ -97,7 +95,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	CRect rectText(m_rectIcon);
 	rectText.top = m_rectIcon.bottom-theApp.m_DefaultFont.GetFontHeight()-1;
 
-	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
+	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 	if (IsCtrlThemed())
 	{
@@ -175,8 +173,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (pSysMenu)
 	{
 		// Always on top
-		CString tmpStr((LPCSTR)SC_ALWAYSONTOP);
-		pSysMenu->InsertMenu(SC_CLOSE, MF_STRING | MF_BYCOMMAND | (m_AlwaysOnTop ? MF_CHECKED : 0), SC_ALWAYSONTOP, tmpStr);
+		pSysMenu->InsertMenu(SC_CLOSE, MF_STRING | MF_BYCOMMAND | (m_AlwaysOnTop ? MF_CHECKED : 0), SC_ALWAYSONTOP, CString((LPCSTR)SC_ALWAYSONTOP));
 		pSysMenu->InsertMenu(SC_CLOSE, MF_SEPARATOR | MF_BYCOMMAND);
 	}
 
@@ -213,7 +210,7 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 		}
 		else
 		{
-			LFGetApp()->HideTooltip();
+			theApp.HideTooltip();
 		}
 
 		m_Hover = Hover;
@@ -225,7 +222,7 @@ void CFileDropWnd::OnMouseLeave()
 {
 	CBackstageWnd::OnMouseLeave();
 
-	LFGetApp()->HideTooltip();
+	theApp.HideTooltip();
 
 	m_Hover = FALSE;
 	Invalidate();
@@ -235,21 +232,12 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		if (!LFGetApp()->IsTooltipVisible() && m_Hover)
-		{
-			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&m_Store);
-
-			CString Hint;
-			GetHintForStore(Hint, pItemDescriptor);
-
-			LFGetApp()->ShowTooltip(this, point, m_Store.StoreName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(m_StoreIcon-1));
-
-			LFFreeItemDescriptor(pItemDescriptor);
-		}
+		if (!theApp.IsTooltipVisible() && m_Hover)
+			theApp.ShowTooltip(this, point, &m_Store);
 	}
 	else
 	{
-		LFGetApp()->HideTooltip();
+		theApp.HideTooltip();
 	}
 }
 
@@ -290,9 +278,7 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		ASSERT_VALID(pPopup);
 
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-
-		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW);
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, CString((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW));
 
 		pPopup->SetDefaultItem(IDM_ITEM_OPENNEWWINDOW);
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);

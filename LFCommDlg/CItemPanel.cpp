@@ -114,35 +114,16 @@ BOOL CItemPanel::SetItem(const CHAR* pStoreID)
 		LFItemDescriptor* pItem = LFAllocItemDescriptorEx(&Store);
 
 		// Text
-		CString tmpStr;
-		GetHintForStore(tmpStr, pItem);
+		CString tmpStr(GetHintForItem(pItem));
 
 		tmpStr.Insert(0, _T("\n"));
 		tmpStr.Insert(0, pItem->CoreAttributes.FileName);
 
 		// Icon
-		INT szSmallX = 16;
-		INT szSmallY = 16;
-		ImageList_GetIconSize(LFGetApp()->m_CoreImageListSmall, &szSmallX, &szSmallY);
-
-		INT szLargeX = 32;
-		INT szLargeY = 32;
-		ImageList_GetIconSize(LFGetApp()->m_CoreImageListLarge, &szLargeX, &szLargeY);
-
-		INT szExtraLargeX = 48;
-		INT szExtraLargeY = 48;
-		ImageList_GetIconSize(LFGetApp()->m_CoreImageListExtraLarge, &szExtraLargeX, &szExtraLargeY);
-
-		INT szHugeX = 96;
-		INT szHugeY = 96;
-		ImageList_GetIconSize(LFGetApp()->m_CoreImageListHuge, &szHugeX, &szHugeY);
-
 		CRect rect;
 		GetClientRect(rect);
 
-		CImageList* pImageList = (rect.Height()>=szHugeY) ? &LFGetApp()->m_CoreImageListHuge :
-			(rect.Height()>=szExtraLargeY) ? &LFGetApp()->m_CoreImageListExtraLarge :
-			(rect.Height()>=szLargeY) ? &LFGetApp()->m_CoreImageListLarge : &LFGetApp()->m_CoreImageListSmall;
+		CImageList* pImageList = (rect.Height()>=LFGetApp()->m_ExtraLargeIconSize) ? &LFGetApp()->m_CoreImageListExtraLarge : &LFGetApp()->m_CoreImageListSmall;
 
 		SetItem(tmpStr, pImageList, pItem->IconID-1, pItem->Type & LFTypeGhosted);
 
@@ -188,23 +169,10 @@ BOOL CItemPanel::SetItem(LPITEMIDLIST pidlFQ, LPCWSTR Path, UINT nID, LPCWSTR Hi
 			}
 
 		// Icon
-		INT szSmallX = 16;
-		INT szSmallY = 16;
-		ImageList_GetIconSize(LFGetApp()->m_SystemImageListSmall, &szSmallX, &szSmallY);
-
-		INT szLargeX = 32;
-		INT szLargeY = 32;
-		ImageList_GetIconSize(LFGetApp()->m_SystemImageListLarge, &szLargeX, &szLargeY);
-
-		INT szExtraLargeX = 48;
-		INT szExtraLargeY = 48;
-		ImageList_GetIconSize(LFGetApp()->m_SystemImageListExtraLarge, &szExtraLargeX, &szExtraLargeY);
-
 		CRect rect;
 		GetClientRect(rect);
 
-		CImageList* pImageList = (rect.Height()>=szExtraLargeY) ? &LFGetApp()->m_SystemImageListExtraLarge :
-			(rect.Height()>=szLargeY) ? &LFGetApp()->m_SystemImageListLarge : &LFGetApp()->m_SystemImageListSmall;
+		CImageList* pImageList = (rect.Height()>=LFGetApp()->m_ExtraLargeIconSize) ? &LFGetApp()->m_SystemImageListExtraLarge : &LFGetApp()->m_SystemImageListSmall;
 
 		SetItem(tmpStr, pImageList, sfi.iIcon);
 

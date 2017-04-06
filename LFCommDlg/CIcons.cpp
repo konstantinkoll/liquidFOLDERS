@@ -208,11 +208,30 @@ void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot, BOOL Disabled, BO
 	}
 }
 
-HICON CIcons::ExtractIcon(INT nImage, BOOL Shadow)
+HBITMAP CIcons::ExtractBitmap(CImageList& ImageList, INT nImage)
+{
+	INT cx = 128;
+	INT cy = 128;
+	ImageList_GetIconSize(ImageList, &cx, &cy);
+
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+
+	HBITMAP hBitmap = CreateTransparentBitmap(cx, cy);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+	ImageList.DrawEx(&dc, nImage, CPoint(0, 0), CSize(cx, cy), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+
+	dc.SelectObject(hOldBitmap);
+
+	return hBitmap;
+}
+
+HBITMAP CIcons::ExtractBitmap(INT nImage, BOOL Shadow)
 {
 	ASSERT(nImage<(INT)m_IconCount);
 
-	HICON hIcon = NULL;
+	HBITMAP hBitmap = NULL;
 
 	if (nImage>=0)
 	{
@@ -222,13 +241,26 @@ HICON CIcons::ExtractIcon(INT nImage, BOOL Shadow)
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
 
-		HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx, m_Size.cy+(Shadow ? 1 : 0));
+		hBitmap = CreateTransparentBitmap(m_Size.cx, m_Size.cy+(Shadow ? 1 : 0));
 		HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 		Draw(dc, 0, Shadow ? 1 : 0, nImage, FALSE, FALSE, Shadow);
 
 		dc.SelectObject(hOldBitmap);
+	}
 
+	return hBitmap;
+}
+
+HICON CIcons::ExtractIcon(INT nImage, BOOL Shadow)
+{
+	ASSERT(nImage<(INT)m_IconCount);
+
+	HICON hIcon = NULL;
+
+	if (nImage>=0)
+	{
+		HBITMAP hBitmap = ExtractBitmap(nImage, Shadow);
 		if (hBitmap)
 		{
 			ICONINFO ii;
@@ -238,9 +270,9 @@ HICON CIcons::ExtractIcon(INT nImage, BOOL Shadow)
 			ii.hbmMask = hBitmap;
 
 			hIcon = CreateIconIndirect(&ii);
-		}
 
-		DeleteObject(hBitmap);
+			DeleteObject(hBitmap);
+		}
 	}
 
 	return hIcon;

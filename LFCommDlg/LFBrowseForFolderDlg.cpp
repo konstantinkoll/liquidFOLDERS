@@ -64,7 +64,7 @@ BOOL LFBrowseForFolderDlg::InitDialog()
 	if ((!m_Caption.IsEmpty()) || (!m_Hint.IsEmpty()))
 	{
 		m_wndHeaderArea.Create(this, IDC_HEADERAREA);
-		m_wndHeaderArea.SetText(m_Caption, m_Hint, FALSE);
+		m_wndHeaderArea.SetHeader(m_Caption, m_Hint, NULL, FALSE);
 	}
 
 	if ((LFGetApp()->m_ThemeLibLoaded) && (LFGetApp()->OSVersion>=OS_Vista))

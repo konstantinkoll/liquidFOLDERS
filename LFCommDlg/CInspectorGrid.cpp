@@ -39,8 +39,8 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 		pProperty = (pData->Attr==LFAttrHashtags) ? new CPropertyTags(pData) : new CProperty(pData);
 		break;
 
-	case LFTypeAnsiString:
-		pProperty = (pData->Attr==LFAttrLocationIATA) ? new CPropertyIATA(pData, NULL, NULL) : new CProperty(pData);
+	case LFTypeIATACode:
+		pProperty = new CPropertyIATA(pData, NULL, NULL);
 		break;
 
 	case LFTypeRating:
@@ -67,11 +67,16 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 		pProperty = new CPropertyTime(pData);
 		break;
 
+	case LFTypeGenre:
+		pProperty = new CPropertyGenre(pData);
+		break;
+
 	default:
 		pProperty = new CProperty(pData);
 	}
 
 	pProperty->SetParent(this);
+
 	return pProperty;
 }
 
@@ -598,30 +603,6 @@ CString CPropertyNumber::GetValidChars() const
 	return _T("0123456789");
 }
 
-BOOL CPropertyNumber::HasButton() const
-{
-	return (p_Data->Attr==LFAttrGenre);
-}
-
-BOOL CPropertyNumber::OnClickValue(INT /*x*/)
-{
-	return (p_Data->Attr!=LFAttrGenre);
-}
-
-void CPropertyNumber::OnClickButton()
-{
-	ASSERT(p_Parent);
-
-	LFEditGenreDlg dlg(m_Multiple ? 0 : p_Data->UINT32, p_Parent->m_StoreID, p_Parent);
-	if (dlg.DoModal()==IDOK)
-	{
-		p_Data->UINT32 = dlg.GetSelectedGenre();
-		p_Data->IsNull = FALSE;
-
-		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
-	}
-}
-
 
 // CPropertySize
 //
@@ -653,11 +634,51 @@ void CPropertyDuration::SetEditMask(CMFCMaskedEdit *pEdit) const
 }
 
 
+// CPropertyGenre
+//
+
+CPropertyGenre::CPropertyGenre(LFVariantData* pData)
+	: CProperty(pData)
+{
+}
+
+CString CPropertyGenre::GetValidChars() const
+{
+	return _T("0123456789");
+}
+
+BOOL CPropertyGenre::HasButton() const
+{
+	return TRUE;
+}
+
+BOOL CPropertyGenre::OnClickValue(INT /*x*/)
+{
+	return FALSE;
+}
+
+void CPropertyGenre::OnClickButton()
+{
+	ASSERT(p_Parent);
+
+	LFEditGenreDlg dlg(m_Multiple ? 0 : p_Data->UINT32, p_Parent->m_StoreID, p_Parent);
+	if (dlg.DoModal()==IDOK)
+	{
+		p_Data->UINT32 = dlg.GetSelectedGenre();
+		p_Data->IsNull = FALSE;
+
+		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+	}
+}
+
+
+
+
 // CInspectorGrid
 //
 
-#define BORDER     2
-#define MARGIN     2
+#define BORDER         2
+#define MARGIN         2
 
 #define NOPART         0
 #define PARTLABEL      1
@@ -1242,7 +1263,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 			pProp->pProperty->SetEditMask(p_Edit);
 
 			if (Attr<LFAttributeCount)
-				p_Edit->SetLimitText(LFGetApp()->m_Attributes[Attr].AttrProperties.cCharacters);
+				p_Edit->SetLimitText((UINT)LFGetApp()->m_Attributes[Attr].AttrProperties.cCharacters);
 
 			p_Edit->SetFont(&LFGetApp()->m_DialogBoldFont);
 			p_Edit->SetFocus();
@@ -1757,12 +1778,7 @@ void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 				BOOL DoReset = (nFlags & MK_CONTROL);
 
 				if (!DoReset)
-				{
-					CString Caption((LPCSTR)IDS_DELETEPROPERTY_CAPTION);
-					CString Message((LPCSTR)IDS_DELETEPROPERTY_MSG);
-
-					DoReset = (LFMessageBox(this, Message, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
-				}
+					DoReset = (LFMessageBox(this, CString((LPCSTR)IDS_DELETEPROPERTY_MSG), CString((LPCSTR)IDS_DELETEPROPERTY_CAPTION), MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
 
 				if (DoReset)
 					ResetProperty(Item);

@@ -38,9 +38,7 @@ void LFGotoYearDlg::DoDataExchange(CDataExchange* pDX)
 			CString Caption;
 			GetWindowText(Caption);
 
-			CString Message((LPCSTR)IDS_ILLEGALYEAR);
-
-			LFMessageBox(this, Message, Caption, MB_ICONERROR);
+			LFMessageBox(this, CString((LPCSTR)IDS_ILLEGALYEAR), Caption, MB_ICONERROR);
 
 			pDX->Fail();
 		}

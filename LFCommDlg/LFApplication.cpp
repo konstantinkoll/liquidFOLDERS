@@ -144,9 +144,6 @@ LFApplication::LFApplication(GUID& AppID)
 	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&il)))
 		m_SystemImageListSmall.Attach((HIMAGELIST)il);
 
-	if (SUCCEEDED(SHGetImageList(SHIL_LARGE, IID_IImageList, (void**)&il)))
-		m_SystemImageListLarge.Attach((HIMAGELIST)il);
-
 	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
 
@@ -158,27 +155,10 @@ LFApplication::LFApplication(GUID& AppID)
 	HMODULE hModIcons = GetModuleHandle(_T("LFCORE"));
 	if (hModIcons)
 	{
-		INT cx = GetSystemMetrics(SM_CXSMICON);
-		INT cy = GetSystemMetrics(SM_CYSMICON);
-		ImageList_GetIconSize(m_SystemImageListSmall, &cx, &cy);
+		ImageList_GetIconSize(m_SystemImageListExtraLarge, &m_ExtraLargeIconSize, &m_ExtraLargeIconSize);
 
-		cy = (cy<=16) ? 16 : (cy<=24) ? 24 : (cy<=32) ? 32 : (cy<=48) ? 48 : (cy<=64) ? 64 : 96;
-		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListSmall);
-
-		cx = GetSystemMetrics(SM_CXICON);
-		cy = GetSystemMetrics(SM_CYICON);
-		ImageList_GetIconSize(m_SystemImageListLarge, &cx, &cy);
-
-		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : (cy<=64) ? 64 : 96;
-		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListLarge);
-
-		cx = cy = 48;
-		ImageList_GetIconSize(m_SystemImageListExtraLarge, &cx, &cy);
-
-		cy = (cy<=32) ? 32 : (cy<=48) ? 48 : (cy<=64) ? 64 : 96;
-		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListExtraLarge);
-
-		ExtractCoreIcons(hModIcons, 96, &m_CoreImageListHuge);
+		ExtractCoreIcons(hModIcons, GetSystemMetrics(SM_CYSMICON), &m_CoreImageListSmall);
+		ExtractCoreIcons(hModIcons, m_ExtraLargeIconSize, &m_CoreImageListExtraLarge);
 		ExtractCoreIcons(hModIcons, 128, &m_CoreImageListJumbo);
 	}
 
@@ -367,14 +347,6 @@ void LFApplication::SendMail(const CString& Subject) const
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 }
 
-BOOL LFApplication::IsAttributeAllowed(INT Context, INT Attr) const
-{
-	ASSERT(Context>=0);
-	ASSERT(Context<=LFContextCount);
-
-	return LFIsAttributeAllowed(m_Contexts[Context], Attr);
-}
-
 
 INT LFApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault) const
 {
@@ -540,6 +512,15 @@ void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& C
 	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
 }
 
+void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, LFStoreDescriptor* pStoreDescriptor)
+{
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
+
+	ShowTooltip(pCallerWnd, point, pItemDescriptor->CoreAttributes.FileName, GetHintForItem(pItemDescriptor), m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1));
+
+	LFFreeItemDescriptor(pItemDescriptor);
+}
+
 
 void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 {
@@ -549,9 +530,8 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 		{
 			CString Caption;
 			Caption.Format(IDS_FORMAT_CAPTION, cVolume);
-			CString Text((LPCSTR)IDS_FORMAT_MSG);
 
-			LFMessageBox(m_pMainWnd, Text, Caption, MB_ICONWARNING);
+			LFMessageBox(m_pMainWnd, CString((LPCSTR)IDS_FORMAT_MSG), Caption, MB_ICONWARNING);
 
 			return;
 		}

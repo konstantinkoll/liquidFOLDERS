@@ -436,6 +436,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CIconsView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CInspectorPane.cpp"
 				>
 			</File>
@@ -551,6 +555,10 @@
 			</File>
 			<File
 				RelativePath=".\ChooseDetailsDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CIconsView.h"
 				>
 			</File>
 			<File

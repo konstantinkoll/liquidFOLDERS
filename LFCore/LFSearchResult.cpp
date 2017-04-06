@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "AttributeTables.h"
 #include "Categorizers.h"
+#include "ID3.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
@@ -58,7 +59,7 @@ LFCORE_API void LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOO
 	pSearchResult->Sort(Attr, Descending);
 }
 
-LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupOne, LFFilter* pFilter)
+LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter)
 {
 	assert(pFilter);
 
@@ -92,7 +93,7 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 	pSearchResult->Sort(Attr, Descending);
 
 	LFSearchResult* pCookedFiles = new LFSearchResult(pSearchResult);
-	pCookedFiles->Group(Attr, GroupOne, pFilter);
+	pCookedFiles->Group(Attr, GroupSingle, pFilter);
 
 	// Revert to old GPS location
 	if (Attr==LFAttrLocationGPS)
@@ -113,9 +114,10 @@ LFSearchResult::LFSearchResult(BYTE Context)
 
 	m_LastError = LFOk;
 
+	m_Name[0] = m_Hint[0] = L'\0';
 	m_QueryTime = 0;
 	m_Context = Context;
-	m_GroupAttribute = LFAttrFileName;
+	m_IconID = 0;
 
 	m_RawCopy = TRUE;
 	m_HasCategories = FALSE;
@@ -137,7 +139,7 @@ LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
 	wcscpy_s(m_Hint, 256, pSearchResult->m_Hint);
 	m_QueryTime = pSearchResult->m_QueryTime;
 	m_Context = pSearchResult->m_Context;
-	m_GroupAttribute = pSearchResult->m_GroupAttribute;
+	m_IconID = pSearchResult->m_IconID;
 
 	m_RawCopy = FALSE;
 	m_HasCategories = pSearchResult->m_HasCategories;
@@ -181,25 +183,47 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 		return;
 	}
 
+	// Determine context
 	if (pFilter->Options.IsSubfolder)
 	{
 		m_Context = LFContextSubfolderDefault;
 
 		if (pFilter->pConditionList)
 		{
-			m_GroupAttribute = pFilter->Options.GroupAttribute;
+			const UINT Attr = pFilter->pConditionList->AttrData.Attr;
 
-			switch (pFilter->pConditionList->AttrData.Attr)
+			switch (Attr)
 			{
-			case LFAttrLocationName:
-			case LFAttrLocationIATA:
-			case LFAttrLocationGPS:
-				m_Context = LFContextSubfolderLocation;
+			case LFAttrAlbum:
+				m_Context = LFContextSubfolderAlbum;
+				break;
+
+			case LFAttrGenre:
+				m_Context = LFContextSubfolderGenre;
+				m_IconID = GetGenreIcon(pFilter->pConditionList->AttrData.UINT32);
 				break;
 
 			default:
-				if (AttrProperties[pFilter->pConditionList->AttrData.Attr].Type==LFTypeTime)
+				if (AttrProperties[Attr].Type==LFTypeTime)
+				{
 					m_Context = LFContextSubfolderDay;
+					m_HasCategories = TRUE;
+
+					// Set item categories
+					for (UINT a=0; a<m_ItemCount; a++)
+					{
+						LFItemDescriptor* pItemDescriptor = m_Items[a];
+
+						assert((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+
+						SYSTEMTIME stUTC;
+						SYSTEMTIME stLocal;
+						FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[Attr], &stUTC);
+						SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+						pItemDescriptor->CategoryID = stLocal.wHour<6 ? LFItemCategoryNight : LFItemCategory0600+stLocal.wHour-6;
+					}
+				}
 			}
 		}
 	}
@@ -219,6 +243,7 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 			break;
 		}
 
+	// Name and hint
 	if ((pFilter->OriginalName[0]==L'\0') || (m_Context==LFContextStores))
 	{
 		LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+m_Context, m_Name, 256, m_Hint, 256);
@@ -294,6 +319,8 @@ BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 
 	if (AddItem(pItemDescriptor))
 	{
+		m_HasCategories = TRUE;
+
 		pItemDescriptor->pNextFilter = LFAllocFilter();
 
 		pItemDescriptor->pNextFilter->Mode = LFFilterModeDirectoryTree;
@@ -466,9 +493,9 @@ void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 	}
 }
 
-UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupOne, LFFilter* pFilter)
+UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
-	if (((ReadIndex2==ReadIndex1+1) && ((!GroupOne) || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
+	if (((ReadIndex2==ReadIndex1+1) && (!GroupSingle || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
 	{
 		for (UINT a=ReadIndex1; a<ReadIndex2; a++)
 			m_Items[WriteIndex++] = m_Items[a];
@@ -506,7 +533,7 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 	return 1;
 }
 
-void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
+void LFSearchResult::Group(UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
 	if (!m_ItemCount)
 		return;
@@ -516,16 +543,12 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 
 	switch (Attr)
 	{
-	case LFAttrLocationIATA:
-		pCategorizer = new CIATACategorizer();
-		break;
-
 	case LFAttrURL:
 		pCategorizer = new CURLCategorizer();
 		break;
 
 	case LFAttrFileName:
-		if (!GroupOne)
+		if (!GroupSingle)
 		{
 			pCategorizer = new CNameCategorizer();
 			break;
@@ -534,6 +557,10 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 	default:
 		switch (AttrProperties[Attr].Type)
 		{
+		case LFTypeIATACode:
+			pCategorizer = new CIATACategorizer();
+			break;
+
 		case LFTypeRating:
 			pCategorizer = new CRatingCategorizer(Attr);
 			break;
@@ -569,14 +596,14 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupOne, LFFilter* pFilter)
 	{
 		if (!pCategorizer->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
 		{
-			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, pCategorizer, Attr, GroupOne, pFilter);
+			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, pCategorizer, Attr, GroupSingle, pFilter);
 			ReadPtr1 = ReadPtr2;
 		}
 
 		ReadPtr2++;
 	}
 
-	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, pCategorizer, Attr, GroupOne, pFilter);
+	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, pCategorizer, Attr, GroupSingle, pFilter);
 	m_ItemCount = WritePtr;
 
 	delete pCategorizer;

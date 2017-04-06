@@ -166,8 +166,7 @@ void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, COLO
 
 void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, COLORREF Color)
 {
-	CString Caption;
-	ENSURE(Caption.LoadString(CmdID));
+	CString Caption((LPCSTR)CmdID);
 
 	INT Pos = Caption.Find(L'\n');
 	if (Pos!=-1)

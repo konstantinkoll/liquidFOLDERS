@@ -227,10 +227,8 @@ void LFDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 		rectText.left += rectBorders.right+rectBorders.right/4+m_ShieldSize;
 		rectText.bottom = rectText.top+m_UACHeight;
 
-		CString tmpStr((LPCSTR)IDS_UACMESSAGE);
-
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_UACFont);
-		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
+		dc.DrawText(CString((LPCSTR)IDS_UACMESSAGE), rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 		dc.SelectObject(pOldFont);
 	}
 }

@@ -83,6 +83,19 @@ struct LFMessageIDs
 #define LFExtSize     16
 
 
+// Views
+
+#define LFViewIcons        0
+#define LFViewList         1
+#define LFViewDetails      2
+#define LFViewCalendar     3
+#define LFViewTimeline     4
+#define LFViewGlobe        5
+#define LFViewTagcloud     6
+
+#define LFViewCount        7
+
+
 // Globe textures
 
 #define LFTextureNone     -1
@@ -158,14 +171,29 @@ struct LFVolumeDescriptor
 
 // Item categories
 
-#define LFItemCategoryLocal       0
-#define LFItemCategoryRemote      1
-#define LFItemCategoryNight       2
+#define LFItemCategoryLocal      0
+#define LFItemCategoryRemote     1
+#define LFItemCategoryNight      2
+#define LFItemCategory0600       3
+#define LFItemCategory0700       4
+#define LFItemCategory0800       5
+#define LFItemCategory0900       6
+#define LFItemCategory1000       7
+#define LFItemCategory1100       8
+#define LFItemCategory1200       9
+#define LFItemCategory1300      10
+#define LFItemCategory1400      11
+#define LFItemCategory1500      12
+#define LFItemCategory1600      13
+#define LFItemCategory1700      14
+#define LFItemCategory1800      15
+#define LFItemCategory1900      16
+#define LFItemCategory2000      17
+#define LFItemCategory2100      18
+#define LFItemCategory2200      19
+#define LFItemCategory2300      20
 
-#define LFItemCategoryCount       3
-
-
-// Context descriptor
+#define LFItemCategoryCount     21
 
 struct LFItemCategoryDescriptor
 {
@@ -194,11 +222,12 @@ struct LFItemCategoryDescriptor
 #define LFContextClipboard             15	// Only limited views
 #define LFContextSubfolderDefault      16	// Only limited views
 #define LFContextSubfolderDay          17	// Only limited views
-#define LFContextSubfolderLocation     18	// Only limited views
+#define LFContextSubfolderAlbum        18	// Only limited views
+#define LFContextSubfolderGenre        19	// Only limited views
 
 #define LFLastGroupContext              8
 #define LFLastQueryContext             12
-#define LFContextCount                 19
+#define LFContextCount                 20
 
 #define LFContextAuto                  0xFF	// Internal use only
 
@@ -274,20 +303,22 @@ struct LFItemCategoryDescriptor
 #define LFTypeUnicodeString      0
 #define LFTypeUnicodeArray       1
 #define LFTypeAnsiString         2
-#define LFTypeFourCC             3
-#define LFTypeRating             4
-#define LFTypeUINT               5
-#define LFTypeSize               6
-#define LFTypeFraction           7
-#define LFTypeDouble             8
-#define LFTypeFlags              9
-#define LFTypeGeoCoordinates     10
-#define LFTypeTime               11
-#define LFTypeBitrate            12
-#define LFTypeDuration           13
-#define LFTypeMegapixel          14
+#define LFTypeIATACode           3
+#define LFTypeFourCC             4
+#define LFTypeRating             5
+#define LFTypeUINT               6
+#define LFTypeSize               7
+#define LFTypeFraction           8
+#define LFTypeDouble             9
+#define LFTypeFlags              10
+#define LFTypeGeoCoordinates     11
+#define LFTypeTime               12
+#define LFTypeBitrate            13
+#define LFTypeDuration           14
+#define LFTypeMegapixel          15
+#define LFTypeGenre              16
 
-#define LFTypeCount              15
+#define LFTypeCount              17
 #define LFMaxRating              10
 
 
@@ -311,6 +342,7 @@ struct LFVariantData
 		WCHAR UnicodeString[256];
 		WCHAR UnicodeArray[256];
 		CHAR AnsiString[256];
+		CHAR IATAString[4];
 		DWORD FourCC;
 		BYTE Rating;
 		UINT UINT32;
@@ -345,11 +377,7 @@ struct LFVariantData
 
 // Attribute descriptor
 
-
-#define LFAlwaysVisible        1
-#define LFNotSortable          2
-#define LFPreferDescending     4
-#define LFFormatRight          16
+#define LFMaxAttributePriority     7
 
 #pragma pack(push,1)
 
@@ -362,9 +390,13 @@ struct LFShellProperty
 struct LFAttributeProperties
 {
 	BYTE Type;
-	UINT cCharacters;
+	SIZE_T cCharacters;
 	BYTE Category;
+	UINT DefaultView;
+	UINT DefaultPriority;
 	BOOL ReadOnly;
+	BOOL AlwaysShow;
+	BOOL DefaultDescending;
 	LFShellProperty ShPropertyMapping;
 };
 
@@ -373,9 +405,10 @@ struct LFTypeProperties
 	SIZE_T Size;
 	BOOL ContainsLetters;
 	BOOL Sortable;
-	BOOL PreferDescendingSort;
 	BOOL FormatRight;
 	INT DefaultColumnWidth;
+	UINT AllowedViews;
+	UINT DefaultView;
 };
 
 #pragma pack(pop)
@@ -391,15 +424,26 @@ struct LFAttributeDescriptor
 
 // Context descriptor
 
+#pragma pack(push,1)
+
+struct LFContextProperties
+{
+	UINT DefaultAttribute;
+	BOOL AllowGroups;
+	UINT AvailableViews;
+	UINT DefaultView;
+	UINT64 AvailableAttributes;
+	UINT64 AdvertisedAttributes;
+};
+
+#pragma pack(pop)
+
 struct LFContextDescriptor
 {
 	WCHAR Name[256];
 	WCHAR Comment[256];
-	BOOL AllowGroups;
-	UINT AllowedAttributes[(LFAttributeCount+31)>>5];
+	LFContextProperties CtxProperties;
 };
-
-#define LFIsAttributeAllowed(CD, Attr) (CD.AllowedAttributes[Attr>>5] & 1<<(Attr & 0x1F))
 
 
 // Statistics

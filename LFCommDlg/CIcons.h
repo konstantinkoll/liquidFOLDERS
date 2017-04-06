@@ -29,6 +29,8 @@ public:
 	INT AddIcon(CImageList& ImageList, INT nImage);
 	void SetGammaMode(BOOL UseDarkBackgroundGamma);
 	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot=FALSE, BOOL Disabled=FALSE, BOOL Shadow=FALSE);
+	static HBITMAP ExtractBitmap(CImageList& ImageList, INT nImage);
+	HBITMAP ExtractBitmap(INT nImage, BOOL Shadow=FALSE);
 	HICON ExtractIcon(INT nImage, BOOL Shadow=FALSE);
 	HIMAGELIST ExtractImageList() const;
 

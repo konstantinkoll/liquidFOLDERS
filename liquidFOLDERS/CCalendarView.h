@@ -33,7 +33,7 @@ public:
 	virtual void GetPersistentData(FVPersistentData& Data) const;
 
 protected:
-	virtual void SetViewOptions(BOOL Force);
+	virtual void SetViewSettings(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
@@ -60,7 +60,6 @@ protected:
 	CalendarMonth m_Months[12];
 	UINT m_Year;
 	INT m_ColumnWidth;
-	BOOL m_ShowCaptions;
 
 private:
 	BOOL IsLeapYear() const;

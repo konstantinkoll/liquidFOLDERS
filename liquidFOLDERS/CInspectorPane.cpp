@@ -402,8 +402,7 @@ void CInspectorPane::UpdateFinish()
 		if (m_Count!=1)
 			SID++;
 
-		CString tmpStr((LPCSTR)SID);
-		m_TypeName.Format(tmpStr, m_Count);
+		m_TypeName.Format(CString((LPCSTR)SID), m_Count);
 	}
 
 	switch (m_IconStatus)

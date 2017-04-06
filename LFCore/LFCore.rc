@@ -171,7 +171,7 @@ BEGIN
     IDS_CONTEXT_CONTACTS    "Kontakte"
     IDS_CONTEXT_MESSAGES    "Nachrichten"
     IDS_CONTEXT_EVENTS      "Veranstaltungen"
-    IDS_CONTEXT_NEW         "Neue Dateien\nKürzlich importierte Dateien"
+    IDS_CONTEXT_NEW         "Neue Dateien\nKürzlich hinzugefügte Dateien"
     IDS_CONTEXT_ARCHIVE     "Archiv\nArchivierte Dateien"
     IDS_CONTEXT_TRASH       "Papierkorb\nGelöschte Dateien"
 END
@@ -184,7 +184,8 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Zwischenablage"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Unterordner"
     IDS_CONTEXT_SUBFOLDER_DAY "Tag"
-    IDS_CONTEXT_SUBFOLDER_LOCATION "Ort"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
+    IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
 END
 
 STRINGTABLE 
@@ -307,7 +308,7 @@ BEGIN
     IDS_ATTR_RATING         "Bewertung"
     IDS_ATTR_PRIORITY       "Priorität"
     IDS_ATTR_LOCATIONNAME   "Ortsname"
-    IDS_ATTR_LOCATIONIATA   "IATA Flughafen-Code"
+    IDS_ATTR_LOCATIONIATA   "IATA-Code"
 END
 
 STRINGTABLE 
@@ -457,7 +458,7 @@ BEGIN
     IDS_CONTEXT_CONTACTS    "Contactos"
     IDS_CONTEXT_MESSAGES    "Mensajes"
     IDS_CONTEXT_EVENTS      "Eventos"
-    IDS_CONTEXT_NEW         "Archivos nuevos\nArchivos importados recientemente"
+    IDS_CONTEXT_NEW         "Archivos nuevos\nArchivos añadidos recientemente"
     IDS_CONTEXT_ARCHIVE     "Archivo\nArchivos archivados"
     IDS_CONTEXT_TRASH       "Basura\nArchivos eliminados"
 END
@@ -470,7 +471,8 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Portapapeles"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Subcarpeta"
     IDS_CONTEXT_SUBFOLDER_DAY "Día"
-    IDS_CONTEXT_SUBFOLDER_LOCATION "Ubicación"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Álbum"
+    IDS_CONTEXT_SUBFOLDER_GENRE "Género"
 END
 
 STRINGTABLE 
@@ -593,7 +595,7 @@ BEGIN
     IDS_ATTR_RATING         "Clasificación"
     IDS_ATTR_PRIORITY       "Prioridad"
     IDS_ATTR_LOCATIONNAME   "Nombre de ubicación"
-    IDS_ATTR_LOCATIONIATA   "Código de aeropuerto IATA"
+    IDS_ATTR_LOCATIONIATA   "Código de IATA"
 END
 
 STRINGTABLE 
@@ -743,7 +745,7 @@ BEGIN
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
     IDS_CONTEXT_EVENTS      "Événements"
-    IDS_CONTEXT_NEW         "Nouveaux fichiers\nFichiers récemment importés"
+    IDS_CONTEXT_NEW         "Nouveaux fichiers\nFichiers ajoutés récemment"
     IDS_CONTEXT_ARCHIVE     "Archive\nLes fichiers archivés"
     IDS_CONTEXT_TRASH       "Déchets\nLes fichiers marqués pour la radiation finale"
 END
@@ -756,7 +758,8 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Presse-papiers"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Sous-dossier"
     IDS_CONTEXT_SUBFOLDER_DAY "Jour"
-    IDS_CONTEXT_SUBFOLDER_LOCATION "Lieu"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
+    IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
 END
 
 STRINGTABLE 
@@ -880,7 +883,7 @@ BEGIN
     IDS_ATTR_RATING         "Estimation"
     IDS_ATTR_PRIORITY       "Priorité"
     IDS_ATTR_LOCATIONNAME   "Nom d'endroit"
-    IDS_ATTR_LOCATIONIATA   "Code d'aéroport IATA"
+    IDS_ATTR_LOCATIONIATA   "Code d'IATA"
 END
 
 STRINGTABLE 
@@ -1067,7 +1070,7 @@ BEGIN
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
     IDS_CONTEXT_EVENTS      "Events"
-    IDS_CONTEXT_NEW         "New files\nRecently imported files"
+    IDS_CONTEXT_NEW         "New files\nRecently added files"
     IDS_CONTEXT_ARCHIVE     "Archive\nArchived files"
     IDS_CONTEXT_TRASH       "Trash\nDeleted files"
 END
@@ -1080,7 +1083,8 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Clipboard"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Subfolder"
     IDS_CONTEXT_SUBFOLDER_DAY "Day"
-    IDS_CONTEXT_SUBFOLDER_LOCATION "Location"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
+    IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
 END
 
 STRINGTABLE 
@@ -1202,7 +1206,7 @@ BEGIN
     IDS_ATTR_RATING         "Rating"
     IDS_ATTR_PRIORITY       "Priority"
     IDS_ATTR_LOCATIONNAME   "Location name"
-    IDS_ATTR_LOCATIONIATA   "IATA airport code"
+    IDS_ATTR_LOCATIONIATA   "IATA code"
 END
 
 STRINGTABLE 

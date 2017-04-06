@@ -17,8 +17,8 @@
 #define NAVMODE_RELOAD      3
 
 #define WM_CONTEXTVIEWCOMMAND     WM_USER+200
-#define WM_UPDATEVIEWOPTIONS      WM_USER+201
-#define WM_UPDATESORTOPTIONS      WM_USER+202
+#define WM_UPDATESORTSETTINGS     WM_USER+201
+#define WM_UPDATEVIEWSETTINGS     WM_USER+202
 #define WM_RELOAD                 WM_USER+203
 #define WM_COOKFILES              WM_USER+204
 #define WM_NAVIGATEBACK           WM_USER+205
@@ -78,8 +78,8 @@ protected:
 	afx_msg void OnExportMetadata();
 
 	afx_msg LRESULT OnContextViewCommand(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnUpdateViewOptions();
-	afx_msg void OnUpdateSortOptions();
+	afx_msg void OnUpdateSortSettings();
+	afx_msg void OnUpdateViewSettings();
 	afx_msg void OnUpdateCounts();
 	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
 	afx_msg void OnUpdateFooter();
@@ -114,6 +114,8 @@ private:
 	void UpdateHistory(UINT NavMode);
 	static void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
 	static void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
+	static BOOL CookSortDescending(LFContextViewSettings* pContextViewSettings);
+	static BOOL CookGroupSingle(LFContextViewSettings* pContextViewSettings);
 
 	CHAR m_StatisticsID[LFKeySize];
 };
@@ -121,4 +123,18 @@ private:
 inline BOOL CMainWnd::CreateClipboard()
 {
 	return Create(TRUE);
+}
+
+inline BOOL CMainWnd::CookSortDescending(LFContextViewSettings* pContextViewSettings)
+{
+	return (pContextViewSettings->View==LFViewTimeline) ||
+		(pContextViewSettings->Descending && (pContextViewSettings->View<=LFViewDetails));
+}
+
+inline BOOL CMainWnd::CookGroupSingle(LFContextViewSettings* pContextViewSettings)
+{
+	const LFAttributeDescriptor* pAttribute = &LFGetApp()->m_Attributes[pContextViewSettings->SortBy];
+
+	return ((pAttribute->AttrProperties.Type!=LFTypeTime) && (pContextViewSettings->SortBy!=LFAttrFileName)) ||
+		(pContextViewSettings->View==LFViewCalendar) || (pContextViewSettings->View==LFViewGlobe) || (pContextViewSettings->View==LFViewTagcloud);
 }

@@ -44,9 +44,7 @@ BOOL CMainWnd::Create(BOOL IsClipboard)
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
-	CString Caption((LPCSTR)(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
-
-	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, IsClipboard ? _T("Clipboard") : _T("Main"), IsClipboard ? CSize(-1, -1) : CSize(0, 0));
+	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION)), IsClipboard ? _T("Clipboard") : _T("Main"), IsClipboard ? CSize(-1, -1) : CSize(0, 0));
 }
 
 BOOL CMainWnd::CreateRoot()
@@ -311,6 +309,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPe
 	}
 
 	OnCookFiles((WPARAM)pPersistentData);
+
 	UpdateHistory(NavMode);
 }
 
@@ -422,8 +421,8 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
 
 	ON_MESSAGE(WM_CONTEXTVIEWCOMMAND, OnContextViewCommand)
-	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
-	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
+	ON_MESSAGE_VOID(WM_UPDATESORTSETTINGS, OnUpdateSortSettings)
+	ON_MESSAGE_VOID(WM_UPDATEVIEWSETTINGS, OnUpdateViewSettings)
 	ON_MESSAGE_VOID(WM_UPDATECOUNTS, OnUpdateCounts)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
@@ -455,8 +454,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			return -1;
 
 		// Suchbegriff
-		CString tmpStr((LPCSTR)IDS_SEARCHTERM);
-		if (!m_wndSearch.Create(this, 3, tmpStr))
+		if (!m_wndSearch.Create(this, 3, CString((LPCSTR)IDS_SEARCHTERM)))
 			return -1;
 
 		// Sidebar
@@ -497,6 +495,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
 	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(m_pActiveFilter);
 	OnCookFiles();
+
 	UpdateHistory(NAVMODE_NORMAL);
 	SetFocus();
 
@@ -736,7 +735,7 @@ void CMainWnd::OnItemOpen()
 				{
 					if ((Result=LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, TRUE))==LFOk)
 					{
-						if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOWNORMAL)==(HINSTANCE)SE_ERR_NOASSOC)
+						if (ShellExecute(GetSafeHwnd(), _T("open"), Path, NULL, NULL, SW_SHOWNORMAL)==(HINSTANCE)SE_ERR_NOASSOC)
 							SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
 					}
 					else
@@ -894,20 +893,7 @@ LRESULT CMainWnd::OnContextViewCommand(WPARAM wParam, LPARAM lParam)
 	return NULL;
 }
 
-void CMainWnd::OnUpdateViewOptions()
-{
-	if ((m_wndMainView.GetViewID()>LFViewContent) || (theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewContent))
-	{
-		m_wndMainView.SelectNone();
-		OnCookFiles();
-	}
-	else
-	{
-		m_wndMainView.UpdateViewOptions();
-	}
-}
-
-void CMainWnd::OnUpdateSortOptions()
+void CMainWnd::OnUpdateSortSettings()
 {
 	m_wndMainView.SelectNone();
 
@@ -915,6 +901,20 @@ void CMainWnd::OnUpdateSortOptions()
 	m_wndMainView.GetPersistentData(Data);
 
 	OnCookFiles((WPARAM)&Data);
+}
+
+void CMainWnd::OnUpdateViewSettings()
+{
+	// Cook raw files when view has changed
+	if (m_wndMainView.GetViewID()!=(INT)theApp.m_ContextViewSettings[m_wndMainView.GetContext()].View)
+	{
+		m_wndMainView.SelectNone();
+		OnCookFiles();
+	}
+	else
+	{
+		m_wndMainView.UpdateViewSettings();
+	}
 }
 
 void CMainWnd::OnUpdateCounts()
@@ -932,18 +932,18 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 {
 	LFSearchResult* pVictim = m_pCookedFiles;
 
-	LFViewParameters* vp = &theApp.m_Views[m_pRawFiles->m_Context];
-	LFAttributeDescriptor* Attr = &theApp.m_Attributes[vp->SortBy];
+	LFContextViewSettings* pContextViewSettings = &theApp.m_ContextViewSettings[m_pRawFiles->m_Context];
 
-	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewContent))
+	if ((!m_IsClipboard && theApp.m_Contexts[m_pRawFiles->m_Context].CtxProperties.AllowGroups && !m_pActiveFilter->Options.IsSubfolder) || (pContextViewSettings->View>LFViewDetails))
 	{
-		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewContent) && vp->Descending) || (vp->Mode==LFViewTimeline),
-			((vp->Mode>LFViewContent) && (vp->Mode!=LFViewTimeline)) || ((Attr->AttrProperties.Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
+		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles,
+			pContextViewSettings->SortBy, CookSortDescending(pContextViewSettings),
+			CookGroupSingle(pContextViewSettings),
 			m_pActiveFilter);
 	}
 	else
 	{
-		LFSortSearchResult(m_pRawFiles, vp->SortBy, vp->Descending);
+		LFSortSearchResult(m_pRawFiles, pContextViewSettings->SortBy, pContextViewSettings->Descending);
 		m_pCookedFiles = m_pRawFiles;
 	}
 

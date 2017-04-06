@@ -22,6 +22,7 @@
 #define UsePreview(pItemDescriptor)     ((pItemDescriptor->Type & LFTypeMounted) && (pItemDescriptor->CoreAttributes.ContextID>=LFContextPictures) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos))
 
 CString CTimelineView::m_FilesSingular;
+
 CString CTimelineView::m_FilesPlural;
 CIcons CTimelineView::m_SourceIcons;
 
@@ -61,7 +62,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 
 			LFVariantData v;
-			LFGetAttributeVariantDataEx(pItemDescriptor, m_ViewParameters.SortBy, v);
+			LFGetAttributeVariantDataEx(pItemDescriptor, m_ContextViewSettings.SortBy, v);
 
 			pData->Hdr.Valid = !LFIsNullVariantData(v);
 			if (pData->Hdr.Valid)
@@ -213,22 +214,21 @@ Restart:
 				Height += m_DefaultFontHeight;
 
 			if (pData->Preview & PRV_COMMENTS)
-			{
 				Height += m_DefaultFontHeight;
 
+			if (pData->Preview & (PRV_TITLE | PRV_ALBUM | PRV_COMMENTS))
 				if (pData->Preview & (PRV_THUMBS | PRV_FOLDER))
 					Height += CARDPADDING/2;
-			}
 
 			if (pData->Preview & PRV_THUMBS)
 				Height += (128+THUMBMARGINY)*pData->PreviewRows-THUMBMARGINY-THUMBOFFSETY;
 
 			if (pData->Preview & PRV_FOLDER)
 			{
-				Height += min(MAXFILELIST, pData->ListCount)*m_SmallFontHeight-CARDPADDING/2;
+				Height += min(MAXFILELIST, pData->ListCount)*m_SmallFontHeight;
 
 				if (pData->Preview & PRV_THUMBS)
-					Height += CARDPADDING;
+					Height += CARDPADDING/2;
 			}
 
 			if (pData->Preview & PRV_SOURCE)
@@ -256,7 +256,7 @@ Restart:
 				ItemCategory ic;
 				ZeroMemory(&ic, sizeof(ic));
 
-				swprintf_s(ic.Caption, 256, L"%u", (UINT)Year);
+				swprintf_s(ic.Caption, 5, L"%u", (UINT)Year);
 
 				ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
 				ic.Rect.right = ic.Rect.left+m_LabelWidth;
@@ -410,7 +410,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	rectText.bottom = rectText.top+m_SmallFontHeight;
 
 	WCHAR tmpBuf[256];
-	LFAttributeToString(pItemDescriptor, ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ? m_ViewParameters.SortBy : LFAttrFileName, tmpBuf, 256);
+	LFAttributeToString(pItemDescriptor, ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ? m_ContextViewSettings.SortBy : LFAttrFileName, tmpBuf, 256);
 
 	if (!pData->Hdr.Selected)
 		dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
@@ -636,19 +636,7 @@ void CTimelineView::OnPaint()
 	// Items
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
-	if (m_Nothing)
-	{
-		CRect rectText(rect);
-		rectText.top += m_HeaderHeight+BACKSTAGEBORDER;
-
-		CString tmpStr((LPCSTR)IDS_NOTHINGTODISPLAY);
-
-		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
-		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
-	}
-	else
+	if (!DrawNothing(dc, rect, Themed))
 	{
 		RECT rectIntersect;
 

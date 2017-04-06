@@ -17,11 +17,8 @@ CExplorerNotification::CExplorerNotification()
 	m_Dismissed = TRUE;
 	hIcon = NULL;
 
-	m_IconCX = GetSystemMetrics(SM_CXICON);
-	m_IconCY = GetSystemMetrics(SM_CYICON);
-	ImageList_GetIconSize(LFGetApp()->m_SystemImageListLarge, &m_IconCX, &m_IconCY);
-
-	m_GradientCY = max(m_IconCY/16, 2);
+	m_IconSize = GetSystemMetrics(SM_CYICON);
+	m_GradientHeight = max(m_IconSize/16, 2);
 	m_CloseHover = m_ClosePressed = FALSE;
 }
 
@@ -34,7 +31,7 @@ BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
 
 UINT CExplorerNotification::GetPreferredHeight() const
 {
-	return m_GradientCY+2*BORDER+m_IconCY+2;
+	return m_GradientHeight+2*BORDER+m_IconSize+2;
 }
 
 void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT Command)
@@ -85,7 +82,7 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 	m_Text = Text;
 
 	if (nIconID)
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nIconID), IMAGE_ICON, m_IconCX, m_IconCY, LR_SHARED);
+		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nIconID), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 
 	if (Command)
 	{
@@ -144,7 +141,7 @@ void CExplorerNotification::AdjustLayout()
 	GetClientRect(m_RectClose);
 	CRect rectClient(m_RectClose);
 
-	m_RectClose.top += m_GradientCY+BORDER+1;
+	m_RectClose.top += m_GradientHeight+BORDER+1;
 	m_RectClose.bottom = m_RectClose.top+Size.cy;
 	m_RectClose.right -= BORDER-1;
 	m_RectClose.left = m_RectClose.right-Size.cx;
@@ -159,7 +156,7 @@ void CExplorerNotification::AdjustLayout()
 
 		m_RightMargin = m_RectClose.left-BORDER-Width;
 
-		m_wndCommandButton.SetWindowPos(NULL, m_RightMargin, m_GradientCY+1+(rectClient.Height()-m_GradientCY-2-Height)/2, Width, Height, SWP_NOACTIVATE | SWP_NOZORDER);
+		m_wndCommandButton.SetWindowPos(NULL, m_RightMargin, m_GradientHeight+1+(rectClient.Height()-m_GradientHeight-2-Height)/2, Width, Height, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 	else
 	{
@@ -234,15 +231,15 @@ void CExplorerNotification::OnPaint()
 	g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 	LinearGradientBrush brush(Point(0, 0), Point(rect.Width(), 0), Color(255, m_FirstCol & 0xFF, (m_FirstCol>>8) & 0xFF, (m_FirstCol>>16) & 0xFF), Color(255, m_SecondCol & 0xFF, (m_SecondCol>>8) & 0xFF, (m_SecondCol>>16) & 0xFF));
-	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_GradientCY);
+	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_GradientHeight);
 
-	rect.top += m_GradientCY;
+	rect.top += m_GradientHeight;
 	rect.left += BORDER;
 
 	if (hIcon)
 	{
-		DrawIconEx(dc, rect.left, rect.top+(rect.Height()-m_IconCY)/2, hIcon, m_IconCX, m_IconCY, 0, NULL, DI_NORMAL);
-		rect.left += BORDER+m_IconCX;
+		DrawIconEx(dc, rect.left, rect.top+(rect.Height()-m_IconSize)/2, hIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+		rect.left += BORDER+m_IconSize;
 	}
 
 	CMenuImages::Draw(&dc, CMenuImages::IdClose, m_RectClose, (!Themed || m_ClosePressed) ? CMenuImages::ImageDkGray : m_CloseHover ? CMenuImages::ImageGray : CMenuImages::ImageLtGray);

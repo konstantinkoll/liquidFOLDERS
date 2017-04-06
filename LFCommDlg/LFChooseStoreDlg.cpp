@@ -164,7 +164,7 @@ BOOL LFChooseStoreDlg::InitDialog()
 		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
 
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
-	m_wndHeaderArea.SetText(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, FALSE);
+	m_wndHeaderArea.SetHeader(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, NULL, FALSE);
 
 	m_wndStoreList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_EDITLABELS, CRect(0, 0, 0, 0), this, IDC_STORELIST);
 
@@ -254,7 +254,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		CString Hint;
 		Hint.Format(m_pSearchResult->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, m_pSearchResult->m_StoreCount);
 
-		m_wndHeaderArea.SetText(LFGetApp()->m_Contexts[LFContextStores].Name, Hint);
+		m_wndHeaderArea.SetHeader(LFGetApp()->m_Contexts[LFContextStores].Name, Hint);
 	}
 
 	// Set previously selected store
@@ -317,10 +317,8 @@ void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (pTooltipData->Item!=-1)
 	{
-		CString tmpStr;
-		GetHintForStore(tmpStr, (*m_pSearchResult)[pTooltipData->Item]);
+		wcscpy_s(pTooltipData->Hint, 4096, GetHintForItem((*m_pSearchResult)[pTooltipData->Item]));
 
-		wcscpy_s(pTooltipData->Hint, 4096, tmpStr);
 		pTooltipData->hIcon = LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon((*m_pSearchResult)[pTooltipData->Item]->IconID-1);
 
 		*pResult = TRUE;

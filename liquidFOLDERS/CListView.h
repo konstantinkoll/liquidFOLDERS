@@ -16,7 +16,7 @@ public:
 	CListView(UINT DataSize=sizeof(GridItemData));
 
 protected:
-	virtual void SetViewOptions(BOOL Force);
+	virtual void SetViewSettings(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
@@ -44,13 +44,11 @@ private:
 	void AdjustHeader(BOOL bShow);
 	void DrawIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor);
 	void AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* tmpStr, SIZE_T cCount);
-	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* pData, INT* Rows, BOOL Themed);
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* pData, UINT Attr, BOOL Themed, BOOL AlwaysNewRow=TRUE);
 	INT GetMaxLabelWidth(INT Max);
 	INT GetMaxColumnWidth(UINT Col, INT Max);
 	void AutosizeColumn(UINT Col);
-	void SortCategories(LFSearchResult* pSearchResult);
 
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];

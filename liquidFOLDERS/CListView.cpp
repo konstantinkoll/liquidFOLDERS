@@ -12,7 +12,7 @@
 //
 
 #define GetItemData(Index)                  ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
-#define PADDING                             3
+#define PADDING                             2
 #define DrawLabel(dc, rect, pItemDescriptor, format)      dc.DrawText(GetLabel(pItemDescriptor), rect, DT_END_ELLIPSIS | DT_NOPREFIX | format);
 #define SwitchColor(dc, d)                  if ((Themed) && (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing)) && !pData->Hdr.Selected) dc.SetTextColor(0x808080);
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
@@ -22,9 +22,23 @@
                                             AlphaBlend(dc, rect.left, rect.top+1, w, h, hdcMem, 0, 0, w, h, BF); \
                                             SelectObject(hdcMem, hOldBitmap); \
                                             DeleteDC(hdcMem); }
-#define RIGHTCOLUMN                         215
 #define MAXAUTOWIDTH                        400
-#define MINWIDTH                            32
+#define MINWIDTH                            50
+
+
+/*	if (m_HeaderHeight>0)
+		if (Themed)
+		{
+			Bitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP);
+
+			Graphics g(dc);
+			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+GetScrollPos(SB_HORZ)+BACKSTAGEBORDER-1, m_HeaderHeight-(INT)pDivider->GetHeight());
+		}
+		else
+		{
+			dc.FillSolidRect(0, 0, rect.Width(), m_HeaderHeight, GetSysColor(COLOR_3DFACE));
+		}*/
+
 
 CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
@@ -32,30 +46,18 @@ CListView::CListView(UINT DataSize)
 	m_Icons[0] = m_Icons[1] = NULL;
 	m_HeaderItemClicked = -1;
 	m_IgnoreHeaderItemChange = FALSE;
-
-	WCHAR tmpStr[256];
-	SYSTEMTIME st;
-	ZeroMemory(&st, sizeof(st));
-
-	for (WORD a=6; a<24; a++)
-	{
-		st.wHour = a;
-		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, tmpStr, 256);
-		AddItemCategory(tmpStr, L"");
-	}
 }
 
-void CListView::SetViewOptions(BOOL Force)
+void CListView::SetViewSettings(BOOL Force)
 {
-	if ((p_ViewParameters->Mode!=m_ViewParameters.Mode) || (Force))
+	if ((p_ContextViewSettings->View!=m_ContextViewSettings.View) || (Force))
 	{
 		INT cx;
 		INT cy;
 
-		switch (p_ViewParameters->Mode)
+		switch (p_ContextViewSettings->View)
 		{
-		case LFViewLargeIcons:
-		case LFViewContent:
+		case LFViewDetails:
 			m_Icons[0] = &theApp.m_CoreImageListJumbo;
 			m_Icons[1] = (theApp.OSVersion<OS_Vista) ? &theApp.m_SystemImageListExtraLarge : &theApp.m_SystemImageListJumbo;
 
@@ -63,22 +65,6 @@ void CListView::SetViewOptions(BOOL Force)
 
 			break;
 
-		case LFViewSmallIcons:
-			m_Icons[0] = &theApp.m_CoreImageListLarge;
-			m_Icons[1] = &theApp.m_SystemImageListLarge;
-
-			cx = cy = 32;
-
-			break;
-
-		case LFViewTiles:
-		case LFViewStrips:
-			m_Icons[0] = &theApp.m_CoreImageListExtraLarge;
-			m_Icons[1] = &theApp.m_SystemImageListExtraLarge;
-
-			cx = cy = 48;
-
-			break;
 		default:
 			m_Icons[0] = &theApp.m_CoreImageListSmall;
 			m_Icons[1] = &theApp.m_SystemImageListSmall;
@@ -95,52 +81,26 @@ void CListView::SetViewOptions(BOOL Force)
 		m_IconSize[1].cy = min(cy, 128);
 	}
 
-	if ((p_ViewParameters->Mode==LFViewDetails) && (p_CookedFiles))
+	if ((p_ContextViewSettings->View==LFViewList) && (p_CookedFiles))
 		for (UINT a=0; a<LFAttributeCount; a++)
-			if (p_ViewParameters->ColumnWidth[a]!=m_ViewParameters.ColumnWidth[a])
+			if (p_ContextViewSettings->ColumnWidth[a]!=m_ContextViewSettings.ColumnWidth[a])
 			{
-				m_ViewParameters = *p_ViewParameters;
+				m_ContextViewSettings = *p_ContextViewSettings;
 				AdjustLayout();
 
 				break;
 			}
 
-	AdjustHeader((p_ViewParameters->Mode==LFViewDetails) && (p_CookedFiles));
+	AdjustHeader((p_ContextViewSettings->View==LFViewList) && (p_CookedFiles));
 }
 
 void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
 	CGridView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
 
-	if (p_CookedFiles)
-	{
-		m_HasCategories = p_CookedFiles->m_HasCategories;
+	ValidateAllItems();
 
-		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-		{
-			GridItemData* pData = GetItemData(a);
-			pData->Hdr.Valid = TRUE;
-
-			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
-				if (!p_CookedFiles->m_HasCategories)
-					if (p_CookedFiles->m_Context==LFContextSubfolderDay)
-					{
-						SYSTEMTIME stUTC;
-						SYSTEMTIME stLocal;
-						FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[p_CookedFiles->m_GroupAttribute], &stUTC);
-						SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
-
-						pItemDescriptor->CategoryID = stLocal.wHour<6 ? LFItemCategoryNight : LFItemCategoryCount+stLocal.wHour-6;
-						m_HasCategories = TRUE;
-					}
-		}
-
-		if (m_HasCategories!=p_CookedFiles->m_HasCategories)
-			SortCategories(p_CookedFiles);
-	}
-
-	AdjustHeader(m_ViewParameters.Mode==LFViewDetails);
+	AdjustHeader(m_ContextViewSettings.View==LFViewList);
 }
 
 void CListView::AdjustHeader(BOOL bShow)
@@ -150,26 +110,26 @@ void CListView::AdjustHeader(BOOL bShow)
 		m_wndHeader.SetRedraw(FALSE);
 		m_IgnoreHeaderItemChange = TRUE;
 
-		VERIFY(m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder));
+		VERIFY(m_wndHeader.SetOrderArray(LFAttributeCount, p_ContextViewSettings->ColumnOrder));
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
 			HDITEM hdi;
 			hdi.mask = HDI_WIDTH | HDI_FORMAT;
-			hdi.cxy = p_ViewParameters->ColumnWidth[a];
+			hdi.cxy = p_ContextViewSettings->ColumnWidth[a];
 			hdi.fmt = theApp.m_Attributes[a].TypeProperties.FormatRight ? HDF_RIGHT : HDF_LEFT;
 
 			if (hdi.cxy)
 				if (theApp.m_Attributes[a].AttrProperties.Type==LFTypeRating)
 				{
-					hdi.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
+					hdi.cxy = p_ContextViewSettings->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
 				}
 				else
 					if (hdi.cxy<MINWIDTH)
-						p_ViewParameters->ColumnWidth[a] = hdi.cxy = MINWIDTH;
+						p_ContextViewSettings->ColumnWidth[a] = hdi.cxy = MINWIDTH;
 
-			if (p_ViewParameters->SortBy==a)
-				hdi.fmt |= p_ViewParameters->Descending ? HDF_SORTDOWN : HDF_SORTUP;
+			if (p_ContextViewSettings->SortBy==a)
+				hdi.fmt |= p_ContextViewSettings->Descending ? HDF_SORTDOWN : HDF_SORTUP;
 
 			m_wndHeader.SetItem(a, &hdi);
 		}
@@ -203,72 +163,28 @@ void CListView::AdjustLayout()
 	m_HeaderHeight = wp.cy;
 
 	// Items
-	GVArrange gva = { 0, 0, BACKSTAGEBORDER, BACKSTAGEBORDER, PADDING, 1, -1 };
+	CSize szItem;
 
-	switch (m_ViewParameters.Mode)
+	switch (m_ContextViewSettings.View)
 	{
-	case LFViewLargeIcons:
-	case LFViewSmallIcons:
-		gva.cx = max(m_IconSize[0].cx, m_DefaultFontHeight*10);
-		gva.cy = m_IconSize[0].cy+m_DefaultFontHeight*2+PADDING;
-		gva.gutterx = gva.guttery = 3;
-
-		ArrangeHorizontal(gva);
-
-		break;
-
 	case LFViewList:
-		gva.cx = m_IconSize[0].cx+PADDING+GetMaxLabelWidth(240-m_IconSize[0].cx-PADDING);
+		szItem.cx = -2*PADDING;
 
-		if (gva.cx<140)
-			gva.cx = 140;
+		for (UINT a=0; a<LFAttributeCount; a++)
+			szItem.cx += m_ContextViewSettings.ColumnWidth[a];
 
-		gva.cy = max(m_IconSize[0].cy, m_DefaultFontHeight);
-		gva.gutterx = 6;
+		szItem.cy = max(m_IconSize[0].cy, m_DefaultFontHeight)+1;
 
-		if (!m_HasCategories)
-			gva.my = 0;
-
-		ArrangeVertical(gva);
+		Arrange(szItem, PADDING, CSize(1, -1), TRUE);
 
 		break;
 
 	case LFViewDetails:
-		gva.cx = -2*gva.padding;
+		szItem.cx = 0;
+		szItem.cy = m_IconSize[0].cy+18+3+8+1;
 
-		for (UINT a=0; a<LFAttributeCount; a++)
-			gva.cx += m_ViewParameters.ColumnWidth[a];
+		Arrange(szItem, PADDING, CSize(1, -1), TRUE);
 
-		gva.cy = max(m_IconSize[0].cy, m_DefaultFontHeight);
-
-		if (!m_HasCategories)
-			gva.my = 0;
-
-		ArrangeHorizontal(gva, FALSE, TRUE);
-
-		break;
-
-	case LFViewTiles:
-		gva.cx = 15*m_DefaultFontHeight;
-		gva.cy = max(m_IconSize[0].cy, m_DefaultFontHeight*3+max(m_DefaultFontHeight, 18));
-		gva.gutterx = gva.guttery = 3;
-
-		ArrangeHorizontal(gva, FALSE);
-
-		break;
-
-	case LFViewStrips:
-		gva.cy = 2+max(m_IconSize[0].cy, max(m_DefaultFontHeight*3+m_LargeFontHeight, m_DefaultFontHeight*2+max(m_DefaultFontHeight, 18)*2+1));
-
-		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
-
-		break;
-
-	case LFViewContent:
-		gva.cy = m_IconSize[0].cy+18+3+8;
-
-		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
-		
 		break;
 	}
 
@@ -281,20 +197,12 @@ RECT CListView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
-	switch (m_ViewParameters.Mode)
+	switch (m_ContextViewSettings.View)
 	{
-	case LFViewLargeIcons:
-	case LFViewSmallIcons:
-		rect.top += m_IconSize[0].cy+2*PADDING;
-		break;
+	case LFViewList:
+		rect.right = rect.left+m_ContextViewSettings.ColumnWidth[0]-3*PADDING;
 
 	case LFViewDetails:
-		rect.right = rect.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
-
-	case LFViewList:
-	case LFViewTiles:
-	case LFViewStrips:
-	case LFViewContent:
 		rect.left += m_IconSize[0].cx+2*PADDING;
 		break;
 	}
@@ -306,8 +214,6 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	GridItemData* pData = GetItemData(Index);
-	INT Rows[4];
-	BOOL Right = FALSE;
 
 	CRect rectClient;
 
@@ -316,47 +222,26 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 
 	CRect rectIcon(rect);
 	CRect rectLabel(rect);
-	CRect rectLeft(rect);
-	CRect rectRight(rect);
 
-	switch (m_ViewParameters.Mode)
+	switch (m_ContextViewSettings.View)
 	{
-	case LFViewLargeIcons:
-	case LFViewSmallIcons:
-		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
-
-		if (IsEditing() && (Index==m_EditLabel))
-			break;
-
-		rectLabel.top += m_IconSize[0].cy+PADDING;
-
-		if (Themed)
-		{
-			rectLabel.left++;
-			rectLabel.right--;
-		}
-
-		DrawLabel(dc, rectLabel, pItemDescriptor, DT_CENTER | DT_WORDBREAK);
-
-		break;
-
-	case LFViewDetails:
+	case LFViewList:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 
-		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
+		rectLabel.right = rectLabel.left+m_ContextViewSettings.ColumnWidth[0]-3*PADDING;
 		rectLabel.left = rectIcon.right+PADDING;
 
 		GetClientRect(rectClient);
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
-			UINT Attr = m_ViewParameters.ColumnOrder[a];
-			if (m_ViewParameters.ColumnWidth[Attr])
+			UINT Attr = m_ContextViewSettings.ColumnOrder[a];
+			if (m_ContextViewSettings.ColumnWidth[Attr])
 			{
 				if (Attr)
 				{
 					rectLabel.left = rectLabel.right+3*PADDING;
-					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[Attr]-3*PADDING;
+					rectLabel.right = rectLabel.left+m_ContextViewSettings.ColumnWidth[Attr]-3*PADDING;
 				}
 
 				switch (Attr)
@@ -366,10 +251,6 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 						continue;
 
 					break;
-
-				case LFAttrFileCount:
-					if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
-						continue;
 				}
 
 				if ((rectLabel.left<=rectClient.right) && (rectLabel.right>=rectClient.left))
@@ -379,117 +260,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 
 		break;
 
-	case LFViewList:
-		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-
-		if (IsEditing() && (Index==m_EditLabel))
-			break;
-
-		rectLabel.left += m_IconSize[0].cx+PADDING;
-		DrawLabel(dc, rectLabel, pItemDescriptor, DT_VCENTER | DT_LEFT | DT_SINGLELINE);
-
-		break;
-
-	case LFViewTiles:
-		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-
-		if (IsEditing() && (Index==m_EditLabel))
-			break;
-
-		rectLabel.left += m_IconSize[0].cx+m_DefaultFontHeight/2;
-
-		Rows[0] = LFAttrFileName;
-		switch (pItemDescriptor->Type & LFTypeMask)
-		{
-		case LFTypeStore:
-			Rows[1] = LFAttrComments;
-			Rows[2] = LFAttrDescription;
-			Rows[3] = -1;
-
-			break;
-
-		case LFTypeFile:
-			Rows[1] = LFAttrFileTime;
-			Rows[2] = LFAttrFileSize;
-			Rows[3] = LFAttrRating;
-
-			break;
-
-		case LFTypeFolder:
-			Rows[1] = LFAttrDescription;
-			Rows[2] = -1;
-			Rows[3] = -1;
-
-			break;
-		}
-
-		DrawTileRows(dc, rectLabel, pItemDescriptor, pData, Rows, Themed);
-
-		break;
-
-	case LFViewStrips:
-		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-
-		if (IsEditing() && (Index==m_EditLabel))
-			break;
-
-		rectLeft.left += m_IconSize[0].cx+m_DefaultFontHeight/2;
-		rectLeft.top++;
-		Right = (rect.Width()>600) && (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) || ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile));
-		if (Right)
-			rectLeft.right -= RIGHTCOLUMN+2*PADDING;
-
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrFileName, Themed);
-
-		switch (pItemDescriptor->Type & LFTypeMask)
-		{
-		case LFTypeStore:
-			DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrComments, Themed);
-			DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrDescription, Themed);
-
-			break;
-
-		case LFTypeFile:
-			DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrComments, Themed);
-			DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrHashtags, Themed);
-			DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrFileFormat, Themed);
-
-			break;
-
-		case LFTypeFolder:
-			DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrDescription, Themed);
-			DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrFileSize, Themed);
-
-			break;
-
-		}
-
-		if (Right)
-		{
-			rectRight.left = rectLeft.right+2*PADDING;
-			rectRight.top += 1+m_LargeFontHeight-m_DefaultFontHeight;
-
-			switch (pItemDescriptor->Type & LFTypeMask)
-			{
-			case LFTypeStore:
-				DrawProperty(dc, rectRight, pItemDescriptor, pData, LFAttrCreationTime, Themed);
-				DrawProperty(dc, rectRight, pItemDescriptor, pData, LFAttrFileTime, Themed);
-
-				break;
-
-			case LFTypeFile:
-				DrawProperty(dc, rectRight, pItemDescriptor, pData, LFAttrFileTime, Themed);
-				DrawProperty(dc, rectRight, pItemDescriptor, pData, LFAttrFileSize, Themed);
-				DrawProperty(dc, rectRight, pItemDescriptor, pData, LFAttrRating, Themed);
-				DrawProperty(dc, rectRight, pItemDescriptor, pData, LFAttrPriority, Themed);
-
-				break;
-			}
-		}
-
-		break;
-
-	case LFViewContent:
+	case LFViewDetails:
 		if (pItemDescriptor->AttributeValues[LFAttrRating])
 		{
 			UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[LFAttrRating]);
@@ -504,35 +275,35 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 			}
 		}
 
-		rectIcon.left = rectLeft.left;
+		rectIcon.left = rectLabel.left;
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		rectIcon.top = rectLeft.top+1;
+		rectIcon.top = rectLabel.top+1;
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
 
 		if (IsEditing() && (Index==m_EditLabel))
 			break;
 
-		rectLeft.left += m_IconSize[0].cx+m_DefaultFontHeight/2;
-		rectLeft.top++;
+		rectLabel.left += m_IconSize[0].cx+m_DefaultFontHeight/2;
+		rectLabel.top++;
 
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrFileName, Themed);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrComments, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrDescription, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrArtist, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrTitle, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrAlbum, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrRecordingTime, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrRoll, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrDuration, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrHashtags, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrPages, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrWidth, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrHeight, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrEquipment, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrBitrate, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrCreationTime, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrFileTime, Themed, FALSE);
-		DrawProperty(dc, rectLeft, pItemDescriptor, pData, LFAttrFileSize, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrFileName, Themed);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrComments, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrDescription, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrArtist, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrTitle, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrAlbum, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrRecordingTime, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrRoll, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrDuration, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrHashtags, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrPages, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrWidth, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrHeight, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrEquipment, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrBitrate, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrCreationTime, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrFileTime, Themed, FALSE);
+		DrawProperty(dc, rectLabel, pItemDescriptor, pData, LFAttrFileSize, Themed, FALSE);
 
 		break;
 	}
@@ -548,7 +319,7 @@ __forceinline void CListView::DrawIcon(CDC& dc, const CRect& rect, LFItemDescrip
 	{
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
-		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewLargeIcons))
+		if (m_ContextViewSettings.View==LFViewDetails)
 		{
 			if (!theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, pItemDescriptor))
 				theApp.m_FileFormats.DrawJumboIcon(dc, rect, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
@@ -583,63 +354,13 @@ void CListView::AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, 
 	}
 }
 
-__forceinline void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* pData, INT* Rows, BOOL Themed)
-{
-	WCHAR tmpStr[4][256];
-	UINT Cnt = 0;
-	UINT Height = 0;
-
-	for (UINT a=0; a<4; a++)
-	{
-		tmpStr[a][0] = L'\0';
-
-		if (Rows[a]==LFAttrRating)
-		{
-			Cnt++;
-			Height += 18;
-		}
-		else
-			if (Rows[a]!=-1)
-			{
-				AttributeToString(pItemDescriptor, Rows[a], tmpStr[a], 256);
-				if (tmpStr[a][0]!=L'\0')
-				{
-					Cnt++;
-					Height += m_DefaultFontHeight;
-				}
-			}
-	}
-
-	rect.top += (rect.Height()-Height)/2;
-	rect.bottom = rect.top+max(m_DefaultFontHeight, 18);
-
-	for (UINT a=0; a<4; a++)
-	{
-		if (Rows[a]==LFAttrRating)
-		{
-			PrepareBlend();
-			Blend(dc, rect, pItemDescriptor->CoreAttributes.Rating, theApp.hRatingBitmaps);
-			rect.OffsetRect(0, 18);
-		}
-		else
-			if (tmpStr[a][0]!=L'\0')
-			{
-				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-				rect.OffsetRect(0, m_DefaultFontHeight);
-			}
-
-		if (Rows[a]==LFAttrFileName)
-			SwitchColor(dc, d);
-	}
-}
-
 __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
 	{
 		if (pItemDescriptor->AttributeValues[Attr])
 		{
-			UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[Attr]);
+			const UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[Attr]);
 			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (Rating))
 			{
 				PrepareBlend();
@@ -658,15 +379,9 @@ __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor*
 	{
 		WCHAR tmpStr[256];
 		AttributeToString(pItemDescriptor, Attr, tmpStr, 256);
+
 		if (tmpStr[0]!=L'\0')
-		{
-			CRect rectText(rect);
-
-			if (theApp.m_Attributes[Attr].TypeProperties.FormatRight)
-				rectText.right -= 3;
-
-			dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr].TypeProperties.FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-		}
+			dc.DrawText(tmpStr, rect, (theApp.m_Attributes[Attr].TypeProperties.FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 	}
 }
 
@@ -752,8 +467,7 @@ INT CListView::GetMaxLabelWidth(INT Max)
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
-			CString label = GetLabel((*p_CookedFiles)[a]);
-			INT cx = pDC->GetTextExtent(label).cx;
+			INT cx = pDC->GetTextExtent(GetLabel((*p_CookedFiles)[a])).cx;
 
 			if (cx>Width)
 			{
@@ -811,30 +525,16 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 
 void CListView::AutosizeColumn(UINT Col)
 {
-	p_ViewParameters->ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col] = 3*PADDING +
+	p_ContextViewSettings->ColumnWidth[Col] = p_ContextViewSettings->ColumnWidth[Col] = 3*PADDING +
 		((Col==LFAttrFileName) ? m_IconSize[0].cx+PADDING+GetMaxLabelWidth(MAXAUTOWIDTH) : (theApp.m_Attributes[Col].AttrProperties.Type==LFTypeRating) ? RatingBitmapWidth+PADDING : GetMaxColumnWidth(Col, MAXAUTOWIDTH));
 
 	if (theApp.m_Attributes[Col].TypeProperties.FormatRight)
-		p_ViewParameters->ColumnWidth[Col] += 3;
+		p_ContextViewSettings->ColumnWidth[Col] += 3;
 
-	if (p_ViewParameters->ColumnWidth[Col]<MINWIDTH)
-		p_ViewParameters->ColumnWidth[Col] = MINWIDTH;
+	if (p_ContextViewSettings->ColumnWidth[Col]<MINWIDTH)
+		p_ContextViewSettings->ColumnWidth[Col] = MINWIDTH;
 
-	m_ViewParameters.ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col];
-}
-
-void CListView::SortCategories(LFSearchResult* pSearchResult)
-{
-	ASSERT(pSearchResult);
-	LFDynArray<LFItemDescriptor*, 128, 128> Buckets[LFItemCategoryCount+18];
-
-	for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-		Buckets[(*pSearchResult)[a]->CategoryID].AddItem((*pSearchResult)[a]);
-
-	UINT Ptr = 0;
-	for (UINT a=0; a<LFItemCategoryCount+18; a++)
-		for (UINT b=0; b<Buckets[a].m_ItemCount; b++)
-			(*pSearchResult)[Ptr++] = Buckets[a][b];
+	m_ContextViewSettings.ColumnWidth[Col] = p_ContextViewSettings->ColumnWidth[Col];
 }
 
 void CListView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
@@ -912,8 +612,8 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 		CMenu* pPopup = menu.GetSubMenu(0);
 		ASSERT_VALID(pPopup);
 
-		for (INT a=LFLastCoreAttribute-1; a>=0; a--)
-			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (LFIsAttributeAllowed(theApp.m_Contexts[m_Context], a)))
+		for (INT a=LFAttributeCount-1; a>=0; a--)
+			if (theApp.IsAttributeAdvertised(m_Context, a))
 				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_DETAILS_TOGGLEATTRIBUTE+a, theApp.m_Attributes[a].Name);
 
 		CPoint pt(point);
@@ -936,8 +636,8 @@ void CListView::OnToggleAttribute(UINT nID)
 	UINT Attr = nID-IDM_DETAILS_TOGGLEATTRIBUTE;
 	ASSERT(Attr<LFAttributeCount);
 
-	p_ViewParameters->ColumnWidth[Attr] = p_ViewParameters->ColumnWidth[Attr] ? 0 : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
-	theApp.UpdateViewOptions(m_Context);
+	p_ContextViewSettings->ColumnWidth[Attr] = p_ContextViewSettings->ColumnWidth[Attr] ? 0 : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
+	theApp.UpdateViewSettings(m_Context);
 }
 
 void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
@@ -945,14 +645,14 @@ void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
 	UINT Attr = pCmdUI->m_nID-IDM_DETAILS_TOGGLEATTRIBUTE;
 	ASSERT(Attr<LFAttributeCount);
 
-	pCmdUI->SetCheck(m_ViewParameters.ColumnWidth[Attr]);
-	pCmdUI->Enable(Attr!=LFAttrFileName);
+	pCmdUI->SetCheck(m_ContextViewSettings.ColumnWidth[Attr]);
+	pCmdUI->Enable(!theApp.m_Attributes[Attr].AttrProperties.AlwaysShow);
 }
 
 void CListView::OnAutosizeAll()
 {
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (m_ViewParameters.ColumnWidth[a])
+		if (m_ContextViewSettings.ColumnWidth[a])
 			AutosizeColumn(a);
 
 	AdjustHeader(TRUE);
@@ -973,12 +673,12 @@ void CListView::OnChooseDetails()
 {
 	ChooseDetailsDlg dlg(m_Context, this);
 	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions(m_Context);
+		theApp.UpdateViewSettings(m_Context);
 }
 
 void CListView::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
-	BOOL bEnable = (m_ViewParameters.Mode==LFViewDetails);
+	BOOL bEnable = (m_ContextViewSettings.View==LFViewList);
 
 	if (pCmdUI->m_nID==IDM_DETAILS_AUTOSIZE)
 		bEnable &= (m_HeaderItemClicked!=-1);
@@ -990,7 +690,7 @@ void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
-	*pResult = (pHdr->iItem==LFAttrFileName) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
+	*pResult = (m_ContextViewSettings.ColumnWidth[pHdr->iItem]==0);
 }
 
 void CListView::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1001,33 +701,29 @@ void CListView::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		if (pHdr->pitem->iOrder==-1)
 		{
-			p_ViewParameters->ColumnWidth[pHdr->iItem] = 0;
+			p_ContextViewSettings->ColumnWidth[pHdr->iItem] = 0;
 		}
 		else
 		{
-			if (pHdr->pitem->iOrder==LFAttrFileName)
-				pHdr->pitem->iOrder = 1;
-			if (pHdr->iItem==LFAttrFileName)
-				pHdr->pitem->iOrder = 0;
-
 			// GetColumnOrderArray() enthält noch die alte Reihenfolge, daher:
 			// 1. Spalte an der alten Stelle löschen
 			for (UINT a=0; a<LFAttributeCount; a++)
-				if (p_ViewParameters->ColumnOrder[a]==pHdr->iItem)
+				if (p_ContextViewSettings->ColumnOrder[a]==pHdr->iItem)
 				{
 					for (UINT b=a; b<LFAttributeCount-1; b++)
-						p_ViewParameters->ColumnOrder[b] = p_ViewParameters->ColumnOrder[b+1];
+						p_ContextViewSettings->ColumnOrder[b] = p_ContextViewSettings->ColumnOrder[b+1];
+
 					break;
 				}
 
 			// 2. Spalte an der neuen Stelle einfügen
 			for (INT a=LFAttributeCount-1; a>pHdr->pitem->iOrder; a--)
-				p_ViewParameters->ColumnOrder[a] = p_ViewParameters->ColumnOrder[a-1];
+				p_ContextViewSettings->ColumnOrder[a] = p_ContextViewSettings->ColumnOrder[a-1];
 
-			p_ViewParameters->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
+			p_ContextViewSettings->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
 		}
 
-		UpdateViewOptions(m_Context);
+		UpdateViewSettings(m_Context);
 
 		*pResult = FALSE;
 	}
@@ -1038,7 +734,7 @@ void CListView::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (pHdr->pitem->mask & HDI_WIDTH)
-		*pResult = (theApp.m_Attributes[pHdr->iItem].AttrProperties.Type==LFTypeRating) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
+		*pResult = (theApp.m_Attributes[pHdr->iItem].AttrProperties.Type==LFTypeRating) || (m_ContextViewSettings.ColumnWidth[pHdr->iItem]==0);
 }
 
 void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1048,9 +744,9 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 	if ((pHdr->pitem->mask & HDI_WIDTH) && (!m_IgnoreHeaderItemChange))
 	{
 		if (pHdr->pitem->cxy<MINWIDTH)
-			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? MINWIDTH : 0;
+			pHdr->pitem->cxy = theApp.m_Attributes[pHdr->iItem].AttrProperties.AlwaysShow ? MINWIDTH : 0;
 
-		m_ViewParameters.ColumnWidth[pHdr->iItem] = p_ViewParameters->ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
+		m_ContextViewSettings.ColumnWidth[pHdr->iItem] = p_ContextViewSettings->ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
 		AdjustLayout();
 
 		*pResult = FALSE;
@@ -1060,27 +756,9 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-	UINT Attr = pHdr->iItem;
 
-	if (!AttributeSortableInView(Attr, m_ViewParameters.Mode))
-	{
-		CString Message((LPCSTR)IDS_ATTRIBUTENOTSORTABLE);
-		LFMessageBox(this, Message, theApp.m_Attributes[Attr].Name, MB_OK | MB_ICONWARNING);
-	
-		return;
-	}
+	const UINT Attr = pHdr->iItem;
+	theApp.SetContextSort(m_Context, Attr, p_ContextViewSettings->SortBy==Attr ? !p_ContextViewSettings->Descending : theApp.m_Attributes[Attr].AttrProperties.DefaultDescending);
 
-	if (p_ViewParameters->SortBy==Attr)
-	{
-		p_ViewParameters->Descending = !p_ViewParameters->Descending;
-	}
-	else
-	{
-		p_ViewParameters->SortBy = Attr;
-		p_ViewParameters->Descending = theApp.m_Attributes[Attr].TypeProperties.PreferDescendingSort;
-	}
-
-	theApp.UpdateSortOptions(m_Context);
-
-	*pResult = NULL;
+	*pResult = FALSE;
 }

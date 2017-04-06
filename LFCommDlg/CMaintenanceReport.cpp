@@ -12,7 +12,7 @@
 extern INT GetAttributeIconIndex(UINT Attr);
 
 #define BORDER       5
-#define MARGIN       10
+#define MARGIN       BACKSTAGEBORDER-1
 #define PADDINGX     BACKSTAGEBORDER-BORDER
 #define PADDINGY     2
 
@@ -20,7 +20,15 @@ CMaintenanceReport::CMaintenanceReport()
 	: CFrontstageWnd()
 {
 	p_MaintenanceList = NULL;
-	m_ItemHeight = m_VScrollMax = m_VScrollPos = m_IconSize = 0;
+
+	m_BadgeSize = GetSystemMetrics(SM_CYICON);
+	hIconReady = hIconWarning = hIconError = NULL;
+
+	m_ItemHeight = max(LFGetApp()->m_ExtraLargeIconSize, 4*LFGetApp()->m_DefaultFont.GetFontHeight())+2*PADDINGY;
+	m_IconSize = (m_ItemHeight>=128) ? 128 : LFGetApp()->m_ExtraLargeIconSize;
+	p_StoreIcons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : &LFGetApp()->m_CoreImageListExtraLarge;
+
+	m_VScrollMax = m_VScrollPos = 0;
 	m_HotItem = -1;
 	m_Hover = FALSE;
 }
@@ -163,15 +171,6 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	for (UINT a=0; a<LFErrorCount; a++)
 		LFGetErrorText(m_ErrorText[a], 256, a);
-
-	m_ItemHeight = max(48, 4*LFGetApp()->m_DefaultFont.GetFontHeight())+2*PADDINGY;
-
-	IMAGEINFO ii;
-	LFGetApp()->m_SystemImageListLarge.GetImageInfo(0, &ii);
-
-	p_StoreIcons = (m_ItemHeight>=96) ? &LFGetApp()->m_CoreImageListHuge : &LFGetApp()->m_CoreImageListExtraLarge;
-	m_IconSize = (m_ItemHeight>=96) ? 96 : 48;
-	m_BadgeSize = ii.rcImage.bottom-ii.rcImage.top;
 
 	hIconReady = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_READY), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
 	hIconWarning = (HICON)LoadImage(AfxGetResourceHandle(), IDI_WARNING, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
@@ -355,16 +354,7 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 			{
 				LFStoreDescriptor Store;
 				if (LFGetStoreSettings((*p_MaintenanceList)[m_HotItem].StoreID, &Store)==LFOk)
-				{
-					LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(&Store);
-
-					CString Hint;
-					GetHintForStore(Hint, pItemDescriptor);
-
-					LFGetApp()->ShowTooltip(this, point, pItemDescriptor->CoreAttributes.FileName, Hint, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1));
-
-					LFFreeItemDescriptor(pItemDescriptor);
-				}
+					LFGetApp()->ShowTooltip(this, point, &Store);
 			}
 	}
 	else

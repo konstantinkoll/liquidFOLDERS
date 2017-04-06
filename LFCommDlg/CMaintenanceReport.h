@@ -39,13 +39,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	LFMaintenanceList* p_MaintenanceList;
-	CImageList* p_StoreIcons;
+	UINT m_BadgeSize;
 	HICON hIconReady;
 	HICON hIconWarning;
 	HICON hIconError;
 	UINT m_ItemHeight;
 	UINT m_IconSize;
-	UINT m_BadgeSize;
+	CImageList* p_StoreIcons;
 	INT m_ScrollHeight;
 	INT m_VScrollPos;
 	INT m_VScrollMax;

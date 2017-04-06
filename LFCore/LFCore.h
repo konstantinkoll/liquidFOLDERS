@@ -275,7 +275,7 @@ LFCORE_API void __stdcall LFRemoveFlaggedItems(LFSearchResult* pSearchResult);
 LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending);
 
 // Gruppiert LFSearchResult und liefert Kopie zurück
-LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupOne, LFFilter* pFilter);
+LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter);
 
 
 // Neue Transaktionsliste erzeugen

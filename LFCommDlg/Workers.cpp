@@ -101,10 +101,7 @@ BOOL LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd)
 
 	if (LFNagScreen(pParentWnd))
 	{
-		CString Caption((LPCSTR)IDS_IMPORTFOLDER_CAPTION);
-		CString Hint((LPCSTR)IDS_IMPORTFOLDER_HINT);
-
-		LFBrowseForFolderDlg dlg(pParentWnd, Caption, Hint, TRUE, TRUE, _T(""));
+		LFBrowseForFolderDlg dlg(pParentWnd, CString((LPCSTR)IDS_IMPORTFOLDER_CAPTION), CString((LPCSTR)IDS_IMPORTFOLDER_HINT), TRUE, TRUE, _T(""));
 		if (dlg.DoModal()==IDOK)
 		{
 			WorkerParameters wp;
@@ -189,9 +186,8 @@ void LFDeleteStore(const CHAR* pStoreID, CWnd* pParentWnd)
 	// LFMessageBox
 	CString Caption;
 	Caption.Format(IDS_DELETESTORE_CAPTION, Store.StoreName);
-	CString Msg((LPCSTR)IDS_DELETESTORE_MSG);
 
-	if (LFMessageBox(pParentWnd, Msg, Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
+	if (LFMessageBox(pParentWnd, CString((LPCSTR)IDS_DELETESTORE_MSG), Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
 		return;
 
 	// Dialogbox nur zeigen, wenn der Store gemountet ist

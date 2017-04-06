@@ -40,16 +40,11 @@ void LFStoreMaintenanceDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 BOOL LFStoreMaintenanceDlg::InitDialog()
 {
-	CString Caption((LPCSTR)IDS_STOREMAINTENANCE_CAPTION);
-
-	CString Mask;
-	ENSURE(Mask.LoadString(m_pMaintenanceList->m_ItemCount==1 ? IDS_STOREMAINTENANCE_HINT_SINGULAR : IDS_STOREMAINTENANCE_HINT_PLURAL));
-
 	CString Hint;
-	Hint.Format(Mask, m_pMaintenanceList->m_ItemCount);
+	Hint.Format(CString((LPCSTR)(m_pMaintenanceList->m_ItemCount==1 ? IDS_STOREMAINTENANCE_HINT_SINGULAR : IDS_STOREMAINTENANCE_HINT_PLURAL)), m_pMaintenanceList->m_ItemCount);
 
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
-	m_wndHeaderArea.SetText(Caption, Hint, FALSE);
+	m_wndHeaderArea.SetHeader(CString((LPCSTR)IDS_STOREMAINTENANCE_CAPTION), Hint, NULL, FALSE);
 
 	m_wndMaintenanceReport.Create(this, IDC_MAINTENANCEREPORT);
 	m_wndMaintenanceReport.SetMaintenanceList(m_pMaintenanceList);

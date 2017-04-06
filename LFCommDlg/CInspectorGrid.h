@@ -20,6 +20,7 @@ friend class CPropertyIATA;
 friend class CPropertyGPS;
 friend class CPropertyTime;
 friend class CPropertyNumber;
+friend class CPropertyGenre;
 
 public:
 	CPropertyHolder();
@@ -181,9 +182,6 @@ public:
 	CPropertyNumber(LFVariantData* pData);
 
 	virtual CString GetValidChars() const;
-	virtual BOOL HasButton() const;
-	virtual BOOL OnClickValue(INT x);
-	virtual void OnClickButton();
 };
 
 
@@ -208,6 +206,21 @@ public:
 	CPropertyDuration(LFVariantData* pData);
 
 	virtual void SetEditMask(CMFCMaskedEdit* pEdit) const;
+};
+
+
+// CPropertyGenre
+//
+
+class CPropertyGenre : public CProperty
+{
+public:
+	CPropertyGenre(LFVariantData* pData);
+
+	virtual CString GetValidChars() const;
+	virtual BOOL HasButton() const;
+	virtual BOOL OnClickValue(INT x);
+	virtual void OnClickButton();
 };
 
 

@@ -27,9 +27,10 @@ protected:
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
 
-	CExplorerList m_wndAttributes;
-	LFViewParameters* p_ViewParamters;
 	UINT m_Context;
+	LFContextViewSettings* p_ContextViewSettings;
+
+	CExplorerList m_wndAttributes;
 
 private:
 	void SwapItems(INT FocusItem, INT NewPos);

@@ -117,7 +117,8 @@
 #define IDS_CONTEXT_CLIPBOARD           1315
 #define IDS_CONTEXT_SUBFOLDER_DEFAULT   1316
 #define IDS_CONTEXT_SUBFOLDER_DAY       1317
-#define IDS_CONTEXT_SUBFOLDER_LOCATION  1318
+#define IDS_CONTEXT_SUBFOLDER_ALBUM     1318
+#define IDS_CONTEXT_SUBFOLDER_GENRE     1319
 #define IDS_ERR_FIRST                   1400
 #define IDS_ERR_OK                      1400
 #define IDS_ERR_CANCEL                  1401

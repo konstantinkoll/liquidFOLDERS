@@ -45,14 +45,14 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchR
 	return CFileView::Create(pParentWnd, nID, rect, pRawFiles, pCookedFiles, pPersistentData, nClassStyle | CS_OWNDC);
 }
 
-void CGlobeView::SetViewOptions(BOOL Force)
+void CGlobeView::SetViewSettings(BOOL Force)
 {
 	// Settings
 	if (Force)
 	{
-		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_ViewParameters->GlobeLatitude/1000.0f;
-		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_ViewParameters->GlobeLongitude/1000.0f;
-		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_ViewParameters->GlobeZoom;
+		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_GlobalViewSettings->GlobeLatitude/1000.0f;
+		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_GlobalViewSettings->GlobeLongitude/1000.0f;
+		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_GlobalViewSettings->GlobeZoom;
 	}
 
 	// Textures
@@ -80,19 +80,23 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 			{
 				LFGeoCoordinates Location = { 0.0, 0.0 };
 
-				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
-				{
-					LFAirport* pAirport;
-					if (LFIATAGetAirportByCode((CHAR*)(*p_CookedFiles)[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
-						Location = pAirport->Location;
-				}
-				else
-					if ((*p_CookedFiles)[a]->AttributeValues[m_ViewParameters.SortBy])
-					{
-						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy].AttrProperties.Type==LFTypeGeoCoordinates);
+				const UINT Attr = m_ContextViewSettings.SortBy;
 
-						Location = *((LFGeoCoordinates*)(*p_CookedFiles)[a]->AttributeValues[m_ViewParameters.SortBy]);
-					}
+				switch (theApp.m_Attributes[Attr].AttrProperties.Type)
+				{
+				case LFTypeIATACode:
+					LFAirport* pAirport;
+					if (LFIATAGetAirportByCode((CHAR*)(*p_CookedFiles)[a]->AttributeValues[Attr], &pAirport))
+						Location = pAirport->Location;
+
+					break;
+
+				case LFTypeGeoCoordinates:
+					if ((*p_CookedFiles)[a]->AttributeValues[Attr])
+						Location = *((LFGeoCoordinates*)(*p_CookedFiles)[a]->AttributeValues[Attr]);
+
+					break;
+				}
 
 				if ((Location.Latitude!=0.0) || (Location.Longitude!=0))
 				{
@@ -160,8 +164,7 @@ CMenu* CGlobeView::GetItemContextMenu(INT Index)
 	CMenu* pPopup = pMenu->GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	CString tmpStr((LPCSTR)IDS_CONTEXTMENU_OPENGOOGLEEARTH);
-	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, tmpStr);
+	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, CString((LPCSTR)IDS_CONTEXTMENU_OPENGOOGLEEARTH));
 
 	return pMenu;
 }
@@ -254,7 +257,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], c
 				pData->ScreenPoint[1] = (INT)Y;
 				pData->Alpha = (Z<BLENDIN) ? (GLfloat)((Z-BLENDOUT)/(BLENDIN-BLENDOUT)) : 1.0f;
 
-				if (m_ViewParameters.GlobeShowSpots)
+				if (m_GlobalViewSettings.GlobeShowSpots)
 					theRenderer.DrawIcon(X, Y, 6.0f+8.0f*pData->Alpha, pData->Alpha);
 			}
 		}
@@ -275,20 +278,20 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 				UINT cCaption = (UINT)wcslen(Caption);
 
 				WCHAR* Subcaption = NULL;
-				WCHAR* Coordinates = (m_ViewParameters.GlobeShowGPS ? pData->CoordString : NULL);
+				WCHAR* Coordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
 				
-				WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? pData->DescriptionString : NULL);
+				WCHAR* Description = (m_GlobalViewSettings.GlobeShowDescription ? pData->DescriptionString : NULL);
 				if (Description)
 					if (*Description==L'\0')
 						Description = NULL;
 
 				// Beschriftung aufbereiten
-				switch (m_ViewParameters.SortBy)
+				switch (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type)
 				{
-				case LFAttrLocationIATA:
+				case LFTypeIATACode:
 					if (cCaption>6)
 					{
-						if (m_ViewParameters.GlobeShowAirportNames)
+						if (m_GlobalViewSettings.GlobeShowAirportNames)
 						{
 							Subcaption = &Caption[3];
 							while ((*Subcaption==L' ') || (*Subcaption==L'–') || (*Subcaption==L'—'))
@@ -300,8 +303,8 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 
 					break;
 
-				case LFAttrLocationGPS:
-					if ((wcscmp(Caption, pData->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
+				case LFTypeGeoCoordinates:
+					if ((wcscmp(Caption, pData->CoordString)==0) && (m_GlobalViewSettings.GlobeShowGPS))
 						Coordinates = NULL;
 
 					break;
@@ -940,11 +943,11 @@ void CGlobeView::OnDestroy()
 	theRenderer.DeleteRenderContext(m_RenderContext);
 
 	// Settings
-	if (p_ViewParameters)
+	if (p_GlobalViewSettings)
 	{
-		p_ViewParameters->GlobeLatitude = (INT)(m_GlobeTarget.Latitude*1000.0f);
-		p_ViewParameters->GlobeLongitude = (INT)(m_GlobeTarget.Longitude*1000.0f);
-		p_ViewParameters->GlobeZoom = m_GlobeTarget.Zoom;
+		p_GlobalViewSettings->GlobeLatitude = (INT)(m_GlobeTarget.Latitude*1000.0f);
+		p_GlobalViewSettings->GlobeLongitude = (INT)(m_GlobeTarget.Longitude*1000.0f);
+		p_GlobalViewSettings->GlobeZoom = m_GlobeTarget.Zoom;
 	}
 
 	CFileView::OnDestroy();
@@ -980,10 +983,8 @@ void CGlobeView::OnPaint()
 		CRect rectText(rect);
 		rectText.top += m_HeaderHeight+6;
 
-		CString tmpStr((LPCSTR)IDS_NORENDERINGCONTEXT);
-
 		dc.SetTextColor(0x0000FF);
-		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		dc.DrawText(CString((LPCSTR)IDS_NORENDERINGCONTEXT), rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 		DrawWindowEdge(dc, Themed);
 
@@ -1210,9 +1211,9 @@ void CGlobeView::OnAutosize()
 
 void CGlobeView::OnSettings()
 {
-	GlobeOptionsDlg dlg(p_ViewParameters, this);
+	GlobeOptionsDlg dlg(m_Context, this);
 	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions(-1, LFViewGlobe);
+		theApp.UpdateViewSettings(-1, LFViewGlobe);
 }
 
 void CGlobeView::OnGoogleEarth()

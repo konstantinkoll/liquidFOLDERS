@@ -140,7 +140,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescr
 	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
-	AlphaBlend(dc, rect.left+(rect.Width()-128)/2, rect.top+(rect.Height()-128)/2, 128, 128, hdcMem, 0, 0, 128, 128, BF);
+	AlphaBlend(dc, (rect.left+rect.right-128)/2, (rect.top+rect.bottom-128)/2, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
 	SelectObject(hdcMem, hOldBitmap);
 	DeleteDC(hdcMem);
@@ -166,22 +166,21 @@ HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, C
 	return NULL;
 }
 
-HICON CThumbnailCache::GetThumbnailIcon(LFItemDescriptor* pItemDescriptor, CDC* pDC)
+HBITMAP CThumbnailCache::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchResult, CDC* pDC, UINT First, UINT Last)
 {
-	HICON hIcon = NULL;
+	CDC dc;
+	dc.CreateCompatibleDC(pDC);
 
-	HBITMAP hBitmap = GetThumbnailBitmap(pItemDescriptor, pDC);
-	if (hBitmap)
-	{
-		ICONINFO ii;
-		ZeroMemory(&ii, sizeof(ii));
-		ii.fIcon = TRUE;
-		ii.hbmColor = hBitmap;
-		ii.hbmMask = hBitmap;
+	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-		hIcon = CreateIconIndirect(&ii);
-		DeleteObject(hBitmap);
-	}
+	CRect rect(0, 0, 128, 128);
+	for (UINT a=First; a<min(Last, pSearchResult->m_ItemCount); a++)
+		if (DrawJumboThumbnail(dc, rect, (*pSearchResult)[a]))
+			return (HBITMAP)dc.SelectObject(hOldBitmap);
 
-	return hIcon;
+	dc.SelectObject(hOldBitmap);
+	DeleteObject(hBitmap);
+
+	return NULL;
 }

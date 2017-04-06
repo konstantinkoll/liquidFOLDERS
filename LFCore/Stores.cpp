@@ -1466,8 +1466,6 @@ void QueryStores(LFSearchResult* pSearchResult)
 {
 	assert(pSearchResult);
 
-	pSearchResult->m_HasCategories = TRUE;
-
 	// Stores
 	if (GetMutexForStores())
 	{

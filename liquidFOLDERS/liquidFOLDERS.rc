@@ -177,7 +177,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Ü&berschriften anzeigen",     IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "&Wochentage anzeigen",        IDM_CALENDAR_SHOWDAYS
         MENUITEM "&Jahr auswählen...\tStrg+Y",  IDM_CALENDAR_GOTOYEAR
     END
 END
@@ -261,7 +261,7 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,139,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 310
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "„%s“ organisieren nach"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -269,11 +269,10 @@ BEGIN
     CONTROL         "Objekte nach dieser Eigenschaft organisieren",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,275,15
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
-    CONTROL         "Dateien in Unterordner &gruppieren",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,220,275,10
-    CONTROL         "Sortierrichtung",IDC_CATEGORY2,"CCategory",WS_GROUP,7,239,275,15
-    COMBOBOX        IDC_SORTDIRECTION,7,257,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,288,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,232,288,50,14,WS_GROUP
+    CONTROL         "Sortierrichtung",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
+    COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,232,273,50,14,WS_GROUP
 END
 
 IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
@@ -318,7 +317,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 302
+        BOTTOMMARGIN, 287
     END
 
     IDD_GLOBEOPTIONS, DIALOG
@@ -364,7 +363,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
     IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
     IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
     IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
@@ -383,23 +381,18 @@ BEGIN
     IDS_CONTEXTMENU_CHOOSESTORE "&Store wählen..."
     IDS_CONTEXTMENU_IMPORTFOLDER "Verzeichnis &importieren..."
     IDS_CONTEXTMENU_MORE    "&Mehr..."
-    IDS_CONTEXTMENU_TIME    "&Zeit"
-    IDS_CONTEXTMENU_LOCATION "&Ort"
-    IDS_CONTEXTMENU_DIMENSION "&Abmessungen"
     IDS_TXTFILEFILTER       "Textdatei"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE 
-                            "Diese Eigenschaft ist zur Sortierung nicht geeignet."
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
+    IDS_FILETYPES           "Dateitypen"
+    IDS_HOUSEKEEPING        "Verwaltung"
+    IDS_SEARCHTERM          "Alle Stores durchsuchen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FILETYPES           "Dateitypen"
-    IDS_HOUSEKEEPING        "Verwaltung"
-    IDS_SEARCHTERM          "Alle Stores durchsuchen"
     IDS_DEFAULTSTORE        "Standard-Store"
     IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
@@ -431,7 +424,7 @@ BEGIN
     IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
     IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
     IDM_STORES_ADD          "Fügt einen neuen Store für Ihre Dateien hinzu.\nStore hinzufügen..."
-    IDM_STORES_SYNCHRONIZE   "Synchronisiert alle Stores mit ihrer Datenquelle.\nSynchronisieren"
+    IDM_STORES_SYNCHRONIZE  "Synchronisiert alle Stores mit ihrer Datenquelle.\nSynchronisieren"
     IDM_STORES_RUNMAINTENANCE "Wartungsarbeiten durchführen"
 END
 
@@ -449,26 +442,22 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Öffnet das ausgewählte Objekt.\nÖffnen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_OPENBROWSER    "Öffnet die ausgewählte Datei im Standard-Webbrowser.\nIm Webbrowser öffnen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_VOLUME_PROPERTIES   "Zeigt die Eigenschaften des ausgewählten Laufwerks an.\nEigenschaften"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
     IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
+    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
+    IDM_VOLUME_PROPERTIES   "Zeigt die Eigenschaften des ausgewählten Laufwerks an.\nEigenschaften"
 END
 
 STRINGTABLE 
@@ -484,10 +473,6 @@ BEGIN
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
     IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergrößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
 END
@@ -506,17 +491,9 @@ END
 STRINGTABLE 
 BEGIN
     IDM_VIEW                "Wählt die Ansicht für diesen Kontext.\nAnzeigen als"
-    IDM_VIEW_LARGEICONS     "Große Symbole"
-    IDM_VIEW_SMALLICONS     "Kleine Symbole"
+    IDM_VIEW_ICONS          "Symbole"
     IDM_VIEW_LIST           "Liste"
     IDM_VIEW_DETAILS        "Details"
-    IDM_VIEW_TILES          "Kacheln"
-    IDM_VIEW_STRIPS         "Kontrollstreifen"
-    IDM_VIEW_CONTENT        "Inhalt"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_VIEW_CALENDAR       "Kalender"
     IDM_VIEW_TIMELINE       "Chronik"
     IDM_VIEW_GLOBE          "Globus"
@@ -530,7 +507,7 @@ END
 /////////////////////////////////////////////////////////////////////////////
 // Spanisch (neutral) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
 #ifdef _WIN32
 LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
@@ -609,7 +586,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Mostrar &títulos",            IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Mostrar &días",               IDM_CALENDAR_SHOWDAYS
         MENUITEM "Ir al &año...\tCtrl+Y",       IDM_CALENDAR_GOTOYEAR
     END
 END
@@ -692,18 +669,18 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,149,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 310
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Organizar «%s» por"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Organizar objetos",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
+    CONTROL         "Organizar objetos",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,275,15
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
-    CONTROL         "&Agrupar objetos en subarchivos",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,220,275,10
-    CONTROL         "Tipo de clasificación",IDC_CATEGORY2,"CCategory",WS_GROUP,7,239,275,15
-    COMBOBOX        IDC_SORTDIRECTION,7,257,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,288,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,232,288,50,14,WS_GROUP
+    CONTROL         "Tipo de clasificación",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
+    COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,232,273,50,14,WS_GROUP
 END
 
 IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
@@ -749,7 +726,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 302
+        BOTTOMMARGIN, 287
     END
 
     IDD_GLOBEOPTIONS, DIALOG
@@ -795,7 +772,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_AUTODIRS "&Agrupar en subcarpetas"
     IDS_CONTEXTMENU_SELECTALL "Seleccionar &todo\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Abrir"
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
@@ -814,22 +790,18 @@ BEGIN
     IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &store..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importar carpeta..."
     IDS_CONTEXTMENU_MORE    "&Más..."
-    IDS_CONTEXTMENU_TIME    "&Tiempo"
-    IDS_CONTEXTMENU_LOCATION "&Ubicación"
-    IDS_CONTEXTMENU_DIMENSION "&Dimensión"
     IDS_TXTFILEFILTER       "Documento de texto"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "Esta propiedad no es adecuada para clasificar."
     IDS_NOITEMSSELECTED     "Objetos no seleccionados"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
+    IDS_FILETYPES           "Tipos de archivo"
+    IDS_HOUSEKEEPING        "Mantenimiento"
+    IDS_SEARCHTERM          "Buscar todo los stores"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FILETYPES           "Tipos de archivo"
-    IDS_HOUSEKEEPING        "Mantenimiento"
-    IDS_SEARCHTERM          "Buscar todo los stores"
     IDS_DEFAULTSTORE        "Store predeterminado"
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
@@ -861,7 +833,7 @@ BEGIN
     IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
     IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
     IDM_STORES_ADD          "Adjuntar un store para sus archivos.\nAdjuntar store..."
-    IDM_STORES_SYNCHRONIZE   "Sincroniza todos los stores con su fuente de datos.\nSincronizar"
+    IDM_STORES_SYNCHRONIZE  "Sincroniza todos los stores con su fuente de datos.\nSincronizar"
     IDM_STORES_RUNMAINTENANCE "Ejecutar mantenimiento"
 END
 
@@ -879,26 +851,22 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Abre el objeto seleccionado.\nAbrir"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_OPENBROWSER    "Abre el archivo seleccionado con el navegador estándar.\nAbrir con navegador"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_VOLUME_PROPERTIES   "Visualiza las propiedades del volumen seleccionado.\nPropiedades"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
     IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
+    IDM_FILE_RESTORE        "Restablece los archivos seleccionados.\nRestablecer"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_RESTORE        "Restablece los archivos seleccionados.\nRestablecer"
+    IDM_VOLUME_PROPERTIES   "Visualiza las propiedades del volumen seleccionado.\nPropiedades"
 END
 
 STRINGTABLE 
@@ -914,10 +882,6 @@ BEGIN
                             "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
     IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
     IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
 END
@@ -936,17 +900,9 @@ END
 STRINGTABLE 
 BEGIN
     IDM_VIEW                "Selecciona el modo de visualización para este contexto.\nVisualizar como"
-    IDM_VIEW_LARGEICONS     "Íconos grandes"
-    IDM_VIEW_SMALLICONS     "Íconos pequeños"
+    IDM_VIEW_ICONS          "Íconos"
     IDM_VIEW_LIST           "Lista"
     IDM_VIEW_DETAILS        "Detalles"
-    IDM_VIEW_TILES          "Mosaicos"
-    IDM_VIEW_STRIPS         "Tiras"
-    IDM_VIEW_CONTENT        "Contenido"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_VIEW_CALENDAR       "Calendario"
     IDM_VIEW_TIMELINE       "Crónica"
     IDM_VIEW_GLOBE          "Globo"
@@ -1039,7 +995,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Indiquer des &titres",        IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Indiquer les &jours",         IDM_CALENDAR_SHOWDAYS
         MENUITEM "Choisissez l'&année...\tCtrl+Y", IDM_CALENDAR_GOTOYEAR
     END
 END
@@ -1122,19 +1078,18 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,144,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 310
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Organiser «%s» après"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Organiser objets après qualité",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
+    CONTROL         "Organiser objets après propriété",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,275,15
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
-    CONTROL         "&Grouper les fichiers dans sous-dossiers",IDC_AUTODIRS,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,220,275,10
-    CONTROL         "Direction de tri",IDC_CATEGORY2,"CCategory",WS_GROUP,7,239,275,15
-    COMBOBOX        IDC_SORTDIRECTION,7,257,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,288,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,232,288,50,14,WS_GROUP
+    CONTROL         "Direction de tri",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
+    COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,232,273,50,14,WS_GROUP
 END
 
 IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
@@ -1179,7 +1134,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 302
+        BOTTOMMARGIN, 287
     END
 
     IDD_GLOBEOPTIONS, DIALOG
@@ -1225,7 +1180,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_AUTODIRS "&Grouper dans sous-dossiers"
     IDS_CONTEXTMENU_SELECTALL "Sélectionner &tout\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
@@ -1244,22 +1198,18 @@ BEGIN
     IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &store..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importer dossier..."
     IDS_CONTEXTMENU_MORE    "&Plus..."
-    IDS_CONTEXTMENU_TIME    "&Temps"
-    IDS_CONTEXTMENU_LOCATION "&Lieu"
-    IDS_CONTEXTMENU_DIMENSION "&Mesurages"
     IDS_TXTFILEFILTER       "Fichier texte"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "Cette qualité ne convient pas au triage."
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
     IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
+    IDS_FILETYPES           "Types de fichiers"
+    IDS_HOUSEKEEPING        "Ménage"
+    IDS_SEARCHTERM          "Recherche tous le stores"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FILETYPES           "Types de fichiers"
-    IDS_HOUSEKEEPING        "Ménage"
-    IDS_SEARCHTERM          "Recherche tous le stores"
     IDS_DEFAULTSTORE        "Store défaut"
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
@@ -1291,7 +1241,7 @@ BEGIN
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
     IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
     IDM_STORES_ADD          "Ajouter un store pour vos fichiers.\nAjouter un store..."
-    IDM_STORES_SYNCHRONIZE   "Synchroniser tous les stores avec leur source de données.\nSynchroniser"
+    IDM_STORES_SYNCHRONIZE  "Synchroniser tous les stores avec leur source de données.\nSynchroniser"
     IDM_STORES_RUNMAINTENANCE "Effectuer travails d'entretien"
 END
 
@@ -1309,26 +1259,22 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Ouvre l'objet choisi.\nOuvrir"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_OPENBROWSER    "Ouvre le fichier choisi avec le navigateur défaut.\nOuvrir avec navigateur"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_VOLUME_PROPERTIES   "Indique les propriétés du lecteur choisi.\nPropriétés"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
     IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
+    IDM_FILE_RESTORE        "Reconstitue tous les fichiers.\nReconstituer"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_RESTORE        "Reconstitue tous les fichiers.\nReconstituer"
+    IDM_VOLUME_PROPERTIES   "Indique les propriétés du lecteur choisi.\nPropriétés"
 END
 
 STRINGTABLE 
@@ -1344,10 +1290,6 @@ BEGIN
                             "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
     IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
     IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
 END
@@ -1366,17 +1308,9 @@ END
 STRINGTABLE 
 BEGIN
     IDM_VIEW                "Choisit l'avis pour ce contexte.\nAfficher comme"
-    IDM_VIEW_LARGEICONS     "Grands symboles"
-    IDM_VIEW_SMALLICONS     "Petits symboles"
+    IDM_VIEW_ICONS          "Symboles"
     IDM_VIEW_LIST           "Liste"
     IDM_VIEW_DETAILS        "Détails"
-    IDM_VIEW_TILES          "Cadres de page"
-    IDM_VIEW_STRIPS         "Bandes"
-    IDM_VIEW_CONTENT        "Contenu"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_VIEW_CALENDAR       "Calendrier"
     IDM_VIEW_TIMELINE       "Chronique"
     IDM_VIEW_GLOBE          "Globe"
@@ -1519,7 +1453,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Show &captions",              IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Show &days",                  IDM_CALENDAR_SHOWDAYS
         MENUITEM "Go to &year...\tCtrl+Y",      IDM_CALENDAR_GOTOYEAR
     END
 END
@@ -1603,7 +1537,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,139,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 310
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Organize “%s” by"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1611,11 +1545,10 @@ BEGIN
     CONTROL         "Organize items by this property",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,275,15
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
-    CONTROL         "&Group files into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,220,275,10
-    CONTROL         "Sort direction",IDC_CATEGORY2,"CCategory",WS_GROUP,7,239,275,15
-    COMBOBOX        IDC_SORTDIRECTION,7,257,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,288,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,232,288,50,14,WS_GROUP
+    CONTROL         "Sort direction",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
+    COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,232,273,50,14,WS_GROUP
 END
 
 IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
@@ -1660,7 +1593,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 302
+        BOTTOMMARGIN, 287
     END
 
     IDD_GLOBEOPTIONS, DIALOG
@@ -1706,7 +1639,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Open"
     IDS_CONTEXTMENU_OPENWITH "Open &with..."
@@ -1725,22 +1657,18 @@ BEGIN
     IDS_CONTEXTMENU_CHOOSESTORE "Choose &store..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Import folder..."
     IDS_CONTEXTMENU_MORE    "&More..."
-    IDS_CONTEXTMENU_TIME    "&Time"
-    IDS_CONTEXTMENU_LOCATION "&Location"
-    IDS_CONTEXTMENU_DIMENSION "&Dimension"
     IDS_TXTFILEFILTER       "Text document"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
+    IDS_FILETYPES           "File types"
+    IDS_HOUSEKEEPING        "Housekeeping"
+    IDS_SEARCHTERM          "Search all stores"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FILETYPES           "File types"
-    IDS_HOUSEKEEPING        "Housekeeping"
-    IDS_SEARCHTERM          "Search all stores"
     IDS_DEFAULTSTORE        "Default Store"
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
@@ -1772,7 +1700,7 @@ BEGIN
     IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_ADD          "Add a store for your files.\nAdd store..."
-    IDM_STORES_SYNCHRONIZE   "Synchronizes all stores with their data source.\nSynchronize"
+    IDM_STORES_SYNCHRONIZE  "Synchronizes all stores with their data source.\nSynchronize"
     IDM_STORES_RUNMAINTENANCE "Run maintenance"
 END
 
@@ -1790,26 +1718,22 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_OPENBROWSER    "Opens the selected file in your default browser.\nOpen in browser"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_VOLUME_PROPERTIES   "Displays the properties of the selected volume.\nProperties"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
     IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
     IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
+    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
+    IDM_VOLUME_PROPERTIES   "Displays the properties of the selected volume.\nProperties"
 END
 
 STRINGTABLE 
@@ -1825,10 +1749,6 @@ BEGIN
                             "Centers the globe on a specific location.\nJump to location..."
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
 END
@@ -1847,17 +1767,9 @@ END
 STRINGTABLE 
 BEGIN
     IDM_VIEW                "Selects the view mode for this context.\nDisplay as"
-    IDM_VIEW_LARGEICONS     "Large icons"
-    IDM_VIEW_SMALLICONS     "Small icons"
+    IDM_VIEW_ICONS          "Icons"
     IDM_VIEW_LIST           "List"
     IDM_VIEW_DETAILS        "Details"
-    IDM_VIEW_TILES          "Tiles"
-    IDM_VIEW_STRIPS         "File strips"
-    IDM_VIEW_CONTENT        "Content"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_VIEW_CALENDAR       "Calendar"
     IDM_VIEW_TIMELINE       "Timeline"
     IDM_VIEW_GLOBE          "Globe"

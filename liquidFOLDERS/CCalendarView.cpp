@@ -26,7 +26,7 @@ CCalendarView::CCalendarView()
 	ZeroMemory(&m_Days, sizeof(m_Days));
 }
 
-void CCalendarView::SetViewOptions(BOOL Force)
+void CCalendarView::SetViewSettings(BOOL Force)
 {
 	if (Force)
 	{
@@ -38,9 +38,9 @@ void CCalendarView::SetViewOptions(BOOL Force)
 		m_Year = st.wYear;
 	}
 
-	if (Force || (m_ShowCaptions!=theApp.m_CalendarShowCaptions))
+	if (Force || (m_GlobalViewSettings.CalendarShowDays!=theApp.m_GlobalViewSettings.CalendarShowDays))
 	{
-		m_ShowCaptions = theApp.m_CalendarShowCaptions;
+		m_GlobalViewSettings.CalendarShowDays = theApp.m_GlobalViewSettings.CalendarShowDays;
 		AdjustLayout();
 	}
 }
@@ -53,14 +53,14 @@ void CCalendarView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-			if (pItemDescriptor->AttributeValues[m_ViewParameters.SortBy])
-				if (*((INT64*)pItemDescriptor->AttributeValues[m_ViewParameters.SortBy]))
+			if (pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy])
+				if (*((INT64*)pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy]))
 				{
 					CalendarItemData* pData = GetItemData(a);
 					pData->Hdr.Valid = TRUE;
 
 					SYSTEMTIME stUTC;
-					FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[m_ViewParameters.SortBy], &stUTC);
+					FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy], &stUTC);
 					SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &pData->Time);
 				}
 		}
@@ -168,7 +168,7 @@ Restart:
 				lpRect->left = pMonth->Rect.left+(Day%7)*(m_ColumnWidth+COLUMNGUTTER)+CARDPADDING;
 				lpRect->top = pMonth->Rect.top+m_LargeFontHeight+2*LFCATEGORYPADDING+(Day/7)*(m_DefaultFontHeight+2*PADDING-1)+CARDPADDING;
 
-				if (m_ShowCaptions)
+				if (m_GlobalViewSettings.CalendarShowDays)
 					lpRect->top += m_DefaultFontHeight+LFCATEGORYPADDING;
 
 				lpRect->right = lpRect->left+m_ColumnWidth;
@@ -247,7 +247,7 @@ void CCalendarView::GetMonthSize(LPSIZE lpSize)
 	lpSize->cx = 7*m_ColumnWidth+6*COLUMNGUTTER+2*CARDPADDING;
 	lpSize->cy = m_LargeFontHeight+2*LFCATEGORYPADDING+6*(m_DefaultFontHeight+2*PADDING-1)+1+2*CARDPADDING;
 
-	if (m_ShowCaptions)
+	if (m_GlobalViewSettings.CalendarShowDays)
 		lpSize->cy += m_DefaultFontHeight+LFCATEGORYPADDING;
 }
 
@@ -259,16 +259,16 @@ void CCalendarView::DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month,
 	rectMonth.top -= LFCATEGORYPADDING;
 
 	// Header
-	ItemCategory ic = { 0 };
-	swprintf_s(ic.Caption, 256, m_Months[Month].Name, m_Year);
+	WCHAR tmpStr[256];
+	swprintf_s(tmpStr, 256, m_Months[Month].Name, m_Year);
 
-	DrawCategory(dc, rectMonth, ic.Caption, ic.Hint, Themed);
+	DrawCategory(dc, rectMonth, tmpStr, NULL, Themed);
 
 	rectMonth.top += m_LargeFontHeight+2*LFCATEGORYPADDING;
 	CRect rectItem(0, rectMonth.top, m_ColumnWidth+2*EXTRA, rectMonth.top+m_DefaultFontHeight+2*PADDING);
 
 	// Days
-	if (m_ShowCaptions)
+	if (m_GlobalViewSettings.CalendarShowDays)
 	{
 		for (UINT a=0; a<7; a++)
 		{
@@ -337,11 +337,11 @@ BEGIN_MESSAGE_MAP(CCalendarView, CFileView)
 	ON_WM_PAINT()
 	ON_WM_KEYDOWN()
 
-	ON_COMMAND(IDM_CALENDAR_SHOWCAPTIONS, OnShowCaptions)
+	ON_COMMAND(IDM_CALENDAR_SHOWDAYS, OnShowCaptions)
 	ON_COMMAND(IDM_CALENDAR_PREVYEAR, OnPrevYear)
 	ON_COMMAND(IDM_CALENDAR_NEXTYEAR, OnNextYear)
 	ON_COMMAND(IDM_CALENDAR_GOTOYEAR, OnGoToYear)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_SHOWCAPTIONS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_SHOWDAYS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -431,8 +431,9 @@ void CCalendarView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CCalendarView::OnShowCaptions()
 {
-	theApp.m_CalendarShowCaptions = !theApp.m_CalendarShowCaptions;
-	theApp.UpdateViewOptions();
+	p_GlobalViewSettings->CalendarShowDays = !p_GlobalViewSettings->CalendarShowDays;
+
+	theApp.UpdateViewSettings(-1, LFViewCalendar);
 }
 
 void CCalendarView::OnPrevYear()
@@ -458,8 +459,8 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_CALENDAR_SHOWCAPTIONS:
-		pCmdUI->SetCheck(theApp.m_CalendarShowCaptions);
+	case IDM_CALENDAR_SHOWDAYS:
+		pCmdUI->SetCheck(m_GlobalViewSettings.CalendarShowDays);
 		break;
 
 	case IDM_CALENDAR_PREVYEAR:

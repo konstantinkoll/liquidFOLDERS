@@ -16,21 +16,6 @@ struct GridItemData
 	INT Column;
 };
 
-struct GVArrange
-{
-	INT cx;
-	INT cy;
-	INT mx;
-	INT my;
-	INT padding;
-	INT gutterx;
-	INT guttery;
-};
-
-#define GRIDARRANGE_HORIZONTAL     0
-#define GRIDARRANGE_VERTICAL       1
-#define GRIDARRANGE_CUSTOM         2
-
 class CGridView : public CFileView
 {
 public:
@@ -39,21 +24,19 @@ public:
 protected:
 	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)=NULL;
 
-	void AddItemCategory(WCHAR* Caption, WCHAR* Name);
 	void ResetItemCategories();
-	void ArrangeHorizontal(GVArrange& gva, BOOL Justify=TRUE, BOOL ForceBreak=FALSE, BOOL MaxWidth=FALSE);
-	void ArrangeVertical(GVArrange& gva);
+	void Arrange(CSize szItem, INT Padding, CSize szGutter, BOOL FullWidth=FALSE);
+	void DrawJumboIcon(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor);
 
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 
-	BOOL m_HasCategories;
-	UINT m_GridArrange;
-
 private:
-	void HandleHorizontalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
-	void HandleVerticalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
-
-	LFDynArray<ItemCategory, LFItemCategoryCount, 4> m_Categories;
+	RECT m_Categories[LFItemCategoryCount];
 };
+
+inline void CGridView::ResetItemCategories()
+{
+	ZeroMemory(m_Categories, sizeof(m_Categories));
+}

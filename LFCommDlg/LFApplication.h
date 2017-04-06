@@ -67,7 +67,6 @@ public:
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
 	void SendMail(const CString& Subject=_T("")) const;
-	BOOL IsAttributeAllowed(INT Context, INT Attr) const;
 	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0) const;
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T("")) const;
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue) const;
@@ -78,6 +77,7 @@ public:
 	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList);
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, LFStoreDescriptor* pStoreDescriptor);
 	BOOL IsTooltipVisible() const;
 	void HideTooltip();
 	INT LoadAttributeIconsSmall();
@@ -102,14 +102,12 @@ public:
 	LFAttributeDescriptor m_Attributes[LFAttributeCount];
 	LFContextDescriptor m_Contexts[LFContextCount];
 	LFItemCategoryDescriptor m_ItemCategories[LFItemCategoryCount];
+	INT m_ExtraLargeIconSize;
 	CImageList m_SystemImageListSmall;
-	CImageList m_SystemImageListLarge;
 	CImageList m_SystemImageListExtraLarge;
 	CImageList m_SystemImageListJumbo;
 	CImageList m_CoreImageListSmall;
-	CImageList m_CoreImageListLarge;
 	CImageList m_CoreImageListExtraLarge;
-	CImageList m_CoreImageListHuge;
 	CImageList m_CoreImageListJumbo;
 	HBITMAP hRatingBitmaps[LFMaxRating+1];
 	HBITMAP hPriorityBitmaps[LFMaxRating+1];

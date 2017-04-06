@@ -49,12 +49,14 @@ BOOL IsNullValue(UINT Type, const void* pValue)
 		return (*(WCHAR*)pValue==L'\0');
 
 	case LFTypeAnsiString:
+	case LFTypeIATACode:
 		return (*(CHAR*)pValue=='\0');
 
 	case LFTypeFourCC:
 	case LFTypeUINT:
 	case LFTypeBitrate:
 	case LFTypeDuration:
+	case LFTypeGenre:
 		return (*(UINT*)pValue)==0;
 
 	case LFTypeRating:
@@ -96,10 +98,12 @@ INT CompareValues(UINT Type, const void* pValue1, const void* pValue2, BOOL Case
 		return CaseSensitive ? wcscmp((WCHAR*)pValue1, (WCHAR*)pValue2) : _wcsicmp((WCHAR*)pValue1, (WCHAR*)pValue2);
 
 	case LFTypeAnsiString:
+	case LFTypeIATACode:
 		return CaseSensitive ? strcmp((CHAR*)pValue1, (CHAR*)pValue2) : _stricmp((CHAR*)pValue1, (CHAR*)pValue2);
 
 	case LFTypeFourCC:
 	case LFTypeUINT:
+	case LFTypeGenre:
 		return *(UINT*)pValue1==*(UINT*)pValue2 ? 0 : *(UINT*)pValue1<*(UINT*)pValue2 ? -1 : 1;
 
 	case LFTypeRating:
@@ -158,6 +162,7 @@ void ToString(const void* pValue, UINT Type, WCHAR* pStr, SIZE_T cCount)
 			return;
 
 		case LFTypeAnsiString:
+		case LFTypeIATACode:
 			MultiByteToWideChar(CP_ACP, 0, (CHAR*)pValue, -1, pStr, (INT)cCount);
 			return;
 
@@ -232,6 +237,10 @@ void ToString(const void* pValue, UINT Type, WCHAR* pStr, SIZE_T cCount)
 
 		case LFTypeMegapixel:
 			LFMegapixelToString(*((DOUBLE*)pValue), pStr, cCount);
+			return;
+
+		case LFTypeGenre:
+			wcscpy_s(pStr, cCount, GetGenreName(*((UINT*)pValue)));
 			return;
 		}
 
@@ -457,9 +466,14 @@ LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount)
 		*pStr = L'\0';
 	}
 	else
-	{
-		swprintf_s(pStr, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
-	}
+		if (d/3600)
+		{
+			swprintf_s(pStr, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+		}
+		else
+		{
+			swprintf_s(pStr, cCount, L"%02d:%02d", d/60, d%60);
+		}
 }
 
 LFCORE_API void LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
@@ -475,14 +489,7 @@ LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr
 	assert(Attr<LFAttributeCount);
 	assert(AttrProperties[Attr].Type<LFTypeCount);
 
-	if ((Attr==LFAttrGenre) && (pItemDescriptor->AttributeValues[Attr]))
-	{
-		wcscpy_s(pStr, cCount, GetGenreName(*((UINT*)pItemDescriptor->AttributeValues[Attr])));
-	}
-	else
-	{
-		ToString(pItemDescriptor->AttributeValues[Attr], AttrProperties[Attr].Type, pStr, cCount);
-	}
+	ToString(pItemDescriptor->AttributeValues[Attr], AttrProperties[Attr].Type, pStr, cCount);
 }
 
 
@@ -536,14 +543,9 @@ LFCORE_API void LFVariantDataToString(const LFVariantData& Value, WCHAR* pStr, S
 		*pStr = L'\0';
 	}
 	else
-		if (Value.Attr==LFAttrGenre)
-		{
-			wcscpy_s(pStr, cCount, GetGenreName(Value.UINT32));
-		}
-		else
-		{
-			ToString(&Value.Value, Value.Type, pStr, cCount);
-		}
+	{
+		ToString(&Value.Value, Value.Type, pStr, cCount);
+	}
 }
 
 LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr)
@@ -595,8 +597,16 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 			break;
 
 		case LFTypeAnsiString:
+		case LFTypeIATACode:
 			WideCharToMultiByte(CP_ACP, 0, pStr, -1, pValue.AnsiString, 256, NULL, NULL);
 			pValue.IsNull = FALSE;
+
+			if (pValue.Type==LFTypeIATACode)
+			{
+				pValue.IATAString[0] = (CHAR)toupper(pValue.IATAString[0]);
+				pValue.IATAString[1] = (CHAR)toupper(pValue.IATAString[1]);
+				pValue.IATAString[2] = (CHAR)toupper(pValue.IATAString[2]);
+			}
 
 			break;
 
@@ -839,9 +849,21 @@ Abort:
 		case LFTypeDuration:
 			if (swscanf_s(pStr, L"%u:%u:%u", &Hour, &Min, &Sec)==3)
 			{
-				pValue.Duration = 1000*(Hour*3600+Min*60+Sec);
-				pValue.IsNull = FALSE;
+				if ((Min<60) && (Sec<60))
+				{
+					pValue.Duration = 1000*(Hour*3600+Min*60+Sec);
+					pValue.IsNull = FALSE;
+				}
 			}
+			else
+				if (swscanf_s(pStr, L"%u:%u", &Min, &Sec)==2)
+				{
+					if ((Min<60) && (Sec<60))
+					{
+						pValue.Duration = 1000*(Min*60+Sec);
+						pValue.IsNull = FALSE;
+					}
+				}
 
 			break;
 		}
@@ -884,6 +906,10 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFV
 
 		case LFTypeAnsiString:
 			strcpy_s(Value.AnsiString, 256, (CHAR*)pItemDescriptor->AttributeValues[Value.Attr]);
+			break;
+
+		case LFTypeIATACode:
+			strcpy_s(Value.IATAString, 4, (CHAR*)pItemDescriptor->AttributeValues[Value.Attr]);
 			break;
 
 		default:

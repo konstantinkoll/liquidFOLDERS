@@ -726,15 +726,15 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 				if (tvItem.cChildren)
 				{
-					CString tmpStr((LPCSTR)(tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
-
-					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
+					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, CString((LPCSTR)(tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND)));
 					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+
 					SetMenuDefaultItem(hPopup, 0x7000, 0);
 				}
 
 				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
 				UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
+
 				if (m_pContextMenu2)
 				{
 					m_pContextMenu2->Release();

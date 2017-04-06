@@ -18,11 +18,12 @@ void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 	if (Themed)
 	{
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+		g.SetSmoothingMode(SmoothingModeNone);
 
 		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
 		g.FillRectangle(&brush, Rect(0, 0, lpRect->right-lpRect->left, WHITE));
 
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
 	}
 }
 
@@ -38,7 +39,7 @@ void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 
 		CreateRoundRectangle(rectShadow, 3, Path);
 
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
 
 		Pen pen(Color(0x0C000000));
 		g.DrawPath(&pen, &Path);

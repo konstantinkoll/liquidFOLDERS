@@ -20,7 +20,7 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard);
-	void UpdateViewOptions();
+	void UpdateViewSettings();
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, BOOL UpdateSelection=TRUE);
 	BOOL StoreIDValid() const;
 	LPCSTR GetStoreID() const;
@@ -63,7 +63,6 @@ protected:
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnSortOptions();
-	afx_msg void OnToggleAutoDirs();
 	afx_msg void OnUpdateHeaderCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnGetMenu(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnSort(UINT nID);

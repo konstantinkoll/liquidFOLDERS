@@ -164,22 +164,16 @@ BOOL LFSelectLocationIATADlg::InitDialog()
 
 	UINT cCount = LFIATAGetCountryCount();
 	for (UINT a=0; a<cCount; a++)
-	{
-		CString tmpStr(LFIATAGetCountry(a)->Name);
-		pComboBox->AddString(tmpStr);
-	}
+		pComboBox->AddString(CString(LFIATAGetCountry(a)->Name));
 
 	// Liste konfigurieren
-	CString tmpStr((LPCSTR)IDS_AIRPORT_CODE);
-	m_wndAirportList.AddColumn(0, tmpStr);
-
-	ENSURE(tmpStr.LoadString(IDS_AIRPORT_LOCATION));
-	m_wndAirportList.AddColumn(1, tmpStr);
+	m_wndAirportList.AddColumn(0, CString((LPCSTR)IDS_AIRPORT_CODE));
+	m_wndAirportList.AddColumn(1, CString((LPCSTR)IDS_AIRPORT_LOCATION));
 
 	// Init
-	UINT Country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
-	tmpStr = LFIATAGetCountry(Country)->Name;
-	pComboBox->SelectString(-1, tmpStr);
+	const UINT Country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
+
+	pComboBox->SelectString(-1, CString(LFIATAGetCountry(Country)->Name));
 	LoadCountry(Country);
 
 	if (p_Airport)

@@ -49,6 +49,7 @@ SIZE_T GetAttributeSize(UINT Attr, const void* Value)
 		return (min(AttrProperties[Attr].cCharacters, wcslen((WCHAR*)Value))+1)*sizeof(WCHAR);
 
 	case LFTypeAnsiString:
+	case LFTypeIATACode:
 		return min(AttrProperties[Attr].cCharacters, strlen((CHAR*)Value))+1;
 
 	default:
@@ -82,6 +83,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Valu
 		break;
 
 	case LFTypeAnsiString:
+	case LFTypeIATACode:
 		strncpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (CHAR*)Value, _TRUNCATE);
 		break;
 

@@ -32,6 +32,12 @@ struct TimelineItemData
 	BYTE Preview;
 };
 
+struct ItemCategory
+{
+	WCHAR Caption[5];
+	RECT Rect;
+};
+
 class CTimelineView : public CFileView
 {
 public:

@@ -13,6 +13,8 @@
 
 #pragma data_seg(".shared")
 
+#include "ContextTable.h"
+
 static const BYTE ContextSlaves[LFLastQueryContext+1] = {
 	IDXTABLE_MASTER,		// LFContextAllFiles
 	IDXTABLE_MASTER,		// LFContextFavorites
@@ -27,8 +29,6 @@ static const BYTE ContextSlaves[LFLastQueryContext+1] = {
 	IDXTABLE_MASTER,		// LFContextTrash
 	IDXTABLE_MASTER			// LFContextFilters
 };
-
-#include "ContextTable.h"
 
 #pragma data_seg()
 
@@ -244,20 +244,6 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 
 			break;
 		}
-
-/*
-
-			if ((Attr==LFAttrGenre) && (Value.vt!=VT_EMPTY))
-			{
-				WCHAR t[256];swprintf_s(t,256,L"%d",Value.vt);MessageBox(NULL,t,0,0);
-				BSTR HUGEP *pbstr;
-				if (SUCCEEDED(SafeArrayAccessData(Value.parray, (void HUGEP**)&pbstr)))
-				{
-					const UINT Genre = FindMusicGenre(pbstr[0]);
-					SetAttribute(pItemDescriptor, Attr, &Genre);
-				}
-			}*/
-
 }
 
 void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LFItemDescriptor* pItemDescriptor)
@@ -290,7 +276,7 @@ void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LF
 						break;
 
 					case VT_LPSTR:
-						if (AttrProperties[Attr].Type==LFTypeAnsiString)
+						if ((AttrProperties[Attr].Type==LFTypeAnsiString) || (AttrProperties[Attr].Type==LFTypeIATACode))
 							SetAttribute(pItemDescriptor, Attr, Value.pszVal);
 
 						if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))

@@ -9,14 +9,16 @@
 // CHeaderArea
 //
 
-#define BORDER     BACKSTAGEBORDER
-#define MARGIN     4
+#define BORDER           BACKSTAGEBORDER
+#define MARGIN           4
+#define MINTEXTWIDTH     64
 
 CHeaderArea::CHeaderArea()
 	: CFrontstageWnd()
 {
+	hIconBitmap = NULL;
 	hBackgroundBrush = NULL;
-	m_BackBufferL = m_BackBufferH = m_RightEdge = 0;
+	m_BitmapWidth = m_BitmapHeight = m_BackBufferL = m_BackBufferH = m_RightEdge = 0;
 }
 
 BOOL CHeaderArea::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
@@ -51,10 +53,23 @@ BOOL CHeaderArea::OnCommand(WPARAM wParam, LPARAM lParam)
 	}
 }
 
-void CHeaderArea::SetText(LPCWSTR Caption, LPCWSTR Hint, BOOL Repaint)
+void CHeaderArea::SetHeader(LPCWSTR Caption, LPCWSTR Hint, HBITMAP hBitmap, BOOL Repaint)
 {
+	DeleteObject(hIconBitmap);
+	m_BitmapWidth = m_BitmapHeight = 0;
+
 	m_Caption = Caption;
 	m_Hint = Hint;
+
+	if ((hIconBitmap=hBitmap)!=NULL)
+	{
+		BITMAP Bitmap;
+		if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
+		{
+			m_BitmapWidth = Bitmap.bmWidth;
+			m_BitmapHeight = Bitmap.bmHeight;
+		}
+	}
 
 	if (Repaint)
 	{
@@ -63,11 +78,33 @@ void CHeaderArea::SetText(LPCWSTR Caption, LPCWSTR Hint, BOOL Repaint)
 	}
 }
 
-UINT CHeaderArea::GetPreferredHeight()
+inline UINT CHeaderArea::GetBitmapMinHeight() const
 {
-	UINT Height = 2*BORDER+MARGIN+LFGetApp()->m_CaptionFont.GetFontHeight()+LFGetApp()->m_DefaultFont.GetFontHeight();
+	return hIconBitmap ? 2*BORDER+m_BitmapHeight : 0;
+}
 
-	return max(Height, max(60, (UINT)m_Buttons.m_ItemCount*(LFGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN+MARGIN/2));
+inline UINT CHeaderArea::GetTextMinHeight() const
+{
+	return 2*BORDER+LFGetApp()->m_CaptionFont.GetFontHeight()+MARGIN+LFGetApp()->m_DefaultFont.GetFontHeight();
+}
+
+inline UINT CHeaderArea::GetButtonHeight() const
+{
+	return m_Buttons.m_ItemCount*(UINT)(LFGetApp()->m_DefaultFont.GetFontHeight()+2*MARGIN+MARGIN/2)-MARGIN/2;
+}
+
+inline UINT CHeaderArea::GetButtonMinHeight() const
+{
+	return GetButtonHeight()+2*MARGIN;
+}
+
+UINT CHeaderArea::GetPreferredHeight() const
+{
+	UINT Height = max(GetTextMinHeight(), GetButtonMinHeight());
+	if (Height<GetBitmapMinHeight())
+		Height = GetBitmapMinHeight();
+
+	return Height;
 }
 
 CHeaderButton* CHeaderArea::AddButton(UINT nID)
@@ -108,7 +145,7 @@ void CHeaderArea::AdjustLayout()
 	GetClientRect(rect);
 
 	m_RightEdge = rect.right;
-	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.m_ItemCount*(LFGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN/2)/2);
+	INT Row = (max(GetTextMinHeight(), GetButtonMinHeight())-GetButtonHeight())/2;
 
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
@@ -154,6 +191,7 @@ void CHeaderArea::OnDestroy()
 		delete pHeaderButton;
 	}
 
+	DeleteObject(hIconBitmap);
 	DeleteObject(hBackgroundBrush);
 
 	CFrontstageWnd::OnDestroy();
@@ -216,6 +254,7 @@ void CHeaderArea::OnPaint()
 			dc.FillSolidRect(rectFill, GetSysColor(COLOR_3DFACE));
 		}
 
+		// Button captions
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
 		dc.SetTextColor(Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
@@ -239,11 +278,27 @@ void CHeaderArea::OnPaint()
 			}
 		}
 
-		if (m_RightEdge-BORDER>=32)
+		// Bitmap
+		INT LeftEdge = BORDER;
+		if (hIconBitmap)
+			if (m_RightEdge-(BORDER+m_BitmapWidth+2*MARGIN)>=MINTEXTWIDTH)
+			{
+				CDC dcMem;
+				dcMem.CreateCompatibleDC(&dc);
+
+				HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(hIconBitmap);
+				dc.AlphaBlend(BORDER, BORDER, m_BitmapWidth, m_BitmapHeight, &dcMem, 0, 0, m_BitmapWidth, m_BitmapHeight, BF);
+				dcMem.SelectObject(hOldBitmap);
+
+				LeftEdge += m_BitmapWidth+2*MARGIN;
+			}
+
+		// Text
+		if (m_RightEdge-LeftEdge>=MINTEXTWIDTH)
 		{
 			dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 
-			CRect rectText(BORDER, rect.bottom-dc.GetTextExtent(m_Hint).cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
+			CRect rectText(LeftEdge, BORDER+LFGetApp()->m_CaptionFont.GetFontHeight()+MARGIN, m_RightEdge, rect.bottom-BORDER);
 			dc.DrawText(m_Hint, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 			dc.SelectObject(&LFGetApp()->m_CaptionFont);

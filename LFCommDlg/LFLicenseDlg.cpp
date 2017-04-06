@@ -29,15 +29,11 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 		{
 			::PostMessage(HWND_BROADCAST, LFGetApp()->m_LicenseActivatedMsg, NULL, NULL);
 
-			CString Caption((LPCSTR)IDS_LICENSEVALID_CAPTION);
-			CString Message((LPCSTR)IDS_LICENSEVALID_MSG);
-			LFMessageBox(this, Message, Caption, MB_ICONINFORMATION | MB_OK);
+			LFMessageBox(this,CString((LPCSTR)IDS_LICENSEVALID_MSG), CString((LPCSTR)IDS_LICENSEVALID_CAPTION), MB_ICONINFORMATION | MB_OK);
 		}
 		else
 		{
-			CString Caption((LPCSTR)IDS_ERROR);
-			CString Message((LPCSTR)IDS_INVALIDLICENSE);
-			LFMessageBox(this, Message, Caption, MB_ICONWARNING | MB_OK);
+			LFMessageBox(this, CString((LPCSTR)IDS_INVALIDLICENSE), CString((LPCSTR)IDS_ERROR), MB_ICONWARNING | MB_OK);
 
 			pDX->Fail();
 		}

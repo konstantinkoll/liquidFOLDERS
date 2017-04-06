@@ -6,26 +6,6 @@
 #include "liquidFOLDERS.h"
 
 
-BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
-{
-	BOOL bSortable = theApp.m_Attributes[Attr].TypeProperties.Sortable;
-
-	switch (ViewMode)
-	{
-	case LFViewCalendar:
-	case LFViewTimeline:
-		bSortable &= (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeTime);
-		break;
-
-	case LFViewGlobe:
-		bSortable &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeGeoCoordinates));
-		break;
-	}
-
-	return bSortable;
-}
-
-
 // CFileView
 //
 
@@ -47,7 +27,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextAllFiles;
 	m_HeaderHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
-	m_ColWidth = HorizontalScrollWidth;
+	m_ColWidth = HORIZONTALSCROLLWIDTH;
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
 	m_Hover = m_BeginDragDrop = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
@@ -82,7 +62,7 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchRe
 	if (!CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, rect, pParentWnd, nID))
 		return FALSE;
 
-	UpdateViewOptions(pCookedFiles ? pCookedFiles->m_Context : LFContextAllFiles, TRUE);
+	UpdateViewSettings(pCookedFiles ? pCookedFiles->m_Context : LFContextAllFiles, TRUE);
 	UpdateSearchResult(pRawFiles, pCookedFiles, pPersistentData, TRUE);
 
 	return TRUE;
@@ -134,7 +114,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
-void CFileView::UpdateViewOptions(INT Context, BOOL Force)
+void CFileView::UpdateViewSettings(INT Context, BOOL Force)
 {
 	DestroyEdit();
 	theApp.HideTooltip();
@@ -142,14 +122,18 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 	if (Context>=0)
 		m_Context = Context;
 
-	p_ViewParameters = &theApp.m_Views[m_Context];
+	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context];
+	p_GlobalViewSettings = &theApp.m_GlobalViewSettings;
 
+	// Allow view subclass to see both old and new settings
 	m_BeginDragDrop = FALSE;
-	m_EditLabel = -1;
-	SetViewOptions(Force);
+	SetViewSettings(Force);
 
-	BOOL Arrange = (m_ViewParameters.Mode!=p_ViewParameters->Mode);
-	m_ViewParameters = *p_ViewParameters;
+	const BOOL Arrange = (m_ContextViewSettings.View!=p_ContextViewSettings->View);
+
+	// Copy settings
+	m_ContextViewSettings = *p_ContextViewSettings;
+	m_GlobalViewSettings = *p_GlobalViewSettings;
 
 	if (Arrange)
 	{
@@ -195,9 +179,8 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 			}
 		}
 
-		m_Context = pCookedFiles->m_Context;
-		p_ViewParameters = &theApp.m_Views[m_Context];
-		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
+		p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context=pCookedFiles->m_Context];
+		m_ContextViewSettings.SortBy = p_ContextViewSettings->SortBy;
 
 		m_FocusItem = pPersistentData ? min(pPersistentData->FocusItem, (INT)pCookedFiles->m_ItemCount-1) : pCookedFiles->m_ItemCount ? 0 : -1;
 		m_HScrollPos = pPersistentData ? pPersistentData->HScrollPos : 0;
@@ -251,7 +234,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	SetCursor(theApp.LoadStandardCursor(pCookedFiles ? IDC_ARROW : IDC_WAIT));
 }
 
-void CFileView::SetViewOptions(BOOL /*Force*/)
+void CFileView::SetViewSettings(BOOL /*Force*/)
 {
 }
 
@@ -259,6 +242,13 @@ void CFileView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 {
 	p_RawFiles = pRawFiles;
 	p_CookedFiles = pCookedFiles;
+}
+
+void CFileView::ValidateAllItems()
+{
+	if (p_CookedFiles)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+			GetItemData(a)->Valid = TRUE;
 }
 
 void CFileView::AdjustLayout()
@@ -272,6 +262,7 @@ INT CFileView::GetFocusItem() const
 	if (p_CookedFiles)
 	{
 		FVItemData* pData = GetItemData(m_FocusItem);
+
 		return pData->Valid ? m_FocusItem : -1;
 	}
 
@@ -284,6 +275,7 @@ INT CFileView::GetSelectedItem() const
 		if (p_CookedFiles->m_ItemCount)
 		{
 			FVItemData* pData = GetItemData(m_FocusItem);
+
 			return (pData->Selected && pData->Valid) ? m_FocusItem : -1;
 		}
 
@@ -352,7 +344,7 @@ void CFileView::EnsureVisible(INT Index)
 	}
 
 	// Horizontal
-	if (m_ViewParameters.Mode!=LFViewDetails)
+	if (m_ContextViewSettings.View!=LFViewList)
 	{
 		nInc = 0;
 
@@ -426,8 +418,11 @@ INT CFileView::ItemAtPosition(CPoint point) const
 		point.Offset(m_HScrollPos, m_VScrollPos-m_HeaderHeight);
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			if (PtInRect(&GetItemData(a)->Rect, point))
+		{
+			FVItemData* pData = GetItemData(a);
+			if (pData->Valid && PtInRect(&GetItemData(a)->Rect, point))
 				return a;
+		}
 	}
 
 	return -1;
@@ -490,8 +485,8 @@ CMenu* CFileView::GetSendToMenu()
 	UINT nID = FIRSTSENDTO;
 	if (LFGetDefaultStore()==LFOk)
 	{
-		CString tmpStr((LPCSTR)IDS_DEFAULTSTORE);
-		AppendSendToItem(pMenu, nID, tmpStr, (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy);
+		AppendSendToItem(pMenu, nID, CString((LPCSTR)IDS_DEFAULTSTORE), (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy);
+
 		Added = TRUE;
 
 		const UINT Index = (nID++) & 0xFF;
@@ -501,8 +496,8 @@ CMenu* CFileView::GetSendToMenu()
 
 	if (LFGetStoreCount())
 	{
-		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_CHOOSESTORE);
-		AppendSendToItem(pMenu, nID, tmpStr, NULL, cx, cy);
+		AppendSendToItem(pMenu, nID, CString((LPCSTR)IDS_CONTEXTMENU_CHOOSESTORE), NULL, cx, cy);
+
 		Added = TRUE;
 
 		const UINT Index = (nID++) & 0xFF;
@@ -896,7 +891,7 @@ CString CFileView::GetLabel(LFItemDescriptor* pItemDescriptor) const
 	CString Label = pItemDescriptor->CoreAttributes.FileName;
 
 	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
-		if (((!m_HideFileExt) || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
+		if ((!m_HideFileExt || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			Label += _T(".");
 			Label += pItemDescriptor->CoreAttributes.FileFormat;
@@ -912,70 +907,6 @@ BOOL CFileView::BeginDragDrop()
 	GetParent()->SendMessage(WM_BEGINDRAGDROP);
 
 	return TRUE;
-}
-
-CString CFileView::GetHint(LFItemDescriptor* pItemDescriptor, WCHAR* FormatName) const
-{
-	WCHAR tmpStr[256];
-	CString Hint;
-
-	switch (pItemDescriptor->Type & LFTypeMask)
-	{
-	case LFTypeStore:
-		GetHintForStore(Hint, pItemDescriptor);
-		break;
-
-	case LFTypeFolder:
-		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
-
-		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-			AppendAttribute(Hint, LFAttrComments, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
-
-		break;
-
-	case LFTypeFile:
-		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
-		AppendAttribute(Hint, LFAttrFileFormat, FormatName);
-
-		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-		{
-			tmpStr[0] = L' ';
-			wcscpy_s(&tmpStr[1], 255, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
-			tmpStr[1] = (WCHAR)towlower(tmpStr[1]);
-
-			Hint += tmpStr;
-		}
-
-		AppendAttribute(Hint, pItemDescriptor, LFAttrArtist);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrTitle);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrAlbum);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrRecordingTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrRoll);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrDuration);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrHashtags);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrPages);
-
-		if (pItemDescriptor->AttributeValues[LFAttrDimension])
-		{
-			LFAttributeToString(pItemDescriptor, LFAttrDimension, tmpStr, 256);
-
-			WCHAR Resolution[256];
-			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
-
-			AppendAttribute(Hint, LFAttrDimension, Resolution);
-		}
-
-		AppendAttribute(Hint, pItemDescriptor, LFAttrEquipment);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrBitrate);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrCreationTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrFileTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrFileSize);
-
-		break;
-	}
-
-	return Hint;
 }
 
 void CFileView::DestroyEdit(BOOL Accept)
@@ -995,7 +926,7 @@ void CFileView::DestroyEdit(BOOL Accept)
 		pVictim->DestroyWindow();
 		delete pVictim;
 
-		if ((Accept) && (!Name.IsEmpty()) && (Item!=-1))
+		if (Accept && (!Name.IsEmpty()) && (Item!=-1))
 			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)Item, (LPARAM)(LPCWSTR)Name);
 	}
 
@@ -1025,9 +956,28 @@ void CFileView::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpCli
 	}
 }
 
+BOOL CFileView::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed)
+{
+	if (m_Nothing)
+	{
+		CRect rectText(lpRectClient);
+		rectText.top += m_HeaderHeight+BACKSTAGEBORDER;
+
+		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
+		dc.DrawText(CString((LPCSTR)IDS_NOTHINGTODISPLAY), rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+		return TRUE;
+	}
+
+	ASSERT(p_CookedFiles);
+
+	return FALSE;
+}
+
 
 BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
@@ -1072,6 +1022,14 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		ResetScrollbars();
 
 	return 0;
+}
+
+void CFileView::OnDestroy()
+{
+	DeleteObject(m_Bitmaps[BM_SELECTED].hBitmap);
+	DeleteObject(m_Bitmaps[BM_REFLECTION].hBitmap);
+
+	CWnd::OnDestroy();
 }
 
 BOOL CFileView::OnEraseBkgnd(CDC* /*pDC*/)
@@ -1269,12 +1227,8 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					switch (pItemDescriptor->Type & LFTypeMask)
 					{
 					case LFTypeFile:
-						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewLargeIcons) && (theApp.m_Views[m_Context].Mode!=LFViewTimeline))
-						{
-							CDC* pDC = GetDC();
-							hBitmap = theApp.m_ThumbnailCache.GetThumbnailBitmap(pItemDescriptor, pDC);
-							ReleaseDC(pDC);
-						}
+						if ((m_ContextViewSettings.View!=LFViewDetails) && (m_ContextViewSettings.View!=LFViewIcons) && (m_ContextViewSettings.View!=LFViewTimeline))
+							hBitmap = theApp.m_ThumbnailCache.GetThumbnailBitmap(pItemDescriptor, NULL);
 
 						theApp.m_FileFormats.Lookup(pItemDescriptor->CoreAttributes.FileFormat, fd);
 
@@ -1292,7 +1246,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					if (!hIcon && !hBitmap)
 						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1);
 
-					theApp.ShowTooltip(this, point, GetLabel(pItemDescriptor), GetHint(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
+					theApp.ShowTooltip(this, point, GetLabel(pItemDescriptor), GetHintForItem(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
 				}
 	}
 	else
@@ -1419,12 +1373,6 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectNone();
-
-		break;
-
-	case VK_SPACE:
-		if (m_FocusItem!=-1)
-			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !IsSelected(m_FocusItem));
 
 		break;
 

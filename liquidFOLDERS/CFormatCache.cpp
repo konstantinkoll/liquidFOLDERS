@@ -107,10 +107,10 @@ void CFormatCache::DrawJumboIcon(CDC& dc, const CRect& rect, CHAR* FileFormat, B
 
 	if (theApp.OSVersion<OS_Vista)
 	{
-		theApp.m_SystemImageListExtraLarge.DrawEx(&dc, fd.SysIconIndex, CPoint(rect.left+(rect.Width()-m_ExtraLargeCX)/2, rect.top+(rect.Height()-m_ExtraLargeCY)/2), CSize(m_ExtraLargeCX, m_ExtraLargeCY), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
+		theApp.m_SystemImageListExtraLarge.DrawEx(&dc, fd.SysIconIndex, CPoint((rect.right+rect.left-m_ExtraLargeCX)/2, (rect.top+rect.bottom-m_ExtraLargeCY)/2), CSize(m_ExtraLargeCX, m_ExtraLargeCY), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 	else
 	{
-		m_SystemIcons128.DrawEx(&dc, fd.IconIndex128, CPoint(rect.left+(rect.Width()-128)/2, rect.top+(rect.Height()-128)/2), CSize(128, 128), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
+		m_SystemIcons128.DrawEx(&dc, fd.IconIndex128, CPoint((rect.right+rect.left-128)/2, (rect.top+rect.bottom-128)/2), CSize(128, 128), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 }

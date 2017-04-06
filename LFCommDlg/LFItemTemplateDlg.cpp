@@ -35,7 +35,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const CHAR* pStore
 				for (UINT a=0; a<LFAttributeCount; a++)
 				{
 					CString Value;
-					Value.Format(_T("Attr%d"), a);
+					Value.Format(_T("Attr%u"), a);
 
 					BYTE* pData = NULL;
 					UINT pSz = 0;
@@ -99,7 +99,7 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 			for (UINT a=0; a<LFAttributeCount; a++)
 			{
 				CString Value;
-				Value.Format(_T("Attr%d"), a);
+				Value.Format(_T("Attr%u"), a);
 
 				if (m_AttributeValues[a].IsNull)
 				{
@@ -268,7 +268,7 @@ LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 			tmpStr += Buffer;
 		}
 
-		m_wndHeaderArea.SetText(Store.StoreName, tmpStr);
+		m_wndHeaderArea.SetHeader(Store.StoreName, tmpStr);
 
 		GetDlgItem(IDOK)->EnableWindow(TRUE);
 		GetDlgItem(IDC_SKIP)->EnableWindow(TRUE);

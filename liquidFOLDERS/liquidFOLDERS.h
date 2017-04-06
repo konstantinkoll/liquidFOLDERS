@@ -14,8 +14,6 @@
 // Siehe liquidFOLDERS.cpp für die Implementierung dieser Klasse
 //
 
-#define ViewParametersVersion     3
-
 class CLiquidFoldersApp : public LFApplication
 {
 public:
@@ -29,33 +27,59 @@ public:
 	CWnd* GetFileDrop(LPCSTR StoreID);
 
 	BOOL IsViewAllowed(INT Context, INT View) const;
+	BOOL IsAttributeAvailable(INT Context, UINT Attr) const;
+	BOOL IsAttributeAdvertised(INT Context, UINT Attr) const;
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
-	void UpdateSortOptions(INT Context);
-	void UpdateViewOptions(INT Context=-1, INT View=-1);
+	void SetContextSort(INT Context, UINT Attr, BOOL Descending);
+	void UpdateViewSettings(INT Context=-1, INT View=-1);
+	void SetContextView(INT Context, INT View);
 	void Reload(INT Context);
 
 	CMainWnd* p_ClipboardWnd;
 	WCHAR m_PathGoogleEarth[MAX_PATH];
 	CFormatCache m_FileFormats;
 	CThumbnailCache m_ThumbnailCache;
-	LFViewParameters m_Views[LFContextCount];
-	UINT m_AllowedViews[LFContextCount];
+	LFContextViewSettings m_ContextViewSettings[LFContextCount];
+	LFGlobalViewSettings m_GlobalViewSettings;
 
 	BOOL m_ShowInspectorPane;
 	UINT m_InspectorPaneWidth;
 
-	BOOL m_CalendarShowCaptions;
-
 	BOOL m_FileDropAlwaysOnTop;
 
 protected:
-	BOOL SanitizeSortBy(LFViewParameters* pViewParameters, INT Context) const;
-	BOOL SanitizeViewMode(LFViewParameters* pViewParameters, INT Context) const;
-	void LoadViewOptions(UINT Context);
-	void SaveViewOptions(UINT Context);
+	void SanitizeContextViewSettings(INT Context);
+	void LoadContextViewSettings(UINT Context, BOOL Reset);
+	void SaveContextViewSettings(UINT Context);
+	BOOL LoadGlobalViewSettings();
+	void SaveGlobalViewSettings();
 
 	BOOL m_AppInitialized;
 };
+
+inline BOOL CLiquidFoldersApp::IsViewAllowed(INT Context, INT View) const
+{
+	ASSERT(View>=0);
+	ASSERT(View<=31);
+
+	return (m_Contexts[Context].CtxProperties.AvailableViews>>View) & 1;
+}
+
+inline BOOL CLiquidFoldersApp::IsAttributeAvailable(INT Context, UINT Attr) const
+{
+	ASSERT(Context>=0);
+	ASSERT(Context<LFContextCount);
+
+	return (m_Contexts[Context].CtxProperties.AvailableAttributes>>Attr) & 1;
+}
+
+inline BOOL CLiquidFoldersApp::IsAttributeAdvertised(INT Context, UINT Attr) const
+{
+	ASSERT(Context>=0);
+	ASSERT(Context<LFContextCount);
+
+	return ((m_Contexts[Context].CtxProperties.AdvertisedAttributes>>Attr) & 1);
+}
 
 inline void CLiquidFoldersApp::Reload(INT Context)
 {

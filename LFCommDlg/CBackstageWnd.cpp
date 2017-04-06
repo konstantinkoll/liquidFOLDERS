@@ -544,15 +544,15 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		FillRect(dc, rectCaption, hBackgroundBrush ? hBackgroundBrush : (HBRUSH)GetStockObject(DKGRAY_BRUSH));
 
 		// Caption
-		CString strCaption;
+		CString Caption;
 
 		if (m_ShowExpireCaption)
 		{
-			ENSURE(strCaption.LoadString(IDS_EXPIRECAPTION));
+			ENSURE(Caption.LoadString(IDS_EXPIRECAPTION));
 		}
 		else
 		{
-			GetWindowText(strCaption);
+			GetWindowText(Caption);
 		}
 
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallBoldFont);
@@ -565,13 +565,13 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		if (Themed)
 		{
 			dc.SetTextColor(0x000000);
-			dc.DrawText(strCaption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+			dc.DrawText(Caption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 		}
 
 		rectText.OffsetRect(0, 1);
 
 		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4840F0 : IsWindowEnabled() ? 0xDACCC4 : 0x998981 : m_ShowExpireCaption ? 0x0000FF : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
-		dc.DrawText(strCaption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+		dc.DrawText(Caption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 		dc.SelectObject(pOldFont);
 

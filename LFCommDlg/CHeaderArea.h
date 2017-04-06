@@ -19,8 +19,8 @@ public:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL Shadow=FALSE);
-	void SetText(LPCWSTR Caption, LPCWSTR Hint, BOOL Repaint=TRUE);
-	UINT GetPreferredHeight();
+	void SetHeader(LPCWSTR Caption=L"", LPCWSTR Hint=L"", HBITMAP hBitmap=NULL, BOOL Repaint=TRUE);
+	UINT GetPreferredHeight() const;
 	CHeaderButton* AddButton(UINT nID=0);
 
 protected:
@@ -42,9 +42,17 @@ protected:
 	LFDynArray<CHeaderButton*, 2, 2> m_Buttons;
 	CString m_Caption;
 	CString m_Hint;
+	HBITMAP hIconBitmap;
+	INT m_BitmapWidth;
+	INT m_BitmapHeight;
 	INT m_RightEdge;
 
 private:
+	UINT GetBitmapMinHeight() const;
+	UINT GetTextMinHeight() const;
+	UINT GetButtonHeight() const;
+	UINT GetButtonMinHeight() const;
+
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;

@@ -255,6 +255,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
 
 			rect.top += rectLine.Height();
+
 			dc.SelectObject(&LFGetApp()->m_DefaultFont);
 			dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_WORDBREAK | DT_NOPREFIX);
 		}
@@ -736,9 +737,9 @@ void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL 
 
 void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
 {
-	CString tmpStr((LPCSTR)ResID);
+	ASSERT(pComboBox);
 
-	pComboBox->SetItemData(pComboBox->AddString(tmpStr), CompareID);
+	pComboBox->SetItemData(pComboBox->AddString(CString((LPCSTR)ResID)), CompareID);
 }
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
@@ -763,10 +764,12 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 
 		break;
 
+	case LFTypeIATACode:
 	case LFTypeFourCC:
 	case LFTypeFraction:
 	case LFTypeFlags:
 	case LFTypeGeoCoordinates:
+	case LFTypeGenre:
 		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
 
@@ -808,40 +811,114 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 }
 
 
-void AppendAttribute(CString& Str, UINT Attr, WCHAR* tmpStr)
+void AppendAttribute(CString& Str, UINT Attr, LPCWSTR Value)
 {
-	if (tmpStr)
-		LFTooltip::AppendAttribute(Str, (Attr==LFAttrComments) || (Attr==LFAttrFileFormat) || (Attr==LFAttrDescription) ? L"" : LFGetApp()->m_Attributes[Attr].Name, tmpStr);
+	if (Value)
+		LFTooltip::AppendAttribute(Str, (Attr==LFAttrComments) || (Attr==LFAttrFileFormat) || (Attr==LFAttrDescription) ? L"" : LFGetApp()->m_Attributes[Attr].Name, Value);
 }
 
 void AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
+	ASSERT(pItemDescriptor);
+
 	WCHAR tmpStr[256];
 	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
 
 	AppendAttribute(Str, Attr, tmpStr);
 }
 
-void GetHintForStore(CString& Str, LFItemDescriptor* pItemDescriptor)
+CString GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName)
 {
 	ASSERT(pItemDescriptor);
 
-	AppendAttribute(Str, pItemDescriptor, LFAttrComments);
+	CString Hint;
 
-	if (pItemDescriptor->Type & LFTypeMaintained)
+	switch (pItemDescriptor->Type & LFTypeMask)
 	{
-		WCHAR tmpStr[256];
-		LFCombineFileCountSize(pItemDescriptor->AggregateCount, pItemDescriptor->CoreAttributes.FileSize, tmpStr, 256);
+	case LFTypeStore:
+		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
 
-		LFTooltip::AppendAttribute(Str, _T(""), tmpStr);
+		if (pItemDescriptor->Type & LFTypeMaintained)
+		{
+			WCHAR tmpStr[256];
+			LFCombineFileCountSize(pItemDescriptor->AggregateCount, pItemDescriptor->CoreAttributes.FileSize, tmpStr, 256);
+
+			LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
+		}
+
+		AppendAttribute(Hint, pItemDescriptor, LFAttrCreationTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrFileTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
+
+		if (((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(pItemDescriptor->Type & LFStoreNotMounted)))
+			LFTooltip::AppendAttribute(Hint, _T(""), LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
+
+		break;
+
+	case LFTypeFolder:
+		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
+
+		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+			AppendAttribute(Hint, LFAttrComments, LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
+
+		break;
+
+	case LFTypeFile:
+		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
+		AppendAttribute(Hint, LFAttrFileFormat, pFormatName);
+
+		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+		{
+			WCHAR tmpStr[256] = L" ";
+			wcscpy_s(&tmpStr[1], 255, LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
+			tmpStr[1] = (WCHAR)towlower(tmpStr[1]);
+
+			Hint += tmpStr;
+		}
+
+		AppendAttribute(Hint, pItemDescriptor, LFAttrArtist);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrTitle);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrAlbum);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrRecordingTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrRoll);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrDuration);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrHashtags);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrCustomer);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrPages);
+
+		if (pItemDescriptor->AttributeValues[LFAttrDimension])
+		{
+			WCHAR tmpStr[256];
+			LFAttributeToString(pItemDescriptor, LFAttrDimension, tmpStr, 256);
+
+			WCHAR Resolution[256];
+			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
+
+			AppendAttribute(Hint, LFAttrDimension, Resolution);
+		}
+
+		AppendAttribute(Hint, pItemDescriptor, LFAttrEquipment);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrBitrate);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrCreationTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrFileTime);
+		AppendAttribute(Hint, pItemDescriptor, LFAttrFileSize);
+
+		break;
 	}
 
-	AppendAttribute(Str, pItemDescriptor, LFAttrCreationTime);
-	AppendAttribute(Str, pItemDescriptor, LFAttrFileTime);
-	AppendAttribute(Str, pItemDescriptor, LFAttrDescription);
+	return Hint;
+}
 
-	if (((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(pItemDescriptor->Type & LFStoreNotMounted)))
-		LFTooltip::AppendAttribute(Str, _T(""), LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
+CString GetHintForStore(LFStoreDescriptor* pStoreDescriptor)
+{
+	ASSERT(pStoreDescriptor);
+
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
+	CString Hint = GetHintForItem(pItemDescriptor);
+	LFFreeItemDescriptor(pItemDescriptor);
+
+	return Hint;
 }
 
 
@@ -1027,8 +1104,8 @@ CString GetLatestVersion(CString CurrentVersion)
 								if (WinHttpReadData(hRequest, pBuffer, dwSize, &dwDownloaded))
 								{
 									pBuffer[dwDownloaded] = '\0';
-									CString tmpStr(pBuffer);
-									VersionIni += tmpStr;
+
+									VersionIni += CString(pBuffer);
 								}
 
 								delete[] pBuffer;
@@ -1198,12 +1275,9 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			}
 	}
 	else
+	{
 		if (Force)
-		{
-			CString Caption((LPCSTR)IDS_UPDATE);
-			CString Text((LPCSTR)IDS_UPDATENOTAVAILABLE);
-
-			LFMessageBox(pParentWnd, Text, Caption, MB_ICONINFORMATION | MB_OK);
+			LFMessageBox(pParentWnd, CString((LPCSTR)IDS_UPDATENOTAVAILABLE), CString((LPCSTR)IDS_UPDATE), MB_ICONINFORMATION | MB_OK);
 		}
 }
 
@@ -1219,16 +1293,13 @@ void LFErrorBox(CWnd* pParentWnd, UINT Result)
 {
 	if (Result>LFCancel)
 	{
-		// Texts
-		CString Caption((LPCSTR)IDS_ERROR);
-
 		WCHAR Message[256];
 		LFGetErrorText(Message, 256, Result);
 
 		// Type
 		const UINT Type = (Result==LFOk) ? MB_ICONREADY : (Result>=LFFirstFatalError) ? MB_ICONERROR : MB_ICONWARNING;
 
-		LFMessageBox(pParentWnd, Message, Caption, Type);
+		LFMessageBox(pParentWnd, Message, CString((LPCSTR)IDS_ERROR), Type);
 	}
 }
 
@@ -1236,8 +1307,7 @@ BOOL LFNagScreen(CWnd* pParentWnd)
 {
 	if (LFIsSharewareExpired())
 	{
-		CString tmpStr((LPCSTR)IDS_NOLICENSE);
-		if (LFMessageBox(pParentWnd, tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP)==IDOK)
+		if (LFMessageBox(pParentWnd, CString((LPCSTR)IDS_NOLICENSE), _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP)==IDOK)
 			LFGetApp()->OnBackstagePurchase();
 
 		return FALSE;

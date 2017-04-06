@@ -22,5 +22,6 @@ extern const FMTID SHPropertyUnnamed5;
 extern const FMTID SHPropertyUnnamed6;
 extern const FMTID SHPropertyUnnamed7;
 
+extern const LFContextProperties CtxProperties[LFContextCount];
 extern const LFAttributeProperties AttrProperties[LFAttributeCount];
 extern const LFTypeProperties TypeProperties[LFTypeCount];

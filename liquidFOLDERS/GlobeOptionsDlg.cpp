@@ -9,12 +9,10 @@
 // GlobeOptionsDlg
 //
 
-GlobeOptionsDlg::GlobeOptionsDlg(LFViewParameters* pViewParameters, CWnd* pParentWnd)
+GlobeOptionsDlg::GlobeOptionsDlg(UINT Context, CWnd* pParentWnd)
 	: LFDialog(IDD_GLOBEOPTIONS, pParentWnd)
 {
-	ASSERT(pViewParameters);
-
-	p_ViewParameters = pViewParameters;
+	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context=Context];
 }
 
 void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
@@ -25,10 +23,10 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXTUREQUALITY, m_wndTextureQuality);
 
 	DDX_Check(pDX, IDC_TEXTURECOMPRESS, theApp.m_TextureCompress);
-	DDX_Check(pDX, IDC_SPOTS, p_ViewParameters->GlobeShowSpots);
-	DDX_Check(pDX, IDC_AIRPORTNAMES, p_ViewParameters->GlobeShowAirportNames);
-	DDX_Check(pDX, IDC_GPSCOORDINATES, p_ViewParameters->GlobeShowGPS);
-	DDX_Check(pDX, IDC_DESCRIPTION, p_ViewParameters->GlobeShowDescription);
+	DDX_Check(pDX, IDC_SPOTS, theApp.m_GlobalViewSettings.GlobeShowSpots);
+	DDX_Check(pDX, IDC_AIRPORTNAMES, theApp.m_GlobalViewSettings.GlobeShowAirportNames);
+	DDX_Check(pDX, IDC_GPSCOORDINATES, theApp.m_GlobalViewSettings.GlobeShowGPS);
+	DDX_Check(pDX, IDC_DESCRIPTION, theApp.m_GlobalViewSettings.GlobeShowDescription);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -39,8 +37,7 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 
 void GlobeOptionsDlg::AddQuality(CComboBox& wndCombobox, UINT nResID)
 {
-	CString tmpStr((LPCSTR)nResID);
-	wndCombobox.AddString(tmpStr);
+	wndCombobox.AddString(CString((LPCSTR)nResID));
 }
 
 BOOL GlobeOptionsDlg::InitDialog()
@@ -76,7 +73,7 @@ BOOL GlobeOptionsDlg::InitDialog()
 	// Disabled controls
 	GetDlgItem(IDC_TEXTURECOMPRESS)->EnableWindow(theRenderer.m_SupportsTextureCompression);
 
-	if (p_ViewParameters->SortBy!=LFAttrLocationIATA)
+	if (p_ContextViewSettings->SortBy!=LFAttrLocationIATA)
 	{
 		GetDlgItem(IDC_AIRPORTNAMES)->EnableWindow(FALSE);
 		GetDlgItem(IDC_GPSCOORDINATES)->EnableWindow(FALSE);

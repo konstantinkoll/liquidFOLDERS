@@ -147,6 +147,20 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 			return FALSE;
 		}
 
+	case LFTypeIATACode:
+		switch (pFilterCondition->Compare)
+		{
+		case LFFilterCompareSubfolder:
+		case LFFilterCompareIsEqual:
+			return _stricmp((CHAR*)v, pFilterCondition->AttrData.IATAString)==0;
+
+		case LFFilterCompareIsNotEqual:
+			return _stricmp((CHAR*)v, pFilterCondition->AttrData.IATAString)!=0;
+
+		default:
+			return FALSE;
+		}
+
 	case LFTypeFourCC:
 		switch (pFilterCondition->Compare)
 		{

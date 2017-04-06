@@ -12,8 +12,7 @@
 ChooseDetailsDlg::ChooseDetailsDlg(UINT Context, CWnd* pParentWnd)
 	: LFAttributeListDlg(IDD_CHOOSEDETAILS, pParentWnd)
 {
-	p_ViewParamters = &theApp.m_Views[Context];
-	m_Context = Context;
+	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context=Context];
 }
 
 void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
@@ -24,37 +23,39 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		// Breite
+		// Width and order
 		INT OldWidth[LFAttributeCount];
-		memcpy(&OldWidth, &p_ViewParamters->ColumnWidth, sizeof(OldWidth));
-		ZeroMemory(&p_ViewParamters->ColumnWidth, sizeof(p_ViewParamters->ColumnWidth));
+		memcpy(&OldWidth, &p_ContextViewSettings->ColumnWidth, sizeof(OldWidth));
+		ZeroMemory(&p_ContextViewSettings->ColumnWidth, sizeof(p_ContextViewSettings->ColumnWidth));
+
+		UINT Count = 0;
 
 		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
 		{
 			const UINT Attr = (UINT)m_wndAttributes.GetItemData(a);
 
-			p_ViewParamters->ColumnWidth[Attr] = m_wndAttributes.GetCheck(a) ? OldWidth[Attr] ? OldWidth[Attr] : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth : 0;
+			if (m_wndAttributes.GetCheck(a) || theApp.m_Attributes[Attr].AttrProperties.AlwaysShow)
+			{
+				p_ContextViewSettings->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
+				p_ContextViewSettings->ColumnOrder[Count++] = Attr;
+			}
+			else
+			{
+				p_ContextViewSettings->ColumnWidth[Attr] = 0;
+			}
 		}
 
-		// Reihenfolge
-		p_ViewParamters->ColumnOrder[0] = 0;
-		p_ViewParamters->ColumnWidth[0] = OldWidth[0];
-		UINT Count = 1;
-
-		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
-			if (m_wndAttributes.GetCheck(a))
-				p_ViewParamters->ColumnOrder[Count++] = (INT)m_wndAttributes.GetItemData(a);
-
+		// Order
 		for (INT a=0; a<LFAttributeCount; a++)
-			if (!p_ViewParamters->ColumnWidth[a])
-				p_ViewParamters->ColumnOrder[Count++] = a;
+			if (!p_ContextViewSettings->ColumnWidth[a])
+				p_ContextViewSettings->ColumnOrder[Count++] = a;
 	}
 }
 
 void ChooseDetailsDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	Add = LFIsAttributeAllowed(theApp.m_Contexts[m_Context], Attr) && (Attr==LFAttrFileName);
-	Check = (p_ViewParamters->ColumnWidth[Attr]!=0);
+	Add = theApp.IsAttributeAvailable(m_Context, Attr);
+	Check = (p_ContextViewSettings->ColumnWidth[Attr]!=0);
 }
 
 void ChooseDetailsDlg::SwapItems(INT FocusItem, INT NewPos)
@@ -102,18 +103,19 @@ BOOL ChooseDetailsDlg::InitDialog()
 
 	CString Caption;
 	Caption.Format(Text, theApp.m_Contexts[m_Context].Name);
+
 	SetWindowText(Caption);
 
 	// Kontrollelemente einstellen
 	PrepareListCtrl(&m_wndAttributes, TRUE);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (p_ViewParamters->ColumnWidth[p_ViewParamters->ColumnOrder[a]])
-			AddAttribute(&m_wndAttributes, p_ViewParamters->ColumnOrder[a]);
+		if (p_ContextViewSettings->ColumnWidth[p_ContextViewSettings->ColumnOrder[a]])
+			AddAttribute(&m_wndAttributes, p_ContextViewSettings->ColumnOrder[a]);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (!p_ViewParamters->ColumnWidth[p_ViewParamters->ColumnOrder[a]])
-			AddAttribute(&m_wndAttributes, p_ViewParamters->ColumnOrder[a]);
+		if (!p_ContextViewSettings->ColumnWidth[p_ContextViewSettings->ColumnOrder[a]])
+			AddAttribute(&m_wndAttributes, p_ContextViewSettings->ColumnOrder[a]);
 
 	FinalizeListCtrl(&m_wndAttributes, -1, FALSE);
 

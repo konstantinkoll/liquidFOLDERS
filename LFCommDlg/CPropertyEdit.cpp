@@ -260,7 +260,7 @@ void CPropertyEdit::CreateProperty()
 
 		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
 		p_Property->SetEditMask(m_pWndEdit);
-		m_pWndEdit->SetLimitText(LFGetApp()->m_Attributes[m_Data.Attr].AttrProperties.cCharacters);
+		m_pWndEdit->SetLimitText((UINT)LFGetApp()->m_Attributes[m_Data.Attr].AttrProperties.cCharacters);
 		m_pWndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	}
 	else

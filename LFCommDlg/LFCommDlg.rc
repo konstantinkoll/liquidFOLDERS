@@ -921,8 +921,8 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
     IDS_CHOOSESTORE_HINT    "Nur angeschlossene und beschreibbare Stores können ausgewählt werden."
     IDS_STOREMAINTENANCE_CAPTION "Bericht"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d Store gewartet"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%d Stores gewartet"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u Store gewartet"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u Stores gewartet"
     IDS_REGFILEFILTER       "Registrierungsdatei"
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
 END
@@ -1765,8 +1765,8 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectadas y escritas."
     IDS_STOREMAINTENANCE_CAPTION "Reporte"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store inspeccionar"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores inspeccionar"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u store inspeccionar"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u stores inspeccionar"
     IDS_REGFILEFILTER       "Archivo de Registro"
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
 END
@@ -2608,8 +2608,8 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_HINT    "Seulement stores montée et inscriptiblée pouvoir choisissse."
     IDS_STOREMAINTENANCE_CAPTION "Rapport"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store revisé"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores revisée"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u store revisé"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u stores revisée"
     IDS_REGFILEFILTER       "Fichier de Registre"
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
 END
@@ -3494,8 +3494,8 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
     IDS_CHOOSESTORE_HINT    "Only mounted and writeable stores can be selected."
     IDS_STOREMAINTENANCE_CAPTION "Report"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%d store serviced"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%d stores serviced"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u store serviced"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u stores serviced"
     IDS_REGFILEFILTER       "Registry file"
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
 END

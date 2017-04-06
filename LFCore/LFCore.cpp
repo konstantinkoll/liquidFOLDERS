@@ -397,8 +397,6 @@ LFCORE_API void LFCoreErrorBox(UINT ID, HWND hWnd)
 // Descriptors
 //
 
-#define ALLOWATTRIBUTE(Attr) ContextDescriptor.AllowedAttributes[Attr>>5] |= 1<<(Attr & 0x1F);
-
 LFCORE_API void LFGetAttrCategoryName(WCHAR* pStr, SIZE_T cCount, UINT ID)
 {
 	assert(pStr);
@@ -435,10 +433,11 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	*PtrDst = L'\0';
 
 	// Properties
-	assert((AttrProperties[ID].Type!=LFAttrFlags) || AttrProperties[ID].ReadOnly);
-	AttributeDescriptor.AttrProperties = AttrProperties[ID];
-
 	assert(AttrProperties[ID].Type<LFTypeCount);
+	assert((AttrProperties[ID].Type!=LFAttrFlags) || AttrProperties[ID].ReadOnly);
+	assert((AttrProperties[ID].DefaultView==(UINT)-1) || (TypeProperties[AttrProperties[ID].Type].AllowedViews & (1<<AttrProperties[ID].DefaultView)));
+
+	AttributeDescriptor.AttrProperties = AttrProperties[ID];
 	AttributeDescriptor.TypeProperties = TypeProperties[AttrProperties[ID].Type];
 }
 
@@ -454,7 +453,20 @@ LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDesc
 	if (ID>=LFItemCategoryCount)
 		return;
 
-	LoadTwoStrings(LFCoreModuleHandle, IDS_ITEMCATEGORY_FIRST+ID, ItemCategoryDescriptor.Caption, 256, ItemCategoryDescriptor.Hint, 256);
+	if (ID<LFItemCategory0600)
+	{
+		// Load strings from resources
+		LoadTwoStrings(LFCoreModuleHandle, IDS_ITEMCATEGORY_FIRST+ID, ItemCategoryDescriptor.Caption, 256, ItemCategoryDescriptor.Hint, 256);
+	}
+	else
+	{
+		// Create time according to locale
+		SYSTEMTIME st;
+		ZeroMemory(&st, sizeof(st));
+
+		st.wHour = (WORD)(ID-LFItemCategory0600+6);
+		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, ItemCategoryDescriptor.Caption, 256);
+	}
 }
 
 LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID)
@@ -466,41 +478,26 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 
 	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+ID, ContextDescriptor.Name, 256, ContextDescriptor.Comment, 256);
 
-	ContextDescriptor.AllowGroups = (ID<=LFLastGroupContext) || (ID==LFContextSearch);
+	// Check consistency
+	assert(CtxProperties[ID].AvailableViews!=0);
+	assert(CtxProperties[ID].AvailableViews & (1<<CtxProperties[ID].DefaultView));
+	assert(TypeProperties[AttrProperties[CtxProperties[ID].DefaultAttribute].Type].AllowedViews & (1<<CtxProperties[ID].DefaultView));
 
-	ALLOWATTRIBUTE(LFAttrFileName);
-	ALLOWATTRIBUTE(LFAttrStoreID);
-	ALLOWATTRIBUTE(LFAttrComments);
+	assert(CtxProperties[ID].AvailableAttributes & (1ull<<LFAttrFileName));
+	assert(CtxProperties[ID].AvailableAttributes & (1ull<<CtxProperties[ID].DefaultAttribute));
+	assert(CtxProperties[ID].AdvertisedAttributes!=0);
+	assert((CtxProperties[ID].AvailableAttributes | CtxProperties[ID].AdvertisedAttributes)==CtxProperties[ID].AvailableAttributes);
 
-	switch (ID)
-	{
-	case LFContextStores:
-		ALLOWATTRIBUTE(LFAttrDescription);
-		ALLOWATTRIBUTE(LFAttrCreationTime);
-		ALLOWATTRIBUTE(LFAttrFileTime);
-		ALLOWATTRIBUTE(LFAttrFileCount);
-		ALLOWATTRIBUTE(LFAttrFileSize);
+#ifdef _DEBUG
+	for (UINT a=0; a<LFAttributeCount; a++)
+		if ((CtxProperties[ID].AvailableAttributes>>a) & 1)
+		{
+			assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[a].Type].AllowedViews);
+			assert(TypeProperties[AttrProperties[a].Type].Sortable);
+			assert(AttrProperties[a].DefaultView!=(UINT)-1);
+		}
+#endif
 
-		break;
-
-	case LFContextFilters:
-		ALLOWATTRIBUTE(LFAttrFileID);
-		ALLOWATTRIBUTE(LFAttrCreationTime);
-		ALLOWATTRIBUTE(LFAttrFileTime);
-		ALLOWATTRIBUTE(LFAttrAddTime);
-		ALLOWATTRIBUTE(LFAttrFileSize);
-
-		break;
-
-	default:
-		if (ID==LFContextArchive)
-			ALLOWATTRIBUTE(LFAttrArchiveTime);
-
-		if (ID==LFContextTrash)
-			ALLOWATTRIBUTE(LFAttrDeleteTime);
-
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (((a!=LFAttrFileCount) || (ID<LFContextSubfolderDefault)) && (a!=LFAttrDescription) && (a!=LFAttrArchiveTime) && (a!=LFAttrDeleteTime))
-				ALLOWATTRIBUTE(a);
-	}
+	// Properties
+	ContextDescriptor.CtxProperties = CtxProperties[ID];
 }

@@ -11,10 +11,12 @@
 //
 
 #define GetItemData(Index)     ((TagcloudItemData*)(m_ItemData+(Index)*m_DataSize))
-#define DefaultFontSize        2
-#define TextFormat             DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
+#define DEFAULTFONT            2
+#define TEXTFORMAT             DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
 #define GUTTER                 3
 #define MARGIN                 BACKSTAGEBORDER
+#define PADDINGX               5
+#define PADDINGY               4
 
 
 CTagcloudView::CTagcloudView()
@@ -22,22 +24,20 @@ CTagcloudView::CTagcloudView()
 {
 }
 
-void CTagcloudView::SetViewOptions(BOOL Force)
+void CTagcloudView::SetViewSettings(BOOL Force)
 {
 	UINT Changes = 0;
 
-	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize) || (m_ViewParameters.TagcloudUseColors!=p_ViewParameters->TagcloudUseColors))
+	if (Force || (m_GlobalViewSettings.TagcloudUseSize!=p_GlobalViewSettings->TagcloudUseSize))
 		Changes = 1;
 
-	if ((Force) || (m_ViewParameters.TagcloudCanonical!=p_ViewParameters->TagcloudCanonical))
-		Changes = 2;
-
-	if ((Force) || (m_ViewParameters.TagcloudShowRare!=p_ViewParameters->TagcloudShowRare))
+	if (Force || (m_GlobalViewSettings.TagcloudCanonical!=p_GlobalViewSettings->TagcloudCanonical) || (m_GlobalViewSettings.TagcloudShowRare!=p_GlobalViewSettings->TagcloudShowRare))
 		Changes = 2;
 
 	if (p_CookedFiles)
 	{
-		m_ViewParameters = *p_ViewParameters;
+		// Copy global view settings early for sorting
+		m_GlobalViewSettings = *p_GlobalViewSettings;
 
 		switch (Changes)
 		{
@@ -62,8 +62,9 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 
 	if (p_CookedFiles)
 	{
-		LFSortSearchResult(p_CookedFiles, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount,
-			(m_ViewParameters.TagcloudCanonical==FALSE) || (theApp.m_Attributes[m_ViewParameters.SortBy].TypeProperties.PreferDescendingSort));
+		// Sort cooked files
+		LFSortSearchResult(p_CookedFiles, m_GlobalViewSettings.TagcloudCanonical ? m_ContextViewSettings.SortBy : LFAttrFileCount,
+			(m_GlobalViewSettings.TagcloudCanonical==FALSE) || (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.DefaultDescending));
 
 		INT Minimum = -1;
 		INT Maximum = -1;
@@ -71,33 +72,39 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 		// Find items
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = (*p_CookedFiles)[a];
+			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 			TagcloudItemData* pData = GetItemData(a);
 
-			if ((i->Type & LFTypeMask)==LFTypeFolder)
-				pData->Cnt = i->AggregateCount;
-
-			pData->Hdr.Hdr.Valid = pData->Cnt;
-			if (pData->Hdr.Hdr.Valid)
+			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
 			{
+				pData->Cnt = pItemDescriptor->AggregateCount;
+				pData->Hdr.Hdr.Valid = TRUE;
+
 				Minimum = (Minimum==-1) ? pData->Cnt : min(Minimum, pData->Cnt);
 				Maximum = (Maximum==-1) ? pData->Cnt : max(Maximum, pData->Cnt);
+			}
+			else
+			{
+				pData->Hdr.Hdr.Valid = FALSE;
 			}
 		}
 
 		// Calculate display properties
 		INT Delta = Maximum-Minimum+1;
+
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TagcloudItemData* pData = GetItemData(a);
 			if (pData->Hdr.Hdr.Valid)
-				if ((!m_ViewParameters.TagcloudShowRare) && (Delta>1) && (pData->Cnt==Minimum))
+				if (!m_GlobalViewSettings.TagcloudShowRare && (Delta>1) && (pData->Cnt==Minimum))
 				{
+					// Omit rare tag
 					ZeroMemory(pData, sizeof(TagcloudItemData));
 				}
 				else
 					if (Delta==1)
 					{
+						// Fixed minimum
 						pData->FontSize = 19;
 						pData->Alpha = 255;
 						pData->Color = 0xFF0000;
@@ -139,7 +146,7 @@ void CTagcloudView::AdjustLayout()
 		if (!rectWindow.Width())
 			return;
 
-#define CenterRow(last) for (UINT b=RowStart; b<=last; b++) \
+#define CenterRow(Last) for (UINT b=RowStart; b<=Last; b++) \
 	{ \
 		TagcloudItemData* pData = GetItemData(b); \
 		if (pData->Hdr.Hdr.Valid) \
@@ -150,7 +157,7 @@ void CTagcloudView::AdjustLayout()
 			if (pData->Hdr.Hdr.Rect.bottom+MARGIN>m_ScrollHeight) \
 			{ \
 				m_ScrollHeight = pData->Hdr.Hdr.Rect.bottom+MARGIN; \
-				if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) \
+				if ((m_ScrollHeight>rectWindow.Height()) && !HasScrollbars) \
 				{ \
 					HasScrollbars = TRUE; \
 					rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); \
@@ -177,13 +184,14 @@ Restart:
 			TagcloudItemData* pData = GetItemData(a);
 			if (pData->Hdr.Hdr.Valid)
 			{
-				LFItemDescriptor* i = (*p_CookedFiles)[a];
+				LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 
 				CRect rect(0, 0, rectWindow.Width()-2*MARGIN, 128);
 				dc.SelectObject(GetFont(a));
-				dc.DrawText(i->CoreAttributes.FileName, rect, TextFormat | DT_CALCRECT);
-				rect.InflateRect(5, 4);
+				dc.DrawText(pItemDescriptor->CoreAttributes.FileName, rect, TEXTFORMAT | DT_CALCRECT);
+				rect.InflateRect(PADDINGX, PADDINGY);
 
+				// Next row
 				if (x+rect.Width()+2*MARGIN>rectWindow.Width())
 				{
 					Column = 0;
@@ -216,33 +224,33 @@ Restart:
 		m_ScrollWidth = m_ScrollHeight = 0;
 	}
 
-	m_GridArrange = GRIDARRANGE_HORIZONTAL;
-
 	CFileView::AdjustLayout();
 }
 
 void CTagcloudView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
-	LFItemDescriptor* i = (*p_CookedFiles)[Index];
+	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	TagcloudItemData* pData = GetItemData(Index);
 
+	// Calculate color
 	if (!pData->Hdr.Hdr.Selected)
 	{
-		COLORREF clr = m_ViewParameters.TagcloudUseColors ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+		COLORREF clrText = m_GlobalViewSettings.TagcloudUseColors ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
-		if (m_ViewParameters.TagcloudUseOpacity)
+		if (m_GlobalViewSettings.TagcloudUseOpacity)
 		{
 			const COLORREF clrBack = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-			clr = ((clr & 0xFF)*pData->Alpha + (clrBack & 0xFF)*(255-pData->Alpha))>>8 |
-				((((clr>>8) & 0xFF)*pData->Alpha + ((clrBack>>8) & 0xFF)*(255-pData->Alpha)) & 0xFF00) |
-				((((clr>>16) & 0xFF)*pData->Alpha + ((clrBack>>16) & 0xFF)*(255-pData->Alpha))<<8) & 0xFF0000;
+
+			clrText = ((clrText & 0xFF)*pData->Alpha + (clrBack & 0xFF)*(255-pData->Alpha))>>8 |
+				((((clrText>>8) & 0xFF)*pData->Alpha + ((clrBack>>8) & 0xFF)*(255-pData->Alpha)) & 0xFF00) |
+				((((clrText>>16) & 0xFF)*pData->Alpha + ((clrBack>>16) & 0xFF)*(255-pData->Alpha))<<8) & 0xFF0000;
 		}
 
-		dc.SetTextColor(clr);
+		dc.SetTextColor(clrText);
 	}
 
 	CFont* pOldFont = dc.SelectObject(GetFont(Index));
-	dc.DrawText(i->CoreAttributes.FileName, (LPRECT)rectItem, TextFormat | DT_CENTER | DT_VCENTER);
+	dc.DrawText(pItemDescriptor->CoreAttributes.FileName, (LPRECT)rectItem, TEXTFORMAT | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 }
 
@@ -256,7 +264,7 @@ CMenu* CTagcloudView::GetViewContextMenu()
 
 LFFont* CTagcloudView::GetFont(INT Index)
 {
-	return &m_Fonts[(m_ViewParameters.TagcloudUseSize ? GetItemData(Index)->FontSize : DefaultFontSize)];
+	return &m_Fonts[(m_GlobalViewSettings.TagcloudUseSize ? GetItemData(Index)->FontSize : DEFAULTFONT)];
 }
 
 
@@ -284,38 +292,44 @@ INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CTagcloudView::OnSortValue()
 {
-	p_ViewParameters->TagcloudCanonical = TRUE;
-	theApp.UpdateViewOptions(m_Context);
+	p_GlobalViewSettings->TagcloudCanonical = TRUE;
+
+	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
 void CTagcloudView::OnSortCount()
 {
-	p_ViewParameters->TagcloudCanonical = FALSE;
-	theApp.UpdateViewOptions(m_Context);
+	p_GlobalViewSettings->TagcloudCanonical = FALSE;
+
+	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
 void CTagcloudView::OnShowRare()
 {
-	p_ViewParameters->TagcloudShowRare = !p_ViewParameters->TagcloudShowRare;
-	theApp.UpdateViewOptions(m_Context);
+	p_GlobalViewSettings->TagcloudShowRare = !p_GlobalViewSettings->TagcloudShowRare;
+
+	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
 void CTagcloudView::OnUseSize()
 {
-	p_ViewParameters->TagcloudUseSize = !p_ViewParameters->TagcloudUseSize;
-	theApp.UpdateViewOptions(m_Context);
+	p_GlobalViewSettings->TagcloudUseSize = !p_GlobalViewSettings->TagcloudUseSize;
+
+	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
 void CTagcloudView::OnUseColors()
 {
-	p_ViewParameters->TagcloudUseColors = !p_ViewParameters->TagcloudUseColors;
-	theApp.UpdateViewOptions(m_Context);
+	p_GlobalViewSettings->TagcloudUseColors = !p_GlobalViewSettings->TagcloudUseColors;
+
+	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
 void CTagcloudView::OnUseOpacity()
 {
-	p_ViewParameters->TagcloudUseOpacity = !p_ViewParameters->TagcloudUseOpacity;
-	theApp.UpdateViewOptions(m_Context);
+	p_GlobalViewSettings->TagcloudUseOpacity = !p_GlobalViewSettings->TagcloudUseOpacity;
+
+	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
 void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -325,34 +339,35 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_TAGCLOUD_SORTVALUE:
-		pCmdUI->SetRadio(m_ViewParameters.TagcloudCanonical);
+		pCmdUI->SetRadio(m_GlobalViewSettings.TagcloudCanonical);
 
 		if (!pCmdUI->m_pMenu)
-			bEnable = !m_ViewParameters.TagcloudCanonical && !m_Nothing;
+			bEnable = !m_GlobalViewSettings.TagcloudCanonical && !m_Nothing;
 
 		break;
 
 	case IDM_TAGCLOUD_SORTCOUNT:
-		pCmdUI->SetRadio(!m_ViewParameters.TagcloudCanonical);
+		pCmdUI->SetRadio(!m_GlobalViewSettings.TagcloudCanonical);
 
 		if (!pCmdUI->m_pMenu)
-			bEnable = m_ViewParameters.TagcloudCanonical && !m_Nothing;
+			bEnable = m_GlobalViewSettings.TagcloudCanonical && !m_Nothing;
 
 		break;
+
 	case IDM_TAGCLOUD_SHOWRARE:
-		pCmdUI->SetCheck(m_ViewParameters.TagcloudShowRare);
+		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudShowRare);
 		break;
 
 	case IDM_TAGCLOUD_USESIZE:
-		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseSize);
+		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudUseSize);
 		break;
 
 	case IDM_TAGCLOUD_USECOLORS:
-		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseColors);
+		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudUseColors);
 		break;
 
 	case IDM_TAGCLOUD_USEOPACITY:
-		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseOpacity);
+		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudUseOpacity);
 		break;
 	}
 

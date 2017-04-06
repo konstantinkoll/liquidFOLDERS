@@ -78,7 +78,8 @@ void LFEditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		INT Index = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
 		if (Index!=-1)
 		{
-			UINT Attr = (UINT)m_wndAttribute.GetItemData(Index);
+			const UINT Attr = (UINT)m_wndAttribute.GetItemData(Index);
+
 			SetCompareComboBox(&m_wndCompare, Attr, m_Condition.Compare);
 			m_wndEdit.SetAttribute(Attr);
 		}

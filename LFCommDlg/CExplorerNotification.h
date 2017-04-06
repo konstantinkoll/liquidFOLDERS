@@ -45,16 +45,15 @@ protected:
 	BOOL m_Dismissed;
 
 private:
-	COLORREF m_FirstCol;
-	COLORREF m_SecondCol;
 	HICON hIcon;
-	INT m_IconCX;
-	INT m_IconCY;
-	INT m_GradientCY;
-	CString m_Text;
-	CRect m_RectClose;
+	INT m_IconSize;
+	INT m_GradientHeight;
 	BOOL m_CloseHover;
 	BOOL m_ClosePressed;
+	COLORREF m_FirstCol;
+	COLORREF m_SecondCol;
+	CString m_Text;
+	CRect m_RectClose;
 	CHoverButton m_wndCommandButton;
 	CString m_CommandText;
 	UINT m_Command;

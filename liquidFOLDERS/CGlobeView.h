@@ -33,7 +33,7 @@ public:
 	virtual void GetPersistentData(FVPersistentData& Data) const;
 
 protected:
-	virtual void SetViewOptions(BOOL Force);
+	virtual void SetViewSettings(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual CMenu* GetItemContextMenu(INT Index);
