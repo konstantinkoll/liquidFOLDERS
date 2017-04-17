@@ -63,7 +63,7 @@ LPCWSTR GetGenreName(UINT nID)
 
 UINT GetGenreIcon(UINT nID)
 {
-	return (nID<MusicGenreCount) ? MusicGenres[nID].IconID : IDI_FLD_NOTE;
+	return (nID<MusicGenreCount) ? MusicGenres[nID].IconID : IDI_FLD_DEFAULTGENRE;
 }
 
 LFCORE_API INT LFID3GetNextMusicGenre(INT Last, LFMusicGenre** ppMusicGenre)

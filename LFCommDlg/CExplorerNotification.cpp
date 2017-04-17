@@ -15,7 +15,7 @@ CExplorerNotification::CExplorerNotification()
 	: CFrontstageWnd()
 {
 	m_Dismissed = TRUE;
-	hIcon = NULL;
+	m_hIcon = NULL;
 
 	m_IconSize = GetSystemMetrics(SM_CYICON);
 	m_GradientHeight = max(m_IconSize/16, 2);
@@ -82,7 +82,7 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 	m_Text = Text;
 
 	if (nIconID)
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nIconID), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+		m_hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nIconID), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 
 	if (Command)
 	{
@@ -123,10 +123,10 @@ void CExplorerNotification::DismissNotification()
 		m_wndCommandButton.EnableWindow(FALSE);
 		m_Command = 0;
 
-		if (hIcon)
+		if (m_hIcon)
 		{
-			DestroyIcon(hIcon);
-			hIcon = NULL;
+			DestroyIcon(m_hIcon);
+			m_hIcon = NULL;
 		}
 
 		m_Dismissed = TRUE;
@@ -194,10 +194,10 @@ INT CExplorerNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CExplorerNotification::OnDestroy()
 {
-	CWnd::OnDestroy();
+	if (m_hIcon)
+		DestroyIcon(m_hIcon);
 
-	if (hIcon)
-		DestroyIcon(hIcon);
+	CWnd::OnDestroy();
 }
 
 BOOL CExplorerNotification::OnEraseBkgnd(CDC* /*pDC*/)
@@ -236,9 +236,9 @@ void CExplorerNotification::OnPaint()
 	rect.top += m_GradientHeight;
 	rect.left += BORDER;
 
-	if (hIcon)
+	if (m_hIcon)
 	{
-		DrawIconEx(dc, rect.left, rect.top+(rect.Height()-m_IconSize)/2, hIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc, rect.left, rect.top+(rect.Height()-m_IconSize)/2, m_hIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 		rect.left += BORDER+m_IconSize;
 	}
 

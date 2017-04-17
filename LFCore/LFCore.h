@@ -32,7 +32,10 @@ LFCORE_API const LFMessageIDs* __stdcall LFGetMessageIDs();
 LFCORE_API BOOL __stdcall LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount);
 
 // Liefert einen String mit Dateianzahl und -größe zurück
-LFCORE_API void __stdcall LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFGetFileSummary(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount);
+
+// Liefert einen String mit Dateianzahl und  Dateigröße oder Laufzeit zurück
+LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& Summary, WCHAR* pStr, SIZE_T cCount);
 
 
 // Gibt TRUE zurück, wenn der Explorer Dateiendungen verbirgt
@@ -72,8 +75,11 @@ LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, SIZE_T cCount, UINT ID, B
 // Informationen über eine Kategorie zurückliefern
 LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDescriptor, UINT ID);
 
-// Informationen über ein Attribut zurückliefern
+// Informationen über einen Kontext zurückliefern
 LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID);
+
+// Gibt eine Liste aller Attribute zurück, die nach ihrer Priorität sortiert sind
+LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeList);
 
 
 // Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
@@ -115,8 +121,8 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType=
 #define LFIsStoreMounted(pStoreDescriptor) ((pStoreDescriptor)->DatPath[0]!=L'\0')
 
 // Erzeugt einen neuen Store
-LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName=NULL, WCHAR* pComments=NULL, CHAR cVolume='\0', BOOL MakeSearchable=FALSE);
-LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, WCHAR* pStoreName=NULL, LFProgress* pProgress=NULL);
+LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName=NULL, LPCWSTR pComments=NULL, CHAR cVolume='\0', BOOL MakeSearchable=FALSE);
+LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName=NULL, LFProgress* pProgress=NULL);
 
 // Macht einen Store offline durchsuchbar
 LFCORE_API UINT __stdcall LFMakeStoreSearchable(const CHAR* pStoreID, BOOL Searchable=TRUE);
@@ -158,7 +164,7 @@ LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCo
 LFCORE_API void __stdcall LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert eine 64-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFSizeToString(const INT64 i, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFSizeToString(const INT64 s, WCHAR* pStr, SIZE_T cCount);
 
 // Konvertiert einen Bruch in eine Zeichenkette
 LFCORE_API void __stdcall LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCount);

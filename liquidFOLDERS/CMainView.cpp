@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CCalendarView.h"
+#include "CDetailsView.h"
 #include "CGlobeView.h"
 #include "CIconsView.h"
 #include "CListView.h"
@@ -75,8 +76,11 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* pPersistentData)
 		m_pWndFileView = new CIconsView();
 		break;
 
-	case LFViewList:
 	case LFViewDetails:
+		m_pWndFileView = new CDetailsView();
+		break;
+
+	case LFViewList:
 		m_pWndFileView = new CListView();
 		break;
 
@@ -158,7 +162,7 @@ void CMainView::SetHeader()
 		else
 		{
 			WCHAR tmpStr[256];
-			LFCombineFileCountSize(p_CookedFiles->m_FileCount, p_CookedFiles->m_FileSize, tmpStr, 256);
+			LFGetFileSummaryEx(p_CookedFiles->m_FileSummary, tmpStr, 256);
 
 			Hint = tmpStr;
 		}
@@ -186,12 +190,21 @@ void CMainView::SetHeader()
 			}
 
 		// Representative thumbnail for music albums or genre icon
-		HBITMAP hBitmap =
-			(p_RawFiles->m_IconID) ? CIcons::ExtractBitmap(theApp.m_CoreImageListJumbo, p_RawFiles->m_IconID-1) :
-			(m_Context==LFContextSubfolderAlbum) ? theApp.m_ThumbnailCache.GetRepresentativeThumbnailBitmap(p_RawFiles, NULL) :
-			NULL;
+		HBITMAP hBitmap = NULL;
+		CPoint BitmapOffset(-2, -1);
 
-		m_wndHeaderArea.SetHeader(p_CookedFiles->m_Name, Hint, hBitmap, FALSE);
+		if (theApp.m_Contexts[m_Context].CtxProperties.ShowRepresentativeThumbnail)
+			hBitmap = theApp.m_ThumbnailCache.GetRepresentativeThumbnailBitmap(p_RawFiles);
+
+		if (p_RawFiles->m_IconID && !hBitmap)
+		{
+			hBitmap = CIcons::ExtractBitmap(theApp.m_CoreImageListJumbo, p_RawFiles->m_IconID-1);
+
+			if (p_RawFiles->m_IconID!=IDI_FLD_PLACEHOLDER)
+				BitmapOffset.x = BitmapOffset.y = -4;
+		}
+
+		m_wndHeaderArea.SetHeader(p_CookedFiles->m_Name, Hint, hBitmap, BitmapOffset, FALSE);
 		SetHeaderButtons();
 
 		GetOwner()->SetWindowText(p_CookedFiles->m_Name);
@@ -1030,6 +1043,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 {
 	HMENU hMenu = CreatePopupMenu();
 	CString tmpStr;
+	UINT AllowedViews;
 
 	switch (wParam)
 	{
@@ -1050,8 +1064,10 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 
 	case IDM_VIEW:
-		for (UINT a=0; a<LFViewCount; a++)
-			if (theApp.IsViewAllowed(m_Context, a))
+		AllowedViews = theApp.m_Attributes[theApp.m_ContextViewSettings[m_Context].SortBy].TypeProperties.AllowedViews;
+
+		for (UINT a=0; a<LFViewCount; a++, AllowedViews>>=1)
+			if (theApp.IsViewAllowed(m_Context, a) && (AllowedViews & 1))
 			{
 				const UINT nID = IDM_VIEW_FIRST+a;
 				CString tmpStr((LPCSTR)nID);

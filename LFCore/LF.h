@@ -222,12 +222,13 @@ struct LFItemCategoryDescriptor
 #define LFContextClipboard             15	// Only limited views
 #define LFContextSubfolderDefault      16	// Only limited views
 #define LFContextSubfolderDay          17	// Only limited views
-#define LFContextSubfolderAlbum        18	// Only limited views
-#define LFContextSubfolderGenre        19	// Only limited views
+#define LFContextSubfolderGenre        18	// Only limited views
+#define LFContextSubfolderArtist       19	// Only limited views
+#define LFContextSubfolderAlbum        20	// Only limited views
 
 #define LFLastGroupContext              8
 #define LFLastQueryContext             12
-#define LFContextCount                 20
+#define LFContextCount                 21
 
 #define LFContextAuto                  0xFF	// Internal use only
 
@@ -293,8 +294,9 @@ struct LFItemCategoryDescriptor
 #define LFAttrDueTime                  50
 #define LFAttrDoneTime                 51
 #define LFAttrCustomer                 52
+#define LFAttrAuthor                   53
 
-#define LFAttributeCount               53
+#define LFAttributeCount               54
 #define LFLastCoreAttribute            20
 
 
@@ -397,6 +399,7 @@ struct LFAttributeProperties
 	BOOL ReadOnly;
 	BOOL AlwaysShow;
 	BOOL DefaultDescending;
+	BOOL ShowRepresentativeThumbnail;
 	LFShellProperty ShPropertyMapping;
 };
 
@@ -421,6 +424,8 @@ struct LFAttributeDescriptor
 	LFTypeProperties TypeProperties;
 };
 
+typedef UINT LFAttributeList[LFAttributeCount];
+
 
 // Context descriptor
 
@@ -430,6 +435,7 @@ struct LFContextProperties
 {
 	UINT DefaultAttribute;
 	BOOL AllowGroups;
+	BOOL ShowRepresentativeThumbnail;
 	UINT AvailableViews;
 	UINT DefaultView;
 	UINT64 AvailableAttributes;
@@ -453,6 +459,14 @@ struct LFStatistics
 	UINT FileCount[LFLastQueryContext+1];
 	INT64 FileSize[LFLastQueryContext+1];
 	UINT LastError;
+};
+
+struct LFFileSummary
+{
+	UINT FileCount;
+	INT64 FileSize;
+	UINT64 Duration;
+	BOOL OnlyMediaFiles;
 };
 
 

@@ -359,11 +359,11 @@ LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount)
 	}
 }
 
-LFCORE_API void LFSizeToString(const INT64 i, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFSizeToString(const INT64 s, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	StrFormatByteSize(i, pStr, (UINT)cCount);
+	StrFormatByteSize(s, pStr, (UINT)cCount);
 }
 
 LFCORE_API void LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCount)

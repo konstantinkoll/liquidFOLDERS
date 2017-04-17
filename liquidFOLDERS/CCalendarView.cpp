@@ -10,7 +10,7 @@
 // CCalendarView
 //
 
-#define GetItemData(Index)     ((CalendarItemData*)(m_ItemData+(Index)*m_DataSize))
+#define GetItemData(Index)     ((CalendarItemData*)(m_pItemData+(Index)*m_DataSize))
 #define PADDING                2
 #define MARGIN                 BACKSTAGEBORDER
 #define COLUMNGUTTER           8

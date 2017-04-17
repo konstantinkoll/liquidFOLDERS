@@ -17,7 +17,7 @@ public:
 	LFCreateStoreDlg(CWnd* pParentWnd=NULL);
 
 	UINT m_Result;
-	CString m_StoreName;
+	WCHAR m_StoreName[256];
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

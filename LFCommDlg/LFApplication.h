@@ -11,8 +11,8 @@
 #include "LFTooltip.h"
 #include <uxtheme.h>
 
-#define RatingBitmapWidth      88
-#define RatingBitmapHeight     15
+#define RATINGBITMAPWIDTH      88
+#define RATINGBITMAPHEIGHT     15
 
 #define OS_XP                   0
 #define OS_Vista                1
@@ -76,6 +76,9 @@ public:
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList);
+	void AttributeToString(CString& Name, CString& Value, LFItemDescriptor* pItemDescriptor, UINT Attr) const;
+	CString GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName=NULL) const;
+	CString GetHintForStore(LFStoreDescriptor* pStoreDescriptor) const;
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, LFStoreDescriptor* pStoreDescriptor);
 	BOOL IsTooltipVisible() const;
@@ -98,10 +101,11 @@ public:
 
 	const LFMessageIDs* p_MessageIDs;
 	WCHAR m_AttrCategoryNames[LFAttrCategoryCount][256];
-	WCHAR m_SourceNames[LFSourceCount][2][256];
 	LFAttributeDescriptor m_Attributes[LFAttributeCount];
+	LFAttributeList m_SortedAttributeList;
 	LFContextDescriptor m_Contexts[LFContextCount];
 	LFItemCategoryDescriptor m_ItemCategories[LFItemCategoryCount];
+	WCHAR m_SourceNames[LFSourceCount][2][256];
 	INT m_ExtraLargeIconSize;
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListExtraLarge;
@@ -169,6 +173,7 @@ protected:
 	LFDynArray<ResourceCacheItem, 16, 4> m_ResourceCache;
 
 private:
+	void AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr) const;
 	static void PlayRegSound(const CString& Identifier);
 
 	ULONG_PTR m_GdiPlusToken;

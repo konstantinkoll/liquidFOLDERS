@@ -19,14 +19,14 @@ struct GridItemData
 class CGridView : public CFileView
 {
 public:
-	CGridView(UINT DataSize=sizeof(GridItemData), BOOL EnableLabelEdit=TRUE);
+	CGridView(SIZE_T DataSize=sizeof(GridItemData), UINT Flags=0);
 
 protected:
 	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)=NULL;
 
 	void ResetItemCategories();
 	void Arrange(CSize szItem, INT Padding, CSize szGutter, BOOL FullWidth=FALSE);
-	void DrawJumboIcon(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor);
+	void DrawJumboIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor);
 
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);

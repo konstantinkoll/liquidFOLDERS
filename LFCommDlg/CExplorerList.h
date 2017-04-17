@@ -47,7 +47,7 @@ protected:
 	BOOL m_Hover;
 	INT m_HoverItem;
 	INT m_TooltipItem;
-	HTHEME hThemeButton;
+	HTHEME m_hThemeButton;
 	CSize m_CheckboxSize;
 
 private:

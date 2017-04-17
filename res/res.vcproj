@@ -144,6 +144,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Folders\FLD_DefaultGenre.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Folders\FLD_EasyListening.ico"
 				>
 			</File>
@@ -172,11 +176,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Note.ico"
+				RelativePath=".\Folders\FLD_Oldies.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Oldies.ico"
+				RelativePath=".\Folders\FLD_Placeholder.ico"
 				>
 			</File>
 			<File
@@ -2629,11 +2633,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Thumbnail_Frame.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Thumbnail_Shadow.png"
+			RelativePath=".\Thumbnail.png"
 			>
 		</File>
 		<File

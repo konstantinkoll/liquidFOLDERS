@@ -122,8 +122,8 @@ LFSearchResult::LFSearchResult(BYTE Context)
 	m_RawCopy = TRUE;
 	m_HasCategories = FALSE;
 
-	m_FileCount = m_StoreCount = 0;
-	m_FileSize = 0;
+	m_StoreCount = 0;
+	InitFileSummary(m_FileSummary);
 
 	m_AutoContext = LFContextAuto;
 }
@@ -145,8 +145,7 @@ LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
 	m_HasCategories = pSearchResult->m_HasCategories;
 
 	m_StoreCount = pSearchResult->m_StoreCount;
-	m_FileCount = pSearchResult->m_FileCount;
-	m_FileSize = pSearchResult->m_FileSize;
+	m_FileSummary = pSearchResult->m_FileSummary;
 
 	m_AutoContext = pSearchResult->m_AutoContext;
 
@@ -194,13 +193,21 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 
 			switch (Attr)
 			{
-			case LFAttrAlbum:
-				m_Context = LFContextSubfolderAlbum;
-				break;
-
 			case LFAttrGenre:
 				m_Context = LFContextSubfolderGenre;
 				m_IconID = GetGenreIcon(pFilter->pConditionList->AttrData.UINT32);
+
+				break;
+
+			case LFAttrArtist:
+				m_Context = LFContextSubfolderArtist;
+
+				break;
+
+			case LFAttrAlbum:
+				m_Context = LFContextSubfolderAlbum;
+				m_IconID = IDI_FLD_PLACEHOLDER;
+
 				break;
 
 			default:
@@ -273,6 +280,31 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 	pFilter->ResultContext = m_Context;
 }
 
+void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+	assert((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+
+	FileSummary.FileCount++;
+	FileSummary.FileSize += pItemDescriptor->CoreAttributes.FileSize;
+	FileSummary.OnlyMediaFiles &= (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio) || (pItemDescriptor->CoreAttributes.ContextID==LFContextVideos);
+
+	if (pItemDescriptor->AttributeValues[LFAttrDuration])
+		FileSummary.Duration += *((UINT*)pItemDescriptor->AttributeValues[LFAttrDuration]);
+}
+
+void LFSearchResult::RemoveFileFromSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+	assert((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+
+	FileSummary.FileCount--;
+	FileSummary.FileSize -= pItemDescriptor->CoreAttributes.FileSize;
+
+	if (pItemDescriptor->AttributeValues[LFAttrDuration])
+		FileSummary.Duration -= *((UINT*)pItemDescriptor->AttributeValues[LFAttrDuration]);
+}
+
 BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
@@ -303,8 +335,8 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 				m_AutoContext = LFContextAllFiles;
 		}
 
-		m_FileCount++;
-		m_FileSize += pItemDescriptor->CoreAttributes.FileSize;
+		AddFileToSummary(m_FileSummary, pItemDescriptor);
+
 		break;
 	}
 
@@ -341,12 +373,8 @@ void LFSearchResult::RemoveItem(UINT Index, BOOL UpdateCount)
 {
 	assert(Index<m_ItemCount);
 
-	if (UpdateCount)
-		if ((m_Items[Index]->Type & LFTypeMask)==LFTypeFile)
-		{
-			m_FileCount--;
-			m_FileSize -= m_Items[Index]->CoreAttributes.FileSize;
-		}
+	if (UpdateCount && ((m_Items[Index]->Type & LFTypeMask)==LFTypeFile))
+		RemoveFileFromSummary(m_FileSummary, m_Items[Index]);
 
 	LFFreeItemDescriptor(m_Items[Index]);
 
@@ -495,6 +523,9 @@ void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 
 UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
+	assert(AttrProperties[LFAttrDuration].Type==LFTypeDuration);
+	assert(TypeProperties[LFTypeDuration].Size==sizeof(UINT));
+
 	if (((ReadIndex2==ReadIndex1+1) && (!GroupSingle || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
 	{
 		for (UINT a=ReadIndex1; a<ReadIndex2; a++)
@@ -512,7 +543,9 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 		pFolder->LastAggregate = ReadIndex2-1;
 	}
 
-	INT64 Size = 0;
+	LFFileSummary FileSummary;
+	InitFileSummary(FileSummary);
+
 	UINT Source = m_Items[ReadIndex1]->Type & LFTypeSourceMask;
 
 	for (UINT a=ReadIndex1; a<ReadIndex2; a++)
@@ -520,13 +553,16 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 		if ((m_Items[a]->Type & LFTypeSourceMask)!=Source)
 			Source = LFTypeSourceUnknown;
 
-		Size += m_Items[a]->CoreAttributes.FileSize;
+		AddFileToSummary(FileSummary, m_Items[a]);
+
 		LFFreeItemDescriptor(m_Items[a]);
 	}
 
 	pFolder->Type |= Source;
-	SetAttribute(pFolder, LFAttrFileSize, &Size);
-	LFCombineFileCountSize(pFolder->AggregateCount, Size, pFolder->Description, 256);
+	SetAttribute(pFolder, LFAttrFileSize, &FileSummary.FileSize);
+	SetAttribute(pFolder, LFAttrDuration, &FileSummary.Duration);
+
+	LFGetFileSummaryEx(FileSummary, pFolder->Description, 256);
 
 	m_Items[WriteIndex] = pFolder;
 
@@ -613,7 +649,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 {
 	assert(AttrProperties[Attr].Type==LFTypeUnicodeArray);
 
-	typedef struct { std::wstring Name; BOOL Multiple; UINT Count; INT64 Size; UINT Source; } TagItem;
+	typedef struct { std::wstring Name; BOOL Multiple; UINT Source; LFFileSummary FileSummary; } TagItem;
 	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;
 	Hashtags Tags;
 
@@ -633,7 +669,11 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 				Hashtags::iterator Location = Tags.find(Key);
 				if (Location==Tags.end())
 				{
-					TagItem Item = { Hashtag, FALSE, 1, m_Items[a]->CoreAttributes.FileSize, m_Items[a]->Type & LFTypeSourceMask };
+					TagItem Item = { Hashtag, FALSE, 1, m_Items[a]->Type & LFTypeSourceMask };
+
+					InitFileSummary(Item.FileSummary);
+					AddFileToSummary(Item.FileSummary, m_Items[a]);
+
 					Tags[Key] = Item;
 				}
 				else
@@ -645,8 +685,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 					if ((m_Items[a]->Type & LFTypeSourceMask)!=Location->second.Source)
 						Location->second.Source = LFTypeSourceUnknown;
 
-					Location->second.Count++;
-					Location->second.Size += m_Items[a]->CoreAttributes.FileSize;
+					AddFileToSummary(Location->second.FileSummary, m_Items[a]);
 				}
 
 				Remove = TRUE;
@@ -686,12 +725,13 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 		}
 
 		LFItemDescriptor* pFolder = AllocFolderDescriptor();
-		pFolder->AggregateCount = it->second.Count;
+		pFolder->AggregateCount = it->second.FileSummary.FileCount;
 
 		SetAttribute(pFolder, LFAttrFileName, Hashtag);
-		SetAttribute(pFolder, LFAttrFileSize, &it->second.Size);
+		SetAttribute(pFolder, LFAttrFileSize, &it->second.FileSummary.FileSize);
 		SetAttribute(pFolder, Attr, Hashtag);
-		LFCombineFileCountSize(pFolder->AggregateCount, it->second.Size, pFolder->Description, 256);
+
+		LFGetFileSummaryEx(it->second.FileSummary, pFolder->Description, 256);
 
 		pFolder->pNextFilter = LFAllocFilter(pFilter);
 		pFolder->pNextFilter->Options.IsSubfolder = TRUE;

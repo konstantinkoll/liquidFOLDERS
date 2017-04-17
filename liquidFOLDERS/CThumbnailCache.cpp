@@ -9,15 +9,19 @@
 // CThumbnailCache
 //
 
+#define THUMBCUTOFF     2
+
 void CThumbnailCache::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy)
 {
+	ASSERT(hBitmap);
+
 	BITMAP Bitmap;
 	GetObject(hBitmap, sizeof(Bitmap), &Bitmap);
 
 	ASSERT(Bitmap.bmBitsPixel==32);
 	ASSERT(Bitmap.bmBits);
 
-	// Alpha-Kanal auf 0xFF setzen
+	// Set alpha channel to 0xFF
 	for (INT Row=y; Row<y+cy; Row++)
 	{
 		BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
@@ -33,6 +37,8 @@ void CThumbnailCache::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT
 
 HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 {
+	ASSERT(pItemDescriptor);
+
 	ThumbnailData td;
 
 	if (m_Thumbnails.Lookup(pItemDescriptor, td))
@@ -41,16 +47,22 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 	if (m_NoThumbnails.Lookup(pItemDescriptor, td))
 		return td.hBitmap;
 
+	const BOOL BlackFrame = (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio);
+	const BOOL Media = (pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos);
+	const BOOL Document = (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments);
+	const INT CutOff = Media || Document ? THUMBCUTOFF : 0;
+	const INT ThumbSize = (BlackFrame ? 124 : 118)+2*CutOff;
+
 	strcpy_s(td.StoreID, LFKeySize, pItemDescriptor->StoreID);
 	strcpy_s(td.FileID, LFKeySize, pItemDescriptor->CoreAttributes.FileID);
-	td.hBitmap = LFGetThumbnail(pItemDescriptor, CSize(118, 118));
+	td.hBitmap = LFGetThumbnail(pItemDescriptor, CSize(ThumbSize, ThumbSize));
 
 	if (td.hBitmap)
 	{
-		// Ggf. Bitmap vierteln
+		// Quarter bitmap if neccessary
 		td.hBitmap = LFQuarter256Bitmap(td.hBitmap);
 
-		// Zulässige Größe?
+		// Size allowed?
 		BITMAP Bitmap;
 		GetObject(td.hBitmap, sizeof(Bitmap), &Bitmap);
 
@@ -62,57 +74,93 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 			return NULL;
 		}
 
-		// Thumbnail dekorieren
+		// Convert thumbnail to 128x128x32bpp
+		CRect rectSrc(CutOff, CutOff, Bitmap.bmWidth-CutOff, Bitmap.bmHeight-CutOff);
+
+		CRect rectDst;
+		rectDst.left = (128-Bitmap.bmWidth)/2+CutOff;
+		rectDst.top = (128-Bitmap.bmHeight)/2+CutOff-1;
+		rectDst.right = rectDst.left+Bitmap.bmWidth-2*CutOff;
+		rectDst.bottom = rectDst.top+Bitmap.bmHeight-2*CutOff;
+
+		const BOOL DrawFrame = Media || Document || ((rectSrc.Width()<=118+2*THUMBCUTOFF) && (rectSrc.Height()<=118+2*THUMBCUTOFF));
+
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
 
 		HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 		HBITMAP hOldBitmap1 = (HBITMAP)dc.SelectObject(hBitmap);
 
-		CRect rect(0, 0, 128, 128);
-
-		BOOL DrawFrame = ((pItemDescriptor->CoreAttributes.ContextID>=LFContextPictures) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos)) || ((Bitmap.bmWidth<=118) && (Bitmap.bmHeight<=118));
-		BOOL DrawShadow = !DrawFrame && (Bitmap.bmWidth>=4) && (Bitmap.bmWidth<=118) && (Bitmap.bmHeight>=4) && (Bitmap.bmHeight<=118);
-
 		Graphics g(dc);
+		g.SetSmoothingMode(SmoothingModeNone);
 
-		// Frame
 		if (DrawFrame)
-			g.DrawImage(LFGetApp()->GetCachedResourceImage(IDB_THUMBNAIL_FRAME), 0, 0);
+		{
+			const INT FrameSize = BlackFrame ? 124 : 122;
 
-		rect.left += max((128-Bitmap.bmWidth)/2-1, 0);
-		rect.right = rect.left+Bitmap.bmWidth;
-		rect.top += max((128-Bitmap.bmHeight)/2-1, 0);
-		rect.bottom = rect.top+Bitmap.bmHeight;
+			SolidBrush brush(Color(BlackFrame ? 0xFF000000 : 0xFFFFFFFF));
+			g.FillRectangle(&brush, (128-FrameSize)/2, (128-FrameSize)/2-1, FrameSize, FrameSize);
 
-		// Thumbnail
+			// Inflate sizes which are just 1 or 2 pixels short
+			if (CutOff)
+			{
+				if (rectSrc.Width()==ThumbSize-2*CutOff-2)
+				{
+					rectSrc.InflateRect(1, 0);
+					rectDst.InflateRect(1, 0);
+				}
+				else
+					if (rectSrc.Width()==ThumbSize-2*CutOff-1)
+					{
+						rectSrc.right++;
+						rectDst.right++;
+					}
+
+				if (rectSrc.Height()==ThumbSize-2*CutOff-2)
+				{
+					rectSrc.InflateRect(0, 1);
+					rectDst.InflateRect(0, 1);
+				}
+				else
+					if (rectSrc.Height()==ThumbSize-2*CutOff-1)
+					{
+						rectSrc.bottom++;
+						rectDst.bottom++;
+					}
+			}
+		}
+
+		// Copy thumbnail
 		HDC hdcMem = CreateCompatibleDC(dc);
 		HBITMAP hOldBitmap2 = (HBITMAP)SelectObject(hdcMem, td.hBitmap);
 
-		if (DrawFrame || DrawShadow || (Bitmap.bmBitsPixel!=32))
+		if (Bitmap.bmBitsPixel!=32)
 		{
-			BitBlt(dc, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
-			MakeBitmapSolid(hBitmap, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight);
+			BitBlt(dc, rectDst.left, rectDst.top, rectDst.Width(), rectDst.Height(), hdcMem, rectSrc.left, rectSrc.top, SRCCOPY);
+			MakeBitmapSolid(hBitmap, rectDst.left, rectDst.top, rectDst.Width(), rectDst.Height());
 		}
 		else
 		{
-			AlphaBlend(dc, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, hdcMem, 0, 0, Bitmap.bmWidth, Bitmap.bmHeight, BF);
+			AlphaBlend(dc, rectDst.left, rectDst.top, rectDst.Width(), rectDst.Height(), hdcMem, rectSrc.left, rectSrc.top, rectSrc.Width(), rectSrc.Height(), BF);
+		}
+
+		// Decorate with frame
+		if (DrawFrame)
+		{
+			g.DrawImage(LFGetApp()->GetCachedResourceImage(IDB_THUMBNAIL), 0, 0);
+
+			if (!BlackFrame && !Document)
+			{
+				Pen pen1(Color(0x30000000));
+				g.DrawRectangle(&pen1, rectDst.left, rectDst.top, rectDst.Width()-1, rectDst.Height()-1);
+
+				Pen pen2(Color(0x10000000));
+				g.DrawRectangle(&pen2, rectDst.left+1, rectDst.top+1, rectDst.Width()-2, rectDst.Height()-2);
+			}
 		}
 
 		SelectObject(hdcMem, hOldBitmap2);
 		DeleteDC(hdcMem);
-
-		// Shadow
-		if (DrawShadow)
-		{
-			Gdiplus::Bitmap* pShadow = LFGetApp()->GetCachedResourceImage(IDB_THUMBNAIL_SHADOW);
-
-			g.DrawImage(pShadow, rect.left-2, rect.top-2, 0, 0, 2+Bitmap.bmWidth, 2, UnitPixel);
-			g.DrawImage(pShadow, rect.left-2, rect.top+Bitmap.bmHeight, 0, 124, 2+Bitmap.bmWidth, 4, UnitPixel);
-			g.DrawImage(pShadow, rect.left-2, rect.top, 0, 4, 2, Bitmap.bmHeight, UnitPixel);
-			g.DrawImage(pShadow, rect.left+Bitmap.bmWidth, rect.top-2, 124, 0, 4, 2+Bitmap.bmHeight, UnitPixel);
-			g.DrawImage(pShadow, rect.left+Bitmap.bmWidth, rect.top+Bitmap.bmHeight, 124, 124, 4, 4, UnitPixel);
-		}
 
 		dc.SelectObject(hOldBitmap1);
 
@@ -129,8 +177,9 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 	return td.hBitmap;
 }
 
-BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor)
+BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor, INT YOffset)
 {
+	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
 	HBITMAP hBitmap = Lookup(pItemDescriptor);
@@ -140,7 +189,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescr
 	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
-	AlphaBlend(dc, (rect.left+rect.right-128)/2, (rect.top+rect.bottom-128)/2, 128, 128, hdcMem, 0, 0, 128, 128, BF);
+	AlphaBlend(dc, (rect.left+rect.right-128)/2, (rect.top+rect.bottom-128)/2+YOffset, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
 	SelectObject(hdcMem, hOldBitmap);
 	DeleteDC(hdcMem);
@@ -148,16 +197,34 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescr
 	return TRUE;
 }
 
-HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, CDC* pDC)
+BOOL CThumbnailCache::DrawRepresentativeThumbnail(CDC& dc, const CRect& rect, LFSearchResult* pSearchResult, INT First, INT Last, INT YOffset)
 {
+	ASSERT(pSearchResult);
+
+	if (First>=0)
+	{
+		if (Last==-1)
+			Last = (INT)pSearchResult->m_ItemCount-1;
+
+		for (INT a=First; a<=Last; a++)
+			if (DrawJumboThumbnail(dc, rect, (*pSearchResult)[a], YOffset))
+				return TRUE;
+	}
+
+	return FALSE;
+}
+
+HBITMAP CThumbnailCache::GetJumboThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
+{
+	ASSERT(pItemDescriptor);
+
 	CDC dc;
-	dc.CreateCompatibleDC(pDC);
+	dc.CreateCompatibleDC(NULL);
 
 	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-	CRect rect(0, 0, 128, 128);
-	if (DrawJumboThumbnail(dc, rect, pItemDescriptor))
+	if (DrawJumboThumbnail(dc, CRect(0, 0, 128, 128), pItemDescriptor, 0))
 		return (HBITMAP)dc.SelectObject(hOldBitmap);
 
 	dc.SelectObject(hOldBitmap);
@@ -166,18 +233,18 @@ HBITMAP CThumbnailCache::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, C
 	return NULL;
 }
 
-HBITMAP CThumbnailCache::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchResult, CDC* pDC, UINT First, UINT Last)
+HBITMAP CThumbnailCache::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchResult, INT First, INT Last)
 {
+	ASSERT(pSearchResult);
+
 	CDC dc;
-	dc.CreateCompatibleDC(pDC);
+	dc.CreateCompatibleDC(NULL);
 
 	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-	CRect rect(0, 0, 128, 128);
-	for (UINT a=First; a<min(Last, pSearchResult->m_ItemCount); a++)
-		if (DrawJumboThumbnail(dc, rect, (*pSearchResult)[a]))
-			return (HBITMAP)dc.SelectObject(hOldBitmap);
+	if (DrawRepresentativeThumbnail(dc, CRect(0, 0, 128, 128), pSearchResult, First, Last, 0))
+		return (HBITMAP)dc.SelectObject(hOldBitmap);
 
 	dc.SelectObject(hOldBitmap);
 	DeleteObject(hBitmap);

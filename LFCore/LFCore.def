@@ -7,21 +7,23 @@ EXPORTS
 	LFInitialize @1
 	LFGetApplicationPath @2
 	LFGetMessageIDs @3
-	LFCombineFileCountSize @4
-	LFHideFileExt @5
-	LFHideVolumesWithNoMedia @6
-	LFGetSourceForVolume @7
-	LFGetLogicalVolumes @8
-	LFInitProgress @9
-	LFGetErrorText @10
-	LFCoreErrorBox @11
-	LFGetAttrCategoryName @12
-	LFGetAttributeInfo @13
-	LFGetSourceName @14
-	LFGetItemCategoryInfo @15
-	LFGetContextInfo @16
-	LFIsLicensed @17
-	LFIsSharewareExpired @18
+	LFGetFileSummary @4
+	LFGetFileSummaryEx @5
+	LFHideFileExt @6
+	LFHideVolumesWithNoMedia @7
+	LFGetSourceForVolume @8
+	LFGetLogicalVolumes @9
+	LFInitProgress @10
+	LFGetErrorText @11
+	LFCoreErrorBox @12
+	LFGetAttrCategoryName @13
+	LFGetAttributeInfo @14
+	LFGetSourceName @15
+	LFGetItemCategoryInfo @16
+	LFGetContextInfo @17
+	LFGetSortedAttributeList @18
+	LFIsLicensed @19
+	LFIsSharewareExpired @20
 
 	LFGetDefaultStore @100
 	LFSetDefaultStore @101

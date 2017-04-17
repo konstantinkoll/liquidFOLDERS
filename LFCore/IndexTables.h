@@ -33,14 +33,14 @@
 // Slave-ID: 1
 
 #define IDXTABLE_DOCUMENTS     1
-#define IDXATTRS_DOCUMENTS     ((1ull<<LFAttrArtist) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
+#define IDXATTRS_DOCUMENTS     ((1ull<<LFAttrAuthor) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
 								(1ull<<LFAttrResponsible) | (1ull<<LFAttrDueTime) | (1ull<<LFAttrDoneTime) | \
 								(1ull<<LFAttrSignature) | (1ull<<LFAttrISBN) | (1ull<<LFAttrPages) | \
 								(1ull<<LFAttrLanguage) | (1ull<<LFAttrCustomer))
 
 struct DocumentAttributes
 {
-	WCHAR Artist[256];
+	WCHAR Author[256];
 	WCHAR Copyright[256];
 	WCHAR Title[256];
 	WCHAR Responsible[256];

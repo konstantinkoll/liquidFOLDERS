@@ -29,6 +29,8 @@ CItemPanel::CItemPanel()
 			AfxThrowResourceException();
 	}
 
+	m_Hover = FALSE;
+
 	Empty();
 }
 
@@ -114,7 +116,7 @@ BOOL CItemPanel::SetItem(const CHAR* pStoreID)
 		LFItemDescriptor* pItem = LFAllocItemDescriptorEx(&Store);
 
 		// Text
-		CString tmpStr(GetHintForItem(pItem));
+		CString tmpStr(LFGetApp()->GetHintForItem(pItem));
 
 		tmpStr.Insert(0, _T("\n"));
 		tmpStr.Insert(0, pItem->CoreAttributes.FileName);

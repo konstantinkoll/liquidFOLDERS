@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CGridView.h"
-#include "LFCommDlg.h"
 
 
 // CListView
@@ -45,7 +44,6 @@ private:
 	void DrawIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor);
 	void AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* tmpStr, SIZE_T cCount);
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, UINT Attr);
-	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, GridItemData* pData, UINT Attr, BOOL Themed, BOOL AlwaysNewRow=TRUE);
 	INT GetMaxLabelWidth(INT Max);
 	INT GetMaxColumnWidth(UINT Col, INT Max);
 	void AutosizeColumn(UINT Col);

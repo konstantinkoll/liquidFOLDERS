@@ -45,7 +45,7 @@ protected:
 	BOOL m_Dismissed;
 
 private:
-	HICON hIcon;
+	HICON m_hIcon;
 	INT m_IconSize;
 	INT m_GradientHeight;
 	BOOL m_CloseHover;

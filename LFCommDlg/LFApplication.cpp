@@ -166,10 +166,8 @@ LFApplication::LFApplication(GUID& AppID)
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		LFGetAttrCategoryName(m_AttrCategoryNames[a], 256, a);
 
-	// Get data source information
-	for (UINT a=0; a<LFSourceCount; a++)
-		for (UINT b=0; b<2; b++)
-			LFGetSourceName(m_SourceNames[a][b], 256, a, b==1);
+	// Get sorted attribute list
+	LFGetSortedAttributeList(m_SortedAttributeList);
 
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)
@@ -182,6 +180,11 @@ LFApplication::LFApplication(GUID& AppID)
 	// Get Item category information
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		LFGetItemCategoryInfo(m_ItemCategories[a], a);
+
+	// Get data source information
+	for (UINT a=0; a<LFSourceCount; a++)
+		for (UINT b=0; b<2; b++)
+			LFGetSourceName(m_SourceNames[a][b], 256, a, b==1);
 }
 
 LFApplication::~LFApplication()
@@ -487,6 +490,8 @@ HANDLE LFApplication::LoadFontFromResource(UINT nID)
 
 void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList)
 {
+	ASSERT(pImageList);
+
 	pImageList->Create(Size, Size, ILC_COLOR32 | ILC_MASK, IDI_LASTICON, 1);
 
 	for (UINT a=1; a<=IDI_LASTICON; a++)
@@ -502,6 +507,100 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* 
 	pImageList->SetOverlayImage(IDI_OVR_EMPTY-1, 4);
 }
 
+void LFApplication::AttributeToString(CString& Name, CString& Value, LFItemDescriptor* pItemDescriptor, UINT Attr) const
+{
+	ASSERT(pItemDescriptor);
+
+	Name.Empty();
+	Value.Empty();
+
+	if (m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
+		return;
+
+	WCHAR tmpStr[256];
+	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
+
+	if (tmpStr[0])
+	{
+		// Decorate values
+		if (Attr==LFAttrDimension)
+		{
+			const SIZE_T Length = wcslen(tmpStr);
+			swprintf_s(&tmpStr[Length], 256-Length, L" (%u×%u)", (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
+		}
+
+		// Copy to buffer
+		if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat) && (Attr!=LFAttrDescription))
+			Name = m_Attributes[Attr].Name;
+
+		Value = tmpStr;
+	}
+}
+
+void LFApplication::AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr) const
+{
+	ASSERT(pItemDescriptor);
+
+	CString Name;
+	CString Value;
+	AttributeToString(Name, Value, pItemDescriptor, Attr);
+
+	LFTooltip::AppendAttribute(Str, Name, Value);
+}
+
+CString LFApplication::GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName) const
+{
+	ASSERT(pItemDescriptor);
+	ASSERT(m_SortedAttributeList[0]==LFAttrFileName);
+
+	CString Hint;
+	AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
+	AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
+
+	// File format
+	if (pFormatName)
+		if (*pFormatName)
+		{
+			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+
+			CString tmpStr(pFormatName);
+
+			if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+			{
+				WCHAR strSource[256] = L" ";
+				wcscpy_s(&strSource[1], 255, m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
+				strSource[1] = (WCHAR)towlower(strSource[1]);
+
+				tmpStr.Append(strSource);
+			}
+
+			LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
+		}
+
+	// Other attributes
+	for (UINT a=1; a<LFAttributeCount; a++)
+	{
+		const UINT Attr = m_SortedAttributeList[a];
+
+		if (m_Attributes[Attr].AttrProperties.DefaultPriority==LFMaxAttributePriority)
+			break;
+
+		AppendAttribute(Hint, pItemDescriptor, Attr);
+	}
+
+	return Hint;
+}
+
+CString LFApplication::GetHintForStore(LFStoreDescriptor* pStoreDescriptor) const
+{
+	ASSERT(pStoreDescriptor);
+
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
+	CString Hint = GetHintForItem(pItemDescriptor);
+	LFFreeItemDescriptor(pItemDescriptor);
+
+	return Hint;
+}
 
 void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
 {
@@ -516,7 +615,7 @@ void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, LFStoreDescripto
 {
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
 
-	ShowTooltip(pCallerWnd, point, pItemDescriptor->CoreAttributes.FileName, GetHintForItem(pItemDescriptor), m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1));
+	ShowTooltip(pCallerWnd, point, pItemDescriptor->CoreAttributes.FileName, GetHintForItem(pItemDescriptor));
 
 	LFFreeItemDescriptor(pItemDescriptor);
 }

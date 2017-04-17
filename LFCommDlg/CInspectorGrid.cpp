@@ -303,8 +303,8 @@ void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
 	UCHAR level = m_Multiple ? m_ShowRange ? m_RangeSecond.Rating : 0 : p_Data->Rating;
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? LFGetApp()->hRatingBitmaps[level] : LFGetApp()->hPriorityBitmaps[level]);
 
-	INT w = min(lpRect->right-lpRect->left-6, RatingBitmapWidth);
-	INT h = min(lpRect->bottom-lpRect->top, RatingBitmapHeight);
+	INT w = min(lpRect->right-lpRect->left-6, RATINGBITMAPWIDTH);
+	INT h = min(lpRect->bottom-lpRect->top, RATINGBITMAPHEIGHT);
 	BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 	AlphaBlend(dc, lpRect->left+6, lpRect->top+(lpRect->bottom-lpRect->top-h)/2, w, h, hdcMem, 0, 0, w, h, BF);
 
@@ -316,7 +316,7 @@ HCURSOR CPropertyRating::SetCursor(INT x) const
 {
 	ASSERT(p_Parent);
 
-	return LFGetApp()->LoadStandardCursor(x<6 ? IDC_HAND : ((x<RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
+	return LFGetApp()->LoadStandardCursor(x<6 ? IDC_HAND : ((x<RATINGBITMAPWIDTH+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
 }
 
 BOOL CPropertyRating::CanDelete() const
@@ -333,7 +333,7 @@ BOOL CPropertyRating::OnClickValue(INT x)
 {
 	ASSERT(p_Parent);
 
-	if ((x>=0) && (x<RatingBitmapWidth+6))
+	if ((x>=0) && (x<RATINGBITMAPWIDTH+6))
 		if ((x<6) || ((x-6)%18<16))
 		{
 			INT Rating = (x<6) ? 0 : 2*((x-6)/18)+((x-6)%18>8)+1;

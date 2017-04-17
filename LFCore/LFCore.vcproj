@@ -758,6 +758,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FLD_DefaultGenre.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FLD_EasyListening.ico"
 				>
 			</File>
@@ -786,11 +790,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Note.ico"
+				RelativePath=".\res\FLD_Oldies.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Oldies.ico"
+				RelativePath=".\res\FLD_Placeholder.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Pop.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_RandB.ico"
 				>
 			</File>
 			<File
@@ -811,6 +823,10 @@
 			</File>
 			<File
 				RelativePath=".\res\FLD_Soundtracks.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_SpokenWord.ico"
 				>
 			</File>
 			<File

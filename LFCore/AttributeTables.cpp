@@ -10,124 +10,130 @@
 
 extern const LFContextProperties CtxProperties[LFContextCount] = {
 	// LFContextAllFiles
-	{ LFAttrFileTime, TRUE,
+	{ LFAttrFileTime, TRUE, FALSE,
 	ALLVIEWS, LFViewTimeline,
 	IDXATTRS_ALL | IDXATTRS_GROUP,
 	IDXATTRS_DETAILS | IDXATTRS_GROUP },
 
 	// LFContextFavorites
-	{ LFAttrRating, TRUE,
+	{ LFAttrRating, TRUE, FALSE,
 	ALLVIEWS, LFViewList,
 	IDXATTRS_ALL | IDXATTRS_GROUP,
 	(1ull<<LFAttrRating) },
 
 	// LFContextAudio
-	{ LFAttrGenre, TRUE,
+	{ LFAttrGenre, TRUE, FALSE,
 	ALLVIEWS, LFViewIcons,
 	IDXATTRS_CORE | IDXATTRS_GROUP | IDXATTRS_AUDIO,
 	(1ull<<LFAttrRating) | (1ull<<LFAttrTitle) | (1ull<<LFAttrAlbum) | (1ull<<LFAttrGenre) | (1ull<<LFAttrArtist) | (1ull<<LFAttrDuration) },
 
 	// LFContextPictures
-	{ LFAttrFileTime, TRUE,
+	{ LFAttrFileTime, TRUE, FALSE,
 	ALLVIEWS, LFViewTimeline,
 	IDXATTRS_CORE | IDXATTRS_GROUP | IDXATTRS_PICTURES,
 	IDXATTRS_VISUAL },
 
 	// LFContextVideos
-	{ LFAttrFileTime, TRUE,
+	{ LFAttrFileTime, TRUE, FALSE,
 	ALLVIEWS, LFViewTimeline,
 	IDXATTRS_CORE | IDXATTRS_GROUP | IDXATTRS_VIDEOS,
 	IDXATTRS_VISUAL | (1ull<<LFAttrDuration) },
 
 	// LFContextDocuments
-	{ LFAttrFileTime, TRUE,
+	{ LFAttrFileTime, TRUE, FALSE,
 	ALLVIEWS, LFViewTimeline,
 	IDXATTRS_CORE | IDXATTRS_GROUP | IDXATTRS_DOCUMENTS,
 	((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | (1ull<<LFAttrFileTime) | (1ull<<LFAttrRating) | (1ull<<LFAttrPriority) | (1ull<<LFAttrCustomer) | (1ull<<LFAttrPages)) },
 
 	// LFContextContacts
-	{ LFAttrFileName, TRUE,
+	{ LFAttrFileName, TRUE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList), LFViewIcons,
 	IDXATTRS_CORE | IDXATTRS_GROUP,
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) },
 
 	// LFContextMessages
-	{ LFAttrFileName, TRUE,
+	{ LFAttrFileName, TRUE, FALSE,
 	(1<<LFViewList) | (1<<LFViewTagcloud), LFViewList,
 	IDXATTRS_CORE | IDXATTRS_GROUP | IDXATTRS_MESSAGES,
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrFileTime) | (1ull<<LFAttrTitle) | (1ull<<LFAttrFrom) | (1ull<<LFAttrTo) | (1ull<<LFAttrPriority) },
 
 	// LFContextEvents
-	{ LFAttrFileName, TRUE,
+	{ LFAttrFileName, TRUE, FALSE,
 	ALLVIEWS, LFViewDetails,
 	IDXATTRS_CORE | IDXATTRS_GROUP | (1ull<<LFAttrTitle) | (1ull<<LFAttrResponsible) | (1ull<<LFAttrArtist),
 	IDXATTRS_LOCATION | (1ull<<LFAttrFileName) | (1ull<<LFAttrFileTime) | (1ull<<LFAttrTitle) | (1ull<<LFAttrPriority) | (1ull<<LFAttrResponsible) | (1ull<<LFAttrArtist) },
 
 	// LFContextNew
-	{ LFAttrAddTime, FALSE,
+	{ LFAttrAddTime, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,
 	IDXATTRS_ALL,
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrAddTime) },
 
 	// LFContextArchive
-	{ LFAttrArchiveTime, FALSE,
+	{ LFAttrArchiveTime, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,
 	IDXATTRS_ALL | (1ull<<LFAttrArchiveTime),
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrArchiveTime) },
 
 	// LFContextTrash
-	{ LFAttrDeleteTime, FALSE,
+	{ LFAttrDeleteTime, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,
 	IDXATTRS_ALL | (1ull<<LFAttrArchiveTime) | (1ull<<LFAttrDeleteTime),
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrDeleteTime) },
 
 	// LFContextFilters
-	{ LFAttrFileName, FALSE,
+	{ LFAttrFileName, FALSE, FALSE,
 	(1<<LFViewIcons), LFViewIcons,
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | (1ull<<LFAttrFileTime) | (1ull<<LFAttrRating),
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) },
 
 	// LFContextSearch
-	{ LFAttrFileName, TRUE,
+	{ LFAttrFileName, TRUE, FALSE,
 	ALLVIEWS, LFViewDetails,
 	IDXATTRS_ALL | IDXATTRS_GROUP,
 	IDXATTRS_DETAILS | (1ull<<LFAttrHashtags) },
 
 	// LFContextStores
-	{ LFAttrFileName, FALSE,
+	{ LFAttrFileName, FALSE, FALSE,
 	(1<<LFViewIcons), LFViewIcons,
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrCreationTime) | (1ull<<LFAttrFileTime),
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrCreationTime) },
 
 	// LFContextClipboard
-	{ LFAttrFileName, FALSE,
+	{ LFAttrFileName, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewDetails,
 	IDXATTRS_ALL,
 	IDXATTRS_DETAILS },
 
 	// LFContextSubfolderDefault
-	{ LFAttrFileName, FALSE,
+	{ LFAttrFileName, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewDetails,
 	IDXATTRS_ALL,
 	IDXATTRS_DETAILS },
 
 	// LFContextSubfolderDay
-	{ LFAttrFileName, FALSE,
+	{ LFAttrFileName, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,
 	IDXATTRS_ALL,
 	IDXATTRS_DETAILS },
 
-	// LFContextSubfolderAlbum
-	{ LFAttrFileName, FALSE,
-	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewList,
-	IDXATTRS_CORE | IDXATTRS_AUDIO,
-	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrRating) | (1ull<<LFAttrGenre) | (1ull<<LFAttrArtist) | (1ull<<LFAttrTitle) | (1ull<<LFAttrDuration) },
-
 	// LFContextSubfolderGenre
-	{ LFAttrArtist, FALSE,
+	{ LFAttrArtist, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewList,
 	IDXATTRS_CORE | IDXATTRS_AUDIO,
-	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrRating) | (1ull<<LFAttrAlbum) | (1ull<<LFAttrArtist) | (1ull<<LFAttrTitle) | (1ull<<LFAttrDuration) }
+	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrRating) | (1ull<<LFAttrAlbum) | (1ull<<LFAttrArtist) | (1ull<<LFAttrTitle) | (1ull<<LFAttrDuration) },
+
+	// LFContextSubfolderArtist
+	{ LFAttrAlbum, FALSE, FALSE,
+	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewList,
+	IDXATTRS_CORE | IDXATTRS_AUDIO,
+	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrRating) | (1ull<<LFAttrAlbum) | (1ull<<LFAttrGenre) | (1ull<<LFAttrTitle) | (1ull<<LFAttrDuration) },
+
+	// LFContextSubfolderAlbum
+	{ LFAttrFileName, FALSE, TRUE,
+	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewList,
+	IDXATTRS_CORE | IDXATTRS_AUDIO,
+	(1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrRating) | (1ull<<LFAttrGenre) | (1ull<<LFAttrArtist) | (1ull<<LFAttrTitle) | (1ull<<LFAttrDuration) }
 };
 
 extern const FMTID SHPropertyStorage =   { 0xB725F130, 0x47EF, 0x101A, { 0xA5, 0xF1, 0x02, 0x60, 0x8C, 0x9E, 0xEB, 0xAC } };
@@ -151,169 +157,172 @@ extern const FMTID SHPropertyUnnamed7 =  { 0x276D7BB0, 0x5B34, 0x4FB0, { 0xAA, 0
 
 extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	// LFAttrFileName
-	{ LFTypeUnicodeString, 255, LFAttrCategoryBasic, LFViewIcons, 0, FALSE, TRUE, FALSE, {SHPropertyStorage, 10 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBasic, LFViewIcons, 0, FALSE, TRUE, FALSE, FALSE, { SHPropertyStorage, 10 } },
 
 	// LFAttrStoreID
-	{ LFTypeAnsiString, LFKeySize-1, LFAttrCategoryInternal, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeAnsiString, LFKeySize-1, LFAttrCategoryInternal, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrFileID
-	{ LFTypeAnsiString, LFKeySize-1, LFAttrCategoryInternal, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, FALSE, {SHPropertyStorage, 8 } },
+	{ LFTypeAnsiString, LFKeySize-1, LFAttrCategoryInternal, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { SHPropertyStorage, 8 } },
 
 	// LFAttrComments
-	{ LFTypeUnicodeString, 255, LFAttrCategoryBasic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, {SHPropertySummary, 6 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBasic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { SHPropertySummary, 6 } },
 
 	// LFAttrDescription
-	{ LFTypeUnicodeString, 255, LFAttrCategoryBasic, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, FALSE, {SHPropertyVersion, 3 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBasic, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { SHPropertyVersion, 3 } },
 
 	// LFAttrCreationTime
-	{ LFTypeTime, 0, LFAttrCategoryBasic, LFViewTimeline, 3, TRUE, FALSE, FALSE, {SHPropertyStorage, 15 } },
+	{ LFTypeTime, 0, LFAttrCategoryBasic, LFViewTimeline, 4, TRUE, FALSE, FALSE, FALSE, { SHPropertyStorage, 15 } },
 
 	// LFAttrFileTime
-	{ LFTypeTime, 0, LFAttrCategoryInternal, LFViewTimeline, 3, TRUE, FALSE, FALSE, {SHPropertyStorage, 14 } },
+	{ LFTypeTime, 0, LFAttrCategoryInternal, LFViewTimeline, 4, TRUE, FALSE, FALSE, FALSE, { SHPropertyStorage, 14 } },
 
 	// LFAttrAddTime
-	{ LFTypeTime, 0, LFAttrCategoryInternal, LFViewTimeline, 0, TRUE, FALSE, TRUE, {SHPropertyUnnamed5, 100 } },
+	{ LFTypeTime, 0, LFAttrCategoryInternal, LFViewTimeline, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { SHPropertyUnnamed5, 100 } },
 
 	// LFAttrDeleteTime
-	{ LFTypeTime, 0, LFAttrCategoryBasic, LFViewCalendar, 0, TRUE, FALSE, TRUE, {0, 0 } },
+	{ LFTypeTime, 0, LFAttrCategoryBasic, LFViewCalendar, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { 0,0 } },
 
 	// LFAttrArchiveTime
-	{ LFTypeTime, 0, LFAttrCategoryBasic, LFViewCalendar, 0, TRUE, FALSE, TRUE, {SHPropertyUnnamed6, 100 } },
+	{ LFTypeTime, 0, LFAttrCategoryBasic, LFViewCalendar, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { SHPropertyUnnamed6, 100 } },
 
 	// LFAttrFileFormat
-	{ LFTypeAnsiString, LFExtSize-1, LFAttrCategoryInternal, LFViewTagcloud, LFMaxAttributePriority, TRUE, FALSE, FALSE, {SHPropertyStorage, 4 } },
+	{ LFTypeAnsiString, LFExtSize-1, LFAttrCategoryInternal, LFViewTagcloud, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { SHPropertyStorage, 4 } },
 
 	// LFAttrFileCount
-	{ LFTypeUINT, 0, LFAttrCategoryBasic, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, TRUE, {0, 0 } },
+	{ LFTypeUINT, 0, LFAttrCategoryBasic, (UINT)-1, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { 0,0 } },
 
 	// LFAttrFileSize
-	{ LFTypeSize, 0, LFAttrCategoryBasic, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, {SHPropertyStorage, 12 } },
+	{ LFTypeSize, 0, LFAttrCategoryBasic, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { SHPropertyStorage, 12 } },
 
 	// LFAttrFlags
-	{ LFTypeFlags, 0, LFAttrCategoryInternal, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeFlags, 0, LFAttrCategoryInternal, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrURL
-	{ LFTypeAnsiString, 255, LFAttrCategoryBasic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, {SHPropertyQuery, 9 } },
+	{ LFTypeAnsiString, 255, LFAttrCategoryBasic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { SHPropertyQuery, 9 } },
 
 	// LFAttrHashtags
-	{ LFTypeUnicodeArray, 255, LFAttrCategoryBasic, LFViewTagcloud, 2, FALSE, FALSE, FALSE, {SHPropertySummary, 5 } },
+	{ LFTypeUnicodeArray, 255, LFAttrCategoryBasic, LFViewTagcloud, 2, FALSE, FALSE, FALSE, FALSE, { SHPropertySummary, 5 } },
 
 	// LFAttrRating
-	{ LFTypeRating, 0, LFAttrCategoryBasic, LFViewList, 6, FALSE, FALSE, TRUE, {SHPropertyMedia, 9 } },
+	{ LFTypeRating, 0, LFAttrCategoryBasic, LFViewList, 6, FALSE, FALSE, TRUE, FALSE, { SHPropertyMedia, 9 } },
 
 	// LFAttrPriority
-	{ LFTypeRating, 0, LFAttrCategoryWorkflow, LFViewList, 5, FALSE, FALSE, TRUE, {SHPropertyUnnamed3, 11 } },
+	{ LFTypeRating, 0, LFAttrCategoryWorkflow, LFViewList, 5, FALSE, FALSE, TRUE, FALSE, { SHPropertyUnnamed3, 11 } },
 
 	// LFAttrLocationName
-	{ LFTypeUnicodeString, 255, LFAttrCategoryGeotags, LFViewList, 6, FALSE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryGeotags, LFViewList, 6, FALSE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrLocationIATA
-	{ LFTypeIATACode, 3, LFAttrCategoryGeotags, LFViewGlobe, 6, FALSE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeIATACode, 3, LFAttrCategoryGeotags, LFViewGlobe, 6, FALSE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrLocationGPS
-	{ LFTypeGeoCoordinates, 0, LFAttrCategoryGeotags, LFViewGlobe, LFMaxAttributePriority, FALSE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeGeoCoordinates, 0, LFAttrCategoryGeotags, LFViewGlobe, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { 0,0 } },
 
 
 	// LFAttrWidth
-	{ LFTypeUINT, 0, LFAttrCategoryVisual, LFViewTagcloud, LFMaxAttributePriority, TRUE, FALSE, TRUE, {SHPropertyImage, 3 } },
+	{ LFTypeUINT, 0, LFAttrCategoryVisual, LFViewTagcloud, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { SHPropertyImage, 3 } },
 
 	// LFAttrHeight
-	{ LFTypeUINT, 0, LFAttrCategoryVisual, LFViewTagcloud, LFMaxAttributePriority, TRUE, FALSE, TRUE, {SHPropertyImage, 4 } },
+	{ LFTypeUINT, 0, LFAttrCategoryVisual, LFViewTagcloud, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { SHPropertyImage, 4 } },
 
 	// LFAttrDimension
-	{ LFTypeMegapixel, 0, LFAttrCategoryVisual, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, {0, 0 } },
+	{ LFTypeMegapixel, 0, LFAttrCategoryVisual, LFViewList, 3, TRUE, FALSE, TRUE, FALSE, { 0,0 } },
 
 	// LFAttrAspectRatio
-	{ LFTypeDouble, 0, LFAttrCategoryVisual, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeDouble, 0, LFAttrCategoryVisual, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrVideoCodec
-	{ LFTypeFourCC, 0, LFAttrCategoryVisual, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, {SHPropertyVideo, 44 } },
+	{ LFTypeFourCC, 0, LFAttrCategoryVisual, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { SHPropertyVideo, 44 } },
 
 	// LFAttrRoll
-	{ LFTypeUnicodeString, 255, LFAttrCategoryVisual, LFViewList, 1, FALSE, FALSE, FALSE, {SHPropertyPhoto, 18248 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryVisual, LFViewList, 1, FALSE, FALSE, FALSE, FALSE, { SHPropertyPhoto, 18248 } },
 
 
 	// LFAttrExposure
-	{ LFTypeUnicodeString, 31, LFAttrCategoryPhotographic, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeUnicodeString, 31, LFAttrCategoryPhotographic, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrFocus
-	{ LFTypeFraction, 0, LFAttrCategoryPhotographic, LFViewIcons, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeFraction, 0, LFAttrCategoryPhotographic, LFViewIcons, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrAperture
-	{ LFTypeFraction, 0, LFAttrCategoryPhotographic, LFViewIcons, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeFraction, 0, LFAttrCategoryPhotographic, LFViewIcons, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrChip
-	{ LFTypeUnicodeString, 31, LFAttrCategoryPhotographic, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeUnicodeString, 31, LFAttrCategoryPhotographic, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 
 	// LFAttrAlbum
-	{ LFTypeUnicodeString, 255, LFAttrCategoryAudio, LFViewList, 1, FALSE, FALSE, FALSE, {SHPropertyMusic, 4 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryAudio, LFViewList, 1, FALSE, FALSE, FALSE, TRUE, { SHPropertyMusic, 4 } },
 
 	// LFAttrGenre
-	{ LFTypeGenre, 0, LFAttrCategoryAudio, LFViewIcons, 2, FALSE, FALSE, FALSE, {SHPropertyMusic, 11 } },
+	{ LFTypeGenre, 0, LFAttrCategoryAudio, LFViewIcons, 2, FALSE, FALSE, FALSE, FALSE, { SHPropertyMusic, 11 } },
 
 	// LFAttrChannels
-	{ LFTypeUINT, 0, LFAttrCategoryAudio, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, {SHPropertyMedia, 7 } },
+	{ LFTypeUINT, 0, LFAttrCategoryAudio, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { SHPropertyMedia, 7 } },
 
 	// LFAttrSamplerate
-	{ LFTypeUINT, 0, LFAttrCategoryAudio, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, {SHPropertyMedia, 5 } },
+	{ LFTypeUINT, 0, LFAttrCategoryAudio, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, FALSE, { SHPropertyMedia, 5 } },
 
 	// LFAttrAudioCodec
-	{ LFTypeFourCC, 0, LFAttrCategoryAudio, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeFourCC, 0, LFAttrCategoryAudio, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 
 	// LFAttrDuration
-	{ LFTypeDuration, 0, LFAttrCategoryTimebased, LFViewList, 2, TRUE, FALSE, TRUE, {SHPropertyAudio, 3 } },
+	{ LFTypeDuration, 0, LFAttrCategoryTimebased, LFViewList, 2, TRUE, FALSE, TRUE, FALSE, { SHPropertyAudio, 3 } },
 
 	// LFAttrBitrate
-	{ LFTypeBitrate, 0, LFAttrCategoryTimebased, LFViewList, LFMaxAttributePriority, TRUE, FALSE, TRUE, {SHPropertyMedia, 4 } },
+	{ LFTypeBitrate, 0, LFAttrCategoryTimebased, LFViewList, 3, TRUE, FALSE, TRUE, FALSE, { SHPropertyMedia, 4 } },
 
 
 	// LFAttrArtist
-	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewList, 0, FALSE, FALSE, FALSE, {SHPropertySummary, 4 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewList, 0, FALSE, FALSE, FALSE, TRUE, { SHPropertyMusic, 13 } },
 
 	// LFAttrTitle
-	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewIcons, 1, FALSE, FALSE, FALSE, {SHPropertySummary, 2 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewIcons, 1, FALSE, FALSE, FALSE, FALSE, { SHPropertySummary, 2 } },
 
 	// LFAttrCopyright
-	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, {SHPropertyMedia, 11 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { SHPropertyMedia, 11 } },
 
 	// LFAttrISBN
-	{ LFTypeAnsiString, 31, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeAnsiString, 31, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrLanguage
-	{ LFTypeAnsiString, 2, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeAnsiString, 2, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrPages
-	{ LFTypeUINT, 0, LFAttrCategoryBibliographic, LFViewList, 4, TRUE, FALSE, TRUE, {SHPropertyDocuments, 14 } },
+	{ LFTypeUINT, 0, LFAttrCategoryBibliographic, LFViewList, 4, TRUE, FALSE, TRUE, FALSE, { SHPropertyDocuments, 14 } },
 
 	// LFAttrRecordingTime
-	{ LFTypeTime, 0, LFAttrCategoryBibliographic, LFViewCalendar, 3, FALSE, FALSE, FALSE, {SHPropertyUnnamed4, 100 } },
+	{ LFTypeTime, 0, LFAttrCategoryBibliographic, LFViewCalendar, 3, FALSE, FALSE, FALSE, FALSE, { SHPropertyUnnamed4, 100 } },
 
 	// LFAttrRecordingEquipment
-	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewList, 3, TRUE, FALSE, FALSE, {SHPropertyPhoto, 272 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewList, 3, TRUE, FALSE, FALSE, FALSE, { SHPropertyPhoto, 272 } },
 
 	// LFAttrSignature
-	{ LFTypeAnsiString, 31, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeAnsiString, 31, LFAttrCategoryBibliographic, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { 0,0 } },
 
 
 	// LFAttrFrom
-	{ LFTypeAnsiString, 255, LFAttrCategoryWorkflow, LFViewList, 0, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeAnsiString, 255, LFAttrCategoryWorkflow, LFViewList, 0, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrTo
-	{ LFTypeAnsiString, 255, LFAttrCategoryWorkflow, LFViewList, 0, TRUE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeAnsiString, 255, LFAttrCategoryWorkflow, LFViewList, 0, TRUE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrResponsible
-	{ LFTypeUnicodeString, 255, LFAttrCategoryWorkflow, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, {0, 0 } },
+	{ LFTypeUnicodeString, 255, LFAttrCategoryWorkflow, LFViewList, LFMaxAttributePriority, FALSE, FALSE, FALSE, FALSE, { 0,0 } },
 
 	// LFAttrDueTime
-	{ LFTypeTime, 0, LFAttrCategoryWorkflow, LFViewCalendar, LFMaxAttributePriority, FALSE, FALSE, TRUE, {SHPropertyUnnamed1, 100 } },
+	{ LFTypeTime, 0, LFAttrCategoryWorkflow, LFViewCalendar, LFMaxAttributePriority, FALSE, FALSE, TRUE, FALSE, { SHPropertyUnnamed1, 100 } },
 
 	// LFAttrDoneTime
-	{ LFTypeTime, 0, LFAttrCategoryWorkflow, LFViewCalendar, LFMaxAttributePriority, FALSE, FALSE, TRUE, {SHPropertyUnnamed2, 100 } },
+	{ LFTypeTime, 0, LFAttrCategoryWorkflow, LFViewCalendar, LFMaxAttributePriority, FALSE, FALSE, TRUE, FALSE, { SHPropertyUnnamed2, 100 } },
 
 	// LFAttrCustomer
-	{ LFTypeUnicodeString, 255, LFAttrCategoryWorkflow, LFViewList, 3, FALSE, FALSE, FALSE, {SHPropertyUnnamed7, 100 } }
+	{ LFTypeUnicodeString, 255, LFAttrCategoryWorkflow, LFViewList, 3, FALSE, FALSE, FALSE, FALSE, { SHPropertyUnnamed7, 100 } },
+
+	// LFAttrAuthor
+	{ LFTypeUnicodeString, 255, LFAttrCategoryBibliographic, LFViewList, 3, FALSE, FALSE, FALSE, FALSE, { SHPropertySummary, 4 } },
 };
 
 #define WIDTH_TINY       80

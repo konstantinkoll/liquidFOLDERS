@@ -53,7 +53,7 @@ BOOL CHeaderArea::OnCommand(WPARAM wParam, LPARAM lParam)
 	}
 }
 
-void CHeaderArea::SetHeader(LPCWSTR Caption, LPCWSTR Hint, HBITMAP hBitmap, BOOL Repaint)
+void CHeaderArea::SetHeader(LPCWSTR Caption, LPCWSTR Hint, HBITMAP hBitmap, const CPoint& BitmapOffset, BOOL Repaint)
 {
 	DeleteObject(hIconBitmap);
 	m_BitmapWidth = m_BitmapHeight = 0;
@@ -68,6 +68,7 @@ void CHeaderArea::SetHeader(LPCWSTR Caption, LPCWSTR Hint, HBITMAP hBitmap, BOOL
 		{
 			m_BitmapWidth = Bitmap.bmWidth;
 			m_BitmapHeight = Bitmap.bmHeight;
+			m_BitmapOffset = BitmapOffset;
 		}
 	}
 
@@ -80,7 +81,7 @@ void CHeaderArea::SetHeader(LPCWSTR Caption, LPCWSTR Hint, HBITMAP hBitmap, BOOL
 
 inline UINT CHeaderArea::GetBitmapMinHeight() const
 {
-	return hIconBitmap ? 2*BORDER+m_BitmapHeight : 0;
+	return hIconBitmap ? 2*BORDER+m_BitmapHeight+m_BitmapOffset.y : 0;
 }
 
 inline UINT CHeaderArea::GetTextMinHeight() const
@@ -287,7 +288,7 @@ void CHeaderArea::OnPaint()
 				dcMem.CreateCompatibleDC(&dc);
 
 				HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(hIconBitmap);
-				dc.AlphaBlend(BORDER, BORDER, m_BitmapWidth, m_BitmapHeight, &dcMem, 0, 0, m_BitmapWidth, m_BitmapHeight, BF);
+				dc.AlphaBlend(BORDER+m_BitmapOffset.x, BORDER+m_BitmapOffset.y, m_BitmapWidth, m_BitmapHeight, &dcMem, 0, 0, m_BitmapWidth, m_BitmapHeight, BF);
 				dcMem.SelectObject(hOldBitmap);
 
 				LeftEdge += m_BitmapWidth+2*MARGIN;

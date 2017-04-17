@@ -8,9 +8,6 @@
 #include <winhttp.h>
 
 
-BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-
-
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 {
 	if (!hSrc)
@@ -86,6 +83,11 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CS
 	}
 }
 
+
+// Draw
+//
+
+BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
@@ -811,117 +813,6 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 }
 
 
-void AppendAttribute(CString& Str, UINT Attr, LPCWSTR Value)
-{
-	if (Value)
-		LFTooltip::AppendAttribute(Str, (Attr==LFAttrComments) || (Attr==LFAttrFileFormat) || (Attr==LFAttrDescription) ? L"" : LFGetApp()->m_Attributes[Attr].Name, Value);
-}
-
-void AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr)
-{
-	ASSERT(pItemDescriptor);
-
-	WCHAR tmpStr[256];
-	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
-
-	AppendAttribute(Str, Attr, tmpStr);
-}
-
-CString GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName)
-{
-	ASSERT(pItemDescriptor);
-
-	CString Hint;
-
-	switch (pItemDescriptor->Type & LFTypeMask)
-	{
-	case LFTypeStore:
-		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
-
-		if (pItemDescriptor->Type & LFTypeMaintained)
-		{
-			WCHAR tmpStr[256];
-			LFCombineFileCountSize(pItemDescriptor->AggregateCount, pItemDescriptor->CoreAttributes.FileSize, tmpStr, 256);
-
-			LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
-		}
-
-		AppendAttribute(Hint, pItemDescriptor, LFAttrCreationTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrFileTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
-
-		if (((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(pItemDescriptor->Type & LFStoreNotMounted)))
-			LFTooltip::AppendAttribute(Hint, _T(""), LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
-
-		break;
-
-	case LFTypeFolder:
-		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
-
-		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-			AppendAttribute(Hint, LFAttrComments, LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
-
-		break;
-
-	case LFTypeFile:
-		AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
-		AppendAttribute(Hint, LFAttrFileFormat, pFormatName);
-
-		if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-		{
-			WCHAR tmpStr[256] = L" ";
-			wcscpy_s(&tmpStr[1], 255, LFGetApp()->m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
-			tmpStr[1] = (WCHAR)towlower(tmpStr[1]);
-
-			Hint += tmpStr;
-		}
-
-		AppendAttribute(Hint, pItemDescriptor, LFAttrArtist);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrTitle);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrAlbum);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrRecordingTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrRoll);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrDuration);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrHashtags);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrCustomer);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrPages);
-
-		if (pItemDescriptor->AttributeValues[LFAttrDimension])
-		{
-			WCHAR tmpStr[256];
-			LFAttributeToString(pItemDescriptor, LFAttrDimension, tmpStr, 256);
-
-			WCHAR Resolution[256];
-			swprintf_s(Resolution, 256, L"%s (%u×%u)", tmpStr, (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
-
-			AppendAttribute(Hint, LFAttrDimension, Resolution);
-		}
-
-		AppendAttribute(Hint, pItemDescriptor, LFAttrEquipment);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrBitrate);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrCreationTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrFileTime);
-		AppendAttribute(Hint, pItemDescriptor, LFAttrFileSize);
-
-		break;
-	}
-
-	return Hint;
-}
-
-CString GetHintForStore(LFStoreDescriptor* pStoreDescriptor)
-{
-	ASSERT(pStoreDescriptor);
-
-	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
-	CString Hint = GetHintForItem(pItemDescriptor);
-	LFFreeItemDescriptor(pItemDescriptor);
-
-	return Hint;
-}
-
-
 // IATA
 //
 
@@ -1020,6 +911,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 
 
 // Update
+//
 
 void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 {
@@ -1281,6 +1173,9 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 		}
 }
 
+
+// Message box
+//
 
 INT LFMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
 {

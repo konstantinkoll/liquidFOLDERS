@@ -101,15 +101,21 @@ struct CachedSelectionBitmap
 #define WM_SELECTNONE         WM_USER+102
 #define WM_RENAMEITEM         WM_USER+103
 
+#define FF_ENABLESCROLLING          0x0001
+#define FF_ENABLEHOVER              0x0002
+#define FF_ENABLETOOLTIPS           0x0004
+#define FF_ENABLEFOLDERTOOLTIPS     0x0008
+#define FF_ENABLETOOLTIPICONS       0x0010
+#define FF_ENABLESHIFTSELECTION     0x0020
+#define FF_ENABLELABELEDIT          0x0040
+
 #define BM_REFLECTION         0
 #define BM_SELECTED           1
-
-#define HORIZONTALSCROLLWIDTH     64
 
 class CFileView : public CFrontstageWnd
 {
 public:
-	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableTooltipOnVirtual=TRUE);
+	CFileView(SIZE_T DataSize=sizeof(FVItemData), UINT Flags=FF_ENABLESCROLLING | FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT);
 	virtual ~CFileView();
 
 	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
@@ -186,17 +192,12 @@ protected:
 	LFGlobalViewSettings* p_GlobalViewSettings;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
-	UINT m_DataSize;
-	BYTE* m_ItemData;
+	SIZE_T m_DataSize;
+	BYTE* m_pItemData;
 	UINT m_ItemDataAllocated;
 	BOOL m_Nothing;
 	UINT m_HeaderHeight;
-	BOOL m_EnableScrolling;
-	BOOL m_EnableHover;
-	BOOL m_EnableTooltip;
-	BOOL m_EnableShiftSelection;
-	BOOL m_EnableLabelEdit;
-	BOOL m_EnableTooltipOnVirtual;
+	UINT m_Flags;
 	BOOL m_HideFileExt;
 	BOOL m_ShowFocusRect;
 	BOOL m_AllowMultiSelect;
@@ -210,7 +211,6 @@ protected:
 	INT m_VScrollPos;
 	INT m_HScrollMax;
 	INT m_VScrollMax;
-	INT m_ColWidth;
 	INT m_RowHeight;
 	INT m_LargeFontHeight;
 	INT m_DefaultFontHeight;

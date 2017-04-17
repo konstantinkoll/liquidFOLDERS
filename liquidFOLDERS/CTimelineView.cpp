@@ -18,7 +18,7 @@
 #define THUMBOFFSETY     1
 #define MAXFILELIST      10
 
-#define GetItemData(Index)              ((TimelineItemData*)(m_ItemData+(Index)*m_DataSize))
+#define GetItemData(Index)              ((TimelineItemData*)(m_pItemData+(Index)*m_DataSize))
 #define UsePreview(pItemDescriptor)     ((pItemDescriptor->Type & LFTypeMounted) && (pItemDescriptor->CoreAttributes.ContextID>=LFContextPictures) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos))
 
 CString CTimelineView::m_FilesSingular;
@@ -27,7 +27,7 @@ CString CTimelineView::m_FilesPlural;
 CIcons CTimelineView::m_SourceIcons;
 
 CTimelineView::CTimelineView()
-	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
+	: CFileView(sizeof(TimelineItemData), FF_ENABLESCROLLING | FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT)
 {
 	if (m_FilesSingular.IsEmpty())
 		ENSURE(m_FilesSingular.LoadString(IDS_FILES_SINGULAR));

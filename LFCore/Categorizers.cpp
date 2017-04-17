@@ -77,10 +77,11 @@ void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* 
 
 		switch (m_Attr)
 		{
-/*		case LFAttrArtist:
-			pFolder->IconID = IDI_FLD_NOTE;
+		case LFAttrArtist:
+		case LFAttrAlbum:
+			pFolder->IconID = IDI_FLD_PLACEHOLDER;
 			break;
-*/
+
 		case LFAttrGenre:
 			pFolder->IconID = GetGenreIcon(pVariant->UINT32);
 			break;

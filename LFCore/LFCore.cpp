@@ -107,7 +107,7 @@ LFCORE_API const LFMessageIDs* LFGetMessageIDs()
 // Output handling
 //
 
-LFCORE_API void LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFGetFileSummary(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -118,6 +118,36 @@ LFCORE_API void LFCombineFileCountSize(UINT Count, INT64 Size, WCHAR* pStr, SIZE
 	LoadString(LFCoreModuleHandle, Count==1 ? IDS_FILECOUNT_SINGULAR : IDS_FILECOUNT_PLURAL, tmpMask, 256);
 
 	swprintf_s(pStr, cCount, tmpMask, Count, tmpStr);
+}
+
+LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& FileSummary, WCHAR* pStr, SIZE_T cCount)
+{
+	assert(pStr);
+
+	if (FileSummary.Duration && FileSummary.OnlyMediaFiles)
+	{
+		UINT nID = IDS_MINUTE;
+
+		UINT64 Duration = max(1, (FileSummary.Duration+30000)/60000);
+		if (Duration>=60)
+		{
+			nID = IDS_HOUR;
+			Duration /= 60;
+		}
+
+		WCHAR tmpMask[256];
+		LoadString(LFCoreModuleHandle, Duration==1 ? nID : nID+1, tmpMask, 256);
+
+		WCHAR tmpStr[256];
+		swprintf_s(tmpStr, 256, tmpMask, max(1, Duration));
+
+		LoadString(LFCoreModuleHandle, FileSummary.FileCount==1 ? IDS_MEDIACOUNT_SINGULAR : IDS_MEDIACOUNT_PLURAL, tmpMask, 256);
+		swprintf_s(pStr, cCount, tmpMask, FileSummary.FileCount, tmpStr);
+	}
+	else
+	{
+		LFGetFileSummary(FileSummary.FileCount, FileSummary.FileSize, pStr, cCount);
+	}
 }
 
 
@@ -432,11 +462,18 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 	*PtrDst = L'\0';
 
-	// Properties
+	// Check consistency
 	assert(AttrProperties[ID].Type<LFTypeCount);
 	assert((AttrProperties[ID].Type!=LFAttrFlags) || AttrProperties[ID].ReadOnly);
 	assert((AttrProperties[ID].DefaultView==(UINT)-1) || (TypeProperties[AttrProperties[ID].Type].AllowedViews & (1<<AttrProperties[ID].DefaultView)));
+	assert(AttrProperties[ID].DefaultPriority<=LFMaxAttributePriority);
 
+	assert(LFAttrFileName==0);
+	assert(AttrProperties[LFAttrFileName].DefaultPriority==0);
+	assert(AttrProperties[LFAttrComments].DefaultPriority==LFMaxAttributePriority);
+	assert(AttrProperties[LFAttrFileFormat].DefaultPriority==LFMaxAttributePriority);
+
+	// Properties
 	AttributeDescriptor.AttrProperties = AttrProperties[ID];
 	AttributeDescriptor.TypeProperties = TypeProperties[AttrProperties[ID].Type];
 }
@@ -500,4 +537,14 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 
 	// Properties
 	ContextDescriptor.CtxProperties = CtxProperties[ID];
+}
+
+LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeList)
+{
+	UINT Index = 0;
+
+	for (UINT Priority=0; Priority<=LFMaxAttributePriority; Priority++)
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if (AttrProperties[a].DefaultPriority==Priority)
+				AttributeList[Index++] = a;
 }

@@ -164,7 +164,7 @@ BOOL LFChooseStoreDlg::InitDialog()
 		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
 
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
-	m_wndHeaderArea.SetHeader(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, NULL, FALSE);
+	m_wndHeaderArea.SetHeader(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, NULL, CPoint(0, 0), FALSE);
 
 	m_wndStoreList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_EDITLABELS, CRect(0, 0, 0, 0), this, IDC_STORELIST);
 
@@ -317,9 +317,7 @@ void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (pTooltipData->Item!=-1)
 	{
-		wcscpy_s(pTooltipData->Hint, 4096, GetHintForItem((*m_pSearchResult)[pTooltipData->Item]));
-
-		pTooltipData->hIcon = LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon((*m_pSearchResult)[pTooltipData->Item]->IconID-1);
+		wcscpy_s(pTooltipData->Hint, 4096, LFGetApp()->GetHintForItem((*m_pSearchResult)[pTooltipData->Item]));
 
 		*pResult = TRUE;
 	}

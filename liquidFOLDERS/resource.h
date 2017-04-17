@@ -17,8 +17,7 @@
 #define IDB_SOURCES_24                  141
 #define IDB_SOURCES_32                  142
 #define IDB_MULTIPLE                    143
-#define IDB_THUMBNAIL_SHADOW            144
-#define IDB_THUMBNAIL_FRAME             145
+#define IDB_THUMBNAIL                   144
 #define ID_PANE_INSPECTOR               400
 #define ID_NAV_BACK                     500
 #define ID_NAV_FORWARD                  501

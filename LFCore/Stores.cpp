@@ -1008,7 +1008,7 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 	return max(LFTypeSourceInternal, pStoreDescriptor->Source);
 }
 
-LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, CHAR cVolume, BOOL MakeSearchable)
+LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName, LPCWSTR pComments, CHAR cVolume, BOOL MakeSearchable)
 {
 	if (!GetMutexForStores())
 		return LFMutexError;
@@ -1021,9 +1021,6 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, 
 #endif
 
 	// Set data
-	if (pStoreName)
-		wcscpy_s(Store.StoreName, 256, pStoreName);
-
 	if (pComments)
 		wcscpy_s(Store.Comments, 256, pComments);
 
@@ -1039,10 +1036,20 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(WCHAR* pStoreName, WCHAR* pComments, 
 		Store.Flags |= LFStoreFlagsAutoLocation;
 	}
 
+	// Retrieve or save store name
+	if (pStoreName)
+	{
+		if (*pStoreName)
+			wcscpy_s(Store.StoreName, 256, pStoreName);
+
+		// Copy name back for display purposes
+		wcscpy_s(pStoreName, 256, Store.StoreName);
+	}
+
 	return CommitInitializeStore(&Store);
 }
 
-LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, WCHAR* pStoreName, LFProgress* pProgress)
+LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName, LFProgress* pProgress)
 {
 	assert(pPath);
 
@@ -1068,7 +1075,7 @@ LFCORE_API UINT LFCreateStoreWindows(WCHAR* pPath, WCHAR* pStoreName, LFProgress
 	if (Ptr)
 		wcscpy_s(Store.StoreName, 256, Ptr+1);
 
-	// Retrieve or store created name
+	// Retrieve or save store name
 	if (pStoreName)
 		if (*pStoreName)
 		{

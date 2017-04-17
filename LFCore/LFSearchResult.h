@@ -33,14 +33,23 @@ public:
 	BOOL m_HasCategories;
 
 	UINT m_StoreCount;
-	UINT m_FileCount;
-	INT64 m_FileSize;
+	LFFileSummary m_FileSummary;
 
 protected:
 	BYTE m_AutoContext;
 
 private:
+	static void InitFileSummary(LFFileSummary& FileSummary);
+	void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
+	void RemoveFileFromSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	INT Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const;
 	void Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending);
 	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 };
+
+inline void LFSearchResult::InitFileSummary(LFFileSummary& FileSummary)
+{
+	ZeroMemory(&FileSummary, sizeof(FileSummary));
+
+	FileSummary.OnlyMediaFiles = TRUE;
+}

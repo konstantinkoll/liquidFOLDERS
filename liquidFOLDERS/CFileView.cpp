@@ -9,37 +9,31 @@
 // CFileView
 //
 
-#define GetItemData(Index)     ((FVItemData*)(m_ItemData+Index*m_DataSize))
-#define IsSelected(Index)      GetItemData(Index)->Selected
-#define ChangedItem(Index)     { InvalidateItem(Index); GetParent()->SendMessage(WM_UPDATESELECTION); }
-#define ChangedItems()         { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
-#define FIRSTSENDTO            0xFF00
+#define GetItemData(Index)        ((FVItemData*)(m_pItemData+Index*m_DataSize))
+#define IsSelected(Index)         GetItemData(Index)->Selected
+#define ChangedItem(Index)        { InvalidateItem(Index); GetParent()->SendMessage(WM_UPDATESELECTION); }
+#define ChangedItems()            { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
+#define FIRSTSENDTO               0xFF00
+#define HORIZONTALSCROLLWIDTH     64
 
-CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableTooltipOnVirtual)
+CFileView::CFileView(SIZE_T DataSize, UINT Flags)
 	: CFrontstageWnd()
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
 
 	p_RawFiles = p_CookedFiles = NULL;
 	p_Edit = NULL;
-	m_ItemData = NULL;
+	m_pItemData = NULL;
 	m_ItemDataAllocated = 0;
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextAllFiles;
 	m_HeaderHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
-	m_ColWidth = HORIZONTALSCROLLWIDTH;
 	m_DataSize = DataSize;
+	m_Flags = Flags;
 	m_Nothing = TRUE;
 	m_Hover = m_BeginDragDrop = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
 	m_TypingBuffer[0] = L'\0';
 	m_TypingTicks = 0;
-
-	m_EnableScrolling = EnableScrolling;
-	m_EnableHover = EnableHover;
-	m_EnableTooltip = EnableTooltip;
-	m_EnableShiftSelection = EnableShiftSelection;
-	m_EnableLabelEdit = EnableLabelEdit;
-	m_EnableTooltipOnVirtual = EnableTooltipOnVirtual;
 
 	ZeroMemory(&m_Bitmaps, sizeof(m_Bitmaps));
 }
@@ -51,8 +45,8 @@ CFileView::~CFileView()
 	for (UINT a=0; a<2; a++)
 		DeleteObject(m_Bitmaps[a].hBitmap);
 
-	if (m_ItemData)
-		free(m_ItemData);
+	if (m_pItemData)
+		free(m_pItemData);
 }
 
 BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
@@ -150,7 +144,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	DestroyEdit();
 	theApp.HideTooltip();
 
-	void* pVictim = m_ItemData;
+	void* pVictim = m_pItemData;
 	SIZE_T VictimAllocated = m_ItemDataAllocated;
 
 	m_Nothing = TRUE;
@@ -159,10 +153,8 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	{
 		m_AllowMultiSelect = (pCookedFiles->m_Context!=LFContextStores);
 
-		SIZE_T Size = pCookedFiles->m_ItemCount*m_DataSize;
-		m_ItemData = (BYTE*)malloc(Size);
-		m_ItemDataAllocated = pCookedFiles->m_ItemCount;
-		ZeroMemory(m_ItemData, Size);
+		const SIZE_T Size = (SIZE_T)(m_ItemDataAllocated=pCookedFiles->m_ItemCount)*m_DataSize;
+		ZeroMemory(m_pItemData=(BYTE*)malloc(Size), Size);
 
 		if (VictimAllocated)
 		{
@@ -171,8 +163,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 			for (UINT a=0; a<min(VictimAllocated, pCookedFiles->m_ItemCount); a++)
 			{
 				FVItemData* pData = GetItemData(a);
-
-				BYTE* pVictimData = (BYTE*)pVictim+(((BYTE*)pData)-((BYTE*)m_ItemData));
+				const BYTE* pVictimData = (BYTE*)pVictim+(((BYTE*)pData)-((BYTE*)m_pItemData));
 
 				if ((m_AllowMultiSelect) || ((INT)a==RetainSelection))
 					pData->Selected = ((FVItemData*)pVictimData)->Selected;
@@ -190,7 +181,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	}
 	else
 	{
-		m_ItemData = NULL;
+		m_pItemData = NULL;
 		m_ItemDataAllocated = 0;
 
 		m_FocusItem = m_HotItem = -1;
@@ -318,7 +309,7 @@ void CFileView::SelectItem(INT Index, BOOL Select, BOOL InternalCall)
 
 void CFileView::EnsureVisible(INT Index)
 {
-	if (!m_EnableScrolling)
+	if ((m_Flags & FF_ENABLESCROLLING)==0)
 		return;
 
 	CRect rect;
@@ -369,7 +360,7 @@ void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 	if (!m_AllowMultiSelect)
 		ShiftSelect = FALSE;
 
-	if (ShiftSelect && m_EnableShiftSelection)
+	if (ShiftSelect && (m_Flags & FF_ENABLESHIFTSELECTION))
 	{
 		if (m_SelectionAnchor==-1)
 			m_SelectionAnchor = m_FocusItem;
@@ -716,7 +707,7 @@ void CFileView::EditLabel(INT Index)
 {
 	m_EditLabel = -1;
 
-	if ((m_EnableLabelEdit) && (p_CookedFiles) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
+	if ((m_Flags & FF_ENABLELABELEDIT) && (p_CookedFiles) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
 	{
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) ||
@@ -832,7 +823,7 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 void CFileView::ResetScrollbars()
 {
-	if (m_EnableScrolling)
+	if (m_Flags & FF_ENABLESCROLLING)
 	{
 		ScrollWindow(m_HScrollPos, m_VScrollPos);
 
@@ -843,7 +834,7 @@ void CFileView::ResetScrollbars()
 
 void CFileView::AdjustScrollbars()
 {
-	if (!m_EnableScrolling)
+	if ((m_Flags & FF_ENABLESCROLLING)==0)
 		return;
 
 	// Dimensions
@@ -936,7 +927,7 @@ void CFileView::DestroyEdit(BOOL Accept)
 
 void CFileView::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpClipRect*/)
 {
-	ASSERT(m_EnableScrolling);
+	ASSERT(m_Flags & FF_ENABLESCROLLING);
 
 	CRect rect;
 	GetClientRect(rect);
@@ -1018,7 +1009,7 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_DefaultFontHeight = m_RowHeight = theApp.m_DefaultFont.GetFontHeight();
 	m_SmallFontHeight = theApp.m_SmallFont.GetFontHeight();
 
-	if (m_EnableScrolling)
+	if (m_Flags & FF_ENABLESCROLLING)
 		ResetScrollbars();
 
 	return 0;
@@ -1126,12 +1117,12 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	case SB_PAGEUP:
 	case SB_LINEUP:
-		nInc = -m_ColWidth;
+		nInc = -HORIZONTALSCROLLWIDTH;
 		break;
 
 	case SB_PAGEDOWN:
 	case SB_LINEDOWN:
-		nInc = m_ColWidth;
+		nInc = HORIZONTALSCROLLWIDTH;
 		break;
 
 	case SB_THUMBTRACK:
@@ -1164,7 +1155,7 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 			if (BeginDragDrop())
 				return;
 
-	if (m_EnableHover || m_EnableTooltip)
+	if ((m_Flags & (FF_ENABLEHOVER | FF_ENABLETOOLTIPS))==(FF_ENABLEHOVER | FF_ENABLETOOLTIPS))
 	{
 		INT Index = ItemAtPosition(point);
 
@@ -1185,12 +1176,12 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 
 		if (m_HotItem!=Index)
 		{
-			if (m_EnableHover)
+			if (m_Flags & FF_ENABLEHOVER)
 				InvalidateItem(m_HotItem);
 
 			m_HotItem = Index;
 
-			if (m_EnableHover)
+			if (m_Flags & FF_ENABLEHOVER)
 				InvalidateItem(m_HotItem);
 		}
 	}
@@ -1216,7 +1207,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 				EditLabel(m_EditLabel);
 			}
 			else
-				if (!LFGetApp()->IsTooltipVisible() && m_EnableTooltip)
+				if (!LFGetApp()->IsTooltipVisible() && (m_Flags & FF_ENABLETOOLTIPS))
 				{
 					FormatData fd;
 					HICON hIcon = NULL;
@@ -1227,26 +1218,29 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					switch (pItemDescriptor->Type & LFTypeMask)
 					{
 					case LFTypeFile:
-						if ((m_ContextViewSettings.View!=LFViewDetails) && (m_ContextViewSettings.View!=LFViewIcons) && (m_ContextViewSettings.View!=LFViewTimeline))
-							hBitmap = theApp.m_ThumbnailCache.GetThumbnailBitmap(pItemDescriptor, NULL);
+						if (m_Flags & FF_ENABLETOOLTIPICONS)
+							hBitmap = theApp.m_ThumbnailCache.GetJumboThumbnailBitmap(pItemDescriptor);
 
 						theApp.m_FileFormats.Lookup(pItemDescriptor->CoreAttributes.FileFormat, fd);
 
 						break;
 
 					case LFTypeFolder:
-						if (!m_EnableTooltipOnVirtual)
+						if ((m_Flags & FF_ENABLEFOLDERTOOLTIPS)==0)
 							goto Leave;
+
+						if ((m_Flags & FF_ENABLETOOLTIPICONS) && theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail)
+							hBitmap = theApp.m_ThumbnailCache.GetRepresentativeThumbnailBitmap(p_RawFiles, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
 
 					default:
 						fd.FormatName[0] = L'\0';
 						fd.SysIconIndex = -1;
 					}
 
-					if (!hIcon && !hBitmap)
-						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(pItemDescriptor->IconID-1);
+					if ((m_Flags & FF_ENABLETOOLTIPICONS) && !hIcon && !hBitmap)
+						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListJumbo.ExtractIcon(pItemDescriptor->IconID-1);
 
-					theApp.ShowTooltip(this, point, GetLabel(pItemDescriptor), GetHintForItem(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
+					theApp.ShowTooltip(this, point, GetLabel(pItemDescriptor), theApp.GetHintForItem(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
 				}
 	}
 	else
@@ -1312,7 +1306,7 @@ void CFileView::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 
 void CFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if ((GetKeyState(VK_CONTROL)>=0) && (nChar>=32) && (m_EditLabel==-1))
+	if ((GetKeyState(VK_CONTROL)>=0) && (nChar>=(m_TypingBuffer[0] ? (UINT)32 : (UINT)33)) && (m_EditLabel==-1))
 	{
 		if (p_CookedFiles)
 			if (p_CookedFiles->m_ItemCount>1)
@@ -1373,6 +1367,12 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectNone();
+
+		break;
+
+	case VK_SPACE:
+		if ((m_FocusItem!=-1) && !m_TypingBuffer[0])
+			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !IsSelected(m_FocusItem));
 
 		break;
 

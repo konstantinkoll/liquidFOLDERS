@@ -355,19 +355,16 @@ void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
 	const UINT DefaultView = m_Contexts[Context].CtxProperties.DefaultView;
 
 	// Default columns
-	UINT Index = 0;
+	memcpy_s(&m_ContextViewSettings[Context].ColumnOrder, LFAttributeCount*sizeof(INT), m_SortedAttributeList, sizeof(LFAttributeList));
 
-	for (UINT Priority=0; Priority<=LFMaxAttributePriority; Priority++)
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (m_Attributes[a].AttrProperties.DefaultPriority==Priority)
-			{
-				m_ContextViewSettings[Context].ColumnWidth[a] = (m_Attributes[a].AttrProperties.AlwaysShow || IsAttributeAdvertised(Context, a)) ? m_Attributes[a].TypeProperties.DefaultColumnWidth : 0;
-				m_ContextViewSettings[Context].ColumnOrder[Index++] = a;
+	for (UINT a=0; a<LFAttributeCount; a++)
+	{
+		m_ContextViewSettings[Context].ColumnWidth[a] = (m_Attributes[a].AttrProperties.AlwaysShow || IsAttributeAdvertised(Context, a)) ? m_Attributes[a].TypeProperties.DefaultColumnWidth : 0;
 
-				// Double the width of file name
-				if (a==LFAttrFileName)
-					m_ContextViewSettings[Context].ColumnWidth[a] *= 2;
-			}
+		// Double the width of file name
+		if (a==LFAttrFileName)
+			m_ContextViewSettings[Context].ColumnWidth[a] *= 2;
+	}
 
 	// Read settings
 	if (!Reset)

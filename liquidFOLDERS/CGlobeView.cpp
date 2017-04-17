@@ -12,7 +12,7 @@
 // CGlobeView
 //
 
-#define GetItemData(Index)     ((GlobeItemData*)(m_ItemData+Index*m_DataSize))
+#define GetItemData(Index)     ((GlobeItemData*)(m_pItemData+Index*m_DataSize))
 #define DISTANCENEAR           3.0f
 #define DISTANCEFAR            17.0f
 #define DOLLY                  0.09f
@@ -25,7 +25,7 @@
 #define WHITE                  100
 
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeItemData), FALSE, TRUE, TRUE, FALSE, FALSE)
+	: CFileView(sizeof(GlobeItemData), FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS)
 {
 	m_RenderContext.pDC = NULL;
 	m_RenderContext.hRC = NULL;

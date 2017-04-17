@@ -133,13 +133,8 @@ void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL 
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
 
-void AppendAttribute(CString& Str, UINT Attr, LPCWSTR Value);
-void AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr);
-CString GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName=NULL);
-CString GetHintForStore(LFStoreDescriptor* pStoreDescriptor);
 
-
-// IATA database
+// IATA
 
 HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height);
 

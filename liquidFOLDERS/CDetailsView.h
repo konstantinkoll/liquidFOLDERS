@@ -1,18 +1,18 @@
 
-// CIconsView.h: Schnittstelle der Klasse CIconsView
+// CDetailsView.h: Schnittstelle der Klasse CDetailsView
 //
 
 #pragma once
 #include "CGridView.h"
 
 
-// CIconsView
+// CDetailsView
 //
 
-class CIconsView : public CGridView
+class CDetailsView : public CGridView
 {
 public:
-	CIconsView(UINT DataSize=sizeof(GridItemData));
+	CDetailsView(UINT DataSize=sizeof(GridItemData));
 
 protected:
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);

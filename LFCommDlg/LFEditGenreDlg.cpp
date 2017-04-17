@@ -28,7 +28,7 @@ void LFEditGenreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 void LFEditGenreDlg::AddItem(LFMusicGenre* pMusicGenre, INT Index)
 {
-	m_wndGenreList.AddItem(pMusicGenre, Index, Index<GENREBUFFERSIZE ? m_FileCount[Index] : 0, Index<GENREBUFFERSIZE ? m_FileSize[Index] : 0);
+	m_wndGenreList.AddItem(pMusicGenre, Index, Index<GENREBUFFERSIZE ? m_FileCount[Index] : 0, Index<GENREBUFFERSIZE ? m_Description[Index] : 0);
 }
 
 void LFEditGenreDlg::AddCategory(INT IconID)
@@ -70,7 +70,7 @@ BOOL LFEditGenreDlg::InitDialog()
 	LFFreeFilter(pFilter);
 
 	ZeroMemory(m_FileCount, sizeof(m_FileCount));
-	ZeroMemory(m_FileSize, sizeof(m_FileSize));
+	ZeroMemory(m_Description, sizeof(m_Description));
 
 	for (UINT a=0; a<pCookedFiles->m_ItemCount; a++)
 	{
@@ -82,7 +82,7 @@ BOOL LFEditGenreDlg::InitDialog()
 			ASSERT(v.UINT32<256);
 
 			m_FileCount[v.UINT32] = (*pCookedFiles)[a]->AggregateCount;
-			m_FileSize[v.UINT32] = (*pCookedFiles)[a]->CoreAttributes.FileSize;
+			wcsncpy_s(m_Description[v.UINT32], 256, (*pCookedFiles)[a]->Description, _TRUNCATE);
 		}
 	}
 
@@ -99,7 +99,7 @@ BOOL LFEditGenreDlg::InitDialog()
 	while (Index!=-1)
 	{
 		if (pMusicGenre->Primary)
-			if (pMusicGenre->IconID==IDI_FLD_NOTE)
+			if (pMusicGenre->IconID==IDI_FLD_DEFAULTGENRE)
 			{
 				pOtherPrimary = pMusicGenre;
 				OtherPrimaryIndex = Index;

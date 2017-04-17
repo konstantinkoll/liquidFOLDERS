@@ -10,10 +10,10 @@
 // CGridView
 //
 
-#define GetItemData(Index)     ((GridItemData*)(m_ItemData+(Index)*m_DataSize))
+#define GetItemData(Index)     ((GridItemData*)(m_pItemData+(Index)*m_DataSize))
 
-CGridView::CGridView(UINT DataSize, BOOL EnableLabelEdit)
-	: CFileView(DataSize, TRUE, TRUE, TRUE, TRUE, EnableLabelEdit, TRUE)
+CGridView::CGridView(SIZE_T DataSize, UINT Flags)
+	: CFileView(DataSize, Flags | FF_ENABLESCROLLING | FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLESHIFTSELECTION)
 {
 }
 
@@ -121,24 +121,23 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
-void CGridView::DrawJumboIcon(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor)
+void CGridView::DrawJumboIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor)
 {
 	if (pItemDescriptor->IconID)
 	{
-		theApp.m_CoreImageListJumbo.DrawEx(&dc, pItemDescriptor->IconID-1, CPoint((rect.right+rect.left-129)/2, (rect.top+rect.bottom-128)/2), CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail)
+			if (theApp.m_ThumbnailCache.DrawRepresentativeThumbnail(dc, rect, p_RawFiles, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate))
+				return;
+
+		const INT YOffset = (pItemDescriptor->IconID==IDI_FLD_PLACEHOLDER) ? 1 : 0;
+		theApp.m_CoreImageListJumbo.DrawEx(&dc, pItemDescriptor->IconID-1, CPoint((rect.right+rect.left-128)/2+YOffset, (rect.top+rect.bottom-128)/2), CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
 	}
 	else
 	{
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
-		rect.OffsetRect(1, 0);
-
 		if (!theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, pItemDescriptor))
-		{
-			rect.OffsetRect(-1, 0);
-
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
-		}
 	}
 }
 
@@ -176,6 +175,7 @@ void CGridView::OnPaint()
 	{
 		RECT rectIntersect;
 
+		// Items
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			GridItemData* pData = GetItemData(a);
@@ -192,6 +192,7 @@ void CGridView::OnPaint()
 			}
 		}
 
+		// Categories
 		if (p_CookedFiles->m_HasCategories)
 			for (UINT a=0; a<LFItemCategoryCount; a++)
 			{

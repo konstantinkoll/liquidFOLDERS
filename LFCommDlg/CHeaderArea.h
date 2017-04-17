@@ -19,7 +19,7 @@ public:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL Shadow=FALSE);
-	void SetHeader(LPCWSTR Caption=L"", LPCWSTR Hint=L"", HBITMAP hBitmap=NULL, BOOL Repaint=TRUE);
+	void SetHeader(LPCWSTR Caption=L"", LPCWSTR Hint=L"", HBITMAP hBitmap=NULL, const CPoint& m_BitmapOffset=CPoint(0, 0), BOOL Repaint=TRUE);
 	UINT GetPreferredHeight() const;
 	CHeaderButton* AddButton(UINT nID=0);
 
@@ -45,6 +45,7 @@ protected:
 	HBITMAP hIconBitmap;
 	INT m_BitmapWidth;
 	INT m_BitmapHeight;
+	CPoint m_BitmapOffset;
 	INT m_RightEdge;
 
 private:

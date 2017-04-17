@@ -14,7 +14,7 @@
 #define PADDING     6
 
 CIconsView::CIconsView(UINT DataSize)
-	: CGridView(DataSize)
+	: CGridView(DataSize, FF_ENABLELABELEDIT)
 {
 }
 

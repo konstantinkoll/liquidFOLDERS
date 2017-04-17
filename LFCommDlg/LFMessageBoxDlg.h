@@ -31,7 +31,7 @@ protected:
 	CRect m_RectText;
 	CPoint m_IconPos;
 	INT m_IconSize;
-	HICON hIcon;
+	HICON m_hIcon;
 
 private:
 	void SetButton(UINT nResID, HINSTANCE hInstance, UINT nCommand, UINT& cButtons);

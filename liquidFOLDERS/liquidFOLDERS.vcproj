@@ -408,6 +408,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CDetailsView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileDropWnd.cpp"
 				>
 			</File>
@@ -527,6 +531,10 @@
 			>
 			<File
 				RelativePath=".\CCalendarView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CDetailsView.h"
 				>
 			</File>
 			<File
@@ -708,11 +716,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Thumbnail_Frame.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Thumbnail_Shadow.png"
+				RelativePath=".\res\Thumbnail.png"
 				>
 			</File>
 		</Filter>

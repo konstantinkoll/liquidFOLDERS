@@ -45,6 +45,8 @@ IDI_STR_TWITTER         ICON                    "res\\STR_Twitter.ico"
 IDI_STR_YOUTUBE         ICON                    "res\\STR_YouTube.ico"
 IDI_FLD_DEFAULT         ICON                    "res\\FLD_Default.ico"
 IDI_FLD_ALL             ICON                    "res\\FLD_All.ico"
+IDI_FLD_DEFAULTGENRE    ICON                    "res\\FLD_DefaultGenre.ico"
+IDI_FLD_PLACEHOLDER     ICON                    "res\\FLD_Placeholder.ico"
 IDI_FLD_ALTERNATIVE     ICON                    "res\\FLD_Alternative.ico"
 IDI_FLD_AMBIENT         ICON                    "res\\FLD_Ambient.ico"
 IDI_FLD_BLUES           ICON                    "res\\FLD_Blues.ico"
@@ -58,7 +60,6 @@ IDI_FLD_JAZZ            ICON                    "res\\FLD_Jazz.ico"
 IDI_FLD_JPOP            ICON                    "res\\FLD_J-Pop.ico"
 IDI_FLD_LATIN           ICON                    "res\\FLD_Latin.ico"
 IDI_FLD_METAL           ICON                    "res\\FLD_Metal.ico"
-IDI_FLD_NOTE            ICON                    "res\\FLD_Note.ico"
 IDI_FLD_OLDIES          ICON                    "res\\FLD_Oldies.ico"
 IDI_FLD_POP             ICON                    "res\\FLD_Pop.ico"
 IDI_FLD_RANDB           ICON                    "res\\FLD_RandB.ico"
@@ -184,17 +185,23 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Zwischenablage"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Unterordner"
     IDS_CONTEXT_SUBFOLDER_DAY "Tag"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
     IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
+    IDS_CONTEXT_SUBFOLDER_ARTIST "Künstler"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_NEWSTORE            "Neuer Store"
     IDS_LASTSEEN            "Zuletzt angeschlossen von %s"
-    IDS_SEENON              "Angeschlossen auf %s"
     IDS_FILECOUNT_SINGULAR  "%u Datei (%s)"
     IDS_FILECOUNT_PLURAL    "%u Dateien (%s)"
+    IDS_MEDIACOUNT_SINGULAR "%u Titel (%s)"
+    IDS_MEDIACOUNT_PLURAL   "%u Titel (%s)"
+    IDS_MINUTE              "%I64u Minute"
+    IDS_MINUTES             "%I64u Minuten"
+    IDS_HOUR                "%I64u Stunde"
+    IDS_HOURS               "%I64u Stunden"
     IDS_ERRORCAPTION        "Fehler"
     IDS_RATING1             "Schlecht"
     IDS_RATING2             "Ausreichend"
@@ -329,13 +336,13 @@ BEGIN
     IDS_ATTR_CHANNELS       "Kanäle"
     IDS_ATTR_SAMPLERATE     "Samplerate"
     IDS_ATTR_AUDIOCODEC     "Audio-Codec"
-    IDS_ATTR_DURATION       "Dauer"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_DURATION       "Laufzeit"
     IDS_ATTR_BITRATE        "Bitrate"
-    IDS_ATTR_ARTIST         "Autor oder Künstler"
+    IDS_ATTR_ARTIST         "Künstler"
     IDS_ATTR_TITLE          "Titel"
     IDS_ATTR_COPYRIGHT      "Copyright"
     IDS_ATTR_ISBN           "ISBN"
@@ -349,7 +356,12 @@ BEGIN
     IDS_ATTR_RESPONSIBLE    "Verantwortlich"
     IDS_ATTR_DUETIME        "Fällig am"
     IDS_ATTR_DONETIME       "Erledigt am"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_CUSTOMER       "Kunde oder Klient"
+    IDS_ATTR_AUTHOR         "Autor"
 END
 
 STRINGTABLE 
@@ -471,17 +483,23 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Portapapeles"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Subcarpeta"
     IDS_CONTEXT_SUBFOLDER_DAY "Día"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Álbum"
     IDS_CONTEXT_SUBFOLDER_GENRE "Género"
+    IDS_CONTEXT_SUBFOLDER_ARTIST "Artista"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Álbum"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_NEWSTORE            "Nuevo store"
     IDS_LASTSEEN            "Conectado por última vez desde %s"
-    IDS_SEENON              "Conectado en %s"
     IDS_FILECOUNT_SINGULAR  "%u archivo (%s)"
     IDS_FILECOUNT_PLURAL    "%u archivos (%s)"
+    IDS_MEDIACOUNT_SINGULAR "%u pieza (%s)"
+    IDS_MEDIACOUNT_PLURAL   "%u piezas (%s)"
+    IDS_MINUTE              "%I64u minuto"
+    IDS_MINUTES             "%I64u minutos"
+    IDS_HOUR                "%I64u hora"
+    IDS_HOURS               "%I64u horas"
     IDS_ERRORCAPTION        "Error"
     IDS_RATING1             "Pobre"
     IDS_RATING2             "Aceptable"
@@ -616,13 +634,13 @@ BEGIN
     IDS_ATTR_CHANNELS       "Canales"
     IDS_ATTR_SAMPLERATE     "Nivel de muestra"
     IDS_ATTR_AUDIOCODEC     "Códec de audio"
-    IDS_ATTR_DURATION       "Duración"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_DURATION       "Duración"
     IDS_ATTR_BITRATE        "Tasa de bits"
-    IDS_ATTR_ARTIST         "Artista ó autor"
+    IDS_ATTR_ARTIST         "Artista"
     IDS_ATTR_TITLE          "Título"
     IDS_ATTR_COPYRIGHT      "Derecho de reproducción"
     IDS_ATTR_ISBN           "ISBN"
@@ -636,7 +654,12 @@ BEGIN
     IDS_ATTR_RESPONSIBLE    "Responsable"
     IDS_ATTR_DUETIME        "En tiempo"
     IDS_ATTR_DONETIME       "Finalizado"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_CUSTOMER       "Consumidor ó cliente"
+    IDS_ATTR_AUTHOR         "Autor"
 END
 
 STRINGTABLE 
@@ -758,17 +781,23 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Presse-papiers"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Sous-dossier"
     IDS_CONTEXT_SUBFOLDER_DAY "Jour"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
     IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
+    IDS_CONTEXT_SUBFOLDER_ARTIST "Artiste"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_NEWSTORE            "Store nouveau"
     IDS_LASTSEEN            "Dernier monté de %s"
-    IDS_SEENON              "Monté sur %s"
     IDS_FILECOUNT_SINGULAR  "%u fichier (%s)"
     IDS_FILECOUNT_PLURAL    "%u fichiers (%s)"
+    IDS_MEDIACOUNT_SINGULAR "%u morceau (%s)"
+    IDS_MEDIACOUNT_PLURAL   "%u morceaux (%s)"
+    IDS_MINUTE              "%I64u minute"
+    IDS_MINUTES             "%I64u minutes"
+    IDS_HOUR                "%I64u heure"
+    IDS_HOURS               "%I64u heures"
     IDS_ERRORCAPTION        "Erreur"
     IDS_RATING1             "Mauvais"
     IDS_RATING2             "Suffisant"
@@ -904,13 +933,13 @@ BEGIN
     IDS_ATTR_CHANNELS       "Canaux"
     IDS_ATTR_SAMPLERATE     "Vitesse d'exploration"
     IDS_ATTR_AUDIOCODEC     "Codec d'audio"
-    IDS_ATTR_DURATION       "Durée"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_DURATION       "Durée"
     IDS_ATTR_BITRATE        "Débit binaire"
-    IDS_ATTR_ARTIST         "Artiste ou auteur"
+    IDS_ATTR_ARTIST         "Artiste"
     IDS_ATTR_TITLE          "Titre"
     IDS_ATTR_COPYRIGHT      "Copyright"
     IDS_ATTR_ISBN           "ISBN"
@@ -924,7 +953,12 @@ BEGIN
     IDS_ATTR_RESPONSIBLE    "Personne responsable"
     IDS_ATTR_DUETIME        "Dû le"
     IDS_ATTR_DONETIME       "Fini le"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_CUSTOMER       "Client"
+    IDS_ATTR_AUTHOR         "Auteur"
 END
 
 STRINGTABLE 
@@ -1083,17 +1117,23 @@ BEGIN
     IDS_CONTEXT_CLIPBOARD   "Clipboard"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Subfolder"
     IDS_CONTEXT_SUBFOLDER_DAY "Day"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
     IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
+    IDS_CONTEXT_SUBFOLDER_ARTIST "Artist"
+    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_NEWSTORE            "New store"
     IDS_LASTSEEN            "Last mounted from %s"
-    IDS_SEENON              "Mounted on %s"
     IDS_FILECOUNT_SINGULAR  "%u file (%s)"
     IDS_FILECOUNT_PLURAL    "%u files (%s)"
+    IDS_MEDIACOUNT_SINGULAR "%u medium (%s)"
+    IDS_MEDIACOUNT_PLURAL   "%u media (%s)"
+    IDS_MINUTE              "%I64u minute"
+    IDS_MINUTES             "%I64u minutes"
+    IDS_HOUR                "%I64u hour"
+    IDS_HOURS               "%I64u hours"
     IDS_ERRORCAPTION        "Error"
     IDS_RATING1             "Poor"
     IDS_RATING2             "Fair"
@@ -1227,13 +1267,13 @@ BEGIN
     IDS_ATTR_CHANNELS       "Channels"
     IDS_ATTR_SAMPLERATE     "Sample rate"
     IDS_ATTR_AUDIOCODEC     "Audio codec"
-    IDS_ATTR_DURATION       "Duration"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_DURATION       "Duration"
     IDS_ATTR_BITRATE        "Bitrate"
-    IDS_ATTR_ARTIST         "Artist or author"
+    IDS_ATTR_ARTIST         "Artist"
     IDS_ATTR_TITLE          "Title"
     IDS_ATTR_COPYRIGHT      "Copyright"
     IDS_ATTR_ISBN           "ISBN"
@@ -1247,7 +1287,12 @@ BEGIN
     IDS_ATTR_RESPONSIBLE    "Responsible"
     IDS_ATTR_DUETIME        "Due"
     IDS_ATTR_DONETIME       "Done"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_CUSTOMER       "Customer or client"
+    IDS_ATTR_AUTHOR         "Author"
 END
 
 STRINGTABLE 

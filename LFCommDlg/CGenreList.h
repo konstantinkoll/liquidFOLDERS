@@ -20,9 +20,9 @@ struct GenreItemData
 {
 	LFMusicGenre* pMusicGenre;
 	UINT Index;
-	RECT Rect;
 	UINT FileCount;
-	INT64 FileSize;
+	LPCWSTR pDescription;
+	RECT Rect;
 };
 
 
@@ -38,7 +38,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void AddCategory(LFMusicGenre* pMusicGenre);
-	void AddItem(LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, INT64 FileSize);
+	void AddItem(LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, LPCWSTR pDescription);
 	UINT GetSelectedGenre() const;
 	void EnsureVisible(INT Index);
 	void SelectGenre(UINT Genre);

@@ -10,7 +10,7 @@
 // CTagcloudView
 //
 
-#define GetItemData(Index)     ((TagcloudItemData*)(m_ItemData+(Index)*m_DataSize))
+#define GetItemData(Index)     ((TagcloudItemData*)(m_pItemData+(Index)*m_DataSize))
 #define DEFAULTFONT            2
 #define TEXTFORMAT             DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
 #define GUTTER                 3
@@ -20,7 +20,7 @@
 
 
 CTagcloudView::CTagcloudView()
-	: CGridView(sizeof(TagcloudItemData), FALSE)
+	: CGridView(sizeof(TagcloudItemData), FF_ENABLETOOLTIPICONS)
 {
 }
 

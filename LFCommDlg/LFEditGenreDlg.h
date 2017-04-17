@@ -36,7 +36,7 @@ private:
 
 	CHAR m_StoreID[LFKeySize];
 	UINT m_FileCount[GENREBUFFERSIZE];
-	INT64 m_FileSize[GENREBUFFERSIZE];
+	WCHAR m_Description[GENREBUFFERSIZE][64];
 };
 
 inline UINT LFEditGenreDlg::GetSelectedGenre() const

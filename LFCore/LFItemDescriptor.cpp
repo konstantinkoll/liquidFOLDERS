@@ -133,14 +133,33 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 	pItemDescriptor->IconID = LFGetStoreIcon(pStoreDescriptor, &pItemDescriptor->Type);
 
 	// Description
-	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+	LFGetFileSummary(pStoreDescriptor->FileCount[LFContextAllFiles], pStoreDescriptor->FileSize[LFContextAllFiles], pItemDescriptor->Description, 256);
+
+	WCHAR Hint[256] = L"";
+	if (LFIsStoreMounted(pStoreDescriptor))
+	{
+		if (pStoreDescriptor->Source>LFTypeSourceInternal)
+		{
+			Hint[0] = L' ';
+			LoadString(LFCoreModuleHandle, IDS_QSRC_UNKNOWN+pStoreDescriptor->Source, &Hint[1], 255);
+			Hint[1] = (WCHAR)tolower(Hint[1]);
+		}
+	}
+	else
+	{
 		if (wcscmp(pStoreDescriptor->LastSeen, L"")!=0)
 		{
 			WCHAR LastSeen[256];
-			LoadString(LFCoreModuleHandle, LFIsStoreMounted(pStoreDescriptor) ? IDS_SEENON : IDS_LASTSEEN, LastSeen, 256);
+			LoadString(LFCoreModuleHandle, IDS_LASTSEEN, LastSeen, 256);
 
-			wsprintf(pItemDescriptor->Description, LastSeen, pStoreDescriptor->LastSeen);
+			wcscpy_s(Hint, 256, L", ");
+			swprintf_s(&Hint[2], 254, LastSeen, pStoreDescriptor->LastSeen);
+			Hint[2] = (WCHAR)tolower(Hint[2]);
 		}
+	}
+
+	if (Hint[0])
+		wcscat_s(pItemDescriptor->Description, 256, Hint);
 
 	// Standard-Attribute kopieren
 	wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, pStoreDescriptor->StoreName);

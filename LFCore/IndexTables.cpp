@@ -27,7 +27,7 @@ extern const IdxTableEntry CoreAttributeEntries[] = {
 };
 
 const IdxTableEntry DocumentAttributeEntries[] = {
-	{ LFAttrArtist, offsetof(DocumentAttributes, Artist) },
+	{ LFAttrAuthor, offsetof(DocumentAttributes, Author) },
 	{ LFAttrCopyright, offsetof(DocumentAttributes, Copyright) },
 	{ LFAttrTitle, offsetof(DocumentAttributes, Title) },
 	{ LFAttrResponsible, offsetof(DocumentAttributes, Responsible) },

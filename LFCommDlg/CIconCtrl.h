@@ -13,14 +13,13 @@ class CIconCtrl : public CWnd
 public:
 	CIconCtrl();
 
-	void SetIcon(HICON hIcon, INT cx, INT cy, BOOL Center=TRUE);
+	void SetIcon(HICON hIcon, INT IconSize, BOOL Center=TRUE);
 	void SetCoreIcon(UINT nID, BOOL Center=TRUE);
 	void SetTaskIcon(HINSTANCE hInst, UINT nID, BOOL Center=FALSE);
 
 protected:
-	HICON m_Icon;
-	INT m_IconSizeX;
-	INT m_IconSizeY;
+	INT m_IconSize;
+	HICON m_hIcon;
 	BOOL m_Center;
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

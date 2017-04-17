@@ -70,18 +70,22 @@ void CGenreList::AddCategory(LFMusicGenre* pMusicGenre)
 	m_IsFirstItemInCategory = TRUE;
 }
 
-void CGenreList::AddItem(LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, INT64 FileSize)
+void CGenreList::AddItem(LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, LPCWSTR pDescription)
 {
+	ASSERT(pMusicGenre);
+
 	// Hide some genres like "Negerpunk"
 	if (!pMusicGenre->Show)
 		return;
+
+	ASSERT(pDescription);
 
 	GenreItemData id;
 
 	id.pMusicGenre = pMusicGenre;
 	id.Index = Index;
 	id.FileCount = FileCount;
-	id.FileSize = FileSize;
+	id.pDescription = pDescription;
 	id.Rect.left = 2*BACKSTAGEBORDER+ICONSIZE-2*ICONPADDING;
 	id.Rect.top = m_ItemsHeight;
 	id.Rect.bottom = id.Rect.top+m_ItemHeight;
@@ -460,12 +464,7 @@ void CGenreList::OnMouseHover(UINT nFlags, CPoint point)
 	{
 		if (m_HotItem!=-1)
 			if (!LFGetApp()->IsTooltipVisible())
-			{
-				WCHAR Hint[256];
-				LFCombineFileCountSize(m_Items[m_HotItem].FileCount, m_Items[m_HotItem].FileSize, Hint, 256);
-
-				LFGetApp()->ShowTooltip(this, point, m_Items[m_HotItem].pMusicGenre->Name, Hint);
-			}
+				LFGetApp()->ShowTooltip(this, point, m_Items[m_HotItem].pMusicGenre->Name, m_Items[m_HotItem].pDescription);
 	}
 	else
 	{

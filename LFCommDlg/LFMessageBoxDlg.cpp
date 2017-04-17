@@ -22,7 +22,7 @@ LFMessageBoxDlg::LFMessageBoxDlg(CWnd* pParentWnd, const CString& Text, const CS
 	m_Type = Type;
 
 	m_IconSize = 0;
-	hIcon = NULL;
+	m_hIcon = NULL;
 }
 
 BOOL LFMessageBoxDlg::PreTranslateMessage(MSG* pMsg)
@@ -46,8 +46,8 @@ void LFMessageBoxDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectL
 	LFDialog::PaintOnBackground(dc, g, rectLayout);
 
 	// Icon
-	if (hIcon)
-		DrawIconEx(dc, rectLayout.left+m_IconPos.x, rectLayout.top+m_IconPos.y, hIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+	if (m_hIcon)
+		DrawIconEx(dc, rectLayout.left+m_IconPos.x, rectLayout.top+m_IconPos.y, m_hIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 
 	// Text
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
@@ -144,7 +144,7 @@ BOOL LFMessageBoxDlg::InitDialog()
 			LFGetApp()->PlayDefaultSound();
 		}
 
-		hIcon = (HICON)LoadImage(AfxGetResourceHandle(), IconName, IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+		m_hIcon = (HICON)LoadImage(AfxGetResourceHandle(), IconName, IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 	}
 
 	// Layout
@@ -156,7 +156,7 @@ BOOL LFMessageBoxDlg::InitDialog()
 
 	CPoint rectBorders(m_RectText.left/2, m_RectText.top);
 
-	if (hIcon)
+	if (m_hIcon)
 	{
 		m_IconPos = m_RectText.TopLeft();
 		m_RectText.left += m_IconSize+rectBorders.x;
@@ -226,7 +226,7 @@ END_MESSAGE_MAP()
 
 void LFMessageBoxDlg::OnDestroy()
 {
-	DestroyIcon(hIcon);
+	DestroyIcon(m_hIcon);
 
 	LFDialog::OnDestroy();
 }

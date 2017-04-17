@@ -10,8 +10,8 @@
 // LFCreateStoreDlg
 //
 
-#define WM_VOLUMECHANGE     WM_USER+5
-#define GetSelectedVolume() m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
+#define WM_VOLUMECHANGE         WM_USER+5
+#define GetSelectedVolume()     m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
 
 LFCreateStoreDlg::LFCreateStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_CREATESTORE, pParentWnd)
@@ -31,7 +31,7 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		GetDlgItem(IDC_STORENAME)->GetWindowText(m_StoreName);
+		GetDlgItem(IDC_STORENAME)->GetWindowText(m_StoreName, 256);
 
 		WCHAR Comments[256];
 		GetDlgItem(IDC_COMMENTS)->GetWindowText(Comments, 256);
@@ -45,7 +45,7 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 		}
 
 		CWaitCursor csr;
-		m_Result = LFCreateStoreLiquidfolders(m_StoreName.GetBuffer(), Comments, cVolume, m_wndMakeSearchable.GetCheck());
+		m_Result = LFCreateStoreLiquidfolders(m_StoreName, Comments, cVolume, m_wndMakeSearchable.GetCheck());
 	}
 }
 
