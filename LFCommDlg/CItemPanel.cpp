@@ -106,7 +106,7 @@ void CItemPanel::SetItem(CString Text, CImageList* pIcons, INT nID, BOOL Ghosted
 	Invalidate();
 }
 
-BOOL CItemPanel::SetItem(const CHAR* pStoreID)
+BOOL CItemPanel::SetItem(const LPCSTR pStoreID)
 {
 	ASSERT(pStoreID);
 

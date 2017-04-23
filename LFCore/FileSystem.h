@@ -4,7 +4,7 @@
 
 
 void SanitizeFileName(LPWSTR lpDstName, SIZE_T cCount, LPCWSTR lpSrcName);
-void AppendGUID(LPWSTR lpPath, LFStoreDescriptor* pStoreDescriptor, WCHAR* pSuffix=L"\\");
+void AppendGUID(LPWSTR lpPath, LFStoreDescriptor* pStoreDescriptor, LPCWSTR pSuffix=L"\\");
 void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR lpPath);
 BOOL FileExists(LPCWSTR lpPath, WIN32_FIND_DATA* pFindData=NULL);
 BOOL DirectoryExists(LPCWSTR lpPath);

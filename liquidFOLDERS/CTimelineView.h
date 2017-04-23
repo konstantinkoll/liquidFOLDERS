@@ -25,10 +25,10 @@ struct TimelineItemData
 	INT PreviewRows;
 	INT ListCount;
 	WORD Year;
-	WCHAR* pArtist;
-	WCHAR* pTitle;
-	WCHAR* pAlbum;
-	WCHAR* pComments;
+	LPCWSTR pArtist;
+	LPCWSTR pTitle;
+	LPCWSTR pAlbum;
+	LPCWSTR pComments;
 	BYTE Preview;
 };
 
@@ -64,7 +64,7 @@ protected:
 	INT m_IconSize;
 
 private:
-	static WCHAR* GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, UINT Attr, UINT Mask);
+	static LPCWSTR GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, UINT Attr, UINT Mask);
 	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* ic, BOOL Themed);
 
 	LFDynArray<ItemCategory, 8, 8> m_Categories;

@@ -12,7 +12,7 @@
 // CHeapFile
 //
 
-CHeapfile::CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize, BOOL Initialize)
+CHeapfile::CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initialize)
 {
 	assert(sizeof(HeapfileHeader)==512);
 
@@ -124,9 +124,9 @@ UINT64 CHeapfile::GetRequiredFileSize() const
 	return GetRequiredElementSize()*m_ItemCount+sizeof(HeapfileHeader);
 }
 
-void* CHeapfile::GetStoreData(void* Ptr) const
+LPVOID CHeapfile::GetStoreData(LPVOID pChar) const
 {
-	return m_Header.StoreDataSize ? (BYTE*)Ptr+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
+	return m_Header.StoreDataSize ? (BYTE*)pChar+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
 }
 
 UINT CHeapfile::GetError(BOOL SingleStore)
@@ -260,7 +260,7 @@ void CHeapfile::MakeDirty(BOOL NeedsCompaction)
 	m_HeaderNeedsWriteback |= NeedsCompaction;
 }
 
-BOOL CHeapfile::FindNext(INT& Next, void*& Ptr)
+BOOL CHeapfile::FindNext(INT& Next, LPVOID& Ptr)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
@@ -283,7 +283,7 @@ BOOL CHeapfile::FindNext(INT& Next, void*& Ptr)
 	return TRUE;
 }
 
-BOOL CHeapfile::FindKey(CHAR* FileID, INT& Next, void*& Ptr)
+BOOL CHeapfile::FindKey(LPCSTR FileID, INT& Next, LPVOID& Ptr)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
@@ -327,13 +327,13 @@ void CHeapfile::Add(LFItemDescriptor* pItemDescriptor)
 	m_LastInBuffer = m_ItemCount;
 
 	// Im RAM hinzufügen
-	BYTE* Ptr = (BYTE*)m_pBuffer+(m_ItemCount-m_FirstInBuffer)*m_Header.ElementSize;
-	GetFromItemDescriptor(Ptr, pItemDescriptor);
+	BYTE* pChar = (BYTE*)m_pBuffer+(m_ItemCount-m_FirstInBuffer)*m_Header.ElementSize;
+	GetFromItemDescriptor(pChar, pItemDescriptor);
 
 	if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
 	{
-		Ptr += m_Header.ElementSize-LFKeySize;
-		memcpy(Ptr, pItemDescriptor->CoreAttributes.FileID, LFKeySize);
+		pChar += m_Header.ElementSize-LFKeySize;
+		memcpy(pChar, pItemDescriptor->CoreAttributes.FileID, LFKeySize);
 	}
 
 	MakeDirty();
@@ -341,11 +341,11 @@ void CHeapfile::Add(LFItemDescriptor* pItemDescriptor)
 	m_ItemCount++;
 }
 
-void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, void* Ptr)
+void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, LPVOID pChar)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
-	GetFromItemDescriptor(Ptr, pItemDescriptor);
+	GetFromItemDescriptor(pChar, pItemDescriptor);
 
 	MakeDirty();
 }
@@ -355,10 +355,10 @@ void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, INT& Next)
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 	assert(pItemDescriptor);
 
-	void* Ptr;
+	LPVOID pChar;
 
-	if (FindKey(pItemDescriptor->CoreAttributes.FileID, Next, Ptr))
-		Update(pItemDescriptor, Ptr);
+	if (FindKey(pItemDescriptor->CoreAttributes.FileID, Next, pChar))
+		Update(pItemDescriptor, pChar);
 }
 
 void CHeapfile::Update(LFItemDescriptor* pItemDescriptor)
@@ -371,24 +371,24 @@ void CHeapfile::Update(LFItemDescriptor* pItemDescriptor)
 	Update(pItemDescriptor, ID);
 }
 
-void CHeapfile::Invalidate(void* Ptr)
+void CHeapfile::Invalidate(LPVOID pChar)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
-	*((BYTE*)Ptr+m_KeyOffset) = 0;
+	*((BYTE*)pChar+m_KeyOffset) = 0;
 
 	MakeDirty(TRUE);
 }
 
-void CHeapfile::Invalidate(CHAR* FileID, INT& Next)
+void CHeapfile::Invalidate(LPCSTR FileID, INT& Next)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 	assert(FileID);
 
-	void* Ptr;
+	LPVOID pChar;
 
-	if (FindKey(FileID, Next, Ptr))
-		Invalidate(Ptr);
+	if (FindKey(FileID, Next, pChar))
+		Invalidate(pChar);
 }
 
 void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
@@ -401,7 +401,7 @@ void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
 	Invalidate(pItemDescriptor->CoreAttributes.FileID, ID);
 }
 
-void CHeapfile::ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize)
+void CHeapfile::ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const SIZE_T SrcSize)
 {
 	assert(pDst);
 	assert(pSrc);
@@ -414,9 +414,9 @@ void CHeapfile::ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZ
 		ZeroMemory((BYTE*)pDst+SrcSize, DstSize-SrcSize);
 }
 
-__forceinline void CHeapfile::GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const
+__forceinline void CHeapfile::GetAttribute(LPVOID Ptr, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const
 {
-	assert(PtrDst);
+	assert(Ptr);
 	assert(Attr<LFAttributeCount);
 
 	if (pItemDescriptor->AttributeValues[Attr])
@@ -428,31 +428,31 @@ __forceinline void CHeapfile::GetAttribute(void* PtrDst, INT_PTR Offset, UINT At
 			EndOfTuple -= LFKeySize;
 
 		if (Offset+Size<=EndOfTuple)
-			memcpy((BYTE*)PtrDst+Offset, pItemDescriptor->AttributeValues[Attr], Size);
+			memcpy((BYTE*)Ptr+Offset, pItemDescriptor->AttributeValues[Attr], Size);
 	}
 }
 
-void CHeapfile::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescriptor)
+void CHeapfile::GetFromItemDescriptor(LPVOID Ptr, LFItemDescriptor* pItemDescriptor)
 {
-	assert(PtrDst);
+	assert(Ptr);
 	assert(pItemDescriptor);
 
 	if (m_TableID==IDXTABLE_MASTER)
 	{
 		const INT_PTR DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
-		ZeroCopy(PtrDst, DataSize, &pItemDescriptor->CoreAttributes, sizeof(LFCoreAttributes));
+		ZeroCopy(Ptr, DataSize, &pItemDescriptor->CoreAttributes, sizeof(LFCoreAttributes));
 
 		if (m_Header.StoreDataSize)
-			ZeroCopy((BYTE*)PtrDst+DataSize, m_Header.StoreDataSize, &pItemDescriptor->StoreData, LFMaxStoreDataSize);
+			ZeroCopy((BYTE*)Ptr+DataSize, m_Header.StoreDataSize, &pItemDescriptor->StoreData, LFMaxStoreDataSize);
 	}
 	else
 	{
 		assert(m_KeyOffset==m_Header.ElementSize-LFKeySize);
 
-		ZeroMemory(PtrDst, m_Header.ElementSize-LFKeySize);
+		ZeroMemory(Ptr, m_Header.ElementSize-LFKeySize);
 
 		for (UINT a=0; a<IndexTables[m_TableID].cTableEntries; a++)
-			GetAttribute(PtrDst, IndexTables[m_TableID].pTableEntries[a].Offset, IndexTables[m_TableID].pTableEntries[a].Attr, pItemDescriptor);
+			GetAttribute(Ptr, IndexTables[m_TableID].pTableEntries[a].Offset, IndexTables[m_TableID].pTableEntries[a].Attr, pItemDescriptor);
 	}
 }
 
@@ -502,14 +502,14 @@ BOOL CHeapfile::Compact()
 	INT TempCount = 0;
 
 	INT Next = 0;
-	void* Ptr;
+	LPVOID pChar;
 
-	while (FindNext(Next, Ptr))
+	while (FindNext(Next, pChar))
 	{
-		memcpy(pTempBuffer, Ptr, m_Header.ElementSize-PaddedDataSize);
+		memcpy(pTempBuffer, pChar, m_Header.ElementSize-PaddedDataSize);
 
 		if (PaddedDataSize)
-			memcpy(pTempBuffer+TempHeader.ElementSize-PaddedDataSize, (BYTE*)Ptr+m_Header.ElementSize-PaddedDataSize, PaddedDataSize);
+			memcpy(pTempBuffer+TempHeader.ElementSize-PaddedDataSize, (BYTE*)pChar+m_Header.ElementSize-PaddedDataSize, PaddedDataSize);
 
 		if (!WriteFile(hTempFile, pTempBuffer, TempHeader.ElementSize, &Written, NULL))
 			ABORT

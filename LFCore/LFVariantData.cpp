@@ -35,7 +35,7 @@ __forceinline DOUBLE GetSeconds(DOUBLE c)
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
-BOOL IsNullValue(UINT Type, const void* pValue)
+BOOL IsNullValue(UINT Type, LPCVOID pValue)
 {
 	if (!pValue)
 		return TRUE;
@@ -46,11 +46,11 @@ BOOL IsNullValue(UINT Type, const void* pValue)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return (*(WCHAR*)pValue==L'\0');
+		return (*(LPCWSTR)pValue==L'\0');
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		return (*(CHAR*)pValue=='\0');
+		return (*(LPCSTR)pValue=='\0');
 
 	case LFTypeFourCC:
 	case LFTypeUINT:
@@ -80,7 +80,7 @@ BOOL IsNullValue(UINT Type, const void* pValue)
 	return FALSE;
 }
 
-INT CompareValues(UINT Type, const void* pValue1, const void* pValue2, BOOL CaseSensitive)
+INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitive)
 {
 	assert(Type<LFTypeCount);
 	assert(pValue1);
@@ -95,11 +95,11 @@ INT CompareValues(UINT Type, const void* pValue1, const void* pValue2, BOOL Case
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return CaseSensitive ? wcscmp((WCHAR*)pValue1, (WCHAR*)pValue2) : _wcsicmp((WCHAR*)pValue1, (WCHAR*)pValue2);
+		return CaseSensitive ? wcscmp((LPCWSTR)pValue1, (LPCWSTR)pValue2) : _wcsicmp((LPCWSTR)pValue1, (LPCWSTR)pValue2);
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		return CaseSensitive ? strcmp((CHAR*)pValue1, (CHAR*)pValue2) : _stricmp((CHAR*)pValue1, (CHAR*)pValue2);
+		return CaseSensitive ? strcmp((LPCSTR)pValue1, (LPCSTR)pValue2) : _stricmp((LPCSTR)pValue1, (LPCSTR)pValue2);
 
 	case LFTypeFourCC:
 	case LFTypeUINT:
@@ -148,7 +148,7 @@ INT CompareValues(UINT Type, const void* pValue1, const void* pValue2, BOOL Case
 	return 0;
 }
 
-void ToString(const void* pValue, UINT Type, WCHAR* pStr, SIZE_T cCount)
+void ToString(LPCVOID pValue, UINT Type, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(Type<LFTypeCount);
 	assert(pStr);
@@ -158,12 +158,12 @@ void ToString(const void* pValue, UINT Type, WCHAR* pStr, SIZE_T cCount)
 		{
 		case LFTypeUnicodeString:
 		case LFTypeUnicodeArray:
-			wcscpy_s(pStr, cCount, (WCHAR*)pValue);
+			wcscpy_s(pStr, cCount, (LPCWSTR)pValue);
 			return;
 
 		case LFTypeAnsiString:
 		case LFTypeIATACode:
-			MultiByteToWideChar(CP_ACP, 0, (CHAR*)pValue, -1, pStr, (INT)cCount);
+			MultiByteToWideChar(CP_ACP, 0, (LPCSTR)pValue, -1, pStr, (INT)cCount);
 			return;
 
 		case LFTypeFourCC:
@@ -247,9 +247,9 @@ void ToString(const void* pValue, UINT Type, WCHAR* pStr, SIZE_T cCount)
 	*pStr = L'\0';
 }
 
-BOOL GetNextHashtag(WCHAR** ppUnicodeArray, WCHAR* pHashtag, SIZE_T cCount)
+BOOL GetNextHashtag(LPCWSTR* ppUnicodeArray, LPWSTR pHashtag, SIZE_T cCount)
 {
-	WCHAR* Start = NULL;
+	LPCWSTR Start = NULL;
 	BOOL InQuotation = FALSE;
 
 	while (**ppUnicodeArray!=L'\0')
@@ -310,7 +310,7 @@ BOOL GetNextHashtag(WCHAR** ppUnicodeArray, WCHAR* pHashtag, SIZE_T cCount)
 	return FALSE;
 }
 
-LFCORE_API BOOL LFContainsHashtag(WCHAR* pUnicodeArray, WCHAR* pHashtag)
+LFCORE_API BOOL LFContainsHashtag(LPCWSTR pUnicodeArray, LPCWSTR pHashtag)
 {
 	assert(pUnicodeArray);
 	assert(pHashtag);
@@ -327,7 +327,7 @@ LFCORE_API BOOL LFContainsHashtag(WCHAR* pUnicodeArray, WCHAR* pHashtag)
 // ToString
 //
 
-LFCORE_API void LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFFourCCToString(const UINT c, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -345,7 +345,7 @@ LFCORE_API void LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCount)
 	}
 }
 
-LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFUINTToString(const UINT u, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -359,14 +359,14 @@ LFCORE_API void LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount)
 	}
 }
 
-LFCORE_API void LFSizeToString(const INT64 s, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFSizeToString(const INT64 s, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
 	StrFormatByteSize(s, pStr, (UINT)cCount);
 }
 
-LFCORE_API void LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFFractionToString(const LFFraction f, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -380,14 +380,14 @@ LFCORE_API void LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCoun
 	}
 }
 
-LFCORE_API void LFDoubleToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFDoubleToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
 	swprintf_s(pStr, cCount, L"%.2lf", d);
 }
 
-LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
+LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, LPWSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
 {
 	assert(pStr);
 
@@ -398,7 +398,7 @@ LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, SIZE_T cCou
 		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
 }
 
-LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates& c, WCHAR* pStr, SIZE_T cCount, BOOL FillZero)
+LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates& c, LPWSTR pStr, SIZE_T cCount, BOOL FillZero)
 {
 	assert(pStr);
 
@@ -417,7 +417,7 @@ LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates& c, WCHAR* pStr,
 	}
 }
 
-LFCORE_API void LFTimeToString(const FILETIME t, WCHAR* pStr, SIZE_T cCount, BOOL IncludeTime)
+LFCORE_API void LFTimeToString(const FILETIME t, LPWSTR pStr, SIZE_T cCount, BOOL IncludeTime)
 {
 	assert(pStr);
 
@@ -441,7 +441,7 @@ LFCORE_API void LFTimeToString(const FILETIME t, WCHAR* pStr, SIZE_T cCount, BOO
 	}
 }
 
-LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFBitrateToString(const UINT r, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -455,7 +455,7 @@ LFCORE_API void LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount)
 	}
 }
 
-LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFDurationToString(UINT d, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -476,14 +476,14 @@ LFCORE_API void LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount)
 		}
 }
 
-LFCORE_API void LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
 	swprintf_s(pStr, cCount, L"%.1lf Megapixel", d);
 }
 
-LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -534,7 +534,7 @@ LFCORE_API BOOL LFIsNullVariantData(const LFVariantData& Value)
 	return Value.IsNull ? TRUE : IsNullValue(Value.Type, &Value.Value);
 }
 
-LFCORE_API void LFVariantDataToString(const LFVariantData& Value, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFVariantDataToString(const LFVariantData& Value, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -548,7 +548,7 @@ LFCORE_API void LFVariantDataToString(const LFVariantData& Value, WCHAR* pStr, S
 	}
 }
 
-LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr)
+LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, LPCWSTR pStr)
 {
 	LFClearVariantData(pValue);
 
@@ -557,7 +557,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 		SIZE_T Size = wcslen(pStr);
 
 		WCHAR Buffer[256];
-		WCHAR* Ptr;
+		WCHAR* pChar;
 
 		INT LatDeg;
 		INT LatMin;
@@ -657,7 +657,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 			break;
 
 		case LFTypeSize:
-			for (Ptr=Buffer; *pStr; pStr++)
+			for (pChar=Buffer; *pStr; pStr++)
 				switch (*pStr)
 				{
 				case L'0':
@@ -670,7 +670,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 				case L'7':
 				case L'8':
 				case L'9':
-					*(Ptr++) = *pStr;
+					*(pChar++) = *pStr;
 
 				case L'.':
 				case L',':
@@ -682,7 +682,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& pValue, const WCHAR* pStr
 				}
 
 Abort:
-			*Ptr = L'\0';
+			*pChar = L'\0';
 
 			if (swscanf_s(Buffer, L"%I64d", &pValue.INT64)==1)
 			{
@@ -901,15 +901,15 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFV
 		{
 		case LFTypeUnicodeString:
 		case LFTypeUnicodeArray:
-			wcscpy_s(Value.UnicodeString, 256, (WCHAR*)pItemDescriptor->AttributeValues[Value.Attr]);
+			wcscpy_s(Value.UnicodeString, 256, (LPCWSTR)pItemDescriptor->AttributeValues[Value.Attr]);
 			break;
 
 		case LFTypeAnsiString:
-			strcpy_s(Value.AnsiString, 256, (CHAR*)pItemDescriptor->AttributeValues[Value.Attr]);
+			strcpy_s(Value.AnsiString, 256, (LPCSTR)pItemDescriptor->AttributeValues[Value.Attr]);
 			break;
 
 		case LFTypeIATACode:
-			strcpy_s(Value.IATAString, 4, (CHAR*)pItemDescriptor->AttributeValues[Value.Attr]);
+			strcpy_s(Value.IATAString, 4, (LPCSTR)pItemDescriptor->AttributeValues[Value.Attr]);
 			break;
 
 		default:
@@ -954,14 +954,14 @@ LFCORE_API BOOL LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	return IsNullValue(AttrProperties[Attr].Type, pItemDescriptor->AttributeValues[Attr]);
 }
 
-LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
+LFCORE_API void LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount)
 {
 	typedef std::pair<std::wstring, BOOL> TagItem;
 	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;
 	Hashtags Tags;
 
 	WCHAR Hashtag[259];
-	WCHAR* pHashtagArray = pBuffer;
+	LPCWSTR pHashtagArray = pStr;
 	while (GetNextHashtag(&pHashtagArray, Hashtag, 256))
 	{
 		std::wstring Key(Hashtag);
@@ -978,10 +978,10 @@ LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 					Location->second.second = TRUE;
 	}
 
-	pBuffer[0] = L'\0';
+	pStr[0] = L'\0';
 	for (Hashtags::iterator it=Tags.begin(); it!=Tags.end(); it++)
 	{
-		wcscpy_s(Hashtag, 259, pBuffer[0]!=L'\0' ? L" " : L"");
+		wcscpy_s(Hashtag, 259, pStr[0]!=L'\0' ? L" " : L"");
 
 		if (it->second.first.find_first_of(L" .,:;?!|")!=std::wstring::npos)
 		{
@@ -994,13 +994,13 @@ LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 			wcscat_s(Hashtag, 259, it->second.first.c_str());
 		}
 
-		if (wcslen(pBuffer)+wcslen(Hashtag)<=255)
+		if (wcslen(pStr)+wcslen(Hashtag)<=255)
 		{
 			if (it->second.second)
 			{
 				BOOL First = TRUE;
-				for (WCHAR* Ptr=Hashtag; *Ptr; Ptr++)
-					switch (*Ptr)
+				for (WCHAR* pChar=Hashtag; *pChar; pChar++)
+					switch (*pChar)
 					{
 					case L' ':
 					case L'.':
@@ -1016,12 +1016,12 @@ LFCORE_API void LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount)
 						break;
 
 					default:
-						*Ptr = First ? (WCHAR)toupper(*Ptr) : (WCHAR)tolower(*Ptr);
+						*pChar = First ? (WCHAR)toupper(*pChar) : (WCHAR)tolower(*pChar);
 						First = FALSE;
 					}
 			}
 
-			wcscat_s(pBuffer, cCount, Hashtag);
+			wcscat_s(pStr, cCount, Hashtag);
 		}
 	}
 }

@@ -4,6 +4,6 @@
 
 
 void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL Force=FALSE);
-void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pFilename);
+void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pFilename);
 void SetFromFindData(LFCoreAttributes* pCoreAttributes, WIN32_FIND_DATA* pFindData);
-void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL Metadata=TRUE);
+void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOOL Metadata=TRUE);

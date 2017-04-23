@@ -18,8 +18,7 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 
 	SIZE_T Size = GlobalSize(hSrc);
 
-	hDst = GlobalAlloc(GMEM_MOVEABLE, Size);
-	if (!hDst)
+	if ((hDst=GlobalAlloc(GMEM_MOVEABLE, Size))==NULL)
 		return FALSE;
 
 	void* pSrc = GlobalLock(hSrc);
@@ -51,7 +50,7 @@ INT GetAttributeIconIndex(UINT Attr)
 void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
 {
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
+	if (SUCCEEDED(SHGetFileInfo((LPCWSTR)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
 		hIcon = pIcons->ExtractIcon(sfi.iIcon);
 		Caption = sfi.szDisplayName;

@@ -37,7 +37,7 @@ public:
 	void SetEmpty();
 	void SetMultiple(const CString& Description=_T(""));
 	void SetCoreIcon(INT IconID, const CString& Description=_T(""));
-	void SetFormatIcon(CHAR* FileFormat, const CString& Description=_T(""));
+	void SetFormatIcon(LPCSTR FileFormat, const CString& Description=_T(""));
 	void SetPreview(LFItemDescriptor* pItemDescriptor, const CString& Description=_T(""));
 
 protected:
@@ -97,8 +97,8 @@ protected:
 
 private:
 	void AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL Editable=FALSE);
-	void AddValueVirtual(UINT Attr, const CHAR* Value);
-	void AddValueVirtual(UINT Attr, const WCHAR* Value);
+	void AddValueVirtual(UINT Attr, const LPCSTR Value);
+	void AddValueVirtual(UINT Attr, const LPCWSTR Value);
 
 	UINT m_Count;
 	UINT m_IconID;

@@ -37,7 +37,7 @@ void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	}
 }
 
-SIZE_T GetAttributeSize(UINT Attr, const void* Value)
+SIZE_T GetAttributeSize(UINT Attr, LPCVOID Value)
 {
 	assert(Attr<LFAttributeCount);
 	assert(AttrProperties[Attr].Type<LFTypeCount);
@@ -46,18 +46,18 @@ SIZE_T GetAttributeSize(UINT Attr, const void* Value)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return (min(AttrProperties[Attr].cCharacters, wcslen((WCHAR*)Value))+1)*sizeof(WCHAR);
+		return (min(AttrProperties[Attr].cCharacters, wcslen((LPCWSTR)Value))+1)*sizeof(WCHAR);
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		return min(AttrProperties[Attr].cCharacters, strlen((CHAR*)Value))+1;
+		return min(AttrProperties[Attr].cCharacters, strlen((LPCSTR)Value))+1;
 
 	default:
 		return TypeProperties[AttrProperties[Attr].Type].Size;
 	}
 }
 
-void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Value)
+void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -79,12 +79,12 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Valu
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		wcsncpy_s((WCHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (WCHAR*)Value, _TRUNCATE);
+		wcsncpy_s((WCHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (LPCWSTR)Value, _TRUNCATE);
 		break;
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		strncpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (CHAR*)Value, _TRUNCATE);
+		strncpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (LPCSTR)Value, _TRUNCATE);
 		break;
 
 	default:
@@ -96,7 +96,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, const void* Valu
 // LFItemDescriptor
 //
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes, void* pStoreData, SIZE_T StoreDataSize)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, SIZE_T StoreDataSize)
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
 	ZeroMemory(pItemDescriptor, sizeof(LFItemDescriptor)-LFMaxSlaveSize-(pCoreAttributes ? sizeof(LFCoreAttributes) : 0));
@@ -229,7 +229,7 @@ LFCORE_API void LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor)
 	}
 }
 
-void AttachSlave(LFItemDescriptor* pItemDescriptor, BYTE SlaveID, void* pSlaveData)
+void AttachSlave(LFItemDescriptor* pItemDescriptor, BYTE SlaveID, LPVOID pSlaveData)
 {
 	assert(SlaveID>0);
 	assert(SlaveID<IDXTABLECOUNT);

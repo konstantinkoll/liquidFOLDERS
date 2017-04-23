@@ -33,7 +33,7 @@ LFCORE_API void LFFreeFileImportList(LFFileImportList* pFileImportList)
 	delete pFileImportList;
 }
 
-LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* pPath)
+LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, LPCWSTR pPath)
 {
 	assert(pFileImportList);
 	assert(pPath);
@@ -41,7 +41,7 @@ LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* pPath)
 	return pFileImportList->AddPath(pPath);
 }
 
-LFCORE_API void LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+LFCORE_API void LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
 	pFileImportList->DoFileImport(Recursive, pStoreID, pItemTemplate, Move, pProgress);
 }
@@ -56,7 +56,7 @@ LFFileImportList::LFFileImportList()
 	m_LastError = LFOk;
 }
 
-BOOL LFFileImportList::AddPath(WCHAR* Path, WIN32_FIND_DATA* pFindFileData)
+BOOL LFFileImportList::AddPath(LPCWSTR Path, WIN32_FIND_DATA* pFindFileData)
 {
 	assert(Path);
 
@@ -67,9 +67,9 @@ BOOL LFFileImportList::AddPath(WCHAR* Path, WIN32_FIND_DATA* pFindFileData)
 	// Remove trailing backslash
 	if (Item.Path[0]!=L'\0')
 	{
-		WCHAR* Ptr = &Item.Path[wcslen(Item.Path)-1];
-		if (*Ptr==L'\\')
-			*Ptr = L'\0';
+		WCHAR* pChar = &Item.Path[wcslen(Item.Path)-1];
+		if (*pChar==L'\\')
+			*pChar = L'\0';
 	}
 
 	// FindFileData
@@ -245,11 +245,11 @@ void LFFileImportList::Sort()
 	}
 }
 
-WCHAR* LFFileImportList::GetFileName(UINT Index)
+LPCWSTR LFFileImportList::GetFileName(UINT Index)
 {
-	WCHAR* Ptr = wcsrchr(m_Items[Index].Path, L'\\');
+	LPCWSTR pChar = wcsrchr(m_Items[Index].Path, L'\\');
 
-	return Ptr ? Ptr+1 : m_Items[Index].Path;
+	return pChar ? pChar+1 : m_Items[Index].Path;
 }
 
 void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
@@ -273,7 +273,7 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 	}
 }
 
-void LFFileImportList::DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+void LFFileImportList::DoFileImport(BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
 	// Store
 	CHAR StoreID[LFKeySize] = "";

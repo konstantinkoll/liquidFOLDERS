@@ -16,7 +16,7 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern UINT VolumeTypes[];
-extern void LoadTwoStrings(HINSTANCE hInstance, UINT uID, WCHAR* lpBuffer1, INT cchBufferMax1, WCHAR* lpBuffer, INT cchBufferMax);
+extern void LoadTwoStrings(HINSTANCE hInstance, UINT uID, LPWSTR lpBuffer1, SIZE_T cchBufferMax1, LPWSTR lpBuffer, SIZE_T cchBufferMax);
 
 
 LFCORE_API LFSearchResult* LFAllocSearchResult(BYTE Context)
@@ -86,7 +86,7 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 			if (IsNullValue(AttrProperties[LFAttrLocationGPS].Type, (*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS]))
 			{
 				LFAirport* pAirport;
-				if (LFIATAGetAirportByCode((CHAR*)(*pSearchResult)[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
+				if (LFIATAGetAirportByCode((LPCSTR)(*pSearchResult)[a]->AttributeValues[LFAttrLocationIATA], &pAirport))
 					(*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS] = &pAirport->Location;
 			}
 
@@ -263,9 +263,9 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 		{
 			LoadString(LFCoreModuleHandle, IDS_CONTEXT_FIRST+m_Context, m_Hint, 256);
 
-			WCHAR* Ptr = wcschr(m_Hint, L'\n');
-			if (Ptr)
-				*Ptr = L'\0';
+			WCHAR* pChar = wcschr(m_Hint, L'\n');
+			if (pChar)
+				*pChar = L'\0';
 
 			if (wcscmp(m_Name, m_Hint)==0)
 				m_Hint[0] = L'\0';
@@ -521,7 +521,7 @@ void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 	}
 }
 
-UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, void* pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
+UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
 	assert(AttrProperties[LFAttrDuration].Type==LFTypeDuration);
 	assert(TypeProperties[LFTypeDuration].Size==sizeof(UINT));
@@ -657,7 +657,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 	{
 		BOOL Remove = FALSE;
 
-		WCHAR* pHashtagArray = (WCHAR*)m_Items[a]->AttributeValues[Attr];
+		LPCWSTR pHashtagArray = (LPCWSTR)m_Items[a]->AttributeValues[Attr];
 		if (pHashtagArray)
 		{
 			WCHAR Hashtag[256];
@@ -705,8 +705,8 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 		if (it->second.Multiple)
 		{
 			BOOL First = TRUE;
-			for (WCHAR* Ptr=Hashtag; *Ptr; Ptr++)
-				switch (*Ptr)
+			for (WCHAR* pChar=Hashtag; *pChar; pChar++)
+				switch (*pChar)
 				{
 				case L' ':
 				case L',':
@@ -719,7 +719,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 					break;
 
 				default:
-					*Ptr = First ? (WCHAR)towupper(*Ptr) : (WCHAR)towlower(*Ptr);
+					*pChar = First ? (WCHAR)towupper(*pChar) : (WCHAR)towlower(*pChar);
 					First = FALSE;
 				}
 		}

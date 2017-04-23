@@ -21,12 +21,12 @@ class CFormatCache
 public:
 	CFormatCache();
 
-	void Lookup(CHAR* FileFormat, FormatData& fd);
-	void Remove(CHAR* FileFormat);
-	void Remove(WCHAR* Path);
-	CString GetTypeName(CHAR* FileFormat);
-	INT GetSysIconIndex(CHAR* FileFormat);
-	void DrawJumboIcon(CDC& dc, const CRect& rect, CHAR* FileFormat, BOOL Ghosted=FALSE);
+	void Lookup(LPCSTR FileFormat, FormatData& fd);
+	void Remove(LPCSTR FileFormat);
+	void Remove(LPCWSTR Path);
+	CString GetTypeName(LPCSTR FileFormat);
+	INT GetSysIconIndex(LPCSTR FileFormat);
+	void DrawJumboIcon(CDC& dc, const CRect& rect, LPCSTR FileFormat, BOOL Ghosted=FALSE);
 
 protected:
 	INT ConvertIcon(INT SysIconIndex);

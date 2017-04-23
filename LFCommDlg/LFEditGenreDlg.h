@@ -15,7 +15,7 @@
 class LFEditGenreDlg : public LFDialog
 {
 public:
-	LFEditGenreDlg(UINT Genre, CHAR* pStoreID, CWnd* pParentWnd=NULL);
+	LFEditGenreDlg(UINT Genre, LPCSTR pStoreID, CWnd* pParentWnd=NULL);
 
 	UINT GetSelectedGenre() const;
 

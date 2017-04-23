@@ -10,7 +10,7 @@
 // LFDeleteStoreDlg
 //
 
-LFDeleteStoreDlg::LFDeleteStoreDlg(const CHAR* pStoreID, CWnd* pParentWnd)
+LFDeleteStoreDlg::LFDeleteStoreDlg(const LPCSTR pStoreID, CWnd* pParentWnd)
 	: LFDialog(IDD_DELETESTORE, pParentWnd, TRUE, TRUE)
 {
 	ASSERT(pStoreID);

@@ -55,7 +55,7 @@ LFCORE_API void LFInitialize()
 	InitWatchdog();
 }
 
-LFCORE_API BOOL LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount)
+LFCORE_API BOOL LFGetApplicationPath(LPWSTR pStr, SIZE_T cCount)
 {
 	assert(cCount>=MAX_PATH);
 
@@ -85,9 +85,9 @@ LFCORE_API BOOL LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount)
 	GetModuleFileName(LFCoreModuleHandle, pStr, (DWORD)cCount);
 	if (GetLastError()==ERROR_SUCCESS)
 	{
-		WCHAR* Ptr = wcsrchr(pStr, L'\\');
-		if (Ptr)
-			*(Ptr+1) = L'\0';
+		WCHAR* pChar = wcsrchr(pStr, L'\\');
+		if (pChar)
+			*(pChar+1) = L'\0';
 
 		wcscat_s(pStr, cCount, L"liquidFOLDERS.exe");
 
@@ -107,7 +107,7 @@ LFCORE_API const LFMessageIDs* LFGetMessageIDs()
 // Output handling
 //
 
-LFCORE_API void LFGetFileSummary(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -120,7 +120,7 @@ LFCORE_API void LFGetFileSummary(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCo
 	swprintf_s(pStr, cCount, tmpMask, Count, tmpStr);
 }
 
-LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& FileSummary, WCHAR* pStr, SIZE_T cCount)
+LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& FileSummary, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -190,7 +190,7 @@ LFCORE_API BOOL LFHideVolumesWithNoMedia()
 // Resources
 //
 
-void LoadStringEnglish(UINT ID, WCHAR* lpBuffer, INT cchBufferMax)
+void LoadStringEnglish(UINT ID, LPWSTR lpBuffer, SIZE_T cchBufferMax)
 {
 	DWORD nID = (ID>>4)+1;
 	DWORD nItemID = ID & 0x000F;
@@ -204,15 +204,15 @@ void LoadStringEnglish(UINT ID, WCHAR* lpBuffer, INT cchBufferMax)
 		UINT nStr = 0;
 		DWORD dwSize = SizeofResource(LFCoreModuleHandle, hResource);
 
-		DWORD Ptr = 0;
-		while (Ptr<dwSize)
+		DWORD pChar = 0;
+		while (pChar<dwSize)
 		{
 			if (nStr==nItemID)
 			{
-				if (lpStr[Ptr])
+				if (lpStr[pChar])
 				{
-					wcsncpy_s(lpBuffer, cchBufferMax, &lpStr[Ptr+1], lpStr[Ptr]);
-					lpBuffer[lpStr[Ptr]] = L'\0';
+					wcsncpy_s(lpBuffer, cchBufferMax, &lpStr[pChar+1], lpStr[pChar]);
+					lpBuffer[lpStr[pChar]] = L'\0';
 				}
 				else
 				{
@@ -222,13 +222,13 @@ void LoadStringEnglish(UINT ID, WCHAR* lpBuffer, INT cchBufferMax)
 				break;
 			}
 
-			Ptr += lpStr[Ptr]+1;
+			pChar += lpStr[pChar]+1;
 			nStr++;
 		}
 	}
 }
 
-void LoadTwoStrings(HINSTANCE hInstance, UINT ID, WCHAR* lpBuffer1, INT cchBufferMax1, WCHAR* lpBuffer2, INT cchBufferMax2)
+void LoadTwoStrings(HINSTANCE hInstance, UINT ID, LPWSTR lpBuffer1, SIZE_T cchBufferMax1, LPWSTR lpBuffer2, SIZE_T cchBufferMax2)
 {
 	assert(lpBuffer1);
 	assert(lpBuffer2);
@@ -236,11 +236,11 @@ void LoadTwoStrings(HINSTANCE hInstance, UINT ID, WCHAR* lpBuffer1, INT cchBuffe
 	WCHAR tmpStr[256];
 	LoadString(hInstance, ID, tmpStr, 256);
 
-	WCHAR* Ptr = wcschr(tmpStr, L'\n');
-	if (Ptr)
+	WCHAR* pChar = wcschr(tmpStr, L'\n');
+	if (pChar)
 	{
-		wcscpy_s(lpBuffer2, cchBufferMax2, Ptr+1);
-		*Ptr = L'\0';
+		wcscpy_s(lpBuffer2, cchBufferMax2, pChar+1);
+		*pChar = L'\0';
 	}
 	else
 	{
@@ -399,7 +399,7 @@ LFCORE_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount
 // Error handling
 //
 
-LFCORE_API void LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID)
+LFCORE_API void LFGetErrorText(LPWSTR pStr, SIZE_T cCount, UINT ID)
 {
 	assert(pStr);
 
@@ -427,7 +427,7 @@ LFCORE_API void LFCoreErrorBox(UINT ID, HWND hWnd)
 // Descriptors
 //
 
-LFCORE_API void LFGetAttrCategoryName(WCHAR* pStr, SIZE_T cCount, UINT ID)
+LFCORE_API void LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID)
 {
 	assert(pStr);
 
@@ -448,19 +448,19 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	WCHAR Str[256];
 	LoadStringEnglish(ID+IDS_ATTR_FIRST, Str, 256);
 
-	WCHAR* PtrSrc = Str;
-	WCHAR* PtrDst = AttributeDescriptor.XMLID;
+	WCHAR* pCharSrc = Str;
+	WCHAR* pCharDst = AttributeDescriptor.XMLID;
 
 	do
 	{
-		WCHAR Ch = (WCHAR)towlower(*PtrSrc);
+		WCHAR Ch = (WCHAR)towlower(*pCharSrc);
 
 		if ((Ch>=L'a') && (Ch<=L'z'))
-			*(PtrDst++) = Ch;
+			*(pCharDst++) = Ch;
 	}
-	while (*(PtrSrc++)!=L'\0');
+	while (*(pCharSrc++)!=L'\0');
 
-	*PtrDst = L'\0';
+	*pCharDst = L'\0';
 
 	// Check consistency
 	assert(AttrProperties[ID].Type<LFTypeCount);
@@ -478,7 +478,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	AttributeDescriptor.TypeProperties = TypeProperties[AttrProperties[ID].Type];
 }
 
-LFCORE_API void LFGetSourceName(WCHAR* pStr, SIZE_T cCount, UINT ID, BOOL Qualified)
+LFCORE_API void LFGetSourceName(LPWSTR pStr, SIZE_T cCount, UINT ID, BOOL Qualified)
 {
 	LoadString(LFCoreModuleHandle, (Qualified ? IDS_QSRC_FIRST : IDS_SRC_FIRST)+ID, pStr, (INT)cCount);
 }

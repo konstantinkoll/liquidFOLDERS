@@ -14,10 +14,10 @@
 #define SendLFNotifyMessage(Message)     SendNotifyMessage(HWND_BROADCAST, Message, NULL, NULL);
 
 
-void CreateNewStoreID(CHAR* pStoreID);
-LFStoreDescriptor* FindStore(const CHAR* pStoreID, HMUTEX* phMutex=NULL);
-LFStoreDescriptor* FindStore(const GUID UniqueID, HMUTEX* phMutex=NULL);
-LFStoreDescriptor* FindStore(const WCHAR* pDatPath, HMUTEX* phMutex=NULL);
+void CreateNewStoreID(LPSTR pStoreID);
+LFStoreDescriptor* FindStore(LPCSTR pStoreID, HMUTEX* phMutex=NULL);
+LFStoreDescriptor* FindStore(const GUID& UniqueID, HMUTEX* phMutex=NULL);
+LFStoreDescriptor* FindStore(LPCWSTR pDatPath, HMUTEX* phMutex=NULL);
 
 UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor);
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime=TRUE, BOOL MakeDefault=FALSE);
@@ -27,8 +27,8 @@ void ChooseNewDefaultStore();
 
 UINT StoreFlagsToType(LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMutex=NULL);
-UINT GetStore(const CHAR* pStoreID, CStore** ppStore);
-UINT OpenStore(const CHAR* pStoreID, BOOL WriteAccess, CStore** ppStore);
+UINT GetStore(LPCSTR pStoreID, CStore** ppStore);
+UINT OpenStore(LPCSTR pStoreID, BOOL WriteAccess, CStore** ppStore);
 
 void QueryStores(LFSearchResult* pSearchResult);
 void MountVolumes(UINT Mask, BOOL OnInitialize=FALSE);

@@ -97,7 +97,7 @@ void CConditionList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 // LFEditFilterDlg
 //
 
-LFEditFilterDlg::LFEditFilterDlg(CWnd* pParentWnd, const CHAR* StoreID, LFFilter* pFilter)
+LFEditFilterDlg::LFEditFilterDlg(CWnd* pParentWnd, const LPCSTR StoreID, LFFilter* pFilter)
 	: LFDialog(IDD_EDITFILTER, pParentWnd)
 {
 	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");

@@ -37,7 +37,7 @@ static const BYTE ContextSlaves[LFLastQueryContext+1] = {
 #pragma comment(lib, "shlwapi.lib")
 
 
-BYTE GetHardcodedContext(CHAR* Extension)
+BYTE GetHardcodedContext(LPCSTR Extension)
 {
 	INT First = 0;
 	INT Last = (sizeof(Registry)/sizeof(RegisteredFile))-1;
@@ -63,7 +63,7 @@ BYTE GetHardcodedContext(CHAR* Extension)
 	return 0;
 }
 
-BYTE GetPerceivedContext(CHAR* Extension)
+BYTE GetPerceivedContext(LPCSTR Extension)
 {
 	WCHAR ExtensionW[17];
 	ExtensionW[0] = '.';
@@ -109,7 +109,7 @@ void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL Force)
 }
 
 
-void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pFilename)
+void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pFilename)
 {
 	assert(pItemDescriptor);
 	assert(pFilename);
@@ -119,26 +119,26 @@ void SetNameExtFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pFilename)
 
 	// Name
 	WCHAR Name[256];
-	WCHAR* Ptr = wcsrchr(pFilename, L'\\');
-	wcscpy_s(Name, 256, Ptr ? Ptr+1 : pFilename);
+	LPCWSTR pChar = wcsrchr(pFilename, L'\\');
+	wcscpy_s(Name, 256, pChar ? pChar+1 : pFilename);
 
 	// Erweiterung
-	WCHAR* LastExt = wcsrchr(Name, L'.');
-	if (LastExt)
+	WCHAR* pLastExt = wcsrchr(Name, L'.');
+	if (pLastExt)
 	{
 		CHAR Extension[LFExtSize] = { 0 };
 
-		Ptr = LastExt+1;
+		pChar = pLastExt+1;
 		SIZE_T cCount = 0;
-		while ((*Ptr!=L'\0') && (cCount<LFExtSize-1))
+		while ((*pChar!=L'\0') && (cCount<LFExtSize-1))
 		{
-			Extension[cCount++] = (*Ptr<=0xFF) ? tolower(*Ptr) & 0xFF : L'_';
-			Ptr++;
+			Extension[cCount++] = (*pChar<=0xFF) ? tolower(*pChar) & 0xFF : L'_';
+			pChar++;
 		}
 
 		SetAttribute(pItemDescriptor, LFAttrFileFormat, Extension);
 
-		*LastExt = L'\0';
+		*pLastExt = L'\0';
 	}
 
 	SetAttribute(pItemDescriptor, LFAttrFileName, Name);
@@ -311,7 +311,7 @@ void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LF
 	}
 }
 
-void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL Metadata)
+void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOOL Metadata)
 {
 	assert(pItemDescriptor);
 	assert(pPath);
@@ -347,7 +347,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 		{
 			IShellFolder2* pParentFolder;
 			LPCITEMIDLIST pidlRel;
-			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
+			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (LPVOID*)&pParentFolder, &pidlRel)))
 			{
 				for (UINT a=0; a<LFAttributeCount; a++)
 					if ((AttrProperties[a].ShPropertyMapping.ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
@@ -376,7 +376,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 		if (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments)
 		{
 			IPropertySetStorage* pPropertySetStorage;
-			if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (void**)&pPropertySetStorage)))
+			if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (LPVOID*)&pPropertySetStorage)))
 			{
 				GetOLEProperties(pPropertySetStorage, SHPropertyDocuments, pItemDescriptor);
 				GetOLEProperties(pPropertySetStorage, SHPropertyMedia, pItemDescriptor);
@@ -395,7 +395,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 	//
 	if ((pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos))
 	{
-		WCHAR* pSeparator = wcsstr(pItemDescriptor->CoreAttributes.FileName, L" – ");
+		LPCWSTR pSeparator = wcsstr(pItemDescriptor->CoreAttributes.FileName, L" – ");
 		SIZE_T SeparatorLength = 3;
 
 		if (!pSeparator)
@@ -410,7 +410,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 			WCHAR Value[256];
 			wcsncpy_s(Value, 256, pItemDescriptor->CoreAttributes.FileName, pSeparator-pItemDescriptor->CoreAttributes.FileName);
 
-			for (WCHAR* pChar=Value; pChar; pChar++)
+			for (LPCWSTR pChar=Value; pChar; pChar++)
 				if (*pChar>=L'A')
 				{
 					const UINT Attr = (pItemDescriptor->CoreAttributes.ContextID>LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrRoll) ? LFAttrRoll : LFAttrArtist;
@@ -420,7 +420,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, BOOL
 				}
 
 			// Title
-			WCHAR* pTitle = pSeparator+SeparatorLength;
+			LPCWSTR pTitle = pSeparator+SeparatorLength;
 			if (*pTitle)
 				SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
 		}

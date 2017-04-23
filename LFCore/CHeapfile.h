@@ -35,26 +35,26 @@ struct HeapfileHeader
 class CHeapfile
 {
 public:
-	CHeapfile(WCHAR* Path, UINT TableID, UINT StoreDataSize, BOOL Initialize);
+	CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initialize);
 	~CHeapfile();
 
 	UINT GetItemCount() const;
 	UINT GetRequiredElementSize() const;
 	UINT64 GetRequiredFileSize() const;
-	void* GetStoreData(void* Ptr) const;
+	LPVOID GetStoreData(LPVOID pChar) const;
 	UINT GetError(BOOL SingleStore=FALSE);
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);
-	BOOL FindNext(INT& Next, void*& Ptr);
-	BOOL FindKey(CHAR* FileID, INT& Next, void*& Ptr);
+	BOOL FindNext(INT& Next, LPVOID& Ptr);
+	BOOL FindKey(LPCSTR FileID, INT& Next, LPVOID& Ptr);
 	void Add(LFItemDescriptor* pItemDescriptor);
-	void Update(LFItemDescriptor* pItemDescriptor, void* Ptr);
+	void Update(LFItemDescriptor* pItemDescriptor, LPVOID pChar);
 	void Update(LFItemDescriptor* pItemDescriptor, INT& Next);
 	void Update(LFItemDescriptor* pItemDescriptor);
-	void Invalidate(void* Ptr);
-	void Invalidate(CHAR* FileID, INT& Next);
+	void Invalidate(LPVOID pChar);
+	void Invalidate(LPCSTR FileID, INT& Next);
 	void Invalidate(LFItemDescriptor* pItemDescriptor);
-	void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* pItemDescriptor);
+	void GetFromItemDescriptor(LPVOID Ptr, LFItemDescriptor* pItemDescriptor);
 	BOOL Compact();
 
 	UINT m_OpenStatus;
@@ -72,7 +72,7 @@ protected:
 	UINT m_StoreDataSize;
 	UINT m_KeyOffset;
 
-	void* m_pBuffer;
+	LPVOID m_pBuffer;
 	UINT m_ItemCount;
 	UINT m_BufferCount;
 	INT m_FirstInBuffer;
@@ -81,8 +81,8 @@ protected:
 	BOOL m_BufferNeedsWriteback;
 
 private:
-	static void ZeroCopy(void* pDst, const SIZE_T DstSize, void* pSrc, const SIZE_T SrcSize);
-	void GetAttribute(void* PtrDst, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
+	static void ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const SIZE_T SrcSize);
+	void GetAttribute(LPVOID Ptr, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
 
 	WCHAR m_Filename[MAX_PATH];
 	HANDLE hFile;

@@ -23,7 +23,7 @@ static const GUID FOLDERID_OneDriveDocuments = { 0x24D89E24, 0x2F19, 0x4534, { 0
 static const GUID FOLDERID_OneDrivePictures = { 0x339719B5, 0x8C47, 0x4894, { 0x94, 0xC2, 0xD8, 0xF7, 0x7A, 0xDD, 0x44, 0xA6 } };
 
 
-LFCORE_API BOOL LFGetICloudPath(WCHAR* pPath)
+LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath)
 {
 	assert(pPath);
 
@@ -52,7 +52,7 @@ HRESULT GetKnownFolderPath(REFKNOWNFOLDERID rfid, LPWSTR lpPath)
 
 	if (zSHGetKnownFolderPath)
 	{
-		WCHAR* pComStr;
+		PWSTR pComStr;
 		HRESULT hResult = zSHGetKnownFolderPath(rfid, 0, NULL, &pComStr);
 		if (SUCCEEDED(hResult))
 		{

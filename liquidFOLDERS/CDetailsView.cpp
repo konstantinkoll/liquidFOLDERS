@@ -72,12 +72,30 @@ void CDetailsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 
 			if (Attr==LFAttrFileName)
 			{
+				ASSERT(rect.Height()>=m_LargeFontHeight+PADDING/2+2*m_DefaultFontHeight);
+
 				// Filename
 				CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
 				dc.DrawText(GetLabel(pItemDescriptor), rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 				dc.SelectObject(pOldFont);
 
 				rectLabel.top += m_LargeFontHeight+PADDING/2;
+
+				// Comments
+				if (pItemDescriptor->CoreAttributes.Comments[0])
+				{
+					dc.DrawText(pItemDescriptor->CoreAttributes.Comments, -1, rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+
+					rectLabel.top += m_DefaultFontHeight;
+				}
+
+				// Description
+				if (pItemDescriptor->Description[0])
+				{
+					dc.DrawText(pItemDescriptor->Description, -1, rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+
+					rectLabel.top += m_DefaultFontHeight;
+				}
 			}
 			else
 				if (theApp.IsAttributeAvailable(m_Context, Attr))

@@ -635,7 +635,7 @@ struct LFItemDescriptor
 	DOUBLE AspectRatio;
 
 	// Pointer to attribute values
-	void* AttributeValues[LFAttributeCount];
+	LPVOID AttributeValues[LFAttributeCount];
 
 	// Internal data from store
 	BYTE StoreData[LFMaxStoreDataSize];

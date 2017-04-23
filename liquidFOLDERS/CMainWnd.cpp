@@ -54,7 +54,7 @@ BOOL CMainWnd::CreateRoot()
 	return Create(FALSE);
 }
 
-BOOL CMainWnd::CreateStore(const CHAR* StoreID)
+BOOL CMainWnd::CreateStore(const LPCSTR StoreID)
 {
 	ASSERT(StoreID);
 

@@ -25,7 +25,7 @@ friend class CPropertyGenre;
 public:
 	CPropertyHolder();
 
-	void SetStore(const CHAR* pStoreID);
+	void SetStore(const LPCSTR pStoreID);
 
 protected:
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1)=NULL;
@@ -53,7 +53,7 @@ friend class CPropertyEdit;
 public:
 	CProperty(LFVariantData* pData);
 
-	virtual void ToString(WCHAR* tmpStr, INT nCount) const;
+	virtual void ToString(LPWSTR pStr, INT nCount) const;
 	virtual void DrawValue(CDC& dc, LPCRECT lpRect) const;
 	virtual HCURSOR SetCursor(INT x) const;
 	virtual CString GetValidChars() const;

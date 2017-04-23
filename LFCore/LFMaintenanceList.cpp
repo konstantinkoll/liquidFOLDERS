@@ -22,7 +22,7 @@ LFMaintenanceList::LFMaintenanceList()
 	m_LastError = LFOk;
 }
 
-BOOL LFMaintenanceList::AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UINT Result, UINT Icon)
+BOOL LFMaintenanceList::AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT Icon)
 {
 	assert(Name);
 	assert(Comments);

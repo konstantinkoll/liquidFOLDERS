@@ -40,7 +40,7 @@ protected:
 
 	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
-	void DrawLabel(GlobeItemData* pData, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
+	void DrawLabel(GlobeItemData* pData, UINT cCaption, LPCWSTR Caption, LPCWSTR Subcaption, LPCWSTR Coordinates, LPCWSTR Description, BOOL Focused, BOOL Hot, BOOL Themed);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

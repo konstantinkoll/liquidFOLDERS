@@ -40,5 +40,5 @@ protected:
 	HGLOBAL m_hShellLink;
 
 private:
-	void CreateGlobals(IShellLink* pShellLink, WCHAR* Name);
+	void CreateGlobals(IShellLink* pShellLink, LPCWSTR Name);
 };

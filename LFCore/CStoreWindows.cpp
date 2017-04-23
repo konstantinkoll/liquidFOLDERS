@@ -60,7 +60,7 @@ UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
 			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 			SetNameExtFromFile(pItemDescriptor, (*m_pFileImportList)[a].Path);
 
-			wcscpy_s((WCHAR*)pItemDescriptor->StoreData, MAX_PATH, &(*m_pFileImportList)[a].Path[wcslen(p_StoreDescriptor->DatPath)]);
+			wcscpy_s((LPWSTR)pItemDescriptor->StoreData, MAX_PATH, &(*m_pFileImportList)[a].Path[wcslen(p_StoreDescriptor->DatPath)]);
 
 			UINT Result;
 			WCHAR Path[2*MAX_PATH];
@@ -95,7 +95,7 @@ Finish:
 	return Result;
 }
 
-UINT CStoreWindows::GetFileLocation(LFCoreAttributes* /*pCoreAttributes*/, void* pStoreData, WCHAR* pPath, SIZE_T cCount) const
+UINT CStoreWindows::GetFileLocation(LFCoreAttributes* /*pCoreAttributes*/, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const
 {
 	assert(pStoreData);
 	assert(pPath);
@@ -105,12 +105,12 @@ UINT CStoreWindows::GetFileLocation(LFCoreAttributes* /*pCoreAttributes*/, void*
 
 	wcscpy_s(pPath, cCount, L"\\\\?\\");
 	wcscat_s(pPath, cCount, p_StoreDescriptor->DatPath);
-	wcscat_s(pPath, cCount, (WCHAR*)pStoreData);
+	wcscat_s(pPath, cCount, (LPCWSTR)pStoreData);
 
 	return LFOk;
 }
 
-UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount)
+UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
 {
 	assert(pItemDescriptor);
 	assert(pPath);
@@ -119,8 +119,8 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 	UINT Result;
 
 	// StoreData
-	WCHAR* Ptr = (WCHAR*)&pItemDescriptor->StoreData;
-	if (*Ptr==L'\0')
+	WCHAR* pData = (LPWSTR)&pItemDescriptor->StoreData;
+	if (*pData==L'\0')
 	{
 		WCHAR SanitizedFileName[MAX_PATH];
 		SanitizeFileName(SanitizedFileName, MAX_PATH, pItemDescriptor->CoreAttributes.FileName);
@@ -132,21 +132,21 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 		// Check if file exists; if yes append number
 		do
 		{
-			wcscpy_s(Ptr, MAX_PATH, SanitizedFileName);
-			wcscat_s(Ptr, MAX_PATH, NumberStr);
+			wcscpy_s(pData, MAX_PATH, SanitizedFileName);
+			wcscat_s(pData, MAX_PATH, NumberStr);
 
 			if (pItemDescriptor->CoreAttributes.FileFormat[0])
 			{
 				WCHAR Buffer[LFExtSize];
 				MultiByteToWideChar(CP_ACP, 0, pItemDescriptor->CoreAttributes.FileFormat, -1, Buffer, LFExtSize);
 
-				wcscat_s(Ptr, MAX_PATH, L".");
-				wcscat_s(Ptr, MAX_PATH, Buffer);
+				wcscat_s(pData, MAX_PATH, L".");
+				wcscat_s(pData, MAX_PATH, Buffer);
 			}
 
 			swprintf_s(NumberStr, 16, L" (%u)", ++Number);
 
-			if ((Result=GetFileLocation(&pItemDescriptor->CoreAttributes, Ptr, Path, 2*MAX_PATH))!=LFOk)
+			if ((Result=GetFileLocation(&pItemDescriptor->CoreAttributes, pData, Path, 2*MAX_PATH))!=LFOk)
 				return Result;
 		}
 		while (_waccess(Path, 0)==0);
@@ -171,18 +171,18 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 		WCHAR Roll[2*MAX_PATH];
 		wcscpy_s(Roll, 2*MAX_PATH, &pPath[4]);
 
-		WCHAR* Ptr = wcsrchr(Roll, L'\\');
-		if (Ptr)
+		WCHAR* pChar = wcsrchr(Roll, L'\\');
+		if (pChar)
 		{
-			*(Ptr+1) = L'\0';
+			*(pChar+1) = L'\0';
 
 			if (wcscmp(Roll, p_StoreDescriptor->DatPath)!=0)
 			{
-				*Ptr = L'\0';
+				*pChar = L'\0';
 
-				Ptr = wcsrchr(Roll, L'\\');
-				if (Ptr)
-					SetAttribute(pItemDescriptor, LFAttrRoll, Ptr+1);
+				pChar = wcsrchr(Roll, L'\\');
+				if (pChar)
+					SetAttribute(pItemDescriptor, LFAttrRoll, pChar+1);
 			}
 		}
 	}
@@ -190,7 +190,7 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPat
 	return LFOk;
 }
 
-UINT CStoreWindows::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor)
+UINT CStoreWindows::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
 {
 	assert(pCoreAttributes);
 	assert(pStoreData);
@@ -202,25 +202,26 @@ UINT CStoreWindows::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreDa
 	SanitizeFileName(pItemDescriptor->CoreAttributes.FileName, 256, tmpStr);
 
 	// Path
-	WCHAR* pPath = (WCHAR*)pItemDescriptor->StoreData;
+	LPWSTR pData = (LPWSTR)pItemDescriptor->StoreData;
 
-	WCHAR* Ptr = wcsrchr(pPath, L'\\');
-	if (!Ptr)
-		Ptr = pPath;
+	LPWSTR pStr = wcsrchr(pData, L'\\');
+	if (!pStr)
+		pStr = pData;
+
+	LPCWSTR pExtension = wcsrchr(pStr, L'.');
 
 	WCHAR Extension[MAX_PATH];
-	WCHAR* pExtension = wcsrchr(Ptr, L'.');
 	wcscpy_s(Extension, MAX_PATH, pExtension ? pExtension : L"");
 
-	SIZE_T cCount = MAX_PATH+pPath-Ptr-wcslen(Extension);
-	wcscpy_s(Ptr, cCount, pItemDescriptor->CoreAttributes.FileName);
-	wcscat_s(Ptr, cCount, Extension);
+	SIZE_T cCount = MAX_PATH+pData-pStr-wcslen(Extension);
+	wcscpy_s(pStr, cCount, pItemDescriptor->CoreAttributes.FileName);
+	wcscat_s(pStr, cCount, Extension);
 
 	// Commit
 	return CStore::RenameFile(pCoreAttributes, pStoreData, pItemDescriptor);
 }
 
-UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
+UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 {
 	assert(pCoreAttributes);
 	assert(pStoreData);
@@ -238,7 +239,7 @@ UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreDa
 	return (Error==ERROR_NO_MORE_FILES) || (Error==ERROR_FILE_NOT_FOUND) || (Error==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
 }
 
-BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
+BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 {
 	assert(m_pFileImportList);
 

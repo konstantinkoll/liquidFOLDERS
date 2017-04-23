@@ -95,7 +95,7 @@ void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pP
 	dlg.DoModal();
 }
 
-BOOL LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd)
+BOOL LFImportFolder(const LPCSTR pStoreID, CWnd* pParentWnd)
 {
 	BOOL Result = FALSE;
 
@@ -132,7 +132,7 @@ BOOL LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd)
 	return Result;
 }
 
-void LFRunSynchronize(const CHAR* pStoreID, CWnd* pParentWnd)
+void LFRunSynchronize(const LPCSTR pStoreID, CWnd* pParentWnd)
 {
 	// Allowed?
 	if (!LFNagScreen(pParentWnd))
@@ -173,7 +173,7 @@ void LFRunMaintenance(CWnd* pParentWnd)
 	dlg.DoModal();
 }
 
-void LFDeleteStore(const CHAR* pStoreID, CWnd* pParentWnd)
+void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd)
 {
 	LFStoreDescriptor Store;
 	UINT Result = LFGetStoreSettings(pStoreID, &Store);

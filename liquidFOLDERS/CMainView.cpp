@@ -490,11 +490,11 @@ void CMainView::CreateShortcut(LFTransactionListItem* pItem)
 	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
 	{
 		WCHAR Ext[LFExtSize+1] = L".*";
-		WCHAR* Ptr = wcsrchr(pItem->Path, L'\\');
-		if (!Ptr)
-			Ptr = pItem->Path;
+		LPCWSTR pChar = wcsrchr(pItem->Path, L'\\');
+		if (!pChar)
+			pChar = pItem->Path;
 
-		WCHAR* LastExt = wcsrchr(Ptr, L'.');
+		LPCWSTR LastExt = wcsrchr(pChar, L'.');
 		if (LastExt)
 			wcscpy_s(Ext, LFExtSize+1, LastExt);
 
@@ -904,7 +904,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	Value.Type = LFTypeUnicodeString;
 	Value.IsNull = FALSE;
 
-	wcsncpy_s(Value.UnicodeString, 256, (WCHAR*)lParam, _TRUNCATE);
+	wcsncpy_s(Value.UnicodeString, 256, (LPCWSTR)lParam, _TRUNCATE);
 
 	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &Value);
 

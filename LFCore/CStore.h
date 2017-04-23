@@ -28,34 +28,34 @@ public:
 	UINT MaintenanceAndStatistics(BOOL Scheduled=FALSE, LFProgress* pProgress=NULL);
 	void ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress=NULL);
 	UINT UpdateStatistics();
-	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount) const;
+	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount) const;
 
 	// Index operations
 	virtual UINT Synchronize(BOOL OnInitialize=FALSE, LFProgress* pProgress=NULL);
-	virtual UINT ImportFile(WCHAR* pPath, LFItemDescriptor* pItemTemplate, BOOL Move=FALSE, BOOL Metadata=TRUE);
+	virtual UINT ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemTemplate, BOOL Move=FALSE, BOOL Metadata=TRUE);
 
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
-	UINT CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit=TRUE, WCHAR* pPath=NULL, BOOL OnInitialize=FALSE);
+	UINT CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit=TRUE, LPCWSTR pPath=NULL, BOOL OnInitialize=FALSE);
 	void Query(LFFilter* pFilter, LFSearchResult* pSearchResult);
 	void DoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, LFVariantData* pVariantData1=NULL, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
 
 	// Callbacks
 	virtual UINT CreateDirectories();
-	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount);
+	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
 
 	LFStoreDescriptor* p_StoreDescriptor;
 
 protected:
 	// Callbacks
 	virtual UINT DeleteDirectories();
-	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCHAR* pPath, SIZE_T cCount) const;
-	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor);
-	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData);
-	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pStoreData);
+	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
+	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
+	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
+	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
 
 	// Aux functions
-	void GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath, SIZE_T cCount) const;
-	void CreateNewFileID(CHAR* pFileID) const;
+	void GetInternalFilePath(LFCoreAttributes* pCoreAttributes, LPWSTR pPath, SIZE_T cCount) const;
+	void CreateNewFileID(LPSTR pFileID) const;
 
 	UINT m_AdditionalDataSize;
 	CIndex* m_pIndexMain;
@@ -78,7 +78,7 @@ inline UINT CStore::UpdateStatistics()
 	return m_pIndexMain->UpdateStatistics();
 }
 
-inline UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount) const
+inline UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount) const
 {
 	assert(pItemDescriptor);
 	assert(pPath);

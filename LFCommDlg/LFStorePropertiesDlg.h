@@ -14,7 +14,7 @@
 class LFStorePropertiesDlg : public LFTabbedDialog
 {
 public:
-	LFStorePropertiesDlg(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
+	LFStorePropertiesDlg(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

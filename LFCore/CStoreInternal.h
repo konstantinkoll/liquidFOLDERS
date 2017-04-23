@@ -16,7 +16,7 @@ public:
 
 	// Callbacks
 	virtual UINT CreateDirectories();
-	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount);
+	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
 
 protected:
 	virtual UINT DeleteDirectories();

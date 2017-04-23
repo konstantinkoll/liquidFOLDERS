@@ -27,7 +27,7 @@ FILETIME ExpireBuffer = { 0 };
 #define BUFSIZE    4096
 
 
-void ParseInput(CHAR* pStr, LFLicense* pLicense)
+void ParseInput(LPSTR pStr, LFLicense* pLicense)
 {
 	assert(pStr);
 	assert(pLicense);
@@ -36,50 +36,51 @@ void ParseInput(CHAR* pStr, LFLicense* pLicense)
 
 	while (*pStr)
 	{
-		CHAR* Ptr = strstr(pStr, "\n");
-		*Ptr = '\0';
+		CHAR* pChar = strstr(pStr, "\n");
+		if (pChar)
+			*pChar = '\0';
 
-		CHAR* Trenner = strchr(pStr, '=');
-		if (Trenner)
+		CHAR* pSeparator = strchr(pStr, '=');
+		if (pSeparator)
 		{
-			*(Trenner++) = '\0';
+			*(pSeparator++) = '\0';
 
 			if (strcmp(pStr, LICENSE_ID)==0)
 			{
-				strcpy_s(pLicense->PurchaseID, 256, Trenner);
+				strcpy_s(pLicense->PurchaseID, 256, pSeparator);
 			}
 			else
 				if (strcmp(pStr, LICENSE_PRODUCT)==0)
 				{
-					strcpy_s(pLicense->ProductID, 256, Trenner);
+					strcpy_s(pLicense->ProductID, 256, pSeparator);
 				}
 				else
 					if (strcmp(pStr, LICENSE_DATE)==0)
 					{
-						strcpy_s(pLicense->PurchaseDate, 256, Trenner);
+						strcpy_s(pLicense->PurchaseDate, 256, pSeparator);
 					}
 					else
 						if (strcmp(pStr, LICENSE_QUANTITY)==0)
 						{
-							strcpy_s(pLicense->Quantity, 256, Trenner);
+							strcpy_s(pLicense->Quantity, 256, pSeparator);
 						}
 						else
 							if (strcmp(pStr, LICENSE_NAME)==0)
 							{
-								strcpy_s(pLicense->RegName, 256, Trenner);
+								strcpy_s(pLicense->RegName, 256, pSeparator);
 							}
 							else
 								if (strcmp(pStr, LICENSE_VERSION)==0)
 								{
-									sscanf_s(Trenner, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
+									sscanf_s(pSeparator, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
 								}
 		}
 
-		pStr = Ptr+1;
+		pStr = pChar+1;
 	}
 }
 
-__forceinline BOOL ReadCodedLicense(CHAR* pStr, SIZE_T cCount)
+__forceinline BOOL ReadCodedLicense(LPCSTR pStr, SIZE_T cCount)
 {
 	BOOL Result = FALSE;
 

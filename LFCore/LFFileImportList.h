@@ -17,12 +17,12 @@ class LFFileImportList : public LFDynArray<LFFileImportListItem, 128, 128>
 public:
 	LFFileImportList();
 
-	BOOL AddPath(WCHAR* Path, WIN32_FIND_DATA* pFindFileData=NULL);
+	BOOL AddPath(LPCWSTR Path, WIN32_FIND_DATA* pFindFileData=NULL);
 	void Resolve(BOOL Recursive, LFProgress* pProgress=NULL);
 	void Sort();
-	WCHAR* GetFileName(UINT Index);
+	LPCWSTR GetFileName(UINT Index);
 	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
-	void DoFileImport(BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
+	void DoFileImport(BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
 
 	UINT m_LastError;
 

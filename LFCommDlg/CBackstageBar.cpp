@@ -78,7 +78,7 @@ void CBackstageBar::Reset()
 	m_Hover = m_Pressed = NOPART;
 }
 
-void CBackstageBar::AddItem(UINT Command, INT IconID, INT PreferredWidth, BOOL Red, WCHAR* pName, BOOL Enabled)
+void CBackstageBar::AddItem(UINT Command, INT IconID, INT PreferredWidth, BOOL Red, LPCWSTR pName, BOOL Enabled)
 {
 	BarItem Item;
 	ZeroMemory(&Item, sizeof(Item));

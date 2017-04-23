@@ -66,7 +66,7 @@ LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* pItemDescriptor)
 	return pFilter;
 }
 
-LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
+LFCORE_API LFFilter* LFLoadFilterEx(LPCWSTR pFilename)
 {
 	assert(pFilename);
 
@@ -76,16 +76,16 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 	WCHAR Path[MAX_PATH];
 	wcscpy_s(Path, MAX_PATH, pFilename);
 
-	WCHAR* Ptr = wcsrchr(Path, L'\\');
-	if (Ptr)
+	WCHAR* pChar = wcsrchr(Path, L'\\');
+	if (pChar)
 	{
-		*(++Ptr) = L'\0';
+		*(++pChar) = L'\0';
 
-		Ptr = Ptr-Path+pFilename;
+		pChar = pChar-Path+(WCHAR*)pFilename;
 	}
 	else
 	{
-		Ptr = pFilename;
+		pChar = (WCHAR*)pFilename;
 	}
 
 	LFStoreDescriptor* pStoreDescriptor = FindStore(Path);
@@ -93,11 +93,11 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 	LFFilter* pFilter = LoadFilter(pFilename, pStoreDescriptor ? pStoreDescriptor->StoreID : "");
 	if (pFilter)
 	{
-		wcscpy_s(pFilter->OriginalName, 256, Ptr);
+		wcscpy_s(pFilter->OriginalName, 256, pChar);
 
-		Ptr = wcschr(pFilter->OriginalName, L'.');
-		if (Ptr)
-			*Ptr = L'\0';
+		pChar = wcschr(pFilter->OriginalName, L'.');
+		if (pChar)
+			*pChar = L'\0';
 	}
 
 	ReleaseMutexForStores();
@@ -105,7 +105,7 @@ LFCORE_API LFFilter* LFLoadFilterEx(WCHAR* pFilename)
 	return pFilter;
 }
 
-LFCORE_API UINT LFSaveFilter(const CHAR* pStoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComment)
+LFCORE_API UINT LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment)
 {
 	assert(pStoreID);
 	assert(pFilter);
@@ -177,7 +177,7 @@ LFCORE_API LFFilterCondition* LFAllocFilterConditionEx(BYTE Compare, UINT Attr, 
 // Filters
 //
 
-LFFilter* LoadFilter(WCHAR* pFilename, CHAR* StoreID)
+LFFilter* LoadFilter(LPCWSTR pFilename, LPCSTR StoreID)
 {
 	assert(pFilename);
 	assert(StoreID);
@@ -231,7 +231,7 @@ Leave:
 	return pFilter;
 }
 
-BOOL StoreFilter(WCHAR* pFilename, LFFilter* pFilter)
+BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
 {
 	assert(pFilename);
 	assert(pFilter);

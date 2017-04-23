@@ -834,7 +834,7 @@ BNE     Brisbane, Australien;4;27*23'3"S, 153*7'3"E
 BNF     Baranof, USA;4;57*5'20"N, 134*49'59"W
 BNG     Banning, USA;4;33*55'21"N, 116*51'2"W
 BNI     Benin City, Nigeria;4;6*19'1"N, 5*35'58"E
-BNJ NRW Bonn, Deutschland;4;50*43'55"N, 7*5'48"E
+BNJ NRW Bonn (Hbf), Deutschland;4;50*43'55"N, 7*5'48"E
 BNK     Ballina, Australien;4;28*50'2"S, 153*33'45"E
 BNL     Barnwell, USA;4;33*15'28"N, 81*23'18"W
 BNM     Bodinumu, Neu-Guinea;4;9*7'59"S, 147*40'1"E
@@ -865,7 +865,7 @@ BOK     Brookings, USA;4;42*4'28"N, 124*17'24"W
 BOL     Ballykelly, Großbritannien;4;55*3'36"N, 7*0'57"W
 BOM     Mumbai (Bombay), Indien;4;19*5'19"N, 72*52'5"E
 BON     Bonaire, Nied. Antillen;4;12*7'52"N, 68*16'7"W
-BOO     Bodo, Norwegen;4;67*16'9"N, 14*21'55"E
+BOO     Bodø, Norwegen;4;67*16'9"N, 14*21'55"E
 BOP     Bouar, Zentralafrikanische Republik;4;5*57'29"N, 15*38'13"E
 BOQ     Boku, Neu-Guinea;4;6*31'59"S, 155*19'59"E
 BOR     Belfort, Frankreich;4;47*39'20"N, 7*0'39"E
@@ -1133,7 +1133,7 @@ CBC     Cherrabun, Australien;4;18*55'1"S, 125*33'0"E
 CBD     Car Nicobar, Indien;4;9*9'9"N, 92*49'11"E
 CBE     Cumberland, USA;4;39*36'56"N, 78*45'39"W
 CBF     Council Bluffs, USA;4;41*15'37"N, 95*45'32"W
-CBG     Cambridge, Großbritannien;4;52*12'18"N, 0*10'30"E
+CBG     Cambridge, Großbritannien;4;52*11'38"N, 0*8'17"E
 CBH     Bechar, Algerien;4;31*38'45"N, 2*16'11"W
 CBJ     Cabo Rojo, Dom. Republik;4;17*55'44"N, 71*38'41"W
 CBK     Colby, USA;4;39*25'39"N, 101*2'48"W
@@ -1896,6 +1896,7 @@ DTO     Denton, USA;4;33*12'3"N, 97*11'53"W
 DTR     Decatur Island, USA
 DTT DTT Detoit, USA
 DTW DTT Detroit (Wayne County), USA;4;42*12'45"N, 83*21'12"W
+DTZ NRW Dortmund (Hbf), Deutschland;5;51*35'3"N, 7*27'32"E
 DUA     Durant, USA;4;33*56'32"N, 96*23'40"W
 DUB     Dublin, Irland;4;53*25'17"N, 6*16'12"W
 DUC     Duncan, USA;4;34*28'15"N, 97*57'35"W
@@ -1920,7 +1921,6 @@ DVO     Davao City, Philippinen;4;7*7'32"N, 125*38'45"E
 DVP     Davenport Downs, Australien;4;24*8'46"S, 141*6'43"E
 DVR     Daly River, Australien;4;13*45'0"S, 130*41'38"E
 DVT     Phoenix (Deer Valley Airport), USA;4;33*41'18"N, 112*4'57"W
-DVX QDV Denver International, USA
 DWB     Soalala, Madagaskar;4;16*4'59"S, 45*22'1"E
 DWC     Dubai Al Maktoum International Airport, VAE;5;24*55'6"N, 55*10'32"E
 DWH     Houston (Hooks Memorial Airport), USA;4;30*3'43"N, 95*33'10"W
@@ -2344,7 +2344,7 @@ FNC     Funchal, Portugal;4;32*41'52"N, 16*46'28"W
 FNE     Fane, Neu-Guinea;4;8*33'0"S, 147*4'59"E
 FNG     Fada Ngourma, Burkina Faso;4;12*1'59"N, 0*21'0"E
 FNH     Fincha, Äthiopien;4;9*34'59"N, 37*20'60"E
-FNI     Nimes, Frankreich;4;43*45'27"N, 4*24'59"E
+FNI     Nîmes, Frankreich;4;43*45'27"N, 4*24'59"E
 FNJ     Pyongyang, Nordkorea;4;39*13'27"N, 125*40'13"E
 FNK     Fin Creek, USA
 FNL     Fort Collins/Loveland, USA;4;40*27'7"N, 105*0'41"W
@@ -3811,6 +3811,7 @@ KIZ     Kikinonda, Neu-Guinea;4;8*31'59"S, 147*55'59"E
 KJA     Krasnoyarsk, Russland;4;56*10'23"N, 92*29'36"E
 KJK     Kortrijk, Belgien;4;50*49'2"N, 3*12'17"E
 KJP     Kerama, Japan;4;26*10'6"N, 127*17'36"E
+KJR     Karlsruhe (Hbf), Deutschland;5;48*59'38"N, 8*24'2"E
 KJU     Kamiraba, Neu-Guinea;4;3*12'0"S, 151*53'60"E
 KKA     Koyuk, USA;4;64*56'22"N, 161*9'15"W
 KKB     Kitoi, USA;4;58*11'27"N, 152*22'14"W
@@ -4554,6 +4555,7 @@ LZH     Liuzhou, China;4;24*12'27"N, 109*23'28"E
 LZI     Luozi, Kongo;4;4*56'60"S, 14*7'59"E
 LZO     Luzhou, China;4;28*52'59"N, 105*20'60"E
 LZR     Lizard Island, Australien;4;14*40'0"S, 145*26'60"E
+LZS     Linz (Hbf), Österreich;5;48*17'26"N, 14*17'28"E
 LZU     Lawrenceville, USA;4;33*58'41"N, 83*57'45"W
 MAA     Madras, Indien;4;12*59'40"N, 80*10'50"E
 MAB     Maraba, Brasilien;4;5*22'7"S, 49*8'17"W
@@ -4741,6 +4743,7 @@ MHF     Morichal, Kolumbien;4;1*45'0"N, 69*55'1"W
 MHG     Mannheim, Deutschland;4;49*28'22"N, 8*30'51"E
 MHH     Marsh Harbour, Bahamas;4;26*30'41"N, 77*5'0"W
 MHI     Musha, Djibouti;4;11*43'1"N, 43*12'0"E
+MHJ     Mannheim (Hbf), Deutschland;5;49*28'47"N, 8*28'12"E
 MHK     Manhattan, USA;4;39*8'27"N, 96*40'15"W
 MHL     Marshall, USA;4;39*5'44"N, 93*12'10"W
 MHM     Minchumina, USA;4;63*53'10"N, 152*18'7"W
@@ -6377,14 +6380,16 @@ QDO     Icoaraci, Brasilien
 QDP     Dom Pedrito, Brasilien
 QDQ     Duque de Caixas, Brasilien
 QDS     Itsjuba, Brasilien
+QDU NRW Düsseldorf (Hbf), Deutschland;5;51*13'13"N, 6*47'34"E
 QDV QDV Denver, USA
 QDW     Diadema, Brasilien
 QEZ     Pomezia, Italien
-QFB     Freiburg, Deutschland
+QFB     Freiburg, Deutschland;5;47*59'52"N, 7*50'28"E
 QFE     Fort Benning, USA
 QFH     Frederikshavn, Dänemark
 QFR     Frosinone, Italien;4;41*38'53"N, 13*17'42"E
 QFS     Sao Francisco do Sul, Brasilien
+QFV     Bergen (Railway Station), Norwegen;5;60*23'25"N, 5*20'0"E
 QGA     Guaira, Brasilien;4;24*4'52"S, 54*11'30"W
 QGB     Garanhuns, Brasilien;4;22*33'52"S, 47*24'17"W
 QGF     Montenegro, Brasilien
@@ -6412,26 +6417,27 @@ QJB     Jubail, Saudi-Arabien;4;27*2'21"N, 49*24'18"E
 QJD     Jimdabyne, Australien;4;36*25'36"S, 148*36'6"E
 QJO     Campos do Jordao, Brasilien
 QJU     Jaladhar, Indien
+QJZ     Nantes (Flughafenbahnhof), Frankreich;4;47*9'25"N, 1*36'28"W
 QKA     Karlsruhe, Deutschland
 QKB     Breckenridge, USA
-QKF     Krefeld, Deutschland
-QKL     Köln (Hbf), Deutschland;4;50*54'0"N, 7*10'59"E
+QKF NRW Krefeld, Deutschland;5;51*19'33"N, 6*34'10"E
+QKL NRW Köln (Hbf), Deutschland;5;50*56'33"N, 6*57'29"E
 QKR     Kourou, Franz.-Guyana
 QKS     Keystone, USA
-QKU NRW Köln (Messe/Deutz), Deutschland;4;50*56'27"N, 6*58'29"E
+QKU NRW Köln (Messe/Deutz), Deutschland;5;50*56'27"N, 6*58'29"E
 QKW     Kanazawa City, Japan
 QKZ     Konstanz, Deutschland;4;47*40'58"N, 9*8'18"E
 QLA QLA Los Angeles, USA
 QLB     Lajeado, Brasilien
 QLE     Leeton, Australien;4;34*32'60"S, 146*23'60"E
-QLG     Landshot, Deutschland
-QLH     Kelsterbach, Deutschland
+QLG     Landshut, Deutschland
+QLH     Kelsterbach, Deutschland;5;50*3'42"N, 8*31'52"E
 QLI     Limassol, Zypern
-QLJ     Luzern, Schweiz
+QLJ     Luzern, Schweiz;5;47*2'56"N, 8*18'38"E
 QLL     Sao Leopoldo, Brasilien
 QLM     La Munoza, Spanien
-QLO     Lorrach, Deutschland
-QLS     Lausanne, Schweiz;4;46*32'43"N, 6*37'0"E
+QLO     Lörrach, Deutschland;5;47*37'0"N, 7*40'0"E
+QLS     Lausanne, Schweiz;5;46*31'0"N, 6*37'45
 QLT     Latina, Italien;4;41*32'33"N, 12*54'32"E
 QLW     Lavras, Brasilien
 QLX     Lauterach, Österreich;4;47*28'59"N, 9*43'59"E
@@ -6471,11 +6477,20 @@ QPD     Pinar del Rio, Kuba;4;22*25'17"N, 83*40'42"W
 QPE     Petropolis, Brasilien;4;22*35'42"S, 43*11'17"W
 QPF     Pompeia, Brasilien
 QPG     Singapur (Payalebaar), Singapur;4;1*21'38"N, 103*54'34"E
+QPP     Berlin (Hbf), Deutschland;5;52*31'30"N, 13*22'10"E
 QPR     Prato, Italien
 QPV     Perisher Valley, Australien;4;35*30'0"S, 148*37'1"E
+QQK LON London (King's Cross), Großbritannien;5;51*31'51"N, 0*7'24"E
+QQM     Manchester (Hbf), Großbritannien;5;53*28'37"N, 2*13'48"W
+QQN     Birmingham (Hbf), Großbritannien;5;52*28'40"N, 1*53'56"W
+QQP LON London (Paddington Station), Großbritannien;5;51*31'2"N, 0*10'39"W
+QQS LON London (St. Pancras), Großbritannien;5;51*31'48"N, 0*7'30"E
+QQU LON London (Euston Station), Großbritannien;5;51*31'42"N, 0*7'59"W
 QQV     Lupin, Kanada
+QQU LON London (Waterloo Station), Großbritannien;5;51*30'11"N, 0*6'48"W
 QQZ     Paraguana, Venezuela
 QRA     Johannesburg (Rand/Germiston Airport), Südafrika;4;26*14'33"S, 28*9'4"E
+QRH     Rotterdam (Hbf), Niederlande;5;51*55'30"N, 4*28'10"E
 QRI     Rize, Türkei
 QRK     Arcos, Brasilien
 QRL     Marbella, Spanien
@@ -7881,6 +7896,7 @@ TTG     Tartagal, Argentinien;4;22*37'9"S, 63*47'35"W
 TTH     Thumrait, Oman;4;17*39'58"N, 54*1'29"E
 TTI     Tetiaroa Island, Franz.-Polynesien;4;17*0'48"S, 149*35'13"W
 TTJ     Tottori, Japan;4;35*31'48"N, 134*9'60"E
+TTK LON London (Tottenham Hale), Großbritannien;5;51*35'18"N, 0*3'35"W
 TTL     Turtle Island, Fiji;4;16*57'57"S, 177*22'13"E
 TTM     Tablon de Tamara, Kolumbien;4;5*43'1"N, 72*5'60"W
 TTN     Trenton, USA;4;40*16'36"N, 74*48'48"W
@@ -8942,6 +8958,7 @@ YMS     Yurimaguas, Peru;4;5*53'38"S, 76*7'6"W
 YMT     Chibougamau, Kanada;4;49*46'19"N, 74*31'41"W
 YMW     Maniwaki, Kanada;4;46*16'22"N, 75*59'26"W
 YMX YMQ Montreal (Mirabel International Airport), Kanada;4;45*40'55"N, 74*0'19"W
+YMY YMQ Montreal (Hbf), Kanada;5;45*30'0"N, 73*34'0"W
 YNA     Natashquan, Kanada;4;50*11'24"N, 61*47'21"W
 YNB     Yanbo, Saudi-Arabien;4;24*8'39"N, 38*3'48"E
 YNC     Wemindji, Kanada;4;53*0'39"N, 78*49'49"W

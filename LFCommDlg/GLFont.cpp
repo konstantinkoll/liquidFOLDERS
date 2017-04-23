@@ -95,7 +95,7 @@ void GLFont::End()
 	glDisable(GL_TEXTURE_2D);
 }
 
-UINT GLFont::Render(CHAR* pStr, INT x, INT y, SIZE_T cCount) const
+UINT GLFont::Render(LPCSTR pStr, INT x, INT y, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;
@@ -115,7 +115,7 @@ UINT GLFont::Render(CHAR* pStr, INT x, INT y, SIZE_T cCount) const
 	return Height;
 }
 
-UINT GLFont::Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount) const
+UINT GLFont::Render(LPCWSTR pStr, INT x, INT y, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;
@@ -173,7 +173,7 @@ UINT GLFont::RenderChar(UCHAR Ch, INT x, INT y, UINT& LineHeight) const
 	return Width;
 }
 
-UINT GLFont::GetTextWidth(CHAR* pStr, SIZE_T cCount) const
+UINT GLFont::GetTextWidth(LPCSTR pStr, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;
@@ -193,7 +193,7 @@ UINT GLFont::GetTextWidth(CHAR* pStr, SIZE_T cCount) const
 	return (UINT)Width;
 }
 
-UINT GLFont::GetTextWidth(WCHAR* pStr, SIZE_T cCount) const
+UINT GLFont::GetTextWidth(LPCWSTR pStr, SIZE_T cCount) const
 {
 	if (!pStr)
 		return 0;

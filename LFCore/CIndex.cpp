@@ -53,7 +53,7 @@
 	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
 
 #define APPEND_ITEMDESCRIPTOR() \
-	void* PtrS; \
+	LPVOID PtrS; \
 	if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS)) \
 		AttachSlave(pItemDescriptor, PtrM->SlaveID, PtrS);
 
@@ -70,7 +70,7 @@
 	LOAD_MASTER(AbortOps, AbortRetval); \
 	INT ID = 0; \
 	LFCoreAttributes* PtrM; \
-	if (m_pTable[IDXTABLE_MASTER]->FindKey(Key, ID, (void*&)PtrM)) {
+	if (m_pTable[IDXTABLE_MASTER]->FindKey(Key, ID, (LPVOID&)PtrM)) {
 
 #define END_FINDMASTER() }
 
@@ -78,7 +78,7 @@
 	LOAD_MASTER(AbortOps, AbortRetval); \
 	INT ID = 0; \
 	LFCoreAttributes* PtrM; \
-	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (void*&)PtrM)) {
+	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (LPVOID&)PtrM)) {
 
 #define END_ITERATEMASTER() }
 
@@ -86,7 +86,7 @@
 	LOAD_MASTER(AbortOps, AbortRetval); \
 	INT IDs[IDXTABLECOUNT]; ZeroMemory(IDs, sizeof(IDs)); \
 	LFCoreAttributes* PtrM; \
-	while (m_pTable[IDXTABLE_MASTER]->FindNext(IDs[IDXTABLE_MASTER], (void*&)PtrM)) {
+	while (m_pTable[IDXTABLE_MASTER]->FindNext(IDs[IDXTABLE_MASTER], (LPVOID&)PtrM)) {
 
 #define END_ITERATEALL() }
 
@@ -260,7 +260,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 	// Traverse index
 	INT ID = 0;
 	LFCoreAttributes* PtrM;
-	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (void*&)PtrM))
+	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (LPVOID&)PtrM))
 	{
 		// Operations below modify index
 		if (!Writeable)
@@ -431,7 +431,7 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 		continue;
 
 	UINT Result = LFOk;
-	void* PtrS = NULL;
+	LPVOID PtrS = NULL;
 
 	if (!pFilter->Options.IgnoreSlaves)
 	{
@@ -523,7 +523,7 @@ void CIndex::ResolveLocations(LFTransactionList* pTransactionList)
 	END_ITERATEMASTER();
 }
 
-void CIndex::SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgress* pProgress)
+void CIndex::SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProgress* pProgress)
 {
 	assert(pTransactionList);
 
@@ -600,7 +600,7 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgr
 	pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalID, pProgress);
 }
 
-BOOL CIndex::ExistingFileID(CHAR* pFileID)
+BOOL CIndex::ExistingFileID(LPCSTR pFileID)
 {
 	assert(pFileID);
 
@@ -788,7 +788,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	{
 		LOAD_SLAVE();
 
-		void* PtrS;
+		LPVOID PtrS;
 		if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
 			m_pTable[PtrM->SlaveID]->Update(pItemDescriptor, PtrS);
 

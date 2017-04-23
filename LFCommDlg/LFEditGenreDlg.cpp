@@ -9,7 +9,7 @@
 // LFEditGenreDlg
 //
 
-LFEditGenreDlg::LFEditGenreDlg(UINT Genre, CHAR* pStoreID, CWnd* pParentWnd)
+LFEditGenreDlg::LFEditGenreDlg(UINT Genre, LPCSTR pStoreID, CWnd* pParentWnd)
 	: LFDialog(IDD_EDITGENRE, pParentWnd)
 {
 	ASSERT(pStoreID);

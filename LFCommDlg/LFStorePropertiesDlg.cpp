@@ -36,7 +36,7 @@ void CEscape(CString &str)
 
 UINT LFStorePropertiesDlg::m_LastTab = 0;
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(const CHAR* pStoreID, CWnd* pParentWnd)
+LFStorePropertiesDlg::LFStorePropertiesDlg(const LPCSTR pStoreID, CWnd* pParentWnd)
 	: LFTabbedDialog(0, pParentWnd, &m_LastTab)
 {
 	if (LFGetStoreSettings(pStoreID, &m_Store)==LFOk)
@@ -195,7 +195,7 @@ void LFStorePropertiesDlg::OnRunBackup()
 			{
 				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
 
-				CHAR* Ptr = pStoreIDs;
+				LPCSTR Ptr = pStoreIDs;
 				for (UINT a=0; a<Count; a++)
 				{
 					LFStoreDescriptor Store;

@@ -36,16 +36,16 @@ CTimelineView::CTimelineView()
 		ENSURE(m_FilesPlural.LoadString(IDS_FILES_PLURAL));
 }
 
-WCHAR* CTimelineView::GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, UINT Attr, UINT Mask)
+LPCWSTR CTimelineView::GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, UINT Attr, UINT Mask)
 {
 	ASSERT(theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeUnicodeString);
 
 	if (pItemDesciptor->AttributeValues[Attr])
-		if (*((WCHAR*)pItemDesciptor->AttributeValues[Attr]))
+		if (*((LPCWSTR)pItemDesciptor->AttributeValues[Attr]))
 		{
 			pData->Preview |= Mask;
 
-			return (WCHAR*)pItemDesciptor->AttributeValues[Attr];
+			return (LPCWSTR)pItemDesciptor->AttributeValues[Attr];
 		}
 
 	return NULL;
@@ -110,12 +110,12 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 							else
 								if (pData->pComments)
 								{
-									if (wcscmp(pData->pComments, (WCHAR*)pItemDescriptor->AttributeValues[LFAttrRoll])!=0)
+									if (wcscmp(pData->pComments, (LPCWSTR)pItemDescriptor->AttributeValues[LFAttrRoll])!=0)
 										pData->Preview &= ~PRV_COMMENTS;
 								}
 								else
 								{
-									pData->pComments = (WCHAR*)pItemDescriptor->AttributeValues[LFAttrRoll];
+									pData->pComments = (LPCWSTR)pItemDescriptor->AttributeValues[LFAttrRoll];
 									if (*pData->pComments==L'\0')
 										pData->Preview &= ~PRV_COMMENTS;
 								}

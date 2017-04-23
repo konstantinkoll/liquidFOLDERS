@@ -9,7 +9,7 @@
 extern HMODULE LFCoreModuleHandle;
 
 
-LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFileName)
+LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, LPCWSTR pLinkFileName)
 {
 	// Get the fully qualified file name for the link file
 	WCHAR PathDesktop[MAX_PATH];
@@ -37,7 +37,7 @@ LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFile
 
 		// Query IShellLink for the IPersistFile interface to save the shortcut in persistent storage
 		IPersistFile* pPersistFile;
-		if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)))
+		if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile)))
 		{
 			// Save the link by calling IPersistFile::Save
 			pPersistFile->Save(PathLink, TRUE);
@@ -46,14 +46,14 @@ LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFile
 	}
 }
 
-IShellLink* GetShortcutForStore(CHAR* StoreID, WCHAR* Comments, UINT IconID)
+IShellLink* GetShortcutForStore(LPCSTR StoreID, LPCWSTR Comments, UINT IconID)
 {
 	WCHAR Path[MAX_PATH];
 	if (LFGetApplicationPath(Path, MAX_PATH))
 	{
 		// Get a pointer to the IShellLink interface
 		IShellLink* pShellLink = NULL;
-		if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
+		if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&pShellLink)))
 		{
 			WCHAR Arguments[LFKeySize];
 			MultiByteToWideChar(CP_ACP, 0, StoreID, -1, Arguments, LFKeySize);

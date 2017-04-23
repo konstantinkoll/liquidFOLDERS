@@ -13,7 +13,7 @@
 #pragma comment(lib, "shlwapi.lib")
 
 
-BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
+BOOL CheckCondition(LPVOID v, LFFilterCondition* pFilterCondition)
 {
 	assert(pFilterCondition);
 	assert(pFilterCondition->Compare>=LFFilterCompareIgnore);
@@ -52,7 +52,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 	FILETIME Time2;
 	ULARGE_INTEGER ULI1;
 	ULARGE_INTEGER ULI2;
-	WCHAR* pHashtagArray;
+	LPCWSTR pHashtagArray;
 	WCHAR Hashtag[256];
 
 	switch (pFilterCondition->AttrData.Type)
@@ -63,31 +63,31 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		case LFFilterCompareSubfolder:
 			if (pFilterCondition->AttrData.Attr==LFAttrFileName)
 			{
-				Len1 = wcslen((WCHAR*)v);
+				Len1 = wcslen((LPCWSTR)v);
 				Len2 = wcslen(pFilterCondition->AttrData.UnicodeString);
 
-				return (Len1<=Len2) ? FALSE : _wcsnicmp((WCHAR*)v, pFilterCondition->AttrData.UnicodeString, Len2)==0;
+				return (Len1<=Len2) ? FALSE : _wcsnicmp((LPCWSTR)v, pFilterCondition->AttrData.UnicodeString, Len2)==0;
 			}
 
 		case LFFilterCompareIsEqual:
-			return _wcsicmp((WCHAR*)v, pFilterCondition->AttrData.UnicodeString)==0;
+			return _wcsicmp((LPCWSTR)v, pFilterCondition->AttrData.UnicodeString)==0;
 
 		case LFFilterCompareIsNotEqual:
-			return _wcsicmp((WCHAR*)v, pFilterCondition->AttrData.UnicodeString)!=0;
+			return _wcsicmp((LPCWSTR)v, pFilterCondition->AttrData.UnicodeString)!=0;
 		case LFFilterCompareBeginsWith:
 			Len1 = wcslen(pFilterCondition->AttrData.UnicodeString);
-			Len2 = wcslen((WCHAR*)v);
+			Len2 = wcslen((LPCWSTR)v);
 
-			return (Len1>Len2) ? FALSE :_wcsnicmp((WCHAR*)v, pFilterCondition->AttrData.UnicodeString, Len1)==0;
+			return (Len1>Len2) ? FALSE :_wcsnicmp((LPCWSTR)v, pFilterCondition->AttrData.UnicodeString, Len1)==0;
 
 		case LFFilterCompareEndsWith:
 			Len1 = wcslen(pFilterCondition->AttrData.UnicodeString);
-			Len2 = wcslen((WCHAR*)v);
+			Len2 = wcslen((LPCWSTR)v);
 
-			return (Len1>Len2) ? FALSE : _wcsicmp(&((WCHAR*)v)[Len2-Len1], pFilterCondition->AttrData.UnicodeString)==0;
+			return (Len1>Len2) ? FALSE : _wcsicmp(&((LPCWSTR)v)[Len2-Len1], pFilterCondition->AttrData.UnicodeString)==0;
 
 		case LFFilterCompareContains:
-			return StrStrIW((WCHAR*)v, pFilterCondition->AttrData.UnicodeString)!=NULL;
+			return StrStrIW((LPCWSTR)v, pFilterCondition->AttrData.UnicodeString)!=NULL;
 
 		default:
 			return FALSE;
@@ -97,12 +97,12 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		switch (pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return LFContainsHashtag((WCHAR*)v, pFilterCondition->AttrData.UnicodeString);
+			return LFContainsHashtag((LPCWSTR)v, pFilterCondition->AttrData.UnicodeString);
 
 		case LFFilterCompareContains:
 			pHashtagArray = pFilterCondition->AttrData.UnicodeArray;
 			while (GetNextHashtag(&pHashtagArray, Hashtag, 256))
-				if (LFContainsHashtag((WCHAR*)v, Hashtag))
+				if (LFContainsHashtag((LPCWSTR)v, Hashtag))
 					return TRUE;
 
 			return FALSE;
@@ -117,31 +117,31 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		case LFFilterCompareSubfolder:
 			if (pFilterCondition->AttrData.Attr==LFAttrURL)
 			{
-				CURLCategorizer::GetServer((CHAR*)v, Server, 256);
+				CURLCategorizer::GetServer((LPCSTR)v, Server, 256);
 
 				return _stricmp(Server, pFilterCondition->AttrData.AnsiString)==0;
 			}
 
 		case LFFilterCompareIsEqual:
-			return _stricmp((CHAR*)v, pFilterCondition->AttrData.AnsiString)==0;
+			return _stricmp((LPCSTR)v, pFilterCondition->AttrData.AnsiString)==0;
 
 		case LFFilterCompareIsNotEqual:
-			return _stricmp((CHAR*)v, pFilterCondition->AttrData.AnsiString)!=0;
+			return _stricmp((LPCSTR)v, pFilterCondition->AttrData.AnsiString)!=0;
 
 		case LFFilterCompareBeginsWith:
 			Len1 = strlen(pFilterCondition->AttrData.AnsiString);
-			Len2 = strlen((CHAR*)v);
+			Len2 = strlen((LPCSTR)v);
 
-			return (Len1>Len2) ? FALSE : _strnicmp((CHAR*)v, pFilterCondition->AttrData.AnsiString, Len1)==0;
+			return (Len1>Len2) ? FALSE : _strnicmp((LPCSTR)v, pFilterCondition->AttrData.AnsiString, Len1)==0;
 
 		case LFFilterCompareEndsWith:
 			Len1 = strlen(pFilterCondition->AttrData.AnsiString);
-			Len2 = strlen((CHAR*)v);
+			Len2 = strlen((LPCSTR)v);
 
-			return (Len1>Len2) ? FALSE : _stricmp(&((CHAR*)v)[Len2-Len1], pFilterCondition->AttrData.AnsiString)==0;
+			return (Len1>Len2) ? FALSE : _stricmp(&((LPCSTR)v)[Len2-Len1], pFilterCondition->AttrData.AnsiString)==0;
 
 		case LFFilterCompareContains:
-			return StrStrIA((CHAR*)v, pFilterCondition->AttrData.AnsiString)!=NULL;
+			return StrStrIA((LPCSTR)v, pFilterCondition->AttrData.AnsiString)!=NULL;
 
 		default:
 			return FALSE;
@@ -152,10 +152,10 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return _stricmp((CHAR*)v, pFilterCondition->AttrData.IATAString)==0;
+			return _stricmp((LPCSTR)v, pFilterCondition->AttrData.IATAString)==0;
 
 		case LFFilterCompareIsNotEqual:
-			return _stricmp((CHAR*)v, pFilterCondition->AttrData.IATAString)!=0;
+			return _stricmp((LPCSTR)v, pFilterCondition->AttrData.IATAString)!=0;
 
 		default:
 			return FALSE;
@@ -352,7 +352,7 @@ BOOL CheckCondition(void* v, LFFilterCondition* pFilterCondition)
 	return TRUE;
 }
 
-BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& CheckSearchterm, BYTE& SearchtermContainsLetters)
+BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BOOL& CheckSearchterm, BYTE& SearchtermContainsLetters)
 {
 	assert(TableID>=0);
 	assert(TableID<IDXTABLECOUNT);
@@ -435,16 +435,16 @@ BOOL PassesFilter(UINT TableID, void* pTableData, LFFilter* pFilter, BOOL& Check
 		{
 			SearchtermContainsLetters = 1;
 
-			WCHAR* Ptr = pFilter->Searchterm;
-			while (*Ptr)
+			LPCWSTR pChar = pFilter->Searchterm;
+			while (*pChar)
 			{
-				if (((*Ptr>=L'A') && (*Ptr<=L'Z')) || ((*Ptr>=L'a') && (*Ptr<=L'z')))
+				if (((*pChar>=L'A') && (*pChar<=L'Z')) || ((*pChar>=L'a') && (*pChar<=L'z')))
 				{
 					SearchtermContainsLetters = 2;
 					break;
 				}
 
-				Ptr++;
+				pChar++;
 			}
 		}
 
@@ -503,7 +503,7 @@ BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter)
 // Query helpers
 //
 
-void QueryStore(CHAR* StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult)
+void QueryStore(LPCSTR StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
 	CStore* pStore;
 
@@ -534,12 +534,12 @@ __forceinline void QuerySearch(LFFilter* pFilter, LFSearchResult* pSearchResult)
 
 		if (Count)
 		{
-			CHAR* Ptr = pStoreIDs;
+			LPCSTR pChar = pStoreIDs;
 			for (UINT a=0; a<Count; a++)
 			{
-				QueryStore(Ptr, pFilter, pSearchResult);
+				QueryStore(pChar, pFilter, pSearchResult);
 
-				Ptr += LFKeySize;
+				pChar += LFKeySize;
 			}
 
 			free(pStoreIDs);

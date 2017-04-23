@@ -86,7 +86,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 				{
 				case LFTypeIATACode:
 					LFAirport* pAirport;
-					if (LFIATAGetAirportByCode((CHAR*)(*p_CookedFiles)[a]->AttributeValues[Attr], &pAirport))
+					if (LFIATAGetAirportByCode((LPCSTR)(*p_CookedFiles)[a]->AttributeValues[Attr], &pAirport))
 						Location = pAirport->Location;
 
 					break;
@@ -274,13 +274,13 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 			if (pData->Alpha>0.0f)
 			{
 				// Beschriftung
-				WCHAR* Caption = (*p_CookedFiles)[a]->CoreAttributes.FileName;
+				LPCWSTR Caption = (*p_CookedFiles)[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(Caption);
 
-				WCHAR* Subcaption = NULL;
-				WCHAR* Coordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
+				LPCWSTR Subcaption = NULL;
+				LPCWSTR Coordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
 				
-				WCHAR* Description = (m_GlobalViewSettings.GlobeShowDescription ? pData->DescriptionString : NULL);
+				LPCWSTR Description = (m_GlobalViewSettings.GlobeShowDescription ? pData->DescriptionString : NULL);
 				if (Description)
 					if (*Description==L'\0')
 						Description = NULL;
@@ -315,7 +315,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 	}
 }
 
-__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed)
+__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, UINT cCaption, LPCWSTR Caption, LPCWSTR Subcaption, LPCWSTR Coordinates, LPCWSTR Description, BOOL Focused, BOOL Hot, BOOL Themed)
 {
 	ASSERT(ARROWSIZE>3);
 

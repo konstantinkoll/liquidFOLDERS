@@ -29,7 +29,7 @@ void LFDropTarget::SetOwner(CWnd* pOwnerWnd)
 	p_OwnerWnd = pOwnerWnd;
 }
 
-void LFDropTarget::SetStore(const CHAR* pStoreID, BOOL AllowChooseStore)
+void LFDropTarget::SetStore(const LPCSTR pStoreID, BOOL AllowChooseStore)
 {
 	ASSERT(pStoreID);
 
@@ -51,7 +51,7 @@ void LFDropTarget::SetSearchResult(LFSearchResult* pSearchResult)
 	p_SearchResult = pSearchResult;
 }
 
-__forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, const CHAR* pStoreID, CWnd* pWnd) const
+__forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, const LPCSTR pStoreID, CWnd* pWnd) const
 {
 	ASSERT(pStoreID);
 
@@ -95,7 +95,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	return (Result==LFOk) ? S_OK : E_INVALIDARG;
 }
 
-__forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, const CHAR* pStoreID, CWnd* pWnd) const
+__forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, const LPCSTR pStoreID, CWnd* pWnd) const
 {
 	ASSERT(pStoreID);
 

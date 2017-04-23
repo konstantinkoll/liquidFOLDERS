@@ -1026,24 +1026,24 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	SHGetPathFromIDList(pidls[0], Path1);
 
 	wcscpy_s(Parent1, MAX_PATH, Path1);
-	WCHAR* Ptr = wcsrchr(Parent1, L'\\');
+	WCHAR* pChar = wcsrchr(Parent1, L'\\');
 
-	if (Ptr<=&Parent1[2])
-		Ptr = &Parent1[3];
+	if (pChar<=&Parent1[2])
+		pChar = &Parent1[3];
 
-	*Ptr = '\0';
+	*pChar = '\0';
 
 	if (pidls[1])
 	{
 		SHGetPathFromIDList(pidls[1], Path2);
 
 		wcscpy_s(Parent2, MAX_PATH, Path2);
-		Ptr = wcsrchr(Parent2, L'\\');
+		pChar = wcsrchr(Parent2, L'\\');
 
-		if (Ptr<=&Parent2[2])
-			Ptr = &Parent2[3];
+		if (pChar<=&Parent2[2])
+			pChar = &Parent2[3];
 
-		*Ptr = '\0';
+		*pChar = '\0';
 	}
 
 	BOOL NotifyOwner = FALSE;

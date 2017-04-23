@@ -63,22 +63,22 @@ void ThumbnailList<C>::AddItem(ThumbnailData& td)
 template <UINT C>
 BOOL ThumbnailList<C>::Lookup(LFItemDescriptor* i, ThumbnailData& td)
 {
-	INT Ptr = m_NextPtr;
+	INT pChar = m_NextPtr;
 
 	for (UINT a=0; a<C; a++)
 	{
-		if (--Ptr<0)
-			Ptr = C-1;
+		if (--pChar<0)
+			pChar = C-1;
 
-		if ((strcmp(m_Items[Ptr].StoreID, i->StoreID)==0) && (strcmp(m_Items[Ptr].FileID, i->CoreAttributes.FileID)==0))
+		if ((strcmp(m_Items[pChar].StoreID, i->StoreID)==0) && (strcmp(m_Items[pChar].FileID, i->CoreAttributes.FileID)==0))
 		{
-			td = m_Items[Ptr];
+			td = m_Items[pChar];
 
-			if (Ptr!=m_NextPtr)
+			if (pChar!=m_NextPtr)
 			{
 				ThumbnailData Temp = m_Items[m_NextPtr];
-				m_Items[m_NextPtr] = m_Items[Ptr];
-				m_Items[Ptr] = Temp;
+				m_Items[m_NextPtr] = m_Items[pChar];
+				m_Items[pChar] = Temp;
 			}
 
 			if (++m_NextPtr>=C)

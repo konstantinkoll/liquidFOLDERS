@@ -9,7 +9,7 @@
 // LFSelectLocationIATADlg
 //
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd, const CHAR* pAirport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd, const LPCSTR pAirport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
 	: LFDialog(IDD_SELECTIATA, pParentWnd)
 {
 	m_IsPropertyDialog = IsPropertyDialog;
@@ -235,7 +235,7 @@ void LFSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-		CHAR* pChar = (pItem->iSubItem==0) ? p_Airports[Index]->Code : p_Airports[Index]->Name;
+		LPCSTR pChar = (pItem->iSubItem==0) ? p_Airports[Index]->Code : p_Airports[Index]->Name;
 		MultiByteToWideChar(CP_ACP, 0, pChar, -1, pItem->pszText, 256);
 	}
 }

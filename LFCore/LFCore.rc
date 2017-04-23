@@ -193,7 +193,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NEWSTORE            "Neuer Store"
-    IDS_LASTSEEN            "Zuletzt angeschlossen von %s"
+    IDS_LASTSEEN            "Zuletzt angeschlossen auf %s"
     IDS_FILECOUNT_SINGULAR  "%u Datei (%s)"
     IDS_FILECOUNT_PLURAL    "%u Dateien (%s)"
     IDS_MEDIACOUNT_SINGULAR "%u Titel (%s)"
@@ -789,7 +789,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NEWSTORE            "Store nouveau"
-    IDS_LASTSEEN            "Dernier monté de %s"
+    IDS_LASTSEEN            "Dernier monté en %s"
     IDS_FILECOUNT_SINGULAR  "%u fichier (%s)"
     IDS_FILECOUNT_PLURAL    "%u fichiers (%s)"
     IDS_MEDIACOUNT_SINGULAR "%u morceau (%s)"
@@ -1125,7 +1125,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NEWSTORE            "New store"
-    IDS_LASTSEEN            "Last mounted from %s"
+    IDS_LASTSEEN            "Last mounted on %s"
     IDS_FILECOUNT_SINGULAR  "%u file (%s)"
     IDS_FILECOUNT_PLURAL    "%u files (%s)"
     IDS_MEDIACOUNT_SINGULAR "%u medium (%s)"

@@ -21,7 +21,7 @@ CPropertyHolder::CPropertyHolder()
 		ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
 
-void CPropertyHolder::SetStore(const CHAR* pStoreID)
+void CPropertyHolder::SetStore(const LPCSTR pStoreID)
 {
 	ASSERT(pStoreID);
 
@@ -117,13 +117,13 @@ CProperty::CProperty(LFVariantData* pData)
 	ZeroMemory(&m_RangeSecond, sizeof(m_RangeSecond));
 }
 
-void CProperty::ToString(WCHAR* tmpStr, INT nCount) const
+void CProperty::ToString(LPWSTR pStr, INT nCount) const
 {
 	ASSERT(p_Parent);
 
 	if (p_Data->Attr>=LFAttributeCount)
 	{
-		wcscpy_s(tmpStr, nCount, p_Data->UnicodeString);
+		wcscpy_s(pStr, nCount, p_Data->UnicodeString);
 	}
 	else
 		if (m_Multiple)
@@ -133,18 +133,18 @@ void CProperty::ToString(WCHAR* tmpStr, INT nCount) const
 				WCHAR tmpBuf[256];
 				LFVariantDataToString(m_RangeSecond, tmpBuf, 256);
 
-				LFVariantDataToString(m_RangeFirst, tmpStr, nCount);
-				wcscat_s(tmpStr, nCount, L" – ");
-				wcscat_s(tmpStr, nCount, tmpBuf);
+				LFVariantDataToString(m_RangeFirst, pStr, nCount);
+				wcscat_s(pStr, nCount, L" – ");
+				wcscat_s(pStr, nCount, tmpBuf);
 			}
 			else
 			{
-				wcscpy_s(tmpStr, nCount, m_Multiple ? p_Parent->m_MultipleValues : p_Data->UnicodeString);
+				wcscpy_s(pStr, nCount, m_Multiple ? p_Parent->m_MultipleValues : p_Data->UnicodeString);
 			}
 		}
 		else
 		{
-			LFVariantDataToString(*p_Data, tmpStr, nCount);
+			LFVariantDataToString(*p_Data, pStr, nCount);
 		}
 }
 

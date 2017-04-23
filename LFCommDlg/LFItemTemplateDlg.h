@@ -14,7 +14,7 @@
 class LFItemTemplateDlg : public LFDialog
 {
 public:
-	LFItemTemplateDlg(LFItemDescriptor* pItem, const CHAR* pStoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
+	LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
 
 	CHAR m_StoreID[LFKeySize];
 	LFItemDescriptor* m_pItem;

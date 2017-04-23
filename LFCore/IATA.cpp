@@ -70,7 +70,7 @@ LFCORE_API INT LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport
 	return Last;
 }
 
-LFCORE_API BOOL LFIATAGetAirportByCode(const CHAR* Code, LFAirport** ppAirport)
+LFCORE_API BOOL LFIATAGetAirportByCode(LPCSTR Code, LFAirport** ppAirport)
 {
 	if (!Code)
 		return FALSE;

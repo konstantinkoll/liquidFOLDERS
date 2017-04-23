@@ -26,8 +26,8 @@ public:
 	~LFTransactionList();
 
 	BOOL AddItem(LFItemDescriptor* pItemDescriptor, UINT_PTR UserData=0);
-	BOOL AddItem(const CHAR* pStoreID, const CHAR* pFileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
-	void SetError(const CHAR* pStoreID, UINT Result, LFProgress* pProgress=NULL);
+	BOOL AddItem(LPCSTR pStoreID, LPCSTR pFileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
+	void SetError(LPCSTR pStoreID, UINT Result, LFProgress* pProgress=NULL);
 	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
 	HGLOBAL CreateDropFiles();
 	HGLOBAL CreateLiquidFiles();
@@ -38,5 +38,5 @@ public:
 	BOOL m_Resolved;
 
 private:
-	BOOL SetStoreAttributes(LFVariantData* pVariantData, WCHAR** ppStoreName, WCHAR** ppStoreComments);
+	BOOL SetStoreAttributes(LFVariantData* pVariantData, LPCWSTR* ppStoreName, LPCWSTR* ppStoreComments);
 };

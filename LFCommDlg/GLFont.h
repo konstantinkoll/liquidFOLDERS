@@ -21,11 +21,11 @@ public:
 	void Begin(const GLcolor& SrcColor, GLfloat Alpha=1.0f) const;
 	void SetColor(const GLcolor& SrcColor, GLfloat Alpha=1.0f) const;
 	static void End();
-	UINT Render(CHAR* pStr, INT x, INT y, SIZE_T cCount=-1) const;
-	UINT Render(WCHAR* pStr, INT x, INT y, SIZE_T cCount=-1) const;
-	UINT GetTextWidth(CHAR* pStr, SIZE_T cCount=-1) const;
-	UINT GetTextWidth(WCHAR* pStr, SIZE_T cCount=-1) const;
-	UINT GetTextHeight(void* pStr) const;
+	UINT Render(LPCSTR pStr, INT x, INT y, SIZE_T cCount=-1) const;
+	UINT Render(LPCWSTR pStr, INT x, INT y, SIZE_T cCount=-1) const;
+	UINT GetTextWidth(LPCSTR pStr, SIZE_T cCount=-1) const;
+	UINT GetTextWidth(LPCWSTR pStr, SIZE_T cCount=-1) const;
+	UINT GetTextHeight(LPCVOID pStr) const;
 
 protected:
 	UINT RenderChar(UCHAR Ch, INT x, INT y, UINT& LineHeight) const;
@@ -51,7 +51,7 @@ inline void GLFont::SetColor(const GLcolor& SrcColor, GLfloat Alpha) const
 	theRenderer.SetColor(SrcColor, Alpha);
 }
 
-inline UINT GLFont::GetTextHeight(void* pStr) const
+inline UINT GLFont::GetTextHeight(LPCVOID pStr) const
 {
-	return (pStr ? m_LineHeight : 0);
+	return pStr ? m_LineHeight : 0;
 }

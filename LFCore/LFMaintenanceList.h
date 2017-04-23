@@ -18,7 +18,7 @@ class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem, 16, 16>
 public:
 	LFMaintenanceList();
 
-	BOOL AddItem(WCHAR* Name, WCHAR* Comments, CHAR* StoreID, UINT Result, UINT Icon);
+	BOOL AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT Icon);
 
 	UINT m_LastError;
 };

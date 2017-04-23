@@ -29,13 +29,13 @@ LFCORE_API void __stdcall LFInitialize();
 LFCORE_API const LFMessageIDs* __stdcall LFGetMessageIDs();
 
 // Gibt den Dateinamen der liquidFOLDERS-App zurück
-LFCORE_API BOOL __stdcall LFGetApplicationPath(WCHAR* pStr, SIZE_T cCount);
+LFCORE_API BOOL __stdcall LFGetApplicationPath(LPWSTR pStr, SIZE_T cCount);
 
 // Liefert einen String mit Dateianzahl und -größe zurück
-LFCORE_API void __stdcall LFGetFileSummary(UINT Count, INT64 Size, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, SIZE_T cCount);
 
 // Liefert einen String mit Dateianzahl und  Dateigröße oder Laufzeit zurück
-LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& Summary, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& Summary, LPWSTR pStr, SIZE_T cCount);
 
 
 // Gibt TRUE zurück, wenn der Explorer Dateiendungen verbirgt
@@ -57,20 +57,20 @@ LFCORE_API void __stdcall LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT 
 
 
 // Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetErrorText(WCHAR* pStr, SIZE_T cCount, UINT ID);
+LFCORE_API void __stdcall LFGetErrorText(LPWSTR pStr, SIZE_T cCount, UINT ID);
 
 // Anzeigen eines Fehlers (LFError...) in aktueller Sprache
 LFCORE_API void __stdcall LFCoreErrorBox(UINT nID, HWND hWnd=NULL);
 
 
 // Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetAttrCategoryName(WCHAR* pStr, SIZE_T cCount, UINT ID);
+LFCORE_API void __stdcall LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID);
 
 // Informationen über ein Attribut zurückliefern
 LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID);
 
 // Name einer Datenquelle in aktueller Sprache zurückliefern
-LFCORE_API void __stdcall LFGetSourceName(WCHAR* pStr, SIZE_T cCount, UINT ID, BOOL Qualified);
+LFCORE_API void __stdcall LFGetSourceName(LPWSTR pStr, SIZE_T cCount, UINT ID, BOOL Qualified);
 
 // Informationen über eine Kategorie zurückliefern
 LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDescriptor, UINT ID);
@@ -96,10 +96,10 @@ LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 //
 
 // Gibt die ID des aktuellen Standard-Stores zurück
-LFCORE_API UINT __stdcall LFGetDefaultStore(CHAR* pStoreID=NULL);
+LFCORE_API UINT __stdcall LFGetDefaultStore(LPSTR pStoreID=NULL);
 
 // Macht einen Store zum Standard-Store
-LFCORE_API UINT __stdcall LFSetDefaultStore(const CHAR* pStoreID);
+LFCORE_API UINT __stdcall LFSetDefaultStore(LPCSTR pStoreID);
 
 // Gibt die Anzahl aller Stores zurück
 LFCORE_API UINT __stdcall LFGetStoreCount();
@@ -108,7 +108,7 @@ LFCORE_API UINT __stdcall LFGetStoreCount();
 LFCORE_API UINT __stdcall LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount);
 
 // Gibt die Daten eines Stores zurück
-LFCORE_API UINT __stdcall LFGetStoreSettings(const CHAR* pStoreID, LFStoreDescriptor* pStoreDescriptor);
+LFCORE_API UINT __stdcall LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor* pStoreDescriptor);
 LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescriptor* pStoreDescriptor);
 
 // Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
@@ -125,17 +125,17 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName=NULL, LPCWSTR pComm
 LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName=NULL, LFProgress* pProgress=NULL);
 
 // Macht einen Store offline durchsuchbar
-LFCORE_API UINT __stdcall LFMakeStoreSearchable(const CHAR* pStoreID, BOOL Searchable=TRUE);
+LFCORE_API UINT __stdcall LFMakeStoreSearchable(LPCSTR pStoreID, BOOL Searchable=TRUE);
 
 // Löscht einen bestehenden Store
-LFCORE_API UINT __stdcall LFDeleteStore(const CHAR* pStoreID, LFProgress* pProgress=NULL);
+LFCORE_API UINT __stdcall LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress=NULL);
 
 // Setzt Namen und Kommentar eines Stores
 // Ist pName oder pComment NULL, so wird der jeweilige Wert nicht verändert
-LFCORE_API UINT __stdcall LFSetStoreAttributes(const CHAR* pStoreID, WCHAR* pName, WCHAR* pComment);
+LFCORE_API UINT __stdcall LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pComment);
 
 // Synchronisiert einen Store
-LFCORE_API UINT __stdcall LFSynchronizeStore(const CHAR* pStoreID, LFProgress* pProgress=NULL);
+LFCORE_API UINT __stdcall LFSynchronizeStore(LPCSTR pStoreID, LFProgress* pProgress=NULL);
 
 // Synchronisiert alle Stores
 LFCORE_API UINT __stdcall LFSynchronizeStores(LFProgress* pProgress=NULL);
@@ -144,10 +144,10 @@ LFCORE_API UINT __stdcall LFSynchronizeStores(LFProgress* pProgress=NULL);
 LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProgress=NULL);
 
 // Gibt den physischen Pfad einer Datei zurück
-LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount, BOOL RemoveNew, BOOL CheckExists=TRUE);
+LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew, BOOL CheckExists=TRUE);
 
 // Importiert Dateien
-LFCORE_API void __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const CHAR* pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
+LFCORE_API void __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
 
 
 
@@ -155,43 +155,43 @@ LFCORE_API void __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL
 //
 
 // Prüft, ob ein Hashtag in einem Unicode-Array enthalten ist
-LFCORE_API BOOL LFContainsHashtag(WCHAR* pUnicodeArray, WCHAR* pHashtag);
+LFCORE_API BOOL LFContainsHashtag(LPCWSTR pUnicodeArray, LPCWSTR pHashtag);
 
 // Konvertiert einen FourCC in eine Zeichenkette
-LFCORE_API void __stdcall LFFourCCToString(const UINT c, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFFourCCToString(const UINT c, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine 32-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFUINTToString(const UINT u, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFUINTToString(const UINT u, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine 64-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFSizeToString(const INT64 s, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFSizeToString(const INT64 s, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert einen Bruch in eine Zeichenkette
-LFCORE_API void __stdcall LFFractionToString(const LFFraction f, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFFractionToString(const LFFraction f, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Double-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFDoubleToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFDoubleToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Koordinaten-Komponente in eine Zeichenkette
-LFCORE_API void __stdcall LFGeoCoordinateToString(const DOUBLE c, WCHAR* pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
+LFCORE_API void __stdcall LFGeoCoordinateToString(const DOUBLE c, LPWSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
 
 // Konvertiert eine Geo-Position in eine Zeichenkette
-LFCORE_API void __stdcall LFGeoCoordinatesToString(const LFGeoCoordinates& c, WCHAR* pStr, SIZE_T cCount, BOOL FillZero);
+LFCORE_API void __stdcall LFGeoCoordinatesToString(const LFGeoCoordinates& c, LPWSTR pStr, SIZE_T cCount, BOOL FillZero);
 
 // Konvertiert eine Zeit in eine Zeichenkette
-LFCORE_API void __stdcall LFTimeToString(const FILETIME t, WCHAR* pStr, SIZE_T cCount, BOOL IncludeTime=TRUE);
+LFCORE_API void __stdcall LFTimeToString(const FILETIME t, LPWSTR pStr, SIZE_T cCount, BOOL IncludeTime=TRUE);
 
 // Konvertiert eine Bitrate in eine Zeichenkette
-LFCORE_API void __stdcall LFBitrateToString(const UINT r, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFBitrateToString(const UINT r, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Zeitdauer in eine Zeichenkette
-LFCORE_API void __stdcall LFDurationToString(UINT d, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFDurationToString(UINT d, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Megapixel-Angabe in eine Zeichenkette
-LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert ein Attribut in eine Zeichenkette
-LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount);
 
 // Initalisiert eine LFVariantData-Struktur
 LFCORE_API void __stdcall LFInitVariantData(LFVariantData& v, UINT Attr);
@@ -204,10 +204,10 @@ LFCORE_API void __stdcall LFClearVariantData(LFVariantData& v);
 LFCORE_API BOOL __stdcall LFIsNullVariantData(const LFVariantData& v);
 
 // Konvertiert eine LFVariantData-Struktur in eine Zeichenkette
-LFCORE_API void __stdcall LFVariantDataToString(const LFVariantData& v, WCHAR* pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFVariantDataToString(const LFVariantData& v, LPWSTR pStr, SIZE_T cCount);
 
 // Erzeugt eine LFVariantData-Struktur aus einer Zeichenkette
-LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& v, const WCHAR* pStr);
+LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& v, LPCWSTR pStr);
 
 // Vergleicht zwei Dateiattribute
 LFCORE_API INT __stdcall LFCompareVariantData(LFVariantData& v1, LFVariantData& v2);
@@ -223,7 +223,7 @@ LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* pItemDescr
 LFCORE_API BOOL __stdcall LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr);
 
 // Entfernt doppelte Eintäge in einem Unicode-Array
-LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
+LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
 
 
 
@@ -231,7 +231,7 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(WCHAR* pBuffer, SIZE_T cCount);
 //
 
 // Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL, void* pStoreData=NULL, SIZE_T StoreDataSize=0);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL, LPVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
 
 // Neuen LFItemDescriptor für Store erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
@@ -251,10 +251,10 @@ LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
 
 // Lädt einen abgespeicherten Filter
 LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* pItemDescriptor);
-LFCORE_API LFFilter* __stdcall LFLoadFilterEx(WCHAR* pFilename);
+LFCORE_API LFFilter* __stdcall LFLoadFilterEx(LPCWSTR pFilename);
 
 // Speichert einen Filter in einem Store ab
-LFCORE_API UINT __stdcall LFSaveFilter(const CHAR* pStoreID, LFFilter* pFilter, WCHAR* pName, WCHAR* pComment=NULL);
+LFCORE_API UINT __stdcall LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment=NULL);
 
 // Neue LFFilterCondition erzeugen
 LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
@@ -292,7 +292,7 @@ LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);
 
 // LFItemDescriptor zur LFTransactionList hinzufügen
 LFCORE_API BOOL __stdcall LFAddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData=0);
-LFCORE_API BOOL __stdcall LFAddTransactionItemEx(LFTransactionList* pTransactionList, const CHAR* pStoreID, const CHAR* pFileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
+LFCORE_API BOOL __stdcall LFAddTransactionItemEx(LFTransactionList* pTransactionList, LPCSTR pStoreID, LPCSTR pFileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
 
 // Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
 LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionList);
@@ -311,7 +311,7 @@ LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
 LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* pFileImportList);
 
 // String zur LFFileImportList hinzufügen
-LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, WCHAR* pPath);
+LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, LPCWSTR pPath);
 
 
 // Existierende LFMaintenanceList freigeben
@@ -338,9 +338,9 @@ LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport** ppAirport);
 // *ppAirport kann in jedem Fall überschrieben werden.
 LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport);
 
-// Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
-// *pBuffer kann in jedem Fall überschrieben werden.
-LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(const CHAR* Code, LFAirport** ppAirport);
+// Setzt den Zeiger *pStr auf den Flughafen mit dem übergebenen Code.
+// *pStr kann in jedem Fall überschrieben werden.
+LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(LPCSTR Code, LFAirport** ppAirport);
 
 
 
@@ -371,7 +371,7 @@ LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult
 
 // Statistik
 // - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
-LFCORE_API LFStatistics* __stdcall LFQueryStatistics(CHAR* StoreID=NULL);
+LFCORE_API LFStatistics* __stdcall LFQueryStatistics(LPCSTR StoreID=NULL);
 
 
 
@@ -389,7 +389,7 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);
 //
 
 // Speichert pShellLink auf dem Desktop ab
-LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, WCHAR* pLinkFileName);
+LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, LPCWSTR pLinkFileName);
 
 // Liefert einen ShellLink für den angegebenen Store
 LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* pItemDescriptor);
@@ -404,7 +404,7 @@ LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* p
 //
 
 // Liefert den Pfad des iCloud-Drive-Ornders zurück
-LFCORE_API BOOL LFGetICloudPath(WCHAR* pPath);
+LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath);
 
 
 // Liefert die Pfade von OneDrive zurück

@@ -24,13 +24,13 @@ void CThumbnailCache::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT
 	// Set alpha channel to 0xFF
 	for (INT Row=y; Row<y+cy; Row++)
 	{
-		BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
+		BYTE* pChar = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
 
 		for (INT Column=cx; Column>0; Column--)
 		{
-			*Ptr = 0xFF;
+			*pChar = 0xFF;
 
-			Ptr += 4;
+			pChar += 4;
 		}
 	}
 }

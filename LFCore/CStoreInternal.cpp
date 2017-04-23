@@ -71,7 +71,7 @@ UINT CStoreInternal::DeleteDirectories()
 	return Result;
 }
 
-UINT CStoreInternal::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount)
+UINT CStoreInternal::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
 {
 	assert(pItemDescriptor);
 	assert(pPath);

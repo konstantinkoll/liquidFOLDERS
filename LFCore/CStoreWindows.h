@@ -16,14 +16,14 @@ public:
 	virtual UINT Synchronize(BOOL OnInitialize=FALSE, LFProgress* pProgress=NULL);
 
 	// Callbacks
-	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount);
+	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
 
 protected:
 	// Callbacks
-	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, void* pStoreData, WCHAR* pPath, SIZE_T cCount) const;
-	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor);
-	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData);
-	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, void* pStoreData);
+	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
+	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
+	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
+	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
 
 private:
 	LFFileImportList* m_pFileImportList;

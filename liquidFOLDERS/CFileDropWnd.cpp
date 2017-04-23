@@ -23,7 +23,7 @@ CFileDropWnd::CFileDropWnd()
 	m_Hover = FALSE;
 }
 
-BOOL CFileDropWnd::Create(const CHAR* pStoreID)
+BOOL CFileDropWnd::Create(const LPCSTR pStoreID)
 {
 	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 
@@ -308,7 +308,7 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 {
 	ASSERT(wParam);
 
-	if (strcmp((CHAR*)wParam, m_StoreID)==0)
+	if (strcmp((LPCSTR)wParam, m_StoreID)==0)
 	{
 		if (IsIconic())
 			ShowWindow(SW_RESTORE);

@@ -13,7 +13,7 @@
 class LFSaveFilterDlg : public LFDialog
 {
 public:
-	LFSaveFilterDlg(CWnd* pParentWnd=NULL, const CHAR* pStoreID=NULL, BOOL AllowChooseStore=FALSE, LPCWSTR FileName=NULL, LPCWSTR Comments=NULL);
+	LFSaveFilterDlg(CWnd* pParentWnd=NULL, const LPCSTR pStoreID=NULL, BOOL AllowChooseStore=FALSE, LPCWSTR FileName=NULL, LPCWSTR Comments=NULL);
 
 	CHAR m_StoreID[LFKeySize];
 	WCHAR m_FileName[256];

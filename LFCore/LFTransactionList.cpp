@@ -20,13 +20,13 @@ LFCORE_API LFTransactionList* LFAllocTransactionList(HLIQUID hLiquid)
 		if (pLiquidFiles)
 		{
 			UINT cFiles = pLiquidFiles->cFiles;
-			CHAR* Ptr = (CHAR*)pLiquidFiles+sizeof(LIQUIDFILES);
+			LPCSTR pChar = (LPCSTR)pLiquidFiles+sizeof(LIQUIDFILES);
 
 			for (UINT a=0; a<cFiles; a++)
 			{
-				pTransactionList->AddItem(Ptr, Ptr+LFKeySize);
+				pTransactionList->AddItem(pChar, pChar+LFKeySize);
 
-				Ptr += 2*LFKeySize;
+				pChar += 2*LFKeySize;
 			}
 		}
 
@@ -50,7 +50,7 @@ LFCORE_API BOOL LFAddTransactionItem(LFTransactionList* pTransactionList, LFItem
 	return pTransactionList->AddItem(pItemDescriptor, UserData);
 }
 
-LFCORE_API BOOL LFAddTransactionItemEx(LFTransactionList* pTransactionList, const CHAR* pStoreID, const CHAR* pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
+LFCORE_API BOOL LFAddTransactionItemEx(LFTransactionList* pTransactionList, LPCSTR pStoreID, LPCSTR pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
 {
 	assert(pTransactionList);
 
@@ -122,7 +122,7 @@ BOOL LFTransactionList::AddItem(LFItemDescriptor* pItemDescriptor, UINT_PTR User
 	return TRUE;
 }
 
-BOOL LFTransactionList::AddItem(const CHAR* pStoreID, const CHAR* pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
+BOOL LFTransactionList::AddItem(LPCSTR pStoreID, LPCSTR pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
 {
 	assert(pStoreID);
 	assert(pFileID);
@@ -149,7 +149,7 @@ BOOL LFTransactionList::AddItem(const CHAR* pStoreID, const CHAR* pFileID, LFIte
 	return TRUE;
 }
 
-void LFTransactionList::SetError(const CHAR* pStoreID, UINT Result, LFProgress* pProgress)
+void LFTransactionList::SetError(LPCSTR pStoreID, UINT Result, LFProgress* pProgress)
 {
 	if (Result==LFOk)
 		m_Modified = TRUE;
@@ -235,19 +235,19 @@ HGLOBAL LFTransactionList::CreateDropFiles()
 	pDropFiles->pt.x = pDropFiles->pt.y = 0;
 	pDropFiles->fWide = TRUE;
 
-	WCHAR* Ptr = (WCHAR*)(((BYTE*)pDropFiles)+sizeof(DROPFILES));
+	WCHAR* pChar = (WCHAR*)(((BYTE*)pDropFiles)+sizeof(DROPFILES));
 	for (UINT a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
 		{
 #pragma warning(push)
 #pragma warning(disable: 4996)
-			wcscpy(Ptr, &m_Items[a].Path[4]);
+			wcscpy(pChar, &m_Items[a].Path[4]);
 #pragma warning(pop)
 
-			Ptr += wcslen(&m_Items[a].Path[4])+1;
+			pChar += wcslen(&m_Items[a].Path[4])+1;
 		}
 
-	*Ptr = L'\0';
+	*pChar = L'\0';
 
 	GlobalUnlock(hGlobal);
 
@@ -276,14 +276,14 @@ HGLOBAL LFTransactionList::CreateLiquidFiles()
 	pLiquidFiles->cFiles = cFiles;
 	pLiquidFiles->pFiles = sizeof(LIQUIDFILES);
 
-	CHAR* Ptr = (CHAR*)pLiquidFiles+sizeof(LIQUIDFILES);
+	CHAR* pChar = (CHAR*)pLiquidFiles+sizeof(LIQUIDFILES);
 	for (UINT a=0; a<m_ItemCount; a++)
 		if (m_Items[a].LastError==LFOk)
 		{
-			strcpy_s(Ptr, LFKeySize, m_Items[a].StoreID);
-			strcpy_s(Ptr+LFKeySize, LFKeySize, m_Items[a].FileID);
+			strcpy_s(pChar, LFKeySize, m_Items[a].StoreID);
+			strcpy_s(pChar+LFKeySize, LFKeySize, m_Items[a].FileID);
 
-			Ptr += 2*LFKeySize;
+			pChar += 2*LFKeySize;
 		}
 
 	GlobalUnlock(hGlobal);
@@ -291,7 +291,7 @@ HGLOBAL LFTransactionList::CreateLiquidFiles()
 	return hGlobal;
 }
 
-BOOL LFTransactionList::SetStoreAttributes(LFVariantData* pVariantData, WCHAR** ppStoreName, WCHAR** ppStoreComments)
+BOOL LFTransactionList::SetStoreAttributes(LFVariantData* pVariantData, LPCWSTR* ppStoreName, LPCWSTR* ppStoreComments)
 {
 	assert(ppStoreName);
 	assert(ppStoreComments);
@@ -357,8 +357,8 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 			case LFTypeStore:
 				if (TransactionType==LFTransactionTypeUpdate)
 				{
-					WCHAR* pStoreName = NULL;
-					WCHAR* pStoreComments = NULL;
+					LPCWSTR pStoreName = NULL;
+					LPCWSTR pStoreComments = NULL;
 
 					if (!SetStoreAttributes(pVariantData1, &pStoreName, &pStoreComments))
 					{

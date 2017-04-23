@@ -10,7 +10,7 @@
 // LFEditConditionDlg
 //
 
-LFEditConditionDlg::LFEditConditionDlg(CWnd* pParentWnd, const CHAR* pStoreID, LFFilterCondition* pCondition)
+LFEditConditionDlg::LFEditConditionDlg(CWnd* pParentWnd, const LPCSTR pStoreID, LFFilterCondition* pCondition)
 	: LFAttributeListDlg(IDD_EDITCONDITION, pParentWnd)
 {
 	strcpy_s(m_StoreID, LFKeySize, pStoreID ? pStoreID : "");

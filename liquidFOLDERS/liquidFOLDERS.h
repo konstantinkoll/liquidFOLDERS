@@ -20,7 +20,7 @@ public:
 	CLiquidFoldersApp();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
+	virtual CWnd* OpenCommandLine(LPWSTR pCmdLine=NULL);
 	virtual INT ExitInstance();
 
 	CMainWnd* GetClipboard();

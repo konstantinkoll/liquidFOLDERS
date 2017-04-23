@@ -45,7 +45,7 @@ LFStoreDescriptor StoreCache[MAXSTORES];
 // Cache access
 //
 
-void CreateNewStoreID(CHAR* pStoreID)
+void CreateNewStoreID(LPSTR pStoreID)
 {
 	assert(pStoreID);
 
@@ -94,7 +94,7 @@ void GetDescriptorForNewStore(LFStoreDescriptor* pStoreDescriptor)
 	pStoreDescriptor->IndexVersion = CURIDXVERSION;
 }
 
-LFStoreDescriptor* FindStore(const CHAR* pStoreID, HMUTEX* phMutex)
+LFStoreDescriptor* FindStore(LPCSTR pStoreID, HMUTEX* phMutex)
 {
 	assert(pStoreID);
 
@@ -110,7 +110,7 @@ LFStoreDescriptor* FindStore(const CHAR* pStoreID, HMUTEX* phMutex)
 	return NULL;
 }
 
-LFStoreDescriptor* FindStore(const GUID UniqueID, HMUTEX* phMutex)
+LFStoreDescriptor* FindStore(const GUID& UniqueID, HMUTEX* phMutex)
 {
 	for (UINT a=0; a<StoreCount; a++)
 		if (StoreCache[a].UniqueID==UniqueID)
@@ -124,7 +124,7 @@ LFStoreDescriptor* FindStore(const GUID UniqueID, HMUTEX* phMutex)
 	return NULL;
 }
 
-LFStoreDescriptor* FindStore(const WCHAR* pDatPath, HMUTEX* phMutex)
+LFStoreDescriptor* FindStore(LPCWSTR pDatPath, HMUTEX* phMutex)
 {
 	assert(pDatPath);
 
@@ -277,7 +277,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 	}
 }
 
-void GetRegistryKey(CHAR* pStoreID, CHAR* pKey)
+void GetRegistryKey(LPCSTR pStoreID, LPSTR pKey)
 {
 	assert(pStoreID);
 	assert(pKey);
@@ -287,7 +287,7 @@ void GetRegistryKey(CHAR* pStoreID, CHAR* pKey)
 	strcat_s(pKey, 256, pStoreID);
 }
 
-BOOL LoadStoreSettingsFromRegistry(CHAR* pStoreID, LFStoreDescriptor* pStoreDescriptor)
+BOOL LoadStoreSettingsFromRegistry(LPCSTR pStoreID, LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreID);
 	assert(pStoreDescriptor);
@@ -450,7 +450,7 @@ UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* pStoreDescriptor)
 }
 
 
-UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, WCHAR* pPath)
+UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, LPWSTR pPath)
 {
 	assert(pStoreDescriptor);
 	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
@@ -465,7 +465,7 @@ UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, WCHAR* p
 	return LFOk;
 }
 
-BOOL LoadStoreSettingsFromFile(WCHAR* pPath, LFStoreDescriptor* pStoreDescriptor)
+BOOL LoadStoreSettingsFromFile(LPCWSTR pPath, LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pPath);
 	assert(pPath[0]!=L'\0');
@@ -676,7 +676,7 @@ void ChooseNewDefaultStore()
 	}
 }
 
-LFCORE_API UINT LFGetDefaultStore(CHAR* pStoreID)
+LFCORE_API UINT LFGetDefaultStore(LPSTR pStoreID)
 {
 	if (GetMutexForStores())
 	{
@@ -693,7 +693,7 @@ LFCORE_API UINT LFGetDefaultStore(CHAR* pStoreID)
 	return LFMutexError;
 }
 
-LFCORE_API UINT LFSetDefaultStore(const CHAR* pStoreID)
+LFCORE_API UINT LFSetDefaultStore(LPCSTR pStoreID)
 {
 	assert(pStoreID);
 
@@ -767,7 +767,7 @@ UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMut
 	return LFOk;
 }
 
-UINT GetStore(const CHAR* pStoreID, CStore** ppStore)
+UINT GetStore(LPCSTR pStoreID, CStore** ppStore)
 {
 	assert(ppStore);
 
@@ -785,7 +785,7 @@ UINT GetStore(const CHAR* pStoreID, CStore** ppStore)
 	return Result;
 }
 
-UINT OpenStore(const CHAR* pStoreID, BOOL WriteAccess, CStore** ppStore)
+UINT OpenStore(LPCSTR pStoreID, BOOL WriteAccess, CStore** ppStore)
 {
 	UINT Result = GetStore(pStoreID, ppStore);
 
@@ -866,14 +866,13 @@ LFCORE_API UINT LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount)
 
 	if (StoreCount)
 	{
-		*ppStoreIDs = (CHAR*)malloc(LFKeySize*StoreCount);
-		CHAR* Ptr = *ppStoreIDs;
+		CHAR* pChar = (*ppStoreIDs=(CHAR*)malloc(LFKeySize*StoreCount));
 
 		for (UINT a=0; a<StoreCount; a++)
 		{
-			strcpy_s(Ptr, LFKeySize, StoreCache[a].StoreID);
+			strcpy_s(pChar, LFKeySize, StoreCache[a].StoreID);
 
-			Ptr += LFKeySize;
+			pChar += LFKeySize;
 		}
 
 		*pCount = StoreCount;
@@ -884,7 +883,7 @@ LFCORE_API UINT LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount)
 	return LFOk;
 }
 
-LFCORE_API UINT LFGetStoreSettings(const CHAR* pStoreID, LFStoreDescriptor* pStoreDescriptor)
+LFCORE_API UINT LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreID);
 	assert(pStoreDescriptor);
@@ -1071,9 +1070,9 @@ LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName, LFProgres
 	if (TrailingBackslash)
 		Store.StoreName[wcslen(Store.StoreName)-1] = L'\0';
 
-	WCHAR* Ptr = wcsrchr(Store.StoreName, L'\\');
-	if (Ptr)
-		wcscpy_s(Store.StoreName, 256, Ptr+1);
+	LPCWSTR pChar = wcsrchr(Store.StoreName, L'\\');
+	if (pChar)
+		wcscpy_s(Store.StoreName, 256, pChar+1);
 
 	// Retrieve or save store name
 	if (pStoreName)
@@ -1089,7 +1088,7 @@ LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName, LFProgres
 	return CommitInitializeStore(&Store, pProgress);
 }
 
-LFCORE_API UINT LFMakeStoreSearchable(const CHAR* pStoreID, BOOL Searchable)
+LFCORE_API UINT LFMakeStoreSearchable(LPCSTR pStoreID, BOOL Searchable)
 {
 	assert(pStoreID);
 
@@ -1165,7 +1164,7 @@ LFCORE_API UINT LFMakeStoreSearchable(const CHAR* pStoreID, BOOL Searchable)
 	return Result;
 }
 
-LFCORE_API UINT LFDeleteStore(const CHAR* pStoreID, LFProgress* pProgress)
+LFCORE_API UINT LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress)
 {
 	assert(pStoreID);
 
@@ -1247,7 +1246,7 @@ LFCORE_API UINT LFDeleteStore(const CHAR* pStoreID, LFProgress* pProgress)
 	return Result;
 }
 
-LFCORE_API UINT LFSetStoreAttributes(const CHAR* pStoreID, WCHAR* pName, WCHAR* pComment)
+LFCORE_API UINT LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pComment)
 {
 	assert(pStoreID);
 
@@ -1286,7 +1285,7 @@ LFCORE_API UINT LFSetStoreAttributes(const CHAR* pStoreID, WCHAR* pName, WCHAR* 
 	return Result;
 }
 
-LFCORE_API UINT LFSynchronizeStore(const CHAR* pStoreID, LFProgress* pProgress)
+LFCORE_API UINT LFSynchronizeStore(LPCSTR pStoreID, LFProgress* pProgress)
 {
 	assert(pStoreID);
 
@@ -1399,7 +1398,7 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 	return pMaintenanceList;
 }
 
-LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, WCHAR* pPath, SIZE_T cCount, BOOL RemoveNew, BOOL CheckExists)
+LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew, BOOL CheckExists)
 {
 	assert(pItemDescriptor);
 	assert(pPath);
@@ -1487,7 +1486,7 @@ void QueryStores(LFSearchResult* pSearchResult)
 	}
 }
 
-LFCORE_API LFStatistics* LFQueryStatistics(CHAR* StoreID)
+LFCORE_API LFStatistics* LFQueryStatistics(LPCSTR StoreID)
 {
 	LFStatistics* pStatistics = new LFStatistics;
 	ZeroMemory(pStatistics, sizeof(LFStatistics));

@@ -25,8 +25,8 @@ DWORD WINAPI WorkerImport(void* lParam);
 DWORD WINAPI WorkerDelete(void* lParam);
 
 void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);
-BOOL LFImportFolder(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
-void LFRunSynchronize(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
+BOOL LFImportFolder(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
+void LFRunSynchronize(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
 void LFRunSynchronizeAll(CWnd* pParentWnd=NULL);
 void LFRunMaintenance(CWnd* pParentWnd=NULL);
-void LFDeleteStore(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
+void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);

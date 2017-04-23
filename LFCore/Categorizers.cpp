@@ -98,13 +98,13 @@ CNameCategorizer::CNameCategorizer()
 {
 }
 
-BOOL CNameCategorizer::GetNamePrefix(WCHAR* FullName, WCHAR* pBuffer)
+BOOL CNameCategorizer::GetNamePrefix(LPCWSTR FullName, LPWSTR pStr, SIZE_T cCount)
 {
 #define CHOOSE if ((P2) && ((!P1) || (P2<P1))) P1 = P2;
 
 	// Am weitesten links stehenden Trenner finden
-	WCHAR* P1 = wcsstr(FullName, L" —");
-	WCHAR* P2;
+	LPCWSTR P1 = wcsstr(FullName, L" —");
+	LPCWSTR P2;
 
 	P2 = wcsstr(FullName, L" –"); CHOOSE;
 	P2 = wcsstr(FullName, L" -"); CHOOSE;
@@ -171,7 +171,7 @@ Fertig:
 
 Ende:
 	if (P1)
-		wcsncpy_s(pBuffer, 256, FullName, P1-FullName);
+		wcsncpy_s(pStr, cCount, FullName, P1-FullName);
 
 	return (P1!=NULL);
 }
@@ -181,10 +181,10 @@ BOOL CNameCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDe
 	assert(AttrProperties[m_Attr].Type==LFTypeUnicodeString);
 
 	WCHAR Prefix1[256];
-	BOOL Result1 = GetNamePrefix((WCHAR*)pItemDescriptor1->AttributeValues[m_Attr], Prefix1);
+	BOOL Result1 = GetNamePrefix((LPCWSTR)pItemDescriptor1->AttributeValues[m_Attr], Prefix1, 256);
 
 	WCHAR Prefix2[256];
-	BOOL Result2 = GetNamePrefix((WCHAR*)pItemDescriptor2->AttributeValues[m_Attr], Prefix2);
+	BOOL Result2 = GetNamePrefix((LPCWSTR)pItemDescriptor2->AttributeValues[m_Attr], Prefix2, 256);
 
 	return (Result1 & Result2) ? wcscmp(Prefix1, Prefix2)==0 : FALSE;
 }
@@ -193,7 +193,7 @@ LFFilterCondition* CNameCategorizer::GetCondition(LFItemDescriptor* pItemDescrip
 {
 	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	if (!GetNamePrefix((WCHAR*)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.UnicodeString))
+	if (!GetNamePrefix((LPCWSTR)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.UnicodeString, 256))
 		LFGetAttributeVariantData(pItemDescriptor, c->AttrData);
 
 	return c;
@@ -208,14 +208,14 @@ CURLCategorizer::CURLCategorizer()
 {
 }
 
-void CURLCategorizer::GetServer(CHAR* URL, CHAR* Server, SIZE_T cCount)
+void CURLCategorizer::GetServer(LPCSTR URL, LPSTR pStr, SIZE_T cCount)
 {
-	CHAR* Pos = strstr(URL, "://");
+	LPCSTR Pos = strstr(URL, "://");
 	if (Pos)
 		URL = Pos+3;
 
 	Pos = strchr(URL, '/');
-	strncpy_s(Server, cCount, URL, Pos ? Pos-URL : cCount);
+	strncpy_s(pStr, cCount, URL, Pos ? Pos-URL : cCount);
 }
 
 BOOL CURLCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
@@ -223,10 +223,10 @@ BOOL CURLCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDes
 	assert(AttrProperties[m_Attr].Type==LFTypeAnsiString);
 
 	CHAR Server1[256];
-	GetServer((CHAR*)pItemDescriptor1->AttributeValues[m_Attr], Server1, 256);
+	GetServer((LPCSTR)pItemDescriptor1->AttributeValues[m_Attr], Server1, 256);
 
 	CHAR Server2[256];
-	GetServer((CHAR*)pItemDescriptor2->AttributeValues[m_Attr], Server2, 256);
+	GetServer((LPCSTR)pItemDescriptor2->AttributeValues[m_Attr], Server2, 256);
 
 	return strcmp(Server1, Server2)==0;
 }
@@ -235,7 +235,7 @@ LFFilterCondition* CURLCategorizer::GetCondition(LFItemDescriptor* pItemDescript
 {
 	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	GetServer((CHAR*)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.AnsiString, 256);
+	GetServer((LPCSTR)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.AnsiString, 256);
 
 	return c;
 }
@@ -254,7 +254,7 @@ void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescript
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
 
 	LFAirport* pAirport;
-	if (LFIATAGetAirportByCode((CHAR*)pItemDescriptor->AttributeValues[m_Attr], &pAirport))
+	if (LFIATAGetAirportByCode((LPCSTR)pItemDescriptor->AttributeValues[m_Attr], &pAirport))
 	{
 		// Ortsname in ANSI
 		CHAR tmpStr1[256];

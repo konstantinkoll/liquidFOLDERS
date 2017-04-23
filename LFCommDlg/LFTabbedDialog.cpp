@@ -117,7 +117,7 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 							// Append tab hint
 							if (CompareClassName(szClassName, _T("CCategory")))
 							{
-								TCHAR* pChar = wcschr(szWindowText, L'\n');
+								WCHAR* pChar = wcschr(szWindowText, L'\n');
 								if (pChar)
 									*pChar = L'\0';
 

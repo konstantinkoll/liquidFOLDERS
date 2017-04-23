@@ -240,7 +240,7 @@ __forceinline void CListView::DrawIcon(CDC& dc, const CRect& rect, LFItemDescrip
 		m_Icons[List]->DrawEx(&dc, IconID, CPoint(rect.left+(rect.Width()-m_IconSize[List].cx)/2, rect.top+(rect.Height()-m_IconSize[List].cy)/2), m_IconSize[List], CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
 }
 
-void CListView::AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* tmpStr, SIZE_T cCount)
+void CListView::AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR tmpStr, SIZE_T cCount)
 {
 	switch (Attr)
 	{

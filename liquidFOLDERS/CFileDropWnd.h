@@ -19,7 +19,7 @@ public:
 	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
 	virtual void PaintBackground(CPaintDC& pDC, CRect rect);
 
-	BOOL Create(const CHAR* pStoreID);
+	BOOL Create(const LPCSTR pStoreID);
 
 protected:
 	void SetTopMost(BOOL AlwaysOnTop);

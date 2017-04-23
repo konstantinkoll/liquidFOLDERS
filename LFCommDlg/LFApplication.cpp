@@ -294,7 +294,7 @@ BOOL LFApplication::InitInstance()
 	return TRUE;
 }
 
-CWnd* LFApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
+CWnd* LFApplication::OpenCommandLine(LPCWSTR /*CmdLine*/)
 {
 	return NULL;
 }

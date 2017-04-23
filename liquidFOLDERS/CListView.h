@@ -42,7 +42,7 @@ protected:
 private:
 	void AdjustHeader(BOOL bShow);
 	void DrawIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor);
-	void AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, WCHAR* tmpStr, SIZE_T cCount);
+	void AttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR tmpStr, SIZE_T cCount);
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	INT GetMaxLabelWidth(INT Max);
 	INT GetMaxColumnWidth(UINT Col, INT Max);

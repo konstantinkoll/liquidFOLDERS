@@ -234,7 +234,7 @@ UINT CStore::Synchronize(BOOL /*OnInitialize*/, LFProgress* pProgress)
 	return LFOk;
 }
 
-UINT CStore::ImportFile(WCHAR* pPath, LFItemDescriptor* pItemDescriptor, BOOL Move, BOOL Metadata)
+UINT CStore::ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemDescriptor, BOOL Move, BOOL Metadata)
 {
 	assert(m_pIndexMain!=NULL);
 
@@ -262,7 +262,7 @@ BOOL CStore::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 	return Result;
 }
 
-UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, WCHAR* pPath, BOOL OnInitialize)
+UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWSTR pPath, BOOL OnInitialize)
 {
 	assert(pItemDescriptor);
 	assert(m_pIndexMain);
@@ -364,7 +364,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 		break;
 
 	case LFTransactionTypeSendTo:
-		m_pIndexMain->SendTo(pTransactionList, (CHAR*)Parameter, pProgress);
+		m_pIndexMain->SendTo(pTransactionList, (LPCSTR)Parameter, pProgress);
 
 		break;
 
@@ -483,7 +483,7 @@ UINT CStore::DeleteDirectories()
 	return LFOk;
 }
 
-UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, void* /*pStoreData*/, WCHAR* pPath, SIZE_T cCount) const
+UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID /*pStoreData*/, LPWSTR pPath, SIZE_T cCount) const
 {
 	assert(pCoreAttributes);
 	assert(pPath);
@@ -510,7 +510,7 @@ UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, void* /*pStoreDa
 	return LFOk;
 }
 
-UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* /*pPath*/, SIZE_T /*cCount*/)
+UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR /*pPath*/, SIZE_T /*cCount*/)
 {
 	assert(pItemDescriptor);
 
@@ -531,7 +531,7 @@ UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, WCHAR* /*pPath*/, 
 	return LFOk;
 }
 
-UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFItemDescriptor* pItemDescriptor)
+UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
 {
 	assert(pCoreAttributes);
 	assert(pStoreData);
@@ -552,7 +552,7 @@ UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, void* pStoreData, LFI
 	return FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFCannotRenameFile : LFNoFileBody;
 }
 
-UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
+UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 {
 	assert(pCoreAttributes);
 	assert(pStoreData);
@@ -566,9 +566,9 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
 	WCHAR Path[2*MAX_PATH];
 	GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH);
 
-	WCHAR* Ptr = wcsrchr(Path, L'\\');
-	if (Ptr)
-		*(Ptr+1) = L'\0';
+	WCHAR* pChar = wcsrchr(Path, L'\\');
+	if (pChar)
+		*(pChar+1) = L'\0';
 
 	if (DeleteDirectory(Path))
 		return LFOk;
@@ -588,7 +588,7 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, void* pStoreData)
 	}
 }
 
-BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, void* /*pStoreData*/)
+BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, LPCVOID /*pStoreData*/)
 {
 	// Always keep file
 	return TRUE;
@@ -598,7 +598,7 @@ BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, void* /*pSto
 // Aux functions
 //
 
-void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath, SIZE_T cCount) const
+void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, LPWSTR pPath, SIZE_T cCount) const
 {
 	assert(pCoreAttributes);
 	assert(pPath);
@@ -616,7 +616,7 @@ void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, WCHAR* pPath
 	wcscat_s(pPath, cCount, Buffer2);
 }
 
-void CStore::CreateNewFileID(CHAR* pFileID) const
+void CStore::CreateNewFileID(LPSTR pFileID) const
 {
 	assert(pFileID);
 	assert(m_pIndexMain);

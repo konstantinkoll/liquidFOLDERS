@@ -18,7 +18,7 @@ public:
 
 	void Empty();
 	void SetItem(CString Text, CImageList* pIcons=NULL, INT nID=-1, BOOL Ghosted=FALSE);
-	BOOL SetItem(const CHAR* pStoreID);
+	BOOL SetItem(const LPCSTR pStoreID);
 	BOOL SetItem(LPITEMIDLIST pidlFQ, LPCWSTR Path=NULL, UINT nID=0, LPCWSTR Hint=NULL);
 	BOOL SetItem(LPCWSTR Path, UINT nID=0, LPCWSTR Hint=NULL);
 

@@ -23,7 +23,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 			ZeroMemory(&cdsw, sizeof(cdsw));
 			cdsw.AppID = theAppID;
 			if (lParam)
-				wcscpy_s(cdsw.Command, MAX_PATH, (WCHAR*)lParam);
+				wcscpy_s(cdsw.Command, MAX_PATH, (LPCWSTR)lParam);
 
 			COPYDATASTRUCT cds;
 			cds.cbData = sizeof(cdsw);
@@ -104,19 +104,19 @@ BOOL CLiquidFoldersApp::InitInstance()
 	return TRUE;
 }
 
-CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
+CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 {
 	// Parse parameter and create window
-	if (CmdLine)
+	if (pCmdLine)
 	{
 		// Prepare arguments
-		WCHAR* pChar = CmdLine;
+		WCHAR* pChar = pCmdLine;
 		while (*pChar)
 			*(pChar++) = (WCHAR)toupper(*pChar);
 
 		CHAR StoreID[LFKeySize] = "";
 
-		WCHAR* pSpace = wcschr(CmdLine, L' ');
+		WCHAR* pSpace = wcschr(pCmdLine, L' ');
 		if (pSpace)
 		{
 			WideCharToMultiByte(CP_ACP, 0, pSpace+1, -1, StoreID, LFKeySize, NULL, NULL);
@@ -124,11 +124,11 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 		}
 
 		// Update
-		if (wcscmp(CmdLine, L"/CHECKUPDATE")==0)
+		if (wcscmp(pCmdLine, L"/CHECKUPDATE")==0)
 			return NULL;
 
 		// FileDrop
-		if (wcscmp(CmdLine, L"/FILEDROP")==0)
+		if (wcscmp(pCmdLine, L"/FILEDROP")==0)
 		{
 			const UINT Result = (StoreID[0]=='\0') ? LFGetDefaultStore(StoreID) : LFOk;
 
@@ -148,12 +148,12 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 		}
 
 		// Key or IATA code
-		if ((wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL) && (wcschr(CmdLine, L'/')==NULL))
+		if ((wcschr(pCmdLine, L'.')==NULL) && (wcschr(pCmdLine, L':')==NULL) && (wcschr(pCmdLine, L'\\')==NULL) && (wcschr(pCmdLine, L'/')==NULL))
 		{
 			// Key
-			if (wcslen(CmdLine)==LFKeySize-1)
+			if (wcslen(pCmdLine)==LFKeySize-1)
 			{
-				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, StoreID, LFKeySize, NULL, NULL);
+				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, StoreID, LFKeySize, NULL, NULL);
 
 				CMainWnd* pFrameWnd = new CMainWnd();
 				pFrameWnd->CreateStore(StoreID);
@@ -163,10 +163,10 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 			}
 
 			// IATA airport code
-			if (wcslen(CmdLine)==3)
+			if (wcslen(pCmdLine)==3)
 			{
 				CHAR Code[4];
-				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, Code, 4, NULL, NULL);
+				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, Code, 4, NULL, NULL);
 
 				LFFilter* pFilter = LFAllocFilter();
 				pFilter->Mode = LFFilterModeSearch;
@@ -187,7 +187,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(WCHAR* CmdLine)
 
 		// Filter
 		CMainWnd* pFrameWnd = new CMainWnd();
-		pFrameWnd->CreateFilter(LFLoadFilterEx(CmdLine));
+		pFrameWnd->CreateFilter(LFLoadFilterEx(pCmdLine));
 		pFrameWnd->ShowWindow(SW_SHOW);
 
 		return pFrameWnd;

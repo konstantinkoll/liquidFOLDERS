@@ -13,7 +13,7 @@
 class LFDeleteStoreDlg : public LFDialog
 {
 public:
-	LFDeleteStoreDlg(const CHAR* pStoreID, CWnd* pParentWnd=NULL);
+	LFDeleteStoreDlg(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
 
 protected:
 	virtual BOOL InitDialog();

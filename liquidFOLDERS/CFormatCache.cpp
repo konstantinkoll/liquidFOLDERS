@@ -50,15 +50,15 @@ INT CFormatCache::ConvertIcon(INT SysIconIndex)
 	return Result;
 }
 
-void CFormatCache::Lookup(CHAR* FileFormat, FormatData& fd)
+void CFormatCache::Lookup(LPCSTR FileFormat, FormatData& fd)
 {
 	if (FileFormat)
 		if (FileFormat[0]!='\0')
 		{
 			CHAR Key[LFExtSize];
 			
-			CHAR* Ptr = Key;
-			do *(Ptr++) = (CHAR)toupper(*FileFormat); while (*(FileFormat++));
+			CHAR* pChar = Key;
+			do *(pChar++) = (CHAR)toupper(*FileFormat); while (*(FileFormat++));
 
 			if (m_Cache.Lookup(Key, fd))
 				return;
@@ -84,7 +84,7 @@ void CFormatCache::Lookup(CHAR* FileFormat, FormatData& fd)
 	fd.IconIndex128 = m_GenericIconIndex128;
 }
 
-CString CFormatCache::GetTypeName(CHAR* FileFormat)
+CString CFormatCache::GetTypeName(LPCSTR FileFormat)
 {
 	FormatData fd;
 	Lookup(FileFormat, fd);
@@ -92,7 +92,7 @@ CString CFormatCache::GetTypeName(CHAR* FileFormat)
 	return fd.FormatName;
 }
 
-INT CFormatCache::GetSysIconIndex(CHAR* FileFormat)
+INT CFormatCache::GetSysIconIndex(LPCSTR FileFormat)
 {
 	FormatData fd;
 	Lookup(FileFormat, fd);
@@ -100,7 +100,7 @@ INT CFormatCache::GetSysIconIndex(CHAR* FileFormat)
 	return fd.SysIconIndex;
 }
 
-void CFormatCache::DrawJumboIcon(CDC& dc, const CRect& rect, CHAR* FileFormat, BOOL Ghosted)
+void CFormatCache::DrawJumboIcon(CDC& dc, const CRect& rect, LPCSTR FileFormat, BOOL Ghosted)
 {
 	FormatData fd;
 	Lookup(FileFormat, fd);

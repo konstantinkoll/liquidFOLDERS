@@ -107,7 +107,7 @@ void CIconHeader::SetCoreIcon(INT IconID, const CString& Description)
 	FreeItem();
 }
 
-void CIconHeader::SetFormatIcon(CHAR* FileFormat, const CString& Description)
+void CIconHeader::SetFormatIcon(LPCSTR FileFormat, const CString& Description)
 {
 	ASSERT(FileFormat);
 
@@ -251,7 +251,7 @@ void CInspectorPane::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL
 	}
 }
 
-void CInspectorPane::AddValueVirtual(UINT Attr, const CHAR* Value)
+void CInspectorPane::AddValueVirtual(UINT Attr, const LPCSTR Value)
 {
 	WCHAR tmpStr[256];
 	MultiByteToWideChar(CP_ACP, 0, Value, -1, tmpStr, 256);
@@ -259,7 +259,7 @@ void CInspectorPane::AddValueVirtual(UINT Attr, const CHAR* Value)
 	AddValueVirtual(Attr, &tmpStr[0]);
 }
 
-void CInspectorPane::AddValueVirtual(UINT Attr, const WCHAR* Value)
+void CInspectorPane::AddValueVirtual(UINT Attr, const LPCWSTR Value)
 {
 	switch (m_AttributeStatus[Attr])
 	{

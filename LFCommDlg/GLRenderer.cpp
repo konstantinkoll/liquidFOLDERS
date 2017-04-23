@@ -69,9 +69,9 @@ BOOL GLRenderer::Initialize()
 			wglMakeCurrent(hDC, hRC);
 
 			// Basic info
-			p_Extensions = (CHAR*)glGetString(GL_EXTENSIONS);
-			p_Vendor = (CHAR*)glGetString(GL_VENDOR);
-			p_Version = (CHAR*)glGetString(GL_VERSION);
+			p_Extensions = (LPCSTR)glGetString(GL_EXTENSIONS);
+			p_Vendor = (LPCSTR)glGetString(GL_VENDOR);
+			p_Version = (LPCSTR)glGetString(GL_VERSION);
 
 			UINT VersionMajor = 0;
 			UINT VersionMinor = 0;

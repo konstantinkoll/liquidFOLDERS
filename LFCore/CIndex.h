@@ -28,8 +28,8 @@ public:
 	UINT UpdateStatistics();
 	void AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResult* pSearchResult);
 	void ResolveLocations(LFTransactionList* pTransactionList);
-	void SendTo(LFTransactionList* pTransactionList, CHAR* pStoreID, LFProgress* pProgress=NULL);
-	BOOL ExistingFileID(CHAR* pFileID);
+	void SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProgress* pProgress=NULL);
+	BOOL ExistingFileID(LPCSTR pFileID);
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
 	void UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FILETIME* pTransactionTime);
 

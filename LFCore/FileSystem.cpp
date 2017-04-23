@@ -23,7 +23,7 @@ void SanitizeFileName(LPWSTR lpDstName, SIZE_T cCount, LPCWSTR lpSrcName)
 	}
 }
 
-void AppendGUID(LPWSTR lpPath, LFStoreDescriptor* pStoreDescriptor, WCHAR* pSuffix)
+void AppendGUID(LPWSTR lpPath, LFStoreDescriptor* pStoreDescriptor, LPCWSTR pSuffix)
 {
 	assert(lpPath);
 	assert(pStoreDescriptor);

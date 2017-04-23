@@ -375,7 +375,7 @@ void LFTooltip::AppendAttribute(CString& Str, UINT ResID, LPCSTR pValue)
 	AppendAttribute(Str, CString((LPCSTR)ResID), CString(pValue));
 }
 
-void LFTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, const CString& Name, const CString& Value)
+void LFTooltip::AppendAttribute(LPWSTR pStr, SIZE_T cCount, const CString& Name, const CString& Value)
 {
 	ASSERT(pStr);
 
@@ -394,14 +394,14 @@ void LFTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, const CString& Name,
 	}
 }
 
-void LFTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CString& Value)
+void LFTooltip::AppendAttribute(LPWSTR pStr, SIZE_T cCount, UINT ResID, const CString& Value)
 {
 	ASSERT(pStr);
 
 	AppendAttribute(pStr, cCount, CString((LPCSTR)ResID), Value);
 }
 
-void LFTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
+void LFTooltip::AppendAttribute(LPWSTR pStr, SIZE_T cCount, UINT ResID, const LPCSTR pValue)
 {
 	ASSERT(pStr);
 	ASSERT(pValue);

@@ -522,16 +522,16 @@ CMenu* CFileView::GetSendToMenu()
 					WCHAR Name[MAX_PATH];
 					wcscpy_s(Name, MAX_PATH, ffd.cFileName);
 
-					WCHAR* LastExt = wcsrchr(Name, L'.');
-					if (LastExt)
-						if (*LastExt!=L'\0')
+					WCHAR* pLastExt = wcsrchr(Name, L'.');
+					if (pLastExt)
+						if (*pLastExt!=L'\0')
 						{
-							CString Ext(LastExt);
+							CString Ext(pLastExt);
 							Ext.MakeUpper();
 							if ((Ext==_T(".DESKLINK")) || (Ext==_T(".LFSENDTO")))
 								continue;
 
-							*LastExt = L'\0';
+							*pLastExt = L'\0';
 						}
 
 					WCHAR Dst[MAX_PATH];

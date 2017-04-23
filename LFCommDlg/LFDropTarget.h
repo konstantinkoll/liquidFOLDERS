@@ -17,7 +17,7 @@ public:
 	void SetDragging(BOOL IsDragging);
 	void SetOwner(CWnd* pOwnerWnd);
 	void SetFilter(LFFilter* pFilter, BOOL AllowChooseStore=TRUE);
-	void SetStore(const CHAR* pStoreID, BOOL AllowChooseStore=TRUE);
+	void SetStore(const LPCSTR pStoreID, BOOL AllowChooseStore=TRUE);
 	void SetSearchResult(LFSearchResult* pSearchResult);
 
 	BEGIN_INTERFACE
@@ -36,8 +36,8 @@ public:
 	END_INTERFACE
 
 protected:
-	HRESULT ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, const CHAR* pStoreID, CWnd* pWnd) const;
-	HRESULT ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, const CHAR* pStoreID, CWnd* pWnd) const;
+	HRESULT ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, const LPCSTR pStoreID, CWnd* pWnd) const;
+	HRESULT ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, const LPCSTR pStoreID, CWnd* pWnd) const;
 	HRESULT AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd) const;
 
 	LONG m_lRefCount;

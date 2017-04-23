@@ -33,7 +33,7 @@ class CNameCategorizer : public CCategorizer
 public:
 	CNameCategorizer();
 
-	static BOOL GetNamePrefix(WCHAR* FullName, WCHAR* pBuffer);
+	static BOOL GetNamePrefix(LPCWSTR FullName, LPWSTR pStr, SIZE_T cCount);
 
 protected:
 	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
@@ -49,7 +49,7 @@ class CURLCategorizer : public CCategorizer
 public:
 	CURLCategorizer();
 
-	static void GetServer(CHAR* URL, CHAR* Server, SIZE_T cCount);
+	static void GetServer(LPCSTR URL, LPSTR pStr, SIZE_T cCount);
 
 protected:
 	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;

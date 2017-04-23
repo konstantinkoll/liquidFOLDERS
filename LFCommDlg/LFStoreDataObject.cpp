@@ -42,7 +42,7 @@ LFStoreDataObject::LFStoreDataObject(LFItemDescriptor* pItemDescriptor)
 	}
 }
 
-void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, WCHAR* Name)
+void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, LPCWSTR Name)
 {
 	WCHAR Path[MAX_PATH];
 	if (GetTempPath(MAX_PATH, Path))
@@ -87,13 +87,13 @@ void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, WCHAR* Name)
 
 						wcscpy_s(fgd.fgd[0].cFileName, MAX_PATH, Name);
 
-						WCHAR* Ptr = fgd.fgd[0].cFileName;
-						while (*Ptr!=L'\0')
+						WCHAR* pChar = fgd.fgd[0].cFileName;
+						while (*pChar!=L'\0')
 						{
-							if ((*Ptr<L' ') || (wcschr(L"<>:\"/\\|?*", *Ptr)))
-								*Ptr = L'_';
+							if ((*pChar<L' ') || (wcschr(L"<>:\"/\\|?*", *pChar)))
+								*pChar = L'_';
 
-							Ptr++;
+							pChar++;
 						}
 
 						wcscat_s(fgd.fgd[0].cFileName, MAX_PATH, L".lnk");

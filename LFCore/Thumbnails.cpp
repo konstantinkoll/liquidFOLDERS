@@ -22,14 +22,14 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 	{
 		IShellFolder* pParentFolder;
 		LPCITEMIDLIST pidlRel;
-		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 		{
 			// IThumbnailProvider, verfügbar seit Windows Vista
 			// Liefert auch rechteckige Vorschaubilder
 			if (osInfo.dwMajorVersion>=6)
 			{
 				IThumbnailProvider* pThumbnailProvider;
-				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (void**)&pThumbnailProvider)))
+				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (LPVOID*)&pThumbnailProvider)))
 				{
 					DWORD dwAlpha = WTSAT_UNKNOWN;
 					pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBitmap, &dwAlpha);
@@ -43,7 +43,7 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 			// IExtractImage, verfügbar seit Windows XP und Fallback seit Windows Vista
 			// Liefert immer quadratische Vorschaubilder
 			IExtractImage* pExtractImage;
-			if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IExtractImage, NULL, (void**)&pExtractImage)))
+			if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IExtractImage, NULL, (LPVOID*)&pExtractImage)))
 			{
 				DWORD dwPriority = 0;
 				DWORD dwFlags = IEIFLAG_SCREEN | IEIFLAG_NOBORDER | IEIFLAG_NOSTAMP | IEIFLAG_OFFLINE;
@@ -90,7 +90,7 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 		DIB.bmiHeader.biBitCount = 24;
 		DIB.bmiHeader.biCompression = BI_RGB;
 
-		HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (void**)&pBitsSrc, NULL, 0);
+		HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (LPVOID*)&pBitsSrc, NULL, 0);
 
 		// Blt bitmap to solve mirrored orientation by Foxit reader and others
 		HDC hDCMem = CreateCompatibleDC(NULL);
@@ -123,7 +123,7 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 	DIB.bmiHeader.biCompression = BI_RGB;
 
 	BYTE* pBitsDst;
-	HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (void**)&pBitsDst, NULL, 0);
+	HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (LPVOID*)&pBitsDst, NULL, 0);
 
 	switch (BitmapSrc.bmBitsPixel)
 	{
