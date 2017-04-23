@@ -734,13 +734,10 @@ void LFApplication::PlayWarningSound()
 }
 
 
-void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval) const
+void LFApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval) const
 {
-	if (EnableAutoUpdate)
-		*EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
-
-	if (Interval)
-		*Interval = GetGlobalInt(_T("UpdateCheckInterval"), 0);
+	EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
+	Interval = GetGlobalInt(_T("UpdateCheckInterval"), 0);
 }
 
 void LFApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval) const
@@ -753,43 +750,45 @@ BOOL LFApplication::IsUpdateCheckDue() const
 {
 	BOOL EnableAutoUpdate;
 	INT Interval;
-	GetUpdateSettings(&EnableAutoUpdate, &Interval);
+	GetUpdateSettings(EnableAutoUpdate, Interval);
 
-	if ((EnableAutoUpdate) && (Interval>=0) && (Interval<=2))
+	if (EnableAutoUpdate && (Interval>=0) && (Interval<=2))
 	{
 		FILETIME ft;
 		GetSystemTimeAsFileTime(&ft);
 
 		ULARGE_INTEGER LastUpdateCheck;
-		LastUpdateCheck.HighPart = GetGlobalInt(_T("LastCheckUpdateHigh"), 0);
-		LastUpdateCheck.LowPart = GetGlobalInt(_T("LastCheckUpdateLow"), 0);
+		LastUpdateCheck.HighPart = GetGlobalInt(_T("LastUpdateCheckHigh"), 0);
+		LastUpdateCheck.LowPart = GetGlobalInt(_T("LastUpdateCheckLow"), 0);
 
 		ULARGE_INTEGER Now;
 		Now.HighPart = ft.dwHighDateTime;
 		Now.LowPart = ft.dwLowDateTime;
 
-#define SECOND ((ULONGLONG)10000000)
-#define MINUTE (60*SECOND)
-#define HOUR   (60*MINUTE)
-#define DAY    (24*HOUR)
+#define SECOND (10000000ull)
+#define MINUTE (60ull*SECOND)
+#define HOUR   (60ull*MINUTE)
+#define DAY    (24ull*HOUR)
+
+		ULARGE_INTEGER NextUpdateCheck = LastUpdateCheck;
+		NextUpdateCheck.QuadPart += 10ull*SECOND;
 
 		switch (Interval)
 		{
 		case 0:
-			LastUpdateCheck.QuadPart += DAY;
+			NextUpdateCheck.QuadPart += DAY;
 			break;
 
 		case 1:
-			LastUpdateCheck.QuadPart += 7*DAY;
+			NextUpdateCheck.QuadPart += 7ull*DAY;
 			break;
 
 		case 2:
-			LastUpdateCheck.QuadPart += 30*DAY;
+			NextUpdateCheck.QuadPart += 30ull*DAY;
 			break;
 		}
-		LastUpdateCheck.QuadPart += 10*SECOND;
 
-		if (Now.QuadPart>=LastUpdateCheck.QuadPart)
+		if ((Now.QuadPart>=NextUpdateCheck.QuadPart) || (Now.QuadPart<LastUpdateCheck.QuadPart))
 		{
 			WriteGlobalInt(_T("LastUpdateCheckHigh"), Now.HighPart);
 			WriteGlobalInt(_T("LastUpdateCheckLow"), Now.LowPart);

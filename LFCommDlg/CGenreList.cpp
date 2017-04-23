@@ -278,7 +278,6 @@ BEGIN_MESSAGE_MAP(CGenreList, CFrontstageWnd)
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_RBUTTONUP()
@@ -564,12 +563,6 @@ void CGenreList::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	if (Index!=-1)
 		SetFocusItem(Index);
 
-	if (GetFocus()!=this)
-		SetFocus();
-}
-
-void CGenreList::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
-{
 	if (GetFocus()!=this)
 		SetFocus();
 }

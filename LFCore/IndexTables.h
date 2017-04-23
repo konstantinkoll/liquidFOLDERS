@@ -101,7 +101,7 @@ struct AudioAttributes
 // Slave-ID: 4
 
 #define IDXTABLE_PICTURES     4
-#define IDXATTRS_PICTURES     ((1ull<<LFAttrArtist) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
+#define IDXATTRS_PICTURES     ((1ull<<LFAttrAuthor) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
 								(1ull<<LFAttrEquipment) | (1ull<<LFAttrRoll) | (1ull<<LFAttrExposure) | \
 								(1ull<<LFAttrHeight) | (1ull<<LFAttrWidth) | (1ull<<LFAttrDimension) | \
 								(1ull<<LFAttrAspectRatio) | (1ull<<LFAttrAperture) | (1ull<<LFAttrFocus) | \
@@ -110,7 +110,7 @@ struct AudioAttributes
 
 struct PictureAttributes
 {
-	WCHAR Artist[256];
+	WCHAR Author[256];
 	WCHAR Copyright[256];
 	WCHAR Title[256];
 	WCHAR Equipment[256];

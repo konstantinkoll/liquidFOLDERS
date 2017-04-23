@@ -74,7 +74,7 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 	else
 	{
-		LFGetApp()->GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
+		LFGetApp()->GetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);

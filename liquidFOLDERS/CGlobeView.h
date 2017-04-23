@@ -16,7 +16,6 @@ struct GlobeItemData
 	INT ScreenPoint[2];
 	GLfloat Alpha;
 	WCHAR CoordString[32];
-	WCHAR DescriptionString[32];
 };
 
 
@@ -40,7 +39,7 @@ protected:
 
 	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
-	void DrawLabel(GlobeItemData* pData, UINT cCaption, LPCWSTR Caption, LPCWSTR Subcaption, LPCWSTR Coordinates, LPCWSTR Description, BOOL Focused, BOOL Hot, BOOL Themed);
+	void DrawLabel(GlobeItemData* pData, SIZE_T cCaption, LPCWSTR pCaption, LPCWSTR pSubcaption, LPCWSTR pCoordinates, LPCWSTR pDescription, BOOL Focused, BOOL Hot, BOOL Themed);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -89,10 +88,15 @@ protected:
 private:
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
-	void WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDescriptor, UINT Attr);
+	static void WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	void RenderScene(BOOL Themed);
 
-	LPCTSTR lpszCursorName;
+	static const GLcolor m_lAmbient;
+	static const GLcolor m_lDiffuse;
+	static const GLcolor m_lSpecular;
+	static const GLcolor m_FogColor;
+
+	LPCWSTR lpszCursorName;
 	HCURSOR hCursor;
 	CPoint m_CursorPos;
 

@@ -24,6 +24,11 @@
 #define MOVEDIVIDER            8.0f
 #define WHITE                  100
 
+const GLfloat CGlobeView::m_lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+const GLfloat CGlobeView::m_lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat CGlobeView::m_lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat CGlobeView::m_FogColor[] = { 0.65f, 0.75f, 0.95f, 1.0f };
+
 CGlobeView::CGlobeView()
 	: CFileView(sizeof(GlobeItemData), FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS)
 {
@@ -98,7 +103,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 					break;
 				}
 
-				if ((Location.Latitude!=0.0) || (Location.Longitude!=0))
+				if ((Location.Latitude!=0.0) || (Location.Longitude!=0.0))
 				{
 					GlobeItemData* pData = GetItemData(a);
 
@@ -113,7 +118,6 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 					pData->World[2] = (GLfloat)(cos(LongitudeRad)*D);
 
 					LFGeoCoordinatesToString(Location, pData->CoordString, 32, FALSE);
-					wcscpy_s(pData->DescriptionString, 32, (*p_CookedFiles)[a]->Description);
 
 					pData->Hdr.Valid = TRUE;
 					pData->Hdr.RectInflate = ARROWSIZE;
@@ -182,12 +186,12 @@ BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const
 	const GLfloat DistX = (GLfloat)point.x-(GLfloat)m_RenderContext.Width/2.0f;
 	const GLfloat DistY = (GLfloat)point.y-(GLfloat)m_RenderContext.Height/2.0f;
 
-	return DistX*DistX + DistY*DistY < m_GlobeRadius*m_GlobeRadius;
+	return DistX*DistX+DistY*DistY < m_GlobeRadius*m_GlobeRadius;
 }
 
 void CGlobeView::UpdateCursor()
 {
-	LPCTSTR Cursor;
+	LPCWSTR Cursor;
 
 	if (m_Grabbed)
 	{
@@ -216,7 +220,7 @@ void CGlobeView::WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDesc
 	WCHAR tmpStr[256];
 	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
 
-	if (tmpStr[0]!='\0')
+	if (tmpStr[0])
 	{
 		f.WriteString(_T("&lt;b&gt;"));
 		f.WriteString(theApp.m_Attributes[Attr].Name);
@@ -246,7 +250,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], c
 		{
 			pData->Alpha = 0.0f;
 
-			GLfloat Z = ModelView[0][2]*pData->World[0] + ModelView[1][2]*pData->World[1] + ModelView[2][2]*pData->World[2];
+			const GLfloat Z = ModelView[0][2]*pData->World[0] + ModelView[1][2]*pData->World[1] + ModelView[2][2]*pData->World[2];
 			if (Z>BLENDOUT)
 			{
 				const GLfloat W = MVP[0][3]*pData->World[0] + MVP[1][3]*pData->World[1] + MVP[2][3]*pData->World[2] + MVP[3][3];
@@ -274,16 +278,12 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 			if (pData->Alpha>0.0f)
 			{
 				// Beschriftung
-				LPCWSTR Caption = (*p_CookedFiles)[a]->CoreAttributes.FileName;
-				UINT cCaption = (UINT)wcslen(Caption);
+				LPCWSTR pCaption = (*p_CookedFiles)[a]->CoreAttributes.FileName;
+				SIZE_T cCaption = wcslen(pCaption);
 
-				LPCWSTR Subcaption = NULL;
-				LPCWSTR Coordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
-				
-				LPCWSTR Description = (m_GlobalViewSettings.GlobeShowDescription ? pData->DescriptionString : NULL);
-				if (Description)
-					if (*Description==L'\0')
-						Description = NULL;
+				LPCWSTR pSubcaption = NULL;
+				LPCWSTR pCoordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
+				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescription ? (*p_CookedFiles)[a]->Description : NULL);
 
 				// Beschriftung aufbereiten
 				switch (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type)
@@ -293,9 +293,9 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 					{
 						if (m_GlobalViewSettings.GlobeShowAirportNames)
 						{
-							Subcaption = &Caption[3];
-							while ((*Subcaption==L' ') || (*Subcaption==L'–') || (*Subcaption==L'—'))
-								Subcaption++;
+							pSubcaption = &pCaption[3];
+							while ((*pSubcaption==L' ') || (*pSubcaption==L'–') || (*pSubcaption==L'—'))
+								pSubcaption++;
 						}
 
 						cCaption = 3;
@@ -304,34 +304,34 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 					break;
 
 				case LFTypeGeoCoordinates:
-					if ((wcscmp(Caption, pData->CoordString)==0) && (m_GlobalViewSettings.GlobeShowGPS))
-						Coordinates = NULL;
+					if ((wcscmp(pCaption, pData->CoordString)==0) && (m_GlobalViewSettings.GlobeShowGPS))
+						pCoordinates = NULL;
 
 					break;
 				}
 
-				DrawLabel(pData, cCaption, Caption, Subcaption, Coordinates, Description, m_FocusItem==(INT)a, m_HotItem==(INT)a, Themed);
+				DrawLabel(pData, cCaption, pCaption, pSubcaption, pCoordinates, pDescription, m_FocusItem==(INT)a, m_HotItem==(INT)a, Themed);
 			}
 	}
 }
 
-__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, UINT cCaption, LPCWSTR Caption, LPCWSTR Subcaption, LPCWSTR Coordinates, LPCWSTR Description, BOOL Focused, BOOL Hot, BOOL Themed)
+__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, SIZE_T cCaption, LPCWSTR pCaption, LPCWSTR pSubcaption, LPCWSTR pCoordinates, LPCWSTR pDescription, BOOL Focused, BOOL Hot, BOOL Themed)
 {
 	ASSERT(ARROWSIZE>3);
 
 	// Width
-	UINT W1 = m_Fonts[1].GetTextWidth(Caption, cCaption);
-	UINT W2 = m_Fonts[0].GetTextWidth(Subcaption);
-	UINT W3 = m_Fonts[0].GetTextWidth(Coordinates);
-	UINT W4 = m_Fonts[0].GetTextWidth(Description);
+	UINT W1 = m_Fonts[1].GetTextWidth(pCaption, cCaption);
+	UINT W2 = m_Fonts[0].GetTextWidth(pSubcaption);
+	UINT W3 = m_Fonts[0].GetTextWidth(pCoordinates);
+	UINT W4 = m_Fonts[0].GetTextWidth(pDescription);
 	UINT Width = max(2*ARROWSIZE, max(W1, max(W2, max(W3, W4)))+11);
 
 	// Height
 	UINT Height = 8;
-	Height += m_Fonts[1].GetTextHeight(Caption);
-	Height += m_Fonts[0].GetTextHeight(Subcaption);
-	Height += m_Fonts[0].GetTextHeight(Coordinates);
-	Height += m_Fonts[0].GetTextHeight(Description);
+	Height += m_Fonts[1].GetTextHeight(pCaption);
+	Height += m_Fonts[0].GetTextHeight(pSubcaption);
+	Height += m_Fonts[0].GetTextHeight(pCoordinates);
+	Height += m_Fonts[0].GetTextHeight(pDescription);
 
 	// Position and bounding rectangle
 	INT Top = (pData->ScreenPoint[1]<m_RenderContext.Height/2) ? -1 : 1;
@@ -485,25 +485,25 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, UINT cCaption, LP
 
 	// Caption
 	m_Fonts[1].Begin(*(Selected ? &m_SelectedColor : &m_CaptionColor), pData->Alpha);
-	y += m_Fonts[1].Render(Caption, x, y, cCaption);
+	y += m_Fonts[1].Render(pCaption, x, y, cCaption);
 	m_Fonts[1].End();
 
 	// Hints
 	m_Fonts[0].Begin(*(Selected ? &m_SelectedColor : &m_TextColor), pData->Alpha);
 
-	if (Subcaption)
-		y += m_Fonts[0].Render(Subcaption, x, y);
+	if (pSubcaption)
+		y += m_Fonts[0].Render(pSubcaption, x, y);
 
-	if (Coordinates)
-		y += m_Fonts[0].Render(Coordinates, x, y);
+	if (pCoordinates)
+		y += m_Fonts[0].Render(pCoordinates, x, y);
 
 	// Description
-	if (Description)
+	if (pDescription)
 	{
 		if (!Selected)
 			m_Fonts[0].SetColor(m_AttrColor, pData->Alpha);
 
-		y += m_Fonts[0].Render(Description, x, y);
+		y += m_Fonts[0].Render(pDescription, x, y);
 	}
 
 	m_Fonts[0].End();
@@ -566,8 +566,8 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 
 		if (m_GlobeTarget.Zoom<600)
 		{
-			INT Distance = 600-m_GlobeTarget.Zoom;
-			INT MaxDistance = (INT)((m_GlobeTarget.Zoom+100)*1.5f);
+			const INT Distance = 600-m_GlobeTarget.Zoom;
+			const INT MaxDistance = (INT)((m_GlobeTarget.Zoom+100)*1.5f);
 
 			const GLfloat Factor = (GLfloat)sin(PI*m_AnimCounter/ANIMLENGTH);
 
@@ -679,9 +679,9 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 
 			for (UINT a=0; a<=256; a++)
 			{
-				const GLfloat Winkel = 2*PI*a/256;
-				const GLfloat X = sin(Winkel);
-				const GLfloat Y = cos(Winkel);
+				const GLfloat Arc = PI*a/128.0f;
+				const GLfloat X = sin(Arc);
+				const GLfloat Y = cos(Arc);
 
 				theRenderer.SetColor(HaloColor);
 				glVertex3f(0.0f, X, Y);
@@ -700,17 +700,14 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	// Lighting
 	if (min(theApp.m_ModelQuality, theRenderer.m_MaxModelQuality)>=MODELMEDIUM)
 	{
-		GLfloat lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-		GLfloat lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		GLfloat lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, m_lAmbient);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, m_lDiffuse);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, m_lSpecular);
 
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHTING);
 
-		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, m_lAmbient);
 	}
 
 	// Rotate globe (AFTER lighting)
@@ -731,8 +728,7 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 		glFogf(GL_FOG_START, Distance-0.5f);
 		glFogf(GL_FOG_END, Distance+0.35f);
 
-		const GLfloat FogColor[4] = { 0.65f, 0.75f, 0.95f, 1.0f };
-		glFogfv(GL_FOG_COLOR, FogColor);
+		glFogfv(GL_FOG_COLOR, m_FogColor);
 	}
 
 	// Texture units

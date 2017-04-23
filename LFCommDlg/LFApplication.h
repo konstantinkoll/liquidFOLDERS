@@ -94,7 +94,7 @@ public:
 	static void PlayQuestionSound();
 	static void PlayTrashSound();
 	static void PlayWarningSound();
-	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval) const;
+	void GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval) const;
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval) const;
 	BOOL IsUpdateCheckDue() const;
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);

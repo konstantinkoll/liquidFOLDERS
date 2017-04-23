@@ -66,7 +66,7 @@ const IdxTableEntry AudioAttributeEntries[] = {
 };
 
 const IdxTableEntry PictureAttributeEntries[] = {
-	{ LFAttrArtist, offsetof(PictureAttributes, Artist) },
+	{ LFAttrAuthor, offsetof(PictureAttributes, Author) },
 	{ LFAttrCopyright, offsetof(PictureAttributes, Copyright) },
 	{ LFAttrTitle, offsetof(PictureAttributes, Title) },
 	{ LFAttrEquipment, offsetof(PictureAttributes, Equipment) },

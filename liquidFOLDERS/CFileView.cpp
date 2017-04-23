@@ -1453,9 +1453,6 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 		if (ItemAtPosition(point)==-1)
 			OnSelectNone();
 
-	if (GetFocus()!=this)
-		SetFocus();
-
 	m_BeginDragDrop = FALSE;
 }
 

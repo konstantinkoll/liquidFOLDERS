@@ -1880,26 +1880,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Attributes\LFAttrAlbum_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrAlbum_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrAlbum_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrAlbum_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrAlbum_64.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Attributes\LFAttrArchiveTime_16.png"
 				>
 			</File>
@@ -1920,26 +1900,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Attributes\LFAttrArtist_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrArtist_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrArtist_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrArtist_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrArtist_64.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Attributes\LFAttrAspectRatio_16.png"
 				>
 			</File>
@@ -1957,6 +1917,26 @@
 			</File>
 			<File
 				RelativePath=".\Attributes\LFAttrAspectRatio_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrAuthor_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrAuthor_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrAuthor_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrAuthor_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Attributes\LFAttrAuthor_64.png"
 				>
 			</File>
 			<File
@@ -2117,26 +2097,6 @@
 			</File>
 			<File
 				RelativePath=".\Attributes\LFAttrFileTime_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrGenre_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrGenre_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrGenre_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrGenre_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Attributes\LFAttrGenre_64.png"
 				>
 			</File>
 			<File

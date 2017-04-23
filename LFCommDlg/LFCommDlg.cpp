@@ -35,9 +35,12 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 
 INT GetAttributeIconIndex(UINT Attr)
 {
+	if (Attr==LFAttrArtist)
+		Attr = LFAttrAlbum;
+
 	static const UINT IconPosition[] = { LFAttrFileName, LFAttrTitle, LFAttrCreationTime, LFAttrAddTime, LFAttrFileTime,
 		LFAttrDueTime, LFAttrDoneTime, LFAttrArchiveTime, LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll,
-		LFAttrArtist, LFAttrComments, LFAttrDuration, LFAttrDimension, LFAttrAspectRatio, LFAttrHashtags, LFAttrAlbum,
+		LFAttrAuthor, LFAttrComments, LFAttrDuration, LFAttrDimension, LFAttrAspectRatio, LFAttrHashtags, LFAttrAlbum,
 		LFAttrURL, LFAttrISBN, LFAttrEquipment, LFAttrCustomer, LFAttrResponsible, LFAttrGenre };
 
 	for (UINT a=0; a<sizeof(IconPosition)/sizeof(UINT); a++)
