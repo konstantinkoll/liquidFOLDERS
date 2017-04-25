@@ -523,6 +523,18 @@ void LFApplication::AttributeToString(CString& Name, CString& Value, LFItemDescr
 	if (tmpStr[0])
 	{
 		// Decorate values
+		if (m_Attributes[Attr].AttrProperties.Type==LFTypeIATACode)
+		{
+			WCHAR LocationName[256];
+			LFIATAGetLocationNameForCode((LPCSTR)pItemDescriptor->AttributeValues[Attr], LocationName, 256);
+
+			if (LocationName[0])
+			{
+				wcscat_s(tmpStr, 256, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? L"—" : L" – ");
+				wcscat_s(tmpStr, 256, LocationName);
+			}
+		}
+
 		if (Attr==LFAttrDimension)
 		{
 			const SIZE_T Length = wcslen(tmpStr);

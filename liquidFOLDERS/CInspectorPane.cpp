@@ -198,16 +198,16 @@ void CInspectorPane::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL
 
 	if (pItemDescriptor->AttributeValues[Attr])
 	{
-		LFVariantData v;
-		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, v);
+		LFVariantData Property;
+		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, Property);
 
 		INT Cmp;
 
 		switch (m_AttributeStatus[Attr])
 		{
 		case StatusUnused:
-			m_AttributeValues[Attr] = v;
-			if ((Editable) || (!LFIsNullVariantData(v)))
+			m_AttributeValues[Attr] = Property;
+			if ((Editable) || (!LFIsNullVariantData(Property)))
 			{
 				m_AttributeStatus[Attr] = StatusUsed;
 				m_AttributeVisible[Attr] = TRUE;
@@ -216,7 +216,7 @@ void CInspectorPane::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL
 			break;
 
 		case StatusUsed:
-			Cmp = LFCompareVariantData(m_AttributeValues[Attr], v);
+			Cmp = LFCompareVariantData(m_AttributeValues[Attr], Property);
 
 			if (Cmp!=0)
 			{
@@ -225,11 +225,11 @@ void CInspectorPane::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL
 				if (Cmp<0)
 				{
 					m_AttributeRangeFirst[Attr] = m_AttributeValues[Attr];
-					m_AttributeRangeSecond[Attr] = v;
+					m_AttributeRangeSecond[Attr] = Property;
 				}
 				else
 				{
-					m_AttributeRangeFirst[Attr] = v;
+					m_AttributeRangeFirst[Attr] = Property;
 					m_AttributeRangeSecond[Attr] = m_AttributeValues[Attr];
 				}
 			}
@@ -237,13 +237,13 @@ void CInspectorPane::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL
 			break;
 
 		case StatusMultiple:
-			if (!LFIsNullVariantData(v))
+			if (!LFIsNullVariantData(Property))
 			{
-				if (LFCompareVariantData(v, m_AttributeRangeFirst[Attr])==-1)
-					m_AttributeRangeFirst[Attr] = v;
+				if (LFCompareVariantData(Property, m_AttributeRangeFirst[Attr])==-1)
+					m_AttributeRangeFirst[Attr] = Property;
 
-				if (LFCompareVariantData(v, m_AttributeRangeSecond[Attr])==1)
-					m_AttributeRangeSecond[Attr] = v;
+				if (LFCompareVariantData(Property, m_AttributeRangeSecond[Attr])==1)
+					m_AttributeRangeSecond[Attr] = Property;
 			}
 
 			break;

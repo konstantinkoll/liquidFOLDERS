@@ -204,12 +204,14 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 	return pClone;
 }
 
-LFItemDescriptor* AllocFolderDescriptor()
+LFItemDescriptor* AllocFolderDescriptor(UINT Attr)
 {
+	assert(Attr<LFAttributeCount);
+
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
 	pItemDescriptor->Type = LFTypeFolder;
-	pItemDescriptor->IconID = IDI_FLD_DEFAULT;
+	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : IDI_FLD_DEFAULT;
 
 	return pItemDescriptor;
 }

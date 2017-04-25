@@ -18,52 +18,54 @@ CConditionList::CConditionList()
 		ENSURE(m_Compare[a].LoadString(IDS_COMPARE_FIRST+a));
 }
 
-void CConditionList::ConditionToItem(LFFilterCondition* c, LVITEM& lvi)
+void CConditionList::ConditionToItem(LFFilterCondition* pFilterCondition, LVITEM& lvi)
 {
 	static UINT puColumns[] = { 1 };
+
+	LFAttributeDescriptor* pAttributeDescriptor = &LFGetApp()->m_Attributes[pFilterCondition->AttrData.Attr];
 
 	ZeroMemory(&lvi, sizeof(lvi));
 
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
 	lvi.cColumns = 1;
 	lvi.puColumns = puColumns;
-	lvi.pszText = LFGetApp()->m_Attributes[c->AttrData.Attr].Name;
-	lvi.iImage = GetAttributeIconIndex(c->AttrData.Attr);
+	lvi.pszText = pAttributeDescriptor->Name;
+	lvi.iImage = pAttributeDescriptor->AttrProperties.IconID-1;
 }
 
-void CConditionList::FinishItem(INT nItem, LFFilterCondition* c)
+void CConditionList::FinishItem(INT nItem, LFFilterCondition* pFilterCondition)
 {
-	ASSERT(c->Compare<LFFilterCompareCount);
+	ASSERT(pFilterCondition->Compare<LFFilterCompareCount);
 
 	WCHAR tmpStr[512];
-	wcscpy_s(tmpStr, 512, m_Compare[c->Compare]);
+	wcscpy_s(tmpStr, 512, m_Compare[pFilterCondition->Compare]);
 
-	if (c->Compare)
+	if (pFilterCondition->Compare)
 	{
 		wcscat_s(tmpStr, 512, L" ");
-		LFVariantDataToString(c->AttrData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
+		LFVariantDataToString(pFilterCondition->AttrData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
 	}
 
 	SetItemText(nItem, 1, tmpStr);
 }
 
-void CConditionList::InsertItem(LFFilterCondition* c)
+void CConditionList::InsertItem(LFFilterCondition* pFilterCondition)
 {
 	LVITEM lvi;
-	ConditionToItem(c, lvi);
+	ConditionToItem(pFilterCondition, lvi);
 	lvi.iItem = GetItemCount();
 
-	FinishItem(CExplorerList::InsertItem(&lvi), c);
+	FinishItem(CExplorerList::InsertItem(&lvi), pFilterCondition);
 }
 
-void CConditionList::SetItem(INT nItem, LFFilterCondition* c)
+void CConditionList::SetItem(INT nItem, LFFilterCondition* pFilterCondition)
 {
 	LVITEM lvi;
-	ConditionToItem(c, lvi);
+	ConditionToItem(pFilterCondition, lvi);
 	lvi.iItem = nItem;
 
 	if (CExplorerList::SetItem(&lvi))
-		FinishItem(nItem, c);
+		FinishItem(nItem, pFilterCondition);
 }
 
 
@@ -158,9 +160,7 @@ BOOL LFEditFilterDlg::InitDialog()
 	m_wndThisStore.EnableWindow(InStore);
 
 	// List
-	LFGetApp()->LoadAttributeIconsLarge();
-	m_AttributeIcons.Attach(LFGetApp()->m_AttributeIconsLarge.ExtractImageList());
-	m_wndConditionList.SetImageList(&m_AttributeIcons, LVSIL_NORMAL);
+	m_wndConditionList.SetImageList(&LFGetApp()->m_CoreImageListExtraLarge, LVSIL_NORMAL);
 
 	m_wndConditionList.AddColumn(0);
 	m_wndConditionList.AddColumn(1);

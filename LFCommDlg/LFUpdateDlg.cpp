@@ -49,7 +49,7 @@ void LFUpdateDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayou
 	g.DrawImage(p_Logo, rectLayout.left+9, rectLayout.top+m_IconTop);
 
 	// Caption
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	CRect rectText(rectLayout);
 	rectText.left = rectLayout.left+80;

@@ -686,8 +686,6 @@ void CPropertyGenre::OnClickButton()
 #define PARTBUTTON     3
 #define PARTRESET      4
 
-extern INT GetAttributeIconIndex(UINT Attr);
-
 CInspectorGrid::CInspectorGrid()
 	: CPropertyHolder()
 {
@@ -744,8 +742,6 @@ void CInspectorGrid::PreSubclassWindow()
 void CInspectorGrid::Init()
 {
 	ResetScrollbars();
-
-	LFGetApp()->LoadAttributeIconsLarge();
 
 	m_RowHeight = max(LFGetApp()->m_DialogFont.GetFontHeight()+2, 16);
 	m_IconSize = (m_RowHeight>=27) ? 25 : (m_RowHeight>=22) ? 20 : (m_RowHeight>=18) ? 16 : 14;
@@ -1357,7 +1353,7 @@ void CInspectorGrid::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
@@ -1595,7 +1591,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
 
-				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, LFGetApp()->m_AttributeIconsLarge.ExtractIcon(GetAttributeIconIndex(m_HotItem)));
+				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(LFGetApp()->m_Attributes[m_HotItem].AttrProperties.IconID-1));
 			}
 	}
 	else

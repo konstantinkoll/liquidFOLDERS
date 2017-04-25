@@ -109,7 +109,7 @@
 #define IDM_DETAILS_CHOOSE              4803
 #define IDM_DETAILS_TOGGLEATTRIBUTE     4804
 #define IDM_CALENDAR                    4900
-#define IDM_CALENDAR_SHOWDAYS       4901
+#define IDM_CALENDAR_SHOWDAYS           4901
 #define IDM_CALENDAR_PREVYEAR           4902
 #define IDM_CALENDAR_NEXTYEAR           4903
 #define IDM_CALENDAR_GOTOYEAR           4904

@@ -26,7 +26,6 @@ protected:
 
 	void ResetItemCategories();
 	void Arrange(CSize szItem, INT Padding, CSize szGutter, BOOL FullWidth=FALSE);
-	void DrawJumboIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor);
 
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);

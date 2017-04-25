@@ -333,7 +333,7 @@ void CBackstageWnd::UpdateBackground()
 
 		DeleteObject(hBackgroundBrush);
 
-		BOOL Themed = IsCtrlThemed();
+		const BOOL Themed = IsCtrlThemed();
 		if (m_WantsBitmap || Themed)
 		{
 			CDC dc;
@@ -538,7 +538,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 		MemBitmap.CreateCompatibleBitmap(&pDC, rectCaption.Width(), rectCaption.Height());
 		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-		BOOL Themed = IsCtrlThemed();
+		const BOOL Themed = IsCtrlThemed();
 
 		// Background
 		FillRect(dc, rectCaption, hBackgroundBrush ? hBackgroundBrush : (HBRUSH)GetStockObject(DKGRAY_BRUSH));

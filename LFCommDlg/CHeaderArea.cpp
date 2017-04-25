@@ -227,7 +227,7 @@ void CHeaderArea::OnPaint()
 
 		Graphics g(dc);
 
-		BOOL Themed = IsCtrlThemed();
+		const BOOL Themed = IsCtrlThemed();
 		if (Themed)
 		{
 			dc.FillSolidRect(rect, 0xFFFFFF);

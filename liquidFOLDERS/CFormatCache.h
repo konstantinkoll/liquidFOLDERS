@@ -26,6 +26,7 @@ public:
 	void Remove(LPCWSTR Path);
 	CString GetTypeName(LPCSTR FileFormat);
 	INT GetSysIconIndex(LPCSTR FileFormat);
+	void DrawJumboIcon(CDC& dc, const CPoint& pt, LPCSTR FileFormat, BOOL Ghosted=FALSE);
 	void DrawJumboIcon(CDC& dc, const CRect& rect, LPCSTR FileFormat, BOOL Ghosted=FALSE);
 
 protected:
@@ -35,6 +36,9 @@ protected:
 	CImageList m_SystemIcons128;
 	INT m_GenericSysIconIndex;
 	INT m_GenericIconIndex128;
-	INT m_ExtraLargeCX;
-	INT m_ExtraLargeCY;
 };
+
+inline void CFormatCache::DrawJumboIcon(CDC& dc, const CRect& rect, LPCSTR FileFormat, BOOL Ghosted)
+{
+	DrawJumboIcon(dc, CPoint((rect.right+rect.left-128)/2, (rect.top+rect.bottom-128)/2), FileFormat, Ghosted);
+}

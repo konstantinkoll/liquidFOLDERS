@@ -45,7 +45,7 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
 
 	// Button
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_Hover);
 

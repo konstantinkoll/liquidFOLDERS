@@ -74,15 +74,15 @@ BOOL LFEditGenreDlg::InitDialog()
 
 	for (UINT a=0; a<pCookedFiles->m_ItemCount; a++)
 	{
-		LFVariantData v;
-		LFGetAttributeVariantDataEx((*pCookedFiles)[a], LFAttrGenre, v);
+		LFVariantData Property;
+		LFGetAttributeVariantDataEx((*pCookedFiles)[a], LFAttrGenre, Property);
 
-		if (!LFIsNullVariantData(v))
+		if (!LFIsNullVariantData(Property))
 		{
-			ASSERT(v.UINT32<256);
+			ASSERT(Property.UINT32<256);
 
-			m_FileCount[v.UINT32] = (*pCookedFiles)[a]->AggregateCount;
-			wcsncpy_s(m_Description[v.UINT32], 256, (*pCookedFiles)[a]->Description, _TRUNCATE);
+			m_FileCount[Property.UINT32] = (*pCookedFiles)[a]->AggregateCount;
+			wcsncpy_s(m_Description[Property.UINT32], 256, (*pCookedFiles)[a]->Description, _TRUNCATE);
 		}
 	}
 

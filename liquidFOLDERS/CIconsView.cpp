@@ -34,7 +34,7 @@ void CIconsView::AdjustLayout()
 RECT CIconsView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
-	rect.top += 128+PADDING;
+	rect.top += 128+PADDING/2;
 
 	return rect;
 }
@@ -54,9 +54,5 @@ void CIconsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 	}
 
 	// Icon
-	CRect rectIcon(rectItem);
-	rectIcon.top += PADDING;
-	rectIcon.bottom = rectIcon.top+128;
-
-	DrawJumboIcon(dc, rectIcon, pItemDescriptor);
+	DrawJumboIcon(dc, CPoint((rectItem->left+rectItem->right-128)/2, rectItem->top+PADDING), pItemDescriptor);
 }

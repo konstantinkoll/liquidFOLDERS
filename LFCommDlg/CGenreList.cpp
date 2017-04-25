@@ -322,7 +322,7 @@ void CGenreList::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
@@ -582,8 +582,7 @@ void CGenreList::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 		if (m_FocusItem!=Index)
 		{
 			InvalidateItem(m_FocusItem);
-			m_FocusItem = Index;
-			InvalidateItem(m_FocusItem);
+			InvalidateItem(m_FocusItem=Index);
 		}
 	}
 	else
@@ -604,8 +603,7 @@ void CGenreList::OnRButtonUp(UINT nFlags, CPoint point)
 		if (m_FocusItem!=Index)
 		{
 			InvalidateItem(m_FocusItem);
-			m_FocusItem = Index;
-			InvalidateItem(m_FocusItem);
+			InvalidateItem(m_FocusItem=Index);
 		}
 	}
 

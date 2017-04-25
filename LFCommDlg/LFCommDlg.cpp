@@ -33,23 +33,6 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 }
 
 
-INT GetAttributeIconIndex(UINT Attr)
-{
-	if (Attr==LFAttrArtist)
-		Attr = LFAttrAlbum;
-
-	static const UINT IconPosition[] = { LFAttrFileName, LFAttrTitle, LFAttrCreationTime, LFAttrAddTime, LFAttrFileTime,
-		LFAttrDueTime, LFAttrDoneTime, LFAttrArchiveTime, LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll,
-		LFAttrAuthor, LFAttrComments, LFAttrDuration, LFAttrDimension, LFAttrAspectRatio, LFAttrHashtags, LFAttrAlbum,
-		LFAttrURL, LFAttrISBN, LFAttrEquipment, LFAttrCustomer, LFAttrResponsible, LFAttrGenre };
-
-	for (UINT a=0; a<sizeof(IconPosition)/sizeof(UINT); a++)
-		if (IconPosition[a]==Attr)
-			return a;
-
-	return -1;
-}
-
 void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
 {
 	SHFILEINFO sfi;
@@ -172,12 +155,12 @@ CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height)
 	return pBitmap;
 }
 
-void DrawLocationIndicator(Graphics& g, INT x, INT y, INT sz)
+void DrawLocationIndicator(Graphics& g, INT x, INT y, INT Size)
 {
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	Gdiplus::REAL Radius = (Gdiplus::REAL)sz/8.0f;
-	Rect rect(x+(INT)(0.5f*Radius), y+(INT)(0.5f*Radius), sz-(INT)Radius-1, sz-(INT)Radius-1);
+	Gdiplus::REAL Radius = (Gdiplus::REAL)Size/8.0f;
+	Rect rect(x+(INT)(0.5f*Radius), y+(INT)(0.5f*Radius), Size-(INT)Radius-1, Size-(INT)Radius-1);
 
 	SolidBrush brush(Color(0xFFFF0000));
 	g.FillEllipse(&brush, rect);
@@ -736,6 +719,68 @@ void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL 
 	HFONT hOldFont = (HFONT)dc.SelectObject((HFONT)::SendMessage(lpDrawItemStruct->hwndItem, WM_GETFONT, NULL, NULL));
 	dc.DrawText(Caption, rect, nFormat);
 	dc.SelectObject(hOldFont);
+}
+
+void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOOL Focused, BOOL Hover)
+{
+	if (Themed)
+	{
+		Graphics g(dc);
+
+		DrawWhiteButtonBorder(g, rect, FALSE);
+
+		rect.top++;
+		rect.left++;
+
+		if (clr!=(COLORREF)-1)
+		{
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+			GraphicsPath PathInner;
+			CreateRoundRectangle(rect, 2, PathInner);
+
+			SolidBrush brush(Color(COLORREF2RGB(clr) & (Enabled ? 0xFFFFFFFF : 0x3FFFFFFF)));
+			g.FillPath(&brush, &PathInner);
+
+			if (Enabled)
+			{
+				// Boost reflection for light colors
+				UINT Alpha = (((clr>>16)*(clr>>16)+6*((clr & 0x00FF00)>>8)*((clr & 0x00FF00)>>8)+5*(clr & 0xFF)*(clr & 0xFF))<<10) & 0xFF000000;
+
+				LinearGradientBrush brush1(Point(0, rect.top), Point(0, (rect.top+rect.bottom)/2+1), Color(Alpha+0x30FFFFFF), Color(Alpha+0x20FFFFFF));
+				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width()-1, rect.Height()/2);
+
+				LinearGradientBrush brush2(Point(0, rect.bottom-6), Point(0, rect.bottom), Color(0x00000000), Color(Hover ? 0x40000000 : 0x20000000));
+				g.FillRectangle(&brush2, rect.left+1, rect.bottom-6, rect.Width()-3, 5);
+			}
+
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
+		}
+
+		rect.right--;
+		rect.bottom--;
+
+		GraphicsPath PathOuter;
+		CreateRoundRectangle(rect, 2, PathOuter);
+
+		Pen pen(Color(Enabled ? Focused || Hover ? 0x40000000 : (clr!=(COLORREF)-1) ? 0x20000000 : 0x08000000 : 0x10000000));
+		g.DrawPath(&pen, &PathOuter);
+	}
+	else
+	{
+		if (clr!=(COLORREF)-1)
+			dc.FillSolidRect(rect, clr);
+
+		dc.DrawEdge(rect, EDGE_SUNKEN, BF_RECT);
+
+		if (Focused)
+		{
+			rect.DeflateRect(2, 2);
+
+			dc.SetTextColor(0x000000);
+			dc.DrawFocusRect(rect);
+		}
+	}
 }
 
 

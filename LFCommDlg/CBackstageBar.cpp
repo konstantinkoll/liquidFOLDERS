@@ -291,7 +291,7 @@ void CBackstageBar::OnPaint()
 	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	// Border
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 	if (!Themed)
 		dc.Draw3dRect(rect, 0x000000, 0x000000);
 

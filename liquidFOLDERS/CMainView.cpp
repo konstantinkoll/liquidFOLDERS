@@ -408,7 +408,7 @@ void CMainView::RemoveTransactedItems(LFTransactionList* pTransactionList)
 		return;
 
 	for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
-		if (((*pTransactionList)[a].LastError==LFOk) && ((*pTransactionList)[a].Processed))
+		if (((*pTransactionList)[a].LastError==LFOk) && (*pTransactionList)[a].Processed)
 			(*pTransactionList)[a].pItemDescriptor->RemoveFlag = TRUE;
 
 	LFRemoveFlaggedItems(p_RawFiles);

@@ -287,6 +287,7 @@ void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescript
 
 	FileSummary.FileCount++;
 	FileSummary.FileSize += pItemDescriptor->CoreAttributes.FileSize;
+	FileSummary.Flags |= (pItemDescriptor->CoreAttributes.Flags & (LFFlagNew | LFFlagMissing));
 	FileSummary.OnlyMediaFiles &= (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio) || (pItemDescriptor->CoreAttributes.ContextID==LFContextVideos);
 
 	if (pItemDescriptor->AttributeValues[LFAttrDuration])
@@ -559,6 +560,8 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 	}
 
 	pFolder->Type |= Source;
+
+	pFolder->CoreAttributes.Flags = FileSummary.Flags;
 	SetAttribute(pFolder, LFAttrFileSize, &FileSummary.FileSize);
 	SetAttribute(pFolder, LFAttrDuration, &FileSummary.Duration);
 
@@ -724,8 +727,10 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 				}
 		}
 
-		LFItemDescriptor* pFolder = AllocFolderDescriptor();
+		LFItemDescriptor* pFolder = AllocFolderDescriptor(Attr);
 		pFolder->AggregateCount = it->second.FileSummary.FileCount;
+	
+		pFolder->CoreAttributes.Flags = it->second.FileSummary.Flags;
 
 		SetAttribute(pFolder, LFAttrFileName, Hashtag);
 		SetAttribute(pFolder, LFAttrFileSize, &it->second.FileSummary.FileSize);

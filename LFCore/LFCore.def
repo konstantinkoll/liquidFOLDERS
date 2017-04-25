@@ -104,8 +104,10 @@ EXPORTS
 	LFIATAGetNextAirport @403
 	LFIATAGetNextAirportByCountry @404
 	LFIATAGetAirportByCode @405
-	LFID3GetNextMusicGenre @406
-	LFID3GetNextMusicGenreByIcon @407
+	LFIATAGetLocationNameForAirport @406
+	LFIATAGetLocationNameForCode @407
+	LFID3GetNextMusicGenre @408
+	LFID3GetNextMusicGenreByIcon @409
 
 	LFQuery @500
 	LFQueryEx @501

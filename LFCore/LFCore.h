@@ -340,8 +340,13 @@ LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last,
 
 // Setzt den Zeiger *pStr auf den Flughafen mit dem übergebenen Code.
 // *pStr kann in jedem Fall überschrieben werden.
-LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(LPCSTR Code, LFAirport** ppAirport);
+LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(LPCSTR pCode, LFAirport** ppAirport);
 
+// Gibt einen Hinweis-String für einen Flughafen zurück.
+LFCORE_API void __stdcall LFIATAGetLocationNameForAirport(LFAirport* pAirport, LPWSTR pStr, SIZE_T cCount);
+
+// Gibt einen Hinweis-String für einen IATA-Code zurück.
+LFCORE_API void __stdcall LFIATAGetLocationNameForCode(LPCSTR pCode, LPWSTR pStr, SIZE_T cCount);
 
 
 // ID3

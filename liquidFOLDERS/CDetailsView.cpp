@@ -132,11 +132,7 @@ void CDetailsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 	}
 
 	// Icon
-	CRect rectIcon(rect);
-	rectIcon.bottom = rectIcon.top+128;
-	rectIcon.right = rectIcon.left+128;
-
-	DrawJumboIcon(dc, rectIcon, pItemDescriptor);
+	DrawJumboIcon(dc, rect.TopLeft(), pItemDescriptor);
 
 	// Rating
 	if (pItemDescriptor->AttributeValues[LFAttrRating])
@@ -150,7 +146,7 @@ void CDetailsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 			dcMem.CreateCompatibleDC(&dc);
 
 			HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(theApp.hRatingBitmaps[Rating]);
-			dc.AlphaBlend(rect.left+(128-RATINGBITMAPWIDTH)/2, rectIcon.bottom+PADDING/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+			dc.AlphaBlend(rect.left+(128-RATINGBITMAPWIDTH)/2, rect.top+128+PADDING/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
 			SelectObject(dcMem, hOldBitmap);
 		}
 	}

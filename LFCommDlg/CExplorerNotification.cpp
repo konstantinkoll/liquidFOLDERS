@@ -220,7 +220,7 @@ void CExplorerNotification::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	FillRect(dc, rectClient, (HBRUSH)SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 

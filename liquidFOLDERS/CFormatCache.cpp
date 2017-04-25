@@ -18,9 +18,6 @@ CFormatCache::CFormatCache()
 	SHFILEINFO sfi;
 	m_GenericSysIconIndex = SUCCEEDED(SHGetFileInfo(_T("*"), 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? sfi.iIcon : 3;
 	m_GenericIconIndex128 = ConvertIcon(m_GenericSysIconIndex);
-
-	m_ExtraLargeCX = m_ExtraLargeCY = 48;
-	ImageList_GetIconSize(theApp.m_SystemImageListExtraLarge, &m_ExtraLargeCX, &m_ExtraLargeCY);
 }
 
 INT CFormatCache::ConvertIcon(INT SysIconIndex)
@@ -75,10 +72,12 @@ void CFormatCache::Lookup(LPCSTR FileFormat, FormatData& fd)
 				fd.IconIndex128 = ConvertIcon(sfi.iIcon);
 
 				m_Cache.SetAt(Key, fd);
+
 				return;
 			}
 		}
 
+	// Return generic format name and icon
 	fd.FormatName[0] = L'\0';
 	fd.SysIconIndex = m_GenericSysIconIndex;
 	fd.IconIndex128 = m_GenericIconIndex128;
@@ -100,17 +99,17 @@ INT CFormatCache::GetSysIconIndex(LPCSTR FileFormat)
 	return fd.SysIconIndex;
 }
 
-void CFormatCache::DrawJumboIcon(CDC& dc, const CRect& rect, LPCSTR FileFormat, BOOL Ghosted)
+void CFormatCache::DrawJumboIcon(CDC& dc, const CPoint& pt, LPCSTR FileFormat, BOOL Ghosted)
 {
 	FormatData fd;
 	Lookup(FileFormat, fd);
 
 	if (theApp.OSVersion<OS_Vista)
 	{
-		theApp.m_SystemImageListExtraLarge.DrawEx(&dc, fd.SysIconIndex, CPoint((rect.right+rect.left-m_ExtraLargeCX)/2, (rect.top+rect.bottom-m_ExtraLargeCY)/2), CSize(m_ExtraLargeCX, m_ExtraLargeCY), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
+		theApp.m_SystemImageListExtraLarge.DrawEx(&dc, fd.SysIconIndex, CPoint(pt.x+(128-theApp.m_ExtraLargeIconSize)/2, pt.y+(128-theApp.m_ExtraLargeIconSize)/2), CSize(theApp.m_ExtraLargeIconSize, theApp.m_ExtraLargeIconSize), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 	else
 	{
-		m_SystemIcons128.DrawEx(&dc, fd.IconIndex128, CPoint((rect.right+rect.left-128)/2, (rect.top+rect.bottom-128)/2), CSize(128, 128), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
+		m_SystemIcons128.DrawEx(&dc, fd.IconIndex128, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, Ghosted ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 }

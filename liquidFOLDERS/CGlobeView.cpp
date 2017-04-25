@@ -81,35 +81,23 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 
 	if (p_CookedFiles)
 		if (p_CookedFiles->m_ItemCount)
+		{
+			const UINT Attr = (m_ContextViewSettings.SortBy==LFAttrLocationIATA) ? LFAttrLocationGPS : m_ContextViewSettings.SortBy;
+
+			ASSERT(theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeGeoCoordinates);
+
 			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 			{
-				LFGeoCoordinates Location = { 0.0, 0.0 };
+				LFVariantData Property;
+				LFGetAttributeVariantDataEx((*p_CookedFiles)[a], Attr, Property);
 
-				const UINT Attr = m_ContextViewSettings.SortBy;
-
-				switch (theApp.m_Attributes[Attr].AttrProperties.Type)
-				{
-				case LFTypeIATACode:
-					LFAirport* pAirport;
-					if (LFIATAGetAirportByCode((LPCSTR)(*p_CookedFiles)[a]->AttributeValues[Attr], &pAirport))
-						Location = pAirport->Location;
-
-					break;
-
-				case LFTypeGeoCoordinates:
-					if ((*p_CookedFiles)[a]->AttributeValues[Attr])
-						Location = *((LFGeoCoordinates*)(*p_CookedFiles)[a]->AttributeValues[Attr]);
-
-					break;
-				}
-
-				if ((Location.Latitude!=0.0) || (Location.Longitude!=0.0))
+				if (!LFIsNullVariantData(Property))
 				{
 					GlobeItemData* pData = GetItemData(a);
 
 					// Calculate world coordinates
-					const DOUBLE LatitudeRad = -theRenderer.DegToRad(Location.Latitude);
-					const DOUBLE LongitudeRad = theRenderer.DegToRad(Location.Longitude);
+					const DOUBLE LatitudeRad = -theRenderer.DegToRad(Property.GeoCoordinates.Latitude);
+					const DOUBLE LongitudeRad = theRenderer.DegToRad(Property.GeoCoordinates.Longitude);
 
 					const DOUBLE D = cos(LatitudeRad);
 
@@ -117,12 +105,13 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 					pData->World[1] = (GLfloat)(sin(LatitudeRad));
 					pData->World[2] = (GLfloat)(cos(LongitudeRad)*D);
 
-					LFGeoCoordinatesToString(Location, pData->CoordString, 32, FALSE);
+					LFGeoCoordinatesToString(Property.GeoCoordinates, pData->CoordString, 32, FALSE);
 
 					pData->Hdr.Valid = TRUE;
 					pData->Hdr.RectInflate = ARROWSIZE;
 				}
 			}
+		}
 
 	if (pPersistentData)
 		if (pPersistentData->LocationValid)
@@ -953,7 +942,7 @@ void CGlobeView::OnPaint()
 {
 	CPaintDC pDC(this);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	if (m_RenderContext.hRC)
 	{

@@ -220,7 +220,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Hintergrund
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, GetSysColor(IsWindowEnabled() ? COLOR_WINDOW : COLOR_3DFACE));
 

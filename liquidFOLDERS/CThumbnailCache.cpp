@@ -24,7 +24,7 @@ void CThumbnailCache::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT
 	// Set alpha channel to 0xFF
 	for (INT Row=y; Row<y+cy; Row++)
 	{
-		BYTE* pChar = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
+		LPBYTE pChar = (LPBYTE)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+x*4+3;
 
 		for (INT Column=cx; Column>0; Column--)
 		{
@@ -177,7 +177,7 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* pItemDescriptor)
 	return td.hBitmap;
 }
 
-BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor, INT YOffset)
+BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT YOffset)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
@@ -189,7 +189,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescr
 	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
-	AlphaBlend(dc, (rect.left+rect.right-128)/2, (rect.top+rect.bottom-128)/2+YOffset, 128, 128, hdcMem, 0, 0, 128, 128, BF);
+	AlphaBlend(dc, pt.x, pt.y+YOffset, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
 	SelectObject(hdcMem, hOldBitmap);
 	DeleteDC(hdcMem);
@@ -197,7 +197,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, const CRect& rect, LFItemDescr
 	return TRUE;
 }
 
-BOOL CThumbnailCache::DrawRepresentativeThumbnail(CDC& dc, const CRect& rect, LFSearchResult* pSearchResult, INT First, INT Last, INT YOffset)
+BOOL CThumbnailCache::DrawRepresentativeThumbnail(CDC& dc, const CPoint& pt, LFSearchResult* pSearchResult, INT First, INT Last, INT YOffset)
 {
 	ASSERT(pSearchResult);
 
@@ -207,7 +207,7 @@ BOOL CThumbnailCache::DrawRepresentativeThumbnail(CDC& dc, const CRect& rect, LF
 			Last = (INT)pSearchResult->m_ItemCount-1;
 
 		for (INT a=First; a<=Last; a++)
-			if (DrawJumboThumbnail(dc, rect, (*pSearchResult)[a], YOffset))
+			if (DrawJumboThumbnail(dc, pt, (*pSearchResult)[a], YOffset))
 				return TRUE;
 	}
 
@@ -224,7 +224,7 @@ HBITMAP CThumbnailCache::GetJumboThumbnailBitmap(LFItemDescriptor* pItemDescript
 	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-	if (DrawJumboThumbnail(dc, CRect(0, 0, 128, 128), pItemDescriptor, 0))
+	if (DrawJumboThumbnail(dc, CPoint(0, 0), pItemDescriptor, 0))
 		return (HBITMAP)dc.SelectObject(hOldBitmap);
 
 	dc.SelectObject(hOldBitmap);
@@ -243,7 +243,7 @@ HBITMAP CThumbnailCache::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearc
 	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-	if (DrawRepresentativeThumbnail(dc, CRect(0, 0, 128, 128), pSearchResult, First, Last, 0))
+	if (DrawRepresentativeThumbnail(dc, CPoint(0, 0), pSearchResult, First, Last, 0))
 		return (HBITMAP)dc.SelectObject(hOldBitmap);
 
 	dc.SelectObject(hOldBitmap);

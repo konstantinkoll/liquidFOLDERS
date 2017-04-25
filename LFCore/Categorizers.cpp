@@ -30,7 +30,7 @@ BOOL CCategorizer::IsEqual(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor*
 
 LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter) const
 {
-	LFItemDescriptor* pFolder = AllocFolderDescriptor();
+	LFItemDescriptor* pFolder = AllocFolderDescriptor(m_Attr);
 
 	if (pItemDescriptor->AttributeValues[m_Attr])
 	{
@@ -75,17 +75,8 @@ void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* 
 
 		SetAttribute(pFolder, LFAttrFileName, Name);
 
-		switch (m_Attr)
-		{
-		case LFAttrArtist:
-		case LFAttrAlbum:
-			pFolder->IconID = IDI_FLD_PLACEHOLDER;
-			break;
-
-		case LFAttrGenre:
+		if (m_Attr==LFAttrGenre)
 			pFolder->IconID = GetGenreIcon(pVariant->UINT32);
-			break;
-		}
 	}
 }
 
@@ -252,32 +243,25 @@ CIATACategorizer::CIATACategorizer()
 void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
+	assert(AttrProperties[m_Attr].Type==LFTypeIATACode);
 
 	LFAirport* pAirport;
 	if (LFIATAGetAirportByCode((LPCSTR)pItemDescriptor->AttributeValues[m_Attr], &pAirport))
 	{
-		// Ortsname in ANSI
-		CHAR tmpStr1[256];
-		strcpy_s(tmpStr1, 256, pAirport->Name);
-		strcat_s(tmpStr1, 256, ", ");
-		strcat_s(tmpStr1, 256, LFIATAGetCountry(pAirport->CountryID)->Name);
+		// Location name
+		WCHAR LocationName[256];
+		LFIATAGetLocationNameForAirport(pAirport, LocationName, 256);
 
-		// Dateiname in ANSI
-		CHAR tmpStr2[256];
-		strcpy_s(tmpStr2, 256, pAirport->Code);
-		strcat_s(tmpStr2, 256, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? "—" :" – ");
-		strcat_s(tmpStr2, 256, tmpStr1);
+		// IATA code to Unicode
+		WCHAR tmpStr[256];
+		MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, tmpStr, 256);
 
-		// Dateiname in Unicode
-		WCHAR tmpStr3[256];
-		MultiByteToWideChar(CP_ACP, 0, tmpStr2, -1, tmpStr3, 256);
-		SetAttribute(pFolder, LFAttrFileName, tmpStr3);
+		wcscat_s(tmpStr, 256, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? L"—" : L" – ");
+		wcscat_s(tmpStr, 256, LocationName);
 
-		// Ortsname in Unicode
-		MultiByteToWideChar(CP_ACP, 0, tmpStr1, -1, tmpStr3, 256);
-		SetAttribute(pFolder, LFAttrLocationName, tmpStr3);
-
-		// Weitere Attribute
+		// Set attributes
+		SetAttribute(pFolder, LFAttrFileName, tmpStr);
+		SetAttribute(pFolder, LFAttrLocationName, LocationName);
 		SetAttribute(pFolder, LFAttrLocationIATA, pAirport->Code);
 		SetAttribute(pFolder, LFAttrLocationGPS, &pAirport->Location);
 	}
@@ -311,6 +295,7 @@ BOOL CRatingCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItem
 void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
+	assert(AttrProperties[m_Attr].Type==LFTypeRating);
 
 	BYTE Rating = GetRatingCategory(*((BYTE*)pItemDescriptor->AttributeValues[m_Attr]));
 
@@ -346,6 +331,7 @@ BOOL CSizeCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDe
 void CSizeCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
+	assert(AttrProperties[m_Attr].Type==LFTypeSize);
 
 	WCHAR Name[256];
 	LoadString(LFCoreModuleHandle, IDS_SIZE1+GetSizeCategory(*((INT64*)pItemDescriptor->AttributeValues[m_Attr])), Name, 256);
@@ -467,6 +453,7 @@ BOOL CDurationCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFIt
 void CDurationCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
+	assert(AttrProperties[m_Attr].Type==LFTypeDuration);
 
 	WCHAR Name[256];
 	LoadString(LFCoreModuleHandle, IDS_DURATION1+GetDurationCategory(*((UINT*)pItemDescriptor->AttributeValues[m_Attr])), Name, 256);
@@ -495,6 +482,7 @@ BOOL CMegapixelCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFI
 void CMegapixelCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
+	assert(AttrProperties[m_Attr].Type==LFTypeMegapixel);
 
 	UINT Dimension = (UINT)*(DOUBLE*)pItemDescriptor->AttributeValues[m_Attr];
 

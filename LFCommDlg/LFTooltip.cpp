@@ -156,7 +156,7 @@ void LFTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 
 	m_ContentRect = rectWindow;
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 	if (Themed)
 	{
 		m_ContentRect.OffsetRect(0, SHADOWOFFSET);

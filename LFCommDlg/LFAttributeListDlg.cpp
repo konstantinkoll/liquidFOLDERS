@@ -15,8 +15,6 @@ INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/
 // LFAttributeListDlg
 //
 
-extern INT GetAttributeIconIndex(UINT Attr);
-
 LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd)
 	: LFDialog(nIDTemplate, pParentWnd)
 {
@@ -38,7 +36,7 @@ void LFAttributeListDlg::PrepareListCtrl(CExplorerList* pExplorerList, BOOL Chec
 	pExplorerList->AddColumn(0);
 
 	pExplorerList->ModifyStyle(0, LVS_SHAREIMAGELISTS);
-	pExplorerList->SetImageList(&m_AttributeIcons, LVSIL_SMALL);
+	pExplorerList->SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
 }
 
 void LFAttributeListDlg::PrepareListCtrl(INT nID, BOOL Check)
@@ -57,12 +55,15 @@ void LFAttributeListDlg::AddAttribute(CExplorerList* pExplorerList, UINT Attr)
 	if (!Add)
 		return;
 
+	LFAttributeDescriptor* pAttributeDescriptor = &LFGetApp()->m_Attributes[Attr];
+
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
+
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 	lvi.lParam = (LPARAM)Attr;
-	lvi.pszText = LFGetApp()->m_Attributes[Attr].Name;
-	lvi.iImage = GetAttributeIconIndex(Attr);
+	lvi.pszText = pAttributeDescriptor->Name;
+	lvi.iImage = pAttributeDescriptor->AttrProperties.IconID-1;
 	lvi.iItem = pExplorerList->GetItemCount();
 
 	pExplorerList->SetCheck(pExplorerList->InsertItem(&lvi), Check);
@@ -117,12 +118,4 @@ void LFAttributeListDlg::PopulateListCtrl(CExplorerList* pExplorerList, BOOL Che
 void LFAttributeListDlg::PopulateListCtrl(INT nID, BOOL Check, INT Focus, BOOL Sort)
 {
 	PopulateListCtrl((CExplorerList*)GetDlgItem(nID), Check, Focus, Sort);
-}
-
-BOOL LFAttributeListDlg::InitDialog()
-{
-	LFGetApp()->LoadAttributeIconsSmall();
-	m_AttributeIcons.Attach(LFGetApp()->m_AttributeIconsSmall.ExtractImageList());
-
-	return TRUE;
 }

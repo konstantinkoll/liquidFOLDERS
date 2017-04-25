@@ -121,26 +121,6 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
-void CGridView::DrawJumboIcon(CDC& dc, const CRect& rect, LFItemDescriptor* pItemDescriptor)
-{
-	if (pItemDescriptor->IconID)
-	{
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail)
-			if (theApp.m_ThumbnailCache.DrawRepresentativeThumbnail(dc, rect, p_RawFiles, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate))
-				return;
-
-		const INT YOffset = (pItemDescriptor->IconID==IDI_FLD_PLACEHOLDER) ? 1 : 0;
-		theApp.m_CoreImageListJumbo.DrawEx(&dc, pItemDescriptor->IconID-1, CPoint((rect.right+rect.left-128)/2+YOffset, (rect.top+rect.bottom-128)/2), CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
-	}
-	else
-	{
-		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
-
-		if (!theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, pItemDescriptor))
-			theApp.m_FileFormats.DrawJumboIcon(dc, rect, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
-	}
-}
-
 
 BEGIN_MESSAGE_MAP(CGridView, CFileView)
 	ON_WM_PAINT()
@@ -165,7 +145,7 @@ void CGridView::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
@@ -393,6 +373,7 @@ void CGridView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			CPoint pt;
 			GetCursorPos(&pt);
 			ScreenToClient(&pt);
+
 			OnMouseMove(0, pt);
 		}
 	}

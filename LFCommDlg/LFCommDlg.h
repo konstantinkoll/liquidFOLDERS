@@ -105,7 +105,6 @@ extern BLENDFUNCTION BF;
 
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
 
-INT GetAttributeIconIndex(UINT Attr);
 void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
 void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
@@ -114,7 +113,7 @@ BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 HBITMAP CreateTruecolorBitmap(LONG Width, LONG Height);
 CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height);
-void DrawLocationIndicator(Graphics& g, INT x, INT y, INT sz=16);
+void DrawLocationIndicator(Graphics& g, INT x, INT y, INT Size=16);
 void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed);
 void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
@@ -127,6 +126,7 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom=TRUE);
 void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled=FALSE, BOOL DrawBorder=FALSE);
 void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL ShowKeyboardCues=FALSE);
+void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF Color, BOOL Enabled=TRUE, BOOL Focused=FALSE, BOOL Hover=FALSE);
 
 
 // liquidFOLDERS

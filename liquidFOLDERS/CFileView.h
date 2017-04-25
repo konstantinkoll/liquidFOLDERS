@@ -96,10 +96,10 @@ struct CachedSelectionBitmap
 // CFileView
 //
 
-#define WM_UPDATESELECTION    WM_USER+100
-#define WM_SELECTALL          WM_USER+101
-#define WM_SELECTNONE         WM_USER+102
-#define WM_RENAMEITEM         WM_USER+103
+#define WM_UPDATESELECTION     WM_USER+100
+#define WM_SELECTALL           WM_USER+101
+#define WM_SELECTNONE          WM_USER+102
+#define WM_RENAMEITEM          WM_USER+103
 
 #define FF_ENABLESCROLLING          0x0001
 #define FF_ENABLEHOVER              0x0002
@@ -109,8 +109,8 @@ struct CachedSelectionBitmap
 #define FF_ENABLESHIFTSELECTION     0x0020
 #define FF_ENABLELABELEDIT          0x0040
 
-#define BM_REFLECTION         0
-#define BM_SELECTED           1
+#define BM_REFLECTION     0
+#define BM_SELECTED       1
 
 class CFileView : public CFrontstageWnd
 {
@@ -145,13 +145,18 @@ protected:
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	void ValidateAllItems();
+	BOOL IsItemSelected(INT Index) const;
+	void ChangedItem(INT Index);
+	void ChangedItems();
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT Index) const;
 	CMenu* GetSendToMenu();
-	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
-	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	CString GetLabel(LFItemDescriptor* pItemDescriptor) const;
 	BOOL BeginDragDrop();
+	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
+	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
+	void DrawBadge(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
+	void DrawJumboIcon(CDC& dc, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
 	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -193,7 +198,7 @@ protected:
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	SIZE_T m_DataSize;
-	BYTE* m_pItemData;
+	LPBYTE m_pItemData;
 	UINT m_ItemDataAllocated;
 	BOOL m_Nothing;
 	UINT m_HeaderHeight;
@@ -228,7 +233,7 @@ private:
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	CachedSelectionBitmap m_Bitmaps[2];
-	CEdit* p_Edit;
+	CEdit* m_pWndEdit;
 	SendToItemData m_SendToItems[256];
 };
 
@@ -240,5 +245,19 @@ inline BOOL CFileView::MultiSelectAllowed() const
 
 inline BOOL CFileView::IsEditing() const
 {
-	return (p_Edit!=NULL);
+	return (m_pWndEdit!=NULL);
+}
+
+inline void CFileView::ChangedItem(INT Index)
+{
+	InvalidateItem(Index);
+
+	GetParent()->SendMessage(WM_UPDATESELECTION);
+}
+
+inline void CFileView::ChangedItems()
+{
+	Invalidate();
+
+	GetParent()->SendMessage(WM_UPDATESELECTION);
 }

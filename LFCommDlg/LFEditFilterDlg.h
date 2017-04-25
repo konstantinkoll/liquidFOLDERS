@@ -15,16 +15,16 @@ class CConditionList : public CExplorerList
 public:
 	CConditionList();
 
-	void InsertItem(LFFilterCondition* c);
-	void SetItem(INT nItem, LFFilterCondition* c);
+	void InsertItem(LFFilterCondition* pFilterCondition);
+	void SetItem(INT nItem, LFFilterCondition* pFilterCondition);
 
 protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 
 private:
-	static void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
-	void FinishItem(INT Index, LFFilterCondition* c);
+	static void ConditionToItem(LFFilterCondition* pFilterCondition, LVITEM& lvi);
+	void FinishItem(INT Index, LFFilterCondition* pFilterCondition);
 
 	CString m_Compare[LFFilterCompareCount];
 };
@@ -61,5 +61,4 @@ protected:
 	CButton m_wndThisStore;
 	CEdit m_wndSearchterm;
 	CConditionList m_wndConditionList;
-	CImageList m_AttributeIcons;
 };

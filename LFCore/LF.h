@@ -394,6 +394,7 @@ struct LFAttributeProperties
 	BYTE Type;
 	SIZE_T cCharacters;
 	BYTE Category;
+	INT IconID;
 	UINT DefaultView;
 	UINT DefaultPriority;
 	BOOL ReadOnly;
@@ -465,6 +466,7 @@ struct LFFileSummary
 {
 	UINT FileCount;
 	INT64 FileSize;
+	UINT Flags;
 	UINT64 Duration;
 	BOOL OnlyMediaFiles;
 };

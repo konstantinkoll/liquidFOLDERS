@@ -9,27 +9,34 @@
 // CTimelineView
 //
 
-#define PRV_NONE         0
-#define PRV_COMMENTS     1
-#define PRV_THUMBS       2
-#define PRV_TITLE        4
-#define PRV_ALBUM        8
-#define PRV_SOURCE      16
-#define PRV_FOLDER      32
+#define PRV_SOURCE             0x00000001
+#define PRV_CONTENTS           0x00000100
+#define PRV_THUMBNAILS         0x00000200
+#define PRV_REPRESENTATIVE     0x00000400
+#define PRV_CREATOR            0x00100000
+#define PRV_TITLE              0x00200000
+#define PRV_COLLECTION         0x00400000
+#define PRV_COMMENTS           0x00800000
+#define PRV_COLLECTIONICON     0x01000000
+
+#define PRV_ATTRIBUTES        (PRV_CREATOR | PRV_TITLE | PRV_COLLECTION | PRV_COMMENTS)
+#define PRV_PREVIEW           (PRV_THUMBNAILS | PRV_REPRESENTATIVE)
+#define PRV_MIDDLESECTION     (PRV_CONTENTS | PRV_PREVIEW | PRV_ATTRIBUTES)
 
 struct TimelineItemData
 {
 	FVItemData Hdr;
 	INT Arrow;
 	INT ArrowOffs;
-	INT PreviewRows;
+	INT ThumbnailRows;
 	INT ListCount;
 	WORD Year;
-	LPCWSTR pArtist;
-	LPCWSTR pTitle;
-	LPCWSTR pAlbum;
-	LPCWSTR pComments;
-	BYTE Preview;
+	LPCWSTR pStrCreator;
+	LPCWSTR pStrTitle;
+	LPCWSTR pStrCollection;
+	LPCWSTR pStrComments;
+	INT CollectionIconID;
+	UINT PreviewMask;
 };
 
 struct ItemCategory
@@ -58,17 +65,20 @@ protected:
 
 	BOOL m_TwoColumns;
 	INT m_CaptionHeight;
+	INT m_SourceHeight;
 	INT m_ItemWidth;
 	INT m_LabelWidth;
 	INT m_PreviewColumns;
-	INT m_IconSize;
+	INT m_CoreIconSize;
+	INT m_SourceIconSize;
 
 private:
-	static LPCWSTR GetAttribute(TimelineItemData* pData, LFItemDescriptor* pItemDesciptor, UINT Attr, UINT Mask);
-	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* ic, BOOL Themed);
+	static LPCWSTR GetAttribute(TimelineItemData* pData, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
+	static void AggregateAttribute(UINT& PreviewMask, LPCWSTR& pStrAggregated, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
+	static void AggregateIcon(UINT& PreviewMask, INT& AggregatedIconID, UINT Mask, INT IconID);
+	static BOOL UsePreview(LFItemDescriptor* pItemDescriptor);
+	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* pItemCategory, BOOL Themed);
 
 	LFDynArray<ItemCategory, 8, 8> m_Categories;
-	static CString m_FilesSingular;
-	static CString m_FilesPlural;
 	static CIcons m_SourceIcons;
 };
