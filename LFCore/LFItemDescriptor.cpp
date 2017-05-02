@@ -21,7 +21,7 @@ __forceinline BOOL IsStaticAttribute(LFItemDescriptor* pItemDescriptor, UINT Att
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
 
-	return (pItemDescriptor->AttributeValues[Attr]>=(BYTE*)pItemDescriptor) && (pItemDescriptor->AttributeValues[Attr]<(BYTE*)pItemDescriptor+sizeof(LFItemDescriptor));
+	return (pItemDescriptor->AttributeValues[Attr]>=(LPBYTE)pItemDescriptor) && (pItemDescriptor->AttributeValues[Attr]<(LPBYTE)pItemDescriptor+sizeof(LFItemDescriptor));
 }
 
 void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
@@ -204,14 +204,23 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 	return pClone;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(UINT Attr)
+LFItemDescriptor* AllocFolderDescriptor(UINT Attr, LFFileSummary& FileSummary, INT FirstAggregate, INT LastAggregate)
 {
 	assert(Attr<LFAttributeCount);
 
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
-	pItemDescriptor->Type = LFTypeFolder;
+	pItemDescriptor->Type = LFTypeFolder | FileSummary.Source;
+	pItemDescriptor->FirstAggregate = FirstAggregate;
+	pItemDescriptor->LastAggregate = LastAggregate;
+	pItemDescriptor->AggregateCount = FileSummary.FileCount;
+	pItemDescriptor->CoreAttributes.FileSize = FileSummary.FileSize;
+	pItemDescriptor->CoreAttributes.Flags = FileSummary.Flags;
 	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : IDI_FLD_DEFAULT;
+
+	LFGetFileSummaryEx(FileSummary, pItemDescriptor->Description, 256);
+
+	SetAttribute(pItemDescriptor, LFAttrDuration, &FileSummary.Duration);
 
 	return pItemDescriptor;
 }

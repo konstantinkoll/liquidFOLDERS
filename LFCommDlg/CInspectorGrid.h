@@ -231,7 +231,7 @@ class CInspectorHeader
 {
 public:
 	virtual INT GetPreferredHeight() const=0;
-	virtual void DrawHeader(CDC& dc, const CRect& rect, BOOL Themed)=NULL;
+	virtual void DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Themed) const=NULL;
 };
 
 

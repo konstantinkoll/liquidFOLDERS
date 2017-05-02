@@ -13,6 +13,8 @@
 
 void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed)
 {
+	ASSERT(lpRect);
+
 	dc.FillSolidRect(lpRect, Themed ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
 
 	if (Themed)
@@ -20,8 +22,8 @@ void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 		g.SetSmoothingMode(SmoothingModeNone);
 
-		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
-		g.FillRectangle(&brush, Rect(0, 0, lpRect->right-lpRect->left, WHITE));
+		LinearGradientBrush brush(Point(0, lpRect->top), Point(0, lpRect->top+WHITE), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
+		g.FillRectangle(&brush, Rect(lpRect->left, lpRect->top, lpRect->right-lpRect->left, WHITE));
 
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 	}
@@ -87,6 +89,7 @@ void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
 
 			rectOutline.InflateRect(1, 1);
 
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
 			g.SetSmoothingMode(LFGetApp()->m_SmoothingModeAntiAlias8x8);
 
 			GraphicsPath path;

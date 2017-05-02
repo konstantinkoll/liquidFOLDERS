@@ -6,7 +6,7 @@
 #include "LFCommDlg.h"
 
 
-CString MakeHex(BYTE* x, UINT bCount)
+CString MakeHex(LPBYTE x, UINT bCount)
 {
 	CString tmpStr;
 
@@ -229,23 +229,23 @@ void LFStorePropertiesDlg::OnRunBackup()
 							}
 
 							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&Store.UniqueID, sizeof(Store.UniqueID))+_T("\n"));
+							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((LPBYTE)&Store.UniqueID, sizeof(Store.UniqueID))+_T("\n"));
 
 							// IndexVersion
 							tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), Store.IndexVersion);
 							f.WriteString(tmpStr);
 
 							// CreationTime
-							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&Store.CreationTime, sizeof(Store.CreationTime))+_T("\n"));
+							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((LPBYTE)&Store.CreationTime, sizeof(Store.CreationTime))+_T("\n"));
 
 							// FileTime
-							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&Store.FileTime, sizeof(Store.FileTime))+_T("\n"));
+							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((LPBYTE)&Store.FileTime, sizeof(Store.FileTime))+_T("\n"));
 
 							// MaintenanceTime
-							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((BYTE*)&Store.MaintenanceTime, sizeof(Store.MaintenanceTime))+_T("\n"));
+							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((LPBYTE)&Store.MaintenanceTime, sizeof(Store.MaintenanceTime))+_T("\n"));
 
 							// SynchronizeTime
-							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((BYTE*)&Store.SynchronizeTime, sizeof(Store.SynchronizeTime))+_T("\n"));
+							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((LPBYTE)&Store.SynchronizeTime, sizeof(Store.SynchronizeTime))+_T("\n"));
 						}
 
 					Ptr += LFKeySize;

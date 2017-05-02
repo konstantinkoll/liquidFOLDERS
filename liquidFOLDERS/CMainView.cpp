@@ -113,7 +113,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* pPersistentData)
 		rect.SetRectEmpty();
 	}
 
-	m_pWndFileView->Create(this, FileViewID, rect, p_RawFiles, p_CookedFiles, pPersistentData);
+	m_pWndFileView->Create(this, FileViewID, rect, p_Filter, p_RawFiles, p_CookedFiles, pPersistentData);
 	m_pWndFileView->SetOwner(GetOwner());
 
 	if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
@@ -194,7 +194,7 @@ void CMainView::SetHeader()
 		CPoint BitmapOffset(-2, -1);
 
 		if (theApp.m_Contexts[m_Context].CtxProperties.ShowRepresentativeThumbnail)
-			hBitmap = theApp.m_ThumbnailCache.GetRepresentativeThumbnailBitmap(p_RawFiles);
+			hBitmap = theApp.m_IconFactory.GetRepresentativeThumbnailBitmap(p_RawFiles);
 
 		if (p_RawFiles->m_IconID && !hBitmap)
 		{
@@ -247,7 +247,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	if (!pCookedFiles)
 	{
 		if (m_pWndFileView)
-			m_pWndFileView->UpdateSearchResult(NULL, NULL, NULL);
+			m_pWndFileView->UpdateSearchResult(NULL, NULL, NULL, NULL);
 
 		RevokeDragDrop(m_wndHeaderArea.GetSafeHwnd());
 		RevokeDragDrop(m_pWndFileView->GetSafeHwnd());
@@ -258,8 +258,8 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 
 		if (!CreateFileView(theApp.m_ContextViewSettings[m_Context].View, pPersistentData))
 		{
-			m_pWndFileView->UpdateViewSettings(m_Context);
-			m_pWndFileView->UpdateSearchResult(pRawFiles, pCookedFiles, pPersistentData);
+			m_pWndFileView->UpdateViewSettings(m_Context, TRUE);
+			m_pWndFileView->UpdateSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 		}
 
 		m_DropTarget.SetFilter(pFilter);
@@ -1406,7 +1406,7 @@ void CMainView::OnFileEdit()
 void CMainView::OnFileRemember()
 {
 	CMainWnd* pClipboard = theApp.GetClipboard();
-	BOOL changes = FALSE;
+	BOOL Changes = FALSE;
 
 	INT Index = GetNextSelectedItem(-1);
 	while (Index!=-1)
@@ -1416,7 +1416,7 @@ void CMainView::OnFileRemember()
 		{
 		case LFTypeFile:
 			if (pClipboard->AddClipItem(pItemDescriptor))
-				changes = TRUE;
+				Changes = TRUE;
 
 			break;
 
@@ -1424,7 +1424,7 @@ void CMainView::OnFileRemember()
 			if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
 				for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
 					if (pClipboard->AddClipItem((*p_RawFiles)[a]))
-						changes = TRUE;
+						Changes = TRUE;
 
 			break;
 		}
@@ -1432,7 +1432,7 @@ void CMainView::OnFileRemember()
 		Index = GetNextSelectedItem(Index);
 	}
 
-	if (changes)
+	if (Changes)
 		pClipboard->SendMessage(WM_COOKFILES);
 }
 

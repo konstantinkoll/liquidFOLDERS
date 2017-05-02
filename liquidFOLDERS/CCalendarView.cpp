@@ -11,7 +11,7 @@
 //
 
 #define GetItemData(Index)     ((CalendarItemData*)(m_pItemData+(Index)*m_DataSize))
-#define PADDING                2
+#define ITEMPADDING            2
 #define MARGIN                 BACKSTAGEBORDER
 #define COLUMNGUTTER           8
 #define EXTRA                  (COLUMNGUTTER/2)
@@ -26,28 +26,19 @@ CCalendarView::CCalendarView()
 	ZeroMemory(&m_Days, sizeof(m_Days));
 }
 
-void CCalendarView::SetViewSettings(BOOL Force)
+void CCalendarView::SetViewSettings(BOOL UpdateSearchResultPending)
 {
-	if (Force)
-	{
-		SYSTEMTIME st;
-		GetLocalTime(&st);
-
-		ASSERT((st.wYear>=MINYEAR) && (st.wYear<=MAXYEAR));
-
-		m_Year = st.wYear;
-	}
-
-	if (Force || (m_GlobalViewSettings.CalendarShowDays!=theApp.m_GlobalViewSettings.CalendarShowDays))
-	{
+	if (m_GlobalViewSettings.CalendarShowDays!=theApp.m_GlobalViewSettings.CalendarShowDays)
 		m_GlobalViewSettings.CalendarShowDays = theApp.m_GlobalViewSettings.CalendarShowDays;
+
+	// Commit settings
+	if (!UpdateSearchResultPending)
 		AdjustLayout();
-	}
 }
 
-void CCalendarView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
+void CCalendarView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CFileView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
+	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
@@ -166,13 +157,13 @@ Restart:
 				const LPRECT lpRect = &pData->Hdr.Rect;
 
 				lpRect->left = pMonth->Rect.left+(Day%7)*(m_ColumnWidth+COLUMNGUTTER)+CARDPADDING;
-				lpRect->top = pMonth->Rect.top+m_LargeFontHeight+2*LFCATEGORYPADDING+(Day/7)*(m_DefaultFontHeight+2*PADDING-1)+CARDPADDING;
+				lpRect->top = pMonth->Rect.top+m_LargeFontHeight+2*LFCATEGORYPADDING+(Day/7)*(m_DefaultFontHeight+2*ITEMPADDING-1)+CARDPADDING;
 
 				if (m_GlobalViewSettings.CalendarShowDays)
 					lpRect->top += m_DefaultFontHeight+LFCATEGORYPADDING;
 
 				lpRect->right = lpRect->left+m_ColumnWidth;
-				lpRect->bottom = lpRect->top+m_DefaultFontHeight+2*PADDING;
+				lpRect->bottom = lpRect->top+m_DefaultFontHeight+2*ITEMPADDING;
 			}
 	}
 
@@ -242,10 +233,10 @@ void CCalendarView::GetMonthSize(LPSIZE lpSize)
 {
 	ASSERT(lpSize);
 
-	m_ColumnWidth = theApp.m_DefaultFont.GetTextExtent(_T("00")).cx+2*PADDING;
+	m_ColumnWidth = theApp.m_DefaultFont.GetTextExtent(_T("00")).cx+2*ITEMPADDING;
 
 	lpSize->cx = 7*m_ColumnWidth+6*COLUMNGUTTER+2*CARDPADDING;
-	lpSize->cy = m_LargeFontHeight+2*LFCATEGORYPADDING+6*(m_DefaultFontHeight+2*PADDING-1)+1+2*CARDPADDING;
+	lpSize->cy = m_LargeFontHeight+2*LFCATEGORYPADDING+6*(m_DefaultFontHeight+2*ITEMPADDING-1)+1+2*CARDPADDING;
 
 	if (m_GlobalViewSettings.CalendarShowDays)
 		lpSize->cy += m_DefaultFontHeight+LFCATEGORYPADDING;
@@ -253,6 +244,7 @@ void CCalendarView::GetMonthSize(LPSIZE lpSize)
 
 void CCalendarView::DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month, BOOL Themed)
 {
+	// Card
 	DrawCardForeground(dc, g, rectMonth, Themed);
 
 	rectMonth.DeflateRect(CARDPADDING, CARDPADDING);
@@ -265,7 +257,7 @@ void CCalendarView::DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month,
 	DrawCategory(dc, rectMonth, tmpStr, NULL, Themed);
 
 	rectMonth.top += m_LargeFontHeight+2*LFCATEGORYPADDING;
-	CRect rectItem(0, rectMonth.top, m_ColumnWidth+2*EXTRA, rectMonth.top+m_DefaultFontHeight+2*PADDING);
+	CRect rectItem(0, rectMonth.top, m_ColumnWidth+2*EXTRA, rectMonth.top+m_DefaultFontHeight+2*ITEMPADDING);
 
 	// Days
 	if (m_GlobalViewSettings.CalendarShowDays)
@@ -290,7 +282,7 @@ void CCalendarView::DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month,
 
 	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
-		rectItem.MoveToXY(rectMonth.left+Column*(m_ColumnWidth+COLUMNGUTTER), rectMonth.top+Row*(m_DefaultFontHeight+2*PADDING-1));
+		rectItem.MoveToXY(rectMonth.left+Column*(m_ColumnWidth+COLUMNGUTTER), rectMonth.top+Row*(m_DefaultFontHeight+2*ITEMPADDING-1));
 
 		if (m_Months[Month].Matrix[Day]!=EMPTY)
 		{
@@ -304,9 +296,9 @@ void CCalendarView::DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month,
 		CString tmpStr;
 		tmpStr.Format(_T("%u"), Day+1);
 
-		rectItem.right -= PADDING;
+		rectItem.right -= ITEMPADDING;
 		dc.DrawText(tmpStr, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
-		rectItem.right += PADDING;
+		rectItem.right += ITEMPADDING;
 
 		if (m_Months[Month].Matrix[Day]!=EMPTY)
 			DrawItemForeground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
@@ -348,6 +340,13 @@ INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
+
+	// Current year
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+
+	ASSERT((st.wYear>=MINYEAR) && (st.wYear<=MAXYEAR));
+	m_Year = st.wYear;
 
 	// First day of week
 	WCHAR DOW[2];
@@ -411,7 +410,7 @@ void CCalendarView::OnPaint()
 			DrawMonth(dc, g, rect, a, Themed);
 	}
 
-	DrawWindowEdge(dc, Themed);
+	DrawWindowEdge(g, Themed);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 

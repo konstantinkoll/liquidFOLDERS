@@ -294,7 +294,7 @@ BOOL LFApplication::InitInstance()
 	return TRUE;
 }
 
-CWnd* LFApplication::OpenCommandLine(LPCWSTR /*CmdLine*/)
+CWnd* LFApplication::OpenCommandLine(LPWSTR /*CmdLine*/)
 {
 	return NULL;
 }
@@ -425,7 +425,7 @@ Bitmap* LFApplication::GetResourceImage(UINT nID) const
 				DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
 				if (Size)
 				{
-					IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
+					IStream* pStream = SHCreateMemStream((LPBYTE)pResourceData, Size);
 
 					pBitmap = Gdiplus::Bitmap::FromStream(pStream);
 

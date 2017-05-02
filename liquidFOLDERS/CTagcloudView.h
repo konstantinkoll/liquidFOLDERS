@@ -29,10 +29,10 @@ public:
 	virtual CMenu* GetViewContextMenu();
 
 protected:
-	virtual void SetViewSettings(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
+	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
-	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed);
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	LFFont* GetFont(INT Index);
 

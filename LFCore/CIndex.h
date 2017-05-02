@@ -51,5 +51,26 @@ protected:
 	CHeapfile* m_pTable[IDXTABLECOUNT];
 
 private:
+	void ResetStatistics();
+	void ResetStatistics(BOOL& DoReset);
+
 	WCHAR m_IdxPath[MAX_PATH];
 };
+
+inline void CIndex::ResetStatistics()
+{
+	assert(p_StoreDescripor);
+
+	ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
+	ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));
+}
+
+inline void CIndex::ResetStatistics(BOOL& DoReset)
+{
+	if (DoReset)
+	{
+		ResetStatistics();
+
+		DoReset = FALSE;
+	}
+}

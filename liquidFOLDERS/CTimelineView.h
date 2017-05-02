@@ -51,7 +51,7 @@ public:
 	CTimelineView();
 
 protected:
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
@@ -69,7 +69,7 @@ protected:
 	INT m_ItemWidth;
 	INT m_LabelWidth;
 	INT m_PreviewColumns;
-	INT m_CoreIconSize;
+	INT m_SmallIconSize;
 	INT m_SourceIconSize;
 
 private:
@@ -81,4 +81,5 @@ private:
 
 	LFDynArray<ItemCategory, 8, 8> m_Categories;
 	static CIcons m_SourceIcons;
+	static const ARGB m_BevelColors[8];
 };

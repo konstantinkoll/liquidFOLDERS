@@ -15,8 +15,8 @@ public:
 	CDetailsView(UINT DataSize=sizeof(GridItemData));
 
 protected:
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
-	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed);
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 };

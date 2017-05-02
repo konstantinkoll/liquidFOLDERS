@@ -55,6 +55,10 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	MemBitmap.Attach(CreateCompatibleBitmap(lpDrawItemStruct->hDC, rect.Width(), rect.Height()));
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
+	Graphics g(dc);
+
+	// Background
+	
 	// State
 	const BOOL Disabled = (lpDrawItemStruct->itemState & ODS_DISABLED);
 	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
@@ -64,7 +68,7 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	FillRect(dc, rect, (HBRUSH)GetOwner()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
 
 	// Button
-	DrawWhiteButtonBackground(dc, rect, IsCtrlThemed(), Focused, Selected, m_Hover, Disabled);
+	DrawWhiteButtonBackground(dc, g, rect, IsCtrlThemed(), Focused, Selected, m_Hover, Disabled);
 
 	// Content
 	NM_DRAWBUTTONFOREGROUND tag;

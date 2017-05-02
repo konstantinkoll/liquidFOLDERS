@@ -33,8 +33,8 @@ public:
 	virtual void GetPersistentData(FVPersistentData& Data) const;
 
 protected:
-	virtual void SetViewSettings(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
+	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 

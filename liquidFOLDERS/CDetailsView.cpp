@@ -20,9 +20,9 @@ CDetailsView::CDetailsView(UINT DataSize)
 {
 }
 
-void CDetailsView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
+void CDetailsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
+	CGridView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	ValidateAllItems();
 }
@@ -46,7 +46,7 @@ RECT CDetailsView::GetLabelRect(INT Index) const
 	return rect;
 }
 
-void CDetailsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
+void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	GridItemData* pData = GetItemData(Index);
@@ -132,7 +132,7 @@ void CDetailsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 	}
 
 	// Icon
-	DrawJumboIcon(dc, rect.TopLeft(), pItemDescriptor);
+	DrawJumboIcon(dc, g, rect.TopLeft(), pItemDescriptor);
 
 	// Rating
 	if (pItemDescriptor->AttributeValues[LFAttrRating])
@@ -140,13 +140,15 @@ void CDetailsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 		const UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[LFAttrRating]);
 		ASSERT(Rating<=LFMaxRating);
 
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (Rating))
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || Rating)
 		{
 			CDC dcMem;
 			dcMem.CreateCompatibleDC(&dc);
 
 			HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(theApp.hRatingBitmaps[Rating]);
+
 			dc.AlphaBlend(rect.left+(128-RATINGBITMAPWIDTH)/2, rect.top+128+PADDING/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+
 			SelectObject(dcMem, hOldBitmap);
 		}
 	}

@@ -194,30 +194,30 @@ LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_
 LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount);
 
 // Initalisiert eine LFVariantData-Struktur
-LFCORE_API void __stdcall LFInitVariantData(LFVariantData& v, UINT Attr);
+LFCORE_API void __stdcall LFInitVariantData(LFVariantData& Value, UINT Attr);
 
 // Löscht eine LFVariantData-Struktur
 // v->Attr muss gesetzt sein
-LFCORE_API void __stdcall LFClearVariantData(LFVariantData& v);
+LFCORE_API void __stdcall LFClearVariantData(LFVariantData& Value);
 
 // Prüft, ob eine LVVariantData-Struktur Null ist
-LFCORE_API BOOL __stdcall LFIsNullVariantData(const LFVariantData& v);
+LFCORE_API BOOL __stdcall LFIsNullVariantData(const LFVariantData& Value);
 
 // Konvertiert eine LFVariantData-Struktur in eine Zeichenkette
-LFCORE_API void __stdcall LFVariantDataToString(const LFVariantData& v, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFVariantDataToString(const LFVariantData& Value, LPWSTR pStr, SIZE_T cCount);
 
 // Erzeugt eine LFVariantData-Struktur aus einer Zeichenkette
-LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& v, LPCWSTR pStr);
+LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr);
 
 // Vergleicht zwei Dateiattribute
-LFCORE_API INT __stdcall LFCompareVariantData(LFVariantData& v1, LFVariantData& v2);
+LFCORE_API INT __stdcall LFCompareVariantData(LFVariantData& Value1, LFVariantData& Value2);
 
 // Attributwert holen
-LFCORE_API void __stdcall LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& v);
-LFCORE_API void __stdcall LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& v);
+LFCORE_API void __stdcall LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& Value);
+LFCORE_API void __stdcall LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& Value);
 
 // Attributwert setzen
-LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& v);
+LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& Value);
 
 // Prüfen, ob ein Attributwert existiert
 LFCORE_API BOOL __stdcall LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr);
@@ -257,7 +257,7 @@ LFCORE_API LFFilter* __stdcall LFLoadFilterEx(LPCWSTR pFilename);
 LFCORE_API UINT __stdcall LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment=NULL);
 
 // Neue LFFilterCondition erzeugen
-LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& v, LFFilterCondition* pNext=NULL);
+LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, LFVariantData& Value, LFFilterCondition* pNext=NULL);
 LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
 
 // Existierende LFFilterCondition freigeben

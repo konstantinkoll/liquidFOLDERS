@@ -18,9 +18,9 @@ CIconsView::CIconsView(UINT DataSize)
 {
 }
 
-void CIconsView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
+void CIconsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
+	CGridView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	ValidateAllItems();
 }
@@ -39,7 +39,7 @@ RECT CIconsView::GetLabelRect(INT Index) const
 	return rect;
 }
 
-void CIconsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
+void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
@@ -54,5 +54,5 @@ void CIconsView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 	}
 
 	// Icon
-	DrawJumboIcon(dc, CPoint((rectItem->left+rectItem->right-128)/2, rectItem->top+PADDING), pItemDescriptor);
+	DrawJumboIcon(dc, g, CPoint((rectItem->left+rectItem->right-128)/2, rectItem->top+PADDING), pItemDescriptor);
 }

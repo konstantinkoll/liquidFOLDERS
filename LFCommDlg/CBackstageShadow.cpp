@@ -17,7 +17,7 @@
 #define TOPHEIGHT           (SHADOWCORNER-SHADOWOFFSET)
 #define BOTTOMHEIGHT        SHADOWCORNER
 
-BYTE* CBackstageShadow::m_pShadowCorner = NULL;
+LPBYTE CBackstageShadow::m_pShadowCorner = NULL;
 
 CBackstageShadow::CBackstageShadow()
 {
@@ -38,11 +38,11 @@ BOOL CBackstageShadow::Create()
 	if (!m_pShadowCorner)
 	{
 		m_pShadowCorner = new BYTE[SHADOWCORNER*SHADOWCORNER];
-		BYTE* pByte = m_pShadowCorner;
+		LPBYTE pByte = m_pShadowCorner;
 
 		for (INT Row=SHADOWCORNER-1; Row>=0; Row--)
 			for (INT Column=SHADOWCORNER-1; Column>=0; Column--)
-				*(pByte++) = CalcOpacity(SHADOWSIZE-sqrt((DOUBLE)(Row*Row+Column*Column))+BACKSTAGERADIUS);
+				*(pByte++) = CalcOpacity((DOUBLE)SHADOWSIZE-sqrt((DOUBLE)(Row*Row+Column*Column))+(DOUBLE)BACKSTAGERADIUS);
 	}
 
 	// Create transparent windows
@@ -151,7 +151,7 @@ void CBackstageShadow::Update(CWnd* pBackstageWnd)
 
 void CBackstageShadow::HorizontalLine(const BITMAP& Bitmap, UINT Row, UINT Width, BYTE Opacity)
 {
-	RGBQUAD* pRGBQUAD = (RGBQUAD*)((BYTE*)Bitmap.bmBits+Row*Bitmap.bmWidthBytes+SHADOWCORNER*4);
+	RGBQUAD* pRGBQUAD = (RGBQUAD*)((LPBYTE)Bitmap.bmBits+Row*Bitmap.bmWidthBytes+SHADOWCORNER*4);
 
 	for (UINT Column=0; Column<Width; Column++)
 		(pRGBQUAD++)->rgbReserved = Opacity;
@@ -159,7 +159,7 @@ void CBackstageShadow::HorizontalLine(const BITMAP& Bitmap, UINT Row, UINT Width
 
 void CBackstageShadow::VerticalLine(const BITMAP& Bitmap, UINT Column, UINT Height, BYTE Opacity)
 {
-	BYTE* pByte = (BYTE*)Bitmap.bmBits+(SHADOWCORNER-SHADOWOFFSET)*Bitmap.bmWidthBytes+Column*4+3;
+	LPBYTE pByte = (LPBYTE)Bitmap.bmBits+(SHADOWCORNER-SHADOWOFFSET)*Bitmap.bmWidthBytes+Column*4+3;
 
 	for (UINT Row=0; Row<Height; Row++)
 	{
@@ -173,9 +173,9 @@ inline void CBackstageShadow::CornersTop(const BITMAP& Bitmap, UINT Width)
 {
 	ASSERT(m_pShadowCorner);
 
-	BYTE* pByteSrc = m_pShadowCorner;
-	BYTE* pByteLeft = (BYTE*)Bitmap.bmBits+3;
-	BYTE* pByteRight = pByteLeft+(Width-1)*4;
+	LPBYTE pByteSrc = m_pShadowCorner;
+	LPBYTE pByteLeft = (LPBYTE)Bitmap.bmBits+3;
+	LPBYTE pByteRight = pByteLeft+(Width-1)*4;
 
 	for (UINT Row=0; Row<SHADOWCORNER; Row++)
 	{
@@ -196,9 +196,9 @@ inline void CBackstageShadow::CornersBottom(const BITMAP& Bitmap, UINT Width, UI
 {
 	ASSERT(m_pShadowCorner);
 
-	BYTE* pByteSrc = m_pShadowCorner;
-	BYTE* pByteLeft = (BYTE*)Bitmap.bmBits+(Height-1)*Bitmap.bmWidthBytes+3;
-	BYTE* pByteRight = pByteLeft+(Width-1)*4;
+	LPBYTE pByteSrc = m_pShadowCorner;
+	LPBYTE pByteLeft = (LPBYTE)Bitmap.bmBits+(Height-1)*Bitmap.bmWidthBytes+3;
+	LPBYTE pByteRight = pByteLeft+(Width-1)*4;
 
 	for (UINT Row=0; Row<SHADOWCORNER; Row++)
 	{

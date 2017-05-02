@@ -37,7 +37,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStor
 					CString Value;
 					Value.Format(_T("Attr%u"), a);
 
-					BYTE* pData = NULL;
+					LPBYTE pData = NULL;
 					UINT pSz = 0;
 
 					if (reg.Read(Value, &pData, &pSz))
@@ -107,7 +107,7 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 				}
 				else
 				{
-					reg.Write(Value, (BYTE*)&m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value));
+					reg.Write(Value, (LPBYTE)&m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value));
 				}
 			}
 		}

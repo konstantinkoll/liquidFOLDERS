@@ -19,6 +19,7 @@ CFileView::CFileView(SIZE_T DataSize, UINT Flags)
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
 
+	p_Filter = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
 	m_pWndEdit = NULL;
 	m_pItemData = NULL;
@@ -47,7 +48,7 @@ CFileView::~CFileView()
 		free(m_pItemData);
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
 {
 	CString className = AfxRegisterWndClass(nClassStyle, theApp.LoadStandardCursor(IDC_ARROW));
 
@@ -55,7 +56,7 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchRe
 		return FALSE;
 
 	UpdateViewSettings(pCookedFiles ? pCookedFiles->m_Context : LFContextAllFiles, TRUE);
-	UpdateSearchResult(pRawFiles, pCookedFiles, pPersistentData, TRUE);
+	UpdateSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData, TRUE);
 
 	return TRUE;
 }
@@ -106,7 +107,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
-void CFileView::UpdateViewSettings(INT Context, BOOL Force)
+void CFileView::UpdateViewSettings(INT Context, BOOL UpdateSearchResultPending)
 {
 	DestroyEdit();
 	theApp.HideTooltip();
@@ -120,25 +121,14 @@ void CFileView::UpdateViewSettings(INT Context, BOOL Force)
 
 	// Allow view subclass to see both old and new settings
 	m_BeginDragDrop = FALSE;
-	SetViewSettings(Force);
-
-	const BOOL Arrange = (m_ContextViewSettings.View!=p_ContextViewSettings->View);
+	SetViewSettings(UpdateSearchResultPending);
 
 	// Copy settings
 	m_ContextViewSettings = *p_ContextViewSettings;
 	m_GlobalViewSettings = *p_GlobalViewSettings;
-
-	if (Arrange)
-	{
-		AdjustLayout();
-	}
-	else
-	{
-		Invalidate();
-	}
 }
 
-void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall)
+void CFileView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall)
 {
 	DestroyEdit();
 	theApp.HideTooltip();
@@ -190,7 +180,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	}
 
 	m_BeginDragDrop = FALSE;
-	SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
+	SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	free(pVictim);
 
@@ -231,12 +221,13 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	SetCursor(theApp.LoadStandardCursor(pCookedFiles ? IDC_ARROW : IDC_WAIT));
 }
 
-void CFileView::SetViewSettings(BOOL /*Force*/)
+void CFileView::SetViewSettings(BOOL /*UpdateSearchResultPending*/)
 {
 }
 
-void CFileView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* /*Data*/)
+void CFileView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* /*Data*/)
 {
+	p_Filter = pFilter;
 	p_RawFiles = pRawFiles;
 	p_CookedFiles = pCookedFiles;
 }
@@ -953,48 +944,9 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 	}
 }
 
-void CFileView::DrawBadge(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset) const
+void CFileView::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset) const
 {
-	const INT Badge = (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? IDI_OVR_ERROR : (pItemDescriptor->CoreAttributes.Flags & LFFlagNew) ? IDI_OVR_NEW : 0;
-	if (Badge)
-		theApp.m_CoreImageListJumbo.DrawEx(&dc, Badge-1, CPoint(pt.x+2, pt.y+ThumbnailYOffset-3), CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT));
-}
-
-void CFileView::DrawJumboIcon(CDC& dc, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset) const
-{
-	if (pItemDescriptor->IconID)
-	{
-		// Do we have a folder for a property with representative thumbnail? If yes, try to draw it.
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail)
-			if (theApp.m_ThumbnailCache.DrawRepresentativeThumbnail(dc, pt, p_RawFiles, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate, ThumbnailYOffset))
-			{
-				DrawBadge(dc, pt, pItemDescriptor, ThumbnailYOffset);
-
-				return;
-			}
-
-		// Offset placeholder icon for visually pleasing result
-		if (pItemDescriptor->IconID==IDI_FLD_PLACEHOLDER)
-			pt.y++;
-
-		// Draw placeholder with badge
-		theApp.m_CoreImageListJumbo.DrawEx(&dc, pItemDescriptor->IconID-1, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
-		DrawBadge(dc, pt, pItemDescriptor, 0);
-	}
-	else
-	{
-		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
-
-		// Draw thumbnail with badge or file format icon without badge (would look ugly)
-		if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, pt, pItemDescriptor, ThumbnailYOffset))
-		{
-			DrawBadge(dc, pt, pItemDescriptor, ThumbnailYOffset);
-		}
-		else
-		{
-			theApp.m_FileFormats.DrawJumboIcon(dc, pt, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
-		}
-	}
+	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail ? p_RawFiles : NULL, ThumbnailYOffset);
 }
 
 BOOL CFileView::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed)
@@ -1038,15 +990,18 @@ BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_WM_SETCURSOR()
+
 	ON_WM_MEASUREITEM()
 	ON_WM_DRAWITEM()
 	ON_WM_CONTEXTMENU()
+
 	ON_MESSAGE_VOID(WM_SELECTALL, OnSelectAll)
 	ON_MESSAGE_VOID(WM_SELECTNONE, OnSelectNone)
 	ON_COMMAND(IDM_SELECTALL, OnSelectAll)
 	ON_COMMAND(IDM_SELECTNONE, OnSelectNone)
 	ON_COMMAND(IDM_SELECTINVERT, OnSelectInvert)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTALL, IDM_SELECTINVERT, OnUpdateCommands)
+
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
@@ -1259,43 +1214,17 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 			else
 				if (!LFGetApp()->IsTooltipVisible() && (m_Flags & FF_ENABLETOOLTIPS))
 				{
-					FormatData fd;
-					HICON hIcon = NULL;
-					HBITMAP hBitmap = NULL;
-
 					LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HotItem];
 
-					switch (pItemDescriptor->Type & LFTypeMask)
-					{
-					case LFTypeFile:
-						if (m_Flags & FF_ENABLETOOLTIPICONS)
-							hBitmap = theApp.m_ThumbnailCache.GetJumboThumbnailBitmap(pItemDescriptor);
+					HBITMAP hBitmap = (m_Flags & FF_ENABLETOOLTIPICONS) ? theApp.m_IconFactory.GetJumboIconBitmap(pItemDescriptor, theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail ? p_RawFiles : NULL) : NULL;
 
-						theApp.m_FileFormats.Lookup(pItemDescriptor->CoreAttributes.FileFormat, fd);
-
-						break;
-
-					case LFTypeFolder:
-						if ((m_Flags & FF_ENABLEFOLDERTOOLTIPS)==0)
-							goto Leave;
-
-						if ((m_Flags & FF_ENABLETOOLTIPICONS) && theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail)
-							hBitmap = theApp.m_ThumbnailCache.GetRepresentativeThumbnailBitmap(p_RawFiles, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
-
-					default:
-						fd.FormatName[0] = L'\0';
-						fd.SysIconIndex = -1;
-					}
-
-					if ((m_Flags & FF_ENABLETOOLTIPICONS) && !hBitmap)
-						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListJumbo.ExtractIcon(pItemDescriptor->IconID-1);
-
-					theApp.ShowTooltip(this, point, GetLabel(pItemDescriptor), theApp.GetHintForItem(pItemDescriptor, fd.FormatName), hIcon, hBitmap);
+					theApp.ShowTooltip(this, point, GetLabel(pItemDescriptor),
+						theApp.GetHintForItem(pItemDescriptor, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat)),
+						NULL, hBitmap);
 				}
 	}
 	else
 	{
-Leave:
 		theApp.HideTooltip();
 	}
 
@@ -1592,6 +1521,9 @@ BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 	return TRUE;
 }
 
+
+// Context menu
+
 void CFileView::OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis)
 {
 	if ((lpmis==NULL) || (lpmis->CtlType!=ODT_MENU))
@@ -1685,6 +1617,9 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 }
 
+
+// Menu commands
+
 void CFileView::OnSelectAll()
 {
 	if (p_CookedFiles && m_AllowMultiSelect)
@@ -1738,6 +1673,9 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	pCmdUI->Enable(bEnable);
 }
+
+
+// Edit
 
 void CFileView::OnDestroyEdit()
 {

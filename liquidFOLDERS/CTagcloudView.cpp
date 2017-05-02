@@ -24,17 +24,18 @@ CTagcloudView::CTagcloudView()
 {
 }
 
-void CTagcloudView::SetViewSettings(BOOL Force)
+void CTagcloudView::SetViewSettings(BOOL UpdateSearchResultPending)
 {
 	UINT Changes = 0;
 
-	if (Force || (m_GlobalViewSettings.TagcloudUseSize!=p_GlobalViewSettings->TagcloudUseSize))
+	if (m_GlobalViewSettings.TagcloudUseSize!=p_GlobalViewSettings->TagcloudUseSize)
 		Changes = 1;
 
-	if (Force || (m_GlobalViewSettings.TagcloudCanonical!=p_GlobalViewSettings->TagcloudCanonical) || (m_GlobalViewSettings.TagcloudShowRare!=p_GlobalViewSettings->TagcloudShowRare))
+	if ((m_GlobalViewSettings.TagcloudCanonical!=p_GlobalViewSettings->TagcloudCanonical) || (m_GlobalViewSettings.TagcloudShowRare!=p_GlobalViewSettings->TagcloudShowRare))
 		Changes = 2;
 
-	if (p_CookedFiles)
+	// Commit settings
+	if (p_CookedFiles && !UpdateSearchResultPending)
 	{
 		// Copy global view settings early for sorting
 		m_GlobalViewSettings = *p_GlobalViewSettings;
@@ -42,7 +43,7 @@ void CTagcloudView::SetViewSettings(BOOL Force)
 		switch (Changes)
 		{
 		case 2:
-			SetSearchResult(p_RawFiles, p_CookedFiles, NULL);
+			SetSearchResult(p_Filter, p_RawFiles, p_CookedFiles, NULL);
 			GetOwner()->PostMessage(WM_COMMAND, WM_UPDATESELECTION);
 
 		case 1:
@@ -56,9 +57,9 @@ void CTagcloudView::SetViewSettings(BOOL Force)
 	}
 }
 
-void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
+void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
+	CGridView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 	{
@@ -227,7 +228,7 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
-void CTagcloudView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
+void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	TagcloudItemData* pData = GetItemData(Index);

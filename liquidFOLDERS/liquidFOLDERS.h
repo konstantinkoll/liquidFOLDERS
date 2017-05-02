@@ -4,8 +4,7 @@
 
 #pragma once
 #include "LFCommDlg.h"
-#include "CFormatCache.h"
-#include "CThumbnailCache.h"
+#include "CIconFactory.h"
 #include "CMainWnd.h"
 #include "resource.h"
 
@@ -30,15 +29,14 @@ public:
 	BOOL IsAttributeAvailable(INT Context, UINT Attr) const;
 	BOOL IsAttributeAdvertised(INT Context, UINT Attr) const;
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
-	void SetContextSort(INT Context, UINT Attr, BOOL Descending);
+	void SetContextSort(INT Context, UINT Attr, BOOL Descending, BOOL SetLastView=TRUE);
 	void UpdateViewSettings(INT Context=-1, INT View=-1);
 	void SetContextView(INT Context, INT View);
 	void Reload(INT Context);
 
 	CMainWnd* p_ClipboardWnd;
 	WCHAR m_PathGoogleEarth[MAX_PATH];
-	CFormatCache m_FileFormats;
-	CThumbnailCache m_ThumbnailCache;
+	CIconFactory m_IconFactory;
 	LFContextViewSettings m_ContextViewSettings[LFContextCount];
 	LFGlobalViewSettings m_GlobalViewSettings;
 

@@ -82,7 +82,7 @@ private:
 	INT m_CategoriesHeight;
 	INT m_ItemsHeight;
 	BOOL m_IsFirstItemInCategory;
-	UINT m_ItemHeight;
+	UINT m_RowHeight;
 	UINT m_CountWidth;
 	INT m_FocusItem;
 	INT m_HotItem;

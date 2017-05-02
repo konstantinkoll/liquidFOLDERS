@@ -45,24 +45,16 @@ CGlobeView::CGlobeView()
 	m_AnimCounter = m_MoveCounter = 0;
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
 {
-	return CFileView::Create(pParentWnd, nID, rect, pRawFiles, pCookedFiles, pPersistentData, nClassStyle | CS_OWNDC);
+	return CFileView::Create(pParentWnd, nID, rect, pFilter, pRawFiles, pCookedFiles, pPersistentData, nClassStyle | CS_OWNDC);
 }
 
-void CGlobeView::SetViewSettings(BOOL Force)
+void CGlobeView::SetViewSettings(BOOL UpdateSearchResultPending)
 {
-	// Settings
-	if (Force)
-	{
-		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_GlobalViewSettings->GlobeLatitude/1000.0f;
-		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_GlobalViewSettings->GlobeLongitude/1000.0f;
-		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_GlobalViewSettings->GlobeZoom;
-	}
-
-	// Textures
 	if (m_RenderContext.hRC)
 	{
+		// Textures
 		CWaitCursor csr;
 
 		theRenderer.MakeCurrent(m_RenderContext);
@@ -71,13 +63,15 @@ void CGlobeView::SetViewSettings(BOOL Force)
 		theRenderer.CreateTextureClouds(m_nTextureClouds);
 		theRenderer.CreateTextureLocationIndicator(m_nTextureLocationIndicator);
 
-		Invalidate();
+		// Commit settings
+		if (!UpdateSearchResultPending)
+			Invalidate();
 	}
 }
 
-void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
+void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CFileView::SetSearchResult(pRawFiles, pCookedFiles, pPersistentData);
+	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 		if (p_CookedFiles->m_ItemCount)
@@ -887,6 +881,11 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!theRenderer.Initialize())
 		return -1;
+
+	// Settings
+	m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = m_GlobalViewSettings.GlobeLatitude/1000.0f;
+	m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = m_GlobalViewSettings.GlobeLongitude/1000.0f;
+	m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = m_GlobalViewSettings.GlobeZoom;
 
 	// OpenGL
 	if (theRenderer.CreateRenderContext(this, m_RenderContext))

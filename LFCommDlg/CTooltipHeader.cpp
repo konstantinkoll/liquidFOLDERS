@@ -117,11 +117,14 @@ void CTooltipHeader::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
+	Graphics g(dc);
+
+	// Background
 	const BOOL Themed = IsCtrlThemed();
+
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));
 
 	CFont* pOldFont = dc.SelectObject(GetFont());
-	Graphics g(dc);
 
 	if (Themed)
 	{
@@ -131,6 +134,7 @@ void CTooltipHeader::OnPaint()
 		GetParent()->GetClientRect(rectParent);
 
 		Bitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP);
+
 		g.DrawImage(pDivider, (rectParent.Width()-(INT)pDivider->GetWidth())/2+GetParent()->GetScrollPos(SB_HORZ), rect.Height()-(INT)pDivider->GetHeight());
 	}
 	else
@@ -138,6 +142,7 @@ void CTooltipHeader::OnPaint()
 		dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 	}
 
+	// Header items
 	const INT Line = rect.Height()*2/5;
 	LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0x00000000), Color(0x40000000));
 	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(0x40000000), Color(0x00000000));
@@ -190,7 +195,7 @@ void CTooltipHeader::OnPaint()
 							rectBounds.top--;
 					}
 
-					DrawSubitemBackground(dc, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
+					DrawSubitemBackground(dc, g, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
 
 					if (Themed)
 					{
@@ -228,7 +233,7 @@ void CTooltipHeader::OnPaint()
 
 					dc.DrawText(lpBuffer, rectItem, nFormat);
 
-					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
+					if (!Themed && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
 					{
 						INT Left;
 

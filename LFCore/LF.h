@@ -467,6 +467,7 @@ struct LFFileSummary
 	UINT FileCount;
 	INT64 FileSize;
 	UINT Flags;
+	UINT Source;
 	UINT64 Duration;
 	BOOL OnlyMediaFiles;
 };

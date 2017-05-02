@@ -145,6 +145,9 @@ void CGridView::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
+	Graphics g(dc);
+
+	// Background
 	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
@@ -159,14 +162,16 @@ void CGridView::OnPaint()
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			GridItemData* pData = GetItemData(a);
+
 			if (pData->Hdr.Valid)
 			{
 				CRect rect(pData->Hdr.Rect);
 				rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+
 				if (IntersectRect(&rectIntersect, rect, rectUpdate))
 				{
 					DrawItemBackground(dc, rect, a, Themed);
-					DrawItem(dc, rect, a, Themed);
+					DrawItem(dc, g, rect, a, Themed);
 					DrawItemForeground(dc, rect, a, Themed);
 				}
 			}

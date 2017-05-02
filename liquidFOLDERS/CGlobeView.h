@@ -27,13 +27,13 @@ class CGlobeView : public CFileView
 public:
 	CGlobeView();
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data) const;
 
 protected:
-	virtual void SetViewSettings(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
+	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual CMenu* GetItemContextMenu(INT Index);
 

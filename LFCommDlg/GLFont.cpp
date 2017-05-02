@@ -49,8 +49,8 @@ BOOL GLFont::Create(CFont* pFont)
 			BITMAP Bitmap;
 			GetObject(hBitmap, sizeof(BITMAP), &Bitmap);
 
-			BYTE* PtrSrc = (BYTE*)Bitmap.bmBits;
-			BYTE* PtrDst = (BYTE*)Bitmap.bmBits;
+			LPBYTE PtrSrc = (LPBYTE)Bitmap.bmBits;
+			LPBYTE PtrDst = (LPBYTE)Bitmap.bmBits;
 			UINT Size = m_TextureSize*m_TextureSize;
 
 			for (UINT a=0; a<Size; a++)

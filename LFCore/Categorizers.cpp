@@ -28,9 +28,9 @@ BOOL CCategorizer::IsEqual(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor*
 	return CompareItems(pItemDescriptor1, pItemDescriptor2);
 }
 
-LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter) const
+LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter, LFFileSummary& FileSummary, INT FirstAggregate, INT LastAggregate) const
 {
-	LFItemDescriptor* pFolder = AllocFolderDescriptor(m_Attr);
+	LFItemDescriptor* pFolder = AllocFolderDescriptor(m_Attr, FileSummary, FirstAggregate, LastAggregate);
 
 	if (pItemDescriptor->AttributeValues[m_Attr])
 	{
@@ -182,12 +182,12 @@ BOOL CNameCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDe
 
 LFFilterCondition* CNameCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
-	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
+	LFFilterCondition* pFilterCondition = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	if (!GetNamePrefix((LPCWSTR)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.UnicodeString, 256))
-		LFGetAttributeVariantData(pItemDescriptor, c->AttrData);
+	if (!GetNamePrefix((LPCWSTR)pItemDescriptor->AttributeValues[m_Attr], pFilterCondition->AttrData.UnicodeString, 256))
+		LFGetAttributeVariantData(pItemDescriptor, pFilterCondition->AttrData);
 
-	return c;
+	return pFilterCondition;
 }
 
 
@@ -224,11 +224,11 @@ BOOL CURLCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDes
 
 LFFilterCondition* CURLCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
-	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
+	LFFilterCondition* pFilterCondition = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	GetServer((LPCSTR)pItemDescriptor->AttributeValues[m_Attr], c->AttrData.AnsiString, 256);
+	GetServer((LPCSTR)pItemDescriptor->AttributeValues[m_Attr], pFilterCondition->AttrData.AnsiString, 256);
 
-	return c;
+	return pFilterCondition;
 }
 
 
@@ -383,11 +383,11 @@ BOOL CDateCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDe
 
 LFFilterCondition* CDateCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const
 {
-	LFFilterCondition* c = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
+	LFFilterCondition* pFilterCondition = LFAllocFilterConditionEx(LFFilterCompareSubfolder, m_Attr, pNext);
 
-	GetDay((FILETIME*)pItemDescriptor->AttributeValues[m_Attr], &c->AttrData.Time);
+	GetDay((FILETIME*)pItemDescriptor->AttributeValues[m_Attr], &pFilterCondition->AttrData.Time);
 
-	return c;
+	return pFilterCondition;
 }
 
 

@@ -28,7 +28,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		memcpy(&OldWidth, &p_ContextViewSettings->ColumnWidth, sizeof(OldWidth));
 		ZeroMemory(&p_ContextViewSettings->ColumnWidth, sizeof(p_ContextViewSettings->ColumnWidth));
 
-		UINT Count = 0;
+		UINT Index = 0;
 
 		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
 		{
@@ -37,7 +37,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 			if (m_wndAttributes.GetCheck(a) || theApp.m_Attributes[Attr].AttrProperties.AlwaysShow)
 			{
 				p_ContextViewSettings->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
-				p_ContextViewSettings->ColumnOrder[Count++] = Attr;
+				p_ContextViewSettings->ColumnOrder[Index++] = Attr;
 			}
 			else
 			{
@@ -48,7 +48,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		// Order
 		for (INT a=0; a<LFAttributeCount; a++)
 			if (!p_ContextViewSettings->ColumnWidth[a])
-				p_ContextViewSettings->ColumnOrder[Count++] = a;
+				p_ContextViewSettings->ColumnOrder[Index++] = a;
 	}
 }
 

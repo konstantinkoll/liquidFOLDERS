@@ -61,14 +61,7 @@ LFCORE_API void LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOO
 
 LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter)
 {
-	assert(pFilter);
-
-	if (pFilter->Options.IsSubfolder)
-	{
-		pSearchResult->Sort(Attr, Descending);
-
-		return pSearchResult;
-	}
+	assert(pSearchResult);
 
 	// Special treatment for string arrays
 	if (AttrProperties[Attr].Type==LFTypeUnicodeArray)
@@ -285,7 +278,16 @@ void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescript
 	assert(pItemDescriptor);
 	assert((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
-	FileSummary.FileCount++;
+	if (FileSummary.FileCount++)
+	{
+		FileSummary.Source = pItemDescriptor->Type & LFTypeSourceMask;
+	}
+	else
+	{
+		if ((pItemDescriptor->Type & LFTypeSourceMask)!=FileSummary.Source)
+			FileSummary.Source = LFTypeSourceUnknown;
+	}
+
 	FileSummary.FileSize += pItemDescriptor->CoreAttributes.FileSize;
 	FileSummary.Flags |= (pItemDescriptor->CoreAttributes.Flags & (LFFlagNew | LFFlagMissing));
 	FileSummary.OnlyMediaFiles &= (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio) || (pItemDescriptor->CoreAttributes.ContextID==LFContextVideos);
@@ -527,6 +529,7 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 	assert(AttrProperties[LFAttrDuration].Type==LFTypeDuration);
 	assert(TypeProperties[LFTypeDuration].Size==sizeof(UINT));
 
+	// Retain item
 	if (((ReadIndex2==ReadIndex1+1) && (!GroupSingle || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
 	{
 		for (UINT a=ReadIndex1; a<ReadIndex2; a++)
@@ -535,39 +538,19 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 		return ReadIndex2-ReadIndex1;
 	}
 
-	LFItemDescriptor* pFolder = ((CCategorizer*)pCategorizer)->GetFolder(m_Items[ReadIndex1], pFilter);
-
-	pFolder->AggregateCount = ReadIndex2-ReadIndex1;
-	if (!m_RawCopy)
-	{
-		pFolder->FirstAggregate = ReadIndex1;
-		pFolder->LastAggregate = ReadIndex2-1;
-	}
-
+	// Create file summary
 	LFFileSummary FileSummary;
 	InitFileSummary(FileSummary);
 
-	UINT Source = m_Items[ReadIndex1]->Type & LFTypeSourceMask;
-
 	for (UINT a=ReadIndex1; a<ReadIndex2; a++)
 	{
-		if ((m_Items[a]->Type & LFTypeSourceMask)!=Source)
-			Source = LFTypeSourceUnknown;
-
 		AddFileToSummary(FileSummary, m_Items[a]);
 
 		LFFreeItemDescriptor(m_Items[a]);
 	}
 
-	pFolder->Type |= Source;
-
-	pFolder->CoreAttributes.Flags = FileSummary.Flags;
-	SetAttribute(pFolder, LFAttrFileSize, &FileSummary.FileSize);
-	SetAttribute(pFolder, LFAttrDuration, &FileSummary.Duration);
-
-	LFGetFileSummaryEx(FileSummary, pFolder->Description, 256);
-
-	m_Items[WriteIndex] = pFolder;
+	// Replace with folder
+	m_Items[WriteIndex] = ((CCategorizer*)pCategorizer)->GetFolder(m_Items[ReadIndex1], pFilter, FileSummary, m_RawCopy ? -1 : ReadIndex1, m_RawCopy ? -1 : ReadIndex2-1);
 
 	return 1;
 }
@@ -727,16 +710,10 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 				}
 		}
 
-		LFItemDescriptor* pFolder = AllocFolderDescriptor(Attr);
-		pFolder->AggregateCount = it->second.FileSummary.FileCount;
-	
-		pFolder->CoreAttributes.Flags = it->second.FileSummary.Flags;
+		LFItemDescriptor* pFolder = AllocFolderDescriptor(Attr, it->second.FileSummary);
 
 		SetAttribute(pFolder, LFAttrFileName, Hashtag);
-		SetAttribute(pFolder, LFAttrFileSize, &it->second.FileSummary.FileSize);
 		SetAttribute(pFolder, Attr, Hashtag);
-
-		LFGetFileSummaryEx(it->second.FileSummary, pFolder->Description, 256);
 
 		pFolder->pNextFilter = LFAllocFilter(pFilter);
 		pFolder->pNextFilter->Options.IsSubfolder = TRUE;

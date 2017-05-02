@@ -307,7 +307,7 @@ void LFTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 
 	for (LONG Row=rectAlpha.top; Row<rectAlpha.bottom; Row++)
 	{
-		BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+rectAlpha.left*4+3;
+		LPBYTE Ptr = (LPBYTE)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+rectAlpha.left*4+3;
 
 		for (LONG Column=rectAlpha.left; Column<rectAlpha.right; Column++)
 		{

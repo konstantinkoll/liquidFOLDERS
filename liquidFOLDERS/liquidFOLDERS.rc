@@ -50,6 +50,7 @@ IDB_BLUEMARBLE_8192     RCDATA                  "res\\BlueMarble_8192.jpg"
 IDB_CLOUDS_1024         RCDATA                  "res\\Clouds_1024.jpg"
 IDB_CLOUDS_2048         RCDATA                  "res\\Clouds_2048.jpg"
 IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
+IDB_BLUEMARBLE_512      RCDATA                  "res\\BlueMarble_512.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -57,8 +58,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,7,0
- PRODUCTVERSION 2,2,7,0
+ FILEVERSION 3,0,0,0
+ PRODUCTVERSION 3,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -75,13 +76,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "2.2.7"
+            VALUE "FileVersion", "3.0.0"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "2.2.7"
+            VALUE "ProductVersion", "3.0.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -160,15 +161,15 @@ BEGIN
     END
 END
 
-IDM_DETAILS MENU 
+IDM_LIST MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_DETAILS_AUTOSIZEALL
-        MENUITEM "&Spaltenbreite anpassen",     IDM_DETAILS_AUTOSIZE
+        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_LIST_AUTOSIZEALL
+        MENUITEM "&Spaltenbreite anpassen",     IDM_LIST_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
-        MENUITEM "&Mehr...",                    IDM_DETAILS_CHOOSE
+        MENUITEM "&Mehr...",                    IDM_LIST_CHOOSE
     END
 END
 
@@ -569,15 +570,15 @@ BEGIN
     END
 END
 
-IDM_DETAILS MENU 
+IDM_LIST MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Autoajustar &todas las columnas", IDM_DETAILS_AUTOSIZEALL
-        MENUITEM "Autoajustar &columna",        IDM_DETAILS_AUTOSIZE
+        MENUITEM "Autoajustar &todas las columnas", IDM_LIST_AUTOSIZEALL
+        MENUITEM "Autoajustar &columna",        IDM_LIST_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
-        MENUITEM "&Más...",                     IDM_DETAILS_CHOOSE
+        MENUITEM "&Más...",                     IDM_LIST_CHOOSE
     END
 END
 
@@ -978,15 +979,15 @@ BEGIN
     END
 END
 
-IDM_DETAILS MENU 
+IDM_LIST MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Adapter &tous les larges de colonnes", IDM_DETAILS_AUTOSIZEALL
-        MENUITEM "&Adapter le large de colonne", IDM_DETAILS_AUTOSIZE
+        MENUITEM "Adapter &tous les larges de colonnes", IDM_LIST_AUTOSIZEALL
+        MENUITEM "&Adapter le large de colonne", IDM_LIST_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
-        MENUITEM "&Plus...",                    IDM_DETAILS_CHOOSE
+        MENUITEM "&Plus...",                    IDM_LIST_CHOOSE
     END
 END
 
@@ -1436,15 +1437,15 @@ BEGIN
     END
 END
 
-IDM_DETAILS MENU 
+IDM_LIST MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Size all &columns to fit",    IDM_DETAILS_AUTOSIZEALL
-        MENUITEM "Size column to &fit",         IDM_DETAILS_AUTOSIZE
+        MENUITEM "Size all &columns to fit",    IDM_LIST_AUTOSIZEALL
+        MENUITEM "Size column to &fit",         IDM_LIST_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
-        MENUITEM "&More...",                    IDM_DETAILS_CHOOSE
+        MENUITEM "&More...",                    IDM_LIST_CHOOSE
     END
 END
 

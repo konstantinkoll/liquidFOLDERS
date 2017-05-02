@@ -32,30 +32,26 @@ INT CIconHeader::GetPreferredHeight() const
 	return 128+24;
 }
 
-void CIconHeader::DrawHeader(CDC& dc, const CRect& rect, BOOL Themed)
+void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Themed) const
 {
-	const INT cx = (rect.Width()-128)/2;
-	const INT cy = rect.top+4;
-	CRect rectIcon(cx, cy, cx+128, cy+128);
-
-	Graphics g(dc);
+	CPoint pt((rect.Width()-128)/2, rect.top+4);
 
 	switch (m_Status)
 	{
 	case IconMultiple:
-		g.DrawImage(LFGetApp()->GetCachedResourceImage(IDB_MULTIPLE), cx, cy);
+		g.DrawImage(LFGetApp()->GetCachedResourceImage(IDB_MULTIPLE), pt.x, pt.y);
 		break;
 
 	case IconCore:
-		theApp.m_CoreImageListJumbo.DrawEx(&dc, m_IconID, CPoint(cx, cy), CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+		theApp.m_CoreImageListJumbo.DrawEx(&dc, m_IconID, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 		break;
 
 	case IconPreview:
-		if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectIcon, m_pItem))
-			break;
+		theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, m_pItem, NULL);
+		break;
 
 	case IconExtension:
-		theApp.m_FileFormats.DrawJumboIcon(dc, rectIcon, m_FileFormat);
+		theApp.m_IconFactory.DrawJumboFormatIcon(dc, pt, m_FileFormat);
 		break;
 	}
 

@@ -420,10 +420,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CFormatCache.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CGlobeView.cpp"
 				>
 			</File>
@@ -437,6 +433,10 @@
 			</File>
 			<File
 				RelativePath=".\ChooseDetailsDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CIconFactory.cpp"
 				>
 			</File>
 			<File
@@ -465,10 +465,6 @@
 			</File>
 			<File
 				RelativePath=".\CTagcloudView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CThumbnailCache.cpp"
 				>
 			</File>
 			<File
@@ -546,10 +542,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CFormatCache.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CGlobeView.h"
 				>
 			</File>
@@ -563,6 +555,10 @@
 			</File>
 			<File
 				RelativePath=".\ChooseDetailsDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CIconFactory.h"
 				>
 			</File>
 			<File
@@ -591,10 +587,6 @@
 			</File>
 			<File
 				RelativePath=".\CTagcloudView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CThumbnailCache.h"
 				>
 			</File>
 			<File
@@ -637,6 +629,10 @@
 			>
 			<File
 				RelativePath=".\res\BlueMarble_1024.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\BlueMarble_512.png"
 				>
 			</File>
 			<File

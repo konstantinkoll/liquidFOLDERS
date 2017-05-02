@@ -13,7 +13,7 @@ class CCategorizer
 public:
 	CCategorizer(UINT Attr);
 
-	LFItemDescriptor* GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter) const;
+	LFItemDescriptor* GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter, LFFileSummary& FileSummary, INT FirstAggregate=-1, INT LastAggregate=-1) const;
 	BOOL IsEqual(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
 
 protected:

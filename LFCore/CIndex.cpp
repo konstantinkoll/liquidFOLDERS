@@ -254,8 +254,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 			return LFNotEnoughFreeDiscSpace;
 
 	// Reset statistics
-	ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
-	ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));
+	ResetStatistics();
 
 	// Traverse index
 	INT ID = 0;
@@ -407,7 +406,7 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 	assert(pFilter->Mode>=LFFilterModeDirectoryTree);
 	assert(pSearchResult);
 
-	BOOL First = TRUE;
+	BOOL DoReset = TRUE;
 	BYTE SearchtermContainsLetters = 0;
 
 	START_ITERATEALL(pSearchResult->m_LastError = m_pTable[IDXTABLE_MASTER]->GetError(pFilter->StoreID[0]!=L'\0'),);
@@ -415,13 +414,7 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 	if (UpdateStatistics)
 	{
 		// Delay resetting statistics in case of unaccessible index
-		if (First)
-		{
-			ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
-			ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));
-
-			First = FALSE;
-		}
+		ResetStatistics(DoReset);
 
 		AddFileToStatistics(PtrM);
 	}
@@ -458,26 +451,27 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 	}
 
 	END_ITERATEALL();
+
+	// Statistics reset still pending (happens if there weren't any files to iterate over in an empty store)?
+	if (UpdateStatistics)
+		ResetStatistics(DoReset);
 }
 
 UINT CIndex::UpdateStatistics()
 {
-	BOOL First = TRUE;
+	BOOL DoReset = TRUE;
 
 	START_ITERATEALL(, m_pTable[IDXTABLE_MASTER]->GetError());
 
 	// Delay resetting statistics in case of unaccessible index
-	if (First)
-	{
-		ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
-		ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));
-
-		First = FALSE;
-	}
+	ResetStatistics(DoReset);
 
 	AddFileToStatistics(PtrM);
 
 	END_ITERATEALL();
+
+	// Statistics reset still pending (happens if there weren't any files to iterate over in an empty store)?
+	ResetStatistics(DoReset);
 
 	return LFOk;
 }

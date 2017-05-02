@@ -293,7 +293,7 @@ void CLiquidFoldersApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 		m_pMainFrames.GetNext(p)->PostMessage(WM_CONTEXTVIEWCOMMAND, cmdMsg, MAKELPARAM(Context, View));
 }
 
-void CLiquidFoldersApp::SetContextSort(INT Context, UINT Attr, BOOL Descending)
+void CLiquidFoldersApp::SetContextSort(INT Context, UINT Attr, BOOL Descending, BOOL SetLastView)
 {
 	ASSERT(Context>=0);
 	ASSERT(Context<LFContextCount);
@@ -305,7 +305,9 @@ void CLiquidFoldersApp::SetContextSort(INT Context, UINT Attr, BOOL Descending)
 	if (m_ContextViewSettings[Context].SortBy!=Attr)
 	{
 		m_ContextViewSettings[Context].SortBy = Attr;
-		m_ContextViewSettings[Context].View = m_GlobalViewSettings.LastViewSelected[Attr];
+
+		if (SetLastView)
+			m_ContextViewSettings[Context].View = m_GlobalViewSettings.LastViewSelected[Attr];
 	}
 
 	m_ContextViewSettings[Context].Descending = Descending;

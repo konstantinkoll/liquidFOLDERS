@@ -88,7 +88,7 @@ void CGenreList::AddItem(LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, L
 	id.pDescription = pDescription;
 	id.Rect.left = 2*BACKSTAGEBORDER+ICONSIZE-2*ICONPADDING;
 	id.Rect.top = m_ItemsHeight;
-	id.Rect.bottom = id.Rect.top+m_ItemHeight;
+	id.Rect.bottom = id.Rect.top+m_RowHeight+1;
 
 	m_Items.AddItem(id);
 
@@ -293,7 +293,7 @@ INT CGenreList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	ResetScrollbars();
 
-	m_ItemHeight = LFGetApp()->m_DefaultFont.GetFontHeight()+2*ITEMPADDING;
+	m_RowHeight = LFGetApp()->m_DefaultFont.GetFontHeight()+2*ITEMPADDING-1;
 	m_CountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+2*ITEMPADDING;
 
 	return 0;
@@ -383,11 +383,11 @@ void CGenreList::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		break;
 
 	case SB_LINEUP:
-		nInc = -(INT)(m_ItemHeight-1);
+		nInc = -(INT)m_RowHeight;
 		break;
 
 	case SB_LINEDOWN:
-		nInc = (INT)(m_ItemHeight-1);
+		nInc = (INT)m_RowHeight;
 		break;
 
 	case SB_PAGEUP:
@@ -491,7 +491,7 @@ BOOL CGenreList::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	if (nScrollLines<1)
 		nScrollLines = 1;
 
-	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)(m_ItemHeight-1)*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
@@ -507,10 +507,10 @@ BOOL CGenreList::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 
 void CGenreList::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
-	CRect rectWindow;
-	GetWindowRect(rectWindow);
+	CRect rectClient;
+	GetWindowRect(rectClient);
 
-	if (!rectWindow.Width())
+	if (!rectClient.Width())
 		return;
 
 	INT Item = m_FocusItem;
@@ -518,11 +518,11 @@ void CGenreList::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	switch (nChar)
 	{
 	case VK_PRIOR:
-		Item -= max(1, rectWindow.Height()/(m_ItemHeight-1));
+		Item -= max(1, rectClient.Height()/m_RowHeight);
 		break;
 
 	case VK_NEXT:
-		Item += max(1, rectWindow.Height()/(m_ItemHeight-1));
+		Item += max(1, rectClient.Height()/m_RowHeight);
 		break;
 
 	case VK_UP:
@@ -541,7 +541,7 @@ void CGenreList::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 
 	case VK_END:
 		if (GetKeyState(VK_CONTROL)<0)
-			Item = m_Items.m_ItemCount-1;
+			Item = ((INT)m_Items.m_ItemCount)-1;
 
 		break;
 	}

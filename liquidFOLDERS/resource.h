@@ -18,6 +18,7 @@
 #define IDB_SOURCES_32                  142
 #define IDB_MULTIPLE                    143
 #define IDB_THUMBNAIL                   144
+#define IDB_BLUEMARBLE_512              145
 #define ID_PANE_INSPECTOR               400
 #define ID_NAV_BACK                     500
 #define ID_NAV_FORWARD                  501
@@ -103,11 +104,11 @@
 #define IDM_SELECTALL                   4700
 #define IDM_SELECTNONE                  4701
 #define IDM_SELECTINVERT                4702
-#define IDM_DETAILS                     4800
-#define IDM_DETAILS_AUTOSIZEALL         4801
-#define IDM_DETAILS_AUTOSIZE            4802
-#define IDM_DETAILS_CHOOSE              4803
-#define IDM_DETAILS_TOGGLEATTRIBUTE     4804
+#define IDM_LIST                        4800
+#define IDM_LIST_AUTOSIZEALL            4801
+#define IDM_LIST_AUTOSIZE               4802
+#define IDM_LIST_CHOOSE                 4803
+#define IDM_LIST_TOGGLEATTRIBUTE        4804
 #define IDM_CALENDAR                    4900
 #define IDM_CALENDAR_SHOWDAYS           4901
 #define IDM_CALENDAR_PREVYEAR           4902

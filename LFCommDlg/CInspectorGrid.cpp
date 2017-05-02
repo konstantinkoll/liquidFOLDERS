@@ -1353,6 +1353,10 @@ void CInspectorGrid::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
+	Graphics g(dc);
+
+	// Background
+
 	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
@@ -1414,7 +1418,7 @@ void CInspectorGrid::OnPaint()
 
 				const BOOL Pressed = m_PartPressed && (m_HotPart==PARTBUTTON);
 
-				DrawWhiteButtonBackground(dc, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON), FALSE, TRUE);
+				DrawWhiteButtonBackground(dc, g, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON), FALSE, TRUE);
 
 				if (Pressed)
 					rectButton.OffsetRect(1, 1);
@@ -1431,10 +1435,10 @@ void CInspectorGrid::OnPaint()
 	if (m_pHeader)
 	{
 		CRect rectHeader(0, -m_VScrollPos, rect.Width(), m_pHeader->GetPreferredHeight()-m_VScrollPos);
-		m_pHeader->DrawHeader(dc, rectHeader, Themed);
+		m_pHeader->DrawHeader(dc, g, rectHeader, Themed);
 	}
 
-	DrawWindowEdge(dc, Themed);
+	DrawWindowEdge(g, Themed);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 

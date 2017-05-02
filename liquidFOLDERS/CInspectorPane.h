@@ -32,7 +32,7 @@ public:
 	~CIconHeader();
 
 	virtual INT GetPreferredHeight() const;
-	virtual void DrawHeader(CDC& dc, const CRect& rect, BOOL Themed);
+	virtual void DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Themed) const;
 
 	void SetEmpty();
 	void SetMultiple(const CString& Description=_T(""));

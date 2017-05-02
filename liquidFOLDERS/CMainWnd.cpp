@@ -377,13 +377,13 @@ void CMainWnd::WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescript
 
 	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
 	{
-		LFVariantData v;
-		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, v);
+		LFVariantData Property;
+		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, Property);
 
-		if (!LFIsNullVariantData(v))
+		if (!LFIsNullVariantData(Property))
 		{
 			WCHAR tmpBuf[256];
-			LFVariantDataToString(v, tmpBuf, 256);
+			LFVariantDataToString(Property, tmpBuf, 256);
 
 			CString tmpStr;
 			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[Attr].XMLID, Attr, tmpBuf);
@@ -909,6 +909,7 @@ void CMainWnd::OnUpdateViewSettings()
 	if (m_wndMainView.GetViewID()!=(INT)theApp.m_ContextViewSettings[m_wndMainView.GetContext()].View)
 	{
 		m_wndMainView.SelectNone();
+
 		OnCookFiles();
 	}
 	else
@@ -931,21 +932,23 @@ void CMainWnd::OnUpdateCounts()
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 {
 	LFSearchResult* pVictim = m_pCookedFiles;
+	m_pCookedFiles = m_pRawFiles;
 
+	// Sort or group?
 	LFContextViewSettings* pContextViewSettings = &theApp.m_ContextViewSettings[m_pRawFiles->m_Context];
 
-	if ((!m_IsClipboard && theApp.m_Contexts[m_pRawFiles->m_Context].CtxProperties.AllowGroups && !m_pActiveFilter->Options.IsSubfolder) || (pContextViewSettings->View>LFViewDetails))
-	{
-		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles,
-			pContextViewSettings->SortBy, CookSortDescending(pContextViewSettings),
-			CookGroupSingle(pContextViewSettings),
-			m_pActiveFilter);
-	}
-	else
-	{
-		LFSortSearchResult(m_pRawFiles, pContextViewSettings->SortBy, pContextViewSettings->Descending);
-		m_pCookedFiles = m_pRawFiles;
-	}
+	if (pContextViewSettings->View!=LFViewList)
+		if ((!m_IsClipboard && theApp.m_Contexts[m_pRawFiles->m_Context].CtxProperties.AllowGroups && !m_pActiveFilter->Options.IsSubfolder) || (pContextViewSettings->View>LFViewDetails))
+		{
+			m_pCookedFiles = LFGroupSearchResult(m_pRawFiles,
+				pContextViewSettings->SortBy, CookSortDescending(pContextViewSettings),
+				CookGroupSingle(pContextViewSettings),
+				m_pActiveFilter);
+		}
+		else
+		{
+			LFSortSearchResult(m_pRawFiles, pContextViewSettings->SortBy, pContextViewSettings->Descending);
+		}
 
 	m_wndMainView.UpdateSearchResult(m_pActiveFilter, m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
 

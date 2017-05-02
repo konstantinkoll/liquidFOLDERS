@@ -22,7 +22,7 @@ public:
 	CGridView(SIZE_T DataSize=sizeof(GridItemData), UINT Flags=0);
 
 protected:
-	virtual void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)=NULL;
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)=NULL;
 
 	void ResetItemCategories();
 	void Arrange(CSize szItem, INT Padding, CSize szGutter, BOOL FullWidth=FALSE);

@@ -349,7 +349,7 @@ void DrawListItemForeground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL /*WinFo
 	}
 }
 
-void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal)
+void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal)
 {
 	if (Hover || Selected)
 		if (Themed)
@@ -368,7 +368,6 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 				rect.DeflateRect(1, 1);
 			}
 
-			Graphics g(dc);
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 			if (Hover)
@@ -618,12 +617,10 @@ void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom)
 	}
 }
 
-void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled, BOOL DrawBorder)
+void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled, BOOL DrawBorder)
 {
 	if (Themed)
 	{
-		Graphics g(dc);
-
 		if (DrawBorder)
 			DrawWhiteButtonBorder(g, rect, FALSE);
 
@@ -877,31 +874,31 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	bmi.biPlanes = 1;
 	bmi.biBitCount = 24;
 
-	BYTE* pbData = NULL;
+	LPBYTE pbData = NULL;
 	HBITMAP hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	// Draw
 	Graphics g(dc);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
-	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
 	Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
+	const CSize szMap(pMap->GetWidth(), pMap->GetHeight());
 
-	INT L = pMap->GetWidth();
-	INT H = pMap->GetHeight();
-	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*L)/360.0);
-	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*H)/180.0);
+	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*szMap.cx)/360.0);
+	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*szMap.cy)/180.0);
+
 	INT PosX = -LocX+Width/2;
 	INT PosY = -LocY+Height/2;
-	if (PosY>1)
+
+	if (PosY>0)
 	{
-		PosY = 1;
+		PosY = 0;
 	}
 	else
-		if (PosY<(INT)Height-H)
+		if (PosY<(INT)Height-szMap.cy)
 		{
-			PosY = Height-H;
+			PosY = (INT)Height-szMap.cy;
 		}
 
 	ImageAttributes ImgAttr;
@@ -909,6 +906,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 
 	g.DrawImage(pMap, Rect(0, 0, Width, Height), -PosX, -PosY, Width, Height, UnitPixel, &ImgAttr);
 
+	// Location indicator
 	LocX += PosX-8;
 	LocY += PosY-8;
 	DrawLocationIndicator(g, LocX, LocY, 16);

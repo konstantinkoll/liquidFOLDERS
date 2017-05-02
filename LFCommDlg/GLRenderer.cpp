@@ -434,7 +434,7 @@ void GLRenderer::CreateTexture(UINT nResID, UINT& nPictureID, IPicture*& pPictur
 					DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
 					if (Size)
 					{
-						IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
+						IStream* pStream = SHCreateMemStream((LPBYTE)pResourceData, Size);
 
 						OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&pPicture);
 

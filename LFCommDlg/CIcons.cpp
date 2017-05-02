@@ -366,7 +366,7 @@ void CIcons::CreateIconsHot()
 		{
 			const LONG Length = Bitmap.bmWidth*Bitmap.bmHeight;
 			RGBQUAD* Ptr = (RGBQUAD*)Bitmap.bmBits;
-			const BYTE* pGammaTable = m_UseDarkBackgroundGamma ? m_GammaTableDarkBackground : m_GammaTableLightBackground;
+			const LPBYTE pGammaTable = m_UseDarkBackgroundGamma ? m_GammaTableDarkBackground : m_GammaTableLightBackground;
 
 			for (LONG Count=0; Count<Length; Count++)
 			{

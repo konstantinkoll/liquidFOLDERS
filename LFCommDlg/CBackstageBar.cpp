@@ -199,7 +199,7 @@ HBITMAP CBackstageBar::LoadMaskedIcon(UINT nID, INT Size, COLORREF clr)
 	if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
 		for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
 		{
-			BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row;
+			LPBYTE Ptr = (LPBYTE)Bitmap.bmBits+Bitmap.bmWidthBytes*Row;
 
 			for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
 			{

@@ -118,13 +118,13 @@ public:
 	CFileView(SIZE_T DataSize=sizeof(FVItemData), UINT Flags=FF_ENABLESCROLLING | FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT);
 	virtual ~CFileView();
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data) const;
 	virtual void EditLabel(INT Index);
 
-	void UpdateViewSettings(INT Context=-1, BOOL Force=FALSE);
-	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
+	void UpdateViewSettings(INT Context=-1, BOOL UpdateSearchResultPending=FALSE);
+	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	INT GetFocusItem() const;
 	INT GetSelectedItem() const;
 	INT GetNextSelectedItem(INT Index) const;
@@ -135,8 +135,8 @@ public:
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void SetViewSettings(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
+	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
 	virtual INT ItemAtPosition(CPoint point) const;
@@ -155,8 +155,7 @@ protected:
 	BOOL BeginDragDrop();
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
-	void DrawBadge(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
-	void DrawJumboIcon(CDC& dc, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
+	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
 	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -180,9 +179,11 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
+
 	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
 	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
 	afx_msg void OnSelectInvert();
@@ -195,6 +196,7 @@ protected:
 	LFGlobalViewSettings m_GlobalViewSettings;
 	LFContextViewSettings* p_ContextViewSettings;
 	LFGlobalViewSettings* p_GlobalViewSettings;
+	LFFilter* p_Filter;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	SIZE_T m_DataSize;
