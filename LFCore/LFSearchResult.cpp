@@ -390,7 +390,6 @@ void LFSearchResult::RemoveFlaggedItems(BOOL UpdateCount)
 	UINT Index = 0;
 
 	while (Index<m_ItemCount)
-	{
 		if (m_Items[Index]->RemoveFlag)
 		{
 			RemoveItem(Index, UpdateCount);
@@ -399,7 +398,6 @@ void LFSearchResult::RemoveFlaggedItems(BOOL UpdateCount)
 		{
 			Index++;
 		}
-	}
 }
 
 void LFSearchResult::KeepRange(INT First, INT Last)

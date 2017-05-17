@@ -279,6 +279,8 @@ void CListView::AdjustLayout()
 
 				rectFile.OffsetRect(0, m_RowHeight);
 			}
+
+			m_ScrollHeight = rectFile.bottom;
 		}
 	}
 
@@ -683,10 +685,10 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 		OnDestroyEdit();
 
 		// Add advertised attributes
-		CMenu menu;
-		menu.LoadMenu(IDM_LIST);
+		CMenu Menu;
+		Menu.LoadMenu(IDM_LIST);
 
-		CMenu* pPopup = menu.GetSubMenu(0);
+		CMenu* pPopup = Menu.GetSubMenu(0);
 		ASSERT_VALID(pPopup);
 
 		for (INT a=LFAttributeCount-1; a>=0; a--)

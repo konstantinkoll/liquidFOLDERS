@@ -141,7 +141,7 @@ BOOL LFItemTemplateDlg::InitDialog()
 
 	// Inspector
 	m_wndInspectorGrid.SetStore(m_StoreID);
-	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
+	m_wndInspectorGrid.AddAttributeProperties(m_AttributeValues);
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
@@ -199,10 +199,10 @@ void LFItemTemplateDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 		ClientToScreen(&point);
 	}
 
-	CMenu menu;
-	ENSURE(menu.LoadMenu(IDM_ITEMTEMPLATE));
+	CMenu Menu;
+	ENSURE(Menu.LoadMenu(IDM_ITEMTEMPLATE));
 
-	CMenu* pPopup = menu.GetSubMenu(0);
+	CMenu* pPopup = Menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this, NULL);

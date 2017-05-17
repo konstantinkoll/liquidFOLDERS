@@ -57,7 +57,7 @@ public:
 	virtual void DrawValue(CDC& dc, LPCRECT lpRect) const;
 	virtual HCURSOR SetCursor(INT x) const;
 	virtual CString GetValidChars() const;
-	virtual void SetEditMask(CMFCMaskedEdit* pEdit) const;
+	virtual void SetEditMask(CMFCMaskedEdit* pWndEdit) const;
 	virtual BOOL CanDelete() const;
 	virtual BOOL HasButton() const;
 	virtual BOOL WantsChars() const;
@@ -67,11 +67,13 @@ public:
 	virtual BOOL OnPushChar(UINT nChar);
 
 	void SetParent(CPropertyHolder* pParentWnd);
-	void SetMultiple(BOOL Multiple, LFVariantData* pRangeFirst, LFVariantData* pRangeSecond);
+	void SetMultiple(BOOL Multiple, const LFVariantData* pRangeFirst, const LFVariantData* pRangeSecond);
 	void ResetModified();
 	LFVariantData* GetData() const;
 
 protected:
+	void NotifyOwner(SHORT Attr2=-1, SHORT Attr3=-1) const;
+
 	CPropertyHolder* p_Parent;
 	LFVariantData* p_Data;
 	BOOL m_Modified;
@@ -89,6 +91,13 @@ inline void CProperty::ResetModified()
 inline LFVariantData* CProperty::GetData() const
 {
 	return p_Data;
+}
+
+inline void CProperty::NotifyOwner(SHORT Attr2, SHORT Attr3) const
+{
+	ASSERT(p_Parent);
+
+	p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
 }
 
 
@@ -119,6 +128,9 @@ public:
 	virtual BOOL WantsChars() const;
 	virtual BOOL OnClickValue(INT x);
 	virtual BOOL OnPushChar(UINT nChar);
+
+protected:
+	void OnSetRating(UCHAR Rating);
 };
 
 
@@ -137,10 +149,18 @@ public:
 	virtual void OnSetString(CString& Value) const;
 	virtual void OnClickButton();
 
+	void SetAdditionalData(LFVariantData* pLocationName, LFVariantData* pLocationGPS);
+
 protected:
 	LFVariantData* p_LocationName;
 	LFVariantData* p_LocationGPS;
 };
+
+inline void CPropertyIATA::SetAdditionalData(LFVariantData* pLocationName, LFVariantData* pLocationGPS)
+{
+	p_LocationName = pLocationName;
+	p_LocationGPS = pLocationGPS;
+}
 
 
 // CPropertyGPS
@@ -205,7 +225,7 @@ class CPropertyDuration : public CPropertyNumber
 public:
 	CPropertyDuration(LFVariantData* pData);
 
-	virtual void SetEditMask(CMFCMaskedEdit* pEdit) const;
+	virtual void SetEditMask(CMFCMaskedEdit* pWndEdit) const;
 };
 
 
@@ -269,9 +289,10 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader=NULL);
 	void AddProperty(CProperty* pProperty, UINT Category, LPCWSTR Name, BOOL Editable=FALSE);
-	void AddAttributes(LFVariantData* pData);
+	CProperty* AddAttributeProperty(LFVariantData* pData);
+	void AddAttributeProperties(LFVariantData* pDataArray);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
-	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible, LFVariantData* pRangeFirst=NULL, LFVariantData* pRangeSecond=NULL);
+	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pRangeFirst=NULL, const LFVariantData* pRangeSecond=NULL);
 	CString GetName(UINT nID) const;
 	CString GetValue(UINT nID) const;
 
@@ -313,12 +334,12 @@ protected:
 
 	LFDynArray<Property, LFAttributeCount, 8> m_Properties;
 	PropertyCategory m_Categories[LFAttrCategoryCount];
-	HICON hIconResetNormal;
-	HICON hIconResetSelected;
-	HICON hIconResetHot;
-	HICON hIconResetPressed;
+	static HICON hIconResetNormal;
+	static HICON hIconResetSelected;
+	static HICON hIconResetHot;
+	static HICON hIconResetPressed;
 	CInspectorHeader* m_pHeader;
-	CMFCMaskedEdit* p_Edit;
+	CMFCMaskedEdit* p_WndEdit;
 	INT m_RowHeight;
 	INT m_LabelWidth;
 	INT m_IconSize;
@@ -340,3 +361,12 @@ private:
 
 	INT* m_pSortArray;
 };
+
+inline void CInspectorGrid::MakeSortArrayDirty()
+{
+	if (m_pSortArray)
+	{
+		delete[] m_pSortArray;
+		m_pSortArray = NULL;
+	}
+}

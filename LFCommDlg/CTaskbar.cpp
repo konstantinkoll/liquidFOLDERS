@@ -329,8 +329,8 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		ClientToScreen(&pos);
 	}
 
-	CMenu menu;
-	if (!menu.CreatePopupMenu())
+	CMenu Menu;
+	if (!Menu.CreatePopupMenu())
 		return;
 
 	BOOL NeedsSeparator = FALSE;
@@ -345,16 +345,16 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		{
 			if (NeedsSeparator)
 			{
-				menu.AppendMenu(MF_SEPARATOR);
+				Menu.AppendMenu(MF_SEPARATOR);
 				NeedsSeparator = FALSE;
 			}
 
 			CString tmpStr;
 			pTaskButton->GetWindowText(tmpStr);
 
-			menu.AppendMenu(0, pTaskButton->GetDlgCtrlID(), _T("&")+tmpStr);
+			Menu.AppendMenu(0, pTaskButton->GetDlgCtrlID(), _T("&")+tmpStr);
 		}
 	}
 
-	menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
+	Menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
 }

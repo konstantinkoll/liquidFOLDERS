@@ -407,12 +407,18 @@ void CMainView::RemoveTransactedItems(LFTransactionList* pTransactionList)
 	if (!p_RawFiles)
 		return;
 
+	// Unselect all files
+	if (m_pWndFileView)
+		m_pWndFileView->UnselectAllAfterTransaction();
+
+	// Remove items from raw search result
 	for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
 		if (((*pTransactionList)[a].LastError==LFOk) && (*pTransactionList)[a].Processed)
 			(*pTransactionList)[a].pItemDescriptor->RemoveFlag = TRUE;
 
 	LFRemoveFlaggedItems(p_RawFiles);
 
+	// Cook search result
 	FVPersistentData Data;
 	GetPersistentData(Data);
 	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
@@ -824,7 +830,7 @@ void CMainView::OnAdjustLayout()
 
 void CMainView::OnUpdateSelection()
 {
-	m_wndInspectorPane.UpdateStart();
+	m_wndInspectorPane.AggregateStart();
 
 	INT Index = GetNextSelectedItem(-1);
 	m_FilesSelected = FALSE;
@@ -832,7 +838,7 @@ void CMainView::OnUpdateSelection()
 	while (Index>=0)
 	{
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-		m_wndInspectorPane.UpdateAdd(pItemDescriptor, p_RawFiles);
+		m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
 
 		m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
 			(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1));
@@ -840,7 +846,7 @@ void CMainView::OnUpdateSelection()
 		Index = GetNextSelectedItem(Index);
 	}
 
-	m_wndInspectorPane.UpdateFinish();
+	m_wndInspectorPane.AggregateFinish();
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 }
 

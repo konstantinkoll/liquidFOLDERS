@@ -967,6 +967,13 @@ BOOL CFileView::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed)
 	return FALSE;
 }
 
+void CFileView::UnselectAllAfterTransaction()
+{
+	if (p_CookedFiles)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			SelectItem(a, FALSE, TRUE);
+}
+
 
 BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_CREATE()

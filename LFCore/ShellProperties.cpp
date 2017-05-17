@@ -404,6 +404,29 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOO
 			SeparatorLength = 1;
 		}
 
+		if (!pSeparator)
+		{
+			if ((pSeparator=wcsrchr(pItemDescriptor->CoreAttributes.FileName, L' '))!=NULL)
+			{
+				// Only (and at least one) numbers following the right-most space?
+				LPCWSTR pChar = pSeparator+1;
+
+				do
+				{
+					if ((*pChar<L'0') || (*pChar>L'9'))
+					{
+						// No, so no separator!
+						pSeparator = NULL;
+
+						break;
+					}
+				}
+				while (*(++pChar));
+			}
+
+			SeparatorLength = 1;
+		}
+
 		if (pSeparator)
 		{
 			// Artist or Roll

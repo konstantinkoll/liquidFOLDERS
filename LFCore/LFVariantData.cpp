@@ -924,14 +924,15 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFV
 	}
 }
 
-LFCORE_API void LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& pValue)
+LFCORE_API void LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& Value)
 {
 	assert(pItemDescriptor);
+	assert(Attr<LFAttributeCount);
 
-	pValue.Attr = Attr;
-	pValue.Type = AttrProperties[Attr].Type;
+	Value.Attr = Attr;
+	Value.Type = AttrProperties[Attr].Type;
 
-	LFGetAttributeVariantData(pItemDescriptor, pValue);
+	LFGetAttributeVariantData(pItemDescriptor, Value);
 }
 
 LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& Value)

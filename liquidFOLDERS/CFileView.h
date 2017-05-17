@@ -132,6 +132,7 @@ public:
 	void EnsureVisible(INT Index);
 	BOOL MultiSelectAllowed() const;
 	BOOL IsEditing() const;
+	void UnselectAllAfterTransaction();
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);

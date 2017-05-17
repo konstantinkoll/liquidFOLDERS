@@ -5570,7 +5570,7 @@ OCH     Nacogdoches, USA;4;31*34'40"N, 94*42'36"W
 OCI     Oceanic, USA
 OCJ     Ocho Rios, Jamaica;4;18*24'15"N, 76*58'8"W
 OCN     Oceanside, USA;4;33*13'5"N, 117*21'5"W
-OCO     San Jose (El Coco), Costa Rica
+OCO     San José (El Coco), Costa Rica
 OCQ     Oconto, USA;4;44*52'27"N, 87*54'35"W
 OCV     Ocana, Kolumbien;4;8*18'54"N, 73*21'30"W
 OCW     Washington, USA;4;35*34'14"N, 77*2'59"W
@@ -6677,7 +6677,7 @@ RHI     Rhinelander, USA;4;45*37'52"N, 89*28'3"W
 RHL     Roy Hill, Australien;4;22*37'59"S, 119*58'1"E
 RHO     Rhodos, Griechenland;4;36*24'20"N, 28*5'10"E
 RHP     Ramechhap, Nepal;4;27*23'38"N, 86*3'41"E
-RHV     San Jose (Reid-Hillview County Airport), USA;4;37*19'58"N, 121*49'11"W
+RHV     San José (Reid-Hillview County Airport), USA;4;37*19'58"N, 121*49'11"W
 RIA     Santa Maria, Brasilien;4;29*42'41"S, 53*41'17"W
 RIB     Riberalta, Bolivien;4;11*1'1"S, 66*7'1"W
 RIC     Richmond, USA;4;37*30'19"N, 77*19'11"W
@@ -7114,21 +7114,21 @@ SJA     San Juan, Peru;4;15*21'9"S, 75*8'14"W
 SJB     San Joaquin, Bolivien;4;13*1'1"S, 64*52'1"W
 SJC QSF San José, USA;4;37*21'46"N, 121*55'45"W
 SJD     Los Cabos, Mexiko;4;23*9'7"N, 109*43'16"W
-SJE     San Jose del Guaviaro, Kolumbien;4;2*34'47"N, 72*38'22"W
+SJE     San José del Guaviaro, Kolumbien;4;2*34'47"N, 72*38'22"W
 SJF     Cruz Bay, U.S. Virgin Islands;4;18*19'59"N, 64*58'59"W
 SJG     San Pedro Jagua, Kolumbien;4;4*37'59"N, 73*18'0"W
 SJH     San Juan del Cesar, Kolumbien;4;10*43'59"N, 72*58'59"W
-SJI     San Jose, Philippinen;4;12*21'41"N, 121*2'48"E
+SJI     San José, Philippinen;4;12*21'41"N, 121*2'48"E
 SJJ     Sarajevo, Bosnien;4;43*49'28"N, 18*19'53"E
 SJK     Sao Jose dos Lampos, Brasilien;4;23*13'41"S, 45*51'46"W
 SJL     Sao Gabriel, Brasilien;4;0*8'54"S, 66*59'8"W
 SJM     San Juan de la Maguana, Dom. Republik;4;18*49'1"N, 71*16'59"W
 SJN     St. Johns, USA;4;34*31'7"N, 109*22'44"W
-SJO     San Jose, Costa Rica;4;9*59'38"N, 84*12'32"W
-SJP     Sao Jose do Rio Preto, Brasilien;4;20*48'60"S, 49*24'23"W
+SJO     San José, Costa Rica;4;9*59'38"N, 84*12'32"W
+SJP     Sao José do Rio Preto, Brasilien;4;20*48'60"S, 49*24'23"W
 SJQ     Sesheke, Sambia;4;17*28'1"S, 24*17'60"E
 SJR     San Juan de Uraba, Kolumbien;4;8*46'1"N, 76*31'59"W
-SJS     San Jose, Bolivien;4;17*49'1"S, 60*43'59"W
+SJS     San José, Bolivien;4;17*49'1"S, 60*43'59"W
 SJT     San Angelo (Mathis Field), USA;4;31*21'28"N, 100*29'47"W
 SJU     San Juan (Luis Munoz Marin), Puerto Rico;4;18*26'22"N, 66*0'7"W
 SJV     San Javier, Bolivien;4;16*15'52"S, 62*28'12"W
@@ -7488,7 +7488,7 @@ SYL     Camp Roberts, USA;4;35*48'54"N, 120*44'38"W
 SYM     Simao, China;4;22*47'36"N, 100*57'34"E
 SYN     Stanton, USA;4;44*28'32"N, 93*0'59"W
 SYO     Shonai, Japan;4;38*48'44"N, 139*47'14"E
-SYQ     San Jose (Tobias Bolanos Airport), Costa Rica;5;9*57'25"N, 84*8'23"W
+SYQ     San José (Tobias Bolanos Airport), Costa Rica;5;9*57'25"N, 84*8'23"W
 SYR     Syracuse, USA;4;43*6'40"N, 76*6'23"W
 SYT     St.-Yan, Frankreich;4;46*24'23"N, 4*1'16"E
 SYU     Sue Island, Australien;4;10*12'27"S, 142*49'26"E

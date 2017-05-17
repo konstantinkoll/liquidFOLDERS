@@ -3,27 +3,54 @@
 #include "LFCommDlg.h"
 
 
-// Virtuelle Attribute
+// CFileSummary
 //
 
-#define AttrSource                  LFAttributeCount+0
-#define AttrMaintenanceTime         LFAttributeCount+1
-#define AttrSynchronizeTime         LFAttributeCount+2
-#define AttrLastSeen                LFAttributeCount+3
-#define AttrIATAAirportName         LFAttributeCount+4
-#define AttrIATAAirportCountry      LFAttributeCount+5
+#define AttrSource                 LFAttributeCount+0
+#define AttrMaintenanceTime        LFAttributeCount+1
+#define AttrSynchronizeTime        LFAttributeCount+2
+#define AttrLastSeen               LFAttributeCount+3
+#define AttrIATAAirportName        LFAttributeCount+4
+#define AttrIATAAirportCountry     LFAttributeCount+5
 
-#define AttrCount                   LFAttributeCount+6
+#define AttrCount                  LFAttributeCount+6
+
+struct AttributeSummary
+{
+	BOOL Visible;
+	UINT Status;
+	LFVariantData Value;
+	LFVariantData RangeFirst;
+	LFVariantData RangeSecond;
+};
+
+class CFileSummary
+{
+public:
+	CFileSummary();
+
+	void Reset();
+	void AddValueVirtual(UINT Attr, const LPCWSTR pStrValue);
+	void AddValueVirtual(UINT Attr, const LPCSTR pStrValue);
+	void AddItem(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
+
+	AttributeSummary m_AttributeSummary[AttrCount];
+	LFItemDescriptor* p_LastItem;
+	UINT m_ItemCount;
+	UINT m_IconID;
+	UINT m_IconStatus;
+	UINT m_Type;
+
+protected:
+	void AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr);
+
+private:
+	void AddFile(LFItemDescriptor* pItemDescriptor);
+};
 
 
 // CIconHeader
 //
-
-#define IconEmpty         0
-#define IconMultiple      1
-#define IconCore          2
-#define IconExtension     3
-#define IconPreview       4
 
 class CIconHeader : public CInspectorHeader
 {
@@ -37,28 +64,18 @@ public:
 	void SetEmpty();
 	void SetMultiple(const CString& Description=_T(""));
 	void SetCoreIcon(INT IconID, const CString& Description=_T(""));
-	void SetFormatIcon(LPCSTR FileFormat, const CString& Description=_T(""));
+	void SetFormatIcon(LPCSTR pFileFormat, const CString& Description=_T(""));
 	void SetPreview(LFItemDescriptor* pItemDescriptor, const CString& Description=_T(""));
 
 protected:
 	void FreeItem();
 
-	static CString m_strNoItemsSelected;
-	CString m_strDescription;
+	static CString m_NoItemsSelected;
+	CString m_Description;
 	UINT m_Status;
 	INT m_IconID;
 	CHAR m_FileFormat[LFExtSize];
 	LFItemDescriptor* m_pItem;
-};
-
-
-// CStoreManagerGrid
-//
-
-class CStoreManagerGrid : public CInspectorGrid
-{
-protected:
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 };
 
 
@@ -73,9 +90,9 @@ public:
 	virtual void AdjustLayout(CRect rectLayout);
 	virtual void SaveSettings();
 
-	void UpdateStart();
-	void UpdateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
-	void UpdateFinish();
+	void AggregateStart();
+	void AggregateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
+	void AggregateFinish();
 
 protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -89,27 +106,23 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	CFileSummary m_FileSummary;
 	CIconHeader m_IconHeader;
-	CStoreManagerGrid m_wndGrid;
+	CInspectorGrid m_wndGrid;
 	BOOL m_ShowInternal;
 	BOOL m_SortAlphabetic;
-	LFItemDescriptor* p_LastItem;
 
 private:
-	void AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr, BOOL Editable=FALSE);
-	void AddValueVirtual(UINT Attr, const LPCSTR Value);
-	void AddValueVirtual(UINT Attr, const LPCWSTR Value);
-
-	UINT m_Count;
-	UINT m_IconID;
-	UINT m_IconStatus;
-	UINT m_TypeID;
-	UINT m_AttributeVisible[AttrCount];
-	UINT m_AttributeStatus[AttrCount];
-	BOOL m_AttributeEditable[AttrCount];
-	LFVariantData m_AttributeValues[AttrCount];
-	LFVariantData m_AttributeRangeFirst[AttrCount];
-	LFVariantData m_AttributeRangeSecond[AttrCount];
 	static CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
 	CString m_TypeName;
 };
+
+inline void CInspectorPane::AggregateStart()
+{
+	m_FileSummary.Reset();
+}
+
+inline void CInspectorPane::AggregateAdd(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles)
+{
+	m_FileSummary.AddItem(pItemDescriptor, pRawFiles);
+}

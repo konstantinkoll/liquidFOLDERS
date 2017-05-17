@@ -217,6 +217,7 @@ BOOL CTimelineView::UsePreview(LFItemDescriptor* pItemDescriptor)
 		case LFContextPictures:
 			return ((_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "BMP")==0) ||
 					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "DIB")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "GIF")==0) ||
 					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "JPG")==0) ||
 					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "JPEG")==0) ||
 					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "PNG")==0) ||

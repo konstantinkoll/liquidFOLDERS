@@ -271,10 +271,10 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	if (m_rectIcon.PtInRect(point))
 	{
 		// Store
-		CMenu menu;
-		ENSURE(menu.LoadMenu(IDM_STORE));
+		CMenu Menu;
+		ENSURE(Menu.LoadMenu(IDM_STORE));
 
-		CMenu* pPopup = menu.GetSubMenu(0);
+		CMenu* pPopup = Menu.GetSubMenu(0);
 		ASSERT_VALID(pPopup);
 
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);

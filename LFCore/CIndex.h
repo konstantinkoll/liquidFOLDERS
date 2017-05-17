@@ -59,7 +59,7 @@ private:
 
 inline void CIndex::ResetStatistics()
 {
-	assert(p_StoreDescripor);
+	assert(p_StoreDescriptor);
 
 	ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
 	ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));

@@ -30,7 +30,7 @@ LFApplication::LFApplication(GUID& AppID)
 	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : OS_Seven;
 
 	// GdiPlus
-	m_SmoothingModeAntiAlias8x8 = OSVersion>=OS_Vista ? (SmoothingMode)(SmoothingModeAntiAlias+1) : SmoothingModeAntiAlias;
+	m_SmoothingModeAntiAlias8x8 = (OSVersion>=OS_Vista) ? (SmoothingMode)(SmoothingModeAntiAlias+1) : SmoothingModeAntiAlias;
 
 	// Clipboard
 	CF_FILEDESCRIPTOR = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_FILEDESCRIPTOR);
