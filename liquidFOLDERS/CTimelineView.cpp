@@ -163,7 +163,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 					if (pData->pStrCollection)
 					{
 						pData->PreviewMask |= PRV_COLLECTIONICON;
-						pData->CollectionIconID = theApp.m_Attributes[CollectionAttr].AttrProperties.IconID;
+						VERIFY(pData->CollectionIconID=theApp.m_Attributes[CollectionAttr].AttrProperties.IconID);
 					}
 
 					break;

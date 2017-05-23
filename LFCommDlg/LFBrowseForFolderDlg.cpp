@@ -106,7 +106,14 @@ void LFBrowseForFolderDlg::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*
 
 		ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->itemNew.lParam;
 
-		WCHAR path[MAX_PATH];
-		GetDlgItem(IDOK)->EnableWindow(pItem ? SHGetPathFromIDList(pItem->pidlFQ, path) : FALSE);
+		BOOL Enable = FALSE;
+		if (pItem)
+		{
+			WCHAR Path[MAX_PATH];
+			if (SHGetPathFromIDList(pItem->pidlFQ, Path))
+				Enable = m_ShowDeleteSource || (wcslen(Path)>3);
+		}
+
+		GetDlgItem(IDOK)->EnableWindow(Enable);
 	}
 }

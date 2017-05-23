@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
-#include <winhttp.h>
 
 
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
@@ -32,45 +31,50 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 	return TRUE;
 }
 
-
-void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
+void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 {
-	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCWSTR)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
+	Version.Empty();
+
+	if (Copyright)
+		Copyright->Empty();
+
+	CString modFilename;
+	if (GetModuleFileName(hModule, modFilename.GetBuffer(MAX_PATH), MAX_PATH)>0)
 	{
-		hIcon = pIcons->ExtractIcon(sfi.iIcon);
-		Caption = sfi.szDisplayName;
-		Hint = sfi.szTypeName;
-
-		IShellFolder* pParentFolder = NULL;
-		LPCITEMIDLIST Child = NULL;
-		if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &Child)))
+		modFilename.ReleaseBuffer(MAX_PATH);
+		DWORD dwHandle = 0;
+		DWORD dwSize = GetFileVersionInfoSize(modFilename, &dwHandle);
+		if (dwSize>0)
 		{
-			WIN32_FIND_DATA ffd;
-			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
-			{
-				FILETIME lft;
-				WCHAR tmpBuf1[256];
-				FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
-				LFTimeToString(lft, tmpBuf1, 256);
-				WCHAR tmpBuf2[256];
-				FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
-				LFTimeToString(lft, tmpBuf2, 256);
+			LPBYTE lpInfo = new BYTE[dwSize];
+			ZeroMemory(lpInfo, dwSize);
 
-				CString tmpStr;
-				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
-					LFGetApp()->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
-					LFGetApp()->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
-				Hint.Append(tmpStr);
+			if (GetFileVersionInfo(modFilename, 0, dwSize, lpInfo))
+			{
+				UINT valLen = 0;
+				LPVOID valPtr = NULL;
+				LPCWSTR valData = NULL;
+
+				if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
+				{
+					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
+					Version.Format(_T("%u.%u.%u"), 
+						(UINT)((pFinfo->dwProductVersionMS >> 16) & 0xFF),
+						(UINT)((pFinfo->dwProductVersionMS) & 0xFF),
+						(UINT)((pFinfo->dwProductVersionLS >> 16) & 0xFF));
+				}
+
+				if (Copyright)
+					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
-			pParentFolder->Release();
+
+			delete[] lpInfo;
 		}
 	}
 }
 
 
 // Draw
-//
 
 BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
@@ -856,9 +860,43 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	pComboBox->Invalidate();
 }
 
+void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
+{
+	SHFILEINFO sfi;
+	if (SUCCEEDED(SHGetFileInfo((LPCWSTR)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
+	{
+		hIcon = pIcons->ExtractIcon(sfi.iIcon);
+		Caption = sfi.szDisplayName;
+		Hint = sfi.szTypeName;
+
+		IShellFolder* pParentFolder = NULL;
+		LPCITEMIDLIST Child = NULL;
+		if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &Child)))
+		{
+			WIN32_FIND_DATA ffd;
+			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
+			{
+				FILETIME lft;
+				WCHAR tmpBuf1[256];
+				FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
+				LFTimeToString(lft, tmpBuf1, 256);
+				WCHAR tmpBuf2[256];
+				FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
+				LFTimeToString(lft, tmpBuf2, 256);
+
+				CString tmpStr;
+				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
+					LFGetApp()->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
+					LFGetApp()->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
+				Hint.Append(tmpStr);
+			}
+			pParentFolder->Release();
+		}
+	}
+}
+
 
 // IATA
-//
 
 HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 {
@@ -955,272 +993,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 }
 
 
-// Update
-//
-
-void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
-{
-	Version.Empty();
-
-	if (Copyright)
-		Copyright->Empty();
-
-	CString modFilename;
-	if (GetModuleFileName(hModule, modFilename.GetBuffer(MAX_PATH), MAX_PATH)>0)
-	{
-		modFilename.ReleaseBuffer(MAX_PATH);
-		DWORD dwHandle = 0;
-		DWORD dwSize = GetFileVersionInfoSize(modFilename, &dwHandle);
-		if (dwSize>0)
-		{
-			LPBYTE lpInfo = new BYTE[dwSize];
-			ZeroMemory(lpInfo, dwSize);
-
-			if (GetFileVersionInfo(modFilename, 0, dwSize, lpInfo))
-			{
-				UINT valLen = 0;
-				LPVOID valPtr = NULL;
-				LPCWSTR valData = NULL;
-
-				if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
-				{
-					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-					Version.Format(_T("%u.%u.%u"), 
-						(UINT)((pFinfo->dwProductVersionMS >> 16) & 0xFF),
-						(UINT)((pFinfo->dwProductVersionMS) & 0xFF),
-						(UINT)((pFinfo->dwProductVersionLS >> 16) & 0xFF));
-				}
-
-				if (Copyright)
-					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
-			}
-
-			delete[] lpInfo;
-		}
-	}
-}
-
-CString GetLatestVersion(CString CurrentVersion)
-{
-	CString VersionIni;
-
-	// License
-	if (LFIsLicensed())
-	{
-		CurrentVersion += _T(" (licensed)");
-	}
-	else
-		if (LFIsSharewareExpired())
-		{
-			CurrentVersion += _T(" (expired)");
-		}
-
-	// Get available version
-	HINTERNET hSession = WinHttpOpen(_T("liquidFOLDERS/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-	if (hSession)
-	{
-		HINTERNET hConnect = WinHttpConnect(hSession, L"update.liquidfolders.net", INTERNET_DEFAULT_HTTP_PORT, 0);
-		if (hConnect)
-		{
-			HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/version.ini", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
-			if (hRequest)
-			{
-				if (WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, NULL, 0, 0, 0))
-					if (WinHttpReceiveResponse(hRequest, NULL))
-					{
-						DWORD dwSize;
-
-						do
-						{
-							dwSize = 0;
-							if (WinHttpQueryDataAvailable(hRequest, &dwSize))
-							{
-								CHAR* pBuffer = new CHAR[dwSize+1];
-								DWORD dwDownloaded;
-
-								if (WinHttpReadData(hRequest, pBuffer, dwSize, &dwDownloaded))
-								{
-									pBuffer[dwDownloaded] = '\0';
-
-									VersionIni += CString(pBuffer);
-								}
-
-								delete[] pBuffer;
-							}
-						}
-						while (dwSize>0);
-					}
-
-				WinHttpCloseHandle(hRequest);
-			}
-
-			WinHttpCloseHandle(hConnect);
-		}
-
-		WinHttpCloseHandle(hSession);
-	}
-
-	return VersionIni;
-}
-
-CString GetIniValue(CString Ini, const CString& Name)
-{
-	while (!Ini.IsEmpty())
-	{
-		INT Pos = Ini.Find(L"\n");
-		if (Pos==-1)
-			Pos = Ini.GetLength()+1;
-
-		CString Line = Ini.Mid(0, Pos-1);
-		Ini.Delete(0, Pos+1);
-
-		Pos = Line.Find(L"=");
-		if (Pos!=-1)
-			if (Line.Mid(0, Pos)==Name)
-				return Line.Mid(Pos+1, Line.GetLength()-Pos);
-	}
-
-	return _T("");
-}
-
-void ParseVersion(const CString& tmpStr, LFVersion* pVersion)
-{
-	ASSERT(pVersion);
-
-	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
-}
-
-BOOL IsVersionLater(const LFVersion& LatestVersion, const LFVersion& CurrentVersion)
-{
-	return ((LatestVersion.Major>CurrentVersion.Major) ||
-		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor>CurrentVersion.Minor)) ||
-		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor==CurrentVersion.Minor) && (LatestVersion.Build>CurrentVersion.Build)));
-}
-
-BOOL IsLaterFeature(const CString VersionIni, const CString Name, LFVersion& CurrentVersion)
-{
-	LFVersion FeatureVersion = { 0 };
-
-	ParseVersion(GetIniValue(VersionIni, Name), &FeatureVersion);
-
-	return IsVersionLater(FeatureVersion, CurrentVersion);
-}
-
-DWORD GetFeatures(const CString& VersionIni, LFVersion& CurrentVersion)
-{
-	DWORD Features = 0;
-
-	if (IsLaterFeature(VersionIni, _T("SecurityPatch"), CurrentVersion))
-		Features |= UPDATE_SECUTIRYPATCH;
-
-	if (IsLaterFeature(VersionIni, _T("ImportantBugfix"), CurrentVersion))
-		Features |= UPDATE_IMPORTANTBUGFIX;
-
-	if (IsLaterFeature(VersionIni, _T("NetworkAPI"), CurrentVersion))
-		Features |= UPDATE_NETWORKAPI;
-
-	if (IsLaterFeature(VersionIni, _T("NewFeature"), CurrentVersion))
-		Features |= UPDATE_NEWFEATURE;
-
-	if (IsLaterFeature(VersionIni, _T("NewVisualization"), CurrentVersion))
-		Features |= UPDATE_NEWVISUALIZATION;
-
-	if (IsLaterFeature(VersionIni, _T("UI"), CurrentVersion))
-		Features |= UPDATE_UI;
-
-	if (IsLaterFeature(VersionIni, _T("SmallBugfix"), CurrentVersion))
-		Features |= UPDATE_SMALLBUGFIX;
-
-	if (IsLaterFeature(VersionIni, _T("IATA"), CurrentVersion))
-		Features |= UPDATE_IATA;
-
-	if (IsLaterFeature(VersionIni, _T("Performance"), CurrentVersion))
-		Features |= UPDATE_PERFORMANCE;
-
-	return Features;
-}
-
-void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
-{
-	// Obtain current version from instance version resource
-	CString CurrentVersion;
-	GetFileVersion(AfxGetResourceHandle(), CurrentVersion);
-
-	LFVersion CV = { 0 };
-	ParseVersion(CurrentVersion, &CV);
-
-	// Check due?
-	BOOL Check = Force;
-	if (!Check)
-		Check = LFGetApp()->IsUpdateCheckDue();
-
-	// Perform check
-	CString LatestVersion = LFGetApp()->GetGlobalString(_T("LatestUpdateVersion"));
-	CString LatestMSN = LFGetApp()->GetGlobalString(_T("LatestUpdateMSN"));
-	DWORD LatestFeatures = LFGetApp()->GetGlobalInt(_T("LatestUpdateFeatures"));
-
-	if (Check)
-	{
-		CWaitCursor csr;
-		CString VersionIni = GetLatestVersion(CurrentVersion);
-
-		if (!VersionIni.IsEmpty())
-		{
-			LatestVersion = GetIniValue(VersionIni, _T("Version"));
-			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
-			LatestFeatures = GetFeatures(VersionIni, CV);
-
-			LFGetApp()->WriteGlobalString(_T("LatestUpdateVersion"), LatestVersion);
-			LFGetApp()->WriteGlobalString(_T("LatestUpdateMSN"), LatestMSN);
-			LFGetApp()->WriteGlobalInt(_T("LatestUpdateFeatures"), LatestFeatures);
-		}
-	}
-
-	// Update available?
-	BOOL UpdateAvailable = FALSE;
-	if (!LatestVersion.IsEmpty())
-	{
-		LFVersion LV = { 0 };
-		ParseVersion(LatestVersion, &LV);
-
-		CString IgnoreMSN = LFGetApp()->GetGlobalString(_T("IgnoreUpdateMSN"));
-
-		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || Force) && IsVersionLater(LV, CV);
-	}
-
-	// Result
-	if (UpdateAvailable)
-	{
-		if (pParentWnd)
-		{
-			if (LFGetApp()->m_pUpdateNotification)
-				LFGetApp()->m_pUpdateNotification->DestroyWindow();
-
-			LFUpdateDlg dlg(LatestVersion, LatestMSN, LatestFeatures, pParentWnd);
-			dlg.DoModal();
-		}
-		else
-			if (LFGetApp()->m_pUpdateNotification)
-			{
-				LFGetApp()->m_pUpdateNotification->SendMessage(WM_COMMAND, IDM_UPDATE_RESTORE);
-			}
-			else
-			{
-				LFGetApp()->m_pUpdateNotification = new LFUpdateDlg(LatestVersion, LatestMSN, LatestFeatures);
-				LFGetApp()->m_pUpdateNotification->Create();
-				LFGetApp()->m_pUpdateNotification->ShowWindow(SW_SHOW);
-			}
-	}
-	else
-	{
-		if (Force)
-			LFMessageBox(pParentWnd, CString((LPCSTR)IDS_UPDATENOTAVAILABLE), CString((LPCSTR)IDS_UPDATE), MB_ICONINFORMATION | MB_OK);
-		}
-}
-
-
-// Message box
-//
+// MessageBox
 
 INT LFMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
 {

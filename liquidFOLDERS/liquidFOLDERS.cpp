@@ -95,8 +95,7 @@ BOOL CLiquidFoldersApp::InitInstance()
 	m_FileDropAlwaysOnTop = GetInt(_T("FileDropAlwaysOnTop"), TRUE);
 
 	// Execute
-	LFCheckForUpdate();
-
+	CheckForUpdate();
 	OpenCommandLine(__argc>1 ? CmdLine : NULL);
 
 	m_AppInitialized = TRUE;

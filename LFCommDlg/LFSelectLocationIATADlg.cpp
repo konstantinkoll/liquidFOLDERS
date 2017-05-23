@@ -155,6 +155,7 @@ void LFSelectLocationIATADlg::LoadCountry(UINT Country)
 	CRect rect;
 	m_wndAirportList.GetClientRect(rect);
 	m_wndAirportList.SetColumnWidth(1, rect.Width()-m_wndAirportList.GetColumnWidth(0));
+	m_wndAirportList.SetFocus();
 }
 
 BOOL LFSelectLocationIATADlg::InitDialog()
@@ -175,9 +176,6 @@ BOOL LFSelectLocationIATADlg::InitDialog()
 
 	pComboBox->SelectString(-1, CString(LFIATAGetCountry(Country)->Name));
 	LoadCountry(Country);
-
-	if (p_Airport)
-		m_wndAirportList.SetFocus();
 
 	// Optionen
 	GetDlgItem(IDC_REPLACE_NAME)->EnableWindow(m_AllowOverwriteName);

@@ -691,6 +691,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\DINMittelschrift.ttf"
+				>
+			</File>
+			<File
 				RelativePath=".\res\DivDown.png"
 				>
 			</File>
@@ -708,10 +712,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Info.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Letter_Gothic.ttf"
 				>
 			</File>
 			<File

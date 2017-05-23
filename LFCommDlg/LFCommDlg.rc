@@ -105,7 +105,7 @@ IDB_UPDATEICONS_64      RCDATA                  "res\\UpdateIcons_64.png"
 IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
 IDB_BACKGROUND_TOOLTIP  RCDATA                  "res\\Background_Tooltip.png"
 IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
-IDF_LETTERGOTHIC        RCDATA                  "res\\Letter_Gothic.ttf"
+IDF_DINMITTELSCHRIFT    RCDATA                  "res\\DINMittelschrift.ttf"
 
 /////////////////////////////////////////////////////////////////////////////
 //

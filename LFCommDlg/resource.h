@@ -143,7 +143,7 @@
 #define IDS_UPDATE_SMALLBUGFIX          20406
 #define IDS_UPDATE_IATA                 20407
 #define IDS_UPDATE_PERFORMANCE          20408
-#define IDF_LETTERGOTHIC                20500
+#define IDF_DINMITTELSCHRIFT            20500
 #define IDC_SYNCHRONIZEICON             20831
 #define IDD_MESSAGEBOX                  21000
 #define IDD_TABBEDDIALOG                21001

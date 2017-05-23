@@ -946,7 +946,7 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 void CFileView::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset) const
 {
-	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail ? p_RawFiles : NULL, ThumbnailYOffset);
+	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail ? p_RawFiles : NULL, TRUE, ThumbnailYOffset);
 }
 
 BOOL CFileView::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed)

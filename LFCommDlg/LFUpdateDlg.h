@@ -32,8 +32,8 @@ protected:
 	virtual BOOL InitDialog();
 
 	void UpdatePosition();
-	BOOL AddTrayIcon();
-	BOOL RemoveTrayIcon();
+	BOOL AddTrayIcon() const;
+	BOOL RemoveTrayIcon() const;
 	void ShowMenu();
 	void EndDialog(INT nResult);
 

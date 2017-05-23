@@ -48,7 +48,7 @@ void CIconFactory::DrawJumboFormatIcon(CDC& dc, const CPoint& pt, LPCSTR lpszFil
 
 }
 
-void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset, BOOL DrawOverlay)
+void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, BOOL DrawOverlay, INT ThumbnailYOffset)
 {
 	ASSERT(pItemDescriptor);
 

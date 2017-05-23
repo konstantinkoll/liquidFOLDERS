@@ -66,16 +66,21 @@ public:
 
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
+
 	void SendMail(const CString& Subject=_T("")) const;
+
+	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
 	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0) const;
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T("")) const;
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue) const;
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue) const;
+
 	Bitmap* GetResourceImage(UINT nID) const;
 	Bitmap* GetCachedResourceImage(UINT nID);
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList);
+
 	void AttributeToString(CString& Name, CString& Value, LFItemDescriptor* pItemDescriptor, UINT Attr) const;
 	CString GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName=NULL) const;
 	CString GetHintForStore(LFStoreDescriptor* pStoreDescriptor) const;
@@ -83,7 +88,9 @@ public:
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, LFStoreDescriptor* pStoreDescriptor);
 	BOOL IsTooltipVisible() const;
 	void HideTooltip();
+
 	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR Verb);
+
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();
 	static void PlayErrorSound();
@@ -92,10 +99,10 @@ public:
 	static void PlayQuestionSound();
 	static void PlayTrashSound();
 	static void PlayWarningSound();
+
 	void GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval) const;
-	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval) const;
-	BOOL IsUpdateCheckDue() const;
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
+	void WriteUpdateSettings(BOOL EnableAutoUpdate, INT Interval) const;
+	void CheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
 
 	const LFMessageIDs* p_MessageIDs;
 	WCHAR m_AttrCategoryNames[LFAttrCategoryCount][256];
@@ -172,13 +179,23 @@ private:
 	void AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr) const;
 	static void PlayRegSound(const CString& Identifier);
 
+	BOOL IsUpdateCheckDue() const;
+	void WriteUpdateCheckTime() const;
+	static CString GetLatestVersion(CString CurrentVersion);
+	static CString GetIniValue(CString Ini, const CString& Name);
+	static void ParseVersion(const CString& tmpStr, LFVersion* pVersion);
+	static BOOL IsVersionLater(const LFVersion& LatestVersion, const LFVersion& CurrentVersion);
+	static BOOL IsUpdateFeatureLater(const CString& VersionIni, const CString& Name, LFVersion& CurrentVersion);
+	static DWORD GetUpdateFeatures(const CString& VersionIni, LFVersion& CurrentVersion);
+
+
 	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;
 	HMODULE hModShell;
 	HMODULE hModKernel;
 	HMODULE hModUser;
-	HANDLE hFontLetterGothic;
+	HANDLE hFontDinMittelschrift;
 };
 
 inline BOOL LFApplication::IsTooltipVisible() const
@@ -190,7 +207,5 @@ inline BOOL LFApplication::IsTooltipVisible() const
 
 inline void LFApplication::HideTooltip()
 {
-	ASSERT(IsWindow(m_wndTooltip));
-
 	m_wndTooltip.HideTooltip();
 }

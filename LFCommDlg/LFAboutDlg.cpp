@@ -70,7 +70,7 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
-		LFGetApp()->SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
+		LFGetApp()->WriteUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 	}
 	else
 	{
@@ -159,7 +159,7 @@ BOOL LFAboutDlg::InitDialog()
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
-	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
 	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
@@ -220,7 +220,7 @@ void LFAboutDlg::OnEnableAutoUpdate()
 
 void LFAboutDlg::OnUpdateNow()
 {
-	LFCheckForUpdate(TRUE, this);
+	LFGetApp()->CheckForUpdate(TRUE, this);
 }
 
 void LFAboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)

@@ -101,11 +101,14 @@ struct PROGRESSDATA
 	TBPFLAG tbpFlags;
 };
 
+BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
+void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright=NULL);
+
+
+// Draw
+
 extern BLENDFUNCTION BF;
 
-BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
-
-void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
 void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
 void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
@@ -132,17 +135,12 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF Color, BOOL Enabled=TR
 // liquidFOLDERS
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
+void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
 
 
 // IATA
 
 HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height);
-
-
-// Update
-
-void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright=NULL);
-void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
 
 
 // MessageBox

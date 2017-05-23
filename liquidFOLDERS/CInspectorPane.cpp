@@ -261,7 +261,7 @@ void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Theme
 		break;
 
 	case ICONPREVIEW:
-		theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, m_pItem, NULL);
+		theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, m_pItem, NULL, FALSE);
 		break;
 	}
 

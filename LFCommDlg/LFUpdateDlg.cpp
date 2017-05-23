@@ -119,10 +119,8 @@ void LFUpdateDlg::UpdatePosition()
 	SetWindowPos(&wndTopMost, rectScreen.right-rectWindow.Width()-1, rectScreen.bottom-rectWindow.Height()-1, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 }
 
-BOOL LFUpdateDlg::AddTrayIcon()
+BOOL LFUpdateDlg::AddTrayIcon() const
 {
-	INT Size = GetSystemMetrics(SM_CXSMICON);
-
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
 	nid.cbSize = sizeof(nid);
@@ -131,14 +129,16 @@ BOOL LFUpdateDlg::AddTrayIcon()
 	nid.guidItem = TrayIcon;
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WM_TRAYMENU;
-	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, Size, Size, LR_DEFAULTCOLOR);
+	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
 	GetWindowText(nid.szTip, 128);
-	Shell_NotifyIcon(NIM_ADD, &nid);
 
-	return Shell_NotifyIcon(NIM_SETVERSION, &nid);
+	if (Shell_NotifyIcon(NIM_ADD, &nid))
+		return Shell_NotifyIcon(NIM_SETVERSION, &nid);
+
+	return FALSE;
 }
 
-BOOL LFUpdateDlg::RemoveTrayIcon()
+BOOL LFUpdateDlg::RemoveTrayIcon() const
 {
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
@@ -209,7 +209,7 @@ BOOL LFUpdateDlg::InitDialog()
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
-	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
 	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
