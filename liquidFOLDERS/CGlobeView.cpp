@@ -67,6 +67,11 @@ void CGlobeView::SetViewSettings(BOOL UpdateSearchResultPending)
 		if (!UpdateSearchResultPending)
 			Invalidate();
 	}
+
+	// Settings
+	m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_GlobalViewSettings->GlobeLatitude/1000.0f;
+	m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_GlobalViewSettings->GlobeLongitude/1000.0f;
+	m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_GlobalViewSettings->GlobeZoom;
 }
 
 void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
@@ -883,9 +888,9 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Settings
-	m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = m_GlobalViewSettings.GlobeLatitude/1000.0f;
-	m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = m_GlobalViewSettings.GlobeLongitude/1000.0f;
-	m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = m_GlobalViewSettings.GlobeZoom;
+//	m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = m_GlobalViewSettings.GlobeLatitude/1000.0f;
+//	m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = m_GlobalViewSettings.GlobeLongitude/1000.0f;
+//	m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = m_GlobalViewSettings.GlobeZoom;
 
 	// OpenGL
 	if (theRenderer.CreateRenderContext(this, m_RenderContext))

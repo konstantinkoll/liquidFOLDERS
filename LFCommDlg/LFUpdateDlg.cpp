@@ -7,8 +7,13 @@
 #include <wininet.h>
 
 
-// Use a GUID to uniquely identify the tray icon: {7091D760-A474-4c14-86B0-2BBB1B842092}
+#ifdef _M_X64
+// Use a GUID to uniquely identify the tray icon: {7091D760-A474-4C14-86B0-2BBB1B842092}
 static const GUID TrayIcon = { 0x7091D760, 0xA474, 0x4C14, { 0x86, 0xB0, 0x2B, 0xBB, 0x1B, 0x84, 0x20, 0x92 } };
+#else
+// Use a GUID to uniquely identify the tray icon: {DE0AE82B-1380-488C-9C43-662B44311FD9}
+static const GUID TrayIcon = { 0xDE0AE82B, 0x1380, 0x488C, { 0x9C, 0x43, 0x66, 0x2B, 0x44, 0x31, 0x1F, 0xD9 } };
+#endif
 
 
 // LFUpdateDlg
