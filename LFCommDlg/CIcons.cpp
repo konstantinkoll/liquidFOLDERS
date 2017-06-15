@@ -196,7 +196,7 @@ void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot, BOOL Disabled, BO
 		{
 			hOldBitmap = (HBITMAP)dcMem.SelectObject(hBitmapShadow);
 			dc.AlphaBlend(x, y-1, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BF);
-			dcMem.SelectObject(Disabled ? hBitmapDisabled : Hot ? hBitmapHot : hBitmapNormal);
+			dcMem.SelectObject(Hot ? hBitmapHot : Disabled ? hBitmapDisabled : hBitmapNormal);
 		}
 		else
 		{
@@ -397,10 +397,19 @@ void CIcons::CreateIconsDisabled()
 
 			for (LONG Count=0; Count<Length; Count++)
 			{
-				const BYTE Value = (Ptr->rgbBlue+4*Ptr->rgbRed+5*Ptr->rgbGreen)/30;
+				const UINT Value = Ptr->rgbBlue+4*Ptr->rgbRed+5*Ptr->rgbGreen;
 
-				Ptr->rgbBlue = Ptr->rgbGreen = Ptr->rgbRed = Value;
-				Ptr->rgbReserved /= 3;
+				if (m_UseDarkBackgroundGamma)
+				{
+					Ptr->rgbBlue = (BYTE)(Value*0x99/2550);
+					Ptr->rgbGreen = (BYTE)(Value*0x89/2550);
+					Ptr->rgbRed = (BYTE)(Value*0x81/2550);
+				}
+				else
+				{
+					Ptr->rgbBlue = Ptr->rgbGreen = Ptr->rgbRed = (BYTE)(Value/30);
+					Ptr->rgbReserved /= 3;
+				}
 
 				Ptr++;
 			}

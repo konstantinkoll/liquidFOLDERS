@@ -28,16 +28,16 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
-	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
+	virtual void GetLayoutRect(LPRECT lpRect);
 	virtual void PostNcDestroy();
 
 	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), const CSize& Size=CSize(0, 0), BOOL ShowCaption=FALSE);
 	void SetSidebar(CBackstageSidebar* pSidebarWnd);
 	void GetCaptionButtonMargins(LPSIZE lpSize) const;
-	void HideSidebar();
 
 protected:
 	virtual INT GetCaptionHeight(BOOL IncludeBottomMargin=TRUE) const;
+	virtual BOOL HasDocumentSheet() const;
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 	virtual void PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout);
 	virtual void PaintBackground(CPaintDC& pDC, CRect rect);
@@ -73,18 +73,13 @@ protected:
 	afx_msg LRESULT OnSetProgress(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
-
-	afx_msg void OnBackstageToggleSidebar();
-	afx_msg void OnUpdateBackstageCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 	CString m_PlacementPrefix;
 	HACCEL hAccelerator;
 	CBackstageSidebar* m_pSidebarWnd;
 	BOOL m_WantsBitmap;
-	BOOL m_ShowSidebar;
-	BOOL m_SidebarAlwaysVisible;
-	BOOL m_ForceSidebarAlwaysVisible;
+	INT m_SidebarWidth;
 	BOOL m_ShowCaption;
 	BOOL m_ShowExpireCaption;
 	INT m_BottomDivider;

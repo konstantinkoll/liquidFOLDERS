@@ -248,11 +248,11 @@ void CHeaderArea::OnPaint()
 		{
 			CRect rectFill(rect);
 			rectFill.bottom--;
-			dc.FillSolidRect(rectFill, GetSysColor(COLOR_WINDOW));
+			dc.FillSolidRect(rectFill, GetSysColor(m_Shadow ? COLOR_3DFACE : COLOR_WINDOW));
 
 			rectFill.top = rectFill.bottom;
 			rectFill.bottom = rect.bottom;
-			dc.FillSolidRect(rectFill, GetSysColor(COLOR_3DFACE));
+			dc.FillSolidRect(rectFill, GetSysColor(m_Shadow ? COLOR_3DSHADOW : COLOR_3DFACE));
 		}
 
 		// Button captions

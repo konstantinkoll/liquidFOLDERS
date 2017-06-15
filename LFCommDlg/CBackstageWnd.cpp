@@ -28,9 +28,8 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 
 	hAccelerator = NULL;
 	m_pSidebarWnd = NULL;
-	m_ShowExpireCaption = m_ShowSidebar = m_SidebarAlwaysVisible = FALSE;
-	m_ForceSidebarAlwaysVisible = IsDialog;
-	m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
+	m_ShowExpireCaption = FALSE;
+	m_SidebarWidth = m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
 	hBackgroundBrush = NULL;
 	m_pTaskbarList3 = NULL;
 }
@@ -241,7 +240,12 @@ INT CBackstageWnd::GetCaptionHeight(BOOL IncludeBottomMargin) const
 	return max((m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0, Size.cy);
 }
 
-BOOL CBackstageWnd::GetLayoutRect(LPRECT lpRect) const
+BOOL CBackstageWnd::HasDocumentSheet() const
+{
+	return TRUE;
+}
+
+void CBackstageWnd::GetLayoutRect(LPRECT lpRect)
 {
 	ASSERT(lpRect);
 
@@ -249,15 +253,7 @@ BOOL CBackstageWnd::GetLayoutRect(LPRECT lpRect) const
 	lpRect->top = GetCaptionHeight();
 
 	if (m_pSidebarWnd)
-		if (m_ShowSidebar || m_SidebarAlwaysVisible)
-		{
-			lpRect->left += m_pSidebarWnd->GetPreferredWidth();
-
-			if (!m_SidebarAlwaysVisible)
-				lpRect->right += m_pSidebarWnd->GetPreferredWidth();
-		}
-
-	return TRUE;
+		lpRect->left += (m_SidebarWidth=m_pSidebarWnd->GetPreferredWidth(m_IsDialog ? -1 : HasDocumentSheet() ? lpRect->right/5 : lpRect->right));
 }
 
 void CBackstageWnd::AdjustLayout(const CRect& /*rectLayout*/, UINT /*nFlags*/)
@@ -271,28 +267,12 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 
 	// Sidebar
 	CRect rectLayout;
+	GetLayoutRect(rectLayout);
 
 	if (m_pSidebarWnd)
 	{
-		if ((m_SidebarAlwaysVisible=(m_ForceSidebarAlwaysVisible || (m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5)))==TRUE)
-			m_ShowSidebar = FALSE;
-
-		const BOOL HasDocumentSheet = GetLayoutRect(rectLayout);
-		m_ShowSidebar |= !HasDocumentSheet;
-		m_pSidebarWnd->SetShadow(HasDocumentSheet);
-
-		if (m_ShowSidebar || m_SidebarAlwaysVisible)
-		{
-			m_pSidebarWnd->SetWindowPos(NULL, 0, rectLayout.top, m_pSidebarWnd->GetPreferredWidth(), rectLayout.bottom-rectLayout.top, nFlags | SWP_SHOWWINDOW);
-		}
-		else
-		{
-			m_pSidebarWnd->ShowWindow(SW_HIDE);
-		}
-	}
-	else
-	{
-		GetLayoutRect(rectLayout);
+		m_pSidebarWnd->SetShadow(HasDocumentSheet());
+		m_pSidebarWnd->SetWindowPos(NULL, 0, rectLayout.top, m_SidebarWidth, rectLayout.bottom-rectLayout.top, nFlags | SWP_SHOWWINDOW);
 	}
 
 	// Widgets
@@ -352,15 +332,9 @@ void CBackstageWnd::UpdateBackground()
 				// Prepare textures
 				PrepareBitmaps();
 
-				// Layout width
-				INT LayoutWidth = 0;
-
-				if (m_ShowSidebar || m_SidebarAlwaysVisible)
-					LayoutWidth = m_pSidebarWnd->GetPreferredWidth();
-
+				// Layout
 				CRect rectLayout;
-				if (GetLayoutRect(rectLayout))
-					LayoutWidth = m_BackBufferL;
+				GetLayoutRect(rectLayout);
 
 				// Background
 				FillRect(dc, CRect(0, 0, m_BackBufferL, min(m_BackBufferH, BACKGROUNDTOP)), hBackgroundTop);
@@ -379,6 +353,7 @@ void CBackstageWnd::UpdateBackground()
 				}
 
 				// Top border
+				const INT LayoutWidth = HasDocumentSheet() ? m_BackBufferL : m_SidebarWidth;
 				if (LayoutWidth>0)
 				{
 					LinearGradientBrush brush(Point(0, rectLayout.top-3), Point(0, rectLayout.top), Color(0x00000000), Color(0x60000000));
@@ -603,12 +578,7 @@ void CBackstageWnd::UpdateRegion(INT cx, INT cy)
 {
 	if (IsZoomed() || !IsCtrlThemed())
 	{
-		if (m_RegionWidth || m_RegionHeight)
-		{
-			SetWindowRgn(NULL, TRUE);
-
-			m_RegionWidth = m_RegionHeight = 0;
-		}
+		SetWindowRgn(CreateRectRgn(0, 0, cx, cy), TRUE);
 	}
 	else
 	{
@@ -635,12 +605,6 @@ void CBackstageWnd::PostNcDestroy()
 {
 	if (!m_IsDialog)
 		delete this;
-}
-
-void CBackstageWnd::HideSidebar()
-{
-	if (m_pSidebarWnd && m_ShowSidebar && !m_SidebarAlwaysVisible)
-		OnBackstageToggleSidebar();
 }
 
 void CBackstageWnd::PrepareBitmaps()
@@ -726,9 +690,6 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_SetProgressMsg, OnSetProgress)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_WakeupMsg, OnWakeup)
 	ON_WM_COPYDATA()
-
-	ON_COMMAND(IDM_BACKSTAGE_TOGGLESIDEBAR, OnBackstageToggleSidebar)
-	ON_UPDATE_COMMAND_UI(IDM_BACKSTAGE_TOGGLESIDEBAR, OnUpdateBackstageCommands)
 END_MESSAGE_MAP()
 
 INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -889,7 +850,9 @@ LRESULT CBackstageWnd::OnNcHitTest(CPoint point)
 			ScreenToClient(&point);
 
 			CRect rectLayout;
-			if (!GetLayoutRect(rectLayout) || (point.x<rectLayout.left) || (point.y<rectLayout.top))
+			GetLayoutRect(rectLayout);
+
+			if (!HasDocumentSheet() || (point.x<rectLayout.left) || (point.y<rectLayout.top))
 				HitTest = HTCAPTION;
 		}
 	}
@@ -1107,7 +1070,9 @@ void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	// Do not show context menu on document sheet
 	CRect rectLayout;
-	if (GetLayoutRect(rectLayout))
+	GetLayoutRect(rectLayout);
+
+	if (HasDocumentSheet())
 		if ((point.x>=rectLayout.left) && (point.y>=rectLayout.top))
 			return;
 
@@ -1220,27 +1185,4 @@ BOOL CBackstageWnd::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 	LFGetApp()->OpenCommandLine(pCDS->Command[0] ? pCDS->Command : NULL);
 
 	return TRUE;
-}
-
-
-// Backstage commands
-
-void CBackstageWnd::OnBackstageToggleSidebar()
-{
-	ASSERT(m_pSidebarWnd);
-	ASSERT(!m_SidebarAlwaysVisible);
-
-	if (m_ShowSidebar)
-		SetFocus();
-
-	m_ShowSidebar = !m_ShowSidebar;
-	AdjustLayout();
-
-	if (m_ShowSidebar)
-		m_pSidebarWnd->SetFocus();
-}
-
-void CBackstageWnd::OnUpdateBackstageCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(m_pSidebarWnd && !m_SidebarAlwaysVisible);
 }

@@ -56,7 +56,7 @@ public:
 	void AddCaption(UINT ResID);
 	void ResetCounts();
 	void SetCount(UINT CmdID, UINT Count);
-	INT GetPreferredWidth() const;
+	INT GetPreferredWidth(INT MaxWidth=-1) const;
 	INT GetMinHeight() const;
 	void SetSelection(UINT CmdID=0);
 	static CString FormatCount(UINT Count);
@@ -89,7 +89,7 @@ protected:
 	CIcons* p_TooltipIcons;
 	INT m_IconSize;
 	LFDynArray<SidebarItem, 8, 8> m_Items;
-	INT m_Width;
+	INT m_PreferredWidth;
 	INT m_SelectedItem;
 	INT m_HotItem;
 	INT m_PressedItem;
@@ -99,11 +99,6 @@ protected:
 	BOOL m_ShowCounts;
 	BOOL m_ShowShadow;
 };
-
-inline INT CBackstageSidebar::GetPreferredWidth() const
-{
-	return m_Width;
-}
 
 inline void CBackstageSidebar::SetShadow(BOOL ShowShadow)
 {

@@ -173,21 +173,19 @@ INT CMainWnd::GetCaptionHeight(BOOL IncludeBottomMargin) const
 	return m_IsClipboard ? CBackstageWnd::GetCaptionHeight(IncludeBottomMargin) : (m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0;
 }
 
-BOOL CMainWnd::GetLayoutRect(LPRECT lpRect) const
+void CMainWnd::GetLayoutRect(LPRECT lpRect)
 {
 	CBackstageWnd::GetLayoutRect(lpRect);
 
 	if (!m_IsClipboard)
 	{
-		INT BarHeight = 2*BACKSTAGEBORDER+CBackstageBar::GetPreferredHeight();
+		const INT BarHeight = 2*BACKSTAGEBORDER+CBackstageBar::GetPreferredHeight();
 
 		if (BarHeight>lpRect->top)
 			lpRect->top = BarHeight;
 
 		lpRect->top += GetCaptionHeight(FALSE);
 	}
-
-	return TRUE;
 }
 
 void CMainWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
@@ -248,12 +246,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPe
 
 	// Navigate
 	if (NavMode<NAVMODE_RELOAD)
-	{
-		// Slide the filter pane away
-		HideSidebar();
-
 		theApp.PlayNavigateSound();
-	}
 
 	if (m_pActiveFilter)
 		if (NavMode==NAVMODE_NORMAL)
@@ -669,9 +662,6 @@ void CMainWnd::OnSwitchContext(UINT nID)
 
 	NavigateTo(pFilter, m_pBreadcrumbBack ? NAVMODE_CONTEXT : NAVMODE_NORMAL);
 
-	// Slide the filter pane away
-	HideSidebar();
-
 	SetFocus();
 }
 
@@ -694,8 +684,6 @@ void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::OnFiltersCreateNew()
 {
-	HideSidebar();
-
 	LFEditFilterDlg dlg(this, m_pActiveFilter ? m_pActiveFilter->StoreID : NULL);
 	if (dlg.DoModal()==IDOK)
 		OnNavigateReload();

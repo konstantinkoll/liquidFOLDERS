@@ -35,7 +35,7 @@ CBackstageSidebar::CBackstageSidebar()
 	: CFrontstageWnd()
 {
 	p_ButtonIcons = p_TooltipIcons = NULL;
-	m_Width = max(BACKSTAGERADIUS, SHADOW);
+	m_PreferredWidth = max(BACKSTAGERADIUS, SHADOW);
 	m_CountWidth = m_IconSize = 0;
 	m_SelectedItem = m_HotItem = m_PressedItem = -1;
 	m_Hover = m_Keyboard = m_ShowCounts = FALSE;
@@ -151,7 +151,7 @@ void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR
 		}
 	}
 
-	m_Width = max(m_Width, Size.cx);
+	m_PreferredWidth = max(m_PreferredWidth, Size.cx);
 	Item.Height = Size.cy;
 
 	m_Items.AddItem(Item);
@@ -216,8 +216,15 @@ void CBackstageSidebar::SetCount(UINT CmdID, UINT Count)
 		}
 }
 
+INT CBackstageSidebar::GetPreferredWidth(INT MaxWidth) const
+{
+	return (!m_IconSize || (MaxWidth<0) || (m_PreferredWidth<=MaxWidth)) ? m_PreferredWidth : BORDERLEFT+m_IconSize+2*BORDER+SHADOW/2;
+}
+
 INT CBackstageSidebar::GetMinHeight() const
 {
+	ASSERT(m_Items.m_ItemCount);
+
 	INT Height = m_Items[m_Items.m_ItemCount-1].Rect.bottom;
 
 	if (IsCtrlThemed())
@@ -383,6 +390,8 @@ void CBackstageSidebar::OnPaint()
 	g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 	// Items
+	const BOOL Small = (rect.right<m_PreferredWidth);
+
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		RECT rectIntersect;
@@ -470,13 +479,13 @@ void CBackstageSidebar::OnPaint()
 				if (m_IconSize)
 				{
 					if (m_Items[a].IconID!=-1)
-						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items[a].IconID, Themed && Hot, FALSE, Themed && !Highlight);
+						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items[a].IconID, Themed && Hot, !Enabled, Themed && !Highlight);
 
 					rectItem.left += m_IconSize+BORDER;
 				}
 
 				// Count
-				if (m_ShowCounts && (m_Items[a].Count))
+				if (m_ShowCounts && !Small && m_Items[a].Count)
 				{
 					CRect rectCount(rectItem.right-m_CountWidth+BORDER/2, rectItem.top-2, rectItem.right-BORDER/2-SHADOW/2, rectItem.bottom);
 
@@ -549,7 +558,7 @@ void CBackstageSidebar::OnPaint()
 			}
 
 			// Text
-			if (m_Items[a].Caption[0])
+			if (!Small && m_Items[a].Caption[0])
 			{
 				CFont* pOldFont = dc.SelectObject(m_Items[a].Selectable ? &LFGetApp()->m_LargeFont : &LFGetApp()->m_SmallBoldFont);
 

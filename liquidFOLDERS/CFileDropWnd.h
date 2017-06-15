@@ -16,7 +16,7 @@ public:
 	CFileDropWnd();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
+	virtual BOOL HasDocumentSheet() const;
 	virtual void PaintBackground(CPaintDC& pDC, CRect rect);
 
 	BOOL Create(const LPCSTR pStoreID);

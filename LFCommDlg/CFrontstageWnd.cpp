@@ -66,7 +66,7 @@ void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 		}
 		else
 		{
-			dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+			dc.Draw3dRect(lpRect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 		}
 	}
 

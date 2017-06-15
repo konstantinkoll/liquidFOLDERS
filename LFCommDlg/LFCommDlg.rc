@@ -989,8 +989,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_TOGGLESIDEBAR 
-                            "Blendet die Seitenleiste ein oder aus.\nSeitenleiste"
     IDM_BACKSTAGE_PURCHASE  "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
     IDM_BACKSTAGE_ENTERLICENSEKEY 
                             "Öffnet ein Fenster zum Freischalten von liquidFOLDERS.\nLizenzschlüssel eingeben"
@@ -1833,8 +1831,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_TOGGLESIDEBAR 
-                            "Abre y cierra la a barra lateral.\nBarra lateral"
     IDM_BACKSTAGE_PURCHASE  "Abre su navegador estándar visualizando una página a través de la cual usted puede adquirir la licencia.\nAdquirir licencia"
     IDM_BACKSTAGE_ENTERLICENSEKEY 
                             "Abre una ventana para ver e ingresar su licencia.\nDictar licencia"
@@ -2676,8 +2672,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_TOGGLESIDEBAR 
-                            "Insère ou masque le panneau latéral.\nPanneau latéral"
     IDM_BACKSTAGE_PURCHASE  "Ouvre le standard-browser avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
     IDM_BACKSTAGE_ENTERLICENSEKEY 
                             "Ouvre une fenêtre pour la déverrouillage de liquidFOLDERS.\nDonner clé de licence"
@@ -3562,7 +3556,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_TOGGLESIDEBAR "Toggles the sidebar.\nSidebar"
     IDM_BACKSTAGE_PURCHASE  "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
     IDM_BACKSTAGE_ENTERLICENSEKEY 
                             "Opens a window to enter your license key.\nEnter license key"

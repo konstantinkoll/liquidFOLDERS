@@ -62,10 +62,8 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	return CBackstageWnd::PreTranslateMessage(pMsg);
 }
 
-BOOL CFileDropWnd::GetLayoutRect(LPRECT lpRect) const
+BOOL CFileDropWnd::HasDocumentSheet() const
 {
-	CBackstageWnd::GetLayoutRect(lpRect);
-
 	return FALSE;
 }
 
