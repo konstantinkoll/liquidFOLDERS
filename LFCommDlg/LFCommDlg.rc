@@ -408,20 +408,21 @@ BEGIN
     CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,99,100,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 628, 228
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Store hinzufügen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Erstellt einen neuen Store für Ihre Dateien.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
-    PUSHBUTTON      "Fügt ein lokales Dropbox-Verzeichnis als Store hinzu.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt das lokale iCloud-Verzeichnis als Store hinzu.",IDC_ADDSTORE_ICLOUD,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt ein lokales OneDrive-Verzeichnis als Store hinzu.",IDC_ADDSTORE_ONEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,209,562,8
-    DEFPUSHBUTTON   "Fertig",IDOK,571,206,50,14,WS_GROUP
+    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
+    PUSHBUTTON      "Fügt das lokale Box-Verzeichnis als Store hinzu.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt ein lokales Dropbox-Verzeichnis als Store hinzu.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt das lokale iCloud-Verzeichnis als Store hinzu.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt ein lokales OneDrive-Verzeichnis als Store hinzu.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    LTEXT           "",IDC_STATUS,7,290,562,8
+    DEFPUSHBUTTON   "Fertig",IDOK,571,287,50,14,WS_GROUP
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -514,6 +515,17 @@ BEGIN
     CONTROL         "Offline &durchsuchbar machen",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
     DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,233,204,50,14,WS_GROUP
+END
+
+IDD_BOX DIALOGEX 0, 0, 252, 96
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Box"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Verzeichnis",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Hinzufügen",IDOK,195,34,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,195,75,50,14,WS_GROUP
 END
 
 IDD_DROPBOX DIALOGEX 0, 0, 252, 157
@@ -696,7 +708,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 220
+        BOTTOMMARGIN, 301
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -745,6 +757,14 @@ BEGIN
         RIGHTMARGIN, 283
         TOPMARGIN, 7
         BOTTOMMARGIN, 218
+    END
+
+    IDD_BOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 89
     END
 
     IDD_DROPBOX, DIALOG
@@ -952,7 +972,6 @@ BEGIN
     IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
     IDS_ADDSTORE_ICLOUD     "Indexiert das bestehende Verzeichnis Ihrer lokalen iCloud-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
     IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dadurch nicht verändert."
-    IDS_ADDSTORE_WEBSERVICE "Verbindet liquidFOLDERS mit Ihrem Benutzerkonto."
     IDS_SUBSCRIPTION        "Abo"
 END
 
@@ -1241,20 +1260,21 @@ BEGIN
     CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,91,110,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 628, 228
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Adjuntar store"
+CAPTION "Adjuntar storen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Crea un nuevo store para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Adjunta una carpeta existente como store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
-    PUSHBUTTON      "Adjunta una carpeta local de Dropbox como store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta la carpeta local de iCloud como store.",IDC_ADDSTORE_ICLOUD,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta una carpeta local de OneDrive como store.",IDC_ADDSTORE_ONEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,209,562,8
-    DEFPUSHBUTTON   "Listo",IDOK,571,206,50,14,WS_GROUP
+    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
+    PUSHBUTTON      "Adjunta la carpeta local de Box como store.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta una carpeta local de Dropbox como store.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta la carpeta local de iCloud como store.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta una carpeta local de OneDrive como store.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    LTEXT           "",IDC_STATUS,7,290,562,8
+    DEFPUSHBUTTON   "Listo",IDOK,571,287,50,14,WS_GROUP
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -1356,6 +1376,17 @@ CAPTION "Mantenimiento programado"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,243,278,50,14,WS_GROUP
+END
+
+IDD_BOX DIALOGEX 0, 0, 252, 96
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Box"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Carpeta",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Adjuntar",IDOK,195,34,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,195,75,50,14,WS_GROUP
 END
 
 IDD_DROPBOX DIALOGEX 0, 0, 252, 157
@@ -1530,7 +1561,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 220
+        BOTTOMMARGIN, 301
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -1587,6 +1618,14 @@ BEGIN
         RIGHTMARGIN, 293
         TOPMARGIN, 7
         BOTTOMMARGIN, 292
+    END
+
+    IDD_BOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 89
     END
 
     IDD_DROPBOX, DIALOG
@@ -1794,7 +1833,6 @@ BEGIN
     IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no serán modificados."
     IDS_ADDSTORE_ICLOUD     "Índices la carpeta existente de su aplicación local de iCloud.\nSus archivos no serán modificados."
     IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no serán modificados."
-    IDS_ADDSTORE_WEBSERVICE "Se conecta liquidFOLDERS con su cuenta de usuario."
     IDS_SUBSCRIPTION        "Suscripción"
 END
 
@@ -2104,20 +2142,21 @@ BEGIN
     CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,99,100,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 628, 228
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ajouter store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Crée un nouveau store pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Ajoute un dossier existant comme store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
-    PUSHBUTTON      "Ajoute un dossier local de Dropbox comme store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute le dossier local de iCloud comme store.",IDC_ADDSTORE_ICLOUD,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute un dossier local de OneDrive comme store.",IDC_ADDSTORE_ONEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,209,562,8
-    DEFPUSHBUTTON   "Fini",IDOK,571,206,50,14,WS_GROUP
+    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
+    PUSHBUTTON      "Ajoute le dossier local de Box comme store.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute un dossier local de Dropbox comme store.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute le dossier local de iCloud comme store.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute un dossier local de OneDrive comme store.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    LTEXT           "",IDC_STATUS,7,290,562,8
+    DEFPUSHBUTTON   "Fini",IDOK,571,287,50,14,WS_GROUP
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -2197,6 +2236,17 @@ BEGIN
     CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,179,276,10
     DEFPUSHBUTTON   "OK",IDOK,175,204,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,233,204,50,14,WS_GROUP
+END
+
+IDD_BOX DIALOGEX 0, 0, 252, 96
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Box"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Dossier",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Ajouter",IDOK,195,34,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,195,75,50,14,WS_GROUP
 END
 
 IDD_DROPBOX DIALOGEX 0, 0, 252, 157
@@ -2387,7 +2437,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 220
+        BOTTOMMARGIN, 301
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -2428,6 +2478,14 @@ BEGIN
         RIGHTMARGIN, 283
         TOPMARGIN, 7
         BOTTOMMARGIN, 218
+    END
+
+    IDD_BOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 89
     END
 
     IDD_DROPBOX, DIALOG
@@ -2635,7 +2693,6 @@ BEGIN
     IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas modifiés."
     IDS_ADDSTORE_ICLOUD     "Indices le dossier existant de votre application iCloud local.\nVos fichiers ne seront pas modifiés."
     IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas modifiés."
-    IDS_ADDSTORE_WEBSERVICE "Connecte liquidFOLDERS à votre compte."
     IDS_SUBSCRIPTION        "Abonnement"
 END
 
@@ -2974,20 +3031,21 @@ BEGIN
     CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,91,120,9
 END
 
-IDD_ADDSTORE DIALOGEX 0, 0, 628, 228
+IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Creates a new store for your files.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "Adds an existing folder as store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
-    PUSHBUTTON      "Adds a local Dropbox folder as store.",IDC_ADDSTORE_DROPBOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds the local iCloud folder as store.",IDC_ADDSTORE_ICLOUD,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds a local OneDrive folder as store.",IDC_ADDSTORE_ONEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,209,562,8
-    DEFPUSHBUTTON   "Done",IDOK,571,206,50,14,WS_GROUP
+    CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
+    PUSHBUTTON      "Adds the local Box folder as store.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds a local Dropbox folder as store.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds the local iCloud folder as store.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds a local OneDrive folder as store.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    LTEXT           "",IDC_STATUS,7,290,562,8
+    DEFPUSHBUTTON   "Done",IDOK,571,287,50,14,WS_GROUP
 END
 
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 156
@@ -3089,6 +3147,17 @@ CAPTION "Scheduled maintenance"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,243,278,50,14,WS_GROUP
+END
+
+IDD_BOX DIALOGEX 0, 0, 252, 96
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Box"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Folder",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Add",IDOK,195,34,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,195,75,50,14,WS_GROUP
 END
 
 IDD_DROPBOX DIALOGEX 0, 0, 252, 157
@@ -3263,7 +3332,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 621
         TOPMARGIN, 7
-        BOTTOMMARGIN, 220
+        BOTTOMMARGIN, 301
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -3312,6 +3381,14 @@ BEGIN
         RIGHTMARGIN, 293
         TOPMARGIN, 7
         BOTTOMMARGIN, 292
+    END
+
+    IDD_BOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 245
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 89
     END
 
     IDD_DROPBOX, DIALOG
@@ -3519,7 +3596,6 @@ BEGIN
     IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox application.\nYour files will not be modified by this."
     IDS_ADDSTORE_ICLOUD     "Indexes the existing folder of your local iCloud application.\nYour files will not be modified by this."
     IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be modified by this."
-    IDS_ADDSTORE_WEBSERVICE "Links liquidFOLDERS to your account."
     IDS_SUBSCRIPTION        "Subscription"
 END
 

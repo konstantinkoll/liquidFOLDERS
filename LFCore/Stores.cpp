@@ -188,8 +188,19 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 				GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
 			}
 
-			// Dropbox
+			// Cloud storage
 			WCHAR szPath[MAX_PATH];
+
+			// Box
+			if (LFGetBoxPath(szPath))
+			{
+				wcscat_s(szPath, MAX_PATH, L"\\");
+
+				if (wcsncmp(szPath, pStoreDescriptor->DatPath, wcslen(szPath))==0)
+					pStoreDescriptor->Source = LFTypeSourceBox;
+			}
+
+			// Dropbox
 			wcscpy_s(szPath, MAX_PATH, pStoreDescriptor->DatPath);
 			wcscat_s(szPath, MAX_PATH, L".dropbox");
 

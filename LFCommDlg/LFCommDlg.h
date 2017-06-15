@@ -31,6 +31,7 @@
 #include "LFAddStoreDlg.h"
 #include "LFApplication.h"
 #include "LFAttributeListDlg.h"
+#include "LFBoxDlg.h"
 #include "LFBrowseForFolderDlg.h"
 #include "LFChooseStoreDlg.h"
 #include "LFDropboxDlg.h"

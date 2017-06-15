@@ -392,7 +392,6 @@ void CMainWnd::WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescript
 BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_GETMINMAXINFO()
 	ON_WM_SETFOCUS()
 	ON_EN_SETFOCUS(3, OnSearchSetFocus)
 	ON_WM_MEASUREITEM()
@@ -505,20 +504,6 @@ void CMainWnd::OnDestroy()
 
 	if (theApp.p_ClipboardWnd==this)
 		theApp.p_ClipboardWnd = NULL;
-}
-
-void CMainWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
-{
-	CBackstageWnd::OnGetMinMaxInfo(lpMMI);
-
-	if (IsWindow(*m_pSidebarWnd))
-	{
-		CRect rect;
-		m_pSidebarWnd->GetWindowRect(rect);
-		ScreenToClient(rect);
-
-		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, rect.top+m_pSidebarWnd->GetMinHeight()+BACKSTAGERADIUS+2+2);
-	}
 }
 
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)

@@ -479,7 +479,7 @@ void CBackstageSidebar::OnPaint()
 				if (m_IconSize)
 				{
 					if (m_Items[a].IconID!=-1)
-						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items[a].IconID, Themed && Hot, !Enabled, Themed && !Highlight);
+						p_ButtonIcons->Draw(dc, rectItem.left, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items[a].IconID, Themed && Hot, Themed && !Highlight && !Enabled, Themed && !Highlight);
 
 					rectItem.left += m_IconSize+BORDER;
 				}

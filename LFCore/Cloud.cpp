@@ -23,13 +23,13 @@ static const GUID FOLDERID_OneDriveDocuments = { 0x24D89E24, 0x2F19, 0x4534, { 0
 static const GUID FOLDERID_OneDrivePictures = { 0x339719B5, 0x8C47, 0x4894, { 0x94, 0xC2, 0xD8, 0xF7, 0x7A, 0xDD, 0x44, 0xA6 } };
 
 
-LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath)
+BOOL GetProfilePath(LPWSTR pPath, LPCWSTR pFolder)
 {
 	assert(pPath);
 
 	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, SHGFP_TYPE_CURRENT, pPath)))
 	{
-		wcscat_s(pPath, MAX_PATH, L"\\iCloudDrive");
+		wcscat_s(pPath, MAX_PATH, pFolder);
 
 		if (DirectoryExists(pPath))
 			return TRUE;
@@ -38,6 +38,20 @@ LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath)
 	*pPath = L'\0';
 
 	return FALSE;
+}
+
+LFCORE_API BOOL LFGetBoxPath(LPWSTR pPath)
+{
+	assert(pPath);
+
+	return GetProfilePath(pPath, L"\\Box Sync");
+}
+
+LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath)
+{
+	assert(pPath);
+
+	return GetProfilePath(pPath, L"\\iCloudDrive");
 }
 
 HRESULT GetKnownFolderPath(REFKNOWNFOLDERID rfid, LPWSTR lpPath)

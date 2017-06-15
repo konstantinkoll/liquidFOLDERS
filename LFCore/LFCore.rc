@@ -36,6 +36,7 @@ IDI_STR_NETHOOD         ICON                    "res\\STR_Nethood.ico"
 IDI_STR_DROPBOX         ICON                    "res\\STR_Dropbox.ico"
 IDI_STR_ICLOUD          ICON                    "res\\STR_iCloud.ico"
 IDI_STR_ONEDRIVE        ICON                    "res\\STR_OneDrive.ico"
+IDI_STR_BOX             ICON                    "res\\STR_Box.ico"
 IDI_STR_FACEBOOK        ICON                    "res\\STR_Facebook.ico"
 IDI_STR_FLICKR          ICON                    "res\\STR_Flickr.ico"
 IDI_STR_INSTAGRAM       ICON                    "res\\STR_Instagram.ico"
@@ -200,15 +201,15 @@ BEGIN
     IDS_MEDIACOUNT_PLURAL   "%u Titel (%s)"
     IDS_MINUTE              "%I64u Minute"
     IDS_MINUTES             "%I64u Minuten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_HOUR                "%I64u Stunde"
     IDS_HOURS               "%I64u Stunden"
     IDS_ERRORCAPTION        "Fehler"
     IDS_RATING1             "Schlecht"
     IDS_RATING2             "Ausreichend"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_RATING3             "Gut"
     IDS_RATING4             "Ausgezeichnet"
     IDS_RATING5             "Exzellent"
@@ -220,15 +221,15 @@ BEGIN
     IDS_SIZE1               "Winzig (< 32 KB)"
     IDS_SIZE2               "Klein (< 128 KB)"
     IDS_SIZE3               "Mittel (< 1 MB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SIZE4               "Groß (< 16 MB)"
     IDS_SIZE5               "Sehr groß (< 128 MB)"
     IDS_SIZE6               "Riesig (128 MB und größer)"
     IDS_DURATION1           "Kürzer als 5 Sekunden"
     IDS_DURATION2           "5-10 Sekunden"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION3           "10-30 Sekunden"
     IDS_DURATION4           "30-60 Sekunden"
     IDS_DURATION5           "1-2 Minuten"
@@ -240,6 +241,10 @@ BEGIN
     IDS_DURATION11          "45-60 Minuten"
     IDS_DURATION12          "60-90 Minuten"
     IDS_DURATION13          "90-120 Minuten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION14          "Länger als 2 Stunden"
 END
 
@@ -372,6 +377,7 @@ BEGIN
     IDS_SRC_1394            "1394-Laufwerk"
     IDS_SRC_USB             "USB-Laufwerk"
     IDS_SRC_NETHOOD         "Netzwerklaufwerk"
+    IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
@@ -381,6 +387,10 @@ BEGIN
     IDS_SRC_PINTEREST       "Pinterest"
     IDS_SRC_SOUNDCLOUD      "SoundCloud"
     IDS_SRC_TWITTER         "Twitter"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -392,16 +402,17 @@ BEGIN
     IDS_QSRC_1394           "Auf lokalem 1394-Laufwerk"
     IDS_QSRC_USB            "Auf lokalem USB-Laufwerk"
     IDS_QSRC_NETHOOD        "Auf Netzwerklaufwerk"
+    IDS_QSRC_BOX            "Auf Box"
     IDS_QSRC_DROPBOX        "Auf Dropbox"
     IDS_QSRC_ICLOUD         "Auf iCloud"
     IDS_QSRC_ONEDRIVE       "Auf OneDrive"
     IDS_QSRC_FACEBOOK       "Auf Facebook"
     IDS_QSRC_FLICKR         "Auf Flickr"
-    IDS_QSRC_INSTAGRAM      "Auf Instagram"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_INSTAGRAM      "Auf Instagram"
     IDS_QSRC_PINTEREST      "Auf Pinterest"
     IDS_QSRC_SOUNDCLOUD     "Auf SoundCloud"
     IDS_QSRC_TWITTER        "Auf Twitter"
@@ -498,15 +509,15 @@ BEGIN
     IDS_MEDIACOUNT_PLURAL   "%u piezas (%s)"
     IDS_MINUTE              "%I64u minuto"
     IDS_MINUTES             "%I64u minutos"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_HOUR                "%I64u hora"
     IDS_HOURS               "%I64u horas"
     IDS_ERRORCAPTION        "Error"
     IDS_RATING1             "Pobre"
     IDS_RATING2             "Aceptable"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_RATING3             "Bueno"
     IDS_RATING4             "Sensacional"
     IDS_RATING5             "Formidable"
@@ -518,15 +529,15 @@ BEGIN
     IDS_SIZE1               "Minúsculo (< 32 KB)"
     IDS_SIZE2               "Chico (< 128 KB)"
     IDS_SIZE3               "Mediano (< 1 MB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SIZE4               "Grande (< 16 MB)"
     IDS_SIZE5               "Extra grande (< 128 MB)"
     IDS_SIZE6               "Enorme (128 MB y arriba de)"
     IDS_DURATION1           "Menos de 5 segundos"
     IDS_DURATION2           "5-10 segundos"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION3           "10-30 segundos"
     IDS_DURATION4           "30-60 segundos"
     IDS_DURATION5           "1-2 minutos"
@@ -538,6 +549,10 @@ BEGIN
     IDS_DURATION11          "45-60 minutos"
     IDS_DURATION12          "60-90 minutos"
     IDS_DURATION13          "90-120 minutos"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION14          "Más de 2 horas"
 END
 
@@ -670,6 +685,7 @@ BEGIN
     IDS_SRC_1394            "Unidad de 1394"
     IDS_SRC_USB             "Unidad de USB"
     IDS_SRC_NETHOOD         "Unidad de red"
+    IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
@@ -679,6 +695,10 @@ BEGIN
     IDS_SRC_PINTEREST       "Pinterest"
     IDS_SRC_SOUNDCLOUD      "SoundCloud"
     IDS_SRC_TWITTER         "Twitter"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -690,16 +710,17 @@ BEGIN
     IDS_QSRC_1394           "En unidad local de 1394"
     IDS_QSRC_USB            "En unidad local de USB"
     IDS_QSRC_NETHOOD        "En unidad de red"
+    IDS_QSRC_BOX            "En Box"
     IDS_QSRC_DROPBOX        "En Dropbox"
     IDS_QSRC_ICLOUD         "En iCloud"
     IDS_QSRC_ONEDRIVE       "En OneDrive"
     IDS_QSRC_FACEBOOK       "En Facebook"
     IDS_QSRC_FLICKR         "En Flickr"
-    IDS_QSRC_INSTAGRAM      "En Instagram"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_INSTAGRAM      "En Instagram"
     IDS_QSRC_PINTEREST      "En Pinterest"
     IDS_QSRC_SOUNDCLOUD     "En SoundCloud"
     IDS_QSRC_TWITTER        "En Twitter"
@@ -796,15 +817,15 @@ BEGIN
     IDS_MEDIACOUNT_PLURAL   "%u morceaux (%s)"
     IDS_MINUTE              "%I64u minute"
     IDS_MINUTES             "%I64u minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_HOUR                "%I64u heure"
     IDS_HOURS               "%I64u heures"
     IDS_ERRORCAPTION        "Erreur"
     IDS_RATING1             "Mauvais"
     IDS_RATING2             "Suffisant"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_RATING3             "Bien"
     IDS_RATING4             "De manière distinguée"
     IDS_RATING5             "Excellent"
@@ -816,15 +837,15 @@ BEGIN
     IDS_SIZE1               "Minuscule (< 32 KB)"
     IDS_SIZE2               "Petit (< 128 KB)"
     IDS_SIZE3               "Moyen (< 1 MB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SIZE4               "Grand (< 16 MB)"
     IDS_SIZE5               "Énorme (< 128 MB)"
     IDS_SIZE6               "Immense (et supérieur à 128 MB)"
     IDS_DURATION1           "Moins de 5 secondes"
     IDS_DURATION2           "5-10 secondes"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION3           "10-30 secondes"
     IDS_DURATION4           "30-60 secondes"
     IDS_DURATION5           "1-2 minutes"
@@ -836,6 +857,10 @@ BEGIN
     IDS_DURATION11          "45-60 minutes"
     IDS_DURATION12          "60-90 minutes"
     IDS_DURATION13          "90-120 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION14          "Plus de 2 heures"
 END
 
@@ -969,6 +994,7 @@ BEGIN
     IDS_SRC_1394            "Lecteur 1394"
     IDS_SRC_USB             "Lecteur USB"
     IDS_SRC_NETHOOD         "Lecteur réseau"
+    IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
@@ -978,6 +1004,10 @@ BEGIN
     IDS_SRC_PINTEREST       "Pinterest"
     IDS_SRC_SOUNDCLOUD      "SoundCloud"
     IDS_SRC_TWITTER         "Twitter"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -989,16 +1019,17 @@ BEGIN
     IDS_QSRC_1394           "Sur lecteur local de 1394"
     IDS_QSRC_USB            "Sur lecteur local de USB"
     IDS_QSRC_NETHOOD        "Sur lecteur réseau"
+    IDS_QSRC_BOX            "Dans Box"
     IDS_QSRC_DROPBOX        "Dans Dropbox"
     IDS_QSRC_ICLOUD         "Dans iCloud"
     IDS_QSRC_ONEDRIVE       "Dans OneDrive"
     IDS_QSRC_FACEBOOK       "Dans Facebook"
     IDS_QSRC_FLICKR         "Dans Flickr"
-    IDS_QSRC_INSTAGRAM      "Dans Instagram"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_INSTAGRAM      "Dans Instagram"
     IDS_QSRC_PINTEREST      "Dans Pinterest"
     IDS_QSRC_SOUNDCLOUD     "Dans SoundCloud"
     IDS_QSRC_TWITTER        "Dans Twitter"
@@ -1132,15 +1163,15 @@ BEGIN
     IDS_MEDIACOUNT_PLURAL   "%u media (%s)"
     IDS_MINUTE              "%I64u minute"
     IDS_MINUTES             "%I64u minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_HOUR                "%I64u hour"
     IDS_HOURS               "%I64u hours"
     IDS_ERRORCAPTION        "Error"
     IDS_RATING1             "Poor"
     IDS_RATING2             "Fair"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_RATING3             "Good"
     IDS_RATING4             "Great"
     IDS_RATING5             "Awesome"
@@ -1152,15 +1183,15 @@ BEGIN
     IDS_SIZE1               "Tiny (< 32 KB)"
     IDS_SIZE2               "Small (< 128 KB)"
     IDS_SIZE3               "Medium (< 1 MB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SIZE4               "Large (< 16 MB)"
     IDS_SIZE5               "Very large (< 128 MB)"
     IDS_SIZE6               "Huge (128 MB and above)"
     IDS_DURATION1           "Shorter than 5 seconds"
     IDS_DURATION2           "5-10 seconds"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION3           "10-30 seconds"
     IDS_DURATION4           "30-60 seconds"
     IDS_DURATION5           "1-2 minutes"
@@ -1172,6 +1203,10 @@ BEGIN
     IDS_DURATION11          "45-60 minutes"
     IDS_DURATION12          "60-90 minutes"
     IDS_DURATION13          "90-120 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION14          "Longer than 2 hours"
 END
 
@@ -1303,6 +1338,7 @@ BEGIN
     IDS_SRC_1394            "1394 volume"
     IDS_SRC_USB             "USB volume"
     IDS_SRC_NETHOOD         "Network volume"
+    IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
@@ -1312,6 +1348,10 @@ BEGIN
     IDS_SRC_PINTEREST       "Pinterest"
     IDS_SRC_SOUNDCLOUD      "SoundCloud"
     IDS_SRC_TWITTER         "Twitter"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -1323,16 +1363,17 @@ BEGIN
     IDS_QSRC_1394           "On local 1394 drive"
     IDS_QSRC_USB            "On local USB drive"
     IDS_QSRC_NETHOOD        "On network volume"
+    IDS_QSRC_BOX            "On Box"
     IDS_QSRC_DROPBOX        "On Dropbox"
     IDS_QSRC_ICLOUD         "On iCloud"
     IDS_QSRC_ONEDRIVE       "On OneDrive"
     IDS_QSRC_FACEBOOK       "On Facebook"
     IDS_QSRC_FLICKR         "On Flickr"
-    IDS_QSRC_INSTAGRAM      "On Instagram"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_INSTAGRAM      "On Instagram"
     IDS_QSRC_PINTEREST      "On Pinterest"
     IDS_QSRC_SOUNDCLOUD     "On SoundCloud"
     IDS_QSRC_TWITTER        "On Twitter"

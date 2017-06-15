@@ -1057,13 +1057,21 @@ void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	if (!m_IsDialog)
 		if (GetStyle() & WS_THICKFRAME)
 		{
-			lpMMI->ptMinTrackSize.x = 640;
+			lpMMI->ptMinTrackSize.x = 650+GetSystemMetrics(SM_CXVSCROLL);
 			lpMMI->ptMinTrackSize.y = 384;
 		}
 		else
 		{
 			lpMMI->ptMinTrackSize.x = lpMMI->ptMinTrackSize.y = 3*BACKSTAGERADIUS;
 		}
+
+	if (m_pSidebarWnd)
+	{
+		CRect rectLayout;
+		GetLayoutRect(rectLayout);
+
+		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, rectLayout.top+m_pSidebarWnd->GetMinHeight()+BACKSTAGERADIUS);
+	}
 }
 
 void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)

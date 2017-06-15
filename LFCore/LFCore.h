@@ -408,7 +408,11 @@ LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* p
 // Cloud
 //
 
-// Liefert den Pfad des iCloud-Drive-Ornders zurück
+// Liefert den Pfad des Box-Ordners zurück
+LFCORE_API BOOL LFGetBoxPath(LPWSTR pPath);
+
+
+// Liefert den Pfad des iCloud-Drive-Ordners zurück
 LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath);
 
 

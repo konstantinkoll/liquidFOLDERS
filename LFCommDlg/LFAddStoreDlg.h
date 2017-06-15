@@ -5,6 +5,7 @@
 #pragma once
 #include "CExplorerNotification.h"
 #include "LFDialog.h"
+#include "Box.h"
 #include "Dropbox.h"
 #include "ICloud.h"
 #include "OneDrive.h"
@@ -35,13 +36,14 @@ protected:
 
 	afx_msg void OnBtnLiquidfolders();
 	afx_msg void OnBtnWindows();
+	afx_msg void OnBtnBox();
 	afx_msg void OnBtnDropbox();
 	afx_msg void OnBtnICloud();
 	afx_msg void OnBtnOneDrive();
 	DECLARE_MESSAGE_MAP()
 
-	static const UINT m_Sources[5];
-	static HICON hSourceIcons[5];
+	static const UINT m_Sources[6];
+	static HICON hSourceIcons[6];
 	CExplorerNotification m_wndExplorerNotification;
 	INT m_IconSize;
 
@@ -49,6 +51,7 @@ private:
 	void CheckSources();
 	void AddWindowsPathAsStore(LPCWSTR Path, LPCWSTR StoreName=L"");
 
+	Box m_Box;
 	Dropbox m_Dropbox;
 	ICloud m_ICloud;
 	OneDrive m_OneDrive;

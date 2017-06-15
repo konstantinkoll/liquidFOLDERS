@@ -906,6 +906,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\STR_Box.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\STR_Dropbox.ico"
 				>
 			</File>

@@ -14,8 +14,8 @@
 #define PADDING     10
 
 const UINT LFAddStoreDlg::m_Sources[] = { LFTypeSourceInternal, LFTypeSourceWindows,
-	LFTypeSourceDropbox, LFTypeSourceICloud, LFTypeSourceOneDrive };
-HICON LFAddStoreDlg::hSourceIcons[] = { NULL, NULL, NULL, NULL, NULL };
+	LFTypeSourceBox, LFTypeSourceDropbox, LFTypeSourceICloud, LFTypeSourceOneDrive };
+HICON LFAddStoreDlg::hSourceIcons[] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ADDSTORE, pParentWnd)
@@ -41,6 +41,7 @@ void LFAddStoreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 void LFAddStoreDlg::CheckSources()
 {
+	GetDlgItem(IDC_ADDSTORE_BOX)->EnableWindow(m_Box.CheckForBox());
 	GetDlgItem(IDC_ADDSTORE_DROPBOX)->EnableWindow(m_Dropbox.CheckForDropbox());
 	GetDlgItem(IDC_ADDSTORE_ICLOUD)->EnableWindow(m_ICloud.CheckForICloud());
 	GetDlgItem(IDC_ADDSTORE_ONEDRIVE)->EnableWindow(m_OneDrive.CheckForOneDrive());
@@ -121,6 +122,7 @@ BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 
 	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
+	ON_BN_CLICKED(IDC_ADDSTORE_BOX, OnBtnBox)
 	ON_BN_CLICKED(IDC_ADDSTORE_DROPBOX, OnBtnDropbox)
 	ON_BN_CLICKED(IDC_ADDSTORE_ICLOUD, OnBtnICloud)
 	ON_BN_CLICKED(IDC_ADDSTORE_ONEDRIVE, OnBtnOneDrive)
@@ -226,6 +228,13 @@ void LFAddStoreDlg::OnBtnWindows()
 	LFBrowseForFolderDlg dlg(this, Caption, Hint);
 	if (dlg.DoModal()==IDOK)
 		AddWindowsPathAsStore(dlg.m_FolderPath);
+}
+
+void LFAddStoreDlg::OnBtnBox()
+{
+	LFBoxDlg dlg(m_Box, this);
+	if (dlg.DoModal()==IDOK)
+		AddWindowsPathAsStore(dlg.m_FolderPath, L"Box");
 }
 
 void LFAddStoreDlg::OnBtnDropbox()

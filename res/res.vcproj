@@ -216,6 +216,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Stores\STR_Box.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Stores\STR_Dropbox.ico"
 				>
 			</File>
@@ -1533,6 +1537,18 @@
 			</File>
 			<File
 				RelativePath=".\Sources\aboutme_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\Box_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\Box_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sources\Box_32.png"
 				>
 			</File>
 			<File

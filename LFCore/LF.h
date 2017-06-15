@@ -569,9 +569,10 @@ struct LFCoreAttributes
 #define LFTypeSource1394           0x00000003
 #define LFTypeSourceUSB            0x00000004
 #define LFTypeSourceNethood        0x00000005
-#define LFTypeSourceDropbox        0x00000006
-#define LFTypeSourceICloud         0x00000007
-#define LFTypeSourceOneDrive       0x00000008
+#define LFTypeSourceBox            0x00000006
+#define LFTypeSourceDropbox        0x00000007
+#define LFTypeSourceICloud         0x00000008
+#define LFTypeSourceOneDrive       0x00000009
 #define LFTypeSourceFacebook       0x0000000A
 #define LFTypeSourceFlickr         0x0000000B
 #define LFTypeSourceInstagram      0x0000000C
