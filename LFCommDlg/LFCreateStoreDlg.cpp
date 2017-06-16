@@ -39,7 +39,7 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 		CHAR cVolume = '\0';
 		if (!m_wndAutoPath.GetCheck())
 		{
-			INT Index = GetSelectedVolume();
+			const INT Index = GetSelectedVolume();
 			if (Index!=-1)
 				cVolume = m_DriveLetters[Index];
 		}
@@ -137,7 +137,7 @@ void LFCreateStoreDlg::OnUpdate()
 	{
 		m_wndExplorerList.EnableWindow(TRUE);
 
-		INT Index = GetSelectedVolume();
+		const INT Index = GetSelectedVolume();
 		if (Index!=-1)
 			Source = LFGetSourceForVolume(m_DriveLetters[Index]);
 	}
@@ -189,21 +189,21 @@ LRESULT LFCreateStoreDlg::OnVolumeChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 void LFCreateStoreDlg::OnVolumeFormat()
 {
-	INT Index = GetSelectedVolume();
+	const INT Index = GetSelectedVolume();
 	if (Index!=-1)
 		LFGetApp()->ExecuteExplorerContextMenu(m_DriveLetters[Index], "format");
 }
 
 void LFCreateStoreDlg::OnVolumeEject()
 {
-	INT Index = GetSelectedVolume();
+	const INT Index = GetSelectedVolume();
 	if (Index!=-1)
 		LFGetApp()->ExecuteExplorerContextMenu(m_DriveLetters[Index], "eject");
 }
 
 void LFCreateStoreDlg::OnVolumeProperties()
 {
-	INT Index = GetSelectedVolume();
+	const INT Index = GetSelectedVolume();
 	if (Index!=-1)
 		LFGetApp()->ExecuteExplorerContextMenu(m_DriveLetters[Index], "properties");
 }
@@ -212,7 +212,7 @@ void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = FALSE;
 
-	INT Index = GetSelectedVolume();
+	const INT Index = GetSelectedVolume();
 	if (Index!=-1)
 	{
 		switch (pCmdUI->m_nID)

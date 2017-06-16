@@ -146,14 +146,14 @@ void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ChooseDetailsDlg::OnMoveUp()
 {
-	INT Index = m_wndAttributes.GetNextItem(-1, LVIS_SELECTED);
+	const INT Index = m_wndAttributes.GetNextItem(-1, LVIS_SELECTED);
 	if (Index>0)
 		SwapItems(Index, Index-1);
 }
 
 void ChooseDetailsDlg::OnMoveDown()
 {
-	INT Index = m_wndAttributes.GetNextItem(-1, LVIS_SELECTED);
+	const INT Index = m_wndAttributes.GetNextItem(-1, LVIS_SELECTED);
 	if (Index<m_wndAttributes.GetItemCount()-1)
 		SwapItems(Index, Index+1);
 }

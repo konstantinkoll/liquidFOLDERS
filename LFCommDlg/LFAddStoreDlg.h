@@ -43,7 +43,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	static const UINT m_Sources[6];
-	static HICON hSourceIcons[6];
+	static CImageList m_SourceIcons;
 	CExplorerNotification m_wndExplorerNotification;
 	INT m_IconSize;
 

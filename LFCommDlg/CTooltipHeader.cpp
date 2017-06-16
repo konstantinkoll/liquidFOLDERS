@@ -267,7 +267,8 @@ void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	HDHITTESTINFO htt;
 	htt.pt = point;
-	INT Index = HitTest(&htt);
+	const INT Index = HitTest(&htt);
+
 	m_PressedItem = (htt.flags==HHT_ONHEADER) ? Index : -1;
 	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? Index : -1;
 

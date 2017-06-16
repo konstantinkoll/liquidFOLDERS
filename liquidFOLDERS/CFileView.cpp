@@ -23,10 +23,9 @@ CFileView::CFileView(SIZE_T DataSize, UINT Flags)
 	p_RawFiles = p_CookedFiles = NULL;
 	m_pWndEdit = NULL;
 	m_pItemData = NULL;
-	m_ItemDataAllocated = 0;
+	m_ItemDataAllocated = m_HeaderHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextAllFiles;
-	m_HeaderHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
 	m_DataSize = DataSize;
 	m_Flags = Flags;
 	m_Nothing = TRUE;
@@ -359,7 +358,7 @@ void CFileView::EnsureVisible(INT Index)
 	}
 }
 
-void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
+void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect, BOOL Deselect)
 {
 	if (!m_AllowMultiSelect)
 		ShiftSelect = FALSE;
@@ -377,7 +376,7 @@ void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 		m_SelectionAnchor = -1;
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			SelectItem(a, a==FocusItem, TRUE);
+			SelectItem(a, Deselect ? (a==FocusItem) : (a==FocusItem) | IsSelected(a), TRUE);
 	}
 
 	m_FocusItem = FocusItem;
@@ -1169,7 +1168,7 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 
 	if ((m_Flags & (FF_ENABLEHOVER | FF_ENABLETOOLTIPS))==(FF_ENABLEHOVER | FF_ENABLETOOLTIPS))
 	{
-		INT Index = ItemAtPosition(point);
+		const INT Index = ItemAtPosition(point);
 
 		if (!m_Hover)
 		{
@@ -1403,7 +1402,7 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	DestroyEdit();
 
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
 		if (!m_BeginDragDrop)
@@ -1412,20 +1411,20 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 			m_DragPos = point;
 		}
 
-		if ((nFlags & MK_CONTROL) && (m_AllowMultiSelect))
+		if ((nFlags & MK_CONTROL) && m_AllowMultiSelect)
 		{
 			InvalidateItem(m_FocusItem);
 			m_FocusItem = Index;
 			SelectItem(Index, !IsSelected(Index));
 		}
 		else
-			if ((m_FocusItem==Index) && (IsSelected(Index)))
+			if ((m_FocusItem==Index) && IsSelected(Index))
 			{
 				m_EditLabel = Index;
 			}
 			else
 			{
-				SetFocusItem(Index, nFlags & MK_SHIFT);
+				SetFocusItem(Index, nFlags & MK_SHIFT, !IsSelected(Index));
 			}
 	}
 
@@ -1435,9 +1434,18 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (!(nFlags & MK_CONTROL) || (!m_AllowMultiSelect))
-		if (ItemAtPosition(point)==-1)
+	if (!(nFlags & MK_CONTROL) || !m_AllowMultiSelect)
+	{
+		const INT Index = ItemAtPosition(point);
+		if (Index!=-1)
+		{
+			SetFocusItem(Index, nFlags & MK_SHIFT);
+		}
+		else
+		{
 			OnSelectNone();
+		}
+	}
 
 	m_BeginDragDrop = FALSE;
 }
@@ -1446,14 +1454,17 @@ void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
 	DestroyEdit();
 
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
+	{
+		SetFocusItem(Index, FALSE);
 		GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
+	}
 }
 
 void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
 		if (!(nFlags & (MK_SHIFT | MK_CONTROL)) || (!m_AllowMultiSelect))
@@ -1484,7 +1495,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
 		if (GetFocus()!=this)

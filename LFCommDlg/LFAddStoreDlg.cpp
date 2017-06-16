@@ -11,11 +11,12 @@
 // LFAddStoreDlg
 //
 
-#define PADDING     10
+#define PADDING          10
+#define SOURCECOUNT     sizeof(m_Sources)/sizeof(UINT)
 
 const UINT LFAddStoreDlg::m_Sources[] = { LFTypeSourceInternal, LFTypeSourceWindows,
 	LFTypeSourceBox, LFTypeSourceDropbox, LFTypeSourceICloud, LFTypeSourceOneDrive };
-HICON LFAddStoreDlg::hSourceIcons[] = { NULL, NULL, NULL, NULL, NULL, NULL };
+CImageList LFAddStoreDlg::m_SourceIcons;
 
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ADDSTORE, pParentWnd)
@@ -78,6 +79,20 @@ BOOL LFAddStoreDlg::InitDialog()
 
 	m_IconSize = rect.Height()-2*PADDING;
 	m_IconSize = m_IconSize>=128 ? 128 : m_IconSize>=96 ? 96 : m_IconSize>=64 ? 64 : 48;
+
+	if (!m_SourceIcons.GetSafeHandle())
+	{
+		const HMODULE hModIcons = GetModuleHandle(_T("LFCORE"));
+
+		m_SourceIcons.Create(m_IconSize, m_IconSize, ILC_COLOR32 | ILC_MASK, SOURCECOUNT, 1);
+
+		for (UINT a=0; a<SOURCECOUNT; a++)
+		{
+			HICON hIcon = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(m_Sources[a]), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+			m_SourceIcons.Add(hIcon);
+			DestroyIcon(hIcon);
+		}
+	}
 
 	// Categories
 	m_wndCategory[0].SetWindowText(LFGetApp()->m_ItemCategories[LFItemCategoryLocal].Caption);
@@ -145,6 +160,7 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	CRect rect(lpDrawItemStruct->rcItem);
 
 	const UINT nID = lpDrawItemStruct->CtlID-IDC_ADDSTORE_LIQUIDFOLDERS;
+	ASSERT(nID<SOURCECOUNT);
 
 	WCHAR Caption[256];
 	LFGetSourceName(Caption, 256, m_Sources[nID], FALSE);
@@ -152,11 +168,8 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	WCHAR Hint[256];
 	::GetWindowText(lpDrawItemStruct->hwndItem, Hint, 256);
 
-	if (!hSourceIcons[nID])
-		hSourceIcons[nID] = (HICON)LoadImage(GetModuleHandle(_T("LFCORE")), MAKEINTRESOURCE(m_Sources[nID]), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
-
 	// Icon
-	DrawIconEx(*pDrawButtonForeground->pDC, rect.left+PADDING, rect.top+(rect.Height()-m_IconSize)/2, hSourceIcons[nID], m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+	m_SourceIcons.DrawEx(pDrawButtonForeground->pDC, nID, CPoint(rect.left+PADDING, rect.top+(rect.Height()-m_IconSize)/2), CSize(m_IconSize, m_IconSize), CLR_NONE, 0xFFFFFF, (lpDrawItemStruct->itemState & ODS_DISABLED) ? ILD_BLEND50 : ILD_TRANSPARENT);
 
 	rect.left += m_IconSize+PADDING;
 	rect.DeflateRect(PADDING, PADDING);

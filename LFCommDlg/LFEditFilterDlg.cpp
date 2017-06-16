@@ -233,7 +233,7 @@ void LFEditFilterDlg::OnAddCondition()
 
 void LFEditFilterDlg::OnEditCondition()
 {
-	INT Index = m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	const INT Index = m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
 	if (Index!=-1)
 	{
 		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions[Index]);
@@ -249,7 +249,7 @@ void LFEditFilterDlg::OnEditCondition()
 
 void LFEditFilterDlg::OnDeleteCondition()
 {
-	INT Index = m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	const INT Index = m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
 	if (Index!=-1)
 	{
 		m_Conditions.m_ItemCount--;

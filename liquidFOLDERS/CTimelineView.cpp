@@ -259,7 +259,7 @@ Restart:
 	m_ItemWidth = m_TwoColumns ? (rect.Width()-MIDDLE)/2-GUTTER : rect.Width()-2*GUTTER;
 	m_PreviewColumns = (m_ItemWidth-2*CARDPADDING+THUMBMARGINX+4)/(128+THUMBMARGINX);
 
-	INT CurRow[2] = { GUTTER+1, GUTTER+1 };
+	INT CurRow[2] = { GUTTER+2, GUTTER+2 };
 	INT LastRow = -10;
 
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)

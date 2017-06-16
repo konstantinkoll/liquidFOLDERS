@@ -75,7 +75,7 @@ void LFEditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if ((pNMListView->uChanged & LVIF_STATE) && ((pNMListView->uOldState & LVIS_SELECTED) || (pNMListView->uNewState & LVIS_SELECTED)))
 	{
-		INT Index = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
+		const INT Index = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
 		if (Index!=-1)
 		{
 			const UINT Attr = (UINT)m_wndAttribute.GetItemData(Index);

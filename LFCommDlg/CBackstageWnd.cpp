@@ -72,7 +72,7 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 	else
 	{
 		// Adjust work area
-		rect.DeflateRect(32, 32);
+		rect.DeflateRect(50, 50);
 
 		if ((Size.cx<0) || (Size.cy<0))
 		{

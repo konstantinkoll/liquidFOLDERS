@@ -188,7 +188,6 @@ private:
 	static BOOL IsUpdateFeatureLater(const CString& VersionIni, const CString& Name, LFVersion& CurrentVersion);
 	static DWORD GetUpdateFeatures(const CString& VersionIni, LFVersion& CurrentVersion);
 
-
 	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;

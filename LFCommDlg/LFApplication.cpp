@@ -153,7 +153,7 @@ LFApplication::LFApplication(GUID& AppID)
 			m_SystemImageListJumbo.Attach((HIMAGELIST)il);
 
 	// Core image lists
-	HMODULE hModIcons = GetModuleHandle(_T("LFCORE"));
+	const HMODULE hModIcons = GetModuleHandle(_T("LFCORE"));
 	if (hModIcons)
 	{
 		ImageList_GetIconSize(m_SystemImageListExtraLarge, &m_ExtraLargeIconSize, &m_ExtraLargeIconSize);

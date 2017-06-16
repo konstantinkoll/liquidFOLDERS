@@ -421,7 +421,7 @@ void CGenreList::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void CGenreList::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 
 	if (!m_Hover)
 	{
@@ -559,7 +559,7 @@ void CGenreList::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 
 void CGenreList::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 		SetFocusItem(Index);
 
@@ -569,14 +569,14 @@ void CGenreList::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CGenreList::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 		GetOwner()->SendMessage(WM_COMMAND, IDOK);
 }
 
 void CGenreList::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
 		if (m_FocusItem!=Index)
@@ -594,7 +594,7 @@ void CGenreList::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CGenreList::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
 		if (GetFocus()!=this)

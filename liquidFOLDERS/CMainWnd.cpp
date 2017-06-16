@@ -679,7 +679,7 @@ void CMainWnd::OnFiltersCreateNew()
 
 void CMainWnd::OnItemOpen()
 {
-	INT Index = m_wndMainView.GetSelectedItem();
+	const INT Index = m_wndMainView.GetSelectedItem();
 	if (Index!=-1)
 	{
 		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
@@ -723,7 +723,7 @@ void CMainWnd::OnItemOpen()
 
 void CMainWnd::OnItemOpenNewWindow()
 {
-	INT Index = m_wndMainView.GetSelectedItem();
+	const INT Index = m_wndMainView.GetSelectedItem();
 	if (Index!=-1)
 	{
 		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
@@ -740,7 +740,7 @@ void CMainWnd::OnItemOpenFileDrop()
 {
 	if (m_wndMainView.GetContext()==LFContextStores)
 	{
-		INT Index = m_wndMainView.GetSelectedItem();
+		const INT Index = m_wndMainView.GetSelectedItem();
 		if (Index!=-1)
 		{
 			LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];

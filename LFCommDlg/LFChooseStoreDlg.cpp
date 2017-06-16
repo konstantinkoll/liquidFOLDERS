@@ -55,7 +55,7 @@ void CStoreList::SetSearchResult(LFSearchResult* pSearchResult)
 			lvi.iImage = (*pSearchResult)[a]->IconID-1;
 			lvi.iGroupId = (*pSearchResult)[a]->CategoryID;
 			lvi.state = (((*pSearchResult)[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | ((*pSearchResult)[a]->Type & LFTypeBadgeMask);
-			INT Index = InsertItem(&lvi);
+			const INT Index = InsertItem(&lvi);
 
 			WCHAR tmpStr[256];
 			SetItemText(Index, 1, (*pSearchResult)[a]->CoreAttributes.Comments);
@@ -123,7 +123,7 @@ void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
 	{
-		INT Index = GetSelectedStore();
+		const INT Index = GetSelectedStore();
 		strcpy_s(m_StoreID, LFKeySize, Index!=-1 ? (*m_pSearchResult)[Index]->StoreID : "");
 	}
 }
@@ -234,7 +234,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	if (m_pSearchResult)
 	{
-		INT Index = m_wndStoreList.GetNextItem(-1, LVIS_SELECTED);
+		const INT Index = m_wndStoreList.GetNextItem(-1, LVIS_SELECTED);
 		if (Index!=-1)
 			strcpy_s(StoreID, LFKeySize, (*m_pSearchResult)[Index]->StoreID);
 
@@ -330,28 +330,28 @@ void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 void LFChooseStoreDlg::OnStoreMakeDefault()
 {
-	INT Index = GetSelectedStore();
+	const INT Index = GetSelectedStore();
 	if (Index!=-1)
 		LFErrorBox(this, LFSetDefaultStore((*m_pSearchResult)[Index]->StoreID));
 }
 
 void LFChooseStoreDlg::OnStoreShortcut()
 {
-	INT Index = GetSelectedStore();
+	const INT Index = GetSelectedStore();
 	if (Index!=-1)
 		LFCreateDesktopShortcutForStore((*m_pSearchResult)[Index]);
 }
 
 void LFChooseStoreDlg::OnStoreDelete()
 {
-	INT Index = GetSelectedStore();
+	const INT Index = GetSelectedStore();
 	if (Index!=-1)
 		LFDeleteStore((*m_pSearchResult)[Index]->StoreID, this);
 }
 
 void LFChooseStoreDlg::OnStoreRename()
 {
-	INT Index = GetSelectedStore();
+	const INT Index = GetSelectedStore();
 	if (Index!=-1)
 	{
 		if (GetFocus()!=&m_wndStoreList)
@@ -363,7 +363,7 @@ void LFChooseStoreDlg::OnStoreRename()
 
 void LFChooseStoreDlg::OnStoreProperties()
 {
-	INT Index = GetSelectedStore();
+	const INT Index = GetSelectedStore();
 	if (Index!=-1)
 	{
 		LFStorePropertiesDlg dlg((*m_pSearchResult)[Index]->StoreID, this);
@@ -375,7 +375,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = FALSE;
 
-	INT Index = GetSelectedStore();
+	const INT Index = GetSelectedStore();
 	if (Index!=-1)
 	{
 		LFItemDescriptor* pItemDescriptor = (*m_pSearchResult)[Index];

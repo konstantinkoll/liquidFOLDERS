@@ -854,7 +854,7 @@ void CMainView::OnBeginDragDrop()
 	// Stores haben keinen physischen Speicherort, der von einer LFTransactionList aufgelöst werden kann
 	if (m_Context==LFContextStores)
 	{
-		INT Index = GetSelectedItem();
+		const INT Index = GetSelectedItem();
 		if (Index!=-1)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
@@ -1190,7 +1190,7 @@ void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = (m_Context==LFContextTrash) && (p_CookedFiles) ? p_CookedFiles->m_ItemCount : FALSE;
 
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 		if (pCmdUI->m_nID==IDM_TRASH_RESTOREALL)
 			bEnable = FALSE;
@@ -1205,7 +1205,7 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = (m_Context==LFContextFilters);
 
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
@@ -1227,7 +1227,7 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = FALSE;
 
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
@@ -1250,14 +1250,14 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnStoreSynchronize()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 		LFRunSynchronize((*p_CookedFiles)[Index]->StoreID, this);
 }
 
 void CMainView::OnStoreMakeDefault()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 		LFErrorBox(this, LFSetDefaultStore((*p_CookedFiles)[Index]->StoreID));
 }
@@ -1266,7 +1266,7 @@ void CMainView::OnStoreImportFolder()
 {
 	if (m_Context==LFContextStores)
 	{
-		INT Index = GetSelectedItem();
+		const INT Index = GetSelectedItem();
 		if (Index!=-1)
 			LFImportFolder((*p_CookedFiles)[Index]->StoreID, this);
 	}
@@ -1280,28 +1280,28 @@ void CMainView::OnStoreImportFolder()
 
 void CMainView::OnStoreShortcut()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 		LFCreateDesktopShortcutForStore((*p_CookedFiles)[Index]);
 }
 
 void CMainView::OnStoreDelete()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 		LFDeleteStore((*p_CookedFiles)[Index]->StoreID, this);
 }
 
 void CMainView::OnStoreRename()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if ((Index!=-1) && (m_pWndFileView))
 		m_pWndFileView->EditLabel(Index);
 }
 
 void CMainView::OnStoreProperties()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
 		LFStorePropertiesDlg dlg((*p_CookedFiles)[Index]->StoreID, this);
@@ -1315,7 +1315,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 	if (m_Context==LFContextStores)
 	{
-		INT Index = GetSelectedItem();
+		const INT Index = GetSelectedItem();
 		if (Index!=-1)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
@@ -1365,7 +1365,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnFileOpenWith()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
 		WCHAR Path[MAX_PATH];
@@ -1387,14 +1387,14 @@ void CMainView::OnFileOpenWith()
 
 void CMainView::OnFileOpenBrowser()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 		ShellExecuteA(GetSafeHwnd(), "open", (*p_CookedFiles)[Index]->CoreAttributes.URL, NULL, NULL, SW_SHOWNORMAL);
 }
 
 void CMainView::OnFileEdit()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 		if (strcmp((*p_CookedFiles)[Index]->CoreAttributes.FileFormat, "filter")==0)
 		{
@@ -1505,7 +1505,7 @@ void CMainView::OnFileDelete()
 
 void CMainView::OnFileRename()
 {
-	INT Index = GetSelectedItem();
+	const INT Index = GetSelectedItem();
 	if ((Index!=-1) && (m_pWndFileView))
 		m_pWndFileView->EditLabel(Index);
 }

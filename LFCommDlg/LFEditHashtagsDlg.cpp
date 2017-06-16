@@ -121,7 +121,7 @@ void LFEditHashtagsDlg::OnUpdateAssignedHashtags()
 		LFItemDescriptor* pItemDescriptor = (*pCookedFiles)[a];
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateCount))
 		{
-			INT Index = m_wndAssignedHashtags.InsertItem(a, pItemDescriptor->CoreAttributes.FileName);
+			const INT Index = m_wndAssignedHashtags.InsertItem(a, pItemDescriptor->CoreAttributes.FileName);
 
 			m_wndAssignedHashtags.SetItemText(Index, 1, pItemDescriptor->Description);
 

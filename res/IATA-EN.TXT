@@ -48,13 +48,13 @@ ABZ     Aberdeen, United Kingdom;4;57*12'7"N, 2*11'52"W
 ACA     Acapulco, Mexico;4;16*45'25"N, 99*45'14"W
 ACB     Bellaire, USA;4;44*59'19"N, 85*11'54"W
 ACC     Accra, Ghana;4;5*36'19"N, 0*10'0"E
-ACD     Acandi, Columbia;4;8*30'0"N, 73*37'59"W
+ACD     Acandí, Columbia;4;8*30'0"N, 73*37'59"W
 ACE     Arrecife, Spain;4;28*56'44"N, 13*36'19"W
 ACH     Altenrhein, Switzerland;4;47*29'6"N, 9*33'39"E
 ACI     Alderney, Channel Islands;4;49*42'22"N, 2*12'53"W
 ACJ     Americus, USA;4;32*6'39"N, 84*11'20"W
 ACK     Nantucket, USA;4;41*15'11"N, 70*3'37"W
-ACM     Arica, Columbia;4;2*7'59"S, 71*46'59"W
+ACM     Puerto Arica, Columbia;4;2*7'59"S, 71*46'59"W
 ACN     Ciudad Acuña, Mexico;4;29*20'2"N, 101*6'3"W
 ACO     Ascona, Switzerland;4;46*9'28"N, 8*46'55"E
 ACQ     Waseca, USA;4;44*4'24"N, 93*33'11"W
@@ -88,7 +88,7 @@ ADV     Andover, United Kingdom;4;51*12'25"N, 1*31'41"W
 ADW     Camp Springs (Andrews Airforce Base), USA;4;38*48'39"N, 76*52'1"W
 ADX     St. Andrews, United Kingdom;4;56*22'22"N, 2*52'6"W
 ADY     Alldays, South Africa;4;22*40'44"S, 29*3'20"E
-ADZ     San Andres Island, Columbia;4;12*35'1"N, 81*42'39"W
+ADZ     San Andrés, Columbia;4;12*35'1"N, 81*42'39"W
 AEA     Abemama Atoll, Kiribati;4;0*29'27"S, 173*49'43"E
 AEG     Aek Godang, Indonesia;4;1*24'0"N, 99*25'50"E
 AEH     Abeche, Tschad;4;13*50'49"N, 20*50'40"E
@@ -126,7 +126,7 @@ AGM     Anqmaqssalik, Greenland;4;65*36'44"N, 37*37'6"W
 AGN     Angoon, USA;4;57*30'13"N, 134*35'6"W
 AGO     Magnolia, USA;4;33*13'41"N, 93*13'1"W
 AGP     Málaga, Spain;4;36*40'30"N, 4*29'57"W
-AGQ     Agrinion, Greece;4;38*36'7"N, 21*21'4"E
+AGQ     Agrínion, Greece;4;38*36'7"N, 21*21'4"E
 AGR     Agra, India;4;27*9'21"N, 77*57'39"E
 AGS     Augusta (Bush Field), USA;4;33*22'12"N, 81*57'52"W
 AGT     Ciudad del Este, Paraguay;4;25*27'20"S, 54*50'37"W
@@ -291,7 +291,7 @@ AOG     Anshan, China;4;41*6'19"N, 122*51'14"E
 AOH     Lima, USA;4;40*42'25"N, 84*1'36"W
 AOI     Ancona, Italy;4;43*36'59"N, 13*21'44"E
 AOJ     Aomori, Japan;4;40*44'5"N, 140*41'27"E
-AOK     Karpathos, Greece;4;35*25'17"N, 27*8'46"E
+AOK     Kárpathos, Greece;4;35*25'17"N, 27*8'46"E
 AOL     Paso de los Libres, Argentina;4;29*41'22"S, 57*9'7"W
 AON     Arona, New Guinea;4;6*18'0"S, 146*1'1"E
 AOO     Altoona, USA;4;40*17'47"N, 78*19'12"W
@@ -312,7 +312,7 @@ APJ     Appian Line, Italy
 APK     Apataki, French Polynesia;4;15*34'25"S, 146*24'55"W
 APL     Nampula, Mosambique;4;15*6'20"S, 39*16'54"E
 APN     Alpena, USA;4;45*4'41"N, 83*33'37"W
-APO     Apartado, Columbia;4;7*1'59"N, 77*11'60"W
+APO     Apartadó, Columbia;4;7*1'59"N, 77*11'60"W
 APP     Asapa, New Guinea;4;8*58'1"S, 148*6'0"E
 APR     April River, New Guinea;4;4*41'60"S, 142*31'59"E
 APS     Anapolis, Brazil;4;16*21'44"S, 48*55'37"W
@@ -344,10 +344,10 @@ ARK     Arusha, Tanzania;4;3*22'4"S, 36*37'60"E
 ARL     Arly, Burkina Faso;4;11*35'49"N, 1*28'59"E
 ARM     Armidale, Australia;4;30*31'41"S, 151*37'2"E
 ARN STO Stockholm (Arlanda), Sweden;4;59*39'7"N, 17*55'7"E
-ARO     Arboletas, Columbia;4;8*49'59"N, 76*25'59"W
+ARO     Arboletes, Columbia;4;8*49'59"N, 76*25'59"W
 ARP     Aragip, New Guinea;4;9*52'1"S, 149*28'59"E
 ARQ     Arauquita, Columbia;4;7*1'16"N, 71*23'20"W
-ARR     Alto Rio Senguerr, Argentina;4;45*1'1"S, 70*48'0"W
+ARR     Alto Río Senguerr, Argentina;4;45*1'1"S, 70*48'0"W
 ARS     Aragarcas, Brazil;4;15*53'48"S, 52*5'44"W
 ART     Watertown, USA;4;43*59'31"N, 76*1'18"W
 ARU     Araçatuba, Brazil;4;21*8'29"S, 50*25'29"W
@@ -358,13 +358,13 @@ ARY     Ararat, Australia;4;37*18'34"S, 142*59'19"E
 ARZ     N'zeto, Angola;4;7*15'34"S, 12*51'47"E
 ASA     Assab, Eritrea;4;13*4'18"N, 42*38'42"E
 ASB     Ashgabat, Turkmenistan;4;37*59'13"N, 58*21'39"E
-ASC     Ascension, Bolivia;4;15*43'1"S, 63*5'60"W
+ASC     Ascención de Guarayos, Bolivia;4;15*43'1"S, 63*5'60"W
 ASD     Andros Town, Bahamas;4;24*41'54"N, 77*47'44"W
 ASE     Aspen, USA;4;39*13'23"N, 106*52'8"W
 ASF     Astrakhan, Russia;4;46*16'60"N, 48*0'23"E
 ASG     Ashburton, New Zealand;4;43*54'12"S, 171*47'48"E
 ASH     Nashua, USA;4;42*46'54"N, 71*30'53"W
-ASI     Ascension Island, St. Helena;4;7*58'11"S, 14*23'37"W
+ASI     Ascension Island, Saint Helena;4;7*58'11"S, 14*23'37"W
 ASJ     Amami O Shima, Japan;4;28*25'50"N, 129*42'45"E
 ASK     Yamoussoukro, Ivory Coast;4;6*54'11"N, 5*21'56"W
 ASL     Marshall, USA;4;32*31'14"N, 94*18'28"W
@@ -375,7 +375,7 @@ ASP     Alice Springs, Australia;4;23*48'24"S, 133*54'8"E
 ASQ     Austin, USA;4;39*28'5"N, 117*11'43"W
 ASR     Kayseri, Turkey;4;38*46'13"N, 35*29'44"E
 AST     Astoria, USA;4;46*9'29"N, 123*52'43"W
-ASU     Asuncion, Paraguay;4;25*14'23"S, 57*31'9"W
+ASU     Asunción, Paraguay;4;25*14'23"S, 57*31'9"W
 ASV     Amboseli, Kenya;4;2*37'59"S, 37*15'0"E
 ASW     Aswan, Egypt;4;23*57'52"N, 32*49'12"E
 ASX     Ashland, USA;4;46*32'55"N, 90*55'8"W
@@ -459,7 +459,7 @@ AWZ     Ahwaz, Iran;4;31*20'15"N, 48*45'43"E
 AXA     Anguilla, Anguilla;4;18*12'17"N, 63*3'18"W
 AXB     Alexandria Bay, USA;4;44*19'0"N, 75*53'59"W
 AXC     Aramac, Australia;4;22*58'1"S, 145*13'59"E
-AXD     Alexandroupolis, Greece;4;40*51'21"N, 25*57'23"E
+AXD     Alexandroúpolis, Greece;4;40*51'21"N, 25*57'23"E
 AXG     Algona, USA;4;43*4'40"N, 94*16'19"W
 AXH     Houston (Southwest Airport), USA;4;29*30'22"N, 95*28'37"W
 AXK     Ataq, Yemen;4;14*33'5"N, 46*49'34"E
@@ -477,9 +477,9 @@ AYA     Ayapel, Columbia;4;8*16'59"N, 75*7'59"W
 AYC     Ayacucho, Columbia;4;8*36'0"N, 73*35'60"W
 AYD     Alroy Downs, Australia;4;19*17'27"S, 136*4'46"E
 AYE     Ayer/Fort Devens, USA
-AYG     Yaguara, Columbia;4;1*32'39"N, 73*55'60"W
+AYG     Yaguará, Columbia;4;1*32'39"N, 73*55'60"W
 AYH     Alconbury, United Kingdom;3;52*21'60"N, 0*13'0"E
-AYI     Yari, Columbia;4;0*22'59"S, 72*16'1"W
+AYI     Yarí, Columbia;4;0*22'59"S, 72*16'1"W
 AYJ     Lincoln (Municipal Airport), USA
 AYK     Arkalyk, Kasachstan;4;50*19'7"N, 66*57'10"E
 AYL     Anthony Lagoon, Australia;4;18*1'18"S, 135*32'33"E
@@ -505,7 +505,7 @@ AZS     Samaná (El Catey), Dom. Republic;5;19*16'10"N, 69*44'13"W
 AZT     Zapatoca, Columbia;4;6*46'1"N, 73*16'1"W
 BAA     Bialla, New Guinea;4;5*19'50"S, 151*0'28"E
 BAB     Marysville (Beale Airforce Base), USA;4;39*8'10"N, 121*26'11"W
-BAC     Barranca de Upi, Columbia;4;4*34'1"N, 72*56'60"W
+BAC     Barranca de Upía, Columbia;4;4*34'1"N, 72*56'60"W
 BAD     Bossier City, USA;4;32*30'7"N, 93*39'46"W
 BAE     Barcelonnette, France;4;44*23'18"N, 6*36'37"E
 BAF     Westfield, USA;4;42*9'28"N, 72*42'56"W
@@ -677,15 +677,15 @@ BGW BGT Baghdad, Iraq;4;33*20'60"N, 44*25'1"E
 BGX     Bagé, Brazil;4;31*23'26"S, 54*6'44"W
 BGY MIL Bergamo, Italy;4;45*40'26"N, 9*42'15"E
 BGZ     Braga, Portugal;4;41*35'13"N, 8*26'43"W
-BHA     Baia de Caraquez, Ecuador;4;0*36'29"S, 80*24'10"W
+BHA     Bahía de Caráquez, Ecuador;4;0*36'29"S, 80*24'10"W
 BHB     Bar Harbor, USA;4;44*26'59"N, 68*21'42"W
 BHC     Bullhead City, USA;4;31*42'50"N, 82*23'38"W
 BHD     Belfast (Harbour Airport), United Kingdom;4;54*37'5"N, 5*52'21"W
 BHE     Blenheim, New Zealand;4;41*31'6"S, 173*52'13"E
-BHF     Bahia Cupica, Columbia;4;6*33'0"N, 77*19'59"W
+BHF     Bahía Cupica, Columbia;4;6*33'0"N, 77*19'59"W
 BHG     Brus Laguna, Honduras;4;15*44'6"N, 84*32'33"W
 BHH     Bisha, Saudi Arabia;4;19*59'4"N, 42*37'15"E
-BHI     Bahia Blanca, Argentina;4;38*43'30"S, 62*10'10"W
+BHI     Bahía Blanca, Argentina;4;38*43'30"S, 62*10'10"W
 BHJ     Bhuj, India;4;23*17'16"N, 69*40'13"E
 BHK     Bukhoro, Usbekistan;4;39*46'30"N, 64*28'60"E
 BHL     Bahía de los Ángeles, Mexico;4;28*58'43"N, 113*33'39"W
@@ -857,7 +857,7 @@ BOC     Bocas del Toro, Panama;4;9*20'27"N, 82*15'3"W
 BOD     Bordeaux, France;5;44*49'43"N, 0*42'55"W
 BOE     Boundji, Congo;4;1*1'59"S, 15*22'59"E
 BOF WAS Washington (Bolling Airforce Base), USA;4;38*50'34"N, 77*0'58"W
-BOG     Bogota, Columbia;4;4*42'11"N, 74*8'18"W
+BOG     Bogotá, Columbia;4;4*42'11"N, 74*8'18"W
 BOH     Bournemouth, United Kingdom;4;50*46'48"N, 1*50'33"W
 BOI     Boise, USA;4;43*33'52"N, 116*13'22"W
 BOJ     Burgas, Bulgaria;4;42*34'10"N, 27*30'55"E
@@ -899,7 +899,7 @@ BQO     Bouna, Ivory Coast;4;9*16'39"N, 3*1'31"W
 BQQ     Barra, Brazil;4;11*4'51"S, 43*8'51"W
 BQS     Blagoveschensk, Russia;4;50*25'31"N, 127*24'45"E
 BQT     Brest, Belarus;4;52*6'30"N, 23*53'53"E
-BQU     Bequia, St. Vincent;4;12*59'18"N, 61*15'43"W
+BQU     Bequia, Saint Vincent;4;12*59'18"N, 61*15'43"W
 BQV     Gustavus/Bartlett Cove, USA;4;58*27'19"N, 135*53'7"W
 BQW     Balgo Hills, Australia;4;20*8'54"S, 127*58'24"E
 BRA     Barreiras, Brazil;4;12*4'44"S, 45*0'32"W
@@ -930,7 +930,7 @@ BRY     Bardstown, USA;4;37*48'52"N, 85*29'59"W
 BRZ     Borotou, Ivory Coast;5;8*43'59"N, 7*30'0"W
 BSA     Bossaso, Somalia;4;11*16'31"N, 49*8'58"E
 BSB     Brasilia, Brazil;4;15*52'16"S, 47*55'7"W
-BSC     Bahia Solano, Columbia;4;6*12'11"N, 77*23'41"W
+BSC     Bahía Solano, Columbia;4;6*12'11"N, 77*23'41"W
 BSD     Baoshan, China;4;25*8'60"N, 99*9'0"E
 BSE     Sematan, Malaysia;4;1*48'49"N, 109*45'46"E
 BSF     Camp Pohakuloa, USA;4;19*45'36"N, 155*33'14"W
@@ -1001,7 +1001,7 @@ BUR     Burbank, USA;4;34*12'2"N, 118*21'31"W
 BUS     Batumi, Georgia;4;41*36'37"N, 41*35'59"E
 BUT     Burtonwood, United Kingdom;4;53*24'0"N, 2*37'59"W
 BUU     Buyo, Ivory Coast;4;6*16'1"N, 7*3'0"W
-BUV     Bella Union, Uruguay;4;30*16'1"S, 57*34'59"W
+BUV     Bella Unión, Uruguay;4;30*16'1"S, 57*34'59"W
 BUW     Buton Babau, Indonesia;4;5*29'13"S, 122*34'9"E
 BUX     Bunia, Congo;4;1*33'57"N, 30*13'15"E
 BUY     Bunbury, Australia;4;33*22'42"S, 115*40'36"E
@@ -1072,7 +1072,7 @@ BYF     Albert-Picardie, France;5;49*58'12"N, 2*41'33"E
 BYG     Buffalo, USA;4;44*22'52"N, 106*43'18"W
 BYH     Blytheville, USA;4;35*57'52"N, 89*56'38"W
 BYI     Burley, USA;4;42*32'33"N, 113*46'18"W
-BYK     Bouake, Ivory Coast;4;7*44'20"N, 5*4'25"W
+BYK     Bouaké, Ivory Coast;4;7*44'20"N, 5*4'25"W
 BYL     Bella Yella, Liberia;4;7*22'1"N, 9*58'59"W
 BYM     Bayamo, Cuba;4;20*23'47"N, 76*37'17"W
 BYO     Bay of Islands, New Zealand
@@ -1137,7 +1137,7 @@ CBG     Cambridge, Großbritannien;4;52*11'38"N, 0*8'17"E
 CBH     Béchar, Algeria;4;31*38'45"N, 2*16'11"W
 CBJ     Cabo Rojo, Dom. Republic;4;17*55'44"N, 71*38'41"W
 CBK     Colby, USA;4;39*25'39"N, 101*2'48"W
-CBL     Ciudad Bolivar, Venezuela;4;8*7'19"N, 63*32'14"W
+CBL     Ciudad Bolívar, Venezuela;4;8*7'19"N, 63*32'14"W
 CBM     Columbus (Airforce Base), USA;4;33*38'38"N, 88*26'38"W
 CBN     Cirebon, Indonesia;4;6*45'22"S, 108*32'23"E
 CBO     Cotabato, Philippines;4;7*9'55"N, 124*12'35"E
@@ -1164,7 +1164,7 @@ CCL     Chinchilla, Australia;5;26*46'30"S, 150*37'0"E
 CCM     Crisciúma, Brazil;4;28*43'33"S, 49*25'29"W
 CCN     Chakcharan, Afghanistan;4;34*31'59"N, 65*16'1"E
 CCO     Carimagua, Columbia;4;4*33'51"N, 71*20'11"W
-CCP     Concepcion, Chile;4;36*46'22"S, 73*3'47"W
+CCP     Concepción, Chile;4;36*46'22"S, 73*3'47"W
 CCQ     Cachoeira, Brazil;4;12*36'0"S, 38*58'1"W
 CCR     Concord, USA;4;37*59'23"N, 122*3'25"W
 CCS     Caracas, Venezuela;4;10*36'11"N, 66*59'26"W
@@ -1211,7 +1211,7 @@ CEL     Cape Eleuthera, Bahamas
 CEM     Central, USA;4;65*34'26"N, 144*46'60"W
 CEN     Ciudad Obregón, Mexico;4;27*23'34"N, 109*49'59"W
 CEO     Waco Kungo, Angola;4;11*25'35"S, 15*6'5"E
-CEP     Concepcion, Bolivia;4;16*8'35"S, 62*1'34"W
+CEP     Concepción, Bolivia;4;16*8'35"S, 62*1'34"W
 CEQ     Cannes, France;4;43*32'47"N, 6*57'15"E
 CER     Cherbourg, France;4;49*39'3"N, 1*28'31"W
 CES     Cessnock, Australia;4;32*47'15"S, 151*20'30"E
@@ -1235,7 +1235,7 @@ CFP     Carpentaria Downs, Australia;4;18*43'6"S, 144*18'45"E
 CFR     Caen, France;4;49*10'24"N, 0*26'60"E
 CFS     Coffs Harbour, Australia;4;30*19'14"S, 153*6'59"E
 CFT     Clifton/Morenci, USA;4;32*57'25"N, 109*12'39"W
-CFU     Corfu, Greece;4;39*36'7"N, 19*54'42"E
+CFU     Corfu (Kérkyra), Greece;4;39*36'7"N, 19*54'42"E
 CFV     Coffeyville, USA;4;37*5'39"N, 95*34'19"W
 CGA     Craig, USA;4;55*28'44"N, 133*8'52"W
 CGB     Cuiabá, Brazil;4;15*39'11"S, 56*7'0"W
@@ -1276,7 +1276,7 @@ CHM     Chimbote, Peru;4;9*8'59"S, 78*31'26"W
 CHN     Chonju, South Korea;4;35*52'42"N, 127*7'10"E
 CHO     Charlottesville, USA;4;38*8'19"N, 78*27'10"W
 CHP     Circle Hot Springs, USA;4;65*29'8"N, 144*36'39"W
-CHQ     Chania, Greece;4;35*31'54"N, 24*8'59"E
+CHQ     Chaniá, Greece;4;35*31'54"N, 24*8'59"E
 CHR     Châteauroux, France;4;46*51'37"N, 1*43'16"E
 CHS     Charleston, USA;4;32*53'55"N, 80*2'26"W
 CHT     Chatham Island, New Zealand;4;43*48'36"S, 176*27'26"W
@@ -1307,7 +1307,7 @@ CIS     Canton Island, Kiribati;4;2*46'5"S, 171*42'37"W
 CIT     Shimkent, Kasachstan;4;42*21'51"N, 69*28'44"E
 CIU     Chippewa County, USA;4;46*15'3"N, 84*28'21"W
 CIV     Chomley, USA
-CIW     Canouan Island, St. Vincent;4;12*41'57"N, 61*20'33"W
+CIW     Canouan Island, Saint Vincent;4;12*41'57"N, 61*20'33"W
 CIX     Chiclayo, Peru;4;6*47'15"S, 79*49'41"W
 CIY     Comiso, Italy;4;36*55'59"N, 14*36'0"E
 CIZ     Coari, Brazil;4;4*8'3"S, 63*7'57"W
@@ -1410,7 +1410,7 @@ CNN     Chulman, Russia;5;56*54'50"N, 124*54'50"E
 CNO     Chino, USA;4;33*58'29"N, 117*38'12"W
 CNP     East Greenland, Greenland;4;70*44'36"N, 22*39'38"W
 CNQ     Corrientes, Argentina;4;27*26'44"S, 58*45'43"W
-CNR     Chanaral, Chile;4;26*19'57"S, 70*36'26"W
+CNR     Chañaral, Chile;4;26*19'57"S, 70*36'26"W
 CNS     Cairns, Australia;4;16*53'9"S, 145*45'19"E
 CNT     Charata, Argentina;4;27*12'0"S, 61*12'0"W
 CNU     Chanute, USA;4;37*40'8"N, 95*29'6"W
@@ -1435,7 +1435,7 @@ COM     Coleman, USA;4;31*50'28"N, 99*24'13"W
 CON     Concord, USA;3;43*12'10"N, 71*30'8"W
 COO     Cotonou, Benin;4;6*21'26"N, 2*23'4"E
 COQ     Choibalsan, Mongolia;5;31*19'25"S, 64*12'29"W
-COR     Cordoba, Argentina;4;31*19'25"S, 64*12'29"W
+COR     Córdoba, Argentina;4;31*19'25"S, 64*12'29"W
 COS     Colorado Springs (Municipal Airport), USA;4;38*48'21"N, 104*42'3"W
 COT     Cotulla, USA;4;28*27'24"N, 99*13'6"W
 COU     Columbia, USA;4;38*49'5"N, 92*13'11"W
@@ -1445,8 +1445,8 @@ COX     Congo Town, Bahamas;4;24*9'32"N, 77*35'23"W
 COY     Coolawanyah, Australia;4;21*47'60"S, 117*45'0"E
 COZ     Constanza, Dom. Republic;4;18*53'60"N, 70*43'1"W
 CPA     Cape Palmas, Liberia;4;4*22'3"N, 7*42'0"W
-CPB     Capurgana, Columbia;4;8*37'60"N, 77*19'60"W
-CPC     San Martin de los Andes, Argentina;4;40*4'31"S, 71*8'14"W
+CPB     Capurganá, Columbia;4;8*37'60"N, 77*19'60"W
+CPC     San Martín de los Andes, Argentina;4;40*4'31"S, 71*8'14"W
 CPD     Coober Pedy, Australia;4;29*2'24"S, 134*43'15"E
 CPE     Campeche, Mexico;4;19*49'0"N, 90*30'1"W
 CPF     Cepu, Indonesia;4;7*10'59"S, 111*31'59"E
@@ -1456,7 +1456,7 @@ CPK     Chesapeake, USA;4;36*39'56"N, 76*19'14"W
 CPL     Chaparral, Columbia;4;3*43'1"N, 75*28'1"W
 CPM     Compton, USA;4;33*53'24"N, 118*14'37"W
 CPN     Cape Rooney, New Guinea;4;10*10'1"S, 148*22'1"E
-CPO     Copiapo, Chile;4;27*17'46"S, 70*24'49"W
+CPO     Copiapó, Chile;4;27*17'46"S, 70*24'49"W
 CPP     Calapan, Philippines
 CPQ     Campinas, Brazil;4;22*51'33"S, 47*6'29"W
 CPR     Casper, USA;4;42*54'29"N, 106*27'52"W
@@ -1525,7 +1525,7 @@ CTB     Cub Bank, USA;5;48*36'30"N, 112*22'34"W
 CTC     Catamarca, Argentina;4;28*35'36"S, 65*45'3"W
 CTE     Cartí, Panama;4;9*26'60"N, 78*58'1"W
 CTF     Coatepeque, Guatemala;5;14*41'39"N, 91*52'57"W
-CTG     Cartagena de Indias, Columbia;4;10*26'33"N, 75*30'46"W
+CTG     Cartagena, Columbia;4;10*26'33"N, 75*30'46"W
 CTH     Coatesville, USA;4;39*58'44"N, 75*51'56"W
 CTI     Cuito Cuanavale, Angola;4;15*9'37"S, 19*9'22"E
 CTJ     Carrollton, USA;4;33*37'55"N, 85*9'8"W
@@ -1547,7 +1547,7 @@ CTY     Cross City, USA;4;29*38'8"N, 83*6'17"W
 CTZ     Clinton, USA;4;34*58'30"N, 78*21'56"W
 CUA     Ciudad Constitución, Mexico;4;25*3'14"N, 111*36'54"W
 CUB     Columbia (Downtown Airport), USA;4;33*58'14"N, 80*59'43"W
-CUC     Cucuta, Columbia;4;7*55'53"N, 72*30'51"W
+CUC     Cúcuta, Columbia;4;7*55'53"N, 72*30'51"W
 CUD     Caloundra, Australia;4;26*48'9"S, 1*53'6"E
 CUE     Cuenca, Ecuador;4;2*53'22"S, 78*59'4"W
 CUF     Cuneo, Italy;5;44*32'49"N, 7*37'24"E
@@ -1557,22 +1557,22 @@ CUI     Currillo, Columbia;4;4*40'1"N, 72*0'0"W
 CUJ     Culion, Philippines;4;11*51'0"N, 119*55'59"E
 CUK     Caye Caulker, Belize;5;17*44'5"N, 88*1'57"W
 CUL     Culiacán, Mexico;4;24*45'52"N, 107*28'29"W
-CUM     Cumana, Venezuela;4;10*27'1"N, 64*7'50"W
+CUM     Cumaná, Venezuela;4;10*27'1"N, 64*7'50"W
 CUN     Cancún, Mexico;4;21*2'12"N, 86*52'37"W
-CUO     Caruru, Columbia;4;0*55'30"S, 70*46'16"W
-CUP     Carupano, Venezuela;4;10*39'36"N, 63*15'42"W
+CUO     Carurú, Columbia;4;0*55'30"S, 70*46'16"W
+CUP     Carúpano, Venezuela;4;10*39'36"N, 63*15'42"W
 CUQ     Coen, Australia;4;13*45'39"S, 143*6'49"E
 CUR     Curacao, Neth. Antilles;4;12*11'20"N, 68*57'35"W
 CUS     Columbus, USA;4;31*49'25"N, 107*37'37"W
-CUT     Cutral-Co, Argentina;4;38*56'23"S, 69*15'53"W
+CUT     Cutral Có, Argentina;4;38*56'23"S, 69*15'53"W
 CUU     Chihuahua, Mexico;4;28*42'10"N, 105*57'52"W
-CUV     Casiqua, Venezuela;4;8*45'23"N, 72*32'12"W
+CUV     Casigua, Venezuela;4;8*45'23"N, 72*32'12"W
 CUW     Cube Cove, USA
 CUX     Corpus Christi (Cuddihy Field), USA;4;27*43'16"N, 97*30'46"W
 CUY     Cue, Australia;4;27*27'6"S, 117*55'3"E
-CUZ     Cuzco, Peru;4;13*32'9"S, 71*56'20"W
+CUZ     Cusco, Peru;4;13*32'9"S, 71*56'20"W
 CVC     Cleve, Australia;4;33*42'35"S, 136*30'17"E
-CVE     Covenas, Columbia;4;9*24'3"N, 75*41'29"W
+CVE     Coveñas, Columbia;4;9*24'3"N, 75*41'29"W
 CVF     Courcheval, France;4;45*23'48"N, 6*38'1"E
 CVG     Covington, USA;4;39*2'56"N, 84*40'4"W
 CVH     Caviahue, Argentina;4;37*51'5"S, 71*0'33"W
@@ -1601,7 +1601,7 @@ CWR     Cowarie, Australia;4;27*42'46"S, 138*19'41"E
 CWS     Center Island, USA;4;48*29'24"N, 122*49'56"W
 CWT     Cowra, Australia;4;33*50'41"S, 148*38'56"E
 CWW     Corowa, Australia;4;35*59'41"S, 146*21'24"E
-CXA     Caicara, Venezuela;4;7*37'34"N, 66*9'54"W
+CXA     Caicara del Orinoco, Venezuela;4;7*37'34"N, 66*9'54"W
 CXB     Cox's Bazar, Bangladesh;4;21*27'8"N, 91*57'50"E
 CXC     Chitina, USA;4;61*34'58"N, 144*25'38"W
 CXE     Chase City, USA;4;36*47'18"N, 78*30'6"W
@@ -1628,7 +1628,7 @@ CYL     Coyoles, Honduras;4;15*25'59"N, 86*40'1"W
 CYM     Chatham, USA;4;57*30'54"N, 134*56'46"W
 CYO     Cayo Largo del Sur, Cuba;4;21*36'59"N, 81*32'46"W
 CYP     Calbayog, Philippines;4;12*4'22"N, 124*32'42"E
-CYR     Colonia, Uruguay;4;34*27'23"S, 57*46'14"W
+CYR     Colonia del Sacramento, Uruguay;4;34*27'23"S, 57*46'14"W
 CYS     Cheyenne, USA;4;41*9'20"N, 104*48'38"W
 CYT     Cape Yakataga, USA;4;60*4'55"N, 142*29'37"W
 CYW     Celaya, Mexico;5;20*32'46"N, 100*53'12"W
@@ -1866,7 +1866,7 @@ DRG     Deering, USA;4;66*4'10"N, 162*45'59"W
 DRI     De Ridder, USA;4;30*49'54"N, 93*20'24"W
 DRJ     Drietabbetje, Surinam;4;4*10'59"N, 54*4'59"W
 DRK     Drake Bay, Costa Rica;5;8*44'0"N, 83*39'0"W
-DRM     Drama, Greece;4;41*9'0"N, 24*7'59"E
+DRM     Dráma, Greece;4;41*9'0"N, 24*7'59"E
 DRN     Dirranbandi, Australia;4;28*35'30"S, 148*13'0"E
 DRO     Durango (La Plata County Airport), USA;4;37*9'5"N, 107*45'14"W
 DRR     Durrie, Australia;4;25*37'2"S, 140*13'20"E
@@ -1958,7 +1958,7 @@ EAU     Eau Claire, USA;4;44*51'57"N, 91*29'3"W
 EBA     Elba, Italy;4;42*45'37"N, 10*14'22"E
 EBB     Kampala, Uganda;4;0*2'33"S, 32*26'37"E
 EBD     El Obeid, Sudan;4;13*9'12"N, 30*13'58"E
-EBG     El Barge, Columbia;4;7*35'47"N, 74*48'32"W
+EBG     El Bagre, Columbia;4;7*35'47"N, 74*48'32"W
 EBJ     Esbjerg, Denmark;4;55*31'33"N, 8*33'12"E
 EBL     Erbil, Iraq;5;36*14'15"N, 43*57'47"E
 EBM     El Borma, Tunesia;5;31*42'15"N, 9*15'17"E
@@ -1995,7 +1995,7 @@ EFC     Belle Fourche, USA;4;44*44'3"N, 103*51'43"W
 EFD     Houston (Ellington Field), USA;4;29*36'26"N, 95*9'32"W
 EFG     Efogi, New Guinea;4;9*8'60"S, 147*38'60"E
 EFK     Newport, USA;4;44*53'20"N, 72*13'45"W
-EFL     Kefalonia, Greece;4;38*7'12"N, 20*30'2"E
+EFL     Kefaloniá, Greece;4;38*7'12"N, 20*30'2"E
 EFO     East Fork, USA
 EFW     Jefferson, USA;4;42*0'37"N, 94*20'33"W
 EGA     Engati, New Guinea;4;6*55'1"S, 146*6'0"E
@@ -2014,7 +2014,7 @@ EGT     Wellington, USA;4;37*19'25"N, 97*23'18"W
 EGV     Eagle River, USA;4;45*55'56"N, 89*16'6"W
 EHA     Elkhart, USA;4;37*0'3"N, 101*52'48"W
 EHC     Erhac, Turkey
-EHL     El Bolson, Argentina;4;41*56'35"S, 71*31'56"W
+EHL     El Bolsón, Argentina;4;41*56'35"S, 71*31'56"W
 EHM     Cape Newenham, USA;4;58*38'47"N, 162*3'46"W
 EHO     Shelby, USA;4;35*15'20"N, 81*36'4"W
 EHT     East Hartford, USA;4;41*45'12"N, 72*37'42"W
@@ -2076,7 +2076,7 @@ EMP     Emporia, USA;4;38*19'56"N, 96*11'28"W
 EMS     Embessa, New Guinea;4;9*26'60"S, 148*45'0"E
 EMT     El Monte, USA;4;34*5'10"N, 118*2'5"W
 EMV     Emporia, USA;4;36*41'13"N, 77*28'58"W
-EMX     El Maiten, Argentina;4;42*2'60"S, 71*10'1"W
+EMX     El Maitén, Argentina;4;42*2'60"S, 71*10'1"W
 EMY     El Minya, Egypt;4;28*4'59"N, 30*43'59"E
 ENA     Kenai (Municipal Airport), USA;4;60*34'23"N, 151*14'42"W
 ENB     Eneabba, Australia;4;29*49'57"S, 115*14'46"E
@@ -2090,7 +2090,7 @@ ENK     Enniskillen, United Kingdom;4;54*23'56"N, 7*39'6"W
 ENL     Centralia, USA;4;38*30'54"N, 89*5'28"W
 ENM     Emmonak, USA;5;62*47'10"N, 164*29'27"W
 ENN     Nenana, USA;4;64*32'50"N, 149*4'26"W
-ENO     Encarnacion, Paraguay;4;27*17'60"S, 55*54'44"W
+ENO     Encarnación, Paraguay;4;27*17'60"S, 55*54'44"W
 ENS     Enschede, Netherlands;4;52*16'12"N, 6*52'27"E
 ENT     Enitewok, Marshall Islands;4;11*20'27"N, 162*19'40"E
 ENU     Enugu, Nigeria;4;6*28'27"N, 7*33'43"E
@@ -2098,7 +2098,7 @@ ENV     Wendover, USA;4;40*43'7"N, 114*1'51"W
 ENW     Kenosha, USA;4;42*35'45"N, 87*55'40"W
 ENY     Yan An, China;4;36*38'13"N, 109*33'14"E
 EOD     Fort Campbell, USA;4;36*34'5"N, 87*28'51"W
-EOH     Medellin, Columbia;4;6*13'12"N, 75*35'26"W
+EOH     Medellín (Enrique Olaya Herrera), Columbia;4;6*13'12"N, 75*35'26"W
 EOI     Eday, United Kingdom;4;59*11'29"N, 2*46'26"W
 EOK     Keokuk, USA;4;40*27'36"N, 91*25'43"W
 EOR     El Dorado, Venezuela;4;6*42'56"N, 61*38'21"W
@@ -2244,7 +2244,7 @@ FCO ROM Rome (Fiumicino), Italy;4;41*48'16"N, 12*15'3"E
 FCS     Colorado Springs/Fort Carson, USA;4;38*40'42"N, 104*45'23"W
 FCT     Yakima (Vagabond Army Airfield), USA;4;46*39'59"N, 120*27'14"W
 FCY     Forrest City, USA;4;34*56'31"N, 90*46'30"W
-FDA     Fundacion, Columbia;4;10*31'60"N, 74*11'60"W
+FDA     Fundación, Columbia;4;10*31'60"N, 74*11'60"W
 FDB     Príncipe da Beira, Brazil
 FDE     Førde, Norway;4;61*23'28"N, 5*45'25"E
 FDF     Fort-de-France, Martinique;4;14*35'32"N, 60*59'47"W
@@ -2258,8 +2258,8 @@ FDY     Findlay, USA;4;41*0'43"N, 83*40'7"W
 FEA     Fetlar Island, United Kingdom;4;60*35'60"N, 0*52'1"E
 FEB     Sanfebagar, Nepal;4;29*13'59"N, 81*13'1"E
 FEG     Farghona, Usbekistan;4;40*21'32"N, 71*44'42"E
-FEK     Ferkessedougou, Ivory Coast;4;9*36'0"N, 5*11'60"W
-FEL     Fuerstenfeldbruck, Germany;4;48*12'20"N, 11*16'1"E
+FEK     Ferkessédougou, Ivory Coast;4;9*36'0"N, 5*11'60"W
+FEL     Fürstenfeldbruck, Germany;4;48*12'20"N, 11*16'1"E
 FEN     Fernando de Noronha, Brazil;4;3*51'18"S, 32*25'24"W
 FEP     Freeport, USA;4;42*14'46"N, 89*34'55"W
 FER     Fergusons Gulf, Kenya
@@ -2274,7 +2274,7 @@ FFL     Fairfield, USA;4;41*3'21"N, 91*58'51"W
 FFM     Fergus Falls, USA;4;46*17'4"N, 96*9'24"W
 FFO     Dayton (Wright-Patterson Airforce Base), USA;4;39*49'34"N, 84*2'54"W
 FFT     Frankfort, USA;4;38*10'55"N, 84*54'22"W
-FFU     Futaleufu, Chile;4;43*10'59"S, 71*49'1"W
+FFU     Futaleufú, Chile;4;43*10'59"S, 71*49'1"W
 FGD     F'derik, Mauretania;4;22*40'1"N, 12*43'59"W
 FGI     Apia (Fabali Si), West Samoa;4;13*50'55"S, 171*44'26"W
 FGL     Fox Glacier, New Zealand;4;43*27'47"S, 169*59'59"E
@@ -2516,7 +2516,7 @@ GDJ     Gandajika, Congo;4;6*43'59"S, 23*57'0"E
 GDL     Guadalajara, Mexico;4;20*31'18"N, 103*18'40"W
 GDM     Gardner, USA;4;42*32'60"N, 72*0'58"W
 GDN     Danzig (Gdansk), Poland;4;54*22'39"N, 18*27'58"E
-GDO     Guasqualito, Venezuela;4;7*12'40"N, 70*45'23"W
+GDO     Guasdualito, Venezuela;4;7*12'40"N, 70*45'23"W
 GDP     Guadalupe, Brazil;5;6*46'56"S, 43*34'56"W
 GDQ     Gondar, Ethiopia;4;12*31'12"N, 37*26'3"E
 GDT     Grand Turk, Turks & Caicos;4;21*26'40"N, 71*8'32"W
@@ -2566,7 +2566,7 @@ GGN     Gagnoa, Ivory Coast;4;6*7'59"N, 5*56'60"W
 GGO     Guiglo, Ivory Coast;4;6*31'30"N, 7*28'43"W
 GGP     Logansport, USA;4;40*42'41"N, 86*22'30"W
 GGR     Garde, Somalia;4;8*23'60"N, 48*28'59"E
-GGS     Gobernador dos Gregores, Argentina;4;48*46'58"S, 70*8'57"W
+GGS     Gobernador Gregores, Argentina;4;48*46'58"S, 70*8'57"W
 GGT     George Town, Bahamas;4;23*28'0"N, 75*46'54"W
 GGW     Glasgow, USA;4;48*12'45"N, 106*36'53"W
 GHA     Ghardaia, Algeria;4;32*23'3"N, 3*47'39"E
@@ -2579,7 +2579,7 @@ GHL     Garden Hill, Canada
 GHM     Centerville, USA;4;35*50'15"N, 87*26'43"W
 GHN     Guanghan, China;5;30*28'1"N, 106*39'0"E
 GHT     Ghat, Lybia;4;25*8'44"N, 10*8'34"E
-GHU     Gualeguaychu, Argentina;4;33*0'37"S, 58*36'47"W
+GHU     Gualeguaychú, Argentina;4;33*0'37"S, 58*36'47"W
 GHW     Glenwood, USA;4;45*38'38"N, 95*19'14"W
 GIB     Gibraltar, Gibraltar;4;36*9'4"N, 5*20'59"W
 GIC     Boigu Island, Australia;4;9*13'60"S, 142*13'6"E
@@ -2590,7 +2590,7 @@ GII     Siguiri, Guinea;4;11*25'59"N, 9*10'1"W
 GIL     Gilgit, Pakistan;4;35*55'8"N, 74*20'1"E
 GIM     Miele Mimbale, Gabun;4;0*4'1"S, 11*21'0"E
 GIO     Geilo, Norway
-GIR     Giradot, Columbia;4;4*16'34"N, 74*47'45"W
+GIR     Girardot, Columbia;4;4*16'34"N, 74*47'45"W
 GIS     Gisborne, New Zealand;4;38*39'48"S, 177*58'42"E
 GIT     Geita, Tanzania;4;2*52'1"S, 32*10'1"E
 GIY     Giyana, South Africa;4;23*17'2"S, 30*39'1"E
@@ -2685,13 +2685,13 @@ GOV     Nhulunbuy, Australia;4;12*16'10"S, 136*49'6"E
 GOW     Garrow Lake, Canada
 GOY     Gal Oya, Sri Lanka;4;7*20'13"N, 81*37'33"E
 GOZ     Gorna, Bulgaria;4;43*9'5"N, 25*42'46"E
-GPA     Araxos/Patras, Greece;4;38*9'4"N, 21*25'32"E
+GPA     Pátras (Áraxos), Greece;4;38*9'4"N, 21*25'32"E
 GPB     Guarapuava, Brazil;4;25*23'15"S, 51*31'13"W
 GPI     Guapi, Columbia;4;2*34'12"N, 77*53'55"W
 GPL     Guápiles, Costa Rica;4;10*13'2"N, 83*47'49"W
 GPN     Garden Point, Australia;4;11*24'9"S, 130*25'19"E
 GPO     General Pico, Argentina;4;35*41'46"S, 63*45'30"W
-GPS     Galapagos Islands, Ecuador;4;0*27'14"S, 90*15'57"W
+GPS     Galápagos Islands, Ecuador;4;0*27'14"S, 90*15'57"W
 GPT     Gulfport/Biloxi, USA;4;30*24'26"N, 89*4'12"W
 GPZ     Grand Rapids, USA;4;47*12'40"N, 93*30'35"W
 GQJ     Machrihanish, United Kingdom
@@ -2759,7 +2759,7 @@ GUD     Goundam, Mali;4;16*21'41"N, 3*35'59"W
 GUF     Gulf Shores, USA;4;30*17'23"N, 87*40'18"W
 GUG     Guari, New Guinea;4;8*7'1"S, 146*51'0"E
 GUH     Gunnedah, Australia;4;30*57'40"S, 150*15'2"E
-GUI     Guiria, Venezuela;4;10*34'27"N, 62*18'46"W
+GUI     Güiria, Venezuela;4;10*34'27"N, 62*18'46"W
 GUJ     Guaratingueta, Brazil;4;22*47'30"S, 45*12'17"W
 GUL     Goulburn, Australia;4;34*48'37"S, 149*43'35"E
 GUM     Guam, Guam;4;13*29'2"N, 144*47'50"E
@@ -2802,7 +2802,7 @@ GXH     Mildenhall, United Kingdom
 GXQ     Coyhaique, Chile;4;45*35'39"S, 72*6'22"W
 GXX     Yagoua, Kamerun;4;10*21'22"N, 15*14'14"E
 GXY     Greeley, USA;4;40*26'15"N, 104*37'60"W
-GYA     Guayaramerin, Bolivia;4;10*49'18"S, 65*20'45"W
+GYA     Guayaramerín, Bolivia;4;10*49'18"S, 65*20'45"W
 GYD     Baki, Azerbaijan;3;40*28'3"N, 50*2'48"E
 GYE     Guayaquil, Ecuador;4;2*9'27"S, 79*53'1"W
 GYI     Gisenyi, Rwanda;4;1*40'38"S, 29*15'32"E
@@ -2888,7 +2888,7 @@ HEK     Heihe, China;4;50*15'0"N, 127*18'0"E
 HEL     Helsinki, Finland;4;60*19'2"N, 24*57'48"E
 HEM     Helsinki (Malmi), Finland;4;60*15'14"N, 25*2'39"E
 HEN     Hendon, United Kingdom
-HER     Heraklion (Kreta), Greece;4;35*20'23"N, 25*10'49"E
+HER     Heráklion (Crete), Greece;4;35*20'23"N, 25*10'49"E
 HES     Hermiston, USA;4;45*49'42"N, 119*15'33"W
 HET     Hohhot, China;4;40*51'5"N, 111*49'27"E
 HEX     Santo Domingo, Dom. Republic;4;18*28'12"N, 69*58'10"W
@@ -3109,7 +3109,7 @@ HUN     Hualien, Taiwan;4;24*1'25"N, 121*37'1"E
 HUQ     Houn, Lybia;4;29*6'36"N, 15*57'56"E
 HUS     Hughes, USA;4;66*2'21"N, 154*15'53"W
 HUT     Hutchinson, USA;4;38*3'56"N, 97*51'38"W
-HUU     Huanuco, Peru;4;9*52'44"S, 76*12'17"W
+HUU     Huánuco, Peru;4;9*52'44"S, 76*12'17"W
 HUV     Hudiksvall, Sweden;4;61*46'6"N, 17*4'50"E
 HUX     Huatulco, Mexico;4;15*46'31"N, 96*15'45"W
 HUY     Humberside, United Kingdom;4;53*34'28"N, 0*21'3"E
@@ -3159,14 +3159,14 @@ IAN     Kiana, USA;4;66*58'33"N, 160*26'12"W
 IAQ     Bahregan, Iran;4;29*49'59"N, 50*16'1"E
 IAS     Iasi, Romania;4;47*10'43"N, 27*37'14"E
 IBA     Ibadan, Nigeria;4;7*21'45"N, 3*58'42"E
-IBE     Ibague, Columbia;4;4*25'17"N, 75*7'57"W
+IBE     Ibagué, Columbia;4;4*25'17"N, 75*7'57"W
 IBI     Iboki, New Guinea;4;5*33'0"S, 149*10'59"E
 IBM     Kimball, USA;4;41*11'17"N, 103*40'39"W
 IBO     Ibo, Mosambique;4;12*19'59"S, 40*35'60"E
 IBP     Iberia, Peru;4;11*24'42"S, 69*29'19"W
 IBR     Ibaraki, Japan;5;36*10'42"N, 140*25'5"E
 IBZ     Ibiza, Spain;4;38*52'22"N, 1*22'23"E
-ICA     Icabaru, Venezuela;4;4*19'59"N, 61*43'59"W
+ICA     Icabarú, Venezuela;4;4*19'59"N, 61*43'59"W
 ICI     Cicia, Fiji;4;17*44'36"S, 179*20'32"W
 ICK     Nieuw Nickerie, Surinam;4;5*57'20"N, 57*2'22"W
 ICL     Clarinda, USA;4;40*43'18"N, 95*1'35"W
@@ -3204,8 +3204,8 @@ IGH     Ingham, Australia;4;18*39'38"S, 146*9'6"E
 IGL     Izmir (Cigli Airforce Base), Turkey;4;38*30'47"N, 27*0'36"E
 IGM     Kingman, USA;4;35*15'34"N, 113*56'17"W
 IGN     Iligan, Philippines;4;8*7'50"N, 124*12'54"E
-IGO     Chigorodo, Columbia;4;7*40'49"N, 76*41'11"W
-IGR     Iguazu, Argentina;4;25*44'14"S, 54*28'24"W
+IGO     Chigorodó, Columbia;4;7*40'49"N, 76*41'11"W
+IGR     Puerto Iguazú, Argentina;4;25*44'14"S, 54*28'24"W
 IGS     Ingolstadt-Manching, Germany;5;48*42'56"N, 11*32'2"E
 IGU     Foz do Iguaçu, Brazil;4;25*35'46"S, 54*29'14"W
 IHA     Niihame, Japan;4;33*55'59"N, 133*11'60"E
@@ -3268,7 +3268,7 @@ INC     Yinchuan, China;4;38*28'55"N, 106*0'33"E
 IND     Indianapolis, USA;4;39*43'2"N, 86*17'41"W
 INE     Chinde, Mosambique;4;18*34'59"S, 36*25'59"E
 INF     In Guezzam, Algeria;4;19*34'1"N, 5*45'0"E
-ING     Ago, Argentina;4;50*19'59"S, 72*18'0"W
+ING     El Calafate, Argentina;4;50*19'59"S, 72*18'0"W
 INH     Inhambane, Mosambique;4;23*52'35"S, 35*24'31"E
 INI     Nis, Jugoslavia;4;43*20'14"N, 21*51'13"E
 INJ     Injune, Australia;4;25*51'0"S, 148*31'59"E
@@ -3286,7 +3286,7 @@ INV     Inverness, United Kingdom;4;57*32'33"N, 4*2'51"W
 INW     Winslow, USA;4;35*1'19"N, 110*43'21"W
 INX     Inanwatan, Indonesia;4;2*7'1"S, 132*8'60"E
 INZ     In Salah, Algeria;4;27*15'4"N, 2*30'43"E
-IOA     Ioannina, Greece;4;39*41'47"N, 20*49'21"E
+IOA     Ioánnina, Greece;4;39*41'47"N, 20*49'21"E
 IOB     Mount Sterling, USA;4;38*3'29"N, 83*58'46"W
 IOK     Iokea, New Guinea;4;8*23'60"S, 146*16'1"E
 IOM     Isle of Man, United Kingdom;4;54*4'60"N, 4*37'26"W
@@ -3327,7 +3327,7 @@ IRS     Sturgis, USA;4;41*48'48"N, 85*26'20"W
 ISA     Mount Isa, Australia;4;20*39'50"S, 139*29'19"E
 ISB     Islamabad, Pakistan;4;33*36'60"N, 73*5'57"E
 ISC     Scilly Isles, United Kingdom;4;49*54'48"N, 6*17'30"W
-ISD     Iscuande, Columbia;4;2*25'59"N, 77*58'1"W
+ISD     Iscuandé, Columbia;4;2*25'59"N, 77*58'1"W
 ISG     Ishigaki, Japan;4;24*20'40"N, 124*11'13"E
 ISH     Ischia, Italy;4;40*45'0"N, 13*53'60"E
 ISI     Isisford, Australia;4;24*15'30"S, 144*25'30"E
@@ -3364,7 +3364,7 @@ IVC     Invercargill, New Zealand;4;46*24'54"S, 168*19'12"E
 IVG     Ivangrad, Jugoslavia;4;42*49'59"N, 19*51'0"E
 IVH     Ivishak, USA
 IVL     Ivalo, Finland;4;68*36'26"N, 27*24'19"E
-IVO     Chivolo, Columbia;4;10*1'1"N, 74*40'59"W
+IVO     Chibolo, Columbia;4;10*1'1"N, 74*40'59"W
 IVR     Inverell, Australia;4;29*53'18"S, 151*8'39"E
 IVW     Inverway, Australia;4;17*50'28"S, 129*38'35"E
 IWA     Ivanovo, Russia;5;56*56'22"N, 40*56'27"E
@@ -3502,11 +3502,11 @@ JIR     Jiri, Nepal;4;27*37'1"N, 86*13'1"E
 JIT     Kitsault, Canada
 JIU     Jiujiang, China;4;29*43'59"N, 115*58'59"E
 JIW     Jiwani, Pakistan;4;25*4'4"N, 61*48'20"E
-JJI     Juanjui, Peru;4;7*10'9"S, 76*43'43"W
+JJI     Juanjuí, Peru;4;7*10'9"S, 76*43'43"W
 JJN     Jinjiang, China;4;24*47'47"N, 118*35'23"E
 JJU     Julianehab, Greenland;4;60*42'57"N, 46*1'46"W
 JKG     Jonkoping, Sweden;4;57*45'27"N, 14*4'7"E
-JKH     Chios, Greece;4;38*20'35"N, 26*8'26"E
+JKH     Chíos, Greece;4;38*20'35"N, 26*8'26"E
 JKL     Jackson, USA;4;37*35'38"N, 83*19'2"W
 JKR     Janakpur, Nepal;4;26*42'32"N, 85*55'21"E
 JKT JKT Jakarta, Indonesia
@@ -3524,7 +3524,7 @@ JMB     Jamba, Angola;4;14*40'59"S, 16*1'59"E
 JMC     Sausalito, USA;4;37*52'45"N, 122*30'49"W
 JMD     Dallas (Market Center Heliport), USA
 JMH CHI Chicago (Schaumburg), USA
-JMK     Mykonos, Greece;4;37*26'6"N, 25*20'53"E
+JMK     Mýkonos, Greece;4;37*26'6"N, 25*20'53"E
 JMM     Malmö (Harbour Heliport), Sweden;4;55*37'12"N, 12*58'58"E
 JMO     Jomsom, Nepal;4;28*46'59"N, 83*43'59"E
 JMS     Jamestown, USA;4;46*55'47"N, 98*40'41"W
@@ -3533,12 +3533,12 @@ JMY     Freetown (Manny Yoko Airport), Sierra Leone
 JNA     Januária, Brazil;4;15*28'26"S, 44*23'8"W
 JNB     Johannesburg, South Africa;4;26*8'21"S, 28*14'46"E
 JNG     Jining, China;4;35*25'1"N, 116*31'59"E
-JNI     Junin, Argentina;4;34*32'45"S, 60*55'50"W
+JNI     Junín, Argentina;4;34*32'45"S, 60*55'50"W
 JNN     Nanortalik, Greenland;4;60*8'24"N, 45*13'54"W
 JNP     Newport Beach, USA
 JNS     Narssaq, Greenland;4;60*55'0"N, 46*3'31"W
 JNU     Juneau, USA;4;58*21'18"N, 134*34'35"W
-JNX     Naxos, Greece;4;37*4'50"N, 25*22'5"E
+JNX     Náxos, Greece;4;37*4'50"N, 25*22'5"E
 JNZ     Jinzhou, China;4;41*7'1"N, 121*1'1"E
 JOC     Orange County, USA
 JOE     Joensuu, Finland;4;62*39'46"N, 29*36'27"E
@@ -3577,24 +3577,24 @@ JRZ     Jerez de la Frontera, Spain
 JSA     Jaisalmer, India;4;26*53'19"N, 70*51'54"E
 JSD     Startford, USA;4;41*14'57"N, 73*5'48"W
 JSE     Juneau Harbor Seaplane Base, USA
-JSH     Sitia, Greece;4;35*12'58"N, 26*6'5"E
-JSI     Skiathos, Greece;4;39*10'38"N, 23*30'13"E
+JSH     Sitía, Greece;4;35*12'58"N, 26*6'5"E
+JSI     Skiáthos, Greece;4;39*10'38"N, 23*30'13"E
 JSK     St. Cloud (Hospital Heliport), USA
 JSL     Atlantic City (Taj Mahal Heliport), USA;4;39*21'17"N, 74*25'4"W
-JSM     José de San Martin, Argentina;4;44*2'60"S, 70*25'59"W
+JSM     José de San Martín, Argentina;4;44*2'60"S, 70*25'59"W
 JSN QLA Los Angeles (Sherman Oaks Hospital), USA;4;34*9'36"N, 118*26'58"W
 JSO     Södertälje, Sweden;4;59*12'0"N, 17*37'1"E
 JSP     Cheju, South Korea
 JSR     Jessore, Bangladesh;4;23*11'2"N, 89*9'39"E
-JSS     Spetsai Island, Greece;5;37*15'58"N, 23*9'22"E
+JSS     Spétsai Island, Greece;5;37*15'58"N, 23*9'22"E
 JST     Johnstown, USA;4;40*18'58"N, 78*50'2"W
 JSU     Sukkertoppen, Greenland;4;65*24'45"N, 52*56'22"W
 JSV     Sunnyvale, USA;4;35*26'17"N, 94*48'10"W
-JSY     Syros, Greece;4;37*25'22"N, 24*57'3"E
+JSY     Sýros, Greece;4;37*25'22"N, 24*57'3"E
 JSZ     Saint-Tropez, France;4;43*16'1"N, 6*39'0"E
 JTO     Thousand Oaks, USA
-JTR     Santorin, Greece;4;36*23'57"N, 25*28'46"E
-JTY     Astypalea, Greece;4;36*34'48"N, 26*22'33"E
+JTR     Santorín, Greece;4;36*23'57"N, 25*28'46"E
+JTY     Astypálea, Greece;4;36*34'48"N, 26*22'33"E
 JUA     Juara, Brazil;4;12*49'59"S, 58*55'1"W
 JUB     Juba, Sudan;4;4*52'19"N, 31*36'4"E
 JUC QLA Los Angeles (Universal Studios), USA
@@ -3603,7 +3603,7 @@ JUJ     Jujuy, Argentina;4;24*23'34"S, 65*5'52"W
 JUL     Juliaca, Peru;4;15*28'2"S, 70*9'29"W
 JUM     Jumla, Nepal;4;29*16'27"N, 82*11'36"E
 JUN     Jundah, Australia;4;24*50'17"S, 143*3'44"E
-JUO     Jurado, Columbia;4;6*31'1"N, 76*35'60"W
+JUO     Juradó, Columbia;4;6*31'1"N, 76*35'60"W
 JUP     Upland (Cable Heliport), USA
 JUR     Jurien Bay, Australia;4;30*18'11"S, 115*3'19"E
 JUT     Juticalpa, Honduras;4;14*40'1"N, 86*18'0"W
@@ -3649,7 +3649,7 @@ KAR     Kamarang, Guyana;4;5*51'55"N, 60*36'51"W
 KAS     Karasburg, Namibia;4;28*1'59"S, 18*43'59"E
 KAT     Kaitaia, New Zealand;4;35*4'12"S, 173*17'7"E
 KAU     Kauhava, Finland;5;63*7'37"N, 23*3'5"E
-KAV     Kavanayen, Venezuela;4;5*37'59"N, 61*46'59"W
+KAV     Kavanayén, Venezuela;4;5*37'59"N, 61*46'59"W
 KAW     Kawthaung, Burma;4;10*2'57"N, 98*32'17"E
 KAX     Kalbarri, Australia;4;27*41'24"S, 114*15'42"E
 KAY     Wakaya Island, Fiji;4;17*37'1"S, 179*1'1"E
@@ -3730,7 +3730,7 @@ KEK     Ekwok, USA;4;59*21'25"N, 157*28'16"W
 KEL     Kiel, Germany;4;54*22'46"N, 10*8'43"E
 KEM     Kemi, Finland;4;65*46'55"N, 24*35'57"E
 KEN     Kenema, Sierra Leone;4;7*53'29"N, 11*10'36"W
-KEO     Odienne, Ivory Coast;4;9*30'0"N, 7*34'1"W
+KEO     Odienné, Ivory Coast;4;9*30'0"N, 7*34'1"W
 KEP     Nepalganj, Nepal;4;28*6'13"N, 81*40'1"E
 KEQ     Kebar, Indonesia;4;0*48'0"S, 133*3'0"E
 KER     Kerman, Iran;4;30*16'28"N, 56*57'4"E
@@ -3801,7 +3801,7 @@ KIP     Wichita Falls (Downtown Airpark), USA;4;33*51'28"N, 98*29'25"W
 KIQ     Kira, New Guinea;4;8*4'1"S, 147*19'1"E
 KIR     Killarney, Ireland;4;52*10'51"N, 9*31'26"W
 KIS     Kisumu, Kenya;4;0*5'10"S, 34*43'44"E
-KIT     Kithira, Greece;4;36*16'27"N, 23*1'1"E
+KIT     Kíthira, Greece;4;36*16'27"N, 23*1'1"E
 KIU     Kiunga, Kenya;4;1*43'59"S, 41*28'1"E
 KIV     Chisinau, Moldova;4;46*55'40"N, 28*55'52"E
 KIW     Kitwe, Zambia;4;12*54'2"S, 28*8'59"E
@@ -3858,7 +3858,7 @@ KLT     Kaiserslautern, Germany
 KLU     Klagenfurt, Austria;4;46*38'33"N, 14*20'16"E
 KLV     Karlovy Vary, Czech Republic;4;50*12'11"N, 12*54'54"E
 KLW     Klawock, USA;4;55*34'45"N, 133*4'34"W
-KLX     Kalamata, Greece;4;37*4'6"N, 22*1'32"E
+KLX     Kalamáta, Greece;4;37*4'6"N, 22*1'32"E
 KLY     Kalima, Congo;4;2*34'41"S, 26*44'2"E
 KLZ     Kleinzee, South Africa;4;29*41'18"S, 17*5'38"E
 KMA     Kerema, New Guinea;4;7*57'49"S, 145*46'17"E
@@ -3886,7 +3886,7 @@ KMV     Kalemyo, Burma;4;23*11'20"N, 94*3'4"E
 KMX     Khamis Muskayt, Saudi Arabia;4;18*17'50"N, 42*48'13"E
 KMY     Moser Bay, USA;4;57*1'32"N, 154*8'45"W
 KMZ     Kacma, Zambia;4;14*48'0"S, 24*46'59"E
-KNA     Vina del Mar, Chile;4;32*56'59"S, 71*28'43"W
+KNA     Viña del Mar, Chile;4;32*56'59"S, 71*28'43"W
 KNB     Kanab, USA;4;37*0'40"N, 112*31'52"W
 KNC     Jian, China
 KND     Kindu, Congo;4;2*55'9"S, 25*54'55"E
@@ -3989,12 +3989,12 @@ KSF     Kassel, Germany;4;51*24'30"N, 9*22'39"E
 KSG     Kisengan, New Guinea;4;6*20'60"S, 146*41'60"E
 KSH     Kermanshah, Iran;4;34*20'45"N, 47*9'29"E
 KSI     Kissidougou, Guinea;4;9*9'38"N, 10*7'28"W
-KSJ     Kasos, Greece;4;35*25'17"N, 26*54'36"E
+KSJ     Kásos, Greece;4;35*25'17"N, 26*54'36"E
 KSK     Karlskoga, Sweden;4;59*20'45"N, 14*29'45"E
 KSL     Kassala, Sudan;4;15*23'15"N, 36*19'44"E
 KSM     St. Mary's, USA;4;62*3'39"N, 163*18'7"W
 KSN     Qostanay, Kasachstan;4;53*12'25"N, 63*33'1"E
-KSO     Kastoria, Greece;4;40*26'47"N, 21*16'56"E
+KSO     Kastoriá, Greece;4;40*26'47"N, 21*16'56"E
 KSP     Kosipe, New Guinea;4;8*26'60"S, 147*11'60"E
 KSQ     Qarshi, Usbekistan;4;38*50'1"N, 65*55'17"E
 KSR     Sandy, USA
@@ -4051,7 +4051,7 @@ KUV     Kunsan, South Korea;4;35*54'14"N, 126*36'57"E
 KUW     Kamusi, New Guinea
 KUY     Uyak, USA
 KUZ     Kusan, South Korea
-KVA     Kavalla, Greece;4;40*54'48"N, 24*37'9"E
+KVA     Kavála, Greece;4;40*54'48"N, 24*37'9"E
 KVB     Skövde, Sweden;4;58*27'23"N, 13*58'22"E
 KVC     King Cove, USA;4;55*6'59"N, 162*15'58"W
 KVD     Gyandzha, Azerbaijan;4;40*44'16"N, 46*19'3"E
@@ -4105,10 +4105,10 @@ KZC     Kompong-Chhnang, Cambodia;4;12*15'19"N, 104*33'50"E
 KZD     Krakor, Cambodia;4;12*31'59"N, 104*9'0"E
 KZF     Kaintiba, New Guinea;4;7*30'0"S, 146*1'1"E
 KZH     Kizhuyak, USA
-KZI     Kozani, Greece;4;40*17'10"N, 21*50'27"E
+KZI     Kozáni, Greece;4;40*17'10"N, 21*50'27"E
 KZK     Kompong-Thom, Cambodia;4;12*43'59"N, 104*54'0"E
 KZN     Kazan, Russia;4;55*36'22"N, 49*16'43"E
-KZS     Kastelorizo, Greece;4;36*7'40"N, 29*33'60"E
+KZS     Kastelórizo, Greece;4;36*7'40"N, 29*33'60"E
 LAA     Lamar, USA;4;38*4'11"N, 102*41'19"W
 LAB     Lablab, New Guinea;4;5*43'1"S, 148*3'0"E
 LAC     Layang-Layang, Malaysia;5;7*24'0"N, 113*50'60"E
@@ -4168,7 +4168,7 @@ LCH     Lake Charles (Regional Airport), USA;4;30*7'34"N, 93*13'24"W
 LCI     Laconia, USA;4;43*34'22"N, 71*25'8"W
 LCK     Columbus, USA;4;39*48'50"N, 82*55'40"W
 LCL     Pinar del Río (La Coloma), Cuba;4;22*20'11"N, 83*38'32"W
-LCM     Lacumbre, Argentina;4;31*0'22"S, 64*31'53"W
+LCM     La Cumbre, Argentina;4;31*0'22"S, 64*31'53"W
 LCN     Balcanoona, Australia;4;30*32'6"S, 139*20'12"E
 LCO     Loque, Congo;4;2*27'0"S, 14*31'59"E
 LCR     La Chorrera, Columbia;4;1*0'0"S, 73*0'0"W
@@ -4222,7 +4222,7 @@ LFK     Lufkin, USA;4;31*14'2"N, 94*45'0"W
 LFN     Louisburg, USA;4;36*1'24"N, 78*19'49"W
 LFO     Kelafo, Ethiopia;4;5*39'25"N, 44*20'60"E
 LFP     Lakefield, Australia;4;14*55'1"S, 144*19'59"E
-LFR     La Fria, Venezuela;4;8*14'21"N, 72*16'16"W
+LFR     La Fría, Venezuela;4;8*14'21"N, 72*16'16"W
 LFT     Lafayette, USA;4;30*12'19"N, 91*59'15"W
 LFW     Lome, Togo;4;6*9'56"N, 1*15'16"E
 LGA NYC New York (La Guardia), USA;4;40*46'38"N, 73*52'21"W
@@ -4239,15 +4239,15 @@ LGM     Laiagam, New Guinea;4;5*28'59"S, 143*28'59"E
 LGN     Linga Linga, New Guinea;4;5*31'59"S, 149*43'59"E
 LGO     Langeoog, Germany;4;53*44'34"N, 7*29'55"E
 LGP     Legaspi, Philippines;4;13*9'25"N, 123*44'46"E
-LGQ     Lago Agrio, Ecuador;4;0*5'33"S, 76*52'10"W
+LGQ     Nueva Loja, Ecuador;4;0*5'33"S, 76*52'10"W
 LGR     Cochrane, Chile;4;47*14'38"S, 72*35'18"W
-LGS     Malargue, Argentina;4;35*29'37"S, 69*34'27"W
+LGS     Malargüe, Argentina;4;35*29'37"S, 69*34'27"W
 LGT     Las Gaviotas, Columbia;4;4*33'0"N, 70*55'30"W
 LGU     Logan, USA;4;41*47'28"N, 111*51'6"W
 LGW LON London (Gatwick), United Kingdom;4;51*8'53"N, 0*11'25"W
 LGX     Lugh Ganane, Somalia;4;3*7'59"N, 42*2'60"E
 LGY     Lagunillas, Venezuela;4;10*7'1"N, 71*13'59"W
-LGZ     Leguizamo, Columbia;4;0*10'1"S, 74*46'1"W
+LGZ     Puerto Leguízamo, Columbia;4;0*10'1"S, 74*46'1"W
 LHA     Lahr, Germany;4;48*22'9"N, 7*49'40"E
 LHB     Lost Harbor, USA;3;30*52'0"N, 96*37'0"W
 LHC     Caballococha, Peru
@@ -4327,7 +4327,7 @@ LLX     Lyndonville, USA;4;44*34'9"N, 72*1'5"W
 LLY     Mount Holly, USA;4;39*56'34"N, 74*50'45"W
 LMA     Lake Minchumina, USA;4;63*53'10"N, 152*18'7"W
 LMB     Salima, Malawi;4;13*45'0"S, 34*34'59"E
-LMC     Lamacarena, Columbia;5;3*19'1"N, 73*54'0"W
+LMC     La Macarena, Columbia;5;3*19'1"N, 73*54'0"W
 LMD     Los Menucos, Argentina;4;40*48'57"S, 68*4'16"W
 LME     Le Mans, France;4;47*56'55"N, 0*12'6"E
 LMG     Lamassa, New Guinea;4;4*40'1"S, 152*43'59"E
@@ -4342,7 +4342,7 @@ LMQ     Marsa Brega, Lybia;4;30*22'41"N, 19*34'35"E
 LMR     Lime Acres, South Africa;4;28*21'36"S, 23*26'21"E
 LMS     Louisville, USA;4;33*8'46"N, 89*3'45"W
 LMT     Klamath Falls, USA;4;42*9'22"N, 121*43'59"W
-LMX     Lopez de Micay, Columbia;4;3*2'60"N, 77*33'0"W
+LMX     López de Micay, Columbia;4;3*2'60"N, 77*33'0"W
 LMY     Lake Murray, New Guinea;4;7*0'0"S, 141*28'59"E
 LMZ     Palma, Mosambique;4;10*45'0"S, 40*28'16"E
 LNA MFW West Palm Beach, USA;4;26*35'35"N, 80*5'6"W
@@ -4411,10 +4411,10 @@ LPW     Little Port Walker, USA
 LPX     Liepaja, Latvija;4;56*31'3"N, 21*5'49"E
 LPY     Le Puy-en-Velay, France;4;45*4'47"N, 3*45'48"E
 LQK     Pickens, USA;4;34*48'36"N, 82*42'10"W
-LQM     Puerto Leguizam, Columbia;4;0*10'56"S, 74*46'15"W
+LQM     Puerto Leguízam, Columbia;4;0*10'56"S, 74*46'15"W
 LQN     Qala-Nau, Afghanistan;4;34*59'6"N, 63*7'4"E
 LQR     Larned, USA;4;38*12'31"N, 99*5'9"W
-LRA     Larisa, Greece;4;39*39'1"N, 22*27'56"E
+LRA     Lárisa, Greece;4;39*39'1"N, 22*27'56"E
 LRB     Leribe, Lesotho;4;28*51'20"S, 28*3'10"E
 LRC     Laarbruch, Germany;4;51*36'8"N, 6*8'30"E
 LRD     Laredo, USA;4;27*32'38"N, 99*27'42"W
@@ -4431,7 +4431,7 @@ LRN     Moses Lake (Larson Airforce Base), USA
 LRO     Sharpe Army Depot, USA;4;32*53'52"N, 79*46'58"W
 LRQ     Laurie River, Canada;4;56*14'55"N, 101*18'15"W
 LRR     Larestan, Iran;5;27*40'23"N, 54*22'53"E
-LRS     Leros, Greece;4;37*11'6"N, 26*48'1"E
+LRS     Léros, Greece;4;37*11'6"N, 26*48'1"E
 LRT     Lorient, France;4;47*45'38"N, 3*26'24"W
 LRU     Las Cruces, USA;4;32*17'22"N, 106*55'19"W
 LRV     Los Roques, Venezuela;4;11*56'60"N, 66*40'1"W
@@ -4449,7 +4449,7 @@ LSM     Long Semado, Malaysia;4;4*13'1"N, 115*35'60"E
 LSN     Los Banos, USA;4;37*3'50"N, 120*52'12"W
 LSO     Les Sables d’Olonne, France;4;46*28'37"N, 1*43'22"W
 LSP     Las Piedras, Venezuela;4;11*46'51"N, 70*9'5"W
-LSQ     Los Angeles, Chile;4;37*24'6"S, 72*25'32"W
+LSQ     Los Ángeles, Chile;4;37*24'6"S, 72*25'32"W
 LSR     Lost River, USA;4;65*23'46"N, 167*9'47"W
 LSS     Les St.es/Terre de Haut, Guadeloupe;4;15*51'52"N, 61*34'50"W
 LST     Launceston, Australia;4;41*32'43"S, 147*12'51"E
@@ -4530,7 +4530,7 @@ LXG     Luang Namtha, Laos;4;20*58'1"N, 101*24'0"E
 LXL     Little Falls, USA;4;45*56'59"N, 94*20'51"W
 LXN     Lexington, USA;4;40*47'26"N, 99*46'33"W
 LXR     Luxor, Egypt;4;25*40'16"N, 32*42'24"E
-LXS     Lemnos, Greece;4;39*55'1"N, 25*14'11"E
+LXS     Lémnos, Greece;4;39*55'1"N, 25*14'11"E
 LXU     Lukulu, Zambia;4;14*21'60"S, 23*15'30"E
 LXV     Leadville, USA;4;39*13'13"N, 106*19'0"W
 LYA     Luoyang, China;4;34*44'28"N, 112*23'18"E
@@ -4639,7 +4639,7 @@ MDA     San Antonio (Martindale Army Airfield), USA;4;29*25'53"N, 98*22'40"W
 MDB     Melinda, Belize;4;17*0'0"N, 88*19'1"W
 MDC     Manado, Indonesia;4;1*32'58"N, 124*55'33"E
 MDD     Midland, USA;4;32*2'11"N, 102*6'4"W
-MDE     Medellin, Columbia;4;6*9'52"N, 75*25'23"W
+MDE     Medellín (José María Córdova), Columbia;4;6*9'52"N, 75*25'23"W
 MDF     Medford, USA;4;45*6'4"N, 90*18'12"W
 MDG     Mudanjiang, China;4;44*31'27"N, 129*34'8"E
 MDH     Carbondale/Murphysboro, USA;4;37*46'41"N, 89*15'7"W
@@ -4722,7 +4722,7 @@ MGI     Matagorda, USA;4;28*7'1"N, 96*48'1"W
 MGJ     Montgomery, USA;4;41*30'36"N, 74*15'53"W
 MGL NRW Moenchengladbach, Germany;4;51*13'49"N, 6*30'16"E
 MGM     Montgomery, USA;4;32*18'2"N, 86*23'38"W
-MGN     Maganque, Columbia;4;9*17'5"N, 74*50'46"W
+MGN     Magangué, Columbia;4;9*17'5"N, 74*50'46"W
 MGO     Manea, Gabun;4;2*0'0"S, 10*25'1"E
 MGP     Manga, New Guinea;4;4*7'59"S, 153*1'1"E
 MGQ     Mogadishu, Somalia;4;2*0'52"N, 45*18'17"E
@@ -4781,7 +4781,7 @@ MIT     Shafter, USA;4;35*30'27"N, 119*11'32"W
 MIU     Maiduguri, Nigeria;4;11*51'19"N, 13*4'51"E
 MIV     Millville, USA;4;39*22'4"N, 75*4'20"W
 MIW     Marshalltown, USA;4;42*6'46"N, 92*55'4"W
-MIX     Miriti, Columbia;4;1*7'59"S, 70*15'0"W
+MIX     Mirití-Paraná, Columbia;4;1*7'59"S, 70*15'0"W
 MIZ     Mainoru, Australia;4;14*3'0"S, 134*6'0"E
 MJA     Manja, Madagascar;4;21*25'1"S, 44*19'1"E
 MJB     Mejit Island, Palau;4;10*16'60"N, 170*52'60"E
@@ -4801,7 +4801,7 @@ MJP     Manjimup, Australia;4;34*15'55"S, 116*8'25"E
 MJQ     Jackson, USA;4;43*39'0"N, 94*59'12"W
 MJR     Miramar, Argentina;4;38*13'37"S, 57*52'11"W
 MJS     Maganja da Costa, Mosambique
-MJT     Mytilene, Greece;4;39*3'24"N, 26*35'54"E
+MJT     Mytiléne, Greece;4;39*3'24"N, 26*35'54"E
 MJU     Mamuju, Indonesia;4;2*40'59"S, 118*54'0"E
 MJV     Murcia, Spain;4;37*46'30"N, 0*48'45"E
 MJY     Mangunjaya, Indonesia;4;2*43'59"S, 103*34'1"E
@@ -4846,7 +4846,7 @@ MLK     Malta, USA;4;48*22'1"N, 107*55'10"W
 MLL     Marshall, USA
 MLM     Morelia, Mexico;4;19*50'60"N, 101*1'32"W
 MLN     Melilla, Spanish Morocco;4;35*16'47"N, 2*57'23"W
-MLO     Milos, Greece;4;36*41'46"N, 24*28'39"E
+MLO     Mílos, Greece;4;36*41'46"N, 24*28'39"E
 MLP     Malabang, Philippines;4;7*37'2"N, 124*3'31"E
 MLQ     Malalaua, New Guinea;4;8*4'1"S, 146*8'60"E
 MLR     Millicent, Australia;4;37*35'1"S, 140*21'58"E
@@ -4873,7 +4873,7 @@ MML     Marshall, USA;4;44*27'2"N, 95*49'19"W
 MMM     Middlemount, Australia;4;22*48'9"S, 148*42'17"E
 MMN     Stow, USA
 MMO     Maio, Cape Verdes;4;15*9'21"N, 23*12'49"W
-MMP     Mompus, Columbia;4;9*16'8"N, 74*39'8"W
+MMP     Mompós, Columbia;4;9*16'8"N, 74*39'8"W
 MMQ     M'Bala, Zambia;5;8*51'33"S, 31*20'11"E
 MMR     Austin (Camp Maybry), USA
 MMS     Marks, USA;4;34*13'53"N, 90*17'22"W
@@ -4974,7 +4974,7 @@ MQN     Mo i Rana, Norway;4;66*21'50"N, 14*18'5"E
 MQP     Kruger Mpumalanga International, South Africa;5;25*22'59"S, 31*6'20"E
 MQQ     Moundou, Tschad;4;8*37'28"N, 16*4'17"E
 MQR     Mosquera, Columbia;4;2*30'0"N, 78*25'1"W
-MQS     Mustique Island, St. Vincent;4;12*53'17"N, 61*10'49"W
+MQS     Mustique Island, Saint Vincent;4;12*53'17"N, 61*10'49"W
 MQT     Marquette, USA;4;46*21'13"N, 87*23'43"W
 MQU     Mariquita, Columbia;4;5*12'45"N, 74*53'1"W
 MQV     Maiquetia, Venezuela
@@ -4984,7 +4984,7 @@ MQY     Smyrna, USA;4;36*0'32"N, 86*31'12"W
 MRA     Misurata, Lybia;4;32*19'30"N, 15*3'40"E
 MRB     Martinsburg, USA;4;39*24'7"N, 77*59'4"W
 MRC     Columbia/Mount Pleasant, USA;4;35*33'15"N, 87*10'44"W
-MRD     Merida, Venezuela;4;8*34'56"N, 71*9'40"W
+MRD     Mérida, Venezuela;4;8*34'56"N, 71*9'40"W
 MRE     Mara Lodges, Kenya;4;1*10'1"S, 35*4'59"E
 MRF     Marfa, USA;4;30*22'16"N, 104*1'3"W
 MRG     Mareeba, Australia;4;17*4'9"S, 145*25'9"E
@@ -4998,7 +4998,7 @@ MRN     Morganton, USA;4;35*49'13"N, 81*36'41"W
 MRO     Masterton, New Zealand;4;40*58'24"S, 175*38'1"E
 MRP     Marla, Australia;4;27*20'2"S, 133*37'41"E
 MRQ     Marinduque, Philippines;4;13*21'39"N, 121*49'32"E
-MRR     Macara, Ecuador;4;4*22'42"S, 79*56'28"W
+MRR     Macará, Ecuador;4;4*22'42"S, 79*56'28"W
 MRS     Marseille, France;4;43*26'12"N, 5*12'54"E
 MRT     Mordak, Australia;4;14*49'1"S, 133*41'60"E
 MRU     Mauritius, Mauritius;4;20*25'49"S, 57*41'1"E
@@ -5034,7 +5034,7 @@ MSX     Massendjo, Congo;4;2*57'0"S, 12*41'60"E
 MSY     New Orleans (Louis Armstrong), USA;4;29*59'36"N, 90*15'29"W
 MSZ     Namibe, Angola;4;15*15'40"S, 12*8'48"E
 MTA     Matamata, New Zealand;4;37*44'4"S, 175*44'31"E
-MTB     Monte Libano, Columbia;4;7*58'18"N, 75*25'57"W
+MTB     Montelíbano, Columbia;4;7*58'18"N, 75*25'57"W
 MTC     Mount Clemens, USA;5;42*35'30"N, 82*52'59"W
 MTD     Mt. Sanford, Australia;4;16*58'42"S, 130*33'17"E
 MTE     Monte Alegre, Brazil;4;1*59'45"S, 54*4'27"W
@@ -5050,7 +5050,7 @@ MTN WAS Baltimore, USA;4;39*19'32"N, 76*24'50"W
 MTO     Mattoon/Charleston, USA;4;39*28'41"N, 88*16'45"W
 MTP     Montauk, USA;4;41*4'35"N, 71*55'15"W
 MTQ     Mitchell, Australia;4;26*28'60"S, 147*56'12"E
-MTR     Monteria, Columbia;4;8*49'25"N, 75*49'33"W
+MTR     Montería, Columbia;4;8*49'25"N, 75*49'33"W
 MTS     Manzini, Swaziland;4;26*31'44"S, 31*18'27"E
 MTT     Minatitlán, Mexico;4;18*6'12"N, 94*34'50"W
 MTU     Montepuez, Mosambique;4;13*7'19"S, 39*3'10"E
@@ -5072,7 +5072,7 @@ MUJ     Mui, Ethiopia;4;5*49'1"N, 35*47'60"E
 MUK     Mauke, Cook Islands;4;20*8'10"S, 157*20'43"W
 MUL     Moultrie (Spence Airport), USA;4;31*8'16"N, 83*42'15"W
 MUM     Mumias, Kenya;4;0*19'59"S, 34*28'59"E
-MUN     Maturin, Venezuela;4;9*44'57"N, 63*9'12"W
+MUN     Maturín, Venezuela;4;9*44'57"N, 63*9'12"W
 MUO     Mountain Home, USA;4;43*2'37"N, 115*52'21"W
 MUP     Mulga Park, Australia;4;25*51'36"S, 131*38'60"E
 MUQ     Muccan, Australia;4;20*37'59"S, 120*1'59"E
@@ -5100,7 +5100,7 @@ MVL     Morrisville/Stowe, USA;4;44*32'5"N, 72*36'50"W
 MVM     Kayenta (International Airport), USA;4;36*42'54"N, 110*13'55"W
 MVN     Mount Vernon, USA;4;38*19'24"N, 88*51'31"W
 MVO     Mongo, Tschad;4;12*10'1"N, 18*40'30"E
-MVP     Mitu, Columbia;4;1*15'13"N, 70*14'3"W
+MVP     Mitú, Columbia;4;1*15'13"N, 70*14'3"W
 MVQ     Mahilyow, Belarus;4;53*57'17"N, 30*5'42"E
 MVR     Maroua, Kamerun;4;10*27'5"N, 14*15'26"E
 MVS     Mucuri, Brazil;4;18*2'56"S, 39*51'51"W
@@ -5185,7 +5185,7 @@ MYZ     Monkey Island, Malawi;4;14*5'1"S, 34*55'11"E
 MZA     Muzaffarnagar, India;4;29*28'59"N, 77*41'60"E
 MZB     Mocimboa da Praia, Mosambique;4;11*21'42"S, 40*21'18"E
 MZC     Mitzic, Gabun;4;0*46'59"S, 11*33'0"E
-MZD     Mendez, Ecuador;4;2*43'1"S, 78*19'1"W
+MZD     Méndez, Ecuador;4;2*43'1"S, 78*19'1"W
 MZE     Manatee, Belize;4;17*15'0"N, 89*7'59"W
 MZF     Mzamba, South Africa;4;31*15'0"S, 29*49'59"E
 MZG     Makung, Taiwan;4;23*34'7"N, 119*37'42"E
@@ -5223,7 +5223,7 @@ NAN     Nadi, Fiji;4;17*45'19"S, 177*26'36"E
 NAO     Nanchong, China;4;30*45'14"N, 106*3'43"E
 NAP     Napels, Italy;4;40*53'10"N, 14*17'27"E
 NAQ     Qanaq, Greenland;4;77*29'19"N, 69*23'19"W
-NAR     Nare, Columbia;4;6*12'36"N, 74*35'26"W
+NAR     Puerto Nare, Columbia;4;6*12'36"N, 74*35'26"W
 NAS     Nassau, Bahamas;4;25*2'20"N, 77*27'58"W
 NAT     Natal, Brazil;4;5*54'41"S, 35*14'52"W
 NAU     Napuka, French Polynesia;4;14*10'36"S, 141*16'2"W
@@ -5247,7 +5247,7 @@ NCA     North Caicos, Turks & Caicos;4;21*55'3"N, 71*56'22"W
 NCE     Nice, France;4;43*39'55"N, 7*12'54"E
 NCG     Nuevo Casas Grandes, Mexico;4;30*23'51"N, 107*52'30"W
 NCH     Nachingwea, Tanzania;4;10*21'27"S, 38*46'45"E
-NCI     Necocli, Columbia;4;8*26'60"N, 76*46'60"W
+NCI     Necoclí, Columbia;4;8*26'60"N, 76*46'60"W
 NCL     Newcastle, United Kingdom;4;55*2'15"N, 1*41'30"W
 NCN     New Chenega, USA;4;60*4'38"N, 147*59'31"W
 NCO     North Kingstown/Quonset Point, USA;4;41*35'58"N, 71*25'0"W
@@ -5285,7 +5285,7 @@ NEN     Jacksonville (Whitehouse Naval Airfield), USA;4;30*21'1"N, 81*52'59"W
 NER     Neryungri, Russia;4;56*39'0"N, 124*35'60"E
 NES NYC New York (Skyports Seaplane Base), USA
 NEU     Sam Neua, Laos;5;20*25'6"N, 104*3'60"E
-NEV     Charlestown, St. Kitts and Nevis;4;17*12'20"N, 62*35'24"W
+NEV     Charlestown, Saint Kitts and Nevis;4;17*12'20"N, 62*35'24"W
 NEW     New Orleans (Lakefront Airport), USA;4;30*2'33"N, 90*1'42"W
 NFB DTT Mount Clemens, USA
 NFD     Summerdale, USA;4;30*30'28"N, 87*38'44"W
@@ -5429,8 +5429,8 @@ NPU     San Pedro de Uraba, Columbia
 NQA     Millington, USA;4;35*21'24"N, 89*52'13"W
 NQI     Kingsville, USA;4;27*30'26"N, 97*48'35"W
 NQL     Niquelandia, Brazil;4;14*26'6"S, 48*29'29"W
-NQN     Neuquen, Argentina;4;38*56'56"S, 68*9'21"W
-NQU     Nuqui, Columbia;4;5*41'60"N, 77*16'59"W
+NQN     Neuquén, Argentina;4;38*56'56"S, 68*9'21"W
+NQU     Nuquí, Columbia;4;5*41'60"N, 77*16'59"W
 NQX     Key West (Boca Chica Field), USA;4;24*34'33"N, 81*41'20"W
 NQY     Newquay, United Kingdom;4;50*26'26"N, 4*59'43"W
 NRA     Narrandera, Australia;4;34*42'8"S, 146*30'44"E
@@ -5490,7 +5490,7 @@ NUC     San Clemente Island, USA;4;33*1'22"N, 118*35'19"W
 NUD     En Nahud, Sudan;4;12*40'1"N, 28*19'59"E
 NUE     Nürnberg, Germany;4;49*29'55"N, 11*4'1"E
 NUG     Nuguria, New Guinea;4;3*28'1"S, 154*49'1"E
-NUH     Nunchia, Columbia;4;5*37'1"N, 72*11'60"W
+NUH     Nunchía, Columbia;4;5*37'1"N, 72*11'60"W
 NUI     Nuiqsut, USA;4;70*12'36"N, 151*0'20"W
 NUK     Nukutaveke, French Polynesia;4;19*17'6"S, 138*46'20"W
 NUL     Nulato, USA;5;64*43'46"N, 158*04'27"W
@@ -5572,7 +5572,7 @@ OCJ     Ocho Rios, Jamaica;4;18*24'15"N, 76*58'8"W
 OCN     Oceanside, USA;4;33*13'5"N, 117*21'5"W
 OCO     San José (El Coco), Costa Rica
 OCQ     Oconto, USA;4;44*52'27"N, 87*54'35"W
-OCV     Ocana, Columbia;4;8*18'54"N, 73*21'30"W
+OCV     Ocaña, Columbia;4;8*18'54"N, 73*21'30"W
 OCW     Washington, USA;4;35*34'14"N, 77*2'59"W
 ODA     Ouadda, Central African Republic;4;8*0'38"N, 22*23'55"E
 ODB     Córdoba, Spain;4;37*50'31"N, 4*50'56"W
@@ -5661,7 +5661,7 @@ OLH     Old Harbor, USA;4;57*13'5"N, 153*16'11"W
 OLI     Olafsvik, Iceland;5;65*0'0"N, 23*59'0"W
 OLJ     Olpoi, Vanuatu;4;14*52'54"S, 166*33'29"E
 OLM     Olympia, USA;4;46*58'10"N, 122*54'9"W
-OLN     Colonia Sarmien, Argentina;4;45*34'1"S, 69*0'0"W
+OLN     Sarmiento, Argentina;4;45*34'1"S, 69*0'0"W
 OLO     Olomouc, Czech Republic;4;49*35'13"N, 17*12'13"E
 OLP     Olympic Dam, Australia;4;30*29'6"S, 136*52'36"E
 OLQ     Olsobip, New Guinea;4;5*22'59"S, 141*30'0"E
@@ -5724,7 +5724,7 @@ OPS     Sinop, Brazil;4;11*53'6"S, 55*35'12"W
 OPU     Balimo, New Guinea;4;8*3'0"S, 142*55'59"E
 OPW     Opuwa, Namibia;4;18*4'1"S, 13*49'59"E
 OQW     Maquoketa, USA;4;42*3'0"N, 90*44'20"W
-ORA     Oran, Argentina;4;23*9'10"S, 64*19'45"W
+ORA     Orán, Argentina;4;23*9'10"S, 64*19'45"W
 ORB     Örebro, Sweden;4;59*13'25"N, 15*2'17"E
 ORC     Orocue, Columbia;4;4*47'32"N, 71*21'23"W
 ORD CHI Chicago (O'Hare International), USA;4;41*58'43"N, 87*54'17"W
@@ -5783,7 +5783,7 @@ OTO     Otto, USA
 OTP BUH Bucharest (Otopeni), Romania;4;44*34'20"N, 26*6'8"E
 OTR     Coto 47, Costa Rica;4;8*36'6"N, 82*58'7"W
 OTS     Anacortes, USA;4;48*29'56"N, 122*39'45"W
-OTU     Otu, Columbia;4;7*0'37"N, 74*42'56"W
+OTU     Otú, Columbia;4;7*0'37"N, 74*42'56"W
 OTV     Otavia, Namibia
 OTY     Oria, New Guinea;4;6*35'60"S, 155*46'1"E
 OTZ     Kotzebue, USA;4;66*53'5"N, 162*35'55"W
@@ -5857,7 +5857,7 @@ PAO     Palo Alto, USA;4;37*27'40"N, 122*6'54"W
 PAP     Port-au-Prince, Haiti;4;18*34'48"N, 72*17'33"W
 PAQ     Palmer, USA;4;61*35'42"N, 149*5'19"W
 PAR PAR Paris, France
-PAS     Paros, Greece;4;37*0'49"N, 25*7'38"E
+PAS     Páros, Greece;4;37*0'49"N, 25*7'38"E
 PAT     Patna, India;4;25*35'29"N, 85*5'17"E
 PAU     Pauk, Burma;4;21*26'57"N, 94*29'13"E
 PAV     Paulo Afonso, Brazil;4;9*24'3"S, 38*15'2"W
@@ -5869,7 +5869,7 @@ PBA     Point Barrow, USA
 PBB     Paranaiba, Brazil;4;19*39'4"S, 51*11'58"W
 PBC     Puebla, Mexico;4;19*9'29"N, 98*22'17"W
 PBD     Porbandar, India;4;21*38'55"N, 69*39'26"E
-PBE     Puerto Berrio, Columbia;4;6*27'37"N, 74*24'38"W
+PBE     Puerto Berrío, Columbia;4;6*27'37"N, 74*24'38"W
 PBF     Pine Bluff, USA;4;34*10'23"N, 91*56'8"W
 PBG     Plattsburgh (Airforce Base), USA;4;44*39'3"N, 73*28'5"W
 PBH     Paro, Bhutan;4;27*24'11"N, 89*25'29"E
@@ -5877,7 +5877,7 @@ PBI MFW West Palm Beach, USA;4;26*40'59"N, 80*5'44"W
 PBJ     Paama, Vanuatu;4;16*26'20"S, 168*15'25"E
 PBK     Pack Creek, USA
 PBL     Puerto Cabello, Venezuela;4;10*28'50"N, 68*4'23"W
-PBM     Zandery, Surinam;4;5*27'10"N, 55*11'16"W
+PBM     Zanderij, Surinam;4;5*27'10"N, 55*11'16"W
 PBN     Porto Amboim, Angola;4;10*43'19"S, 13*45'56"E
 PBO     Paraburdoo, Australia;4;23*10'16"S, 117*44'43"E
 PBP     Punta Islita, Costa Rica;5;9*51'22"N, 85*22'15"W
@@ -5900,14 +5900,14 @@ PCM     Playa del Carmen, Mexico;4;20*37'21"N, 87*4'56"W
 PCN     Picton, New Zealand;4;41*20'54"S, 173*57'19"E
 PCO     Punta Colorada, Mexico;4;23*34'1"N, 109*31'59"W
 PCP     Príncipe, São Tomé & Príncipe;4;1*39'47"N, 7*24'42"E
-PCR     Puerto Carreno, Columbia;4;6*11'15"N, 67*29'48"W
+PCR     Puerto Carreño, Columbia;4;6*11'15"N, 67*29'48"W
 PCS     Picos, Brazil;4;7*3'43"S, 41*31'25"W
 PCT     Princeton, USA;4;40*23'57"N, 74*39'32"W
 PCU     Picayune, USA
 PCV     Punta Chivato, Mexico;4;27*4'9"N, 111*57'44"W
 PCW     Port Clinton, USA;4;41*30'59"N, 82*52'7"W
 PCZ     Waupaca, USA;5;44*19'60"N, 89*1'11"W
-PDA     Puerto Inirida, Columbia;4;3*51'13"N, 67*54'22"W
+PDA     Puerto Inírida, Columbia;4;3*51'13"N, 67*54'22"W
 PDB     Pedro Bay, USA;4;59*47'23"N, 154*7'26"W
 PDC     Mueo, New Caledonia;4;21*18'59"S, 164*59'58"E
 PDE     Pandie Pandie, Australia;4;26*8'17"S, 139*23'32"E
@@ -5922,7 +5922,7 @@ PDP     Punta del Este, Uruguay;4;34*51'19"S, 55*5'39"W
 PDR     Presidente Dutra, Brazil;4;5*18'0"S, 44*28'1"W
 PDS     Piedras Negras, Mexico;4;28*37'39"N, 100*32'7"W
 PDT     Pendleton, USA;4;45*41'42"N, 118*50'29"W
-PDU     Paysandu, Uruguay;4;32*21'48"S, 58*3'44"W
+PDU     Paysandú, Uruguay;4;32*21'48"S, 58*3'44"W
 PDV     Plovdiv, Bulgaria;4;42*4'4"N, 24*51'3"E
 PDX     Portland, USA;4;45*35'19"N, 122*35'51"W
 PDZ     Pedernales, Venezuela;4;9*58'43"N, 62*13'53"W
@@ -5932,7 +5932,7 @@ PEC     Pelican, USA;4;57*57'19"N, 136*14'11"W
 PEE     Perm, Russia;4;57*54'52"N, 56*1'16"E
 PEF     Peenemünde, Germany;5;54*9'28"N, 13*46'28"E
 PEG     Perugia, Italy;4;43*5'45"N, 12*30'48"E
-PEH     Pehuajo, Argentina;4;35*50'41"S, 61*51'27"W
+PEH     Pehuajó, Argentina;4;35*50'41"S, 61*51'27"W
 PEI     Pereira, Columbia;4;4*48'46"N, 75*44'22"W
 PEK BJS Beijing (Peking), China;4;40*4'48"N, 116*35'4"E
 PEL     Pelaneng, Lesotho;4;29*7'1"S, 28*30'0"E
@@ -6035,7 +6035,7 @@ PKD     Park Rapids, USA;4;46*54'2"N, 95*4'23"W
 PKE     Parkes, Australia;4;33*7'53"S, 148*14'21"E
 PKF     Park Falls, USA;4;45*57'18"N, 90*25'28"W
 PKG     Pangkor Island, Malaysia;4;4*15'0"N, 100*33'0"E
-PKH     Porto-Kheli, Greece;4;37*17'60"N, 23*8'58"E
+PKH     Porto Chéli, Greece;4;37*17'60"N, 23*8'58"E
 PKI     Pakotoa Island, New Zealand
 PKK     Pakokku, Burma;4;21*19'59"N, 95*5'60"E
 PKL     Pakatoa Island, New Zealand;4;36*20'60"S, 174*8'60"E
@@ -6059,7 +6059,7 @@ PLE     Paiela, New Guinea;4;5*22'1"S, 142*58'1"E
 PLF     Pala, Tschad;4;9*22'41"N, 14*55'30"E
 PLG     La Plagne, France
 PLH     Plymouth, United Kingdom;4;50*25'22"N, 4*6'21"W
-PLI     Palm Island, St. Vincent;4;12*34'59"N, 61*22'59"W
+PLI     Palm Island, Saint Vincent;4;12*34'59"N, 61*22'59"W
 PLK     Point Lookout, USA;4;36*37'33"N, 93*13'44"W
 PLL     Ponta Pelada, Brazil;5;3*8'46"S, 59*59'11"W
 PLM     Palembang, Indonesia;4;2*53'54"S, 104*41'60"E
@@ -6096,7 +6096,7 @@ PMR     Palmerston North, New Zealand;4;40*19'14"S, 175*37'1"E
 PMS     Palmyra, Syria;4;34*33'26"N, 38*19'1"E
 PMT     Paramakatoi, Guyana;4;4*40'59"N, 59*42'0"W
 PMU     Paimiut, USA
-PMV     Margerita, Venezuela;4;10*54'47"N, 63*58'3"W
+PMV     Porlamar, Venezuela;4;10*54'47"N, 63*58'3"W
 PMW     Palmas, Brazil;4;10*17'29"S, 48*21'25"W
 PMX     Palmer, USA;4;42*13'24"N, 72*18'41"W
 PMY     Puerto Madryn, Argentina;4;42*45'33"S, 65*6'10"W
@@ -6130,7 +6130,7 @@ POE     Fort Polk, USA;4;31*2'41"N, 93*11'30"W
 POF     Poplar Bluff, USA;4;36*46'26"N, 90*19'29"W
 POG     Port Gentil, Gabun;4;0*42'42"S, 8*45'16"E
 POH     Pocahontas, USA;4;42*44'34"N, 94*38'50"W
-POI     Potosi, Bolivia;4;19*32'35"S, 65*43'25"W
+POI     Potosí, Bolivia;4;19*32'35"S, 65*43'25"W
 POL     Pemba, Mosambique;4;12*59'12"S, 40*31'21"E
 POM     Port Moresby, New Guinea;4;9*26'36"S, 147*13'12"E
 PON     Poptún, Guatemala;4;16*19'1"N, 89*25'1"W
@@ -6152,13 +6152,13 @@ PPD     Humacao, Puerto Rico
 PPE     Puerto Peñasco, Mexico;4;31*21'7"N, 113*31'33"W
 PPF     Parsons, USA;4;37*19'48"N, 95*30'22"W
 PPG     Pago Pago, Samoa;4;14*19'54"S, 170*42'41"W
-PPH     Peraitepuys, Venezuela;4;4*34'1"N, 61*28'59"W
+PPH     Parai-tepuí, Venezuela;4;4*34'1"N, 61*28'59"W
 PPI     Portpirie, Australia;4;33*14'20"S, 137*59'42"E
 PPJ     Pulau, Malaysia;4;5*55'55"S, 106*9'14"E
 PPK     Petropavlovsk, Russia;4;54*46'28"N, 69*11'2"E
 PPL     Phaplu, Nepal;4;27*31'1"N, 86*35'60"E
 PPM     Pompano Beach, USA;4;26*14'50"N, 80*6'40"W
-PPN     Popayan, Columbia;4;2*27'16"N, 76*36'32"W
+PPN     Popayán, Columbia;4;2*27'16"N, 76*36'32"W
 PPO     Powell Point, Bahamas;4;24*49'59"N, 76*19'59"W
 PPP     Proserpine, Australia;4;20*29'42"S, 148*33'8"E
 PPQ     Paraparaumu, New Zealand;4;40*54'17"S, 174*59'21"E
@@ -6170,14 +6170,14 @@ PPV     Port Protection, USA;4;56*19'44"N, 133*36'36"W
 PPW     Papa Westray, United Kingdom;4;59*21'6"N, 2*54'1"W
 PPX     Paran, New Guinea;4;9*58'59"S, 149*34'59"E
 PPY     Pouso Alegre, Brazil;4;22*17'21"S, 45*55'9"W
-PPZ     Puerto Paez, Venezuela;4;6*13'1"N, 67*25'59"W
+PPZ     Puerto Páez, Venezuela;4;6*13'1"N, 67*25'59"W
 PQC     Phu Quoc, Vietnam;4;10*13'34"N, 103*57'55"E
 PQI     Presque Isle, USA;4;46*41'20"N, 68*2'41"W
 PQM     Palenque, Mexico;4;17*32'0"N, 91*59'4"W
 PQN     Pipestone, USA;4;43*58'60"N, 96*18'1"W
 PQQ     Port Macquarie, Australia;4;31*26'9"S, 152*51'48"E
 PQS     Pilot Station, USA;4;61*56'4"N, 162*53'58"W
-PRA     Parana, Argentina;4;31*47'41"S, 60*28'49"W
+PRA     Paraná, Argentina;4;31*47'41"S, 60*28'49"W
 PRB     Paso Robles, USA;4;35*40'22"N, 120*37'37"W
 PRC     Prescott, USA;4;34*39'16"N, 112*25'10"W
 PRD     Pardoo, Australia;4;20*7'3"S, 119*35'24"E
@@ -6192,7 +6192,7 @@ PRM     Portimão, Portugal;4;37*8'58"N, 8*35'2"W
 PRN     Pristina, Jugoslavia;2;42*34'22"N, 21*2'9"E
 PRO     Perry, USA;4;41*49'41"N, 94*9'36"W
 PRP     Propriano, France;4;41*39'41"N, 8*53'42"E
-PRQ     Presidencia Roque Saenz Pena, Argentina;4;26*45'23"S, 60*29'35"W
+PRQ     Presidencia Roque Sáenz Peña, Argentina;4;26*45'23"S, 60*29'35"W
 PRR     Paruima, Guyana;4;5*49'1"N, 61*1'59"W
 PRS     Parasi, Solomons;4;9*38'30"S, 161*25'31"E
 PRT     Pointe Retreat, USA
@@ -6227,7 +6227,7 @@ PSV     Papa Stour, United Kingdom;4;60*19'1"N, 1*42'0"W
 PSW     Passos, Brazil;4;20*43'56"S, 46*39'42"W
 PSX     Palacios, USA;4;28*43'39"N, 96*15'3"W
 PSY     Port Stanley, Falkland Islands;4;51*41'8"S, 57*46'40"W
-PSZ     Puerto Suarez, Bolivia;4;18*58'31"S, 57*49'14"W
+PSZ     Puerto Suárez, Bolivia;4;18*58'31"S, 57*49'14"W
 PTA     Port Alsworth, USA;4;60*12'16"N, 154*19'8"W
 PTB     Petersburg, USA;4;37*11'2"N, 77*30'27"W
 PTC     Port Alice, USA;4;55*47'6"N, 133*35'39"W
@@ -6253,7 +6253,7 @@ PTV     Porterville, USA;4;36*1'47"N, 119*3'46"W
 PTW     Pottstown, USA;4;40*14'22"N, 75*33'24"W
 PTX     Pitalito, Columbia;4;1*51'28"N, 76*5'9"W
 PTY     Panama City (Tocumen), Panama;4;9*4'17"N, 79*23'0"W
-PTZ     Pastaza, Ecuador;4;1*30'19"S, 78*3'46"W
+PTZ     Shell Mera, Ecuador;4;1*30'19"S, 78*3'46"W
 PUA     Puas, New Guinea;4;2*22'59"S, 150*13'1"E
 PUB     Pueblo, USA;4;38*17'21"N, 104*29'48"W
 PUC     Price, USA;4;39*36'50"N, 110*45'5"W
@@ -6273,7 +6273,7 @@ PUQ     Punta Arenas, Chile;4;53*0'10"S, 70*51'17"W
 PUR     Puerto Rico, Bolivia;4;11*6'0"S, 67*33'0"W
 PUS     Pusan, South Korea;4;35*10'46"N, 128*56'18"E
 PUT     Puttaparthi, India;4;14*7'59"N, 77*46'59"E
-PUU     Puerto Asis, Columbia;4;0*30'18"S, 76*30'3"W
+PUU     Puerto Asís, Columbia;4;0*30'18"S, 76*30'3"W
 PUW     Pullman, USA;4;46*44'38"N, 117*6'34"W
 PUY     Pula, Croatia;4;44*53'37"N, 13*55'20"E
 PUZ     Puerto Cabezas, Nicaragua;4;14*2'50"N, 83*23'12"W
@@ -6286,7 +6286,7 @@ PVF     Placerville, USA;4;38*43'27"N, 120*45'12"W
 PVG     Shanghai (Pudong), China;4;31*8'36"N, 121*48'19"E
 PVH     Porto Velho, Brazil;4;8*42'33"S, 63*54'8"W
 PVI     Paranavaí, Brazil;4;23*5'24"S, 52*29'19"W
-PVK     Preveza/Lefkas, Greece;4;38*55'32"N, 20*45'55"E
+PVK     Préveza/Lefkada, Greece;4;38*55'32"N, 20*45'55"E
 PVN     Pleven, Bulgaria;4;42*0'0"N, 24*30'0"E
 PVO     Portoviejo, Ecuador;4;1*2'30"S, 80*28'20"W
 PVR     Puerto Vallarta, Mexico;4;20*40'48"N, 105*15'15"W
@@ -6313,7 +6313,7 @@ PXL     Polacca, USA;4;35*47'30"N, 110*25'24"W
 PXM     Puerto Escondido, Mexico;4;15*52'37"N, 97*5'21"W
 PXO     Porto Santo, Portugal;4;33*4'24"N, 16*20'60"W
 PXU     Pleiku, Vietnam;4;14*0'16"N, 108*1'2"E
-PYA     Puerto Boyaca, Columbia;4;5*56'21"N, 74*27'25"W
+PYA     Puerto Boyacá, Columbia;4;5*56'21"N, 74*27'25"W
 PYB     Jeypore, India;4;18*52'48"N, 82*33'14"E
 PYC     Playón Chico, Panama;4;8*37'1"N, 79*43'59"W
 PYE     Penrhyn Island, Cook Islands;4;9*0'24"S, 158*2'12"W
@@ -6322,9 +6322,9 @@ PYH     Puerto Ayacucho, Venezuela;4;5*37'12"N, 67*36'22"W
 PYJ     Polyarnj, Russia;4;66*24'2"N, 112*1'49"E
 PYL     Perry Island, USA;4;60*41'7"N, 147*55'7"W
 PYM     Plymouth, USA;4;41*54'33"N, 70*43'44"W
-PYN     Payan, Columbia;4;1*46'1"N, 78*10'1"W
+PYN     Magüí Payán, Columbia;4;1*46'1"N, 78*10'1"W
 PYO     Putumayo, Ecuador;4;0*7'1"S, 75*52'1"W
-PYR     Pyrgos, Greece;4;37*55'15"N, 21*17'33"E
+PYR     Pýrgos, Greece;4;37*55'15"N, 21*17'33"E
 PYV     Yaviza, Panama;4;8*10'1"N, 77*40'59"W
 PYX     Pattaya, Thailand;4;12*56'60"N, 100*52'59"E
 PZA     Paz de Ariporo, Columbia;4;5*52'34"N, 71*53'12"W
@@ -6594,7 +6594,7 @@ RBK     Rancho California, USA;4;33*34'27"N, 117*7'43"W
 RBL     Red Bluff, USA;4;40*9'2"N, 122*15'8"W
 RBM     Straubing, Germany;5;48*54'3"N, 12*31'5"E
 RBN     Fort Jefferson, USA;4;24*37'43"N, 82*52'24"W
-RBO     Robore, Bolivia;4;18*19'39"S, 59*45'56"W
+RBO     Roboré, Bolivia;4;18*19'39"S, 59*45'56"W
 RBP     Rabaraba, New Guinea;4;9*58'1"S, 149*49'59"E
 RBQ     Rurrenabaque, Bolivia;4;14*25'39"S, 67*29'53"W
 RBR     Rio Branco, Brazil;4;9*52'9"S, 67*53'39"W
@@ -6616,7 +6616,7 @@ RCQ     Reconquista, Argentina;4;29*12'37"S, 59*40'48"W
 RCR     Rochester, USA;4;41*3'56"N, 86*10'54"W
 RCS     Rochester, United Kingdom;4;51*21'9"N, 0*30'13"E
 RCT     Reed City, USA;4;43*54'0"N, 85*31'0"W
-RCU     Rio Cuarto, Argentina;4;33*5'6"S, 64*15'41"W
+RCU     Río Cuarto, Argentina;4;33*5'6"S, 64*15'41"W
 RCX     Ladysmith, USA;4;45*29'49"N, 91*0'2"W
 RCY     Rum Cay, Bahamas;4;23*41'4"N, 74*50'10"W
 RDA     Rockhampton Downs, Australia;4;18*57'12"S, 135*12'2"E
@@ -6658,24 +6658,24 @@ RFK     Anguilla/Rolling Fork, USA;4;32*57'15"N, 90*50'45"W
 RFN     Raufarhöfn, Iceland;4;66*24'23"N, 15*55'6"W
 RFP     Raiatea, French Polynesia;4;16*43'22"S, 151*27'57"W
 RFR     Río Frio, Costa Rica;4;10*19'1"N, 83*52'59"W
-RGA     Rio Grande, Argentina;4;53*46'40"S, 67*44'58"W
+RGA     Río Grande, Argentina;4;53*46'40"S, 67*44'58"W
 RGE     Porgera, New Guinea;4;5*28'1"S, 143*7'1"E
 RGH     Balurghat, India;4;25*15'42"N, 88*47'44"E
 RGI     Rangiroa, French Polynesia;4;14*57'19"S, 147*39'28"W
 RGK     Red Wing, USA;4;44*35'22"N, 92*29'6"W
-RGL     Rio Gallegos, Argentina;4;51*36'32"S, 69*18'45"W
+RGL     Río Gallegos, Argentina;4;51*36'32"S, 69*18'45"W
 RGN     Yangoon, Burma;4;16*54'26"N, 96*7'60"E
 RGP     Rangpur, Bangladesh
 RGR     Ranger, USA;4;32*27'9"N, 98*40'58"W
 RGT     Rengat, Indonesia;4;0*21'10"S, 102*20'6"E
 RGV     Rio Grande Valley, USA
 RHA     Reykholar, Iceland;4;65*26'59"N, 22*13'48"W
-RHD     Rio Hondo, Argentina;4;27*27'0"S, 64*52'59"W
+RHD     Río Hondo, Argentina;4;27*27'0"S, 64*52'59"W
 RHE     Reims, France;4;49*18'37"N, 4*3'3"E
 RHG     Ruhengeri, Rwanda;4;1*30'0"S, 29*37'59"E
 RHI     Rhinelander, USA;4;45*37'52"N, 89*28'3"W
 RHL     Roy Hill, Australia;4;22*37'59"S, 119*58'1"E
-RHO     Rhodos, Greece;4;36*24'20"N, 28*5'10"E
+RHO     Rhódos, Greece;4;36*24'20"N, 28*5'10"E
 RHP     Ramechhap, Nepal;4;27*23'38"N, 86*3'41"E
 RHV     San José (Reid-Hillview County Airport), USA;4;37*19'58"N, 121*49'11"W
 RIA     Santa Maria, Brazil;4;29*42'41"S, 53*41'17"W
@@ -6689,7 +6689,7 @@ RIH     Río Hato, Panama;5;8*22'33"N, 80*7'40"W
 RIJ     Rioja, Peru;4;6*4'4"S, 77*9'36"W
 RIK     Carrillo, Costa Rica;4;9*52'1"N, 85*28'59"W
 RIL     Rifle, USA;4;39*31'35"N, 107*43'37"W
-RIM     Rodriguez de Mendez, Peru;4;6*0'0"S, 78*0'0"W
+RIM     Rodríguez de Mendez, Peru;4;6*0'0"S, 78*0'0"W
 RIN     Ringi Cove, Solomons;4;8*7'35"S, 157*8'33"E
 RIO RIO Rio de Janeiro, Brazil
 RIR     Riverside, USA;4;33*59'20"N, 117*24'36"W
@@ -6780,7 +6780,7 @@ ROU     Ruse, Bulgaria;4;43*50'60"N, 25*57'0"E
 ROV     Rostov, Russia;4;47*15'30"N, 39*49'5"E
 ROW     Roswell, USA;4;33*18'6"N, 104*31'50"W
 ROX     Roseau, USA;4;48*51'22"N, 95*41'49"W
-ROY     Rio Mayo, Argentina;4;45*42'14"S, 70*14'38"W
+ROY     Río Mayo, Argentina;4;45*42'14"S, 70*14'38"W
 RPA     Rolpa, Nepal;4;28*42'0"N, 82*39'0"E
 RPB     Roper Bar, Australia;4;14*43'59"S, 134*31'1"E
 RPM     Ngukurr, Australia;4;14*43'22"S, 134*44'51"E
@@ -6869,10 +6869,10 @@ RXW     Watersmeet, USA
 RYG     Moss Airport (Rygge), Norway;5;59*22'44"N, 10*47'08"E
 RYK     Rahim Yar Khan, Pakistan;4;28*23'2"N, 70*16'46"E
 RYN     Royan, France;4;45*37'52"N, 0*58'32"E
-RYO     Rio Turbio, Argentina;4;51*35'60"S, 72*13'1"W
+RYO     Río Turbio, Argentina;4;51*35'60"S, 72*13'1"W
 RYV     Watertown, USA;4;43*10'11"N, 88*43'24"W
 RYY     Marietta (Cobb County Airport), USA;4;34*0'47"N, 84*35'49"W
-RZA     Santa Cruz, Argentina;4;50*0'60"S, 68*34'45"W
+RZA     Puerto Santa Cruz, Argentina;4;50*0'60"S, 68*34'45"W
 RZE     Rzeszow, Poland;4;50*6'36"N, 22*1'8"E
 RZH     Lancaster, USA
 RZN     Ryazan, Russia;5;54*38'29"N, 39*34'10"E
@@ -6907,7 +6907,7 @@ SAX     Sambú, Panama;4;8*1'1"N, 78*11'60"W
 SAY     Siena, Italy;4;43*15'23"N, 11*15'18"E
 SAZ     Sasstown, Liberia;4;4*40'1"N, 8*25'1"W
 SBA     Santa Barbara (Municipal Airport), USA;4;34*25'34"N, 119*50'25"W
-SBB     Santa Barbara, Venezuela;4;7*48'13"N, 71*9'57"W
+SBB     Santa Bárbara, Venezuela;4;7*48'13"N, 71*9'57"W
 SBC     Selbang, New Guinea;5;5*19'1"S, 141*45'0"E
 SBD     San Bernardino, USA;4;34*5'43"N, 117*14'6"W
 SBE     Saubi, New Guinea;4;6*5'60"S, 142*16'59"E
@@ -6917,7 +6917,7 @@ SBH     Saint Barthelemy, Guadeloupe;4;17*54'16"N, 62*50'37"W
 SBI     Koundara, Guinea;4;12*34'22"N, 13*21'31"W
 SBJ     São Mateus, Brazil;4;18*43'17"S, 39*50'1"W
 SBK     Saint-Brieuc, France;4;48*32'15"N, 2*51'24"W
-SBL     Santa Ana, Bolivia;4;13*45'44"S, 65*26'7"W
+SBL     Santa Ana del Yacuma, Bolivia;4;13*45'44"S, 65*26'7"W
 SBM     Sheboygan, USA;4;43*46'10"N, 87*51'7"W
 SBN     South Bend, USA;4;41*42'30"N, 86*19'2"W
 SBO     Salina, USA;4;39*1'45"N, 111*50'18"W
@@ -6940,7 +6940,7 @@ SCE     State College, USA;4;40*50'57"N, 77*50'55"W
 SCF     Scottsdale, USA;4;33*37'22"N, 111*54'38"W
 SCG     Spring Creek, Australia;4;18*37'18"S, 144*34'6"E
 SCH     Schenectady, USA;4;42*51'9"N, 73*55'44"W
-SCI     San Cristobal, Venezuela;4;7*48'5"N, 72*12'10"W
+SCI     San Cristóbal, Venezuela;4;7*48'5"N, 72*12'10"W
 SCJ     Smith Cove, USA
 SCK     Stockton, USA;4;37*53'39"N, 121*14'18"W
 SCL     Santiago de Chile, Chile;4;33*23'35"S, 70*47'9"W
@@ -6956,7 +6956,7 @@ SCU     Santiago de Cuba, Cuba;4;19*58'11"N, 75*50'7"W
 SCV     Suceava, Romania;4;47*41'15"N, 26*21'15"E
 SCW     Syktyvkar, Russia;4;61*38'49"N, 50*50'42"E
 SCX     Salina Cruz, Mexico;4;16*12'45"N, 95*12'6"W
-SCY     San Francisco, Peru;4;0*54'37"S, 89*37'3"W
+SCY     San Cristóbal, Ecuador;5;0*54'37"S, 89*37'3"W
 SCZ     Santa Cruz, Solomons;4;10*43'13"S, 165*47'42"E
 SDA BGT Baghdad (International), Iraq;4;33*15'45"N, 44*14'4"E
 SDC     Sandcreek, Guyana;4;3*0'0"N, 59*31'1"W
@@ -7010,7 +7010,7 @@ SEZ     Mahe, Seychelles;4;4*40'28"S, 55*31'19"E
 SFA     Sfax, Tunesia;4;34*43'5"N, 10*41'27"E
 SFB     Sanford, USA;4;28*46'40"N, 81*14'15"W
 SFC     Saint-François, Guadeloupe;4;16*15'28"N, 61*15'45"W
-SFD     San Fernando de Apu, Venezuela;4;7*52'60"N, 67*26'38"W
+SFD     San Fernando de Apure, Venezuela;4;7*52'60"N, 67*26'38"W
 SFE     San Fernando, Philippines;4;16*35'44"N, 120*18'12"E
 SFF     Spokane (Felts Field), USA;4;47*40'58"N, 117*19'21"W
 SFG     St. Martin (Esperance), Guadeloupe;4;18*2'60"N, 63*7'1"W
@@ -7030,7 +7030,7 @@ SFT     Skellefteå, Sweden;4;64*37'29"N, 21*4'37"E
 SFU     Safia, New Guinea;4;9*34'59"S, 148*37'59"E
 SFV     Santa Fe do Sul, Brazil;4;20*10'59"S, 50*55'1"W
 SFW     Santa Fe, Panama;4;8*31'1"N, 81*4'1"W
-SFX     San Felix, Venezuela;4;8*21'0"N, 62*37'59"W
+SFX     San Félix, Venezuela;4;8*21'0"N, 62*37'59"W
 SFY     Springfield, USA;4;42*2'45"N, 90*6'29"W
 SFZ     Pawtucket/Smithfield, USA;4;41*55'15"N, 71*29'29"W
 SGA     Wheghnan, Afghanistan;4;37*34'1"N, 71*30'0"E
@@ -7111,11 +7111,11 @@ SIW     Sibisa, Indonesia
 SIX     Singleton, Australia;4;32*36'3"S, 151*11'35"E
 SIY     Montague, USA;4;41*46'53"N, 122*28'5"W
 SIZ     Sissano, New Guinea;4;3*0'0"S, 142*1'59"E
-SJA     San Juan, Peru;4;15*21'9"S, 75*8'14"W
-SJB     San Joaquin, Bolivia;4;13*1'1"S, 64*52'1"W
+SJA     San Juan de Marcona, Peru;4;15*21'9"S, 75*8'14"W
+SJB     San Joaquín, Bolivia;4;13*1'1"S, 64*52'1"W
 SJC QSF San José, USA;4;37*21'46"N, 121*55'45"W
 SJD     Los Cabos, Mexico;4;23*9'7"N, 109*43'16"W
-SJE     San José del Guaviaro, Columbia;4;2*34'47"N, 72*38'22"W
+SJE     San José del Guaviare, Columbia;4;2*34'47"N, 72*38'22"W
 SJF     Cruz Bay, U.S. Virgin Islands;4;18*19'59"N, 64*58'59"W
 SJG     San Pedro Jagua, Columbia;4;4*37'59"N, 73*18'0"W
 SJH     San Juan del Cesar, Columbia;4;10*43'59"N, 72*58'59"W
@@ -7128,8 +7128,8 @@ SJN     St. Johns, USA;4;34*31'7"N, 109*22'44"W
 SJO     San José, Costa Rica;4;9*59'38"N, 84*12'32"W
 SJP     São José do Rio Preto, Brazil;4;20*48'60"S, 49*24'23"W
 SJQ     Sesheke, Zambia;4;17*28'1"S, 24*17'60"E
-SJR     San Juan de Uraba, Columbia;4;8*46'1"N, 76*31'59"W
-SJS     San José, Bolivia;4;17*49'1"S, 60*43'59"W
+SJR     San Juan de Urabá, Columbia;4;8*46'1"N, 76*31'59"W
+SJS     San José de Chiquitos, Bolivia;4;17*49'1"S, 60*43'59"W
 SJT     San Angelo (Mathis Field), USA;4;31*21'28"N, 100*29'47"W
 SJU     San Juan (Luis Munoz Marin), Puerto Rico;4;18*26'22"N, 66*0'7"W
 SJV     San Javier, Bolivia;4;16*15'52"S, 62*28'12"W
@@ -7138,12 +7138,12 @@ SJX     Sartaneja, Belize;4;18*21'0"N, 88*7'1"W
 SJY     Seinäjoki, Finland;4;62*41'32"N, 22*49'56"E
 SJZ     São Jorge, Portugal;4;38*39'56"N, 28*10'33"W
 SKA     Spokane (Fairchild Airforce Base), USA;4;47*36'54"N, 117*39'21"W
-SKB     Basseterre, St. Kitts and Nevis;4;17*18'40"N, 62*43'7"W
+SKB     Basseterre, Saint Kitts and Nevis;4;17*18'40"N, 62*43'7"W
 SKC     Suki, New Guinea;4;8*1'59"S, 141*43'1"E
 SKD     Samarqand, Usbekistan;4;39*42'2"N, 66*59'2"E
 SKE     Skein, Norway;4;59*11'6"N, 9*34'1"E
 SKF     San Antonio (Kelly Airforce Base), USA;4;29*23'3"N, 98*34'52"W
-SKG     Thessaloniki, Greece;4;40*31'11"N, 22*58'15"E
+SKG     Thessaloníki, Greece;4;40*31'11"N, 22*58'15"E
 SKH     Sirkhet, Nepal;4;28*35'10"N, 81*38'10"E
 SKI     Skikda, Algeria;4;36*55'59"N, 6*56'60"E
 SKJ     Sitkinak, USA
@@ -7157,7 +7157,7 @@ SKQ     Sekakes, Lesotho;4;30*2'20"S, 28*22'13"E
 SKR     Shakiso, Ethiopia;4;5*43'59"N, 38*55'1"E
 SKS     Skrydstrup, Denmark;4;55*13'32"N, 9*15'50"E
 SKT     Sialkot, Pakistan;4;32*31'1"N, 74*31'1"E
-SKU     Skiros, Greece;4;38*58'3"N, 24*29'14"E
+SKU     Skýros, Greece;4;38*58'3"N, 24*29'14"E
 SKV     Santa Katarina, Egypt;4;28*41'7"N, 34*3'45"E
 SKW     Skwentna, USA;4;61*57'55"N, 151*11'29"W
 SKX     Saransk, Russia;4;54*10'1"N, 45*10'1"E
@@ -7183,7 +7183,7 @@ SLQ     Sleetmute, USA;4;61*42'2"N, 157*9'57"W
 SLR     Sulphur Springs, USA;4;33*9'35"N, 95*37'16"W
 SLS     Silistra, Bulgaria;4;44*3'19"N, 27*10'44"E
 SLT     Salida, USA;4;38*32'18"N, 106*2'55"W
-SLU     St. Lucia, St. Lucia;4;14*1'13"N, 60*59'35"W
+SLU     Saint Lucia, Saint Lucia;4;14*1'13"N, 60*59'35"W
 SLV     Simla, India;4;31*4'54"N, 77*4'5"E
 SLW     Saltillo, Mexico;4;25*32'58"N, 100*55'43"W
 SLX     Salt Cay, Turks & Caicos;4;21*19'59"N, 71*11'60"W
@@ -7191,13 +7191,13 @@ SLY     Salekhard, Russia;5;66*35'27"N, 66*36'40"E
 SLZ     São Luís, Brazil;4;2*35'7"S, 44*14'3"W
 SMA     Santa Maria, Portugal;4;36*58'17"N, 25*10'14"W
 SMB     Cerro Sombrero, Chile;4;52*44'12"S, 69*20'1"W
-SMC     Santa Maria, Columbia;4;8*8'60"N, 77*3'0"W
+SMC     Santa María, Columbia;4;8*8'60"N, 77*3'0"W
 SMD     Fort Wayne (Smith Field), USA;4;41*8'36"N, 85*9'10"W
 SME     Somerset, USA;4;37*3'13"N, 84*36'56"W
 SMF     Sacramento (Metropolitan Airport), USA;4;38*41'44"N, 121*35'27"W
-SMG     Santa Maria, Peru;4;11*58'59"S, 77*0'0"W
+SMG     Santa María del Mar, Peru;4;11*58'59"S, 77*0'0"W
 SMH     Sapmanga, New Guinea;4;6*4'1"S, 146*48'0"E
-SMI     Samos, Greece;4;37*41'24"N, 26*54'42"E
+SMI     Sámos, Greece;4;37*41'24"N, 26*54'42"E
 SMJ     Sim, New Guinea;4;7*40'1"S, 146*49'59"E
 SMK     St. Michael, USA;4;63*29'24"N, 162*6'37"W
 SML     Stella Maris, Bahamas;4;23*34'53"N, 75*16'14"W
@@ -7221,7 +7221,7 @@ SNC     Salinas, Ecuador;4;2*12'18"S, 80*59'20"W
 SND     Seno, Laos;4;16*40'1"N, 105*1'1"E
 SNE     São Nicolau, Cape Verdes;4;16*35'18"N, 24*17'5"W
 SNF     San Felipe, Venezuela;4;10*16'43"N, 68*45'19"W
-SNG     San Ignacio de VLS, Bolivia;4;16*23'4"S, 60*57'46"W
+SNG     San Ignacio de Velasco, Bolivia;4;16*23'4"S, 60*57'46"W
 SNH     Stanthorpe, Australia;4;28*37'13"S, 151*59'26"E
 SNI     Sinoe, Liberia;4;5*2'4"N, 9*4'0"W
 SNJ     Pinar del Río (San Julian), Cuba;4;22*5'43"N, 84*9'7"W
@@ -7236,7 +7236,7 @@ SNR     Saint-Nazaire, France;4;47*18'38"N, 2*9'24"W
 SNS     Salinas, USA;4;36*39'46"N, 121*36'23"W
 SNT     Sabana de Torres, Columbia;4;7*22'60"N, 73*30'20"W
 SNU     Santa Clara, Cuba;4;22*29'32"N, 79*56'37"W
-SNV     Santa Elena, Venezuela;5;4*33'17"N, 61*8'42"W
+SNV     Santa Elena de Uairén, Venezuela;5;4*33'17"N, 61*8'42"W
 SNW     Sandoway, Burma;4;18*27'39"N, 94*18'0"E
 SNX     Sabana de la Mar, Dom. Republic;4;19*2'60"N, 69*22'1"W
 SNY     Sidney, USA;4;41*6'5"N, 102*59'7"W
@@ -7252,7 +7252,7 @@ SOI     South Molle Island, Australia;4;20*15'47"S, 148*50'10"E
 SOJ     Sørkjosen, Norway;4;69*47'13"N, 20*57'34"E
 SOK     Semongkong, Lesotho;4;29*50'20"S, 28*3'30"E
 SOL     Solomon, USA
-SOM     San Tome, Venezuela;4;8*56'43"N, 64*9'4"W
+SOM     San Tomé, Venezuela;4;8*56'43"N, 64*9'4"W
 SON     Espirito Santo, Vanuatu;4;15*30'21"S, 167*13'17"E
 SOO     Soderhamn, Sweden;4;61*15'41"N, 17*5'57"E
 SOP     Pinehurst/Southern Pines, USA;4;35*14'14"N, 79*23'28"W
@@ -7273,7 +7273,7 @@ SPF     Spearfish, USA;4;44*28'49"N, 103*46'59"W
 SPG     St. Petersburg (Albert Whitted Airport), USA;4;27*45'54"N, 82*37'37"W
 SPH     Sopu, New Guinea;4;8*18'0"S, 147*10'1"E
 SPI     Springfield, USA;4;39*50'39"N, 89*40'40"W
-SPJ     Sparta, Greece;4;36*58'26"N, 22*31'35"E
+SPJ     Spárta, Greece;4;36*58'26"N, 22*31'35"E
 SPK     Saporro, Japan;4;42*47'40"N, 141*39'59"E
 SPL     Amsterdam (Schiphol), Netherlands
 SPM     Spangdahlem, Germany;4;49*58'22"N, 6*41'33"E
@@ -7287,7 +7287,7 @@ SPT     Sipitang, Malaysia;4;5*4'59"N, 115*33'0"E
 SPU     Split, Croatia;4;43*32'20"N, 16*17'53"E
 SPW     Spencer, USA;4;43*9'56"N, 95*12'10"W
 SPX     Houston (Spaceland Gulf Airport), USA
-SPY     San Pedro, Ivory Coast;4;4*44'48"N, 6*39'39"W
+SPY     San Pédro, Ivory Coast;4;4*44'48"N, 6*39'39"W
 SPZ     Springdale, USA;4;36*10'35"N, 94*7'9"W
 SQA     Santa Inez, USA;4;34*36'25"N, 120*4'32"W
 SQB     Santa Ana, Columbia;4;4*45'0"N, 75*56'60"W
@@ -7310,7 +7310,7 @@ SQZ     Scampton, United Kingdom;4;53*18'28"N, 0*33'3"E
 SRA     Santa Rosa, Brazil;4;27*54'24"S, 54*31'13"W
 SRB     Santa Rosa, Bolivia;4;14*4'59"S, 66*46'59"W
 SRC     Searcy, USA;4;35*12'38"N, 91*44'15"W
-SRD     San Ramon, Bolivia;4;13*16'59"S, 64*41'60"W
+SRD     San Ramón, Bolivia;4;13*16'59"S, 64*41'60"W
 SRE     Sucre, Bolivia;4;19*0'25"S, 65*17'19"W
 SRG     Semarang, Indonesia;4;6*58'17"S, 110*22'27"E
 SRH     Sarh, Tschad;4;9*8'40"N, 18*22'28"E
@@ -7331,7 +7331,7 @@ SRV     Stony River, USA;4;61*47'23"N, 156*35'19"W
 SRW     Salisbury, USA;4;35*38'45"N, 80*31'13"W
 SRX     Sert, Lybia;4;31*3'48"N, 16*35'42"E
 SRY     Sary, Iran;4;36*38'9"N, 53*11'37"E
-SRZ     Santa Cruz, Bolivia;4;17*48'42"S, 63*10'17"W
+SRZ     Santa Cruz (El Trompillo), Bolivia;4;17*48'42"S, 63*10'17"W
 SSA     Salvador, Brazil;4;12*54'40"S, 38*19'52"W
 SSB     Christiansted (Harbor Seaplane Base), U.S. Virgin Islands;4;17*44'50"N, 64*42'18"W
 SSC     Sumter (Shaw Airforce Base), USA;4;33*58'23"N, 80*28'22"W
@@ -7343,7 +7343,7 @@ SSH     Sharm El Sheikh, Egypt;4;27*58'38"N, 34*23'42"E
 SSI     Brunswick (McKinnon Airport), USA;4;31*9'7"N, 81*23'29"W
 SSJ     Sandnessjøen, Norway;4;65*57'25"N, 12*28'8"E
 SSK     Sturt Creek, Australia;4;19*9'59"S, 128*10'28"E
-SSL     Santa Rosalia, Venezuela;4;5*7'59"N, 70*52'1"W
+SSL     Santa Rosalía, Venezuela;4;5*7'59"N, 70*52'1"W
 SSM     Sault St. Marie (Municipal Airport), USA;4;43*30'0"N, 84*20'60"W
 SSN     Seoul (Airforce Base), South Korea;4;37*26'45"N, 127*6'50"E
 SSO     São Lourenço, Brazil;4;22*5'27"S, 45*2'40"W
@@ -7358,7 +7358,7 @@ SSX     Samsun, Turkey;4;41*16'1"N, 36*17'60"E
 SSY     M'banza Congo, Angola;4;6*16'12"S, 14*14'49"E
 SSZ     Santos, Brazil;4;23*55'31"S, 46*17'15"W
 STA     Stauning, Denmark;4;55*59'24"N, 8*21'14"E
-STB     Santa Barbara Zulia, Venezuela;4;8*58'28"N, 71*56'35"W
+STB     Santa Bárbara del Zulia, Venezuela;4;8*58'28"N, 71*56'35"W
 STC     St. Cloud, USA;4;45*32'48"N, 94*3'36"W
 STD     Santo Domingo, Venezuela;4;7*33'54"N, 72*2'6"W
 STE     Stevens Point, USA;4;44*32'42"N, 89*31'49"W
@@ -7399,7 +7399,7 @@ SUM     Sumter, USA;4;33*59'42"N, 80*21'41"W
 SUN     Sun Valley, USA;4;43*30'14"N, 114*17'44"W
 SUO     Sun River, USA;5;43*52'35"N, 121*27'11"W
 SUP     Sumenep, Indonesia;4;7*4'1"S, 113*55'59"E
-SUQ     Sucua, Ecuador;4;2*28'59"S, 78*10'1"W
+SUQ     Sucúa, Ecuador;4;2*28'59"S, 78*10'1"W
 SUR     Summer Beaver, Canada;4;52*42'31"N, 88*32'31"W
 SUS     St. Louis (Spirit of St. Louis Airport), USA;4;38*39'44"N, 90*39'7"W
 SUT     Sumbawanga, Tanzania;4;7*58'1"S, 31*40'1"E
@@ -7412,12 +7412,12 @@ SUZ     Suria, New Guinea;4;9*1'59"S, 147*26'60"E
 SVA     Savoonga, USA;4;63*41'11"N, 170*29'33"W
 SVB     Sambava, Madagascar;4;14*16'43"S, 50*10'29"E
 SVC     Silver City, USA;4;32*38'12"N, 108*9'23"W
-SVD     Kingstown, St. Vincent;4;13*8'40"N, 61*12'39"W
+SVD     Kingstown, Saint Vincent;4;13*8'40"N, 61*12'39"W
 SVE     Susanville, USA;4;40*22'32"N, 120*34'22"W
 SVF     Save, Benin;4;8*1'59"N, 2*28'1"E
 SVG     Stavanger, Norway;4;58*52'36"N, 5*38'16"E
 SVH     Statesville, USA;4;35*45'54"N, 80*57'14"W
-SVI     San Vicente del Caguan, Columbia;4;2*9'0"N, 74*46'0"W
+SVI     San Vicente del Caguán, Columbia;4;2*9'0"N, 74*46'0"W
 SVJ     Svolvær, Norway;4;68*14'36"N, 14*40'9"E
 SVK     Silver Creek, Belize;4;16*43'59"N, 88*19'59"W
 SVL     Savonlinna, Finland;4;61*56'35"N, 28*56'42"E
@@ -7434,7 +7434,7 @@ SVV     San Salvador, Venezuela;4;7*0'0"N, 62*0'0"W
 SVW     Sparrevohn, USA;4;61*5'51"N, 155*34'27"W
 SVX     Yekaterinburg, Russia;4;56*44'35"N, 60*48'10"E
 SVY     Savo, Solomons;4;9*10'1"S, 159*49'59"E
-SVZ     San Antonio, Venezuela;4;7*50'27"N, 72*26'23"W
+SVZ     San Antonio del Táchira, Venezuela;4;7*50'27"N, 72*26'23"W
 SWA     Shantou, China;4;23*25'37"N, 116*45'43"E
 SWB     Shaw River, Australia;4;21*31'1"S, 119*22'1"E
 SWC     Stawell, Australia;4;37*4'18"S, 142*44'26"E
@@ -7505,7 +7505,7 @@ SZK     Skukuza, South Africa;4;24*57'39"S, 31*35'19"E
 SZL     Knob Noster, USA;4;38*43'49"N, 93*32'53"W
 SZN     Santa Barbara (Santa Cruz Island Airport), USA;4;34*3'38"N, 119*54'54"W
 SZP     Santa Paula, USA;4;34*20'50"N, 119*3'40"W
-SZQ     Saenz Pena, Argentina;4;26*48'57"S, 60*26'54"W
+SZQ     Sáenz Peña, Argentina;4;26*48'57"S, 60*26'54"W
 SZR     Stara Zagora, Bulgaria;4;42*22'36"N, 25*39'19"E
 SZS     Stewart Island, New Zealand;4;46*53'59"S, 168*6'7"E
 SZU     Segou, Mali;4;13*23'60"N, 6*9'0"W
@@ -7535,14 +7535,14 @@ TAS     Tashkent, Usbekistan;4;41*15'28"N, 69*16'52"E
 TAT     Poprad, Slovakia;4;49*4'25"N, 20*14'28"E
 TAU     Tauramena, Columbia;4;5*1'1"N, 72*43'59"W
 TAV     Tau Island, Samoa;4;14*13'45"S, 169*30'40"W
-TAW     Tacuarembo, Uruguay;4;31*44'57"S, 55*55'33"W
+TAW     Tacuarembó, Uruguay;4;31*44'57"S, 55*55'33"W
 TAX     Taliabu, Indonesia;4;1*37'1"S, 124*33'0"E
 TAY     Tartu, Estonia;4;58*18'27"N, 26*41'26"E
 TAZ     Dashhowuz, Turkmenistan;4;41*45'40"N, 59*49'36"E
 TBA     Tabibuga, New Guinea;4;5*34'59"S, 144*40'59"E
 TBB     Tuy Hoa, Vietnam;4;13*2'58"N, 109*20'1"E
 TBC     Tuba City, USA;4;36*5'34"N, 111*22'59"W
-TBD     Timbiqui, Columbia;4;2*46'1"N, 77*40'1"W
+TBD     Timbiquí, Columbia;4;2*46'1"N, 77*40'1"W
 TBE     Timbunke, New Guinea;4;4*11'60"S, 143*31'1"E
 TBF     Tabiteuea North, Kiribati;4;1*13'28"S, 174*46'32"E
 TBG     Tabubil, New Guinea;4;5*16'43"S, 141*13'33"E
@@ -7564,7 +7564,7 @@ TBZ     Tabriz, Iran;4;38*8'2"N, 46*14'6"E
 TCA     Tennant Creek, Australia;4;19*38'4"S, 134*10'60"E
 TCB     Treasure Cay, Bahamas;4;26*44'43"N, 77*23'29"W
 TCC     Tucumcari, USA;4;35*10'58"N, 103*36'11"W
-TCD     Tarapaca, Columbia;4;2*52'1"S, 69*43'59"W
+TCD     Tarapacá, Columbia;4;2*52'1"S, 69*43'59"W
 TCE     Tulcea, Romania;4;45*3'45"N, 28*42'52"E
 TCF     Tocoa, Honduras;4;15*38'60"N, 85*58'59"W
 TCG     Tacheng, China;5;46*40'21"N, 83*20'27"E
@@ -7633,7 +7633,7 @@ TGE     Tuskegee, USA;4;32*27'38"N, 85*40'48"W
 TGF     Tignes, France;4;45*30'0"N, 6*55'1"E
 TGG     Kuala Terengganu, Malaysia;4;5*22'58"N, 103*6'12"E
 TGH     Tongoa, Vanuatu;4;16*53'28"S, 168*33'5"E
-TGI     Tingo Maria, Peru;4;9*7'59"S, 75*56'60"W
+TGI     Tingo María, Peru;4;9*7'59"S, 75*56'60"W
 TGJ     Tiga, New Caledonia;4;21*5'46"S, 167*48'14"E
 TGL     Tagula, New Guinea;4;11*19'59"S, 153*11'60"E
 TGM     Tirgu Mures, Romania;4;46*28'4"N, 24*24'45"E
@@ -7667,7 +7667,7 @@ THV     York, USA;4;39*55'1"N, 76*52'23"W
 THY     Thohoyandou, South Africa;4;22*58'1"S, 30*28'59"E
 THZ     Tahoua, Nigeria;4;14*52'32"N, 5*15'55"E
 TIA     Tirana, Albania;4;41*24'53"N, 19*43'14"E
-TIB     Tibu, Columbia;4;8*38'3"N, 72*44'2"W
+TIB     Tibú, Columbia;4;8*38'3"N, 72*44'2"W
 TIC     Tinak, Marshall Islands;4;7*7'60"N, 171*55'0"E
 TID     Tiaret, Algeria;4;35*20'28"N, 1*27'47"E
 TIE     Tippi, Ethiopia;4;7*7'1"N, 35*22'59"E
@@ -7743,7 +7743,7 @@ TLP     Tumolbil, New Guinea;4;4*46'59"S, 141*1'1"E
 TLR     Tulare, USA;4;36*9'23"N, 119*19'34"W
 TLS     Toulouse, France;4;43*38'6"N, 1*22'4"E
 TLT     Tuluksak, USA;4;61*5'49"N, 160*58'10"W
-TLU     Tolu, Columbia;4;9*30'0"N, 75*34'60"W
+TLU     Tolú, Columbia;4;9*30'0"N, 75*34'60"W
 TLV     Tel Aviv, Israel;4;32*0'41"N, 34*53'12"E
 TLW     Talasea, New Guinea;4;5*16'1"S, 150*0'0"E
 TLX     Talca, Chile;4;35*22'40"S, 71*36'6"W
@@ -7898,7 +7898,7 @@ TTI     Tetiaroa Island, French Polynesia;4;17*0'48"S, 149*35'13"W
 TTJ     Tottori, Japan;4;35*31'48"N, 134*9'60"E
 TTK LON London (Tottenham Hale), United Kingdom;5;51*35'18"N, 0*3'35"W
 TTL     Turtle Island, Fiji;4;16*57'57"S, 177*22'13"E
-TTM     Tablon de Tamara, Columbia;4;5*43'1"N, 72*5'60"W
+TTM     Tablón de Tamará, Columbia;4;5*43'1"N, 72*5'60"W
 TTN     Trenton, USA;4;40*16'36"N, 74*48'48"W
 TTO     Britton, USA;4;45*48'55"N, 97*44'35"W
 TTQ     Tortuquero, Costa Rica;4;10*34'1"N, 83*31'1"W
@@ -7907,9 +7907,9 @@ TTS     Tsaratanana, Madagascar;4;16*45'0"S, 47*37'1"E
 TTT     Taitung, Taiwan;4;22*45'18"N, 121*6'6"E
 TTU     Tétouan, Morocco;4;35*35'40"N, 5*19'12"W
 TTV     Barat, Yemen
-TUA     Tulcan, Ecuador;4;0*48'34"S, 77*42'29"W
+TUA     Tulcán, Ecuador;4;0*48'34"S, 77*42'29"W
 TUB     Tubuai, French Polynesia;4;23*21'55"S, 149*31'27"W
-TUC     Tucuman, Argentina;4;26*50'27"S, 65*6'18"W
+TUC     Tucumán, Argentina;4;26*50'27"S, 65*6'18"W
 TUD     Tambacounda, Senegal;4;13*44'13"N, 13*39'11"W
 TUE     Tupile, Panama;4;9*15'0"N, 78*22'1"W
 TUF     Tours, France;4;47*25'55"N, 0*43'23"E
@@ -8030,7 +8030,7 @@ UGN CHI Chicago (Waukegan), USA;4;42*25'20"N, 87*52'4"W
 UGO     Uíge, Angola;4;7*36'11"S, 15*1'40"E
 UHE     Uherske Hradiste, Slovakia;4;49*1'46"N, 17*26'23"E
 UHF     Upper Heyford, United Kingdom
-UIB     Quibdo, Columbia;4;5*41'27"N, 76*38'28"W
+UIB     Quibdó, Columbia;4;5*41'27"N, 76*38'28"W
 UIH     Quy Nhon, Vietnam;4;13*46'1"N, 109*13'1"E
 UII     Útila, Honduras;4;16*6'47"N, 86*52'49"W
 UIK     Ust'Ilimsk, Russia;4;58*8'10"N, 102*33'55"E
@@ -8054,7 +8054,7 @@ UKS     Sewastopol, Russia;5;44*41'30"N, 33*34'35"E
 UKT     Quakertown, USA;4;40*26'7"N, 75*22'55"W
 UKU     Nuku, New Guinea;4;3*40'1"S, 142*28'59"E
 UKY     Kyoto, Japan
-ULA     San Julian, Argentina;4;49*18'24"S, 67*48'9"W
+ULA     Puerto San Julián, Argentina;4;49*18'24"S, 67*48'9"W
 ULB     Ulei, Vanuatu;4;16*19'59"S, 168*16'59"E
 ULC     Santiago de Chile, Chile;2;33*29'36"S, 70*41'51"W
 ULD     Ulundi, South Africa;4;28*19'14"S, 31*24'59"E
@@ -8065,7 +8065,7 @@ ULL     Mull, United Kingdom;4;56*31'1"N, 5*54'29"W
 ULM     New Ulm, USA;4;44*19'10"N, 94*30'8"W
 ULN     Ulan Bator, Mongolia;4;47*50'35"N, 106*45'60"E
 ULP     Quilpie, Australia;4;26*36'44"S, 144*15'10"E
-ULQ     Tulua, Columbia;4;4*5'18"N, 76*14'6"W
+ULQ     Tuluá, Columbia;4;4*5'18"N, 76*14'6"W
 ULS     Mulatos, Columbia;4;8*37'59"N, 76*43'1"W
 ULU     Gulu, Uganda;4;2*48'20"N, 32*16'18"E
 ULY     Simbirsk, Russia;4;54*24'4"N, 48*48'10"E
@@ -8081,11 +8081,11 @@ UMR     Woomera, Australia;4;31*8'39"S, 136*49'1"E
 UMT     Umiat, USA;4;69*22'16"N, 152*8'8"W
 UMU     Umuarama, Brazil;4;23*47'55"S, 53*18'50"W
 UMY     Sumy, Ukraine;4;50*51'30"N, 34*45'45"E
-UNC     Unguia, Columbia;4;8*1'1"N, 77*4'59"W
+UNC     Unguía, Columbia;4;8*1'1"N, 77*4'59"W
 UND     Kunduz, Afghanistan;4;36*39'54"N, 68*54'39"E
 UNE     Oachas Neck, Lesotho;4;30*6'39"S, 28*40'16"E
 UNG     Kiunga, New Guinea;4;6*7'1"S, 141*16'59"E
-UNI     Union Island, St. Vincent;4;12*34'59"N, 61*25'1"W
+UNI     Union Island, Saint Vincent;4;12*34'59"N, 61*25'1"W
 UNK     Unalakleet, USA;4;63*53'18"N, 160*47'56"W
 UNL     Unalaska, USA
 UNO     West Plains, USA;4;36*52'42"N, 91*54'10"W
@@ -8154,7 +8154,7 @@ UUU     Manumu, New Guinea;4;9*4'1"S, 147*34'1"E
 UUV     Sullivan, USA;4;38*14'1"N, 91*9'51"W
 UVA     Uvalde, USA;4;29*12'41"N, 99*44'37"W
 UVE     Ouvea, New Caledonia;4;20*38'26"S, 166*34'22"E
-UVF     St. Lucia (Vieux Fort), St. Lucia;4;13*43'59"N, 60*57'9"W
+UVF     Saint Lucia (Vieux Fort), Saint Lucia;4;13*43'59"N, 60*57'9"W
 UVL     New Valley, Egypt;4;25*28'25"N, 30*35'27"E
 UVO     Uvol, New Guinea;4;6*1'1"S, 150*56'60"E
 UWA     Ware, USA;4;42*16'55"N, 72*12'53"W
@@ -8165,9 +8165,9 @@ UYF     London, USA;4;39*55'58"N, 83*27'43"W
 UYL     Nyala, Sudan;4;12*3'13"N, 24*57'22"E
 UYN     Yulin, China;4;38*16'9"N, 109*43'52"E
 UZH     Unayzah, Saudi Arabia;4;26*6'0"N, 43*55'59"E
-UZU     Curuzu Cuatia, Argentina;4;29*46'14"S, 57*58'44"W
+UZU     Curuzú Cuatiá, Argentina;4;29*46'14"S, 57*58'44"W
 VAA     Vaasa, Finland;4;63*3'2"N, 21*45'44"E
-VAB     Yavarate, Columbia;4;1*7'1"N, 70*45'0"W
+VAB     Yavaraté, Columbia;4;1*7'1"N, 70*45'0"W
 VAC     Varrelbusch, Germany;4;52*54'25"N, 8*2'26"E
 VAD     Valdosta (Moody Airforce Base), USA;4;30*58'4"N, 83*11'35"W
 UAE     Valles, Mexico
@@ -8208,7 +8208,7 @@ VDC     Vitória da Conquista, Brazil;4;14*51'46"S, 40*51'47"W
 VDE     Valverde, Spain;4;27*48'53"N, 17*53'13"W
 VDI     Vidalia, USA;4;32*11'34"N, 82*22'16"W
 VDM     Viedma, Argentina;4;40*52'9"S, 63*0'1"W
-VDP     Valle de Pascua, Venezuela;4;9*13'19"N, 65*59'37"W
+VDP     Valle de la Pascua, Venezuela;4;9*13'19"N, 65*59'37"W
 VDR     Villa Dolores, Argentina;4;31*56'43"S, 65*8'47"W
 VDS     Vadsø, Norway;4;70*3'55"N, 29*50'41"E
 VDU     Refugio (Tom O'Conner Airport), USA
@@ -8230,7 +8230,7 @@ VGN     Vigan, Philippines
 VGO     Vigo, Spain;4;42*13'54"N, 8*37'36"W
 VGS     General Villega, Argentina;4;34*58'59"S, 62*58'59"W
 VGT     Las Vegas (North Air Terminal), USA;4;36*12'38"N, 115*11'40"W
-VGZ     Villagarzon, Columbia;4;2*10'0"N, 75*40'0"W
+VGZ     Villagarzón, Columbia;4;2*10'0"N, 75*40'0"W
 VHC     Saurimo, Angola;4;9*41'21"S, 20*25'55"E
 VHM     Vilhelmina, Sweden;4;64*34'45"N, 16*50'1"E
 VHN     Van Horn, USA;4;31*3'28"N, 104*47'2"W
@@ -8240,7 +8240,7 @@ VIB     Ciudad Constitución, Mexico;4;25*3'13"N, 111*36'53"W
 VIC     Vicenza, Italy;4;45*34'24"N, 11*31'46"E
 VID     Vidin, Bulgaria;4;43*58'59"N, 22*49'1"E
 VIE     Vienna, Austria;4;48*6'37"N, 16*34'11"E
-VIG     El Vigia, Venezuela;4;8*37'27"N, 71*40'22"W
+VIG     El Vigía, Venezuela;4;8*37'27"N, 71*40'22"W
 VIH     Rolla/Vichy, USA;4;38*7'39"N, 91*46'10"W
 VIJ     Virgin Gorda, British Virgin Islands;4;18*26'47"N, 64*25'39"W
 VIK     Kavik, USA
@@ -8295,7 +8295,7 @@ VOG     Volgograd, Russia;4;48*46'57"N, 44*20'44"E
 VOH     Vohemar, Madagascar;4;13*22'33"S, 50*0'10"E
 VOI     Voinjama, Liberia;4;8*23'60"N, 9*46'1"W
 VOK     Camp Douglas, USA;4;43*56'20"N, 90*15'13"W
-VOL     Volos, Greece;4;39*13'11"N, 22*47'40"E
+VOL     Vólos, Greece;4;39*13'11"N, 22*47'40"E
 VOT     Votuporanga, Brazil;4;20*27'48"S, 50*0'16"W
 VOZ     Voronezh, Russia;4;51*48'51"N, 39*13'47"E
 VPC     Cartersville, USA;4;34*7'23"N, 84*50'55"W
@@ -8382,7 +8382,7 @@ WBU     Boulder, USA;4;40*2'22"N, 105*13'33"W
 WBW     Wilkes-Barre, USA;4;41*17'50"N, 75*51'4"W
 WBX     Yaquara, Columbia
 WCA     Castro, Chile;4;42*28'59"S, 73*46'1"W
-WCH     Chaiten, Chile;4;42*55'58"S, 72*41'57"W
+WCH     Chaitén, Chile;4;42*55'58"S, 72*41'57"W
 WCJ     Caleta Josefina, Chile
 WCO     Coolullah, Australia
 WCR     Chandalar Lake, USA;4;67*30'16"N, 148*28'60"W
@@ -8514,7 +8514,7 @@ WON     Wondoola, Australia;4;18*34'23"S, 140*53'38"E
 WOO     Woodchopper, USA
 WOT     Wonan, Taiwan;4;23*22'15"N, 119*29'40"E
 WOW     Willow, USA;4;61*45'15"N, 150*3'6"W
-WPA     Puerto Aisen, Chile;4;45*25'1"S, 72*41'60"W
+WPA     Puerto Aisén, Chile;4;45*25'1"S, 72*41'60"W
 WPB     Port Berge, Madagascar;4;15*34'59"S, 47*37'1"E
 WPC     Pincher Creek, Canada;4;49*31'14"N, 113*59'50"W
 WPK     Wrotham, Australia;4;16*39'29"S, 144*0'4"E
@@ -8751,7 +8751,7 @@ YAE     Alta Lake, Canada
 YAF     Asbestos Hill, Canada;4;61*49'1"N, 73*56'60"W
 YAG     Fort Frances, Canada;4;48*39'15"N, 93*26'23"W
 YAH     La Grande (Nr. 4 Airport), Canada;4;53*45'17"N, 73*40'31"W
-YAI     Chillan, Chile;4;36*34'57"S, 72*1'53"W
+YAI     Chillán, Chile;4;36*34'57"S, 72*1'53"W
 YAJ     Lyall Harbour, Canada;4;48*47'60"N, 123*11'60"W
 YAK     Yakutat, USA;4;59*30'12"N, 139*39'37"W
 YAL     Alert Bay, Canada;4;50*34'56"N, 126*54'56"W
@@ -9360,7 +9360,7 @@ ZNZ     Zanzibar Island, Tanzania;4;6*13'19"S, 39*13'30"E
 ZOF     Ocean Falls, Canada;4;52*22'1"N, 127*41'60"W
 ZOS     Osorno, Chile;4;40*36'40"S, 73*3'40"W
 ZPB     Sachigo Lake, Canada;4;53*53'26"N, 92*11'43"W
-ZPC     Pucon, Chile;4;39*17'34"S, 71*54'57"W
+ZPC     Pucón, Chile;4;39*17'34"S, 71*54'57"W
 ZPE NRW Osnabrück, Germany
 ZPH     Zephyrhills, USA;4;28*13'41"N, 82*9'21"W
 ZPO     Pinehouse Lake, Canada;4;55*31'41"N, 106*34'56"W
@@ -9394,7 +9394,7 @@ ZSZ     Swakopmund (Railway Station), Namibia;4;22*38'60"S, 14*34'1"E
 ZTA     Tureia, French Polynesia;4;20*46'14"S, 138*34'7"W
 ZTB     Tete-a-la-Baleine, Canada;4;50*40'28"N, 59*23'1"W
 ZTF     Stamford, USA;5;41*6'0"N, 73*33'0"W
-ZTH     Zakynthos, Greece;4;37*45'3"N, 20*53'3"E
+ZTH     Zákynthos, Greece;4;37*45'3"N, 20*53'3"E
 ZTJ     Interlaken, Switzerland
 ZTL     Telluride, USA
 ZTM     Shamattawa, Canada;4;55*51'40"N, 92*4'56"W

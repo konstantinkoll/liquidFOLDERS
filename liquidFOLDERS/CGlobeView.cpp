@@ -1052,7 +1052,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index==-1)
 	{
 		if (CursorOnGlobe(point))

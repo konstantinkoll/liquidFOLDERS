@@ -149,7 +149,7 @@ protected:
 	BOOL IsItemSelected(INT Index) const;
 	void ChangedItem(INT Index);
 	void ChangedItems();
-	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
+	void SetFocusItem(INT FocusItem, BOOL ShiftSelect, BOOL Deselect=TRUE);
 	RECT GetItemRect(INT Index) const;
 	CMenu* GetSendToMenu();
 	CString GetLabel(LFItemDescriptor* pItemDescriptor) const;
