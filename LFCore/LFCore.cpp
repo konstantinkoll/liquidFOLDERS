@@ -107,7 +107,7 @@ LFCORE_API const LFMessageIDs* LFGetMessageIDs()
 // Output handling
 //
 
-LFCORE_API void LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void __stdcall LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -115,9 +115,18 @@ LFCORE_API void LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, SIZE_T cCo
 	StrFormatByteSize(Size, tmpStr, 256);
 
 	WCHAR tmpMask[256];
-	LoadString(LFCoreModuleHandle, Count==1 ? IDS_FILECOUNT_SINGULAR : IDS_FILECOUNT_PLURAL, tmpMask, 256);
+	LoadString(LFCoreModuleHandle, Count==1 ? IDS_FILESUMMARY_SINGULAR : IDS_FILESUMMARY_PLURAL, tmpMask, 256);
 
 	swprintf_s(pStr, cCount, tmpMask, Count, tmpStr);
+
+	// Axe file size if 0
+	if (!Size)
+	{
+		WCHAR* pChar = wcsstr(pStr, L" (");
+
+		if (pChar)
+			*pChar = L'\0';
+	}
 }
 
 LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& FileSummary, LPWSTR pStr, SIZE_T cCount)
@@ -141,7 +150,7 @@ LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& FileSummary, L
 		WCHAR tmpStr[256];
 		swprintf_s(tmpStr, 256, tmpMask, max(1, Duration));
 
-		LoadString(LFCoreModuleHandle, FileSummary.FileCount==1 ? IDS_MEDIACOUNT_SINGULAR : IDS_MEDIACOUNT_PLURAL, tmpMask, 256);
+		LoadString(LFCoreModuleHandle, FileSummary.FileCount==1 ? IDS_MEDIASUMMARY_SINGULAR : IDS_MEDIASUMMARY_PLURAL, tmpMask, 256);
 		swprintf_s(pStr, cCount, tmpMask, FileSummary.FileCount, tmpStr);
 	}
 	else

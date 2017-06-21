@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "AttributeTables.h"
 #include "CIndex.h"
 #include "CStore.h"
 #include "FileSystem.h"
@@ -706,6 +707,24 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 	pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalID);
 }
 
+BOOL CIndex::InspectForUpdate(LFVariantData* pVariantData, BOOL& IncludeSlaves, BOOL& DoRename)
+{
+	if (pVariantData)
+	{
+		assert(pVariantData->Attr<LFAttributeCount);
+		assert(pVariantData->Type==AttrProperties[pVariantData->Attr].Type);
+		assert(pVariantData->Type<LFTypeCount);
+
+		if (AttrProperties[pVariantData->Attr].ReadOnly)
+			return FALSE;
+
+		IncludeSlaves |= (pVariantData->Attr>LFLastCoreAttribute);
+		DoRename |= (pVariantData->Attr==LFAttrFileName);
+	}
+
+	return TRUE;
+}
+
 void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3)
 {
 	assert(pTransactionList);
@@ -717,16 +736,19 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 		return;
 	}
 
-	const BOOL IncludeSlave =
-		(pVariantData1 ? (pVariantData1->Attr>LFLastCoreAttribute) : FALSE) ||
-		(pVariantData2 ? (pVariantData2->Attr>LFLastCoreAttribute) : FALSE) ||
-		(pVariantData3 ? (pVariantData3->Attr>LFLastCoreAttribute) : FALSE);
+	// Inspect attributes
+	BOOL IncludeSlaves = FALSE;
+	BOOL DoRename = FALSE;
 
-	const BOOL Rename =
-		(pVariantData1 ? (pVariantData1->Attr==LFAttrFileName) : FALSE) ||
-		(pVariantData2 ? (pVariantData2->Attr==LFAttrFileName) : FALSE) ||
-		(pVariantData3 ? (pVariantData3->Attr==LFAttrFileName) : FALSE);
+	if (!InspectForUpdate(pVariantData1, IncludeSlaves, DoRename) ||
+		!InspectForUpdate(pVariantData2, IncludeSlaves, DoRename) ||
+		!InspectForUpdate(pVariantData3, IncludeSlaves, DoRename))
+	{
+		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalAttribute);
+		return;
+	}
 
+	// Start
 	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
 	REMOVE_STATS();
@@ -750,7 +772,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	UINT Result = LFOk;
 
 	// Phys. Datei umbenennen ?
-	if (Rename)
+	if (DoRename)
 		if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
 		{
 			Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
@@ -778,7 +800,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	ADD_STATS();
 
 	// Slave
-	if (IncludeSlave)
+	if (IncludeSlaves)
 	{
 		LOAD_SLAVE();
 

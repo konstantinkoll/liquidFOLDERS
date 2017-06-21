@@ -68,7 +68,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value)
 	FreeAttribute(pItemDescriptor, Attr);
 
 	// Größe ermitteln
-	SIZE_T Size = GetAttributeSize(Attr, Value);
+	const SIZE_T Size = GetAttributeSize(Attr, Value);
 
 	// Ggf. Speicher reservieren
 	if (!pItemDescriptor->AttributeValues[Attr])

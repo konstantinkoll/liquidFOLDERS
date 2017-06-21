@@ -299,7 +299,6 @@ BOOL LFTransactionList::SetStoreAttributes(LFVariantData* pVariantData, LPCWSTR*
 	if (!pVariantData)
 		return TRUE;
 
-
 	switch (pVariantData->Attr)
 	{
 	case LFAttrFileName:
@@ -314,6 +313,7 @@ BOOL LFTransactionList::SetStoreAttributes(LFVariantData* pVariantData, LPCWSTR*
 
 	case LFAttrComments:
 		assert(pVariantData->Type==LFTypeUnicodeString);
+
 		*ppStoreComments = pVariantData->UnicodeString;
 
 		return TRUE;
@@ -337,7 +337,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	CStore* pStore;
 
 	for (UINT a=0; a<m_ItemCount; a++)
-		if ((m_Items[a].LastError==LFOk) && (!m_Items[a].Processed))
+		if ((m_Items[a].LastError==LFOk) && !m_Items[a].Processed)
 		{
 			switch (m_Items[a].pItemDescriptor ? m_Items[a].pItemDescriptor->Type & LFTypeMask : LFTypeFile)
 			{
@@ -411,7 +411,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	case LFTransactionTypeSendTo:
 	case LFTransactionTypeArchive:
 	case LFTransactionTypePutInTrash:
-	case LFTransactionTypeRestore:
+	case LFTransactionTypeRecover:
 	case LFTransactionTypeUpdate:
 	case LFTransactionTypeDelete:
 		SendLFNotifyMessage(LFMessages.StatisticsChanged);

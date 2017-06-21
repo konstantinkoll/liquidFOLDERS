@@ -78,7 +78,7 @@ protected:
 	afx_msg void OnNewClearNew();
 	afx_msg void OnUpdateNewCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnTrashRestoreAll();
+	afx_msg void OnTrashRecoverAll();
 	afx_msg void OnTrashEmpty();
 	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
 
@@ -106,7 +106,7 @@ protected:
 	afx_msg void OnFileDelete();
 	afx_msg void OnFileRename();
 	afx_msg void OnFileProperties();
-	afx_msg void OnFileRestore();
+	afx_msg void OnFileRecover();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 

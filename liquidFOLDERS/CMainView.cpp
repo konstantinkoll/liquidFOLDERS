@@ -152,20 +152,10 @@ void CMainView::SetHeader()
 	else
 	{
 		// Hint
-		CString Hint;
+		WCHAR tmpStr[256];
+		LFGetFileSummaryEx(p_CookedFiles->m_FileSummary, tmpStr, 256);
 
-		// Number of stores (LFContextStores) or file count and file size (all other contexts)
-		if (m_Context==LFContextStores)
-		{
-			Hint.Format(p_CookedFiles->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, p_CookedFiles->m_StoreCount);
-		}
-		else
-		{
-			WCHAR tmpStr[256];
-			LFGetFileSummaryEx(p_CookedFiles->m_FileSummary, tmpStr, 256);
-
-			Hint = tmpStr;
-		}
+		CString Hint(tmpStr);
 
 		// Use hint from search result
 		LPCWSTR pHint = p_CookedFiles->m_Hint;
@@ -458,7 +448,7 @@ void CMainView::RestoreFiles(BOOL All)
 	CWaitCursor csr;
 
 	LFTransactionList* pTransactionList = BuildTransactionList(All);
-	LFDoTransaction(pTransactionList, LFTransactionTypeRestore);
+	LFDoTransaction(pTransactionList, LFTransactionTypeRecover);
 	RemoveTransactedItems(pTransactionList);
 
 	ShowNotification(pTransactionList->m_LastError);
@@ -555,8 +545,8 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_NEW_CLEARNEW, IDM_NEW_CLEARNEW, OnUpdateNewCommands)
 
 	ON_COMMAND(IDM_TRASH_EMPTY, OnTrashEmpty)
-	ON_COMMAND(IDM_TRASH_RESTOREALL, OnTrashRestoreAll)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RESTOREALL, OnUpdateTrashCommands)
+	ON_COMMAND(IDM_TRASH_RECOVERALL, OnTrashRecoverAll)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RECOVERALL, OnUpdateTrashCommands)
 
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILTERS_CREATENEW, IDM_FILTERS_EDIT, OnUpdateFiltersCommands)
 
@@ -582,8 +572,8 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
 	ON_COMMAND(IDM_FILE_PROPERTIES, OnFileProperties)
-	ON_COMMAND(IDM_FILE_RESTORE, OnFileRestore)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RESTORE, OnUpdateFileCommands)
+	ON_COMMAND(IDM_FILE_RECOVER, OnFileRecover)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RECOVER, OnUpdateFileCommands)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -601,8 +591,8 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_SYNCHRONIZE, 1);
 	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 5);
+	m_wndTaskbar.AddButton(IDM_TRASH_RECOVERALL, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_RECOVER, 5);
 	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 7, TRUE);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 8, TRUE);
@@ -1175,7 +1165,7 @@ void CMainView::OnUpdateNewCommands(CCmdUI* pCmdUI)
 
 // Trash
 
-void CMainView::OnTrashRestoreAll()
+void CMainView::OnTrashRecoverAll()
 {
 	RestoreFiles(TRUE);
 }
@@ -1192,7 +1182,7 @@ void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-		if (pCmdUI->m_nID==IDM_TRASH_RESTOREALL)
+		if (pCmdUI->m_nID==IDM_TRASH_RECOVERALL)
 			bEnable = FALSE;
 
 	pCmdUI->Enable(bEnable);
@@ -1524,7 +1514,7 @@ void CMainView::OnFileProperties()
 	m_wndInspectorPane.SetFocus();
 }
 
-void CMainView::OnFileRestore()
+void CMainView::OnFileRecover()
 {
 	RestoreFiles();
 }
@@ -1587,7 +1577,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		bEnable = m_FilesSelected && !m_ShowInspectorPane;
 		break;
 
-	case IDM_FILE_RESTORE:
+	case IDM_FILE_RECOVER:
 		bEnable = m_FilesSelected && ((m_Context==LFContextArchive) || (m_Context==LFContextTrash));
 		break;
 	}

@@ -315,13 +315,8 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 	if (!LFDynArray::AddItem(pItemDescriptor))
 		return FALSE;
 
-	switch (pItemDescriptor->Type & LFTypeMask)
+	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 	{
-	case LFTypeStore:
-		m_StoreCount++;
-		break;
-
-	case LFTypeFile:
 		if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
 			pItemDescriptor->IconID = IDI_FLD_ALL;
 
@@ -339,8 +334,6 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 		}
 
 		AddFileToSummary(m_FileSummary, pItemDescriptor);
-
-		break;
 	}
 
 	return TRUE;
@@ -363,6 +356,8 @@ BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 
 		strcpy_s(pItemDescriptor->pNextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
 		wcscpy_s(pItemDescriptor->pNextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
+
+		AddStoreToSummary(m_FileSummary, pStoreDescriptor);
 
 		return TRUE;
 	}

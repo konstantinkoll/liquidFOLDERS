@@ -53,6 +53,7 @@ protected:
 private:
 	void ResetStatistics();
 	void ResetStatistics(BOOL& DoReset);
+	BOOL InspectForUpdate(LFVariantData* pVariantData, BOOL& IncludeSlaves, BOOL& DoRename);
 
 	WCHAR m_IdxPath[MAX_PATH];
 };

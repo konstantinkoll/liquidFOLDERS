@@ -78,8 +78,8 @@ IDI_FLD_WORLDMUSIC      ICON                    "res\\FLD_WorldMusic.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,4,0
- PRODUCTVERSION 3,0,4,0
+ FILEVERSION 3,0,5,0
+ PRODUCTVERSION 3,0,5,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -96,13 +96,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "3.0.4"
+            VALUE "FileVersion", "3.0.5"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "3.0.4"
+            VALUE "ProductVersion", "3.0.5"
         END
     END
     BLOCK "VarFileInfo"
@@ -145,7 +145,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Auf diesem Computer gespeicherte Dateien"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern oder werden mit ihnen synchronisiert."
+                            "Netzwerkadresse\nDiese Dateien befinden sich auf anderen Computern oder werden mit ihnen synchronisiert."
     IDS_ITEMCATEGORY_NIGHT  "Nacht\nBis 6 Uhr"
 END
 
@@ -182,7 +182,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXT_FILTERS     "Filter\nBenutzerdefinierte Filter"
     IDS_CONTEXT_SEARCH      "Suchergebnis"
-    IDS_CONTEXT_STORES      "Stores"
+    IDS_CONTEXT_STORES      "Speicherorte"
     IDS_CONTEXT_CLIPBOARD   "Zwischenablage"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Unterordner"
     IDS_CONTEXT_SUBFOLDER_DAY "Tag"
@@ -193,12 +193,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NEWSTORE            "Neuer Store"
+    IDS_NEWSTORE            "Neuer Speicherort"
     IDS_LASTSEEN            "Zuletzt angeschlossen auf %s"
-    IDS_FILECOUNT_SINGULAR  "%u Datei (%s)"
-    IDS_FILECOUNT_PLURAL    "%u Dateien (%s)"
-    IDS_MEDIACOUNT_SINGULAR "%u Titel (%s)"
-    IDS_MEDIACOUNT_PLURAL   "%u Titel (%s)"
+    IDS_FILESUMMARY_SINGULAR  "%u Datei (%s)"
+    IDS_FILESUMMARY_PLURAL    "%u Dateien (%s)"
+    IDS_MEDIASUMMARY_SINGULAR "%u Titel (%s)"
+    IDS_MEDIASUMMARY_PLURAL   "%u Titel (%s)"
     IDS_MINUTE              "%I64u Minute"
     IDS_MINUTES             "%I64u Minuten"
 END
@@ -254,26 +254,26 @@ BEGIN
     IDS_ERR_CANCEL          "Abgebrochen"
     IDS_ERR_DRIVEWRITEPROTECTED "Der Datenträger ist schreibgeschützt."
     IDS_ERR_SHARINGVIOLATION1 
-                            "Der Store wird zur Zeit von einem anderen Gerät blockiert."
+                            "Der Speicherort wird zur Zeit von einem anderen Gerät blockiert."
     IDS_ERR_SHARINGVIOLATION2 
-                            "Ein Store wird zur Zeit von einem anderen Gerät blockiert."
+                            "Ein Speicherort wird zur Zeit von einem anderen Gerät blockiert."
     IDS_ERR_MEMORY          "Speicherfehler"
     IDS_ERR_ILLEGALQUERY    "Der Filter beschreibt eine ungültige Abfrage."
-    IDS_ERR_ILLEGALSTOREDESCRIPTOR "Die Store-Einstellungen sind ungültig."
+    IDS_ERR_ILLEGALSTOREDESCRIPTOR "Der Speicherort ist ungültig."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_STORENOTFOUND   "Der gewählte Store ist nicht angeschlossen oder nicht vorhanden."
+    IDS_ERR_STORENOTFOUND   "Der gewählte Speicherort ist nicht angeschlossen oder nicht vorhanden."
     IDS_ERR_DRIVENOTREADY   "Der Datenträger ist nicht bereit!"
     IDS_ERR_ILLEGALPHYSFOLDER 
                             "Auf das physische Verzeichnis kann nicht zugegriffen werden."
     IDS_ERR_REGISTRY        "Auf die Registry kann nicht zugegriffen werden."
     IDS_ERR_NOACCESS        "Auf das physische Verzeichnis kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
-    IDS_ERR_ILLEGALID       "Der Store oder die Datei ist nicht mehr verfügbar."
-    IDS_ERR_NODEFAULTSTORE  "Zur Zeit ist kein Standard-Store festgelegt."
-    IDS_ERR_TOOMANYSTORES   "Sie haben bereits die maximale Anzahl an Stores erzeugt!"
-    IDS_ERR_STORENOTMOUNTED "Der Store ist zur Zeit nicht angeschlossen."
+    IDS_ERR_ILLEGALID       "Der Speicherort oder die Datei ist nicht mehr verfügbar."
+    IDS_ERR_NODEFAULTSTORE  "Zur Zeit ist kein Standard-Speicherort festgelegt."
+    IDS_ERR_TOOMANYSTORES   "Sie haben bereits die maximale Anzahl an Speicherorten erzeugt!"
+    IDS_ERR_STORENOTMOUNTED "Der Speicherort ist zur Zeit nicht angeschlossen."
     IDS_ERR_MUTEX           "liquidFOLDERS wird zur Zeit von einem anderen Programm blockiert."
     IDS_ERR_ILLEGALATTRIBUTE 
                             "Eines der gewählten Objekte verfügt nicht über die Eigenschaft."
@@ -281,7 +281,7 @@ BEGIN
     IDS_ERR_ILLEGALVALUE    "Eine der Eigenschaften hat einen ungültigen Wert."
     IDS_ERR_INDEXLOAD       "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
     IDS_ERR_INDEXREPAIR     "Der Index ist zu stark beschädigt und kann leider nicht repariert werden."
-    IDS_ERR_INDEXACCESS     "Auf den Store kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
+    IDS_ERR_INDEXACCESS     "Auf den Speicherort kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
 END
 
 STRINGTABLE 
@@ -292,13 +292,13 @@ BEGIN
     IDS_ERR_FILEDELETE      "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind oder Sie nicht die nötigen Zugriffsrechte haben."
     IDS_ERR_FILERENAME      "Einige Dateien können nicht umbenannt werden."
     IDS_ERR_INDEXCOPY       "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt?)."
-    IDS_ERR_NOFILEBODY      "Die Datei befindet sich nicht mehr im Store."
+    IDS_ERR_NOFILEBODY      "Die Datei befindet sich nicht mehr an ihrem Speicherort."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Name"
-    IDS_ATTR_STOREID        "Store-ID"
+    IDS_ATTR_STOREID        "Speicherort-ID"
     IDS_ATTR_FILEID         "Datei-ID"
     IDS_ATTR_COMMENTS       "Kommentar"
 END
@@ -453,7 +453,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Archivos almacenados en este equipo"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Ubicación de red\nEstos stores residen en otras computadoras o sincronizarse con ellas."
+                            "Ubicación de red\nEstos archivos residen en otras computadoras o sincronizarse con ellas."
     IDS_ITEMCATEGORY_NIGHT  "Noche\nHasta 6am"
 END
 
@@ -490,7 +490,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXT_FILTERS     "Filtros\nFiltros definidos por el usuario"
     IDS_CONTEXT_SEARCH      "Resultados de la búsqueda"
-    IDS_CONTEXT_STORES      "Stores"
+    IDS_CONTEXT_STORES      "Ubicaciones"
     IDS_CONTEXT_CLIPBOARD   "Portapapeles"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Subcarpeta"
     IDS_CONTEXT_SUBFOLDER_DAY "Día"
@@ -501,12 +501,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NEWSTORE            "Nuevo store"
+    IDS_NEWSTORE            "Nuevo ubicación"
     IDS_LASTSEEN            "Conectado por última vez desde %s"
-    IDS_FILECOUNT_SINGULAR  "%u archivo (%s)"
-    IDS_FILECOUNT_PLURAL    "%u archivos (%s)"
-    IDS_MEDIACOUNT_SINGULAR "%u pieza (%s)"
-    IDS_MEDIACOUNT_PLURAL   "%u piezas (%s)"
+    IDS_FILESUMMARY_SINGULAR  "%u archivo (%s)"
+    IDS_FILESUMMARY_PLURAL    "%u archivos (%s)"
+    IDS_MEDIASUMMARY_SINGULAR "%u pieza (%s)"
+    IDS_MEDIASUMMARY_PLURAL   "%u piezas (%s)"
     IDS_MINUTE              "%I64u minuto"
     IDS_MINUTES             "%I64u minutos"
 END
@@ -562,51 +562,51 @@ BEGIN
     IDS_ERR_CANCEL          "Cancelado"
     IDS_ERR_DRIVEWRITEPROTECTED "La unidad está protegida contra escritura."
     IDS_ERR_SHARINGVIOLATION1 
-                            "El store está por el momento bloqueado por otro dispositivo."
+                            "El ubicación está por el momento bloqueado por otro dispositivo."
     IDS_ERR_SHARINGVIOLATION2 
-                            "Un store está por el momento bloqueado por otro dispositivo."
+                            "Un ubicación está por el momento bloqueado por otro dispositivo."
     IDS_ERR_MEMORY          "Error de memoria"
     IDS_ERR_ILLEGALQUERY    "El filtro describe una solicitud ilegal."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR 
-                            "Las configuraciones del store no son válidas."
+                            "El ubicación es invalidez."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_STORENOTFOUND   "El store seleccionado no está conectado ó no está presente."
+    IDS_ERR_STORENOTFOUND   "El ubicación seleccionado no está conectado ó no está presente."
     IDS_ERR_DRIVENOTREADY   "La unidad no está lista!"
     IDS_ERR_ILLEGALPHYSFOLDER "La carpeta física no es accessible."
     IDS_ERR_REGISTRY        "No se puede acceder al registro."
-    IDS_ERR_NOACCESS        "La carpeta física no es accessible. Por favor revise los derechos de acceso del directorio del store."
-    IDS_ERR_ILLEGALID       "El store o archivo ya no está disponible."
-    IDS_ERR_NODEFAULTSTORE  "No hay un store predeterminado en este momento."
-    IDS_ERR_TOOMANYSTORES   "El número máximo de stores ya ha sido creado."
-    IDS_ERR_STORENOTMOUNTED "El store no está conectado en este momento."
+    IDS_ERR_NOACCESS        "La carpeta física no es accessible. Por favor revise los derechos de acceso del directorio del ubicación."
+    IDS_ERR_ILLEGALID       "El ubicación o archivo ya no está disponible."
+    IDS_ERR_NODEFAULTSTORE  "No hay un ubicación estándar en este momento."
+    IDS_ERR_TOOMANYSTORES   "El número máximo de ubicaciones ya ha sido creado."
+    IDS_ERR_STORENOTMOUNTED "El ubicación no está conectado en este momento."
     IDS_ERR_MUTEX           "liquidFOLDERS está por el momento bloqueado por otro programa."
     IDS_ERR_ILLEGALATTRIBUTE 
-                            "Al menos uno de los objetos seleccionados no posee la propiedad."
-    IDS_ERR_ILLEGALITEMTYPE "Al menos uno de los objetos seleccionados no respalda esta operación."
+                            "Al menos uno de los ítems seleccionados no posee la propiedad."
+    IDS_ERR_ILLEGALITEMTYPE "Al menos uno de los ítems seleccionados no respalda esta operación."
     IDS_ERR_ILLEGALVALUE    "Al menos uno de los valores de propiedad es ilegal."
     IDS_ERR_INDEXLOAD       "Una tabla índice no puede ser cargada. Por favor ejecute un mantenimiento programado."
-    IDS_ERR_INDEXREPAIR     "El índice del store está dañado y no pudo ser reparado."
-    IDS_ERR_INDEXACCESS     "No se puede acceder al store. Por favor revise los derechos de acceso del directorio del store."
+    IDS_ERR_INDEXREPAIR     "El índice del ubicación está dañado y no pudo ser reparado."
+    IDS_ERR_INDEXACCESS     "No se puede acceder al ubicación. Por favor revise los derechos de acceso del directorio del ubicación."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_INDEXCREATE     "El índice del store no puede ser creado (¿disco protegido contra escritura?)."
+    IDS_ERR_INDEXCREATE     "El índice del ubicación no puede ser creado (¿disco protegido contra escritura?)."
     IDS_ERR_NOTENOUGHSPACE  "No hay suficiente espacio libre en el disco."
     IDS_ERR_FILEIMPORT      "Algunos archivos no pueden ser importados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
     IDS_ERR_FILEDELETE      "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
     IDS_ERR_FILERENAME      "Algunos archivos no pueden ser renombrados."
     IDS_ERR_INDEXCOPY       "El índice no puede ser actualizado (¿disco protegido contra escritura?)."
-    IDS_ERR_NOFILEBODY      "El archivo no está presente en el store."
+    IDS_ERR_NOFILEBODY      "El archivo ya no está presente en su ubicación."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Nombre"
-    IDS_ATTR_STOREID        "ID de Store"
+    IDS_ATTR_STOREID        "ID de ubicación"
     IDS_ATTR_FILEID         "ID de archivo"
     IDS_ATTR_COMMENTS       "Comentarios"
 END
@@ -761,7 +761,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Fichiers enregistrés sur cet ordinateur"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs ou être synchronisés avec eux."
+                            "Emplacement réseau\nCes fichiers se trouvent sur des autres ordinateurs ou être synchronisés avec eux."
     IDS_ITEMCATEGORY_NIGHT  "Nuit\nJusqu'à 6 heures"
 END
 
@@ -798,7 +798,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXT_FILTERS     "Filtres\nFiltres définis par l'utilisateur"
     IDS_CONTEXT_SEARCH      "Résultat de la recherche"
-    IDS_CONTEXT_STORES      "Stores"
+    IDS_CONTEXT_STORES      "Emplacements"
     IDS_CONTEXT_CLIPBOARD   "Presse-papiers"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Sous-dossier"
     IDS_CONTEXT_SUBFOLDER_DAY "Jour"
@@ -809,12 +809,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NEWSTORE            "Store nouveau"
+    IDS_NEWSTORE            "Emplacement nouveau"
     IDS_LASTSEEN            "Dernier monté en %s"
-    IDS_FILECOUNT_SINGULAR  "%u fichier (%s)"
-    IDS_FILECOUNT_PLURAL    "%u fichiers (%s)"
-    IDS_MEDIACOUNT_SINGULAR "%u morceau (%s)"
-    IDS_MEDIACOUNT_PLURAL   "%u morceaux (%s)"
+    IDS_FILESUMMARY_SINGULAR  "%u fichier (%s)"
+    IDS_FILESUMMARY_PLURAL    "%u fichiers (%s)"
+    IDS_MEDIASUMMARY_SINGULAR "%u morceau (%s)"
+    IDS_MEDIASUMMARY_PLURAL   "%u morceaux (%s)"
     IDS_MINUTE              "%I64u minute"
     IDS_MINUTES             "%I64u minutes"
 END
@@ -871,34 +871,34 @@ BEGIN
     IDS_ERR_DRIVEWRITEPROTECTED 
                             "Le support de données est protégé en écriture."
     IDS_ERR_SHARINGVIOLATION1 
-                            "Le store est bloqué à présent par un autre appareil."
+                            "L'emplacement est bloqué à présent par un autre appareil."
     IDS_ERR_SHARINGVIOLATION2 
-                            "Un store est bloqué à présent par un autre appareil."
+                            "Un emplacement est bloqué à présent par un autre appareil."
     IDS_ERR_MEMORY          "Faute de mémoire"
     IDS_ERR_ILLEGALQUERY    "Le filtre décrit une interrogation non valable."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR 
-                            "Les paramètres du store sont non valables."
+                            "L'emplacement est invalidité."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_STORENOTFOUND   "Le store choisi n'est pas relié ou pas disponible."
+    IDS_ERR_STORENOTFOUND   "L'emplacement choisi n'est pas relié ou pas disponible."
     IDS_ERR_DRIVENOTREADY   "Le support de données n'est pas prêt!"
     IDS_ERR_ILLEGALPHYSFOLDER "Il n'y a pas accès au dossier physique."
     IDS_ERR_REGISTRY        "Il n'ya pas accès au registry."
     IDS_ERR_NOACCESS        "Il n'y a pas accès au dossier physique. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
-    IDS_ERR_ILLEGALID       "Le store ou fichier n'est plus disponible."
-    IDS_ERR_NODEFAULTSTORE  "A présent aucun store de norme n'est fixé."
-    IDS_ERR_TOOMANYSTORES   "Vous avez déjà produit le nombre maximum de stores!"
-    IDS_ERR_STORENOTMOUNTED "Le store n'est pas relié à présent."
+    IDS_ERR_ILLEGALID       "L'emplacement ou le fichier n'est plus disponible."
+    IDS_ERR_NODEFAULTSTORE  "A présent aucun emplacement défaut n'est pas fixé."
+    IDS_ERR_TOOMANYSTORES   "Vous avez déjà produit le nombre maximum de emplacements!"
+    IDS_ERR_STORENOTMOUNTED "L'emplacement n'est pas relié à présent."
     IDS_ERR_MUTEX           "liquidFOLDERS est bloqué à présent par un autre programme."
     IDS_ERR_ILLEGALATTRIBUTE 
-                            "L'un des éléments choisis ne dispose pas de la qualité."
+                            "L'un des éléments choisis ne dispose pas cette qualité."
     IDS_ERR_ILLEGALITEMTYPE "L'un des éléments choisis ne soutient pas cette opération."
     IDS_ERR_ILLEGALVALUE    "L'une des qualités a une valeur non valable."
     IDS_ERR_INDEXLOAD       "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
     IDS_ERR_INDEXREPAIR     "L'index est endommagé et ne peut pas être réparé malheureusement."
-    IDS_ERR_INDEXACCESS     "Il n'ya pas accès au store. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
+    IDS_ERR_INDEXACCESS     "Il n'ya pas accès à l'emplacement. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
 END
 
 STRINGTABLE 
@@ -909,13 +909,13 @@ BEGIN
     IDS_ERR_FILEDELETE      "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage ou si vous ne disposez pas des droits d'accès requis."
     IDS_ERR_FILERENAME      "Certains fichiers ne peuvent pas être renommées."
     IDS_ERR_INDEXCOPY       "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture?)."
-    IDS_ERR_NOFILEBODY      "Le fichier ne se trouve pas dans le store."
+    IDS_ERR_NOFILEBODY      "Le fichier ne se trouve pas à leur emplacement."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Nom"
-    IDS_ATTR_STOREID        "ID du store"
+    IDS_ATTR_STOREID        "ID du emplacement"
     IDS_ATTR_FILEID         "ID du fichier"
     IDS_ATTR_COMMENTS       "Commentaire"
 END
@@ -1107,7 +1107,7 @@ STRINGTABLE
 BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Files stored on this computer"
     IDS_ITEMCATEGORY_REMOTESTORES 
-                            "Network location\nThese stores are saved on or synchronized with other computers."
+                            "Network location\nThese files are stored on or synchronized with other computers."
     IDS_ITEMCATEGORY_NIGHT  "Night\nUntil 6am"
 END
 
@@ -1144,7 +1144,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXT_FILTERS     "Filters\nUser-defined filters"
     IDS_CONTEXT_SEARCH      "Search result"
-    IDS_CONTEXT_STORES      "Stores"
+    IDS_CONTEXT_STORES      "Locations"
     IDS_CONTEXT_CLIPBOARD   "Clipboard"
     IDS_CONTEXT_SUBFOLDER_DEFAULT "Subfolder"
     IDS_CONTEXT_SUBFOLDER_DAY "Day"
@@ -1155,12 +1155,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NEWSTORE            "New store"
+    IDS_NEWSTORE            "New location"
     IDS_LASTSEEN            "Last mounted on %s"
-    IDS_FILECOUNT_SINGULAR  "%u file (%s)"
-    IDS_FILECOUNT_PLURAL    "%u files (%s)"
-    IDS_MEDIACOUNT_SINGULAR "%u medium (%s)"
-    IDS_MEDIACOUNT_PLURAL   "%u media (%s)"
+    IDS_FILESUMMARY_SINGULAR  "%u file (%s)"
+    IDS_FILESUMMARY_PLURAL    "%u files (%s)"
+    IDS_MEDIASUMMARY_SINGULAR "%u medium (%s)"
+    IDS_MEDIASUMMARY_PLURAL   "%u media (%s)"
     IDS_MINUTE              "%I64u minute"
     IDS_MINUTES             "%I64u minutes"
 END
@@ -1216,50 +1216,50 @@ BEGIN
     IDS_ERR_CANCEL          "Canceled"
     IDS_ERR_DRIVEWRITEPROTECTED "The drive is write protected."
     IDS_ERR_SHARINGVIOLATION1 
-                            "The store is currently blocked by another device."
+                            "The location is currently blocked by another device."
     IDS_ERR_SHARINGVIOLATION2 
-                            "A store is currently blocked by another device."
+                            "A location is currently blocked by another device."
     IDS_ERR_MEMORY          "Memory error"
     IDS_ERR_ILLEGALQUERY    "The filter describes an illegal request."
-    IDS_ERR_ILLEGALSTOREDESCRIPTOR "The store settings are not valid."
+    IDS_ERR_ILLEGALSTOREDESCRIPTOR "The location is invalid."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_STORENOTFOUND   "The selected store is not mounted or not present."
+    IDS_ERR_STORENOTFOUND   "The selected location is not mounted or not present."
     IDS_ERR_DRIVENOTREADY   "The drive is not ready!"
     IDS_ERR_ILLEGALPHYSFOLDER "The physical folder is not accessible."
     IDS_ERR_REGISTRY        "The registry cannot be accessed."
-    IDS_ERR_NOACCESS        "The physical folder is not accessible. Please check the access rights of the store's directory."
-    IDS_ERR_ILLEGALID       "The store or file is not available anymore."
-    IDS_ERR_NODEFAULTSTORE  "There is no default store right now."
-    IDS_ERR_TOOMANYSTORES   "The maximum number of stores has already been created."
-    IDS_ERR_STORENOTMOUNTED "The store is not mounted right now."
+    IDS_ERR_NOACCESS        "The physical folder is not accessible. Please check the access rights of the location's directory."
+    IDS_ERR_ILLEGALID       "The location or file is not available anymore."
+    IDS_ERR_NODEFAULTSTORE  "There is no default location right now."
+    IDS_ERR_TOOMANYSTORES   "The maximum number of locations has already been created."
+    IDS_ERR_STORENOTMOUNTED "The location is not mounted right now."
     IDS_ERR_MUTEX           "liquidFOLDERS is currently blocked by another application."
     IDS_ERR_ILLEGALATTRIBUTE 
                             "At least one of the selected items does not possesss the property."
     IDS_ERR_ILLEGALITEMTYPE "At least one of the selected items does not support this operation."
     IDS_ERR_ILLEGALVALUE    "At least one of the property values is illegal."
     IDS_ERR_INDEXLOAD       "An index table cannot be loaded. Please run scheduled maintenance."
-    IDS_ERR_INDEXREPAIR     "The store index is damaged and could not be repaired."
-    IDS_ERR_INDEXACCESS     "The store cannot be accessed. Please check the access rights of the store's directory."
+    IDS_ERR_INDEXREPAIR     "The location index is damaged and could not be repaired."
+    IDS_ERR_INDEXACCESS     "The location cannot be accessed. Please check the access rights of the location's directory."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ERR_INDEXCREATE     "The store index cannot be created (write protected disc?)."
+    IDS_ERR_INDEXCREATE     "The location index cannot be created (write protected disc?)."
     IDS_ERR_NOTENOUGHSPACE  "There is not enough free disc space."
     IDS_ERR_FILEIMPORT      "Some files cannot be imported because they are still in use or you don't have the neccessary permissions."
     IDS_ERR_FILEDELETE      "Some files cannot be deleted because they are still in use or you don't have the neccessary permissions."
     IDS_ERR_FILERENAME      "Some files cannot be renamed."
     IDS_ERR_INDEXCOPY       "The index cannot be updated (write protected disc?)."
-    IDS_ERR_NOFILEBODY      "The file is not in the store anymore."
+    IDS_ERR_NOFILEBODY      "The file is not at its location anymore."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Name"
-    IDS_ATTR_STOREID        "Store ID"
+    IDS_ATTR_STOREID        "Location ID"
     IDS_ATTR_FILEID         "File ID"
     IDS_ATTR_COMMENTS       "Comments"
 END

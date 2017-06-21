@@ -104,11 +104,6 @@ BOOL LFAddStoreDlg::InitDialog()
 	// Notification
 	m_wndExplorerNotification.Create(this, 1);
 
-	// Status
-	SetBottomLeftControl(IDC_STATUS);
-
-	OnUpdateStores(NULL, NULL);
-
 	return TRUE;
 }
 
@@ -132,8 +127,6 @@ BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 	ON_WM_ACTIVATE()
 	ON_NOTIFY_RANGE(REQUEST_DRAWBUTTONFOREGROUND, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_ONEDRIVE, OnDrawButtonForeground)
 	ON_NOTIFY_RANGE(REQUEST_TOOLTIP_DATA, IDC_ADDSTORE_LIQUIDFOLDERS, IDC_ADDSTORE_ONEDRIVE, OnRequestTooltipData)
-
-	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
 
 	ON_BN_CLICKED(IDC_ADDSTORE_LIQUIDFOLDERS, OnBtnLiquidfolders)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
@@ -169,7 +162,10 @@ void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRES
 	::GetWindowText(lpDrawItemStruct->hwndItem, Hint, 256);
 
 	// Icon
-	m_SourceIcons.DrawEx(pDrawButtonForeground->pDC, nID, CPoint(rect.left+PADDING, rect.top+(rect.Height()-m_IconSize)/2), CSize(m_IconSize, m_IconSize), CLR_NONE, 0xFFFFFF, (lpDrawItemStruct->itemState & ODS_DISABLED) ? ILD_BLEND50 : ILD_TRANSPARENT);
+	CPoint pt(rect.left+PADDING, rect.top+(rect.Height()-m_IconSize)/2);
+
+	m_SourceIcons.DrawEx(pDrawButtonForeground->pDC, nID, pt, CSize(m_IconSize, m_IconSize), CLR_NONE, 0xFFFFFF, (lpDrawItemStruct->itemState & ODS_DISABLED) ? ILD_BLEND50 : ILD_TRANSPARENT);
+	DrawStoreIconShadow(*pDrawButtonForeground->pDC, pt, nID, m_IconSize);
 
 	rect.left += m_IconSize+PADDING;
 	rect.DeflateRect(PADDING, PADDING);
@@ -207,19 +203,6 @@ void LFAddStoreDlg::OnRequestTooltipData(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* p
 	ENSURE(LoadString(AfxGetResourceHandle(), nID+IDS_ADDSTORE_LIQUIDFOLDERS, pTooltipData->Hint, 4096));
 
 	*pResult = TRUE;
-}
-
-
-LRESULT LFAddStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	UINT StoreCount = LFGetStoreCount();
-
-	CString Hint;
-	Hint.Format(StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, StoreCount);
-
-	GetDlgItem(IDC_STATUS)->SetWindowText(Hint);
-
-	return NULL;
 }
 
 

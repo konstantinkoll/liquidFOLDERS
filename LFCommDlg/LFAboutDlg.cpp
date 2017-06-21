@@ -88,9 +88,9 @@ void LFAboutDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout
 	LFDialog::PaintOnBackground(dc, g, rectLayout);
 
 	// Icon
-	g.DrawImage(p_Logo, rectLayout.left+(p_Santa ? 39 : 9), rectLayout.top+m_IconTop);
+	g.DrawImage(p_Logo, rectLayout.left+(p_Santa ? 33 : 3), rectLayout.top+m_IconTop);
 	if (p_Santa)
-		g.DrawImage(p_Santa, rectLayout.left-7, rectLayout.top+m_IconTop-8);
+		g.DrawImage(p_Santa, rectLayout.left-6, rectLayout.top+m_IconTop-8);
 
 	// Caption
 	CRect rectText(rectLayout);

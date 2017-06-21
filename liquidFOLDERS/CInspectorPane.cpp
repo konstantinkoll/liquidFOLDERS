@@ -253,7 +253,9 @@ void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Theme
 		break;
 
 	case ICONCORE:
-		theApp.m_CoreImageListJumbo.DrawEx(&dc, m_IconID, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+		theApp.m_CoreImageListJumbo.DrawEx(&dc, m_IconID-1, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+		DrawStoreIconShadow(g, pt, m_IconID);
+
 		break;
 
 	case ICONEXTENSION:
@@ -360,14 +362,16 @@ void CInspectorPane::SaveSettings()
 void CInspectorPane::AggregateFinish()
 {
 	// Type
-	UINT SID = (m_FileSummary.m_Type==LFTypeStore) ? IDS_STORES_SINGULAR : IDS_FILES_SINGULAR;
-
-	if (SID)
+	if (m_FileSummary.m_Type==LFTypeStore)
 	{
-		if (m_FileSummary.m_ItemCount!=1)
-			SID++;
+		ENSURE(m_TypeName.LoadString(IDS_STORE));
+	}
+	else
+	{
+		WCHAR tmpStr[256];
+		LFGetFileSummary(m_FileSummary.m_ItemCount, 0, tmpStr, 256);
 
-		m_TypeName.Format(CString((LPCSTR)SID), m_FileSummary.m_ItemCount);
+		m_TypeName = tmpStr;
 	}
 
 	// Icon
@@ -402,7 +406,7 @@ void CInspectorPane::AggregateFinish()
 			break;
 
 		default:
-			m_IconHeader.SetCoreIcon(m_FileSummary.m_IconID-1, m_TypeName);
+			m_IconHeader.SetCoreIcon(m_FileSummary.m_IconID, m_TypeName);
 		}
 	}
 

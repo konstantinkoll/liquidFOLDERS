@@ -131,6 +131,8 @@ void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom=TRUE)
 void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled=FALSE, BOOL DrawBorder=FALSE);
 void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL ShowKeyboardCues=FALSE);
 void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF Color, BOOL Enabled=TRUE, BOOL Focused=FALSE, BOOL Hover=FALSE);
+void DrawStoreIconShadow(Graphics& g, const CPoint& pt, UINT IconID, INT IconSize=128);
+void DrawStoreIconShadow(CDC& dc, const CPoint& pt, UINT IconID, INT IconSize=128);
 
 
 // liquidFOLDERS

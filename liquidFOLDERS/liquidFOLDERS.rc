@@ -58,8 +58,8 @@ IDB_BLUEMARBLE_512      RCDATA                  "res\\BlueMarble_512.png"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,4,0
- PRODUCTVERSION 3,0,4,0
+ FILEVERSION 3,0,5,0
+ PRODUCTVERSION 3,0,5,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -76,13 +76,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "3.0.4"
+            VALUE "FileVersion", "3.0.5"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "3.0.4"
+            VALUE "ProductVersion", "3.0.5"
         END
     END
     BLOCK "VarFileInfo"
@@ -121,7 +121,7 @@ IDM_TRASH MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
+        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RECOVERALL
         MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
     END
 END
@@ -154,7 +154,7 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
+        MENUITEM "&Wiederherstellen",           IDM_FILE_RECOVER
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Löschen",                    IDM_FILE_DELETE
@@ -378,7 +378,7 @@ BEGIN
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVE  "Aus Zwischenablage &entfernen"
     IDS_CONTEXTMENU_SENDTO  "S&enden an"
-    IDS_CONTEXTMENU_CHOOSESTORE "&Store wählen..."
+    IDS_CONTEXTMENU_CHOOSESTORE "&Speicherort wählen..."
     IDS_CONTEXTMENU_IMPORTFOLDER "Verzeichnis &importieren..."
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_TXTFILEFILTER       "Textdatei"
@@ -388,12 +388,13 @@ BEGIN
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
-    IDS_SEARCHTERM          "Alle Stores durchsuchen"
+    IDS_SEARCHTERM          "Alle Speicherorte durchsuchen"
+    IDS_STORE               "Speicherort"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Standard-Store"
+    IDS_DEFAULTSTORE        "Standard-Speicherort"
     IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
     IDS_QUALITY_HIGH        "Hoch"
@@ -421,10 +422,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
-    IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
-    IDM_STORES_ADD          "Fügt einen neuen Store für Ihre Dateien hinzu.\nStore hinzufügen..."
-    IDM_STORES_SYNCHRONIZE  "Synchronisiert alle Stores mit ihrer Datenquelle.\nSynchronisieren"
+    IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Speicherort als Standard.\nAls Standard-Speicherort setzen"
+    IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Speicherorts an.\nEigenschaften"
+    IDM_STORES_ADD          "Fügt einen Speicherort für Ihre Dateien hinzu.\nSpeicherort hinzufügen..."
+    IDM_STORES_SYNCHRONIZE  "Synchronisiert alle Speicherorte mit ihrer Datenquelle.\nSynchronisieren"
     IDM_STORES_RUNMAINTENANCE "Wartungsarbeiten durchführen"
 END
 
@@ -436,7 +437,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
-    IDM_TRASH_RESTOREALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
+    IDM_TRASH_RECOVERALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
 END
 
 STRINGTABLE 
@@ -452,7 +453,7 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
-    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
+    IDM_FILE_RECOVER        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
 END
 
 STRINGTABLE 
@@ -530,7 +531,7 @@ IDM_TRASH MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Restaurar todo",             IDM_TRASH_RESTOREALL
+        MENUITEM "&Restaurar todo",             IDM_TRASH_RECOVERALL
         MENUITEM "&Vaciar bandeja de reciclaje", IDM_TRASH_EMPTY
     END
 END
@@ -563,7 +564,7 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Re&staurar",                  IDM_FILE_RESTORE
+        MENUITEM "Re&staurar",                  IDM_FILE_RECOVER
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
@@ -674,8 +675,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Organizar «%s» por"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Organizar objetos",IDC_CATEGORY1,
-                    "CCategory",WS_GROUP,7,7,275,15
+    CONTROL         "Organizar ítems",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,275,15
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
     CONTROL         "Tipo de clasificación",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
     COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
@@ -696,7 +696,7 @@ BEGIN
     LTEXT           "Texturas:",IDC_STATIC,7,43,54,8
     COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "&Comprimir",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
-    CONTROL         "Objetos",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
+    CONTROL         "Ítems",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
     CONTROL         "Marcar &ubicaciones",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
     CONTROL         "Mostrar &nombres de aeropuertos",IDC_AIRPORTNAMES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
@@ -787,22 +787,23 @@ BEGIN
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
     IDS_CONTEXTMENU_REMOVE  "&Eliminar del portapapeles"
     IDS_CONTEXTMENU_SENDTO  "&Enviar a"
-    IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &store..."
+    IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &ubicación..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importar carpeta..."
     IDS_CONTEXTMENU_MORE    "&Más..."
     IDS_TXTFILEFILTER       "Documento de texto"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_NOITEMSSELECTED     "Objetos no seleccionados"
+    IDS_NOITEMSSELECTED     "Ítems no seleccionados"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
-    IDS_SEARCHTERM          "Buscar todo los stores"
+    IDS_SEARCHTERM          "Buscar todo los ubicaciones"
+    IDS_STORE               "Ubicación"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Store predeterminado"
+    IDS_DEFAULTSTORE        "Ubicación estándar"
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
     IDS_QUALITY_HIGH        "Alto"
@@ -830,10 +831,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
-    IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
-    IDM_STORES_ADD          "Adjuntar un store para sus archivos.\nAdjuntar store..."
-    IDM_STORES_SYNCHRONIZE  "Sincroniza todos los stores con su fuente de datos.\nSincronizar"
+    IDM_STORE_MAKEDEFAULT   "Establece el ubicación seleccionado al el ubicación estándar.\nEstablecer al ubicación estándar"
+    IDM_STORE_PROPERTIES    "Despliega las propiedades del ubicación seleccionado.\nPropiedades"
+    IDM_STORES_ADD          "Adjuntar un ubicación para sus archivos.\nAdjuntar ubicación..."
+    IDM_STORES_SYNCHRONIZE  "Sincroniza todos los ubicaciones con su fuente de datos.\nSincronizar"
     IDM_STORES_RUNMAINTENANCE "Ejecutar mantenimiento"
 END
 
@@ -845,12 +846,12 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos de la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
-    IDM_TRASH_RESTOREALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
+    IDM_TRASH_RECOVERALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_ITEM_OPEN           "Abre el objeto seleccionado.\nAbrir"
+    IDM_ITEM_OPEN           "Abre el ítem seleccionado.\nAbrir"
 END
 
 STRINGTABLE 
@@ -861,7 +862,7 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
-    IDM_FILE_RESTORE        "Restablece los archivos seleccionados.\nRestablecer"
+    IDM_FILE_RECOVER        "Restablece los archivos seleccionados.\nRestablecer"
 END
 
 STRINGTABLE 
@@ -894,7 +895,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_ORGANIZE            "Selecciona la propiedad mediante la cuál organizar todos los objetos en este contexto.\nOrganizar por"
+    IDM_ORGANIZE            "Selecciona la propiedad mediante la cuál organizar todos los ítems en este contexto.\nOrganizar por"
 END
 
 STRINGTABLE 
@@ -939,7 +940,7 @@ IDM_TRASH MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Reconstituer &tous",          IDM_TRASH_RESTOREALL
+        MENUITEM "Reconstituer &tous",          IDM_TRASH_RECOVERALL
         MENUITEM "&Vider dêchets",              IDM_TRASH_EMPTY
     END
 END
@@ -972,7 +973,7 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Reconstituer",               IDM_FILE_RESTORE
+        MENUITEM "&Reconstituer",               IDM_FILE_RECOVER
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
@@ -1083,7 +1084,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Organiser «%s» après"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Organiser objets après propriété",IDC_CATEGORY1,
+    CONTROL         "Organiser éléments après propriété",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,275,15
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
     CONTROL         "Direction de tri",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
@@ -1195,7 +1196,7 @@ BEGIN
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
     IDS_CONTEXTMENU_REMOVE  "Enlèver du &presse-papiers"
     IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
-    IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &store..."
+    IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &emplacement..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importer dossier..."
     IDS_CONTEXTMENU_MORE    "&Plus..."
     IDS_TXTFILEFILTER       "Fichier texte"
@@ -1205,12 +1206,13 @@ BEGIN
     IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
-    IDS_SEARCHTERM          "Recherche tous le stores"
+    IDS_SEARCHTERM          "Recherche tous les emplacements"
+    IDS_STORE               "Emplacement"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Store défaut"
+    IDS_DEFAULTSTORE        "Emplacement défaut"
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
     IDS_QUALITY_HIGH        "Haut"
@@ -1238,10 +1240,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
-    IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
-    IDM_STORES_ADD          "Ajouter un store pour vos fichiers.\nAjouter un store..."
-    IDM_STORES_SYNCHRONIZE  "Synchroniser tous les stores avec leur source de données.\nSynchroniser"
+    IDM_STORE_MAKEDEFAULT   "Met l'emplacement choisi comme l'emplacement défaut.\nMettre emplacement défaut"
+    IDM_STORE_PROPERTIES    "Indique les propriétés du emplacement choisi.\nPropriétés"
+    IDM_STORES_ADD          "Ajouter un emplacement pour vos fichiers.\nAjouter emplacement..."
+    IDM_STORES_SYNCHRONIZE  "Synchroniser tous les emplacements avec leur source de données.\nSynchroniser"
     IDM_STORES_RUNMAINTENANCE "Effectuer travails d'entretien"
 END
 
@@ -1253,7 +1255,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille.\nVider la corbeille"
-    IDM_TRASH_RESTOREALL    "Reconstitue tous les fichiers.\nReconstituer tous"
+    IDM_TRASH_RECOVERALL    "Reconstitue tous les fichiers.\nReconstituer tous"
 END
 
 STRINGTABLE 
@@ -1269,7 +1271,7 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
-    IDM_FILE_RESTORE        "Reconstitue tous les fichiers.\nReconstituer"
+    IDM_FILE_RECOVER        "Reconstitue tous les fichiers.\nReconstituer"
 END
 
 STRINGTABLE 
@@ -1397,7 +1399,7 @@ IDM_TRASH MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
+        MENUITEM "&Recover all",                IDM_TRASH_RECOVERALL
         MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
     END
 END
@@ -1430,7 +1432,7 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Re&store",                    IDM_FILE_RESTORE
+        MENUITEM "Rec&over",                    IDM_FILE_RECOVER
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_FILE_DELETE
@@ -1654,7 +1656,7 @@ BEGIN
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_SENDTO  "S&end to"
-    IDS_CONTEXTMENU_CHOOSESTORE "Choose &store..."
+    IDS_CONTEXTMENU_CHOOSESTORE "Choose &location..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Import folder..."
     IDS_CONTEXTMENU_MORE    "&More..."
     IDS_TXTFILEFILTER       "Text document"
@@ -1664,12 +1666,13 @@ BEGIN
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
-    IDS_SEARCHTERM          "Search all stores"
+    IDS_SEARCHTERM          "Search all locations"
+    IDS_STORE               "Location"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DEFAULTSTORE        "Default Store"
+    IDS_DEFAULTSTORE        "Default location"
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
     IDS_QUALITY_HIGH        "High"
@@ -1697,10 +1700,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
-    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
-    IDM_STORES_ADD          "Add a store for your files.\nAdd store..."
-    IDM_STORES_SYNCHRONIZE  "Synchronizes all stores with their data source.\nSynchronize"
+    IDM_STORE_MAKEDEFAULT   "Makes the selected location the default location.\nMake default location"
+    IDM_STORE_PROPERTIES    "Displays the properties of the selected location.\nProperties"
+    IDM_STORES_ADD          "Add a location for your files.\nAdd storage location..."
+    IDM_STORES_SYNCHRONIZE  "Synchronizes all locations with their data source.\nSynchronize"
     IDM_STORES_RUNMAINTENANCE "Run maintenance"
 END
 
@@ -1712,7 +1715,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
-    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
+    IDM_TRASH_RECOVERALL    "Recovers all files from the trash.\nRecover all"
 END
 
 STRINGTABLE 
@@ -1728,7 +1731,7 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
-    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
+    IDM_FILE_RECOVER        "Recovers the selected files.\nRecover"
 END
 
 STRINGTABLE 

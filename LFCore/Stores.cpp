@@ -1261,7 +1261,7 @@ LFCORE_API UINT LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pCo
 {
 	assert(pStoreID);
 
-	if ((!pName) && (!pComment))
+	if (!pName && !pComment)
 		return LFOk;
 
 	if (pName)
@@ -1504,7 +1504,7 @@ LFCORE_API LFStatistics* LFQueryStatistics(LPCSTR StoreID)
 
 	if (GetMutexForStores())
 	{
-		if ((!StoreID) || (*StoreID==L'\0'))
+		if (!StoreID || (*StoreID==L'\0'))
 		{
 			// All stores
 			for (UINT a=0; a<StoreCount; a++)

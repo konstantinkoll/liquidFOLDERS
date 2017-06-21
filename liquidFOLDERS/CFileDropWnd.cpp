@@ -85,9 +85,11 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	FillRect(dc, rect, (HBRUSH)SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	// Icon
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1, 
-		CPoint(m_rectIcon.left-ICONOFFSETX, m_rectIcon.top-ICONOFFSETY), CSize(128, 128),
+	CPoint pt(m_rectIcon.left-ICONOFFSETX, m_rectIcon.top-ICONOFFSETY);
+
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1, pt, CSize(128, 128),
 		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeGhosted) ? ILD_BLEND25 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
+	DrawStoreIconShadow(dc, pt, m_StoreIcon);
 
 	// Text
 	CRect rectText(m_rectIcon);

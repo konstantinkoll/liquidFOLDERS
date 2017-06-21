@@ -248,15 +248,6 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	m_wndStoreList.SetSearchResult(m_pSearchResult);
 
-	// Header
-	if (!m_Writeable)
-	{
-		CString Hint;
-		Hint.Format(m_pSearchResult->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL, m_pSearchResult->m_StoreCount);
-
-		m_wndHeaderArea.SetHeader(LFGetApp()->m_Contexts[LFContextStores].Name, Hint);
-	}
-
 	// Set previously selected store
 	INT Index = -1;
 	for (UINT a=0; a<m_pSearchResult->m_ItemCount; a++)

@@ -784,6 +784,30 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOO
 	}
 }
 
+void DrawStoreIconShadow(Graphics& g, const CPoint& pt, UINT IconID, INT IconSize)
+{
+	if (IconID<=IDI_LASTSTOREICON)
+		switch (IconSize)
+		{
+		case 96:
+			g.DrawImage(LFGetApp()->GetCachedResourceImage(IDB_ICONSHADOW_96), pt.x-6,pt.y+85);
+			break;
+
+		case 128:
+			g.DrawImage(LFGetApp()->GetCachedResourceImage(IDB_ICONSHADOW_128), pt.x-5,pt.y+114);
+			break;
+		}
+}
+
+void DrawStoreIconShadow(CDC& dc, const CPoint& pt, UINT IconID, INT IconSize)
+{
+	Graphics g(dc);
+
+	DrawStoreIconShadow(g, pt, IconID, IconSize);
+}
+
+
+// liquidFOLDERS
 
 void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
 {

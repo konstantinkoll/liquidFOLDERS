@@ -32,8 +32,6 @@ protected:
 	afx_msg void OnDrawButtonForeground(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRequestTooltipData(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
 
-	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
-
 	afx_msg void OnBtnLiquidfolders();
 	afx_msg void OnBtnWindows();
 	afx_msg void OnBtnBox();

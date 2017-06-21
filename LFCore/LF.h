@@ -707,7 +707,7 @@ struct LFStoreDescriptor
 
 #define LFTransactionTypeArchive               0x100
 #define LFTransactionTypePutInTrash            0x101
-#define LFTransactionTypeRestore               0x102
+#define LFTransactionTypeRecover               0x102
 #define LFTransactionTypeUpdate                0x103
 #define LFTransactionTypeDelete                0x104
 

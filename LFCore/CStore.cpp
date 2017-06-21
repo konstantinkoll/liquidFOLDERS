@@ -384,7 +384,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
-	case LFTransactionTypeRestore:
+	case LFTransactionTypeRecover:
 		m_pIndexMain->UpdateItemState(pTransactionList, 0, &TransactionTime);
 
 		if (m_pIndexAux)

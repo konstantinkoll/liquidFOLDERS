@@ -104,6 +104,8 @@ IDB_UPDATEICONS_48      RCDATA                  "res\\UpdateIcons_48.png"
 IDB_UPDATEICONS_64      RCDATA                  "res\\UpdateIcons_64.png"
 IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
 IDB_BACKGROUND_TOOLTIP  RCDATA                  "res\\Background_Tooltip.png"
+IDB_ICONSHADOW_96       RCDATA                  "res\\IconShadow_96.png"
+IDB_ICONSHADOW_128      RCDATA                  "res\\IconShadow_128.png"
 IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
 IDF_DINMITTELSCHRIFT    RCDATA                  "res\\DINMittelschrift.ttf"
 
@@ -206,7 +208,7 @@ END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Store wählen"
+CAPTION "Speicherort wählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
@@ -215,15 +217,15 @@ END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Angeschlossenen Store „%s“ löschen"
+CAPTION "Angeschlossenen Speicherort „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Abbrechen",IDCANCEL,220,153,50,14,WS_GROUP
-    LTEXT           "Soll der Store wirklich gelöscht werden?",IDC_CAPTION,7,31,263,15
-    LTEXT           "Da der gewählte Store zur Zeit angeschlossen ist, werden alle\nDateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_NUKEMESSAGE,7,51,263,17
+    LTEXT           "Soll der Speicherort wirklich gelöscht werden?",IDC_CAPTION,7,31,263,15
+    LTEXT           "Da der gewählte Speicherort zur Zeit angeschlossen ist, werden\nalle Dateien ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_NUKEMESSAGE,7,51,263,17
     LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“\nauswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,263,17
-    CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,62,10
-    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,61,10
+    CONTROL         "Speicherort &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,263,10
+    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,263,10
     PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,47,153,165,14,WS_DISABLED | WS_GROUP
 END
 
@@ -275,7 +277,7 @@ CAPTION "Hashtags"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
-    CONTROL         "Hashtags aus &allen Stores zeigen",IDC_HASHTAGSFROMALLSTORES,
+    CONTROL         "Hashtags von &allen Speicherorten zeigen",IDC_HASHTAGSFROMALLSTORES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
     EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
@@ -352,7 +354,8 @@ BEGIN
     LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Einstellungen",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
-    CONTROL         "Als &Standard-Store setzen",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Als &Standard-Speicherort setzen",IDC_MAKEDEFAULT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
     CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 
@@ -363,17 +366,17 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Synchronisiert den Store mit seiner Datenquelle.",IDC_STATIC,43,23,286,8
+    LTEXT           "Synchronisiert den Speicherort mit seiner Datenquelle.",IDC_STATIC,43,23,286,8
     LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,43,45,120,14
     CONTROL         "Wartungsarbeiten",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
     CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,43,85,286,8
-    LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    LTEXT           "Führt Wartungsarbeiten an allen Speicherorten durch.",IDC_STATIC,43,85,286,8
+    LTEXT           "Letzte Wartung dieses Speicherorts: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,43,107,120,14
     CONTROL         "Einstellungen sichern",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
     CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,43,147,286,8
+    LTEXT           "Sichert die Einstellungen aller Speicherorte.",IDC_STATIC,43,147,286,8
     PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,43,158,120,14
 END
 
@@ -410,18 +413,17 @@ END
 
 IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Store hinzufügen"
+CAPTION "Speicherort hinzufügen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    PUSHBUTTON      "Erstellt einen neuen Store für Ihre Dateien.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Store hinzu.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
+    PUSHBUTTON      "Erstellt einen neuen Speicherort für Ihre Dateien.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Fügt ein bestehendes Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
-    PUSHBUTTON      "Fügt das lokale Box-Verzeichnis als Store hinzu.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt ein lokales Dropbox-Verzeichnis als Store hinzu.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt das lokale iCloud-Verzeichnis als Store hinzu.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt ein lokales OneDrive-Verzeichnis als Store hinzu.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,290,562,8
+    PUSHBUTTON      "Fügt das lokale Box-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt ein lokales Dropbox-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt das lokale iCloud-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt ein lokales OneDrive-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Fertig",IDOK,571,287,50,14,WS_GROUP
 END
 
@@ -438,8 +440,8 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Ziel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
-    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
-    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,195,34,75,14
+    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,175,37
+    PUSHBUTTON      "&Speicherort wählen...",IDC_CHOOSESTORE,185,34,85,14
 END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
@@ -459,8 +461,8 @@ CAPTION "Filter bearbeiten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Durchsuchen",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
-    CONTROL         "&Alle Stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
-    CONTROL         "Diesen &Store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    CONTROL         "&Alle Speicherorte",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "Diesen &Speicherort",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
     LTEXT           "Suchbegriff (in allen Eigenschaften):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Weitere Bedingungen",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
@@ -489,7 +491,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Lizenzschlüssel eingeben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "Unser Partner share*it sendet Ihnen eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Laden Sie diese Datei, oder kopieren Sie den Inhalt der Datei in das Textfeld.",IDC_INSTRUCTIONS,7,7,336,35
+    LTEXT           "Unser Partner MyCommerce sendet Ihnen eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Laden Sie diese Datei, oder kopieren Sie den Inhalt der Datei in das Textfeld.",IDC_INSTRUCTIONS,7,7,336,35
     CONTROL         "Lizenzschlüssel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
     PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
     EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
@@ -499,7 +501,7 @@ END
 
 IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Neuen liquidFOLDERS-Store erstellen"
+CAPTION "Neuen Speicherort erstellen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Allgemein",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
@@ -822,7 +824,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "S&ynchronisieren",            IDM_STORE_SYNCHRONIZE
-        MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
+        MENUITEM "Als &Standard-Speicherort setzen", IDM_STORE_MAKEDEFAULT
         MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
@@ -837,7 +839,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Store &hinzufügen...",        IDM_STORES_ADD
+        MENUITEM "Speicherort &hinzufügen...",  IDM_STORES_ADD
         MENUITEM SEPARATOR
         MENUITEM "S&ynchronisieren",            IDM_STORES_SYNCHRONIZE
         MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_RUNMAINTENANCE
@@ -907,7 +909,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Wählt einen anderen Store als Speicherort aus.\nStore wählen..."
+    IDC_CHOOSESTORE         "Wählt einen anderen Speicherort aus.\nSpeicherort wählen..."
 END
 
 STRINGTABLE 
@@ -916,10 +918,6 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/de/"
     IDS_ERROR               "Fehler"
-    IDS_STORES_SINGULAR     "%u Store"
-    IDS_STORES_PLURAL       "%u Stores"
-    IDS_FILES_SINGULAR      "%u Datei"
-    IDS_FILES_PLURAL        "%u Dateien"
 END
 
 STRINGTABLE 
@@ -934,10 +932,10 @@ BEGIN
     IDS_COLLAPSE            "&Reduzieren"
     IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
     IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
-    IDS_CHOOSESTORE_HINT    "Nur angeschlossene und beschreibbare Stores können ausgewählt werden."
+    IDS_CHOOSESTORE_HINT    "Nur angeschlossene und beschreibbare Speicherorte können ausgewählt werden."
     IDS_STOREMAINTENANCE_CAPTION "Bericht"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u Store gewartet"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%u Stores gewartet"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u Speicherort gewartet"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u Speicherorte gewartet"
     IDS_REGFILEFILTER       "Registrierungsdatei"
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
 END
@@ -956,19 +954,20 @@ BEGIN
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen?"
-    IDS_DELETESTORE_CAPTION "Store „%s“ löschen"
-    IDS_DELETESTORE_MSG     "Möchten Sie diesen Store wirklich löschen?"
+    IDS_DELETESTORE_CAPTION "Speicherort „%s“ entfernen"
+    IDS_DELETESTORE_MSG     "Möchten Sie diesen Speicherort wirklich entfernen?"
     IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
-    IDS_FORMAT_MSG          "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
+    IDS_FORMAT_MSG          "Das Laufwerk enthält Speicherorte, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Speicherorte unbrauchbar machen."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
-    IDS_STORECREATED        "Der Store „%s“ wurde hinzugefügt."
+    IDS_STORECREATED        "Der Speicherort „%s“ wurde hinzugefügt."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Erstellt einen neuen Speicherort für Ihre Dateien.\nBeim Importieren werden Dateien dorthin kopiert."
     IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dadurch nicht verändert."
+    IDS_ADDSTORE_BOX        "Indexiert das bestehenden Verzeichnis Ihrer lokalen Box-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
     IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
     IDS_ADDSTORE_ICLOUD     "Indexiert das bestehende Verzeichnis Ihrer lokalen iCloud-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
     IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dadurch nicht verändert."
@@ -1065,7 +1064,7 @@ END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Seleccionar store"
+CAPTION "Seleccionar ubicación"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
@@ -1074,15 +1073,15 @@ END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Eliminar store conectado «%s»"
+CAPTION "Eliminar ubicación conectado «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Cancelar",IDCANCEL,220,153,50,14,WS_GROUP
-    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,15
-    LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_NUKEMESSAGE,7,51,263,17
-    LTEXT           "Usted da permiso de eliminar el store al elegir «Eliminar» en la parte de abajo y luego dar clic en «Eliminar ahora».",IDC_STATIC,7,81,263,17
-    CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,72,10
-    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,72,10
+    LTEXT           "Confirme si realmente desea eliminar el ubicación seleccionado.",IDC_CAPTION,7,31,263,15
+    LTEXT           "Dado que el ubicación está actualmente conectado, perderá todos\nlos archivos dentro de ese ubicación sin opción a recuperarlos!",IDC_NUKEMESSAGE,7,51,263,17
+    LTEXT           "Usted da permiso de eliminar el ubicación al elegir «Eliminar» en\nla parte de abajo y luego dar clic en «Eliminar ahora».",IDC_STATIC,7,81,263,17
+    CONTROL         "&Conservar ubicación",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,263,10
+    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,263,10
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,67,153,145,14,WS_DISABLED | WS_GROUP
 END
 
@@ -1148,7 +1147,7 @@ CAPTION "Etiquetas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
-    CONTROL         "Mostrar etiquetas de todos los stores",IDC_HASHTAGSFROMALLSTORES,
+    CONTROL         "Mostrar etiquetas de todos los ubicaciones",IDC_HASHTAGSFROMALLSTORES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
     EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
@@ -1203,7 +1202,7 @@ BEGIN
     LTEXT           "Última entrada:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Ajustes",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
-    CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Establecer al ubicación &estándar",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
     CONTROL         "Hacer búsquedas mientras no está conectado",IDC_MAKESEARCHABLE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
@@ -1234,17 +1233,17 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Sincronización",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Sincroniza el store con su fuente de datos.",IDC_STATIC,43,23,286,8
+    LTEXT           "Sincroniza el ubicación con su fuente de datos.",IDC_STATIC,43,23,286,8
     LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,43,45,120,14
     CONTROL         "Mantenimiento",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
     CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,43,85,286,8
-    LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    LTEXT           "Ejecuta trabajo de mantenimiento en todos los ubicaciones.",IDC_STATIC,43,85,286,8
+    LTEXT           "Mantenimiento de esto ubicación: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,43,107,120,14
     CONTROL         "Guardar configuraciones",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
     CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,43,147,286,8
+    LTEXT           "Guarda las configuraciones de todos los ubicaciones.",IDC_STATIC,43,147,286,8
     PUSHBUTTON      "Guardar &configuraciones",IDC_RUNBACKUP,43,158,120,14
 END
 
@@ -1262,18 +1261,17 @@ END
 
 IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Adjuntar storen"
+CAPTION "Adjuntar ubicación"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    PUSHBUTTON      "Crea un nuevo store para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Adjunta una carpeta existente como store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
+    PUSHBUTTON      "Crea un nuevo ubicación para sus archivos.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Adjunta una carpeta existente como ubicación.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
-    PUSHBUTTON      "Adjunta la carpeta local de Box como store.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta una carpeta local de Dropbox como store.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta la carpeta local de iCloud como store.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta una carpeta local de OneDrive como store.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,290,562,8
+    PUSHBUTTON      "Adjunta la carpeta local de Box como ubicación.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta una carpeta local de Dropbox como ubicación.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta la carpeta local de iCloud como ubicación.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta una carpeta local de OneDrive como ubicación.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Listo",IDOK,571,287,50,14,WS_GROUP
 END
 
@@ -1290,8 +1288,8 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Destino",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
-    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,180,37
-    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,190,34,80,14
+    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,170,37
+    PUSHBUTTON      "Selecionar &ubicación...",IDC_CHOOSESTORE,180,34,90,14
 END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
@@ -1311,8 +1309,8 @@ CAPTION "Editar filtro"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Buscar en",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
-    CONTROL         "&Todos los stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
-    CONTROL         "Este &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    CONTROL         "&Todos los ubicaciones",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "Este &ubicación",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
     LTEXT           "Buscar término (todas propriedades):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Otras condiciones",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
@@ -1351,7 +1349,7 @@ END
 
 IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Crear un nuevo store de liquidFOLDERS"
+CAPTION "Crear un nuevo ubicación"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Geral",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
@@ -1683,7 +1681,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Si&ncronizar",                IDM_STORE_SYNCHRONIZE
-        MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
+        MENUITEM "Establecer al &ubicación estándar", IDM_STORE_MAKEDEFAULT
         MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
@@ -1698,7 +1696,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Adjuntar store...",          IDM_STORES_ADD
+        MENUITEM "&Adjuntar ubicación...",      IDM_STORES_ADD
         MENUITEM SEPARATOR
         MENUITEM "Si&ncronizar",                IDM_STORES_SYNCHRONIZE
         MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_RUNMAINTENANCE
@@ -1768,7 +1766,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Seleccionar un store diferente para estos archivos.\nSeleccionar store..."
+    IDC_CHOOSESTORE         "Seleccionar un ubicación diferente para estos archivos.\nSeleccionar ubicación..."
 END
 
 STRINGTABLE 
@@ -1777,10 +1775,6 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/es/"
     IDS_ERROR               "Error"
-    IDS_STORES_SINGULAR     "%u store"
-    IDS_STORES_PLURAL       "%u stores"
-    IDS_FILES_SINGULAR      "%u archivo"
-    IDS_FILES_PLURAL        "%u archivos"
 END
 
 STRINGTABLE 
@@ -1795,10 +1789,10 @@ BEGIN
     IDS_COLLAPSE            "&Plegar"
     IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
     IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
-    IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectadas y escritas."
+    IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente ubicaciones conectadas y escritas."
     IDS_STOREMAINTENANCE_CAPTION "Reporte"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u store inspeccionar"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%u stores inspeccionar"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u ubicación inspeccionar"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u ubicaciones inspeccionar"
     IDS_REGFILEFILTER       "Archivo de Registro"
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
 END
@@ -1817,19 +1811,20 @@ BEGIN
     IDS_STOREPROPERTIES     "Propiedades de «%s»"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
-    IDS_DELETESTORE_CAPTION "Eliminar store «%s»"
-    IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este store?"
+    IDS_DELETESTORE_CAPTION "Eliminar ubicación «%s»"
+    IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este ubicación?"
     IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
-    IDS_FORMAT_MSG          "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
+    IDS_FORMAT_MSG          "Contiene ubicaciones que usted está usando.\nAl formatear este volúmen destruirá aquellos ubicaciones."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
-    IDS_STORECREATED        "Se añadió el store «%s»."
+    IDS_STORECREATED        "Se añadió el ubicación «%s»."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Se crea una nueva ubicación para sus archivos.\nLos archivos importados se copiarán allí."
     IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no serán modificados."
+    IDS_ADDSTORE_BOX        "Índices la carpeta existente de su aplicación local de Box.\nSus archivos no serán modificados."
     IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no serán modificados."
     IDS_ADDSTORE_ICLOUD     "Índices la carpeta existente de su aplicación local de iCloud.\nSus archivos no serán modificados."
     IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no serán modificados."
@@ -1926,7 +1921,7 @@ END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Choisissez un store"
+CAPTION "Choisissez un emplacement"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
@@ -1935,15 +1930,15 @@ END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 287, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Effacez le store monté sur «%s»"
+CAPTION "Effacez l'emplacement monté «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Annuler",IDCANCEL,230,153,50,14,WS_GROUP
-    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,273,15
-    LTEXT           "Comme le store est actuellement monté, vous perdrez tous les\nfichiers à l'intérieur de ce store sans option de récupération!",IDC_NUKEMESSAGE,7,51,273,17
+    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer l'emplacement choisi.",IDC_CAPTION,7,31,273,15
+    LTEXT           "Comme l'emplacement est actuellement monté, vous perdrez tous les\nfichiers à l'intérieur de c'emplacement sans option de récupération!",IDC_NUKEMESSAGE,7,51,273,17
     LTEXT           "Pour l'effacement vous donnez votre approbation en choisir\n«Effacer» et, ensuite, en cliquer sur «Effacer maintenant»:",IDC_STATIC,7,81,273,17
-    CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,67,10
-    CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,67,10
+    CONTROL         "&Gardez l'emplacement",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,273,10
+    CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,273,10
     PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,7,153,215,14,WS_DISABLED | WS_GROUP
 END
 
@@ -1994,7 +1989,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Donner clé de licence"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier «liquidFOLDERS.lic» est ajouté. Ensuite ouvrez le fichier, ou copierez son contenu dans le champ de texte y compris.",IDC_INSTRUCTIONS,7,7,336,35
+    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire MyCommerce vous envoie un e-mail auquel le fichier «liquidFOLDERS.lic» est ajouté. Ensuite ouvrez le fichier, ou copierez son contenu dans le champ de texte y compris.",IDC_INSTRUCTIONS,7,7,336,35
     CONTROL         "Licence",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
     PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,7,62,115,15,WS_GROUP
     EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
@@ -2031,7 +2026,7 @@ CAPTION "Mots-dièse"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
-    CONTROL         "Voir mots-dièse de &tous les stores",IDC_HASHTAGSFROMALLSTORES,
+    CONTROL         "Voir mots-dièse de &tous les emplacements",IDC_HASHTAGSFROMALLSTORES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
     EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
@@ -2086,7 +2081,7 @@ BEGIN
     LTEXT           "Dernier vu:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Paramètres",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
-    CONTROL         "Faites &standard",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Mettre emplacement &défaut",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
     CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
 
@@ -2116,17 +2111,17 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,43,23,286,8
+    LTEXT           "Synchroniser l'emplacement avec sa source de données.",IDC_STATIC,43,23,286,8
     LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,43,45,120,14
     CONTROL         "Travails d'entretien",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
     CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,43,85,286,8
-    LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    LTEXT           "Exécute des travails d'entretien sur tous les emplacements.",IDC_STATIC,43,85,286,8
+    LTEXT           "Dernier travails d'entretien sur c'emplacement: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Exécuter &travails d'entretien",IDC_RUNMAINTENANCE,43,107,120,14
     CONTROL         "Sauvegarder paramètres",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
     CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,43,147,286,8
+    LTEXT           "Sauvegarde les paramètres de tous les emplacements.",IDC_STATIC,43,147,286,8
     PUSHBUTTON      "Sauvegarde &paramètres",IDC_RUNBACKUP,43,158,120,14
 END
 
@@ -2144,18 +2139,17 @@ END
 
 IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Ajouter store"
+CAPTION "Ajouter emplacement"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    PUSHBUTTON      "Crée un nouveau store pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Ajoute un dossier existant comme store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
+    PUSHBUTTON      "Crée un nouveau emplacement pour vos fichiers.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Ajoute un dossier existant comme emplacement.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
-    PUSHBUTTON      "Ajoute le dossier local de Box comme store.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute un dossier local de Dropbox comme store.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute le dossier local de iCloud comme store.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute un dossier local de OneDrive comme store.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,290,562,8
+    PUSHBUTTON      "Ajoute le dossier local de Box comme emplacement.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute un dossier local de Dropbox comme emplacement.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute le dossier local de iCloud comme emplacement.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute un dossier local de OneDrive comme emplacement.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Fini",IDOK,571,287,50,14,WS_GROUP
 END
 
@@ -2172,8 +2166,8 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,164,136,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Destination",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
-    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,175,37
-    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,185,34,85,14
+    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,155,37
+    PUSHBUTTON      "Choisissez l'&emplacement...",IDC_CHOOSESTORE,165,34,105,14
 END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
@@ -2193,8 +2187,8 @@ CAPTION "Modifier filtre"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Rechercher dans",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
-    CONTROL         "&Tous les stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
-    CONTROL         "Ce &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    CONTROL         "&Tous les emplacements",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "C'&emplacement",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
     LTEXT           "Mot de recherches (tous le qualités):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Autres conditions",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
@@ -2220,7 +2214,7 @@ END
 
 IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Créer un store nouveau de liquidFOLDERS"
+CAPTION "Créer un emplacement nouveau"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Général",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
@@ -2543,7 +2537,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "S&ynchroniser",               IDM_STORE_SYNCHRONIZE
-        MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
+        MENUITEM "Mettre emplacement &défaut",  IDM_STORE_MAKEDEFAULT
         MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
@@ -2558,7 +2552,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Ajouter store...",           IDM_STORES_ADD
+        MENUITEM "&Ajouter emplacement...",     IDM_STORES_ADD
         MENUITEM SEPARATOR
         MENUITEM "S&ynchroniser",               IDM_STORES_SYNCHRONIZE
         MENUITEM "Exécuter &travails d'entretien", IDM_STORES_RUNMAINTENANCE
@@ -2628,7 +2622,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Choisissez un autre store pour ces fichiers.\nChoisissez le store..."
+    IDC_CHOOSESTORE         "Choisissez un autre emplacement pour ces fichiers.\nChoisissez l'emplacement..."
 END
 
 STRINGTABLE 
@@ -2637,10 +2631,6 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/fr/"
     IDS_ERROR               "Erreur"
-    IDS_STORES_SINGULAR     "%u store"
-    IDS_STORES_PLURAL       "%u stores"
-    IDS_FILES_SINGULAR      "%u fichier"
-    IDS_FILES_PLURAL        "%u fichiers"
 END
 
 STRINGTABLE 
@@ -2655,10 +2645,10 @@ BEGIN
     IDS_COLLAPSE            "&Fermer"
     IDS_IMPORTFOLDER_CAPTION "Importer dossier"
     IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
-    IDS_CHOOSESTORE_HINT    "Seulement stores montée et inscriptiblée pouvoir choisissse."
+    IDS_CHOOSESTORE_HINT    "Seulement emplacements montée et inscriptiblée pouvoir choisissse."
     IDS_STOREMAINTENANCE_CAPTION "Rapport"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u store revisé"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%u stores revisée"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u emplacement revisé"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u semplacements revisée"
     IDS_REGFILEFILTER       "Fichier de Registre"
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
 END
@@ -2677,19 +2667,20 @@ BEGIN
     IDS_STOREPROPERTIES     "Qualités de «%s»"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété?"
-    IDS_DELETESTORE_CAPTION "Effacez le store «%s»"
-    IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer ce store?"
+    IDS_DELETESTORE_CAPTION "Effacez l'emplacement «%s»"
+    IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer c'emplacement?"
     IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
-    IDS_FORMAT_MSG          "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
+    IDS_FORMAT_MSG          "Le lecteur contient à présent emplacements, être utilisés.\nLe fait de formater le lecteur rendrait ces emplacements inutilisables."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
-    IDS_STORECREATED        "Le store «%s» a été ajouté."
+    IDS_STORECREATED        "L'emplacement «%s» a été ajouté."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Crée un nouvel emplacement pour vos fichiers.\nLes fichiers importés seront copiés là."
     IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas modifiés."
+    IDS_ADDSTORE_BOX        "Indices le dossier existant de votre application Box local.\nVos fichiers ne seront pas modifiés."
     IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas modifiés."
     IDS_ADDSTORE_ICLOUD     "Indices le dossier existant de votre application iCloud local.\nVos fichiers ne seront pas modifiés."
     IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas modifiés."
@@ -2729,7 +2720,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_PURCHASE  "Ouvre le standard-browser avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
+    IDM_BACKSTAGE_PURCHASE  "Ouvre le navigateur défaut avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
     IDM_BACKSTAGE_ENTERLICENSEKEY 
                             "Ouvre une fenêtre pour la déverrouillage de liquidFOLDERS.\nDonner clé de licence"
     IDM_BACKSTAGE_SUPPORT   "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
@@ -2836,7 +2827,7 @@ END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 520, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Choose store"
+CAPTION "Choose location"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,406,260,50,14,WS_GROUP
@@ -2845,15 +2836,15 @@ END
 
 IDD_DELETESTORE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Delete mounted store “%s”"
+CAPTION "Delete mounted location “%s”"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Cancel",IDCANCEL,220,153,50,14,WS_GROUP
-    LTEXT           "Please confirm that you really want to delete the selected store.",IDC_CAPTION,7,31,263,15
-    LTEXT           "Since the store is currently mounted, you will lose\nall files inside that store without recovery option!",IDC_NUKEMESSAGE,7,51,263,17
-    LTEXT           "You give permission to delete the store by choosing “Delete”\nbelow, and then click on the button “Delete now”.",IDC_STATIC,7,81,263,17
-    CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,62,10
-    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,61,10
+    LTEXT           "Please confirm that you really want to delete the selected location.",IDC_CAPTION,7,31,263,15
+    LTEXT           "Since the location is currently mounted, you will lose\nall files inside that location without recovery option!",IDC_NUKEMESSAGE,7,51,263,17
+    LTEXT           "You give permission to delete the location by choosing “Delete”\nbelow, and then click on the button “Delete now”.",IDC_STATIC,7,81,263,17
+    CONTROL         "&Keep the location",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,263,10
+    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,263,10
     PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,37,153,175,14,WS_DISABLED | WS_GROUP
 END
 
@@ -2897,7 +2888,7 @@ CAPTION "Hashtags"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_ASSIGNEDHASHTAGS,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,406,97
-    CONTROL         "View for hashtags from &all stores",IDC_HASHTAGSFROMALLSTORES,
+    CONTROL         "View for hashtags from &all locations",IDC_HASHTAGSFROMALLSTORES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,136,406,10
     EDITTEXT        IDC_NEWHASHTAGS,7,193,406,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,306,224,50,14,WS_GROUP
@@ -2974,7 +2965,7 @@ BEGIN
     LTEXT           "Last seen:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Settings",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
-    CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Make &default location",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
     CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
@@ -3005,17 +2996,17 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Synchronization",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,43,23,286,8
+    LTEXT           "Synchronizes the location with its data source.",IDC_STATIC,43,23,286,8
     LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,43,45,100,14
     CONTROL         "Maintenance",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
     CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,43,85,286,8
-    LTEXT           "Last maintenance of this store: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    LTEXT           "Executes maintenance work on all locations.",IDC_STATIC,43,85,286,8
+    LTEXT           "Last maintenance of this location: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,43,107,100,14
     CONTROL         "Backup settings",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
     CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Saves the settings of all stores.",IDC_STATIC,43,147,286,8
+    LTEXT           "Saves the settings of all locations.",IDC_STATIC,43,147,286,8
     PUSHBUTTON      "Backup &settingsn",IDC_RUNBACKUP,43,158,100,14
 END
 
@@ -3033,18 +3024,17 @@ END
 
 IDD_ADDSTORE DIALOGEX 0, 0, 628, 309
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Add store"
+CAPTION "Add storage location"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,614,15
-    PUSHBUTTON      "Creates a new store for your files.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
-    PUSHBUTTON      "Adds an existing folder as store.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
+    PUSHBUTTON      "Creates a new storage location for your files.",IDC_ADDSTORE_LIQUIDFOLDERS,7,22,200,74,BS_MULTILINE | WS_GROUP
+    PUSHBUTTON      "Adds an existing folder as storage location.",IDC_ADDSTORE_WINDOWS,214,22,200,74,BS_MULTILINE
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
-    PUSHBUTTON      "Adds the local Box folder as store.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds a local Dropbox folder as store.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds the local iCloud folder as store.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds a local OneDrive folder as store.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
-    LTEXT           "",IDC_STATUS,7,290,562,8
+    PUSHBUTTON      "Adds the local Box folder as storage location.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds a local Dropbox folder as storage location.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds the local iCloud folder as storage location.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds a local OneDrive folder as storage location.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Done",IDOK,571,287,50,14,WS_GROUP
 END
 
@@ -3062,7 +3052,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,220,136,50,14,WS_GROUP
     CONTROL         "Destination",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,263,15
     CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
-    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,195,34,75,14
+    PUSHBUTTON      "Choose &location...",IDC_CHOOSESTORE,195,34,75,14
 END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 59
@@ -3082,8 +3072,8 @@ CAPTION "Edit filter"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Search in",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,160,15
-    CONTROL         "&All stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
-    CONTROL         "This &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
+    CONTROL         "&All locations",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,24,160,10
+    CONTROL         "This &location",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,35,160,10
     LTEXT           "Search term (in all properties):",IDC_STATIC,7,53,160,8
     EDITTEXT        IDC_SEARCHTERM,7,63,160,14,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Other conditions",IDC_CATEGORY2,"CCategory",WS_GROUP,7,88,160,15
@@ -3112,7 +3102,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Enter license key"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "Our partner share*it will send you an email that has the file “liquidFOLDERS.lic” attached to it. Open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_INSTRUCTIONS,7,7,336,35
+    LTEXT           "Our partner MyCommerce will send you an email that has the file “liquidFOLDERS.lic” attached to it. Open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_INSTRUCTIONS,7,7,336,35
     CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
     PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
     EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
@@ -3122,7 +3112,7 @@ END
 
 IDD_CREATESTORE DIALOGEX 0, 0, 290, 226
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create a new liquidFOLDERS store"
+CAPTION "Create a new storage location"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "General",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,276,15
@@ -3446,7 +3436,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "S&ynchronize",                IDM_STORE_SYNCHRONIZE
-        MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "Make de&fault location",      IDM_STORE_MAKEDEFAULT
         MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
@@ -3461,7 +3451,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Add store...",               IDM_STORES_ADD
+        MENUITEM "&Add storage location...",    IDM_STORES_ADD
         MENUITEM SEPARATOR
         MENUITEM "S&ynchronize",                IDM_STORES_SYNCHRONIZE
         MENUITEM "Run &maintenance",            IDM_STORES_RUNMAINTENANCE
@@ -3531,7 +3521,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_CHOOSESTORE         "Choose a different store for these files.\nChoose store..."
+    IDC_CHOOSESTORE         "Choose a different location for these files.\nChoose location..."
 END
 
 STRINGTABLE 
@@ -3540,10 +3530,6 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/en/"
     IDS_ERROR               "Error"
-    IDS_STORES_SINGULAR     "%u store"
-    IDS_STORES_PLURAL       "%u stores"
-    IDS_FILES_SINGULAR      "%u file"
-    IDS_FILES_PLURAL        "%u files"
 END
 
 STRINGTABLE 
@@ -3558,10 +3544,10 @@ BEGIN
     IDS_COLLAPSE            "&Collapse"
     IDS_IMPORTFOLDER_CAPTION "Import folder"
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
-    IDS_CHOOSESTORE_HINT    "Only mounted and writeable stores can be selected."
+    IDS_CHOOSESTORE_HINT    "Only mounted and writeable locations can be selected."
     IDS_STOREMAINTENANCE_CAPTION "Report"
-    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u store serviced"
-    IDS_STOREMAINTENANCE_HINT_PLURAL "%u stores serviced"
+    IDS_STOREMAINTENANCE_HINT_SINGULAR "%u location serviced"
+    IDS_STOREMAINTENANCE_HINT_PLURAL "%u locations serviced"
     IDS_REGFILEFILTER       "Registry file"
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
 END
@@ -3580,21 +3566,22 @@ BEGIN
     IDS_STOREPROPERTIES     "Properties of “%s”"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property?"
-    IDS_DELETESTORE_CAPTION "Delete store “%s”"
-    IDS_DELETESTORE_MSG     "Do you really want to delete this store?"
+    IDS_DELETESTORE_CAPTION "Delete location “%s”"
+    IDS_DELETESTORE_MSG     "Do you really want to delete this location?"
     IDS_FORMAT_CAPTION      "You cannot format volume %c:"
-    IDS_FORMAT_MSG          "It contains stores that you are using.\nFormatting this volume will destroy those stores."
+    IDS_FORMAT_MSG          "It contains locations that you are using.\nFormatting this volume will destroy those locations."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
-    IDS_STORECREATED        "The store “%s” was added."
+    IDS_STORECREATED        "The location “%s” was added."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Creates a new storage location for your files.\nImported files will be copied there."
     IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be modified by this."
-    IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox application.\nYour files will not be modified by this."
-    IDS_ADDSTORE_ICLOUD     "Indexes the existing folder of your local iCloud application.\nYour files will not be modified by this."
+    IDS_ADDSTORE_BOX        "Indexes the existing folder of your local Box client.\nYour files will not be modified by this."
+    IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox client.\nYour files will not be modified by this."
+    IDS_ADDSTORE_ICLOUD     "Indexes the existing folder of your local iCloud client.\nYour files will not be modified by this."
     IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be modified by this."
     IDS_SUBSCRIPTION        "Subscription"
 END

@@ -239,7 +239,7 @@ void CBackstageSidebar::SetSelection(UINT CmdID)
 	m_Hover = FALSE;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if ((m_Items[a].Selectable) && (m_Items[a].CmdID==CmdID))
+		if (m_Items[a].Selectable && (m_Items[a].CmdID==CmdID))
 		{
 			m_SelectedItem = a;
 			break;

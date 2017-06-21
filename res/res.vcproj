@@ -1164,6 +1164,46 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Tasks\Recover_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Recover_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Recover_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Recover_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Recover_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\RecoverAll_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\RecoverAll_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\RecoverAll_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\RecoverAll_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\RecoverAll_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Tasks\Remember_16.png"
 				>
 			</File>
@@ -1241,46 +1281,6 @@
 			</File>
 			<File
 				RelativePath=".\Tasks\Rename_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Restore_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Restore_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Restore_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Restore_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Restore_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\RestoreAll_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\RestoreAll_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\RestoreAll_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\RestoreAll_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\RestoreAll_64.png"
 				>
 			</File>
 			<File
@@ -1926,6 +1926,14 @@
 		</File>
 		<File
 			RelativePath="IATA-EN.TXT"
+			>
+		</File>
+		<File
+			RelativePath=".\IconShadow_128.png"
+			>
+		</File>
+		<File
+			RelativePath=".\IconShadow_96.png"
 			>
 		</File>
 		<File

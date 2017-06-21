@@ -46,11 +46,12 @@
 #define IDS_FILETYPES                   1020
 #define IDS_HOUSEKEEPING                1021
 #define IDS_SEARCHTERM                  1022
-#define IDS_DEFAULTSTORE                1023
-#define IDS_QUALITY_LOW                 1024
-#define IDS_QUALITY_MEDIUM              1025
-#define IDS_QUALITY_HIGH                1026
-#define IDS_QUALITY_ULTRA               1027
+#define IDS_STORE                       1023
+#define IDS_DEFAULTSTORE                1024
+#define IDS_QUALITY_LOW                 1025
+#define IDS_QUALITY_MEDIUM              1026
+#define IDS_QUALITY_HIGH                1027
+#define IDS_QUALITY_ULTRA               1028
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_SOURCE                1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -79,7 +80,7 @@
 #define IDM_NEW_CLEARNEW                4001
 #define IDM_TRASH                       4100
 #define IDM_TRASH_EMPTY                 4101
-#define IDM_TRASH_RESTOREALL            4102
+#define IDM_TRASH_RECOVERALL            4102
 #define IDM_FILTERS                     4200
 #define IDM_FILTERS_CREATENEW           4201
 #define IDM_FILTERS_EDIT                4202
@@ -98,7 +99,7 @@
 #define IDM_FILE_DELETE                 4409
 #define IDM_FILE_RENAME                 4410
 #define IDM_FILE_PROPERTIES             4411
-#define IDM_FILE_RESTORE                4412
+#define IDM_FILE_RECOVER                4412
 #define IDM_FILE_AWAY                   4500
 #define IDM_FOLDER                      4600
 #define IDM_SELECTALL                   4700

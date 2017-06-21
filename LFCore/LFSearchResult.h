@@ -40,8 +40,9 @@ protected:
 
 private:
 	static void InitFileSummary(LFFileSummary& FileSummary);
-	void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
-	void RemoveFileFromSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
+	static void AddStoreToSummary(LFFileSummary& FileSummary, LFStoreDescriptor* pStoreDescriptor);
+	static void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
+	static void RemoveFileFromSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	INT Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const;
 	void Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending);
 	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
@@ -52,4 +53,12 @@ inline void LFSearchResult::InitFileSummary(LFFileSummary& FileSummary)
 	ZeroMemory(&FileSummary, sizeof(FileSummary));
 
 	FileSummary.OnlyMediaFiles = TRUE;
+}
+
+inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+
+	FileSummary.FileCount += pStoreDescriptor->FileCount[0];
+	FileSummary.FileSize += pStoreDescriptor->FileSize[0];
 }

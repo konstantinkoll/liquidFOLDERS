@@ -715,6 +715,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\IconShadow_128.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\IconShadow_96.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Info.ico"
 				>
 			</File>
