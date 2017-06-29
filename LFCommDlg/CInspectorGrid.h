@@ -356,7 +356,7 @@ protected:
 
 private:
 	INT Compare(INT Eins, INT Zwei) const;
-	void Heap(INT Wurzel, INT Anzahl);
+	void Heap(INT Element, INT Count);
 	void CreateSortArray();
 
 	INT* m_pSortArray;

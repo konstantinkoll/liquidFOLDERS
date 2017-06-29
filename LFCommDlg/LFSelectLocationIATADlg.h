@@ -50,12 +50,12 @@ protected:
 private:
 	INT Compare(INT n1, INT n2);
 	static void Swap(LFAirport*& Eins, LFAirport*& Zwei);
-	void Heap(INT Wurzel, INT Anzahl);
+	void Heap(INT Element, INT Count);
 };
 
 inline void LFSelectLocationIATADlg::Swap(LFAirport*& Eins, LFAirport*& Zwei)
 {
-	LFAirport* Temp = Eins;
+	LFAirport* pAirport = Eins;
 	Eins = Zwei;
-	Zwei = Temp;
+	Zwei = pAirport;
 }

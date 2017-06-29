@@ -32,10 +32,10 @@ LFCORE_API const LFMessageIDs* __stdcall LFGetMessageIDs();
 LFCORE_API BOOL __stdcall LFGetApplicationPath(LPWSTR pStr, SIZE_T cCount);
 
 // Liefert einen String mit Dateianzahl und -größe zurück
-LFCORE_API void __stdcall LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFGetFileSummary(LPWSTR pStr, SIZE_T cCount, UINT Count, INT64 Size=0);
 
 // Liefert einen String mit Dateianzahl und  Dateigröße oder Laufzeit zurück
-LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& Summary, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFGetFileSummaryEx(LPWSTR pStr, SIZE_T cCount, const LFFileSummary& Summary);
 
 
 // Gibt TRUE zurück, wenn der Explorer Dateiendungen verbirgt

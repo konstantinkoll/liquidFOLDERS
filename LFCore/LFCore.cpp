@@ -107,7 +107,7 @@ LFCORE_API const LFMessageIDs* LFGetMessageIDs()
 // Output handling
 //
 
-LFCORE_API void __stdcall LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void __stdcall LFGetFileSummary(LPWSTR pStr, SIZE_T cCount, UINT Count, INT64 Size)
 {
 	assert(pStr);
 
@@ -129,7 +129,7 @@ LFCORE_API void __stdcall LFGetFileSummary(UINT Count, INT64 Size, LPWSTR pStr, 
 	}
 }
 
-LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& FileSummary, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void __stdcall LFGetFileSummaryEx(LPWSTR pStr, SIZE_T cCount, const LFFileSummary& FileSummary)
 {
 	assert(pStr);
 
@@ -155,7 +155,7 @@ LFCORE_API void __stdcall LFGetFileSummaryEx(const LFFileSummary& FileSummary, L
 	}
 	else
 	{
-		LFGetFileSummary(FileSummary.FileCount, FileSummary.FileSize, pStr, cCount);
+		LFGetFileSummary(pStr, cCount, FileSummary.FileCount, FileSummary.FileSize);
 	}
 }
 

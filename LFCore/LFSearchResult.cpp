@@ -443,13 +443,13 @@ INT LFSearchResult::Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, 
 	return Compare;
 }
 
-void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending)
+void LFSearchResult::Heap(UINT Element, const UINT Count, const UINT Attr, const BOOL Descending)
 {
-	LFItemDescriptor* pItemDescriptor = m_Items[Wurzel];
-	UINT Parent = Wurzel;
+	LFItemDescriptor* pItemDescriptor = m_Items[Element];
+	UINT Parent = Element;
 	UINT Child;
 
-	while ((Child=(Parent+1)*2)<Anz)
+	while ((Child=(Parent+1)*2)<Count)
 	{
 		if (Compare(m_Items[Child-1], m_Items[Child], Attr, Descending)>0)
 			Child--;
@@ -458,7 +458,7 @@ void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BO
 		Parent = Child;
 	}
 
-	if (Child==Anz)
+	if (Child==Count)
 	{
 		if (Compare(m_Items[--Child], pItemDescriptor, Attr, Descending)>=0)
 		{
@@ -472,7 +472,7 @@ void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BO
 	}
 	else
 	{
-		if (Parent==Wurzel)
+		if (Parent==Element)
 			return;
 
 		if (Compare(m_Items[Parent], pItemDescriptor, Attr, Descending)>=0)
@@ -485,7 +485,7 @@ void LFSearchResult::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BO
 		Child = (Parent-1)/2;
 	}
 
-	while (Child!=Wurzel)
+	while (Child!=Element)
 	{
 		Parent = (Child-1)/2;
 
@@ -508,9 +508,9 @@ void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 
 		for (INT a=m_ItemCount-1; a>0; a--)
 		{
-			LFItemDescriptor* Temp = m_Items[0];
+			LFItemDescriptor* pItemDescriptor = m_Items[0];
 			m_Items[0] = m_Items[a];
-			m_Items[a] = Temp;
+			m_Items[a] = pItemDescriptor;
 
 			Heap(0, a, Attr, Descending);
 		}

@@ -579,6 +579,8 @@ void CBackstageWnd::UpdateRegion(INT cx, INT cy)
 	if (IsZoomed() || !IsCtrlThemed())
 	{
 		SetWindowRgn(CreateRectRgn(0, 0, cx, cy), TRUE);
+
+		m_RegionWidth = m_RegionHeight = -1;
 	}
 	else
 	{
@@ -1042,7 +1044,7 @@ void CBackstageWnd::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 			RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 		}
 
-		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && (lpwndpos->cx<=m_RegionWidth) && (lpwndpos->cy<=m_RegionHeight))
+//		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && (lpwndpos->cx<=m_RegionWidth) && (lpwndpos->cy<=m_RegionHeight))
 			UpdateRegion(lpwndpos->cx, lpwndpos->cy);
 
 		if (IsWindowVisible())

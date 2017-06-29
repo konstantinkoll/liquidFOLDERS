@@ -1026,8 +1026,8 @@ void CMainWnd::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 			if (pTooltipData->Hint[0])
 				wcscat_s(pTooltipData->Hint, 4096, L"\n");
 
-			SIZE_T Length = wcslen(pTooltipData->Hint);
-			LFGetFileSummary(m_pStatistics->FileCount[Context], m_pStatistics->FileSize[Context], &pTooltipData->Hint[Length], 4096-Length);
+			const SIZE_T Length = wcslen(pTooltipData->Hint);
+			LFGetFileSummary(&pTooltipData->Hint[Length], 4096-Length, m_pStatistics->FileCount[Context], m_pStatistics->FileSize[Context]);
 		}
 
 	*pResult = TRUE;

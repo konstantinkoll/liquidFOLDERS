@@ -153,7 +153,7 @@ void CMainView::SetHeader()
 	{
 		// Hint
 		WCHAR tmpStr[256];
-		LFGetFileSummaryEx(p_CookedFiles->m_FileSummary, tmpStr, 256);
+		LFGetFileSummaryEx(tmpStr, 256, p_CookedFiles->m_FileSummary);
 
 		CString Hint(tmpStr);
 

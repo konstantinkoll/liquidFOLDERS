@@ -369,7 +369,7 @@ void CInspectorPane::AggregateFinish()
 	else
 	{
 		WCHAR tmpStr[256];
-		LFGetFileSummary(m_FileSummary.m_ItemCount, 0, tmpStr, 256);
+		LFGetFileSummary(tmpStr, 256, m_FileSummary.m_ItemCount);
 
 		m_TypeName = tmpStr;
 	}

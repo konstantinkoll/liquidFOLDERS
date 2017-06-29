@@ -301,7 +301,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		{
 			GetDlgItem(IDC_CONTENTSLABEL)->EnableWindow(TRUE);
 
-			LFGetFileSummary(m_Store.FileCount[LFContextAllFiles], m_Store.FileSize[LFContextAllFiles], tmpStr, 256);
+			LFGetFileSummary(tmpStr, 256, m_Store.FileCount[LFContextAllFiles], m_Store.FileSize[LFContextAllFiles]);
 			GetDlgItem(IDC_CONTENTS)->SetWindowText(tmpStr);
 		}
 		else

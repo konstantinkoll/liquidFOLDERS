@@ -133,7 +133,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 	pItemDescriptor->IconID = LFGetStoreIcon(pStoreDescriptor, &pItemDescriptor->Type);
 
 	// Description
-	LFGetFileSummary(pStoreDescriptor->FileCount[LFContextAllFiles], pStoreDescriptor->FileSize[LFContextAllFiles], pItemDescriptor->Description, 256);
+	LFGetFileSummary(pItemDescriptor->Description, 256, pStoreDescriptor->FileCount[LFContextAllFiles], pStoreDescriptor->FileSize[LFContextAllFiles]);
 
 	WCHAR Hint[256] = L"";
 	if (LFIsStoreMounted(pStoreDescriptor))
@@ -218,7 +218,7 @@ LFItemDescriptor* AllocFolderDescriptor(UINT Attr, LFFileSummary& FileSummary, I
 	pItemDescriptor->CoreAttributes.Flags = FileSummary.Flags;
 	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : IDI_FLD_DEFAULT;
 
-	LFGetFileSummaryEx(FileSummary, pItemDescriptor->Description, 256);
+	LFGetFileSummaryEx(pItemDescriptor->Description, 256, FileSummary);
 
 	SetAttribute(pItemDescriptor, LFAttrDuration, &FileSummary.Duration);
 

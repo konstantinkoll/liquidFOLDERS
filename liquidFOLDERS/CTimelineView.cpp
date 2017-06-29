@@ -476,7 +476,9 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, Ite
 		g.GetClip(&OldClip);
 
 		const INT Left = (rectCategory->left+rectCategory->right)/2-4;
-		g.SetClip(Rect(Left, rectCategory->top-1, 8, rectCategory->bottom-rectCategory->top+1), CombineModeExclude);
+
+		if (m_TwoColumns)
+			g.SetClip(Rect(Left, rectCategory->top-1, 8, rectCategory->bottom-rectCategory->top+1), CombineModeExclude);
 
 		CRect rectBorder(rectCategory);
 		rectBorder.left--;
@@ -488,8 +490,11 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, Ite
 		g.DrawPath(&pen, &path);
 
 		// Dark border
-		g.SetClip(&OldClip);
-		g.SetClip(Rect(Left+2, rectCategory->top, 4, rectCategory->bottom-rectCategory->top), CombineModeExclude);
+		if (m_TwoColumns)
+		{
+			g.SetClip(&OldClip);
+			g.SetClip(Rect(Left+2, rectCategory->top, 4, rectCategory->bottom-rectCategory->top), CombineModeExclude);
+		}
 
 		rectBorder.DeflateRect(1, 1);
 		CreateRoundRectangle(rectBorder, CATEGORYRADIUS, path);
@@ -510,12 +515,15 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, Ite
 		dc.SetTextColor(OldColor);
 
 		// Finishing touches
-		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+		if (m_TwoColumns)
+		{
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-		LinearGradientBrush brush2(Point(0, rectCategory->top-BLENDHEIGHT), Point(0, rectCategory->top), Color(0x00A7A8AA), Color(0xFFA7A8AA));
-		g.FillRectangle(&brush2, Left+3, rectCategory->top-BLENDHEIGHT, 3, BLENDHEIGHT);
+			LinearGradientBrush brush2(Point(0, rectCategory->top-BLENDHEIGHT), Point(0, rectCategory->top), Color(0x00A7A8AA), Color(0xFFA7A8AA));
+			g.FillRectangle(&brush2, Left+3, rectCategory->top-BLENDHEIGHT, 3, BLENDHEIGHT);
 
-		dc.SetPixel((rectCategory->left+rectCategory->right)/2-1, rectCategory->bottom-1, 0xCDCBCA);
+			dc.SetPixel((rectCategory->left+rectCategory->right)/2-1, rectCategory->bottom-1, 0xCDCBCA);
+		}
 	}
 	else
 	{

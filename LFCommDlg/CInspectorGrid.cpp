@@ -1068,22 +1068,22 @@ INT CInspectorGrid::Compare(INT Eins, INT Zwei) const
 	return m_SortAlphabetic ? wcscmp(pEins->Name, pZwei->Name) : (pEins->Category!=pZwei->Category) ? (INT)pEins->Category-(INT)pZwei->Category : m_pSortArray[Eins]-m_pSortArray[Zwei];
 }
 
-void CInspectorGrid::Heap(INT Wurzel, INT Anzahl)
+void CInspectorGrid::Heap(INT Element, INT Count)
 {
-	while (Wurzel<=Anzahl/2-1)
+	while (Element<=Count/2-1)
 	{
-		INT Index = (Wurzel+1)*2-1;
-		if (Index+1<Anzahl)
+		INT Index = (Element+1)*2-1;
+		if (Index+1<Count)
 			if (Compare(Index, Index+1)<0)
 				Index++;
 
-		if (Compare(Wurzel, Index)<0)
+		if (Compare(Element, Index)<0)
 		{
-			INT Temp = m_pSortArray[Wurzel];
-			m_pSortArray[Wurzel] = m_pSortArray[Index];
+			INT Temp = m_pSortArray[Element];
+			m_pSortArray[Element] = m_pSortArray[Index];
 			m_pSortArray[Index] = Temp;
 
-			Wurzel = Index;
+			Element = Index;
 		}
 		else
 		{
