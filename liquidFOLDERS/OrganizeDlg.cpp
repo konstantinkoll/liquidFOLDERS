@@ -30,7 +30,7 @@ void OrganizeDlg::DoDataExchange(CDataExchange* pDX)
 
 void OrganizeDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	Add = theApp.IsAttributeAvailable(m_Context, Attr) && (theApp.m_Attributes[Attr].TypeProperties.Sortable) && (theApp.m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
+	Add = theApp.IsAttributeAvailable(m_Context, Attr) && theApp.IsAttributeSortable(m_Context, Attr) && (theApp.m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 
 	Check = FALSE;
 }
@@ -78,7 +78,7 @@ void OrganizeDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		{
 			const UINT Attr = (UINT)m_wndSortAttribute.GetItemData(Index);
 
-			m_wndSortDirection.SetCurSel(theApp.m_Attributes[Attr].AttrProperties.DefaultDescending ? 1 : 0);
+			m_wndSortDirection.SetCurSel(theApp.m_Attributes[Attr].TypeProperties.DefaultDescending ? 1 : 0);
 		}
 	}
 }

@@ -204,12 +204,26 @@ void CBackstageSidebar::ResetCounts()
 	Invalidate();
 }
 
+
 void CBackstageSidebar::SetCount(UINT CmdID, UINT Count)
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		if (m_Items[a].CmdID==CmdID)
 		{
 			m_Items[a].Count = Count;
+			InvalidateItem(a);
+
+			break;
+		}
+}
+
+void CBackstageSidebar::SetCount(UINT CmdID, UINT Count, COLORREF Color)
+{
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		if (m_Items[a].CmdID==CmdID)
+		{
+			m_Items[a].Count = Count;
+			m_Items[a].Color = Color;
 			InvalidateItem(a);
 
 			break;

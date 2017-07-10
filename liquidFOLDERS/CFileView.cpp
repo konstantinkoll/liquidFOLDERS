@@ -11,6 +11,7 @@
 
 #define GetItemData(Index)        ((FVItemData*)(m_pItemData+Index*m_DataSize))
 #define IsSelected(Index)         GetItemData(Index)->Selected
+//#define IsSelected(Index)         (*p_CookedFiles)[Index]->Type & 1
 #define FIRSTSENDTO               0xFF00
 #define HORIZONTALSCROLLWIDTH     64
 
@@ -648,8 +649,12 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	if (m_Context!=LFContextTrash)
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1)))
 		{
-			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVE : IDM_FILE_REMEMBER, CString((LPCSTR)(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVE : IDS_CONTEXTMENU_REMEMBER)));
+			if (m_Context!=LFContextArchive)
+				pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextTasks ? IDM_FILE_TASKDONE : IDM_FILE_MAKETASK, CString((LPCSTR)(m_Context==LFContextTasks ? IDS_CONTEXTMENU_TASKDONE : IDS_CONTEXTMENU_MAKETASK)));
 
+			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVEFROMCLIPBOARD : IDM_FILE_REMEMBER, CString((LPCSTR)(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD : IDS_CONTEXTMENU_REMEMBER)));
+
+			// SendTo
 			CMenu* pSendPopup = GetSendToMenu();
 
 			pPopup->InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, CString((LPCSTR)IDS_CONTEXTMENU_SENDTO));

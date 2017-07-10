@@ -38,7 +38,9 @@ public:
 	CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initialize);
 	~CHeapfile();
 
+	UINT GetVersion() const;
 	UINT GetItemCount() const;
+	UINT GetElementSize() const;
 	UINT GetRequiredElementSize() const;
 	UINT64 GetRequiredFileSize() const;
 	LPVOID GetStoreData(LPVOID pChar) const;
@@ -87,6 +89,26 @@ private:
 	WCHAR m_Filename[MAX_PATH];
 	HANDLE hFile;
 };
+
+inline UINT CHeapfile::GetVersion() const
+{
+	return m_Header.Version;
+}
+
+inline UINT CHeapfile::GetElementSize() const
+{
+	return m_Header.ElementSize;
+}
+
+inline UINT CHeapfile::GetRequiredElementSize() const
+{
+	return max(m_Header.ElementSize, m_RequiredElementSize);
+}
+
+inline UINT64 CHeapfile::GetRequiredFileSize() const
+{
+	return GetRequiredElementSize()*m_ItemCount+sizeof(HeapfileHeader);
+}
 
 inline UINT CHeapfile::GetItemCount() const
 {

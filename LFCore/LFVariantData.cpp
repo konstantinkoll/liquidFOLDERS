@@ -203,22 +203,6 @@ void ToString(LPCVOID pValue, UINT Type, LPWSTR pStr, SIZE_T cCount)
 			LFDoubleToString(*((DOUBLE*)pValue), pStr, cCount);
 			return;
 
-		case LFTypeFlags:
-			if (cCount<5)
-			{
-				*pStr = '\0';
-			}
-			else
-			{
-				pStr[0] = (*((UINT*)pValue) & LFFlagLink) ? 'L' : '-';
-				pStr[1] = (*((UINT*)pValue) & LFFlagNew) ? 'N' : '-';
-				pStr[2] = (*((UINT*)pValue) & LFFlagTrash) ? 'T' : '-';
-				pStr[3] = (*((UINT*)pValue) & LFFlagMissing) ? 'M' : '-';
-				pStr[4] = '\0';
-			}
-
-			return;
-
 		case LFTypeGeoCoordinates:
 			LFGeoCoordinatesToString(*((LFGeoCoordinates*)pValue), pStr, cCount, FALSE);
 			return;
@@ -766,7 +750,7 @@ Abort:
 			case 4:
 				if ((Date1>=0) && (Date1<=12) && (Date2>1600) && (Date2<0x10000))
 				{
-					UINT Temp = Date1;
+					const UINT Temp = Date1;
 					Date1 = Date2;
 					Date2 = Temp;
 				}
@@ -793,7 +777,7 @@ Abort:
 					{
 						if ((DateCh1=='/') || ((Date2>12) && (Date3<=12)))
 						{
-							UINT Temp = Date2;
+							const UINT Temp = Date2;
 							Date2 = Date3;
 							Date3 = Temp;
 						}
@@ -815,7 +799,7 @@ Abort:
 						{
 							if ((DateCh1=='/') || ((Date1>12) && (Date2<=12)))
 							{
-								UINT Temp = Date1;
+								const UINT Temp = Date1;
 								Date1 = Date2;
 								Date2 = Temp;
 							}
@@ -942,9 +926,7 @@ LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, con
 	assert(Value.Type==AttrProperties[Value.Attr].Type);
 	assert(Value.Type<LFTypeCount);
 
-	// Flags can only be managed by the system
-	if (Value.Type!=LFTypeFlags)
-		SetAttribute(pItemDescriptor, Value.Attr, &Value.Value);
+	SetAttribute(pItemDescriptor, Value.Attr, &Value.Value);
 }
 
 LFCORE_API BOOL LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)

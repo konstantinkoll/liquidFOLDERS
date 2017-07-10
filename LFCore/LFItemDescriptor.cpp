@@ -99,7 +99,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value)
 LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, SIZE_T StoreDataSize)
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
-	ZeroMemory(pItemDescriptor, sizeof(LFItemDescriptor)-LFMaxSlaveSize-(pCoreAttributes ? sizeof(LFCoreAttributes) : 0));
+	ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes)+(pCoreAttributes ? 0 : sizeof(LFCoreAttributes)));
 
 	if (pCoreAttributes)
 		pItemDescriptor->CoreAttributes = *pCoreAttributes;
@@ -109,14 +109,11 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttrib
 
 	pItemDescriptor->FirstAggregate = pItemDescriptor->LastAggregate = -1;
 	pItemDescriptor->RefCount = 1;
-	pItemDescriptor->Dimension = pItemDescriptor->AspectRatio = 0.0;
 
 	// Zeiger auf statische Attributwerte initalisieren
 	for (UINT a=0; a<IndexTables[IDXTABLE_MASTER].cTableEntries; a++)
 		pItemDescriptor->AttributeValues[CoreAttributeEntries[a].Attr] = (BYTE*)&pItemDescriptor->CoreAttributes+CoreAttributeEntries[a].Offset;
 
-	pItemDescriptor->AttributeValues[LFAttrStoreID] = &pItemDescriptor->StoreID;
-	pItemDescriptor->AttributeValues[LFAttrDescription] = &pItemDescriptor->Description[0];
 	pItemDescriptor->AttributeValues[LFAttrFileCount] = &pItemDescriptor->AggregateCount;
 
 	return pItemDescriptor;
@@ -133,7 +130,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 	pItemDescriptor->IconID = LFGetStoreIcon(pStoreDescriptor, &pItemDescriptor->Type);
 
 	// Description
-	LFGetFileSummary(pItemDescriptor->Description, 256, pStoreDescriptor->FileCount[LFContextAllFiles], pStoreDescriptor->FileSize[LFContextAllFiles]);
+	LFGetFileSummary(pItemDescriptor->Description, 256, pStoreDescriptor->Statistics.FileCount[LFContextAllFiles], pStoreDescriptor->Statistics.FileSize[LFContextAllFiles]);
 
 	WCHAR Hint[256] = L"";
 	if (LFIsStoreMounted(pStoreDescriptor))
@@ -146,7 +143,6 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 		}
 	}
 	else
-	{
 		if (wcscmp(pStoreDescriptor->LastSeen, L"")!=0)
 		{
 			WCHAR LastSeen[256];
@@ -156,20 +152,19 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 			swprintf_s(&Hint[2], 254, LastSeen, pStoreDescriptor->LastSeen);
 			Hint[2] = (WCHAR)tolower(Hint[2]);
 		}
-	}
 
 	if (Hint[0])
 		wcscat_s(pItemDescriptor->Description, 256, Hint);
 
-	// Standard-Attribute kopieren
+	// Copy properties
 	wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, pStoreDescriptor->StoreName);
 	wcscpy_s(pItemDescriptor->CoreAttributes.Comments, 256, pStoreDescriptor->Comments);
 	strcpy_s(pItemDescriptor->StoreID, LFKeySize, pStoreDescriptor->StoreID);
 
 	pItemDescriptor->CoreAttributes.CreationTime = pStoreDescriptor->CreationTime;
 	pItemDescriptor->CoreAttributes.FileTime = pStoreDescriptor->FileTime;
-	pItemDescriptor->AggregateCount = pStoreDescriptor->FileCount[LFContextAllFiles];
-	pItemDescriptor->CoreAttributes.FileSize = pStoreDescriptor->FileSize[LFContextAllFiles];
+	pItemDescriptor->AggregateCount = pStoreDescriptor->Statistics.FileCount[LFContextAllFiles];
+	pItemDescriptor->CoreAttributes.FileSize = pStoreDescriptor->Statistics.FileSize[LFContextAllFiles];
 
 	return pItemDescriptor;
 }
@@ -204,13 +199,13 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 	return pClone;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(UINT Attr, LFFileSummary& FileSummary, INT FirstAggregate, INT LastAggregate)
+LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSummary, INT FirstAggregate, INT LastAggregate)
 {
 	assert(Attr<LFAttributeCount);
 
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
-	pItemDescriptor->Type = LFTypeFolder | FileSummary.Source;
+	pItemDescriptor->Type = LFTypeFolder | LFTypeHasDescription | FileSummary.Source;
 	pItemDescriptor->FirstAggregate = FirstAggregate;
 	pItemDescriptor->LastAggregate = LastAggregate;
 	pItemDescriptor->AggregateCount = FileSummary.FileCount;
@@ -218,8 +213,10 @@ LFItemDescriptor* AllocFolderDescriptor(UINT Attr, LFFileSummary& FileSummary, I
 	pItemDescriptor->CoreAttributes.Flags = FileSummary.Flags;
 	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : IDI_FLD_DEFAULT;
 
+	// Description
 	LFGetFileSummaryEx(pItemDescriptor->Description, 256, FileSummary);
 
+	// Additional properties
 	SetAttribute(pItemDescriptor, LFAttrDuration, &FileSummary.Duration);
 
 	return pItemDescriptor;
@@ -256,13 +253,13 @@ void AttachSlave(LFItemDescriptor* pItemDescriptor, BYTE SlaveID, LPVOID pSlaveD
 	for (UINT a=0; a<pTable->cTableEntries; a++)
 		pItemDescriptor->AttributeValues[pTable->pTableEntries[a].Attr] = pItemDescriptor->SlaveData + pTable->pTableEntries[a].Offset;
 
-	// LFAttrDimension und LFAttrAspectRatio werden dynamisch berechnet
-	if ((pItemDescriptor->AttributeValues[LFAttrWidth]) && (pItemDescriptor->AttributeValues[LFAttrHeight]))
+	// LFAttrDimension and LFAttrAspectRatio are computed on the fly
+	if (pItemDescriptor->AttributeValues[LFAttrWidth] && pItemDescriptor->AttributeValues[LFAttrHeight])
 	{
 		const UINT Width = *((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]);
 		const UINT Height = *((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]);
 
-		if ((Width) && (Height))
+		if (Width && Height)
 		{
 			pItemDescriptor->Dimension = ((DOUBLE)Width*Height)/((DOUBLE)1000000);
 			pItemDescriptor->AttributeValues[LFAttrDimension] = &pItemDescriptor->Dimension;

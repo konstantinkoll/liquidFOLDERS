@@ -434,10 +434,10 @@ INT LFSearchResult::Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, 
 	if ((Compare==0) && (Attr!=LFAttrFileName))
 		Compare = _wcsicmp(pItem1->CoreAttributes.FileName, pItem2->CoreAttributes.FileName);
 
-	if ((Compare==0) && (Attr!=LFAttrStoreID))
+	if (Compare==0)
 		Compare = strcmp(pItem1->StoreID, pItem2->StoreID);
 
-	if ((Compare==0) && (Attr!=LFAttrFileID))
+	if (Compare==0)
 		Compare = strcmp(pItem1->CoreAttributes.FileID, pItem2->CoreAttributes.FileID);
 
 	return Compare;
@@ -519,9 +519,6 @@ void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 
 UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
-	assert(AttrProperties[LFAttrDuration].Type==LFTypeDuration);
-	assert(TypeProperties[LFTypeDuration].Size==sizeof(UINT));
-
 	// Retain item
 	if (((ReadIndex2==ReadIndex1+1) && (!GroupSingle || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
 	{

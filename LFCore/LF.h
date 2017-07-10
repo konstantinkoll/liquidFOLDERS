@@ -114,7 +114,7 @@ struct LFGeoCoordinates
 	DOUBLE Longitude;
 };
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 
 struct LFCountry
 {
@@ -136,7 +136,7 @@ struct LFAirport
 
 // Music database
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 
 struct LFMusicGenre
 {
@@ -212,7 +212,7 @@ struct LFItemCategoryDescriptor
 #define LFContextDocuments              5	// All views
 #define LFContextContacts               6	// All views
 #define LFContextMessages               7	// All views
-#define LFContextEvents                 8	// All views
+#define LFContextTasks                  8	// All views
 #define LFContextNew                    9	// Only limited views
 #define LFContextArchive               10	// Only limited views
 #define LFContextTrash                 11	// Only limited views
@@ -235,69 +235,67 @@ struct LFItemCategoryDescriptor
 
 // Attributes
 
-#define LFAttrFileName                  0
-#define LFAttrStoreID                   1
-#define LFAttrFileID                    2
-#define LFAttrComments                  3
-#define LFAttrDescription               4
-#define LFAttrCreationTime              5
-#define LFAttrFileTime                  6
-#define LFAttrAddTime                   7
+#define LFAttrFileName                  0	// Core
+#define LFAttrPriority                  1
+#define LFAttrCreationTime              2
+#define LFAttrFileTime                  3
+#define LFAttrAddTime                   4
+#define LFAttrDueTime                   5
+#define LFAttrDoneTime                  6
+#define LFAttrArchiveTime               7
 #define LFAttrDeleteTime                8
-#define LFAttrArchiveTime               9
-#define LFAttrFileFormat               10
-#define LFAttrFileCount                11
-#define LFAttrFileSize                 12
-#define LFAttrFlags                    13
-#define LFAttrURL                      14
-#define LFAttrHashtags                 15
-#define LFAttrRating                   16
-#define LFAttrPriority                 17
-#define LFAttrLocationName             18
-#define LFAttrLocationIATA             19
-#define LFAttrLocationGPS              20
+#define LFAttrColor                     9
+#define LFAttrHashtags                 10
+#define LFAttrRating                   11
+#define LFAttrComments                 12
+#define LFAttrFileFormat               13
+#define LFAttrFileCount                14
+#define LFAttrFileSize                 15
+#define LFAttrLocationName             16
+#define LFAttrLocationIATA             17
+#define LFAttrLocationGPS              18
+#define LFAttrURL                      19
 
+#define LFAttrRoll                     20	// Visual
 #define LFAttrWidth                    21
 #define LFAttrHeight                   22
 #define LFAttrDimension                23
 #define LFAttrAspectRatio              24
 #define LFAttrVideoCodec               25
-#define LFAttrRoll                     26
 
-#define LFAttrExposure                 27
-#define LFAttrFocus                    28
-#define LFAttrAperture                 29
-#define LFAttrChip                     30
+#define LFAttrExposure                 26	// Photos
+#define LFAttrFocus                    27
+#define LFAttrAperture                 28
+#define LFAttrChip                     29
 
+#define LFAttrArtist                   30	// Audio
 #define LFAttrAlbum                    31
 #define LFAttrGenre                    32
 #define LFAttrChannels                 33
 #define LFAttrSamplerate               34
 #define LFAttrAudioCodec               35
 
-#define LFAttrDuration                 36
+#define LFAttrDuration                 36	// Media
 #define LFAttrBitrate                  37
+#define LFAttrRecordingTime            38
+#define LFAttrRecordingEquipment       39
 
-#define LFAttrArtist                   38
-#define LFAttrTitle                    39
-#define LFAttrCopyright                40
-#define LFAttrISBN                     41
-#define LFAttrLanguage                 42
-#define LFAttrPages                    43
-#define LFAttrRecordingTime            44
-#define LFAttrEquipment                45
+#define LFAttrAuthor                   40	// Documents
+#define LFAttrCopyright                41
+#define LFAttrTitle                    42
+#define LFAttrISBN                     43
+#define LFAttrLanguage                 44
+#define LFAttrPages                    45
 #define LFAttrSignature                46
 
-#define LFAttrFrom                     47
+#define LFAttrFrom                     47	// Messages
 #define LFAttrTo                       48
-#define LFAttrResponsible              49
-#define LFAttrDueTime                  50
-#define LFAttrDoneTime                 51
-#define LFAttrCustomer                 52
-#define LFAttrAuthor                   53
 
-#define LFAttributeCount               54
-#define LFLastCoreAttribute            20
+#define LFAttrResponsible              49	// Workflow
+#define LFAttrCustomer                 50
+
+#define LFAttributeCount               51
+#define LFLastCoreAttribute            19
 
 
 // Attribute types
@@ -312,7 +310,7 @@ struct LFItemCategoryDescriptor
 #define LFTypeSize               7
 #define LFTypeFraction           8
 #define LFTypeDouble             9
-#define LFTypeFlags              10
+#define LFTypeColor              10
 #define LFTypeGeoCoordinates     11
 #define LFTypeTime               12
 #define LFTypeBitrate            13
@@ -351,7 +349,7 @@ struct LFVariantData
 		INT64 INT64;
 		LFFraction Fraction;
 		DOUBLE Double;
-		UINT Flags;
+		UINT Color;
 		LFGeoCoordinates GeoCoordinates;
 		FILETIME Time;
 		UINT Duration;
@@ -365,13 +363,13 @@ struct LFVariantData
 // Attribute categories
 
 #define LFAttrCategoryBasic             0
-#define LFAttrCategoryGeotags           1
-#define LFAttrCategoryVisual            2
-#define LFAttrCategoryPhotographic      3
-#define LFAttrCategoryAudio             4
-#define LFAttrCategoryTimebased         5
-#define LFAttrCategoryBibliographic     6
-#define LFAttrCategoryWorkflow          7
+#define LFAttrCategoryTasks             1
+#define LFAttrCategoryGeotags           2
+#define LFAttrCategoryVisual            3
+#define LFAttrCategoryPhotographic      4
+#define LFAttrCategoryAudio             5
+#define LFAttrCategoryTimebased         6
+#define LFAttrCategoryBibliographic     7
 #define LFAttrCategoryInternal          8
 
 #define LFAttrCategoryCount             9
@@ -379,9 +377,9 @@ struct LFVariantData
 
 // Attribute descriptor
 
-#define LFMaxAttributePriority     7
+#define LFMaxAttributePriority          5
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 
 struct LFShellProperty
 {
@@ -399,9 +397,9 @@ struct LFAttributeProperties
 	UINT DefaultPriority;
 	BOOL ReadOnly;
 	BOOL AlwaysShow;
-	BOOL DefaultDescending;
 	BOOL ShowRepresentativeThumbnail;
 	LFShellProperty ShPropertyMapping;
+	UINT PersistentID;
 };
 
 struct LFTypeProperties
@@ -409,6 +407,8 @@ struct LFTypeProperties
 	SIZE_T Size;
 	BOOL ContainsLetters;
 	BOOL Sortable;
+	BOOL SortableSubfolder;
+	BOOL DefaultDescending;
 	BOOL FormatRight;
 	INT DefaultColumnWidth;
 	UINT AllowedViews;
@@ -430,7 +430,7 @@ typedef UINT LFAttributeList[LFAttributeCount];
 
 // Context descriptor
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 
 struct LFContextProperties
 {
@@ -459,7 +459,7 @@ struct LFStatistics
 {
 	UINT FileCount[LFLastQueryContext+1];
 	INT64 FileSize[LFLastQueryContext+1];
-	UINT LastError;
+	UINT TaskCount[LFMaxRating+1];
 };
 
 struct LFFileSummary
@@ -553,6 +553,10 @@ struct LFCoreAttributes
 	// Private
 	BYTE SlaveID;
 	BYTE ContextID;
+
+	// Public extended
+	FILETIME DueTime;
+	FILETIME DoneTime;
 };
 
 
@@ -588,34 +592,56 @@ struct LFCoreAttributes
 #define LFTypeBadgeEmpty           0x00000400
 #define LFTypeBadgeMask            0x00000F00
 
-// Store capabilities
-#define LFTypeShortcutAllowed      0x00001000	// Volatile
-#define LFTypeSynchronizeAllowed   0x00002000
-#define LFTypeCapabilitiesMask     0x00003000
+// Store type capabilities
+#define LFTypeHasDescription       0x00001000	// Volatile
+#define LFTypeShortcutAllowed      0x00002000
+#define LFTypeSynchronizeAllowed   0x00004000
 
-// Store flags
+// Store type flags
 #define LFTypeMounted              0x00100000	// Volatile
-#define LFTypeMaintained           0x00400000
-#define LFTypeWriteable            0x00800000
+#define LFTypeMaintained           0x00200000
+#define LFTypeWriteable            0x00400000
 
-// Visual flags
+// Visual type
 #define LFTypeDefault              0x01000000	// Volatile
 #define LFTypeGhosted              0x02000000
 
-// Type
+// Item type
 #define LFTypeStore                0x00000000	// Volatile
 #define LFTypeFile                 0x40000000
 #define LFTypeFolder               0x80000000
 #define LFTypeMask                 0xC0000000
 
-#define LFFlagTrash                0x0001		// Persistent, DO NOT CHANGE
-#define LFFlagNew                  0x0002
-#define LFFlagLink                 0x0004
-#define LFFlagMissing              0x0008
-#define LFFlagArchive              0x0010
+// Persistent item flags
+#define LFFlagTrash                0x00000001		// Persistent, DO NOT CHANGE
+#define LFFlagNew                  0x00000002
+#define LFFlagTask                 0x00000004
+#define LFFlagMissing              0x00000008
+#define LFFlagArchive              0x00000010
+#define LFFlagLink                 0x00000020
 
+#define LFFlagColorMask            0x30000000
+#define LFFlagColorShift           28
+
+// Item colors
+#define LFColorDefault             0xFFFFFF
+#define LFColorRed                 0x303BFF
+#define LFColorOrange              0x0095FF
+#define LFColorYellow              0x00CCFF
+#define LFColorGreen               0x64D94C
+#define LFColorBlue                0xFF7A00
+#define LFColorPurple              0xE173CC
+#define LFColorGray                0x938E8E
+
+#define LFColorCount               8
+
+// Item data structure
 #define LFMaxSlaveSize             3236			// Check if new attributes are attached
 #define LFMaxStoreDataSize         sizeof(WCHAR)*MAX_PATH
+
+#pragma pack(push, 4)
+#pragma warning(push)
+#pragma warning(disable: 4201)
 
 struct LFItemDescriptor
 {
@@ -623,31 +649,52 @@ struct LFItemDescriptor
 	UINT Type;
 	UINT CategoryID;
 	UINT IconID;
-	LFFilter* pNextFilter;
 
 	// Internal use only
-	INT FirstAggregate;
-	INT LastAggregate;
-	UINT AggregateCount;
 	UINT RefCount;
 	BOOL RemoveFlag;
 
-	// Volatile attributes
-	CHAR StoreID[LFKeySize];
-	WCHAR Description[256];
-	DOUBLE Dimension;
-	DOUBLE AspectRatio;
+	// Item aggregation
+	LFFilter* pNextFilter;
+	UINT AggregateCount;
 
 	// Pointer to attribute values
 	LPVOID AttributeValues[LFAttributeCount];
+
+	// Volatile attributes
+	CHAR StoreID[LFKeySize];
 
 	// Internal data from store
 	BYTE StoreData[LFMaxStoreDataSize];
 
 	// Must be last in struct in this order, as zero-filling depends on it
 	LFCoreAttributes CoreAttributes;
-	BYTE SlaveData[LFMaxSlaveSize];
+
+	//
+	// Variables below this line are NOT zeroed out!
+	//
+
+	// Item aggregation
+	INT FirstAggregate;
+	INT LastAggregate;
+
+	// Space for additional attributes
+	union
+	{
+		struct
+		{
+			DOUBLE Dimension;
+			DOUBLE AspectRatio;
+			BYTE SlaveData[LFMaxSlaveSize];
+		};
+
+		// Item aggregation
+		WCHAR Description[256];
+	};
 };
+
+#pragma warning(pop)
+#pragma pack(pop)
 
 
 // Store structure
@@ -666,8 +713,8 @@ struct LFItemDescriptor
 #define LFStoreModeBackendSoundCloud     0x0D000000
 #define LFStoreModeBackendTwitter        0x0E000000
 #define LFStoreModeBackendYouTube        0x0F000000
-#define LFStoreModeBackendShift          24
 #define LFStoreModeBackendMask           0xFF000000
+#define LFStoreModeBackendShift          24
 
 #define LFStoreFlagsAutoLocation         0x00000001
 #define LFStoreFlagsError                0x00000002
@@ -690,12 +737,12 @@ struct LFStoreDescriptor
 	UINT IndexVersion;
 	WCHAR DatPath[MAX_PATH];
 	FILETIME SynchronizeTime;
+
 	WCHAR IdxPathMain[MAX_PATH];				// Volatile, must be first
 	WCHAR IdxPathAux[MAX_PATH];					// Volatile
 	FILETIME MountTime;							// Volatile
 	UINT Source;								// Volatile
-	UINT FileCount[LFLastQueryContext+1];		// Volatile
-	INT64 FileSize[LFLastQueryContext+1];		// Volatile
+	LFStatistics Statistics;			;		// Volatile
 };
 
 
@@ -709,7 +756,8 @@ struct LFStoreDescriptor
 #define LFTransactionTypePutInTrash            0x101
 #define LFTransactionTypeRecover               0x102
 #define LFTransactionTypeUpdate                0x103
-#define LFTransactionTypeDelete                0x104
+#define LFTransactionTypeUpdateTask            0x104
+#define LFTransactionTypeDelete                0x105
 
 #define LFTransactionTypeLastReadonly          0x0FF
 

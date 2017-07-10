@@ -18,9 +18,8 @@ void CStoreList::AddStoreColumns()
 {
 	AddColumn(0, LFAttrFileName);
 	AddColumn(1, LFAttrComments);
-	AddColumn(2, LFAttrDescription);
+	CExplorerList::AddColumn(2);
 	AddColumn(3, LFAttrCreationTime);
-	AddColumn(4, LFAttrStoreID);
 }
 
 void CStoreList::AddItemCategories()
@@ -59,13 +58,12 @@ void CStoreList::SetSearchResult(LFSearchResult* pSearchResult)
 
 			WCHAR tmpStr[256];
 			SetItemText(Index, 1, (*pSearchResult)[a]->CoreAttributes.Comments);
-			SetItemText(Index, 2, (*pSearchResult)[a]->Description);
+
+			if ((*pSearchResult)[a]->Type & LFTypeHasDescription)
+				SetItemText(Index, 2, (*pSearchResult)[a]->Description);
 
 			LFAttributeToString((*pSearchResult)[a], LFAttrCreationTime, tmpStr, 256);
 			SetItemText(Index, 3, tmpStr);
-
-			LFAttributeToString((*pSearchResult)[a], LFAttrStoreID, tmpStr, 256);
-			SetItemText(Index, 4, tmpStr);
 		}
 	}
 
@@ -379,7 +377,6 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			break;
 
 		case IDM_STORE_SYNCHRONIZE:
-		case IDM_STORE_IMPORTFOLDER:
 			bEnable = FALSE;
 			break;
 

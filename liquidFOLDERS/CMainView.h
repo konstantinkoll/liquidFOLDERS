@@ -39,7 +39,7 @@ protected:
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolveLocations=FALSE, BOOL IncludePIDL=FALSE);
 	void RemoveTransactedItems(LFTransactionList* pTransactionList);
 	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
-	void RestoreFiles(BOOL All=FALSE);
+	void RecoverFiles(BOOL All=FALSE);
 	BOOL UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -88,7 +88,6 @@ protected:
 
 	afx_msg void OnStoreSynchronize();
 	afx_msg void OnStoreMakeDefault();
-	afx_msg void OnStoreImportFolder();
 	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreRename();
@@ -99,13 +98,15 @@ protected:
 	afx_msg void OnFileOpenBrowser();
 	afx_msg void OnFileEdit();
 	afx_msg void OnFileRemember();
-	afx_msg void OnFileRemove();
+	afx_msg void OnFileRemoveFromClipboard();
+	afx_msg void OnFileMakeTask();
 	afx_msg void OnFileArchive();
 	afx_msg void OnFileCopy();
 	afx_msg void OnFileShortcut();
 	afx_msg void OnFileDelete();
 	afx_msg void OnFileRename();
 	afx_msg void OnFileProperties();
+	afx_msg void OnFileTaskDone();
 	afx_msg void OnFileRecover();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
@@ -134,6 +135,7 @@ private:
 	BOOL CreateFileView(UINT ViewID, FVPersistentData* pPersistentData);
 	void SetHeaderButtons();
 	void SetHeader();
+	void UpdateSearchResult();
 	void AdjustLayout(UINT nFlags=SWP_NOACTIVATE | SWP_NOZORDER);
 	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData) const;
 	static void CreateShortcut(LFTransactionListItem* pItem);

@@ -271,7 +271,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 
 				LPCWSTR pSubcaption = NULL;
 				LPCWSTR pCoordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
-				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescription ? (*p_CookedFiles)[a]->Description : NULL);
+				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescription && ((*p_CookedFiles)[a]->Type & LFTypeHasDescription) ? (*p_CookedFiles)[a]->Description : NULL);
 
 				// Beschriftung aufbereiten
 				switch (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type)
@@ -1155,7 +1155,7 @@ void CGlobeView::OnContextMenu(CWnd* pWnd, CPoint pos)
 
 void CGlobeView::OnJumpToLocation()
 {
-	LFSelectLocationIATADlg dlg(FALSE, this);
+	LFSelectLocationIATADlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
 		ASSERT(dlg.p_Airport);

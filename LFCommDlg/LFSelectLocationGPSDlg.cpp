@@ -10,7 +10,7 @@
 //
 
 LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(const LFGeoCoordinates& Location, CWnd* pParentWnd)
-	: LFDialog(IDD_SELECTGPS, pParentWnd)
+	: LFDialog(IDD_SELECTLOCATIONGPS, pParentWnd)
 {
 	m_Location = Location;
 }
@@ -120,7 +120,7 @@ void LFSelectLocationGPSDlg::OnLongitudeChanged()
 
 void LFSelectLocationGPSDlg::OnIATA()
 {
-	LFSelectLocationIATADlg dlg(FALSE, this);
+	LFSelectLocationIATADlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
 		m_Location = dlg.p_Airport->Location;

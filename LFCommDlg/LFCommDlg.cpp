@@ -248,7 +248,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 			rect.top += rectLine.Height();
 
 			dc.SelectObject(&LFGetApp()->m_DefaultFont);
-			dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_WORDBREAK | DT_NOPREFIX);
+			dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_NOPREFIX | (rect.Height()>=2*LFGetApp()->m_DefaultFont.GetFontHeight() ? DT_WORDBREAK : DT_END_ELLIPSIS));
 		}
 
 	dc.SelectObject(pOldFont);
@@ -841,7 +841,7 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	case LFTypeIATACode:
 	case LFTypeFourCC:
 	case LFTypeFraction:
-	case LFTypeFlags:
+	case LFTypeColor:
 	case LFTypeGeoCoordinates:
 	case LFTypeGenre:
 		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);

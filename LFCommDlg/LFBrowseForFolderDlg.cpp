@@ -9,17 +9,15 @@
 // LFBrowseForFolderDlg
 //
 
-LFBrowseForFolderDlg::LFBrowseForFolderDlg(CWnd* pParentWnd, CString Caption, CString Hint, BOOL OnlyFSObjects, BOOL ShowDeleteSource, CString RootPath)
+LFBrowseForFolderDlg::LFBrowseForFolderDlg(const CString& Caption, const CString& Hint, CWnd* pParentWnd, BOOL OnlyFSObjects, const CString& RootPath)
 	: LFDialog(IDD_BROWSEFORFOLDER, pParentWnd)
 {
 	m_Caption = Caption;
 	m_Hint = Hint;
 	m_OnlyFSObjects = OnlyFSObjects;
-	m_ShowDeleteSource = ShowDeleteSource;
 	m_RootPath = RootPath;
 	m_FolderPIDL = NULL;
 	m_FolderPath[0] = L'\0';
-	m_DeleteSource = FALSE;
 }
 
 LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
@@ -31,13 +29,11 @@ LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
 void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_SHELLTREE, m_wndExplorerTree);
-	DDX_Control(pDX, IDC_DELETESOURCE, m_wndDeleteSource);
 
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_FolderPIDL = LFGetApp()->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
 		SHGetPathFromIDList(m_FolderPIDL, m_FolderPath);
-		m_DeleteSource = m_wndDeleteSource.GetCheck();
 	}
 }
 
@@ -73,10 +69,6 @@ BOOL LFBrowseForFolderDlg::InitDialog()
 		m_wndExplorerTree.ModifyStyle(0, TVS_TRACKSELECT);
 	}
 
-	m_wndDeleteSource.ShowWindow(m_ShowDeleteSource ? SW_SHOW : SW_HIDE);
-	m_wndDeleteSource.EnableWindow(m_ShowDeleteSource);
-	SetBottomLeftControl(&m_wndDeleteSource);
-
 	m_wndExplorerTree.SetOnlyFilesystem(TRUE);
 	m_wndExplorerTree.PopulateTree();
 	m_wndExplorerTree.SetFocus();
@@ -111,7 +103,7 @@ void LFBrowseForFolderDlg::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*
 		{
 			WCHAR Path[MAX_PATH];
 			if (SHGetPathFromIDList(pItem->pidlFQ, Path))
-				Enable = m_ShowDeleteSource || (wcslen(Path)>3);
+				Enable = (wcslen(Path)>3);
 		}
 
 		GetDlgItem(IDOK)->EnableWindow(Enable);

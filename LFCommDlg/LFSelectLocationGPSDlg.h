@@ -30,8 +30,8 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	CMapCtrl m_wndMap;
+
 private:
 	static DOUBLE StringToCoord(LPCWSTR Str);
-
-	CMapCtrl m_wndMap;
 };

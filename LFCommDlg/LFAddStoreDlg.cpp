@@ -221,7 +221,7 @@ void LFAddStoreDlg::OnBtnWindows()
 	CString Hint;
 	GetDlgItem(IDC_ADDSTORE_WINDOWS)->GetWindowText(Hint);
 
-	LFBrowseForFolderDlg dlg(this, Caption, Hint);
+	LFBrowseForFolderDlg dlg(Caption, Hint, this);
 	if (dlg.DoModal()==IDOK)
 		AddWindowsPathAsStore(dlg.m_FolderPath);
 }

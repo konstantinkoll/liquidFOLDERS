@@ -163,7 +163,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 					if (pData->pStrCollection)
 					{
 						pData->PreviewMask |= PRV_COLLECTIONICON;
-						VERIFY(pData->CollectionIconID=theApp.m_Attributes[CollectionAttr].AttrProperties.IconID);
+						VERIFY((pData->CollectionIconID=theApp.m_Attributes[CollectionAttr].AttrProperties.IconID)!=0);
 					}
 
 					break;
@@ -594,11 +594,12 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		dc.DrawText(GetLabel(pItemDescriptor), rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
 	else
-	{
-		LPCWSTR pSubstring = wcsstr(pItemDescriptor->Description, L" (");
+		if (pItemDescriptor->Type & LFTypeHasDescription)
+		{
+			LPCWSTR pSubstring = wcsstr(pItemDescriptor->Description, L" (");
 
-		dc.DrawText(pItemDescriptor->Description, pSubstring ? (INT)(pSubstring-pItemDescriptor->Description) : -1, rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
-	}
+			dc.DrawText(pItemDescriptor->Description, pSubstring ? (INT)(pSubstring-pItemDescriptor->Description) : -1, rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+		}
 
 	rectCaption.top += m_DefaultFontHeight+CARDPADDING/3;
 

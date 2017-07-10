@@ -90,7 +90,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 				}
 
 				// Description
-				if (pItemDescriptor->Description[0])
+				if (pItemDescriptor->Type & LFTypeHasDescription)
 				{
 					dc.DrawText(pItemDescriptor->Description, -1, rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 
@@ -118,7 +118,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 
 						// Value
 						COLORREF oldColor = dc.GetTextColor();
-						if ((Themed) && (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing)) && !pData->Hdr.Selected)
+						if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !pData->Hdr.Selected)
 							dc.SetTextColor(0x808080);
 
 						dc.DrawText(Value, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);

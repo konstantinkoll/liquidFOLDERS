@@ -218,6 +218,14 @@ void CMainView::UpdateViewSettings()
 	}
 }
 
+void CMainView::UpdateSearchResult()
+{
+	FVPersistentData Data;
+	GetPersistentData(Data);
+
+	UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data, FALSE);
+}
+
 void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL UpdateSelection)
 {
 	p_Filter = pFilter;
@@ -443,7 +451,7 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 	return Modified;
 }
 
-void CMainView::RestoreFiles(BOOL All)
+void CMainView::RecoverFiles(BOOL All)
 {
 	CWaitCursor csr;
 
@@ -463,13 +471,8 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 	LFTransactionList* pTransactionList = BuildTransactionList();
 	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, Value1, Value2, Value3);
 
-	if (m_pWndFileView)
-		if (pTransactionList->m_Modified)
-		{
-			FVPersistentData Data;
-			GetPersistentData(Data);
-			UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data, FALSE);
-		}
+	if ((m_pWndFileView!=NULL) && pTransactionList->m_Modified)
+		UpdateSearchResult();
 
 	ShowNotification(pTransactionList->m_LastError);
 
@@ -554,7 +557,6 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 
 	ON_COMMAND(IDM_STORE_SYNCHRONIZE, OnStoreSynchronize)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
@@ -565,13 +567,15 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_COMMAND(IDM_FILE_OPENBROWSER, OnFileOpenBrowser)
 	ON_COMMAND(IDM_FILE_EDIT, OnFileEdit)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
-	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
+	ON_COMMAND(IDM_FILE_REMOVEFROMCLIPBOARD, OnFileRemoveFromClipboard)
+	ON_COMMAND(IDM_FILE_MAKETASK, OnFileMakeTask)
 	ON_COMMAND(IDM_FILE_ARCHIVE, OnFileArchive)
 	ON_COMMAND(IDM_FILE_COPY, OnFileCopy)
 	ON_COMMAND(IDM_FILE_SHORTCUT, OnFileShortcut)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
 	ON_COMMAND(IDM_FILE_PROPERTIES, OnFileProperties)
+	ON_COMMAND(IDM_FILE_TASKDONE, OnFileTaskDone)
 	ON_COMMAND(IDM_FILE_RECOVER, OnFileRecover)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RECOVER, OnUpdateFileCommands)
 END_MESSAGE_MAP()
@@ -589,41 +593,43 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_STORES_SYNCHRONIZE, 1);
-	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RECOVERALL, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_RECOVER, 5);
-	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 7, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 8, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 9);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 10, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 11);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 12);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
+	m_wndTaskbar.AddButton(IDM_FILE_TASKDONE, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 3, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RECOVERALL, 5, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_RECOVER, 6);
+	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 7);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 8, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 10);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 11, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 12);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 13);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 14);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 15);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 16);
 
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_OPENBROWSER, 17, TRUE);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 17, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_OPENBROWSER, 18, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 18, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 19, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
 
-	#define InspectorIconVisible     26
-	#define InspectorIconHidden      27
+	#define InspectorIconVisible     28
+	#define InspectorIconHidden      29
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 28, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 33, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -777,7 +783,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	CString tmpStr;
 
-	// Append "Open as FileDrop" and "Import folder" command when viewing a store
+	// Append "Open as FileDrop" when viewing a store
 	if (m_StoreIDValid)
 	{
 		if (pPopup->GetMenuItemCount())
@@ -785,14 +791,6 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
 		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
-
-		if (m_Context<=LFLastGroupContext)
-		{
-			pPopup->AppendMenu(MF_SEPARATOR | MF_BYPOSITION);
-
-			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_IMPORTFOLDER));
-			pPopup->AppendMenu(MF_POPUP | MF_BYPOSITION, IDM_STORE_IMPORTFOLDER, tmpStr);
-		}
 	}
 
 	// Insert "Select all" command
@@ -819,7 +817,7 @@ void CMainView::OnAdjustLayout()
 
 void CMainView::OnUpdateSelection()
 {
-	m_wndInspectorPane.AggregateStart();
+	m_wndInspectorPane.AggregateStart(m_Context);
 
 	INT Index = GetNextSelectedItem(-1);
 	m_FilesSelected = FALSE;
@@ -1078,7 +1076,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 
 void CMainView::OnSort(UINT nID)
 {
-	theApp.SetContextSort(m_Context, nID-IDM_ORGANIZE_FIRST, theApp.m_Attributes[nID-IDM_ORGANIZE_FIRST].AttrProperties.DefaultDescending);
+	theApp.SetContextSort(m_Context, nID-IDM_ORGANIZE_FIRST, theApp.m_Attributes[nID-IDM_ORGANIZE_FIRST].TypeProperties.DefaultDescending);
 
 	SetFocus();
 }
@@ -1154,7 +1152,7 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnNewClearNew()
 {
-	RestoreFiles(TRUE);
+	RecoverFiles(TRUE);
 }
 
 void CMainView::OnUpdateNewCommands(CCmdUI* pCmdUI)
@@ -1167,7 +1165,7 @@ void CMainView::OnUpdateNewCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnTrashRecoverAll()
 {
-	RestoreFiles(TRUE);
+	RecoverFiles(TRUE);
 }
 
 void CMainView::OnTrashEmpty()
@@ -1252,22 +1250,6 @@ void CMainView::OnStoreMakeDefault()
 		LFErrorBox(this, LFSetDefaultStore((*p_CookedFiles)[Index]->StoreID));
 }
 
-void CMainView::OnStoreImportFolder()
-{
-	if (m_Context==LFContextStores)
-	{
-		const INT Index = GetSelectedItem();
-		if (Index!=-1)
-			LFImportFolder((*p_CookedFiles)[Index]->StoreID, this);
-	}
-	else
-		if (m_StoreIDValid)
-		{
-			if (LFImportFolder(m_StoreID, this))
-				GetOwner()->PostMessage(WM_RELOAD);
-		}
-}
-
 void CMainView::OnStoreShortcut()
 {
 	const INT Index = GetSelectedItem();
@@ -1320,10 +1302,6 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					bEnable = !(pItemDescriptor->Type & LFTypeDefault);
 					break;
 
-				case IDM_STORE_IMPORTFOLDER:
-					bEnable = ((pItemDescriptor->Type & (LFTypeMounted | LFTypeWriteable))==(LFTypeMounted | LFTypeWriteable));
-					break;
-
 				case IDM_STORE_SHORTCUT:
 					bEnable = (pItemDescriptor->Type & LFTypeShortcutAllowed);
 					break;
@@ -1340,11 +1318,6 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					bEnable = TRUE;
 				}
 		}
-	}
-	else
-	{
-		if (pCmdUI->m_nID==IDM_STORE_IMPORTFOLDER)
-			bEnable = m_StoreIDValid && (m_Context<=LFLastGroupContext);
 	}
 
 	pCmdUI->Enable(bEnable);
@@ -1431,7 +1404,7 @@ void CMainView::OnFileRemember()
 		pClipboard->SendMessage(WM_COOKFILES);
 }
 
-void CMainView::OnFileRemove()
+void CMainView::OnFileRemoveFromClipboard()
 {
 	LFTransactionList* pTransactionList = BuildTransactionList();
 
@@ -1443,11 +1416,38 @@ void CMainView::OnFileRemove()
 	LFFreeTransactionList(pTransactionList);
 }
 
+void CMainView::OnFileMakeTask()
+{
+	// Default priority: 6 (normal/lime green)
+	LFVariantData Priority;
+	LFInitVariantData(Priority, LFAttrPriority);
+	Priority.IsNull = FALSE;
+	Priority.Rating = 4;
+
+	// Default due time: none
+	LFVariantData DueTime;
+	LFInitVariantData(DueTime, LFAttrDueTime);
+
+	LFMakeTaskDlg dlg(&Priority, &DueTime, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		CWaitCursor csr;
+
+		LFTransactionList* pTransactionList = BuildTransactionList();
+		LFDoTransaction(pTransactionList, LFTransactionTypeUpdateTask, NULL, NULL, &Priority, &DueTime);
+		UpdateSearchResult();
+
+		ShowNotification(pTransactionList->m_LastError);
+
+		LFFreeTransactionList(pTransactionList);
+	}
+}
+
 void CMainView::OnFileArchive()
 {
-	LFTransactionList* pTransactionList = BuildTransactionList();
-
 	CWaitCursor csr;
+
+	LFTransactionList* pTransactionList = BuildTransactionList();
 	LFDoTransaction(pTransactionList, LFTransactionTypeArchive);
 	RemoveTransactedItems(pTransactionList);
 
@@ -1479,6 +1479,7 @@ void CMainView::OnFileShortcut()
 	if (pTransactionList->m_ItemCount)
 	{
 		CWaitCursor csr;
+
 		for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
 			if (((*pTransactionList)[a].LastError==LFOk) && ((*pTransactionList)[a].Processed))
 				CreateShortcut(&(*pTransactionList)[a]);
@@ -1514,9 +1515,14 @@ void CMainView::OnFileProperties()
 	m_wndInspectorPane.SetFocus();
 }
 
+void CMainView::OnFileTaskDone()
+{
+	RecoverFiles();
+}
+
 void CMainView::OnFileRecover()
 {
-	RestoreFiles();
+	RecoverFiles();
 }
 
 void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
@@ -1550,8 +1556,12 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		bEnable = m_FilesSelected && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
 		break;
 
-	case IDM_FILE_REMOVE:
+	case IDM_FILE_REMOVEFROMCLIPBOARD:
 		bEnable = m_FilesSelected && (m_Context==LFContextClipboard);
+		break;
+
+	case IDM_FILE_MAKETASK:
+		bEnable = m_FilesSelected && (m_Context!=LFContextTasks) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
 		break;
 
 	case IDM_FILE_ARCHIVE:
@@ -1575,6 +1585,10 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 	case IDM_FILE_PROPERTIES:
 		bEnable = m_FilesSelected && !m_ShowInspectorPane;
+		break;
+
+	case IDM_FILE_TASKDONE:
+		bEnable = m_FilesSelected && (m_Context==LFContextTasks);
 		break;
 
 	case IDM_FILE_RECOVER:

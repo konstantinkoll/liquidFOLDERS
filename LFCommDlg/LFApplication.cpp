@@ -570,7 +570,7 @@ void LFApplication::AttributeToString(CString& Name, CString& Value, LFItemDescr
 		}
 
 		// Copy to buffer
-		if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat) && (Attr!=LFAttrDescription))
+		if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat))
 			Name = m_Attributes[Attr].Name;
 
 		Value = tmpStr;
@@ -595,7 +595,9 @@ CString LFApplication::GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR
 
 	CString Hint;
 	AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
-	AppendAttribute(Hint, pItemDescriptor, LFAttrDescription);
+
+	if (pItemDescriptor->Type & LFTypeHasDescription)
+		LFTooltip::AppendAttribute(Hint, _T(""), pItemDescriptor->Description);
 
 	// File format
 	if (pFormatName)

@@ -218,11 +218,20 @@ LFFilter* LoadFilter(LPCWSTR pFilename, LPCSTR StoreID)
 		if (!ReadFile(hFile, &Condition, min(Header.szCondition, sizeof(Condition)), &Read, NULL))
 			goto Leave;
 
-		LFFilterCondition* pFilterCondition = new LFFilterCondition;
-		memcpy_s(pFilterCondition, sizeof(LFFilterCondition), &Condition, sizeof(Condition));
-		pFilterCondition->pNext = pFilter->pConditionList;
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if (AttrProperties[a].PersistentID==Condition.AttrData.Attr)
+			{
+				// Replace persistent ID with actual sequential number
+				Condition.AttrData.Attr = a;
 
-		pFilter->pConditionList = pFilterCondition;
+				LFFilterCondition* pFilterCondition = new LFFilterCondition;
+				*pFilterCondition = Condition;
+				pFilterCondition->pNext = pFilter->pConditionList;
+
+				pFilter->pConditionList = pFilterCondition;
+
+				break;
+			}
 	}
 
 Leave:
@@ -267,7 +276,13 @@ BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
 			pFilterCondition = pFilter->pConditionList;
 			while (pFilterCondition)
 			{
-				if (!WriteFile(hFile, pFilterCondition, sizeof(LFFilterCondition), &Written, NULL))
+				// Replace sequential number with persistent ID
+				LFPersistentFilterCondition Condition;
+				Condition = *pFilterCondition;
+				Condition.AttrData.Attr = AttrProperties[Condition.AttrData.Attr].PersistentID;
+				Condition.pNext = NULL;
+
+				if (!WriteFile(hFile, &Condition, sizeof(LFFilterCondition), &Written, NULL))
 					break;
 
 				pFilterCondition = pFilterCondition->pNext;

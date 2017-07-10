@@ -81,7 +81,9 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 				(m_ContextViewSettings.SortBy==LFAttrLocationName) ||
 				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeDuration) ||
 				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeGenre) ||
+				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeGeoCoordinates) ||
 				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeIATACode) ||
+				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeRating) ||
 				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeTime);
 		}
 
@@ -101,7 +103,7 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 		const UINT Attr = m_ContextViewSettings.SortBy;
 		const UINT Type = theApp.m_Attributes[Attr].AttrProperties.Type;
 
-		m_PreviewAttribute = m_HasFolders && ((Type==LFTypeGenre) || (Type==LFTypeIATACode) || (Type==LFTypeGeoCoordinates) || (Attr==LFAttrRoll) || theApp.m_Attributes[Attr].AttrProperties.ShowRepresentativeThumbnail) ? Attr : -1;
+		m_PreviewAttribute = m_HasFolders && ((Type==LFTypeGenre) || (Type==LFTypeGeoCoordinates) || (Type==LFTypeIATACode) || (Attr==LFAttrRoll) || theApp.m_Attributes[Attr].AttrProperties.ShowRepresentativeThumbnail) ? Attr : -1;
 	}
 	else
 	{
@@ -341,16 +343,19 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 
 			DrawJumboIcon(dc, g, rect.TopLeft(), pItemDescriptor);
 
-			rect.right = rect.left+m_PreviewSize.cx-CARDPADDING;
-			rect.top += 128+1;
-
 			// Description
-			CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
+			if (pItemDescriptor->Type & LFTypeHasDescription)
+			{
+				rect.right = rect.left+m_PreviewSize.cx-CARDPADDING;
+				rect.top += 128+1;
 
-			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
-			dc.DrawText(pItemDescriptor->Description, -1, rect, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+				CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
 
-			dc.SelectObject(pOldFont);
+				dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
+				dc.DrawText(pItemDescriptor->Description, -1, rect, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+				dc.SelectObject(pOldFont);
+			}
 		}
 	}
 }
@@ -392,7 +397,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 				if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
 				{
 					// Rating bitmap
-					const UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[LFAttrRating]);
+					const UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[Attr]);
 					ASSERT(Rating<=LFMaxRating);
 
 					CDC dcMem;
@@ -448,7 +453,7 @@ void CListView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
 		wp.x = GetHeaderIndent();
 		wp.y = 0;
 
-		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
 	}
 
 	if (IsCtrlThemed())
@@ -782,7 +787,7 @@ void CListView::OnToggleAttribute(UINT nID)
 	const UINT Attr = nID-IDM_LIST_TOGGLEATTRIBUTE;
 	ASSERT(Attr<LFAttributeCount);
 
-	p_ContextViewSettings->ColumnWidth[Attr] ? 0 : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
+	p_ContextViewSettings->ColumnWidth[Attr] = p_ContextViewSettings->ColumnWidth[Attr] ? 0 : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
 
 	theApp.UpdateViewSettings(m_Context);
 }
@@ -927,7 +932,7 @@ void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 	const UINT Attr = pHdr->iItem;
 
 	// Remain in list view when possible!
-	theApp.SetContextSort(m_Context, Attr, p_ContextViewSettings->SortBy==Attr ? !p_ContextViewSettings->Descending : theApp.m_Attributes[Attr].AttrProperties.DefaultDescending, FALSE);
+	theApp.SetContextSort(m_Context, Attr, p_ContextViewSettings->SortBy==Attr ? !p_ContextViewSettings->Descending : theApp.m_Attributes[Attr].TypeProperties.DefaultDescending, FALSE);
 
 	*pResult = FALSE;
 }

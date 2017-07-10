@@ -10,13 +10,14 @@
 // LFEditTimeDlg
 //
 
-LFEditTimeDlg::LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd)
-	: LFDialog(IDD_EDITTIME, pParentWnd)
+LFEditTimeDlg::LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd, UINT nIDTemplate, BOOL UseTime, BOOL UseDate)
+	: LFDialog(nIDTemplate, pParentWnd)
 {
 	ASSERT(pData);
 
 	p_Data = pData;
-	m_UseTime = TRUE;
+	m_UseDate = UseDate;
+	m_UseTime = UseTime;
 }
 
 void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
@@ -26,7 +27,7 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CALENDAR, m_wndCalendar);
 	DDX_Control(pDX, IDC_TIME, m_wndTime);
 
-	if (pDX->m_bSaveAndValidate)
+	if (pDX->m_bSaveAndValidate && m_UseDate)
 	{
 		ASSERT(LFGetApp()->m_Attributes[p_Data->Attr].AttrProperties.Type==LFTypeTime);
 		p_Data->IsNull = FALSE;
@@ -57,9 +58,10 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL LFEditTimeDlg::InitDialog()
 {
-	SetWindowText(LFGetApp()->m_Attributes[p_Data->Attr].Name);
+	if (m_lpszTemplateName==MAKEINTRESOURCE(IDD_EDITTIME))
+		SetWindowText(LFGetApp()->m_Attributes[p_Data->Attr].Name);
 
-	// Größe
+	// Size
 	CRect rect;
 	m_wndCalendar.GetMinReqRect(&rect);
 
@@ -69,8 +71,8 @@ BOOL LFEditTimeDlg::InitDialog()
 	INT GrowX = rect.Width()-rectCalendar.Width();
 	INT GrowY = rect.Height()-rectCalendar.Height();
 
-#define GrowXY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
-#define GrowX(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
+#define GrowXY(pWnd) { pWnd->GetWindowRect(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
+#define GrowX(pWnd) { pWnd->GetWindowRect(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
 #define GrowXMoveY(pWnd) { pWnd->GetWindowRect(rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
 
 	GrowXY(this);
@@ -80,7 +82,7 @@ BOOL LFEditTimeDlg::InitDialog()
 	GrowXMoveY(GetDlgItem(IDC_USETIME));
 	GrowXMoveY(GetDlgItem(IDC_TIME));
 
-	// Werte
+	// Data
 	if (!p_Data->IsNull)
 		if ((p_Data->Time.dwHighDateTime) || (p_Data->Time.dwLowDateTime))
 		{
@@ -120,9 +122,16 @@ BOOL LFEditTimeDlg::InitDialog()
 
 	// Time
 	((CButton*)GetDlgItem(IDC_USETIME))->SetCheck(m_UseTime);
-	m_wndTime.EnableWindow(m_UseTime);
+	EnableControls();
 
 	return TRUE;
+}
+
+void LFEditTimeDlg::EnableControls()
+{
+	GetDlgItem(IDC_USETIME)->EnableWindow(m_UseDate);
+	m_wndCalendar.EnableWindow(m_UseDate);
+	m_wndTime.EnableWindow(m_UseDate && m_UseTime);
 }
 
 
@@ -133,5 +142,5 @@ END_MESSAGE_MAP()
 void LFEditTimeDlg::OnUseTime()
 {
 	m_UseTime = ((CButton*)GetDlgItem(IDC_USETIME))->GetCheck();
-	m_wndTime.EnableWindow(m_UseTime);
+	EnableControls();
 }

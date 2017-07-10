@@ -56,6 +56,7 @@ public:
 	void AddCaption(UINT ResID);
 	void ResetCounts();
 	void SetCount(UINT CmdID, UINT Count);
+	void SetCount(UINT CmdID, UINT Count, COLORREF Color);
 	INT GetPreferredWidth(INT MaxWidth=-1) const;
 	INT GetMinHeight() const;
 	void SetSelection(UINT CmdID=0);

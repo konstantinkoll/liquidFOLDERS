@@ -413,6 +413,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	case LFTransactionTypePutInTrash:
 	case LFTransactionTypeRecover:
 	case LFTransactionTypeUpdate:
+	case LFTransactionTypeUpdateTask:
 	case LFTransactionTypeDelete:
 		SendLFNotifyMessage(LFMessages.StatisticsChanged);
 

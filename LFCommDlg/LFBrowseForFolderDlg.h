@@ -14,12 +14,11 @@
 class LFBrowseForFolderDlg : public LFDialog
 {
 public:
-	LFBrowseForFolderDlg(CWnd* pParentWnd=NULL, CString Caption=_T(""), CString Hint=_T(""), BOOL OnlyFSObjects=TRUE, BOOL ShowDeleteSource=FALSE, CString RootPath=_T(""));
+	LFBrowseForFolderDlg(const CString& Caption, const CString& Hint, CWnd* pParentWnd=NULL, BOOL OnlyFSObjects=TRUE, const CString& RootPath=_T(""));
 	~LFBrowseForFolderDlg();
 
 	LPITEMIDLIST m_FolderPIDL;
 	WCHAR m_FolderPath[MAX_PATH];
-	BOOL m_DeleteSource;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -32,12 +31,10 @@ protected:
 
 	CString m_RootPath;
 	BOOL m_OnlyFSObjects;
-	BOOL m_ShowDeleteSource;
 	CString m_Caption;
 	CString m_Hint;
 
 private:
 	CHeaderArea m_wndHeaderArea;
 	CExplorerTree m_wndExplorerTree;
-	CButton m_wndDeleteSource;
 };

@@ -31,10 +31,10 @@ public:
 	void SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProgress* pProgress=NULL);
 	BOOL ExistingFileID(LPCSTR pFileID);
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
-	void UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FILETIME* pTransactionTime);
+	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, UINT Flags);
 
 	// Operations with callbacks to CStore object
-	void Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
+	void Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL, BOOL MakeTask=FALSE);
 	UINT Synchronize(LFProgress* pProgress=NULL);
 	void Delete(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
@@ -62,8 +62,7 @@ inline void CIndex::ResetStatistics()
 {
 	assert(p_StoreDescriptor);
 
-	ZeroMemory(p_StoreDescriptor->FileCount, sizeof(p_StoreDescriptor->FileCount));
-	ZeroMemory(p_StoreDescriptor->FileSize, sizeof(p_StoreDescriptor->FileSize));
+	ZeroMemory(&p_StoreDescriptor->Statistics, sizeof(LFStatistics));
 }
 
 inline void CIndex::ResetStatistics(BOOL& DoReset)

@@ -59,6 +59,6 @@ inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, LFStor
 {
 	assert(pStoreDescriptor);
 
-	FileSummary.FileCount += pStoreDescriptor->FileCount[0];
-	FileSummary.FileSize += pStoreDescriptor->FileSize[0];
+	FileSummary.FileCount += pStoreDescriptor->Statistics.FileCount[0];
+	FileSummary.FileSize += pStoreDescriptor->Statistics.FileSize[0];
 }

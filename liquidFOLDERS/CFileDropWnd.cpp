@@ -147,7 +147,6 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CBackstageWnd)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnStoreOpen)
 	ON_COMMAND(IDM_STORE_SYNCHRONIZE, OnStoreSynchronize)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
@@ -338,11 +337,6 @@ void CFileDropWnd::OnStoreMakeDefault()
 	LFErrorBox(this, LFSetDefaultStore(m_Store.StoreID));
 }
 
-void CFileDropWnd::OnStoreImportFolder()
-{
-	LFImportFolder(m_Store.StoreID, this);
-}
-
 void CFileDropWnd::OnStoreShortcut()
 {
 	LFCreateDesktopShortcutForStoreEx(&m_Store);
@@ -371,10 +365,6 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 	case IDM_STORE_MAKEDEFAULT:
 		bEnable = !(m_StoreType & LFTypeDefault);
-		break;
-
-	case IDM_STORE_IMPORTFOLDER:
-		bEnable = ((m_StoreType & (LFTypeMounted | LFTypeWriteable))==(LFTypeMounted | LFTypeWriteable));
 		break;
 
 	case IDM_STORE_SHORTCUT:

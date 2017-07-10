@@ -152,13 +152,13 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Allgemein"
+    IDS_ATTRCATEGORY_TASKS  "Aufgaben"
     IDS_ATTRCATEGORY_GEOTAGGING "Geodaten"
     IDS_ATTRCATEGORY_VISUAL "Visuell"
     IDS_ATTRCATEGORY_PHOTOGRAPHIC "Fotos"
     IDS_ATTRCATEGORY_AUDIO  "Audio"
     IDS_ATTRCATEGORY_TIMEBASED "Zeitbasiert"
     IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographisch"
-    IDS_ATTRCATEGORY_WORKFLOW "Vorgang"
     IDS_ATTRCATEGORY_INTERNAL "Interner Gebrauch"
 END
 
@@ -172,7 +172,7 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Dokumente\nOffice-Dokumente"
     IDS_CONTEXT_CONTACTS    "Kontakte"
     IDS_CONTEXT_MESSAGES    "Nachrichten"
-    IDS_CONTEXT_EVENTS      "Veranstaltungen"
+    IDS_CONTEXT_TASKS       "Aufgaben\nAls Aufgaben markierte Dateien"
     IDS_CONTEXT_NEW         "Neue Dateien\nKürzlich hinzugefügte Dateien"
     IDS_CONTEXT_ARCHIVE     "Archiv\nArchivierte Dateien"
     IDS_CONTEXT_TRASH       "Papierkorb\nGelöschte Dateien"
@@ -195,10 +195,10 @@ STRINGTABLE
 BEGIN
     IDS_NEWSTORE            "Neuer Speicherort"
     IDS_LASTSEEN            "Zuletzt angeschlossen auf %s"
-    IDS_FILESUMMARY_SINGULAR  "%u Datei (%s)"
-    IDS_FILESUMMARY_PLURAL    "%u Dateien (%s)"
+    IDS_FILESUMMARY_SINGULAR "%u Datei (%s)"
+    IDS_FILESUMMARY_PLURAL  "%u Dateien (%s)"
     IDS_MEDIASUMMARY_SINGULAR "%u Titel (%s)"
-    IDS_MEDIASUMMARY_PLURAL   "%u Titel (%s)"
+    IDS_MEDIASUMMARY_PLURAL "%u Titel (%s)"
     IDS_MINUTE              "%I64u Minute"
     IDS_MINUTES             "%I64u Minuten"
 END
@@ -213,10 +213,10 @@ BEGIN
     IDS_RATING3             "Gut"
     IDS_RATING4             "Ausgezeichnet"
     IDS_RATING5             "Exzellent"
-    IDS_PRIORITY1           "Sehr niedrig"
-    IDS_PRIORITY2           "Niedrig"
-    IDS_PRIORITY3           "Normal"
-    IDS_PRIORITY4           "Hoch"
+    IDS_PRIORITY1           "Niedrig"
+    IDS_PRIORITY2           "Normal"
+    IDS_PRIORITY3           "Hoch"
+    IDS_PRIORITY4           "Sehr hoch"
     IDS_PRIORITY5           "Dringend"
     IDS_SIZE1               "Winzig (< 32 KB)"
     IDS_SIZE2               "Klein (< 128 KB)"
@@ -298,44 +298,44 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Name"
-    IDS_ATTR_STOREID        "Speicherort-ID"
-    IDS_ATTR_FILEID         "Datei-ID"
-    IDS_ATTR_COMMENTS       "Kommentar"
+    IDS_ATTR_PRIORITY       "Priorität"
+    IDS_ATTR_CREATIONTIME   "Erstellt am"
+    IDS_ATTR_FILETIME       "Geändert am"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_DESCRIPTION    "Beschreibung"
-    IDS_ATTR_CREATIONTIME   "Erstellt am"
-    IDS_ATTR_FILETIME       "Geändert am"
     IDS_ATTR_ADDTIME        "Hinzugefügt am"
-    IDS_ATTR_DELETETIME     "Gelöscht am"
+    IDS_ATTR_DUETIME        "Fällig am"
+    IDS_ATTR_DONETIME       "Erledigt am"
     IDS_ATTR_ARCHIVETIME    "Archiviert am"
+    IDS_ATTR_DELETETIME     "Gelöscht am"
     IDS_ATTR_FILEFORMAT     "Dateiformat"
     IDS_ATTR_FILECOUNT      "Dateianzahl"
     IDS_ATTR_FILESIZE       "Größe"
-    IDS_ATTR_FLAGS          "Markierungen"
-    IDS_ATTR_URL            "URL"
+    IDS_ATTR_COLOR          "Farbe"
     IDS_ATTR_HASHTAGS       "Hashtags"
     IDS_ATTR_RATING         "Bewertung"
-    IDS_ATTR_PRIORITY       "Priorität"
+    IDS_ATTR_COMMENTS       "Kommentar"
     IDS_ATTR_LOCATIONNAME   "Ortsname"
     IDS_ATTR_LOCATIONIATA   "IATA-Code"
+    IDS_ATTR_LOCATIONGPS    "GPS-Koordinaten"
+    IDS_ATTR_URL            "URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_LOCATIONGPS    "GPS-Koordinaten"
+    IDS_ATTR_ROLL           "Rolle"
     IDS_ATTR_WIDTH          "Breite"
     IDS_ATTR_HEIGHT         "Höhe"
     IDS_ATTR_DIMENSION      "Auflösung"
     IDS_ATTR_ASPECTRATIO    "Seitenverhältnis"
     IDS_ATTR_VIDEOCODEC     "Video-Codec"
-    IDS_ATTR_ROLL           "Rolle"
     IDS_ATTR_EXPOSURE       "Belichtung"
     IDS_ATTR_FOCUS          "Focus"
     IDS_ATTR_APERTURE       "Blende"
     IDS_ATTR_CHIP           "Chip"
+    IDS_ATTR_ARTIST         "Künstler"
     IDS_ATTR_ALBUM          "Album"
     IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Kanäle"
@@ -347,26 +347,19 @@ STRINGTABLE
 BEGIN
     IDS_ATTR_DURATION       "Laufzeit"
     IDS_ATTR_BITRATE        "Bitrate"
-    IDS_ATTR_ARTIST         "Künstler"
-    IDS_ATTR_TITLE          "Titel"
+    IDS_ATTR_RECORDINGTIME  "Aufgenommen am"
+    IDS_ATTR_RECORDINGEQUIPMENT "Gerät"
+    IDS_ATTR_AUTHOR         "Autor"
     IDS_ATTR_COPYRIGHT      "Copyright"
+    IDS_ATTR_TITLE          "Titel"
     IDS_ATTR_ISBN           "ISBN"
     IDS_ATTR_LANGUAGE       "Sprache"
     IDS_ATTR_PAGES          "Seitenzahl"
-    IDS_ATTR_RECORDINGTIME  "Aufgenommen am"
-    IDS_ATTR_RECORDINGEQUIPMENT "Gerät"
     IDS_ATTR_SIGNATURE      "Signatur"
     IDS_ATTR_FROM           "Von"
     IDS_ATTR_TO             "An"
     IDS_ATTR_RESPONSIBLE    "Verantwortlich"
-    IDS_ATTR_DUETIME        "Fällig am"
-    IDS_ATTR_DONETIME       "Erledigt am"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_CUSTOMER       "Kunde oder Klient"
-    IDS_ATTR_AUTHOR         "Autor"
 END
 
 STRINGTABLE 
@@ -460,13 +453,13 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Básico"
+    IDS_ATTRCATEGORY_TASKS  "Tareas"
     IDS_ATTRCATEGORY_GEOTAGGING "Geoetiquetado"
     IDS_ATTRCATEGORY_VISUAL "Visual"
     IDS_ATTRCATEGORY_PHOTOGRAPHIC "Fotos"
     IDS_ATTRCATEGORY_AUDIO  "Audio"
     IDS_ATTRCATEGORY_TIMEBASED "Basados en tiempo"
     IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliográfico"
-    IDS_ATTRCATEGORY_WORKFLOW "Flujo de trabajo"
     IDS_ATTRCATEGORY_INTERNAL "Uso interno"
 END
 
@@ -480,7 +473,7 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Documentos\nDocumentos de oficina"
     IDS_CONTEXT_CONTACTS    "Contactos"
     IDS_CONTEXT_MESSAGES    "Mensajes"
-    IDS_CONTEXT_EVENTS      "Eventos"
+    IDS_CONTEXT_TASKS       "Tareas\nArchivos marcados como tareas"
     IDS_CONTEXT_NEW         "Archivos nuevos\nArchivos añadidos recientemente"
     IDS_CONTEXT_ARCHIVE     "Archivo\nArchivos archivados"
     IDS_CONTEXT_TRASH       "Basura\nArchivos eliminados"
@@ -503,10 +496,10 @@ STRINGTABLE
 BEGIN
     IDS_NEWSTORE            "Nuevo ubicación"
     IDS_LASTSEEN            "Conectado por última vez desde %s"
-    IDS_FILESUMMARY_SINGULAR  "%u archivo (%s)"
-    IDS_FILESUMMARY_PLURAL    "%u archivos (%s)"
+    IDS_FILESUMMARY_SINGULAR "%u archivo (%s)"
+    IDS_FILESUMMARY_PLURAL  "%u archivos (%s)"
     IDS_MEDIASUMMARY_SINGULAR "%u pieza (%s)"
-    IDS_MEDIASUMMARY_PLURAL   "%u piezas (%s)"
+    IDS_MEDIASUMMARY_PLURAL "%u piezas (%s)"
     IDS_MINUTE              "%I64u minuto"
     IDS_MINUTES             "%I64u minutos"
 END
@@ -521,10 +514,10 @@ BEGIN
     IDS_RATING3             "Bueno"
     IDS_RATING4             "Sensacional"
     IDS_RATING5             "Formidable"
-    IDS_PRIORITY1           "Muy bajo"
-    IDS_PRIORITY2           "Bajo"
-    IDS_PRIORITY3           "Medio"
-    IDS_PRIORITY4           "Alto"
+    IDS_PRIORITY1           "Bajo"
+    IDS_PRIORITY2           "Medio"
+    IDS_PRIORITY3           "Alto"
+    IDS_PRIORITY4           "Muy alto"
     IDS_PRIORITY5           "Urgente"
     IDS_SIZE1               "Minúsculo (< 32 KB)"
     IDS_SIZE2               "Chico (< 128 KB)"
@@ -567,8 +560,7 @@ BEGIN
                             "Un ubicación está por el momento bloqueado por otro dispositivo."
     IDS_ERR_MEMORY          "Error de memoria"
     IDS_ERR_ILLEGALQUERY    "El filtro describe una solicitud ilegal."
-    IDS_ERR_ILLEGALSTOREDESCRIPTOR 
-                            "El ubicación es invalidez."
+    IDS_ERR_ILLEGALSTOREDESCRIPTOR "El ubicación es invalidez."
 END
 
 STRINGTABLE 
@@ -606,44 +598,44 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Nombre"
-    IDS_ATTR_STOREID        "ID de ubicación"
-    IDS_ATTR_FILEID         "ID de archivo"
-    IDS_ATTR_COMMENTS       "Comentarios"
+    IDS_ATTR_PRIORITY       "Prioridad"
+    IDS_ATTR_CREATIONTIME   "Creado"
+    IDS_ATTR_FILETIME       "Modificado"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_DESCRIPTION    "Descripción"
-    IDS_ATTR_CREATIONTIME   "Creado"
-    IDS_ATTR_FILETIME       "Modificado"
     IDS_ATTR_ADDTIME        "Añadido"
-    IDS_ATTR_DELETETIME     "Eliminado"
+    IDS_ATTR_DUETIME        "Tiempo debido"
+    IDS_ATTR_DONETIME       "Finalizado"
     IDS_ATTR_ARCHIVETIME    "Archivado"
+    IDS_ATTR_DELETETIME     "Eliminado"
     IDS_ATTR_FILEFORMAT     "Formato de archivo"
     IDS_ATTR_FILECOUNT      "Número de archivos"
     IDS_ATTR_FILESIZE       "Tamaño"
-    IDS_ATTR_FLAGS          "Indicadores"
-    IDS_ATTR_URL            "URL"
+    IDS_ATTR_COLOR          "Color"
     IDS_ATTR_HASHTAGS       "Etiquetas"
     IDS_ATTR_RATING         "Clasificación"
-    IDS_ATTR_PRIORITY       "Prioridad"
+    IDS_ATTR_COMMENTS       "Comentarios"
     IDS_ATTR_LOCATIONNAME   "Nombre de ubicación"
     IDS_ATTR_LOCATIONIATA   "Código de IATA"
+    IDS_ATTR_LOCATIONGPS    "Ubicación GPS"
+    IDS_ATTR_URL            "URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_LOCATIONGPS    "Ubicación GPS"
+    IDS_ATTR_ROLL           "Rollo"
     IDS_ATTR_WIDTH          "Anchura"
     IDS_ATTR_HEIGHT         "Altura"
     IDS_ATTR_DIMENSION      "Dimensión"
     IDS_ATTR_ASPECTRATIO    "Proporción de alto y ancho"
     IDS_ATTR_VIDEOCODEC     "Códec de video"
-    IDS_ATTR_ROLL           "Rollo"
     IDS_ATTR_EXPOSURE       "Exposición"
     IDS_ATTR_FOCUS          "Foco"
     IDS_ATTR_APERTURE       "Apertura"
     IDS_ATTR_CHIP           "Chip"
+    IDS_ATTR_ARTIST         "Artista"
     IDS_ATTR_ALBUM          "Álbum"
     IDS_ATTR_GENRE          "Género"
     IDS_ATTR_CHANNELS       "Canales"
@@ -655,26 +647,19 @@ STRINGTABLE
 BEGIN
     IDS_ATTR_DURATION       "Duración"
     IDS_ATTR_BITRATE        "Tasa de bits"
-    IDS_ATTR_ARTIST         "Artista"
-    IDS_ATTR_TITLE          "Título"
+    IDS_ATTR_RECORDINGTIME  "Tiempo registrado"
+    IDS_ATTR_RECORDINGEQUIPMENT "Equipo"
+    IDS_ATTR_AUTHOR         "Autor"
     IDS_ATTR_COPYRIGHT      "Derecho de reproducción"
+    IDS_ATTR_TITLE          "Título"
     IDS_ATTR_ISBN           "ISBN"
     IDS_ATTR_LANGUAGE       "Idioma"
     IDS_ATTR_PAGES          "Página"
-    IDS_ATTR_RECORDINGTIME  "Tiempo registrado"
-    IDS_ATTR_RECORDINGEQUIPMENT "Equipo"
     IDS_ATTR_SIGNATURE      "Firma"
     IDS_ATTR_FROM           "De"
     IDS_ATTR_TO             "Para"
     IDS_ATTR_RESPONSIBLE    "Responsable"
-    IDS_ATTR_DUETIME        "En tiempo"
-    IDS_ATTR_DONETIME       "Finalizado"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_CUSTOMER       "Consumidor ó cliente"
-    IDS_ATTR_AUTHOR         "Autor"
 END
 
 STRINGTABLE 
@@ -768,13 +753,13 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Fondamental"
+    IDS_ATTRCATEGORY_TASKS  "Tâches"
     IDS_ATTRCATEGORY_GEOTAGGING "Geodata"
     IDS_ATTRCATEGORY_VISUAL "Visuel"
     IDS_ATTRCATEGORY_PHOTOGRAPHIC "Photos"
     IDS_ATTRCATEGORY_AUDIO  "Audio"
     IDS_ATTRCATEGORY_TIMEBASED "Basé sur le temps"
     IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographique"
-    IDS_ATTRCATEGORY_WORKFLOW "Processus"
     IDS_ATTRCATEGORY_INTERNAL "Utilisation interne"
 END
 
@@ -788,7 +773,7 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Documents\nDocuments de bureau"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
-    IDS_CONTEXT_EVENTS      "Événements"
+    IDS_CONTEXT_TASKS       "Tâches\nFichiers marqués comme tâches"
     IDS_CONTEXT_NEW         "Nouveaux fichiers\nFichiers ajoutés récemment"
     IDS_CONTEXT_ARCHIVE     "Archive\nLes fichiers archivés"
     IDS_CONTEXT_TRASH       "Déchets\nLes fichiers marqués pour la radiation finale"
@@ -811,10 +796,10 @@ STRINGTABLE
 BEGIN
     IDS_NEWSTORE            "Emplacement nouveau"
     IDS_LASTSEEN            "Dernier monté en %s"
-    IDS_FILESUMMARY_SINGULAR  "%u fichier (%s)"
-    IDS_FILESUMMARY_PLURAL    "%u fichiers (%s)"
+    IDS_FILESUMMARY_SINGULAR "%u fichier (%s)"
+    IDS_FILESUMMARY_PLURAL  "%u fichiers (%s)"
     IDS_MEDIASUMMARY_SINGULAR "%u morceau (%s)"
-    IDS_MEDIASUMMARY_PLURAL   "%u morceaux (%s)"
+    IDS_MEDIASUMMARY_PLURAL "%u morceaux (%s)"
     IDS_MINUTE              "%I64u minute"
     IDS_MINUTES             "%I64u minutes"
 END
@@ -829,10 +814,10 @@ BEGIN
     IDS_RATING3             "Bien"
     IDS_RATING4             "De manière distinguée"
     IDS_RATING5             "Excellent"
-    IDS_PRIORITY1           "Très bas"
-    IDS_PRIORITY2           "Bas"
-    IDS_PRIORITY3           "Normal"
-    IDS_PRIORITY4           "Haut"
+    IDS_PRIORITY1           "Bas"
+    IDS_PRIORITY2           "Normal"
+    IDS_PRIORITY3           "Haut"
+    IDS_PRIORITY4           "Très jaut"
     IDS_PRIORITY5           "Urgent"
     IDS_SIZE1               "Minuscule (< 32 KB)"
     IDS_SIZE2               "Petit (< 128 KB)"
@@ -876,8 +861,7 @@ BEGIN
                             "Un emplacement est bloqué à présent par un autre appareil."
     IDS_ERR_MEMORY          "Faute de mémoire"
     IDS_ERR_ILLEGALQUERY    "Le filtre décrit une interrogation non valable."
-    IDS_ERR_ILLEGALSTOREDESCRIPTOR 
-                            "L'emplacement est invalidité."
+    IDS_ERR_ILLEGALSTOREDESCRIPTOR "L'emplacement est invalidité."
 END
 
 STRINGTABLE 
@@ -915,44 +899,44 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Nom"
-    IDS_ATTR_STOREID        "ID du emplacement"
-    IDS_ATTR_FILEID         "ID du fichier"
-    IDS_ATTR_COMMENTS       "Commentaire"
+    IDS_ATTR_PRIORITY       "Priorité"
+    IDS_ATTR_CREATIONTIME   "Temp de création"
+    IDS_ATTR_FILETIME       "Changé le"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_DESCRIPTION    "Description"
-    IDS_ATTR_CREATIONTIME   "Temp de création"
-    IDS_ATTR_FILETIME       "Changé le"
     IDS_ATTR_ADDTIME        "De manière ajoutée le"
-    IDS_ATTR_DELETETIME     "De manière effacée le"
+    IDS_ATTR_DUETIME        "Dû le"
+    IDS_ATTR_DONETIME       "Fini le"
     IDS_ATTR_ARCHIVETIME    "Archivé le"
+    IDS_ATTR_DELETETIME     "De manière effacée le"
     IDS_ATTR_FILEFORMAT     "Format de fichier"
     IDS_ATTR_FILECOUNT      "Nombre de fichier"
     IDS_ATTR_FILESIZE       "Grandeur"
-    IDS_ATTR_FLAGS          "Attributes"
-    IDS_ATTR_URL            "Adresse URL"
+    IDS_ATTR_COLOR          "Couleur"
     IDS_ATTR_HASHTAGS       "Mots-dièse"
     IDS_ATTR_RATING         "Estimation"
-    IDS_ATTR_PRIORITY       "Priorité"
+    IDS_ATTR_COMMENTS       "Commentaire"
     IDS_ATTR_LOCATIONNAME   "Nom d'endroit"
     IDS_ATTR_LOCATIONIATA   "Code d'IATA"
+    IDS_ATTR_LOCATIONGPS    "Coordonnées GPS"
+    IDS_ATTR_URL            "Adresse URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_LOCATIONGPS    "Coordonnées GPS"
+    IDS_ATTR_ROLL           "Rouleau"
     IDS_ATTR_WIDTH          "Latitude"
     IDS_ATTR_HEIGHT         "Altitude"
     IDS_ATTR_DIMENSION      "Dimension"
     IDS_ATTR_ASPECTRATIO    "Rapport largeur"
     IDS_ATTR_VIDEOCODEC     "Codec de vidèo"
-    IDS_ATTR_ROLL           "Rouleau"
     IDS_ATTR_EXPOSURE       "Exposition"
     IDS_ATTR_FOCUS          "Foyer"
     IDS_ATTR_APERTURE       "Ouverture"
     IDS_ATTR_CHIP           "Chip"
+    IDS_ATTR_ARTIST         "Artiste"
     IDS_ATTR_ALBUM          "Album"
     IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Canaux"
@@ -964,26 +948,19 @@ STRINGTABLE
 BEGIN
     IDS_ATTR_DURATION       "Durée"
     IDS_ATTR_BITRATE        "Débit binaire"
-    IDS_ATTR_ARTIST         "Artiste"
-    IDS_ATTR_TITLE          "Titre"
+    IDS_ATTR_RECORDINGTIME  "Temp d'enregistrement"
+    IDS_ATTR_RECORDINGEQUIPMENT "Équipement"
+    IDS_ATTR_AUTHOR         "Auteur"
     IDS_ATTR_COPYRIGHT      "Copyright"
+    IDS_ATTR_TITLE          "Titre"
     IDS_ATTR_ISBN           "ISBN"
     IDS_ATTR_LANGUAGE       "Langue"
     IDS_ATTR_PAGES          "Comte de page"
-    IDS_ATTR_RECORDINGTIME  "Temp d'enregistrement"
-    IDS_ATTR_RECORDINGEQUIPMENT "Équipement"
     IDS_ATTR_SIGNATURE      "Signature"
     IDS_ATTR_FROM           "De"
     IDS_ATTR_TO             "À"
     IDS_ATTR_RESPONSIBLE    "Personne responsable"
-    IDS_ATTR_DUETIME        "Dû le"
-    IDS_ATTR_DONETIME       "Fini le"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_CUSTOMER       "Client"
-    IDS_ATTR_AUTHOR         "Auteur"
 END
 
 STRINGTABLE 
@@ -1114,13 +1091,13 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Basic"
+    IDS_ATTRCATEGORY_TASKS  "Tasks"
     IDS_ATTRCATEGORY_GEOTAGGING "Geotagging"
     IDS_ATTRCATEGORY_VISUAL "Visual"
     IDS_ATTRCATEGORY_PHOTOGRAPHIC "Photos"
     IDS_ATTRCATEGORY_AUDIO  "Audio"
     IDS_ATTRCATEGORY_TIMEBASED "Timebased"
     IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographic"
-    IDS_ATTRCATEGORY_WORKFLOW "Workflow"
     IDS_ATTRCATEGORY_INTERNAL "Internal use"
 END
 
@@ -1134,7 +1111,7 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Documents\nOffice documents"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
-    IDS_CONTEXT_EVENTS      "Events"
+    IDS_CONTEXT_TASKS       "Tasks\nFiles marked as tasks"
     IDS_CONTEXT_NEW         "New files\nRecently added files"
     IDS_CONTEXT_ARCHIVE     "Archive\nArchived files"
     IDS_CONTEXT_TRASH       "Trash\nDeleted files"
@@ -1157,10 +1134,10 @@ STRINGTABLE
 BEGIN
     IDS_NEWSTORE            "New location"
     IDS_LASTSEEN            "Last mounted on %s"
-    IDS_FILESUMMARY_SINGULAR  "%u file (%s)"
-    IDS_FILESUMMARY_PLURAL    "%u files (%s)"
+    IDS_FILESUMMARY_SINGULAR "%u file (%s)"
+    IDS_FILESUMMARY_PLURAL  "%u files (%s)"
     IDS_MEDIASUMMARY_SINGULAR "%u medium (%s)"
-    IDS_MEDIASUMMARY_PLURAL   "%u media (%s)"
+    IDS_MEDIASUMMARY_PLURAL "%u media (%s)"
     IDS_MINUTE              "%I64u minute"
     IDS_MINUTES             "%I64u minutes"
 END
@@ -1175,10 +1152,10 @@ BEGIN
     IDS_RATING3             "Good"
     IDS_RATING4             "Great"
     IDS_RATING5             "Awesome"
-    IDS_PRIORITY1           "Lowest"
-    IDS_PRIORITY2           "Low"
-    IDS_PRIORITY3           "Average"
-    IDS_PRIORITY4           "High"
+    IDS_PRIORITY1           "Low"
+    IDS_PRIORITY2           "Average"
+    IDS_PRIORITY3           "High"
+    IDS_PRIORITY4           "Very high"
     IDS_PRIORITY5           "Urgent"
     IDS_SIZE1               "Tiny (< 32 KB)"
     IDS_SIZE2               "Small (< 128 KB)"
@@ -1259,44 +1236,44 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ATTR_FILENAME       "Name"
-    IDS_ATTR_STOREID        "Location ID"
-    IDS_ATTR_FILEID         "File ID"
-    IDS_ATTR_COMMENTS       "Comments"
+    IDS_ATTR_PRIORITY       "Priority"
+    IDS_ATTR_CREATIONTIME   "Created"
+    IDS_ATTR_FILETIME       "Modified"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_DESCRIPTION    "Description"
-    IDS_ATTR_CREATIONTIME   "Created"
-    IDS_ATTR_FILETIME       "Modified"
     IDS_ATTR_ADDTIME        "Added"
-    IDS_ATTR_DELETETIME     "Deleted"
+    IDS_ATTR_DUETIME        "Due"
+    IDS_ATTR_DONETIME       "Done"
     IDS_ATTR_ARCHIVETIME    "Archived"
+    IDS_ATTR_DELETETIME     "Deleted"
     IDS_ATTR_FILEFORMAT     "File format"
     IDS_ATTR_FILECOUNT      "File count"
     IDS_ATTR_FILESIZE       "Size"
-    IDS_ATTR_FLAGS          "Flags"
-    IDS_ATTR_URL            "URL"
+    IDS_ATTR_COLOR          "Color"
     IDS_ATTR_HASHTAGS       "Hashtags"
     IDS_ATTR_RATING         "Rating"
-    IDS_ATTR_PRIORITY       "Priority"
+    IDS_ATTR_COMMENTS       "Comments"
     IDS_ATTR_LOCATIONNAME   "Location name"
     IDS_ATTR_LOCATIONIATA   "IATA code"
+    IDS_ATTR_LOCATIONGPS    "GPS location"
+    IDS_ATTR_URL            "URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_LOCATIONGPS    "GPS location"
+    IDS_ATTR_ROLL           "Roll"
     IDS_ATTR_WIDTH          "Width"
     IDS_ATTR_HEIGHT         "Height"
     IDS_ATTR_DIMENSION      "Dimension"
     IDS_ATTR_ASPECTRATIO    "Aspect ratio"
     IDS_ATTR_VIDEOCODEC     "Video codec"
-    IDS_ATTR_ROLL           "Roll"
     IDS_ATTR_EXPOSURE       "Exposure"
     IDS_ATTR_FOCUS          "Focus"
     IDS_ATTR_APERTURE       "Aperture"
     IDS_ATTR_CHIP           "Chip"
+    IDS_ATTR_ARTIST         "Artist"
     IDS_ATTR_ALBUM          "Album"
     IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Channels"
@@ -1308,26 +1285,19 @@ STRINGTABLE
 BEGIN
     IDS_ATTR_DURATION       "Duration"
     IDS_ATTR_BITRATE        "Bitrate"
-    IDS_ATTR_ARTIST         "Artist"
-    IDS_ATTR_TITLE          "Title"
+    IDS_ATTR_RECORDINGTIME  "Recorded"
+    IDS_ATTR_RECORDINGEQUIPMENT "Equipment"
+    IDS_ATTR_AUTHOR         "Author"
     IDS_ATTR_COPYRIGHT      "Copyright"
+    IDS_ATTR_TITLE          "Title"
     IDS_ATTR_ISBN           "ISBN"
     IDS_ATTR_LANGUAGE       "Language"
     IDS_ATTR_PAGES          "Page count"
-    IDS_ATTR_RECORDINGTIME  "Recorded"
-    IDS_ATTR_RECORDINGEQUIPMENT "Equipment"
     IDS_ATTR_SIGNATURE      "Signature"
     IDS_ATTR_FROM           "From"
     IDS_ATTR_TO             "To"
     IDS_ATTR_RESPONSIBLE    "Responsible"
-    IDS_ATTR_DUETIME        "Due"
-    IDS_ATTR_DONETIME       "Done"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_CUSTOMER       "Customer or client"
-    IDS_ATTR_AUTHOR         "Author"
 END
 
 STRINGTABLE 

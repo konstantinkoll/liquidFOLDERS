@@ -114,16 +114,6 @@ CHeapfile::~CHeapfile()
 	free(m_pBuffer);
 }
 
-UINT CHeapfile::GetRequiredElementSize() const
-{
-	return max(m_Header.ElementSize, m_RequiredElementSize);
-}
-
-UINT64 CHeapfile::GetRequiredFileSize() const
-{
-	return GetRequiredElementSize()*m_ItemCount+sizeof(HeapfileHeader);
-}
-
 LPVOID CHeapfile::GetStoreData(LPVOID pChar) const
 {
 	return m_Header.StoreDataSize ? (BYTE*)pChar+m_Header.ElementSize-m_Header.StoreDataSize : NULL;

@@ -20,26 +20,32 @@
 	if (!m_pTable[Index]->Compact()) \
 		return LFIndexRepairError;
 
-#define COUNT_FILE(Ops) \
+#define COUNT_FILE(ContextOps, TaskOps) \
 	if (PtrM->Flags & LFFlagTrash) \
 	{ \
-		Ops(LFContextTrash); \
+		ContextOps(LFContextTrash); \
 	} \
 	else \
 		if (PtrM->Flags & LFFlagArchive) \
 		{ \
-			Ops(LFContextArchive); \
+			ContextOps(LFContextArchive); \
 		} \
 		else \
 		{ \
 			if (PtrM->ContextID!=LFContextFilters) \
-				Ops(LFContextAllFiles); \
+				ContextOps(LFContextAllFiles); \
 			if (PtrM->ContextID!=LFContextAllFiles) \
-				Ops(PtrM->ContextID); \
+				ContextOps(PtrM->ContextID); \
 			if (PtrM->Rating) \
-				Ops(LFContextFavorites); \
+				ContextOps(LFContextFavorites); \
+			if (PtrM->Flags & LFFlagTask) \
+			{ \
+				TaskOps(PtrM->Priority); \
+				if (PtrM->ContextID!=LFContextTasks) \
+					ContextOps(LFContextTasks); \
+			} \
 			if (PtrM->Flags & LFFlagNew) \
-				Ops(LFContextNew); \
+				ContextOps(LFContextNew); \
 		}
 
 #define ADD_STATS() \
@@ -355,8 +361,9 @@ void CIndex::AddFileToStatistics(LFCoreAttributes* PtrM) const
 	assert(p_StoreDescriptor);
 	assert(PtrM);
 
-	#define ADD_FILE(Context) { p_StoreDescriptor->FileCount[Context]++; p_StoreDescriptor->FileSize[Context] += PtrM->FileSize; }
-	COUNT_FILE(ADD_FILE);
+	#define ADDFILE_CONTEXT(Context) { p_StoreDescriptor->Statistics.FileCount[Context]++; p_StoreDescriptor->Statistics.FileSize[Context] += PtrM->FileSize; }
+	#define ADDFILE_TASK(Priority) { p_StoreDescriptor->Statistics.TaskCount[Priority]++; }
+	COUNT_FILE(ADDFILE_CONTEXT, ADDFILE_TASK);
 }
 
 void CIndex::RemoveFileFromStatistics(LFCoreAttributes* PtrM) const
@@ -364,8 +371,9 @@ void CIndex::RemoveFileFromStatistics(LFCoreAttributes* PtrM) const
 	assert(p_StoreDescriptor);
 	assert(PtrM);
 
-	#define SUB_FILE(Context) { p_StoreDescriptor->FileCount[Context]--; p_StoreDescriptor->FileSize[Context] -= PtrM->FileSize; }
-	COUNT_FILE(SUB_FILE);
+	#define SUBFILE_CONTEXT(Context) { p_StoreDescriptor->Statistics.FileCount[Context]--; p_StoreDescriptor->Statistics.FileSize[Context] -= PtrM->FileSize; }
+	#define SUBFILE_TASK(Priority) { p_StoreDescriptor->Statistics.TaskCount[Priority]--; }
+	COUNT_FILE(SUBFILE_CONTEXT, SUBFILE_TASK);
 }
 
 
@@ -641,11 +649,10 @@ BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 	return !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing);
 }
 
-void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FILETIME* pTransactionTime)
+void CIndex::UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, UINT Flags)
 {
 	assert(pTransactionList);
-	assert(pTransactionTime);
-	assert((Flags & ~(LFFlagArchive | LFFlagTrash))==0);
+	assert((Flags & ~(LFFlagTrash | LFFlagArchive))==0);
 
 	// Access
 	if (!m_WriteAccess)
@@ -657,7 +664,7 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
 
-	if ((PtrM->Flags & (LFFlagArchive | LFFlagTrash | LFFlagNew))!=Flags)
+	if ((PtrM->Flags & (LFFlagTrash | LFFlagTask | LFFlagArchive | LFFlagNew))!=Flags)
 	{
 		REMOVE_STATS();
 
@@ -669,7 +676,7 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 			if (!(PtrM->Flags & LFFlagArchive))
 			{
 				PtrM->Flags |= LFFlagArchive;
-				PtrM->ArchiveTime = *pTransactionTime;
+				PtrM->ArchiveTime = TransactionTime;
 			}
 
 		// "Trash" flag
@@ -677,7 +684,7 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 			if (!(PtrM->Flags & LFFlagTrash))
 			{
 				PtrM->Flags |= LFFlagTrash;
-				PtrM->DeleteTime = *pTransactionTime;
+				PtrM->DeleteTime = TransactionTime;
 			}
 
 		// Restore
@@ -693,6 +700,21 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, UINT Flags, FI
 					PtrM->Flags &= ~LFFlagArchive;
 					ZeroMemory(&PtrM->ArchiveTime, sizeof(FILETIME));
 				}
+				else
+					if (PtrM->Flags & LFFlagTask)
+					{
+						PtrM->Flags &= ~LFFlagTask;
+
+						// Check if data structure is large enough for properties that were extended in liquidFOLDERS 3.1.0
+						if (m_pTable[IDXTABLE_MASTER]->GetVersion()>=4)
+						{
+							assert(m_pTable[IDXTABLE_MASTER]->GetElementSize()>=offsetof(LFCoreAttributes, DueTime)+sizeof(FILETIME));
+							assert(m_pTable[IDXTABLE_MASTER]->GetElementSize()>=offsetof(LFCoreAttributes, DoneTime)+sizeof(FILETIME));
+
+							PtrM->DueTime.dwHighDateTime = PtrM->DueTime.dwLowDateTime = 0;
+							PtrM->DoneTime = TransactionTime;
+						}
+					}
 
 		m_pTable[IDXTABLE_MASTER]->MakeDirty();
 
@@ -725,7 +747,7 @@ BOOL CIndex::InspectForUpdate(LFVariantData* pVariantData, BOOL& IncludeSlaves, 
 	return TRUE;
 }
 
-void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3)
+void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3, BOOL MakeTask)
 {
 	assert(pTransactionList);
 
@@ -758,6 +780,13 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 
 	// Remove "New" flag
 	pItemDescriptor->CoreAttributes.Flags &= ~LFFlagNew;
+
+	// "Task" flag
+	if (MakeTask)
+	{
+		pItemDescriptor->CoreAttributes.Flags |= LFFlagTask;
+		pItemDescriptor->CoreAttributes.DoneTime.dwHighDateTime = pItemDescriptor->CoreAttributes.DoneTime.dwLowDateTime = 0;
+	}
 
 	// Update attributes
 	if (pVariantData1)

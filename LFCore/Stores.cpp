@@ -964,14 +964,14 @@ LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 	if (pType)
 	{
 		// Basic, Mounted?
-		*pType = StoreFlagsToType(pStoreDescriptor, LFTypeStore);
+		*pType = StoreFlagsToType(pStoreDescriptor, LFTypeStore | LFTypeHasDescription);
 
 		// Empty?
 		if (pStoreDescriptor->Flags & LFStoreFlagsMaintained)
 		{
 			*pType |= LFTypeMaintained;
 
-			if (!pStoreDescriptor->FileCount[LFContextAllFiles])
+			if (!pStoreDescriptor->Statistics.FileCount[LFContextAllFiles])
 				*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeEmpty;
 		}
 		else
@@ -1497,49 +1497,44 @@ void QueryStores(LFSearchResult* pSearchResult)
 	}
 }
 
-LFCORE_API LFStatistics* LFQueryStatistics(LPCSTR StoreID)
+LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID)
 {
-	LFStatistics* pStatistics = new LFStatistics;
-	ZeroMemory(pStatistics, sizeof(LFStatistics));
+	ZeroMemory(&Statistics, sizeof(LFStatistics));
 
-	if (GetMutexForStores())
+	if (!GetMutexForStores())
+		return LFMutexError;
+
+	if (!StoreID || (*StoreID==L'\0'))
 	{
-		if (!StoreID || (*StoreID==L'\0'))
+		// Iterate all stores
+		for (UINT a=0; a<StoreCount; a++)
 		{
-			// All stores
-			for (UINT a=0; a<StoreCount; a++)
-				for (UINT Context=0; Context<=min(LFLastQueryContext, 31); Context++)
-				{
-					pStatistics->FileCount[Context] += StoreCache[a].FileCount[Context];
-					pStatistics->FileSize[Context] += StoreCache[a].FileSize[Context];
-				}
-		}
-		else
-		{
-			// Single store
-			HANDLE StoreLock = NULL;
-			LFStoreDescriptor* pStoreDescriptor = FindStore(StoreID, &StoreLock);
-
-			if (pStoreDescriptor)
+			for (UINT Context=0; Context<=LFLastQueryContext; Context++)
 			{
-				for (UINT Context=0; Context<=min(LFLastQueryContext, 31); Context++)
-				{
-					pStatistics->FileCount[Context] = pStoreDescriptor->FileCount[Context];
-					pStatistics->FileSize[Context] = pStoreDescriptor->FileSize[Context];
-				}
-
-				ReleaseMutexForStore(StoreLock);
+				Statistics.FileCount[Context] += StoreCache[a].Statistics.FileCount[Context];
+				Statistics.FileSize[Context] += StoreCache[a].Statistics.FileSize[Context];
 			}
-		}
 
-		ReleaseMutexForStores();
+			for (UINT Priority=0; Priority<=LFMaxRating; Priority++)
+				Statistics.TaskCount[Priority] += StoreCache[a].Statistics.TaskCount[Priority];
+		}
 	}
 	else
 	{
-		pStatistics->LastError = LFMutexError;
+		// Single store
+		HANDLE StoreLock = NULL;
+		LFStoreDescriptor* pStoreDescriptor = FindStore(StoreID, &StoreLock);
+
+		if (pStoreDescriptor)
+		{
+			Statistics = pStoreDescriptor->Statistics;
+			ReleaseMutexForStore(StoreLock);
+		}
 	}
 
-	return pStatistics;
+	ReleaseMutexForStores();
+
+	return LFOk;
 }
 
 

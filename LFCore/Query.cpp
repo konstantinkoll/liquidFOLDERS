@@ -382,6 +382,12 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BOOL& Chec
 
 				break;
 
+			case LFContextTasks:
+				if (!(pCoreAttributes->Flags & LFFlagTask) && (pCoreAttributes->ContextID!=LFContextTasks))
+					return FALSE;
+
+				break;
+
 			case LFContextNew:
 				if (!(pCoreAttributes->Flags & LFFlagNew))
 					return FALSE;
@@ -453,7 +459,7 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BOOL& Chec
 		{
 			const UINT Attr = pTable->pTableEntries[a].Attr;
 
-			if ((Attr!=LFAttrFileID) && ((SearchtermContainsLetters<2) || TypeProperties[AttrProperties[Attr].Type].ContainsLetters))
+			if ((SearchtermContainsLetters<2) || TypeProperties[AttrProperties[Attr].Type].ContainsLetters)
 			{
 				WCHAR tmpStr[256];
 				ToString((BYTE*)pTableData+pTable->pTableEntries[a].Offset, AttrProperties[pTable->pTableEntries[a].Attr].Type, tmpStr, 256);

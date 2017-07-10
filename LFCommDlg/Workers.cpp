@@ -95,43 +95,6 @@ void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pP
 	dlg.DoModal();
 }
 
-BOOL LFImportFolder(const LPCSTR pStoreID, CWnd* pParentWnd)
-{
-	BOOL Result = FALSE;
-
-	if (LFNagScreen(pParentWnd))
-	{
-		LFBrowseForFolderDlg dlg(pParentWnd, CString((LPCSTR)IDS_IMPORTFOLDER_CAPTION), CString((LPCSTR)IDS_IMPORTFOLDER_HINT), TRUE, TRUE, _T(""));
-		if (dlg.DoModal()==IDOK)
-		{
-			WorkerParameters wp;
-			ZeroMemory(&wp, sizeof(wp));
-
-			wp.pFileImportList = LFAllocFileImportList();
-			LFAddImportPath(wp.pFileImportList, dlg.m_FolderPath);
-
-			strcpy_s(wp.StoreID, LFKeySize, pStoreID);
-			wp.DeleteSource = dlg.m_DeleteSource;
-
-			// Template füllen
-			wp.pItemTemplate = LFAllocItemDescriptor();
-			LFItemTemplateDlg tdlg(wp.pItemTemplate, pStoreID, pParentWnd, TRUE);
-			if (tdlg.DoModal()!=IDCANCEL)
-			{
-				LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
-				LFErrorBox(pParentWnd, wp.pFileImportList->m_LastError);
-
-				Result = TRUE;
-			}
-
-			LFFreeItemDescriptor(wp.pItemTemplate);
-			LFFreeFileImportList(wp.pFileImportList);
-		}
-	}
-
-	return Result;
-}
-
 void LFRunSynchronize(const LPCSTR pStoreID, CWnd* pParentWnd)
 {
 	// Allowed?

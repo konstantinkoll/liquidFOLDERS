@@ -43,7 +43,7 @@ void LFEditConditionDlg::DoDataExchange(CDataExchange* pDX)
 
 void LFEditConditionDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	Add = (Attr!=LFAttrFileID) && (Attr!=LFAttrStoreID) && (Attr!=LFAttrDescription) && (LFGetApp()->m_Attributes[Attr].AttrProperties.Type!=LFTypeFlags);
+	Add = (LFGetApp()->m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 	Check = FALSE;
 }
 
@@ -52,7 +52,7 @@ BOOL LFEditConditionDlg::InitDialog()
 	LFAttributeListDlg::InitDialog();
 
 	// Bedingung
-	m_wndEdit.SetData(&m_Condition.AttrData);
+	m_wndEdit.SetData(m_Condition.AttrData);
 
 	if (m_StoreID[0]!='\0')
 		m_wndEdit.SetStore(m_StoreID);

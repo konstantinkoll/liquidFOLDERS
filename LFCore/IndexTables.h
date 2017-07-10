@@ -8,35 +8,36 @@
 #define IDXTABLE_MASTER     0
 #define IDXTABLECOUNT       6
 
-#define CURIDXVERSION       3
+#define CURIDXVERSION       4
 
 
-#define IDXATTRS_GROUP        (1ull<<LFAttrHashtags)
 #define IDXATTRS_CORE         ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | \
-								(1ull<<LFAttrFileTime) | (1ull<<LFAttrAddTime) | (1ull<<LFAttrFileFormat) | \
-								(1ull<<LFAttrFileSize) | (1ull<<LFAttrURL) | (1ull<<LFAttrRating) | \
-								(1ull<<LFAttrPriority) | (1ull<<LFAttrLocationName) | (1ull<<LFAttrLocationIATA) | \
-								(1ull<<LFAttrLocationGPS))
-#define IDXATTRS_ALL          ((((UINT64)-1)<<LFLastCoreAttribute) | IDXATTRS_CORE)
-#define IDXATTRS_DETAILS      ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | \
-								(1ull<<LFAttrFileTime) | (1ull<<LFAttrRating) | (1ull<<LFAttrPriority) | \
-								(1ull<<LFAttrArtist) | (1ull<<LFAttrTitle) | (1ull<<LFAttrAlbum) | \
-								(1ull<<LFAttrDuration) | (1ull<<LFAttrRecordingTime) | (1ull<<LFAttrRoll) | \
-								(1ull<<LFAttrCustomer) | (1ull<<LFAttrPages) | (1ull<<LFAttrEquipment))
-#define IDXATTRS_LOCATION     ((1ull<<LFAttrLocationName) | (1ull<<LFAttrLocationIATA))
-#define IDXATTRS_VISUAL       ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrHashtags) | \
-								(1ull<<LFAttrFileTime) | (1ull<<LFAttrRating) | (1ull<<LFAttrTitle) | \
-								(1ull<<LFAttrRoll) | IDXATTRS_LOCATION)
+								(1ull<<LFAttrFileTime) | (1ull<<LFAttrAddTime) | (1ull<<LFAttrDoneTime) | \
+								(1ull<<LFAttrFileFormat) | (1ull<<LFAttrFileSize) | (1ull<<LFAttrColor) | \
+								(1ull<<LFAttrHashtags) | (1ull<<LFAttrRating) | (1ull<<LFAttrLocationName) | \
+								(1ull<<LFAttrLocationIATA) | (1ull<<LFAttrLocationGPS) | (1ull<<LFAttrURL))
+#define IDXATTRS_ALL          ((((UINT64)-1)<<(LFLastCoreAttribute+1)) | IDXATTRS_CORE)
 
+// Minimal advertised properties
+#define IDXATTRS_MINDETAILS   ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrFileTime))
+
+// Advertised properties for photos and videos
+#define IDXATTRS_VISDETAILS   (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrRoll) | (1ull<<LFAttrHashtags) | \
+								(1ull<<LFAttrLocationName) | (1ull<<LFAttrLocationIATA))
+
+// Generically advertised properties
+#define IDXATTRS_GENDETAILS   (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrCreationTime) | \
+								(1ull<<LFAttrArtist) | (1ull<<LFAttrTitle) | (1ull<<LFAttrAlbum) | \
+								(1ull<<LFAttrDuration) | (1ull<<LFAttrRecordingTime) | (1ull<<LFAttrRecordingEquipment) | \
+								(1ull<<LFAttrRoll) | (1ull<<LFAttrCustomer) | (1ull<<LFAttrComments))
 
 
 // Slave-ID: 1
 
 #define IDXTABLE_DOCUMENTS     1
 #define IDXATTRS_DOCUMENTS     ((1ull<<LFAttrAuthor) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
-								(1ull<<LFAttrResponsible) | (1ull<<LFAttrDueTime) | (1ull<<LFAttrDoneTime) | \
-								(1ull<<LFAttrSignature) | (1ull<<LFAttrISBN) | (1ull<<LFAttrPages) | \
-								(1ull<<LFAttrLanguage) | (1ull<<LFAttrCustomer))
+								(1ull<<LFAttrResponsible) | (1ull<<LFAttrSignature) | (1ull<<LFAttrISBN) | \
+								(1ull<<LFAttrPages) | (1ull<<LFAttrLanguage) | (1ull<<LFAttrCustomer))
 
 struct DocumentAttributes
 {
@@ -44,8 +45,7 @@ struct DocumentAttributes
 	WCHAR Copyright[256];
 	WCHAR Title[256];
 	WCHAR Responsible[256];
-	FILETIME DueTime;
-	FILETIME DoneTime;
+	BYTE FREE[16];
 	CHAR Signature[32];
 	CHAR ISBN[32];
 	UINT Pages;
@@ -58,8 +58,7 @@ struct DocumentAttributes
 
 #define IDXTABLE_MESSAGES     2
 #define IDXATTRS_MESSAGES     ((1ull<<LFAttrFrom) | (1ull<<LFAttrTo) | (1ull<<LFAttrTitle) | \
-								(1ull<<LFAttrLanguage) | (1ull<<LFAttrResponsible) | (1ull<<LFAttrDueTime) | \
-								(1ull<<LFAttrDoneTime))
+								(1ull<<LFAttrLanguage) | (1ull<<LFAttrResponsible))
 
 struct MessageAttributes
 {
@@ -68,8 +67,6 @@ struct MessageAttributes
 	WCHAR Title[256];
 	CHAR Language[3];
 	WCHAR Responsible[256];
-	FILETIME DueTime;
-	FILETIME DoneTime;
 };
 
 
@@ -102,7 +99,7 @@ struct AudioAttributes
 
 #define IDXTABLE_PICTURES     4
 #define IDXATTRS_PICTURES     ((1ull<<LFAttrAuthor) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
-								(1ull<<LFAttrEquipment) | (1ull<<LFAttrRoll) | (1ull<<LFAttrExposure) | \
+								(1ull<<LFAttrRecordingEquipment) | (1ull<<LFAttrRoll) | (1ull<<LFAttrExposure) | \
 								(1ull<<LFAttrHeight) | (1ull<<LFAttrWidth) | (1ull<<LFAttrDimension) | \
 								(1ull<<LFAttrAspectRatio) | (1ull<<LFAttrAperture) | (1ull<<LFAttrFocus) | \
 								(1ull<<LFAttrChip) | (1ull<<LFAttrRecordingTime) | (1ull<<LFAttrLanguage) | \
@@ -131,7 +128,7 @@ struct PictureAttributes
 
 #define IDXTABLE_VIDEOS     5
 #define IDXATTRS_VIDEOS     ((1ull<<LFAttrArtist) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
-								(1ull<<LFAttrEquipment) | (1ull<<LFAttrRoll) | (1ull<<LFAttrHeight) | \
+								(1ull<<LFAttrRecordingEquipment) | (1ull<<LFAttrRoll) | (1ull<<LFAttrHeight) | \
 								(1ull<<LFAttrWidth) | (1ull<<LFAttrDimension) | (1ull<<LFAttrAspectRatio) | \
 								(1ull<<LFAttrAudioCodec) | (1ull<<LFAttrVideoCodec) | (1ull<<LFAttrChannels) | \
 								(1ull<<LFAttrSamplerate) | (1ull<<LFAttrDuration) | (1ull<<LFAttrBitrate) | \

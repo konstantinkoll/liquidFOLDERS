@@ -28,6 +28,7 @@ public:
 	BOOL IsViewAllowed(INT Context, INT View) const;
 	BOOL IsAttributeAvailable(INT Context, UINT Attr) const;
 	BOOL IsAttributeAdvertised(INT Context, UINT Attr) const;
+	BOOL IsAttributeSortable(INT Context, UINT Attr) const;
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void SetContextSort(INT Context, UINT Attr, BOOL Descending, BOOL SetLastView=TRUE);
 	void UpdateViewSettings(INT Context=-1, INT View=-1);
@@ -57,6 +58,8 @@ protected:
 
 inline BOOL CLiquidFoldersApp::IsViewAllowed(INT Context, INT View) const
 {
+	ASSERT(Context>=0);
+	ASSERT(Context<LFContextCount);
 	ASSERT(View>=0);
 	ASSERT(View<=31);
 
@@ -67,6 +70,7 @@ inline BOOL CLiquidFoldersApp::IsAttributeAvailable(INT Context, UINT Attr) cons
 {
 	ASSERT(Context>=0);
 	ASSERT(Context<LFContextCount);
+	ASSERT(Attr<LFAttributeCount);
 
 	return (m_Contexts[Context].CtxProperties.AvailableAttributes>>Attr) & 1;
 }
@@ -75,8 +79,18 @@ inline BOOL CLiquidFoldersApp::IsAttributeAdvertised(INT Context, UINT Attr) con
 {
 	ASSERT(Context>=0);
 	ASSERT(Context<LFContextCount);
+	ASSERT(Attr<LFAttributeCount);
 
 	return ((m_Contexts[Context].CtxProperties.AdvertisedAttributes>>Attr) & 1);
+}
+
+inline BOOL CLiquidFoldersApp::IsAttributeSortable(INT Context, UINT Attr) const
+{
+	ASSERT(Context>=0);
+	ASSERT(Context<LFContextCount);
+	ASSERT(Attr<LFAttributeCount);
+
+	return Context>LFLastGroupContext ? m_Attributes[Attr].TypeProperties.SortableSubfolder : m_Attributes[Attr].TypeProperties.Sortable;
 }
 
 inline void CLiquidFoldersApp::Reload(INT Context)

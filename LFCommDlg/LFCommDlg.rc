@@ -229,7 +229,7 @@ BEGIN
     PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,47,153,165,14,WS_DISABLED | WS_GROUP
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
+IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "GPS-Koordinaten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -246,7 +246,21 @@ BEGIN
     CONTROL         "Koordinaten",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
-IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
+IDD_SELECTLOCATIONIATA DIALOGEX 0, 0, 189, 312
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "IATA Flughafen-Code"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    DEFPUSHBUTTON   "OK",IDOK,75,290,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,132,290,50,14,WS_GROUP
+    CONTROL         "Land/Gebiet",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
+    CONTROL         "Flughäfen\nMetropolitan-Codes sind grün dargestellt.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,47,175,25
+END
+
+IDD_SELECTPROPERTYIATA DIALOGEX 0, 0, 189, 358
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "IATA Flughafen-Code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -294,7 +308,6 @@ CAPTION "Verzeichnis wählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,287
-    CONTROL         "Quelldateien &löschen",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,296,125,10
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -310,17 +323,21 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,191,318,50,14,WS_GROUP
 END
 
-IDD_EDITTIME DIALOGEX 0, 0, 134, 218
+IDD_MAKETASK DIALOGEX 0, 0, 134, 275
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Aufgabe erstellen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,20,196,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,77,196,50,14,WS_GROUP
-    CONTROL         "Datum",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
-    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
-    CONTROL         "Uhrzeit",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
-    CONTROL         "&Uhrzeit benutzen",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
-    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
+    DEFPUSHBUTTON   "OK",IDOK,20,253,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,77,253,50,14,WS_GROUP
+    CONTROL         "Priorität",IDC_CATEGORY3,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_PRIORITY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,120,13
+    CONTROL         "Fällig am",IDC_CATEGORY1,"CCategory",WS_GROUP,7,47,120,15
+    CONTROL         "&Datum benutzen",IDC_USEDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,65,120,10
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,79,120,102
+    CONTROL         "Uhrzeit",IDC_CATEGORY2,"CCategory",WS_GROUP,7,191,120,15
+    CONTROL         "&Uhrzeit benutzen",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,208,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,222,120,15
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 249, 82
@@ -582,6 +599,19 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,188,403,50,14,WS_GROUP
 END
 
+IDD_EDITTIME DIALOGEX 0, 0, 134, 218
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,20,196,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,77,196,50,14,WS_GROUP
+    CONTROL         "Datum",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
+    CONTROL         "Uhrzeit",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
+    CONTROL         "&Uhrzeit benutzen",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -615,7 +645,7 @@ BEGIN
         BOTTOMMARGIN, 167
     END
 
-    IDD_SELECTGPS, DIALOG
+    IDD_SELECTLOCATIONGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 423
@@ -623,7 +653,15 @@ BEGIN
         BOTTOMMARGIN, 314
     END
 
-    IDD_SELECTIATA, DIALOG
+    IDD_SELECTLOCATIONIATA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 304
+    END
+
+    IDD_SELECTPROPERTYIATA, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 182
@@ -657,12 +695,12 @@ BEGIN
         BOTTOMMARGIN, 332
     END
 
-    IDD_EDITTIME, DIALOG
+    IDD_MAKETASK, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 127
         TOPMARGIN, 7
-        BOTTOMMARGIN, 210
+        BOTTOMMARGIN, 267
     END
 
     IDD_PROGRESS, DIALOG
@@ -800,6 +838,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 417
     END
+
+    IDD_EDITTIME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 210
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -825,7 +871,6 @@ BEGIN
     BEGIN
         MENUITEM "S&ynchronisieren",            IDM_STORE_SYNCHRONIZE
         MENUITEM "Als &Standard-Speicherort setzen", IDM_STORE_MAKEDEFAULT
-        MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
@@ -930,20 +975,18 @@ BEGIN
     IDS_UACMESSAGE          "Ihre Zustimmung ist erforderlich"
     IDS_EXPAND              "E&rweitern"
     IDS_COLLAPSE            "&Reduzieren"
-    IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
-    IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
     IDS_CHOOSESTORE_HINT    "Nur angeschlossene und beschreibbare Speicherorte können ausgewählt werden."
     IDS_STOREMAINTENANCE_CAPTION "Bericht"
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u Speicherort gewartet"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u Speicherorte gewartet"
     IDS_REGFILEFILTER       "Registrierungsdatei"
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
+    IDS_EXPIRECAPTION       "Unregistrierte Kopie – bitte erwerben Sie eine Lizenz!"
+    IDS_XOFY_SINGULAR       "%u von %u"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPIRECAPTION       "Unregistrierte Kopie – bitte erwerben Sie eine Lizenz!"
-    IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
     IDS_UPDATENOTAVAILABLE  "Ihr liquidFOLDERS ist auf dem neuesten Stand."
@@ -958,12 +1001,12 @@ BEGIN
     IDS_DELETESTORE_MSG     "Möchten Sie diesen Speicherort wirklich entfernen?"
     IDS_FORMAT_CAPTION      "Sie können Laufwerk %c: nicht formatieren"
     IDS_FORMAT_MSG          "Das Laufwerk enthält Speicherorte, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Speicherorte unbrauchbar machen."
+    IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
+    IDS_STORECREATED        "Der Speicherort „%s“ wurde hinzugefügt."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
-    IDS_STORECREATED        "Der Speicherort „%s“ wurde hinzugefügt."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Erstellt einen neuen Speicherort für Ihre Dateien.\nBeim Importieren werden Dateien dorthin kopiert."
     IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dadurch nicht verändert."
@@ -1085,7 +1128,7 @@ BEGIN
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,67,153,145,14,WS_DISABLED | WS_GROUP
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
+IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ubicación GPS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1102,7 +1145,21 @@ BEGIN
     CONTROL         "Coordenadas",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
-IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
+IDD_SELECTLOCATIONIATA DIALOGEX 0, 0, 189, 312
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Código de aeropuerto IATA"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    DEFPUSHBUTTON   "OK",IDOK,75,290,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,132,290,50,14,WS_GROUP
+    CONTROL         "Territorio",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
+    CONTROL         "Aeropuertos\nCódigos metropolitanos están en verde.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,47,175,25
+END
+
+IDD_SELECTPROPERTYIATA DIALOGEX 0, 0, 189, 358
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Código de aeropuerto IATA"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1125,7 +1182,6 @@ CAPTION "Seleccionar carpeta"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,248,287
-    CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,296,125,10
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -1167,7 +1223,7 @@ BEGIN
     CONTROL         "Fecha",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
     CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
     CONTROL         "Hora",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
-    CONTROL         "Usar &hora",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
+    CONTROL         "Usar la &hora",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
     CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,165,120,15
 END
 
@@ -1202,7 +1258,8 @@ BEGIN
     LTEXT           "Última entrada:",IDC_LASTSEENLABEL,7,113,80,8
     LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
     CONTROL         "Ajustes",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
-    CONTROL         "Establecer al ubicación &estándar",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+    CONTROL         "Establecer al ubicación &estándar",IDC_MAKEDEFAULT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
     CONTROL         "Hacer búsquedas mientras no está conectado",IDC_MAKESEARCHABLE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
 END
@@ -1439,6 +1496,23 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,188,403,50,14,WS_GROUP
 END
 
+IDD_MAKETASK DIALOGEX 0, 0, 134, 275
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Crear tarea"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,20,253,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,77,253,50,14,WS_GROUP
+    CONTROL         "Prioridad",IDC_CATEGORY3,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_PRIORITY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,120,13
+    CONTROL         "Tiempo debido",IDC_CATEGORY1,"CCategory",WS_GROUP,7,47,120,15
+    CONTROL         "Usar el &dato",IDC_USEDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,65,120,10
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,79,120,102
+    CONTROL         "Hora",IDC_CATEGORY2,"CCategory",WS_GROUP,7,191,120,15
+    CONTROL         "Usar la &hora",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,208,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,222,120,15
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1472,7 +1546,7 @@ BEGIN
         BOTTOMMARGIN, 167
     END
 
-    IDD_SELECTGPS, DIALOG
+    IDD_SELECTLOCATIONGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 423
@@ -1480,7 +1554,15 @@ BEGIN
         BOTTOMMARGIN, 314
     END
 
-    IDD_SELECTIATA, DIALOG
+    IDD_SELECTLOCATIONIATA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 304
+    END
+
+    IDD_SELECTPROPERTYIATA, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 182
@@ -1657,6 +1739,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 417
     END
+
+    IDD_MAKETASK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 267
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1682,7 +1772,6 @@ BEGIN
     BEGIN
         MENUITEM "Si&ncronizar",                IDM_STORE_SYNCHRONIZE
         MENUITEM "Establecer al &ubicación estándar", IDM_STORE_MAKEDEFAULT
-        MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
@@ -1787,20 +1876,18 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS necesita su permiso para continuar"
     IDS_EXPAND              "&Abrir"
     IDS_COLLAPSE            "&Plegar"
-    IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
-    IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente ubicaciones conectadas y escritas."
     IDS_STOREMAINTENANCE_CAPTION "Reporte"
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u ubicación inspeccionar"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u ubicaciones inspeccionar"
     IDS_REGFILEFILTER       "Archivo de Registro"
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
+    IDS_EXPIRECAPTION       "Copia no registrada – compre una licencia por fovor!"
+    IDS_XOFY_SINGULAR       "%u de %u"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPIRECAPTION       "Copia no registrada – compre una licencia por fovor!"
-    IDS_XOFY_SINGULAR       "%u de %u"
     IDS_XOFY_PLURAL         "%u de %u"
     IDS_UPDATE              "Actualización"
     IDS_UPDATENOTAVAILABLE  "Su liquidFOLDERS esta actualmente."
@@ -1815,12 +1902,12 @@ BEGIN
     IDS_DELETESTORE_MSG     "¿Realmente quiere eliminar este ubicación?"
     IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen %c:"
     IDS_FORMAT_MSG          "Contiene ubicaciones que usted está usando.\nAl formatear este volúmen destruirá aquellos ubicaciones."
+    IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
+    IDS_STORECREATED        "Se añadió el ubicación «%s»."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
-    IDS_STORECREATED        "Se añadió el ubicación «%s»."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Se crea una nueva ubicación para sus archivos.\nLos archivos importados se copiarán allí."
     IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no serán modificados."
@@ -1942,7 +2029,7 @@ BEGIN
     PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,7,153,215,14,WS_DISABLED | WS_GROUP
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
+IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Coordonnées GPS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1959,15 +2046,29 @@ BEGIN
     CONTROL         "Coordonnées",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
-IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
+IDD_SELECTLOCATIONIATA DIALOGEX 0, 0, 189, 312
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Code d'aéroport IATA"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
     CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
-    CONTROL         "Remplacez l'endroit &name",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,299,175,10
-    CONTROL         "Remplacez &GPS coordonnées",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,310,175,10
+    DEFPUSHBUTTON   "OK",IDOK,75,290,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,132,290,50,14,WS_GROUP
+    CONTROL         "Territoire",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
+    CONTROL         "Aéroports\nLes codes métropolitains sont imprimés verts.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,47,175,25
+END
+
+IDD_SELECTPROPERTYIATA DIALOGEX 0, 0, 189, 358
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Code d'aéroport IATA"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "Remplacer le &nom d'endroit",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,299,175,10
+    CONTROL         "Remplacer les coordonnées &GPS",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,310,175,10
     DEFPUSHBUTTON   "OK",IDOK,75,336,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,132,336,50,14,WS_GROUP
     CONTROL         "Territoire",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
@@ -2003,8 +2104,6 @@ CAPTION "Choisissez un dossier"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,248,287
-    CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,296,125,10
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -2043,7 +2142,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,20,196,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,77,196,50,14,WS_GROUP
-    CONTROL         "Jour",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "Date",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,120,15
     CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,22,120,102
     CONTROL         "Heure",IDC_CATEGORY2,"CCategory",WS_GROUP,7,134,120,15
     CONTROL         "Utiliser l'&heure",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,120,10
@@ -2295,6 +2394,23 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,188,403,50,14,WS_GROUP
 END
 
+IDD_MAKETASK DIALOGEX 0, 0, 134, 275
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Créer tâche"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,20,253,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,77,253,50,14,WS_GROUP
+    CONTROL         "Priorité",IDC_CATEGORY3,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_PRIORITY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,120,13
+    CONTROL         "Dû le",IDC_CATEGORY1,"CCategory",WS_GROUP,7,47,120,15
+    CONTROL         "Utiliser la &date",IDC_USEDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,65,120,10
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,79,120,102
+    CONTROL         "Heure",IDC_CATEGORY2,"CCategory",WS_GROUP,7,191,120,15
+    CONTROL         "Utiliser l'&heure",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,208,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,222,120,15
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2328,7 +2444,7 @@ BEGIN
         BOTTOMMARGIN, 167
     END
 
-    IDD_SELECTGPS, DIALOG
+    IDD_SELECTLOCATIONGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 423
@@ -2336,7 +2452,15 @@ BEGIN
         BOTTOMMARGIN, 314
     END
 
-    IDD_SELECTIATA, DIALOG
+    IDD_SELECTLOCATIONIATA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 304
+    END
+
+    IDD_SELECTPROPERTYIATA, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 182
@@ -2513,6 +2637,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 417
     END
+
+    IDD_MAKETASK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 267
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2538,7 +2670,6 @@ BEGIN
     BEGIN
         MENUITEM "S&ynchroniser",               IDM_STORE_SYNCHRONIZE
         MENUITEM "Mettre emplacement &défaut",  IDM_STORE_MAKEDEFAULT
-        MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_STORE_DELETE
@@ -2643,20 +2774,18 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS a besoin de votre permission de continuer"
     IDS_EXPAND              "&Ouvrir"
     IDS_COLLAPSE            "&Fermer"
-    IDS_IMPORTFOLDER_CAPTION "Importer dossier"
-    IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_HINT    "Seulement emplacements montée et inscriptiblée pouvoir choisissse."
     IDS_STOREMAINTENANCE_CAPTION "Rapport"
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u emplacement revisé"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u semplacements revisée"
     IDS_REGFILEFILTER       "Fichier de Registre"
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
+    IDS_EXPIRECAPTION       "Copie non enregistée – acheter une license s'il vous plaît!"
+    IDS_XOFY_SINGULAR       "%u sur %u"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPIRECAPTION       "Copie non enregistée – acheter une license s'il vous plaît!"
-    IDS_XOFY_SINGULAR       "%u sur %u"
     IDS_XOFY_PLURAL         "%u sur %u"
     IDS_UPDATE              "Mise á jour"
     IDS_UPDATENOTAVAILABLE  "Votre liquidFOLDERS est à jour."
@@ -2671,12 +2800,12 @@ BEGIN
     IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer c'emplacement?"
     IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
     IDS_FORMAT_MSG          "Le lecteur contient à présent emplacements, être utilisés.\nLe fait de formater le lecteur rendrait ces emplacements inutilisables."
+    IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
+    IDS_STORECREATED        "L'emplacement «%s» a été ajouté."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
-    IDS_STORECREATED        "L'emplacement «%s» a été ajouté."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Crée un nouvel emplacement pour vos fichiers.\nLes fichiers importés seront copiés là."
     IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas modifiés."
@@ -2848,7 +2977,7 @@ BEGIN
     PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,37,153,175,14,WS_DISABLED | WS_GROUP
 END
 
-IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
+IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "GPS location"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2865,7 +2994,21 @@ BEGIN
     CONTROL         "Coordinates",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
-IDD_SELECTIATA DIALOGEX 0, 0, 189, 358
+IDD_SELECTLOCATIONIATA DIALOGEX 0, 0, 189, 312
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "IATA airport code"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    DEFPUSHBUTTON   "OK",IDOK,75,290,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,132,290,50,14,WS_GROUP
+    CONTROL         "Territory",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
+    CONTROL         "Airports\nMetropolitan codes are displayed green.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,47,175,25
+END
+
+IDD_SELECTPROPERTYIATA DIALOGEX 0, 0, 189, 358
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "IATA airport code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2905,7 +3048,6 @@ CAPTION "Select a folder"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,248,287
-    CONTROL         "&Delete source files",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,296,125,10
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -3202,6 +3344,23 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,188,403,50,14,WS_GROUP
 END
 
+IDD_MAKETASK DIALOGEX 0, 0, 134, 275
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create task"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,20,253,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,77,253,50,14,WS_GROUP
+    CONTROL         "Priority",IDC_CATEGORY3,"CCategory",WS_GROUP,7,7,120,15
+    CONTROL         "",IDC_PRIORITY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,120,13
+    CONTROL         "Due at",IDC_CATEGORY1,"CCategory",WS_GROUP,7,47,120,15
+    CONTROL         "Use &date",IDC_USEDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,65,120,10
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_WEEKNUMBERS | WS_GROUP | WS_TABSTOP,7,79,120,102
+    CONTROL         "Time",IDC_CATEGORY2,"CCategory",WS_GROUP,7,191,120,15
+    CONTROL         "Use &time",IDC_USETIME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,208,120,10
+    CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,222,120,15
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3235,7 +3394,7 @@ BEGIN
         BOTTOMMARGIN, 167
     END
 
-    IDD_SELECTGPS, DIALOG
+    IDD_SELECTLOCATIONGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 423
@@ -3243,7 +3402,15 @@ BEGIN
         BOTTOMMARGIN, 314
     END
 
-    IDD_SELECTIATA, DIALOG
+    IDD_SELECTLOCATIONIATA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 304
+    END
+
+    IDD_SELECTPROPERTYIATA, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 182
@@ -3412,6 +3579,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 417
     END
+
+    IDD_MAKETASK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 267
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -3437,7 +3612,6 @@ BEGIN
     BEGIN
         MENUITEM "S&ynchronize",                IDM_STORE_SYNCHRONIZE
         MENUITEM "Make de&fault location",      IDM_STORE_MAKEDEFAULT
-        MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
         MENUITEM "&Delete",                     IDM_STORE_DELETE
@@ -3542,20 +3716,18 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS needs your permission"
     IDS_EXPAND              "&Expand"
     IDS_COLLAPSE            "&Collapse"
-    IDS_IMPORTFOLDER_CAPTION "Import folder"
-    IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
     IDS_CHOOSESTORE_HINT    "Only mounted and writeable locations can be selected."
     IDS_STOREMAINTENANCE_CAPTION "Report"
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u location serviced"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u locations serviced"
     IDS_REGFILEFILTER       "Registry file"
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
+    IDS_EXPIRECAPTION       "Unregistered copy—please purchase a license!"
+    IDS_XOFY_SINGULAR       "%u of %u"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPIRECAPTION       "Unregistered copy—please purchase a license!"
-    IDS_XOFY_SINGULAR       "%u of %u"
     IDS_XOFY_PLURAL         "%u of %u"
     IDS_UPDATE              "Update"
     IDS_UPDATENOTAVAILABLE  "Your liquidFOLDERS is up to date."
@@ -3570,12 +3742,12 @@ BEGIN
     IDS_DELETESTORE_MSG     "Do you really want to delete this location?"
     IDS_FORMAT_CAPTION      "You cannot format volume %c:"
     IDS_FORMAT_MSG          "It contains locations that you are using.\nFormatting this volume will destroy those locations."
+    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
+    IDS_STORECREATED        "The location “%s” was added."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
-    IDS_STORECREATED        "The location “%s” was added."
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Creates a new storage location for your files.\nImported files will be copied there."
     IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be modified by this."

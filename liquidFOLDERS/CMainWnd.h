@@ -104,7 +104,7 @@ protected:
 	LFFilter* m_pActiveFilter;
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;
-	LFStatistics* m_pStatistics;
+	LFStatistics m_Statistics;
 
 private:
 	static LFFilter* GetRootFilter();
@@ -113,15 +113,27 @@ private:
 	void UpdateHistory(UINT NavMode);
 	static void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
 	static void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
+	COLORREF PriorityColor() const;
 	static BOOL CookSortDescending(LFContextViewSettings* pContextViewSettings);
 	static BOOL CookGroupSingle(LFContextViewSettings* pContextViewSettings);
 
 	CHAR m_StatisticsID[LFKeySize];
+	BOOL m_StatisticsResult;
 };
 
 inline BOOL CMainWnd::CreateClipboard()
 {
 	return Create(TRUE);
+}
+
+inline COLORREF CMainWnd::PriorityColor() const
+{
+	return m_Statistics.TaskCount[10] ? 0x0000FF :
+		m_Statistics.TaskCount[8] || m_Statistics.TaskCount[9] ? 0x0060FF :
+		m_Statistics.TaskCount[6] || m_Statistics.TaskCount[7] ? 0x00C0FF :
+		m_Statistics.TaskCount[4] || m_Statistics.TaskCount[5] ? 0x05DB8E :
+		m_Statistics.TaskCount[1] || m_Statistics.TaskCount[2] || m_Statistics.TaskCount[3] ? 0x069006 :
+		(COLORREF)-1;
 }
 
 inline BOOL CMainWnd::CookSortDescending(LFContextViewSettings* pContextViewSettings)

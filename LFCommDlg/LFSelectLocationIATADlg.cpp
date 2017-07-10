@@ -9,18 +9,12 @@
 // LFSelectLocationIATADlg
 //
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(BOOL IsPropertyDialog, CWnd* pParentWnd, const LPCSTR pAirport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
-	: LFDialog(IDD_SELECTIATA, pParentWnd)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirport, UINT nIDTemplate)
+	: LFDialog(nIDTemplate, pParentWnd)
 {
-	m_IsPropertyDialog = IsPropertyDialog;
-	m_AllowOverwriteName = AllowOverwriteName;
-	m_AllowOverwriteGPS = AllowOverwriteGPS;
-
 	m_LastCountrySelected = LFGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
 	m_LastSortColumn = LFGetApp()->GetInt(_T("IATALastSortColumn"), 0);
 	m_LastSortDirection = LFGetApp()->GetInt(_T("IATALastSortDirection"), FALSE);
-	m_OverwriteName = AllowOverwriteName ? LFGetApp()->GetInt(_T("IATAOverwriteName"), TRUE) : FALSE;
-	m_OverwriteGPS = AllowOverwriteGPS ? LFGetApp()->GetInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
 
 	p_Airport = NULL;
 	LFIATAGetAirportByCode(pAirport, &p_Airport);
@@ -31,8 +25,6 @@ void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 	LFDialog::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_AIRPORTS, m_wndAirportList);
-	DDX_Check(pDX, IDC_REPLACE_NAME, m_OverwriteName);
-	DDX_Check(pDX, IDC_REPLACE_GPS, m_OverwriteGPS);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -43,12 +35,6 @@ void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 		LFGetApp()->WriteInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
 		LFGetApp()->WriteInt(_T("IATALastSortColumn"), m_LastSortColumn);
 		LFGetApp()->WriteInt(_T("IATALastSortDirection"), m_LastSortDirection);
-
-		if (m_AllowOverwriteName)
-			LFGetApp()->WriteInt(_T("IATAOverwriteName"), m_OverwriteName);
-
-		if (m_AllowOverwriteGPS)
-			LFGetApp()->WriteInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
 	}
 }
 
@@ -176,28 +162,6 @@ BOOL LFSelectLocationIATADlg::InitDialog()
 
 	pComboBox->SelectString(-1, CString(LFIATAGetCountry(Country)->Name));
 	LoadCountry(Country);
-
-	// Optionen
-	GetDlgItem(IDC_REPLACE_NAME)->EnableWindow(m_AllowOverwriteName);
-	GetDlgItem(IDC_REPLACE_GPS)->EnableWindow(m_AllowOverwriteGPS);
-
-	if (!m_IsPropertyDialog)
-	{
-		m_wndCategory[2].ShowWindow(SW_HIDE);
-
-		GetDlgItem(IDC_REPLACE_NAME)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_REPLACE_GPS)->ShowWindow(SW_HIDE);
-
-		CRect rectBottom;
-		GetDlgItem(IDC_REPLACE_GPS)->GetWindowRect(rectBottom);
-		ScreenToClient(rectBottom);
-
-		CRect rectWindow;
-		m_wndAirportList.GetWindowRect(rectWindow);
-		ScreenToClient(rectWindow);
-
-		m_wndAirportList.SetWindowPos(NULL, 0, 0, rectWindow.Width(), rectBottom.bottom-rectWindow.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-	}
 
 	return p_Airport!=NULL;
 }

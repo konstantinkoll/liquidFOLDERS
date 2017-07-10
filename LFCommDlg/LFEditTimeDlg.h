@@ -12,19 +12,21 @@
 class LFEditTimeDlg : public LFDialog
 {
 public:
-	LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd=NULL);
+	LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd=NULL, UINT nIDTemplate=IDD_EDITTIME, BOOL UseTime=FALSE, BOOL UseDate=TRUE);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();
+
+	void EnableControls();
 
 	afx_msg void OnUseTime();
 	DECLARE_MESSAGE_MAP()
 
 	LFVariantData* p_Data;
 
-private:
 	CMonthCalCtrl m_wndCalendar;
 	CDateTimeCtrl m_wndTime;
+	BOOL m_UseDate;
 	BOOL m_UseTime;
 };

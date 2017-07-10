@@ -82,7 +82,9 @@ BOOL LFEditGenreDlg::InitDialog()
 			ASSERT(Property.UINT32<256);
 
 			m_FileCount[Property.UINT32] = (*pCookedFiles)[a]->AggregateCount;
-			wcsncpy_s(m_Description[Property.UINT32], 256, (*pCookedFiles)[a]->Description, _TRUNCATE);
+
+			if ((*pCookedFiles)[a]->Type & LFTypeHasDescription)
+				wcsncpy_s(m_Description[Property.UINT32], 256, (*pCookedFiles)[a]->Description, _TRUNCATE);
 		}
 	}
 

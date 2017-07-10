@@ -473,8 +473,9 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 	// Check consistency
 	assert(AttrProperties[ID].Type<LFTypeCount);
-	assert((AttrProperties[ID].Type!=LFAttrFlags) || AttrProperties[ID].ReadOnly);
 	assert((AttrProperties[ID].DefaultView==(UINT)-1) || (TypeProperties[AttrProperties[ID].Type].AllowedViews & (1<<AttrProperties[ID].DefaultView)));
+	assert((AttrProperties[ID].DefaultView==(UINT)-1) ^ (TypeProperties[AttrProperties[ID].Type].AllowedViews!=0));
+	assert((TypeProperties[AttrProperties[ID].Type].Sortable | TypeProperties[AttrProperties[ID].Type].SortableSubfolder)==TypeProperties[AttrProperties[ID].Type].Sortable);
 	assert(AttrProperties[ID].DefaultPriority<=LFMaxAttributePriority);
 
 	assert(LFAttrFileName==0);
@@ -536,11 +537,13 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 
 #ifdef _DEBUG
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if ((CtxProperties[ID].AvailableAttributes>>a) & 1)
+		if (TypeProperties[AttrProperties[a].Type].AllowedViews)
 		{
-			assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[a].Type].AllowedViews);
-			assert(TypeProperties[AttrProperties[a].Type].Sortable);
-			assert(AttrProperties[a].DefaultView!=(UINT)-1);
+			if ((CtxProperties[ID].AvailableAttributes>>a) & 1)
+				assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[a].Type].AllowedViews);
+
+			if ((CtxProperties[ID].AdvertisedAttributes>>a) & 1)
+				assert(TypeProperties[AttrProperties[a].Type].Sortable);
 		}
 #endif
 

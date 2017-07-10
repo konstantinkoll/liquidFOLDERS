@@ -24,7 +24,7 @@ static const BYTE ContextSlaves[LFLastQueryContext+1] = {
 	IDXTABLE_DOCUMENTS,		// LFContextDocuments
 	IDXTABLE_MASTER,		// LFContextContacts
 	IDXTABLE_MESSAGES,		// LFContextMessages
-	IDXTABLE_MASTER,		// LFContextEvents
+	IDXTABLE_MASTER,		// LFContextTasks
 	IDXTABLE_MASTER,		// LFContextNew
 	IDXTABLE_MASTER,		// LFContextTrash
 	IDXTABLE_MASTER			// LFContextFilters
@@ -357,7 +357,6 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOO
 				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 4, pItemDescriptor, LFAttrBitrate);
 				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 5, pItemDescriptor, LFAttrSamplerate);
 				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 7, pItemDescriptor, LFAttrChannels);
-				GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 10, pItemDescriptor, LFAttrAudioCodec);
 
 				GetShellProperty(pParentFolder, pidlRel, SHPropertyPhoto, 36867, pItemDescriptor, LFAttrRecordingTime);
 

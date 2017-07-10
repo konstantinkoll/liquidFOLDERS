@@ -307,11 +307,10 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 	}
 }
 
-void CPropertyEdit::SetData(const LFVariantData* pData)
+void CPropertyEdit::SetData(const LFVariantData& Data)
 {
-	ASSERT(pData);
+	m_Data = Data;
 
-	m_Data = *pData;
 	CreateProperty();
 }
 

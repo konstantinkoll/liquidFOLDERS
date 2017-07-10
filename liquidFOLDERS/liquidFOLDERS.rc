@@ -138,7 +138,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Archivieren",                IDM_FILE_ARCHIVE
+        MENUITEM "Archi&vieren",                IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Kopieren",                   IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -229,7 +229,7 @@ IDM_FOLDER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Archivieren",                IDM_FILE_ARCHIVE
+        MENUITEM "Archi&vieren",                IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Kopieren",                   IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -375,11 +375,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
-    IDS_CONTEXTMENU_REMEMBER "Mer&ken"
-    IDS_CONTEXTMENU_REMOVE  "Aus Zwischenablage &entfernen"
     IDS_CONTEXTMENU_SENDTO  "S&enden an"
     IDS_CONTEXTMENU_CHOOSESTORE "&Speicherort wählen..."
-    IDS_CONTEXTMENU_IMPORTFOLDER "Verzeichnis &importieren..."
+    IDS_CONTEXTMENU_REMEMBER "Mer&ken"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Aus Zwischenablage &entfernen"
+    IDS_CONTEXTMENU_MAKETASK "&Aufgabe erstellen..."
+    IDS_CONTEXTMENU_TASKDONE "&Aufgabe erledigt"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_TXTFILEFILTER       "Textdatei"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
@@ -389,11 +390,11 @@ BEGIN
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
     IDS_SEARCHTERM          "Alle Speicherorte durchsuchen"
-    IDS_STORE               "Speicherort"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORE               "Speicherort"
     IDS_DEFAULTSTORE        "Standard-Speicherort"
     IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
@@ -403,11 +404,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILTERS_CREATENEW   "Neuer Filter..."
+    IDM_FILTERS_CREATENEW   "Erstellt einen neuen Filter\nNeuer Filter..."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FLAGS         "Markierungen"
     IDS_VATTR_SOURCE        "Quelle"
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_SYNCHRONIZETIME "Zuletzt synchronisiert"
@@ -449,10 +451,13 @@ STRINGTABLE
 BEGIN
     IDM_FILE_OPENBROWSER    "Öffnet die ausgewählte Datei im Standard-Webbrowser.\nIm Webbrowser öffnen"
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
-    IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
+    IDM_FILE_REMOVEFROMCLIPBOARD 
+                            "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
+    IDM_FILE_MAKETASK       "Markiert die Dateien als Aufgabe.\nAufgabe erstellen..."
     IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
+    IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nAufgabe erledigt"
     IDM_FILE_RECOVER        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
 END
 
@@ -784,11 +789,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_EDIT    "E&ditar..."
-    IDS_CONTEXTMENU_REMEMBER "Re&cordar"
-    IDS_CONTEXTMENU_REMOVE  "&Eliminar del portapapeles"
     IDS_CONTEXTMENU_SENDTO  "&Enviar a"
     IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &ubicación..."
-    IDS_CONTEXTMENU_IMPORTFOLDER "&Importar carpeta..."
+    IDS_CONTEXTMENU_REMEMBER "Re&cordar"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Eliminar del portapapeles"
+    IDS_CONTEXTMENU_MAKETASK "Crear &tarea..."
+    IDS_CONTEXTMENU_TASKDONE "&Tarea cumplida"
     IDS_CONTEXTMENU_MORE    "&Más..."
     IDS_TXTFILEFILTER       "Documento de texto"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
@@ -798,11 +804,11 @@ BEGIN
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
     IDS_SEARCHTERM          "Buscar todo los ubicaciones"
-    IDS_STORE               "Ubicación"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORE               "Ubicación"
     IDS_DEFAULTSTORE        "Ubicación estándar"
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
@@ -812,11 +818,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILTERS_CREATENEW   "Nuevo filtro..."
+    IDM_FILTERS_CREATENEW   "Crea un nuevo filtro\nNuevo filtro..."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FLAGS         "Indicadores"
     IDS_VATTR_SOURCE        "Origen"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_SYNCHRONIZETIME "Sincronizado"
@@ -858,10 +865,13 @@ STRINGTABLE
 BEGIN
     IDM_FILE_OPENBROWSER    "Abre el archivo seleccionado con el navegador estándar.\nAbrir con navegador"
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
-    IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
+    IDM_FILE_REMOVEFROMCLIPBOARD 
+                            "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
+    IDM_FILE_MAKETASK       "Marca los archivos seleccionados como tarea.\nCrear tarea..."
     IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
+    IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nTarea cumplida"
     IDM_FILE_RECOVER        "Restablece los archivos seleccionados.\nRestablecer"
 END
 
@@ -949,7 +959,7 @@ IDM_FILTERS MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Filtre noveau...",           IDM_FILTERS_CREATENEW
+        MENUITEM "&Noveau filtre...",           IDM_FILTERS_CREATENEW
     END
 END
 
@@ -1193,11 +1203,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_EDIT    "&Modifier..."
-    IDS_CONTEXTMENU_REMEMBER "Remar&quer"
-    IDS_CONTEXTMENU_REMOVE  "Enlèver du &presse-papiers"
     IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
     IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &emplacement..."
-    IDS_CONTEXTMENU_IMPORTFOLDER "&Importer dossier..."
+    IDS_CONTEXTMENU_REMEMBER "Remar&quer"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Enlèver du &presse-papiers"
+    IDS_CONTEXTMENU_MAKETASK "Créer &tâche..."
+    IDS_CONTEXTMENU_TASKDONE "&Tâche fini"
     IDS_CONTEXTMENU_MORE    "&Plus..."
     IDS_TXTFILEFILTER       "Fichier texte"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
@@ -1207,11 +1218,11 @@ BEGIN
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
     IDS_SEARCHTERM          "Recherche tous les emplacements"
-    IDS_STORE               "Emplacement"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORE               "Emplacement"
     IDS_DEFAULTSTORE        "Emplacement défaut"
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
@@ -1221,11 +1232,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILTERS_CREATENEW   "Filtre noveau..."
+    IDM_FILTERS_CREATENEW   "Crée un nouveau filtre\nNoveau filtre..."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FLAGS         "Marquage"
     IDS_VATTR_SOURCE        "Source"
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_SYNCHRONIZETIME "Synchronisée"
@@ -1267,10 +1279,13 @@ STRINGTABLE
 BEGIN
     IDM_FILE_OPENBROWSER    "Ouvre le fichier choisi avec le navigateur défaut.\nOuvrir avec navigateur"
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
-    IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
+    IDM_FILE_REMOVEFROMCLIPBOARD 
+                            "Enlève les fichiers choisis du presse-papiers.\nEnlever"
+    IDM_FILE_MAKETASK       "Marque les fichiers choisis comme une tâche.\nCréer tâche..."
     IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
+    IDM_FILE_TASKDONE       "Supprime la marque comme une tâche des fichiers choisis.\nTâche fini"
     IDM_FILE_RECOVER        "Reconstitue tous les fichiers.\nReconstituer"
 END
 
@@ -1416,7 +1431,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Archive",                    IDM_FILE_ARCHIVE
+        MENUITEM "Archi&ve",                    IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copy",                       IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1507,7 +1522,7 @@ IDM_FOLDER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Archive",                    IDM_FILE_ARCHIVE
+        MENUITEM "Archi&ve",                    IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copy",                       IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1653,11 +1668,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_EDIT    "&Edit..."
-    IDS_CONTEXTMENU_REMEMBER "Re&member"
-    IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_SENDTO  "S&end to"
     IDS_CONTEXTMENU_CHOOSESTORE "Choose &location..."
-    IDS_CONTEXTMENU_IMPORTFOLDER "&Import folder..."
+    IDS_CONTEXTMENU_REMEMBER "Re&member"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Re&move from clipboard"
+    IDS_CONTEXTMENU_MAKETASK "Create &task..."
+    IDS_CONTEXTMENU_TASKDONE "&Task done"
     IDS_CONTEXTMENU_MORE    "&More..."
     IDS_TXTFILEFILTER       "Text document"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
@@ -1667,11 +1683,11 @@ BEGIN
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
     IDS_SEARCHTERM          "Search all locations"
-    IDS_STORE               "Location"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORE               "Location"
     IDS_DEFAULTSTORE        "Default location"
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
@@ -1681,11 +1697,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILTERS_CREATENEW   "Add filter..."
+    IDM_FILTERS_CREATENEW   "Creates a new filter\nNew filter..."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FLAGS         "Flags"
     IDS_VATTR_SOURCE        "Source"
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_SYNCHRONIZETIME "Synchronized"
@@ -1727,10 +1744,13 @@ STRINGTABLE
 BEGIN
     IDM_FILE_OPENBROWSER    "Opens the selected file in your default browser.\nOpen in browser"
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
-    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
+    IDM_FILE_REMOVEFROMCLIPBOARD 
+                            "Removes the selected files from the clipboard window.\nRemove"
+    IDM_FILE_MAKETASK       "Marks the selected files as task.\nCreate task..."
     IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
+    IDM_FILE_TASKDONE       "Removes the task marking from the selected files.\nTask done"
     IDM_FILE_RECOVER        "Recovers the selected files.\nRecover"
 END
 

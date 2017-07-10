@@ -8,7 +8,7 @@
 
 // View parameters
 
-#define VIEWSETTINGSVERSION     4
+#define VIEWSETTINGSVERSION     5
 
 struct LFContextViewSettings
 {

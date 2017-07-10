@@ -18,8 +18,10 @@ CMainWnd::CMainWnd()
 	m_pActiveFilter = NULL;
 	m_pBreadcrumbBack = m_pBreadcrumbForward = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
-	m_pStatistics = NULL;
+
+	ZeroMemory(&m_Statistics, sizeof(LFStatistics));
 	m_StatisticsID[0] = '\0';
+	m_StatisticsResult = LFCancel;
 }
 
 CMainWnd::~CMainWnd()
@@ -34,8 +36,6 @@ CMainWnd::~CMainWnd()
 		LFFreeSearchResult(m_pCookedFiles);
 
 	LFFreeSearchResult(m_pRawFiles);
-
-	delete m_pStatistics;
 }
 
 BOOL CMainWnd::Create(BOOL IsClipboard)
@@ -659,7 +659,7 @@ void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)
 
 	const UINT Context = pCmdUI->m_nID-IDM_NAV_SWITCHCONTEXT;
 	if ((Context!=LFContextAllFiles) && (Context!=LFContextFilters))
-		bEnable &= m_pStatistics ? m_pStatistics->FileCount[Context]>0 : FALSE;
+		bEnable &= (m_Statistics.FileCount[Context]>0);
 
 	pCmdUI->Enable(bEnable);
 }
@@ -893,13 +893,18 @@ void CMainWnd::OnUpdateViewSettings()
 
 void CMainWnd::OnUpdateCounts()
 {
-	delete m_pStatistics;
-
-	m_pStatistics = LFQueryStatistics(m_StatisticsID);
+	m_StatisticsResult = LFQueryStatistics(m_Statistics, m_StatisticsID);
 
 	if (m_pSidebarWnd)
 		for (UINT a=0; a<=LFLastQueryContext; a++)
-			m_pSidebarWnd->SetCount(IDM_NAV_SWITCHCONTEXT+a, m_pStatistics->FileCount[a]);
+			if (a==LFContextTasks)
+			{
+				m_pSidebarWnd->SetCount(IDM_NAV_SWITCHCONTEXT+a, m_Statistics.FileCount[a], PriorityColor());
+			}
+			else
+			{
+				m_pSidebarWnd->SetCount(IDM_NAV_SWITCHCONTEXT+a, m_Statistics.FileCount[a]);
+			}
 }
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
@@ -928,14 +933,12 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	if (!m_IsClipboard)
 	{
 		INT Context = m_wndMainView.GetContext();
-		if (Context>LFLastQueryContext)
-			if (m_pActiveFilter)
-				if (m_pActiveFilter->Options.IsSubfolder && (m_pBreadcrumbBack!=NULL))
-					Context = m_pBreadcrumbBack->pFilter->ResultContext;
+		if ((Context>LFLastQueryContext) && m_pActiveFilter && m_pActiveFilter->Options.IsSubfolder && m_pBreadcrumbBack)
+			Context = m_pBreadcrumbBack->pFilter->ResultContext;
 
 		if (m_pSidebarWnd)
 		{
-			if ((strcmp(m_StatisticsID, GetStatisticsID())!=0) || !m_pStatistics)
+			if ((strcmp(m_StatisticsID, GetStatisticsID())!=0) || (m_StatisticsResult!=LFOk))
 			{
 				strcpy_s(m_StatisticsID, LFKeySize, GetStatisticsID());
 
@@ -946,7 +949,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		}
 	}
 
-	if ((pVictim) && (pVictim!=m_pRawFiles))
+	if (pVictim && (pVictim!=m_pRawFiles))
 		LFFreeSearchResult(pVictim);
 
 	return m_pCookedFiles->m_LastError;
@@ -1020,14 +1023,14 @@ void CMainWnd::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 	wcscpy_s(pTooltipData->Hint, 4096, theApp.m_Contexts[Context].Comment);
 
-	if (m_pStatistics && (Context<=LFLastQueryContext))
-		if (m_pStatistics->FileCount[Context])
+	if (Context<=LFLastQueryContext)
+		if (m_Statistics.FileCount[Context])
 		{
 			if (pTooltipData->Hint[0])
 				wcscat_s(pTooltipData->Hint, 4096, L"\n");
 
 			const SIZE_T Length = wcslen(pTooltipData->Hint);
-			LFGetFileSummary(&pTooltipData->Hint[Length], 4096-Length, m_pStatistics->FileCount[Context], m_pStatistics->FileSize[Context]);
+			LFGetFileSummary(&pTooltipData->Hint[Length], 4096-Length, m_Statistics.FileCount[Context], m_Statistics.FileSize[Context]);
 		}
 
 	*pResult = TRUE;

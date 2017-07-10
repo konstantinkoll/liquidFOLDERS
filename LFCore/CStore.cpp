@@ -309,23 +309,14 @@ void CStore::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	if (p_StoreDescriptor->Source==LFTypeSourceNethood)
 	{
 		// Keep old copy of statistics
-		UINT FileCount[LFLastQueryContext+1];
-		memcpy_s(FileCount, sizeof(FileCount), p_StoreDescriptor->FileCount, sizeof(FileCount));
-
-		INT64 FileSize[LFLastQueryContext+1];
-		memcpy_s(FileSize, sizeof(FileSize), p_StoreDescriptor->FileSize, sizeof(FileSize));
+		LFStatistics Statistics = p_StoreDescriptor->Statistics;
 
 		// Read-only operation, just needs main index
 		m_pIndexMain->Query(pFilter, pSearchResult, TRUE);
 
 		// Compare old and current statistics, send notify message if needed
-		for (UINT a=0; a<=LFLastQueryContext; a++)
-			if ((FileCount[a]!=p_StoreDescriptor->FileCount[a]) || (FileSize[a]!=p_StoreDescriptor->FileSize[a]))
-			{
-				SendLFNotifyMessage(LFMessages.StatisticsChanged);
-
-				break;
-			}
+		if (memcmp(&Statistics, &p_StoreDescriptor->Statistics, sizeof(LFStatistics)))
+			SendLFNotifyMessage(LFMessages.StatisticsChanged);
 	}
 	else
 	{
@@ -369,34 +360,35 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 		break;
 
 	case LFTransactionTypeArchive:
-		m_pIndexMain->UpdateItemState(pTransactionList, LFFlagArchive, &TransactionTime);
+		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, LFFlagArchive);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateItemState(pTransactionList, LFFlagArchive, &TransactionTime);
+			m_pIndexAux->UpdateItemState(pTransactionList, TransactionTime, LFFlagArchive);
 
 		break;
 
 	case LFTransactionTypePutInTrash:
-		m_pIndexMain->UpdateItemState(pTransactionList, LFFlagTrash, &TransactionTime);
+		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, LFFlagTrash);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateItemState(pTransactionList, LFFlagTrash, &TransactionTime);
+			m_pIndexAux->UpdateItemState(pTransactionList, TransactionTime, LFFlagTrash);
 
 		break;
 
 	case LFTransactionTypeRecover:
-		m_pIndexMain->UpdateItemState(pTransactionList, 0, &TransactionTime);
+		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, 0);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateItemState(pTransactionList, 0, &TransactionTime);
+			m_pIndexAux->UpdateItemState(pTransactionList, TransactionTime, 0);
 
 		break;
 
 	case LFTransactionTypeUpdate:
-		m_pIndexMain->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3);
+	case LFTransactionTypeUpdateTask:
+		m_pIndexMain->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3, TransactionType==LFTransactionTypeUpdateTask);
 
 		if (m_pIndexAux)
-			m_pIndexAux->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3);
+			m_pIndexAux->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3, TransactionType==LFTransactionTypeUpdateTask);
 
 		break;
 
@@ -555,7 +547,6 @@ UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LF
 UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 {
 	assert(pCoreAttributes);
-	assert(pStoreData);
 
 	if (!LFIsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;

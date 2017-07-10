@@ -263,7 +263,7 @@ void CLiquidFoldersApp::SanitizeContextViewSettings(INT Context)
 	// Find view for this attribute that is allowed in the context
 	const UINT Attr = m_ContextViewSettings[Context].SortBy;
 
-	ASSERT(m_Attributes[Attr].TypeProperties.Sortable);
+	ASSERT(IsAttributeSortable(Context, Attr));
 	ASSERT(m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 
 	UINT Mask = m_Attributes[Attr].TypeProperties.AllowedViews & m_Contexts[Context].CtxProperties.AvailableViews;
@@ -298,7 +298,7 @@ void CLiquidFoldersApp::SetContextSort(INT Context, UINT Attr, BOOL Descending, 
 	ASSERT(Context<LFContextCount);
 	ASSERT(Attr>=0);
 	ASSERT(Attr<LFAttributeCount);
-	ASSERT(m_Attributes[Attr].TypeProperties.Sortable);
+	ASSERT(IsAttributeSortable(Context, Attr));
 	ASSERT(m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 
 	if (m_ContextViewSettings[Context].SortBy!=Attr)
@@ -352,7 +352,7 @@ void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
 	SetRegistryBase(Base);
 
 	const UINT DefaultAttribute = m_Contexts[Context].CtxProperties.DefaultAttribute;
-	const BOOL DefaultDescending = m_Attributes[DefaultAttribute].AttrProperties.DefaultDescending;
+	const BOOL DefaultDescending = m_Attributes[DefaultAttribute].TypeProperties.DefaultDescending;
 	const UINT DefaultView = m_Contexts[Context].CtxProperties.DefaultView;
 
 	// Default columns
@@ -409,20 +409,20 @@ void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
 
 void CLiquidFoldersApp::SaveContextViewSettings(UINT Context)
 {
-#ifndef _DEBUG
 	CString Base;
 	Base.Format(_T("Settings\\Context%u"), Context);
 	SetRegistryBase(Base);
 
+#ifndef _DEBUG
 	WriteInt(_T("SortBy"), m_ContextViewSettings[Context].SortBy);
 	WriteInt(_T("Descending"), m_ContextViewSettings[Context].Descending);
 	WriteInt(_T("View"), m_ContextViewSettings[Context].View);
 
 	WriteBinary(_T("ColumnOrder"), (LPBYTE)m_ContextViewSettings[Context].ColumnOrder, sizeof(m_ContextViewSettings[Context].ColumnOrder));
 	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_ContextViewSettings[Context].ColumnWidth, sizeof(m_ContextViewSettings[Context].ColumnWidth));
+#endif
 
 	SetRegistryBase(_T("Settings"));
-#endif
 }
 
 BOOL CLiquidFoldersApp::LoadGlobalViewSettings()

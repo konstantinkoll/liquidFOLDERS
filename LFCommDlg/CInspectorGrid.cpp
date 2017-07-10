@@ -480,7 +480,7 @@ void CPropertyIATA::OnSetString(CString& Value) const
 
 void CPropertyIATA::OnClickButton()
 {
-	LFSelectLocationIATADlg dlg(TRUE, NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
+	LFSelectPropertyIATADlg dlg(NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
 	if (dlg.DoModal()==IDOK)
 		if (dlg.p_Airport)
 		{

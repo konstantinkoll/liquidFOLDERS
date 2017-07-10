@@ -376,7 +376,7 @@ LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult
 
 // Statistik
 // - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
-LFCORE_API LFStatistics* __stdcall LFQueryStatistics(LPCSTR StoreID=NULL);
+LFCORE_API UINT __stdcall LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID=NULL);
 
 
 

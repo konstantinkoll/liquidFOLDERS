@@ -18,13 +18,16 @@ CFileSummary::CFileSummary()
 	Reset();
 }
 
-void CFileSummary::Reset()
+void CFileSummary::Reset(INT Context)
 {
+	m_Context = Context;
 	p_LastItem = NULL;
 	m_ItemCount = 0;
 
-	// Icon and type
-	m_IconStatus = STATUSUNUSED;
+	// Icon, flags and store
+	m_IconStatus = m_StoreStatus = STATUSUNUSED;
+	m_FlagsFirst = TRUE;
+	m_FlagsSet = m_FlagsMultiple = 0;
 
 	// Properties
 	ZeroMemory(m_AttributeSummary, sizeof(m_AttributeSummary));
@@ -78,45 +81,42 @@ void CFileSummary::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	ASSERT(pItemDescriptor);
 	ASSERT(Attr<LFAttributeCount);
 
-	if (pItemDescriptor->AttributeValues[Attr])
+	if (theApp.IsAttributeAvailable(m_Context, Attr) && pItemDescriptor->AttributeValues[Attr])
 	{
 		AttributeSummary* pAttributeSummary = &m_AttributeSummary[Attr];
 
 		LFVariantData Property;
 		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, Property);
 
-		switch (pAttributeSummary->Status)
-		{
-		case STATUSUNUSED:
-			if (!theApp.m_Attributes[Attr].AttrProperties.ReadOnly || !LFIsNullVariantData(Property))
+		if (!theApp.m_Attributes[Attr].AttrProperties.ReadOnly || !LFIsNullVariantData(Property))
+			switch (pAttributeSummary->Status)
 			{
-				pAttributeSummary->Value = Property;
+			case STATUSUNUSED:
+				{
+					pAttributeSummary->Value = Property;
 
-				pAttributeSummary->Status = STATUSUSED;
-				pAttributeSummary->Visible = TRUE;
-			}
+					pAttributeSummary->Status = STATUSUSED;
+					pAttributeSummary->Visible = TRUE;
+				}
 
-			break;
+				break;
 
-		case STATUSUSED:
-			if (LFCompareVariantData(pAttributeSummary->Value, Property)==0)
-				return;
+			case STATUSUSED:
+				if (LFCompareVariantData(pAttributeSummary->Value, Property)==0)
+					return;
 
-			pAttributeSummary->RangeFirst = pAttributeSummary->RangeSecond = pAttributeSummary->Value;
-			pAttributeSummary->Status = STATUSMULTIPLE;
+				pAttributeSummary->RangeFirst = pAttributeSummary->RangeSecond = pAttributeSummary->Value;
+				pAttributeSummary->Status = STATUSMULTIPLE;
 
-		case STATUSMULTIPLE:
-			if (!LFIsNullVariantData(Property))
-			{
+			case STATUSMULTIPLE:
 				if (LFCompareVariantData(Property, pAttributeSummary->RangeFirst)==-1)
 					pAttributeSummary->RangeFirst = Property;
 
 				if (LFCompareVariantData(Property, pAttributeSummary->RangeSecond)==1)
 					pAttributeSummary->RangeSecond = Property;
-			}
 
-			break;
-		}
+				break;
+			}
 	}
 }
 
@@ -125,12 +125,43 @@ void CFileSummary::AddFile(LFItemDescriptor* pItemDescriptor)
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
+	// Basic
 	p_LastItem = pItemDescriptor;
 	m_ItemCount++;
 
+	// Flags
+	if (m_FlagsFirst)
+	{
+		m_FlagsFirst = FALSE;
+		m_FlagsSet = pItemDescriptor->CoreAttributes.Flags;
+	}
+	else
+	{
+		m_FlagsMultiple = m_FlagsSet ^ pItemDescriptor->CoreAttributes.Flags;
+		m_FlagsSet |= pItemDescriptor->CoreAttributes.Flags;
+	}
+
+	// Store
+	if (m_StoreStatus<STATUSMULTIPLE)
+		switch (m_StoreStatus)
+		{
+		case STATUSUNUSED:
+			m_StoreStatus = STATUSUSED;
+			strcpy_s(m_StoreID, LFKeySize, pItemDescriptor->StoreID);
+			break;
+
+		case STATUSUSED:
+			if (strcmp(m_StoreID, pItemDescriptor->StoreID))
+				m_StoreStatus = STATUSMULTIPLE;
+
+			break;
+		}
+
+	// Attributes
 	for (UINT a=0; a<LFAttributeCount; a++)
 		AddValue(pItemDescriptor, a);
 
+	// Virtual properties
 	AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0]);
 }
 
@@ -169,6 +200,7 @@ void CFileSummary::AddItem(LFItemDescriptor* pItemDescriptor, LFSearchResult* pR
 		AddValue(pItemDescriptor, LFAttrFileCount);
 		AddValue(pItemDescriptor, LFAttrFileSize);
 
+		// Virtual properties
 		LFStoreDescriptor Store;
 		LFGetStoreSettings(pItemDescriptor->StoreID, &Store);
 
@@ -189,6 +221,7 @@ void CFileSummary::AddItem(LFItemDescriptor* pItemDescriptor, LFSearchResult* pR
 
 	case LFTypeFile:
 		AddFile(pItemDescriptor);
+
 		break;
 
 	case LFTypeFolder:
@@ -389,18 +422,18 @@ void CInspectorPane::AggregateFinish()
 		switch (m_FileSummary.m_Type)
 		{
 		case LFTypeFile:
-			if (m_FileSummary.m_AttributeSummary[LFAttrFileFormat].Status==STATUSMULTIPLE)
+			if (m_FileSummary.m_ItemCount==1)
 			{
-				m_IconHeader.SetMultiple(m_TypeName);
+				m_IconHeader.SetPreview(m_FileSummary.p_LastItem, m_TypeName);
 			}
 			else
-				if ((m_FileSummary.m_AttributeSummary[LFAttrStoreID].Status==STATUSMULTIPLE) || (m_FileSummary.m_AttributeSummary[LFAttrFileID].Status==STATUSMULTIPLE))
+				if (m_FileSummary.m_AttributeSummary[LFAttrFileFormat].Status==STATUSMULTIPLE)
 				{
-					m_IconHeader.SetFormatIcon(m_FileSummary.m_AttributeSummary[LFAttrFileFormat].Value.AnsiString, m_TypeName);
+					m_IconHeader.SetMultiple(m_TypeName);
 				}
 				else
 				{
-					m_IconHeader.SetPreview(m_FileSummary.p_LastItem, m_TypeName);
+					m_IconHeader.SetFormatIcon(m_FileSummary.m_AttributeSummary[LFAttrFileFormat].Value.AnsiString, m_TypeName);
 				}
 
 			break;
@@ -409,6 +442,29 @@ void CInspectorPane::AggregateFinish()
 			m_IconHeader.SetCoreIcon(m_FileSummary.m_IconID, m_TypeName);
 		}
 	}
+
+	// Flags
+	if (!m_FileSummary.m_FlagsFirst)
+	{
+		WCHAR tmpStr[7] = L"AMTND";
+		WCHAR* pChar = tmpStr;
+
+		for (UINT Flag=LFFlagArchive; Flag>0; Flag>>=1, pChar++)
+			if (m_FileSummary.m_FlagsMultiple & Flag)
+			{
+				*pChar = L'?';
+			}
+			else
+				if ((m_FileSummary.m_FlagsSet & Flag)==0)
+				{
+					*pChar = L'-';
+				}
+
+			m_FileSummary.AddValueVirtual(AttrFlags, tmpStr);
+	}
+
+	// Store
+	m_wndGrid.SetStore(m_FileSummary.m_StoreStatus==STATUSUSED ? m_FileSummary.m_StoreID : "");
 
 	// Airport name and country
 	if ((m_FileSummary.m_AttributeSummary[LFAttrLocationIATA].Status==STATUSUSED) && (m_FileSummary.m_AttributeSummary[LFAttrLocationIATA].Value.AnsiString[0]!='\0'))
@@ -437,15 +493,12 @@ void CInspectorPane::AggregateFinish()
 		const AttributeSummary* pAttributeSummary = &m_FileSummary.m_AttributeSummary[a];
 
 		m_wndGrid.UpdatePropertyState(a, pAttributeSummary->Status==STATUSMULTIPLE,
-		a<LFAttributeCount ? !theApp.m_Attributes[a].AttrProperties.ReadOnly : FALSE,
+			a<LFAttributeCount ? !theApp.m_Attributes[a].AttrProperties.ReadOnly && (m_FileSummary.m_Context!=LFContextArchive) && (m_FileSummary.m_Context!=LFContextTrash) : FALSE,
 			pAttributeSummary->Visible & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a].AttrProperties.Category!=LFAttrCategoryInternal) : FALSE),
 			&pAttributeSummary->RangeFirst, &pAttributeSummary->RangeSecond);
 	}
 
-	// Store
-	ASSERT(theApp.m_Attributes[LFAttrStoreID].AttrProperties.Type==LFTypeAnsiString);
-	m_wndGrid.SetStore(m_FileSummary.m_AttributeSummary[LFAttrStoreID].Status==STATUSUSED ? m_FileSummary.m_AttributeSummary[LFAttrStoreID].Value.AnsiString : "");
-
+	// Done
 	m_wndGrid.AdjustLayout();
 }
 
