@@ -10,7 +10,6 @@
 // CDetailsView
 //
 
-#define GetItemData(Index)     ((GridItemData*)(m_pItemData+(Index)*m_DataSize))
 #define GUTTER                 9
 #define PADDING                6
 #define MINWIDTH               400
@@ -49,7 +48,6 @@ RECT CDetailsView::GetLabelRect(INT Index) const
 void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-	GridItemData* pData = GetItemData(Index);
 
 	CRect rect(rectItem);
 	rect.DeflateRect(PADDING, PADDING);
@@ -118,7 +116,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 
 						// Value
 						COLORREF oldColor = dc.GetTextColor();
-						if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !pData->Hdr.Selected)
+						if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
 							dc.SetTextColor(0x808080);
 
 						dc.DrawText(Value, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);

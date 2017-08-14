@@ -2156,7 +2156,8 @@ ETB     West Bend, USA;4;43*25'20"N, 88*7'41"W
 ETC     Tarboro, USA;4;35*56'14"N, 77*32'48"W
 ETD     Etadunna, Australia;4;28*44'27"S, 138*35'20"E
 ETE     Genda Wuha, Ethiopia;4;12*55'59"N, 36*10'1"E
-ETH     Elat, Israel;4;29*33'41"N, 34*57'36"E
+ETH     Eilat, Israel;5;29*33'41"N, 34*57'36"E
+ETM     Eilat (Ramon International Airport), Israel;5;29*43'38"N, 34*59'54"E
 ETN     Eastland, USA;4;32*24'49"N, 98*48'35"W
 ETS     Enterprise, USA;4;31*17'59"N, 85*53'59"W
 ETZ     Metz/Nancy, France;4;48*58'42"N, 6*14'48"E
@@ -8202,7 +8203,7 @@ VCR     Carora, Venezuela;4;10*10'32"N, 70*3'55"W
 VCT     Victoria, USA;4;28*51'9"N, 96*55'7"W
 VCV     Victorville, USA;4;34*35'51"N, 117*22'59"W
 VCW     Colonial Williamsburg, USA
-VDA     Ovda, Israel;4;29*56'25"N, 34*56'9"E
+VDA     Eilat (Ovda International Airport), Israel;5;29*56'25"N, 34*56'9"E
 VDB     Fagernes, Norway;4;61*0'56"N, 9*17'17"E
 VDC     Vitória da Conquista, Brazil;4;14*51'46"S, 40*51'47"W
 VDE     Valverde, Spain;4;27*48'53"N, 17*53'13"W

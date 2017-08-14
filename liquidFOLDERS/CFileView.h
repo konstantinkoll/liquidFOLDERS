@@ -51,6 +51,7 @@ struct GlobeParameters
 struct FVPersistentData
 {
 	INT FocusItem;
+	BOOL FocusItemSelected;
 	INT HScrollPos;
 	INT VScrollPos;
 	UINT Year;
@@ -78,7 +79,6 @@ struct FVItemData
 {
 	RECT Rect;
 	INT RectInflate;
-	BOOL Selected;
 	BOOL Valid;
 };
 
@@ -120,15 +120,14 @@ public:
 
 	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
-	virtual void GetPersistentData(FVPersistentData& Data) const;
+	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 	virtual void EditLabel(INT Index);
 
 	void UpdateViewSettings(INT Context=-1, BOOL UpdateSearchResultPending=FALSE);
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	INT GetFocusItem() const;
 	INT GetSelectedItem() const;
-	INT GetNextSelectedItem(INT Index) const;
-	void SelectItem(INT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
+	static BOOL IsItemSelected(const LFItemDescriptor* pItemDescriptor);
 	void EnsureVisible(INT Index);
 	BOOL MultiSelectAllowed() const;
 	BOOL IsEditing() const;
@@ -147,9 +146,11 @@ protected:
 
 	void ValidateAllItems();
 	BOOL IsItemSelected(INT Index) const;
+	BOOL HasItemsSelected() const;
+	void SelectItem(INT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
+	void SetFocusItem(INT FocusItem, BOOL ShiftSelect, BOOL Deselect=TRUE);
 	void ChangedItem(INT Index);
 	void ChangedItems();
-	void SetFocusItem(INT FocusItem, BOOL ShiftSelect, BOOL Deselect=TRUE);
 	RECT GetItemRect(INT Index) const;
 	CMenu* GetSendToMenu();
 	CString GetLabel(LFItemDescriptor* pItemDescriptor) const;
@@ -230,6 +231,7 @@ protected:
 	DWORD m_TypingTicks;
 
 private:
+	void SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select=TRUE);
 	void AppendSendToItem(CMenu* pMenu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
 	void ResetScrollbars();
 	void AdjustScrollbars();
@@ -251,6 +253,22 @@ inline BOOL CFileView::IsEditing() const
 	return (m_pWndEdit!=NULL);
 }
 
+inline BOOL CFileView::IsItemSelected(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return pItemDescriptor->Type & LFTypeSelected;
+}
+
+inline BOOL CFileView::IsItemSelected(INT Index) const
+{
+	assert(p_CookedFiles);
+	assert(Index>=0);
+	assert(Index<(INT)p_CookedFiles->m_ItemCount);
+
+	return IsItemSelected((*p_CookedFiles)[Index]);
+}
+
 inline void CFileView::ChangedItem(INT Index)
 {
 	InvalidateItem(Index);
@@ -263,4 +281,18 @@ inline void CFileView::ChangedItems()
 	Invalidate();
 
 	GetParent()->SendMessage(WM_UPDATESELECTION);
+}
+
+inline void CFileView::SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select)
+{
+	ASSERT(pItemDescriptor);
+
+	if (Select)
+	{
+		pItemDescriptor->Type |= LFTypeSelected;
+	}
+	else
+	{
+		pItemDescriptor->Type &= ~LFTypeSelected;
+	}
 }

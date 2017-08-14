@@ -76,7 +76,7 @@ void CFileSummary::AddValueVirtual(UINT Attr, const LPCSTR pStrValue)
 	AddValueVirtual(Attr, &tmpStr[0]);
 }
 
-void CFileSummary::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr)
+void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT(Attr<LFAttributeCount);
@@ -120,7 +120,7 @@ void CFileSummary::AddValue(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	}
 }
 
-void CFileSummary::AddFile(LFItemDescriptor* pItemDescriptor)
+void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
@@ -165,7 +165,7 @@ void CFileSummary::AddFile(LFItemDescriptor* pItemDescriptor)
 	AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0]);
 }
 
-void CFileSummary::AddItem(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles)
+void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT(pRawFiles);
@@ -353,7 +353,7 @@ void CIconHeader::SetFormatIcon(LPCSTR pFileFormat, const CString& Description)
 	FreeItem();
 }
 
-void CIconHeader::SetPreview(LFItemDescriptor* pItemDescriptor, const CString& Description)
+void CIconHeader::SetPreview(const LFItemDescriptor* pItemDescriptor, const CString& Description)
 {
 	ASSERT(pItemDescriptor);
 
@@ -511,8 +511,7 @@ BEGIN_MESSAGE_MAP(CInspectorPane, CFrontstagePane)
 
 	ON_COMMAND(IDM_INSPECTOR_SHOWINTERNAL, OnToggleInternal)
 	ON_COMMAND(IDM_INSPECTOR_SORTALPHABETIC, OnAlphabetic)
-	ON_COMMAND(IDM_INSPECTOR_EXPORTSUMMARY, OnExportSummary)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_INSPECTOR_SHOWINTERNAL, IDM_INSPECTOR_EXPORTMETADATA, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_INSPECTOR_SHOWINTERNAL, IDM_INSPECTOR_SORTALPHABETIC, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CInspectorPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -629,41 +628,6 @@ void CInspectorPane::OnAlphabetic()
 	SaveSettings();
 }
 
-void CInspectorPane::OnExportSummary()
-{
-	CString Extensions((LPCSTR)IDS_TXTFILEFILTER);
-	Extensions += _T(" (*.txt)|*.txt||");
-
-	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-	{
-		FILE* pStream;
-		if (_tfopen_s(&pStream, dlg.GetPathName(), _T("wt,ccs=UTF-8")))
-		{
-			LFErrorBox(this, LFDriveNotReady);
-		}
-		else
-		{
-			CStdioFile f(pStream);
-
-			try
-			{
-				f.WriteString(m_TypeName+_T("\n\n"));
-
-				for (UINT a=0; a<AttrCount; a++)
-					if (m_FileSummary.m_AttributeSummary[a].Visible)
-						f.WriteString(m_wndGrid.GetName(a)+_T(": ")+m_wndGrid.GetValue(a)+_T("\n"));
-			}
-			catch(CFileException ex)
-			{
-				LFErrorBox(this, LFDriveNotReady);
-			}
-
-			f.Close();
-		}
-	}
-}
-
 void CInspectorPane::OnUpdateCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = TRUE;
@@ -676,11 +640,6 @@ void CInspectorPane::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	case IDM_INSPECTOR_SORTALPHABETIC:
 		pCmdUI->SetCheck(m_SortAlphabetic);
-		break;
-
-	case IDM_INSPECTOR_EXPORTSUMMARY:
-	case IDM_INSPECTOR_EXPORTMETADATA:
-		bEnable = m_FileSummary.m_ItemCount;
 		break;
 	}
 

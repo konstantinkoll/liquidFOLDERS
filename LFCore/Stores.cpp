@@ -738,7 +738,7 @@ LFCORE_API UINT LFSetDefaultStore(LPCSTR pStoreID)
 // Stores
 //
 
-__forceinline UINT StoreFlagsToType(LFStoreDescriptor* pStoreDescriptor, UINT ItemType)
+__forceinline UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType)
 {
 	assert(pStoreDescriptor);
 
@@ -957,7 +957,7 @@ LFCORE_API BOOL LFStoresOnVolume(CHAR cVolume)
 	return Result;
 }
 
-LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType)
+LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* pType)
 {
 	assert(pStoreDescriptor);
 

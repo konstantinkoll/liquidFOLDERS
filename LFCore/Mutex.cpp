@@ -40,7 +40,7 @@ void ReleaseMutexForStores()
 }
 
 
-BOOL GetMutexForStore(LFStoreDescriptor* pStoreDescriptor, HMUTEX* hMutex)
+BOOL GetMutexForStore(const LFStoreDescriptor* pStoreDescriptor, HMUTEX* hMutex)
 {
 	assert(pStoreDescriptor);
 

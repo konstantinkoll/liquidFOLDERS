@@ -467,7 +467,7 @@ LFCORE_API void LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount)
 	swprintf_s(pStr, cCount, L"%.1lf Megapixel", d);
 }
 
-LFCORE_API void LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -871,7 +871,7 @@ LFCORE_API INT LFCompareVariantData(LFVariantData& Value1, LFVariantData& Value2
 	return CompareValues(Value1.Type, &Value1.Value, &Value2.Value);
 }
 
-LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& Value)
+LFCORE_API void LFGetAttributeVariantData(const LFItemDescriptor* pItemDescriptor, LFVariantData& Value)
 {
 	assert(pItemDescriptor);
 
@@ -908,7 +908,7 @@ LFCORE_API void LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFV
 	}
 }
 
-LFCORE_API void LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& Value)
+LFCORE_API void LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& Value)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -929,7 +929,7 @@ LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, con
 	SetAttribute(pItemDescriptor, Value.Attr, &Value.Value);
 }
 
-LFCORE_API BOOL LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
+LFCORE_API BOOL LFIsNullAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);

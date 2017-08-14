@@ -16,7 +16,7 @@ extern CHAR DefaultStore[LFKeySize];
 // Dynamic attribute handling
 //
 
-__forceinline BOOL IsStaticAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
+__forceinline BOOL IsStaticAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -96,7 +96,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value)
 // LFItemDescriptor
 //
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, SIZE_T StoreDataSize)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, SIZE_T StoreDataSize)
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
 	ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes)+(pCoreAttributes ? 0 : sizeof(LFCoreAttributes)));
@@ -119,7 +119,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* pCoreAttrib
 	return pItemDescriptor;
 }
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreDescriptor);
 
@@ -169,7 +169,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDe
 	return pItemDescriptor;
 }
 
-LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor)
+LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(const LFItemDescriptor* pItemDescriptor)
 {
 	if (!pItemDescriptor)
 		return LFAllocItemDescriptor();
@@ -177,22 +177,24 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(LFItemDescriptor* pItemDescri
 	LFItemDescriptor* pClone = new LFItemDescriptor;
 	memcpy(pClone, pItemDescriptor, sizeof(LFItemDescriptor));
 
+	// Reset reference counter
 	pClone->RefCount = 1;
 
+	// Clone attached filter
 	if (pItemDescriptor->pNextFilter)
 		pClone->pNextFilter = LFAllocFilter(pItemDescriptor->pNextFilter);
 
-	// Zeiger anpassen
+	// Adjust attribute value pointers
 	for (UINT a=0; a<LFAttributeCount; a++)
 		if (pClone->AttributeValues[a])
 			if (IsStaticAttribute(pItemDescriptor, a))
 			{
-				INT_PTR Offset = (BYTE*)pItemDescriptor->AttributeValues[a]-(BYTE*)pItemDescriptor;
+				const INT_PTR Offset = (BYTE*)pItemDescriptor->AttributeValues[a]-(BYTE*)pItemDescriptor;
 				pClone->AttributeValues[a] = (BYTE*)pClone+Offset;
 			}
 			else
 			{
-				SIZE_T Size = _msize(pItemDescriptor->AttributeValues[a]);
+				const SIZE_T Size = _msize(pItemDescriptor->AttributeValues[a]);
 				memcpy(pClone->AttributeValues[a] = malloc(Size), pItemDescriptor->AttributeValues[a], Size);
 			}
 

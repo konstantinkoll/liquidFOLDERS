@@ -402,6 +402,10 @@ void LFSearchResult::KeepRange(INT First, INT Last)
 
 	for (INT a=First-1; a>=0; a--)
 		RemoveItem((UINT)a);
+
+	// Deselect all remaining items
+	for (UINT a=0; a<m_ItemCount; a++)
+		m_Items[a]->Type &= ~LFTypeSelected;
 }
 
 INT LFSearchResult::Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const

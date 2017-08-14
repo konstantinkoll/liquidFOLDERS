@@ -203,7 +203,7 @@ void CGlobeView::UpdateCursor()
 	}
 }
 
-void CGlobeView::WriteGoogleAttribute(CStdioFile& f, LFItemDescriptor* pItemDescriptor, UINT Attr)
+void CGlobeView::WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	WCHAR tmpStr[256];
 	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
@@ -298,12 +298,12 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 					break;
 				}
 
-				DrawLabel(pData, cCaption, pCaption, pSubcaption, pCoordinates, pDescription, m_FocusItem==(INT)a, m_HotItem==(INT)a, Themed);
+				DrawLabel(pData, cCaption, pCaption, pSubcaption, pCoordinates, pDescription, IsItemSelected(a), m_FocusItem==(INT)a, m_HotItem==(INT)a, Themed);
 			}
 	}
 }
 
-__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, SIZE_T cCaption, LPCWSTR pCaption, LPCWSTR pSubcaption, LPCWSTR pCoordinates, LPCWSTR pDescription, BOOL Focused, BOOL Hot, BOOL Themed)
+__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, SIZE_T cCaption, LPCWSTR pCaption, LPCWSTR pSubcaption, LPCWSTR pCoordinates, LPCWSTR pDescription, BOOL Selected, BOOL Focused, BOOL Hot, BOOL Themed)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -337,8 +337,6 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, SIZE_T cCaption, 
 	}
 
 	// Colors
-	BOOL Selected = pData->Hdr.Selected;
-
 	GLcolor BorderColor;
 	theRenderer.ColorRef2GLColor(BorderColor, Themed ? (Focused && m_ShowFocusRect && (GetFocus()==this)) || Selected ? 0xE08010 : Hot ? 0xF0C08A : 0xD5D1D0 : GetSysColor(Selected ? COLOR_HIGHLIGHT : COLOR_3DSHADOW));
 
@@ -1207,6 +1205,8 @@ void CGlobeView::OnSettings()
 
 void CGlobeView::OnGoogleEarth()
 {
+	ASSERT(p_CookedFiles);
+
 	if (theApp.m_PathGoogleEarth[0]==L'\0')
 		return;
 
@@ -1220,7 +1220,7 @@ void CGlobeView::OnGoogleEarth()
 	szTempName.Format(_T("%sliquidFOLDERS%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
 	// Datei erzeugen
-	FILE *fStream;
+	FILE* fStream;
 	if (_tfopen_s(&fStream, szTempName, _T("wt,ccs=UTF-8")))
 	{
 		LFErrorBox(this, LFDriveNotReady);
@@ -1233,35 +1233,32 @@ void CGlobeView::OnGoogleEarth()
 			f.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
 			f.WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
 			f.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
-			f.WriteString(_T("<StyleMap id=\"Coord\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
+			f.WriteString(_T("<StyleMap id=\"Location\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
 
-			INT Index = GetNextSelectedItem(-1);
-			while (Index>-1)
+			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 			{
-				LFGeoCoordinates Location = (*p_CookedFiles)[Index]->CoreAttributes.LocationGPS;
-				if ((Location.Latitude!=0) || (Location.Longitude!=0))
+				const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+				if (IsItemSelected(pItemDescriptor) && ((pItemDescriptor->CoreAttributes.LocationGPS.Latitude!=0) || (pItemDescriptor->CoreAttributes.LocationGPS.Longitude!=0)))
 				{
 					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString((*p_CookedFiles)[Index]->CoreAttributes.FileName);
+					f.WriteString(pItemDescriptor->CoreAttributes.FileName);
 					f.WriteString(_T("</name>\n<description>"));
 
-					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrLocationName);
-					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrLocationIATA);
-					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrLocationGPS);
-					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrArtist);
-					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrRoll);
-					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrRecordingTime);
-					WriteGoogleAttribute(f, (*p_CookedFiles)[Index], LFAttrComments);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationName);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationIATA);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationGPS);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrArtist);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrRoll);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrRecordingTime);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrComments);
 
 					f.WriteString(_T("&lt;div&gt;</description>\n<styleUrl>#Location</styleUrl>\n"));
 
 					CString tmpStr;
-					tmpStr.Format(_T("<Point><coordinates>%.6lf,%.6lf,-5000</coordinates></Point>\n"), Location.Longitude, -Location.Latitude);
+					tmpStr.Format(_T("<Point><coordinates>%.6lf,%.6lf,-5000</coordinates></Point>\n"), pItemDescriptor->CoreAttributes.LocationGPS.Longitude, -pItemDescriptor->CoreAttributes.LocationGPS.Latitude);
 
 					f.WriteString(tmpStr+_T("</Placemark>\n"));
 				}
-
-				Index = GetNextSelectedItem(Index);
 			}
 
 			f.WriteString(_T("</Document>\n</kml>\n"));
@@ -1300,7 +1297,7 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_GLOBE_GOOGLEEARTH:
-		bEnable &= (GetNextSelectedItem(-1)!=-1) && (theApp.m_PathGoogleEarth[0]!=L'\0');
+		bEnable &= HasItemsSelected() && (theApp.m_PathGoogleEarth[0]!=L'\0');
 		break;
 	}
 

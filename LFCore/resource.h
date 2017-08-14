@@ -155,11 +155,12 @@
 #define IDS_ERR_INDEXACCESS             1423
 #define IDS_ERR_INDEXCREATE             1424
 #define IDS_ERR_NOTENOUGHSPACE          1425
-#define IDS_ERR_FILEIMPORT              1426
-#define IDS_ERR_FILEDELETE              1427
-#define IDS_ERR_FILERENAME              1428
-#define IDS_ERR_INDEXCOPY               1429
-#define IDS_ERR_NOFILEBODY              1430
+#define IDS_ERR_FILEWRITEPROTECTED      1426
+#define IDS_ERR_CANNOTIMPORTFILE        1427
+#define IDS_ERR_CANNOTDELETEFILE        1428
+#define IDS_ERR_CANNOTRENAMEFILE        1429
+#define IDS_ERR_INDEXCOPY               1430
+#define IDS_ERR_NOFILEBODY              1431
 #define IDS_ATTR_FIRST                  1500
 #define IDS_ATTR_FILENAME               1500
 #define IDS_ATTR_PRIORITY               1501

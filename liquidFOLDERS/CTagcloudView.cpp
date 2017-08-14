@@ -76,17 +76,12 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 			TagcloudItemData* pData = GetItemData(a);
 
-			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
+			if ((pData->Hdr.Hdr.Valid=((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))==TRUE)
 			{
 				pData->Cnt = pItemDescriptor->AggregateCount;
-				pData->Hdr.Hdr.Valid = TRUE;
 
 				Minimum = (Minimum==-1) ? pData->Cnt : min(Minimum, pData->Cnt);
 				Maximum = (Maximum==-1) ? pData->Cnt : max(Maximum, pData->Cnt);
-			}
-			else
-			{
-				pData->Hdr.Hdr.Valid = FALSE;
 			}
 		}
 
@@ -231,10 +226,10 @@ Restart:
 void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-	TagcloudItemData* pData = GetItemData(Index);
+	const TagcloudItemData* pData = GetItemData(Index);
 
 	// Calculate color
-	if (!pData->Hdr.Hdr.Selected)
+	if (!IsItemSelected(pItemDescriptor))
 	{
 		COLORREF clrText = m_GlobalViewSettings.TagcloudUseColors ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 

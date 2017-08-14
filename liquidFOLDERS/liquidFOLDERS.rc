@@ -216,12 +216,6 @@ BEGIN
     BEGIN
         MENUITEM "&Alle Eigenschaften anzeigen", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
-        MENUITEM SEPARATOR
-        POPUP "&Exportieren"
-        BEGIN
-            MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
-            MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA
-        END
     END
 END
 
@@ -382,8 +376,6 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK "&Aufgabe erstellen..."
     IDS_CONTEXTMENU_TASKDONE "&Aufgabe erledigt"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
-    IDS_TXTFILEFILTER       "Textdatei"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
@@ -630,12 +622,6 @@ BEGIN
     BEGIN
         MENUITEM "Mostrar &todas las propriedades", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "Ordenar &alfabéticamente",    IDM_INSPECTOR_SORTALPHABETIC
-        MENUITEM SEPARATOR
-        POPUP "&Exportar"
-        BEGIN
-            MENUITEM "&Sumario...",                 IDM_INSPECTOR_EXPORTSUMMARY
-            MENUITEM "Completar &metadata...",      IDM_INSPECTOR_EXPORTMETADATA
-        END
     END
 END
 
@@ -796,8 +782,6 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK "Crear &tarea..."
     IDS_CONTEXTMENU_TASKDONE "&Tarea cumplida"
     IDS_CONTEXTMENU_MORE    "&Más..."
-    IDS_TXTFILEFILTER       "Documento de texto"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_NOITEMSSELECTED     "Ítems no seleccionados"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
@@ -1006,7 +990,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Indiquer les &jours",         IDM_CALENDAR_SHOWDAYS
+        MENUITEM "Présenter les &jours",         IDM_CALENDAR_SHOWDAYS
         MENUITEM "Choisissez l'&année...\tCtrl+Y", IDM_CALENDAR_GOTOYEAR
     END
 END
@@ -1030,7 +1014,7 @@ BEGIN
             MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
             MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
             MENUITEM SEPARATOR
-            MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
+            MENUITEM "Présenter les tags &rares",    IDM_TAGCLOUD_SHOWRARE
         END
         MENUITEM "Utilise la &taille",          IDM_TAGCLOUD_USESIZE
         MENUITEM "Utilise la &couleur",         IDM_TAGCLOUD_USECOLORS
@@ -1042,14 +1026,8 @@ IDM_INSPECTOR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Indiquer &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
+        MENUITEM "Présenter &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Trier alphabétique",         IDM_INSPECTOR_SORTALPHABETIC
-        MENUITEM SEPARATOR
-        POPUP "&Export"
-        BEGIN
-            MENUITEM "&Compte-rendu...",            IDM_INSPECTOR_EXPORTSUMMARY
-            MENUITEM "Toutes les &meta-données...", IDM_INSPECTOR_EXPORTMETADATA
-        END
     END
 END
 
@@ -1118,9 +1096,9 @@ BEGIN
     CONTROL         "&Compresser",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
     CONTROL         "Objets",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
     CONTROL         "&Sélectionner des lieux",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
-    CONTROL         "Indiquer &noms d'aéroport",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
-    CONTROL         "Indiquer &coordonnées-GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
-    CONTROL         "Indiquer &descriptions",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
+    CONTROL         "Présenter &noms d'aéroport",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
+    CONTROL         "Présenter &coordonnées-GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
+    CONTROL         "Présenter &descriptions",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
 END
 
 
@@ -1210,10 +1188,8 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK "Créer &tâche..."
     IDS_CONTEXTMENU_TASKDONE "&Tâche fini"
     IDS_CONTEXTMENU_MORE    "&Plus..."
-    IDS_TXTFILEFILTER       "Fichier texte"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
-    IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
+    IDS_NOTHINGTODISPLAY    "Il n'y a rien présenter."
     IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
@@ -1253,7 +1229,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Met l'emplacement choisi comme l'emplacement défaut.\nMettre emplacement défaut"
-    IDM_STORE_PROPERTIES    "Indique les propriétés du emplacement choisi.\nPropriétés"
+    IDM_STORE_PROPERTIES    "Présente les propriétés du emplacement choisi.\nPropriétés"
     IDM_STORES_ADD          "Ajouter un emplacement pour vos fichiers.\nAjouter emplacement..."
     IDM_STORES_SYNCHRONIZE  "Synchroniser tous les emplacements avec leur source de données.\nSynchroniser"
     IDM_STORES_RUNMAINTENANCE "Effectuer travails d'entretien"
@@ -1291,13 +1267,13 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_VOLUME_PROPERTIES   "Indique les propriétés du lecteur choisi.\nPropriétés"
+    IDM_VOLUME_PROPERTIES   "Présente les propriétés du lecteur choisi.\nPropriétés"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_CALENDAR_PREVYEAR   "Indique l'année précédente.\nAnnée précédente"
-    IDM_CALENDAR_NEXTYEAR   "Indique l' année prochaine.\nAnnée prochaine"
+    IDM_CALENDAR_PREVYEAR   "Présente l'année précédente.\nAnnée précédente"
+    IDM_CALENDAR_NEXTYEAR   "Présente l' année prochaine.\nAnnée prochaine"
     IDM_CALENDAR_GOTOYEAR   "Ouvre une fenêtre de dialogue dans quoi vous pouvez choisir un an à l'annonce.\nChoisissez l'année..."
 END
 
@@ -1509,12 +1485,6 @@ BEGIN
     BEGIN
         MENUITEM "Show a&ll properties",        IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
-        MENUITEM SEPARATOR
-        POPUP "&Export"
-        BEGIN
-            MENUITEM "&Summary...",                 IDM_INSPECTOR_EXPORTSUMMARY
-            MENUITEM "Complete &metadata...",       IDM_INSPECTOR_EXPORTMETADATA
-        END
     END
 END
 
@@ -1675,8 +1645,6 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK "Create &task..."
     IDS_CONTEXTMENU_TASKDONE "&Task done"
     IDS_CONTEXTMENU_MORE    "&More..."
-    IDS_TXTFILEFILTER       "Text document"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."

@@ -10,8 +10,6 @@
 //
 
 #define GetItemData(Index)        ((FVItemData*)(m_pItemData+Index*m_DataSize))
-#define IsSelected(Index)         GetItemData(Index)->Selected
-//#define IsSelected(Index)         (*p_CookedFiles)[Index]->Type & 1
 #define FIRSTSENDTO               0xFF00
 #define HORIZONTALSCROLLWIDTH     64
 
@@ -134,30 +132,15 @@ void CFileView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	theApp.HideTooltip();
 
 	LPBYTE pVictim = m_pItemData;
-	const SIZE_T VictimAllocated = m_ItemDataAllocated;
 
 	m_Nothing = TRUE;
 
 	if (pCookedFiles)
 	{
-		m_AllowMultiSelect = (pCookedFiles->m_Context!=LFContextStores);
-
 		const SIZE_T Size = (SIZE_T)(m_ItemDataAllocated=pCookedFiles->m_ItemCount)*m_DataSize;
 		ZeroMemory(m_pItemData=(LPBYTE)malloc(Size), Size);
 
-		if (VictimAllocated)
-		{
-			const INT RetainSelection = pPersistentData ? pPersistentData->FocusItem : -1;
-
-			for (UINT a=0; a<min(VictimAllocated, pCookedFiles->m_ItemCount); a++)
-			{
-				FVItemData* pData = GetItemData(a);
-				const LPBYTE pVictimData = pVictim+((LPBYTE)pData-m_pItemData);
-
-				if (m_AllowMultiSelect || ((INT)a==RetainSelection))
-					pData->Selected = ((FVItemData*)pVictimData)->Selected;
-			}
-		}
+		m_AllowMultiSelect = (pCookedFiles->m_Context!=LFContextStores);
 
 		p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context=pCookedFiles->m_Context];
 		m_ContextViewSettings.SortBy = p_ContextViewSettings->SortBy;
@@ -186,27 +169,26 @@ void CFileView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 
 	if (p_CookedFiles)
 	{
-		BOOL NeedNewFocusItem = (m_FocusItem>=0) ? !GetItemData(m_FocusItem)->Valid : TRUE;
+		BOOL NeedsNewFocusItem = (m_FocusItem>=0) ? !GetItemData(m_FocusItem)->Valid : TRUE;
 
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-		{
-			FVItemData* pData = GetItemData(a);
-
-			if (pData->Valid)
+			if (GetItemData(a)->Valid)
 			{
 				m_Nothing = FALSE;
 
-				if (NeedNewFocusItem)
+				if (NeedsNewFocusItem)
 				{
 					m_FocusItem = a;
-					NeedNewFocusItem = FALSE;
+					NeedsNewFocusItem = FALSE;
 				}
 			}
 			else
 			{
-				pData->Selected = FALSE;
+				SelectItem(a, FALSE, TRUE);
 			}
-		}
+
+		if (pPersistentData && (pPersistentData->FocusItem!=-1) && pPersistentData->FocusItemSelected)
+			SelectItem(m_FocusItem, TRUE, TRUE);
 
 		AdjustLayout();
 
@@ -256,34 +238,23 @@ INT CFileView::GetFocusItem() const
 
 INT CFileView::GetSelectedItem() const
 {
-	if (p_CookedFiles && (m_FocusItem>=0))
-		if (m_FocusItem<(INT)p_CookedFiles->m_ItemCount)
-		{
-			FVItemData* pData = GetItemData(m_FocusItem);
+	const INT FocusItem = GetFocusItem();
 
-			if (pData->Selected && pData->Valid)
-				return m_FocusItem;
-		}
+	if (FocusItem>=0)
+		if (IsItemSelected(FocusItem))
+			return FocusItem;
 
 	return -1;
 }
 
-INT CFileView::GetNextSelectedItem(INT Index) const
+BOOL CFileView::HasItemsSelected() const
 {
 	if (p_CookedFiles)
-	{
-		ASSERT(Index>=-1);
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+			if (IsItemSelected(a))
+				return TRUE;
 
-		while (++Index<(INT)p_CookedFiles->m_ItemCount)
-		{
-			FVItemData* pData = GetItemData(Index);
-
-			if (pData->Selected && pData->Valid)
-				return Index;
-		}
-	}
-
-	return -1;
+	return FALSE;
 }
 
 void CFileView::SelectItem(INT Index, BOOL Select, BOOL InternalCall)
@@ -293,11 +264,14 @@ void CFileView::SelectItem(INT Index, BOOL Select, BOOL InternalCall)
 		ASSERT(Index>=0);
 		ASSERT(Index<(INT)p_CookedFiles->m_ItemCount);
 
-		FVItemData* pData = GetItemData(Index);
-
-		if (pData->Valid)
+		if (GetItemData(Index)->Valid)
 		{
-			pData->Selected = Select;
+			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+			SelectItem(pItemDescriptor, Select);
+
+			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1))
+				for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
+					SelectItem((*p_RawFiles)[a], Select);
 
 			if (!InternalCall)
 				ChangedItem(Index);
@@ -377,7 +351,7 @@ void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect, BOOL Deselect)
 		m_SelectionAnchor = -1;
 
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			SelectItem(a, Deselect ? (a==FocusItem) : (a==FocusItem) | IsSelected(a), TRUE);
+			SelectItem(a, Deselect ? (a==FocusItem) : (a==FocusItem) | IsItemSelected(a), TRUE);
 	}
 
 	m_FocusItem = FocusItem;
@@ -427,8 +401,7 @@ void CFileView::InvalidateItem(INT Index)
 	if (p_CookedFiles)
 		if ((Index>=0) && (Index<(INT)p_CookedFiles->m_ItemCount))
 		{
-			FVItemData* pData = GetItemData(Index);
-
+			const FVItemData* pData = GetItemData(Index);
 			RECT rect = GetItemRect(Index);
 
 			InflateRect(&rect, pData->RectInflate, pData->RectInflate);
@@ -694,11 +667,12 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	return pMenu;
 }
 
-void CFileView::GetPersistentData(FVPersistentData& Data) const
+void CFileView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
 {
 	ZeroMemory(&Data, sizeof(Data));
 
 	Data.FocusItem = m_FocusItem;
+	Data.FocusItemSelected = !ForReload && (m_FocusItem!=-1) ? IsItemSelected(m_FocusItem) : FALSE;
 	Data.HScrollPos = m_HScrollPos;
 	Data.VScrollPos = m_VScrollPos;
 }
@@ -809,7 +783,8 @@ BOOL CFileView::BeginDragDrop()
 {
 	m_BeginDragDrop = FALSE;
 
-	GetParent()->SendMessage(WM_BEGINDRAGDROP);
+	if (HasItemsSelected())
+		GetParent()->SendMessage(WM_BEGINDRAGDROP);
 
 	return TRUE;
 }
@@ -863,7 +838,7 @@ void CFileView::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpCli
 
 void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	if (Cached && Themed && IsSelected(Index))
+	if (Cached && Themed && IsItemSelected(Index))
 	{
 		CDC MemDC;
 		MemDC.CreateCompatibleDC(&dc);
@@ -884,7 +859,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_SELECTED].hBitmap);
 
 			MemDC.FillSolidRect(0, 0, Width, Height, 0xFFFFFF);
-			DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
+			DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index));
 		}
 		else
 		{
@@ -900,7 +875,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 	else
 	{
 		DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
-			m_HotItem==Index, m_FocusItem==Index, IsSelected(Index),
+			m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index),
 			((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
 			m_ShowFocusRect);
 	}
@@ -908,7 +883,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	if (((m_HotItem!=Index) && !IsSelected(Index)) || !Themed)
+	if (((m_HotItem!=Index) && !IsItemSelected(Index)) || !Themed)
 		return;
 
 	if (Cached)
@@ -931,7 +906,7 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_REFLECTION].hBitmap);
 
-			DrawListItemForeground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
+			DrawListItemForeground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index));
 		}
 		else
 		{
@@ -944,7 +919,7 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 	}
 	else
 	{
-		DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsSelected(Index));
+		DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index));
 	}
 }
 
@@ -1362,13 +1337,13 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_SPACE:
 		if ((m_FocusItem!=-1) && !m_TypingBuffer[0])
-			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !IsSelected(m_FocusItem));
+			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !IsItemSelected(m_FocusItem));
 
 		break;
 
 	case VK_F2:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0) && (m_FocusItem!=-1))
-			if (IsSelected(m_FocusItem))
+			if (IsItemSelected(m_FocusItem))
 				EditLabel(m_FocusItem);
 
 		break;
@@ -1420,16 +1395,16 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 			InvalidateItem(m_FocusItem);
 			m_FocusItem = Index;
-			SelectItem(Index, !IsSelected(Index));
+			SelectItem(Index, !IsItemSelected(Index));
 		}
 		else
-			if ((m_FocusItem==Index) && IsSelected(Index))
+			if ((m_FocusItem==Index) && IsItemSelected(Index))
 			{
 				m_EditLabel = Index;
 			}
 			else
 			{
-				SetFocusItem(Index, nFlags & MK_SHIFT, !IsSelected(Index));
+				SetFocusItem(Index, nFlags & MK_SHIFT, !IsItemSelected(Index));
 			}
 	}
 
@@ -1437,21 +1412,8 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 		SetFocus();
 }
 
-void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
+void CFileView::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
 {
-	if (!(nFlags & MK_CONTROL) || !m_AllowMultiSelect)
-	{
-		const INT Index = ItemAtPosition(point);
-		if (Index!=-1)
-		{
-			SetFocusItem(Index, nFlags & MK_SHIFT);
-		}
-		else
-		{
-			OnSelectNone();
-		}
-	}
-
 	m_BeginDragDrop = FALSE;
 }
 
@@ -1473,7 +1435,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 	if (Index!=-1)
 	{
 		if (!(nFlags & (MK_SHIFT | MK_CONTROL)) || (!m_AllowMultiSelect))
-			if (!IsSelected(Index))
+			if (!IsItemSelected(Index))
 			{
 				m_FocusItem = Index;
 
@@ -1506,7 +1468,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 		if (GetFocus()!=this)
 			SetFocus();
 
-		if (!IsSelected(Index))
+		if (!IsItemSelected(Index))
 		{
 			m_FocusItem = Index;
 
@@ -1672,7 +1634,7 @@ void CFileView::OnSelectInvert()
 	if (p_CookedFiles && m_AllowMultiSelect)
 	{
 		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			SelectItem(a, !IsSelected(a), TRUE);
+			SelectItem(a, !IsItemSelected(a), TRUE);
 
 		ChangedItems();
 		RedrawWindow();

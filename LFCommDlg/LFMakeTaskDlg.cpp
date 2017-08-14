@@ -11,7 +11,7 @@
 //
 
 LFMakeTaskDlg::LFMakeTaskDlg(LFVariantData* pDataPriority, LFVariantData* pDataDueTime, CWnd* pParentWnd)
-	: LFEditTimeDlg(pDataDueTime, pParentWnd, IDD_MAKETASK, TRUE, FALSE)
+	: LFEditTimeDlg(pDataDueTime, pParentWnd, IDD_MAKETASK, FALSE, FALSE)
 {
 	ASSERT(pDataPriority);
 

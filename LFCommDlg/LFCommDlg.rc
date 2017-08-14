@@ -2800,7 +2800,7 @@ BEGIN
     IDS_DELETESTORE_MSG     "Voulez-vous vraiment effacer c'emplacement?"
     IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur %c:"
     IDS_FORMAT_MSG          "Le lecteur contient à présent emplacements, être utilisés.\nLe fait de formater le lecteur rendrait ces emplacements inutilisables."
-    IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
+    IDS_ILLEGALYEAR         "Vous pouvez se présenter seulement les années de 1900 à 2100."
     IDS_STORECREATED        "L'emplacement «%s» a été ajouté."
 END
 

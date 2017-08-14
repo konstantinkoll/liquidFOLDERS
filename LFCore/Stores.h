@@ -25,7 +25,7 @@ UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime
 UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);
 void ChooseNewDefaultStore();
 
-UINT StoreFlagsToType(LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
+UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMutex=NULL);
 UINT GetStore(LPCSTR pStoreID, CStore** ppStore);
 UINT OpenStore(LPCSTR pStoreID, BOOL WriteAccess, CStore** ppStore);

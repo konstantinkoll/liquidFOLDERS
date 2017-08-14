@@ -41,15 +41,13 @@ public:
 	BOOL CreateRoot();
 	BOOL CreateStore(const LPCSTR StoreID);
 	BOOL CreateFilter(LFFilter* pFilter);
-	BOOL AddClipItem(LFItemDescriptor* pItemDescriptor);
+	BOOL AddClipItem(const LFItemDescriptor* pItemDescriptor, BOOL& First);
 
 protected:
 	virtual INT GetCaptionHeight(BOOL IncludeBottomMargin=TRUE) const;
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 
 	BOOL Create(BOOL IsClipboard);
-	void WriteMetadataTXT(CStdioFile& f) const;
-	void WriteMetadataXML(CStdioFile& f) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -111,11 +109,9 @@ private:
 	LPCSTR GetStatisticsID() const;
 	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* pPersistentData=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory(UINT NavMode);
-	static void WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
-	static void WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor);
 	COLORREF PriorityColor() const;
-	static BOOL CookSortDescending(LFContextViewSettings* pContextViewSettings);
-	static BOOL CookGroupSingle(LFContextViewSettings* pContextViewSettings);
+	static BOOL CookSortDescending(const LFContextViewSettings* pContextViewSettings);
+	static BOOL CookGroupSingle(const LFContextViewSettings* pContextViewSettings);
 
 	CHAR m_StatisticsID[LFKeySize];
 	BOOL m_StatisticsResult;
@@ -130,19 +126,19 @@ inline COLORREF CMainWnd::PriorityColor() const
 {
 	return m_Statistics.TaskCount[10] ? 0x0000FF :
 		m_Statistics.TaskCount[8] || m_Statistics.TaskCount[9] ? 0x0060FF :
-		m_Statistics.TaskCount[6] || m_Statistics.TaskCount[7] ? 0x00C0FF :
-		m_Statistics.TaskCount[4] || m_Statistics.TaskCount[5] ? 0x05DB8E :
+		m_Statistics.TaskCount[6] || m_Statistics.TaskCount[7] ? 0x00A0E0 :
+		m_Statistics.TaskCount[4] || m_Statistics.TaskCount[5] ? 0x05BB7D :
 		m_Statistics.TaskCount[1] || m_Statistics.TaskCount[2] || m_Statistics.TaskCount[3] ? 0x069006 :
 		(COLORREF)-1;
 }
 
-inline BOOL CMainWnd::CookSortDescending(LFContextViewSettings* pContextViewSettings)
+inline BOOL CMainWnd::CookSortDescending(const LFContextViewSettings* pContextViewSettings)
 {
 	return (pContextViewSettings->View==LFViewTimeline) ||
 		(pContextViewSettings->Descending && (pContextViewSettings->View<=LFViewDetails));
 }
 
-inline BOOL CMainWnd::CookGroupSingle(LFContextViewSettings* pContextViewSettings)
+inline BOOL CMainWnd::CookGroupSingle(const LFContextViewSettings* pContextViewSettings)
 {
 	const LFAttributeDescriptor* pAttribute = &LFGetApp()->m_Attributes[pContextViewSettings->SortBy];
 

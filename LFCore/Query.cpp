@@ -199,6 +199,7 @@ BOOL CheckCondition(LPVOID v, LFFilterCondition* pFilterCondition)
 
 	case LFTypeUINT:
 	case LFTypeDuration:
+	case LFTypeGenre:
 		switch (pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:

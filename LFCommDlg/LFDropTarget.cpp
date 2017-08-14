@@ -105,7 +105,7 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	wp.pTransactionList = LFAllocTransactionList(hLiquid);
+	wp.pTransactionList = LFAllocTransactionListEx(hLiquid);
 	GlobalUnlock(hgLiquid);
 
 	LFDoWithProgress(WorkerSendTo, &wp.Hdr, pWnd);
@@ -143,7 +143,7 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 	CWaitCursor csr;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	LFTransactionList* pTransactionList = LFAllocTransactionList(hLiquid);
+	LFTransactionList* pTransactionList = LFAllocTransactionListEx(hLiquid);
 	GlobalUnlock(hgLiquid);
 
 	LFDoTransaction(pTransactionList, LFTransactionTypeAddToSearchResult, NULL, (UINT_PTR)p_SearchResult);

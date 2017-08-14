@@ -228,7 +228,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8753
+#define AirportCount_EN 8754
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  65, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2292,7 +2292,8 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 212, "ETC", "", "Tarboro", { -35.937222, -77.546667 } },
 	{   8, "ETD", "", "Etadunna", { 28.740833, 138.588889 } },
 	{  59, "ETE", "", "Genda Wuha", { -12.933056, 36.166944 } },
-	{  92, "ETH", "", "Elat", { -29.561389, 34.960000 } },
+	{  92, "ETH", "", "Eilat", { -29.561389, 34.960000 } },
+	{  92, "ETM", "", "Eilat (Ramon International Airport)", { -29.727222, 34.998333 } },
 	{ 212, "ETN", "", "Eastland", { -32.413611, -98.809722 } },
 	{ 212, "ETS", "", "Enterprise", { -31.299722, -85.899722 } },
 	{  63, "ETZ", "", "Metz/Nancy", { -48.978333, 6.246667 } },
@@ -7865,7 +7866,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 215, "VCR", "", "Carora", { -10.175556, -70.065278 } },
 	{ 212, "VCT", "", "Victoria", { -28.852500, -96.918611 } },
 	{ 212, "VCV", "", "Victorville", { -34.597500, -117.383056 } },
-	{  92, "VDA", "", "Ovda", { -29.940278, 34.935833 } },
+	{  92, "VDA", "", "Eilat (Ovda International Airport)", { -29.940278, 34.935833 } },
 	{ 149, "VDB", "", "Fagernes", { -61.015556, 9.288056 } },
 	{  25, "VDC", "", "Vitória da Conquista", { 14.862778, -40.863056 } },
 	{ 182, "VDE", "", "Valverde", { -27.814722, -17.886944 } },

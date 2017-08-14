@@ -603,8 +603,10 @@ struct LFCoreAttributes
 #define LFTypeWriteable            0x00400000
 
 // Visual type
-#define LFTypeDefault              0x01000000	// Volatile
-#define LFTypeGhosted              0x02000000
+#define LFTypeSelected             0x01000000	// Volatile
+#define LFTypeDefault              0x02000000
+#define LFTypeGhosted              0x04000000
+
 
 // Item type
 #define LFTypeStore                0x00000000	// Volatile
@@ -790,11 +792,12 @@ struct LFStoreDescriptor
 #define LFIndexAccessError           23
 #define LFIndexCreateError           24
 #define LFNotEnoughFreeDiscSpace     25
-#define LFCannotImportFile           26
-#define LFCannotDeleteFile           27
-#define LFCannotRenameFile           28
-#define LFCannotCopyIndex            29
-#define LFNoFileBody                 30
+#define LFFileWriteProtected         26
+#define LFCannotImportFile           27
+#define LFCannotDeleteFile           28
+#define LFCannotRenameFile           29
+#define LFCannotCopyIndex            30
+#define LFNoFileBody                 31
 
-#define LFErrorCount                 31
+#define LFErrorCount                 32
 #define LFFirstFatalError            5

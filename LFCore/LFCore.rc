@@ -288,9 +288,13 @@ STRINGTABLE
 BEGIN
     IDS_ERR_INDEXCREATE     "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt?)."
     IDS_ERR_NOTENOUGHSPACE  "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
-    IDS_ERR_FILEIMPORT      "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind oder Sie nicht die nötigen Zugriffsrechte haben."
-    IDS_ERR_FILEDELETE      "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind oder Sie nicht die nötigen Zugriffsrechte haben."
-    IDS_ERR_FILERENAME      "Einige Dateien können nicht umbenannt werden."
+    IDS_ERR_FILEWRITEPROTECTED 
+                            "Dateien im Archiv oder Papierkorb dürfen nicht verändert werden."
+    IDS_ERR_CANNOTIMPORTFILE 
+                            "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind oder Sie nicht die nötigen Zugriffsrechte haben."
+    IDS_ERR_CANNOTDELETEFILE 
+                            "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind oder Sie nicht die nötigen Zugriffsrechte haben."
+    IDS_ERR_CANNOTRENAMEFILE "Einige Dateien können nicht umbenannt werden."
     IDS_ERR_INDEXCOPY       "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt?)."
     IDS_ERR_NOFILEBODY      "Die Datei befindet sich nicht mehr an ihrem Speicherort."
 END
@@ -310,13 +314,13 @@ BEGIN
     IDS_ATTR_DONETIME       "Erledigt am"
     IDS_ATTR_ARCHIVETIME    "Archiviert am"
     IDS_ATTR_DELETETIME     "Gelöscht am"
-    IDS_ATTR_FILEFORMAT     "Dateiformat"
-    IDS_ATTR_FILECOUNT      "Dateianzahl"
-    IDS_ATTR_FILESIZE       "Größe"
     IDS_ATTR_COLOR          "Farbe"
     IDS_ATTR_HASHTAGS       "Hashtags"
     IDS_ATTR_RATING         "Bewertung"
     IDS_ATTR_COMMENTS       "Kommentar"
+    IDS_ATTR_FILEFORMAT     "Dateiformat"
+    IDS_ATTR_FILECOUNT      "Dateianzahl"
+    IDS_ATTR_FILESIZE       "Größe"
     IDS_ATTR_LOCATIONNAME   "Ortsname"
     IDS_ATTR_LOCATIONIATA   "IATA-Code"
     IDS_ATTR_LOCATIONGPS    "GPS-Koordinaten"
@@ -588,9 +592,13 @@ STRINGTABLE
 BEGIN
     IDS_ERR_INDEXCREATE     "El índice del ubicación no puede ser creado (¿disco protegido contra escritura?)."
     IDS_ERR_NOTENOUGHSPACE  "No hay suficiente espacio libre en el disco."
-    IDS_ERR_FILEIMPORT      "Algunos archivos no pueden ser importados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
-    IDS_ERR_FILEDELETE      "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
-    IDS_ERR_FILERENAME      "Algunos archivos no pueden ser renombrados."
+    IDS_ERR_FILEWRITEPROTECTED 
+                            "Ficheros del archivo o la basura no se pueden cambiar."
+    IDS_ERR_CANNOTIMPORTFILE 
+                            "Algunos archivos no pueden ser importados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
+    IDS_ERR_CANNOTDELETEFILE 
+                            "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso o usted no tiene los derechos de acceso requeridos."
+    IDS_ERR_CANNOTRENAMEFILE "Algunos archivos no pueden ser renombrados."
     IDS_ERR_INDEXCOPY       "El índice no puede ser actualizado (¿disco protegido contra escritura?)."
     IDS_ERR_NOFILEBODY      "El archivo ya no está presente en su ubicación."
 END
@@ -610,13 +618,13 @@ BEGIN
     IDS_ATTR_DONETIME       "Finalizado"
     IDS_ATTR_ARCHIVETIME    "Archivado"
     IDS_ATTR_DELETETIME     "Eliminado"
-    IDS_ATTR_FILEFORMAT     "Formato de archivo"
-    IDS_ATTR_FILECOUNT      "Número de archivos"
-    IDS_ATTR_FILESIZE       "Tamaño"
     IDS_ATTR_COLOR          "Color"
     IDS_ATTR_HASHTAGS       "Etiquetas"
     IDS_ATTR_RATING         "Clasificación"
     IDS_ATTR_COMMENTS       "Comentarios"
+    IDS_ATTR_FILEFORMAT     "Formato de archivo"
+    IDS_ATTR_FILECOUNT      "Número de archivos"
+    IDS_ATTR_FILESIZE       "Tamaño"
     IDS_ATTR_LOCATIONNAME   "Nombre de ubicación"
     IDS_ATTR_LOCATIONIATA   "Código de IATA"
     IDS_ATTR_LOCATIONGPS    "Ubicación GPS"
@@ -889,9 +897,14 @@ STRINGTABLE
 BEGIN
     IDS_ERR_INDEXCREATE     "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture?)."
     IDS_ERR_NOTENOUGHSPACE  "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
-    IDS_ERR_FILEIMPORT      "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage ou si vous ne disposez pas des droits d'accès requis."
-    IDS_ERR_FILEDELETE      "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage ou si vous ne disposez pas des droits d'accès requis."
-    IDS_ERR_FILERENAME      "Certains fichiers ne peuvent pas être renommées."
+    IDS_ERR_FILEWRITEPROTECTED 
+                            "Les fichiers dans l'archive ou les déchets ne peuvent pas être modifiés."
+    IDS_ERR_CANNOTIMPORTFILE 
+                            "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage ou si vous ne disposez pas des droits d'accès requis."
+    IDS_ERR_CANNOTDELETEFILE 
+                            "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage ou si vous ne disposez pas des droits d'accès requis."
+    IDS_ERR_CANNOTRENAMEFILE 
+                            "Certains fichiers ne peuvent pas être renommées."
     IDS_ERR_INDEXCOPY       "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture?)."
     IDS_ERR_NOFILEBODY      "Le fichier ne se trouve pas à leur emplacement."
 END
@@ -911,13 +924,13 @@ BEGIN
     IDS_ATTR_DONETIME       "Fini le"
     IDS_ATTR_ARCHIVETIME    "Archivé le"
     IDS_ATTR_DELETETIME     "De manière effacée le"
-    IDS_ATTR_FILEFORMAT     "Format de fichier"
-    IDS_ATTR_FILECOUNT      "Nombre de fichier"
-    IDS_ATTR_FILESIZE       "Grandeur"
     IDS_ATTR_COLOR          "Couleur"
     IDS_ATTR_HASHTAGS       "Mots-dièse"
     IDS_ATTR_RATING         "Estimation"
     IDS_ATTR_COMMENTS       "Commentaire"
+    IDS_ATTR_FILEFORMAT     "Format de fichier"
+    IDS_ATTR_FILECOUNT      "Nombre de fichier"
+    IDS_ATTR_FILESIZE       "Grandeur"
     IDS_ATTR_LOCATIONNAME   "Nom d'endroit"
     IDS_ATTR_LOCATIONIATA   "Code d'IATA"
     IDS_ATTR_LOCATIONGPS    "Coordonnées GPS"
@@ -1226,9 +1239,13 @@ STRINGTABLE
 BEGIN
     IDS_ERR_INDEXCREATE     "The location index cannot be created (write protected disc?)."
     IDS_ERR_NOTENOUGHSPACE  "There is not enough free disc space."
-    IDS_ERR_FILEIMPORT      "Some files cannot be imported because they are still in use or you don't have the neccessary permissions."
-    IDS_ERR_FILEDELETE      "Some files cannot be deleted because they are still in use or you don't have the neccessary permissions."
-    IDS_ERR_FILERENAME      "Some files cannot be renamed."
+    IDS_ERR_FILEWRITEPROTECTED 
+                            "Archived or trashed files must not be modified."
+    IDS_ERR_CANNOTIMPORTFILE 
+                            "Some files cannot be imported because they are still in use or you don't have the neccessary permissions."
+    IDS_ERR_CANNOTDELETEFILE 
+                            "Some files cannot be deleted because they are still in use or you don't have the neccessary permissions."
+    IDS_ERR_CANNOTRENAMEFILE "Some files cannot be renamed."
     IDS_ERR_INDEXCOPY       "The index cannot be updated (write protected disc?)."
     IDS_ERR_NOFILEBODY      "The file is not at its location anymore."
 END
@@ -1248,13 +1265,13 @@ BEGIN
     IDS_ATTR_DONETIME       "Done"
     IDS_ATTR_ARCHIVETIME    "Archived"
     IDS_ATTR_DELETETIME     "Deleted"
-    IDS_ATTR_FILEFORMAT     "File format"
-    IDS_ATTR_FILECOUNT      "File count"
-    IDS_ATTR_FILESIZE       "Size"
     IDS_ATTR_COLOR          "Color"
     IDS_ATTR_HASHTAGS       "Hashtags"
     IDS_ATTR_RATING         "Rating"
     IDS_ATTR_COMMENTS       "Comments"
+    IDS_ATTR_FILEFORMAT     "File format"
+    IDS_ATTR_FILECOUNT      "File count"
+    IDS_ATTR_FILESIZE       "Size"
     IDS_ATTR_LOCATIONNAME   "Location name"
     IDS_ATTR_LOCATIONIATA   "IATA code"
     IDS_ATTR_LOCATIONGPS    "GPS location"

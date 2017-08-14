@@ -87,16 +87,17 @@ EXPORTS
 	LFSortSearchResult @315
 	LFGroupSearchResult @316
 	LFAllocTransactionList @317
-	LFFreeTransactionList @318
-	LFAddTransactionItem @319
-	LFAddTransactionItemEx @320
-	LFCreateDropFiles @321
-	LFCreateLiquidFiles @322
-	LFDoTransaction @323
-	LFAllocFileImportList @324
-	LFFreeFileImportList @325
-	LFAddImportPath @326
-	LFFreeMaintenanceList @327
+	LFAllocTransactionListEx @318
+	LFFreeTransactionList @319
+	LFAddTransactionItem @320
+	LFAddTransactionItemEx @321
+	LFCreateDropFiles @322
+	LFCreateLiquidFiles @323
+	LFDoTransaction @324
+	LFAllocFileImportList @325
+	LFFreeFileImportList @326
+	LFAddImportPath @327
+	LFFreeMaintenanceList @328
 
 	LFIATAGetCountryCount @400
 	LFIATAGetAirportCount @401

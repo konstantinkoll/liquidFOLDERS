@@ -773,71 +773,82 @@ void CIndex::Update(LFTransactionList* pTransactionList, LFVariantData* pVariant
 	// Start
 	START_ITERATEALL(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
 	IN_TRANSACTIONLIST(pTransactionList);
-	REMOVE_STATS();
 
-	LFItemDescriptor* pItemDescriptor = (*pTransactionList)[ItemID].pItemDescriptor;
-	assert(pItemDescriptor);
+	UINT Result;
 
-	// Remove "New" flag
-	pItemDescriptor->CoreAttributes.Flags &= ~LFFlagNew;
-
-	// "Task" flag
-	if (MakeTask)
+	// Write protected?
+	if (PtrM->Flags & (LFFlagArchive | LFFlagTrash))
 	{
-		pItemDescriptor->CoreAttributes.Flags |= LFFlagTask;
-		pItemDescriptor->CoreAttributes.DoneTime.dwHighDateTime = pItemDescriptor->CoreAttributes.DoneTime.dwLowDateTime = 0;
+		Result = LFFileWriteProtected;
 	}
+	else
+	{
+		Result = LFOk;
 
-	// Update attributes
-	if (pVariantData1)
-		LFSetAttributeVariantData(pItemDescriptor, *pVariantData1);
+		REMOVE_STATS();
 
-	if (pVariantData2)
-		LFSetAttributeVariantData(pItemDescriptor, *pVariantData2);
+		LFItemDescriptor* pItemDescriptor = (*pTransactionList)[ItemID].pItemDescriptor;
+		assert(pItemDescriptor);
 
-	if (pVariantData3)
-		LFSetAttributeVariantData(pItemDescriptor, *pVariantData3);
+		// Remove "New" flag
+		pItemDescriptor->CoreAttributes.Flags &= ~LFFlagNew;
 
-	UINT Result = LFOk;
-
-	// Phys. Datei umbenennen ?
-	if (DoRename)
-		if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
+		// "Task" flag
+		if (MakeTask)
 		{
-			Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
-
-			switch (Result)
-			{
-			case LFOk:
-				pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
-				break;
-
-			case LFNoFileBody:
-				pItemDescriptor->CoreAttributes.Flags |= LFFlagMissing;
-
-			default:
-				wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, PtrM->FileName);
-
-				if (m_AdditionalDataSize)
-					memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize);
-			}
+			pItemDescriptor->CoreAttributes.Flags |= LFFlagTask;
+			pItemDescriptor->CoreAttributes.DoneTime.dwHighDateTime = pItemDescriptor->CoreAttributes.DoneTime.dwLowDateTime = 0;
 		}
 
-	// Master
-	m_pTable[IDXTABLE_MASTER]->Update(pItemDescriptor, PtrM);
+		// Update attributes
+		if (pVariantData1)
+			LFSetAttributeVariantData(pItemDescriptor, *pVariantData1);
 
-	ADD_STATS();
+		if (pVariantData2)
+			LFSetAttributeVariantData(pItemDescriptor, *pVariantData2);
 
-	// Slave
-	if (IncludeSlaves)
-	{
-		LOAD_SLAVE();
+		if (pVariantData3)
+			LFSetAttributeVariantData(pItemDescriptor, *pVariantData3);
 
-		LPVOID PtrS;
-		if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-			m_pTable[PtrM->SlaveID]->Update(pItemDescriptor, PtrS);
+		// Phys. Datei umbenennen ?
+		if (DoRename)
+			if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
+			{
+				Result = p_Store->RenameFile(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
 
-		DISCARD_SLAVE();
+				switch (Result)
+				{
+				case LFOk:
+					pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
+					break;
+
+				case LFNoFileBody:
+					pItemDescriptor->CoreAttributes.Flags |= LFFlagMissing;
+
+				default:
+					wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, PtrM->FileName);
+
+					if (m_AdditionalDataSize)
+						memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize);
+				}
+			}
+
+		// Master
+		m_pTable[IDXTABLE_MASTER]->Update(pItemDescriptor, PtrM);
+
+		ADD_STATS();
+
+		// Slave
+		if (IncludeSlaves)
+		{
+			LOAD_SLAVE();
+
+			LPVOID PtrS;
+			if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+				m_pTable[PtrM->SlaveID]->Update(pItemDescriptor, PtrS);
+
+			DISCARD_SLAVE();
+		}
 	}
 
 	pTransactionList->SetError(ItemID, Result);

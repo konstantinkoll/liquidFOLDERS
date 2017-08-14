@@ -31,8 +31,7 @@ public:
 	void ShowNotification(UINT Type, UINT Result, UINT Command=0);
 	void ShowNotification(UINT Result);
 	INT GetSelectedItem() const;
-	INT GetNextSelectedItem(INT Index) const;
-	void GetPersistentData(FVPersistentData& Data) const;
+	void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 	void SelectNone();
 
 protected:
@@ -137,7 +136,6 @@ private:
 	void SetHeader();
 	void UpdateSearchResult();
 	void AdjustLayout(UINT nFlags=SWP_NOACTIVATE | SWP_NOZORDER);
-	void AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData) const;
 	static void CreateShortcut(LFTransactionListItem* pItem);
 
 	CTaskButton* p_InspectorButton;
@@ -179,9 +177,4 @@ inline void CMainView::ShowNotification(UINT Type, const CString& Message, UINT 
 inline INT CMainView::GetSelectedItem() const
 {
 	return m_pWndFileView ? m_pWndFileView->GetSelectedItem() : -1;
-}
-
-inline INT CMainView::GetNextSelectedItem(INT Index) const
-{
-	return m_pWndFileView ? m_pWndFileView->GetNextSelectedItem(Index) : -1;
 }

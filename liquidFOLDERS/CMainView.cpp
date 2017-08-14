@@ -31,7 +31,7 @@ CMainView::CMainView()
 	p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
-	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
+	m_Resizing = m_StoreIDValid = m_FilesSelected = m_Alerted = FALSE;
 }
 
 BOOL CMainView::Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard)
@@ -221,7 +221,7 @@ void CMainView::UpdateViewSettings()
 void CMainView::UpdateSearchResult()
 {
 	FVPersistentData Data;
-	GetPersistentData(Data);
+	GetPersistentData(Data, TRUE);
 
 	UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data, FALSE);
 }
@@ -269,6 +269,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		m_DropTarget.SetSearchResult(pRawFiles);
 
 	SetHeader();
+
 	if (UpdateSelection)
 		OnUpdateSelection();
 }
@@ -333,11 +334,11 @@ void CMainView::AdjustLayout(UINT nFlags)
 	m_Resizing = FALSE;
 }
 
-void CMainView::GetPersistentData(FVPersistentData& Data) const
+void CMainView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
 {
 	if (m_pWndFileView)
 	{
-		m_pWndFileView->GetPersistentData(Data);
+		m_pWndFileView->GetPersistentData(Data, ForReload);
 	}
 	else
 	{
@@ -351,50 +352,14 @@ void CMainView::SelectNone()
 		m_pWndFileView->SendMessage(WM_SELECTNONE);
 }
 
-void CMainView::AddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData) const
-{
-	switch (pItemDescriptor->Type & LFTypeMask)
-	{
-	case LFTypeStore:
-	case LFTypeFile:
-		LFAddTransactionItem(pTransactionList, pItemDescriptor, UserData);
-		break;
-
-	case LFTypeFolder:
-		if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
-			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
-				LFAddTransactionItem(pTransactionList, (*p_RawFiles)[a], UserData);
-
-		break;
-	}
-}
-
 LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolveLocations, BOOL IncludePIDL)
 {
-	LFTransactionList* pTransactionList = LFAllocTransactionList();
+	LFTransactionList* pTransactionList = LFAllocTransactionList(p_RawFiles, All);
 
-	if ((p_RawFiles) && (p_CookedFiles))
+	if (ResolveLocations)
 	{
-		if (All)
-		{
-			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-				AddTransactionItem(pTransactionList, (*p_CookedFiles)[a], a);
-		}
-		else
-		{
-			INT Index = GetNextSelectedItem(-1);
-			while (Index!=-1)
-			{
-				AddTransactionItem(pTransactionList, (*p_CookedFiles)[Index], Index);
-				Index = GetNextSelectedItem(Index);
-			}
-		}
-
-		if (ResolveLocations)
-		{
-			LFDoTransaction(pTransactionList, LFTransactionTypeResolveLocations, NULL, IncludePIDL);
-			ShowNotification(pTransactionList->m_LastError);
-		}
+		LFDoTransaction(pTransactionList, LFTransactionTypeResolveLocations, NULL, IncludePIDL);
+		ShowNotification(pTransactionList->m_LastError);
 	}
 
 	return pTransactionList;
@@ -818,20 +783,20 @@ void CMainView::OnAdjustLayout()
 void CMainView::OnUpdateSelection()
 {
 	m_wndInspectorPane.AggregateStart(m_Context);
-
-	INT Index = GetNextSelectedItem(-1);
 	m_FilesSelected = FALSE;
 
-	while (Index>=0)
-	{
-		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-		m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
+	if (p_CookedFiles)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+		{
+			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+			if (CFileView::IsItemSelected(pItemDescriptor))
+			{
+				m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
 
-		m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
-			(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1));
-
-		Index = GetNextSelectedItem(Index);
-	}
+				m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
+					(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1));
+			}
+		}
 
 	m_wndInspectorPane.AggregateFinish();
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
@@ -1373,35 +1338,24 @@ void CMainView::OnFileEdit()
 
 void CMainView::OnFileRemember()
 {
-	CMainWnd* pClipboard = theApp.GetClipboard();
+	ASSERT(p_RawFiles);
+
+	CMainWnd* pClipboardWnd = theApp.GetClipboard();
+
 	BOOL Changes = FALSE;
+	BOOL First = TRUE;
 
-	INT Index = GetNextSelectedItem(-1);
-	while (Index!=-1)
+	for (UINT a=0; a<p_RawFiles->m_ItemCount; a++)
 	{
-		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-		switch (pItemDescriptor->Type & LFTypeMask)
-		{
-		case LFTypeFile:
-			if (pClipboard->AddClipItem(pItemDescriptor))
+		const LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[a];
+
+		if (CFileView::IsItemSelected(pItemDescriptor))
+			if (pClipboardWnd->AddClipItem(pItemDescriptor, First))
 				Changes = TRUE;
-
-			break;
-
-		case LFTypeFolder:
-			if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
-				for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
-					if (pClipboard->AddClipItem((*p_RawFiles)[a]))
-						Changes = TRUE;
-
-			break;
-		}
-
-		Index = GetNextSelectedItem(Index);
 	}
 
 	if (Changes)
-		pClipboard->SendMessage(WM_COOKFILES);
+		pClipboardWnd->SendMessage(WM_COOKFILES);
 }
 
 void CMainView::OnFileRemoveFromClipboard()

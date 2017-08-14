@@ -277,7 +277,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 	*pResult = FALSE;
 
-	if ((m_pSearchResult) && (pDispInfo->item.pszText))
+	if (m_pSearchResult && pDispInfo->item.pszText)
 		if (pDispInfo->item.pszText[0]!=L'\0')
 		{
 			CWaitCursor csr;

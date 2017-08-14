@@ -115,7 +115,7 @@ LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescr
 LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
 
 // Gibt die ID für das Icon eines Stores zurück
-LFCORE_API UINT LFGetStoreIcon(LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
+LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
 
 // Prüft, ob ein Store angeschlossen ist
 #define LFIsStoreMounted(pStoreDescriptor) ((pStoreDescriptor)->DatPath[0]!=L'\0')
@@ -191,7 +191,7 @@ LFCORE_API void __stdcall LFDurationToString(UINT d, LPWSTR pStr, SIZE_T cCount)
 LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert ein Attribut in eine Zeichenkette
-LFCORE_API void __stdcall LFAttributeToString(LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount);
 
 // Initalisiert eine LFVariantData-Struktur
 LFCORE_API void __stdcall LFInitVariantData(LFVariantData& Value, UINT Attr);
@@ -213,14 +213,14 @@ LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& Value, LPCWSTR 
 LFCORE_API INT __stdcall LFCompareVariantData(LFVariantData& Value1, LFVariantData& Value2);
 
 // Attributwert holen
-LFCORE_API void __stdcall LFGetAttributeVariantData(LFItemDescriptor* pItemDescriptor, LFVariantData& Value);
-LFCORE_API void __stdcall LFGetAttributeVariantDataEx(LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& Value);
+LFCORE_API void __stdcall LFGetAttributeVariantData(const LFItemDescriptor* pItemDescriptor, LFVariantData& Value);
+LFCORE_API void __stdcall LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& Value);
 
 // Attributwert setzen
 LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& Value);
 
 // Prüfen, ob ein Attributwert existiert
-LFCORE_API BOOL __stdcall LFIsNullAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr);
+LFCORE_API BOOL __stdcall LFIsNullAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr);
 
 // Entfernt doppelte Eintäge in einem Unicode-Array
 LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
@@ -231,13 +231,13 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
 //
 
 // Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(LFCoreAttributes* pCoreAttributes=NULL, LPVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes=NULL, LPVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
 
 // Neuen LFItemDescriptor für Store erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor* pStoreDescriptor);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(const LFStoreDescriptor* pStoreDescriptor);
 
 // Unabhängige Kopie von pItemDescriptor erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(LFItemDescriptor* pItemDescriptor);
+LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(const LFItemDescriptor* pItemDescriptor);
 
 // Existierenden LFItemDescriptor freigeben
 LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor);
@@ -284,8 +284,11 @@ LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT
 LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter);
 
 
-// Neue Transaktionsliste erzeugen
-LFCORE_API LFTransactionList* __stdcall LFAllocTransactionList(HLIQUID hLiquid=NULL);
+// Neue Transaktionsliste auf Basis von LFSearchResult erzeugen
+LFCORE_API LFTransactionList* __stdcall LFAllocTransactionList(LFSearchResult* pSearchResult=NULL, BOOL All=FALSE);
+
+// Neue Transaktionsliste auf Basis von HLIQUID-Handle erzeugen
+LFCORE_API LFTransactionList* __stdcall LFAllocTransactionListEx(HLIQUID hLiquid);
 
 // Existierende LFTransactionList freigeben
 LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);

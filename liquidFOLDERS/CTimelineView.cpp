@@ -542,7 +542,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	TimelineItemData* pData = GetItemData(Index);
 
-	DrawCardForeground(dc, g, rectItem, Themed, m_HotItem==Index, m_FocusItem==Index, pData->Hdr.Selected,
+	const BOOL Selected = IsItemSelected(pItemDescriptor);
+	DrawCardForeground(dc, g, rectItem, Themed, m_HotItem==Index, m_FocusItem==Index, Selected,
 		(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
 		m_ShowFocusRect);
 
@@ -587,7 +588,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	CRect rectCaption(rect);
 	rectCaption.left += m_SmallIconSize+SMALLPADDING;
 
-	dc.SetTextColor(pData->Hdr.Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? pData->Hdr.Selected ? 0xFFFFFF : pItemDescriptor->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? pItemDescriptor->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	if ((pItemDescriptor->Type & LFTypeMask)!=LFTypeFolder)
 	{
@@ -608,7 +609,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	LFAttributeToString(pItemDescriptor, ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ? m_ContextViewSettings.SortBy : LFAttrFileName, tmpBuf, 256);
 
 	// Light text color
-	if (!pData->Hdr.Selected)
+	if (!Selected)
 		dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
@@ -619,13 +620,13 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 	// Separator line
 	if (pData->PreviewMask && Themed)
-		dc.FillSolidRect(rectItem->left+CARDPADDING, rect.top-1, m_ItemWidth-2*CARDPADDING, 1, pData->Hdr.Selected ? 0xFFFFFF : 0xE5E5E5);
+		dc.FillSolidRect(rectItem->left+CARDPADDING, rect.top-1, m_ItemWidth-2*CARDPADDING, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
 
 	// Attributes
 	if (pData->PreviewMask & PRV_ATTRIBUTES)
 	{
 		// Slightly lighter text color
-		if (!pData->Hdr.Selected)
+		if (!Selected)
 			dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 
 		CRect rectAttr(rect);
@@ -745,7 +746,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	if (pData->PreviewMask & (PRV_SOURCE | PRV_CONTENTS))
 	{
 		// Light text color
-		if (!pData->Hdr.Selected)
+		if (!Selected)
 			dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
 		pOldFont = dc.SelectObject(&theApp.m_SmallFont);
@@ -778,7 +779,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 				rect.top += (Content==PRV_ATTRIBUTES) ? SMALLPADDING : LARGEPADDING;
 
 				if (Themed)
-					dc.FillSolidRect(rect.left, rect.top, m_ItemWidth-2*CARDPADDING, 1, pData->Hdr.Selected ? 0xFFFFFF : 0xE5E5E5);
+					dc.FillSolidRect(rect.left, rect.top, m_ItemWidth-2*CARDPADDING, 1, Selected ? 0xFFFFFF : 0xE5E5E5);
 
 				rect.top++;
 			}

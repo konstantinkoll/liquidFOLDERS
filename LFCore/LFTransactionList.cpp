@@ -9,29 +9,45 @@
 extern LFMessageIDs LFMessages;
 
 
-LFCORE_API LFTransactionList* LFAllocTransactionList(HLIQUID hLiquid)
+LFCORE_API LFTransactionList* LFAllocTransactionList(LFSearchResult* pSearchResult, BOOL All)
 {
 	LFTransactionList* pTransactionList = new LFTransactionList();
 
-	if (hLiquid)
-	{
-		LIQUIDFILES* pLiquidFiles = (LIQUIDFILES*)GlobalLock(hLiquid);
-
-		if (pLiquidFiles)
+	if (pSearchResult)
+		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
 		{
-			UINT cFiles = pLiquidFiles->cFiles;
-			LPCSTR pChar = (LPCSTR)pLiquidFiles+sizeof(LIQUIDFILES);
+			const UINT Type = (*pSearchResult)[a]->Type;
 
-			for (UINT a=0; a<cFiles; a++)
+			if (All || (Type & LFTypeSelected))
 			{
-				pTransactionList->AddItem(pChar, pChar+LFKeySize);
-
-				pChar += 2*LFKeySize;
+				assert(((Type & LFTypeMask)==LFTypeFile) || ((Type & LFTypeMask)==LFTypeStore));
+				pTransactionList->AddItem((*pSearchResult)[a], a);
 			}
 		}
 
-		GlobalUnlock(hLiquid);
+	return pTransactionList;
+}
+
+LFCORE_API LFTransactionList* LFAllocTransactionListEx(HLIQUID hLiquid)
+{
+	assert(hLiquid);
+
+	LFTransactionList* pTransactionList = new LFTransactionList();
+
+	LIQUIDFILES* pLiquidFiles = (LIQUIDFILES*)GlobalLock(hLiquid);
+	if (pLiquidFiles)
+	{
+		LPCSTR pChar = (LPCSTR)pLiquidFiles+sizeof(LIQUIDFILES);
+
+		for (UINT a=0; a<pLiquidFiles->cFiles; a++)
+		{
+			pTransactionList->AddItem(pChar, pChar+LFKeySize);
+
+			pChar += 2*LFKeySize;
+		}
 	}
+
+	GlobalUnlock(hLiquid);
 
 	return pTransactionList;
 }

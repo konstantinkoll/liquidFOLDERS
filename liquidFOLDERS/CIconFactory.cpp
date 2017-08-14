@@ -60,7 +60,12 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		{
 			// Try to draw a representative thumbnail
 			if (DrawRepresentativeThumbnail(dc, pt, pItemDescriptor, pRawFiles, ThumbnailYOffset))
+			{
+				// No overlay for representative thumbnails
+				DrawOverlay = FALSE;
+
 				goto FinishIcon;
+			}
 
 			// Try to draw a map using the GPS coordinates
 			if (DrawJumboMap(g, pt, pItemDescriptor, ThumbnailYOffset))
@@ -76,7 +81,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		}
 		else
 		{
-			// Overlay only for placeholder icon
+			// No overlay for system icons other than placeholder icon
 			DrawOverlay = FALSE;
 		}
 

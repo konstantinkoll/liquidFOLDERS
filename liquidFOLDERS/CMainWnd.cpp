@@ -216,15 +216,25 @@ void CMainWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 	m_wndMainView.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), rectLayout.Height(), nFlags);
 }
 
-BOOL CMainWnd::AddClipItem(LFItemDescriptor* pItemDescriptor)
+BOOL CMainWnd::AddClipItem(const LFItemDescriptor* pItemDescriptor, BOOL& First)
 {
 	ASSERT(m_IsClipboard);
 
+	// Deselect all previous items
+	if (First)
+	{
+		m_wndMainView.SelectNone();
+
+		First = FALSE;
+	}
+
+	// Skip if item already exists
 	for (UINT a=0; a<m_pRawFiles->m_ItemCount; a++)
 		if ((strcmp(pItemDescriptor->StoreID, (*m_pRawFiles)[a]->StoreID)==0) &&
 			(strcmp(pItemDescriptor->CoreAttributes.FileID, (*m_pRawFiles)[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
+	// Add item
 	LFAddItem(m_pRawFiles, LFCloneItemDescriptor(pItemDescriptor));
 
 	return TRUE;
@@ -326,68 +336,6 @@ void CMainWnd::UpdateHistory(UINT NavMode)
 		m_wndSearch.SetWindowText(m_pActiveFilter->Searchterm);
 }
 
-void CMainWnd::WriteTXTItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor)
-{
-	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
-	{
-		LFVariantData Value;
-		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, Value);
-
-		if (!LFIsNullVariantData(Value))
-		{
-			WCHAR tmpBuf[256];
-			LFVariantDataToString(Value, tmpBuf, 256);
-
-			CString tmpStr(theApp.m_Attributes[Attr].Name);
-			tmpStr.Append(_T(": "));
-			tmpStr.Append(tmpBuf);
-			tmpStr.Append(_T("\n"));
-
-			pFilter.WriteString(tmpStr);
-		}
-	}
-}
-
-void CMainWnd::WriteXMLItem(CStdioFile& pFilter, LFItemDescriptor* pItemDescriptor)
-{
-	CString Type(_T("unknown"));
-	switch (pItemDescriptor->Type & LFTypeMask)
-	{
-	case LFTypeStore:
-		Type = _T("store");
-		break;
-
-	case LFTypeFolder:
-		Type = _T("folder");
-		break;
-
-	case LFTypeFile:
-		Type = _T("file");
-		break;
-	}
-
-	pFilter.WriteString(_T("\t<Item type=\"")+Type+_T("\">\n"));
-
-	for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
-	{
-		LFVariantData Property;
-		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, Property);
-
-		if (!LFIsNullVariantData(Property))
-		{
-			WCHAR tmpBuf[256];
-			LFVariantDataToString(Property, tmpBuf, 256);
-
-			CString tmpStr;
-			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[Attr].XMLID, Attr, tmpBuf);
-
-			pFilter.WriteString(tmpStr);
-		}
-	}
-
-	pFilter.WriteString(_T("\t</Item>\n"));
-}
-
 
 BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_WM_CREATE()
@@ -410,7 +358,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
 	ON_COMMAND(IDM_ITEM_OPENFILEDROP, OnItemOpenFileDrop)
-	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
 
 	ON_MESSAGE(WM_CONTEXTVIEWCOMMAND, OnContextViewCommand)
 	ON_MESSAGE_VOID(WM_UPDATESORTSETTINGS, OnUpdateSortSettings)
@@ -473,7 +420,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					break;
 				}
 
-				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x0000FF : (COLORREF)-1);
+				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x383030 : (COLORREF)-1);
 			}
 
 			SetSidebar(&m_wndSidebar);
@@ -761,99 +708,6 @@ LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)
 	NavigateTo((LFFilter*)wParam);
 
 	return NULL;
-}
-
-
-void CMainWnd::WriteMetadataTXT(CStdioFile& pFilter) const
-{
-#define Spacer { if (First) { First = FALSE; } else { pFilter.WriteString(_T("\n")); } }
-
-	BOOL First = TRUE;
-	INT Index = m_wndMainView.GetNextSelectedItem(-1);
-	while (Index!=-1)
-	{
-		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
-
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
-		{
-			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
-			{
-				Spacer;
-				WriteTXTItem(pFilter, (*m_pRawFiles)[a]);
-			}
-		}
-		else
-		{
-			Spacer;
-			WriteTXTItem(pFilter, pItemDescriptor);
-		}
-
-		Index = m_wndMainView.GetNextSelectedItem(Index);
-	}
-}
-
-void CMainWnd::WriteMetadataXML(CStdioFile& pFilter) const
-{
-	pFilter.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\">\n<items>\n"));
-
-	INT Index = m_wndMainView.GetNextSelectedItem(-1);
-	while (Index!=-1)
-	{
-		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
-		{
-			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
-				WriteXMLItem(pFilter, (*m_pRawFiles)[a]);
-		}
-		else
-		{
-			WriteXMLItem(pFilter, pItemDescriptor);
-		}
-
-		Index = m_wndMainView.GetNextSelectedItem(Index);
-	}
-
-	pFilter.WriteString(_T("</items>\n"));
-}
-
-void CMainWnd::OnExportMetadata()
-{
-	CString Extensions((LPCSTR)IDS_TXTFILEFILTER);
-	Extensions += _T(" (*.txt)|*.txt|");
-
-	CString tmpStr((LPCSTR)IDS_XMLFILEFILTER);
-	Extensions += tmpStr+_T(" (*.xml)|*.xml||");
-
-	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-	{
-		FILE *fStream;
-		if (_tfopen_s(&fStream, dlg.GetPathName(), _T("wt,ccs=UTF-8")))
-		{
-			LFErrorBox(this, LFDriveNotReady);
-		}
-		else
-		{
-			CStdioFile pFilter(fStream);
-			try
-			{
-				if (dlg.GetFileExt()==_T("txt"))
-				{
-					WriteMetadataTXT(pFilter);
-				}
-				else
-					if (dlg.GetFileExt()==_T("xml"))
-					{
-						WriteMetadataXML(pFilter);
-					}
-			}
-			catch(CFileException ex)
-			{
-				LFErrorBox(this, LFDriveNotReady);
-			}
-			pFilter.Close();
-		}
-	}
 }
 
 
