@@ -82,6 +82,13 @@ LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescripto
 LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeList);
 
 
+// Liefert eine Farbe für Dateien zurück
+LFCORE_API COLORREF __stdcall LFGetItemColor(UINT ID, UINT Fade=LFItemColorFadePure);
+
+// Extrahiere eine Farbe aus den Flags
+#define LFGetItemColorIndex(Flags) (*(((LPBYTE)&(Flags))+(LFFlagItemColorShift/8)) & (LFItemColorCount-1))
+
+
 // Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
 // Die gespeicherten Lizenzinformationen finden sich in License
 LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FALSE);
@@ -89,6 +96,7 @@ LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FAL
 // Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
 // und keine ordnungsgemäße Lizenz vorliegt
 LFCORE_API BOOL __stdcall LFIsSharewareExpired();
+
 
 
 
@@ -197,7 +205,7 @@ LFCORE_API void __stdcall LFAttributeToString(const LFItemDescriptor* pItemDescr
 LFCORE_API void __stdcall LFInitVariantData(LFVariantData& Value, UINT Attr);
 
 // Löscht eine LFVariantData-Struktur
-// v->Attr muss gesetzt sein
+// Value.Attr muss gesetzt sein
 LFCORE_API void __stdcall LFClearVariantData(LFVariantData& Value);
 
 // Prüft, ob eine LVVariantData-Struktur Null ist
@@ -282,6 +290,9 @@ LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT
 
 // Gruppiert LFSearchResult und liefert Kopie zurück
 LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter);
+
+// Errechnet die Ordnerfarben nach Änderungen neu
+LFCORE_API void LFUpdateFolderColors(LFSearchResult* pCookedFiles, const LFSearchResult* pRawFiles);
 
 
 // Neue Transaktionsliste auf Basis von LFSearchResult erzeugen

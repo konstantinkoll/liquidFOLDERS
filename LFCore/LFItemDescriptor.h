@@ -3,8 +3,10 @@
 #include "LF.h"
 
 
-SIZE_T GetAttributeSize(UINT Attr, LPCVOID Value);
-void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value);
+SIZE_T GetAttributeSize(UINT Attr, LPCVOID pValue);
+void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID pValue);
 
-LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSummary, INT FirstAggregate=-1, INT LastAggregate=-1);
+UINT GetColoredFolderIconID(const LFFileSummary& FileSummary);
+
+LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSummary, INT AggregateFirst=-1, INT AggregateLast=-1);
 void AttachSlave(LFItemDescriptor* pItemDescriptor, BYTE SlaveID, LPVOID pSlaveData);

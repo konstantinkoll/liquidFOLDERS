@@ -138,6 +138,7 @@ protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
+	virtual LFFont* GetLabelFont() const;
 	virtual RECT GetLabelRect(INT Index) const;
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
@@ -158,7 +159,11 @@ protected:
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
-	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed);
+	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed) const;
+	static UINT GetColorDotCount(const LFItemDescriptor* pItemDescriptor);
+	INT GetColorDotWidth(const LFItemDescriptor* pItemDescriptor, const CIcons& Icons=m_DefaultColorDots) const;
+	INT GetColorDotWidth(INT Index, const CIcons& Icons=m_DefaultColorDots) const;
+	void DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pItemDescriptor, INT FontHeight=0, CIcons& Icons=m_DefaultColorDots) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -224,6 +229,8 @@ protected:
 	INT m_LargeFontHeight;
 	INT m_DefaultFontHeight;
 	INT m_SmallFontHeight;
+	static CIcons m_LargeColorDots;
+	static CIcons m_DefaultColorDots;
 	BOOL m_Hover;
 	BOOL m_BeginDragDrop;
 	CPoint m_DragPos;
@@ -295,4 +302,13 @@ inline void CFileView::SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select
 	{
 		pItemDescriptor->Type &= ~LFTypeSelected;
 	}
+}
+
+inline INT CFileView::GetColorDotWidth(INT Index, const CIcons& Icons) const
+{
+	assert(p_CookedFiles);
+	assert(Index>=0);
+	assert(Index<(INT)p_CookedFiles->m_ItemCount);
+
+	return GetColorDotWidth((*p_CookedFiles)[Index], Icons);
 }

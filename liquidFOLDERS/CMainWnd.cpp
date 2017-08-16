@@ -240,7 +240,7 @@ BOOL CMainWnd::AddClipItem(const LFItemDescriptor* pItemDescriptor, BOOL& First)
 	return TRUE;
 }
 
-void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPersistentData, INT FirstAggregate, INT LastAggregate)
+void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPersistentData, INT AggregateFirst, INT AggregateLast)
 {
 	ASSERT(pFilter);
 
@@ -296,9 +296,9 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPe
 			pVictim = m_pRawFiles;
 	}
 
-	if ((m_pRawFiles) && (FirstAggregate!=-1) && (LastAggregate!=-1))
+	if (m_pRawFiles && (AggregateFirst!=-1) && (AggregateLast!=-1))
 	{
-		m_pRawFiles = LFQueryEx(pFilter, m_pRawFiles, FirstAggregate, LastAggregate);
+		m_pRawFiles = LFQueryEx(pFilter, m_pRawFiles, AggregateFirst, AggregateLast);
 
 		if ((pVictim) && (pVictim!=m_pRawFiles))
 			LFFreeSearchResult(pVictim);
@@ -633,7 +633,7 @@ void CMainWnd::OnItemOpen()
 
 		if (pItemDescriptor->pNextFilter)
 		{
-			NavigateTo(LFAllocFilter(pItemDescriptor->pNextFilter), NAVMODE_NORMAL, NULL, pItemDescriptor->FirstAggregate, pItemDescriptor->LastAggregate);
+			NavigateTo(LFAllocFilter(pItemDescriptor->pNextFilter), NAVMODE_NORMAL, NULL, pItemDescriptor->AggregateFirst, pItemDescriptor->AggregateLast);
 		}
 		else
 		{
@@ -690,7 +690,7 @@ void CMainWnd::OnItemOpenFileDrop()
 		const INT Index = m_wndMainView.GetSelectedItem();
 		if (Index!=-1)
 		{
-			LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
+			const LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
 
 			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 			theApp.GetFileDrop(pItemDescriptor->StoreID);
@@ -701,6 +701,9 @@ void CMainWnd::OnItemOpenFileDrop()
 		{
 			theApp.GetFileDrop(m_wndMainView.GetStoreID());
 		}
+
+	// Iconize own window
+	ShowWindow(SW_MINIMIZE);
 }
 
 LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)

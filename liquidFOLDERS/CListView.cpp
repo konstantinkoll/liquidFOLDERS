@@ -15,7 +15,6 @@
 #define GUTTER                 BACKSTAGEBORDER
 #define ITEMPADDING            2
 #define MAXAUTOWIDTH           400
-#define MINCOLUMNWIDTH         64
 #define PREVIEWITEMOFFSET      2
 #define PREVIEWWIDTH           128+CARDPADDING
 #define SPACER                 (4*ITEMPADDING+1)
@@ -152,9 +151,10 @@ void CListView::AdjustHeader()
 						hdi.cxy = p_ContextViewSettings->ColumnWidth[a] = RATINGBITMAPWIDTH+SPACER;
 					}
 					else
-						if (hdi.cxy<MINCOLUMNWIDTH)
-							p_ContextViewSettings->ColumnWidth[a] = hdi.cxy = MINCOLUMNWIDTH;
-
+					{
+						if (hdi.cxy<GetMinColumnWidth(a))
+							p_ContextViewSettings->ColumnWidth[a] = hdi.cxy = GetMinColumnWidth(a);
+					}
 
 				m_wndHeader.SetItem(a, &hdi);
 			}
@@ -230,8 +230,8 @@ void CListView::AdjustLayout()
 
 			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
 			{
-				VERIFY((Data.First=pItemDescriptor->FirstAggregate)>=0);
-				VERIFY((LastFolderItem=Data.Last=pItemDescriptor->LastAggregate)>=0);
+				VERIFY((Data.First=pItemDescriptor->AggregateFirst)>=0);
+				VERIFY((LastFolderItem=Data.Last=pItemDescriptor->AggregateLast)>=0);
 
 				Data.Rect.bottom += m_LargeFontHeight+((m_PreviewAttribute>=0) ? CARDPADDING+PREVIEWITEMOFFSET : CARDPADDING/2+LFCATEGORYPADDING);
 
@@ -310,7 +310,7 @@ RECT CListView::GetLabelRect(INT Index) const
 
 	// Calculate rectangle
 	rect.right = rect.left+m_ContextViewSettings.ColumnWidth[0]-3*ITEMPADDING;
-	rect.left += m_IconSize+2*ITEMPADDING-2;
+	rect.left += m_IconSize+2*ITEMPADDING+GetColorDotWidth(Index)-2;
 
 	return rect;
 }
@@ -383,14 +383,17 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 			{
 				if (Attr==LFAttrFileName)
 				{
-					// Label
-					if (IsEditing() && (Index==m_EditLabel))
-						continue;
-
 					// Icon
 					theApp.m_IconFactory.DrawSmallIcon(dc, CPoint(rect.left, (rect.top+rect.bottom-m_IconSize)/2), pItemDescriptor);
 
 					rect.left += m_IconSize+2*ITEMPADDING;
+
+					// Color
+					DrawColorDots(dc, rect, pItemDescriptor, m_DefaultFontHeight);
+
+					// Label
+					if (IsEditing() && (Index==m_EditLabel))
+						continue;
 				}
 
 				// Column
@@ -522,9 +525,9 @@ INT CListView::GetMaxAttributeWidth(UINT Attr) const
 
 	// Icon
 	if (Attr==LFAttrFileName)
-		Width += m_IconSize+2*ITEMPADDING;
+		Width += m_IconSize+4*m_DefaultColorDots.GetIconSize()/3+2*ITEMPADDING;
 
-	return max(Width, MINCOLUMNWIDTH);
+	return max(Width, GetMinColumnWidth(Attr));
 }
 
 void CListView::AutosizeColumn(UINT Attr)
@@ -911,12 +914,14 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (!m_IgnoreHeaderItemChange && (pHdr->pitem->mask & HDI_WIDTH))
 	{
-		// Guarantee MINCOLUMNWIDTH, or hide column
-		const INT Width = (pHdr->pitem->cxy<MINCOLUMNWIDTH) ? theApp.m_Attributes[pHdr->iItem].AttrProperties.AlwaysShow ? MINCOLUMNWIDTH : 0 : pHdr->pitem->cxy;
+		const UINT Attr = pHdr->iItem;
 
-		if ((Width!=m_ContextViewSettings.ColumnWidth[pHdr->iItem]) || (Width!=pHdr->pitem->cxy))
+		// Guarantee GetMinColumnWidth(), or hide column
+		const INT Width = (pHdr->pitem->cxy<GetMinColumnWidth(Attr)) ? theApp.m_Attributes[Attr].AttrProperties.AlwaysShow ? GetMinColumnWidth(Attr) : 0 : pHdr->pitem->cxy;
+
+		if ((Width!=m_ContextViewSettings.ColumnWidth[Attr]) || (Width!=pHdr->pitem->cxy))
 		{
-			p_ContextViewSettings->ColumnWidth[pHdr->iItem] = Width;
+			p_ContextViewSettings->ColumnWidth[Attr] = Width;
 
 			theApp.UpdateViewSettings(m_Context, LFViewList);
 		}

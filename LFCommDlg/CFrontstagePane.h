@@ -16,10 +16,10 @@ class CFrontstagePane : public CFrontstageWnd
 public:
 	CFrontstagePane();
 
+	virtual INT GetMinWidth() const;
 	virtual void AdjustLayout(CRect rectLayout);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth, BOOL Shadow=FALSE);
-	static INT GetMinWidth();
 	INT GetPreferredWidth() const;
 	void SetMaxWidth(INT MaxWidth);
 	void GetLayoutRect(LPRECT lpRect) const;
@@ -37,11 +37,6 @@ protected:
 	INT m_MaxWidth;
 	BOOL m_Shadow;
 };
-
-inline INT CFrontstagePane::GetMinWidth()
-{
-	return 240+PANEGRIPPER;
-}
 
 inline INT CFrontstagePane::GetPreferredWidth() const
 {

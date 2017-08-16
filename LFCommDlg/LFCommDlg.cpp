@@ -784,6 +784,21 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOO
 	}
 }
 
+void DrawColorDot(CDC& dc, CRect& rect, UINT nColor, BOOL& First, CIcons& Icons, INT FontHeight)
+{
+	ASSERT(nColor>0);
+
+	const INT Size = Icons.GetIconSize();
+
+	if (!First)
+		rect.left -= 5*Size/6;
+
+	Icons.Draw(dc, rect.left, (rect.top+rect.bottom-Size)/2+(FontHeight & 1), nColor-1);
+
+	rect.left += 4*Size/3;
+	First = FALSE;
+}
+
 void DrawStoreIconShadow(Graphics& g, const CPoint& pt, UINT IconID, INT IconSize)
 {
 	if (IconID<=IDI_LASTSTOREICON)

@@ -209,16 +209,18 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 
 		case HeapError:
 			p_StoreDescriptor->Flags |= LFStoreFlagsError;
+
 			return LFIndexRepairError;
 
 		case HeapMaintenanceRequired:
 			COMPACT(a);
-
 			*pRepaired = UpdateContexts = TRUE;
+
 			break;
 
 		case HeapNoAccess:
 			p_StoreDescriptor->Flags |= LFStoreFlagsError;
+
 			return LFIndexAccessError;
 
 		case HeapSharingViolation:
@@ -687,7 +689,7 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, const FILETIME
 				PtrM->DeleteTime = TransactionTime;
 			}
 
-		// Restore
+		// Recover
 		if (!Flags)
 			if (PtrM->Flags & LFFlagTrash)
 			{

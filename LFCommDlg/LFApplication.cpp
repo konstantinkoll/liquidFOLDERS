@@ -15,6 +15,8 @@
 
 #define GLOBALREGPATH     _T("SOFTWARE\\liquidFOLDERS\\")
 
+const INT LFApplication::m_ColorDotSizes[4] = { 14, 16, 20, 25 };
+
 LFApplication::LFApplication(GUID& AppID)
 {
 	// ID
@@ -511,6 +513,13 @@ HANDLE LFApplication::LoadFontFromResource(UINT nID)
 	}
 
 	return hFont;
+}
+
+void LFApplication::LoadColorDots(CIcons& Icons, INT Size)
+{
+	const UINT Level = (Size>=27) ? 3 : (Size>=22) ? 2 : (Size>=18) ? 1 : 0;
+
+	Icons.Load(IDB_COLORDOTS_14+Level, m_ColorDotSizes[Level]);
 }
 
 void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList)

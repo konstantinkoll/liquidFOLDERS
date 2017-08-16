@@ -429,15 +429,22 @@ void CMainView::RecoverFiles(BOOL All)
 	LFFreeTransactionList(pTransactionList);
 }
 
-BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3)
+BOOL CMainView::UpdateItems(LFVariantData* pValue1, LFVariantData* pValue2, LFVariantData* pValue3)
 {
 	CWaitCursor csr;
 
 	LFTransactionList* pTransactionList = BuildTransactionList();
-	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, Value1, Value2, Value3);
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, pValue1, pValue2, pValue3);
 
 	if ((m_pWndFileView!=NULL) && pTransactionList->m_Modified)
+	{
+		// Update folder colors
+		if ((pValue1 && (pValue1->Attr==LFAttrColor)) || (pValue2 && (pValue2->Attr==LFAttrColor)) || (pValue3 && (pValue3->Attr==LFAttrColor)))
+			LFUpdateFolderColors(p_CookedFiles, p_RawFiles);
+
+		// Update search result
 		UpdateSearchResult();
+	}
 
 	ShowNotification(pTransactionList->m_LastError);
 
@@ -794,7 +801,7 @@ void CMainView::OnUpdateSelection()
 				m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
 
 				m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
-					(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1));
+					(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1));
 			}
 		}
 

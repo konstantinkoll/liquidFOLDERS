@@ -22,8 +22,9 @@ EXPORTS
 	LFGetItemCategoryInfo @16
 	LFGetContextInfo @17
 	LFGetSortedAttributeList @18
-	LFIsLicensed @19
-	LFIsSharewareExpired @20
+	LFGetItemColor @19
+	LFIsLicensed @20
+	LFIsSharewareExpired @21
 
 	LFGetDefaultStore @100
 	LFSetDefaultStore @101
@@ -86,18 +87,19 @@ EXPORTS
 	LFRemoveFlaggedItems @234
 	LFSortSearchResult @315
 	LFGroupSearchResult @316
-	LFAllocTransactionList @317
-	LFAllocTransactionListEx @318
-	LFFreeTransactionList @319
-	LFAddTransactionItem @320
-	LFAddTransactionItemEx @321
-	LFCreateDropFiles @322
-	LFCreateLiquidFiles @323
-	LFDoTransaction @324
-	LFAllocFileImportList @325
-	LFFreeFileImportList @326
-	LFAddImportPath @327
-	LFFreeMaintenanceList @328
+	LFUpdateFolderColors @317
+	LFAllocTransactionList @318
+	LFAllocTransactionListEx @319
+	LFFreeTransactionList @320
+	LFAddTransactionItem @321
+	LFAddTransactionItemEx @322
+	LFCreateDropFiles @323
+	LFCreateLiquidFiles @324
+	LFDoTransaction @325
+	LFAllocFileImportList @326
+	LFFreeFileImportList @327
+	LFAddImportPath @328
+	LFFreeMaintenanceList @329
 
 	LFIATAGetCountryCount @400
 	LFIATAGetAirportCount @401

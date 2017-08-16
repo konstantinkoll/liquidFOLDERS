@@ -249,11 +249,12 @@ HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
 
 	if (DrawFrame)
 	{
-		const INT FrameSize = BlackFrame ? 124 : 122;
-
 		// Draw background
-		SolidBrush brush(Color(BlackFrame ? 0xFF000000 : 0xFFFFFFFF));
-		g.FillRectangle(&brush, (128-FrameSize)/2, (128-FrameSize)/2-1, FrameSize, FrameSize);
+		if (BlackFrame)
+		{
+			SolidBrush brush(Color(0xFF000000));
+			g.FillRectangle(&brush, 2, 1, 124, 124);
+		}
 
 		// Inflate sizes which are just 1 or 2 pixels short
 		if (CutOff)
@@ -365,6 +366,10 @@ BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, const CPoint& pt, LFItemDescripto
 	if (!hBitmap)
 		return FALSE;
 
+	// Draw background
+	dc.FillSolidRect(pt.x+3, pt.y+2, 122, 122, LFGetItemColor(LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags), LFItemColorFadeLight));
+
+	// Draw thumbnail
 	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
@@ -386,11 +391,11 @@ BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, const CPoint& pt, LFItem
 		return FALSE;
 
 	// Is the folder an aggregated folder?
-	if ((pItemDescriptor->FirstAggregate==-1) || (pItemDescriptor->LastAggregate==-1))
+	if ((pItemDescriptor->AggregateFirst==-1) || (pItemDescriptor->AggregateLast==-1))
 		return FALSE;
 
 	// Try to draw a thumbnail
-	for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
+	for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
 		if (DrawJumboThumbnail(dc, pt, (*pRawFiles)[a], ThumbnailYOffset))
 			return TRUE;
 

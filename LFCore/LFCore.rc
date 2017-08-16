@@ -45,7 +45,14 @@ IDI_STR_SOUNDCLOUD      ICON                    "res\\STR_SoundCloud.ico"
 IDI_STR_TWITTER         ICON                    "res\\STR_Twitter.ico"
 IDI_STR_YOUTUBE         ICON                    "res\\STR_YouTube.ico"
 IDI_FLD_DEFAULT         ICON                    "res\\FLD_Default.ico"
-IDI_FLD_ALL             ICON                    "res\\FLD_All.ico"
+IDI_FLD_RED             ICON                    "res\\FLD_Red.ico"
+IDI_FLD_ORANGE          ICON                    "res\\FLD_Orange.ico"
+IDI_FLD_YELLOW          ICON                    "res\\FLD_Yellow.ico"
+IDI_FLD_GREEN           ICON                    "res\\FLD_Green.ico"
+IDI_FLD_BLUE            ICON                    "res\\FLD_Blue.ico"
+IDI_FLD_PURPLE          ICON                    "res\\FLD_Purple.ico"
+IDI_FLD_GRAY            ICON                    "res\\FLD_Gray.ico"
+IDI_FLD_CONTENT         ICON                    "res\\FLD_Content.ico"
 IDI_FLD_DEFAULTGENRE    ICON                    "res\\FLD_DefaultGenre.ico"
 IDI_FLD_PLACEHOLDER     ICON                    "res\\FLD_Placeholder.ico"
 IDI_FLD_ALTERNATIVE     ICON                    "res\\FLD_Alternative.ico"
@@ -78,8 +85,8 @@ IDI_FLD_WORLDMUSIC      ICON                    "res\\FLD_WorldMusic.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,5,0
- PRODUCTVERSION 3,0,5,0
+ FILEVERSION 3,1,0,0
+ PRODUCTVERSION 3,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -96,13 +103,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "3.0.5"
+            VALUE "FileVersion", "3.1.0"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "3.0.5"
+            VALUE "ProductVersion", "3.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -172,8 +179,8 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Dokumente\nOffice-Dokumente"
     IDS_CONTEXT_CONTACTS    "Kontakte"
     IDS_CONTEXT_MESSAGES    "Nachrichten"
-    IDS_CONTEXT_TASKS       "Aufgaben\nAls Aufgaben markierte Dateien"
     IDS_CONTEXT_NEW         "Neue Dateien\nKürzlich hinzugefügte Dateien"
+    IDS_CONTEXT_TASKS       "Aufgaben\nAls Aufgaben markierte Dateien"
     IDS_CONTEXT_ARCHIVE     "Archiv\nArchivierte Dateien"
     IDS_CONTEXT_TRASH       "Papierkorb\nGelöschte Dateien"
 END
@@ -477,8 +484,8 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Documentos\nDocumentos de oficina"
     IDS_CONTEXT_CONTACTS    "Contactos"
     IDS_CONTEXT_MESSAGES    "Mensajes"
-    IDS_CONTEXT_TASKS       "Tareas\nArchivos marcados como tareas"
     IDS_CONTEXT_NEW         "Archivos nuevos\nArchivos añadidos recientemente"
+    IDS_CONTEXT_TASKS       "Tareas\nArchivos marcados como tareas"
     IDS_CONTEXT_ARCHIVE     "Archivo\nArchivos archivados"
     IDS_CONTEXT_TRASH       "Basura\nArchivos eliminados"
 END
@@ -781,8 +788,8 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Documents\nDocuments de bureau"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
-    IDS_CONTEXT_TASKS       "Tâches\nFichiers marqués comme tâches"
     IDS_CONTEXT_NEW         "Nouveaux fichiers\nFichiers ajoutés récemment"
+    IDS_CONTEXT_TASKS       "Tâches\nFichiers marqués comme tâches"
     IDS_CONTEXT_ARCHIVE     "Archive\nLes fichiers archivés"
     IDS_CONTEXT_TRASH       "Déchets\nLes fichiers marqués pour la radiation finale"
 END
@@ -1124,8 +1131,8 @@ BEGIN
     IDS_CONTEXT_DOCUMENTS   "Documents\nOffice documents"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
-    IDS_CONTEXT_TASKS       "Tasks\nFiles marked as tasks"
     IDS_CONTEXT_NEW         "New files\nRecently added files"
+    IDS_CONTEXT_TASKS       "Tasks\nFiles marked as tasks"
     IDS_CONTEXT_ARCHIVE     "Archive\nArchived files"
     IDS_CONTEXT_TRASH       "Trash\nDeleted files"
 END

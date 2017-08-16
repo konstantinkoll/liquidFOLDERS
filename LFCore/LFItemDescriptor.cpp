@@ -37,7 +37,7 @@ void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	}
 }
 
-SIZE_T GetAttributeSize(UINT Attr, LPCVOID Value)
+SIZE_T GetAttributeSize(UINT Attr, LPCVOID pValue)
 {
 	assert(Attr<LFAttributeCount);
 	assert(AttrProperties[Attr].Type<LFTypeCount);
@@ -46,29 +46,29 @@ SIZE_T GetAttributeSize(UINT Attr, LPCVOID Value)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return (min(AttrProperties[Attr].cCharacters, wcslen((LPCWSTR)Value))+1)*sizeof(WCHAR);
+		return (min(AttrProperties[Attr].cCharacters, wcslen((LPCWSTR)pValue))+1)*sizeof(WCHAR);
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		return min(AttrProperties[Attr].cCharacters, strlen((LPCSTR)Value))+1;
+		return min(AttrProperties[Attr].cCharacters, strlen((LPCSTR)pValue))+1;
 
 	default:
 		return TypeProperties[AttrProperties[Attr].Type].Size;
 	}
 }
 
-void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value)
+void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID pValue)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
 	assert(AttrProperties[Attr].Type<LFTypeCount);
-	assert(Value);
+	assert(pValue);
 
 	// Altes Attribut freigeben
 	FreeAttribute(pItemDescriptor, Attr);
 
 	// Größe ermitteln
-	const SIZE_T Size = GetAttributeSize(Attr, Value);
+	const SIZE_T Size = GetAttributeSize(Attr, pValue);
 
 	// Ggf. Speicher reservieren
 	if (!pItemDescriptor->AttributeValues[Attr])
@@ -79,17 +79,38 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		wcsncpy_s((WCHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (LPCWSTR)Value, _TRUNCATE);
+		wcsncpy_s((WCHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (LPCWSTR)pValue, _TRUNCATE);
 		break;
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		strncpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (LPCSTR)Value, _TRUNCATE);
+		strncpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (LPCSTR)pValue, _TRUNCATE);
+		break;
+
+	case LFTypeColor:
+		assert(Attr==LFAttrColor);
+		assert((*((UINT*)pValue) & ~LFFlagItemColorMask)==0);
+
+		pItemDescriptor->CoreAttributes.Flags = (pItemDescriptor->CoreAttributes.Flags & ~LFFlagItemColorMask) | (*((UINT*)pValue));
+		pItemDescriptor->AggregateColorSet = (1u << LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags));
+
 		break;
 
 	default:
-		memcpy(pItemDescriptor->AttributeValues[Attr], Value, Size);
+		memcpy(pItemDescriptor->AttributeValues[Attr], pValue, Size);
 	}
+}
+
+UINT GetColoredFolderIconID(const LFFileSummary& FileSummary)
+{
+	UINT IconColorIndex = 0;
+	UINT ItemColorCount = 0;
+
+	for (UINT a=1; a<LFItemColorCount; a++)
+		if (FileSummary.ItemColors[a]>ItemColorCount)
+			ItemColorCount = FileSummary.ItemColors[IconColorIndex=a];
+
+	return IDI_FLD_DEFAULT+IconColorIndex;
 }
 
 
@@ -99,15 +120,23 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID Value)
 LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, SIZE_T StoreDataSize)
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
-	ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes)+(pCoreAttributes ? 0 : sizeof(LFCoreAttributes)));
 
 	if (pCoreAttributes)
+	{
+		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes));
+
 		pItemDescriptor->CoreAttributes = *pCoreAttributes;
+		pItemDescriptor->AggregateColorSet = (1u << LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags));
+	}
+	else
+	{
+		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes)+sizeof(pItemDescriptor->CoreAttributes)+sizeof(pItemDescriptor->AggregateColorSet));
+	}
 
 	if (pStoreData)
 		memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, pStoreData, StoreDataSize);
 
-	pItemDescriptor->FirstAggregate = pItemDescriptor->LastAggregate = -1;
+	pItemDescriptor->AggregateFirst = pItemDescriptor->AggregateLast = -1;
 	pItemDescriptor->RefCount = 1;
 
 	// Zeiger auf statische Attributwerte initalisieren
@@ -201,19 +230,20 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(const LFItemDescriptor* pItem
 	return pClone;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSummary, INT FirstAggregate, INT LastAggregate)
+LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSummary, INT AggregateFirst, INT AggregateLast)
 {
 	assert(Attr<LFAttributeCount);
 
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
 	pItemDescriptor->Type = LFTypeFolder | LFTypeHasDescription | FileSummary.Source;
-	pItemDescriptor->FirstAggregate = FirstAggregate;
-	pItemDescriptor->LastAggregate = LastAggregate;
-	pItemDescriptor->AggregateCount = FileSummary.FileCount;
+	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : GetColoredFolderIconID(FileSummary);
 	pItemDescriptor->CoreAttributes.FileSize = FileSummary.FileSize;
 	pItemDescriptor->CoreAttributes.Flags = FileSummary.Flags;
-	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : IDI_FLD_DEFAULT;
+	pItemDescriptor->AggregateCount = FileSummary.FileCount;
+	pItemDescriptor->AggregateFirst = AggregateFirst;
+	pItemDescriptor->AggregateLast = AggregateLast;
+	pItemDescriptor->AggregateColorSet = FileSummary.ItemColorSet;
 
 	// Description
 	LFGetFileSummaryEx(pItemDescriptor->Description, 256, FileSummary);

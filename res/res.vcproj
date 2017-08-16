@@ -112,10 +112,6 @@
 			Name="Folders"
 			>
 			<File
-				RelativePath=".\Folders\FLD_All.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Folders\FLD_Alternative.ico"
 				>
 			</File>
@@ -124,11 +120,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Folders\FLD_Blue.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Folders\FLD_Blues.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\Folders\FLD_Classical.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Content.ico"
 				>
 			</File>
 			<File
@@ -156,6 +160,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Folders\FLD_Gray.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Green.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Folders\FLD_Hip-Hop.ico"
 				>
 			</File>
@@ -180,7 +192,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Folders\FLD_Orange.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Folders\FLD_Placeholder.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Pop.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Purple.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_RandB.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Red.ico"
 				>
 			</File>
 			<File
@@ -204,7 +236,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Folders\FLD_SpokenWord.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Folders\FLD_WorldMusic.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Yellow.ico"
 				>
 			</File>
 		</Filter>
@@ -1930,6 +1970,26 @@
 		</File>
 		<File
 			RelativePath=".\Close.svg"
+			>
+		</File>
+		<File
+			RelativePath=".\Color Dot.svg"
+			>
+		</File>
+		<File
+			RelativePath=".\ColorDots_14.png"
+			>
+		</File>
+		<File
+			RelativePath=".\ColorDots_16.png"
+			>
+		</File>
+		<File
+			RelativePath=".\ColorDots_20.png"
+			>
+		</File>
+		<File
+			RelativePath=".\ColorDots_25.png"
 			>
 		</File>
 		<File

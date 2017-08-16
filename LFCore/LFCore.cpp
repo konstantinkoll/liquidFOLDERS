@@ -27,6 +27,12 @@ OSVERSIONINFO osInfo;
 LFMessageIDs LFMessages;
 LFVolumeDescriptor Volumes[26];
 
+const COLORREF ItemColorFade[LFItemColorFadeCount] = { 0x00000000, 0x808080, 0xC0C0C0, 0xE0E0E0 };
+const COLORREF ItemColors[LFItemColorCount] = {
+	LFItemColorDefault, LFItemColorRed, LFItemColorOrange, LFItemColorYellow,
+	LFItemColorGreen, LFItemColorBlue, LFItemColorPurple, LFItemColorGray
+};
+
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
@@ -445,6 +451,10 @@ LFCORE_API void LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID)
 
 LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID)
 {
+	assert(LFItemColorCount<=8);
+	assert((LFFlagItemColorShift & 7)==0);
+	assert(LFFlagItemColorShift<=24);
+
 	ZeroMemory(&AttributeDescriptor, sizeof(LFAttributeDescriptor));
 
 	if (ID>=LFAttributeCount)
@@ -559,4 +569,13 @@ LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeLis
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (AttrProperties[a].DefaultPriority==Priority)
 				AttributeList[Index++] = a;
+}
+
+
+LFCORE_API COLORREF __stdcall LFGetItemColor(UINT ID, UINT Fade)
+{
+	assert(ID<LFItemColorCount);
+	assert(Fade<=LFItemColorFadeLight);
+
+	return (ItemColors[ID]>>Fade) | ItemColorFade[Fade];
 }

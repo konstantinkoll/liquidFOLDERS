@@ -59,6 +59,9 @@ BOOL IsNullValue(UINT Type, LPCVOID pValue)
 	case LFTypeGenre:
 		return (*(UINT*)pValue)==0;
 
+	case LFTypeColor:
+		return ((*(UINT*)pValue) & ~LFFlagItemColorMask)==0;
+
 	case LFTypeRating:
 		return (*(BYTE*)pValue)==0;
 
@@ -86,10 +89,10 @@ INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitiv
 	assert(pValue1);
 	assert(pValue2);
 
-	UINT u1;
-	UINT u2;
-	DOUBLE d1;
-	DOUBLE d2;
+	UINT UInt1;
+	UINT UInt2;
+	DOUBLE Double1;
+	DOUBLE Double2;
 
 	switch (Type)
 	{
@@ -106,6 +109,12 @@ INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitiv
 	case LFTypeGenre:
 		return *(UINT*)pValue1==*(UINT*)pValue2 ? 0 : *(UINT*)pValue1<*(UINT*)pValue2 ? -1 : 1;
 
+	case LFTypeColor:
+		UInt1 = ((*(UINT*)pValue1) & ~LFFlagItemColorMask);
+		UInt2 = ((*(UINT*)pValue2) & ~LFFlagItemColorMask);
+
+		return UInt1==UInt2 ? 0 : UInt1<UInt2 ? -1 : 1;
+
 	case LFTypeRating:
 		return (INT)(*(BYTE*)pValue1)-(INT)(*(BYTE*)pValue2);
 
@@ -113,10 +122,10 @@ INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitiv
 		return *(INT64*)pValue1==*(INT64*)pValue2 ? 0 : *(INT64*)pValue1<*(INT64*)pValue2 ? -1 : 1;
 
 	case LFTypeDouble:
-		d1 = (DOUBLE)((INT)(*(DOUBLE*)pValue1*100.0))/100.0;
-		d2 = (DOUBLE)((INT)(*(DOUBLE*)pValue2*100.0))/100.0;
+		Double1 = (DOUBLE)((INT)(*(DOUBLE*)pValue1*100.0))/100.0;
+		Double2 = (DOUBLE)((INT)(*(DOUBLE*)pValue2*100.0))/100.0;
 
-		return d1==d2 ? 0 : d1<d2 ? -1 : 1;
+		return Double1==Double2 ? 0 : Double1<Double2 ? -1 : 1;
 
 	case LFTypeGeoCoordinates:
 		if (((LFGeoCoordinates*)pValue1)->Latitude==((LFGeoCoordinates*)pValue2)->Latitude)
@@ -133,16 +142,16 @@ INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitiv
 
 	case LFTypeBitrate:
 	case LFTypeDuration:
-		u1 = *(UINT*)pValue1/1000;
-		u2 = *(UINT*)pValue2/1000;
+		UInt1 = *(UINT*)pValue1/1000;
+		UInt2 = *(UINT*)pValue2/1000;
 
-		return u1==u2 ? 0 : u1<u2 ? -1 : 1;
+		return UInt1==UInt2 ? 0 : UInt1<UInt2 ? -1 : 1;
 
 	case LFTypeMegapixel:
-		d1 = (DOUBLE)((INT)(*(DOUBLE*)pValue1*10.0))/10.0;
-		d2 = (DOUBLE)((INT)(*(DOUBLE*)pValue2*10.0))/10.0;
+		Double1 = (DOUBLE)((INT)(*(DOUBLE*)pValue1*10.0))/10.0;
+		Double2 = (DOUBLE)((INT)(*(DOUBLE*)pValue2*10.0))/10.0;
 
-		return d1==d2 ? 0 : d1<d2 ? -1 : 1;
+		return Double1==Double2 ? 0 : Double1<Double2 ? -1 : 1;
 	}
 
 	return 0;
@@ -894,6 +903,14 @@ LFCORE_API void LFGetAttributeVariantData(const LFItemDescriptor* pItemDescripto
 
 		case LFTypeIATACode:
 			strcpy_s(Value.IATAString, 4, (LPCSTR)pItemDescriptor->AttributeValues[Value.Attr]);
+			break;
+
+		case LFTypeColor:
+			assert(Value.Attr==LFAttrColor);
+
+			Value.Color = (pItemDescriptor->CoreAttributes.Flags & ~LFFlagItemColorMask);
+			Value.ColorSet = (1u << Value.Color);
+
 			break;
 
 		default:

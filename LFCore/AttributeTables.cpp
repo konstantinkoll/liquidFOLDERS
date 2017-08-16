@@ -57,17 +57,17 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	IDXATTRS_CORE | IDXATTRS_MESSAGES,
 	IDXATTRS_MINDETAILS | (1ull<<LFAttrTitle) | (1ull<<LFAttrFrom) | (1ull<<LFAttrTo) },
 
-	// LFContextTasks
-	{ LFAttrPriority, TRUE, FALSE,
-	ALLVIEWS, LFViewList,
-	(IDXATTRS_ALL | (1ull<<LFAttrDueTime) | (1ull<<LFAttrPriority)) & ~(1ull<<LFAttrDoneTime),
-	IDXATTRS_MINDETAILS | (1ull<<LFAttrDueTime) | (1ull<<LFAttrPriority) | (1ull<<LFAttrResponsible) },
-
 	// LFContextNew
 	{ LFAttrAddTime, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,
 	IDXATTRS_ALL,
 	(1ull<<LFAttrFileName) | (1ull<<LFAttrAddTime) },
+
+	// LFContextTasks
+	{ LFAttrPriority, TRUE, FALSE,
+	ALLVIEWS, LFViewList,
+	(IDXATTRS_ALL | (1ull<<LFAttrDueTime) | (1ull<<LFAttrPriority)) & ~(1ull<<LFAttrDoneTime),
+	IDXATTRS_MINDETAILS | (1ull<<LFAttrDueTime) | (1ull<<LFAttrPriority) | (1ull<<LFAttrResponsible) },
 
 	// LFContextArchive
 	{ LFAttrArchiveTime, FALSE, FALSE,
@@ -166,7 +166,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	{ LFTypeTime, 0, LFAttrCategoryBasic, 0, LFViewTimeline, 4, TRUE, FALSE,FALSE, { SHPropertyStorage, 15 }, 5 },
 
 	// LFAttrFileTime
-	{ LFTypeTime, 0, LFAttrCategoryInternal, 0, LFViewTimeline, 4, TRUE, FALSE, FALSE, { SHPropertyStorage, 14 }, 6 },
+	{ LFTypeTime, 0, LFAttrCategoryBasic, 0, LFViewTimeline, 4, TRUE, FALSE, FALSE, { SHPropertyStorage, 14 }, 6 },
 
 	// LFAttrAddTime
 	{ LFTypeTime, 0, LFAttrCategoryInternal, 0, LFViewTimeline, LFMaxAttributePriority, TRUE, FALSE, FALSE, { SHPropertyUnnamed5, 100 }, 7 },

@@ -204,29 +204,29 @@ struct LFItemCategoryDescriptor
 
 // Contexts
 
-#define LFContextAllFiles               0	// All views
-#define LFContextFavorites              1	// All views
-#define LFContextAudio                  2	// All views
-#define LFContextPictures               3	// All views
-#define LFContextVideos                 4	// All views
-#define LFContextDocuments              5	// All views
-#define LFContextContacts               6	// All views
-#define LFContextMessages               7	// All views
-#define LFContextTasks                  8	// All views
-#define LFContextNew                    9	// Only limited views
-#define LFContextArchive               10	// Only limited views
-#define LFContextTrash                 11	// Only limited views
-#define LFContextFilters               12	// Only limites views
-#define LFContextSearch                13	// All views
-#define LFContextStores                14	// Only limited views, no preview
-#define LFContextClipboard             15	// Only limited views
-#define LFContextSubfolderDefault      16	// Only limited views
-#define LFContextSubfolderDay          17	// Only limited views
-#define LFContextSubfolderGenre        18	// Only limited views
-#define LFContextSubfolderArtist       19	// Only limited views
-#define LFContextSubfolderAlbum        20	// Only limited views
+#define LFContextAllFiles               0
+#define LFContextFavorites              1
+#define LFContextAudio                  2
+#define LFContextPictures               3
+#define LFContextVideos                 4
+#define LFContextDocuments              5
+#define LFContextContacts               6
+#define LFContextMessages               7
+#define LFContextNew                    8
+#define LFContextTasks                  9
+#define LFContextArchive               10
+#define LFContextTrash                 11
+#define LFContextFilters               12
+#define LFContextSearch                13
+#define LFContextStores                14
+#define LFContextClipboard             15
+#define LFContextSubfolderDefault      16
+#define LFContextSubfolderDay          17
+#define LFContextSubfolderGenre        18
+#define LFContextSubfolderArtist       19
+#define LFContextSubfolderAlbum        20
 
-#define LFLastGroupContext              8
+#define LFLastGroupContext              7
 #define LFLastQueryContext             12
 #define LFContextCount                 21
 
@@ -330,6 +330,9 @@ struct LFFraction
 	UINT Denum;
 };
 
+#pragma warning(push)
+#pragma warning(disable: 4201)
+
 struct LFVariantData
 {
 	UINT Attr;
@@ -349,15 +352,21 @@ struct LFVariantData
 		INT64 INT64;
 		LFFraction Fraction;
 		DOUBLE Double;
-		UINT Color;
 		LFGeoCoordinates GeoCoordinates;
 		FILETIME Time;
 		UINT Duration;
 		UINT Bitrate;
 		DOUBLE Megapixel;
+
+		struct
+		{
+			UINT Color;
+			BYTE ColorSet;
+		};
 	};
 };
 
+#pragma warning(pop)
 
 
 // Attribute categories
@@ -453,6 +462,26 @@ struct LFContextDescriptor
 };
 
 
+// Item colors
+
+#define LFItemColorDefault         0xFFFFFF
+#define LFItemColorRed             0x303BFF
+#define LFItemColorOrange          0x0095FF
+#define LFItemColorYellow          0x00CCFF
+#define LFItemColorGreen           0x64D94C
+#define LFItemColorBlue            0xFF7A00
+#define LFItemColorPurple          0xE173CC
+#define LFItemColorGray            0x938E8E
+
+#define LFItemColorFadePure        0
+#define LFItemColorFadeBold        1
+#define LFItemColorFadeMedium      2
+#define LFItemColorFadeLight       3
+
+#define LFItemColorCount           8
+#define LFItemColorFadeCount       4
+
+
 // Statistics
 
 struct LFStatistics
@@ -467,6 +496,8 @@ struct LFFileSummary
 	UINT FileCount;
 	INT64 FileSize;
 	UINT Flags;
+	UINT ItemColors[LFItemColorCount];
+	UINT ItemColorSet;
 	UINT Source;
 	UINT64 Duration;
 	BOOL OnlyMediaFiles;
@@ -586,7 +617,7 @@ struct LFCoreAttributes
 #define LFTypeSourceYouTube        0x00000010
 #define LFTypeSourceMask           0x000000FF
 
-#define LFTypeBadgeError           0x00000100	// Must match Windows image list
+#define LFTypeBadgeError           0x00000100	// Volatile, must match image list
 #define LFTypeBadgeDefault         0x00000200
 #define LFTypeBadgeNew             0x00000300
 #define LFTypeBadgeEmpty           0x00000400
@@ -607,35 +638,24 @@ struct LFCoreAttributes
 #define LFTypeDefault              0x02000000
 #define LFTypeGhosted              0x04000000
 
-
 // Item type
 #define LFTypeStore                0x00000000	// Volatile
 #define LFTypeFile                 0x40000000
 #define LFTypeFolder               0x80000000
 #define LFTypeMask                 0xC0000000
 
+
 // Persistent item flags
-#define LFFlagTrash                0x00000001		// Persistent, DO NOT CHANGE
+#define LFFlagTrash                0x00000001	// Persistent, DO NOT CHANGE
 #define LFFlagNew                  0x00000002
 #define LFFlagTask                 0x00000004
 #define LFFlagMissing              0x00000008
 #define LFFlagArchive              0x00000010
 #define LFFlagLink                 0x00000020
 
-#define LFFlagColorMask            0x30000000
-#define LFFlagColorShift           28
+#define LFFlagItemColorMask        0x00000700
+#define LFFlagItemColorShift       8			// 8, 16 or 24: color must be on BYTE boundary!
 
-// Item colors
-#define LFColorDefault             0xFFFFFF
-#define LFColorRed                 0x303BFF
-#define LFColorOrange              0x0095FF
-#define LFColorYellow              0x00CCFF
-#define LFColorGreen               0x64D94C
-#define LFColorBlue                0xFF7A00
-#define LFColorPurple              0xE173CC
-#define LFColorGray                0x938E8E
-
-#define LFColorCount               8
 
 // Item data structure
 #define LFMaxSlaveSize             3236			// Check if new attributes are attached
@@ -651,14 +671,12 @@ struct LFItemDescriptor
 	UINT Type;
 	UINT CategoryID;
 	UINT IconID;
-
-	// Internal use only
-	UINT RefCount;
 	BOOL RemoveFlag;
 
 	// Item aggregation
 	LFFilter* pNextFilter;
 	UINT AggregateCount;
+	UINT AggregateColorSet;
 
 	// Pointer to attribute values
 	LPVOID AttributeValues[LFAttributeCount];
@@ -677,8 +695,11 @@ struct LFItemDescriptor
 	//
 
 	// Item aggregation
-	INT FirstAggregate;
-	INT LastAggregate;
+	INT AggregateFirst;
+	INT AggregateLast;
+
+	// Internal use only
+	UINT RefCount;
 
 	// Space for additional attributes
 	union
@@ -744,7 +765,7 @@ struct LFStoreDescriptor
 	WCHAR IdxPathAux[MAX_PATH];					// Volatile
 	FILETIME MountTime;							// Volatile
 	UINT Source;								// Volatile
-	LFStatistics Statistics;			;		// Volatile
+	LFStatistics Statistics;					// Volatile
 };
 
 

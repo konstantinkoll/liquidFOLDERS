@@ -20,6 +20,7 @@ public:
 	void Sort(UINT Attr, BOOL Descending);
 	void Group(UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 	void GroupArray(UINT Attr, LFFilter* pFilter);
+	void UpdateFolderColors(const LFSearchResult* pRawFiles);
 
 	UINT m_LastError;
 
@@ -62,3 +63,4 @@ inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, LFStor
 	FileSummary.FileCount += pStoreDescriptor->Statistics.FileCount[0];
 	FileSummary.FileSize += pStoreDescriptor->Statistics.FileSize[0];
 }
+

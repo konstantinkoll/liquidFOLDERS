@@ -50,6 +50,10 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 		pProperty = new CPropertyNumber(pData);
 		break;
 
+	case LFTypeColor:
+		pProperty = new CPropertyColor(pData);
+		break;
+
 	case LFTypeSize:
 		pProperty = new CPropertySize(pData);
 		break;
@@ -143,6 +147,11 @@ void CProperty::ToString(LPWSTR pStr, INT nCount) const
 		// Attribute value
 		LFVariantDataToString(*p_Data, pStr, nCount);
 	}
+}
+
+INT CProperty::GetMinWidth() const
+{
+	return 8*LFGetApp()->m_DialogFont.GetFontHeight();
 }
 
 void CProperty::DrawValue(CDC& dc, LPCRECT lpRect) const
@@ -289,6 +298,11 @@ CPropertyRating::CPropertyRating(LFVariantData* pData)
 	ASSERT(pData->Type==LFTypeRating);
 }
 
+INT CPropertyRating::GetMinWidth() const
+{
+	return RATINGBITMAPWIDTH+6;
+}
+
 void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
 {
 	// Rating bitmap
@@ -324,11 +338,7 @@ BOOL CPropertyRating::OnClickValue(INT x)
 {
 	if ((x>=0) && (x<RATINGBITMAPWIDTH+6))
 		if ((x<6) || ((x-6)%18<16))
-		{
-			const UCHAR Rating = (UCHAR)((x<6) ? 0 : 2*((x-6)/18)+((x-6)%18>8)+1);
-
-			OnSetRating(Rating);
-		}
+			OnSetRating((UCHAR)((x<6) ? 0 : 2*((x-6)/18)+((x-6)%18>8)+1));
 
 	return FALSE;
 }
@@ -355,13 +365,13 @@ BOOL CPropertyRating::OnPushChar(UINT nChar)
 
 		break;
 
-	case '0':
-	case '1':
-	case '2':
-	case '3':
-	case '4':
-	case '5':
-		Rating = (nChar-'0')*2;
+	case L'0':
+	case L'1':
+	case L'2':
+	case L'3':
+	case L'4':
+	case L'5':
+		Rating = (nChar-L'0')*2;
 		break;
 
 	default:
@@ -386,6 +396,93 @@ void CPropertyRating::OnSetRating(UCHAR Rating)
 	}
 }
 
+
+// CPropertyColor
+//
+
+#define GUTTER     2
+
+CIcons CPropertyColor::m_ColorDots;
+
+CPropertyColor::CPropertyColor(LFVariantData* pData)
+	: CProperty(pData)
+{
+	ASSERT(pData);
+	ASSERT(pData->Type==LFTypeColor);
+
+	LFGetApp()->LoadColorDots(m_ColorDots, LFGetApp()->m_DialogFont);
+}
+
+INT CPropertyColor::GetMinWidth() const
+{
+	return 7*m_ColorDots.GetIconSize()+6*GUTTER;
+}
+
+void CPropertyColor::DrawValue(CDC& dc, LPCRECT lpRect) const
+{
+	const INT Size = m_ColorDots.GetIconSize();
+
+	INT x = lpRect->left;
+	INT y = (lpRect->top+lpRect->bottom-Size)/2;
+
+	for (UINT a=1; a<LFItemColorCount; a++)
+	{
+		const BOOL Enabled = (p_Data->ColorSet & (1 << a));
+
+		m_ColorDots.Draw(dc, x, y, Enabled ? a-1 : 2, FALSE, !Enabled);
+		x += Size+GUTTER;
+	}
+}
+
+HCURSOR CPropertyColor::SetCursor(INT x) const
+{
+	const INT Size = m_ColorDots.GetIconSize();
+
+	return LFGetApp()->LoadStandardCursor(((x<7*Size+6*GUTTER) && (x%(Size+GUTTER)<Size)) ? IDC_HAND : IDC_ARROW);
+}
+
+BOOL CPropertyColor::CanDelete() const
+{
+	return (p_Data->ColorSet>1);
+}
+
+BOOL CPropertyColor::WantsChars() const
+{
+	return TRUE;
+}
+
+BOOL CPropertyColor::OnClickValue(INT x)
+{
+	const INT Size = m_ColorDots.GetIconSize();
+
+	if ((x>=0) && (x<7*Size+6*GUTTER))
+		if (x%(Size+GUTTER)<Size)
+			OnSetColor((UINT)(1+x/(Size+GUTTER)));
+
+	return FALSE;
+}
+
+BOOL CPropertyColor::OnPushChar(UINT nChar)
+{
+	if ((nChar>=L'0') && (nChar<=L'7'))
+		OnSetColor(nChar-L'0');
+
+	return TRUE;
+}
+
+void CPropertyColor::OnSetColor(UINT Color)
+{
+	assert(Color<LFItemColorCount);
+
+	if (p_Data->Color!=(Color << LFFlagItemColorShift))
+	{
+		p_Data->ColorSet = (1 << Color);
+		p_Data->Color = (Color << LFFlagItemColorShift);
+		p_Data->IsNull = FALSE;
+
+		NotifyOwner();
+	}
+}
 
 
 // CPropertyIATA
@@ -940,7 +1037,7 @@ INT CInspectorGrid::HitTest(const CPoint& point, UINT* PartID) const
 
 				if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a!=m_EditItem))
 				{
-					INT Offs = (rectPart.Height()-m_IconSize)/2;
+					const INT Offs = (m_RowHeight-m_IconSize)/2;
 					CRect rectReset(rectPart.right-m_IconSize-Offs-1, rectPart.top+Offs, rectPart.right-Offs-1, rectPart.top+Offs+m_IconSize);
 
 					if (rectReset.PtInRect(point))
@@ -1130,7 +1227,7 @@ void CInspectorGrid::AdjustLayout()
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
-	m_LabelWidth = 0;
+	m_LabelWidth = m_MinWidth = 0;
 	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : MARGIN+1;
 	INT Category = -1;
 
@@ -1150,9 +1247,11 @@ void CInspectorGrid::AdjustLayout()
 			m_ScrollHeight += LFGetApp()->m_LargeFont.GetFontHeight()+2*MARGIN+Spacer+1;
 		}
 
+		// Row
 		pProp->Top = pProp->Visible ? m_ScrollHeight : -1;
 		pProp->Bottom = pProp->Visible ? m_ScrollHeight+m_RowHeight : -1;
 
+		// Label width
 		if (pProp->Visible)
 		{
 			if (pProp->LabelWidth>m_LabelWidth)
@@ -1160,6 +1259,13 @@ void CInspectorGrid::AdjustLayout()
 
 			m_ScrollHeight += m_RowHeight+1;
 		}
+
+		// Minimum width
+		const INT Offs = (m_RowHeight-m_IconSize)/2;
+		INT MinWidth = pProp->LabelWidth+2*BORDER+pProp->pProperty->GetMinWidth()+m_IconSize+Offs+BORDER+2;
+
+		if (MinWidth>m_MinWidth)
+			m_MinWidth = MinWidth;
 	}
 
 	m_LabelWidth += 2*BORDER;
@@ -1237,7 +1343,7 @@ void CInspectorGrid::ResetProperty(UINT Attr)
 {
 	ASSERT(Attr<m_Properties.m_ItemCount);
 
-	if ((m_Properties[Attr].Editable) && (Attr!=LFAttrFileName))
+	if (m_Properties[Attr].Editable && (Attr!=LFAttrFileName))
 	{
 		LFClearVariantData(*m_Properties[Attr].pProperty->GetData());
 		m_Properties[Attr].pProperty->m_Modified = TRUE;
@@ -1416,10 +1522,11 @@ void CInspectorGrid::OnPaint()
 			rectLabel.left = rectLabel.right+2*BORDER;
 			rectLabel.right = rect.Width();
 
-			if ((pProp->Editable) && (pProp->pProperty->CanDelete()))
+			if (pProp->Editable && pProp->pProperty->CanDelete())
 			{
-				INT Offs = (rectLabel.Height()-m_IconSize)/2;
+				const INT Offs = (m_RowHeight-m_IconSize)/2;
 				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : Selected ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+
 				rectLabel.right -= m_IconSize+Offs+BORDER+2;
 			}
 			else

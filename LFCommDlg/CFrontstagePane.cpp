@@ -12,7 +12,7 @@
 CFrontstagePane::CFrontstagePane()
 	: CFrontstageWnd()
 {
-	m_MaxWidth = 140;
+	m_MaxWidth = GetMinWidth();
 }
 
 BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth, BOOL Shadow)
@@ -24,6 +24,11 @@ BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT Prefer
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_NOACTIVATE, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
+}
+
+INT CFrontstagePane::GetMinWidth() const
+{
+	return 240+PANEGRIPPER;
 }
 
 void CFrontstagePane::AdjustLayout(CRect /*rectLayout*/)

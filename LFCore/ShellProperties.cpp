@@ -24,8 +24,8 @@ static const BYTE ContextSlaves[LFLastQueryContext+1] = {
 	IDXTABLE_DOCUMENTS,		// LFContextDocuments
 	IDXTABLE_MASTER,		// LFContextContacts
 	IDXTABLE_MESSAGES,		// LFContextMessages
-	IDXTABLE_MASTER,		// LFContextTasks
 	IDXTABLE_MASTER,		// LFContextNew
+	IDXTABLE_MASTER,		// LFContextTasks
 	IDXTABLE_MASTER,		// LFContextTrash
 	IDXTABLE_MASTER			// LFContextFilters
 };
@@ -44,9 +44,9 @@ BYTE GetHardcodedContext(LPCSTR Extension)
 
 	while (First<=Last)
 	{
-		INT Mid = (First+Last)/2;
+		const INT Mid = (First+Last)/2;
 
-		INT Result = strcmp(Registry[Mid].Format, Extension);
+		const INT Result = strcmp(Registry[Mid].Format, Extension);
 		if (Result==0)
 			return Registry[Mid].ContextID;
 
@@ -94,14 +94,14 @@ void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL Force)
 {
 	assert(pCoreAttributes);
 
-	#ifdef _DEBUG
-	// Test: ist die Kontext-Liste korrekt sortiert?
+#ifdef _DEBUG
+	// Test: is the context list sorted?
 	for (UINT a=0; a<(sizeof(Registry)/sizeof(RegisteredFile))-1; a++)
 		if (strcmp(Registry[a].Format, Registry[a+1].Format)>-1)
 			MessageBoxA(NULL, Registry[a].Format, "Registry sort error", 0);
-	#endif
+#endif
 
-	if ((!pCoreAttributes->ContextID) || Force)
+	if (!pCoreAttributes->ContextID || Force)
 		pCoreAttributes->ContextID = GetHardcodedContext(pCoreAttributes->FileFormat);
 
 	if (!pCoreAttributes->ContextID)

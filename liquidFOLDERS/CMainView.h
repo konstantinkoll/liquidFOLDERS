@@ -39,7 +39,7 @@ protected:
 	void RemoveTransactedItems(LFTransactionList* pTransactionList);
 	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
 	void RecoverFiles(BOOL All=FALSE);
-	BOOL UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3);
+	BOOL UpdateItems(LFVariantData* pValue1, LFVariantData* pValue2, LFVariantData* pValue3);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

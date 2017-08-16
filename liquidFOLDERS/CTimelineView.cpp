@@ -174,10 +174,10 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 					pData->pStrCreator = pData->pStrTitle = pData->pStrComments = NULL;
 					pData->CollectionIconID = 0;
 
-					ASSERT(pItemDescriptor->FirstAggregate>=0);
-					ASSERT(pItemDescriptor->LastAggregate>=0);
+					ASSERT(pItemDescriptor->AggregateFirst>=0);
+					ASSERT(pItemDescriptor->AggregateLast>=0);
 
-					for (INT b=pItemDescriptor->FirstAggregate; b<=pItemDescriptor->LastAggregate; b++)
+					for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
 					{
 						LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[b];
 
@@ -307,7 +307,7 @@ Restart:
 						pData->PreviewMask &= ~PRV_REPRESENTATIVE;
 
 						// Decide for thumbnails or folder contents
-						for (INT b=pItemDescriptor->FirstAggregate; b<=pItemDescriptor->LastAggregate; b++)
+						for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
 							if (UsePreview((*p_RawFiles)[b]))
 							{
 								pData->PreviewMask |= PRV_THUMBNAILS;
@@ -426,7 +426,7 @@ Restart:
 			LastRow = CurRow[Column];
 			CurRow[Column] += Height+GUTTER+1;
 
-			if ((CurRow[Column]>rect.Height()) && (!HasScrollbars))
+			if ((CurRow[Column]>rect.Height()) && !HasScrollbars)
 			{
 				HasScrollbars = TRUE;
 				rect.right -= GetSystemMetrics(SM_CXVSCROLL);
@@ -446,10 +446,10 @@ RECT CTimelineView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
-	rect.left += CARDPADDING+m_SmallIconSize+SMALLPADDING-5;
 	rect.top += CARDPADDING-2;
-	rect.right -= CARDPADDING-2;
 	rect.bottom = rect.top+m_DefaultFontHeight+4;
+	rect.left += CARDPADDING+m_SmallIconSize+SMALLPADDING-5;
+	rect.right -= CARDPADDING-2;
 
 	return rect;
 }
@@ -715,7 +715,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 				INT Col = 0;
 
 				for (INT a=LFMaxRating; a>=0; a--)
-					for (INT b=pItemDescriptor->FirstAggregate; b<=pItemDescriptor->LastAggregate; b++)
+					for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
 					{
 						LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[b];
 						if (UsePreview(pItemDescriptor) && (pItemDescriptor->CoreAttributes.Rating==a))
@@ -758,7 +758,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 			INT ListCount = min(MAXFILELIST, pData->ListCount);
 
-			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
+			for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
 				if (!UsePreview((*p_RawFiles)[a]))
 				{
 					dc.DrawText(GetLabel((*p_RawFiles)[a]), rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);

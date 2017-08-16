@@ -34,9 +34,87 @@ void CIconsView::AdjustLayout()
 RECT CIconsView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
-	rect.top += 128+PADDING/2;
+
+	rect.top += 128+PADDING+PADDING/2-2;
+	rect.bottom = rect.top+m_DefaultFontHeight+4;
+	rect.left += PADDING/2;
+	rect.right -= PADDING/2;
 
 	return rect;
+}
+
+void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor* pItemDescriptor, UINT MaxLineCount) const
+{
+	// Make width one pixel larger due to ClearType
+	const INT MaxLineWidth = rectLabel.Width()+1;
+
+	// Label and with of color dots
+	CString strLabel = GetLabel(pItemDescriptor);
+	INT ColorDotWidth = GetColorDotWidth(pItemDescriptor);
+
+	// We only care for the height of rectLine here
+	CRect rectLine(rectLabel);
+	rectLine.bottom = rectLine.top+m_DefaultFontHeight;
+
+	// Iterate the lines
+	for (UINT Line=0; Line<MaxLineCount; Line++)
+	{
+		// Leave when there is no more label string to consume
+		if (strLabel.IsEmpty())
+			return;
+
+		CString strLine;
+		INT LineWidth = 0;
+		BOOL Break;
+		do
+		{
+			// Find delimiter
+			INT Pos = strLabel.Find(L' ');
+
+			// If none is found, use end of string
+			if (Pos==-1)
+				Pos = strLabel.GetLength();
+
+			// Extract next token
+			const CString strToken = strLabel.Left(Pos);
+
+			// Calculate new line width, assuming the token would be concatenated
+			const INT NewLineWidth = ColorDotWidth+dc.GetTextExtent(strLine+strToken).cx;
+
+			// Do we add the token?
+			if (((Break=(NewLineWidth>MaxLineWidth))==FALSE) || strLine.IsEmpty())
+			{
+				// Yes, so we have a new line width...
+				LineWidth = NewLineWidth;
+				strLine += strToken+_T(" ");
+
+				// ...and consume the token! Also remove all extra spaces on the left
+				strLabel.Delete(0, Pos+1);
+				strLabel = strLabel.TrimLeft();
+			}
+		}
+		while (!Break && !strLabel.IsEmpty());
+
+		// There might me trailing spaces
+		strLine.TrimRight();
+
+		// Calculate left and right bounds of line
+		rectLine.left = (rectLabel.left+rectLabel.right-min(MaxLineWidth, LineWidth))/2;
+		rectLine.right = min(rectLabel.right, rectLine.left+LineWidth);
+
+		// Draw color dots on first line
+		if (ColorDotWidth)
+		{
+			DrawColorDots(dc, rectLine, pItemDescriptor, m_DefaultFontHeight);
+			ColorDotWidth = 0;
+		}
+
+		// Draw text
+		dc.DrawText(strLine, rectLine, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_TOP | DT_SINGLELINE);
+
+		// Move rectLine one line down
+		rectLine.OffsetRect(0, m_DefaultFontHeight);
+	}
 }
 
 void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
@@ -50,7 +128,7 @@ void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOO
 		rectLabel.DeflateRect(Themed ? PADDING+1 : PADDING, PADDING);
 		rectLabel.top += 128+PADDING/2;
 
-		dc.DrawText(GetLabel(pItemDescriptor), rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_CENTER | DT_WORDBREAK);
+		DrawWrapLabel(dc, rectLabel, pItemDescriptor);
 	}
 
 	// Icon

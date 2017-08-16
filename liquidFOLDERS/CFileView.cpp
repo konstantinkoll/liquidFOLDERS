@@ -13,6 +13,9 @@
 #define FIRSTSENDTO               0xFF00
 #define HORIZONTALSCROLLWIDTH     64
 
+CIcons CFileView::m_LargeColorDots;
+CIcons CFileView::m_DefaultColorDots;
+
 CFileView::CFileView(SIZE_T DataSize, UINT Flags)
 	: CFrontstageWnd()
 {
@@ -269,8 +272,8 @@ void CFileView::SelectItem(INT Index, BOOL Select, BOOL InternalCall)
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 			SelectItem(pItemDescriptor, Select);
 
-			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1))
-				for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
+			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1))
+				for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
 					SelectItem((*p_RawFiles)[a], Select);
 
 			if (!InternalCall)
@@ -371,6 +374,11 @@ RECT CFileView::GetItemRect(INT Index) const
 	OffsetRect(&rect, -m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 
 	return rect;
+}
+
+LFFont* CFileView::GetLabelFont() const
+{
+	return &theApp.m_DefaultFont;
 }
 
 RECT CFileView::GetLabelRect(INT Index) const
@@ -591,7 +599,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 		break;
 
 	case LFTypeFolder:
-		if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
+		if ((pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1))
 			pMenu->LoadMenu(IDM_FOLDER);
 
 		break;
@@ -620,7 +628,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	ASSERT_VALID(pPopup);
 
 	if (m_Context!=LFContextTrash)
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1)))
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1)))
 		{
 			if (m_Context!=LFContextArchive)
 				pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextTasks ? IDM_FILE_TASKDONE : IDM_FILE_MAKETASK, CString((LPCSTR)(m_Context==LFContextTasks ? IDS_CONTEXTMENU_TASKDONE : IDS_CONTEXTMENU_MAKETASK)));
@@ -672,7 +680,7 @@ void CFileView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
 	ZeroMemory(&Data, sizeof(Data));
 
 	Data.FocusItem = m_FocusItem;
-	Data.FocusItemSelected = !ForReload && (m_FocusItem!=-1) ? IsItemSelected(m_FocusItem) : FALSE;
+	Data.FocusItemSelected = !ForReload && p_CookedFiles && (m_FocusItem!=-1) && (m_FocusItem<(INT)p_CookedFiles->m_ItemCount) ? IsItemSelected(m_FocusItem) : FALSE;
 	Data.HScrollPos = m_HScrollPos;
 	Data.VScrollPos = m_VScrollPos;
 }
@@ -692,17 +700,20 @@ void CFileView::EditLabel(INT Index)
 			InvalidateItem(Index);
 			EnsureVisible(Index);
 
+			LFFont* pFont = GetLabelFont();
+			const INT FontHeight = pFont->GetFontHeight();
+
 			CRect rect(GetLabelRect(Index));
-			if (rect.Height()>m_DefaultFontHeight+4)
+			if (rect.Height()>FontHeight+4)
 			{
-				rect.top += (rect.Height()-m_DefaultFontHeight-4)/2;
-				rect.bottom = rect.top+m_DefaultFontHeight+4;
+				rect.top += (rect.Height()-FontHeight-4)/2;
+				rect.bottom = rect.top+FontHeight+4;
 			}
 
 			m_pWndEdit = new CEdit();
 			m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
 			m_pWndEdit->SetWindowText(pItemDescriptor->CoreAttributes.FileName);
-			m_pWndEdit->SetFont(&theApp.m_DefaultFont);
+			m_pWndEdit->SetFont(pFont);
 			m_pWndEdit->SetFocus();
 			m_pWndEdit->SetSel(0, -1);
 		}
@@ -838,7 +849,9 @@ void CFileView::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpCli
 
 void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	if (Cached && Themed && IsItemSelected(Index))
+	const BOOL Selected = IsItemSelected(Index);
+
+	if (Cached && Themed && Selected)
 	{
 		CDC MemDC;
 		MemDC.CreateCompatibleDC(&dc);
@@ -859,7 +872,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_SELECTED].hBitmap);
 
 			MemDC.FillSolidRect(0, 0, Width, Height, 0xFFFFFF);
-			DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index));
+			DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, Selected);
 		}
 		else
 		{
@@ -875,7 +888,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 	else
 	{
 		DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
-			m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index),
+			m_HotItem==Index, m_FocusItem==Index, Selected,
 			((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
 			m_ShowFocusRect);
 	}
@@ -883,7 +896,9 @@ void CFileView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	if (((m_HotItem!=Index) && !IsItemSelected(Index)) || !Themed)
+	const BOOL Selected = IsItemSelected(Index);
+
+	if (((m_HotItem!=Index) && !Selected) || !Themed)
 		return;
 
 	if (Cached)
@@ -906,7 +921,7 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 
 			hOldBitmap = (HBITMAP)MemDC.SelectObject(m_Bitmaps[BM_REFLECTION].hBitmap);
 
-			DrawListItemForeground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index));
+			DrawListItemForeground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, Selected);
 		}
 		else
 		{
@@ -919,7 +934,7 @@ void CFileView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Th
 	}
 	else
 	{
-		DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, IsItemSelected(Index));
+		DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, Selected);
 	}
 }
 
@@ -928,7 +943,7 @@ void CFileView::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor*
 	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.ShowRepresentativeThumbnail ? p_RawFiles : NULL, TRUE, ThumbnailYOffset);
 }
 
-BOOL CFileView::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed)
+BOOL CFileView::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed) const
 {
 	if (m_Nothing)
 	{
@@ -944,6 +959,69 @@ BOOL CFileView::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed)
 	ASSERT(p_CookedFiles);
 
 	return FALSE;
+}
+
+UINT CFileView::GetColorDotCount(const LFItemDescriptor* pItemDescriptor)
+{
+	ASSERT(pItemDescriptor);
+
+	switch (pItemDescriptor->Type & LFTypeMask)
+	{
+#ifdef _DEBUG
+	case LFTypeStore:
+		ASSERT(LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags)==0);
+		ASSERT(pItemDescriptor->AggregateColorSet<2);
+		break;
+#endif
+
+	case LFTypeFile:
+		return LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags) ? 1 : 0;
+
+	case LFTypeFolder:
+		UINT Count = 0;
+
+		for (UINT a=1; a<LFItemColorCount; a++)
+			if (pItemDescriptor->AggregateColorSet & (1 << a))
+				Count++;
+
+		return Count;
+	}
+
+	return 0;
+}
+
+INT CFileView::GetColorDotWidth(const LFItemDescriptor* pItemDescriptor, const CIcons& Icons) const
+{
+	const UINT Count = GetColorDotCount(pItemDescriptor);
+	const INT Size = Icons.GetIconSize();
+
+	return Count*(4*Size/3)-((Count>1) ? (Count-1)*(5*Size/6) : 0);
+}
+
+void CFileView::DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pItemDescriptor, INT FontHeight, CIcons& Icons) const
+{
+	ASSERT(pItemDescriptor);
+
+	BOOL First = TRUE;
+
+	switch (pItemDescriptor->Type & LFTypeMask)
+	{
+	case LFTypeFolder:
+		for (UINT a=1; a<LFItemColorCount; a++)
+			if (pItemDescriptor->AggregateColorSet & (1 << a))
+				DrawColorDot(dc, rect, a, First, Icons, FontHeight);
+
+		break;
+
+	case LFTypeFile:
+		const UINT ItemColor = LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags);
+		ASSERT(pItemDescriptor->AggregateColorSet==(1u << ItemColor));
+
+		if (ItemColor)
+			DrawColorDot(dc, rect, ItemColor, First, Icons, FontHeight);
+
+		break;
+	}
 }
 
 void CFileView::UnselectAllAfterTransaction()
@@ -996,9 +1074,14 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Font height
 	m_LargeFontHeight = theApp.m_LargeFont.GetFontHeight();
 	m_DefaultFontHeight = m_RowHeight = theApp.m_DefaultFont.GetFontHeight();
 	m_SmallFontHeight = theApp.m_SmallFont.GetFontHeight();
+
+	// Color dots
+	theApp.LoadColorDots(m_LargeColorDots, m_LargeFontHeight);
+	theApp.LoadColorDots(m_DefaultColorDots, m_DefaultFontHeight);
 
 	if (m_Flags & FF_ENABLESCROLLING)
 		ResetScrollbars();
@@ -1271,7 +1354,7 @@ void CFileView::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 
 void CFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if ((GetKeyState(VK_CONTROL)>=0) && (nChar>=(m_TypingBuffer[0] ? (UINT)32 : (UINT)33)) && (m_EditLabel==-1))
+	if ((GetKeyState(VK_CONTROL)>=0) && (nChar>=(m_TypingBuffer[0] ? 32u : 33u)) && (m_EditLabel==-1))
 	{
 		if (p_CookedFiles)
 			if (p_CookedFiles->m_ItemCount>1)
@@ -1412,8 +1495,12 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 		SetFocus();
 }
 
-void CFileView::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
+void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 {
+	if (!(nFlags & MK_CONTROL) || !m_AllowMultiSelect)
+		if (ItemAtPosition(point)==-1)
+			OnSelectNone();
+
 	m_BeginDragDrop = FALSE;
 }
 
@@ -1434,7 +1521,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
-		if (!(nFlags & (MK_SHIFT | MK_CONTROL)) || (!m_AllowMultiSelect))
+		if (!(nFlags & (MK_SHIFT | MK_CONTROL)) || !m_AllowMultiSelect)
 			if (!IsItemSelected(Index))
 			{
 				m_FocusItem = Index;
@@ -1480,7 +1567,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		if (!(nFlags & MK_CONTROL) || (!m_AllowMultiSelect))
+		if (!(nFlags & MK_CONTROL) || !m_AllowMultiSelect)
 			OnSelectNone();
 	}
 

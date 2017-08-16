@@ -133,13 +133,14 @@ void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 	if (m_FlagsFirst)
 	{
 		m_FlagsFirst = FALSE;
-		m_FlagsSet = pItemDescriptor->CoreAttributes.Flags;
 	}
 	else
 	{
 		m_FlagsMultiple = m_FlagsSet ^ pItemDescriptor->CoreAttributes.Flags;
-		m_FlagsSet |= pItemDescriptor->CoreAttributes.Flags;
 	}
+
+	m_FlagsSet |= (pItemDescriptor->CoreAttributes.Flags & ~LFFlagItemColorMask);
+	m_AttributeSummary[LFAttrColor].Value.ColorSet |= pItemDescriptor->AggregateColorSet;
 
 	// Store
 	if (m_StoreStatus<STATUSMULTIPLE)
@@ -179,6 +180,7 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 		case STATUSUNUSED:
 			m_IconStatus = STATUSUSED;
 			m_IconID = pItemDescriptor->IconID;
+
 			break;
 
 		case STATUSUSED:
@@ -194,11 +196,9 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 	case LFTypeStore:
 		m_ItemCount++;
 
-		for (UINT a=0; a<=LFAttrFileTime; a++)
-			AddValue(pItemDescriptor, a);
-
-		AddValue(pItemDescriptor, LFAttrFileCount);
-		AddValue(pItemDescriptor, LFAttrFileSize);
+		for (UINT a=0; a<=LFLastCoreAttribute; a++)
+			if (theApp.IsAttributeAvailable(LFContextStores, a))
+				AddValue(pItemDescriptor, a);
 
 		// Virtual properties
 		LFStoreDescriptor Store;
@@ -225,17 +225,14 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 		break;
 
 	case LFTypeFolder:
-		if ((pItemDescriptor->FirstAggregate!=-1) && (pItemDescriptor->LastAggregate!=-1))
+		if ((pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1))
 		{
-			for (INT a=pItemDescriptor->FirstAggregate; a<=pItemDescriptor->LastAggregate; a++)
+			for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
 				AddFile((*pRawFiles)[a]);
 		}
 		else
 		{
 			m_ItemCount += pItemDescriptor->AggregateCount;
-
-			for (UINT a=LFAttrFileName; a<LFAttributeCount; a++)
-				AddValue(pItemDescriptor, a);
 		}
 
 		break;
@@ -365,6 +362,31 @@ void CIconHeader::SetPreview(const LFItemDescriptor* pItemDescriptor, const CStr
 	m_pItem = LFCloneItemDescriptor(pItemDescriptor);
 }
 
+BOOL CIconHeader::UpdateThumbnailColor(const LFVariantData& Data)
+{
+	ASSERT(Data.Attr==LFAttrColor);
+
+	switch (m_Status)
+	{
+	case ICONCORE:
+		if ((m_IconID>=IDI_FLD_DEFAULT) && (m_IconID<IDI_FLD_DEFAULT+LFItemColorCount))
+		{
+			m_IconID = IDI_FLD_DEFAULT+LFGetItemColorIndex(Data.Color);
+
+			return TRUE;
+		}
+
+		break;
+
+	case ICONPREVIEW:
+		LFSetAttributeVariantData(m_pItem, Data);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 
 // CInspectorPane
 //
@@ -379,6 +401,11 @@ CInspectorPane::CInspectorPane()
 			ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
 }
 
+INT CInspectorPane::GetMinWidth() const
+{
+	return m_wndGrid.GetMinWidth()+PANEGRIPPER;
+}
+
 void CInspectorPane::AdjustLayout(CRect rectLayout)
 {
 	const INT BorderLeft = BACKSTAGEBORDER-PANEGRIPPER;
@@ -386,7 +413,7 @@ void CInspectorPane::AdjustLayout(CRect rectLayout)
 	m_wndGrid.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top, rectLayout.Width()-BorderLeft, rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CInspectorPane::SaveSettings()
+void CInspectorPane::SaveSettings() const
 {
 	theApp.WriteInt(_T("InspectorShowInternal"), m_ShowInternal);
 	theApp.WriteInt(_T("InspectorSortAlphabetic"), m_SortAlphabetic);
@@ -446,6 +473,7 @@ void CInspectorPane::AggregateFinish()
 	// Flags
 	if (!m_FileSummary.m_FlagsFirst)
 	{
+		// Flags
 		WCHAR tmpStr[7] = L"AMTND";
 		WCHAR* pChar = tmpStr;
 
@@ -460,7 +488,13 @@ void CInspectorPane::AggregateFinish()
 					*pChar = L'-';
 				}
 
-			m_FileSummary.AddValueVirtual(AttrFlags, tmpStr);
+		m_FileSummary.AddValueVirtual(AttrFlags, tmpStr);
+
+		// Color
+		m_FileSummary.m_AttributeSummary[LFAttrColor].Value.IsNull = FALSE;
+
+		m_FileSummary.m_AttributeSummary[LFAttrColor].Status = STATUSUSED;
+		m_FileSummary.m_AttributeSummary[LFAttrColor].Visible = TRUE;
 	}
 
 	// Store
@@ -579,6 +613,19 @@ LRESULT CInspectorPane::OnPropertyChanged(WPARAM wParam, LPARAM lParam)
 	LFVariantData* pValue1 = (Attr1==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr1].Value;
 	LFVariantData* pValue2 = (Attr2==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr2].Value;
 	LFVariantData* pValue3 = (Attr3==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr3].Value;
+
+	// Update icon color in header
+	if (Attr1==LFAttrColor)
+		if (m_IconHeader.UpdateThumbnailColor(*pValue1))
+			m_wndGrid.Invalidate();
+
+	if (Attr2==LFAttrColor)
+		if (m_IconHeader.UpdateThumbnailColor(*pValue2))
+			m_wndGrid.Invalidate();
+
+	if (Attr3==LFAttrColor)
+		if (m_IconHeader.UpdateThumbnailColor(*pValue3))
+			m_wndGrid.Invalidate();
 
 	// Update of IATA airport code and country (internal properties)
 	if (AttrIATA!=-1)

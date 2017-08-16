@@ -79,6 +79,8 @@ public:
 	Bitmap* GetCachedResourceImage(UINT nID);
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
+	static void LoadColorDots(CIcons& Icons, INT Size);
+	static void LoadColorDots(CIcons& Icons, const LFFont& Font);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList);
 
 	void AttributeToString(CString& Name, CString& Value, LFItemDescriptor* pItemDescriptor, UINT Attr) const;
@@ -195,7 +197,13 @@ private:
 	HMODULE hModKernel;
 	HMODULE hModUser;
 	HANDLE hFontDinMittelschrift;
+	static const INT m_ColorDotSizes[4];
 };
+
+inline void LFApplication::LoadColorDots(CIcons& Icons, const LFFont& Font)
+{
+	LoadColorDots(Icons, Font.GetFontHeight());
+}
 
 inline BOOL LFApplication::IsTooltipVisible() const
 {

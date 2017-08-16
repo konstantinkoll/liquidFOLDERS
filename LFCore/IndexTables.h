@@ -11,22 +11,22 @@
 #define CURIDXVERSION       4
 
 
-#define IDXATTRS_CORE         ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | \
+#define IDXATTRS_CORE           ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | \
 								(1ull<<LFAttrFileTime) | (1ull<<LFAttrAddTime) | (1ull<<LFAttrDoneTime) | \
-								(1ull<<LFAttrFileFormat) | (1ull<<LFAttrFileSize) | (1ull<<LFAttrColor) | \
-								(1ull<<LFAttrHashtags) | (1ull<<LFAttrRating) | (1ull<<LFAttrLocationName) | \
-								(1ull<<LFAttrLocationIATA) | (1ull<<LFAttrLocationGPS) | (1ull<<LFAttrURL))
-#define IDXATTRS_ALL          ((((UINT64)-1)<<(LFLastCoreAttribute+1)) | IDXATTRS_CORE)
+								(1ull<<LFAttrFileFormat) | (1ull<<LFAttrFileSize) | (1ull<<LFAttrHashtags) | \
+								(1ull<<LFAttrRating) | (1ull<<LFAttrLocationName) | (1ull<<LFAttrLocationIATA) | \
+								(1ull<<LFAttrLocationGPS) | (1ull<<LFAttrURL))
+#define IDXATTRS_ALL            ((((UINT64)-1)<<(LFLastCoreAttribute+1)) | IDXATTRS_CORE)
 
 // Minimal advertised properties
-#define IDXATTRS_MINDETAILS   ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrFileTime))
+#define IDXATTRS_MINDETAILS     ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrFileTime))
 
 // Advertised properties for photos and videos
-#define IDXATTRS_VISDETAILS   (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrRoll) | (1ull<<LFAttrHashtags) | \
+#define IDXATTRS_VISDETAILS     (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrRoll) | (1ull<<LFAttrHashtags) | \
 								(1ull<<LFAttrLocationName) | (1ull<<LFAttrLocationIATA))
 
 // Generically advertised properties
-#define IDXATTRS_GENDETAILS   (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrCreationTime) | \
+#define IDXATTRS_GENDETAILS     (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrCreationTime) | \
 								(1ull<<LFAttrArtist) | (1ull<<LFAttrTitle) | (1ull<<LFAttrAlbum) | \
 								(1ull<<LFAttrDuration) | (1ull<<LFAttrRecordingTime) | (1ull<<LFAttrRecordingEquipment) | \
 								(1ull<<LFAttrRoll) | (1ull<<LFAttrCustomer) | (1ull<<LFAttrComments))

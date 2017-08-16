@@ -703,6 +703,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\ColorDots_14.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ColorDots_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ColorDots_20.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ColorDots_25.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\DINMittelschrift.ttf"
 				>
 			</File>

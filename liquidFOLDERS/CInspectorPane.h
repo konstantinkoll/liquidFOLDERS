@@ -73,6 +73,7 @@ public:
 	void SetCoreIcon(INT IconID, const CString& Description=_T(""));
 	void SetFormatIcon(LPCSTR pFileFormat, const CString& Description=_T(""));
 	void SetPreview(const LFItemDescriptor* pItemDescriptor, const CString& Description=_T(""));
+	BOOL UpdateThumbnailColor(const LFVariantData& Data);
 
 protected:
 	void FreeItem();
@@ -94,14 +95,16 @@ class CInspectorPane : public CFrontstagePane
 public:
 	CInspectorPane();
 
+	virtual INT GetMinWidth() const;
 	virtual void AdjustLayout(CRect rectLayout);
-	virtual void SaveSettings();
 
 	void AggregateStart(INT Context);
 	void AggregateAdd(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
 	void AggregateFinish();
 
 protected:
+	void SaveSettings() const;
+
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);

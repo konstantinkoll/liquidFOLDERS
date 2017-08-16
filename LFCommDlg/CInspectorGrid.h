@@ -4,6 +4,7 @@
 
 #pragma once
 #include "LFCore.h"
+#include "CIcons.h"
 
 
 // CPropertyHolder
@@ -16,6 +17,7 @@ class CPropertyHolder : public CFrontstageWnd
 friend class CProperty;
 friend class CPropertyTags;
 friend class CPropertyRating;
+friend class CPropertyColor;
 friend class CPropertyIATA;
 friend class CPropertyGPS;
 friend class CPropertyTime;
@@ -54,6 +56,7 @@ public:
 	CProperty(LFVariantData* pData);
 
 	virtual void ToString(LPWSTR pStr, INT nCount) const;
+	virtual INT GetMinWidth() const;
 	virtual void DrawValue(CDC& dc, LPCRECT lpRect) const;
 	virtual HCURSOR SetCursor(INT x) const;
 	virtual CString GetValidChars() const;
@@ -122,6 +125,7 @@ class CPropertyRating : public CProperty
 public:
 	CPropertyRating(LFVariantData* pData);
 
+	virtual INT GetMinWidth() const;
 	virtual void DrawValue(CDC& dc, LPCRECT lpRect) const;
 	virtual HCURSOR SetCursor(INT x) const;
 	virtual BOOL CanDelete() const;
@@ -131,6 +135,29 @@ public:
 
 protected:
 	void OnSetRating(UCHAR Rating);
+};
+
+
+// CPropertyColor
+//
+
+class CPropertyColor : public CProperty
+{
+public:
+	CPropertyColor(LFVariantData* pData);
+
+	virtual INT GetMinWidth() const;
+	virtual void DrawValue(CDC& dc, LPCRECT lpRect) const;
+	virtual HCURSOR SetCursor(INT x) const;
+	virtual BOOL CanDelete() const;
+	virtual BOOL WantsChars() const;
+	virtual BOOL OnClickValue(INT x);
+	virtual BOOL OnPushChar(UINT nChar);
+
+protected:
+	void OnSetColor(UINT Color);
+
+	static CIcons m_ColorDots;
 };
 
 
@@ -293,6 +320,7 @@ public:
 	void AddAttributeProperties(LFVariantData* pDataArray);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
 	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pRangeFirst=NULL, const LFVariantData* pRangeSecond=NULL);
+	INT GetMinWidth() const;
 	CString GetName(UINT nID) const;
 	CString GetValue(UINT nID) const;
 
@@ -342,6 +370,7 @@ protected:
 	CMFCMaskedEdit* p_WndEdit;
 	INT m_RowHeight;
 	INT m_LabelWidth;
+	INT m_MinWidth;
 	INT m_IconSize;
 	BOOL m_SortAlphabetic;
 	BOOL m_Hover;
@@ -361,6 +390,11 @@ private:
 
 	INT* m_pSortArray;
 };
+
+inline INT CInspectorGrid::GetMinWidth() const
+{
+	return m_MinWidth;
+}
 
 inline void CInspectorGrid::MakeSortArrayDirty()
 {

@@ -526,7 +526,6 @@ UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR /*pPath*/, 
 UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
 {
 	assert(pCoreAttributes);
-	assert(pStoreData);
 	assert(pItemDescriptor);
 
 	if (!LFIsStoreMounted(p_StoreDescriptor))

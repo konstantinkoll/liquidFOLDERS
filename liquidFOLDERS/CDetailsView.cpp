@@ -37,96 +37,113 @@ void CDetailsView::AdjustLayout()
 	Arrange(CSize(MinWidth, 128+PADDING/2+RATINGBITMAPHEIGHT+2), PADDING, CSize(GUTTER, GUTTER), FullWidth);
 }
 
+LFFont* CDetailsView::GetLabelFont() const
+{
+	return &theApp.m_LargeFont;
+}
+
 RECT CDetailsView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
-	rect.left += 128+2*PADDING;
+
+	rect.top += PADDING-2;
+	rect.bottom = rect.top+m_LargeFontHeight+4;
+	rect.left += 128+2*PADDING+GetColorDotWidth(Index, m_LargeColorDots)-5;
+	rect.right -= PADDING-2;
 
 	return rect;
 }
 
 void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(LFAttrFileName==0);
+
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
 	CRect rect(rectItem);
 	rect.DeflateRect(PADDING, PADDING);
 
 	// Properties
-	if (!IsEditing() || (Index!=m_EditLabel))
+	CRect rectText(rect);
+	rectText.left += 128+PADDING+1;
+
+	CString Name;
+	CString Value;
+
+	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		CRect rectLabel(rect);
-		rectLabel.left += 128+PADDING+1;
+		const UINT Attr = theApp.m_SortedAttributeList[a];
 
-		CString Name;
-		CString Value;
+		if (theApp.m_Attributes[Attr].AttrProperties.DefaultPriority==LFMaxAttributePriority)
+			break;
 
-		for (UINT a=0; a<LFAttributeCount; a++)
+		if (Attr==LFAttrFileName)
 		{
-			const UINT Attr = theApp.m_SortedAttributeList[a];
+			ASSERT(rect.Height()>=m_LargeFontHeight+PADDING/2+2*m_DefaultFontHeight);
 
-			if (theApp.m_Attributes[Attr].AttrProperties.DefaultPriority==LFMaxAttributePriority)
-				break;
+			CRect rectLabel(rectText);
+			rectLabel.bottom = rectLabel.top+m_LargeFontHeight;
 
-			if (Attr==LFAttrFileName)
+			// Color
+			DrawColorDots(dc, rectLabel, pItemDescriptor, m_LargeFontHeight, m_LargeColorDots);
+
+			if (!IsEditing() || (Index!=m_EditLabel))
 			{
-				ASSERT(rect.Height()>=m_LargeFontHeight+PADDING/2+2*m_DefaultFontHeight);
-
 				// Filename
 				CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
 				dc.DrawText(GetLabel(pItemDescriptor), rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 				dc.SelectObject(pOldFont);
+			}
 
-				rectLabel.top += m_LargeFontHeight+PADDING/2;
+			rectText.top += m_LargeFontHeight+PADDING/2;
 
-				// Comments
-				if (pItemDescriptor->CoreAttributes.Comments[0])
+			// Comments
+			if (pItemDescriptor->CoreAttributes.Comments[0])
+			{
+				dc.DrawText(pItemDescriptor->CoreAttributes.Comments, -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+
+				rectText.top += m_DefaultFontHeight;
+			}
+
+			// Description
+			if (pItemDescriptor->Type & LFTypeHasDescription)
+			{
+				dc.DrawText(pItemDescriptor->Description, -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+
+				rectText.top += m_DefaultFontHeight;
+			}
+		}
+		else
+			if (theApp.IsAttributeAvailable(m_Context, Attr))
+			{
+				// Other properties
+				theApp.AttributeToString(Name, Value, pItemDescriptor, Attr);
+
+				if (!Value.IsEmpty())
 				{
-					dc.DrawText(pItemDescriptor->CoreAttributes.Comments, -1, rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+					CRect rectLabel(rectText);
 
-					rectLabel.top += m_DefaultFontHeight;
-				}
+					// Name
+					if (!Name.IsEmpty())
+					{
+						Name.Append(_T(": "));
+						dc.DrawText(Name, rectLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
-				// Description
-				if (pItemDescriptor->Type & LFTypeHasDescription)
-				{
-					dc.DrawText(pItemDescriptor->Description, -1, rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+						rectLabel.left += dc.GetTextExtent(Name).cx;
+					}
 
-					rectLabel.top += m_DefaultFontHeight;
+					// Value
+					COLORREF oldColor = dc.GetTextColor();
+					if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
+						dc.SetTextColor(0x808080);
+
+					dc.DrawText(Value, rectLabel, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+					dc.SetTextColor(oldColor);
+
+					if ((rectText.top+=m_DefaultFontHeight)>rect.bottom-m_DefaultFontHeight)
+						break;
 				}
 			}
-			else
-				if (theApp.IsAttributeAvailable(m_Context, Attr))
-				{
-					// Other properties
-					theApp.AttributeToString(Name, Value, pItemDescriptor, Attr);
-
-					if (!Value.IsEmpty())
-					{
-						CRect rectText(rectLabel);
-
-						// Name
-						if (!Name.IsEmpty())
-						{
-							Name.Append(_T(": "));
-							dc.DrawText(Name, rectText, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-
-							rectText.left += dc.GetTextExtent(Name).cx;
-						}
-
-						// Value
-						COLORREF oldColor = dc.GetTextColor();
-						if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
-							dc.SetTextColor(0x808080);
-
-						dc.DrawText(Value, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-						dc.SetTextColor(oldColor);
-
-						if ((rectLabel.top+=m_DefaultFontHeight)>rect.bottom-m_DefaultFontHeight)
-							break;
-					}
-				}
-		}
 	}
 
 	// Icon

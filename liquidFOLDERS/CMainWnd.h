@@ -78,7 +78,7 @@ protected:
 	afx_msg void OnUpdateSortSettings();
 	afx_msg void OnUpdateViewSettings();
 	afx_msg void OnUpdateCounts();
-	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
+	afx_msg LRESULT OnCookFiles(WPARAM wParam=NULL, LPARAM lParam=NULL);
 	afx_msg void OnUpdateFooter();
 
 	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
@@ -107,7 +107,7 @@ protected:
 private:
 	static LFFilter* GetRootFilter();
 	LPCSTR GetStatisticsID() const;
-	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* pPersistentData=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
+	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* pPersistentData=NULL, INT AggregateFirst=-1, INT AggregateLast=-1);
 	void UpdateHistory(UINT NavMode);
 	COLORREF PriorityColor() const;
 	static BOOL CookSortDescending(const LFContextViewSettings* pContextViewSettings);

@@ -96,6 +96,14 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 	return pCookedFiles;
 }
 
+LFCORE_API void LFUpdateFolderColors(LFSearchResult* pCookedFiles, const LFSearchResult* pRawFiles)
+{
+	assert(pRawFiles);
+	assert(pCookedFiles);
+
+	pCookedFiles->UpdateFolderColors(pRawFiles);
+}
+
 
 // LFSearchResult
 //
@@ -280,16 +288,18 @@ void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescript
 
 	if (FileSummary.FileCount++)
 	{
-		FileSummary.Source = pItemDescriptor->Type & LFTypeSourceMask;
-	}
-	else
-	{
 		if ((pItemDescriptor->Type & LFTypeSourceMask)!=FileSummary.Source)
 			FileSummary.Source = LFTypeSourceUnknown;
 	}
+	else
+	{
+		FileSummary.Source = pItemDescriptor->Type & LFTypeSourceMask;
+	}
 
 	FileSummary.FileSize += pItemDescriptor->CoreAttributes.FileSize;
-	FileSummary.Flags |= (pItemDescriptor->CoreAttributes.Flags & (LFFlagNew | LFFlagMissing));
+	FileSummary.Flags |= (pItemDescriptor->CoreAttributes.Flags & (LFFlagNew | LFFlagTask | LFFlagMissing));
+	FileSummary.ItemColors[LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags)]++;
+	FileSummary.ItemColorSet |= pItemDescriptor->AggregateColorSet;
 	FileSummary.OnlyMediaFiles &= (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio) || (pItemDescriptor->CoreAttributes.ContextID==LFContextVideos);
 
 	if (pItemDescriptor->AttributeValues[LFAttrDuration])
@@ -317,8 +327,9 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 
 	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 	{
+		// Special icon for filter
 		if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
-			pItemDescriptor->IconID = IDI_FLD_ALL;
+			pItemDescriptor->IconID = IDI_FLD_CONTENT;
 
 		switch (m_AutoContext)
 		{
@@ -720,5 +731,30 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 		pFolder->pNextFilter->pConditionList = pFilterCondition;
 
 		AddItem(pFolder);
+	}
+}
+
+void LFSearchResult::UpdateFolderColors(const LFSearchResult* pRawFiles)
+{
+	for (UINT a=0; a<m_ItemCount; a++)
+	{
+		LFItemDescriptor* pItemDescriptor = m_Items[a];
+
+		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1))
+		{
+			// Create file summary
+			LFFileSummary FileSummary;
+			InitFileSummary(FileSummary);
+
+			for (UINT Index=(UINT)pItemDescriptor->AggregateFirst; Index<=(UINT)pItemDescriptor->AggregateLast; Index++)
+				AddFileToSummary(FileSummary, (*pRawFiles)[Index]);
+
+			// Color set
+			pItemDescriptor->AggregateColorSet = FileSummary.ItemColorSet;
+
+			// Colored icon
+			if ((pItemDescriptor->IconID>=IDI_FLD_DEFAULT) && (pItemDescriptor->IconID<IDI_FLD_DEFAULT+LFItemColorCount))
+				pItemDescriptor->IconID = GetColoredFolderIconID(FileSummary);
+		}
 	}
 }

@@ -63,6 +63,7 @@ private:
 	INT GetMaxAttributeWidth(UINT Attr) const;
 	void AutosizeColumn(UINT Attr);
 	INT GetHeaderIndent() const;
+	static INT GetMinColumnWidth(UINT Attr);
 
 	LFDynArray<FolderData, 128, 128> m_Folders;
 	LFSearchResult* m_pFolderItems;
@@ -70,3 +71,8 @@ private:
 	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
 };
+
+inline INT CListView::GetMinColumnWidth(UINT Attr)
+{
+	return (Attr==LFAttrFileName) ? 200 : 64;
+}

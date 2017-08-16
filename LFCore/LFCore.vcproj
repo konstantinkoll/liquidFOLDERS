@@ -726,10 +726,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\FLD_All.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_Alternative.ico"
 				>
 			</File>
@@ -738,11 +734,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FLD_Blue.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FLD_Blues.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\res\FLD_Classical.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Content.ico"
 				>
 			</File>
 			<File
@@ -770,6 +774,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FLD_Gray.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Green.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FLD_Hip-Hop.ico"
 				>
 			</File>
@@ -794,6 +806,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FLD_Orange.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FLD_Placeholder.ico"
 				>
 			</File>
@@ -802,7 +818,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FLD_Purple.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FLD_RandB.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Red.ico"
 				>
 			</File>
 			<File
@@ -831,6 +855,10 @@
 			</File>
 			<File
 				RelativePath=".\res\FLD_WorldMusic.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Yellow.ico"
 				>
 			</File>
 			<File
