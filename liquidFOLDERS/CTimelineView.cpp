@@ -246,6 +246,8 @@ void CTimelineView::AdjustLayout()
 	CRect rect;
 	GetWindowRect(rect);
 
+	m_BackgroundWidth = rect.Width();
+
 	BOOL HasScrollbars = FALSE;
 
 Restart:
@@ -255,8 +257,8 @@ Restart:
 	WORD Year = st.wYear;
 
 	m_Categories.m_ItemCount = 0;
-	m_TwoColumns = rect.Width()-2*GUTTER-MIDDLE-7*CARDPADDING>=512;
-	m_ItemWidth = m_TwoColumns ? (rect.Width()-MIDDLE)/2-GUTTER : rect.Width()-2*GUTTER;
+	m_TwoColumns = m_BackgroundWidth-2*GUTTER-MIDDLE-7*CARDPADDING>=512;
+	m_ItemWidth = m_TwoColumns ? (m_BackgroundWidth-MIDDLE)/2-GUTTER : m_BackgroundWidth-2*GUTTER;
 	m_PreviewColumns = (m_ItemWidth-2*CARDPADDING+THUMBMARGINX+4)/(128+THUMBMARGINX);
 
 	INT CurRow[2] = { GUTTER+2, GUTTER+2 };
@@ -391,7 +393,7 @@ Restart:
 				ZeroMemory(&ic, sizeof(ic));
 
 				swprintf_s(ic.Caption, 5, L"%u", (UINT)Year);
-				ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
+				ic.Rect.left = m_BackgroundWidth/2-m_LabelWidth/2;
 				ic.Rect.right = ic.Rect.left+m_LabelWidth;
 				ic.Rect.top = max(CurRow[0], CurRow[1]);
 				ic.Rect.bottom = ic.Rect.top+2*CARDPADDING+theApp.m_SmallBoldFont.GetFontHeight()-2;
@@ -428,8 +430,8 @@ Restart:
 
 			if ((CurRow[Column]>rect.Height()) && !HasScrollbars)
 			{
+				m_BackgroundWidth -= GetSystemMetrics(SM_CXVSCROLL);
 				HasScrollbars = TRUE;
-				rect.right -= GetSystemMetrics(SM_CXVSCROLL);
 
 				goto Restart;
 			}
@@ -868,7 +870,7 @@ void CTimelineView::OnPaint()
 		if (m_TwoColumns)
 			if (Themed)
 			{
-				const INT x = rect.Width()/2-4;
+				const INT x = m_BackgroundWidth/2-4;
 
 				for (UINT a=0; a<8; a++)
 				{

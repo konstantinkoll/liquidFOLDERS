@@ -19,9 +19,9 @@
 #define PRV_COMMENTS           0x00800000
 #define PRV_COLLECTIONICON     0x01000000
 
-#define PRV_ATTRIBUTES        (PRV_CREATOR | PRV_TITLE | PRV_COLLECTION | PRV_COMMENTS)
-#define PRV_PREVIEW           (PRV_THUMBNAILS | PRV_REPRESENTATIVE)
-#define PRV_MIDDLESECTION     (PRV_CONTENTS | PRV_PREVIEW | PRV_ATTRIBUTES)
+#define PRV_ATTRIBUTES         (PRV_CREATOR | PRV_TITLE | PRV_COLLECTION | PRV_COMMENTS)
+#define PRV_PREVIEW            (PRV_THUMBNAILS | PRV_REPRESENTATIVE)
+#define PRV_MIDDLESECTION      (PRV_CONTENTS | PRV_PREVIEW | PRV_ATTRIBUTES)
 
 struct TimelineItemData
 {
@@ -68,6 +68,7 @@ protected:
 	INT m_SourceHeight;
 	INT m_ItemWidth;
 	INT m_LabelWidth;
+	INT m_BackgroundWidth;
 	INT m_PreviewColumns;
 	INT m_SmallIconSize;
 	INT m_SourceIconSize;
