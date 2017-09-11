@@ -68,7 +68,6 @@ protected:
 	INT m_SourceHeight;
 	INT m_ItemWidth;
 	INT m_LabelWidth;
-	INT m_BackgroundWidth;
 	INT m_PreviewColumns;
 	INT m_SmallIconSize;
 	INT m_SourceIconSize;
