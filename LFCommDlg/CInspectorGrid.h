@@ -320,7 +320,7 @@ public:
 	void AddAttributeProperties(LFVariantData* pDataArray);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
 	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pRangeFirst=NULL, const LFVariantData* pRangeSecond=NULL);
-	INT GetMinWidth() const;
+	INT GetMinWidth(INT Height) const;
 	CString GetName(UINT nID) const;
 	CString GetValue(UINT nID) const;
 
@@ -391,9 +391,9 @@ private:
 	INT* m_pSortArray;
 };
 
-inline INT CInspectorGrid::GetMinWidth() const
+inline INT CInspectorGrid::GetMinWidth(INT Height) const
 {
-	return m_MinWidth;
+	return Height<m_ScrollHeight ? m_MinWidth+GetSystemMetrics(SM_CXVSCROLL) : m_MinWidth;
 }
 
 inline void CInspectorGrid::MakeSortArrayDirty()

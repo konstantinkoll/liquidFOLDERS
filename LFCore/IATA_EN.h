@@ -228,7 +228,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8754
+#define AirportCount_EN 8755
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  65, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -850,7 +850,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 212, "BFG", "", "Bullfrog Basin", { -37.545833, -110.713333 } },
 	{ 212, "BFI", "", "Seattle", { -47.530000, -122.301944 } },
 	{  61, "BFJ", "", "Ba", { 17.550000, 177.666944 } },
-	{ 212, "BFK", "QDV", "Denver (Aurora)", { -36.863333, -99.618611 } },
+	{ 212, "BFK", "QDV", "Buckley Air Force Base", { -39.701667, -104.751667 } },
 	{ 212, "BFL", "", "Bakersfield", { -35.433611, -119.056667 } },
 	{ 212, "BFM", "", "Mobile (Downtown Airport)", { -30.626667, -88.068056 } },
 	{ 180, "BFN", "", "Bloemfontein", { 29.092778, 26.302500 } },
@@ -938,7 +938,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 180, "BIY", "", "Bisho", { 32.897222, 27.279167 } },
 	{ 143, "BIZ", "", "Bimin", { 5.283056, 142.016944 } },
 	{   2, "BJA", "", "Béjaïa", { -36.711944, 5.070000 } },
-	{ 212, "BJC", "QDV", "Denver (Broomfield)", { -39.908889, -105.117222 } },
+	{ 212, "BJC", "QDV", "Denver (Rocky Mountain)", { -39.908889, -105.117222 } },
 	{  86, "BJD", "", "Bakkafjörður", { -66.021944, -14.824444 } },
 	{ 149, "BJF", "", "Båtsfjord", { -70.600278, 29.692500 } },
 	{  88, "BJG", "", "Bolaang", { 0.933056, 124.166944 } },
@@ -963,7 +963,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 212, "BKC", "", "Buckland", { -65.981667, -161.149167 } },
 	{ 212, "BKD", "", "Breckenridge", { -32.719167, -98.891111 } },
 	{ 212, "BKE", "", "Baker City", { -44.837222, -117.809167 } },
-	{ 212, "BKF", "", "Brooks Camp", { -58.554722, -155.777500 } },
+	{ 212, "BKF", "", "Brooks Lake", { -58.554722, -155.777500 } },
 	{ 212, "BKH", "", "Kekana", { -22.024722, -159.789444 } },
 	{ 118, "BKI", "", "Kota Kinabalu", { -5.937222, 116.051111 } },
 	{  79, "BKJ", "", "Boké", { -10.965833, -14.281111 } },
@@ -1875,7 +1875,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 173, "DEI", "", "Dennis Island", { 3.802222, 55.666944 } },
 	{  87, "DEL", "", "Delhi", { -28.566389, 77.103056 } },
 	{  59, "DEM", "", "Dembidollo", { -8.553889, 34.858056 } },
-	{ 212, "DEN", "QDV", "Denver International", { -39.861667, -104.673056 } },
+	{ 212, "DEN", "QDV", "Denver (International Airport)", { -39.861667, -104.673056 } },
 	{ 143, "DER", "", "Derim", { 6.133056, 147.100000 } },
 	{ 173, "DES", "", "Desroches", { 5.696667, 53.655833 } },
 	{ 212, "DET", "DTT", "Detroit (Coleman Young)", { -42.409167, -83.009722 } },
@@ -2053,7 +2053,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  73, "DUN", "", "Dundas", { -76.566944, -68.800000 } },
 	{  34, "DUQ", "", "Duncan", { -48.749722, -123.718056 } },
 	{ 180, "DUR", "", "Durban", { 29.614444, 31.116389 } },
-	{  69, "DUS", "NRW", "Dusseldorf", { -51.289444, 6.766667 } },
+	{  69, "DUS", "NRW", "Düsseldorf", { -51.289444, 6.766667 } },
 	{ 212, "DUT", "", "Dutch Harbor", { -53.900278, -166.543611 } },
 	{ 212, "DUX", "", "Dumas", { -35.858056, -102.013056 } },
 	{ 162, "DVA", "", "Deva", { -45.883056, 22.900000 } },
@@ -6223,8 +6223,8 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  25, "QCH", "", "Colatina", { 19.486944, -40.579444 } },
 	{  25, "QDF", "", "Conselheiro Lafaiete", { 20.738611, -43.797500 } },
 	{   8, "QDN", "", "Eden", { 37.066944, 149.900000 } },
-	{  69, "QDU", "NRW", "Dusseldorf (Central Railway Station)", { -51.220278, 6.792778 } },
-	{ 212, "QDV", "QDV", "Denver", { -39.197833, -103.760278 } },
+	{  69, "QDU", "NRW", "Düsseldorf (Central Railway Station)", { -51.220278, 6.792778 } },
+	{ 212, "QDV", "QDV", "Denver", { -39.765500, -104.786889 } },
 	{  69, "QFB", "", "Freiburg", { -47.997778, 7.841111 } },
 	{  93, "QFR", "", "Frosinone", { -41.648056, 13.295000 } },
 	{ 149, "QFV", "", "Bergen (Railway Station)", { -60.390278, 5.333333 } },
@@ -7870,6 +7870,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 149, "VDB", "", "Fagernes", { -61.015556, 9.288056 } },
 	{  25, "VDC", "", "Vitória da Conquista", { 14.862778, -40.863056 } },
 	{ 182, "VDE", "", "Valverde", { -27.814722, -17.886944 } },
+	{ 216, "VDH", "", "Dong Hoi", { -17.515000, 106.590556 } },
 	{ 212, "VDI", "", "Vidalia", { -32.192778, -82.371111 } },
 	{   6, "VDM", "", "Viedma", { 40.869167, -63.000278 } },
 	{ 215, "VDP", "", "Valle de la Pascua", { -9.221944, -65.993611 } },

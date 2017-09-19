@@ -52,6 +52,7 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	// Content
 	CRect rectText(rect);
 	rectText.DeflateRect(BORDER+2, BORDER);
+
 	if (Selected)
 		rectText.OffsetRect(1, 1);
 

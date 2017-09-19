@@ -708,7 +708,7 @@ void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BO
 void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL ShowKeyboardCues)
 {
 	CRect rect(lpDrawItemStruct->rcItem);
-	rect.DeflateRect(2, 2);
+	rect.DeflateRect(6, 4);
 
 	WCHAR Caption[256];
 	::GetWindowText(lpDrawItemStruct->hwndItem, Caption, 256);
@@ -833,6 +833,8 @@ void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 {
+	ASSERT(pComboBox);
+
 	pComboBox->SetRedraw(FALSE);
 	pComboBox->ResetContent();
 
@@ -886,8 +888,8 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 
 		for (INT a=0; a<pComboBox->GetCount(); a++)
 		{
-			INT Data = (INT)pComboBox->GetItemData(a);
-			if ((Data==Request) || ((First==TRUE) && ((Data==LFFilterCompareIsEqual) || (Data==LFFilterCompareContains))))
+			const INT Data = (INT)pComboBox->GetItemData(a);
+			if ((Data==Request) || (First && ((Data==LFFilterCompareIsEqual) || (Data==LFFilterCompareContains))))
 			{
 				pComboBox->SetCurSel(a);
 				First = FALSE;

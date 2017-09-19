@@ -95,7 +95,7 @@ class CInspectorPane : public CFrontstagePane
 public:
 	CInspectorPane();
 
-	virtual INT GetMinWidth() const;
+	virtual INT GetMinWidth(INT Height) const;
 	virtual void AdjustLayout(CRect rectLayout);
 
 	void AggregateStart(INT Context);

@@ -1227,7 +1227,7 @@ void CInspectorGrid::AdjustLayout()
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
-	m_LabelWidth = m_MinWidth = 0;
+	INT LabelWidth = m_LabelWidth = m_MinWidth = 0;
 	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : MARGIN+1;
 	INT Category = -1;
 
@@ -1252,6 +1252,9 @@ void CInspectorGrid::AdjustLayout()
 		pProp->Bottom = pProp->Visible ? m_ScrollHeight+m_RowHeight : -1;
 
 		// Label width
+		if (pProp->LabelWidth>LabelWidth)
+			LabelWidth = pProp->LabelWidth;
+
 		if (pProp->Visible)
 		{
 			if (pProp->LabelWidth>m_LabelWidth)
@@ -1260,21 +1263,16 @@ void CInspectorGrid::AdjustLayout()
 			m_ScrollHeight += m_RowHeight+1;
 		}
 
-		// Minimum width
-		const INT Offs = (m_RowHeight-m_IconSize)/2;
-		INT MinWidth = pProp->LabelWidth+2*BORDER+pProp->pProperty->GetMinWidth()+m_IconSize+Offs+BORDER+2;
+		// Data width
+		const INT DataWidth = pProp->pProperty->GetMinWidth();
 
-		if (MinWidth>m_MinWidth)
-			m_MinWidth = MinWidth;
+		if (DataWidth>m_MinWidth)
+			m_MinWidth = DataWidth;
 	}
 
+	LabelWidth += 2*BORDER;
 	m_LabelWidth += 2*BORDER;
-
-	CRect rect;
-	GetClientRect(rect);
-
-	if (m_LabelWidth>rect.Width()/2)
-		m_LabelWidth = rect.Width()/2;
+	m_MinWidth += LabelWidth+m_IconSize+(m_RowHeight-m_IconSize)/2+BORDER+4;
 
 	if (m_SelectedItem==-1)
 		m_SelectedItem = 0;

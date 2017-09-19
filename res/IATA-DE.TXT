@@ -638,7 +638,7 @@ BFF     Scottsbluff, USA;4;41*52'27"N, 103*35'44"W
 BFG     Bullfrog Basin, USA;4;37*32'45"N, 110*42'48"W
 BFI     Seattle, USA;4;47*31'48"N, 122*18'7"W
 BFJ     Ba, Fiji;4;17*32'60"S, 177*40'1"E
-BFK QDV Denver (Aurora), USA;4;36*51'48"N, 99*37'7"W
+BFK QDV Buckley Air Force Base, USA;5;39*42'06"N, 104*45'6"W
 BFL     Bakersfield, USA;4;35*26'1"N, 119*3'24"W
 BFM     Mobile (Downtown Airport), USA;4;30*37'36"N, 88*4'5"W
 BFN     Bloemfontein, Südafrika;4;29*5'34"S, 26*18'9"E
@@ -728,7 +728,7 @@ BIX     Biloxi, USA;4;30*24'41"N, 88*55'25"W
 BIY     Bisho, Südafrika;4;32*53'50"S, 27*16'45"E
 BIZ     Bimin, Neu-Guinea;4;5*16'59"S, 142*1'1"E
 BJA     Béjaïa, Algerien;4;36*42'43"N, 5*4'12"E
-BJC QDV Denver (Broomfield), USA;4;39*54'32"N, 105*7'2"W
+BJC QDV Denver (Rocky Mountain), USA;5;39*54'32"N, 105*7'2"W
 BJD     Bakkafjörður, Island;4;66*1'19"N, 14*49'28"W
 BJF     Båtsfjord, Norwegen;4;70*36'1"N, 29*41'33"E
 BJG     Bolaang, Indonesien;4;0*55'59"S, 124*10'1"E
@@ -754,7 +754,7 @@ BKB     Bikaner, Indien;4;28*4'14"N, 73*12'26"E
 BKC     Buckland, USA;4;65*58'54"N, 161*8'57"W
 BKD     Breckenridge, USA;4;32*43'9"N, 98*53'28"W
 BKE     Baker City, USA;4;44*50'14"N, 117*48'33"W
-BKF     Brooks Camp, USA;4;58*33'17"N, 155*46'39"W
+BKF     Brooks Lake, USA;4;58*33'17"N, 155*46'39"W
 BKH     Kekana, USA;4;22*1'29"N, 159*47'22"W
 BKI     Kota Kinabalu, Malaysia;4;5*56'14"N, 116*3'4"E
 BKJ     Boké, Guinea;4;10*57'57"N, 14*16'52"W
@@ -1712,7 +1712,7 @@ DEH     Decorah, USA;4;43*16'32"N, 91*44'22"W
 DEI     Dennis Island, Sychellen;4;3*48'8"S, 55*40'1"E
 DEL     Delhi, Indien;4;28*33'59"N, 77*6'11"E
 DEM     Dembidollo, Äthiopien;4;8*33'14"N, 34*51'29"E
-DEN QDV Denver International, USA;4;39*51'42"N, 104*40'23"W
+DEN QDV Denver (International Airport), USA;5;39*51'42"N, 104*40'23"W
 DEO     Dearborn, USA
 DER     Derim, Neu-Guinea;4;6*7'59"S, 147*6'0"E
 DES     Desroches, Sychellen;4;5*41'48"S, 53*39'21"E
@@ -2411,7 +2411,7 @@ FSU     Fort Sumner, USA;4;34*29'0"N, 104*13'2"W
 FSZ     Mt. Fuji (Shizuoka), Japan;5;34*47'46"N, 138*11'22"E
 FTA     Futuna Island, Wallis and Futuna Islands;4;19*30'59"S, 170*13'55"E
 FTE     El Calafate, Argentinien;5;50*17'0"S, 72*03'18"W
-FTG QDV Denver (Front Range Airport), USA;4;39*47'7"N, 104*32'35"W
+FTG QDV Denver (Front Range Airport), USA;5;39*47'7"N, 104*32'35"W
 FTI     Fitiuta, Samoa;4;14*12'58"S, 169*25'25"W
 FTK     Fort Knox, USA;4;37*54'25"N, 85*58'20"W
 FTL     Fortuna Ledge, USA
@@ -8206,6 +8206,7 @@ VDA     Eilat (Ovda International Airport), Israel;5;29*56'25"N, 34*56'9"E
 VDB     Fagernes, Norwegen;4;61*0'56"N, 9*17'17"E
 VDC     Vitória da Conquista, Brasilien;4;14*51'46"S, 40*51'47"W
 VDE     Valverde, Spanien;4;27*48'53"N, 17*53'13"W
+VDH     Dong Hoi, Vietnam;5;17*30'54"N, 106*35'26"E
 VDI     Vidalia, USA;4;32*11'34"N, 82*22'16"W
 VDM     Viedma, Argentinien;4;40*52'9"S, 63*0'1"W
 VDP     Valle de la Pascua, Venezuela;4;9*13'19"N, 65*59'37"W

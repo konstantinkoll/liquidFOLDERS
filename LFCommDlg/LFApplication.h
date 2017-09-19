@@ -17,6 +17,8 @@
 #define OS_XP                   0
 #define OS_Vista                1
 #define OS_Seven                2
+#define OS_Eight                3
+#define OS_Ten                  4
 
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);

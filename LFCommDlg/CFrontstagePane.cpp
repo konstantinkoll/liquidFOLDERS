@@ -12,7 +12,7 @@
 CFrontstagePane::CFrontstagePane()
 	: CFrontstageWnd()
 {
-	m_MaxWidth = GetMinWidth();
+	m_MaxWidth = GetMinWidth(0);
 }
 
 BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth, BOOL Shadow)
@@ -26,7 +26,7 @@ BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT Prefer
 	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_NOACTIVATE, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
-INT CFrontstagePane::GetMinWidth() const
+INT CFrontstagePane::GetMinWidth(INT /*Height*/) const
 {
 	return 240+PANEGRIPPER;
 }
@@ -35,9 +35,9 @@ void CFrontstagePane::AdjustLayout(CRect /*rectLayout*/)
 {
 }
 
-void CFrontstagePane::SetMaxWidth(INT MaxWidth)
+void CFrontstagePane::SetMaxWidth(INT MaxWidth, INT Height)
 {
-	m_MaxWidth = max(MaxWidth, GetMinWidth())-PANEGRIPPER;
+	m_MaxWidth = max(MaxWidth, GetMinWidth(Height))-PANEGRIPPER;
 }
 
 void CFrontstagePane::GetLayoutRect(LPRECT lpRect) const
@@ -160,6 +160,9 @@ void CFrontstagePane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	CFrontstageWnd::OnGetMinMaxInfo(lpMMI);
 
-	lpMMI->ptMinTrackSize.x = GetMinWidth();
-	lpMMI->ptMaxTrackSize.x = max(GetMinWidth(), m_MaxWidth+PANEGRIPPER);
+	CRect rect;
+	GetClientRect(rect);
+
+	lpMMI->ptMinTrackSize.x = GetMinWidth(rect.bottom);
+	lpMMI->ptMaxTrackSize.x = max(lpMMI->ptMinTrackSize.x, m_MaxWidth+PANEGRIPPER);
 }

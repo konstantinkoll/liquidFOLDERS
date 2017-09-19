@@ -991,7 +991,7 @@ LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* 
 		ULI2.LowPart = pStoreDescriptor->CreationTime.dwLowDateTime;
 		ULI2.HighPart = pStoreDescriptor->CreationTime.dwHighDateTime;
 
-		if (ULI1.QuadPart<ULI2.QuadPart+(ULONGLONG)86400*10*1000*1000)
+		if ((ULI1.QuadPart<ULI2.QuadPart+(ULONGLONG)86400*10*1000*1000) || pStoreDescriptor->Statistics.FileCount[LFContextNew])
 			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeNew;
 
 		// Default store?

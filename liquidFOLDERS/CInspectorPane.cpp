@@ -401,9 +401,9 @@ CInspectorPane::CInspectorPane()
 			ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
 }
 
-INT CInspectorPane::GetMinWidth() const
+INT CInspectorPane::GetMinWidth(INT Height) const
 {
-	return m_wndGrid.GetMinWidth()+PANEGRIPPER;
+	return m_wndGrid.GetMinWidth(Height)+BACKSTAGEBORDER;
 }
 
 void CInspectorPane::AdjustLayout(CRect rectLayout)

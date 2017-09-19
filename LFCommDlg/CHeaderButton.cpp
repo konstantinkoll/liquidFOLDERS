@@ -68,8 +68,7 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	// Icon
 	if (m_ShowDropdown)
 	{
-		CPen pen;
-		pen.CreatePen(PS_SOLID, 1, clrText);
+		CPen pen(PS_SOLID, 1, clrText);
 		CPen* pOldPen = dc.SelectObject(&pen);
 
 		INT Row = rectText.top+(rectText.Height()-4)/2;

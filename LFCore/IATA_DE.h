@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8753
+#define AirportCount_DE 8754
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -849,7 +849,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "BFG", "", "Bullfrog Basin", { -37.545833, -110.713333 } },
 	{ 209, "BFI", "", "Seattle", { -47.530000, -122.301944 } },
 	{  49, "BFJ", "", "Ba", { 17.550000, 177.666944 } },
-	{ 209, "BFK", "QDV", "Denver (Aurora)", { -36.863333, -99.618611 } },
+	{ 209, "BFK", "QDV", "Buckley Air Force Base", { -39.701667, -104.751667 } },
 	{ 209, "BFL", "", "Bakersfield", { -35.433611, -119.056667 } },
 	{ 209, "BFM", "", "Mobile (Downtown Airport)", { -30.626667, -88.068056 } },
 	{ 182, "BFN", "", "Bloemfontein", { 29.092778, 26.302500 } },
@@ -937,7 +937,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 182, "BIY", "", "Bisho", { 32.897222, 27.279167 } },
 	{ 136, "BIZ", "", "Bimin", { 5.283056, 142.016944 } },
 	{   3, "BJA", "", "Béjaïa", { -36.711944, 5.070000 } },
-	{ 209, "BJC", "QDV", "Denver (Broomfield)", { -39.908889, -105.117222 } },
+	{ 209, "BJC", "QDV", "Denver (Rocky Mountain)", { -39.908889, -105.117222 } },
 	{  77, "BJD", "", "Bakkafjörður", { -66.021944, -14.824444 } },
 	{ 145, "BJF", "", "Båtsfjord", { -70.600278, 29.692500 } },
 	{  73, "BJG", "", "Bolaang", { 0.933056, 124.166944 } },
@@ -962,7 +962,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "BKC", "", "Buckland", { -65.981667, -161.149167 } },
 	{ 209, "BKD", "", "Breckenridge", { -32.719167, -98.891111 } },
 	{ 209, "BKE", "", "Baker City", { -44.837222, -117.809167 } },
-	{ 209, "BKF", "", "Brooks Camp", { -58.554722, -155.777500 } },
+	{ 209, "BKF", "", "Brooks Lake", { -58.554722, -155.777500 } },
 	{ 209, "BKH", "", "Kekana", { -22.024722, -159.789444 } },
 	{ 113, "BKI", "", "Kota Kinabalu", { -5.937222, 116.051111 } },
 	{  66, "BKJ", "", "Boké", { -10.965833, -14.281111 } },
@@ -1874,7 +1874,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 187, "DEI", "", "Dennis Island", { 3.802222, 55.666944 } },
 	{  72, "DEL", "", "Delhi", { -28.566389, 77.103056 } },
 	{  10, "DEM", "", "Dembidollo", { -8.553889, 34.858056 } },
-	{ 209, "DEN", "QDV", "Denver International", { -39.861667, -104.673056 } },
+	{ 209, "DEN", "QDV", "Denver (International Airport)", { -39.861667, -104.673056 } },
 	{ 136, "DER", "", "Derim", { 6.133056, 147.100000 } },
 	{ 187, "DES", "", "Desroches", { 5.696667, 53.655833 } },
 	{ 209, "DET", "DTT", "Detroit (Coleman Young)", { -42.409167, -83.009722 } },
@@ -6223,7 +6223,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  26, "QDF", "", "Conselheiro Lafaiete", { 20.738611, -43.797500 } },
 	{  11, "QDN", "", "Eden", { 37.066944, 149.900000 } },
 	{  40, "QDU", "NRW", "Düsseldorf (Hbf)", { -51.220278, 6.792778 } },
-	{ 209, "QDV", "QDV", "Denver", { -39.197833, -103.760278 } },
+	{ 209, "QDV", "QDV", "Denver", { -39.765500, -104.786889 } },
 	{  40, "QFB", "", "Freiburg", { -47.997778, 7.841111 } },
 	{  79, "QFR", "", "Frosinone", { -41.648056, 13.295000 } },
 	{ 145, "QFV", "", "Bergen (Hbf)", { -60.390278, 5.333333 } },
@@ -7868,6 +7868,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 145, "VDB", "", "Fagernes", { -61.015556, 9.288056 } },
 	{  26, "VDC", "", "Vitória da Conquista", { 14.862778, -40.863056 } },
 	{ 175, "VDE", "", "Valverde", { -27.814722, -17.886944 } },
+	{ 214, "VDH", "", "Dong Hoi", { -17.515000, 106.590556 } },
 	{ 209, "VDI", "", "Vidalia", { -32.192778, -82.371111 } },
 	{   8, "VDM", "", "Viedma", { 40.869167, -63.000278 } },
 	{ 213, "VDP", "", "Valle de la Pascua", { -9.221944, -65.993611 } },

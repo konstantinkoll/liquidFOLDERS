@@ -305,15 +305,16 @@ void CMainView::AdjustLayout(UINT nFlags)
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight+1, rect.Width()-64, NotificationHeight, nFlags & ~(SWP_NOZORDER | SWP_NOOWNERZORDER));
 
 	INT InspectorPaneWidth = 0;
+	const INT InspectorPaneHeight = rect.bottom-TaskHeight;
 
-	const INT MaxWidth = max(m_wndInspectorPane.GetMinWidth(), (rect.Width()-128)/2);
+	const INT MaxWidth = max(m_wndInspectorPane.GetMinWidth(InspectorPaneHeight), (rect.right-128)/2);
 	if (MaxWidth>0)
 	{
-		InspectorPaneWidth = theApp.m_InspectorPaneWidth = min(MaxWidth, max(m_wndInspectorPane.GetMinWidth(), m_wndInspectorPane.GetPreferredWidth()));
+		InspectorPaneWidth = theApp.m_InspectorPaneWidth = min(MaxWidth, max(m_wndInspectorPane.GetMinWidth(InspectorPaneHeight), m_wndInspectorPane.GetPreferredWidth()));
 
 		if (m_ShowInspectorPane)
 		{
-			m_wndInspectorPane.SetMaxWidth(MaxWidth);
+			m_wndInspectorPane.SetMaxWidth(MaxWidth, rect.bottom);
 			m_wndInspectorPane.SetWindowPos(NULL, rect.right-InspectorPaneWidth, rect.top+TaskHeight, InspectorPaneWidth, rect.Height()-TaskHeight, nFlags | (!m_wndInspectorPane.IsWindowVisible() ? SWP_SHOWWINDOW : 0));
 		}
 		else

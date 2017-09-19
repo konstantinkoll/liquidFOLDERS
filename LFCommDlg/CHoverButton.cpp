@@ -57,8 +57,6 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 
 	Graphics g(dc);
 
-	// Background
-	
 	// State
 	const BOOL Disabled = (lpDrawItemStruct->itemState & ODS_DISABLED);
 	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
