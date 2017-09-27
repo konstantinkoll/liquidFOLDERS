@@ -33,6 +33,8 @@ const COLORREF ItemColors[LFItemColorCount] = {
 	LFItemColorGreen, LFItemColorBlue, LFItemColorPurple, LFItemColorGray
 };
 
+WCHAR ItemColorNames[LFItemColorCount-1][256];
+
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
@@ -42,12 +44,15 @@ const COLORREF ItemColors[LFItemColorCount] = {
 
 LFCORE_API void LFInitialize()
 {
+	// Volumes
 	ZeroMemory(&Volumes, sizeof(Volumes));
 
+	// OS version
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
 
+	// Messages
 	LFMessages.UpdateProgress = RegisterWindowMessageA("liquidFOLDERS.UpdateProgress");
 	LFMessages.ItemsDropped = RegisterWindowMessageA("liquidFOLDERS.ItemsDropped");
 	LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
@@ -55,6 +60,11 @@ LFCORE_API void LFInitialize()
 	LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");
 	LFMessages.StatisticsChanged = RegisterWindowMessageA("liquidFOLDERS.StatisticsChanged");
 
+	// Color names
+	for (UINT a=0; a<LFItemColorCount-1; a++)
+		LoadString(LFCoreModuleHandle, IDS_COLOR1+a, ItemColorNames[a], 256);
+
+	// Other modules
 	InitMutex();
 	InitAirportDatabase();
 	InitStores();
@@ -452,8 +462,6 @@ LFCORE_API void LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID)
 LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID)
 {
 	assert(LFItemColorCount<=8);
-	assert((LFFlagItemColorShift & 7)==0);
-	assert(LFFlagItemColorShift<=24);
 
 	ZeroMemory(&AttributeDescriptor, sizeof(LFAttributeDescriptor));
 
@@ -483,15 +491,16 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 	// Check consistency
 	assert(AttrProperties[ID].Type<LFTypeCount);
-	assert((AttrProperties[ID].DefaultView==(UINT)-1) || (TypeProperties[AttrProperties[ID].Type].AllowedViews & (1<<AttrProperties[ID].DefaultView)));
-	assert((AttrProperties[ID].DefaultView==(UINT)-1) ^ (TypeProperties[AttrProperties[ID].Type].AllowedViews!=0));
-	assert((TypeProperties[AttrProperties[ID].Type].Sortable | TypeProperties[AttrProperties[ID].Type].SortableSubfolder)==TypeProperties[AttrProperties[ID].Type].Sortable);
+	assert(TypeProperties[AttrProperties[ID].Type].AllowedViews & (1<<AttrProperties[ID].DefaultView));
+	assert(!AttrProperties[ID].AlwaysShow || TypeProperties[AttrProperties[ID].Type].DefaultColumnWidth);
 	assert(AttrProperties[ID].DefaultPriority<=LFMaxAttributePriority);
 
 	assert(LFAttrFileName==0);
 	assert(AttrProperties[LFAttrFileName].DefaultPriority==0);
 	assert(AttrProperties[LFAttrComments].DefaultPriority==LFMaxAttributePriority);
 	assert(AttrProperties[LFAttrFileFormat].DefaultPriority==LFMaxAttributePriority);
+
+	assert((ID==LFAttrColor) || (AttrProperties[ID].Type!=LFTypeColor));
 
 	// Properties
 	AttributeDescriptor.AttrProperties = AttrProperties[ID];
@@ -547,14 +556,8 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 
 #ifdef _DEBUG
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (TypeProperties[AttrProperties[a].Type].AllowedViews)
-		{
-			if ((CtxProperties[ID].AvailableAttributes>>a) & 1)
-				assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[a].Type].AllowedViews);
-
-			if ((CtxProperties[ID].AdvertisedAttributes>>a) & 1)
-				assert(TypeProperties[AttrProperties[a].Type].Sortable);
-		}
+		if ((CtxProperties[ID].AvailableAttributes>>a) & 1)
+			assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[a].Type].AllowedViews);
 #endif
 
 	// Properties

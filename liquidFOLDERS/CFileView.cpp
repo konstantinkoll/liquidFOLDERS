@@ -969,13 +969,13 @@ UINT CFileView::GetColorDotCount(const LFItemDescriptor* pItemDescriptor)
 	{
 #ifdef _DEBUG
 	case LFTypeStore:
-		ASSERT(LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags)==0);
+		ASSERT(pItemDescriptor->CoreAttributes.Color==0);
 		ASSERT(pItemDescriptor->AggregateColorSet<2);
 		break;
 #endif
 
 	case LFTypeFile:
-		return LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags) ? 1 : 0;
+		return pItemDescriptor->CoreAttributes.Color ? 1 : 0;
 
 	case LFTypeFolder:
 		UINT Count = 0;
@@ -1007,18 +1007,17 @@ void CFileView::DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pIte
 	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeFolder:
-		for (UINT a=1; a<LFItemColorCount; a++)
+		for (BYTE a=1; a<LFItemColorCount; a++)
 			if (pItemDescriptor->AggregateColorSet & (1 << a))
 				DrawColorDot(dc, rect, a, First, Icons, FontHeight);
 
 		break;
 
 	case LFTypeFile:
-		const UINT ItemColor = LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags);
-		ASSERT(pItemDescriptor->AggregateColorSet==(1u << ItemColor));
+		ASSERT(pItemDescriptor->AggregateColorSet==(1 << pItemDescriptor->CoreAttributes.Color));
 
-		if (ItemColor)
-			DrawColorDot(dc, rect, ItemColor, First, Icons, FontHeight);
+		if (pItemDescriptor->CoreAttributes.Color)
+			DrawColorDot(dc, rect, pItemDescriptor->CoreAttributes.Color, First, Icons, FontHeight);
 
 		break;
 	}

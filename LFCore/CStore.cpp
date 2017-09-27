@@ -284,7 +284,7 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWST
 		// Commit
 		UINT Result = m_pIndexMain->Add(pItemDescriptor);
 
-		if ((Result==LFOk) && (m_pIndexAux))
+		if ((Result==LFOk) && m_pIndexAux)
 			Result = m_pIndexAux->Add(pItemDescriptor);
 
 		return Result;

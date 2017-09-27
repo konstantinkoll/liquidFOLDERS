@@ -235,12 +235,23 @@ BEGIN
     IDS_SIZE4               "Groﬂ (< 16 MB)"
     IDS_SIZE5               "Sehr groﬂ (< 128 MB)"
     IDS_SIZE6               "Riesig (128 MB und grˆﬂer)"
+    IDS_COLOR1              "Rot"
+    IDS_COLOR2              "Orange"
+    IDS_COLOR3              "Gelb"
+    IDS_COLOR4              "Gr¸n"
+    IDS_COLOR5              "Blau"
+    IDS_COLOR6              "Violett"
+    IDS_COLOR7              "Grau"
     IDS_DURATION1           "K¸rzer als 5 Sekunden"
     IDS_DURATION2           "5-10 Sekunden"
     IDS_DURATION3           "10-30 Sekunden"
     IDS_DURATION4           "30-60 Sekunden"
     IDS_DURATION5           "1-2 Minuten"
     IDS_DURATION6           "2-3 Minuten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION7           "3-5 Minuten"
     IDS_DURATION8           "5-15 Minuten"
     IDS_DURATION9           "15-30 Minuten"
@@ -248,10 +259,6 @@ BEGIN
     IDS_DURATION11          "45-60 Minuten"
     IDS_DURATION12          "60-90 Minuten"
     IDS_DURATION13          "90-120 Minuten"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION14          "L‰nger als 2 Stunden"
 END
 
@@ -540,12 +547,23 @@ BEGIN
     IDS_SIZE4               "Grande (< 16 MB)"
     IDS_SIZE5               "Extra grande (< 128 MB)"
     IDS_SIZE6               "Enorme (128 MB y arriba de)"
+    IDS_COLOR1              "Rojo"
+    IDS_COLOR2              "Naranja"
+    IDS_COLOR3              "Amarillo"
+    IDS_COLOR4              "Verde"
+    IDS_COLOR5              "Azul"
+    IDS_COLOR6              "Violeta"
+    IDS_COLOR7              "Gris"
     IDS_DURATION1           "Menos de 5 segundos"
     IDS_DURATION2           "5-10 segundos"
     IDS_DURATION3           "10-30 segundos"
     IDS_DURATION4           "30-60 segundos"
     IDS_DURATION5           "1-2 minutos"
     IDS_DURATION6           "2-3 minutos"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION7           "3-5 minutos"
     IDS_DURATION8           "5-15 minuteo"
     IDS_DURATION9           "15-30 minutos"
@@ -553,10 +571,6 @@ BEGIN
     IDS_DURATION11          "45-60 minutos"
     IDS_DURATION12          "60-90 minutos"
     IDS_DURATION13          "90-120 minutos"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION14          "M·s de 2 horas"
 END
 
@@ -844,12 +858,23 @@ BEGIN
     IDS_SIZE4               "Grand (< 16 MB)"
     IDS_SIZE5               "…norme (< 128 MB)"
     IDS_SIZE6               "Immense (et supÈrieur ‡ 128 MB)"
+    IDS_COLOR1              "Rouge"
+    IDS_COLOR2              "Orange"
+    IDS_COLOR3              "Jaune"
+    IDS_COLOR4              "Vert"
+    IDS_COLOR5              "Bleu"
+    IDS_COLOR6              "Violet"
+    IDS_COLOR7              "Gris"
     IDS_DURATION1           "Moins de 5 secondes"
     IDS_DURATION2           "5-10 secondes"
     IDS_DURATION3           "10-30 secondes"
     IDS_DURATION4           "30-60 secondes"
     IDS_DURATION5           "1-2 minutes"
     IDS_DURATION6           "2-3 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION7           "3-5 minutes"
     IDS_DURATION8           "5-15 minutes"
     IDS_DURATION9           "15-30 minutes"
@@ -857,10 +882,6 @@ BEGIN
     IDS_DURATION11          "45-60 minutes"
     IDS_DURATION12          "60-90 minutes"
     IDS_DURATION13          "90-120 minutes"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION14          "Plus de 2 heures"
 END
 
@@ -1187,12 +1208,23 @@ BEGIN
     IDS_SIZE4               "Large (< 16 MB)"
     IDS_SIZE5               "Very large (< 128 MB)"
     IDS_SIZE6               "Huge (128 MB and above)"
+    IDS_COLOR1              "Red"
+    IDS_COLOR2              "Orange"
+    IDS_COLOR3              "Yellow"
+    IDS_COLOR4              "Green"
+    IDS_COLOR5              "Blue"
+    IDS_COLOR6              "Purple"
+    IDS_COLOR7              "Gray"
     IDS_DURATION1           "Shorter than 5 seconds"
     IDS_DURATION2           "5-10 seconds"
     IDS_DURATION3           "10-30 seconds"
     IDS_DURATION4           "30-60 seconds"
     IDS_DURATION5           "1-2 minutes"
     IDS_DURATION6           "2-3 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DURATION7           "3-5 minutes"
     IDS_DURATION8           "5-15 minutes"
     IDS_DURATION9           "15-30 minutes"
@@ -1200,10 +1232,6 @@ BEGIN
     IDS_DURATION11          "45-60 minutes"
     IDS_DURATION12          "60-90 minutes"
     IDS_DURATION13          "90-120 minutes"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DURATION14          "Longer than 2 hours"
 END
 

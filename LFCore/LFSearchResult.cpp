@@ -298,7 +298,7 @@ void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescript
 
 	FileSummary.FileSize += pItemDescriptor->CoreAttributes.FileSize;
 	FileSummary.Flags |= (pItemDescriptor->CoreAttributes.Flags & (LFFlagNew | LFFlagTask | LFFlagMissing));
-	FileSummary.ItemColors[LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags)]++;
+	FileSummary.ItemColors[pItemDescriptor->CoreAttributes.Color]++;
 	FileSummary.ItemColorSet |= pItemDescriptor->AggregateColorSet;
 	FileSummary.OnlyMediaFiles &= (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio) || (pItemDescriptor->CoreAttributes.ContextID==LFContextVideos);
 
@@ -586,6 +586,10 @@ void LFSearchResult::Group(UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 		{
 		case LFTypeIATACode:
 			pCategorizer = new CIATACategorizer();
+			break;
+
+		case LFTypeColor:
+			pCategorizer = new CColorCategorizer(Attr);
 			break;
 
 		case LFTypeRating:

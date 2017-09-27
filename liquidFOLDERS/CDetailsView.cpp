@@ -84,18 +84,22 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 			CRect rectLabel(rectText);
 			rectLabel.bottom = rectLabel.top+m_LargeFontHeight;
 
-			// Color
-			DrawColorDots(dc, rectLabel, pItemDescriptor, m_LargeFontHeight, m_LargeColorDots);
-
-			if (!IsEditing() || (Index!=m_EditLabel))
+			CString Label = GetLabel(pItemDescriptor);
+			if (!Label.IsEmpty())
 			{
-				// Filename
-				CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
-				dc.DrawText(GetLabel(pItemDescriptor), rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
-				dc.SelectObject(pOldFont);
-			}
+				// Color
+				DrawColorDots(dc, rectLabel, pItemDescriptor, m_LargeFontHeight, m_LargeColorDots);
 
-			rectText.top += m_LargeFontHeight+PADDING/2;
+				if (!IsEditing() || (Index!=m_EditLabel))
+				{
+					// Filename
+					CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
+					dc.DrawText(GetLabel(pItemDescriptor), rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+					dc.SelectObject(pOldFont);
+				}
+
+				rectText.top += m_LargeFontHeight+PADDING/2;
+			}
 
 			// Comments
 			if (pItemDescriptor->CoreAttributes.Comments[0])

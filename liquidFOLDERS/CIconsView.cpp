@@ -59,10 +59,6 @@ void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor
 	// Iterate the lines
 	for (UINT Line=0; Line<MaxLineCount; Line++)
 	{
-		// Leave when there is no more label string to consume
-		if (strLabel.IsEmpty())
-			return;
-
 		CString strLine;
 		INT LineWidth = 0;
 		BOOL Break;

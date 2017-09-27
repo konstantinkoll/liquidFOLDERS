@@ -59,7 +59,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
 		{
 			// Try to draw a representative thumbnail
-			if (DrawRepresentativeThumbnail(dc, pt, pItemDescriptor, pRawFiles, ThumbnailYOffset))
+			if (DrawRepresentativeThumbnail(dc, g, pt, pItemDescriptor, pRawFiles, ThumbnailYOffset))
 			{
 				// No overlay for representative thumbnails
 				DrawOverlay = FALSE;
@@ -94,7 +94,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
 		// Draw thumbnail or file format icon
-		if (!DrawJumboThumbnail(dc, pt, pItemDescriptor, ThumbnailYOffset))
+		if (!DrawJumboThumbnail(dc, g, pt, pItemDescriptor, ThumbnailYOffset))
 		{
 			DrawJumboFormatIcon(dc, pt, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
 
@@ -142,9 +142,11 @@ HBITMAP CIconFactory::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchRe
 	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
+	Graphics g(dc);
+
 	// Try to draw a thumbnail
 	for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-		if (DrawJumboThumbnail(dc, CPoint(0, 0), (*pSearchResult)[a], 0))
+		if (DrawJumboThumbnail(dc, g, CPoint(0, 0), (*pSearchResult)[a], 0))
 			return (HBITMAP)dc.SelectObject(hOldBitmap);
 
 	dc.SelectObject(hOldBitmap);
@@ -357,7 +359,7 @@ HBITMAP CIconFactory::LookupThumbnail(LFItemDescriptor* pItemDescriptor)
 	return Data.hBitmap;
 }
 
-BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
+BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
@@ -367,7 +369,10 @@ BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, const CPoint& pt, LFItemDescripto
 		return FALSE;
 
 	// Draw background
-	dc.FillSolidRect(pt.x+3, pt.y+2, 122, 122, LFGetItemColor(LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags), LFItemColorFadeLight));
+	g.SetSmoothingMode(SmoothingModeNone);
+
+	SolidBrush brush(Color(COLORREF2RGB(LFGetItemColor(pItemDescriptor->CoreAttributes.Color, LFItemColorFadeLight))));
+	g.FillRectangle(&brush, pt.x+3, pt.y+2+ThumbnailYOffset, 122, 122);
 
 	// Draw thumbnail
 	HDC hdcMem = CreateCompatibleDC(dc);
@@ -381,7 +386,7 @@ BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, const CPoint& pt, LFItemDescripto
 	return TRUE;
 }
 
-BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset)
+BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder);
@@ -396,7 +401,7 @@ BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, const CPoint& pt, LFItem
 
 	// Try to draw a thumbnail
 	for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
-		if (DrawJumboThumbnail(dc, pt, (*pRawFiles)[a], ThumbnailYOffset))
+		if (DrawJumboThumbnail(dc, g, pt, (*pRawFiles)[a], ThumbnailYOffset))
 			return TRUE;
 
 	return FALSE;

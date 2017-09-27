@@ -14,12 +14,12 @@ public:
 	CCategorizer(UINT Attr);
 
 	LFItemDescriptor* GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter, LFFileSummary& FileSummary, INT FirstAggregate=-1, INT LastAggregate=-1) const;
-	BOOL IsEqual(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	BOOL IsEqual(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
 
 	UINT m_Attr;
 };
@@ -36,7 +36,7 @@ public:
 	static BOOL GetNamePrefix(LPCWSTR FullName, LPWSTR pStr, SIZE_T cCount);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
 };
 
@@ -52,7 +52,7 @@ public:
 	static void GetServer(LPCSTR URL, LPSTR pStr, SIZE_T cCount);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
 };
 
@@ -66,7 +66,7 @@ public:
 	CIATACategorizer();
 
 protected:
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -81,8 +81,21 @@ public:
 	static BYTE GetRatingCategory(const BYTE Rating);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
+};
+
+
+// CColorCategorizer
+//
+
+class CColorCategorizer : public CCategorizer
+{
+public:
+	CColorCategorizer(UINT Attr);
+
+protected:
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -97,8 +110,8 @@ public:
 	static UINT GetSizeCategory(const INT64 Size);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -114,7 +127,7 @@ public:
 	static void GetDay(const FILETIME* Time, LPFILETIME Day);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
 };
 
@@ -130,8 +143,8 @@ public:
 	static UINT GetDurationCategory(const UINT Duration);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -144,6 +157,6 @@ public:
 	CMegapixelCategorizer(UINT Attr);
 
 protected:
-	virtual BOOL CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const;
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
 };

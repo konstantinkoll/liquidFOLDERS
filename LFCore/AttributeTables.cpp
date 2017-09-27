@@ -25,7 +25,7 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	{ LFAttrGenre, TRUE, FALSE,
 	ALLVIEWS, LFViewIcons,
 	IDXATTRS_CORE | IDXATTRS_AUDIO,
-	(1ull<<LFAttrRating) | (1ull<<LFAttrTitle) | (1ull<<LFAttrAlbum) | (1ull<<LFAttrGenre) | (1ull<<LFAttrArtist) | (1ull<<LFAttrDuration) },
+	(1ull<<LFAttrRating) | (1ull<<LFAttrColor) | (1ull<<LFAttrTitle) | (1ull<<LFAttrAlbum) | (1ull<<LFAttrGenre) | (1ull<<LFAttrArtist) | (1ull<<LFAttrDuration) },
 
 	// LFContextPictures
 	{ LFAttrFileTime, TRUE, FALSE,
@@ -43,7 +43,7 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	{ LFAttrFileTime, TRUE, FALSE,
 	ALLVIEWS, LFViewTimeline,
 	IDXATTRS_CORE | IDXATTRS_DOCUMENTS,
-	((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | (1ull<<LFAttrFileTime) | (1ull<<LFAttrRating) | (1ull<<LFAttrCustomer) | (1ull<<LFAttrPages)) },
+	((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | (1ull<<LFAttrFileTime) | (1ull<<LFAttrRating) | (1ull<<LFAttrColor) | (1ull<<LFAttrCustomer) | (1ull<<LFAttrPages)) },
 
 	// LFContextContacts
 	{ LFAttrFileName, TRUE, FALSE,
@@ -73,7 +73,7 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	{ LFAttrArchiveTime, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,
 	IDXATTRS_ALL | (1ull<<LFAttrArchiveTime),
-	(1ull<<LFAttrFileName) | (1ull<<LFAttrArchiveTime) },
+	(1ull<<LFAttrFileName) | (1ull<<LFAttrArchiveTime) | (1ull<<LFAttrColor) },
 
 	// LFContextTrash
 	{ LFAttrDeleteTime, FALSE, FALSE,
@@ -184,7 +184,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	{ LFTypeTime, 0, LFAttrCategoryBasic, 0, LFViewCalendar, LFMaxAttributePriority, TRUE, FALSE, FALSE, { 0,0 }, 8 },
 
 	// LFAttrColor
-	{ LFTypeColor, 0, LFAttrCategoryBasic, 0, (UINT)-1, 3, FALSE, FALSE, FALSE, { 0,0 }, 54 },
+	{ LFTypeColor, 0, LFAttrCategoryBasic, 0, LFViewList, 3, FALSE, FALSE, FALSE, { 0,0 }, 54 },
 
 	// LFAttrHashtags
 	{ LFTypeUnicodeArray, 255, LFAttrCategoryBasic, 0, LFViewTagcloud, 3, FALSE, FALSE, FALSE, { SHPropertySummary, 5 }, 15 },
@@ -318,6 +318,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 };
 
 
+#define WIDTH_HIDE        0
 #define WIDTH_TINY       80
 #define WIDTH_SMALL     100
 #define WIDTH_MEDIUM    120
@@ -326,71 +327,71 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 
 extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 	// LFTypeUnicodeString
-	{ 0, TRUE, TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
+	{ 0, TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeUnicodeArray
-	{ 0, TRUE, TRUE, FALSE, FALSE, FALSE, WIDTH_HUGE,
+	{ 0, TRUE, FALSE, FALSE, FALSE, WIDTH_HUGE,
 	(1<<LFViewIcons) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewTagcloud },
 
 	// LFTypeAnsiString
-	{ 0, TRUE, TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
+	{ 0, TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeIATACode
-	{ sizeof(CHAR)*4, TRUE, TRUE, TRUE, FALSE, FALSE, WIDTH_TINY,
+	{ sizeof(CHAR)*4, TRUE, TRUE, FALSE, FALSE, WIDTH_TINY,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewGlobe) | (1<<LFViewTagcloud), LFViewList },
 
 	// LFTypeFourCC
-	{ sizeof(DWORD), TRUE, TRUE, TRUE, FALSE, FALSE, WIDTH_SMALL,
+	{ sizeof(DWORD), TRUE, TRUE, FALSE, FALSE, WIDTH_SMALL,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewList },
 
 	// LFTypeRating
-	{ sizeof(BYTE), FALSE, TRUE, TRUE, TRUE, FALSE, WIDTH_SMALL,
+	{ sizeof(BYTE), FALSE, TRUE, TRUE, FALSE, WIDTH_SMALL,
 	(1<<LFViewList), LFViewList },
 
 	// LFTypeUINT
-	{ sizeof(UINT), FALSE, TRUE, TRUE, TRUE, FALSE, WIDTH_SMALL,
+	{ sizeof(UINT), FALSE, TRUE, TRUE, FALSE, WIDTH_SMALL,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewList },
 
 	// LFTypeSize
-	{ sizeof(INT64), TRUE, TRUE, TRUE, TRUE, FALSE, WIDTH_TINY,
+	{ sizeof(INT64), TRUE, TRUE, TRUE, FALSE, WIDTH_TINY,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeFraction
-	{ sizeof(LFFraction), FALSE, TRUE, TRUE, FALSE, FALSE, WIDTH_TINY,
+	{ sizeof(LFFraction), FALSE, TRUE, FALSE, FALSE, WIDTH_TINY,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons },
 
 	// LFTypeDouble
-	{ sizeof(DOUBLE), FALSE, TRUE, TRUE, TRUE, TRUE, WIDTH_SMALL,
+	{ sizeof(DOUBLE), FALSE, TRUE, TRUE, TRUE, WIDTH_SMALL,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons },
 
 	// LFTypeColor
-	{ sizeof(UINT), FALSE, FALSE, FALSE, FALSE, FALSE, WIDTH_SMALL,
-	0, 0 },
+	{ sizeof(BYTE), FALSE, TRUE, FALSE, FALSE, WIDTH_HIDE,
+	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewList },
 
 	// LFTypeGeoCoordinates
-	{ sizeof(LFGeoCoordinates), TRUE, TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
+	{ sizeof(LFGeoCoordinates), TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewGlobe), LFViewIcons },
 
 	// LFTypeTime
-	{ sizeof(FILETIME), TRUE, TRUE, TRUE, TRUE, FALSE, WIDTH_MEDIUM,
+	{ sizeof(FILETIME), TRUE, TRUE, TRUE, FALSE, WIDTH_MEDIUM,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewCalendar) | (1<<LFViewTimeline) | (1<<LFViewTagcloud), LFViewTimeline },
 
 	// LFTypeBitrate,
-	{ sizeof(UINT), TRUE, TRUE, TRUE, TRUE, TRUE, WIDTH_SMALL,
+	{ sizeof(UINT), TRUE, TRUE, TRUE, TRUE, WIDTH_SMALL,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeDuration
-	{ sizeof(UINT), TRUE, TRUE, TRUE, TRUE, TRUE, WIDTH_SMALL,
+	{ sizeof(UINT), TRUE, TRUE, TRUE, TRUE, WIDTH_SMALL,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeMegapixel
-	{ sizeof(DOUBLE), TRUE, TRUE, TRUE, TRUE, TRUE, WIDTH_MEDIUM,
+	{ sizeof(DOUBLE), TRUE, TRUE, TRUE, TRUE, WIDTH_MEDIUM,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeGenre
-	{ sizeof(UINT), TRUE, TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
+	{ sizeof(UINT), TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 };
 

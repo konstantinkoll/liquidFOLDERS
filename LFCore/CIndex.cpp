@@ -297,7 +297,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 				}
 
 				// Update flags
-				UINT Flags = Exists ? 0 : LFFlagMissing;
+				BYTE Flags = Exists ? 0 : LFFlagMissing;
 				if ((Flags & LFFlagMissing)!=(PtrM->Flags & LFFlagMissing))
 				{
 					PtrM->Flags = (PtrM->Flags & ~LFFlagMissing) | Flags;
@@ -559,7 +559,7 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProg
 	}
 
 	CStore* pStore;
-	if ((Result=OpenStore(StoreID, TRUE, &pStore))!=LFOk)
+	if ((Result=OpenStore(StoreID, pStore))!=LFOk)
 	{
 		pTransactionList->SetError(p_StoreDescriptor->StoreID, Result, pProgress);
 		return;
@@ -651,7 +651,7 @@ BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 	return !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing);
 }
 
-void CIndex::UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, UINT Flags)
+void CIndex::UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags)
 {
 	assert(pTransactionList);
 	assert((Flags & ~(LFFlagTrash | LFFlagArchive))==0);

@@ -79,20 +79,22 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID pValue)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		wcsncpy_s((WCHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (LPCWSTR)pValue, _TRUNCATE);
+		wcsncpy_s((LPWSTR)pItemDescriptor->AttributeValues[Attr], Size/sizeof(WCHAR), (LPCWSTR)pValue, _TRUNCATE);
 		break;
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		strncpy_s((CHAR*)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (LPCSTR)pValue, _TRUNCATE);
+		strncpy_s((LPSTR)pItemDescriptor->AttributeValues[Attr], Size/sizeof(CHAR), (LPCSTR)pValue, _TRUNCATE);
 		break;
 
 	case LFTypeColor:
-		assert(Attr==LFAttrColor);
-		assert((*((UINT*)pValue) & ~LFFlagItemColorMask)==0);
+		*((BYTE*)pItemDescriptor->AttributeValues[Attr]) = *((BYTE*)pValue);
 
-		pItemDescriptor->CoreAttributes.Flags = (pItemDescriptor->CoreAttributes.Flags & ~LFFlagItemColorMask) | (*((UINT*)pValue));
-		pItemDescriptor->AggregateColorSet = (1u << LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags));
+		if (Attr==LFAttrColor)
+		{
+			assert(pItemDescriptor->CoreAttributes.Color<LFItemColorCount);
+			pItemDescriptor->AggregateColorSet = (1 << pItemDescriptor->CoreAttributes.Color);
+		}
 
 		break;
 
@@ -126,7 +128,9 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCore
 		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes));
 
 		pItemDescriptor->CoreAttributes = *pCoreAttributes;
-		pItemDescriptor->AggregateColorSet = (1u << LFGetItemColorIndex(pItemDescriptor->CoreAttributes.Flags));
+
+		assert(pItemDescriptor->CoreAttributes.Color<LFItemColorCount);
+		pItemDescriptor->AggregateColorSet = (1 << pItemDescriptor->CoreAttributes.Color);
 	}
 	else
 	{

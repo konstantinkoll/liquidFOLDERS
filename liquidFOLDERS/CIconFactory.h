@@ -33,8 +33,8 @@ public:
 
 protected:
 	HBITMAP LookupThumbnail(LFItemDescriptor* pItemDescriptor);
-	BOOL DrawJumboThumbnail(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
-	BOOL DrawRepresentativeThumbnail(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset);
+	BOOL DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
+	BOOL DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset);
 	BOOL DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
 
 	void LookupFileFormat(LPCSTR lpszFileFormat, FileFormatData& Data);

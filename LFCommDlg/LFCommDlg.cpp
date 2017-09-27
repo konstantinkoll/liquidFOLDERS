@@ -20,8 +20,8 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 	if ((hDst=GlobalAlloc(GMEM_MOVEABLE, Size))==NULL)
 		return FALSE;
 
-	void* pSrc = GlobalLock(hSrc);
-	void* pDst = GlobalLock(hDst);
+	LPVOID pSrc = GlobalLock(hSrc);
+	LPVOID pDst = GlobalLock(hDst);
 
 	memcpy(pDst, pSrc, Size);
 
@@ -80,38 +80,38 @@ BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
-	INT d = Radius*2+1;
-	INT r = lpRect->right-d-1;
-	INT b = lpRect->bottom-d-1;
+	const INT Diameter = Radius*2+1;
+	const INT Right = lpRect->right-Diameter-1;
+	const INT Bottom = lpRect->bottom-Diameter-1;
 
 	Path.Reset();
-	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
-	Path.AddArc(r, lpRect->top, d, d, 270, 90);
-	Path.AddArc(r-1, b-1, d+1, d+1, 0, 90);
-	Path.AddArc(lpRect->left, b-1, d+1, d+1, 90, 90);
+	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 180, 90);
+	Path.AddArc(Right, lpRect->top, Diameter, Diameter, 270, 90);
+	Path.AddArc(Right-1, Bottom-1, Diameter+1, Diameter+1, 0, 90);
+	Path.AddArc(lpRect->left, Bottom-1, Diameter+1, Diameter+1, 90, 90);
 	Path.CloseFigure();
 }
 
 void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
-	INT d = Radius*2+1;
-	INT r = lpRect->right-d-1;
+	const INT Diameter = Radius*2+1;
+	const INT Right = lpRect->right-Diameter-1;
 
 	Path.Reset();
-	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
-	Path.AddArc(r, lpRect->top, d, d, 270, 90);
+	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 180, 90);
+	Path.AddArc(Right, lpRect->top, Diameter, Diameter, 270, 90);
 }
 
 void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
 	Path.Reset();
 
-	INT d = Radius*2+1;
-	INT h = lpRect->bottom-lpRect->top-1;
-	INT w = min((INT)(h*1.681), lpRect->right-lpRect->left-1);
+	const INT Diameter = Radius*2+1;
+	const INT Height = lpRect->bottom-lpRect->top-1;
+	const INT Width = min((INT)(Height*1.681), lpRect->right-lpRect->left-1);
 
-	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
-	Path.AddArc(lpRect->left, lpRect->top, 2*w, 2*h, 270, -90);
+	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 180, 90);
+	Path.AddArc(lpRect->left, lpRect->top, 2*Width, 2*Height, 270, -90);
 	Path.CloseFigure();
 }
 
@@ -434,8 +434,7 @@ void DrawBackstageBorder(Graphics& g, CRect rect)
 
 	LinearGradientBrush brush2(Point(0, rect.top-1), Point(0, rect.top+5), Color(0xF0000000), Color(0x00000000));
 
-	Pen pen(Color(0xFF000000));
-	pen.SetBrush(&brush2);
+	Pen pen(&brush2);
 	g.DrawPath(&pen, &path);
 
 	CreateRoundRectangle(rect, 4, path);
@@ -547,8 +546,14 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 			if (Selected)
 			{
-				SolidBrush brush(Color(0x20505762));
-				g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
+				LinearGradientBrush brush1(Point(0, rect.top), Point(0, rect.bottom+1), Color(0x0CA0AEC4), Color(0x20505762));
+				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
+
+				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20000000), Color(0x00000000));
+				g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), 2);
+
+				SolidBrush brush3(Color(0x18000000));
+				g.FillRectangle(&brush3, rect.left, rect.top, 1, rect.Height());
 			}
 			else
 				if (Hover)
@@ -575,7 +580,7 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 			rect.InflateRect(1, 1);
 			CreateRoundRectangle(rect, 2, path);
 
-			Pen pen(Color(0x70505762));
+			Pen pen(Color(Selected || Hover ? 0x80505762 : 0x40505762));
 			g.DrawPath(&pen, &path);
 		}
 	}
@@ -606,9 +611,7 @@ void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom)
 
 	LinearGradientBrush brush1(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x0C000000), Color(0x00000000));
 
-	Pen pen(Color(0x00000000));
-	pen.SetBrush(&brush1);
-
+	Pen pen(&brush1);
 	g.DrawPath(&pen, &path);
 
 	if (IncludeBottom)
@@ -616,7 +619,6 @@ void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom)
 		LinearGradientBrush brush2(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x00FFFFFF), Color(0xFFFFFFFF));
 
 		pen.SetBrush(&brush2);
-
 		g.DrawPath(&pen, &path);
 	}
 }
@@ -636,19 +638,20 @@ void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BO
 
 		if (Selected)
 		{
-			dc.FillSolidRect(rect, 0xEDEAE9);
+			LinearGradientBrush brush1(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFFFAFAFC), Color(0xFFDDDDDF));
+			g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 
-			LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20000000), Color(0x00000000));
-			g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), 2);
+			LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.top+3), Color(0x20000000), Color(0x00000000));
+			g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), 3);
 
-			LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20000000), Color(0x00000000));
-			g.FillRectangle(&brush2, rect.left, rect.top, 1, rect.Height());
+			LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left+3, rect.top), Color(0x18000000), Color(0x00000000));
+			g.FillRectangle(&brush3, rect.left, rect.top, 2, rect.Height());
 		}
 		else
 		{
 			dc.FillSolidRect(rect, Hover ? 0xEFECEC : 0xF7F4F4);
 
-			LinearGradientBrush brush1(Point(0, rect.top+1), Point(0, (rect.top+rect.bottom)/2+1), Color(0xFFFFFFFF), Color((Disabled ? 0x00000000 : 0x40000000) | 0xFFFFFF));
+			LinearGradientBrush brush1(Point(0, rect.top+1), Point(0, (rect.top+rect.bottom)/2+1), Color(0xFFFFFFFF), Color(Disabled ? 0x00FFFFFF : 0x40FFFFFF));
 			g.FillRectangle(&brush1, rect.left, rect.top+1, rect.Width(), rect.Height()/2);
 
 			if (!Disabled)
@@ -784,7 +787,7 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOO
 	}
 }
 
-void DrawColorDot(CDC& dc, CRect& rect, UINT nColor, BOOL& First, CIcons& Icons, INT FontHeight)
+void DrawColorDot(CDC& dc, CRect& rect, BYTE nColor, BOOL& First, CIcons& Icons, INT FontHeight)
 {
 	ASSERT(nColor>0);
 

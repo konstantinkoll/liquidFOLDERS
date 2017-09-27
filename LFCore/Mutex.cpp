@@ -40,7 +40,7 @@ void ReleaseMutexForStores()
 }
 
 
-BOOL GetMutexForStore(const LFStoreDescriptor* pStoreDescriptor, HMUTEX* hMutex)
+BOOL GetMutexForStore(const LFStoreDescriptor* pStoreDescriptor, HMUTEX& hMutex)
 {
 	assert(pStoreDescriptor);
 
@@ -49,13 +49,13 @@ BOOL GetMutexForStore(const LFStoreDescriptor* pStoreDescriptor, HMUTEX* hMutex)
 	strcat_s(ID, MAX_PATH, "_");
 	strcat_s(ID, MAX_PATH, pStoreDescriptor->StoreID);
 
-	*hMutex = CreateMutexA(NULL, FALSE, ID);
-	if (*hMutex==NULL)
+	hMutex = CreateMutexA(NULL, FALSE, ID);
+	if (hMutex==NULL)
 		return FALSE;
 
-	BOOL Result = GetMutex(*hMutex);
+	BOOL Result = GetMutex(hMutex);
 	if (!Result)
-		CloseHandle(*hMutex);
+		CloseHandle(hMutex);
 
 	return Result;
 }

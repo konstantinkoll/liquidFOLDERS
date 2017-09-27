@@ -31,7 +31,7 @@ public:
 	void SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProgress* pProgress=NULL);
 	BOOL ExistingFileID(LPCSTR pFileID);
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
-	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, UINT Flags);
+	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags);
 
 	// Operations with callbacks to CStore object
 	void Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL, BOOL MakeTask=FALSE);

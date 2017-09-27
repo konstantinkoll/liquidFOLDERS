@@ -55,6 +55,8 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 		ValidateAllItems();
 
 		// Folders
+		UINT TypeMask = 0;
+
 		switch (m_Context)
 		{
 		case LFContextSubfolderAlbum:
@@ -62,29 +64,23 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 			break;
 
 		case LFContextSubfolderArtist:
-			m_HasFolders =
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID && (m_ContextViewSettings.SortBy!=LFAttrArtist)) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeDuration) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeGenre);
+			TypeMask = (1<<LFTypeDuration) | (1<<LFTypeGenre);
+			m_HasFolders = (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID && (m_ContextViewSettings.SortBy!=LFAttrArtist));
+
 			break;
 
 		case LFContextSubfolderGenre:
-			m_HasFolders =
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID && (m_ContextViewSettings.SortBy!=LFAttrGenre)) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeDuration);
+			TypeMask = (1<<LFTypeDuration);
+			m_HasFolders = (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID && (m_ContextViewSettings.SortBy!=LFAttrGenre));
+
 			break;
 
 		default:
-			m_HasFolders =
-				theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID ||
-				(m_ContextViewSettings.SortBy==LFAttrLocationName) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeDuration) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeGenre) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeGeoCoordinates) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeIATACode) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeRating) ||
-				(theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type==LFTypeTime);
+			TypeMask = (1<<LFTypeDuration) | (1<<LFTypeGenre) | (1<<LFTypeGeoCoordinates) | (1<<LFTypeIATACode) | (1<<LFTypeRating) | (1<<LFTypeColor) | (1<<LFTypeTime);
+			m_HasFolders = theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID || (m_ContextViewSettings.SortBy==LFAttrLocationName);
 		}
+
+		m_HasFolders |= (TypeMask & (1 << theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type));
 
 		// Prepare search result
 		if (m_HasFolders)
@@ -145,16 +141,22 @@ void CListView::AdjustHeader()
 				if (p_ContextViewSettings->SortBy==a)
 					hdi.fmt |= p_ContextViewSettings->Descending ? HDF_SORTDOWN : HDF_SORTUP;
 
-				if (hdi.cxy)
+				if (theApp.m_Attributes[a].TypeProperties.DefaultColumnWidth && hdi.cxy)
+				{
 					if (theApp.m_Attributes[a].AttrProperties.Type==LFTypeRating)
-					{
-						hdi.cxy = p_ContextViewSettings->ColumnWidth[a] = RATINGBITMAPWIDTH+SPACER;
-					}
+						{
+							hdi.cxy = p_ContextViewSettings->ColumnWidth[a] = RATINGBITMAPWIDTH+SPACER;
+						}
 					else
 					{
 						if (hdi.cxy<GetMinColumnWidth(a))
 							p_ContextViewSettings->ColumnWidth[a] = hdi.cxy = GetMinColumnWidth(a);
 					}
+				}
+				else
+				{
+					hdi.cxy = 0;
+				}
 
 				m_wndHeader.SetItem(a, &hdi);
 			}
@@ -233,7 +235,8 @@ void CListView::AdjustLayout()
 				VERIFY((Data.First=pItemDescriptor->AggregateFirst)>=0);
 				VERIFY((LastFolderItem=Data.Last=pItemDescriptor->AggregateLast)>=0);
 
-				Data.Rect.bottom += m_LargeFontHeight+((m_PreviewAttribute>=0) ? CARDPADDING+PREVIEWITEMOFFSET : CARDPADDING/2+LFCATEGORYPADDING);
+				if (pItemDescriptor->CoreAttributes.FileName[0])
+					Data.Rect.bottom += m_LargeFontHeight+((m_PreviewAttribute>=0) ? CARDPADDING+PREVIEWITEMOFFSET : CARDPADDING/2+LFCATEGORYPADDING);
 
 				Data.pItemDescriptor = pItemDescriptor;
 			}
@@ -320,8 +323,6 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 	// Card
 	DrawCardForeground(dc, g, rect, Themed);
 
-	rect.DeflateRect(CARDPADDING, 0);
-
 	// Caption and preview
 	LFItemDescriptor* pItemDescriptor = m_Folders[Index].pItemDescriptor;
 
@@ -330,10 +331,14 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 		if (m_PreviewAttribute>=0)
 			rect.left += 2;
 
-		rect.top += CARDPADDING-LFCATEGORYPADDING;
-		rect.bottom -= CARDPADDING;
+		rect.DeflateRect(CARDPADDING, CARDPADDING);
 
-		DrawCategory(dc, rect, pItemDescriptor->CoreAttributes.FileName, NULL, Themed);
+		if (pItemDescriptor->CoreAttributes.FileName[0])
+		{
+			rect.top -= LFCATEGORYPADDING;
+
+			DrawCategory(dc, rect, pItemDescriptor->CoreAttributes.FileName, NULL, Themed);
+		}
 
 		// Preview
 		if (m_PreviewAttribute>=0)
@@ -357,6 +362,10 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 				dc.SelectObject(pOldFont);
 			}
 		}
+	}
+	else
+	{
+		rect.DeflateRect(CARDPADDING, 0);
 	}
 }
 
@@ -472,6 +481,10 @@ void CListView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
 INT CListView::GetMaxAttributeWidth(UINT Attr) const
 {
 	ASSERT(Attr<LFAttributeCount);
+
+	// Hidden columns
+	if (!theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth)
+		return 0;
 
 	// Fixed width for rating bitmaps
 	if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
@@ -849,7 +862,13 @@ void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 
 	OnDestroyEdit();
 
-	*pResult = (m_ContextViewSettings.ColumnWidth[pHdr->iItem]==0) || (pHdr->iItem==m_PreviewAttribute);
+	// Do not drag invisible columns, hidden attributes or the preview attribute
+	const UINT Attr = pHdr->iItem;
+
+	*pResult =
+		(m_ContextViewSettings.ColumnWidth[Attr]==0) ||							// Currently invisible column
+		(theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth==0) ||		// Hidden attribute
+		((INT)Attr==m_PreviewAttribute);										// Preview attribute of this list
 }
 
 void CListView::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
@@ -903,8 +922,14 @@ void CListView::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		OnDestroyEdit();
 
-		// Do not track rating columns, hidden columns or the preview column
-		*pResult = (theApp.m_Attributes[pHdr->iItem].AttrProperties.Type==LFTypeRating) || (m_ContextViewSettings.ColumnWidth[pHdr->iItem]==0) || (pHdr->iItem==m_PreviewAttribute);
+		// Do not track rating columns, invisible columns, hidden attributes or the preview attribute
+		const UINT Attr = pHdr->iItem;
+
+		*pResult =
+			(theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating) ||		// Fixed width
+			(m_ContextViewSettings.ColumnWidth[Attr]==0) ||							// Currently invisible column
+			(theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth==0) ||		// Hidden attribute
+			((INT)Attr==m_PreviewAttribute);										// Preview attribute of this list
 	}
 }
 
@@ -917,7 +942,9 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 		const UINT Attr = pHdr->iItem;
 
 		// Guarantee GetMinColumnWidth(), or hide column
-		const INT Width = (pHdr->pitem->cxy<GetMinColumnWidth(Attr)) ? theApp.m_Attributes[Attr].AttrProperties.AlwaysShow ? GetMinColumnWidth(Attr) : 0 : pHdr->pitem->cxy;
+		INT Width = 0;
+		if (theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth)
+			Width = (pHdr->pitem->cxy<GetMinColumnWidth(Attr)) ? theApp.m_Attributes[Attr].AttrProperties.AlwaysShow ? GetMinColumnWidth(Attr) : 0 : pHdr->pitem->cxy;
 
 		if ((Width!=m_ContextViewSettings.ColumnWidth[Attr]) || (Width!=pHdr->pitem->cxy))
 		{

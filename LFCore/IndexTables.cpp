@@ -17,7 +17,7 @@ extern const IdxTableEntry CoreAttributeEntries[] = {
 	{ LFAttrDeleteTime, offsetof(LFCoreAttributes, DeleteTime) },
 	{ LFAttrFileFormat, offsetof(LFCoreAttributes, FileFormat) },
 	{ LFAttrFileSize, offsetof(LFCoreAttributes, FileSize) },
-	{ LFAttrColor, offsetof(LFCoreAttributes, Flags) },
+	{ LFAttrColor, offsetof(LFCoreAttributes, Color) },
 	{ LFAttrHashtags, offsetof(LFCoreAttributes, Hashtags) },
 	{ LFAttrRating, offsetof(LFCoreAttributes, Rating) },
 	{ LFAttrComments, offsetof(LFCoreAttributes, Comments) },

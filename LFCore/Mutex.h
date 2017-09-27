@@ -15,7 +15,7 @@ typedef HANDLE HMUTEX;
 void InitMutex();
 BOOL GetMutexForStores();
 void ReleaseMutexForStores();
-BOOL GetMutexForStore(const LFStoreDescriptor* pStoreDescriptor, HMUTEX* hMutex);
+BOOL GetMutexForStore(const LFStoreDescriptor* pStoreDescriptor, HMUTEX& hMutex);
 void ReleaseMutexForStore(HMUTEX hMutex);
 
 UINT CreateFileConcurrent(LPCTSTR lpFileName, BOOL WriteAccess, DWORD dwCreationDisposition, HANDLE& hFile, BOOL Hidden=FALSE);

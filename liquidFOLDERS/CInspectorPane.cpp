@@ -92,12 +92,10 @@ void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 			switch (pAttributeSummary->Status)
 			{
 			case STATUSUNUSED:
-				{
-					pAttributeSummary->Value = Property;
+				pAttributeSummary->Value = Property;
 
-					pAttributeSummary->Status = STATUSUSED;
-					pAttributeSummary->Visible = TRUE;
-				}
+				pAttributeSummary->Status = STATUSUSED;
+				pAttributeSummary->Visible = TRUE;
 
 				break;
 
@@ -108,11 +106,13 @@ void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 				pAttributeSummary->RangeFirst = pAttributeSummary->RangeSecond = pAttributeSummary->Value;
 				pAttributeSummary->Status = STATUSMULTIPLE;
 
+				break;
+
 			case STATUSMULTIPLE:
-				if (LFCompareVariantData(Property, pAttributeSummary->RangeFirst)==-1)
+				if (LFCompareVariantData(Property, pAttributeSummary->RangeFirst)<0)
 					pAttributeSummary->RangeFirst = Property;
 
-				if (LFCompareVariantData(Property, pAttributeSummary->RangeSecond)==1)
+				if (LFCompareVariantData(Property, pAttributeSummary->RangeSecond)>0)
 					pAttributeSummary->RangeSecond = Property;
 
 				break;
@@ -139,7 +139,9 @@ void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 		m_FlagsMultiple = m_FlagsSet ^ pItemDescriptor->CoreAttributes.Flags;
 	}
 
-	m_FlagsSet |= (pItemDescriptor->CoreAttributes.Flags & ~LFFlagItemColorMask);
+	m_FlagsSet |= pItemDescriptor->CoreAttributes.Flags;
+
+	// Color
 	m_AttributeSummary[LFAttrColor].Value.ColorSet |= pItemDescriptor->AggregateColorSet;
 
 	// Store
@@ -364,14 +366,14 @@ void CIconHeader::SetPreview(const LFItemDescriptor* pItemDescriptor, const CStr
 
 BOOL CIconHeader::UpdateThumbnailColor(const LFVariantData& Data)
 {
-	ASSERT(Data.Attr==LFAttrColor);
+	ASSERT(Data.Type==LFTypeColor);
 
 	switch (m_Status)
 	{
 	case ICONCORE:
 		if ((m_IconID>=IDI_FLD_DEFAULT) && (m_IconID<IDI_FLD_DEFAULT+LFItemColorCount))
 		{
-			m_IconID = IDI_FLD_DEFAULT+LFGetItemColorIndex(Data.Color);
+			m_IconID = IDI_FLD_DEFAULT+Data.Color;
 
 			return TRUE;
 		}
@@ -489,12 +491,6 @@ void CInspectorPane::AggregateFinish()
 				}
 
 		m_FileSummary.AddValueVirtual(AttrFlags, tmpStr);
-
-		// Color
-		m_FileSummary.m_AttributeSummary[LFAttrColor].Value.IsNull = FALSE;
-
-		m_FileSummary.m_AttributeSummary[LFAttrColor].Status = STATUSUSED;
-		m_FileSummary.m_AttributeSummary[LFAttrColor].Visible = TRUE;
 	}
 
 	// Store

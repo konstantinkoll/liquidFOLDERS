@@ -360,7 +360,7 @@ struct LFVariantData
 
 		struct
 		{
-			UINT Color;
+			BYTE Color;
 			BYTE ColorSet;
 		};
 	};
@@ -415,7 +415,6 @@ struct LFTypeProperties
 {
 	SIZE_T Size;
 	BOOL ContainsLetters;
-	BOOL Sortable;
 	BOOL SortableSubfolder;
 	BOOL DefaultDescending;
 	BOOL FormatRight;
@@ -452,14 +451,14 @@ struct LFContextProperties
 	UINT64 AdvertisedAttributes;
 };
 
-#pragma pack(pop)
-
 struct LFContextDescriptor
 {
 	WCHAR Name[256];
 	WCHAR Comment[256];
 	LFContextProperties CtxProperties;
 };
+
+#pragma pack(pop)
 
 
 // Item colors
@@ -495,9 +494,9 @@ struct LFFileSummary
 {
 	UINT FileCount;
 	INT64 FileSize;
-	UINT Flags;
 	UINT ItemColors[LFItemColorCount];
-	UINT ItemColorSet;
+	BYTE ItemColorSet;
+	BYTE Flags;
 	UINT Source;
 	UINT64 Duration;
 	BOOL OnlyMediaFiles;
@@ -572,13 +571,17 @@ struct LFCoreAttributes
 	FILETIME ArchiveTime;
 	CHAR FileFormat[LFExtSize];
 	INT64 FileSize;
-	UINT Flags;
+	BYTE Flags;
+	BYTE Color;
+	BYTE Reserved1;
+	BYTE Reserved2;
 	CHAR URL[256];
 	WCHAR Hashtags[256];
 	BYTE Rating;
 	BYTE Priority;
 	WCHAR LocationName[256];
 	CHAR LocationIATA[4];
+	UINT Reserved3;
 	LFGeoCoordinates LocationGPS;
 
 	// Private
@@ -646,22 +649,18 @@ struct LFCoreAttributes
 
 
 // Persistent item flags
-#define LFFlagTrash                0x00000001	// Persistent, DO NOT CHANGE
-#define LFFlagNew                  0x00000002
-#define LFFlagTask                 0x00000004
-#define LFFlagMissing              0x00000008
-#define LFFlagArchive              0x00000010
-#define LFFlagLink                 0x00000020
-
-#define LFFlagItemColorMask        0x00000700
-#define LFFlagItemColorShift       8			// 8, 16 or 24: color must be on BYTE boundary!
+#define LFFlagTrash                0x01			// Persistent, DO NOT CHANGE
+#define LFFlagNew                  0x02
+#define LFFlagTask                 0x04
+#define LFFlagMissing              0x08
+#define LFFlagArchive              0x10
+#define LFFlagLink                 0x20
 
 
 // Item data structure
 #define LFMaxSlaveSize             3236			// Check if new attributes are attached
 #define LFMaxStoreDataSize         sizeof(WCHAR)*MAX_PATH
 
-#pragma pack(push, 4)
 #pragma warning(push)
 #pragma warning(disable: 4201)
 
@@ -676,7 +675,7 @@ struct LFItemDescriptor
 	// Item aggregation
 	LFFilter* pNextFilter;
 	UINT AggregateCount;
-	UINT AggregateColorSet;
+	BYTE AggregateColorSet;
 
 	// Pointer to attribute values
 	LPVOID AttributeValues[LFAttributeCount];
@@ -717,7 +716,6 @@ struct LFItemDescriptor
 };
 
 #pragma warning(pop)
-#pragma pack(pop)
 
 
 // Store structure

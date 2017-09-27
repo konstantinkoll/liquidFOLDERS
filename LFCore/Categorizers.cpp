@@ -20,9 +20,9 @@ CCategorizer::CCategorizer(UINT Attr)
 	m_Attr = Attr;
 }
 
-BOOL CCategorizer::IsEqual(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CCategorizer::IsEqual(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
-	if ((!pItemDescriptor1->AttributeValues[m_Attr]) || (!pItemDescriptor2->AttributeValues[m_Attr]))
+	if (!pItemDescriptor1->AttributeValues[m_Attr] || !pItemDescriptor2->AttributeValues[m_Attr])
 		return pItemDescriptor1->AttributeValues[m_Attr]==pItemDescriptor2->AttributeValues[m_Attr];
 
 	return CompareItems(pItemDescriptor1, pItemDescriptor2);
@@ -48,7 +48,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFF
 	return pFolder;
 }
 
-BOOL CCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	return CompareValues(AttrProperties[m_Attr].Type, pItemDescriptor1->AttributeValues[m_Attr], pItemDescriptor2->AttributeValues[m_Attr], m_Attr>0)==0;
 }
@@ -62,7 +62,7 @@ LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* pItemDescriptor,
 	return pCondition;
 }
 
-void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* /*pItemDescriptor*/) const
+void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* /*pItemDescriptor*/) const
 {
 	LFSetAttributeVariantData(pFolder, pFolder->pNextFilter->pConditionList->AttrData);
 
@@ -91,34 +91,34 @@ CNameCategorizer::CNameCategorizer()
 
 BOOL CNameCategorizer::GetNamePrefix(LPCWSTR FullName, LPWSTR pStr, SIZE_T cCount)
 {
-#define CHOOSE if ((P2) && ((!P1) || (P2<P1))) P1 = P2;
+#define CHOOSE if (pChar2 && (!pChar1 || (pChar2<pChar1))) pChar1 = pChar2;
 
 	// Am weitesten links stehenden Trenner finden
-	LPCWSTR P1 = wcsstr(FullName, L" —");
-	LPCWSTR P2;
+	LPCWSTR pChar1 = wcsstr(FullName, L" —");
+	LPCWSTR pChar2;
 
-	P2 = wcsstr(FullName, L" –"); CHOOSE;
-	P2 = wcsstr(FullName, L" -"); CHOOSE;
-	P2 = wcsstr(FullName, L" \""); CHOOSE;
-	P2 = wcsstr(FullName, L" ("); CHOOSE;
-	P2 = wcsstr(FullName, L" /"); CHOOSE;
-	P2 = wcsstr(FullName, L" »"); CHOOSE;
-	P2 = wcsstr(FullName, L" «"); CHOOSE;
-	P2 = wcsstr(FullName, L" „"); CHOOSE;
-	P2 = wcsstr(FullName, L" “"); CHOOSE;
-	P2 = wcsstr(FullName, L"—"); CHOOSE;
+	pChar2 = wcsstr(FullName, L" –"); CHOOSE;
+	pChar2 = wcsstr(FullName, L" -"); CHOOSE;
+	pChar2 = wcsstr(FullName, L" \""); CHOOSE;
+	pChar2 = wcsstr(FullName, L" ("); CHOOSE;
+	pChar2 = wcsstr(FullName, L" /"); CHOOSE;
+	pChar2 = wcsstr(FullName, L" »"); CHOOSE;
+	pChar2 = wcsstr(FullName, L" «"); CHOOSE;
+	pChar2 = wcsstr(FullName, L" „"); CHOOSE;
+	pChar2 = wcsstr(FullName, L" “"); CHOOSE;
+	pChar2 = wcsstr(FullName, L"—"); CHOOSE;
 
 	// Wenn kein Trenner gefunden wurde, von rechts nach Ziffern suchen
-	if (!P1)
+	if (!pChar1)
 	{
 		UINT Zustand = 1;
 
-		P2 = &FullName[wcslen(FullName)-1];
-		while (P2>FullName)
+		pChar2 = &FullName[wcslen(FullName)-1];
+		while (pChar2>FullName)
 			switch (Zustand)
 			{
 			case 1:
-				switch (*P2)
+				switch (*pChar2)
 				{
 				case L'0':
 				case L'1':
@@ -132,11 +132,11 @@ BOOL CNameCategorizer::GetNamePrefix(LPCWSTR FullName, LPWSTR pStr, SIZE_T cCoun
 				case L'9':
 				case L'.':
 				case L',':
-					P2--;
+					pChar2--;
 					break;
 
 				case L' ':
-					P2--;
+					pChar2--;
 					Zustand = 2;
 					break;
 
@@ -145,9 +145,9 @@ BOOL CNameCategorizer::GetNamePrefix(LPCWSTR FullName, LPWSTR pStr, SIZE_T cCoun
 				}
 
 			case 2:
-				if (*P2==L' ')
+				if (*pChar2==L' ')
 				{
-					P2--;
+					pChar2--;
 				}
 				else
 				{
@@ -157,17 +157,17 @@ BOOL CNameCategorizer::GetNamePrefix(LPCWSTR FullName, LPWSTR pStr, SIZE_T cCoun
 
 Fertig:
 		if (Zustand==2)
-			P1 = P2+1;
+			pChar1 = pChar2+1;
 	}
 
 Ende:
-	if (P1)
-		wcsncpy_s(pStr, cCount, FullName, P1-FullName);
+	if (pChar1)
+		wcsncpy_s(pStr, cCount, FullName, pChar1-FullName);
 
-	return (P1!=NULL);
+	return (pChar1!=NULL);
 }
 
-BOOL CNameCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CNameCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrProperties[m_Attr].Type==LFTypeUnicodeString);
 
@@ -209,7 +209,7 @@ void CURLCategorizer::GetServer(LPCSTR URL, LPSTR pStr, SIZE_T cCount)
 	strncpy_s(pStr, cCount, URL, Pos ? Pos-URL : cCount);
 }
 
-BOOL CURLCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CURLCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrProperties[m_Attr].Type==LFTypeAnsiString);
 
@@ -240,7 +240,7 @@ CIATACategorizer::CIATACategorizer()
 {
 }
 
-void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
+void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
 	assert(AttrProperties[m_Attr].Type==LFTypeIATACode);
@@ -285,19 +285,20 @@ __forceinline BYTE CRatingCategorizer::GetRatingCategory(const BYTE Rating)
 	return (Rating==1) ? 1 : Rating>>1;
 }
 
-BOOL CRatingCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CRatingCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrProperties[m_Attr].Type==LFTypeRating);
 
 	return GetRatingCategory(*((BYTE*)pItemDescriptor1->AttributeValues[m_Attr]))==GetRatingCategory(*((BYTE*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
 
-void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
+void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
 	assert(AttrProperties[m_Attr].Type==LFTypeRating);
 
 	BYTE Rating = GetRatingCategory(*((BYTE*)pItemDescriptor->AttributeValues[m_Attr]));
+	assert(Rating<=LFMaxRating);
 
 	WCHAR Name[256];
 	LoadString(LFCoreModuleHandle, ((m_Attr==LFAttrRating) ? IDS_RATING1 : IDS_PRIORITY1)+Rating-1, Name, 256);
@@ -305,6 +306,25 @@ void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescri
 
 	Rating *= 2;
 	SetAttribute(pFolder, m_Attr, &Rating);
+}
+
+
+// CColorCategorizer
+//
+
+extern WCHAR ItemColorNames[LFItemColorCount-1][256];
+
+CColorCategorizer::CColorCategorizer(UINT Attr)
+	: CCategorizer(Attr)
+{
+}
+
+void CColorCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const
+{
+	assert(pItemDescriptor->AttributeValues[m_Attr]);
+	assert(AttrProperties[m_Attr].Type==LFTypeColor);
+
+	SetAttribute(pFolder, m_Attr, pItemDescriptor->AttributeValues[m_Attr]);
 }
 
 
@@ -321,14 +341,14 @@ UINT CSizeCategorizer::GetSizeCategory(const INT64 Size)
 	return (Size<32*1024) ? 0 : (Size<128*1024) ? 1 : (Size<1024*1024) ? 2: (Size<16384*1024) ? 3 : (Size<131072*1024) ? 4 : 5;
 }
 
-BOOL CSizeCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CSizeCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrProperties[m_Attr].Type==LFTypeSize);
 
 	return GetSizeCategory(*((INT64*)pItemDescriptor1->AttributeValues[m_Attr]))==GetSizeCategory(*((INT64*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
 
-void CSizeCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
+void CSizeCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
 	assert(AttrProperties[m_Attr].Type==LFTypeSize);
@@ -368,7 +388,7 @@ void CDateCategorizer::GetDay(const FILETIME* Time, LPFILETIME Day)
 	SystemTimeToFileTime(&stUTC, Day);
 }
 
-BOOL CDateCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CDateCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrProperties[m_Attr].Type==LFTypeTime);
 
@@ -443,14 +463,14 @@ UINT CDurationCategorizer::GetDurationCategory(const UINT Duration)
 	return 13;
 }
 
-BOOL CDurationCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CDurationCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrProperties[m_Attr].Type==LFTypeDuration);
 
 	return GetDurationCategory(*((UINT*)pItemDescriptor1->AttributeValues[m_Attr]))==GetDurationCategory(*((UINT*)pItemDescriptor2->AttributeValues[m_Attr]));
 }
 
-void CDurationCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
+void CDurationCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
 	assert(AttrProperties[m_Attr].Type==LFTypeDuration);
@@ -471,7 +491,7 @@ CMegapixelCategorizer::CMegapixelCategorizer(UINT Attr)
 {
 }
 
-BOOL CMegapixelCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFItemDescriptor* pItemDescriptor2) const
+BOOL CMegapixelCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const
 {
 	assert(AttrProperties[m_Attr].Type==LFTypeMegapixel);
 
@@ -479,7 +499,7 @@ BOOL CMegapixelCategorizer::CompareItems(LFItemDescriptor* pItemDescriptor1, LFI
 }
 
 
-void CMegapixelCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, LFItemDescriptor* pItemDescriptor) const
+void CMegapixelCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const
 {
 	assert(pItemDescriptor->AttributeValues[m_Attr]);
 	assert(AttrProperties[m_Attr].Type==LFTypeMegapixel);

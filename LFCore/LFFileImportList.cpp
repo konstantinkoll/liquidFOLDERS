@@ -285,7 +285,7 @@ void LFFileImportList::DoFileImport(BOOL Recursive, LPCSTR pStoreID, LFItemDescr
 			return;
 
 	CStore* pStore;
-	if ((m_LastError=OpenStore(StoreID, TRUE, &pStore))==LFOk)
+	if ((m_LastError=OpenStore(StoreID, pStore))==LFOk)
 	{
 		// Resolve
 		Resolve(Recursive, pProgress);

@@ -358,7 +358,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 			switch (m_Items[a].pItemDescriptor ? m_Items[a].pItemDescriptor->Type & LFTypeMask : LFTypeFile)
 			{
 			case LFTypeFile:
-				if ((Result=OpenStore(m_Items[a].StoreID, TransactionType>LFTransactionTypeLastReadonly, &pStore))==LFOk)
+				if ((Result=OpenStore(m_Items[a].StoreID, pStore, TransactionType>LFTransactionTypeLastReadonly))==LFOk)
 				{
 					pStore->DoTransaction(this, TransactionType, pProgress, Parameter, pVariantData1, pVariantData2, pVariantData3);
 					delete pStore;

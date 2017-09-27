@@ -81,11 +81,11 @@ LFCORE_API LFFilter* LFLoadFilterEx(LPCWSTR pFilename)
 	{
 		*(++pChar) = L'\0';
 
-		pChar = pChar-Path+(WCHAR*)pFilename;
+		pChar = pChar-Path+(LPWSTR)pFilename;
 	}
 	else
 	{
-		pChar = (WCHAR*)pFilename;
+		pChar = (LPWSTR)pFilename;
 	}
 
 	LFStoreDescriptor* pStoreDescriptor = FindStore(Path);
@@ -122,7 +122,7 @@ LFCORE_API UINT LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, 
 			return Result;
 
 	CStore* pStore;
-	if ((Result=OpenStore(Store, TRUE, &pStore))==LFOk)
+	if ((Result=OpenStore(Store, pStore))==LFOk)
 	{
 		LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 

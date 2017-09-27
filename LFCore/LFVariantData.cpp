@@ -12,11 +12,13 @@
 #include <shlwapi.h>
 
 
+extern WCHAR ItemColorNames[LFItemColorCount-1][256];
+
 
 #pragma comment(lib, "shlwapi.lib")
 
 
-// Interne Methoden
+// Internal functions
 //
 
 #define ROUNDOFF 0.00000001
@@ -59,10 +61,8 @@ BOOL IsNullValue(UINT Type, LPCVOID pValue)
 	case LFTypeGenre:
 		return (*(UINT*)pValue)==0;
 
-	case LFTypeColor:
-		return ((*(UINT*)pValue) & ~LFFlagItemColorMask)==0;
-
 	case LFTypeRating:
+	case LFTypeColor:
 		return (*(BYTE*)pValue)==0;
 
 	case LFTypeSize:
@@ -109,13 +109,8 @@ INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitiv
 	case LFTypeGenre:
 		return *(UINT*)pValue1==*(UINT*)pValue2 ? 0 : *(UINT*)pValue1<*(UINT*)pValue2 ? -1 : 1;
 
-	case LFTypeColor:
-		UInt1 = ((*(UINT*)pValue1) & ~LFFlagItemColorMask);
-		UInt2 = ((*(UINT*)pValue2) & ~LFFlagItemColorMask);
-
-		return UInt1==UInt2 ? 0 : UInt1<UInt2 ? -1 : 1;
-
 	case LFTypeRating:
+	case LFTypeColor:
 		return (INT)(*(BYTE*)pValue1)-(INT)(*(BYTE*)pValue2);
 
 	case LFTypeSize:
@@ -194,6 +189,10 @@ void ToString(LPCVOID pValue, UINT Type, LPWSTR pStr, SIZE_T cCount)
 			if (*((BYTE*)pValue)%2)
 				wcscat_s(pStr, cCount, L"½");
 
+			return;
+
+		case LFTypeColor:
+			wcscpy_s(pStr, cCount, *((BYTE*)pValue) ? ItemColorNames[*((BYTE*)pValue)-1] : L"");
 			return;
 
 		case LFTypeUINT:
@@ -906,10 +905,10 @@ LFCORE_API void LFGetAttributeVariantData(const LFItemDescriptor* pItemDescripto
 			break;
 
 		case LFTypeColor:
-			assert(Value.Attr==LFAttrColor);
+			Value.Color = *((BYTE*)pItemDescriptor->AttributeValues[Value.Attr]);
 
-			Value.Color = (pItemDescriptor->CoreAttributes.Flags & ~LFFlagItemColorMask);
-			Value.ColorSet = (1u << Value.Color);
+			assert(Value.Color<LFItemColorCount);
+			Value.ColorSet = (1 << Value.Color);
 
 			break;
 

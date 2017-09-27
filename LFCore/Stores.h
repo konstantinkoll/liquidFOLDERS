@@ -15,9 +15,9 @@
 
 
 void CreateNewStoreID(LPSTR pStoreID);
-LFStoreDescriptor* FindStore(LPCSTR pStoreID, HMUTEX* phMutex=NULL);
-LFStoreDescriptor* FindStore(const GUID& UniqueID, HMUTEX* phMutex=NULL);
-LFStoreDescriptor* FindStore(LPCWSTR pDatPath, HMUTEX* phMutex=NULL);
+LFStoreDescriptor* FindStore(LPCSTR pStoreID);
+LFStoreDescriptor* FindStore(const GUID& UniqueID);
+LFStoreDescriptor* FindStore(LPCWSTR pDatPath);
 
 UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor);
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime=TRUE, BOOL MakeDefault=FALSE);
@@ -26,9 +26,9 @@ UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);
 void ChooseNewDefaultStore();
 
 UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
-UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMutex=NULL);
-UINT GetStore(LPCSTR pStoreID, CStore** ppStore);
-UINT OpenStore(LPCSTR pStoreID, BOOL WriteAccess, CStore** ppStore);
+UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore*& pStore);
+UINT GetStore(LPCSTR pStoreID, CStore*& pStore);
+UINT OpenStore(LPCSTR pStoreID, CStore*& pStore, BOOL WriteAccess=TRUE);
 
 void QueryStores(LFSearchResult* pSearchResult);
 void MountVolumes(UINT Mask, BOOL OnInitialize=FALSE);

@@ -85,9 +85,6 @@ LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeLis
 // Liefert eine Farbe für Dateien zurück
 LFCORE_API COLORREF __stdcall LFGetItemColor(UINT ID, UINT Fade=LFItemColorFadePure);
 
-// Extrahiere eine Farbe aus den Flags
-#define LFGetItemColorIndex(Flags) (*(((LPBYTE)&(Flags))+(LFFlagItemColorShift/8)) & (LFItemColorCount-1))
-
 
 // Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
 // Die gespeicherten Lizenzinformationen finden sich in License

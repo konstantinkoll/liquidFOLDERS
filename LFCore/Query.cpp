@@ -176,6 +176,7 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 		}
 
 	case LFTypeRating:
+	case LFTypeColor:
 		switch (pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
@@ -512,12 +513,20 @@ BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter)
 
 void QueryStore(LPCSTR StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
+	assert(pSearchResult);
+
 	CStore* pStore;
+	UINT Result = OpenStore(StoreID, pStore, FALSE);
 
-	if (OpenStore(StoreID, FALSE, &pStore)==LFOk)
+	if (Result==LFOk)
+	{
 		pStore->Query(pFilter, pSearchResult);
-
-	delete pStore;
+		delete pStore;
+	}
+	else
+	{
+		pSearchResult->m_LastError = Result;
+	}
 }
 
 __forceinline void QueryTree(LFFilter* pFilter, LFSearchResult* pSearchResult)

@@ -94,48 +94,33 @@ void GetDescriptorForNewStore(LFStoreDescriptor* pStoreDescriptor)
 	pStoreDescriptor->IndexVersion = CURIDXVERSION;
 }
 
-LFStoreDescriptor* FindStore(LPCSTR pStoreID, HMUTEX* phMutex)
+LFStoreDescriptor* FindStore(LPCSTR pStoreID)
 {
 	assert(pStoreID);
 
 	for (UINT a=0; a<StoreCount; a++)
 		if (strcmp(StoreCache[a].StoreID, pStoreID)==0)
-		{
-			if (phMutex)
-				GetMutexForStore(&StoreCache[a], phMutex);
-
 			return &StoreCache[a];
-		}
 
 	return NULL;
 }
 
-LFStoreDescriptor* FindStore(const GUID& UniqueID, HMUTEX* phMutex)
+LFStoreDescriptor* FindStore(const GUID& UniqueID)
 {
 	for (UINT a=0; a<StoreCount; a++)
 		if (StoreCache[a].UniqueID==UniqueID)
-		{
-			if (phMutex)
-				GetMutexForStore(&StoreCache[a], phMutex);
-
 			return &StoreCache[a];
-		}
 
 	return NULL;
 }
 
-LFStoreDescriptor* FindStore(LPCWSTR pDatPath, HMUTEX* phMutex)
+LFStoreDescriptor* FindStore(LPCWSTR pDatPath)
 {
 	assert(pDatPath);
 
 	for (UINT a=0; a<StoreCount; a++)
 		if (wcscmp(StoreCache[a].DatPath, pDatPath)==0)
-		{
-			if (phMutex)
-				GetMutexForStore(&StoreCache[a], phMutex);
-
 			return &StoreCache[a];
-		}
 
 	return NULL;
 }
@@ -609,7 +594,7 @@ UINT DeleteStoreFromCache(LFStoreDescriptor* pStoreDescriptor)
 			{
 				// Swap with last in cache (store needs to be locked first)
 				HMUTEX hMutex;
-				if (!GetMutexForStore(&StoreCache[StoreCount-1], &hMutex))
+				if (!GetMutexForStore(&StoreCache[StoreCount-1], hMutex))
 					return LFMutexError;
 
 				StoreCache[a] = StoreCache[--StoreCount];
@@ -745,28 +730,26 @@ __forceinline UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, U
 	return pStoreDescriptor->Source | ItemType | (LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted) | (pStoreDescriptor->Flags & LFStoreFlagsWriteable);
 }
 
-UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMutex)
+UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore*& pStore)
 {
-	assert(ppStore);
-
-	*ppStore = NULL;
+	pStore = NULL;
 
 	if (!pStoreDescriptor)
 		return LFIllegalID;
 
-	if (!hMutex)
-		if (!GetMutexForStore(pStoreDescriptor, &hMutex))
-			return LFMutexError;
+	HMUTEX hMutex;
+	if (!GetMutexForStore(pStoreDescriptor, hMutex))
+		return LFMutexError;
 
 	// Create matching CStore object
 	switch (pStoreDescriptor->Mode & LFStoreModeBackendMask)
 	{
 	case LFStoreModeBackendInternal:
-		*ppStore = new CStoreInternal(pStoreDescriptor, hMutex);
+		pStore = new CStoreInternal(pStoreDescriptor, hMutex);
 		break;
 
 	case LFStoreModeBackendWindows:
-		*ppStore = new CStoreWindows(pStoreDescriptor, hMutex);
+		pStore = new CStoreWindows(pStoreDescriptor, hMutex);
 		break;
 
 	default:
@@ -778,33 +761,29 @@ UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore** ppStore, HMUTEX hMut
 	return LFOk;
 }
 
-UINT GetStore(LPCSTR pStoreID, CStore** ppStore)
+UINT GetStore(LPCSTR pStoreID, CStore*& pStore)
 {
-	assert(ppStore);
-
-	*ppStore = NULL;
+	pStore = NULL;
 
 	if (!GetMutexForStores())
 		return LFMutexError;
 
-	HMUTEX hMutex;
-	LFStoreDescriptor* pStoreDescriptor = FindStore(pStoreID, &hMutex);
-	UINT Result = GetStore(pStoreDescriptor, ppStore, hMutex);
+	UINT Result = GetStore(FindStore(pStoreID), pStore);
 
 	ReleaseMutexForStores();
 
 	return Result;
 }
 
-UINT OpenStore(LPCSTR pStoreID, BOOL WriteAccess, CStore** ppStore)
+UINT OpenStore(LPCSTR pStoreID, CStore*& pStore, BOOL WriteAccess)
 {
-	UINT Result = GetStore(pStoreID, ppStore);
+	UINT Result = GetStore(pStoreID, pStore);
 
 	if (Result==LFOk)
-		if ((Result=(*ppStore)->Open(WriteAccess))!=LFOk)
+		if ((Result=pStore->Open(WriteAccess))!=LFOk)
 		{
-			delete *ppStore;
-			*ppStore = NULL;
+			delete pStore;
+			pStore = NULL;
 		}
 
 	return Result;
@@ -828,7 +807,7 @@ UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pPro
 	if (Result==LFOk)
 	{
 		CStore* pStore;
-		if ((Result=GetStore(pStoreDescriptor->StoreID, &pStore))==LFOk)
+		if ((Result=GetStore(pStoreDescriptor->StoreID, pStore))==LFOk)
 		{
 			Result = pStore->Initialize(pProgress);
 			delete pStore;
@@ -1108,7 +1087,7 @@ LFCORE_API UINT LFMakeStoreSearchable(LPCSTR pStoreID, BOOL Searchable)
 
 	UINT Result;
 	CStore* pStore;
-	if ((Result=GetStore(pStoreID, &pStore))==LFOk)
+	if ((Result=GetStore(pStoreID, pStore))==LFOk)
 	{
 		LFStoreDescriptor* pStoreDescriptor = pStore->p_StoreDescriptor;
 		LFStoreDescriptor Victim = *pStoreDescriptor;
@@ -1183,9 +1162,8 @@ LFCORE_API UINT LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress)
 		return LFMutexError;
 
 	UINT Result;
-	HMUTEX hMutex;
 
-	LFStoreDescriptor* pStoreDescriptor = FindStore(pStoreID, &hMutex);
+	LFStoreDescriptor* pStoreDescriptor = FindStore(pStoreID);
 	if (pStoreDescriptor)
 	{
 		// Progress
@@ -1199,7 +1177,6 @@ LFCORE_API UINT LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress)
 			if (UpdateProgress(pProgress))
 			{
 				ReleaseMutexForStores();
-				ReleaseMutexForStore(hMutex);
 
 				return LFCancel;
 			}
@@ -1213,7 +1190,7 @@ LFCORE_API UINT LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress)
 
 		// Get CStore object
 		CStore* pStore;
-		if ((Result=GetStore(&Victim, &pStore, hMutex))==LFOk)
+		if ((Result=GetStore(&Victim, pStore))==LFOk)
 		{
 			if ((Result=pStore->PrepareDelete())==LFOk)
 				if ((Result=DeleteStoreFromCache(pStoreDescriptor))==LFOk)
@@ -1302,7 +1279,7 @@ LFCORE_API UINT LFSynchronizeStore(LPCSTR pStoreID, LFProgress* pProgress)
 
 	CStore* pStore;
 	UINT Result;
-	if ((Result=OpenStore(pStoreID, TRUE, &pStore))==LFOk)
+	if ((Result=OpenStore(pStoreID, pStore))==LFOk)
 	{
 		Result = pStore->Synchronize(FALSE, pProgress);
 		delete pStore;
@@ -1333,7 +1310,7 @@ LFCORE_API UINT LFSynchronizeStores(LFProgress* pProgress)
 		for (UINT a=0; a<Count; a++)
 		{
 			CStore* pStore;
-			if ((Result=OpenStore(Ptr, TRUE, &pStore))==LFOk)
+			if ((Result=OpenStore(Ptr, pStore))==LFOk)
 			{
 				Result = pStore->Synchronize(FALSE, pProgress);
 				delete pStore;
@@ -1381,7 +1358,7 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 		for (UINT a=0; a<Count; a++)
 		{
 			CStore* pStore;
-			if ((pMaintenanceList->m_LastError=GetStore(Ptr, &pStore))!=LFOk)
+			if ((pMaintenanceList->m_LastError=GetStore(Ptr, pStore))!=LFOk)
 			{
 				free(pStoreIDs);
 				return pMaintenanceList;
@@ -1429,7 +1406,7 @@ LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPat
 	// Get file location from backend
 	CStore* pStore;
 	UINT Result;
-	if ((Result=GetStore(pItemDescriptor->StoreID, &pStore))==LFOk)
+	if ((Result=GetStore(pItemDescriptor->StoreID, pStore))==LFOk)
 	{
 		WCHAR Path[2*MAX_PATH];
 		if ((Result=pStore->GetFileLocation(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
@@ -1522,14 +1499,10 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID)
 	else
 	{
 		// Single store
-		HANDLE StoreLock = NULL;
-		LFStoreDescriptor* pStoreDescriptor = FindStore(StoreID, &StoreLock);
+		LFStoreDescriptor* pStoreDescriptor = FindStore(StoreID);
 
 		if (pStoreDescriptor)
-		{
 			Statistics = pStoreDescriptor->Statistics;
-			ReleaseMutexForStore(StoreLock);
-		}
 	}
 
 	ReleaseMutexForStores();
@@ -1621,7 +1594,7 @@ void InitStores()
 				if ((StoreCache[a].Flags & LFStoreFlagsMaintained)==0)
 				{
 					CStore* pStore;
-					if (GetStore(&StoreCache[a], &pStore)==LFOk)
+					if (GetStore(&StoreCache[a], pStore)==LFOk)
 					{
 						pStore->MaintenanceAndStatistics();
 						delete pStore;
@@ -1753,7 +1726,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 						if (!OnInitialize && ((pSlot->Source==LFTypeSourceNethood) || ((pSlot->Flags & LFStoreFlagsMaintained)==0)))
 						{
 							CStore* pStore;
-							if ((Result=GetStore(pSlot, &pStore))==LFOk)
+							if ((Result=GetStore(pSlot, pStore))==LFOk)
 							{
 								if ((pSlot->Flags & LFStoreFlagsMaintained)==0)
 								{
@@ -1793,7 +1766,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 		if (StoreCache[a].Flags & LFStoreFlagsVictim)
 		{
 			HANDLE hMutex;
-			if (!GetMutexForStore(&StoreCache[a], &hMutex))
+			if (!GetMutexForStore(&StoreCache[a], hMutex))
 			{
 				Result = LFMutexError;
 				continue;
@@ -1814,7 +1787,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 				if (a<StoreCount-1)
 				{
 					HANDLE hMutexMove;
-					if (!GetMutexForStore(&StoreCache[StoreCount-1], &hMutexMove))
+					if (!GetMutexForStore(&StoreCache[StoreCount-1], hMutexMove))
 					{
 						ReleaseMutexForStore(hMutex);
 

@@ -54,8 +54,8 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 void ChooseDetailsDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
 {
-	Add = theApp.IsAttributeAvailable(m_Context, Attr);
-	Check = (p_ContextViewSettings->ColumnWidth[Attr]!=0);
+	Add = theApp.IsAttributeAvailable(m_Context, Attr) && theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
+	Check = p_ContextViewSettings->ColumnWidth[Attr];
 }
 
 void ChooseDetailsDlg::SwapItems(INT FocusItem, INT NewPos)

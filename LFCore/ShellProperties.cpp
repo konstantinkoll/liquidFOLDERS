@@ -390,22 +390,47 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOO
 		// TODO: weitere Attribute durch eigene Metadaten-Bibliothek
 	}
 
-	// Properties from filename
+	// Properties from file name
 	//
 	if ((pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos))
 	{
-		LPCWSTR pSeparator = wcsstr(pItemDescriptor->CoreAttributes.FileName, L" – ");
+		// Buffer
+		WCHAR Name[256];
+		wcscpy_s(Name, 256, pItemDescriptor->CoreAttributes.FileName);
+
+		// Extract annotation in brackets
+		WCHAR Annotation[256] = L"";
+
+		if (Name[0])
+			if (Name[wcslen(Name)-1]==L')')
+			{
+				LPWSTR pBracket = wcsrchr(Name, L'(');
+
+				if (pBracket)
+				{
+					wcsncpy_s(Annotation, 256, pBracket+1, wcslen(pBracket)-2);
+
+					// Trim
+					while ((pBracket>Name) && (*(pBracket-1)==L' '))
+						*pBracket--;
+
+					*pBracket = L'\0';
+				}
+			}
+
+		// Separator
+		LPCWSTR pSeparator = wcsstr(Name, L" – ");
 		SIZE_T SeparatorLength = 3;
 
 		if (!pSeparator)
 		{
-			pSeparator = wcschr(pItemDescriptor->CoreAttributes.FileName, L'—');
+			pSeparator = wcschr(Name, L'—');
 			SeparatorLength = 1;
 		}
 
 		if (!pSeparator)
 		{
-			if ((pSeparator=wcsrchr(pItemDescriptor->CoreAttributes.FileName, L' '))!=NULL)
+			if ((pSeparator=wcsrchr(Name, L' '))!=NULL)
 			{
 				// Only (and at least one) numbers following the right-most space?
 				LPCWSTR pChar = pSeparator+1;
@@ -430,7 +455,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOO
 		{
 			// Artist or Roll
 			WCHAR Value[256];
-			wcsncpy_s(Value, 256, pItemDescriptor->CoreAttributes.FileName, pSeparator-pItemDescriptor->CoreAttributes.FileName);
+			wcsncpy_s(Value, 256, Name, pSeparator-Name);
 
 			for (LPCWSTR pChar=Value; pChar; pChar++)
 				if (*pChar>=L'A')
@@ -443,6 +468,7 @@ void SetAttributesFromFile(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOO
 
 			// Title
 			LPCWSTR pTitle = pSeparator+SeparatorLength;
+
 			if (*pTitle)
 				SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
 		}

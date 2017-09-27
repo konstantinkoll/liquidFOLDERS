@@ -457,7 +457,7 @@ BOOL CPropertyColor::OnClickValue(INT x)
 
 	if ((x>=0) && (x<7*Size+6*GUTTER))
 		if (x%(Size+GUTTER)<Size)
-			OnSetColor((UINT)(1+x/(Size+GUTTER)));
+			OnSetColor((BYTE)(1+x/(Size+GUTTER)));
 
 	return FALSE;
 }
@@ -465,19 +465,19 @@ BOOL CPropertyColor::OnClickValue(INT x)
 BOOL CPropertyColor::OnPushChar(UINT nChar)
 {
 	if ((nChar>=L'0') && (nChar<=L'7'))
-		OnSetColor(nChar-L'0');
+		OnSetColor((BYTE)(nChar-L'0'));
 
 	return TRUE;
 }
 
-void CPropertyColor::OnSetColor(UINT Color)
+void CPropertyColor::OnSetColor(BYTE Color)
 {
 	assert(Color<LFItemColorCount);
 
-	if (p_Data->Color!=(Color << LFFlagItemColorShift))
+	if (p_Data->Color!=Color)
 	{
+		p_Data->Color = Color;
 		p_Data->ColorSet = (1 << Color);
-		p_Data->Color = (Color << LFFlagItemColorShift);
 		p_Data->IsNull = FALSE;
 
 		NotifyOwner();

@@ -155,7 +155,7 @@ public:
 	virtual BOOL OnPushChar(UINT nChar);
 
 protected:
-	void OnSetColor(UINT Color);
+	void OnSetColor(BYTE Color);
 
 	static CIcons m_ColorDots;
 };
