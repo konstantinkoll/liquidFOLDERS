@@ -256,7 +256,7 @@ LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
 
 // Lädt einen abgespeicherten Filter
 LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* pItemDescriptor);
-LFCORE_API LFFilter* __stdcall LFLoadFilterEx(LPCWSTR pFilename);
+LFCORE_API LFFilter* __stdcall LFLoadFilterEx(LPCWSTR pPath);
 
 // Speichert einen Filter in einem Store ab
 LFCORE_API UINT __stdcall LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment=NULL);

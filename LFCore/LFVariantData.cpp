@@ -1,10 +1,11 @@
 
 #include "stdafx.h"
-#include "AttributeTables.h"
 #include "ID3.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
+#include "TableApplications.h"
+#include "TableAttributes.h"
 #include <algorithm>
 #include <assert.h>
 #include <hash_map>
@@ -63,6 +64,7 @@ BOOL IsNullValue(UINT Type, LPCVOID pValue)
 
 	case LFTypeRating:
 	case LFTypeColor:
+	case LFTypeApplication:
 		return (*(BYTE*)pValue)==0;
 
 	case LFTypeSize:
@@ -146,7 +148,22 @@ INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitiv
 		Double1 = (DOUBLE)((INT)(*(DOUBLE*)pValue1*10.0))/10.0;
 		Double2 = (DOUBLE)((INT)(*(DOUBLE*)pValue2*10.0))/10.0;
 
-		return Double1==Double2 ? 0 : Double1<Double2 ? -1 : 1;
+		return (Double1==Double2) ? 0 : Double1<Double2 ? -1 : 1;
+
+	case LFTypeApplication:
+		UInt1 = *(BYTE*)pValue1;
+		UInt2 = *(BYTE*)pValue2;
+
+		if ((UInt1>LFApplicationCount) && (UInt2>LFApplicationCount))
+			return 0;
+
+		if (UInt1>LFApplicationCount)
+			return -1;
+
+		if (UInt2>LFApplicationCount)
+			return -1;
+
+		return wcscmp(ApplicationRegistry[UInt1].Name, ApplicationRegistry[UInt2].Name);
 	}
 
 	return 0;
@@ -233,6 +250,10 @@ void ToString(LPCVOID pValue, UINT Type, LPWSTR pStr, SIZE_T cCount)
 
 		case LFTypeGenre:
 			wcscpy_s(pStr, cCount, GetGenreName(*((UINT*)pValue)));
+			return;
+
+		case LFTypeApplication:
+			wcscpy_s(pStr, cCount, *((BYTE*)pValue)<LFApplicationCount ? ApplicationRegistry[*((BYTE*)pValue)].Name : L"?");
 			return;
 		}
 

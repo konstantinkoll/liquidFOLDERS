@@ -2,7 +2,7 @@
 #pragma once
 #include "LFCore.h"
 #include "CHeapfile.h"
-#include "IndexTables.h"
+#include "TableIndexes.h"
 
 
 // CIndex

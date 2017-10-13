@@ -72,7 +72,7 @@ void ReleaseMutexForStore(HANDLE hMutex)
 // Files
 //
 
-UINT CreateFileConcurrent(LPCTSTR lpFileName, BOOL WriteAccess, DWORD dwCreationDisposition, HANDLE& hFile, BOOL Hidden)
+UINT CreateFileConcurrent(LPCTSTR pPath, BOOL WriteAccess, DWORD dwCreationDisposition, HANDLE& hFile, BOOL Hidden)
 {
 #ifndef _DEBUG
 	UINT Tries = 3;		// 3x ~500ms
@@ -81,7 +81,7 @@ UINT CreateFileConcurrent(LPCTSTR lpFileName, BOOL WriteAccess, DWORD dwCreation
 #endif
 
 TryAgain:
-	hFile = CreateFile(lpFileName, WriteAccess ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ, WriteAccess ? 0 : FILE_SHARE_READ, NULL, dwCreationDisposition, FILE_FLAG_SEQUENTIAL_SCAN | (Hidden ? FILE_ATTRIBUTE_HIDDEN : FILE_ATTRIBUTE_NORMAL), NULL);
+	hFile = CreateFile(pPath, WriteAccess ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ, WriteAccess ? 0 : FILE_SHARE_READ, NULL, dwCreationDisposition, FILE_FLAG_SEQUENTIAL_SCAN | (Hidden ? FILE_ATTRIBUTE_HIDDEN : FILE_ATTRIBUTE_NORMAL), NULL);
 	if (hFile!=INVALID_HANDLE_VALUE)
 		return FileOk;
 

@@ -71,15 +71,17 @@ UINT CStoreInternal::DeleteDirectories()
 	return Result;
 }
 
-UINT CStoreInternal::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
+UINT CStoreInternal::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
 {
+	assert(pFilename);
+	assert(pExtension);
 	assert(pItemDescriptor);
 	assert(pPath);
 	assert(cCount>=2*MAX_PATH);
 
 	UINT Result;
 
-	if ((Result=CStore::PrepareImport(pItemDescriptor, pPath, cCount))!=LFOk)
+	if ((Result=CStore::PrepareImport(pFilename, pExtension, pItemDescriptor, pPath, cCount))!=LFOk)
 		return Result;
 
 	// FileID

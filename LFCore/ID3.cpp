@@ -7,7 +7,7 @@
 
 #pragma data_seg(".shared")
 
-#include "MusicGenres.h"
+#include "TableGenres.h"
 
 #pragma data_seg()
 
@@ -58,7 +58,7 @@ UINT FindMusicGenre(LPCWSTR lpGenre)
 
 LPCWSTR GetGenreName(UINT nID)
 {
-	return (nID<MusicGenreCount) ? MusicGenres[nID].Name : L"";
+	return (nID<MusicGenreCount) ? MusicGenres[nID].Name : L"?";
 }
 
 UINT GetGenreIcon(UINT nID)
@@ -68,6 +68,8 @@ UINT GetGenreIcon(UINT nID)
 
 LFCORE_API INT LFID3GetNextMusicGenre(INT Last, LFMusicGenre** ppMusicGenre)
 {
+	assert(ppMusicGenre);
+
 	if (Last<-1)
 		Last = -1;
 

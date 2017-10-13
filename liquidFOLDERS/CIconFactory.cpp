@@ -48,21 +48,27 @@ void CIconFactory::DrawJumboFormatIcon(CDC& dc, const CPoint& pt, LPCSTR lpszFil
 
 }
 
-void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, BOOL DrawOverlay, INT ThumbnailYOffset)
+void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, BOOL DrawOverlays, INT ThumbnailYOffset)
 {
 	ASSERT(pItemDescriptor);
+
+	BOOL DrawAppBadge = DrawOverlays;
+	BOOL DrawSash = DrawOverlays;
 
 	// Draw icon
 	if (pItemDescriptor->IconID)
 	{
+		// No app badge for folders
+		DrawAppBadge = FALSE;
+
 		// Do we have a folder?
 		if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
 		{
 			// Try to draw a representative thumbnail
 			if (DrawRepresentativeThumbnail(dc, g, pt, pItemDescriptor, pRawFiles, ThumbnailYOffset))
 			{
-				// No overlay for representative thumbnails
-				DrawOverlay = FALSE;
+				// No sash for representative thumbnails
+				DrawSash = FALSE;
 
 				goto FinishIcon;
 			}
@@ -81,8 +87,8 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		}
 		else
 		{
-			// No overlay for system icons other than placeholder icon
-			DrawOverlay = FALSE;
+			// No sash for system icons other than placeholder icon
+			DrawSash = FALSE;
 		}
 
 		// Draw core icon
@@ -98,14 +104,18 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		{
 			DrawJumboFormatIcon(dc, pt, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
 
-			// No overlay for file format icons
-			DrawOverlay = FALSE;
+			// No overlays for file format icons
+			DrawAppBadge = DrawSash = FALSE;
 		}
 	}
 
 FinishIcon:
-	// Draw overlay
-	if (DrawOverlay)
+	// Draw overlays
+	if (DrawAppBadge)
+	{
+	}
+
+	if (DrawSash)
 	{
 		const INT Overlay = (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? IDI_OVR_ERROR : (pItemDescriptor->CoreAttributes.Flags & LFFlagNew) ? IDI_OVR_NEW : 0;
 		if (Overlay)
@@ -167,7 +177,7 @@ HBITMAP CIconFactory::GetJumboIconBitmap(LFItemDescriptor* pItemDescriptor, LFSe
 
 	Graphics g(dc);
 
-	DrawJumboIcon(dc, g, CPoint(0, 0), pItemDescriptor, pRawFiles, 0);
+	DrawJumboIcon(dc, g, CPoint(0, 0), pItemDescriptor, pRawFiles, FALSE);
 
 	return (HBITMAP)dc.SelectObject(hOldBitmap);
 }

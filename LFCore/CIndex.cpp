@@ -1,13 +1,13 @@
 
 #include "stdafx.h"
-#include "AttributeTables.h"
 #include "CIndex.h"
 #include "CStore.h"
+#include "FileProperties.h"
 #include "FileSystem.h"
 #include "LFCore.h"
 #include "Query.h"
-#include "ShellProperties.h"
 #include "Stores.h"
+#include "TableAttributes.h"
 #include <assert.h>
 
 
@@ -291,7 +291,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 				// Update metadata
 				if (Exists)
 				{
-					SetFromFindData(PtrM, &FindFileData);
+					SetAttributesFromFindFileData(PtrM, FindFileData);
 
 					m_pTable[IDXTABLE_MASTER]->MakeDirty();
 				}
@@ -310,7 +310,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 		// Index version changed? Then update contexts!
 		if (UpdateContexts)
 		{
-			SetFileContext(PtrM, TRUE);
+			SetFileContext(PtrM, FALSE);
 			m_pTable[IDXTABLE_MASTER]->MakeDirty();
 		}
 
@@ -318,12 +318,16 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 
 		// Slave index missing?
 		if (SlaveReindex)
-			if ((PtrM->SlaveID) && (PtrM->SlaveID<IDXTABLECOUNT))
+			if (PtrM->SlaveID && (PtrM->SlaveID<IDXTABLECOUNT))
 				if (TableLoadResult[PtrM->SlaveID]==HeapCreated)
 				{
 					BUILD_ITEMDESCRIPTOR();
 
-					SetAttributesFromFile(pItemDescriptor, &Path[4]);	// No fully qualified path allowed, skip prefix
+					// Retrieve metadata
+					SetAttributesFromShell(pItemDescriptor, &Path[4], FALSE);	// No fully qualified path allowed, skip prefix
+					p_Store->SetAttributesFromStore(pItemDescriptor);
+
+					// Add file to newly created slave
 					m_pTable[PtrM->SlaveID]->Add(pItemDescriptor);
 
 					LFFreeItemDescriptor(pItemDescriptor);

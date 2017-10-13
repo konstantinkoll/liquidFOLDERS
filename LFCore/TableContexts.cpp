@@ -1,15 +1,12 @@
 
-#pragma pack(push,1)
+#include "stdafx.h"
+#include "TableContexts.h"
+#include "TableIndexes.h"
 
-struct RegisteredFile
-{
-	CHAR Format[7];
-	BYTE ContextID;
-};
 
-#pragma pack(pop)
+#pragma data_seg(".shared")
 
-static const RegisteredFile Registry[] = {
+extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "air",    LFContextDocuments },
 	{ "ans",    LFContextPictures },
 	{ "asc",    LFContextDocuments },
@@ -178,3 +175,20 @@ static const RegisteredFile Registry[] = {
 	{ "xps",    LFContextDocuments },
 	{ "xsl",    LFContextDocuments },
 };
+
+extern const BYTE ContextSlaves[LFLastQueryContext+1] = {
+	IDXTABLE_MASTER,		// LFContextAllFiles
+	IDXTABLE_MASTER,		// LFContextFavorites
+	IDXTABLE_AUDIO,			// LFContextAudio
+	IDXTABLE_PICTURES,		// LFContextPictures
+	IDXTABLE_VIDEOS,		// LFContextVideos
+	IDXTABLE_DOCUMENTS,		// LFContextDocuments
+	IDXTABLE_MASTER,		// LFContextContacts
+	IDXTABLE_MESSAGES,		// LFContextMessages
+	IDXTABLE_MASTER,		// LFContextNew
+	IDXTABLE_MASTER,		// LFContextTasks
+	IDXTABLE_MASTER,		// LFContextTrash
+	IDXTABLE_MASTER			// LFContextFilters
+};
+
+#pragma data_seg()

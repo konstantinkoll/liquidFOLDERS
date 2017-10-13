@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
-#include "AttributeTables.h"
-#include "IndexTables.h"
+#include "TableAttributes.h"
+#include "TableIndexes.h"
 
 
 #pragma data_seg(".shared")
@@ -232,6 +232,9 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	// LFAttrAspectRatio
 	{ LFTypeDouble, 0, LFAttrCategoryVisual, 0, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, { 0,0 }, 24 },
 
+	// LFAttrApplication
+	{ LFTypeApplication, 0, LFAttrCategoryVisual, 0, LFViewList, 4, TRUE, FALSE, FALSE, { 0,0 }, 55 },
+
 	// LFAttrVideoCodec
 	{ LFTypeFourCC, 0, LFAttrCategoryVisual, 0, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, { SHPropertyVideo, 44 }, 25 },
 
@@ -393,6 +396,10 @@ extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 	// LFTypeGenre
 	{ sizeof(UINT), TRUE, TRUE, FALSE, FALSE, WIDTH_LARGE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
+
+	// LFTypeApplication
+	{ sizeof(BYTE), TRUE, TRUE, FALSE, FALSE, WIDTH_MEDIUM,
+	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons }
 };
 
 #pragma data_seg()

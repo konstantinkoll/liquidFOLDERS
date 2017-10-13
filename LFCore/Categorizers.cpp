@@ -1,11 +1,11 @@
 
 #include "stdafx.h"
-#include "AttributeTables.h"
 #include "Categorizers.h"
 #include "ID3.h"
 #include "LFCore.h"
 #include "LFVariantData.h"
 #include "Query.h"
+#include "TableAttributes.h"
 #include <assert.h>
 
 

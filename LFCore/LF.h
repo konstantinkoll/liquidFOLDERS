@@ -261,40 +261,41 @@ struct LFItemCategoryDescriptor
 #define LFAttrHeight                   22
 #define LFAttrDimension                23
 #define LFAttrAspectRatio              24
-#define LFAttrVideoCodec               25
+#define LFAttrApplication              25
+#define LFAttrVideoCodec               26
 
-#define LFAttrExposure                 26	// Photos
-#define LFAttrFocus                    27
-#define LFAttrAperture                 28
-#define LFAttrChip                     29
+#define LFAttrExposure                 27	// Photos
+#define LFAttrFocus                    28
+#define LFAttrAperture                 29
+#define LFAttrChip                     30
 
-#define LFAttrArtist                   30	// Audio
-#define LFAttrAlbum                    31
-#define LFAttrGenre                    32
-#define LFAttrChannels                 33
-#define LFAttrSamplerate               34
-#define LFAttrAudioCodec               35
+#define LFAttrArtist                   31	// Audio
+#define LFAttrAlbum                    32
+#define LFAttrGenre                    33
+#define LFAttrChannels                 34
+#define LFAttrSamplerate               35
+#define LFAttrAudioCodec               36
 
-#define LFAttrDuration                 36	// Media
-#define LFAttrBitrate                  37
-#define LFAttrRecordingTime            38
-#define LFAttrRecordingEquipment       39
+#define LFAttrDuration                 37	// Media
+#define LFAttrBitrate                  38
+#define LFAttrRecordingTime            39
+#define LFAttrRecordingEquipment       40
 
-#define LFAttrAuthor                   40	// Documents
-#define LFAttrCopyright                41
-#define LFAttrTitle                    42
-#define LFAttrISBN                     43
-#define LFAttrLanguage                 44
-#define LFAttrPages                    45
-#define LFAttrSignature                46
+#define LFAttrAuthor                   41	// Documents
+#define LFAttrCopyright                42
+#define LFAttrTitle                    43
+#define LFAttrISBN                     44
+#define LFAttrLanguage                 45
+#define LFAttrPages                    46
+#define LFAttrSignature                47
 
-#define LFAttrFrom                     47	// Messages
-#define LFAttrTo                       48
+#define LFAttrFrom                     48	// Messages
+#define LFAttrTo                       49
 
-#define LFAttrResponsible              49	// Workflow
-#define LFAttrCustomer                 50
+#define LFAttrResponsible              50	// Workflow
+#define LFAttrCustomer                 51
 
-#define LFAttributeCount               51
+#define LFAttributeCount               52
 #define LFLastCoreAttribute            19
 
 
@@ -317,8 +318,9 @@ struct LFItemCategoryDescriptor
 #define LFTypeDuration           14
 #define LFTypeMegapixel          15
 #define LFTypeGenre              16
+#define LFTypeApplication        17
 
-#define LFTypeCount              17
+#define LFTypeCount              18
 #define LFMaxRating              10
 
 
@@ -357,6 +359,8 @@ struct LFVariantData
 		UINT Duration;
 		UINT Bitrate;
 		DOUBLE Megapixel;
+		UINT Genre;
+		BYTE Application;
 
 		struct
 		{
@@ -479,6 +483,28 @@ struct LFContextDescriptor
 
 #define LFItemColorCount           8
 #define LFItemColorFadeCount       4
+
+
+// Applications
+
+#define LFApplicationNone            0
+#define LFApplicationBoomerang       1
+#define LFApplicationCinemagraph     2
+#define LFApplicationFacebook        3
+#define LFApplicationHipstamatic     4
+#define LFApplicationHyperlapse      5
+#define LFApplicationIncrediBooth    6
+#define LFApplicationInstagram       7
+#define LFApplicationLabelbox        8
+#define LFApplicationLayout          9
+#define LFApplicationPinterest       10
+#define LFApplicationRetrica         11
+#define LFApplicationSnapchat        12
+#define LFApplicationVintageCam      13
+#define LFApplicationVSCO            14
+#define LFApplicationYouTube         15
+
+#define LFApplicationCount           16
 
 
 // Statistics

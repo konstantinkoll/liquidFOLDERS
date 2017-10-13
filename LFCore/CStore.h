@@ -32,7 +32,7 @@ public:
 
 	// Index operations
 	virtual UINT Synchronize(BOOL OnInitialize=FALSE, LFProgress* pProgress=NULL);
-	virtual UINT ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemTemplate, BOOL Move=FALSE, BOOL Metadata=TRUE);
+	virtual UINT ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemTemplate, BOOL Move=FALSE, BOOL RetrieveMetadata=TRUE);
 
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
 	UINT CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit=TRUE, LPCWSTR pPath=NULL, BOOL OnInitialize=FALSE);
@@ -41,7 +41,7 @@ public:
 
 	// Callbacks
 	virtual UINT CreateDirectories();
-	virtual UINT PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
+	virtual UINT PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
 
 	LFStoreDescriptor* p_StoreDescriptor;
 
@@ -51,9 +51,11 @@ protected:
 	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
 	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
 	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
+	virtual void SetAttributesFromStore(LFItemDescriptor* pItemDescriptor);
 	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
 
 	// Aux functions
+	UINT PrepareImport(LPCWSTR pSourcePath, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
 	void GetInternalFilePath(LFCoreAttributes* pCoreAttributes, LPWSTR pPath, SIZE_T cCount) const;
 	void CreateNewFileID(LPSTR pFileID) const;
 

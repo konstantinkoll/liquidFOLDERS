@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
 #include "CStore.h"
+#include "FileProperties.h"
 #include "FileSystem.h"
-#include "ShellProperties.h"
 #include "Stores.h"
 #include <assert.h>
 
@@ -234,17 +234,14 @@ UINT CStore::Synchronize(BOOL /*OnInitialize*/, LFProgress* pProgress)
 	return LFOk;
 }
 
-UINT CStore::ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemDescriptor, BOOL Move, BOOL Metadata)
+UINT CStore::ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemDescriptor, BOOL Move, BOOL RetrieveMetadata)
 {
 	assert(m_pIndexMain!=NULL);
 
-	if (Metadata)
-		SetNameExtFromFile(pItemDescriptor, pPath);
-
 	UINT Result;
 	WCHAR Path[2*MAX_PATH];
-	if ((Result=PrepareImport(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
-		CommitImport(pItemDescriptor, (Result=(Move ? MoveFile(pPath, Path) : CopyFile(pPath, Path, FALSE)) ? LFOk : LFCannotImportFile)==LFOk, Metadata ? Move ? Path : pPath : NULL);
+	if ((Result=PrepareImport(pPath, pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
+		CommitImport(pItemDescriptor, (Result=(Move ? MoveFile(pPath, Path) : CopyFile(pPath, Path, FALSE)) ? LFOk : LFCannotImportFile)==LFOk, RetrieveMetadata ? Move ? Path : pPath : NULL);
 
 	return Result;
 }
@@ -262,6 +259,37 @@ BOOL CStore::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 	return Result;
 }
 
+UINT CStore::PrepareImport(LPCWSTR pSourcePath, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
+{
+	assert(pSourcePath);
+	assert(pItemDescriptor);
+
+	// Name
+	WCHAR Filename[256];
+	LPCWSTR pChar = wcsrchr(pSourcePath, L'\\');
+	wcscpy_s(Filename, 256, pChar ? pChar+1 : pSourcePath);
+
+	// Extension
+	CHAR Extension[LFExtSize] = { 0 };
+	WCHAR* pLastExt = wcsrchr(Filename, L'.');
+	if (pLastExt)
+	{
+		pChar = pLastExt+1;
+		SIZE_T cCount = 0;
+
+		while (*pChar && (cCount<LFExtSize-1))
+		{
+			Extension[cCount++] = (*pChar<=0xFF) ? tolower(*pChar) & 0xFF : L'_';
+			pChar++;
+		}
+
+		*pLastExt = L'\0';
+	}
+
+	// Callback
+	return PrepareImport(Filename, Extension, pItemDescriptor, pPath, cCount);
+}
+
 UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWSTR pPath, BOOL OnInitialize)
 {
 	assert(pItemDescriptor);
@@ -269,17 +297,23 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWST
 
 	if (Commit)
 	{
+		// Flags
 		if (!OnInitialize)
 			pItemDescriptor->CoreAttributes.Flags |= LFFlagNew;
+
+		// Metadata
+		if (pPath)
+		{
+			SetFileContext(&pItemDescriptor->CoreAttributes);
+			SetAttributesFromFindFileData(&pItemDescriptor->CoreAttributes, pPath);
+			SetAttributesFromShell(pItemDescriptor, pPath);
+			SetAttributesFromStore(pItemDescriptor);
+		}
 
 		// Time added
 		FILETIME Time;
 		GetSystemTimeAsFileTime(&Time);
 		SetAttribute(pItemDescriptor, LFAttrAddTime, &Time);
-
-		// Metadata
-		if (pPath)
-			SetAttributesFromFile(pItemDescriptor, pPath);
 
 		// Commit
 		UINT Result = m_pIndexMain->Add(pItemDescriptor);
@@ -502,8 +536,10 @@ UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID /*pStore
 	return LFOk;
 }
 
-UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR /*pPath*/, SIZE_T /*cCount*/)
+UINT CStore::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescriptor* pItemDescriptor, LPWSTR /*pPath*/, SIZE_T /*cCount*/)
 {
+	assert(pFilename);
+	assert(pExtension);
 	assert(pItemDescriptor);
 
 	if (!LFIsStoreMounted(p_StoreDescriptor))
@@ -511,6 +547,13 @@ UINT CStore::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR /*pPath*/, 
 
 	if (!m_WriteAccess)
 		return LFIndexAccessError;
+
+	// Type
+	pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeMask) | LFTypeFile;
+
+	// Filename and extension
+	SetAttribute(pItemDescriptor, LFAttrFileName, pFilename);
+	SetAttribute(pItemDescriptor, LFAttrFileFormat, pExtension);
 
 	// StoreID
 	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
@@ -575,6 +618,95 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 
 	default:
 		return LFCannotDeleteFile;
+	}
+}
+
+void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
+{
+	// Only for media files
+	if ((pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos))
+	{
+		// Buffer
+		WCHAR Name[256];
+		wcscpy_s(Name, 256, pItemDescriptor->CoreAttributes.FileName);
+
+		// Extract annotation in brackets
+		WCHAR Annotation[256] = L"";
+
+		if (Name[0])
+			if (Name[wcslen(Name)-1]==L')')
+			{
+				LPWSTR pBracket = wcsrchr(Name, L'(');
+
+				if (pBracket)
+				{
+					wcsncpy_s(Annotation, 256, pBracket+1, wcslen(pBracket)-2);
+
+					if (SetAttributesFromAnnotation(pItemDescriptor, Annotation))
+					{
+						// Remove annotation and trim file name
+						while ((pBracket>Name) && (*(pBracket-1)==L' '))
+							*pBracket--;
+
+						*pBracket = L'\0';
+					}
+				}
+			}
+
+		// Find separator char
+		LPCWSTR pSeparator = wcsstr(Name, L" – ");
+		SIZE_T SeparatorLength = 3;
+
+		if (!pSeparator)
+		{
+			pSeparator = wcschr(Name, L'—');
+			SeparatorLength = 1;
+		}
+
+		// Find space character separating name and number
+		if (!pSeparator)
+		{
+			if ((pSeparator=wcsrchr(Name, L' '))!=NULL)
+			{
+				// Only (and at least one) number chars following the right-most space?
+				LPCWSTR pChar = pSeparator+1;
+
+				do
+				{
+					if ((*pChar<L'0') || (*pChar>L'9'))
+					{
+						// No, so no separator!
+						pSeparator = NULL;
+
+						break;
+					}
+				}
+				while (*(++pChar));
+			}
+
+			SeparatorLength = 1;
+		}
+
+		if (pSeparator)
+		{
+			// Artist or roll
+			WCHAR Value[256];
+			wcsncpy_s(Value, 256, Name, pSeparator-Name);
+
+			for (LPCWSTR pChar=Value; pChar; pChar++)
+				if (*pChar>=L'A')
+				{
+					const UINT Attr = (pItemDescriptor->CoreAttributes.ContextID>LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrRoll) ? LFAttrRoll : LFAttrArtist;
+					SetAttribute(pItemDescriptor, Attr, Value);
+
+					break;
+				}
+
+			// Title
+			LPCWSTR pTitle = pSeparator+SeparatorLength;
+			if (*pTitle)
+				SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
+		}
 	}
 }
 

@@ -18,6 +18,6 @@ void ReleaseMutexForStores();
 BOOL GetMutexForStore(const LFStoreDescriptor* pStoreDescriptor, HMUTEX& hMutex);
 void ReleaseMutexForStore(HMUTEX hMutex);
 
-UINT CreateFileConcurrent(LPCTSTR lpFileName, BOOL WriteAccess, DWORD dwCreationDisposition, HANDLE& hFile, BOOL Hidden=FALSE);
+UINT CreateFileConcurrent(LPCTSTR pPath, BOOL WriteAccess, DWORD dwCreationDisposition, HANDLE& hFile, BOOL Hidden=FALSE);
 
 DWORD_PTR UpdateProgress(LFProgress* pProgress);

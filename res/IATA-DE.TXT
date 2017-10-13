@@ -2963,6 +2963,7 @@ HLA     Lanseria, Südafrika;4;25*56'19"S, 27*55'34"E
 HLB     Batesville, USA;4;39*20'40"N, 85*15'30"W
 HLC     Hill City, USA;4;39*22'44"N, 99*49'53"W
 HLD     Hailar, China;4;49*12'18"N, 119*49'30"E
+HLE     St. Helena, St. Helena;5;15*57'33"S, 5*38'45"W
 HLF     Hultsfred, Schweden;4;57*31'33"N, 15*49'24"E
 HLG     Wheeling, USA;4;40*10'30"N, 80*38'47"W
 HLH     Ulanhot, China;4;46*4'59"N, 122*1'1"E

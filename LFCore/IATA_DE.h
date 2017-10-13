@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8754
+#define AirportCount_DE 8755
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3040,6 +3040,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "HLB", "", "Batesville", { -39.344444, -85.258333 } },
 	{ 209, "HLC", "", "Hill City", { -39.378889, -99.831389 } },
 	{  36, "HLD", "", "Hailar", { -49.205000, 119.825000 } },
+	{ 178, "HLE", "", "St. Helena", { 15.959167, -5.645833 } },
 	{ 166, "HLF", "", "Hultsfred", { -57.525833, 15.823333 } },
 	{ 209, "HLG", "", "Wheeling", { -40.175000, -80.646389 } },
 	{  36, "HLH", "", "Ulanhot", { -46.083056, 122.016944 } },

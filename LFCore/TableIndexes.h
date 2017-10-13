@@ -101,9 +101,9 @@ struct AudioAttributes
 #define IDXATTRS_PICTURES     ((1ull<<LFAttrAuthor) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
 								(1ull<<LFAttrRecordingEquipment) | (1ull<<LFAttrRoll) | (1ull<<LFAttrExposure) | \
 								(1ull<<LFAttrHeight) | (1ull<<LFAttrWidth) | (1ull<<LFAttrDimension) | \
-								(1ull<<LFAttrAspectRatio) | (1ull<<LFAttrAperture) | (1ull<<LFAttrFocus) | \
-								(1ull<<LFAttrChip) | (1ull<<LFAttrRecordingTime) | (1ull<<LFAttrLanguage) | \
-								(1ull<<LFAttrCustomer))
+								(1ull<<LFAttrAspectRatio) | (1ull<<LFAttrApplication) | (1ull<<LFAttrAperture) | \
+								(1ull<<LFAttrFocus) | (1ull<<LFAttrChip) | (1ull<<LFAttrRecordingTime) | \
+								(1ull<<LFAttrLanguage) | (1ull<<LFAttrCustomer))
 
 struct PictureAttributes
 {
@@ -120,6 +120,7 @@ struct PictureAttributes
 	WCHAR Chip[32];
 	FILETIME RecordingTime;
 	CHAR Language[3];
+	BYTE Application;
 	WCHAR Customer[256];
 };
 
@@ -130,9 +131,10 @@ struct PictureAttributes
 #define IDXATTRS_VIDEOS     ((1ull<<LFAttrArtist) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrTitle) | \
 								(1ull<<LFAttrRecordingEquipment) | (1ull<<LFAttrRoll) | (1ull<<LFAttrHeight) | \
 								(1ull<<LFAttrWidth) | (1ull<<LFAttrDimension) | (1ull<<LFAttrAspectRatio) | \
-								(1ull<<LFAttrAudioCodec) | (1ull<<LFAttrVideoCodec) | (1ull<<LFAttrChannels) | \
-								(1ull<<LFAttrSamplerate) | (1ull<<LFAttrDuration) | (1ull<<LFAttrBitrate) | \
-								(1ull<<LFAttrRecordingTime) | (1ull<<LFAttrLanguage) | (1ull<<LFAttrCustomer))
+								(1ull<<LFAttrApplication) | (1ull<<LFAttrAudioCodec) | (1ull<<LFAttrVideoCodec) | \
+								(1ull<<LFAttrChannels) | (1ull<<LFAttrSamplerate) | (1ull<<LFAttrDuration) | \
+								(1ull<<LFAttrBitrate) | (1ull<<LFAttrRecordingTime) | (1ull<<LFAttrLanguage) | \
+								(1ull<<LFAttrCustomer))
 
 struct VideoAttributes
 {
@@ -151,6 +153,7 @@ struct VideoAttributes
 	UINT Bitrate;
 	FILETIME RecordingTime;
 	CHAR Language[3];
+	BYTE Application;
 	WCHAR Customer[256];
 };
 

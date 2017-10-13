@@ -1,9 +1,9 @@
 
 #include "stdafx.h"
-#include "AttributeTables.h"
 #include "Filters.h"
 #include "LFCore.h"
 #include "LFVariantData.h"
+#include "TableAttributes.h"
 #include "Stores.h"
 #include <assert.h>
 
@@ -66,31 +66,31 @@ LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* pItemDescriptor)
 	return pFilter;
 }
 
-LFCORE_API LFFilter* LFLoadFilterEx(LPCWSTR pFilename)
+LFCORE_API LFFilter* LFLoadFilterEx(LPCWSTR pPath)
 {
-	assert(pFilename);
+	assert(pPath);
 
 	if (!GetMutexForStores())
 		return NULL;
 
 	WCHAR Path[MAX_PATH];
-	wcscpy_s(Path, MAX_PATH, pFilename);
+	wcscpy_s(Path, MAX_PATH, pPath);
 
 	WCHAR* pChar = wcsrchr(Path, L'\\');
 	if (pChar)
 	{
 		*(++pChar) = L'\0';
 
-		pChar = pChar-Path+(LPWSTR)pFilename;
+		pChar = pChar-Path+(LPWSTR)pPath;
 	}
 	else
 	{
-		pChar = (LPWSTR)pFilename;
+		pChar = (LPWSTR)pPath;
 	}
 
 	LFStoreDescriptor* pStoreDescriptor = FindStore(Path);
 
-	LFFilter* pFilter = LoadFilter(pFilename, pStoreDescriptor ? pStoreDescriptor->StoreID : "");
+	LFFilter* pFilter = LoadFilter(pPath, pStoreDescriptor ? pStoreDescriptor->StoreID : "");
 	if (pFilter)
 	{
 		wcscpy_s(pFilter->OriginalName, 256, pChar);
@@ -113,7 +113,7 @@ LFCORE_API UINT LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, 
 
 	UINT Result;
 
-	// Store finden
+	// Find store
 	CHAR Store[LFKeySize];
 	strcpy_s(Store, LFKeySize, pStoreID);
 
@@ -124,18 +124,15 @@ LFCORE_API UINT LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, 
 	CStore* pStore;
 	if ((Result=OpenStore(Store, pStore))==LFOk)
 	{
+		// Prepare item descriptor
 		LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
-
-		pItemDescriptor->Type = LFTypeFile;
-
-		SetAttribute(pItemDescriptor, LFAttrFileName, pName);
-		SetAttribute(pItemDescriptor, LFAttrFileFormat, "filter");
 
 		if (pComment)
 			SetAttribute(pItemDescriptor, LFAttrComments, pComment);
 
+		// Import
 		WCHAR Path[2*MAX_PATH];
-		if ((Result=pStore->PrepareImport(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
+		if ((Result=pStore->PrepareImport(pName, "filter", pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
 			Result = pStore->CommitImport(pItemDescriptor, StoreFilter(Path, pFilter), Path);
 
 		delete pItemDescriptor;

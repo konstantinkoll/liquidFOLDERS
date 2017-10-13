@@ -1,10 +1,10 @@
 
 #include "stdafx.h"
-#include "AttributeTables.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
-#include "IndexTables.h"
+#include "TableAttributes.h"
+#include "TableIndexes.h"
 #include <assert.h>
 #include <malloc.h>
 

@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "IndexTables.h"
+#include "TableIndexes.h"
 
 
 #pragma data_seg(".shared")
@@ -76,6 +76,7 @@ const IdxTableEntry PictureAttributeEntries[] = {
 	{ LFAttrCopyright, offsetof(PictureAttributes, Copyright) },
 	{ LFAttrTitle, offsetof(PictureAttributes, Title) },
 	{ LFAttrLanguage, offsetof(PictureAttributes, Language) },
+	{ LFAttrApplication, offsetof(PictureAttributes, Application) },
 	{ LFAttrCustomer, offsetof(PictureAttributes, Customer) }
 };
 
@@ -95,6 +96,7 @@ const IdxTableEntry VideoAttributeEntries[] = {
 	{ LFAttrCopyright, offsetof(VideoAttributes, Copyright) },
 	{ LFAttrTitle, offsetof(VideoAttributes, Title) },
 	{ LFAttrLanguage, offsetof(VideoAttributes, Language) },
+	{ LFAttrApplication, offsetof(VideoAttributes, Application) },
 	{ LFAttrCustomer, offsetof(VideoAttributes, Customer) }
 };
 

@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
 #include "CStoreWindows.h"
+#include "FileProperties.h"
 #include "FileSystem.h"
-#include "ShellProperties.h"
 #include "Stores.h"
 #include <assert.h>
 
@@ -58,13 +58,12 @@ UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
 			}
 
 			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
-			SetNameExtFromFile(pItemDescriptor, (*m_pFileImportList)[a].Path);
 
 			wcscpy_s((LPWSTR)pItemDescriptor->StoreData, MAX_PATH, &(*m_pFileImportList)[a].Path[wcslen(p_StoreDescriptor->DatPath)]);
 
 			UINT Result;
 			WCHAR Path[2*MAX_PATH];
-			if ((Result=PrepareImport(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
+			if ((Result=CStore::PrepareImport((*m_pFileImportList)[a].Path, pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
 				CommitImport(pItemDescriptor, TRUE, (*m_pFileImportList)[a].Path, OnInitialize);
 
 			LFFreeItemDescriptor(pItemDescriptor);
@@ -110,20 +109,22 @@ UINT CStoreWindows::GetFileLocation(LFCoreAttributes* /*pCoreAttributes*/, LPCVO
 	return LFOk;
 }
 
-UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
+UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
 {
+	assert(pFilename);
+	assert(pExtension);
 	assert(pItemDescriptor);
 	assert(pPath);
 	assert(cCount>=2*MAX_PATH);
 
 	UINT Result;
 
-	// StoreData
-	WCHAR* pData = (LPWSTR)&pItemDescriptor->StoreData;
+	// Add store data
+	LPWSTR pData = (LPWSTR)&pItemDescriptor->StoreData;
 	if (*pData==L'\0')
 	{
 		WCHAR SanitizedFileName[MAX_PATH];
-		SanitizeFileName(SanitizedFileName, MAX_PATH, pItemDescriptor->CoreAttributes.FileName);
+		SanitizeFileName(SanitizedFileName, MAX_PATH, pFilename);
 
 		WCHAR Path[2*MAX_PATH];
 		WCHAR NumberStr[16] = L"";
@@ -135,10 +136,10 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPat
 			wcscpy_s(pData, MAX_PATH, SanitizedFileName);
 			wcscat_s(pData, MAX_PATH, NumberStr);
 
-			if (pItemDescriptor->CoreAttributes.FileFormat[0])
+			if (*pExtension)
 			{
 				WCHAR Buffer[LFExtSize];
-				MultiByteToWideChar(CP_ACP, 0, pItemDescriptor->CoreAttributes.FileFormat, -1, Buffer, LFExtSize);
+				MultiByteToWideChar(CP_ACP, 0, pExtension, -1, Buffer, LFExtSize);
 
 				wcscat_s(pData, MAX_PATH, L".");
 				wcscat_s(pData, MAX_PATH, Buffer);
@@ -152,42 +153,15 @@ UINT CStoreWindows::PrepareImport(LFItemDescriptor* pItemDescriptor, LPWSTR pPat
 		while (_waccess(Path, 0)==0);
 	}
 
-	if ((Result=CStore::PrepareImport(pItemDescriptor, pPath, cCount))!=LFOk)
+	// Prepare import
+	if ((Result=CStore::PrepareImport(pFilename, pExtension, pItemDescriptor, pPath, cCount))!=LFOk)
 		return Result;
 
 	// File ID
 	CreateNewFileID(pItemDescriptor->CoreAttributes.FileID);
 
 	// Location
-	if ((Result=CStore::GetFileLocation(pItemDescriptor, pPath, cCount))!=LFOk)
-		return Result;
-
-	// Roll
-	LFVariantData Value;
-	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrRoll, Value);
-
-	if (LFIsNullVariantData(Value))
-	{
-		WCHAR Roll[2*MAX_PATH];
-		wcscpy_s(Roll, 2*MAX_PATH, &pPath[4]);
-
-		WCHAR* pChar = wcsrchr(Roll, L'\\');
-		if (pChar)
-		{
-			*(pChar+1) = L'\0';
-
-			if (wcscmp(Roll, p_StoreDescriptor->DatPath)!=0)
-			{
-				*pChar = L'\0';
-
-				pChar = wcsrchr(Roll, L'\\');
-				if (pChar)
-					SetAttribute(pItemDescriptor, LFAttrRoll, pChar+1);
-			}
-		}
-	}
-
-	return LFOk;
+	return CStore::GetFileLocation(pItemDescriptor, pPath, cCount);
 }
 
 UINT CStoreWindows::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
@@ -239,12 +213,36 @@ UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStore
 	return (Error==ERROR_NO_MORE_FILES) || (Error==ERROR_FILE_NOT_FOUND) || (Error==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
 }
 
+void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
+{
+	CStore::SetAttributesFromStore(pItemDescriptor);
+
+	// Extract roll from path
+	if (LFIsNullAttribute(pItemDescriptor, LFAttrRoll))
+	{
+		// Get file path
+		WCHAR Roll[MAX_PATH];
+		wcscpy_s(Roll, MAX_PATH, (LPCWSTR)pItemDescriptor->StoreData);
+
+		// Isolate lowest subfolder
+		WCHAR* pChar = wcsrchr(Roll, L'\\');
+		if (pChar)
+		{
+			*pChar = L'\0';
+
+			// If there is another path component left, set it as roll
+			SetAttribute(pItemDescriptor, LFAttrRoll, (pChar=wcsrchr(Roll, L'\\'))!=NULL ? pChar+1 : Roll);
+		}
+	}
+}
+
 BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 {
 	assert(m_pFileImportList);
 
 	WCHAR Path[2*MAX_PATH];
-	GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH);
+	if (GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH)!=LFOk)
+		return TRUE;
 
 	// Find in import list using binary search
 	INT First = 0;
@@ -263,7 +261,7 @@ BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID p
 				// Update metadata
 				assert(pItem->FindFileDataPresent);
 
-				SetFromFindData(pCoreAttributes, &pItem->FindFileData);
+				SetAttributesFromFindFileData(pCoreAttributes, pItem->FindFileData);
 
 				pItem->Processed = TRUE;
 			}

@@ -3,15 +3,15 @@
 //
 
 #include "stdafx.h"
-#include "AttributeTables.h"
+#include "FileProperties.h"
 #include "FileSystem.h"
 #include "IATA.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
 #include "resource.h"
-#include "ShellProperties.h"
 #include "Stores.h"
+#include "TableAttributes.h"
 #include "Watchdog.h"
 #include <assert.h>
 #include <shlwapi.h>

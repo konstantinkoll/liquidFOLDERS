@@ -86,7 +86,7 @@ private:
 	static void ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const SIZE_T SrcSize);
 	void GetAttribute(LPVOID Ptr, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
 
-	WCHAR m_Filename[MAX_PATH];
+	WCHAR m_Path[MAX_PATH];
 	HANDLE hFile;
 };
 

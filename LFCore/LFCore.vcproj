@@ -374,10 +374,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\AttributeTables.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Categorizers.cpp"
 				>
 			</File>
@@ -446,6 +442,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\FileProperties.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FileSystem.cpp"
 				>
 			</File>
@@ -459,10 +459,6 @@
 			</File>
 			<File
 				RelativePath=".\ID3.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IndexTables.cpp"
 				>
 			</File>
 			<File
@@ -510,10 +506,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ShellProperties.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Shortcuts.cpp"
 				>
 			</File>
@@ -558,6 +550,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TableApplications.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TableAttributes.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TableContexts.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TableIndexes.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Thumbnails.cpp"
 				>
 			</File>
@@ -571,10 +579,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\AttributeTables.h"
-				>
-			</File>
 			<File
 				RelativePath=".\Categorizers.h"
 				>
@@ -592,10 +596,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ContextTable.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CStore.h"
 				>
 			</File>
@@ -605,6 +605,10 @@
 			</File>
 			<File
 				RelativePath=".\CStoreWindows.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FileProperties.h"
 				>
 			</File>
 			<File
@@ -629,10 +633,6 @@
 			</File>
 			<File
 				RelativePath=".\ID3.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IndexTables.h"
 				>
 			</File>
 			<File
@@ -676,10 +676,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MusicGenres.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Mutex.h"
 				>
 			</File>
@@ -692,10 +688,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ShellProperties.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Shortcuts.h"
 				>
 			</File>
@@ -705,6 +697,26 @@
 			</File>
 			<File
 				RelativePath=".\Stores.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TableApplications.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TableAttributes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TableContexts.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TableGenres.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TableIndexes.h"
 				>
 			</File>
 			<File

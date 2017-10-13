@@ -1,6 +1,6 @@
 
-// Music genres
 #define MusicGenreCount 203
+
 LFMusicGenre MusicGenres[MusicGenreCount] = {
 	{ L"", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Abstract", IDI_FLD_ELECTRONIC, FALSE, TRUE },

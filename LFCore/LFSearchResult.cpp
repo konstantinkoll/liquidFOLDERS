@@ -1,12 +1,12 @@
 
 #include "stdafx.h"
-#include "AttributeTables.h"
 #include "Categorizers.h"
 #include "ID3.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
 #include "LFVariantData.h"
+#include "TableAttributes.h"
 #include <assert.h>
 #include <algorithm>
 #include <hash_map>

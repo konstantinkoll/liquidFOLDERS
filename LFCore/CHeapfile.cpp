@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "CHeapfile.h"
 #include "FileSystem.h"
-#include "IndexTables.h"
+#include "TableIndexes.h"
 #include <assert.h>
 #include <io.h>
 #include <malloc.h>
@@ -20,9 +20,9 @@ CHeapfile::CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initia
 	m_ItemCount = 0;
 	m_BufferNeedsWriteback = m_HeaderNeedsWriteback = FALSE;
 
-	// Filename
-	wcscpy_s(m_Filename, MAX_PATH, Path);
-	wcscat_s(m_Filename, MAX_PATH, IndexTables[TableID].FileName);
+	// Path
+	wcscpy_s(m_Path, MAX_PATH, Path);
+	wcscat_s(m_Path, MAX_PATH, IndexTables[TableID].FileName);
 
 	// Table
 	m_RequiredElementSize = IndexTables[TableID].Size+(m_StoreDataSize=(TableID==IDXTABLE_MASTER) ? StoreDataSize : 0);
@@ -37,7 +37,7 @@ CHeapfile::CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initia
 	}
 
 	// Open file
-	if ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, Initialize ? OPEN_ALWAYS : OPEN_EXISTING, hFile))!=FileOk)
+	if ((m_OpenStatus=CreateFileConcurrent(m_Path, TRUE, Initialize ? OPEN_ALWAYS : OPEN_EXISTING, hFile))!=FileOk)
 	{
 		if (GetLastError()==ERROR_FILE_NOT_FOUND)
 			m_OpenStatus = HeapCannotCreate;
@@ -99,7 +99,7 @@ Create:
 		}
 
 		SetEndOfFile(hFile);
-		CompressFile(hFile, (CHAR)m_Filename[0]);
+		CompressFile(hFile, (CHAR)m_Path[0]);
 
 		m_OpenStatus = HeapCreated;
 	}
@@ -456,7 +456,7 @@ BOOL CHeapfile::Compact()
 
 	// Temporary filename
 	WCHAR TempFilename[MAX_PATH];
-	wcscpy_s(TempFilename, MAX_PATH, m_Filename);
+	wcscpy_s(TempFilename, MAX_PATH, m_Path);
 	wcscat_s(TempFilename, MAX_PATH, L".part");
 
 	// Open temporary file
@@ -517,10 +517,10 @@ BOOL CHeapfile::Compact()
 	CloseHandle(hTempFile);
 
 	// Temporary file becomes heapfile
-	if (!DeleteFile(m_Filename))
+	if (!DeleteFile(m_Path))
 		return FALSE;
 
-	if (!MoveFile(TempFilename, m_Filename))
+	if (!MoveFile(TempFilename, m_Path))
 		return FALSE;
 
 	// Process new header
@@ -533,5 +533,5 @@ BOOL CHeapfile::Compact()
 	AllocBuffer();
 
 	// Reopen file
-	return ((m_OpenStatus=CreateFileConcurrent(m_Filename, TRUE, OPEN_EXISTING, hFile))==FileOk);
+	return ((m_OpenStatus=CreateFileConcurrent(m_Path, TRUE, OPEN_EXISTING, hFile))==FileOk);
 }
