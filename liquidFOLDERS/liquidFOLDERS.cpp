@@ -94,6 +94,9 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	m_FileDropAlwaysOnTop = GetInt(_T("FileDropAlwaysOnTop"), TRUE);
 
+	// Icon factory
+	m_IconFactory.m_ApplicationIcons.Load(IDB_APPLICATIONS_29, CSize(31, 32));
+
 	// Execute
 	CheckForUpdate();
 	OpenCommandLine(__argc>1 ? CmdLine : NULL);

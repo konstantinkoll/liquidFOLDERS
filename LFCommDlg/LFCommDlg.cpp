@@ -864,6 +864,7 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	case LFTypeColor:
 	case LFTypeGeoCoordinates:
 	case LFTypeGenre:
+	case LFTypeApplication:
 		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
 

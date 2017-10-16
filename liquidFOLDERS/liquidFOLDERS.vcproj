@@ -628,6 +628,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\res\Applications_29.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\BlueMarble_1024.jpg"
 				>
 			</File>
@@ -677,18 +681,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Multiple.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Sources_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Sources_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Sources_32.png"
 				>
 			</File>
 			<File

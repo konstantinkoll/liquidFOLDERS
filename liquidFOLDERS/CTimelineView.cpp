@@ -15,9 +15,9 @@
 #define MIDDLE             (2*GUTTER+6)
 #define BLENDHEIGHT        2*(GUTTER+CARDPADDING)
 #define CATEGORYRADIUS     8
-#define LARGEPADDING       (CARDPADDING-1)
-#define SMALLPADDING       (CARDPADDING/2+1)
-#define THUMBMARGINX       2
+#define LARGEPADDING       (CARDPADDING)
+#define SMALLPADDING       (CARDPADDING/2+2)
+#define THUMBMARGINX       3
 #define THUMBMARGINY       THUMBMARGINX
 #define THUMBOFFSETY       -1
 #define MAXFILELIST        10
@@ -25,7 +25,6 @@
 #define GetItemData(Index)       ((TimelineItemData*)(m_pItemData+(Index)*m_DataSize))
 #define DrawCollectionIcon()     theApp.m_CoreImageListSmall.DrawEx(&dc, pData->CollectionIconID-1, CPoint(rect.left, rectAttr.top-(m_DefaultFontHeight-16)/2), CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
-CIcons CTimelineView::m_SourceIcons;
 const ARGB CTimelineView::m_BevelColors[8] = { 0x80FFFFFF, 0xFF7A7A7C, 0xFFA7A8AA, 0xFFBEBFC2, 0xFFCACBCD, 0xFFCACBCD, 0xFF7A7A7C, 0x80FFFFFF };
 
 CTimelineView::CTimelineView()
@@ -380,7 +379,7 @@ Restart:
 					}
 
 					// Source height
-					Height += 1+LARGEPADDING+m_SourceHeight;
+					Height += 1+LARGEPADDING+m_SmallFontHeight;
 				}
 			}
 
@@ -786,11 +785,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			}
 			
 			rect.top += LARGEPADDING;
-
-			m_SourceIcons.Draw(dc, rect.left, rect.top+(m_SourceHeight-m_SourceIconSize)/2, (pItemDescriptor->Type & LFTypeSourceMask)-2);
-			rect.left += m_SourceIconSize+SMALLPADDING;
-
-			dc.DrawText(theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0], -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+			dc.DrawText(theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0], -1, rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 		}
 
 		dc.SelectObject(pOldFont);
@@ -823,11 +818,9 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Icons
 	m_SmallIconSize = GetSystemMetrics(SM_CYSMICON);
-	m_SourceIconSize = m_SourceIcons.LoadSmall(IDB_SOURCES_16);
 
 	// Heights
 	m_CaptionHeight = max(m_SmallIconSize, m_DefaultFontHeight+CARDPADDING/3+m_SmallFontHeight);
-	m_SourceHeight = max(m_SourceIconSize, m_SmallFontHeight);
 	m_LabelWidth = (theApp.m_SmallBoldFont.GetTextExtent(_T("8888")).cx+2*CARDPADDING) | 1;
 
 	return 0;

@@ -65,12 +65,10 @@ protected:
 
 	BOOL m_TwoColumns;
 	INT m_CaptionHeight;
-	INT m_SourceHeight;
 	INT m_ItemWidth;
 	INT m_LabelWidth;
 	INT m_PreviewColumns;
 	INT m_SmallIconSize;
-	INT m_SourceIconSize;
 
 private:
 	static LPCWSTR GetAttribute(TimelineItemData* pData, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
@@ -80,6 +78,5 @@ private:
 	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* pItemCategory, BOOL Themed);
 
 	LFDynArray<ItemCategory, 8, 8> m_Categories;
-	static CIcons m_SourceIcons;
 	static const ARGB m_BevelColors[8];
 };

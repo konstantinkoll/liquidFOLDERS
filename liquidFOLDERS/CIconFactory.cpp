@@ -12,6 +12,8 @@
 
 #define THUMBCUTOFF     2
 
+CIcons CIconFactory::m_ApplicationIcons;
+
 CIconFactory::CIconFactory()
 {
 	m_FileFormats.InitHashTable(2111);			// Prime number with pz = 4n+3
@@ -113,6 +115,11 @@ FinishIcon:
 	// Draw overlays
 	if (DrawAppBadge)
 	{
+		LFVariantData Data;
+		LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrApplication, Data);
+		if (!LFIsNullVariantData(Data))
+			if (Data.Application<LFApplicationCount)
+				m_ApplicationIcons.Draw(dc, pt.x-2, pt.y+ThumbnailYOffset+98, Data.Application-1);
 	}
 
 	if (DrawSash)

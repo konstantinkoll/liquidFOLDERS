@@ -13,12 +13,10 @@
 #define IDB_TASKS_32                    137
 #define IDB_TASKS_48                    138
 #define IDB_TASKS_64                    139
-#define IDB_SOURCES_16                  140
-#define IDB_SOURCES_24                  141
-#define IDB_SOURCES_32                  142
-#define IDB_MULTIPLE                    143
-#define IDB_THUMBNAIL                   144
-#define IDB_BLUEMARBLE_512              145
+#define IDB_MULTIPLE                    140
+#define IDB_THUMBNAIL                   141
+#define IDB_BLUEMARBLE_512              142
+#define IDB_APPLICATIONS_29             143
 #define ID_PANE_INSPECTOR               400
 #define ID_NAV_BACK                     500
 #define ID_NAV_FORWARD                  501

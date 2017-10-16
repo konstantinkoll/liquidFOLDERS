@@ -34,7 +34,7 @@ void CDetailsView::AdjustLayout()
 	const INT MinWidth = max(1, 25*m_DefaultFontHeight);
 	const BOOL FullWidth = rect.Width()<BACKSTAGEBORDER+2*(MinWidth+2*PADDING+GUTTER)+GetSystemMetrics(SM_CXVSCROLL);
 
-	Arrange(CSize(MinWidth, 128+PADDING/2+RATINGBITMAPHEIGHT+2), PADDING, CSize(GUTTER, GUTTER), FullWidth);
+	Arrange(CSize(MinWidth, 128+PADDING+RATINGBITMAPHEIGHT+3), PADDING, CSize(GUTTER, GUTTER), FullWidth);
 }
 
 LFFont* CDetailsView::GetLabelFont() const
@@ -166,7 +166,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 
 			HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(theApp.hRatingBitmaps[Rating]);
 
-			dc.AlphaBlend(rect.left+(128-RATINGBITMAPWIDTH)/2, rect.top+128+PADDING/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+			dc.AlphaBlend(rect.left+(128-RATINGBITMAPWIDTH)/2, rect.top+128+PADDING, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
 
 			SelectObject(dcMem, hOldBitmap);
 		}

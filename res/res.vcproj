@@ -1605,330 +1605,66 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Sources"
+			Name="Applications"
 			>
 			<File
-				RelativePath=".\Sources\aboutme_16.png"
+				RelativePath=".\Applications\Boomerang_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\aboutme_24.png"
+				RelativePath=".\Applications\Cinemagraph_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\aboutme_32.png"
+				RelativePath=".\Applications\Facebook_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Box_16.png"
+				RelativePath=".\Applications\Hipstamatic_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Box_24.png"
+				RelativePath=".\Applications\Hyperlapse_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Box_32.png"
+				RelativePath=".\Applications\IncrediBooth_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Directory_16.png"
+				RelativePath=".\Applications\Instagram_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Directory_24.png"
+				RelativePath=".\Applications\Labelbox_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Directory_32.png"
+				RelativePath=".\Applications\Layout_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Dropbox_16.png"
+				RelativePath=".\Applications\Pinterest_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Dropbox_24.png"
+				RelativePath=".\Applications\Retrica_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Dropbox_32.png"
+				RelativePath=".\Applications\Snapchat_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Facebook_16.png"
+				RelativePath=".\Applications\VintageCam_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Facebook_24.png"
+				RelativePath=".\Applications\VSCO_29.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Sources\Facebook_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\FireWire_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\FireWire_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\FireWire_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Flickr_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Flickr_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Flickr_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\foursquare_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\foursquare_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\foursquare_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Google_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Google_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Google_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\iCloud_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\iCloud_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\iCloud_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Instagram_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Instagram_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Instagram_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\linkedin_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\linkedin_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\linkedin_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Nethood_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Nethood_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Nethood_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\OneDrive_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\OneDrive_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\OneDrive_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Paypal_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Paypal_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Paypal_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Pinterest_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Pinterest_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Pinterest_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\RSS_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\RSS_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\RSS_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Skype_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Skype_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Skype_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Soundcloud_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Soundcloud_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Soundcloud_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\StumbleUpon_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\StumbleUpon_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\StumbleUpon_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Tumblr_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Tumblr_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Tumblr_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Twitter_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Twitter_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Twitter_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\USB_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\USB_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\USB_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\vimeo_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\vimeo_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\vimeo_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Wordpress_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Wordpress_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Wordpress_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Yelp_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Yelp_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\Yelp_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\YouTube_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\YouTube_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Sources\YouTube_32.png"
+				RelativePath=".\Applications\YouTube_29.png"
 				>
 			</File>
 		</Filter>

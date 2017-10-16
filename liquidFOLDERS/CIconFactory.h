@@ -31,6 +31,8 @@ public:
 	HBITMAP GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchResult);
 	HBITMAP GetJumboIconBitmap(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
 
+	static CIcons m_ApplicationIcons;
+
 protected:
 	HBITMAP LookupThumbnail(LFItemDescriptor* pItemDescriptor);
 	BOOL DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
