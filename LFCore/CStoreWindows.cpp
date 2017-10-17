@@ -215,8 +215,6 @@ UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStore
 
 void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 {
-	CStore::SetAttributesFromStore(pItemDescriptor);
-
 	// Extract roll from path
 	if (LFIsNullAttribute(pItemDescriptor, LFAttrRoll))
 	{
@@ -234,6 +232,9 @@ void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 			SetAttribute(pItemDescriptor, LFAttrRoll, (pChar=wcsrchr(Roll, L'\\'))!=NULL ? pChar+1 : Roll);
 		}
 	}
+
+	// Inherited roll, artist and title
+	CStore::SetAttributesFromStore(pItemDescriptor);
 }
 
 BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)

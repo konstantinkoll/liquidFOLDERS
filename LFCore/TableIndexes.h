@@ -23,7 +23,8 @@
 
 // Advertised properties for photos and videos
 #define IDXATTRS_VISDETAILS     (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrColor) | (1ull<<LFAttrRoll) | \
-								(1ull<<LFAttrHashtags) | (1ull<<LFAttrLocationName) | (1ull<<LFAttrLocationIATA))
+								(1ull<<LFAttrHashtags) | (1ull<<LFAttrLocationName) | (1ull<<LFAttrLocationIATA) | \
+								(1ull<<LFAttrApplication))
 
 // Generically advertised properties
 #define IDXATTRS_GENDETAILS     (IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) | (1ull<<LFAttrCreationTime) | \

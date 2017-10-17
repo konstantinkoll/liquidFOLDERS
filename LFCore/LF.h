@@ -503,8 +503,10 @@ struct LFContextDescriptor
 #define LFApplicationVintageCam      13
 #define LFApplicationVSCO            14
 #define LFApplicationYouTube         15
+#define LFApplicationJodel           16
+#define LFApplicationVimeo           17
 
-#define LFApplicationCount           16
+#define LFApplicationCount           18
 
 
 // Statistics

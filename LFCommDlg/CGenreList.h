@@ -18,7 +18,7 @@ struct GenreCategoryData
 
 struct GenreItemData
 {
-	LFMusicGenre* pMusicGenre;
+	const LFMusicGenre* pMusicGenre;
 	UINT Index;
 	UINT FileCount;
 	LPCWSTR pDescription;
@@ -37,8 +37,8 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void AddCategory(LFMusicGenre* pMusicGenre);
-	void AddItem(LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, LPCWSTR pDescription);
+	void AddCategory(const LFMusicGenre* pMusicGenre);
+	void AddItem(const LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, LPCWSTR pDescription);
 	UINT GetSelectedGenre() const;
 	void EnsureVisible(INT Index);
 	void SelectGenre(UINT Genre);

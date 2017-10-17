@@ -1,12 +1,13 @@
 
 #include "stdafx.h"
 #include "Categorizers.h"
-#include "ID3.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
 #include "LFVariantData.h"
+#include "TableApplications.h"
 #include "TableAttributes.h"
+#include "TableMusicGenres.h"
 #include <assert.h>
 #include <algorithm>
 #include <hash_map>
@@ -196,7 +197,12 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 			{
 			case LFAttrGenre:
 				m_Context = LFContextSubfolderGenre;
-				m_IconID = GetGenreIcon(pFilter->pConditionList->AttrData.UINT32);
+				m_IconID = GetGenreIcon(pFilter->pConditionList->AttrData.Genre);
+
+				break;
+
+			case LFAttrApplication:
+				m_IconID = GetApplicationIcon(pFilter->pConditionList->AttrData.Application);
 
 				break;
 

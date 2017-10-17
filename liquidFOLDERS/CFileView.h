@@ -160,6 +160,7 @@ protected:
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
 	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed) const;
+	COLORREF SetGrayText(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	static UINT GetColorDotCount(const LFItemDescriptor* pItemDescriptor);
 	INT GetColorDotWidth(const LFItemDescriptor* pItemDescriptor, const CIcons& Icons=m_DefaultColorDots) const;
 	INT GetColorDotWidth(INT Index, const CIcons& Icons=m_DefaultColorDots) const;
@@ -311,4 +312,12 @@ inline INT CFileView::GetColorDotWidth(INT Index, const CIcons& Icons) const
 	assert(Index<(INT)p_CookedFiles->m_ItemCount);
 
 	return GetColorDotWidth((*p_CookedFiles)[Index], Icons);
+}
+
+inline COLORREF CFileView::SetGrayText(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
+{
+	if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
+		return dc.SetTextColor(0x808080);
+
+	return dc.GetTextColor();
 }

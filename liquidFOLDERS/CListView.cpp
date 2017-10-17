@@ -76,7 +76,7 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 			break;
 
 		default:
-			TypeMask = (1<<LFTypeDuration) | (1<<LFTypeGenre) | (1<<LFTypeGeoCoordinates) | (1<<LFTypeIATACode) | (1<<LFTypeRating) | (1<<LFTypeColor) | (1<<LFTypeTime);
+			TypeMask = (1<<LFTypeDuration) | (1<<LFTypeGenre) | (1<<LFTypeGeoCoordinates) | (1<<LFTypeIATACode) | (1<<LFTypeRating) | (1<<LFTypeColor) | (1<<LFTypeTime) | (1<<LFTypeApplication);
 			m_HasFolders = theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID || (m_ContextViewSettings.SortBy==LFAttrLocationName);
 		}
 
@@ -98,7 +98,10 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 		const UINT Attr = m_ContextViewSettings.SortBy;
 		const UINT Type = theApp.m_Attributes[Attr].AttrProperties.Type;
 
-		m_PreviewAttribute = m_HasFolders && ((Type==LFTypeGenre) || (Type==LFTypeGeoCoordinates) || (Type==LFTypeIATACode) || (Attr==LFAttrRoll) || theApp.m_Attributes[Attr].AttrProperties.ShowRepresentativeThumbnail) ? Attr : -1;
+		m_PreviewAttribute = m_HasFolders &&
+			((Type==LFTypeGenre) || (Type==LFTypeGeoCoordinates) || (Type==LFTypeIATACode) || (Type==LFTypeApplication) || 
+			(Attr==LFAttrRoll) || theApp.m_Attributes[Attr].AttrProperties.ShowRepresentativeThumbnail)
+			? Attr : -1;
 	}
 	else
 	{

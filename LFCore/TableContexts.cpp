@@ -161,6 +161,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "wave",   LFContextAudio },
 	{ "wm",     LFContextAudio },
 	{ "wmv",    LFContextVideos },
+	{ "xcf",    LFContextPictures },
 	{ "xlb",    LFContextDocuments },
 	{ "xls",    LFContextDocuments },
 	{ "xlsb",   LFContextDocuments },

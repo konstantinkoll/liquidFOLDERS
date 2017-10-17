@@ -43,7 +43,7 @@ RECT CIconsView::GetLabelRect(INT Index) const
 	return rect;
 }
 
-void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor* pItemDescriptor, UINT MaxLineCount) const
+void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor* pItemDescriptor, BOOL Themed, UINT MaxLineCount) const
 {
 	// Make width one pixel larger due to ClearType
 	const INT MaxLineWidth = rectLabel.Width()+1;
@@ -57,7 +57,8 @@ void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor
 	rectLine.bottom = rectLine.top+m_DefaultFontHeight;
 
 	// Iterate the lines
-	for (UINT Line=0; Line<MaxLineCount; Line++)
+	UINT Line = 0;
+	for (; Line<MaxLineCount; Line++)
 	{
 		CString strLine;
 		INT LineWidth = 0;
@@ -111,6 +112,20 @@ void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor
 		// Move rectLine one line down
 		rectLine.OffsetRect(0, m_DefaultFontHeight);
 	}
+
+	// Hint
+	if ((Line<=MaxLineCount) && ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))
+	{
+		ASSERT(pItemDescriptor->Description[0]);
+
+		CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
+		COLORREF oldColor = SetGrayText(dc, pItemDescriptor, Themed);
+
+		dc.DrawText(pItemDescriptor->Description, -1, CRect(rectLabel.left, rectLabel.bottom-m_SmallFontHeight, rectLabel.right, rectLabel.bottom), DT_CENTER | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+		dc.SelectObject(pOldFont);
+		dc.SetTextColor(oldColor);
+	}
 }
 
 void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
@@ -124,7 +139,7 @@ void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOO
 		rectLabel.DeflateRect(Themed ? PADDING+1 : PADDING, PADDING);
 		rectLabel.top += 128+PADDING/2;
 
-		DrawWrapLabel(dc, rectLabel, pItemDescriptor);
+		DrawWrapLabel(dc, rectLabel, pItemDescriptor, Themed);
 	}
 
 	// Icon

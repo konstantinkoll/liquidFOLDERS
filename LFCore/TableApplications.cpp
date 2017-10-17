@@ -22,6 +22,8 @@ extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT] = {
 	{ L"VintageCam",   LFApplicationVintageCam },
 	{ L"VSCO",         LFApplicationVSCO },
 	{ L"YouTube",      LFApplicationYouTube },
+	{ L"Jodel",        LFApplicationJodel },
+	{ L"Vimeo",        LFApplicationVimeo },
 
 	{ L"FB",           LFApplicationFacebook },
 	{ L"Hipsta",       LFApplicationHipstamatic },
@@ -35,3 +37,9 @@ extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT] = {
 };
 
 #pragma data_seg()
+
+
+UINT GetApplicationIcon(BYTE nID)
+{
+	return (nID<LFApplicationCount) ? IDI_APP_DEFAULT+nID : IDI_APP_DEFAULT;
+}

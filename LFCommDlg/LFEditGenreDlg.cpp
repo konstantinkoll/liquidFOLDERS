@@ -26,14 +26,14 @@ void LFEditGenreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 		m_wndGenreList.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), m_BottomDivider-rectLayout.top, nFlags);
 }
 
-void LFEditGenreDlg::AddItem(LFMusicGenre* pMusicGenre, INT Index)
+void LFEditGenreDlg::AddItem(const LFMusicGenre* pMusicGenre, INT Index)
 {
 	m_wndGenreList.AddItem(pMusicGenre, Index, Index<GENREBUFFERSIZE ? m_FileCount[Index] : 0, Index<GENREBUFFERSIZE ? m_Description[Index] : 0);
 }
 
 void LFEditGenreDlg::AddCategory(INT IconID)
 {
-	LFMusicGenre* pMusicGenre;
+	const LFMusicGenre* pMusicGenre;
 
 	INT Index = LFID3GetNextMusicGenreByIcon(IconID, 0, &pMusicGenre);			// Skip genre 0
 	while (Index!=-1)
@@ -92,10 +92,10 @@ BOOL LFEditGenreDlg::InitDialog()
 	LFFreeSearchResult(pRawFiles);
 
 	// Add music genres
-	LFMusicGenre* pOtherPrimary = NULL;
+	const LFMusicGenre* pOtherPrimary = NULL;
 	INT OtherPrimaryIndex = 0;
 
-	LFMusicGenre* pMusicGenre;
+	const LFMusicGenre* pMusicGenre;
 
 	INT Index = LFID3GetNextMusicGenre(0, &pMusicGenre);			// Skip genre 0
 	while (Index!=-1)

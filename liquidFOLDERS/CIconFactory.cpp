@@ -117,9 +117,9 @@ FinishIcon:
 	{
 		LFVariantData Data;
 		LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrApplication, Data);
-		if (!LFIsNullVariantData(Data))
-			if (Data.Application<LFApplicationCount)
-				m_ApplicationIcons.Draw(dc, pt.x-2, pt.y+ThumbnailYOffset+98, Data.Application-1);
+
+		if (!LFIsNullVariantData(Data) && (Data.Application<LFApplicationCount))
+			m_ApplicationIcons.Draw(dc, pt.x-2, pt.y+ThumbnailYOffset+98, Data.Application-1);
 	}
 
 	if (DrawSash)

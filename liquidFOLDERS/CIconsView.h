@@ -20,5 +20,5 @@ protected:
 	virtual RECT GetLabelRect(INT Index) const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
-	void DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor* pItemDescriptor, UINT MaxLineCount=2) const;
+	void DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor* pItemDescriptor, BOOL Themed, UINT MaxLineCount=2) const;
 };

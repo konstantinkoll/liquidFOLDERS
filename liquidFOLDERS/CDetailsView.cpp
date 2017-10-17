@@ -84,8 +84,8 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 			CRect rectLabel(rectText);
 			rectLabel.bottom = rectLabel.top+m_LargeFontHeight;
 
-			CString Label = GetLabel(pItemDescriptor);
-			if (!Label.IsEmpty())
+			const CString strLabel = GetLabel(pItemDescriptor);
+			if (!strLabel.IsEmpty())
 			{
 				// Color
 				DrawColorDots(dc, rectLabel, pItemDescriptor, m_LargeFontHeight, m_LargeColorDots);
@@ -94,7 +94,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 				{
 					// Filename
 					CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
-					dc.DrawText(GetLabel(pItemDescriptor), rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+					dc.DrawText(strLabel, rectLabel, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 					dc.SelectObject(pOldFont);
 				}
 
@@ -137,10 +137,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 					}
 
 					// Value
-					COLORREF oldColor = dc.GetTextColor();
-					if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
-						dc.SetTextColor(0x808080);
-
+					COLORREF oldColor = SetGrayText(dc, pItemDescriptor, Themed);
 					dc.DrawText(Value, rectLabel, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 					dc.SetTextColor(oldColor);
 

@@ -1,13 +1,13 @@
 
 #include "stdafx.h"
 #include "FileProperties.h"
-#include "ID3.h"
 #include "TableIndexes.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "TableApplications.h"
 #include "TableAttributes.h"
 #include "TableContexts.h"
+#include "TableMusicGenres.h"
 #include <assert.h>
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -150,7 +150,7 @@ BOOL SetAttributesFromAnnotation(LFItemDescriptor* pItemDescriptor, LPCWSTR pAnn
 	for (BYTE a=0; a<APPLICATIONCOUNT; a++)
 		if (_wcsicmp(ApplicationRegistry[a].Name, pAnnotation)==0)
 		{
-			SetAttribute(pItemDescriptor, LFAttrApplication, &a);
+			SetAttribute(pItemDescriptor, LFAttrApplication, &ApplicationRegistry[a].ApplicationID);
 
 			return TRUE;
 		}

@@ -80,6 +80,8 @@ BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
+	ASSERT(lpRect);
+
 	const INT Diameter = Radius*2+1;
 	const INT Right = lpRect->right-Diameter-1;
 	const INT Bottom = lpRect->bottom-Diameter-1;
@@ -94,6 +96,8 @@ void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 
 void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
+	ASSERT(lpRect);
+
 	const INT Diameter = Radius*2+1;
 	const INT Right = lpRect->right-Diameter-1;
 
@@ -104,14 +108,19 @@ void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 
 void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
+	ASSERT(lpRect);
+
 	Path.Reset();
 
 	const INT Diameter = Radius*2+1;
-	const INT Height = lpRect->bottom-lpRect->top-1;
-	const INT Width = min((INT)(Height*1.681), lpRect->right-lpRect->left-1);
+	const INT Width = lpRect->right-lpRect->left;
 
+	Path.AddLine(Point(lpRect->left+Width*2/3, lpRect->top), Point(lpRect->left+Diameter, lpRect->top));
 	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 180, 90);
-	Path.AddArc(lpRect->left, lpRect->top, 2*Width, 2*Height, 270, -90);
+	Path.AddLine(Point(lpRect->left, lpRect->top+Diameter), Point(lpRect->left, lpRect->bottom-Diameter));
+	Path.AddArc(lpRect->left, lpRect->bottom, Diameter, Diameter, 180, -90);
+	Path.AddLine(Point(lpRect->left+Diameter, lpRect->bottom), Point(lpRect->left+Width/3, lpRect->bottom));
+
 	Path.CloseFigure();
 }
 
@@ -257,9 +266,12 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 void DrawReflection(Graphics& g, LPCRECT lpRect)
 {
 	GraphicsPath pathReflection;
-	CreateReflectionRectangle(lpRect, 2, pathReflection);
+	CreateReflectionRectangle(lpRect, 1, pathReflection);
 
-	LinearGradientBrush brush(Point(lpRect->left, lpRect->top), Point(lpRect->left+min((INT)((lpRect->bottom-lpRect->top)*1.681), lpRect->right-lpRect->left), lpRect->bottom), Color(0x28FFFFFF), Color(0x10FFFFFF));
+	const INT Height = lpRect->bottom-lpRect->top;
+	const INT Width = lpRect->right-lpRect->left;
+
+	LinearGradientBrush brush(Rect(lpRect->left, lpRect->top, lpRect->left+Width, Height), Color(0x30FFFFFF), Color(0x00FFFFFF), LinearGradientModeForwardDiagonal);
 	g.FillPath(&brush, &pathReflection);
 }
 

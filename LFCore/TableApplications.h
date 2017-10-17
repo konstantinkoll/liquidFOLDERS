@@ -3,7 +3,10 @@
 #include "LF.h"
 
 
-#define APPLICATIONCOUNT     25
+UINT GetApplicationIcon(BYTE nID);
+
+
+#define APPLICATIONCOUNT     27
 
 
 #pragma pack(push,1)
@@ -15,5 +18,6 @@ struct RegisteredApplication
 };
 
 #pragma pack(pop)
+
 
 extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT];

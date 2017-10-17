@@ -6508,7 +6508,7 @@ QSC     São Carlos, Brazil;4;21*52'32"S, 47*54'13"W
 QSD     São Gonçalo, Brazil
 QSE     Santo Andre, Brazil
 QSF QSF San Francisco Bay Area, USA
-QSH     Seeheim, Germany
+QSH     Seeheim, Germany;5;49*45'37"N, 8*39'8"E
 QSI     Moshi, Tanzania;4;3*21'48"S, 37*19'37"E
 QSJ     São João del Rei, Brazil
 QSM     St. Maarten, Neth. Antilles

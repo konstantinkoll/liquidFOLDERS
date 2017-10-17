@@ -458,10 +458,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ID3.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFCore.cpp"
 				>
 			</File>
@@ -566,6 +562,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TableMusicGenres.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Thumbnails.cpp"
 				>
 			</File>
@@ -629,10 +629,6 @@
 			</File>
 			<File
 				RelativePath=".\IATA_EN.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ID3.h"
 				>
 			</File>
 			<File
@@ -712,11 +708,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TableGenres.h"
+				RelativePath=".\TableIndexes.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TableIndexes.h"
+				RelativePath=".\TableMusicGenres.h"
 				>
 			</File>
 			<File
@@ -737,6 +733,78 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\res\APP_Boomerang.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Cinemagraph.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Default.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Facebook.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Hipstamatic.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Hyperlapse.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_IncrediBooth.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Instagram.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Jodel.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Labelbox.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Layout.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Pinterest.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Retrica.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Snapchat.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_Vimeo.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_VintageCam.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_VSCO.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\APP_YouTube.ico"
+				>
+			</File>
 			<File
 				RelativePath=".\res\FLD_Alternative.ico"
 				>

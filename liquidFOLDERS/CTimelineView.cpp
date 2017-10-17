@@ -15,9 +15,9 @@
 #define MIDDLE             (2*GUTTER+6)
 #define BLENDHEIGHT        2*(GUTTER+CARDPADDING)
 #define CATEGORYRADIUS     8
-#define LARGEPADDING       (CARDPADDING)
-#define SMALLPADDING       (CARDPADDING/2+2)
-#define THUMBMARGINX       3
+#define LARGEPADDING       (CARDPADDING-1)
+#define SMALLPADDING       (CARDPADDING/2+1)
+#define THUMBMARGINX       2
 #define THUMBMARGINY       THUMBMARGINX
 #define THUMBOFFSETY       -1
 #define MAXFILELIST        10

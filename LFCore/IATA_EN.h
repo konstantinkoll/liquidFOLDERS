@@ -228,7 +228,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8756
+#define AirportCount_EN 8757
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  65, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -6283,6 +6283,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 182, "QSA", "", "Sabadell", { -41.520556, 2.105000 } },
 	{  25, "QSC", "", "São Carlos", { 21.875556, -47.903611 } },
 	{ 212, "QSF", "QSF", "San Francisco Bay Area", { -37.536389, -122.249583 } },
+	{  69, "QSH", "", "Seeheim", { -49.760278, 8.652222 } },
 	{ 195, "QSI", "", "Moshi", { 3.363333, 37.326944 } },
 	{   8, "QTH", "", "Thredbo", { 36.483056, 148.316944 } },
 	{ 181, "QTW", "", "Taejon", { -36.300000, 127.400000 } },

@@ -78,15 +78,32 @@ IDI_FLD_SOUNDTRACKS     ICON                    "res\\FLD_Soundtracks.ico"
 IDI_FLD_SOUL            ICON                    "res\\FLD_Soul.ico"
 IDI_FLD_SPOKENWORD      ICON                    "res\\FLD_SpokenWord.ico"
 IDI_FLD_WORLDMUSIC      ICON                    "res\\FLD_WorldMusic.ico"
-
+IDI_APP_DEFAULT         ICON                    "res\\APP_Default.ico"
+IDI_APP_BOOMERANG       ICON                    "res\\APP_Boomerang.ico"
+IDI_APP_CINEMAGRAPH     ICON                    "res\\APP_Cinemagraph.ico"
+IDI_APP_FACEBOOK        ICON                    "res\\APP_Facebook.ico"
+IDI_APP_HIPSTAMATIC     ICON                    "res\\APP_Hipstamatic.ico"
+IDI_APP_HYPERLAPSE      ICON                    "res\\APP_Hyperlapse.ico"
+IDI_APP_INCREDIBOOTH    ICON                    "res\\APP_IncrediBooth.ico"
+IDI_APP_INSTAGRAM       ICON                    "res\\APP_Instagram.ico"
+IDI_APP_LABELBOX        ICON                    "res\\APP_Labelbox.ico"
+IDI_APP_LAYOUT          ICON                    "res\\APP_Layout.ico"
+IDI_APP_PINTEREST       ICON                    "res\\APP_Pinterest.ico"
+IDI_APP_RETRICA         ICON                    "res\\APP_Retrica.ico"
+IDI_APP_SNAPCHAT        ICON                    "res\\APP_Snapchat.ico"
+IDI_APP_VINTAGECAM      ICON                    "res\\APP_VintageCam.ico"
+IDI_APP_VSCO            ICON                    "res\\APP_VSCO.ico"
+IDI_APP_YOUTUBE         ICON                    "res\\APP_YouTube.ico"
+IDI_APP_JODEL           ICON                    "res\\APP_Jodel.ico"
+IDI_APP_VIMEO           ICON                    "res\\APP_Vimeo.ico"
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,2,0,0
- PRODUCTVERSION 3,2,0,0
+ FILEVERSION 3,2,1,0
+ PRODUCTVERSION 3,2,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -103,13 +120,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "3.2.0"
+            VALUE "FileVersion", "3.2.1"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "3.2.0"
+            VALUE "ProductVersion", "3.2.1"
         END
     END
     BLOCK "VarFileInfo"

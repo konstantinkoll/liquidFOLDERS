@@ -233,7 +233,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	{ LFTypeDouble, 0, LFAttrCategoryVisual, 0, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, { 0,0 }, 24 },
 
 	// LFAttrApplication
-	{ LFTypeApplication, 0, LFAttrCategoryVisual, 0, LFViewList, 4, TRUE, FALSE, FALSE, { 0,0 }, 55 },
+	{ LFTypeApplication, 0, LFAttrCategoryVisual, IDI_APP_DEFAULT, LFViewList, 4, TRUE, FALSE, FALSE, { 0,0 }, 55 },
 
 	// LFAttrVideoCodec
 	{ LFTypeFourCC, 0, LFAttrCategoryVisual, 0, LFViewList, LFMaxAttributePriority, TRUE, FALSE, FALSE, { SHPropertyVideo, 44 }, 25 },

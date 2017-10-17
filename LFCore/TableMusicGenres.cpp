@@ -1,7 +1,14 @@
 
-#define MusicGenreCount 203
+#include "stdafx.h"
+#include "LFCore.h"
+#include "resource.h"
+#include "TableMusicGenres.h"
+#include <assert.h>
 
-LFMusicGenre MusicGenres[MusicGenreCount] = {
+
+#pragma data_seg(".shared")
+
+extern const LFMusicGenre MusicGenres[MUSICGENRECOUNT] = {
 	{ L"", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Abstract", IDI_FLD_ELECTRONIC, FALSE, TRUE },
 	{ L"Acapella", IDI_FLD_REDCURTAIN, FALSE, TRUE },
@@ -206,3 +213,92 @@ LFMusicGenre MusicGenres[MusicGenreCount] = {
 	{ L"Vocal", IDI_FLD_REDCURTAIN, FALSE, TRUE },
 	{ L"World Music", IDI_FLD_WORLDMUSIC, TRUE, TRUE }
 };
+
+#pragma data_seg()
+
+
+void SanitizeGenre(LPCWSTR lpGenre, LPWSTR lpBuffer, SIZE_T cCount)
+{
+	assert(lpGenre);
+	assert(lpBuffer);
+	assert(cCount>1);
+
+	while(*lpGenre)
+	{
+		if (*lpGenre==L'/')
+			break;
+
+		if (*lpGenre>=L'A')
+		{
+			*(lpBuffer++) = (WCHAR)toupper(*lpGenre);
+
+			if (--cCount==1)
+				break;
+		}
+
+		lpGenre++;
+	}
+
+	*lpBuffer = L'\0';
+}
+
+UINT FindMusicGenre(LPCWSTR lpGenre)
+{
+	assert(lpGenre);
+
+	WCHAR Genre[256];
+	SanitizeGenre(lpGenre, Genre, 256);
+
+	for (UINT a=0; a<MUSICGENRECOUNT; a++)
+	{
+		WCHAR Name[256];
+		SanitizeGenre(MusicGenres[a].Name, Name, 256);
+
+		if (wcscmp(Genre, Name)==0)
+			return a;
+	}
+
+	return 0;
+}
+
+LPCWSTR GetGenreName(UINT nID)
+{
+	return (nID<MUSICGENRECOUNT) ? MusicGenres[nID].Name : L"?";
+}
+
+UINT GetGenreIcon(UINT nID)
+{
+	return (nID<MUSICGENRECOUNT) ? MusicGenres[nID].IconID : IDI_FLD_DEFAULTGENRE;
+}
+
+LFCORE_API INT LFID3GetNextMusicGenre(INT Last, const LFMusicGenre** ppMusicGenre)
+{
+	assert(ppMusicGenre);
+
+	if (Last<-1)
+		Last = -1;
+
+	if (Last>=MUSICGENRECOUNT-1)
+		return -1;
+
+	*ppMusicGenre = &MusicGenres[++Last];
+
+	return Last;
+}
+
+LFCORE_API INT LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, const LFMusicGenre** ppMusicGenre)
+{
+	if (Last<-1)
+		Last = -1;
+
+	do
+	{
+		if (Last>=MUSICGENRECOUNT-1)
+			return -1;
+
+		*ppMusicGenre = &MusicGenres[++Last];
+	}
+	while ((*ppMusicGenre)->IconID!=IconID);
+
+	return Last;
+}

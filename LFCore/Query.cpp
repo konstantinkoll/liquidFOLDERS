@@ -5,6 +5,7 @@
 #include "LFVariantData.h"
 #include "Query.h"
 #include "Stores.h"
+#include "TableApplications.h"
 #include "TableAttributes.h"
 #include <assert.h>
 #include <shlwapi.h>
@@ -105,8 +106,6 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 				if (LFContainsHashtag((LPCWSTR)pValue, Hashtag))
 					return TRUE;
 
-			return FALSE;
-
 		default:
 			return FALSE;
 		}
@@ -166,10 +165,10 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return *(UINT*)pValue==pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)==pFilterCondition->AttrData.UINT32;
 
 		case LFFilterCompareIsNotEqual:
-			return *(UINT*)pValue!=pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)!=pFilterCondition->AttrData.UINT32;
 
 		default:
 			return FALSE;
@@ -180,19 +179,19 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 		switch (pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return CRatingCategorizer::GetRatingCategory(*(BYTE*)pValue)==CRatingCategorizer::GetRatingCategory(pFilterCondition->AttrData.Rating);
+			return CRatingCategorizer::GetRatingCategory(*((BYTE*)pValue))==CRatingCategorizer::GetRatingCategory(pFilterCondition->AttrData.Rating);
 
 		case LFFilterCompareIsEqual:
-			return *(BYTE*)pValue==pFilterCondition->AttrData.Rating;
+			return *((BYTE*)pValue)==pFilterCondition->AttrData.Rating;
 
 		case LFFilterCompareIsNotEqual:
-			return *(BYTE*)pValue!=pFilterCondition->AttrData.Rating;
+			return *((BYTE*)pValue)!=pFilterCondition->AttrData.Rating;
 
 		case LFFilterCompareIsAboveOrEqual:
-			return *(BYTE*)pValue>=pFilterCondition->AttrData.Rating;
+			return *((BYTE*)pValue)>=pFilterCondition->AttrData.Rating;
 
 		case LFFilterCompareIsBelowOrEqual:
-			return *(BYTE*)pValue<=pFilterCondition->AttrData.Rating;
+			return *((BYTE*)pValue)<=pFilterCondition->AttrData.Rating;
 
 		default:
 			return FALSE;
@@ -205,19 +204,19 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 		{
 		case LFFilterCompareSubfolder:
 			if (pFilterCondition->AttrData.Type==LFTypeDuration)
-				return CDurationCategorizer::GetDurationCategory(*(UINT*)pValue)==CDurationCategorizer::GetDurationCategory(pFilterCondition->AttrData.UINT32);
+				return CDurationCategorizer::GetDurationCategory(*((UINT*)pValue))==CDurationCategorizer::GetDurationCategory(pFilterCondition->AttrData.UINT32);
 
 		case LFFilterCompareIsEqual:
-			return *(UINT*)pValue==pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)==pFilterCondition->AttrData.UINT32;
 
 		case LFFilterCompareIsNotEqual:
-			return *(UINT*)pValue!=pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)!=pFilterCondition->AttrData.UINT32;
 
 		case LFFilterCompareIsAboveOrEqual:
-			return *(UINT*)pValue>=pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)>=pFilterCondition->AttrData.UINT32;
 
 		case LFFilterCompareIsBelowOrEqual:
-			return *(UINT*)pValue<=pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)<=pFilterCondition->AttrData.UINT32;
 
 		default:
 			return FALSE;
@@ -227,19 +226,19 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 		switch (pFilterCondition->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return CSizeCategorizer::GetSizeCategory(*(INT64*)pValue)==CSizeCategorizer::GetSizeCategory(pFilterCondition->AttrData.INT64);
+			return CSizeCategorizer::GetSizeCategory(*((INT64*)pValue))==CSizeCategorizer::GetSizeCategory(pFilterCondition->AttrData.INT64);
 
 		case LFFilterCompareIsEqual:
-			return *(INT64*)pValue==pFilterCondition->AttrData.INT64;
+			return *((INT64*)pValue)==pFilterCondition->AttrData.INT64;
 
 		case LFFilterCompareIsNotEqual:
-			return *(INT64*)pValue!=pFilterCondition->AttrData.INT64;
+			return *((INT64*)pValue)!=pFilterCondition->AttrData.INT64;
 
 		case LFFilterCompareIsAboveOrEqual:
-			return *(INT64*)pValue>=pFilterCondition->AttrData.INT64;
+			return *((INT64*)pValue)>=pFilterCondition->AttrData.INT64;
 
 		case LFFilterCompareIsBelowOrEqual:
-			return *(INT64*)pValue<=pFilterCondition->AttrData.INT64;
+			return *((INT64*)pValue)<=pFilterCondition->AttrData.INT64;
 
 		default:
 			return FALSE;
@@ -265,16 +264,16 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return *(DOUBLE*)pValue==pFilterCondition->AttrData.Double;
+			return *((DOUBLE*)pValue)==pFilterCondition->AttrData.Double;
 
 		case LFFilterCompareIsNotEqual:
-			return *(DOUBLE*)pValue!=pFilterCondition->AttrData.Double;
+			return *((DOUBLE*)pValue)!=pFilterCondition->AttrData.Double;
 
 		case LFFilterCompareIsAboveOrEqual:
-			return *(DOUBLE*)pValue>=pFilterCondition->AttrData.Double;
+			return *((DOUBLE*)pValue)>=pFilterCondition->AttrData.Double;
 
 		case LFFilterCompareIsBelowOrEqual:
-			return *(DOUBLE*)pValue<=pFilterCondition->AttrData.Double;
+			return *((DOUBLE*)pValue)<=pFilterCondition->AttrData.Double;
 
 		default:
 			return FALSE;
@@ -311,16 +310,16 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 			return memcmp(&Time1, &Time2, sizeof(FILETIME))!=0;
 
 		case LFFilterCompareIsAboveOrEqual:
-			ULI1.LowPart = (*(FILETIME*)pValue).dwLowDateTime;
-			ULI1.HighPart = (*(FILETIME*)pValue).dwHighDateTime;
+			ULI1.LowPart = ((FILETIME*)pValue)->dwLowDateTime;
+			ULI1.HighPart = ((FILETIME*)pValue)->dwHighDateTime;
 			ULI2.LowPart = pFilterCondition->AttrData.Time.dwLowDateTime;
 			ULI2.HighPart = pFilterCondition->AttrData.Time.dwHighDateTime;
 
 			return ULI1.QuadPart>=ULI2.QuadPart;
 
 		case LFFilterCompareIsBelowOrEqual:
-			ULI1.LowPart = (*(FILETIME*)pValue).dwLowDateTime;
-			ULI1.HighPart = (*(FILETIME*)pValue).dwHighDateTime;
+			ULI1.LowPart = ((FILETIME*)pValue)->dwLowDateTime;
+			ULI1.HighPart = ((FILETIME*)pValue)->dwHighDateTime;
 			ULI2.LowPart = pFilterCondition->AttrData.Time.dwLowDateTime;
 			ULI2.HighPart = pFilterCondition->AttrData.Time.dwHighDateTime;
 
@@ -341,10 +340,24 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 			return ((*(UINT*)pValue+500)/1000)!=((pFilterCondition->AttrData.UINT32+500)/1000);
 
 		case LFFilterCompareIsAboveOrEqual:
-			return *(UINT*)pValue>=pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)>=pFilterCondition->AttrData.UINT32;
 
 		case LFFilterCompareIsBelowOrEqual:
-			return *(UINT*)pValue<=pFilterCondition->AttrData.UINT32;
+			return *((UINT*)pValue)<=pFilterCondition->AttrData.UINT32;
+
+		default:
+			return FALSE;
+		}
+
+	case LFTypeApplication:
+		switch (pFilterCondition->Compare)
+		{
+		case LFFilterCompareSubfolder:
+		case LFFilterCompareIsEqual:
+			return *((BYTE*)pValue)==pFilterCondition->AttrData.Application;
+
+		case LFFilterCompareIsNotEqual:
+			return *((BYTE*)pValue)!=pFilterCondition->AttrData.Application;
 
 		default:
 			return FALSE;
@@ -424,10 +437,22 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BOOL& Chec
 	LFFilterCondition* pFilterCondition = pFilter->pConditionList;
 	while (pFilterCondition)
 	{
+		BOOL AttributePresent = FALSE;
+
 		for (UINT a=0; a<pTable->cTableEntries; a++)
 			if (pTable->pTableEntries[a].Attr==pFilterCondition->AttrData.Attr)
+			{
+				// Attribute exists for type
 				if (!CheckCondition((BYTE*)pTableData+pTable->pTableEntries[a].Offset, pFilterCondition))
 					return FALSE;
+
+				AttributePresent = TRUE;
+			}
+
+		// Attribute does not exist for type
+		if (!AttributePresent)
+			if ((pTable!=IndexTables) && (pFilterCondition->Compare!=LFFilterCompareIsNotEqual))
+				return FALSE;
 
 		pFilterCondition = pFilterCondition->pNext;
 	}

@@ -1,11 +1,12 @@
 
 #include "stdafx.h"
 #include "Categorizers.h"
-#include "ID3.h"
 #include "LFCore.h"
 #include "LFVariantData.h"
 #include "Query.h"
+#include "TableApplications.h"
 #include "TableAttributes.h"
+#include "TableMusicGenres.h"
 #include <assert.h>
 
 
@@ -75,8 +76,19 @@ void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescri
 
 		SetAttribute(pFolder, LFAttrFileName, Name);
 
-		if (m_Attr==LFAttrGenre)
-			pFolder->IconID = GetGenreIcon(pVariant->UINT32);
+		switch (m_Attr)
+		{
+		case LFAttrApplication:
+			pFolder->IconID = GetApplicationIcon(pVariant->Application);
+
+			break;
+
+		case LFAttrGenre:
+			pFolder->IconID = GetGenreIcon(pVariant->Genre);
+
+			break;
+
+		}
 	}
 }
 

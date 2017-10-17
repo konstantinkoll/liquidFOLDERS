@@ -53,7 +53,7 @@ BOOL CGenreList::PreTranslateMessage(MSG* pMsg)
 	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
-void CGenreList::AddCategory(LFMusicGenre* pMusicGenre)
+void CGenreList::AddCategory(const LFMusicGenre* pMusicGenre)
 {
 	GenreCategoryData cd;
 
@@ -70,7 +70,7 @@ void CGenreList::AddCategory(LFMusicGenre* pMusicGenre)
 	m_IsFirstItemInCategory = TRUE;
 }
 
-void CGenreList::AddItem(LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, LPCWSTR pDescription)
+void CGenreList::AddItem(const LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, LPCWSTR pDescription)
 {
 	ASSERT(pMusicGenre);
 

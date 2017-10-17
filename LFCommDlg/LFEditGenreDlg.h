@@ -31,7 +31,7 @@ protected:
 	CGenreList m_wndGenreList;
 
 private:
-	void AddItem(LFMusicGenre* pMusicGenre, INT Index);
+	void AddItem(const LFMusicGenre* pMusicGenre, INT Index);
 	void AddCategory(INT IconID);
 
 	CHAR m_StoreID[LFKeySize];

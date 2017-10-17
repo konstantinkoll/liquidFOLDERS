@@ -56,8 +56,8 @@ IDB_APPLICATIONS_29     RCDATA                  "res\\Applications_29.png"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,2,0,0
- PRODUCTVERSION 3,2,0,0
+ FILEVERSION 3,2,1,0
+ PRODUCTVERSION 3,2,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -74,13 +74,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "3.2.0"
+            VALUE "FileVersion", "3.2.1"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "3.2.0"
+            VALUE "ProductVersion", "3.2.1"
         END
     END
     BLOCK "VarFileInfo"

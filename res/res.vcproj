@@ -1608,6 +1608,78 @@
 			Name="Applications"
 			>
 			<File
+				RelativePath=".\Applications\APP_Boomerang.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Cinemagraph.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Default.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Facebook.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Hipstamatic.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Hyperlapse.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_IncrediBooth.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Instagram.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Jodel.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Labelbox.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Layout.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Pinterest.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Retrica.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Snapchat.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Vimeo.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_VintageCam.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_VSCO.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_YouTube.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Applications\Boomerang_29.png"
 				>
 			</File>
@@ -1636,6 +1708,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Applications\Jodel_29.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Applications\Labelbox_29.png"
 				>
 			</File>
@@ -1653,6 +1729,10 @@
 			</File>
 			<File
 				RelativePath=".\Applications\Snapchat_29.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\Vimeo_29.png"
 				>
 			</File>
 			<File

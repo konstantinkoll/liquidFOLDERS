@@ -712,7 +712,10 @@ void CFileView::EditLabel(INT Index)
 
 			m_pWndEdit = new CEdit();
 			m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
+
+			// DO NOT USE GetLabel(), as it is a beautified version of the file name for display purposes only!
 			m_pWndEdit->SetWindowText(pItemDescriptor->CoreAttributes.FileName);
+
 			m_pWndEdit->SetFont(pFont);
 			m_pWndEdit->SetFocus();
 			m_pWndEdit->SetSel(0, -1);
@@ -778,16 +781,41 @@ void CFileView::AdjustScrollbars()
 
 CString CFileView::GetLabel(LFItemDescriptor* pItemDescriptor) const
 {
-	CString Label = pItemDescriptor->CoreAttributes.FileName;
+	CString strLabel = pItemDescriptor->CoreAttributes.FileName;
 
+	// Remove annotation
+	LFVariantData Data1;
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrApplication, Data1);
+
+	if (!LFIsNullVariantData(Data1))
+	{
+		const INT Length = strLabel.GetLength();
+
+		if (strLabel.GetAt(Length-1)==L')')
+		{
+			UINT Pos = strLabel.ReverseFind(L'(');
+
+			if (Pos!=-1)
+			{
+				LFVariantData Data2;
+				LFInitVariantData(Data2, LFAttrApplication);
+				LFVariantDataFromString(Data2, strLabel.Mid(Pos+1, Length-Pos-2));
+
+				if (LFCompareVariantData(Data1, Data2)==0)
+					strLabel = strLabel.Left(Pos).TrimRight();
+			}
+		}
+	}
+
+	// Extension
 	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 		if ((!m_HideFileExt || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
 		{
-			Label += _T(".");
-			Label += pItemDescriptor->CoreAttributes.FileFormat;
+			strLabel += _T(".");
+			strLabel += pItemDescriptor->CoreAttributes.FileFormat;
 		}
 
-	return Label;
+	return strLabel;
 }
 
 BOOL CFileView::BeginDragDrop()
