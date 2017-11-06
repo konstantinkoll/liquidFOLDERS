@@ -215,8 +215,7 @@ void CMapCtrl::OnPaint()
 		INT PosY;
 		PointFromLocation(PosX, PosY);
 
-		Graphics g(dc);
-		DrawLocationIndicator(g, PosX-4, PosY-4, 8);
+		DrawLocationIndicator(dc, PosX-4, PosY-4, 8);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

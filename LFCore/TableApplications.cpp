@@ -26,6 +26,7 @@ extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT] = {
 	{ L"Vimeo",        LFApplicationVimeo },
 
 	{ L"FB",           LFApplicationFacebook },
+	{ L"Flixel",       LFApplicationCinemagraph },
 	{ L"Hipsta",       LFApplicationHipstamatic },
 	{ L"HipstaPrint",  LFApplicationHipstamatic },
 	{ L"IG",           LFApplicationInstagram },

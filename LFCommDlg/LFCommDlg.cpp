@@ -78,6 +78,31 @@ void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 
 BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
+struct BITMAPINFO16
+{
+	BITMAPINFOHEADER bmiHeader;
+	RGBQUAD bmiColors[16];
+};
+
+static const BYTE DefaultPalette[64] = {
+	255, 255, 255, 0,
+	0, 255, 255, 0,
+	0, 102, 255, 0,
+	0, 0, 221, 0,
+	153, 0, 255, 0,
+	153, 0, 51, 0,
+	204, 0, 0, 0,
+	255, 153, 0, 0,
+	0, 170, 0, 0,
+	0, 102, 0, 0,
+	102, 51, 0, 0,
+	51, 102, 153, 0,
+	187, 187, 187, 0,
+	136, 136, 136, 0,
+	68, 68, 68, 0,
+	0, 0, 0, 0
+};
+
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
 	ASSERT(lpRect);
@@ -129,6 +154,24 @@ BOOL IsCtrlThemed()
 	return LFGetApp()->m_ThemeLibLoaded ? LFGetApp()->zIsAppThemed() : FALSE;
 }
 
+HBITMAP CreateMaskBitmap(LONG Width, LONG Height)
+{
+	BITMAPINFO16 DIB;
+	ZeroMemory(&DIB, sizeof(DIB));
+
+	DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	DIB.bmiHeader.biWidth = Width;
+	DIB.bmiHeader.biHeight = -Height;
+	DIB.bmiHeader.biPlanes = 1;
+	DIB.bmiHeader.biBitCount = 4;
+	DIB.bmiHeader.biCompression = BI_RGB;
+	DIB.bmiHeader.biClrUsed = 16;
+
+	memcpy_s(DIB.bmiColors, sizeof(DIB.bmiColors), DefaultPalette, sizeof(DefaultPalette));
+
+	return CreateDIBSection(NULL, (LPBITMAPINFO)&DIB, DIB_RGB_COLORS, NULL, NULL, 0);
+}
+
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height)
 {
 	BITMAPINFO DIB;
@@ -170,16 +213,23 @@ CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height)
 
 void DrawLocationIndicator(Graphics& g, INT x, INT y, INT Size)
 {
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-	Gdiplus::REAL Radius = (Gdiplus::REAL)Size/8.0f;
-	Rect rect(x+(INT)(0.5f*Radius), y+(INT)(0.5f*Radius), Size-(INT)Radius-1, Size-(INT)Radius-1);
+	const REAL Diameter = (REAL)Size/8.0f;
+	Rect rect(x+(INT)(Diameter/2.0f), y+(INT)(Diameter/2.0f), Size-(INT)Diameter-1, Size-(INT)Diameter-1);
 
 	SolidBrush brush(Color(0xFFFF0000));
 	g.FillEllipse(&brush, rect);
 
-	Pen pen(Color(0xFFFFFFFF), Radius);
+	Pen pen(Color(0xFFFFFFFF), Diameter);
 	g.DrawEllipse(&pen, rect);
+}
+
+void DrawLocationIndicator(CDC& dc, INT x, INT y, INT Size)
+{
+	Graphics g(dc);
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+	DrawLocationIndicator(g, x, y, Size);
 }
 
 void DrawControlBorder(CWnd* pWnd)
@@ -928,15 +978,19 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CS
 
 		IShellFolder* pParentFolder = NULL;
 		LPCITEMIDLIST Child = NULL;
+
 		if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &Child)))
 		{
 			WIN32_FIND_DATA ffd;
+
 			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
 			{
 				FILETIME lft;
+
 				WCHAR tmpBuf1[256];
 				FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
 				LFTimeToString(lft, tmpBuf1, 256);
+
 				WCHAR tmpBuf2[256];
 				FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
 				LFTimeToString(lft, tmpBuf2, 256);
@@ -945,8 +999,10 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CS
 				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
 					LFGetApp()->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
 					LFGetApp()->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
+
 				Hint.Append(tmpStr);
 			}
+
 			pParentFolder->Release();
 		}
 	}
@@ -955,7 +1011,7 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CS
 
 // IATA
 
-HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
+HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, LONG Width, LONG Height)
 {
 	ASSERT(pAirport);
 
@@ -963,90 +1019,70 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, UINT Width, UINT Height)
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
 
-	BITMAPINFOHEADER bmi = { sizeof(bmi) };
-	bmi.biWidth = Width;
-	bmi.biHeight = Height;
-	bmi.biPlanes = 1;
-	bmi.biBitCount = 24;
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(CreateTruecolorBitmap(Width, Height));
 
-	LPBYTE pbData = NULL;
-	HBITMAP hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
-
-	// Draw
+	// Draw map
 	Graphics g(dc);
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
-	const CSize szMap(pMap->GetWidth(), pMap->GetHeight());
+	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
 
-	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*szMap.cx)/360.0);
-	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*szMap.cy)/180.0);
+	// Map location
+	INT X = (INT)((pAirport->Location.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
+	INT Y = (INT)((pAirport->Location.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
 
-	INT PosX = -LocX+Width/2;
-	INT PosY = -LocY+Height/2;
+	// Map offset
+	INT OffsX = -X+Width/2;
+	INT OffsY = -Y+Height/2;
 
-	if (PosY>0)
+	if (OffsY>0)
 	{
-		PosY = 0;
+		OffsY = 0;
 	}
 	else
-		if (PosY<(INT)Height-szMap.cy)
+		if (OffsY<Height-Size.cy)
 		{
-			PosY = (INT)Height-szMap.cy;
+			OffsY = Height-Size.cy;
 		}
 
 	ImageAttributes ImgAttr;
 	ImgAttr.SetWrapMode(WrapModeTile);
 
-	g.DrawImage(pMap, Rect(0, 0, Width, Height), -PosX, -PosY, Width, Height, UnitPixel, &ImgAttr);
+	g.DrawImage(pMap, Rect(0, 0, Width, Height), -OffsX, -OffsY, Width, Height, UnitPixel, &ImgAttr);
 
 	// Location indicator
-	LocX += PosX-8;
-	LocY += PosY-8;
-	DrawLocationIndicator(g, LocX, LocY, 16);
+	X += OffsX-8;
+	Y += OffsY-8;
+	DrawLocationIndicator(g, X, Y);
 
-	// Pfad erstellen
+	// Create font path
 	FontFamily fontFamily(_T("Arial"));
 	WCHAR pszBuf[4];
 	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
 
 	StringFormat StrFormat;
 	GraphicsPath TextPath;
-	TextPath.AddString(pszBuf, -1, &fontFamily, FontStyleRegular, 21, Point(0, 0), &StrFormat);
+	TextPath.AddString(pszBuf, -1, &fontFamily, FontStyleRegular, 20.75f, Point(0, 0), &StrFormat);
 
-	// Pfad verschieben
-	Rect rt;
-	TextPath.GetBounds(&rt);
-
-	INT FntX = LocX+16;
-	INT FntY = LocY-rt.Y;
-
-	if (FntY<10)
-	{
-		FntY = 10;
-	}
-	else
-		if (FntY+rt.Height+10>(INT)Height)
-		{
-			FntY = Height-rt.Height-10;
-		}
+	// Translate path
+	Rect rectPath;
+	TextPath.GetBounds(&rectPath);
 
 	Matrix m;
-	m.Translate((Gdiplus::REAL)FntX, (Gdiplus::REAL)(FntY-1));
+	m.Translate((Gdiplus::REAL)X+(rectPath.X+12), (Gdiplus::REAL)Y-(rectPath.Y+1));
 	TextPath.Transform(&m);
 
-	// Text
-	Pen pen(Color(0xFF000000), 3.5);
+	// Draw label
+	Pen pen(Color(0xCC000000), 3.0f);
 	pen.SetLineJoin(LineJoinRound);
 	g.DrawPath(&pen, &TextPath);
 
 	SolidBrush brush(Color(0xFFFFFFFF));
 	g.FillPath(&brush, &TextPath);
 
-	dc.SelectObject(hOldBitmap);
-
-	return hBitmap;
+	return (HBITMAP)dc.SelectObject(hOldBitmap);
 }
 
 

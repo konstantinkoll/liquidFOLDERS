@@ -644,7 +644,7 @@ void CBackstageSidebar::OnSize(UINT nType, INT cx, INT cy)
 
 void CBackstageSidebar::OnMouseMove(UINT nFlags, CPoint point)
 {
-	INT Item = ItemAtPosition(point);
+	const INT Item = ItemAtPosition(point);
 
 	if (!m_Hover)
 	{

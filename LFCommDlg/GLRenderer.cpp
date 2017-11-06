@@ -476,8 +476,7 @@ void GLRenderer::CreateTextureLocationIndicator(GLuint& nTextureID) const
 
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
-	Graphics g(dc);
-	DrawLocationIndicator(g, 1, 1, 62);
+	DrawLocationIndicator(dc, 1, 1, 62);
 
 	dc.SelectObject(hOldBitmap);
 

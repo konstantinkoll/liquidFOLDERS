@@ -8668,7 +8668,7 @@ XLA     Little America, USA
 XLB     Lac Brochet, Canada;4;58*37'3"N, 101*28'8"W
 XLJ     Québec (Gare du Palais), Canada;5;46*49'8"N, 71*12'52"W
 XLK     Levis (Railway Station), Canada;5;46*48'37"N, 71*11'13"W
-XLM YMQ Montreal (Central Railway Station), Canada;5;45*30'0"N, 73*34'0"E
+XLM YMQ Montreal (Central Railway Station), Canada;5;45*30'0"N, 73*34'0"W
 XLO     Long Xuyen, Vietnam;4;10*19'59"N, 105*28'59"E
 XLS     Saint-Louis, Senegal;4;16*3'3"N, 16*27'47"W
 XLU     Leo, Burkina Faso;4;11*6'0"N, 2*5'60"W

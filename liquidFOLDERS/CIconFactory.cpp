@@ -435,35 +435,38 @@ BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor*
 	if (LFIsNullVariantData(Data))
 		return FALSE;
 
-	// Draw map icon
-	Bitmap* pMap = theApp.GetCachedResourceImage(IDB_BLUEMARBLE_512);
-	const CSize szMap(pMap->GetWidth(), pMap->GetHeight());
+	// Draw map
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	INT LocX = (INT)(((Data.GeoCoordinates.Longitude+180.0)*szMap.cx)/360.0);
-	INT LocY = (INT)(((Data.GeoCoordinates.Latitude+90.0)*szMap.cy)/180.0);
+	Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_512);
+	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
 
-	INT PosX = -LocX+124/2;
-	INT PosY = -LocY+124/2;
+	// Map location
+	INT X = (INT)((Data.GeoCoordinates.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
+	INT Y = (INT)((Data.GeoCoordinates.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
 
-	if (PosY>0)
+	// Map offset
+	INT OffsX = -X+124/2;
+	INT OffsY = -Y+124/2;
+
+	if (OffsY>0)
 	{
-		PosY = 0;
+		OffsY = 0;
 	}
 	else
-		if (PosY<124-szMap.cy)
+		if (OffsY<124-Size.cy)
 		{
-			PosY = 124-szMap.cy;
+			OffsY = 124-Size.cy;
 		}
 
 	ImageAttributes ImgAttr;
 	ImgAttr.SetWrapMode(WrapModeTile);
-
-	g.DrawImage(pMap, Rect(pt.x+2, pt.y+ThumbnailYOffset+1, 124, 124), -PosX, -PosY, 124, 124, UnitPixel, &ImgAttr);
+	g.DrawImage(pMap, Rect(pt.x+2, pt.y+ThumbnailYOffset+1, 124, 124), -OffsX, -OffsY, 124, 124, UnitPixel, &ImgAttr);
 
 	// Location indicator
-	LocX += PosX-4;
-	LocY += PosY-4;
-	DrawLocationIndicator(g, pt.x+2+LocX, pt.y+ThumbnailYOffset+1+LocY, 8);
+	X += OffsX-4;
+	Y += OffsY-4;
+	DrawLocationIndicator(g, pt.x+2+X, pt.y+ThumbnailYOffset+1+Y, 8);
 
 	// Decorate map with thumbnail frame
 	g.DrawImage(theApp.GetCachedResourceImage(IDB_THUMBNAIL), pt.x, pt.y+ThumbnailYOffset);

@@ -1044,8 +1044,7 @@ void CBackstageWnd::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 			RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 		}
 
-//		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && (lpwndpos->cx<=m_RegionWidth) && (lpwndpos->cy<=m_RegionHeight))
-			UpdateRegion(lpwndpos->cx, lpwndpos->cy);
+		UpdateRegion(lpwndpos->cx, lpwndpos->cy);
 
 		if (IsWindowVisible())
 			RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN);

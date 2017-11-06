@@ -1433,6 +1433,12 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		break;
 
+	case 'C':
+		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_COPY);
+
+		break;
+
 	case 'I':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectInvert();

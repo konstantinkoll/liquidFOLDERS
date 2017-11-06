@@ -58,11 +58,13 @@ void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor
 
 	// Iterate the lines
 	UINT Line = 0;
-	for (; Line<MaxLineCount; Line++)
+
+	while (Line<MaxLineCount)
 	{
 		CString strLine;
 		INT LineWidth = 0;
 		BOOL Break;
+
 		do
 		{
 			// Find delimiter
@@ -111,10 +113,15 @@ void CIconsView::DrawWrapLabel(CDC& dc, const CRect& rectLabel, LFItemDescriptor
 
 		// Move rectLine one line down
 		rectLine.OffsetRect(0, m_DefaultFontHeight);
+
+		Line++;
+
+		if (strLabel.IsEmpty())
+			break;
 	}
 
 	// Hint
-	if ((Line<=MaxLineCount) && ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))
+	if ((Line<MaxLineCount) && ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))
 	{
 		ASSERT(pItemDescriptor->Description[0]);
 

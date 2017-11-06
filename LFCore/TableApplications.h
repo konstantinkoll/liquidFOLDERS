@@ -6,7 +6,7 @@
 UINT GetApplicationIcon(BYTE nID);
 
 
-#define APPLICATIONCOUNT     27
+#define APPLICATIONCOUNT     28
 
 
 #pragma pack(push,1)
