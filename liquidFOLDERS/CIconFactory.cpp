@@ -438,7 +438,7 @@ BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor*
 	// Draw map
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_512);
+	Bitmap* pMap = theApp.GetCachedResourceImage(IDB_BLUEMARBLE_512);
 	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
 
 	// Map location

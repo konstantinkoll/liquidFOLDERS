@@ -71,7 +71,7 @@ protected:
 	INT m_SmallIconSize;
 
 private:
-	static LPCWSTR GetAttribute(TimelineItemData* pData, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
+	static LPCWSTR GetAttribute(TimelineItemData* pData, UINT Mask, const LFItemDescriptor* pItemDescriptor, UINT Attr);
 	static void AggregateAttribute(UINT& PreviewMask, LPCWSTR& pStrAggregated, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	static void AggregateIcon(UINT& PreviewMask, INT& AggregatedIconID, UINT Mask, INT IconID);
 	static BOOL UsePreview(LFItemDescriptor* pItemDescriptor);

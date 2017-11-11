@@ -32,7 +32,7 @@ CTimelineView::CTimelineView()
 {
 }
 
-LPCWSTR CTimelineView::GetAttribute(TimelineItemData* pData, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr)
+LPCWSTR CTimelineView::GetAttribute(TimelineItemData* pData, UINT Mask, const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	ASSERT(pData);
 	ASSERT(pItemDescriptor);
@@ -211,7 +211,7 @@ BOOL CTimelineView::UsePreview(LFItemDescriptor* pItemDescriptor)
 		switch (pItemDescriptor->CoreAttributes.ContextID)
 		{
 		case LFContextAudio:
-			return (LFGetApp()->OSVersion>OS_XP);
+			return (theApp.OSVersion>OS_XP);
 
 		case LFContextPictures:
 			return ((_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "BMP")==0) ||

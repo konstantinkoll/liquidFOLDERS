@@ -1017,7 +1017,7 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
-	LFGetApp()->HideTooltip();
+	theApp.HideTooltip();
 
 	if (zDelta<0)
 	{

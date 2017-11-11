@@ -1272,7 +1272,7 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 			TrackMouseEvent(&tme);
 		}
 		else
-			if ((LFGetApp()->IsTooltipVisible()) && (Index!=m_HotItem))
+			if ((theApp.IsTooltipVisible()) && (Index!=m_HotItem))
 				theApp.HideTooltip();
 
 		if (m_HotItem!=Index)
@@ -1308,7 +1308,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 				EditLabel(m_EditLabel);
 			}
 			else
-				if (!LFGetApp()->IsTooltipVisible() && (m_Flags & FF_ENABLETOOLTIPS))
+				if (!theApp.IsTooltipVisible() && (m_Flags & FF_ENABLETOOLTIPS))
 				{
 					LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HotItem];
 
@@ -1417,7 +1417,7 @@ void CFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 			}
 
-		LFGetApp()->PlayDefaultSound();
+		theApp.PlayDefaultSound();
 	}
 
 	CFrontstageWnd::OnChar(nChar, nRepCnt, nFlags);
