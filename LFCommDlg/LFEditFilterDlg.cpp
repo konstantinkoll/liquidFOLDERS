@@ -139,7 +139,7 @@ BOOL LFEditFilterDlg::InitDialog()
 	if (m_StoreID[0]!='\0')
 	{
 		LFStoreDescriptor Store;
-		if (LFGetStoreSettings(m_StoreID, &Store)==LFOk)
+		if (LFGetStoreSettings(m_StoreID, Store)==LFOk)
 		{
 			InStore = TRUE;
 

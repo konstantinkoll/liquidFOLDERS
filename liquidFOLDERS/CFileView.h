@@ -8,7 +8,7 @@
 
 // View parameters
 
-#define VIEWSETTINGSVERSION     6
+#define VIEWSETTINGSVERSION     7
 
 struct LFContextViewSettings
 {
@@ -33,6 +33,8 @@ struct LFGlobalViewSettings
 	BOOL GlobeShowAirportNames;
 	BOOL GlobeShowGPS;
 	BOOL GlobeShowDescription;
+
+	BOOL IconsShowCapacity;
 
 	BOOL TagcloudCanonical;
 	BOOL TagcloudShowRare;
@@ -316,8 +318,8 @@ inline INT CFileView::GetColorDotWidth(INT Index, const CIcons& Icons) const
 
 inline COLORREF CFileView::SetGrayText(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
 {
-	if (Themed && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
-		return dc.SetTextColor(0x808080);
+	if (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
+		return dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
 	return dc.GetTextColor();
 }

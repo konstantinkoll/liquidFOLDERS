@@ -87,9 +87,9 @@ public:
 
 	void AttributeToString(CString& Name, CString& Value, LFItemDescriptor* pItemDescriptor, UINT Attr) const;
 	CString GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName=NULL) const;
-	CString GetHintForStore(LFStoreDescriptor* pStoreDescriptor) const;
+	CString GetHintForStore(const LFStoreDescriptor& StoreDescriptor) const;
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, LFStoreDescriptor* pStoreDescriptor);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const LFStoreDescriptor& StoreDescriptor);
 	BOOL IsTooltipVisible() const;
 	void HideTooltip();
 
@@ -205,6 +205,11 @@ private:
 inline void LFApplication::LoadColorDots(CIcons& Icons, const LFFont& Font)
 {
 	LoadColorDots(Icons, Font.GetFontHeight());
+}
+
+inline void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const LFStoreDescriptor& StoreDescriptor)
+{
+	ShowTooltip(pCallerWnd, point, StoreDescriptor.StoreName, GetHintForStore(StoreDescriptor));
 }
 
 inline BOOL LFApplication::IsTooltipVisible() const

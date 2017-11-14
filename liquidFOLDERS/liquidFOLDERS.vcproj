@@ -632,6 +632,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Background_CapacityBar.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\BlueMarble_1024.jpg"
 				>
 			</File>

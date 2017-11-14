@@ -8,7 +8,7 @@
 #define IDXTABLE_MASTER     0
 #define IDXTABLECOUNT       6
 
-#define CURIDXVERSION       4
+#define CURIDXVERSION       5
 
 
 #define IDXATTRS_CORE           ((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | \

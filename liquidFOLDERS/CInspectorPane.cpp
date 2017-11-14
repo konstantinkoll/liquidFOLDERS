@@ -73,7 +73,15 @@ void CFileSummary::AddValueVirtual(UINT Attr, const LPCSTR pStrValue)
 	WCHAR tmpStr[256];
 	MultiByteToWideChar(CP_ACP, 0, pStrValue, -1, tmpStr, 256);
 
-	AddValueVirtual(Attr, &tmpStr[0]);
+	AddValueVirtual(Attr, tmpStr);
+}
+
+void CFileSummary::AddValueVirtual(UINT Attr, const INT64 Size)
+{
+	WCHAR tmpStr[256];
+	LFSizeToString(Size, tmpStr, 256);
+
+	AddValueVirtual(Attr, tmpStr);
 }
 
 void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
@@ -195,32 +203,6 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 	// Type and properties
 	switch (m_Type=(pItemDescriptor->Type & LFTypeMask))
 	{
-	case LFTypeStore:
-		m_ItemCount++;
-
-		for (UINT a=0; a<=LFLastCoreAttribute; a++)
-			if (theApp.IsAttributeAvailable(LFContextStores, a))
-				AddValue(pItemDescriptor, a);
-
-		// Virtual properties
-		LFStoreDescriptor Store;
-		LFGetStoreSettings(pItemDescriptor->StoreID, &Store);
-
-		AddValueVirtual(AttrSource, theApp.m_SourceNames[Store.Source][0]);
-
-		WCHAR tmpStr[256];
-		LFTimeToString(Store.MaintenanceTime, tmpStr, 256);
-		AddValueVirtual(AttrMaintenanceTime, tmpStr);
-
-		LFTimeToString(Store.SynchronizeTime, tmpStr, 256);
-		if (tmpStr[0]!=L'\0')
-			AddValueVirtual(AttrSynchronizeTime, tmpStr);
-
-		if ((Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-			AddValueVirtual(AttrLastSeen, Store.LastSeen);
-
-		break;
-
 	case LFTypeFile:
 		AddFile(pItemDescriptor);
 
@@ -236,6 +218,39 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 		{
 			m_ItemCount += pItemDescriptor->AggregateCount;
 		}
+
+		break;
+
+	case LFTypeStore:
+		m_ItemCount++;
+
+		for (UINT a=0; a<=LFLastCoreAttribute; a++)
+			if (theApp.IsAttributeAvailable(LFContextStores, a))
+				AddValue(pItemDescriptor, a);
+
+		// Source
+		AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->StoreDescriptor.Source][0]);
+
+		// Maintenance time
+		WCHAR tmpStr[256];
+		LFTimeToString(pItemDescriptor->StoreDescriptor.MaintenanceTime, tmpStr, 256);
+		AddValueVirtual(AttrMaintenanceTime, tmpStr);
+
+		// Synchronize time
+		LFTimeToString(pItemDescriptor->StoreDescriptor.SynchronizeTime, tmpStr, 256);
+		if (tmpStr[0]!=L'\0')
+			AddValueVirtual(AttrSynchronizeTime, tmpStr);
+
+		// Last seen
+		if ((pItemDescriptor->StoreDescriptor.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+			AddValueVirtual(AttrLastSeen, pItemDescriptor->StoreDescriptor.LastSeen);
+
+		// Volume space
+		AddValueVirtual(AttrTotalBytes, pItemDescriptor->StoreDescriptor.TotalNumberOfBytes.QuadPart);
+		AddValueVirtual(AttrTotalBytesFree, pItemDescriptor->StoreDescriptor.TotalNumberOfBytesFree.QuadPart);
+
+		if (pItemDescriptor->StoreDescriptor.TotalNumberOfBytesFree.QuadPart!=pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart)
+			AddValueVirtual(AttrFreeBytesAvailable, pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart);
 
 		break;
 	}

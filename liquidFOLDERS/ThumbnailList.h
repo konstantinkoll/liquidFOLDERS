@@ -8,6 +8,8 @@ struct ThumbnailData
 	CHAR StoreID[LFKeySize];
 	CHAR FileID[LFKeySize];
 	HBITMAP hBitmap;
+	BOOL HasFrame;
+	BOOL HasBackground;
 };
 
 
@@ -18,8 +20,8 @@ public:
 	ThumbnailList();
 	~ThumbnailList();
 
-	void AddItem(ThumbnailData& td);
-	BOOL Lookup(LFItemDescriptor* i, ThumbnailData& td);
+	void AddItem(ThumbnailData& Thumbnail);
+	BOOL Lookup(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
 
 protected:
 	void FreeItem(UINT Index);
@@ -51,17 +53,17 @@ __forceinline void ThumbnailList<C>::FreeItem(UINT Index)
 }
 
 template <UINT C>
-void ThumbnailList<C>::AddItem(ThumbnailData& td)
+void ThumbnailList<C>::AddItem(ThumbnailData& Thumbnail)
 {
 	FreeItem(m_NextPtr);
 
-	m_Items[m_NextPtr] = td;
+	m_Items[m_NextPtr] = Thumbnail;
 	if (++m_NextPtr>=C)
 		m_NextPtr = 0;
 }
 
 template <UINT C>
-BOOL ThumbnailList<C>::Lookup(LFItemDescriptor* i, ThumbnailData& td)
+BOOL ThumbnailList<C>::Lookup(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail)
 {
 	INT pChar = m_NextPtr;
 
@@ -70,9 +72,9 @@ BOOL ThumbnailList<C>::Lookup(LFItemDescriptor* i, ThumbnailData& td)
 		if (--pChar<0)
 			pChar = C-1;
 
-		if ((strcmp(m_Items[pChar].StoreID, i->StoreID)==0) && (strcmp(m_Items[pChar].FileID, i->CoreAttributes.FileID)==0))
+		if ((strcmp(m_Items[pChar].StoreID, pItemDescriptor->StoreID)==0) && (strcmp(m_Items[pChar].FileID, pItemDescriptor->CoreAttributes.FileID)==0))
 		{
-			td = m_Items[pChar];
+			Thumbnail = m_Items[pChar];
 
 			if (pChar!=m_NextPtr)
 			{

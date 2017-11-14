@@ -660,6 +660,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Contexts\Books_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Books_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Books_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Books_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Books_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Contexts\Contacts_16.png"
 				>
 			</File>
@@ -737,6 +757,26 @@
 			</File>
 			<File
 				RelativePath=".\Contexts\Filters_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Fonts_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Fonts_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Fonts_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Fonts_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Fonts_64.png"
 				>
 			</File>
 			<File
@@ -901,26 +941,6 @@
 			</File>
 			<File
 				RelativePath=".\Tasks\Archive_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Browse_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Browse_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Browse_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Browse_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Browse_64.png"
 				>
 			</File>
 			<File
@@ -1364,6 +1384,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Tasks\ShowInstalled_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ShowInstalled_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ShowInstalled_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ShowInstalled_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ShowInstalled_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Tasks\SizeToFit_16.png"
 				>
 			</File>
@@ -1762,6 +1802,14 @@
 		</File>
 		<File
 			RelativePath=".\Arrow_Right.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Background_CapacityBar (Original).jpg"
+			>
+		</File>
+		<File
+			RelativePath=".\Background_CapacityBar.png"
 			>
 		</File>
 		<File

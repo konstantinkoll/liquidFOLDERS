@@ -110,24 +110,24 @@ LFCORE_API UINT __stdcall LFSetDefaultStore(LPCSTR pStoreID);
 LFCORE_API UINT __stdcall LFGetStoreCount();
 
 // Gibt die IDs aller Stores zurück
-LFCORE_API UINT __stdcall LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount);
+LFCORE_API UINT __stdcall LFGetAllStores(CHAR*& pStoreIDs, UINT& Count);
 
 // Gibt die Daten eines Stores zurück
-LFCORE_API UINT __stdcall LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor* pStoreDescriptor);
-LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescriptor* pStoreDescriptor);
+LFCORE_API UINT __stdcall LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace=FALSE);
+LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace=FALSE);
 
 // Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
 LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
 
 // Gibt die ID für das Icon eines Stores zurück
-LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
+LFCORE_API UINT __stdcall LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
 
 // Prüft, ob ein Store angeschlossen ist
 #define LFIsStoreMounted(pStoreDescriptor) ((pStoreDescriptor)->DatPath[0]!=L'\0')
 
 // Erzeugt einen neuen Store
-LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName=NULL, LPCWSTR pComments=NULL, CHAR cVolume='\0', BOOL MakeSearchable=FALSE);
-LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName=NULL, LFProgress* pProgress=NULL);
+LFCORE_API UINT __stdcall LFCreateStoreLiquidfolders(LPWSTR pStoreName=NULL, LPCWSTR pComments=NULL, CHAR cVolume='\0', BOOL MakeSearchable=FALSE);
+LFCORE_API UINT __stdcall LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName=NULL, LFProgress* pProgress=NULL);
 
 // Macht einen Store offline durchsuchbar
 LFCORE_API UINT __stdcall LFMakeStoreSearchable(LPCSTR pStoreID, BOOL Searchable=TRUE);
@@ -149,7 +149,7 @@ LFCORE_API UINT __stdcall LFSynchronizeStores(LFProgress* pProgress=NULL);
 LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProgress=NULL);
 
 // Gibt den physischen Pfad einer Datei zurück
-LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew, BOOL CheckExists=TRUE);
+LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew=TRUE, BOOL CheckExists=TRUE);
 
 // Importiert Dateien
 LFCORE_API void __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
@@ -160,7 +160,7 @@ LFCORE_API void __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL
 //
 
 // Prüft, ob ein Hashtag in einem Unicode-Array enthalten ist
-LFCORE_API BOOL LFContainsHashtag(LPCWSTR pUnicodeArray, LPCWSTR pHashtag);
+LFCORE_API BOOL __stdcall LFContainsHashtag(LPCWSTR pUnicodeArray, LPCWSTR pHashtag);
 
 // Konvertiert einen FourCC in eine Zeichenkette
 LFCORE_API void __stdcall LFFourCCToString(const UINT c, LPWSTR pStr, SIZE_T cCount);
@@ -239,7 +239,7 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
 LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes=NULL, LPVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
 
 // Neuen LFItemDescriptor für Store erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(const LFStoreDescriptor* pStoreDescriptor);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(const LFStoreDescriptor& StoreDescriptor);
 
 // Unabhängige Kopie von pItemDescriptor erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(const LFItemDescriptor* pItemDescriptor);
@@ -364,11 +364,11 @@ LFCORE_API void __stdcall LFIATAGetLocationNameForCode(LPCSTR pCode, LPWSTR pStr
 //
 
 // Setzt den Zeiger *ppMusicGenre auf das nächsten Genre
-LFCORE_API INT LFID3GetNextMusicGenre(INT Last, const LFMusicGenre** ppMusicGenre);
+LFCORE_API INT __stdcall LFID3GetNextMusicGenre(INT Last, const LFMusicGenre** ppMusicGenre);
 
 // Setzt den Zeiger *ppMusicGenre auf das nächsten Genre mit dem Icon IconID.
 // *ppMusicGenre kann in jedem Fall überschrieben werden.
-LFCORE_API INT LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, const LFMusicGenre** ppMusicGenre);
+LFCORE_API INT __stdcall LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, const LFMusicGenre** ppMusicGenre);
 
 
 
@@ -396,23 +396,24 @@ LFCORE_API UINT __stdcall LFQueryStatistics(LFStatistics& Statistics, LPCSTR Sto
 
 LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz);
 
-// Skaliert eine Bitmap von 256x256 auf 128x128 (nur 32 Bit)
-LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap);
+// Bereitet eine Bitmap für die Ausgabe vor, da viele Thumbnail-Handler korrupte Vorschaubilder zurückliefern.
+// Die Bitmap wird ggf. auf maximal 128x128 Pixel skaliert.
+LFCORE_API HBITMAP __stdcall LFSanitizeThumbnail(HBITMAP hBitmap);
 
 
 
 // Shortcuts
 //
 
-// Speichert pShellLink auf dem Desktop ab
-LFCORE_API void __stdcall LFCreateDesktopShortcut(IShellLink* pShellLink, LPCWSTR pLinkFileName);
+// Erstellt ein IShellLink-Objekt
+#define LFCreateShellLink(ppShellLink) SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&ppShellLink))
 
-// Liefert einen ShellLink für den angegebenen Store
-LFCORE_API IShellLink* __stdcall LFGetShortcutForStore(LFItemDescriptor* pItemDescriptor);
+// Liefert einen ShellLink für das angegebene Element
+LFCORE_API UINT __stdcall LFGetShortcutForItem(LFItemDescriptor* pItemDescriptor, IShellLink*& pShellLink);
 
 // Erzeugt auf dem Desktop eine Verknüpfung mit dem angegebenen Store
-LFCORE_API void __stdcall LFCreateDesktopShortcutForStore(LFItemDescriptor* pItemDescriptor);
-LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* pStoreDescriptor);
+LFCORE_API UINT __stdcall LFCreateDesktopShortcutForItem(LFItemDescriptor* pItemDescriptor);
+LFCORE_API UINT __stdcall LFCreateDesktopShortcutForStore(const LFStoreDescriptor& StoreDescriptor);
 
 
 
@@ -420,12 +421,12 @@ LFCORE_API void __stdcall LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* p
 //
 
 // Liefert den Pfad des Box-Ordners zurück
-LFCORE_API BOOL LFGetBoxPath(LPWSTR pPath);
+LFCORE_API BOOL __stdcall LFGetBoxPath(LPWSTR pPath);
 
 
 // Liefert den Pfad des iCloud-Drive-Ordners zurück
-LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath);
+LFCORE_API BOOL __stdcall LFGetICloudPath(LPWSTR pPath);
 
 
 // Liefert die Pfade von OneDrive zurück
-LFCORE_API BOOL LFGetOneDrivePaths(LFOneDrivePaths& OneDrivePaths);
+LFCORE_API BOOL __stdcall LFGetOneDrivePaths(LFOneDrivePaths& OneDrivePaths);

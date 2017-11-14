@@ -210,25 +210,35 @@ BOOL CTimelineView::UsePreview(LFItemDescriptor* pItemDescriptor)
 	if (pItemDescriptor->Type & LFTypeMounted)
 		switch (pItemDescriptor->CoreAttributes.ContextID)
 		{
+		case LFContextAllFiles:
+			return (theApp.OSVersion>OS_XP) && (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "theme")==0);
+
 		case LFContextAudio:
 			return (theApp.OSVersion>OS_XP);
 
 		case LFContextPictures:
-			return ((_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "BMP")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "DIB")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "GIF")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "JPG")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "JPEG")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "PNG")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "TIF")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "TIFF")==0));
+			return ((_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "bmp")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "dib")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "gif")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "jpg")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "jpeg")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "png")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "tif")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "tiff")==0));
 
 		case LFContextVideos:
 			return TRUE;
 
 		case LFContextDocuments:
-			return ((_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "PPT")==0) ||
-					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "PPTX")==0));
+			return ((_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "ppt")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "pptx")==0));
+
+		case LFContextFonts:
+			return (theApp.OSVersion>OS_XP) && 
+					((_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "odttf")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "ttc")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "ttf")==0) ||
+					(_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "otf")==0));
 		}
 
 	return FALSE;
@@ -590,17 +600,16 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? pItemDescriptor->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
-	if ((pItemDescriptor->Type & LFTypeMask)!=LFTypeFolder)
+	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
+	{
+		LPCWSTR pSubstring = wcsstr(pItemDescriptor->Description, L" (");
+
+		dc.DrawText(pItemDescriptor->Description, pSubstring ? (INT)(pSubstring-pItemDescriptor->Description) : -1, rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+	}
+	else
 	{
 		dc.DrawText(GetLabel(pItemDescriptor), rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
-	else
-		if (pItemDescriptor->Type & LFTypeHasDescription)
-		{
-			LPCWSTR pSubstring = wcsstr(pItemDescriptor->Description, L" (");
-
-			dc.DrawText(pItemDescriptor->Description, pSubstring ? (INT)(pSubstring-pItemDescriptor->Description) : -1, rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
-		}
 
 	rectCaption.top += m_DefaultFontHeight+CARDPADDING/3;
 
@@ -608,12 +617,11 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	WCHAR tmpBuf[256];
 	LFAttributeToString(pItemDescriptor, ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ? m_ContextViewSettings.SortBy : LFAttrFileName, tmpBuf, 256);
 
-	// Light text color
-	if (!Selected)
-		dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
-
 	CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
+
+	SetGrayText(dc, pItemDescriptor, Themed);
 	dc.DrawText(tmpBuf, -1, rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+
 	dc.SelectObject(pOldFont);
 
 	rect.top += m_CaptionHeight+SMALLPADDING;
@@ -745,11 +753,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	// Folder contents and source
 	if (pData->PreviewMask & (PRV_SOURCE | PRV_CONTENTS))
 	{
-		// Light text color
-		if (!Selected)
-			dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
-
 		pOldFont = dc.SelectObject(&theApp.m_SmallFont);
+		SetGrayText(dc, pItemDescriptor, Themed);
 
 		// Folder contents
 		if (pData->PreviewMask & PRV_CONTENTS)
@@ -783,7 +788,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 				rect.top++;
 			}
-			
+
 			rect.top += LARGEPADDING;
 			dc.DrawText(theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0], -1, rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 		}

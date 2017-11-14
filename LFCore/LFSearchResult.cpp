@@ -334,7 +334,7 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
 	{
 		// Special icon for filter
-		if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
+		if (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
 			pItemDescriptor->IconID = IDI_FLD_CONTENT;
 
 		switch (m_AutoContext)
@@ -356,11 +356,9 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 	return TRUE;
 }
 
-BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
+BOOL LFSearchResult::AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor)
 {
-	assert(pStoreDescriptor);
-
-	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(StoreDescriptor);
 
 	if (AddItem(pItemDescriptor))
 	{
@@ -371,10 +369,10 @@ BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor)
 		pItemDescriptor->pNextFilter->Mode = LFFilterModeDirectoryTree;
 		pItemDescriptor->pNextFilter->QueryContext = LFContextAuto;
 
-		strcpy_s(pItemDescriptor->pNextFilter->StoreID, LFKeySize, pStoreDescriptor->StoreID);
-		wcscpy_s(pItemDescriptor->pNextFilter->OriginalName, 256, pStoreDescriptor->StoreName);
+		strcpy_s(pItemDescriptor->pNextFilter->StoreID, LFKeySize, StoreDescriptor.StoreID);
+		wcscpy_s(pItemDescriptor->pNextFilter->OriginalName, 256, StoreDescriptor.StoreName);
 
-		AddStoreToSummary(m_FileSummary, pStoreDescriptor);
+		AddStoreToSummary(m_FileSummary, StoreDescriptor);
 
 		return TRUE;
 	}

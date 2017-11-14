@@ -58,7 +58,7 @@ void LFDeleteStoreDlg::OnUpdateOkButton()
 
 LRESULT LFDeleteStoreDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (LFGetStoreSettings(m_StoreID, &m_Store)!=LFOk)
+	if (LFGetStoreSettings(m_StoreID, m_Store)!=LFOk)
 	{
 		// Prevent desktop dimming and sound
 		m_UAC = FALSE;

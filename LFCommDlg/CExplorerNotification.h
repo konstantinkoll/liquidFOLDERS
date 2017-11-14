@@ -28,9 +28,11 @@ public:
 
 protected:
 	void AdjustLayout();
+	UINT GetTimerLength() const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
@@ -59,3 +61,8 @@ private:
 	UINT m_Command;
 	UINT m_RightMargin;
 };
+
+inline UINT CExplorerNotification::GetTimerLength() const
+{
+	return 2000+40*m_Text.GetLength();
+}

@@ -161,9 +161,9 @@ CMenu* CGlobeView::GetItemContextMenu(INT Index)
 	return pMenu;
 }
 
-void CGlobeView::GetPersistentData(FVPersistentData& Data) const
+void CGlobeView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
 {
-	CFileView::GetPersistentData(Data);
+	CFileView::GetPersistentData(Data, ForReload);
 
 	Data.Location = m_GlobeCurrent;
 	Data.LocationValid = TRUE;
@@ -271,7 +271,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 
 				LPCWSTR pSubcaption = NULL;
 				LPCWSTR pCoordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
-				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescription && ((*p_CookedFiles)[a]->Type & LFTypeHasDescription) ? (*p_CookedFiles)[a]->Description : NULL);
+				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescription ? (*p_CookedFiles)[a]->Description : NULL);
 
 				// Beschriftung aufbereiten
 				switch (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type)

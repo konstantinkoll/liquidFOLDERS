@@ -26,6 +26,7 @@ UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);
 void ChooseNewDefaultStore();
 
 UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
+void GetDiskFreeSpaceForStore(LFStoreDescriptor& StoreDescriptor);
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore*& pStore);
 UINT GetStore(LPCSTR pStoreID, CStore*& pStore);
 UINT OpenStore(LPCSTR pStoreID, CStore*& pStore, BOOL WriteAccess=TRUE);

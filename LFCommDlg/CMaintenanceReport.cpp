@@ -353,8 +353,8 @@ void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
 			if (!LFGetApp()->IsTooltipVisible())
 			{
 				LFStoreDescriptor Store;
-				if (LFGetStoreSettings((*p_MaintenanceList)[m_HotItem].StoreID, &Store)==LFOk)
-					LFGetApp()->ShowTooltip(this, point, &Store);
+				if (LFGetStoreSettings((*p_MaintenanceList)[m_HotItem].StoreID, Store, TRUE)==LFOk)
+					LFGetApp()->ShowTooltip(this, point, Store);
 			}
 	}
 	else

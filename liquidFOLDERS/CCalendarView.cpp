@@ -178,9 +178,9 @@ CMenu* CCalendarView::GetViewContextMenu()
 	return pMenu;
 }
 
-void CCalendarView::GetPersistentData(FVPersistentData& Data) const
+void CCalendarView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
 {
-	CFileView::GetPersistentData(Data);
+	CFileView::GetPersistentData(Data, ForReload);
 
 	Data.Year = m_Year;
 }

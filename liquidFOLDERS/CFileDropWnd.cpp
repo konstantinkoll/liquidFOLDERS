@@ -32,8 +32,8 @@ BOOL CFileDropWnd::Create(const LPCSTR pStoreID)
 	CSize Size;
 	GetCaptionButtonMargins(&Size);
 
-	INT Width = 2*BACKSTAGEBORDER+128-1;
-	INT Height = Size.cy+BACKSTAGEBORDER+128-12+MARGIN+theApp.m_DefaultFont.GetFontHeight()+FONTOFFSETY;
+	const INT Width = 2*BACKSTAGEBORDER+128-1;
+	const INT Height = Size.cy+BACKSTAGEBORDER+128-12+MARGIN+theApp.m_DefaultFont.GetFontHeight()+FONTOFFSETY;
 	m_rectIcon.SetRect((Width-128)/2+ICONOFFSETX, Size.cy+ICONOFFSETY, (Width-128)/2+ICONOFFSETX+128-9, Height-BACKSTAGEBORDER-FONTOFFSETY);
 
 	return CBackstageWnd::Create(WS_MINIMIZEBOX, className, CString((LPCSTR)IDR_FILEDROP), _T("FileDrop"), CSize(Width, Height));
@@ -144,14 +144,13 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CBackstageWnd)
 	ON_WM_SYSCOMMAND()
 	ON_MESSAGE(WM_OPENFILEDROP, OnOpenFileDrop)
 
-	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnStoreOpen)
+	ON_COMMAND(IDM_STORE_OPENNEWWINDOW, OnStoreOpenNewWindow)
 	ON_COMMAND(IDM_STORE_SYNCHRONIZE, OnStoreSynchronize)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
-	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPENNEWWINDOW, OnUpdateStoreCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_SYNCHRONIZE, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_OPENNEWWINDOW, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
@@ -232,7 +231,7 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
 		if (!theApp.IsTooltipVisible() && m_Hover)
-			theApp.ShowTooltip(this, point, &m_Store);
+			theApp.ShowTooltip(this, point, m_Store);
 	}
 	else
 	{
@@ -243,7 +242,7 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 void CFileDropWnd::OnNcLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (m_Hover)
-		OnStoreOpen();
+		OnStoreOpenNewWindow();
 }
 
 void CFileDropWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
@@ -277,9 +276,9 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		ASSERT_VALID(pPopup);
 
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, CString((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW));
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORE_OPENNEWWINDOW, CString((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW));
 
-		pPopup->SetDefaultItem(IDM_ITEM_OPENNEWWINDOW);
+		pPopup->SetDefaultItem(0, TRUE);
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 
 		return;
@@ -320,7 +319,7 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 }
 
 
-void CFileDropWnd::OnStoreOpen()
+void CFileDropWnd::OnStoreOpenNewWindow()
 {
 	CMainWnd* pFrame = new CMainWnd();
 	pFrame->CreateStore(m_Store.StoreID);
@@ -339,7 +338,7 @@ void CFileDropWnd::OnStoreMakeDefault()
 
 void CFileDropWnd::OnStoreShortcut()
 {
-	LFCreateDesktopShortcutForStoreEx(&m_Store);
+	LFErrorBox(this, LFCreateDesktopShortcutForStore(m_Store));
 }
 
 void CFileDropWnd::OnStoreDelete()
@@ -386,7 +385,7 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (LFGetStoreSettings(m_StoreID, &m_Store)!=LFOk)
+	if (LFGetStoreSettings(m_StoreID, m_Store)!=LFOk)
 		PostMessage(WM_CLOSE);
 
 	m_StoreIcon = LFGetStoreIcon(&m_Store, &m_StoreType);

@@ -49,6 +49,7 @@ IDB_CLOUDS_2048         RCDATA                  "res\\Clouds_2048.jpg"
 IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 IDB_BLUEMARBLE_512      RCDATA                  "res\\BlueMarble_512.png"
 IDB_APPLICATIONS_29     RCDATA                  "res\\Applications_29.png"
+IDB_BACKGROUND_CAPACITYBAR RCDATA                  "res\\Background_CapacityBar.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -106,6 +107,14 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 //
 // Menu
 //
+
+IDM_FONTS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Installierte Schriftarten zeigen...", IDM_FONTS_SHOWINSTALLED
+    END
+END
 
 IDM_NEW MENU 
 BEGIN
@@ -214,21 +223,6 @@ BEGIN
     BEGIN
         MENUITEM "&Alle Eigenschaften anzeigen", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
-    END
-END
-
-IDM_FOLDER MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Archi&vieren",                IDM_FILE_ARCHIVE
-        MENUITEM SEPARATOR
-        MENUITEM "&Kopieren",                   IDM_FILE_COPY
-        MENUITEM SEPARATOR
-        MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
-        MENUITEM "&Löschen",                    IDM_FILE_DELETE
-        MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_FILE_PROPERTIES
     END
 END
 
@@ -358,10 +352,11 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
     IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
     IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
-    IDS_CONTEXTMENU_OPENBROWSER "Im Web&browser öffnen"
+    IDS_CONTEXTMENU_SHOWEXPLORER "Im &Explorer zeigen"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_OPENFILEDROP "Als File&Drop öffnen"
+    IDS_CONTEXTMENU_SHOWCAPACITY "&Speicherkapazität zeigen"
 END
 
 STRINGTABLE 
@@ -380,12 +375,14 @@ BEGIN
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
     IDS_SEARCHTERM          "Alle Speicherorte durchsuchen"
+    IDS_STORE               "Speicherort"
+    IDS_DEFAULTSTORE        "Standard-Speicherort"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORE               "Speicherort"
-    IDS_DEFAULTSTORE        "Standard-Speicherort"
+    IDS_FILESCOPIED         "%s in die Zwischenablage kopiert."
+    IDS_SHORTCUTCREATED     "Die Verknüpfung wurde auf dem Desktop erstellt."
     IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
     IDS_QUALITY_HIGH        "Hoch"
@@ -403,13 +400,16 @@ BEGIN
     IDS_VATTR_SOURCE        "Quelle"
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_SYNCHRONIZETIME "Synchronisiert"
-    IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
+    IDS_VATTR_TOTALBYTES    "Laufwerksgröße"
+    IDS_VATTR_TOTALBYTESFREE "Freier Speicher"
+    IDS_VATTR_FREEBYTESAVAILABLE "Verfügbarer Speicher"
 END
 
 STRINGTABLE 
@@ -419,6 +419,11 @@ BEGIN
     IDM_STORES_ADD          "Fügt einen Speicherort für Ihre Dateien hinzu.\nSpeicherort hinzufügen..."
     IDM_STORES_SYNCHRONIZE  "Synchronisiert alle Speicherorte mit ihrer Datenquelle.\nSynchronisieren"
     IDM_STORES_RUNMAINTENANCE "Wartungsarbeiten durchführen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FONTS_SHOWINSTALLED "Öffnet die Systemsteuerung und zeigt alle installierten Schriftarten an.\nInstallierte Schriftarten zeigen"
 END
 
 STRINGTABLE 
@@ -439,7 +444,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_OPENBROWSER    "Öffnet die ausgewählte Datei im Standard-Webbrowser.\nIm Webbrowser öffnen"
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
@@ -447,6 +451,10 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nAufgabe erledigt"
     IDM_FILE_RECOVER        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
 END
@@ -469,6 +477,10 @@ BEGIN
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
     IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergrößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
 END
@@ -513,6 +525,14 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 //
 // Menu
 //
+
+IDM_FONTS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Mostrar fuentes &instaladas...", IDM_FONTS_SHOWINSTALLED
+    END
+END
 
 IDM_NEW MENU 
 BEGIN
@@ -620,21 +640,6 @@ BEGIN
     BEGIN
         MENUITEM "Mostrar &todas las propriedades", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "Ordenar &alfabéticamente",    IDM_INSPECTOR_SORTALPHABETIC
-    END
-END
-
-IDM_FOLDER MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Archi&var",                   IDM_FILE_ARCHIVE
-        MENUITEM SEPARATOR
-        MENUITEM "&Copiar",                     IDM_FILE_COPY
-        MENUITEM SEPARATOR
-        MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
-        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
-        MENUITEM SEPARATOR
-        MENUITEM "&Propiedades",                IDM_FILE_PROPERTIES
     END
 END
 
@@ -764,10 +769,11 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Seleccionar &todo\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Abrir"
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
-    IDS_CONTEXTMENU_OPENBROWSER "Abrir con &navegador"
+    IDS_CONTEXTMENU_SHOWEXPLORER "Mostrar con &Explorador"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_OPENFILEDROP "Abrir por &FileDrop"
+    IDS_CONTEXTMENU_SHOWCAPACITY "Mostrar &capacidad"
 END
 
 STRINGTABLE 
@@ -786,12 +792,14 @@ BEGIN
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
     IDS_SEARCHTERM          "Buscar todo los ubicaciones"
+    IDS_STORE               "Ubicación"
+    IDS_DEFAULTSTORE        "Ubicación estándar"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORE               "Ubicación"
-    IDS_DEFAULTSTORE        "Ubicación estándar"
+    IDS_FILESCOPIED         "%s copiado al portapapeles."
+    IDS_SHORTCUTCREATED     "El acceso directo ha sido creado en el escritorio."
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
     IDS_QUALITY_HIGH        "Alto"
@@ -809,13 +817,16 @@ BEGIN
     IDS_VATTR_SOURCE        "Origen"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_SYNCHRONIZETIME "Sincronizado"
-    IDS_VATTR_LASTSEEN      "Última entrada"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
+    IDS_VATTR_TOTALBYTES    "Tamaño del unidad"
+    IDS_VATTR_TOTALBYTESFREE "Espacio libre"
+    IDS_VATTR_FREEBYTESAVAILABLE "Espacio disponible"
 END
 
 STRINGTABLE 
@@ -825,6 +836,11 @@ BEGIN
     IDM_STORES_ADD          "Adjuntar un ubicación para sus archivos.\nAdjuntar ubicación..."
     IDM_STORES_SYNCHRONIZE  "Sincroniza todos los ubicaciones con su fuente de datos.\nSincronizar"
     IDM_STORES_RUNMAINTENANCE "Ejecutar mantenimiento"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FONTS_SHOWINSTALLED "Abra el Panel de control y muestre todas las fuentes instaladas.\nMostrar fuentes &instaladas"
 END
 
 STRINGTABLE 
@@ -845,7 +861,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_OPENBROWSER    "Abre el archivo seleccionado con el navegador estándar.\nAbrir con navegador"
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
@@ -853,6 +868,10 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nTarea cumplida"
     IDM_FILE_RECOVER        "Restablece los archivos seleccionados.\nRestablecer"
 END
@@ -875,6 +894,10 @@ BEGIN
                             "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
     IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
     IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
 END
@@ -919,6 +942,14 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 //
 // Menu
 //
+
+IDM_FONTS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Afficher fontes &installées...", IDM_FONTS_SHOWINSTALLED
+    END
+END
 
 IDM_NEW MENU 
 BEGIN
@@ -988,7 +1019,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Présenter les &jours",         IDM_CALENDAR_SHOWDAYS
+        MENUITEM "Afficher les &jours",         IDM_CALENDAR_SHOWDAYS
         MENUITEM "Choisissez l'&année...\tCtrl+Y", IDM_CALENDAR_GOTOYEAR
     END
 END
@@ -1012,7 +1043,7 @@ BEGIN
             MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
             MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
             MENUITEM SEPARATOR
-            MENUITEM "Présenter les tags &rares",    IDM_TAGCLOUD_SHOWRARE
+            MENUITEM "Présenter les tags &rares",   IDM_TAGCLOUD_SHOWRARE
         END
         MENUITEM "Utilise la &taille",          IDM_TAGCLOUD_USESIZE
         MENUITEM "Utilise la &couleur",         IDM_TAGCLOUD_USECOLORS
@@ -1026,21 +1057,6 @@ BEGIN
     BEGIN
         MENUITEM "Présenter &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Trier alphabétique",         IDM_INSPECTOR_SORTALPHABETIC
-    END
-END
-
-IDM_FOLDER MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Archi&ver",                   IDM_FILE_ARCHIVE
-        MENUITEM SEPARATOR
-        MENUITEM "&Copier",                     IDM_FILE_COPY
-        MENUITEM SEPARATOR
-        MENUITEM "Créer r&accourci",            IDM_FILE_SHORTCUT
-        MENUITEM "&Effacer",                    IDM_FILE_DELETE
-        MENUITEM SEPARATOR
-        MENUITEM "&Propriétés",                 IDM_FILE_PROPERTIES
     END
 END
 
@@ -1170,10 +1186,11 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Sélectionner &tout\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
-    IDS_CONTEXTMENU_OPENBROWSER "Ouvrir avec &navigateur"
+    IDS_CONTEXTMENU_SHOWEXPLORER "Afficher avec l'&Explorateur"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_OPENFILEDROP "Ouvrir comme File&Drop"
+    IDS_CONTEXTMENU_SHOWCAPACITY "Afficher capacité"
 END
 
 STRINGTABLE 
@@ -1192,12 +1209,14 @@ BEGIN
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
     IDS_SEARCHTERM          "Recherche tous les emplacements"
+    IDS_STORE               "Emplacement"
+    IDS_DEFAULTSTORE        "Emplacement défaut"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORE               "Emplacement"
-    IDS_DEFAULTSTORE        "Emplacement défaut"
+    IDS_FILESCOPIED         "%s copié au presse-papiers."
+    IDS_SHORTCUTCREATED     "Le raccourci a été créé sur le bureau."
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
     IDS_QUALITY_HIGH        "Haut"
@@ -1215,13 +1234,16 @@ BEGIN
     IDS_VATTR_SOURCE        "Source"
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_SYNCHRONIZETIME "Synchronisée"
-    IDS_VATTR_LASTSEEN      "Finalement vu"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
     IDS_VATTR_IATA_COUNTRY  "Territoire"
+    IDS_VATTR_TOTALBYTES    "Taille du lecteur"
+    IDS_VATTR_TOTALBYTESFREE "Espace libre"
+    IDS_VATTR_FREEBYTESAVAILABLE "Espace disponible"
 END
 
 STRINGTABLE 
@@ -1231,6 +1253,11 @@ BEGIN
     IDM_STORES_ADD          "Ajouter un emplacement pour vos fichiers.\nAjouter emplacement..."
     IDM_STORES_SYNCHRONIZE  "Synchroniser tous les emplacements avec leur source de données.\nSynchroniser"
     IDM_STORES_RUNMAINTENANCE "Effectuer travails d'entretien"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FONTS_SHOWINSTALLED "Ouvre le Panneau de configuration et affiche toutes les fontes installées.\nAfficher fontes &installées"
 END
 
 STRINGTABLE 
@@ -1251,7 +1278,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_OPENBROWSER    "Ouvre le fichier choisi avec le navigateur défaut.\nOuvrir avec navigateur"
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Enlève les fichiers choisis du presse-papiers.\nEnlever"
@@ -1259,6 +1285,10 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_TASKDONE       "Supprime la marque comme une tâche des fichiers choisis.\nTâche fini"
     IDM_FILE_RECOVER        "Reconstitue tous les fichiers.\nReconstituer"
 END
@@ -1281,6 +1311,10 @@ BEGIN
                             "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
     IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
     IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
 END
@@ -1375,6 +1409,14 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 // Menu
 //
+
+IDM_FONTS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Show &installed fonts...",    IDM_FONTS_SHOWINSTALLED
+    END
+END
 
 IDM_NEW MENU 
 BEGIN
@@ -1483,21 +1525,6 @@ BEGIN
     BEGIN
         MENUITEM "Show a&ll properties",        IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
-    END
-END
-
-IDM_FOLDER MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Archi&ve",                    IDM_FILE_ARCHIVE
-        MENUITEM SEPARATOR
-        MENUITEM "&Copy",                       IDM_FILE_COPY
-        MENUITEM SEPARATOR
-        MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
-        MENUITEM "&Delete",                     IDM_FILE_DELETE
-        MENUITEM SEPARATOR
-        MENUITEM "&Properties",                 IDM_FILE_PROPERTIES
     END
 END
 
@@ -1627,10 +1654,11 @@ BEGIN
     IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
     IDS_CONTEXTMENU_OPEN    "&Open"
     IDS_CONTEXTMENU_OPENWITH "Open &with..."
-    IDS_CONTEXTMENU_OPENBROWSER "Open in &browser"
+    IDS_CONTEXTMENU_SHOWEXPLORER "Show in &Explorer"
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
     IDS_CONTEXTMENU_OPENFILEDROP "Open as &FileDrop"
+    IDS_CONTEXTMENU_SHOWCAPACITY "Show &capacity"
 END
 
 STRINGTABLE 
@@ -1649,12 +1677,14 @@ BEGIN
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
     IDS_SEARCHTERM          "Search all locations"
+    IDS_STORE               "Location"
+    IDS_DEFAULTSTORE        "Default location"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORE               "Location"
-    IDS_DEFAULTSTORE        "Default location"
+    IDS_FILESCOPIED         "%s copied to the clipboard."
+    IDS_SHORTCUTCREATED     "The shortcut has been created on the desktop."
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
     IDS_QUALITY_HIGH        "High"
@@ -1672,13 +1702,16 @@ BEGIN
     IDS_VATTR_SOURCE        "Source"
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_SYNCHRONIZETIME "Synchronized"
-    IDS_VATTR_LASTSEEN      "Last seen"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
+    IDS_VATTR_TOTALBYTES    "Volume size"
+    IDS_VATTR_TOTALBYTESFREE "Free space"
+    IDS_VATTR_FREEBYTESAVAILABLE "Available space"
 END
 
 STRINGTABLE 
@@ -1688,6 +1721,11 @@ BEGIN
     IDM_STORES_ADD          "Add a location for your files.\nAdd storage location..."
     IDM_STORES_SYNCHRONIZE  "Synchronizes all locations with their data source.\nSynchronize"
     IDM_STORES_RUNMAINTENANCE "Run maintenance"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FONTS_SHOWINSTALLED "Opens the Control Panel and shows all installed fonts.\nShow installed fonts"
 END
 
 STRINGTABLE 
@@ -1708,7 +1746,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_OPENBROWSER    "Opens the selected file in your default browser.\nOpen in browser"
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Removes the selected files from the clipboard window.\nRemove"
@@ -1716,6 +1753,10 @@ BEGIN
     IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_TASKDONE       "Removes the task marking from the selected files.\nTask done"
     IDM_FILE_RECOVER        "Recovers the selected files.\nRecover"
 END
@@ -1738,6 +1779,10 @@ BEGIN
                             "Centers the globe on a specific location.\nJump to location..."
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
 END

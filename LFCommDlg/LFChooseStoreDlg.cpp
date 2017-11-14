@@ -56,12 +56,10 @@ void CStoreList::SetSearchResult(LFSearchResult* pSearchResult)
 			lvi.state = (((*pSearchResult)[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | ((*pSearchResult)[a]->Type & LFTypeBadgeMask);
 			const INT Index = InsertItem(&lvi);
 
-			WCHAR tmpStr[256];
 			SetItemText(Index, 1, (*pSearchResult)[a]->CoreAttributes.Comments);
+			SetItemText(Index, 2, (*pSearchResult)[a]->Description);
 
-			if ((*pSearchResult)[a]->Type & LFTypeHasDescription)
-				SetItemText(Index, 2, (*pSearchResult)[a]->Description);
-
+			WCHAR tmpStr[256];
 			LFAttributeToString((*pSearchResult)[a], LFAttrCreationTime, tmpStr, 256);
 			SetItemText(Index, 3, tmpStr);
 		}
@@ -328,7 +326,7 @@ void LFChooseStoreDlg::OnStoreShortcut()
 {
 	const INT Index = GetSelectedStore();
 	if (Index!=-1)
-		LFCreateDesktopShortcutForStore((*m_pSearchResult)[Index]);
+		LFErrorBox(this, LFCreateDesktopShortcutForItem((*m_pSearchResult)[Index]));
 }
 
 void LFChooseStoreDlg::OnStoreDelete()

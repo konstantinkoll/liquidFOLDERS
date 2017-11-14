@@ -74,6 +74,9 @@ protected:
 	afx_msg void OnStoresRunMaintenance();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnFontsShowInstalled();
+	afx_msg void OnUpdateFontsCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnNewClearNew();
 	afx_msg void OnUpdateNewCommands(CCmdUI* pCmdUI);
 
@@ -83,25 +86,26 @@ protected:
 
 	afx_msg void OnUpdateFiltersCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnItemShortcut();
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnStoreOpenNewWindow();
+	afx_msg void OnStoreOpenFileDrop();
 	afx_msg void OnStoreSynchronize();
 	afx_msg void OnStoreMakeDefault();
-	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreRename();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnFileOpenWith();
-	afx_msg void OnFileOpenBrowser();
+	afx_msg void OnFileShowExplorer();
 	afx_msg void OnFileEdit();
 	afx_msg void OnFileRemember();
 	afx_msg void OnFileRemoveFromClipboard();
 	afx_msg void OnFileMakeTask();
 	afx_msg void OnFileArchive();
 	afx_msg void OnFileCopy();
-	afx_msg void OnFileShortcut();
 	afx_msg void OnFileDelete();
 	afx_msg void OnFileRename();
 	afx_msg void OnFileProperties();
@@ -136,7 +140,6 @@ private:
 	void SetHeader();
 	void UpdateSearchResult();
 	void AdjustLayout(UINT nFlags=SWP_NOACTIVATE | SWP_NOZORDER);
-	static void CreateShortcut(LFTransactionListItem* pItem);
 
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;

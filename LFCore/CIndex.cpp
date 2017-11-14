@@ -56,7 +56,7 @@
 
 #define BUILD_ITEMDESCRIPTOR() \
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize); \
-	pItemDescriptor->Type = StoreFlagsToType(p_StoreDescriptor, LFTypeFile); \
+	pItemDescriptor->Type = m_StoreTypeFlags; \
 	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
 
 #define APPEND_ITEMDESCRIPTOR() \
@@ -118,13 +118,12 @@ CIndex::CIndex(CStore* pStore, BOOL IsMainIndex, BOOL WriteAccess, UINT StoreDat
 	assert(pStore);
 
 	p_Store = pStore;
-	p_StoreDescriptor = pStore->p_StoreDescriptor;
+	m_StoreTypeFlags = StoreFlagsToType(p_StoreDescriptor=pStore->p_StoreDescriptor, LFTypeFile);
 	m_WriteAccess = WriteAccess;
 	m_AdditionalDataSize = StoreDataSize;
 
 	ZeroMemory(m_pTable, sizeof(m_pTable));
-	wcscpy_s(m_IdxPath, MAX_PATH, IsMainIndex ? p_StoreDescriptor->IdxPathMain : p_StoreDescriptor->IdxPathAux);
-	m_IsMainIndex = IsMainIndex;
+	wcscpy_s(m_IdxPath, MAX_PATH, ((m_IsMainIndex=IsMainIndex)==TRUE) ? p_StoreDescriptor->IdxPathMain : p_StoreDescriptor->IdxPathAux);
 }
 
 CIndex::~CIndex()

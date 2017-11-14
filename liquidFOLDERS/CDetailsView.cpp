@@ -110,7 +110,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 			}
 
 			// Description
-			if (pItemDescriptor->Type & LFTypeHasDescription)
+			if (pItemDescriptor->Description[0])
 			{
 				dc.DrawText(pItemDescriptor->Description, -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 

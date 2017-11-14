@@ -47,7 +47,6 @@ void CIconFactory::DrawJumboFormatIcon(CDC& dc, const CPoint& pt, LPCSTR lpszFil
 		// Draw jumbo icon
 		m_SystemIcons128.DrawEx(&dc, Data.IconIndex128, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, nStyle);
 	}
-
 }
 
 void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, BOOL DrawOverlays, INT ThumbnailYOffset)
@@ -102,7 +101,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
 		// Draw thumbnail or file format icon
-		if (!DrawJumboThumbnail(dc, g, pt, pItemDescriptor, ThumbnailYOffset))
+		if (!DrawJumboThumbnail(dc, g, pt, pItemDescriptor, DrawSash, ThumbnailYOffset))
 		{
 			DrawJumboFormatIcon(dc, pt, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
 
@@ -162,8 +161,10 @@ HBITMAP CIconFactory::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchRe
 	Graphics g(dc);
 
 	// Try to draw a thumbnail
+	BOOL DrawSash;
+
 	for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-		if (DrawJumboThumbnail(dc, g, CPoint(0, 0), (*pSearchResult)[a], 0))
+		if (DrawJumboThumbnail(dc, g, CPoint(0, 0), (*pSearchResult)[a], DrawSash, 0))
 			return (HBITMAP)dc.SelectObject(hOldBitmap);
 
 	dc.SelectObject(hOldBitmap);
@@ -216,7 +217,7 @@ void CIconFactory::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy
 	}
 }
 
-HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
+BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
@@ -224,16 +225,13 @@ HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
 	// Calculate thumbnail size and other parameters
 	const BOOL BlackFrame = (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio);
 	const BOOL Media = (pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos);
-	const BOOL Document = (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments);
+	const BOOL Document = (pItemDescriptor->CoreAttributes.ContextID==LFContextBooks) || (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments);
 	const INT CutOff = Media || Document ? THUMBCUTOFF : 0;
 	const INT ThumbSize = (BlackFrame ? 124 : 118)+2*CutOff;
 
-	HBITMAP hBitmapImage;
-	if ((hBitmapImage=LFGetThumbnail(pItemDescriptor, CSize(ThumbSize, ThumbSize)))==NULL)
-		return NULL;
-
-	// Quarter BitmapImage if neccessary
-	hBitmapImage = LFQuarter256Bitmap(hBitmapImage);
+	HBITMAP hBitmapImage = LFGetThumbnail(pItemDescriptor, CSize(ThumbSize, ThumbSize));
+	if (!hBitmapImage)
+		return FALSE;
 
 	// Size allowed?
 	BITMAP BitmapImage;
@@ -243,7 +241,7 @@ HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
 	{
 		DeleteObject(hBitmapImage);
 
-		return NULL;
+		return FALSE;
 	}
 
 	// Convert thumbnail to 128x128x32bpp
@@ -255,18 +253,19 @@ HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
 	rectDst.right = rectDst.left+BitmapImage.bmWidth-2*CutOff;
 	rectDst.bottom = rectDst.top+BitmapImage.bmHeight-2*CutOff;
 
-	const BOOL DrawFrame = Media || Document || ((rectSrc.Width()<=118+2*THUMBCUTOFF) && (rectSrc.Height()<=118+2*THUMBCUTOFF));
+	Thumbnail.HasFrame = Media || Document || ((rectSrc.Width()<=118+2*THUMBCUTOFF) && (rectSrc.Height()<=118+2*THUMBCUTOFF));
+	Thumbnail.HasBackground = !Thumbnail.HasFrame || BlackFrame;
 
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
 
-	HBITMAP hBitmapThumbnail = CreateTransparentBitmap(128, 128);
-	HBITMAP hOldBitmap1 = (HBITMAP)dc.SelectObject(hBitmapThumbnail);
+	Thumbnail.hBitmap = CreateTransparentBitmap(128, 128);
+	HBITMAP hOldBitmap1 = (HBITMAP)dc.SelectObject(Thumbnail.hBitmap);
 
 	Graphics g(dc);
 	g.SetSmoothingMode(SmoothingModeNone);
 
-	if (DrawFrame)
+	if (Thumbnail.HasFrame)
 	{
 		// Draw background
 		if (BlackFrame)
@@ -311,7 +310,7 @@ HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
 	if (BitmapImage.bmBitsPixel!=32)
 	{
 		BitBlt(dc, rectDst.left, rectDst.top, rectDst.Width(), rectDst.Height(), hdcMem, rectSrc.left, rectSrc.top, SRCCOPY);
-		MakeBitmapSolid(hBitmapThumbnail, rectDst.left, rectDst.top, rectDst.Width(), rectDst.Height());
+		MakeBitmapSolid(Thumbnail.hBitmap, rectDst.left, rectDst.top, rectDst.Width(), rectDst.Height());
 	}
 	else
 	{
@@ -319,7 +318,7 @@ HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
 	}
 
 	// Decorate with frame
-	if (DrawFrame)
+	if (Thumbnail.HasFrame)
 	{
 		g.DrawImage(theApp.GetCachedResourceImage(IDB_THUMBNAIL), 0, 0);
 
@@ -340,60 +339,69 @@ HBITMAP CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor)
 
 	DeleteObject(hBitmapImage);
 
-	return hBitmapThumbnail;
+	return TRUE;
 }
 
-HBITMAP CIconFactory::LookupThumbnail(LFItemDescriptor* pItemDescriptor)
+BOOL CIconFactory::LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
-	ThumbnailData Data;
-
 	// Is there a thumbnail?
-	if (m_Thumbnails.Lookup(pItemDescriptor, Data))
-		return Data.hBitmap;
+	if (m_Thumbnails.Lookup(pItemDescriptor, Thumbnail))
+		return TRUE;
 
 	// Do we know that this file has no thumbnail?
-	if (m_NoThumbnails.Lookup(pItemDescriptor, Data))
-		return Data.hBitmap;
+	if (m_NoThumbnails.Lookup(pItemDescriptor, Thumbnail))
+		return FALSE;
 
 	// Add file to either m_Thumbnails or m_NoThumbnails
-	strcpy_s(Data.StoreID, LFKeySize, pItemDescriptor->StoreID);
-	strcpy_s(Data.FileID, LFKeySize, pItemDescriptor->CoreAttributes.FileID);
+	ZeroMemory(&Thumbnail, sizeof(Thumbnail));
+	strcpy_s(Thumbnail.StoreID, LFKeySize, pItemDescriptor->StoreID);
+	strcpy_s(Thumbnail.FileID, LFKeySize, pItemDescriptor->CoreAttributes.FileID);
 
-	if ((Data.hBitmap=GetThumbnailBitmap(pItemDescriptor))!=NULL)
+	if (GetThumbnailBitmap(pItemDescriptor, Thumbnail))
 	{
 		// Thumbnail available
-		m_Thumbnails.AddItem(Data);
+		m_Thumbnails.AddItem(Thumbnail);
+
+		return TRUE;
 	}
 	else
 	{
 		// No thumbnail available
-		m_NoThumbnails.AddItem(Data);
-	}
+		m_NoThumbnails.AddItem(Thumbnail);
 
-	return Data.hBitmap;
+		return FALSE;
+	}
 }
 
-BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
+BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, BOOL& DrawSash, INT ThumbnailYOffset)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
-	HBITMAP hBitmap = LookupThumbnail(pItemDescriptor);
-	if (!hBitmap)
+	ThumbnailData Thumbnail;
+	if (!LookupThumbnail(pItemDescriptor, Thumbnail))
 		return FALSE;
 
-	// Draw background
-	g.SetSmoothingMode(SmoothingModeNone);
+	// Draw color background
+	if (!Thumbnail.HasBackground)
+	{
+		ASSERT(Thumbnail.HasFrame);
 
-	SolidBrush brush(Color(COLORREF2RGB(LFGetItemColor(pItemDescriptor->CoreAttributes.Color, LFItemColorFadeLight))));
-	g.FillRectangle(&brush, pt.x+3, pt.y+2+ThumbnailYOffset, 122, 122);
+		g.SetSmoothingMode(SmoothingModeNone);
+
+		SolidBrush brush(Color(COLORREF2RGB(LFGetItemColor(pItemDescriptor->CoreAttributes.Color, LFItemColorFadeLight))));
+		g.FillRectangle(&brush, pt.x+3, pt.y+2+ThumbnailYOffset, 122, 122);
+	}
+
+	// Handle sash
+	DrawSash &= Thumbnail.HasFrame;
 
 	// Draw thumbnail
 	HDC hdcMem = CreateCompatibleDC(dc);
-	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, hBitmap);
+	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, Thumbnail.hBitmap);
 
 	AlphaBlend(dc, pt.x, pt.y+ThumbnailYOffset, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
@@ -493,11 +501,8 @@ INT CIconFactory::QuarterJumboSystemIcon(INT SystemIconIndex)
 
 	dc.SelectObject(hOldBitmap);
 
-	// Ziel-Bitmap erstellen
-	hBitmap = LFQuarter256Bitmap(hBitmap);
-
 	// Hinzufügen
-	INT Result = ImageList_Add(m_SystemIcons128, hBitmap, NULL);
+	const INT Result = ImageList_Add(m_SystemIcons128, hBitmap=LFSanitizeThumbnail(hBitmap), NULL);
 
 	DeleteObject(hBitmap);
 

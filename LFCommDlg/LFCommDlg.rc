@@ -1013,12 +1013,13 @@ STRINGTABLE
 BEGIN
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Erstellt einen neuen Speicherort für Ihre Dateien.\nBeim Importieren werden Dateien dorthin kopiert."
-    IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dadurch nicht verändert."
-    IDS_ADDSTORE_BOX        "Indexiert das bestehenden Verzeichnis Ihrer lokalen Box-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
-    IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
-    IDS_ADDSTORE_ICLOUD     "Indexiert das bestehende Verzeichnis Ihrer lokalen iCloud-Anwendung.\nDie enthaltenen Dateien werden dadurch nicht verändert."
-    IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dadurch nicht verändert."
+    IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
+    IDS_ADDSTORE_BOX        "Indexiert das bestehenden Verzeichnis Ihrer lokalen Box-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
+    IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
+    IDS_ADDSTORE_ICLOUD     "Indexiert das bestehende Verzeichnis Ihrer lokalen iCloud-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
+    IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_SUBSCRIPTION        "Abo"
+    IDS_FREEBYTESAVAILABLE  "%s verfügbar"
 END
 
 STRINGTABLE 
@@ -1914,12 +1915,13 @@ STRINGTABLE
 BEGIN
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Se crea una nueva ubicación para sus archivos.\nLos archivos importados se copiarán allí."
-    IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no serán modificados."
-    IDS_ADDSTORE_BOX        "Índices la carpeta existente de su aplicación local de Box.\nSus archivos no serán modificados."
-    IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no serán modificados."
-    IDS_ADDSTORE_ICLOUD     "Índices la carpeta existente de su aplicación local de iCloud.\nSus archivos no serán modificados."
-    IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no serán modificados."
+    IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no se copian o modifican."
+    IDS_ADDSTORE_BOX        "Índices la carpeta existente de su aplicación local de Box.\nSus archivos no se copian o modifican."
+    IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no se copian o modifican."
+    IDS_ADDSTORE_ICLOUD     "Índices la carpeta existente de su aplicación local de iCloud.\nSus archivos no se copian o modifican."
+    IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no se copian o modifican."
     IDS_SUBSCRIPTION        "Suscripción"
+    IDS_FREEBYTESAVAILABLE  "%s disponible"
 END
 
 STRINGTABLE 
@@ -2812,12 +2814,13 @@ STRINGTABLE
 BEGIN
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Crée un nouvel emplacement pour vos fichiers.\nLes fichiers importés seront copiés là."
-    IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas modifiés."
-    IDS_ADDSTORE_BOX        "Indices le dossier existant de votre application Box local.\nVos fichiers ne seront pas modifiés."
-    IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas modifiés."
-    IDS_ADDSTORE_ICLOUD     "Indices le dossier existant de votre application iCloud local.\nVos fichiers ne seront pas modifiés."
-    IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas modifiés."
+    IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas copiés ou modifiés."
+    IDS_ADDSTORE_BOX        "Indices le dossier existant de votre application Box local.\nVos fichiers ne seront pas copiés ou modifiés."
+    IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas copiés ou modifiés."
+    IDS_ADDSTORE_ICLOUD     "Indices le dossier existant de votre application iCloud local.\nVos fichiers ne seront pas copiés ou modifiés."
+    IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_SUBSCRIPTION        "Abonnement"
+    IDS_FREEBYTESAVAILABLE  "%s disponible"
 END
 
 STRINGTABLE 
@@ -3754,12 +3757,13 @@ STRINGTABLE
 BEGIN
     IDS_ADDSTORE_LIQUIDFOLDERS 
                             "Creates a new storage location for your files.\nImported files will be copied there."
-    IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be modified by this."
-    IDS_ADDSTORE_BOX        "Indexes the existing folder of your local Box client.\nYour files will not be modified by this."
-    IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox client.\nYour files will not be modified by this."
-    IDS_ADDSTORE_ICLOUD     "Indexes the existing folder of your local iCloud client.\nYour files will not be modified by this."
-    IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be modified by this."
+    IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be copied or modified."
+    IDS_ADDSTORE_BOX        "Indexes the existing folder of your local Box client.\nYour files will not be copied or modified."
+    IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox client.\nYour files will not be copied or modified."
+    IDS_ADDSTORE_ICLOUD     "Indexes the existing folder of your local iCloud client.\nYour files will not be copied or modified."
+    IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be copied or modified."
     IDS_SUBSCRIPTION        "Subscription"
+    IDS_FREEBYTESAVAILABLE  "%s available"
 END
 
 STRINGTABLE 

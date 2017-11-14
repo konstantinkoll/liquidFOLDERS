@@ -68,8 +68,6 @@ protected:
 	afx_msg void OnFiltersCreateNew();
 
 	afx_msg void OnItemOpen();
-	afx_msg void OnItemOpenNewWindow();
-	afx_msg void OnItemOpenFileDrop();
 	afx_msg LRESULT OnNavigateTo(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnExportMetadata();
@@ -113,6 +111,7 @@ private:
 	static BOOL CookSortDescending(const LFContextViewSettings* pContextViewSettings);
 	static BOOL CookGroupSingle(const LFContextViewSettings* pContextViewSettings);
 
+	static const UINT m_ContextOrder[LFLastQueryContext+1];
 	CHAR m_StatisticsID[LFKeySize];
 	BOOL m_StatisticsResult;
 };

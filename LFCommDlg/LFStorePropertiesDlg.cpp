@@ -39,7 +39,7 @@ UINT LFStorePropertiesDlg::m_LastTab = 0;
 LFStorePropertiesDlg::LFStorePropertiesDlg(const LPCSTR pStoreID, CWnd* pParentWnd)
 	: LFTabbedDialog(0, pParentWnd, &m_LastTab)
 {
-	if (LFGetStoreSettings(pStoreID, &m_Store)==LFOk)
+	if (LFGetStoreSettings(pStoreID, m_Store)==LFOk)
 	{
 		m_StoreUniqueID = m_Store.UniqueID;
 	}
@@ -168,8 +168,8 @@ void LFStorePropertiesDlg::OnRunBackup()
 {
 	CHAR* pStoreIDs;
 	UINT Count;
-	UINT Result = LFGetAllStores(&pStoreIDs, &Count);
-	if (Result!=LFOk)
+	UINT Result;
+	if ((Result=LFGetAllStores(pStoreIDs, Count))!=LFOk)
 	{
 		LFErrorBox(this, Result);
 		return;
@@ -199,7 +199,7 @@ void LFStorePropertiesDlg::OnRunBackup()
 				for (UINT a=0; a<Count; a++)
 				{
 					LFStoreDescriptor Store;
-					if (LFGetStoreSettings(Ptr, &Store)==LFOk)
+					if (LFGetStoreSettings(Ptr, Store)==LFOk)
 						if ((Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 						{
 							// Header
@@ -267,7 +267,7 @@ void LFStorePropertiesDlg::OnRunBackup()
 LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	// Get store data
-	if ((m_StoreValid=((LFGetStoreSettingsEx(m_StoreUniqueID, &m_Store)==LFOk)))==TRUE)
+	if ((m_StoreValid=((LFGetStoreSettingsEx(m_StoreUniqueID, m_Store, TRUE)==LFOk)))==TRUE)
 		m_StoreIcon = LFGetStoreIcon(&m_Store, &m_StoreType);
 
 	// Basic settings

@@ -34,7 +34,7 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg LRESULT OnOpenFileDrop(WPARAM wParam, LPARAM lParam);
 
-	afx_msg void OnStoreOpen();
+	afx_msg void OnStoreOpenNewWindow();
 	afx_msg void OnStoreSynchronize();
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreShortcut();

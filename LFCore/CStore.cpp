@@ -297,7 +297,7 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWST
 
 	if (Commit)
 	{
-		// Flags
+		// Flags (must be first)
 		if (!OnInitialize)
 			pItemDescriptor->CoreAttributes.Flags |= LFFlagNew;
 

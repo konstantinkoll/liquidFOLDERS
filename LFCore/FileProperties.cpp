@@ -111,6 +111,10 @@ void SetAttributesFromFindFileData(LFCoreAttributes* pCoreAttributes, WIN32_FIND
 	pCoreAttributes->CreationTime = FindData.ftCreationTime;
 	pCoreAttributes->FileTime = FindData.ftLastWriteTime;
 
+	// Hidden flag
+	if (FindData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
+		pCoreAttributes->Flags = (pCoreAttributes->Flags & ~LFFlagNew) | LFFlagArchive;
+
 	// Adjust files with modification time older than creation time
 	ULARGE_INTEGER CreationTime;
 	CreationTime.LowPart = pCoreAttributes->CreationTime.dwLowDateTime;

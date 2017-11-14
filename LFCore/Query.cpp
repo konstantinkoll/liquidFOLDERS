@@ -570,7 +570,7 @@ __forceinline void QuerySearch(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	{
 		CHAR* pStoreIDs;
 		UINT Count;
-		if ((pSearchResult->m_LastError=LFGetAllStores(&pStoreIDs, &Count))!=LFOk)
+		if ((pSearchResult->m_LastError=LFGetAllStores(pStoreIDs, Count))!=LFOk)
 			return;
 
 		if (Count)

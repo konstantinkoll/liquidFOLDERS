@@ -45,9 +45,10 @@ protected:
 
 	CStore* p_Store;
 	LFStoreDescriptor* p_StoreDescriptor;
+	UINT m_StoreTypeFlags;
 	BOOL m_IsMainIndex;
-	UINT m_AdditionalDataSize;
 	BOOL m_WriteAccess;
+	UINT m_AdditionalDataSize;
 	CHeapfile* m_pTable[IDXTABLECOUNT];
 
 private:

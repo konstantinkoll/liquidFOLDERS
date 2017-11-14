@@ -111,9 +111,9 @@ BOOL CItemPanel::SetItem(const LPCSTR pStoreID)
 	ASSERT(pStoreID);
 
 	LFStoreDescriptor Store;
-	if (LFGetStoreSettings(pStoreID, &Store)==LFOk)
+	if (LFGetStoreSettings(pStoreID, Store)==LFOk)
 	{
-		LFItemDescriptor* pItem = LFAllocItemDescriptorEx(&Store);
+		LFItemDescriptor* pItem = LFAllocItemDescriptorEx(Store);
 
 		// Text
 		CString tmpStr(LFGetApp()->GetHintForItem(pItem));

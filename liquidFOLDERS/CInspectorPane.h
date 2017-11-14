@@ -8,13 +8,16 @@
 
 #define AttrFlags                  LFAttributeCount+0
 #define AttrSource                 LFAttributeCount+1
-#define AttrMaintenanceTime        LFAttributeCount+2
-#define AttrSynchronizeTime        LFAttributeCount+3
-#define AttrLastSeen               LFAttributeCount+4
-#define AttrIATAAirportName        LFAttributeCount+5
-#define AttrIATAAirportCountry     LFAttributeCount+6
+#define AttrTotalBytes             LFAttributeCount+2
+#define AttrTotalBytesFree         LFAttributeCount+3
+#define AttrFreeBytesAvailable     LFAttributeCount+4
+#define AttrMaintenanceTime        LFAttributeCount+5
+#define AttrSynchronizeTime        LFAttributeCount+6
+#define AttrLastSeen               LFAttributeCount+7
+#define AttrIATAAirportName        LFAttributeCount+8
+#define AttrIATAAirportCountry     LFAttributeCount+9
 
-#define AttrCount                  LFAttributeCount+7
+#define AttrCount                  LFAttributeCount+10
 
 struct AttributeSummary
 {
@@ -33,6 +36,7 @@ public:
 	void Reset(INT Context=LFContextAllFiles);
 	void AddValueVirtual(UINT Attr, const LPCWSTR pStrValue);
 	void AddValueVirtual(UINT Attr, const LPCSTR pStrValue);
+	void AddValueVirtual(UINT Attr, const INT64 Size);
 	void AddItem(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
 
 	AttributeSummary m_AttributeSummary[AttrCount];

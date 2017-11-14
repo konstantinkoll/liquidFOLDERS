@@ -117,12 +117,11 @@ EXPORTS
 	LFQueryStatistics @502
 
 	LFGetThumbnail @600
-	LFQuarter256Bitmap @601
+	LFSanitizeThumbnail @601
 
-	LFCreateDesktopShortcut @700
-	LFGetShortcutForStore @701
+	LFGetShortcutForItem @700
+	LFCreateDesktopShortcutForItem @701
 	LFCreateDesktopShortcutForStore @702
-	LFCreateDesktopShortcutForStoreEx @703
 
 	LFGetBoxPath @800
 	LFGetICloudPath @801

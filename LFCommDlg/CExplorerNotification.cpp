@@ -36,7 +36,11 @@ UINT CExplorerNotification::GetPreferredHeight() const
 
 void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT Command)
 {
-	LPWSTR nIconID = NULL;
+	// Kill timer
+	KillTimer(1);
+
+	// Set color and message text
+	LPCWSTR nIconID = NULL;
 
 	switch (Type)
 	{
@@ -81,14 +85,16 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 
 	m_Text = Text;
 
+	// Load icon
 	if (nIconID)
 		m_hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nIconID), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 
+	// Set command button
 	if (Command)
 	{
 		ENSURE(m_CommandText.LoadString(Command));
 
-		INT Pos = m_CommandText.Find(L'\n');
+		const INT Pos = m_CommandText.Find(L'\n');
 		if (Pos!=-1)
 			m_CommandText.Delete(0, Pos+1);
 
@@ -103,12 +109,22 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 	}
 	m_Command = Command;
 
+	// Arrange and show window
 	AdjustLayout();
 	ShowWindow(SW_SHOW);
-	Invalidate();
 
-	if (Type!=ENT_READY)
+	// Finalize
+	if (Type==ENT_READY)
+	{
+		// Start timer to auto-hide notification when there is no button to click
+		if (!Command)
+			SetTimer(1, GetTimerLength(), NULL);
+	}
+	else
+	{
+		// Notification sound
 		LFGetApp()->PlayNotificationSound();
+	}
 
 	m_Dismissed = FALSE;
 }
@@ -162,12 +178,15 @@ void CExplorerNotification::AdjustLayout()
 	{
 		m_RightMargin = m_RectClose.left;
 	}
+
+	Invalidate();
 }
 
 
 BEGIN_MESSAGE_MAP(CExplorerNotification, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_TIMER()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -198,6 +217,22 @@ void CExplorerNotification::OnDestroy()
 		DestroyIcon(m_hIcon);
 
 	CWnd::OnDestroy();
+}
+
+void CExplorerNotification::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent==1)
+	{
+		KillTimer(1);
+
+		DismissNotification();
+	}
+
+	CFrontstageWnd::OnTimer(nIDEvent);
+
+	// Eat bogus WM_TIMER messages
+	MSG msg;
+	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
 BOOL CExplorerNotification::OnEraseBkgnd(CDC* /*pDC*/)

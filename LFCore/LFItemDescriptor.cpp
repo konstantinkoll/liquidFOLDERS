@@ -3,6 +3,7 @@
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
+#include "Stores.h"
 #include "TableAttributes.h"
 #include "TableIndexes.h"
 #include <assert.h>
@@ -128,13 +129,14 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCore
 		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes));
 
 		pItemDescriptor->CoreAttributes = *pCoreAttributes;
+		pItemDescriptor->Description[0] = L'\0';
 
 		assert(pItemDescriptor->CoreAttributes.Color<LFItemColorCount);
 		pItemDescriptor->AggregateColorSet = (1 << pItemDescriptor->CoreAttributes.Color);
 	}
 	else
 	{
-		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes)+sizeof(pItemDescriptor->CoreAttributes)+sizeof(pItemDescriptor->AggregateColorSet));
+		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, Description)+sizeof(pItemDescriptor->Description[0]));
 	}
 
 	if (pStoreData)
@@ -152,37 +154,35 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCore
 	return pItemDescriptor;
 }
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor* pStoreDescriptor)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor& StoreDescriptor)
 {
-	assert(pStoreDescriptor);
-
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
 	// Category, icon and type
-	pItemDescriptor->CategoryID = (pStoreDescriptor->Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
-	pItemDescriptor->IconID = LFGetStoreIcon(pStoreDescriptor, &pItemDescriptor->Type);
+	pItemDescriptor->CategoryID = (StoreDescriptor.Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
+	pItemDescriptor->IconID = LFGetStoreIcon(&StoreDescriptor, &pItemDescriptor->Type);
 
 	// Description
-	LFGetFileSummary(pItemDescriptor->Description, 256, pStoreDescriptor->Statistics.FileCount[LFContextAllFiles], pStoreDescriptor->Statistics.FileSize[LFContextAllFiles]);
+	LFGetFileSummary(pItemDescriptor->Description, 256, StoreDescriptor.Statistics.FileCount[LFContextAllFiles], StoreDescriptor.Statistics.FileSize[LFContextAllFiles]);
 
 	WCHAR Hint[256] = L"";
-	if (LFIsStoreMounted(pStoreDescriptor))
+	if (LFIsStoreMounted(&StoreDescriptor))
 	{
-		if (pStoreDescriptor->Source>LFTypeSourceInternal)
+		if (StoreDescriptor.Source>LFTypeSourceInternal)
 		{
 			Hint[0] = L' ';
-			LoadString(LFCoreModuleHandle, IDS_QSRC_UNKNOWN+pStoreDescriptor->Source, &Hint[1], 255);
+			LoadString(LFCoreModuleHandle, IDS_QSRC_UNKNOWN+StoreDescriptor.Source, &Hint[1], 255);
 			Hint[1] = (WCHAR)tolower(Hint[1]);
 		}
 	}
 	else
-		if (wcscmp(pStoreDescriptor->LastSeen, L"")!=0)
+		if (wcscmp(StoreDescriptor.LastSeen, L"")!=0)
 		{
 			WCHAR LastSeen[256];
 			LoadString(LFCoreModuleHandle, IDS_LASTSEEN, LastSeen, 256);
 
 			wcscpy_s(Hint, 256, L", ");
-			swprintf_s(&Hint[2], 254, LastSeen, pStoreDescriptor->LastSeen);
+			swprintf_s(&Hint[2], 254, LastSeen, StoreDescriptor.LastSeen);
 			Hint[2] = (WCHAR)tolower(Hint[2]);
 		}
 
@@ -190,14 +190,18 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor* pS
 		wcscat_s(pItemDescriptor->Description, 256, Hint);
 
 	// Copy properties
-	wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, pStoreDescriptor->StoreName);
-	wcscpy_s(pItemDescriptor->CoreAttributes.Comments, 256, pStoreDescriptor->Comments);
-	strcpy_s(pItemDescriptor->StoreID, LFKeySize, pStoreDescriptor->StoreID);
+	wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, StoreDescriptor.StoreName);
+	wcscpy_s(pItemDescriptor->CoreAttributes.Comments, 256, StoreDescriptor.Comments);
+	strcpy_s(pItemDescriptor->StoreID, LFKeySize, StoreDescriptor.StoreID);
 
-	pItemDescriptor->CoreAttributes.CreationTime = pStoreDescriptor->CreationTime;
-	pItemDescriptor->CoreAttributes.FileTime = pStoreDescriptor->FileTime;
-	pItemDescriptor->AggregateCount = pStoreDescriptor->Statistics.FileCount[LFContextAllFiles];
-	pItemDescriptor->CoreAttributes.FileSize = pStoreDescriptor->Statistics.FileSize[LFContextAllFiles];
+	pItemDescriptor->CoreAttributes.CreationTime = StoreDescriptor.CreationTime;
+	pItemDescriptor->CoreAttributes.FileTime = StoreDescriptor.FileTime;
+	pItemDescriptor->AggregateCount = StoreDescriptor.Statistics.FileCount[LFContextAllFiles];
+	pItemDescriptor->CoreAttributes.FileSize = StoreDescriptor.Statistics.FileSize[LFContextAllFiles];
+
+	// Copy store descriptor
+	pItemDescriptor->StoreDescriptor = StoreDescriptor;
+	GetDiskFreeSpaceForStore(pItemDescriptor->StoreDescriptor);
 
 	return pItemDescriptor;
 }
@@ -240,7 +244,7 @@ LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSumm
 
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
-	pItemDescriptor->Type = LFTypeFolder | LFTypeHasDescription | FileSummary.Source;
+	pItemDescriptor->Type = LFTypeFolder | FileSummary.Source;
 	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : GetColoredFolderIconID(FileSummary);
 	pItemDescriptor->CoreAttributes.FileSize = FileSummary.FileSize;
 	pItemDescriptor->CoreAttributes.Flags = FileSummary.Flags;

@@ -448,6 +448,8 @@ BOOL CLiquidFoldersApp::LoadGlobalViewSettings()
 	m_GlobalViewSettings.GlobeShowGPS = GetInt(_T("GlobeShowGPS"), FALSE);
 	m_GlobalViewSettings.GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
 
+	m_GlobalViewSettings.IconsShowCapacity = GetInt(_T("IconsShowCapacity"), TRUE);
+
 	m_GlobalViewSettings.TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
 	m_GlobalViewSettings.TagcloudShowRare = GetInt(_T("TagcloudShowRare"), TRUE);
 	m_GlobalViewSettings.TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
@@ -471,6 +473,8 @@ void CLiquidFoldersApp::SaveGlobalViewSettings()
 	WriteInt(_T("GlobeShowAirportNames"), m_GlobalViewSettings.GlobeShowAirportNames);
 	WriteInt(_T("GlobeShowGPS"), m_GlobalViewSettings.GlobeShowGPS);
 	WriteInt(_T("GlobeShowDescription"), m_GlobalViewSettings.GlobeShowDescription);
+
+	WriteInt(_T("IconsShowCapacity"), m_GlobalViewSettings.IconsShowCapacity);
 
 	WriteInt(_T("TagcloudSortCanonical"), m_GlobalViewSettings.TagcloudCanonical);
 	WriteInt(_T("TagcloudShowRare"), m_GlobalViewSettings.TagcloudShowRare);

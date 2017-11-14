@@ -574,10 +574,11 @@ void LFApplication::AttributeToString(CString& Name, CString& Value, LFItemDescr
 		}
 
 		if (Attr==LFAttrDimension)
-		{
-			const SIZE_T Length = wcslen(tmpStr);
-			swprintf_s(&tmpStr[Length], 256-Length, L" (%u×%u)", (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
-		}
+			if (!LFIsNullAttribute(pItemDescriptor, LFAttrWidth) && !LFIsNullAttribute(pItemDescriptor, LFAttrHeight))
+			{
+				const SIZE_T Length = wcslen(tmpStr);
+				swprintf_s(&tmpStr[Length], 256-Length, L" (%u×%u)", (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]), (UINT)*((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]));
+			}
 
 		// Copy to buffer
 		if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat))
@@ -606,8 +607,7 @@ CString LFApplication::GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR
 	CString Hint;
 	AppendAttribute(Hint, pItemDescriptor, LFAttrComments);
 
-	if (pItemDescriptor->Type & LFTypeHasDescription)
-		LFTooltip::AppendAttribute(Hint, _T(""), pItemDescriptor->Description);
+	LFTooltip::AppendAttribute(Hint, _T(""), pItemDescriptor->Description);
 
 	// File format
 	if (pFormatName)
@@ -629,6 +629,18 @@ CString LFApplication::GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR
 			LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
 		}
 
+	// Free bytes available
+	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore)
+	{
+		WCHAR tmpBuf[256];
+		LFSizeToString(pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart, tmpBuf, 256);
+
+		CString tmpStr;
+		tmpStr.Format(IDS_FREEBYTESAVAILABLE, tmpBuf);
+
+		LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
+	}
+
 	// Other attributes
 	for (UINT a=1; a<LFAttributeCount; a++)
 	{
@@ -643,12 +655,12 @@ CString LFApplication::GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR
 	return Hint;
 }
 
-CString LFApplication::GetHintForStore(LFStoreDescriptor* pStoreDescriptor) const
+CString LFApplication::GetHintForStore(const LFStoreDescriptor& StoreDescriptor) const
 {
-	ASSERT(pStoreDescriptor);
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(StoreDescriptor);
 
-	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
 	CString Hint = GetHintForItem(pItemDescriptor);
+
 	LFFreeItemDescriptor(pItemDescriptor);
 
 	return Hint;
@@ -661,15 +673,6 @@ void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& C
 
 	pCallerWnd->ClientToScreen(&point);
 	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
-}
-
-void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, LFStoreDescriptor* pStoreDescriptor)
-{
-	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(pStoreDescriptor);
-
-	ShowTooltip(pCallerWnd, point, pItemDescriptor->CoreAttributes.FileName, GetHintForItem(pItemDescriptor));
-
-	LFFreeItemDescriptor(pItemDescriptor);
 }
 
 

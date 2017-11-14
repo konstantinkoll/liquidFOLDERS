@@ -381,7 +381,7 @@ void CBackstageWnd::UpdateBackground()
 								rectBounds.right += BACKSTAGERADIUS;
 							}
 
-							DrawBackstageBorder(g, rectBounds);
+							DrawMilledRectangle(g, rectBounds);
 						}
 					}
 

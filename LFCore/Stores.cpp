@@ -723,11 +723,29 @@ LFCORE_API UINT LFSetDefaultStore(LPCSTR pStoreID)
 // Stores
 //
 
-__forceinline UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType)
+UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType)
 {
 	assert(pStoreDescriptor);
 
-	return pStoreDescriptor->Source | ItemType | (LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted) | (pStoreDescriptor->Flags & LFStoreFlagsWriteable);
+	UINT Type = pStoreDescriptor->Source | ItemType | (pStoreDescriptor->Flags & LFStoreFlagsWriteable) | (LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted);
+
+	// Add capability flags
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+		Type |= LFTypeShortcutAllowed;
+
+	if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)!=LFStoreModeBackendInternal)
+		Type |= (LFTypeSynchronizeAllowed | LFTypeExplorerAllowed);
+
+	return Type;
+}
+
+void GetDiskFreeSpaceForStore(LFStoreDescriptor& StoreDescriptor)
+{
+	if (LFIsStoreMounted(&StoreDescriptor))
+		if (GetDiskFreeSpaceEx(StoreDescriptor.DatPath, &StoreDescriptor.FreeBytesAvailable, &StoreDescriptor.TotalNumberOfBytes, &StoreDescriptor.TotalNumberOfBytesFree))
+			return;
+
+	StoreDescriptor.FreeBytesAvailable.QuadPart = StoreDescriptor.TotalNumberOfBytes.QuadPart = StoreDescriptor.TotalNumberOfBytesFree.QuadPart = 0;
 }
 
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore*& pStore)
@@ -843,20 +861,17 @@ LFCORE_API UINT LFGetStoreCount()
 	return 0;
 }
 
-LFCORE_API UINT LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount)
+LFCORE_API UINT LFGetAllStores(CHAR*& pStoreIDs, UINT& Count)
 {
-	assert(ppStoreIDs);
-	assert(pCount);
-
-	*ppStoreIDs = NULL;
-	*pCount = NULL;
+	pStoreIDs = NULL;
+	Count = 0;
 
 	if (!GetMutexForStores())
 		return LFMutexError;
 
 	if (StoreCount)
 	{
-		CHAR* pChar = (*ppStoreIDs=(CHAR*)malloc(LFKeySize*StoreCount));
+		CHAR* pChar = (pStoreIDs=(CHAR*)malloc(LFKeySize*StoreCount));
 
 		for (UINT a=0; a<StoreCount; a++)
 		{
@@ -865,7 +880,7 @@ LFCORE_API UINT LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount)
 			pChar += LFKeySize;
 		}
 
-		*pCount = StoreCount;
+		Count = StoreCount;
 	}
 
 	ReleaseMutexForStores();
@@ -873,10 +888,9 @@ LFCORE_API UINT LFGetAllStores(CHAR** ppStoreIDs, UINT* pCount)
 	return LFOk;
 }
 
-LFCORE_API UINT LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor* pStoreDescriptor)
+LFCORE_API UINT LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace)
 {
 	assert(pStoreID);
-	assert(pStoreDescriptor);
 
 	UINT Result;
 
@@ -893,23 +907,31 @@ LFCORE_API UINT LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor* pStoreDes
 
 	LFStoreDescriptor* pSlot = FindStore(StoreID);
 	if (pSlot)
-		*pStoreDescriptor = *pSlot;
+	{
+		StoreDescriptor = *pSlot;
+
+		if (DiskFreeSpace)
+			GetDiskFreeSpaceForStore(StoreDescriptor);
+	}
 
 	ReleaseMutexForStores();
 
 	return (pSlot ? LFOk : LFIllegalID);
 }
 
-LFCORE_API UINT LFGetStoreSettingsEx(GUID UniqueID, LFStoreDescriptor* pStoreDescriptor)
+LFCORE_API UINT LFGetStoreSettingsEx(GUID UniqueID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace)
 {
-	assert(pStoreDescriptor);
-
 	if (!GetMutexForStores())
 		return LFMutexError;
 
 	LFStoreDescriptor* pSlot = FindStore(UniqueID);
 	if (pSlot)
-		*pStoreDescriptor = *pSlot;
+	{
+		StoreDescriptor = *pSlot;
+
+		if (DiskFreeSpace)
+			GetDiskFreeSpaceForStore(StoreDescriptor);
+	}
 
 	ReleaseMutexForStores();
 
@@ -943,7 +965,7 @@ LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* 
 	if (pType)
 	{
 		// Basic, Mounted?
-		*pType = StoreFlagsToType(pStoreDescriptor, LFTypeStore | LFTypeHasDescription);
+		*pType = StoreFlagsToType(pStoreDescriptor, LFTypeStore);
 
 		// Empty?
 		if (pStoreDescriptor->Flags & LFStoreFlagsMaintained)
@@ -970,7 +992,7 @@ LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* 
 		ULI2.LowPart = pStoreDescriptor->CreationTime.dwLowDateTime;
 		ULI2.HighPart = pStoreDescriptor->CreationTime.dwHighDateTime;
 
-		if ((ULI1.QuadPart<ULI2.QuadPart+(ULONGLONG)86400*10*1000*1000) || pStoreDescriptor->Statistics.FileCount[LFContextNew])
+		if ((ULI1.QuadPart<ULI2.QuadPart+86400ull*10ull*1000ull*1000ull) || pStoreDescriptor->Statistics.FileCount[LFContextNew])
 			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeNew;
 
 		// Default store?
@@ -985,13 +1007,6 @@ LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* 
 		// Error?
 		if (pStoreDescriptor->Flags & LFStoreFlagsError)
 			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeError;
-
-		// Capabilities
-		if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-			*pType |= LFTypeShortcutAllowed;
-
-		if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)!=LFStoreModeBackendInternal)
-			*pType |= LFTypeSynchronizeAllowed;
 	}
 
 	return max(LFTypeSourceInternal, pStoreDescriptor->Source);
@@ -1298,7 +1313,7 @@ LFCORE_API UINT LFSynchronizeStores(LFProgress* pProgress)
 	CHAR* pStoreIDs;
 	UINT Count;
 	UINT Result;
-	if ((Result=LFGetAllStores(&pStoreIDs, &Count))!=LFOk)
+	if ((Result=LFGetAllStores(pStoreIDs, Count))!=LFOk)
 		return Result;
 
 	if (Count)
@@ -1346,7 +1361,7 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 
 	CHAR* pStoreIDs;
 	UINT Count;
-	if ((pMaintenanceList->m_LastError=LFGetAllStores(&pStoreIDs, &Count))!=LFOk)
+	if ((pMaintenanceList->m_LastError=LFGetAllStores(pStoreIDs, Count))!=LFOk)
 		return pMaintenanceList;
 
 	if (Count)
@@ -1464,7 +1479,7 @@ void QueryStores(LFSearchResult* pSearchResult)
 	if (GetMutexForStores())
 	{
 		for (UINT a=0; a<StoreCount; a++)
-			pSearchResult->AddStoreDescriptor(&StoreCache[a]);
+			pSearchResult->AddStoreDescriptor(StoreCache[a]);
 
 		ReleaseMutexForStores();
 	}

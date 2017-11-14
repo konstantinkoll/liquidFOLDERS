@@ -57,6 +57,18 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	IDXATTRS_CORE | IDXATTRS_MESSAGES,
 	IDXATTRS_MINDETAILS | (1ull<<LFAttrTitle) | (1ull<<LFAttrFrom) | (1ull<<LFAttrTo) },
 
+	// LFContextBooks
+	{ LFAttrFileName, TRUE, FALSE,
+	ALLVIEWS, LFViewIcons,
+	IDXATTRS_CORE | IDXATTRS_DOCUMENTS,
+	((1ull<<LFAttrFileName) | (1ull<<LFAttrComments) | (1ull<<LFAttrCreationTime) | (1ull<<LFAttrFileTime) | (1ull<<LFAttrRating) | (1ull<<LFAttrColor) | (1ull<<LFAttrCustomer) | (1ull<<LFAttrPages)) },
+
+	// LFContextFonts
+	{ LFAttrFileName, TRUE, FALSE,
+	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,
+	IDXATTRS_CORE,
+	IDXATTRS_MINDETAILS | (1ull<<LFAttrRating) },
+
 	// LFContextNew
 	{ LFAttrAddTime, FALSE, FALSE,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewIcons,

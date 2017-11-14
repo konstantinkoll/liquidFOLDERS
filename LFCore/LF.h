@@ -212,23 +212,25 @@ struct LFItemCategoryDescriptor
 #define LFContextDocuments              5
 #define LFContextContacts               6
 #define LFContextMessages               7
-#define LFContextNew                    8
-#define LFContextTasks                  9
-#define LFContextArchive               10
-#define LFContextTrash                 11
-#define LFContextFilters               12
-#define LFContextSearch                13
-#define LFContextStores                14
-#define LFContextClipboard             15
-#define LFContextSubfolderDefault      16
-#define LFContextSubfolderDay          17
-#define LFContextSubfolderGenre        18
-#define LFContextSubfolderArtist       19
-#define LFContextSubfolderAlbum        20
+#define LFContextBooks                  8
+#define LFContextFonts                  9
+#define LFContextNew                   10
+#define LFContextTasks                 11
+#define LFContextArchive               12
+#define LFContextTrash                 13
+#define LFContextFilters               14
+#define LFContextSearch                15
+#define LFContextStores                16
+#define LFContextClipboard             17
+#define LFContextSubfolderDefault      18
+#define LFContextSubfolderDay          19
+#define LFContextSubfolderGenre        20
+#define LFContextSubfolderArtist       21
+#define LFContextSubfolderAlbum        22
 
-#define LFLastGroupContext              7
-#define LFLastQueryContext             12
-#define LFContextCount                 21
+#define LFLastPersistentContext         9
+#define LFLastQueryContext             14
+#define LFContextCount                 23
 
 #define LFContextAuto                  0xFF	// Internal use only
 
@@ -584,168 +586,6 @@ struct LFFilter
 };
 
 
-// Attribute structures
-
-struct LFCoreAttributes
-{
-	// Public
-	WCHAR FileName[256];
-	CHAR FileID[LFKeySize];
-	WCHAR Comments[256];
-	FILETIME CreationTime;
-	FILETIME AddTime;
-	FILETIME FileTime;
-	FILETIME DeleteTime;
-	FILETIME ArchiveTime;
-	CHAR FileFormat[LFExtSize];
-	INT64 FileSize;
-	BYTE Flags;
-	BYTE Color;
-	BYTE Reserved1;
-	BYTE Reserved2;
-	CHAR URL[256];
-	WCHAR Hashtags[256];
-	BYTE Rating;
-	BYTE Priority;
-	WCHAR LocationName[256];
-	CHAR LocationIATA[4];
-	UINT Reserved3;
-	LFGeoCoordinates LocationGPS;
-
-	// Private
-	BYTE SlaveID;
-	BYTE ContextID;
-
-	// Public extended
-	FILETIME DueTime;
-	FILETIME DoneTime;
-};
-
-
-// Sources
-
-#define LFSourceCount              16
-
-
-// Item structure
-
-#define LFTypeSourceUnknown        0x00000000	// Must be lowest bits
-#define LFTypeSourceInternal       0x00000001
-#define LFTypeSourceWindows        0x00000002
-#define LFTypeSource1394           0x00000003
-#define LFTypeSourceUSB            0x00000004
-#define LFTypeSourceNethood        0x00000005
-#define LFTypeSourceBox            0x00000006
-#define LFTypeSourceDropbox        0x00000007
-#define LFTypeSourceICloud         0x00000008
-#define LFTypeSourceOneDrive       0x00000009
-#define LFTypeSourceFacebook       0x0000000A
-#define LFTypeSourceFlickr         0x0000000B
-#define LFTypeSourceInstagram      0x0000000C
-#define LFTypeSourcePinterest      0x0000000D
-#define LFTypeSourceSoundCloud     0x0000000E
-#define LFTypeSourceTwitter        0x0000000F
-#define LFTypeSourceYouTube        0x00000010
-#define LFTypeSourceMask           0x000000FF
-
-#define LFTypeBadgeError           0x00000100	// Volatile, must match image list
-#define LFTypeBadgeDefault         0x00000200
-#define LFTypeBadgeNew             0x00000300
-#define LFTypeBadgeEmpty           0x00000400
-#define LFTypeBadgeMask            0x00000F00
-
-// Store type capabilities
-#define LFTypeHasDescription       0x00001000	// Volatile
-#define LFTypeShortcutAllowed      0x00002000
-#define LFTypeSynchronizeAllowed   0x00004000
-
-// Store type flags
-#define LFTypeMounted              0x00100000	// Volatile
-#define LFTypeMaintained           0x00200000
-#define LFTypeWriteable            0x00400000
-
-// Visual type
-#define LFTypeSelected             0x01000000	// Volatile
-#define LFTypeDefault              0x02000000
-#define LFTypeGhosted              0x04000000
-
-// Item type
-#define LFTypeStore                0x00000000	// Volatile
-#define LFTypeFile                 0x40000000
-#define LFTypeFolder               0x80000000
-#define LFTypeMask                 0xC0000000
-
-
-// Persistent item flags
-#define LFFlagTrash                0x01			// Persistent, DO NOT CHANGE
-#define LFFlagNew                  0x02
-#define LFFlagTask                 0x04
-#define LFFlagMissing              0x08
-#define LFFlagArchive              0x10
-#define LFFlagLink                 0x20
-
-
-// Item data structure
-#define LFMaxSlaveSize             3236			// Check if new attributes are attached
-#define LFMaxStoreDataSize         sizeof(WCHAR)*MAX_PATH
-
-#pragma warning(push)
-#pragma warning(disable: 4201)
-
-struct LFItemDescriptor
-{
-	// Basic
-	UINT Type;
-	UINT CategoryID;
-	UINT IconID;
-	BOOL RemoveFlag;
-
-	// Item aggregation
-	LFFilter* pNextFilter;
-	UINT AggregateCount;
-	BYTE AggregateColorSet;
-
-	// Pointer to attribute values
-	LPVOID AttributeValues[LFAttributeCount];
-
-	// Volatile attributes
-	CHAR StoreID[LFKeySize];
-
-	// Internal data from store
-	BYTE StoreData[LFMaxStoreDataSize];
-
-	// Must be last in struct in this order, as zero-filling depends on it
-	LFCoreAttributes CoreAttributes;
-
-	//
-	// Variables below this line are NOT zeroed out!
-	//
-
-	// Item aggregation
-	INT AggregateFirst;
-	INT AggregateLast;
-
-	// Internal use only
-	UINT RefCount;
-
-	// Space for additional attributes
-	union
-	{
-		struct
-		{
-			DOUBLE Dimension;
-			DOUBLE AspectRatio;
-			BYTE SlaveData[LFMaxSlaveSize];
-		};
-
-		// Item aggregation
-		WCHAR Description[256];
-	};
-};
-
-#pragma warning(pop)
-
-
 // Store structure
 
 #define LFStoreModeIndexInternal         0x00
@@ -792,7 +632,180 @@ struct LFStoreDescriptor
 	FILETIME MountTime;							// Volatile
 	UINT Source;								// Volatile
 	LFStatistics Statistics;					// Volatile
+	ULARGE_INTEGER FreeBytesAvailable;			// Volatile
+	ULARGE_INTEGER TotalNumberOfBytes;			// Volatile
+	ULARGE_INTEGER TotalNumberOfBytesFree;		// Volatile
 };
+
+
+// Attribute structures
+
+struct LFCoreAttributes
+{
+	// Public
+	WCHAR FileName[256];
+	CHAR FileID[LFKeySize];
+	WCHAR Comments[256];
+	FILETIME CreationTime;
+	FILETIME AddTime;
+	FILETIME FileTime;
+	FILETIME DeleteTime;
+	FILETIME ArchiveTime;
+	CHAR FileFormat[LFExtSize];
+	INT64 FileSize;
+	BYTE Flags;
+	BYTE Color;
+	BYTE Reserved1;
+	BYTE Reserved2;
+	CHAR URL[256];
+	WCHAR Hashtags[256];
+	BYTE Rating;
+	BYTE Priority;
+	WCHAR LocationName[256];
+	CHAR LocationIATA[4];
+	UINT Reserved3;
+	LFGeoCoordinates LocationGPS;
+
+	// Private
+	BYTE SlaveID;
+	BYTE ContextID;
+
+	// Public extended
+	FILETIME DueTime;
+	FILETIME DoneTime;
+};
+
+
+// Sources
+
+#define LFSourceCount                 16
+
+
+// Item structure
+
+#define LFTypeSourceUnknown           0x00000000	// Must be lowest bits
+#define LFTypeSourceInternal          0x00000001
+#define LFTypeSourceWindows           0x00000002
+#define LFTypeSource1394              0x00000003
+#define LFTypeSourceUSB               0x00000004
+#define LFTypeSourceNethood           0x00000005
+#define LFTypeSourceBox               0x00000006
+#define LFTypeSourceDropbox           0x00000007
+#define LFTypeSourceICloud            0x00000008
+#define LFTypeSourceOneDrive          0x00000009
+#define LFTypeSourceFacebook          0x0000000A
+#define LFTypeSourceFlickr            0x0000000B
+#define LFTypeSourceInstagram         0x0000000C
+#define LFTypeSourcePinterest         0x0000000D
+#define LFTypeSourceSoundCloud        0x0000000E
+#define LFTypeSourceTwitter           0x0000000F
+#define LFTypeSourceYouTube           0x00000010
+
+#define LFTypeSourceMask              0x000000FF
+
+// Type: badge flags
+#define LFTypeBadgeError              0x00000100	// Volatile, must match image list
+#define LFTypeBadgeDefault            0x00000200
+#define LFTypeBadgeNew                0x00000300
+#define LFTypeBadgeEmpty              0x00000400
+
+#define LFTypeBadgeMask               0x00000F00
+
+// Type: capability flags
+#define LFTypeShortcutAllowed         0x00001000	// Volatile
+#define LFTypeSynchronizeAllowed      0x00002000
+#define LFTypeExplorerAllowed         0x00004000
+
+#define LFTypeCapabilityMask          0x000FF000
+
+// Type: store flags
+#define LFTypeMounted                 0x00100000	// Volatile
+#define LFTypeMaintained              0x00200000
+#define LFTypeWriteable               0x00400000
+
+// Typpe: visual flags
+#define LFTypeSelected                0x01000000	// Volatile
+#define LFTypeDefault                 0x02000000
+#define LFTypeGhosted                 0x04000000
+
+// Item type
+#define LFTypeStore                   0x00000000	// Volatile
+#define LFTypeFile                    0x40000000
+#define LFTypeFolder                  0x80000000
+
+#define LFTypeMask                    0xC0000000
+
+
+// Persistent item flags
+#define LFFlagTrash                   0x01			// Persistent, DO NOT CHANGE
+#define LFFlagNew                     0x02
+#define LFFlagTask                    0x04
+#define LFFlagMissing                 0x08
+#define LFFlagArchive                 0x10
+#define LFFlagLink                    0x20
+
+
+// Item data structure
+#define LFMaxSlaveSize                3236			// Check when new attributes are added
+#define LFMaxStoreDataSize            sizeof(WCHAR)*MAX_PATH
+
+#pragma warning(push)
+#pragma warning(disable: 4201)
+
+struct LFItemDescriptor
+{
+	// Basic
+	UINT Type;
+	UINT CategoryID;
+	UINT IconID;
+	BOOL RemoveFlag;
+
+	// Item aggregation
+	LFFilter* pNextFilter;
+	UINT AggregateCount;
+	BYTE AggregateColorSet;
+
+	// Pointer to attribute values
+	LPVOID AttributeValues[LFAttributeCount];
+
+	// Volatile attributes
+	CHAR StoreID[LFKeySize];
+
+	// Internal data from store
+	BYTE StoreData[LFMaxStoreDataSize];
+
+	// Must be last in struct in this order, as zero-filling depends on it
+	LFCoreAttributes CoreAttributes;
+
+	//
+	// Variables below this line are NOT zeroed out except the first WCHAR of Description!
+	//
+
+	// Item aggregation
+	WCHAR Description[256];
+	INT AggregateFirst;
+	INT AggregateLast;
+
+	// Internal use only
+	UINT RefCount;
+
+	// Space for additional data
+	union
+	{
+		// For stores
+		LFStoreDescriptor StoreDescriptor;
+
+		// For files and folders
+		struct
+		{
+			DOUBLE Dimension;
+			DOUBLE AspectRatio;
+			BYTE SlaveData[LFMaxSlaveSize];
+		};
+	};
+};
+
+#pragma warning(pop)
 
 
 // Transaction types

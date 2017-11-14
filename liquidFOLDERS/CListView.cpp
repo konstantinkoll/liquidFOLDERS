@@ -76,7 +76,7 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 			break;
 
 		default:
-			TypeMask = (1<<LFTypeDuration) | (1<<LFTypeGenre) | (1<<LFTypeGeoCoordinates) | (1<<LFTypeIATACode) | (1<<LFTypeRating) | (1<<LFTypeColor) | (1<<LFTypeTime) | (1<<LFTypeApplication);
+			TypeMask = (1<<LFTypeDuration) | (1<<LFTypeGenre) | (1<<LFTypeGeoCoordinates) | (1<<LFTypeIATACode) | (1<<LFTypeRating) | (1<<LFTypeColor) | (1<<LFTypeTime) | (1<<LFTypeMegapixel) | (1<<LFTypeApplication);
 			m_HasFolders = theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.IconID || (m_ContextViewSettings.SortBy==LFAttrLocationName);
 		}
 
@@ -352,18 +352,15 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 			DrawJumboIcon(dc, g, rect.TopLeft(), pItemDescriptor);
 
 			// Description
-			if (pItemDescriptor->Type & LFTypeHasDescription)
-			{
-				rect.right = rect.left+m_PreviewSize.cx-CARDPADDING;
-				rect.top += 128+1;
+			rect.right = rect.left+m_PreviewSize.cx-CARDPADDING;
+			rect.top += 128+1;
 
-				CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
+			CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
 
-				dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
-				dc.DrawText(pItemDescriptor->Description, -1, rect, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			SetGrayText(dc, pItemDescriptor, Themed);
+			dc.DrawText(pItemDescriptor->Description, -1, rect, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-				dc.SelectObject(pOldFont);
-			}
+			dc.SelectObject(pOldFont);
 		}
 	}
 	else

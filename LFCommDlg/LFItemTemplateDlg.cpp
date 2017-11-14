@@ -253,7 +253,7 @@ void LFItemTemplateDlg::OnUpdateCommands(CCmdUI* pCmdUI)
 LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	LFStoreDescriptor Store;
-	if (LFGetStoreSettings(m_StoreID, &Store)==LFOk)
+	if (LFGetStoreSettings(m_StoreID, Store)==LFOk)
 	{
 		CString tmpStr;
 		if (Store.Comments[0]!=L'\0')

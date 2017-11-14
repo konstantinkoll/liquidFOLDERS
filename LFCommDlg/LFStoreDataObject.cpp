@@ -34,10 +34,11 @@ LFStoreDataObject::LFStoreDataObject(LFItemDescriptor* pItemDescriptor)
 	m_lRefCount = 1;
 	m_hDescriptor = m_hShellLink = NULL;
 
-	IShellLink* pShellLink = LFGetShortcutForStore(pItemDescriptor);
-	if (pShellLink)
+	IShellLink* pShellLink;
+	if (LFGetShortcutForItem(pItemDescriptor, pShellLink)==LFOk)
 	{
 		CreateGlobals(pShellLink, pItemDescriptor->CoreAttributes.FileName);
+
 		pShellLink->Release();
 	}
 }

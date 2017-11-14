@@ -190,7 +190,7 @@ void CFileView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 				SelectItem(a, FALSE, TRUE);
 			}
 
-		if (pPersistentData && (pPersistentData->FocusItem!=-1) && pPersistentData->FocusItemSelected)
+		if (pPersistentData && pPersistentData->FocusItemSelected && (m_FocusItem!=-1))
 			SelectItem(m_FocusItem, TRUE, TRUE);
 
 		AdjustLayout();
@@ -599,10 +599,8 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 		break;
 
 	case LFTypeFolder:
-		if ((pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1))
-			pMenu->LoadMenu(IDM_FOLDER);
-
-		break;
+		if ((pItemDescriptor->AggregateFirst==-1) || (pItemDescriptor->AggregateLast==-1))
+			break;
 
 	case LFTypeFile:
 		if ((m_Context==LFContextArchive) || (m_Context==LFContextTrash))
@@ -638,6 +636,7 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 			// SendTo
 			CMenu* pSendPopup = GetSendToMenu();
 
+			pPopup->InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
 			pPopup->InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, CString((LPCSTR)IDS_CONTEXTMENU_SENDTO));
 			pPopup->InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
 
@@ -648,27 +647,30 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 	switch (pItemDescriptor->Type & LFTypeMask)
 	{
 	case LFTypeStore:
-		pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, CString((LPCSTR)IDS_CONTEXTMENU_OPENFILEDROP));
-		pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, CString((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW));
+		pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_STORE_OPENFILEDROP, CString((LPCSTR)IDS_CONTEXTMENU_OPENFILEDROP));
+		pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_STORE_OPENNEWWINDOW, CString((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW));
 
 		break;
 
 	case LFTypeFile:
 		if (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters)
 		{
+			// Edit
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_EDIT, CString((LPCSTR)IDS_CONTEXTMENU_EDIT));
 		}
 		else
 		{
-			if (pItemDescriptor->CoreAttributes.URL[0]!='\0')
-				pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENBROWSER, CString((LPCSTR)IDS_CONTEXTMENU_OPENBROWSER));
+			// Show in Explorer
+			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_SHOWEXPLORER, CString((LPCSTR)IDS_CONTEXTMENU_SHOWEXPLORER));
 
+			// Open with
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, CString((LPCSTR)IDS_CONTEXTMENU_OPENWITH));
 		}
 
 		break;
 	}
 
+	// Open
 	pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPEN, CString((LPCSTR)IDS_CONTEXTMENU_OPEN));
 	pPopup->SetDefaultItem(InsertPos, TRUE);
 
@@ -809,7 +811,7 @@ CString CFileView::GetLabel(LFItemDescriptor* pItemDescriptor) const
 
 	// Extension
 	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
-		if ((!m_HideFileExt || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
+		if ((!m_HideFileExt || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			strLabel += _T(".");
 			strLabel += pItemDescriptor->CoreAttributes.FileFormat;

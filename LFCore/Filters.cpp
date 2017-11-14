@@ -56,7 +56,7 @@ LFCORE_API void LFFreeFilter(LFFilter* pFilter)
 LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* pItemDescriptor)
 {
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, TRUE)!=LFOk)
+	if (LFGetFileLocation(pItemDescriptor, Path, MAX_PATH)!=LFOk)
 		return NULL;
 
 	LFFilter* pFilter = LoadFilter(Path, pItemDescriptor->StoreID);

@@ -12,6 +12,15 @@
 CIcons CMainWnd::m_LargeIcons;
 CIcons CMainWnd::m_SmallIcons;
 
+const UINT CMainWnd::m_ContextOrder[LFLastQueryContext+1] = {
+	LFContextAllFiles, LFContextFavorites,
+	LFContextAudio, LFContextPictures, LFContextVideos,
+	LFContextBooks, LFContextDocuments, LFContextFonts,
+	LFContextContacts, LFContextMessages,
+	LFContextNew, LFContextTasks, LFContextArchive, LFContextTrash,
+	LFContextFilters
+};
+
 CMainWnd::CMainWnd()
 	: CBackstageWnd()
 {
@@ -64,7 +73,7 @@ BOOL CMainWnd::CreateStore(const LPCSTR StoreID)
 	pFilter->QueryContext = LFContextAuto;
 
 	LFStoreDescriptor Store;
-	if (LFGetStoreSettings(StoreID, &Store)==LFOk)
+	if (LFGetStoreSettings(StoreID, Store)==LFOk)
 		wcscpy_s(pFilter->OriginalName, 256, Store.StoreName);
 
 	return CreateFilter(pFilter);
@@ -356,8 +365,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_COMMAND(IDM_FILTERS_CREATENEW, OnFiltersCreateNew)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
-	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
-	ON_COMMAND(IDM_ITEM_OPENFILEDROP, OnItemOpenFileDrop)
 
 	ON_MESSAGE(WM_CONTEXTVIEWCOMMAND, OnContextViewCommand)
 	ON_MESSAGE_VOID(WM_UPDATESORTSETTINGS, OnUpdateSortSettings)
@@ -399,19 +406,24 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// Sidebar
 		if (m_wndSidebar.Create(this, m_LargeIcons, m_SmallIcons, IDB_CONTEXTS_16, 4, TRUE))
 		{
+			ASSERT((sizeof(m_ContextOrder)/sizeof(UINT))==LFLastQueryContext+1);
+
 			for (UINT a=0; a<=LFLastQueryContext; a++)
 			{
-				switch (a)
+				const UINT Context = m_ContextOrder[a];
+
+				switch (Context)
 				{
-				case 2:
+				case LFContextAudio:
 					m_wndSidebar.AddCaption(IDS_FILETYPES);
 					break;
 
-				case LFContextDocuments:
+				case LFContextBooks:
+				case LFContextContacts:
 					m_wndSidebar.AddCaption();
 					break;
 
-				case LFLastGroupContext+1:
+				case LFLastPersistentContext+1:
 					m_wndSidebar.AddCaption(IDS_HOUSEKEEPING);
 					break;
 
@@ -420,7 +432,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					break;
 				}
 
-				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, (a==LFContextNew) ? 0xFF6020 : (a==LFContextTrash) ? 0x383030 : (COLORREF)-1);
+				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+Context, Context, theApp.m_Contexts[Context].Name, (Context==LFContextNew) ? 0xFF6020 : (Context==LFContextTrash) ? 0x383030 : (COLORREF)-1);
 			}
 
 			SetSidebar(&m_wndSidebar);
@@ -644,7 +656,7 @@ void CMainWnd::OnItemOpen()
 				WCHAR Path[MAX_PATH];
 				UINT Result;
 
-				if (strcmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
+				if (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
 				{
 					LFFilter* pFilter = LFLoadFilter(pItemDescriptor);
 
@@ -653,7 +665,7 @@ void CMainWnd::OnItemOpen()
 				}
 				else
 				{
-					if ((Result=LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, TRUE))==LFOk)
+					if ((Result=LFGetFileLocation(pItemDescriptor, Path, MAX_PATH))==LFOk)
 					{
 						if (ShellExecute(GetSafeHwnd(), _T("open"), Path, NULL, NULL, SW_SHOWNORMAL)==(HINSTANCE)SE_ERR_NOASSOC)
 							SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
@@ -666,44 +678,6 @@ void CMainWnd::OnItemOpen()
 			}
 		}
 	}
-}
-
-void CMainWnd::OnItemOpenNewWindow()
-{
-	const INT Index = m_wndMainView.GetSelectedItem();
-	if (Index!=-1)
-	{
-		LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
-
-		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
-
-		CMainWnd* pFrameWnd = new CMainWnd();
-		pFrameWnd->CreateStore(pItemDescriptor->StoreID);
-		pFrameWnd->ShowWindow(SW_SHOW);
-	}
-}
-
-void CMainWnd::OnItemOpenFileDrop()
-{
-	if (m_wndMainView.GetContext()==LFContextStores)
-	{
-		const INT Index = m_wndMainView.GetSelectedItem();
-		if (Index!=-1)
-		{
-			const LFItemDescriptor* pItemDescriptor = (*m_pCookedFiles)[Index];
-
-			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
-			theApp.GetFileDrop(pItemDescriptor->StoreID);
-		}
-	}
-	else
-		if (m_wndMainView.StoreIDValid())
-		{
-			theApp.GetFileDrop(m_wndMainView.GetStoreID());
-		}
-
-	// Iconize own window
-	ShowWindow(SW_MINIMIZE);
 }
 
 LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)

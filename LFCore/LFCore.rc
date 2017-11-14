@@ -96,6 +96,7 @@ IDI_APP_VSCO            ICON                    "res\\APP_VSCO.ico"
 IDI_APP_YOUTUBE         ICON                    "res\\APP_YouTube.ico"
 IDI_APP_JODEL           ICON                    "res\\APP_Jodel.ico"
 IDI_APP_VIMEO           ICON                    "res\\APP_Vimeo.ico"
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -193,17 +194,19 @@ BEGIN
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Bilder"
     IDS_CONTEXT_VIDEOS      "Videos"
-    IDS_CONTEXT_DOCUMENTS   "Dokumente\nOffice-Dokumente"
+    IDS_CONTEXT_DOCUMENTS   "Dokumente\nOffice-Dokumente und Webseiten"
     IDS_CONTEXT_CONTACTS    "Kontakte"
     IDS_CONTEXT_MESSAGES    "Nachrichten"
+    IDS_CONTEXT_BOOKS       "Bücher\nDigitale Bücher"
+    IDS_CONTEXT_FONTS       "Schriftarten"
     IDS_CONTEXT_NEW         "Neue Dateien\nKürzlich hinzugefügte Dateien"
     IDS_CONTEXT_TASKS       "Aufgaben\nAls Aufgaben markierte Dateien"
-    IDS_CONTEXT_ARCHIVE     "Archiv\nArchivierte Dateien"
-    IDS_CONTEXT_TRASH       "Papierkorb\nGelöschte Dateien"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_ARCHIVE     "Archiv\nAusgeblendete Dateien"
+    IDS_CONTEXT_TRASH       "Papierkorb\nGelöschte Dateien"
     IDS_CONTEXT_FILTERS     "Filter\nBenutzerdefinierte Filter"
     IDS_CONTEXT_SEARCH      "Suchergebnis"
     IDS_CONTEXT_STORES      "Speicherorte"
@@ -376,11 +379,11 @@ BEGIN
     IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Kanäle"
     IDS_ATTR_SAMPLERATE     "Samplerate"
-    IDS_ATTR_AUDIOCODEC     "Audio-Codec"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_AUDIOCODEC     "Audio-Codec"
     IDS_ATTR_DURATION       "Laufzeit"
     IDS_ATTR_BITRATE        "Bitrate"
     IDS_ATTR_RECORDINGTIME  "Aufgenommen am"
@@ -506,17 +509,19 @@ BEGIN
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Fotos"
     IDS_CONTEXT_VIDEOS      "Videos"
-    IDS_CONTEXT_DOCUMENTS   "Documentos\nDocumentos de oficina"
+    IDS_CONTEXT_DOCUMENTS   "Documentos\nDocumentos de oficina y páginas web"
     IDS_CONTEXT_CONTACTS    "Contactos"
     IDS_CONTEXT_MESSAGES    "Mensajes"
+    IDS_CONTEXT_BOOKS       "Libros\nLibros digitales"
+    IDS_CONTEXT_FONTS       "Fuentes"
     IDS_CONTEXT_NEW         "Archivos nuevos\nArchivos añadidos recientemente"
     IDS_CONTEXT_TASKS       "Tareas\nArchivos marcados como tareas"
-    IDS_CONTEXT_ARCHIVE     "Archivo\nArchivos archivados"
-    IDS_CONTEXT_TRASH       "Basura\nArchivos eliminados"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_ARCHIVE     "Archivo\nArchivos ocultos"
+    IDS_CONTEXT_TRASH       "Basura\nArchivos eliminados"
     IDS_CONTEXT_FILTERS     "Filtros\nFiltros definidos por el usuario"
     IDS_CONTEXT_SEARCH      "Resultados de la búsqueda"
     IDS_CONTEXT_STORES      "Ubicaciones"
@@ -688,11 +693,11 @@ BEGIN
     IDS_ATTR_GENRE          "Género"
     IDS_ATTR_CHANNELS       "Canales"
     IDS_ATTR_SAMPLERATE     "Nivel de muestra"
-    IDS_ATTR_AUDIOCODEC     "Códec de audio"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_AUDIOCODEC     "Códec de audio"
     IDS_ATTR_DURATION       "Duración"
     IDS_ATTR_BITRATE        "Tasa de bits"
     IDS_ATTR_RECORDINGTIME  "Tiempo registrado"
@@ -818,17 +823,19 @@ BEGIN
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Images"
     IDS_CONTEXT_VIDEOS      "Vidéos"
-    IDS_CONTEXT_DOCUMENTS   "Documents\nDocuments de bureau"
+    IDS_CONTEXT_DOCUMENTS   "Documents\nDocuments de bureau et pages web"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
+    IDS_CONTEXT_BOOKS       "Livres\nLivres digitals"
+    IDS_CONTEXT_FONTS       "Fontes"
     IDS_CONTEXT_NEW         "Nouveaux fichiers\nFichiers ajoutés récemment"
     IDS_CONTEXT_TASKS       "Tâches\nFichiers marqués comme tâches"
-    IDS_CONTEXT_ARCHIVE     "Archive\nLes fichiers archivés"
-    IDS_CONTEXT_TRASH       "Déchets\nLes fichiers marqués pour la radiation finale"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_ARCHIVE     "Archive\nLes fichiers masqués"
+    IDS_CONTEXT_TRASH       "Déchets\nLes fichiers marqués pour la radiation finale"
     IDS_CONTEXT_FILTERS     "Filtres\nFiltres définis par l'utilisateur"
     IDS_CONTEXT_SEARCH      "Résultat de la recherche"
     IDS_CONTEXT_STORES      "Emplacements"
@@ -1002,11 +1009,11 @@ BEGIN
     IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Canaux"
     IDS_ATTR_SAMPLERATE     "Vitesse d'exploration"
-    IDS_ATTR_AUDIOCODEC     "Codec d'audio"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_AUDIOCODEC     "Codec d'audio"
     IDS_ATTR_DURATION       "Durée"
     IDS_ATTR_BITRATE        "Débit binaire"
     IDS_ATTR_RECORDINGTIME  "Temp d'enregistrement"
@@ -1169,17 +1176,19 @@ BEGIN
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Pictures"
     IDS_CONTEXT_VIDEOS      "Videos"
-    IDS_CONTEXT_DOCUMENTS   "Documents\nOffice documents"
+    IDS_CONTEXT_DOCUMENTS   "Documents\nOffice documents and web pages"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
+    IDS_CONTEXT_BOOKS       "Books\nElectronic books"
+    IDS_CONTEXT_FONTS       "Fonts"
     IDS_CONTEXT_NEW         "New files\nRecently added files"
     IDS_CONTEXT_TASKS       "Tasks\nFiles marked as tasks"
-    IDS_CONTEXT_ARCHIVE     "Archive\nArchived files"
-    IDS_CONTEXT_TRASH       "Trash\nDeleted files"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_ARCHIVE     "Archive\nHidden files"
+    IDS_CONTEXT_TRASH       "Trash\nDeleted files"
     IDS_CONTEXT_FILTERS     "Filters\nUser-defined filters"
     IDS_CONTEXT_SEARCH      "Search result"
     IDS_CONTEXT_STORES      "Locations"
@@ -1351,11 +1360,11 @@ BEGIN
     IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Channels"
     IDS_ATTR_SAMPLERATE     "Sample rate"
-    IDS_ATTR_AUDIOCODEC     "Audio codec"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTR_AUDIOCODEC     "Audio codec"
     IDS_ATTR_DURATION       "Duration"
     IDS_ATTR_BITRATE        "Bitrate"
     IDS_ATTR_RECORDINGTIME  "Recorded"

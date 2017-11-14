@@ -13,7 +13,7 @@ public:
 
 	void FinishQuery(LFFilter* pFilter);
 	BOOL AddItem(LFItemDescriptor* pItemDescriptor);
-	BOOL AddStoreDescriptor(LFStoreDescriptor* pStoreDescriptor);
+	BOOL AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor);
 	void RemoveItem(UINT Index, BOOL UpdateCount=TRUE);
 	void RemoveFlaggedItems(BOOL UpdateCount=TRUE);
 	void KeepRange(INT First, INT Last);
@@ -41,7 +41,7 @@ protected:
 
 private:
 	static void InitFileSummary(LFFileSummary& FileSummary);
-	static void AddStoreToSummary(LFFileSummary& FileSummary, LFStoreDescriptor* pStoreDescriptor);
+	static void AddStoreToSummary(LFFileSummary& FileSummary, const LFStoreDescriptor& StoreDescriptor);
 	static void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	static void RemoveFileFromSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	INT Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const;
@@ -56,11 +56,8 @@ inline void LFSearchResult::InitFileSummary(LFFileSummary& FileSummary)
 	FileSummary.OnlyMediaFiles = TRUE;
 }
 
-inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, LFStoreDescriptor* pStoreDescriptor)
+inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, const LFStoreDescriptor& StoreDescriptor)
 {
-	assert(pStoreDescriptor);
-
-	FileSummary.FileCount += pStoreDescriptor->Statistics.FileCount[0];
-	FileSummary.FileSize += pStoreDescriptor->Statistics.FileSize[0];
+	FileSummary.FileCount += StoreDescriptor.Statistics.FileCount[0];
+	FileSummary.FileSize += StoreDescriptor.Statistics.FileSize[0];
 }
-

@@ -139,7 +139,7 @@ void LFRunMaintenance(CWnd* pParentWnd)
 void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd)
 {
 	LFStoreDescriptor Store;
-	UINT Result = LFGetStoreSettings(pStoreID, &Store);
+	UINT Result = LFGetStoreSettings(pStoreID, Store);
 	if (Result!=LFOk)
 	{
 		LFErrorBox(pParentWnd, Result);

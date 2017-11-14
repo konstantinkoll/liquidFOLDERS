@@ -5,6 +5,10 @@
 #include <shellapi.h>
 #include <Thumbcache.h>
 
+#include <gdiplus.h>
+using namespace Gdiplus;
+#pragma comment(lib, "gdiplus.lib")
+
 
 extern OSVERSIONINFO osInfo;
 
@@ -63,20 +67,34 @@ Finish:
 		CoTaskMemFree(pidlFQ);
 	}
 
-	return hBitmap;
+	return LFSanitizeThumbnail(hBitmap);
 }
 
-LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
+LFCORE_API HBITMAP LFSanitizeThumbnail(HBITMAP hBitmap)
 {
+	// Is hBitmap valid?
+	if (!hBitmap)
+		return NULL;
+
+	// Get bitmap data
 	BITMAP BitmapSrc;
 	GetObject(hBitmap, sizeof(BitmapSrc), &BitmapSrc);
 
-	if ((BitmapSrc.bmBits==NULL) || (BitmapSrc.bmWidth!=256) || (BitmapSrc.bmHeight!=256) || ((BitmapSrc.bmBitsPixel!=24) && (BitmapSrc.bmBitsPixel!=32)))
+	// Are the pixels stored in RAM?
+	if (!BitmapSrc.bmBits)
+		return hBitmap;
+
+	// Only try to fix thumbnails with a width of 256 or 512 pixels
+	if (((BitmapSrc.bmWidth!=256) && (BitmapSrc.bmWidth!=512)))
+		return hBitmap;
+
+	// Only try to fix thumbnails with 24bpp or 32bpp color depth
+	if ((BitmapSrc.bmBitsPixel!=24) && (BitmapSrc.bmBitsPixel!=32))
 		return hBitmap;
 
 	BYTE* pBitsSrc = (BYTE*)BitmapSrc.bmBits;
 
-	// Blt bitmaps without alpha channel
+	// Blit 24bpp bitmaps to solve mirrored orientation by Foxit reader and others
 	if (BitmapSrc.bmBitsPixel==24)
 	{
 		// Create new bitmap
@@ -84,22 +102,21 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 		ZeroMemory(&DIB, sizeof(DIB));
 
 		DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		DIB.bmiHeader.biWidth = 256;
-		DIB.bmiHeader.biHeight = 256;
+		DIB.bmiHeader.biWidth = BitmapSrc.bmWidth;
+		DIB.bmiHeader.biHeight = BitmapSrc.bmHeight;
 		DIB.bmiHeader.biPlanes = 1;
 		DIB.bmiHeader.biBitCount = 24;
 		DIB.bmiHeader.biCompression = BI_RGB;
 
 		HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (LPVOID*)&pBitsSrc, NULL, 0);
 
-		// Blt bitmap to solve mirrored orientation by Foxit reader and others
 		HDC hDCMem = CreateCompatibleDC(NULL);
 		HDC hDC = CreateCompatibleDC(hDCMem);
 
 		HBITMAP hBitmapOld1 = (HBITMAP)SelectObject(hDCMem, hBitmap);
 		HBITMAP hBitmapOld2 = (HBITMAP)SelectObject(hDC, hBitmapNew);
 
-		BitBlt(hDC, 0, 0, 256, 256, hDCMem, 0, 0, SRCCOPY);
+		BitBlt(hDC, 0, 0, BitmapSrc.bmWidth, BitmapSrc.bmHeight, hDCMem, 0, 0, SRCCOPY);
 
 		SelectObject(hDCMem, hBitmapOld1);
 		SelectObject(hDC, hBitmapOld2);
@@ -112,57 +129,50 @@ LFCORE_API HBITMAP LFQuarter256Bitmap(HBITMAP hBitmap)
 	}
 
 	// Create new bitmap
+	const LONG Scale = BitmapSrc.bmWidth/128;
+
 	BITMAPINFO DIB;
 	ZeroMemory(&DIB, sizeof(DIB));
 
 	DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	DIB.bmiHeader.biWidth = 128;
-	DIB.bmiHeader.biHeight = 128;
+	DIB.bmiHeader.biHeight = BitmapSrc.bmHeight/Scale;
 	DIB.bmiHeader.biPlanes = 1;
-	DIB.bmiHeader.biBitCount = 32;
+	DIB.bmiHeader.biBitCount = BitmapSrc.bmBitsPixel;
 	DIB.bmiHeader.biCompression = BI_RGB;
 
-	BYTE* pBitsDst;
+	LPBYTE pBitsDst;
 	HBITMAP hBitmapNew = CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, (LPVOID*)&pBitsDst, NULL, 0);
 
+	// Invoke high-performance, high-quality scaler
 	switch (BitmapSrc.bmBitsPixel)
 	{
-	case 32:
-		// True color with alpha channel
-		for (UINT Row=0; Row<128; Row++)
+	case 24:
+		// True color without alpha channel
+		switch (BitmapSrc.bmWidth)
 		{
-			for (UINT Column=0; Column<128; Column++)
-			{
-				*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+4)+*(pBitsSrc+256*4)+*(pBitsSrc+256*4+4))>>2;
-				*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+5)+*(pBitsSrc+256*4+1)+*(pBitsSrc+256*4+5))>>2;
-				*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+6)+*(pBitsSrc+256*4+2)+*(pBitsSrc+256*4+6))>>2;
-				*(pBitsDst+3) = (*(pBitsSrc+3)+*(pBitsSrc+7)+*(pBitsSrc+256*4+3)+*(pBitsSrc+256*4+7))>>2;
+		case 256:
+			HQScale24<2>(DIB, pBitsSrc, pBitsDst);
+			break;
 
-				pBitsSrc += 8;
-				pBitsDst += 4;
-			}
-
-			pBitsSrc += 256*4;
+		case 512:
+			HQScale24<4>(DIB, pBitsSrc, pBitsDst);
+			break;
 		}
 
 		break;
 
-	case 24:
-		// True color without alpha channel
-		for (UINT Row=0; Row<128; Row++)
+	case 32:
+		// True color with alpha channel
+		switch (BitmapSrc.bmWidth)
 		{
-			for (UINT Column=0; Column<128; Column++)
-			{
-				*(pBitsDst+0) = (*(pBitsSrc+0)+*(pBitsSrc+3)+*(pBitsSrc+256*3)+*(pBitsSrc+256*3+3))>>2;
-				*(pBitsDst+1) = (*(pBitsSrc+1)+*(pBitsSrc+4)+*(pBitsSrc+256*3+1)+*(pBitsSrc+256*3+4))>>2;
-				*(pBitsDst+2) = (*(pBitsSrc+2)+*(pBitsSrc+5)+*(pBitsSrc+256*3+2)+*(pBitsSrc+256*3+5))>>2;
-				*(pBitsDst+3) = 0xFF;
+		case 256:
+			HQScale32<2>(DIB, pBitsSrc, pBitsDst);
+			break;
 
-				pBitsSrc += 6;
-				pBitsDst += 4;
-			}
-
-			pBitsSrc += 256*3;
+		case 512:
+			HQScale32<4>(DIB, pBitsSrc, pBitsDst);
+			break;
 		}
 
 		break;

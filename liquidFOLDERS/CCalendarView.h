@@ -30,7 +30,7 @@ public:
 	CCalendarView();
 
 	virtual CMenu* GetViewContextMenu();
-	virtual void GetPersistentData(FVPersistentData& Data) const;
+	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);

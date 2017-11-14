@@ -123,7 +123,7 @@ LFCORE_API const LFMessageIDs* LFGetMessageIDs()
 // Output handling
 //
 
-LFCORE_API void __stdcall LFGetFileSummary(LPWSTR pStr, SIZE_T cCount, UINT Count, INT64 Size)
+LFCORE_API void LFGetFileSummary(LPWSTR pStr, SIZE_T cCount, UINT Count, INT64 Size)
 {
 	assert(pStr);
 
@@ -145,7 +145,7 @@ LFCORE_API void __stdcall LFGetFileSummary(LPWSTR pStr, SIZE_T cCount, UINT Coun
 	}
 }
 
-LFCORE_API void __stdcall LFGetFileSummaryEx(LPWSTR pStr, SIZE_T cCount, const LFFileSummary& FileSummary)
+LFCORE_API void LFGetFileSummaryEx(LPWSTR pStr, SIZE_T cCount, const LFFileSummary& FileSummary)
 {
 	assert(pStr);
 
@@ -564,7 +564,7 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 	ContextDescriptor.CtxProperties = CtxProperties[ID];
 }
 
-LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeList)
+LFCORE_API void LFGetSortedAttributeList(LFAttributeList& AttributeList)
 {
 	UINT Index = 0;
 
@@ -575,7 +575,7 @@ LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeLis
 }
 
 
-LFCORE_API COLORREF __stdcall LFGetItemColor(UINT ID, UINT Fade)
+LFCORE_API COLORREF LFGetItemColor(UINT ID, UINT Fade)
 {
 	assert(ID<LFItemColorCount);
 	assert(Fade<=LFItemColorFadeLight);

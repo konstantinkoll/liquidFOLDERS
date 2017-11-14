@@ -9,8 +9,80 @@
 extern HMODULE LFCoreModuleHandle;
 
 
-LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, LPCWSTR pLinkFileName)
+UINT GetShortcutForStore(IShellLink*& pShellLink, LPCSTR StoreID, LPCWSTR Comments, UINT IconID)
 {
+	assert(StoreID);
+	assert(IconID>0);
+
+	WCHAR Path[MAX_PATH];
+	if (LFGetApplicationPath(Path, MAX_PATH))
+		if (LFCreateShellLink(pShellLink))
+		{
+			// Physical path to file
+			pShellLink->SetPath(Path);
+
+			// Arguments for app invoke
+			WCHAR Arguments[LFKeySize];
+			MultiByteToWideChar(CP_ACP, 0, StoreID, -1, Arguments, LFKeySize);
+
+			pShellLink->SetArguments(Arguments);
+
+			// Comments
+			if (Comments)
+				pShellLink->SetDescription(Comments);
+
+			// Icon
+			WCHAR IconLocation[MAX_PATH];
+			GetModuleFileName(LFCoreModuleHandle, IconLocation, MAX_PATH);
+			
+			pShellLink->SetIconLocation(IconLocation, IconID-1);
+
+			return LFOk;
+		}
+
+	return LFRegistryError;
+}
+
+__forceinline UINT GetShortcutForFile(IShellLink*& pShellLink, LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	WCHAR Path[MAX_PATH];
+	UINT Result;
+	if ((Result=LFGetFileLocation(pItemDescriptor, Path, MAX_PATH))!=LFOk)
+		return Result;
+
+	if (LFCreateShellLink(pShellLink))
+	{
+		pShellLink->SetPath(Path);
+
+		return LFOk;
+	}
+
+	return LFRegistryError;
+}
+
+LFCORE_API UINT LFGetShortcutForItem(LFItemDescriptor* pItemDescriptor, IShellLink*& pShellLink)
+{
+	assert(pItemDescriptor);
+
+	switch (pItemDescriptor->Type & LFTypeMask)
+	{
+	case LFTypeStore:
+		return GetShortcutForStore(pShellLink, pItemDescriptor->StoreID, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->IconID);
+
+	case LFTypeFile:
+		return GetShortcutForFile(pShellLink, pItemDescriptor);
+	}
+
+	return LFIllegalItemType;
+}
+
+UINT CreateDesktopShortcut(IShellLink* pShellLink, LPCWSTR pLinkFileName)
+{
+	assert(pShellLink);
+	assert(pLinkFileName);
+
 	// Get the fully qualified file name for the link file
 	WCHAR PathDesktop[MAX_PATH];
 	if (SHGetSpecialFolderPath(NULL, PathDesktop, CSIDL_DESKTOPDIRECTORY, FALSE))
@@ -42,67 +114,43 @@ LFCORE_API void LFCreateDesktopShortcut(IShellLink* pShellLink, LPCWSTR pLinkFil
 			// Save the link by calling IPersistFile::Save
 			pPersistFile->Save(PathLink, TRUE);
 			pPersistFile->Release();
+
+			return LFOk;
 		}
-	}
-}
 
-IShellLink* GetShortcutForStore(LPCSTR StoreID, LPCWSTR Comments, UINT IconID)
-{
-	WCHAR Path[MAX_PATH];
-	if (LFGetApplicationPath(Path, MAX_PATH))
-	{
-		// Get a pointer to the IShellLink interface
-		IShellLink* pShellLink = NULL;
-		if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&pShellLink)))
-		{
-			WCHAR Arguments[LFKeySize];
-			MultiByteToWideChar(CP_ACP, 0, StoreID, -1, Arguments, LFKeySize);
-	
-			WCHAR IconLocation[MAX_PATH];
-			GetModuleFileName(LFCoreModuleHandle, IconLocation, MAX_PATH);
-
-			pShellLink->SetPath(Path);
-			pShellLink->SetArguments(Arguments);
-			pShellLink->SetDescription(Comments);
-			pShellLink->SetIconLocation(IconLocation, IconID-1);
-			pShellLink->SetShowCmd(SW_SHOWNORMAL);
-
-			return pShellLink;
-		}
+		return LFRegistryError;
 	}
 
-	return NULL;
+	return LFIllegalPhysicalPath;
 }
 
-LFCORE_API IShellLink* LFGetShortcutForStore(LFItemDescriptor* pItemDescriptor)
+
+LFCORE_API UINT LFCreateDesktopShortcutForItem(LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
-	return (pItemDescriptor->Type & LFTypeMask)==LFTypeStore ? GetShortcutForStore(pItemDescriptor->StoreID, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->IconID) : NULL;
+	IShellLink* pShellLink;
+	UINT Result = LFGetShortcutForItem(pItemDescriptor, pShellLink);
+	if (Result!=LFOk)
+		return Result;
+
+	// Save on desktop
+	Result = CreateDesktopShortcut(pShellLink, pItemDescriptor->CoreAttributes.FileName);
+	pShellLink->Release();
+
+	return Result;
 }
 
-LFCORE_API void LFCreateDesktopShortcutForStore(LFItemDescriptor* pItemDescriptor)
+LFCORE_API UINT LFCreateDesktopShortcutForStore(const LFStoreDescriptor& StoreDescriptor)
 {
-	assert(pItemDescriptor);
+	IShellLink* pShellLink;
+	UINT Result = GetShortcutForStore(pShellLink, StoreDescriptor.StoreID, StoreDescriptor.Comments, LFGetStoreIcon(&StoreDescriptor));
+	if (Result!=LFOk)
+		return Result;
 
-	IShellLink* pShellLink = LFGetShortcutForStore(pItemDescriptor);
-	if (pShellLink)
-	{
-		LFCreateDesktopShortcut(pShellLink, pItemDescriptor->CoreAttributes.FileName);
+	// Save on desktop
+	Result = CreateDesktopShortcut(pShellLink, StoreDescriptor.StoreName);
+	pShellLink->Release();
 
-		pShellLink->Release();
-	}
-}
-
-LFCORE_API void LFCreateDesktopShortcutForStoreEx(LFStoreDescriptor* pStoreDescriptor)
-{
-	assert(pStoreDescriptor);
-
-	IShellLink* pShellLink = GetShortcutForStore(pStoreDescriptor->StoreID, pStoreDescriptor->Comments, LFGetStoreIcon(pStoreDescriptor));
-	if (pShellLink)
-	{
-		LFCreateDesktopShortcut(pShellLink, pStoreDescriptor->StoreName);
-
-		pShellLink->Release();
-	}
+	return Result;
 }

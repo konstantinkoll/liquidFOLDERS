@@ -90,7 +90,7 @@ inline BOOL CLiquidFoldersApp::IsAttributeSortable(INT Context, UINT Attr) const
 	ASSERT(Context<LFContextCount);
 	ASSERT(Attr<LFAttributeCount);
 
-	return (Context<=LFLastGroupContext) || m_Attributes[Attr].TypeProperties.SortableSubfolder;
+	return (Context<=LFLastPersistentContext) || m_Attributes[Attr].TypeProperties.SortableSubfolder;
 }
 
 inline void CLiquidFoldersApp::Reload(INT Context)

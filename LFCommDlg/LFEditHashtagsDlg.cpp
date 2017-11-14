@@ -123,8 +123,7 @@ void LFEditHashtagsDlg::OnUpdateAssignedHashtags()
 		{
 			const INT Index = m_wndAssignedHashtags.InsertItem(a, pItemDescriptor->CoreAttributes.FileName);
 
-			if (pItemDescriptor->Type & LFTypeHasDescription)
-				m_wndAssignedHashtags.SetItemText(Index, 1, pItemDescriptor->Description);
+			m_wndAssignedHashtags.SetItemText(Index, 1, pItemDescriptor->Description);
 
 			if (LFContainsHashtag(m_Hashtags.GetBuffer(), pItemDescriptor->CoreAttributes.FileName))
 				m_wndAssignedHashtags.SetCheck(Index);

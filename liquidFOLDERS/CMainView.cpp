@@ -17,7 +17,7 @@
 // CMainView
 //
 
-#define FileViewID     3
+#define FileViewID                  3
 
 CIcons CMainView::m_LargeIcons;
 CIcons CMainView::m_SmallIcons;
@@ -163,7 +163,7 @@ void CMainView::SetHeader()
 		// If we show all files, use store comments (if we have a valid store ID)
 		LFStoreDescriptor Store;
 		if ((m_Context==LFContextAllFiles) && m_StoreIDValid)
-			if (LFGetStoreSettings(m_StoreID, &Store)==LFOk)
+			if (LFGetStoreSettings(m_StoreID, Store)==LFOk)
 			{
 				wcscpy_s(p_RawFiles->m_Name, 256, Store.StoreName);
 				wcscpy_s(p_CookedFiles->m_Name, 256, Store.StoreName);
@@ -360,6 +360,8 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolveLocatio
 	if (ResolveLocations)
 	{
 		LFDoTransaction(pTransactionList, LFTransactionTypeResolveLocations, NULL, IncludePIDL);
+
+		// Show notification
 		ShowNotification(pTransactionList->m_LastError);
 	}
 
@@ -409,9 +411,10 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 
 	RemoveTransactedItems(pTransactionList);
 
+	// Show notification
 	ShowNotification(pTransactionList->m_LastError);
 
-	BOOL Modified = pTransactionList->m_Modified;
+	const BOOL Modified = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
 
 	return Modified;
@@ -425,6 +428,7 @@ void CMainView::RecoverFiles(BOOL All)
 	LFDoTransaction(pTransactionList, LFTransactionTypeRecover);
 	RemoveTransactedItems(pTransactionList);
 
+	// Show notification
 	ShowNotification(pTransactionList->m_LastError);
 
 	LFFreeTransactionList(pTransactionList);
@@ -447,37 +451,13 @@ BOOL CMainView::UpdateItems(LFVariantData* pValue1, LFVariantData* pValue2, LFVa
 		UpdateSearchResult();
 	}
 
+	// Show notification
 	ShowNotification(pTransactionList->m_LastError);
 
-	BOOL Changes = pTransactionList->m_Modified;
+	const BOOL Changes = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
 
 	return Changes;
-}
-
-void CMainView::CreateShortcut(LFTransactionListItem* pItem)
-{
-	// Get a pointer to the IShellLink interface
-	IShellLink* pShellLink = NULL;
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
-	{
-		WCHAR Ext[LFExtSize+1] = L".*";
-		LPCWSTR pChar = wcsrchr(pItem->Path, L'\\');
-		if (!pChar)
-			pChar = pItem->Path;
-
-		LPCWSTR LastExt = wcsrchr(pChar, L'.');
-		if (LastExt)
-			wcscpy_s(Ext, LFExtSize+1, LastExt);
-
-		pShellLink->SetIDList(pItem->pidlFQ);
-		pShellLink->SetIconLocation(Ext, 0);
-		pShellLink->SetShowCmd(SW_SHOWNORMAL);
-
-		LFCreateDesktopShortcut(pShellLink, pItem->pItemDescriptor->CoreAttributes.FileName);
-
-		pShellLink->Release();
-	}
 }
 
 
@@ -517,6 +497,9 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_COMMAND(IDM_STORES_RUNMAINTENANCE, OnStoresRunMaintenance)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_ADD, IDM_STORES_RUNMAINTENANCE, OnUpdateStoresCommands)
 
+	ON_COMMAND(IDM_FONTS_SHOWINSTALLED, OnFontsShowInstalled)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_FONTS_SHOWINSTALLED, IDM_FONTS_SHOWINSTALLED, OnUpdateFontsCommands)
+
 	ON_COMMAND(IDM_NEW_CLEARNEW, OnNewClearNew)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_NEW_CLEARNEW, IDM_NEW_CLEARNEW, OnUpdateNewCommands)
 
@@ -528,23 +511,25 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
+	ON_COMMAND(IDM_STORE_OPENNEWWINDOW, OnStoreOpenNewWindow)
+	ON_COMMAND(IDM_STORE_OPENFILEDROP, OnStoreOpenFileDrop)
 	ON_COMMAND(IDM_STORE_SYNCHRONIZE, OnStoreSynchronize)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
+	ON_COMMAND(IDM_STORE_SHORTCUT, OnItemShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_SYNCHRONIZE, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_OPENFILEDROP, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
-	ON_COMMAND(IDM_FILE_OPENBROWSER, OnFileOpenBrowser)
+	ON_COMMAND(IDM_FILE_SHOWEXPLORER, OnFileShowExplorer)
 	ON_COMMAND(IDM_FILE_EDIT, OnFileEdit)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVEFROMCLIPBOARD, OnFileRemoveFromClipboard)
 	ON_COMMAND(IDM_FILE_MAKETASK, OnFileMakeTask)
 	ON_COMMAND(IDM_FILE_ARCHIVE, OnFileArchive)
 	ON_COMMAND(IDM_FILE_COPY, OnFileCopy)
-	ON_COMMAND(IDM_FILE_SHORTCUT, OnFileShortcut)
+	ON_COMMAND(IDM_FILE_SHORTCUT, OnItemShortcut)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
 	ON_COMMAND(IDM_FILE_PROPERTIES, OnFileProperties)
@@ -566,24 +551,24 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_STORES_SYNCHRONIZE, 1);
-	m_wndTaskbar.AddButton(IDM_FILE_TASKDONE, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_FONTS_SHOWINSTALLED, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_NEW_CLEARNEW, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RECOVERALL, 5, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_RECOVER, 6);
-	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 7);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 8, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 9, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 10);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 11, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 12);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 13);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 14);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 15);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 16);
+	m_wndTaskbar.AddButton(IDM_FILE_TASKDONE, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 5, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RECOVERALL, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_RECOVER, 7);
+	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 8);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 10, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 11);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 12, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 13);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 14);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 15);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 16);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 17);
 
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 17, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_OPENBROWSER, 18, TRUE);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 18, TRUE);
 
 	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 19, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
@@ -720,6 +705,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 		break;
 
+	case LFContextFonts:
+		pMenu = new CMenu();
+		pMenu->LoadMenu(IDM_FONTS);
+
+		break;
+
 	case LFContextNew:
 		pMenu = new CMenu();
 		pMenu->LoadMenu(IDM_NEW);
@@ -754,16 +745,14 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	CMenu* pPopup = pMenu->GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	CString tmpStr;
-
-	// Append "Open as FileDrop" when viewing a store
-	if (m_StoreIDValid)
+	// Append option command
+	if (m_Context==LFContextStores)
 	{
 		if (pPopup->GetMenuItemCount())
-			pPopup->AppendMenu(MF_SEPARATOR | MF_BYPOSITION);
+			pPopup->InsertMenu(pPopup->GetMenuItemCount(), MF_SEPARATOR | MF_BYPOSITION);
 
-		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
-		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
+		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_SHOWCAPACITY);
+		pPopup->InsertMenu(pPopup->GetMenuItemCount(), MF_STRING | MF_BYPOSITION, IDM_ICONS_SHOWCAPACITY, tmpStr);
 	}
 
 	// Insert "Select all" command
@@ -772,7 +761,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		if (pPopup->GetMenuItemCount())
 			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
-		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SELECTALL));
+		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_SELECTALL);
 		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_SELECTALL, tmpStr);
 	}
 
@@ -841,7 +830,7 @@ void CMainView::OnBeginDragDrop()
 
 	// Alle anderen Kontexte
 	LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
-	if (pTransactionList->m_LastError==LFOk)
+	if (!pTransactionList->m_LastError)
 	{
 		m_DropTarget.SetDragging(TRUE);
 
@@ -881,6 +870,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 		UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data);
 	}
 
+	// Show notification
 	ShowNotification(pTransactionList->m_LastError);
 
 	BOOL Changes = pTransactionList->m_Modified;
@@ -908,6 +898,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 
 				LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
 
+				// Show notification
 				ShowNotification(wp.pTransactionList->m_LastError);
 			}
 		}
@@ -930,7 +921,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 					if (SUCCEEDED(pParentWnd->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
 					{
 						LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
-						if (pTransactionList->m_ItemCount)
+						if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
 						{
 							CWaitCursor csr;
 							LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
@@ -968,7 +959,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 
 LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if ((p_RawFiles) && (p_CookedFiles) && (m_Context<=LFLastQueryContext))
+	if (p_RawFiles && p_CookedFiles && (m_Context<=LFLastQueryContext))
 		SetHeader();
 
 	return NULL;
@@ -1121,6 +1112,21 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 }
 
 
+// Fonts
+
+void CMainView::OnFontsShowInstalled()
+{
+	WCHAR Path[MAX_PATH];
+	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_FONTS, NULL, SHGFP_TYPE_CURRENT, Path)))
+		ShellExecute(GetSafeHwnd(), _T("open"), Path, NULL, NULL, SW_SHOWNORMAL);
+}
+
+void CMainView::OnUpdateFontsCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_Context==LFContextFonts);
+}
+
+
 // New
 
 void CMainView::OnNewClearNew()
@@ -1130,7 +1136,7 @@ void CMainView::OnNewClearNew()
 
 void CMainView::OnUpdateNewCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(((m_Context==LFContextNew) && (p_CookedFiles)) ? p_CookedFiles->m_ItemCount : FALSE);
+	pCmdUI->Enable(((m_Context==LFContextNew) && p_CookedFiles) ? p_CookedFiles->m_ItemCount : FALSE);
 }
 
 
@@ -1149,7 +1155,7 @@ void CMainView::OnTrashEmpty()
 
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
-	BOOL bEnable = (m_Context==LFContextTrash) && (p_CookedFiles) ? p_CookedFiles->m_ItemCount : FALSE;
+	BOOL bEnable = (m_Context==LFContextTrash) && p_CookedFiles ? p_CookedFiles->m_ItemCount : FALSE;
 
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
@@ -1184,6 +1190,25 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 
 // pItemDescriptor
 
+void CMainView::OnItemShortcut()
+{
+	const INT Index = GetSelectedItem();
+	if (Index!=-1)
+	{
+		const UINT Result = LFCreateDesktopShortcutForItem((*p_CookedFiles)[Index]);
+
+		// Show notification
+		if (Result)
+		{
+			ShowNotification(Result);
+		}
+		else
+		{
+			ShowNotification(ENT_READY, CString((LPCSTR)IDS_SHORTCUTCREATED));
+		}
+	}
+}
+
 void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = FALSE;
@@ -1209,6 +1234,27 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 
 // Store
 
+void CMainView::OnStoreOpenNewWindow()
+{
+	const INT Index = GetSelectedItem();
+	if (Index!=-1)
+	{
+		CMainWnd* pFrameWnd = new CMainWnd();
+		pFrameWnd->CreateStore((*p_CookedFiles)[Index]->StoreID);
+		pFrameWnd->ShowWindow(SW_SHOW);
+	}
+}
+
+void CMainView::OnStoreOpenFileDrop()
+{
+	const INT Index = GetSelectedItem();
+	if (Index!=-1)
+		theApp.GetFileDrop((*p_CookedFiles)[Index]->StoreID);
+
+	// Iconize own window
+	GetTopLevelParent()->ShowWindow(SW_MINIMIZE);
+}
+
 void CMainView::OnStoreSynchronize()
 {
 	const INT Index = GetSelectedItem();
@@ -1220,14 +1266,7 @@ void CMainView::OnStoreMakeDefault()
 {
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFErrorBox(this, LFSetDefaultStore((*p_CookedFiles)[Index]->StoreID));
-}
-
-void CMainView::OnStoreShortcut()
-{
-	const INT Index = GetSelectedItem();
-	if (Index!=-1)
-		LFCreateDesktopShortcutForStore((*p_CookedFiles)[Index]);
+		ShowNotification(LFSetDefaultStore((*p_CookedFiles)[Index]->StoreID));
 }
 
 void CMainView::OnStoreDelete()
@@ -1240,7 +1279,7 @@ void CMainView::OnStoreDelete()
 void CMainView::OnStoreRename()
 {
 	const INT Index = GetSelectedItem();
-	if ((Index!=-1) && (m_pWndFileView))
+	if ((Index!=-1) && m_pWndFileView)
 		m_pWndFileView->EditLabel(Index);
 }
 
@@ -1305,7 +1344,7 @@ void CMainView::OnFileOpenWith()
 	if (Index!=-1)
 	{
 		WCHAR Path[MAX_PATH];
-		UINT Result = LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH, TRUE);
+		UINT Result = LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH);
 		if (Result==LFOk)
 		{
 			WCHAR Cmd[300];
@@ -1321,18 +1360,35 @@ void CMainView::OnFileOpenWith()
 	}
 }
 
-void CMainView::OnFileOpenBrowser()
+void CMainView::OnFileShowExplorer()
 {
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-		ShellExecuteA(GetSafeHwnd(), "open", (*p_CookedFiles)[Index]->CoreAttributes.URL, NULL, NULL, SW_SHOWNORMAL);
+	{
+		WCHAR Path[MAX_PATH];
+		UINT Result = LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH);
+		if (Result==LFOk)
+		{
+			LPITEMIDLIST pidlFQ;
+			if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, 0, NULL)))
+			{
+				SHOpenFolderAndSelectItems(pidlFQ, 0, NULL, 0);
+
+				theApp.GetShellManager()->FreeItem(pidlFQ);
+			}
+		}
+		else
+		{
+			LFErrorBox(this, Result);
+		}
+	}
 }
 
 void CMainView::OnFileEdit()
 {
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-		if (strcmp((*p_CookedFiles)[Index]->CoreAttributes.FileFormat, "filter")==0)
+		if (_stricmp((*p_CookedFiles)[Index]->CoreAttributes.FileFormat, "filter")==0)
 		{
 			LFFilter* pFilter = LFLoadFilter((*p_CookedFiles)[Index]);
 
@@ -1399,6 +1455,7 @@ void CMainView::OnFileMakeTask()
 		LFDoTransaction(pTransactionList, LFTransactionTypeUpdateTask, NULL, NULL, &Priority, &DueTime);
 		UpdateSearchResult();
 
+		// Show notification
 		ShowNotification(pTransactionList->m_LastError);
 
 		LFFreeTransactionList(pTransactionList);
@@ -1413,6 +1470,7 @@ void CMainView::OnFileArchive()
 	LFDoTransaction(pTransactionList, LFTransactionTypeArchive);
 	RemoveTransactedItems(pTransactionList);
 
+	// Show notification
 	ShowNotification(pTransactionList->m_LastError);
 
 	LFFreeTransactionList(pTransactionList);
@@ -1421,7 +1479,7 @@ void CMainView::OnFileArchive()
 void CMainView::OnFileCopy()
 {
 	LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
-	if (pTransactionList->m_ItemCount)
+	if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
 	{
 		CWaitCursor csr;
 		LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
@@ -1430,21 +1488,15 @@ void CMainView::OnFileCopy()
 		OleFlushClipboard();
 
 		pDataObject->Release();
-	}
 
-	LFFreeTransactionList(pTransactionList);
-}
+		// Show notification
+		WCHAR tmpStr[256];
+		LFGetFileSummary(tmpStr, 256, pTransactionList->m_ItemCount);
 
-void CMainView::OnFileShortcut()
-{
-	LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE, TRUE);
-	if (pTransactionList->m_ItemCount)
-	{
-		CWaitCursor csr;
+		CString Text;
+		Text.Format(IDS_FILESCOPIED, tmpStr);
 
-		for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
-			if (((*pTransactionList)[a].LastError==LFOk) && ((*pTransactionList)[a].Processed))
-				CreateShortcut(&(*pTransactionList)[a]);
+		ShowNotification(ENT_READY, Text);
 	}
 
 	LFFreeTransactionList(pTransactionList);
@@ -1459,7 +1511,7 @@ void CMainView::OnFileDelete()
 void CMainView::OnFileRename()
 {
 	const INT Index = GetSelectedItem();
-	if ((Index!=-1) && (m_pWndFileView))
+	if ((Index!=-1) && m_pWndFileView)
 		m_pWndFileView->EditLabel(Index);
 }
 
@@ -1502,15 +1554,15 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 		break;
 
-	case IDM_FILE_OPENBROWSER:
+	case IDM_FILE_SHOWEXPLORER:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) && (pItemDescriptor->CoreAttributes.URL[0]!='\0');
+			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted | LFTypeExplorerAllowed))==(LFTypeFile | LFTypeMounted | LFTypeExplorerAllowed)) && (pItemDescriptor->CoreAttributes.ContextID!=LFContextFilters);
 
 		break;
 
 	case IDM_FILE_EDIT:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) && (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters);
+			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters);
 
 		break;
 
@@ -1531,13 +1583,18 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_FILE_COPY:
-	case IDM_FILE_SHORTCUT:
 	case IDM_FILE_DELETE:
 		bEnable = m_FilesSelected;
 		break;
 
+	case IDM_FILE_SHORTCUT:
+		if (pItemDescriptor && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
+			bEnable = (pItemDescriptor->Type & (LFTypeMask | LFTypeMounted | LFTypeShortcutAllowed))==(LFTypeFile | LFTypeMounted | LFTypeShortcutAllowed);
+
+		break;
+
 	case IDM_FILE_RENAME:
-		if ((pItemDescriptor) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
+		if (pItemDescriptor && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
 			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
 
 		if (m_pWndFileView)

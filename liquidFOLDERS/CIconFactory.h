@@ -34,8 +34,8 @@ public:
 	static CIcons m_ApplicationIcons;
 
 protected:
-	HBITMAP LookupThumbnail(LFItemDescriptor* pItemDescriptor);
-	BOOL DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
+	BOOL LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
+	BOOL DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, BOOL& DrawSash, INT ThumbnailYOffset=1);
 	BOOL DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset);
 	BOOL DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
 
@@ -49,7 +49,7 @@ protected:
 
 private:
 	static void MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy);
-	static HBITMAP GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor);
+	static BOOL GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
 	INT QuarterJumboSystemIcon(INT SystemIconIndex);
 
 	INT m_SmallIconSize;

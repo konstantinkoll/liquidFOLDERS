@@ -29,7 +29,7 @@ public:
 
 	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
 	virtual CMenu* GetViewContextMenu();
-	virtual void GetPersistentData(FVPersistentData& Data) const;
+	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);

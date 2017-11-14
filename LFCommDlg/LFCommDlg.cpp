@@ -126,9 +126,10 @@ void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 	const INT Diameter = Radius*2+1;
 	const INT Right = lpRect->right-Diameter-1;
 
+	// 10° less to both sides
 	Path.Reset();
-	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 180, 90);
-	Path.AddArc(Right, lpRect->top, Diameter, Diameter, 270, 90);
+	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 190, 80);
+	Path.AddArc(Right, lpRect->top, Diameter, Diameter, 270, 80);
 }
 
 void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
@@ -474,7 +475,7 @@ void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL S
 	dc.SetTextColor(Themed ? Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 }
 
-void DrawBackstageBorder(Graphics& g, CRect rect)
+void DrawMilledRectangle(Graphics& g, CRect rect, BOOL Backstage, INT Radius)
 {
 	rect.left++;
 	rect.top++;
@@ -483,25 +484,25 @@ void DrawBackstageBorder(Graphics& g, CRect rect)
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	GraphicsPath path;
-	CreateRoundRectangle(rect, 3, path);
+	CreateRoundRectangle(rect, Radius-1, path);
 
-	SolidBrush brush1(Color(0x80000000));
+	SolidBrush brush1(Color(Backstage ? 0x80000000 : 0x18000000));
 	g.FillPath(&brush1, &path);
 
 	rect.left--;
 	rect.top--;
 
 	g.SetPixelOffsetMode(PixelOffsetModeNone);
-	CreateRoundTop(rect, 4, path);
+	CreateRoundTop(rect, Radius, path);
 
-	LinearGradientBrush brush2(Point(0, rect.top-1), Point(0, rect.top+5), Color(0xF0000000), Color(0x00000000));
+	LinearGradientBrush brush2(Point(0, rect.top-1), Point(0, rect.top+5), Color(Backstage ? 0xF0000000 : 0x40000000), Color(0x00000000));
 
 	Pen pen(&brush2);
 	g.DrawPath(&pen, &path);
 
 	CreateRoundRectangle(rect, 4, path);
 
-	LinearGradientBrush brush3(Point(0, rect.top-1), Point(0, rect.bottom), Color(0x00FFFFFF), Color(0x38FFFFFF));
+	LinearGradientBrush brush3(Point(0, rect.top-1), Point(0, rect.bottom), Color(Backstage ? 0x00FFFFFF : 0x00E0E0E0), Color(Backstage ? 0x38FFFFFF : 0x60E0E0E0));
 
 	pen.SetBrush(&brush3);
 	g.DrawPath(&pen, &path);
