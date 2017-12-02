@@ -85,11 +85,11 @@ BOOL IsNullValue(UINT Type, LPCVOID pValue)
 	return FALSE;
 }
 
-INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitive)
+INT CompareValues(UINT Type, LPCVOID pData1, LPCVOID pData2, BOOL CaseSensitive)
 {
 	assert(Type<LFTypeCount);
-	assert(pValue1);
-	assert(pValue2);
+	assert(pData1);
+	assert(pData2);
 
 	UINT UInt1;
 	UINT UInt2;
@@ -100,59 +100,59 @@ INT CompareValues(UINT Type, LPCVOID pValue1, LPCVOID pValue2, BOOL CaseSensitiv
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
-		return CaseSensitive ? wcscmp((LPCWSTR)pValue1, (LPCWSTR)pValue2) : _wcsicmp((LPCWSTR)pValue1, (LPCWSTR)pValue2);
+		return CaseSensitive ? wcscmp((LPCWSTR)pData1, (LPCWSTR)pData2) : _wcsicmp((LPCWSTR)pData1, (LPCWSTR)pData2);
 
 	case LFTypeAnsiString:
 	case LFTypeIATACode:
-		return CaseSensitive ? strcmp((LPCSTR)pValue1, (LPCSTR)pValue2) : _stricmp((LPCSTR)pValue1, (LPCSTR)pValue2);
+		return CaseSensitive ? strcmp((LPCSTR)pData1, (LPCSTR)pData2) : _stricmp((LPCSTR)pData1, (LPCSTR)pData2);
 
 	case LFTypeFourCC:
 	case LFTypeUINT:
 	case LFTypeGenre:
-		return *(UINT*)pValue1==*(UINT*)pValue2 ? 0 : *(UINT*)pValue1<*(UINT*)pValue2 ? -1 : 1;
+		return *(UINT*)pData1==*(UINT*)pData2 ? 0 : *(UINT*)pData1<*(UINT*)pData2 ? -1 : 1;
 
 	case LFTypeRating:
 	case LFTypeColor:
-		return (INT)(*(BYTE*)pValue1)-(INT)(*(BYTE*)pValue2);
+		return (INT)(*(BYTE*)pData1)-(INT)(*(BYTE*)pData2);
 
 	case LFTypeSize:
-		return *(INT64*)pValue1==*(INT64*)pValue2 ? 0 : *(INT64*)pValue1<*(INT64*)pValue2 ? -1 : 1;
+		return *(INT64*)pData1==*(INT64*)pData2 ? 0 : *(INT64*)pData1<*(INT64*)pData2 ? -1 : 1;
 
 	case LFTypeDouble:
-		Double1 = (DOUBLE)((INT)(*(DOUBLE*)pValue1*100.0))/100.0;
-		Double2 = (DOUBLE)((INT)(*(DOUBLE*)pValue2*100.0))/100.0;
+		Double1 = (DOUBLE)((INT)(*(DOUBLE*)pData1*100.0))/100.0;
+		Double2 = (DOUBLE)((INT)(*(DOUBLE*)pData2*100.0))/100.0;
 
 		return Double1==Double2 ? 0 : Double1<Double2 ? -1 : 1;
 
 	case LFTypeGeoCoordinates:
-		if (((LFGeoCoordinates*)pValue1)->Latitude==((LFGeoCoordinates*)pValue2)->Latitude)
+		if (((LFGeoCoordinates*)pData1)->Latitude==((LFGeoCoordinates*)pData2)->Latitude)
 		{
-			return ((LFGeoCoordinates*)pValue1)->Longitude==((LFGeoCoordinates*)pValue2)->Longitude ? 0 : ((LFGeoCoordinates*)pValue1)->Longitude<((LFGeoCoordinates*)pValue2)->Longitude ? -1 : 1;
+			return ((LFGeoCoordinates*)pData1)->Longitude==((LFGeoCoordinates*)pData2)->Longitude ? 0 : ((LFGeoCoordinates*)pData1)->Longitude<((LFGeoCoordinates*)pData2)->Longitude ? -1 : 1;
 		}
 		else
 		{
-			return ((LFGeoCoordinates*)pValue1)->Latitude<((LFGeoCoordinates*)pValue2)->Latitude ? -1 : 1;
+			return ((LFGeoCoordinates*)pData1)->Latitude<((LFGeoCoordinates*)pData2)->Latitude ? -1 : 1;
 		}
 
 	case LFTypeTime:
-		return CompareFileTime((FILETIME*)pValue1, (FILETIME*)pValue2);
+		return CompareFileTime((FILETIME*)pData1, (FILETIME*)pData2);
 
 	case LFTypeBitrate:
 	case LFTypeDuration:
-		UInt1 = *(UINT*)pValue1/1000;
-		UInt2 = *(UINT*)pValue2/1000;
+		UInt1 = *(UINT*)pData1/1000;
+		UInt2 = *(UINT*)pData2/1000;
 
 		return UInt1==UInt2 ? 0 : UInt1<UInt2 ? -1 : 1;
 
 	case LFTypeMegapixel:
-		Double1 = (DOUBLE)((INT)(*(DOUBLE*)pValue1*10.0))/10.0;
-		Double2 = (DOUBLE)((INT)(*(DOUBLE*)pValue2*10.0))/10.0;
+		Double1 = (DOUBLE)((INT)(*(DOUBLE*)pData1*10.0))/10.0;
+		Double2 = (DOUBLE)((INT)(*(DOUBLE*)pData2*10.0))/10.0;
 
 		return (Double1==Double2) ? 0 : Double1<Double2 ? -1 : 1;
 
 	case LFTypeApplication:
-		UInt1 = *((BYTE*)pValue1);
-		UInt2 = *((BYTE*)pValue2);
+		UInt1 = *((BYTE*)pData1);
+		UInt2 = *((BYTE*)pData2);
 
 		if ((UInt1>=LFApplicationCount) && (UInt2>=LFApplicationCount))
 			return 0;
@@ -509,61 +509,61 @@ LFCORE_API void LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UIN
 // LFVariantData
 //
 
-LFCORE_API void LFInitVariantData(LFVariantData& pValue, UINT Attr)
+LFCORE_API void LFInitVariantData(LFVariantData& VData, UINT Attr)
 {
-	pValue.Attr = Attr;
-	pValue.Type = (Attr<LFAttributeCount) ? AttrProperties[Attr].Type : LFTypeUnicodeString;
+	VData.Attr = Attr;
+	VData.Type = (Attr<LFAttributeCount) ? AttrProperties[Attr].Type : LFTypeUnicodeString;
 
-	LFClearVariantData(pValue);
+	LFClearVariantData(VData);
 }
 
-LFCORE_API void LFClearVariantData(LFVariantData& pValue)
+LFCORE_API void LFClearVariantData(LFVariantData& VData)
 {
-	assert(pValue.Type<LFTypeCount);
+	assert(VData.Type<LFTypeCount);
 
-	pValue.IsNull = TRUE;
+	VData.IsNull = TRUE;
 
-	switch (pValue.Type)
+	switch (VData.Type)
 	{
 	case LFTypeDouble:
-		pValue.Double = 0;
+		VData.Double = 0;
 		break;
 
 	case LFTypeGeoCoordinates:
-		pValue.GeoCoordinates.Latitude = pValue.GeoCoordinates.Longitude = 0;
+		VData.GeoCoordinates.Latitude = VData.GeoCoordinates.Longitude = 0;
 		break;
 
 	case LFTypeMegapixel:
-		pValue.Double = -1;
+		VData.Double = -1;
 		break;
 
 	default:
-		pValue.INT64 = 0;
+		VData.INT64 = 0;
 	}
 }
 
-LFCORE_API BOOL LFIsNullVariantData(const LFVariantData& Value)
+LFCORE_API BOOL LFIsNullVariantData(const LFVariantData& VData)
 {
-	return Value.IsNull ? TRUE : IsNullValue(Value.Type, &Value.Value);
+	return VData.IsNull ? TRUE : IsNullValue(VData.Type, &VData.Value);
 }
 
-LFCORE_API void LFVariantDataToString(const LFVariantData& Value, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFVariantDataToString(const LFVariantData& VData, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	if (Value.IsNull)
+	if (VData.IsNull)
 	{
 		*pStr = L'\0';
 	}
 	else
 	{
-		ToString(&Value.Value, Value.Type, pStr, cCount);
+		ToString(&VData.Value, VData.Type, pStr, cCount);
 	}
 }
 
-LFCORE_API void LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr)
+LFCORE_API void LFVariantDataFromString(LFVariantData& VData, LPCWSTR pStr)
 {
-	LFClearVariantData(Value);
+	LFClearVariantData(VData);
 
 	if (pStr)
 	{
@@ -594,31 +594,31 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr)
 		UINT Min;
 		UINT Sec;
 
-		switch (Value.Type)
+		switch (VData.Type)
 		{
 		case LFTypeUnicodeString:
-			wcsncpy_s(Value.UnicodeString, 256, pStr, _TRUNCATE);
-			Value.IsNull = FALSE;
+			wcsncpy_s(VData.UnicodeString, 256, pStr, _TRUNCATE);
+			VData.IsNull = FALSE;
 
 			break;
 
 		case LFTypeUnicodeArray:
-			wcsncpy_s(Value.UnicodeArray, 256, pStr, _TRUNCATE);
-			LFSanitizeUnicodeArray(Value.UnicodeArray, 256);
-			Value.IsNull = FALSE;
+			wcsncpy_s(VData.UnicodeArray, 256, pStr, _TRUNCATE);
+			LFSanitizeUnicodeArray(VData.UnicodeArray, 256);
+			VData.IsNull = FALSE;
 
 			break;
 
 		case LFTypeAnsiString:
 		case LFTypeIATACode:
-			WideCharToMultiByte(CP_ACP, 0, pStr, -1, Value.AnsiString, 256, NULL, NULL);
-			Value.IsNull = FALSE;
+			WideCharToMultiByte(CP_ACP, 0, pStr, -1, VData.AnsiString, 256, NULL, NULL);
+			VData.IsNull = FALSE;
 
-			if (Value.Type==LFTypeIATACode)
+			if (VData.Type==LFTypeIATACode)
 			{
-				Value.IATAString[0] = (CHAR)toupper(Value.IATAString[0]);
-				Value.IATAString[1] = (CHAR)toupper(Value.IATAString[1]);
-				Value.IATAString[2] = (CHAR)toupper(Value.IATAString[2]);
+				VData.IATAString[0] = (CHAR)toupper(VData.IATAString[0]);
+				VData.IATAString[1] = (CHAR)toupper(VData.IATAString[1]);
+				VData.IATAString[2] = (CHAR)toupper(VData.IATAString[2]);
 			}
 
 			break;
@@ -626,8 +626,8 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr)
 		case LFTypeRating:
 			if (wcscmp(pStr, L"½")==0)
 			{
-				Value.Rating = 1;
-				Value.IsNull = FALSE;
+				VData.Rating = 1;
+				VData.IsNull = FALSE;
 
 				return;
 			}
@@ -635,13 +635,13 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr)
 			if ((pStr[0]>=L'0') && (pStr[0]<=L'5'))
 				if (Size<=2)
 				{
-					Value.Rating = (BYTE)((pStr[0]-L'0')*2);
+					VData.Rating = (BYTE)((pStr[0]-L'0')*2);
 
 					if (Size==2)
 						if (pStr[1]==L'½')
-							Value.Rating++;
+							VData.Rating++;
 
-					Value.IsNull = FALSE;
+					VData.IsNull = FALSE;
 
 					return;
 				}
@@ -654,8 +654,8 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr)
 
 				if (Same)
 				{
-					Value.Rating = (BYTE)(Size*2);
-					Value.IsNull = FALSE;
+					VData.Rating = (BYTE)(Size*2);
+					VData.IsNull = FALSE;
 
 					return;
 				}
@@ -664,8 +664,8 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr)
 			break;
 
 		case LFTypeUINT:
-			if (swscanf_s(pStr, L"%u", &Value.UINT32)==1)
-				Value.IsNull = FALSE;
+			if (swscanf_s(pStr, L"%u", &VData.UINT32)==1)
+				VData.IsNull = FALSE;
 
 			break;
 
@@ -697,41 +697,41 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& Value, LPCWSTR pStr)
 Abort:
 			*pChar = L'\0';
 
-			if (swscanf_s(Buffer, L"%I64d", Value.INT64)==1)
+			if (swscanf_s(Buffer, L"%I64d", VData.INT64)==1)
 			{
-				Value.IsNull = FALSE;
+				VData.IsNull = FALSE;
 
 				while (*pStr==L' ')
 					pStr++;
 
 				if ((_wcsicmp(pStr, L"KB")==0) || (_wcsicmp(pStr, L"K")==0))
 				{
-					Value.INT64 *= 1024;
+					VData.INT64 *= 1024;
 				}
 				else
 					if ((_wcsicmp(pStr, L"MB")==0) || (_wcsicmp(pStr, L"M")==0))
 					{
-						Value.INT64 *= 1024*1024;
+						VData.INT64 *= 1024*1024;
 					}
 					else
 						if ((_wcsicmp(pStr, L"GB")==0) || (_wcsicmp(pStr, L"G")==0))
 						{
-							Value.INT64 *= 1024*1024*1024;
+							VData.INT64 *= 1024*1024*1024;
 						}
 			}
 
 			break;
 
 		case LFTypeFraction:
-			if (swscanf_s(pStr, L"%u/%u", &Value.Fraction.Num, &Value.Fraction.Denum)==2)
-				Value.IsNull = FALSE;
+			if (swscanf_s(pStr, L"%u/%u", &VData.Fraction.Num, &VData.Fraction.Denum)==2)
+				VData.IsNull = FALSE;
 
 			break;
 
 		case LFTypeDouble:
 		case LFTypeMegapixel:
-			if (swscanf_s(pStr, L"%lf", &Value.Double)==1)
-				Value.IsNull = FALSE;
+			if (swscanf_s(pStr, L"%lf", &VData.Double)==1)
+				VData.IsNull = FALSE;
 
 			break;
 
@@ -739,23 +739,23 @@ Abort:
 			if (swscanf_s(pStr, L"%i°%i\'%i\"%c, %i°%i\'%i\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
 				if (((LatCh==L'N') || (LatCh==L'S')) && ((LonCh==L'W') || (LonCh==L'E')))
 				{
-					Value.GeoCoordinates.Latitude = abs(LatDeg)+(abs(LatMin)/60.0)+(abs(LatSec)/3600.0);
+					VData.GeoCoordinates.Latitude = abs(LatDeg)+(abs(LatMin)/60.0)+(abs(LatSec)/3600.0);
 
 					if (LatCh==L'N')
-						Value.GeoCoordinates.Latitude -= Value.GeoCoordinates.Latitude;
+						VData.GeoCoordinates.Latitude -= VData.GeoCoordinates.Latitude;
 
-					if ((Value.GeoCoordinates.Latitude<180.0) || (Value.GeoCoordinates.Latitude>180.0))
-						Value.GeoCoordinates.Latitude = 0.0;
+					if ((VData.GeoCoordinates.Latitude<180.0) || (VData.GeoCoordinates.Latitude>180.0))
+						VData.GeoCoordinates.Latitude = 0.0;
 
-					Value.GeoCoordinates.Longitude = abs(LonDeg)+(abs(LonMin)/60.0)+(abs(LonSec)/3600.0);
+					VData.GeoCoordinates.Longitude = abs(LonDeg)+(abs(LonMin)/60.0)+(abs(LonSec)/3600.0);
 
 					if (LonCh==L'W')
-						Value.GeoCoordinates.Longitude -= Value.GeoCoordinates.Longitude;
+						VData.GeoCoordinates.Longitude -= VData.GeoCoordinates.Longitude;
 
-					if ((Value.GeoCoordinates.Longitude<-180.0) || (Value.GeoCoordinates.Longitude>180.0))
-						Value.GeoCoordinates.Longitude = 0.0;
+					if ((VData.GeoCoordinates.Longitude<-180.0) || (VData.GeoCoordinates.Longitude>180.0))
+						VData.GeoCoordinates.Longitude = 0.0;
 
-					Value.IsNull = FALSE;
+					VData.IsNull = FALSE;
 				}
 
 			break;
@@ -773,8 +773,8 @@ Abort:
 					stLocal.wMonth = stLocal.wDay = 1;
 
 					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-					SystemTimeToFileTime(&stUTC, &Value.Time);
-					Value.IsNull = !((Value.Time.dwHighDateTime) || (Value.Time.dwLowDateTime));
+					SystemTimeToFileTime(&stUTC, &VData.Time);
+					VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
 				}
 
 				break;
@@ -796,9 +796,9 @@ Abort:
 					stLocal.wDay = 1;
 
 					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-					SystemTimeToFileTime(&stUTC, &Value.Time);
+					SystemTimeToFileTime(&stUTC, &VData.Time);
 
-					Value.IsNull = !((Value.Time.dwHighDateTime) || (Value.Time.dwLowDateTime));
+					VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
 				}
 
 				break;
@@ -823,9 +823,9 @@ Abort:
 							stLocal.wDay = (WORD)Date3;
 
 							TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-							SystemTimeToFileTime(&stUTC, &Value.Time);
+							SystemTimeToFileTime(&stUTC, &VData.Time);
 
-							Value.IsNull = !((Value.Time.dwHighDateTime) || (Value.Time.dwLowDateTime));
+							VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
 						}
 					}
 					else
@@ -845,9 +845,9 @@ Abort:
 								stLocal.wDay = (WORD)Date1;
 
 								TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
-								SystemTimeToFileTime(&stUTC, &Value.Time);
+								SystemTimeToFileTime(&stUTC, &VData.Time);
 
-								Value.IsNull = !((Value.Time.dwHighDateTime) || (Value.Time.dwLowDateTime));
+								VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
 							}
 						}
 				}
@@ -856,10 +856,10 @@ Abort:
 			break;
 
 		case LFTypeBitrate:
-			if (swscanf_s(pStr, L"%u", &Value.Bitrate)==1)
+			if (swscanf_s(pStr, L"%u", &VData.Bitrate)==1)
 			{
-				Value.Bitrate *= 1000;
-				Value.IsNull = FALSE;
+				VData.Bitrate *= 1000;
+				VData.IsNull = FALSE;
 			}
 
 			break;
@@ -869,8 +869,8 @@ Abort:
 			{
 				if ((Min<60) && (Sec<60))
 				{
-					Value.Duration = 1000*(Hour*3600+Min*60+Sec);
-					Value.IsNull = FALSE;
+					VData.Duration = 1000*(Hour*3600+Min*60+Sec);
+					VData.IsNull = FALSE;
 				}
 			}
 			else
@@ -878,8 +878,8 @@ Abort:
 				{
 					if ((Min<60) && (Sec<60))
 					{
-						Value.Duration = 1000*(Min*60+Sec);
-						Value.IsNull = FALSE;
+						VData.Duration = 1000*(Min*60+Sec);
+						VData.IsNull = FALSE;
 					}
 				}
 
@@ -889,8 +889,8 @@ Abort:
 			for (UINT a=1; a<APPLICATIONCOUNT; a++)
 				if (_wcsicmp(pStr, ApplicationRegistry[a].Name)==0)
 				{
-					Value.Application = ApplicationRegistry[a].ApplicationID;
-					Value.IsNull = FALSE;
+					VData.Application = ApplicationRegistry[a].ApplicationID;
+					VData.IsNull = FALSE;
 
 					break;
 				}
@@ -900,87 +900,87 @@ Abort:
 	}
 }
 
-LFCORE_API INT LFCompareVariantData(LFVariantData& Value1, LFVariantData& Value2)
+LFCORE_API INT LFCompareVariantData(LFVariantData& VData1, LFVariantData& VData2)
 {
-	if (Value1.IsNull && Value2.IsNull)
+	if (VData1.IsNull && VData2.IsNull)
 		return 0;
 
-	if (Value1.IsNull)
+	if (VData1.IsNull)
 		return -1;
 
-	if (Value2.IsNull)
+	if (VData2.IsNull)
 		return 1;
 
-	if (Value1.Type!=Value2.Type)
-		return Value1.Type-Value2.Type;
+	if (VData1.Type!=VData2.Type)
+		return VData1.Type-VData2.Type;
 
-	return CompareValues(Value1.Type, &Value1.Value, &Value2.Value);
+	return CompareValues(VData1.Type, &VData1.Value, &VData2.Value);
 }
 
-LFCORE_API void LFGetAttributeVariantData(const LFItemDescriptor* pItemDescriptor, LFVariantData& Value)
+LFCORE_API void LFGetAttributeVariantData(const LFItemDescriptor* pItemDescriptor, LFVariantData& VData)
 {
 	assert(pItemDescriptor);
 
-	if (pItemDescriptor->AttributeValues[Value.Attr])
+	if (pItemDescriptor->AttributeValues[VData.Attr])
 	{
-		assert(Value.Attr<LFAttributeCount);
-		assert(Value.Type==AttrProperties[Value.Attr].Type);
-		assert(Value.Type<LFTypeCount);
+		assert(VData.Attr<LFAttributeCount);
+		assert(VData.Type==AttrProperties[VData.Attr].Type);
+		assert(VData.Type<LFTypeCount);
 
-		switch (AttrProperties[Value.Attr].Type)
+		switch (AttrProperties[VData.Attr].Type)
 		{
 		case LFTypeUnicodeString:
 		case LFTypeUnicodeArray:
-			wcscpy_s(Value.UnicodeString, 256, (LPCWSTR)pItemDescriptor->AttributeValues[Value.Attr]);
+			wcscpy_s(VData.UnicodeString, 256, (LPCWSTR)pItemDescriptor->AttributeValues[VData.Attr]);
 			break;
 
 		case LFTypeAnsiString:
-			strcpy_s(Value.AnsiString, 256, (LPCSTR)pItemDescriptor->AttributeValues[Value.Attr]);
+			strcpy_s(VData.AnsiString, 256, (LPCSTR)pItemDescriptor->AttributeValues[VData.Attr]);
 			break;
 
 		case LFTypeIATACode:
-			strcpy_s(Value.IATAString, 4, (LPCSTR)pItemDescriptor->AttributeValues[Value.Attr]);
+			strcpy_s(VData.IATAString, 4, (LPCSTR)pItemDescriptor->AttributeValues[VData.Attr]);
 			break;
 
 		case LFTypeColor:
-			Value.Color = *((BYTE*)pItemDescriptor->AttributeValues[Value.Attr]);
+			VData.Color = *((BYTE*)pItemDescriptor->AttributeValues[VData.Attr]);
 
-			assert(Value.Color<LFItemColorCount);
-			Value.ColorSet = (1 << Value.Color);
+			assert(VData.Color<LFItemColorCount);
+			VData.ColorSet = (1 << VData.Color);
 
 			break;
 
 		default:
-			memcpy(&Value.Value, pItemDescriptor->AttributeValues[Value.Attr], TypeProperties[AttrProperties[Value.Attr].Type].Size);
+			memcpy(&VData.Value, pItemDescriptor->AttributeValues[VData.Attr], TypeProperties[AttrProperties[VData.Attr].Type].Size);
 		}
 
-		Value.IsNull = FALSE;
+		VData.IsNull = FALSE;
 	}
 	else
 	{
-		LFClearVariantData(Value);
+		LFClearVariantData(VData);
 	}
 }
 
-LFCORE_API void LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& Value)
+LFCORE_API void LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& VData)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
 
-	Value.Attr = Attr;
-	Value.Type = AttrProperties[Attr].Type;
+	VData.Attr = Attr;
+	VData.Type = AttrProperties[Attr].Type;
 
-	LFGetAttributeVariantData(pItemDescriptor, Value);
+	LFGetAttributeVariantData(pItemDescriptor, VData);
 }
 
-LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& Value)
+LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& VData)
 {
 	assert(pItemDescriptor);
-	assert(Value.Attr<LFAttributeCount);
-	assert(Value.Type==AttrProperties[Value.Attr].Type);
-	assert(Value.Type<LFTypeCount);
+	assert(VData.Attr<LFAttributeCount);
+	assert(VData.Type==AttrProperties[VData.Attr].Type);
+	assert(VData.Type<LFTypeCount);
 
-	SetAttribute(pItemDescriptor, Value.Attr, &Value.Value);
+	SetAttribute(pItemDescriptor, VData.Attr, &VData.Value);
 }
 
 LFCORE_API BOOL LFIsNullAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr)

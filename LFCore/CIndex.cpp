@@ -285,7 +285,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 			if ((!(PtrM->Flags & LFFlagLink)) && LFIsStoreMounted(p_StoreDescriptor))
 			{
 				WIN32_FIND_DATA FindFileData;
-				BOOL Exists = FileExists(Path, &FindFileData);
+				const BOOL Exists = FileExists(Path, &FindFileData);
 
 				// Update metadata
 				if (Exists)
@@ -296,7 +296,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgres
 				}
 
 				// Update flags
-				BYTE Flags = Exists ? 0 : LFFlagMissing;
+				const BYTE Flags = Exists ? 0 : LFFlagMissing;
 				if ((Flags & LFFlagMissing)!=(PtrM->Flags & LFFlagMissing))
 				{
 					PtrM->Flags = (PtrM->Flags & ~LFFlagMissing) | Flags;
@@ -621,6 +621,58 @@ BOOL CIndex::ExistingFileID(LPCSTR pFileID)
 	END_FINDMASTER();
 
 	return Result;
+}
+
+void CIndex::UpdateContext(LFTransactionList* pTransactionList, BYTE ContextID)
+{
+	assert(pTransactionList);
+
+	// Access
+	if (!m_WriteAccess)
+	{
+		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexAccessError);
+		return;
+	}
+
+	// Context
+
+	if ((ContextID!=LFContextBooks) && (ContextID!=LFContextDocuments))
+	{
+		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalValue);
+		return;
+	}
+
+	START_ITERATEMASTER(pTransactionList->SetError(p_StoreDescriptor->StoreID, m_pTable[IDXTABLE_MASTER]->GetError()),);
+	IN_TRANSACTIONLIST(pTransactionList);
+
+	if ((PtrM->ContextID!=LFContextBooks) && (PtrM->ContextID!=LFContextDocuments))
+	{
+		pTransactionList->SetError(ItemID, LFIllegalItemType);
+	}
+	else
+	{
+		if (PtrM->ContextID!=ContextID)
+		{
+			REMOVE_STATS();
+
+			// Remove "New" flag
+			PtrM->Flags &= ~LFFlagNew;
+
+			// Set new context
+			PtrM->ContextID = ContextID;
+
+			m_pTable[IDXTABLE_MASTER]->MakeDirty();
+	
+			ADD_STATS();
+		}
+
+		pTransactionList->SetError(ItemID, LFOk);
+	}
+
+	END_ITERATEMASTER();
+
+	// Invalid items
+	pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalID);
 }
 
 BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew)

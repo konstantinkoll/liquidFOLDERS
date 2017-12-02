@@ -1184,6 +1184,46 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Tasks\MoveToBooks_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToBooks_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToBooks_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToBooks_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToBooks_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToDocuments_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToDocuments_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToDocuments_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToDocuments_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\MoveToDocuments_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Tasks\NewFilter_16.png"
 				>
 			</File>

@@ -154,7 +154,7 @@ CPropertyEdit::CPropertyEdit()
 			AfxThrowResourceException();
 	}
 
-	LFInitVariantData(m_Data, LFAttrFileName);
+	LFInitVariantData(m_VData, LFAttrFileName);
 	p_Property = NULL;
 	m_pWndDisplay = NULL;
 	m_pWndEdit = NULL;
@@ -244,7 +244,7 @@ void CPropertyEdit::CreateProperty()
 
 	delete p_Property;
 
-	p_Property = CPropertyHolder::CreateProperty(&m_Data);
+	p_Property = CPropertyHolder::CreateProperty(&m_VData);
 
 	if (p_Property->OnClickValue(-1))
 	{
@@ -260,7 +260,7 @@ void CPropertyEdit::CreateProperty()
 
 		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
 		p_Property->SetEditMask(m_pWndEdit);
-		m_pWndEdit->SetLimitText((UINT)LFGetApp()->m_Attributes[m_Data.Attr].AttrProperties.cCharacters);
+		m_pWndEdit->SetLimitText((UINT)LFGetApp()->m_Attributes[m_VData.Attr].AttrProperties.cCharacters);
 		m_pWndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	}
 	else
@@ -274,31 +274,31 @@ void CPropertyEdit::CreateProperty()
 	AdjustLayout();
 
 	m_IsValid = TRUE;
-	m_IsEmpty = LFIsNullVariantData(m_Data);
+	m_IsEmpty = LFIsNullVariantData(m_VData);
 }
 
 void CPropertyEdit::SetAttribute(UINT Attr)
 {
-	if ((Attr!=m_Data.Attr) || (!p_Property))
+	if ((Attr!=m_VData.Attr) || (!p_Property))
 	{
 		const LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[Attr];
 
-		if (pAttr->AttrProperties.Type!=m_Data.Type)
+		if (pAttr->AttrProperties.Type!=m_VData.Type)
 		{
-			LFInitVariantData(m_Data, Attr);
+			LFInitVariantData(m_VData, Attr);
 		}
 		else
 		{
-			m_Data.Attr = Attr;
+			m_VData.Attr = Attr;
 
 			switch (pAttr->AttrProperties.Type)
 			{
 			case LFTypeUnicodeString:
-				m_Data.UnicodeString[pAttr->AttrProperties.cCharacters] = L'\0';
+				m_VData.UnicodeString[pAttr->AttrProperties.cCharacters] = L'\0';
 				break;
 
 			case LFTypeAnsiString:
-				m_Data.AnsiString[pAttr->AttrProperties.cCharacters] = '\0';
+				m_VData.AnsiString[pAttr->AttrProperties.cCharacters] = '\0';
 				break;
 			}
 		}
@@ -307,9 +307,9 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 	}
 }
 
-void CPropertyEdit::SetData(const LFVariantData& Data)
+void CPropertyEdit::SetData(const LFVariantData& VData)
 {
-	m_Data = Data;
+	m_VData = VData;
 
 	CreateProperty();
 }
@@ -322,7 +322,7 @@ void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
 
 		m_IsValid = TRUE;
-		m_IsEmpty = LFIsNullVariantData(m_Data);
+		m_IsEmpty = LFIsNullVariantData(m_VData);
 	}
 
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
@@ -408,11 +408,11 @@ LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	WCHAR tmpStr[256];
 	m_pWndEdit->GetWindowText(tmpStr, 256);
 
-	LFVariantDataFromString(m_Data, tmpStr);
-	m_IsValid = !m_Data.IsNull;
-	m_IsEmpty = LFIsNullVariantData(m_Data);
+	LFVariantDataFromString(m_VData, tmpStr);
+	m_IsValid = !m_VData.IsNull;
+	m_IsEmpty = LFIsNullVariantData(m_VData);
 
-	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, m_Data.Attr);
+	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, m_VData.Attr);
 }
 
 void CPropertyEdit::OnClick()
@@ -425,7 +425,7 @@ void CPropertyEdit::OnClick()
 			if (m_pWndEdit)
 			{
 				WCHAR tmpStr[256];
-				LFVariantDataToString(m_Data, tmpStr, 256);
+				LFVariantDataToString(m_VData, tmpStr, 256);
 
 				m_pWndEdit->SetWindowText(tmpStr);
 			}

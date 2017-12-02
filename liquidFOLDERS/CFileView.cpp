@@ -632,11 +632,20 @@ CMenu* CFileView::GetItemContextMenu(INT Index)
 				pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextTasks ? IDM_FILE_TASKDONE : IDM_FILE_MAKETASK, CString((LPCSTR)(m_Context==LFContextTasks ? IDS_CONTEXTMENU_TASKDONE : IDS_CONTEXTMENU_MAKETASK)));
 
 			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVEFROMCLIPBOARD : IDM_FILE_REMEMBER, CString((LPCSTR)(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD : IDS_CONTEXTMENU_REMEMBER)));
+			pPopup->InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
+
+			// Move to other context
+			if ((m_Context==LFContextBooks) || (m_Context==LFContextDocuments))
+			{
+				CString tmpStr;
+				tmpStr.Format(IDS_CONTEXTMENU_MOVETOCONTEXT, theApp.m_Contexts[m_Context==LFContextDocuments ? LFContextBooks : LFContextDocuments].Name);
+
+				pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextDocuments ? IDM_FILE_MOVETOBOOKS : IDM_FILE_MOVETODOCUMENTS, tmpStr);
+			}
 
 			// SendTo
 			CMenu* pSendPopup = GetSendToMenu();
 
-			pPopup->InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
 			pPopup->InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, CString((LPCSTR)IDS_CONTEXTMENU_SENDTO));
 			pPopup->InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
 
@@ -786,10 +795,10 @@ CString CFileView::GetLabel(LFItemDescriptor* pItemDescriptor) const
 	CString strLabel = pItemDescriptor->CoreAttributes.FileName;
 
 	// Remove annotation
-	LFVariantData Data1;
-	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrApplication, Data1);
+	LFVariantData VData1;
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrApplication, VData1);
 
-	if (!LFIsNullVariantData(Data1))
+	if (!LFIsNullVariantData(VData1))
 	{
 		const INT Length = strLabel.GetLength();
 
@@ -799,11 +808,11 @@ CString CFileView::GetLabel(LFItemDescriptor* pItemDescriptor) const
 
 			if (Pos!=-1)
 			{
-				LFVariantData Data2;
-				LFInitVariantData(Data2, LFAttrApplication);
-				LFVariantDataFromString(Data2, strLabel.Mid(Pos+1, Length-Pos-2));
+				LFVariantData VData2;
+				LFInitVariantData(VData2, LFAttrApplication);
+				LFVariantDataFromString(VData2, strLabel.Mid(Pos+1, Length-Pos-2));
 
-				if (LFCompareVariantData(Data1, Data2)==0)
+				if (LFCompareVariantData(VData1, VData2)==0)
 					strLabel = strLabel.Left(Pos).TrimRight();
 			}
 		}

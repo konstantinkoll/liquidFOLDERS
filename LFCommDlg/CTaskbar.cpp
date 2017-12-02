@@ -96,8 +96,7 @@ void CTaskbar::AdjustLayout()
 		if (pTaskButton->IsWindowEnabled())
 		{
 			const INT Width = pTaskButton->GetPreferredWidth();
-			RPos -= Width+BORDER;
-			if (RPos>=BORDERLEFT)
+			if ((RPos-=Width+BORDER)>=BORDERLEFT)
 			{
 				pTaskButton->SetWindowPos(NULL, RPos, Row, Width, Height, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 			}

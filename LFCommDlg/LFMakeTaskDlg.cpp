@@ -10,12 +10,12 @@
 // LFMakeTaskDlg
 //
 
-LFMakeTaskDlg::LFMakeTaskDlg(LFVariantData* pDataPriority, LFVariantData* pDataDueTime, CWnd* pParentWnd)
-	: LFEditTimeDlg(pDataDueTime, pParentWnd, IDD_MAKETASK, FALSE, FALSE)
+LFMakeTaskDlg::LFMakeTaskDlg(LFVariantData* pVDataPriority, LFVariantData* pVDataDueTime, CWnd* pParentWnd)
+	: LFEditTimeDlg(pVDataDueTime, pParentWnd, IDD_MAKETASK, FALSE, FALSE)
 {
-	ASSERT(pDataPriority);
+	ASSERT(pVDataPriority);
 
-	p_Data = pDataPriority;
+	p_VDataPriority = pVDataPriority;
 }
 
 void LFMakeTaskDlg::DoDataExchange(CDataExchange* pDX)
@@ -25,7 +25,7 @@ void LFMakeTaskDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PRIORITY, m_wndPriority);
 
 	if (pDX->m_bSaveAndValidate)
-		*p_Data = m_wndPriority.m_Data;
+		*p_VDataPriority = m_wndPriority.m_VData;
 }
 
 BOOL LFMakeTaskDlg::InitDialog()
@@ -41,7 +41,7 @@ BOOL LFMakeTaskDlg::InitDialog()
 	m_wndPriority.SetWindowPos(NULL, 0, 0, rectCalendar.Width(), rect.Height(), SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
 	// Data
-	m_wndPriority.SetData(*p_Data);
+	m_wndPriority.SetData(*p_VData);
 
 	return TRUE;
 }

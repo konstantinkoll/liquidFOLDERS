@@ -14,9 +14,8 @@ CIcons CMainWnd::m_SmallIcons;
 
 const UINT CMainWnd::m_ContextOrder[LFLastQueryContext+1] = {
 	LFContextAllFiles, LFContextFavorites,
-	LFContextAudio, LFContextPictures, LFContextVideos,
-	LFContextBooks, LFContextDocuments, LFContextFonts,
-	LFContextContacts, LFContextMessages,
+	LFContextAudio, LFContextPictures, LFContextVideos, LFContextBooks,
+	LFContextDocuments, LFContextFonts, LFContextContacts, LFContextMessages,
 	LFContextNew, LFContextTasks, LFContextArchive, LFContextTrash,
 	LFContextFilters
 };
@@ -418,8 +417,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					m_wndSidebar.AddCaption(IDS_FILETYPES);
 					break;
 
-				case LFContextBooks:
-				case LFContextContacts:
+				case LFContextDocuments:
 					m_wndSidebar.AddCaption();
 					break;
 

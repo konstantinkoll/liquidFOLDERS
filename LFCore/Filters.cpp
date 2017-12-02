@@ -146,12 +146,12 @@ LFCORE_API UINT LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, 
 }
 
 
-LFCORE_API LFFilterCondition* LFAllocFilterCondition(BYTE Compare, LFVariantData& Value, LFFilterCondition* pNext)
+LFCORE_API LFFilterCondition* LFAllocFilterCondition(BYTE Compare, const LFVariantData& VData, LFFilterCondition* pNext)
 {
 	LFFilterCondition* pFilterCondition = new LFFilterCondition;
 
 	pFilterCondition->pNext = pNext;
-	pFilterCondition->AttrData = Value;
+	pFilterCondition->AttrData = VData;
 	pFilterCondition->Compare = Compare;
 
 	return pFilterCondition;

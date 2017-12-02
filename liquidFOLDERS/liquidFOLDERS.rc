@@ -363,6 +363,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
     IDS_CONTEXTMENU_SENDTO  "S&enden an"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "Nach „%s“ &verschieben"
     IDS_CONTEXTMENU_CHOOSESTORE "&Speicherort wählen..."
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Aus Zwischenablage &entfernen"
@@ -444,6 +445,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_MOVETOBOOKS    "Verschiebt die ausgewählten Dokumente nach „Bücher“.\nNach „Bücher“ verschieben"
+    IDM_FILE_MOVETODOCUMENTS "Verschiebt die ausgewählten Bücher nach „Dokumente“.\nNach „Dokumente“ verschieben"
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
@@ -780,6 +783,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_EDIT    "E&ditar..."
     IDS_CONTEXTMENU_SENDTO  "&Enviar a"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "&Desplazar a «%s»"
     IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &ubicación..."
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
     IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Eliminar del portapapeles"
@@ -861,6 +865,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_MOVETOBOOKS    "Desplaza los documentos seleccionados a «Libros».\nDesplazar a «Libros»"
+    IDM_FILE_MOVETODOCUMENTS "Desplaza los lobros seleccionados a «Documentos».\nDesplazar a «Documentos»"
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
@@ -1197,6 +1203,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_EDIT    "&Modifier..."
     IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "&Déplacer à «%s»"
     IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &emplacement..."
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
     IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Enlèver du &presse-papiers"
@@ -1278,6 +1285,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_MOVETOBOOKS    "Déplace les documents choisis à «Livres».\nDéplacer à «Livres»"
+    IDM_FILE_MOVETODOCUMENTS "Déplace les livres choisis à «Documents».\nDéplacer à «Documents»"
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Enlève les fichiers choisis du presse-papiers.\nEnlever"
@@ -1665,6 +1674,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_EDIT    "&Edit..."
     IDS_CONTEXTMENU_SENDTO  "S&end to"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "&Move to “%s”"
     IDS_CONTEXTMENU_CHOOSESTORE "Choose &location..."
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Re&move from clipboard"
@@ -1746,6 +1756,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_MOVETOBOOKS    "Moves the selected documents to “Books”.\nMove to “Books”"
+    IDM_FILE_MOVETODOCUMENTS "Moves the selected books to “Documents”.\nMove to “Documents”"
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Removes the selected files from the clipboard window.\nRemove"

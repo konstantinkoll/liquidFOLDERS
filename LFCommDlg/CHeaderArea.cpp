@@ -174,6 +174,7 @@ BEGIN_MESSAGE_MAP(CHeaderArea, CFrontstageWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_SYSCOLORCHANGE()
 	ON_WM_THEMECHANGED()
 	ON_WM_CTLCOLOR()
 	ON_WM_LBUTTONDOWN()
@@ -316,8 +317,15 @@ void CHeaderArea::OnPaint()
 	FillRect(pDC, rect, hBackgroundBrush);
 }
 
+void CHeaderArea::OnSysColorChange()
+{
+	m_BackBufferH = 0;
+	AdjustLayout();
+}
+
 LRESULT CHeaderArea::OnThemeChanged()
 {
+	m_BackBufferH = 0;
 	AdjustLayout();
 
 	return NULL;

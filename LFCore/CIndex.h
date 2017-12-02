@@ -30,6 +30,7 @@ public:
 	void ResolveLocations(LFTransactionList* pTransactionList);
 	void SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProgress* pProgress=NULL);
 	BOOL ExistingFileID(LPCSTR pFileID);
+	void UpdateContext(LFTransactionList* pTransactionList, BYTE ContextID);
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
 	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags);
 

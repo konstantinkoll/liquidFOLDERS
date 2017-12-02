@@ -23,7 +23,7 @@ struct AttributeSummary
 {
 	BOOL Visible;
 	UINT Status;
-	LFVariantData Value;
+	LFVariantData VData;
 	LFVariantData RangeFirst;
 	LFVariantData RangeSecond;
 };
@@ -77,7 +77,7 @@ public:
 	void SetCoreIcon(INT IconID, const CString& Description=_T(""));
 	void SetFormatIcon(LPCSTR pFileFormat, const CString& Description=_T(""));
 	void SetPreview(const LFItemDescriptor* pItemDescriptor, const CString& Description=_T(""));
-	BOOL UpdateThumbnailColor(const LFVariantData& Data);
+	BOOL UpdateThumbnailColor(const LFVariantData& VData);
 
 protected:
 	void FreeItem();

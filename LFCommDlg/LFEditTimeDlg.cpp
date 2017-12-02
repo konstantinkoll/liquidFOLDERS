@@ -10,12 +10,12 @@
 // LFEditTimeDlg
 //
 
-LFEditTimeDlg::LFEditTimeDlg(LFVariantData* pData, CWnd* pParentWnd, UINT nIDTemplate, BOOL UseTime, BOOL UseDate)
+LFEditTimeDlg::LFEditTimeDlg(LFVariantData* pVData, CWnd* pParentWnd, UINT nIDTemplate, BOOL UseTime, BOOL UseDate)
 	: LFDialog(nIDTemplate, pParentWnd)
 {
-	ASSERT(pData);
+	ASSERT(pVData);
 
-	p_Data = pData;
+	p_VData = pVData;
 	m_UseDate = UseDate;
 	m_UseTime = UseTime;
 }
@@ -29,8 +29,8 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate && m_UseDate)
 	{
-		ASSERT(LFGetApp()->m_Attributes[p_Data->Attr].AttrProperties.Type==LFTypeTime);
-		p_Data->IsNull = FALSE;
+		ASSERT(LFGetApp()->m_Attributes[p_VData->Attr].AttrProperties.Type==LFTypeTime);
+		p_VData->IsNull = FALSE;
 
 		SYSTEMTIME Date;
 		m_wndCalendar.GetCurSel(&Date);
@@ -52,14 +52,14 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 
 		SYSTEMTIME stUTC;
 		TzSpecificLocalTimeToSystemTime(NULL, &Date, &stUTC);
-		SystemTimeToFileTime(&stUTC, &p_Data->Time);
+		SystemTimeToFileTime(&stUTC, &p_VData->Time);
 	}
 }
 
 BOOL LFEditTimeDlg::InitDialog()
 {
 	if (m_lpszTemplateName==MAKEINTRESOURCE(IDD_EDITTIME))
-		SetWindowText(LFGetApp()->m_Attributes[p_Data->Attr].Name);
+		SetWindowText(LFGetApp()->m_Attributes[p_VData->Attr].Name);
 
 	// Size
 	CRect rect;
@@ -83,12 +83,12 @@ BOOL LFEditTimeDlg::InitDialog()
 	GrowXMoveY(GetDlgItem(IDC_TIME));
 
 	// Data
-	if (!p_Data->IsNull)
-		if ((p_Data->Time.dwHighDateTime) || (p_Data->Time.dwLowDateTime))
+	if (!p_VData->IsNull)
+		if ((p_VData->Time.dwHighDateTime) || (p_VData->Time.dwLowDateTime))
 		{
 			SYSTEMTIME stUTC;
 			SYSTEMTIME stLocal;
-			FileTimeToSystemTime(&p_Data->Time, &stUTC);
+			FileTimeToSystemTime(&p_VData->Time, &stUTC);
 			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
 			ENSURE(m_wndCalendar.SetCurSel(&stLocal));

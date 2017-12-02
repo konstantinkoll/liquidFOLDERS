@@ -426,6 +426,14 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
+	case LFTransactionTypeUpdateContext:
+		m_pIndexMain->UpdateContext(pTransactionList, (BYTE)Parameter);
+
+		if (m_pIndexAux)
+			m_pIndexAux->UpdateContext(pTransactionList, (BYTE)Parameter);
+
+		break;
+
 	case LFTransactionTypeDelete:
 		m_pIndexMain->Delete(pTransactionList, pProgress);
 
@@ -675,7 +683,7 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 				{
 					if ((*pChar<L'0') || (*pChar>L'9'))
 					{
-						// No, so no separator!
+						// No, so there is no separator!
 						pSeparator = NULL;
 
 						break;

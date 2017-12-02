@@ -37,7 +37,7 @@ void LFEditConditionDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_Condition.Compare = (UCHAR)m_wndCompare.GetItemData(m_wndCompare.GetCurSel());
-		m_Condition.AttrData = m_wndEdit.m_Data;
+		m_Condition.AttrData = m_wndEdit.m_VData;
 	}
 }
 

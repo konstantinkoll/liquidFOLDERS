@@ -390,6 +390,24 @@ void CMainView::RemoveTransactedItems(LFTransactionList* pTransactionList)
 	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
 }
 
+void CMainView::MoveToContext(BYTE Context)
+{
+	ASSERT((m_Context==LFContextBooks) || (m_Context==LFContextDocuments));
+	ASSERT((Context==LFContextBooks) || (Context==LFContextDocuments));
+	ASSERT(m_Context!=Context);
+
+	CWaitCursor csr;
+
+	LFTransactionList* pTransactionList = BuildTransactionList();
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdateContext, NULL, Context);
+	RemoveTransactedItems(pTransactionList);
+
+	// Show notification
+	ShowNotification(pTransactionList->m_LastError);
+
+	LFFreeTransactionList(pTransactionList);
+}
+
 BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 {
 	LFTransactionList* pTransactionList = BuildTransactionList(All);
@@ -523,6 +541,8 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
 	ON_COMMAND(IDM_FILE_SHOWEXPLORER, OnFileShowExplorer)
+	ON_COMMAND(IDM_FILE_MOVETOBOOKS, OnFileMoveToBooks)
+	ON_COMMAND(IDM_FILE_MOVETODOCUMENTS, OnFileMoveToDocuments)
 	ON_COMMAND(IDM_FILE_EDIT, OnFileEdit)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVEFROMCLIPBOARD, OnFileRemoveFromClipboard)
@@ -573,21 +593,23 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 19, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_MOVETOBOOKS, 22, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_MOVETODOCUMENTS, 23, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 28);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 29);
 
-	#define InspectorIconVisible     28
-	#define InspectorIconHidden      29
+	#define InspectorIconVisible     30
+	#define InspectorIconHidden      31
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 35, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -854,14 +876,13 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	LFTransactionList* pTransactionList = LFAllocTransactionList();
 	LFAddTransactionItem(pTransactionList, (*p_CookedFiles)[(UINT)wParam]);
 
-	LFVariantData Value;
-	Value.Attr = LFAttrFileName;
-	Value.Type = LFTypeUnicodeString;
-	Value.IsNull = FALSE;
+	LFVariantData VData;
+	LFInitVariantData(VData, LFAttrFileName);
 
-	wcsncpy_s(Value.UnicodeString, 256, (LPCWSTR)lParam, _TRUNCATE);
+	wcsncpy_s(VData.UnicodeString, 256, (LPCWSTR)lParam, _TRUNCATE);
+	VData.IsNull = FALSE;
 
-	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &Value);
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &VData);
 
 	if (pTransactionList->m_Modified)
 	{
@@ -1384,6 +1405,16 @@ void CMainView::OnFileShowExplorer()
 	}
 }
 
+void CMainView::OnFileMoveToBooks()
+{
+	MoveToContext(LFContextBooks);
+}
+
+void CMainView::OnFileMoveToDocuments()
+{
+	MoveToContext(LFContextDocuments);
+}
+
 void CMainView::OnFileEdit()
 {
 	const INT Index = GetSelectedItem();
@@ -1564,6 +1595,14 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		if (pItemDescriptor)
 			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters);
 
+		break;
+
+	case IDM_FILE_MOVETOBOOKS:
+		bEnable = m_FilesSelected && (m_Context==LFContextDocuments);
+		break;
+
+	case IDM_FILE_MOVETODOCUMENTS:
+		bEnable = m_FilesSelected && (m_Context==LFContextBooks);
 		break;
 
 	case IDM_FILE_REMEMBER:

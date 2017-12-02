@@ -8,6 +8,7 @@
 
 extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "air",    LFContextDocuments },
+	{ "airx",    LFContextDocuments },
 	{ "ans",    LFContextPictures },
 	{ "asc",    LFContextDocuments },
 	{ "asm",    LFContextDocuments },
@@ -215,8 +216,11 @@ extern const BYTE ContextSlaves[LFLastQueryContext+1] = {
 	IDXTABLE_DOCUMENTS,		// LFContextDocuments
 	IDXTABLE_MASTER,		// LFContextContacts
 	IDXTABLE_MESSAGES,		// LFContextMessages
+	IDXTABLE_DOCUMENTS,		// LFContextBooks
+	IDXTABLE_MASTER,		// LFContextFonts
 	IDXTABLE_MASTER,		// LFContextNew
 	IDXTABLE_MASTER,		// LFContextTasks
+	IDXTABLE_MASTER,		// LFContextArchive
 	IDXTABLE_MASTER,		// LFContextTrash
 	IDXTABLE_MASTER			// LFContextFilters
 };

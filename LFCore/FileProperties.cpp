@@ -76,6 +76,7 @@ BYTE GetPerceivedContext(LPCSTR Extension)
 void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL OnImport)
 {
 	assert(pCoreAttributes);
+	assert(ContextSlaves[LFContextBooks]==ContextSlaves[LFContextDocuments]);
 
 #ifdef _DEBUG
 	// Is the context list sorted?
@@ -83,18 +84,24 @@ void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL OnImport)
 		assert(strcmp(ContextRegistry[a].Format, ContextRegistry[a+1].Format)<1);
 #endif
 
-	// Context
-	pCoreAttributes->ContextID = GetHardcodedContext(pCoreAttributes->FileFormat);
+	// Find context
+	BYTE ContextID = GetHardcodedContext(pCoreAttributes->FileFormat);
 
-	if (!pCoreAttributes->ContextID)
-		pCoreAttributes->ContextID = GetPerceivedContext(pCoreAttributes->FileFormat);
+	if (!ContextID)
+		ContextID = GetPerceivedContext(pCoreAttributes->FileFormat);
+
+	// Do not set context if LFContextBooks and LFContextDocuments are switched: the user can manually move files!
+	if (((pCoreAttributes->ContextID!=LFContextBooks) && (pCoreAttributes->ContextID!=LFContextDocuments)) ||
+		((ContextID!=LFContextBooks) && (ContextID!=LFContextDocuments)))
+		pCoreAttributes->ContextID = ContextID;
 
 	// Slave
 	if (OnImport)
 	{
-		assert(pCoreAttributes->ContextID<=LFLastQueryContext);
+		assert(ContextID<=LFLastQueryContext);
+		assert(!pCoreAttributes->SlaveID);
 
-		pCoreAttributes->SlaveID = ContextSlaves[pCoreAttributes->ContextID];
+		pCoreAttributes->SlaveID = ContextSlaves[ContextID];
 	}
 }
 
@@ -364,6 +371,22 @@ void SetAttributesFromShell(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BO
 			GetOLEProperties(pPropertySetStorage, SHPropertySummary, pItemDescriptor);
 
 			pPropertySetStorage->Release();
+		}
+	}
+
+	// Fix broken properties
+	//
+
+	// Amazon appends " [Explicit" to certain album names; remove it!
+	LFVariantData VData;
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrAlbum, VData);
+	if (!LFIsNullVariantData(VData))
+	{
+		LPWSTR pSubstr = StrStrI(VData.UnicodeString, L" [EXPLICIT]");
+		if (pSubstr)
+		{
+			*pSubstr = L'\0';
+			LFSetAttributeVariantData(pItemDescriptor, VData);
 		}
 	}
 }

@@ -47,11 +47,11 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetAttribute(UINT Attr);
-	void SetData(const LFVariantData& Data);
+	void SetData(const LFVariantData& VData);
 
 	BOOL m_IsValid;
 	BOOL m_IsEmpty;
-	LFVariantData m_Data;
+	LFVariantData m_VData;
 
 protected:
 	virtual void Init();

@@ -12,7 +12,7 @@
 class LFMakeTaskDlg : public LFEditTimeDlg
 {
 public:
-	LFMakeTaskDlg(LFVariantData* pDataPriority, LFVariantData* pDataDueTime, CWnd* pParentWnd=NULL);
+	LFMakeTaskDlg(LFVariantData* pVDataPriority, LFVariantData* pVDataDueTime, CWnd* pParentWnd=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -21,7 +21,7 @@ protected:
 	afx_msg void OnUseDate();
 	DECLARE_MESSAGE_MAP()
 
-	LFVariantData* p_Data;
+	LFVariantData* p_VDataPriority;
 
 	CPropertyEdit m_wndPriority;
 };

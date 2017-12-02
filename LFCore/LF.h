@@ -669,6 +669,8 @@ struct LFCoreAttributes
 	// Private
 	BYTE SlaveID;
 	BYTE ContextID;
+	BYTE Reserved4;
+	BYTE Reserved5;
 
 	// Public extended
 	FILETIME DueTime;
@@ -819,7 +821,8 @@ struct LFItemDescriptor
 #define LFTransactionTypeRecover               0x102
 #define LFTransactionTypeUpdate                0x103
 #define LFTransactionTypeUpdateTask            0x104
-#define LFTransactionTypeDelete                0x105
+#define LFTransactionTypeUpdateContext         0x105
+#define LFTransactionTypeDelete                0x106
 
 #define LFTransactionTypeLastReadonly          0x0FF
 

@@ -430,6 +430,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	case LFTransactionTypeRecover:
 	case LFTransactionTypeUpdate:
 	case LFTransactionTypeUpdateTask:
+	case LFTransactionTypeUpdateContext:
 	case LFTransactionTypeDelete:
 		SendLFNotifyMessage(LFMessages.StatisticsChanged);
 

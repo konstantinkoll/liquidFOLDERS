@@ -283,14 +283,13 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			LFTransactionList* pTransactionList = LFAllocTransactionList();
 			LFAddTransactionItem(pTransactionList, (*m_pSearchResult)[pDispInfo->item.iItem]);
 
-			LFVariantData Value;
-			Value.Attr = LFAttrFileName;
-			Value.Type = LFTypeUnicodeString;
-			Value.IsNull = FALSE;
+			LFVariantData VData;
+			LFInitVariantData(VData, LFAttrFileName);
 
-			wcsncpy_s(Value.UnicodeString, 256, pDispInfo->item.pszText, _TRUNCATE);
+			wcsncpy_s(VData.UnicodeString, 256, pDispInfo->item.pszText, _TRUNCATE);
+			VData.IsNull = FALSE;
 
-			LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &Value);
+			LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &VData);
 			LFErrorBox(this, pTransactionList->m_LastError);
 
 			LFFreeTransactionList(pTransactionList);

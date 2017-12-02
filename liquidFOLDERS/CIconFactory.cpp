@@ -114,11 +114,11 @@ FinishIcon:
 	// Draw overlays
 	if (DrawAppBadge)
 	{
-		LFVariantData Data;
-		LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrApplication, Data);
+		LFVariantData VData;
+		LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrApplication, VData);
 
-		if (!LFIsNullVariantData(Data) && (Data.Application<LFApplicationCount))
-			m_ApplicationIcons.Draw(dc, pt.x-2, pt.y+ThumbnailYOffset+98, Data.Application-1);
+		if (!LFIsNullVariantData(VData) && (VData.Application<LFApplicationCount))
+			m_ApplicationIcons.Draw(dc, pt.x-2, pt.y+ThumbnailYOffset+98, VData.Application-1);
 	}
 
 	if (DrawSash)
@@ -438,9 +438,9 @@ BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor*
 	ASSERT((pItemDescriptor->Type & LFTypeMask)!=LFTypeFile);
 
 	// GPS coordinates present?
-	LFVariantData Data;
-	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrLocationGPS, Data);
-	if (LFIsNullVariantData(Data))
+	LFVariantData VData;
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrLocationGPS, VData);
+	if (LFIsNullVariantData(VData))
 		return FALSE;
 
 	// Draw map
@@ -450,8 +450,8 @@ BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor*
 	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
 
 	// Map location
-	INT X = (INT)((Data.GeoCoordinates.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
-	INT Y = (INT)((Data.GeoCoordinates.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
+	INT X = (INT)((VData.GeoCoordinates.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
+	INT Y = (INT)((VData.GeoCoordinates.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
 
 	// Map offset
 	INT OffsX = -X+124/2;
