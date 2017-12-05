@@ -25,10 +25,11 @@ public:
 
 	void DrawJumboFormatIcon(CDC& dc, const CPoint& pt, LPCSTR lpszFileFormat, BOOL Ghosted=FALSE);
 	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, BOOL DrawOverlays=TRUE, INT ThumbnailYOffset=1);
-	void DrawSmallIcon(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor);
+	void DrawSmallIcon(CDC& dc, const CPoint& pt, const LFItemDescriptor* pItemDescriptor);
 	CString GetTypeName(LPCSTR lpszFileFormat);
 
 	HBITMAP GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchResult);
+	HBITMAP GetMapBitmap(LPCSTR lpszIATACode);
 	HBITMAP GetJumboIconBitmap(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
 
 	static CIcons m_ApplicationIcons;
@@ -37,7 +38,8 @@ protected:
 	BOOL LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
 	BOOL DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, BOOL& DrawSash, INT ThumbnailYOffset=1);
 	BOOL DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset);
-	BOOL DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
+	BOOL DrawJumboMap(Graphics& g, const CPoint& pt, const LFGeoCoordinates& GeoCoordinates, INT ThumbnailYOffset=1);
+	BOOL DrawJumboMap(Graphics& g, const CPoint& pt, const LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
 
 	void LookupFileFormat(LPCSTR lpszFileFormat, FileFormatData& Data);
 	INT GetSystemIconIndex(LPCSTR lpszFileFormat);

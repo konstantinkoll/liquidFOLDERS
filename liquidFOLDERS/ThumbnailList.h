@@ -21,7 +21,7 @@ public:
 	~ThumbnailList();
 
 	void AddItem(ThumbnailData& Thumbnail);
-	BOOL Lookup(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
+	BOOL Lookup(const LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
 
 protected:
 	void FreeItem(UINT Index);
@@ -63,7 +63,7 @@ void ThumbnailList<C>::AddItem(ThumbnailData& Thumbnail)
 }
 
 template <UINT C>
-BOOL ThumbnailList<C>::Lookup(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail)
+BOOL ThumbnailList<C>::Lookup(const LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail)
 {
 	INT pChar = m_NextPtr;
 

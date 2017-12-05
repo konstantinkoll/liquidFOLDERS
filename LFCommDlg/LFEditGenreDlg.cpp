@@ -53,7 +53,7 @@ BOOL LFEditGenreDlg::InitDialog()
 	CWaitCursor csr;
 
 	LFFilter* pFilter = LFAllocFilter();
-	pFilter->QueryContext = LFContextAudio;
+	pFilter->QueryContext = LFContextMusic;
 
 	if (!m_StoreID[0])
 	{
@@ -65,6 +65,7 @@ BOOL LFEditGenreDlg::InitDialog()
 		strcpy_s(pFilter->StoreID, LFKeySize, m_StoreID);
 	}
 
+	// Query
 	LFSearchResult* pRawFiles = LFQuery(pFilter);
 	LFSearchResult* pCookedFiles = LFGroupSearchResult(pRawFiles, LFAttrGenre, FALSE, TRUE, pFilter);
 	LFFreeFilter(pFilter);
@@ -74,15 +75,15 @@ BOOL LFEditGenreDlg::InitDialog()
 
 	for (UINT a=0; a<pCookedFiles->m_ItemCount; a++)
 	{
-		LFVariantData Property;
-		LFGetAttributeVariantDataEx((*pCookedFiles)[a], LFAttrGenre, Property);
+		LFVariantData VData;
+		LFGetAttributeVariantDataEx((*pCookedFiles)[a], LFAttrGenre, VData);
 
-		if (!LFIsNullVariantData(Property))
+		if (!LFIsNullVariantData(VData))
 		{
-			ASSERT(Property.UINT32<256);
+			ASSERT(VData.Genre<256);
 
-			m_FileCount[Property.UINT32] = (*pCookedFiles)[a]->AggregateCount;
-			wcsncpy_s(m_Description[Property.UINT32], 256, (*pCookedFiles)[a]->Description, _TRUNCATE);
+			m_FileCount[VData.Genre] = (*pCookedFiles)[a]->AggregateCount;
+			wcsncpy_s(m_Description[VData.Genre], 256, (*pCookedFiles)[a]->Description, _TRUNCATE);
 		}
 	}
 

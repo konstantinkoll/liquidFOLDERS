@@ -60,6 +60,8 @@ BOOL IsNullValue(UINT Type, LPCVOID pValue)
 	case LFTypeBitrate:
 	case LFTypeDuration:
 	case LFTypeGenre:
+	case LFTypeYear:
+	case LFTypeFramerate:
 		return (*(UINT*)pValue)==0;
 
 	case LFTypeRating:
@@ -109,6 +111,8 @@ INT CompareValues(UINT Type, LPCVOID pData1, LPCVOID pData2, BOOL CaseSensitive)
 	case LFTypeFourCC:
 	case LFTypeUINT:
 	case LFTypeGenre:
+	case LFTypeYear:
+	case LFTypeFramerate:
 		return *(UINT*)pData1==*(UINT*)pData2 ? 0 : *(UINT*)pData1<*(UINT*)pData2 ? -1 : 1;
 
 	case LFTypeRating:
@@ -213,6 +217,7 @@ void ToString(LPCVOID pValue, UINT Type, LPWSTR pStr, SIZE_T cCount)
 			return;
 
 		case LFTypeUINT:
+		case LFTypeYear:
 			LFUINTToString(*((UINT*)pValue), pStr, cCount);
 			return;
 
@@ -254,6 +259,10 @@ void ToString(LPCVOID pValue, UINT Type, LPWSTR pStr, SIZE_T cCount)
 
 		case LFTypeApplication:
 			wcscpy_s(pStr, cCount, *((BYTE*)pValue)<LFApplicationCount ? ApplicationRegistry[*((BYTE*)pValue)].Name : L"?");
+			return;
+
+		case LFTypeFramerate:
+			LFFramerateToString(*((UINT*)pValue), pStr, cCount);
 			return;
 		}
 
@@ -481,11 +490,11 @@ LFCORE_API void LFDurationToString(UINT d, LPWSTR pStr, SIZE_T cCount)
 	else
 		if (d/3600)
 		{
-			swprintf_s(pStr, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+			swprintf_s(pStr, cCount, L"%02u:%02u:%02u", d/3600, (d/60)%60, d%60);
 		}
 		else
 		{
-			swprintf_s(pStr, cCount, L"%02d:%02d", d/60, d%60);
+			swprintf_s(pStr, cCount, L"%02u:%02u", d/60, d%60);
 		}
 }
 
@@ -494,6 +503,25 @@ LFCORE_API void LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount)
 	assert(pStr);
 
 	swprintf_s(pStr, cCount, L"%.1lf Megapixel", d);
+}
+
+LFCORE_API void LFFramerateToString(const UINT r, LPWSTR pStr, SIZE_T cCount)
+{
+	assert(pStr);
+
+	if (r==0)
+	{
+		*pStr = L'\0';
+	}
+	else
+		if ((r % 1000)==0)
+		{
+			swprintf_s(pStr, cCount, L"%u fps", r/1000);
+		}
+		else
+		{
+			swprintf_s(pStr, cCount, L"%.2lf fps", r/1000.0);
+		}
 }
 
 LFCORE_API void LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount)
@@ -616,9 +644,9 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& VData, LPCWSTR pStr)
 
 			if (VData.Type==LFTypeIATACode)
 			{
-				VData.IATAString[0] = (CHAR)toupper(VData.IATAString[0]);
-				VData.IATAString[1] = (CHAR)toupper(VData.IATAString[1]);
-				VData.IATAString[2] = (CHAR)toupper(VData.IATAString[2]);
+				VData.IATACode[0] = (CHAR)toupper(VData.IATACode[0]);
+				VData.IATACode[1] = (CHAR)toupper(VData.IATACode[1]);
+				VData.IATACode[2] = (CHAR)toupper(VData.IATACode[2]);
 			}
 
 			break;
@@ -664,6 +692,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& VData, LPCWSTR pStr)
 			break;
 
 		case LFTypeUINT:
+		case LFTypeYear:
 			if (swscanf_s(pStr, L"%u", &VData.UINT32)==1)
 				VData.IsNull = FALSE;
 
@@ -697,7 +726,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& VData, LPCWSTR pStr)
 Abort:
 			*pChar = L'\0';
 
-			if (swscanf_s(Buffer, L"%I64d", VData.INT64)==1)
+			if (swscanf_s(Buffer, L"%I64d", &VData.INT64)==1)
 			{
 				VData.IsNull = FALSE;
 
@@ -939,7 +968,7 @@ LFCORE_API void LFGetAttributeVariantData(const LFItemDescriptor* pItemDescripto
 			break;
 
 		case LFTypeIATACode:
-			strcpy_s(VData.IATAString, 4, (LPCSTR)pItemDescriptor->AttributeValues[VData.Attr]);
+			strcpy_s(VData.IATACode, 4, (LPCSTR)pItemDescriptor->AttributeValues[VData.Attr]);
 			break;
 
 		case LFTypeColor:

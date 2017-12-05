@@ -14,8 +14,10 @@ CIcons CTooltipHeader::m_SortIndicators;
 CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
-	m_Hover = m_Shadow = FALSE;
-	m_HoverItem = m_PressedItem = m_TrackItem = m_TooltipItem = -1;
+	CONSTRUCTOR_TOOLTIP()
+
+	m_Shadow = FALSE;
+	m_PressedItem = m_TrackItem = -1;
 }
 
 BOOL CTooltipHeader::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
@@ -34,33 +36,6 @@ void CTooltipHeader::PreSubclassWindow()
 		Init();
 }
 
-BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CHeaderCtrl::PreTranslateMessage(pMsg);
-}
-
 void CTooltipHeader::Init()
 {
 	m_SortIndicators.Load(IDB_SORTINDICATORS, CSize(7, 4));
@@ -71,21 +46,67 @@ void CTooltipHeader::Init()
 void CTooltipHeader::SetShadow(BOOL Shadow)
 {
 	m_Shadow = Shadow;
+
 	Invalidate();
 }
 
+INT CTooltipHeader::ItemAtPosition(CPoint point) const
+{
+	HDHITTESTINFO htt;
+	htt.pt = point;
 
-BEGIN_MESSAGE_MAP(CTooltipHeader, CHeaderCtrl)
+	return ((CHeaderCtrl*)this)->HitTest(&htt);
+}
+
+CPoint CTooltipHeader::PointAtPosition(CPoint /*point*/) const
+{
+	return CPoint(-1, -1);
+}
+
+LPCVOID CTooltipHeader::PtrAtPosition(CPoint /*point*/) const
+{
+	return NULL;
+}
+
+void CTooltipHeader::InvalidateItem(INT /*Index*/)
+{
+	Invalidate();
+}
+
+void CTooltipHeader::InvalidatePoint(const CPoint& /*point*/)
+{
+	Invalidate();
+}
+
+void CTooltipHeader::InvalidatePtr(LPCVOID /*Ptr*/)
+{
+	Invalidate();
+}
+
+void CTooltipHeader::ShowTooltip(const CPoint& point)
+{
+	WCHAR TooltipTextBuffer[256];
+
+	HDITEMW Item;
+	Item.mask = HDI_TEXT;
+	Item.pszText = TooltipTextBuffer;
+	Item.cchTextMax = 256;
+
+	if (GetItem(m_HoverItem, &Item) && (TooltipTextBuffer[0]!=L'\0'))
+		LFGetApp()->ShowTooltip(this, point, _T(""), TooltipTextBuffer);
+}
+
+
+IMPLEMENT_TOOLTIP_WHEEL(CTooltipHeader, CHeaderCtrl)
+
+BEGIN_TOOLTIP_MAP(CTooltipHeader, CHeaderCtrl)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_MESSAGE(HDM_LAYOUT, OnLayout)
-END_MESSAGE_MAP()
+END_TOOLTIP_MAP()
 
 INT CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -282,80 +303,6 @@ void CTooltipHeader::OnLButtonUp(UINT nFlags, CPoint point)
 
 	CHeaderCtrl::OnLButtonUp(nFlags, point);
 	Invalidate();
-}
-
-void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
-{
-	HDHITTESTINFO htt;
-	htt.pt = point;
-	m_HoverItem = HitTest(&htt);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		ZeroMemory(&tme, sizeof(tme));
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = GetSafeHwnd();
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((LFGetApp()->IsTooltipVisible()) && (m_HoverItem!=m_TooltipItem))
-			LFGetApp()->HideTooltip();
-
-	if (m_PressedItem==-1)
-		Invalidate();
-
-	CHeaderCtrl::OnMouseMove(nFlags, point);
-}
-
-void CTooltipHeader::OnMouseLeave()
-{
-	LFGetApp()->HideTooltip();
-	m_Hover = FALSE;
-	m_HoverItem = -1;
-
-	CHeaderCtrl::OnMouseLeave();
-	Invalidate();
-}
-
-void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		HDHITTESTINFO htt;
-		htt.pt = point;
-
-		m_TooltipItem = HitTest(&htt);
-		if (m_TooltipItem!=-1)
-			if (!LFGetApp()->IsTooltipVisible())
-			{
-				HDITEMW i;
-				WCHAR TooltipTextBuffer[256];
-				i.mask = HDI_TEXT;
-				i.pszText = TooltipTextBuffer;
-				i.cchTextMax = 256;
-
-				if (GetItem(m_TooltipItem, &i))
-					if (TooltipTextBuffer[0]!=L'\0')
-						LFGetApp()->ShowTooltip(this, point, _T(""), TooltipTextBuffer);
-			}
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	ZeroMemory(&tme, sizeof(tme));
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = GetSafeHwnd();
-	TrackMouseEvent(&tme);
 }
 
 LRESULT CTooltipHeader::OnLayout(WPARAM wParam, LPARAM lParam)

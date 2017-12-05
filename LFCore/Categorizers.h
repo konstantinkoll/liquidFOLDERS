@@ -18,8 +18,8 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
+	virtual void GetFilterValue(LFVariantData& VData, LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
 
 	UINT m_Attr;
 };
@@ -37,7 +37,7 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
+	virtual void GetFilterValue(LFVariantData& VData, LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -53,7 +53,7 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
+	virtual void GetFilterValue(LFVariantData& VData, LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -66,7 +66,23 @@ public:
 	CIATACategorizer();
 
 protected:
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
+};
+
+
+// CChannelsCategorizer
+//
+
+class CChannelsCategorizer : public CCategorizer
+{
+public:
+	CChannelsCategorizer();
+
+	static UINT GetChannelsCategory(const UINT Channels);
+
+protected:
+	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
 };
 
 
@@ -82,20 +98,7 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
-};
-
-
-// CColorCategorizer
-//
-
-class CColorCategorizer : public CCategorizer
-{
-public:
-	CColorCategorizer(UINT Attr);
-
-protected:
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
 };
 
 
@@ -111,7 +114,7 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
 };
 
 
@@ -128,7 +131,7 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual LFFilterCondition* GetCondition(LFItemDescriptor* pItemDescriptor, LFFilterCondition* pNext) const;
+	virtual void GetFilterValue(LFVariantData& VData, LFItemDescriptor* pItemDescriptor) const;
 };
 
 
@@ -144,7 +147,7 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
 };
 
 
@@ -158,5 +161,5 @@ public:
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
-	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pItemDescriptor) const;
+	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
 };

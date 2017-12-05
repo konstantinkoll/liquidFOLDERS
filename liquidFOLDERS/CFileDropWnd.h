@@ -15,19 +15,18 @@ class CFileDropWnd : public CBackstageWnd
 public:
 	CFileDropWnd();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL HasDocumentSheet() const;
 	virtual void PaintBackground(CPaintDC& pDC, CRect rect);
 
 	BOOL Create(const LPCSTR pStoreID);
 
 protected:
+	virtual INT ItemAtPosition(CPoint point) const;
+	virtual void ShowTooltip(const CPoint& point);
+
 	void SetTopMost(BOOL AlwaysOnTop);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnNcLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
@@ -53,5 +52,4 @@ protected:
 	UINT m_StoreIcon;
 	UINT m_StoreType;
 	BOOL m_AlwaysOnTop;
-	BOOL m_Hover;
 };

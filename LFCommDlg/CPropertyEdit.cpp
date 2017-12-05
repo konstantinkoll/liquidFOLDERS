@@ -6,135 +6,11 @@
 #include "LFCommDlg.h"
 
 
-// CPropertyDisplay
-//
-
-CPropertyDisplay::CPropertyDisplay()
-	: CWnd()
-{
-	p_Property = NULL;
-}
-
-BOOL CPropertyDisplay::Create(CWnd* pParentWnd, UINT nID)
-{
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
-
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
-}
-
-void CPropertyDisplay::SetProperty(CProperty* pProperty)
-{
-	p_Property = pProperty;
-	Invalidate();
-}
-
-
-BEGIN_MESSAGE_MAP(CPropertyDisplay, CWnd)
-	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
-	ON_WM_KEYDOWN()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-	ON_WM_GETDLGCODE()
-	ON_WM_SETCURSOR()
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
-END_MESSAGE_MAP()
-
-BOOL CPropertyDisplay::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
-void CPropertyDisplay::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	BOOL Focused = GetFocus()==this;
-
-	dc.FillSolidRect(rect, GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_WINDOW));
-	dc.SelectStockObject(DEFAULT_GUI_FONT);
-	dc.SetTextColor(GetSysColor(Focused ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
-
-	if (p_Property)
-	{
-		CRect rectValue(rect);
-		rectValue.DeflateRect(1, 0);
-		p_Property->DrawValue(dc, rectValue);
-	}
-
-	if (Focused)
-	{
-		dc.SetBkColor(0x000000);
-		dc.DrawFocusRect(rect);
-	}
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(pOldBitmap);
-}
-
-void CPropertyDisplay::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	if (p_Property)
-		if (p_Property->WantsChars())
-			if (p_Property->OnPushChar(nChar))
-				return;
-
-	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
-}
-
-void CPropertyDisplay::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
-{
-	SetFocus();
-}
-
-void CPropertyDisplay::OnLButtonUp(UINT /*nFlags*/, CPoint point)
-{
-	if (p_Property)
-		p_Property->OnClickValue(point.x);
-}
-
-UINT CPropertyDisplay::OnGetDlgCode()
-{
-	return DLGC_WANTARROWS | DLGC_WANTCHARS;
-}
-
-BOOL CPropertyDisplay::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
-{
-	CPoint point;
-	GetCursorPos(&point);
-	ScreenToClient(&point);
-
-	SetCursor(p_Property->SetCursor(point.x));
-
-	return TRUE;
-}
-
-void CPropertyDisplay::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	Invalidate();
-}
-
-void CPropertyDisplay::OnKillFocus(CWnd* /*pNewWnd*/)
-{
-	Invalidate();
-}
-
-
 // CPropertyEdit
 //
+
+#define BORDER      2
+#define PADDING     1
 
 CPropertyEdit::CPropertyEdit()
 	: CPropertyHolder()
@@ -155,11 +31,10 @@ CPropertyEdit::CPropertyEdit()
 	}
 
 	LFInitVariantData(m_VData, LFAttrFileName);
-	p_Property = NULL;
-	m_pWndDisplay = NULL;
+
+	m_pProperty = NULL;
 	m_pWndEdit = NULL;
-	m_IsValid = FALSE;
-	m_IsEmpty = TRUE;
+	m_ButtonWidth = 0;
 }
 
 BOOL CPropertyEdit::Create(CWnd* pParentWnd, UINT nID)
@@ -181,109 +56,75 @@ void CPropertyEdit::PreSubclassWindow()
 void CPropertyEdit::Init()
 {
 	ModifyStyle(0, WS_CLIPCHILDREN);
-	ModifyStyleEx(0, WS_EX_CONTROLPARENT);
 
-	m_wndButton.Create(_T("..."), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_TABSTOP, CRect(0, 0, 0, 0), this, 3);
+	m_wndButton.Create(_T("..."), this, 2);
 	m_wndButton.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
-}
-
-BOOL CPropertyEdit::PreTranslateMessage(MSG* pMsg)
-{
-	return CPropertyHolder::PreTranslateMessage(pMsg);
 }
 
 void CPropertyEdit::AdjustLayout()
 {
-	if (p_Property)
+	if (!m_pProperty)
+		return;
+
+	CRect rect;
+	GetClientRect(rect);
+
+	// Button
+	if (m_pProperty->HasButton())
 	{
-		CRect rect;
-		GetClientRect(rect);
+		m_ButtonWidth = rect.Height()*3/2;
 
-		if (p_Property->HasButton())
-		{
-			INT btnWidth = rect.Height()*3/2;
-			CRect rectButton(rect.right-btnWidth, rect.top, rect.right, rect.bottom);
-			if (IsCtrlThemed())
-				rectButton.InflateRect(1, 1);
+		CRect rectButton(rect.right-m_ButtonWidth, rect.top, rect.right, rect.bottom);
+		if (IsCtrlThemed())
+			rectButton.InflateRect(1, 1);
 
-			m_wndButton.SetWindowPos(NULL, rectButton.left, rectButton.top, rectButton.Width(), rectButton.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
-			rect.right = rectButton.left-2;
-		}
-		else
-		{
-			m_wndButton.ShowWindow(SW_HIDE);
-		}
+		m_wndButton.SetWindowPos(NULL, rectButton.left, rectButton.top, rectButton.Width(), rectButton.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 
-		if (m_pWndDisplay)
-		{
-			m_pWndDisplay->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
-			m_wndButton.SetWindowPos(m_pWndDisplay, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-		}
-		if (m_pWndEdit)
-		{
-			m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top+1, rect.Width(), rect.Height()-2, SWP_NOZORDER | SWP_NOACTIVATE);
-			m_wndButton.SetWindowPos(m_pWndEdit, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-		}
+		m_ButtonWidth += BORDER;
 	}
+	else
+	{
+		m_ButtonWidth = 0;
+
+		m_wndButton.ShowWindow(SW_HIDE);
+	}
+
+	// Edit control
+	if (m_pWndEdit)
+	{
+		m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top+1, rect.Width()-m_ButtonWidth, rect.Height()-2, SWP_NOZORDER | SWP_NOACTIVATE);
+		m_wndButton.SetWindowPos(m_pWndEdit, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+
+	Invalidate();
 }
 
 void CPropertyEdit::CreateProperty()
 {
-	if (m_pWndDisplay)
-	{
-		m_pWndDisplay->DestroyWindow();
-		delete m_pWndDisplay;
-		m_pWndDisplay = NULL;
-	}
-	if (m_pWndEdit)
-	{
-		m_pWndEdit->DestroyWindow();
-		delete m_pWndEdit;
-		m_pWndEdit = NULL;
-	}
+	DestroyEdit();
 
-	delete p_Property;
+	m_pProperty = CPropertyHolder::CreateProperty(&m_VData);
 
-	p_Property = CPropertyHolder::CreateProperty(&m_VData);
-
-	if (p_Property->OnClickValue(-1))
-	{
-		m_pWndEdit = new CMFCMaskedEdit();
-		m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 1);
-
-		if (!p_Property->m_Multiple)
-		{
-			WCHAR tmpStr[256];
-			p_Property->ToString(tmpStr, 256);
-			m_pWndEdit->SetWindowText(tmpStr);
-		}
-
-		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
-		p_Property->SetEditMask(m_pWndEdit);
-		m_pWndEdit->SetLimitText((UINT)LFGetApp()->m_Attributes[m_VData.Attr].AttrProperties.cCharacters);
-		m_pWndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
-	}
-	else
-	{
-		m_pWndDisplay = new CPropertyDisplay();
-		m_pWndDisplay->Create(this, 2);
-		m_pWndDisplay->SetProperty(p_Property);
-		m_pWndDisplay->EnableWindow(p_Property->WantsChars());
-	}
+	if (m_pProperty->OnClickValue(-1))
+		m_pWndEdit = m_pProperty->CreateEditControl(CRect(0, 0, 0, 0), this);
 
 	AdjustLayout();
+}
 
-	m_IsValid = TRUE;
-	m_IsEmpty = LFIsNullVariantData(m_VData);
+void CPropertyEdit::SetInitialData(const LFVariantData& VData)
+{
+	m_VData = VData;
+
+	CreateProperty();
 }
 
 void CPropertyEdit::SetAttribute(UINT Attr)
 {
-	if ((Attr!=m_VData.Attr) || (!p_Property))
+	if ((Attr!=m_VData.Attr) || !m_pProperty)
 	{
-		const LFAttributeDescriptor* pAttr = &LFGetApp()->m_Attributes[Attr];
+		const LFAttributeDescriptor* pAttribute = &LFGetApp()->m_Attributes[Attr];
 
-		if (pAttr->AttrProperties.Type!=m_VData.Type)
+		if (pAttribute->AttrProperties.Type!=m_VData.Type)
 		{
 			LFInitVariantData(m_VData, Attr);
 		}
@@ -291,14 +132,16 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 		{
 			m_VData.Attr = Attr;
 
-			switch (pAttr->AttrProperties.Type)
+			switch (pAttribute->AttrProperties.Type)
 			{
 			case LFTypeUnicodeString:
-				m_VData.UnicodeString[pAttr->AttrProperties.cCharacters] = L'\0';
+			case LFTypeUnicodeArray:
+				m_VData.UnicodeString[pAttribute->AttrProperties.cCharacters] = L'\0';
 				break;
 
 			case LFTypeAnsiString:
-				m_VData.AnsiString[pAttr->AttrProperties.cCharacters] = '\0';
+			case LFTypeIATACode:
+				m_VData.AnsiString[pAttribute->AttrProperties.cCharacters] = '\0';
 				break;
 			}
 		}
@@ -307,22 +150,25 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 	}
 }
 
-void CPropertyEdit::SetData(const LFVariantData& VData)
+void CPropertyEdit::DestroyEdit()
 {
-	m_VData = VData;
+	if (m_pWndEdit)
+	{
+		m_pWndEdit->DestroyWindow();
+		delete m_pWndEdit;
 
-	CreateProperty();
+		m_pWndEdit = NULL;
+	}
+
+	delete m_pProperty;
 }
 
 void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 {
 	if (Attr1!=-1)
 	{
-		p_Property->m_Multiple = FALSE;
+		m_pProperty->UpdateState(FALSE);
 		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
-
-		m_IsValid = TRUE;
-		m_IsEmpty = LFIsNullVariantData(m_VData);
 	}
 
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
@@ -335,10 +181,18 @@ BEGIN_MESSAGE_MAP(CPropertyEdit, CPropertyHolder)
 	ON_WM_ERASEBKGND()
 	ON_WM_NCPAINT()
 	ON_WM_PAINT()
+	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_KEYDOWN()
+	ON_WM_GETDLGCODE()
+	ON_WM_SETCURSOR()
+	ON_WM_SETFOCUS()
+
 	ON_EN_CHANGE(1, OnChange)
+	ON_BN_CLICKED(2, OnClick)
 	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
-	ON_BN_CLICKED(3, OnClick)
 END_MESSAGE_MAP()
 
 INT CPropertyEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -353,18 +207,7 @@ INT CPropertyEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CPropertyEdit::OnDestroy()
 {
-	if (m_pWndDisplay)
-	{
-		m_pWndDisplay->DestroyWindow();
-		delete m_pWndDisplay;
-	}
-	if (m_pWndEdit)
-	{
-		m_pWndEdit->DestroyWindow();
-		delete m_pWndEdit;
-	}
-
-	delete p_Property;
+	DestroyEdit();
 
 	CPropertyHolder::OnDestroy();
 }
@@ -386,7 +229,55 @@ void CPropertyEdit::OnPaint()
 	CRect rect;
 	GetClientRect(rect);
 
-	pDC.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
+
+	if (!m_pWndEdit)
+	{
+		const BOOL Focused = (GetFocus()==this);
+
+		CRect rectValue(rect.left, rect.top, rect.right-m_ButtonWidth, rect.bottom);
+		dc.FillSolidRect(rectValue, GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_WINDOW));
+
+		if (m_pProperty)
+		{
+			dc.SelectStockObject(DEFAULT_GUI_FONT);
+			dc.SetTextColor(GetSysColor(Focused ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
+
+			m_pProperty->DrawValue(dc, CRect(rectValue.left+PADDING, rectValue.top, rectValue.right-PADDING, rectValue.bottom));
+
+			if (Focused)
+			{
+				dc.SetBkColor(0x000000);
+				dc.DrawFocusRect(rectValue);
+			}
+		}
+	}
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldBitmap);
+}
+
+HBRUSH CPropertyEdit::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if (nCtlColor==CTLCOLOR_BTN)
+	{
+		pDC->SetDCBrushColor(GetSysColor(COLOR_WINDOW));
+		hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
+	}
+
+	return hBrush;
 }
 
 void CPropertyEdit::OnSize(UINT nType, INT cx, INT cy)
@@ -396,9 +287,81 @@ void CPropertyEdit::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
+void CPropertyEdit::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+{
+	SetFocus();
+}
+
+void CPropertyEdit::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	if (m_pProperty && !m_pWndEdit)
+		m_pProperty->OnClickValue(point.x-PADDING);
+}
+
+void CPropertyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (m_pProperty && m_pProperty->WantsChars() && m_pProperty->OnPushChar(nChar))
+		return;
+
+	CPropertyHolder::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+UINT CPropertyEdit::OnGetDlgCode()
+{
+	return DLGC_WANTARROWS | DLGC_WANTCHARS;
+}
+
+BOOL CPropertyEdit::OnSetCursor(CWnd* pWnd, UINT /*nHitTest*/, UINT /*Message*/)
+{
+	if (m_pProperty)
+	{
+		CPoint point;
+		GetCursorPos(&point);
+		ScreenToClient(&point);
+
+		SetCursor((pWnd!=&m_wndButton) && (point.x>PADDING) ? m_pProperty->SetCursor(point.x-PADDING) : LFGetApp()->LoadStandardCursor(IDC_ARROW));
+	}
+
+	return TRUE;
+}
+
+void CPropertyEdit::OnSetFocus(CWnd* pOldWnd)
+{
+	if (m_pWndEdit)
+	{
+		m_pWndEdit->SetFocus();
+	}
+	else
+		if (m_ButtonWidth)
+		{
+			m_wndButton.SetFocus();
+		}
+
+	CPropertyHolder::OnSetFocus(pOldWnd);
+}
+
+
 void CPropertyEdit::OnChange()
 {
 	PostMessage(WM_PROPERTYCHANGED);
+}
+
+void CPropertyEdit::OnClick()
+{
+	if (m_pProperty)
+		if (m_pProperty->HasButton())
+		{
+			m_pProperty->OnClickButton();
+
+			// Update edit control
+			if (m_pWndEdit)
+			{
+				WCHAR tmpStr[256];
+				LFVariantDataToString(m_VData, tmpStr, 256);
+
+				m_pWndEdit->SetWindowText(tmpStr);
+			}
+		}
 }
 
 LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
@@ -409,25 +372,6 @@ LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	m_pWndEdit->GetWindowText(tmpStr, 256);
 
 	LFVariantDataFromString(m_VData, tmpStr);
-	m_IsValid = !m_VData.IsNull;
-	m_IsEmpty = LFIsNullVariantData(m_VData);
 
 	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, m_VData.Attr);
-}
-
-void CPropertyEdit::OnClick()
-{
-	if (p_Property)
-		if (p_Property->HasButton())
-		{
-			p_Property->OnClickButton();
-
-			if (m_pWndEdit)
-			{
-				WCHAR tmpStr[256];
-				LFVariantDataToString(m_VData, tmpStr, 256);
-
-				m_pWndEdit->SetWindowText(tmpStr);
-			}
-		}
 }

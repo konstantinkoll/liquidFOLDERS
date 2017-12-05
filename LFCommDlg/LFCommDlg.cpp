@@ -941,6 +941,8 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	case LFTypeDuration:
 	case LFTypeBitrate:
 	case LFTypeMegapixel:
+	case LFTypeYear:
+	case LFTypeFramerate:
 		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
 		AddCompare(pComboBox, IDS_COMPARE_ISABOVEEQUAL, LFFilterCompareIsAboveOrEqual);
@@ -998,8 +1000,8 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CS
 
 				CString tmpStr;
 				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
-					LFGetApp()->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
-					LFGetApp()->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
+					LFGetApp()->GetAttributeName(LFAttrCreationTime), tmpBuf1,
+					LFGetApp()->GetAttributeName(LFAttrFileTime), tmpBuf2);
 
 				Hint.Append(tmpStr);
 			}

@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 
 
 // CExplorerTree
@@ -32,7 +33,6 @@ public:
 
 protected:
 	virtual LRESULT WindowProc(UINT Message, WPARAM wParam, LPARAM lParam);
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	CString GetItemText(ExplorerTreeItemData* pItem) const;
 	INT GetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const;
@@ -51,9 +51,9 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+/*	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);*/
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
@@ -63,11 +63,11 @@ protected:
 	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
+	DECLARE_TOOLTIP()
+
 	IContextMenu2* m_pContextMenu2;
 	BOOL m_OnlyFilesystem;
-	BOOL m_Hover;
 	BOOL m_ExplorerStyle;
-	HTREEITEM m_HoverItem;
 	CString m_RootPath;
 
 private:

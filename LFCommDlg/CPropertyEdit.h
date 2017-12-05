@@ -6,33 +6,6 @@
 #include "CInspectorGrid.h"
 
 
-// CPropertyDisplay
-//
-
-class CPropertyDisplay : public CWnd
-{
-public:
-	CPropertyDisplay();
-
-	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetProperty(CProperty* pProperty);
-
-protected:
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg UINT OnGetDlgCode();
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	DECLARE_MESSAGE_MAP()
-
-	CProperty* p_Property;
-};
-
-
 // CPropertyEdit
 //
 
@@ -42,15 +15,12 @@ public:
 	CPropertyEdit();
 
 	virtual void PreSubclassWindow();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
+	BOOL IsNullData() const;
+	void SetInitialData(const LFVariantData& VData);
 	void SetAttribute(UINT Attr);
-	void SetData(const LFVariantData& VData);
 
-	BOOL m_IsValid;
-	BOOL m_IsEmpty;
 	LFVariantData m_VData;
 
 protected:
@@ -58,21 +28,35 @@ protected:
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 
 	void CreateProperty();
+	void AdjustLayout();
+	void DestroyEdit();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg UINT OnGetDlgCode();
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+
 	afx_msg void OnChange();
-	afx_msg LRESULT OnPropertyChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnClick();
+	afx_msg LRESULT OnPropertyChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
-	CProperty* p_Property;
-	CPropertyDisplay* m_pWndDisplay;
+	CProperty* m_pProperty;
 	CMFCMaskedEdit* m_pWndEdit;
-	CButton m_wndButton;
+	CHoverButton m_wndButton;
+	INT m_ButtonWidth;
 };
+
+inline BOOL CPropertyEdit::IsNullData() const
+{
+	return LFIsNullVariantData(m_VData);
+}

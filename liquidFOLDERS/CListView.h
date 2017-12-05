@@ -6,6 +6,15 @@
 #include "CFileView.h"
 
 
+// Item Data
+
+struct ListItemData
+{
+	FVItemData Hdr;
+	BOOL DrawTrailingSeparator;
+};
+
+
 // CListView
 //
 
@@ -56,6 +65,7 @@ protected:
 	CTooltipHeader m_wndHeader;
 	INT m_IconSize;
 	BOOL m_HasFolders;
+	INT m_PreviewAttribute;
 	CSize m_PreviewSize;
 
 private:
@@ -67,12 +77,11 @@ private:
 
 	LFDynArray<FolderData, 128, 128> m_Folders;
 	LFSearchResult* m_pFolderItems;
-	INT m_PreviewAttribute;
 	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
 };
 
 inline INT CListView::GetMinColumnWidth(UINT Attr)
 {
-	return (Attr==LFAttrFileName) ? 200 : 64;
+	return (Attr==LFAttrFileName) ? 200 : 60;
 }

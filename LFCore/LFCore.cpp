@@ -149,7 +149,7 @@ LFCORE_API void LFGetFileSummaryEx(LPWSTR pStr, SIZE_T cCount, const LFFileSumma
 {
 	assert(pStr);
 
-	if (FileSummary.Duration && FileSummary.OnlyMediaFiles)
+	if (FileSummary.Duration && FileSummary.OnlyTimebasedMediaFiles)
 	{
 		UINT nID = IDS_MINUTE;
 
@@ -461,19 +461,37 @@ LFCORE_API void LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID)
 
 LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID)
 {
+	assert(ID<LFAttributeCount);
 	assert(LFItemColorCount<=8);
 
 	ZeroMemory(&AttributeDescriptor, sizeof(LFAttributeDescriptor));
 
-	if (ID>=LFAttributeCount)
-		return;
+	// Alternate names
+	UINT cAttributeContextRecords = 1;
+	UINT64 ContextSet = ALLCONTEXTSSET;
 
-	// Name
-	LoadString(LFCoreModuleHandle, IDS_ATTR_FIRST+ID, AttributeDescriptor.Name, 256);
+	for (UINT a=0; a<SPECIALATTRIBUTENAMESCOUNT; a++)
+		if (SpecialAttributeNames[a].Attr==ID)
+		{
+			assert((SpecialAttributeNames[a].ContextSet & (1ull<<LFContextAllFiles))==0);
+			assert(cAttributeContextRecords<LFAttributeContextRecordCount);
+
+			ContextSet &= ~SpecialAttributeNames[a].ContextSet;
+
+			AttributeDescriptor.ContextRecords[cAttributeContextRecords].IconID = SpecialAttributeNames[a].IconID;
+			AttributeDescriptor.ContextRecords[cAttributeContextRecords].SortDescending = SpecialAttributeNames[a].SortDescending;
+			AttributeDescriptor.ContextRecords[cAttributeContextRecords].ContextSet = SpecialAttributeNames[a].ContextSet;
+			LoadString(LFCoreModuleHandle, SpecialAttributeNames[a].nID, AttributeDescriptor.ContextRecords[cAttributeContextRecords++].Name, LFAttributeNameSize);
+		}
+
+	// Default name
+	AttributeDescriptor.ContextRecords[0].IconID = AttrProperties[ID].DefaultIconID;
+	AttributeDescriptor.ContextRecords[0].ContextSet = ContextSet;
+	LoadString(LFCoreModuleHandle, IDS_ATTR_FIRST+ID, AttributeDescriptor.ContextRecords[0].Name, LFAttributeNameSize);
 
 	// XML ID
-	WCHAR Str[256];
-	LoadStringEnglish(ID+IDS_ATTR_FIRST, Str, 256);
+	WCHAR Str[LFAttributeNameSize];
+	LoadStringEnglish(ID+IDS_ATTR_FIRST, Str, LFAttributeNameSize);
 
 	WCHAR* pCharSrc = Str;
 	WCHAR* pCharDst = AttributeDescriptor.XMLID;
@@ -492,15 +510,27 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	// Check consistency
 	assert(AttrProperties[ID].Type<LFTypeCount);
 	assert(TypeProperties[AttrProperties[ID].Type].AllowedViews & (1<<AttrProperties[ID].DefaultView));
-	assert(!AttrProperties[ID].AlwaysShow || TypeProperties[AttrProperties[ID].Type].DefaultColumnWidth);
-	assert(AttrProperties[ID].DefaultPriority<=LFMaxAttributePriority);
+	assert(!(AttrProperties[ID].DataFlags & LFDataAlwaysVisible) || TypeProperties[AttrProperties[ID].Type].DefaultColumnWidth);
+	assert((AttrProperties[ID].Type!=LFTypeUnicodeArray) || !AttrProperties[ID].DefaultIconID);
+	assert(AttrProperties[ID].DefaultPriority<=LFMinAttributePriority);
+	assert(!(AttrProperties[ID].DataFlags & LFDataBucket) || !(TypeProperties[AttrProperties[ID].Type].DataFlags & LFDataBucket));
+
+	assert((ID==LFAttrColor) || (AttrProperties[ID].Type!=LFTypeColor));
 
 	assert(LFAttrFileName==0);
 	assert(AttrProperties[LFAttrFileName].DefaultPriority==0);
-	assert(AttrProperties[LFAttrComments].DefaultPriority==LFMaxAttributePriority);
-	assert(AttrProperties[LFAttrFileFormat].DefaultPriority==LFMaxAttributePriority);
+	assert(AttrProperties[LFAttrComments].DefaultPriority==LFMinAttributePriority);
+	assert(AttrProperties[LFAttrFileFormat].DefaultPriority==LFMinAttributePriority);
 
-	assert((ID==LFAttrColor) || (AttrProperties[ID].Type!=LFTypeColor));
+#ifdef _DEBUG
+	// The alternate sort attribute has to resolve to LFAttrFileName eventually
+	UINT Attr = ID;
+	do
+	{
+		Attr = AttrProperties[Attr].AlternateSort;
+	}
+	while (Attr!=LFAttrFileName);
+#endif
 
 	// Properties
 	AttributeDescriptor.AttrProperties = AttrProperties[ID];
@@ -509,38 +539,25 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 LFCORE_API void LFGetSourceName(LPWSTR pStr, SIZE_T cCount, UINT ID, BOOL Qualified)
 {
+	assert(ID<LFSourceCount);
+
 	LoadString(LFCoreModuleHandle, (Qualified ? IDS_QSRC_FIRST : IDS_SRC_FIRST)+ID, pStr, (INT)cCount);
 }
 
 LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDescriptor, UINT ID)
 {
+	assert(ID<LFItemCategoryCount);
+
 	ZeroMemory(&ItemCategoryDescriptor, sizeof(LFItemCategoryDescriptor));
 
-	if (ID>=LFItemCategoryCount)
-		return;
-
-	if (ID<LFItemCategory0600)
-	{
-		// Load strings from resources
-		LoadTwoStrings(LFCoreModuleHandle, IDS_ITEMCATEGORY_FIRST+ID, ItemCategoryDescriptor.Caption, 256, ItemCategoryDescriptor.Hint, 256);
-	}
-	else
-	{
-		// Create time according to locale
-		SYSTEMTIME st;
-		ZeroMemory(&st, sizeof(st));
-
-		st.wHour = (WORD)(ID-LFItemCategory0600+6);
-		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, ItemCategoryDescriptor.Caption, 256);
-	}
+	LoadTwoStrings(LFCoreModuleHandle, IDS_ITEMCATEGORY_FIRST+ID, ItemCategoryDescriptor.Caption, 256, ItemCategoryDescriptor.Hint, 256);
 }
 
 LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID)
 {
-	ZeroMemory(&ContextDescriptor, sizeof(LFContextDescriptor));
+	assert(ID<LFContextCount);
 
-	if (ID>=LFContextCount)
-		return;
+	ZeroMemory(&ContextDescriptor, sizeof(LFContextDescriptor));
 
 	LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+ID, ContextDescriptor.Name, 256, ContextDescriptor.Comment, 256);
 
@@ -556,9 +573,13 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 
 #ifdef _DEBUG
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if ((CtxProperties[ID].AvailableAttributes>>a) & 1)
+		if (((CtxProperties[ID].AvailableAttributes>>a) & 1) && ((ID<LFContextSubfolderDefault) || (TypeProperties[AttrProperties[a].Type].DataFlags & LFDataSortableInSubfolder)))
 			assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[a].Type].AllowedViews);
 #endif
+
+	assert((ID<=LFLastPersistentContext) || !CtxProperties[ID].SubfolderContext);
+	assert(((ID>LFContextFilters) && (ID<=LFLastPersistentContext)) || !CtxProperties[ID].AllowMoveToContext);
+	assert((CtxProperties[ID].AllowMoveToContext & (((1ull<<(LFLastPersistentContext+1))-1)-(1ull<<LFContextFilters)))==CtxProperties[ID].AllowMoveToContext);
 
 	// Properties
 	ContextDescriptor.CtxProperties = CtxProperties[ID];
@@ -568,7 +589,7 @@ LFCORE_API void LFGetSortedAttributeList(LFAttributeList& AttributeList)
 {
 	UINT Index = 0;
 
-	for (UINT Priority=0; Priority<=LFMaxAttributePriority; Priority++)
+	for (UINT Priority=0; Priority<=LFMinAttributePriority; Priority++)
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (AttrProperties[a].DefaultPriority==Priority)
 				AttributeList[Index++] = a;

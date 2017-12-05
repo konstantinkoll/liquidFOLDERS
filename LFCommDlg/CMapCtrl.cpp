@@ -10,7 +10,7 @@
 //
 
 CMapCtrl::CMapCtrl()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	WNDCLASS wndcls;
 	ZeroMemory(&wndcls, sizeof(wndcls));
@@ -29,16 +29,15 @@ CMapCtrl::CMapCtrl()
 
 	m_Location.Latitude = m_Location.Longitude = 0;
 
-	hBackgroundBrush = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
-	m_LastTrack.x = m_LastTrack.y = -1;
+	hBackgroundBrush = NULL;
 	m_Blink = TRUE;
 	m_RemainVisible = m_BackgroundMenuID = 0;
 }
 
 void CMapCtrl::PreSubclassWindow()
 {
-	CWnd::PreSubclassWindow();
+	CFrontstageWnd::PreSubclassWindow();
 
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	if (!pThreadState->m_pWndInit)
@@ -48,6 +47,24 @@ void CMapCtrl::PreSubclassWindow()
 void CMapCtrl::Init()
 {
 	SetTimer(100, 500, NULL);
+}
+
+void CMapCtrl::ShowTooltip(const CPoint& point)
+{
+	LFGeoCoordinates Location;
+	LocationFromPoint(point, Location.Latitude, Location.Longitude);
+
+	WCHAR tmpStr[256];
+	LFGeoCoordinatesToString(Location, tmpStr, 256, FALSE);
+
+	if (tmpStr[0]!=L'\0')
+	{
+		LFGetApp()->ShowTooltip(this, point, _T(""), tmpStr);
+	}
+	else
+	{
+		HideTooltip();
+	}
 }
 
 void CMapCtrl::SetMenu(UINT BackgroundMenuID, BOOL HighlightFirst)
@@ -87,17 +104,17 @@ void CMapCtrl::SetLocation(const CPoint& point)
 {
 	LocationFromPoint(point, m_Location.Latitude, m_Location.Longitude);
 
-	SendUpdateMsg();
+	SendUpdateMessage();
 }
 
 void CMapCtrl::SetLocation(const LFGeoCoordinates& Location)
 {
 	m_Location = Location;
 
-	SendUpdateMsg();
+	SendUpdateMessage();
 }
 
-void CMapCtrl::SendUpdateMsg()
+void CMapCtrl::SendUpdateMessage()
 {
 	m_Blink = TRUE;
 	m_RemainVisible = 1;
@@ -112,16 +129,42 @@ void CMapCtrl::SendUpdateMsg()
 	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
 }
 
+void CMapCtrl::PrepareBitmap(const CRect& rect)
+{
+	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
+	{
+		m_BackBufferL = rect.Width();
+		m_BackBufferH = rect.Height();
 
-BEGIN_MESSAGE_MAP(CMapCtrl, CWnd)
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
+
+		dc.SetBkMode(TRANSPARENT);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateBitmap(rect.Width(), rect.Height(), 1, 32, NULL);
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+		Graphics g(dc);
+
+		Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
+		g.DrawImage(pMap, 0, 0, rect.Width(), rect.Height());
+
+		dc.SelectObject(pOldBitmap);
+
+		DeleteObject(hBackgroundBrush);
+		hBackgroundBrush = CreatePatternBrush(MemBitmap);
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(CMapCtrl, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCPAINT()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_TIMER()
@@ -130,7 +173,7 @@ END_MESSAGE_MAP()
 
 INT CMapCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	Init();
@@ -144,7 +187,7 @@ void CMapCtrl::OnDestroy()
 
 	DeleteObject(hBackgroundBrush);
 
-	CWnd::OnDestroy();
+	CFrontstageWnd::OnDestroy();
 }
 
 void CMapCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
@@ -158,38 +201,6 @@ void CMapCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
 void CMapCtrl::OnNcPaint()
 {
 	DrawControlBorder(this);
-}
-
-BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
-	{
-		m_BackBufferL = rect.Width();
-		m_BackBufferH = rect.Height();
-
-		CDC dc;
-		dc.CreateCompatibleDC(pDC);
-		dc.SetBkMode(TRANSPARENT);
-
-		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-		Graphics g(dc);
-
-		Bitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
-		g.DrawImage(pMap, 0, 0, rect.Width(), rect.Height());
-
-		dc.SelectObject(pOldBitmap);
-
-		DeleteObject(hBackgroundBrush);
-		hBackgroundBrush = CreatePatternBrush(MemBitmap);
-	}
-
-	return TRUE;
 }
 
 void CMapCtrl::OnPaint()
@@ -207,9 +218,10 @@ void CMapCtrl::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
+	PrepareBitmap(rect);
 	FillRect(dc, rect, hBackgroundBrush);
 
-	if (m_Blink && ((m_Location.Latitude!=0) || (m_Location.Longitude!=0)))
+	if (m_Blink && (m_Location.Latitude || m_Location.Longitude))
 	{
 		INT PosX;
 		INT PosY;
@@ -225,38 +237,9 @@ void CMapCtrl::OnPaint()
 
 void CMapCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
-	if ((point.x!=m_LastTrack.x) || (point.y!=m_LastTrack.y))
-	{
-		LFGeoCoordinates Location;
-		LocationFromPoint(point, Location.Latitude, Location.Longitude);
+	ShowTooltip(point);
 
-		WCHAR tmpStr[256];
-		LFGeoCoordinatesToString(Location, tmpStr, 256, FALSE);
-
-		if (tmpStr[0]!=L'\0')
-		{
-			LFGetApp()->ShowTooltip(this, point, _T(""), tmpStr);
-		}
-		else
-		{
-			LFGetApp()->HideTooltip();
-		}
-
-		m_LastTrack = point;
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
-}
-
-void CMapCtrl::OnMouseLeave()
-{
-	LFGetApp()->HideTooltip();
-
-	m_LastTrack.x = m_LastTrack.y = -1;
+	TRACKMOUSE(TME_LEAVE);
 }
 
 void CMapCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -268,20 +251,19 @@ void CMapCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			m_Location.Latitude = m_Location.Longitude = 0;
 
-			SendUpdateMsg();
+			SendUpdateMessage();
 		}
 
 		break;
 
 	default:
-		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		CFrontstageWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 }
 
 void CMapCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetLocation(point);
-	m_LastTrack = point;
 
 	if (GetFocus()!=this)
 		SetFocus();

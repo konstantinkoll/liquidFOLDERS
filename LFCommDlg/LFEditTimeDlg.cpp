@@ -59,7 +59,7 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 BOOL LFEditTimeDlg::InitDialog()
 {
 	if (m_lpszTemplateName==MAKEINTRESOURCE(IDD_EDITTIME))
-		SetWindowText(LFGetApp()->m_Attributes[p_VData->Attr].Name);
+		SetWindowText(LFGetApp()->GetAttributeName(p_VData->Attr));
 
 	// Size
 	CRect rect;

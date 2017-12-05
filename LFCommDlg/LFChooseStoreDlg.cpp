@@ -11,7 +11,7 @@
 
 void CStoreList::AddColumn(INT ID, UINT Attr)
 {
-	CExplorerList::AddColumn(ID, LFGetApp()->m_Attributes[Attr].Name, LFGetApp()->m_Attributes[Attr].TypeProperties.DefaultColumnWidth, LFGetApp()->m_Attributes[Attr].TypeProperties.FormatRight);
+	CExplorerList::AddColumn(ID, LFGetApp()->GetAttributeName(Attr, LFContextStores), LFGetApp()->m_Attributes[Attr].TypeProperties.DefaultColumnWidth, LFGetApp()->IsAttributeFormatRight(Attr));
 }
 
 void CStoreList::AddStoreColumns()

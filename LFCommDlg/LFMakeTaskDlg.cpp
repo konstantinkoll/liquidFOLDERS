@@ -41,7 +41,7 @@ BOOL LFMakeTaskDlg::InitDialog()
 	m_wndPriority.SetWindowPos(NULL, 0, 0, rectCalendar.Width(), rect.Height(), SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
 	// Data
-	m_wndPriority.SetData(*p_VData);
+	m_wndPriority.SetInitialData(*p_VDataPriority);
 
 	return TRUE;
 }

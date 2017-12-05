@@ -22,7 +22,7 @@ LFEditConditionDlg::LFEditConditionDlg(CWnd* pParentWnd, const LPCSTR pStoreID, 
 	else
 	{
 		m_Condition.Compare = LFFilterCompareContains;
-		LFInitVariantData(m_Condition.AttrData, LFAttrFileName);
+		LFInitVariantData(m_Condition.VData, LFAttrFileName);
 	}
 }
 
@@ -37,7 +37,7 @@ void LFEditConditionDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_Condition.Compare = (UCHAR)m_wndCompare.GetItemData(m_wndCompare.GetCurSel());
-		m_Condition.AttrData = m_wndEdit.m_VData;
+		m_Condition.VData = m_wndEdit.m_VData;
 	}
 }
 
@@ -52,13 +52,13 @@ BOOL LFEditConditionDlg::InitDialog()
 	LFAttributeListDlg::InitDialog();
 
 	// Bedingung
-	m_wndEdit.SetData(m_Condition.AttrData);
+	m_wndEdit.SetInitialData(m_Condition.VData);
 
 	if (m_StoreID[0]!='\0')
 		m_wndEdit.SetStore(m_StoreID);
 
 	// Attribut-Liste füllen
-	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.AttrData.Attr);
+	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.VData.Attr);
 
 	return TRUE;
 }
@@ -88,7 +88,7 @@ void LFEditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 LRESULT LFEditConditionDlg::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	GetDlgItem(IDOK)->EnableWindow(m_wndEdit.m_IsValid && !m_wndEdit.m_IsEmpty);
+	GetDlgItem(IDOK)->EnableWindow(!m_wndEdit.IsNullData());
 
 	return NULL;
 }

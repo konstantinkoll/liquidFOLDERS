@@ -14,7 +14,7 @@
 CHeaderButton::CHeaderButton()
 	: CHoverButton()
 {
-	m_Hover = m_ShowDropdown = FALSE;
+	m_ShowDropdown = FALSE;
 }
 
 BOOL CHeaderButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint)
@@ -48,7 +48,7 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	// Button
 	const BOOL Themed = IsCtrlThemed();
 
-	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_Hover);
+	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_HoverItem>=0);
 
 	// Content
 	CRect rectText(rect);
@@ -58,7 +58,7 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 		rectText.OffsetRect(1, 1);
 
 	// Text
-	COLORREF clrText = Themed ? Disabled ? 0xA4A2A0 : m_Hover ? 0xCC6633 : 0xCC3300 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT);
+	COLORREF clrText = Themed ? Disabled ? 0xA4A2A0 : (m_HoverItem>=0) ? 0xCC6633 : 0xCC3300 : GetSysColor(Disabled ? COLOR_GRAYTEXT : COLOR_WINDOWTEXT);
 	dc.SetTextColor(clrText);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);

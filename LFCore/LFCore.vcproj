@@ -890,7 +890,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Placeholder.ico"
+				RelativePath=".\res\FLD_Placeholder_Contact.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Placeholder_Default.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Placeholder_Location.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Placeholder_Note.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Placeholder_Podcast.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Placeholder_TV.ico"
 				>
 			</File>
 			<File
@@ -962,6 +982,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\OVR_Empty.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\OVR_Empty_DE.ico"
 				>
 			</File>
@@ -978,6 +1002,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\OVR_Error.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\OVR_Error_DE.ico"
 				>
 			</File>
@@ -991,6 +1019,10 @@
 			</File>
 			<File
 				RelativePath=".\res\OVR_Error_FR.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\OVR_New.ico"
 				>
 			</File>
 			<File

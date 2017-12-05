@@ -29,8 +29,6 @@ CMaintenanceReport::CMaintenanceReport()
 	p_StoreIcons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : &LFGetApp()->m_CoreImageListExtraLarge;
 
 	m_VScrollMax = m_VScrollPos = 0;
-	m_HotItem = -1;
-	m_Hover = FALSE;
 }
 
 BOOL CMaintenanceReport::Create(CWnd* pParentWnd, UINT nID)
@@ -38,29 +36,6 @@ BOOL CMaintenanceReport::Create(CWnd* pParentWnd, UINT nID)
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
-}
-
-BOOL CMaintenanceReport::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
 void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
@@ -90,7 +65,6 @@ void CMaintenanceReport::AdjustScrollbars()
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Height();
-	si.nMin = 0;
 	si.nMax = m_ScrollHeight-1;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
@@ -109,7 +83,7 @@ void CMaintenanceReport::AdjustLayout()
 
 void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed) const
 {
-	DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, FALSE, FALSE);
+	DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this, m_HoverItem==Index, FALSE, FALSE);
 
 	LFMaintenanceListItem* pItem = &(*p_MaintenanceList)[Index];
 
@@ -117,7 +91,7 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL The
 	rect.DeflateRect(PADDINGX, PADDINGY);
 
 	// Icon
-	p_StoreIcons->Draw(&dc, pItem->Icon-1, CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), ILD_TRANSPARENT);
+	p_StoreIcons->Draw(&dc, pItem->IconID-1, CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), ILD_TRANSPARENT);
 	rect.left += m_IconSize+MARGIN;
 
 	// Badge
@@ -148,16 +122,50 @@ void CMaintenanceReport::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL The
 	dc.DrawText(pDescription, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_WORDBREAK);
 }
 
+INT CMaintenanceReport::ItemAtPosition(CPoint point) const
+{
+	if (!p_MaintenanceList)
+		return -1;
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	if ((point.x<BORDER) || (point.x>=rectClient.right-BORDER))
+		return -1;
+
+	INT Index = (point.y+m_VScrollPos-BORDER)/m_ItemHeight;
+
+	if ((Index<0) || (Index>=(INT)p_MaintenanceList->m_ItemCount))
+		Index = -1;
+
+	return Index;
+}
+
+void CMaintenanceReport::InvalidateItem(INT Index)
+{
+	const INT y = Index*m_ItemHeight-m_VScrollPos+BORDER;
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	InvalidateRect(CRect(BORDER, y, rectClient.right-BORDER, y+m_ItemHeight));
+}
+
+void CMaintenanceReport::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	LFStoreDescriptor Store;
+	if (LFGetStoreSettings((*p_MaintenanceList)[m_HoverItem].StoreID, Store, TRUE)==LFOk)
+		LFGetApp()->ShowTooltip(this, point, Store);
+}
+
 
 BEGIN_MESSAGE_MAP(CMaintenanceReport, CFrontstageWnd)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
@@ -177,11 +185,6 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	hIconError = (HICON)LoadImage(AfxGetResourceHandle(), IDI_ERROR, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
 
 	return 0;
-}
-
-BOOL CMaintenanceReport::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CMaintenanceReport::OnPaint()
@@ -292,84 +295,6 @@ void CMaintenanceReport::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CMaintenanceReport::OnMouseMove(UINT /*nFlags*/, CPoint point)
-{
-	INT Index;
-
-	CRect rectClient;
-	GetClientRect(rectClient);
-
-	if ((p_MaintenanceList) && (point.x>=BORDER) && (point.x<rectClient.right-BORDER))
-	{
-		Index = (point.y+m_VScrollPos-BORDER)/m_ItemHeight;
-
-		if ((Index<0) || (Index>=(INT)p_MaintenanceList->m_ItemCount))
-			Index = -1;
-	}
-	else
-	{
-		Index = -1;
-	}
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-	else
-	{
-		if ((LFGetApp()->IsTooltipVisible()) && (Index!=m_HotItem))
-			LFGetApp()->HideTooltip();
-	}
-
-	if (m_HotItem!=Index)
-	{
-		m_HotItem = Index;
-
-		Invalidate();
-	}
-}
-
-void CMaintenanceReport::OnMouseLeave()
-{
-	Invalidate();
-	LFGetApp()->HideTooltip();
-
-	m_Hover = FALSE;
-	m_HotItem = -1;
-}
-
-void CMaintenanceReport::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (m_HotItem!=-1)
-			if (!LFGetApp()->IsTooltipVisible())
-			{
-				LFStoreDescriptor Store;
-				if (LFGetStoreSettings((*p_MaintenanceList)[m_HotItem].StoreID, Store, TRUE)==LFOk)
-					LFGetApp()->ShowTooltip(this, point, Store);
-			}
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
-}
-
 BOOL CMaintenanceReport::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
@@ -385,7 +310,7 @@ BOOL CMaintenanceReport::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_ItemHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
-		LFGetApp()->HideTooltip();
+		HideTooltip();
 
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);

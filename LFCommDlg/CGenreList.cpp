@@ -19,8 +19,8 @@ CGenreList::CGenreList()
 	: CFrontstageWnd()
 {
 	m_CategoriesHeight = m_VScrollMax = m_VScrollPos = 0;
-	m_ItemsHeight = m_FocusItem = m_HotItem = -1;
-	m_IsFirstItemInCategory = m_Hover = FALSE;
+	m_ItemsHeight = m_FocusItem = -1;
+	m_IsFirstItemInCategory = FALSE;
 }
 
 BOOL CGenreList::Create(CWnd* pParentWnd, UINT nID)
@@ -30,42 +30,19 @@ BOOL CGenreList::Create(CWnd* pParentWnd, UINT nID)
 	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
-BOOL CGenreList::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CFrontstageWnd::PreTranslateMessage(pMsg);
-}
-
 void CGenreList::AddCategory(const LFMusicGenre* pMusicGenre)
 {
-	GenreCategoryData cd;
+	GenreCategoryData Data;
 
-	wcscpy_s(cd.Caption, 256, pMusicGenre->Name);
-	cd.IconID = pMusicGenre->IconID;
-	cd.Rect.left = BACKSTAGEBORDER;
-	cd.Rect.top = max(m_CategoriesHeight, m_ItemsHeight+1)+BACKSTAGEBORDER;
-	cd.Rect.bottom = cd.Rect.top+LFGetApp()->m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING;
+	wcscpy_s(Data.Caption, 256, pMusicGenre->Name);
+	Data.IconID = pMusicGenre->IconID;
+	Data.Rect.left = BACKSTAGEBORDER;
+	Data.Rect.top = max(m_CategoriesHeight, m_ItemsHeight+1)+BACKSTAGEBORDER;
+	Data.Rect.bottom = Data.Rect.top+LFGetApp()->m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING;
 
-	m_Categories.AddItem(cd);
+	m_Categories.AddItem(Data);
 
-	m_ItemsHeight = cd.Rect.bottom+BACKSTAGEBORDER/2;
+	m_ItemsHeight = Data.Rect.bottom+BACKSTAGEBORDER/2;
 	m_CategoriesHeight = m_ItemsHeight+ICONSIZE-2*ICONPADDING;
 	m_IsFirstItemInCategory = TRUE;
 }
@@ -80,19 +57,19 @@ void CGenreList::AddItem(const LFMusicGenre* pMusicGenre, INT Index, UINT FileCo
 
 	ASSERT(pDescription);
 
-	GenreItemData id;
+	GenreItemData Data;
 
-	id.pMusicGenre = pMusicGenre;
-	id.Index = Index;
-	id.FileCount = FileCount;
-	id.pDescription = pDescription;
-	id.Rect.left = 2*BACKSTAGEBORDER+ICONSIZE-2*ICONPADDING;
-	id.Rect.top = m_ItemsHeight;
-	id.Rect.bottom = id.Rect.top+m_RowHeight+1;
+	Data.pMusicGenre = pMusicGenre;
+	Data.Index = Index;
+	Data.FileCount = FileCount;
+	Data.pDescription = pDescription;
+	Data.Rect.left = 2*BACKSTAGEBORDER+ICONSIZE-2*ICONPADDING;
+	Data.Rect.top = m_ItemsHeight;
+	Data.Rect.bottom = Data.Rect.top+m_RowHeight+1;
 
-	m_Items.AddItem(id);
+	m_Items.AddItem(Data);
 
-	m_ItemsHeight = id.Rect.bottom-1;
+	m_ItemsHeight = Data.Rect.bottom-1;
 
 	if (m_IsFirstItemInCategory)
 	{
@@ -121,7 +98,6 @@ void CGenreList::AdjustScrollbars()
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Height();
-	si.nMin = 0;
 	si.nMax = m_ScrollHeight-1;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
@@ -158,7 +134,7 @@ void CGenreList::EnsureVisible(INT Index)
 	CRect rect;
 	GetClientRect(rect);
 
-	RECT rectItem = GetItemRect(Index);
+	const RECT rectItem = GetItemRect(Index);
 
 	// Vertikal
 	INT nInc = 0;
@@ -220,14 +196,14 @@ void CGenreList::InvalidateItem(INT Index)
 {
 	if ((Index>=0) && (Index<(INT)m_Items.m_ItemCount))
 	{
-		RECT rect = GetItemRect(Index);
+		const RECT rect = GetItemRect(Index);
 		InvalidateRect(&rect);
 	}
 }
 
 void CGenreList::DrawItem(CDC& dc, CRect& rectItem, INT Index, BOOL Themed) const
 {
-	DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this, m_HotItem==Index, m_FocusItem==Index, m_FocusItem==Index);
+	DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, m_FocusItem==Index);
 
 	rectItem.DeflateRect(2*ITEMPADDING, ITEMPADDING);
 
@@ -254,6 +230,13 @@ void CGenreList::DrawItem(CDC& dc, CRect& rectItem, INT Index, BOOL Themed) cons
 	}
 }
 
+void CGenreList::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	LFGetApp()->ShowTooltip(this, point, m_Items[m_HoverItem].pMusicGenre->Name, m_Items[m_HoverItem].pDescription);
+}
+
 void CGenreList::SelectGenre(UINT Genre)
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
@@ -268,13 +251,9 @@ void CGenreList::SelectGenre(UINT Genre)
 
 BEGIN_MESSAGE_MAP(CGenreList, CFrontstageWnd)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
@@ -297,11 +276,6 @@ INT CGenreList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_CountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+2*ITEMPADDING;
 
 	return 0;
-}
-
-BOOL CGenreList::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CGenreList::OnPaint()
@@ -417,65 +391,6 @@ void CGenreList::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 
 	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
-}
-
-void CGenreList::OnMouseMove(UINT /*nFlags*/, CPoint point)
-{
-	const INT Index = ItemAtPosition(point);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((LFGetApp()->IsTooltipVisible()) && (Index!=m_HotItem))
-			LFGetApp()->HideTooltip();
-
-	if (m_HotItem!=Index)
-	{
-		InvalidateItem(m_HotItem);
-
-		m_HotItem = Index;
-
-		InvalidateItem(m_HotItem);
-	}
-}
-
-void CGenreList::OnMouseLeave()
-{
-	InvalidateItem(m_HotItem);
-	LFGetApp()->HideTooltip();
-
-	m_Hover = FALSE;
-	m_HotItem = -1;
-}
-
-void CGenreList::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (m_HotItem!=-1)
-			if (!LFGetApp()->IsTooltipVisible())
-				LFGetApp()->ShowTooltip(this, point, m_Items[m_HotItem].pMusicGenre->Name, m_Items[m_HotItem].pDescription);
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
 }
 
 BOOL CGenreList::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)

@@ -25,11 +25,18 @@ public:
 // CBackstageSidebar
 //
 
+#define SBI_SELECTABLE        0x01
+#define SBI_ENABLED           0x02
+#define SBI_VISIBLE           0x04
+#define SBI_ALWAYSVISIBLE     0x08
+#define SBI_LABELABOVE        0x10
+#define SBI_LABELBELOW        0x20
+#define SBI_CANFIRE           (SBI_SELECTABLE | SBI_ENABLED | SBI_VISIBLE)
+
 struct SidebarItem
 {
 	RECT Rect;
-	BOOL Selectable;
-	BOOL Enabled;
+	UINT Flags;
 	UINT CmdID;
 	INT IconID;
 	WCHAR Caption[256];
@@ -45,33 +52,39 @@ friend class CBackstageWnd;
 public:
 	CBackstageSidebar();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts=FALSE);
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT nID, BOOL ShowCounts);
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID, BOOL ShowCounts);
-	void AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color=(COLORREF)-1);
+	void AddCommand(UINT CmdID, INT IconID, LPCWSTR pCaption, COLORREF Color=(COLORREF)-1);
 	void AddCommand(UINT CmdID, INT IconID, COLORREF Color=(COLORREF)-1);
-	void AddCaption(LPCWSTR Caption=L"");
+	void AddCaption(LPCWSTR pCaption=L"");
 	void AddCaption(UINT ResID);
-	void ResetCounts();
-	void SetCount(UINT CmdID, UINT Count);
-	void SetCount(UINT CmdID, UINT Count, COLORREF Color);
+	void UpdateItem(UINT CmdID, UINT Count, BOOL AlwaysVisible=TRUE, COLORREF Color=(COLORREF)-1);
 	INT GetPreferredWidth(INT MaxWidth=-1) const;
 	INT GetMinHeight() const;
 	void SetSelection(UINT CmdID=0);
 	static CString FormatCount(UINT Count);
 
 protected:
+	virtual INT ItemAtPosition(CPoint point) const;
+	virtual void InvalidateItem(INT Index);
+	virtual void ShowTooltip(const CPoint& point);
+
+	BOOL IsItemAlwaysVisible(INT Index) const;
+	BOOL IsItemEnabled(INT Index) const;
+	BOOL IsItemLabel(INT Index) const;
+	BOOL IsItemLargeLabel(INT Index) const;
+	BOOL IsItemSelectable(INT Index) const;
+	BOOL IsItemVisible(INT Index) const;
+	BOOL CanItemFire(INT Index) const;
+	BOOL HasItemLabelAbove(INT Index) const;
+	BOOL HasItemLabelBelow(INT Index) const;
 	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color=(COLORREF)-1);
 	void SetShadow(BOOL ShowShadow);
-	INT ItemAtPosition(CPoint point);
-	void InvalidateItem(INT Index);
 	void PressItem(INT Index);
 	void AdjustLayout();
 
 	afx_msg LRESULT OnNcHitTest(CPoint point);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -92,14 +105,95 @@ protected:
 	LFDynArray<SidebarItem, 8, 8> m_Items;
 	INT m_PreferredWidth;
 	INT m_SelectedItem;
-	INT m_HotItem;
 	INT m_PressedItem;
 	INT m_CountWidth;
-	BOOL m_Hover;
 	BOOL m_Keyboard;
 	BOOL m_ShowCounts;
 	BOOL m_ShowShadow;
 };
+
+inline BOOL CBackstageSidebar::IsItemAlwaysVisible(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return (m_Items[Index].Flags & SBI_ALWAYSVISIBLE);
+}
+
+inline BOOL CBackstageSidebar::IsItemEnabled(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return (m_Items[Index].Flags & SBI_ENABLED);
+}
+
+inline BOOL CBackstageSidebar::IsItemLabel(INT Index) const
+{
+	return !IsItemSelectable(Index);
+}
+
+inline BOOL CBackstageSidebar::IsItemLargeLabel(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return IsItemLabel(Index) && m_Items[Index].Caption[0];
+
+}
+inline BOOL CBackstageSidebar::IsItemSelectable(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return (m_Items[Index].Flags & SBI_SELECTABLE);
+}
+
+inline BOOL CBackstageSidebar::IsItemVisible(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return (m_Items[Index].Flags & SBI_VISIBLE);
+}
+
+inline BOOL CBackstageSidebar::CanItemFire(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return (m_Items[Index].Flags & SBI_CANFIRE)==SBI_CANFIRE;
+}
+
+inline BOOL CBackstageSidebar::HasItemLabelAbove(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return (m_Items[Index].Flags & SBI_LABELABOVE);
+}
+
+inline BOOL CBackstageSidebar::HasItemLabelBelow(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Items.m_ItemCount);
+
+	return (m_Items[Index].Flags & SBI_LABELBELOW);
+}
+
+inline void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, LPCWSTR pCaption, COLORREF Color)
+{
+	ASSERT(pCaption);
+
+	AddItem(TRUE, CmdID, IconID, pCaption, Color);
+}
+
+inline void CBackstageSidebar::AddCaption(LPCWSTR pCaption)
+{
+	ASSERT(pCaption);
+
+	AddItem(FALSE, 0, -1, pCaption);
+}
 
 inline void CBackstageSidebar::SetShadow(BOOL ShowShadow)
 {

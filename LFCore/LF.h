@@ -173,27 +173,8 @@ struct LFVolumeDescriptor
 
 #define LFItemCategoryLocal      0
 #define LFItemCategoryRemote     1
-#define LFItemCategoryNight      2
-#define LFItemCategory0600       3
-#define LFItemCategory0700       4
-#define LFItemCategory0800       5
-#define LFItemCategory0900       6
-#define LFItemCategory1000       7
-#define LFItemCategory1100       8
-#define LFItemCategory1200       9
-#define LFItemCategory1300      10
-#define LFItemCategory1400      11
-#define LFItemCategory1500      12
-#define LFItemCategory1600      13
-#define LFItemCategory1700      14
-#define LFItemCategory1800      15
-#define LFItemCategory1900      16
-#define LFItemCategory2000      17
-#define LFItemCategory2100      18
-#define LFItemCategory2200      19
-#define LFItemCategory2300      20
 
-#define LFItemCategoryCount     21
+#define LFItemCategoryCount      2
 
 struct LFItemCategoryDescriptor
 {
@@ -204,49 +185,62 @@ struct LFItemCategoryDescriptor
 
 // Contexts
 
-#define LFContextAllFiles               0
-#define LFContextFavorites              1
-#define LFContextAudio                  2
-#define LFContextPictures               3
-#define LFContextVideos                 4
-#define LFContextDocuments              5
-#define LFContextContacts               6
-#define LFContextMessages               7
-#define LFContextBooks                  8
-#define LFContextFonts                  9
-#define LFContextNew                   10
-#define LFContextTasks                 11
-#define LFContextArchive               12
-#define LFContextTrash                 13
-#define LFContextFilters               14
-#define LFContextSearch                15
-#define LFContextStores                16
-#define LFContextClipboard             17
-#define LFContextSubfolderDefault      18
-#define LFContextSubfolderDay          19
-#define LFContextSubfolderGenre        20
-#define LFContextSubfolderArtist       21
-#define LFContextSubfolderAlbum        22
+#define LFContextAllFiles                0
+#define LFContextFilters                 1
+#define LFContextAudio                   2
+#define LFContextPictures                3
+#define LFContextVideos                  4
+#define LFContextDocuments               5
+#define LFContextContacts                6
+#define LFContextMessages                7
+#define LFContextFonts                   8
+#define LFContextApps                    9
+#define LFContextBooks                   10
+#define LFContextMovies                  11
+#define LFContextMusic                   12
+#define LFContextPodcasts                13
+#define LFContextTVShows                 14
 
-#define LFLastPersistentContext         9
-#define LFLastQueryContext             14
-#define LFContextCount                 23
+#define LFContextFavorites               15
+#define LFContextNew                     16
+#define LFContextTasks                   17
+#define LFContextArchive                 18
+#define LFContextTrash                   19
 
-#define LFContextAuto                  0xFF	// Internal use only
+#define LFContextSearch                  20
+#define LFContextStores                  21
+#define LFContextClipboard               22
+#define LFContextSubfolderDefault        23
+#define LFContextSubfolderBooks          24
+#define LFContextSubfolderFonts          25
+#define LFContextSubfolderMessages       26
+#define LFContextSubfolderMovies         27
+#define LFContextSubfolderMusic          28
+#define LFContextSubfolderPictures       29
+#define LFContextSubfolderPodcasts       30
+#define LFContextSubfolderTVShows        31
+#define LFContextSubfolderVideos         32
+
+#define LFLastPersistentContext          14
+#define LFLastQueryContext               19
+#define LFContextCount                   33
+
+#define LFContextAuto                    0xFF	// Internal use only
+#define LFContextRemove                  LFContextAllFiles
 
 
 // Attributes
 
-#define LFAttrFileName                  0	// Core
-#define LFAttrPriority                  1
-#define LFAttrCreationTime              2
-#define LFAttrFileTime                  3
-#define LFAttrAddTime                   4
-#define LFAttrDueTime                   5
-#define LFAttrDoneTime                  6
-#define LFAttrArchiveTime               7
-#define LFAttrDeleteTime                8
-#define LFAttrColor                     9
+#define LFAttrFileName                 0	// Core
+#define LFAttrPriority                 1
+#define LFAttrCreationTime             2
+#define LFAttrFileTime                 3
+#define LFAttrAddTime                  4
+#define LFAttrDueTime                  5
+#define LFAttrDoneTime                 6
+#define LFAttrArchiveTime              7
+#define LFAttrDeleteTime               8
+#define LFAttrColor                    9
 #define LFAttrHashtags                 10
 #define LFAttrRating                   11
 #define LFAttrComments                 12
@@ -258,46 +252,46 @@ struct LFItemCategoryDescriptor
 #define LFAttrLocationGPS              18
 #define LFAttrURL                      19
 
-#define LFAttrRoll                     20	// Visual
-#define LFAttrWidth                    21
-#define LFAttrHeight                   22
-#define LFAttrDimension                23
-#define LFAttrAspectRatio              24
-#define LFAttrApplication              25
-#define LFAttrVideoCodec               26
+#define LFAttrCreator                  20	// Media
+#define LFAttrMediaCollection          21
+#define LFAttrSequenceInCollection     22
+#define LFAttrTitle                    23
+#define LFAttrReleased                 24
+#define LFAttrLength                   25
+#define LFAttrBitrate                  26
+#define LFAttrLanguage                 27
+#define LFAttrRecordingTime            28
+#define LFAttrRecordingEquipment       29
+#define LFAttrCopyright                30
 
-#define LFAttrExposure                 27	// Photos
-#define LFAttrFocus                    28
-#define LFAttrAperture                 29
-#define LFAttrChip                     30
+#define LFAttrWidth                    31	// Visual media
+#define LFAttrHeight                   32
+#define LFAttrDimension                33
+#define LFAttrAspectRatio              34
+#define LFAttrFramerate                35
+#define LFAttrApplication              36
+#define LFAttrVideoCodec               37	// Videos
+#define LFAttrExposure                 38	// Photos
+#define LFAttrFocus                    39
+#define LFAttrAperture                 40
+#define LFAttrChip                     41
 
-#define LFAttrArtist                   31	// Audio
-#define LFAttrAlbum                    32
-#define LFAttrGenre                    33
-#define LFAttrChannels                 34
-#define LFAttrSamplerate               35
-#define LFAttrAudioCodec               36
+#define LFAttrChannels                 42	// Audio
+#define LFAttrSamplerate               43
+#define LFAttrAudioCodec               44
+#define LFAttrGenre                    45	// Music
 
-#define LFAttrDuration                 37	// Media
-#define LFAttrBitrate                  38
-#define LFAttrRecordingTime            39
-#define LFAttrRecordingEquipment       40
+#define LFAttrPages                    46	// Documents
+#define LFAttrISBN                     47	// Books
+#define LFAttrSignature                48
 
-#define LFAttrAuthor                   41	// Documents
-#define LFAttrCopyright                42
-#define LFAttrTitle                    43
-#define LFAttrISBN                     44
-#define LFAttrLanguage                 45
-#define LFAttrPages                    46
-#define LFAttrSignature                47
+#define LFAttrFrom                     49	// Messages
+#define LFAttrTo                       50
 
-#define LFAttrFrom                     48	// Messages
-#define LFAttrTo                       49
+#define LFAttrResponsible              51	// Tasks
+#define LFAttrCustomer                 52
 
-#define LFAttrResponsible              50	// Workflow
-#define LFAttrCustomer                 51
-
-#define LFAttributeCount               52
+#define LFAttributeCount               53
 #define LFLastCoreAttribute            19
 
 
@@ -321,8 +315,10 @@ struct LFItemCategoryDescriptor
 #define LFTypeMegapixel          15
 #define LFTypeGenre              16
 #define LFTypeApplication        17
+#define LFTypeYear               18
+#define LFTypeFramerate          19
 
-#define LFTypeCount              18
+#define LFTypeCount              20
 #define LFMaxRating              10
 
 
@@ -349,7 +345,7 @@ struct LFVariantData
 		WCHAR UnicodeString[256];
 		WCHAR UnicodeArray[256];
 		CHAR AnsiString[256];
-		CHAR IATAString[4];
+		CHAR IATACode[4];
 		DWORD FourCC;
 		BYTE Rating;
 		UINT UINT32;
@@ -377,42 +373,57 @@ struct LFVariantData
 
 // Attribute categories
 
-#define LFAttrCategoryBasic             0
-#define LFAttrCategoryTasks             1
-#define LFAttrCategoryGeotags           2
-#define LFAttrCategoryVisual            3
-#define LFAttrCategoryPhotographic      4
-#define LFAttrCategoryAudio             5
-#define LFAttrCategoryTimebased         6
-#define LFAttrCategoryBibliographic     7
-#define LFAttrCategoryInternal          8
+#define LFAttrCategoryBasic                   0
+#define LFAttrCategoryMedia                   1
+#define LFAttrCategoryVisual                  2
+#define LFAttrCategoryAudio                   3
+#define LFAttrCategoryDocuments               4
+#define LFAttrCategoryMessages                5
+#define LFAttrCategoryTasks                   6
+#define LFAttrCategoryGeotagging              7
+#define LFAttrCategoryInternal                8
 
-#define LFAttrCategoryCount             9
+#define LFAttrCategoryCount                   9
 
 
 // Attribute descriptor
 
-#define LFMaxAttributePriority          5
+#define LFMinAttributePriority                5
+
+#define LFAttributeNameSize                   64
+
+#define LFAttributeContextRecordCount         5
+
+#define LFDataContainsLetters                 0x01	// For type
+#define LFDataSortableInSubfolder             0x02
+#define LFDataSortDescending                  0x04
+#define LFDataFormatRight                     0x08
+
+#define LFDataEditable                        0x01	// For attribute
+#define LFDataShowRepresentativeThumbnail     0x02
+#define LFDataAlwaysVisible                   0x04
+#define LFDataNeverSortable                   0x08
+
+#define LFDataBucket                          0x80	// For both
 
 #pragma pack(push, 1)
 
 struct LFShellProperty
 {
-	GUID Schema;
+	LPCGUID Schema;
 	INT ID;
 };
 
 struct LFAttributeProperties
 {
 	BYTE Type;
-	SIZE_T cCharacters;
 	BYTE Category;
-	INT IconID;
+	BYTE DataFlags;
+	SIZE_T cCharacters;
+	UINT DefaultIconID;
 	UINT DefaultView;
 	UINT DefaultPriority;
-	BOOL ReadOnly;
-	BOOL AlwaysShow;
-	BOOL ShowRepresentativeThumbnail;
+	UINT AlternateSort;
 	LFShellProperty ShPropertyMapping;
 	UINT PersistentID;
 };
@@ -420,21 +431,26 @@ struct LFAttributeProperties
 struct LFTypeProperties
 {
 	SIZE_T Size;
-	BOOL ContainsLetters;
-	BOOL SortableSubfolder;
-	BOOL DefaultDescending;
-	BOOL FormatRight;
 	INT DefaultColumnWidth;
+	BYTE DataFlags;
 	UINT AllowedViews;
 	UINT DefaultView;
+};
+
+struct LFAttributeContextRecord
+{
+	UINT64 ContextSet;
+	WCHAR Name[LFAttributeNameSize];
+	INT IconID;
+	BOOL SortDescending;
 };
 
 #pragma pack(pop)
 
 struct LFAttributeDescriptor
 {
-	WCHAR Name[256];
-	WCHAR XMLID[256];
+	LFAttributeContextRecord ContextRecords[LFAttributeContextRecordCount];
+	WCHAR XMLID[LFAttributeNameSize];
 	LFAttributeProperties AttrProperties;
 	LFTypeProperties TypeProperties;
 };
@@ -450,11 +466,12 @@ struct LFContextProperties
 {
 	UINT DefaultAttribute;
 	BOOL AllowGroups;
-	BOOL ShowRepresentativeThumbnail;
+	BYTE SubfolderContext;
 	UINT AvailableViews;
 	UINT DefaultView;
 	UINT64 AvailableAttributes;
 	UINT64 AdvertisedAttributes;
+	UINT64 AllowMoveToContext;
 };
 
 struct LFContextDescriptor
@@ -526,10 +543,12 @@ struct LFFileSummary
 	INT64 FileSize;
 	UINT ItemColors[LFItemColorCount];
 	BYTE ItemColorSet;
+	UINT64 ContextSet;
+	BYTE Context;
 	BYTE Flags;
 	UINT Source;
 	UINT64 Duration;
-	BOOL OnlyMediaFiles;
+	BOOL OnlyTimebasedMediaFiles;
 };
 
 
@@ -559,15 +578,12 @@ struct LFFilterOptions
 	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
 	BOOL IsSubfolder;						// If TRUE, you are already inside a grouped subdirectory
 	BOOL IsPersistent;						// If TRUE, the filter is a custom search filter
-
-	// For subfolders
-	UINT GroupAttribute;					// Attribute on which parent folder was grouped
 };
 
 struct LFFilterCondition
 {
 	LFFilterCondition* pNext;
-	LFVariantData AttrData;					// Never use for LFAttrDesciption or LFAttrStoreID
+	LFVariantData VData;
 	BYTE Compare;
 };
 
@@ -581,7 +597,7 @@ struct LFFilter
 
 	CHAR StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
 	BYTE QueryContext;						// For LFFilterModeDirectoryTree and above
-	WCHAR Searchterm[256];					// For LFFilterModeDirectoryTree and above
+	WCHAR SearchTerm[256];					// For LFFilterModeDirectoryTree and above
 	LFFilterCondition* pConditionList;		// For LFFilterModeDirectoryTree and above
 };
 
@@ -640,6 +656,9 @@ struct LFStoreDescriptor
 
 // Attribute structures
 
+#pragma warning(push)
+#pragma warning(disable: 4201)
+
 struct LFCoreAttributes
 {
 	// Public
@@ -668,14 +687,16 @@ struct LFCoreAttributes
 
 	// Private
 	BYTE SlaveID;
-	BYTE ContextID;
+	BYTE SystemContextID;
+	BYTE UserContextID;
 	BYTE Reserved4;
-	BYTE Reserved5;
 
 	// Public extended
 	FILETIME DueTime;
 	FILETIME DoneTime;
 };
+
+#pragma warning(pop)
 
 
 // Sources
@@ -821,7 +842,7 @@ struct LFItemDescriptor
 #define LFTransactionTypeRecover               0x102
 #define LFTransactionTypeUpdate                0x103
 #define LFTransactionTypeUpdateTask            0x104
-#define LFTransactionTypeUpdateContext         0x105
+#define LFTransactionTypeUpdateUserContext     0x105
 #define LFTransactionTypeDelete                0x106
 
 #define LFTransactionTypeLastReadonly          0x0FF

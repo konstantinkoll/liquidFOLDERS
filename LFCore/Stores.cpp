@@ -992,7 +992,7 @@ LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* 
 		ULI2.LowPart = pStoreDescriptor->CreationTime.dwLowDateTime;
 		ULI2.HighPart = pStoreDescriptor->CreationTime.dwHighDateTime;
 
-		if ((ULI1.QuadPart<ULI2.QuadPart+86400ull*10ull*1000ull*1000ull) || pStoreDescriptor->Statistics.FileCount[LFContextNew])
+		if ((ULI1.QuadPart<ULI2.QuadPart+864000000000ull) || pStoreDescriptor->Statistics.FileCount[LFContextNew])
 			*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeNew;
 
 		// Default store?
@@ -1489,9 +1489,12 @@ void QueryStores(LFSearchResult* pSearchResult)
 	}
 }
 
-LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID)
+LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID, UINT64* pGlobalContextSet)
 {
 	ZeroMemory(&Statistics, sizeof(LFStatistics));
+
+	if (pGlobalContextSet)
+		*pGlobalContextSet = 0;
 
 	if (!GetMutexForStores())
 		return LFMutexError;
@@ -1510,6 +1513,12 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID)
 			for (UINT Priority=0; Priority<=LFMaxRating; Priority++)
 				Statistics.TaskCount[Priority] += StoreCache[a].Statistics.TaskCount[Priority];
 		}
+
+		// Global context set
+		if (pGlobalContextSet)
+			for (UINT Context=0; Context<=LFLastQueryContext; Context++)
+				if (Statistics.FileCount[Context])
+					*pGlobalContextSet |= (1ull<<Context);
 	}
 	else
 	{
@@ -1518,6 +1527,16 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID)
 
 		if (pStoreDescriptor)
 			Statistics = pStoreDescriptor->Statistics;
+
+		// Global context set
+		if (pGlobalContextSet)
+			for (UINT Context=0; Context<=LFLastQueryContext; Context++)
+				for (UINT a=0; a<StoreCount; a++)
+					if (StoreCache[a].Statistics.FileCount[Context])
+					{
+						*pGlobalContextSet |= (1ull<<Context);
+						break;
+					}
 	}
 
 	ReleaseMutexForStores();

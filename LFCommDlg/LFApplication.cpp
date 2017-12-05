@@ -189,6 +189,9 @@ LFApplication::LFApplication(GUID& AppID)
 	for (UINT a=0; a<LFSourceCount; a++)
 		for (UINT b=0; b<2; b++)
 			LFGetSourceName(m_SourceNames[a][b], 256, a, b==1);
+
+	// Tooltip
+	p_WndTooltipOwner = NULL;
 }
 
 LFApplication::~LFApplication()
@@ -545,7 +548,7 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* 
 
 // Tooltips
 
-void LFApplication::AttributeToString(CString& Name, CString& Value, LFItemDescriptor* pItemDescriptor, UINT Attr) const
+void LFApplication::AttributeToString(CString& Name, CString& Value, const LFItemDescriptor* pItemDescriptor, UINT Attr) const
 {
 	ASSERT(pItemDescriptor);
 
@@ -582,13 +585,13 @@ void LFApplication::AttributeToString(CString& Name, CString& Value, LFItemDescr
 
 		// Copy to buffer
 		if ((Attr!=LFAttrComments) && (Attr!=LFAttrFileFormat))
-			Name = m_Attributes[Attr].Name;
+			Name = GetAttributeName(Attr, LFGetUserContextID(pItemDescriptor));
 
 		Value = tmpStr;
 	}
 }
 
-void LFApplication::AppendAttribute(CString& Str, LFItemDescriptor* pItemDescriptor, UINT Attr) const
+void LFApplication::AppendAttribute(CString& Str, const LFItemDescriptor* pItemDescriptor, UINT Attr) const
 {
 	ASSERT(pItemDescriptor);
 
@@ -599,7 +602,7 @@ void LFApplication::AppendAttribute(CString& Str, LFItemDescriptor* pItemDescrip
 	LFTooltip::AppendAttribute(Str, Name, Value);
 }
 
-CString LFApplication::GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName) const
+CString LFApplication::GetHintForItem(const LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName) const
 {
 	ASSERT(pItemDescriptor);
 	ASSERT(m_SortedAttributeList[0]==LFAttrFileName);
@@ -646,7 +649,7 @@ CString LFApplication::GetHintForItem(LFItemDescriptor* pItemDescriptor, LPCWSTR
 	{
 		const UINT Attr = m_SortedAttributeList[a];
 
-		if (m_Attributes[Attr].AttrProperties.DefaultPriority==LFMaxAttributePriority)
+		if (m_Attributes[Attr].AttrProperties.DefaultPriority==LFMinAttributePriority)
 			break;
 
 		AppendAttribute(Hint, pItemDescriptor, Attr);
@@ -666,13 +669,66 @@ CString LFApplication::GetHintForStore(const LFStoreDescriptor& StoreDescriptor)
 	return Hint;
 }
 
-void LFApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
+void LFApplication::ShowTooltip(const CWnd* pWndOwner, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
 {
 	ASSERT(IsWindow(m_wndTooltip));
-	ASSERT(pCallerWnd);
+	ASSERT(pWndOwner);
 
-	pCallerWnd->ClientToScreen(&point);
+	(p_WndTooltipOwner=pWndOwner)->ClientToScreen(&point);
 	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
+}
+
+void LFApplication::HideTooltip(const CWnd* pWndOwner)
+{
+	if (!pWndOwner || (pWndOwner==p_WndTooltipOwner))
+	{
+		if (m_wndTooltip.IsWindowVisible())
+			m_wndTooltip.HideTooltip();
+
+		p_WndTooltipOwner = NULL;
+	}
+}
+
+
+// Attributes
+
+LPCWSTR LFApplication::GetAttributeName(UINT Attr, UINT Context) const
+{
+	ASSERT(Attr<LFAttributeCount);
+	ASSERT(Context<LFContextCount);
+
+	for (UINT a=0; a<LFAttributeContextRecordCount; a++)
+		if (m_Attributes[Attr].ContextRecords[a].ContextSet & (1ull<<Context))
+			return m_Attributes[Attr].ContextRecords[a].Name;
+
+	ASSERT(FALSE);
+	return m_Attributes[Attr].ContextRecords[0].Name;
+}
+
+INT LFApplication::GetAttributeIcon(UINT Attr, UINT Context) const
+{
+	ASSERT(Attr<LFAttributeCount);
+	ASSERT(Context<LFContextCount);
+
+	for (UINT a=0; a<LFAttributeContextRecordCount; a++)
+		if (m_Attributes[Attr].ContextRecords[a].ContextSet & (1ull<<Context))
+			return m_Attributes[Attr].ContextRecords[a].IconID;
+
+	ASSERT(FALSE);
+	return m_Attributes[Attr].AttrProperties.DefaultIconID;
+}
+
+BOOL LFApplication::IsAttributeSortDescending(UINT Context, UINT Attr) const
+{
+	ASSERT(Attr<LFAttributeCount);
+	ASSERT(Context<LFContextCount);
+
+	for (UINT a=0; a<LFAttributeContextRecordCount; a++)
+		if (m_Attributes[Attr].ContextRecords[a].ContextSet & (1ull<<Context))
+			return m_Attributes[Attr].ContextRecords[a].SortDescending;
+
+	ASSERT(FALSE);
+	return (m_Attributes[Attr].TypeProperties.DataFlags & LFDataSortDescending);
 }
 
 

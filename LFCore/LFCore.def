@@ -57,18 +57,19 @@ EXPORTS
 	LFBitrateToString @209
 	LFDurationToString @210
 	LFMegapixelToString @211
-	LFAttributeToString @212
-	LFInitVariantData @213
-	LFClearVariantData @214
-	LFIsNullVariantData @215
-	LFVariantDataToString @216
-	LFVariantDataFromString @217
-	LFCompareVariantData @218
-	LFGetAttributeVariantData @219
-	LFGetAttributeVariantDataEx @220
-	LFSetAttributeVariantData @221
-	LFIsNullAttribute @222
-	LFSanitizeUnicodeArray @223
+	LFFramerateToString @212
+	LFAttributeToString @213
+	LFInitVariantData @214
+	LFClearVariantData @215
+	LFIsNullVariantData @216
+	LFVariantDataToString @217
+	LFVariantDataFromString @218
+	LFCompareVariantData @219
+	LFGetAttributeVariantData @220
+	LFGetAttributeVariantDataEx @221
+	LFSetAttributeVariantData @222
+	LFIsNullAttribute @223
+	LFSanitizeUnicodeArray @224
 
 	LFAllocItemDescriptor @300
 	LFAllocItemDescriptorEx @301
@@ -80,26 +81,25 @@ EXPORTS
 	LFLoadFilterEx @307
 	LFSaveFilter @308
 	LFAllocFilterCondition @309
-	LFAllocFilterConditionEx @310
-	LFAllocSearchResult @311
-	LFFreeSearchResult @312
-	LFAddItem @313
-	LFRemoveFlaggedItems @234
-	LFSortSearchResult @315
-	LFGroupSearchResult @316
-	LFUpdateFolderColors @317
-	LFAllocTransactionList @318
-	LFAllocTransactionListEx @319
-	LFFreeTransactionList @320
-	LFAddTransactionItem @321
-	LFAddTransactionItemEx @322
-	LFCreateDropFiles @323
-	LFCreateLiquidFiles @324
-	LFDoTransaction @325
-	LFAllocFileImportList @326
-	LFFreeFileImportList @327
-	LFAddImportPath @328
-	LFFreeMaintenanceList @329
+	LFAllocSearchResult @310
+	LFFreeSearchResult @311
+	LFAddItem @312
+	LFRemoveFlaggedItems @313
+	LFSortSearchResult @314
+	LFGroupSearchResult @315
+	LFUpdateFolderColors @316
+	LFAllocTransactionList @317
+	LFAllocTransactionListEx @318
+	LFFreeTransactionList @319
+	LFAddTransactionItem @320
+	LFAddTransactionItemEx @321
+	LFCreateDropFiles @322
+	LFCreateLiquidFiles @323
+	LFDoTransaction @324
+	LFAllocFileImportList @325
+	LFFreeFileImportList @326
+	LFAddImportPath @327
+	LFFreeMaintenanceList @328
 
 	LFIATAGetCountryCount @400
 	LFIATAGetAirportCount @401

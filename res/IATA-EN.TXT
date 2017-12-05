@@ -1770,7 +1770,7 @@ DJV     Dabajoro, Venezuela
 DKB     De Kalb Taylor, USA;4;41*56'1"N, 88*42'21"W
 DKI     Dunk Island, Australia;4;17*56'23"S, 146*8'31"E
 DKK     Dunkirk, USA;4;42*29'36"N, 79*16'19"W
-DKR     Dakar, Senegal;4;14*44'23"N, 17*29'25"W
+DKR     Dakar (Léopold Sédar Senghor), Senegal;4;14*44'23"N, 17*29'25"W
 DKX     Knoxville (Downtown Island Airport), USA;4;35*57'50"N, 83*52'25"W
 DLA     Douala, Kamerun;4;4*0'22"N, 9*43'10"E
 DLB     Dalbertis, New Guinea;4;5*0'0"S, 142*4'59"E
@@ -1882,6 +1882,7 @@ DSI     Destin, USA;4;30*24'0"N, 86*28'17"W
 DSK     Dera Ismail Khan, Pakistan;4;31*54'34"N, 70*53'48"E
 DSL     Daru, Sierra Leone;4;7*58'59"N, 10*51'0"W
 DSM     Des Moines, USA;4;41*32'2"N, 93*39'47"W
+DSS     Dakar (Blaise Diagne), Senegal;5;14*40'15"N, 17*4'22"W
 DSV     Dansville, USA;4;42*34'15"N, 77*42'47"W
 DTA     Delta, USA;4;39*22'50"N, 112*30'28"W
 DTD     Datadawai, Indonesia;4;0*43'1"S, 116*28'59"E
@@ -2404,7 +2405,7 @@ FSL     Fossil Downs, Australia;4;18*12'0"S, 125*45'0"E
 FSM     Fort Smith, USA;4;35*20'12"N, 94*22'3"W
 FSN     Fort Sheridan, USA
 FSO     Highgate, USA;4;44*56'25"N, 73*5'51"W
-FSP     Saint-Pierre, Saint-Pierre & Miquelon;4;46*45'47"N, 56*10'27"W
+FSP     Saint-Pierre, Saint-Pierre and Miquelon;4;46*45'47"N, 56*10'27"W
 FSS     Forres, United Kingdom;4;57*38'58"N, 3*33'38"W
 FST     Fort Stockton, USA;4;30*54'56"N, 102*54'58"W
 FSU     Fort Sumner, USA;4;34*29'0"N, 104*13'2"W
@@ -2520,7 +2521,7 @@ GDN     Danzig (Gdansk), Poland;4;54*22'39"N, 18*27'58"E
 GDO     Guasdualito, Venezuela;4;7*12'40"N, 70*45'23"W
 GDP     Guadalupe, Brazil;5;6*46'56"S, 43*34'56"W
 GDQ     Gondar, Ethiopia;4;12*31'12"N, 37*26'3"E
-GDT     Grand Turk, Turks & Caicos;4;21*26'40"N, 71*8'32"W
+GDT     Grand Turk, Turks and Caicos;4;21*26'40"N, 71*8'32"W
 GDV     Glendive, USA;4;47*8'19"N, 104*48'26"W
 GDW     Gladwin, USA;4;43*58'14"N, 84*28'30"W
 GDX     Magadan, Russia;4;59*54'40"N, 150*43'14"E
@@ -4655,7 +4656,7 @@ MDO     Middleton Island, USA;4;59*26'60"N, 146*18'26"W
 MDP     Mindiptana, Indonesia;4;5*52'1"S, 140*41'60"E
 MDQ     Mar del Plata, Argentina;4;37*56'3"S, 57*34'24"W
 MDR     Medfra, USA
-MDS     Middle Caicos, Turks & Caicos;4;21*49'59"N, 71*49'1"W
+MDS     Middle Caicos, Turks and Caicos;4;21*49'59"N, 71*49'1"W
 MDT     Harrisburg, USA;4;40*11'37"N, 76*45'48"W
 MDU     Mendi, New Guinea;4;6*8'52"S, 143*39'26"E
 MDV     Medouneu, Gabun;4;1*0'0"N, 10*45'0"E
@@ -4964,7 +4965,7 @@ MPY     Maripasoula, Surinam;4;3*39'27"N, 54*2'14"W
 MPZ     Mount Pleasant, USA;4;40*56'48"N, 91*30'40"W
 MQA     Mandora, Australia;4;19*44'18"S, 120*50'18"E
 MQB     Macomb, USA;4;40*31'12"N, 90*39'9"W
-MQC     Miquelon, Saint-Pierre & Miquelon;4;47*5'45"N, 56*23'4"W
+MQC     Miquelon, Saint-Pierre and Miquelon;4;47*5'45"N, 56*23'4"W
 MQD     Maquinchao, Argentina;4;41*15'0"S, 68*43'59"W
 MQE     Marqua, Australia;4;22*48'21"S, 137*15'5"E
 MQF     Magnitogorsk, Russia;4;53*23'35"N, 58*45'20"E
@@ -5245,7 +5246,7 @@ NBU     Glenview, USA
 NBV     Cana Brava, Brazil;4;13*31'59"S, 48*15'0"W
 NBW     Guantánamo Bay, Cuba;4;19*54'23"N, 75*12'25"W
 NBX     Nabire, Indonesia;4;3*22'5"S, 135*29'47"E
-NCA     North Caicos, Turks & Caicos;4;21*55'3"N, 71*56'22"W
+NCA     North Caicos, Turks and Caicos;4;21*55'3"N, 71*56'22"W
 NCE     Nice, France;4;43*39'55"N, 7*12'54"E
 NCG     Nuevo Casas Grandes, Mexico;4;30*23'51"N, 107*52'30"W
 NCH     Nachingwea, Tanzania;4;10*21'27"S, 38*46'45"E
@@ -5901,7 +5902,7 @@ PCL     Pucallpa, Peru;4;8*22'41"S, 74*34'27"W
 PCM     Playa del Carmen, Mexico;4;20*37'21"N, 87*4'56"W
 PCN     Picton, New Zealand;4;41*20'54"S, 173*57'19"E
 PCO     Punta Colorada, Mexico;4;23*34'1"N, 109*31'59"W
-PCP     Príncipe, São Tomé & Príncipe;4;1*39'47"N, 7*24'42"E
+PCP     Príncipe, São Tomé and Príncipe;4;1*39'47"N, 7*24'42"E
 PCR     Puerto Carreño, Columbia;4;6*11'15"N, 67*29'48"W
 PCS     Picos, Brazil;4;7*3'43"S, 41*31'25"W
 PCT     Princeton, USA;4;40*23'57"N, 74*39'32"W
@@ -5971,7 +5972,7 @@ PGL     Pascagoula, USA;4;30*27'46"N, 88*31'45"W
 PGM     Port Graham, USA;4;59*20'54"N, 151*49'54"W
 PGN     Pangia, New Guinea;4;6*22'59"S, 144*6'0"E
 PGO     Pagosa Springs, USA;4;37*17'11"N, 107*3'22"W
-PGP     Porto Alegre, São Tomé & Príncipe;4;0*1'52"S, 6*31'8"E
+PGP     Porto Alegre, São Tomé and Príncipe;4;0*1'52"S, 6*31'8"E
 PGR     Paragould, USA;4;36*3'46"N, 90*30'28"W
 PGS     Peach Springs, USA;4;35*31'37"N, 113*14'51"W
 PGV     Greenville, USA;4;35*38'7"N, 77*23'7"W
@@ -6002,7 +6003,7 @@ PHW     Phalaborwa, South Africa;4;23*56'14"S, 31*9'19"E
 PHX     Phoenix Sky Harbor, USA;4;33*26'3"N, 112*0'42"W
 PIA     Peoria, USA;4;40*39'51"N, 89*41'36"W
 PIB     Laurel/Hattiesburg, USA;4;31*28'2"N, 89*20'13"W
-PIC     Pine Cay, Turks & Caicos;4;21*53'60"N, 72*5'60"W
+PIC     Pine Cay, Turks and Caicos;4;21*53'60"N, 72*5'60"W
 PID     Paradise Island, Bahamas;4;25*4'59"N, 77*18'0"W
 PIE     St. Petersburg/Clearwater, USA;4;27*54'36"N, 82*41'15"W
 PIF     Pingtung, Taiwan;5;22*42'1"N, 120*28'55"E
@@ -6070,7 +6071,7 @@ PLO     Port Lincoln, Australia;4;34*36'19"S, 135*52'49"E
 PLP     La Palma, Panama;5;8*24'24"N, 78*8'30"W
 PLQ     Palanga, Lithuania;4;55*58'24"N, 21*5'38"E
 PLR     Pell City, USA;4;33*33'32"N, 86*14'57"W
-PLS     Providenciales, Turks & Caicos;4;21*46'25"N, 72*15'57"W
+PLS     Providenciales, Turks and Caicos;4;21*46'25"N, 72*15'57"W
 PLT     Plato, Columbia;4;9*48'0"N, 74*46'60"W
 PLU BHZ Belo Horizonte (Pampulha), Brazil;4;19*51'4"S, 43*57'2"W
 PLV     Poltava, Ukraine;4;49*34'7"N, 34*23'50"E
@@ -6140,7 +6141,7 @@ POO     Poços de Caldas, Brazil;4;21*50'35"S, 46*34'5"W
 POP     Puerto Plata, Dom. Republic;4;19*45'28"N, 70*34'12"W
 POQ     Polk Inlet, USA
 POR     Pori, Finland;4;61*27'42"N, 21*47'60"E
-POS     Port of Spain, Trinidad & Tobago;4;10*35'43"N, 61*20'14"W
+POS     Port of Spain, Trinidad and Tobago;4;10*35'43"N, 61*20'14"W
 POT     Port Antonio, Jamaica;4;18*11'56"N, 76*32'4"W
 POU     Poughkeepsie, USA;4;41*37'36"N, 73*53'3"W
 POW     Portoroz, Slovenija;5;45*28'24"N, 13*36'54"E
@@ -7188,7 +7189,7 @@ SLT     Salida, USA;4;38*32'18"N, 106*2'55"W
 SLU     Saint Lucia, Saint Lucia;4;14*1'13"N, 60*59'35"W
 SLV     Simla, India;4;31*4'54"N, 77*4'5"E
 SLW     Saltillo, Mexico;4;25*32'58"N, 100*55'43"W
-SLX     Salt Cay, Turks & Caicos;4;21*19'59"N, 71*11'60"W
+SLX     Salt Cay, Turks and Caicos;4;21*19'59"N, 71*11'60"W
 SLY     Salekhard, Russia;5;66*35'27"N, 66*36'40"E
 SLZ     São Luís, Brazil;4;2*35'7"S, 44*14'3"W
 SMA     Santa Maria, Portugal;4;36*58'17"N, 25*10'14"W
@@ -7516,7 +7517,7 @@ SZX     Zhenzhen, China;4;22*38'21"N, 113*48'38"E
 SZY     Szymany (Mazury), Poland;5;52*26'12"N, 20*56'20"E
 SZZ     Szczecin, Poland;4;53*35'5"N, 14*54'8"E
 TAA     Tarapaina, Solomons;4;9*22'1"S, 161*11'60"E
-TAB     Tobago, Trinidad & Tobago;4;11*8'59"N, 60*49'56"W
+TAB     Tobago, Trinidad and Tobago;4;11*8'59"N, 60*49'56"W
 TAC     Tacloban, Philippines;4;11*13'39"N, 125*1'40"E
 TAD     Trinidad, USA;4;37*15'34"N, 104*20'26"W
 TAE     Taegu, South Korea;4;35*53'39"N, 128*39'32"E
@@ -7766,7 +7767,7 @@ TMO     Tumeremo, Venezuela;4;7*14'58"N, 61*31'44"W
 TMP     Tampere, Finland;4;61*24'55"N, 23*35'16"E
 TMQ     Tambao, Burkina Faso;4;14*48'0"N, 0*3'0"E
 TMR     Tamanrasset, Algeria;4;22*48'41"N, 5*27'4"E
-TMS     São Tomé, São Tomé & Príncipe;4;0*22'41"S, 6*42'44"E
+TMS     São Tomé, São Tomé and Príncipe;4;0*22'41"S, 6*42'44"E
 TMT     Porto de Trombetas, Brazil;4;1*29'23"S, 56*23'48"W
 TMU     Tambor, Costa Rica;4;9*43'59"N, 85*0'0"W
 TMW     Tamworth, Australia;4;31*5'2"S, 150*50'48"E
@@ -8711,7 +8712,7 @@ XRK MOW Moscow (Pawelezki), Russia;5;55*43'47"N, 37*38'22"E
 XRR     Ross River, Canada;4;61*58'16"N, 132*25'34"W
 XRY     Jerez de la Frontera (Cádiz), Spain;4;36*44'41"N, 6*3'36"W
 XSB     Sir Bani Yas, UAE;5;24*17'0"N, 52*35'0"E
-XSC     South Caicos Is., Turks & Caicos;4;21*30'57"N, 71*31'43"W
+XSC     South Caicos Is., Turks and Caicos;4;21*30'57"N, 71*31'43"W
 XSE     Sebba, Burkina Faso;4;13*26'60"N, 0*31'1"E
 XSI     South Indian Lake, Canada;4;56*47'34"N, 98*54'26"W
 XSM     St. Mary's, USA

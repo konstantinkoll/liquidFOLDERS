@@ -17,7 +17,7 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirpo
 	m_LastSortDirection = LFGetApp()->GetInt(_T("IATALastSortDirection"), FALSE);
 
 	p_Airport = NULL;
-	LFIATAGetAirportByCode(pAirport, &p_Airport);
+	LFIATAGetAirportByCode(pAirport, p_Airport);
 }
 
 void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
@@ -126,9 +126,9 @@ void LFSelectLocationIATADlg::LoadCountry(UINT Country)
 {
 	m_AirportCount = 0;
 
-	INT Index = LFIATAGetNextAirportByCountry(Country, -1, &p_Airports[m_AirportCount]);
+	INT Index = LFIATAGetNextAirportByCountry(Country, -1, p_Airports[m_AirportCount]);
 	while ((Index!=-1) && (m_AirportCount<MaxAirportsPerCountry))
-		Index = LFIATAGetNextAirportByCountry(Country, Index, &p_Airports[++m_AirportCount]);
+		Index = LFIATAGetNextAirportByCountry(Country, Index, p_Airports[++m_AirportCount]);
 
 	m_wndAirportList.SetItemCount(m_AirportCount);
 	Sort();

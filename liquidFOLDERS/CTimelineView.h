@@ -10,7 +10,7 @@
 //
 
 #define PRV_SOURCE             0x00000001
-#define PRV_CONTENTS           0x00000100
+#define PRV_CONTENTLIST        0x00000100
 #define PRV_THUMBNAILS         0x00000200
 #define PRV_REPRESENTATIVE     0x00000400
 #define PRV_CREATOR            0x00100000
@@ -28,6 +28,7 @@ struct TimelineItemData
 	FVItemData Hdr;
 	INT Arrow;
 	INT ArrowOffs;
+	INT ThumbnailCount;
 	INT ThumbnailRows;
 	INT ListCount;
 	WORD Year;

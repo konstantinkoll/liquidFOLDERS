@@ -28,57 +28,64 @@ void CPropertyHolder::SetStore(const LPCSTR pStoreID)
 	strcpy_s(m_StoreID, LFKeySize, pStoreID);
 }
 
-CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
+CProperty* CPropertyHolder::CreateProperty(LFVariantData* pVData)
 {
+	ASSERT(pVData);
+	ASSERT(pVData->Type<LFTypeCount);
+
 	CProperty* pProperty;
 
-	switch (pData->Type)
+	switch (pVData->Type)
 	{
-	case LFTypeUnicodeArray:
-		pProperty = (pData->Attr==LFAttrHashtags) ? new CPropertyTags(pData) : new CProperty(pData);
-		break;
-
 	case LFTypeIATACode:
-		pProperty = new CPropertyIATA(pData, NULL, NULL);
+		pProperty = new CPropertyIATA(pVData, this);
 		break;
 
 	case LFTypeRating:
-		pProperty = new CPropertyRating(pData);
+		pProperty = new CPropertyRating(pVData, this);
 		break;
 
 	case LFTypeUINT:
-		pProperty = new CPropertyNumber(pData);
-		break;
-
-	case LFTypeColor:
-		pProperty = new CPropertyColor(pData);
+	case LFTypeYear:
+		pProperty = new CPropertyNumber(pVData, this);
 		break;
 
 	case LFTypeSize:
-		pProperty = new CPropertySize(pData);
+		pProperty = new CPropertySize(pVData, this);
 		break;
 
-	case LFTypeDuration:
-		pProperty = new CPropertyDuration(pData);
+	case LFTypeColor:
+		pProperty = new CPropertyColor(pVData, this);
 		break;
 
 	case LFTypeGeoCoordinates:
-		pProperty = new CPropertyGPS(pData);
+		pProperty = new CPropertyGeoCoordinates(pVData, this);
 		break;
 
 	case LFTypeTime:
-		pProperty = new CPropertyTime(pData);
+		pProperty = new CPropertyTime(pVData, this);
+		break;
+
+	case LFTypeDuration:
+		pProperty = new CPropertyDuration(pVData, this);
 		break;
 
 	case LFTypeGenre:
-		pProperty = new CPropertyGenre(pData);
+		pProperty = new CPropertyGenre(pVData, this);
 		break;
 
+	case LFTypeUnicodeArray:
+		if (pVData->Attr==LFAttrHashtags) 
+		{
+			pProperty = new CPropertyHashtags(pVData, this);
+			break;
+		}
+
 	default:
-		pProperty = new CProperty(pData);
+		pProperty = new CProperty(pVData, this);
 	}
 
-	pProperty->SetParent(this);
+	ASSERT(pProperty);
 
 	return pProperty;
 }
@@ -109,19 +116,18 @@ void CPropertyHolder::OnKillFocus(CWnd* /*pNewWnd*/)
 // CProperty
 //
 
-CProperty::CProperty(LFVariantData* pData)
+CProperty::CProperty(LFVariantData* pVData, CPropertyHolder* pParent)
 {
-	ASSERT(pData);
+	ASSERT(pVData);
+	ASSERT(pParent);
 
-	p_Data = pData;
-	p_Parent = NULL;
+	p_VData = pVData;
+	p_VDataRange = NULL;
+	p_Parent = pParent;
 	m_Modified = m_Multiple = m_ShowRange = FALSE;
-
-	ZeroMemory(&m_RangeFirst, sizeof(m_RangeFirst));
-	ZeroMemory(&m_RangeSecond, sizeof(m_RangeSecond));
 }
 
-void CProperty::ToString(LPWSTR pStr, INT nCount) const
+void CProperty::ToString(LPWSTR pStr, SIZE_T nCount) const
 {
 	if (m_Multiple)
 	{
@@ -130,9 +136,9 @@ void CProperty::ToString(LPWSTR pStr, INT nCount) const
 		{
 			// Range
 			WCHAR tmpBuf[256];
-			LFVariantDataToString(m_RangeSecond, tmpBuf, 256);
+			LFVariantDataToString(*p_VDataRange, tmpBuf, 256);
 
-			LFVariantDataToString(m_RangeFirst, pStr, nCount);
+			LFVariantDataToString(*p_VData, pStr, nCount);
 			wcscat_s(pStr, nCount, L" – ");
 			wcscat_s(pStr, nCount, tmpBuf);
 		}
@@ -145,7 +151,7 @@ void CProperty::ToString(LPWSTR pStr, INT nCount) const
 	else
 	{
 		// Attribute value
-		LFVariantDataToString(*p_Data, pStr, nCount);
+		LFVariantDataToString(*p_VData, pStr, nCount);
 	}
 }
 
@@ -171,13 +177,28 @@ HCURSOR CProperty::SetCursor(INT /*x*/) const
 	return LFGetApp()->LoadStandardCursor(IDC_IBEAM);
 }
 
-CString CProperty::GetValidChars() const
+CMFCMaskedEdit* CProperty::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
 {
-	return _T("");
-}
+	CMFCMaskedEdit* pWndEdit = new CMFCMaskedEdit();
+	pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, pParentWnd, 1);
+	
+	// Font
+	pWndEdit->SendMessage(WM_SETFONT, (WPARAM)hFont);
 
-void CProperty::SetEditMask(CMFCMaskedEdit* /*pWndEdit*/) const
-{
+	// Limit
+	if (p_VData->Attr<LFAttributeCount)
+		pWndEdit->SetLimitText((UINT)LFGetApp()->m_Attributes[p_VData->Attr].AttrProperties.cCharacters);
+
+	// Default text
+	if (!HasMultipleValues())
+	{
+		WCHAR tmpStr[256];
+		ToString(tmpStr, 256);
+
+		pWndEdit->SetWindowText(tmpStr);
+	}
+
+	return pWndEdit;
 }
 
 void CProperty::OnSetString(CString& Value) const
@@ -185,7 +206,7 @@ void CProperty::OnSetString(CString& Value) const
 	// Prepare new string
 	Value.Trim();
 
-	if (p_Data->Attr==LFAttrLanguage)
+	if (p_VData->Attr==LFAttrLanguage)
 		Value.MakeUpper();
 
 	// Old string
@@ -193,15 +214,15 @@ void CProperty::OnSetString(CString& Value) const
 	ToString(tmpStr, 256);
 
 	// Is new value different?
-	if (((p_Data->Attr!=LFAttrFileName) || !Value.IsEmpty()) && (wcscmp(tmpStr, Value.GetBuffer())!=0))
+	if (((p_VData->Attr!=LFAttrFileName) || !Value.IsEmpty()) && (wcscmp(tmpStr, Value.GetBuffer())!=0))
 	{
-		LFVariantDataFromString(*p_Data, Value);
+		LFVariantDataFromString(*p_VData, Value);
 
 		NotifyOwner();
 	}
 }
 
-BOOL CProperty::OnClickValue(INT /*x*/)
+BOOL CProperty::OnClickValue(INT /*x*/) const
 {
 	return TRUE;
 }
@@ -212,7 +233,7 @@ void CProperty::OnClickButton()
 
 BOOL CProperty::CanDelete() const
 {
-	return (p_Data->Attr!=LFAttrFileName) && (!LFIsNullVariantData(*p_Data) || m_Multiple);
+	return (p_VData->Attr!=LFAttrFileName) && (!LFIsNullVariantData(*p_VData) || m_Multiple);
 }
 
 BOOL CProperty::HasButton() const
@@ -224,78 +245,203 @@ BOOL CProperty::WantsChars() const
 {
 	return FALSE;
 }
-
-void CProperty::SetParent(CPropertyHolder* pParentWnd)
+	
+void CProperty::UpdateState(BOOL Multiple, const LFVariantData* pVDataRange)
 {
-	p_Parent = pParentWnd;
-}
-
-void CProperty::SetMultiple(BOOL Multiple, const LFVariantData* pRangeFirst, const LFVariantData* pRangeSecond)
-{
-	const UINT Type = p_Data->Type;
+	const UINT Type = p_VData->Type;
 
 	m_ShowRange = ((m_Multiple=Multiple)==TRUE) &&
-		pRangeFirst && !LFIsNullVariantData(*pRangeFirst) &&
-		pRangeSecond && !LFIsNullVariantData(*pRangeSecond) &&
-		((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeSize) || (Type==LFTypeDouble) || (Type==LFTypeTime) || (Type==LFTypeBitrate) || (Type==LFTypeDuration) || (Type==LFTypeMegapixel));
+		((p_VDataRange=pVDataRange)!=NULL) && !LFIsNullVariantData(*pVDataRange) &&
+		((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeYear) || (Type==LFTypeSize) || (Type==LFTypeDouble) || (Type==LFTypeTime) || (Type==LFTypeBitrate) || (Type==LFTypeDuration) || (Type==LFTypeMegapixel));
 
-	if (m_ShowRange)
-	{
-		m_RangeFirst = *pRangeFirst;
-		m_RangeSecond = *pRangeSecond;
-	}
-	else
-	{
-		ZeroMemory(&m_RangeFirst, sizeof(m_RangeFirst));
-		ZeroMemory(&m_RangeSecond, sizeof(m_RangeSecond));
-	}
+	m_Modified = FALSE;
 }
 
-BOOL CProperty::OnPushChar(UINT /*ch*/)
+BOOL CProperty::OnPushChar(UINT /*ch*/) const
 {
 	return FALSE;
 }
 
 
-// CPropertyTags
+// CPropertyHashtags
 //
 
-CPropertyTags::CPropertyTags(LFVariantData* pData)
-	: CProperty(pData)
+CPropertyHashtags::CPropertyHashtags(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
 {
-	ASSERT(pData);
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeUnicodeArray);
 }
 
-BOOL CPropertyTags::HasButton() const
+BOOL CPropertyHashtags::HasButton() const
 {
 	return TRUE;
 }
 
-void CPropertyTags::OnClickButton()
+void CPropertyHashtags::OnClickButton()
 {
-	LFEditHashtagsDlg dlg(m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreID, p_Parent);
+	LFEditHashtagsDlg dlg(m_Multiple ? _T("") : p_VData->UnicodeArray, p_Parent->m_StoreID, p_Parent);
 	if (dlg.DoModal()==IDOK)
 	{
 		WCHAR Buffer[4096];
 		wcscpy_s(Buffer, 4096, dlg.m_Hashtags);
 		LFSanitizeUnicodeArray(Buffer, 4096);
 
-		wcscpy_s(p_Data->UnicodeArray, 256, Buffer);
-		p_Data->IsNull = FALSE;
+		wcsncpy_s(p_VData->UnicodeArray, 256, Buffer, _TRUNCATE);
+		p_VData->IsNull = FALSE;
 
 		NotifyOwner();
 	}
 }
 
 
+// CPropertyIATA
+//
+
+CPropertyIATA::CPropertyIATA(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
+{
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeIATACode);
+
+	p_VDataLocationName = p_VDataLocationGPS = NULL;
+}
+
+CMFCMaskedEdit* CPropertyIATA::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+{
+	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, pParentWnd, hFont);
+
+	pWndEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
+
+	return pWndEdit;
+}
+
+BOOL CPropertyIATA::HasButton() const
+{
+	return TRUE;
+}
+
+void CPropertyIATA::OnSetString(CString& Value) const
+{
+	// Prepare new string
+	Value.Trim();
+
+	if ((Value.GetLength()!=0) && (Value.GetLength()!=3))
+		return;
+
+	// Get old airport
+	LFAirport* pAirportOld = NULL;
+	if (!m_Multiple)
+		LFIATAGetAirportByCode(p_VData->IATACode, pAirportOld);
+
+	// Set new airport
+	LFVariantDataFromString(*p_VData, Value);
+
+	// Try to find the airport, and replace location name and coordinates with data from airport database
+	SHORT Attr2 = -1;
+	SHORT Attr3 = -1;
+
+	LFAirport* pAirportNew = NULL;
+	if (LFIATAGetAirportByCode(p_VData->IATACode, pAirportNew) && !m_Multiple)
+	{
+		// Location name
+		if (p_VDataLocationName)
+		{
+			BOOL OverwriteLocationName = LFIsNullVariantData(*p_VDataLocationName);
+
+			if (pAirportOld)
+			{
+				WCHAR tmpStr[256];
+				MultiByteToWideChar(CP_ACP, 0, pAirportOld->Name, -1, tmpStr, 256);
+
+				OverwriteLocationName |= (wcscmp(p_VDataLocationName->UnicodeString, tmpStr)==0);
+			}
+
+			if (OverwriteLocationName)
+				Attr2 = OnSetLocationName(pAirportNew);
+		}
+
+		// GPS location
+		if (p_VDataLocationGPS)
+		{
+			BOOL OverwriteLocationGPS = LFIsNullVariantData(*p_VDataLocationGPS);
+
+			if (pAirportOld)
+				OverwriteLocationGPS |= (p_VDataLocationGPS->GeoCoordinates.Latitude==pAirportOld->Location.Latitude) && (p_VDataLocationGPS->GeoCoordinates.Longitude==pAirportOld->Location.Longitude);
+
+			if (OverwriteLocationGPS)
+				Attr3 = OnSetLocationGPS(pAirportNew);
+		}
+	}
+
+	NotifyOwner(Attr2, Attr3);
+}
+
+void CPropertyIATA::OnClickButton()
+{
+	LFSelectPropertyIATADlg dlg(NULL, &p_VData->AnsiString[0], p_VDataLocationName!=NULL, p_VDataLocationGPS!=NULL);
+	if (dlg.DoModal()==IDOK)
+		if (dlg.p_Airport)
+		{
+			// IATA code
+			strcpy_s(p_VData->IATACode, 256, dlg.p_Airport->Code);
+			p_VData->IsNull = FALSE;
+
+			// Other attributes
+			const SHORT Attr2 = dlg.m_OverwriteName ? OnSetLocationName(dlg.p_Airport) : -1;
+			const SHORT Attr3 = dlg.m_OverwriteGPS ? OnSetLocationGPS(dlg.p_Airport) : -1;
+
+			NotifyOwner(Attr2, Attr3);
+		}
+}
+
+void CPropertyIATA::SetAdditionalVData(LFVariantData* pVDataLocationName, LFVariantData* pVDataLocationGPS)
+{
+	if ((p_VDataLocationName=pVDataLocationName)!=NULL)
+		ASSERT(LFGetApp()->m_Attributes[p_VDataLocationName->Attr].AttrProperties.Type==LFTypeUnicodeString);
+
+	if ((p_VDataLocationGPS=pVDataLocationGPS)!=NULL)
+		ASSERT(LFGetApp()->m_Attributes[p_VDataLocationGPS->Attr].AttrProperties.Type==LFTypeGeoCoordinates);
+}
+
+SHORT CPropertyIATA::OnSetLocationName(LFAirport* pAirport) const
+{
+	ASSERT(pAirport);
+
+	if (p_VDataLocationName)
+	{
+		MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, p_VDataLocationName->UnicodeString, 256);
+		p_VDataLocationName->IsNull = FALSE;
+
+		return (SHORT)p_VDataLocationName->Attr;
+	}
+
+	return -1;
+}
+
+SHORT CPropertyIATA::OnSetLocationGPS(LFAirport* pAirport) const
+{
+	ASSERT(pAirport);
+
+	if (p_VDataLocationGPS)
+	{
+		p_VDataLocationGPS->GeoCoordinates = pAirport->Location;
+		p_VDataLocationGPS->IsNull = FALSE;
+
+		return (SHORT)p_VDataLocationGPS->Attr;
+	}
+
+	return -1;
+}
+
 // CPropertyRating
 //
 
-CPropertyRating::CPropertyRating(LFVariantData* pData)
-	: CProperty(pData)
+CPropertyRating::CPropertyRating(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
 {
-	ASSERT(pData);
-	ASSERT(pData->Type==LFTypeRating);
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeRating);
 }
 
 INT CPropertyRating::GetMinWidth() const
@@ -306,13 +452,13 @@ INT CPropertyRating::GetMinWidth() const
 void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
 {
 	// Rating bitmap
-	const UCHAR Rating = m_Multiple ? m_ShowRange ? m_RangeSecond.Rating : 0 : p_Data->Rating;
+	const UCHAR Rating = m_Multiple ? m_ShowRange ? p_VDataRange->Rating : 0 : p_VData->Rating;
 	ASSERT(Rating<=LFMaxRating);
 
 	CDC dcMem;
 	dcMem.CreateCompatibleDC(&dc);
 
-	HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(p_Data->Attr==LFAttrPriority ? LFGetApp()->hPriorityBitmaps[Rating] : LFGetApp()->hRatingBitmaps[Rating]);
+	HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(p_VData->Attr==LFAttrPriority ? LFGetApp()->hPriorityBitmaps[Rating] : LFGetApp()->hRatingBitmaps[Rating]);
 
 	dc.AlphaBlend(lpRect->left+6, (lpRect->top+lpRect->bottom-RATINGBITMAPHEIGHT)/2-1, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
 
@@ -334,7 +480,7 @@ BOOL CPropertyRating::WantsChars() const
 	return TRUE;
 }
 
-BOOL CPropertyRating::OnClickValue(INT x)
+BOOL CPropertyRating::OnClickValue(INT x) const
 {
 	if ((x>=0) && (x<RATINGBITMAPWIDTH+6))
 		if ((x<6) || ((x-6)%18<16))
@@ -343,9 +489,9 @@ BOOL CPropertyRating::OnClickValue(INT x)
 	return FALSE;
 }
 
-BOOL CPropertyRating::OnPushChar(UINT nChar)
+BOOL CPropertyRating::OnPushChar(UINT nChar) const
 {
-	INT Rating = m_Multiple ? 0 : p_Data->Rating;
+	INT Rating = m_Multiple ? 0 : p_VData->Rating;
 
 	switch (nChar)
 	{
@@ -383,17 +529,57 @@ BOOL CPropertyRating::OnPushChar(UINT nChar)
 	return TRUE;
 }
 
-void CPropertyRating::OnSetRating(UCHAR Rating)
+void CPropertyRating::OnSetRating(UCHAR Rating) const
 {
 	assert(Rating<=LFMaxRating);
 
-	if (p_Data->Rating!=Rating)
+	if (p_VData->Rating!=Rating)
 	{
-		p_Data->Rating = Rating;
-		p_Data->IsNull = FALSE;
+		p_VData->Rating = Rating;
+		p_VData->IsNull = FALSE;
 
 		NotifyOwner();
 	}
+}
+
+
+// CPropertyNumber
+//
+
+CPropertyNumber::CPropertyNumber(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
+{
+	ASSERT(pVData);
+	ASSERT((pVData->Type==LFTypeUINT) || (pVData->Type==LFTypeDuration) || (pVData->Type==LFTypeYear));
+}
+
+CMFCMaskedEdit* CPropertyNumber::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+{
+	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, pParentWnd, hFont);
+
+	pWndEdit->SetValidChars(_T("0123456789"));
+
+	return pWndEdit;
+}
+
+
+// CPropertySize
+//
+
+CPropertySize::CPropertySize(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
+{
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeSize);
+}
+
+CMFCMaskedEdit* CPropertySize::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+{
+	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, pParentWnd, hFont);
+
+	pWndEdit->SetValidChars(_T("0123456789 KkMmGgBb"));
+
+	return pWndEdit;
 }
 
 
@@ -404,11 +590,11 @@ void CPropertyRating::OnSetRating(UCHAR Rating)
 
 CIcons CPropertyColor::m_ColorDots;
 
-CPropertyColor::CPropertyColor(LFVariantData* pData)
-	: CProperty(pData)
+CPropertyColor::CPropertyColor(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
 {
-	ASSERT(pData);
-	ASSERT(pData->Type==LFTypeColor);
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeColor);
 
 	LFGetApp()->LoadColorDots(m_ColorDots, LFGetApp()->m_DialogFont);
 }
@@ -427,7 +613,7 @@ void CPropertyColor::DrawValue(CDC& dc, LPCRECT lpRect) const
 
 	for (UINT a=1; a<LFItemColorCount; a++)
 	{
-		const BOOL Enabled = (p_Data->ColorSet & (1 << a));
+		const BOOL Enabled = (p_VData->ColorSet & (1 << a));
 
 		m_ColorDots.Draw(dc, x, y, Enabled ? a-1 : 2, FALSE, !Enabled);
 		x += Size+GUTTER;
@@ -443,7 +629,7 @@ HCURSOR CPropertyColor::SetCursor(INT x) const
 
 BOOL CPropertyColor::CanDelete() const
 {
-	return (p_Data->ColorSet>1);
+	return (p_VData->ColorSet>1);
 }
 
 BOOL CPropertyColor::WantsChars() const
@@ -451,7 +637,7 @@ BOOL CPropertyColor::WantsChars() const
 	return TRUE;
 }
 
-BOOL CPropertyColor::OnClickValue(INT x)
+BOOL CPropertyColor::OnClickValue(INT x) const
 {
 	const INT Size = m_ColorDots.GetIconSize();
 
@@ -462,7 +648,7 @@ BOOL CPropertyColor::OnClickValue(INT x)
 	return FALSE;
 }
 
-BOOL CPropertyColor::OnPushChar(UINT nChar)
+BOOL CPropertyColor::OnPushChar(UINT nChar) const
 {
 	if ((nChar>=L'0') && (nChar<=L'7'))
 		OnSetColor((BYTE)(nChar-L'0'));
@@ -470,178 +656,53 @@ BOOL CPropertyColor::OnPushChar(UINT nChar)
 	return TRUE;
 }
 
-void CPropertyColor::OnSetColor(BYTE Color)
+void CPropertyColor::OnSetColor(BYTE Color) const
 {
 	assert(Color<LFItemColorCount);
 
-	if (p_Data->Color!=Color)
+	if (p_VData->Color!=Color)
 	{
-		p_Data->Color = Color;
-		p_Data->ColorSet = (1 << Color);
-		p_Data->IsNull = FALSE;
+		p_VData->Color = Color;
+		p_VData->ColorSet = (1 << Color);
+		p_VData->IsNull = FALSE;
 
 		NotifyOwner();
 	}
 }
 
 
-// CPropertyIATA
+// CPropertyGeoCoordinates
 //
 
-CPropertyIATA::CPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS)
-	: CProperty(pData)
+CPropertyGeoCoordinates::CPropertyGeoCoordinates(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
 {
-	ASSERT(pData);
-	ASSERT(pData->Type==LFTypeIATACode);
-
-	if ((p_LocationName=pLocationName)!=NULL)
-		ASSERT(LFGetApp()->m_Attributes[p_LocationName->Attr].AttrProperties.Type==LFTypeUnicodeString);
-
-	if ((p_LocationGPS=pLocationGPS)!=NULL)
-		ASSERT(LFGetApp()->m_Attributes[p_LocationGPS->Attr].AttrProperties.Type==LFTypeGeoCoordinates);
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeGeoCoordinates);
 }
 
-CString CPropertyIATA::GetValidChars() const
-{
-	return _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-}
-
-BOOL CPropertyIATA::HasButton() const
+BOOL CPropertyGeoCoordinates::HasButton() const
 {
 	return TRUE;
 }
 
-void CPropertyIATA::OnSetString(CString& Value) const
-{
-	LFAirport* pAirportOld = NULL;
-	if (!m_Multiple)
-		LFIATAGetAirportByCode(p_Data->IATAString, &pAirportOld);
-
-	// Prepare new string
-	Value.Trim();
-
-	if ((Value.GetLength()!=0) && (Value.GetLength()!=3))
-		return;
-
-	LFVariantDataFromString(*p_Data, Value);
-
-	// Old string
-	WCHAR tmpStr[256];
-	ToString(tmpStr, 256);
-
-	// Try to find the airport, and replace location name and coordinates with data from airport database
-	SHORT Attr2 = -1;
-	SHORT Attr3 = -1;
-
-	LFAirport* pAirportNew = NULL;
-	if (LFIATAGetAirportByCode(p_Data->IATAString, &pAirportNew) && !m_Multiple)
-	{
-		// Location name
-		if (p_LocationName)
-		{
-			BOOL SetLocationName = LFIsNullVariantData(*p_LocationName);
-			if (pAirportOld)
-			{
-				MultiByteToWideChar(CP_ACP, 0, pAirportOld->Name, -1, tmpStr, 256);
-				SetLocationName |= (wcscmp(p_LocationName->UnicodeString, tmpStr)==0);
-			}
-
-			if (SetLocationName)
-			{
-				Attr2 = (SHORT)p_LocationName->Attr;
-
-				MultiByteToWideChar(CP_ACP, 0, pAirportNew->Name, -1, p_LocationName->UnicodeString, 256);
-				p_LocationName->IsNull = FALSE;
-			}
-		}
-
-		// GPS location
-		if (p_LocationGPS)
-		{
-			BOOL SetLocationGPS = LFIsNullVariantData(*p_LocationGPS);
-			if (pAirportOld)
-				SetLocationGPS |= (p_LocationGPS->GeoCoordinates.Latitude==pAirportOld->Location.Latitude) && (p_LocationGPS->GeoCoordinates.Longitude==pAirportOld->Location.Longitude);
-
-			if (SetLocationGPS)
-			{
-				Attr3 = (SHORT)p_LocationGPS->Attr;
-
-				p_LocationGPS->GeoCoordinates = pAirportNew->Location;
-				p_LocationGPS->IsNull = FALSE;
-			}
-		}
-	}
-
-	NotifyOwner(Attr2, Attr3);
-}
-
-void CPropertyIATA::OnClickButton()
-{
-	LFSelectPropertyIATADlg dlg(NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
-	if (dlg.DoModal()==IDOK)
-		if (dlg.p_Airport)
-		{
-			// IATA code
-			strcpy_s(p_Data->IATAString, 256, dlg.p_Airport->Code);
-			p_Data->IsNull = FALSE;
-
-			// Location name
-			SHORT Attr2 = -1;
-			if (p_LocationName && dlg.m_OverwriteName)
-			{
-				Attr2 = (SHORT)p_LocationName->Attr;
-
-				MultiByteToWideChar(CP_ACP, 0, dlg.p_Airport->Name, -1, p_LocationName->UnicodeString, 256);
-				p_LocationName->IsNull = FALSE;
-			}
-
-			// GPS location
-			SHORT Attr3 = -1;
-			if (p_LocationGPS && dlg.m_OverwriteGPS)
-			{
-				Attr3 = (SHORT)p_LocationGPS->Attr;
-
-				p_LocationGPS->GeoCoordinates = dlg.p_Airport->Location;
-				p_LocationGPS->IsNull = FALSE;
-			}
-
-			NotifyOwner(Attr2, Attr3);
-		}
-}
-
-
-// CPropertyGPS
-//
-
-CPropertyGPS::CPropertyGPS(LFVariantData* pData)
-	: CProperty(pData)
-{
-	ASSERT(pData);
-	ASSERT(pData->Type==LFTypeGeoCoordinates);
-}
-
-BOOL CPropertyGPS::HasButton() const
-{
-	return TRUE;
-}
-
-HCURSOR CPropertyGPS::SetCursor(INT /*x*/) const
+HCURSOR CPropertyGeoCoordinates::SetCursor(INT /*x*/) const
 {
 	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
 }
 
-BOOL CPropertyGPS::OnClickValue(INT /*x*/)
+BOOL CPropertyGeoCoordinates::OnClickValue(INT /*x*/) const
 {
 	return FALSE;
 }
 
-void CPropertyGPS::OnClickButton()
+void CPropertyGeoCoordinates::OnClickButton()
 {
-	LFSelectLocationGPSDlg dlg(p_Data->GeoCoordinates, p_Parent);
+	LFSelectLocationGPSDlg dlg(p_VData->GeoCoordinates, p_Parent);
 	if (dlg.DoModal()==IDOK)
 	{
-		p_Data->GeoCoordinates = dlg.m_Location;
-		p_Data->IsNull = FALSE;
+		p_VData->GeoCoordinates = dlg.m_Location;
+		p_VData->IsNull = FALSE;
 
 		NotifyOwner();
 	}
@@ -651,11 +712,11 @@ void CPropertyGPS::OnClickButton()
 // CPropertyTime
 //
 
-CPropertyTime::CPropertyTime(LFVariantData* pData)
-	: CProperty(pData)
+CPropertyTime::CPropertyTime(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
 {
-	ASSERT(pData);
-	ASSERT(pData->Type==LFTypeTime);
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeTime);
 }
 
 BOOL CPropertyTime::HasButton() const
@@ -668,81 +729,47 @@ HCURSOR CPropertyTime::SetCursor(INT /*x*/) const
 	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
 }
 
-BOOL CPropertyTime::OnClickValue(INT /*x*/)
+BOOL CPropertyTime::OnClickValue(INT /*x*/) const
 {
 	return FALSE;
 }
 
 void CPropertyTime::OnClickButton()
 {
-	LFEditTimeDlg dlg(p_Data, p_Parent);
+	LFEditTimeDlg dlg(p_VData, p_Parent);
 	if (dlg.DoModal()==IDOK)
 		NotifyOwner();
-}
-
-
-// CPropertyNumber
-//
-
-CPropertyNumber::CPropertyNumber(LFVariantData* pData)
-	: CProperty(pData)
-{
-	ASSERT(pData);
-}
-
-CString CPropertyNumber::GetValidChars() const
-{
-	return _T("0123456789");
-}
-
-
-// CPropertySize
-//
-
-CPropertySize::CPropertySize(LFVariantData* pData)
-	: CProperty(pData)
-{
-	ASSERT(pData);
-	ASSERT(pData->Type==LFTypeSize);
-}
-
-CString CPropertySize::GetValidChars() const
-{
-	return _T("0123456789 KkMmGgBb");
 }
 
 
 // CPropertyDuration
 //
 
-CPropertyDuration::CPropertyDuration(LFVariantData* pData)
-	: CPropertyNumber(pData)
+CPropertyDuration::CPropertyDuration(LFVariantData* pData, CPropertyHolder* pParent)
+	: CPropertyNumber(pData, pParent)
 {
 }
 
-void CPropertyDuration::SetEditMask(CMFCMaskedEdit *pWndEdit) const
+CMFCMaskedEdit* CPropertyDuration::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
 {
-	ASSERT(pWndEdit);
+	CMFCMaskedEdit* pWndEdit = CPropertyNumber::CreateEditControl(rect, pParentWnd, hFont);
 
 	pWndEdit->EnableMask(_T("DD DD DD"), _T("__:__:__"), _T('0'), _T("0123456789"));
 	pWndEdit->EnableGetMaskedCharsOnly(FALSE);
 	pWndEdit->SetWindowText(_T("00:00:00"));
+
+	return pWndEdit;
 }
 
 
 // CPropertyGenre
 //
 
-CPropertyGenre::CPropertyGenre(LFVariantData* pData)
-	: CProperty(pData)
+CPropertyGenre::CPropertyGenre(LFVariantData* pVData, CPropertyHolder* pParent)
+	: CProperty(pVData, pParent)
 {
-	ASSERT(pData);
-	ASSERT(pData->Type==LFTypeGenre);
-}
-
-CString CPropertyGenre::GetValidChars() const
-{
-	return _T("0123456789");
+	ASSERT(pVData);
+	ASSERT(pVData->Type==LFTypeGenre);
 }
 
 BOOL CPropertyGenre::HasButton() const
@@ -750,18 +777,18 @@ BOOL CPropertyGenre::HasButton() const
 	return TRUE;
 }
 
-BOOL CPropertyGenre::OnClickValue(INT /*x*/)
+BOOL CPropertyGenre::OnClickValue(INT /*x*/) const
 {
 	return FALSE;
 }
 
 void CPropertyGenre::OnClickButton()
 {
-	LFEditGenreDlg dlg(m_Multiple ? 0 : p_Data->UINT32, p_Parent->m_StoreID, p_Parent);
+	LFEditGenreDlg dlg(m_Multiple ? 0 : p_VData->Genre, p_Parent->m_StoreID, p_Parent);
 	if (dlg.DoModal()==IDOK)
 	{
-		p_Data->UINT32 = dlg.GetSelectedGenre();
-		p_Data->IsNull = FALSE;
+		p_VData->UINT32 = dlg.GetSelectedGenre();
+		p_VData->IsNull = FALSE;
 
 		NotifyOwner();
 	}
@@ -803,20 +830,13 @@ CInspectorGrid::CInspectorGrid()
 			AfxThrowResourceException();
 	}
 
-	m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
+	m_SortAlphabetic = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
-	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
-	m_HotItem = m_SelectedItem = m_EditItem = -1;
-	m_HotPart = NOPART;
-	p_WndEdit = NULL;
-}
-
-CInspectorGrid::~CInspectorGrid()
-{
-	DestroyEdit();
-
-	delete[] m_pSortArray;
+	m_pWndEdit = NULL;
+	m_VScrollMax = m_VScrollPos = m_IconSize = m_Context = 0;
+	m_SelectedItem = m_EditItem = -1;
+	m_HoverPart = NOPART;
 }
 
 BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader)
@@ -862,7 +882,7 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 	switch (pMsg->message)
 	{
 	case WM_KEYDOWN:
-		if (p_WndEdit)
+		if (m_pWndEdit)
 			switch (pMsg->wParam)
 			{
 			case VK_EXECUTE:
@@ -879,220 +899,217 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
-		if (p_WndEdit)
+		if (m_pWndEdit)
 			return TRUE;
 
-		break;
-
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
 		break;
 	}
 
 	return CPropertyHolder::PreTranslateMessage(pMsg);
 }
 
-void CInspectorGrid::AddProperty(CProperty* pProperty, UINT Category, LPCWSTR Name, BOOL Editable)
+void CInspectorGrid::SetPropertyName(Property& Prop, LPCWSTR pszName, CDC& dc)
 {
-	pProperty->SetParent(this);
+	ASSERT(pszName);
 
-	Property prop;
-	prop.pProperty = pProperty;
-	prop.Category = Category;
-	wcscpy_s(prop.Name, 256, Name);
-	prop.Visible = FALSE;
-	prop.Editable = Editable;
-	prop.Top = prop.Bottom = prop.LabelWidth = -1;
+	// Set property name
+	wcscpy_s(Prop.Name, LFAttributeNameSize, pszName);
 
-	WCHAR tmpName[256];
-	wcscpy_s(tmpName, 256, Name);
-	wcscat_s(tmpName, 256, L":");
+	// Update label width
+	CGdiObject* pOldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
+	Prop.LabelWidth = dc.GetTextExtent(CString(pszName)+_T(":")).cx;
+	dc.SelectObject(pOldFont);
+}
 
+void CInspectorGrid::AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT Category, BOOL Editable, BOOL Visible)
+{
+	ASSERT(pVData);
+	ASSERT(pszName);
+
+	// Property structure
+	Property Prop;
+	Prop.pProperty = CreateProperty(pVData);
+	Prop.Category = Category;
+	Prop.Editable = Editable;
+	Prop.Visible = Visible;
+	Prop.Top = Prop.Bottom = -1;
+
+	// Set property name
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
 
-	CGdiObject* pOldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
-	prop.LabelWidth = dc.GetTextExtent(tmpName).cx;
-	dc.SelectObject(pOldFont);
+	SetPropertyName(Prop, pszName, dc);
 
-	m_Properties.AddItem(prop);
-
-	MakeSortArrayDirty();
-
-	DestroyEdit();
+	// Add property to grid
+	m_Properties.AddItem(Prop);
 }
 
-CProperty* CInspectorGrid::AddAttributeProperty(LFVariantData* pData)
+void CInspectorGrid::AddAttributeProperties(LFVariantData* pVDataArray, SIZE_T ItemSize)
 {
-	ASSERT(pData);
-	ASSERT(pData->Attr<LFAttributeCount);
+	ASSERT(pVDataArray);
 
-	CProperty* pProperty = CreateProperty(pData);
+	// For byte granular addressing
+	LPBYTE pVData = (LPBYTE)pVDataArray;
 
-	const LFAttributeDescriptor* pAttribute = &LFGetApp()->m_Attributes[pData->Attr];
-	AddProperty(pProperty, pAttribute->AttrProperties.Category, pAttribute->Name, !pAttribute->AttrProperties.ReadOnly);
-
-	return pProperty;
-}
-
-void CInspectorGrid::AddAttributeProperties(LFVariantData* pDataArray)
-{
-	ASSERT(pDataArray);
-
+	// Iterate attributes
 	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		CProperty* pProperty = AddAttributeProperty(&pDataArray[a]);
+		AddProperty((LFVariantData*)(pVData+a*ItemSize),
+			LFGetApp()->GetAttributeName(a, m_Context),
+			LFGetApp()->m_Attributes[a].AttrProperties.Category,
+			LFGetApp()->IsAttributeEditable(a),
+			LFGetApp()->IsAttributeEditable(a) && (a!=LFAttrFileName) && (a!=LFAttrPriority) && (a!=LFAttrDueTime));
 
-		if (a==LFAttrLocationIATA)
-			((CPropertyIATA*)pProperty)->SetAdditionalData(&pDataArray[LFAttrLocationName], &pDataArray[LFAttrLocationGPS]);
-	}
+	// Add pointers to location name and GPS coordinates to IATA code property
+	((CPropertyIATA*)m_Properties[LFAttrLocationIATA].pProperty)->SetAdditionalVData((LFVariantData*)(pVData+LFAttrLocationName*ItemSize), (LFVariantData*)(pVData+LFAttrLocationGPS*ItemSize));
 }
 
-void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
+void CInspectorGrid::SortProperties()
 {
 	DestroyEdit();
 
-	m_SortAlphabetic = SortAlphabetic;
-	MakeSortArrayDirty();
+	// If neccessary, delete sorting of property items (to be recreated when layout is adjusted)
+	if (m_pSortArray)
+	{
+		delete[] m_pSortArray;
+		m_pSortArray = NULL;
+	}
 
 	AdjustLayout();
 	EnsureVisible(m_SelectedItem);
 }
 
-void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pRangeFirst, const LFVariantData* pRangeSecond)
+void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
 {
-	ASSERT(nID<m_Properties.m_ItemCount);
+	// Set alphabetic mode
+	m_SortAlphabetic = SortAlphabetic;
+
+	SortProperties();
+}
+
+void CInspectorGrid::SetContext(UINT Context)
+{
+	// Set new context
+	m_Context = Context;
+
+	// Update property names
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+
+	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
+	{
+		const UINT Attr = m_Properties[a].pProperty->GetVData()->Attr;
+
+		if (Attr<LFAttributeCount)
+			SetPropertyName(m_Properties[a], LFGetApp()->GetAttributeName(Attr, m_Context), dc);
+	}
+
+	SortProperties();
+}
+
+void CInspectorGrid::UpdatePropertyState(UINT Index, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pVDataRange)
+{
+	ASSERT(Index<m_Properties.m_ItemCount);
 
 	DestroyEdit();
 
-	m_Properties[nID].Editable = Editable;
-	m_Properties[nID].Visible = Visible;
-	m_Properties[nID].pProperty->SetMultiple(Multiple, pRangeFirst, pRangeSecond);
-	m_Properties[nID].pProperty->ResetModified();
+	m_Properties[Index].Editable = Editable;
+	m_Properties[Index].Visible = Visible;
+	m_Properties[Index].pProperty->UpdateState(Multiple, pVDataRange);
 }
 
-CString CInspectorGrid::GetName(UINT nID) const
-{
-	ASSERT(nID<m_Properties.m_ItemCount);
-
-	return m_Properties[nID].Name;
-}
-
-CString CInspectorGrid::GetValue(UINT nID) const
-{
-	ASSERT(nID<m_Properties.m_ItemCount);
-
-	WCHAR tmpStr[256];
-	m_Properties[nID].pProperty->ToString(tmpStr, 256);
-
-	return tmpStr;
-}
-
-RECT CInspectorGrid::GetItemRect(INT Item) const
+RECT CInspectorGrid::GetItemRect(INT Index) const
 {
 	RECT rect = { 0, 0, 0, 0 };
 
-	if ((Item>=0) && (Item<(INT)m_Properties.m_ItemCount))
-		{
-			GetClientRect(&rect);
+	if ((Index>=0) && (Index<(INT)m_Properties.m_ItemCount))
+	{
+		GetClientRect(&rect);
 
-			rect.top = m_Properties[Item].Top-1;
-			rect.bottom = m_Properties[Item].Bottom+1;
-			rect.right -= MARGIN;
+		rect.top = m_Properties[Index].Top-1;
+		rect.bottom = m_Properties[Index].Bottom+1;
+		rect.right -= MARGIN;
 
-			OffsetRect(&rect, 0, -m_VScrollPos);
-		}
+		OffsetRect(&rect, 0, -m_VScrollPos);
+	}
 
 	return rect;
 }
 
-INT CInspectorGrid::HitTest(const CPoint& point, UINT* PartID) const
+UINT CInspectorGrid::PartAtPosition(const CPoint& point, INT Index) const
+{
+	if ((Index>=0) && (Index<(INT)m_Properties.m_ItemCount))
+	{
+		const RECT rect = GetItemRect(Index);
+
+		// Label
+		if (point.x<m_LabelWidth+BORDER)
+			return PARTLABEL;
+
+		const Property* pProp = &m_Properties[Index];
+		CRect rectPart(m_LabelWidth+BORDER, pProp->Top-m_VScrollPos, rect.right+1, pProp->Bottom-m_VScrollPos);
+
+		// Reset button
+		if (pProp->Editable && pProp->pProperty->CanDelete() && (Index!=m_EditItem))
+		{
+			const INT Offs = (m_RowHeight-m_IconSize)/2;
+			CRect rectReset(rectPart.right-m_IconSize-Offs-1, rectPart.top+Offs, rectPart.right-Offs-1, rectPart.top+Offs+m_IconSize);
+
+			if (rectReset.PtInRect(point))
+				return PARTRESET;
+
+			rectPart.right -= m_IconSize+Offs+BORDER+2;
+		}
+		else
+		{
+			rectPart.right -= BORDER;
+		}
+
+		// Button
+		if (pProp->Editable && pProp->pProperty->HasButton() && (Index!=m_EditItem))
+		{
+			CRect rectButton(rectPart);
+			rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
+
+			if (rectButton.PtInRect(point))
+				return PARTBUTTON;
+		}
+
+		// Value
+		return PARTVALUE;
+	}
+
+	return NOPART;
+}
+
+INT CInspectorGrid::ItemAtPosition(CPoint point) const
 {
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
-		RECT rect = GetItemRect(a);
+		const RECT rect = GetItemRect(a);
+
 		if (PtInRect(&rect, point))
-		{
-			if (PartID)
-			{
-				if (point.x<m_LabelWidth+BORDER)
-				{
-					*PartID = PARTLABEL;
-					return a;
-				}
-
-				const Property* pProp = &m_Properties[a];
-				CRect rectPart(m_LabelWidth+BORDER, pProp->Top-m_VScrollPos, rect.right+1, pProp->Bottom-m_VScrollPos);
-
-				if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a!=m_EditItem))
-				{
-					const INT Offs = (m_RowHeight-m_IconSize)/2;
-					CRect rectReset(rectPart.right-m_IconSize-Offs-1, rectPart.top+Offs, rectPart.right-Offs-1, rectPart.top+Offs+m_IconSize);
-
-					if (rectReset.PtInRect(point))
-					{
-						*PartID = PARTRESET;
-						return a;
-					}
-
-					rectPart.right -= m_IconSize+Offs+BORDER+2;
-				}
-				else
-				{
-					rectPart.right -= BORDER;
-				}
-
-				if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a!=m_EditItem))
-				{
-					CRect rectButton(rectPart);
-					rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
-
-					if (rectButton.PtInRect(point))
-					{
-						*PartID = PARTBUTTON;
-						return a;
-					}
-				}
-
-				*PartID = PARTVALUE;
-			}
-
 			return a;
-		}
 	}
-
-	if (PartID)
-		*PartID = NOPART;
 
 	return -1;
 }
 
-void CInspectorGrid::InvalidateItem(INT Item)
+void CInspectorGrid::InvalidateItem(INT Index)
 {
-	RECT rect = GetItemRect(Item);
+	const RECT rect = GetItemRect(Index);
+
 	InvalidateRect(&rect);
 }
 
-void CInspectorGrid::EnsureVisible(INT Item)
+void CInspectorGrid::EnsureVisible(INT Index)
 {
-	if (Item==-1)
+	if (Index==-1)
 		return;
 
 	CRect rect;
 	GetClientRect(rect);
 
-	RECT rectItem = GetItemRect(Item);
+	const RECT rectItem = GetItemRect(Index);
 
 	// Vertikal
 	INT nInc = 0;
@@ -1112,20 +1129,35 @@ void CInspectorGrid::EnsureVisible(INT Item)
 	}
 }
 
-void CInspectorGrid::SelectItem(INT Item)
+void CInspectorGrid::SelectItem(INT Index)
 {
-	if ((Item==m_SelectedItem) || (Item==-1))
+	if ((Index==m_SelectedItem) || (Index==-1))
 		return;
 
-	if (!m_Properties[Item].Visible)
+	if (!m_Properties[Index].Visible)
 		return;
 
 	InvalidateItem(m_SelectedItem);
-	m_SelectedItem = Item;
-	EnsureVisible(Item);
-	InvalidateItem(Item);
+	m_SelectedItem = Index;
+	EnsureVisible(Index);
+	InvalidateItem(Index);
 
 	ReleaseCapture();
+}
+
+void CInspectorGrid::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	if (!m_pWndEdit)
+	{
+		const Property* pProp = &m_Properties[m_HoverItem];
+
+		WCHAR tmpStr[256];
+		pProp->pProperty->ToString(tmpStr, 256);
+
+		LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, (m_HoverItem<LFAttributeCount) ? LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(LFGetApp()->GetAttributeIcon(m_HoverItem, m_Context)-1) : NULL);
+	}
 }
 
 void CInspectorGrid::ResetScrollbars()
@@ -1148,7 +1180,6 @@ void CInspectorGrid::AdjustScrollbars()
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Height();
-	si.nMin = 0;
 	si.nMax = m_ScrollHeight-1;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
@@ -1176,7 +1207,7 @@ void CInspectorGrid::Heap(INT Element, INT Count)
 
 		if (Compare(Element, Index)<0)
 		{
-			INT Temp = m_pSortArray[Element];
+			const INT Temp = m_pSortArray[Element];
 			m_pSortArray[Element] = m_pSortArray[Index];
 			m_pSortArray[Index] = Temp;
 
@@ -1197,9 +1228,11 @@ void CInspectorGrid::CreateSortArray()
 	ASSERT(m_Properties.m_ItemCount);
 	m_pSortArray = new INT[m_Properties.m_ItemCount];
 
+	// Canonical sort
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		m_pSortArray[a] = a;
 
+	// Heapsort with compare function
 	if (m_Properties.m_ItemCount>1)
 	{
 		for (INT a=m_Properties.m_ItemCount/2-1; a>=0; a--)
@@ -1207,7 +1240,7 @@ void CInspectorGrid::CreateSortArray()
 
 		for (INT a=m_Properties.m_ItemCount-1; a>0; a--)
 		{
-			INT Temp = m_pSortArray[0];
+			const INT Temp = m_pSortArray[0];
 			m_pSortArray[0] = m_pSortArray[a];
 			m_pSortArray[a] = Temp;
 
@@ -1221,21 +1254,25 @@ void CInspectorGrid::AdjustLayout()
 	if (!m_Properties.m_ItemCount)
 		return;
 
+	// Sort array
 	CreateSortArray();
 	ASSERT(m_pSortArray);
 
+	// Reset categories
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
+	// Place categories and  properties
 	INT LabelWidth = m_LabelWidth = m_MinWidth = 0;
 	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : MARGIN+1;
-	INT Category = -1;
+	UINT Category = (UINT)-1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
 		Property* pProp = &m_Properties[m_pSortArray[a]];
 
-		if (!m_SortAlphabetic && pProp->Visible && ((INT)pProp->Category!=Category))
+		// Category
+		if (!m_SortAlphabetic && pProp->Visible && (pProp->Category!=Category))
 		{
 			Category = pProp->Category;
 
@@ -1270,6 +1307,10 @@ void CInspectorGrid::AdjustLayout()
 			m_MinWidth = DataWidth;
 	}
 
+	// Bottom margin
+	m_ScrollHeight += MARGIN+1;
+
+	// Minimum width of control
 	LabelWidth += 2*BORDER;
 	m_LabelWidth += 2*BORDER;
 	m_MinWidth += LabelWidth+m_IconSize+(m_RowHeight-m_IconSize)/2+BORDER+4;
@@ -1277,6 +1318,7 @@ void CInspectorGrid::AdjustLayout()
 	if (m_SelectedItem==-1)
 		m_SelectedItem = 0;
 
+	// Select new property when current property is invisible
 	if (!m_Properties[m_SelectedItem].Visible)
 	{
 		m_SelectedItem = -1;
@@ -1305,90 +1347,42 @@ void CInspectorGrid::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClip
 	}
 }
 
-void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
+void CInspectorGrid::ResetProperty(INT Index)
 {
-	if (Attr1!=-1)
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Properties.m_ItemCount);
+
+	if (m_Properties[Index].Editable && (Index!=LFAttrFileName))
 	{
-		m_Properties[Attr1].pProperty->m_Modified = TRUE;
-		m_Properties[Attr1].pProperty->m_Multiple = FALSE;
+		LFClearVariantData(*m_Properties[Index].pProperty->GetVData());
 
-		InvalidateItem(Attr1);
-	}
-
-	if (Attr2!=-1)
-	{
-		m_Properties[Attr2].pProperty->m_Modified = TRUE;
-		m_Properties[Attr2].pProperty->m_Multiple = FALSE;
-
-		InvalidateItem(Attr2);
-	}
-
-	if (Attr3!=-1)
-	{
-		m_Properties[Attr3].pProperty->m_Modified = TRUE;
-		m_Properties[Attr3].pProperty->m_Multiple = FALSE;
-
-		InvalidateItem(Attr3);
-	}
-
-	LFGetApp()->HideTooltip();
-
-	UpdateWindow();
-	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
-}
-
-void CInspectorGrid::ResetProperty(UINT Attr)
-{
-	ASSERT(Attr<m_Properties.m_ItemCount);
-
-	if (m_Properties[Attr].Editable && (Attr!=LFAttrFileName))
-	{
-		LFClearVariantData(*m_Properties[Attr].pProperty->GetData());
-		m_Properties[Attr].pProperty->m_Modified = TRUE;
-
-		NotifyOwner((SHORT)Attr);
+		NotifyOwner((SHORT)Index);
 	}
 }
 
-void CInspectorGrid::EditProperty(UINT Attr)
+void CInspectorGrid::EditProperty(INT Index)
 {
-	ASSERT(Attr<m_Properties.m_ItemCount);
+	ASSERT(Index>=0);
+	ASSERT(Index<(INT)m_Properties.m_ItemCount);
 
 	m_EditItem = -1;
 
-	Property* pProp = &m_Properties[Attr];
+	Property* pProp = &m_Properties[Index];
 	if (pProp->Editable)
 	{
+		// Create edit control
 		if (pProp->pProperty->OnClickValue(-1))
 		{
-			m_EditItem = Attr;
-			InvalidateItem(Attr);
-			EnsureVisible(Attr);
+			EnsureVisible(m_EditItem=Index);
+			InvalidateItem(Index);
 
-			RECT rect = GetItemRect(Attr);
+			RECT rect = GetItemRect(Index);
 			rect.top += 2;
 			rect.bottom -=2;
 			rect.left += m_LabelWidth+BORDER-1;
 
-			p_WndEdit = new CMFCMaskedEdit();
-			p_WndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
-
-			if (!pProp->pProperty->m_Multiple)
-			{
-				WCHAR tmpStr[256];
-				pProp->pProperty->ToString(tmpStr, 256);
-				p_WndEdit->SetWindowText(tmpStr);
-			}
-
-			p_WndEdit->SetValidChars(pProp->pProperty->GetValidChars());
-
-			pProp->pProperty->SetEditMask(p_WndEdit);
-
-			if (Attr<LFAttributeCount)
-				p_WndEdit->SetLimitText((UINT)LFGetApp()->m_Attributes[Attr].AttrProperties.cCharacters);
-
-			p_WndEdit->SetFont(&LFGetApp()->m_DialogBoldFont);
-			p_WndEdit->SetFocus();
+			m_pWndEdit = pProp->pProperty->CreateEditControl(rect, this, LFGetApp()->m_DialogBoldFont);
+			m_pWndEdit->SetFocus();
 
 			return;
 		}
@@ -1398,23 +1392,49 @@ void CInspectorGrid::EditProperty(UINT Attr)
 	}
 }
 
+void CInspectorGrid::ModifyProperty(INT Index)
+{
+	if (Index!=-1)
+	{
+		ASSERT(m_Properties[Index].pProperty->GetVData()->Attr==(UINT)Index);
+
+		m_Properties[Index].pProperty->SetModified();
+		InvalidateItem(Index);
+	}
+}
+
+void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
+{
+	ModifyProperty(Attr1);
+	ModifyProperty(Attr2);
+	ModifyProperty(Attr3);
+
+	HideTooltip();
+
+	UpdateWindow();
+	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
+}
+
 void CInspectorGrid::DestroyEdit(BOOL Accept)
 {
-	if (p_WndEdit)
+	if (m_pWndEdit)
 	{
-		INT Item = m_EditItem;
+		const INT EditItem = m_EditItem;
 
-		CEdit* pWndVictim = p_WndEdit;
-		p_WndEdit = NULL;
+		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
+		CEdit* pVictim = m_pWndEdit;
+		m_pWndEdit = NULL;
 
+		// Get text
 		CString Value;
-		pWndVictim->GetWindowText(Value);
+		pVictim->GetWindowText(Value);
 
-		pWndVictim->DestroyWindow();
-		delete pWndVictim;
+		// Destroy window; this will trigger another DestroyEdit() call!
+		pVictim->DestroyWindow();
+		delete pVictim;
 
-		if ((Accept) && (Item!=-1))
-			m_Properties[Item].pProperty->OnSetString(Value);
+		if (Accept && (EditItem!=-1))
+			m_Properties[EditItem].pProperty->OnSetString(Value);
 	}
 
 	m_EditItem = -1;
@@ -1424,13 +1444,11 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 BEGIN_MESSAGE_MAP(CInspectorGrid, CPropertyHolder)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
@@ -1453,15 +1471,14 @@ INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CInspectorGrid::OnDestroy()
 {
-	CPropertyHolder::OnDestroy();
+	DestroyEdit();
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		delete m_Properties[a].pProperty;
-}
 
-BOOL CInspectorGrid::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
+	delete[] m_pSortArray;
+
+	CPropertyHolder::OnDestroy();
 }
 
 void CInspectorGrid::OnPaint()
@@ -1499,13 +1516,13 @@ void CInspectorGrid::OnPaint()
 		Property* pProp = &m_Properties[a];
 		if (pProp->Visible)
 		{
-			RECT rectProp = GetItemRect(a);
+			const RECT rectProp = GetItemRect(a);
 			BOOL Selected = ((INT)a==m_SelectedItem) && (GetFocus()==this);
 
 			if ((INT)a!=m_EditItem)
 			{
-				DrawListItemBackground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HotItem, Selected, Selected);
-				DrawListItemForeground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HotItem, Selected, Selected);
+				DrawListItemBackground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HoverItem, Selected, Selected);
+				DrawListItemForeground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HoverItem, Selected, Selected);
 			}
 			else
 			{
@@ -1514,37 +1531,40 @@ void CInspectorGrid::OnPaint()
 
 			COLORREF clr = dc.SetTextColor(Selected ? dc.GetTextColor() : pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
 
-			CRect rectLabel(BORDER, pProp->Top-m_VScrollPos, m_LabelWidth-BORDER, pProp->Bottom-m_VScrollPos);
-			dc.DrawText(CString(pProp->Name)+_T(":"), rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+			// Label
+			CRect rectValue(BORDER, pProp->Top-m_VScrollPos, m_LabelWidth-BORDER, pProp->Bottom-m_VScrollPos);
+			dc.DrawText(CString(pProp->Name)+_T(":"), rectValue, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 
-			rectLabel.left = rectLabel.right+2*BORDER;
-			rectLabel.right = rect.Width();
+			rectValue.left = rectValue.right+2*BORDER;
+			rectValue.right = rect.Width();
 
+			// Delete button
 			if (pProp->Editable && pProp->pProperty->CanDelete())
 			{
 				const INT Offs = (m_RowHeight-m_IconSize)/2;
-				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : Selected ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+				DrawIconEx(dc, rectValue.right-m_IconSize-Offs-2, rectValue.top+Offs, ((INT)a==m_HoverItem) && (m_HoverPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : Selected ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 
-				rectLabel.right -= m_IconSize+Offs+BORDER+2;
+				rectValue.right -= m_IconSize+Offs+BORDER+2;
 			}
 			else
 			{
-				rectLabel.right -= BORDER-1;
+				rectValue.right -= BORDER-1;
 			}
 
-			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a==m_HotItem) && ((INT)a!=m_EditItem))
+			// Button
+			if (pProp->Editable && pProp->pProperty->HasButton() && ((INT)a==m_HoverItem) && ((INT)a!=m_EditItem))
 			{
-				CRect rectButton(rectLabel);
+				CRect rectButton(rectValue);
 				rectButton.right -= BORDER;
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
-				rectLabel.right -= rectButton.Width()+2*BORDER;
+				rectValue.right -= rectButton.Width()+2*BORDER;
 
 				if (Themed)
 					rectButton.InflateRect(1, 1);
 
-				const BOOL Pressed = m_PartPressed && (m_HotPart==PARTBUTTON);
+				const BOOL Pressed = m_PartPressed && (m_HoverPart==PARTBUTTON);
 
-				DrawWhiteButtonBackground(dc, g, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON), FALSE, TRUE);
+				DrawWhiteButtonBackground(dc, g, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HoverItem) && (m_HoverPart==PARTBUTTON), FALSE, TRUE);
 
 				if (Pressed)
 					rectButton.OffsetRect(1, 1);
@@ -1552,8 +1572,9 @@ void CInspectorGrid::OnPaint()
 				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 			}
 
+			// Value
 			dc.SetTextColor(clr);
-			pProp->pProperty->DrawValue(dc, rectLabel);
+			pProp->pProperty->DrawValue(dc, rectValue);
 		}
 	}
 
@@ -1578,17 +1599,19 @@ void CInspectorGrid::OnPaint()
 void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 {
 	CPropertyHolder::OnSize(nType, cx, cy);
+
 	AdjustLayout();
 
-	if (p_WndEdit)
+	// Adjust size of edit control
+	if (m_pWndEdit)
 	{
 		CRect rect;
-		p_WndEdit->GetWindowRect(rect);
+		m_pWndEdit->GetWindowRect(rect);
 		ScreenToClient(rect);
 
 		rect.left = m_LabelWidth+BORDER;
 		rect.right = cx-1;
-		p_WndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+		m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 }
 
@@ -1643,14 +1666,14 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		ScrollWindow(0, -nInc);
 		SetScrollPos(SB_VERT, m_VScrollPos);
 
-		if (p_WndEdit)
+		if (m_pWndEdit)
 		{
 			CRect rect;
-			p_WndEdit->GetWindowRect(rect);
+			m_pWndEdit->GetWindowRect(rect);
 			ScreenToClient(rect);
 
 			rect.OffsetRect(0, -nInc);
-			p_WndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+			m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
@@ -1659,85 +1682,30 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 {
-	BOOL Dragging = (GetCapture()==this);
-	UINT Part;
-	INT Item = HitTest(point, &Part);
+	const BOOL Dragging = (GetCapture()==this);
 
-	if (!m_Hover)
+	if (Dragging)
 	{
-		m_Hover = TRUE;
+		const UINT Part = PartAtPosition(point, m_SelectedItem);
 
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((LFGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
-			LFGetApp()->HideTooltip();
-
-	if (!Dragging)
-	{
-		if ((m_HotItem!=Item) || (m_HotPart!=Part))
-		{
-			InvalidateItem(m_HotItem);
-			m_HotItem = Item;
-			m_HotPart = Part;
-			InvalidateItem(m_HotItem);
-		}
-
-		if (nFlags & MK_RBUTTON)
-			SetFocus();
-	}
-	else
-	{
-		BOOL PartPressed = (Item==m_SelectedItem) && (Part==m_HotPart);
+		BOOL PartPressed = (Part==m_HoverPart);
 		if (m_PartPressed!=PartPressed)
 		{
 			m_PartPressed = PartPressed;
 			InvalidateItem(m_SelectedItem);
 		}
 	}
+	else
+	{
+		CFrontstageWnd::OnMouseMove(nFlags, point);
+	}
 }
 
 void CInspectorGrid::OnMouseLeave()
 {
-	LFGetApp()->HideTooltip();
-	InvalidateItem(m_HotItem);
+	m_HoverPart = NOPART;
 
-	m_Hover = FALSE;
-	m_HotItem = -1;
-	m_HotPart = NOPART;
-}
-
-void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if ((m_HotItem!=-1) && !p_WndEdit)
-			if (!LFGetApp()->IsTooltipVisible())
-			{
-				const Property* pProp = &m_Properties[m_HotItem];
-
-				WCHAR tmpStr[256];
-				pProp->pProperty->ToString(tmpStr, 256);
-
-				LFGetApp()->ShowTooltip(this, point, pProp->Name, tmpStr, LFGetApp()->m_CoreImageListExtraLarge.ExtractIcon(LFGetApp()->m_Attributes[m_HotItem].AttrProperties.IconID-1));
-			}
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
+	CFrontstageWnd::OnMouseLeave();
 }
 
 BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
@@ -1755,7 +1723,7 @@ BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)(m_RowHeight+1)*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
-		LFGetApp()->HideTooltip();
+		HideTooltip();
 
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
@@ -1772,19 +1740,72 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
 
-	UINT Part;
-	INT Item = HitTest(point, &Part);
-	if (Item!=-1)
+	const INT Index = ItemAtPosition(point);
+	if (Index!=-1)
 	{
-		SelectItem(Item);
+		SelectItem(Index);
 
+		const UINT Part = PartAtPosition(point, Index);
 		if (Part>=PARTBUTTON)
 		{
-			m_HotPart = Part;
+			m_HoverPart = Part;
 			m_PartPressed = TRUE;
+
 			SetCapture();
+
 			InvalidateItem(m_SelectedItem);
 		}
+	}
+}
+
+void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	const INT Index = ItemAtPosition(point);
+	const UINT Part = PartAtPosition(point, Index);
+
+	if (GetCapture()==this)
+	{
+		m_PartPressed = FALSE;
+		ReleaseCapture();
+		InvalidateItem(Index);
+
+		if ((Index==m_SelectedItem) && (Index!=-1))
+			if (Part==PARTRESET)
+			{
+				BOOL DoReset = (nFlags & MK_CONTROL);
+
+				if (!DoReset)
+					DoReset = (LFMessageBox(this, CString((LPCSTR)IDS_DELETEPROPERTY_MSG), CString((LPCSTR)IDS_DELETEPROPERTY_CAPTION), MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
+
+				if (DoReset)
+					ResetProperty(Index);
+			}
+			else
+				if (Part==PARTBUTTON)
+				{
+					m_Properties[Index].pProperty->OnClickButton();
+				}
+	}
+	else
+		if ((Index==m_SelectedItem) && (Index!=-1) && (Part==PARTVALUE))
+		{
+			const Property* pProp = &m_Properties[Index];
+
+			if (pProp->Editable && pProp->pProperty->OnClickValue(point.x-m_LabelWidth-BORDER))
+				EditProperty(Index);
+		}
+}
+
+void CInspectorGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
+{
+	m_PartPressed = FALSE;
+	ReleaseCapture();
+
+	const INT Index = ItemAtPosition(point);
+	if ((Index!=-1) && (PartAtPosition(point, Index)<=PARTBUTTON))
+	{
+		SelectItem(Index);
+		EditProperty(Index);
 	}
 }
 
@@ -1881,67 +1902,14 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	default:
 		if (m_SelectedItem!=-1)
 		{
-			Property* pProp = &m_Properties[m_SelectedItem];
+			const Property* pProp = &m_Properties[m_SelectedItem];
 
-			if ((pProp->Editable) && (pProp->pProperty->WantsChars()))
+			if (pProp->Editable && pProp->pProperty->WantsChars())
 				if (m_Properties[m_SelectedItem].pProperty->OnPushChar(nChar))
 					break;
 		}
 
 		CPropertyHolder::OnKeyDown(nChar, nRepCnt, nFlags);
-	}
-}
-
-void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	UINT Part;
-	INT Item = HitTest(point, &Part);
-
-	if (GetCapture()==this)
-	{
-		m_PartPressed = FALSE;
-		ReleaseCapture();
-		InvalidateItem(Item);
-
-		if ((Item==m_SelectedItem) && (Item!=-1))
-			if (Part==PARTRESET)
-			{
-				BOOL DoReset = (nFlags & MK_CONTROL);
-
-				if (!DoReset)
-					DoReset = (LFMessageBox(this, CString((LPCSTR)IDS_DELETEPROPERTY_MSG), CString((LPCSTR)IDS_DELETEPROPERTY_CAPTION), MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
-
-				if (DoReset)
-					ResetProperty(Item);
-			}
-			else
-				if (Part==PARTBUTTON)
-				{
-					m_Properties[Item].pProperty->OnClickButton();
-				}
-	}
-	else
-		if ((Item==m_SelectedItem) && (Item!=-1) && (Part==PARTVALUE))
-		{
-			Property* pProp = &m_Properties[Item];
-
-			if (pProp->Editable)
-				if (pProp->pProperty->OnClickValue(point.x-m_LabelWidth-BORDER))
-					EditProperty(Item);
-		}
-}
-
-void CInspectorGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
-{
-	m_PartPressed = FALSE;
-	ReleaseCapture();
-
-	UINT Part;
-	INT Item = HitTest(point, &Part);
-	if ((Item!=-1) && (Part<=PARTBUTTON))
-	{
-		SelectItem(Item);
-		EditProperty(Item);
 	}
 }
 
@@ -1956,16 +1924,15 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Messa
 	GetCursorPos(&point);
 	ScreenToClient(&point);
 
-	UINT Part;
-	INT Item = HitTest(point, &Part);
-
-	if ((Item!=-1) && (Part==PARTVALUE))
+	const INT Index = ItemAtPosition(point);
+	if ((Index!=-1) && (PartAtPosition(point, Index)==PARTVALUE))
 	{
-		Property* pProp = &m_Properties[Item];
+		const Property* pProp = &m_Properties[Index];
 
 		if (pProp->Editable)
 		{
 			SetCursor(pProp->pProperty->SetCursor(point.x-m_LabelWidth-BORDER));
+
 			return TRUE;
 		}
 	}

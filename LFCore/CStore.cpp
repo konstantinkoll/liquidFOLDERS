@@ -168,7 +168,7 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 	BOOL Repaired = FALSE;
 
 	CIndex* pIndex = new CIndex(this, LFIsStoreMounted(p_StoreDescriptor), TRUE, m_AdditionalDataSize);
-	Result = pIndex->MaintenanceAndStatistics(Scheduled, &Repaired, pProgress);
+	Result = pIndex->MaintenanceAndStatistics(Scheduled, Repaired, pProgress);
 	delete pIndex;
 
 	if (Result!=LFOk)
@@ -304,8 +304,8 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWST
 		// Metadata
 		if (pPath)
 		{
-			SetFileContext(&pItemDescriptor->CoreAttributes);
-			SetAttributesFromFindFileData(&pItemDescriptor->CoreAttributes, pPath);
+			SetFileContext(pItemDescriptor->CoreAttributes);
+			SetAttributesFromFindFileData(pItemDescriptor->CoreAttributes, pPath);
 			SetAttributesFromShell(pItemDescriptor, pPath);
 			SetAttributesFromStore(pItemDescriptor);
 		}
@@ -326,7 +326,7 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWST
 	else
 	{
 		// Revert
-		UINT Result = DeleteFile(&pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData);
+		UINT Result = DeleteFile(pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData);
 		if (Result==LFCannotDeleteFile)
 			Result = LFCannotImportFile;
 
@@ -359,7 +359,7 @@ void CStore::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	}
 }
 
-void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3)
+void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
 {
 	assert(m_pIndexMain);
 	assert(pTransactionList);
@@ -426,11 +426,11 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
-	case LFTransactionTypeUpdateContext:
-		m_pIndexMain->UpdateContext(pTransactionList, (BYTE)Parameter);
+	case LFTransactionTypeUpdateUserContext:
+		m_pIndexMain->UpdateUserContext(pTransactionList, (BYTE)Parameter);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateContext(pTransactionList, (BYTE)Parameter);
+			m_pIndexAux->UpdateUserContext(pTransactionList, (BYTE)Parameter);
 
 		break;
 
@@ -517,25 +517,24 @@ UINT CStore::DeleteDirectories()
 	return LFOk;
 }
 
-UINT CStore::GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID /*pStoreData*/, LPWSTR pPath, SIZE_T cCount) const
+UINT CStore::GetFileLocation(const LFCoreAttributes& CoreAttributes, LPCVOID /*pStoreData*/, LPWSTR pPath, SIZE_T cCount) const
 {
-	assert(pCoreAttributes);
 	assert(pPath);
 
 	if (!LFIsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
 	WCHAR Buffer[MAX_PATH];
-	SanitizeFileName(Buffer, MAX_PATH, pCoreAttributes->FileName);
+	SanitizeFileName(Buffer, MAX_PATH, CoreAttributes.FileName);
 
-	GetInternalFilePath(pCoreAttributes, pPath, cCount);
+	GetInternalFilePath(CoreAttributes, pPath, cCount);
 	wcscat_s(pPath, cCount, L"\\");
 	wcsncat_s(pPath, cCount, Buffer, 127);
 
-	if (pCoreAttributes->FileFormat[0])
+	if (CoreAttributes.FileFormat[0])
 	{
 		WCHAR Buffer[LFExtSize];
-		MultiByteToWideChar(CP_ACP, 0, pCoreAttributes->FileFormat, -1, Buffer, LFExtSize);
+		MultiByteToWideChar(CP_ACP, 0, CoreAttributes.FileFormat, -1, Buffer, LFExtSize);
 
 		wcscat_s(pPath, cCount, L".");
 		wcscat_s(pPath, cCount, Buffer);
@@ -574,9 +573,8 @@ UINT CStore::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescripto
 	return LFOk;
 }
 
-UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
+UINT CStore::RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
 {
-	assert(pCoreAttributes);
 	assert(pItemDescriptor);
 
 	if (!LFIsStoreMounted(p_StoreDescriptor))
@@ -586,7 +584,7 @@ UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LF
 		return LFIndexAccessError;
 
 	WCHAR Path1[2*MAX_PATH];
-	GetFileLocation(pCoreAttributes, pStoreData, Path1, 2*MAX_PATH);
+	GetFileLocation(CoreAttributes, pStoreData, Path1, 2*MAX_PATH);
 
 	WCHAR Path2[2*MAX_PATH];
 	GetFileLocation(pItemDescriptor, Path2, 2*MAX_PATH);
@@ -594,10 +592,8 @@ UINT CStore::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LF
 	return FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFCannotRenameFile : LFNoFileBody;
 }
 
-UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
+UINT CStore::DeleteFile(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData)
 {
-	assert(pCoreAttributes);
-
 	if (!LFIsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
@@ -605,7 +601,7 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 		return LFIndexAccessError;
 
 	WCHAR Path[2*MAX_PATH];
-	GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH);
+	GetFileLocation(CoreAttributes, pStoreData, Path, 2*MAX_PATH);
 
 	WCHAR* pChar = wcsrchr(Path, L'\\');
 	if (pChar)
@@ -631,8 +627,10 @@ UINT CStore::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
 
 void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 {
+	assert(pItemDescriptor);
+
 	// Only for media files
-	if ((pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos))
+	if (LFIsMediaFile(pItemDescriptor))
 	{
 		// Buffer
 		WCHAR Name[256];
@@ -688,6 +686,16 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 
 						break;
 					}
+
+					// When the number gets larger than 4 digits, do not recognize
+					// it as it is probably a year number in the file name. We do
+					// not want that as media title!
+					if (pChar-pSeparator>3)
+					{
+						pSeparator = NULL;
+
+						break;
+					}
 				}
 				while (*(++pChar));
 			}
@@ -697,14 +705,14 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 
 		if (pSeparator)
 		{
-			// Artist or roll
+			// Creator or media collection
 			WCHAR Value[256];
 			wcsncpy_s(Value, 256, Name, pSeparator-Name);
 
 			for (LPCWSTR pChar=Value; pChar; pChar++)
 				if (*pChar>=L'A')
 				{
-					const UINT Attr = (pItemDescriptor->CoreAttributes.ContextID>LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrRoll) ? LFAttrRoll : LFAttrArtist;
+					const UINT Attr = (pItemDescriptor->CoreAttributes.SystemContextID>LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection) ? LFAttrMediaCollection : LFAttrCreator;
 					SetAttribute(pItemDescriptor, Attr, Value);
 
 					break;
@@ -718,7 +726,7 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 	}
 }
 
-BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, LPCVOID /*pStoreData*/)
+BOOL CStore::SynchronizeFile(LFCoreAttributes& /*pCoreAttributes*/, LPCVOID /*pStoreData*/)
 {
 	// Always keep file
 	return TRUE;
@@ -728,17 +736,16 @@ BOOL CStore::SynchronizeFile(LFCoreAttributes* /*pCoreAttributes*/, LPCVOID /*pS
 // Aux functions
 //
 
-void CStore::GetInternalFilePath(LFCoreAttributes* pCoreAttributes, LPWSTR pPath, SIZE_T cCount) const
+void CStore::GetInternalFilePath(const LFCoreAttributes& CoreAttributes, LPWSTR pPath, SIZE_T cCount) const
 {
-	assert(pCoreAttributes);
 	assert(pPath);
 	assert(p_StoreDescriptor->DatPath[0]!=L'\0');
 
 	WCHAR Buffer1[3] = L" \\";
-	Buffer1[0] = pCoreAttributes->FileID[0];
+	Buffer1[0] = CoreAttributes.FileID[0];
 
 	WCHAR Buffer2[LFKeySize-1];
-	MultiByteToWideChar(CP_ACP, 0, &pCoreAttributes->FileID[1], -1, Buffer2, LFKeySize-1);
+	MultiByteToWideChar(CP_ACP, 0, &CoreAttributes.FileID[1], -1, Buffer2, LFKeySize-1);
 
 	wcscpy_s(pPath, cCount, L"\\\\?\\");
 	wcscat_s(pPath, cCount, p_StoreDescriptor->DatPath);

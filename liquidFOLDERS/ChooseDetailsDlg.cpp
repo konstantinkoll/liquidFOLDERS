@@ -9,10 +9,10 @@
 // ChooseDetailsDlg
 //
 
-ChooseDetailsDlg::ChooseDetailsDlg(UINT Context, CWnd* pParentWnd)
-	: LFAttributeListDlg(IDD_CHOOSEDETAILS, pParentWnd)
+ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, UINT Context)
+	: LFAttributeListDlg(IDD_CHOOSEDETAILS, pParentWnd, Context)
 {
-	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context=Context];
+	p_ContextViewSettings = &theApp.m_ContextViewSettings[Context];
 }
 
 void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
@@ -34,7 +34,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		{
 			const UINT Attr = (UINT)m_wndAttributes.GetItemData(a);
 
-			if (m_wndAttributes.GetCheck(a) || theApp.m_Attributes[Attr].AttrProperties.AlwaysShow)
+			if (m_wndAttributes.GetCheck(a) || theApp.IsAttributeAlwaysVisible(Attr))
 			{
 				p_ContextViewSettings->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
 				p_ContextViewSettings->ColumnOrder[Index++] = Attr;

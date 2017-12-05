@@ -37,10 +37,10 @@ public:
 protected:
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolveLocations=FALSE, BOOL IncludePIDL=FALSE);
 	void RemoveTransactedItems(LFTransactionList* pTransactionList);
-	void MoveToContext(BYTE Context);
+	void MoveToContext(BYTE UserContextID);
 	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
 	void RecoverFiles(BOOL All=FALSE);
-	BOOL UpdateItems(LFVariantData* pValue1, LFVariantData* pValue2, LFVariantData* pValue3);
+	BOOL UpdateItems(const LFVariantData* pValue1, const LFVariantData* pValue2, const LFVariantData* pValue3);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -102,8 +102,6 @@ protected:
 	afx_msg void OnFileOpenWith();
 	afx_msg void OnFileShowExplorer();
 	afx_msg void OnFileEdit();
-	afx_msg void OnFileMoveToBooks();
-	afx_msg void OnFileMoveToDocuments();
 	afx_msg void OnFileRemember();
 	afx_msg void OnFileRemoveFromClipboard();
 	afx_msg void OnFileMakeTask();
@@ -115,6 +113,8 @@ protected:
 	afx_msg void OnFileTaskDone();
 	afx_msg void OnFileRecover();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnFileMoveToContext(UINT CmdID);
 	DECLARE_MESSAGE_MAP()
 
 	static CIcons m_LargeIcons;

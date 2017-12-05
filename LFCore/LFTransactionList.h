@@ -31,12 +31,12 @@ public:
 	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
 	HGLOBAL CreateDropFiles();
 	HGLOBAL CreateLiquidFiles();
-	void DoTransaction(UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, LFVariantData* pVariantData1=NULL, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
+	void DoTransaction(UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, const LFVariantData* pVariantData1=NULL, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL);
 
 	UINT m_LastError;
 	BOOL m_Modified;
 	BOOL m_Resolved;
 
 private:
-	BOOL SetStoreAttributes(LFVariantData* pVariantData, LPCWSTR* ppStoreName, LPCWSTR* ppStoreComments);
+	BOOL SetStoreAttributes(const LFVariantData* pVData, LPCWSTR* ppStoreName, LPCWSTR* ppStoreComments);
 };

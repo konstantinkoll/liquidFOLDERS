@@ -13,7 +13,7 @@
 class ChooseDetailsDlg : public LFAttributeListDlg
 {
 public:
-	ChooseDetailsDlg(UINT Context, CWnd* pParentWnd=NULL);
+	ChooseDetailsDlg(CWnd* pParentWnd=NULL, UINT Context=LFContextAllFiles);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -27,7 +27,6 @@ protected:
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
 
-	UINT m_Context;
 	LFContextViewSettings* p_ContextViewSettings;
 
 	CExplorerList m_wndAttributes;

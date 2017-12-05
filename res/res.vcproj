@@ -196,7 +196,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Placeholder.ico"
+				RelativePath=".\Folders\FLD_Placeholder_Contact.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Placeholder_Default.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Placeholder_Location.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Placeholder_Note.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Placeholder_Podcast.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Placeholder_TV.ico"
 				>
 			</File>
 			<File
@@ -620,6 +640,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Contexts\Apps_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Apps_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Apps_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Apps_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Apps_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Contexts\Archive_16.png"
 				>
 			</File>
@@ -800,6 +840,46 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Contexts\Movies_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Movies_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Movies_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Movies_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Movies_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Music_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Music_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Music_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Music_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Music_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Contexts\New_16.png"
 				>
 			</File>
@@ -840,6 +920,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Contexts\Podcasts_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Podcasts_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Podcasts_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Podcasts_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\Podcasts_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Contexts\Tasks_16.png"
 				>
 			</File>
@@ -877,6 +977,26 @@
 			</File>
 			<File
 				RelativePath=".\Contexts\Trash_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\TV_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\TV_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\TV_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\TV_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\TV_64.png"
 				>
 			</File>
 			<File
@@ -1181,46 +1301,6 @@
 			</File>
 			<File
 				RelativePath=".\Tasks\MakeTask_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToBooks_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToBooks_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToBooks_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToBooks_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToBooks_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToDocuments_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToDocuments_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToDocuments_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToDocuments_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\MoveToDocuments_64.png"
 				>
 			</File>
 			<File

@@ -95,48 +95,25 @@ LRESULT CExplorerTree::WindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 			m_pContextMenu2->HandleMenuMsg(Message, wParam, lParam);
 			return 0;
 		}
-	}
 
-	return CTreeCtrl::WindowProc(Message, wParam, lParam);
-}
+		break;
 
-BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
 	case WM_KEYDOWN:
-		if ((pMsg->wParam==VK_RETURN) || (pMsg->wParam==VK_ESCAPE))
+		if ((wParam==VK_RETURN) || (wParam==VK_ESCAPE))
 		{
 			CEdit* pEditCtrl = GetEditControl();
 			if (pEditCtrl)
 			{
-				pEditCtrl->SendMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam);
+				pEditCtrl->SendMessage(WM_KEYDOWN, wParam, lParam);
 
 				return TRUE;
 			}
 		}
 
 		break;
-
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-		LFGetApp()->HideTooltip();
-		break;
 	}
 
-	return CTreeCtrl::PreTranslateMessage(pMsg);
+	return CTreeCtrl::WindowProc(Message, wParam, lParam);
 }
 
 CString CExplorerTree::GetItemText(ExplorerTreeItemData* pItem) const
@@ -227,7 +204,7 @@ void CExplorerTree::PopulateTree()
 		Select(hItem, TVGN_CARET);
 	}
 
-	if ((hItem) && (!(GetStyle() & TVS_LINESATROOT)))
+	if (hItem && (!(GetStyle() & TVS_LINESATROOT)))
 		Expand(hItem, TVE_EXPAND);
 }
 
@@ -583,16 +560,71 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 	pDesktop->Release();
 }
 
+INT CExplorerTree::ItemAtPosition(CPoint /*point*/) const
+{
+	return -1;
+}
 
-BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
+CPoint CExplorerTree::PointAtPosition(CPoint /*point*/) const
+{
+	return CPoint(-1, -1);
+}
+
+LPCVOID CExplorerTree::PtrAtPosition(CPoint point) const
+{
+	UINT uFlags;
+	HTREEITEM hItem = HitTest(point, &uFlags);
+
+	return (hItem && (uFlags & TVHT_ONITEM)) ? hItem : NULL;
+}
+
+void CExplorerTree::InvalidateItem(INT /*Index*/)
+{
+	Invalidate();
+}
+
+void CExplorerTree::InvalidatePoint(const CPoint& /*point*/)
+{
+	Invalidate();
+}
+
+void CExplorerTree::InvalidatePtr(LPCVOID /*Ptr*/)
+{
+	Invalidate();
+}
+
+void CExplorerTree::ShowTooltip(const CPoint& point)
+{
+	if (!GetEditControl())
+	{
+		TVITEM tvItem;
+		ZeroMemory(&tvItem, sizeof(tvItem));
+		tvItem.mask = TVIF_PARAM;
+		tvItem.hItem = (HTREEITEM)m_HoverPtr;
+
+		if (!GetItem(&tvItem))
+			return;
+
+		ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
+
+		HICON hIcon = NULL;
+		CString Caption;
+		CString Hint;
+		TooltipDataFromPIDL(pItem->pidlFQ, &LFGetApp()->m_SystemImageListExtraLarge, hIcon, Caption, Hint);
+
+		LFGetApp()->ShowTooltip(this, point, Caption, Hint, hIcon);
+	}
+}
+
+
+IMPLEMENT_TOOLTIP_WHEEL(CExplorerTree, CTreeCtrl)
+
+BEGIN_TOOLTIP_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_DESTROY()
 	ON_WM_NCHITTEST()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_CONTEXTMENU()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
@@ -600,7 +632,7 @@ BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_NOTIFY_REFLECT(TVN_BEGINLABELEDIT, OnBeginLabelEdit)
 	ON_NOTIFY_REFLECT(TVN_ENDLABELEDIT, OnEndLabelEdit)
 	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
-END_MESSAGE_MAP()
+END_TOOLTIP_MAP()
 
 void CExplorerTree::OnDestroy()
 {
@@ -669,9 +701,9 @@ void CExplorerTree::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+void CExplorerTree::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-	if (m_pContextMenu2)
+	if ((pWnd!=this) || m_pContextMenu2)
 		return;
 
 	HTREEITEM hItem = NULL;
@@ -696,8 +728,10 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 		UINT nFlags;
 		hItem = HitTest(pt, &nFlags);
-		if ((!hItem) || (!(nFlags & TVHT_ONITEM)))
+		if (!hItem || (!(nFlags & TVHT_ONITEM)))
 			return;
+
+		SelectItem(hItem);
 	}
 
 	TVITEM tvItem;
@@ -784,89 +818,13 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	pParentFolder->Release();
 }
 
-void CExplorerTree::OnMouseMove(UINT nFlags, CPoint point)
-{
-	UINT uFlags;
-	HTREEITEM hItem = HitTest(point, &uFlags);
-
-	if ((nFlags & MK_RBUTTON) && (hItem) && (uFlags & TVHT_ONITEM))
-	{
-		SetFocus();
-		SelectItem(hItem);
-	}
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((LFGetApp()->IsTooltipVisible()) && ((hItem!=m_HoverItem) || (!(uFlags & TVHT_ONITEM))))
-			LFGetApp()->HideTooltip();
-
-	CTreeCtrl::OnMouseMove(nFlags, point);
-}
-
-void CExplorerTree::OnMouseLeave()
-{
-	LFGetApp()->HideTooltip();
-	m_Hover = FALSE;
-
-	CTreeCtrl::OnMouseLeave();
-}
-
-void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		UINT uFlags;
-		m_HoverItem = HitTest(point, &uFlags);
-		if ((m_HoverItem) && (uFlags & TVHT_ONITEM) && (!GetEditControl()))
-			if (!LFGetApp()->IsTooltipVisible())
-			{
-				TVITEM tvItem;
-				ZeroMemory(&tvItem, sizeof(tvItem));
-				tvItem.mask = TVIF_PARAM;
-				tvItem.hItem = m_HoverItem;
-				if (!GetItem(&tvItem))
-					return;
-
-				ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
-
-				HICON hIcon = NULL;
-				CString Caption;
-				CString Hint;
-				TooltipDataFromPIDL(pItem->pidlFQ, &LFGetApp()->m_SystemImageListExtraLarge, hIcon, Caption, Hint);
-
-				LFGetApp()->ShowTooltip(this, point, Caption, Hint, hIcon);
-			}
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
-}
-
 void CExplorerTree::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
 
 	UINT uFlags;
 	HTREEITEM hItem = HitTest(point, &uFlags);
-	if ((hItem) && (uFlags & TVHT_ONITEM))
+	if (hItem && (uFlags & TVHT_ONITEM))
 		SelectItem(hItem);
 }
 

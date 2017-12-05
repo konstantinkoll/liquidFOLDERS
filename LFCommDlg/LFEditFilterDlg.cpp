@@ -20,17 +20,15 @@ CConditionList::CConditionList()
 
 void CConditionList::ConditionToItem(LFFilterCondition* pFilterCondition, LVITEM& lvi)
 {
-	static UINT puColumns[] = { 1 };
-
-	LFAttributeDescriptor* pAttributeDescriptor = &LFGetApp()->m_Attributes[pFilterCondition->AttrData.Attr];
+	const UINT Attr = pFilterCondition->VData.Attr;
 
 	ZeroMemory(&lvi, sizeof(lvi));
 
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
 	lvi.cColumns = 1;
-	lvi.puColumns = puColumns;
-	lvi.pszText = pAttributeDescriptor->Name;
-	lvi.iImage = pAttributeDescriptor->AttrProperties.IconID-1;
+	lvi.puColumns = &lvi.cColumns;
+	lvi.pszText = (LPWSTR)LFGetApp()->GetAttributeName(Attr);
+	lvi.iImage = LFGetApp()->GetAttributeIcon(Attr)-1;
 }
 
 void CConditionList::FinishItem(INT nItem, LFFilterCondition* pFilterCondition)
@@ -43,7 +41,7 @@ void CConditionList::FinishItem(INT nItem, LFFilterCondition* pFilterCondition)
 	if (pFilterCondition->Compare)
 	{
 		wcscat_s(tmpStr, 512, L" ");
-		LFVariantDataToString(pFilterCondition->AttrData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
+		LFVariantDataToString(pFilterCondition->VData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
 	}
 
 	SetItemText(nItem, 1, tmpStr);
@@ -112,7 +110,7 @@ void LFEditFilterDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_ALLSTORES, m_wndAllStores);
 	DDX_Control(pDX, IDC_THISSTORE, m_wndThisStore);
-	DDX_Control(pDX, IDC_SEARCHTERM, m_wndSearchterm);
+	DDX_Control(pDX, IDC_SEARCHTERM, m_wndSearchTerm);
 	DDX_Control(pDX, IDC_CONDITIONLIST, m_wndConditionList);
 }
 
@@ -123,10 +121,10 @@ LFFilter* LFEditFilterDlg::CreateFilter()
 	pFilter->Options.IsPersistent = TRUE;
 
 	strcpy_s(pFilter->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
-	m_wndSearchterm.GetWindowText(pFilter->Searchterm, 256);
+	m_wndSearchTerm.GetWindowText(pFilter->SearchTerm, 256);
 
 	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
-		pFilter->pConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].AttrData, pFilter->pConditionList);
+		pFilter->pConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].VData, pFilter->pConditionList);
 
 	return pFilter;
 }
@@ -172,7 +170,7 @@ BOOL LFEditFilterDlg::InitDialog()
 	// Filter
 	if (p_Filter)
 	{
-		m_wndSearchterm.SetWindowText(p_Filter->Searchterm);
+		m_wndSearchTerm.SetWindowText(p_Filter->SearchTerm);
 
 		LFFilterCondition* pFilterCondition = p_Filter->pConditionList;
 		while (pFilterCondition)

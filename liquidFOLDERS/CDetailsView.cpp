@@ -74,7 +74,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 	{
 		const UINT Attr = theApp.m_SortedAttributeList[a];
 
-		if (theApp.m_Attributes[Attr].AttrProperties.DefaultPriority==LFMaxAttributePriority)
+		if (theApp.m_Attributes[Attr].AttrProperties.DefaultPriority==LFMinAttributePriority)
 			break;
 
 		if (Attr==LFAttrFileName)
@@ -90,7 +90,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 				// Color
 				DrawColorDots(dc, rectLabel, pItemDescriptor, m_LargeFontHeight, m_LargeColorDots);
 
-				if (!IsEditing() || (Index!=m_EditLabel))
+				if (!IsEditing() || (Index!=m_EditItem))
 				{
 					// Filename
 					CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
@@ -100,6 +100,8 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 
 				rectText.top += m_LargeFontHeight+PADDING/2;
 			}
+
+			SetDarkTextColor(dc, pItemDescriptor, Themed);
 
 			// Comments
 			if (pItemDescriptor->CoreAttributes.Comments[0])
@@ -137,7 +139,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 					}
 
 					// Value
-					COLORREF oldColor = SetGrayText(dc, pItemDescriptor, Themed);
+					COLORREF oldColor = SetLightTextColor(dc, pItemDescriptor, Themed);
 					dc.DrawText(Value, rectLabel, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 					dc.SetTextColor(oldColor);
 

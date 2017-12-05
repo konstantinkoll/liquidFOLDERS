@@ -6,18 +6,25 @@
 #include "LFCommDlg.h"
 
 
-INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
+INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
-	return wcscmp(LFGetApp()->m_Attributes[(INT)lParam1].Name, LFGetApp()->m_Attributes[(INT)lParam2].Name);
+	LPCWSTR* pAttributeNames = (LPCWSTR*)lParamSort;
+	ASSERT(pAttributeNames);
+
+	return wcscmp(pAttributeNames[(INT)lParam1], pAttributeNames[(INT)lParam2]);
 }
 
 
 // LFAttributeListDlg
 //
 
-LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd)
+LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd, UINT Context)
 	: LFDialog(nIDTemplate, pParentWnd)
 {
+	m_Context = Context;
+
+	for (UINT a=0; a<LFAttributeCount; a++)
+		p_AttributeNames[a] = LFGetApp()->GetAttributeName(a, Context);
 }
 
 void LFAttributeListDlg::TestAttribute(UINT /*Attr*/, BOOL& Add, BOOL& Check)
@@ -55,15 +62,13 @@ void LFAttributeListDlg::AddAttribute(CExplorerList* pExplorerList, UINT Attr)
 	if (!Add)
 		return;
 
-	LFAttributeDescriptor* pAttributeDescriptor = &LFGetApp()->m_Attributes[Attr];
-
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
 
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 	lvi.lParam = (LPARAM)Attr;
-	lvi.pszText = pAttributeDescriptor->Name;
-	lvi.iImage = pAttributeDescriptor->AttrProperties.IconID-1;
+	lvi.pszText = (LPWSTR)p_AttributeNames[Attr];
+	lvi.iImage = LFGetApp()->GetAttributeIcon(Attr, m_Context)-1;
 	lvi.iItem = pExplorerList->GetItemCount();
 
 	pExplorerList->SetCheck(pExplorerList->InsertItem(&lvi), Check);
@@ -81,7 +86,7 @@ void LFAttributeListDlg::FinalizeListCtrl(CExplorerList* pExplorerList, INT Focu
 	pExplorerList->SetColumnWidth(0, LVSCW_AUTOSIZE);
 
 	if (Sort)
-		pExplorerList->SortItems(MyCompareProc, 0);
+		pExplorerList->SortItems(MyCompareProc, (DWORD_PTR)p_AttributeNames);
 
 	INT Select = 0;
 	if (Focus!=-1)

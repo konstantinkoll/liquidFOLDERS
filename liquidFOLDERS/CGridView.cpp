@@ -13,8 +13,9 @@
 #define GetItemData(Index)     ((GridItemData*)(m_pItemData+(Index)*m_DataSize))
 
 CGridView::CGridView(SIZE_T DataSize, UINT Flags)
-	: CFileView(DataSize, Flags | FF_ENABLESCROLLING | FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLESHIFTSELECTION)
+	: CFileView(DataSize, Flags | FF_ENABLESCROLLING | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLESHIFTSELECTION)
 {
+	ResetItemCategories();
 }
 
 void CGridView::Arrange(CSize szItem, INT Padding, CSize szGutter, BOOL FullWidth)

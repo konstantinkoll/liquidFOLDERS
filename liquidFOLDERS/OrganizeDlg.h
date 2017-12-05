@@ -12,7 +12,7 @@
 class OrganizeDlg : public LFAttributeListDlg
 {
 public:
-	OrganizeDlg(UINT Context, CWnd* pParentWnd=NULL);
+	OrganizeDlg(CWnd* pParentWnd=NULL, UINT Context=LFContextAllFiles);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -23,7 +23,6 @@ protected:
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	UINT m_Context;
 	LFContextViewSettings* p_ContextViewSettings;
 
 	CExplorerList m_wndSortAttribute;

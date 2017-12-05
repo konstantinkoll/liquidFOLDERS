@@ -87,7 +87,7 @@ LFCORE_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* pTransactionList)
 	return pTransactionList->CreateLiquidFiles();
 }
 
-LFCORE_API void LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3)
+LFCORE_API void LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
 {
 	assert(pTransactionList);
 
@@ -307,30 +307,30 @@ HGLOBAL LFTransactionList::CreateLiquidFiles()
 	return hGlobal;
 }
 
-BOOL LFTransactionList::SetStoreAttributes(LFVariantData* pVariantData, LPCWSTR* ppStoreName, LPCWSTR* ppStoreComments)
+BOOL LFTransactionList::SetStoreAttributes(const LFVariantData* pVData, LPCWSTR* ppStoreName, LPCWSTR* ppStoreComments)
 {
 	assert(ppStoreName);
 	assert(ppStoreComments);
 
-	if (!pVariantData)
+	if (!pVData)
 		return TRUE;
 
-	switch (pVariantData->Attr)
+	switch (pVData->Attr)
 	{
 	case LFAttrFileName:
-		assert(pVariantData->Type==LFTypeUnicodeString);
+		assert(pVData->Type==LFTypeUnicodeString);
 
-		if (pVariantData->IsNull)
+		if (pVData->IsNull)
 			return FALSE;
 
-		*ppStoreName = pVariantData->UnicodeString;
+		*ppStoreName = pVData->UnicodeString;
 
 		return TRUE;
 
 	case LFAttrComments:
-		assert(pVariantData->Type==LFTypeUnicodeString);
+		assert(pVData->Type==LFTypeUnicodeString);
 
-		*ppStoreComments = pVariantData->UnicodeString;
+		*ppStoreComments = pVData->UnicodeString;
 
 		return TRUE;
 
@@ -339,7 +339,7 @@ BOOL LFTransactionList::SetStoreAttributes(LFVariantData* pVariantData, LPCWSTR*
 	}
 }
 
-void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, LFVariantData* pVariantData1, LFVariantData* pVariantData2, LFVariantData* pVariantData3)
+void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
 {
 	// Progress
 	if (pProgress)
@@ -430,7 +430,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	case LFTransactionTypeRecover:
 	case LFTransactionTypeUpdate:
 	case LFTransactionTypeUpdateTask:
-	case LFTransactionTypeUpdateContext:
+	case LFTransactionTypeUpdateUserContext:
 	case LFTransactionTypeDelete:
 		SendLFNotifyMessage(LFMessages.StatisticsChanged);
 

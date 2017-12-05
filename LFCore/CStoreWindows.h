@@ -20,11 +20,11 @@ public:
 
 protected:
 	// Callbacks
-	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
-	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
-	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
+	virtual UINT GetFileLocation(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
+	virtual UINT RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
+	virtual UINT DeleteFile(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData);
 	virtual void SetAttributesFromStore(LFItemDescriptor* pItemDescriptor);
-	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
+	virtual BOOL SynchronizeFile(LFCoreAttributes& CoreAttributes, LPCVOID pStoreData);
 
 private:
 	LFFileImportList* m_pFileImportList;

@@ -3156,7 +3156,7 @@ BEGIN
     CONTROL         "Backup settings",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
     CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
     LTEXT           "Saves the settings of all locations.",IDC_STATIC,43,147,286,8
-    PUSHBUTTON      "Backup &settingsn",IDC_RUNBACKUP,43,158,100,14
+    PUSHBUTTON      "Backup &settings",IDC_RUNBACKUP,43,158,100,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110

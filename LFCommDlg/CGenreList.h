@@ -34,8 +34,6 @@ class CGenreList : public CFrontstageWnd
 public:
 	CGenreList();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void AddCategory(const LFMusicGenre* pMusicGenre);
 	void AddItem(const LFMusicGenre* pMusicGenre, INT Index, UINT FileCount, LPCWSTR pDescription);
@@ -44,23 +42,21 @@ public:
 	void SelectGenre(UINT Genre);
 
 protected:
+	virtual INT ItemAtPosition(CPoint point) const;
+	virtual void InvalidateItem(INT Index);
+	virtual void ShowTooltip(const CPoint& point);
+
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	void AdjustLayout();
 	void SetFocusItem(INT FocusItem);
 	RECT GetItemRect(INT Index) const;
-	INT ItemAtPosition(CPoint point) const;
-	void InvalidateItem(INT Index);
 	void DrawItem(CDC& dc, CRect& rectItem, INT Index, BOOL Themed) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -85,8 +81,6 @@ private:
 	UINT m_RowHeight;
 	UINT m_CountWidth;
 	INT m_FocusItem;
-	INT m_HotItem;
-	BOOL m_Hover;
 };
 
 inline UINT CGenreList::GetSelectedGenre() const

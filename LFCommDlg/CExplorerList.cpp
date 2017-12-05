@@ -15,12 +15,12 @@
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
+	CONSTRUCTOR_TOOLTIP()
+
 	p_ImageList = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 	m_ItemsPerRow = m_ColumnsPerTile = 3;
 	m_ColumnCount = 1;
-	m_Hover = FALSE;
-	m_HoverItem = m_TooltipItem = -1;
 	m_hThemeButton = NULL;
 }
 
@@ -31,33 +31,6 @@ void CExplorerList::PreSubclassWindow()
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	if (!pThreadState->m_pWndInit)
 		Init();
-}
-
-BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CListCtrl::PreTranslateMessage(pMsg);
 }
 
 void CExplorerList::Init()
@@ -237,7 +210,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 	if (IsWindowEnabled())
 	{
-		DrawListItemBackground(dc, rect, Themed, GetFocus()==this, GetHotItem()==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED, tag.Color);
+		DrawListItemBackground(dc, rect, Themed, GetFocus()==this, m_HoverItem==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED, tag.Color);
 	}
 	else
 	{
@@ -414,20 +387,66 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	dc.SelectObject(pOldBitmap);
 }
 
+INT CExplorerList::ItemAtPosition(CPoint point) const
+{
+	LVHITTESTINFO htt;
+	htt.pt = point;
 
-BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
+	return HitTest(&htt);
+}
+
+CPoint CExplorerList::PointAtPosition(CPoint /*point*/) const
+{
+	return CPoint(-1, -1);
+}
+
+LPCVOID CExplorerList::PtrAtPosition(CPoint /*point*/) const
+{
+	return NULL;
+}
+
+void CExplorerList::InvalidateItem(INT /*Index*/)
+{
+	Invalidate();
+}
+
+void CExplorerList::InvalidatePoint(const CPoint& /*point*/)
+{
+	Invalidate();
+}
+
+void CExplorerList::InvalidatePtr(LPCVOID /*Ptr*/)
+{
+	Invalidate();
+}
+
+void CExplorerList::ShowTooltip(const CPoint& point)
+{
+	NM_TOOLTIPDATA tag;
+	ZeroMemory(&tag, sizeof(tag));
+
+	tag.hdr.code = REQUEST_TOOLTIP_DATA;
+	tag.hdr.hwndFrom = m_hWnd;
+	tag.hdr.idFrom = GetDlgCtrlID();
+	tag.Item = m_HoverItem;
+
+	if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
+		LFGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : GetItemText(m_HoverItem, 0), tag.Hint, tag.hIcon, tag.hBitmap);
+}
+
+
+IMPLEMENT_TOOLTIP_WHEEL(CExplorerList, CListCtrl)
+
+BEGIN_TOOLTIP_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_NCHITTEST()
 	ON_WM_THEMECHANGED()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_WINDOWPOSCHANGING()
 	ON_WM_WINDOWPOSCHANGED()
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
-END_MESSAGE_MAP()
+END_TOOLTIP_MAP()
 
 INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -475,84 +494,6 @@ LRESULT CExplorerList::OnThemeChanged()
 	SetWidgetSize();
 
 	return NULL;
-}
-
-void CExplorerList::OnMouseMove(UINT nFlags, CPoint point)
-{
-	LVHITTESTINFO htt;
-	htt.pt = point;
-	INT HoverItem = HitTest(&htt);
-
-	if (HoverItem!=m_HoverItem)
-	{
-		m_HoverItem = HoverItem;
-		Invalidate();
-	}
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		ZeroMemory(&tme, sizeof(tme));
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = GetSafeHwnd();
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((LFGetApp()->IsTooltipVisible()) && (m_HoverItem!=m_TooltipItem))
-			LFGetApp()->HideTooltip();
-
-	CListCtrl::OnMouseMove(nFlags, point);
-}
-
-void CExplorerList::OnMouseLeave()
-{
-	LFGetApp()->HideTooltip();
-	m_Hover = FALSE;
-	m_HoverItem = -1;
-	Invalidate();
-
-	CListCtrl::OnMouseLeave();
-}
-
-void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		LVHITTESTINFO htt;
-		htt.pt = point;
-
-		m_TooltipItem = HitTest(&htt);
-		if (m_TooltipItem!=-1)
-			if (!LFGetApp()->IsTooltipVisible())
-			{
-				NM_TOOLTIPDATA tag;
-				ZeroMemory(&tag, sizeof(tag));
-
-				tag.hdr.code = REQUEST_TOOLTIP_DATA;
-				tag.hdr.hwndFrom = m_hWnd;
-				tag.hdr.idFrom = GetDlgCtrlID();
-				tag.Item = m_TooltipItem;
-
-				if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
-					LFGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : GetItemText(m_TooltipItem, 0), tag.Hint, tag.hIcon, tag.hBitmap);
-			}
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	ZeroMemory(&tme, sizeof(tme));
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = GetSafeHwnd();
-	TrackMouseEvent(&tme);
 }
 
 void CExplorerList::OnWindowPosChanging(WINDOWPOS* lpwndpos)

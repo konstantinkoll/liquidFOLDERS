@@ -60,12 +60,12 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStor
 		{
 			if (pFilterCondition->Compare==LFFilterCompareSubfolder)
 			{
-				const UINT Attr = pFilterCondition->AttrData.Attr;
+				const UINT Attr = pFilterCondition->VData.Attr;
 
-				if ((!LFGetApp()->m_Attributes[Attr].AttrProperties.ReadOnly) && (Attr!=LFAttrFileName))
+				if (LFGetApp()->IsAttributeEditable(Attr) && (Attr!=LFAttrFileName))
 				{
-					ASSERT(m_AttributeValues[Attr].Type==pFilterCondition->AttrData.Type);
-					m_AttributeValues[Attr] = pFilterCondition->AttrData;
+					ASSERT(m_AttributeValues[Attr].Type==pFilterCondition->VData.Type);
+					m_AttributeValues[Attr] = pFilterCondition->VData;
 				}
 			}
 
@@ -143,11 +143,11 @@ BOOL LFItemTemplateDlg::InitDialog()
 	// Inspector
 	m_wndInspectorGrid.SetStore(m_StoreID);
 	m_wndInspectorGrid.AddAttributeProperties(m_AttributeValues);
+
+	// Sort inspector items
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 
-	for (UINT a=0; a<LFAttributeCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !LFGetApp()->m_Attributes[a].AttrProperties.ReadOnly, !LFGetApp()->m_Attributes[a].AttrProperties.ReadOnly && (a!=LFAttrFileName) && (a!=LFAttrPriority) && (a!=LFAttrDueTime));
-
+	// "Skip" button
 	AddBottomRightControl(IDC_SKIP);
 
 	return TRUE;
@@ -264,9 +264,8 @@ LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		{
 			WCHAR Buffer[256];
 			LFTimeToString(Store.CreationTime, Buffer, 256);
-			tmpStr = LFGetApp()->m_Attributes[LFAttrCreationTime].Name;
-			tmpStr += _T(": ");
-			tmpStr += Buffer;
+
+			LFTooltip::AppendAttribute(tmpStr, LFGetApp()->GetAttributeName(LFAttrCreationTime, LFContextStores), Buffer);
 		}
 
 		m_wndHeaderArea.SetHeader(Store.StoreName, tmpStr);

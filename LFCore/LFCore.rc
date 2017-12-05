@@ -54,7 +54,6 @@ IDI_FLD_PURPLE          ICON                    "res\\FLD_Purple.ico"
 IDI_FLD_GRAY            ICON                    "res\\FLD_Gray.ico"
 IDI_FLD_CONTENT         ICON                    "res\\FLD_Content.ico"
 IDI_FLD_DEFAULTGENRE    ICON                    "res\\FLD_DefaultGenre.ico"
-IDI_FLD_PLACEHOLDER     ICON                    "res\\FLD_Placeholder.ico"
 IDI_FLD_ALTERNATIVE     ICON                    "res\\FLD_Alternative.ico"
 IDI_FLD_AMBIENT         ICON                    "res\\FLD_Ambient.ico"
 IDI_FLD_BLUES           ICON                    "res\\FLD_Blues.ico"
@@ -96,6 +95,12 @@ IDI_APP_VSCO            ICON                    "res\\APP_VSCO.ico"
 IDI_APP_YOUTUBE         ICON                    "res\\APP_YouTube.ico"
 IDI_APP_JODEL           ICON                    "res\\APP_Jodel.ico"
 IDI_APP_VIMEO           ICON                    "res\\APP_Vimeo.ico"
+IDI_FLD_PLACEHOLDER_DEFAULT ICON                    "res\\FLD_Placeholder_Default.ico"
+IDI_FLD_PLACEHOLDER_CONTACT ICON                    "res\\FLD_Placeholder_Contact.ico"
+IDI_FLD_PLACEHOLDER_LOCATION ICON                    "res\\FLD_Placeholder_Location.ico"
+IDI_FLD_PLACEHOLDER_NOTE ICON                    "res\\FLD_Placeholder_Note.ico"
+IDI_FLD_PLACEHOLDER_PODCAST ICON                    "res\\FLD_Placeholder_Podcast.ico"
+IDI_FLD_PLACEHOLDER_TV  ICON                    "res\\FLD_Placeholder_TV.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -123,7 +128,7 @@ BEGIN
             VALUE "FileDescription", "liquidFOLDERS"
             VALUE "FileVersion", "3.2.2"
             VALUE "InternalName", "LFCore"
-            VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
@@ -171,51 +176,64 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Auf diesem Computer gespeicherte Dateien"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Netzwerkadresse\nDiese Dateien befinden sich auf anderen Computern oder werden mit ihnen synchronisiert."
-    IDS_ITEMCATEGORY_NIGHT  "Nacht\nBis 6 Uhr"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Allgemein"
+    IDS_ATTRCATEGORY_MEDIA  "Medien"
+    IDS_ATTRCATEGORY_VISUAL "Bilder und Videos"
+    IDS_ATTRCATEGORY_AUDIO  "Audio und Musik"
+    IDS_ATTRCATEGORY_DOCUMENTS "Dokumente und Bücher"
+    IDS_ATTRCATEGORY_MESSAGES "Nachrichten"
     IDS_ATTRCATEGORY_TASKS  "Aufgaben"
     IDS_ATTRCATEGORY_GEOTAGGING "Geodaten"
-    IDS_ATTRCATEGORY_VISUAL "Visuell"
-    IDS_ATTRCATEGORY_PHOTOGRAPHIC "Fotos"
-    IDS_ATTRCATEGORY_AUDIO  "Audio"
-    IDS_ATTRCATEGORY_TIMEBASED "Zeitbasiert"
-    IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographisch"
     IDS_ATTRCATEGORY_INTERNAL "Interner Gebrauch"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CONTEXT_ALLFILES    "Alle Dateien"
-    IDS_CONTEXT_FAVORITES   "Favoriten\nAlle Dateien mit Bewertung"
+    IDS_CONTEXT_FILTERS     "Filter\nBenutzerdefinierte Filter"
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Bilder"
     IDS_CONTEXT_VIDEOS      "Videos"
     IDS_CONTEXT_DOCUMENTS   "Dokumente\nOffice-Dokumente und Webseiten"
     IDS_CONTEXT_CONTACTS    "Kontakte"
     IDS_CONTEXT_MESSAGES    "Nachrichten"
-    IDS_CONTEXT_BOOKS       "Bücher\nDigitale Bücher"
-    IDS_CONTEXT_FONTS       "Schriftarten"
-    IDS_CONTEXT_NEW         "Neue Dateien\nKürzlich hinzugefügte Dateien"
-    IDS_CONTEXT_TASKS       "Aufgaben\nAls Aufgaben markierte Dateien"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_FONTS       "Schriftarten"
+    IDS_CONTEXT_APPS        "Apps\nApps und Desktop-Programme"
+    IDS_CONTEXT_BOOKS       "Bücher\nDigitale Bücher"
+    IDS_CONTEXT_MOVIES      "Filme"
+    IDS_CONTEXT_MUSIC       "Musik"
+    IDS_CONTEXT_PODCASTS    "Podcasts\nAudio und Video"
+    IDS_CONTEXT_TVSHOWS     "TV-Sendungen"
+    IDS_CONTEXT_FAVORITES   "Favoriten\nAlle Dateien mit Bewertung"
+    IDS_CONTEXT_NEW         "Neue Dateien\nKürzlich hinzugefügte Dateien"
+    IDS_CONTEXT_TASKS       "Aufgaben\nAls Aufgaben markierte Dateien"
     IDS_CONTEXT_ARCHIVE     "Archiv\nAusgeblendete Dateien"
     IDS_CONTEXT_TRASH       "Papierkorb\nGelöschte Dateien"
-    IDS_CONTEXT_FILTERS     "Filter\nBenutzerdefinierte Filter"
     IDS_CONTEXT_SEARCH      "Suchergebnis"
     IDS_CONTEXT_STORES      "Speicherorte"
     IDS_CONTEXT_CLIPBOARD   "Zwischenablage"
-    IDS_CONTEXT_SUBFOLDER_DEFAULT "Unterordner"
-    IDS_CONTEXT_SUBFOLDER_DAY "Tag"
-    IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
-    IDS_CONTEXT_SUBFOLDER_ARTIST "Künstler"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
+    IDS_CONTEXT_SUBFOLDER_DEFAULT "Allgemeiner Ordner"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXT_SUBFOLDER_BOOKS "Bücherordner"
+    IDS_CONTEXT_SUBFOLDER_FONTS "Schriftenordner"
+    IDS_CONTEXT_SUBFOLDER_MESSAGES "Nachrichtenordner"
+    IDS_CONTEXT_SUBFOLDER_MOVIES "Filmordner"
+    IDS_CONTEXT_SUBFOLDER_MUSIC "Musikordner"
+    IDS_CONTEXT_SUBFOLDER_PICTURES "Bilderordner"
+    IDS_CONTEXT_SUBFOLDER_PODCASTS "Podcast-Ordner"
+    IDS_CONTEXT_SUBFOLDER_TVSHOWS "TV-Ordner"
+    IDS_CONTEXT_SUBFOLDER_VIDEOS "Video-Ordner"
 END
 
 STRINGTABLE 
@@ -235,6 +253,18 @@ BEGIN
     IDS_HOUR                "%I64u Stunde"
     IDS_HOURS               "%I64u Stunden"
     IDS_ERRORCAPTION        "Fehler"
+    IDS_ALBUM               "Album"
+    IDS_ARTIST              "Künstler"
+    IDS_AUTHOR              "Autor"
+    IDS_EPISODE             "Folge"
+    IDS_PODCAST             "Podcast"
+    IDS_ROLL                "Rolle"
+    IDS_TRACK               "CD-Nummer"
+    IDS_TVSHOW              "Serie"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_RATING1             "Schlecht"
     IDS_RATING2             "Ausreichend"
     IDS_RATING3             "Gut"
@@ -244,14 +274,14 @@ BEGIN
     IDS_PRIORITY2           "Normal"
     IDS_PRIORITY3           "Hoch"
     IDS_PRIORITY4           "Sehr hoch"
-    IDS_PRIORITY5           "Dringend"
-    IDS_SIZE1               "Winzig (< 32 KB)"
-    IDS_SIZE2               "Klein (< 128 KB)"
-    IDS_SIZE3               "Mittel (< 1 MB)"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_PRIORITY5           "Dringend"
+    IDS_SIZE1               "Winzig (< 32 KB)"
+    IDS_SIZE2               "Klein (< 128 KB)"
+    IDS_SIZE3               "Mittel (< 1 MB)"
     IDS_SIZE4               "Groß (< 16 MB)"
     IDS_SIZE5               "Sehr groß (< 128 MB)"
     IDS_SIZE6               "Riesig (128 MB und größer)"
@@ -264,14 +294,14 @@ BEGIN
     IDS_COLOR7              "Grau"
     IDS_DURATION1           "Kürzer als 5 Sekunden"
     IDS_DURATION2           "5-10 Sekunden"
-    IDS_DURATION3           "10-30 Sekunden"
-    IDS_DURATION4           "30-60 Sekunden"
-    IDS_DURATION5           "1-2 Minuten"
-    IDS_DURATION6           "2-3 Minuten"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DURATION3           "10-30 Sekunden"
+    IDS_DURATION4           "30-60 Sekunden"
+    IDS_DURATION5           "1-2 Minuten"
+    IDS_DURATION6           "2-3 Minuten"
     IDS_DURATION7           "3-5 Minuten"
     IDS_DURATION8           "5-15 Minuten"
     IDS_DURATION9           "15-30 Minuten"
@@ -280,6 +310,9 @@ BEGIN
     IDS_DURATION12          "60-90 Minuten"
     IDS_DURATION13          "90-120 Minuten"
     IDS_DURATION14          "Länger als 2 Stunden"
+    IDS_CHANNELS1           "Mono"
+    IDS_CHANNELS2           "Stereo"
+    IDS_CHANNELS3           "Surround Sound"
 END
 
 STRINGTABLE 
@@ -289,15 +322,15 @@ BEGIN
     IDS_ERR_DRIVEWRITEPROTECTED "Der Datenträger ist schreibgeschützt."
     IDS_ERR_SHARINGVIOLATION1 
                             "Der Speicherort wird zur Zeit von einem anderen Gerät blockiert."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ERR_SHARINGVIOLATION2 
                             "Ein Speicherort wird zur Zeit von einem anderen Gerät blockiert."
     IDS_ERR_MEMORY          "Speicherfehler"
     IDS_ERR_ILLEGALQUERY    "Der Filter beschreibt eine ungültige Abfrage."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "Der Speicherort ist ungültig."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ERR_STORENOTFOUND   "Der gewählte Speicherort ist nicht angeschlossen oder nicht vorhanden."
     IDS_ERR_DRIVENOTREADY   "Der Datenträger ist nicht bereit!"
     IDS_ERR_ILLEGALPHYSFOLDER 
@@ -312,14 +345,14 @@ BEGIN
     IDS_ERR_ILLEGALATTRIBUTE 
                             "Eines der gewählten Objekte verfügt nicht über die Eigenschaft."
     IDS_ERR_ILLEGALITEMTYPE "Eines der gewählten Objekte unterstützt diese Operation nicht."
-    IDS_ERR_ILLEGALVALUE    "Eine der Eigenschaften hat einen ungültigen Wert."
-    IDS_ERR_INDEXLOAD       "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
-    IDS_ERR_INDEXREPAIR     "Der Index ist zu stark beschädigt und kann leider nicht repariert werden."
-    IDS_ERR_INDEXACCESS     "Auf den Speicherort kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ERR_ILLEGALVALUE    "Eine der Eigenschaften hat einen ungültigen Wert."
+    IDS_ERR_INDEXLOAD       "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
+    IDS_ERR_INDEXREPAIR     "Der Index ist zu stark beschädigt und kann leider nicht repariert werden."
+    IDS_ERR_INDEXACCESS     "Auf den Speicherort kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
     IDS_ERR_INDEXCREATE     "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt?)."
     IDS_ERR_NOTENOUGHSPACE  "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
     IDS_ERR_FILEWRITEPROTECTED 
@@ -339,10 +372,6 @@ BEGIN
     IDS_ATTR_PRIORITY       "Priorität"
     IDS_ATTR_CREATIONTIME   "Erstellt am"
     IDS_ATTR_FILETIME       "Geändert am"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_ADDTIME        "Hinzugefügt am"
     IDS_ATTR_DUETIME        "Fällig am"
     IDS_ATTR_DONETIME       "Erledigt am"
@@ -355,45 +384,50 @@ BEGIN
     IDS_ATTR_FILEFORMAT     "Dateiformat"
     IDS_ATTR_FILECOUNT      "Dateianzahl"
     IDS_ATTR_FILESIZE       "Größe"
-    IDS_ATTR_LOCATIONNAME   "Ortsname"
-    IDS_ATTR_LOCATIONIATA   "IATA-Code"
-    IDS_ATTR_LOCATIONGPS    "GPS-Koordinaten"
-    IDS_ATTR_URL            "URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_ROLL           "Rolle"
+    IDS_ATTR_LOCATIONNAME   "Ortsname"
+    IDS_ATTR_LOCATIONIATA   "IATA-Code"
+    IDS_ATTR_LOCATIONGPS    "GPS-Koordinaten"
+    IDS_ATTR_URL            "URL"
+    IDS_ATTR_CREATOR        "Künstler oder Autor"
+    IDS_ATTR_MEDIACOLLECTION "Sammlung"
+    IDS_ATTR_SEQUENCEINCOLLECTION "Nummer"
+    IDS_ATTR_TITLE          "Titel"
+    IDS_ATTR_RELEASED       "Erschienen"
+    IDS_ATTR_LENGTH         "Länge"
+    IDS_ATTR_BITRATE        "Bitrate"
+    IDS_ATTR_LANGUAGE       "Sprache"
+    IDS_ATTR_RECORDINGTIME  "Aufgenommen am"
+    IDS_ATTR_RECORDINGEQUIPMENT "Gerät"
+    IDS_ATTR_COPYRIGHT      "Copyright"
     IDS_ATTR_WIDTH          "Breite"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_HEIGHT         "Höhe"
     IDS_ATTR_DIMENSION      "Auflösung"
     IDS_ATTR_ASPECTRATIO    "Seitenverhältnis"
+    IDS_ATTR_FRAMERATE      "Bildrate"
     IDS_ATTR_APPLICATION    "App"
     IDS_ATTR_VIDEOCODEC     "Video-Codec"
     IDS_ATTR_EXPOSURE       "Belichtung"
     IDS_ATTR_FOCUS          "Focus"
     IDS_ATTR_APERTURE       "Blende"
     IDS_ATTR_CHIP           "Chip"
-    IDS_ATTR_ARTIST         "Künstler"
-    IDS_ATTR_ALBUM          "Album"
-    IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Kanäle"
     IDS_ATTR_SAMPLERATE     "Samplerate"
+    IDS_ATTR_AUDIOCODEC     "Audio-Codec"
+    IDS_ATTR_GENRE          "Genre"
+    IDS_ATTR_PAGES          "Seitenzahl"
+    IDS_ATTR_ISBN           "ISBN"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_AUDIOCODEC     "Audio-Codec"
-    IDS_ATTR_DURATION       "Laufzeit"
-    IDS_ATTR_BITRATE        "Bitrate"
-    IDS_ATTR_RECORDINGTIME  "Aufgenommen am"
-    IDS_ATTR_RECORDINGEQUIPMENT "Gerät"
-    IDS_ATTR_AUTHOR         "Autor"
-    IDS_ATTR_COPYRIGHT      "Copyright"
-    IDS_ATTR_TITLE          "Titel"
-    IDS_ATTR_ISBN           "ISBN"
-    IDS_ATTR_LANGUAGE       "Sprache"
-    IDS_ATTR_PAGES          "Seitenzahl"
     IDS_ATTR_SIGNATURE      "Signatur"
     IDS_ATTR_FROM           "Von"
     IDS_ATTR_TO             "An"
@@ -415,14 +449,14 @@ BEGIN
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SRC_INSTAGRAM       "Instagram"
+    IDS_SRC_PINTEREST       "Pinterest"
+    IDS_SRC_SOUNDCLOUD      "SoundCloud"
+    IDS_SRC_TWITTER         "Twitter"
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -436,14 +470,14 @@ BEGIN
     IDS_QSRC_NETHOOD        "Auf Netzwerklaufwerk"
     IDS_QSRC_BOX            "Auf Box"
     IDS_QSRC_DROPBOX        "Auf Dropbox"
-    IDS_QSRC_ICLOUD         "Auf iCloud"
-    IDS_QSRC_ONEDRIVE       "Auf OneDrive"
-    IDS_QSRC_FACEBOOK       "Auf Facebook"
-    IDS_QSRC_FLICKR         "Auf Flickr"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_ICLOUD         "Auf iCloud"
+    IDS_QSRC_ONEDRIVE       "Auf OneDrive"
+    IDS_QSRC_FACEBOOK       "Auf Facebook"
+    IDS_QSRC_FLICKR         "Auf Flickr"
     IDS_QSRC_INSTAGRAM      "Auf Instagram"
     IDS_QSRC_PINTEREST      "Auf Pinterest"
     IDS_QSRC_SOUNDCLOUD     "Auf SoundCloud"
@@ -486,51 +520,64 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Archivos almacenados en este equipo"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Ubicación de red\nEstos archivos residen en otras computadoras o sincronizarse con ellas."
-    IDS_ITEMCATEGORY_NIGHT  "Noche\nHasta 6am"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Básico"
+    IDS_ATTRCATEGORY_MEDIA  "Medios"
+    IDS_ATTRCATEGORY_VISUAL "Fotos y videos"
+    IDS_ATTRCATEGORY_AUDIO  "Audio y música"
+    IDS_ATTRCATEGORY_DOCUMENTS "Documentos y libros"
+    IDS_ATTRCATEGORY_MESSAGES "Mensajes"
     IDS_ATTRCATEGORY_TASKS  "Tareas"
     IDS_ATTRCATEGORY_GEOTAGGING "Geoetiquetado"
-    IDS_ATTRCATEGORY_VISUAL "Visual"
-    IDS_ATTRCATEGORY_PHOTOGRAPHIC "Fotos"
-    IDS_ATTRCATEGORY_AUDIO  "Audio"
-    IDS_ATTRCATEGORY_TIMEBASED "Basados en tiempo"
-    IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliográfico"
     IDS_ATTRCATEGORY_INTERNAL "Uso interno"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CONTEXT_ALLFILES    "Todos los archivos"
-    IDS_CONTEXT_FAVORITES   "Favoritos\nTodos los archivos que están calificados"
+    IDS_CONTEXT_FILTERS     "Filtros\nFiltros definidos por el usuario"
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Fotos"
     IDS_CONTEXT_VIDEOS      "Videos"
     IDS_CONTEXT_DOCUMENTS   "Documentos\nDocumentos de oficina y páginas web"
     IDS_CONTEXT_CONTACTS    "Contactos"
     IDS_CONTEXT_MESSAGES    "Mensajes"
-    IDS_CONTEXT_BOOKS       "Libros\nLibros digitales"
-    IDS_CONTEXT_FONTS       "Fuentes"
-    IDS_CONTEXT_NEW         "Archivos nuevos\nArchivos añadidos recientemente"
-    IDS_CONTEXT_TASKS       "Tareas\nArchivos marcados como tareas"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_FONTS       "Fuentes"
+    IDS_CONTEXT_APPS        "Aplicaciones\nAplicaciones y programas de escritorio"
+    IDS_CONTEXT_BOOKS       "Libros\nLibros digitales"
+    IDS_CONTEXT_MOVIES      "Películas"
+    IDS_CONTEXT_MUSIC       "Música"
+    IDS_CONTEXT_PODCASTS    "Podcasts\nAudio y video"
+    IDS_CONTEXT_TVSHOWS     "Televisión"
+    IDS_CONTEXT_FAVORITES   "Favoritos\nTodos los archivos que están calificados"
+    IDS_CONTEXT_NEW         "Archivos nuevos\nArchivos añadidos recientemente"
+    IDS_CONTEXT_TASKS       "Tareas\nArchivos marcados como tareas"
     IDS_CONTEXT_ARCHIVE     "Archivo\nArchivos ocultos"
     IDS_CONTEXT_TRASH       "Basura\nArchivos eliminados"
-    IDS_CONTEXT_FILTERS     "Filtros\nFiltros definidos por el usuario"
     IDS_CONTEXT_SEARCH      "Resultados de la búsqueda"
     IDS_CONTEXT_STORES      "Ubicaciones"
     IDS_CONTEXT_CLIPBOARD   "Portapapeles"
-    IDS_CONTEXT_SUBFOLDER_DEFAULT "Subcarpeta"
-    IDS_CONTEXT_SUBFOLDER_DAY "Día"
-    IDS_CONTEXT_SUBFOLDER_GENRE "Género"
-    IDS_CONTEXT_SUBFOLDER_ARTIST "Artista"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Álbum"
+    IDS_CONTEXT_SUBFOLDER_DEFAULT "Carpeta general"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXT_SUBFOLDER_BOOKS "Carpeta libros"
+    IDS_CONTEXT_SUBFOLDER_FONTS "Carpeta fuentes"
+    IDS_CONTEXT_SUBFOLDER_MESSAGES "Carpeta mensajes"
+    IDS_CONTEXT_SUBFOLDER_MOVIES "Carpeta películas"
+    IDS_CONTEXT_SUBFOLDER_MUSIC "Carpeta música"
+    IDS_CONTEXT_SUBFOLDER_PICTURES "Carpeta fotos"
+    IDS_CONTEXT_SUBFOLDER_PODCASTS "Carpeta podcasts"
+    IDS_CONTEXT_SUBFOLDER_TVSHOWS "Carpeta TV"
+    IDS_CONTEXT_SUBFOLDER_VIDEOS "Carpeta videos"
 END
 
 STRINGTABLE 
@@ -550,6 +597,18 @@ BEGIN
     IDS_HOUR                "%I64u hora"
     IDS_HOURS               "%I64u horas"
     IDS_ERRORCAPTION        "Error"
+    IDS_ALBUM               "Álbum"
+    IDS_ARTIST              "Artista"
+    IDS_AUTHOR              "Autor"
+    IDS_EPISODE             "Episodio"
+    IDS_PODCAST             "Podcast"
+    IDS_ROLL                "Rollo"
+    IDS_TRACK               "Número"
+    IDS_TVSHOW              "Series"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_RATING1             "Pobre"
     IDS_RATING2             "Aceptable"
     IDS_RATING3             "Bueno"
@@ -559,14 +618,14 @@ BEGIN
     IDS_PRIORITY2           "Medio"
     IDS_PRIORITY3           "Alto"
     IDS_PRIORITY4           "Muy alto"
-    IDS_PRIORITY5           "Urgente"
-    IDS_SIZE1               "Minúsculo (< 32 KB)"
-    IDS_SIZE2               "Chico (< 128 KB)"
-    IDS_SIZE3               "Mediano (< 1 MB)"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_PRIORITY5           "Urgente"
+    IDS_SIZE1               "Minúsculo (< 32 KB)"
+    IDS_SIZE2               "Chico (< 128 KB)"
+    IDS_SIZE3               "Mediano (< 1 MB)"
     IDS_SIZE4               "Grande (< 16 MB)"
     IDS_SIZE5               "Extra grande (< 128 MB)"
     IDS_SIZE6               "Enorme (128 MB y arriba de)"
@@ -579,14 +638,14 @@ BEGIN
     IDS_COLOR7              "Gris"
     IDS_DURATION1           "Menos de 5 segundos"
     IDS_DURATION2           "5-10 segundos"
-    IDS_DURATION3           "10-30 segundos"
-    IDS_DURATION4           "30-60 segundos"
-    IDS_DURATION5           "1-2 minutos"
-    IDS_DURATION6           "2-3 minutos"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DURATION3           "10-30 segundos"
+    IDS_DURATION4           "30-60 segundos"
+    IDS_DURATION5           "1-2 minutos"
+    IDS_DURATION6           "2-3 minutos"
     IDS_DURATION7           "3-5 minutos"
     IDS_DURATION8           "5-15 minuteo"
     IDS_DURATION9           "15-30 minutos"
@@ -595,6 +654,9 @@ BEGIN
     IDS_DURATION12          "60-90 minutos"
     IDS_DURATION13          "90-120 minutos"
     IDS_DURATION14          "Más de 2 horas"
+    IDS_CHANNELS1           "Mono"
+    IDS_CHANNELS2           "Estéreo"
+    IDS_CHANNELS3           "Sonido envolvente"
 END
 
 STRINGTABLE 
@@ -604,15 +666,15 @@ BEGIN
     IDS_ERR_DRIVEWRITEPROTECTED "La unidad está protegida contra escritura."
     IDS_ERR_SHARINGVIOLATION1 
                             "El ubicación está por el momento bloqueado por otro dispositivo."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ERR_SHARINGVIOLATION2 
                             "Un ubicación está por el momento bloqueado por otro dispositivo."
     IDS_ERR_MEMORY          "Error de memoria"
     IDS_ERR_ILLEGALQUERY    "El filtro describe una solicitud ilegal."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "El ubicación es invalidez."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ERR_STORENOTFOUND   "El ubicación seleccionado no está conectado ó no está presente."
     IDS_ERR_DRIVENOTREADY   "La unidad no está lista!"
     IDS_ERR_ILLEGALPHYSFOLDER "La carpeta física no es accessible."
@@ -626,14 +688,14 @@ BEGIN
     IDS_ERR_ILLEGALATTRIBUTE 
                             "Al menos uno de los ítems seleccionados no posee la propiedad."
     IDS_ERR_ILLEGALITEMTYPE "Al menos uno de los ítems seleccionados no respalda esta operación."
-    IDS_ERR_ILLEGALVALUE    "Al menos uno de los valores de propiedad es ilegal."
-    IDS_ERR_INDEXLOAD       "Una tabla índice no puede ser cargada. Por favor ejecute un mantenimiento programado."
-    IDS_ERR_INDEXREPAIR     "El índice del ubicación está dañado y no pudo ser reparado."
-    IDS_ERR_INDEXACCESS     "No se puede acceder al ubicación. Por favor revise los derechos de acceso del directorio del ubicación."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ERR_ILLEGALVALUE    "Al menos uno de los valores de propiedad es ilegal."
+    IDS_ERR_INDEXLOAD       "Una tabla índice no puede ser cargada. Por favor ejecute un mantenimiento programado."
+    IDS_ERR_INDEXREPAIR     "El índice del ubicación está dañado y no pudo ser reparado."
+    IDS_ERR_INDEXACCESS     "No se puede acceder al ubicación. Por favor revise los derechos de acceso del directorio del ubicación."
     IDS_ERR_INDEXCREATE     "El índice del ubicación no puede ser creado (¿disco protegido contra escritura?)."
     IDS_ERR_NOTENOUGHSPACE  "No hay suficiente espacio libre en el disco."
     IDS_ERR_FILEWRITEPROTECTED 
@@ -653,10 +715,6 @@ BEGIN
     IDS_ATTR_PRIORITY       "Prioridad"
     IDS_ATTR_CREATIONTIME   "Creado"
     IDS_ATTR_FILETIME       "Modificado"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_ADDTIME        "Añadido"
     IDS_ATTR_DUETIME        "Tiempo debido"
     IDS_ATTR_DONETIME       "Finalizado"
@@ -669,45 +727,50 @@ BEGIN
     IDS_ATTR_FILEFORMAT     "Formato de archivo"
     IDS_ATTR_FILECOUNT      "Número de archivos"
     IDS_ATTR_FILESIZE       "Tamaño"
-    IDS_ATTR_LOCATIONNAME   "Nombre de ubicación"
-    IDS_ATTR_LOCATIONIATA   "Código de IATA"
-    IDS_ATTR_LOCATIONGPS    "Ubicación GPS"
-    IDS_ATTR_URL            "URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_ROLL           "Rollo"
+    IDS_ATTR_LOCATIONNAME   "Nombre de ubicación"
+    IDS_ATTR_LOCATIONIATA   "Código de IATA"
+    IDS_ATTR_LOCATIONGPS    "Ubicación GPS"
+    IDS_ATTR_URL            "URL"
+    IDS_ATTR_CREATOR        "Artista o autor"
+    IDS_ATTR_MEDIACOLLECTION "Colección"
+    IDS_ATTR_SEQUENCEINCOLLECTION "Número"
+    IDS_ATTR_TITLE          "Título"
+    IDS_ATTR_RELEASED       "Publicado"
+    IDS_ATTR_LENGTH         "Duración"
+    IDS_ATTR_BITRATE        "Tasa de bits"
+    IDS_ATTR_LANGUAGE       "Idioma"
+    IDS_ATTR_RECORDINGTIME  "Tiempo registrado"
+    IDS_ATTR_RECORDINGEQUIPMENT "Equipo"
+    IDS_ATTR_COPYRIGHT      "Derecho de reproducción"
     IDS_ATTR_WIDTH          "Anchura"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_HEIGHT         "Altura"
     IDS_ATTR_DIMENSION      "Dimensión"
     IDS_ATTR_ASPECTRATIO    "Proporción de alto y ancho"
+    IDS_ATTR_FRAMERATE      "Cuadros por segundo"
     IDS_ATTR_APPLICATION    "Aplicación"
     IDS_ATTR_VIDEOCODEC     "Códec de video"
     IDS_ATTR_EXPOSURE       "Exposición"
     IDS_ATTR_FOCUS          "Foco"
     IDS_ATTR_APERTURE       "Apertura"
     IDS_ATTR_CHIP           "Chip"
-    IDS_ATTR_ARTIST         "Artista"
-    IDS_ATTR_ALBUM          "Álbum"
-    IDS_ATTR_GENRE          "Género"
     IDS_ATTR_CHANNELS       "Canales"
     IDS_ATTR_SAMPLERATE     "Nivel de muestra"
+    IDS_ATTR_AUDIOCODEC     "Códec de audio"
+    IDS_ATTR_GENRE          "Género"
+    IDS_ATTR_PAGES          "Página"
+    IDS_ATTR_ISBN           "ISBN"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_AUDIOCODEC     "Códec de audio"
-    IDS_ATTR_DURATION       "Duración"
-    IDS_ATTR_BITRATE        "Tasa de bits"
-    IDS_ATTR_RECORDINGTIME  "Tiempo registrado"
-    IDS_ATTR_RECORDINGEQUIPMENT "Equipo"
-    IDS_ATTR_AUTHOR         "Autor"
-    IDS_ATTR_COPYRIGHT      "Derecho de reproducción"
-    IDS_ATTR_TITLE          "Título"
-    IDS_ATTR_ISBN           "ISBN"
-    IDS_ATTR_LANGUAGE       "Idioma"
-    IDS_ATTR_PAGES          "Página"
     IDS_ATTR_SIGNATURE      "Firma"
     IDS_ATTR_FROM           "De"
     IDS_ATTR_TO             "Para"
@@ -729,14 +792,14 @@ BEGIN
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SRC_INSTAGRAM       "Instagram"
+    IDS_SRC_PINTEREST       "Pinterest"
+    IDS_SRC_SOUNDCLOUD      "SoundCloud"
+    IDS_SRC_TWITTER         "Twitter"
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -750,14 +813,14 @@ BEGIN
     IDS_QSRC_NETHOOD        "En unidad de red"
     IDS_QSRC_BOX            "En Box"
     IDS_QSRC_DROPBOX        "En Dropbox"
-    IDS_QSRC_ICLOUD         "En iCloud"
-    IDS_QSRC_ONEDRIVE       "En OneDrive"
-    IDS_QSRC_FACEBOOK       "En Facebook"
-    IDS_QSRC_FLICKR         "En Flickr"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_ICLOUD         "En iCloud"
+    IDS_QSRC_ONEDRIVE       "En OneDrive"
+    IDS_QSRC_FACEBOOK       "En Facebook"
+    IDS_QSRC_FLICKR         "En Flickr"
     IDS_QSRC_INSTAGRAM      "En Instagram"
     IDS_QSRC_PINTEREST      "En Pinterest"
     IDS_QSRC_SOUNDCLOUD     "En SoundCloud"
@@ -800,51 +863,64 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Fichiers enregistrés sur cet ordinateur"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Emplacement réseau\nCes fichiers se trouvent sur des autres ordinateurs ou être synchronisés avec eux."
-    IDS_ITEMCATEGORY_NIGHT  "Nuit\nJusqu'à 6 heures"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Fondamental"
+    IDS_ATTRCATEGORY_MEDIA  "Médias"
+    IDS_ATTRCATEGORY_VISUAL "Images et vidéos"
+    IDS_ATTRCATEGORY_AUDIO  "Audio et musique"
+    IDS_ATTRCATEGORY_DOCUMENTS "Documents et livres"
+    IDS_ATTRCATEGORY_MESSAGES "Messages"
     IDS_ATTRCATEGORY_TASKS  "Tâches"
     IDS_ATTRCATEGORY_GEOTAGGING "Geodata"
-    IDS_ATTRCATEGORY_VISUAL "Visuel"
-    IDS_ATTRCATEGORY_PHOTOGRAPHIC "Photos"
-    IDS_ATTRCATEGORY_AUDIO  "Audio"
-    IDS_ATTRCATEGORY_TIMEBASED "Basé sur le temps"
-    IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographique"
     IDS_ATTRCATEGORY_INTERNAL "Utilisation interne"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CONTEXT_ALLFILES    "Tous les fichiers"
-    IDS_CONTEXT_FAVORITES   "Favoris\nTous les fichiers qui sont estimés"
+    IDS_CONTEXT_FILTERS     "Filtres\nFiltres définis par l'utilisateur"
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Images"
     IDS_CONTEXT_VIDEOS      "Vidéos"
-    IDS_CONTEXT_DOCUMENTS   "Documents\nDocuments de bureau et pages web"
+    IDS_CONTEXT_DOCUMENTS   "Documents\nDocuments et pages web"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
-    IDS_CONTEXT_BOOKS       "Livres\nLivres digitals"
-    IDS_CONTEXT_FONTS       "Fontes"
-    IDS_CONTEXT_NEW         "Nouveaux fichiers\nFichiers ajoutés récemment"
-    IDS_CONTEXT_TASKS       "Tâches\nFichiers marqués comme tâches"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_FONTS       "Fontes"
+    IDS_CONTEXT_APPS        "Applications\nApplications et programmes du bureau"
+    IDS_CONTEXT_BOOKS       "Livres\nLivres digitals"
+    IDS_CONTEXT_MOVIES      "Films"
+    IDS_CONTEXT_MUSIC       "Musique"
+    IDS_CONTEXT_PODCASTS    "Podcasts\nAudio et vidéo"
+    IDS_CONTEXT_TVSHOWS     "Séries TV"
+    IDS_CONTEXT_FAVORITES   "Favoris\nTous les fichiers qui sont estimés"
+    IDS_CONTEXT_NEW         "Nouveaux fichiers\nFichiers ajoutés récemment"
+    IDS_CONTEXT_TASKS       "Tâches\nFichiers marqués comme tâches"
     IDS_CONTEXT_ARCHIVE     "Archive\nLes fichiers masqués"
     IDS_CONTEXT_TRASH       "Déchets\nLes fichiers marqués pour la radiation finale"
-    IDS_CONTEXT_FILTERS     "Filtres\nFiltres définis par l'utilisateur"
     IDS_CONTEXT_SEARCH      "Résultat de la recherche"
     IDS_CONTEXT_STORES      "Emplacements"
     IDS_CONTEXT_CLIPBOARD   "Presse-papiers"
-    IDS_CONTEXT_SUBFOLDER_DEFAULT "Sous-dossier"
-    IDS_CONTEXT_SUBFOLDER_DAY "Jour"
-    IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
-    IDS_CONTEXT_SUBFOLDER_ARTIST "Artiste"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
+    IDS_CONTEXT_SUBFOLDER_DEFAULT "Dossier général"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXT_SUBFOLDER_BOOKS "Dossier des livres"
+    IDS_CONTEXT_SUBFOLDER_FONTS "Dossier des fontes"
+    IDS_CONTEXT_SUBFOLDER_MESSAGES "Dossier des messages"
+    IDS_CONTEXT_SUBFOLDER_MOVIES "Dossier des films"
+    IDS_CONTEXT_SUBFOLDER_MUSIC "Dossier musique"
+    IDS_CONTEXT_SUBFOLDER_PICTURES "Dossier des images"
+    IDS_CONTEXT_SUBFOLDER_PODCASTS "Dossier des podcast"
+    IDS_CONTEXT_SUBFOLDER_TVSHOWS "Dossier TV"
+    IDS_CONTEXT_SUBFOLDER_VIDEOS "Dossier vidéo"
 END
 
 STRINGTABLE 
@@ -864,6 +940,18 @@ BEGIN
     IDS_HOUR                "%I64u heure"
     IDS_HOURS               "%I64u heures"
     IDS_ERRORCAPTION        "Erreur"
+    IDS_ALBUM               "Album"
+    IDS_ARTIST              "Artiste"
+    IDS_AUTHOR              "Auteur"
+    IDS_EPISODE             "Épisode"
+    IDS_PODCAST             "Podcast"
+    IDS_ROLL                "Rouleau"
+    IDS_TRACK               "Numéro"
+    IDS_TVSHOW              "Séries"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_RATING1             "Mauvais"
     IDS_RATING2             "Suffisant"
     IDS_RATING3             "Bien"
@@ -873,14 +961,14 @@ BEGIN
     IDS_PRIORITY2           "Normal"
     IDS_PRIORITY3           "Haut"
     IDS_PRIORITY4           "Très jaut"
-    IDS_PRIORITY5           "Urgent"
-    IDS_SIZE1               "Minuscule (< 32 KB)"
-    IDS_SIZE2               "Petit (< 128 KB)"
-    IDS_SIZE3               "Moyen (< 1 MB)"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_PRIORITY5           "Urgent"
+    IDS_SIZE1               "Minuscule (< 32 KB)"
+    IDS_SIZE2               "Petit (< 128 KB)"
+    IDS_SIZE3               "Moyen (< 1 MB)"
     IDS_SIZE4               "Grand (< 16 MB)"
     IDS_SIZE5               "Énorme (< 128 MB)"
     IDS_SIZE6               "Immense (et supérieur à 128 MB)"
@@ -893,14 +981,14 @@ BEGIN
     IDS_COLOR7              "Gris"
     IDS_DURATION1           "Moins de 5 secondes"
     IDS_DURATION2           "5-10 secondes"
-    IDS_DURATION3           "10-30 secondes"
-    IDS_DURATION4           "30-60 secondes"
-    IDS_DURATION5           "1-2 minutes"
-    IDS_DURATION6           "2-3 minutes"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DURATION3           "10-30 secondes"
+    IDS_DURATION4           "30-60 secondes"
+    IDS_DURATION5           "1-2 minutes"
+    IDS_DURATION6           "2-3 minutes"
     IDS_DURATION7           "3-5 minutes"
     IDS_DURATION8           "5-15 minutes"
     IDS_DURATION9           "15-30 minutes"
@@ -909,6 +997,9 @@ BEGIN
     IDS_DURATION12          "60-90 minutes"
     IDS_DURATION13          "90-120 minutes"
     IDS_DURATION14          "Plus de 2 heures"
+    IDS_CHANNELS1           "Mono"
+    IDS_CHANNELS2           "Stéréo"
+    IDS_CHANNELS3           "Son surround"
 END
 
 STRINGTABLE 
@@ -919,15 +1010,15 @@ BEGIN
                             "Le support de données est protégé en écriture."
     IDS_ERR_SHARINGVIOLATION1 
                             "L'emplacement est bloqué à présent par un autre appareil."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ERR_SHARINGVIOLATION2 
                             "Un emplacement est bloqué à présent par un autre appareil."
     IDS_ERR_MEMORY          "Faute de mémoire"
     IDS_ERR_ILLEGALQUERY    "Le filtre décrit une interrogation non valable."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "L'emplacement est invalidité."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ERR_STORENOTFOUND   "L'emplacement choisi n'est pas relié ou pas disponible."
     IDS_ERR_DRIVENOTREADY   "Le support de données n'est pas prêt!"
     IDS_ERR_ILLEGALPHYSFOLDER "Il n'y a pas accès au dossier physique."
@@ -941,14 +1032,14 @@ BEGIN
     IDS_ERR_ILLEGALATTRIBUTE 
                             "L'un des éléments choisis ne dispose pas cette qualité."
     IDS_ERR_ILLEGALITEMTYPE "L'un des éléments choisis ne soutient pas cette opération."
-    IDS_ERR_ILLEGALVALUE    "L'une des qualités a une valeur non valable."
-    IDS_ERR_INDEXLOAD       "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
-    IDS_ERR_INDEXREPAIR     "L'index est endommagé et ne peut pas être réparé malheureusement."
-    IDS_ERR_INDEXACCESS     "Il n'ya pas accès à l'emplacement. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ERR_ILLEGALVALUE    "L'une des qualités a une valeur non valable."
+    IDS_ERR_INDEXLOAD       "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
+    IDS_ERR_INDEXREPAIR     "L'index est endommagé et ne peut pas être réparé malheureusement."
+    IDS_ERR_INDEXACCESS     "Il n'ya pas accès à l'emplacement. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
     IDS_ERR_INDEXCREATE     "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture?)."
     IDS_ERR_NOTENOUGHSPACE  "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
     IDS_ERR_FILEWRITEPROTECTED 
@@ -967,12 +1058,8 @@ STRINGTABLE
 BEGIN
     IDS_ATTR_FILENAME       "Nom"
     IDS_ATTR_PRIORITY       "Priorité"
-    IDS_ATTR_CREATIONTIME   "Temp de création"
+    IDS_ATTR_CREATIONTIME   "Crée le"
     IDS_ATTR_FILETIME       "Changé le"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_ADDTIME        "De manière ajoutée le"
     IDS_ATTR_DUETIME        "Dû le"
     IDS_ATTR_DONETIME       "Fini le"
@@ -985,45 +1072,50 @@ BEGIN
     IDS_ATTR_FILEFORMAT     "Format de fichier"
     IDS_ATTR_FILECOUNT      "Nombre de fichier"
     IDS_ATTR_FILESIZE       "Grandeur"
-    IDS_ATTR_LOCATIONNAME   "Nom d'endroit"
-    IDS_ATTR_LOCATIONIATA   "Code d'IATA"
-    IDS_ATTR_LOCATIONGPS    "Coordonnées GPS"
-    IDS_ATTR_URL            "Adresse URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_ROLL           "Rouleau"
+    IDS_ATTR_LOCATIONNAME   "Nom d'endroit"
+    IDS_ATTR_LOCATIONIATA   "Code d'IATA"
+    IDS_ATTR_LOCATIONGPS    "Coordonnées GPS"
+    IDS_ATTR_URL            "Adresse URL"
+    IDS_ATTR_CREATOR        "Artiste our auteur"
+    IDS_ATTR_MEDIACOLLECTION "Collection"
+    IDS_ATTR_SEQUENCEINCOLLECTION "Nombre"
+    IDS_ATTR_TITLE          "Titre"
+    IDS_ATTR_RELEASED       "Publié"
+    IDS_ATTR_LENGTH         "Durée"
+    IDS_ATTR_BITRATE        "Débit binaire"
+    IDS_ATTR_LANGUAGE       "Langue"
+    IDS_ATTR_RECORDINGTIME  "Enregistrée le"
+    IDS_ATTR_RECORDINGEQUIPMENT "Équipement"
+    IDS_ATTR_COPYRIGHT      "Copyright"
     IDS_ATTR_WIDTH          "Latitude"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_HEIGHT         "Altitude"
     IDS_ATTR_DIMENSION      "Dimension"
     IDS_ATTR_ASPECTRATIO    "Rapport largeur"
+    IDS_ATTR_FRAMERATE      "Taux de trame"
     IDS_ATTR_APPLICATION    "Appli"
     IDS_ATTR_VIDEOCODEC     "Codec de vidèo"
     IDS_ATTR_EXPOSURE       "Exposition"
     IDS_ATTR_FOCUS          "Foyer"
     IDS_ATTR_APERTURE       "Ouverture"
     IDS_ATTR_CHIP           "Chip"
-    IDS_ATTR_ARTIST         "Artiste"
-    IDS_ATTR_ALBUM          "Album"
-    IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Canaux"
-    IDS_ATTR_SAMPLERATE     "Vitesse d'exploration"
+    IDS_ATTR_SAMPLERATE     "Taux d'échantillonnage"
+    IDS_ATTR_AUDIOCODEC     "Codec d'audio"
+    IDS_ATTR_GENRE          "Genre"
+    IDS_ATTR_PAGES          "Comte de page"
+    IDS_ATTR_ISBN           "ISBN"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_AUDIOCODEC     "Codec d'audio"
-    IDS_ATTR_DURATION       "Durée"
-    IDS_ATTR_BITRATE        "Débit binaire"
-    IDS_ATTR_RECORDINGTIME  "Temp d'enregistrement"
-    IDS_ATTR_RECORDINGEQUIPMENT "Équipement"
-    IDS_ATTR_AUTHOR         "Auteur"
-    IDS_ATTR_COPYRIGHT      "Copyright"
-    IDS_ATTR_TITLE          "Titre"
-    IDS_ATTR_ISBN           "ISBN"
-    IDS_ATTR_LANGUAGE       "Langue"
-    IDS_ATTR_PAGES          "Comte de page"
     IDS_ATTR_SIGNATURE      "Signature"
     IDS_ATTR_FROM           "De"
     IDS_ATTR_TO             "À"
@@ -1045,14 +1137,14 @@ BEGIN
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SRC_INSTAGRAM       "Instagram"
+    IDS_SRC_PINTEREST       "Pinterest"
+    IDS_SRC_SOUNDCLOUD      "SoundCloud"
+    IDS_SRC_TWITTER         "Twitter"
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -1066,14 +1158,14 @@ BEGIN
     IDS_QSRC_NETHOOD        "Sur lecteur réseau"
     IDS_QSRC_BOX            "Dans Box"
     IDS_QSRC_DROPBOX        "Dans Dropbox"
-    IDS_QSRC_ICLOUD         "Dans iCloud"
-    IDS_QSRC_ONEDRIVE       "Dans OneDrive"
-    IDS_QSRC_FACEBOOK       "Dans Facebook"
-    IDS_QSRC_FLICKR         "Dans Flickr"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_ICLOUD         "Dans iCloud"
+    IDS_QSRC_ONEDRIVE       "Dans OneDrive"
+    IDS_QSRC_FACEBOOK       "Dans Facebook"
+    IDS_QSRC_FLICKR         "Dans Flickr"
     IDS_QSRC_INSTAGRAM      "Dans Instagram"
     IDS_QSRC_PINTEREST      "Dans Pinterest"
     IDS_QSRC_SOUNDCLOUD     "Dans SoundCloud"
@@ -1153,51 +1245,64 @@ BEGIN
     IDS_ITEMCATEGORY_LOCALSTORES "Files stored on this computer"
     IDS_ITEMCATEGORY_REMOTESTORES 
                             "Network location\nThese files are stored on or synchronized with other computers."
-    IDS_ITEMCATEGORY_NIGHT  "Night\nUntil 6am"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ATTRCATEGORY_BASIC  "Basic"
+    IDS_ATTRCATEGORY_MEDIA  "Media"
+    IDS_ATTRCATEGORY_VISUAL "Pictures and videos"
+    IDS_ATTRCATEGORY_AUDIO  "Audio and music"
+    IDS_ATTRCATEGORY_DOCUMENTS "Documents and books"
+    IDS_ATTRCATEGORY_MESSAGES "Messages"
     IDS_ATTRCATEGORY_TASKS  "Tasks"
     IDS_ATTRCATEGORY_GEOTAGGING "Geotagging"
-    IDS_ATTRCATEGORY_VISUAL "Visual"
-    IDS_ATTRCATEGORY_PHOTOGRAPHIC "Photos"
-    IDS_ATTRCATEGORY_AUDIO  "Audio"
-    IDS_ATTRCATEGORY_TIMEBASED "Timebased"
-    IDS_ATTRCATEGORY_BIBLIOGRAPHIC "Bibliographic"
     IDS_ATTRCATEGORY_INTERNAL "Internal use"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CONTEXT_ALLFILES    "All files"
-    IDS_CONTEXT_FAVORITES   "Favorites\nAll files which are rated"
+    IDS_CONTEXT_FILTERS     "Filters\nUser-defined filters"
     IDS_CONTEXT_AUDIO       "Audio"
     IDS_CONTEXT_PICTURES    "Pictures"
     IDS_CONTEXT_VIDEOS      "Videos"
     IDS_CONTEXT_DOCUMENTS   "Documents\nOffice documents and web pages"
     IDS_CONTEXT_CONTACTS    "Contacts"
     IDS_CONTEXT_MESSAGES    "Messages"
-    IDS_CONTEXT_BOOKS       "Books\nElectronic books"
-    IDS_CONTEXT_FONTS       "Fonts"
-    IDS_CONTEXT_NEW         "New files\nRecently added files"
-    IDS_CONTEXT_TASKS       "Tasks\nFiles marked as tasks"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXT_FONTS       "Fonts"
+    IDS_CONTEXT_APPS        "Apps\nApps and desktop software"
+    IDS_CONTEXT_BOOKS       "Books\nDigital books"
+    IDS_CONTEXT_MOVIES      "Movies"
+    IDS_CONTEXT_MUSIC       "Music"
+    IDS_CONTEXT_PODCASTS    "Podcasts\nAudio and video"
+    IDS_CONTEXT_TVSHOWS     "TV Shows"
+    IDS_CONTEXT_FAVORITES   "Favorites\nAll files which are rated"
+    IDS_CONTEXT_NEW         "New files\nRecently added files"
+    IDS_CONTEXT_TASKS       "Tasks\nFiles marked as tasks"
     IDS_CONTEXT_ARCHIVE     "Archive\nHidden files"
     IDS_CONTEXT_TRASH       "Trash\nDeleted files"
-    IDS_CONTEXT_FILTERS     "Filters\nUser-defined filters"
     IDS_CONTEXT_SEARCH      "Search result"
     IDS_CONTEXT_STORES      "Locations"
     IDS_CONTEXT_CLIPBOARD   "Clipboard"
-    IDS_CONTEXT_SUBFOLDER_DEFAULT "Subfolder"
-    IDS_CONTEXT_SUBFOLDER_DAY "Day"
-    IDS_CONTEXT_SUBFOLDER_GENRE "Genre"
-    IDS_CONTEXT_SUBFOLDER_ARTIST "Artist"
-    IDS_CONTEXT_SUBFOLDER_ALBUM "Album"
+    IDS_CONTEXT_SUBFOLDER_DEFAULT "Folder"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXT_SUBFOLDER_BOOKS "Book folder"
+    IDS_CONTEXT_SUBFOLDER_FONTS "Font folder"
+    IDS_CONTEXT_SUBFOLDER_MESSAGES "Message folder"
+    IDS_CONTEXT_SUBFOLDER_MOVIES "Movie folder"
+    IDS_CONTEXT_SUBFOLDER_MUSIC "Music folder"
+    IDS_CONTEXT_SUBFOLDER_PICTURES "Picture folder"
+    IDS_CONTEXT_SUBFOLDER_PODCASTS "Podcast folder"
+    IDS_CONTEXT_SUBFOLDER_TVSHOWS "TV folder"
+    IDS_CONTEXT_SUBFOLDER_VIDEOS "Video folder"
 END
 
 STRINGTABLE 
@@ -1217,6 +1322,18 @@ BEGIN
     IDS_HOUR                "%I64u hour"
     IDS_HOURS               "%I64u hours"
     IDS_ERRORCAPTION        "Error"
+    IDS_ALBUM               "Album"
+    IDS_ARTIST              "Artist"
+    IDS_AUTHOR              "Author"
+    IDS_EPISODE             "Episode"
+    IDS_PODCAST             "Podcast"
+    IDS_ROLL                "Roll"
+    IDS_TRACK               "Track"
+    IDS_TVSHOW              "Show"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_RATING1             "Poor"
     IDS_RATING2             "Fair"
     IDS_RATING3             "Good"
@@ -1226,14 +1343,14 @@ BEGIN
     IDS_PRIORITY2           "Average"
     IDS_PRIORITY3           "High"
     IDS_PRIORITY4           "Very high"
-    IDS_PRIORITY5           "Urgent"
-    IDS_SIZE1               "Tiny (< 32 KB)"
-    IDS_SIZE2               "Small (< 128 KB)"
-    IDS_SIZE3               "Medium (< 1 MB)"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_PRIORITY5           "Urgent"
+    IDS_SIZE1               "Tiny (< 32 KB)"
+    IDS_SIZE2               "Small (< 128 KB)"
+    IDS_SIZE3               "Medium (< 1 MB)"
     IDS_SIZE4               "Large (< 16 MB)"
     IDS_SIZE5               "Very large (< 128 MB)"
     IDS_SIZE6               "Huge (128 MB and above)"
@@ -1246,14 +1363,14 @@ BEGIN
     IDS_COLOR7              "Gray"
     IDS_DURATION1           "Shorter than 5 seconds"
     IDS_DURATION2           "5-10 seconds"
-    IDS_DURATION3           "10-30 seconds"
-    IDS_DURATION4           "30-60 seconds"
-    IDS_DURATION5           "1-2 minutes"
-    IDS_DURATION6           "2-3 minutes"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_DURATION3           "10-30 seconds"
+    IDS_DURATION4           "30-60 seconds"
+    IDS_DURATION5           "1-2 minutes"
+    IDS_DURATION6           "2-3 minutes"
     IDS_DURATION7           "3-5 minutes"
     IDS_DURATION8           "5-15 minutes"
     IDS_DURATION9           "15-30 minutes"
@@ -1262,6 +1379,9 @@ BEGIN
     IDS_DURATION12          "60-90 minutes"
     IDS_DURATION13          "90-120 minutes"
     IDS_DURATION14          "Longer than 2 hours"
+    IDS_CHANNELS1           "Mono"
+    IDS_CHANNELS2           "Stereo"
+    IDS_CHANNELS3           "Surround sound"
 END
 
 STRINGTABLE 
@@ -1271,15 +1391,15 @@ BEGIN
     IDS_ERR_DRIVEWRITEPROTECTED "The drive is write protected."
     IDS_ERR_SHARINGVIOLATION1 
                             "The location is currently blocked by another device."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ERR_SHARINGVIOLATION2 
                             "A location is currently blocked by another device."
     IDS_ERR_MEMORY          "Memory error"
     IDS_ERR_ILLEGALQUERY    "The filter describes an illegal request."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "The location is invalid."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ERR_STORENOTFOUND   "The selected location is not mounted or not present."
     IDS_ERR_DRIVENOTREADY   "The drive is not ready!"
     IDS_ERR_ILLEGALPHYSFOLDER "The physical folder is not accessible."
@@ -1293,14 +1413,14 @@ BEGIN
     IDS_ERR_ILLEGALATTRIBUTE 
                             "At least one of the selected items does not possesss the property."
     IDS_ERR_ILLEGALITEMTYPE "At least one of the selected items does not support this operation."
-    IDS_ERR_ILLEGALVALUE    "At least one of the property values is illegal."
-    IDS_ERR_INDEXLOAD       "An index table cannot be loaded. Please run scheduled maintenance."
-    IDS_ERR_INDEXREPAIR     "The location index is damaged and could not be repaired."
-    IDS_ERR_INDEXACCESS     "The location cannot be accessed. Please check the access rights of the location's directory."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ERR_ILLEGALVALUE    "At least one of the property values is illegal."
+    IDS_ERR_INDEXLOAD       "An index table cannot be loaded. Please run scheduled maintenance."
+    IDS_ERR_INDEXREPAIR     "The location index is damaged and could not be repaired."
+    IDS_ERR_INDEXACCESS     "The location cannot be accessed. Please check the access rights of the location's directory."
     IDS_ERR_INDEXCREATE     "The location index cannot be created (write protected disc?)."
     IDS_ERR_NOTENOUGHSPACE  "There is not enough free disc space."
     IDS_ERR_FILEWRITEPROTECTED 
@@ -1320,10 +1440,6 @@ BEGIN
     IDS_ATTR_PRIORITY       "Priority"
     IDS_ATTR_CREATIONTIME   "Created"
     IDS_ATTR_FILETIME       "Modified"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_ATTR_ADDTIME        "Added"
     IDS_ATTR_DUETIME        "Due"
     IDS_ATTR_DONETIME       "Done"
@@ -1336,45 +1452,50 @@ BEGIN
     IDS_ATTR_FILEFORMAT     "File format"
     IDS_ATTR_FILECOUNT      "File count"
     IDS_ATTR_FILESIZE       "Size"
-    IDS_ATTR_LOCATIONNAME   "Location name"
-    IDS_ATTR_LOCATIONIATA   "IATA code"
-    IDS_ATTR_LOCATIONGPS    "GPS location"
-    IDS_ATTR_URL            "URL"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_ROLL           "Roll"
+    IDS_ATTR_LOCATIONNAME   "Location name"
+    IDS_ATTR_LOCATIONIATA   "IATA code"
+    IDS_ATTR_LOCATIONGPS    "GPS location"
+    IDS_ATTR_URL            "URL"
+    IDS_ATTR_CREATOR        "Artist or author"
+    IDS_ATTR_MEDIACOLLECTION "Collection"
+    IDS_ATTR_SEQUENCEINCOLLECTION "Number"
+    IDS_ATTR_TITLE          "Title"
+    IDS_ATTR_RELEASED       "Released"
+    IDS_ATTR_LENGTH         "Length"
+    IDS_ATTR_BITRATE        "Bitrate"
+    IDS_ATTR_LANGUAGE       "Language"
+    IDS_ATTR_RECORDINGTIME  "Recorded"
+    IDS_ATTR_RECORDINGEQUIPMENT "Equipment"
+    IDS_ATTR_COPYRIGHT      "Copyright"
     IDS_ATTR_WIDTH          "Width"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ATTR_HEIGHT         "Height"
     IDS_ATTR_DIMENSION      "Dimension"
     IDS_ATTR_ASPECTRATIO    "Aspect ratio"
+    IDS_ATTR_FRAMERATE      "Frame rate"
     IDS_ATTR_APPLICATION    "App"
     IDS_ATTR_VIDEOCODEC     "Video codec"
     IDS_ATTR_EXPOSURE       "Exposure"
     IDS_ATTR_FOCUS          "Focus"
     IDS_ATTR_APERTURE       "Aperture"
     IDS_ATTR_CHIP           "Chip"
-    IDS_ATTR_ARTIST         "Artist"
-    IDS_ATTR_ALBUM          "Album"
-    IDS_ATTR_GENRE          "Genre"
     IDS_ATTR_CHANNELS       "Channels"
     IDS_ATTR_SAMPLERATE     "Sample rate"
+    IDS_ATTR_AUDIOCODEC     "Audio codec"
+    IDS_ATTR_GENRE          "Genre"
+    IDS_ATTR_PAGES          "Page count"
+    IDS_ATTR_ISBN           "ISBN"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ATTR_AUDIOCODEC     "Audio codec"
-    IDS_ATTR_DURATION       "Duration"
-    IDS_ATTR_BITRATE        "Bitrate"
-    IDS_ATTR_RECORDINGTIME  "Recorded"
-    IDS_ATTR_RECORDINGEQUIPMENT "Equipment"
-    IDS_ATTR_AUTHOR         "Author"
-    IDS_ATTR_COPYRIGHT      "Copyright"
-    IDS_ATTR_TITLE          "Title"
-    IDS_ATTR_ISBN           "ISBN"
-    IDS_ATTR_LANGUAGE       "Language"
-    IDS_ATTR_PAGES          "Page count"
     IDS_ATTR_SIGNATURE      "Signature"
     IDS_ATTR_FROM           "From"
     IDS_ATTR_TO             "To"
@@ -1396,14 +1517,14 @@ BEGIN
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_FACEBOOK        "Facebook"
     IDS_SRC_FLICKR          "Flickr"
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SRC_INSTAGRAM       "Instagram"
+    IDS_SRC_PINTEREST       "Pinterest"
+    IDS_SRC_SOUNDCLOUD      "SoundCloud"
+    IDS_SRC_TWITTER         "Twitter"
     IDS_SRC_YOUTUBE         "YouTube"
 END
 
@@ -1417,14 +1538,14 @@ BEGIN
     IDS_QSRC_NETHOOD        "On network volume"
     IDS_QSRC_BOX            "On Box"
     IDS_QSRC_DROPBOX        "On Dropbox"
-    IDS_QSRC_ICLOUD         "On iCloud"
-    IDS_QSRC_ONEDRIVE       "On OneDrive"
-    IDS_QSRC_FACEBOOK       "On Facebook"
-    IDS_QSRC_FLICKR         "On Flickr"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_QSRC_ICLOUD         "On iCloud"
+    IDS_QSRC_ONEDRIVE       "On OneDrive"
+    IDS_QSRC_FACEBOOK       "On Facebook"
+    IDS_QSRC_FLICKR         "On Flickr"
     IDS_QSRC_INSTAGRAM      "On Instagram"
     IDS_QSRC_PINTEREST      "On Pinterest"
     IDS_QSRC_SOUNDCLOUD     "On SoundCloud"

@@ -13,7 +13,7 @@
 struct LFContextViewSettings
 {
 	UINT SortBy;
-	BOOL Descending;
+	BOOL SortDescending;
 
 	UINT View;
 	INT ColumnOrder[LFAttributeCount];
@@ -80,7 +80,7 @@ struct SendToItemData
 struct FVItemData
 {
 	RECT Rect;
-	INT RectInflate;
+	INT RectInflateOnInvalidate;
 	BOOL Valid;
 };
 
@@ -104,12 +104,10 @@ struct CachedSelectionBitmap
 #define WM_RENAMEITEM          WM_USER+103
 
 #define FF_ENABLESCROLLING          0x0001
-#define FF_ENABLEHOVER              0x0002
-#define FF_ENABLETOOLTIPS           0x0004
-#define FF_ENABLEFOLDERTOOLTIPS     0x0008
-#define FF_ENABLETOOLTIPICONS       0x0010
-#define FF_ENABLESHIFTSELECTION     0x0020
-#define FF_ENABLELABELEDIT          0x0040
+#define FF_ENABLEFOLDERTOOLTIPS     0x0002
+#define FF_ENABLETOOLTIPICONS       0x0004
+#define FF_ENABLESHIFTSELECTION     0x0008
+#define FF_ENABLELABELEDIT          0x0010
 
 #define BM_REFLECTION     0
 #define BM_SELECTED       1
@@ -117,7 +115,7 @@ struct CachedSelectionBitmap
 class CFileView : public CFrontstageWnd
 {
 public:
-	CFileView(SIZE_T DataSize=sizeof(FVItemData), UINT Flags=FF_ENABLESCROLLING | FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT);
+	CFileView(SIZE_T DataSize=sizeof(FVItemData), UINT Flags=FF_ENABLESCROLLING | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT);
 	virtual ~CFileView();
 
 	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
@@ -129,6 +127,7 @@ public:
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	INT GetFocusItem() const;
 	INT GetSelectedItem() const;
+	UINT GetSortAttribute() const;
 	static BOOL IsItemSelected(const LFItemDescriptor* pItemDescriptor);
 	void EnsureVisible(INT Index);
 	BOOL MultiSelectAllowed() const;
@@ -144,6 +143,7 @@ protected:
 	virtual RECT GetLabelRect(INT Index) const;
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
+	virtual void ShowTooltip(const CPoint& point);
 	virtual CMenu* GetItemContextMenu(INT Index);
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
@@ -155,14 +155,16 @@ protected:
 	void ChangedItem(INT Index);
 	void ChangedItems();
 	RECT GetItemRect(INT Index) const;
+	CMenu* GetMoveToMenu(UINT Context) const;
 	CMenu* GetSendToMenu();
-	CString GetLabel(LFItemDescriptor* pItemDescriptor) const;
+	CString GetLabel(const LFItemDescriptor* pItemDescriptor) const;
 	BOOL BeginDragDrop();
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
 	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed) const;
-	COLORREF SetGrayText(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
+	COLORREF SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
+	COLORREF SetDarkTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	static UINT GetColorDotCount(const LFItemDescriptor* pItemDescriptor);
 	INT GetColorDotWidth(const LFItemDescriptor* pItemDescriptor, const CIcons& Icons=m_DefaultColorDots) const;
 	INT GetColorDotWidth(INT Index, const CIcons& Icons=m_DefaultColorDots) const;
@@ -170,13 +172,10 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -207,6 +206,7 @@ protected:
 	LFContextViewSettings* p_ContextViewSettings;
 	LFGlobalViewSettings* p_GlobalViewSettings;
 	LFFilter* p_Filter;
+	INT m_SubfolderAttribute;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	SIZE_T m_DataSize;
@@ -219,9 +219,8 @@ protected:
 	BOOL m_ShowFocusRect;
 	BOOL m_AllowMultiSelect;
 	INT m_FocusItem;
-	INT m_HotItem;
+	INT m_EditItem;
 	INT m_SelectionAnchor;
-	INT m_EditLabel;
 	INT m_ScrollWidth;
 	INT m_ScrollHeight;
 	INT m_HScrollPos;
@@ -234,7 +233,6 @@ protected:
 	INT m_SmallFontHeight;
 	static CIcons m_LargeColorDots;
 	static CIcons m_DefaultColorDots;
-	BOOL m_Hover;
 	BOOL m_BeginDragDrop;
 	CPoint m_DragPos;
 	WCHAR m_TypingBuffer[256];
@@ -242,6 +240,7 @@ protected:
 
 private:
 	void SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select=TRUE);
+	void AppendMoveToItem(CMenu* pMenu, UINT FromContext, UINT ToContext) const;
 	void AppendSendToItem(CMenu* pMenu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
 	void ResetScrollbars();
 	void AdjustScrollbars();
@@ -252,6 +251,11 @@ private:
 	SendToItemData m_SendToItems[256];
 };
 
+
+inline UINT CFileView::GetSortAttribute() const
+{
+	return m_ContextViewSettings.SortBy;
+}
 
 inline BOOL CFileView::MultiSelectAllowed() const
 {
@@ -316,10 +320,18 @@ inline INT CFileView::GetColorDotWidth(INT Index, const CIcons& Icons) const
 	return GetColorDotWidth((*p_CookedFiles)[Index], Icons);
 }
 
-inline COLORREF CFileView::SetGrayText(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
+inline COLORREF CFileView::SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
 {
 	if (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
 		return dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
+
+	return dc.GetTextColor();
+}
+
+inline COLORREF CFileView::SetDarkTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
+{
+	if (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
+		return dc.SetTextColor(Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT));
 
 	return dc.GetTextColor();
 }

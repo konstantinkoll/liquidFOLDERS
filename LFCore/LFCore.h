@@ -81,6 +81,9 @@ LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescripto
 // Gibt eine Liste aller Attribute zurück, die nach ihrer Priorität sortiert sind
 LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeList);
 
+// Gibt TRUE zurück, wenn es sich bei dem Context um einen Unterordner handelt
+#define LFIsSubfolderContext(ID) (ID>=LFContextSearch)
+
 
 // Liefert eine Farbe für Dateien zurück
 LFCORE_API COLORREF __stdcall LFGetItemColor(UINT ID, UINT Fade=LFItemColorFadePure);
@@ -123,7 +126,12 @@ LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
 LFCORE_API UINT __stdcall LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
 
 // Prüft, ob ein Store angeschlossen ist
-#define LFIsStoreMounted(pStoreDescriptor) ((pStoreDescriptor)->DatPath[0]!=L'\0')
+inline BOOL LFIsStoreMounted(const LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+
+	return pStoreDescriptor->DatPath[0]!=L'\0';
+}
 
 // Erzeugt einen neuen Store
 LFCORE_API UINT __stdcall LFCreateStoreLiquidfolders(LPWSTR pStoreName=NULL, LPCWSTR pComments=NULL, CHAR cVolume='\0', BOOL MakeSearchable=FALSE);
@@ -195,6 +203,9 @@ LFCORE_API void __stdcall LFDurationToString(UINT d, LPWSTR pStr, SIZE_T cCount)
 // Konvertiert eine Megapixel-Angabe in eine Zeichenkette
 LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount);
 
+// Konvertiert eine Bildraten in eine Zeichenkette
+LFCORE_API void __stdcall LFFramerateToString(const UINT r, LPWSTR pStr, SIZE_T cCount);
+
 // Konvertiert ein Attribut in eine Zeichenkette
 LFCORE_API void __stdcall LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount);
 
@@ -247,6 +258,55 @@ LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(const LFItemDescrip
 // Existierenden LFItemDescriptor freigeben
 LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor);
 
+// Gibt den System-Kontext einer Datei zurück
+inline BYTE LFGetSystemContextID(const LFCoreAttributes& CoreAttributes)
+{
+	return CoreAttributes.SystemContextID;
+}
+
+// Gibt den System-Kontext einer Datei zurück
+inline BYTE LFGetSystemContextID(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return LFGetSystemContextID(pItemDescriptor->CoreAttributes);
+}
+
+// Gibt den Benutzer-Kontext einer Datei zurück
+inline BYTE LFGetUserContextID(const LFCoreAttributes& CoreAttributes)
+{
+	return CoreAttributes.UserContextID ? CoreAttributes.UserContextID : LFGetSystemContextID(CoreAttributes);
+}
+
+// Gibt den Benutzer-Kontext einer Datei zurück
+inline BYTE LFGetUserContextID(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return LFGetUserContextID(pItemDescriptor->CoreAttributes);
+}
+
+// Gibt TRUE zurück, wenn die Datei eine Audio-Datei ist
+#define LFIsAudioFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextAudio)
+
+// Gibt TRUE zurück, wenn die Datei ein Dokument ist
+#define LFIsDocumentFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextDocuments)
+
+// Gibt TRUE zurück, wenn die Datei ein Filter ist
+#define LFIsFilterFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextFilters)
+
+// Gibt TRUE zurück, wenn die Datei eine Mediendatei ist
+#define LFIsMediaFile(pItemDescriptor) ((LFGetSystemContextID(pItemDescriptor)>=LFContextAudio) && (LFGetSystemContextID(pItemDescriptor)<=LFContextVideos))
+
+// Gibt TRUE zurück, wenn der Ordner durch ein einziges Vorschaubild seines Inhalts repräsentiert werden kann
+#define LFIsRepresentativeFolder(pItemDescriptor) ((LFGetUserContextID(pItemDescriptor)==LFContextMusic) || (LFGetUserContextID(pItemDescriptor)==LFContextPodcasts))
+
+// Gibt TRUE zurück, wenn die Datei eine zeitbasierte Mediendatei ist
+#define LFIsTimebasedMediaFile(pItemDescriptor) ((LFGetSystemContextID(pItemDescriptor)==LFContextAudio) || (LFGetSystemContextID(pItemDescriptor)==LFContextVideos))
+
+// Gibt TRUE zurück, wenn die Datei ein Video ist
+#define LFIsVideoFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextVideos)
+
 
 // Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters
 LFCORE_API LFFilter* __stdcall LFAllocFilter(const LFFilter* pFilter=NULL);
@@ -263,10 +323,12 @@ LFCORE_API UINT __stdcall LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWS
 
 // Neue LFFilterCondition erzeugen
 LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, const LFVariantData& VData, LFFilterCondition* pNext=NULL);
-LFCORE_API LFFilterCondition* __stdcall LFAllocFilterConditionEx(BYTE Compare, UINT Attr, LFFilterCondition* pNext=NULL);
 
 // Existierende LFFilterCondition freigeben
 #define LFFreeFilterCondition(pFilterCondition) delete pFilterCondition;
+
+// Liefert das Attribut zurück, nachdem ein Unterordnet gebildet wirde
+#define LFGetSubfolderAttribute(pFilter) (pFilter && pFilter->Options.IsSubfolder && pFilter->pConditionList ? pFilter->pConditionList->VData.Attr : -1)
 
 
 // Neues Suchergebnis mit Kontext Context erzeugen
@@ -312,7 +374,7 @@ LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionLi
 LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* pTransactionList);
 
 // Transaktion ausführen
-LFCORE_API void __stdcall LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, LFVariantData* pVariantData1=NULL, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
+LFCORE_API void __stdcall LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, const LFVariantData* pVariantData1=NULL, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL);
 
 
 // Neue Datei-Importliste erzeugen
@@ -343,21 +405,21 @@ LFCORE_API UINT __stdcall LFIATAGetAirportCount();
 LFCORE_API const LFCountry* __stdcall LFIATAGetCountry(UINT CountryID);
 
 // Setzt den Zeiger *ppAirport auf den nächsten Flughafen
-LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport** ppAirport);
+LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport*& pAirport);
 
 // Setzt den Zeiger *ppAirport auf den nächsten Flughafen, der im Territorium CountryID liegt.
 // *ppAirport kann in jedem Fall überschrieben werden.
-LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport);
+LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport*& pAirport);
 
 // Setzt den Zeiger *pStr auf den Flughafen mit dem übergebenen Code.
 // *pStr kann in jedem Fall überschrieben werden.
-LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(LPCSTR pCode, LFAirport** ppAirport);
+LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(LPCSTR lpszCode, LFAirport*& pAirport);
 
 // Gibt einen Hinweis-String für einen Flughafen zurück.
 LFCORE_API void __stdcall LFIATAGetLocationNameForAirport(LFAirport* pAirport, LPWSTR pStr, SIZE_T cCount);
 
 // Gibt einen Hinweis-String für einen IATA-Code zurück.
-LFCORE_API void __stdcall LFIATAGetLocationNameForCode(LPCSTR pCode, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFIATAGetLocationNameForCode(LPCSTR lpszCode, LPWSTR pStr, SIZE_T cCount);
 
 
 // ID3
@@ -387,7 +449,7 @@ LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult
 
 // Statistik
 // - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
-LFCORE_API UINT __stdcall LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID=NULL);
+LFCORE_API UINT __stdcall LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID=NULL, UINT64* pGlobalContextSet=NULL);
 
 
 

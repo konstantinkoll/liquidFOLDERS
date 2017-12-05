@@ -20,7 +20,7 @@ public:
 
 	// Index management
 	BOOL Initialize();
-	UINT MaintenanceAndStatistics(BOOL Scheduled, BOOL* pRepaired, LFProgress* pProgress=NULL);
+	UINT MaintenanceAndStatistics(BOOL Scheduled, BOOL& Repaired, LFProgress* pProgress=NULL);
 
 	// Operations on index only
 	UINT Add(LFItemDescriptor* pItemDescriptor);
@@ -30,12 +30,12 @@ public:
 	void ResolveLocations(LFTransactionList* pTransactionList);
 	void SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProgress* pProgress=NULL);
 	BOOL ExistingFileID(LPCSTR pFileID);
-	void UpdateContext(LFTransactionList* pTransactionList, BYTE ContextID);
+	void UpdateUserContext(LFTransactionList* pTransactionList, BYTE UserContextID);
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
 	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags);
 
 	// Operations with callbacks to CStore object
-	void Update(LFTransactionList* pTransactionList, LFVariantData* pVariantData1, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL, BOOL MakeTask=FALSE);
+	void Update(LFTransactionList* pTransactionList, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL, BOOL MakeTask=FALSE);
 	UINT Synchronize(LFProgress* pProgress=NULL);
 	void Delete(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
@@ -55,7 +55,7 @@ protected:
 private:
 	void ResetStatistics();
 	void ResetStatistics(BOOL& DoReset);
-	BOOL InspectForUpdate(LFVariantData* pVariantData, BOOL& IncludeSlaves, BOOL& DoRename);
+	BOOL InspectForUpdate(const LFVariantData* pVData, BOOL& IncludeSlaves, BOOL& DoRename);
 
 	WCHAR m_IdxPath[MAX_PATH];
 };

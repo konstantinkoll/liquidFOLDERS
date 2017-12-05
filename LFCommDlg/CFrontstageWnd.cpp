@@ -9,9 +9,15 @@
 // CFrontstageWnd
 //
 
-#define WHITE    100
+#define WHITEAREAHEIGHT     100
 
-void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed)
+CFrontstageWnd::CFrontstageWnd()
+	: CWnd()
+{
+	CONSTRUCTOR_TOOLTIP()
+}
+
+void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed) const
 {
 	ASSERT(lpRect);
 
@@ -22,14 +28,14 @@ void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 		g.SetSmoothingMode(SmoothingModeNone);
 
-		LinearGradientBrush brush(Point(0, lpRect->top), Point(0, lpRect->top+WHITE), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
-		g.FillRectangle(&brush, Rect(lpRect->left, lpRect->top, lpRect->right-lpRect->left, WHITE));
+		LinearGradientBrush brush(Point(0, lpRect->top), Point(0, lpRect->top+WHITEAREAHEIGHT), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
+		g.FillRectangle(&brush, Rect(lpRect->left, lpRect->top, lpRect->right-lpRect->left, WHITEAREAHEIGHT));
 
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 	}
 }
 
-void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect) const
 {
 	// Shadow
 	GraphicsPath Path;
@@ -73,7 +79,7 @@ void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 	DrawListItemBackground(dc, lpRect, Themed, GetFocus()==this, Hot, Focused, Selected, TextColor, ShowFocusRect);
 }
 
-void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
+void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed) const
 {
 	if (Themed)
 	{
@@ -101,7 +107,7 @@ void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
 	}
 }
 
-void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed)
+void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed) const
 {
 	if (Themed)
 	{
@@ -111,12 +117,57 @@ void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed)
 	}
 }
 
+INT CFrontstageWnd::ItemAtPosition(CPoint /*point*/) const
+{
+	return -1;
+}
 
-BEGIN_MESSAGE_MAP(CFrontstageWnd, CWnd)
+CPoint CFrontstageWnd::PointAtPosition(CPoint /*point*/) const
+{
+	return CPoint(-1, -1);
+}
+
+LPCVOID CFrontstageWnd::PtrAtPosition(CPoint /*point*/) const
+{
+	return NULL;
+}
+
+void CFrontstageWnd::InvalidateItem(INT /*Index*/)
+{
+	Invalidate();
+}
+
+void CFrontstageWnd::InvalidatePoint(const CPoint& /*point*/)
+{
+	Invalidate();
+}
+
+void CFrontstageWnd::InvalidatePtr(LPCVOID /*Ptr*/)
+{
+	Invalidate();
+}
+
+void CFrontstageWnd::ShowTooltip(const CPoint& /*point*/)
+{
+}
+
+
+IMPLEMENT_TOOLTIP_NOWHEEL(CFrontstageWnd, CWnd)
+
+BEGIN_TOOLTIP_MAP(CFrontstageWnd, CWnd)
+	ON_WM_DESTROY()
 	ON_MESSAGE(WM_NCCALCSIZE, OnNcCalcSize)
 	ON_WM_NCHITTEST()
+	ON_WM_ERASEBKGND()
 	ON_WM_INITMENUPOPUP()
-END_MESSAGE_MAP()
+END_TOOLTIP_MAP()
+
+void CFrontstageWnd::OnDestroy()
+{
+	HideTooltip();
+
+	CWnd::OnDestroy();
+}
 
 LRESULT CFrontstageWnd::OnNcCalcSize(WPARAM wParam, LPARAM lParam)
 {
@@ -146,6 +197,11 @@ LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)
 		return HTTRANSPARENT;
 
 	return CWnd::OnNcHitTest(point);
+}
+
+BOOL CFrontstageWnd::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
 }
 
 void CFrontstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)

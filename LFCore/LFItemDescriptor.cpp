@@ -4,8 +4,10 @@
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
 #include "Stores.h"
+#include "TableApplications.h"
 #include "TableAttributes.h"
 #include "TableIndexes.h"
+#include "TableMusicGenres.h"
 #include <assert.h>
 #include <malloc.h>
 
@@ -31,7 +33,7 @@ void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	assert(Attr<LFAttributeCount);
 
 	// Attribut nur dann freigeben, wenn es nicht im statischer Teil des LFItemDescriptor liegt
-	if ((pItemDescriptor->AttributeValues[Attr]) && !IsStaticAttribute(pItemDescriptor, Attr))
+	if (pItemDescriptor->AttributeValues[Attr] && !IsStaticAttribute(pItemDescriptor, Attr))
 	{
 		free(pItemDescriptor->AttributeValues[Attr]);
 		pItemDescriptor->AttributeValues[Attr] = NULL;
@@ -104,7 +106,7 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID pValue)
 	}
 }
 
-UINT GetColoredFolderIconID(const LFFileSummary& FileSummary)
+UINT GetColoredFolderIcon(const LFFileSummary& FileSummary)
 {
 	UINT IconColorIndex = 0;
 	UINT ItemColorCount = 0;
@@ -114,6 +116,62 @@ UINT GetColoredFolderIconID(const LFFileSummary& FileSummary)
 			ItemColorCount = FileSummary.ItemColors[IconColorIndex=a];
 
 	return IDI_FLD_DEFAULT+IconColorIndex;
+}
+
+UINT GetAttributeIcon(UINT Attr, const LFFileSummary& FileSummary)
+{
+	assert(Attr<LFAttributeCount);
+
+	UINT IconID = 0;
+
+	for (UINT a=0; a<SPECIALATTRIBUTENAMESCOUNT; a++)
+		if ((SpecialAttributeNames[a].Attr==Attr) && (SpecialAttributeNames[a].ContextSet & FileSummary.ContextSet))
+			if (!IconID)
+			{
+				IconID = SpecialAttributeNames[a].IconID;
+			}
+			else
+				if (IconID!=SpecialAttributeNames[a].IconID)
+				{
+					IconID = AttrProperties[Attr].DefaultIconID;
+					break;
+				}
+			
+
+	if (!IconID)
+		IconID = AttrProperties[Attr].DefaultIconID;
+
+	return IconID;
+}
+
+UINT GetFolderIcon(const LFFileSummary& FileSummary, const LFVariantData& VData, BOOL IgnoreDefaultIcon)
+{
+	assert(VData.Attr<LFAttributeCount);
+	assert(VData.Type==AttrProperties[VData.Attr].Type);
+	assert(VData.Type<LFTypeCount);
+
+	UINT IconID;
+
+	// Attribute icons
+	switch (VData.Attr)
+	{
+	case LFAttrApplication:
+		IconID = GetApplicationIcon(VData.Application);
+		break;
+
+	case LFAttrGenre:
+		IconID = GetGenreIcon(VData.Genre);
+		break;
+
+	default:
+		IconID = GetAttributeIcon(VData.Attr, FileSummary);
+	}
+
+	// Colored default icon
+	if ((!IconID || (IconID==IDI_FLD_DEFAULT)) && !IgnoreDefaultIcon)
+		IconID = GetColoredFolderIcon(FileSummary);
+
+	return IconID;
 }
 
 
@@ -238,16 +296,14 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(const LFItemDescriptor* pItem
 	return pClone;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSummary, INT AggregateFirst, INT AggregateLast)
+LFItemDescriptor* AllocFolderDescriptor(const LFFileSummary& FileSummary, const LFVariantData& VData, LFFilter* pFilter, INT AggregateFirst, INT AggregateLast)
 {
-	assert(Attr<LFAttributeCount);
-
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
 	pItemDescriptor->Type = LFTypeFolder | FileSummary.Source;
-	pItemDescriptor->IconID = AttrProperties[Attr].IconID ? AttrProperties[Attr].IconID : GetColoredFolderIconID(FileSummary);
 	pItemDescriptor->CoreAttributes.FileSize = FileSummary.FileSize;
 	pItemDescriptor->CoreAttributes.Flags = FileSummary.Flags;
+	pItemDescriptor->CoreAttributes.UserContextID = pItemDescriptor->CoreAttributes.SystemContextID = FileSummary.Context;
 	pItemDescriptor->AggregateCount = FileSummary.FileCount;
 	pItemDescriptor->AggregateFirst = AggregateFirst;
 	pItemDescriptor->AggregateLast = AggregateLast;
@@ -256,8 +312,16 @@ LFItemDescriptor* AllocFolderDescriptor(UINT Attr, const LFFileSummary& FileSumm
 	// Description
 	LFGetFileSummaryEx(pItemDescriptor->Description, 256, FileSummary);
 
+	// Icon
+	pItemDescriptor->IconID = GetFolderIcon(FileSummary, VData);
+
 	// Additional properties
-	SetAttribute(pItemDescriptor, LFAttrDuration, &FileSummary.Duration);
+	SetAttribute(pItemDescriptor, LFAttrLength, &FileSummary.Duration);
+
+	// Filter
+	pItemDescriptor->pNextFilter = LFAllocFilter(pFilter);
+	pItemDescriptor->pNextFilter->Options.IsSubfolder = TRUE;
+	pItemDescriptor->pNextFilter->pConditionList = LFAllocFilterCondition(LFFilterCompareSubfolder, VData, pItemDescriptor->pNextFilter->pConditionList);
 
 	return pItemDescriptor;
 }

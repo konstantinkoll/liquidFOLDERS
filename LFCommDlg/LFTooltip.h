@@ -8,8 +8,6 @@
 // LFTooltip
 //
 
-#define HOVERTIME     850
-
 class LFTooltip : public CWnd
 {
 public:

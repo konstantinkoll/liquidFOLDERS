@@ -18,7 +18,17 @@ CFileSummary::CFileSummary()
 	Reset();
 }
 
-void CFileSummary::Reset(INT Context)
+void CFileSummary::ResetAttribute(UINT Attr)
+{
+	ASSERT(Attr<AttrCount);
+
+	m_AttributeSummary[Attr].Status = m_AttributeSummary[Attr].Visible = FALSE;
+
+	LFInitVariantData(m_AttributeSummary[Attr].VData, Attr);
+	LFInitVariantData(m_AttributeSummary[Attr].VDataRange, Attr);
+}
+
+void CFileSummary::Reset(UINT Context)
 {
 	m_Context = Context;
 	p_LastItem = NULL;
@@ -29,15 +39,9 @@ void CFileSummary::Reset(INT Context)
 	m_FlagsFirst = TRUE;
 	m_FlagsSet = m_FlagsMultiple = 0;
 
-	// Properties
-	ZeroMemory(m_AttributeSummary, sizeof(m_AttributeSummary));
-
+	// Attribute summaries
 	for (UINT a=0; a<AttrCount; a++)
-	{
-		LFInitVariantData(m_AttributeSummary[a].VData, a);
-		LFInitVariantData(m_AttributeSummary[a].RangeFirst, a);
-		LFInitVariantData(m_AttributeSummary[a].RangeSecond, a);
-	}
+		ResetAttribute(a);
 }
 
 void CFileSummary::AddValueVirtual(UINT Attr, const LPCWSTR pStrValue)
@@ -96,7 +100,7 @@ void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 		LFVariantData Property;
 		LFGetAttributeVariantDataEx(pItemDescriptor, Attr, Property);
 
-		if (!theApp.m_Attributes[Attr].AttrProperties.ReadOnly || !LFIsNullVariantData(Property))
+		if (theApp.IsAttributeEditable(Attr) || !LFIsNullVariantData(Property))
 			switch (pAttributeSummary->Status)
 			{
 			case STATUSUNUSED:
@@ -111,17 +115,18 @@ void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 				if (LFCompareVariantData(pAttributeSummary->VData, Property)==0)
 					return;
 
-				pAttributeSummary->RangeFirst = pAttributeSummary->RangeSecond = pAttributeSummary->VData;
+				// Set lower and upper range to first value
+				pAttributeSummary->VDataRange = pAttributeSummary->VData;
 				pAttributeSummary->Status = STATUSMULTIPLE;
 
-				break;
+				// Compare Property with range values
 
 			case STATUSMULTIPLE:
-				if (LFCompareVariantData(Property, pAttributeSummary->RangeFirst)<0)
-					pAttributeSummary->RangeFirst = Property;
+				if (LFCompareVariantData(Property, pAttributeSummary->VData)<0)
+					pAttributeSummary->VData = Property;
 
-				if (LFCompareVariantData(Property, pAttributeSummary->RangeSecond)>0)
-					pAttributeSummary->RangeSecond = Property;
+				if (LFCompareVariantData(Property, pAttributeSummary->VDataRange)>0)
+					pAttributeSummary->VDataRange = Property;
 
 				break;
 			}
@@ -225,8 +230,7 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 		m_ItemCount++;
 
 		for (UINT a=0; a<=LFLastCoreAttribute; a++)
-			if (theApp.IsAttributeAvailable(LFContextStores, a))
-				AddValue(pItemDescriptor, a);
+			AddValue(pItemDescriptor, a);
 
 		// Source
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->StoreDescriptor.Source][0]);
@@ -256,6 +260,36 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 	}
 }
 
+void CFileSummary::UpdateIATAAirport(BOOL AllowMultiple)
+{
+	ResetAttribute(AttrIATAAirportName);
+	ResetAttribute(AttrIATAAirportCountry);
+
+	const BOOL Multiple = AllowMultiple && (m_AttributeSummary[LFAttrLocationIATA].Status==STATUSMULTIPLE);
+	const BOOL Visible = m_AttributeSummary[LFAttrLocationIATA].Visible && !LFIsNullVariantData(m_AttributeSummary[LFAttrLocationIATA].VData);
+
+	if (Visible)
+		if (Multiple)
+		{
+			m_AttributeSummary[AttrIATAAirportName].Status = m_AttributeSummary[AttrIATAAirportCountry].Status = STATUSMULTIPLE;
+			m_AttributeSummary[AttrIATAAirportName].Visible = m_AttributeSummary[AttrIATAAirportCountry].Visible = TRUE;
+		}
+		else
+		{
+			LFAirport* pAirport;
+			if (LFIATAGetAirportByCode(m_AttributeSummary[LFAttrLocationIATA].VData.IATACode, pAirport))
+			{
+				AddValueVirtual(AttrIATAAirportName, pAirport->Name);
+				AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(pAirport->CountryID)->Name);
+			}
+			else
+			{
+				AddValueVirtual(AttrIATAAirportName, L"?");
+				AddValueVirtual(AttrIATAAirportCountry, L"?");
+			}
+		}
+}
+
 
 // CIconHeader
 //
@@ -276,7 +310,7 @@ CIconHeader::CIconHeader()
 
 	m_Description = m_NoItemsSelected;
 	m_Status = ICONEMPTY;
-	m_pItem = NULL;
+	m_pItemDesciptor = NULL;
 }
 
 CIconHeader::~CIconHeader()
@@ -310,7 +344,7 @@ void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Theme
 		break;
 
 	case ICONPREVIEW:
-		theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, m_pItem, NULL, FALSE);
+		theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, m_pItemDesciptor, NULL, FALSE);
 		break;
 	}
 
@@ -324,10 +358,10 @@ void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Theme
 
 void CIconHeader::FreeItem()
 {
-	if (m_pItem)
+	if (m_pItemDesciptor)
 	{
-		LFFreeItemDescriptor(m_pItem);
-		m_pItem = NULL;
+		LFFreeItemDescriptor(m_pItemDesciptor);
+		m_pItemDesciptor = NULL;
 	}
 }
 
@@ -376,7 +410,7 @@ void CIconHeader::SetPreview(const LFItemDescriptor* pItemDescriptor, const CStr
 	strcpy_s(m_FileFormat, LFExtSize, pItemDescriptor->CoreAttributes.FileFormat);
 
 	FreeItem();
-	m_pItem = LFCloneItemDescriptor(pItemDescriptor);
+	m_pItemDesciptor = LFCloneItemDescriptor(pItemDescriptor);
 }
 
 BOOL CIconHeader::UpdateThumbnailColor(const LFVariantData& VData)
@@ -396,7 +430,7 @@ BOOL CIconHeader::UpdateThumbnailColor(const LFVariantData& VData)
 		break;
 
 	case ICONPREVIEW:
-		LFSetAttributeVariantData(m_pItem, VData);
+		LFSetAttributeVariantData(m_pItemDesciptor, VData);
 
 		return TRUE;
 	}
@@ -413,6 +447,9 @@ CString CInspectorPane::m_AttributeVirtualNames[AttrCount-LFAttributeCount];
 CInspectorPane::CInspectorPane()
 	: CFrontstagePane()
 {
+	ASSERT(AttrIATAAirportName>=AttrCount-2);
+	ASSERT(AttrIATAAirportCountry>=AttrCount-2);
+
 	if (m_AttributeVirtualNames[0].IsEmpty())
 		for (UINT a=0; a<AttrCount-LFAttributeCount; a++)
 			ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
@@ -420,14 +457,14 @@ CInspectorPane::CInspectorPane()
 
 INT CInspectorPane::GetMinWidth(INT Height) const
 {
-	return m_wndGrid.GetMinWidth(Height)+BACKSTAGEBORDER;
+	return m_wndInspectorGrid.GetMinWidth(Height)+BACKSTAGEBORDER;
 }
 
 void CInspectorPane::AdjustLayout(CRect rectLayout)
 {
 	const INT BorderLeft = BACKSTAGEBORDER-PANEGRIPPER;
 
-	m_wndGrid.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top, rectLayout.Width()-BorderLeft, rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top, rectLayout.Width()-BorderLeft, rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInspectorPane::SaveSettings() const
@@ -436,7 +473,31 @@ void CInspectorPane::SaveSettings() const
 	theApp.WriteInt(_T("InspectorSortAlphabetic"), m_SortAlphabetic);
 }
 
-void CInspectorPane::AggregateFinish()
+void CInspectorPane::UpdatePropertyState(UINT Attr)
+{
+	ASSERT(Attr<AttrCount);
+
+	const AttributeSummary* pAttributeSummary = &m_FileSummary.m_AttributeSummary[Attr];
+
+	m_wndInspectorGrid.UpdatePropertyState(Attr, pAttributeSummary->Status==STATUSMULTIPLE,
+		Attr<LFAttributeCount ? theApp.IsAttributeEditable(Attr) && (m_FileSummary.m_Context!=LFContextArchive) && (m_FileSummary.m_Context!=LFContextTrash) : FALSE,
+		pAttributeSummary->Visible && (m_ShowInternal ? TRUE : Attr<LFAttributeCount ? (theApp.m_Attributes[Attr].AttrProperties.Category!=LFAttrCategoryInternal) : FALSE),
+		&pAttributeSummary->VDataRange);
+}
+
+void CInspectorPane::UpdateIATAAirport(BOOL AllowMultiple)
+{
+	m_FileSummary.UpdateIATAAirport(AllowMultiple);
+
+	// Update properties
+	UpdatePropertyState(AttrIATAAirportName);
+	UpdatePropertyState(AttrIATAAirportCountry);
+
+	// Done
+	m_wndInspectorGrid.AdjustLayout();
+}
+
+void CInspectorPane::AggregateClose()
 {
 	// Type
 	if (m_FileSummary.m_Type==LFTypeStore)
@@ -509,42 +570,14 @@ void CInspectorPane::AggregateFinish()
 	}
 
 	// Store
-	m_wndGrid.SetStore(m_FileSummary.m_StoreStatus==STATUSUSED ? m_FileSummary.m_StoreID : "");
+	m_wndInspectorGrid.SetStore(m_FileSummary.m_StoreStatus==STATUSUSED ? m_FileSummary.m_StoreID : "");
 
-	// Airport name and country
-	if ((m_FileSummary.m_AttributeSummary[LFAttrLocationIATA].Status==STATUSUSED) && (m_FileSummary.m_AttributeSummary[LFAttrLocationIATA].VData.AnsiString[0]!='\0'))
-	{
-		LFAirport* pAirport;
-		if (LFIATAGetAirportByCode(m_FileSummary.m_AttributeSummary[LFAttrLocationIATA].VData.AnsiString, &pAirport))
-		{
-			m_FileSummary.AddValueVirtual(AttrIATAAirportName, pAirport->Name);
-			m_FileSummary.AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(pAirport->CountryID)->Name);
-		}
-		else
-		{
-			m_FileSummary.AddValueVirtual(AttrIATAAirportName, L"?");
-			m_FileSummary.AddValueVirtual(AttrIATAAirportCountry, L"?");
-		}
-	}
-	else
-	{
-		m_FileSummary.m_AttributeSummary[AttrIATAAirportName].Status = m_FileSummary.m_AttributeSummary[AttrIATAAirportCountry].Status = m_FileSummary.m_AttributeSummary[LFAttrLocationIATA].Status;
-		m_FileSummary.m_AttributeSummary[AttrIATAAirportName].Visible = m_FileSummary.m_AttributeSummary[AttrIATAAirportCountry].Visible = (m_FileSummary.m_AttributeSummary[LFAttrLocationIATA].Status==STATUSMULTIPLE);
-	}
+	// Update properties, except for AttrIATAAirportName and AttrIATAAirportCounty (must be last)
+	for (UINT a=0; a<AttrCount-2; a++)
+		UpdatePropertyState(a);
 
-	// Update properties
-	for (UINT a=0; a<AttrCount; a++)
-	{
-		const AttributeSummary* pAttributeSummary = &m_FileSummary.m_AttributeSummary[a];
-
-		m_wndGrid.UpdatePropertyState(a, pAttributeSummary->Status==STATUSMULTIPLE,
-			a<LFAttributeCount ? !theApp.m_Attributes[a].AttrProperties.ReadOnly && (m_FileSummary.m_Context!=LFContextArchive) && (m_FileSummary.m_Context!=LFContextTrash) : FALSE,
-			pAttributeSummary->Visible & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a].AttrProperties.Category!=LFAttrCategoryInternal) : FALSE),
-			&pAttributeSummary->RangeFirst, &pAttributeSummary->RangeSecond);
-	}
-
-	// Done
-	m_wndGrid.AdjustLayout();
+	// Update AttrIATAAirportName and AttrIATAAirportCounty; includes call to AdjustLayout() of CInpsectorGrid
+	UpdateIATAAirport();
 }
 
 
@@ -567,30 +600,25 @@ INT CInspectorPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_ShowInternal = theApp.GetInt(_T("InspectorShowInternal"), FALSE);
 	m_SortAlphabetic = theApp.GetInt(_T("InspectorSortAlphabetic"), FALSE);
 
-	if (!m_wndGrid.Create(this, 1, &m_IconHeader))
+	if (!m_wndInspectorGrid.Create(this, 1, &m_IconHeader))
 		return -1;
 
-	m_wndGrid.SetAlphabeticMode(m_SortAlphabetic);
-
 	// Add attribute properties
-	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		CProperty* pProperty = m_wndGrid.AddAttributeProperty(&m_FileSummary.m_AttributeSummary[a].VData);
-
-		if (a==LFAttrLocationIATA)
-			((CPropertyIATA*)pProperty)->SetAdditionalData(&m_FileSummary.m_AttributeSummary[LFAttrLocationName].VData, &m_FileSummary.m_AttributeSummary[LFAttrLocationGPS].VData);
-	}
+	m_wndInspectorGrid.AddAttributeProperties(&m_FileSummary.m_AttributeSummary[0].VData, sizeof(AttributeSummary));
 
 	// Add virtual attribute properties
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)
-		m_wndGrid.AddProperty(new CProperty(&m_FileSummary.m_AttributeSummary[a].VData), LFAttrCategoryInternal, m_AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
+		m_wndInspectorGrid.AddProperty(&m_FileSummary.m_AttributeSummary[a].VData, m_AttributeVirtualNames[a-LFAttributeCount]);
+
+	// Sort inspector items
+	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 
 	return 0;
 }
 
 void CInspectorPane::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	m_wndGrid.SetFocus();
+	m_wndInspectorGrid.SetFocus();
 }
 
 void CInspectorPane::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
@@ -616,55 +644,24 @@ void CInspectorPane::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 LRESULT CInspectorPane::OnPropertyChanged(WPARAM wParam, LPARAM lParam)
 {
-	SHORT Attr1 = LOWORD(wParam);
-	SHORT Attr2 = LOWORD(lParam);
-	SHORT Attr3 = HIWORD(lParam);
-	SHORT AttrIATA = (Attr1==LFAttrLocationIATA) ? Attr1 : (Attr2==LFAttrLocationIATA) ? Attr2 : (Attr3==LFAttrLocationIATA) ? Attr3 : -1;
-
-	LFVariantData* pValue1 = (Attr1==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr1].VData;
-	LFVariantData* pValue2 = (Attr2==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr2].VData;
-	LFVariantData* pValue3 = (Attr3==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr3].VData;
+	const SHORT Attr1 = LOWORD(wParam);
+	const SHORT Attr2 = LOWORD(lParam);
+	const SHORT Attr3 = HIWORD(lParam);
 
 	// Update icon color in header
-	if (Attr1==LFAttrColor)
-		if (m_IconHeader.UpdateThumbnailColor(*pValue1))
-			m_wndGrid.Invalidate();
-
-	if (Attr2==LFAttrColor)
-		if (m_IconHeader.UpdateThumbnailColor(*pValue2))
-			m_wndGrid.Invalidate();
-
-	if (Attr3==LFAttrColor)
-		if (m_IconHeader.UpdateThumbnailColor(*pValue3))
-			m_wndGrid.Invalidate();
+	if ((Attr1==LFAttrColor) || (Attr2==LFAttrColor) || (Attr3==LFAttrColor))
+		if (m_IconHeader.UpdateThumbnailColor(m_FileSummary.m_AttributeSummary[LFAttrColor].VData))
+			m_wndInspectorGrid.Invalidate();
 
 	// Update of IATA airport code and country (internal properties)
-	if (AttrIATA!=-1)
-	{
-		BOOL Visible;
-		if ((Visible=!LFIsNullVariantData(m_FileSummary.m_AttributeSummary[AttrIATA].VData))==TRUE)
-		{
-			LFAirport* pAirport;
-			if (LFIATAGetAirportByCode(m_FileSummary.m_AttributeSummary[AttrIATA].VData.IATAString, &pAirport))
-			{
-				MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, m_FileSummary.m_AttributeSummary[AttrIATAAirportName].VData.UnicodeString, 256);
-				MultiByteToWideChar(CP_ACP, 0, LFIATAGetCountry(pAirport->CountryID)->Name, -1, m_FileSummary.m_AttributeSummary[AttrIATAAirportCountry].VData.UnicodeString, 256);
-			}
-			else
-			{
-				wcscpy_s(m_FileSummary.m_AttributeSummary[AttrIATAAirportName].VData.UnicodeString, 256, L"?");
-				wcscpy_s(m_FileSummary.m_AttributeSummary[AttrIATAAirportCountry].VData.UnicodeString, 256, L"?");
-			}
-
-			m_FileSummary.m_AttributeSummary[AttrIATAAirportName].VData.IsNull = m_FileSummary.m_AttributeSummary[AttrIATAAirportCountry].VData.IsNull = FALSE;
-		}
-
-		m_wndGrid.UpdatePropertyState(AttrIATAAirportName, FALSE, FALSE, Visible && m_ShowInternal);
-		m_wndGrid.UpdatePropertyState(AttrIATAAirportCountry, FALSE, FALSE, Visible && m_ShowInternal);
-		m_wndGrid.AdjustLayout();
-	}
+	if ((Attr1==LFAttrLocationIATA) || (Attr2==LFAttrLocationIATA) || (Attr3==LFAttrLocationIATA))
+		UpdateIATAAirport(FALSE);
 
 	// Update items
+	const LFVariantData* pValue1 = (Attr1==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr1].VData;
+	const LFVariantData* pValue2 = (Attr2==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr2].VData;
+	const LFVariantData* pValue3 = (Attr3==-1) ? NULL : &m_FileSummary.m_AttributeSummary[Attr3].VData;
+
 	((CMainView*)GetParent())->UpdateItems(pValue1, pValue2, pValue3);
 
 	return NULL;
@@ -676,12 +673,12 @@ void CInspectorPane::OnToggleInternal()
 	m_ShowInternal = !m_ShowInternal;
 
 	SaveSettings();
-	AggregateFinish();
+	AggregateClose();
 }
 
 void CInspectorPane::OnAlphabetic()
 {
-	m_wndGrid.SetAlphabeticMode(m_SortAlphabetic=!m_SortAlphabetic);
+	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic=!m_SortAlphabetic);
 
 	SaveSettings();
 }

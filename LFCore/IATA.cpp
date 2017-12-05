@@ -38,7 +38,7 @@ LFCORE_API const LFCountry* LFIATAGetCountry(UINT CountryID)
 	return UseGermanDB ? &Countries_DE[CountryID] : &Countries_EN[CountryID];
 }
 
-LFCORE_API INT LFIATAGetNextAirport(INT Last, LFAirport** ppAirport)
+LFCORE_API INT LFIATAGetNextAirport(INT Last, LFAirport*& pAirport)
 {
 	if (Last<-1)
 		Last = -1;
@@ -46,12 +46,12 @@ LFCORE_API INT LFIATAGetNextAirport(INT Last, LFAirport** ppAirport)
 	if (Last>=(INT)LFIATAGetAirportCount()-1)
 		return -1;
 
-	*ppAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+	pAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 
 	return Last;
 }
 
-LFCORE_API INT LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport** ppAirport)
+LFCORE_API INT LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport*& pAirport)
 {
 	if (Last<-1)
 		Last = -1;
@@ -63,19 +63,19 @@ LFCORE_API INT LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport
 		if (Last>=(INT)Count-1)
 			return -1;
 
-		*ppAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+		pAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 	}
-	while ((*ppAirport)->CountryID!=CountryID);
+	while (pAirport->CountryID!=CountryID);
 
 	return Last;
 }
 
-LFCORE_API BOOL LFIATAGetAirportByCode(LPCSTR pCode, LFAirport** ppAirport)
+LFCORE_API BOOL LFIATAGetAirportByCode(LPCSTR lpszCode, LFAirport*& pAirport)
 {
-	if (!pCode)
+	if (!lpszCode)
 		return FALSE;
 
-	if (strlen(pCode)!=3)
+	if (strlen(lpszCode)!=3)
 		return FALSE;
 
 	INT First = 0;
@@ -85,9 +85,9 @@ LFCORE_API BOOL LFIATAGetAirportByCode(LPCSTR pCode, LFAirport** ppAirport)
 	{
 		const INT Mid = (First+Last)/2;
 
-		*ppAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
+		pAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
 
-		const INT Result = strcmp((*ppAirport)->Code, pCode);
+		const INT Result = strcmp(pAirport->Code, lpszCode);
 		if (!Result)
 			return TRUE;
 
@@ -117,13 +117,13 @@ LFCORE_API void LFIATAGetLocationNameForAirport(LFAirport* pAirport, LPWSTR pStr
 	MultiByteToWideChar(CP_ACP, 0, tmpStr, -1, pStr, (INT)cCount);
 }
 
-LFCORE_API void LFIATAGetLocationNameForCode(LPCSTR pCode, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFIATAGetLocationNameForCode(LPCSTR lpszCode, LPWSTR pStr, SIZE_T cCount)
 {
-	assert(pCode);
+	assert(lpszCode);
 	assert(pStr);
 
 	LFAirport* pAirport;
-	if (LFIATAGetAirportByCode(pCode, &pAirport))
+	if (LFIATAGetAirportByCode(lpszCode, pAirport))
 	{
 		LFIATAGetLocationNameForAirport(pAirport, pStr, cCount);
 	}

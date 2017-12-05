@@ -259,7 +259,7 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 
 			CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
 
-			SetGrayText(dc, pItemDescriptor, Themed);
+			SetLightTextColor(dc, pItemDescriptor, Themed);
 			dc.DrawText(pItemDescriptor->Description, -1, CRect(rectLabel.left, rectLabel.bottom-m_SmallFontHeight, rectLabel.right, rectLabel.bottom), DT_CENTER | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 			dc.SelectObject(pOldFont);
@@ -273,7 +273,7 @@ void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOO
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
 	// Label
-	if (!IsEditing() || (Index!=m_EditLabel))
+	if (!IsEditing() || (Index!=m_EditItem))
 	{
 		CRect rectLabel(rectItem);
 		rectLabel.DeflateRect(Themed ? PADDING+1 : PADDING, PADDING);

@@ -10,7 +10,7 @@ struct LFMaintenanceListItem
 	WCHAR Comments[256];
 	CHAR StoreID[LFKeySize];
 	UINT Result;
-	UINT Icon;
+	UINT IconID;
 };
 
 class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem, 16, 16>
@@ -18,7 +18,7 @@ class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem, 16, 16>
 public:
 	LFMaintenanceList();
 
-	BOOL AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT Icon);
+	BOOL AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT IconID);
 
 	UINT m_LastError;
 };

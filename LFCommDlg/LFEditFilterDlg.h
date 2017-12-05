@@ -59,6 +59,6 @@ protected:
 
 	CButton m_wndAllStores;
 	CButton m_wndThisStore;
-	CEdit m_wndSearchterm;
+	CEdit m_wndSearchTerm;
 	CConditionList m_wndConditionList;
 };

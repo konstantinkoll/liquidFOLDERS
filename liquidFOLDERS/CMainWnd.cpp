@@ -14,8 +14,8 @@ CIcons CMainWnd::m_SmallIcons;
 
 const UINT CMainWnd::m_ContextOrder[LFLastQueryContext+1] = {
 	LFContextAllFiles, LFContextFavorites,
-	LFContextAudio, LFContextPictures, LFContextVideos, LFContextBooks,
-	LFContextDocuments, LFContextFonts, LFContextContacts, LFContextMessages,
+	LFContextAudio, LFContextBooks, LFContextMovies, LFContextMusic, LFContextPictures, LFContextPodcasts, LFContextTVShows, LFContextVideos,
+	LFContextDocuments, LFContextFonts, LFContextContacts, LFContextMessages, LFContextApps,
 	LFContextNew, LFContextTasks, LFContextArchive, LFContextTrash,
 	LFContextFilters
 };
@@ -102,13 +102,6 @@ LFFilter* CMainWnd::GetRootFilter()
 	return pFilter;
 }
 
-LPCSTR CMainWnd::GetStatisticsID() const
-{
-	ASSERT(m_pActiveFilter);
-
-	return (m_pActiveFilter->Mode<LFFilterModeSearch) && IsWindow(m_wndMainView) ? m_wndMainView.GetStoreID() : "";
-}
-
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 {
 	// Filter
@@ -136,7 +129,7 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 			{
 				LFFilter* pFilter = LFAllocFilter();
 				pFilter->Mode = LFFilterModeSearch;
-				m_wndSearch.GetWindowText(pFilter->Searchterm, 256);
+				m_wndSearch.GetWindowText(pFilter->SearchTerm, 256);
 
 				SendMessage(WM_NAVIGATETO, (WPARAM)pFilter);
 
@@ -308,7 +301,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPe
 	{
 		m_pRawFiles = LFQueryEx(pFilter, m_pRawFiles, AggregateFirst, AggregateLast);
 
-		if ((pVictim) && (pVictim!=m_pRawFiles))
+		if (pVictim && (pVictim!=m_pRawFiles))
 			LFFreeSearchResult(pVictim);
 	}
 	else
@@ -341,7 +334,7 @@ void CMainWnd::UpdateHistory(UINT NavMode)
 		m_wndHistory.SetHistory(m_pActiveFilter, m_pBreadcrumbBack);
 
 	if (m_pActiveFilter)
-		m_wndSearch.SetWindowText(m_pActiveFilter->Searchterm);
+		m_wndSearch.SetWindowText(m_pActiveFilter->SearchTerm);
 }
 
 
@@ -368,7 +361,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_MESSAGE(WM_CONTEXTVIEWCOMMAND, OnContextViewCommand)
 	ON_MESSAGE_VOID(WM_UPDATESORTSETTINGS, OnUpdateSortSettings)
 	ON_MESSAGE_VOID(WM_UPDATEVIEWSETTINGS, OnUpdateViewSettings)
-	ON_MESSAGE_VOID(WM_UPDATECOUNTS, OnUpdateCounts)
+	ON_MESSAGE_VOID(WM_UPDATESIDEBAR, OnUpdateSidebar)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
@@ -421,7 +414,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					m_wndSidebar.AddCaption();
 					break;
 
-				case LFLastPersistentContext+1:
+				case LFContextNew:
 					m_wndSidebar.AddCaption(IDS_HOUSEKEEPING);
 					break;
 
@@ -720,20 +713,21 @@ void CMainWnd::OnUpdateViewSettings()
 	}
 }
 
-void CMainWnd::OnUpdateCounts()
+void CMainWnd::OnUpdateSidebar()
 {
-	m_StatisticsResult = LFQueryStatistics(m_Statistics, m_StatisticsID);
+	UINT64 GlobalContextSet;
+	m_StatisticsResult = LFQueryStatistics(m_Statistics, m_StatisticsID, &GlobalContextSet);
 
 	if (m_pSidebarWnd)
+	{
 		for (UINT a=0; a<=LFLastQueryContext; a++)
-			if (a==LFContextTasks)
-			{
-				m_pSidebarWnd->SetCount(IDM_NAV_SWITCHCONTEXT+a, m_Statistics.FileCount[a], PriorityColor());
-			}
-			else
-			{
-				m_pSidebarWnd->SetCount(IDM_NAV_SWITCHCONTEXT+a, m_Statistics.FileCount[a]);
-			}
+			m_pSidebarWnd->UpdateItem(IDM_NAV_SWITCHCONTEXT+a, m_Statistics.FileCount[a], 
+				(GlobalContextSet & (1ull<<a)) || (a<=LFContextFilters) || (a>LFLastPersistentContext),
+				(a==LFContextTasks) ? PriorityColor() : (COLORREF)-1);
+
+		// Immediately update sidebar
+		m_pSidebarWnd->SendMessage(WM_IDLEUPDATECMDUI);
+	}
 }
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
@@ -754,7 +748,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		}
 		else
 		{
-			LFSortSearchResult(m_pRawFiles, pContextViewSettings->SortBy, pContextViewSettings->Descending);
+			LFSortSearchResult(m_pRawFiles, pContextViewSettings->SortBy, pContextViewSettings->SortDescending);
 		}
 
 	m_wndMainView.UpdateSearchResult(m_pActiveFilter, m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
@@ -771,7 +765,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 			{
 				strcpy_s(m_StatisticsID, LFKeySize, GetStatisticsID());
 
-				OnUpdateCounts();
+				OnUpdateSidebar();
 			}
 
 			m_pSidebarWnd->SetSelection(IDM_NAV_SWITCHCONTEXT+Context);
@@ -811,7 +805,7 @@ LRESULT CMainWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 			PostMessage(WM_RELOAD);
 
 	if (m_wndMainView.GetStoreID()[0]=='\0')
-		PostMessage(WM_UPDATECOUNTS);
+		PostMessage(WM_UPDATESIDEBAR);
 
 	return NULL;
 }
@@ -838,7 +832,7 @@ LRESULT CMainWnd::OnStatisticsChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		if (m_pCookedFiles->m_Context==LFContextStores)
 			PostMessage(WM_RELOAD);
 
-	PostMessage(WM_UPDATECOUNTS);
+	PostMessage(WM_UPDATESIDEBAR);
 
 	return NULL;
 }

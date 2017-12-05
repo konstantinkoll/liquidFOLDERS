@@ -6,6 +6,7 @@
 #include "CBackstageShadow.h"
 #include "CBackstageSidebar.h"
 #include "CBackstageWidgets.h"
+#include "CFrontstageWnd.h"
 #include "ITaskbarList3.h"
 
 
@@ -20,7 +21,7 @@
 #define SWP_NOCLIENTSIZE     0x0800
 #define SWP_NOCLIENTMOVE     0x1000
 
-class CBackstageWnd : public CWnd
+class CBackstageWnd : public CFrontstageWnd
 {
 public:
 	CBackstageWnd(BOOL IsDialog=FALSE, BOOL WantsBitmap=FALSE);
@@ -57,7 +58,6 @@ protected:
 	afx_msg BOOL OnNcActivate(BOOL bActive);
 	afx_msg void OnEnable(BOOL bEnable);
 	afx_msg LRESULT OnGetTitleBarInfoEx(WPARAM wParam, LPARAM lParam);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg LRESULT OnSetFont(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnThemeChanged();

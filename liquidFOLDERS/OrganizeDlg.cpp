@@ -9,10 +9,10 @@
 // OrganizeDlg
 //
 
-OrganizeDlg::OrganizeDlg(UINT Context, CWnd* pParentWnd)
-	: LFAttributeListDlg(IDD_ORGANIZE, pParentWnd)
+OrganizeDlg::OrganizeDlg(CWnd* pParentWnd, UINT Context)
+	: LFAttributeListDlg(IDD_ORGANIZE, pParentWnd, Context)
 {
-	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context=Context];
+	p_ContextViewSettings = &theApp.m_ContextViewSettings[Context];
 }
 
 void OrganizeDlg::DoDataExchange(CDataExchange* pDX)
@@ -23,9 +23,13 @@ void OrganizeDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SORTDIRECTION, m_wndSortDirection);
 
 	if (pDX->m_bSaveAndValidate)
-		theApp.SetContextSort(m_Context,
-			(UINT)m_wndSortAttribute.GetItemData(m_wndSortAttribute.GetNextItem(-1, LVNI_SELECTED)),
-			m_wndSortDirection.GetCurSel());
+	{
+		const UINT Index = m_wndSortAttribute.GetNextItem(-1, LVNI_SELECTED);
+		if (Index!=-1)
+			theApp.SetContextSort(m_Context,
+				(UINT)m_wndSortAttribute.GetItemData(Index),
+				m_wndSortDirection.GetCurSel());
+	}
 }
 
 void OrganizeDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
@@ -52,7 +56,7 @@ BOOL OrganizeDlg::InitDialog()
 	PopulateListCtrl(IDC_SORTATTRIBUTE, FALSE, p_ContextViewSettings->SortBy);
 
 	// Combobox füllen
-	m_wndSortDirection.SetCurSel(p_ContextViewSettings->Descending ? 1 : 0);
+	m_wndSortDirection.SetCurSel(p_ContextViewSettings->SortDescending ? 1 : 0);
 
 	// Ggf. Elemente deaktivieren
 	if (p_ContextViewSettings->View>LFViewDetails)
@@ -78,7 +82,7 @@ void OrganizeDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		{
 			const UINT Attr = (UINT)m_wndSortAttribute.GetItemData(Index);
 
-			m_wndSortDirection.SetCurSel(theApp.m_Attributes[Attr].TypeProperties.DefaultDescending ? 1 : 0);
+			m_wndSortDirection.SetCurSel(theApp.IsAttributeSortDescending(m_Context, Attr) ? 1 : 0);
 		}
 	}
 }

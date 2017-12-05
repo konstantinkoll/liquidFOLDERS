@@ -3,31 +3,30 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 #include "LFCore.h"
 
 
 // CItemPanel
 //
 
-class CItemPanel : public CWnd
+class CItemPanel : public CFrontstageWnd
 {
 public:
 	CItemPanel();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
-	void Empty();
+	void Reset();
 	void SetItem(CString Text, CImageList* pIcons=NULL, INT nID=-1, BOOL Ghosted=FALSE);
 	BOOL SetItem(const LPCSTR pStoreID);
 	BOOL SetItem(LPITEMIDLIST pidlFQ, LPCWSTR Path=NULL, UINT nID=0, LPCWSTR Hint=NULL);
 	BOOL SetItem(LPCWSTR Path, UINT nID=0, LPCWSTR Hint=NULL);
 
 protected:
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	virtual INT ItemAtPosition(CPoint point) const;
+	virtual void InvalidateItem(INT Index);
+	virtual void ShowTooltip(const CPoint& point);
+
 	afx_msg void OnPaint();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 	CSize m_IconSize;
@@ -36,7 +35,4 @@ protected:
 	BOOL m_Ghosted;
 	CString m_Text;
 	UINT m_Lines;
-
-private:
-	BOOL m_Hover;
 };

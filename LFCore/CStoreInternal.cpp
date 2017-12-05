@@ -89,7 +89,7 @@ UINT CStoreInternal::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemD
 	ZeroMemory(&pItemDescriptor->CoreAttributes.FileID[1], LFKeySize-1);
 
 	// 1st directory level
-	GetInternalFilePath(&pItemDescriptor->CoreAttributes, pPath, cCount);
+	GetInternalFilePath(pItemDescriptor->CoreAttributes, pPath, cCount);
 
 	Result = CreateDirectory(pPath);
 	if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
@@ -101,7 +101,7 @@ UINT CStoreInternal::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemD
 		for (UINT a=1; a<LFKeySize-1; a++)
 			pItemDescriptor->CoreAttributes.FileID[a] = RAND_CHAR();
 
-		GetInternalFilePath(&pItemDescriptor->CoreAttributes, pPath, cCount);
+		GetInternalFilePath(pItemDescriptor->CoreAttributes, pPath, cCount);
 	}
 	while (FileExists(pPath));
 

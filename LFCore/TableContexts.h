@@ -3,7 +3,7 @@
 #include "LF.h"
 
 
-#define FILEFORMATCOUNT     198
+#define FILEFORMATCOUNT     247
 
 
 #pragma pack(push,1)
@@ -11,10 +11,11 @@
 struct RegisteredFileFormat
 {
 	CHAR Format[7];
-	BYTE ContextID;
+	BYTE SystemContextID;
+	BYTE UserContextID;
 };
 
 #pragma pack(pop)
 
 extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT];
-extern const BYTE ContextSlaves[LFLastQueryContext+1];
+extern const BYTE ContextSlaves[LFLastPersistentContext+1];

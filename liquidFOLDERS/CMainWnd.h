@@ -25,7 +25,7 @@
 #define WM_NAVIGATETO             WM_USER+206
 #define WM_SENDTO                 WM_USER+207
 #define WM_BEGINDRAGDROP          WM_USER+208
-#define WM_UPDATECOUNTS           WM_USER+209
+#define WM_UPDATESIDEBAR          WM_USER+209
 
 class CMainWnd : public CBackstageWnd
 {
@@ -75,7 +75,7 @@ protected:
 	afx_msg LRESULT OnContextViewCommand(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnUpdateSortSettings();
 	afx_msg void OnUpdateViewSettings();
-	afx_msg void OnUpdateCounts();
+	afx_msg void OnUpdateSidebar();
 	afx_msg LRESULT OnCookFiles(WPARAM wParam=NULL, LPARAM lParam=NULL);
 	afx_msg void OnUpdateFooter();
 
@@ -121,6 +121,13 @@ inline BOOL CMainWnd::CreateClipboard()
 	return Create(TRUE);
 }
 
+inline LPCSTR CMainWnd::GetStatisticsID() const
+{
+	ASSERT(m_pActiveFilter);
+
+	return (m_pActiveFilter->Mode<LFFilterModeSearch) && IsWindow(m_wndMainView) ? m_wndMainView.GetStoreID() : "";
+}
+
 inline COLORREF CMainWnd::PriorityColor() const
 {
 	return m_Statistics.TaskCount[10] ? 0x0000FF :
@@ -134,7 +141,7 @@ inline COLORREF CMainWnd::PriorityColor() const
 inline BOOL CMainWnd::CookSortDescending(const LFContextViewSettings* pContextViewSettings)
 {
 	return (pContextViewSettings->View==LFViewTimeline) ||
-		(pContextViewSettings->Descending && (pContextViewSettings->View<=LFViewDetails));
+		(pContextViewSettings->SortDescending && (pContextViewSettings->View<=LFViewDetails));
 }
 
 inline BOOL CMainWnd::CookGroupSingle(const LFContextViewSettings* pContextViewSettings)

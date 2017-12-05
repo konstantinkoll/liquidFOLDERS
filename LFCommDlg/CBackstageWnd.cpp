@@ -21,7 +21,7 @@ HBRUSH hBackgroundBottom = NULL;
 const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
 
 CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
-	: CWnd()
+	: CFrontstageWnd()
 {
 	m_IsDialog = m_ShowCaption = IsDialog;
 	m_WantsBitmap = WantsBitmap;
@@ -93,7 +93,7 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 	}
 
 	// Create window
-	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
+	if (!CFrontstageWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
 		dwStyle | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
 		return FALSE;
 
@@ -180,7 +180,7 @@ BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
 			if (TranslateAccelerator(m_hWnd, hAccelerator, pMsg))
 				return TRUE;
 
-	return CWnd::PreTranslateMessage(pMsg);
+	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
 LRESULT CBackstageWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -191,7 +191,7 @@ LRESULT CBackstageWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 		LONG lStyle = GetWindowLong(m_hWnd, GWL_STYLE);
 		SetWindowLong(m_hWnd, GWL_STYLE, lStyle & ~WS_VISIBLE);
 
-		CWnd::WindowProc(message, wParam, lParam);
+		CFrontstageWnd::WindowProc(message, wParam, lParam);
 
 		SetWindowLong(m_hWnd, GWL_STYLE, lStyle);
 
@@ -200,12 +200,12 @@ LRESULT CBackstageWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 		return NULL;
 	}
 
-	return CWnd::WindowProc(message, wParam, lParam);
+	return CFrontstageWnd::WindowProc(message, wParam, lParam);
 }
 
 BOOL CBackstageWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	if (CFrontstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
 	return LFGetApp()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
@@ -403,16 +403,11 @@ void CBackstageWnd::UpdateBackground()
 				}
 
 				// Outline
-				CRect rectOutline(-1, -1, m_BackBufferL+1, m_BackBufferH+1);
-				if (!IsZoomed())
-				{
-					CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
+				DrawWindowEdge(g, Themed);
 
-					pen.SetColor(Color(0xFF000000));
-					g.DrawPath(&pen, &path);
-				}
-				else
+				if (IsZoomed())
 				{
+					CRect rectOutline(-1, -1, m_BackBufferL+1, m_BackBufferH+1);
 					CreateRoundTop(rectOutline, BACKSTAGERADIUS, path);
 
 					path.AddLine(m_BackBufferL, -1, -1, -1);
@@ -615,13 +610,11 @@ void CBackstageWnd::PrepareBitmaps()
 	{
 		Bitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN);
 
-		CDC* pDC = GetDC();
-
 		CDC dc;
-		dc.CreateCompatibleDC(pDC);
+		dc.CreateCompatibleDC(NULL);
 
 		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->GetWidth(), BACKGROUNDTOP);
+		MemBitmap.CreateBitmap(pTexture->GetWidth(), BACKGROUNDTOP, 1, 32, NULL);
 		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		Graphics g(dc);
@@ -632,7 +625,6 @@ void CBackstageWnd::PrepareBitmaps()
 		g.FillRectangle(&brush, 0, 0, pTexture->GetWidth(), BACKGROUNDTOP);
 
 		dc.SelectObject(pOldBitmap);
-		ReleaseDC(pDC);
 
 		hBackgroundTop = CreatePatternBrush(MemBitmap);
 	}
@@ -641,13 +633,11 @@ void CBackstageWnd::PrepareBitmaps()
 	{
 		Bitmap* pTexture = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_DARKLINEN);
 
-		CDC* pDC = GetDC();
-
 		CDC dc;
-		dc.CreateCompatibleDC(pDC);
+		dc.CreateCompatibleDC(NULL);
 
 		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(pDC, pTexture->GetWidth(), pTexture->GetHeight());
+		MemBitmap.CreateBitmap(pTexture->GetWidth(), pTexture->GetHeight(), 1, 32, NULL);
 		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		Graphics g(dc);
@@ -658,14 +648,13 @@ void CBackstageWnd::PrepareBitmaps()
 		g.FillRectangle(&brush, 0, 0, pTexture->GetWidth(), pTexture->GetHeight());
 
 		dc.SelectObject(pOldBitmap);
-		ReleaseDC(pDC);
 
 		hBackgroundBottom = CreatePatternBrush(MemBitmap);
 	}
 }
 
 
-BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
+BEGIN_MESSAGE_MAP(CBackstageWnd, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
@@ -675,7 +664,6 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CWnd)
 	ON_WM_NCACTIVATE()
 	ON_WM_ENABLE()
 	ON_MESSAGE(WM_GETTITLEBARINFOEX, OnGetTitleBarInfoEx)
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_SETFONT, OnSetFont)
 	ON_WM_THEMECHANGED()
@@ -696,7 +684,7 @@ END_MESSAGE_MAP()
 
 INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	LFGetApp()->HideTooltip();
@@ -755,7 +743,7 @@ void CBackstageWnd::OnClose()
 			LFGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
 	}
 
-	CWnd::OnClose();
+	CFrontstageWnd::OnClose();
 }
 
 void CBackstageWnd::OnDestroy()
@@ -767,7 +755,7 @@ void CBackstageWnd::OnDestroy()
 
 	DeleteObject(hBackgroundBrush);
 
-	CWnd::OnDestroy();
+	CFrontstageWnd::OnDestroy();
 
 	LFGetApp()->KillFrame(this);
 }
@@ -908,11 +896,6 @@ LRESULT CBackstageWnd::OnGetTitleBarInfoEx(WPARAM /*wParam*/, LPARAM lParam)
 	return FALSE;
 }
 
-BOOL CBackstageWnd::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
 void CBackstageWnd::OnPaint()
 {
 	UpdateBackground();
@@ -958,7 +941,7 @@ void CBackstageWnd::OnCompositionChanged()
 HBRUSH CBackstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_EDIT))
 	{
@@ -1019,7 +1002,7 @@ void CBackstageWnd::OnWindowPosChanging(WINDOWPOS* lpwndpos)
 	if (lpwndpos->y<0)
 		lpwndpos->y = 0;
 
-	CWnd::OnWindowPosChanging(lpwndpos);
+	CFrontstageWnd::OnWindowPosChanging(lpwndpos);
 
 	if (!(lpwndpos->flags & (SWP_NOCLIENTSIZE | SWP_NOSIZE)))
 		if ((lpwndpos->x+lpwndpos->cx>0) && (lpwndpos->y+lpwndpos->cy>0) && ((lpwndpos->cx>m_RegionWidth) || (lpwndpos->cy>m_RegionHeight)))
@@ -1053,7 +1036,7 @@ void CBackstageWnd::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 
 void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	CWnd::OnGetMinMaxInfo(lpMMI);
+	CFrontstageWnd::OnGetMinMaxInfo(lpMMI);
 
 	if (!m_IsDialog)
 		if (GetStyle() & WS_THICKFRAME)

@@ -24,8 +24,7 @@ struct AttributeSummary
 	BOOL Visible;
 	UINT Status;
 	LFVariantData VData;
-	LFVariantData RangeFirst;
-	LFVariantData RangeSecond;
+	LFVariantData VDataRange;
 };
 
 class CFileSummary
@@ -33,14 +32,16 @@ class CFileSummary
 public:
 	CFileSummary();
 
-	void Reset(INT Context=LFContextAllFiles);
+	void ResetAttribute(UINT Attr);
+	void Reset(UINT Context=LFContextAllFiles);
 	void AddValueVirtual(UINT Attr, const LPCWSTR pStrValue);
 	void AddValueVirtual(UINT Attr, const LPCSTR pStrValue);
 	void AddValueVirtual(UINT Attr, const INT64 Size);
 	void AddItem(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
+	void UpdateIATAAirport(BOOL AllowMultiple);
 
 	AttributeSummary m_AttributeSummary[AttrCount];
-	INT m_Context;
+	UINT m_Context;
 	const LFItemDescriptor* p_LastItem;
 	UINT m_ItemCount;
 	UINT m_IconStatus;
@@ -87,7 +88,7 @@ protected:
 	UINT m_Status;
 	INT m_IconID;
 	CHAR m_FileFormat[LFExtSize];
-	LFItemDescriptor* m_pItem;
+	LFItemDescriptor* m_pItemDesciptor;
 };
 
 
@@ -102,9 +103,9 @@ public:
 	virtual INT GetMinWidth(INT Height) const;
 	virtual void AdjustLayout(CRect rectLayout);
 
-	void AggregateStart(INT Context);
+	void AggregateInitialize(UINT Context);
 	void AggregateAdd(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
-	void AggregateFinish();
+	void AggregateClose();
 
 protected:
 	void SaveSettings() const;
@@ -121,18 +122,22 @@ protected:
 
 	CFileSummary m_FileSummary;
 	CIconHeader m_IconHeader;
-	CInspectorGrid m_wndGrid;
+	CInspectorGrid m_wndInspectorGrid;
 	BOOL m_ShowInternal;
 	BOOL m_SortAlphabetic;
 
 private:
+	void UpdatePropertyState(UINT Attr);
+	void UpdateIATAAirport(BOOL AllowMultiple=TRUE);
+
 	static CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
 	CString m_TypeName;
 };
 
-inline void CInspectorPane::AggregateStart(INT Context)
+inline void CInspectorPane::AggregateInitialize(UINT Context)
 {
 	m_FileSummary.Reset(Context);
+	m_wndInspectorGrid.SetContext(Context);
 }
 
 inline void CInspectorPane::AggregateAdd(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles)

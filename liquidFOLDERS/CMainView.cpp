@@ -17,7 +17,7 @@
 // CMainView
 //
 
-#define FileViewID                  3
+#define FileViewID     3
 
 CIcons CMainView::m_LargeIcons;
 CIcons CMainView::m_SmallIcons;
@@ -137,7 +137,8 @@ void CMainView::SetHeaderButtons()
 	ASSERT(p_OrganizeButton);
 	ASSERT(p_ViewButton);
 
-	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_ContextViewSettings[m_Context].SortBy].Name, FALSE);
+	const UINT Attr = m_pWndFileView ? m_pWndFileView->GetSortAttribute() : theApp.m_ContextViewSettings[m_Context].SortBy;
+	p_OrganizeButton->SetValue(theApp.GetAttributeName(Attr, m_Context), FALSE);
 
 	p_ViewButton->SetValue(CString((LPCSTR)IDM_VIEW_FIRST+m_ViewID));
 }
@@ -179,18 +180,39 @@ void CMainView::SetHeader()
 				Hint.Insert(0, pHint);
 			}
 
-		// Representative thumbnail for music albums or genre icon
+		// Thumbnail
 		HBITMAP hBitmap = NULL;
 		CPoint BitmapOffset(-2, -1);
 
-		if (theApp.m_Contexts[m_Context].CtxProperties.ShowRepresentativeThumbnail)
-			hBitmap = theApp.m_IconFactory.GetRepresentativeThumbnailBitmap(p_RawFiles);
+		// Representative thumbnail
+		const INT SubfolderAttribute = LFGetSubfolderAttribute(p_Filter);
+		INT IconID = p_RawFiles->m_IconID;
 
-		if (p_RawFiles->m_IconID && !hBitmap)
+		if (theApp.ShowRepresentativeThumbnail(SubfolderAttribute, m_Context))
 		{
-			hBitmap = CIcons::ExtractBitmap(theApp.m_CoreImageListJumbo, p_RawFiles->m_IconID-1);
+			if (theApp.IsPlaceholderIcon(IconID))
+				if (m_ViewID==LFViewList)
+				{
+					hBitmap = theApp.m_IconFactory.GetRepresentativeThumbnailBitmap(p_RawFiles);
+				}
+				else
+				{
+					IconID = 0;
+				}
+		}
+		else
+		{
+			// Map thumbnail
+			if ((IconID==IDI_FLD_PLACEHOLDER_LOCATION) && (SubfolderAttribute==LFAttrLocationIATA))
+				hBitmap = theApp.m_IconFactory.GetMapBitmap(p_Filter->pConditionList->VData.IATACode);
+		}
 
-			if (p_RawFiles->m_IconID!=IDI_FLD_PLACEHOLDER)
+		// Icon
+		if (!hBitmap && IconID)
+		{
+			hBitmap = CIcons::ExtractBitmap(theApp.m_CoreImageListJumbo, IconID-1);
+
+			if (p_RawFiles->m_IconID<IDI_FIRSTPLACEHOLDERICON)
 				BitmapOffset.x = BitmapOffset.y = -4;
 		}
 
@@ -390,24 +412,6 @@ void CMainView::RemoveTransactedItems(LFTransactionList* pTransactionList)
 	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
 }
 
-void CMainView::MoveToContext(BYTE Context)
-{
-	ASSERT((m_Context==LFContextBooks) || (m_Context==LFContextDocuments));
-	ASSERT((Context==LFContextBooks) || (Context==LFContextDocuments));
-	ASSERT(m_Context!=Context);
-
-	CWaitCursor csr;
-
-	LFTransactionList* pTransactionList = BuildTransactionList();
-	LFDoTransaction(pTransactionList, LFTransactionTypeUpdateContext, NULL, Context);
-	RemoveTransactedItems(pTransactionList);
-
-	// Show notification
-	ShowNotification(pTransactionList->m_LastError);
-
-	LFFreeTransactionList(pTransactionList);
-}
-
 BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 {
 	LFTransactionList* pTransactionList = BuildTransactionList(All);
@@ -452,14 +456,14 @@ void CMainView::RecoverFiles(BOOL All)
 	LFFreeTransactionList(pTransactionList);
 }
 
-BOOL CMainView::UpdateItems(LFVariantData* pValue1, LFVariantData* pValue2, LFVariantData* pValue3)
+BOOL CMainView::UpdateItems(const LFVariantData* pValue1, const LFVariantData* pValue2, const LFVariantData* pValue3)
 {
 	CWaitCursor csr;
 
 	LFTransactionList* pTransactionList = BuildTransactionList();
 	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, pValue1, pValue2, pValue3);
 
-	if ((m_pWndFileView!=NULL) && pTransactionList->m_Modified)
+	if (m_pWndFileView && pTransactionList->m_Modified)
 	{
 		// Update folder colors
 		if ((pValue1 && (pValue1->Attr==LFAttrColor)) || (pValue2 && (pValue2->Attr==LFAttrColor)) || (pValue3 && (pValue3->Attr==LFAttrColor)))
@@ -541,8 +545,6 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
 	ON_COMMAND(IDM_FILE_SHOWEXPLORER, OnFileShowExplorer)
-	ON_COMMAND(IDM_FILE_MOVETOBOOKS, OnFileMoveToBooks)
-	ON_COMMAND(IDM_FILE_MOVETODOCUMENTS, OnFileMoveToDocuments)
 	ON_COMMAND(IDM_FILE_EDIT, OnFileEdit)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVEFROMCLIPBOARD, OnFileRemoveFromClipboard)
@@ -556,6 +558,8 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_COMMAND(IDM_FILE_TASKDONE, OnFileTaskDone)
 	ON_COMMAND(IDM_FILE_RECOVER, OnFileRecover)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RECOVER, OnUpdateFileCommands)
+
+	ON_COMMAND_RANGE(IDM_FILE_MOVETOCONTEXT, IDM_FILE_MOVETOCONTEXT+LFContextCount-1, OnFileMoveToContext)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -593,23 +597,21 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 19, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_MOVETOBOOKS, 22, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_MOVETODOCUMENTS, 23, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 27);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 28);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 29);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
 
-	#define InspectorIconVisible     30
-	#define InspectorIconHidden      31
+	#define InspectorIconVisible     28
+	#define InspectorIconHidden      29
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 34, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 35, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 33, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -801,7 +803,7 @@ void CMainView::OnAdjustLayout()
 
 void CMainView::OnUpdateSelection()
 {
-	m_wndInspectorPane.AggregateStart(m_Context);
+	m_wndInspectorPane.AggregateInitialize(m_Context);
 	m_FilesSelected = FALSE;
 
 	if (p_CookedFiles)
@@ -817,7 +819,7 @@ void CMainView::OnUpdateSelection()
 			}
 		}
 
-	m_wndInspectorPane.AggregateFinish();
+	m_wndInspectorPane.AggregateClose();
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 }
 
@@ -1008,7 +1010,7 @@ void CMainView::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnSortOptions()
 {
-	OrganizeDlg dlg(m_Context, this);
+	OrganizeDlg dlg(this, m_Context);
 	dlg.DoModal();
 }
 
@@ -1021,15 +1023,18 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 {
 	HMENU hMenu = CreatePopupMenu();
 	CString tmpStr;
+	INT SubfolderAttribute;
 	UINT AllowedViews;
 
 	switch (wParam)
 	{
 	case IDM_ORGANIZE:
+		SubfolderAttribute = LFGetSubfolderAttribute(p_Filter);
+
 		for (UINT a=0; a<LFAttributeCount; a++)
-			if (theApp.IsAttributeAdvertised(m_Context, a))
+			if (theApp.IsAttributeSortable(m_Context, a, SubfolderAttribute) && theApp.IsAttributeAdvertised(m_Context, a))
 			{
-				tmpStr = theApp.m_Attributes[a].Name;
+				tmpStr = theApp.GetAttributeName(a, m_Context);
 
 				AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_FIRST+a, _T("&")+tmpStr);
 			}
@@ -1061,7 +1066,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 
 void CMainView::OnSort(UINT nID)
 {
-	theApp.SetContextSort(m_Context, nID-IDM_ORGANIZE_FIRST, theApp.m_Attributes[nID-IDM_ORGANIZE_FIRST].TypeProperties.DefaultDescending);
+	theApp.SetContextSort(m_Context, nID-IDM_ORGANIZE_FIRST, theApp.IsAttributeSortDescending(m_Context, nID-IDM_ORGANIZE_FIRST));
 
 	SetFocus();
 }
@@ -1405,16 +1410,6 @@ void CMainView::OnFileShowExplorer()
 	}
 }
 
-void CMainView::OnFileMoveToBooks()
-{
-	MoveToContext(LFContextBooks);
-}
-
-void CMainView::OnFileMoveToDocuments()
-{
-	MoveToContext(LFContextDocuments);
-}
-
 void CMainView::OnFileEdit()
 {
 	const INT Index = GetSelectedItem();
@@ -1581,28 +1576,20 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_FILE_OPENWITH:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && (pItemDescriptor->CoreAttributes.ContextID!=LFContextFilters);
+			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && !LFIsFilterFile(pItemDescriptor);
 
 		break;
 
 	case IDM_FILE_SHOWEXPLORER:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted | LFTypeExplorerAllowed))==(LFTypeFile | LFTypeMounted | LFTypeExplorerAllowed)) && (pItemDescriptor->CoreAttributes.ContextID!=LFContextFilters);
+			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted | LFTypeExplorerAllowed))==(LFTypeFile | LFTypeMounted | LFTypeExplorerAllowed)) && !LFIsFilterFile(pItemDescriptor);
 
 		break;
 
 	case IDM_FILE_EDIT:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && (pItemDescriptor->CoreAttributes.ContextID==LFContextFilters);
+			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && LFIsFilterFile(pItemDescriptor);
 
-		break;
-
-	case IDM_FILE_MOVETOBOOKS:
-		bEnable = m_FilesSelected && (m_Context==LFContextDocuments);
-		break;
-
-	case IDM_FILE_MOVETODOCUMENTS:
-		bEnable = m_FilesSelected && (m_Context==LFContextBooks);
 		break;
 
 	case IDM_FILE_REMEMBER:
@@ -1655,4 +1642,19 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(bEnable);
+}
+
+
+void CMainView::OnFileMoveToContext(UINT CmdID)
+{
+	CWaitCursor csr;
+
+	LFTransactionList* pTransactionList = BuildTransactionList();
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdateUserContext, NULL, CmdID-IDM_FILE_MOVETOCONTEXT);
+	RemoveTransactedItems(pTransactionList);
+
+	// Show notification
+	ShowNotification(pTransactionList->m_LastError);
+
+	LFFreeTransactionList(pTransactionList);
 }

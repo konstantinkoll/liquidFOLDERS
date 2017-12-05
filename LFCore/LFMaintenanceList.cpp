@@ -22,7 +22,7 @@ LFMaintenanceList::LFMaintenanceList()
 	m_LastError = LFOk;
 }
 
-BOOL LFMaintenanceList::AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT Icon)
+BOOL LFMaintenanceList::AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT IconID)
 {
 	assert(Name);
 	assert(Comments);
@@ -34,7 +34,7 @@ BOOL LFMaintenanceList::AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, 
 	wcscpy_s(Item.Comments, 256, Comments);
 	strcpy_s(Item.StoreID, LFKeySize, StoreID);
 	Item.Result = Result;
-	Item.Icon = Icon;
+	Item.IconID = IconID;
 
 	return LFDynArray::AddItem(Item);
 }

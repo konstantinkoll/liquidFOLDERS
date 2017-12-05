@@ -94,7 +94,7 @@ Finish:
 	return Result;
 }
 
-UINT CStoreWindows::GetFileLocation(LFCoreAttributes* /*pCoreAttributes*/, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const
+UINT CStoreWindows::GetFileLocation(const LFCoreAttributes& /*pCoreAttributes*/, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const
 {
 	assert(pStoreData);
 	assert(pPath);
@@ -147,7 +147,7 @@ UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDe
 
 			swprintf_s(NumberStr, 16, L" (%u)", ++Number);
 
-			if ((Result=GetFileLocation(&pItemDescriptor->CoreAttributes, pData, Path, 2*MAX_PATH))!=LFOk)
+			if ((Result=GetFileLocation(pItemDescriptor->CoreAttributes, pData, Path, 2*MAX_PATH))!=LFOk)
 				return Result;
 		}
 		while (_waccess(Path, 0)==0);
@@ -164,9 +164,8 @@ UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDe
 	return CStore::GetFileLocation(pItemDescriptor, pPath, cCount);
 }
 
-UINT CStoreWindows::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
+UINT CStoreWindows::RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
 {
-	assert(pCoreAttributes);
 	assert(pStoreData);
 	assert(pItemDescriptor);
 
@@ -192,19 +191,18 @@ UINT CStoreWindows::RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreD
 	wcscat_s(pStr, cCount, Extension);
 
 	// Commit
-	return CStore::RenameFile(pCoreAttributes, pStoreData, pItemDescriptor);
+	return CStore::RenameFile(CoreAttributes, pStoreData, pItemDescriptor);
 }
 
-UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
+UINT CStoreWindows::DeleteFile(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData)
 {
-	assert(pCoreAttributes);
 	assert(pStoreData);
 
 	if (!LFIsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
 	WCHAR Path[2*MAX_PATH];
-	GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH);
+	GetFileLocation(CoreAttributes, pStoreData, Path, 2*MAX_PATH);
 
 	if (::DeleteFile(Path))
 		return LFOk;
@@ -215,21 +213,21 @@ UINT CStoreWindows::DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStore
 
 void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 {
-	// Extract roll from path
-	if (LFIsNullAttribute(pItemDescriptor, LFAttrRoll))
+	// Extract media collection from path
+	if (LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection))
 	{
 		// Get file path
-		WCHAR Roll[MAX_PATH];
-		wcscpy_s(Roll, MAX_PATH, (LPCWSTR)pItemDescriptor->StoreData);
+		WCHAR MediaCollection[MAX_PATH];
+		wcscpy_s(MediaCollection, MAX_PATH, (LPCWSTR)pItemDescriptor->StoreData);
 
 		// Isolate lowest subfolder
-		WCHAR* pChar = wcsrchr(Roll, L'\\');
+		WCHAR* pChar = wcsrchr(MediaCollection, L'\\');
 		if (pChar)
 		{
 			*pChar = L'\0';
 
-			// If there is another path component left, set it as roll
-			SetAttribute(pItemDescriptor, LFAttrRoll, (pChar=wcsrchr(Roll, L'\\'))!=NULL ? pChar+1 : Roll);
+			// If there is another path component left, set it as media collection
+			SetAttribute(pItemDescriptor, LFAttrMediaCollection, (pChar=wcsrchr(MediaCollection, L'\\'))!=NULL ? pChar+1 : MediaCollection);
 		}
 	}
 
@@ -237,17 +235,17 @@ void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 	CStore::SetAttributesFromStore(pItemDescriptor);
 }
 
-BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData)
+BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes& CoreAttributes, LPCVOID pStoreData)
 {
 	assert(m_pFileImportList);
 
 	WCHAR Path[2*MAX_PATH];
-	if (GetFileLocation(pCoreAttributes, pStoreData, Path, 2*MAX_PATH)!=LFOk)
+	if (GetFileLocation(CoreAttributes, pStoreData, Path, 2*MAX_PATH)!=LFOk)
 		return TRUE;
 
 	// Find in import list using binary search
 	INT First = 0;
-	INT Last = (INT)m_pFileImportList->m_ItemCount;
+	INT Last = (INT)m_pFileImportList->m_ItemCount-1;
 
 	while (First<=Last)
 	{
@@ -262,7 +260,7 @@ BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID p
 				// Update metadata
 				assert(pItem->FindFileDataPresent);
 
-				SetAttributesFromFindFileData(pCoreAttributes, pItem->FindFileData);
+				SetAttributesFromFindFileData(CoreAttributes, pItem->FindFileData);
 
 				pItem->Processed = TRUE;
 			}

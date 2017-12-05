@@ -4,6 +4,21 @@
 #include "LFDynArray.h"
 
 
+#define REMOVEITEMS(KeepCondition, KeepOps) \
+	assert(m_RawCopy); \
+	UINT WriteIdx = 0; \
+	for (UINT ReadIdx=0; ReadIdx<m_ItemCount; ReadIdx++) \
+		if (KeepCondition) \
+		{ \
+			(m_Items[WriteIdx++]=m_Items[ReadIdx])KeepOps; \
+		} \
+		else \
+		{ \
+			assert((m_Items[ReadIdx]->Type & LFTypeMask)==LFTypeFile); \
+			LFFreeItemDescriptor(m_Items[ReadIdx]); \
+		} \
+	m_ItemCount = WriteIdx;
+
 class LFSearchResult : public LFDynArray<LFItemDescriptor*, 64, 2048>
 {
 public:
@@ -14,9 +29,8 @@ public:
 	void FinishQuery(LFFilter* pFilter);
 	BOOL AddItem(LFItemDescriptor* pItemDescriptor);
 	BOOL AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor);
-	void RemoveItem(UINT Index, BOOL UpdateCount=TRUE);
-	void RemoveFlaggedItems(BOOL UpdateCount=TRUE);
-	void KeepRange(INT First, INT Last);
+	void RemoveFlaggedItems(BOOL UpdateSummary=TRUE);
+	void KeepRange(UINT First, UINT Last);
 	void Sort(UINT Attr, BOOL Descending);
 	void Group(UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 	void GroupArray(UINT Attr, LFFilter* pFilter);
@@ -33,31 +47,33 @@ public:
 	BOOL m_RawCopy;
 	BOOL m_HasCategories;
 
-	UINT m_StoreCount;
 	LFFileSummary m_FileSummary;
 
 protected:
-	BYTE m_AutoContext;
+	void UpdateFileSummary(BOOL Close=TRUE);
 
 private:
-	static void InitFileSummary(LFFileSummary& FileSummary);
+	static void InitializeFileSummary(LFFileSummary& FileSummary);
 	static void AddStoreToSummary(LFFileSummary& FileSummary, const LFStoreDescriptor& StoreDescriptor);
 	static void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
-	static void RemoveFileFromSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
+	static void CloseFileSummary(LFFileSummary& FileSummary);
 	INT Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const;
 	void Heap(UINT Element, const UINT Count, const UINT Attr, const BOOL Descending);
 	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 };
 
-inline void LFSearchResult::InitFileSummary(LFFileSummary& FileSummary)
+inline void LFSearchResult::InitializeFileSummary(LFFileSummary& FileSummary)
 {
 	ZeroMemory(&FileSummary, sizeof(FileSummary));
 
-	FileSummary.OnlyMediaFiles = TRUE;
+	FileSummary.Context = LFContextAuto;
+	FileSummary.OnlyTimebasedMediaFiles = TRUE;
 }
 
 inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, const LFStoreDescriptor& StoreDescriptor)
 {
 	FileSummary.FileCount += StoreDescriptor.Statistics.FileCount[0];
 	FileSummary.FileSize += StoreDescriptor.Statistics.FileSize[0];
+
+	FileSummary.Context = LFContextStores;
 }

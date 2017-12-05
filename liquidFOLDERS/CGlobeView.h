@@ -35,6 +35,7 @@ protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual INT ItemAtPosition(CPoint point) const;
+	virtual void ShowTooltip(const CPoint& point);
 	virtual CMenu* GetItemContextMenu(INT Index);
 
 	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
@@ -48,7 +49,6 @@ protected:
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -88,7 +88,7 @@ protected:
 private:
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
-	static void WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr);
+	void WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr);
 	void RenderScene(BOOL Themed);
 
 	static const GLcolor m_lAmbient;

@@ -12,7 +12,7 @@ struct LFPersistentFilterHeader
 	BYTE Reserved[8];
 	UINT szCondition;
 	BOOL AllStores;
-	WCHAR Searchterm[256];
+	WCHAR SearchTerm[256];
 	UINT cConditions;
 };
 

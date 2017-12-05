@@ -20,7 +20,7 @@
 // Context handling
 //
 
-BYTE GetHardcodedContext(LPCSTR Extension)
+void GetHardcodedContext(LPCSTR Extension, BYTE& SystemContextID, BYTE& UserContextID)
 {
 	INT First = 0;
 	INT Last = FILEFORMATCOUNT-1;
@@ -31,7 +31,14 @@ BYTE GetHardcodedContext(LPCSTR Extension)
 
 		const INT Result = strcmp(ContextRegistry[Mid].Format, Extension);
 		if (Result==0)
-			return ContextRegistry[Mid].ContextID;
+		{
+			SystemContextID = ContextRegistry[Mid].SystemContextID;
+			UserContextID = ContextRegistry[Mid].UserContextID;
+
+			assert(ContextMoveAllowed(SystemContextID, UserContextID));
+
+			return;
+		}
 
 		if (Result<0)
 		{
@@ -42,8 +49,6 @@ BYTE GetHardcodedContext(LPCSTR Extension)
 			Last = Mid-1;
 		}
 	}
-
-	return 0;
 }
 
 BYTE GetPerceivedContext(LPCSTR Extension)
@@ -68,16 +73,16 @@ BYTE GetPerceivedContext(LPCSTR Extension)
 
 		case PERCEIVED_TYPE_CONTACTS:
 			return LFContextContacts;
-		}
+
+		case PERCEIVED_TYPE_APPLICATION:
+			return LFContextApps;
+	}
 
 	return 0;
 }
 
-void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL OnImport)
+void SetFileContext(LFCoreAttributes& CoreAttributes, BOOL OnImport)
 {
-	assert(pCoreAttributes);
-	assert(ContextSlaves[LFContextBooks]==ContextSlaves[LFContextDocuments]);
-
 #ifdef _DEBUG
 	// Is the context list sorted?
 	for (UINT a=0; a<(sizeof(ContextRegistry)/sizeof(RegisteredFileFormat))-1; a++)
@@ -85,23 +90,35 @@ void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL OnImport)
 #endif
 
 	// Find context
-	BYTE ContextID = GetHardcodedContext(pCoreAttributes->FileFormat);
+	BYTE SystemContextID = 0;
+	BYTE UserContextID = 0;
+	GetHardcodedContext(CoreAttributes.FileFormat, SystemContextID, UserContextID);
 
-	if (!ContextID)
-		ContextID = GetPerceivedContext(pCoreAttributes->FileFormat);
+	assert(ContextMoveAllowed(SystemContextID, UserContextID));
 
-	// Do not set context if LFContextBooks and LFContextDocuments are switched: the user can manually move files!
-	if (((pCoreAttributes->ContextID!=LFContextBooks) && (pCoreAttributes->ContextID!=LFContextDocuments)) ||
-		((ContextID!=LFContextBooks) && (ContextID!=LFContextDocuments)))
-		pCoreAttributes->ContextID = ContextID;
+	if (!SystemContextID)
+		SystemContextID = GetPerceivedContext(CoreAttributes.FileFormat);
+
+	if (LFGetSystemContextID(CoreAttributes)!=SystemContextID)
+	{
+		// New system context: set both system and user context
+		CoreAttributes.SystemContextID = SystemContextID;
+		CoreAttributes.UserContextID = UserContextID;
+	}
+	else
+		if (CoreAttributes.UserContextID && !(CtxProperties[SystemContextID].AllowMoveToContext & (1ull<<UserContextID)))
+		{
+			// Illegal user context: set new user context
+			CoreAttributes.UserContextID = UserContextID;
+		}
 
 	// Slave
 	if (OnImport)
 	{
-		assert(ContextID<=LFLastQueryContext);
-		assert(!pCoreAttributes->SlaveID);
+		assert(SystemContextID<=LFLastPersistentContext);
+		assert(!CoreAttributes.SlaveID);
 
-		pCoreAttributes->SlaveID = ContextSlaves[ContextID];
+		CoreAttributes.SlaveID = ContextSlaves[SystemContextID];
 	}
 }
 
@@ -109,42 +126,39 @@ void SetFileContext(LFCoreAttributes* pCoreAttributes, BOOL OnImport)
 // File system handling
 //
 
-void SetAttributesFromFindFileData(LFCoreAttributes* pCoreAttributes, WIN32_FIND_DATA& FindData)
+void SetAttributesFromFindFileData(LFCoreAttributes& CoreAttributes, WIN32_FIND_DATA& FindData)
 {
-	assert(pCoreAttributes);
-
 	// Set attributes
-	pCoreAttributes->FileSize = (((INT64)FindData.nFileSizeHigh) << 32) | FindData.nFileSizeLow;
-	pCoreAttributes->CreationTime = FindData.ftCreationTime;
-	pCoreAttributes->FileTime = FindData.ftLastWriteTime;
+	CoreAttributes.FileSize = (((INT64)FindData.nFileSizeHigh) << 32) | FindData.nFileSizeLow;
+	CoreAttributes.CreationTime = FindData.ftCreationTime;
+	CoreAttributes.FileTime = FindData.ftLastWriteTime;
 
 	// Hidden flag
 	if (FindData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
-		pCoreAttributes->Flags = (pCoreAttributes->Flags & ~LFFlagNew) | LFFlagArchive;
+		CoreAttributes.Flags = (CoreAttributes.Flags & ~LFFlagNew) | LFFlagArchive;
 
 	// Adjust files with modification time older than creation time
 	ULARGE_INTEGER CreationTime;
-	CreationTime.LowPart = pCoreAttributes->CreationTime.dwLowDateTime;
-	CreationTime.HighPart = pCoreAttributes->CreationTime.dwHighDateTime;
+	CreationTime.LowPart = CoreAttributes.CreationTime.dwLowDateTime;
+	CreationTime.HighPart = CoreAttributes.CreationTime.dwHighDateTime;
 
 	ULARGE_INTEGER FileTime;
-	FileTime.LowPart = pCoreAttributes->FileTime.dwLowDateTime;
-	FileTime.HighPart = pCoreAttributes->FileTime.dwHighDateTime;
+	FileTime.LowPart = CoreAttributes.FileTime.dwLowDateTime;
+	FileTime.HighPart = CoreAttributes.FileTime.dwHighDateTime;
 
 	if (CreationTime.QuadPart>FileTime.QuadPart)
-		pCoreAttributes->CreationTime = pCoreAttributes->FileTime;
+		CoreAttributes.CreationTime = CoreAttributes.FileTime;
 }
 
-void SetAttributesFromFindFileData(LFCoreAttributes* pCoreAttributes, LPCWSTR pPath)
+void SetAttributesFromFindFileData(LFCoreAttributes& CoreAttributes, LPCWSTR pPath)
 {
-	assert(pCoreAttributes);
 	assert(pPath);
 
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind = FindFirstFile(pPath, &FindFileData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
-		SetAttributesFromFindFileData(pCoreAttributes, FindFileData);
+		SetAttributesFromFindFileData(CoreAttributes, FindFileData);
 
 	FindClose(hFind);
 }
@@ -173,11 +187,11 @@ BOOL SetAttributesFromAnnotation(LFItemDescriptor* pItemDescriptor, LPCWSTR pAnn
 // Shell property handling
 //
 
-void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID Schema, UINT ID, LFItemDescriptor* pItemDescriptor, UINT Attr)
+void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, LPCGUID Schema, UINT ID, LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	assert(pParentFolder);
 
-	SHCOLUMNID Column = { Schema, ID };
+	SHCOLUMNID Column = { *Schema, ID };
 	VARIANT Value = { 0 };
 
 	if (SUCCEEDED(pParentFolder->GetDetailsEx(pidlRel, &Column, &Value)))
@@ -204,13 +218,11 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 			break;
 
 		case VT_I4:
-			if (((AttrProperties[Attr].Type==LFTypeUINT) || (AttrProperties[Attr].Type==LFTypeBitrate)) && (Value.intVal>=0))
-				SetAttribute(pItemDescriptor, Attr, &Value.intVal);
-
-			break;
+			if (Value.intVal<0)
+				break;
 
 		case VT_UI4:
-			if ((AttrProperties[Attr].Type==LFTypeUINT) || (AttrProperties[Attr].Type==LFTypeFourCC))
+			if ((AttrProperties[Attr].Type==LFTypeUINT) || (AttrProperties[Attr].Type==LFTypeBitrate) || (AttrProperties[Attr].Type==LFTypeYear) || (AttrProperties[Attr].Type==LFTypeFramerate) || (AttrProperties[Attr].Type==LFTypeFourCC))
 				SetAttribute(pItemDescriptor, Attr, &Value.uintVal);
 
 			break;
@@ -265,7 +277,7 @@ void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LF
 		PropertySpec.ulKind = PRSPEC_PROPID;
 
 		for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
-			if (AttrProperties[Attr].ShPropertyMapping.Schema==Schema)
+			if (*AttrProperties[Attr].ShPropertyMapping.Schema==Schema)
 			{
 				PropertySpec.propid = AttrProperties[Attr].ShPropertyMapping.ID;
 
@@ -340,16 +352,23 @@ void SetAttributesFromShell(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BO
 				if (AttrProperties[a].ShPropertyMapping.ID && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
 					GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].ShPropertyMapping.Schema, AttrProperties[a].ShPropertyMapping.ID, pItemDescriptor, a);
 
-			// Besondere Eigenschaften
-			GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 4, pItemDescriptor, LFAttrBitrate);
-			GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 5, pItemDescriptor, LFAttrSamplerate);
-			GetShellProperty(pParentFolder, pidlRel, SHPropertyAudio, 7, pItemDescriptor, LFAttrChannels);
+			// Secondary properties
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyAudio, 4, pItemDescriptor, LFAttrBitrate);
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyAudio, 5, pItemDescriptor, LFAttrSamplerate);
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyAudio, 7, pItemDescriptor, LFAttrChannels);
 
-			GetShellProperty(pParentFolder, pidlRel, SHPropertyPhoto, 36867, pItemDescriptor, LFAttrRecordingTime);
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyMedia, 32, pItemDescriptor, LFAttrURL);
 
-			GetShellProperty(pParentFolder, pidlRel, SHPropertyVideo, 3, pItemDescriptor, LFAttrWidth);
-			GetShellProperty(pParentFolder, pidlRel, SHPropertyVideo, 4, pItemDescriptor, LFAttrHeight);
-			GetShellProperty(pParentFolder, pidlRel, SHPropertyVideo, 8, pItemDescriptor, LFAttrBitrate);
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyMusic, 2, pItemDescriptor, LFAttrCreator);
+
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyPhoto, 18248, pItemDescriptor, LFAttrMediaCollection);
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyPhoto, 36867, pItemDescriptor, LFAttrRecordingTime);
+
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertySummary, 4, pItemDescriptor, LFAttrCreator);
+
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyVideo, 3, pItemDescriptor, LFAttrWidth);
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyVideo, 4, pItemDescriptor, LFAttrHeight);
+			GetShellProperty(pParentFolder, pidlRel, &SHPropertyVideo, 8, pItemDescriptor, LFAttrBitrate);
 
 			pParentFolder->Release();
 		}
@@ -359,7 +378,7 @@ void SetAttributesFromShell(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BO
 
 	// OLE structured storage
 	//
-	if (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments)
+	if (LFIsDocumentFile(pItemDescriptor))
 	{
 		IPropertySetStorage* pPropertySetStorage;
 		if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (LPVOID*)&pPropertySetStorage)))
@@ -377,9 +396,9 @@ void SetAttributesFromShell(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BO
 	// Fix broken properties
 	//
 
-	// Amazon appends " [Explicit" to certain album names; remove it!
+	// Amazon appends " [Explicit]" to certain album names; remove it!
 	LFVariantData VData;
-	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrAlbum, VData);
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrMediaCollection, VData);
 	if (!LFIsNullVariantData(VData))
 	{
 		LPWSTR pSubstr = StrStrI(VData.UnicodeString, L" [EXPLICIT]");

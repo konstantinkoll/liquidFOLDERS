@@ -28,7 +28,7 @@
 const ARGB CTimelineView::m_BevelColors[8] = { 0x80FFFFFF, 0xFF7A7A7C, 0xFFA7A8AA, 0xFFBEBFC2, 0xFFCACBCD, 0xFFCACBCD, 0xFF7A7A7C, 0x80FFFFFF };
 
 CTimelineView::CTimelineView()
-	: CFileView(sizeof(TimelineItemData), FF_ENABLESCROLLING | FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT)
+	: CFileView(sizeof(TimelineItemData), FF_ENABLESCROLLING | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT)
 {
 }
 
@@ -139,37 +139,35 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 				pData->Year = stLocal.wYear;
 
 				// Source
-				if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+				if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceWindows)
 					pData->PreviewMask |= PRV_SOURCE;
-
-				UINT ContextID;
-				UINT CreatorAttr;
-				UINT CollectionAttr;
 
 				// Map properties to Creator, Title, Collection and Comments
 				switch (pItemDescriptor->Type & LFTypeMask)
 				{
 				case LFTypeFile:
-					ContextID = pItemDescriptor->CoreAttributes.ContextID;
-					CreatorAttr = (ContextID==LFContextAudio) || (ContextID==LFContextVideos) ? LFAttrArtist : LFAttrAuthor;
-					CollectionAttr = (ContextID==LFContextAudio) ? LFAttrAlbum : LFAttrRoll;
-
-					pData->pStrCreator = GetAttribute(pData, PRV_CREATOR, pItemDescriptor, CreatorAttr);
+					pData->pStrCreator = GetAttribute(pData, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
 					pData->pStrTitle = GetAttribute(pData, PRV_TITLE, pItemDescriptor, LFAttrTitle);
-					pData->pStrCollection = GetAttribute(pData, PRV_COLLECTION, pItemDescriptor, CollectionAttr);
+					pData->pStrCollection = GetAttribute(pData, PRV_COLLECTION, pItemDescriptor, LFAttrMediaCollection);
 					pData->pStrComments = GetAttribute(pData, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
 
 					if (pData->pStrCollection)
 					{
 						pData->PreviewMask |= PRV_COLLECTIONICON;
-						VERIFY((pData->CollectionIconID=theApp.m_Attributes[CollectionAttr].AttrProperties.IconID)!=0);
+						pData->CollectionIconID = theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor));
+					}
+
+					if (UsePreview(pItemDescriptor))
+					{
+						pData->PreviewMask |= PRV_THUMBNAILS;
+						pData->ThumbnailCount = 1;
 					}
 
 					break;
 
 				case LFTypeFolder:
 					// Aggregate properties
-					pData->PreviewMask |= PRV_CREATOR | PRV_TITLE | PRV_COMMENTS | PRV_COLLECTIONICON | PRV_REPRESENTATIVE;
+					pData->PreviewMask |= PRV_CREATOR | PRV_TITLE | PRV_COMMENTS | PRV_COLLECTIONICON;
 					pData->pStrCreator = pData->pStrTitle = pData->pStrComments = NULL;
 					pData->CollectionIconID = 0;
 
@@ -180,22 +178,35 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 					{
 						LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[b];
 
-						if ((ContextID=pItemDescriptor->CoreAttributes.ContextID)!=LFContextAudio)
-							pData->PreviewMask &= ~PRV_REPRESENTATIVE;
+						if (UsePreview(pItemDescriptor))
+						{
+							pData->PreviewMask |= PRV_THUMBNAILS;
+							pData->ThumbnailCount++;
+						}
+						else
+						{
+							pData->PreviewMask |= PRV_CONTENTLIST;
+							pData->ListCount++;
+						}
 
-						CreatorAttr = (ContextID==LFContextAudio) || (ContextID==LFContextVideos) ? LFAttrArtist : LFAttrAuthor;
-						CollectionAttr = (ContextID==LFContextAudio) ? LFAttrAlbum : LFAttrRoll;
-
-						AggregateAttribute(pData->PreviewMask, pData->pStrCreator, PRV_CREATOR, pItemDescriptor, CreatorAttr);
-						AggregateAttribute(pData->PreviewMask, pData->pStrTitle, PRV_TITLE, pItemDescriptor, CollectionAttr);
+						AggregateAttribute(pData->PreviewMask, pData->pStrCreator, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
+						AggregateAttribute(pData->PreviewMask, pData->pStrTitle, PRV_TITLE, pItemDescriptor, LFAttrMediaCollection);
 						AggregateAttribute(pData->PreviewMask, pData->pStrComments, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
 
-						AggregateIcon(pData->PreviewMask, pData->CollectionIconID, PRV_COLLECTIONICON, theApp.m_Attributes[CollectionAttr].AttrProperties.IconID);
+						AggregateIcon(pData->PreviewMask, pData->CollectionIconID, PRV_COLLECTIONICON, theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor)));
 					}
 
 					// Only show icon and indent text when the collection is valid
 					if ((pData->PreviewMask & PRV_TITLE)==0)
 						pData->PreviewMask &= ~PRV_COLLECTIONICON;
+
+					// Show representative icon for music albums and podcasts
+					if (pData->PreviewMask & (PRV_CREATOR | PRV_TITLE))
+						if (LFIsRepresentativeFolder(pItemDescriptor))
+						{
+							pItemDescriptor->IconID = pData->CollectionIconID;
+							pData->PreviewMask |= PRV_REPRESENTATIVE;
+						}
 
 					break;
 				}
@@ -208,7 +219,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 BOOL CTimelineView::UsePreview(LFItemDescriptor* pItemDescriptor)
 {
 	if (pItemDescriptor->Type & LFTypeMounted)
-		switch (pItemDescriptor->CoreAttributes.ContextID)
+		switch (LFGetSystemContextID(pItemDescriptor))
 		{
 		case LFContextAllFiles:
 			return (theApp.OSVersion>OS_XP) && (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "theme")==0);
@@ -279,64 +290,12 @@ Restart:
 
 		if (pData->Hdr.Valid)
 		{
-			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-
-			// Use thumbnails or representative image?
-			if (m_ItemWidth<2*CARDPADDING+124)
-			{
-				// No, column is too small
-				pData->PreviewMask &= ~PRV_PREVIEW;
-			}
-			else
-			{
-				INT ThumbnailCount = 0;
-				pData->ListCount = 0;
-
-				switch (pItemDescriptor->Type & LFTypeMask)
-				{
-				case LFTypeFile:
-					if (UsePreview(pItemDescriptor))
-					{
-						pData->PreviewMask |= PRV_THUMBNAILS;
-						ThumbnailCount = 1;
-					}
-
-					break;
-
-				case LFTypeFolder:
-					// Is it a music album? It must have a title and a valid collection icon, which has to match LFAttrAlbum
-					if (((pData->PreviewMask & (PRV_TITLE | PRV_COLLECTIONICON))==(PRV_TITLE | PRV_COLLECTIONICON)) &&
-						(pData->CollectionIconID==theApp.m_Attributes[LFAttrAlbum].AttrProperties.IconID))
-					{
-						// Remove thumbnails and folder contents
-						pData->PreviewMask = (pData->PreviewMask & ~(PRV_THUMBNAILS | PRV_CONTENTS)) | PRV_REPRESENTATIVE;
-						ThumbnailCount = 1;
-					}
-					else
-					{
-						// Remove representative image
-						pData->PreviewMask &= ~PRV_REPRESENTATIVE;
-
-						// Decide for thumbnails or folder contents
-						for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
-							if (UsePreview((*p_RawFiles)[b]))
-							{
-								pData->PreviewMask |= PRV_THUMBNAILS;
-								ThumbnailCount++;
-							}
-							else
-							{
-								pData->PreviewMask |= PRV_CONTENTS;
-								pData->ListCount++;
-							}
-					}
-
-					break;
-				}
-
-				// Calc number of thumb rows, but cap at square ratio for visually pleasing card
-				pData->ThumbnailRows = m_PreviewColumns ? max(1, min(ThumbnailCount/m_PreviewColumns, m_PreviewColumns)) : 1;
-			}
+			// Calc number of thumb rows, but cap at square ratio for visually pleasing card
+			pData->ThumbnailRows =
+				(m_ItemWidth<2*CARDPADDING+124) ? 0 :														// Too small
+				(pData->PreviewMask & PRV_REPRESENTATIVE) ? 1 :												// Representative thumbnail
+				m_PreviewColumns ? max(1, min(pData->ThumbnailCount/m_PreviewColumns, m_PreviewColumns)) :	// At least two columns
+				1;
 
 			// Card padding and caption
 			INT Height = 2*CARDPADDING+m_CaptionHeight;
@@ -370,13 +329,13 @@ Restart:
 					Height += LARGEPADDING+(128+THUMBMARGINY)*pData->ThumbnailRows-THUMBMARGINY-4;
 
 				// Folder contents
-				if (pData->PreviewMask & PRV_CONTENTS)
+				if (pData->PreviewMask & PRV_CONTENTLIST)
 					Height += LARGEPADDING+min(MAXFILELIST, pData->ListCount)*m_SmallFontHeight;
 
 				// Source
 				if (pData->PreviewMask & PRV_SOURCE)
 				{
-					switch (pData->PreviewMask & (PRV_CONTENTS | PRV_PREVIEW | PRV_ATTRIBUTES))
+					switch (pData->PreviewMask & (PRV_CONTENTLIST | PRV_PREVIEW | PRV_ATTRIBUTES))
 					{
 					case PRV_ATTRIBUTES:
 						Height += SMALLPADDING;
@@ -416,7 +375,7 @@ Restart:
 			const INT Column = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
 			pData->Arrow = m_TwoColumns ? 1-(BYTE)Column*2 : 0;
 			pData->ArrowOffs = 0;
-			pData->Hdr.RectInflate = pData->Arrow ? ARROWSIZE+1 : 0;
+			pData->Hdr.RectInflateOnInvalidate = pData->Arrow ? ARROWSIZE+1 : 0;
 
 			if (abs(CurRow[Column]-LastRow)<2*ARROWSIZE)
 				if (Height>m_CaptionHeight+CARDPADDING-2*ARROWSIZE+2*GUTTER)
@@ -553,9 +512,12 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	TimelineItemData* pData = GetItemData(Index);
 
 	const BOOL Selected = IsItemSelected(pItemDescriptor);
-	DrawCardForeground(dc, g, rectItem, Themed, m_HotItem==Index, m_FocusItem==Index, Selected,
+	DrawCardForeground(dc, g, rectItem, Themed, m_HoverItem==Index, m_FocusItem==Index, Selected,
 		(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
 		m_ShowFocusRect);
+
+	CRect rect(rectItem);
+	rect.DeflateRect(CARDPADDING, CARDPADDING);
 
 	// Arrows
 	if (pData->Arrow)
@@ -589,21 +551,23 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	}
 
 	// Icon
-	CRect rect(rectItem);
-	rect.DeflateRect(CARDPADDING, CARDPADDING);
+	CRect rectCaption(rect);
+	theApp.m_IconFactory.DrawSmallIcon(dc, rectCaption.TopLeft(), pItemDescriptor);
 
-	theApp.m_IconFactory.DrawSmallIcon(dc, rect.TopLeft(), pItemDescriptor);
+	rectCaption.left += m_SmallIconSize+SMALLPADDING;
+	rectCaption.bottom = rectCaption.top+m_DefaultFontHeight;
+
+	// Color
+	DrawColorDots(dc, rectCaption, pItemDescriptor, m_DefaultFontHeight);
 
 	// Caption
-	CRect rectCaption(rect);
-	rectCaption.left += m_SmallIconSize+SMALLPADDING;
-
 	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? pItemDescriptor->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
 	{
 		LPCWSTR pSubstring = wcsstr(pItemDescriptor->Description, L" (");
 
+		// Remove summary from description
 		dc.DrawText(pItemDescriptor->Description, pSubstring ? (INT)(pSubstring-pItemDescriptor->Description) : -1, rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
 	else
@@ -611,15 +575,16 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		dc.DrawText(GetLabel(pItemDescriptor), rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
 
-	rectCaption.top += m_DefaultFontHeight+CARDPADDING/3;
+	rectCaption.top = rectCaption.bottom+CARDPADDING/3;
+	rectCaption.bottom = rectCaption.top+m_SmallFontHeight;
 
-	// Subtext
+	// Subcaption
 	WCHAR tmpBuf[256];
 	LFAttributeToString(pItemDescriptor, ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ? m_ContextViewSettings.SortBy : LFAttrFileName, tmpBuf, 256);
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
 
-	SetGrayText(dc, pItemDescriptor, Themed);
+	SetLightTextColor(dc, pItemDescriptor, Themed);
 	dc.DrawText(tmpBuf, -1, rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 
 	dc.SelectObject(pOldFont);
@@ -633,12 +598,10 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	// Attributes
 	if (pData->PreviewMask & PRV_ATTRIBUTES)
 	{
-		// Slightly lighter text color
-		if (!Selected)
-			dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
-
 		CRect rectAttr(rect);
 		rectAttr.top += SMALLPADDING;
+
+		SetDarkTextColor(dc, pItemDescriptor, Themed);
 
 		// Inset text when attribute icons are present
 		if (pData->PreviewMask & PRV_COLLECTIONICON)
@@ -722,7 +685,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 				INT Row = 0;
 				INT Col = 0;
 
-				for (INT a=LFMaxRating; a>=0; a--)
+				for (INT a=LFMaxRating; (a>=0) && (Row<pData->ThumbnailRows); a--)
 					for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
 					{
 						LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[b];
@@ -751,13 +714,13 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	}
 
 	// Folder contents and source
-	if (pData->PreviewMask & (PRV_SOURCE | PRV_CONTENTS))
+	if (pData->PreviewMask & (PRV_SOURCE | PRV_CONTENTLIST))
 	{
 		pOldFont = dc.SelectObject(&theApp.m_SmallFont);
-		SetGrayText(dc, pItemDescriptor, Themed);
+		SetLightTextColor(dc, pItemDescriptor, Themed);
 
 		// Folder contents
-		if (pData->PreviewMask & PRV_CONTENTS)
+		if (pData->PreviewMask & PRV_CONTENTLIST)
 		{
 			rect.top += LARGEPADDING;
 
@@ -778,7 +741,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		// Source
 		if (pData->PreviewMask & PRV_SOURCE)
 		{
-			const UINT Content = (pData->PreviewMask & (PRV_CONTENTS | PRV_PREVIEW | PRV_ATTRIBUTES));
+			const UINT Content = (pData->PreviewMask & (PRV_CONTENTLIST | PRV_PREVIEW | PRV_ATTRIBUTES));
 			if (Content)
 			{
 				rect.top += (Content==PRV_ATTRIBUTES) ? SMALLPADDING : LARGEPADDING;

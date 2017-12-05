@@ -47,7 +47,7 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	// Button
 	const BOOL Themed = IsCtrlThemed();
 
-	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_Hover);
+	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_HoverItem>=0);
 
 	// Content
 	CRect rectText(rect);
@@ -61,14 +61,14 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	{
 		const INT IconSize = p_ButtonIcons->GetIconSize();
 
-		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-IconSize)/2+(Selected ? 1 : 0), m_IconID, m_Hover, Disabled);
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-IconSize)/2+(Selected ? 1 : 0), m_IconID, m_HoverItem>=0, Disabled);
 		rectText.left += IconSize+BORDER;
 	}
 
 	// Text
 	if (!m_Small)
 	{
-		dc.SetTextColor(Themed ? m_Hover ? 0x333333 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+		dc.SetTextColor(Themed ? (m_HoverItem>=0) ? 0x333333 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX);

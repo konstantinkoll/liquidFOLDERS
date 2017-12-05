@@ -30,7 +30,7 @@ const GLfloat CGlobeView::m_lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat CGlobeView::m_FogColor[] = { 0.65f, 0.75f, 0.95f, 1.0f };
 
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeItemData), FF_ENABLEHOVER | FF_ENABLETOOLTIPS | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS)
+	: CFileView(sizeof(GlobeItemData), FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS)
 {
 	m_RenderContext.pDC = NULL;
 	m_RenderContext.hRC = NULL;
@@ -107,7 +107,7 @@ void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 					LFGeoCoordinatesToString(Property.GeoCoordinates, pData->CoordString, 32, FALSE);
 
 					pData->Hdr.Valid = TRUE;
-					pData->Hdr.RectInflate = ARROWSIZE;
+					pData->Hdr.RectInflateOnInvalidate = ARROWSIZE;
 				}
 			}
 		}
@@ -139,6 +139,12 @@ INT CGlobeView::ItemAtPosition(CPoint point) const
 	}
 
 	return Result;
+}
+
+void CGlobeView::ShowTooltip(const CPoint& point)
+{
+	if (m_Momentum==0.0f)
+		CFileView::ShowTooltip(point);
 }
 
 CMenu* CGlobeView::GetViewContextMenu()
@@ -179,28 +185,10 @@ BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const
 
 void CGlobeView::UpdateCursor()
 {
-	LPCWSTR Cursor;
-
-	if (m_Grabbed)
-	{
-		Cursor = IDC_HAND;
-	}
-	else
-	{
-		Cursor = IDC_ARROW;
-
-		if (CursorOnGlobe(m_CursorPos))
-			if (ItemAtPosition(m_CursorPos)==-1)
-				Cursor = IDC_HAND;
-	}
+	LPCTSTR Cursor = m_Grabbed || (CursorOnGlobe(m_CursorPos) && (m_HoverItem==-1)) ? IDC_HAND : IDC_ARROW;
 
 	if (Cursor!=lpszCursorName)
-	{
-		hCursor = theApp.LoadStandardCursor(Cursor);
-
-		SetCursor(hCursor);
-		lpszCursorName = Cursor;
-	}
+		SetCursor(hCursor=theApp.LoadStandardCursor(lpszCursorName=Cursor));
 }
 
 void CGlobeView::WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr)
@@ -211,7 +199,7 @@ void CGlobeView::WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pIt
 	if (tmpStr[0])
 	{
 		f.WriteString(_T("&lt;b&gt;"));
-		f.WriteString(theApp.m_Attributes[Attr].Name);
+		f.WriteString(theApp.GetAttributeName(Attr, m_Context));
 		f.WriteString(_T("&lt;/b&gt;: "));
 		f.WriteString(tmpStr);
 		f.WriteString(_T("&lt;br&gt;"));
@@ -298,7 +286,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 					break;
 				}
 
-				DrawLabel(pData, cCaption, pCaption, pSubcaption, pCoordinates, pDescription, IsItemSelected(a), m_FocusItem==(INT)a, m_HotItem==(INT)a, Themed);
+				DrawLabel(pData, cCaption, pCaption, pSubcaption, pCoordinates, pDescription, IsItemSelected(a), m_FocusItem==(INT)a, m_HoverItem==(INT)a, Themed);
 			}
 	}
 }
@@ -523,7 +511,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	if (m_GlobeCurrent.Zoom<=m_GlobeTarget.Zoom-5)
 	{
 		m_GlobeCurrent.Zoom += 5;
-		m_HotItem = -1;
+		m_HoverItem = -1;
 
 		Result = TRUE;
 	}
@@ -531,7 +519,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		if (m_GlobeCurrent.Zoom>=m_GlobeTarget.Zoom+5)
 		{
 			m_GlobeCurrent.Zoom -= 5;
-			m_HotItem = -1;
+			m_HoverItem = -1;
 
 			Result = TRUE;
 		}
@@ -577,8 +565,16 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 
 	if (Result)
 	{
+		if (!m_Grabbed)
+		{
+			CPoint point;
+			GetCursorPos(&point);
+			ScreenToClient(&point);
+
+			OnMouseMove(0, point);
+		}
+
 		Invalidate();
-		UpdateCursor();
 	}
 
 	return Result;
@@ -861,7 +857,6 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
-	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
@@ -991,7 +986,7 @@ BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/
 
 void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	m_CursorPos = point;
+	CFileView::OnMouseMove(nFlags, 	m_CursorPos=point);
 
 	if (m_Grabbed)
 	{
@@ -1011,13 +1006,11 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		UpdateCursor();
 	}
-
-	CFileView::OnMouseMove(nFlags, point);
 }
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
-	theApp.HideTooltip();
+	HideTooltip();
 
 	if (zDelta<0)
 	{
@@ -1029,23 +1022,6 @@ BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 	}
 
 	return TRUE;
-}
-
-void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if (m_Momentum==0.0f)
-	{
-		CFileView::OnMouseHover(nFlags, point);
-	}
-	else
-	{
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
 }
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
@@ -1247,9 +1223,8 @@ void CGlobeView::OnGoogleEarth()
 					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationName);
 					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationIATA);
 					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationGPS);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrArtist);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrRoll);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrRecordingTime);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrCreator);
+					WriteGoogleAttribute(f, pItemDescriptor, LFAttrMediaCollection);
 					WriteGoogleAttribute(f, pItemDescriptor, LFAttrComments);
 
 					f.WriteString(_T("&lt;div&gt;</description>\n<styleUrl>#Location</styleUrl>\n"));

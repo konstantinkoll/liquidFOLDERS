@@ -77,7 +77,7 @@ BEGIN
             VALUE "FileDescription", "liquidFOLDERS"
             VALUE "FileVersion", "3.2.2"
             VALUE "InternalName", "liquidFOLDERS"
-            VALUE "LegalCopyright", "© 2009-2017 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
@@ -129,7 +129,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RECOVERALL
-        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+        MENUITEM "&Papierkorb entleeren",       IDM_TRASH_EMPTY
     END
 END
 
@@ -145,7 +145,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Archi&vieren",                IDM_FILE_ARCHIVE
+        MENUITEM "&Archivieren",                IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Kopieren",                   IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -356,15 +356,17 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_OPENFILEDROP "Als File&Drop öffnen"
-    IDS_CONTEXTMENU_SHOWCAPACITY "&Speicherkapazität zeigen"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXTMENU_SHOWCAPACITY "&Speicherkapazität zeigen"
     IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
     IDS_CONTEXTMENU_SENDTO  "S&enden an"
-    IDS_CONTEXTMENU_MOVETOCONTEXT "Nach „%s“ &verschieben"
     IDS_CONTEXTMENU_CHOOSESTORE "&Speicherort wählen..."
+    IDS_CONTEXTMENU_MOVETO  "&Verschieben nach"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "Nach „&%s“ &verschieben"
+    IDS_CONTEXTMENU_REMOVEFROMCONTEXT "Aus „&%s“ &entfernen"
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Aus Zwischenablage &entfernen"
     IDS_CONTEXTMENU_MAKETASK "&Aufgabe erstellen..."
@@ -374,14 +376,14 @@ BEGIN
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
     IDS_FILETYPES           "Dateitypen"
-    IDS_HOUSEKEEPING        "Verwaltung"
-    IDS_SEARCHTERM          "Alle Speicherorte durchsuchen"
-    IDS_STORE               "Speicherort"
-    IDS_DEFAULTSTORE        "Standard-Speicherort"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_HOUSEKEEPING        "Verwaltung"
+    IDS_SEARCHTERM          "Alle Speicherorte durchsuchen"
+    IDS_STORE               "Speicherort"
+    IDS_DEFAULTSTORE        "Standard-Speicherort"
     IDS_FILESCOPIED         "%s in die Zwischenablage kopiert."
     IDS_SHORTCUTCREATED     "Die Verknüpfung wurde auf dem Desktop erstellt."
     IDS_QUALITY_LOW         "Niedrig"
@@ -399,18 +401,18 @@ STRINGTABLE
 BEGIN
     IDS_VATTR_FLAGS         "Markierungen"
     IDS_VATTR_SOURCE        "Quelle"
-    IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
-    IDS_VATTR_SYNCHRONIZETIME "Synchronisiert"
+    IDS_VATTR_TOTALBYTES    "Laufwerksgröße"
+    IDS_VATTR_TOTALBYTESFREE "Freier Speicher"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FREEBYTESAVAILABLE "Verfügbarer Speicher"
+    IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
+    IDS_VATTR_SYNCHRONIZETIME "Synchronisiert"
     IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
-    IDS_VATTR_TOTALBYTES    "Laufwerksgröße"
-    IDS_VATTR_TOTALBYTESFREE "Freier Speicher"
-    IDS_VATTR_FREEBYTESAVAILABLE "Verfügbarer Speicher"
 END
 
 STRINGTABLE 
@@ -434,7 +436,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
+    IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien im Papierkorb.\nPapierkorb entleeren"
     IDM_TRASH_RECOVERALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
 END
 
@@ -445,8 +447,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_MOVETOBOOKS    "Verschiebt die ausgewählten Dokumente nach „Bücher“.\nNach „Bücher“ verschieben"
-    IDM_FILE_MOVETODOCUMENTS "Verschiebt die ausgewählten Bücher nach „Dokumente“.\nNach „Dokumente“ verschieben"
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
@@ -471,6 +471,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Zeigt das vorige Jahr an.\nVoriges Jahr"
     IDM_CALENDAR_NEXTYEAR   "Zeigt das nächste Jahr an.\nNächstes Jahr"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Öffnet ein Dialogfenster, in dem Sie ein Jahr zum Anzeigen auswählen können.\nJahr auswählen..."
 END
 
@@ -480,10 +484,6 @@ BEGIN
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
     IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergrößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
 END
@@ -566,7 +566,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Archi&var",                   IDM_FILE_ARCHIVE
+        MENUITEM "&Archivar",                   IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copiar",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -776,17 +776,19 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_OPENFILEDROP "Abrir por &FileDrop"
-    IDS_CONTEXTMENU_SHOWCAPACITY "Mostrar &capacidad"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXTMENU_SHOWCAPACITY "Mostrar &capacidad"
     IDS_CONTEXTMENU_EDIT    "E&ditar..."
     IDS_CONTEXTMENU_SENDTO  "&Enviar a"
-    IDS_CONTEXTMENU_MOVETOCONTEXT "&Desplazar a «%s»"
     IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &ubicación..."
+    IDS_CONTEXTMENU_MOVETO  "&Desplazar a"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "&Desplazar a «&%s»"
+    IDS_CONTEXTMENU_REMOVEFROMCONTEXT "&Retirar del «&%s»"
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
-    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Eliminar del portapapeles"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Retirar del portapapeles"
     IDS_CONTEXTMENU_MAKETASK "Crear &tarea..."
     IDS_CONTEXTMENU_TASKDONE "&Tarea cumplida"
     IDS_CONTEXTMENU_MORE    "&Más..."
@@ -794,14 +796,14 @@ BEGIN
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
     IDS_FILETYPES           "Tipos de archivo"
-    IDS_HOUSEKEEPING        "Mantenimiento"
-    IDS_SEARCHTERM          "Buscar todo los ubicaciones"
-    IDS_STORE               "Ubicación"
-    IDS_DEFAULTSTORE        "Ubicación estándar"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_HOUSEKEEPING        "Mantenimiento"
+    IDS_SEARCHTERM          "Buscar todo los ubicaciones"
+    IDS_STORE               "Ubicación"
+    IDS_DEFAULTSTORE        "Ubicación estándar"
     IDS_FILESCOPIED         "%s copiado al portapapeles."
     IDS_SHORTCUTCREATED     "El acceso directo ha sido creado en el escritorio."
     IDS_QUALITY_LOW         "Bajo"
@@ -819,18 +821,18 @@ STRINGTABLE
 BEGIN
     IDS_VATTR_FLAGS         "Indicadores"
     IDS_VATTR_SOURCE        "Origen"
-    IDS_VATTR_MAINTENANCETIME "Mantenimiento"
-    IDS_VATTR_SYNCHRONIZETIME "Sincronizado"
+    IDS_VATTR_TOTALBYTES    "Tamaño del unidad"
+    IDS_VATTR_TOTALBYTESFREE "Espacio libre"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FREEBYTESAVAILABLE "Espacio disponible"
+    IDS_VATTR_MAINTENANCETIME "Mantenimiento"
+    IDS_VATTR_SYNCHRONIZETIME "Sincronizado"
     IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
-    IDS_VATTR_TOTALBYTES    "Tamaño del unidad"
-    IDS_VATTR_TOTALBYTESFREE "Espacio libre"
-    IDS_VATTR_FREEBYTESAVAILABLE "Espacio disponible"
 END
 
 STRINGTABLE 
@@ -854,7 +856,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos de la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
+    IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos en la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
     IDM_TRASH_RECOVERALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
 END
 
@@ -865,8 +867,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_MOVETOBOOKS    "Desplaza los documentos seleccionados a «Libros».\nDesplazar a «Libros»"
-    IDM_FILE_MOVETODOCUMENTS "Desplaza los lobros seleccionados a «Documentos».\nDesplazar a «Documentos»"
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
@@ -891,6 +891,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Visualiza el años anterior.\nAño anterior"
     IDM_CALENDAR_NEXTYEAR   "Visualiza el año siguiente.\nAño siguiente"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Muestra una ventana que le permite elegir un año para visualizar.\nIr al año..."
 END
 
@@ -900,10 +904,6 @@ BEGIN
                             "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
     IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
     IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
 END
@@ -986,7 +986,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Archi&ver",                   IDM_FILE_ARCHIVE
+        MENUITEM "&Archiver",                   IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copier",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1196,17 +1196,19 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_OPENFILEDROP "Ouvrir comme File&Drop"
-    IDS_CONTEXTMENU_SHOWCAPACITY "Afficher capacité"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXTMENU_SHOWCAPACITY "Afficher capacité"
     IDS_CONTEXTMENU_EDIT    "&Modifier..."
     IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
-    IDS_CONTEXTMENU_MOVETOCONTEXT "&Déplacer à «%s»"
     IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &emplacement..."
+    IDS_CONTEXTMENU_MOVETO  "&Déplacer à"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "&Déplacer à «&%s»"
+    IDS_CONTEXTMENU_REMOVEFROMCONTEXT "&Retirer de «&%s»"
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
-    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Enlèver du &presse-papiers"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Retirer du presse-papiers"
     IDS_CONTEXTMENU_MAKETASK "Créer &tâche..."
     IDS_CONTEXTMENU_TASKDONE "&Tâche fini"
     IDS_CONTEXTMENU_MORE    "&Plus..."
@@ -1214,14 +1216,14 @@ BEGIN
     IDS_NOTHINGTODISPLAY    "Il n'y a rien présenter."
     IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
     IDS_FILETYPES           "Types de fichiers"
-    IDS_HOUSEKEEPING        "Ménage"
-    IDS_SEARCHTERM          "Recherche tous les emplacements"
-    IDS_STORE               "Emplacement"
-    IDS_DEFAULTSTORE        "Emplacement défaut"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_HOUSEKEEPING        "Ménage"
+    IDS_SEARCHTERM          "Recherche tous les emplacements"
+    IDS_STORE               "Emplacement"
+    IDS_DEFAULTSTORE        "Emplacement défaut"
     IDS_FILESCOPIED         "%s copié au presse-papiers."
     IDS_SHORTCUTCREATED     "Le raccourci a été créé sur le bureau."
     IDS_QUALITY_LOW         "Faible"
@@ -1239,18 +1241,18 @@ STRINGTABLE
 BEGIN
     IDS_VATTR_FLAGS         "Marquage"
     IDS_VATTR_SOURCE        "Source"
-    IDS_VATTR_MAINTENANCETIME "Entretien"
-    IDS_VATTR_SYNCHRONIZETIME "Synchronisée"
+    IDS_VATTR_TOTALBYTES    "Taille du lecteur"
+    IDS_VATTR_TOTALBYTESFREE "Espace libre"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FREEBYTESAVAILABLE "Espace disponible"
+    IDS_VATTR_MAINTENANCETIME "Entretien"
+    IDS_VATTR_SYNCHRONIZETIME "Synchronisée"
     IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
     IDS_VATTR_IATA_COUNTRY  "Territoire"
-    IDS_VATTR_TOTALBYTES    "Taille du lecteur"
-    IDS_VATTR_TOTALBYTESFREE "Espace libre"
-    IDS_VATTR_FREEBYTESAVAILABLE "Espace disponible"
 END
 
 STRINGTABLE 
@@ -1274,7 +1276,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille.\nVider la corbeille"
+    IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers dans la corbeille.\nVider la corbeille"
     IDM_TRASH_RECOVERALL    "Reconstitue tous les fichiers.\nReconstituer tous"
 END
 
@@ -1285,8 +1287,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_MOVETOBOOKS    "Déplace les documents choisis à «Livres».\nDéplacer à «Livres»"
-    IDM_FILE_MOVETODOCUMENTS "Déplace les livres choisis à «Documents».\nDéplacer à «Documents»"
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Enlève les fichiers choisis du presse-papiers.\nEnlever"
@@ -1311,6 +1311,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Présente l'année précédente.\nAnnée précédente"
     IDM_CALENDAR_NEXTYEAR   "Présente l' année prochaine.\nAnnée prochaine"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Ouvre une fenêtre de dialogue dans quoi vous pouvez choisir un an à l'annonce.\nChoisissez l'année..."
 END
 
@@ -1320,10 +1324,6 @@ BEGIN
                             "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
     IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
     IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
 END
@@ -1456,7 +1456,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Archi&ve",                    IDM_FILE_ARCHIVE
+        MENUITEM "&Archive",                    IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copy",                       IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1667,17 +1667,19 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
     IDS_CONTEXTMENU_OPENFILEDROP "Open as &FileDrop"
-    IDS_CONTEXTMENU_SHOWCAPACITY "Show &capacity"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXTMENU_SHOWCAPACITY "Show &capacity"
     IDS_CONTEXTMENU_EDIT    "&Edit..."
     IDS_CONTEXTMENU_SENDTO  "S&end to"
-    IDS_CONTEXTMENU_MOVETOCONTEXT "&Move to “%s”"
     IDS_CONTEXTMENU_CHOOSESTORE "Choose &location..."
+    IDS_CONTEXTMENU_MOVETO  "&Move to"
+    IDS_CONTEXTMENU_MOVETOCONTEXT "&Move to “&%s”"
+    IDS_CONTEXTMENU_REMOVEFROMCONTEXT "&Remove from “&%s”"
     IDS_CONTEXTMENU_REMEMBER "Re&member"
-    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Re&move from clipboard"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Remove from clipboard"
     IDS_CONTEXTMENU_MAKETASK "Create &task..."
     IDS_CONTEXTMENU_TASKDONE "&Task done"
     IDS_CONTEXTMENU_MORE    "&More..."
@@ -1685,14 +1687,14 @@ BEGIN
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
     IDS_FILETYPES           "File types"
-    IDS_HOUSEKEEPING        "Housekeeping"
-    IDS_SEARCHTERM          "Search all locations"
-    IDS_STORE               "Location"
-    IDS_DEFAULTSTORE        "Default location"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_HOUSEKEEPING        "Housekeeping"
+    IDS_SEARCHTERM          "Search all locations"
+    IDS_STORE               "Location"
+    IDS_DEFAULTSTORE        "Default location"
     IDS_FILESCOPIED         "%s copied to the clipboard."
     IDS_SHORTCUTCREATED     "The shortcut has been created on the desktop."
     IDS_QUALITY_LOW         "Low"
@@ -1710,18 +1712,18 @@ STRINGTABLE
 BEGIN
     IDS_VATTR_FLAGS         "Flags"
     IDS_VATTR_SOURCE        "Source"
-    IDS_VATTR_MAINTENANCETIME "Last maintenance"
-    IDS_VATTR_SYNCHRONIZETIME "Synchronized"
+    IDS_VATTR_TOTALBYTES    "Volume size"
+    IDS_VATTR_TOTALBYTESFREE "Free space"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_FREEBYTESAVAILABLE "Available space"
+    IDS_VATTR_MAINTENANCETIME "Last maintenance"
+    IDS_VATTR_SYNCHRONIZETIME "Synchronized"
     IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
-    IDS_VATTR_TOTALBYTES    "Volume size"
-    IDS_VATTR_TOTALBYTESFREE "Free space"
-    IDS_VATTR_FREEBYTESAVAILABLE "Available space"
 END
 
 STRINGTABLE 
@@ -1745,7 +1747,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
+    IDM_TRASH_EMPTY         "Permanently deletes all files in the trash.\nEmpty trash"
     IDM_TRASH_RECOVERALL    "Recovers all files from the trash.\nRecover all"
 END
 
@@ -1756,8 +1758,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_MOVETOBOOKS    "Moves the selected documents to “Books”.\nMove to “Books”"
-    IDM_FILE_MOVETODOCUMENTS "Moves the selected books to “Documents”.\nMove to “Documents”"
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Removes the selected files from the clipboard window.\nRemove"
@@ -1782,6 +1782,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
     IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year..."
 END
 
@@ -1791,10 +1795,6 @@ BEGIN
                             "Centers the globe on a specific location.\nJump to location..."
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
 END

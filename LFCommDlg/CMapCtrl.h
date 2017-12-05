@@ -17,7 +17,7 @@ struct NM_GPSDATA
 	LFGeoCoordinates* pLocation;
 };
 
-class CMapCtrl : public CWnd
+class CMapCtrl : public CFrontstageWnd
 {
 public:
 	CMapCtrl();
@@ -29,6 +29,7 @@ public:
 
 protected:
 	virtual void Init();
+	virtual void ShowTooltip(const CPoint& point);
 
 	void LocationFromPoint(const CPoint& point, DOUBLE& Latitude, DOUBLE& Longitude) const;
 	void PointFromLocation(INT& PosX, INT& PosY) const;
@@ -38,10 +39,8 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg void OnNcPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -50,13 +49,15 @@ protected:
 
 	LFGeoCoordinates m_Location;
 
+protected:
+	void SendUpdateMessage();
+
 private:
-	void SendUpdateMsg();
+	void PrepareBitmap(const CRect& rect);
 
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
-	CPoint m_LastTrack;
 	BOOL m_Blink;
 	UINT m_RemainVisible;
 	UINT m_BackgroundMenuID;

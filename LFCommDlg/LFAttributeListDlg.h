@@ -12,7 +12,7 @@
 class LFAttributeListDlg : public LFDialog
 {
 public:
-	LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd=NULL);
+	LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd=NULL, UINT Context=LFContextAllFiles);
 
 protected:
 	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
@@ -25,4 +25,7 @@ protected:
 	void AddAttribute(UINT nID, UINT Attr);
 	void PopulateListCtrl(CExplorerList* pExplorerList, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
 	void PopulateListCtrl(INT nID, BOOL Check, INT Focus=-1, BOOL Sort=TRUE);
+
+	LPCWSTR p_AttributeNames[LFAttributeCount];
+	UINT m_Context;
 };

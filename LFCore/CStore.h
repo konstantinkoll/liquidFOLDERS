@@ -37,7 +37,7 @@ public:
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
 	UINT CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit=TRUE, LPCWSTR pPath=NULL, BOOL OnInitialize=FALSE);
 	void Query(LFFilter* pFilter, LFSearchResult* pSearchResult);
-	void DoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, LFVariantData* pVariantData1=NULL, LFVariantData* pVariantData2=NULL, LFVariantData* pVariantData3=NULL);
+	void DoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, const LFVariantData* pVariantData1=NULL, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL);
 
 	// Callbacks
 	virtual UINT CreateDirectories();
@@ -48,15 +48,15 @@ public:
 protected:
 	// Callbacks
 	virtual UINT DeleteDirectories();
-	virtual UINT GetFileLocation(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
-	virtual UINT RenameFile(LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
-	virtual UINT DeleteFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
+	virtual UINT GetFileLocation(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
+	virtual UINT RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
+	virtual UINT DeleteFile(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData);
 	virtual void SetAttributesFromStore(LFItemDescriptor* pItemDescriptor);
-	virtual BOOL SynchronizeFile(LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData);
+	virtual BOOL SynchronizeFile(LFCoreAttributes& CoreAttributes, LPCVOID pStoreData);
 
 	// Aux functions
 	UINT PrepareImport(LPCWSTR pSourcePath, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
-	void GetInternalFilePath(LFCoreAttributes* pCoreAttributes, LPWSTR pPath, SIZE_T cCount) const;
+	void GetInternalFilePath(const LFCoreAttributes& CoreAttributes, LPWSTR pPath, SIZE_T cCount) const;
 	void CreateNewFileID(LPSTR pFileID) const;
 
 	UINT m_AdditionalDataSize;
@@ -85,5 +85,5 @@ inline UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pP
 	assert(pItemDescriptor);
 	assert(pPath);
 
-	return GetFileLocation(&pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData, pPath, cCount);
+	return GetFileLocation(pItemDescriptor->CoreAttributes, &pItemDescriptor->StoreData, pPath, cCount);
 }

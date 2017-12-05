@@ -80,7 +80,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		}
 
 		// Generic core icon
-		if (pItemDescriptor->IconID==IDI_FLD_PLACEHOLDER)
+		if (pItemDescriptor->IconID>=IDI_FIRSTPLACEHOLDERICON)
 		{
 			// Offset placeholder icon for visually pleasing result
 			pt.y++;
@@ -129,7 +129,7 @@ FinishIcon:
 	}
 }
 
-void CIconFactory::DrawSmallIcon(CDC& dc, const CPoint& pt, LFItemDescriptor* pItemDescriptor)
+void CIconFactory::DrawSmallIcon(CDC& dc, const CPoint& pt, const LFItemDescriptor* pItemDescriptor)
 {
 	ASSERT(pItemDescriptor);
 
@@ -171,6 +171,27 @@ HBITMAP CIconFactory::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchRe
 	DeleteObject(hBitmap);
 
 	return NULL;
+}
+
+HBITMAP CIconFactory::GetMapBitmap(LPCSTR lpszIATACode)
+{
+	ASSERT(lpszIATACode);
+
+	LFAirport* pAirport;
+	if (!LFIATAGetAirportByCode(lpszIATACode, pAirport))
+		return NULL;
+
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+
+	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+	Graphics g(dc);
+
+	DrawJumboMap(g, CPoint(0, 0), pAirport->Location, 0);
+
+	return (HBITMAP)dc.SelectObject(hOldBitmap);
 }
 
 HBITMAP CIconFactory::GetJumboIconBitmap(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles)
@@ -223,10 +244,10 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
 
 	// Calculate thumbnail size and other parameters
-	const BOOL BlackFrame = (pItemDescriptor->CoreAttributes.ContextID==LFContextAudio);
-	const BOOL Media = (pItemDescriptor->CoreAttributes.ContextID>=LFContextAudio) && (pItemDescriptor->CoreAttributes.ContextID<=LFContextVideos);
-	const BOOL Document = (pItemDescriptor->CoreAttributes.ContextID==LFContextBooks) || (pItemDescriptor->CoreAttributes.ContextID==LFContextDocuments);
-	const INT CutOff = Media || Document ? THUMBCUTOFF : 0;
+	const BOOL BlackFrame = LFIsAudioFile(pItemDescriptor);
+	const BOOL IsMediaFile = LFIsMediaFile(pItemDescriptor);
+	const BOOL IsDocumentFile = LFIsDocumentFile(pItemDescriptor);
+	const INT CutOff = IsMediaFile || IsDocumentFile ? THUMBCUTOFF : 0;
 	const INT ThumbSize = (BlackFrame ? 124 : 118)+2*CutOff;
 
 	HBITMAP hBitmapImage = LFGetThumbnail(pItemDescriptor, CSize(ThumbSize, ThumbSize));
@@ -253,7 +274,7 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	rectDst.right = rectDst.left+BitmapImage.bmWidth-2*CutOff;
 	rectDst.bottom = rectDst.top+BitmapImage.bmHeight-2*CutOff;
 
-	Thumbnail.HasFrame = Media || Document || ((rectSrc.Width()<=118+2*THUMBCUTOFF) && (rectSrc.Height()<=118+2*THUMBCUTOFF));
+	Thumbnail.HasFrame = IsMediaFile || IsDocumentFile || ((rectSrc.Width()<=118+2*THUMBCUTOFF) && (rectSrc.Height()<=118+2*THUMBCUTOFF));
 	Thumbnail.HasBackground = !Thumbnail.HasFrame || BlackFrame;
 
 	CDC dc;
@@ -322,7 +343,7 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	{
 		g.DrawImage(theApp.GetCachedResourceImage(IDB_THUMBNAIL), 0, 0);
 
-		if (!BlackFrame && !Document)
+		if (!BlackFrame && !IsDocumentFile)
 		{
 			Pen pen1(Color(0x30000000));
 			g.DrawRectangle(&pen1, rectDst.left, rectDst.top, rectDst.Width()-1, rectDst.Height()-1);
@@ -416,6 +437,10 @@ BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoin
 	ASSERT(pItemDescriptor);
 	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder);
 
+	// No placeholder icon
+	if (!theApp.IsPlaceholderIcon(pItemDescriptor->IconID))
+		return FALSE;
+
 	// Do we have a raw search result?
 	if (!pRawFiles)
 		return FALSE;
@@ -432,17 +457,8 @@ BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoin
 	return FALSE;
 }
 
-BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
+BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFGeoCoordinates& GeoCoordinates, INT ThumbnailYOffset)
 {
-	ASSERT(pItemDescriptor);
-	ASSERT((pItemDescriptor->Type & LFTypeMask)!=LFTypeFile);
-
-	// GPS coordinates present?
-	LFVariantData VData;
-	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrLocationGPS, VData);
-	if (LFIsNullVariantData(VData))
-		return FALSE;
-
 	// Draw map
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
@@ -450,8 +466,8 @@ BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor*
 	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
 
 	// Map location
-	INT X = (INT)((VData.GeoCoordinates.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
-	INT Y = (INT)((VData.GeoCoordinates.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
+	INT X = (INT)((GeoCoordinates.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
+	INT Y = (INT)((GeoCoordinates.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
 
 	// Map offset
 	INT OffsX = -X+124/2;
@@ -480,6 +496,18 @@ BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, LFItemDescriptor*
 	g.DrawImage(theApp.GetCachedResourceImage(IDB_THUMBNAIL), pt.x, pt.y+ThumbnailYOffset);
 
 	return TRUE;
+}
+
+BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
+{
+	ASSERT(pItemDescriptor);
+	ASSERT((pItemDescriptor->Type & LFTypeMask)!=LFTypeFile);
+
+	// GPS coordinates
+	LFVariantData VData;
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrLocationGPS, VData);
+
+	return LFIsNullVariantData(VData) ? FALSE : DrawJumboMap(g, pt, VData.GeoCoordinates, ThumbnailYOffset);
 }
 
 

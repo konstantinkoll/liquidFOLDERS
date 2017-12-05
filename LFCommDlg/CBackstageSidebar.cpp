@@ -37,8 +37,8 @@ CBackstageSidebar::CBackstageSidebar()
 	p_ButtonIcons = p_TooltipIcons = NULL;
 	m_PreferredWidth = max(BACKSTAGERADIUS, SHADOW);
 	m_CountWidth = m_IconSize = 0;
-	m_SelectedItem = m_HotItem = m_PressedItem = -1;
-	m_Hover = m_Keyboard = m_ShowCounts = FALSE;
+	m_SelectedItem = m_PressedItem = -1;
+	m_Keyboard = m_ShowCounts = FALSE;
 	m_ShowShadow = TRUE;
 }
 
@@ -83,55 +83,37 @@ BOOL CBackstageSidebar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& Sma
 	return Create(pParentWnd, nID, ShowCounts);
 }
 
-BOOL CBackstageSidebar::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CFrontstageWnd::PreTranslateMessage(pMsg);
-}
-
-void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color)
+void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR pCaption, COLORREF Color)
 {
 	// Hinzufügen
 	SidebarItem Item;
 	ZeroMemory(&Item, sizeof(Item));
-	Item.Selectable = Selectable;
+
+	Item.Flags = SBI_ALWAYSVISIBLE;
 	Item.CmdID = CmdID;
 	Item.IconID = IconID;
 
-	if (Caption)
+	if (pCaption)
 		if (Selectable)
 		{
-			wcscpy_s(Item.Caption, 256, Caption);
+			wcscpy_s(Item.Caption, 256, pCaption);
 			Item.Color = Color;
+
+			Item.Flags |= SBI_SELECTABLE;
 		}
 		else
 		{
-			for (WCHAR* pDst=Item.Caption; *Caption; )
-				*(pDst++) = (WCHAR)towupper(*(Caption++));
+			for (WCHAR* pDst=Item.Caption; *pCaption; )
+				*(pDst++) = (WCHAR)towupper(*(pCaption++));
 		}
 
 	// Metrik
 	CSize Size;
 
-	if (Item.Caption[0]==L'\0')
+	if (!Item.Caption[0])
 	{
+		ASSERT(!Selectable);
+
 		Size.cx = 0;
 		Size.cy = BORDER+2;
 	}
@@ -157,38 +139,16 @@ void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR
 	m_Items.AddItem(Item);
 }
 
-void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, LPCWSTR Caption, COLORREF Color)
-{
-	ASSERT(Caption);
-
-	AddItem(TRUE, CmdID, IconID, Caption, Color);
-}
 
 void CBackstageSidebar::AddCommand(UINT CmdID, INT IconID, COLORREF Color)
 {
 	CString Caption((LPCSTR)CmdID);
 
-	INT Pos = Caption.Find(L'\n');
+	const INT Pos = Caption.Find(L'\n');
 	if (Pos!=-1)
 		Caption.Delete(0, Pos+1);
 
 	AddItem(TRUE, CmdID, IconID, Caption, Color);
-}
-
-void CBackstageSidebar::AddCaption(LPCWSTR Caption)
-{
-	ASSERT(Caption);
-
-	if (m_Items.m_ItemCount)
-		if (!m_Items[m_Items.m_ItemCount-1].Selectable)
-		{
-			if (*Caption==L'\0')
-				return;
-
-			m_Items.m_ItemCount--;
-		}
-
-	AddItem(FALSE, 0, -1, Caption);
 }
 
 void CBackstageSidebar::AddCaption(UINT ResID)
@@ -196,34 +156,17 @@ void CBackstageSidebar::AddCaption(UINT ResID)
 	AddCaption(CString((LPCSTR)ResID));
 }
 
-void CBackstageSidebar::ResetCounts()
-{
-	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		m_Items[a].Count = 0;
-
-	Invalidate();
-}
-
-
-void CBackstageSidebar::SetCount(UINT CmdID, UINT Count)
+void CBackstageSidebar::UpdateItem(UINT CmdID, UINT Count, BOOL AlwaysVisible, COLORREF Color)
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		if (m_Items[a].CmdID==CmdID)
 		{
+			m_Items[a].Flags = AlwaysVisible ? (m_Items[a].Flags | SBI_ALWAYSVISIBLE) : (m_Items[a].Flags & ~SBI_ALWAYSVISIBLE);
 			m_Items[a].Count = Count;
-			InvalidateItem(a);
 
-			break;
-		}
-}
+			if (Color!=(COLORREF)-1)
+				m_Items[a].Color = Color;
 
-void CBackstageSidebar::SetCount(UINT CmdID, UINT Count, COLORREF Color)
-{
-	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items[a].CmdID==CmdID)
-		{
-			m_Items[a].Count = Count;
-			m_Items[a].Color = Color;
 			InvalidateItem(a);
 
 			break;
@@ -249,11 +192,10 @@ INT CBackstageSidebar::GetMinHeight() const
 
 void CBackstageSidebar::SetSelection(UINT CmdID)
 {
-	m_SelectedItem = m_HotItem = m_PressedItem = -1;
-	m_Hover = FALSE;
+	m_SelectedItem = m_HoverItem = m_PressedItem = -1;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items[a].Selectable && (m_Items[a].CmdID==CmdID))
+		if (IsItemSelectable(a) && (m_Items[a].CmdID==CmdID))
 		{
 			m_SelectedItem = a;
 			break;
@@ -262,10 +204,10 @@ void CBackstageSidebar::SetSelection(UINT CmdID)
 	Invalidate();
 }
 
-INT CBackstageSidebar::ItemAtPosition(CPoint point)
+INT CBackstageSidebar::ItemAtPosition(CPoint point) const
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items[a].Selectable)
+		if (IsItemSelectable(a))
 			if (PtInRect(&m_Items[a].Rect, point))
 				return a;
 
@@ -285,9 +227,8 @@ void CBackstageSidebar::PressItem(INT Index)
 		InvalidateItem(m_SelectedItem);
 		InvalidateItem(m_PressedItem);
 
-		if (Index!=-1)
-			if (!m_Items[Index].Enabled)
-				Index = -1;
+		if ((Index!=-1) && !CanItemFire(Index))
+			Index = -1;
 
 		m_PressedItem = Index;
 		InvalidateItem(m_PressedItem);
@@ -302,8 +243,15 @@ void CBackstageSidebar::AdjustLayout()
 	INT y = 0;
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
-		m_Items[a].Rect.top = y;
-		y = m_Items[a].Rect.bottom = y+m_Items[a].Height;
+		if (IsItemVisible(a))
+		{
+			m_Items[a].Rect.top = y;
+			y = m_Items[a].Rect.bottom = y+m_Items[a].Height;
+		}
+		else
+		{
+			m_Items[a].Rect.top = m_Items[a].Rect.bottom = 0;
+		}
 
 		m_Items[a].Rect.left = 0;
 		m_Items[a].Rect.right = rect.Width();
@@ -333,15 +281,31 @@ CString CBackstageSidebar::FormatCount(UINT Count)
 	return tmpStr;
 }
 
+void CBackstageSidebar::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	const SidebarItem* pSidebarItem = &m_Items[m_HoverItem];
+
+	NM_TOOLTIPDATA tag;
+	ZeroMemory(&tag, sizeof(tag));
+
+	tag.hdr.code = REQUEST_TOOLTIP_DATA;
+	tag.hdr.hwndFrom = m_hWnd;
+	tag.hdr.idFrom = GetDlgCtrlID();
+	tag.Item = pSidebarItem->CmdID;
+
+	if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
+		LFGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : pSidebarItem->Caption, tag.Hint, tag.hIcon ? tag.hIcon : (pSidebarItem->IconID!=-1) && (p_TooltipIcons!=NULL) ? p_TooltipIcons->ExtractIcon(pSidebarItem->IconID, IsCtrlThemed()) : NULL, tag.hBitmap);
+}
+
 
 BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_NCHITTEST()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_GETDLGCODE()
@@ -365,11 +329,6 @@ LRESULT CBackstageSidebar::OnNcHitTest(CPoint point)
 	}
 
 	return HitTest;
-}
-
-BOOL CBackstageSidebar::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CBackstageSidebar::OnPaint()
@@ -409,20 +368,21 @@ void CBackstageSidebar::OnPaint()
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		RECT rectIntersect;
-		if (IntersectRect(&rectIntersect, &m_Items[a].Rect, rectUpdate))
+		if (IsItemVisible(a) && IntersectRect(&rectIntersect, &m_Items[a].Rect, rectUpdate))
 		{
 			CRect rectItem(m_Items[a].Rect);
 
-			const BOOL Enabled = m_Items[a].Enabled && GetParent()->IsWindowEnabled();
+			const BOOL Enabled = IsItemEnabled(a) && GetParent()->IsWindowEnabled();
 			const BOOL Highlight = (m_PressedItem!=-1) ? m_PressedItem==(INT)a : m_SelectedItem==(INT)a;
-			const BOOL Hot = Enabled && !Highlight && (m_HotItem==(INT)a);
+			const BOOL Hot = Enabled && !Highlight && (m_HoverItem==(INT)a);
+			const BOOL Selectable = IsItemSelectable(a);
 
 			// Background
-			if (m_Items[a].Selectable)
+			if (Selectable)
 			{
 				if (Themed)
 				{
-					if ((a==0) || m_Items[a-1].Selectable)
+					if (!a || !HasItemLabelAbove(a))
 					{
 						LinearGradientBrush brush3(Point(0, rectItem.top), Point(0, rectItem.top+2), Color(0x20FFFFFF), Color(0x00FFFFFF));
 						g.FillRectangle(&brush3, 0, rectItem.top, rectItem.right, 2);
@@ -450,7 +410,7 @@ void CBackstageSidebar::OnPaint()
 					LinearGradientBrush brush6(Point(0, rectItem.bottom-3), Point(0, rectItem.bottom), Color(0x00000000), Color(0x60000000));
 					g.FillRectangle(&brush6, 0, rectItem.bottom-2, rectItem.right, 2);
 
-					if ((a<m_Items.m_ItemCount-1) && (!m_Items[a+1].Selectable))
+					if ((a<m_Items.m_ItemCount-1) && HasItemLabelBelow(a))
 					{
 						SolidBrush brush7(Color(0x28000000));
 						g.FillRectangle(&brush7, 0, rectItem.bottom-1, rectItem.right, 1);
@@ -485,7 +445,7 @@ void CBackstageSidebar::OnPaint()
 
 			rectItem.left += BORDERLEFT;
 
-			if (m_Items[a].Selectable)
+			if (Selectable && m_Items[a].Caption[0])
 			{
 				rectItem.DeflateRect(BORDER, BORDER);
 
@@ -574,9 +534,9 @@ void CBackstageSidebar::OnPaint()
 			// Text
 			if (!Small && m_Items[a].Caption[0])
 			{
-				CFont* pOldFont = dc.SelectObject(m_Items[a].Selectable ? &LFGetApp()->m_LargeFont : &LFGetApp()->m_SmallBoldFont);
+				CFont* pOldFont = dc.SelectObject(Selectable ? &LFGetApp()->m_LargeFont : &LFGetApp()->m_SmallBoldFont);
 
-				if (!m_Items[a].Selectable)
+				if (!Selectable)
 				{
 					rectItem.OffsetRect(0, 1);
 				}
@@ -644,32 +604,10 @@ void CBackstageSidebar::OnSize(UINT nType, INT cx, INT cy)
 
 void CBackstageSidebar::OnMouseMove(UINT nFlags, CPoint point)
 {
-	const INT Item = ItemAtPosition(point);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((LFGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
-			LFGetApp()->HideTooltip();
-
-	if (m_HotItem!=Item)
-	{
-		InvalidateItem(m_HotItem);
-		m_HotItem = Item;
-		InvalidateItem(m_HotItem);
-	}
+	CFrontstageWnd::OnMouseMove(nFlags, point);
 
 	if (nFlags & MK_LBUTTON)
-		PressItem(Item);
+		PressItem(ItemAtPosition(point));
 
 	if (nFlags & MK_RBUTTON)
 		SetFocus();
@@ -677,50 +615,13 @@ void CBackstageSidebar::OnMouseMove(UINT nFlags, CPoint point)
 
 void CBackstageSidebar::OnMouseLeave()
 {
-	LFGetApp()->HideTooltip();
+	CFrontstageWnd::OnMouseLeave();
+
 	InvalidateItem(m_SelectedItem);
-	InvalidateItem(m_HotItem);
 	InvalidateItem(m_PressedItem);
 
-	m_Hover = FALSE;
-	m_HotItem = -1;
-	
 	if (!m_Keyboard)
 		m_PressedItem = -1;
-}
-
-void CBackstageSidebar::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (m_HotItem!=-1)
-			if (!LFGetApp()->IsTooltipVisible())
-			{
-				const SidebarItem* pSidebarItem = &m_Items[m_HotItem];
-
-				NM_TOOLTIPDATA tag;
-				ZeroMemory(&tag, sizeof(tag));
-
-				tag.hdr.code = REQUEST_TOOLTIP_DATA;
-				tag.hdr.hwndFrom = m_hWnd;
-				tag.hdr.idFrom = GetDlgCtrlID();
-				tag.Item = pSidebarItem->CmdID;
-
-				if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
-					LFGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : pSidebarItem->Caption, tag.Hint, tag.hIcon ? tag.hIcon : (pSidebarItem->IconID!=-1) && (p_TooltipIcons!=NULL) ? p_TooltipIcons->ExtractIcon(pSidebarItem->IconID, IsCtrlThemed()) : NULL, tag.hBitmap);
-			}
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
 }
 
 void CBackstageSidebar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
@@ -732,13 +633,13 @@ void CBackstageSidebar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CBackstageSidebar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
-	INT Item = ItemAtPosition(point);
-	if (Item!=-1)
+	const INT Index = ItemAtPosition(point);
+	if (Index!=-1)
 	{
-		PressItem(Item);
+		PressItem(Index);
 
-		if (m_Items[Item].Enabled)
-			GetOwner()->PostMessage(WM_COMMAND, m_Items[Item].CmdID);
+		if (CanItemFire(Index))
+			GetOwner()->PostMessage(WM_COMMAND, m_Items[Index].CmdID);
 	}
 }
 
@@ -763,7 +664,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_HOME:
 		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
-			if (m_Items[a].Selectable && m_Items[a].Enabled)
+			if (CanItemFire(a))
 			{
 				PressItem(a);
 				m_Keyboard = TRUE;
@@ -775,7 +676,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_END:
 		for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
-			if (m_Items[a].Selectable && m_Items[a].Enabled)
+			if (CanItemFire(a))
 			{
 				PressItem(a);
 				m_Keyboard = TRUE;
@@ -791,7 +692,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (--Index<0)
 				Index = m_Items.m_ItemCount-1;
 
-			if (m_Items[Index].Selectable && m_Items[Index].Enabled)
+			if (CanItemFire(Index))
 			{
 				PressItem(Index);
 				m_Keyboard = TRUE;
@@ -808,7 +709,7 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (++Index>=(INT)m_Items.m_ItemCount)
 				Index = 0;
 
-			if (m_Items[Index].Selectable && m_Items[Index].Enabled)
+			if (CanItemFire(Index))
 			{
 				PressItem(Index);
 				m_Keyboard = TRUE;
@@ -825,19 +726,65 @@ void CBackstageSidebar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CBackstageSidebar::OnIdleUpdateCmdUI()
 {
+	INT LastCommand = -1;
+	INT LastLabel = -1;
+	BOOL VisibleChanged = FALSE;
+
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items[a].Selectable)
+	{
+		const UINT Flags = m_Items[a].Flags;
+		m_Items[a].Flags &= ~(SBI_ENABLED | SBI_VISIBLE | SBI_LABELABOVE | SBI_LABELBELOW);
+
+		if (IsItemSelectable(a))
 		{
 			CSidebarCmdUI cmdUI;
 			cmdUI.m_nID = m_Items[a].CmdID;
 			cmdUI.DoUpdate(GetOwner(), TRUE);
 
-			if (m_Items[a].Enabled!=cmdUI.m_Enabled)
+			// Enabled?
+			if (cmdUI.m_Enabled)
+				m_Items[a].Flags |= SBI_ENABLED;
+
+			// Visible?
+			if (cmdUI.m_Enabled || IsItemAlwaysVisible(a))
 			{
-				m_Items[a].Enabled = cmdUI.m_Enabled;
-				InvalidateItem(a);
+				m_Items[a].Flags |= SBI_VISIBLE;
+
+				// Make last label visible
+				if (LastLabel!=-1)
+				{
+					m_Items[LastLabel].Flags |= SBI_VISIBLE;
+					m_Items[a].Flags |= SBI_LABELABOVE;
+					LastLabel = -1;
+
+					if (LastCommand!=-1)
+						m_Items[LastCommand].Flags |= SBI_LABELBELOW;
+				}
+
+				LastCommand = a;
+			}
+
+			// Invalidate
+			if ((Flags ^ m_Items[a].Flags) & SBI_VISIBLE)
+			{
+				VisibleChanged = TRUE;
+			}
+			else
+			{
+				if (!VisibleChanged)
+					InvalidateItem(a);
 			}
 		}
+		else
+		{
+			if ((LastLabel==-1) || ((LastCommand!=-1) && IsItemLargeLabel(a)) || (!IsItemLargeLabel(LastLabel) && IsItemLargeLabel(a)))
+				LastLabel = a;
+		}
+	}
+
+	// Rearrange items
+	if (VisibleChanged)
+		AdjustLayout();
 }
 
 void CBackstageSidebar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)

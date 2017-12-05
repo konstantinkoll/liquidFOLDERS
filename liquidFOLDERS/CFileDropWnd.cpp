@@ -20,7 +20,6 @@ CFileDropWnd::CFileDropWnd()
 	: CBackstageWnd()
 {
 	m_rectIcon.SetRectEmpty();
-	m_Hover = FALSE;
 }
 
 BOOL CFileDropWnd::Create(const LPCSTR pStoreID)
@@ -37,29 +36,6 @@ BOOL CFileDropWnd::Create(const LPCSTR pStoreID)
 	m_rectIcon.SetRect((Width-128)/2+ICONOFFSETX, Size.cy+ICONOFFSETY, (Width-128)/2+ICONOFFSETX+128-9, Height-BACKSTAGEBORDER-FONTOFFSETY);
 
 	return CBackstageWnd::Create(WS_MINIMIZEBOX, className, CString((LPCSTR)IDR_FILEDROP), _T("FileDrop"), CSize(Width, Height));
-}
-
-BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		theApp.HideTooltip();
-		break;
-	}
-
-	return CBackstageWnd::PreTranslateMessage(pMsg);
 }
 
 BOOL CFileDropWnd::HasDocumentSheet() const
@@ -102,7 +78,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 		dc.SetTextColor(0x000000);
 		dc.DrawText(m_Store.StoreName, -1, rectText, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-		dc.SetTextColor(m_Hover ? 0xFFFFFF : 0xDACCC4);
+		dc.SetTextColor((m_HoverItem>=0) ? 0xFFFFFF : 0xDACCC4);
 	}
 	else
 	{
@@ -132,12 +108,19 @@ void CFileDropWnd::SetTopMost(BOOL AlwaysOnTop)
 		pSysMenu->CheckMenuItem(SC_ALWAYSONTOP, MF_BYCOMMAND | (AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED));
 }
 
+INT CFileDropWnd::ItemAtPosition(CPoint point) const
+{
+	return m_rectIcon.PtInRect(point) ? 0 : -1;
+}
+
+void CFileDropWnd::ShowTooltip(const CPoint& point)
+{
+	theApp.ShowTooltip(this, point, m_Store);
+}
+
 
 BEGIN_MESSAGE_MAP(CFileDropWnd, CBackstageWnd)
 	ON_WM_CREATE()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_NCLBUTTONDBLCLK()
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
@@ -189,59 +172,9 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
-{
-	CBackstageWnd::OnMouseMove(nFlags, point);
-
-	BOOL Hover = m_rectIcon.PtInRect(point);
-	if (Hover!=m_Hover)
-	{
-		if (Hover)
-		{
-			TRACKMOUSEEVENT tme;
-			ZeroMemory(&tme, sizeof(tme));
-			tme.cbSize = sizeof(TRACKMOUSEEVENT);
-			tme.dwFlags = TME_LEAVE | TME_HOVER;
-			tme.dwHoverTime = HOVERTIME;
-			tme.hwndTrack = m_hWnd;
-			TrackMouseEvent(&tme);
-		}
-		else
-		{
-			theApp.HideTooltip();
-		}
-
-		m_Hover = Hover;
-		Invalidate();
-	}
-}
-
-void CFileDropWnd::OnMouseLeave()
-{
-	CBackstageWnd::OnMouseLeave();
-
-	theApp.HideTooltip();
-
-	m_Hover = FALSE;
-	Invalidate();
-}
-
-void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (!theApp.IsTooltipVisible() && m_Hover)
-			theApp.ShowTooltip(this, point, m_Store);
-	}
-	else
-	{
-		theApp.HideTooltip();
-	}
-}
-
 void CFileDropWnd::OnNcLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
-	if (m_Hover)
+	if (m_HoverItem>=0)
 		OnStoreOpenNewWindow();
 }
 

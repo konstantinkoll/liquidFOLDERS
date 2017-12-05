@@ -12,7 +12,7 @@
 #define GUTTER     10
 
 CItemPanel::CItemPanel()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	WNDCLASS wndcls;
 	ZeroMemory(&wndcls, sizeof(wndcls));
@@ -29,35 +29,10 @@ CItemPanel::CItemPanel()
 			AfxThrowResourceException();
 	}
 
-	m_Hover = FALSE;
-
-	Empty();
+	Reset();
 }
 
-BOOL CItemPanel::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		LFGetApp()->HideTooltip();
-		break;
-	}
-
-	return CWnd::PreTranslateMessage(pMsg);
-}
-
-void CItemPanel::Empty()
+void CItemPanel::Reset()
 {
 	m_Text = _T("");
 	m_Lines = 0;
@@ -134,7 +109,7 @@ BOOL CItemPanel::SetItem(const LPCSTR pStoreID)
 		return TRUE;
 	}
 
-	Empty();
+	Reset();
 
 	return FALSE;
 }
@@ -181,7 +156,7 @@ BOOL CItemPanel::SetItem(LPITEMIDLIST pidlFQ, LPCWSTR Path, UINT nID, LPCWSTR Hi
 		return TRUE;
 	}
 
-	Empty();
+	Reset();
 
 	return FALSE;
 }
@@ -205,24 +180,38 @@ BOOL CItemPanel::SetItem(LPCWSTR Path, UINT nID, LPCWSTR Hint)
 	}
 
 	if (!Result)
-		Empty();
+		Reset();
 
 	return Result;
 }
 
-
-BEGIN_MESSAGE_MAP(CItemPanel, CWnd)
-	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
-END_MESSAGE_MAP()
-
-BOOL CItemPanel::OnEraseBkgnd(CDC* /*pDC*/)
+INT  CItemPanel::ItemAtPosition(CPoint /*point*/) const
 {
-	return TRUE;
+	return 0;
 }
+
+void  CItemPanel::InvalidateItem(INT /*Index*/)
+{
+}
+
+void  CItemPanel::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	if (!m_Text.IsEmpty())
+	{
+		INT Pos = m_Text.Find(L'\n');
+		if (Pos<0)
+			Pos = m_Text.GetLength();
+
+		LFGetApp()->ShowTooltip(this, point, m_Text.Left(Pos), m_Text.Mid(Pos+1), p_Icons ? p_Icons->ExtractIcon(m_IconID) : NULL);
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(CItemPanel, CFrontstageWnd)
+	ON_WM_PAINT()
+END_MESSAGE_MAP()
 
 void CItemPanel::OnPaint()
 {
@@ -279,52 +268,4 @@ void CItemPanel::OnPaint()
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(pOldBitmap);
-}
-
-void CItemPanel::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
-{
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-}
-
-void CItemPanel::OnMouseLeave()
-{
-	LFGetApp()->HideTooltip();
-
-	m_Hover = FALSE;
-}
-
-void CItemPanel::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (!LFGetApp()->IsTooltipVisible() && !m_Text.IsEmpty())
-		{
-			INT Pos = m_Text.Find(L'\n');
-			if (Pos<0)
-				Pos = m_Text.GetLength();
-
-			LFGetApp()->ShowTooltip(this, point, m_Text.Left(Pos), m_Text.Mid(Pos+1), p_Icons ? p_Icons->ExtractIcon(m_IconID) : NULL);
-		}
-	}
-	else
-	{
-		LFGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
 }
