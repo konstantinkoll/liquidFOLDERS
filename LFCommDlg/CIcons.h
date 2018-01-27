@@ -22,6 +22,7 @@ public:
 	void Load(UINT nID, INT Size);
 	INT Load(UINT nID, UINT Flags=LI_SLIGHTLYLARGER, LFFont* pFont=NULL);
 	INT LoadSmall(UINT nID);
+	INT LoadForSize(UINT nID, INT Height);
 	void Create(const CSize& Size, UINT MaxIcons);
 	void Create(const CImageList& ImageList, UINT MaxIcons);
 	INT GetIconSize() const;

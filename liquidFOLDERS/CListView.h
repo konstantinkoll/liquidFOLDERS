@@ -10,7 +10,7 @@
 
 struct ListItemData
 {
-	FVItemData Hdr;
+	ItemData Hdr;
 	BOOL DrawTrailingSeparator;
 };
 
@@ -34,8 +34,11 @@ public:
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual INT GetHeaderIndent() const;
+	virtual void GetHeaderContextMenu(CMenu& Menu, INT HeaderItem);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
+	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	void DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Themed);
@@ -43,9 +46,6 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg void OnPaint();
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	afx_msg void OnToggleAttribute(UINT nID);
 	afx_msg void OnUpdateToggleCommands(CCmdUI* pCmdUI);
@@ -62,7 +62,6 @@ protected:
 	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	CTooltipHeader m_wndHeader;
 	INT m_IconSize;
 	BOOL m_HasFolders;
 	INT m_PreviewAttribute;
@@ -72,7 +71,6 @@ private:
 	void AdjustHeader();
 	INT GetMaxAttributeWidth(UINT Attr) const;
 	void AutosizeColumn(UINT Attr);
-	INT GetHeaderIndent() const;
 	static INT GetMinColumnWidth(UINT Attr);
 
 	LFDynArray<FolderData, 128, 128> m_Folders;

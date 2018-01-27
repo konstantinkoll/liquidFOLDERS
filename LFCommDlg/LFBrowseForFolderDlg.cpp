@@ -28,8 +28,6 @@ LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
 
 void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_SHELLTREE, m_wndExplorerTree);
-
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_FolderPIDL = LFGetApp()->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
@@ -57,13 +55,17 @@ void LFBrowseForFolderDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 BOOL LFBrowseForFolderDlg::InitDialog()
 {
-	if ((!m_Caption.IsEmpty()) || (!m_Hint.IsEmpty()))
+	// Header
+	if (!m_Caption.IsEmpty() || !m_Hint.IsEmpty())
 	{
 		m_wndHeaderArea.Create(this, IDC_HEADERAREA);
 		m_wndHeaderArea.SetHeader(m_Caption, m_Hint, NULL, CPoint(0, 0), FALSE);
 	}
 
-	if ((LFGetApp()->m_ThemeLibLoaded) && (LFGetApp()->OSVersion>=OS_Vista))
+	// Explorer tree
+	m_wndExplorerTree.Create(this, IDC_SHELLTREE);
+
+	if (LFGetApp()->m_ThemeLibLoaded && (LFGetApp()->OSVersion>=OS_Vista))
 	{
 		LFGetApp()->zSetWindowTheme(m_wndExplorerTree, L"EXPLORER", NULL);
 		m_wndExplorerTree.ModifyStyle(0, TVS_TRACKSELECT);
@@ -96,9 +98,9 @@ void LFBrowseForFolderDlg::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*
 	{
 		NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
-		ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->itemNew.lParam;
-
 		BOOL Enable = FALSE;
+
+		ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->itemNew.lParam;
 		if (pItem)
 		{
 			WCHAR Path[MAX_PATH];

@@ -185,7 +185,7 @@ BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
 
 LRESULT CBackstageWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	// Prevent default caption bar from drawn
+	// Prevent default caption bar from being drawn
 	if (message==WM_SETTEXT)
 	{
 		LONG lStyle = GetWindowLong(m_hWnd, GWL_STYLE);
@@ -673,8 +673,7 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CFrontstageWnd)
 	ON_WM_WINDOWPOSCHANGED()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
-	ON_WM_RBUTTONUP()
-	ON_WM_INITMENUPOPUP()
+	ON_WM_CONTEXTMENU()
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_TaskbarButtonCreated, OnTaskbarButtonCreated)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_LicenseActivatedMsg, OnLicenseActivated)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_SetProgressMsg, OnSetProgress)
@@ -762,15 +761,16 @@ void CBackstageWnd::OnDestroy()
 
 LRESULT CBackstageWnd::OnNcCalcSize(WPARAM wParam, LPARAM lParam)
 {
+	// Valid for !wParam and wParam
 	NCCALCSIZE_PARAMS* lpncsp = (NCCALCSIZE_PARAMS*)lParam;
 
 	if (IsZoomed())
 	{
-		INT cx = GetSystemMetrics(SM_CXFRAME);
+		const INT cx = GetSystemMetrics(SM_CXFRAME);
 		lpncsp->rgrc[0].left += cx;
 		lpncsp->rgrc[0].right -= cx;
 
-		INT cy = GetSystemMetrics(SM_CYFRAME);
+		const INT cy = GetSystemMetrics(SM_CYFRAME);
 		lpncsp->rgrc[0].top += cy;
 		lpncsp->rgrc[0].bottom -= cy;
 	}
@@ -854,13 +854,14 @@ void CBackstageWnd::OnNcPaint()
 {
 	if (!IsCtrlThemed())
 	{
-		CWindowDC pDC(this);
+		CWindowDC dc(this);
 
 		CRect rect;
 		GetWindowRect(rect);
+
 		rect.OffsetRect(-rect.left, -rect.top);
 
-		pDC.Draw3dRect(rect, 0x000000, 0x000000);
+		dc.Draw3dRect(rect, 0x000000, 0x000000);
 	}
 }
 
@@ -1058,48 +1059,52 @@ void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	}
 }
 
-void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
+void CBackstageWnd::OnContextMenu(CWnd* pWnd, CPoint pos)
 {
+	// Handle click position
+	if ((pWnd!=this) || (pos.x<0) || (pos.y<0))
+		return;
+
+	CPoint posClient(pos);
+	ScreenToClient(&posClient);
+
 	// Do not show context menu on document sheet
-	CRect rectLayout;
-	GetLayoutRect(rectLayout);
-
 	if (HasDocumentSheet())
-		if ((point.x>=rectLayout.left) && (point.y>=rectLayout.top))
+	{
+		CRect rectLayout;
+		GetLayoutRect(rectLayout);
+
+		if ((posClient.x>=rectLayout.left) && (posClient.y>=rectLayout.top))
 			return;
-
-	ClientToScreen(&point);
-
-	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu)
-	{
-		pSysMenu->EnableMenuItem(SC_MAXIMIZE, MF_BYCOMMAND | (IsZoomed() ? MF_GRAYED : MF_ENABLED));
-		pSysMenu->EnableMenuItem(SC_MINIMIZE, MF_BYCOMMAND | (IsIconic() ? MF_GRAYED : MF_ENABLED));
-		pSysMenu->EnableMenuItem(SC_MOVE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
-		pSysMenu->EnableMenuItem(SC_RESTORE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_ENABLED : MF_GRAYED));
-		pSysMenu->EnableMenuItem(SC_SIZE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
-
-		SendMessage(WM_SYSCOMMAND, (WPARAM)pSysMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this));
 	}
-}
 
-void CBackstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
-{
-	ASSERT(pPopupMenu);
+	// Get menu
+	CMenu Menu;
+	BOOL SetDefaultItem = FALSE;
 
-	CCmdUI cmdUI;
-	cmdUI.m_pMenu = cmdUI.m_pParentMenu = pPopupMenu;
-	cmdUI.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+	SetDefaultItem |= GetContextMenu(Menu, ItemAtPosition(posClient));
+	SetDefaultItem |= GetContextMenu(Menu, PtrAtPosition(posClient));
+	SetDefaultItem |= GetContextMenu(Menu, PointAtPosition(posClient));
 
-	ASSERT(!cmdUI.m_pOther);
-	ASSERT(cmdUI.m_pMenu);
-
-	for (cmdUI.m_nIndex=0; cmdUI.m_nIndex<cmdUI.m_nIndexMax; cmdUI.m_nIndex++)
+	if (IsMenu(Menu))
 	{
-		cmdUI.m_nID = pPopupMenu->GetMenuItemID(cmdUI.m_nIndex);
+		TrackPopupMenu(Menu, pos, this, SetDefaultItem);
+	}
+	else
+	{
+		// System menu
+		CMenu* pSystemMenu = GetSystemMenu(FALSE);
 
-		if ((cmdUI.m_nID) && (cmdUI.m_nID!=(UINT)-1))
-			cmdUI.DoUpdate(this, FALSE);
+		if (pSystemMenu)
+		{
+			pSystemMenu->EnableMenuItem(SC_MAXIMIZE, MF_BYCOMMAND | (IsZoomed() ? MF_GRAYED : MF_ENABLED));
+			pSystemMenu->EnableMenuItem(SC_MINIMIZE, MF_BYCOMMAND | (IsIconic() ? MF_GRAYED : MF_ENABLED));
+			pSystemMenu->EnableMenuItem(SC_MOVE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
+			pSystemMenu->EnableMenuItem(SC_RESTORE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_ENABLED : MF_GRAYED));
+			pSystemMenu->EnableMenuItem(SC_SIZE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
+
+			SendMessage(WM_SYSCOMMAND, (WPARAM)pSystemMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, pos.x, pos.y, this));
+		}
 	}
 }
 

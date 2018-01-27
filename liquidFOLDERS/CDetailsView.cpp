@@ -14,14 +14,14 @@
 #define PADDING                6
 #define MINWIDTH               400
 
-CDetailsView::CDetailsView(UINT DataSize)
-	: CGridView(DataSize, FF_ENABLELABELEDIT)
+CDetailsView::CDetailsView()
+	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS)
 {
 }
 
 void CDetailsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
+	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	ValidateAllItems();
 }
@@ -34,7 +34,7 @@ void CDetailsView::AdjustLayout()
 	const INT MinWidth = max(1, 25*m_DefaultFontHeight);
 	const BOOL FullWidth = rect.Width()<BACKSTAGEBORDER+2*(MinWidth+2*PADDING+GUTTER)+GetSystemMetrics(SM_CXVSCROLL);
 
-	Arrange(CSize(MinWidth, 128+PADDING+RATINGBITMAPHEIGHT+3), PADDING, CSize(GUTTER, GUTTER), FullWidth);
+	AdjustLayoutGrid(CSize(MinWidth+2*PADDING, 128+3*PADDING+RATINGBITMAPHEIGHT+3), CSize(GUTTER, GUTTER), FullWidth, BACKSTAGEBORDER);
 }
 
 LFFont* CDetailsView::GetLabelFont() const
@@ -84,7 +84,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 			CRect rectLabel(rectText);
 			rectLabel.bottom = rectLabel.top+m_LargeFontHeight;
 
-			const CString strLabel = GetLabel(pItemDescriptor);
+			const CString strLabel = GetItemLabel(pItemDescriptor);
 			if (!strLabel.IsEmpty())
 			{
 				// Color

@@ -3,12 +3,13 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 
 
 // CIconCtrl
 //
 
-class CIconCtrl : public CWnd
+class CIconCtrl : public CFrontstageWnd
 {
 public:
 	CIconCtrl();
@@ -22,7 +23,6 @@ protected:
 	HICON m_hIcon;
 	BOOL m_Center;
 
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 };

@@ -424,10 +424,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGridView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CHistoryBar.cpp"
 				>
 			</File>
@@ -546,10 +542,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGridView.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CHistoryBar.h"
 				>
 			</File>
@@ -657,26 +649,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Clouds_4096.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Contexts_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Contexts_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Contexts_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Contexts_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Contexts_64.png"
 				>
 			</File>
 			<File

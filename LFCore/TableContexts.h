@@ -3,14 +3,14 @@
 #include "LF.h"
 
 
-#define FILEFORMATCOUNT     247
+#define FILEFORMATCOUNT     251
 
 
 #pragma pack(push,1)
 
 struct RegisteredFileFormat
 {
-	CHAR Format[7];
+	CHAR Format[8];
 	BYTE SystemContextID;
 	BYTE UserContextID;
 };

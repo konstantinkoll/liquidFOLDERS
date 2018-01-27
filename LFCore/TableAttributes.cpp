@@ -18,7 +18,7 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	{ LFAttrFileTime, TRUE, LFContextSubfolderDefault,
 	MEDIAVIEWS, LFViewTimeline,
 	IDXATTRS_ALL,
-	ADVATTRS_DEFAULT,
+	ADVATTRS_DEFAULT | (1ull<<LFAttrApplication),
 	0 },
 
 	// LFContextFilters
@@ -327,7 +327,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	0, LFViewIcons, LFMinAttributePriority, 0, { 0,0 }, 11 },
 
 	// LFAttrFileSize
-	{ LFTypeSize, LFAttrCategoryBasic, 0, 0,
+	{ LFTypeSize, LFAttrCategoryBasic, LFDataBucket, 0,
 	0, LFViewList, LFMinAttributePriority, 0, { &SHPropertyStorage, 12 }, 12 },
 
 	// LFAttrLocationName

@@ -250,7 +250,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 			GetAutoPath(pStoreDescriptor, pStoreDescriptor->DatPath);
 
 		// Main index
-		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || (LFIsStoreMounted(pStoreDescriptor)))
+		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || LFIsStoreMounted(pStoreDescriptor))
 		{
 			wcscpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath);
 			wcscat_s(pStoreDescriptor->IdxPathMain, MAX_PATH, L"INDEX\\");
@@ -650,9 +650,12 @@ void ChooseNewDefaultStore()
 	INT Slot = -1;
 
 	for (UINT a=0; a<StoreCount; a++)
-		if (strcmp(DefaultStore, StoreCache[a].StoreID)!=0)
-			if ((Slot==-1) || ((StoreCache[a].Mode & (LFStoreModeBackendMask | LFStoreModeIndexMask))==(LFStoreModeBackendInternal | LFStoreModeIndexInternal)))
-				Slot = a;
+		if ((strcmp(DefaultStore, StoreCache[a].StoreID)!=0) && ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal))
+		{
+			Slot = a;
+
+			break;
+		}
 
 	if (Slot!=-1)
 	{
@@ -1033,7 +1036,7 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName, LPCWSTR pComments,
 		swprintf_s(Store.DatPath, MAX_PATH, L"%c:\\", cVolume);
 		AppendGUID(Store.DatPath, &Store);
 
-		Store.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceUnknown) ? LFStoreModeIndexInternal : MakeSearchable ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
+		Store.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceInternal) ? LFStoreModeIndexInternal : MakeSearchable ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
 	}
 	else
 	{

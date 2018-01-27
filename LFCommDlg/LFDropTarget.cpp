@@ -181,7 +181,7 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::Release()
 	return InterlockedDecrement(&m_lRefCount);
 }
 
-STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
+STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect)
 {
 	if (m_pDropTargetHelper)
 	{
@@ -205,7 +205,7 @@ Allowed:
 	return DragOver(grfKeyState, ptl, pdwEffect);
 }
 
-STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
+STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect)
 {
 	if (m_pDropTargetHelper)
 	{
@@ -227,7 +227,7 @@ STDMETHODIMP LFDropTarget::DragLeave()
 	return S_OK;
 }
 
-STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
+STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect)
 {
 	if (p_OwnerWnd)
 		p_OwnerWnd->ActivateTopParent();
@@ -268,7 +268,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 
 	// Ziel-Store
 	CHAR StoreID[LFKeySize];
-	strcpy_s(StoreID, LFKeySize, p_Filter ? p_Filter->StoreID : m_StoreIDValid ? m_StoreID : "");
+	strcpy_s(StoreID, LFKeySize, p_Filter ? p_Filter->Query.StoreID : m_StoreIDValid ? m_StoreID : "");
 
 	// Wenn Default-Store gewünscht: verfügbar ?
 	UINT Result;

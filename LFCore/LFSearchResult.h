@@ -5,7 +5,6 @@
 
 
 #define REMOVEITEMS(KeepCondition, KeepOps) \
-	assert(m_RawCopy); \
 	UINT WriteIdx = 0; \
 	for (UINT ReadIdx=0; ReadIdx<m_ItemCount; ReadIdx++) \
 		if (KeepCondition) \

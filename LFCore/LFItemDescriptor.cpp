@@ -277,7 +277,7 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(const LFItemDescriptor* pItem
 
 	// Clone attached filter
 	if (pItemDescriptor->pNextFilter)
-		pClone->pNextFilter = LFAllocFilter(pItemDescriptor->pNextFilter);
+		pClone->pNextFilter = LFCloneFilter(pItemDescriptor->pNextFilter);
 
 	// Adjust attribute value pointers
 	for (UINT a=0; a<LFAttributeCount; a++)
@@ -319,9 +319,9 @@ LFItemDescriptor* AllocFolderDescriptor(const LFFileSummary& FileSummary, const 
 	SetAttribute(pItemDescriptor, LFAttrLength, &FileSummary.Duration);
 
 	// Filter
-	pItemDescriptor->pNextFilter = LFAllocFilter(pFilter);
-	pItemDescriptor->pNextFilter->Options.IsSubfolder = TRUE;
-	pItemDescriptor->pNextFilter->pConditionList = LFAllocFilterCondition(LFFilterCompareSubfolder, VData, pItemDescriptor->pNextFilter->pConditionList);
+	pItemDescriptor->pNextFilter = LFCloneFilter(pFilter);
+	pItemDescriptor->pNextFilter->IsSubfolder = TRUE;
+	pItemDescriptor->pNextFilter->Query.pConditionList = LFAllocFilterCondition(LFFilterCompareSubfolder, VData, pItemDescriptor->pNextFilter->Query.pConditionList);
 
 	return pItemDescriptor;
 }

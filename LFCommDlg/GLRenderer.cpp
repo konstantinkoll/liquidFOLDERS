@@ -582,8 +582,8 @@ void GLRenderer::BeginRender(CWnd* pWnd, GLRenderContext& RenderContext) const
 	CRect rectClient;
 	pWnd->GetClientRect(rectClient);
 
-	INT Width = rectClient.Width();
-	INT Height = rectClient.Height();
+	const INT Width = rectClient.Width();
+	const INT Height = rectClient.Height();
 	ASSERT(Width<=RenderContext.MaxWidth);
 	ASSERT(Height<=RenderContext.MaxHeight);
 

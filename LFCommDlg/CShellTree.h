@@ -1,12 +1,12 @@
 
-// CExplorerTree: Schnittstelle der Klasse CExplorerTree
+// CShellTree: Schnittstelle der Klasse CShellTree
 //
 
 #pragma once
 #include "CFrontstageWnd.h"
 
 
-// CExplorerTree
+// CShellTree
 //
 
 #define WM_SHELLCHANGE     WM_USER+1
@@ -18,13 +18,12 @@ struct ExplorerTreeItemData
 	ULONG dwAttributes;
 };
 
-class CExplorerTree : public CTreeCtrl
+class CShellTree : public CTreeCtrl
 {
 public:
-	CExplorerTree();
+	CShellTree();
 
-	virtual void PreSubclassWindow();
-
+	BOOL Create(CWnd* pParentWnd, UINT nID);
 	LPCITEMIDLIST GetSelectedPIDL() const;
 	BOOL GetSelectedPath(LPWSTR Path) const;
 	void PopulateTree();
@@ -46,14 +45,12 @@ protected:
 	void UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
 	void UpdatePath(LPCWSTR Path1, LPCWSTR Path2);
 
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-/*	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);*/
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
@@ -75,7 +72,7 @@ private:
 	CString m_strBuffer;
 };
 
-inline void CExplorerTree::SetOnlyFilesystem(BOOL OnlyFilesystem)
+inline void CShellTree::SetOnlyFilesystem(BOOL OnlyFilesystem)
 {
 	m_OnlyFilesystem = OnlyFilesystem;
 }

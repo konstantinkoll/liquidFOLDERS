@@ -15,13 +15,21 @@ struct BreadcrumbItem
 	FVPersistentData Data;
 };
 
-void AddBreadcrumbItem(BreadcrumbItem** pBreadcrumbItem, LFFilter* pFilter, FVPersistentData& Data);
-void ConsumeBreadcrumbItem(BreadcrumbItem** pBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* pPersistentData);
-void DeleteBreadcrumbs(BreadcrumbItem** pBreadcrumbItem);
+void AddBreadcrumbItem(BreadcrumbItem*& pBreadcrumbItem, LFFilter* pFilter, const FVPersistentData& Data);
+void ConsumeBreadcrumbItem(BreadcrumbItem*& pBreadcrumbItem, LFFilter*& pFilter, FVPersistentData& Data);
+void DeleteBreadcrumbItems(BreadcrumbItem*& pBreadcrumbItem);
+
+inline void LeafBreadcrumbItem(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, LFFilter*& pFilter, FVPersistentData& Data)
+{
+	AddBreadcrumbItem(pAddItem, pFilter, Data);
+	ConsumeBreadcrumbItem(pConsumeItem, pFilter, Data);
+}
 
 
 // CHistoryBar
 //
+
+#define WM_NAVIGATEBACK     WM_USER+201
 
 class CHistoryBar : public CBackstageBar
 {

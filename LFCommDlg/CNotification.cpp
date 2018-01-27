@@ -1,17 +1,17 @@
 
-// CExplorerNotification.cpp: Implementierung der Klasse CExplorerNotification
+// CNotification.cpp: Implementierung der Klasse CNotification
 //
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
 
 
-// CExplorerNotification
+// CNotification
 //
 
 #define BORDER     BACKSTAGEBORDER
 
-CExplorerNotification::CExplorerNotification()
+CNotification::CNotification()
 	: CFrontstageWnd()
 {
 	m_Dismissed = TRUE;
@@ -22,19 +22,19 @@ CExplorerNotification::CExplorerNotification()
 	m_CloseHover = m_ClosePressed = FALSE;
 }
 
-BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
+BOOL CNotification::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_BORDER, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
-UINT CExplorerNotification::GetPreferredHeight() const
+UINT CNotification::GetPreferredHeight() const
 {
 	return m_GradientHeight+2*BORDER+m_IconSize+2;
 }
 
-void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT Command)
+void CNotification::SetNotification(UINT Type, const CString& Text, UINT Command)
 {
 	// Kill timer
 	KillTimer(1);
@@ -129,7 +129,7 @@ void CExplorerNotification::SetNotification(UINT Type, const CString& Text, UINT
 	m_Dismissed = FALSE;
 }
 
-void CExplorerNotification::DismissNotification()
+void CNotification::DismissNotification()
 {
 	if (!m_Dismissed)
 	{
@@ -149,7 +149,7 @@ void CExplorerNotification::DismissNotification()
 	}
 }
 
-void CExplorerNotification::AdjustLayout()
+void CNotification::AdjustLayout()
 {
 	// Close button
 	CSize Size = CMenuImages::Size();
@@ -183,7 +183,7 @@ void CExplorerNotification::AdjustLayout()
 }
 
 
-BEGIN_MESSAGE_MAP(CExplorerNotification, CFrontstageWnd)
+BEGIN_MESSAGE_MAP(CNotification, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
@@ -198,11 +198,12 @@ BEGIN_MESSAGE_MAP(CExplorerNotification, CFrontstageWnd)
 	ON_BN_CLICKED(1, OnButtonClicked)
 END_MESSAGE_MAP()
 
-INT CExplorerNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Button
 	if (!m_wndCommandButton.Create(_T(""), this, 1))
 		return -1;
 
@@ -211,7 +212,7 @@ INT CExplorerNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CExplorerNotification::OnDestroy()
+void CNotification::OnDestroy()
 {
 	if (m_hIcon)
 		DestroyIcon(m_hIcon);
@@ -219,7 +220,7 @@ void CExplorerNotification::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-void CExplorerNotification::OnTimer(UINT_PTR nIDEvent)
+void CNotification::OnTimer(UINT_PTR nIDEvent)
 {
 	if (nIDEvent==1)
 	{
@@ -235,12 +236,12 @@ void CExplorerNotification::OnTimer(UINT_PTR nIDEvent)
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
-BOOL CExplorerNotification::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CNotification::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
 
-void CExplorerNotification::OnPaint()
+void CNotification::OnPaint()
 {
 	CPaintDC pDC(this);
 
@@ -299,14 +300,14 @@ void CExplorerNotification::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CExplorerNotification::OnSize(UINT nType, INT cx, INT cy)
+void CNotification::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
 	AdjustLayout();
 }
 
-void CExplorerNotification::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CNotification::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
 	if (m_CloseHover!=m_RectClose.PtInRect(point))
 	{
@@ -321,7 +322,7 @@ void CExplorerNotification::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	TrackMouseEvent(&tme);
 }
 
-void CExplorerNotification::OnMouseLeave()
+void CNotification::OnMouseLeave()
 {
 	if (m_CloseHover)
 	{
@@ -330,7 +331,7 @@ void CExplorerNotification::OnMouseLeave()
 	}
 }
 
-void CExplorerNotification::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+void CNotification::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	if (m_RectClose.PtInRect(point))
 	{
@@ -341,7 +342,7 @@ void CExplorerNotification::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	}
 }
 
-void CExplorerNotification::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+void CNotification::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	if (m_RectClose.PtInRect(point))
 		DismissNotification();
@@ -352,7 +353,7 @@ void CExplorerNotification::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	ReleaseCapture();
 }
 
-HBRUSH CExplorerNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+HBRUSH CNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
 	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
@@ -364,7 +365,7 @@ HBRUSH CExplorerNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hBrush;
 }
 
-void CExplorerNotification::OnButtonClicked()
+void CNotification::OnButtonClicked()
 {
 	if (m_Command)
 	{

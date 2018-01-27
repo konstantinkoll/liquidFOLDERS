@@ -28,10 +28,10 @@ public:
 	STDMETHOD_(ULONG, Release());
 
 	// IDropTarget members
-	STDMETHOD(DragEnter)(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect);
-	STDMETHOD(DragOver)(DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect);
+	STDMETHOD(DragEnter)(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect);
+	STDMETHOD(DragOver)(DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect);
 	STDMETHOD(DragLeave)();
-	STDMETHOD(Drop)(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect);
+	STDMETHOD(Drop)(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect);
 
 	END_INTERFACE
 

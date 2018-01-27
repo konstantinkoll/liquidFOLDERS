@@ -25,8 +25,6 @@ protected:
 	virtual BOOL InitDialog();
 
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-
 	afx_msg void OnChooseStore();
 	afx_msg void OnSkip();
 

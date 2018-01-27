@@ -86,6 +86,8 @@ public:
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList);
 
 	void AttributeToString(CString& Name, CString& Value, const LFItemDescriptor* pItemDescriptor, UINT Attr) const;
+	static CString GetFreeBytesAvailable(INT64 FreeBytesAvailable);
+	static CString GetFreeBytesAvailable(const LFStoreDescriptor& StoreDescriptor);
 	CString GetHintForItem(const LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName=NULL) const;
 	CString GetHintForStore(const LFStoreDescriptor& StoreDescriptor) const;
 	void ShowTooltip(const CWnd* pWndOwner, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
@@ -221,6 +223,11 @@ private:
 inline void LFApplication::LoadColorDots(CIcons& Icons, const LFFont& Font)
 {
 	LoadColorDots(Icons, Font.GetFontHeight());
+}
+
+inline CString LFApplication::GetFreeBytesAvailable(const LFStoreDescriptor& StoreDescriptor)
+{
+	return GetFreeBytesAvailable(StoreDescriptor.FreeBytesAvailable.QuadPart);
 }
 
 inline void LFApplication::ShowTooltip(const CWnd* pWndOwner, const CPoint& point, const LFStoreDescriptor& StoreDescriptor)

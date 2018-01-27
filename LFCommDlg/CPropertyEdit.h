@@ -24,21 +24,15 @@ public:
 	LFVariantData m_VData;
 
 protected:
-	virtual void Init();
+	virtual void AdjustLayout();
+	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 
 	void CreateProperty();
-	void AdjustLayout();
 	void DestroyEdit();
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnNcPaint();
-	afx_msg void OnPaint();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg UINT OnGetDlgCode();

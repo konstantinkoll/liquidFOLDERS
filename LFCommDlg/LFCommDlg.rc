@@ -110,6 +110,11 @@ IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
 IDB_BACKGROUND_TOOLTIP  RCDATA                  "res\\Background_Tooltip.png"
 IDB_ICONSHADOW_96       RCDATA                  "res\\IconShadow_96.png"
 IDB_ICONSHADOW_128      RCDATA                  "res\\IconShadow_128.png"
+IDB_CONTEXTS_16         RCDATA                  "res\\Contexts_16.png"
+IDB_CONTEXTS_24         RCDATA                  "res\\Contexts_24.png"
+IDB_CONTEXTS_32         RCDATA                  "res\\Contexts_32.png"
+IDB_CONTEXTS_48         RCDATA                  "res\\Contexts_48.png"
+IDB_CONTEXTS_64         RCDATA                  "res\\Contexts_64.png"
 IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
 IDF_DINMITTELSCHRIFT    RCDATA                  "res\\DINMittelschrift.ttf"
 
@@ -311,7 +316,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | W
 CAPTION "Verzeichnis wählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,260,287
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -321,7 +325,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Eigenschaften ergänzen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
     DEFPUSHBUTTON   "OK",IDOK,66,318,50,14,WS_GROUP
     PUSHBUTTON      "Überspringen",IDC_SKIP,123,318,60,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,191,318,50,14,WS_GROUP
@@ -354,70 +357,75 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 236, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Allgemein"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "Allgemein",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "Allgemein",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,222,15
     CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
     LTEXT           "Name:",IDC_STATIC,49,26,50,8
-    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STORENAME,103,24,126,14,ES_AUTOHSCROLL
     LTEXT           "Kommentar:",IDC_STATIC,49,45,50,8
-    EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
-    CONTROL         "Eigenschaften",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    EDITTEXT        IDC_COMMENTS,103,43,126,14,ES_AUTOHSCROLL
+    CONTROL         "Eigenschaften",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,222,15
     LTEXT           "Inhalt:",IDC_CONTENTSLABEL,7,83,80,8
-    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
-    LTEXT           "Erzeugt am:",IDC_STATIC,7,92,80,8
-    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
-    LTEXT           "Geändert am:",IDC_STATIC,7,102,80,8
-    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    CONTROL         "<a>%s</a>",IDC_CONTENTS,"SysLink",WS_GROUP | WS_TABSTOP,89,83,140,8
+    LTEXT           "Erzeugt am:",IDC_STATIC,7,93,80,8
+    LTEXT           "X",IDC_CREATED,89,93,140,8,SS_ENDELLIPSIS
+    LTEXT           "Geändert am:",IDC_STATIC,7,103,80,8
+    LTEXT           "X",IDC_UPDATED,89,103,140,8,SS_ENDELLIPSIS
     LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENLABEL,7,113,80,8
-    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
-    CONTROL         "Einstellungen",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
+    LTEXT           "X",IDC_LASTSEEN,89,113,140,8,SS_ENDELLIPSIS
+    CONTROL         "Einstellungen",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,222,15
     CONTROL         "Als &Standard-Speicherort setzen",IDC_MAKEDEFAULT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
-    CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,222,10
+    CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,222,10
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
+IDD_STOREPROPERTIES_USAGE DIALOGEX 0, 0, 236, 200
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Benutzung"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+END
+
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 236, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Extras"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,222,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Synchronisiert den Speicherort mit seiner Datenquelle.",IDC_STATIC,43,23,286,8
-    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
+    LTEXT           "Synchronisiert den Speicherort mit seiner Datenquelle.\nZuletzt synchronisiert: %s",IDC_SYNCHRONIZED,43,23,186,18
     PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,43,45,120,14
-    CONTROL         "Wartungsarbeiten",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
+    CONTROL         "Wartungsarbeiten",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,222,15
     CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Führt Wartungsarbeiten an allen Speicherorten durch.",IDC_STATIC,43,85,286,8
-    LTEXT           "Letzte Wartung dieses Speicherorts: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
+    LTEXT           "Führt Wartungsarbeiten an allen Speicherorten durch.\nLetzte Wartung dieses Speicherorts: %s",IDC_MAINTENANCE,43,85,186,18
     PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,43,107,120,14
-    CONTROL         "Einstellungen sichern",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    CONTROL         "Einstellungen sichern",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,222,15
     CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Sichert die Einstellungen aller Speicherorte.",IDC_STATIC,43,147,286,8
-    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,43,158,120,14
+    LTEXT           "Sichert die Einstellungen aller Speicherorte.",IDC_STATIC,43,147,186,10
+    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,43,161,120,14
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 236, 103
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Index"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "ID und Pfad",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "ID und Pfad",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,222,15
     LTEXT           "GUID:",IDC_STATIC,7,24,55,8
-    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
+    LTEXT           "X",IDC_GUID,69,24,160,8,SS_ENDELLIPSIS
     LTEXT           "Datenpfad:",IDC_STATIC,7,34,55,8
-    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
-    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
+    LTEXT           "X",IDC_DATPATH,69,34,160,8,SS_PATHELLIPSIS
+    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,222,15
     LTEXT           "Hauptindex:",IDC_STATIC,7,69,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,160,8,SS_ENDELLIPSIS
     LTEXT           "Hilfsindex:",IDC_IDXPATHAUXCAPTION,7,79,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,160,8,SS_ENDELLIPSIS
     LTEXT           "Index-Version:",IDC_STATIC,7,89,55,8
-    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
+    LTEXT           "X",IDC_IDXVERSION,69,89,160,8,SS_ENDELLIPSIS
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
@@ -718,15 +726,23 @@ BEGIN
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
         BOTTOMMARGIN, 171
+    END
+
+    IDD_STOREPROPERTIES_USAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 196
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
         BOTTOMMARGIN, 179
     END
@@ -734,7 +750,7 @@ BEGIN
     IDD_STOREPROPERTIES_INDEX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
         BOTTOMMARGIN, 96
     END
@@ -859,87 +875,63 @@ END
 // Menu
 //
 
-IDM_SELECTGPS MENU 
+IDM_MAPCTRL MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&IATA-Code...",               IDM_SELECTGPS_IATA
-        MENUITEM SEPARATOR
-        MENUITEM "&Zurücksetzen",               IDM_SELECTGPS_RESET
-    END
+    MENUITEM "&IATA-Code...",               IDM_MAPCTRL_IATA
+    MENUITEM SEPARATOR
+    MENUITEM "&Zurücksetzen",               IDM_MAPCTRL_RESET
 END
 
 IDM_STORE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "S&ynchronisieren",            IDM_STORE_SYNCHRONIZE
-        MENUITEM "Als &Standard-Speicherort setzen", IDM_STORE_MAKEDEFAULT
-        MENUITEM SEPARATOR
-        MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
-        MENUITEM "&Löschen",                    IDM_STORE_DELETE
-        MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
-    END
+    MENUITEM "S&ynchronisieren",            IDM_STORE_SYNCHRONIZE
+    MENUITEM "Als &Standard-Speicherort setzen", IDM_STORE_MAKEDEFAULT
+    MENUITEM SEPARATOR
+    MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
+    MENUITEM "&Löschen",                    IDM_STORE_DELETE
+    MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
 END
 
 IDM_STORES MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Speicherort &hinzufügen...",  IDM_STORES_ADD
-        MENUITEM SEPARATOR
-        MENUITEM "S&ynchronisieren",            IDM_STORES_SYNCHRONIZE
-        MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_RUNMAINTENANCE
-    END
+    MENUITEM "Speicherort &hinzufügen...",  IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "S&ynchronisieren",            IDM_STORES_SYNCHRONIZE
+    MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_RUNMAINTENANCE
 END
 
 IDM_ITEMTEMPLATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Alphabetisch sortieren",     IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Zurücksetzen",               IDM_ITEMTEMPLATE_RESET
-    END
+    MENUITEM "&Alphabetisch sortieren",     IDM_ITEMTEMPLATE_TOGGLESORT
+    MENUITEM SEPARATOR
+    MENUITEM "&Zurücksetzen",               IDM_ITEMTEMPLATE_RESET
 END
 
 IDM_CONDITION MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Löschen",                    IDM_CONDITION_DELETE
-    END
+    MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
+    MENUITEM SEPARATOR
+    MENUITEM "&Löschen",                    IDM_CONDITION_DELETE
 END
 
 IDM_UPDATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Wiederherstellen",           IDM_UPDATE_RESTORE
-    END
+    MENUITEM "&Wiederherstellen",           IDM_UPDATE_RESTORE
 END
 
 IDM_CONDITIONLIST MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
-    END
+    MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
 END
 
 IDM_VOLUME MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
-        MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_VOLUME_PROPERTIES
-    END
+    MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
+    MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
+    MENUITEM SEPARATOR
+    MENUITEM "&Eigenschaften",              IDM_VOLUME_PROPERTIES
 END
 
 
@@ -1020,6 +1012,8 @@ BEGIN
     IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_SUBSCRIPTION        "Abo"
     IDS_FREEBYTESAVAILABLE  "%s verfügbar"
+    IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
+    IDS_OTHERFILES          "Andere Dateien"
 END
 
 STRINGTABLE 
@@ -1186,7 +1180,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | W
 CAPTION "Seleccionar carpeta"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,248,287
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -1196,7 +1189,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Complementar propiedades"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
     DEFPUSHBUTTON   "OK",IDOK,76,318,50,14,WS_GROUP
     PUSHBUTTON      "Omitir",IDC_SKIP,133,318,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,191,318,50,14,WS_GROUP
@@ -1242,71 +1234,69 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 236, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Geral"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "Geral",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "Geral",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,222,15
     CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
     LTEXT           "Nombre:",IDC_STATIC,49,26,50,8
-    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STORENAME,103,24,126,14,ES_AUTOHSCROLL
     LTEXT           "Comentarios:",IDC_STATIC,49,45,50,8
-    EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
-    CONTROL         "Propiedades",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    EDITTEXT        IDC_COMMENTS,103,43,126,14,ES_AUTOHSCROLL
+    CONTROL         "Propiedades",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,222,15
     LTEXT           "Contenido:",IDC_CONTENTSLABEL,7,83,80,8
-    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
-    LTEXT           "Creado:",IDC_STATIC,7,92,80,8
-    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
-    LTEXT           "Modificado:",IDC_STATIC,7,102,80,8
-    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    CONTROL         "<a>%s</a>",IDC_CONTENTS,"SysLink",WS_GROUP | WS_TABSTOP,89,83,140,8
+    LTEXT           "Creado:",IDC_STATIC,7,93,80,8
+    LTEXT           "X",IDC_CREATED,89,93,140,8,SS_ENDELLIPSIS
+    LTEXT           "Modificado:",IDC_STATIC,7,103,80,8
+    LTEXT           "X",IDC_UPDATED,89,103,140,8,SS_ENDELLIPSIS
     LTEXT           "Última entrada:",IDC_LASTSEENLABEL,7,113,80,8
-    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
-    CONTROL         "Ajustes",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
+    LTEXT           "X",IDC_LASTSEEN,89,113,140,8,SS_ENDELLIPSIS
+    CONTROL         "Ajustes",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,222,15
     CONTROL         "Establecer al ubicación &estándar",IDC_MAKEDEFAULT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,222,10
     CONTROL         "Hacer búsquedas mientras no está conectado",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,222,10
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 236, 191
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Herramientas"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    CONTROL         "Sincronización",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,222,15
+    CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
+    LTEXT           "Sincroniza el ubicación con su fuente de datos.\nÚltima sincronizado: %s",IDC_SYNCHRONIZED,43,23,186,18
+    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,43,45,120,14
+    CONTROL         "Mantenimiento",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,222,15
+    CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
+    LTEXT           "Ejecuta trabajo de mantenimiento en todos los ubicaciones.\nMantenimiento de esto ubicación: %s",IDC_MAINTENANCE,43,85,186,26
+    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,43,115,120,14
+    CONTROL         "Guardar configuraciones",IDC_CATEGORY6,"CCategory",WS_GROUP,7,138,222,15
+    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,154,33,33
+    LTEXT           "Guarda las configuraciones de todos los ubicaciones.",IDC_STATIC,43,155,186,10
+    PUSHBUTTON      "Guardar &configuraciones",IDC_RUNBACKUP,43,169,120,14
+END
+
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 236, 103
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Índice"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "Identificación y carpeta",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "Identificación y carpeta",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,222,15
     LTEXT           "GUID:",IDC_STATIC,7,24,55,8
-    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
+    LTEXT           "X",IDC_GUID,69,24,160,8,SS_ENDELLIPSIS
     LTEXT           "Carpeta:",IDC_STATIC,7,34,55,8
-    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
-    CONTROL         "Índice",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
+    LTEXT           "X",IDC_DATPATH,69,34,160,8,SS_PATHELLIPSIS
+    CONTROL         "Índice",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,222,15
     LTEXT           "Índice principal:",IDC_STATIC,7,69,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,160,8,SS_ENDELLIPSIS
     LTEXT           "Índice auxiliar:",IDC_IDXPATHAUXCAPTION,7,79,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,160,8,SS_ENDELLIPSIS
     LTEXT           "Versión índice:",IDC_STATIC,7,89,55,8
-    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
-END
-
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Ferramentas"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "Sincronización",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
-    CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Sincroniza el ubicación con su fuente de datos.",IDC_STATIC,43,23,286,8
-    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,43,45,120,14
-    CONTROL         "Mantenimiento",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
-    CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Ejecuta trabajo de mantenimiento en todos los ubicaciones.",IDC_STATIC,43,85,286,8
-    LTEXT           "Mantenimiento de esto ubicación: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,43,107,120,14
-    CONTROL         "Guardar configuraciones",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
-    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Guarda las configuraciones de todos los ubicaciones.",IDC_STATIC,43,147,286,8
-    PUSHBUTTON      "Guardar &configuraciones",IDC_RUNBACKUP,43,158,120,14
+    LTEXT           "X",IDC_IDXVERSION,69,89,160,8,SS_ENDELLIPSIS
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110
@@ -1518,6 +1508,13 @@ BEGIN
     CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,222,120,15
 END
 
+IDD_STOREPROPERTIES_USAGE DIALOGEX 0, 0, 236, 200
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Uso"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1612,25 +1609,25 @@ BEGIN
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
         BOTTOMMARGIN, 171
-    END
-
-    IDD_STOREPROPERTIES_INDEX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 329
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 96
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
-        BOTTOMMARGIN, 179
+        BOTTOMMARGIN, 187
+    END
+
+    IDD_STOREPROPERTIES_INDEX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
     END
 
     IDD_UPDATE, DIALOG
@@ -1752,6 +1749,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 267
     END
+
+    IDD_STOREPROPERTIES_USAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 196
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1761,87 +1766,63 @@ END
 // Menu
 //
 
-IDM_SELECTGPS MENU 
+IDM_MAPCTRL MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Código de &IATA...",          IDM_SELECTGPS_IATA
-        MENUITEM SEPARATOR
-        MENUITEM "&Restaurar",                  IDM_SELECTGPS_RESET
-    END
+    MENUITEM "Código de &IATA...",          IDM_MAPCTRL_IATA
+    MENUITEM SEPARATOR
+    MENUITEM "&Restaurar",                  IDM_MAPCTRL_RESET
 END
 
 IDM_STORE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Si&ncronizar",                IDM_STORE_SYNCHRONIZE
-        MENUITEM "Establecer al &ubicación estándar", IDM_STORE_MAKEDEFAULT
-        MENUITEM SEPARATOR
-        MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
-        MENUITEM "&Eliminar",                   IDM_STORE_DELETE
-        MENUITEM "&Renombrar",                  IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
-    END
+    MENUITEM "Si&ncronizar",                IDM_STORE_SYNCHRONIZE
+    MENUITEM "Establecer al &ubicación estándar", IDM_STORE_MAKEDEFAULT
+    MENUITEM SEPARATOR
+    MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
+    MENUITEM "&Eliminar",                   IDM_STORE_DELETE
+    MENUITEM "&Renombrar",                  IDM_STORE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
 END
 
 IDM_STORES MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Adjuntar ubicación...",      IDM_STORES_ADD
-        MENUITEM SEPARATOR
-        MENUITEM "Si&ncronizar",                IDM_STORES_SYNCHRONIZE
-        MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_RUNMAINTENANCE
-    END
+    MENUITEM "&Adjuntar ubicación...",      IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "Si&ncronizar",                IDM_STORES_SYNCHRONIZE
+    MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_RUNMAINTENANCE
 END
 
 IDM_ITEMTEMPLATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Ordenar &alfabéticamente",    IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Resetaurar",                 IDM_ITEMTEMPLATE_RESET
-    END
+    MENUITEM "Ordenar &alfabéticamente",    IDM_ITEMTEMPLATE_TOGGLESORT
+    MENUITEM SEPARATOR
+    MENUITEM "&Resetaurar",                 IDM_ITEMTEMPLATE_RESET
 END
 
 IDM_CONDITION MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "E&ditar...",                  IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Eliminar",                   IDM_CONDITION_DELETE
-    END
+    MENUITEM "E&ditar...",                  IDM_CONDITION_EDIT
+    MENUITEM SEPARATOR
+    MENUITEM "&Eliminar",                   IDM_CONDITION_DELETE
 END
 
 IDM_UPDATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Restaurar",                  IDM_UPDATE_RESTORE
-    END
+    MENUITEM "&Restaurar",                  IDM_UPDATE_RESTORE
 END
 
 IDM_CONDITIONLIST MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Adjuntar condición...",      IDM_CONDITIONLIST_ADD
-    END
+    MENUITEM "&Adjuntar condición...",      IDM_CONDITIONLIST_ADD
 END
 
 IDM_VOLUME MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
-        MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
-    END
+    MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
+    MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
+    MENUITEM SEPARATOR
+    MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
 END
 
 
@@ -1921,7 +1902,9 @@ BEGIN
     IDS_ADDSTORE_ICLOUD     "Índices la carpeta existente de su aplicación local de iCloud.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no se copian o modifican."
     IDS_SUBSCRIPTION        "Suscripción"
-    IDS_FREEBYTESAVAILABLE  "%s disponible"
+    IDS_FREEBYTESAVAILABLE  "%s disponibles"
+    IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
+    IDS_OTHERFILES          "Otros archivosn"
 END
 
 STRINGTABLE 
@@ -2109,7 +2092,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | W
 CAPTION "Choisissez un dossier"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,248,287
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -2119,7 +2101,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Ajouter les qualités"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
     DEFPUSHBUTTON   "OK",IDOK,76,318,50,14,WS_GROUP
     PUSHBUTTON      "Omettre",IDC_SKIP,133,318,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,191,318,50,14,WS_GROUP
@@ -2165,69 +2146,67 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 236, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Général"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "Général",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "Général",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,222,15
     CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
     LTEXT           "Nom:",IDC_STATIC,49,26,50,8
-    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STORENAME,103,24,126,14,ES_AUTOHSCROLL
     LTEXT           "Commentaire:",IDC_STATIC,49,45,50,8
-    EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
-    CONTROL         "Propriétés",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    EDITTEXT        IDC_COMMENTS,103,43,126,14,ES_AUTOHSCROLL
+    CONTROL         "Propriétés",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,222,15
     LTEXT           "Contenu:",IDC_CONTENTSLABEL,7,83,80,8
-    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
-    LTEXT           "Temp de création:",IDC_STATIC,7,92,80,8
-    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
-    LTEXT           "Changé le:",IDC_STATIC,7,102,80,8
-    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    CONTROL         "<a>%s</a>",IDC_CONTENTS,"SysLink",WS_GROUP | WS_TABSTOP,89,83,140,8
+    LTEXT           "Crée le:",IDC_STATIC,7,93,80,8
+    LTEXT           "X",IDC_CREATED,89,93,140,8,SS_ENDELLIPSIS
+    LTEXT           "Changé le:",IDC_STATIC,7,103,80,8
+    LTEXT           "X",IDC_UPDATED,89,103,140,8,SS_ENDELLIPSIS
     LTEXT           "Dernier vu:",IDC_LASTSEENLABEL,7,113,80,8
-    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
-    CONTROL         "Paramètres",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
-    CONTROL         "Mettre emplacement &défaut",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
-    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
+    LTEXT           "X",IDC_LASTSEEN,89,113,140,8,SS_ENDELLIPSIS
+    CONTROL         "Paramètres",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,222,15
+    CONTROL         "Mettre emplacement &défaut",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,222,10
+    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,222,10
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Index"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    CONTROL         "ID et dossier",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
-    LTEXT           "GUID:",IDC_STATIC,7,24,55,8
-    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
-    LTEXT           "Données:",IDC_STATIC,7,34,55,8
-    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
-    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
-    LTEXT           "Index principal:",IDC_STATIC,7,69,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
-    LTEXT           "Index auxiliaire:",IDC_IDXPATHAUXCAPTION,7,79,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
-    LTEXT           "Version de index:",IDC_STATIC,7,89,55,8
-    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
-END
-
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 236, 191
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Outils"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "Synchronisation",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,222,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Synchroniser l'emplacement avec sa source de données.",IDC_STATIC,43,23,286,8
-    LTEXT           "En dernier synchronisée: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
+    LTEXT           "Synchroniser l'emplacement avec sa source de données.\nEn dernier synchronisée: %s",IDC_SYNCHRONIZED,43,23,186,18
     PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,43,45,120,14
-    CONTROL         "Travails d'entretien",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
+    CONTROL         "Travails d'entretien",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,222,15
     CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Exécute des travails d'entretien sur tous les emplacements.",IDC_STATIC,43,85,286,8
-    LTEXT           "Dernier travails d'entretien sur c'emplacement: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Exécuter &travails d'entretien",IDC_RUNMAINTENANCE,43,107,120,14
-    CONTROL         "Sauvegarder paramètres",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
-    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Sauvegarde les paramètres de tous les emplacements.",IDC_STATIC,43,147,286,8
-    PUSHBUTTON      "Sauvegarde &paramètres",IDC_RUNBACKUP,43,158,120,14
+    LTEXT           "Exécute des travails d'entretien sur tous les emplacements.\nDernier travails d'entretien sur c'emplacement: %s",IDC_MAINTENANCE,43,85,186,26
+    PUSHBUTTON      "Exécuter &travails d'entretien",IDC_RUNMAINTENANCE,43,115,120,14
+    CONTROL         "Sauvegarder paramètres",IDC_CATEGORY6,"CCategory",WS_GROUP,7,138,222,15
+    CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,154,33,33
+    LTEXT           "Sauvegarde les paramètres de tous les emplacements.",IDC_STATIC,43,155,186,10
+    PUSHBUTTON      "Sauvegarde &paramètres",IDC_RUNBACKUP,43,169,120,14
+END
+
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 236, 103
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Index"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    CONTROL         "ID et dossier",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,222,15
+    LTEXT           "GUID:",IDC_STATIC,7,24,55,8
+    LTEXT           "X",IDC_GUID,69,24,160,8,SS_ENDELLIPSIS
+    LTEXT           "Données:",IDC_STATIC,7,34,55,8
+    LTEXT           "X",IDC_DATPATH,69,34,160,8,SS_PATHELLIPSIS
+    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,222,15
+    LTEXT           "Index principal:",IDC_STATIC,7,69,55,8
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,160,8,SS_ENDELLIPSIS
+    LTEXT           "Index auxiliaire:",IDC_IDXPATHAUXCAPTION,7,79,55,8
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,160,8,SS_ENDELLIPSIS
+    LTEXT           "Version d'index:",IDC_STATIC,7,89,55,8
+    LTEXT           "X",IDC_IDXVERSION,69,89,160,8,SS_ENDELLIPSIS
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 118
@@ -2417,6 +2396,13 @@ BEGIN
     CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,222,120,15
 END
 
+IDD_STOREPROPERTIES_USAGE DIALOGEX 0, 0, 236, 200
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Utilisation"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2527,25 +2513,25 @@ BEGIN
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
         BOTTOMMARGIN, 171
-    END
-
-    IDD_STOREPROPERTIES_INDEX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 329
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 96
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
-        BOTTOMMARGIN, 179
+        BOTTOMMARGIN, 187
+    END
+
+    IDD_STOREPROPERTIES_INDEX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
     END
 
     IDD_UPDATE, DIALOG
@@ -2651,6 +2637,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 267
     END
+
+    IDD_STOREPROPERTIES_USAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 196
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2660,87 +2654,63 @@ END
 // Menu
 //
 
-IDM_SELECTGPS MENU 
+IDM_MAPCTRL MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Code d'aéroport &IATA...",    IDM_SELECTGPS_IATA
-        MENUITEM SEPARATOR
-        MENUITEM "&Remise",                     IDM_SELECTGPS_RESET
-    END
+    MENUITEM "Code d'aéroport &IATA...",    IDM_MAPCTRL_IATA
+    MENUITEM SEPARATOR
+    MENUITEM "&Remise",                     IDM_MAPCTRL_RESET
 END
 
 IDM_STORE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "S&ynchroniser",               IDM_STORE_SYNCHRONIZE
-        MENUITEM "Mettre emplacement &défaut",  IDM_STORE_MAKEDEFAULT
-        MENUITEM SEPARATOR
-        MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
-        MENUITEM "&Effacer",                    IDM_STORE_DELETE
-        MENUITEM "&Renommer",                   IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
-    END
+    MENUITEM "S&ynchroniser",               IDM_STORE_SYNCHRONIZE
+    MENUITEM "Mettre emplacement &défaut",  IDM_STORE_MAKEDEFAULT
+    MENUITEM SEPARATOR
+    MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
+    MENUITEM "&Effacer",                    IDM_STORE_DELETE
+    MENUITEM "&Renommer",                   IDM_STORE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
 END
 
 IDM_STORES MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Ajouter emplacement...",     IDM_STORES_ADD
-        MENUITEM SEPARATOR
-        MENUITEM "S&ynchroniser",               IDM_STORES_SYNCHRONIZE
-        MENUITEM "Exécuter &travails d'entretien", IDM_STORES_RUNMAINTENANCE
-    END
+    MENUITEM "&Ajouter emplacement...",     IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "S&ynchroniser",               IDM_STORES_SYNCHRONIZE
+    MENUITEM "Exécuter &travails d'entretien", IDM_STORES_RUNMAINTENANCE
 END
 
 IDM_ITEMTEMPLATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Classer alphabétique",       IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Remise",                     IDM_ITEMTEMPLATE_RESET
-    END
+    MENUITEM "&Classer alphabétique",       IDM_ITEMTEMPLATE_TOGGLESORT
+    MENUITEM SEPARATOR
+    MENUITEM "&Remise",                     IDM_ITEMTEMPLATE_RESET
 END
 
 IDM_CONDITION MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Modifier...",                IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Effacer",                    IDM_CONDITION_DELETE
-    END
+    MENUITEM "&Modifier...",                IDM_CONDITION_EDIT
+    MENUITEM SEPARATOR
+    MENUITEM "&Effacer",                    IDM_CONDITION_DELETE
 END
 
 IDM_UPDATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Restaurer",                  IDM_UPDATE_RESTORE
-    END
+    MENUITEM "&Restaurer",                  IDM_UPDATE_RESTORE
 END
 
 IDM_CONDITIONLIST MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
-    END
+    MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
 END
 
 IDM_VOLUME MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
-        MENUITEM "&Éjecter",                    IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
-    END
+    MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
+    MENUITEM "&Éjecter",                    IDM_VOLUME_EJECT
+    MENUITEM SEPARATOR
+    MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
 END
 
 
@@ -2820,7 +2790,9 @@ BEGIN
     IDS_ADDSTORE_ICLOUD     "Indices le dossier existant de votre application iCloud local.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_SUBSCRIPTION        "Abonnement"
-    IDS_FREEBYTESAVAILABLE  "%s disponible"
+    IDS_FREEBYTESAVAILABLE  "%s disponibles"
+    IDS_NOTHINGTODISPLAY    "Il n'y a rien présenter."
+    IDS_OTHERFILES          "Autres fichiers"
 END
 
 STRINGTABLE 
@@ -3054,7 +3026,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | W
 CAPTION "Select a folder"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_HSCROLL | WS_TABSTOP,0,0,248,287
     DEFPUSHBUTTON   "OK",IDOK,134,294,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,191,294,50,14,WS_GROUP
 END
@@ -3064,7 +3035,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SY
 CAPTION "Tag files"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,311
     DEFPUSHBUTTON   "OK",IDOK,76,318,50,14,WS_GROUP
     PUSHBUTTON      "Skip",IDC_SKIP,133,318,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,191,318,50,14,WS_GROUP
@@ -3093,70 +3063,68 @@ BEGIN
     CONTROL         "",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 336, 178
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 236, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "General"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "General",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "General",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,222,15
     CONTROL         "",IDC_STOREICON,"CIconCtrl",WS_GROUP,7,23,33,33
     LTEXT           "Name:",IDC_STATIC,49,26,50,8
-    EDITTEXT        IDC_STORENAME,103,24,226,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STORENAME,103,24,126,14,ES_AUTOHSCROLL
     LTEXT           "Comments:",IDC_STATIC,49,45,50,8
-    EDITTEXT        IDC_COMMENTS,103,43,226,14,ES_AUTOHSCROLL
-    CONTROL         "Properties",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,322,15
+    EDITTEXT        IDC_COMMENTS,103,43,126,14,ES_AUTOHSCROLL
+    CONTROL         "Properties",IDC_CATEGORY2,"CCategory",WS_GROUP,7,66,222,15
     LTEXT           "Contents:",IDC_CONTENTSLABEL,7,83,80,8
-    LTEXT           "X",IDC_CONTENTS,89,83,240,8,SS_ENDELLIPSIS
-    LTEXT           "Created:",IDC_STATIC,7,92,80,8
-    LTEXT           "X",IDC_CREATED,89,92,240,8,SS_ENDELLIPSIS
-    LTEXT           "Modified:",IDC_STATIC,7,102,80,8
-    LTEXT           "X",IDC_UPDATED,89,102,240,8,SS_ENDELLIPSIS
+    CONTROL         "<a>%s</a>",IDC_CONTENTS,"SysLink",WS_GROUP | WS_TABSTOP,89,83,140,8
+    LTEXT           "Created:",IDC_STATIC,7,93,80,8
+    LTEXT           "X",IDC_CREATED,89,93,140,8,SS_ENDELLIPSIS
+    LTEXT           "Modified:",IDC_STATIC,7,103,80,8
+    LTEXT           "X",IDC_UPDATED,89,103,140,8,SS_ENDELLIPSIS
     LTEXT           "Last seen:",IDC_LASTSEENLABEL,7,113,80,8
-    LTEXT           "X",IDC_LASTSEEN,89,113,240,8,SS_ENDELLIPSIS
-    CONTROL         "Settings",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,322,15
-    CONTROL         "Make &default location",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,322,10
-    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,322,10
+    LTEXT           "X",IDC_LASTSEEN,89,113,140,8,SS_ENDELLIPSIS
+    CONTROL         "Settings",IDC_CATEGORY3,"CCategory",WS_GROUP,7,131,222,15
+    CONTROL         "Make &default location",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,149,222,10
+    CONTROL         "Make &searchable when not connected",IDC_MAKESEARCHABLE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,161,222,10
 END
 
-IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 336, 103
+IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 236, 103
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Index"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "ID and path",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "ID and path",IDC_CATEGORY7,"CCategory",WS_GROUP,7,7,222,15
     LTEXT           "GUID:",IDC_STATIC,7,24,55,8
-    LTEXT           "X",IDC_GUID,69,24,260,8,SS_ENDELLIPSIS
+    LTEXT           "X",IDC_GUID,69,24,160,8,SS_ENDELLIPSIS
     LTEXT           "Data path:",IDC_STATIC,7,34,55,8
-    LTEXT           "X",IDC_DATPATH,69,34,260,8,SS_PATHELLIPSIS
-    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,322,15
+    LTEXT           "X",IDC_DATPATH,69,34,160,8,SS_PATHELLIPSIS
+    CONTROL         "Index",IDC_CATEGORY8,"CCategory",WS_GROUP,7,52,222,15
     LTEXT           "Main index:",IDC_STATIC,7,69,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,69,69,260,8,SS_PATHELLIPSIS
+    LTEXT           "X",IDC_IDXPATHMAIN,69,69,160,8,SS_ENDELLIPSIS
     LTEXT           "Aux. index:",IDC_IDXPATHAUXCAPTION,7,79,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,69,79,260,8,SS_PATHELLIPSIS
+    LTEXT           "X",IDC_IDXPATHAUX,69,79,160,8,SS_ENDELLIPSIS
     LTEXT           "Index version:",IDC_STATIC,7,89,55,8
-    LTEXT           "X",IDC_IDXVERSION,69,89,260,8,SS_ENDELLIPSIS
+    LTEXT           "X",IDC_IDXVERSION,69,89,160,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 336, 183
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 236, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Tools"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "Synchronization",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,322,15
+    CONTROL         "Synchronization",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,222,15
     CONTROL         "",IDC_SYNCHRONIZEICON,"CIconCtrl",WS_GROUP,8,23,33,33
-    LTEXT           "Synchronizes the location with its data source.",IDC_STATIC,43,23,286,8
-    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,43,33,286,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,43,45,100,14
-    CONTROL         "Maintenance",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,322,15
+    LTEXT           "Synchronizes the location with its data source.\nLast synchronized: %s",IDC_SYNCHRONIZED,43,23,186,18
+    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,43,45,120,14
+    CONTROL         "Maintenance",IDC_CATEGORY5,"CCategory",WS_GROUP,7,68,222,15
     CONTROL         "",IDC_MAINTENANCEICON,"CIconCtrl",WS_GROUP,8,85,33,33
-    LTEXT           "Executes maintenance work on all locations.",IDC_STATIC,43,85,286,8
-    LTEXT           "Last maintenance of this location: %s",IDC_MAINTENANCE,43,95,286,8,SS_ENDELLIPSIS
-    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,43,107,100,14
-    CONTROL         "Backup settings",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,322,15
+    LTEXT           "Executes maintenance work on all locations.\nLast maintenance of this location: %s",IDC_MAINTENANCE,43,85,186,18
+    PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,43,107,120,14
+    CONTROL         "Backup settings",IDC_CATEGORY6,"CCategory",WS_GROUP,7,130,222,15
     CONTROL         "",IDC_BACKUPICON,"CIconCtrl",WS_GROUP,8,146,33,33
-    LTEXT           "Saves the settings of all locations.",IDC_STATIC,43,147,286,8
-    PUSHBUTTON      "Backup &settings",IDC_RUNBACKUP,43,158,100,14
+    LTEXT           "Saves the settings of all locations.",IDC_STATIC,43,147,186,10
+    PUSHBUTTON      "Backup &settings",IDC_RUNBACKUP,43,161,120,14
 END
 
 IDD_UPDATE DIALOGEX 0, 0, 220, 110
@@ -3368,6 +3336,13 @@ BEGIN
     CONTROL         "",IDC_TIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_GROUP | WS_TABSTOP | 0x8,7,222,120,15
 END
 
+IDD_STOREPROPERTIES_USAGE DIALOGEX 0, 0, 236, 200
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Usage"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3462,7 +3437,7 @@ BEGIN
     IDD_STOREPROPERTIES_GENERAL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
         BOTTOMMARGIN, 171
     END
@@ -3470,7 +3445,7 @@ BEGIN
     IDD_STOREPROPERTIES_INDEX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
         BOTTOMMARGIN, 96
     END
@@ -3478,9 +3453,9 @@ BEGIN
     IDD_STOREPROPERTIES_TOOLS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 329
+        RIGHTMARGIN, 229
         TOPMARGIN, 7
-        BOTTOMMARGIN, 173
+        BOTTOMMARGIN, 179
     END
 
     IDD_UPDATE, DIALOG
@@ -3594,6 +3569,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 267
     END
+
+    IDD_STOREPROPERTIES_USAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 196
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -3603,87 +3586,63 @@ END
 // Menu
 //
 
-IDM_SELECTGPS MENU 
+IDM_MAPCTRL MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&IATA code...",               IDM_SELECTGPS_IATA
-        MENUITEM SEPARATOR
-        MENUITEM "&Reset",                      IDM_SELECTGPS_RESET
-    END
+    MENUITEM "&IATA code...",               IDM_MAPCTRL_IATA
+    MENUITEM SEPARATOR
+    MENUITEM "&Reset",                      IDM_MAPCTRL_RESET
 END
 
 IDM_STORE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "S&ynchronize",                IDM_STORE_SYNCHRONIZE
-        MENUITEM "Make de&fault location",      IDM_STORE_MAKEDEFAULT
-        MENUITEM SEPARATOR
-        MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
-        MENUITEM "&Delete",                     IDM_STORE_DELETE
-        MENUITEM "&Rename",                     IDM_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
-    END
+    MENUITEM "S&ynchronize",                IDM_STORE_SYNCHRONIZE
+    MENUITEM "Make de&fault location",      IDM_STORE_MAKEDEFAULT
+    MENUITEM SEPARATOR
+    MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
+    MENUITEM "&Delete",                     IDM_STORE_DELETE
+    MENUITEM "&Rename",                     IDM_STORE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
 END
 
 IDM_STORES MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Add storage location...",    IDM_STORES_ADD
-        MENUITEM SEPARATOR
-        MENUITEM "S&ynchronize",                IDM_STORES_SYNCHRONIZE
-        MENUITEM "Run &maintenance",            IDM_STORES_RUNMAINTENANCE
-    END
+    MENUITEM "&Add storage location...",    IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "S&ynchronize",                IDM_STORES_SYNCHRONIZE
+    MENUITEM "Run &maintenance",            IDM_STORES_RUNMAINTENANCE
 END
 
 IDM_ITEMTEMPLATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Sort alphabetically",        IDM_ITEMTEMPLATE_TOGGLESORT
-        MENUITEM SEPARATOR
-        MENUITEM "&Reset",                      IDM_ITEMTEMPLATE_RESET
-    END
+    MENUITEM "&Sort alphabetically",        IDM_ITEMTEMPLATE_TOGGLESORT
+    MENUITEM SEPARATOR
+    MENUITEM "&Reset",                      IDM_ITEMTEMPLATE_RESET
 END
 
 IDM_CONDITION MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Edit...",                    IDM_CONDITION_EDIT
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     IDM_CONDITION_DELETE
-    END
+    MENUITEM "&Edit...",                    IDM_CONDITION_EDIT
+    MENUITEM SEPARATOR
+    MENUITEM "&Delete",                     IDM_CONDITION_DELETE
 END
 
 IDM_UPDATE MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Restore",                    IDM_UPDATE_RESTORE
-    END
+    MENUITEM "&Restore",                    IDM_UPDATE_RESTORE
 END
 
 IDM_CONDITIONLIST MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
-    END
+    MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
 END
 
 IDM_VOLUME MENU 
 BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
-        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "P&roperties",                 IDM_VOLUME_PROPERTIES
-    END
+    MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
+    MENUITEM "E&ject",                      IDM_VOLUME_EJECT
+    MENUITEM SEPARATOR
+    MENUITEM "P&roperties",                 IDM_VOLUME_PROPERTIES
 END
 
 
@@ -3764,6 +3723,8 @@ BEGIN
     IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be copied or modified."
     IDS_SUBSCRIPTION        "Subscription"
     IDS_FREEBYTESAVAILABLE  "%s available"
+    IDS_NOTHINGTODISPLAY    "There is nothing to display."
+    IDS_OTHERFILES          "Other files"
 END
 
 STRINGTABLE 

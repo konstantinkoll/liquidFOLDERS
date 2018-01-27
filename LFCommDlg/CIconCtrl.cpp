@@ -10,7 +10,7 @@
 //
 
 CIconCtrl::CIconCtrl()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	WNDCLASS wndcls;
 	ZeroMemory(&wndcls, sizeof(wndcls));
@@ -44,8 +44,9 @@ void CIconCtrl::SetCoreIcon(UINT nID, BOOL Center)
 {
 	CRect rect;
 	GetClientRect(rect);
-	INT Size = min(rect.Width(), rect.Height());
-	INT IconSize = (Size>=128) ? 128 : (Size>=96) ? 96 : (Size>=64) ? 64 : (Size>=48) ? 48 : (Size>=32) ? 32 : (Size>=24) ? 24 : 16;
+
+	const INT Size = min(rect.Width(), rect.Height());
+	const INT IconSize = (Size>=128) ? 128 : (Size>=96) ? 96 : (Size>=64) ? 64 : (Size>=48) ? 48 : (Size>=32) ? 32 : (Size>=24) ? 24 : 16;
 
 	SetIcon((HICON)LoadImage(GetModuleHandle(_T("LFCORE.DLL")), MAKEINTRESOURCE(nID), IMAGE_ICON, IconSize, IconSize, LR_SHARED), IconSize, Center);
 }
@@ -54,22 +55,17 @@ void CIconCtrl::SetTaskIcon(HINSTANCE hInst, UINT nID, BOOL Center)
 {
 	CRect rect;
 	GetClientRect(rect);
-	INT Size = min(rect.Width(), rect.Height());
-	INT IconSize = (Size>=64) ? 64 : (Size>=48) ? 48 : (Size>=32) ? 32 : (Size>=24) ? 24 : 16;
+
+	const INT Size = min(rect.Width(), rect.Height());
+	const INT IconSize = (Size>=64) ? 64 : (Size>=48) ? 48 : (Size>=32) ? 32 : (Size>=24) ? 24 : 16;
 
 	SetIcon((HICON)LoadImage(hInst, MAKEINTRESOURCE(nID), IMAGE_ICON, IconSize, IconSize, LR_SHARED), IconSize, Center);
 }
 
 
-BEGIN_MESSAGE_MAP(CIconCtrl, CWnd)
-	ON_WM_ERASEBKGND()
+BEGIN_MESSAGE_MAP(CIconCtrl, CFrontstageWnd)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
-
-BOOL CIconCtrl::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
 
 void CIconCtrl::OnPaint()
 {

@@ -9,6 +9,7 @@
 // CFrontstageWnd
 //
 
+#define BORDERSIZE            2
 #define WHITEAREAHEIGHT     100
 
 CFrontstageWnd::CFrontstageWnd()
@@ -16,6 +17,9 @@ CFrontstageWnd::CFrontstageWnd()
 {
 	CONSTRUCTOR_TOOLTIP()
 }
+
+
+// Cards
 
 void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed) const
 {
@@ -117,6 +121,9 @@ void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed) const
 	}
 }
 
+
+// Items
+
 INT CFrontstageWnd::ItemAtPosition(CPoint /*point*/) const
 {
 	return -1;
@@ -137,7 +144,7 @@ void CFrontstageWnd::InvalidateItem(INT /*Index*/)
 	Invalidate();
 }
 
-void CFrontstageWnd::InvalidatePoint(const CPoint& /*point*/)
+void CFrontstageWnd::InvalidatePoint(const CPoint& /*Point*/)
 {
 	Invalidate();
 }
@@ -151,14 +158,62 @@ void CFrontstageWnd::ShowTooltip(const CPoint& /*point*/)
 {
 }
 
+void CFrontstageWnd::UpdateHoverItem()
+{
+	if (!GetCapture())
+	{
+		CPoint point;
+		GetCursorPos(&point);
+		ScreenToClient(&point);
+
+		OnMouseMove(0, point);
+	}
+}
+
+
+// Menus
+
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, INT /*Index*/)
+{
+	return FALSE;
+}
+
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, LPCVOID /*Ptr*/)
+{
+	return FALSE;
+}
+
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, const CPoint& /*point*/)
+{
+	return FALSE;
+}
+
+void CFrontstageWnd::TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem, BOOL AlignRight) const
+{
+	if (IsMenu(Menu))
+	{
+		if (SetDefaultItem)
+			Menu.SetDefaultItem(0, TRUE);
+
+		CMenu MenuPopup;
+		if (MenuPopup.CreatePopupMenu())
+		{
+			MenuPopup.InsertMenu(0, MF_POPUP, (UINT_PTR)(HMENU)Menu);
+
+			Menu.TrackPopupMenu((AlignRight ? TPM_RIGHTALIGN : TPM_LEFTALIGN) | TPM_RIGHTBUTTON, pos.x, pos.y, pWndOwner, NULL);
+		}
+	}
+}
+
 
 IMPLEMENT_TOOLTIP_NOWHEEL(CFrontstageWnd, CWnd)
 
 BEGIN_TOOLTIP_MAP(CFrontstageWnd, CWnd)
 	ON_WM_DESTROY()
-	ON_MESSAGE(WM_NCCALCSIZE, OnNcCalcSize)
 	ON_WM_NCHITTEST()
+	ON_MESSAGE(WM_NCPAINT, OnNcPaint)
 	ON_WM_ERASEBKGND()
+	ON_WM_CONTEXTMENU()
 	ON_WM_INITMENUPOPUP()
 END_TOOLTIP_MAP()
 
@@ -167,21 +222,6 @@ void CFrontstageWnd::OnDestroy()
 	HideTooltip();
 
 	CWnd::OnDestroy();
-}
-
-LRESULT CFrontstageWnd::OnNcCalcSize(WPARAM wParam, LPARAM lParam)
-{
-	CWnd::OnNcCalcSize((BOOL)wParam, (NCCALCSIZE_PARAMS*)lParam);
-
-	if (wParam)
-	{
-		NCCALCSIZE_PARAMS* lpncsp = (NCCALCSIZE_PARAMS*)lParam;
-		ZeroMemory(&lpncsp->rgrc[1], 2*sizeof(RECT));
-
-		return WVR_VALIDRECTS;
-	}
-
-	return 0;
 }
 
 LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)
@@ -199,26 +239,116 @@ LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)
 	return CWnd::OnNcHitTest(point);
 }
 
+LRESULT CFrontstageWnd::OnNcPaint(WPARAM wParam, LPARAM lParam)
+{
+	if (HasBorder() && IsCtrlThemed())
+	{
+		// Window DC
+		CWindowDC dc(this);
+
+		// Window Rect
+		const INT cxEdge = GetSystemMetrics(SM_CXEDGE);
+		const INT cyEdge = GetSystemMetrics(SM_CYEDGE);
+
+		CRect rect;
+		GetWindowRect(rect);
+
+		rect.DeflateRect(cxEdge, cyEdge);
+
+		// Update region
+		HRGN hRgn = CreateRectRgnIndirect(rect);
+
+		HRGN hRgnUpdate = (HRGN)wParam;
+		if (hRgnUpdate)
+			CombineRgn(hRgn, hRgnUpdate, hRgn, RGN_AND);
+
+		// Draw themed border
+		rect.OffsetRect(-rect.left+cxEdge, -rect.top+cyEdge);
+		dc.ExcludeClipRect(rect);
+
+		rect.InflateRect(cxEdge, cyEdge);
+		dc.Draw3dRect(rect, 0xA0A0A0, 0xA0A0A0);
+
+		rect.DeflateRect(1, 1);
+		dc.FillSolidRect(rect, IsWindowEnabled() ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));
+
+		// Draw rest of non-client area
+		DefWindowProc(WM_NCPAINT, (WPARAM)hRgn, lParam);
+		DeleteObject(hRgn);
+	}
+	else
+	{
+		DefWindowProc(WM_NCPAINT, wParam, lParam);
+	}
+
+	return 0;
+}
+
 BOOL CFrontstageWnd::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
 
-void CFrontstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
+void CFrontstageWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
-	ASSERT(pPopupMenu);
+	INT Index = -1;
+	LPCVOID Ptr = NULL;
+	CPoint Point(-1, -1);
 
-	CCmdUI state;
-	state.m_pMenu = state.m_pParentMenu = pPopupMenu;
-	state.m_nIndexMax = pPopupMenu->GetMenuItemCount();
-
-	ASSERT(!state.m_pOther);
-	ASSERT(state.m_pMenu);
-
-	for (state.m_nIndex=0; state.m_nIndex<state.m_nIndexMax; state.m_nIndex++)
+	// Handle click position
+	if ((pos.x<0) || (pos.y<0))
 	{
-		state.m_nID = pPopupMenu->GetMenuItemID(state.m_nIndex);
-		if ((state.m_nID) && (state.m_nID!=(UINT)-1))
-			state.DoUpdate(this, FALSE);
+		CRect rect;
+		GetClientRect(rect);
+
+		pos.x = (rect.left+rect.right)/2;
+		pos.y = (rect.top+rect.bottom)/2;
+	}
+	else
+	{
+		ScreenToClient(&pos);
+
+		Index = ItemAtPosition(pos);
+		Ptr = PtrAtPosition(pos);
+		Point = PointAtPosition(pos);
+	}
+
+	// Get menu
+	CMenu Menu;
+	BOOL SetDefaultItem = FALSE;
+
+	SetDefaultItem |= GetContextMenu(Menu, Index);
+	SetDefaultItem |= GetContextMenu(Menu, Ptr);
+	SetDefaultItem |= GetContextMenu(Menu, Point);
+
+	ClientToScreen(&pos);
+
+	if (IsMenu(Menu))
+	{
+		TrackPopupMenu(Menu, pos, SetDefaultItem);
+	}
+	else
+	{
+		GetOwner()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(pos.x, pos.y));
+	}
+}
+
+void CFrontstageWnd::OnInitMenuPopup(CMenu* pMenuPopup, UINT /*nIndex*/, BOOL /*bSysMenu*/)
+{
+	ASSERT(pMenuPopup);
+
+	CCmdUI cmdUI;
+	cmdUI.m_pMenu = cmdUI.m_pParentMenu = pMenuPopup;
+	cmdUI.m_nIndexMax = pMenuPopup->GetMenuItemCount();
+
+	ASSERT(!cmdUI.m_pOther);
+	ASSERT(cmdUI.m_pMenu);
+
+	for (cmdUI.m_nIndex=0; cmdUI.m_nIndex<cmdUI.m_nIndexMax; cmdUI.m_nIndex++)
+	{
+		cmdUI.m_nID = pMenuPopup->GetMenuItemID(cmdUI.m_nIndex);
+
+		if (cmdUI.m_nID && (cmdUI.m_nID!=(UINT)-1))
+			cmdUI.DoUpdate(this, FALSE);
 	}
 }

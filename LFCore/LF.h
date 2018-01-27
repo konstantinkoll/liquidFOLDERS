@@ -524,8 +524,9 @@ struct LFContextDescriptor
 #define LFApplicationYouTube         15
 #define LFApplicationJodel           16
 #define LFApplicationVimeo           17
+#define LFApplicationPicfx           18
 
-#define LFApplicationCount           18
+#define LFApplicationCount           19
 
 
 // Statistics
@@ -556,7 +557,7 @@ struct LFFileSummary
 
 #define LFFilterModeStores                0
 #define LFFilterModeDirectoryTree         1
-#define LFFilterModeSearch                2
+#define LFFilterModeQuery                 2
 
 #define LFFilterCompareIgnore             0
 #define LFFilterCompareIsNull             1
@@ -572,13 +573,7 @@ struct LFFileSummary
 #define LFFilterCompareCount              10
 
 
-struct LFFilterOptions
-{
-	// For LFFilterModeDirectoryTree and above
-	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
-	BOOL IsSubfolder;						// If TRUE, you are already inside a grouped subdirectory
-	BOOL IsPersistent;						// If TRUE, the filter is a custom search filter
-};
+#pragma pack(push,1)
 
 struct LFFilterCondition
 {
@@ -587,37 +582,52 @@ struct LFFilterCondition
 	BYTE Compare;
 };
 
-struct LFFilter
+struct LFFilterQuery
 {
-	WCHAR OriginalName[256];
-	WCHAR ResultName[256];
-	BYTE ResultContext;
-	UINT Mode;
-	LFFilterOptions Options;
+	BYTE Mode;
 
+	BYTE Context;							// For LFFilterModeDirectoryTree and above
+	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
 	CHAR StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
-	BYTE QueryContext;						// For LFFilterModeDirectoryTree and above
 	WCHAR SearchTerm[256];					// For LFFilterModeDirectoryTree and above
 	LFFilterCondition* pConditionList;		// For LFFilterModeDirectoryTree and above
 };
 
+struct LFFilterResult
+{
+	WCHAR Name[256];
+	BYTE Context;
+};
+
+struct LFFilter
+{
+	WCHAR Name[256];
+	BOOL IsPersistent;						// If TRUE, the filter is a custom search filter
+	BOOL IsSubfolder;						// If TRUE, the filter is a subfolder
+
+	LFFilterQuery Query;
+	LFFilterResult Result;
+};
+
+#pragma pack(pop)
+
 
 // Store structure
 
-#define LFStoreModeIndexInternal         0x00
-#define LFStoreModeIndexHybrid           0x01
-#define LFStoreModeIndexExternal         0x02
-#define LFStoreModeIndexMask             0x0F
+#define LFStoreModeIndexInternal         0x00000000
+#define LFStoreModeIndexHybrid           0x00000001
+#define LFStoreModeIndexExternal         0x00000002
+#define LFStoreModeIndexMask             0x0000000F
 
 #define LFStoreModeBackendInternal       0x00000000
 #define LFStoreModeBackendWindows        0x02000000
-#define LFStoreModeBackendFacebook       0x09000000
-#define LFStoreModeBackendFlickr         0x0A000000
-#define LFStoreModeBackendInstagram      0x0B000000
-#define LFStoreModeBackendPinterest      0x0C000000
-#define LFStoreModeBackendSoundCloud     0x0D000000
-#define LFStoreModeBackendTwitter        0x0E000000
-#define LFStoreModeBackendYouTube        0x0F000000
+//#define LFStoreModeBackendFacebook       0x09000000
+//#define LFStoreModeBackendFlickr         0x0A000000
+//#define LFStoreModeBackendInstagram      0x0B000000
+//#define LFStoreModeBackendPinterest      0x0C000000
+//#define LFStoreModeBackendSoundCloud     0x0D000000
+//#define LFStoreModeBackendTwitter        0x0E000000
+//#define LFStoreModeBackendYouTube        0x0F000000
 #define LFStoreModeBackendMask           0xFF000000
 #define LFStoreModeBackendShift          24
 
@@ -701,7 +711,7 @@ struct LFCoreAttributes
 
 // Sources
 
-#define LFSourceCount                 16
+#define LFSourceCount                 10
 
 
 // Item structure
@@ -716,13 +726,6 @@ struct LFCoreAttributes
 #define LFTypeSourceDropbox           0x00000007
 #define LFTypeSourceICloud            0x00000008
 #define LFTypeSourceOneDrive          0x00000009
-#define LFTypeSourceFacebook          0x0000000A
-#define LFTypeSourceFlickr            0x0000000B
-#define LFTypeSourceInstagram         0x0000000C
-#define LFTypeSourcePinterest         0x0000000D
-#define LFTypeSourceSoundCloud        0x0000000E
-#define LFTypeSourceTwitter           0x0000000F
-#define LFTypeSourceYouTube           0x00000010
 
 #define LFTypeSourceMask              0x000000FF
 

@@ -284,19 +284,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\STR_Facebook.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\STR_Flickr.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores\STR_iCloud.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\STR_Instagram.ico"
 				>
 			</File>
 			<File
@@ -312,23 +300,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\STR_Pinterest.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\STR_SoundCloud.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\STR_Twitter.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores\STR_Windows.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\STR_YouTube.ico"
 				>
 			</File>
 		</Filter>
@@ -1812,6 +1784,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Applications\APP_Picfx.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Applications\APP_Pinterest.ico"
 				>
 			</File>
@@ -1877,6 +1853,10 @@
 			</File>
 			<File
 				RelativePath=".\Applications\Layout_29.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\Picfx_29.png"
 				>
 			</File>
 			<File

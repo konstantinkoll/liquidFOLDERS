@@ -415,7 +415,7 @@ UINT CIndex::Add(LFItemDescriptor* pItemDescriptor)
 void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL UpdateStatistics)
 {
 	assert(pFilter);
-	assert(pFilter->Mode>=LFFilterModeDirectoryTree);
+	assert(pFilter->Query.Mode>=LFFilterModeDirectoryTree);
 	assert(pSearchResult);
 
 	BOOL DoReset = TRUE;
@@ -423,7 +423,7 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 	BYTE QueryState;
 	InitializeQueryState(QueryState);
 
-	START_ITERATEALL(pSearchResult->m_LastError = m_pTable[IDXTABLE_MASTER]->GetError(pFilter->StoreID[0]!=L'\0'),);
+	START_ITERATEALL(pSearchResult->m_LastError = m_pTable[IDXTABLE_MASTER]->GetError(pFilter->Query.StoreID[0]!=L'\0'),);
 
 	if (UpdateStatistics)
 	{
@@ -440,7 +440,7 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 	UINT Result = LFOk;
 	LPVOID PtrS = NULL;
 
-	if (!pFilter->Options.IgnoreSlaves)
+	if (!pFilter->Query.IgnoreSlaves)
 	{
 		LOAD_SLAVE();
 

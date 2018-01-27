@@ -163,7 +163,7 @@ STDMETHODIMP LFTransactionDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORM
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP LFTransactionDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, DWORD* /*pdwConnection*/)
+STDMETHODIMP LFTransactionDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, LPDWORD /*pdwConnection*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;;
 }

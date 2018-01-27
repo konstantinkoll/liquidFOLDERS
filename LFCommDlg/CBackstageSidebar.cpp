@@ -311,7 +311,6 @@ BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_GETDLGCODE()
 	ON_WM_KEYDOWN()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
-	ON_WM_CONTEXTMENU()
 	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
@@ -785,10 +784,6 @@ void CBackstageSidebar::OnIdleUpdateCmdUI()
 	// Rearrange items
 	if (VisibleChanged)
 		AdjustLayout();
-}
-
-void CBackstageSidebar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
-{
 }
 
 void CBackstageSidebar::OnKillFocus(CWnd* /*pNewWnd*/)

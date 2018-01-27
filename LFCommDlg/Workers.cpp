@@ -91,8 +91,7 @@ DWORD WINAPI WorkerDelete(void* lParam)
 
 void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
 {
-	LFProgressDlg dlg(pThreadProc, pParameters, pParentWnd);
-	dlg.DoModal();
+	LFProgressDlg(pThreadProc, pParameters, pParentWnd).DoModal();
 }
 
 void LFRunSynchronize(const LPCSTR pStoreID, CWnd* pParentWnd)
@@ -132,8 +131,7 @@ void LFRunMaintenance(CWnd* pParentWnd)
 	LFDoWithProgress(WorkerStoreMaintenance, &wp.Hdr, pParentWnd);
 	LFErrorBox(pParentWnd, wp.pMaintenanceList->m_LastError);
 
-	LFStoreMaintenanceDlg dlg(wp.pMaintenanceList, pParentWnd);
-	dlg.DoModal();
+	LFStoreMaintenanceDlg(wp.pMaintenanceList, pParentWnd).DoModal();
 }
 
 void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd)
@@ -154,12 +152,8 @@ void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd)
 		return;
 
 	// Dialogbox nur zeigen, wenn der Store gemountet ist
-	if (LFIsStoreMounted(&Store))
-	{
-		LFDeleteStoreDlg dlg(Store.StoreID, pParentWnd);
-		if (dlg.DoModal()!=IDOK)
-			return;
-	}
+	if (LFIsStoreMounted(&Store) && (LFDeleteStoreDlg(Store.StoreID, pParentWnd).DoModal()!=IDOK))
+		return;
 
 	WorkerParameters wp;
 	ZeroMemory(&wp, sizeof(wp));

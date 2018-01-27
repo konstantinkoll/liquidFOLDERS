@@ -5,7 +5,7 @@
 #pragma once
 #include "LFDialog.h"
 #include "CHeaderArea.h"
-#include "CExplorerTree.h"
+#include "CShellTree.h"
 
 
 // LFBrowseForFolderDlg
@@ -36,5 +36,5 @@ protected:
 
 private:
 	CHeaderArea m_wndHeaderArea;
-	CExplorerTree m_wndExplorerTree;
+	CShellTree m_wndExplorerTree;
 };

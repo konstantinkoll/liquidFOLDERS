@@ -591,6 +591,17 @@ void LFApplication::AttributeToString(CString& Name, CString& Value, const LFIte
 	}
 }
 
+CString LFApplication::GetFreeBytesAvailable(INT64 FreeBytesAvailable)
+{
+	WCHAR tmpBuf[256];
+	LFSizeToString(FreeBytesAvailable, tmpBuf, 256);
+
+	CString tmpStr;
+	tmpStr.Format(IDS_FREEBYTESAVAILABLE, tmpBuf);
+
+	return tmpStr;
+}
+
 void LFApplication::AppendAttribute(CString& Str, const LFItemDescriptor* pItemDescriptor, UINT Attr) const
 {
 	ASSERT(pItemDescriptor);
@@ -634,15 +645,7 @@ CString LFApplication::GetHintForItem(const LFItemDescriptor* pItemDescriptor, L
 
 	// Free bytes available
 	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore)
-	{
-		WCHAR tmpBuf[256];
-		LFSizeToString(pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart, tmpBuf, 256);
-
-		CString tmpStr;
-		tmpStr.Format(IDS_FREEBYTESAVAILABLE, tmpBuf);
-
-		LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
-	}
+		LFTooltip::AppendAttribute(Hint, _T(""), GetFreeBytesAvailable(pItemDescriptor->StoreDescriptor));
 
 	// Other attributes
 	for (UINT a=1; a<LFAttributeCount; a++)
@@ -753,38 +756,40 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 	Path[0] = cVolume;
 
 	LPITEMIDLIST pidlFQ = SHSimpleIDListFromPath(Path);
-	LPCITEMIDLIST pidlRel = NULL;
+	LPCITEMIDLIST pidlRel;
 
-	IShellFolder* pParentFolder = NULL;
-	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
-		return;
-
-	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(pParentFolder->GetUIObjectOf(m_pMainWnd->GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	IShellFolder* pParentFolder;
+	if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 	{
-		HMENU hPopup = CreatePopupMenu();
-		if (hPopup)
+		IContextMenu* pContextMenu;
+		if (SUCCEEDED(pParentFolder->GetUIObjectOf(m_pMainWnd->GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (void**)&pContextMenu)))
 		{
-			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
-			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+			HMENU hPopup = CreatePopupMenu();
+			if (hPopup)
 			{
-				CWaitCursor csr;
+				UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
+				if (SUCCEEDED(pContextMenu->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+				{
+					CWaitCursor csr;
 
-				CMINVOKECOMMANDINFO cmi;
-				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-				cmi.fMask = 0;
-				cmi.hwnd = m_pMainWnd->GetSafeHwnd();
-				cmi.lpVerb = Verb;
-				cmi.lpParameters = NULL;
-				cmi.lpDirectory = NULL;
-				cmi.nShow = SW_SHOWNORMAL;
-				cmi.dwHotKey = 0;
-				cmi.hIcon = NULL;
+					CMINVOKECOMMANDINFO cmi;
+					cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+					cmi.fMask = 0;
+					cmi.hwnd = m_pMainWnd->GetSafeHwnd();
+					cmi.lpVerb = Verb;
+					cmi.lpParameters = NULL;
+					cmi.lpDirectory = NULL;
+					cmi.nShow = SW_SHOWNORMAL;
+					cmi.dwHotKey = 0;
+					cmi.hIcon = NULL;
 
-				pcm->InvokeCommand(&cmi);
+					pContextMenu->InvokeCommand(&cmi);
+				}
 			}
 		}
 	}
+
+	GetShellManager()->FreeItem(pidlFQ);
 }
 
 
@@ -1111,8 +1116,7 @@ void LFApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			if (m_pUpdateNotification)
 				m_pUpdateNotification->DestroyWindow();
 
-			LFUpdateDlg dlg(LatestVersion, LatestMSN, LatestUpdateFeatures, pParentWnd);
-			dlg.DoModal();
+			LFUpdateDlg(LatestVersion, LatestMSN, LatestUpdateFeatures, pParentWnd).DoModal();
 		}
 		else
 			if (m_pUpdateNotification)
@@ -1151,8 +1155,7 @@ void LFApplication::OnBackstagePurchase()
 
 void LFApplication::OnBackstageEnterLicenseKey()
 {
-	LFLicenseDlg dlg(m_pActiveWnd);
-	dlg.DoModal();
+	LFLicenseDlg(m_pActiveWnd).DoModal();
 }
 
 void LFApplication::OnBackstageSupport()
@@ -1162,8 +1165,7 @@ void LFApplication::OnBackstageSupport()
 
 void LFApplication::OnBackstageAbout()
 {
-	LFAboutDlg dlg(m_pActiveWnd);
-	dlg.DoModal();
+	LFAboutDlg(m_pActiveWnd).DoModal();
 }
 
 void LFApplication::OnUpdateBackstageCommands(CCmdUI* pCmdUI)

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CFrontstageWnd.h"
+#include "CIcons.h"
 
 
 // CTooltipHeader
@@ -30,10 +31,11 @@ public:
 	DECLARE_TOOLTIP()
 
 protected:
-	virtual void Init();
-
 	BOOL m_Shadow;
 	INT m_PressedItem;
 	INT m_TrackItem;
 	static CIcons m_SortIndicators;
+
+private:
+	void InitControl();
 };

@@ -14,8 +14,8 @@
 #define GUTTER                9
 #define PADDING               6
 
-CIconsView::CIconsView(UINT DataSize)
-	: CGridView(DataSize, FF_ENABLELABELEDIT)
+CIconsView::CIconsView()
+	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS)
 {
 }
 
@@ -27,7 +27,7 @@ void CIconsView::SetViewSettings(BOOL UpdateSearchResultPending)
 
 void CIconsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
+	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	ValidateAllItems();
 }
@@ -35,7 +35,7 @@ void CIconsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 void CIconsView::AdjustLayout()
 {
 	// Item width must be odd for proper alignment of jumbo core icons
-	Arrange(CSize(max(127, m_DefaultFontHeight*8+1), 128+m_DefaultFontHeight*2+PADDING/2), PADDING, CSize(GUTTER, GUTTER));
+	AdjustLayoutGrid(CSize(max(127, m_DefaultFontHeight*8+1)+2*PADDING, 128+m_DefaultFontHeight*2+2*PADDING+PADDING/2), CSize(GUTTER, GUTTER), FALSE, BACKSTAGEBORDER);
 }
 
 RECT CIconsView::GetLabelRect(INT Index) const
@@ -173,7 +173,7 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 	const INT MaxLineWidth = rectLabel.Width()+1;
 
 	// Label and with of color dots
-	CString strLabel = GetLabel(pItemDescriptor);
+	CString strLabel = GetItemLabel(pItemDescriptor);
 	INT ColorDotWidth = GetColorDotWidth(pItemDescriptor);
 
 	// We only care for the height of rectLine here
@@ -287,7 +287,7 @@ void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOO
 }
 
 
-BEGIN_MESSAGE_MAP(CIconsView, CGridView)
+BEGIN_MESSAGE_MAP(CIconsView, CFileView)
 	ON_COMMAND(IDM_ICONS_SHOWCAPACITY, OnShowCapacity)
 	ON_UPDATE_COMMAND_UI(IDM_ICONS_SHOWCAPACITY, OnUpdateCommands)
 END_MESSAGE_MAP()

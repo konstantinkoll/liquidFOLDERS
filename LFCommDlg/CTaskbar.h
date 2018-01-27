@@ -21,10 +21,12 @@ public:
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID);
 	UINT GetPreferredHeight() const;
 	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL ForceSmall=FALSE);
-	void AdjustLayout();
 	static void DrawTaskbarShadow(Graphics& g, const CRect& rectClient);
 
 protected:
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
+	virtual void AdjustLayout();
+
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -34,7 +36,6 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnIdleUpdateCmdUI();
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
 
 private:

@@ -225,16 +225,13 @@ void LFAboutDlg::OnUpdateNow()
 
 void LFAboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	CString URL((LPCSTR)IDS_ABOUTURL);
-
-	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(GetSafeHwnd(), _T("open"), CString((LPCSTR)IDS_ABOUTURL), NULL, NULL, SW_SHOWNORMAL);
 
 	*pResult = 0;
 }
 
 void LFAboutDlg::OnEnterLicenseKey()
 {
-	LFLicenseDlg dlg(this);
-	if (dlg.DoModal()==IDOK)
+	if (LFLicenseDlg(this).DoModal()==IDOK)
 		CheckLicenseKey();
 }

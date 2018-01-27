@@ -233,40 +233,6 @@ void DrawLocationIndicator(CDC& dc, INT x, INT y, INT Size)
 	DrawLocationIndicator(g, x, y, Size);
 }
 
-void DrawControlBorder(CWnd* pWnd)
-{
-	CRect rect;
-	pWnd->GetWindowRect(rect);
-
-	rect.bottom -= rect.top;
-	rect.right -= rect.left;
-	rect.left = rect.top = 0;
-
-	CWindowDC dc(pWnd);
-
-	if (LFGetApp()->m_ThemeLibLoaded)
-		if (LFGetApp()->zIsAppThemed())
-		{
-			HTHEME hTheme = LFGetApp()->zOpenThemeData(pWnd->GetSafeHwnd(), VSCLASS_LISTBOX);
-			if (hTheme)
-			{
-				CRect rectClient(rect);
-				rectClient.DeflateRect(2, 2);
-				dc.ExcludeClipRect(rectClient);
-
-				LFGetApp()->zDrawThemeBackground(hTheme, dc, LBCP_BORDER_NOSCROLL, pWnd->IsWindowEnabled() ? GetFocus()==pWnd->GetSafeHwnd() ? LBPSN_FOCUSED : LBPSN_NORMAL : LBPSN_DISABLED, rect, rect);
-				LFGetApp()->zCloseThemeData(hTheme);
-
-				return;
-			}
-		}
-
-	dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
-
-	rect.DeflateRect(1, 1);
-	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
-}
-
 void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed)
 {
 	ASSERT(Caption);
@@ -970,23 +936,21 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	pComboBox->Invalidate();
 }
 
-void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
+void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
 {
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCWSTR)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
+	if (SUCCEEDED(SHGetFileInfo((LPCWSTR)pidlFQ, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
 		hIcon = pIcons->ExtractIcon(sfi.iIcon);
 		Caption = sfi.szDisplayName;
 		Hint = sfi.szTypeName;
 
-		IShellFolder* pParentFolder = NULL;
-		LPCITEMIDLIST Child = NULL;
-
-		if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &Child)))
+		IShellFolder* pParentFolder;
+		LPCITEMIDLIST pidlRel;
+		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 		{
 			WIN32_FIND_DATA ffd;
-
-			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
+			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlRel, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
 			{
 				FILETIME lft;
 
@@ -1093,9 +1057,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, LONG Width, LONG Height)
 
 INT LFMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
 {
-	LFMessageBoxDlg dlg(pParentWnd, Text, Caption, Type);
-
-	return (INT)dlg.DoModal();
+	return (INT)LFMessageBoxDlg(pParentWnd, Text, Caption, Type).DoModal();
 }
 
 void LFErrorBox(CWnd* pParentWnd, UINT Result)

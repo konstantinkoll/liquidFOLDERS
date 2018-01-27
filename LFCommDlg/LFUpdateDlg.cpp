@@ -19,7 +19,7 @@ static const GUID TrayIcon = { 0xDE0AE82B, 0x1380, 0x488C, { 0x9C, 0x43, 0x66, 0
 // LFUpdateDlg
 //
 
-#define WM_TRAYMENU     WM_USER+6
+#define WM_TRAYMENU     WM_USER+5
 #define MARGIN          4
 
 LFUpdateDlg::LFUpdateDlg(const CString& Version, const CString& MSN, DWORD Features, CWnd* pParentWnd)
@@ -155,27 +155,22 @@ BOOL LFUpdateDlg::RemoveTrayIcon() const
 	return Shell_NotifyIcon(NIM_DELETE, &nid);
 }
 
-void LFUpdateDlg::ShowMenu()
+inline void LFUpdateDlg::ShowMenu()
 {
 	CMenu Menu;
 	Menu.LoadMenu(IDM_UPDATE);
-	ASSERT_VALID(&Menu);
-
-	CMenu* pPopup = Menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
 
 	MENUITEMINFO mii;
 	mii.cbSize = sizeof(mii);
 	mii.fMask = MIIM_BITMAP;
 	mii.hbmpItem = HBMMENU_POPUP_RESTORE;
 
-	pPopup->SetMenuItemInfo(0, &mii, TRUE);
-	pPopup->SetDefaultItem(0, TRUE);
+	Menu.SetMenuItemInfo(0, &mii, TRUE);
 
-	CPoint pt;
-	GetCursorPos(&pt);
+	CPoint pos;
+	GetCursorPos(&pos);
 
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, this);
+	TrackPopupMenu(Menu, pos, this);
 }
 
 BOOL LFUpdateDlg::InitDialog()

@@ -21,7 +21,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();
 
-	afx_msg void OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnUpdateMap(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLatitudeChanged();
 	afx_msg void OnLongitudeChanged();
 

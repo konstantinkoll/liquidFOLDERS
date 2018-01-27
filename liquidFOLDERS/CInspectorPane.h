@@ -1,4 +1,3 @@
-
 #pragma once
 #include "LFCommDlg.h"
 
@@ -112,7 +111,6 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg LRESULT OnPropertyChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnToggleInternal();

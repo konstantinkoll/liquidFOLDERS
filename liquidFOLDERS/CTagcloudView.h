@@ -3,14 +3,14 @@
 //
 
 #pragma once
-#include "CGridView.h"
+#include "CFileView.h"
 
 
 // Item Data
 
 struct TagcloudItemData
 {
-	GridItemData Hdr;
+	ItemData Hdr;
 	INT Cnt;
 	COLORREF Color;
 	UINT FontSize;
@@ -21,12 +21,12 @@ struct TagcloudItemData
 // CTagcloudView
 //
 
-class CTagcloudView : public CGridView
+class CTagcloudView : public CFileView
 {
 public:
 	CTagcloudView();
 
-	virtual CMenu* GetViewContextMenu();
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);

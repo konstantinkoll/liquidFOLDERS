@@ -124,26 +124,21 @@ BOOL CItemPanel::SetItem(LPITEMIDLIST pidlFQ, LPCWSTR Path, UINT nID, LPCWSTR Hi
 		// Text
 		CString tmpStr(sfi.szDisplayName);
 
-		if (Path)
-			if (*Path!=L'\0')
-			{
-				tmpStr.Append(_T("\n"));
-				tmpStr.Append(Path);
-			}
+		if (Path && (*Path!=L'\0'))
+		{
+			tmpStr.Append(_T("\n"));
+			tmpStr.Append(Path);
+		}
 
-		if (Hint)
-			if (*Hint!=L'\0')
-			{
-				tmpStr.Append(_T("\n"));
+		if (Hint && (*Hint!=L'\0'))
+		{
+			tmpStr.Append(_T("\n"));
 
-				if (nID)
-				{
-					CString Caption((LPCSTR)nID);
-					tmpStr.Append(Caption+_T(": "));
-				}
+			if (nID)
+				tmpStr.Append(CString((LPCSTR)nID)+_T(": "));
 
-				tmpStr.Append(Hint);
-			}
+			tmpStr.Append(Hint);
+		}
 
 		// Icon
 		CRect rect;
@@ -175,6 +170,7 @@ BOOL CItemPanel::SetItem(LPCWSTR Path, UINT nID, LPCWSTR Hint)
 		if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, dwAttributes, NULL)))
 		{
 			Result = SetItem(pidlFQ, Path, nID, Hint);
+
 			LFGetApp()->GetShellManager()->FreeItem(pidlFQ);
 		}
 	}
@@ -185,16 +181,16 @@ BOOL CItemPanel::SetItem(LPCWSTR Path, UINT nID, LPCWSTR Hint)
 	return Result;
 }
 
-INT  CItemPanel::ItemAtPosition(CPoint /*point*/) const
+INT CItemPanel::ItemAtPosition(CPoint /*point*/) const
 {
 	return 0;
 }
 
-void  CItemPanel::InvalidateItem(INT /*Index*/)
+void CItemPanel::InvalidateItem(INT /*Index*/)
 {
 }
 
-void  CItemPanel::ShowTooltip(const CPoint& point)
+void CItemPanel::ShowTooltip(const CPoint& point)
 {
 	ASSERT(m_HoverItem>=0);
 

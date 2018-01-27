@@ -52,6 +52,7 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 				DWORD dwPriority = 0;
 				DWORD dwFlags = IEIFLAG_SCREEN | IEIFLAG_NOBORDER | IEIFLAG_NOSTAMP | IEIFLAG_OFFLINE;
 				HRESULT hResult = pExtractImage->GetLocation(Path, MAX_PATH, &dwPriority, &sz, 32, &dwFlags);
+
 				if (SUCCEEDED(hResult) || (hResult==E_PENDING))
 					pExtractImage->Extract(&hBitmap);
 

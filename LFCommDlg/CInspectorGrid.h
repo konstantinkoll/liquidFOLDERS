@@ -10,9 +10,9 @@
 // CPropertyHolder
 //
 
-#define WM_PROPERTYCHANGED     WM_USER+4
+#define WM_PROPERTYCHANGED     WM_USER+3
 
-class CPropertyHolder : public CFrontstageWnd
+class CPropertyHolder : public CFrontstageScroller
 {
 friend class CProperty;
 friend class CPropertyHashtags;
@@ -35,8 +35,6 @@ protected:
 	CProperty* CreateProperty(LFVariantData* pVData);
 
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
 
 	static CString m_MultipleValues;
@@ -305,11 +303,10 @@ class CInspectorGrid : public CPropertyHolder
 public:
 	CInspectorGrid();
 
-	virtual void PreSubclassWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader=NULL);
+	BOOL Create(CWnd* pParentWnd, UINT nID, UINT ContextMenuID, CInspectorHeader* pHeader=NULL);
 	void AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT Category=LFAttrCategoryInternal, BOOL Editable=FALSE, BOOL Visible=FALSE);
 	void AddAttributeProperties(LFVariantData* pVDataArray, SIZE_T ItemSize=sizeof(LFVariantData));
 	void SetAlphabeticMode(BOOL SortAlphabetic);
@@ -318,11 +315,11 @@ public:
 	INT GetMinWidth(INT Height) const;
 
 protected:
-	virtual void Init();
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
 	virtual void ShowTooltip(const CPoint& point);
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
+	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 
 	void SortProperties();
@@ -330,8 +327,6 @@ protected:
 	UINT PartAtPosition(const CPoint& point, INT Index) const;
 	void EnsureVisible(INT Index);
 	void SelectItem(INT Index);
-	void ResetScrollbars();
-	void AdjustScrollbars();
 	void ResetProperty(INT Index);
 	void EditProperty(INT Index);
 	void ModifyProperty(INT Index);
@@ -339,12 +334,9 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
-	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
@@ -361,16 +353,12 @@ protected:
 	static HICON hIconResetHot;
 	static HICON hIconResetPressed;
 	CInspectorHeader* m_pHeader;
-	INT m_RowHeight;
 	INT m_LabelWidth;
 	INT m_MinWidth;
 	INT m_IconSize;
 	UINT m_Context;
 	BOOL m_SortAlphabetic;
 	BOOL m_PartPressed;
-	INT m_ScrollHeight;
-	INT m_VScrollPos;
-	INT m_VScrollMax;
 	UINT m_HoverPart;
 	INT m_SelectedItem;
 	INT m_EditItem;
@@ -383,6 +371,7 @@ private:
 
 	CMFCMaskedEdit* m_pWndEdit;
 	INT* m_pSortArray;
+	UINT m_ContextMenuID;
 };
 
 inline INT CInspectorGrid::GetMinWidth(INT Height) const

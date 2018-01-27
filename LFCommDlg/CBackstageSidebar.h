@@ -95,7 +95,6 @@ protected:
 	afx_msg UINT OnGetDlgCode();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnIdleUpdateCmdUI();
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
 

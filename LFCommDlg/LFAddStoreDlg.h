@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "CExplorerNotification.h"
+#include "CNotification.h"
 #include "LFDialog.h"
 #include "Box.h"
 #include "Dropbox.h"
@@ -42,7 +42,7 @@ protected:
 
 	static const UINT m_Sources[6];
 	static CImageList m_SourceIcons;
-	CExplorerNotification m_wndExplorerNotification;
+	CNotification m_wndExplorerNotification;
 	INT m_IconSize;
 
 private:

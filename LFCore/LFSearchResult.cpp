@@ -181,12 +181,12 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 	// Determine context
 	CloseFileSummary(m_FileSummary);
 
-	if (pFilter->Options.IsSubfolder)
+	if (pFilter->IsSubfolder)
 	{
-		if (pFilter->pConditionList)
+		if (pFilter->Query.pConditionList)
 		{
 			m_Context = CtxProperties[m_FileSummary.Context].SubfolderContext;
-			m_IconID = GetFolderIcon(m_FileSummary, pFilter->pConditionList->VData, TRUE);
+			m_IconID = GetFolderIcon(m_FileSummary, pFilter->Query.pConditionList->VData, TRUE);
 		}
 		else
 		{
@@ -194,29 +194,29 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 		}
 	}
 	else
-		switch (pFilter->Mode)
+		switch (pFilter->Query.Mode)
 		{
 		case LFFilterModeStores:
 			m_Context = LFContextStores;
 			break;
 
 		case LFFilterModeDirectoryTree:
-			m_Context = (pFilter->QueryContext==LFContextAuto) ? (m_FileSummary.Context==LFContextAuto) ? LFContextAllFiles : m_FileSummary.Context : pFilter->QueryContext;
+			m_Context = (pFilter->Query.Context==LFContextAuto) ? (m_FileSummary.Context==LFContextAuto) ? LFContextAllFiles : m_FileSummary.Context : pFilter->Query.Context;
 			break;
 
-		case LFFilterModeSearch:
-			m_Context = (pFilter->Options.IsPersistent || (pFilter->SearchTerm[0]!=L'\0') || (pFilter->pConditionList!=NULL)) ? LFContextSearch : pFilter->QueryContext;
+		case LFFilterModeQuery:
+			m_Context = (pFilter->IsPersistent || (pFilter->Query.SearchTerm[0]!=L'\0') || (pFilter->Query.pConditionList!=NULL)) ? LFContextSearch : pFilter->Query.Context;
 			break;
 		}
 
 	// Name and hint
-	if ((pFilter->OriginalName[0]==L'\0') || (m_Context==LFContextStores))
+	if ((pFilter->Name[0]==L'\0') || (m_Context==LFContextStores))
 	{
 		LoadTwoStrings(LFCoreModuleHandle, IDS_CONTEXT_FIRST+m_Context, m_Name, 256, m_Hint, 256);
 	}
 	else
 	{
-		wcscpy_s(m_Name, 256, pFilter->OriginalName);
+		wcscpy_s(m_Name, 256, pFilter->Name);
 
 		if (m_Context<=LFLastQueryContext)
 		{
@@ -235,8 +235,8 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 		}
 	}
 
-	wcscpy_s(pFilter->ResultName, 256, m_Name);
-	pFilter->ResultContext = m_Context;
+	wcscpy_s(pFilter->Result.Name, 256, m_Name);
+	pFilter->Result.Context = m_Context;
 }
 
 void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor)
@@ -303,13 +303,9 @@ BOOL LFSearchResult::AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor
 	{
 		m_HasCategories = TRUE;
 
-		pItemDescriptor->pNextFilter = LFAllocFilter();
-
-		pItemDescriptor->pNextFilter->Mode = LFFilterModeDirectoryTree;
-		pItemDescriptor->pNextFilter->QueryContext = LFContextAuto;
-
-		strcpy_s(pItemDescriptor->pNextFilter->StoreID, LFKeySize, StoreDescriptor.StoreID);
-		wcscpy_s(pItemDescriptor->pNextFilter->OriginalName, 256, StoreDescriptor.StoreName);
+		pItemDescriptor->pNextFilter = LFAllocFilter(LFFilterModeDirectoryTree);
+		strcpy_s(pItemDescriptor->pNextFilter->Query.StoreID, LFKeySize, StoreDescriptor.StoreID);
+		wcscpy_s(pItemDescriptor->pNextFilter->Name, 256, StoreDescriptor.StoreName);
 
 		AddStoreToSummary(m_FileSummary, StoreDescriptor);
 
@@ -608,8 +604,8 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 				std::wstring Key(Hashtag);
 				transform(Key.begin(), Key.end(), Key.begin(), towlower);
 
-				Hashtags::iterator Location = Tags.find(Key);
-				if (Location==Tags.end())
+				Hashtags::iterator Iterator = Tags.find(Key);
+				if (Iterator==Tags.end())
 				{
 					TagItem Item = { Hashtag, FALSE, 1, m_Items[a]->Type & LFTypeSourceMask };
 
@@ -620,14 +616,14 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 				}
 				else
 				{
-					if (!Location->second.Multiple)
-						if (Location->second.Name.compare(Hashtag)!=0)
-							Location->second.Multiple = TRUE;
+					if (!Iterator->second.Multiple)
+						if (Iterator->second.Name.compare(Hashtag)!=0)
+							Iterator->second.Multiple = TRUE;
 
-					if ((m_Items[a]->Type & LFTypeSourceMask)!=Location->second.Source)
-						Location->second.Source = LFTypeSourceUnknown;
+					if ((m_Items[a]->Type & LFTypeSourceMask)!=Iterator->second.Source)
+						Iterator->second.Source = LFTypeSourceUnknown;
 
-					AddFileToSummary(Location->second.FileSummary, m_Items[a]);
+					AddFileToSummary(Iterator->second.FileSummary, m_Items[a]);
 				}
 
 				Remove = TRUE;
@@ -677,7 +673,7 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 
 		// Folder
 		LFItemDescriptor* pFolder = AllocFolderDescriptor(it->second.FileSummary, VData, pFilter);
-		wcscpy_s(pFolder->pNextFilter->OriginalName, 256, Hashtag);
+		wcscpy_s(pFolder->pNextFilter->Name, 256, Hashtag);
 
 		SetAttribute(pFolder, LFAttrFileName, Hashtag);
 		SetAttribute(pFolder, Attr, Hashtag);

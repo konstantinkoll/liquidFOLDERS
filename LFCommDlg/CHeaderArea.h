@@ -22,12 +22,12 @@ public:
 	void SetHeader(LPCWSTR Caption=L"", LPCWSTR Hint=L"", HBITMAP hBitmap=NULL, const CPoint& m_BitmapOffset=CPoint(0, 0), BOOL Repaint=TRUE);
 	UINT GetPreferredHeight() const;
 	CHeaderButton* AddButton(UINT nID=0);
+	void TrackPopupMenu(CMenu& Menu, UINT DlgCtrlID) const;
 
 protected:
 	void AdjustLayout();
 
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSysColorChange();
 	afx_msg LRESULT OnThemeChanged();
@@ -51,9 +51,9 @@ protected:
 
 private:
 	UINT GetBitmapMinHeight() const;
-	UINT GetTextMinHeight() const;
 	UINT GetButtonHeight() const;
 	UINT GetButtonMinHeight() const;
+	UINT GetTextMinHeight() const;
 
 	INT m_BackBufferL;
 	INT m_BackBufferH;

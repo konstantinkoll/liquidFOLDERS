@@ -29,7 +29,6 @@ public:
 	void SetContextSort(INT Context, UINT Attr, BOOL SortDescending, BOOL SetLastView=TRUE);
 	void UpdateViewSettings(INT Context=-1, INT View=-1);
 	void SetContextView(INT Context, INT View);
-	void Reload(INT Context);
 
 	CMainWnd* p_ClipboardWnd;
 	WCHAR m_PathGoogleEarth[MAX_PATH];
@@ -51,10 +50,5 @@ protected:
 
 	BOOL m_AppInitialized;
 };
-
-inline void CLiquidFoldersApp::Reload(INT Context)
-{
-	Broadcast(Context, -1, WM_RELOAD);
-}
 
 extern CLiquidFoldersApp theApp;

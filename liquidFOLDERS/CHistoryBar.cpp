@@ -9,38 +9,38 @@
 // Breadcrumbs
 //
 
-void AddBreadcrumbItem(BreadcrumbItem** ppBreadcrumbItem, LFFilter* pFilter, FVPersistentData& Data)
+void AddBreadcrumbItem(BreadcrumbItem*& pBreadcrumbItem, LFFilter* pFilter, const FVPersistentData& Data)
 {
 	BreadcrumbItem* pNewItem = new BreadcrumbItem;
-	pNewItem->pNext = *ppBreadcrumbItem;
+	pNewItem->pNext = pBreadcrumbItem;
 	pNewItem->pFilter = pFilter;
 	pNewItem->Data = Data;
 
-	*ppBreadcrumbItem = pNewItem;
+	pBreadcrumbItem = pNewItem;
 }
 
-void ConsumeBreadcrumbItem(BreadcrumbItem** ppBreadcrumbItem, LFFilter** ppFilter, FVPersistentData* pPersistentData)
+void ConsumeBreadcrumbItem(BreadcrumbItem*& pBreadcrumbItem, LFFilter*& pFilter, FVPersistentData& Data)
 {
-	*ppFilter = NULL;
-	ZeroMemory(pPersistentData, sizeof(FVPersistentData));
+	pFilter = NULL;
+	ZeroMemory(&Data, sizeof(FVPersistentData));
 
-	if (*ppBreadcrumbItem)
+	if (pBreadcrumbItem)
 	{
-		*ppFilter = (*ppBreadcrumbItem)->pFilter;
-		*pPersistentData = (*ppBreadcrumbItem)->Data;
+		pFilter = pBreadcrumbItem->pFilter;
+		Data = pBreadcrumbItem->Data;
 
-		BreadcrumbItem* pVictim = *ppBreadcrumbItem;
-		*ppBreadcrumbItem = (*ppBreadcrumbItem)->pNext;
+		BreadcrumbItem* pVictim = pBreadcrumbItem;
+		pBreadcrumbItem = pBreadcrumbItem->pNext;
 		delete pVictim;
 	}
 }
 
-void DeleteBreadcrumbs(BreadcrumbItem** ppBreadcrumbItem)
+void DeleteBreadcrumbItems(BreadcrumbItem*& pBreadcrumbItem)
 {
-	while (*ppBreadcrumbItem)
+	while (pBreadcrumbItem)
 	{
-		BreadcrumbItem* pVictim = *ppBreadcrumbItem;
-		*ppBreadcrumbItem = (*ppBreadcrumbItem)->pNext;
+		BreadcrumbItem* pVictim = pBreadcrumbItem;
+		pBreadcrumbItem = pBreadcrumbItem->pNext;
 
 		LFFreeFilter(pVictim->pFilter);
 		delete pVictim;
@@ -63,7 +63,7 @@ void CHistoryBar::AddItem(const LFFilter* pFilter, CDC& dc)
 	BarItem Item;
 	ZeroMemory(&Item, sizeof(Item));
 
-	wcscpy_s(Item.Name, 256, pFilter->ResultName);
+	wcscpy_s(Item.Name, 256, pFilter->Result.Name);
 	Item.IconID = -1;
 	Item.PreferredWidth = dc.GetTextExtent(Item.Name, (INT)wcslen(Item.Name)).cx+2*MARGIN;
 	Item.Enabled = TRUE;
@@ -123,5 +123,7 @@ void CHistoryBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT /*State*/,
 
 void CHistoryBar::OnClickButton(INT Index) const
 {
-	GetOwner()->PostMessage(Index ? WM_NAVIGATEBACK : WM_RELOAD, (WPARAM)Index);
+	// Index==0: WM_COMMAND, ID_NAV_RELOAD
+	// Index!=0: WM_NAVIGATEBACK, Index
+	GetOwner()->PostMessage(Index ? WM_NAVIGATEBACK : WM_COMMAND, Index ? (WPARAM)Index : ID_NAV_RELOAD);
 }

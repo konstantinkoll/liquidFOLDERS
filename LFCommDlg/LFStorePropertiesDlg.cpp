@@ -6,28 +6,129 @@
 #include "LFCommDlg.h"
 
 
-CString MakeHex(LPBYTE x, UINT bCount)
+// CUsageList
+//
+
+#define PADDING     (BACKSTAGEBORDER-LFITEMVIEWMARGIN)
+
+CIcons CUsageList::m_ContextIcons;
+CString CUsageList::m_OtherFiles;
+
+
+CUsageList::CUsageList()
+	: CFrontstageItemView(sizeof(UsageItemData))
 {
-	CString tmpStr;
+	m_IconSize = 0;
 
-	for (UINT a=0; a<bCount; a++)
-	{
-		CString Digit;
-		Digit.Format(_T("%.2x"), x[a]);
-		tmpStr += Digit;
-
-		if (a<bCount-1)
-			tmpStr += _T(",");
-	}
-
-	return tmpStr;
+	if (m_OtherFiles.IsEmpty())
+		ENSURE(m_OtherFiles.LoadString(IDS_OTHERFILES));
 }
 
-void CEscape(CString &str)
+INT CUsageList::CompareItems(INT Index1, INT Index2) const
 {
-	for (INT a=str.GetLength()-1; a>=0; a--)
-		if ((str[a]==L'\\') || (str[a]==L'\"'))
-			str.Insert(a, L'\\');
+	return (INT)((GetUsageItemData(Index2)->FileSize-GetUsageItemData(Index1)->FileSize)>>32);
+}
+
+void CUsageList::AddContext(const LFStatistics& Statistics, UINT Context)
+{
+	UsageItemData Data;
+
+	Data.Context = Context;
+	Data.FileCount = Statistics.FileCount[Context];
+	Data.FileSize = Statistics.FileSize[Context];
+
+	AddItem(&Data);
+}
+
+void CUsageList::SetUsage(LFStatistics Statistics)
+{
+	// Add contexts
+	ASSERT(LFContextAllFiles==0);
+
+	AllocItemData(LFLastPersistentContext+1);
+
+	for (UINT a=1; a<=LFLastPersistentContext; a++)
+		if (Statistics.FileCount[a])
+		{
+			if (a!=LFContextFilters)
+			{
+				Statistics.FileCount[0] -= Statistics.FileCount[a];
+				Statistics.FileSize[0] -= Statistics.FileSize[a];
+			}
+
+			AddContext(Statistics, a);
+		}
+
+	if (Statistics.FileSize[0])
+		AddContext(Statistics, 0);
+
+	SortItems();
+	AdjustLayout();
+}
+
+void CUsageList::AdjustLayout()
+{
+	AdjustLayoutSingleColumnList();
+}
+
+void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+{
+	const UsageItemData* pData = (UsageItemData*)GetItemData(Index);
+	const LFContextDescriptor* pContextDescriptor = &LFGetApp()->m_Contexts[pData->Context];
+
+	CRect rect(rectItem);
+	rect.DeflateRect(PADDING, PADDING);
+
+	// Text height
+	INT TextHeight = m_DefaultFontHeight;
+
+	if (pContextDescriptor->Comment[0])
+		TextHeight <<= 1;
+
+	// Icon
+	m_ContextIcons.Draw(dc, rect.left, rect.top+(rect.Height()-m_IconSize)/2, pData->Context);
+	rect.left += m_IconSize+PADDING;
+
+	// Occupied storage
+	WCHAR tmpStr[256];
+	LFSizeToString(pData->FileSize, tmpStr, 256);
+
+	dc.DrawText(tmpStr, -1, rect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+	rect.right -= LFGetApp()->m_LargeFont.GetTextExtent(tmpStr).cx+BACKSTAGEBORDER;
+
+	// Context name
+	rect.top += (rect.Height()-TextHeight)/2;
+
+	SetDarkTextColor(dc, Index, Themed);
+	dc.DrawText((pData->Context==LFContextAllFiles) ? m_OtherFiles : LFGetApp()->m_Contexts[pData->Context].Name, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+	// Comment
+	if (pContextDescriptor->Comment[0])
+	{
+		rect.top += m_DefaultFontHeight;
+
+		SetLightTextColor(dc, Index, Themed);
+		dc.DrawText(LFGetApp()->m_Contexts[pData->Context].Comment, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(CUsageList, CFrontstageItemView)
+	ON_WM_CREATE()
+END_MESSAGE_MAP()
+
+INT CUsageList::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CFrontstageItemView::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	// Item
+	SetItemHeight(max(32, m_LargeFontHeight+m_DefaultFontHeight)+2*PADDING);
+
+	// Icons
+	m_IconSize = m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, m_ItemHeight-2*PADDING);
+
+	return 0;
 }
 
 
@@ -95,12 +196,28 @@ void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+void LFStorePropertiesDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
+{
+	LFTabbedDialog::AdjustLayout(rectLayout, nFlags);
+
+	UINT ExplorerHeight = 0;
+	if (IsWindow(m_wndUsageHeader))
+	{
+		ExplorerHeight = m_wndUsageHeader.GetPreferredHeight();
+		m_wndUsageHeader.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
+	}
+
+	if (IsWindow(m_wndUsageList))
+		m_wndUsageList.SetWindowPos(NULL, rectLayout.left, rectLayout.top+ExplorerHeight, rectLayout.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+}
+
 BOOL LFStorePropertiesDlg::InitSidebar(LPSIZE pszTabArea)
 {
 	if (!LFTabbedDialog::InitSidebar(pszTabArea))
 		return FALSE;
 
 	AddTab(IDD_STOREPROPERTIES_GENERAL, pszTabArea);
+	AddTab(IDD_STOREPROPERTIES_USAGE, pszTabArea);
 	AddTab(IDD_STOREPROPERTIES_TOOLS, pszTabArea);
 	AddTab(IDD_STOREPROPERTIES_INDEX, pszTabArea);
 
@@ -109,6 +226,14 @@ BOOL LFStorePropertiesDlg::InitSidebar(LPSIZE pszTabArea)
 
 BOOL LFStorePropertiesDlg::InitDialog()
 {
+	// Useage
+	m_wndUsageHeader.Create(this, IDC_USAGEHEADER);
+	AddControl(m_wndUsageHeader, 1);
+
+	m_wndUsageList.Create(this, IDC_USAGELIST);
+	AddControl(m_wndUsageList, 1);
+
+	// Init dialog
 	BOOL Result = LFTabbedDialog::InitDialog();
 
 	// Caption
@@ -123,6 +248,7 @@ BOOL LFStorePropertiesDlg::InitDialog()
 	m_wndBackupIcon.SetTaskIcon(AfxGetResourceHandle(), IDI_STOREBACKUP);
 
 	// Masks
+	GetDlgItem(IDC_CONTENTS)->GetWindowText(m_MaskContents);
 	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_MaskMaintenance);
 	GetDlgItem(IDC_SYNCHRONIZED)->GetWindowText(m_MaskSynchronized);
 
@@ -144,7 +270,33 @@ BOOL LFStorePropertiesDlg::InitDialog()
 	return Result;
 }
 
+CString LFStorePropertiesDlg::MakeHex(LPBYTE x, UINT bCount)
+{
+	CString tmpStr;
+
+	for (UINT a=0; a<bCount; a++)
+	{
+		CString Digit;
+		Digit.Format(_T("%.2x"), x[a]);
+		tmpStr += Digit;
+
+		if (a<bCount-1)
+			tmpStr += _T(",");
+	}
+
+	return tmpStr;
+}
+
+void LFStorePropertiesDlg::CEscape(CString &str)
+{
+	for (INT a=str.GetLength()-1; a>=0; a--)
+		if ((str[a]==L'\\') || (str[a]==L'\"'))
+			str.Insert(a, L'\\');
+}
+
+
 BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, LFTabbedDialog)
+	ON_NOTIFY(NM_CLICK, IDC_CONTENTS, OnShowUsageTab)
 	ON_BN_CLICKED(IDC_RUNSYNCHRONIZE, OnRunSynchronize)
 	ON_BN_CLICKED(IDC_RUNMAINTENANCE, OnRunMaintenance)
 	ON_BN_CLICKED(IDC_RUNBACKUP, OnRunBackup)
@@ -153,6 +305,13 @@ BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, LFTabbedDialog)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StatisticsChanged, OnUpdateStore)
 END_MESSAGE_MAP()
+
+void LFStorePropertiesDlg::OnShowUsageTab(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	SelectTab(1);
+
+	*pResult = 0;
+}
 
 void LFStorePropertiesDlg::OnRunSynchronize()
 {
@@ -279,6 +438,10 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 	const BOOL Editable = m_StoreValid && (m_StoreType & LFTypeWriteable);
 	GetDlgItem(IDOK)->EnableWindow(Editable);
 
+	// Usage
+	m_wndUsageHeader.SetHeader(m_Store.StoreName, LFGetApp()->GetFreeBytesAvailable(m_Store));
+	m_wndUsageList.SetUsage(m_Store);
+
 	// Synchronize
 	const BOOL CanSynchronize = m_StoreType & LFTypeSynchronizeAllowed;
 	GetDlgItem(IDC_SYNCHRONIZED)->EnableWindow(CanSynchronize);
@@ -302,7 +465,8 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 			GetDlgItem(IDC_CONTENTSLABEL)->EnableWindow(TRUE);
 
 			LFGetFileSummary(tmpStr, 256, m_Store.Statistics.FileCount[LFContextAllFiles], m_Store.Statistics.FileSize[LFContextAllFiles]);
-			GetDlgItem(IDC_CONTENTS)->SetWindowText(tmpStr);
+			tmpText.Format(m_MaskContents, tmpStr);
+			GetDlgItem(IDC_CONTENTS)->SetWindowText(tmpText);
 		}
 		else
 		{

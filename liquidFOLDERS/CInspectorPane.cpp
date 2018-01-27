@@ -320,12 +320,12 @@ CIconHeader::~CIconHeader()
 
 INT CIconHeader::GetPreferredHeight() const
 {
-	return 128+24;
+	return BACKSTAGEBORDER+128+BACKSTAGEBORDER/2+LFGetApp()->m_DefaultFont.GetFontHeight();
 }
 
 void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Themed) const
 {
-	CPoint pt((rect.Width()-128)/2, rect.top+4);
+	CPoint pt((rect.Width()-128)/2, rect.top+BACKSTAGEBORDER);
 
 	switch (m_Status)
 	{
@@ -351,7 +351,7 @@ void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Theme
 	dc.SetTextColor(m_Status==ICONEMPTY ? Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW) : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	CRect rectText(rect);
-	rectText.top += (m_Status==ICONEMPTY) ? BACKSTAGEBORDER : 128+6;
+	rectText.top += (m_Status==ICONEMPTY) ? BACKSTAGEBORDER : BACKSTAGEBORDER+128+BACKSTAGEBORDER/2;
 
 	dc.DrawText(m_Description, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_TOP | DT_CENTER | DT_NOPREFIX);
 }
@@ -584,7 +584,6 @@ void CInspectorPane::AggregateClose()
 BEGIN_MESSAGE_MAP(CInspectorPane, CFrontstagePane)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
-	ON_WM_CONTEXTMENU()
 	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
 
 	ON_COMMAND(IDM_INSPECTOR_SHOWINTERNAL, OnToggleInternal)
@@ -600,7 +599,7 @@ INT CInspectorPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_ShowInternal = theApp.GetInt(_T("InspectorShowInternal"), FALSE);
 	m_SortAlphabetic = theApp.GetInt(_T("InspectorSortAlphabetic"), FALSE);
 
-	if (!m_wndInspectorGrid.Create(this, 1, &m_IconHeader))
+	if (!m_wndInspectorGrid.Create(this, 1, IDM_INSPECTOR, &m_IconHeader))
 		return -1;
 
 	// Add attribute properties
@@ -619,27 +618,6 @@ INT CInspectorPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CInspectorPane::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	m_wndInspectorGrid.SetFocus();
-}
-
-void CInspectorPane::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
-{
-	if ((point.x<0) || (point.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		point.x = (rect.left+rect.right)/2;
-		point.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&point);
-	}
-
-	CMenu Menu;
-	ENSURE(Menu.LoadMenu(IDM_INSPECTOR));
-
-	CMenu* pPopup = Menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 }
 
 LRESULT CInspectorPane::OnPropertyChanged(WPARAM wParam, LPARAM lParam)

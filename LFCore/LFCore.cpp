@@ -486,6 +486,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 	// Default name
 	AttributeDescriptor.ContextRecords[0].IconID = AttrProperties[ID].DefaultIconID;
+	AttributeDescriptor.ContextRecords[0].SortDescending = (TypeProperties[AttrProperties[ID].Type].DataFlags & LFDataSortDescending);
 	AttributeDescriptor.ContextRecords[0].ContextSet = ContextSet;
 	LoadString(LFCoreModuleHandle, IDS_ATTR_FIRST+ID, AttributeDescriptor.ContextRecords[0].Name, LFAttributeNameSize);
 

@@ -117,14 +117,13 @@ void LFEditFilterDlg::DoDataExchange(CDataExchange* pDX)
 LFFilter* LFEditFilterDlg::CreateFilter()
 {
 	LFFilter* pFilter = LFAllocFilter();
-	pFilter->Mode = LFFilterModeSearch;
-	pFilter->Options.IsPersistent = TRUE;
+	pFilter->IsPersistent = TRUE;
 
-	strcpy_s(pFilter->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
-	m_wndSearchTerm.GetWindowText(pFilter->SearchTerm, 256);
+	strcpy_s(pFilter->Query.StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
+	m_wndSearchTerm.GetWindowText(pFilter->Query.SearchTerm, 256);
 
 	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
-		pFilter->pConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].VData, pFilter->pConditionList);
+		pFilter->Query.pConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].VData, pFilter->Query.pConditionList);
 
 	return pFilter;
 }
@@ -170,9 +169,9 @@ BOOL LFEditFilterDlg::InitDialog()
 	// Filter
 	if (p_Filter)
 	{
-		m_wndSearchTerm.SetWindowText(p_Filter->SearchTerm);
+		m_wndSearchTerm.SetWindowText(p_Filter->Query.SearchTerm);
 
-		LFFilterCondition* pFilterCondition = p_Filter->pConditionList;
+		LFFilterCondition* pFilterCondition = p_Filter->Query.pConditionList;
 		while (pFilterCondition)
 		{
 			m_Conditions.AddItem(*pFilterCondition);

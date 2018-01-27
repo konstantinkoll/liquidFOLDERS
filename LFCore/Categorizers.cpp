@@ -41,7 +41,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* pItemDescriptor, LFF
 	LFItemDescriptor* pFolder = AllocFolderDescriptor(FileSummary, VData, pFilter, FirstAggregate, LastAggregate);
 
 	CustomizeFolder(pFolder, pItemDescriptor);
-	wcscpy_s(pFolder->pNextFilter->OriginalName, 256, pFolder->CoreAttributes.FileName);
+	wcscpy_s(pFolder->pNextFilter->Name, 256, pFolder->CoreAttributes.FileName);
 
 	// No folder name for colors
 	if (AttrProperties[m_Attr].Type==LFTypeColor)
@@ -62,11 +62,11 @@ void CCategorizer::GetFilterValue(LFVariantData& VData, LFItemDescriptor* pItemD
 
 void CCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* /*pSpecimen*/) const
 {
-	LFSetAttributeVariantData(pFolder, pFolder->pNextFilter->pConditionList->VData);
+	LFSetAttributeVariantData(pFolder, pFolder->pNextFilter->Query.pConditionList->VData);
 
 	if (m_Attr!=LFAttrFileName)
 	{
-		const LFVariantData* pVData = &pFolder->pNextFilter->pConditionList->VData;
+		const LFVariantData* pVData = &pFolder->pNextFilter->Query.pConditionList->VData;
 
 		// Set category name as file name
 		WCHAR Name[256];

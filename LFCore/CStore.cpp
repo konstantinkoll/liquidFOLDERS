@@ -509,10 +509,13 @@ UINT CStore::DeleteDirectories()
 		if (!DeleteDirectory(p_StoreDescriptor->IdxPathAux))
 			return LFDriveNotReady;
 
-	// Delete internal path, ignore error code
+	// Delete internal directory
 	WCHAR Path[MAX_PATH];
 	GetAutoPath(p_StoreDescriptor, Path);
-	DeleteDirectory(Path);
+
+	if (wcscmp(Path, p_StoreDescriptor->DatPath)!=0)
+		// Ignore the error code because the directory might not exist!
+		DeleteDirectory(Path);
 
 	return LFOk;
 }

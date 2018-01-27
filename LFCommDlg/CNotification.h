@@ -1,5 +1,5 @@
 
-// CExplorerNotification.h: Schnittstelle der Klasse CExplorerNotification
+// CNotification.h: Schnittstelle der Klasse CNotification
 //
 
 #pragma once
@@ -7,7 +7,7 @@
 #include "CHoverButton.h"
 
 
-// CExplorerNotification
+// CNotification
 //
 
 #define ENT_READY       1
@@ -16,10 +16,10 @@
 #define ENT_SHIELD      4
 #define ENT_ERROR       5
 
-class CExplorerNotification : public CFrontstageWnd
+class CNotification : public CFrontstageWnd
 {
 public:
-	CExplorerNotification();
+	CNotification();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	UINT GetPreferredHeight() const;
@@ -62,7 +62,7 @@ private:
 	UINT m_RightMargin;
 };
 
-inline UINT CExplorerNotification::GetTimerLength() const
+inline UINT CNotification::GetTimerLength() const
 {
 	return 2000+40*m_Text.GetLength();
 }

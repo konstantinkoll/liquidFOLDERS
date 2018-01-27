@@ -10,7 +10,7 @@
 // CTagcloudView
 //
 
-#define GetItemData(Index)     ((TagcloudItemData*)(m_pItemData+(Index)*m_DataSize))
+#define GetItemData(Index)     ((TagcloudItemData*)CFileView::GetItemData(Index))
 #define DEFAULTFONT            2
 #define TEXTFORMAT             DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
 #define GUTTER                 3
@@ -20,7 +20,7 @@
 
 
 CTagcloudView::CTagcloudView()
-	: CGridView(sizeof(TagcloudItemData), FF_ENABLETOOLTIPICONS)
+	: CFileView(sizeof(TagcloudItemData), FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FF_ENABLEFOLDERTOOLTIPS | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLETOOLTIPICONS)
 {
 }
 
@@ -44,7 +44,6 @@ void CTagcloudView::SetViewSettings(BOOL UpdateSearchResultPending)
 		{
 		case 2:
 			SetSearchResult(p_Filter, p_RawFiles, p_CookedFiles, NULL);
-			GetOwner()->PostMessage(WM_COMMAND, WM_UPDATESELECTION);
 
 		case 1:
 			AdjustLayout();
@@ -59,7 +58,7 @@ void CTagcloudView::SetViewSettings(BOOL UpdateSearchResultPending)
 
 void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	CGridView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
+	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
 	{
@@ -76,7 +75,7 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 			TagcloudItemData* pData = GetItemData(a);
 
-			if ((pData->Hdr.Hdr.Valid=((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))==TRUE)
+			if ((pData->Hdr.Valid=((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))==TRUE)
 			{
 				pData->Cnt = pItemDescriptor->AggregateCount;
 
@@ -91,7 +90,7 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TagcloudItemData* pData = GetItemData(a);
-			if (pData->Hdr.Hdr.Valid)
+			if (pData->Hdr.Valid)
 				if (!m_GlobalViewSettings.TagcloudShowRare && (Delta>1) && (pData->Cnt==Minimum))
 				{
 					// Omit rare tag
@@ -128,44 +127,39 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 	}
 }
 
+BOOL CTagcloudView::GetContextMenu(CMenu& Menu, INT Index)
+{
+	if (Index==-1)
+		Menu.LoadMenu(IDM_TAGCLOUD);
+
+	return CFileView::GetContextMenu(Menu, Index);
+}
+
 void CTagcloudView::AdjustLayout()
 {
-	ResetItemCategories();
-
 	if (p_CookedFiles)
 	{
 		CClientDC dc(this);
 
-		CRect rectWindow;
-		GetWindowRect(rectWindow);
+		CRect rectLayout;
+		GetLayoutRect(rectLayout);
 
-		if (!rectWindow.Width())
+		if (!rectLayout.Width())
 			return;
 
 #define CenterRow(Last) for (UINT b=RowStart; b<=Last; b++) \
 	{ \
 		TagcloudItemData* pData = GetItemData(b); \
-		if (pData->Hdr.Hdr.Valid) \
+		if (pData->Hdr.Valid) \
 		{ \
-			OffsetRect(&pData->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (RowHeight-(pData->Hdr.Hdr.Rect.bottom-pData->Hdr.Hdr.Rect.top))/2); \
-			if (pData->Hdr.Hdr.Rect.right>m_ScrollWidth) \
-				m_ScrollWidth = pData->Hdr.Hdr.Rect.right; \
-			if (pData->Hdr.Hdr.Rect.bottom+MARGIN>m_ScrollHeight) \
-			{ \
-				m_ScrollHeight = pData->Hdr.Hdr.Rect.bottom+MARGIN; \
-				if ((m_ScrollHeight>rectWindow.Height()) && !HasScrollbars) \
-				{ \
-					HasScrollbars = TRUE; \
-					rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); \
-					goto Restart; \
-				} \
-			} \
+			OffsetRect(&pData->Hdr.Rect, (rectLayout.Width()+GUTTER-x)/2, (RowHeight-(pData->Hdr.Rect.bottom-pData->Hdr.Rect.top))/2); \
+			if (pData->Hdr.Rect.right>m_ScrollWidth) \
+				m_ScrollWidth = pData->Hdr.Rect.right; \
+			if (pData->Hdr.Rect.bottom+MARGIN>m_ScrollHeight) \
+				m_ScrollHeight = pData->Hdr.Rect.bottom+MARGIN; \
 		} \
 	}
 
-		BOOL HasScrollbars = FALSE;
-
-Restart:
 		m_ScrollWidth = m_ScrollHeight = 0;
 
 		INT Column = 0;
@@ -178,17 +172,17 @@ Restart:
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TagcloudItemData* pData = GetItemData(a);
-			if (pData->Hdr.Hdr.Valid)
+			if (pData->Hdr.Valid)
 			{
 				LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 
-				CRect rect(0, 0, rectWindow.Width()-2*MARGIN, 128);
+				CRect rect(0, 0, rectLayout.Width()-2*MARGIN, 128);
 				dc.SelectObject(GetFont(a));
 				dc.DrawText(pItemDescriptor->CoreAttributes.FileName, rect, TEXTFORMAT | DT_CALCRECT);
 				rect.InflateRect(PADDINGX, PADDINGY);
 
 				// Next row
-				if (x+rect.Width()+2*MARGIN>rectWindow.Width())
+				if (x+rect.Width()+2*MARGIN>rectLayout.Width())
 				{
 					Column = 0;
 					Row++;
@@ -203,9 +197,10 @@ Restart:
 				}
 
 				rect.MoveToXY(x, y);
+
+				pData->Hdr.Rect = rect;
 				pData->Hdr.Column = Column++;
 				pData->Hdr.Row = Row;
-				pData->Hdr.Hdr.Rect = rect;
 
 				x += rect.Width()+GUTTER;
 				RowHeight = max(RowHeight, rect.Height());
@@ -250,21 +245,13 @@ void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Ind
 	dc.SelectObject(pOldFont);
 }
 
-CMenu* CTagcloudView::GetViewContextMenu()
-{
-	CMenu* pMenu = new CMenu();
-	pMenu->LoadMenu(IDM_TAGCLOUD);
-
-	return pMenu;
-}
-
 LFFont* CTagcloudView::GetFont(INT Index)
 {
-	return &m_Fonts[(m_GlobalViewSettings.TagcloudUseSize ? GetItemData(Index)->FontSize : DEFAULTFONT)];
+	return &m_Fonts[m_GlobalViewSettings.TagcloudUseSize ? GetItemData(Index)->FontSize : DEFAULTFONT];
 }
 
 
-BEGIN_MESSAGE_MAP(CTagcloudView, CGridView)
+BEGIN_MESSAGE_MAP(CTagcloudView, CFileView)
 	ON_WM_CREATE()
 	ON_COMMAND(IDM_TAGCLOUD_SORTVALUE, OnSortValue)
 	ON_COMMAND(IDM_TAGCLOUD_SORTCOUNT, OnSortCount)
@@ -277,7 +264,7 @@ END_MESSAGE_MAP()
 
 INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGridView::OnCreate(lpCreateStruct)==-1)
+	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	for (INT a=0; a<20; a++)

@@ -32,25 +32,8 @@ BOOL CHeaderArea::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
 
 BOOL CHeaderArea::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	HMENU hMenu = (HMENU)GetParent()->SendMessage(WM_GETMENU, wParam);
-	if (hMenu)
-	{
-		CWnd* pWnd = GetDlgItem((INT)wParam);
-		if (pWnd)
-		{
-			CRect rectWindow;
-			pWnd->GetWindowRect(rectWindow);
-
-			TrackPopupMenu(hMenu, TPM_RIGHTALIGN | TPM_RIGHTBUTTON, rectWindow.right, rectWindow.bottom, 0, GetOwner()->GetSafeHwnd(), NULL);
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-	else
-	{
-		return GetOwner()->SendMessage(WM_COMMAND, wParam, lParam)!=0;
-	}
+	// Buttons do not send their command to their owner, but their parent window - so we pass it on.
+	return GetOwner()->SendMessage(WM_COMMAND, wParam, lParam)!=0;
 }
 
 void CHeaderArea::SetHeader(LPCWSTR Caption, LPCWSTR Hint, HBITMAP hBitmap, const CPoint& BitmapOffset, BOOL Repaint)
@@ -84,12 +67,7 @@ inline UINT CHeaderArea::GetBitmapMinHeight() const
 	return hIconBitmap ? 2*BORDER+m_BitmapHeight+m_BitmapOffset.y : 0;
 }
 
-inline UINT CHeaderArea::GetTextMinHeight() const
-{
-	return 2*BORDER+LFGetApp()->m_CaptionFont.GetFontHeight()+MARGIN+LFGetApp()->m_DefaultFont.GetFontHeight();
-}
-
-inline UINT CHeaderArea::GetButtonHeight() const
+UINT CHeaderArea::GetButtonHeight() const
 {
 	return m_Buttons.m_ItemCount*(UINT)(LFGetApp()->m_DefaultFont.GetFontHeight()+2*MARGIN+MARGIN/2)-MARGIN/2;
 }
@@ -99,13 +77,18 @@ inline UINT CHeaderArea::GetButtonMinHeight() const
 	return GetButtonHeight()+2*MARGIN;
 }
 
+UINT CHeaderArea::GetTextMinHeight() const
+{
+	return 2*BORDER+LFGetApp()->m_CaptionFont.GetFontHeight()+MARGIN+LFGetApp()->m_DefaultFont.GetFontHeight();
+}
+
 UINT CHeaderArea::GetPreferredHeight() const
 {
-	UINT Height = max(GetTextMinHeight(), GetButtonMinHeight());
-	if (Height<GetBitmapMinHeight())
-		Height = GetBitmapMinHeight();
+	const UINT BitmapMinHeight = GetBitmapMinHeight();
+	const UINT ButtonMinHeight = GetButtonMinHeight();
+	const UINT TextMinHeight = GetTextMinHeight();
 
-	return Height;
+	return max(BitmapMinHeight, max(TextMinHeight, ButtonMinHeight));
 }
 
 CHeaderButton* CHeaderArea::AddButton(UINT nID)
@@ -140,6 +123,20 @@ CHeaderButton* CHeaderArea::AddButton(UINT nID)
 	return pHeaderButton;
 }
 
+void CHeaderArea::TrackPopupMenu(CMenu& Menu, UINT DlgCtrlID) const
+{
+	ASSERT(IsMenu(Menu));
+
+	CWnd* pWnd = GetDlgItem(DlgCtrlID);
+	if (pWnd)
+	{
+		CRect rectWindow;
+		pWnd->GetWindowRect(rectWindow);
+
+		CFrontstageWnd::TrackPopupMenu(Menu, rectWindow.BottomRight(), FALSE, TRUE);
+	}
+}
+
 void CHeaderArea::AdjustLayout()
 {
 	CRect rect;
@@ -172,7 +169,6 @@ void CHeaderArea::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CHeaderArea, CFrontstageWnd)
 	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_THEMECHANGED()
@@ -197,11 +193,6 @@ void CHeaderArea::OnDestroy()
 	DeleteObject(hBackgroundBrush);
 
 	CFrontstageWnd::OnDestroy();
-}
-
-BOOL CHeaderArea::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CHeaderArea::OnPaint()

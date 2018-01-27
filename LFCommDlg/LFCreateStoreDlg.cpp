@@ -10,7 +10,7 @@
 // LFCreateStoreDlg
 //
 
-#define WM_VOLUMECHANGE         WM_USER+5
+#define WM_VOLUMECHANGE         WM_USER+4
 #define GetSelectedVolume()     m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
 
 LFCreateStoreDlg::LFCreateStoreDlg(CWnd* pParentWnd)
@@ -215,11 +215,13 @@ void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 	const INT Index = GetSelectedVolume();
 	if (Index!=-1)
 	{
+		const UINT Source = LFGetSourceForVolume(m_DriveLetters[Index]);
+
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_VOLUME_FORMAT:
 		case IDM_VOLUME_EJECT:
-			bEnable = LFGetSourceForVolume(m_DriveLetters[Index])>LFTypeSourceInternal;
+			bEnable = (Source>LFTypeSourceWindows) && (Source<LFTypeSourceNethood);
 			break;
 
 		case IDM_VOLUME_PROPERTIES:

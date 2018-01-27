@@ -414,7 +414,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	{
 		if ((BOOL)Parameter)
 			for (UINT a=0; a<m_ItemCount; a++)
-				if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+				if (m_Items[a].Processed && (m_Items[a].LastError==LFOk))
 					if (FAILED(SHParseDisplayName(&m_Items[a].Path[4], NULL, &m_Items[a].pidlFQ, 0, NULL)))
 						m_Items[a].LastError = m_LastError = LFIllegalPhysicalPath;
 

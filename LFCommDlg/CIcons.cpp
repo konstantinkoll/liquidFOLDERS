@@ -93,10 +93,19 @@ INT CIcons::Load(UINT nID, UINT Flags, LFFont* pFont)
 
 INT CIcons::LoadSmall(UINT nID)
 {
-	INT Size = GetSystemMetrics(SM_CXSMICON);
+	const INT Size = GetSystemMetrics(SM_CXSMICON);
 	ASSERT(Size==GetSystemMetrics(SM_CYSMICON));
 
-	INT Level = (Size>=32) ? 2 : (Size>=24) ? 1 : 0;
+	const INT Level = (Size>=32) ? 2 : (Size>=24) ? 1 : 0;
+
+	Load(nID+Level, m_IconSizes[Level]);
+
+	return m_IconSizes[Level];
+}
+
+INT CIcons::LoadForSize(UINT nID, INT Height)
+{
+	const UINT Level = (Height>=64) ? 4 : (Height>=48) ? 3 : (Height>=32) ? 2 : (Height>=24) ? 1 : 0;
 
 	Load(nID+Level, m_IconSizes[Level]);
 

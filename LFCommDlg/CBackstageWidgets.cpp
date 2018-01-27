@@ -39,7 +39,7 @@ void CBackstageWidgets::AddWidgetSize(LPSIZE lpSize) const
 
 void CBackstageWidgets::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed)
 {
-	INT IconID = m_BarItems[Index].IconID;
+	const INT IconID = m_BarItems[Index].IconID;
 
 	if ((IconID==BACKSTAGEICON_MAXIMIZE) || (IconID==BACKSTAGEICON_RESTORE))
 		m_BarItems[Index].IconID = (GetParent()->GetStyle() & WS_MAXIMIZE) ? BACKSTAGEICON_RESTORE : BACKSTAGEICON_MAXIMIZE;
@@ -67,6 +67,7 @@ INT CBackstageWidgets::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Add items
 	const DWORD dwStyle = GetParent()->GetStyle();
 
 	if (dwStyle & WS_MINIMIZEBOX)
@@ -76,7 +77,6 @@ INT CBackstageWidgets::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		AddItem(SC_MAXIMIZE, BACKSTAGEICON_MAXIMIZE);
 
 	AddItem(SC_CLOSE, BACKSTAGEICON_CLOSE, 0, TRUE);
-	AdjustLayout();
 
 	return 0;
 }

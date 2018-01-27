@@ -308,8 +308,11 @@ inline BYTE LFGetUserContextID(const LFItemDescriptor* pItemDescriptor)
 #define LFIsVideoFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextVideos)
 
 
-// Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters
-LFCORE_API LFFilter* __stdcall LFAllocFilter(const LFFilter* pFilter=NULL);
+// Neuen LFFilter erzeugen
+LFCORE_API LFFilter* __stdcall LFAllocFilter(BYTE Mode=LFFilterModeQuery);
+
+// Neuen LFFilter als Kopie eines existierenden Filters erzeugen
+LFCORE_API LFFilter* __stdcall LFCloneFilter(const LFFilter* pFilter);
 
 // Existierenden LFFilter freigeben
 LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
@@ -328,7 +331,7 @@ LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, con
 #define LFFreeFilterCondition(pFilterCondition) delete pFilterCondition;
 
 // Liefert das Attribut zurück, nachdem ein Unterordnet gebildet wirde
-#define LFGetSubfolderAttribute(pFilter) (pFilter && pFilter->Options.IsSubfolder && pFilter->pConditionList ? pFilter->pConditionList->VData.Attr : -1)
+#define LFGetSubfolderAttribute(pFilter) (pFilter && pFilter->IsSubfolder && pFilter->Query.pConditionList ? pFilter->Query.pConditionList->VData.Attr : -1)
 
 
 // Neues Suchergebnis mit Kontext Context erzeugen
@@ -345,7 +348,7 @@ LFCORE_API BOOL __stdcall LFAddItem(LFSearchResult* pSearchResult, LFItemDescrip
 LFCORE_API void __stdcall LFRemoveFlaggedItems(LFSearchResult* pSearchResult);
 
 // Sortiert LFSearchResult
-LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending);
+LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending=FALSE);
 
 // Gruppiert LFSearchResult und liefert Kopie zurück
 LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter);
@@ -442,7 +445,7 @@ LFCORE_API INT __stdcall LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, con
 LFCORE_API LFSearchResult* __stdcall LFQuery(LFFilter* pFilter);
 
 // Bestehendes Suchergebnis eingrenzen
-// - pFilter muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
+// - pFilter muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeQuery sein
 // - pFilter muss ein Unterverzeichnis sein
 // - First und Last müssen einen gültigen Bereich umfassen
 LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchResult, INT First, INT Last);

@@ -25,7 +25,7 @@
 
 struct TimelineItemData
 {
-	FVItemData Hdr;
+	ItemData Hdr;
 	INT Arrow;
 	INT ArrowOffs;
 	INT ThumbnailCount;
@@ -40,12 +40,6 @@ struct TimelineItemData
 	UINT PreviewMask;
 };
 
-struct ItemCategory
-{
-	WCHAR Caption[5];
-	RECT Rect;
-};
-
 class CTimelineView : public CFileView
 {
 public:
@@ -55,13 +49,12 @@ protected:
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
+	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
+	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 
 	void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnPaint();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 
 	BOOL m_TwoColumns;
@@ -76,8 +69,7 @@ private:
 	static void AggregateAttribute(UINT& PreviewMask, LPCWSTR& pStrAggregated, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	static void AggregateIcon(UINT& PreviewMask, INT& AggregatedIconID, UINT Mask, INT IconID);
 	static BOOL UsePreview(LFItemDescriptor* pItemDescriptor);
-	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* pItemCategory, BOOL Themed);
+	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed);
 
-	LFDynArray<ItemCategory, 8, 8> m_Categories;
 	static const ARGB m_BevelColors[8];
 };

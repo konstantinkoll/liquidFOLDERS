@@ -11,13 +11,15 @@
 
 struct CalendarItemData
 {
-	FVItemData Hdr;
+	ItemData Hdr;
 	SYSTEMTIME Time;
 };
 
 struct CalendarMonth
 {
 	RECT Rect;
+	INT Column;
+	INT Row;
 	WCHAR Name[256];
 	UINT Matrix[31];
 	UINT SOM;			// Start of month
@@ -29,14 +31,14 @@ class CCalendarView : public CFileView
 public:
 	CCalendarView();
 
-	virtual CMenu* GetViewContextMenu();
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
+	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 
 	void SetYear(UINT Year);
 	UINT DaysOfMonth(UINT Month) const;

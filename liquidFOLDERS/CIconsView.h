@@ -3,16 +3,16 @@
 //
 
 #pragma once
-#include "CGridView.h"
+#include "CFileView.h"
 
 
 // CIconsView
 //
 
-class CIconsView : public CGridView
+class CIconsView : public CFileView
 {
 public:
-	CIconsView(UINT DataSize=sizeof(GridItemData));
+	CIconsView();
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);

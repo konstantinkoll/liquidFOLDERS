@@ -31,6 +31,8 @@ protected:
 
 	BOOL AddTab(const CString& Caption);
 	BOOL AddTab(UINT nResID, LPSIZE pszTabArea);
+	void AddControl(const ControlOnTab& Ctrl);
+	void AddControl(HWND hWnd, UINT Index);
 	void SelectTab(UINT Index);
 
 	afx_msg void OnDestroy();
@@ -50,3 +52,8 @@ private:
 	LFDynArray<ControlOnTab, 16, 16>m_ControlsOnTab;
 	WCHAR m_TabHints[MAXTABS][4096];
 };
+
+inline void LFTabbedDialog::AddControl(const ControlOnTab& Ctrl)
+{
+	m_ControlsOnTab.AddItem(Ctrl);
+}

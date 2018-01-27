@@ -24,35 +24,28 @@ public:
 
 	virtual void PreSubclassWindow();
 
-	void SetMenu(UINT BackgroundMenuID=0, BOOL HighlightFirst=FALSE);
 	void SetLocation(const LFGeoCoordinates& Coord);
 
 protected:
-	virtual void Init();
 	virtual void ShowTooltip(const CPoint& point);
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 
 	void LocationFromPoint(const CPoint& point, DOUBLE& Latitude, DOUBLE& Longitude) const;
 	void PointFromLocation(INT& PosX, INT& PosY) const;
 	void SetLocation(const CPoint& point);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
-	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
 
 	LFGeoCoordinates m_Location;
 
-protected:
-	void SendUpdateMessage();
-
 private:
+	void SendNotifyMessage();
 	void PrepareBitmap(const CRect& rect);
 
 	INT m_BackBufferL;

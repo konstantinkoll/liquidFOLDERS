@@ -10,6 +10,8 @@
 // CMainView
 //
 
+#define WM_NAVIGATETO     WM_USER+202
+
 class CMainView : public CFrontstageWnd
 {
 friend class CInspectorPane;
@@ -30,45 +32,49 @@ public:
 	void ShowNotification(UINT Type, const CString& Message, UINT Command=0);
 	void ShowNotification(UINT Type, UINT Result, UINT Command=0);
 	void ShowNotification(UINT Result);
-	INT GetSelectedItem() const;
 	void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 	void SelectNone();
 
 protected:
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
+
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolveLocations=FALSE, BOOL IncludePIDL=FALSE);
 	void RemoveTransactedItems(LFTransactionList* pTransactionList);
-	void MoveToContext(BYTE UserContextID);
 	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
 	void RecoverFiles(BOOL All=FALSE);
 	BOOL UpdateItems(const LFVariantData* pValue1, const LFVariantData* pValue2, const LFVariantData* pValue3);
+	INT GetSelectedItem() const;
+	void SelectionChanged();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
 	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+
 	afx_msg void OnAdjustLayout();
-	afx_msg void OnUpdateSelection();
-	afx_msg void OnBeginDragDrop();
+	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBeginDragAndDrop(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnSendTo(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnToggleInspector();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnSortOptions();
 	afx_msg void OnUpdateHeaderCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnGetMenu(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnSort(UINT nID);
-	afx_msg void OnUpdateSortCommands(CCmdUI* pCmdUI);
-	afx_msg void OnView(UINT nID);
-	afx_msg void OnUpdateViewCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnOrganizeButton();
+	afx_msg void OnOrganizeOptions();
+	afx_msg void OnSetOrganize(UINT nID);
+	afx_msg void OnUpdateSetOrganizeCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnViewButton();
+	afx_msg void OnSetView(UINT nID);
+	afx_msg void OnUpdateSetViewCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnStoresAdd();
 	afx_msg void OnStoresSynchronize();
@@ -85,8 +91,11 @@ protected:
 	afx_msg void OnTrashEmpty();
 	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnFiltersCreateNew();
 	afx_msg void OnUpdateFiltersCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnItemOpen();
+	afx_msg void OnItemSendTo(UINT nID);
 	afx_msg void OnItemShortcut();
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
@@ -123,7 +132,7 @@ protected:
 	CHeaderArea m_wndHeaderArea;
 	CFileView* m_pWndFileView;
 	CInspectorPane m_wndInspectorPane;
-	CExplorerNotification m_wndExplorerNotification;
+	CNotification m_wndExplorerNotification;
 	LFDropTarget m_DropTarget;
 	LFFilter* p_Filter;
 	LFSearchResult* p_RawFiles;
@@ -182,5 +191,5 @@ inline void CMainView::ShowNotification(UINT Type, const CString& Message, UINT 
 
 inline INT CMainView::GetSelectedItem() const
 {
-	return m_pWndFileView ? m_pWndFileView->GetSelectedItem() : -1;
+	return m_pWndFileView && p_CookedFiles ? m_pWndFileView->GetSelectedItem() : -1;
 }

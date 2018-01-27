@@ -12,7 +12,7 @@
 // CGlobeView
 //
 
-#define GetItemData(Index)     ((GlobeItemData*)(m_pItemData+Index*m_DataSize))
+#define GetItemData(Index)     ((GlobeItemData*)CFileView::GetItemData(Index))
 #define DISTANCENEAR           3.0f
 #define DISTANCEFAR            17.0f
 #define DOLLY                  0.09f
@@ -30,7 +30,7 @@ const GLfloat CGlobeView::m_lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat CGlobeView::m_FogColor[] = { 0.65f, 0.75f, 0.95f, 1.0f };
 
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeItemData), FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS)
+	: CFileView(sizeof(GlobeItemData), FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESELECTION | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, CSize(0, ARROWSIZE))
 {
 	m_RenderContext.pDC = NULL;
 	m_RenderContext.hRC = NULL;
@@ -45,9 +45,9 @@ CGlobeView::CGlobeView()
 	m_AnimCounter = m_MoveCounter = 0;
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	return CFileView::Create(pParentWnd, nID, rect, pFilter, pRawFiles, pCookedFiles, pPersistentData, nClassStyle | CS_OWNDC);
+	return CFileView::Create(pParentWnd, nID, rect, pFilter, pRawFiles, pCookedFiles, pPersistentData, CS_OWNDC);
 }
 
 void CGlobeView::SetViewSettings(BOOL UpdateSearchResultPending)
@@ -107,7 +107,6 @@ void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 					LFGeoCoordinatesToString(Property.GeoCoordinates, pData->CoordString, 32, FALSE);
 
 					pData->Hdr.Valid = TRUE;
-					pData->Hdr.RectInflateOnInvalidate = ARROWSIZE;
 				}
 			}
 		}
@@ -119,22 +118,19 @@ void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 
 INT CGlobeView::ItemAtPosition(CPoint point) const
 {
-	if (!p_CookedFiles)
-		return -1;
-
 	INT Result = -1;
 	GLfloat Alpha = 0.0f;
 
-	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
-		GlobeItemData* pData = GetItemData(a);
+		GlobeItemData* pData = GetItemData(Index);
 
 		if (pData->Hdr.Valid)
 			if ((pData->Alpha>0.75f) || ((pData->Alpha>0.1f) && (pData->Alpha>Alpha-0.05f)))
 				if (PtInRect(&pData->Hdr.Rect, point))
 				{
 					Alpha = pData->Alpha;
-					Result = (INT)a;
+					Result = Index;
 				}
 	}
 
@@ -147,24 +143,29 @@ void CGlobeView::ShowTooltip(const CPoint& point)
 		CFileView::ShowTooltip(point);
 }
 
-CMenu* CGlobeView::GetViewContextMenu()
+void CGlobeView::GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL /*Themed*/) const
 {
-	CMenu* pMenu = new CMenu();
-	pMenu->LoadMenu(IDM_GLOBE);
+	ENSURE(strMessage.LoadString(IDS_NORENDERINGCONTEXT));
 
-	return pMenu;
+	clrMessage = 0x0000FF;
 }
 
-CMenu* CGlobeView::GetItemContextMenu(INT Index)
+BOOL CGlobeView::DrawNothing() const
 {
-	CMenu* pMenu = CFileView::GetItemContextMenu(Index);
-	
-	CMenu* pPopup = pMenu->GetSubMenu(0);
-	ASSERT_VALID(pPopup);
+	return !m_RenderContext.hRC;
+}
 
-	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, CString((LPCSTR)IDS_CONTEXTMENU_OPENGOOGLEEARTH));
+BOOL CGlobeView::GetContextMenu(CMenu& Menu, INT Index)
+{
+	if (Index==-1)
+		Menu.LoadMenu(IDM_GLOBE);
 
-	return pMenu;
+	const BOOL SetDefaultItem = CFileView::GetContextMenu(Menu, Index);
+
+	if (Index!=-1)
+		Menu.InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, CString((LPCSTR)IDS_CONTEXTMENU_OPENGOOGLEEARTH));
+
+	return SetDefaultItem;
 }
 
 void CGlobeView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
@@ -566,13 +567,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	if (Result)
 	{
 		if (!m_Grabbed)
-		{
-			CPoint point;
-			GetCursorPos(&point);
-			ScreenToClient(&point);
-
-			OnMouseMove(0, point);
-		}
+			UpdateHoverItem();
 
 		Invalidate();
 	}
@@ -580,8 +575,10 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	return Result;
 }
 
-__forceinline void CGlobeView::RenderScene(BOOL Themed)
+__forceinline void CGlobeView::RenderScene()
 {
+	const BOOL Themed = IsCtrlThemed();
+
 	theRenderer.BeginRender(this, m_RenderContext);
 
 	//Clear background
@@ -880,11 +877,6 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!theRenderer.Initialize())
 		return -1;
 
-	// Settings
-//	m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = m_GlobalViewSettings.GlobeLatitude/1000.0f;
-//	m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = m_GlobalViewSettings.GlobeLongitude/1000.0f;
-//	m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = m_GlobalViewSettings.GlobeZoom;
-
 	// OpenGL
 	if (theRenderer.CreateRenderContext(this, m_RenderContext))
 	{
@@ -937,43 +929,15 @@ void CGlobeView::OnDestroy()
 
 void CGlobeView::OnPaint()
 {
-	CPaintDC pDC(this);
-
-	const BOOL Themed = IsCtrlThemed();
-
 	if (m_RenderContext.hRC)
 	{
-		RenderScene(Themed);
+		CPaintDC pDC(this);
+
+		RenderScene();
 	}
 	else
 	{
-		CRect rect;
-		GetClientRect(rect);
-
-		CDC dc;
-		dc.CreateCompatibleDC(&pDC);
-		dc.SetBkMode(TRANSPARENT);
-
-		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-
-		CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-
-		CRect rectText(rect);
-		rectText.top += m_HeaderHeight+6;
-
-		dc.SetTextColor(0x0000FF);
-		dc.DrawText(CString((LPCSTR)IDS_NORENDERINGCONTEXT), rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		DrawWindowEdge(dc, Themed);
-
-		pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-		dc.SelectObject(pOldFont);
-		dc.SelectObject(pOldBitmap);
+		CFileView::OnPaint();
 	}
 }
 
@@ -1174,8 +1138,7 @@ void CGlobeView::OnAutosize()
 
 void CGlobeView::OnSettings()
 {
-	GlobeOptionsDlg dlg(m_Context, this);
-	if (dlg.DoModal()==IDOK)
+	if (GlobeOptionsDlg(m_Context, this).DoModal()==IDOK)
 		theApp.UpdateViewSettings(-1, LFViewGlobe);
 }
 

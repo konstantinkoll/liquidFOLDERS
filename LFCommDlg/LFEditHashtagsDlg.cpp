@@ -93,16 +93,16 @@ void LFEditHashtagsDlg::OnUpdateAssignedHashtags()
 	CWaitCursor csr;
 
 	LFFilter* pFilter = LFAllocFilter();
-	pFilter->Options.IgnoreSlaves = TRUE;
+	pFilter->Query.IgnoreSlaves = TRUE;
 
 	if ((!m_StoreID[0]) || (m_wndHashtagsFromAllStores.GetCheck()))
 	{
-		pFilter->Mode = LFFilterModeSearch;
+		pFilter->Query.Mode = LFFilterModeQuery;
 	}
 	else
 	{
-		pFilter->Mode = LFFilterModeDirectoryTree;
-		strcpy_s(pFilter->StoreID, LFKeySize, m_StoreID);
+		pFilter->Query.Mode = LFFilterModeDirectoryTree;
+		strcpy_s(pFilter->Query.StoreID, LFKeySize, m_StoreID);
 	}
 
 	LFSearchResult* pRawFiles = LFQuery(pFilter);

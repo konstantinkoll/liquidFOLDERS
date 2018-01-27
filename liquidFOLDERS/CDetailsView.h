@@ -3,16 +3,16 @@
 //
 
 #pragma once
-#include "CGridView.h"
+#include "CFileView.h"
 
 
 // CDetailsView
 //
 
-class CDetailsView : public CGridView
+class CDetailsView : public CFileView
 {
 public:
-	CDetailsView(UINT DataSize=sizeof(GridItemData));
+	CDetailsView();
 
 protected:
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);

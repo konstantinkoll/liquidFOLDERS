@@ -66,8 +66,7 @@ protected:
 	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
 	afx_msg void OnWindowPosChanged(WINDOWPOS* lpwndpos);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg LRESULT OnTaskbarButtonCreated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLicenseActivated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnSetProgress(WPARAM wParam, LPARAM lParam);

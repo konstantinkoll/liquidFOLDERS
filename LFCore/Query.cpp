@@ -380,16 +380,16 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& Quer
 		const LFCoreAttributes* pCoreAttributes = (LFCoreAttributes*)pTableData;
 
 		// Only show trashed files when filter queries trashcan
-		if ((pCoreAttributes->Flags & LFFlagTrash) && (pFilter->QueryContext!=LFContextTrash))
+		if ((pCoreAttributes->Flags & LFFlagTrash) && (pFilter->Query.Context!=LFContextTrash))
 			return FALSE;
 
 		// Only show archived files when filter queries archive
-		if ((pCoreAttributes->Flags & LFFlagArchive) && (pFilter->QueryContext!=LFContextArchive) &&
-			(((pCoreAttributes->Flags & LFFlagTrash)==0) || (pFilter->QueryContext!=LFContextTrash)))
+		if ((pCoreAttributes->Flags & LFFlagArchive) && (pFilter->Query.Context!=LFContextArchive) &&
+			(((pCoreAttributes->Flags & LFFlagTrash)==0) || (pFilter->Query.Context!=LFContextTrash)))
 			return FALSE;
 
-		if (((pFilter->QueryContext!=LFContextAllFiles) && (pFilter->QueryContext!=LFContextAuto)) || LFIsFilterFile(*pCoreAttributes))
-			switch (pFilter->QueryContext)
+		if (((pFilter->Query.Context!=LFContextAllFiles) && (pFilter->Query.Context!=LFContextAuto)) || LFIsFilterFile(*pCoreAttributes))
+			switch (pFilter->Query.Context)
 			{
 			case LFContextFavorites:
 				if (!pCoreAttributes->Rating)
@@ -422,11 +422,11 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& Quer
 				break;
 
 			case LFContextFilters:
-				if (pFilter->Options.IsPersistent)
+				if (pFilter->IsPersistent)
 					return FALSE;
 
 			default:
-				if (pFilter->QueryContext!=LFGetUserContextID(*pCoreAttributes))
+				if (pFilter->Query.Context!=LFGetUserContextID(*pCoreAttributes))
 					return FALSE;
 			}
 	}
@@ -435,7 +435,7 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& Quer
 	const IdxTable* pTable = &IndexTables[TableID];
 	BYTE Passed = QUERYSTATE_PASSED_MASTER | QUERYSTATE_PASSED_SLAVE;
 
-	LFFilterCondition* pFilterCondition = pFilter->pConditionList;
+	LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
 	while (pFilterCondition)
 	{
 		BOOL AttributePresent = FALSE;
@@ -470,7 +470,7 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& Quer
 
 	// Search term
 	if ((QueryState & QUERYSTATE_PASSED_SEARCHTERM)==0)
-		if (pFilter->SearchTerm[0])
+		if (pFilter->Query.SearchTerm[0])
 		{
 			// Check if search term contains letters: if yes, do not compare attributes that contain letters for improved efficiency
 			assert(QUERYSTATE_SEARCHTERM_UNKNOWN==0);
@@ -479,7 +479,7 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& Quer
 			{
 				QueryState |= QUERYSTATE_SEARCHTERM_NOLETTERS;
 
-				LPCWSTR pChar = pFilter->SearchTerm;
+				LPCWSTR pChar = pFilter->Query.SearchTerm;
 				while (*pChar)
 				{
 					if (((*pChar>=L'A') && (*pChar<=L'Z')) || ((*pChar>=L'a') && (*pChar<=L'z')))
@@ -502,7 +502,7 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& Quer
 					WCHAR tmpStr[256];
 					ToString((BYTE*)pTableData+pTable->pTableEntries[a].Offset, AttrProperties[pTable->pTableEntries[a].Attr].Type, tmpStr, 256);
 
-					if (StrStrIW(tmpStr, pFilter->SearchTerm)!=NULL)
+					if (StrStrIW(tmpStr, pFilter->Query.SearchTerm)!=NULL)
 					{
 						QueryState |= QUERYSTATE_PASSED_SEARCHTERM;
 						break;
@@ -523,7 +523,7 @@ BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter, BYTE& Qu
 	assert(pItemDescriptor);
 	assert(pFilter);
 
-	LFFilterCondition* pFilterCondition = pFilter->pConditionList;
+	LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
 	while (pFilterCondition)
 	{
 		switch (pFilterCondition->VData.Attr)
@@ -571,15 +571,15 @@ void QueryStore(LPCSTR StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult
 
 __forceinline void QueryTree(LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
-	QueryStore(pFilter->StoreID, pFilter, pSearchResult);
+	QueryStore(pFilter->Query.StoreID, pFilter, pSearchResult);
 }
 
 __forceinline void QuerySearch(LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
-	if (pFilter->StoreID[0])
+	if (pFilter->Query.StoreID[0])
 	{
 		// Single store
-		QueryStore(pFilter->StoreID, pFilter, pSearchResult);
+		QueryStore(pFilter->Query.StoreID, pFilter, pSearchResult);
 	}
 	else
 	{
@@ -620,7 +620,7 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 	else
 	{
 		// Query
-		switch (pFilter->Mode)
+		switch (pFilter->Query.Mode)
 		{
 		case LFFilterModeStores:
 			QueryStores(pSearchResult);
@@ -628,15 +628,15 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 			break;
 
 		case LFFilterModeDirectoryTree:
-			if ((pFilter->StoreID[0]=='\0') && (pFilter->Mode==LFFilterModeDirectoryTree))
-				if ((pSearchResult->m_LastError=LFGetDefaultStore(pFilter->StoreID))!=LFOk)
+			if ((pFilter->Query.StoreID[0]=='\0') && (pFilter->Query.Mode==LFFilterModeDirectoryTree))
+				if ((pSearchResult->m_LastError=LFGetDefaultStore(pFilter->Query.StoreID))!=LFOk)
 					goto Finish;
 
 			QueryTree(pFilter, pSearchResult);
 
 			break;
 
-		case LFFilterModeSearch:
+		case LFFilterModeQuery:
 			QuerySearch(pFilter, pSearchResult);
 
 			break;
@@ -657,7 +657,7 @@ LFCORE_API LFSearchResult* LFQueryEx(LFFilter* pFilter, LFSearchResult* pSearchR
 {
 	DWORD Start = GetTickCount();
 
-	if ((pFilter->Mode>=LFFilterModeDirectoryTree) && (pFilter->Options.IsSubfolder) && (pSearchResult->m_RawCopy) &&
+	if ((pFilter->Query.Mode>=LFFilterModeDirectoryTree) && pFilter->IsSubfolder && pSearchResult->m_RawCopy &&
 		(First<=Last) && (First>=0) && (First<(INT)pSearchResult->m_ItemCount) && (Last>=0) && (Last<(INT)pSearchResult->m_ItemCount))
 	{
 		pSearchResult->m_LastError = LFOk;

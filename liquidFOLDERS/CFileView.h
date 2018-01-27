@@ -56,13 +56,17 @@ struct FVPersistentData
 	BOOL FocusItemSelected;
 	INT HScrollPos;
 	INT VScrollPos;
+	
 	UINT Year;
+	
 	GlobeParameters Location;
 	BOOL LocationValid;
 };
 
 
 // SendTo Item
+
+#define CHOOSESTOREID "CHOOSE"
 
 struct SendToItemData
 {
@@ -75,94 +79,42 @@ struct SendToItemData
 };
 
 
-// Item Data
-
-struct FVItemData
-{
-	RECT Rect;
-	INT RectInflateOnInvalidate;
-	BOOL Valid;
-};
-
-
-// Theming
-
-struct CachedSelectionBitmap
-{
-	HBITMAP hBitmap;
-	INT Width;
-	INT Height;
-};
-
-
 // CFileView
 //
 
-#define WM_UPDATESELECTION     WM_USER+100
-#define WM_SELECTALL           WM_USER+101
-#define WM_SELECTNONE          WM_USER+102
-#define WM_RENAMEITEM          WM_USER+103
+#define FF_ENABLEFOLDERTOOLTIPS     0x00010000
+#define FF_ENABLETOOLTIPICONS       0x00020000
 
-#define FF_ENABLESCROLLING          0x0001
-#define FF_ENABLEFOLDERTOOLTIPS     0x0002
-#define FF_ENABLETOOLTIPICONS       0x0004
-#define FF_ENABLESHIFTSELECTION     0x0008
-#define FF_ENABLELABELEDIT          0x0010
+#define FIRSTSENDTO     0xFF00
+#define LASTSENDTO      0xFFFF
 
-#define BM_REFLECTION     0
-#define BM_SELECTED       1
-
-class CFileView : public CFrontstageWnd
+class CFileView : public CAbstractFileView
 {
 public:
-	CFileView(SIZE_T DataSize=sizeof(FVItemData), UINT Flags=FF_ENABLESCROLLING | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT);
-	virtual ~CFileView();
+	CFileView(SIZE_T DataSize=sizeof(ItemData), UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, const CSize& szItemInflate=CSize(0, 0));
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
-	virtual CMenu* GetViewContextMenu();
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=0);
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
-	virtual void EditLabel(INT Index);
 
 	void UpdateViewSettings(INT Context=-1, BOOL UpdateSearchResultPending=FALSE);
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
-	INT GetFocusItem() const;
-	INT GetSelectedItem() const;
 	UINT GetSortAttribute() const;
 	static BOOL IsItemSelected(const LFItemDescriptor* pItemDescriptor);
-	void EnsureVisible(INT Index);
-	BOOL MultiSelectAllowed() const;
-	BOOL IsEditing() const;
 	void UnselectAllAfterTransaction();
+	const SendToItemData* GetSendToItemData(UINT nID) const;
 
 protected:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
-	virtual void AdjustLayout();
-	virtual LFFont* GetLabelFont() const;
-	virtual RECT GetLabelRect(INT Index) const;
-	virtual INT ItemAtPosition(CPoint point) const;
-	virtual void InvalidateItem(INT Index);
+	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual BOOL IsItemSelected(INT Index) const;
+	virtual void SelectItem(INT Index, BOOL Select=TRUE);
+	virtual void FireFocusItem() const;
 	virtual void ShowTooltip(const CPoint& point);
-	virtual CMenu* GetItemContextMenu(INT Index);
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
-	void ValidateAllItems();
-	BOOL IsItemSelected(INT Index) const;
-	BOOL HasItemsSelected() const;
-	void SelectItem(INT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
-	void SetFocusItem(INT FocusItem, BOOL ShiftSelect, BOOL Deselect=TRUE);
-	void ChangedItem(INT Index);
-	void ChangedItems();
-	RECT GetItemRect(INT Index) const;
-	CMenu* GetMoveToMenu(UINT Context) const;
-	CMenu* GetSendToMenu();
-	CString GetLabel(const LFItemDescriptor* pItemDescriptor) const;
-	BOOL BeginDragDrop();
-	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
-	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
+	CString GetItemLabel(const LFItemDescriptor* pItemDescriptor) const;
 	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
-	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed) const;
 	COLORREF SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	static UINT GetColorDotCount(const LFItemDescriptor* pItemDescriptor);
@@ -171,33 +123,10 @@ protected:
 	void DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pItemDescriptor, INT FontHeight=0, CIcons& Icons=m_DefaultColorDots) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
-	afx_msg void OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 
 	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
 	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-
-	afx_msg void OnSelectAll();
-	afx_msg void OnSelectNone();
-	afx_msg void OnSelectInvert();
-	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
-	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 
 	INT m_Context;
@@ -208,63 +137,23 @@ protected:
 	LFFilter* p_Filter;
 	INT m_SubfolderAttribute;
 	LFSearchResult* p_RawFiles;
-	LFSearchResult* p_CookedFiles;
-	SIZE_T m_DataSize;
-	LPBYTE m_pItemData;
-	UINT m_ItemDataAllocated;
-	BOOL m_Nothing;
-	UINT m_HeaderHeight;
-	UINT m_Flags;
 	BOOL m_HideFileExt;
-	BOOL m_ShowFocusRect;
-	BOOL m_AllowMultiSelect;
-	INT m_FocusItem;
-	INT m_EditItem;
-	INT m_SelectionAnchor;
-	INT m_ScrollWidth;
-	INT m_ScrollHeight;
-	INT m_HScrollPos;
-	INT m_VScrollPos;
-	INT m_HScrollMax;
-	INT m_VScrollMax;
-	INT m_RowHeight;
-	INT m_LargeFontHeight;
-	INT m_DefaultFontHeight;
-	INT m_SmallFontHeight;
 	static CIcons m_LargeColorDots;
 	static CIcons m_DefaultColorDots;
-	BOOL m_BeginDragDrop;
-	CPoint m_DragPos;
-	WCHAR m_TypingBuffer[256];
-	DWORD m_TypingTicks;
 
 private:
 	void SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select=TRUE);
-	void AppendMoveToItem(CMenu* pMenu, UINT FromContext, UINT ToContext) const;
-	void AppendSendToItem(CMenu* pMenu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
-	void ResetScrollbars();
-	void AdjustScrollbars();
-	void DestroyEdit(BOOL Accept=FALSE);
+	void AppendMoveToItem(CMenu& Menu, UINT FromContext, UINT ToContext) const;
+	void GetMoveToMenu(CMenu& Menu) const;
+	void AppendSendToItem(CMenu& Menu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
+	void GetSendToMenu(CMenu& Menu);
 
-	CachedSelectionBitmap m_Bitmaps[2];
-	CEdit* m_pWndEdit;
 	SendToItemData m_SendToItems[256];
 };
-
 
 inline UINT CFileView::GetSortAttribute() const
 {
 	return m_ContextViewSettings.SortBy;
-}
-
-inline BOOL CFileView::MultiSelectAllowed() const
-{
-	return m_AllowMultiSelect;
-}
-
-inline BOOL CFileView::IsEditing() const
-{
-	return (m_pWndEdit!=NULL);
 }
 
 inline BOOL CFileView::IsItemSelected(const LFItemDescriptor* pItemDescriptor)
@@ -272,29 +161,6 @@ inline BOOL CFileView::IsItemSelected(const LFItemDescriptor* pItemDescriptor)
 	assert(pItemDescriptor);
 
 	return pItemDescriptor->Type & LFTypeSelected;
-}
-
-inline BOOL CFileView::IsItemSelected(INT Index) const
-{
-	assert(p_CookedFiles);
-	assert(Index>=0);
-	assert(Index<(INT)p_CookedFiles->m_ItemCount);
-
-	return IsItemSelected((*p_CookedFiles)[Index]);
-}
-
-inline void CFileView::ChangedItem(INT Index)
-{
-	InvalidateItem(Index);
-
-	GetParent()->SendMessage(WM_UPDATESELECTION);
-}
-
-inline void CFileView::ChangedItems()
-{
-	Invalidate();
-
-	GetParent()->SendMessage(WM_UPDATESELECTION);
 }
 
 inline void CFileView::SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select)
@@ -311,15 +177,6 @@ inline void CFileView::SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select
 	}
 }
 
-inline INT CFileView::GetColorDotWidth(INT Index, const CIcons& Icons) const
-{
-	assert(p_CookedFiles);
-	assert(Index>=0);
-	assert(Index<(INT)p_CookedFiles->m_ItemCount);
-
-	return GetColorDotWidth((*p_CookedFiles)[Index], Icons);
-}
-
 inline COLORREF CFileView::SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
 {
 	if (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
@@ -334,4 +191,18 @@ inline COLORREF CFileView::SetDarkTextColor(CDC& dc, const LFItemDescriptor* pIt
 		return dc.SetTextColor(Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT));
 
 	return dc.GetTextColor();
+}
+
+inline INT CFileView::GetColorDotWidth(INT Index, const CIcons& Icons) const
+{
+	assert(p_CookedFiles);
+	assert(Index>=0);
+	assert(Index<m_ItemCount);
+
+	return GetColorDotWidth((*p_CookedFiles)[Index], Icons);
+}
+
+inline const SendToItemData* CFileView::GetSendToItemData(UINT nID) const
+{
+	return (nID>=FIRSTSENDTO) && (nID<=LASTSENDTO) ? &m_SendToItems[nID-FIRSTSENDTO] : NULL;
 }

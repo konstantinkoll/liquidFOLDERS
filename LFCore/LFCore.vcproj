@@ -778,6 +778,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\APP_Picfx.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\APP_Pinterest.ico"
 				>
 			</File>
@@ -1054,19 +1058,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_Facebook.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\STR_Flickr.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\STR_iCloud.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\STR_Instagram.ico"
 				>
 			</File>
 			<File
@@ -1082,18 +1074,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_Pinterest.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\STR_SoundCloud.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\STR_Twitter.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\STR_USB.ico"
 				>
 			</File>
@@ -1102,7 +1082,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_YouTube.ico"
+				RelativePath=".\res\Template.ico"
 				>
 			</File>
 		</Filter>

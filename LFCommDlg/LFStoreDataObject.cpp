@@ -224,7 +224,7 @@ STDMETHODIMP LFStoreDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC*
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP LFStoreDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, DWORD* /*pdwConnection*/)
+STDMETHODIMP LFStoreDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, LPDWORD /*pdwConnection*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;;
 }

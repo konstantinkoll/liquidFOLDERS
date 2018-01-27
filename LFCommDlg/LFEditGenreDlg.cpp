@@ -53,16 +53,16 @@ BOOL LFEditGenreDlg::InitDialog()
 	CWaitCursor csr;
 
 	LFFilter* pFilter = LFAllocFilter();
-	pFilter->QueryContext = LFContextMusic;
+	pFilter->Query.Context = LFContextMusic;
 
 	if (!m_StoreID[0])
 	{
-		pFilter->Mode = LFFilterModeSearch;
+		pFilter->Query.Mode = LFFilterModeQuery;
 	}
 	else
 	{
-		pFilter->Mode = LFFilterModeDirectoryTree;
-		strcpy_s(pFilter->StoreID, LFKeySize, m_StoreID);
+		pFilter->Query.Mode = LFFilterModeDirectoryTree;
+		strcpy_s(pFilter->Query.StoreID, LFKeySize, m_StoreID);
 	}
 
 	// Query

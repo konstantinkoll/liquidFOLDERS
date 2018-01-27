@@ -118,12 +118,25 @@ void CFileDropWnd::ShowTooltip(const CPoint& point)
 	theApp.ShowTooltip(this, point, m_Store);
 }
 
+BOOL CFileDropWnd::GetContextMenu(CMenu& Menu, INT Index)
+{
+	if (Index!=-1)
+	{
+		Menu.LoadMenu(IDM_STORE);
+
+		Menu.InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+		Menu.InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORE_OPENNEWWINDOW, CString((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW));
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 
 BEGIN_MESSAGE_MAP(CFileDropWnd, CBackstageWnd)
 	ON_WM_CREATE()
 	ON_WM_NCLBUTTONDBLCLK()
-	ON_WM_RBUTTONUP()
-	ON_WM_CONTEXTMENU()
 	ON_WM_SYSCOMMAND()
 	ON_MESSAGE(WM_OPENFILEDROP, OnOpenFileDrop)
 
@@ -176,51 +189,6 @@ void CFileDropWnd::OnNcLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (m_HoverItem>=0)
 		OnStoreOpenNewWindow();
-}
-
-void CFileDropWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
-{
-	ClientToScreen(&point);
-	OnContextMenu(this, point);
-}
-
-void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
-{
-	if ((pos.x<0) || (pos.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		pos.x = (rect.left+rect.right)/2;
-		pos.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&pos);
-	}
-
-	CPoint point(pos);
-	ScreenToClient(&point);
-
-	if (m_rectIcon.PtInRect(point))
-	{
-		// Store
-		CMenu Menu;
-		ENSURE(Menu.LoadMenu(IDM_STORE));
-
-		CMenu* pPopup = Menu.GetSubMenu(0);
-		ASSERT_VALID(pPopup);
-
-		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORE_OPENNEWWINDOW, CString((LPCSTR)IDS_CONTEXTMENU_OPENNEWWINDOW));
-
-		pPopup->SetDefaultItem(0, TRUE);
-		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
-
-		return;
-	}
-
-	// System menu
-	CMenu* pMenu = GetSystemMenu(FALSE);
-	if (pMenu)
-		SendMessage(WM_SYSCOMMAND, (WPARAM)pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, pos.x, pos.y, this));
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
@@ -281,8 +249,7 @@ void CFileDropWnd::OnStoreDelete()
 
 void CFileDropWnd::OnStoreProperties()
 {
-	LFStorePropertiesDlg dlg(m_Store.StoreID, this);
-	dlg.DoModal();
+	LFStorePropertiesDlg(m_Store.StoreID, this).DoModal();
 }
 
 void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)

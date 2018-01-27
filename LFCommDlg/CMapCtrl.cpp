@@ -39,13 +39,6 @@ void CMapCtrl::PreSubclassWindow()
 {
 	CFrontstageWnd::PreSubclassWindow();
 
-	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
-	if (!pThreadState->m_pWndInit)
-		Init();
-}
-
-void CMapCtrl::Init()
-{
 	SetTimer(100, 500, NULL);
 }
 
@@ -67,10 +60,11 @@ void CMapCtrl::ShowTooltip(const CPoint& point)
 	}
 }
 
-void CMapCtrl::SetMenu(UINT BackgroundMenuID, BOOL HighlightFirst)
+BOOL CMapCtrl::GetContextMenu(CMenu& Menu, INT /*Index*/)
 {
-	m_BackgroundMenuID = BackgroundMenuID;
-	m_HighlightFirst = HighlightFirst;
+	Menu.LoadMenu(IDM_MAPCTRL);
+
+	return FALSE;
 }
 
 void CMapCtrl::LocationFromPoint(const CPoint& point, DOUBLE& Latitude, DOUBLE& Longitude) const
@@ -100,33 +94,31 @@ void CMapCtrl::PointFromLocation(INT& PosX, INT& PosY) const
 	PosY = (INT)(m_Location.Latitude+90)*rect.Height()/180;
 }
 
+void CMapCtrl::SendNotifyMessage()
+{
+	// Reset blink
+	m_Blink = TRUE;
+	m_RemainVisible = 1;
+	Invalidate();
+
+	// Send message
+	const NM_GPSDATA nmHdr = { { m_hWnd, GetDlgCtrlID(), MAP_UPDATE_LOCATION }, &m_Location };
+
+	GetOwner()->SendMessage(WM_NOTIFY, nmHdr.hdr.idFrom, (LPARAM)&nmHdr);
+}
+
 void CMapCtrl::SetLocation(const CPoint& point)
 {
 	LocationFromPoint(point, m_Location.Latitude, m_Location.Longitude);
 
-	SendUpdateMessage();
+	SendNotifyMessage();
 }
 
 void CMapCtrl::SetLocation(const LFGeoCoordinates& Location)
 {
 	m_Location = Location;
 
-	SendUpdateMessage();
-}
-
-void CMapCtrl::SendUpdateMessage()
-{
-	m_Blink = TRUE;
-	m_RemainVisible = 1;
-	Invalidate();
-
-	NM_GPSDATA tag;
-	tag.hdr.code = MAP_UPDATE_LOCATION;
-	tag.hdr.hwndFrom = m_hWnd;
-	tag.hdr.idFrom = GetDlgCtrlID();
-	tag.pLocation = &m_Location;
-
-	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+	SendNotifyMessage();
 }
 
 void CMapCtrl::PrepareBitmap(const CRect& rect)
@@ -159,27 +151,13 @@ void CMapCtrl::PrepareBitmap(const CRect& rect)
 
 
 BEGIN_MESSAGE_MAP(CMapCtrl, CFrontstageWnd)
-	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_NCCALCSIZE()
-	ON_WM_NCPAINT()
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_TIMER()
-	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
-
-INT CMapCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	Init();
-
-	return 0;
-}
 
 void CMapCtrl::OnDestroy()
 {
@@ -188,19 +166,6 @@ void CMapCtrl::OnDestroy()
 	DeleteObject(hBackgroundBrush);
 
 	CFrontstageWnd::OnDestroy();
-}
-
-void CMapCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
-{
-	lpncsp->rgrc[0].top += 2;
-	lpncsp->rgrc[0].left += 2;
-	lpncsp->rgrc[0].bottom -= 2;
-	lpncsp->rgrc[0].right -= 2;
-}
-
-void CMapCtrl::OnNcPaint()
-{
-	DrawControlBorder(this);
 }
 
 void CMapCtrl::OnPaint()
@@ -251,7 +216,7 @@ void CMapCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			m_Location.Latitude = m_Location.Longitude = 0;
 
-			SendUpdateMessage();
+			SendNotifyMessage();
 		}
 
 		break;
@@ -286,41 +251,4 @@ void CMapCtrl::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-void CMapCtrl::OnContextMenu(CWnd* pWnd, CPoint pos)
-{
-	if (pWnd!=this)
-		return;
-
-	if ((pos.x<0) || (pos.y<0))
-	{
-		INT PosX;
-		INT PosY;
-		PointFromLocation(PosX, PosY);
-
-		pos.x = PosX;
-		pos.y = PosY;
-	}
-	else
-	{
-		ScreenToClient(&pos);
-	}
-
-	if (m_BackgroundMenuID)
-	{
-		ClientToScreen(&pos);
-
-		CMenu Menu;
-		Menu.LoadMenu(m_BackgroundMenuID);
-		ASSERT_VALID(&Menu);
-
-		CMenu* pPopup = Menu.GetSubMenu(0);
-		ASSERT_VALID(pPopup);
-
-		if (m_HighlightFirst)
-			pPopup->SetDefaultItem(0, TRUE);
-
-		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
-	}
 }

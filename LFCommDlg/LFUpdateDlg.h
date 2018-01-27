@@ -34,7 +34,6 @@ protected:
 	void UpdatePosition();
 	BOOL AddTrayIcon() const;
 	BOOL RemoveTrayIcon() const;
-	void ShowMenu();
 	void EndDialog(INT nResult);
 
 	afx_msg void OnDestroy();
@@ -52,6 +51,7 @@ protected:
 private:
 	void UpdateDownloadButton();
 	void CheckInternetConnection();
+	void ShowMenu();
 
 	Bitmap* p_Logo;
 	CIcons m_UpdateIcons;

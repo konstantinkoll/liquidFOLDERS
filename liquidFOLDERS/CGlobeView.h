@@ -11,7 +11,7 @@
 
 struct GlobeItemData
 {
-	FVItemData Hdr;
+	ItemData Hdr;
 	GLfloat World[3];
 	INT ScreenPoint[2];
 	GLfloat Alpha;
@@ -27,8 +27,8 @@ class CGlobeView : public CFileView
 public:
 	CGlobeView();
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=CS_DBLCLKS);
-	virtual CMenu* GetViewContextMenu();
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL);
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 
 protected:
@@ -36,7 +36,8 @@ protected:
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void ShowTooltip(const CPoint& point);
-	virtual CMenu* GetItemContextMenu(INT Index);
+	virtual void GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL Themed) const;
+	virtual BOOL DrawNothing() const;
 
 	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
@@ -89,7 +90,7 @@ private:
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
 	void WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr);
-	void RenderScene(BOOL Themed);
+	void RenderScene();
 
 	static const GLcolor m_lAmbient;
 	static const GLcolor m_lDiffuse;

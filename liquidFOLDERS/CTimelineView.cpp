@@ -22,13 +22,13 @@
 #define THUMBOFFSETY       -1
 #define MAXFILELIST        10
 
-#define GetItemData(Index)       ((TimelineItemData*)(m_pItemData+(Index)*m_DataSize))
+#define GetItemData(Index)       ((TimelineItemData*)CFileView::GetItemData(Index))
 #define DrawCollectionIcon()     theApp.m_CoreImageListSmall.DrawEx(&dc, pData->CollectionIconID-1, CPoint(rect.left, rectAttr.top-(m_DefaultFontHeight-16)/2), CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
 const ARGB CTimelineView::m_BevelColors[8] = { 0x80FFFFFF, 0xFF7A7A7C, 0xFFA7A8AA, 0xFFBEBFC2, 0xFFCACBCD, 0xFFCACBCD, 0xFF7A7A7C, 0x80FFFFFF };
 
 CTimelineView::CTimelineView()
-	: CFileView(sizeof(TimelineItemData), FF_ENABLESCROLLING | FF_ENABLESHIFTSELECTION | FF_ENABLELABELEDIT)
+	: CFileView(sizeof(TimelineItemData), FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT, CSize(ARROWSIZE+1, 0))
 {
 }
 
@@ -120,7 +120,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	if (p_CookedFiles)
-		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+		for (INT a=0; a<m_ItemCount; a++)
 		{
 			TimelineItemData* pData = GetItemData(a);
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
@@ -276,15 +276,16 @@ Restart:
 
 	WORD Year = st.wYear;
 
-	m_Categories.m_ItemCount = 0;
+	m_ItemCategories.m_ItemCount = 0;
 	m_TwoColumns = m_ScrollWidth-2*GUTTER-MIDDLE-7*CARDPADDING>=512;
 	m_ItemWidth = m_TwoColumns ? (m_ScrollWidth-MIDDLE)/2-GUTTER : m_ScrollWidth-2*GUTTER;
 	m_PreviewColumns = (m_ItemWidth-2*CARDPADDING+THUMBMARGINX+4)/(128+THUMBMARGINX);
 
-	INT CurRow[2] = { GUTTER+2, GUTTER+2 };
-	INT LastRow = -10;
+	INT CurTop[2] = { GUTTER+2, GUTTER+2 };
+	INT LastTop = -10;
+	INT Row = 0;
 
-	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
+	for (INT a=0; a<m_ItemCount; a++)
 	{
 		TimelineItemData* pData = GetItemData(a);
 
@@ -357,46 +358,53 @@ Restart:
 			{
 				Year = pData->Year;
 
-				ItemCategory ic;
-				ZeroMemory(&ic, sizeof(ic));
+				ItemCategoryData Data;
+				ZeroMemory(&Data, sizeof(Data));
 
-				swprintf_s(ic.Caption, 5, L"%u", (UINT)Year);
-				ic.Rect.left = m_ScrollWidth/2-m_LabelWidth/2;
-				ic.Rect.right = ic.Rect.left+m_LabelWidth;
-				ic.Rect.top = max(CurRow[0], CurRow[1]);
-				ic.Rect.bottom = ic.Rect.top+2*CARDPADDING+theApp.m_SmallBoldFont.GetFontHeight()-2;
+				swprintf_s(Data.Caption, 256, L"%u", (UINT)Year);
+				Data.Rect.left = m_ScrollWidth/2-m_LabelWidth/2;
+				Data.Rect.right = Data.Rect.left+m_LabelWidth;
+				Data.Rect.top = max(CurTop[0], CurTop[1]);
+				Data.Rect.bottom = Data.Rect.top+2*CARDPADDING+theApp.m_SmallBoldFont.GetFontHeight()-2;
 
-				m_Categories.AddItem(ic);
+				m_ItemCategories.AddItem(Data);
 
-				CurRow[0] = CurRow[1] = ic.Rect.bottom+GUTTER;
+				CurTop[0] = CurTop[1] = Data.Rect.bottom+GUTTER;
 			}
 
 			// Arrow
-			const INT Column = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
+			const INT Column = m_TwoColumns ? CurTop[0]<=CurTop[1] ? 0 : 1 : 0;
 			pData->Arrow = m_TwoColumns ? 1-(BYTE)Column*2 : 0;
 			pData->ArrowOffs = 0;
-			pData->Hdr.RectInflateOnInvalidate = pData->Arrow ? ARROWSIZE+1 : 0;
 
-			if (abs(CurRow[Column]-LastRow)<2*ARROWSIZE)
+			if (abs(CurTop[Column]-LastTop)<2*ARROWSIZE)
 				if (Height>m_CaptionHeight+CARDPADDING-2*ARROWSIZE+2*GUTTER)
 				{
 					pData->ArrowOffs = 2*GUTTER;
 				}
 				else
 				{
-					CurRow[Column] += 2*GUTTER;
+					CurTop[Column] += 2*GUTTER;
 				}
 
 			// Place card
 			pData->Hdr.Rect.left = (Column==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
-			pData->Hdr.Rect.top = CurRow[Column];
+			pData->Hdr.Rect.top = CurTop[Column];
 			pData->Hdr.Rect.right = pData->Hdr.Rect.left+m_ItemWidth;
 			pData->Hdr.Rect.bottom = pData->Hdr.Rect.top+Height;
 
-			LastRow = CurRow[Column];
-			CurRow[Column] += Height+GUTTER+1;
+			if (LastTop!=CurTop[Column])
+			{
+				LastTop = CurTop[Column];
+				Row++;
+			}
 
-			if ((CurRow[Column]>rect.Height()) && !HasScrollbars)
+			pData->Hdr.Row = Row;
+			pData->Hdr.Column = Column;
+
+			CurTop[Column] += Height+GUTTER+1;
+
+			if ((CurTop[Column]>rect.Height()) && !HasScrollbars)
 			{
 				m_ScrollWidth -= GetSystemMetrics(SM_CXVSCROLL);
 				HasScrollbars = TRUE;
@@ -406,9 +414,174 @@ Restart:
 		}
 	}
 
-	m_ScrollHeight = max(CurRow[0], CurRow[1]);
+	m_ScrollHeight = max(CurTop[0], CurTop[1]);
 
 	CFileView::AdjustLayout();
+}
+
+INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
+{
+	CRect rect;
+	GetClientRect(rect);
+
+	INT Item = m_FocusItem;
+	const ItemData* pData = (Item==-1) ? NULL : &GetItemData(Item)->Hdr;
+	const INT Top = pData ? pData->Rect.top : 0;
+	const INT Bottom = pData ? pData->Rect.bottom : 0;
+	const INT Column = pData ? pData->Column : 0;
+
+	switch (nChar)
+	{
+	case VK_LEFT:
+		for (INT a=Item-1; a>=0; a--)
+		{
+			const TimelineItemData* pData = GetItemData(a);
+			if ((pData->Hdr.Column<Column) && pData->Hdr.Valid)
+			{
+				Item = a;
+
+				break;
+			}
+		}
+
+		break;
+
+	case VK_RIGHT:
+		for (INT a=Item+1; a<m_ItemCount; a++)
+		{
+			const TimelineItemData* pData = GetItemData(a);
+			if ((pData->Hdr.Column>Column) && pData->Hdr.Valid)
+			{
+				Item = a;
+
+				break;
+			}
+		}
+
+		for (INT a=Item; a>=0; a--)
+		{
+			const TimelineItemData* pData = GetItemData(a);
+			if ((pData->Hdr.Column>Column) && pData->Hdr.Valid)
+			{
+				Item = a;
+
+				break;
+			}
+		}
+
+		break;
+
+	case VK_UP:
+		for (INT a=Item-1; a>=0; a--)
+		{
+			const TimelineItemData* pData = GetItemData(a);
+			if ((pData->Hdr.Column==Column) && pData->Hdr.Valid)
+			{
+				Item = a;
+
+				break;
+			}
+		}
+
+		break;
+
+	case VK_PRIOR:
+		for (INT a=Item-1; a>=0; a--)
+		{
+			const TimelineItemData* pData = GetItemData(a);
+			if ((pData->Hdr.Column<=Column) && pData->Hdr.Valid)
+			{
+				Item = a;
+
+				if (pData->Hdr.Rect.top<=Bottom-rect.Height())
+					break;
+			}
+		}
+
+		break;
+
+	case VK_DOWN:
+		for (INT a=Item+1; a<m_ItemCount; a++)
+		{
+			const TimelineItemData* pData = GetItemData(a);
+			if ((pData->Hdr.Column==Column) && pData->Hdr.Valid)
+			{
+				Item = a;
+				break;
+			}
+		}
+
+		break;
+
+	case VK_NEXT:
+		for (INT a=Item+1; a<m_ItemCount; a++)
+		{
+			const TimelineItemData* pData = GetItemData(a);
+			if ((pData->Hdr.Column>=Column) && pData->Hdr.Valid)
+			{
+				Item = a;
+
+				if (pData->Hdr.Rect.bottom>=Top+rect.Height())
+					break;
+			}
+		}
+
+		break;
+
+	case VK_HOME:
+		if (Control)
+		{
+			for (INT a=0; a<m_ItemCount; a++)
+				if (GetItemData(a)->Hdr.Valid)
+				{
+					Item = a;
+
+					break;
+				}
+		}
+		else
+			for (INT a=Item-1; a>=0; a--)
+			{
+				const TimelineItemData* pData = GetItemData(a);
+				if (pData->Hdr.Valid)
+					if (pData->Hdr.Column<Column)
+					{
+						Item = a;
+
+						break;
+					}
+			}
+
+		break;
+
+	case VK_END:
+		if (Control)
+		{
+			for (INT a=m_ItemCount-1; a>=0; a--)
+				if (GetItemData(a)->Hdr.Valid)
+				{
+					Item = a;
+
+					break;
+				}
+		}
+		else
+			for (INT a=Item+1; a<m_ItemCount; a++)
+			{
+				const TimelineItemData* pData = GetItemData(a);
+				if (pData->Hdr.Valid)
+					if (pData->Hdr.Column>Column)
+					{
+						Item = a;
+
+						break;
+					}
+			}
+
+		break;
+	}
+
+	return Item;
 }
 
 RECT CTimelineView::GetLabelRect(INT Index) const
@@ -423,7 +596,7 @@ RECT CTimelineView::GetLabelRect(INT Index) const
 	return rect;
 }
 
-void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategory* pItemCategory, BOOL Themed)
+void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed)
 {
 	CRect rectText(rectCategory);
 
@@ -477,7 +650,7 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, Ite
 		rectText.OffsetRect(1, 0);
 
 		COLORREF OldColor = dc.SetTextColor(0x7C7A7A);
-		dc.DrawText(pItemCategory->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
+		dc.DrawText(pItemCategoryData->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 
 		rectText.OffsetRect(-1, -1);
 
@@ -502,7 +675,7 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, Ite
 	}
 
 	// Text
-	dc.DrawText(pItemCategory->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
+	dc.DrawText(pItemCategoryData->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
 
 void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
@@ -572,7 +745,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	}
 	else
 	{
-		dc.DrawText(GetLabel(pItemDescriptor), rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+		dc.DrawText(GetItemLabel(pItemDescriptor), rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
 
 	rectCaption.top = rectCaption.bottom+CARDPADDING/3;
@@ -729,7 +902,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
 				if (!UsePreview((*p_RawFiles)[a]))
 				{
-					dc.DrawText(GetLabel((*p_RawFiles)[a]), rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+					dc.DrawText(GetItemLabel((*p_RawFiles)[a]), rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 
 					rect.top += m_SmallFontHeight;
 
@@ -760,23 +933,69 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	}
 }
 
-void CTimelineView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
+void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed)
 {
-	if (IsCtrlThemed())
+	RECT rectIntersect;
+
+	// Timeline
+	if (m_TwoColumns)
+		if (Themed)
+		{
+			const INT x = m_ScrollWidth/2-4;
+
+			for (UINT a=0; a<8; a++)
+			{
+				SolidBrush brush(Color((ARGB)m_BevelColors[a]));
+				g.FillRectangle(&brush, x+a, 0, 1, rect.Height());
+			}
+		}
+		else
+		{
+			dc.FillSolidRect(rect.Width()/2-3, 0, 6, rect.Height(), GetSysColor(COLOR_3DSHADOW));
+		}
+
+	// Categories
+	CFont* pOldFont = dc.SelectObject(&theApp.m_SmallBoldFont);
+
+	dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
+
+	for (UINT a=0; a<m_ItemCategories.m_ItemCount; a++)
 	{
-		Invalidate();
+		CRect rect(m_ItemCategories[a].Rect);
+		rect.OffsetRect(0, -m_VScrollPos);
+		rect.top -= BLENDHEIGHT;
+
+		if (IntersectRect(&rectIntersect, rect, rectUpdate))
+		{
+			rect.top += BLENDHEIGHT;
+
+			DrawCategory(dc, g, rect, &m_ItemCategories[a], Themed);
+		}
 	}
-	else
+
+	dc.SelectObject(pOldFont);
+
+	g.SetPixelOffsetMode(PixelOffsetModeNone);
+
+	// Items
+	for (INT a=0; a<m_ItemCount; a++)
 	{
-		CFileView::ScrollWindow(dx, dy, lpRect, lpClipRect);
+		TimelineItemData* pData = GetItemData(a);
+
+		if (pData->Hdr.Valid)
+		{
+			CRect rect(pData->Hdr.Rect);
+			rect.OffsetRect(0, -m_VScrollPos);
+
+			if (IntersectRect(&rectIntersect, rect, rectUpdate))
+				DrawItem(dc, g, rect, a, Themed);
+		}
 	}
 }
 
 
 BEGIN_MESSAGE_MAP(CTimelineView, CFileView)
 	ON_WM_CREATE()
-	ON_WM_PAINT()
-	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -792,289 +1011,4 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_LabelWidth = (theApp.m_SmallBoldFont.GetTextExtent(_T("8888")).cx+2*CARDPADDING) | 1;
 
 	return 0;
-}
-
-void CTimelineView::OnPaint()
-{
-	CRect rectUpdate;
-	GetUpdateRect(rectUpdate);
-
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	Graphics g(dc);
-
-	// Background
-	const BOOL Themed = IsCtrlThemed();
-
-	DrawCardBackground(dc, g, rect, Themed);
-
-	// Items
-	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-
-	if (!DrawNothing(dc, rect, Themed))
-	{
-		RECT rectIntersect;
-
-		// Timeline
-		if (m_TwoColumns)
-			if (Themed)
-			{
-				const INT x = m_ScrollWidth/2-4;
-
-				for (UINT a=0; a<8; a++)
-				{
-					SolidBrush brush(Color((ARGB)m_BevelColors[a]));
-					g.FillRectangle(&brush, x+a, 0, 1, rect.Height());
-				}
-			}
-			else
-			{
-				dc.FillSolidRect(rect.Width()/2-3, 0, 6, rect.Height(), GetSysColor(COLOR_3DSHADOW));
-			}
-
-		// Categories
-		CFont* pOldFont = dc.SelectObject(&theApp.m_SmallBoldFont);
-
-		dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
-
-		for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-		{
-			CRect rect(m_Categories[a].Rect);
-			rect.OffsetRect(0, -m_VScrollPos);
-			rect.top -= BLENDHEIGHT;
-
-			if (IntersectRect(&rectIntersect, rect, rectUpdate))
-			{
-				rect.top += BLENDHEIGHT;
-
-				DrawCategory(dc, g, rect, &m_Categories[a], Themed);
-			}
-		}
-
-		dc.SelectObject(pOldFont);
-
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
-
-		// Items
-		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-		{
-			TimelineItemData* pData = GetItemData(a);
-
-			if (pData->Hdr.Valid)
-			{
-				CRect rect(pData->Hdr.Rect);
-				rect.OffsetRect(0, -m_VScrollPos);
-
-				if (IntersectRect(&rectIntersect, rect, rectUpdate))
-					DrawItem(dc, g, rect, a, Themed);
-			}
-		}
-	}
-
-	DrawWindowEdge(g, Themed);
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(pOldFont);
-	dc.SelectObject(pOldBitmap);
-}
-
-void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	CFileView::OnKeyDown(nChar, nRepCnt, nFlags);
-
-	if (p_CookedFiles)
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		INT Item = m_FocusItem;
-		INT Left = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.left;
-		INT Right = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.right;
-		INT Top = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.top;
-		INT Bottom = (Item==-1) ? 0 : GetItemData(Item)->Hdr.Rect.bottom;
-
-		switch (nChar)
-		{
-		case VK_LEFT:
-			for (INT a=Item-1; a>=0; a--)
-			{
-				TimelineItemData* pData = GetItemData(a);
-
-				if ((pData->Hdr.Rect.right<Left) && pData->Hdr.Valid)
-				{
-					Item = a;
-
-					break;
-				}
-			}
-
-			break;
-
-		case VK_RIGHT:
-			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			{
-				TimelineItemData* pData = GetItemData(a);
-
-				if ((pData->Hdr.Rect.left>Right) && pData->Hdr.Valid)
-				{
-					Item = a;
-
-					break;
-				}
-			}
-
-			for (INT a=Item; a>=0; a--)
-			{
-				TimelineItemData* pData = GetItemData(a);
-
-				if ((pData->Hdr.Rect.left>Right) && pData->Hdr.Valid)
-				{
-					Item = a;
-
-					break;
-				}
-			}
-
-			break;
-
-		case VK_UP:
-			for (INT a=Item-1; a>=0; a--)
-			{
-				TimelineItemData* pData = GetItemData(a);
-
-				if ((pData->Hdr.Rect.left==Left) && pData->Hdr.Valid)
-				{
-					Item = a;
-
-					break;
-				}
-			}
-
-			break;
-
-		case VK_PRIOR:
-			for (INT a=Item-1; a>=0; a--)
-			{
-				TimelineItemData* pData = GetItemData(a);
-
-				if ((pData->Hdr.Rect.left<=Left) && pData->Hdr.Valid)
-				{
-					Item = a;
-
-					if (pData->Hdr.Rect.top<=Bottom-rect.Height())
-						break;
-				}
-			}
-
-			break;
-
-		case VK_DOWN:
-			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			{
-				TimelineItemData* pData = GetItemData(a);
-
-				if ((pData->Hdr.Rect.left==Left) && pData->Hdr.Valid)
-				{
-					Item = a;
-					break;
-				}
-			}
-
-			break;
-
-		case VK_NEXT:
-			for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			{
-				TimelineItemData* pData = GetItemData(a);
-
-				if ((pData->Hdr.Rect.right>=Right) && pData->Hdr.Valid)
-				{
-					Item = a;
-
-					if (pData->Hdr.Rect.bottom>=Top+rect.Height())
-						break;
-				}
-			}
-
-			break;
-
-		case VK_HOME:
-			if (GetKeyState(VK_CONTROL)<0)
-			{
-				for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
-					if (GetItemData(a)->Hdr.Valid)
-					{
-						Item = a;
-
-						break;
-					}
-			}
-			else
-				for (INT a=Item-1; a>=0; a--)
-				{
-					TimelineItemData* pData = GetItemData(a);
-
-					if (pData->Hdr.Valid)
-						if (pData->Hdr.Rect.right<Left)
-						{
-							Item = a;
-
-							break;
-						}
-				}
-
-			break;
-
-		case VK_END:
-			if (GetKeyState(VK_CONTROL)<0)
-			{
-				for (INT a=(INT)p_CookedFiles->m_ItemCount-1; a>=0; a--)
-					if (GetItemData(a)->Hdr.Valid)
-					{
-						Item = a;
-
-						break;
-					}
-			}
-			else
-				for (INT a=Item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
-				{
-					TimelineItemData* pData = GetItemData(a);
-
-					if (pData->Hdr.Valid)
-						if (pData->Hdr.Rect.left>Right)
-						{
-							Item = a;
-
-							break;
-						}
-				}
-
-			break;
-		}
-
-		if (Item!=m_FocusItem)
-		{
-			m_ShowFocusRect = TRUE;
-			SetFocusItem(Item, GetKeyState(VK_SHIFT)<0);
-
-			CPoint pt;
-			GetCursorPos(&pt);
-			ScreenToClient(&pt);
-
-			OnMouseMove(0, pt);
-		}
-	}
 }

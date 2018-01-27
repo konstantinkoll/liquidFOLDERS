@@ -551,13 +551,16 @@ void CExplorerList::OnContextMenu(CWnd* pWnd, CPoint pos)
 		Menu.LoadMenu(MenuID);
 		ASSERT_VALID(&Menu);
 
-		CMenu* pPopup = Menu.GetSubMenu(0);
-		ASSERT_VALID(pPopup);
+		if ((pInfo.iItem!=-1) && m_HighlightFirst)
+			Menu.SetDefaultItem(0, TRUE);
 
-		if ((pInfo.iItem!=-1) && (m_HighlightFirst))
-			pPopup->SetDefaultItem(0, TRUE);
+		CMenu MenuPopup;
+		if (MenuPopup.CreatePopupMenu())
+		{
+			MenuPopup.InsertMenu(0, MF_POPUP, (UINT_PTR)(HMENU)Menu);
 
-		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
+			Menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
+		}
 	}
 }
 

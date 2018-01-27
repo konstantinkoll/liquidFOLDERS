@@ -33,10 +33,10 @@ void CTooltipHeader::PreSubclassWindow()
 
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	if (!pThreadState->m_pWndInit)
-		Init();
+		InitControl();
 }
 
-void CTooltipHeader::Init()
+void CTooltipHeader::InitControl()
 {
 	m_SortIndicators.Load(IDB_SORTINDICATORS, CSize(7, 4));
 
@@ -113,7 +113,7 @@ INT CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CHeaderCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	Init();
+	InitControl();
 
 	return 0;
 }

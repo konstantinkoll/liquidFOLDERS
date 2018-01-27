@@ -48,13 +48,6 @@ void CPropertyEdit::PreSubclassWindow()
 {
 	CPropertyHolder::PreSubclassWindow();
 
-	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
-	if (!pThreadState->m_pWndInit)
-		Init();
-}
-
-void CPropertyEdit::Init()
-{
 	ModifyStyle(0, WS_CLIPCHILDREN);
 
 	m_wndButton.Create(_T("..."), this, 2);
@@ -150,6 +143,31 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 	}
 }
 
+void CPropertyEdit::DrawStage(CDC& dc, Graphics& /*g*/, const CRect& rect, const CRect& /*rectUpdate*/, BOOL /*Themed*/)
+{
+	if (!m_pWndEdit)
+	{
+		const BOOL Focused = (GetFocus()==this);
+
+		CRect rectValue(rect.left, rect.top, rect.right-m_ButtonWidth, rect.bottom);
+		dc.FillSolidRect(rectValue, GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_WINDOW));
+
+		if (m_pProperty)
+		{
+			dc.SelectStockObject(DEFAULT_GUI_FONT);
+			dc.SetTextColor(GetSysColor(Focused ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
+
+			m_pProperty->DrawValue(dc, CRect(rectValue.left+PADDING, rectValue.top, rectValue.right-PADDING, rectValue.bottom));
+
+			if (Focused)
+			{
+				dc.SetBkColor(0x000000);
+				dc.DrawFocusRect(rectValue);
+			}
+		}
+	}
+}
+
 void CPropertyEdit::DestroyEdit()
 {
 	if (m_pWndEdit)
@@ -176,94 +194,23 @@ void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 
 
 BEGIN_MESSAGE_MAP(CPropertyEdit, CPropertyHolder)
-	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
-	ON_WM_NCPAINT()
-	ON_WM_PAINT()
 	ON_WM_CTLCOLOR()
-	ON_WM_SIZE()
-	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
 	ON_WM_SETCURSOR()
-	ON_WM_SETFOCUS()
 
 	ON_EN_CHANGE(1, OnChange)
 	ON_BN_CLICKED(2, OnClick)
 	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
 END_MESSAGE_MAP()
 
-INT CPropertyEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CPropertyHolder::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	Init();
-
-	return 0;
-}
-
 void CPropertyEdit::OnDestroy()
 {
 	DestroyEdit();
 
 	CPropertyHolder::OnDestroy();
-}
-
-BOOL CPropertyEdit::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
-void CPropertyEdit::OnNcPaint()
-{
-	DrawControlBorder(this);
-}
-
-void CPropertyEdit::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
-
-	if (!m_pWndEdit)
-	{
-		const BOOL Focused = (GetFocus()==this);
-
-		CRect rectValue(rect.left, rect.top, rect.right-m_ButtonWidth, rect.bottom);
-		dc.FillSolidRect(rectValue, GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_WINDOW));
-
-		if (m_pProperty)
-		{
-			dc.SelectStockObject(DEFAULT_GUI_FONT);
-			dc.SetTextColor(GetSysColor(Focused ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
-
-			m_pProperty->DrawValue(dc, CRect(rectValue.left+PADDING, rectValue.top, rectValue.right-PADDING, rectValue.bottom));
-
-			if (Focused)
-			{
-				dc.SetBkColor(0x000000);
-				dc.DrawFocusRect(rectValue);
-			}
-		}
-	}
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(pOldBitmap);
 }
 
 HBRUSH CPropertyEdit::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -278,18 +225,6 @@ HBRUSH CPropertyEdit::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 
 	return hBrush;
-}
-
-void CPropertyEdit::OnSize(UINT nType, INT cx, INT cy)
-{
-	CPropertyHolder::OnSize(nType, cx, cy);
-
-	AdjustLayout();
-}
-
-void CPropertyEdit::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
-{
-	SetFocus();
 }
 
 void CPropertyEdit::OnLButtonUp(UINT /*nFlags*/, CPoint point)

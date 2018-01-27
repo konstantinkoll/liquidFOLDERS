@@ -50,10 +50,6 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 		if (m_pWndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
-	// Check Inspector
-	if (m_wndInspectorPane.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-		return TRUE;
-
 	// Check application commands
 	if (theApp.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
@@ -103,18 +99,14 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* pPersistentData)
 
 	// Exchange control
 	CRect rect;
+
 	if (pVictim)
 	{
 		pVictim->GetWindowRect(rect);
 		ScreenToClient(rect);
 	}
-	else
-	{
-		rect.SetRectEmpty();
-	}
 
 	m_pWndFileView->Create(this, FileViewID, rect, p_Filter, p_RawFiles, p_CookedFiles, pPersistentData);
-	m_pWndFileView->SetOwner(GetOwner());
 
 	if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
 		m_pWndFileView->SetFocus();
@@ -140,7 +132,7 @@ void CMainView::SetHeaderButtons()
 	const UINT Attr = m_pWndFileView ? m_pWndFileView->GetSortAttribute() : theApp.m_ContextViewSettings[m_Context].SortBy;
 	p_OrganizeButton->SetValue(theApp.GetAttributeName(Attr, m_Context), FALSE);
 
-	p_ViewButton->SetValue(CString((LPCSTR)IDM_VIEW_FIRST+m_ViewID));
+	p_ViewButton->SetValue(CString((LPCSTR)IDM_SETVIEW_FIRST+m_ViewID));
 }
 
 void CMainView::SetHeader()
@@ -204,7 +196,7 @@ void CMainView::SetHeader()
 		{
 			// Map thumbnail
 			if ((IconID==IDI_FLD_PLACEHOLDER_LOCATION) && (SubfolderAttribute==LFAttrLocationIATA))
-				hBitmap = theApp.m_IconFactory.GetMapBitmap(p_Filter->pConditionList->VData.IATACode);
+				hBitmap = theApp.m_IconFactory.GetMapBitmap(p_Filter->Query.pConditionList->VData.IATACode);
 		}
 
 		// Icon
@@ -219,7 +211,7 @@ void CMainView::SetHeader()
 		m_wndHeaderArea.SetHeader(p_CookedFiles->m_Name, Hint, hBitmap, BitmapOffset, FALSE);
 		SetHeaderButtons();
 
-		GetOwner()->SetWindowText(p_CookedFiles->m_Name);
+		GetTopLevelParent()->SetWindowText(p_CookedFiles->m_Name);
 	}
 
 	// The header can change its height!
@@ -260,7 +252,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	}
 	else
 	{
-		strcpy_s(m_StoreID, LFKeySize, pFilter->StoreID);
+		strcpy_s(m_StoreID, LFKeySize, pFilter->Query.StoreID);
 		m_StoreIDValid = (m_StoreID[0]!='\0');
 	}
 
@@ -293,7 +285,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	SetHeader();
 
 	if (UpdateSelection)
-		OnUpdateSelection();
+		SelectionChanged();
 }
 
 void CMainView::ShowNotification(UINT Type, UINT Result, UINT Command)
@@ -311,6 +303,23 @@ void CMainView::ShowNotification(UINT Result)
 {
 	if (Result!=LFOk)
 		ShowNotification((Result<LFFirstFatalError) ? ENT_WARNING : ENT_ERROR, Result);
+}
+
+BOOL CMainView::GetContextMenu(CMenu& Menu, INT Index)
+{
+	return m_pWndFileView ? m_pWndFileView->GetContextMenu(Menu, Index) : FALSE;
+}
+
+void CMainView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
+{
+	if (m_pWndFileView)
+	{
+		m_pWndFileView->GetPersistentData(Data, ForReload);
+	}
+	else
+	{
+		ZeroMemory(&Data, sizeof(Data));
+	}
 }
 
 void CMainView::AdjustLayout(UINT nFlags)
@@ -357,22 +366,10 @@ void CMainView::AdjustLayout(UINT nFlags)
 	m_Resizing = FALSE;
 }
 
-void CMainView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
-{
-	if (m_pWndFileView)
-	{
-		m_pWndFileView->GetPersistentData(Data, ForReload);
-	}
-	else
-	{
-		ZeroMemory(&Data, sizeof(Data));
-	}
-}
-
 void CMainView::SelectNone()
 {
 	if (m_pWndFileView)
-		m_pWndFileView->SendMessage(WM_SELECTNONE);
+		m_pWndFileView->SelectNone();
 }
 
 LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolveLocations, BOOL IncludePIDL)
@@ -482,6 +479,28 @@ BOOL CMainView::UpdateItems(const LFVariantData* pValue1, const LFVariantData* p
 	return Changes;
 }
 
+void CMainView::SelectionChanged()
+{
+	m_wndInspectorPane.AggregateInitialize(m_Context);
+	m_FilesSelected = FALSE;
+
+	if (p_CookedFiles)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+		{
+			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+			if (CFileView::IsItemSelected(pItemDescriptor))
+			{
+				m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
+
+				m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
+					(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1));
+			}
+		}
+
+	m_wndInspectorPane.AggregateClose();
+	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
+}
+
 
 BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_WM_CREATE()
@@ -493,26 +512,26 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_WM_RBUTTONUP()
 	ON_WM_MEASUREITEM()
 	ON_WM_DRAWITEM()
-	ON_WM_CONTEXTMENU()
+
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
-	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
-	ON_MESSAGE_VOID(WM_BEGINDRAGDROP, OnBeginDragDrop)
+	ON_NOTIFY(IVN_SELECTIONCHANGED, FileViewID, OnSelectionChanged)
+	ON_NOTIFY(IVN_BEGINDRAGANDDROP, FileViewID, OnBeginDragAndDrop)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
-	ON_MESSAGE(WM_SENDTO, OnSendTo)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
 	ON_COMMAND(ID_PANE_INSPECTOR, OnToggleInspector)
 	ON_UPDATE_COMMAND_UI(ID_PANE_INSPECTOR, OnUpdatePaneCommands)
 
-	ON_COMMAND(IDM_ORGANIZE_OPTIONS, OnSortOptions)
-	ON_UPDATE_COMMAND_UI(IDM_ORGANIZE_OPTIONS, OnUpdateHeaderCommands)
+	ON_BN_CLICKED(IDM_ORGANIZE, OnOrganizeButton)
+	ON_COMMAND(IDM_ORGANIZE_OPTIONS, OnOrganizeOptions)
+	ON_COMMAND_RANGE(IDM_SETORGANIZE_FIRST, IDM_SETORGANIZE_FIRST+LFAttributeCount-1, OnSetOrganize)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_ORGANIZE, IDM_ORGANIZE_OPTIONS, OnUpdateHeaderCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_SETORGANIZE_FIRST, IDM_SETORGANIZE_FIRST+LFAttributeCount-1, OnUpdateSetOrganizeCommands)
+
+	ON_BN_CLICKED(IDM_VIEW, OnViewButton)
+	ON_COMMAND_RANGE(IDM_SETVIEW_FIRST, IDM_SETVIEW_FIRST+LFViewCount-1, OnSetView)
 	ON_UPDATE_COMMAND_UI(IDM_VIEW, OnUpdateHeaderCommands)
-	ON_UPDATE_COMMAND_UI(IDM_ORGANIZE, OnUpdateHeaderCommands)
-	ON_MESSAGE(WM_GETMENU, OnGetMenu)
-	ON_COMMAND_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnSort)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnUpdateSortCommands)
-	ON_COMMAND_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnView)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnUpdateViewCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_SETVIEW_FIRST, IDM_SETVIEW_FIRST+LFViewCount-1, OnUpdateSetViewCommands)
 
 	ON_COMMAND(IDM_STORES_ADD, OnStoresAdd)
 	ON_COMMAND(IDM_STORES_SYNCHRONIZE, OnStoresSynchronize)
@@ -529,8 +548,11 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_COMMAND(IDM_TRASH_RECOVERALL, OnTrashRecoverAll)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RECOVERALL, OnUpdateTrashCommands)
 
+	ON_COMMAND(IDM_FILTERS_CREATENEW, OnFiltersCreateNew)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILTERS_CREATENEW, IDM_FILTERS_EDIT, OnUpdateFiltersCommands)
 
+	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
+	ON_COMMAND_RANGE(FIRSTSENDTO, LASTSENDTO, OnItemSendTo)
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
 	ON_COMMAND(IDM_STORE_OPENNEWWINDOW, OnStoreOpenNewWindow)
@@ -571,8 +593,6 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, m_LargeIcons, m_SmallIcons, IDB_TASKS_16, 1))
 		return -1;
 
-	m_wndTaskbar.SetOwner(GetOwner());
-
 	m_wndTaskbar.AddButton(IDM_STORES_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_STORES_SYNCHRONIZE, 1);
 	m_wndTaskbar.AddButton(IDM_FONTS_SHOWINSTALLED, 2, TRUE);
@@ -604,9 +624,9 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
 	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
 
-	#define InspectorIconVisible     28
-	#define InspectorIconHidden      29
-	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
+	#define INSPECTORICONVISIBLE     28
+	#define INSPECTORICONHIDDEN      29
+	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? INSPECTORICONVISIBLE : INSPECTORICONHIDDEN, TRUE, TRUE);
 
 	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 30, TRUE, TRUE);
 	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 31, TRUE, TRUE);
@@ -620,8 +640,6 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndHeaderArea.Create(this, 2, TRUE))
 		return -1;
 
-	m_wndHeaderArea.SetOwner(GetOwner());
-
 	p_OrganizeButton = m_wndHeaderArea.AddButton(IDM_ORGANIZE);
 	p_ViewButton = m_wndHeaderArea.AddButton(IDM_VIEW);
 
@@ -629,7 +647,6 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndInspectorPane.Create(this, 4, FALSE, theApp.m_InspectorPaneWidth, TRUE))
 		return -1;
 
-	m_wndInspectorPane.SetOwner(GetOwner());
 	m_ShowInspectorPane = theApp.m_ShowInspectorPane;
 
 	// Explorer notification
@@ -650,11 +667,6 @@ void CMainView::OnDestroy()
 	CFrontstageWnd::OnDestroy();
 }
 
-BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
 void CMainView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFrontstageWnd::OnSize(nType, cx, cy);
@@ -664,30 +676,23 @@ void CMainView::OnSize(UINT nType, INT cx, INT cy)
 
 void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	if (m_pWndFileView)
-		if (m_pWndFileView->IsWindowEnabled())
-		{
-			m_pWndFileView->SetFocus();
-			return;
-		}
-
-	m_wndTaskbar.SetFocus();
+	(m_pWndFileView ? (CWnd*)m_pWndFileView : (CWnd*)&m_wndTaskbar)->SetFocus();
 }
 
 void CMainView::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
-	if (m_pWndFileView)
-		m_pWndFileView->SendMessage(WM_SELECTNONE);
-
+	SelectNone();
 	SetFocus();
 }
 
-void CMainView::OnRButtonUp(UINT nFlags, CPoint point)
+void CMainView::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
-	if (m_pWndFileView)
-		m_pWndFileView->SendMessage(WM_SELECTNONE);
+	SelectNone();
 
-	CFrontstageWnd::OnRButtonUp(nFlags, point);
+	ClientToScreen(&point);
+
+	CMenu Menu;
+	TrackPopupMenu(Menu, point, this, GetContextMenu(Menu, -1));
 }
 
 void CMainView::OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis)
@@ -702,98 +707,8 @@ void CMainView::OnDrawItem(INT nIDCtl, LPDRAWITEMSTRUCT lpdis)
 		m_pWndFileView->SendMessage(WM_DRAWITEM, (WPARAM)nIDCtl, (LPARAM)lpdis);
 }
 
-void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
-{
-	if (!m_pWndFileView)
-		return;
 
-	if ((point.x<0) || (point.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		point.x = (rect.left+rect.right)/2;
-		point.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&point);
-	}
-
-	// Empty menu
-	CMenu* pMenu = NULL;
-
-	// Check contexts with their own menu, overriding view menus
-	switch (m_Context)
-	{
-	case LFContextStores:
-		pMenu = new CMenu();
-		pMenu->LoadMenu(IDM_STORES);
-
-		break;
-
-	case LFContextFonts:
-		pMenu = new CMenu();
-		pMenu->LoadMenu(IDM_FONTS);
-
-		break;
-
-	case LFContextNew:
-		pMenu = new CMenu();
-		pMenu->LoadMenu(IDM_NEW);
-
-		break;
-
-	case LFContextTrash:
-		pMenu = new CMenu();
-		pMenu->LoadMenu(IDM_TRASH);
-
-		break;
-
-	case LFContextFilters:
-		pMenu = new CMenu();
-		pMenu->LoadMenu(IDM_FILTERS);
-
-		break;
-
-	default:
-		pMenu = m_pWndFileView->GetViewContextMenu();
-	}
-
-	// Create empty menu
-	if (!pMenu)
-	{
-		pMenu = new CMenu();
-		pMenu->CreatePopupMenu();
-		pMenu->AppendMenu(MF_POPUP, (UINT_PTR)CreateMenu(), _T("POPUP"));
-	}
-
-	// Get the popup
-	CMenu* pPopup = pMenu->GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	// Append option command
-	if (m_Context==LFContextStores)
-	{
-		if (pPopup->GetMenuItemCount())
-			pPopup->InsertMenu(pPopup->GetMenuItemCount(), MF_SEPARATOR | MF_BYPOSITION);
-
-		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_SHOWCAPACITY);
-		pPopup->InsertMenu(pPopup->GetMenuItemCount(), MF_STRING | MF_BYPOSITION, IDM_ICONS_SHOWCAPACITY, tmpStr);
-	}
-
-	// Insert "Select all" command
-	if (m_pWndFileView->MultiSelectAllowed())
-	{
-		if (pPopup->GetMenuItemCount())
-			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-
-		CString tmpStr((LPCSTR)IDS_CONTEXTMENU_SELECTALL);
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_SELECTALL, tmpStr);
-	}
-
-	// Go!
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
-
-	delete pMenu;
-}
+// Messages and notifications
 
 void CMainView::OnAdjustLayout()
 {
@@ -801,64 +716,46 @@ void CMainView::OnAdjustLayout()
 		AdjustLayout();
 }
 
-void CMainView::OnUpdateSelection()
+void CMainView::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	m_wndInspectorPane.AggregateInitialize(m_Context);
-	m_FilesSelected = FALSE;
+	SelectionChanged();
 
-	if (p_CookedFiles)
-		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-		{
-			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-			if (CFileView::IsItemSelected(pItemDescriptor))
-			{
-				m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
-
-				m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
-					(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1));
-			}
-		}
-
-	m_wndInspectorPane.AggregateClose();
-	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
+	*pResult = 0;
 }
 
-void CMainView::OnBeginDragDrop()
+void CMainView::OnBeginDragAndDrop(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	// Stores haben keinen physischen Speicherort, der von einer LFTransactionList aufgelöst werden kann
+	IDataObject* pDataObject = NULL;
+
 	if (m_Context==LFContextStores)
 	{
+		// Stores have no physical path that could be resolved via LFTransactionList
 		const INT Index = GetSelectedItem();
 		if (Index!=-1)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-			if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) && (pItemDescriptor->Type & LFTypeShortcutAllowed))
-			{
-				m_DropTarget.SetDragging(TRUE);
+			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 
-				LFStoreDataObject* pDataObject = new LFStoreDataObject(pItemDescriptor);
-				LFDropSource* pDropSource = new LFDropSource();
-
-				DWORD dwEffect;
-				SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY, &dwEffect);
-
-				pDropSource->Release();
-				pDataObject->Release();
-
-				m_DropTarget.SetDragging(FALSE);
-			}
+			if (pItemDescriptor->Type & LFTypeShortcutAllowed)
+				pDataObject = new LFStoreDataObject(pItemDescriptor);
 		}
+	}
+	else
+	{
+		// All other contexts
+		LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
+		if (!pTransactionList->m_LastError && pTransactionList->m_ItemCount)
+			pDataObject = new LFTransactionDataObject(pTransactionList);
 
-		return;
+		LFFreeTransactionList(pTransactionList);
 	}
 
-	// Alle anderen Kontexte
-	LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
-	if (!pTransactionList->m_LastError)
+	// Do drag and drop
+	if (pDataObject)
 	{
+		// Disable local drop target
 		m_DropTarget.SetDragging(TRUE);
 
-		LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
 		LFDropSource* pDropSource = new LFDropSource();
 
 		DWORD dwEffect;
@@ -867,10 +764,15 @@ void CMainView::OnBeginDragDrop()
 		pDropSource->Release();
 		pDataObject->Release();
 
+		// Enable local drop target
 		m_DropTarget.SetDragging(FALSE);
-	}
 
-	LFFreeTransactionList(pTransactionList);
+		*pResult = 0;
+	}
+	else
+	{
+		*pResult = 1;
+	}
 }
 
 LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
@@ -902,84 +804,6 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	return Changes;
 }
 
-LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
-{
-	SendToItemData* pItemData = (SendToItemData*)wParam;
-	if (pItemData->IsStore)
-	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		wp.pTransactionList = BuildTransactionList();
-		strcpy_s(wp.StoreID, LFKeySize, pItemData->StoreID);
-
-		if (strcmp(wp.StoreID, "CHOOSE")==0)
-		{
-			LFChooseStoreDlg dlg(this);
-			if (dlg.DoModal()==IDOK)
-			{
-				strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
-
-				LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
-
-				// Show notification
-				ShowNotification(wp.pTransactionList->m_LastError);
-			}
-		}
-
-		LFFreeTransactionList(wp.pTransactionList);
-	}
-	else
-	{
-		IShellFolder* pDesktop = NULL;
-		if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
-		{
-			LPITEMIDLIST pidlFQ;
-			if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, pItemData->Path, NULL, &pidlFQ, NULL)))
-			{
-				IShellFolder* pParentWnd = NULL;
-				LPCITEMIDLIST pidlRel;
-				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentWnd, &pidlRel)))
-				{
-					IDropTarget* pDropTarget = NULL;
-					if (SUCCEEDED(pParentWnd->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
-					{
-						LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
-						if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
-						{
-							CWaitCursor csr;
-							LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
-
-							POINTL pt = { 0, 0 };
-							DWORD dwEffect = DROPEFFECT_COPY;
-							if (SUCCEEDED(pDropTarget->DragEnter(pDataObject, MK_LBUTTON, pt, &dwEffect)))
-							{
-								pDropTarget->Drop(pDataObject, MK_LBUTTON, pt, &dwEffect);
-							}
-							else
-							{
-								pDropTarget->DragLeave();
-							}
-
-							pDataObject->Release();
-						}
-
-						LFFreeTransactionList(pTransactionList);
-						pDropTarget->Release();
-					}
-
-					pParentWnd->Release();
-				}
-
-				theApp.GetShellManager()->FreeItem(pidlFQ);
-			}
-
-			pDesktop->Release();
-		}
-	}
-
-	return NULL;
-}
-
 LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (p_RawFiles && p_CookedFiles && (m_Context<=LFLastQueryContext))
@@ -989,14 +813,14 @@ LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/
 }
 
 
-// Panes
+// Inspector pane
 
 void CMainView::OnToggleInspector()
 {
 	ASSERT(p_InspectorButton);
 
 	theApp.m_ShowInspectorPane = m_ShowInspectorPane = !m_ShowInspectorPane;
-	p_InspectorButton->SetIconID(m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden);
+	p_InspectorButton->SetIconID(m_ShowInspectorPane ? INSPECTORICONVISIBLE : INSPECTORICONHIDDEN);
 	AdjustLayout();
 }
 
@@ -1008,84 +832,79 @@ void CMainView::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 
 // Header
 
-void CMainView::OnSortOptions()
-{
-	OrganizeDlg dlg(this, m_Context);
-	dlg.DoModal();
-}
-
 void CMainView::OnUpdateHeaderCommands(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
 }
 
-LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
+
+// Organize
+
+void CMainView::OnOrganizeButton()
 {
-	HMENU hMenu = CreatePopupMenu();
-	CString tmpStr;
-	INT SubfolderAttribute;
-	UINT AllowedViews;
+	CMenu Menu;
+	Menu.CreatePopupMenu();
 
-	switch (wParam)
-	{
-	case IDM_ORGANIZE:
-		SubfolderAttribute = LFGetSubfolderAttribute(p_Filter);
+	const INT SubfolderAttribute = LFGetSubfolderAttribute(p_Filter);
 
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (theApp.IsAttributeSortable(m_Context, a, SubfolderAttribute) && theApp.IsAttributeAdvertised(m_Context, a))
-			{
-				tmpStr = theApp.GetAttributeName(a, m_Context);
+	for (UINT a=0; a<LFAttributeCount; a++)
+		if (theApp.IsAttributeSortable(m_Context, a, SubfolderAttribute) && theApp.IsAttributeAdvertised(m_Context, a))
+			Menu.AppendMenu(MF_STRING, IDM_SETORGANIZE_FIRST+a, _T("&")+CString(theApp.GetAttributeName(a, m_Context)));
 
-				AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_FIRST+a, _T("&")+tmpStr);
-			}
+	Menu.AppendMenu(MF_SEPARATOR);
+	Menu.AppendMenu(MF_STRING, IDM_ORGANIZE_OPTIONS, CString((LPCSTR)IDS_CONTEXTMENU_MORE));
 
-		AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MORE));
-		AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_OPTIONS, tmpStr);
-
-		break;
-
-	case IDM_VIEW:
-		AllowedViews = theApp.m_Attributes[theApp.m_ContextViewSettings[m_Context].SortBy].TypeProperties.AllowedViews;
-
-		for (UINT a=0; a<LFViewCount; a++, AllowedViews>>=1)
-			if (theApp.IsViewAllowed(m_Context, a) && (AllowedViews & 1))
-			{
-				const UINT nID = IDM_VIEW_FIRST+a;
-				CString tmpStr((LPCSTR)nID);
-
-				AppendMenu(hMenu, MF_STRING, nID, _T("&")+tmpStr);
-			}
-
-		break;
-	}
-
-	return (LRESULT)hMenu;
+	m_wndHeaderArea.TrackPopupMenu(Menu, IDM_ORGANIZE);
 }
 
-void CMainView::OnSort(UINT nID)
+void CMainView::OnOrganizeOptions()
 {
-	theApp.SetContextSort(m_Context, nID-IDM_ORGANIZE_FIRST, theApp.IsAttributeSortDescending(m_Context, nID-IDM_ORGANIZE_FIRST));
+	OrganizeDlg(this, m_Context).DoModal();
+}
+
+void CMainView::OnSetOrganize(UINT nID)
+{
+	theApp.SetContextSort(m_Context, nID-IDM_SETORGANIZE_FIRST, theApp.IsAttributeSortDescending(m_Context, nID-IDM_SETORGANIZE_FIRST));
 
 	SetFocus();
 }
 
-void CMainView::OnUpdateSortCommands(CCmdUI* pCmdUI)
+void CMainView::OnUpdateSetOrganizeCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetRadio(pCmdUI->m_nID-IDM_ORGANIZE_FIRST==theApp.m_ContextViewSettings[m_Context].SortBy);
+	pCmdUI->SetRadio(pCmdUI->m_nID-IDM_SETORGANIZE_FIRST==theApp.m_ContextViewSettings[m_Context].SortBy);
 }
 
-void CMainView::OnView(UINT nID)
+
+// View
+
+void CMainView::OnViewButton()
 {
-	theApp.SetContextView(m_Context, nID-IDM_VIEW_FIRST);
+	CMenu Menu;
+	Menu.CreatePopupMenu();
+
+	UINT AllowedViews = theApp.m_Attributes[theApp.m_ContextViewSettings[m_Context].SortBy].TypeProperties.AllowedViews;
+
+	for (UINT a=0; a<LFViewCount; a++, AllowedViews>>=1)
+		if ((AllowedViews & 1) && theApp.IsViewAllowed(m_Context, a))
+		{
+			const UINT nID = IDM_SETVIEW_FIRST+a;
+
+			Menu.AppendMenu(MF_STRING, nID, _T("&")+CString((LPCSTR)nID));
+		}
+
+	m_wndHeaderArea.TrackPopupMenu(Menu, IDM_VIEW);
+}
+
+void CMainView::OnSetView(UINT nID)
+{
+	theApp.SetContextView(m_Context, nID-IDM_SETVIEW_FIRST);
 
 	SetFocus();
 }
 
-void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)
+void CMainView::OnUpdateSetViewCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetRadio((INT)(pCmdUI->m_nID-IDM_VIEW_FIRST)==m_ViewID);
+	pCmdUI->SetRadio((INT)(pCmdUI->m_nID-IDM_SETVIEW_FIRST)==m_ViewID);
 }
 
 
@@ -1097,9 +916,7 @@ void CMainView::OnStoresAdd()
 	if (LFNagScreen(this))
 	{
 		CWaitCursor csr;
-
-		LFAddStoreDlg dlg(this);
-		dlg.DoModal();
+		LFAddStoreDlg(this).DoModal();
 	}
 }
 
@@ -1194,6 +1011,12 @@ void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 
 // Filters
 
+void CMainView::OnFiltersCreateNew()
+{
+	if (LFEditFilterDlg(this, m_StoreID).DoModal()==IDOK)
+		GetTopLevelParent()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
+}
+
 void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = (m_Context==LFContextFilters);
@@ -1214,7 +1037,146 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 }
 
 
-// pItemDescriptor
+// Items
+
+void CMainView::OnItemOpen()
+{
+	const INT Index = GetSelectedItem();
+	if (Index!=-1)
+	{
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+		if (pItemDescriptor->pNextFilter)
+		{
+			// Navigate to item filter
+			GetTopLevelParent()->SendMessage(WM_NAVIGATETO, (WPARAM)LFCloneFilter(pItemDescriptor->pNextFilter), (LPARAM)pItemDescriptor);
+		}
+		else
+		{
+			// Only files have no navigable filter
+			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+
+			if (pItemDescriptor->Type & LFTypeMounted)
+			{
+				WCHAR Path[MAX_PATH];
+				UINT Result;
+
+				// Is it a .filter file?
+				if (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
+				{
+					// Yes, load filter and navigate to it
+					LFFilter* pFilter = LFLoadFilter(pItemDescriptor);
+
+					if (pFilter)
+						GetTopLevelParent()->SendMessage(WM_NAVIGATETO, (WPARAM)pFilter);
+				}
+				else
+				{
+					// Retrieve physical file location
+					if ((Result=LFGetFileLocation(pItemDescriptor, Path, MAX_PATH))==LFOk)
+					{
+						// Launch file
+						if (ShellExecute(GetSafeHwnd(), _T("open"), Path, NULL, NULL, SW_SHOWNORMAL)==(HINSTANCE)SE_ERR_NOASSOC)
+							OnFileOpenWith();
+					}
+					else
+					{
+						LFErrorBox(this, Result);
+					}
+				}
+			}
+		}
+	}
+}
+
+void CMainView::OnItemSendTo(UINT nID)
+{
+	const SendToItemData* pSendToItemData = m_pWndFileView ? m_pWndFileView->GetSendToItemData(nID) : NULL;
+
+	// Item data present?
+	if (!pSendToItemData)
+		return;
+
+	if (pSendToItemData->IsStore)
+	{
+		// Destination is a store
+		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
+
+		if (strcmp(pSendToItemData->StoreID, CHOOSESTOREID)==0)
+		{
+			LFChooseStoreDlg dlg(this);
+			if (dlg.DoModal()!=IDOK)
+				return;
+
+			strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
+		}
+		else
+		{
+			strcpy_s(wp.StoreID, LFKeySize, pSendToItemData->StoreID);
+		}
+
+		// Start worker
+		wp.pTransactionList = BuildTransactionList();
+
+		LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
+
+		// Show notification
+		ShowNotification(wp.pTransactionList->m_LastError);
+
+		LFFreeTransactionList(wp.pTransactionList);
+	}
+	else
+	{
+		// Destination is a shell object
+		IShellFolder* pDesktop = NULL;
+		if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+		{
+			LPITEMIDLIST pidlFQ;
+			if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, (LPWSTR)pSendToItemData->Path, NULL, &pidlFQ, NULL)))
+			{
+				IShellFolder* pParentFolder;
+				LPCITEMIDLIST pidlRel;
+				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+				{
+					IDropTarget* pDropTarget;
+					if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
+					{
+						LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
+						if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
+						{
+							CWaitCursor csr;
+
+							LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
+
+							POINTL pt = { 0, 0 };
+							DWORD dwEffect = DROPEFFECT_COPY;
+							if (SUCCEEDED(pDropTarget->DragEnter(pDataObject, MK_LBUTTON, pt, &dwEffect)))
+							{
+								pDropTarget->Drop(pDataObject, MK_LBUTTON, pt, &dwEffect);
+							}
+							else
+							{
+								pDropTarget->DragLeave();
+							}
+
+							pDataObject->Release();
+						}
+
+						LFFreeTransactionList(pTransactionList);
+						pDropTarget->Release();
+					}
+
+					pParentFolder->Release();
+				}
+
+				theApp.GetShellManager()->FreeItem(pidlFQ);
+			}
+
+			pDesktop->Release();
+		}
+	}
+}
 
 void CMainView::OnItemShortcut()
 {
@@ -1313,10 +1275,7 @@ void CMainView::OnStoreProperties()
 {
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-	{
-		LFStorePropertiesDlg dlg((*p_CookedFiles)[Index]->StoreID, this);
-		dlg.DoModal();
-	}
+		LFStorePropertiesDlg((*p_CookedFiles)[Index]->StoreID, this).DoModal();
 }
 
 void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
@@ -1418,9 +1377,8 @@ void CMainView::OnFileEdit()
 		{
 			LFFilter* pFilter = LFLoadFilter((*p_CookedFiles)[Index]);
 
-			LFEditFilterDlg dlg(this, pFilter ? pFilter->StoreID[0]!='\0' ? pFilter->StoreID : m_StoreID : m_StoreID, pFilter);
-			if (dlg.DoModal()==IDOK)
-				GetOwner()->PostMessage(WM_RELOAD);
+			if (LFEditFilterDlg(this, pFilter ? pFilter->Query.StoreID[0]!='\0' ? pFilter->Query.StoreID : m_StoreID : m_StoreID, pFilter).DoModal()==IDOK)
+				GetTopLevelParent()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 
 			LFFreeFilter(pFilter);
 		}
@@ -1472,8 +1430,7 @@ void CMainView::OnFileMakeTask()
 	LFVariantData DueTime;
 	LFInitVariantData(DueTime, LFAttrDueTime);
 
-	LFMakeTaskDlg dlg(&Priority, &DueTime, this);
-	if (dlg.DoModal()==IDOK)
+	if (LFMakeTaskDlg(&Priority, &DueTime, this).DoModal()==IDOK)
 	{
 		CWaitCursor csr;
 
@@ -1548,7 +1505,7 @@ void CMainView::OnFileProperties()
 		ASSERT(p_InspectorButton);
 
 		m_ShowInspectorPane = TRUE;
-		p_InspectorButton->SetIconID(InspectorIconVisible);
+		p_InspectorButton->SetIconID(INSPECTORICONVISIBLE);
 		AdjustLayout();
 	}
 

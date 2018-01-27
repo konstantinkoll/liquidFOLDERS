@@ -15,7 +15,7 @@
 CString CPropertyHolder::m_MultipleValues;
 
 CPropertyHolder::CPropertyHolder()
-	: CFrontstageWnd()
+	: CFrontstageScroller(FRONTSTAGE_COMPLEXBACKGROUND)
 {
 	if (m_MultipleValues.IsEmpty())
 		ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
@@ -91,25 +91,13 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pVData)
 }
 
 
-BEGIN_MESSAGE_MAP(CPropertyHolder, CFrontstageWnd)
+BEGIN_MESSAGE_MAP(CPropertyHolder, CFrontstageScroller)
 	ON_WM_RBUTTONDOWN()
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 void CPropertyHolder::OnRButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
 	SetFocus();
-}
-
-void CPropertyHolder::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	Invalidate();
-}
-
-void CPropertyHolder::OnKillFocus(CWnd* /*pNewWnd*/)
-{
-	Invalidate();
 }
 
 
@@ -380,19 +368,18 @@ void CPropertyIATA::OnSetString(CString& Value) const
 void CPropertyIATA::OnClickButton()
 {
 	LFSelectPropertyIATADlg dlg(NULL, &p_VData->AnsiString[0], p_VDataLocationName!=NULL, p_VDataLocationGPS!=NULL);
-	if (dlg.DoModal()==IDOK)
-		if (dlg.p_Airport)
-		{
-			// IATA code
-			strcpy_s(p_VData->IATACode, 256, dlg.p_Airport->Code);
-			p_VData->IsNull = FALSE;
+	if ((dlg.DoModal()==IDOK) && dlg.p_Airport)
+	{
+		// IATA code
+		strcpy_s(p_VData->IATACode, 256, dlg.p_Airport->Code);
+		p_VData->IsNull = FALSE;
 
-			// Other attributes
-			const SHORT Attr2 = dlg.m_OverwriteName ? OnSetLocationName(dlg.p_Airport) : -1;
-			const SHORT Attr3 = dlg.m_OverwriteGPS ? OnSetLocationGPS(dlg.p_Airport) : -1;
+		// Other attributes
+		const SHORT Attr2 = dlg.m_OverwriteName ? OnSetLocationName(dlg.p_Airport) : -1;
+		const SHORT Attr3 = dlg.m_OverwriteGPS ? OnSetLocationGPS(dlg.p_Airport) : -1;
 
-			NotifyOwner(Attr2, Attr3);
-		}
+		NotifyOwner(Attr2, Attr3);
+	}
 }
 
 void CPropertyIATA::SetAdditionalVData(LFVariantData* pVDataLocationName, LFVariantData* pVDataLocationGPS)
@@ -460,7 +447,7 @@ void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
 
 	HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(p_VData->Attr==LFAttrPriority ? LFGetApp()->hPriorityBitmaps[Rating] : LFGetApp()->hRatingBitmaps[Rating]);
 
-	dc.AlphaBlend(lpRect->left+6, (lpRect->top+lpRect->bottom-RATINGBITMAPHEIGHT)/2-1, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+	dc.AlphaBlend(lpRect->left+6, (lpRect->top+lpRect->bottom-RATINGBITMAPHEIGHT)/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
 
 	SelectObject(dcMem, hOldBitmap);
 }
@@ -736,8 +723,7 @@ BOOL CPropertyTime::OnClickValue(INT /*x*/) const
 
 void CPropertyTime::OnClickButton()
 {
-	LFEditTimeDlg dlg(p_VData, p_Parent);
-	if (dlg.DoModal()==IDOK)
+	if (LFEditTimeDlg(p_VData, p_Parent).DoModal()==IDOK)
 		NotifyOwner();
 }
 
@@ -815,66 +801,23 @@ HICON CInspectorGrid::hIconResetPressed = NULL;
 CInspectorGrid::CInspectorGrid()
 	: CPropertyHolder()
 {
-	WNDCLASS wndcls;
-	ZeroMemory(&wndcls, sizeof(wndcls));
-	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
-	wndcls.lpszClassName = L"CInspectorGrid";
-
-	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CInspectorGrid", &wndcls)))
-	{
-		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-
 	m_SortAlphabetic = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	m_pWndEdit = NULL;
-	m_VScrollMax = m_VScrollPos = m_IconSize = m_Context = 0;
+	m_IconSize = m_Context = m_ContextMenuID = 0;
 	m_SelectedItem = m_EditItem = -1;
 	m_HoverPart = NOPART;
 }
 
-BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader)
+BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, UINT ContextMenuID, CInspectorHeader* pHeader)
 {
+	m_ContextMenuID = ContextMenuID;
 	m_pHeader = pHeader;
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
-}
-
-void CInspectorGrid::PreSubclassWindow()
-{
-	CPropertyHolder::PreSubclassWindow();
-
-	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
-	if (!pThreadState->m_pWndInit)
-		Init();
-}
-
-void CInspectorGrid::Init()
-{
-	ResetScrollbars();
-
-	m_RowHeight = max(LFGetApp()->m_DialogFont.GetFontHeight()+2, 16);
-	m_IconSize = (m_RowHeight>=27) ? 25 : (m_RowHeight>=22) ? 20 : (m_RowHeight>=18) ? 16 : 14;
-
-	if (!hIconResetNormal)
-		hIconResetNormal = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
-
-	if (!hIconResetSelected)
-		hIconResetSelected = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_SELECTED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
-
-	if (!hIconResetHot)
-		hIconResetHot = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
-
-	if (!hIconResetPressed)
-		hIconResetPressed = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+	return CPropertyHolder::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
@@ -916,8 +859,10 @@ void CInspectorGrid::SetPropertyName(Property& Prop, LPCWSTR pszName, CDC& dc)
 	wcscpy_s(Prop.Name, LFAttributeNameSize, pszName);
 
 	// Update label width
-	CGdiObject* pOldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DialogFont);
+
 	Prop.LabelWidth = dc.GetTextExtent(CString(pszName)+_T(":")).cx;
+
 	dc.SelectObject(pOldFont);
 }
 
@@ -1025,8 +970,8 @@ RECT CInspectorGrid::GetItemRect(INT Index) const
 	{
 		GetClientRect(&rect);
 
-		rect.top = m_Properties[Index].Top-1;
-		rect.bottom = m_Properties[Index].Bottom+1;
+		rect.top = m_Properties[Index].Top;
+		rect.bottom = m_Properties[Index].Bottom;
 		rect.right -= MARGIN;
 
 		OffsetRect(&rect, 0, -m_VScrollPos);
@@ -1051,7 +996,7 @@ UINT CInspectorGrid::PartAtPosition(const CPoint& point, INT Index) const
 		// Reset button
 		if (pProp->Editable && pProp->pProperty->CanDelete() && (Index!=m_EditItem))
 		{
-			const INT Offs = (m_RowHeight-m_IconSize)/2;
+			const INT Offs = (m_ItemHeight-m_IconSize)/2;
 			CRect rectReset(rectPart.right-m_IconSize-Offs-1, rectPart.top+Offs, rectPart.right-Offs-1, rectPart.top+Offs+m_IconSize);
 
 			if (rectReset.PtInRect(point))
@@ -1109,6 +1054,9 @@ void CInspectorGrid::EnsureVisible(INT Index)
 	CRect rect;
 	GetClientRect(rect);
 
+	if (!rect.Height())
+		return;
+
 	const RECT rectItem = GetItemRect(Index);
 
 	// Vertikal
@@ -1160,32 +1108,12 @@ void CInspectorGrid::ShowTooltip(const CPoint& point)
 	}
 }
 
-void CInspectorGrid::ResetScrollbars()
+BOOL CInspectorGrid::GetContextMenu(CMenu& Menu, INT /*Index*/)
 {
-	ScrollWindow(0, m_VScrollPos);
-	SetScrollPos(SB_VERT, m_VScrollPos=0);
-}
+	if (m_ContextMenuID)
+		Menu.LoadMenu(m_ContextMenuID);
 
-void CInspectorGrid::AdjustScrollbars()
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	INT OldVScrollPos = m_VScrollPos;
-	m_VScrollMax = max(0, m_ScrollHeight-rect.Height());
-	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
-
-	SCROLLINFO si;
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(SCROLLINFO);
-	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
-	si.nPage = rect.Height();
-	si.nMax = m_ScrollHeight-1;
-	si.nPos = m_VScrollPos;
-	SetScrollInfo(SB_VERT, &si);
-
-	if (OldVScrollPos!=m_VScrollPos)
-		Invalidate();
+	return FALSE;
 }
 
 INT CInspectorGrid::Compare(INT Eins, INT Zwei) const
@@ -1284,20 +1212,23 @@ void CInspectorGrid::AdjustLayout()
 			m_ScrollHeight += LFGetApp()->m_LargeFont.GetFontHeight()+2*MARGIN+Spacer+1;
 		}
 
-		// Row
-		pProp->Top = pProp->Visible ? m_ScrollHeight : -1;
-		pProp->Bottom = pProp->Visible ? m_ScrollHeight+m_RowHeight : -1;
-
 		// Label width
 		if (pProp->LabelWidth>LabelWidth)
 			LabelWidth = pProp->LabelWidth;
 
 		if (pProp->Visible)
 		{
+			pProp->Top = m_ScrollHeight;
+			pProp->Bottom = m_ScrollHeight+18;
+
 			if (pProp->LabelWidth>m_LabelWidth)
 				m_LabelWidth = pProp->LabelWidth;
 
-			m_ScrollHeight += m_RowHeight+1;
+			m_ScrollHeight += m_szScrollStep.cy;
+		}
+		else
+		{
+			pProp->Top = pProp->Bottom = -1;
 		}
 
 		// Data width
@@ -1308,12 +1239,12 @@ void CInspectorGrid::AdjustLayout()
 	}
 
 	// Bottom margin
-	m_ScrollHeight += MARGIN+1;
+	m_ScrollHeight += MARGIN+2;
 
 	// Minimum width of control
 	LabelWidth += 2*BORDER;
 	m_LabelWidth += 2*BORDER;
-	m_MinWidth += LabelWidth+m_IconSize+(m_RowHeight-m_IconSize)/2+BORDER+4;
+	m_MinWidth += LabelWidth+m_IconSize+(m_ItemHeight-m_IconSize)/2+BORDER+4;
 
 	if (m_SelectedItem==-1)
 		m_SelectedItem = 0;
@@ -1331,20 +1262,99 @@ void CInspectorGrid::AdjustLayout()
 			}
 	}
 
-	AdjustScrollbars();
-	Invalidate();
+	CFrontstageScroller::AdjustLayout();
 }
 
-void CInspectorGrid::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
+void CInspectorGrid::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& /*rectUpdate*/, BOOL Themed)
 {
-	if (m_pHeader && IsCtrlThemed())
+	//Header
+	if (m_pHeader)
 	{
-		Invalidate();
+		CRect rectHeader(0, -m_VScrollPos, rect.Width(), m_pHeader->GetPreferredHeight()-m_VScrollPos);
+		m_pHeader->DrawHeader(dc, g, rectHeader, Themed);
 	}
-	else
+
+	// Categories
+	for (UINT a=0; a<LFAttrCategoryCount; a++)
+		if (m_Categories[a].Top!=-1)
+			DrawCategory(dc, CRect(0, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos), LFGetApp()->m_AttrCategoryNames[a], NULL, Themed);
+
+	// Items
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DialogFont);
+
+	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
-		CWnd::ScrollWindow(dx, dy, lpRect, lpClipRect);
+		Property* pProp = &m_Properties[a];
+		if (pProp->Visible)
+		{
+			const RECT rectProp = GetItemRect(a);
+			BOOL Selected = ((INT)a==m_SelectedItem) && (GetFocus()==this);
+
+			if ((INT)a!=m_EditItem)
+			{
+				DrawListItemBackground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HoverItem, Selected, Selected);
+				DrawListItemForeground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HoverItem, Selected, Selected);
+			}
+			else
+			{
+				dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+			}
+
+			COLORREF clr = dc.SetTextColor(Selected ? dc.GetTextColor() : pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
+
+			// Label
+			CRect rectValue(BORDER, pProp->Top-m_VScrollPos, m_LabelWidth-BORDER, pProp->Bottom-m_VScrollPos);
+			dc.DrawText(CString(pProp->Name)+_T(":"), rectValue, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+
+			rectValue.left = rectValue.right+2*BORDER;
+			rectValue.right = rect.Width();
+
+			// Delete button
+			if (pProp->Editable && pProp->pProperty->CanDelete())
+			{
+				const INT Offs = (m_ItemHeight-m_IconSize)/2;
+				DrawIconEx(dc, rectValue.right-m_IconSize-Offs-2, rectValue.top+Offs, ((INT)a==m_HoverItem) && (m_HoverPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : Selected ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+
+				rectValue.right -= m_IconSize+Offs+BORDER+2;
+			}
+			else
+			{
+				rectValue.right -= BORDER-1;
+			}
+
+			// Button
+			if (pProp->Editable && pProp->pProperty->HasButton() && ((INT)a!=m_EditItem))
+			{
+				CRect rectButton(rectValue);
+				rectButton.right -= BORDER-1;
+				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
+				rectValue.right -= rectButton.Width()+2*BORDER;
+
+				if (!Themed)
+					rectButton.DeflateRect(1, 1);
+
+				const BOOL Hover = ((INT)a==m_HoverItem) && (m_HoverPart==PARTBUTTON);
+				const BOOL Pressed = Hover && m_PartPressed;
+
+				DrawWhiteButtonBackground(dc, g, rectButton, Themed, FALSE, Pressed, Hover, FALSE, TRUE);
+
+				if (Pressed)
+					rectButton.OffsetRect(1, 1);
+
+				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+			}
+
+			// Value
+			dc.SetTextColor(clr);
+			pProp->pProperty->DrawValue(dc, rectValue);
+		}
 	}
+
+	dc.SelectObject(pOldFont);
+
+	// Shadow
+	if (m_pHeader && Themed)
+		CTaskbar::DrawTaskbarShadow(g, rect);
 }
 
 void CInspectorGrid::ResetProperty(INT Index)
@@ -1381,6 +1391,7 @@ void CInspectorGrid::EditProperty(INT Index)
 			rect.bottom -=2;
 			rect.left += m_LabelWidth+BORDER-1;
 
+			ASSERT(!m_pWndEdit);
 			m_pWndEdit = pProp->pProperty->CreateEditControl(rect, this, LFGetApp()->m_DialogBoldFont);
 			m_pWndEdit->SetFocus();
 
@@ -1435,6 +1446,9 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 
 		if (Accept && (EditItem!=-1))
 			m_Properties[EditItem].pProperty->OnSetString(Value);
+
+		// Redraw whole item
+		InvalidateItem(m_EditItem);
 	}
 
 	m_EditItem = -1;
@@ -1444,18 +1458,16 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 BEGIN_MESSAGE_MAP(CInspectorGrid, CPropertyHolder)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_PAINT()
 	ON_WM_SIZE()
-	ON_WM_VSCROLL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEWHEEL()
-	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
+	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
 	ON_WM_SETCURSOR()
+
 	ON_EN_KILLFOCUS(1, OnDestroyEdit)
 END_MESSAGE_MAP()
 
@@ -1464,7 +1476,23 @@ INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CPropertyHolder::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	Init();
+	// Item height
+	SetItemHeight(max(LFGetApp()->m_DialogFont.GetFontHeight(), 16)+2);
+
+	// Icons
+	m_IconSize = (m_ItemHeight>=27) ? 25 : (m_ItemHeight>=22) ? 20 : (m_ItemHeight>=18) ? 16 : 14;
+
+	if (!hIconResetNormal)
+		hIconResetNormal = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+
+	if (!hIconResetSelected)
+		hIconResetSelected = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_SELECTED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+
+	if (!hIconResetHot)
+		hIconResetHot = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
+
+	if (!hIconResetPressed)
+		hIconResetPressed = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_SHARED);
 
 	return 0;
 }
@@ -1481,126 +1509,9 @@ void CInspectorGrid::OnDestroy()
 	CPropertyHolder::OnDestroy();
 }
 
-void CInspectorGrid::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	Graphics g(dc);
-
-	// Background
-	const BOOL Themed = IsCtrlThemed();
-
-	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-
-	// Categories
-	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		if (m_Categories[a].Top!=-1)
-			DrawCategory(dc, CRect(0, m_Categories[a].Top-m_VScrollPos, rect.Width()-1, m_Categories[a].Bottom-m_VScrollPos), LFGetApp()->m_AttrCategoryNames[a], NULL, Themed);
-
-	// Items
-	HFONT hOldFont = (HFONT)dc.SelectStockObject(DEFAULT_GUI_FONT);
-
-	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
-	{
-		Property* pProp = &m_Properties[a];
-		if (pProp->Visible)
-		{
-			const RECT rectProp = GetItemRect(a);
-			BOOL Selected = ((INT)a==m_SelectedItem) && (GetFocus()==this);
-
-			if ((INT)a!=m_EditItem)
-			{
-				DrawListItemBackground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HoverItem, Selected, Selected);
-				DrawListItemForeground(dc, &rectProp, Themed, GetFocus()==this, (INT)a==m_HoverItem, Selected, Selected);
-			}
-			else
-			{
-				dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-			}
-
-			COLORREF clr = dc.SetTextColor(Selected ? dc.GetTextColor() : pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
-
-			// Label
-			CRect rectValue(BORDER, pProp->Top-m_VScrollPos, m_LabelWidth-BORDER, pProp->Bottom-m_VScrollPos);
-			dc.DrawText(CString(pProp->Name)+_T(":"), rectValue, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
-
-			rectValue.left = rectValue.right+2*BORDER;
-			rectValue.right = rect.Width();
-
-			// Delete button
-			if (pProp->Editable && pProp->pProperty->CanDelete())
-			{
-				const INT Offs = (m_RowHeight-m_IconSize)/2;
-				DrawIconEx(dc, rectValue.right-m_IconSize-Offs-2, rectValue.top+Offs, ((INT)a==m_HoverItem) && (m_HoverPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : Selected ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
-
-				rectValue.right -= m_IconSize+Offs+BORDER+2;
-			}
-			else
-			{
-				rectValue.right -= BORDER-1;
-			}
-
-			// Button
-			if (pProp->Editable && pProp->pProperty->HasButton() && ((INT)a==m_HoverItem) && ((INT)a!=m_EditItem))
-			{
-				CRect rectButton(rectValue);
-				rectButton.right -= BORDER;
-				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
-				rectValue.right -= rectButton.Width()+2*BORDER;
-
-				if (Themed)
-					rectButton.InflateRect(1, 1);
-
-				const BOOL Pressed = m_PartPressed && (m_HoverPart==PARTBUTTON);
-
-				DrawWhiteButtonBackground(dc, g, rectButton, Themed, FALSE, Pressed, ((INT)a==m_HoverItem) && (m_HoverPart==PARTBUTTON), FALSE, TRUE);
-
-				if (Pressed)
-					rectButton.OffsetRect(1, 1);
-
-				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
-			}
-
-			// Value
-			dc.SetTextColor(clr);
-			pProp->pProperty->DrawValue(dc, rectValue);
-		}
-	}
-
-	//Header
-	if (m_pHeader)
-	{
-		CRect rectHeader(0, -m_VScrollPos, rect.Width(), m_pHeader->GetPreferredHeight()-m_VScrollPos);
-		m_pHeader->DrawHeader(dc, g, rectHeader, Themed);
-
-		if (Themed)
-			CTaskbar::DrawTaskbarShadow(g, rect);
-	}
-
-	DrawWindowEdge(g, Themed);
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(hOldFont);
-	dc.SelectObject(pOldBitmap);
-}
-
 void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 {
 	CPropertyHolder::OnSize(nType, cx, cy);
-
-	AdjustLayout();
 
 	// Adjust size of edit control
 	if (m_pWndEdit)
@@ -1613,71 +1524,6 @@ void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 		rect.right = cx-1;
 		m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 	}
-}
-
-void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	SCROLLINFO si;
-
-	INT nInc = 0;
-	switch (nSBCode)
-	{
-	case SB_TOP:
-		nInc = -m_VScrollPos;
-		break;
-
-	case SB_BOTTOM:
-		nInc = m_VScrollMax-m_VScrollPos;
-		break;
-
-	case SB_LINEUP:
-		nInc = -m_RowHeight-1;
-		break;
-
-	case SB_LINEDOWN:
-		nInc = m_RowHeight+1;
-		break;
-
-	case SB_PAGEUP:
-		nInc = min(-1, -rect.Height());
-		break;
-
-	case SB_PAGEDOWN:
-		nInc = max(1, rect.Height());
-		break;
-
-	case SB_THUMBTRACK:
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_TRACKPOS;
-		GetScrollInfo(SB_VERT, &si);
-
-		nInc = si.nTrackPos-m_VScrollPos;
-		break;
-	}
-
-	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos);
-
-		if (m_pWndEdit)
-		{
-			CRect rect;
-			m_pWndEdit->GetWindowRect(rect);
-			ScreenToClient(rect);
-
-			rect.OffsetRect(0, -nInc);
-			m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
-		}
-	}
-
-	CPropertyHolder::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
@@ -1698,6 +1544,13 @@ void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 	else
 	{
 		CFrontstageWnd::OnMouseMove(nFlags, point);
+
+		const UINT Part = PartAtPosition(point, m_HoverItem);
+		if (m_HoverPart!=Part)
+		{
+			m_HoverPart = Part;
+			InvalidateItem(m_HoverItem);
+		}
 	}
 }
 
@@ -1708,38 +1561,8 @@ void CInspectorGrid::OnMouseLeave()
 	CFrontstageWnd::OnMouseLeave();
 }
 
-BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
+void CInspectorGrid::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	CRect rect;
-	GetWindowRect(rect);
-	if (!rect.PtInRect(pt))
-		return FALSE;
-
-	INT nScrollLines;
-	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
-	if (nScrollLines<1)
-		nScrollLines = 1;
-
-	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)(m_RowHeight+1)*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		HideTooltip();
-
-		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos);
-
-		ScreenToClient(&pt);
-		OnMouseMove(nFlags, pt);
-	}
-
-	return TRUE;
-}
-
-void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
-{
-	SetFocus();
-
 	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
@@ -1756,6 +1579,8 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 			InvalidateItem(m_SelectedItem);
 		}
 	}
+
+	CPropertyHolder::OnLButtonDown(nFlags, point);
 }
 
 void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
@@ -1941,6 +1766,7 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Messa
 
 	return TRUE;
 }
+
 
 void CInspectorGrid::OnDestroyEdit()
 {

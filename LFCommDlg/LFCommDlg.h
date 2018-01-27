@@ -1,5 +1,6 @@
 
 #pragma once
+#include "CAbstractFileView.h"
 #include "CBackstageBar.h"
 #include "CBackstageEdit.h"
 #include "CBackstageShadow.h"
@@ -9,9 +10,11 @@
 #include "CCategory.h"
 #include "CDesktopDimmer.h"
 #include "CExplorerList.h"
-#include "CExplorerNotification.h"
-#include "CExplorerTree.h"
+#include "CNotification.h"
+#include "CShellTree.h"
+#include "CFrontstageItemView.h"
 #include "CFrontstagePane.h"
+#include "CFrontstageScroller.h"
 #include "CFrontstageWnd.h"
 #include "CGenreList.h"
 #include "CHeaderArea.h"
@@ -122,7 +125,6 @@ HBITMAP CreateTruecolorBitmap(LONG Width, LONG Height);
 CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height);
 void DrawLocationIndicator(Graphics& g, INT x, INT y, INT Size=16);
 void DrawLocationIndicator(CDC& dc, INT x, INT y, INT Size=16);
-void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed);
 void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
 void DrawListItemForeground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected);
@@ -143,7 +145,7 @@ void DrawStoreIconShadow(CDC& dc, const CPoint& pt, UINT IconID, INT IconSize=12
 // liquidFOLDERS
 
 void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
-void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
+void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
 
 
 // IATA

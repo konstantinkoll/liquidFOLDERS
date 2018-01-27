@@ -105,7 +105,7 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 							Ctrl.hWnd = CreateWindowEx(dwExStyle, szClassName, szWindowText, dwStyle, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), GetSafeHwnd(), (HMENU)nID, NULL, NULL);
 							Ctrl.Index = m_TabCount;
 
-							m_ControlsOnTab.AddItem(Ctrl);
+							AddControl(Ctrl);
 
 							// Set font
 							::SendMessage(Ctrl.hWnd, WM_SETFONT, (WPARAM)pFont->GetSafeHandle(), NULL);
@@ -144,6 +144,15 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 	}
 
 	return Result;
+}
+
+void LFTabbedDialog::AddControl(HWND hWnd, UINT Index)
+{
+	ControlOnTab Ctrl;
+	Ctrl.hWnd = hWnd;
+	Ctrl.Index = Index;
+
+	AddControl(Ctrl);
 }
 
 void LFTabbedDialog::ShowTab(UINT Index)

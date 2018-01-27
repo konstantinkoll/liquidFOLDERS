@@ -465,10 +465,7 @@ void CGenreList::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	{
 		SetFocusItem(Item);
 
-		CPoint pt;
-		GetCursorPos(&pt);
-		ScreenToClient(&pt);
-		OnMouseMove(0, pt);
+		UpdateHoverItem();
 	}
 }
 

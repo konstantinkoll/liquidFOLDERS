@@ -37,13 +37,13 @@ IDI_STR_DROPBOX         ICON                    "res\\STR_Dropbox.ico"
 IDI_STR_ICLOUD          ICON                    "res\\STR_iCloud.ico"
 IDI_STR_ONEDRIVE        ICON                    "res\\STR_OneDrive.ico"
 IDI_STR_BOX             ICON                    "res\\STR_Box.ico"
-IDI_STR_FACEBOOK        ICON                    "res\\STR_Facebook.ico"
-IDI_STR_FLICKR          ICON                    "res\\STR_Flickr.ico"
-IDI_STR_INSTAGRAM       ICON                    "res\\STR_Instagram.ico"
-IDI_STR_PINTEREST       ICON                    "res\\STR_Pinterest.ico"
-IDI_STR_SOUNDCLOUD      ICON                    "res\\STR_SoundCloud.ico"
-IDI_STR_TWITTER         ICON                    "res\\STR_Twitter.ico"
-IDI_STR_YOUTUBE         ICON                    "res\\STR_YouTube.ico"
+IDI_STR_RESERVED7       ICON                    "res\\Template.ico"
+IDI_STR_RESERVED6       ICON                    "res\\Template.ico"
+IDI_STR_RESERVED5       ICON                    "res\\Template.ico"
+IDI_STR_RESERVED4       ICON                    "res\\Template.ico"
+IDI_STR_RESERVED3       ICON                    "res\\Template.ico"
+IDI_STR_RESERVED2       ICON                    "res\\Template.ico"
+IDI_STR_RESERVED1       ICON                    "res\\Template.ico"
 IDI_FLD_DEFAULT         ICON                    "res\\FLD_Default.ico"
 IDI_FLD_RED             ICON                    "res\\FLD_Red.ico"
 IDI_FLD_ORANGE          ICON                    "res\\FLD_Orange.ico"
@@ -95,6 +95,7 @@ IDI_APP_VSCO            ICON                    "res\\APP_VSCO.ico"
 IDI_APP_YOUTUBE         ICON                    "res\\APP_YouTube.ico"
 IDI_APP_JODEL           ICON                    "res\\APP_Jodel.ico"
 IDI_APP_VIMEO           ICON                    "res\\APP_Vimeo.ico"
+IDI_APP_PICFX           ICON                    "res\\APP_Picfx.ico"
 IDI_FLD_PLACEHOLDER_DEFAULT ICON                    "res\\FLD_Placeholder_Default.ico"
 IDI_FLD_PLACEHOLDER_CONTACT ICON                    "res\\FLD_Placeholder_Contact.ico"
 IDI_FLD_PLACEHOLDER_LOCATION ICON                    "res\\FLD_Placeholder_Location.ico"
@@ -108,8 +109,8 @@ IDI_FLD_PLACEHOLDER_TV  ICON                    "res\\FLD_Placeholder_TV.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,2,2,0
- PRODUCTVERSION 3,2,2,0
+ FILEVERSION 3,9,0,0
+ PRODUCTVERSION 3,9,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -126,13 +127,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "3.2.2"
+            VALUE "FileVersion", "3.9.0"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "3.2.2"
+            VALUE "ProductVersion", "3.9.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -447,17 +448,6 @@ BEGIN
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
-    IDS_SRC_FACEBOOK        "Facebook"
-    IDS_SRC_FLICKR          "Flickr"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
-    IDS_SRC_YOUTUBE         "YouTube"
 END
 
 STRINGTABLE 
@@ -476,13 +466,6 @@ STRINGTABLE
 BEGIN
     IDS_QSRC_ICLOUD         "Auf iCloud"
     IDS_QSRC_ONEDRIVE       "Auf OneDrive"
-    IDS_QSRC_FACEBOOK       "Auf Facebook"
-    IDS_QSRC_FLICKR         "Auf Flickr"
-    IDS_QSRC_INSTAGRAM      "Auf Instagram"
-    IDS_QSRC_PINTEREST      "Auf Pinterest"
-    IDS_QSRC_SOUNDCLOUD     "Auf SoundCloud"
-    IDS_QSRC_TWITTER        "Auf Twitter"
-    IDS_QSRC_YOUTUBE        "Auf YouTube"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -790,17 +773,6 @@ BEGIN
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
-    IDS_SRC_FACEBOOK        "Facebook"
-    IDS_SRC_FLICKR          "Flickr"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
-    IDS_SRC_YOUTUBE         "YouTube"
 END
 
 STRINGTABLE 
@@ -819,13 +791,6 @@ STRINGTABLE
 BEGIN
     IDS_QSRC_ICLOUD         "En iCloud"
     IDS_QSRC_ONEDRIVE       "En OneDrive"
-    IDS_QSRC_FACEBOOK       "En Facebook"
-    IDS_QSRC_FLICKR         "En Flickr"
-    IDS_QSRC_INSTAGRAM      "En Instagram"
-    IDS_QSRC_PINTEREST      "En Pinterest"
-    IDS_QSRC_SOUNDCLOUD     "En SoundCloud"
-    IDS_QSRC_TWITTER        "En Twitter"
-    IDS_QSRC_YOUTUBE        "En YouTube"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -1071,7 +1036,7 @@ BEGIN
     IDS_ATTR_COMMENTS       "Commentaire"
     IDS_ATTR_FILEFORMAT     "Format de fichier"
     IDS_ATTR_FILECOUNT      "Nombre de fichier"
-    IDS_ATTR_FILESIZE       "Grandeur"
+    IDS_ATTR_FILESIZE       "Taille"
 END
 
 STRINGTABLE 
@@ -1135,17 +1100,6 @@ BEGIN
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
-    IDS_SRC_FACEBOOK        "Facebook"
-    IDS_SRC_FLICKR          "Flickr"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
-    IDS_SRC_YOUTUBE         "YouTube"
 END
 
 STRINGTABLE 
@@ -1164,13 +1118,6 @@ STRINGTABLE
 BEGIN
     IDS_QSRC_ICLOUD         "Dans iCloud"
     IDS_QSRC_ONEDRIVE       "Dans OneDrive"
-    IDS_QSRC_FACEBOOK       "Dans Facebook"
-    IDS_QSRC_FLICKR         "Dans Flickr"
-    IDS_QSRC_INSTAGRAM      "Dans Instagram"
-    IDS_QSRC_PINTEREST      "Dans Pinterest"
-    IDS_QSRC_SOUNDCLOUD     "Dans SoundCloud"
-    IDS_QSRC_TWITTER        "Dans Twitter"
-    IDS_QSRC_YOUTUBE        "Dans YouTube"
 END
 
 #endif    // Französisch (neutral) resources
@@ -1515,17 +1462,6 @@ BEGIN
     IDS_SRC_DROPBOX         "Dropbox"
     IDS_SRC_ICLOUD          "iCloud"
     IDS_SRC_ONEDRIVE        "OneDrive"
-    IDS_SRC_FACEBOOK        "Facebook"
-    IDS_SRC_FLICKR          "Flickr"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_SRC_INSTAGRAM       "Instagram"
-    IDS_SRC_PINTEREST       "Pinterest"
-    IDS_SRC_SOUNDCLOUD      "SoundCloud"
-    IDS_SRC_TWITTER         "Twitter"
-    IDS_SRC_YOUTUBE         "YouTube"
 END
 
 STRINGTABLE 
@@ -1544,13 +1480,6 @@ STRINGTABLE
 BEGIN
     IDS_QSRC_ICLOUD         "On iCloud"
     IDS_QSRC_ONEDRIVE       "On OneDrive"
-    IDS_QSRC_FACEBOOK       "On Facebook"
-    IDS_QSRC_FLICKR         "On Flickr"
-    IDS_QSRC_INSTAGRAM      "On Instagram"
-    IDS_QSRC_PINTEREST      "On Pinterest"
-    IDS_QSRC_SOUNDCLOUD     "On SoundCloud"
-    IDS_QSRC_TWITTER        "On Twitter"
-    IDS_QSRC_YOUTUBE        "On YouTube"
 END
 
 #endif    // Englisch (USA) resources

@@ -11,26 +11,31 @@
 extern LFMessageIDs LFMessages;
 
 
-LFCORE_API LFFilter* LFAllocFilter(const LFFilter* pFilter)
+LFCORE_API LFFilter* LFAllocFilter(BYTE Mode)
 {
 	LFFilter* pNewFilter = new LFFilter;
+	ZeroMemory(pNewFilter, sizeof(LFFilter));
 
-	if (pFilter)
+	pNewFilter->Query.Mode = Mode;
+	pNewFilter->Query.Context = LFContextAuto;
+
+	return pNewFilter;
+}
+
+LFCORE_API LFFilter* LFCloneFilter(const LFFilter* pFilter)
+{
+	assert(pFilter);
+
+	LFFilter* pNewFilter = new LFFilter;
+	memcpy_s(pNewFilter, sizeof(LFFilter), pFilter, sizeof(LFFilter));
+	pNewFilter->Query.pConditionList = NULL;
+
+	LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
+	while (pFilterCondition)
 	{
-		*pNewFilter = *pFilter;
-		pNewFilter->pConditionList = NULL;
+		pNewFilter->Query.pConditionList = LFAllocFilterCondition(pFilterCondition->Compare, pFilterCondition->VData, pNewFilter->Query.pConditionList);
 
-		LFFilterCondition* pFilterCondition = pFilter->pConditionList;
-		while (pFilterCondition)
-		{
-			pNewFilter->pConditionList = LFAllocFilterCondition(pFilterCondition->Compare, pFilterCondition->VData, pNewFilter->pConditionList);
-
-			pFilterCondition = pFilterCondition->pNext;
-		}
-	}
-	else
-	{
-		ZeroMemory(pNewFilter, sizeof(LFFilter));
+		pFilterCondition = pFilterCondition->pNext;
 	}
 
 	return pNewFilter;
@@ -40,7 +45,7 @@ LFCORE_API void LFFreeFilter(LFFilter* pFilter)
 {
 	if (pFilter)
 	{
-		LFFilterCondition* pFilterCondition = pFilter->pConditionList;
+		LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
 		while (pFilterCondition)
 		{
 			LFFilterCondition* pVictim = pFilterCondition;
@@ -61,7 +66,7 @@ LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* pItemDescriptor)
 
 	LFFilter* pFilter = LoadFilter(Path, pItemDescriptor->StoreID);
 	if (pFilter)
-		wcscpy_s(pFilter->OriginalName, 256, pItemDescriptor->CoreAttributes.FileName);
+		wcscpy_s(pFilter->Name, 256, pItemDescriptor->CoreAttributes.FileName);
 
 	return pFilter;
 }
@@ -93,9 +98,9 @@ LFCORE_API LFFilter* LFLoadFilterEx(LPCWSTR pPath)
 	LFFilter* pFilter = LoadFilter(pPath, pStoreDescriptor ? pStoreDescriptor->StoreID : "");
 	if (pFilter)
 	{
-		wcscpy_s(pFilter->OriginalName, 256, pChar);
+		wcscpy_s(pFilter->Name, 256, pChar);
 
-		pChar = wcschr(pFilter->OriginalName, L'.');
+		pChar = wcschr(pFilter->Name, L'.');
 		if (pChar)
 			*pChar = L'\0';
 	}
@@ -182,14 +187,12 @@ LFFilter* LoadFilter(LPCWSTR pFilename, LPCSTR StoreID)
 		goto Leave;
 
 	pFilter = LFAllocFilter();
-
-	pFilter->Mode = LFFilterModeSearch;
-	pFilter->Options.IsPersistent = TRUE;
+	pFilter->IsPersistent = TRUE;
 
 	if (!Header.AllStores)
-		strcpy_s(pFilter->StoreID, LFKeySize, StoreID);
+		strcpy_s(pFilter->Query.StoreID, LFKeySize, StoreID);
 
-	wcscpy_s(pFilter->SearchTerm, 256, Header.SearchTerm);
+	wcscpy_s(pFilter->Query.SearchTerm, 256, Header.SearchTerm);
 
 	for (UINT a=Header.cConditions; a>0; a--)
 	{
@@ -210,9 +213,9 @@ LFFilter* LoadFilter(LPCWSTR pFilename, LPCSTR StoreID)
 
 				LFFilterCondition* pFilterCondition = new LFFilterCondition;
 				*pFilterCondition = Condition;
-				pFilterCondition->pNext = pFilter->pConditionList;
+				pFilterCondition->pNext = pFilter->Query.pConditionList;
 
-				pFilter->pConditionList = pFilterCondition;
+				pFilter->Query.pConditionList = pFilterCondition;
 
 				break;
 			}
@@ -229,7 +232,7 @@ BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
 	assert(pFilename);
 	assert(pFilter);
 
-	if (pFilter->Mode!=LFFilterModeSearch)
+	if (pFilter->Query.Mode!=LFFilterModeQuery)
 		return FALSE;
 
 	LFPersistentFilterHeader Header;
@@ -238,10 +241,10 @@ BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
 	strcpy_s(Header.ID, 9, "LFFilter");
 	Header.Version = 1;
 	Header.szCondition = sizeof(LFPersistentFilterCondition);
-	Header.AllStores = (pFilter->StoreID[0]=='\0');
-	wcscpy_s(Header.SearchTerm, 256, pFilter->SearchTerm);
+	Header.AllStores = (pFilter->Query.StoreID[0]=='\0');
+	wcscpy_s(Header.SearchTerm, 256, pFilter->Query.SearchTerm);
 
-	LFFilterCondition* pFilterCondition = pFilter->pConditionList;
+	LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
 	while (pFilterCondition)
 	{
 		Header.cConditions++;
@@ -257,7 +260,7 @@ BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
 		DWORD Written;
 		if (WriteFile(hFile, &Header, sizeof(Header), &Written, NULL))
 		{
-			pFilterCondition = pFilter->pConditionList;
+			pFilterCondition = pFilter->Query.pConditionList;
 			while (pFilterCondition)
 			{
 				// Replace sequential number with persistent ID

@@ -96,7 +96,8 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	// Icon factory
 	m_IconFactory.m_ApplicationIcons.Load(IDB_APPLICATIONS_29, CSize(31, 32));
-
+LFChooseStoreDlg dlg;
+dlg.DoModal();
 	// Execute
 	CheckForUpdate();
 	OpenCommandLine(__argc>1 ? CmdLine : NULL);
@@ -177,15 +178,14 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 				VData.IsNull = FALSE;
 
 				LFFilter* pFilter = LFAllocFilter();
-				pFilter->Mode = LFFilterModeSearch;
-				pFilter->pConditionList = LFAllocFilterCondition(LFFilterCompareIsEqual, VData);
+				pFilter->Query.pConditionList = LFAllocFilterCondition(LFFilterCompareIsEqual, VData);
 
 				LFAirport* pAirport;
 				if (LFIATAGetAirportByCode(Code, pAirport))
-					MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, pFilter->OriginalName, 256);
+					MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, pFilter->Name, 256);
 
 				CMainWnd* pFrameWnd = new CMainWnd();
-				pFrameWnd->CreateFilter(pFilter);
+				pFrameWnd->Create(pFilter);
 				pFrameWnd->ShowWindow(SW_SHOW);
 
 				return pFrameWnd;
@@ -194,7 +194,7 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 
 		// Filter
 		CMainWnd* pFrameWnd = new CMainWnd();
-		pFrameWnd->CreateFilter(LFLoadFilterEx(pCmdLine));
+		pFrameWnd->Create(LFLoadFilterEx(pCmdLine));
 		pFrameWnd->ShowWindow(SW_SHOW);
 
 		return pFrameWnd;

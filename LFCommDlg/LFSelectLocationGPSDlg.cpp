@@ -36,7 +36,6 @@ void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 BOOL LFSelectLocationGPSDlg::InitDialog()
 {
 	m_wndMap.SetLocation(m_Location);
-	m_wndMap.SetMenu(IDM_SELECTGPS);
 
 	return TRUE;
 }
@@ -72,16 +71,16 @@ DOUBLE LFSelectLocationGPSDlg::StringToCoord(LPCWSTR Str)
 
 
 BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, LFDialog)
-	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP, OnUpdateEdit)
+	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP, OnUpdateMap)
 	ON_EN_KILLFOCUS(IDC_LATITUDE, OnLatitudeChanged)
 	ON_EN_KILLFOCUS(IDC_LONGITUDE, OnLongitudeChanged)
 
-	ON_COMMAND(IDM_SELECTGPS_IATA, OnIATA)
-	ON_COMMAND(IDM_SELECTGPS_RESET, OnReset)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTGPS_IATA, IDM_SELECTGPS_RESET, OnUpdateCommands)
+	ON_COMMAND(IDM_MAPCTRL_IATA, OnIATA)
+	ON_COMMAND(IDM_MAPCTRL_RESET, OnReset)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAPCTRL_IATA, IDM_MAPCTRL_RESET, OnUpdateCommands)
 END_MESSAGE_MAP()
 
-void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
+void LFSelectLocationGPSDlg::OnUpdateMap(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_GPSDATA* pTag = (NM_GPSDATA*)pNMHDR;
 
@@ -140,7 +139,7 @@ void LFSelectLocationGPSDlg::OnUpdateCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = TRUE;
 
-	if (pCmdUI->m_nID==IDM_SELECTGPS_RESET)
+	if (pCmdUI->m_nID==IDM_MAPCTRL_RESET)
 		bEnable &= (m_Location.Latitude!=0) || (m_Location.Longitude!=0);
 
 	pCmdUI->Enable(bEnable);

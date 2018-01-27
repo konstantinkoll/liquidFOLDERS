@@ -48,8 +48,8 @@ UINT CStoreInternal::CreateDirectories()
 {
 	UINT Result = CStore::CreateDirectories();
 
-	// Hide data path
-	if ((Result==LFOk) && (p_StoreDescriptor->DatPath[0]!=L'\0') && ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal))
+	// Hide data directory when it exists, but not for stores with an internal index and auto-location enabled!
+	if ((Result==LFOk) && (p_StoreDescriptor->DatPath[0]!=L'\0') && (((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal) || ((p_StoreDescriptor->Flags & LFStoreFlagsAutoLocation)==0)))
 		SetFileAttributes(p_StoreDescriptor->DatPath, FILE_ATTRIBUTE_HIDDEN);
 
 	return Result;
@@ -64,9 +64,8 @@ UINT CStoreInternal::DeleteDirectories()
 		return Result;
 
 	// Delete data directory
-	if ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if (p_StoreDescriptor->DatPath[0]!=L'\0')
-			Result = DeleteDirectory(p_StoreDescriptor->DatPath) ? LFOk : LFDriveNotReady;
+	if (p_StoreDescriptor->DatPath[0])
+		Result = DeleteDirectory(p_StoreDescriptor->DatPath) ? LFOk : LFDriveNotReady;
 
 	return Result;
 }

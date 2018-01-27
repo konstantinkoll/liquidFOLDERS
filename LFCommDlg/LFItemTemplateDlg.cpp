@@ -55,7 +55,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStor
 
 	if (pFilter)
 	{
-		LFFilterCondition* pFilterCondition = pFilter->pConditionList;
+		LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
 		while (pFilterCondition)
 		{
 			if (pFilterCondition->Compare==LFFilterCompareSubfolder)
@@ -79,8 +79,6 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStor
 
 void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_INSPECTOR, m_wndInspectorGrid);
-
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_pItem->Type = LFTypeFile;
@@ -126,8 +124,8 @@ void LFItemTemplateDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 		m_wndHeaderArea.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), ExplorerHeight, nFlags);
 	}
 
-	const INT BorderLeft = BACKSTAGEBORDER;
-	m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top+ExplorerHeight, rectLayout.Width()-BorderLeft, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+	if (IsWindow(m_wndInspectorGrid))
+		m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+BACKSTAGEBORDER, rectLayout.top+ExplorerHeight, rectLayout.Width()-BACKSTAGEBORDER, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
 }
 
 BOOL LFItemTemplateDlg::InitDialog()
@@ -141,8 +139,11 @@ BOOL LFItemTemplateDlg::InitDialog()
 	OnStoresChanged(NULL, NULL);
 
 	// Inspector
+	m_wndInspectorGrid.Create(this, IDC_INSPECTOR, IDM_ITEMTEMPLATE);
+
 	m_wndInspectorGrid.SetStore(m_StoreID);
 	m_wndInspectorGrid.AddAttributeProperties(m_AttributeValues);
+	m_wndInspectorGrid.SetFocus();
 
 	// Sort inspector items
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
@@ -150,13 +151,12 @@ BOOL LFItemTemplateDlg::InitDialog()
 	// "Skip" button
 	AddBottomRightControl(IDC_SKIP);
 
-	return TRUE;
+	return FALSE;
 }
 
 
 BEGIN_MESSAGE_MAP(LFItemTemplateDlg, LFDialog)
 	ON_WM_GETMINMAXINFO()
-	ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
 	ON_BN_CLICKED(IDC_SKIP, OnSkip)
 
@@ -183,30 +183,6 @@ void LFItemTemplateDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	}
 
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
-}
-
-void LFItemTemplateDlg::OnContextMenu(CWnd* pWnd, CPoint point)
-{
-	if (pWnd!=&m_wndInspectorGrid)
-		return;
-
-	if ((point.x<0) || (point.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		point.x = (rect.left+rect.right)/2;
-		point.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&point);
-	}
-
-	CMenu Menu;
-	ENSURE(Menu.LoadMenu(IDM_ITEMTEMPLATE));
-
-	CMenu* pPopup = Menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this, NULL);
 }
 
 void LFItemTemplateDlg::OnChooseStore()
