@@ -164,6 +164,7 @@ protected:
 	virtual BOOL GetContextMenu(CMenu& Menu, LPCVOID Ptr);
 	virtual BOOL GetContextMenu(CMenu& Menu, const CPoint& point);
 
+	BOOL HasBorder() const;
 	void DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed) const;
 	void DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed, BOOL Hot=FALSE, BOOL Focused=FALSE, BOOL Selected=FALSE, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE) const;
 	void TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem=TRUE, BOOL AlignRight=FALSE) const;
@@ -178,9 +179,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	DECLARE_TOOLTIP()
-
-private:
-	BOOL HasBorder() const;
 };
 
 inline BOOL CFrontstageWnd::HasBorder() const

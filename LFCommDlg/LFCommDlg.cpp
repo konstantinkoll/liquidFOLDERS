@@ -269,7 +269,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 	if (Hint)
 		if (Hint[0]!=L'\0')
 		{
-			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
+			dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
 			rect.top += rectLine.Height();
 
@@ -525,8 +525,7 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 			rect.left++;
-			rect.top++;
-			rect.bottom = rect.top+rect.Height()/2;
+			rect.bottom = (++rect.top)+rect.Height()/2;
 
 			if (Red)
 			{

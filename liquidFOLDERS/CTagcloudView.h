@@ -47,4 +47,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	LFFont m_Fonts[20];
+
+private:
+	TagcloudItemData* GetTagcloudItemData(INT Index) const;
 };
+
+inline TagcloudItemData* CTagcloudView::GetTagcloudItemData(INT Index) const
+{
+	return (TagcloudItemData*)GetItemData(Index);
+}

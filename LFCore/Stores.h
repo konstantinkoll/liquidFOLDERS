@@ -23,7 +23,7 @@ UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor);
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime=TRUE, BOOL MakeDefault=FALSE);
 
 UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);
-void ChooseNewDefaultStore();
+void ChooseNewDefaultStore(BOOL OnInitialize=FALSE);
 
 UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
 void GetDiskFreeSpaceForStore(LFStoreDescriptor& StoreDescriptor);

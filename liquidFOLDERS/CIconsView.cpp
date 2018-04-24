@@ -11,8 +11,6 @@
 //
 
 #define CAPACITYBARHEIGHT     10
-#define GUTTER                9
-#define PADDING               6
 
 CIconsView::CIconsView()
 	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS)
@@ -35,17 +33,17 @@ void CIconsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 void CIconsView::AdjustLayout()
 {
 	// Item width must be odd for proper alignment of jumbo core icons
-	AdjustLayoutGrid(CSize(max(127, m_DefaultFontHeight*8+1)+2*PADDING, 128+m_DefaultFontHeight*2+2*PADDING+PADDING/2), CSize(GUTTER, GUTTER), FALSE, BACKSTAGEBORDER);
+	AdjustLayoutGrid(CSize(max(127, m_DefaultFontHeight*8+1)+2*ITEMVIEWPADDING, 128+m_DefaultFontHeight*2+2*ITEMVIEWPADDING+ITEMVIEWPADDING/2),
+		FALSE, BACKSTAGEBORDER);
 }
 
 RECT CIconsView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
-	rect.top += 128+PADDING+PADDING/2-2;
-	rect.bottom = rect.top+m_DefaultFontHeight+4;
-	rect.left += PADDING/2;
-	rect.right -= PADDING/2;
+	rect.bottom = (rect.top+=128+ITEMVIEWPADDING+ITEMVIEWPADDING/2-2)+m_DefaultFontHeight+4;
+	rect.left += ITEMVIEWPADDING/2;
+	rect.right -= ITEMVIEWPADDING/2;
 
 	return rect;
 }
@@ -276,14 +274,14 @@ void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOO
 	if (!IsEditing() || (Index!=m_EditItem))
 	{
 		CRect rectLabel(rectItem);
-		rectLabel.DeflateRect(Themed ? PADDING+1 : PADDING, PADDING);
-		rectLabel.top += 128+PADDING/2;
+		rectLabel.DeflateRect(Themed ? ITEMVIEWPADDING+1 : ITEMVIEWPADDING, ITEMVIEWPADDING);
+		rectLabel.top += 128+ITEMVIEWPADDING/2;
 
 		DrawWrapLabel(dc, g, rectLabel, pItemDescriptor, Themed);
 	}
 
 	// Icon
-	DrawJumboIcon(dc, g, CPoint((rectItem->left+rectItem->right-128)/2, rectItem->top+PADDING), pItemDescriptor);
+	DrawJumboIcon(dc, g, CPoint((rectItem->left+rectItem->right-128)/2, rectItem->top+ITEMVIEWPADDING), pItemDescriptor);
 }
 
 

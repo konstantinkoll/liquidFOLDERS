@@ -9,77 +9,102 @@
 // CStoreList
 //
 
+CStoreList::CStoreList()
+	: CAbstractFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLELABELEDIT)
+{
+}
+
+BOOL CStoreList::GetContextMenu(CMenu& Menu, INT Index)
+{
+	if (Index>=0)
+		Menu.LoadMenu(IDM_STORE);
+
+	return FALSE;
+}
+
 void CStoreList::AdjustLayout()
 {
-	m_ItemHeight = 50;
-
-	AdjustLayoutSingleColumnList();
+	AdjustLayoutColumns(2, BACKSTAGEBORDER);
 }
 
-/*void CStoreList::AddColumn(INT ID, UINT Attr)
+INT CStoreList::GetTileRows(const LFItemDescriptor* pItemDescriptor)
 {
-	CExplorerList::AddColumn(ID, LFGetApp()->GetAttributeName(Attr, LFContextStores), LFGetApp()->m_Attributes[Attr].TypeProperties.DefaultColumnWidth, LFGetApp()->IsAttributeFormatRight(Attr));
+	INT Rows = 2;
+
+	// Comments
+	if (pItemDescriptor->CoreAttributes.Comments[0])
+		Rows++;
+
+	// Description
+	if (pItemDescriptor->Description[0])
+		Rows++;
+
+	return Rows;
 }
 
-void CStoreList::AddStoreColumns()
+void CStoreList::DrawTileRow(CDC& dc, CRect& rectText, LPCWSTR pStr) const
 {
-	AddColumn(0, LFAttrFileName);
-	AddColumn(1, LFAttrComments);
-	CExplorerList::AddColumn(2);
-	AddColumn(3, LFAttrCreationTime);
-}
+	ASSERT(pStr);
 
-void CStoreList::AddItemCategories()
-{
-	for (UINT a=0; a<LFItemCategoryCount; a++)
-		AddCategory(a, LFGetApp()->m_ItemCategories[a].Caption, LFGetApp()->m_ItemCategories[a].Hint);
-}
-
-void CStoreList::SetSearchResult(LFSearchResult* pSearchResult)
-{
-	DeleteAllItems();
-
-	if (pSearchResult)
+	if (pStr[0])
 	{
-		LFSortSearchResult(pSearchResult, LFAttrFileName);
-		LFErrorBox(this, pSearchResult->m_LastError);
-
-		static UINT puColumns[2] = { 1, 2 };
-
-		LVITEM lvi;
-		ZeroMemory(&lvi, sizeof(lvi));
-
-		lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_COLUMNS | LVIF_STATE;
-		lvi.stateMask = LVIS_CUT | LVIS_OVERLAYMASK;
-		lvi.cColumns = 2;
-		lvi.puColumns = puColumns;
-
-		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-		{
-			lvi.iItem = a;
-			lvi.pszText = (*pSearchResult)[a]->CoreAttributes.FileName;
-			lvi.iImage = (*pSearchResult)[a]->IconID-1;
-			lvi.iGroupId = (*pSearchResult)[a]->CategoryID;
-			lvi.state = (((*pSearchResult)[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | ((*pSearchResult)[a]->Type & LFTypeBadgeMask);
-			const INT Index = InsertItem(&lvi);
-
-			SetItemText(Index, 1, (*pSearchResult)[a]->CoreAttributes.Comments);
-			SetItemText(Index, 2, (*pSearchResult)[a]->Description);
-
-			WCHAR tmpStr[256];
-			LFAttributeToString((*pSearchResult)[a], LFAttrCreationTime, tmpStr, 256);
-			SetItemText(Index, 3, tmpStr);
-		}
+		dc.DrawText(pStr, -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+		rectText.top += m_DefaultFontHeight;
 	}
-
-	if (GetView()==LV_VIEW_DETAILS)
-		for (UINT a=0; a<5; a++)
-			SetColumnWidth(a, LVSCW_AUTOSIZE);
 }
-*/
+
+void CStoreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+{
+	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+	CRect rect(rectItem);
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
+
+	// Icon
+	LFGetApp()->m_CoreImageListExtraLarge.DrawEx(&dc, pItemDescriptor->IconID-1, 
+		CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), CSize(m_IconSize, m_IconSize), CLR_NONE, CLR_NONE,
+		((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
+
+	// Text
+	CRect rectText(rect);
+	rectText.left += m_IconSize+ITEMVIEWPADDING;
+	rectText.top += (rect.Height()-GetTileRows(pItemDescriptor)*m_DefaultFontHeight)/2;
+
+	DrawTileRow(dc, rectText, pItemDescriptor->CoreAttributes.FileName);
+
+	SetDarkTextColor(dc, Index, Themed);
+
+	DrawTileRow(dc, rectText, pItemDescriptor->CoreAttributes.Comments);
+	DrawTileRow(dc, rectText, pItemDescriptor->Description);
+	DrawTileRow(dc, rectText, LFGetApp()->GetFreeBytesAvailable(pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart));
+}
+
+RECT CStoreList::GetLabelRect(INT Index) const
+{
+	RECT rect = GetItemRect(Index);
+
+	rect.bottom = (rect.top+=(rect.bottom-rect.top-GetTileRows(Index)*m_DefaultFontHeight)/2-2)+m_DefaultFontHeight+4;
+	rect.left += m_IconSize+2*ITEMVIEWPADDING-5;
+	rect.right -= ITEMVIEWPADDING-2;
+
+	return rect;
+}
+
 
 BEGIN_MESSAGE_MAP(CStoreList, CAbstractFileView)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
+
+INT CStoreList::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CAbstractFileView::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	// Item
+	SetItemHeight(max(m_IconSize=LFGetApp()->m_ExtraLargeIconSize, 4*m_DefaultFontHeight)+2*ITEMVIEWPADDING);
+
+	return 0;
+}
 
 
 // LFChooseStoreDlg
@@ -138,16 +163,6 @@ BOOL LFChooseStoreDlg::InitDialog()
 	m_wndHeaderArea.SetHeader(LFGetApp()->m_Contexts[LFContextStores].Name, Hint, NULL, CPoint(0, 0), FALSE);
 
 	m_wndStoreList.Create(this, IDC_STORELIST);
-
-	/*m_wndStoreList.SetImageList(&LFGetApp()->m_CoreImageListSmall, LVSIL_SMALL);
-	m_wndStoreList.SetImageList(&LFGetApp()->m_CoreImageListExtraLarge, LVSIL_NORMAL);
-
-	m_wndStoreList.AddStoreColumns();
-	m_wndStoreList.AddItemCategories();
-	m_wndStoreList.SetMenus(IDM_STORE);
-	m_wndStoreList.EnableGroupView(LFGetApp()->OSVersion>OS_XP);
-	m_wndStoreList.SetView(LV_VIEW_TILE);
-	m_wndStoreList.SetItemsPerRow(3);*/
 	m_wndStoreList.SetFocus();
 
 	OnUpdateStores(NULL, NULL);
@@ -159,10 +174,8 @@ BOOL LFChooseStoreDlg::InitDialog()
 BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_WM_DESTROY()
 	ON_WM_GETMINMAXINFO()
-	//ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
-	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
-	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_STORELIST, OnRequestTooltipData)
+	ON_NOTIFY(IVN_SELECTIONCHANGED, IDC_STORELIST, OnSelectionChanged)
+	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
 
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnUpdateStores)
@@ -198,9 +211,38 @@ void LFChooseStoreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
 }
 
+void LFChooseStoreDlg::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	UpdateOkButton();
+
+	*pResult = 0;
+}
+
+LRESULT LFChooseStoreDlg::OnRenameItem(WPARAM wParam, LPARAM lParam)
+{
+	CWaitCursor csr;
+
+	LFTransactionList* pTransactionList = LFAllocTransactionList();
+	LFAddTransactionItem(pTransactionList, (*m_pSearchResult)[(UINT)wParam]);
+
+	LFVariantData VData;
+	LFInitVariantData(VData, LFAttrFileName);
+
+	wcsncpy_s(VData.UnicodeString, 256, (LPCWSTR)lParam, _TRUNCATE);
+	VData.IsNull = FALSE;
+
+	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &VData);
+
+	LFErrorBox(this, pTransactionList->m_LastError);
+	LFFreeTransactionList(pTransactionList);
+
+	return NULL;
+}
+
+
 LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	// Save selected store
+	// Save ID of selected store
 	CHAR StoreID[LFKeySize] = "";
 
 	if (m_pSearchResult)
@@ -212,82 +254,31 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		LFFreeSearchResult(m_pSearchResult);
 	}
 
-	// Query
+	// Filter
 	LFFilter* pFilter = LFAllocFilter(LFFilterModeStores);
+
+	// Query
 	LFSortSearchResult(m_pSearchResult=LFQuery(pFilter), LFAttrFileName);
 	LFFreeFilter(pFilter);
 
 	LFErrorBox(this, m_pSearchResult->m_LastError);
 
+	// Update search result
 	m_wndStoreList.UpdateSearchResult(m_pSearchResult);
 
-	// Set previously selected store
-	/*INT Index = -1;
+	// Set previously selected store or default store
+	INT Index = -1;
+
 	for (UINT a=0; a<m_pSearchResult->m_ItemCount; a++)
-		if (((Index==-1) && ((*m_pSearchResult)[a]->Type & LFTypeDefault)) || (!strcmp(StoreID, (*m_pSearchResult)[a]->StoreID)))
+		if (((Index==-1) && ((*m_pSearchResult)[a]->Type & LFTypeDefault)) || !strcmp(StoreID, (*m_pSearchResult)[a]->StoreID))
 			Index = a;
 
-	m_wndStoreList.SetItemState(Index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);*/
+	m_wndStoreList.SetFocusItem(Index);
+
+	// Update Ok button
+	UpdateOkButton();
 
 	return NULL;
-}
-
-/*void LFChooseStoreDlg::OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	if ((GetSelectedStore()!=-1) && (GetDlgItem(IDOK)->IsWindowEnabled()))
-		PostMessage(WM_COMMAND, (WPARAM)IDOK);
-}*/
-
-void LFChooseStoreDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
-{
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-
-	if ((pNMListView->uChanged & LVIF_STATE) && ((pNMListView->uOldState & LVIS_SELECTED) || (pNMListView->uNewState & LVIS_SELECTED)))
-		UpdateOkButton();
-}
-
-void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
-
-	*pResult = FALSE;
-
-	if (m_pSearchResult && pDispInfo->item.pszText)
-		if (pDispInfo->item.pszText[0]!=L'\0')
-		{
-			CWaitCursor csr;
-
-			LFTransactionList* pTransactionList = LFAllocTransactionList();
-			LFAddTransactionItem(pTransactionList, (*m_pSearchResult)[pDispInfo->item.iItem]);
-
-			LFVariantData VData;
-			LFInitVariantData(VData, LFAttrFileName);
-
-			wcsncpy_s(VData.UnicodeString, 256, pDispInfo->item.pszText, _TRUNCATE);
-			VData.IsNull = FALSE;
-
-			LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &VData);
-			LFErrorBox(this, pTransactionList->m_LastError);
-
-			LFFreeTransactionList(pTransactionList);
-			*pResult = TRUE;
-		}
-}
-
-void LFChooseStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
-
-	if (pTooltipData->Item!=-1)
-	{
-		wcscpy_s(pTooltipData->Hint, 4096, LFGetApp()->GetHintForItem((*m_pSearchResult)[pTooltipData->Item]));
-
-		*pResult = TRUE;
-	}
-	else
-	{
-		*pResult = FALSE;
-	}
 }
 
 

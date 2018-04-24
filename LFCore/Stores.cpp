@@ -645,12 +645,12 @@ UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor)
 	return Result;
 }
 
-void ChooseNewDefaultStore()
+void ChooseNewDefaultStore(BOOL OnInitialize)
 {
 	INT Slot = -1;
 
 	for (UINT a=0; a<StoreCount; a++)
-		if ((strcmp(DefaultStore, StoreCache[a].StoreID)!=0) && ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal))
+		if ((strcmp(DefaultStore, StoreCache[a].StoreID)!=0) && (OnInitialize || ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)))
 		{
 			Slot = a;
 
@@ -1259,9 +1259,8 @@ LFCORE_API UINT LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pCo
 	if (!pName && !pComment)
 		return LFOk;
 
-	if (pName)
-		if (pName[0]==L'\0')
-			return LFIllegalValue;
+	if (pName && (pName[0]==L'\0'))
+		return LFIllegalValue;
 
 	if (!GetMutexForStores())
 		return LFMutexError;
@@ -1645,7 +1644,7 @@ void InitStores()
 
 			// Choose new default store if neccessary
 			if (!DefaultStoreOk)
-				ChooseNewDefaultStore();
+				ChooseNewDefaultStore(TRUE);
 		}
 
 		ReleaseMutexForStores();

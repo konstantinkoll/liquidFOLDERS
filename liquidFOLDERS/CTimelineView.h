@@ -65,6 +65,7 @@ protected:
 	INT m_SmallIconSize;
 
 private:
+	TimelineItemData* GetTimelineItemData(INT Index) const;
 	static LPCWSTR GetAttribute(TimelineItemData* pData, UINT Mask, const LFItemDescriptor* pItemDescriptor, UINT Attr);
 	static void AggregateAttribute(UINT& PreviewMask, LPCWSTR& pStrAggregated, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	static void AggregateIcon(UINT& PreviewMask, INT& AggregatedIconID, UINT Mask, INT IconID);
@@ -73,3 +74,8 @@ private:
 
 	static const ARGB m_BevelColors[8];
 };
+
+inline TimelineItemData* CTimelineView::GetTimelineItemData(INT Index) const
+{
+	return (TimelineItemData*)GetItemData(Index);
+}

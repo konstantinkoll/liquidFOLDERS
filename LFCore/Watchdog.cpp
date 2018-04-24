@@ -82,7 +82,8 @@ void InitWatchdog()
 	if ((hWndWatchdog=CreateWindow(szWindowClass, L"", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL))!=NULL)
 	{
 		// Shell notifications
-		SHChangeNotifyEntry shCNE = { NULL, TRUE };
+		const SHChangeNotifyEntry shCNE = { NULL, TRUE };
+
 		ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWndWatchdog, SHCNRF_ShellLevel | SHCNRF_NewDelivery,
 			SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
 			WM_USER, 1, &shCNE);

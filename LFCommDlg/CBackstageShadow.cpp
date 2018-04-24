@@ -17,11 +17,13 @@
 #define TOPHEIGHT           (SHADOWCORNER-SHADOWOFFSET)
 #define BOTTOMHEIGHT        SHADOWCORNER
 
-LPBYTE CBackstageShadow::m_pShadowCorner = NULL;
+BYTE CBackstageShadow::m_ShadowCorner[31][31];
+BOOL CBackstageShadow::m_ShadowCornerValid = FALSE;
 
 CBackstageShadow::CBackstageShadow()
 {
 	m_Width = m_Height = 0;
+
 	ZeroMemory(&m_wndTopLeft, sizeof(m_wndTopLeft));
 }
 
@@ -35,14 +37,16 @@ CBackstageShadow::~CBackstageShadow()
 BOOL CBackstageShadow::Create()
 {
 	// Corner mask
-	if (!m_pShadowCorner)
+	if (!m_ShadowCornerValid)
 	{
-		m_pShadowCorner = new BYTE[SHADOWCORNER*SHADOWCORNER];
-		LPBYTE pByte = m_pShadowCorner;
+		ASSERT(SHADOWCORNER==31);
+		LPBYTE pByte = &m_ShadowCorner[0][0];
 
 		for (INT Row=SHADOWCORNER-1; Row>=0; Row--)
 			for (INT Column=SHADOWCORNER-1; Column>=0; Column--)
 				*(pByte++) = CalcOpacity((DOUBLE)SHADOWSIZE-sqrt((DOUBLE)(Row*Row+Column*Column))+(DOUBLE)BACKSTAGERADIUS);
+
+		m_ShadowCornerValid = TRUE;
 	}
 
 	// Create transparent windows
@@ -171,9 +175,7 @@ void CBackstageShadow::VerticalLine(const BITMAP& Bitmap, UINT Column, UINT Heig
 
 inline void CBackstageShadow::CornersTop(const BITMAP& Bitmap, UINT Width)
 {
-	ASSERT(m_pShadowCorner);
-
-	LPBYTE pByteSrc = m_pShadowCorner;
+	LPBYTE pByteSrc = &m_ShadowCorner[0][0];
 	LPBYTE pByteLeft = (LPBYTE)Bitmap.bmBits+3;
 	LPBYTE pByteRight = pByteLeft+(Width-1)*4;
 
@@ -194,9 +196,7 @@ inline void CBackstageShadow::CornersTop(const BITMAP& Bitmap, UINT Width)
 
 inline void CBackstageShadow::CornersBottom(const BITMAP& Bitmap, UINT Width, UINT Height)
 {
-	ASSERT(m_pShadowCorner);
-
-	LPBYTE pByteSrc = m_pShadowCorner;
+	LPBYTE pByteSrc = &m_ShadowCorner[0][0];
 	LPBYTE pByteLeft = (LPBYTE)Bitmap.bmBits+(Height-1)*Bitmap.bmWidthBytes+3;
 	LPBYTE pByteRight = pByteLeft+(Width-1)*4;
 

@@ -19,7 +19,7 @@
 #define SPACER                 (4*ITEMPADDING+1)
 
 CListView::CListView()
-	: CFileView(sizeof(ListItemData), FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS)
+	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(ListItemData))
 {
 	m_pFolderItems = NULL;
 	m_HeaderItemClicked = -1;
@@ -229,8 +229,7 @@ void CListView::AdjustLayout()
 			LFItemDescriptor* pItemDescriptor = (*m_pFolderItems)[a];
 
 			FolderData Data;
-			Data.Rect.top = m_ScrollHeight;
-			Data.Rect.bottom = Data.Rect.top+CARDPADDING;
+			Data.Rect.bottom = (Data.Rect.top=m_ScrollHeight)+CARDPADDING;
 			Data.Rect.left = BACKSTAGEBORDER;
 			Data.Rect.right = m_ScrollWidth-BACKSTAGEBORDER;
 
@@ -393,8 +392,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 
 		if (m_ContextViewSettings.ColumnWidth[Attr] && ((INT)Attr!=m_PreviewAttribute))
 		{
-			rect.left = rect.right+SPACER;
-			rect.right = rect.left+m_ContextViewSettings.ColumnWidth[Attr]-SPACER;
+			rect.right = (rect.left=rect.right+SPACER)+m_ContextViewSettings.ColumnWidth[Attr]-SPACER;
 
 			if (pItemDescriptor->AttributeValues[Attr])
 			{

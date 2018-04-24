@@ -10,17 +10,16 @@
 // CTagcloudView
 //
 
-#define GetItemData(Index)     ((TagcloudItemData*)CFileView::GetItemData(Index))
-#define DEFAULTFONT            2
-#define TEXTFORMAT             DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
-#define GUTTER                 3
-#define MARGIN                 BACKSTAGEBORDER
-#define PADDINGX               5
-#define PADDINGY               4
+#define DEFAULTFONT     3
+#define TEXTFORMAT      DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
+#define GUTTER          3
+#define MARGIN          BACKSTAGEBORDER
+#define PADDINGX        5
+#define PADDINGY        4
 
 
 CTagcloudView::CTagcloudView()
-	: CFileView(sizeof(TagcloudItemData), FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FF_ENABLEFOLDERTOOLTIPS | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLETOOLTIPICONS)
+	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FF_ENABLEFOLDERTOOLTIPS | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLETOOLTIPICONS, sizeof(TagcloudItemData))
 {
 }
 
@@ -73,7 +72,7 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-			TagcloudItemData* pData = GetItemData(a);
+			TagcloudItemData* pData = GetTagcloudItemData(a);
 
 			if ((pData->Hdr.Valid=((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))==TRUE)
 			{
@@ -89,7 +88,7 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			TagcloudItemData* pData = GetItemData(a);
+			TagcloudItemData* pData = GetTagcloudItemData(a);
 			if (pData->Hdr.Valid)
 				if (!m_GlobalViewSettings.TagcloudShowRare && (Delta>1) && (pData->Cnt==Minimum))
 				{
@@ -147,19 +146,27 @@ void CTagcloudView::AdjustLayout()
 		if (!rectLayout.Width())
 			return;
 
-#define CenterRow(Last) for (UINT b=RowStart; b<=Last; b++) \
+#define CenterRow(Last) for (INT Index=RowStart; Index<=Last; Index++) \
 	{ \
-		TagcloudItemData* pData = GetItemData(b); \
+		TagcloudItemData* pData = GetTagcloudItemData(Index); \
 		if (pData->Hdr.Valid) \
 		{ \
 			OffsetRect(&pData->Hdr.Rect, (rectLayout.Width()+GUTTER-x)/2, (RowHeight-(pData->Hdr.Rect.bottom-pData->Hdr.Rect.top))/2); \
 			if (pData->Hdr.Rect.right>m_ScrollWidth) \
 				m_ScrollWidth = pData->Hdr.Rect.right; \
 			if (pData->Hdr.Rect.bottom+MARGIN>m_ScrollHeight) \
-				m_ScrollHeight = pData->Hdr.Rect.bottom+MARGIN; \
+				if (((m_ScrollHeight=pData->Hdr.Rect.bottom+MARGIN)>rectLayout.Height()) && !HasScrollbars) \
+				{ \
+					rectLayout.right -= GetSystemMetrics(SM_CXVSCROLL); \
+					HasScrollbars = TRUE; \
+					goto Restart; \
+				} \
 		} \
 	}
 
+	BOOL HasScrollbars = FALSE;
+
+Restart:
 		m_ScrollWidth = m_ScrollHeight = 0;
 
 		INT Column = 0;
@@ -169,9 +176,9 @@ void CTagcloudView::AdjustLayout()
 		INT RowHeight = 0;
 		INT RowStart = 0;
 
-		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+		for (INT a=0; a<m_ItemCount; a++)
 		{
-			TagcloudItemData* pData = GetItemData(a);
+			TagcloudItemData* pData = GetTagcloudItemData(a);
 			if (pData->Hdr.Valid)
 			{
 				LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
@@ -207,8 +214,8 @@ void CTagcloudView::AdjustLayout()
 			}
 		}
 
-		if (p_CookedFiles->m_ItemCount)
-			CenterRow(p_CookedFiles->m_ItemCount-1);
+		if (m_ItemCount)
+			CenterRow(m_ItemCount-1);
 	}
 	else
 	{
@@ -221,7 +228,7 @@ void CTagcloudView::AdjustLayout()
 void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-	const TagcloudItemData* pData = GetItemData(Index);
+	const TagcloudItemData* pData = GetTagcloudItemData(Index);
 
 	// Calculate color
 	if (!IsItemSelected(pItemDescriptor))
@@ -247,7 +254,7 @@ void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Ind
 
 LFFont* CTagcloudView::GetFont(INT Index)
 {
-	return &m_Fonts[m_GlobalViewSettings.TagcloudUseSize ? GetItemData(Index)->FontSize : DEFAULTFONT];
+	return &m_Fonts[m_GlobalViewSettings.TagcloudUseSize ? GetTagcloudItemData(Index)->FontSize : DEFAULTFONT];
 }
 
 

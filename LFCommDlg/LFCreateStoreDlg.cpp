@@ -7,57 +7,70 @@
 #include "LFCreateStoreDlg.h"
 
 
-// LFCreateStoreDlg
+// CVolumeList
 //
 
-#define WM_VOLUMECHANGE         WM_USER+4
-#define GetSelectedVolume()     m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
-
-LFCreateStoreDlg::LFCreateStoreDlg(CWnd* pParentWnd)
-	: LFDialog(IDD_CREATESTORE, pParentWnd)
+CVolumeList::CVolumeList()
+	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM, sizeof(VolumeItemData))
 {
-	m_Result = LFCancel;
-	m_SHChangeNotifyRegister = 0;
-}
+	WNDCLASS wndcls;
+	ZeroMemory(&wndcls, sizeof(wndcls));
+	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
+	wndcls.lpszClassName = L"CVolumeList";
 
-void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
-{
-	LFDialog::DoDataExchange(pDX);
-
-	DDX_Control(pDX, IDC_STOREICON, m_wndIcon);
-	DDX_Control(pDX, IDC_AUTOPATH, m_wndAutoPath);
-	DDX_Control(pDX, IDC_MAKESEARCHABLE, m_wndMakeSearchable);
-	DDX_Control(pDX, IDC_VOLUMELIST, m_wndExplorerList);
-
-	if (pDX->m_bSaveAndValidate)
+	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CVolumeList", &wndcls)))
 	{
-		GetDlgItem(IDC_STORENAME)->GetWindowText(m_StoreName, 256);
+		wndcls.hInstance = AfxGetInstanceHandle();
 
-		WCHAR Comments[256];
-		GetDlgItem(IDC_COMMENTS)->GetWindowText(Comments, 256);
-		
-		CHAR cVolume = '\0';
-		if (!m_wndAutoPath.GetCheck())
-		{
-			const INT Index = GetSelectedVolume();
-			if (Index!=-1)
-				cVolume = m_DriveLetters[Index];
-		}
-
-		CWaitCursor csr;
-		m_Result = LFCreateStoreLiquidfolders(m_StoreName, Comments, cVolume, m_wndMakeSearchable.GetCheck());
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
 	}
 }
 
-void LFCreateStoreDlg::UpdateVolumes()
+void CVolumeList::ShowTooltip(const CPoint& point)
 {
-	DWORD VolumesOnSystem = LFGetLogicalVolumes();
+	ASSERT(m_HoverItem>=0);
 
-	m_wndExplorerList.DeleteAllItems();
+	const VolumeItemData* pData = GetVolumeItemData(m_HoverItem);
 
-	LVITEM lvi;
-	ZeroMemory(&lvi, sizeof(lvi));
-	lvi.mask = LVIF_TEXT | LVIF_IMAGE;
+	WCHAR szVolumeRoot[] = L" :\\";
+	szVolumeRoot[0] = pData->cVolume;
+
+	SHFILEINFO sfi;
+	if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
+		LFGetApp()->ShowTooltip(this, point, pData->DisplayName, sfi.szTypeName,
+			LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(sfi.iIcon), NULL);
+}
+
+BOOL CVolumeList::GetContextMenu(CMenu& Menu, INT Index)
+{
+	if (Index>=0)
+		Menu.LoadMenu(IDM_VOLUME);
+
+	return FALSE;
+}
+
+void CVolumeList::AddVolume(CHAR cVolume, LPCWSTR DisplayName, INT iIcon)
+{
+	VolumeItemData Data;
+
+	Data.cVolume = cVolume;
+	wcsncpy_s(Data.DisplayName, 256, DisplayName, _TRUNCATE);
+	Data.iIcon = iIcon;
+
+	AddItem(&Data);
+}
+
+void CVolumeList::SetVolumes(UINT Mask)
+{
+	ASSERT(LFContextAllFiles==0);
+
+	// Add volumes
+	SetItemCount(26, FALSE);
+
+	DWORD VolumesOnSystem = LFGetLogicalVolumes(Mask);
 
 	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
 	{
@@ -73,15 +86,89 @@ void LFCreateStoreDlg::UpdateVolumes()
 			if (!sfi.dwAttributes)
 				continue;
 
-			lvi.pszText = sfi.szDisplayName;
-			lvi.iImage = sfi.iIcon;
-			m_wndExplorerList.InsertItem(&lvi);
-
-			m_DriveLetters[lvi.iItem++] = cVolume;
+			AddVolume(cVolume, sfi.szDisplayName, sfi.iIcon);
 		}
 	}
 
-	OnUpdate();
+	LastItem();
+
+	AdjustLayout();
+}
+
+CHAR CVolumeList::GetSelectedVolume() const
+{
+	const INT Index = GetSelectedItem();
+
+	return (Index<0) ? '\0' : GetVolumeItemData(Index)->cVolume;
+}
+
+void CVolumeList::AdjustLayout()
+{
+	AdjustLayoutSingleRow(3);
+}
+
+void CVolumeList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
+{
+	const VolumeItemData* pData = GetVolumeItemData(Index);
+
+	CRect rect(rectItem);
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
+
+	// Text
+	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DialogFont);
+	dc.DrawText(pData->DisplayName, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
+	dc.SelectObject(pOldFont);
+
+	rect.bottom -= LFGetApp()->m_DialogFont.GetFontHeight()+ITEMVIEWPADDING;
+
+	// Icon
+	LFGetApp()->m_SystemImageListExtraLarge.DrawEx(&dc, pData->iIcon,
+		CPoint((rect.left+rect.right-LFGetApp()->m_ExtraLargeIconSize)/2, (rect.top+rect.bottom-LFGetApp()->m_ExtraLargeIconSize)/2),
+		CSize(LFGetApp()->m_ExtraLargeIconSize, LFGetApp()->m_ExtraLargeIconSize), CLR_NONE, CLR_NONE,
+		IsWindowEnabled() ? ILD_TRANSPARENT : ILD_BLEND50);
+}
+
+
+// LFCreateStoreDlg
+//
+
+#define WM_VOLUMECHANGE     WM_USER+4
+
+LFCreateStoreDlg::LFCreateStoreDlg(CWnd* pParentWnd)
+	: LFDialog(IDD_CREATESTORE, pParentWnd)
+{
+	m_Result = LFCancel;
+	m_SHChangeNotifyRegister = 0;
+}
+
+void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
+{
+	LFDialog::DoDataExchange(pDX);
+
+	DDX_Control(pDX, IDC_STOREICON, m_wndIcon);
+	DDX_Control(pDX, IDC_AUTOPATH, m_wndAutoPath);
+	DDX_Control(pDX, IDC_MAKESEARCHABLE, m_wndMakeSearchable);
+	DDX_Control(pDX, IDC_VOLUMELIST, m_wndVolumeList);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		GetDlgItem(IDC_STORENAME)->GetWindowText(m_StoreName, 256);
+
+		WCHAR Comments[256];
+		GetDlgItem(IDC_COMMENTS)->GetWindowText(Comments, 256);
+
+		CWaitCursor csr;
+		m_Result = LFCreateStoreLiquidfolders(m_StoreName, Comments,
+			m_wndAutoPath.GetCheck() ? '\0' : GetSelectedVolume(),
+			m_wndMakeSearchable.GetCheck());
+	}
+}
+
+void LFCreateStoreDlg::UpdateVolumes()
+{
+	m_wndVolumeList.SetVolumes();
+
+	OnUpdateControls();
 }
 
 
@@ -89,16 +176,11 @@ BOOL LFCreateStoreDlg::InitDialog()
 {
 	m_wndAutoPath.SetCheck(TRUE);
 
-	m_wndExplorerList.SetImageList(&LFGetApp()->m_SystemImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&LFGetApp()->m_SystemImageListExtraLarge, LVSIL_NORMAL);
-	m_wndExplorerList.SetMenus(IDM_VOLUME);
-	m_wndExplorerList.SetView(LV_VIEW_ICON);
-	m_wndExplorerList.SetItemsPerRow(3);
-
 	UpdateVolumes();
 
-	// Benachrichtigung, wenn sich Laufwerke ändern
-	SHChangeNotifyEntry shCNE = { NULL, TRUE };
+	// Shell notifications
+	const SHChangeNotifyEntry shCNE = { NULL, TRUE };
+
 	m_SHChangeNotifyRegister = SHChangeNotifyRegister(GetSafeHwnd(), SHCNRF_ShellLevel | SHCNRF_NewDelivery,
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
 		WM_VOLUMECHANGE, 1, &shCNE);
@@ -109,10 +191,9 @@ BOOL LFCreateStoreDlg::InitDialog()
 
 BEGIN_MESSAGE_MAP(LFCreateStoreDlg, LFDialog)
 	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_AUTOPATH, OnUpdate)
-	ON_BN_CLICKED(IDC_VOLUMEPATH, OnUpdate)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VOLUMELIST, OnItemChanged)
-	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_VOLUMELIST, OnRequestTooltipData)
+	ON_BN_CLICKED(IDC_AUTOPATH, OnUpdateControls)
+	ON_BN_CLICKED(IDC_VOLUMEPATH, OnUpdateControls)
+	ON_NOTIFY(IVN_SELECTIONCHANGED, IDC_VOLUMELIST, OnSelectionChanged)
 	ON_MESSAGE(WM_VOLUMECHANGE, OnVolumeChange)
 
 	ON_COMMAND(IDM_VOLUME_FORMAT, OnVolumeFormat)
@@ -129,54 +210,35 @@ void LFCreateStoreDlg::OnDestroy()
 	LFDialog::OnDestroy();
 }
 
-void LFCreateStoreDlg::OnUpdate()
+void LFCreateStoreDlg::OnUpdateControls()
 {
 	UINT Source = LFTypeSourceInternal;
 
+	// Volume list
 	if (!m_wndAutoPath.GetCheck())
 	{
-		m_wndExplorerList.EnableWindow(TRUE);
+		m_wndVolumeList.EnableWindow(TRUE);
 
-		const INT Index = GetSelectedVolume();
-		if (Index!=-1)
-			Source = LFGetSourceForVolume(m_DriveLetters[Index]);
+		if (const CHAR cVolume = GetSelectedVolume())
+			Source = LFGetSourceForVolume(cVolume);
 	}
 	else
 	{
-		m_wndExplorerList.EnableWindow(FALSE);
+		m_wndVolumeList.EnableWindow(FALSE);
 	}
 
+	// Make searchable
 	m_wndMakeSearchable.EnableWindow(Source!=LFTypeSourceInternal);
+
+	// Icon
 	m_wndIcon.SetCoreIcon(Source);
 }
 
-void LFCreateStoreDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+void LFCreateStoreDlg::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	OnUpdateControls();
 
-	if ((pNMListView->uChanged & LVIF_STATE) && ((pNMListView->uOldState & LVIS_SELECTED) || (pNMListView->uNewState & LVIS_SELECTED)))
-		OnUpdate();
-}
-
-void LFCreateStoreDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
-
-	*pResult = FALSE;
-	if (pTooltipData->Item!=-1)
-	{
-		WCHAR szVolumeRoot[] = L" :\\";
-		szVolumeRoot[0] = m_DriveLetters[pTooltipData->Item];
-
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
-		{
-			wcscpy_s(pTooltipData->Hint, 4096, sfi.szTypeName);
-			pTooltipData->hIcon = LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(sfi.iIcon);
-
-			*pResult = TRUE;
-		}
-	}
+	*pResult = 0;
 }
 
 LRESULT LFCreateStoreDlg::OnVolumeChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
@@ -189,33 +251,29 @@ LRESULT LFCreateStoreDlg::OnVolumeChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 void LFCreateStoreDlg::OnVolumeFormat()
 {
-	const INT Index = GetSelectedVolume();
-	if (Index!=-1)
-		LFGetApp()->ExecuteExplorerContextMenu(m_DriveLetters[Index], "format");
+	if (const CHAR cVolume = GetSelectedVolume())
+		LFGetApp()->ExecuteExplorerContextMenu(cVolume, "format");
 }
 
 void LFCreateStoreDlg::OnVolumeEject()
 {
-	const INT Index = GetSelectedVolume();
-	if (Index!=-1)
-		LFGetApp()->ExecuteExplorerContextMenu(m_DriveLetters[Index], "eject");
+	if (const CHAR cVolume = GetSelectedVolume())
+		LFGetApp()->ExecuteExplorerContextMenu(cVolume, "eject");
 }
 
 void LFCreateStoreDlg::OnVolumeProperties()
 {
-	const INT Index = GetSelectedVolume();
-	if (Index!=-1)
-		LFGetApp()->ExecuteExplorerContextMenu(m_DriveLetters[Index], "properties");
+	if (const CHAR cVolume = GetSelectedVolume())
+		LFGetApp()->ExecuteExplorerContextMenu(cVolume, "properties");
 }
 
 void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = FALSE;
 
-	const INT Index = GetSelectedVolume();
-	if (Index!=-1)
+	if (const CHAR cVolume = GetSelectedVolume())
 	{
-		const UINT Source = LFGetSourceForVolume(m_DriveLetters[Index]);
+		const UINT Source = LFGetSourceForVolume(cVolume);
 
 		switch (pCmdUI->m_nID)
 		{

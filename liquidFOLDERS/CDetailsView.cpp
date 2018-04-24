@@ -10,10 +10,6 @@
 // CDetailsView
 //
 
-#define GUTTER                 9
-#define PADDING                6
-#define MINWIDTH               400
-
 CDetailsView::CDetailsView()
 	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS)
 {
@@ -28,13 +24,14 @@ void CDetailsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 
 void CDetailsView::AdjustLayout()
 {
-	CRect rect;
-	GetWindowRect(rect);
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
 
 	const INT MinWidth = max(1, 25*m_DefaultFontHeight);
-	const BOOL FullWidth = rect.Width()<BACKSTAGEBORDER+2*(MinWidth+2*PADDING+GUTTER)+GetSystemMetrics(SM_CXVSCROLL);
+	const BOOL FullWidth = rectLayout.Width()<BACKSTAGEBORDER+2*(MinWidth+2*ITEMVIEWPADDING+ITEMVIEWMARGINLARGE)+GetSystemMetrics(SM_CXVSCROLL);
 
-	AdjustLayoutGrid(CSize(MinWidth+2*PADDING, 128+3*PADDING+RATINGBITMAPHEIGHT+3), CSize(GUTTER, GUTTER), FullWidth, BACKSTAGEBORDER);
+	AdjustLayoutGrid(CSize(MinWidth+2*ITEMVIEWPADDING, 128+3*ITEMVIEWPADDING+RATINGBITMAPHEIGHT+2),
+		FullWidth, BACKSTAGEBORDER);
 }
 
 LFFont* CDetailsView::GetLabelFont() const
@@ -46,10 +43,9 @@ RECT CDetailsView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
-	rect.top += PADDING-2;
-	rect.bottom = rect.top+m_LargeFontHeight+4;
-	rect.left += 128+2*PADDING+GetColorDotWidth(Index, m_LargeColorDots)-5;
-	rect.right -= PADDING-2;
+	rect.bottom = (rect.top+=ITEMVIEWPADDING-2)+m_LargeFontHeight+4;
+	rect.left += 128+2*ITEMVIEWPADDING+GetColorDotWidth(Index, m_LargeColorDots)-5;
+	rect.right -= ITEMVIEWPADDING-2;
 
 	return rect;
 }
@@ -61,11 +57,11 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
 	CRect rect(rectItem);
-	rect.DeflateRect(PADDING, PADDING);
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
 
 	// Properties
 	CRect rectText(rect);
-	rectText.left += 128+PADDING+1;
+	rectText.left += 128+ITEMVIEWPADDING+1;
 
 	CString Name;
 	CString Value;
@@ -79,7 +75,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 
 		if (Attr==LFAttrFileName)
 		{
-			ASSERT(rect.Height()>=m_LargeFontHeight+PADDING/2+2*m_DefaultFontHeight);
+			ASSERT(rect.Height()>=m_LargeFontHeight+ITEMVIEWPADDING/2+2*m_DefaultFontHeight);
 
 			CRect rectLabel(rectText);
 			rectLabel.bottom = rectLabel.top+m_LargeFontHeight;
@@ -98,7 +94,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 					dc.SelectObject(pOldFont);
 				}
 
-				rectText.top += m_LargeFontHeight+PADDING/2;
+				rectText.top += m_LargeFontHeight+ITEMVIEWPADDING/2;
 			}
 
 			SetDarkTextColor(dc, pItemDescriptor, Themed);
@@ -165,7 +161,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 
 			HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(theApp.hRatingBitmaps[Rating]);
 
-			dc.AlphaBlend(rect.left+(128-RATINGBITMAPWIDTH)/2, rect.top+128+PADDING, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+			dc.AlphaBlend(rect.left+(128-RATINGBITMAPWIDTH)/2, rect.top+128+ITEMVIEWPADDING, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
 
 			SelectObject(dcMem, hOldBitmap);
 		}

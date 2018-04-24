@@ -773,7 +773,7 @@ void CPropertyGenre::OnClickButton()
 	LFEditGenreDlg dlg(m_Multiple ? 0 : p_VData->Genre, p_Parent->m_StoreID, p_Parent);
 	if (dlg.DoModal()==IDOK)
 	{
-		p_VData->UINT32 = dlg.GetSelectedGenre();
+		p_VData->UINT32 = dlg.m_Genre;
 		p_VData->IsNull = FALSE;
 
 		NotifyOwner();

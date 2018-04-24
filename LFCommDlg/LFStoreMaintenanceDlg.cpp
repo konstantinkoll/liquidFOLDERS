@@ -9,10 +9,10 @@
 // CMaintenanceReport
 //
 
-#define PADDING     (BACKSTAGEBORDER-LFITEMVIEWMARGIN)
+#define PADDING     (BACKSTAGEBORDER-ITEMVIEWMARGIN)
 
 CMaintenanceReport::CMaintenanceReport()
-	: CFrontstageItemView(sizeof(UsageItemData))
+	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING, sizeof(UsageItemData))
 {
 	p_StoreIcons = NULL;
 	p_MaintenanceList = NULL;
@@ -32,7 +32,7 @@ void CMaintenanceReport::ShowTooltip(const CPoint& point)
 
 void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
 {
-	SetItemCount((p_MaintenanceList=pMaintenanceList)->m_ItemCount);
+	SetItemCount((p_MaintenanceList=pMaintenanceList)->m_ItemCount, TRUE);
 	ValidateAllItems();
 
 	AdjustLayout();
@@ -40,7 +40,7 @@ void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
 
 void CMaintenanceReport::AdjustLayout()
 {
-	AdjustLayoutSingleColumnList();
+	AdjustLayoutColumns();
 }
 
 void CMaintenanceReport::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
@@ -72,10 +72,9 @@ void CMaintenanceReport::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, IN
 	rect.top += (rect.Height()-rectText.Height()-m_DefaultFontHeight)/2-1;
 
 	dc.DrawText(pData->Name, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
-
 	rect.top += m_DefaultFontHeight;
 
-	SetLightTextColor(dc, Index, hIcon, Themed);
+	SetDarkTextColor(dc, Index, hIcon, Themed);
 	dc.DrawText(pDescription, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_WORDBREAK);
 }
 

@@ -9,21 +9,27 @@
 // CFrontstageItemView
 //
 
-CFrontstageItemView::CFrontstageItemView(SIZE_T DataSize, UINT Flags, const CSize& szItemInflate)
+CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
 	: CFrontstageScroller(Flags)
 {
-	ASSERT(DataSize>=sizeof(ItemData));
 	ASSERT(((Flags & FRONTSTAGE_ENABLESELECTION)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
 	ASSERT(((Flags & FRONTSTAGE_ENABLESHIFTSELECTION)==0) || (Flags & FRONTSTAGE_ENABLESELECTION));
 	ASSERT(((Flags & FRONTSTAGE_ENABLEDRAGANDDROP)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
 	ASSERT(((Flags & FRONTSTAGE_ENABLELABELEDIT)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
+	ASSERT(DataSize>=sizeof(ItemData));
 
 	m_DataSize = DataSize;
 	m_pItemData = NULL;
+	m_szItemInflate = szItemInflate;
+
+	// Font height
+	m_LargeFontHeight = LFGetApp()->m_LargeFont.GetFontHeight();
+	m_DefaultFontHeight = LFGetApp()->m_DefaultFont.GetFontHeight();
+	m_SmallFontHeight = LFGetApp()->m_SmallFont.GetFontHeight();
+
+	// Items
 	m_ItemDataAllocated = m_ItemCount = 0;
 	m_Nothing = TRUE;
-
-	m_szItemInflate = szItemInflate;
 
 	m_FocusItem = m_EditItem = m_SelectionAnchor = -1;
 	m_FocusItemSelected = m_MultipleSelected = m_ShowFocusRect = FALSE;
@@ -49,17 +55,19 @@ LRESULT CFrontstageItemView::SendNotifyMessage(UINT Code) const
 
 // Item categories
 
-void CFrontstageItemView::AddItemCategory(LPCWSTR Caption, LPCWSTR Hint)
+void CFrontstageItemView::AddItemCategory(LPCWSTR Caption, LPCWSTR Hint, INT IconID)
 {
 	ASSERT(Caption);
 	ASSERT(Caption[0]);
 	ASSERT(Hint);
+	ASSERT(IconID>=0);
 
 	ItemCategoryData Data;
 
 	ZeroMemory(&Data.Rect, sizeof(RECT));
 	wcscpy_s(Data.Caption, 256, Caption);
 	wcscpy_s(Data.Hint, 256, Hint);
+	Data.IconID = IconID;
 
 	m_ItemCategories.AddItem(Data);
 }
@@ -72,24 +80,27 @@ INT CFrontstageItemView::GetItemCategory(INT /*Index*/) const
 
 // Item data
 
-void CFrontstageItemView::AllocItemData(UINT ItemCount)
+void CFrontstageItemView::SetItemCount(UINT ItemCount, BOOL Virtual)
 {
+	// Free old item data
 	FreeItemData(TRUE);
 
+	// Allocate new item data
 	const SIZE_T Size = ((SIZE_T)(m_ItemDataAllocated=ItemCount))*m_DataSize;
 	ZeroMemory(m_pItemData=(LPBYTE)malloc(Size), Size);
-}
 
-void CFrontstageItemView::SetItemCount(UINT ItemCount)
-{
-	AllocItemData(ItemCount);
+	if (Virtual)
+	{
+		// Virtual data, so set m_ItemCount to ItemCount paramter
+		// Otherwise, items will be added using AddItem() calls
+		m_ItemCount = ItemCount;
 
-	m_Nothing = ((m_ItemCount=(INT)ItemCount)==0);
+		// Focus item
+		LastItem();
+	}
+
 	m_MultipleSelected = IsSelectionEnabled();
-
-	// Focus item
-	if (m_FocusItem>=m_ItemCount)
-		m_FocusItem = m_ItemCount-1;
+	m_Nothing = TRUE;
 }
 
 void CFrontstageItemView::AddItem(LPCVOID pData)
@@ -108,16 +119,22 @@ void CFrontstageItemView::AddItem(LPCVOID pData)
 	m_Nothing = FALSE;
 }
 
+void CFrontstageItemView::LastItem()
+{
+	if (m_FocusItem>=m_ItemCount)
+		m_FocusItem = m_ItemCount-1;
+}
+
 void CFrontstageItemView::FreeItemData(BOOL InternalCall)
 {
 	free(m_pItemData);
 
 	m_pItemData = NULL;
+	m_ItemDataAllocated = m_ItemCount = 0;
 	m_ShowFocusRect = FALSE;
 
 	if (!InternalCall)
 	{
-		m_ItemDataAllocated = m_ItemCount = 0;
 		m_Nothing = TRUE;
 		m_FocusItem = -1;
 	}
@@ -127,6 +144,8 @@ void CFrontstageItemView::ValidateAllItems()
 {
 	for (INT Index=0; Index<m_ItemCount; Index++)
 		GetItemData(Index)->Valid = TRUE;
+
+	m_Nothing = (m_ItemCount<=0);
 }
 
 
@@ -213,18 +232,6 @@ void CFrontstageItemView::InvalidateItem(INT Index)
 	}
 }
 
-INT CFrontstageItemView::GetFocusItem() const
-{
-	if ((m_FocusItem>=0) && GetItemData(m_FocusItem)->Valid && m_FocusItemSelected)
-	{
-		ASSERT(IsFocusItemEnabled());
-
-		return m_FocusItem;
-	}
-
-	return -1;
-}
-
 void CFrontstageItemView::SetFocusItem(INT Index, UINT Mode)
 {
 	m_EditItem = -1;
@@ -236,7 +243,14 @@ void CFrontstageItemView::SetFocusItem(INT Index, UINT Mode)
 		
 		switch (Mode)
 		{
+		case SETFOCUSITEM_MOVEONLY:
+			m_FocusItem = Index;
+
+			break;
+
 		case SETFOCUSITEM_MOVEDESELECT:
+			m_FocusItemSelected = TRUE;
+
 			if (IsSelectionEnabled() && m_MultipleSelected)
 			{
 				m_SelectionAnchor = -1;
@@ -244,6 +258,7 @@ void CFrontstageItemView::SetFocusItem(INT Index, UINT Mode)
 				for (INT a=0; a<m_ItemCount; a++)
 					SelectItem(a, a==Index);
 
+				m_FocusItem = Index;
 				ItemSelectionChanged();
 			}
 			else
@@ -255,10 +270,9 @@ void CFrontstageItemView::SetFocusItem(INT Index, UINT Mode)
 				}
 
 				SelectItem(Index);
-				ItemSelectionChanged(Index);
+				ItemSelectionChanged(m_FocusItem=Index);
 			}
 
-			m_FocusItemSelected = TRUE;
 			m_MultipleSelected = FALSE;
 
 			break;
@@ -268,7 +282,7 @@ void CFrontstageItemView::SetFocusItem(INT Index, UINT Mode)
 			m_MultipleSelected = TRUE;
 
 			SelectItem(Index, m_FocusItemSelected=!IsItemSelected(Index));
-			ItemSelectionChanged(Index);
+			ItemSelectionChanged(m_FocusItem=Index);
 
 			break;
 
@@ -276,17 +290,19 @@ void CFrontstageItemView::SetFocusItem(INT Index, UINT Mode)
 			if (m_SelectionAnchor==-1)
 				m_SelectionAnchor = m_FocusItem;
 
-			m_MultipleSelected = TRUE;
+			m_FocusItemSelected = m_MultipleSelected = TRUE;
 
 			for (INT a=0; a<m_ItemCount; a++)
 				SelectItem(a, ((a>=Index) && (a<=m_SelectionAnchor)) || ((a>=m_SelectionAnchor) && (a<=Index)));
 
+			m_FocusItem = Index;
 			ItemSelectionChanged();
 
 			break;
 		}
 
-		EnsureVisible(m_FocusItem=Index);
+		ASSERT(m_FocusItem==Index);
+		EnsureVisible(m_FocusItem);
 	}
 }
 
@@ -300,7 +316,7 @@ COLORREF CFrontstageItemView::GetItemTextColor(INT /*Index*/) const
 
 BOOL CFrontstageItemView::IsItemSelected(INT Index) const
 {
-	return (Index==m_FocusItem);
+	return (Index==m_FocusItem) && m_FocusItemSelected;
 }
 
 void CFrontstageItemView::SelectItem(INT /*Index*/, BOOL /*Select*/)
@@ -309,9 +325,7 @@ void CFrontstageItemView::SelectItem(INT /*Index*/, BOOL /*Select*/)
 
 INT CFrontstageItemView::GetSelectedItem() const
 {
-	const INT FocusItem = GetFocusItem();
-
-	return ((FocusItem>=0) && IsItemSelected(FocusItem)) ? FocusItem : -1;
+	return ((m_FocusItem>=0) && GetItemData(m_FocusItem)->Valid && IsItemSelected(m_FocusItem)) ? m_FocusItem : -1;
 }
 
 BOOL CFrontstageItemView::HasItemsSelected() const
@@ -501,7 +515,14 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 void CFrontstageItemView::FireFocusItem() const
 {
 	if (IsFocusItemEnabled())
+	{
+		// Only fire focus item if there is no disabled button
+		CWnd* pWnd = GetOwner()->GetDlgItem(IDOK);
+		if (pWnd && !pWnd->IsWindowEnabled())
+			return;
+
 		GetOwner()->PostMessage(WM_COMMAND, IDOK);
+	}
 }
 
 
@@ -517,11 +538,10 @@ void CFrontstageItemView::EnsureVisible(INT Index)
 	if ((Index<0) || (Index>=m_ItemCount))
 		return;
 
-	// Do NOT call GetLayoutRect to avoid resetting the item categories!
-	CRect rect;
-	GetClientRect(rect);
+	CRect rectClient;
+	GetClientRect(rectClient);
 
-	if (!rect.Height())
+	if (!rectClient.Height())
 		return;
 
 	CSize nInc(0, 0);
@@ -529,8 +549,8 @@ void CFrontstageItemView::EnsureVisible(INT Index)
 	const RECT rectItem = GetItemRect(Index);
 
 	// Vertical
-	if (rectItem.bottom+ENSUREVISIBLEEXTRAMARGIN>rect.Height())
-		nInc.cy = rectItem.bottom-rect.Height()+ENSUREVISIBLEEXTRAMARGIN;
+	if (rectItem.bottom+ENSUREVISIBLEEXTRAMARGIN>rectClient.Height())
+		nInc.cy = rectItem.bottom-rectClient.Height()+ENSUREVISIBLEEXTRAMARGIN;
 
 	if (rectItem.top-ENSUREVISIBLEEXTRAMARGIN<nInc.cy+(INT)m_HeaderHeight)
 		nInc.cy = rectItem.top-(INT)m_HeaderHeight-ENSUREVISIBLEEXTRAMARGIN;
@@ -538,10 +558,10 @@ void CFrontstageItemView::EnsureVisible(INT Index)
 	nInc.cy = max(-m_VScrollPos, min(nInc.cy, m_VScrollMax-m_VScrollPos));
 
 	// Horizontal
-	if ((rectItem.right-rectItem.left<rect.Width()) || (rectItem.right<rect.left) || (rectItem.left>=rect.right))
+	if ((rectItem.right-rectItem.left<rectClient.Width()) || (rectItem.right<rectClient.left) || (rectItem.left>=rectClient.right))
 	{
-		if (rectItem.right+ENSUREVISIBLEEXTRAMARGIN>rect.Width())
-			nInc.cx = rectItem.right-rect.Width()+ENSUREVISIBLEEXTRAMARGIN;
+		if (rectItem.right+ENSUREVISIBLEEXTRAMARGIN>rectClient.Width())
+			nInc.cx = rectItem.right-rectClient.Width()+ENSUREVISIBLEEXTRAMARGIN;
 
 		if (rectItem.left-ENSUREVISIBLEEXTRAMARGIN<nInc.cx)
 			nInc.cx = rectItem.left-ENSUREVISIBLEEXTRAMARGIN;
@@ -603,11 +623,21 @@ void CFrontstageItemView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/,
 	// Categories
 	for (UINT a=0; a<m_ItemCategories.m_ItemCount; a++)
 	{
-		CRect rect(m_ItemCategories[a].Rect);
-		rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+		CRect rectCategory(m_ItemCategories[a].Rect);
+		rectCategory.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 
-		if (IntersectRect(&rectIntersect, rect, rectUpdate))
-			DrawCategory(dc, rect, m_ItemCategories[a].Caption, m_ItemCategories[a].Hint, Themed);
+		if (IntersectRect(&rectIntersect, rectCategory, rectUpdate))
+			DrawCategory(dc, rectCategory, m_ItemCategories[a].Caption, m_ItemCategories[a].Hint, Themed);
+
+		if (m_ItemCategories[a].IconID)
+		{
+			CRect rectIcon(rectCategory);
+			rectIcon.right = (rectIcon.left-=ITEMVIEWICONPADDING)+128;
+			rectIcon.bottom = (rectIcon.top=rectIcon.bottom+BACKSTAGEBORDER/2-ITEMVIEWICONPADDING)+128;
+
+			if (IntersectRect(&rectIntersect, rectIcon, rectUpdate))
+				LFGetApp()->m_CoreImageListJumbo.Draw(&dc, m_ItemCategories[a].IconID-1, rectIcon.TopLeft(), ILD_NORMAL);
+		}
 	}
 }
 
@@ -636,19 +666,26 @@ void CFrontstageItemView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/,
 
 void CFrontstageItemView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	const BOOL Selected = IsSelectionEnabled() ? IsItemSelected(Index) : (m_FocusItem==Index) && m_FocusItemSelected;
-
-	if (Cached && Selected && Themed)
+	if (IsWindowEnabled())
 	{
-		DRAWCACHED(BITMAP_SELECTION, DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, Selected));
+		const BOOL Selected = IsSelectionEnabled() ? IsItemSelected(Index) : (m_FocusItem==Index) && m_FocusItemSelected;
 
-		const COLORREF TextColor = GetItemTextColor(Index);
-		dc.SetTextColor(Selected ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
+		if (Cached && Selected && Themed)
+		{
+			DRAWCACHED(BITMAP_SELECTION, DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, Selected));
+
+			const COLORREF TextColor = GetItemTextColor(Index);
+			dc.SetTextColor(Selected ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
+		}
+		else
+		{
+			DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
+				m_HoverItem==Index, m_FocusItem==Index, Selected, IsWindowEnabled() ? GetItemTextColor(Index) : GetSysColor(COLOR_GRAYTEXT), m_ShowFocusRect);
+		}
 	}
 	else
 	{
-		DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
-			m_HoverItem==Index, m_FocusItem==Index, Selected, GetItemTextColor(Index), m_ShowFocusRect);
+		dc.SetTextColor(GetSysColor(COLOR_GRAYTEXT));
 	}
 }
 
@@ -688,10 +725,14 @@ void CFrontstageItemView::GetLayoutRect(CRect& rectLayout)
 	ResetItemCategories();
 
 	// Client area for layout
-	GetClientRect(rectLayout);
+	GetWindowRect(rectLayout);
+
+	if (HasBorder())
+		rectLayout.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
+
 }
 
-void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, const CSize& szGutter, BOOL FullWidth, INT Margin)
+void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, INT Margin)
 {
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
@@ -699,8 +740,18 @@ void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, const CSize& szG
 	if (!rectLayout.Width())
 		return;
 
+	ASSERT(szItem.cx>0);
+	ASSERT(szItem.cy>0);
+
+	CSize szGutter;
+	szGutter.cx = GetGutterForMargin(Margin);
+	szGutter.cy = FullWidth ? -1 : szGutter.cx;
+
 	m_szScrollStep.cy = (m_ItemHeight=szItem.cy)+szGutter.cy;
 
+	BOOL HasScrollbars = FALSE;
+
+Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
 
 	INT Column = 0;
@@ -712,6 +763,10 @@ void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, const CSize& szG
 
 	for (INT a=0; a<m_ItemCount; a++)
 	{
+		ItemData* pData = GetItemData(a);
+
+		if (pData->Valid)
+		{
 			if (GetItemCategory(a)!=Category)
 			{
 				if (x>Margin)
@@ -731,8 +786,7 @@ void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, const CSize& szG
 
 				const LPRECT lpRect = &m_ItemCategories[Category].Rect;
 				lpRect->left = lpRect->right = x;
-				lpRect->top = y;
-				lpRect->bottom = lpRect->top+2*LFCATEGORYPADDING+m_LargeFontHeight;
+				lpRect->bottom = (lpRect->top=y)+2*LFCATEGORYPADDING+m_LargeFontHeight;
 
 				if (m_ItemCategories[Category].Hint[0]!=L'\0')
 					lpRect->bottom += m_DefaultFontHeight;
@@ -740,30 +794,34 @@ void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, const CSize& szG
 				y = lpRect->bottom+4;
 			}
 
-		ItemData* pItemData = GetItemData(a);
-		pItemData->Column = Column++;
-		pItemData->Row = Row;
-		pItemData->Rect.left = x;
-		pItemData->Rect.top = y;
-		pItemData->Rect.right = x+szItem.cx;
-		pItemData->Rect.bottom = y+szItem.cy;
+			pData->Column = Column++;
+			pData->Row = Row;
+			pData->Rect.right = (pData->Rect.left=x)+szItem.cx;
+			pData->Rect.bottom = (pData->Rect.top=y)+szItem.cy;
 
-		if ((x+=szItem.cx+szGutter.cx)>m_ScrollWidth)
-			m_ScrollWidth = x-1;
+			if ((x+=szItem.cx+szGutter.cx)>m_ScrollWidth)
+				m_ScrollWidth = x-1;
 
-		if (y+szItem.cy+szGutter.cy-1>m_ScrollHeight)
-			m_ScrollHeight = y+szItem.cy+Margin;
+			if (y+szItem.cy+szGutter.cy-1>m_ScrollHeight)
+				if (((m_ScrollHeight=y+szItem.cy+Margin)>rectLayout.Height()) && !HasScrollbars)
+				{
+					rectLayout.right -= GetSystemMetrics(SM_CXVSCROLL);
+					HasScrollbars = TRUE;
 
-		if ((x+szItem.cx+szGutter.cx>rectLayout.Width()) || FullWidth)
-		{
-			if (FullWidth)
-				pItemData->Rect.right = rectLayout.Width()-szGutter.cx;
+					goto Restart;
+				}
 
-			Column = 0;
-			Row++;
+			if ((x+szItem.cx+szGutter.cx>rectLayout.Width()) || FullWidth)
+			{
+				if (FullWidth)
+					pData->Rect.right = rectLayout.Width()-Margin;
 
-			x = Margin;
-			y += szItem.cy+szGutter.cy;
+				Column = 0;
+				Row++;
+
+				x = Margin;
+				y += szItem.cy+szGutter.cy;
+			}
 		}
 	}
 
@@ -775,36 +833,70 @@ void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, const CSize& szG
 	CFrontstageScroller::AdjustLayout();
 }
 
+void CFrontstageItemView::AdjustLayoutColumns(INT Columns, INT Margin)
+{
+	ASSERT(Columns>=1);
+
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
+	const INT Width = (rectLayout.Width()-GetSystemMetrics(SM_CXVSCROLL)-Margin)/Columns-GetGutterForMargin(Margin);
+
+	AdjustLayoutGrid(CSize(max(Width, ITEMVIEWMINWIDTH), m_ItemHeight), Columns==1, Margin);
+}
+
+void CFrontstageItemView::AdjustLayoutSingleRow(INT Columns)
+{
+	ASSERT(Columns>=1);
+
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
+	if (!rectLayout.Width())
+		return;
+
+	INT Width = (rectLayout.Width()-ITEMVIEWMARGIN)/Columns-ITEMVIEWMARGIN;
+	if (Width<ITEMVIEWMINWIDTH)
+		Width = ITEMVIEWMINWIDTH;
+
+	m_ItemHeight = (m_ScrollHeight=rectLayout.Height()-GetSystemMetrics(SM_CYHSCROLL))-2*ITEMVIEWMARGIN;
+	m_ScrollWidth = ITEMVIEWMARGIN;
+
+	INT Column = 0;
+	INT x = ITEMVIEWMARGIN;
+
+	for (INT a=0; a<m_ItemCount; a++)
+		if (GetItemData(a)->Valid)
+		{
+			ItemData* pItemData = GetItemData(a);
+
+			pItemData->Column = Column++;
+			pItemData->Rect.right = (pItemData->Rect.left=x)+Width;
+			pItemData->Rect.bottom = (pItemData->Rect.top=ITEMVIEWMARGIN)+m_ItemHeight;
+
+			m_ScrollWidth = x+=(Width+ITEMVIEWMARGIN);
+		}
+
+	CFrontstageScroller::AdjustLayout();
+}
+
 
 BEGIN_MESSAGE_MAP(CFrontstageItemView, CFrontstageScroller)
-	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_KEYDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_RBUTTONUP()
+	ON_WM_GETDLGCODE()
+	ON_WM_KEYDOWN()
 
 	ON_COMMAND(IDM_ITEMVIEW_SELECTALL, OnSelectAll)
 	ON_COMMAND(IDM_ITEMVIEW_SELECTNONE, OnSelectNone)
 	ON_COMMAND(IDM_ITEMVIEW_SELECTTOGGLE, OnSelectToggle)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_ITEMVIEW_SELECTALL, IDM_ITEMVIEW_SELECTTOGGLE, OnUpdateCommands)
 END_MESSAGE_MAP()
-
-INT CFrontstageItemView::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageScroller::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Font height
-	m_LargeFontHeight = LFGetApp()->m_LargeFont.GetFontHeight();
-	m_DefaultFontHeight = LFGetApp()->m_DefaultFont.GetFontHeight();
-	m_SmallFontHeight = LFGetApp()->m_SmallFont.GetFontHeight();
-
-	return 0;
-}
 
 void CFrontstageItemView::OnDestroy()
 {
@@ -816,77 +908,6 @@ void CFrontstageItemView::OnDestroy()
 	DeleteObject(m_Bitmaps[BITMAP_REFLECTION].hBitmap);
 
 	CFrontstageScroller::OnDestroy();
-}
-
-void CFrontstageItemView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	const BOOL Control = (GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0);
-	const BOOL Plain = (GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0);
-
-	// Item selection
-	switch (nChar)
-	{
-	case 'A':
-		if (Control)
-			OnSelectAll();
-
-		break;
-
-	case 'I':
-	case 'T':
-		if (Control)
-			OnSelectToggle();
-
-		break;
-
-	case 'N':
-		if (Control)
-			OnSelectNone();
-
-		break;
-
-	case VK_LEFT:
-	case VK_RIGHT:
-	case VK_UP:
-	case VK_PRIOR:
-	case VK_DOWN:
-	case VK_NEXT:
-	case VK_HOME:
-	case VK_END:
-		if (IsFocusItemEnabled() && m_ItemCount)
-		{
-			const INT Item = HandleNavigationKeys(nChar, Control);
-
-			if (Item!=m_FocusItem)
-			{
-				m_ShowFocusRect = TRUE;
-				SetFocusItem(Item, GetKeyState(VK_SHIFT)<0 ? SETFOCUSITEM_SHIFTSELECT : SETFOCUSITEM_MOVEDESELECT);
-
-				UpdateHoverItem();
-			}
-		}
-
-		break;
-
-	case VK_SPACE:
-		if (IsSelectionEnabled() && (m_FocusItem>=0))
-		{
-			SelectItem(m_FocusItem, !Control || !IsItemSelected(m_FocusItem));
-			ItemSelectionChanged(m_FocusItem);
-		}
-
-		break;
-
-	case VK_EXECUTE:
-	case VK_RETURN:
-		if (Plain && (m_FocusItem>=0))
-			FireFocusItem();
-
-		break;
-
-	default:
-		CFrontstageScroller::OnKeyDown(nChar, nRepCnt, nFlags);
-	}
 }
 
 void CFrontstageItemView::OnMouseMove(UINT nFlags, CPoint point)
@@ -964,7 +985,7 @@ void CFrontstageItemView::OnRButtonDown(UINT nFlags, CPoint point)
 		if (Index!=-1)
 		{
 			if (((nFlags & (MK_SHIFT | MK_CONTROL))!=MK_CONTROL) || !IsSelectionEnabled())
-				SetFocusItem(Index);
+				SetFocusItem(Index, IsItemSelected(Index) ? SETFOCUSITEM_MOVEONLY : SETFOCUSITEM_MOVEDESELECT);
 
 			return;
 		}
@@ -993,6 +1014,82 @@ void CFrontstageItemView::OnRButtonUp(UINT nFlags, CPoint point)
 	}
 
 	CFrontstageScroller::OnRButtonUp(nFlags, point);
+}
+
+UINT CFrontstageItemView::OnGetDlgCode()
+{
+	return DLGC_WANTARROWS;
+}
+
+void CFrontstageItemView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	const BOOL Control = (GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0);
+	const BOOL Plain = (GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0);
+
+	// Item selection
+	switch (nChar)
+	{
+	case 'A':
+		if (Control)
+			OnSelectAll();
+
+		break;
+
+	case 'I':
+	case 'T':
+		if (Control)
+			OnSelectToggle();
+
+		break;
+
+	case 'N':
+		if (Control)
+			OnSelectNone();
+
+		break;
+
+	case VK_LEFT:
+	case VK_RIGHT:
+	case VK_UP:
+	case VK_PRIOR:
+	case VK_DOWN:
+	case VK_NEXT:
+	case VK_HOME:
+	case VK_END:
+		if (IsFocusItemEnabled() && m_ItemCount)
+		{
+			const INT Item = HandleNavigationKeys(nChar, Control);
+
+			if (Item!=m_FocusItem)
+			{
+				m_ShowFocusRect = TRUE;
+				SetFocusItem(Item, GetKeyState(VK_SHIFT)<0 ? SETFOCUSITEM_SHIFTSELECT : SETFOCUSITEM_MOVEDESELECT);
+
+				UpdateHoverItem();
+			}
+		}
+
+		break;
+
+	case VK_SPACE:
+		if (IsSelectionEnabled() && (m_FocusItem>=0))
+		{
+			SelectItem(m_FocusItem, !Control || !IsItemSelected(m_FocusItem));
+			ItemSelectionChanged(m_FocusItem);
+		}
+
+		break;
+
+	case VK_EXECUTE:
+	case VK_RETURN:
+		if (Plain && (m_FocusItem>=0))
+			FireFocusItem();
+
+		break;
+
+	default:
+		CFrontstageScroller::OnKeyDown(nChar, nRepCnt, nFlags);
+	}
 }
 
 

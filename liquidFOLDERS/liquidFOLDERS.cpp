@@ -96,8 +96,7 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	// Icon factory
 	m_IconFactory.m_ApplicationIcons.Load(IDB_APPLICATIONS_29, CSize(31, 32));
-LFChooseStoreDlg dlg;
-dlg.DoModal();
+
 	// Execute
 	CheckForUpdate();
 	OpenCommandLine(__argc>1 ? CmdLine : NULL);

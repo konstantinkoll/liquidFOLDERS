@@ -16,7 +16,6 @@
 #include "CFrontstagePane.h"
 #include "CFrontstageScroller.h"
 #include "CFrontstageWnd.h"
-#include "CGenreList.h"
 #include "CHeaderArea.h"
 #include "CHeaderButton.h"
 #include "CHoverButton.h"

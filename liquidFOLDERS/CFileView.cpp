@@ -12,8 +12,8 @@
 CIcons CFileView::m_LargeColorDots;
 CIcons CFileView::m_DefaultColorDots;
 
-CFileView::CFileView(SIZE_T DataSize, UINT Flags, const CSize& szItemInflate)
-	: CAbstractFileView(DataSize, Flags | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLEDRAGANDDROP, szItemInflate)
+CFileView::CFileView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
+	: CAbstractFileView(Flags | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLEDRAGANDDROP, DataSize, szItemInflate)
 {
 	p_Filter = NULL;
 	p_RawFiles = NULL;
@@ -74,43 +74,10 @@ void CFileView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		m_HideFileExt = LFHideFileExt();
 	}
 
+	m_Nothing = TRUE;
 	SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
-	if (p_CookedFiles)
-	{
-		BOOL NeedsNewFocusItem = (m_FocusItem>=0) ? !GetItemData(m_FocusItem)->Valid : FALSE;
-
-		for (INT a=0; a<m_ItemCount; a++)
-			if (GetItemData(a)->Valid)
-			{
-				m_Nothing = FALSE;
-
-				if (NeedsNewFocusItem)
-				{
-					m_FocusItem = a;
-					NeedsNewFocusItem = FALSE;
-				}
-			}
-			else
-			{
-				SelectItem(a, FALSE);
-				ItemSelectionChanged(a);
-			}
-
-		if (pPersistentData && pPersistentData->FocusItemSelected && (m_FocusItem>=0))
-			SelectItem(m_FocusItem);
-
-		AdjustLayout();
-
-		if (!InternalCall)
-			EnsureVisible(m_FocusItem);
-	}
-	else
-	{
-		Invalidate();
-	}
-
-	SetCursor(theApp.LoadStandardCursor(pCookedFiles ? IDC_ARROW : IDC_WAIT));
+	FinishUpdate(InternalCall);
 }
 
 void CFileView::SetViewSettings(BOOL /*UpdateSearchResultPending*/)
@@ -171,22 +138,12 @@ void CFileView::ShowTooltip(const CPoint& point)
 {
 	ASSERT(m_HoverItem>=0);
 
-	if (!IsEditing())
-		if (m_HoverItem==m_EditItem)
-		{
-			HideTooltip();
-			EditLabel(m_EditItem);
-		}
-		else
-		{
-			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HoverItem];
+	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HoverItem];
+	HBITMAP hBitmap = (m_Flags & FF_ENABLETOOLTIPICONS) ? theApp.m_IconFactory.GetJumboIconBitmap(pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL) : NULL;
 
-			HBITMAP hBitmap = (m_Flags & FF_ENABLETOOLTIPICONS) ? theApp.m_IconFactory.GetJumboIconBitmap(pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL) : NULL;
-
-			theApp.ShowTooltip(this, point, GetItemLabel(pItemDescriptor),
-				theApp.GetHintForItem(pItemDescriptor, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat)),
-				NULL, hBitmap);
-		}
+	theApp.ShowTooltip(this, point, GetItemLabel(pItemDescriptor),
+		theApp.GetHintForItem(pItemDescriptor, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat)),
+		NULL, hBitmap);
 }
 
 void CFileView::AppendMoveToItem(CMenu& Menu, UINT FromContext, UINT ToContext) const

@@ -242,8 +242,7 @@ void CItemPanel::OnPaint()
 		dc.SetTextColor(IsCtrlThemed() ? 0x808080 : GetSysColor(COLOR_GRAYTEXT));
 
 	const INT FontHeight = LFGetApp()->m_DialogFont.GetFontHeight();
-	rectText.top = (rectText.Height()-m_Lines*FontHeight)/2;
-	rectText.bottom = rectText.top+FontHeight;
+	rectText.bottom = (rectText.top=(rectText.Height()-m_Lines*FontHeight)/2)+FontHeight;
 
 	CString Text(m_Text);
 

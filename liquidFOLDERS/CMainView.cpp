@@ -797,11 +797,9 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 
 	// Show notification
 	ShowNotification(pTransactionList->m_LastError);
-
-	BOOL Changes = pTransactionList->m_Modified;
 	LFFreeTransactionList(pTransactionList);
 
-	return Changes;
+	return NULL;
 }
 
 LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

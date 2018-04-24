@@ -64,5 +64,11 @@ protected:
 	INT m_ColumnWidth;
 
 private:
+	CalendarItemData* GetCalendarItemData(INT Index) const;
 	BOOL IsLeapYear() const;
 };
+
+inline CalendarItemData* CCalendarView::GetCalendarItemData(INT Index) const
+{
+	return (CalendarItemData*)GetItemData(Index);
+}

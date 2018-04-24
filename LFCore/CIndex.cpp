@@ -588,7 +588,6 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProg
 	BUILD_ITEMDESCRIPTOR();
 
 	Result = LFOk;
-	pItemDescriptor->CoreAttributes.Flags |= LFFlagNew;
 
 	LOAD_SLAVE()
 	APPEND_ITEMDESCRIPTOR();

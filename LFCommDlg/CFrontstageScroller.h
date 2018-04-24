@@ -34,10 +34,10 @@ protected:
 	void ResetScrollArea();
 	void SetItemHeight(INT ItemHeight, INT Gutter=-1);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
+	afx_msg void OnEnable(BOOL bEnable);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);

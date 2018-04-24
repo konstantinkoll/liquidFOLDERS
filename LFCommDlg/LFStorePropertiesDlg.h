@@ -31,11 +31,9 @@ public:
 	void SetUsage(const LFStoreDescriptor& Store);
 
 protected:
-	virtual INT CompareItems(INT Index1, INT Index2) const;
 	virtual void AdjustLayout();
+	virtual INT CompareItems(INT Index1, INT Index2) const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
-
-	UsageItemData* GetUsageItemData(INT Index) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
@@ -44,19 +42,20 @@ protected:
 	static CIcons m_ContextIcons;
 
 private:
+	UsageItemData* GetUsageItemData(INT Index) const;
 	void AddContext(const LFStatistics& Statistics, UINT Context);
 
 	static CString m_OtherFiles;
 };
 
-inline void CUsageList::SetUsage(const LFStoreDescriptor& Store)
-{
-	SetUsage(Store.Statistics);
-}
-
 inline UsageItemData* CUsageList::GetUsageItemData(INT Index) const
 {
 	return (UsageItemData*)GetItemData(Index);
+}
+
+inline void CUsageList::SetUsage(const LFStoreDescriptor& Store)
+{
+	SetUsage(Store.Statistics);
 }
 
 

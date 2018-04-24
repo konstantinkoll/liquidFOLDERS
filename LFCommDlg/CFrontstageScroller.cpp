@@ -17,6 +17,9 @@ CFrontstageScroller::CFrontstageScroller(UINT Flags)
 	m_szScrollStep.cx = m_szScrollStep.cy = DEFAULTSCROLLSTEP;
 	m_pWndHeader = NULL;
 
+	m_szScrollStep.cx = DEFAULTSCROLLSTEP;
+	m_szScrollStep.cy = LFGetApp()->m_DefaultFont.GetFontHeight();
+
 	ResetScrollArea();
 }
 
@@ -34,6 +37,9 @@ void CFrontstageScroller::AdjustScrollbars()
 	// Dimensions
 	CRect rect;
 	GetWindowRect(rect);
+
+	if (HasBorder())
+		rect.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
 
 	BOOL HScroll = FALSE;
 	if (m_ScrollWidth>rect.Width())
@@ -169,7 +175,7 @@ BOOL CFrontstageScroller::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed
 	{
 		// Message
 		CString strMessage;
-		COLORREF clrMessage = Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW);
+		COLORREF clrMessage = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
 
 		GetNothingMessage(strMessage, clrMessage, Themed);
 
@@ -213,9 +219,9 @@ void CFrontstageScroller::SetItemHeight(INT ItemHeight, INT Gutter)
 
 
 BEGIN_MESSAGE_MAP(CFrontstageScroller, CFrontstageWnd)
-	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_PAINT()
+	ON_WM_ENABLE()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -227,17 +233,6 @@ BEGIN_MESSAGE_MAP(CFrontstageScroller, CFrontstageWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
-
-INT CFrontstageScroller::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	m_szScrollStep.cx = DEFAULTSCROLLSTEP;
-	m_szScrollStep.cy = LFGetApp()->m_DefaultFont.GetFontHeight();
-
-	return 0;
-}
 
 void CFrontstageScroller::OnDestroy()
 {
@@ -311,6 +306,11 @@ void CFrontstageScroller::OnPaint()
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(pOldBitmap);
+}
+
+void CFrontstageScroller::OnEnable(BOOL /*bEnable*/)
+{
+	Invalidate();
 }
 
 void CFrontstageScroller::OnSize(UINT nType, INT cx, INT cy)

@@ -12,17 +12,16 @@
 // CGlobeView
 //
 
-#define GetItemData(Index)     ((GlobeItemData*)CFileView::GetItemData(Index))
-#define DISTANCENEAR           3.0f
-#define DISTANCEFAR            17.0f
-#define DOLLY                  0.09f
-#define BLENDOUT               0.075f
-#define BLENDIN                0.275f
-#define ARROWSIZE              8
-#define ANIMLENGTH             200
-#define MOVEDELAY              10
-#define MOVEDIVIDER            8.0f
-#define WHITE                  100
+#define DISTANCENEAR     3.0f
+#define DISTANCEFAR      17.0f
+#define DOLLY            0.09f
+#define BLENDOUT         0.075f
+#define BLENDIN          0.275f
+#define ARROWSIZE        8
+#define ANIMLENGTH       200
+#define MOVEDELAY        10
+#define MOVEDIVIDER      8.0f
+#define WHITE            100
 
 const GLfloat CGlobeView::m_lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 const GLfloat CGlobeView::m_lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -30,7 +29,7 @@ const GLfloat CGlobeView::m_lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat CGlobeView::m_FogColor[] = { 0.65f, 0.75f, 0.95f, 1.0f };
 
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeItemData), FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESELECTION | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, CSize(0, ARROWSIZE))
+	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESELECTION | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(GlobeItemData), CSize(0, ARROWSIZE))
 {
 	m_RenderContext.pDC = NULL;
 	m_RenderContext.hRC = NULL;
@@ -92,7 +91,7 @@ void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 
 				if (!LFIsNullVariantData(Property))
 				{
-					GlobeItemData* pData = GetItemData(a);
+					GlobeItemData* pData = GetGlobeItemData(a);
 
 					// Calculate world coordinates
 					const DOUBLE LatitudeRad = -theRenderer.DegToRad(Property.GeoCoordinates.Latitude);
@@ -123,7 +122,7 @@ INT CGlobeView::ItemAtPosition(CPoint point) const
 
 	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
-		GlobeItemData* pData = GetItemData(Index);
+		GlobeItemData* pData = GetGlobeItemData(Index);
 
 		if (pData->Hdr.Valid)
 			if ((pData->Alpha>0.75f) || ((pData->Alpha>0.1f) && (pData->Alpha>Alpha-0.05f)))
@@ -221,7 +220,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], c
 
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
-		GlobeItemData* pData = GetItemData(a);
+		GlobeItemData* pData = GetGlobeItemData(a);
 
 		if (pData->Hdr.Valid)
 		{
@@ -249,7 +248,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 {
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
-		GlobeItemData* pData = GetItemData(a);
+		GlobeItemData* pData = GetGlobeItemData(a);
 
 		if (pData->Hdr.Valid)
 			if (pData->Alpha>0.0f)

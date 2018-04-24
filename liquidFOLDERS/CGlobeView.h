@@ -87,6 +87,7 @@ protected:
 	GLcolor m_TopColorSelected;
 
 private:
+	GlobeItemData* GetGlobeItemData(INT Index) const;
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
 	void WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr);
@@ -112,3 +113,8 @@ private:
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;
 };
+
+inline GlobeItemData* CGlobeView::GetGlobeItemData(INT Index) const
+{
+	return (GlobeItemData*)GetItemData(Index);
+}

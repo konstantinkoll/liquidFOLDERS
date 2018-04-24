@@ -9,14 +9,11 @@
 // CUsageList
 //
 
-#define PADDING     (BACKSTAGEBORDER-LFITEMVIEWMARGIN)
-
 CIcons CUsageList::m_ContextIcons;
 CString CUsageList::m_OtherFiles;
 
-
 CUsageList::CUsageList()
-	: CFrontstageItemView(sizeof(UsageItemData))
+	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING, sizeof(UsageItemData))
 {
 	m_IconSize = 0;
 
@@ -42,10 +39,10 @@ void CUsageList::AddContext(const LFStatistics& Statistics, UINT Context)
 
 void CUsageList::SetUsage(LFStatistics Statistics)
 {
-	// Add contexts
 	ASSERT(LFContextAllFiles==0);
 
-	AllocItemData(LFLastPersistentContext+1);
+	// Add contexts
+	SetItemCount(LFLastPersistentContext+1, FALSE);
 
 	for (UINT a=1; a<=LFLastPersistentContext; a++)
 		if (Statistics.FileCount[a])
@@ -62,13 +59,15 @@ void CUsageList::SetUsage(LFStatistics Statistics)
 	if (Statistics.FileSize[0])
 		AddContext(Statistics, 0);
 
+	LastItem();
 	SortItems();
+
 	AdjustLayout();
 }
 
 void CUsageList::AdjustLayout()
 {
-	AdjustLayoutSingleColumnList();
+	AdjustLayoutColumns();
 }
 
 void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
@@ -77,7 +76,7 @@ void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	const LFContextDescriptor* pContextDescriptor = &LFGetApp()->m_Contexts[pData->Context];
 
 	CRect rect(rectItem);
-	rect.DeflateRect(PADDING, PADDING);
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
 
 	// Text height
 	INT TextHeight = m_DefaultFontHeight;
@@ -87,7 +86,7 @@ void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 
 	// Icon
 	m_ContextIcons.Draw(dc, rect.left, rect.top+(rect.Height()-m_IconSize)/2, pData->Context);
-	rect.left += m_IconSize+PADDING;
+	rect.left += m_IconSize+ITEMVIEWPADDING;
 
 	// Occupied storage
 	WCHAR tmpStr[256];
@@ -123,10 +122,10 @@ INT CUsageList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Item
-	SetItemHeight(max(32, m_LargeFontHeight+m_DefaultFontHeight)+2*PADDING);
+	SetItemHeight(max(32, m_LargeFontHeight+m_DefaultFontHeight)+2*ITEMVIEWPADDING);
 
 	// Icons
-	m_IconSize = m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, m_ItemHeight-2*PADDING);
+	m_IconSize = m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, m_ItemHeight-2*ITEMVIEWPADDING);
 
 	return 0;
 }

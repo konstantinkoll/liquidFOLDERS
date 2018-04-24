@@ -397,10 +397,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGenreList.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CHeaderArea.cpp"
 				>
 			</File>
@@ -1050,10 +1046,6 @@
 			</File>
 			<File
 				RelativePath=".\CFrontstageWnd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGenreList.h"
 				>
 			</File>
 			<File

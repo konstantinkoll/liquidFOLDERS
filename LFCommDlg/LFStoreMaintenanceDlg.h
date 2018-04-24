@@ -36,14 +36,14 @@ protected:
 	HICON hIconError;
 
 private:
-	COLORREF SetLightTextColor(CDC& dc, INT Index, HICON hIcon, BOOL Themed) const;
+	COLORREF SetDarkTextColor(CDC& dc, INT Index, HICON hIcon, BOOL Themed) const;
 
 	WCHAR m_ErrorText[LFErrorCount][256];
 };
 
-inline COLORREF CMaintenanceReport::SetLightTextColor(CDC& dc, INT Index, HICON hIcon, BOOL Themed) const
+inline COLORREF CMaintenanceReport::SetDarkTextColor(CDC& dc, INT Index, HICON hIcon, BOOL Themed) const
 {
-	return (hIcon!=hIconReady) ? dc.SetTextColor(0x0000FF) : CFrontstageItemView::SetLightTextColor(dc, Index, Themed);
+	return (hIcon!=hIconReady) ? dc.SetTextColor(0x0000FF) : CFrontstageItemView::SetDarkTextColor(dc, Index, Themed);
 }
 
 

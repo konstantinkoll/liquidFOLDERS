@@ -4,7 +4,7 @@
 
 #pragma once
 #include "CHeaderArea.h"
-#include "CExplorerList.h"
+#include "CAbstractFileView.h"
 #include "LFCore.h"
 #include "LFDialog.h"
 
@@ -12,20 +12,37 @@
 // CStoreList
 //
 
-class CStoreList : public CExplorerList
+class CStoreList : public CAbstractFileView
 {
 public:
-	void AddStoreColumns();
-	void AddItemCategories();
-	void SetSearchResult(LFSearchResult* pSearchResult);
+	CStoreList();
+
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 
 protected:
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	virtual void AdjustLayout();
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
+	virtual RECT GetLabelRect(INT Index) const;
+
+	static INT GetTileRows(const LFItemDescriptor* pItemDescriptor);
+	INT GetTileRows(INT Index) const;
+
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
 
+	INT m_IconSize;
+
 private:
-	void AddColumn(INT ID, UINT Attr);
+	void DrawTileRow(CDC& dc, CRect& rectText, LPCWSTR pStr) const;
 };
+
+inline INT CStoreList::GetTileRows(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<m_ItemCount);
+
+	return GetTileRows((*p_CookedFiles)[Index]);
+}
 
 
 // LFChooseStoreDlg
@@ -43,14 +60,13 @@ protected:
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 	virtual BOOL InitDialog();
 
+	INT GetSelectedStore() const;
 	void UpdateOkButton();
 
 	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
-	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
 
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 
@@ -67,3 +83,8 @@ protected:
 	LFSearchResult* m_pSearchResult;
 	BOOL m_Writeable;
 };
+
+inline INT LFChooseStoreDlg::GetSelectedStore() const
+{
+	return m_wndStoreList.GetSelectedItem();
+}

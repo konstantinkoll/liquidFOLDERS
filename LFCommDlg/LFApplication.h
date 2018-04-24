@@ -50,8 +50,7 @@ struct ResourceCacheItem
 };
 
 
-// LFApplication:
-// Siehe LFApplication.cpp für die Implementierung dieser Klasse
+// LFApplication
 //
 
 class LFUpdateDlg;

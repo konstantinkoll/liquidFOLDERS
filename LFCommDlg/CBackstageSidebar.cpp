@@ -254,7 +254,7 @@ void CBackstageSidebar::AdjustLayout()
 		}
 
 		m_Items[a].Rect.left = 0;
-		m_Items[a].Rect.right = rect.Width();
+		m_Items[a].Rect.right = rect.right;
 	}
 
 	Invalidate();

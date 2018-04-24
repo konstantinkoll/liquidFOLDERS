@@ -629,7 +629,8 @@ INT CShellTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetImageList(&LFGetApp()->m_SystemImageListSmall, 0);
 
 	// Shell notifications
-	SHChangeNotifyEntry shCNE = { NULL, TRUE };
+	const SHChangeNotifyEntry shCNE = { NULL, TRUE };
+
 	m_SHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_ShellLevel | SHCNRF_NewDelivery,
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED |
 			SHCNE_MKDIR | SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,

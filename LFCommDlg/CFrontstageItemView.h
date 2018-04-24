@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CBackstageWnd.h"
 #include "CFrontstageScroller.h"
 #include "LFDynArray.h"
 #include "resource.h"
@@ -21,7 +22,12 @@
 #define IVN_SELECTIONCHANGED                0x00000100
 #define IVN_BEGINDRAGANDDROP                0x00000200
 
-#define LFITEMVIEWMARGIN      5
+#define ITEMVIEWICONPADDING      4
+#define ITEMVIEWMARGIN           5
+#define ITEMVIEWMARGINLARGE      (BACKSTAGEBORDER-2)
+#define ITEMVIEWPADDING          (BACKSTAGEBORDER-ITEMVIEWMARGIN)
+
+#define ITEMVIEWMINWIDTH     64
 
 #define BITMAP_SELECTION      0
 #define BITMAP_REFLECTION     1
@@ -43,6 +49,7 @@ struct ItemCategoryData
 	RECT Rect;
 	WCHAR Caption[256];
 	WCHAR Hint[256];
+	INT IconID;
 };
 
 struct ItemData
@@ -56,9 +63,10 @@ struct ItemData
 class CFrontstageItemView : public CFrontstageScroller
 {
 public:
-	CFrontstageItemView(SIZE_T DataSize=sizeof(ItemData), UINT Flags=FRONTSTAGE_ENABLESCROLLING, const CSize& szItemInflate=CSize(0, 0));
+	CFrontstageItemView(UINT Flags=FRONTSTAGE_ENABLESCROLLING, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 	BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect=CRect(0, 0, 0, 0), UINT nClassStyle=0);
 	INT GetSelectedItem() const;
+	void SetFocusItem(INT Index, UINT Mode=SETFOCUSITEM_MOVEDESELECT);
 	void SelectNone();
 
 protected:
@@ -83,17 +91,15 @@ protected:
 	BOOL IsShiftSelectionEnabled() const;
 	BOOL IsDragAndDropEnabled() const;
 	BOOL IsLabelEditEnabled() const;
-	void AddItemCategory(LPCWSTR Caption, LPCWSTR Hint=L"");
-	void AllocItemData(UINT ItemCount);
-	void SetItemCount(UINT ItemCount);
+	void AddItemCategory(LPCWSTR Caption, LPCWSTR Hint=L"", INT IconID=0);
+	void SetItemCount(UINT ItemCount, BOOL Virtual);
 	void AddItem(LPCVOID pData);
+	void LastItem();
 	ItemData* GetItemData(INT Index) const;
-	void FreeItemData(BOOL InternalCall);
+	void FreeItemData(BOOL InternalCall=FALSE);
 	void ValidateAllItems();
 	void SortItems();
 	RECT GetItemRect(INT Index) const;
-	INT GetFocusItem() const;
-	void SetFocusItem(INT Index, UINT Mode=SETFOCUSITEM_MOVEDESELECT);
 	BOOL HasItemsSelected() const;
 	void ItemSelectionChanged(INT Index);
 	void ItemSelectionChanged();
@@ -105,18 +111,19 @@ protected:
 	COLORREF SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	void GetLayoutRect(CRect& rectLayout);
-	void AdjustLayoutGrid(const CSize& szItem, const CSize& szGutter, BOOL FullWidth=FALSE, INT Margin=LFITEMVIEWMARGIN);
-	void AdjustLayoutSingleColumnList();
+	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN);
+	void AdjustLayoutColumns(INT Columns=1, INT Margin=ITEMVIEWMARGIN);
+	void AdjustLayoutSingleRow(INT Columns);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg UINT OnGetDlgCode();
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
@@ -144,6 +151,7 @@ protected:
 
 private:
 	void ResetItemCategories();
+	static INT GetGutterForMargin(INT Margin);
 	void Swap(INT Index1, INT Index2);
 	void Heap(INT Element, INT Count);
 
@@ -209,6 +217,11 @@ inline ItemData* CFrontstageItemView::GetItemData(INT Index) const
 	return ((ItemData*)(m_pItemData+Index*m_DataSize));
 }
 
+inline INT CFrontstageItemView::GetGutterForMargin(INT Margin)
+{
+	return (Margin>=BACKSTAGEBORDER) ? ITEMVIEWMARGINLARGE : ITEMVIEWMARGIN;
+}
+
 inline void CFrontstageItemView::Swap(INT Index1, INT Index2)
 {
 	ASSERT(Index1>=0);
@@ -255,9 +268,4 @@ inline void CFrontstageItemView::ResetDragLocation()
 inline BOOL CFrontstageItemView::IsDragLocationValid() const
 {
 	return (m_DragPos.x!=-1) && (m_DragPos.y!=-1);
-}
-
-inline void CFrontstageItemView::AdjustLayoutSingleColumnList()
-{
-	AdjustLayoutGrid(CSize(0, m_ItemHeight), CSize(LFITEMVIEWMARGIN, -1), TRUE);
 }

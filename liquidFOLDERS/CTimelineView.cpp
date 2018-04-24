@@ -22,13 +22,12 @@
 #define THUMBOFFSETY       -1
 #define MAXFILELIST        10
 
-#define GetItemData(Index)       ((TimelineItemData*)CFileView::GetItemData(Index))
 #define DrawCollectionIcon()     theApp.m_CoreImageListSmall.DrawEx(&dc, pData->CollectionIconID-1, CPoint(rect.left, rectAttr.top-(m_DefaultFontHeight-16)/2), CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
 const ARGB CTimelineView::m_BevelColors[8] = { 0x80FFFFFF, 0xFF7A7A7C, 0xFFA7A8AA, 0xFFBEBFC2, 0xFFCACBCD, 0xFFCACBCD, 0xFF7A7A7C, 0x80FFFFFF };
 
 CTimelineView::CTimelineView()
-	: CFileView(sizeof(TimelineItemData), FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT, CSize(ARROWSIZE+1, 0))
+	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT, sizeof(TimelineItemData), CSize(ARROWSIZE+1, 0))
 {
 }
 
@@ -122,7 +121,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 	if (p_CookedFiles)
 		for (INT a=0; a<m_ItemCount; a++)
 		{
-			TimelineItemData* pData = GetItemData(a);
+			TimelineItemData* pData = GetTimelineItemData(a);
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 
 			LFVariantData Property;
@@ -263,31 +262,33 @@ void CTimelineView::AdjustLayout()
 		return;
 	}
 
-	CRect rect;
-	GetWindowRect(rect);
+	// Current year
+	SYSTEMTIME st;
+	GetLocalTime(&st);
 
-	m_ScrollWidth = rect.Width();
+	// Width
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
+	m_ScrollWidth = rectLayout.Width();
 
 	BOOL HasScrollbars = FALSE;
 
 Restart:
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-
-	WORD Year = st.wYear;
 
 	m_ItemCategories.m_ItemCount = 0;
-	m_TwoColumns = m_ScrollWidth-2*GUTTER-MIDDLE-7*CARDPADDING>=512;
+	m_TwoColumns = m_ScrollWidth-2*GUTTER-MIDDLE-4*CARDPADDING+2*THUMBMARGINX+8>=4*(128+THUMBMARGINX);
 	m_ItemWidth = m_TwoColumns ? (m_ScrollWidth-MIDDLE)/2-GUTTER : m_ScrollWidth-2*GUTTER;
 	m_PreviewColumns = (m_ItemWidth-2*CARDPADDING+THUMBMARGINX+4)/(128+THUMBMARGINX);
 
+	WORD Year = st.wYear;
 	INT CurTop[2] = { GUTTER+2, GUTTER+2 };
 	INT LastTop = -10;
 	INT Row = 0;
 
 	for (INT a=0; a<m_ItemCount; a++)
 	{
-		TimelineItemData* pData = GetItemData(a);
+		TimelineItemData* pData = GetTimelineItemData(a);
 
 		if (pData->Hdr.Valid)
 		{
@@ -362,10 +363,9 @@ Restart:
 				ZeroMemory(&Data, sizeof(Data));
 
 				swprintf_s(Data.Caption, 256, L"%u", (UINT)Year);
-				Data.Rect.left = m_ScrollWidth/2-m_LabelWidth/2;
-				Data.Rect.right = Data.Rect.left+m_LabelWidth;
-				Data.Rect.top = max(CurTop[0], CurTop[1]);
-				Data.Rect.bottom = Data.Rect.top+2*CARDPADDING+theApp.m_SmallBoldFont.GetFontHeight()-2;
+				
+				Data.Rect.right = (Data.Rect.left=m_ScrollWidth/2-m_LabelWidth/2)+m_LabelWidth;
+				Data.Rect.bottom = (Data.Rect.top=max(CurTop[0], CurTop[1]))+2*CARDPADDING+theApp.m_SmallBoldFont.GetFontHeight()-2;
 
 				m_ItemCategories.AddItem(Data);
 
@@ -389,9 +389,8 @@ Restart:
 
 			// Place card
 			pData->Hdr.Rect.left = (Column==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
-			pData->Hdr.Rect.top = CurTop[Column];
 			pData->Hdr.Rect.right = pData->Hdr.Rect.left+m_ItemWidth;
-			pData->Hdr.Rect.bottom = pData->Hdr.Rect.top+Height;
+			pData->Hdr.Rect.bottom = (pData->Hdr.Rect.top=CurTop[Column])+Height;
 
 			if (LastTop!=CurTop[Column])
 			{
@@ -404,7 +403,7 @@ Restart:
 
 			CurTop[Column] += Height+GUTTER+1;
 
-			if ((CurTop[Column]>rect.Height()) && !HasScrollbars)
+			if ((CurTop[Column]>rectLayout.Height()) && !HasScrollbars)
 			{
 				m_ScrollWidth -= GetSystemMetrics(SM_CXVSCROLL);
 				HasScrollbars = TRUE;
@@ -425,7 +424,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	GetClientRect(rect);
 
 	INT Item = m_FocusItem;
-	const ItemData* pData = (Item==-1) ? NULL : &GetItemData(Item)->Hdr;
+	const ItemData* pData = (Item==-1) ? NULL : &GetTimelineItemData(Item)->Hdr;
 	const INT Top = pData ? pData->Rect.top : 0;
 	const INT Bottom = pData ? pData->Rect.bottom : 0;
 	const INT Column = pData ? pData->Column : 0;
@@ -435,7 +434,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_LEFT:
 		for (INT a=Item-1; a>=0; a--)
 		{
-			const TimelineItemData* pData = GetItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(a);
 			if ((pData->Hdr.Column<Column) && pData->Hdr.Valid)
 			{
 				Item = a;
@@ -449,7 +448,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_RIGHT:
 		for (INT a=Item+1; a<m_ItemCount; a++)
 		{
-			const TimelineItemData* pData = GetItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(a);
 			if ((pData->Hdr.Column>Column) && pData->Hdr.Valid)
 			{
 				Item = a;
@@ -460,7 +459,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 
 		for (INT a=Item; a>=0; a--)
 		{
-			const TimelineItemData* pData = GetItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(a);
 			if ((pData->Hdr.Column>Column) && pData->Hdr.Valid)
 			{
 				Item = a;
@@ -474,7 +473,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_UP:
 		for (INT a=Item-1; a>=0; a--)
 		{
-			const TimelineItemData* pData = GetItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(a);
 			if ((pData->Hdr.Column==Column) && pData->Hdr.Valid)
 			{
 				Item = a;
@@ -488,7 +487,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_PRIOR:
 		for (INT a=Item-1; a>=0; a--)
 		{
-			const TimelineItemData* pData = GetItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(a);
 			if ((pData->Hdr.Column<=Column) && pData->Hdr.Valid)
 			{
 				Item = a;
@@ -503,7 +502,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_DOWN:
 		for (INT a=Item+1; a<m_ItemCount; a++)
 		{
-			const TimelineItemData* pData = GetItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(a);
 			if ((pData->Hdr.Column==Column) && pData->Hdr.Valid)
 			{
 				Item = a;
@@ -516,7 +515,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_NEXT:
 		for (INT a=Item+1; a<m_ItemCount; a++)
 		{
-			const TimelineItemData* pData = GetItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(a);
 			if ((pData->Hdr.Column>=Column) && pData->Hdr.Valid)
 			{
 				Item = a;
@@ -532,7 +531,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		if (Control)
 		{
 			for (INT a=0; a<m_ItemCount; a++)
-				if (GetItemData(a)->Hdr.Valid)
+				if (GetTimelineItemData(a)->Hdr.Valid)
 				{
 					Item = a;
 
@@ -542,7 +541,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		else
 			for (INT a=Item-1; a>=0; a--)
 			{
-				const TimelineItemData* pData = GetItemData(a);
+				const TimelineItemData* pData = GetTimelineItemData(a);
 				if (pData->Hdr.Valid)
 					if (pData->Hdr.Column<Column)
 					{
@@ -558,7 +557,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		if (Control)
 		{
 			for (INT a=m_ItemCount-1; a>=0; a--)
-				if (GetItemData(a)->Hdr.Valid)
+				if (GetTimelineItemData(a)->Hdr.Valid)
 				{
 					Item = a;
 
@@ -568,7 +567,7 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		else
 			for (INT a=Item+1; a<m_ItemCount; a++)
 			{
-				const TimelineItemData* pData = GetItemData(a);
+				const TimelineItemData* pData = GetTimelineItemData(a);
 				if (pData->Hdr.Valid)
 					if (pData->Hdr.Column>Column)
 					{
@@ -588,8 +587,7 @@ RECT CTimelineView::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
-	rect.top += CARDPADDING-2;
-	rect.bottom = rect.top+m_DefaultFontHeight+4;
+	rect.bottom = (rect.top+=CARDPADDING-2)+m_DefaultFontHeight+4;
 	rect.left += CARDPADDING+m_SmallIconSize+SMALLPADDING-5;
 	rect.right -= CARDPADDING-2;
 
@@ -682,7 +680,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 {
 	// Card
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-	TimelineItemData* pData = GetItemData(Index);
+	TimelineItemData* pData = GetTimelineItemData(Index);
 
 	const BOOL Selected = IsItemSelected(pItemDescriptor);
 	DrawCardForeground(dc, g, rectItem, Themed, m_HoverItem==Index, m_FocusItem==Index, Selected,
@@ -748,8 +746,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		dc.DrawText(GetItemLabel(pItemDescriptor), rectCaption, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
 
-	rectCaption.top = rectCaption.bottom+CARDPADDING/3;
-	rectCaption.bottom = rectCaption.top+m_SmallFontHeight;
+	rectCaption.bottom = (rectCaption.top=rectCaption.bottom+CARDPADDING/3)+m_SmallFontHeight;
 
 	// Subcaption
 	WCHAR tmpBuf[256];
@@ -980,7 +977,7 @@ void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRe
 	// Items
 	for (INT a=0; a<m_ItemCount; a++)
 	{
-		TimelineItemData* pData = GetItemData(a);
+		TimelineItemData* pData = GetTimelineItemData(a);
 
 		if (pData->Hdr.Valid)
 		{

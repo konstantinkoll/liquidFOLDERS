@@ -3,9 +3,46 @@
 //
 
 #pragma once
-#include "CExplorerList.h"
+#include "CFrontstageItemView.h"
 #include "CIconCtrl.h"
 #include "LFDialog.h"
+
+
+// CVolumeList
+//
+
+struct VolumeItemData
+{
+	ItemData Hdr;
+	CHAR cVolume;
+	WCHAR DisplayName[256];
+	INT iIcon;
+};
+
+class CVolumeList : public CFrontstageItemView
+{
+public:
+	CVolumeList();
+
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
+
+	void SetVolumes(UINT Mask=LFGLV_INTERNAL | LFGLV_EXTERNAL | LFGLV_NETWORK);
+	CHAR GetSelectedVolume() const;
+
+protected:
+	virtual void ShowTooltip(const CPoint& point);
+	virtual void AdjustLayout();
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
+
+private:
+	VolumeItemData* GetVolumeItemData(INT Index) const;
+	void AddVolume(CHAR cVolume, LPCWSTR DisplayName, INT iIcon);
+};
+
+inline VolumeItemData* CVolumeList::GetVolumeItemData(INT Index) const
+{
+	return (VolumeItemData*)GetItemData(Index);
+}
 
 
 // LFCreateStoreDlg
@@ -23,12 +60,12 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();
 
+	CHAR GetSelectedVolume() const;
 	void UpdateVolumes();
 
 	afx_msg void OnDestroy();
-	afx_msg void OnUpdate();
-	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnUpdateControls();
+	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnVolumeChange(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnVolumeFormat();
@@ -38,11 +75,16 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-private:
-	CHAR m_DriveLetters[26];
 	CIconCtrl m_wndIcon;
 	CButton m_wndAutoPath;
 	CButton m_wndMakeSearchable;
-	CExplorerList m_wndExplorerList;
+	CVolumeList m_wndVolumeList;
+
+private:
 	ULONG m_SHChangeNotifyRegister;
 };
+
+inline CHAR LFCreateStoreDlg::GetSelectedVolume() const
+{
+	return m_wndVolumeList.GetSelectedVolume();
+}

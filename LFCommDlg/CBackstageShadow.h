@@ -34,7 +34,8 @@ private:
 	static void CornersTop(const BITMAP& Bitmap, UINT Width);
 	static void CornersBottom(const BITMAP& Bitmap, UINT Width, UINT Height);
 
-	static LPBYTE m_pShadowCorner;
+	static BYTE m_ShadowCorner[31][31];
+	static BOOL m_ShadowCornerValid;
 };
 
 inline BYTE CBackstageShadow::CalcOpacity(UINT Proximity)

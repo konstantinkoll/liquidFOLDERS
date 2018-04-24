@@ -64,7 +64,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	CPoint pt(m_rectIcon.left-ICONOFFSETX, m_rectIcon.top-ICONOFFSETY);
 
 	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1, pt, CSize(128, 128),
-		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeGhosted) ? ILD_BLEND25 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
+		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
 	DrawStoreIconShadow(dc, pt, m_StoreIcon);
 
 	// Text

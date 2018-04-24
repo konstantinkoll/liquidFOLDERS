@@ -269,10 +269,8 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	CRect rectSrc(CutOff, CutOff, BitmapImage.bmWidth-CutOff, BitmapImage.bmHeight-CutOff);
 
 	CRect rectDst;
-	rectDst.left = (128-BitmapImage.bmWidth)/2+CutOff;
-	rectDst.top = (128-BitmapImage.bmHeight)/2+CutOff-1;
-	rectDst.right = rectDst.left+BitmapImage.bmWidth-2*CutOff;
-	rectDst.bottom = rectDst.top+BitmapImage.bmHeight-2*CutOff;
+	rectDst.right = (rectDst.left=(128-BitmapImage.bmWidth)/2+CutOff)+BitmapImage.bmWidth-2*CutOff;
+	rectDst.bottom = (rectDst.top=(128-BitmapImage.bmHeight)/2+CutOff-1)+BitmapImage.bmHeight-2*CutOff;
 
 	Thumbnail.HasFrame = IsMediaFile || IsDocumentFile || ((rectSrc.Width()<=118+2*THUMBCUTOFF) && (rectSrc.Height()<=118+2*THUMBCUTOFF));
 	Thumbnail.HasBackground = !Thumbnail.HasFrame || BlackFrame;

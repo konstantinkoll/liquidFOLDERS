@@ -10,17 +10,16 @@
 // CCalendarView
 //
 
-#define GetItemData(Index)     ((CalendarItemData*)CFileView::GetItemData(Index))
-#define ITEMPADDING            2
-#define MARGIN                 BACKSTAGEBORDER
-#define COLUMNGUTTER           8
-#define EXTRA                  (COLUMNGUTTER/2)
-#define EMPTY                  ((UINT)-1)
-#define MINYEAR                1900
-#define MAXYEAR                2100
+#define ITEMPADDING      2
+#define MARGIN           BACKSTAGEBORDER
+#define COLUMNGUTTER     8
+#define EXTRA            (COLUMNGUTTER/2)
+#define EMPTY            ((UINT)-1)
+#define MINYEAR          1900
+#define MAXYEAR          2100
 
 CCalendarView::CCalendarView()
-	: CFileView(sizeof(CalendarItemData), FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS)
+	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(CalendarItemData))
 {
 	ZeroMemory(&m_Months, sizeof(m_Months));
 	ZeroMemory(&m_Days, sizeof(m_Days));
@@ -40,6 +39,9 @@ void CCalendarView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 {
 	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
+	// Calendar is always visible!
+	m_Nothing = FALSE;
+
 	if (p_CookedFiles)
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
@@ -47,7 +49,7 @@ void CCalendarView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 			if (pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy])
 				if (*((INT64*)pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy]))
 				{
-					CalendarItemData* pData = GetItemData(a);
+					CalendarItemData* pData = GetCalendarItemData(a);
 
 					SYSTEMTIME stUTC;
 					FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy], &stUTC);
@@ -68,7 +70,7 @@ void CCalendarView::SetYear(UINT Year)
 
 	if (p_CookedFiles)
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-			if (GetItemData(a)->Time.wYear==Year)
+			if (GetCalendarItemData(a)->Time.wYear==Year)
 			{
 				m_FocusItem = a;
 				break;
@@ -94,10 +96,10 @@ void CCalendarView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) co
 
 void CCalendarView::AdjustLayout()
 {
-	CRect rectWindow;
-	GetWindowRect(rectWindow);
+	CRect rectLayout;
+	GetWindowRect(rectLayout);
 
-	if (!rectWindow.Width())
+	if (!rectLayout.Width())
 		return;
 
 	CSize sz;
@@ -113,7 +115,7 @@ Restart:
 	INT x = MARGIN;
 	INT y = MARGIN;
 
-	INT MonthsPerRow = (rectWindow.Width()-MARGIN)/(sz.cx+MARGIN);
+	INT MonthsPerRow = (rectLayout.Width()-MARGIN)/(sz.cx+MARGIN);
 
 	// Only allow some layouts
 	MonthsPerRow = (MonthsPerRow<1) ? 1 : (MonthsPerRow==5) ? 4 : ((MonthsPerRow>6) && (MonthsPerRow<12)) ? 6 : MonthsPerRow;
@@ -128,21 +130,18 @@ Restart:
 		m_Months[a].DOM = DaysOfMonth(a);
 
 		const LPRECT lpRect = &m_Months[a].Rect;
-
-		lpRect->left = x;
-		lpRect->top = y;
-		lpRect->right = x+sz.cx;
-		lpRect->bottom = y+sz.cy;
+		lpRect->right = (lpRect->left=x)+sz.cx;
+		lpRect->bottom = (lpRect->top=y)+sz.cy;
 
 		x += sz.cx+MARGIN;
 		if (lpRect->right>m_ScrollWidth)
 			m_ScrollWidth = lpRect->right-1;
 
 		if (lpRect->bottom+MARGIN>m_ScrollHeight)
-			if (((m_ScrollHeight=lpRect->bottom+MARGIN)>rectWindow.Height()) && !HasScrollbars)
+			if (((m_ScrollHeight=lpRect->bottom+MARGIN)>rectLayout.Height()) && !HasScrollbars)
 			{
 				HasScrollbars = TRUE;
-				rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL);
+				rectLayout.right -= GetSystemMetrics(SM_CXVSCROLL);
 				goto Restart;
 			}
 
@@ -159,7 +158,7 @@ Restart:
 	if (p_CookedFiles)
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			CalendarItemData* pData = GetItemData(a);
+			CalendarItemData* pData = GetCalendarItemData(a);
 			if ((pData->Hdr.Valid=(pData->Time.wYear==m_Year))==TRUE)
 			{
 				ASSERT(pData->Time.wMonth<=12);
@@ -183,6 +182,8 @@ Restart:
 
 				pData->Hdr.Column = pMonth->Column*7+(Day%7);
 				pData->Hdr.Row = pMonth->Row*6+(Day/7);
+
+				//m_Nothing = FALSE;
 			}
 	}
 

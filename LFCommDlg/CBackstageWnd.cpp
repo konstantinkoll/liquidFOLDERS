@@ -84,11 +84,8 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 		else
 			if ((Size.cx>0) && (Size.cy>0))
 			{
-				rect.left = (rect.left+rect.right)/2-Size.cx;
-				rect.right = rect.left+Size.cx;
-
-				rect.top = (rect.top+rect.bottom)/2-Size.cy;
-				rect.bottom = rect.top+Size.cy;
+				rect.right = (rect.left=(rect.left+rect.right)/2-Size.cx)+Size.cx;
+				rect.bottom = (rect.top=(rect.top+rect.bottom)/2-Size.cy)+Size.cy;
 			}
 	}
 
