@@ -78,7 +78,8 @@ protected:
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);
 	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
-	virtual void FireFocusItem() const;
+	virtual void FireSelectedItem() const;
+	virtual void DeleteSelectedItem() const;
 	virtual void AdjustScrollbars();
 	virtual BOOL DrawNothing() const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);

@@ -127,11 +127,20 @@ void CFileView::SelectItem(INT Index, BOOL Select)
 	}
 }
 
-void CFileView::FireFocusItem() const
+void CFileView::FireSelectedItem() const
 {
 	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
 
 	GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
+}
+
+void CFileView::DeleteSelectedItem() const
+{
+	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
+
+	GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_DELETE);
 }
 
 void CFileView::ShowTooltip(const CPoint& point)
@@ -684,12 +693,6 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_BACK:
 		if (Plain)
 			GetTopLevelParent()->PostMessage(WM_COMMAND, ID_NAV_BACK);
-
-		break;
-
-	case VK_DELETE:
-		if (Plain)
-			GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_DELETE);
 
 		break;
 

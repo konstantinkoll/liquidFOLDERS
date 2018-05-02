@@ -30,7 +30,7 @@ CCategory::CCategory()
 
 void CCategory::PreSubclassWindow()
 {
-	CWnd::PreSubclassWindow();
+	CStatic::PreSubclassWindow();
 
 	ModifyStyle(WS_BORDER, WS_CLIPSIBLINGS | WS_DISABLED);
 }

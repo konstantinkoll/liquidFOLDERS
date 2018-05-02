@@ -12,28 +12,96 @@
 //
 
 CConditionList::CConditionList()
-	: CExplorerList()
+	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM)
 {
+	WNDCLASS wndcls;
+	ZeroMemory(&wndcls, sizeof(wndcls));
+	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.hCursor = LFGetApp()->LoadStandardCursor(IDC_ARROW);
+	wndcls.lpszClassName = L"CConditionList";
+
+	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CConditionList", &wndcls)))
+	{
+		wndcls.hInstance = AfxGetInstanceHandle();
+
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
+	}
+
+	p_Conditions = NULL;
+
 	for (UINT a=0; a<LFFilterCompareCount; a++)
 		ENSURE(m_Compare[a].LoadString(IDS_COMPARE_FIRST+a));
 }
 
-void CConditionList::ConditionToItem(LFFilterCondition* pFilterCondition, LVITEM& lvi)
+void CConditionList::PreSubclassWindow()
 {
-	const UINT Attr = pFilterCondition->VData.Attr;
+	CFrontstageItemView::PreSubclassWindow();
 
-	ZeroMemory(&lvi, sizeof(lvi));
-
-	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
-	lvi.cColumns = 1;
-	lvi.puColumns = &lvi.cColumns;
-	lvi.pszText = (LPWSTR)LFGetApp()->GetAttributeName(Attr);
-	lvi.iImage = LFGetApp()->GetAttributeIcon(Attr)-1;
+	SetItemHeight(max(m_IconSize=LFGetApp()->m_ExtraLargeIconSize, 2*m_DefaultFontHeight)+2*ITEMVIEWPADDING);
 }
 
-void CConditionList::FinishItem(INT nItem, LFFilterCondition* pFilterCondition)
+void CConditionList::SetConditions(const ConditionArray& Conditions)
 {
-	ASSERT(pFilterCondition->Compare<LFFilterCompareCount);
+	SetItemCount((p_Conditions=&Conditions)->m_ItemCount, TRUE);
+	ValidateAllItems();
+
+	AdjustLayout();
+}
+
+BOOL CConditionList::GetContextMenu(CMenu& Menu, INT Index)
+{
+	Menu.LoadMenu(Index>=0 ? IDM_CONDITION : IDM_CONDITIONLIST);
+
+	return (Index>=0);
+}
+
+void CConditionList::AdjustLayout()
+{
+	AdjustLayoutColumns();
+}
+
+void CConditionList::FireSelectedItem() const
+{
+	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
+
+	GetOwner()->SendMessage(WM_COMMAND, IDM_CONDITION_EDIT);
+}
+
+void CConditionList::DeleteSelectedItem() const
+{
+	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
+
+	GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_DELETE);
+}
+
+void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+{
+	const LFFilterCondition* pFilterCondition = &(*p_Conditions)[Index];
+	const UINT Attr = pFilterCondition->VData.Attr;
+
+	CRect rect(rectItem);
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
+
+	// Icon
+	const INT IconID = LFGetApp()->GetAttributeIcon(Attr);
+
+	if (IconID)
+		LFGetApp()->m_CoreImageListExtraLarge.Draw(&dc, IconID-1, CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), ILD_TRANSPARENT);
+
+	// Text
+	CRect rectText(rect);
+	rectText.left += m_IconSize+ITEMVIEWPADDING;
+	rectText.top += (rect.Height()-2*m_DefaultFontHeight)/2;
+
+	dc.DrawText(LFGetApp()->GetAttributeName(Attr), -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+	rectText.top += m_DefaultFontHeight;
+
+	SetDarkTextColor(dc, Index, Themed);
+
 
 	WCHAR tmpStr[512];
 	wcscpy_s(tmpStr, 512, m_Compare[pFilterCondition->Compare]);
@@ -44,53 +112,7 @@ void CConditionList::FinishItem(INT nItem, LFFilterCondition* pFilterCondition)
 		LFVariantDataToString(pFilterCondition->VData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
 	}
 
-	SetItemText(nItem, 1, tmpStr);
-}
-
-void CConditionList::InsertItem(LFFilterCondition* pFilterCondition)
-{
-	LVITEM lvi;
-	ConditionToItem(pFilterCondition, lvi);
-	lvi.iItem = GetItemCount();
-
-	FinishItem(CExplorerList::InsertItem(&lvi), pFilterCondition);
-}
-
-void CConditionList::SetItem(INT nItem, LFFilterCondition* pFilterCondition)
-{
-	LVITEM lvi;
-	ConditionToItem(pFilterCondition, lvi);
-	lvi.iItem = nItem;
-
-	if (CExplorerList::SetItem(&lvi))
-		FinishItem(nItem, pFilterCondition);
-}
-
-
-BEGIN_MESSAGE_MAP(CConditionList, CExplorerList)
-	ON_WM_KEYDOWN()
-END_MESSAGE_MAP()
-
-void CConditionList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	switch (nChar)
-	{
-	case VK_EXECUTE:
-	case VK_RETURN:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_EDIT);
-
-		break;
-
-	case VK_DELETE:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_DELETE);
-
-		break;
-
-	default:
-		CExplorerList::OnKeyDown(nChar, nRepCnt, nFlags);
-	}
+	dc.DrawText(tmpStr, -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
 }
 
 
@@ -114,7 +136,7 @@ void LFEditFilterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CONDITIONLIST, m_wndConditionList);
 }
 
-LFFilter* LFEditFilterDlg::CreateFilter()
+LFFilter* LFEditFilterDlg::CreateFilter() const
 {
 	LFFilter* pFilter = LFAllocFilter();
 	pFilter->IsPersistent = TRUE;
@@ -156,16 +178,6 @@ BOOL LFEditFilterDlg::InitDialog()
 	m_wndThisStore.SetCheck(InStore);
 	m_wndThisStore.EnableWindow(InStore);
 
-	// List
-	m_wndConditionList.SetImageList(&LFGetApp()->m_CoreImageListExtraLarge, LVSIL_NORMAL);
-
-	m_wndConditionList.AddColumn(0);
-	m_wndConditionList.AddColumn(1);
-
-	m_wndConditionList.SetMenus(IDM_CONDITION, TRUE, IDM_CONDITIONLIST);
-	m_wndConditionList.SetView(LV_VIEW_TILE);
-	m_wndConditionList.SetItemsPerRow(1, 2);
-
 	// Filter
 	if (p_Filter)
 	{
@@ -175,10 +187,11 @@ BOOL LFEditFilterDlg::InitDialog()
 		while (pFilterCondition)
 		{
 			m_Conditions.AddItem(*pFilterCondition);
-			m_wndConditionList.InsertItem(pFilterCondition);
 
 			pFilterCondition = pFilterCondition->pNext;
 		}
+
+		m_wndConditionList.SetConditions(m_Conditions);
 	}
 
 	return TRUE;
@@ -188,17 +201,11 @@ BOOL LFEditFilterDlg::InitDialog()
 BEGIN_MESSAGE_MAP(LFEditFilterDlg, LFDialog)
 	ON_BN_CLICKED(IDM_CONDITIONLIST_ADD, OnAddCondition)
 	ON_BN_CLICKED(IDOK, OnSave)
-	ON_NOTIFY(NM_DBLCLK, IDC_CONDITIONLIST, OnDoubleClick)
 
 	ON_COMMAND(IDM_CONDITION_EDIT, OnEditCondition)
 	ON_COMMAND(IDM_CONDITION_DELETE, OnDeleteCondition)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_CONDITION_EDIT, IDM_CONDITION_DELETE, OnUpdateCommands)
 END_MESSAGE_MAP()
-
-void LFEditFilterDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
-{
-	OnEditCondition();
-}
 
 void LFEditFilterDlg::OnSave()
 {
@@ -222,7 +229,8 @@ void LFEditFilterDlg::OnAddCondition()
 	if (dlg.DoModal()==IDOK)
 	{
 		m_Conditions.AddItem(dlg.m_Condition);
-		m_wndConditionList.InsertItem(&dlg.m_Condition);
+
+		m_wndConditionList.SetConditions(m_Conditions);
 	}
 
 	m_wndConditionList.SetFocus();
@@ -230,14 +238,15 @@ void LFEditFilterDlg::OnAddCondition()
 
 void LFEditFilterDlg::OnEditCondition()
 {
-	const INT Index = m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	const INT Index = GetSelectedCondition();
 	if (Index!=-1)
 	{
 		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions[Index]);
 		if (dlg.DoModal()==IDOK)
 		{
 			m_Conditions[Index] = dlg.m_Condition;
-			m_wndConditionList.SetItem(Index, &dlg.m_Condition);
+
+			m_wndConditionList.Invalidate();
 		}
 
 		m_wndConditionList.SetFocus();
@@ -246,15 +255,15 @@ void LFEditFilterDlg::OnEditCondition()
 
 void LFEditFilterDlg::OnDeleteCondition()
 {
-	const INT Index = m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	const INT Index = GetSelectedCondition();
 	if (Index!=-1)
 	{
-		m_Conditions.m_ItemCount--;
-		for (INT a=Index; a<(INT)m_Conditions.m_ItemCount; a++)
+		for (INT a=Index; a<(INT)m_Conditions.m_ItemCount-1; a++)
 			m_Conditions[a] = m_Conditions[a+1];
 
-		m_wndConditionList.DeleteItem(Index);
-		m_wndConditionList.Arrange(LVA_ALIGNTOP);
+		m_Conditions.m_ItemCount--;
+
+		m_wndConditionList.SetConditions(m_Conditions);
 	}
 }
 
@@ -266,7 +275,7 @@ void LFEditFilterDlg::OnUpdateCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_CONDITION_EDIT:
 	case IDM_CONDITION_DELETE:
-		bEnable = (m_wndConditionList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED)!=-1);
+		bEnable = (GetSelectedCondition()!=-1);
 		break;
 	}
 

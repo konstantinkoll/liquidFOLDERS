@@ -68,19 +68,11 @@
 
 #define LFCATEGORYPADDING     2
 
-#define REQUEST_TEXTCOLOR                1
-#define REQUEST_TOOLTIP_DATA             2
-#define REQUEST_DRAWBUTTONFOREGROUND     3
-
 #define COLORREF2RGB(clr)             (0xFF000000 | (((clr) & 0xFF)<<16) | ((clr) & 0xFF00) | ((clr)>>16))
 #define COLORREF2ARGB(clr, alpha)     (((alpha)<<24) | (((clr) & 0xFF)<<16) | ((clr) & 0xFF00) | ((clr)>>16))
 
-struct NM_TEXTCOLOR
-{
-	NMHDR hdr;
-	INT Item;
-	COLORREF Color;
-};
+#define REQUEST_TOOLTIP_DATA             1
+#define REQUEST_DRAWBUTTONFOREGROUND     2
 
 struct NM_TOOLTIPDATA
 {

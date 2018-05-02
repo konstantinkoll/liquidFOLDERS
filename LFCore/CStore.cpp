@@ -646,7 +646,6 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 			if (Name[wcslen(Name)-1]==L')')
 			{
 				LPWSTR pBracket = wcsrchr(Name, L'(');
-
 				if (pBracket)
 				{
 					wcsncpy_s(Annotation, 256, pBracket+1, wcslen(pBracket)-2);

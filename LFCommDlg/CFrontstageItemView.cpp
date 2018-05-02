@@ -325,6 +325,8 @@ void CFrontstageItemView::SelectItem(INT /*Index*/, BOOL /*Select*/)
 
 INT CFrontstageItemView::GetSelectedItem() const
 {
+	ASSERT(IsFocusItemEnabled());
+
 	return ((m_FocusItem>=0) && GetItemData(m_FocusItem)->Valid && IsItemSelected(m_FocusItem)) ? m_FocusItem : -1;
 }
 
@@ -510,19 +512,25 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 }
 
 
-// Fire focus item
+// Selected item commands
 
-void CFrontstageItemView::FireFocusItem() const
+void CFrontstageItemView::FireSelectedItem() const
 {
-	if (IsFocusItemEnabled())
-	{
-		// Only fire focus item if there is no disabled button
-		CWnd* pWnd = GetOwner()->GetDlgItem(IDOK);
-		if (pWnd && !pWnd->IsWindowEnabled())
-			return;
+	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
 
-		GetOwner()->PostMessage(WM_COMMAND, IDOK);
-	}
+	// Only fire focus item if there is no disabled OK button
+	CWnd* pWnd = GetOwner()->GetDlgItem(IDOK);
+	if (pWnd && !pWnd->IsWindowEnabled())
+		return;
+
+	GetOwner()->PostMessage(WM_COMMAND, IDOK);
+}
+
+void CFrontstageItemView::DeleteSelectedItem() const
+{
+	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
 }
 
 
@@ -970,7 +978,7 @@ void CFrontstageItemView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 		if (Index!=-1)
 		{
 			SetFocusItem(Index);
-			FireFocusItem();
+			FireSelectedItem();
 		}
 	}
 }
@@ -1082,8 +1090,14 @@ void CFrontstageItemView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	case VK_EXECUTE:
 	case VK_RETURN:
-		if (Plain && (m_FocusItem>=0))
-			FireFocusItem();
+		if (Plain && (GetSelectedItem()>=0))
+			FireSelectedItem();
+
+		break;
+
+	case VK_DELETE:
+		if (Plain && GetSelectedItem()>=0)
+			DeleteSelectedItem();
 
 		break;
 

@@ -110,7 +110,8 @@ protected:
 	virtual COLORREF GetItemTextColor(INT Index) const;
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);
-	virtual void FireFocusItem() const;
+	virtual void FireSelectedItem() const;
+	virtual void DeleteSelectedItem() const;
 	virtual void ShowTooltip(const CPoint& point);
 
 	CString GetItemLabel(const LFItemDescriptor* pItemDescriptor) const;
