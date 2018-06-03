@@ -9,9 +9,9 @@
 #define IDI_STR_NETHOOD                 5
 #define IDI_STR_BOX                     6
 #define IDI_STR_DROPBOX                 7
-#define IDI_STR_ICLOUD                  8
+#define IDI_STR_ICLOUDDRIVE             8
 #define IDI_STR_ONEDRIVE                9
-#define IDI_STR_RESERVED7               10
+#define IDI_STR_ICLOUDPHOTOS            10
 #define IDI_STR_RESERVED6               11
 #define IDI_STR_RESERVED5               12
 #define IDI_STR_RESERVED4               13
@@ -285,8 +285,9 @@
 #define IDS_SRC_NETHOOD                 1705
 #define IDS_SRC_BOX                     1706
 #define IDS_SRC_DROPBOX                 1707
-#define IDS_SRC_ICLOUD                  1708
+#define IDS_SRC_ICLOUDDRIVE             1708
 #define IDS_SRC_ONEDRIVE                1709
+#define IDS_SRC_ICLOUDPHOTOS            1710
 #define IDS_QSRC_FIRST                  1800
 #define IDS_QSRC_UNKNOWN                1800
 #define IDS_QSRC_LIQUIDFOLDERS          1801
@@ -296,8 +297,9 @@
 #define IDS_QSRC_NETHOOD                1805
 #define IDS_QSRC_BOX                    1806
 #define IDS_QSRC_DROPBOX                1807
-#define IDS_QSRC_ICLOUD                 1808
+#define IDS_QSRC_ICLOUDDRIVE            1808
 #define IDS_QSRC_ONEDRIVE               1809
+#define IDS_QSRC_ICLOUDPHOTOS           1810
 
 // Next default values for new objects
 // 

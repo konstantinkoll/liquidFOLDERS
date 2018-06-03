@@ -315,6 +315,10 @@
 #define IDC_DROPBOX_ADDBUSINESS         23004
 #define IDD_BOX                         23100
 #define IDD_ICLOUD                      23200
+#define IDC_ICLOUD_DRIVE                23201
+#define IDC_ICLOUD_ADDDRIVE             23202
+#define IDC_ICLOUD_PHOTOS               23203
+#define IDC_ICLOUD_ADDPHOTOS            23204
 #define IDD_ONEDRIVE                    23300
 #define IDC_ONEDRIVE_ONEDRIVE           23301
 #define IDC_ONEDRIVE_ADDONEDRIVE        23302

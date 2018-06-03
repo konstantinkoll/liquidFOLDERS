@@ -28,7 +28,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	LFOneDrivePaths m_OneDriveData;
+	LFOneDrivePaths m_OneDrivePaths;
 	CItemPanel m_wndOneDrivePanel;
 	CItemPanel m_wndCameraRollPanel;
 	CItemPanel m_wndDocumentsPanel;

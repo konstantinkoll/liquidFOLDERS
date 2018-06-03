@@ -148,6 +148,16 @@ struct LFMusicGenre
 
 #pragma pack(pop)
 
+
+// iCloud
+
+struct LFICloudPaths
+{
+	WCHAR Drive[MAX_PATH];
+	WCHAR PhotoLibrary[MAX_PATH];
+};
+
+
 // OneDrive
 
 struct LFOneDrivePaths
@@ -621,13 +631,6 @@ struct LFFilter
 
 #define LFStoreModeBackendInternal       0x00000000
 #define LFStoreModeBackendWindows        0x02000000
-//#define LFStoreModeBackendFacebook       0x09000000
-//#define LFStoreModeBackendFlickr         0x0A000000
-//#define LFStoreModeBackendInstagram      0x0B000000
-//#define LFStoreModeBackendPinterest      0x0C000000
-//#define LFStoreModeBackendSoundCloud     0x0D000000
-//#define LFStoreModeBackendTwitter        0x0E000000
-//#define LFStoreModeBackendYouTube        0x0F000000
 #define LFStoreModeBackendMask           0xFF000000
 #define LFStoreModeBackendShift          24
 
@@ -635,6 +638,7 @@ struct LFFilter
 #define LFStoreFlagsError                0x00000002
 #define LFStoreFlagsVictim               0x00000004
 #define LFStoreFlagsMaintained           LFTypeMaintained
+#define LFStoreFlagsManageable           LFTypeManageable
 #define LFStoreFlagsWriteable            LFTypeWriteable
 
 struct LFStoreDescriptor
@@ -711,7 +715,7 @@ struct LFCoreAttributes
 
 // Sources
 
-#define LFSourceCount                 10
+#define LFSourceCount                 11
 
 
 // Item structure
@@ -724,8 +728,9 @@ struct LFCoreAttributes
 #define LFTypeSourceNethood           0x00000005
 #define LFTypeSourceBox               0x00000006
 #define LFTypeSourceDropbox           0x00000007
-#define LFTypeSourceICloud            0x00000008
+#define LFTypeSourceICloudDrive       0x00000008
 #define LFTypeSourceOneDrive          0x00000009
+#define LFTypeSourceICloudPhotos      0x0000000A
 
 #define LFTypeSourceMask              0x000000FF
 
@@ -747,7 +752,8 @@ struct LFCoreAttributes
 // Type: store flags
 #define LFTypeMounted                 0x00100000	// Volatile
 #define LFTypeMaintained              0x00200000
-#define LFTypeWriteable               0x00400000
+#define LFTypeManageable              0x00400000
+#define LFTypeWriteable               0x00800000
 
 // Typpe: visual flags
 #define LFTypeSelected                0x01000000	// Volatile

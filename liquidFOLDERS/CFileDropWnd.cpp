@@ -271,7 +271,7 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_STORE_DELETE:
-		bEnable = (m_StoreType & LFTypeWriteable);
+		bEnable = (m_StoreType & LFTypeManageable);
 		break;
 
 	case IDM_STORE_RENAME:

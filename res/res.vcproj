@@ -284,7 +284,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\STR_iCloud.ico"
+				RelativePath=".\Stores\STR_iCloudDrive.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_iCloudPhotos.ico"
 				>
 			</File>
 			<File

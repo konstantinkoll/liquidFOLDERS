@@ -451,7 +451,7 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Fügt das lokale Box-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Fügt ein lokales Dropbox-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt das lokale iCloud-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt ein lokales iCloud-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Fügt ein lokales OneDrive-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Fertig",IDOK,571,287,50,14,WS_GROUP
 END
@@ -573,15 +573,18 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
-IDD_ICLOUD DIALOGEX 0, 0, 252, 96
+IDD_ICLOUD DIALOGEX 0, 0, 252, 157
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "iCloud"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Verzeichnis",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
-    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
-    PUSHBUTTON      "&Hinzufügen",IDOK,195,34,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,195,75,50,14,WS_GROUP
+    CONTROL         "iCloud Drive",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ICLOUD_DRIVE,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Hinzufügen",IDC_ICLOUD_ADDDRIVE,195,34,50,14
+    CONTROL         "Fotos",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_ICLOUD_PHOTOS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "H&inzufügen",IDC_ICLOUD_ADDPHOTOS,195,95,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
 IDD_ONEDRIVE DIALOGEX 0, 0, 252, 237
@@ -840,7 +843,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
         TOPMARGIN, 7
-        BOTTOMMARGIN, 89
+        BOTTOMMARGIN, 150
     END
 
     IDD_ONEDRIVE, DIALOG
@@ -1008,7 +1011,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_BOX        "Indexiert das bestehenden Verzeichnis Ihrer lokalen Box-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
-    IDS_ADDSTORE_ICLOUD     "Indexiert das bestehende Verzeichnis Ihrer lokalen iCloud-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
+    IDS_ADDSTORE_ICLOUD     "Indexiert die bestehenden lokalen iCloud-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_SUBSCRIPTION        "Abo"
     IDS_FREEBYTESAVAILABLE  "%s verfügbar"
@@ -1322,7 +1325,7 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Adjunta la carpeta local de Box como ubicación.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Adjunta una carpeta local de Dropbox como ubicación.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta la carpeta local de iCloud como ubicación.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta una carpeta local de iCloud como ubicación.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Adjunta una carpeta local de OneDrive como ubicación.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Listo",IDOK,571,287,50,14,WS_GROUP
 END
@@ -1453,15 +1456,18 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
-IDD_ICLOUD DIALOGEX 0, 0, 252, 96
+IDD_ICLOUD DIALOGEX 0, 0, 252, 157
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "iCloud"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Carpeta",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
-    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
-    PUSHBUTTON      "&Adjuntar",IDOK,195,34,50,14
-    PUSHBUTTON      "Cancelar",IDCANCEL,195,75,50,14,WS_GROUP
+    CONTROL         "iCloud Drive",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ICLOUD_DRIVE,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Adjuntar",IDC_ICLOUD_ADDDRIVE,195,34,50,14
+    CONTROL         "Fotos",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_ICLOUD_PHOTOS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "A&djuntar",IDC_ICLOUD_ADDPHOTOS,195,95,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
 IDD_ONEDRIVE DIALOGEX 0, 0, 252, 237
@@ -1723,7 +1729,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
         TOPMARGIN, 7
-        BOTTOMMARGIN, 89
+        BOTTOMMARGIN, 150
     END
 
     IDD_ONEDRIVE, DIALOG
@@ -1899,7 +1905,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_BOX        "Índices la carpeta existente de su aplicación local de Box.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no se copian o modifican."
-    IDS_ADDSTORE_ICLOUD     "Índices la carpeta existente de su aplicación local de iCloud.\nSus archivos no se copian o modifican."
+    IDS_ADDSTORE_ICLOUD     "Índices las carpetas locales existentes de iCloud.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no se copian o modifican."
     IDS_SUBSCRIPTION        "Suscripción"
     IDS_FREEBYTESAVAILABLE  "%s disponibles"
@@ -2232,7 +2238,7 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Ajoute le dossier local de Box comme emplacement.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Ajoute un dossier local de Dropbox comme emplacement.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute le dossier local de iCloud comme emplacement.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute un dossier local de iCloud comme emplacement.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Ajoute un dossier local de OneDrive comme emplacement.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Fini",IDOK,571,287,50,14,WS_GROUP
 END
@@ -2341,15 +2347,19 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
-IDD_ICLOUD DIALOGEX 0, 0, 252, 96
+
+IDD_ICLOUD DIALOGEX 0, 0, 252, 157
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "iCloud"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Dossier",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
-    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
-    PUSHBUTTON      "&Ajouter",IDOK,195,34,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,195,75,50,14,WS_GROUP
+    CONTROL         "iCloud Drive",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ICLOUD_DRIVE,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Ajouter",IDC_ICLOUD_ADDDRIVE,195,34,50,14
+    CONTROL         "Photos",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_ICLOUD_PHOTOS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "A&jouter",IDC_ICLOUD_ADDPHOTOS,195,95,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
 IDD_ONEDRIVE DIALOGEX 0, 0, 252, 237
@@ -2611,7 +2621,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
         TOPMARGIN, 7
-        BOTTOMMARGIN, 89
+        BOTTOMMARGIN, 150
     END
 
     IDD_ONEDRIVE, DIALOG
@@ -2787,7 +2797,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_BOX        "Indices le dossier existant de votre application Box local.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas copiés ou modifiés."
-    IDS_ADDSTORE_ICLOUD     "Indices le dossier existant de votre application iCloud local.\nVos fichiers ne seront pas copiés ou modifiés."
+    IDS_ADDSTORE_ICLOUD     "Indices les dossiers locaux existants de iCloud.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_SUBSCRIPTION        "Abonnement"
     IDS_FREEBYTESAVAILABLE  "%s disponibles"
@@ -3150,7 +3160,7 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Adds the local Box folder as storage location.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Adds a local Dropbox folder as storage location.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds the local iCloud folder as storage location.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds a local iCloud folder as storage location.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Adds a local OneDrive folder as storage location.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Done",IDOK,571,287,50,14,WS_GROUP
 END
@@ -3281,15 +3291,18 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
-IDD_ICLOUD DIALOGEX 0, 0, 252, 96
+IDD_ICLOUD DIALOGEX 0, 0, 252, 157
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "iCloud"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Folder",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
-    CONTROL         "",IDC_ITEMPANEL,"CItemPanel",WS_GROUP,7,22,185,37
-    PUSHBUTTON      "&Add",IDOK,195,34,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,195,75,50,14,WS_GROUP
+    CONTROL         "iCloud Drive",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
+    CONTROL         "",IDC_ICLOUD_DRIVE,"CItemPanel",WS_GROUP,7,22,185,37
+    PUSHBUTTON      "&Add",IDC_ICLOUD_ADDDRIVE,195,34,50,14
+    CONTROL         "Photos",IDC_CATEGORY2,"CCategory",WS_GROUP,7,67,238,15
+    CONTROL         "",IDC_ICLOUD_PHOTOS,"CItemPanel",WS_GROUP,7,83,185,37
+    PUSHBUTTON      "A&dd",IDC_ICLOUD_ADDPHOTOS,195,95,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,195,136,50,14,WS_GROUP
 END
 
 IDD_ONEDRIVE DIALOGEX 0, 0, 252, 237
@@ -3543,7 +3556,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
         TOPMARGIN, 7
-        BOTTOMMARGIN, 89
+        BOTTOMMARGIN, 150
     END
 
     IDD_ONEDRIVE, DIALOG
@@ -3719,7 +3732,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be copied or modified."
     IDS_ADDSTORE_BOX        "Indexes the existing folder of your local Box client.\nYour files will not be copied or modified."
     IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox client.\nYour files will not be copied or modified."
-    IDS_ADDSTORE_ICLOUD     "Indexes the existing folder of your local iCloud client.\nYour files will not be copied or modified."
+    IDS_ADDSTORE_ICLOUD     "Indexes the existing local iCloud folders.\nYour files will not be copied or modified."
     IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be copied or modified."
     IDS_SUBSCRIPTION        "Subscription"
     IDS_FREEBYTESAVAILABLE  "%s available"

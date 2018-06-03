@@ -40,20 +40,6 @@ BOOL GetProfilePath(LPWSTR pPath, LPCWSTR pFolder)
 	return FALSE;
 }
 
-LFCORE_API BOOL LFGetBoxPath(LPWSTR pPath)
-{
-	assert(pPath);
-
-	return GetProfilePath(pPath, L"\\Box Sync");
-}
-
-LFCORE_API BOOL LFGetICloudPath(LPWSTR pPath)
-{
-	assert(pPath);
-
-	return GetProfilePath(pPath, L"\\iCloudDrive");
-}
-
 HRESULT GetKnownFolderPath(REFKNOWNFOLDERID rfid, LPWSTR lpPath)
 {
 	if (!lpPath)
@@ -79,6 +65,43 @@ HRESULT GetKnownFolderPath(REFKNOWNFOLDERID rfid, LPWSTR lpPath)
 
 	return E_NOTIMPL;
 }
+
+
+// Box
+
+LFCORE_API BOOL LFGetBoxPath(LPWSTR pPath)
+{
+	assert(pPath);
+
+	return GetProfilePath(pPath, L"\\Box Sync");
+}
+
+
+// iCloud
+
+LFCORE_API BOOL LFGetICloudPaths(LFICloudPaths& iCloudPaths)
+{
+	ZeroMemory(&iCloudPaths, sizeof(iCloudPaths));
+
+	// iCloud Drive
+	BOOL Result = GetProfilePath(iCloudPaths.Drive, L"\\iCloudDrive");
+
+	// iCloud Photo Library
+	HKEY hKey;
+	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Apple Inc.\\Internet Services\\iCloud Photos\\Settings", &hKey)==ERROR_SUCCESS)
+	{
+		DWORD Size = sizeof(iCloudPaths.PhotoLibrary);
+		if (RegQueryValueEx(hKey, L"DownloadPath", 0, NULL, (BYTE*)iCloudPaths.PhotoLibrary, &Size)==ERROR_SUCCESS)
+			Result = TRUE;
+
+		RegCloseKey(hKey);
+	}
+
+	return Result;
+}
+
+
+// OneDrive
 
 void AddOneDrivePaths(LFOneDrivePaths& OneDrivePaths)
 {

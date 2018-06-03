@@ -12,7 +12,7 @@
 LFOneDriveDlg::LFOneDriveDlg(const OneDrive& OneDrive, CWnd* pParentWnd)
 	: LFDialog(IDD_ONEDRIVE, pParentWnd)
 {
-	m_OneDriveData = OneDrive.m_OneDriveData;
+	m_OneDrivePaths = OneDrive.m_OneDrivePaths;
 	m_FolderPath[0] = L'\0';
 }
 
@@ -29,16 +29,16 @@ void LFOneDriveDlg::DoDataExchange(CDataExchange* pDX)
 BOOL LFOneDriveDlg::InitDialog()
 {
 	// Item panels
-	m_wndOneDrivePanel.SetItem(m_OneDriveData.OneDrive);
-	m_wndCameraRollPanel.SetItem(m_OneDriveData.CameraRoll);
-	m_wndDocumentsPanel.SetItem(m_OneDriveData.Documents);
-	m_wndPicturesPanel.SetItem(m_OneDriveData.Pictures);
+	m_wndOneDrivePanel.SetItem(m_OneDrivePaths.OneDrive);
+	m_wndCameraRollPanel.SetItem(m_OneDrivePaths.CameraRoll);
+	m_wndDocumentsPanel.SetItem(m_OneDrivePaths.Documents);
+	m_wndPicturesPanel.SetItem(m_OneDrivePaths.Pictures);
 
 	// Disable buttons
-	GetDlgItem(IDC_ONEDRIVE_ADDONEDRIVE)->EnableWindow(m_OneDriveData.OneDrive[0]!=L'\0');
-	GetDlgItem(IDC_ONEDRIVE_ADDCAMERAROLL)->EnableWindow(m_OneDriveData.CameraRoll[0]!=L'\0');
-	GetDlgItem(IDC_ONEDRIVE_ADDDOCUMENTS)->EnableWindow(m_OneDriveData.Documents[0]!=L'\0');
-	GetDlgItem(IDC_ONEDRIVE_ADDPICTURES)->EnableWindow(m_OneDriveData.Pictures[0]!=L'\0');
+	GetDlgItem(IDC_ONEDRIVE_ADDONEDRIVE)->EnableWindow(m_OneDrivePaths.OneDrive[0]!=L'\0');
+	GetDlgItem(IDC_ONEDRIVE_ADDCAMERAROLL)->EnableWindow(m_OneDrivePaths.CameraRoll[0]!=L'\0');
+	GetDlgItem(IDC_ONEDRIVE_ADDDOCUMENTS)->EnableWindow(m_OneDrivePaths.Documents[0]!=L'\0');
+	GetDlgItem(IDC_ONEDRIVE_ADDPICTURES)->EnableWindow(m_OneDrivePaths.Pictures[0]!=L'\0');
 
 	return TRUE;
 }
@@ -53,39 +53,36 @@ END_MESSAGE_MAP()
 
 void LFOneDriveDlg::OnAddOneDrive()
 {
-	ASSERT(m_OneDriveData.OneDrive[0]!=L'\0');
+	ASSERT(m_OneDrivePaths.OneDrive[0]!=L'\0');
 
-	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDriveData.OneDrive);
+	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDrivePaths.OneDrive);
 
 	OnOK();
 }
-
 
 void LFOneDriveDlg::OnAddCameraRoll()
 {
-	ASSERT(m_OneDriveData.CameraRoll[0]!=L'\0');
+	ASSERT(m_OneDrivePaths.CameraRoll[0]!=L'\0');
 
-	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDriveData.CameraRoll);
+	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDrivePaths.CameraRoll);
 
 	OnOK();
 }
-
 
 void LFOneDriveDlg::OnAddDocuments()
 {
-	ASSERT(m_OneDriveData.Documents[0]!=L'\0');
+	ASSERT(m_OneDrivePaths.Documents[0]!=L'\0');
 
-	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDriveData.Documents);
+	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDrivePaths.Documents);
 
 	OnOK();
 }
 
-
 void LFOneDriveDlg::OnAddPictures()
 {
-	ASSERT(m_OneDriveData.Pictures[0]!=L'\0');
+	ASSERT(m_OneDrivePaths.Pictures[0]!=L'\0');
 
-	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDriveData.Pictures);
+	wcscpy_s(m_FolderPath, MAX_PATH, m_OneDrivePaths.Pictures);
 
 	OnOK();
 }

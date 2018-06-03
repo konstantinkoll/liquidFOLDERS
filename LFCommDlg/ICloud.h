@@ -17,7 +17,7 @@ public:
 	BOOL CheckForICloud();
 	BOOL IsICloudAvailable() const;
 
-	WCHAR m_Path[MAX_PATH];
+	LFICloudPaths m_iCloudPaths;
 
 private:
 	void Reset();
@@ -26,15 +26,15 @@ private:
 
 inline BOOL ICloud::CheckForICloud()
 {
-	return LFGetICloudPath(m_Path);
+	return LFGetICloudPaths(m_iCloudPaths);
 }
 
 inline BOOL ICloud::IsICloudAvailable() const
 {
-	return (m_Path[0]!=L'\0');
+	return (m_iCloudPaths.Drive[0]!=L'\0') || (m_iCloudPaths.PhotoLibrary[0]!=L'\0');
 }
 
 inline void ICloud::Reset()
 {
-	m_Path[0] = L'\0';
+	ZeroMemory(&m_iCloudPaths, sizeof(m_iCloudPaths));
 }

@@ -489,8 +489,8 @@ LFCORE_API UINT __stdcall LFCreateDesktopShortcutForStore(const LFStoreDescripto
 LFCORE_API BOOL __stdcall LFGetBoxPath(LPWSTR pPath);
 
 
-// Liefert den Pfad des iCloud-Drive-Ordners zurück
-LFCORE_API BOOL __stdcall LFGetICloudPath(LPWSTR pPath);
+// Liefert die Pfade von iCloud zurück
+LFCORE_API BOOL __stdcall LFGetICloudPaths(LFICloudPaths& iCloudPaths);
 
 
 // Liefert die Pfade von OneDrive zurück

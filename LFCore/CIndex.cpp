@@ -169,11 +169,11 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL& Repaired, LFProgress
 	const BOOL Writeable = VolumeWriteable((CHAR)m_IdxPath[0]);
 	if (Writeable)
 	{
-		p_StoreDescriptor->Flags |= LFStoreFlagsWriteable;
+		p_StoreDescriptor->Flags |= LFStoreFlagsManageable | LFStoreFlagsWriteable;
 	}
 	else
 	{
-		p_StoreDescriptor->Flags &= ~LFStoreFlagsWriteable;
+		p_StoreDescriptor->Flags &= ~(LFStoreFlagsManageable | LFStoreFlagsWriteable);
 
 		// Run scheduled maintenance only when index is writeable because of table compaction
 		if (Scheduled)

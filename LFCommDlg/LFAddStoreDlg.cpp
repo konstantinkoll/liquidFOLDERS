@@ -15,7 +15,7 @@
 #define SOURCECOUNT     sizeof(m_Sources)/sizeof(UINT)
 
 const UINT LFAddStoreDlg::m_Sources[] = { LFTypeSourceInternal, LFTypeSourceWindows,
-	LFTypeSourceBox, LFTypeSourceDropbox, LFTypeSourceICloud, LFTypeSourceOneDrive };
+	LFTypeSourceBox, LFTypeSourceDropbox, LFTypeSourceICloudDrive, LFTypeSourceOneDrive };
 CImageList LFAddStoreDlg::m_SourceIcons;
 
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
@@ -244,7 +244,7 @@ void LFAddStoreDlg::OnBtnICloud()
 {
 	LFICloudDlg dlg(m_ICloud, this);
 	if (dlg.DoModal()==IDOK)
-		AddWindowsPathAsStore(dlg.m_FolderPath, L"iCloud");
+		AddWindowsPathAsStore(dlg.m_FolderPath, dlg.m_StoreName);
 }
 
 void LFAddStoreDlg::OnBtnOneDrive()

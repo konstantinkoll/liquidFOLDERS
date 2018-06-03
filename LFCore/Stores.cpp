@@ -129,6 +129,19 @@ LFStoreDescriptor* FindStore(LPCWSTR pDatPath)
 // Persistence
 //
 
+void TestCloudPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR Path, UINT Source)
+{
+	assert(Path);
+
+	if (Path[0]!=L'\0')
+	{
+		wcscat_s(Path, MAX_PATH, L"\\");
+
+		if (wcsncmp(Path, pStoreDescriptor->DatPath, wcslen(Path))==0)
+			pStoreDescriptor->Source = Source;
+	}
+}
+
 void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreDescriptor);
@@ -151,7 +164,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 
 			if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendWindows)
 			{
-				UINT Source = LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0]);
+				const UINT Source = LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0]);
 
 				if (Source>LFTypeSourceInternal)
 					pStoreDescriptor->Source = Source;
@@ -178,12 +191,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 
 			// Box
 			if (LFGetBoxPath(szPath))
-			{
-				wcscat_s(szPath, MAX_PATH, L"\\");
-
-				if (wcsncmp(szPath, pStoreDescriptor->DatPath, wcslen(szPath))==0)
-					pStoreDescriptor->Source = LFTypeSourceBox;
-			}
+				TestCloudPath(pStoreDescriptor, szPath, LFTypeSourceBox);
 
 			// Dropbox
 			wcscpy_s(szPath, MAX_PATH, pStoreDescriptor->DatPath);
@@ -193,49 +201,21 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 				pStoreDescriptor->Source = LFTypeSourceDropbox;
 
 			// iCloud
-			if (LFGetICloudPath(szPath))
+			LFICloudPaths iCloudPaths;
+			if (LFGetICloudPaths(iCloudPaths))
 			{
-				wcscat_s(szPath, MAX_PATH, L"\\");
-
-				if (wcsncmp(szPath, pStoreDescriptor->DatPath, wcslen(szPath))==0)
-					pStoreDescriptor->Source = LFTypeSourceICloud;
+				TestCloudPath(pStoreDescriptor, iCloudPaths.Drive, LFTypeSourceICloudDrive);
+				TestCloudPath(pStoreDescriptor, iCloudPaths.PhotoLibrary, LFTypeSourceICloudPhotos);
 			}
 
 			// OneDrive
 			LFOneDrivePaths OneDrivePaths;
 			if (LFGetOneDrivePaths(OneDrivePaths))
 			{
-				// Root path
-				wcscat_s(OneDrivePaths.OneDrive, MAX_PATH, L"\\");
-				if (wcsncmp(OneDrivePaths.OneDrive, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.OneDrive))==0)
-					pStoreDescriptor->Source = LFTypeSourceOneDrive;
-
-				// Camera roll
-				if (OneDrivePaths.CameraRoll[0]!=L'\0')
-				{
-					wcscat_s(OneDrivePaths.CameraRoll, MAX_PATH, L"\\");
-
-					if (wcsncmp(OneDrivePaths.CameraRoll, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.CameraRoll))==0)
-						pStoreDescriptor->Source = LFTypeSourceOneDrive;
-				}
-
-				// Documents
-				if (OneDrivePaths.Documents[0]!=L'\0')
-				{
-					wcscat_s(OneDrivePaths.Documents, MAX_PATH, L"\\");
-
-					if (wcsncmp(OneDrivePaths.Documents, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.Documents))==0)
-						pStoreDescriptor->Source = LFTypeSourceOneDrive;
-				}
-
-				// Pictures
-				if (OneDrivePaths.Pictures[0]!=L'\0')
-				{
-					wcscat_s(OneDrivePaths.Pictures, MAX_PATH, L"\\");
-
-					if (wcsncmp(OneDrivePaths.Pictures, pStoreDescriptor->DatPath, wcslen(OneDrivePaths.Pictures))==0)
-						pStoreDescriptor->Source = LFTypeSourceOneDrive;
-				}
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.OneDrive, LFTypeSourceOneDrive);
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.CameraRoll, LFTypeSourceOneDrive);
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.Documents, LFTypeSourceOneDrive);
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.Pictures, LFTypeSourceOneDrive);
 			}
 		}
 		else
@@ -730,7 +710,8 @@ UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType)
 {
 	assert(pStoreDescriptor);
 
-	UINT Type = pStoreDescriptor->Source | ItemType | (pStoreDescriptor->Flags & LFStoreFlagsWriteable) | (LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted);
+	UINT Type = pStoreDescriptor->Source | ItemType | (pStoreDescriptor->Flags & (LFStoreFlagsManageable | LFStoreFlagsWriteable)) |
+		(LFIsStoreMounted(pStoreDescriptor) ? LFTypeMounted : LFTypeGhosted);
 
 	// Add capability flags
 	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
@@ -821,7 +802,7 @@ UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pPro
 
 	// Writeable?
 	if (VolumeWriteable((CHAR)pStoreDescriptor->IdxPathMain[0]))
-		pStoreDescriptor->Flags |= LFStoreFlagsWriteable;
+		pStoreDescriptor->Flags |= LFStoreFlagsManageable | LFStoreFlagsWriteable;
 	
 	// Create index
 	UINT Result = UpdateStoreInCache(pStoreDescriptor);

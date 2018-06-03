@@ -17,7 +17,7 @@ public:
 	BOOL CheckForOneDrive();
 	BOOL IsOneDriveAvailable() const;
 
-	LFOneDrivePaths m_OneDriveData;
+	LFOneDrivePaths m_OneDrivePaths;
 
 private:
 	void Reset();
@@ -26,15 +26,15 @@ private:
 
 inline BOOL OneDrive::CheckForOneDrive()
 {
-	return LFGetOneDrivePaths(m_OneDriveData);
+	return LFGetOneDrivePaths(m_OneDrivePaths);
 }
 
 inline BOOL OneDrive::IsOneDriveAvailable() const
 {
-	return (m_OneDriveData.OneDrive[0]!=L'\0');
+	return (m_OneDrivePaths.OneDrive[0]!=L'\0');
 }
 
 inline void OneDrive::Reset()
 {
-	ZeroMemory(&m_OneDriveData, sizeof(m_OneDriveData));
+	ZeroMemory(&m_OneDrivePaths, sizeof(m_OneDrivePaths));
 }

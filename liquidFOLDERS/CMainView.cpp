@@ -1302,11 +1302,11 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					break;
 
 				case IDM_STORE_DELETE:
-					bEnable = (pItemDescriptor->Type & LFTypeWriteable);
+					bEnable = (pItemDescriptor->Type & LFTypeManageable);
 					break;
 
 				case IDM_STORE_RENAME:
-					bEnable = (pItemDescriptor->Type & LFTypeWriteable) && !m_pWndFileView->IsEditing();
+					bEnable = (pItemDescriptor->Type & LFTypeManageable) && !m_pWndFileView->IsEditing();
 					break;
 
 				default:

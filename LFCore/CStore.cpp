@@ -152,7 +152,12 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 	// Create store directories
 	UINT Result = CreateDirectories();
 	if (Result!=LFOk)
+	{
+		// Set Manageable flag to allow a broken store to be deleted
+		p_StoreDescriptor->Flags |= LFStoreFlagsManageable;
+
 		ABORT(Result);
+	}
 
 	// Progress
 	if (pProgress)

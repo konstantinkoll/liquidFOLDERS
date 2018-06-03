@@ -33,11 +33,11 @@ IDI_STR_WINDOWS         ICON                    "res\\STR_Windows.ico"
 IDI_STR_1394            ICON                    "res\\STR_1394.ico"
 IDI_STR_USB             ICON                    "res\\STR_USB.ico"
 IDI_STR_NETHOOD         ICON                    "res\\STR_Nethood.ico"
-IDI_STR_DROPBOX         ICON                    "res\\STR_Dropbox.ico"
-IDI_STR_ICLOUD          ICON                    "res\\STR_iCloud.ico"
-IDI_STR_ONEDRIVE        ICON                    "res\\STR_OneDrive.ico"
 IDI_STR_BOX             ICON                    "res\\STR_Box.ico"
-IDI_STR_RESERVED7       ICON                    "res\\Template.ico"
+IDI_STR_DROPBOX         ICON                    "res\\STR_Dropbox.ico"
+IDI_STR_ICLOUDDRIVE     ICON                    "res\\STR_iCloudDrive.ico"
+IDI_STR_ONEDRIVE        ICON                    "res\\STR_OneDrive.ico"
+IDI_STR_ICLOUDPHOTOS    ICON                    "res\\STR_iCloudPhotos.ico"
 IDI_STR_RESERVED6       ICON                    "res\\Template.ico"
 IDI_STR_RESERVED5       ICON                    "res\\Template.ico"
 IDI_STR_RESERVED4       ICON                    "res\\Template.ico"
@@ -109,8 +109,8 @@ IDI_FLD_PLACEHOLDER_TV  ICON                    "res\\FLD_Placeholder_TV.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,1,0
- PRODUCTVERSION 4,0,1,0
+ FILEVERSION 4,0,2,0
+ PRODUCTVERSION 4,0,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -127,13 +127,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.1"
+            VALUE "FileVersion", "4.0.2"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.1"
+            VALUE "ProductVersion", "4.0.2"
         END
     END
     BLOCK "VarFileInfo"
@@ -446,8 +446,9 @@ BEGIN
     IDS_SRC_NETHOOD         "Netzwerklaufwerk"
     IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
-    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
+    IDS_SRC_ICLOUDPHOTOS    "iCloud-Fotomediathek"
 END
 
 STRINGTABLE 
@@ -464,8 +465,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_QSRC_ICLOUD         "Auf iCloud"
+    IDS_QSRC_ICLOUDDRIVE    "Auf iCloud"
     IDS_QSRC_ONEDRIVE       "Auf OneDrive"
+    IDS_QSRC_ICLOUDPHOTOS   "Auf iCloud"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -771,8 +773,9 @@ BEGIN
     IDS_SRC_NETHOOD         "Unidad de red"
     IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
-    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
+    IDS_SRC_ICLOUDPHOTOS    "Fototeca de iCloud"
 END
 
 STRINGTABLE 
@@ -789,8 +792,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_QSRC_ICLOUD         "En iCloud"
+    IDS_QSRC_ICLOUDDRIVE    "En iCloud"
     IDS_QSRC_ONEDRIVE       "En OneDrive"
+    IDS_QSRC_ICLOUDPHOTOS   "En iCloud"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -1098,8 +1102,9 @@ BEGIN
     IDS_SRC_NETHOOD         "Lecteur réseau"
     IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
-    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
+    IDS_SRC_ICLOUDPHOTOS    "Photothèque iCloud"
 END
 
 STRINGTABLE 
@@ -1116,8 +1121,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_QSRC_ICLOUD         "Dans iCloud"
+    IDS_QSRC_ICLOUDDRIVE    "Dans iCloud"
     IDS_QSRC_ONEDRIVE       "Dans OneDrive"
+    IDS_QSRC_ICLOUDPHOTOS   "Dans iCloud"
 END
 
 #endif    // Französisch (neutral) resources
@@ -1460,8 +1466,9 @@ BEGIN
     IDS_SRC_NETHOOD         "Network volume"
     IDS_SRC_BOX             "Box"
     IDS_SRC_DROPBOX         "Dropbox"
-    IDS_SRC_ICLOUD          "iCloud"
+    IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
+    IDS_SRC_ICLOUDPHOTOS    "iCloud Photo Library"
 END
 
 STRINGTABLE 
@@ -1478,8 +1485,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_QSRC_ICLOUD         "On iCloud"
+    IDS_QSRC_ICLOUDDRIVE    "On iCloud"
     IDS_QSRC_ONEDRIVE       "On OneDrive"
+    IDS_QSRC_ICLOUDPHOTOS   "On iCloud"
 END
 
 #endif    // Englisch (USA) resources

@@ -347,11 +347,11 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			break;
 
 		case IDM_STORE_DELETE:
-			bEnable = (pItemDescriptor->Type & LFTypeWriteable);
+			bEnable = (pItemDescriptor->Type & LFTypeManageable);
 			break;
 
 		case IDM_STORE_RENAME:
-			bEnable = (pItemDescriptor->Type & LFTypeWriteable) && !m_wndStoreList.IsEditing();
+			bEnable = (pItemDescriptor->Type & LFTypeManageable) && !m_wndStoreList.IsEditing();
 			break;
 		}
 	}

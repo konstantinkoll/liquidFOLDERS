@@ -1058,7 +1058,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_iCloud.ico"
+				RelativePath=".\res\STR_iCloudDrive.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_iCloudPhotos.ico"
 				>
 			</File>
 			<File
