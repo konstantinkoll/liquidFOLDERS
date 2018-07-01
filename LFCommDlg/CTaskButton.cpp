@@ -61,7 +61,7 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	{
 		const INT IconSize = p_ButtonIcons->GetIconSize();
 
-		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-IconSize)/2+(Selected ? 1 : 0), m_IconID, m_HoverItem>=0, Disabled);
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-IconSize)/2+(Selected ? 1 : 0), m_IconID, Themed && (m_HoverItem>=0), Disabled);
 		rectText.left += IconSize+BORDER;
 	}
 

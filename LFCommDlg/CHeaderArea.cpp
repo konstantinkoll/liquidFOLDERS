@@ -327,17 +327,16 @@ HBRUSH CHeaderArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (hBackgroundBrush)
-		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
-		{
-			CRect rect;
-			pWnd->GetWindowRect(rect);
-			ScreenToClient(rect);
+	if (hBackgroundBrush && ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC)))
+	{
+		CRect rect;
+		pWnd->GetWindowRect(rect);
+		ScreenToClient(rect);
 
-			pDC->SetBrushOrg(-rect.left, -rect.top);
+		pDC->SetBrushOrg(-rect.left, -rect.top);
 
-			hBrush = hBackgroundBrush;
-		}
+		hBrush = hBackgroundBrush;
+	}
 
 	return hBrush;
 }

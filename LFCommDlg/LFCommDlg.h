@@ -89,6 +89,8 @@ struct NM_DRAWBUTTONFOREGROUND
 	NMHDR hdr;
 	LPDRAWITEMSTRUCT lpDrawItemStruct;
 	CDC* pDC;
+	BOOL Hover;
+	BOOL Themed;
 };
 
 struct PROGRESSDATA

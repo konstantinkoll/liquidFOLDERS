@@ -174,6 +174,7 @@ protected:
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg LRESULT OnNcPaint(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnInitMenuPopup(CMenu* pMenuPopup, UINT nIndex, BOOL bSysMenu);
 	DECLARE_MESSAGE_MAP()

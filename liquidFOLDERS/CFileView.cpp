@@ -9,20 +9,35 @@
 // CFileView
 //
 
+#define BUTTONPADDING     8
+
 CIcons CFileView::m_LargeColorDots;
 CIcons CFileView::m_DefaultColorDots;
+CString CFileView::m_WelcomeCaption;
+CString CFileView::m_WelcomeMessage;
 
 CFileView::CFileView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
 	: CAbstractFileView(Flags | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLEDRAGANDDROP, DataSize, szItemInflate)
 {
+	if (m_WelcomeCaption.IsEmpty())
+		ENSURE(m_WelcomeCaption.LoadString(IDS_WELCOME_CAPTION));
+
+	if (m_WelcomeMessage.IsEmpty())
+		ENSURE(m_WelcomeMessage.LoadString(IDS_WELCOME_MESSAGE));
+
+	p_TaskIcons = NULL;
 	p_Filter = NULL;
 	p_RawFiles = NULL;
 	m_Context = LFContextAllFiles;
 	m_SubfolderAttribute = -1;
+	m_WelcomeCaptionHeight = m_WelcomeMessageHeight = 0;
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
 {
+	ASSERT(pTaskIcons);
+	p_TaskIcons = pTaskIcons;
+
 	if (!CAbstractFileView::Create(pParentWnd, nID, rect, nClassStyle))
 		return FALSE;
 
@@ -97,6 +112,55 @@ void CFileView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 	CAbstractFileView::SetSearchResult(pCookedFiles);
 }
 
+void CFileView::AdjustScrollbars()
+{
+	CAbstractFileView::AdjustScrollbars();
+
+	// Command button
+	if (CAbstractFileView::DrawNothing() && (m_Context==LFContextStores))
+	{
+		CRect rectClient;
+		GetClientRect(rectClient);
+
+		// Message
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
+
+		CFont* pOldFont = dc.SelectObject(&theApp.m_CaptionFont);
+
+		CRect rectText(rectClient);
+		rectText.DeflateRect(BACKSTAGEBORDER, 0);
+
+		dc.DrawText(m_WelcomeCaption, rectText, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX | DT_CALCRECT);
+
+		m_WelcomeCaptionHeight = rectText.Height()+BACKSTAGEBORDER/2;
+
+		rectText = rectClient;
+		rectText.DeflateRect(BACKSTAGEBORDER, 0);
+
+		dc.SelectObject(&theApp.m_LargeFont);
+
+		dc.DrawText(m_WelcomeMessage, rectText, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX | DT_CALCRECT);
+
+		m_WelcomeMessageHeight = rectText.Height()+BACKSTAGEBORDER;
+
+		dc.SelectObject(pOldFont);
+
+		// Button
+		CString tmpStr;
+		m_wndCommandButton.GetWindowText(tmpStr);
+
+		const INT ButtonWidth = min(rectClient.Width()-2*BACKSTAGEBORDER, max(theApp.m_DefaultFont.GetTextExtent(tmpStr).cx, p_TaskIcons->GetIconSize())+2*BUTTONPADDING);
+		const INT ButtonHeight = m_DefaultFontHeight+p_TaskIcons->GetIconSize()+3*BUTTONPADDING-2;
+
+		m_wndCommandButton.SetWindowPos(NULL, (rectClient.Width()-ButtonWidth)/2, 2*BACKSTAGEBORDER+m_WelcomeCaptionHeight+m_WelcomeMessageHeight, ButtonWidth, ButtonHeight, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+	else
+	{
+		m_wndCommandButton.ShowWindow(SW_HIDE);
+	}
+}
+
 COLORREF CFileView::GetItemTextColor(INT Index) const
 {
 	return ((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1;
@@ -153,6 +217,34 @@ void CFileView::ShowTooltip(const CPoint& point)
 	theApp.ShowTooltip(this, point, GetItemLabel(pItemDescriptor),
 		theApp.GetHintForItem(pItemDescriptor, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat)),
 		NULL, hBitmap);
+}
+
+void CFileView::DrawNothing(CDC& dc, CRect rect, BOOL Themed) const
+{
+	if (m_Context==LFContextStores)
+	{
+		rect.top += 2*BACKSTAGEBORDER;
+		rect.left += BACKSTAGEBORDER;
+		rect.right -= BACKSTAGEBORDER;
+
+		CFont* pOldFont = dc.SelectObject(&theApp.m_CaptionFont);
+
+		dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+		dc.DrawText(m_WelcomeCaption, rect, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX);
+
+		rect.top += m_WelcomeCaptionHeight;
+
+		dc.SelectObject(&theApp.m_LargeFont);
+
+		dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+		dc.DrawText(m_WelcomeMessage, rect, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX);
+
+		dc.SelectObject(pOldFont);
+	}
+	else
+	{
+		CFrontstageScroller::DrawNothing(dc, rect, Themed);
+	}
 }
 
 void CFileView::AppendMoveToItem(CMenu& Menu, UINT FromContext, UINT ToContext) const
@@ -643,6 +735,9 @@ BEGIN_MESSAGE_MAP(CFileView, CAbstractFileView)
 	ON_WM_CREATE()
 	ON_WM_KEYDOWN()
 
+	ON_NOTIFY(REQUEST_DRAWBUTTONFOREGROUND, 2, OnDrawButtonForeground)
+	ON_BN_CLICKED(2, OnButtonClicked)
+
 	ON_WM_MEASUREITEM()
 	ON_WM_DRAWITEM()
 END_MESSAGE_MAP()
@@ -655,6 +750,15 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Color dots
 	theApp.LoadColorDots(m_LargeColorDots, m_LargeFontHeight);
 	theApp.LoadColorDots(m_DefaultColorDots, m_DefaultFontHeight);
+
+	// Command button
+	CString tmpStr((LPCSTR)IDM_STORES_ADD);
+
+	const INT Pos = tmpStr.Find(L'\n');
+	if (Pos!=-1)
+		tmpStr.Delete(0, Pos+1);
+
+	m_wndCommandButton.Create(tmpStr, this, 2);
 
 	return 0;
 }
@@ -699,6 +803,44 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	default:
 		CAbstractFileView::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
+}
+
+
+// Command button
+
+void CFileView::OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_DRAWBUTTONFOREGROUND* pDrawButtonForeground = (NM_DRAWBUTTONFOREGROUND*)pNMHDR;
+	LPDRAWITEMSTRUCT lpDrawItemStruct = pDrawButtonForeground->lpDrawItemStruct;
+
+	// State
+	const BOOL Disabled = (lpDrawItemStruct->itemState & ODS_DISABLED);
+
+	// Content
+	CRect rect(lpDrawItemStruct->rcItem);
+
+	CFont* pOldFont = pDrawButtonForeground->pDC->SelectObject(&theApp.m_DefaultFont);
+
+	// Icon
+	p_TaskIcons->Draw(*pDrawButtonForeground->pDC, rect.left+(rect.Width()-p_TaskIcons->GetIconSize())/2, rect.top+BUTTONPADDING, 0, pDrawButtonForeground->Themed && pDrawButtonForeground->Hover, Disabled);
+
+	rect.DeflateRect(BUTTONPADDING, BUTTONPADDING);
+	rect.top += p_TaskIcons->GetIconSize()+BUTTONPADDING-2;
+
+	// Text
+	WCHAR Caption[256];
+	::GetWindowText(pDrawButtonForeground->hdr.hwndFrom, Caption, 256);
+
+	pDrawButtonForeground->pDC->DrawText(Caption, -1, rect, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_HIDEPREFIX | DT_TOP);
+
+	pDrawButtonForeground->pDC->SelectObject(pOldFont);
+
+	*pResult = TRUE;
+}
+
+void CFileView::OnButtonClicked()
+{
+	GetOwner()->PostMessage(WM_COMMAND, IDM_STORES_ADD);
 }
 
 

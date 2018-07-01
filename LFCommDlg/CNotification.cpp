@@ -187,14 +187,12 @@ BEGIN_MESSAGE_MAP(CNotification, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
-	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(1, OnButtonClicked)
 END_MESSAGE_MAP()
 
@@ -234,11 +232,6 @@ void CNotification::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-BOOL CNotification::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CNotification::OnPaint()
@@ -351,18 +344,6 @@ void CNotification::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	InvalidateRect(m_RectClose);
 
 	ReleaseCapture();
-}
-
-HBRUSH CNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	// Call base class version at first, else it will override changes
-	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	pDC->SetDCBrushColor(IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-
-	hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
-
-	return hBrush;
 }
 
 void CNotification::OnButtonClicked()

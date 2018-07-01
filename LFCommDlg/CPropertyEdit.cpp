@@ -195,7 +195,6 @@ void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 
 BEGIN_MESSAGE_MAP(CPropertyEdit, CPropertyHolder)
 	ON_WM_DESTROY()
-	ON_WM_CTLCOLOR()
 	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
@@ -211,20 +210,6 @@ void CPropertyEdit::OnDestroy()
 	DestroyEdit();
 
 	CPropertyHolder::OnDestroy();
-}
-
-HBRUSH CPropertyEdit::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	// Call base class version at first, else it will override changes
-	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	if (nCtlColor==CTLCOLOR_BTN)
-	{
-		pDC->SetDCBrushColor(GetSysColor(COLOR_WINDOW));
-		hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
-	}
-
-	return hBrush;
 }
 
 void CPropertyEdit::OnLButtonUp(UINT /*nFlags*/, CPoint point)

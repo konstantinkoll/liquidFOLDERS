@@ -213,6 +213,7 @@ BEGIN_TOOLTIP_MAP(CFrontstageWnd, CWnd)
 	ON_WM_NCHITTEST()
 	ON_MESSAGE(WM_NCPAINT, OnNcPaint)
 	ON_WM_ERASEBKGND()
+	ON_WM_CTLCOLOR()
 	ON_WM_CONTEXTMENU()
 	ON_WM_INITMENUPOPUP()
 END_TOOLTIP_MAP()
@@ -287,6 +288,16 @@ LRESULT CFrontstageWnd::OnNcPaint(WPARAM wParam, LPARAM lParam)
 BOOL CFrontstageWnd::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
+}
+
+HBRUSH CFrontstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	pDC->SetDCBrushColor(IsWindowEnabled() ? IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW) : GetSysColor(COLOR_3DFACE));
+
+	return (HBRUSH)GetStockObject(DC_BRUSH);
 }
 
 void CFrontstageWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)

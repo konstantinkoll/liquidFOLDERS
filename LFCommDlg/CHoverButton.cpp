@@ -13,10 +13,14 @@ CHoverButton::CHoverButton()
 	: CButton()
 {
 	CONSTRUCTOR_TOOLTIP()
+
+	m_DrawBorder = FALSE;
 }
 
 BOOL CHoverButton::Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nID)
 {
+	m_DrawBorder = TRUE;
+
 	return CButton::Create(lpszCaption, WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
@@ -43,7 +47,12 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	FillRect(dc, rect, (HBRUSH)GetOwner()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
 
 	// Button
-	DrawWhiteButtonBackground(dc, g, rect, IsCtrlThemed(), Focused, Selected, m_HoverItem>=0, Disabled);
+	const BOOL Themed = IsCtrlThemed();
+
+	if (Themed && m_DrawBorder)
+		DrawWhiteButtonBorder(g, rect);
+
+	DrawWhiteButtonBackground(dc, g, rect, Themed, Focused, Selected, m_HoverItem>=0, Disabled);
 
 	// Content
 	NM_DRAWBUTTONFOREGROUND tag;
@@ -54,6 +63,8 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	tag.hdr.idFrom = GetDlgCtrlID();
 	tag.lpDrawItemStruct = lpDrawItemStruct;
 	tag.pDC = &dc;
+	tag.Hover = (m_HoverItem>=0);
+	tag.Themed = Themed;
 
 	if (Selected)
 		::OffsetRect(&lpDrawItemStruct->rcItem, 1, 1);

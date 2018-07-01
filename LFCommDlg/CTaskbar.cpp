@@ -292,8 +292,8 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (hBackgroundBrush)
-		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+		if (hBackgroundBrush)
 		{
 			CRect rect;
 			pWnd->GetWindowRect(rect);
@@ -302,6 +302,12 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 			pDC->SetBrushOrg(-rect.left, -rect.top);
 
 			hBrush = hBackgroundBrush;
+		}
+		else
+		{
+			pDC->SetDCBrushColor(GetSysColor(COLOR_3DFACE));
+
+			hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
 		}
 
 	return hBrush;

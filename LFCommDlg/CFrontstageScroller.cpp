@@ -169,37 +169,32 @@ BOOL CFrontstageScroller::DrawNothing() const
 	return FALSE;
 }
 
-BOOL CFrontstageScroller::DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed) const
+void CFrontstageScroller::DrawNothing(CDC& dc, CRect rect, BOOL Themed) const
 {
-	if (DrawNothing())
+	// Message
+	CString strMessage;
+	COLORREF clrMessage = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
+
+	GetNothingMessage(strMessage, clrMessage, Themed);
+
+	// Draw message
+	rect.top += m_HeaderHeight+BACKSTAGEBORDER;
+
+	if (Themed)
 	{
-		// Message
-		CString strMessage;
-		COLORREF clrMessage = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
+		rect.top++;
 
-		GetNothingMessage(strMessage, clrMessage, Themed);
+		dc.SetTextColor(0xFFFFFF);
+		dc.DrawText(strMessage, rect, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-		// Draw message
-		CRect rectText(lpRectClient);
-		rectText.top += m_HeaderHeight+BACKSTAGEBORDER;
-
-		if (Themed)
-		{
-			rectText.top++;
-
-			dc.SetTextColor(0xFFFFFF);
-			dc.DrawText(strMessage, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-			rectText.top--;
-		}
-
-		dc.SetTextColor(clrMessage);
-		dc.DrawText(strMessage, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		return TRUE;
+		rect.top--;
 	}
 
-	return FALSE;
+	dc.SetTextColor(clrMessage);
+	dc.DrawText(strMessage, rect, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+	// Bottom border to splash screen
+	rect.top += LFGetApp()->m_DefaultFont.GetFontHeight()+BACKSTAGEBORDER;
 }
 
 void CFrontstageScroller::DrawStage(CDC& /*dc*/, Graphics& /*g*/, const CRect& /*rect*/, const CRect& /*rectUpdate*/, BOOL /*Themed*/)
@@ -221,6 +216,7 @@ void CFrontstageScroller::SetItemHeight(INT ItemHeight, INT Gutter)
 BEGIN_MESSAGE_MAP(CFrontstageScroller, CFrontstageWnd)
 	ON_WM_DESTROY()
 	ON_WM_PAINT()
+	ON_WM_CTLCOLOR()
 	ON_WM_ENABLE()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
@@ -280,8 +276,14 @@ void CFrontstageScroller::OnPaint()
 	// Stage
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
-	if (!DrawNothing(dc, rect, Themed))
+	if (DrawNothing())
+	{
+		DrawNothing(dc, rect, Themed);
+	}
+	else
+	{
 		DrawStage(dc, g, rect, rectUpdate, Themed);
+	}
 
 	dc.SelectObject(pOldFont);
 
@@ -306,6 +308,20 @@ void CFrontstageScroller::OnPaint()
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(pOldBitmap);
+}
+
+HBRUSH CFrontstageScroller::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if ((m_Flags & FRONTSTAGE_CARDBACKGROUND)==FRONTSTAGE_CARDBACKGROUND)
+	{
+		pDC->SetDCBrushColor(IsCtrlThemed() ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
+		hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
+	}
+
+	return hBrush;
 }
 
 void CFrontstageScroller::OnEnable(BOOL /*bEnable*/)

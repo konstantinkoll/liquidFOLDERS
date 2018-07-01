@@ -939,56 +939,54 @@ void CBackstageWnd::OnCompositionChanged()
 HBRUSH CBackstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_EDIT))
+	HBRUSH hBrush;
+	if (hBackgroundBrush)
 	{
-		if (hBackgroundBrush)
+		CRect rect;
+
+		if (nCtlColor==CTLCOLOR_EDIT)
+		{
+			if (!m_IsDialog)
+			{
+				pDC->SetBkMode(TRANSPARENT);
+				pDC->SetTextColor(0xDACCC4);
+			}
+
+			pWnd->GetClientRect(rect);
+			pWnd->ClientToScreen(rect);
+		}
+		else
+		{
+			pDC->SetTextColor(0x000000);
+
+			pWnd->GetWindowRect(rect);
+		}
+
+		ScreenToClient(rect);
+		pDC->SetBrushOrg(-rect.left, -rect.top);
+
+		hBrush = hBackgroundBrush;
+	}
+	else
+		if ((pWnd==&m_wndWidgets) || (pWnd==m_pSidebarWnd) || !m_IsDialog)
+		{
+			hBrush = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
+		}
+		else
 		{
 			CRect rect;
 
-			if (nCtlColor==CTLCOLOR_EDIT)
-			{
-				if (!m_IsDialog)
-				{
-					pDC->SetBkMode(TRANSPARENT);
-					pDC->SetTextColor(0xDACCC4);
-				}
-
-				pWnd->GetClientRect(rect);
-				pWnd->ClientToScreen(rect);
-			}
-			else
-			{
-				pDC->SetTextColor(0x000000);
-
-				pWnd->GetWindowRect(rect);
-			}
-
+			pWnd->GetWindowRect(rect);
 			ScreenToClient(rect);
-			pDC->SetBrushOrg(-rect.left, -rect.top);
+			pDC->SetDCBrushColor(GetSysColor(rect.top>=m_BottomDivider ? COLOR_3DFACE : COLOR_WINDOW));
 
-			hBrush = hBackgroundBrush;
+			hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
 		}
-		else
-			if ((pWnd==&m_wndWidgets) || (pWnd==m_pSidebarWnd) || !m_IsDialog)
-			{
-				hBrush = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
-			}
-			else
-			{
-				CRect rect;
 
-				pWnd->GetWindowRect(rect);
-				ScreenToClient(rect);
-				pDC->SetDCBrushColor(GetSysColor(rect.top>=m_BottomDivider ? COLOR_3DFACE : COLOR_WINDOW));
-
-				hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
-			}
-
-		if (nCtlColor!=CTLCOLOR_EDIT)
-			pDC->SetBkMode(TRANSPARENT);
-	}
+	if (nCtlColor!=CTLCOLOR_EDIT)
+		pDC->SetBkMode(TRANSPARENT);
 
 	return hBrush;
 }

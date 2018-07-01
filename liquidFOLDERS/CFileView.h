@@ -93,7 +93,7 @@ class CFileView : public CAbstractFileView
 public:
 	CFileView(UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=0);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=0);
 	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 
@@ -107,12 +107,14 @@ public:
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
+	virtual void AdjustScrollbars();
 	virtual COLORREF GetItemTextColor(INT Index) const;
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);
 	virtual void FireSelectedItem() const;
 	virtual void DeleteSelectedItem() const;
 	virtual void ShowTooltip(const CPoint& point);
+	virtual void DrawNothing(CDC& dc, CRect rect, BOOL Themed) const;
 
 	CString GetItemLabel(const LFItemDescriptor* pItemDescriptor) const;
 	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
@@ -125,6 +127,9 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+	afx_msg void OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnButtonClicked();
 
 	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
 	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
@@ -148,6 +153,13 @@ private:
 	void GetMoveToMenu(CMenu& Menu) const;
 	void AppendSendToItem(CMenu& Menu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
 	void GetSendToMenu(CMenu& Menu);
+
+	static CString m_WelcomeCaption;
+	static CString m_WelcomeMessage;
+	INT m_WelcomeCaptionHeight;
+	INT m_WelcomeMessageHeight;
+	CIcons* p_TaskIcons;
+	CHoverButton m_wndCommandButton;
 
 	SendToItemData m_SendToItems[256];
 };

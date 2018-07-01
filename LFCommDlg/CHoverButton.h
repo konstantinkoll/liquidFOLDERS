@@ -25,4 +25,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	DECLARE_TOOLTIP()
+
+private:
+	BOOL m_DrawBorder;
 };

@@ -28,6 +28,7 @@ protected:
 	virtual void AdjustLayout();
 	virtual void GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL Themed) const;
 	virtual BOOL DrawNothing() const;
+	virtual void DrawNothing(CDC& dc, CRect rect, BOOL Themed) const;
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
@@ -37,6 +38,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnEnable(BOOL bEnable);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -65,5 +67,4 @@ protected:
 	CTooltipHeader* m_pWndHeader;
 
 private:
-	BOOL DrawNothing(CDC& dc, LPCRECT lpRectClient, BOOL Themed) const;
 };

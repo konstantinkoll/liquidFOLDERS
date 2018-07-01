@@ -44,9 +44,9 @@ CGlobeView::CGlobeView()
 	m_AnimCounter = m_MoveCounter = 0;
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
 {
-	return CFileView::Create(pParentWnd, nID, rect, pFilter, pRawFiles, pCookedFiles, pPersistentData, CS_OWNDC);
+	return CFileView::Create(pParentWnd, nID, rect, pTaskIcons, pFilter, pRawFiles, pCookedFiles, pPersistentData, CS_OWNDC);
 }
 
 void CGlobeView::SetViewSettings(BOOL UpdateSearchResultPending)

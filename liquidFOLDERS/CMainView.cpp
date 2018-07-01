@@ -106,7 +106,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* pPersistentData)
 		ScreenToClient(rect);
 	}
 
-	m_pWndFileView->Create(this, FileViewID, rect, p_Filter, p_RawFiles, p_CookedFiles, pPersistentData);
+	m_pWndFileView->Create(this, FileViewID, rect, &m_LargeIcons, p_Filter, p_RawFiles, p_CookedFiles, pPersistentData);
 
 	if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
 		m_pWndFileView->SetFocus();
@@ -618,7 +618,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
 	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 24);
 	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
 	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);

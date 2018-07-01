@@ -46,10 +46,12 @@
 #define IDS_DEFAULTSTORE                1026
 #define IDS_FILESCOPIED                 1027
 #define IDS_SHORTCUTCREATED             1028
-#define IDS_QUALITY_LOW                 1029
-#define IDS_QUALITY_MEDIUM              1030
-#define IDS_QUALITY_HIGH                1031
-#define IDS_QUALITY_ULTRA               1032
+#define IDS_WELCOME_CAPTION             1029
+#define IDS_WELCOME_MESSAGE             1030
+#define IDS_QUALITY_LOW                 1031
+#define IDS_QUALITY_MEDIUM              1032
+#define IDS_QUALITY_HIGH                1033
+#define IDS_QUALITY_ULTRA               1034
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_FLAGS                 1100
 #define IDS_VATTR_SOURCE                1101
