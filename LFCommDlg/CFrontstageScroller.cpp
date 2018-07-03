@@ -207,9 +207,9 @@ void CFrontstageScroller::ResetScrollArea()
 	m_HoverItem = -1;
 }
 
-void CFrontstageScroller::SetItemHeight(INT ItemHeight, INT Gutter)
+void CFrontstageScroller::SetItemHeight(INT ItemHeight)
 {
-	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)+Gutter;
+	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)-1;
 }
 
 

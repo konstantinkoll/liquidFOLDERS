@@ -39,7 +39,7 @@ void CConditionList::PreSubclassWindow()
 {
 	CFrontstageItemView::PreSubclassWindow();
 
-	SetItemHeight(max(m_IconSize=LFGetApp()->m_ExtraLargeIconSize, 2*m_DefaultFontHeight)+2*ITEMVIEWPADDING);
+	SetItemHeight(LFGetApp()->m_ExtraLargeIconSize, 2);
 }
 
 void CConditionList::SetConditions(const ConditionArray& Conditions)
@@ -83,26 +83,6 @@ void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT In
 	const LFFilterCondition* pFilterCondition = &(*p_Conditions)[Index];
 	const UINT Attr = pFilterCondition->VData.Attr;
 
-	CRect rect(rectItem);
-	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
-
-	// Icon
-	const INT IconID = LFGetApp()->GetAttributeIcon(Attr);
-
-	if (IconID)
-		LFGetApp()->m_CoreImageListExtraLarge.Draw(&dc, IconID-1, CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), ILD_TRANSPARENT);
-
-	// Text
-	CRect rectText(rect);
-	rectText.left += m_IconSize+ITEMVIEWPADDING;
-	rectText.top += (rect.Height()-2*m_DefaultFontHeight)/2;
-
-	dc.DrawText(LFGetApp()->GetAttributeName(Attr), -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
-	rectText.top += m_DefaultFontHeight;
-
-	SetDarkTextColor(dc, Index, Themed);
-
-
 	WCHAR tmpStr[512];
 	wcscpy_s(tmpStr, 512, m_Compare[pFilterCondition->Compare]);
 
@@ -112,7 +92,10 @@ void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT In
 		LFVariantDataToString(pFilterCondition->VData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
 	}
 
-	dc.DrawText(tmpStr, -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+	DrawTile(dc, rectItem, LFGetApp()->m_CoreImageListExtraLarge, LFGetApp()->GetAttributeIcon(Attr)-1,
+		ILD_TRANSPARENT,
+		GetDarkTextColor(dc, Index, Themed), 2,
+		LFGetApp()->GetAttributeName(Attr), tmpStr);
 }
 
 

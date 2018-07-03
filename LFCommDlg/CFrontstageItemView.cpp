@@ -28,7 +28,7 @@ CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T DataSize, const CSiz
 	m_SmallFontHeight = LFGetApp()->m_SmallFont.GetFontHeight();
 
 	// Items
-	m_ItemDataAllocated = m_ItemCount = 0;
+	m_ItemDataAllocated = m_ItemCount = m_IconSize = 0;
 	m_Nothing = TRUE;
 
 	m_FocusItem = m_EditItem = m_SelectionAnchor = -1;
@@ -601,6 +601,69 @@ BOOL CFrontstageItemView::DrawNothing() const
 	return !m_pItemData || !m_ItemCount || m_Nothing;
 }
 
+UINT CFrontstageItemView::GetTileRows(UINT Rows, va_list vl)
+{
+	UINT TileRows = 0;
+
+	for (UINT a=0; a<Rows; a++)
+	{
+		LPCWSTR pStr = va_arg(vl, LPCWSTR);
+
+		if (pStr && pStr[0])
+			TileRows++;
+	}
+
+	return TileRows;
+}
+
+void CFrontstageItemView::DrawTile(CDC& dc, CRect& rect, COLORREF TextColor, UINT Rows, va_list& vl) const
+{
+	rect.left += m_IconSize+ITEMVIEWPADDING;
+	rect.top += (rect.Height()-GetTileRows(Rows, vl)*m_DefaultFontHeight)/2;
+
+	for (UINT a=0; a<Rows; a++)
+	{
+		LPCWSTR pStr = va_arg(vl, LPCWSTR);
+
+		if (pStr && pStr[0])
+		{
+			dc.DrawText(pStr, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
+			rect.top += m_DefaultFontHeight;
+		}
+
+		if (a==0)
+			dc.SetTextColor(TextColor);
+	}
+}
+
+void CFrontstageItemView::DrawTile(CDC& dc, CRect rect, CIcons& Icons, INT IconID, COLORREF TextColor, UINT Rows, ...) const
+{
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
+
+	// Icon
+	Icons.Draw(dc, rect.left, rect.top+(rect.Height()-m_IconSize)/2, IconID);
+
+	// Text rows
+	va_list vl;
+	va_start(vl, Rows);
+
+	DrawTile(dc, rect, TextColor, Rows, vl);
+}
+
+void CFrontstageItemView::DrawTile(CDC& dc, CRect rect, CImageList& ImageList, INT IconID, UINT nStyle, COLORREF TextColor, UINT Rows, ...) const
+{
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
+
+	// Icon
+	ImageList.DrawEx(&dc, IconID, CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), CSize(m_IconSize, m_IconSize), CLR_NONE, CLR_NONE, nStyle);
+
+	// Text rows
+	va_list vl;
+	va_start(vl, Rows);
+
+	DrawTile(dc, rect, TextColor, Rows, vl);
+}
+
 void CFrontstageItemView::DrawItem(CDC& /*dc*/, Graphics& /*g*/, LPCRECT /*rectItem*/, INT /*Index*/, BOOL /*Themed*/)
 {
 }
@@ -714,18 +777,26 @@ void CFrontstageItemView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Inde
 	}
 }
 
-COLORREF CFrontstageItemView::SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const
+COLORREF CFrontstageItemView::GetLightTextColor(CDC& dc, INT Index, BOOL Themed) const
 {
-	return IsItemSelected(Index) ? dc.GetTextColor() : dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
+	return IsItemSelected(Index) ? dc.GetTextColor() : Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
 }
 
-COLORREF CFrontstageItemView::SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const
+COLORREF CFrontstageItemView::GetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const
 {
-	return IsItemSelected(Index) ? dc.GetTextColor() : dc.SetTextColor(Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT));
+	return IsItemSelected(Index) ? dc.GetTextColor() : Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT);
 }
 
 
 // Layouts
+
+void CFrontstageItemView::SetItemHeight(INT IconSize, INT Rows, INT Padding)
+{
+	ASSERT(Rows>=1);
+	ASSERT(Padding>=0);
+
+	CFrontstageScroller::SetItemHeight(max(m_IconSize=IconSize, Rows*m_DefaultFontHeight)+2*Padding);
+}
 
 void CFrontstageItemView::GetLayoutRect(CRect& rectLayout)
 {
@@ -737,7 +808,6 @@ void CFrontstageItemView::GetLayoutRect(CRect& rectLayout)
 
 	if (HasBorder())
 		rectLayout.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
-
 }
 
 void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, INT Margin)

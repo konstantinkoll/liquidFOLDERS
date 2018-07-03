@@ -24,26 +24,9 @@ protected:
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual RECT GetLabelRect(INT Index) const;
 
-	static INT GetTileRows(const LFItemDescriptor* pItemDescriptor);
-	INT GetTileRows(INT Index) const;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
-
-	INT m_IconSize;
-
-private:
-	void DrawTileRow(CDC& dc, CRect& rectText, LPCWSTR pStr) const;
 };
-
-inline INT CStoreList::GetTileRows(INT Index) const
-{
-	ASSERT(Index>=0);
-	ASSERT(Index<m_ItemCount);
-
-	return GetTileRows((*p_CookedFiles)[Index]);
-}
-
 
 // LFChooseStoreDlg
 //

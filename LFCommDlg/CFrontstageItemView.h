@@ -22,6 +22,7 @@
 #define IVN_SELECTIONCHANGED                0x00000100
 #define IVN_BEGINDRAGANDDROP                0x00000200
 
+#define ITEMCELLPADDING          2
 #define ITEMVIEWICONPADDING      4
 #define ITEMVIEWMARGIN           5
 #define ITEMVIEWMARGINLARGE      (BACKSTAGEBORDER-2)
@@ -107,10 +108,17 @@ protected:
 	void EnsureVisible(INT Index);
 	void ResetDragLocation();
 	BOOL IsDragLocationValid() const;
+	void DrawTile(CDC& dc, CRect rect, CIcons& Icons, INT IconID, COLORREF TextColor, UINT Rows, ...) const;
+	void DrawTile(CDC& dc, CRect rect, CImageList& ImageList, INT IconID, UINT nStyle, COLORREF TextColor, UINT Rows, ...) const;
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
+	COLORREF GetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
+	COLORREF GetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
+	void SetItemHeight(INT IconSize, INT Rows, INT Padding=ITEMVIEWPADDING);
+	void SetItemHeight(const CIcons& Icons, INT Rows, INT Padding=ITEMVIEWPADDING);
+	void SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding=ITEMVIEWPADDING);
 	void GetLayoutRect(CRect& rectLayout);
 	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN);
 	void AdjustLayoutColumns(INT Columns=1, INT Margin=ITEMVIEWMARGIN);
@@ -135,6 +143,7 @@ protected:
 	INT m_LargeFontHeight;
 	INT m_DefaultFontHeight;
 	INT m_SmallFontHeight;
+	INT m_IconSize;
 
 	CSize m_szItemInflate;
 
@@ -155,6 +164,8 @@ private:
 	static INT GetGutterForMargin(INT Margin);
 	void Swap(INT Index1, INT Index2);
 	void Heap(INT Element, INT Count);
+	static UINT GetTileRows(UINT Rows, va_list vl);
+	void DrawTile(CDC& dc, CRect& rect, COLORREF TextColor, UINT Rows, va_list& vl) const;
 
 	SIZE_T m_DataSize;
 	LPBYTE m_pItemData;
@@ -269,4 +280,34 @@ inline void CFrontstageItemView::ResetDragLocation()
 inline BOOL CFrontstageItemView::IsDragLocationValid() const
 {
 	return (m_DragPos.x!=-1) && (m_DragPos.y!=-1);
+}
+
+inline COLORREF CFrontstageItemView::SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const
+{
+	return dc.SetTextColor(GetLightTextColor(dc, Index, Themed));
+}
+
+inline COLORREF CFrontstageItemView::SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const
+{
+	return dc.SetTextColor(GetDarkTextColor(dc, Index, Themed));
+}
+
+inline void CFrontstageItemView::SetItemHeight(const CIcons& Icons, INT Rows, INT Padding)
+{
+	ASSERT(Rows>=1);
+	ASSERT(Padding>=0);
+
+	SetItemHeight(Icons.GetIconSize(), Rows, Padding);
+}
+
+inline void CFrontstageItemView::SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding)
+{
+	ASSERT(Rows>=1);
+	ASSERT(Padding>=0);
+
+	INT cx;
+	INT cy;
+	ImageList_GetIconSize(ImageList, &cx, &cy);
+
+	SetItemHeight(cy, Rows, Padding);
 }

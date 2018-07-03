@@ -91,7 +91,7 @@ struct SendToItemData
 class CFileView : public CAbstractFileView
 {
 public:
-	CFileView(UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
+	CFileView(UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 
 	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=0);
 	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);

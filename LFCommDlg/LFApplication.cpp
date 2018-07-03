@@ -144,16 +144,16 @@ LFApplication::LFApplication(GUID& AppID)
 	}
 
 	// System image lists
-	IImageList* il;
-	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&il)))
-		m_SystemImageListSmall.Attach((HIMAGELIST)il);
+	IImageList* pImageList;
+	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&pImageList)))
+		m_SystemImageListSmall.Attach((HIMAGELIST)pImageList);
 
-	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
-		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
+	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&pImageList)))
+		m_SystemImageListExtraLarge.Attach((HIMAGELIST)pImageList);
 
 	if (OSVersion>=OS_Vista)
-		if (SUCCEEDED(SHGetImageList(SHIL_JUMBO, IID_IImageList, (void**)&il)))
-			m_SystemImageListJumbo.Attach((HIMAGELIST)il);
+		if (SUCCEEDED(SHGetImageList(SHIL_JUMBO, IID_IImageList, (void**)&pImageList)))
+			m_SystemImageListJumbo.Attach((HIMAGELIST)pImageList);
 
 	// Core image lists
 	const HMODULE hModIcons = GetModuleHandle(_T("LFCORE"));

@@ -9,15 +9,12 @@
 // CMaintenanceReport
 //
 
-#define PADDING     (BACKSTAGEBORDER-ITEMVIEWMARGIN)
-
 CMaintenanceReport::CMaintenanceReport()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING, sizeof(UsageItemData))
 {
 	p_StoreIcons = NULL;
 	p_MaintenanceList = NULL;
 
-	m_BadgeSize = GetSystemMetrics(SM_CYICON);
 	hIconReady = hIconWarning = hIconError = NULL;
 }
 
@@ -48,17 +45,17 @@ void CMaintenanceReport::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, IN
 	const LFMaintenanceListItem* pData = &(*p_MaintenanceList)[Index];
 
 	CRect rect(rectItem);
-	rect.DeflateRect(PADDING, PADDING);
+	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
 
 	// Icon
 	p_StoreIcons->Draw(&dc, pData->IconID-1, CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), ILD_TRANSPARENT);
-	rect.left += m_IconSize+PADDING;
+	rect.left += m_IconSize+ITEMVIEWPADDING;
 
 	// Badge
 	const HICON hIcon = (pData->Result==LFOk) ? hIconReady : (pData->Result<LFFirstFatalError) ? hIconWarning : hIconError;
 
 	DrawIconEx(dc, rect.right-m_BadgeSize+2, rect.top+(rect.Height()-m_BadgeSize)/2, hIcon, m_BadgeSize, m_BadgeSize, 0, NULL, DI_NORMAL);
-	rect.right -= m_BadgeSize+PADDING-2;
+	rect.right -= m_BadgeSize+ITEMVIEWPADDING-2;
 
 	// Text
 	LPCWSTR pDescription = (pData->Result==LFOk) ? pData->Comments : m_ErrorText[pData->Result];
@@ -89,14 +86,15 @@ INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Item
-	SetItemHeight(max(LFGetApp()->m_ExtraLargeIconSize, 4*m_DefaultFontHeight)+2*PADDING);
+	SetItemHeight(LFGetApp()->m_ExtraLargeIconSize, 4);
 
 	// Icons
+	m_BadgeSize = GetSystemMetrics(SM_CYICON);
 	hIconReady = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_READY), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
 	hIconWarning = (HICON)LoadImage(AfxGetResourceHandle(), IDI_WARNING, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
 	hIconError = (HICON)LoadImage(AfxGetResourceHandle(), IDI_ERROR, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
 
-	m_IconSize = (m_ItemHeight>=128) ? 128 : LFGetApp()->m_ExtraLargeIconSize;
+	m_IconSize = ((m_ItemHeight-2*ITEMVIEWPADDING)>=128) ? 128 : LFGetApp()->m_ExtraLargeIconSize;
 	p_StoreIcons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : &LFGetApp()->m_CoreImageListExtraLarge;
 
 	// Error messages

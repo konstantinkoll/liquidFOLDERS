@@ -28,7 +28,6 @@ protected:
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	const ConditionArray* p_Conditions;
-	INT m_IconSize;
 
 private:
 	CString m_Compare[LFFilterCompareCount];

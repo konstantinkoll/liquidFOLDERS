@@ -38,7 +38,6 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
 
-	INT m_IconSize;
 	static CIcons m_ContextIcons;
 
 private:

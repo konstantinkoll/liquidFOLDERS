@@ -62,7 +62,6 @@ protected:
 	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	INT m_IconSize;
 	BOOL m_HasFolders;
 	INT m_PreviewAttribute;
 	CSize m_PreviewSize;

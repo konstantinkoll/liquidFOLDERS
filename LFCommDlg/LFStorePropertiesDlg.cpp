@@ -76,39 +76,19 @@ void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	const LFContextDescriptor* pContextDescriptor = &LFGetApp()->m_Contexts[pData->Context];
 
 	CRect rect(rectItem);
-	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
-
-	// Text height
-	INT TextHeight = m_DefaultFontHeight;
-
-	if (pContextDescriptor->Comment[0])
-		TextHeight <<= 1;
-
-	// Icon
-	m_ContextIcons.Draw(dc, rect.left, rect.top+(rect.Height()-m_IconSize)/2, pData->Context);
-	rect.left += m_IconSize+ITEMVIEWPADDING;
+	rect.right -= ITEMVIEWPADDING;
 
 	// Occupied storage
 	WCHAR tmpStr[256];
 	LFSizeToString(pData->FileSize, tmpStr, 256);
 
 	dc.DrawText(tmpStr, -1, rect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-	rect.right -= LFGetApp()->m_LargeFont.GetTextExtent(tmpStr).cx+BACKSTAGEBORDER;
-
-	// Context name
-	rect.top += (rect.Height()-TextHeight)/2;
+	rect.right -= LFGetApp()->m_LargeFont.GetTextExtent(tmpStr).cx+(BACKSTAGEBORDER-ITEMVIEWPADDING);
 
 	SetDarkTextColor(dc, Index, Themed);
-	dc.DrawText((pData->Context==LFContextAllFiles) ? m_OtherFiles : LFGetApp()->m_Contexts[pData->Context].Name, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-	// Comment
-	if (pContextDescriptor->Comment[0])
-	{
-		rect.top += m_DefaultFontHeight;
-
-		SetLightTextColor(dc, Index, Themed);
-		dc.DrawText(LFGetApp()->m_Contexts[pData->Context].Comment, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-	}
+	DrawTile(dc, rect, m_ContextIcons, pData->Context,
+		GetLightTextColor(dc, Index, Themed), 2,
+		(pData->Context==LFContextAllFiles) ? m_OtherFiles : pContextDescriptor->Name, pContextDescriptor->Comment);
 }
 
 
@@ -122,10 +102,7 @@ INT CUsageList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Item
-	SetItemHeight(max(32, m_LargeFontHeight+m_DefaultFontHeight)+2*ITEMVIEWPADDING);
-
-	// Icons
-	m_IconSize = m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, m_ItemHeight-2*ITEMVIEWPADDING);
+	SetItemHeight(m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, max(32, 2*m_DefaultFontHeight)), 2);
 
 	return 0;
 }

@@ -25,9 +25,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
 
-	INT m_IconSize;
 	CImageList* p_StoreIcons;
-
 	LFMaintenanceList* p_MaintenanceList;
 
 	UINT m_BadgeSize;

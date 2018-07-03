@@ -9,8 +9,6 @@
 // CGenreList
 //
 
-#define ITEMPADDING     2
-
 CGenreList::CGenreList()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM, sizeof(GenreItemData))
 {
@@ -190,10 +188,10 @@ void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	const GenreItemData* pData = GetGenreItemData(Index);
 
 	CRect rect(rectItem);
-	rect.DeflateRect(2*ITEMPADDING, ITEMPADDING);
+	rect.DeflateRect(2*ITEMCELLPADDING, ITEMCELLPADDING);
 
 	if (pData->FileCount)
-		rect.right -= m_FileCountWidth+ITEMPADDING;
+		rect.right -= m_FileCountWidth+ITEMCELLPADDING;
 
 	// Name
 	dc.DrawText(pData->pMusicGenre->Name, -1, rect, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_VCENTER);
@@ -201,7 +199,7 @@ void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	// Count
 	if (pData->FileCount)
 	{
-		rect.left = rect.right+ITEMPADDING;
+		rect.left = rect.right+ITEMCELLPADDING;
 		rect.right += m_FileCountWidth;
 
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallFont);
@@ -243,8 +241,8 @@ INT CGenreList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Item
-	SetItemHeight(LFGetApp()->m_DefaultFont.GetFontHeight()+2*ITEMPADDING);
-	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+2*ITEMPADDING;
+	SetItemHeight(0, 1, ITEMCELLPADDING);
+	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+2*ITEMCELLPADDING;
 
 	return 0;
 }

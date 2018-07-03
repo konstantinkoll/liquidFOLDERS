@@ -27,63 +27,34 @@ void CStoreList::AdjustLayout()
 	AdjustLayoutColumns(2, BACKSTAGEBORDER);
 }
 
-INT CStoreList::GetTileRows(const LFItemDescriptor* pItemDescriptor)
-{
-	INT Rows = 2;
-
-	// Comments
-	if (pItemDescriptor->CoreAttributes.Comments[0])
-		Rows++;
-
-	// Description
-	if (pItemDescriptor->Description[0])
-		Rows++;
-
-	return Rows;
-}
-
-void CStoreList::DrawTileRow(CDC& dc, CRect& rectText, LPCWSTR pStr) const
-{
-	ASSERT(pStr);
-
-	if (pStr[0])
-	{
-		dc.DrawText(pStr, -1, rectText, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_SINGLELINE);
-		rectText.top += m_DefaultFontHeight;
-	}
-}
-
 void CStoreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
-	CRect rect(rectItem);
-	rect.DeflateRect(ITEMVIEWPADDING, ITEMVIEWPADDING);
-
-	// Icon
-	LFGetApp()->m_CoreImageListExtraLarge.DrawEx(&dc, pItemDescriptor->IconID-1, 
-		CPoint(rect.left, rect.top+(rect.Height()-m_IconSize)/2), CSize(m_IconSize, m_IconSize), CLR_NONE, CLR_NONE,
-		((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
-
-	// Text
-	CRect rectText(rect);
-	rectText.left += m_IconSize+ITEMVIEWPADDING;
-	rectText.top += (rect.Height()-GetTileRows(pItemDescriptor)*m_DefaultFontHeight)/2;
-
-	DrawTileRow(dc, rectText, pItemDescriptor->CoreAttributes.FileName);
-
-	SetDarkTextColor(dc, Index, Themed);
-
-	DrawTileRow(dc, rectText, pItemDescriptor->CoreAttributes.Comments);
-	DrawTileRow(dc, rectText, pItemDescriptor->Description);
-	DrawTileRow(dc, rectText, LFGetApp()->GetFreeBytesAvailable(pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart));
+	DrawTile(dc, rectItem, LFGetApp()->m_CoreImageListExtraLarge, pItemDescriptor->IconID-1, 
+		((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask), 
+		GetDarkTextColor(dc, Index, Themed), 4,
+		pItemDescriptor->CoreAttributes.FileName, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->Description,
+		(LPCWSTR)LFGetApp()->GetFreeBytesAvailable(pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart));
 }
 
 RECT CStoreList::GetLabelRect(INT Index) const
 {
+	// Rows
+	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+	INT Rows = 2;
+
+	if (pItemDescriptor->CoreAttributes.Comments[0])
+		Rows++;
+
+	if (pItemDescriptor->Description[0])
+		Rows++;
+
+	// Rect
 	RECT rect = GetItemRect(Index);
 
-	rect.bottom = (rect.top+=(rect.bottom-rect.top-GetTileRows(Index)*m_DefaultFontHeight)/2-2)+m_DefaultFontHeight+4;
+	rect.bottom = (rect.top+=(rect.bottom-rect.top-Rows*m_DefaultFontHeight)/2-2)+m_DefaultFontHeight+4;
 	rect.left += m_IconSize+2*ITEMVIEWPADDING-5;
 	rect.right -= ITEMVIEWPADDING-2;
 
@@ -101,7 +72,7 @@ INT CStoreList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Item
-	SetItemHeight(max(m_IconSize=LFGetApp()->m_ExtraLargeIconSize, 4*m_DefaultFontHeight)+2*ITEMVIEWPADDING);
+	SetItemHeight(LFGetApp()->m_ExtraLargeIconSize, 4);
 
 	return 0;
 }

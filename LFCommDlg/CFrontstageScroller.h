@@ -33,7 +33,7 @@ protected:
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	void ResetScrollArea();
-	void SetItemHeight(INT ItemHeight, INT Gutter=-1);
+	void SetItemHeight(INT ItemHeight);
 
 	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
