@@ -1120,6 +1120,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Tasks\Duplicate_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Duplicate_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Duplicate_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Duplicate_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Duplicate_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Tasks\EmptyTrash_16.png"
 				>
 			</File>
@@ -1743,6 +1763,14 @@
 		<Filter
 			Name="Applications"
 			>
+			<File
+				RelativePath=".\Applications\Afterlight_29.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\APP_Afterlight.ico"
+				>
+			</File>
 			<File
 				RelativePath=".\Applications\APP_Boomerang.ico"
 				>

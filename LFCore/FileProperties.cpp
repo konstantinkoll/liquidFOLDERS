@@ -268,68 +268,6 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, LPCGU
 		}
 }
 
-void GetOLEProperties(IPropertySetStorage* pPropertySetStorage, FMTID Schema, LFItemDescriptor* pItemDescriptor)
-{
-	IPropertyStorage *pPropertyStorage;
-	if (SUCCEEDED(pPropertySetStorage->Open(Schema, STGM_READ | STGM_SHARE_EXCLUSIVE, &pPropertyStorage)))
-	{
-		PROPSPEC PropertySpec;
-		PropertySpec.ulKind = PRSPEC_PROPID;
-
-		for (UINT Attr=0; Attr<LFAttributeCount; Attr++)
-			if (*AttrProperties[Attr].ShPropertyMapping.Schema==Schema)
-			{
-				PropertySpec.propid = AttrProperties[Attr].ShPropertyMapping.ID;
-
-				PROPVARIANT Value;
-				if (pPropertyStorage->ReadMultiple(1, &PropertySpec, &Value)==S_OK)
-					switch (Value.vt)
-					{
-					case VT_BSTR:
-						if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))
-							SetAttribute(pItemDescriptor, Attr, Value.pbstrVal);
-
-						break;
-
-					case VT_LPWSTR:
-						if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))
-							SetAttribute(pItemDescriptor, Attr, Value.pwszVal);
-
-						break;
-
-					case VT_LPSTR:
-						if ((AttrProperties[Attr].Type==LFTypeAnsiString) || (AttrProperties[Attr].Type==LFTypeIATACode))
-							SetAttribute(pItemDescriptor, Attr, Value.pszVal);
-
-						if ((AttrProperties[Attr].Type==LFTypeUnicodeString) || (AttrProperties[Attr].Type==LFTypeUnicodeArray))
-						{
-							WCHAR tmpStr[256];
-							MultiByteToWideChar(CP_ACP, 0, Value.pszVal, -1, tmpStr, 256);
-
-							SetAttribute(pItemDescriptor, Attr, tmpStr);
-						}
-
-						break;
-
-					case VT_DATE:
-						if (AttrProperties[Attr].Type==LFTypeTime)
-						{
-							SYSTEMTIME st;
-							FILETIME ft;
-
-							VariantTimeToSystemTime(Value.date, &st);
-							SystemTimeToFileTime(&st, &ft);
-							SetAttribute(pItemDescriptor, Attr, &ft);
-						}
-
-						break;
-					}
-			}
-
-		pPropertyStorage->Release();
-	}
-}
-
 void SetAttributesFromShell(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BOOL OnImport)
 {
 	assert(pItemDescriptor);
@@ -374,23 +312,6 @@ void SetAttributesFromShell(LFItemDescriptor* pItemDescriptor, LPCWSTR pPath, BO
 		}
 
 		CoTaskMemFree(pidlFQ);
-	}
-
-	// OLE structured storage
-	//
-	if (LFIsDocumentFile(pItemDescriptor))
-	{
-		IPropertySetStorage* pPropertySetStorage;
-		if (SUCCEEDED(StgOpenStorageEx(pPath, STGM_DIRECT | STGM_SHARE_EXCLUSIVE | STGM_READ, STGFMT_ANY, 0, NULL, NULL, IID_IPropertySetStorage, (LPVOID*)&pPropertySetStorage)))
-		{
-			GetOLEProperties(pPropertySetStorage, SHPropertyDocuments, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, SHPropertyMedia, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, SHPropertyMusic, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, SHPropertyPhoto, pItemDescriptor);
-			GetOLEProperties(pPropertySetStorage, SHPropertySummary, pItemDescriptor);
-
-			pPropertySetStorage->Release();
-		}
 	}
 
 	// Fix broken properties

@@ -535,8 +535,9 @@ struct LFContextDescriptor
 #define LFApplicationJodel           16
 #define LFApplicationVimeo           17
 #define LFApplicationPicfx           18
+#define LFApplicationAfterlight      19
 
-#define LFApplicationCount           19
+#define LFApplicationCount           20
 
 
 // Statistics

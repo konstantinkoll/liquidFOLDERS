@@ -25,6 +25,7 @@ extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT] = {
 	{ L"Jodel",        LFApplicationJodel },
 	{ L"Vimeo",        LFApplicationVimeo },
 	{ L"Picfx",        LFApplicationPicfx },
+	{ L"Afterlight",   LFApplicationAfterlight },
 
 	{ L"FB",           LFApplicationFacebook },
 	{ L"Flixel",       LFApplicationCinemagraph },
@@ -35,7 +36,8 @@ extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT] = {
 	{ L"Pin",          LFApplicationPinterest },
 	{ L"SC",           LFApplicationSnapchat },
 	{ L"Snap",         LFApplicationSnapchat },
-	{ L"YT",           LFApplicationYouTube }
+	{ L"YT",           LFApplicationYouTube },
+	{ L"Afterglow",    LFApplicationAfterlight }
 };
 
 #pragma data_seg()

@@ -12,8 +12,8 @@
 
 CWinApp theApp;
 CString path;
-size_t maxCountryLength;
-size_t maxAirportLength;
+SIZE_T maxCountryLength;
+SIZE_T maxAirportLength;
 
 using namespace std;
 
@@ -37,12 +37,12 @@ INT Compare(CString s1, CString s2)
 	return s1.CompareNoCase(s2);
 }
 
-double GetCoord(CString s)
+DOUBLE GetCoord(CString s)
 {
 	USES_CONVERSION;
 
 	INT curPos = s.Find("*");
-	double c = atof(s.Mid(0, curPos));
+	DOUBLE c = atof(s.Mid(0, curPos));
 	s = s.Mid(curPos+1);
 
 	curPos = s.Find("'");
@@ -59,7 +59,7 @@ double GetCoord(CString s)
 	return c;
 }
 
-void ConvertFile(CString LanguageSuffix)
+void ConvertFile(const CString& LanguageSuffix)
 {
 	CString tmpStr;
 
@@ -73,8 +73,8 @@ void ConvertFile(CString LanguageSuffix)
 		CString Code;
 		CString MetroCode;
 		CString Name;
-		double Latitude;
-		double Longitude;
+		DOUBLE Latitude;
+		DOUBLE Longitude;
 		UINT Divider;
 	};
 

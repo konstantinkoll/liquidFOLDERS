@@ -52,8 +52,8 @@ IDB_BACKGROUND_CAPACITYBAR RCDATA                  "res\\Background_CapacityBar.
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,4,0
- PRODUCTVERSION 4,0,4,0
+ FILEVERSION 4,0,6,0
+ PRODUCTVERSION 4,0,6,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.4"
+            VALUE "FileVersion", "4.0.6"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.4"
+            VALUE "ProductVersion", "4.0.6"
         END
     END
     BLOCK "VarFileInfo"
@@ -1333,7 +1333,7 @@ BEGIN
     MENUITEM "&Copy",                       IDM_FILE_COPY
     MENUITEM SEPARATOR
     MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
-    MENUITEM "&Delete",                     IDM_FILE_DELETE
+    MENUITEM "D&elete",                     IDM_FILE_DELETE
     MENUITEM "&Rename",                     IDM_FILE_RENAME
     MENUITEM SEPARATOR
     MENUITEM "&Properties",                 IDM_FILE_PROPERTIES

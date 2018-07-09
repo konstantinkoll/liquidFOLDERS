@@ -39,10 +39,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{288AE0CA-856E-4E44-A65D-B296812B51F9} 3082:{ABF741D9-7638-401D-ACE5-D5FA4016F4E5} 1036:{741155F9-E4D0-4F2C-81F4-220120F18C0D} 1031:{C399E675-DE28-4572-B8D4-D0B795514F83} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{92B89B86-5DB6-4FE4-A198-D6CB90AF1D40} 3082:{E415049D-ECED-485E-B493-45693F78C3EC} 1036:{C5FB18BC-C162-43EC-A154-C3C7C13DBDE3} 1031:{161972E0-4969-42CE-91CA-082CB5F7EECA} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="4.0.4" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.0.6" Type="32"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>

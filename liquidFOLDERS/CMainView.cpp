@@ -621,17 +621,17 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 24);
 	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 28);
 
-	#define INSPECTORICONVISIBLE     28
-	#define INSPECTORICONHIDDEN      29
+	#define INSPECTORICONVISIBLE     29
+	#define INSPECTORICONHIDDEN      30
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? INSPECTORICONVISIBLE : INSPECTORICONHIDDEN, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 34, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
