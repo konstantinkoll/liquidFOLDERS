@@ -13,7 +13,7 @@ public:
 	CStoreWindows(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexForStore);
 
 	// Index operations
-	virtual UINT Synchronize(BOOL OnInitialize=FALSE, LFProgress* pProgress=NULL);
+	virtual UINT Synchronize(LFProgress* pProgress=NULL, BOOL OnInitialize=FALSE);
 
 	// Callbacks
 	virtual UINT PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);

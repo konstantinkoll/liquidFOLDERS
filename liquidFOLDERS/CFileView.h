@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CInspectorPane.h"
 #include "LFCommDlg.h"
 
 
@@ -74,7 +75,7 @@ struct SendToItemData
 	INT cx;
 	INT cy;
 	BOOL IsStore;
-	CHAR StoreID[LFKeySize];
+	STOREID StoreID;
 	WCHAR Path[MAX_PATH];
 };
 
@@ -93,7 +94,7 @@ class CFileView : public CAbstractFileView
 public:
 	CFileView(UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 
-	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=0);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, CInspectorPane* pInspectorPane, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=0);
 	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 
@@ -159,6 +160,7 @@ private:
 	INT m_WelcomeCaptionHeight;
 	INT m_WelcomeMessageHeight;
 	CIcons* p_TaskIcons;
+	CInspectorPane* p_InspectorPane;
 	CHoverButton m_wndCommandButton;
 
 	SendToItemData m_SendToItems[256];

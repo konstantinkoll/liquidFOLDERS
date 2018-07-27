@@ -28,8 +28,8 @@ public:
 	UINT UpdateStatistics();
 	void AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResult* pSearchResult);
 	void ResolveLocations(LFTransactionList* pTransactionList);
-	void SendTo(LFTransactionList* pTransactionList, LPCSTR pStoreID, LFProgress* pProgress=NULL);
-	BOOL ExistingFileID(LPCSTR pFileID);
+	void SendTo(LFTransactionList* pTransactionList, const STOREID& StoreID, LFProgress* pProgress=NULL);
+	BOOL ExistingFileID(const FILEID& FileID);
 	void UpdateUserContext(LFTransactionList* pTransactionList, BYTE UserContextID);
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
 	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags);
@@ -40,6 +40,7 @@ public:
 	void Delete(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
 protected:
+	void SetError(LFTransactionList* pTransactionList, UINT Result, LFProgress* pProgress=NULL) const;
 	BOOL LoadTable(UINT TableID, BOOL Initialize=FALSE, UINT* pResult=NULL);
 	void AddFileToStatistics(LFCoreAttributes* PtrM) const;
 	void RemoveFileFromStatistics(LFCoreAttributes* PtrM) const;
@@ -60,10 +61,15 @@ private:
 	WCHAR m_IdxPath[MAX_PATH];
 };
 
+inline void CIndex::SetError(LFTransactionList* pTransactionList, UINT Result, LFProgress* pProgress) const
+{
+	assert(pTransactionList);
+
+	pTransactionList->SetError(p_StoreDescriptor->StoreID, Result, pProgress);
+}
+
 inline void CIndex::ResetStatistics()
 {
-	assert(p_StoreDescriptor);
-
 	ZeroMemory(&p_StoreDescriptor->Statistics, sizeof(LFStatistics));
 }
 

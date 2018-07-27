@@ -1,7 +1,6 @@
 
 #pragma once
 #include "LF.h"
-#include <assert.h>
 
 
 extern const FMTID SHPropertyStorage;

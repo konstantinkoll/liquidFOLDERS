@@ -10,13 +10,11 @@
 // LFEditHashtagsDlg
 //
 
-LFEditHashtagsDlg::LFEditHashtagsDlg(const CString& Hashtags, LPCSTR pStoreID, CWnd* pParentWnd)
+LFEditHashtagsDlg::LFEditHashtagsDlg(const CString& Hashtags, const STOREID& StoreID, CWnd* pParentWnd)
 	: LFDialog(IDD_EDITHASHTAGS, pParentWnd)
 {
-	ASSERT(pStoreID);
-
 	m_Hashtags = Hashtags;
-	strcpy_s(m_StoreID, LFKeySize, pStoreID);
+	m_StoreID = StoreID;
 }
 
 void LFEditHashtagsDlg::DoDataExchange(CDataExchange* pDX)
@@ -56,7 +54,7 @@ BOOL LFEditHashtagsDlg::InitDialog()
 	m_wndAssignedHashtags.AddColumn(1);
 
 	m_wndHashtagsFromAllStores.SetCheck(LFGetApp()->GetInt(_T("ShowHashtagsFromAllStores"), FALSE));
-	m_wndHashtagsFromAllStores.EnableWindow(m_StoreID[0]);
+	m_wndHashtagsFromAllStores.EnableWindow(!LFIsDefaultStoreID(m_StoreID));
 
 	OnUpdateAssignedHashtags();
 
@@ -90,20 +88,13 @@ void LFEditHashtagsDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 void LFEditHashtagsDlg::OnUpdateAssignedHashtags()
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	LFFilter* pFilter = LFAllocFilter();
 	pFilter->Query.IgnoreSlaves = TRUE;
 
-	if ((!m_StoreID[0]) || (m_wndHashtagsFromAllStores.GetCheck()))
-	{
-		pFilter->Query.Mode = LFFilterModeQuery;
-	}
-	else
-	{
-		pFilter->Query.Mode = LFFilterModeDirectoryTree;
-		strcpy_s(pFilter->Query.StoreID, LFKeySize, m_StoreID);
-	}
+	if (!m_wndHashtagsFromAllStores.GetCheck())
+		pFilter->Query.StoreID = m_StoreID;
 
 	LFSearchResult* pRawFiles = LFQuery(pFilter);
 	LFSearchResult* pCookedFiles = LFGroupSearchResult(pRawFiles, LFAttrHashtags, FALSE, TRUE, pFilter);

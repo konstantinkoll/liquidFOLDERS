@@ -116,7 +116,8 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 		while (*pChar)
 			*(pChar++) = (WCHAR)toupper(*pChar);
 
-		CHAR StoreID[LFKeySize] = "";
+		STOREID StoreID;
+		DEFAULTSTOREID(StoreID);
 
 		WCHAR* pSpace = wcschr(pCmdLine, L' ');
 		if (pSpace)
@@ -132,12 +133,13 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 		// FileDrop
 		if (wcscmp(pCmdLine, L"/FILEDROP")==0)
 		{
-			const UINT Result = (StoreID[0]=='\0') ? LFGetDefaultStore(StoreID) : LFOk;
+			ABSOLUTESTOREID AbsoluteStoreID;
+			const UINT Result = LFResolveStoreIDEx(AbsoluteStoreID, StoreID);
 
 			switch (Result)
 			{
 			case LFOk:
-				return GetFileDrop(StoreID);
+				return GetFileDrop(AbsoluteStoreID);
 
 			case LFNoDefaultStore:
 				goto OpenRootWindow;
@@ -155,10 +157,11 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 			// Key
 			if (wcslen(pCmdLine)==LFKeySize-1)
 			{
-				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, StoreID, LFKeySize, NULL, NULL);
+				ABSOLUTESTOREID AbsoluteStoreID;
+				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, AbsoluteStoreID, LFKeySize, NULL, NULL);
 
 				CMainWnd* pFrameWnd = new CMainWnd();
-				pFrameWnd->CreateStore(StoreID);
+				pFrameWnd->CreateStore(AbsoluteStoreID);
 				pFrameWnd->ShowWindow(SW_SHOW);
 
 				return pFrameWnd;
@@ -190,13 +193,6 @@ CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 				return pFrameWnd;
 			}
 		}
-
-		// Filter
-		CMainWnd* pFrameWnd = new CMainWnd();
-		pFrameWnd->Create(LFLoadFilterEx(pCmdLine));
-		pFrameWnd->ShowWindow(SW_SHOW);
-
-		return pFrameWnd;
 	}
 
 	// Root
@@ -245,12 +241,12 @@ CMainWnd* CLiquidFoldersApp::GetClipboard()
 	return p_ClipboardWnd;
 }
 
-CWnd* CLiquidFoldersApp::GetFileDrop(LPCSTR StoreID)
+CWnd* CLiquidFoldersApp::GetFileDrop(const ABSOLUTESTOREID& StoreID)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 	{
 		CWnd* pFrameWnd = m_pMainFrames.GetNext(p);
-		if (pFrameWnd->SendMessage(WM_OPENFILEDROP, (WPARAM)StoreID)==24878)
+		if (pFrameWnd->SendMessage(WM_OPENFILEDROP, (WPARAM)(LPCSTR)StoreID)==24878)
 			return pFrameWnd;
 	}
 
@@ -363,7 +359,7 @@ void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
 	const UINT DefaultView = m_Contexts[Context].CtxProperties.DefaultView;
 
 	// Default columns
-	memcpy_s(&m_ContextViewSettings[Context].ColumnOrder, LFAttributeCount*sizeof(INT), m_SortedAttributeList, sizeof(LFAttributeList));
+	memcpy(&m_ContextViewSettings[Context].ColumnOrder, m_SortedAttributeList, sizeof(LFAttributeList));
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_ContextViewSettings[Context].ColumnWidth[a] = (IsAttributeAlwaysVisible(a) || IsAttributeAdvertised(Context, a)) ? m_Attributes[a].TypeProperties.DefaultColumnWidth : 0;

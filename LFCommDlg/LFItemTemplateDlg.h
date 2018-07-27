@@ -14,10 +14,10 @@
 class LFItemTemplateDlg : public LFDialog
 {
 public:
-	LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE, LFFilter* pFilter=NULL);
+	LFItemTemplateDlg(LFItemDescriptor* pItemDescriptor, const STOREID& StoreID, BOOL AllowChooseStore=FALSE, CWnd* pParentWnd=NULL);
 
-	CHAR m_StoreID[LFKeySize];
-	LFItemDescriptor* m_pItem;
+	STOREID m_StoreID;
+	LFItemDescriptor* p_ItemDescriptor;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

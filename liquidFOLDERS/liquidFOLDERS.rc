@@ -52,8 +52,8 @@ IDB_BACKGROUND_CAPACITYBAR RCDATA                  "res\\Background_CapacityBar.
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,6,0
- PRODUCTVERSION 4,0,6,0
+ FILEVERSION 4,0,7,0
+ PRODUCTVERSION 4,0,7,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.6"
+            VALUE "FileVersion", "4.0.7"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.6"
+            VALUE "ProductVersion", "4.0.7"
         END
     END
     BLOCK "VarFileInfo"
@@ -124,7 +124,7 @@ BEGIN
     MENUITEM "&Neuer Filter...",            IDM_FILTERS_CREATENEW
 END
 
-IDM_FILE MENU 
+IDM_FILE_SINGLE MENU 
 BEGIN
     MENUITEM "&Archivieren",                IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
@@ -137,12 +137,33 @@ BEGIN
     MENUITEM "&Eigenschaften",              IDM_FILE_PROPERTIES
 END
 
-IDM_FILE_AWAY MENU 
+IDM_FILE_MULTIPLE MENU 
+BEGIN
+    MENUITEM "%u Dateien &archivieren",     IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "%u Dateien &kopieren",        IDM_FILE_COPY
+    MENUITEM SEPARATOR
+    MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
+    MENUITEM "%u Dateien &löschen",         IDM_FILE_DELETE
+    MENUITEM "&Umbenennen",                 IDM_FILE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Eigenschaften",              IDM_FILE_PROPERTIES
+END
+
+IDM_FILE_AWAY_SINGLE MENU 
 BEGIN
     MENUITEM "&Wiederherstellen",           IDM_FILE_RECOVER
     MENUITEM SEPARATOR
     MENUITEM SEPARATOR
     MENUITEM "&Löschen",                    IDM_FILE_DELETE
+END
+
+IDM_FILE_AWAY_MULTIPLE MENU 
+BEGIN
+    MENUITEM "%u Dateien &wiederherstellen", IDM_FILE_RECOVER
+    MENUITEM SEPARATOR
+    MENUITEM SEPARATOR
+    MENUITEM "%u Dateien &löschen",         IDM_FILE_DELETE
 END
 
 IDM_LIST MENU 
@@ -324,24 +345,31 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_SHOWCAPACITY "&Speicherkapazität zeigen"
     IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
-    IDS_CONTEXTMENU_SENDTO  "S&enden an"
+    IDS_CONTEXTMENU_SENDTO_SINGLE "S&enden an"
+    IDS_CONTEXTMENU_SENDTO_MULTIPLE "%u Dateien s&enden an"
     IDS_CONTEXTMENU_CHOOSESTORE "&Speicherort wählen..."
-    IDS_CONTEXTMENU_MOVETO  "&Verschieben nach"
+    IDS_CONTEXTMENU_MOVETO_SINGLE "&Verschieben nach"
+    IDS_CONTEXTMENU_MOVETO_MULTIPLE "%u Dateien &verschieben nach"
     IDS_CONTEXTMENU_MOVETOCONTEXT "Nach „&%s“ &verschieben"
     IDS_CONTEXTMENU_REMOVEFROMCONTEXT "Aus „&%s“ &entfernen"
-    IDS_CONTEXTMENU_REMEMBER "Mer&ken"
-    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "Aus Zwischenablage &entfernen"
-    IDS_CONTEXTMENU_MAKETASK "&Aufgabe erstellen..."
-    IDS_CONTEXTMENU_TASKDONE "&Aufgabe erledigt"
+    IDS_CONTEXTMENU_REMEMBER_SINGLE "Mer&ken"
+    IDS_CONTEXTMENU_REMEMBER_MULTIPLE "%u Dateien mer&ken"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_SINGLE "Aus Zwischenablage &entfernen"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_MULTIPLE 
+                            "%u Dateien aus Zwischenablage &entfernen"
+    IDS_CONTEXTMENU_MAKETASK_SINGLE "&Aufgabe erstellen..."
+    IDS_CONTEXTMENU_MAKETASK_MULTIPLE "%u &Aufgaben erstellen..."
+    IDS_CONTEXTMENU_TASKDONE_SINGLE "&Aufgabe erledigt"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &Aufgaben erledigt"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SEARCHTERM          "Alle Speicherorte durchsuchen"
     IDS_STORE               "Speicherort"
     IDS_DEFAULTSTORE        "Standard-Speicherort"
@@ -351,6 +379,10 @@ BEGIN
     IDS_WELCOME_MESSAGE     "Fügen Sie Speicherorte hinzu, die von liquidFOLDERS verwaltet werden sollen:"
     IDS_QUALITY_MEDIUM      "Mittel"
     IDS_QUALITY_HIGH        "Hoch"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -412,14 +444,14 @@ BEGIN
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
-    IDM_FILE_MAKETASK       "Markiert die Dateien als Aufgabe.\nAufgabe erstellen..."
+    IDM_FILE_MAKETASK       "Markiert die ausgewählten Dateien als Aufgabe.\nAufgabe erstellen..."
     IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
-    IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nAufgabe erledigt"
     IDM_FILE_RECOVER        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
 END
@@ -508,25 +540,46 @@ BEGIN
     MENUITEM "&Nuevo filtro...",            IDM_FILTERS_CREATENEW
 END
 
-IDM_FILE MENU 
+IDM_FILE_SINGLE MENU 
 BEGIN
-    MENUITEM "&Archivar",                   IDM_FILE_ARCHIVE
+    MENUITEM "&Archivar %u archivos",       IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
-    MENUITEM "&Copiar",                     IDM_FILE_COPY
+    MENUITEM "&Copiar %u archivos",         IDM_FILE_COPY
     MENUITEM SEPARATOR
     MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
-    MENUITEM "&Eliminar",                   IDM_FILE_DELETE
+    MENUITEM "&Eliminar %u archivos",       IDM_FILE_DELETE
     MENUITEM "&Renombrar",                  IDM_FILE_RENAME
     MENUITEM SEPARATOR
     MENUITEM "&Propiedades",                IDM_FILE_PROPERTIES
 END
 
-IDM_FILE_AWAY MENU 
+IDM_FILE_MULTIPLE MENU 
+BEGIN
+    MENUITEM "&Archivar %u archivos",       IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "&Copiar %u archivos",         IDM_FILE_COPY
+    MENUITEM SEPARATOR
+    MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
+    MENUITEM "&Eliminar %u archivos",       IDM_FILE_DELETE
+    MENUITEM "&Renombrar",                  IDM_FILE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Propiedades",                IDM_FILE_PROPERTIES
+END
+
+IDM_FILE_AWAY_SINGLE MENU 
 BEGIN
     MENUITEM "Re&staurar",                  IDM_FILE_RECOVER
     MENUITEM SEPARATOR
     MENUITEM SEPARATOR
     MENUITEM "&Eliminar",                   IDM_FILE_DELETE
+END
+
+IDM_FILE_AWAY_MULTIPLE MENU 
+BEGIN
+    MENUITEM "Re&staurar %u archivos",      IDM_FILE_RECOVER
+    MENUITEM SEPARATOR
+    MENUITEM SEPARATOR
+    MENUITEM "&Eliminar %u archivos",       IDM_FILE_DELETE
 END
 
 IDM_LIST MENU 
@@ -707,24 +760,31 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_SHOWCAPACITY "Mostrar &capacidad"
     IDS_CONTEXTMENU_EDIT    "E&ditar..."
-    IDS_CONTEXTMENU_SENDTO  "&Enviar a"
+    IDS_CONTEXTMENU_SENDTO_SINGLE "&Enviar a"
+    IDS_CONTEXTMENU_SENDTO_MULTIPLE "&Enviar %u archivos a"
     IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &ubicación..."
-    IDS_CONTEXTMENU_MOVETO  "&Desplazar a"
+    IDS_CONTEXTMENU_MOVETO_SINGLE "&Desplazar a"
+    IDS_CONTEXTMENU_MOVETO_MULTIPLE "&Desplazar %u archivos a"
     IDS_CONTEXTMENU_MOVETOCONTEXT "&Desplazar a «&%s»"
     IDS_CONTEXTMENU_REMOVEFROMCONTEXT "&Retirar del «&%s»"
-    IDS_CONTEXTMENU_REMEMBER "Re&cordar"
-    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Retirar del portapapeles"
-    IDS_CONTEXTMENU_MAKETASK "Crear &tarea..."
-    IDS_CONTEXTMENU_TASKDONE "&Tarea cumplida"
+    IDS_CONTEXTMENU_REMEMBER_SINGLE "Re&cordar"
+    IDS_CONTEXTMENU_REMEMBER_MULTIPLE "Re&cordar %u archivos"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_SINGLE "&Retirar del portapapeles"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_MULTIPLE 
+                            "&Retirar %u archivos del portapapeles"
+    IDS_CONTEXTMENU_MAKETASK_SINGLE "Crear &tarea..."
+    IDS_CONTEXTMENU_MAKETASK_MULTIPLE "Crear %u &tareas..."
+    IDS_CONTEXTMENU_TASKDONE_SINGLE "&Tarea cumplida"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tareas cumplida"
     IDS_CONTEXTMENU_MORE    "&Más..."
     IDS_NOITEMSSELECTED     "Ítems no seleccionados"
     IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SEARCHTERM          "Buscar todo los ubicaciones"
     IDS_STORE               "Ubicación"
     IDS_DEFAULTSTORE        "Ubicación estándar"
@@ -735,6 +795,10 @@ BEGIN
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
     IDS_QUALITY_HIGH        "Alto"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -799,11 +863,11 @@ BEGIN
     IDM_FILE_MAKETASK       "Marca los archivos seleccionados como tarea.\nCrear tarea..."
     IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
-    IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nTarea cumplida"
     IDM_FILE_RECOVER        "Restablece los archivos seleccionados.\nRestablecer"
 END
@@ -892,7 +956,7 @@ BEGIN
     MENUITEM "&Noveau filtre...",           IDM_FILTERS_CREATENEW
 END
 
-IDM_FILE MENU 
+IDM_FILE_SINGLE MENU 
 BEGIN
     MENUITEM "&Archiver",                   IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
@@ -905,12 +969,33 @@ BEGIN
     MENUITEM "&Propriétés",                 IDM_FILE_PROPERTIES
 END
 
-IDM_FILE_AWAY MENU 
+IDM_FILE_MULTIPLE MENU 
+BEGIN
+    MENUITEM "&Archiver %u fichiers",       IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "&Copier %u fichiers",         IDM_FILE_COPY
+    MENUITEM SEPARATOR
+    MENUITEM "Créer r&accourci",            IDM_FILE_SHORTCUT
+    MENUITEM "&Effacer %u fichiers",        IDM_FILE_DELETE
+    MENUITEM "&Renommer",                   IDM_FILE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Propriétés",                 IDM_FILE_PROPERTIES
+END
+
+IDM_FILE_AWAY_SINGLE MENU 
 BEGIN
     MENUITEM "&Reconstituer",               IDM_FILE_RECOVER
     MENUITEM SEPARATOR
     MENUITEM SEPARATOR
     MENUITEM "&Effacer",                    IDM_FILE_DELETE
+END
+
+IDM_FILE_AWAY_MULTIPLE MENU 
+BEGIN
+    MENUITEM "&Reconstituer %u fichiers",   IDM_FILE_RECOVER
+    MENUITEM SEPARATOR
+    MENUITEM SEPARATOR
+    MENUITEM "&Effacer %u fichiers",        IDM_FILE_DELETE
 END
 
 IDM_LIST MENU 
@@ -1091,24 +1176,31 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_SHOWCAPACITY "Afficher capacité"
     IDS_CONTEXTMENU_EDIT    "&Modifier..."
-    IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
+    IDS_CONTEXTMENU_SENDTO_SINGLE "E&nvoyer à"
+    IDS_CONTEXTMENU_SENDTO_MULTIPLE "E&nvoyer %u fichiers à"
     IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &emplacement..."
-    IDS_CONTEXTMENU_MOVETO  "&Déplacer à"
+    IDS_CONTEXTMENU_MOVETO_SINGLE "&Déplacer à"
+    IDS_CONTEXTMENU_MOVETO_MULTIPLE "&Déplacer %u fichiers à"
     IDS_CONTEXTMENU_MOVETOCONTEXT "&Déplacer à «&%s»"
     IDS_CONTEXTMENU_REMOVEFROMCONTEXT "&Retirer de «&%s»"
-    IDS_CONTEXTMENU_REMEMBER "Remar&quer"
-    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Retirer du presse-papiers"
-    IDS_CONTEXTMENU_MAKETASK "Créer &tâche..."
-    IDS_CONTEXTMENU_TASKDONE "&Tâche fini"
+    IDS_CONTEXTMENU_REMEMBER_SINGLE "Remar&quer"
+    IDS_CONTEXTMENU_REMEMBER_MULTIPLE "Remar&quer %u fichiers"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_SINGLE "&Retirer du presse-papiers"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_MULTIPLE 
+                            "&Retirer %u fichiers du presse-papiers"
+    IDS_CONTEXTMENU_MAKETASK_SINGLE "Créer &tâche..."
+    IDS_CONTEXTMENU_MAKETASK_MULTIPLE "Créer %u &tâches..."
+    IDS_CONTEXTMENU_TASKDONE_SINGLE "&Tâche fini"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tâches fini"
     IDS_CONTEXTMENU_MORE    "&Plus..."
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
     IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SEARCHTERM          "Recherche tous les emplacements"
     IDS_STORE               "Emplacement"
     IDS_DEFAULTSTORE        "Emplacement défaut"
@@ -1119,6 +1211,10 @@ BEGIN
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
     IDS_QUALITY_HIGH        "Haut"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -1183,11 +1279,11 @@ BEGIN
     IDM_FILE_MAKETASK       "Marque les fichiers choisis comme une tâche.\nCréer tâche..."
     IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
-    IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
     IDM_FILE_TASKDONE       "Supprime la marque comme une tâche des fichiers choisis.\nTâche fini"
     IDM_FILE_RECOVER        "Reconstitue tous les fichiers.\nReconstituer"
 END
@@ -1326,7 +1422,7 @@ BEGIN
     MENUITEM "&New filter...",              IDM_FILTERS_CREATENEW
 END
 
-IDM_FILE MENU 
+IDM_FILE_SINGLE MENU 
 BEGIN
     MENUITEM "&Archive",                    IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
@@ -1339,12 +1435,33 @@ BEGIN
     MENUITEM "&Properties",                 IDM_FILE_PROPERTIES
 END
 
-IDM_FILE_AWAY MENU 
+IDM_FILE_MULTIPLE MENU 
+BEGIN
+    MENUITEM "&Archive %u files",           IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "&Copy %u files",              IDM_FILE_COPY
+    MENUITEM SEPARATOR
+    MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
+    MENUITEM "D&elete %u files",            IDM_FILE_DELETE
+    MENUITEM "&Rename",                     IDM_FILE_RENAME
+    MENUITEM SEPARATOR
+    MENUITEM "&Properties",                 IDM_FILE_PROPERTIES
+END
+
+IDM_FILE_AWAY_SINGLE MENU 
 BEGIN
     MENUITEM "Rec&over",                    IDM_FILE_RECOVER
     MENUITEM SEPARATOR
     MENUITEM SEPARATOR
     MENUITEM "&Delete",                     IDM_FILE_DELETE
+END
+
+IDM_FILE_AWAY_MULTIPLE MENU 
+BEGIN
+    MENUITEM "Rec&over %u files",           IDM_FILE_RECOVER
+    MENUITEM SEPARATOR
+    MENUITEM SEPARATOR
+    MENUITEM "&Delete %u files",            IDM_FILE_DELETE
 END
 
 IDM_LIST MENU 
@@ -1526,24 +1643,31 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_SHOWCAPACITY "Show &capacity"
     IDS_CONTEXTMENU_EDIT    "&Edit..."
-    IDS_CONTEXTMENU_SENDTO  "S&end to"
+    IDS_CONTEXTMENU_SENDTO_SINGLE "S&end to"
+    IDS_CONTEXTMENU_SENDTO_MULTIPLE "S&end %u files to"
     IDS_CONTEXTMENU_CHOOSESTORE "Choose &location..."
-    IDS_CONTEXTMENU_MOVETO  "&Move to"
+    IDS_CONTEXTMENU_MOVETO_SINGLE "&Move to"
+    IDS_CONTEXTMENU_MOVETO_MULTIPLE "&Move %u files to"
     IDS_CONTEXTMENU_MOVETOCONTEXT "&Move to “&%s”"
     IDS_CONTEXTMENU_REMOVEFROMCONTEXT "&Remove from “&%s”"
-    IDS_CONTEXTMENU_REMEMBER "Re&member"
-    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD "&Remove from clipboard"
-    IDS_CONTEXTMENU_MAKETASK "Create &task..."
-    IDS_CONTEXTMENU_TASKDONE "&Task done"
+    IDS_CONTEXTMENU_REMEMBER_SINGLE "Re&member"
+    IDS_CONTEXTMENU_REMEMBER_MULTIPLE "Re&member %u files"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_SINGLE "&Remove from clipboard"
+    IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_MULTIPLE 
+                            "&Remove %u files from clipboard"
+    IDS_CONTEXTMENU_MAKETASK_SINGLE "Create &task..."
+    IDS_CONTEXTMENU_MAKETASK_MULTIPLE "Create %u &tasks..."
+    IDS_CONTEXTMENU_TASKDONE_SINGLE "&Task done"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tasks done"
     IDS_CONTEXTMENU_MORE    "&More..."
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SEARCHTERM          "Search all locations"
     IDS_STORE               "Location"
     IDS_DEFAULTSTORE        "Default location"
@@ -1554,6 +1678,10 @@ BEGIN
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
     IDS_QUALITY_HIGH        "High"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -1618,11 +1746,11 @@ BEGIN
     IDM_FILE_MAKETASK       "Marks the selected files as task.\nCreate task..."
     IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
-    IDM_FILE_RENAME         "Renames the selected file.\nRename"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_RENAME         "Renames the selected file.\nRename"
     IDM_FILE_TASKDONE       "Removes the task marking from the selected files.\nTask done"
     IDM_FILE_RECOVER        "Recovers the selected files.\nRecover"
 END

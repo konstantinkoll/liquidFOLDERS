@@ -3,7 +3,6 @@
 #include "LFCore.h"
 #include "resource.h"
 #include "TableMusicGenres.h"
-#include <assert.h>
 
 
 #pragma data_seg(".shared")

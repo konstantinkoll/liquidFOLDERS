@@ -4,7 +4,6 @@
 #include "FileProperties.h"
 #include "FileSystem.h"
 #include "Stores.h"
-#include <assert.h>
 
 
 // CStoreWindows
@@ -16,7 +15,7 @@ CStoreWindows::CStoreWindows(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexF
 	m_pFileImportList = NULL;
 }
 
-UINT CStoreWindows::Synchronize(BOOL OnInitialize, LFProgress* pProgress)
+UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 {
 	assert(m_pIndexMain);
 
@@ -119,7 +118,7 @@ UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDe
 
 	UINT Result;
 
-	// Add store data
+	// Add store data (if not present from synchronization)
 	LPWSTR pData = (LPWSTR)&pItemDescriptor->StoreData;
 	if (*pData==L'\0')
 	{

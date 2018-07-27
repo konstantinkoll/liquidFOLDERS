@@ -12,6 +12,7 @@
 struct LFWorkerParameters
 {
 	HWND hWnd;
+	UINT Result;
 };
 
 class LFProgressDlg : public LFDialog

@@ -7,9 +7,9 @@
 #include "LFTransactionList.h"
 
 #ifdef LFCore_EXPORTS
-#define LFCORE_API __declspec(dllexport)
+#define LFCORE_API __declspec(dllexport,nothrow,noinline)
 #else
-#define LFCORE_API __declspec(dllimport)
+#define LFCORE_API __declspec(dllimport,nothrow,noinline)
 #endif
 
 
@@ -53,7 +53,7 @@ LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_INTERNAL | LFGLV_E
 
 
 // Initalisiert eine LFProgress-Datenstruktur
-LFCORE_API void __stdcall LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount=0);
+LFCORE_API void __stdcall LFInitProgress(LFProgress& Progress, HWND hWnd, UINT MajorCount=0);
 
 
 // Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
@@ -104,20 +104,35 @@ LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 //
 
 // Gibt die ID des aktuellen Standard-Stores zurück
-LFCORE_API UINT __stdcall LFGetDefaultStore(LPSTR pStoreID=NULL);
+LFCORE_API UINT __stdcall LFGetDefaultStore(STOREID& StoreID);
 
 // Macht einen Store zum Standard-Store
-LFCORE_API UINT __stdcall LFSetDefaultStore(LPCSTR pStoreID);
+LFCORE_API UINT __stdcall LFSetDefaultStore(const ABSOLUTESTOREID& StoreID);
+
+// Prüft, ob es sich bei einer ID um den Default Store handelt
+inline BOOL LFIsDefaultStoreID(const STOREID& StoreID)
+{
+	return (StoreID[0]=='\0');
+}
 
 // Gibt die Anzahl aller Stores zurück
 LFCORE_API UINT __stdcall LFGetStoreCount();
 
+// Ersetzt die ID eines Stores ggf. durch den Default Store
+inline UINT LFResolveStoreID(STOREID& StoreID)
+{
+	return LFIsDefaultStoreID(StoreID) ? LFGetDefaultStore(StoreID) : LFOk;
+}
+
+// Kopiert die ID eines Stores zurück und ersetzt sie ggf. durch den Default Store
+LFCORE_API UINT __stdcall LFResolveStoreIDEx(ABSOLUTESTOREID& AbsoluteStoreID, const STOREID& StoreID);
+
 // Gibt die IDs aller Stores zurück
-LFCORE_API UINT __stdcall LFGetAllStores(CHAR*& pStoreIDs, UINT& Count);
+LFCORE_API UINT __stdcall LFGetAllStores(LPCABSOLUTESTOREID& lpcStoreIDs, UINT& Count);
 
 // Gibt die Daten eines Stores zurück
-LFCORE_API UINT __stdcall LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace=FALSE);
-LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace=FALSE);
+LFCORE_API UINT __stdcall LFGetStoreSettings(const STOREID& StoreID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace=FALSE);
+LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescriptor& StoreDescriptor);
 
 // Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
 LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
@@ -138,20 +153,17 @@ LFCORE_API UINT __stdcall LFCreateStoreLiquidfolders(LPWSTR pStoreName=NULL, LPC
 LFCORE_API UINT __stdcall LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName=NULL, LFProgress* pProgress=NULL);
 
 // Macht einen Store offline durchsuchbar
-LFCORE_API UINT __stdcall LFMakeStoreSearchable(LPCSTR pStoreID, BOOL Searchable=TRUE);
+LFCORE_API UINT __stdcall LFMakeStoreSearchable(const ABSOLUTESTOREID& StoreID, BOOL Searchable=TRUE);
 
 // Löscht einen bestehenden Store
-LFCORE_API UINT __stdcall LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress=NULL);
+LFCORE_API UINT __stdcall LFDeleteStore(const ABSOLUTESTOREID& StoreID, LFProgress* pProgress=NULL);
 
 // Setzt Namen und Kommentar eines Stores
 // Ist pName oder pComment NULL, so wird der jeweilige Wert nicht verändert
-LFCORE_API UINT __stdcall LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pComment);
+LFCORE_API UINT __stdcall LFSetStoreAttributes(const ABSOLUTESTOREID& StoreID, LPCWSTR pName, LPCWSTR pComment);
 
-// Synchronisiert einen Store
-LFCORE_API UINT __stdcall LFSynchronizeStore(LPCSTR pStoreID, LFProgress* pProgress=NULL);
-
-// Synchronisiert alle Stores
-LFCORE_API UINT __stdcall LFSynchronizeStores(LFProgress* pProgress=NULL);
+// Synchronisiert Stores
+LFCORE_API UINT __stdcall LFSynchronizeStores(const STOREID& StoreID, LFProgress* pProgress=NULL);
 
 // Startet geplante Wartungsarbeiten für alle Stores
 LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProgress=NULL);
@@ -160,7 +172,7 @@ LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProg
 LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew=TRUE, BOOL CheckExists=TRUE);
 
 // Importiert Dateien
-LFCORE_API void __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
+LFCORE_API UINT __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const STOREID& StoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
 
 
 
@@ -311,24 +323,23 @@ inline BYTE LFGetUserContextID(const LFItemDescriptor* pItemDescriptor)
 // Neuen LFFilter erzeugen
 LFCORE_API LFFilter* __stdcall LFAllocFilter(BYTE Mode=LFFilterModeQuery);
 
-// Neuen LFFilter als Kopie eines existierenden Filters erzeugen
-LFCORE_API LFFilter* __stdcall LFCloneFilter(const LFFilter* pFilter);
-
 // Existierenden LFFilter freigeben
 LFCORE_API void __stdcall LFFreeFilter(LFFilter* pFilter);
 
 // Lädt einen abgespeicherten Filter
 LFCORE_API LFFilter* __stdcall LFLoadFilter(LFItemDescriptor* pItemDescriptor);
-LFCORE_API LFFilter* __stdcall LFLoadFilterEx(LPCWSTR pPath);
 
 // Speichert einen Filter in einem Store ab
-LFCORE_API UINT __stdcall LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment=NULL);
+LFCORE_API UINT __stdcall LFSaveFilter(const STOREID& StoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment=NULL);
 
 // Neue LFFilterCondition erzeugen
 LFCORE_API LFFilterCondition* __stdcall LFAllocFilterCondition(BYTE Compare, const LFVariantData& VData, LFFilterCondition* pNext=NULL);
 
 // Existierende LFFilterCondition freigeben
-#define LFFreeFilterCondition(pFilterCondition) delete pFilterCondition;
+inline void LFFreeFilterCondition(LFFilterCondition* pFilterCondition)
+{
+	delete pFilterCondition;
+}
 
 // Liefert das Attribut zurück, nachdem ein Unterordnet gebildet wirde
 #define LFGetSubfolderAttribute(pFilter) (pFilter && pFilter->IsSubfolder && pFilter->Query.pConditionList ? pFilter->Query.pConditionList->VData.Attr : -1)
@@ -360,15 +371,14 @@ LFCORE_API void LFUpdateFolderColors(LFSearchResult* pCookedFiles, const LFSearc
 // Neue Transaktionsliste auf Basis von LFSearchResult erzeugen
 LFCORE_API LFTransactionList* __stdcall LFAllocTransactionList(LFSearchResult* pSearchResult=NULL, BOOL All=FALSE);
 
-// Neue Transaktionsliste auf Basis von HLIQUID-Handle erzeugen
-LFCORE_API LFTransactionList* __stdcall LFAllocTransactionListEx(HLIQUID hLiquid);
+// Neue Transaktionsliste auf Basis von HLIQUIDFILES-Handle erzeugen
+LFCORE_API LFTransactionList* __stdcall LFAllocTransactionListEx(HLIQUIDFILES hLiquidFiles);
 
 // Existierende LFTransactionList freigeben
-LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* tl);
+LFCORE_API void __stdcall LFFreeTransactionList(LFTransactionList* pTransactionList);
 
 // LFItemDescriptor zur LFTransactionList hinzufügen
 LFCORE_API BOOL __stdcall LFAddTransactionItem(LFTransactionList* pTransactionList, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData=0);
-LFCORE_API BOOL __stdcall LFAddTransactionItemEx(LFTransactionList* pTransactionList, LPCSTR pStoreID, LPCSTR pFileID, LFItemDescriptor* pItemDescriptor=NULL, UINT_PTR UserData=0);
 
 // Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
 LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionList);
@@ -377,21 +387,27 @@ LFCORE_API HGLOBAL __stdcall LFCreateDropFiles(LFTransactionList* pTransactionLi
 LFCORE_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* pTransactionList);
 
 // Transaktion ausführen
-LFCORE_API void __stdcall LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, const LFVariantData* pVariantData1=NULL, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL);
+LFCORE_API UINT __stdcall LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, const LFVariantData* pVariantData1=NULL, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL);
 
 
 // Neue Datei-Importliste erzeugen
 LFCORE_API LFFileImportList* __stdcall LFAllocFileImportList(HDROP hDrop=NULL);
 
 // Existierende LFFileImportList freigeben
-LFCORE_API void __stdcall LFFreeFileImportList(LFFileImportList* pFileImportList);
+inline void LFFreeFileImportList(LFFileImportList* pFileImportList)
+{
+	delete pFileImportList;
+}
 
 // String zur LFFileImportList hinzufügen
 LFCORE_API BOOL __stdcall LFAddImportPath(LFFileImportList* pFileImportList, LPCWSTR pPath);
 
 
 // Existierende LFMaintenanceList freigeben
-LFCORE_API void __stdcall LFFreeMaintenanceList(LFMaintenanceList* ml);
+inline void LFFreeMaintenanceList(LFMaintenanceList* pMaintenanceList)
+{
+	delete pMaintenanceList;
+}
 
 
 
@@ -452,7 +468,7 @@ LFCORE_API LFSearchResult* __stdcall LFQueryEx(LFFilter* pFilter, LFSearchResult
 
 // Statistik
 // - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
-LFCORE_API UINT __stdcall LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID=NULL, UINT64* pGlobalContextSet=NULL);
+LFCORE_API UINT __stdcall LFQueryStatistics(LFStatistics& Statistics, const STOREID& StoreID, UINT64* pGlobalContextSet=NULL);
 
 
 

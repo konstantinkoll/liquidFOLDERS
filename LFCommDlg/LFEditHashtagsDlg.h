@@ -13,7 +13,7 @@
 class LFEditHashtagsDlg : public LFDialog
 {
 public:
-	LFEditHashtagsDlg(const CString& Hashtags, LPCSTR pStoreID, CWnd* pParentWnd=NULL);
+	LFEditHashtagsDlg(const CString& Hashtags, const STOREID& StoreID, CWnd* pParentWnd=NULL);
 
 	CString m_Hashtags;
 
@@ -30,5 +30,5 @@ protected:
 	CEdit m_wndNewHashtags;
 
 private:
-	CHAR m_StoreID[LFKeySize];
+	STOREID m_StoreID;
 };

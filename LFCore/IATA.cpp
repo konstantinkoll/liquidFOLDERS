@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "IATA.h"
-#include <assert.h>
 
 
 #pragma data_seg(".shared")

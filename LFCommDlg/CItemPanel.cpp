@@ -81,20 +81,18 @@ void CItemPanel::SetItem(CString Text, CImageList* pIcons, INT nID, BOOL Ghosted
 	Invalidate();
 }
 
-BOOL CItemPanel::SetItem(const LPCSTR pStoreID)
+BOOL CItemPanel::SetItem(const STOREID& StoreID)
 {
-	ASSERT(pStoreID);
-
-	LFStoreDescriptor Store;
-	if (LFGetStoreSettings(pStoreID, Store)==LFOk)
+	LFStoreDescriptor StoreDescriptor;
+	if (LFGetStoreSettings(StoreID, StoreDescriptor)==LFOk)
 	{
-		LFItemDescriptor* pItem = LFAllocItemDescriptorEx(Store);
+		LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(StoreDescriptor);
 
 		// Text
-		CString tmpStr(LFGetApp()->GetHintForItem(pItem));
+		CString tmpStr(LFGetApp()->GetHintForItem(pItemDescriptor));
 
 		tmpStr.Insert(0, _T("\n"));
-		tmpStr.Insert(0, pItem->CoreAttributes.FileName);
+		tmpStr.Insert(0, pItemDescriptor->CoreAttributes.FileName);
 
 		// Icon
 		CRect rect;
@@ -102,9 +100,9 @@ BOOL CItemPanel::SetItem(const LPCSTR pStoreID)
 
 		CImageList* pImageList = (rect.Height()>=LFGetApp()->m_ExtraLargeIconSize) ? &LFGetApp()->m_CoreImageListExtraLarge : &LFGetApp()->m_CoreImageListSmall;
 
-		SetItem(tmpStr, pImageList, pItem->IconID-1, pItem->Type & LFTypeGhosted);
+		SetItem(tmpStr, pImageList, pItemDescriptor->IconID-1, pItemDescriptor->Type & LFTypeGhosted);
 
-		LFFreeItemDescriptor(pItem);
+		LFFreeItemDescriptor(pItemDescriptor);
 
 		return TRUE;
 	}

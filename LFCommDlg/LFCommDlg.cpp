@@ -168,7 +168,7 @@ HBITMAP CreateMaskBitmap(LONG Width, LONG Height)
 	DIB.bmiHeader.biCompression = BI_RGB;
 	DIB.bmiHeader.biClrUsed = 16;
 
-	memcpy_s(DIB.bmiColors, sizeof(DIB.bmiColors), DefaultPalette, sizeof(DefaultPalette));
+	memcpy(DIB.bmiColors, DefaultPalette, sizeof(DefaultPalette));
 
 	return CreateDIBSection(NULL, (LPBITMAPINFO)&DIB, DIB_RGB_COLORS, NULL, NULL, 0);
 }

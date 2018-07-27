@@ -13,7 +13,6 @@
 #include "Stores.h"
 #include "TableAttributes.h"
 #include "Watchdog.h"
-#include <assert.h>
 #include <shlwapi.h>
 #include <winioctl.h>
 
@@ -409,15 +408,13 @@ LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
 // Threading
 //
 
-LFCORE_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, UINT MajorCount)
+LFCORE_API void LFInitProgress(LFProgress& Progress, HWND hWnd, UINT MajorCount)
 {
-	assert(pProgress);
+	ZeroMemory(&Progress, sizeof(LFProgress));
 
-	ZeroMemory(pProgress, sizeof(LFProgress));
-
-	pProgress->hWnd = hWnd;
-	pProgress->ProgressState = LFProgressWorking;
-	pProgress->MajorCount = MajorCount;
+	Progress.hWnd = hWnd;
+	Progress.ProgressState = LFProgressWorking;
+	Progress.MajorCount = MajorCount;
 }
 
 

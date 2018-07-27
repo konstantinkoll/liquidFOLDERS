@@ -3,7 +3,6 @@
 #include "LFCore.h"
 #include "LFTransactionList.h"
 #include "Stores.h"
-#include <assert.h>
 
 
 extern LFMessageIDs LFMessages;
@@ -28,34 +27,26 @@ LFCORE_API LFTransactionList* LFAllocTransactionList(LFSearchResult* pSearchResu
 	return pTransactionList;
 }
 
-LFCORE_API LFTransactionList* LFAllocTransactionListEx(HLIQUID hLiquid)
+LFCORE_API LFTransactionList* LFAllocTransactionListEx(HLIQUIDFILES hLiquidFiles)
 {
-	assert(hLiquid);
+	assert(hLiquidFiles);
 
 	LFTransactionList* pTransactionList = new LFTransactionList();
 
-	LIQUIDFILES* pLiquidFiles = (LIQUIDFILES*)GlobalLock(hLiquid);
-	if (pLiquidFiles)
+	LPCLIQUIDFILES lpcLiquidFiles = (LPCLIQUIDFILES)GlobalLock(hLiquidFiles);
+	if (lpcLiquidFiles)
 	{
-		LPCSTR pChar = (LPCSTR)pLiquidFiles+sizeof(LIQUIDFILES);
+		for (UINT a=0; a<lpcLiquidFiles->cFiles; a++)
+			pTransactionList->AddItem(lpcLiquidFiles->FileItems[a]);
 
-		for (UINT a=0; a<pLiquidFiles->cFiles; a++)
-		{
-			pTransactionList->AddItem(pChar, pChar+LFKeySize);
-
-			pChar += 2*LFKeySize;
-		}
+		GlobalUnlock(hLiquidFiles);
 	}
-
-	GlobalUnlock(hLiquid);
 
 	return pTransactionList;
 }
 
 LFCORE_API void LFFreeTransactionList(LFTransactionList* pTransactionList)
 {
-	assert(pTransactionList);
-
 	delete pTransactionList;
 }
 
@@ -64,13 +55,6 @@ LFCORE_API BOOL LFAddTransactionItem(LFTransactionList* pTransactionList, LFItem
 	assert(pTransactionList);
 
 	return pTransactionList->AddItem(pItemDescriptor, UserData);
-}
-
-LFCORE_API BOOL LFAddTransactionItemEx(LFTransactionList* pTransactionList, LPCSTR pStoreID, LPCSTR pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
-{
-	assert(pTransactionList);
-
-	return pTransactionList->AddItem(pStoreID, pFileID, pItemDescriptor, UserData);
 }
 
 LFCORE_API HGLOBAL LFCreateDropFiles(LFTransactionList* pTransactionList)
@@ -87,11 +71,11 @@ LFCORE_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* pTransactionList)
 	return pTransactionList->CreateLiquidFiles();
 }
 
-LFCORE_API void LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
+LFCORE_API UINT LFDoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
 {
 	assert(pTransactionList);
 
-	pTransactionList->DoTransaction(TransactionType, pProgress, Parameter, pVariantData1, pVariantData2, pVariantData3);
+	return pTransactionList->DoTransaction(TransactionType, pProgress, Parameter, pVariantData1, pVariantData2, pVariantData3);
 }
 
 
@@ -113,40 +97,12 @@ LFTransactionList::~LFTransactionList()
 				LFFreeItemDescriptor(m_Items[a].pItemDescriptor);
 }
 
-BOOL LFTransactionList::AddItem(LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
+BOOL LFTransactionList::AddItem(const ABSOLUTESTOREID& StoreID, const FILEID& FileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
 {
-	assert(pItemDescriptor);
-
 	LFTransactionListItem Item;
 
-	strcpy_s(Item.StoreID, LFKeySize, pItemDescriptor->StoreID);
-	strcpy_s(Item.FileID, LFKeySize, pItemDescriptor->CoreAttributes.FileID);
-	Item.pItemDescriptor = pItemDescriptor;
-	Item.UserData = UserData;
-
-	Item.LastError = 0;
-	Item.Processed = FALSE;
-
-	Item.Path[0] = L'\0';
-	Item.pidlFQ = NULL;
-	
-	if (!LFDynArray::AddItem(Item))
-		return FALSE;
-
-	pItemDescriptor->RefCount++;
-
-	return TRUE;
-}
-
-BOOL LFTransactionList::AddItem(LPCSTR pStoreID, LPCSTR pFileID, LFItemDescriptor* pItemDescriptor, UINT_PTR UserData)
-{
-	assert(pStoreID);
-	assert(pFileID);
-
-	LFTransactionListItem Item;
-
-	strcpy_s(Item.StoreID, LFKeySize, pStoreID);
-	strcpy_s(Item.FileID, LFKeySize, pFileID);
+	Item.StoreID = StoreID;
+	Item.FileID = FileID;
 	Item.pItemDescriptor = pItemDescriptor;
 	Item.UserData = UserData;
 
@@ -165,27 +121,26 @@ BOOL LFTransactionList::AddItem(LPCSTR pStoreID, LPCSTR pFileID, LFItemDescripto
 	return TRUE;
 }
 
-void LFTransactionList::SetError(LPCSTR pStoreID, UINT Result, LFProgress* pProgress)
+void LFTransactionList::SetError(const ABSOLUTESTOREID& StoreID, UINT Result, LFProgress* pProgress)
 {
 	if (Result==LFOk)
 		m_Modified = TRUE;
 
 	for (UINT a=0; a<m_ItemCount; a++)
-		if (!m_Items[a].Processed)
-			if (strcmp(m_Items[a].StoreID, pStoreID)==0)
+		if (!m_Items[a].Processed && (m_Items[a].StoreID==StoreID))
+		{
+			if (Result!=LFOk)
+				m_LastError = Result;
+
+			m_Items[a].LastError = Result;
+			m_Items[a].Processed = TRUE;
+
+			if (pProgress)
 			{
-				if (Result!=LFOk)
-					m_LastError = Result;
-
-				m_Items[a].LastError = Result;
-				m_Items[a].Processed = TRUE;
-
-				if (pProgress)
-				{
-					pProgress->Object[0] = L'\0';
-					pProgress->MinorCurrent++;
-				}
+				pProgress->Object[0] = L'\0';
+				pProgress->MinorCurrent++;
 			}
+		}
 
 	if (pProgress)
 	{
@@ -208,6 +163,7 @@ void LFTransactionList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 		m_LastError = Result;
 	}
 
+	assert(Index<m_ItemCount);
 	m_Items[Index].LastError = Result;
 	m_Items[Index].Processed = TRUE;
 
@@ -229,11 +185,13 @@ HGLOBAL LFTransactionList::CreateDropFiles()
 	if (!m_Resolved)
 		return NULL;
 
+	// Buffer size
 	SIZE_T cChars = 0;
 	for (UINT a=0; a<m_ItemCount; a++)
-		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+		if (m_Items[a].Processed && (m_Items[a].LastError==LFOk))
 			cChars += wcslen(&m_Items[a].Path[4])+1;
 
+	// Alloc memory
 	SIZE_T szBuffer = sizeof(DROPFILES)+sizeof(WCHAR)*(cChars+1);
 	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
 	if (!hGlobal)
@@ -246,24 +204,25 @@ HGLOBAL LFTransactionList::CreateDropFiles()
 		return NULL;
 	}
 
+	// Set up data structure
 	pDropFiles->pFiles = sizeof(DROPFILES);
-	pDropFiles->fNC = TRUE;
 	pDropFiles->pt.x = pDropFiles->pt.y = 0;
-	pDropFiles->fWide = TRUE;
+	pDropFiles->fWide = pDropFiles->fNC = TRUE;
 
-	WCHAR* pChar = (WCHAR*)(((BYTE*)pDropFiles)+sizeof(DROPFILES));
+	// Paths
+	LPWSTR pPath = (LPWSTR)(((LPBYTE)pDropFiles)+sizeof(DROPFILES));
 	for (UINT a=0; a<m_ItemCount; a++)
-		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+		if (m_Items[a].Processed && (m_Items[a].LastError==LFOk))
 		{
 #pragma warning(push)
 #pragma warning(disable: 4996)
-			wcscpy(pChar, &m_Items[a].Path[4]);
+			wcscpy(pPath, &m_Items[a].Path[4]);
 #pragma warning(pop)
 
-			pChar += wcslen(&m_Items[a].Path[4])+1;
+			pPath += wcslen(&m_Items[a].Path[4])+1;
 		}
 
-	*pChar = L'\0';
+	*pPath = L'\0';
 
 	GlobalUnlock(hGlobal);
 
@@ -272,36 +231,36 @@ HGLOBAL LFTransactionList::CreateDropFiles()
 
 HGLOBAL LFTransactionList::CreateLiquidFiles()
 {
+	// File count
 	UINT cFiles = 0;
 	for (UINT a=0; a<m_ItemCount; a++)
 		if (m_Items[a].LastError==LFOk)
 			cFiles++;
 
-	SIZE_T szBuffer = sizeof(LIQUIDFILES)+cFiles*LFKeySize*2;
+	// Alloc memory
+	const SIZE_T szBuffer = sizeof(LIQUIDFILES)+(cFiles-1)*sizeof(LIQUIDFILEITEM);
 	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
 	if (!hGlobal)
 		return NULL;
 
-	LIQUIDFILES* pLiquidFiles = (LIQUIDFILES*)GlobalLock(hGlobal);
-	if (!pLiquidFiles)
+	LPLIQUIDFILES lpLiquidFiles = (LPLIQUIDFILES)GlobalLock(hGlobal);
+	if (!lpLiquidFiles)
 	{
 		GlobalFree(hGlobal);
+
 		return NULL;
 	}
 
-	pLiquidFiles->cFiles = cFiles;
-	pLiquidFiles->pFiles = sizeof(LIQUIDFILES);
+	// Set up data structure
+	lpLiquidFiles->cFiles = cFiles;
 
-	CHAR* pChar = (CHAR*)pLiquidFiles+sizeof(LIQUIDFILES);
+	// IDs
+	UINT Index = 0;
 	for (UINT a=0; a<m_ItemCount; a++)
 		if (m_Items[a].LastError==LFOk)
-		{
-			strcpy_s(pChar, LFKeySize, m_Items[a].StoreID);
-			strcpy_s(pChar+LFKeySize, LFKeySize, m_Items[a].FileID);
+			lpLiquidFiles->FileItems[Index++] = m_Items[a].FileItem;
 
-			pChar += 2*LFKeySize;
-		}
-
+	assert(Index==cFiles);
 	GlobalUnlock(hGlobal);
 
 	return hGlobal;
@@ -312,34 +271,31 @@ BOOL LFTransactionList::SetStoreAttributes(const LFVariantData* pVData, LPCWSTR*
 	assert(ppStoreName);
 	assert(ppStoreComments);
 
-	if (!pVData)
-		return TRUE;
+	if (pVData)
+		switch (pVData->Attr)
+		{
+		case LFAttrComments:
+			assert(pVData->Type==LFTypeUnicodeString);
 
-	switch (pVData->Attr)
-	{
-	case LFAttrFileName:
-		assert(pVData->Type==LFTypeUnicodeString);
+			*ppStoreComments = pVData->UnicodeString;
 
-		if (pVData->IsNull)
-			return FALSE;
+			return TRUE;
 
-		*ppStoreName = pVData->UnicodeString;
+		case LFAttrFileName:
+			assert(pVData->Type==LFTypeUnicodeString);
 
-		return TRUE;
+			if (!pVData->IsNull)
+			{
+				*ppStoreName = pVData->UnicodeString;
 
-	case LFAttrComments:
-		assert(pVData->Type==LFTypeUnicodeString);
+				return TRUE;
+			}
+		}
 
-		*ppStoreComments = pVData->UnicodeString;
-
-		return TRUE;
-
-	default:
-		return FALSE;
-	}
+	return FALSE;
 }
 
-void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
+UINT LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
 {
 	// Progress
 	if (pProgress)
@@ -358,7 +314,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 			switch (m_Items[a].pItemDescriptor ? m_Items[a].pItemDescriptor->Type & LFTypeMask : LFTypeFile)
 			{
 			case LFTypeFile:
-				if ((Result=OpenStore(m_Items[a].StoreID, pStore, TransactionType>LFTransactionTypeLastReadonly))==LFOk)
+				if ((Result=OpenStore(m_Items[a].StoreID, pStore, TransactionType>LFTransactionLastReadonly))==LFOk)
 				{
 					pStore->DoTransaction(this, TransactionType, pProgress, Parameter, pVariantData1, pVariantData2, pVariantData3);
 					delete pStore;
@@ -371,7 +327,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 				break;
 
 			case LFTypeStore:
-				if (TransactionType==LFTransactionTypeUpdate)
+				if (TransactionType==LFTransactionUpdate)
 				{
 					LPCWSTR pStoreName = NULL;
 					LPCWSTR pStoreComments = NULL;
@@ -410,7 +366,7 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 		}
 
 	// Get PIDLs
-	if (TransactionType==LFTransactionTypeResolveLocations)
+	if (TransactionType==LFTransactionResolveLocations)
 	{
 		if ((BOOL)Parameter)
 			for (UINT a=0; a<m_ItemCount; a++)
@@ -424,16 +380,18 @@ void LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	// Finish transaction
 	switch (TransactionType)
 	{
-	case LFTransactionTypeSendTo:
-	case LFTransactionTypeArchive:
-	case LFTransactionTypePutInTrash:
-	case LFTransactionTypeRecover:
-	case LFTransactionTypeUpdate:
-	case LFTransactionTypeUpdateTask:
-	case LFTransactionTypeUpdateUserContext:
-	case LFTransactionTypeDelete:
+	case LFTransactionSendTo:
+	case LFTransactionArchive:
+	case LFTransactionPutInTrash:
+	case LFTransactionRecover:
+	case LFTransactionUpdate:
+	case LFTransactionUpdateTask:
+	case LFTransactionUpdateUserContext:
+	case LFTransactionDelete:
 		SendLFNotifyMessage(LFMessages.StatisticsChanged);
 
 		break;
 	}
+
+	return m_LastError;
 }

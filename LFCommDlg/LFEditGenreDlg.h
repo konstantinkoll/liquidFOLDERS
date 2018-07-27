@@ -27,7 +27,7 @@ class CGenreList : public CFrontstageItemView
 public:
 	CGenreList();
 
-	void SetGenres(LPCSTR StoreID);
+	void SetGenres(const STOREID& StoreID);
 	void SelectGenre(UINT GenreID);
 	UINT GetSelectedGenre() const;
 
@@ -68,7 +68,7 @@ inline void CGenreList::AddItemCategory(const LFMusicGenre* pMusicGenre)
 class LFEditGenreDlg : public LFDialog
 {
 public:
-	LFEditGenreDlg(UINT Genre, LPCSTR StoreID, CWnd* pParentWnd=NULL);
+	LFEditGenreDlg(UINT Genre, const STOREID& StoreID, CWnd* pParentWnd=NULL);
 
 	UINT m_Genre;
 
@@ -83,6 +83,6 @@ protected:
 	CGenreList m_wndGenreList;
 
 private:
-	CHAR m_StoreID[LFKeySize];
+	STOREID m_StoreID;
 	BOOL m_SelectGenre;
 };

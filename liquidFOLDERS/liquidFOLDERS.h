@@ -23,7 +23,7 @@ public:
 	virtual INT ExitInstance();
 
 	CMainWnd* GetClipboard();
-	CWnd* GetFileDrop(LPCSTR StoreID);
+	CWnd* GetFileDrop(const ABSOLUTESTOREID& StoreID);
 
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void SetContextSort(INT Context, UINT Attr, BOOL SortDescending, BOOL SetLastView=TRUE);

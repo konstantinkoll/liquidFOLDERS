@@ -5,7 +5,6 @@
 #include "LFVariantData.h"
 #include "Query.h"
 #include "TableAttributes.h"
-#include <assert.h>
 
 
 extern HMODULE LFCoreModuleHandle;

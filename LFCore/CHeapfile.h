@@ -48,13 +48,13 @@ public:
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);
 	BOOL FindNext(INT& Next, LPVOID& Ptr);
-	BOOL FindKey(LPCSTR FileID, INT& Next, LPVOID& Ptr);
+	BOOL FindKey(const FILEID& FileID, INT& Next, LPVOID& Ptr);
 	void Add(LFItemDescriptor* pItemDescriptor);
-	void Update(LFItemDescriptor* pItemDescriptor, LPVOID pChar);
+	void Update(LFItemDescriptor* pItemDescriptor, LPVOID Ptr);
 	void Update(LFItemDescriptor* pItemDescriptor, INT& Next);
 	void Update(LFItemDescriptor* pItemDescriptor);
-	void Invalidate(LPVOID pChar);
-	void Invalidate(LPCSTR FileID, INT& Next);
+	void Invalidate(LPVOID Ptr);
+	void Invalidate(const FILEID& FileID, INT& Next);
 	void Invalidate(LFItemDescriptor* pItemDescriptor);
 	void GetFromItemDescriptor(LPVOID Ptr, LFItemDescriptor* pItemDescriptor);
 	BOOL Compact();
@@ -84,7 +84,7 @@ protected:
 
 private:
 	static void ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const SIZE_T SrcSize);
-	void GetAttribute(LPVOID Ptr, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
+	void GetAttribute(LPVOID Ptr, SIZE_T Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
 
 	WCHAR m_Path[MAX_PATH];
 	HANDLE hFile;

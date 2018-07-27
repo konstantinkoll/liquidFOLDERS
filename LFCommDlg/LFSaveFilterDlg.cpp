@@ -10,13 +10,13 @@
 // LFSaveFilterDlg
 //
 
-LFSaveFilterDlg::LFSaveFilterDlg(CWnd* pParentWnd, const LPCSTR pStoreID, BOOL AllowChooseStore, LPCWSTR FileName, LPCWSTR Comments)
+LFSaveFilterDlg::LFSaveFilterDlg(const STOREID& StoreID, CWnd* pParentWnd, LPCWSTR FileName, LPCWSTR Comments)
 	: LFDialog(IDD_SAVEFILTER, pParentWnd)
 {
-	strcpy_s(m_StoreID, LFKeySize, pStoreID ? pStoreID : "");
+	m_StoreID = StoreID;
 	wcscpy_s(m_FileName, 256, FileName ? FileName : L"");
 	wcscpy_s(m_Comments, 256, Comments ? Comments : L"");
-	m_AllowChooseStore = AllowChooseStore;
+
 	m_IsValidStore = FALSE;
 }
 
@@ -37,7 +37,6 @@ void LFSaveFilterDlg::DoDataExchange(CDataExchange* pDX)
 BOOL LFSaveFilterDlg::InitDialog()
 {
 	// Store
-	GetDlgItem(IDC_CHOOSESTORE)->EnableWindow(m_AllowChooseStore);
 	OnStoresChanged(NULL, NULL);
 
 	// Name
@@ -64,7 +63,8 @@ void LFSaveFilterDlg::OnChooseStore()
 	LFChooseStoreDlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
-		strcpy_s(m_StoreID, LFKeySize, dlg.m_StoreID);
+		m_StoreID = dlg.m_StoreID;
+
 		OnStoresChanged(NULL, NULL);
 	}
 }

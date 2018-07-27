@@ -21,13 +21,6 @@ CPropertyHolder::CPropertyHolder()
 		ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
 
-void CPropertyHolder::SetStore(const LPCSTR pStoreID)
-{
-	ASSERT(pStoreID);
-
-	strcpy_s(m_StoreID, LFKeySize, pStoreID);
-}
-
 CProperty* CPropertyHolder::CreateProperty(LFVariantData* pVData)
 {
 	ASSERT(pVData);

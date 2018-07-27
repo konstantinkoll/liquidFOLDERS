@@ -10,10 +10,10 @@
 // LFEditConditionDlg
 //
 
-LFEditConditionDlg::LFEditConditionDlg(CWnd* pParentWnd, const LPCSTR pStoreID, LFFilterCondition* pCondition)
+LFEditConditionDlg::LFEditConditionDlg(const STOREID& StoreID, CWnd* pParentWnd, LFFilterCondition* pCondition)
 	: LFAttributeListDlg(IDD_EDITCONDITION, pParentWnd)
 {
-	strcpy_s(m_StoreID, LFKeySize, pStoreID ? pStoreID : "");
+	m_StoreID = StoreID;
 
 	if (pCondition)
 	{
@@ -53,9 +53,7 @@ BOOL LFEditConditionDlg::InitDialog()
 
 	// Bedingung
 	m_wndEdit.SetInitialData(m_Condition.VData);
-
-	if (m_StoreID[0]!='\0')
-		m_wndEdit.SetStore(m_StoreID);
+	m_wndEdit.SetStore(m_StoreID);
 
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.VData.Attr);

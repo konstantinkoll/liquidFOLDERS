@@ -10,12 +10,10 @@
 // LFDeleteStoreDlg
 //
 
-LFDeleteStoreDlg::LFDeleteStoreDlg(const LPCSTR pStoreID, CWnd* pParentWnd)
+LFDeleteStoreDlg::LFDeleteStoreDlg(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd)
 	: LFDialog(IDD_DELETESTORE, pParentWnd, TRUE, TRUE)
 {
-	ASSERT(pStoreID);
-
-	strcpy_s(m_StoreID, LFKeySize, pStoreID);
+	m_StoreID = StoreID;
 }
 
 BOOL LFDeleteStoreDlg::InitDialog()
@@ -30,7 +28,7 @@ BOOL LFDeleteStoreDlg::InitDialog()
 	GetDlgItem(IDC_CAPTION)->SetFont(&LFGetApp()->m_DialogBoldFont);
 
 	// Nuke
-	if ((m_Store.Mode & LFStoreModeBackendMask)>LFStoreModeBackendInternal)
+	if ((m_StoreDescriptor.Mode & LFStoreModeBackendMask)>LFStoreModeBackendInternal)
 		GetDlgItem(IDC_NUKEMESSAGE)->ShowWindow(SW_HIDE);
 
 	// Titelleiste
@@ -38,7 +36,7 @@ BOOL LFDeleteStoreDlg::InitDialog()
 	GetWindowText(Mask);
 
 	CString Caption;
-	Caption.Format(Mask, m_Store.StoreName);
+	Caption.Format(Mask, m_StoreDescriptor.StoreName);
 	SetWindowText(Caption);
 
 	return TRUE;
@@ -58,7 +56,7 @@ void LFDeleteStoreDlg::OnUpdateOkButton()
 
 LRESULT LFDeleteStoreDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (LFGetStoreSettings(m_StoreID, m_Store)!=LFOk)
+	if (LFGetStoreSettings(m_StoreID, m_StoreDescriptor)!=LFOk)
 	{
 		// Prevent desktop dimming and sound
 		m_UAC = FALSE;

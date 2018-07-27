@@ -53,16 +53,14 @@ BOOL CMainWnd::Create(LFFilter* pFilter, BOOL IsClipboard)
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION)), IsClipboard ? _T("Clipboard") : _T("Main"), IsClipboard ? CSize(-1, -1) : CSize(0, 0));
 }
 
-BOOL CMainWnd::CreateStore(const LPCSTR StoreID)
+BOOL CMainWnd::CreateStore(const ABSOLUTESTOREID& StoreID)
 {
-	ASSERT(StoreID);
-
 	LFFilter* pFilter = LFAllocFilter(LFFilterModeDirectoryTree);
-	strcpy_s(pFilter->Query.StoreID, LFKeySize, StoreID);
+	pFilter->Query.StoreID = StoreID;
 
-	LFStoreDescriptor Store;
-	if (LFGetStoreSettings(StoreID, Store)==LFOk)
-		wcscpy_s(pFilter->Name, 256, Store.StoreName);
+	LFStoreDescriptor StoreDescriptor;
+	if (LFGetStoreSettings(StoreID, StoreDescriptor)==LFOk)
+		wcscpy_s(pFilter->Name, 256, StoreDescriptor.StoreName);
 
 	return Create(pFilter);
 }
@@ -524,7 +522,7 @@ void CMainWnd::OnSwitchContext(UINT nID)
 	if (m_pActiveFilter->Query.StoreID[0])
 	{
 		wcscpy_s(pFilter->Name, 256, m_pActiveFilter->Name);
-		strcpy_s(pFilter->Query.StoreID, LFKeySize, m_pActiveFilter->Query.StoreID);
+		pFilter->Query.StoreID = m_pActiveFilter->Query.StoreID;
 	}
 
 	ASSERT(LFFilterModeStores==0);
@@ -601,9 +599,9 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 		if (m_pSidebarWnd)
 		{
-			if ((strcmp(m_StatisticsID, GetStatisticsID())!=0) || (m_StatisticsResult!=LFOk))
+			if ((m_StatisticsID!=GetStatisticsID()) || (m_StatisticsResult!=LFOk))
 			{
-				strcpy_s(m_StatisticsID, LFKeySize, GetStatisticsID());
+				m_StatisticsID = GetStatisticsID();
 
 				OnUpdateSidebar();
 			}

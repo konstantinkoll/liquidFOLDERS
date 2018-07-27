@@ -64,7 +64,7 @@ inline void CUsageList::SetUsage(const LFStoreDescriptor& Store)
 class LFStorePropertiesDlg : public LFTabbedDialog
 {
 public:
-	LFStorePropertiesDlg(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
+	LFStorePropertiesDlg(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -80,10 +80,10 @@ protected:
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
-	LFStoreDescriptor m_Store;
+	LFStoreDescriptor m_StoreDescriptor;
+	BOOL m_StoreDescriptorValid;
 	UINT m_StoreIcon;
 	UINT m_StoreType;
-	BOOL m_StoreValid;
 	static UINT m_LastTab;
 
 	CIconCtrl m_wndStoreIcon;
@@ -101,7 +101,7 @@ protected:
 
 private:
 	static CString MakeHex(LPBYTE x, UINT bCount);
-	static void CEscape(CString &str);
+	static void CEscape(CString &strEscape);
 
 	_GUID m_StoreUniqueID;
 	CString m_MaskContents;

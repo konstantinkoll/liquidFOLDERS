@@ -8,7 +8,7 @@ struct LFMaintenanceListItem
 {
 	WCHAR Name[256];
 	WCHAR Comments[256];
-	CHAR StoreID[LFKeySize];
+	ABSOLUTESTOREID StoreID;
 	UINT Result;
 	UINT IconID;
 };
@@ -18,7 +18,7 @@ class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem, 16, 16>
 public:
 	LFMaintenanceList();
 
-	BOOL AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT IconID);
+	BOOL AddItem(LFStoreDescriptor* pStoreDescriptor, UINT Result);
 
 	UINT m_LastError;
 };

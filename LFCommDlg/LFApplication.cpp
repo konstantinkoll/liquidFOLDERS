@@ -39,7 +39,7 @@ LFApplication::LFApplication(GUID& AppID)
 	// Clipboard
 	CF_FILEDESCRIPTOR = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_FILEDESCRIPTOR);
 	CF_FILECONTENTS = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_FILECONTENTS);
-	CF_HLIQUID = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_LIQUIDFILES);
+	CF_LIQUIDFILES = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_LIQUIDFILES);
 
 	// DLL-Hijacking verhindern
 	SetDllDirectory(_T(""));
@@ -366,7 +366,7 @@ void LFApplication::SendMail(const CString& Subject) const
 
 // Registry access
 
-void LFApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
+void LFApplication::GetBinary(LPCTSTR lpszEntry, LPVOID pData, UINT Size)
 {
 	UINT Bytes;
 	LPBYTE pBuffer = NULL;
@@ -374,7 +374,7 @@ void LFApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
 
 	if (pBuffer)
 	{
-		memcpy_s(pData, Size, pBuffer, min(Size, Bytes));
+		memcpy(pData, pBuffer, min(Size, Bytes));
 		free(pBuffer);
 	}
 }
@@ -770,7 +770,7 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 				UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
 				if (SUCCEEDED(pContextMenu->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 				{
-					CWaitCursor csr;
+					CWaitCursor WaitCursor;
 
 					CMINVOKECOMMANDINFO cmi;
 					cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
@@ -1080,7 +1080,7 @@ void LFApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 	if (Check)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 		CString VersionIni = GetLatestVersion(CurrentVersion);
 
 		if (!VersionIni.IsEmpty())

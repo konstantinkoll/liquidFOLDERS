@@ -27,10 +27,12 @@ STDMETHODIMP LFTransactionDataObject::QueryInterface(REFIID iid, void** ppvObjec
 	{
 		AddRef();
 		*ppvObject = this;
+
 		return S_OK;
 	}
 
 	*ppvObject = NULL;
+
 	return E_NOINTERFACE;
 }
 
@@ -51,6 +53,7 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFTransactionDataObject::Release()
 			GlobalFree(m_hLiquidFiles);
 
 		delete this;
+
 		return 0;
 	}
 
@@ -59,7 +62,7 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFTransactionDataObject::Release()
 
 STDMETHODIMP LFTransactionDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
 {
-	if ((!pFormatEtc) || (!pMedium))
+	if (!pFormatEtc || !pMedium)
 		return DV_E_FORMATETC;
 
 	if ((pFormatEtc->tymed & TYMED_HGLOBAL)==0)
@@ -76,7 +79,7 @@ STDMETHODIMP LFTransactionDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 		return S_OK;
 	}
 
-	if (pFormatEtc->cfFormat==LFGetApp()->CF_HLIQUID)
+	if (pFormatEtc->cfFormat==LFGetApp()->CF_LIQUIDFILES)
 	{
 		if (!DuplicateGlobalMemory(m_hLiquidFiles, pMedium->hGlobal))
 			return STG_E_MEDIUMFULL;
@@ -97,7 +100,7 @@ STDMETHODIMP LFTransactionDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STG
 
 STDMETHODIMP LFTransactionDataObject::QueryGetData(FORMATETC* pFormatEtc)
 {
-	return ((pFormatEtc->cfFormat==CF_HDROP) || (pFormatEtc->cfFormat==LFGetApp()->CF_HLIQUID)) &&
+	return ((pFormatEtc->cfFormat==CF_HDROP) || (pFormatEtc->cfFormat==LFGetApp()->CF_LIQUIDFILES)) &&
 		(pFormatEtc->tymed & TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
 }
 
@@ -110,7 +113,7 @@ STDMETHODIMP LFTransactionDataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormat
 
 STDMETHODIMP LFTransactionDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BOOL /*fRelease*/)
 {
-	if ((!pFormatEtc) || (!pMedium))
+	if (!pFormatEtc || !pMedium)
 		return E_INVALIDARG;
 
 	if ((pFormatEtc->tymed!=TYMED_HGLOBAL) || (pMedium->tymed!=TYMED_HGLOBAL))
@@ -125,15 +128,17 @@ STDMETHODIMP LFTransactionDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 			GlobalFree(m_hDropFiles);
 
 		m_hDropFiles = pMedium->hGlobal;
+
 		return S_OK;
 	}
 
-	if (pFormatEtc->cfFormat==LFGetApp()->CF_HLIQUID)
+	if (pFormatEtc->cfFormat==LFGetApp()->CF_LIQUIDFILES)
 	{
 		if (m_hLiquidFiles)
 			GlobalFree(m_hLiquidFiles);
 
 		m_hLiquidFiles = pMedium->hGlobal;
+
 		return S_OK;
 	}
 
@@ -152,7 +157,7 @@ STDMETHODIMP LFTransactionDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORM
 		fmt[0].lindex = -1;
 		fmt[0].tymed = TYMED_HGLOBAL;
 
-		fmt[1].cfFormat = LFGetApp()->CF_HLIQUID;
+		fmt[1].cfFormat = LFGetApp()->CF_LIQUIDFILES;
 		fmt[1].dwAspect = DVASPECT_CONTENT;
 		fmt[1].lindex = -1;
 		fmt[1].tymed = TYMED_HGLOBAL;

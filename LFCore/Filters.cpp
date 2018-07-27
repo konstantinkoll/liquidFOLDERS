@@ -5,7 +5,6 @@
 #include "LFVariantData.h"
 #include "TableAttributes.h"
 #include "Stores.h"
-#include <assert.h>
 
 
 extern LFMessageIDs LFMessages;
@@ -22,34 +21,14 @@ LFCORE_API LFFilter* LFAllocFilter(BYTE Mode)
 	return pNewFilter;
 }
 
-LFCORE_API LFFilter* LFCloneFilter(const LFFilter* pFilter)
-{
-	assert(pFilter);
-
-	LFFilter* pNewFilter = new LFFilter;
-	memcpy_s(pNewFilter, sizeof(LFFilter), pFilter, sizeof(LFFilter));
-	pNewFilter->Query.pConditionList = NULL;
-
-	LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
-	while (pFilterCondition)
-	{
-		pNewFilter->Query.pConditionList = LFAllocFilterCondition(pFilterCondition->Compare, pFilterCondition->VData, pNewFilter->Query.pConditionList);
-
-		pFilterCondition = pFilterCondition->pNext;
-	}
-
-	return pNewFilter;
-}
-
 LFCORE_API void LFFreeFilter(LFFilter* pFilter)
 {
 	if (pFilter)
 	{
-		LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
-		while (pFilterCondition)
+		while (pFilter->Query.pConditionList)
 		{
-			LFFilterCondition* pVictim = pFilterCondition;
-			pFilterCondition = pFilterCondition->pNext;
+			LFFilterCondition* pVictim = pFilter->Query.pConditionList;
+			pFilter->Query.pConditionList = pFilter->Query.pConditionList->pNext;
 
 			LFFreeFilterCondition(pVictim);
 		}
@@ -60,74 +39,81 @@ LFCORE_API void LFFreeFilter(LFFilter* pFilter)
 
 LFCORE_API LFFilter* LFLoadFilter(LFItemDescriptor* pItemDescriptor)
 {
+	assert(pItemDescriptor);
+
+	// Path
 	WCHAR Path[MAX_PATH];
 	if (LFGetFileLocation(pItemDescriptor, Path, MAX_PATH)!=LFOk)
 		return NULL;
 
-	LFFilter* pFilter = LoadFilter(Path, pItemDescriptor->StoreID);
-	if (pFilter)
-		wcscpy_s(pFilter->Name, 256, pItemDescriptor->CoreAttributes.FileName);
-
-	return pFilter;
-}
-
-LFCORE_API LFFilter* LFLoadFilterEx(LPCWSTR pPath)
-{
-	assert(pPath);
-
-	if (!GetMutexForStores())
+	// Open file
+	HANDLE hFile = CreateFile(Path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile==INVALID_HANDLE_VALUE)
 		return NULL;
 
-	WCHAR Path[MAX_PATH];
-	wcscpy_s(Path, MAX_PATH, pPath);
+	LFFilter* pFilter = NULL;
 
-	WCHAR* pChar = wcsrchr(Path, L'\\');
-	if (pChar)
+	// Read and verify header
+	LFPersistentFilterHeader Header;
+	DWORD Read;
+	if (!ReadFile(hFile, &Header, sizeof(Header), &Read, NULL))
+		goto Leave;
+
+	if (strcmp(Header.ID, "LFFilter")!=0)
+		goto Leave;
+
+	// Allocate filter and set up data
+	pFilter = LFAllocFilter();
+	pFilter->IsPersistent = TRUE;
+	wcscpy_s(pFilter->Name, 256, pItemDescriptor->CoreAttributes.FileName);
+
+	if (!Header.AllStores)
+		pFilter->Query.StoreID = pItemDescriptor->StoreID;
+
+	wcscpy_s(pFilter->Query.SearchTerm, 256, Header.SearchTerm);
+
+	// Filter conditions
+	for (UINT a=Header.cConditions; a>0; a--)
 	{
-		*(++pChar) = L'\0';
+		if (SetFilePointer(hFile, sizeof(Header)+(a-1)*Header.szCondition, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
+			goto Leave;
 
-		pChar = pChar-Path+(LPWSTR)pPath;
+		LFPersistentFilterCondition Condition;
+		ZeroMemory(&Condition, sizeof(Condition));
+
+		if (!ReadFile(hFile, &Condition, min(Header.szCondition, sizeof(Condition)), &Read, NULL))
+			goto Leave;
+
+		// Find actual attribute number from persistent ID
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if (AttrProperties[a].PersistentID==Condition.VData.Attr)
+			{
+				// Replace persistent ID with actual sequential number
+				Condition.VData.Attr = a;
+
+				LFFilterCondition* pFilterCondition = new LFFilterCondition(Condition);
+				pFilterCondition->pNext = pFilter->Query.pConditionList;
+
+				pFilter->Query.pConditionList = pFilterCondition;
+
+				break;
+			}
 	}
-	else
-	{
-		pChar = (LPWSTR)pPath;
-	}
 
-	LFStoreDescriptor* pStoreDescriptor = FindStore(Path);
-
-	LFFilter* pFilter = LoadFilter(pPath, pStoreDescriptor ? pStoreDescriptor->StoreID : "");
-	if (pFilter)
-	{
-		wcscpy_s(pFilter->Name, 256, pChar);
-
-		pChar = wcschr(pFilter->Name, L'.');
-		if (pChar)
-			*pChar = L'\0';
-	}
-
-	ReleaseMutexForStores();
+Leave:
+	CloseHandle(hFile);
 
 	return pFilter;
 }
 
-LFCORE_API UINT LFSaveFilter(LPCSTR pStoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment)
+LFCORE_API UINT LFSaveFilter(const STOREID& StoreID, LFFilter* pFilter, LPCWSTR pName, LPCWSTR pComment)
 {
-	assert(pStoreID);
 	assert(pFilter);
 	assert(pName);
 
 	UINT Result;
-
-	// Find store
-	CHAR Store[LFKeySize];
-	strcpy_s(Store, LFKeySize, pStoreID);
-
-	if (Store[0]=='\0')
-		if ((Result=LFGetDefaultStore(Store))!=LFOk)
-			return Result;
-
 	CStore* pStore;
-	if ((Result=OpenStore(Store, pStore))==LFOk)
+	if ((Result=OpenStore(StoreID, pStore))==LFOk)
 	{
 		// Prepare item descriptor
 		LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
@@ -166,84 +152,46 @@ LFCORE_API LFFilterCondition* LFAllocFilterCondition(BYTE Compare, const LFVaria
 // Filters
 //
 
-LFFilter* LoadFilter(LPCWSTR pFilename, LPCSTR StoreID)
+LFFilter* CloneFilter(const LFFilter* pFilter)
 {
-	assert(pFilename);
-	assert(StoreID);
-
-	HANDLE hFile = CreateFile(pFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile==INVALID_HANDLE_VALUE)
-		return NULL;
-
-	LFFilter* pFilter = NULL;
-
-	LFPersistentFilterHeader Header;
-
-	DWORD Read;
-	if (!ReadFile(hFile, &Header, sizeof(Header), &Read, NULL))
-		goto Leave;
-
-	if (strcmp(Header.ID, "LFFilter")!=0)
-		goto Leave;
-
-	pFilter = LFAllocFilter();
-	pFilter->IsPersistent = TRUE;
-
-	if (!Header.AllStores)
-		strcpy_s(pFilter->Query.StoreID, LFKeySize, StoreID);
-
-	wcscpy_s(pFilter->Query.SearchTerm, 256, Header.SearchTerm);
-
-	for (UINT a=Header.cConditions; a>0; a--)
-	{
-		if (SetFilePointer(hFile, sizeof(Header)+(a-1)*Header.szCondition, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
-			goto Leave;
-
-		LFPersistentFilterCondition Condition;
-		ZeroMemory(&Condition, sizeof(Condition));
-
-		if (!ReadFile(hFile, &Condition, min(Header.szCondition, sizeof(Condition)), &Read, NULL))
-			goto Leave;
-
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (AttrProperties[a].PersistentID==Condition.VData.Attr)
-			{
-				// Replace persistent ID with actual sequential number
-				Condition.VData.Attr = a;
-
-				LFFilterCondition* pFilterCondition = new LFFilterCondition;
-				*pFilterCondition = Condition;
-				pFilterCondition->pNext = pFilter->Query.pConditionList;
-
-				pFilter->Query.pConditionList = pFilterCondition;
-
-				break;
-			}
-	}
-
-Leave:
-	CloseHandle(hFile);
-
-	return pFilter;
-}
-
-BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
-{
-	assert(pFilename);
 	assert(pFilter);
 
+	// Filter
+	LFFilter* pNewFilter = new LFFilter(*pFilter);
+	pNewFilter->Query.pConditionList = NULL;
+
+	// Filter conditions
+	LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
+	while (pFilterCondition)
+	{
+		pNewFilter->Query.pConditionList = LFAllocFilterCondition(pFilterCondition->Compare, pFilterCondition->VData, pNewFilter->Query.pConditionList);
+
+		pFilterCondition = pFilterCondition->pNext;
+	}
+
+	return pNewFilter;
+}
+
+BOOL StoreFilter(LPCWSTR pPath, LFFilter* pFilter)
+{
+	assert(pPath);
+	assert(pFilter);
+
+	// Filter mode
 	if (pFilter->Query.Mode!=LFFilterModeQuery)
 		return FALSE;
 
+	// Create file header
 	LFPersistentFilterHeader Header;
 	ZeroMemory(&Header, sizeof(Header));
 
 	strcpy_s(Header.ID, 9, "LFFilter");
 	Header.Version = 1;
 	Header.szCondition = sizeof(LFPersistentFilterCondition);
-	Header.AllStores = (pFilter->Query.StoreID[0]=='\0');
+	Header.AllStores = LFIsDefaultStoreID(pFilter->Query.StoreID);
 	wcscpy_s(Header.SearchTerm, 256, pFilter->Query.SearchTerm);
 
+	// Condition count
 	LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
 	while (pFilterCondition)
 	{
@@ -252,9 +200,10 @@ BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
 		pFilterCondition = pFilterCondition->pNext;
 	}
 
+	// Write to file
 	BOOL Result = FALSE;
 
-	HANDLE hFile = CreateFile(pFilename, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+	HANDLE hFile = CreateFile(pPath, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hFile!=INVALID_HANDLE_VALUE)
 	{
 		DWORD Written;
@@ -264,12 +213,11 @@ BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter)
 			while (pFilterCondition)
 			{
 				// Replace sequential number with persistent ID
-				LFPersistentFilterCondition Condition;
-				Condition = *pFilterCondition;
+				LFPersistentFilterCondition Condition(*pFilterCondition);
 				Condition.VData.Attr = AttrProperties[Condition.VData.Attr].PersistentID;
 				Condition.pNext = NULL;
 
-				if (!WriteFile(hFile, &Condition, sizeof(LFFilterCondition), &Written, NULL))
+				if (!WriteFile(hFile, &Condition, sizeof(LFPersistentFilterCondition), &Written, NULL))
 					break;
 
 				pFilterCondition = pFilterCondition->pNext;

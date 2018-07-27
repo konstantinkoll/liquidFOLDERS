@@ -9,13 +9,13 @@
 // LFItemTemplateDlg
 //
 
-LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStoreID, CWnd* pParentWnd, BOOL AllowChooseStore, LFFilter* pFilter)
+LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItemDescriptor, const STOREID& StoreID, BOOL AllowChooseStore, CWnd* pParentWnd)
 	: LFDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
-	ASSERT(pStoreID);
+	ASSERT(pItemDescriptor);
 
-	m_pItem = pItem;
-	strcpy_s(m_StoreID, LFKeySize, pStoreID);
+	p_ItemDescriptor = pItemDescriptor;
+	m_StoreID = StoreID;
 	m_AllowChooseStore = AllowChooseStore;
 	m_SortAlphabetic = FALSE;
 
@@ -44,33 +44,13 @@ LFItemTemplateDlg::LFItemTemplateDlg(LFItemDescriptor* pItem, const LPCSTR pStor
 					{
 						if (pSz==sizeof(m_AttributeValues[a].Value))
 						{
-							memcpy_s(m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value), pData, pSz);
+							memcpy(m_AttributeValues[a].Value, pData, pSz);
 							m_AttributeValues[a].IsNull = FALSE;
 						}
 
 						free(pData);
 					}
 				}
-	}
-
-	if (pFilter)
-	{
-		LFFilterCondition* pFilterCondition = pFilter->Query.pConditionList;
-		while (pFilterCondition)
-		{
-			if (pFilterCondition->Compare==LFFilterCompareSubfolder)
-			{
-				const UINT Attr = pFilterCondition->VData.Attr;
-
-				if (LFGetApp()->IsAttributeEditable(Attr) && (Attr!=LFAttrFileName))
-				{
-					ASSERT(m_AttributeValues[Attr].Type==pFilterCondition->VData.Type);
-					m_AttributeValues[Attr] = pFilterCondition->VData;
-				}
-			}
-
-			pFilterCondition = pFilterCondition->pNext;
-		}
 	}
 
 	if (pParentWnd)
@@ -81,11 +61,11 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
 	{
-		m_pItem->Type = LFTypeFile;
+		p_ItemDescriptor->Type = LFTypeFile;
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (!m_AttributeValues[a].IsNull)
-				LFSetAttributeVariantData(m_pItem, m_AttributeValues[a]);
+				LFSetAttributeVariantData(p_ItemDescriptor, m_AttributeValues[a]);
 
 		CSettingsStoreSP regSP;
 		CSettingsStore& reg = regSP.Create(FALSE, FALSE);
@@ -190,8 +170,7 @@ void LFItemTemplateDlg::OnChooseStore()
 	LFChooseStoreDlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
-		strcpy_s(m_StoreID, LFKeySize, dlg.m_StoreID);
-		m_wndInspectorGrid.SetStore(m_StoreID);
+		m_wndInspectorGrid.SetStore(m_StoreID=dlg.m_StoreID);
 
 		OnStoresChanged(NULL, NULL);
 	}
@@ -228,32 +207,21 @@ void LFItemTemplateDlg::OnUpdateCommands(CCmdUI* pCmdUI)
 
 LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	LFStoreDescriptor Store;
-	if (LFGetStoreSettings(m_StoreID, Store)==LFOk)
+	UINT Result;
+	LFStoreDescriptor StoreDescriptor;
+	if ((Result=LFGetStoreSettings(m_StoreID, StoreDescriptor, TRUE))==LFOk)
 	{
+		WCHAR tmpBuffer[256];
+		LFSizeToString(StoreDescriptor.FreeBytesAvailable.QuadPart, tmpBuffer, 256);
+
 		CString tmpStr;
-		if (Store.Comments[0]!=L'\0')
-		{
-			tmpStr = Store.Comments;
-		}
-		else
-		{
-			WCHAR Buffer[256];
-			LFTimeToString(Store.CreationTime, Buffer, 256);
+		tmpStr.Format(IDS_FREEBYTESAVAILABLE, tmpBuffer);
 
-			LFTooltip::AppendAttribute(tmpStr, LFGetApp()->GetAttributeName(LFAttrCreationTime, LFContextStores), Buffer);
-		}
-
-		m_wndHeaderArea.SetHeader(Store.StoreName, tmpStr);
-
-		GetDlgItem(IDOK)->EnableWindow(TRUE);
-		GetDlgItem(IDC_SKIP)->EnableWindow(TRUE);
+		m_wndHeaderArea.SetHeader(StoreDescriptor.StoreName, tmpStr);
 	}
-	else
-	{
-		GetDlgItem(IDOK)->EnableWindow(FALSE);
-		GetDlgItem(IDC_SKIP)->EnableWindow(FALSE);
-	}
+
+	GetDlgItem(IDOK)->EnableWindow(Result==LFOk);
+	GetDlgItem(IDC_SKIP)->EnableWindow(Result==LFOk);
 
 	return NULL;
 }

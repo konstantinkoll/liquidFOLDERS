@@ -36,7 +36,7 @@ class LFChooseStoreDlg : public LFDialog
 public:
 	LFChooseStoreDlg(CWnd* pParentWnd=NULL, BOOL Writeable=TRUE);
 
-	CHAR m_StoreID[LFKeySize];
+	ABSOLUTESTOREID m_StoreID;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

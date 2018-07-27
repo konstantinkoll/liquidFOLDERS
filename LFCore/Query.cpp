@@ -7,7 +7,6 @@
 #include "Stores.h"
 #include "TableApplications.h"
 #include "TableAttributes.h"
-#include <assert.h>
 #include <shlwapi.h>
 
 
@@ -548,10 +547,10 @@ BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter, BYTE& Qu
 }
 
 
-// Query helpers
+// Query helper
 //
 
-void QueryStore(LPCSTR StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult)
+void QueryStore(const ABSOLUTESTOREID& StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult)
 {
 	assert(pSearchResult);
 
@@ -566,40 +565,6 @@ void QueryStore(LPCSTR StoreID, LFFilter* pFilter, LFSearchResult* pSearchResult
 	else
 	{
 		pSearchResult->m_LastError = Result;
-	}
-}
-
-__forceinline void QueryTree(LFFilter* pFilter, LFSearchResult* pSearchResult)
-{
-	QueryStore(pFilter->Query.StoreID, pFilter, pSearchResult);
-}
-
-__forceinline void QuerySearch(LFFilter* pFilter, LFSearchResult* pSearchResult)
-{
-	if (pFilter->Query.StoreID[0])
-	{
-		// Single store
-		QueryStore(pFilter->Query.StoreID, pFilter, pSearchResult);
-	}
-	else
-	{
-		CHAR* pStoreIDs;
-		UINT Count;
-		if ((pSearchResult->m_LastError=LFGetAllStores(pStoreIDs, Count))!=LFOk)
-			return;
-
-		if (Count)
-		{
-			LPCSTR pChar = pStoreIDs;
-			for (UINT a=0; a<Count; a++)
-			{
-				QueryStore(pChar, pFilter, pSearchResult);
-
-				pChar += LFKeySize;
-			}
-
-			free(pStoreIDs);
-		}
 	}
 }
 
@@ -628,16 +593,31 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 			break;
 
 		case LFFilterModeDirectoryTree:
-			if ((pFilter->Query.StoreID[0]=='\0') && (pFilter->Query.Mode==LFFilterModeDirectoryTree))
-				if ((pSearchResult->m_LastError=LFGetDefaultStore(pFilter->Query.StoreID))!=LFOk)
-					goto Finish;
+			// Resolve default store
+			if ((pSearchResult->m_LastError=LFResolveStoreID(pFilter->Query.StoreID))!=LFOk)
+				break;
 
-			QueryTree(pFilter, pSearchResult);
-
-			break;
+			// Run query
 
 		case LFFilterModeQuery:
-			QuerySearch(pFilter, pSearchResult);
+			if (!LFIsDefaultStoreID(pFilter->Query.StoreID))
+			{
+				// Single store – we know the store ID is absolute!
+				QueryStore(MAKEABSOLUTESTOREID(pFilter->Query.StoreID), pFilter, pSearchResult);
+			}
+			else
+			{
+				LPCABSOLUTESTOREID lpcStoreIDs;
+				UINT Count;
+				if ((pSearchResult->m_LastError=LFGetAllStores(lpcStoreIDs, Count))==LFOk)
+				{
+					// Iterate stores
+					for (UINT a=0; a<Count; a++)
+						QueryStore(lpcStoreIDs[a], pFilter, pSearchResult);
+
+					free(lpcStoreIDs);
+				}
+			}
 
 			break;
 
@@ -646,7 +626,6 @@ LFCORE_API LFSearchResult* LFQuery(LFFilter* pFilter)
 		}
 	}
 
-Finish:
 	pSearchResult->FinishQuery(pFilter);
 	pSearchResult->m_QueryTime = GetTickCount()-Start;
 

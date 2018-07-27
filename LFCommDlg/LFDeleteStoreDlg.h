@@ -13,7 +13,7 @@
 class LFDeleteStoreDlg : public LFDialog
 {
 public:
-	LFDeleteStoreDlg(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
+	LFDeleteStoreDlg(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd=NULL);
 
 protected:
 	virtual BOOL InitDialog();
@@ -23,6 +23,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CHAR m_StoreID[LFKeySize];
-	LFStoreDescriptor m_Store;
+	ABSOLUTESTOREID m_StoreID;
+	LFStoreDescriptor m_StoreDescriptor;
 };

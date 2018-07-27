@@ -14,7 +14,7 @@
 class LFEditConditionDlg : public LFAttributeListDlg
 {
 public:
-	LFEditConditionDlg(CWnd* pParentWnd=NULL, const LPCSTR pStoreID=NULL, LFFilterCondition* pCondition=NULL);
+	LFEditConditionDlg(const STOREID& StoreID, CWnd* pParentWnd=NULL, LFFilterCondition* pCondition=NULL);
 
 	LFFilterCondition m_Condition;
 
@@ -28,7 +28,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CHAR m_StoreID[LFKeySize];
+	STOREID m_StoreID;
 	CExplorerList m_wndAttribute;
 	CComboBox m_wndCompare;
 	CPropertyEdit m_wndEdit;

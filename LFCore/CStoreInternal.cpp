@@ -5,7 +5,6 @@
 #include "LFCore.h"
 #include "LFVariantData.h"
 #include "Stores.h"
-#include <assert.h>
 
 
 extern CHAR KeyChars[38];

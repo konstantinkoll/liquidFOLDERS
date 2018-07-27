@@ -108,10 +108,8 @@ void CGenreList::AddMusicGenreCategory(UINT IconID)
 	}
 }
 
-void CGenreList::SetGenres(LPCSTR StoreID)
+void CGenreList::SetGenres(const STOREID& StoreID)
 {
-	ASSERT(StoreID);
-
 	// Gather statistics
 	ZeroMemory(m_Description, sizeof(m_Description));
 	ZeroMemory(m_FileCount, sizeof(m_FileCount));
@@ -119,11 +117,10 @@ void CGenreList::SetGenres(LPCSTR StoreID)
 	// Filter
 	LFFilter* pFilter = LFAllocFilter();
 	pFilter->Query.Context = LFContextMusic;
-	pFilter->Query.Mode = StoreID[0] ? LFFilterModeDirectoryTree : LFFilterModeQuery;
-	strcpy_s(pFilter->Query.StoreID, LFKeySize, StoreID);
+	pFilter->Query.StoreID = StoreID;
 
 	// Query
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	LFSearchResult* pRawFiles = LFQuery(pFilter);
 	LFSearchResult* pCookedFiles = LFGroupSearchResult(pRawFiles, LFAttrGenre, FALSE, TRUE, pFilter);
@@ -251,13 +248,11 @@ INT CGenreList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 // LFEditGenreDlg
 //
 
-LFEditGenreDlg::LFEditGenreDlg(UINT Genre, LPCSTR StoreID, CWnd* pParentWnd)
+LFEditGenreDlg::LFEditGenreDlg(UINT Genre, const STOREID& StoreID, CWnd* pParentWnd)
 	: LFDialog(IDD_EDITGENRE, pParentWnd)
 {
-	ASSERT(StoreID);
-
 	m_Genre = Genre;
-	strcpy_s(m_StoreID, LFKeySize, StoreID);
+	m_StoreID = StoreID;
 
 	m_SelectGenre = TRUE;
 }

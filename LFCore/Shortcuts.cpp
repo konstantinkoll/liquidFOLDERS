@@ -3,15 +3,13 @@
 #include "FileSystem.h"
 #include "LFCore.h"
 #include "Shortcuts.h"
-#include <assert.h>
 
 
 extern HMODULE LFCoreModuleHandle;
 
 
-UINT GetShortcutForStore(IShellLink*& pShellLink, LPCSTR StoreID, LPCWSTR Comments, UINT IconID)
+UINT GetShortcutForStore(IShellLink*& pShellLink, const ABSOLUTESTOREID& StoreID, LPCWSTR Comments, UINT IconID)
 {
-	assert(StoreID);
 	assert(IconID>0);
 
 	WCHAR Path[MAX_PATH];
@@ -47,8 +45,8 @@ __forceinline UINT GetShortcutForFile(IShellLink*& pShellLink, LFItemDescriptor*
 {
 	assert(pItemDescriptor);
 
-	WCHAR Path[MAX_PATH];
 	UINT Result;
+	WCHAR Path[MAX_PATH];
 	if ((Result=LFGetFileLocation(pItemDescriptor, Path, MAX_PATH))!=LFOk)
 		return Result;
 

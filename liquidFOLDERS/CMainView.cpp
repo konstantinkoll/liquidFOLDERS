@@ -31,7 +31,7 @@ CMainView::CMainView()
 	p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
-	m_Resizing = m_StoreIDValid = m_FilesSelected = m_Alerted = FALSE;
+	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
 }
 
 BOOL CMainView::Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard)
@@ -106,7 +106,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* pPersistentData)
 		ScreenToClient(rect);
 	}
 
-	m_pWndFileView->Create(this, FileViewID, rect, &m_LargeIcons, p_Filter, p_RawFiles, p_CookedFiles, pPersistentData);
+	m_pWndFileView->Create(this, FileViewID, rect, &m_LargeIcons, &m_wndInspectorPane, p_Filter, p_RawFiles, p_CookedFiles, pPersistentData);
 
 	if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
 		m_pWndFileView->SetFocus();
@@ -154,14 +154,14 @@ void CMainView::SetHeader()
 		LPCWSTR pHint = p_CookedFiles->m_Hint;
 
 		// If we show all files, use store comments (if we have a valid store ID)
-		LFStoreDescriptor Store;
+		LFStoreDescriptor StoreDescriptor;
 		if ((m_Context==LFContextAllFiles) && m_StoreIDValid)
-			if (LFGetStoreSettings(m_StoreID, Store)==LFOk)
+			if (LFGetStoreSettings(m_StoreID, StoreDescriptor)==LFOk)
 			{
-				wcscpy_s(p_RawFiles->m_Name, 256, Store.StoreName);
-				wcscpy_s(p_CookedFiles->m_Name, 256, Store.StoreName);
+				wcscpy_s(p_RawFiles->m_Name, 256, StoreDescriptor.StoreName);
+				wcscpy_s(p_CookedFiles->m_Name, 256, StoreDescriptor.StoreName);
 
-				pHint = Store.Comments;
+				pHint = StoreDescriptor.Comments;
 			}
 
 		// Merge hint and file count/size
@@ -252,8 +252,8 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	}
 	else
 	{
-		strcpy_s(m_StoreID, LFKeySize, pFilter->Query.StoreID);
-		m_StoreIDValid = (m_StoreID[0]!='\0');
+		m_StoreID = pFilter->Query.StoreID;
+		m_StoreIDValid = !LFIsDefaultStoreID(m_StoreID);
 	}
 
 	if (!pCookedFiles)
@@ -274,7 +274,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 			m_pWndFileView->UpdateSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 		}
 
-		m_DropTarget.SetFilter(pFilter);
+		m_DropTarget.SetStore(pFilter);
 		RegisterDragDrop(m_wndHeaderArea.GetSafeHwnd(), &m_DropTarget);
 		RegisterDragDrop(m_pWndFileView->GetSafeHwnd(), &m_DropTarget);
 	}
@@ -377,12 +377,7 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolveLocatio
 	LFTransactionList* pTransactionList = LFAllocTransactionList(p_RawFiles, All);
 
 	if (ResolveLocations)
-	{
-		LFDoTransaction(pTransactionList, LFTransactionTypeResolveLocations, NULL, IncludePIDL);
-
-		// Show notification
-		ShowNotification(pTransactionList->m_LastError);
-	}
+		ShowNotification(LFDoTransaction(pTransactionList, LFTransactionResolveLocations, NULL, IncludePIDL));
 
 	return pTransactionList;
 }
@@ -415,17 +410,17 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 
 	if (Trash)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 
-		LFDoTransaction(pTransactionList, LFTransactionTypePutInTrash);
+		LFDoTransaction(pTransactionList, LFTransactionPutInTrash);
 	}
 	else
 	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		wp.pTransactionList = pTransactionList;
+		WorkerDeleteParameters Parameters;
+		ZeroMemory(&Parameters, sizeof(Parameters));
+		Parameters.pTransactionList = pTransactionList;
 
-		LFDoWithProgress(WorkerDelete, &wp.Hdr, this);
+		LFDoWithProgress(WorkerDelete, &Parameters.Hdr, this);
 	}
 
 	RemoveTransactedItems(pTransactionList);
@@ -441,10 +436,10 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 
 void CMainView::RecoverFiles(BOOL All)
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	LFTransactionList* pTransactionList = BuildTransactionList(All);
-	LFDoTransaction(pTransactionList, LFTransactionTypeRecover);
+	LFDoTransaction(pTransactionList, LFTransactionRecover);
 	RemoveTransactedItems(pTransactionList);
 
 	// Show notification
@@ -455,10 +450,10 @@ void CMainView::RecoverFiles(BOOL All)
 
 BOOL CMainView::UpdateItems(const LFVariantData* pValue1, const LFVariantData* pValue2, const LFVariantData* pValue3)
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	LFTransactionList* pTransactionList = BuildTransactionList();
-	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, pValue1, pValue2, pValue3);
+	LFDoTransaction(pTransactionList, LFTransactionUpdate, NULL, NULL, pValue1, pValue2, pValue3);
 
 	if (m_pWndFileView && pTransactionList->m_Modified)
 	{
@@ -482,19 +477,13 @@ BOOL CMainView::UpdateItems(const LFVariantData* pValue1, const LFVariantData* p
 void CMainView::SelectionChanged()
 {
 	m_wndInspectorPane.AggregateInitialize(m_Context);
-	m_FilesSelected = FALSE;
 
 	if (p_CookedFiles)
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 			if (CFileView::IsItemSelected(pItemDescriptor))
-			{
 				m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
-
-				m_FilesSelected |= ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ||
-					(((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1));
-			}
 		}
 
 	m_wndInspectorPane.AggregateClose();
@@ -512,6 +501,7 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_WM_RBUTTONUP()
 	ON_WM_MEASUREITEM()
 	ON_WM_DRAWITEM()
+	ON_WM_INITMENUPOPUP()
 
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 	ON_NOTIFY(IVN_SELECTIONCHANGED, FileViewID, OnSelectionChanged)
@@ -621,17 +611,17 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 24);
 	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 27);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 28);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
 
-	#define INSPECTORICONVISIBLE     29
-	#define INSPECTORICONHIDDEN      30
+	#define INSPECTORICONVISIBLE     28
+	#define INSPECTORICONHIDDEN      29
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? INSPECTORICONVISIBLE : INSPECTORICONHIDDEN, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 33, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -707,6 +697,42 @@ void CMainView::OnDrawItem(INT nIDCtl, LPDRAWITEMSTRUCT lpdis)
 		m_pWndFileView->SendMessage(WM_DRAWITEM, (WPARAM)nIDCtl, (LPARAM)lpdis);
 }
 
+void CMainView::OnInitMenuPopup(CMenu* pMenuPopup, UINT nIndex, BOOL bSysMenu)
+{
+	ASSERT(pMenuPopup);
+
+	CFrontstageWnd::OnInitMenuPopup(pMenuPopup, nIndex, bSysMenu);
+
+	// Replace %u with actual file count
+	CString strFileCount;
+	strFileCount.Format(_T("%u"), m_wndInspectorPane.GetFileCount());
+
+	for (UINT uItem=0; uItem<pMenuPopup->GetMenuItemCount(); uItem++)
+	{
+		WCHAR strMask[256];
+		WCHAR strMenuString[256];
+
+		// Get menu item info
+		MENUITEMINFO MenuItemInfo;
+		MenuItemInfo.cbSize = sizeof(MenuItemInfo);
+		MenuItemInfo.fMask = MIIM_TYPE | MIIM_DATA;
+		MenuItemInfo.dwTypeData = strMask;
+		MenuItemInfo.cch = sizeof(strMask)/sizeof(WCHAR);
+
+		pMenuPopup->GetMenuItemInfo(uItem, &MenuItemInfo, TRUE);
+
+		// When a string contains %u: replace it
+		if ((MenuItemInfo.fType==MFT_STRING) && wcsstr(strMask, L"%u"))
+		{
+			swprintf_s(strMenuString, 256, strMask, m_wndInspectorPane.GetFileCount());
+
+			// Set menu item info
+			MenuItemInfo.dwTypeData = strMenuString;
+			pMenuPopup->SetMenuItemInfo(uItem, &MenuItemInfo, TRUE);
+		}
+	}
+}
+
 
 // Messages and notifications
 
@@ -754,7 +780,7 @@ void CMainView::OnBeginDragAndDrop(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	if (pDataObject)
 	{
 		// Disable local drop target
-		m_DropTarget.SetDragging(TRUE);
+		m_DropTarget.SetDragSource(TRUE);
 
 		LFDropSource* pDropSource = new LFDropSource();
 
@@ -765,7 +791,7 @@ void CMainView::OnBeginDragAndDrop(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		pDataObject->Release();
 
 		// Enable local drop target
-		m_DropTarget.SetDragging(FALSE);
+		m_DropTarget.SetDragSource(FALSE);
 
 		*pResult = 0;
 	}
@@ -786,7 +812,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	wcsncpy_s(VData.UnicodeString, 256, (LPCWSTR)lParam, _TRUNCATE);
 	VData.IsNull = FALSE;
 
-	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &VData);
+	LFDoTransaction(pTransactionList, LFTransactionUpdate, NULL, NULL, &VData);
 
 	if (pTransactionList->m_Modified)
 	{
@@ -913,21 +939,21 @@ void CMainView::OnStoresAdd()
 	// Allowed?
 	if (LFNagScreen(this))
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 		LFAddStoreDlg(this).DoModal();
 	}
 }
 
 void CMainView::OnStoresSynchronize()
 {
-	LFRunSynchronizeAll(this);
+	LFRunSynchronizeStores(DEFAULTSTOREID(), this);
 }
 
 void CMainView::OnStoresRunMaintenance()
 {
 	DismissNotification();
 
-	LFRunMaintenance(this);
+	LFRunStoreMaintenance(this);
 }
 
 void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
@@ -1011,7 +1037,7 @@ void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnFiltersCreateNew()
 {
-	if (LFEditFilterDlg(this, m_StoreID).DoModal()==IDOK)
+	if (LFEditFilterDlg(m_StoreID, this).DoModal()==IDOK)
 		GetTopLevelParent()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 }
 
@@ -1047,7 +1073,10 @@ void CMainView::OnItemOpen()
 		if (pItemDescriptor->pNextFilter)
 		{
 			// Navigate to item filter
-			GetTopLevelParent()->SendMessage(WM_NAVIGATETO, (WPARAM)LFCloneFilter(pItemDescriptor->pNextFilter), (LPARAM)pItemDescriptor);
+			LFFilter* pFilter = pItemDescriptor->pNextFilter;
+			pItemDescriptor->pNextFilter = NULL;
+
+			GetTopLevelParent()->SendMessage(WM_NAVIGATETO, (WPARAM)pFilter, (LPARAM)pItemDescriptor);
 		}
 		else
 		{
@@ -1098,8 +1127,8 @@ void CMainView::OnItemSendTo(UINT nID)
 	if (pSendToItemData->IsStore)
 	{
 		// Destination is a store
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
+		WorkerSendToParameters Parameters;
+		ZeroMemory(&Parameters, sizeof(Parameters));
 
 		if (strcmp(pSendToItemData->StoreID, CHOOSESTOREID)==0)
 		{
@@ -1107,22 +1136,22 @@ void CMainView::OnItemSendTo(UINT nID)
 			if (dlg.DoModal()!=IDOK)
 				return;
 
-			strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
+			Parameters.StoreID = dlg.m_StoreID;
 		}
 		else
 		{
-			strcpy_s(wp.StoreID, LFKeySize, pSendToItemData->StoreID);
+			Parameters.StoreID = MAKEABSOLUTESTOREID(pSendToItemData->StoreID);
 		}
 
 		// Start worker
-		wp.pTransactionList = BuildTransactionList();
+		Parameters.pTransactionList = BuildTransactionList();
 
-		LFDoWithProgress(WorkerSendTo, &wp.Hdr, this);
+		LFDoWithProgress(WorkerSendTo, &Parameters.Hdr, this);
 
 		// Show notification
-		ShowNotification(wp.pTransactionList->m_LastError);
+		ShowNotification(Parameters.pTransactionList->m_LastError);
 
-		LFFreeTransactionList(wp.pTransactionList);
+		LFFreeTransactionList(Parameters.pTransactionList);
 	}
 	else
 	{
@@ -1143,7 +1172,7 @@ void CMainView::OnItemSendTo(UINT nID)
 						LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
 						if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
 						{
-							CWaitCursor csr;
+							CWaitCursor WaitCursor;
 
 							LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
 
@@ -1245,7 +1274,7 @@ void CMainView::OnStoreSynchronize()
 {
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-		LFRunSynchronize((*p_CookedFiles)[Index]->StoreID, this);
+		LFRunSynchronizeStores((*p_CookedFiles)[Index]->StoreID, this);
 }
 
 void CMainView::OnStoreMakeDefault()
@@ -1375,7 +1404,7 @@ void CMainView::OnFileEdit()
 		{
 			LFFilter* pFilter = LFLoadFilter((*p_CookedFiles)[Index]);
 
-			if (LFEditFilterDlg(this, pFilter ? pFilter->Query.StoreID[0]!='\0' ? pFilter->Query.StoreID : m_StoreID : m_StoreID, pFilter).DoModal()==IDOK)
+			if (LFEditFilterDlg(pFilter && !LFIsDefaultStoreID(pFilter->Query.StoreID) ? pFilter->Query.StoreID : m_StoreID, this, pFilter).DoModal()==IDOK)
 				GetTopLevelParent()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 
 			LFFreeFilter(pFilter);
@@ -1430,10 +1459,10 @@ void CMainView::OnFileMakeTask()
 
 	if (LFMakeTaskDlg(&Priority, &DueTime, this).DoModal()==IDOK)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 
 		LFTransactionList* pTransactionList = BuildTransactionList();
-		LFDoTransaction(pTransactionList, LFTransactionTypeUpdateTask, NULL, NULL, &Priority, &DueTime);
+		LFDoTransaction(pTransactionList, LFTransactionUpdateTask, NULL, NULL, &Priority, &DueTime);
 		UpdateSearchResult();
 
 		// Show notification
@@ -1445,10 +1474,10 @@ void CMainView::OnFileMakeTask()
 
 void CMainView::OnFileArchive()
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	LFTransactionList* pTransactionList = BuildTransactionList();
-	LFDoTransaction(pTransactionList, LFTransactionTypeArchive);
+	LFDoTransaction(pTransactionList, LFTransactionArchive);
 	RemoveTransactedItems(pTransactionList);
 
 	// Show notification
@@ -1462,7 +1491,7 @@ void CMainView::OnFileCopy()
 	LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
 	if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 		LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
 
 		OleSetClipboard(pDataObject);
@@ -1548,24 +1577,24 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_FILE_REMEMBER:
-		bEnable = m_FilesSelected && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
+		bEnable = m_wndInspectorPane.GetFileCount() && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
 		break;
 
 	case IDM_FILE_REMOVEFROMCLIPBOARD:
-		bEnable = m_FilesSelected && (m_Context==LFContextClipboard);
+		bEnable = m_wndInspectorPane.GetFileCount() && (m_Context==LFContextClipboard);
 		break;
 
 	case IDM_FILE_MAKETASK:
-		bEnable = m_FilesSelected && (m_Context!=LFContextTasks) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
+		bEnable = m_wndInspectorPane.GetFileCount() && (m_Context!=LFContextTasks) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
 		break;
 
 	case IDM_FILE_ARCHIVE:
-		bEnable = m_FilesSelected && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
+		bEnable = m_wndInspectorPane.GetFileCount() && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
 		break;
 
 	case IDM_FILE_COPY:
 	case IDM_FILE_DELETE:
-		bEnable = m_FilesSelected;
+		bEnable = m_wndInspectorPane.GetFileCount();
 		break;
 
 	case IDM_FILE_SHORTCUT:
@@ -1584,15 +1613,15 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_FILE_PROPERTIES:
-		bEnable = m_FilesSelected && !m_ShowInspectorPane;
+		bEnable = m_wndInspectorPane.GetFileCount() && !m_ShowInspectorPane;
 		break;
 
 	case IDM_FILE_TASKDONE:
-		bEnable = m_FilesSelected && (m_Context==LFContextTasks);
+		bEnable = m_wndInspectorPane.GetFileCount() && (m_Context==LFContextTasks);
 		break;
 
 	case IDM_FILE_RECOVER:
-		bEnable = m_FilesSelected && ((m_Context==LFContextArchive) || (m_Context==LFContextTrash));
+		bEnable = m_wndInspectorPane.GetFileCount() && ((m_Context==LFContextArchive) || (m_Context==LFContextTrash));
 		break;
 	}
 
@@ -1602,10 +1631,10 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnFileMoveToContext(UINT CmdID)
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	LFTransactionList* pTransactionList = BuildTransactionList();
-	LFDoTransaction(pTransactionList, LFTransactionTypeUpdateUserContext, NULL, CmdID-IDM_FILE_MOVETOCONTEXT);
+	LFDoTransaction(pTransactionList, LFTransactionUpdateUserContext, NULL, CmdID-IDM_FILE_MOVETOCONTEXT);
 	RemoveTransactedItems(pTransactionList);
 
 	// Show notification

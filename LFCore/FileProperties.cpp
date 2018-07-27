@@ -8,7 +8,6 @@
 #include "TableAttributes.h"
 #include "TableContexts.h"
 #include "TableMusicGenres.h"
-#include <assert.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 

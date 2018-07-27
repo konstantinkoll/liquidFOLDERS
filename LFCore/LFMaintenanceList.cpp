@@ -2,15 +2,6 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFMaintenanceList.h"
-#include <assert.h>
-
-
-LFCORE_API void LFFreeMaintenanceList(LFMaintenanceList* pMaintenanceList)
-{
-	assert(pMaintenanceList);
-
-	delete pMaintenanceList;
-}
 
 
 // LFMaintenanceList
@@ -22,19 +13,17 @@ LFMaintenanceList::LFMaintenanceList()
 	m_LastError = LFOk;
 }
 
-BOOL LFMaintenanceList::AddItem(LPCWSTR Name, LPCWSTR Comments, LPCSTR StoreID, UINT Result, UINT IconID)
+BOOL LFMaintenanceList::AddItem(LFStoreDescriptor* pStoreDescriptor, UINT Result)
 {
-	assert(Name);
-	assert(Comments);
-	assert(StoreID);
+	assert(pStoreDescriptor);
 
 	LFMaintenanceListItem Item;
 
-	wcscpy_s(Item.Name, 256, Name);
-	wcscpy_s(Item.Comments, 256, Comments);
-	strcpy_s(Item.StoreID, LFKeySize, StoreID);
+	wcscpy_s(Item.Name, 256, pStoreDescriptor->StoreName);
+	wcscpy_s(Item.Comments, 256, pStoreDescriptor->Comments);
+	Item.StoreID = pStoreDescriptor->StoreID;
 	Item.Result = Result;
-	Item.IconID = IconID;
+	Item.IconID = LFGetStoreIcon(pStoreDescriptor);
 
 	return LFDynArray::AddItem(Item);
 }

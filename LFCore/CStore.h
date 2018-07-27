@@ -25,13 +25,13 @@ public:
 	virtual UINT PrepareDelete();
 	virtual UINT CommitDelete();
 
-	UINT MaintenanceAndStatistics(BOOL Scheduled=FALSE, LFProgress* pProgress=NULL);
+	UINT MaintenanceAndStatistics(LFProgress* pProgress=NULL, BOOL Scheduled=FALSE);
 	void ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress=NULL);
 	UINT UpdateStatistics();
 	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount) const;
 
 	// Index operations
-	virtual UINT Synchronize(BOOL OnInitialize=FALSE, LFProgress* pProgress=NULL);
+	virtual UINT Synchronize(LFProgress* pProgress=NULL, BOOL OnInitialize=FALSE);
 	virtual UINT ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemTemplate, BOOL Move=FALSE, BOOL RetrieveMetadata=TRUE);
 
 	BOOL UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew);
@@ -57,7 +57,7 @@ protected:
 	// Aux functions
 	UINT PrepareImport(LPCWSTR pSourcePath, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount);
 	void GetInternalFilePath(const LFCoreAttributes& CoreAttributes, LPWSTR pPath, SIZE_T cCount) const;
-	void CreateNewFileID(LPSTR pFileID) const;
+	void CreateNewFileID(FILEID& FileID) const;
 
 	UINT m_AdditionalDataSize;
 	CIndex* m_pIndexMain;
@@ -70,7 +70,7 @@ private:
 
 inline void CStore::ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress)
 {
-	pMaintenanceList->AddItem(p_StoreDescriptor->StoreName, p_StoreDescriptor->Comments, p_StoreDescriptor->StoreID, MaintenanceAndStatistics(TRUE, pProgress), LFGetStoreIcon(p_StoreDescriptor));
+	pMaintenanceList->AddItem(p_StoreDescriptor, MaintenanceAndStatistics(pProgress, TRUE));
 }
 
 inline UINT CStore::UpdateStatistics()

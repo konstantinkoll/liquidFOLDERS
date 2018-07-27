@@ -2,30 +2,59 @@
 // Workers.h: Schnittstelle für Methoden zum Threading
 //
 
-struct WorkerParameters
+struct WorkerCreateStoreWindowsParameters
 {
 	LFWorkerParameters Hdr;
-	CHAR StoreID[LFKeySize];
 	WCHAR StoreName[256];
-	BOOL DeleteSource;
-	LFItemDescriptor* pItemTemplate;
 	WCHAR Path[MAX_PATH];
-	union
-	{
-		LFFileImportList* pFileImportList;
-		LFMaintenanceList* pMaintenanceList;
-		LFTransactionList* pTransactionList;
-		UINT Result;
-	};
 };
 
-DWORD WINAPI WorkerCreateStoreWindows(void* lParam);
-DWORD WINAPI WorkerSendTo(void* lParam);
-DWORD WINAPI WorkerImport(void* lParam);
-DWORD WINAPI WorkerDelete(void* lParam);
+struct WorkerSynchronizeStoresParameters
+{
+	LFWorkerParameters Hdr;
+	STOREID StoreID;
+};
+
+struct WorkerStoreMaintenanceParameters
+{
+	LFWorkerParameters Hdr;
+	LFMaintenanceList* pMaintenanceList;
+};
+
+struct WorkerStoreDeleteParameters
+{
+	LFWorkerParameters Hdr;
+	ABSOLUTESTOREID StoreID;
+};
+
+struct WorkerSendToParameters
+{
+	LFWorkerParameters Hdr;
+	LFTransactionList* pTransactionList;
+	STOREID StoreID;
+};
+
+struct WorkerImportParameters
+{
+	LFWorkerParameters Hdr;
+	LFFileImportList* pFileImportList;
+	STOREID StoreID;
+	LFItemDescriptor* pItemTemplate;
+	BOOL DeleteSource;
+};
+
+struct WorkerDeleteParameters
+{
+	LFWorkerParameters Hdr;
+	LFTransactionList* pTransactionList;
+};
+
+DWORD WINAPI WorkerCreateStoreWindows(LPVOID lpParam);
+DWORD WINAPI WorkerSendTo(LPVOID lpParam);
+DWORD WINAPI WorkerImport(LPVOID lpParam);
+DWORD WINAPI WorkerDelete(LPVOID lpParam);
 
 void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);
-void LFRunSynchronize(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
-void LFRunSynchronizeAll(CWnd* pParentWnd=NULL);
-void LFRunMaintenance(CWnd* pParentWnd=NULL);
-void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd=NULL);
+void LFRunSynchronizeStores(const STOREID& StoreID=DEFAULTSTOREID(), CWnd* pParentWnd=NULL);
+void LFRunStoreMaintenance(CWnd* pParentWnd=NULL);
+void LFDeleteStore(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd=NULL);

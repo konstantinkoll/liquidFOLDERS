@@ -26,6 +26,7 @@ CFileView::CFileView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
 		ENSURE(m_WelcomeMessage.LoadString(IDS_WELCOME_MESSAGE));
 
 	p_TaskIcons = NULL;
+	p_InspectorPane = NULL;
 	p_Filter = NULL;
 	p_RawFiles = NULL;
 	m_Context = LFContextAllFiles;
@@ -33,10 +34,13 @@ CFileView::CFileView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
 	m_WelcomeCaptionHeight = m_WelcomeMessageHeight = 0;
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, CInspectorPane* pInspectorPane, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, UINT nClassStyle)
 {
 	ASSERT(pTaskIcons);
+	ASSERT(pInspectorPane);
+
 	p_TaskIcons = pTaskIcons;
+	p_InspectorPane = pInspectorPane;
 
 	if (!CAbstractFileView::Create(pParentWnd, nID, rect, nClassStyle))
 		return FALSE;
@@ -342,7 +346,9 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 
 	// Stores
 	UINT nID = FIRSTSENDTO;
-	if (LFGetDefaultStore()==LFOk)
+
+	STOREID StoreID;
+	if (LFGetDefaultStore(StoreID)==LFOk)
 	{
 		AppendSendToItem(Menu, nID, CString((LPCSTR)IDS_DEFAULTSTORE), (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy);
 		Added = TRUE;
@@ -350,7 +356,7 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 		const UINT Index = (nID++) & 0xFF;
 
 		m_SendToItems[Index].IsStore = TRUE;
-		strcpy_s(m_SendToItems[Index].StoreID, LFKeySize, "");
+		DEFAULTSTOREID(m_SendToItems[Index].StoreID);
 	}
 
 	if (LFGetStoreCount())
@@ -514,6 +520,9 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 	}
 
 	// Item context menu
+	const UINT FileCount = p_InspectorPane->GetFileCount();
+	const BOOL MultipleFiles = (FileCount>1);
+
 	UINT InsertPos = 0;
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
@@ -535,12 +544,12 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 	case LFTypeFile:
 		if ((m_Context==LFContextArchive) || (m_Context==LFContextTrash))
 		{
-			Menu.LoadMenu(IDM_FILE_AWAY);
+			Menu.LoadMenu(MultipleFiles ? IDM_FILE_AWAY_MULTIPLE : IDM_FILE_AWAY_SINGLE);
 			InsertPos = 2;
 		}
 		else
 		{
-			Menu.LoadMenu(IDM_FILE);
+			Menu.LoadMenu(MultipleFiles ? IDM_FILE_MULTIPLE : IDM_FILE_SINGLE);
 		}
 
 		break;
@@ -554,9 +563,14 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1)))
 		{
 			if (m_Context!=LFContextArchive)
-				Menu.InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextTasks ? IDM_FILE_TASKDONE : IDM_FILE_MAKETASK, CString((LPCSTR)(m_Context==LFContextTasks ? IDS_CONTEXTMENU_TASKDONE : IDS_CONTEXTMENU_MAKETASK)));
+				Menu.InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION,
+					m_Context==LFContextTasks ? IDM_FILE_TASKDONE : IDM_FILE_MAKETASK,
+					CString((LPCSTR)(m_Context==LFContextTasks ? MultipleFiles ? IDS_CONTEXTMENU_TASKDONE_MULTIPLE : IDS_CONTEXTMENU_TASKDONE_SINGLE : MultipleFiles ? IDS_CONTEXTMENU_MAKETASK_MULTIPLE : IDS_CONTEXTMENU_MAKETASK_SINGLE)));
 
-			Menu.InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVEFROMCLIPBOARD : IDM_FILE_REMEMBER, CString((LPCSTR)(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD : IDS_CONTEXTMENU_REMEMBER)));
+			Menu.InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION,
+				m_Context==LFContextClipboard ? IDM_FILE_REMOVEFROMCLIPBOARD : IDM_FILE_REMEMBER,
+				CString((LPCSTR)(m_Context==LFContextClipboard ? MultipleFiles ? IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_MULTIPLE : IDS_CONTEXTMENU_REMOVEFROMCLIPBOARD_SINGLE : MultipleFiles ? IDS_CONTEXTMENU_REMEMBER_MULTIPLE : IDS_CONTEXTMENU_REMEMBER_SINGLE)));
+
 			Menu.InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
 
 			if (m_Context!=LFContextArchive)
@@ -567,7 +581,7 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 
 				if (IsMenu(PopupMenu))
 				{
-					Menu.InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)(HMENU)PopupMenu, CString((LPCSTR)IDS_CONTEXTMENU_MOVETO));
+					Menu.InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)(HMENU)PopupMenu, CString((LPCSTR)(MultipleFiles ? IDS_CONTEXTMENU_MOVETO_MULTIPLE : IDS_CONTEXTMENU_MOVETO_SINGLE)));
 
 					PopupMenu.Detach();
 				}
@@ -578,7 +592,7 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 			GetSendToMenu(PopupMenu);
 			ASSERT(IsMenu(PopupMenu));
 
-			Menu.InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)(HMENU)PopupMenu, CString((LPCSTR)IDS_CONTEXTMENU_SENDTO));
+			Menu.InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)(HMENU)PopupMenu, CString((LPCSTR)(MultipleFiles ? IDS_CONTEXTMENU_SENDTO_MULTIPLE : IDS_CONTEXTMENU_SENDTO_SINGLE)));
 			Menu.InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
 
 			PopupMenu.Detach();

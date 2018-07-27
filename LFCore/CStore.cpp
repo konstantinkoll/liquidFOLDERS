@@ -4,7 +4,6 @@
 #include "FileProperties.h"
 #include "FileSystem.h"
 #include "Stores.h"
-#include <assert.h>
 
 
 extern LFMessageIDs LFMessages;
@@ -112,7 +111,7 @@ UINT CStore::Initialize(LFProgress* pProgress)
 			return LFIndexCreateError;
 
 	// Synchronize
-	if ((Result=Synchronize(TRUE, pProgress))!=LFOk)
+	if ((Result=Synchronize(pProgress, TRUE))!=LFOk)
 		return Result;
 
 	// Done
@@ -134,7 +133,7 @@ UINT CStore::CommitDelete()
 	return DeleteDirectories();
 }
 
-UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
+UINT CStore::MaintenanceAndStatistics(LFProgress* pProgress, BOOL Scheduled)
 {
 	Close();
 
@@ -224,7 +223,7 @@ UINT CStore::MaintenanceAndStatistics(BOOL Scheduled, LFProgress* pProgress)
 // Index operations
 //
 
-UINT CStore::Synchronize(BOOL /*OnInitialize*/, LFProgress* pProgress)
+UINT CStore::Synchronize(LFProgress* pProgress, BOOL /*OnInitialize*/)
 {
 	// Progress
 	if (pProgress)
@@ -243,6 +242,10 @@ UINT CStore::ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemDescriptor, BOOL M
 {
 	assert(m_pIndexMain!=NULL);
 
+	// Reset store data in item descriptor (maybe left from "Send to" operation and others)
+	ZeroMemory(&pItemDescriptor->StoreData, LFMaxStoreDataSize);
+
+	// Import
 	UINT Result;
 	WCHAR Path[2*MAX_PATH];
 	if ((Result=PrepareImport(pPath, pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
@@ -322,7 +325,6 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWST
 
 		// Commit
 		UINT Result = m_pIndexMain->Add(pItemDescriptor);
-
 		if ((Result==LFOk) && m_pIndexAux)
 			Result = m_pIndexAux->Add(pItemDescriptor);
 
@@ -370,9 +372,10 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 	assert(pTransactionList);
 
 	// Check if write access is allowed
-	if (!m_WriteAccess && (TransactionType>LFTransactionTypeLastReadonly))
+	if (!m_WriteAccess && (TransactionType>LFTransactionLastReadonly))
 	{
 		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIndexAccessError, pProgress);
+
 		return;
 	}
 
@@ -383,22 +386,22 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 	// Process
 	switch (TransactionType)
 	{
-	case LFTransactionTypeAddToSearchResult:
+	case LFTransactionAddToSearchResult:
 		m_pIndexMain->AddToSearchResult(pTransactionList, (LFSearchResult*)Parameter);
 
 		break;
 
-	case LFTransactionTypeResolveLocations:
+	case LFTransactionResolveLocations:
 		m_pIndexMain->ResolveLocations(pTransactionList);
 
 		break;
 
-	case LFTransactionTypeSendTo:
-		m_pIndexMain->SendTo(pTransactionList, (LPCSTR)Parameter, pProgress);
+	case LFTransactionSendTo:
+		m_pIndexMain->SendTo(pTransactionList, *((LPCSTOREID)Parameter), pProgress);
 
 		break;
 
-	case LFTransactionTypeArchive:
+	case LFTransactionArchive:
 		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, LFFlagArchive);
 
 		if (m_pIndexAux)
@@ -406,7 +409,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
-	case LFTransactionTypePutInTrash:
+	case LFTransactionPutInTrash:
 		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, LFFlagTrash);
 
 		if (m_pIndexAux)
@@ -414,7 +417,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
-	case LFTransactionTypeRecover:
+	case LFTransactionRecover:
 		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, 0);
 
 		if (m_pIndexAux)
@@ -422,16 +425,16 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
-	case LFTransactionTypeUpdate:
-	case LFTransactionTypeUpdateTask:
-		m_pIndexMain->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3, TransactionType==LFTransactionTypeUpdateTask);
+	case LFTransactionUpdate:
+	case LFTransactionUpdateTask:
+		m_pIndexMain->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3, TransactionType==LFTransactionUpdateTask);
 
 		if (m_pIndexAux)
-			m_pIndexAux->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3, TransactionType==LFTransactionTypeUpdateTask);
+			m_pIndexAux->Update(pTransactionList, pVariantData1, pVariantData2, pVariantData3, TransactionType==LFTransactionUpdateTask);
 
 		break;
 
-	case LFTransactionTypeUpdateUserContext:
+	case LFTransactionUpdateUserContext:
 		m_pIndexMain->UpdateUserContext(pTransactionList, (BYTE)Parameter);
 
 		if (m_pIndexAux)
@@ -439,7 +442,7 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
-	case LFTransactionTypeDelete:
+	case LFTransactionDelete:
 		m_pIndexMain->Delete(pTransactionList, pProgress);
 
 		if (m_pIndexAux)
@@ -571,7 +574,7 @@ UINT CStore::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescripto
 	SetAttribute(pItemDescriptor, LFAttrFileFormat, pExtension);
 
 	// StoreID
-	strcpy_s(pItemDescriptor->StoreID, LFKeySize, p_StoreDescriptor->StoreID);
+	pItemDescriptor->StoreID = p_StoreDescriptor->StoreID;
 
 	// Randomize
 	SYSTEMTIME st;
@@ -760,17 +763,16 @@ void CStore::GetInternalFilePath(const LFCoreAttributes& CoreAttributes, LPWSTR 
 	wcscat_s(pPath, cCount, Buffer2);
 }
 
-void CStore::CreateNewFileID(LPSTR pFileID) const
+void CStore::CreateNewFileID(FILEID& FileID) const
 {
-	assert(pFileID);
 	assert(m_pIndexMain);
 
-	pFileID[LFKeySize-1] = '\0';
+	FileID[LFKeySize-1] = '\0';
 
 	do
 	{
 		for (UINT a=0; a<LFKeySize-1; a++)
-			pFileID[a] = RAND_CHAR();
+			FileID[a] = RAND_CHAR();
 	}
-	while (m_pIndexMain->ExistingFileID(pFileID));
+	while (m_pIndexMain->ExistingFileID(FileID));
 }

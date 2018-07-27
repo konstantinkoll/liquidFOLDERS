@@ -7,7 +7,6 @@
 #include "TableAttributes.h"
 #include "TableMusicGenres.h"
 #include <algorithm>
-#include <assert.h>
 #include <hash_map>
 #include <math.h>
 #include <shlwapi.h>

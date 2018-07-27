@@ -3,7 +3,6 @@
 #include "LFCore.h"
 #include "LFFileImportList.h"
 #include "Stores.h"
-#include <assert.h>
 
 
 extern LFMessageIDs LFMessages;
@@ -26,13 +25,6 @@ LFCORE_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
 	return pFileImportList;
 }
 
-LFCORE_API void LFFreeFileImportList(LFFileImportList* pFileImportList)
-{
-	assert(pFileImportList);
-
-	delete pFileImportList;
-}
-
 LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, LPCWSTR pPath)
 {
 	assert(pFileImportList);
@@ -41,9 +33,9 @@ LFCORE_API BOOL LFAddImportPath(LFFileImportList* pFileImportList, LPCWSTR pPath
 	return pFileImportList->AddPath(pPath);
 }
 
-LFCORE_API void LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+LFCORE_API UINT LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const STOREID& StoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
-	pFileImportList->DoFileImport(Recursive, pStoreID, pItemTemplate, Move, pProgress);
+	return pFileImportList->DoFileImport(Recursive, StoreID, pItemTemplate, Move, pProgress);
 }
 
 
@@ -56,13 +48,13 @@ LFFileImportList::LFFileImportList()
 	m_LastError = LFOk;
 }
 
-BOOL LFFileImportList::AddPath(LPCWSTR Path, WIN32_FIND_DATA* pFindFileData)
+BOOL LFFileImportList::AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindFileData)
 {
-	assert(Path);
+	assert(pPath);
 
 	LFFileImportListItem Item;
 
-	wcscpy_s(Item.Path, MAX_PATH, Path);
+	wcscpy_s(Item.Path, MAX_PATH, pPath);
 
 	// Remove trailing backslash
 	if (Item.Path[0]!=L'\0')
@@ -273,17 +265,8 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 	}
 }
 
-void LFFileImportList::DoFileImport(BOOL Recursive, LPCSTR pStoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
+UINT LFFileImportList::DoFileImport(BOOL Recursive, const STOREID& StoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
 {
-	// Store
-	CHAR StoreID[LFKeySize] = "";
-	if (pStoreID)
-		strcpy_s(StoreID, LFKeySize, pStoreID);
-
-	if (StoreID[0]=='\0')
-		if ((m_LastError=LFGetDefaultStore(StoreID))!=LFOk)
-			return;
-
 	CStore* pStore;
 	if ((m_LastError=OpenStore(StoreID, pStore))==LFOk)
 	{
@@ -339,4 +322,6 @@ void LFFileImportList::DoFileImport(BOOL Recursive, LPCSTR pStoreID, LFItemDescr
 	}
 
 	SendLFNotifyMessage(LFMessages.StatisticsChanged);
+
+	return m_LastError;
 }

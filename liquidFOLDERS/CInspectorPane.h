@@ -38,6 +38,7 @@ public:
 	void AddValueVirtual(UINT Attr, const INT64 Size);
 	void AddItem(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
 	void UpdateIATAAirport(BOOL AllowMultiple);
+	UINT GetFileCount() const;
 
 	AttributeSummary m_AttributeSummary[AttrCount];
 	UINT m_Context;
@@ -49,8 +50,9 @@ public:
 	UINT m_FlagsSet;
 	UINT m_FlagsMultiple;
 	UINT m_StoreStatus;
-	CHAR m_StoreID[LFKeySize];
+	STOREID m_StoreID;
 	UINT m_Type;
+	BOOL m_AggregatedFiles;
 
 protected:
 	void AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr);
@@ -58,6 +60,11 @@ protected:
 private:
 	void AddFile(const LFItemDescriptor* pItemDescriptor);
 };
+
+inline UINT CFileSummary::GetFileCount() const
+{
+	return m_AggregatedFiles ? m_ItemCount : 0;
+}
 
 
 // CIconHeader
@@ -105,6 +112,7 @@ public:
 	void AggregateInitialize(UINT Context);
 	void AggregateAdd(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
 	void AggregateClose();
+	UINT GetFileCount() const;
 
 protected:
 	void SaveSettings() const;
@@ -141,4 +149,9 @@ inline void CInspectorPane::AggregateInitialize(UINT Context)
 inline void CInspectorPane::AggregateAdd(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles)
 {
 	m_FileSummary.AddItem(pItemDescriptor, pRawFiles);
+}
+
+inline UINT CInspectorPane::GetFileCount() const
+{
+	return m_FileSummary.GetFileCount();
 }

@@ -376,8 +376,8 @@ BOOL CIconFactory::LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailD
 
 	// Add file to either m_Thumbnails or m_NoThumbnails
 	ZeroMemory(&Thumbnail, sizeof(Thumbnail));
-	strcpy_s(Thumbnail.StoreID, LFKeySize, pItemDescriptor->StoreID);
-	strcpy_s(Thumbnail.FileID, LFKeySize, pItemDescriptor->CoreAttributes.FileID);
+	Thumbnail.StoreID = pItemDescriptor->StoreID;
+	Thumbnail.FileID = pItemDescriptor->CoreAttributes.FileID;
 
 	if (GetThumbnailBitmap(pItemDescriptor, Thumbnail))
 	{

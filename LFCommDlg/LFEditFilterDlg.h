@@ -30,7 +30,7 @@ protected:
 	const ConditionArray* p_Conditions;
 
 private:
-	CString m_Compare[LFFilterCompareCount];
+	static CString m_strCompare[LFFilterCompareCount];
 };
 
 
@@ -40,13 +40,14 @@ private:
 class LFEditFilterDlg : public LFDialog
 {
 public:
-	LFEditFilterDlg(CWnd* pParentWnd=NULL, const LPCSTR StoreID=NULL, LFFilter* pFilter=NULL);
+	LFEditFilterDlg(const STOREID& StoreID, CWnd* pParentWnd=NULL, LFFilter* pFilter=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL InitDialog();
 
 	INT GetSelectedCondition() const;
+	STOREID GetSelectedStore() const;
 	LFFilter* CreateFilter() const;
 
 	afx_msg void OnSave();
@@ -57,7 +58,7 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	CHAR m_StoreID[LFKeySize];
+	STOREID m_StoreID;
 	LFFilter* p_Filter;
 	ConditionArray m_Conditions;
 
@@ -70,4 +71,9 @@ protected:
 inline INT LFEditFilterDlg::GetSelectedCondition() const
 {
 	return m_wndConditionList.GetSelectedItem();
+}
+
+inline STOREID LFEditFilterDlg::GetSelectedStore() const
+{
+	return m_wndAllStores.GetCheck() ? DEFAULTSTOREID() : m_StoreID;
 }

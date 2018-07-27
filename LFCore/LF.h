@@ -1,5 +1,6 @@
 
 #pragma once
+#include <assert.h>
 #include <shellapi.h>
 
 
@@ -11,19 +12,6 @@ typedef double DOUBLE;
 #include "..\\LFCore\\resource.h"
 
 
-// Clipboard
-
-#define CFSTR_LIQUIDFILES     L"liquidFOLDERS.liquidFILES"
-
-typedef HANDLE HLIQUID;
-
-struct LIQUIDFILES
-{
-	DWORD pFiles;
-	UINT32 cFiles;
-};
-
-
 // Progress message
 
 #define LFProgressWorking       1
@@ -33,8 +21,8 @@ struct LIQUIDFILES
 struct LFProgress
 {
 	HWND hWnd;
-	WCHAR Object[256];
 	BYTE ProgressState;
+	WCHAR Object[256];
 	UINT MajorCurrent;					// Starting from 0, must not exceed max(0, MajorCount-1)
 	UINT MajorCount;					// May be 0
 	UINT MinorCurrent;					// Starting from 0, must nox exceed max(0, MinorCount-1)
@@ -77,10 +65,80 @@ struct LFMessageIDs
 };
 
 
-// Globals
+// IDs
 
 #define LFKeySize     16
 #define LFExtSize     16
+
+typedef struct _ID
+{
+public:
+	operator LPSTR() { return Key; }
+	operator LPCSTR() const { return Key; }
+
+	friend BOOL operator==(const _ID& a, const _ID& b) { return strcmp(a.Key, b.Key)==0; }
+	friend BOOL operator!=(const _ID& a, const _ID& b) { return strcmp(a.Key, b.Key)!=0; }
+
+protected:
+	union
+	{
+		CHAR Key[LFKeySize];
+		UINT64 Key64[LFKeySize/8];
+	};
+} ID;
+
+typedef ID* LPID;
+typedef const ID* LPCID;
+
+typedef struct _STOREID : ID {} STOREID;
+typedef STOREID* LPSTOREID;
+typedef const STOREID* LPCSTOREID;
+
+inline void DEFAULTSTOREID(STOREID& ID) { ID[0] = '\0'; }
+inline STOREID DEFAULTSTOREID() { STOREID ID; DEFAULTSTOREID(ID); return ID; }
+
+typedef struct _ABSOLUTESTOREID : STOREID
+{
+	friend BOOL operator==(const _ABSOLUTESTOREID& a, const _ABSOLUTESTOREID& b) { return (a.Key64[0]==b.Key64[0]) && (a.Key64[1]==b.Key64[1]); }
+	friend BOOL operator!=(const _ABSOLUTESTOREID& a, const _ABSOLUTESTOREID& b) { return (a.Key64[0]!=b.Key64[0]) || (a.Key64[1]!=b.Key64[1]); }
+} ABSOLUTESTOREID;
+
+typedef ABSOLUTESTOREID* LPABSOLUTESTOREID;
+typedef const ABSOLUTESTOREID* LPCABSOLUTESTOREID;
+
+inline ABSOLUTESTOREID MAKEABSOLUTESTOREID(const STOREID& ID) { assert(ID[0]!='\0'); return *((LPABSOLUTESTOREID)&ID); }
+inline ABSOLUTESTOREID MAKEABSOLUTESTOREID(LPCSTR pStr) { ABSOLUTESTOREID ID; strcpy_s(ID, LFKeySize, pStr); return ID; }
+inline void free(LPCABSOLUTESTOREID lpcStoreIDs) { free((LPVOID)lpcStoreIDs); }
+
+typedef struct _FILEID : ID
+{
+	friend BOOL operator==(const _FILEID& a, const _FILEID& b) { return (a.Key64[0]==b.Key64[0]) && (a.Key64[1]==b.Key64[1]); }
+	friend BOOL operator!=(const _FILEID& a, const _FILEID& b) { return (a.Key64[0]!=b.Key64[0]) || (a.Key64[1]!=b.Key64[1]); }
+} FILEID;
+
+typedef FILEID* LPFILEID;
+typedef const FILEID* LPCFILEID;
+
+
+// Clipboard
+
+#define CFSTR_LIQUIDFILES     L"liquidFOLDERS.liquidFILES"
+
+struct LIQUIDFILEITEM
+{
+	ABSOLUTESTOREID StoreID;
+	FILEID FileID;
+};
+
+struct LIQUIDFILES
+{
+	UINT32 cFiles;
+	LIQUIDFILEITEM FileItems[1];
+};
+
+typedef LIQUIDFILES* LPLIQUIDFILES;
+typedef const LIQUIDFILES* LPCLIQUIDFILES;
+typedef HGLOBAL HLIQUIDFILES;
 
 
 // Views
@@ -599,7 +657,7 @@ struct LFFilterQuery
 
 	BYTE Context;							// For LFFilterModeDirectoryTree and above
 	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
-	CHAR StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
+	STOREID StoreID;						// For LFFilterModeDirectoryTree and above
 	WCHAR SearchTerm[256];					// For LFFilterModeDirectoryTree and above
 	LFFilterCondition* pConditionList;		// For LFFilterModeDirectoryTree and above
 };
@@ -644,7 +702,7 @@ struct LFFilter
 
 struct LFStoreDescriptor
 {
-	CHAR StoreID[LFKeySize];
+	ABSOLUTESTOREID StoreID;
 	WCHAR StoreName[256];
 	WCHAR LastSeen[256];
 	WCHAR Comments[256];
@@ -678,7 +736,7 @@ struct LFCoreAttributes
 {
 	// Public
 	WCHAR FileName[256];
-	CHAR FileID[LFKeySize];
+	FILEID FileID;
 	WCHAR Comments[256];
 	FILETIME CreationTime;
 	FILETIME AddTime;
@@ -802,7 +860,7 @@ struct LFItemDescriptor
 	LPVOID AttributeValues[LFAttributeCount];
 
 	// Volatile attributes
-	CHAR StoreID[LFKeySize];
+	ABSOLUTESTOREID StoreID;
 
 	// Internal data from store
 	BYTE StoreData[LFMaxStoreDataSize];
@@ -843,19 +901,19 @@ struct LFItemDescriptor
 
 // Transaction types
 
-#define LFTransactionTypeAddToSearchResult     0x000
-#define LFTransactionTypeResolveLocations      0x001
-#define LFTransactionTypeSendTo                0x002
+#define LFTransactionAddToSearchResult     0x000
+#define LFTransactionResolveLocations      0x001
+#define LFTransactionSendTo                0x002
 
-#define LFTransactionTypeArchive               0x100
-#define LFTransactionTypePutInTrash            0x101
-#define LFTransactionTypeRecover               0x102
-#define LFTransactionTypeUpdate                0x103
-#define LFTransactionTypeUpdateTask            0x104
-#define LFTransactionTypeUpdateUserContext     0x105
-#define LFTransactionTypeDelete                0x106
+#define LFTransactionArchive               0x100
+#define LFTransactionPutInTrash            0x101
+#define LFTransactionRecover               0x102
+#define LFTransactionUpdate                0x103
+#define LFTransactionUpdateTask            0x104
+#define LFTransactionUpdateUserContext     0x105
+#define LFTransactionDelete                0x106
 
-#define LFTransactionTypeLastReadonly          0x0FF
+#define LFTransactionLastReadonly          0x0FF
 
 
 // Error codes

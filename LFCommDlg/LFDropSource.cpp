@@ -26,10 +26,12 @@ STDMETHODIMP LFDropSource::QueryInterface(REFIID iid, void** ppvObject)
 	{
 		AddRef();
 		*ppvObject = this;
+
 		return S_OK;
 	}
 
 	*ppvObject = NULL;
+
 	return E_NOINTERFACE;
 }
 
@@ -44,6 +46,7 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropSource::Release()
 	if (!Count)
 	{
 		delete this;
+
 		return 0;
 	}
 

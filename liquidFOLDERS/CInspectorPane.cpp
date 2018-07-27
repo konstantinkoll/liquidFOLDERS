@@ -38,6 +38,7 @@ void CFileSummary::Reset(UINT Context)
 	m_IconStatus = m_StoreStatus = STATUSUNUSED;
 	m_FlagsFirst = TRUE;
 	m_FlagsSet = m_FlagsMultiple = 0;
+	m_AggregatedFiles = TRUE;
 
 	// Attribute summaries
 	for (UINT a=0; a<AttrCount; a++)
@@ -163,11 +164,11 @@ void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 		{
 		case STATUSUNUSED:
 			m_StoreStatus = STATUSUSED;
-			strcpy_s(m_StoreID, LFKeySize, pItemDescriptor->StoreID);
+			m_StoreID = pItemDescriptor->StoreID;
 			break;
 
 		case STATUSUSED:
-			if (strcmp(m_StoreID, pItemDescriptor->StoreID))
+			if (m_StoreID!=pItemDescriptor->StoreID)
 				m_StoreStatus = STATUSMULTIPLE;
 
 			break;
@@ -222,12 +223,14 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 		else
 		{
 			m_ItemCount += pItemDescriptor->AggregateCount;
+			m_AggregatedFiles = FALSE;
 		}
 
 		break;
 
 	case LFTypeStore:
 		m_ItemCount++;
+		m_AggregatedFiles = FALSE;
 
 		for (UINT a=0; a<=LFLastCoreAttribute; a++)
 			AddValue(pItemDescriptor, a);
@@ -570,7 +573,7 @@ void CInspectorPane::AggregateClose()
 	}
 
 	// Store
-	m_wndInspectorGrid.SetStore(m_FileSummary.m_StoreStatus==STATUSUSED ? m_FileSummary.m_StoreID : "");
+	m_wndInspectorGrid.SetStore(m_FileSummary.m_StoreStatus==STATUSUSED ? m_FileSummary.m_StoreID : DEFAULTSTOREID());
 
 	// Update properties, except for AttrIATAAirportName and AttrIATAAirportCounty (must be last)
 	for (UINT a=0; a<AttrCount-2; a++)

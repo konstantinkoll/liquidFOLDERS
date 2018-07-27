@@ -3,7 +3,6 @@
 #include "Cloud.h"
 #include "FileSystem.h"
 #include "LFCore.h"
-#include <assert.h>
 #include <shlobj.h>
 
 

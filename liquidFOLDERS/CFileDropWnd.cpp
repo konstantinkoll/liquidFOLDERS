@@ -22,9 +22,9 @@ CFileDropWnd::CFileDropWnd()
 	m_rectIcon.SetRectEmpty();
 }
 
-BOOL CFileDropWnd::Create(const LPCSTR pStoreID)
+BOOL CFileDropWnd::Create(const ABSOLUTESTOREID& StoreID)
 {
-	strcpy_s(m_StoreID, LFKeySize, pStoreID);
+	m_StoreID = StoreID;
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
 
@@ -76,7 +76,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	if (IsCtrlThemed())
 	{
 		dc.SetTextColor(0x000000);
-		dc.DrawText(m_Store.StoreName, -1, rectText, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+		dc.DrawText(m_StoreDescriptor.StoreName, -1, rectText, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 
 		dc.SetTextColor((m_HoverItem>=0) ? 0xFFFFFF : 0xDACCC4);
 	}
@@ -86,7 +86,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	}
 
 	rectText.OffsetRect(0, 1);
-	dc.DrawText(m_Store.StoreName, -1, rectText, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+	dc.DrawText(m_StoreDescriptor.StoreName, -1, rectText, DT_TOP | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 
 	dc.SelectObject(pOldFont);
 
@@ -115,7 +115,7 @@ INT CFileDropWnd::ItemAtPosition(CPoint point) const
 
 void CFileDropWnd::ShowTooltip(const CPoint& point)
 {
-	theApp.ShowTooltip(this, point, m_Store);
+	theApp.ShowTooltip(this, point, m_StoreDescriptor);
 }
 
 BOOL CFileDropWnd::GetContextMenu(CMenu& Menu, INT Index)
@@ -179,7 +179,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Initialize DropTarget
 	m_DropTarget.SetOwner(this);
-	m_DropTarget.SetStore(m_StoreID, FALSE);
+	m_DropTarget.SetStore(m_StoreID);
 	RegisterDragDrop(GetSafeHwnd(), &m_DropTarget);
 
 	return 0;
@@ -207,7 +207,7 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 {
 	ASSERT(wParam);
 
-	if (strcmp((LPCSTR)wParam, m_StoreID)==0)
+	if (*((LPCSTOREID)wParam)==m_StoreID)
 	{
 		if (IsIconic())
 			ShowWindow(SW_RESTORE);
@@ -223,33 +223,33 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 void CFileDropWnd::OnStoreOpenNewWindow()
 {
 	CMainWnd* pFrame = new CMainWnd();
-	pFrame->CreateStore(m_Store.StoreID);
+	pFrame->CreateStore(m_StoreDescriptor.StoreID);
 	pFrame->ShowWindow(SW_SHOW);
 }
 
 void CFileDropWnd::OnStoreSynchronize()
 {
-	LFRunSynchronize(m_StoreID, this);
+	LFRunSynchronizeStores(m_StoreID, this);
 }
 
 void CFileDropWnd::OnStoreMakeDefault()
 {
-	LFErrorBox(this, LFSetDefaultStore(m_Store.StoreID));
+	LFErrorBox(this, LFSetDefaultStore(m_StoreDescriptor.StoreID));
 }
 
 void CFileDropWnd::OnStoreShortcut()
 {
-	LFErrorBox(this, LFCreateDesktopShortcutForStore(m_Store));
+	LFErrorBox(this, LFCreateDesktopShortcutForStore(m_StoreDescriptor));
 }
 
 void CFileDropWnd::OnStoreDelete()
 {
-	LFDeleteStore(m_Store.StoreID, this);
+	LFDeleteStore(m_StoreDescriptor.StoreID, this);
 }
 
 void CFileDropWnd::OnStoreProperties()
 {
-	LFStorePropertiesDlg(m_Store.StoreID, this).DoModal();
+	LFStorePropertiesDlg(m_StoreDescriptor.StoreID, this).DoModal();
 }
 
 void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
@@ -285,12 +285,12 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (LFGetStoreSettings(m_StoreID, m_Store)!=LFOk)
+	if (LFGetStoreSettings(m_StoreID, m_StoreDescriptor)!=LFOk)
 		PostMessage(WM_CLOSE);
 
-	m_StoreIcon = LFGetStoreIcon(&m_Store, &m_StoreType);
+	m_StoreIcon = LFGetStoreIcon(&m_StoreDescriptor, &m_StoreType);
 
-	SetWindowText(m_Store.StoreName);
+	SetWindowText(m_StoreDescriptor.StoreName);
 	Invalidate();
 
 	return NULL;

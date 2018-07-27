@@ -450,7 +450,7 @@ void CShellTree::SetRootPath(LPCWSTR RootPath)
 
 BOOL CShellTree::GetChildItems(HTREEITEM hParentItem)
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	TVITEM tvItem;
 	ZeroMemory(&tvItem, sizeof(tvItem));
@@ -796,7 +796,7 @@ void CShellTree::OnContextMenu(CWnd* pWnd, CPoint point)
 						}
 						else
 						{
-							CWaitCursor csr;
+							CWaitCursor WaitCursor;
 
 							CMINVOKECOMMANDINFO cmi;
 							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);

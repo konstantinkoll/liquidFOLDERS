@@ -25,7 +25,7 @@ public:
 	void UpdateViewSettings();
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, BOOL UpdateSelection=TRUE);
 	BOOL StoreIDValid() const;
-	LPCSTR GetStoreID() const;
+	STOREID GetStoreID() const;
 	INT GetContext() const;
 	INT GetViewID() const;
 	void DismissNotification();
@@ -54,6 +54,7 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMeasureItem(INT nIDCtl, LPMEASUREITEMSTRUCT lpmis);
 	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
+	afx_msg void OnInitMenuPopup(CMenu* pMenuPopup, UINT nIndex, BOOL bSysMenu);
 
 	afx_msg void OnAdjustLayout();
 	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
@@ -137,12 +138,11 @@ protected:
 	LFFilter* p_Filter;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
-	CHAR m_StoreID[LFKeySize];
+	STOREID m_StoreID;
 	INT m_Context;
 	INT m_ViewID;
 	BOOL m_StoreIDValid;
 	BOOL m_IsClipboard;
-	BOOL m_FilesSelected;
 	BOOL m_ShowInspectorPane;
 	BOOL m_Alerted;
 
@@ -164,7 +164,7 @@ inline BOOL CMainView::StoreIDValid() const
 	return m_StoreIDValid;
 }
 
-inline LPCSTR CMainView::GetStoreID() const
+inline STOREID CMainView::GetStoreID() const
 {
 	return m_StoreID;
 }

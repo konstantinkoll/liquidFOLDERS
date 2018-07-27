@@ -21,5 +21,5 @@ struct LFPersistentFilterHeader
 typedef LFFilterCondition LFPersistentFilterCondition;
 
 
-LFFilter* LoadFilter(LPCWSTR pFileName, LPCSTR StoreID);
-BOOL StoreFilter(LPCWSTR pFilename, LFFilter* pFilter);
+LFFilter* CloneFilter(const LFFilter* pFilter);
+BOOL StoreFilter(LPCWSTR pPath, LFFilter* pFilter);

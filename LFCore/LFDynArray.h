@@ -10,7 +10,7 @@ public:
 	LFDynArray();
 	~LFDynArray();
 
-	BOOL AddItem(T Item);
+	BOOL AddItem(const T& Item);
 	BOOL InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE);
 	void DeleteItems(UINT Pos, UINT Count=1);
 	const T& operator[](const SIZE_T Index) const;
@@ -19,8 +19,8 @@ public:
 	UINT m_ItemCount;
 
 protected:
-	T* m_Items;
 	UINT m_Allocated;
+	T* m_Items;
 };
 
 
@@ -38,25 +38,22 @@ LFDynArray<T, FirstAlloc, SubsequentAlloc>::~LFDynArray()
 }
 
 template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
-BOOL LFDynArray<T, FirstAlloc, SubsequentAlloc>::AddItem(T Item)
+BOOL LFDynArray<T, FirstAlloc, SubsequentAlloc>::AddItem(const T& Item)
 {
-	if (!m_Items)
+	if (m_ItemCount==m_Allocated)
 	{
-		m_Items = (T*)malloc(FirstAlloc*sizeof(T));
+		if (!m_Items)
+		{
+			m_Items = (T*)malloc((m_Allocated=FirstAlloc)*sizeof(T));
+		}
+		else
+		{
+			m_Items = (T*)realloc(m_Items, (m_Allocated+=SubsequentAlloc)*sizeof(T));
+		}
+
 		if (!m_Items)
 			return FALSE;
-
-		m_Allocated = FirstAlloc;
 	}
-	else
-		if (m_ItemCount==m_Allocated)
-		{
-			m_Items = (T*)realloc(m_Items, (m_Allocated+SubsequentAlloc)*sizeof(T));
-			if (!m_Items)
-				return FALSE;
-
-			m_Allocated += SubsequentAlloc;
-		}
 
 	m_Items[m_ItemCount++] = Item;
 
@@ -72,25 +69,20 @@ BOOL LFDynArray<T, FirstAlloc, SubsequentAlloc>::InsertEmpty(UINT Pos, UINT Coun
 	if (Pos>m_ItemCount+1)
 		return FALSE;
 
-	if (!m_Items)
+	if (m_ItemCount<m_Allocated+Count)
 	{
-		const UINT Size = max(FirstAlloc, Count);
-		m_Items = (T*)malloc(Size*sizeof(T));
+		if (!m_Items)
+		{
+			m_Items = (T*)malloc((m_Allocated=max(FirstAlloc, Count))*sizeof(T));
+		}
+		else
+		{
+			m_Items = (T*)realloc(m_Items, (m_Allocated+=SubsequentAlloc)*sizeof(T));
+		}
+
 		if (!m_Items)
 			return FALSE;
-
-		m_Allocated = Size;
 	}
-	else
-		if (m_ItemCount<m_Allocated+Count)
-		{
-			const UINT Size = max(SubsequentAlloc, Count);
-			m_Items = (T*)realloc(m_Items, (m_Allocated+Size)*sizeof(T));
-			if (!m_Items)
-				return FALSE;
-
-			m_Allocated += Size;
-		}
 
 	for (INT a=((INT)(m_ItemCount))-1; a>=(INT)Pos; a--)
 		m_Items[a+Count] = m_Items[a];

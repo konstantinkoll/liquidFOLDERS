@@ -11,15 +11,16 @@
 
 #define RAND_CHAR()     KeyChars[rand()%sizeof(KeyChars)]
 
-#define SendLFNotifyMessage(Message)     SendNotifyMessage(HWND_BROADCAST, Message, NULL, NULL);
-
-
-void CreateNewStoreID(LPSTR pStoreID);
-LFStoreDescriptor* FindStore(LPCSTR pStoreID);
-LFStoreDescriptor* FindStore(const GUID& UniqueID);
-LFStoreDescriptor* FindStore(LPCWSTR pDatPath);
+inline BOOL SendLFNotifyMessage(UINT Msg)
+{
+	return SendNotifyMessage(HWND_BROADCAST, Msg, NULL, NULL);
+}
 
 UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor);
+
+void CreateNewStoreID(ABSOLUTESTOREID& StoreID);
+LFStoreDescriptor* FindStore(const ABSOLUTESTOREID& StoreID);
+LFStoreDescriptor* FindStore(const GUID& UniqueID);
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime=TRUE, BOOL MakeDefault=FALSE);
 
 UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);
@@ -28,8 +29,9 @@ void ChooseNewDefaultStore(BOOL OnInitialize=FALSE);
 UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
 void GetDiskFreeSpaceForStore(LFStoreDescriptor& StoreDescriptor);
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore*& pStore);
-UINT GetStore(LPCSTR pStoreID, CStore*& pStore);
-UINT OpenStore(LPCSTR pStoreID, CStore*& pStore, BOOL WriteAccess=TRUE);
+UINT GetStore(const ABSOLUTESTOREID& StoreID, CStore*& pStore);
+UINT OpenStore(const ABSOLUTESTOREID& StoreID, CStore*& pStore, BOOL WriteAccess=TRUE);
+UINT OpenStore(const STOREID& StoreID, CStore*& pStore, BOOL WriteAccess=TRUE);
 
 void QueryStores(LFSearchResult* pSearchResult);
 void MountVolumes(UINT Mask, BOOL OnInitialize=FALSE);

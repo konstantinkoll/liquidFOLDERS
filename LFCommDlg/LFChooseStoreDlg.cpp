@@ -94,7 +94,8 @@ void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		const INT Index = GetSelectedStore();
-		strcpy_s(m_StoreID, LFKeySize, Index!=-1 ? (*m_pSearchResult)[Index]->StoreID : "");
+		if (Index!=-1)
+			m_StoreID = (*m_pSearchResult)[Index]->StoreID;
 	}
 }
 
@@ -191,7 +192,7 @@ void LFChooseStoreDlg::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 LRESULT LFChooseStoreDlg::OnRenameItem(WPARAM wParam, LPARAM lParam)
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	LFTransactionList* pTransactionList = LFAllocTransactionList();
 	LFAddTransactionItem(pTransactionList, (*m_pSearchResult)[(UINT)wParam]);
@@ -202,9 +203,7 @@ LRESULT LFChooseStoreDlg::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	wcsncpy_s(VData.UnicodeString, 256, (LPCWSTR)lParam, _TRUNCATE);
 	VData.IsNull = FALSE;
 
-	LFDoTransaction(pTransactionList, LFTransactionTypeUpdate, NULL, NULL, &VData);
-
-	LFErrorBox(this, pTransactionList->m_LastError);
+	LFErrorBox(this, LFDoTransaction(pTransactionList, LFTransactionUpdate, NULL, NULL, &VData));
 	LFFreeTransactionList(pTransactionList);
 
 	return NULL;
@@ -214,13 +213,14 @@ LRESULT LFChooseStoreDlg::OnRenameItem(WPARAM wParam, LPARAM lParam)
 LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	// Save ID of selected store
-	CHAR StoreID[LFKeySize] = "";
+	STOREID StoreID;
+	StoreID[0] = '\0';
 
 	if (m_pSearchResult)
 	{
 		const INT Index = GetSelectedStore();
 		if (Index!=-1)
-			strcpy_s(StoreID, LFKeySize, (*m_pSearchResult)[Index]->StoreID);
+			StoreID = (*m_pSearchResult)[Index]->StoreID;
 
 		LFFreeSearchResult(m_pSearchResult);
 	}
@@ -241,7 +241,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	INT Index = -1;
 
 	for (UINT a=0; a<m_pSearchResult->m_ItemCount; a++)
-		if (((Index==-1) && ((*m_pSearchResult)[a]->Type & LFTypeDefault)) || !strcmp(StoreID, (*m_pSearchResult)[a]->StoreID))
+		if (((Index==-1) && ((*m_pSearchResult)[a]->Type & LFTypeDefault)) || (StoreID==(*m_pSearchResult)[a]->StoreID))
 			Index = a;
 
 	m_wndStoreList.SetFocusItem(Index);

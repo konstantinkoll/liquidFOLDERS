@@ -113,17 +113,19 @@ INT CUsageList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 UINT LFStorePropertiesDlg::m_LastTab = 0;
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(const LPCSTR pStoreID, CWnd* pParentWnd)
+LFStorePropertiesDlg::LFStorePropertiesDlg(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd)
 	: LFTabbedDialog(0, pParentWnd, &m_LastTab)
 {
-	if (LFGetStoreSettings(pStoreID, m_Store)==LFOk)
+	if (LFGetStoreSettings(StoreID, m_StoreDescriptor)==LFOk)
 	{
-		m_StoreUniqueID = m_Store.UniqueID;
+		m_StoreUniqueID = m_StoreDescriptor.UniqueID;
 	}
 	else
 	{
 		ZeroMemory(&m_StoreUniqueID, sizeof(m_StoreUniqueID));
 	}
+
+	m_StoreDescriptorValid = FALSE;
 }
 
 void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
@@ -142,7 +144,7 @@ void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 
 		WCHAR StoreName[256];
 		m_wndStoreName.GetWindowText(StoreName, 256);
@@ -154,7 +156,7 @@ void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 		const BOOL SetDefault = (m_wndMakeDefault.IsWindowEnabled() && m_wndMakeDefault.GetCheck());
 		const BOOL MakeSearchable = m_wndMakeSearchable.GetCheck();
 
-		UINT Result = LFSetStoreAttributes(m_Store.StoreID, StoreName, Comment);
+		UINT Result = LFSetStoreAttributes(m_StoreDescriptor.StoreID, StoreName, Comment);
 		if (Result!=LFOk)
 		{
 			LFErrorBox(this, Result);
@@ -162,12 +164,12 @@ void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 		else
 		{
 			if (SetDefault)
-				LFErrorBox(this, LFSetDefaultStore(m_Store.StoreID));
+				LFErrorBox(this, LFSetDefaultStore(m_StoreDescriptor.StoreID));
 
-			ASSERT(m_wndMakeSearchable.IsWindowVisible()==((m_Store.Mode & LFStoreModeIndexMask)>=LFStoreModeIndexHybrid));
+			ASSERT(m_wndMakeSearchable.IsWindowVisible()==((m_StoreDescriptor.Mode & LFStoreModeIndexMask)>=LFStoreModeIndexHybrid));
 
 			if (m_wndMakeSearchable.IsWindowVisible())
-				LFErrorBox(this, LFMakeStoreSearchable(m_Store.StoreID, MakeSearchable));
+				LFErrorBox(this, LFMakeStoreSearchable(m_StoreDescriptor.StoreID, MakeSearchable));
 		}
 	}
 }
@@ -214,7 +216,7 @@ BOOL LFStorePropertiesDlg::InitDialog()
 
 	// Caption
 	CString Caption;
-	Caption.Format(IDS_STOREPROPERTIES, m_Store.StoreName);
+	Caption.Format(IDS_STOREPROPERTIES, m_StoreDescriptor.StoreName);
 
 	SetWindowText(Caption);
 
@@ -229,15 +231,15 @@ BOOL LFStorePropertiesDlg::InitDialog()
 	GetDlgItem(IDC_SYNCHRONIZED)->GetWindowText(m_MaskSynchronized);
 
 	// Store
-	m_wndStoreIcon.SetCoreIcon(LFGetStoreIcon(&m_Store));
+	m_wndStoreIcon.SetCoreIcon(LFGetStoreIcon(&m_StoreDescriptor));
 
-	if ((m_Store.Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
+	if ((m_StoreDescriptor.Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 	{
 		m_wndMakeSearchable.ShowWindow(SW_HIDE);
 	}
 	else
 	{
-		m_wndMakeSearchable.SetCheck((m_Store.Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid);
+		m_wndMakeSearchable.SetCheck((m_StoreDescriptor.Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid);
 	}
 
 	// Store
@@ -263,11 +265,11 @@ CString LFStorePropertiesDlg::MakeHex(LPBYTE x, UINT bCount)
 	return tmpStr;
 }
 
-void LFStorePropertiesDlg::CEscape(CString &str)
+void LFStorePropertiesDlg::CEscape(CString &strEscape)
 {
-	for (INT a=str.GetLength()-1; a>=0; a--)
-		if ((str[a]==L'\\') || (str[a]==L'\"'))
-			str.Insert(a, L'\\');
+	for (INT a=strEscape.GetLength()-1; a>=0; a--)
+		if ((strEscape[a]==L'\\') || (strEscape[a]==L'\"'))
+			strEscape.Insert(a, L'\\');
 }
 
 
@@ -291,33 +293,34 @@ void LFStorePropertiesDlg::OnShowUsageTab(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 void LFStorePropertiesDlg::OnRunSynchronize()
 {
-	LFRunSynchronize(m_Store.StoreID, this);
+	LFRunSynchronizeStores(m_StoreDescriptor.StoreID, this);
 }
 
 void LFStorePropertiesDlg::OnRunMaintenance()
 {
-	LFRunMaintenance(this);
+	LFRunStoreMaintenance(this);
 }
 
 void LFStorePropertiesDlg::OnRunBackup()
 {
-	CHAR* pStoreIDs;
-	UINT Count;
+	// Get stores
 	UINT Result;
-	if ((Result=LFGetAllStores(pStoreIDs, Count))!=LFOk)
+	LPCABSOLUTESTOREID lpcStoreIDs;
+	UINT Count;
+	if ((Result=LFGetAllStores(lpcStoreIDs, Count))!=LFOk)
 	{
 		LFErrorBox(this, Result);
 		return;
 	}
 
+	// Open file
 	CString tmpStr((LPCSTR)IDS_REGFILEFILTER);
 	tmpStr += _T(" (*.reg)|*.reg||");
 
 	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
-
 	if (dlg.DoModal()==IDOK)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 
 		CStdioFile f;
 		if (!f.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
@@ -330,60 +333,58 @@ void LFStorePropertiesDlg::OnRunBackup()
 			{
 				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
 
-				LPCSTR Ptr = pStoreIDs;
+				// Iterate stores
 				for (UINT a=0; a<Count; a++)
 				{
-					LFStoreDescriptor Store;
-					if (LFGetStoreSettings(Ptr, Store)==LFOk)
-						if ((Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+					LFStoreDescriptor StoreDescriptor;
+					if (LFGetStoreSettings(lpcStoreIDs[a], StoreDescriptor)==LFOk)
+						if ((StoreDescriptor.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 						{
 							// Header
 							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
-							tmpStr += Store.StoreID;
+							tmpStr += StoreDescriptor.StoreID;
 							f.WriteString(tmpStr+_T("]\n"));
 
 							// Name
-							tmpStr = Store.StoreName;
+							tmpStr = StoreDescriptor.StoreName;
 							CEscape(tmpStr);
 							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
 
 							// Mode
-							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), Store.Mode);
+							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), StoreDescriptor.Mode);
 							f.WriteString(tmpStr);
 
 							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), Store.Flags & LFStoreFlagsAutoLocation);
+							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), StoreDescriptor.Flags & LFStoreFlagsAutoLocation);
 							f.WriteString(tmpStr);
 
-							if ((Store.Flags & LFStoreFlagsAutoLocation)==0)
+							if ((StoreDescriptor.Flags & LFStoreFlagsAutoLocation)==0)
 							{
 								// Path
-								tmpStr = Store.DatPath;
+								tmpStr = StoreDescriptor.DatPath;
 								CEscape(tmpStr);
 								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
 							}
 
 							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((LPBYTE)&Store.UniqueID, sizeof(Store.UniqueID))+_T("\n"));
+							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.UniqueID, sizeof(StoreDescriptor.UniqueID))+_T("\n"));
 
 							// IndexVersion
-							tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), Store.IndexVersion);
+							tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), StoreDescriptor.IndexVersion);
 							f.WriteString(tmpStr);
 
 							// CreationTime
-							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((LPBYTE)&Store.CreationTime, sizeof(Store.CreationTime))+_T("\n"));
+							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.CreationTime, sizeof(StoreDescriptor.CreationTime))+_T("\n"));
 
 							// FileTime
-							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((LPBYTE)&Store.FileTime, sizeof(Store.FileTime))+_T("\n"));
+							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.FileTime, sizeof(StoreDescriptor.FileTime))+_T("\n"));
 
 							// MaintenanceTime
-							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((LPBYTE)&Store.MaintenanceTime, sizeof(Store.MaintenanceTime))+_T("\n"));
+							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.MaintenanceTime, sizeof(StoreDescriptor.MaintenanceTime))+_T("\n"));
 
 							// SynchronizeTime
-							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((LPBYTE)&Store.SynchronizeTime, sizeof(Store.SynchronizeTime))+_T("\n"));
+							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.SynchronizeTime, sizeof(StoreDescriptor.SynchronizeTime))+_T("\n"));
 						}
-
-					Ptr += LFKeySize;
 				}
 			}
 			catch(CFileException ex)
@@ -395,28 +396,28 @@ void LFStorePropertiesDlg::OnRunBackup()
 		}
 	}
 
-	free(pStoreIDs);
+	free(lpcStoreIDs);
 }
 
 
 LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	// Get store data
-	if ((m_StoreValid=((LFGetStoreSettingsEx(m_StoreUniqueID, m_Store, TRUE)==LFOk)))==TRUE)
-		m_StoreIcon = LFGetStoreIcon(&m_Store, &m_StoreType);
+	if ((m_StoreDescriptorValid=((LFGetStoreSettingsEx(m_StoreUniqueID, m_StoreDescriptor)==LFOk)))==TRUE)
+		m_StoreIcon = LFGetStoreIcon(&m_StoreDescriptor, &m_StoreType);
 
 	// Basic settings
-	m_wndStoreName.EnableWindow(m_StoreValid);
-	m_wndStoreComment.EnableWindow(m_StoreValid);
-	m_wndMakeDefault.EnableWindow(m_StoreValid);
-	m_wndMakeSearchable.EnableWindow(m_StoreValid);
+	m_wndStoreName.EnableWindow(m_StoreDescriptorValid);
+	m_wndStoreComment.EnableWindow(m_StoreDescriptorValid);
+	m_wndMakeDefault.EnableWindow(m_StoreDescriptorValid);
+	m_wndMakeSearchable.EnableWindow(m_StoreDescriptorValid);
 
-	const BOOL Editable = m_StoreValid && (m_StoreType & LFTypeWriteable);
+	const BOOL Editable = m_StoreDescriptorValid && (m_StoreType & LFTypeWriteable);
 	GetDlgItem(IDOK)->EnableWindow(Editable);
 
 	// Usage
-	m_wndUsageHeader.SetHeader(m_Store.StoreName, LFGetApp()->GetFreeBytesAvailable(m_Store));
-	m_wndUsageList.SetUsage(m_Store);
+	m_wndUsageHeader.SetHeader(m_StoreDescriptor.StoreName, LFGetApp()->GetFreeBytesAvailable(m_StoreDescriptor));
+	m_wndUsageList.SetUsage(m_StoreDescriptor);
 
 	// Synchronize
 	const BOOL CanSynchronize = m_StoreType & LFTypeSynchronizeAllowed;
@@ -424,23 +425,23 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize && Editable);
 
 	// Update properties
-	if (m_StoreValid)
+	if (m_StoreDescriptorValid)
 	{
 		WCHAR tmpStr[256];
 		CString tmpText;
 
 		// Tab 0
 		if (m_wndStoreName.LineLength()==0)
-			m_wndStoreName.SetWindowText(m_Store.StoreName);
+			m_wndStoreName.SetWindowText(m_StoreDescriptor.StoreName);
 
 		if (m_wndStoreComment.LineLength()==0)
-			m_wndStoreComment.SetWindowText(m_Store.Comments);
+			m_wndStoreComment.SetWindowText(m_StoreDescriptor.Comments);
 
-		if (m_Store.Flags & LFStoreFlagsMaintained)
+		if (m_StoreDescriptor.Flags & LFStoreFlagsMaintained)
 		{
 			GetDlgItem(IDC_CONTENTSLABEL)->EnableWindow(TRUE);
 
-			LFGetFileSummary(tmpStr, 256, m_Store.Statistics.FileCount[LFContextAllFiles], m_Store.Statistics.FileSize[LFContextAllFiles]);
+			LFGetFileSummary(tmpStr, 256, m_StoreDescriptor.Statistics.FileCount[LFContextAllFiles], m_StoreDescriptor.Statistics.FileSize[LFContextAllFiles]);
 			tmpText.Format(m_MaskContents, tmpStr);
 			GetDlgItem(IDC_CONTENTS)->SetWindowText(tmpText);
 		}
@@ -450,40 +451,40 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 			GetDlgItem(IDC_CONTENTS)->SetWindowText(_T(""));
 		}
 
-		LFTimeToString(m_Store.CreationTime, tmpStr, 256);
+		LFTimeToString(m_StoreDescriptor.CreationTime, tmpStr, 256);
 		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
 
-		LFTimeToString(m_Store.FileTime, tmpStr, 256);
+		LFTimeToString(m_StoreDescriptor.FileTime, tmpStr, 256);
 		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
 
-		GetDlgItem(IDC_LASTSEENLABEL)->EnableWindow((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
-		GetDlgItem(IDC_LASTSEEN)->SetWindowText(m_Store.LastSeen);
+		GetDlgItem(IDC_LASTSEENLABEL)->EnableWindow((m_StoreDescriptor.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
+		GetDlgItem(IDC_LASTSEEN)->SetWindowText(m_StoreDescriptor.LastSeen);
 
-		CHAR StoreID[LFKeySize];
+		STOREID StoreID;
 		if (LFGetDefaultStore(StoreID)==LFOk)
-			m_wndMakeDefault.SetCheck(strcmp(m_Store.StoreID, StoreID)==0);
+			m_wndMakeDefault.SetCheck(strcmp(m_StoreDescriptor.StoreID, StoreID)==0);
 
 		// Tab 1
-		LFTimeToString(m_Store.MaintenanceTime, tmpStr, 256);
+		LFTimeToString(m_StoreDescriptor.MaintenanceTime, tmpStr, 256);
 		tmpText.Format(m_MaskMaintenance, tmpStr);
 		GetDlgItem(IDC_MAINTENANCE)->SetWindowText(tmpText);
 
-		LFTimeToString(m_Store.SynchronizeTime, tmpStr, 256);
+		LFTimeToString(m_StoreDescriptor.SynchronizeTime, tmpStr, 256);
 		tmpText.Format(m_MaskSynchronized, tmpStr);
 		GetDlgItem(IDC_SYNCHRONIZED)->SetWindowText(tmpText);
 
 		// Tab 2
-		GetDlgItem(IDC_DATPATH)->SetWindowText(m_Store.DatPath);
+		GetDlgItem(IDC_DATPATH)->SetWindowText(m_StoreDescriptor.DatPath);
 
 		OLECHAR szGUID[MAX_PATH];
-		StringFromGUID2(m_Store.UniqueID, szGUID, MAX_PATH);
+		StringFromGUID2(m_StoreDescriptor.UniqueID, szGUID, MAX_PATH);
 		GetDlgItem(IDC_GUID)->SetWindowText(szGUID);
 
-		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(m_Store.IdxPathMain);
-		GetDlgItem(IDC_IDXPATHAUXCAPTION)->EnableWindow(m_Store.IdxPathAux[0]!=L'\0');
-		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(m_Store.IdxPathAux);
+		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(m_StoreDescriptor.IdxPathMain);
+		GetDlgItem(IDC_IDXPATHAUXCAPTION)->EnableWindow(m_StoreDescriptor.IdxPathAux[0]!=L'\0');
+		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(m_StoreDescriptor.IdxPathAux);
 
-		LFUINTToString(m_Store.IndexVersion, tmpStr, 256);
+		LFUINTToString(m_StoreDescriptor.IndexVersion, tmpStr, 256);
 		GetDlgItem(IDC_IDXVERSION)->SetWindowText(tmpStr);
 	}
 

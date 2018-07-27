@@ -13,142 +13,113 @@ LFDropTarget::LFDropTarget()
 {
 	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_pDropTargetHelper);
 
+	DEFAULTSTOREID(m_StoreID);
 	p_OwnerWnd = NULL;
-	m_StoreIDValid = m_SkipTemplate = m_AllowChooseStore = m_IsDragging = FALSE;
-	p_Filter = NULL;
+	m_SkipTemplate = m_AllowChooseStore = m_IsDragSource = m_IsDropAllowed = FALSE;
 	p_SearchResult = NULL;
 }
 
-void LFDropTarget::SetDragging(BOOL IsDragging)
+void LFDropTarget::SetStore(const ABSOLUTESTOREID& StoreID)
 {
-	m_IsDragging = IsDragging;
+	m_StoreID = StoreID;
+	m_AllowChooseStore = FALSE;
 }
 
-void LFDropTarget::SetOwner(CWnd* pOwnerWnd)
+void LFDropTarget::SetStore(LFFilter* pFilter)
 {
-	p_OwnerWnd = pOwnerWnd;
+	m_StoreID = pFilter ? pFilter->Query.StoreID : DEFAULTSTOREID();
+	m_AllowChooseStore = TRUE;
 }
 
-void LFDropTarget::SetStore(const LPCSTR pStoreID, BOOL AllowChooseStore)
+inline HRESULT LFDropTarget::ImportFromFS(HDROP hDrop, DWORD dwEffect, CWnd* pWnd) const
 {
-	ASSERT(pStoreID);
+	if (!hDrop)
+		return E_INVALIDARG;
 
-	p_Filter = NULL;
-	strcpy_s(m_StoreID, LFKeySize, pStoreID);
-	m_StoreIDValid = TRUE;
-	m_AllowChooseStore = AllowChooseStore;
-}
+	// Thread worker
+	WorkerImportParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
+	Parameters.StoreID = m_StoreID;
+	Parameters.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
 
-void LFDropTarget::SetFilter(LFFilter* pFilter, BOOL AllowChooseStore)
-{
-	p_Filter = pFilter;
-	m_StoreIDValid = FALSE;
-	m_AllowChooseStore = AllowChooseStore;
-}
-
-void LFDropTarget::SetSearchResult(LFSearchResult* pSearchResult)
-{
-	p_SearchResult = pSearchResult;
-}
-
-__forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, const LPCSTR pStoreID, CWnd* pWnd) const
-{
-	ASSERT(pStoreID);
-
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, pStoreID);
-	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
-
-	// Template füllen
+	// Fill template
 	if (!m_SkipTemplate)
 	{
-		wp.pItemTemplate = LFAllocItemDescriptor();
-
-		LFItemTemplateDlg dlg(wp.pItemTemplate, wp.StoreID, pWnd, m_AllowChooseStore, p_Filter);
+		LFItemTemplateDlg dlg(Parameters.pItemTemplate=LFAllocItemDescriptor(), m_StoreID, m_AllowChooseStore, pWnd);
 		if (dlg.DoModal()==IDCANCEL)
 		{
-			LFFreeItemDescriptor(wp.pItemTemplate);
+			LFFreeItemDescriptor(Parameters.pItemTemplate);
 			return E_ABORT;
 		}
 
-		if (m_AllowChooseStore)
-			strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
+		Parameters.StoreID = dlg.m_StoreID;
 	}
 
-	HDROP hDrop = (HDROP)GlobalLock(hgDrop);
-	wp.pFileImportList = LFAllocFileImportList(hDrop);
-	GlobalUnlock(hgDrop);
+	Parameters.pFileImportList = LFAllocFileImportList(hDrop);
 
-	LFDoWithProgress(WorkerImport, &wp.Hdr, pWnd);
-	UINT Result = wp.pFileImportList->m_LastError;
-	LFErrorBox(pWnd, Result);
+	LFDoWithProgress(WorkerImport, &Parameters.Hdr, pWnd);
+	LFErrorBox(pWnd, Parameters.Hdr.Result);
 
-	LFFreeFileImportList(wp.pFileImportList);
+	LFFreeFileImportList(Parameters.pFileImportList);
 
-	if (wp.pItemTemplate)
-		LFFreeItemDescriptor(wp.pItemTemplate);
+	if (Parameters.pItemTemplate)
+		LFFreeItemDescriptor(Parameters.pItemTemplate);
 
 	if (p_OwnerWnd)
 		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
 
-	return (Result==LFOk) ? S_OK : E_INVALIDARG;
+	return (Parameters.Hdr.Result==LFOk) ? S_OK : E_INVALIDARG;
 }
 
-__forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, const LPCSTR pStoreID, CWnd* pWnd) const
+inline HRESULT LFDropTarget::ImportFromStore(HLIQUIDFILES hLiquidFiles, IDataObject* pDataObject, CWnd* pWnd) const
 {
-	ASSERT(pStoreID);
-
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, pStoreID);
-	wp.DeleteSource = (dwEffect & DROPEFFECT_MOVE)!=0;
-
-	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	wp.pTransactionList = LFAllocTransactionListEx(hLiquid);
-	GlobalUnlock(hgLiquid);
-
-	LFDoWithProgress(WorkerSendTo, &wp.Hdr, pWnd);
-	UINT Result = wp.pTransactionList->m_LastError;
-	LFErrorBox(pWnd, Result);
-
-	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
-	FORMATETC fmt;
-	ZeroMemory(&fmt, sizeof(fmt));
-	fmt.cfFormat = LFGetApp()->CF_HLIQUID;
-	fmt.dwAspect = DVASPECT_CONTENT;
-	fmt.lindex = -1;
-	fmt.tymed = TYMED_HGLOBAL;
-
-	STGMEDIUM stg;
-	ZeroMemory(&stg, sizeof(stg));
-	stg.tymed = TYMED_HGLOBAL;
-	stg.hGlobal = LFCreateLiquidFiles(wp.pTransactionList);
-
-	pDataObject->SetData(&fmt, &stg, FALSE);
-
-	LFFreeTransactionList(wp.pTransactionList);
-
-	if (p_OwnerWnd)
-		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
-
-	return (Result==LFOk) ? S_OK : E_INVALIDARG;
-}
-
-__forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd) const
-{
-	if (!hgLiquid)
+	if (!hLiquidFiles)
 		return E_INVALIDARG;
 
-	CWaitCursor csr;
+	// Thread worker
+	WorkerSendToParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
+	Parameters.pTransactionList = LFAllocTransactionListEx(hLiquidFiles);
+	Parameters.StoreID = m_StoreID;
 
-	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	LFTransactionList* pTransactionList = LFAllocTransactionListEx(hLiquid);
-	GlobalUnlock(hgLiquid);
+	LFDoWithProgress(WorkerSendTo, &Parameters.Hdr, pWnd);
+	LFErrorBox(pWnd, Parameters.Hdr.Result);
 
-	LFDoTransaction(pTransactionList, LFTransactionTypeAddToSearchResult, NULL, (UINT_PTR)p_SearchResult);
-	UINT Result = pTransactionList->m_LastError;
+	// Re-set CF_LIQUIDFILES to remove unaffected files (error or drop on same store)
+	FORMATETC Format;
+	ZeroMemory(&Format, sizeof(Format));
+	Format.cfFormat = LFGetApp()->CF_LIQUIDFILES;
+	Format.dwAspect = DVASPECT_CONTENT;
+	Format.lindex = -1;
+	Format.tymed = TYMED_HGLOBAL;
+
+	STGMEDIUM Medium;
+	ZeroMemory(&Medium, sizeof(Medium));
+	Medium.tymed = TYMED_HGLOBAL;
+	Medium.hGlobal = LFCreateLiquidFiles(Parameters.pTransactionList);
+
+	pDataObject->SetData(&Format, &Medium, FALSE);
+
+	LFFreeTransactionList(Parameters.pTransactionList);
+
+	if (p_OwnerWnd)
+		p_OwnerWnd->SendMessage(LFGetMessageIDs()->ItemsDropped);
+
+	return (Parameters.Hdr.Result==LFOk) ? S_OK : E_INVALIDARG;
+}
+
+inline HRESULT LFDropTarget::AddToClipboard(HLIQUIDFILES hLiquidFiles, CWnd* pWnd) const
+{
+	if (!hLiquidFiles)
+		return E_INVALIDARG;
+
+	CWaitCursor WaitCursor;
+
+	LFTransactionList* pTransactionList = LFAllocTransactionListEx(hLiquidFiles);
+
+	const UINT Result = LFDoTransaction(pTransactionList, LFTransactionAddToSearchResult, NULL, (UINT_PTR)p_SearchResult);
 	LFErrorBox(pWnd, Result);
+
 	LFFreeTransactionList(pTransactionList);
 
 	if (p_OwnerWnd)
@@ -164,10 +135,12 @@ STDMETHODIMP LFDropTarget::QueryInterface(REFIID iid, void** ppvObject)
 	{
 		AddRef();
 		*ppvObject = this;
+
 		return S_OK;
 	}
 
 	*ppvObject = NULL;
+
 	return E_NOINTERFACE;
 }
 
@@ -181,103 +154,87 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::Release()
 	return InterlockedDecrement(&m_lRefCount);
 }
 
-STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect)
+STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL Point, LPDWORD pdwEffect)
 {
+	// Drop target helper
 	if (m_pDropTargetHelper)
+		m_pDropTargetHelper->DragEnter(p_OwnerWnd->GetSafeHwnd(), pDataObject, (LPPOINT)&Point, *pdwEffect);
+
+	// Is drop allowed?
+	COleDataObject DataObject;
+	DataObject.Attach(pDataObject, FALSE);
+
+	if ((m_IsDropAllowed=DataObject.GetGlobalData(LFGetApp()->CF_LIQUIDFILES) || (DataObject.GetGlobalData(CF_HDROP) && !p_SearchResult))==TRUE)
 	{
-		POINT pt = { ptl.x, ptl.y };
-		m_pDropTargetHelper->DragEnter(p_OwnerWnd->GetSafeHwnd(), pDataObject, &pt, *pdwEffect);
+		return DragOver(grfKeyState, Point, pdwEffect);
 	}
+	else
+	{
+		*pdwEffect = DROPEFFECT_NONE;
 
-	COleDataObject dobj;
-	dobj.Attach(pDataObject, FALSE);
-
-	if (dobj.GetGlobalData(LFGetApp()->CF_HLIQUID))
-		goto Allowed;
-
-	if ((!p_SearchResult) && (dobj.GetGlobalData(CF_HDROP)))
-		goto Allowed;
-
-	*pdwEffect = DROPEFFECT_NONE;
-	return E_INVALIDARG;
-
-Allowed:
-	return DragOver(grfKeyState, ptl, pdwEffect);
+		return S_OK;
+	}
 }
 
-STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect)
+STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL Point, LPDWORD pdwEffect)
 {
+	// Drop target helper
 	if (m_pDropTargetHelper)
-	{
-		POINT pt = { ptl.x, ptl.y };
-		m_pDropTargetHelper->DragOver(&pt, *pdwEffect);
-	}
+		m_pDropTargetHelper->DragOver((LPPOINT)&Point, *pdwEffect);
 
+	// Skip template
 	m_SkipTemplate = (grfKeyState & MK_SHIFT);
 
-	*pdwEffect &= m_IsDragging ? DROPEFFECT_NONE : p_SearchResult ? DROPEFFECT_COPY : (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	// Drop effect
+	*pdwEffect &= m_IsDragSource || !m_IsDropAllowed ? DROPEFFECT_NONE : p_SearchResult ? DROPEFFECT_COPY : (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+
 	return S_OK;
 }
 
 STDMETHODIMP LFDropTarget::DragLeave()
 {
+	// Drop target helper
 	if (m_pDropTargetHelper)
 		m_pDropTargetHelper->DragLeave();
 
 	return S_OK;
 }
 
-STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, LPDWORD pdwEffect)
+STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL Point, LPDWORD pdwEffect)
 {
-	if (p_OwnerWnd)
-		p_OwnerWnd->ActivateTopParent();
+	DragOver(grfKeyState, Point, pdwEffect);
 
+	// Drop target helper
 	if (m_pDropTargetHelper)
-	{
-		POINT pt = { ptl.x, ptl.y };
-		m_pDropTargetHelper->Drop(pDataObject, &pt, *pdwEffect);
-	}
+		m_pDropTargetHelper->Drop(pDataObject, (LPPOINT)&Point, *pdwEffect);
 
-	if ((DragOver(grfKeyState, ptl, pdwEffect)!=S_OK) || (m_IsDragging))
+	if (m_IsDragSource || !m_IsDropAllowed)
 		return E_INVALIDARG;
 
+	// Bring window to front
+	CWnd* pWnd;
+	if (p_OwnerWnd)
+	{
+		pWnd = p_OwnerWnd;
+
+		p_OwnerWnd->ActivateTopParent();
+	}
+	else
+	{
+		pWnd = CWnd::GetForegroundWindow();
+	}
+
 	// Allowed?
-	if (!LFNagScreen(p_OwnerWnd))
+	if (!LFNagScreen(pWnd))
 		return E_INVALIDARG;
 
 	// Data object
-	COleDataObject dobj;
-	dobj.Attach(pDataObject, FALSE);
+	COleDataObject DataObject;
+	DataObject.Attach(pDataObject, FALSE);
 
-	HGLOBAL hgDrop = dobj.GetGlobalData(CF_HDROP);
-	HGLOBAL hgLiquid = dobj.GetGlobalData(LFGetApp()->CF_HLIQUID);
+	HDROP hDrop = (HDROP)DataObject.GetGlobalData(CF_HDROP);
+	HLIQUIDFILES hLiquidFiles = (HLIQUIDFILES)DataObject.GetGlobalData(LFGetApp()->CF_LIQUIDFILES);
 
-	if ((hgDrop==NULL) && (hgLiquid==NULL))
-		return E_INVALIDARG;
-
-	// Fenster
-	CWnd* pWnd = p_OwnerWnd ? p_OwnerWnd : CWnd::GetForegroundWindow();
-
-	// Clipboard
-	if (p_SearchResult)
-	{
-		CWaitCursor csr;
-
-		return AddToClipboard(hgLiquid, pWnd);
-	}
-
-	// Ziel-Store
-	CHAR StoreID[LFKeySize];
-	strcpy_s(StoreID, LFKeySize, p_Filter ? p_Filter->Query.StoreID : m_StoreIDValid ? m_StoreID : "");
-
-	// Wenn Default-Store gewünscht: verfügbar ?
-	UINT Result;
-	if (StoreID[0]=='\0')
-		if ((Result=LFGetDefaultStore())!=LFOk)
-		{
-			LFErrorBox(pWnd, Result);
-			return E_INVALIDARG;
-		}
-
-	return hgLiquid ? ImportFromStore(pDataObject, hgLiquid, *pdwEffect, StoreID, pWnd) : ImportFromFS(hgDrop, *pdwEffect, StoreID, pWnd);
+	return p_SearchResult ? AddToClipboard(hLiquidFiles, pWnd) :
+		hLiquidFiles ? ImportFromStore(hLiquidFiles, pDataObject, pWnd) : ImportFromFS(hDrop, *pdwEffect, pWnd);
 }

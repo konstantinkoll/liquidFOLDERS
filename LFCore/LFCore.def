@@ -1,6 +1,6 @@
 ; LFCore.def : Declares the module parameters for the DLL.
 
-LIBRARY      "LFCORE"
+LIBRARY     "LFCORE"
 
 EXPORTS
 	; Explicit exports can go here
@@ -29,17 +29,17 @@ EXPORTS
 	LFGetDefaultStore @100
 	LFSetDefaultStore @101
 	LFGetStoreCount @102
-	LFGetAllStores @103
-	LFGetStoreSettings @104
-	LFGetStoreSettingsEx @105
-	LFStoresOnVolume @106
-	LFGetStoreIcon @107
-	LFCreateStoreLiquidfolders @108
-	LFCreateStoreWindows @109
-	LFMakeStoreSearchable @110
-	LFDeleteStore @111
-	LFSetStoreAttributes @112
-	LFSynchronizeStore @113
+	LFResolveStoreIDEx @103
+	LFGetAllStores @104
+	LFGetStoreSettings @105
+	LFGetStoreSettingsEx @106
+	LFStoresOnVolume @107
+	LFGetStoreIcon @108
+	LFCreateStoreLiquidfolders @109
+	LFCreateStoreWindows @110
+	LFMakeStoreSearchable @111
+	LFDeleteStore @112
+	LFSetStoreAttributes @113
 	LFSynchronizeStores @114
 	LFScheduledMaintenance @115
 	LFGetFileLocation @116
@@ -76,31 +76,26 @@ EXPORTS
 	LFCloneItemDescriptor @302
 	LFFreeItemDescriptor @303
 	LFAllocFilter @304
-	LFCloneFilter @305
-	LFFreeFilter @306
-	LFLoadFilter @307
-	LFLoadFilterEx @308
-	LFSaveFilter @309
-	LFAllocFilterCondition @310
-	LFAllocSearchResult @311
-	LFFreeSearchResult @312
-	LFAddItem @313
-	LFRemoveFlaggedItems @314
-	LFSortSearchResult @315
-	LFGroupSearchResult @316
-	LFUpdateFolderColors @317
-	LFAllocTransactionList @318
-	LFAllocTransactionListEx @319
-	LFFreeTransactionList @320
-	LFAddTransactionItem @321
-	LFAddTransactionItemEx @322
-	LFCreateDropFiles @323
-	LFCreateLiquidFiles @324
-	LFDoTransaction @325
-	LFAllocFileImportList @326
-	LFFreeFileImportList @327
-	LFAddImportPath @328
-	LFFreeMaintenanceList @329
+	LFFreeFilter @305
+	LFLoadFilter @306
+	LFSaveFilter @307
+	LFAllocFilterCondition @308
+	LFAllocSearchResult @309
+	LFFreeSearchResult @310
+	LFAddItem @311
+	LFRemoveFlaggedItems @312
+	LFSortSearchResult @313
+	LFGroupSearchResult @314
+	LFUpdateFolderColors @315
+	LFAllocTransactionList @316
+	LFAllocTransactionListEx @317
+	LFFreeTransactionList @318
+	LFAddTransactionItem @319
+	LFCreateDropFiles @320
+	LFCreateLiquidFiles @321
+	LFDoTransaction @322
+	LFAllocFileImportList @323
+	LFAddImportPath @324
 
 	LFIATAGetCountryCount @400
 	LFIATAGetAirportCount @401

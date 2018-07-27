@@ -6,7 +6,6 @@
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "Stores.h"
-#include <assert.h>
 
 
 extern HMODULE LFCoreModuleHandle;
@@ -28,7 +27,7 @@ CHAR KeyChars[38] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'
 
 #pragma bss_seg(".stores")
 
-CHAR DefaultStore[LFKeySize];
+ABSOLUTESTOREID DefaultStore;
 UINT StoreCount;
 LFStoreDescriptor StoreCache[MAXSTORES];
 
@@ -42,242 +41,32 @@ LFStoreDescriptor StoreCache[MAXSTORES];
 #define ResetStoreFlags(pStoreDescriptor)     pStoreDescriptor->Flags &= (LFStoreFlagsAutoLocation | LFStoreFlagsError);
 
 
-// Cache access
+// Persistence in registry
 //
 
-void CreateNewStoreID(LPSTR pStoreID)
+void GetRegistryKey(const ABSOLUTESTOREID& StoreID, LPSTR pKey)
 {
-	assert(pStoreID);
-
-	pStoreID[LFKeySize-1] = 0;
-	BOOL IsUnique;
-
-	do
-	{
-		RANDOMIZE();
-
-		for (UINT a=0; a<LFKeySize-1; a++)
-			pStoreID[a] = RAND_CHAR();
-
-		IsUnique = TRUE;
-
-		for (UINT a=0; a<StoreCount; a++)
-			if (strcmp(StoreCache[a].StoreID, pStoreID)==0)
-			{
-				IsUnique = FALSE;
-				break;
-			}
-	}
-	while (!IsUnique);
-}
-
-void GetDescriptorForNewStore(LFStoreDescriptor* pStoreDescriptor)
-{
-	assert(pStoreDescriptor);
-
-	ZeroMemory(pStoreDescriptor, sizeof(LFStoreDescriptor));
-
-	// Name
-	LoadString(LFCoreModuleHandle, IDS_NEWSTORE, pStoreDescriptor->StoreName, 256);
-
-	// Create uniquie ID
-	CoCreateGuid(&pStoreDescriptor->UniqueID);
-
-	// CreateTime and MaintenanceTime
-	GetSystemTimeAsFileTime(&pStoreDescriptor->CreationTime);
-	pStoreDescriptor->MaintenanceTime = pStoreDescriptor->CreationTime;
-
-	// Create ID
-	CreateNewStoreID(pStoreDescriptor->StoreID);
-
-	// Index version
-	pStoreDescriptor->IndexVersion = CURIDXVERSION;
-}
-
-LFStoreDescriptor* FindStore(LPCSTR pStoreID)
-{
-	assert(pStoreID);
-
-	for (UINT a=0; a<StoreCount; a++)
-		if (strcmp(StoreCache[a].StoreID, pStoreID)==0)
-			return &StoreCache[a];
-
-	return NULL;
-}
-
-LFStoreDescriptor* FindStore(const GUID& UniqueID)
-{
-	for (UINT a=0; a<StoreCount; a++)
-		if (StoreCache[a].UniqueID==UniqueID)
-			return &StoreCache[a];
-
-	return NULL;
-}
-
-LFStoreDescriptor* FindStore(LPCWSTR pDatPath)
-{
-	assert(pDatPath);
-
-	for (UINT a=0; a<StoreCount; a++)
-		if (wcscmp(StoreCache[a].DatPath, pDatPath)==0)
-			return &StoreCache[a];
-
-	return NULL;
-}
-
-
-// Persistence
-//
-
-void TestCloudPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR Path, UINT Source)
-{
-	assert(Path);
-
-	if (Path[0]!=L'\0')
-	{
-		wcscat_s(Path, MAX_PATH, L"\\");
-
-		if (wcsncmp(Path, pStoreDescriptor->DatPath, wcslen(Path))==0)
-			pStoreDescriptor->Source = Source;
-	}
-}
-
-void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
-{
-	assert(pStoreDescriptor);
-	assert(((pStoreDescriptor->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((pStoreDescriptor->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
-
-	// Source: only set if unknown to retain USB/IEEE1394 icons when unmounted
-	if (pStoreDescriptor->Source==LFTypeSourceUnknown)
-		pStoreDescriptor->Source = max(LFTypeSourceInternal, (pStoreDescriptor->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift);
-
-	// Store name and source of mounted volume
-	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
-		if (LFIsStoreMounted(pStoreDescriptor))
-		{
-			WCHAR szVolumeRoot[] = L" :\\";
-			szVolumeRoot[0] = pStoreDescriptor->DatPath[0];
-
-			SHFILEINFO sfi;
-			if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
-				wcscpy_s(pStoreDescriptor->LastSeen, 256, sfi.szDisplayName);
-
-			if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendWindows)
-			{
-				const UINT Source = LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0]);
-
-				if (Source>LFTypeSourceInternal)
-					pStoreDescriptor->Source = Source;
-			}
-		}
-
-	// Paths
-	if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)==LFStoreModeBackendWindows)
-	{
-		if (LFIsStoreMounted(pStoreDescriptor))
-		{
-			if (LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0])>LFTypeSourceInternal)
-			{
-				wcsncpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath, 3);
-				AppendGUID(pStoreDescriptor->IdxPathMain, pStoreDescriptor);
-			}
-			else
-			{
-				GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
-			}
-
-			// Cloud storage
-			WCHAR szPath[MAX_PATH];
-
-			// Box
-			if (LFGetBoxPath(szPath))
-				TestCloudPath(pStoreDescriptor, szPath, LFTypeSourceBox);
-
-			// Dropbox
-			wcscpy_s(szPath, MAX_PATH, pStoreDescriptor->DatPath);
-			wcscat_s(szPath, MAX_PATH, L".dropbox");
-
-			if (FileExists(szPath))
-				pStoreDescriptor->Source = LFTypeSourceDropbox;
-
-			// iCloud
-			LFICloudPaths iCloudPaths;
-			if (LFGetICloudPaths(iCloudPaths))
-			{
-				TestCloudPath(pStoreDescriptor, iCloudPaths.Drive, LFTypeSourceICloudDrive);
-				TestCloudPath(pStoreDescriptor, iCloudPaths.PhotoLibrary, LFTypeSourceICloudPhotos);
-			}
-
-			// OneDrive
-			LFOneDrivePaths OneDrivePaths;
-			if (LFGetOneDrivePaths(OneDrivePaths))
-			{
-				TestCloudPath(pStoreDescriptor, OneDrivePaths.OneDrive, LFTypeSourceOneDrive);
-				TestCloudPath(pStoreDescriptor, OneDrivePaths.CameraRoll, LFTypeSourceOneDrive);
-				TestCloudPath(pStoreDescriptor, OneDrivePaths.Documents, LFTypeSourceOneDrive);
-				TestCloudPath(pStoreDescriptor, OneDrivePaths.Pictures, LFTypeSourceOneDrive);
-			}
-		}
-		else
-		{
-			pStoreDescriptor->IdxPathMain[0] = L'\0';
-		}
-	}
-	else
-	{
-		// Get automatic data path
-		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (pStoreDescriptor->Flags & LFStoreFlagsAutoLocation))
-			GetAutoPath(pStoreDescriptor, pStoreDescriptor->DatPath);
-
-		// Main index
-		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || LFIsStoreMounted(pStoreDescriptor))
-		{
-			wcscpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath);
-			wcscat_s(pStoreDescriptor->IdxPathMain, MAX_PATH, L"INDEX\\");
-		}
-		else
-		{
-			pStoreDescriptor->IdxPathMain[0] = L'\0';
-		}
-	}
-
-	// Set aux index for local hybrid stores
-	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
-	{
-		GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathAux);
-		wcscat_s(pStoreDescriptor->IdxPathAux, MAX_PATH, L"INDEX\\");
-	}
-	else
-	{
-		pStoreDescriptor->IdxPathAux[0] = L'\0';
-	}
-}
-
-void GetRegistryKey(LPCSTR pStoreID, LPSTR pKey)
-{
-	assert(pStoreID);
 	assert(pKey);
 
 	strcpy_s(pKey, 256, LFSTORESHIVE);
 	strcat_s(pKey, 256, "\\");
-	strcat_s(pKey, 256, pStoreID);
+	strcat_s(pKey, 256, StoreID);
 }
 
-BOOL LoadStoreSettingsFromRegistry(LPCSTR pStoreID, LFStoreDescriptor* pStoreDescriptor)
+BOOL LoadStoreSettingsFromRegistry(const ABSOLUTESTOREID& StoreID, LFStoreDescriptor* pStoreDescriptor)
 {
-	assert(pStoreID);
 	assert(pStoreDescriptor);
 
 	BOOL Result = FALSE;
 
 	CHAR Key[256];
-	GetRegistryKey(pStoreID, Key);
+	GetRegistryKey(StoreID, Key);
 
 	HKEY hKey;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, Key, &hKey)==ERROR_SUCCESS)
 	{
 		ZeroMemory(pStoreDescriptor, sizeof(LFStoreDescriptor));
-		strcpy_s(pStoreDescriptor->StoreID, LFKeySize, pStoreID);
+		pStoreDescriptor->StoreID = StoreID;
 
 		Result = TRUE;
 
@@ -426,6 +215,9 @@ UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* pStoreDescriptor)
 }
 
 
+// Persistence in .store file
+//
+
 UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, LPWSTR pPath)
 {
 	assert(pStoreDescriptor);
@@ -444,7 +236,6 @@ UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, LPWSTR p
 BOOL LoadStoreSettingsFromFile(LPCWSTR pPath, LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pPath);
-	assert(pPath[0]!=L'\0');
 	assert(pStoreDescriptor);
 
 	HANDLE hFile;
@@ -502,6 +293,134 @@ UINT DeleteStoreSettingsFromFile(LFStoreDescriptor* pStoreDescriptor)
 	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFDriveNotReady;
 }
 
+
+// General persistence
+//
+
+void TestCloudPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR pPath, UINT Source)
+{
+	assert(pPath);
+
+	if (pPath[0]!=L'\0')
+	{
+		wcscat_s(pPath, MAX_PATH, L"\\");
+
+		if (wcsncmp(pPath, pStoreDescriptor->DatPath, wcslen(pPath))==0)
+			pStoreDescriptor->Source = Source;
+	}
+}
+
+void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+	assert(((pStoreDescriptor->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((pStoreDescriptor->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
+
+	// Source: only set if unknown to retain USB/IEEE1394 icons when unmounted
+	if (pStoreDescriptor->Source==LFTypeSourceUnknown)
+		pStoreDescriptor->Source = max(LFTypeSourceInternal, (pStoreDescriptor->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift);
+
+	// Store name and source of mounted volume
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if (LFIsStoreMounted(pStoreDescriptor))
+		{
+			WCHAR szVolumeRoot[] = L" :\\";
+			szVolumeRoot[0] = pStoreDescriptor->DatPath[0];
+
+			SHFILEINFO sfi;
+			if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
+				wcscpy_s(pStoreDescriptor->LastSeen, 256, sfi.szDisplayName);
+
+			if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendWindows)
+			{
+				const UINT Source = LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0]);
+
+				if (Source>LFTypeSourceInternal)
+					pStoreDescriptor->Source = Source;
+			}
+		}
+
+	// Paths
+	if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)==LFStoreModeBackendWindows)
+	{
+		if (LFIsStoreMounted(pStoreDescriptor))
+		{
+			if (LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0])>LFTypeSourceInternal)
+			{
+				wcsncpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath, 3);
+				AppendGUID(pStoreDescriptor->IdxPathMain, pStoreDescriptor);
+			}
+			else
+			{
+				GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
+			}
+
+			// Cloud storage
+			WCHAR szPath[MAX_PATH];
+
+			// Box
+			if (LFGetBoxPath(szPath))
+				TestCloudPath(pStoreDescriptor, szPath, LFTypeSourceBox);
+
+			// Dropbox
+			wcscpy_s(szPath, MAX_PATH, pStoreDescriptor->DatPath);
+			wcscat_s(szPath, MAX_PATH, L".dropbox");
+
+			if (FileExists(szPath))
+				pStoreDescriptor->Source = LFTypeSourceDropbox;
+
+			// iCloud
+			LFICloudPaths iCloudPaths;
+			if (LFGetICloudPaths(iCloudPaths))
+			{
+				TestCloudPath(pStoreDescriptor, iCloudPaths.Drive, LFTypeSourceICloudDrive);
+				TestCloudPath(pStoreDescriptor, iCloudPaths.PhotoLibrary, LFTypeSourceICloudPhotos);
+			}
+
+			// OneDrive
+			LFOneDrivePaths OneDrivePaths;
+			if (LFGetOneDrivePaths(OneDrivePaths))
+			{
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.OneDrive, LFTypeSourceOneDrive);
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.CameraRoll, LFTypeSourceOneDrive);
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.Documents, LFTypeSourceOneDrive);
+				TestCloudPath(pStoreDescriptor, OneDrivePaths.Pictures, LFTypeSourceOneDrive);
+			}
+		}
+		else
+		{
+			pStoreDescriptor->IdxPathMain[0] = L'\0';
+		}
+	}
+	else
+	{
+		// Get automatic data path
+		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (pStoreDescriptor->Flags & LFStoreFlagsAutoLocation))
+			GetAutoPath(pStoreDescriptor, pStoreDescriptor->DatPath);
+
+		// Main index
+		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || LFIsStoreMounted(pStoreDescriptor))
+		{
+			wcscpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath);
+			wcscat_s(pStoreDescriptor->IdxPathMain, MAX_PATH, L"INDEX\\");
+		}
+		else
+		{
+			pStoreDescriptor->IdxPathMain[0] = L'\0';
+		}
+	}
+
+	// Set aux index for local hybrid stores
+	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
+	{
+		GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathAux);
+		wcscat_s(pStoreDescriptor->IdxPathAux, MAX_PATH, L"INDEX\\");
+	}
+	else
+	{
+		pStoreDescriptor->IdxPathAux[0] = L'\0';
+	}
+}
+
 UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreDescriptor);
@@ -518,6 +437,75 @@ UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 				return Result;
 
 	return LFOk;
+}
+
+
+// Cache access
+//
+
+void CreateNewStoreID(ABSOLUTESTOREID& StoreID)
+{
+	StoreID[LFKeySize-1] = 0;
+	BOOL IsUnique;
+
+	do
+	{
+		RANDOMIZE();
+
+		for (UINT a=0; a<LFKeySize-1; a++)
+			StoreID[a] = RAND_CHAR();
+
+		IsUnique = TRUE;
+
+		for (UINT a=0; a<StoreCount; a++)
+			if (StoreCache[a].StoreID==StoreID)
+			{
+				IsUnique = FALSE;
+				break;
+			}
+	}
+	while (!IsUnique);
+}
+
+void GetDescriptorForNewStore(LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+
+	ZeroMemory(pStoreDescriptor, sizeof(LFStoreDescriptor));
+
+	// Name
+	LoadString(LFCoreModuleHandle, IDS_NEWSTORE, pStoreDescriptor->StoreName, 256);
+
+	// Create uniquie ID
+	CoCreateGuid(&pStoreDescriptor->UniqueID);
+
+	// CreateTime and MaintenanceTime
+	GetSystemTimeAsFileTime(&pStoreDescriptor->CreationTime);
+	pStoreDescriptor->MaintenanceTime = pStoreDescriptor->CreationTime;
+
+	// Create ID
+	CreateNewStoreID(pStoreDescriptor->StoreID);
+
+	// Index version
+	pStoreDescriptor->IndexVersion = CURIDXVERSION;
+}
+
+LFStoreDescriptor* FindStore(const ABSOLUTESTOREID& StoreID)
+{
+	for (UINT a=0; a<StoreCount; a++)
+		if (StoreCache[a].StoreID==StoreID)
+			return &StoreCache[a];
+
+	return NULL;
+}
+
+LFStoreDescriptor* FindStore(const GUID& UniqueID)
+{
+	for (UINT a=0; a<StoreCount; a++)
+		if (StoreCache[a].UniqueID==UniqueID)
+			return &StoreCache[a];
+
+	return NULL;
 }
 
 UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime, BOOL MakeDefault)
@@ -544,7 +532,7 @@ UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime
 		(pSlot ? *pSlot : StoreCache[StoreCount++]) = *pStoreDescriptor;
 
 		// Make default store
-		if (MakeDefault || (DefaultStore[0]=='\0'))
+		if (MakeDefault || LFIsDefaultStoreID(DefaultStore))
 			Result = MakeDefaultStore(pStoreDescriptor);
 	}
 
@@ -568,7 +556,7 @@ UINT DeleteStoreFromCache(LFStoreDescriptor* pStoreDescriptor)
 
 	// Remove from cache
 	for (UINT a=0; a<StoreCount; a++)
-		if (strcmp(StoreCache[a].StoreID, pStoreDescriptor->StoreID)==0)
+		if (StoreCache[a].StoreID==pStoreDescriptor->StoreID)
 		{
 			if (a<StoreCount-1)
 			{
@@ -590,14 +578,14 @@ UINT DeleteStoreFromCache(LFStoreDescriptor* pStoreDescriptor)
 		}
 
 	// Choose new default store
-	if (strcmp(Victim.StoreID, DefaultStore)==0)
+	if (Victim.StoreID==DefaultStore)
 		ChooseNewDefaultStore();
 
 	return LFOk;
 }
 
 
-// Default store handling
+// Default store
 //
 
 UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor)
@@ -609,13 +597,9 @@ UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor)
 	HKEY hKey;
 	if (RegCreateKeyA(HKEY_CURRENT_USER, LFSTORESHIVE, &hKey)==ERROR_SUCCESS)
 	{
-		if (RegSetValueExA(hKey, "DefaultStore", 0, REG_SZ, (BYTE*)pStoreDescriptor->StoreID, LFKeySize-1)==ERROR_SUCCESS)
+		if (RegSetValueExA(hKey, "DefaultStore", 0, REG_SZ, (LPBYTE)&pStoreDescriptor->StoreID, LFKeySize-1)==ERROR_SUCCESS)
 		{
-			CHAR OldDefaultStore[LFKeySize];
-			strcpy_s(OldDefaultStore, LFKeySize, DefaultStore);
-
-			strcpy_s(DefaultStore, LFKeySize, pStoreDescriptor->StoreID);
-
+			DefaultStore = pStoreDescriptor->StoreID;
 			Result = LFOk;
 		}
 
@@ -630,7 +614,8 @@ void ChooseNewDefaultStore(BOOL OnInitialize)
 	INT Slot = -1;
 
 	for (UINT a=0; a<StoreCount; a++)
-		if ((strcmp(DefaultStore, StoreCache[a].StoreID)!=0) && (OnInitialize || ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)))
+		if (StoreCache[a].StoreID!=DefaultStore) 
+			if(OnInitialize || ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal))
 		{
 			Slot = a;
 
@@ -655,39 +640,31 @@ void ChooseNewDefaultStore(BOOL OnInitialize)
 	}
 }
 
-LFCORE_API UINT LFGetDefaultStore(LPSTR pStoreID)
+LFCORE_API UINT LFGetDefaultStore(STOREID& StoreID)
 {
 	if (GetMutexForStores())
 	{
-		UINT Result = DefaultStore[0] ? LFOk : LFNoDefaultStore;
-
-		if (pStoreID)
-			strcpy_s(pStoreID, LFKeySize, DefaultStore);
+		StoreID = DefaultStore;
 
 		ReleaseMutexForStores();
 
-		return Result;
+		return StoreID[0] ? LFOk : LFNoDefaultStore;
 	}
 
 	return LFMutexError;
 }
 
-LFCORE_API UINT LFSetDefaultStore(LPCSTR pStoreID)
+LFCORE_API UINT LFSetDefaultStore(const ABSOLUTESTOREID& StoreID)
 {
-	assert(pStoreID);
-
-	if (*pStoreID==L'\0')
-		return LFIllegalValue;
-
 	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result = LFOk;
 
-	if (strcmp(pStoreID, DefaultStore)!=0)
+	if (StoreID!=DefaultStore)
 	{
 		LFStoreDescriptor* pStoreDescriptor;
-		Result = (pStoreDescriptor=FindStore(pStoreID))!=NULL ? MakeDefaultStore(pStoreDescriptor) : LFIllegalID;
+		Result = (pStoreDescriptor=FindStore(StoreID))!=NULL ? MakeDefaultStore(pStoreDescriptor) : LFIllegalID;
 
 		ReleaseMutexForStores();
 
@@ -763,25 +740,24 @@ UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore*& pStore)
 	return LFOk;
 }
 
-UINT GetStore(LPCSTR pStoreID, CStore*& pStore)
+UINT GetStore(const ABSOLUTESTOREID& StoreID, CStore*& pStore)
 {
 	pStore = NULL;
 
 	if (!GetMutexForStores())
 		return LFMutexError;
 
-	UINT Result = GetStore(FindStore(pStoreID), pStore);
+	UINT Result = GetStore(FindStore(StoreID), pStore);
 
 	ReleaseMutexForStores();
 
 	return Result;
 }
 
-UINT OpenStore(LPCSTR pStoreID, CStore*& pStore, BOOL WriteAccess)
+UINT OpenStore(const ABSOLUTESTOREID& StoreID, CStore*& pStore, BOOL WriteAccess)
 {
-	UINT Result = GetStore(pStoreID, pStore);
-
-	if (Result==LFOk)
+	UINT Result;
+	if ((Result=GetStore(StoreID, pStore))==LFOk)
 		if ((Result=pStore->Open(WriteAccess))!=LFOk)
 		{
 			delete pStore;
@@ -789,6 +765,14 @@ UINT OpenStore(LPCSTR pStoreID, CStore*& pStore, BOOL WriteAccess)
 		}
 
 	return Result;
+}
+
+UINT OpenStore(const STOREID& StoreID, CStore*& pStore, BOOL WriteAccess)
+{
+	UINT Result;
+	ABSOLUTESTOREID AbsoluteStoreID;
+
+	return ((Result=LFResolveStoreIDEx(AbsoluteStoreID, StoreID))!=LFOk) ? Result : OpenStore(AbsoluteStoreID, pStore, WriteAccess);
 }
 
 UINT CommitInitializeStore(LFStoreDescriptor* pStoreDescriptor, LFProgress* pProgress=NULL)
@@ -845,26 +829,30 @@ LFCORE_API UINT LFGetStoreCount()
 	return 0;
 }
 
-LFCORE_API UINT LFGetAllStores(CHAR*& pStoreIDs, UINT& Count)
+LFCORE_API UINT LFResolveStoreIDEx(ABSOLUTESTOREID& AbsoluteStoreID, const STOREID& StoreID)
 {
-	pStoreIDs = NULL;
+	if (LFIsDefaultStoreID(StoreID))
+		return LFGetDefaultStore(AbsoluteStoreID);
+
+	AbsoluteStoreID = MAKEABSOLUTESTOREID(StoreID);
+
+	return LFOk;
+}
+
+LFCORE_API UINT LFGetAllStores(LPCABSOLUTESTOREID& lpcStoreIDs, UINT& Count)
+{
+	lpcStoreIDs = NULL;
 	Count = 0;
 
 	if (!GetMutexForStores())
 		return LFMutexError;
 
-	if (StoreCount)
+	if ((Count=StoreCount)>0)
 	{
-		CHAR* pChar = (pStoreIDs=(CHAR*)malloc(LFKeySize*StoreCount));
+		lpcStoreIDs = (LPABSOLUTESTOREID)malloc(LFKeySize*StoreCount);
 
 		for (UINT a=0; a<StoreCount; a++)
-		{
-			strcpy_s(pChar, LFKeySize, StoreCache[a].StoreID);
-
-			pChar += LFKeySize;
-		}
-
-		Count = StoreCount;
+			((LPSTOREID)lpcStoreIDs)[a] = StoreCache[a].StoreID;
 	}
 
 	ReleaseMutexForStores();
@@ -872,38 +860,33 @@ LFCORE_API UINT LFGetAllStores(CHAR*& pStoreIDs, UINT& Count)
 	return LFOk;
 }
 
-LFCORE_API UINT LFGetStoreSettings(LPCSTR pStoreID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace)
+LFCORE_API UINT LFGetStoreSettings(const STOREID& StoreID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace)
 {
-	assert(pStoreID);
-
-	UINT Result;
-
-	// Store
-	CHAR StoreID[LFKeySize];
-	strcpy_s(StoreID, LFKeySize, pStoreID);
-
-	if (StoreID[0]=='\0')
-		if ((Result=LFGetDefaultStore(StoreID))!=LFOk)
-			return Result;
-
 	if (!GetMutexForStores())
 		return LFMutexError;
 
-	LFStoreDescriptor* pSlot = FindStore(StoreID);
+	UINT Result;
+	ABSOLUTESTOREID AbsoluteStoreID;
+
+	if ((Result=LFResolveStoreIDEx(AbsoluteStoreID, StoreID))!=LFOk)
+		return Result;
+
+	LFStoreDescriptor* pSlot = FindStore(AbsoluteStoreID);
 	if (pSlot)
 	{
 		StoreDescriptor = *pSlot;
 
+		// Only get free disk space when requested by caller
 		if (DiskFreeSpace)
 			GetDiskFreeSpaceForStore(StoreDescriptor);
 	}
 
 	ReleaseMutexForStores();
 
-	return (pSlot ? LFOk : LFIllegalID);
+	return pSlot ? LFOk : LFIllegalID;
 }
 
-LFCORE_API UINT LFGetStoreSettingsEx(GUID UniqueID, LFStoreDescriptor& StoreDescriptor, BOOL DiskFreeSpace)
+LFCORE_API UINT LFGetStoreSettingsEx(GUID UniqueID, LFStoreDescriptor& StoreDescriptor)
 {
 	if (!GetMutexForStores())
 		return LFMutexError;
@@ -913,13 +896,13 @@ LFCORE_API UINT LFGetStoreSettingsEx(GUID UniqueID, LFStoreDescriptor& StoreDesc
 	{
 		StoreDescriptor = *pSlot;
 
-		if (DiskFreeSpace)
-			GetDiskFreeSpaceForStore(StoreDescriptor);
+		// Always get free disk space
+		GetDiskFreeSpaceForStore(StoreDescriptor);
 	}
 
 	ReleaseMutexForStores();
 
-	return (pSlot ? LFOk : LFIllegalID);
+	return pSlot ? LFOk : LFIllegalID;
 }
 
 LFCORE_API BOOL LFStoresOnVolume(CHAR cVolume)
@@ -929,12 +912,11 @@ LFCORE_API BOOL LFStoresOnVolume(CHAR cVolume)
 	if (GetMutexForStores())
 	{
 		for (UINT a=0; a<StoreCount; a++)
-			if (LFIsStoreMounted(&StoreCache[a]))
-				if (StoreCache[a].DatPath[0]==cVolume)
-				{
-					Result = TRUE;
-					break;
-				}
+			if (LFIsStoreMounted(&StoreCache[a]) && (StoreCache[a].DatPath[0]==cVolume))
+			{
+				Result = TRUE;
+				break;
+			}
 
 		ReleaseMutexForStores();
 	}
@@ -982,7 +964,7 @@ LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* 
 		// Default store?
 		if (GetMutexForStores())
 		{
-			if (strcmp(pStoreDescriptor->StoreID, DefaultStore)==0)
+			if (pStoreDescriptor->StoreID==DefaultStore)
 				*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeDefault | LFTypeDefault;
 
 			ReleaseMutexForStores();
@@ -1077,16 +1059,14 @@ LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName, LFProgres
 	return CommitInitializeStore(&Store, pProgress);
 }
 
-LFCORE_API UINT LFMakeStoreSearchable(LPCSTR pStoreID, BOOL Searchable)
+LFCORE_API UINT LFMakeStoreSearchable(const ABSOLUTESTOREID& StoreID, BOOL Searchable)
 {
-	assert(pStoreID);
-
 	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result;
 	CStore* pStore;
-	if ((Result=GetStore(pStoreID, pStore))==LFOk)
+	if ((Result=GetStore(StoreID, pStore))==LFOk)
 	{
 		LFStoreDescriptor* pStoreDescriptor = pStore->p_StoreDescriptor;
 		LFStoreDescriptor Victim = *pStoreDescriptor;
@@ -1153,16 +1133,14 @@ LFCORE_API UINT LFMakeStoreSearchable(LPCSTR pStoreID, BOOL Searchable)
 	return Result;
 }
 
-LFCORE_API UINT LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress)
+LFCORE_API UINT LFDeleteStore(const ABSOLUTESTOREID& StoreID, LFProgress* pProgress)
 {
-	assert(pStoreID);
-
 	if (!GetMutexForStores())
 		return LFMutexError;
 
 	UINT Result;
 
-	LFStoreDescriptor* pStoreDescriptor = FindStore(pStoreID);
+	LFStoreDescriptor* pStoreDescriptor = FindStore(StoreID);
 	if (pStoreDescriptor)
 	{
 		// Progress
@@ -1233,10 +1211,8 @@ LFCORE_API UINT LFDeleteStore(LPCSTR pStoreID, LFProgress* pProgress)
 	return Result;
 }
 
-LFCORE_API UINT LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pComment)
+LFCORE_API UINT LFSetStoreAttributes(const ABSOLUTESTOREID& StoreID, LPCWSTR pName, LPCWSTR pComment)
 {
-	assert(pStoreID);
-
 	if (!pName && !pComment)
 		return LFOk;
 
@@ -1247,7 +1223,7 @@ LFCORE_API UINT LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pCo
 		return LFMutexError;
 
 	UINT Result;
-	LFStoreDescriptor* pStoreDescriptor = FindStore(pStoreID);
+	LFStoreDescriptor* pStoreDescriptor = FindStore(StoreID);
 	if (pStoreDescriptor)
 	{
 		if (pName)
@@ -1271,69 +1247,63 @@ LFCORE_API UINT LFSetStoreAttributes(LPCSTR pStoreID, LPCWSTR pName, LPCWSTR pCo
 	return Result;
 }
 
-LFCORE_API UINT LFSynchronizeStore(LPCSTR pStoreID, LFProgress* pProgress)
+LFCORE_API UINT LFSynchronizeStores(const STOREID& StoreID, LFProgress* pProgress)
 {
-	assert(pStoreID);
-
-	CStore* pStore;
 	UINT Result;
-	if ((Result=OpenStore(pStoreID, pStore))==LFOk)
+
+	if (LFIsDefaultStoreID(StoreID))
 	{
-		Result = pStore->Synchronize(FALSE, pProgress);
-		delete pStore;
-
-		if (Result==LFOk)
-			SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
-
-		SendLFNotifyMessage(LFMessages.StatisticsChanged);
-	}
-
-	return Result;
-}
-
-LFCORE_API UINT LFSynchronizeStores(LFProgress* pProgress)
-{
-	CHAR* pStoreIDs;
-	UINT Count;
-	UINT Result;
-	if ((Result=LFGetAllStores(pStoreIDs, Count))!=LFOk)
-		return Result;
-
-	if (Count)
-	{
-		if (pProgress)
-			pProgress->MajorCount = Count;
-
-		CHAR* Ptr = pStoreIDs;
-		for (UINT a=0; a<Count; a++)
+		// Iterate all stores
+		LPCABSOLUTESTOREID lpcStoreIDs;
+		UINT Count;
+		if ((Result=LFGetAllStores(lpcStoreIDs, Count))==LFOk)
 		{
-			CStore* pStore;
-			if ((Result=OpenStore(Ptr, pStore))==LFOk)
-			{
-				Result = pStore->Synchronize(FALSE, pProgress);
-				delete pStore;
-			}
-
-			// Stores which are not mounted do not present an error
-			if (Result==LFStoreNotMounted)
-				Result = LFOk;
-
-			Ptr += LFKeySize;
-
 			if (pProgress)
+				pProgress->MajorCount = Count;
+
+			for (UINT a=0; a<Count; a++)
 			{
-				if (pProgress->UserAbort)
-					break;
+				CStore* pStore;
+				if ((Result=OpenStore(lpcStoreIDs[a], pStore))==LFOk)
+				{
+					Result = pStore->Synchronize(pProgress);
+					delete pStore;
+				}
 
-				pProgress->MajorCurrent++;
+				// Stores which are not mounted do not present an error
+				if (Result==LFStoreNotMounted)
+					Result = LFOk;
+
+				if (pProgress)
+				{
+					if (pProgress->UserAbort)
+						break;
+
+					pProgress->MajorCurrent++;
+				}
 			}
+
+			free(lpcStoreIDs);
+
+			SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
+			SendLFNotifyMessage(LFMessages.StatisticsChanged);
 		}
-
-		free(pStoreIDs);
 	}
+	else
+	{
+		// Single store
+		CStore* pStore;
+		if ((Result=OpenStore(StoreID, pStore))==LFOk)
+		{
+			Result = pStore->Synchronize(pProgress);
+			delete pStore;
 
-	SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
-	SendLFNotifyMessage(LFMessages.StatisticsChanged);
+			if (Result==LFOk)
+				SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
+
+			SendLFNotifyMessage(LFMessages.StatisticsChanged);
+		}
+	}
 
 	return Result;
 }
@@ -1342,30 +1312,21 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 {
 	LFMaintenanceList* pMaintenanceList = new LFMaintenanceList();
 
-	CHAR* pStoreIDs;
+	LPCABSOLUTESTOREID lpcStoreIDs;
 	UINT Count;
-	if ((pMaintenanceList->m_LastError=LFGetAllStores(pStoreIDs, Count))!=LFOk)
-		return pMaintenanceList;
-
-	if (Count)
+	if ((pMaintenanceList->m_LastError=LFGetAllStores(lpcStoreIDs, Count))==LFOk)
 	{
 		if (pProgress)
 			pProgress->MajorCount = Count;
 
-		CHAR* Ptr = pStoreIDs;
 		for (UINT a=0; a<Count; a++)
 		{
 			CStore* pStore;
-			if ((pMaintenanceList->m_LastError=GetStore(Ptr, pStore))!=LFOk)
-			{
-				free(pStoreIDs);
-				return pMaintenanceList;
-			}
+			if ((pMaintenanceList->m_LastError=GetStore(lpcStoreIDs[a], pStore))!=LFOk)
+				break;
 
 			pStore->ScheduledMaintenance(pMaintenanceList, pProgress);
 			delete pStore;
-
-			Ptr += LFKeySize;
 
 			if (pProgress)
 			{
@@ -1376,10 +1337,10 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 			}
 		}
 
-		free(pStoreIDs);
-	}
+		free(lpcStoreIDs);
 
-	SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
+		SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
+	}
 
 	return pMaintenanceList;
 }
@@ -1402,8 +1363,8 @@ LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPat
 	}
 
 	// Get file location from backend
-	CStore* pStore;
 	UINT Result;
+	CStore* pStore;
 	if ((Result=GetStore(pItemDescriptor->StoreID, pStore))==LFOk)
 	{
 		WCHAR Path[2*MAX_PATH];
@@ -1472,7 +1433,7 @@ void QueryStores(LFSearchResult* pSearchResult)
 	}
 }
 
-LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID, UINT64* pGlobalContextSet)
+LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, const STOREID& StoreID, UINT64* pGlobalContextSet)
 {
 	ZeroMemory(&Statistics, sizeof(LFStatistics));
 
@@ -1482,7 +1443,7 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID, UINT
 	if (!GetMutexForStores())
 		return LFMutexError;
 
-	if (!StoreID || (*StoreID==L'\0'))
+	if (LFIsDefaultStoreID(StoreID))
 	{
 		// Iterate all stores
 		for (UINT a=0; a<StoreCount; a++)
@@ -1506,7 +1467,7 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, LPCSTR StoreID, UINT
 	else
 	{
 		// Single store
-		LFStoreDescriptor* pStoreDescriptor = FindStore(StoreID);
+		LFStoreDescriptor* pStoreDescriptor = FindStore(MAKEABSOLUTESTOREID(StoreID));
 
 		if (pStoreDescriptor)
 			Statistics = pStoreDescriptor->Statistics;
@@ -1545,10 +1506,9 @@ __forceinline void LoadRegistry()
 					break;
 
 				// Enum next ID
-				CHAR ID[256];
-				DWORD Size = 255;
-				if (RegEnumKeyA(hKey, a, ID, Size)==ERROR_SUCCESS)
-					if (LoadStoreSettingsFromRegistry(ID, &StoreCache[StoreCount]))
+				CHAR ID[LFKeySize];
+				if (RegEnumKeyA(hKey, a, ID, LFKeySize)==ERROR_SUCCESS)
+					if (LoadStoreSettingsFromRegistry(MAKEABSOLUTESTOREID(ID), &StoreCache[StoreCount]))
 						CompleteStoreSettings(&StoreCache[StoreCount++]);
 			}
 	}
@@ -1591,7 +1551,7 @@ void InitStores()
 			{
 				DWORD Type;
 				DWORD Size = LFKeySize;
-				RegQueryValueExA(hKey, "DefaultStore", NULL, &Type, (BYTE*)DefaultStore, &Size);
+				RegQueryValueExA(hKey, "DefaultStore", NULL, &Type, (LPBYTE)&DefaultStore, &Size);
 				RegCloseKey(hKey);
 			}
 
@@ -1619,7 +1579,7 @@ void InitStores()
 				}
 
 				// Default store
-				if (strcmp(DefaultStore, StoreCache[a].StoreID)==0)
+				if (StoreCache[a].StoreID==DefaultStore)
 					DefaultStoreOk = TRUE;
 			}
 
@@ -1790,7 +1750,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 			}
 
 			// New default store required
-			RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
+			RemovedDefaultStore |= (StoreCache[a].StoreID==DefaultStore);
 			ChangeOccured |= 2;
 
 			if ((StoreCache[a].Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)

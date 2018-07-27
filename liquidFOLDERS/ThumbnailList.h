@@ -5,8 +5,8 @@
 
 struct ThumbnailData
 {
-	CHAR StoreID[LFKeySize];
-	CHAR FileID[LFKeySize];
+	STOREID StoreID;
+	FILEID FileID;
 	HBITMAP hBitmap;
 	BOOL HasFrame;
 	BOOL HasBackground;

@@ -112,14 +112,14 @@ void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path, LPCWSTR StoreName)
 	ASSERT(Path);
 	ASSERT(StoreName);
 
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	wcscpy_s(wp.Path, MAX_PATH, Path);
-	wcscpy_s(wp.StoreName, MAX_PATH, StoreName);
+	WorkerCreateStoreWindowsParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
+	wcscpy_s(Parameters.Path, MAX_PATH, Path);
+	wcscpy_s(Parameters.StoreName, MAX_PATH, StoreName);
 
-	LFDoWithProgress(WorkerCreateStoreWindows, (LFWorkerParameters*)&wp, this);
+	LFDoWithProgress(WorkerCreateStoreWindows, &Parameters.Hdr, this);
 
-	ShowResult(wp.Result, wp.StoreName);
+	ShowResult(Parameters.Hdr.Result, Parameters.StoreName);
 }
 
 

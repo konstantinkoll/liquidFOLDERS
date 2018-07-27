@@ -70,7 +70,7 @@ public:
 
 	void SendMail(const CString& Subject=_T("")) const;
 
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
+	void GetBinary(LPCTSTR lpszEntry, LPVOID pData, UINT Size);
 	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0) const;
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T("")) const;
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue) const;
@@ -159,7 +159,7 @@ public:
 	GUID m_AppID;
 	CLIPFORMAT CF_FILEDESCRIPTOR;
 	CLIPFORMAT CF_FILECONTENTS;
-	CLIPFORMAT CF_HLIQUID;
+	CLIPFORMAT CF_LIQUIDFILES;
 	CList<CWnd*> m_pMainFrames;
 	LFUpdateDlg* m_pUpdateNotification;
 	GLModelQuality m_ModelQuality;

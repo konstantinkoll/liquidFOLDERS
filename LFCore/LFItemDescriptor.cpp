@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "Filters.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
@@ -8,7 +9,6 @@
 #include "TableAttributes.h"
 #include "TableIndexes.h"
 #include "TableMusicGenres.h"
-#include <assert.h>
 #include <malloc.h>
 
 
@@ -19,7 +19,7 @@ extern CHAR DefaultStore[LFKeySize];
 // Dynamic attribute handling
 //
 
-__forceinline BOOL IsStaticAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr)
+inline BOOL IsStaticAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -198,7 +198,11 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCore
 	}
 
 	if (pStoreData)
+#ifdef _DEBUG
 		memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, pStoreData, StoreDataSize);
+#else
+		memcpy(pItemDescriptor->StoreData, pStoreData, StoreDataSize);
+#endif
 
 	pItemDescriptor->AggregateFirst = pItemDescriptor->AggregateLast = -1;
 	pItemDescriptor->RefCount = 1;
@@ -248,10 +252,9 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor& St
 		wcscat_s(pItemDescriptor->Description, 256, Hint);
 
 	// Copy properties
+	pItemDescriptor->StoreID = StoreDescriptor.StoreID;
 	wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, StoreDescriptor.StoreName);
 	wcscpy_s(pItemDescriptor->CoreAttributes.Comments, 256, StoreDescriptor.Comments);
-	strcpy_s(pItemDescriptor->StoreID, LFKeySize, StoreDescriptor.StoreID);
-
 	pItemDescriptor->CoreAttributes.CreationTime = StoreDescriptor.CreationTime;
 	pItemDescriptor->CoreAttributes.FileTime = StoreDescriptor.FileTime;
 	pItemDescriptor->AggregateCount = StoreDescriptor.Statistics.FileCount[LFContextAllFiles];
@@ -269,15 +272,14 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(const LFItemDescriptor* pItem
 	if (!pItemDescriptor)
 		return LFAllocItemDescriptor();
 
-	LFItemDescriptor* pClone = new LFItemDescriptor;
-	memcpy(pClone, pItemDescriptor, sizeof(LFItemDescriptor));
+	LFItemDescriptor* pClone = new LFItemDescriptor(*pItemDescriptor);
 
 	// Reset reference counter
 	pClone->RefCount = 1;
 
 	// Clone attached filter
 	if (pItemDescriptor->pNextFilter)
-		pClone->pNextFilter = LFCloneFilter(pItemDescriptor->pNextFilter);
+		pClone->pNextFilter = CloneFilter(pItemDescriptor->pNextFilter);
 
 	// Adjust attribute value pointers
 	for (UINT a=0; a<LFAttributeCount; a++)
@@ -319,7 +321,7 @@ LFItemDescriptor* AllocFolderDescriptor(const LFFileSummary& FileSummary, const 
 	SetAttribute(pItemDescriptor, LFAttrLength, &FileSummary.Duration);
 
 	// Filter
-	pItemDescriptor->pNextFilter = LFCloneFilter(pFilter);
+	pItemDescriptor->pNextFilter = CloneFilter(pFilter);
 	pItemDescriptor->pNextFilter->IsSubfolder = TRUE;
 	pItemDescriptor->pNextFilter->Query.pConditionList = LFAllocFilterCondition(LFFilterCompareSubfolder, VData, pItemDescriptor->pNextFilter->Query.pConditionList);
 
@@ -360,8 +362,8 @@ void AttachSlave(LFItemDescriptor* pItemDescriptor, BYTE SlaveID, LPVOID pSlaveD
 	// LFAttrDimension and LFAttrAspectRatio are computed on the fly
 	if (pItemDescriptor->AttributeValues[LFAttrWidth] && pItemDescriptor->AttributeValues[LFAttrHeight])
 	{
-		const UINT Width = *((UINT*)pItemDescriptor->AttributeValues[LFAttrWidth]);
-		const UINT Height = *((UINT*)pItemDescriptor->AttributeValues[LFAttrHeight]);
+		const UINT Width = *((LPUINT)pItemDescriptor->AttributeValues[LFAttrWidth]);
+		const UINT Height = *((LPUINT)pItemDescriptor->AttributeValues[LFAttrHeight]);
 
 		if (Width && Height)
 		{

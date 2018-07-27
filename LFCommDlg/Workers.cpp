@@ -9,81 +9,77 @@
 
 // Workers
 
-#define LF_WORKERTHREAD_START(pParam) LF_WORKERTHREAD_START_EX(pParam, 0);
-#define LF_WORKERTHREAD_START_EX(pParam, MajorCount) CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE); WorkerParameters* wp = (WorkerParameters*)pParam; LFProgress p; LFInitProgress(&p, wp->Hdr.hWnd);
-#define LF_WORKERTHREAD_FINISH() LF_WORKERTHREAD_FINISH_EX(LFOk);
-#define LF_WORKERTHREAD_FINISH_EX(Result) CoUninitialize(); PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL); return Result;
+#define LF_WORKERTHREAD_START(pParam) CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE); LFProgress Progress; LFInitProgress(Progress, ((LFWorkerParameters*)pParam)->hWnd);
+#define LF_WORKERTHREAD_FINISH(pParam) CoUninitialize(); PostMessage(((LFWorkerParameters*)pParam)->hWnd, WM_COMMAND, (WPARAM)IDOK, NULL); return ((LFWorkerParameters*)pParam)->Result;
 
-DWORD WINAPI WorkerCreateStoreWindows(void* lParam)
+DWORD WINAPI WorkerCreateStoreWindows(LPVOID lpParam)
 {
-	LF_WORKERTHREAD_START(lParam);
+	LF_WORKERTHREAD_START(lpParam);
 
-	wp->Result = LFCreateStoreWindows(wp->Path, wp->StoreName, &p);
+	WorkerCreateStoreWindowsParameters* pParameters = (WorkerCreateStoreWindowsParameters*)lpParam;
+	pParameters->Hdr.Result = LFCreateStoreWindows(pParameters->Path, pParameters->StoreName, &Progress);
 
-	LF_WORKERTHREAD_FINISH();
+	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
-DWORD WINAPI WorkerStoreSynchronize(void* lParam)
+DWORD WINAPI WorkerSynchronizeStores(LPVOID lpParam)
 {
-	LF_WORKERTHREAD_START(lParam);
+	LF_WORKERTHREAD_START(lpParam);
 
-	wp->Result = LFSynchronizeStore(wp->StoreID, &p);
+	WorkerSynchronizeStoresParameters* pParameters = (WorkerSynchronizeStoresParameters*)lpParam;
+	pParameters->Hdr.Result = LFSynchronizeStores(pParameters->StoreID, &Progress);
 
-	LF_WORKERTHREAD_FINISH();
+	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
-DWORD WINAPI WorkerStoreSynchronizeAll(void* lParam)
+DWORD WINAPI WorkerStoreMaintenance(LPVOID lpParam)
 {
-	LF_WORKERTHREAD_START(lParam);
+	LF_WORKERTHREAD_START(lpParam);
 
-	wp->Result = LFSynchronizeStores(&p);
+	WorkerStoreMaintenanceParameters* pParameters = (WorkerStoreMaintenanceParameters*)lpParam;
+	pParameters->Hdr.Result = (pParameters->pMaintenanceList=LFScheduledMaintenance(&Progress))->m_LastError;
 
-	LF_WORKERTHREAD_FINISH();
+	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
-DWORD WINAPI WorkerStoreMaintenance(void* lParam)
+DWORD WINAPI WorkerStoreDelete(LPVOID lpParam)
 {
-	LF_WORKERTHREAD_START(lParam);
+	LF_WORKERTHREAD_START(lpParam);
 
-	wp->pMaintenanceList = LFScheduledMaintenance(&p);
+	WorkerStoreDeleteParameters* pParameters = (WorkerStoreDeleteParameters*)lpParam;
+	pParameters->Hdr.Result = LFDeleteStore(pParameters->StoreID, &Progress);
 
-	LF_WORKERTHREAD_FINISH();
+	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
-DWORD WINAPI WorkerStoreDelete(void* lParam)
+DWORD WINAPI WorkerSendTo(LPVOID lpParam)
 {
-	LF_WORKERTHREAD_START(lParam);
+	LF_WORKERTHREAD_START(lpParam);
 
-	wp->Result = LFDeleteStore(wp->StoreID, &p);
+	WorkerSendToParameters* pParameters = (WorkerSendToParameters*)lpParam;
+	pParameters->Hdr.Result = LFDoTransaction(pParameters->pTransactionList, LFTransactionSendTo, &Progress, (UINT_PTR)&pParameters->StoreID);
 
-	LF_WORKERTHREAD_FINISH();
+	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
-DWORD WINAPI WorkerSendTo(void* lParam)
+DWORD WINAPI WorkerImport(LPVOID lpParam)
 {
-	LF_WORKERTHREAD_START(lParam);
+	LF_WORKERTHREAD_START(lpParam);
 
-	LFDoTransaction(wp->pTransactionList, LFTransactionTypeSendTo, &p, (UINT_PTR)wp->StoreID);
+	WorkerImportParameters* pParameters = (WorkerImportParameters*)lpParam;
+	pParameters->Hdr.Result = LFDoFileImport(pParameters->pFileImportList, TRUE, pParameters->StoreID, pParameters->pItemTemplate, pParameters->DeleteSource, &Progress);
 
-	LF_WORKERTHREAD_FINISH();
+	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
-DWORD WINAPI WorkerImport(void* lParam)
+DWORD WINAPI WorkerDelete(LPVOID lpParam)
 {
-	LF_WORKERTHREAD_START(lParam);
+	LF_WORKERTHREAD_START(lpParam);
 
-	LFDoFileImport(wp->pFileImportList, TRUE, wp->StoreID, wp->pItemTemplate, wp->DeleteSource, &p);
+	WorkerDeleteParameters* pParameters = (WorkerDeleteParameters*)lpParam;
+	pParameters->Hdr.Result = LFDoTransaction(pParameters->pTransactionList, LFTransactionDelete, &Progress);
 
-	LF_WORKERTHREAD_FINISH();
-}
-
-DWORD WINAPI WorkerDelete(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	LFDoTransaction(wp->pTransactionList, LFTransactionTypeDelete, &p);
-
-	LF_WORKERTHREAD_FINISH();
+	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
 
@@ -94,50 +90,37 @@ void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pP
 	LFProgressDlg(pThreadProc, pParameters, pParentWnd).DoModal();
 }
 
-void LFRunSynchronize(const LPCSTR pStoreID, CWnd* pParentWnd)
+void LFRunSynchronizeStores(const STOREID& StoreID, CWnd* pParentWnd)
 {
 	// Allowed?
 	if (!LFNagScreen(pParentWnd))
 		return;
 
 	// Run
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, pStoreID);
+	WorkerSynchronizeStoresParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
+	Parameters.StoreID = StoreID;
 
-	LFDoWithProgress(WorkerStoreSynchronize, &wp.Hdr, pParentWnd);
-	LFErrorBox(pParentWnd, wp.Result);
+	LFDoWithProgress(WorkerSynchronizeStores, &Parameters.Hdr, pParentWnd);
+	LFErrorBox(pParentWnd, Parameters.Hdr.Result);
 }
 
-void LFRunSynchronizeAll(CWnd* pParentWnd)
+void LFRunStoreMaintenance(CWnd* pParentWnd)
 {
-	// Allowed?
-	if (!LFNagScreen(pParentWnd))
-		return;
-
 	// Run
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
+	WorkerStoreMaintenanceParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
 
-	LFDoWithProgress(WorkerStoreSynchronizeAll, &wp.Hdr, pParentWnd);
-	LFErrorBox(pParentWnd, wp.Result);
+	LFDoWithProgress(WorkerStoreMaintenance, &Parameters.Hdr, pParentWnd);
+	LFErrorBox(pParentWnd, Parameters.Hdr.Result);
+
+	LFStoreMaintenanceDlg(Parameters.pMaintenanceList, pParentWnd).DoModal();
 }
 
-void LFRunMaintenance(CWnd* pParentWnd)
+void LFDeleteStore(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd)
 {
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-
-	LFDoWithProgress(WorkerStoreMaintenance, &wp.Hdr, pParentWnd);
-	LFErrorBox(pParentWnd, wp.pMaintenanceList->m_LastError);
-
-	LFStoreMaintenanceDlg(wp.pMaintenanceList, pParentWnd).DoModal();
-}
-
-void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd)
-{
-	LFStoreDescriptor Store;
-	UINT Result = LFGetStoreSettings(pStoreID, Store);
+	LFStoreDescriptor StoreDescriptor;
+	UINT Result = LFGetStoreSettings(StoreID, StoreDescriptor);
 	if (Result!=LFOk)
 	{
 		LFErrorBox(pParentWnd, Result);
@@ -146,19 +129,20 @@ void LFDeleteStore(const LPCSTR pStoreID, CWnd* pParentWnd)
 
 	// LFMessageBox
 	CString Caption;
-	Caption.Format(IDS_DELETESTORE_CAPTION, Store.StoreName);
+	Caption.Format(IDS_DELETESTORE_CAPTION, StoreDescriptor.StoreName);
 
 	if (LFMessageBox(pParentWnd, CString((LPCSTR)IDS_DELETESTORE_MSG), Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
 		return;
 
-	// Dialogbox nur zeigen, wenn der Store gemountet ist
-	if (LFIsStoreMounted(&Store) && (LFDeleteStoreDlg(Store.StoreID, pParentWnd).DoModal()!=IDOK))
+	// Only show dialog when store is mounted
+	if (LFIsStoreMounted(&StoreDescriptor) && (LFDeleteStoreDlg(StoreID, pParentWnd).DoModal()!=IDOK))
 		return;
 
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, Store.StoreID);
+	// Run
+	WorkerStoreDeleteParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
+	Parameters.StoreID = StoreID;
 
-	LFDoWithProgress(WorkerStoreDelete, &wp.Hdr, pParentWnd);
-	LFErrorBox(pParentWnd, wp.Result);
+	LFDoWithProgress(WorkerStoreDelete, &Parameters.Hdr, pParentWnd);
+	LFErrorBox(pParentWnd, Parameters.Hdr.Result);
 }

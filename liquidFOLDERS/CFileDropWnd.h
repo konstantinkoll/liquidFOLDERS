@@ -15,7 +15,7 @@ class CFileDropWnd : public CBackstageWnd
 public:
 	CFileDropWnd();
 
-	BOOL Create(const LPCSTR pStoreID);
+	BOOL Create(const ABSOLUTESTOREID& StoreID);
 
 protected:
 	virtual BOOL HasDocumentSheet() const;
@@ -43,10 +43,10 @@ protected:
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
-	CHAR m_StoreID[LFKeySize];
+	ABSOLUTESTOREID m_StoreID;
 	LFDropTarget m_DropTarget;
 	CRect m_rectIcon;
-	LFStoreDescriptor m_Store;
+	LFStoreDescriptor m_StoreDescriptor;
 	UINT m_StoreIcon;
 	UINT m_StoreType;
 	BOOL m_AlwaysOnTop;

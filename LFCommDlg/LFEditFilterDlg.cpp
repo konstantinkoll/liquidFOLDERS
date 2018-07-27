@@ -11,6 +11,8 @@
 // CConditionList
 //
 
+CString CConditionList::m_strCompare[LFFilterCompareCount];
+
 CConditionList::CConditionList()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM)
 {
@@ -31,8 +33,9 @@ CConditionList::CConditionList()
 
 	p_Conditions = NULL;
 
-	for (UINT a=0; a<LFFilterCompareCount; a++)
-		ENSURE(m_Compare[a].LoadString(IDS_COMPARE_FIRST+a));
+	if (m_strCompare[0].IsEmpty())
+		for (UINT a=0; a<LFFilterCompareCount; a++)
+			ENSURE(m_strCompare[a].LoadString(IDS_COMPARE_FIRST+a));
 }
 
 void CConditionList::PreSubclassWindow()
@@ -84,7 +87,7 @@ void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT In
 	const UINT Attr = pFilterCondition->VData.Attr;
 
 	WCHAR tmpStr[512];
-	wcscpy_s(tmpStr, 512, m_Compare[pFilterCondition->Compare]);
+	wcscpy_s(tmpStr, 512, m_strCompare[pFilterCondition->Compare]);
 
 	if (pFilterCondition->Compare)
 	{
@@ -102,10 +105,10 @@ void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT In
 // LFEditFilterDlg
 //
 
-LFEditFilterDlg::LFEditFilterDlg(CWnd* pParentWnd, const LPCSTR StoreID, LFFilter* pFilter)
+LFEditFilterDlg::LFEditFilterDlg(const STOREID& StoreID, CWnd* pParentWnd, LFFilter* pFilter)
 	: LFDialog(IDD_EDITFILTER, pParentWnd)
 {
-	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
+	m_StoreID = StoreID;
 	p_Filter = pFilter;
 }
 
@@ -124,8 +127,9 @@ LFFilter* LFEditFilterDlg::CreateFilter() const
 	LFFilter* pFilter = LFAllocFilter();
 	pFilter->IsPersistent = TRUE;
 
-	strcpy_s(pFilter->Query.StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
 	m_wndSearchTerm.GetWindowText(pFilter->Query.SearchTerm, 256);
+	if (!m_wndAllStores.GetCheck())
+		pFilter->Query.StoreID = m_StoreID;
 
 	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
 		pFilter->Query.pConditionList = LFAllocFilterCondition(m_Conditions[a].Compare, m_Conditions[a].VData, pFilter->Query.pConditionList);
@@ -138,10 +142,10 @@ BOOL LFEditFilterDlg::InitDialog()
 	// Store-Namen einsetzen
 	BOOL InStore = FALSE;
 
-	if (m_StoreID[0]!='\0')
+	if (!LFIsDefaultStoreID(m_StoreID))
 	{
-		LFStoreDescriptor Store;
-		if (LFGetStoreSettings(m_StoreID, Store)==LFOk)
+		LFStoreDescriptor StoreDescriptor;
+		if (LFGetStoreSettings(MAKEABSOLUTESTOREID(m_StoreID), StoreDescriptor)==LFOk)
 		{
 			InStore = TRUE;
 
@@ -149,7 +153,7 @@ BOOL LFEditFilterDlg::InitDialog()
 			m_wndThisStore.GetWindowText(tmpStr);
 
 			tmpStr.Append(_T(" ("));
-			tmpStr.Append(Store.StoreName);
+			tmpStr.Append(StoreDescriptor.StoreName);
 			tmpStr.Append(_T(")"));
 
 			m_wndThisStore.SetWindowText(tmpStr);
@@ -192,10 +196,10 @@ END_MESSAGE_MAP()
 
 void LFEditFilterDlg::OnSave()
 {
-	LFSaveFilterDlg dlg(this, m_StoreID, TRUE);
+	LFSaveFilterDlg dlg(m_StoreID, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 
 		UINT Result = LFSaveFilter(dlg.m_StoreID, CreateFilter(), dlg.m_FileName, dlg.m_Comments);
 		LFErrorBox(this, Result);
@@ -208,7 +212,7 @@ void LFEditFilterDlg::OnSave()
 
 void LFEditFilterDlg::OnAddCondition()
 {
-	LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID);
+	LFEditConditionDlg dlg(GetSelectedStore(), this);
 	if (dlg.DoModal()==IDOK)
 	{
 		m_Conditions.AddItem(dlg.m_Condition);
@@ -224,7 +228,7 @@ void LFEditFilterDlg::OnEditCondition()
 	const INT Index = GetSelectedCondition();
 	if (Index!=-1)
 	{
-		LFEditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions[Index]);
+		LFEditConditionDlg dlg(GetSelectedStore(), this, &m_Conditions[Index]);
 		if (dlg.DoModal()==IDOK)
 		{
 			m_Conditions[Index] = dlg.m_Condition;

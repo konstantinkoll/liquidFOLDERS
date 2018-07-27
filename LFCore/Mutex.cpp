@@ -1,10 +1,9 @@
 
 #include "stdafx.h"
 #include "Mutex.h"
-#include <assert.h>
 
 
-HMUTEX MutexStores;
+HMUTEX hMutexStores;
 extern LFMessageIDs LFMessages;
 
 
@@ -13,7 +12,7 @@ extern LFMessageIDs LFMessages;
 
 void InitMutex()
 {
-	MutexStores = CreateMutexA(NULL, FALSE, MUTEX_STORES);
+	hMutexStores = CreateMutexA(NULL, FALSE, MUTEX_STORES);
 }
 
 BOOL GetMutex(HMUTEX hMutex)
@@ -27,16 +26,16 @@ BOOL GetMutex(HMUTEX hMutex)
 
 BOOL GetMutexForStores()
 {
-	assert(MutexStores);
+	assert(hMutexStores);
 
-	return GetMutex(MutexStores);
+	return GetMutex(hMutexStores);
 }
 
 void ReleaseMutexForStores()
 {
-	assert(MutexStores);
+	assert(hMutexStores);
 
-	ReleaseMutex(MutexStores);
+	ReleaseMutex(hMutexStores);
 }
 
 

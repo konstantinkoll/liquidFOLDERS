@@ -8,7 +8,6 @@
 #include "TableApplications.h"
 #include "TableAttributes.h"
 #include "TableMusicGenres.h"
-#include <assert.h>
 #include <algorithm>
 #include <hash_map>
 #include <malloc.h>
@@ -34,8 +33,6 @@ LFCORE_API LFSearchResult* LFAllocSearchResult(BYTE Context)
 
 LFCORE_API void LFFreeSearchResult(LFSearchResult* pSearchResult)
 {
-	assert(pSearchResult);
-
 	delete pSearchResult;
 }
 
@@ -149,7 +146,7 @@ LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
 	{
 		assert(pSearchResult->m_Items);
 
-		SIZE_T Size = pSearchResult->m_ItemCount*sizeof(LFItemDescriptor*);
+		const SIZE_T Size = pSearchResult->m_ItemCount*sizeof(LFItemDescriptor*);
 
 		m_Items = (LFItemDescriptor**)malloc(Size);
 		memcpy(m_Items, pSearchResult->m_Items, pSearchResult->m_ItemCount*sizeof(LFItemDescriptor*));
@@ -304,7 +301,7 @@ BOOL LFSearchResult::AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor
 		m_HasCategories = TRUE;
 
 		pItemDescriptor->pNextFilter = LFAllocFilter(LFFilterModeDirectoryTree);
-		strcpy_s(pItemDescriptor->pNextFilter->Query.StoreID, LFKeySize, StoreDescriptor.StoreID);
+		pItemDescriptor->pNextFilter->Query.StoreID = StoreDescriptor.StoreID;
 		wcscpy_s(pItemDescriptor->pNextFilter->Name, 256, StoreDescriptor.StoreName);
 
 		AddStoreToSummary(m_FileSummary, StoreDescriptor);

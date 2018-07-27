@@ -114,7 +114,7 @@ void CFrontstageItemView::AddItem(LPCVOID pData)
 	pItemData->Valid = TRUE;
 
 	if (m_DataSize>sizeof(ItemData))
-		memcpy_s(((LPBYTE)pItemData)+sizeof(ItemData), m_DataSize-sizeof(ItemData), ((LPBYTE)pData)+sizeof(ItemData), m_DataSize-sizeof(ItemData));
+		memcpy(((LPBYTE)pItemData)+sizeof(ItemData), ((LPBYTE)pData)+sizeof(ItemData), m_DataSize-sizeof(ItemData));
 
 	m_Nothing = FALSE;
 }

@@ -3,7 +3,6 @@
 #include "CHeapfile.h"
 #include "FileSystem.h"
 #include "TableIndexes.h"
-#include <assert.h>
 #include <io.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -114,9 +113,9 @@ CHeapfile::~CHeapfile()
 	free(m_pBuffer);
 }
 
-LPVOID CHeapfile::GetStoreData(LPVOID pChar) const
+LPVOID CHeapfile::GetStoreData(LPVOID pData) const
 {
-	return m_Header.StoreDataSize ? (LPBYTE)pChar+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
+	return m_Header.StoreDataSize ? (LPBYTE)pData+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
 }
 
 UINT CHeapfile::GetError(BOOL SingleStore)
@@ -254,7 +253,7 @@ BOOL CHeapfile::FindNext(INT& Next, LPVOID& Ptr)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
-	CHAR* pKey;
+	LPCFILEID lpcFileID;
 
 	do
 	{
@@ -263,21 +262,20 @@ BOOL CHeapfile::FindNext(INT& Next, LPVOID& Ptr)
 
 		ElementToBuffer(Next);
 
-		pKey = (CHAR*)m_pBuffer+(Next-m_FirstInBuffer)*m_Header.ElementSize+m_KeyOffset;
-		Next++;
+		lpcFileID = (LPCFILEID)((LPBYTE)m_pBuffer+((Next++)-m_FirstInBuffer)*m_Header.ElementSize+m_KeyOffset);
 	}
-	while (*pKey==0);
+	while (*lpcFileID[0]=='\0');
 
-	Ptr = pKey-m_KeyOffset;
+	Ptr = (LPBYTE)lpcFileID-m_KeyOffset;
 
 	return TRUE;
 }
 
-BOOL CHeapfile::FindKey(LPCSTR FileID, INT& Next, LPVOID& Ptr)
+BOOL CHeapfile::FindKey(const FILEID& FileID, INT& Next, LPVOID& Ptr)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
-	CHAR* pKey;
+	LPCFILEID lpcFileID;
 
 	do
 	{
@@ -286,12 +284,11 @@ BOOL CHeapfile::FindKey(LPCSTR FileID, INT& Next, LPVOID& Ptr)
 
 		ElementToBuffer(Next);
 
-		pKey = (CHAR*)m_pBuffer+(Next-m_FirstInBuffer)*m_Header.ElementSize+m_KeyOffset;
-		Next++;
+		lpcFileID = (LPCFILEID)((LPBYTE)m_pBuffer+((Next++)-m_FirstInBuffer)*m_Header.ElementSize+m_KeyOffset);
 	}
-	while (strcmp(pKey, FileID)!=0);
+	while (FileID!=*lpcFileID);
 
-	Ptr = pKey-m_KeyOffset;
+	Ptr = (LPBYTE)lpcFileID-m_KeyOffset;
 
 	return TRUE;
 }
@@ -317,25 +314,23 @@ void CHeapfile::Add(LFItemDescriptor* pItemDescriptor)
 	m_LastInBuffer = m_ItemCount;
 
 	// Im RAM hinzufügen
-	LPBYTE pChar = (LPBYTE)m_pBuffer+(m_ItemCount-m_FirstInBuffer)*m_Header.ElementSize;
-	GetFromItemDescriptor(pChar, pItemDescriptor);
+	LPBYTE Ptr = (LPBYTE)m_pBuffer+(m_ItemCount-m_FirstInBuffer)*m_Header.ElementSize;
+	GetFromItemDescriptor(Ptr, pItemDescriptor);
 
 	if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
-	{
-		pChar += m_Header.ElementSize-LFKeySize;
-		memcpy(pChar, pItemDescriptor->CoreAttributes.FileID, LFKeySize);
-	}
+		*((LPFILEID)(Ptr+m_Header.ElementSize-LFKeySize)) = pItemDescriptor->CoreAttributes.FileID;
 
 	MakeDirty();
 
 	m_ItemCount++;
 }
 
-void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, LPVOID pChar)
+void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, LPVOID Ptr)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
+	assert(pItemDescriptor);
 
-	GetFromItemDescriptor(pChar, pItemDescriptor);
+	GetFromItemDescriptor(Ptr, pItemDescriptor);
 
 	MakeDirty();
 }
@@ -345,10 +340,9 @@ void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, INT& Next)
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 	assert(pItemDescriptor);
 
-	LPVOID pChar;
-
-	if (FindKey(pItemDescriptor->CoreAttributes.FileID, Next, pChar))
-		Update(pItemDescriptor, pChar);
+	LPVOID Ptr;
+	if (FindKey(pItemDescriptor->CoreAttributes.FileID, Next, Ptr))
+		Update(pItemDescriptor, Ptr);
 }
 
 void CHeapfile::Update(LFItemDescriptor* pItemDescriptor)
@@ -357,28 +351,25 @@ void CHeapfile::Update(LFItemDescriptor* pItemDescriptor)
 	assert(pItemDescriptor);
 
 	INT ID = 0;
-
 	Update(pItemDescriptor, ID);
 }
 
-void CHeapfile::Invalidate(LPVOID pChar)
+void CHeapfile::Invalidate(LPVOID Ptr)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
-	*((LPBYTE)pChar+m_KeyOffset) = 0;
+	*((LPBYTE)Ptr+m_KeyOffset) = 0;
 
 	MakeDirty(TRUE);
 }
 
-void CHeapfile::Invalidate(LPCSTR FileID, INT& Next)
+void CHeapfile::Invalidate(const FILEID& FileID, INT& Next)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
-	assert(FileID);
 
-	LPVOID pChar;
-
-	if (FindKey(FileID, Next, pChar))
-		Invalidate(pChar);
+	LPVOID Ptr;
+	if (FindKey(FileID, Next, Ptr))
+		Invalidate(Ptr);
 }
 
 void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
@@ -387,7 +378,6 @@ void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
 	assert(pItemDescriptor);
 
 	INT ID = 0;
-
 	Invalidate(pItemDescriptor->CoreAttributes.FileID, ID);
 }
 
@@ -404,14 +394,14 @@ void CHeapfile::ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const S
 		ZeroMemory((LPBYTE)pDst+SrcSize, DstSize-SrcSize);
 }
 
-__forceinline void CHeapfile::GetAttribute(LPVOID Ptr, INT_PTR Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const
+void CHeapfile::GetAttribute(LPVOID Ptr, SIZE_T Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(Ptr);
 	assert(Attr<LFAttributeCount);
 
 	if (pItemDescriptor->AttributeValues[Attr])
 	{
-		SIZE_T Size = GetAttributeSize(Attr, pItemDescriptor->AttributeValues[Attr]);
+		const SIZE_T Size = GetAttributeSize(Attr, pItemDescriptor->AttributeValues[Attr]);
 
 		UINT EndOfTuple = m_Header.ElementSize;
 		if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
@@ -429,7 +419,7 @@ void CHeapfile::GetFromItemDescriptor(LPVOID Ptr, LFItemDescriptor* pItemDescrip
 
 	if (m_TableID==IDXTABLE_MASTER)
 	{
-		const INT_PTR DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
+		const SIZE_T DataSize = m_Header.ElementSize-m_Header.StoreDataSize;
 		ZeroCopy(Ptr, DataSize, &pItemDescriptor->CoreAttributes, sizeof(LFCoreAttributes));
 
 		if (m_Header.StoreDataSize)
@@ -492,14 +482,14 @@ BOOL CHeapfile::Compact()
 	INT TempCount = 0;
 
 	INT Next = 0;
-	LPVOID pChar;
+	LPVOID pData;
 
-	while (FindNext(Next, pChar))
+	while (FindNext(Next, pData))
 	{
-		memcpy(pTempBuffer, pChar, m_Header.ElementSize-PaddedDataSize);
+		memcpy(pTempBuffer, pData, m_Header.ElementSize-PaddedDataSize);
 
 		if (PaddedDataSize)
-			memcpy(pTempBuffer+TempHeader.ElementSize-PaddedDataSize, (LPBYTE)pChar+m_Header.ElementSize-PaddedDataSize, PaddedDataSize);
+			memcpy(pTempBuffer+TempHeader.ElementSize-PaddedDataSize, (LPBYTE)pData+m_Header.ElementSize-PaddedDataSize, PaddedDataSize);
 
 		if (!WriteFile(hTempFile, pTempBuffer, TempHeader.ElementSize, &Written, NULL))
 			ABORT

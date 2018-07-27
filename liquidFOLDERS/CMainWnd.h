@@ -34,7 +34,7 @@ public:
 	BOOL Create(LFFilter* pFilter=NULL, BOOL IsClipboard=FALSE);
 	BOOL CreateClipboard();
 	BOOL CreateRoot();
-	BOOL CreateStore(const LPCSTR StoreID);
+	BOOL CreateStore(const ABSOLUTESTOREID& StoreID);
 	BOOL AddClipItem(const LFItemDescriptor* pItemDescriptor, BOOL& First);
 
 protected:
@@ -89,7 +89,7 @@ protected:
 
 private:
 	static LFFilter* GetRootFilter();
-	LPCSTR GetStatisticsID() const;
+	STOREID GetStatisticsID() const;
 	void UpdateHistory(UINT NavMode);
 	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* pPersistentData=NULL, INT AggregateFirst=-1, INT AggregateLast=-1);
 	void LeafBreadcrumbs(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, UINT Pages=1);
@@ -98,7 +98,7 @@ private:
 	static BOOL CookGroupSingle(const LFContextViewSettings* pContextViewSettings);
 
 	static const UINT m_ContextOrder[LFLastQueryContext+1];
-	CHAR m_StatisticsID[LFKeySize];
+	STOREID m_StatisticsID;
 	BOOL m_StatisticsResult;
 };
 
@@ -122,11 +122,11 @@ inline void CMainWnd::Reload()
 	PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 }
 
-inline LPCSTR CMainWnd::GetStatisticsID() const
+inline STOREID CMainWnd::GetStatisticsID() const
 {
 	ASSERT(m_pActiveFilter);
 
-	return (m_pActiveFilter->Query.Mode<LFFilterModeQuery) && IsWindow(m_wndMainView) ? m_wndMainView.GetStoreID() : "";
+	return (m_pActiveFilter->Query.Mode<LFFilterModeQuery) && IsWindow(m_wndMainView) ? m_wndMainView.GetStoreID() : DEFAULTSTOREID();
 }
 
 inline COLORREF CMainWnd::PriorityColor() const

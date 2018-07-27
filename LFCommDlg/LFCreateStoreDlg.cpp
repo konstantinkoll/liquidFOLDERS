@@ -157,7 +157,7 @@ void LFCreateStoreDlg::DoDataExchange(CDataExchange* pDX)
 		WCHAR Comments[256];
 		GetDlgItem(IDC_COMMENTS)->GetWindowText(Comments, 256);
 
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 		m_Result = LFCreateStoreLiquidfolders(m_StoreName, Comments,
 			m_wndAutoPath.GetCheck() ? '\0' : GetSelectedVolume(),
 			m_wndMakeSearchable.GetCheck());

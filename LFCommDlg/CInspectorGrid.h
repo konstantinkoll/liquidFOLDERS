@@ -27,7 +27,7 @@ friend class CPropertyGenre;
 public:
 	CPropertyHolder();
 
-	void SetStore(const LPCSTR pStoreID);
+	void SetStore(const STOREID& StoreID);
 
 protected:
 	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1)=NULL;
@@ -38,8 +38,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	static CString m_MultipleValues;
-	CHAR m_StoreID[LFKeySize];
+	STOREID m_StoreID;
 };
+
+inline void CPropertyHolder::SetStore(const STOREID& StoreID)
+{
+	m_StoreID = StoreID;
+}
 
 
 // CProperty

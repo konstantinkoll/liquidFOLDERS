@@ -22,9 +22,9 @@ void CMaintenanceReport::ShowTooltip(const CPoint& point)
 {
 	ASSERT(m_HoverItem>=0);
 
-	LFStoreDescriptor Store;
-	if (LFGetStoreSettings((*p_MaintenanceList)[m_HoverItem].StoreID, Store, TRUE)==LFOk)
-		LFGetApp()->ShowTooltip(this, point, Store);
+	LFStoreDescriptor StoreDescriptor;
+	if (LFGetStoreSettings((*p_MaintenanceList)[m_HoverItem].StoreID, StoreDescriptor, TRUE)==LFOk)
+		LFGetApp()->ShowTooltip(this, point, StoreDescriptor);
 }
 
 void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
