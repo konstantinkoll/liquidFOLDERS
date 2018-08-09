@@ -9,64 +9,136 @@
 // LFDropSource
 //
 
-LFDropSource::LFDropSource()
+#define DDWM_SETCURSOR        WM_USER+2
+#define DDWM_UPDATEWINDOW     WM_USER+3
+
+LFDropSource::LFDropSource(LFDataSource* pDataSource)
+	: COleDropSource()
 {
-	m_lRefCount = 1;
-	m_LastEffect = DROPEFFECT_NONE;
+	ASSERT(pDataSource);
+
+	p_DataObject = pDataSource->GetDataObject();
+	m_SetCursor = TRUE;
 }
 
-DWORD LFDropSource::GetLastEffect() const
+BOOL LFDropSource::GetGlobalData(LPCWSTR lpszFormat, FORMATETC& FormatEtc, STGMEDIUM& StgMedium) const
 {
-	return m_LastEffect;
+	ASSERT(p_DataObject);
+	ASSERT(lpszFormat);
+
+	FormatEtc.cfFormat = (CLIPFORMAT)RegisterClipboardFormat(lpszFormat);
+	FormatEtc.ptd = NULL;
+	FormatEtc.dwAspect = DVASPECT_CONTENT;
+	FormatEtc.lindex = -1;
+	FormatEtc.tymed = TYMED_HGLOBAL;
+
+	if (SUCCEEDED(p_DataObject->QueryGetData(&FormatEtc)))
+		if (SUCCEEDED(p_DataObject->GetData(&FormatEtc, &StgMedium)))
+		{
+			if (StgMedium.tymed==TYMED_HGLOBAL)
+				return TRUE;
+
+			ReleaseStgMedium(&StgMedium);
+		}
+
+	return FALSE;
 }
 
-STDMETHODIMP LFDropSource::QueryInterface(REFIID iid, void** ppvObject)
+DWORD LFDropSource::GetGlobalDataDWord(LPCWSTR lpszFormat) const
 {
-	if ((iid==IID_IDropSource) || (iid==IID_IUnknown))
+	FORMATETC FormatEtc;
+	STGMEDIUM StgMedium;
+
+	DWORD dwData = 0;
+
+	if (GetGlobalData(lpszFormat, FormatEtc, StgMedium))
 	{
-		AddRef();
-		*ppvObject = this;
+		ASSERT(GlobalSize(StgMedium.hGlobal)>=sizeof(DWORD));
 
-		return S_OK;
+		dwData = *((LPDWORD)(GlobalLock(StgMedium.hGlobal)));
+		GlobalUnlock(StgMedium.hGlobal);
+
+		ReleaseStgMedium(&StgMedium);
 	}
 
-	*ppvObject = NULL;
-
-	return E_NOINTERFACE;
+	return dwData;
 }
 
-STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropSource::AddRef()
+BOOL LFDropSource::SetDragImageCursor(DROPEFFECT DropEffect) const
 {
-	return InterlockedIncrement(&m_lRefCount);
-}
+	// At least Windows Vista?
+	if (LFGetApp()->OSVersion<OS_Vista)
+		return FALSE;
 
-STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropSource::Release()
-{
-	LONG Count = InterlockedDecrement(&m_lRefCount);
-	if (!Count)
+	// Is showing layered?
+	if (!IsCtrlThemed() || !GetGlobalDataDWord(_T("IsShowingLayered")))
+		return FALSE;
+
+	// Drag window handle
+	HWND hWnd = (HWND)ULongToHandle(GetGlobalDataDWord(_T("DragWindow")));
+	if (!hWnd)
+		return FALSE;
+
+	// Set cursor
+	WPARAM wParam;
+
+	switch (DropEffect & ~DROPEFFECT_SCROLL)
 	{
-		delete this;
+	case DROPEFFECT_NONE:
+		wParam = 1;
+		break;
 
-		return 0;
+	case DROPEFFECT_COPY:
+		wParam = 3;
+		break;
+
+	case DROPEFFECT_MOVE:
+		wParam = 2;
+		break;
+
+	case DROPEFFECT_LINK:
+		wParam = 4;
+		break;
+
+	default:
+		wParam = 0;
 	}
 
-	return Count;
+	// Undocumented window message
+	SendMessage(hWnd, DDWM_SETCURSOR, wParam, 0);
+
+	return TRUE;
 }
 
-STDMETHODIMP LFDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
+SCODE LFDropSource::QueryContinueDrag(BOOL bEscapePressed, DWORD dwKeyState)
 {
-	if (fEscapePressed)
+	if (bEscapePressed)
 		return DRAGDROP_S_CANCEL;
 
-	if ((grfKeyState & MK_LBUTTON)==0)
+	if ((dwKeyState & MK_LBUTTON)==0)
 		return DRAGDROP_S_DROP;
 
 	return S_OK;
 }
 
-STDMETHODIMP LFDropSource::GiveFeedback(DWORD dwEffect)
+SCODE LFDropSource::GiveFeedback(DROPEFFECT DropEffect)
 {
-	m_LastEffect = dwEffect;
+	if (SetDragImageCursor(DropEffect))
+	{
+		// Set default arrow cursor if neccessary
+		if (m_SetCursor)
+		{
+			SetCursor((HCURSOR)LoadImage(NULL, MAKEINTRESOURCE(OCR_NORMAL), IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
+
+			m_SetCursor = FALSE;
+		}
+
+		return S_OK;
+	}
+
+	// When the old style drag cursor is used, the default cursor must be set the next time.
+	// If the new style cursor is actually shown, the cursor has been set above.
+	m_SetCursor = TRUE;
 
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }

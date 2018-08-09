@@ -2,6 +2,7 @@
 #pragma once
 #include "CAbstractFileView.h"
 #include "CBackstageBar.h"
+#include "CBackstageDropTarget.h"
 #include "CBackstageEdit.h"
 #include "CBackstageShadow.h"
 #include "CBackstageSidebar.h"
@@ -36,6 +37,7 @@
 #include "LFBoxDlg.h"
 #include "LFBrowseForFolderDlg.h"
 #include "LFChooseStoreDlg.h"
+#include "LFDataSource.h"
 #include "LFDropboxDlg.h"
 #include "LFDropSource.h"
 #include "LFDropTarget.h"
@@ -53,11 +55,9 @@
 #include "LFSelectLocationGPSDlg.h"
 #include "LFSelectLocationIATADlg.h"
 #include "LFSelectPropertyIATADlg.h"
-#include "LFStoreDataObject.h"
 #include "LFStoreMaintenanceDlg.h"
 #include "LFStorePropertiesDlg.h"
 #include "LFTabbedDialog.h"
-#include "LFTransactionDataObject.h"
 #include "LFUpdateDlg.h"
 #include "Workers.h"
 
@@ -100,7 +100,6 @@ struct PROGRESSDATA
 	TBPFLAG tbpFlags;
 };
 
-BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
 void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright=NULL);
 
 

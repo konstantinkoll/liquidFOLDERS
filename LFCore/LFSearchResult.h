@@ -18,7 +18,7 @@
 		} \
 	m_ItemCount = WriteIdx;
 
-class LFSearchResult : public LFDynArray<LFItemDescriptor*, 64, 2048>
+class LFSearchResult sealed : public LFDynArray<LFItemDescriptor*, 64, 2048>
 {
 public:
 	LFSearchResult(BYTE Context=LFContextAllFiles);

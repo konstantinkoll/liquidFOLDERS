@@ -184,12 +184,6 @@ BOOL CMainWnd::AddClipItem(const LFItemDescriptor* pItemDescriptor, BOOL& First)
 		First = FALSE;
 	}
 
-	// Skip if item already exists
-	for (UINT a=0; a<m_pRawFiles->m_ItemCount; a++)
-		if ((strcmp(pItemDescriptor->StoreID, (*m_pRawFiles)[a]->StoreID)==0) &&
-			(strcmp(pItemDescriptor->CoreAttributes.FileID, (*m_pRawFiles)[a]->CoreAttributes.FileID)==0))
-			return FALSE;
-
 	// Add item
 	LFAddItem(m_pRawFiles, LFCloneItemDescriptor(pItemDescriptor));
 
@@ -408,7 +402,12 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Clipboard
 	if (m_IsClipboard)
+	{
 		theApp.p_ClipboardWnd = this;
+
+		// Taskbar
+		DisableTaskbarPinning(L"app.liquidFOLDERS.liquidFOLDERS.Clipboard");
+	}
 
 	return 0;
 }

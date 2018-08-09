@@ -35,7 +35,7 @@ BOOL CFileDropWnd::Create(const ABSOLUTESTOREID& StoreID)
 	const INT Height = Size.cy+BACKSTAGEBORDER+128-12+MARGIN+theApp.m_DefaultFont.GetFontHeight()+FONTOFFSETY;
 	m_rectIcon.SetRect((Width-128)/2+ICONOFFSETX, Size.cy+ICONOFFSETY, (Width-128)/2+ICONOFFSETX+128-9, Height-BACKSTAGEBORDER-FONTOFFSETY);
 
-	return CBackstageWnd::Create(WS_MINIMIZEBOX, className, CString((LPCSTR)IDR_FILEDROP), _T("FileDrop"), CSize(Width, Height));
+	return CBackstageWnd::Create(WS_MINIMIZEBOX, className, CString((LPCSTR)IDR_FILEDROP), _T("FileDrop"), CSize(Width, Height), FALSE, new LFDropTarget());
 }
 
 BOOL CFileDropWnd::HasDocumentSheet() const
@@ -174,13 +174,15 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TopMost
 	SetTopMost(theApp.m_FileDropAlwaysOnTop);
 
+	// Taskbar
+	DisableTaskbarPinning(L"app.liquidFOLDERS.liquidFOLDERS.FileDrop");
+
 	// Store
 	OnUpdateStore(NULL, NULL);
 
-	// Initialize DropTarget
-	m_DropTarget.SetOwner(this);
-	m_DropTarget.SetStore(m_StoreID);
-	RegisterDragDrop(GetSafeHwnd(), &m_DropTarget);
+	// Drop target
+	ASSERT(m_pDropTarget);
+	((LFDropTarget*)m_pDropTarget)->SetStore(m_StoreID);
 
 	return 0;
 }

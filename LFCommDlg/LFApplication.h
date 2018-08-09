@@ -35,9 +35,12 @@ typedef HRESULT(__stdcall* PFNDWMSETWINDOWATTRIBUTE)(HWND hWnd, DWORD dwAttribut
 
 typedef HRESULT(__stdcall* PFNREGISTERAPPLICATIONRESTART)(PCWSTR CommandLine, DWORD Flags);
 
+typedef HRESULT(__stdcall* PFNGETPROPERTYSTOREFORWINDOW)(HWND hwnd, REFIID riid, void** ppv);
+typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR AppID);
+
 typedef HRESULT(__stdcall* PFNCHANGEWINDOWMESSAGEFILTER)(HWND hWnd, UINT message, DWORD action);
 
-struct CDS_Wakeup
+struct CDSWAKEUP
 {
 	GUID AppID;
 	WCHAR Command[MAX_PATH];
@@ -58,7 +61,7 @@ class LFUpdateDlg;
 class LFApplication : public CWinAppEx
 {
 public:
-	LFApplication(GUID& AppID);
+	LFApplication(const GUID& AppID);
 	virtual ~LFApplication();
 
 	virtual BOOL InitInstance();
@@ -181,6 +184,10 @@ public:
 	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
 	BOOL m_KernelLibLoaded;
 
+	PFNGETPROPERTYSTOREFORWINDOW zGetPropertyStoreForWindow;
+	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
+	BOOL m_ShellLibLoaded;
+
 	PFNCHANGEWINDOWMESSAGEFILTER zChangeWindowMessageFilter;
 	BOOL m_UserLibLoaded;
 
@@ -212,9 +219,9 @@ private:
 	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;
-	HMODULE hModShell;
 	HMODULE hModKernel;
 	HMODULE hModUser;
+	HMODULE hModShell;
 	HANDLE hFontDinMittelschrift;
 	static const INT m_ColorDotSizes[4];
 };

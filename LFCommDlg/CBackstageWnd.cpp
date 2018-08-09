@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "LFCommDlg.h"
 #include <dwmapi.h>
+#include <propkey.h>
+#include <propsys.h>
 
 
 // CBackstageWnd
@@ -18,7 +20,11 @@
 HBRUSH hBackgroundTop = NULL;
 HBRUSH hBackgroundBottom = NULL;
 
-const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
+const FMTID AppUserModel =  { 0x9F4C2855, 0x9F79, 0x4B39, { 0xA8, 0xD0, 0xE1, 0xD4, 0x2D, 0xE1, 0xD5, 0xF3 } };
+const FMTID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
+
+const PROPERTYKEY AppUserModelID = { AppUserModel, 5 };
+const PROPERTYKEY AppUserModelPreventPinning = { AppUserModel, 9 };
 
 CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	: CFrontstageWnd()
@@ -27,6 +33,7 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	m_WantsBitmap = WantsBitmap;
 
 	hAccelerator = NULL;
+	m_pDropTarget = NULL;
 	m_pSidebarWnd = NULL;
 	m_ShowExpireCaption = FALSE;
 	m_SidebarWidth = m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
@@ -34,11 +41,12 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	m_pTaskbarList3 = NULL;
 }
 
-BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, const CSize& Size, BOOL ShowCaption)
+BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, const CSize& Size, BOOL ShowCaption, CBackstageDropTarget* pDropTarget)
 {
 	m_PlacementPrefix = lpszPlacementPrefix;
 	m_ShowCaption = ShowCaption;
 	m_ShowExpireCaption = LFIsSharewareExpired();
+	m_pDropTarget = pDropTarget;
 
 	// Get size of work area
 	CRect rect;
@@ -206,6 +214,35 @@ BOOL CBackstageWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERIN
 		return TRUE;
 
 	return LFGetApp()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}
+
+void CBackstageWnd::DisableTaskbarPinning(LPCWSTR UserModelID)
+{
+	if (LFGetApp()->m_ShellLibLoaded)
+	{
+		ASSERT(UserModelID);
+
+		IPropertyStore *pPropertyStore;
+		if (SUCCEEDED(LFGetApp()->zGetPropertyStoreForWindow(GetSafeHwnd(), IID_PPV_ARGS(&pPropertyStore))))
+		{
+			// User Model ID
+			PROPVARIANT VariantID;
+			VariantID.vt = VT_BSTR;
+			VariantID.pwszVal = (LPWSTR)UserModelID;
+
+			pPropertyStore->SetValue(AppUserModelID, VariantID);
+
+			// Prevent pinning
+			PROPVARIANT VariantPinning;
+			VariantPinning.vt = VT_BOOL;
+			VariantPinning.boolVal = VARIANT_TRUE;
+
+			pPropertyStore->SetValue(AppUserModelPreventPinning, VariantPinning);
+
+			// Release property store
+			pPropertyStore->Release();
+		}
+	}
 }
 
 void CBackstageWnd::SetSidebar(CBackstageSidebar* pSidebarWnd)
@@ -718,8 +755,12 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndWidgets.Create(this, (UINT)-1);
 
 	// Message filter
-	if (LFGetApp()->zChangeWindowMessageFilter)
+	if (LFGetApp()->m_UserLibLoaded)
 		LFGetApp()->zChangeWindowMessageFilter(GetSafeHwnd(), LFGetApp()->m_TaskbarButtonCreated, MSGFLT_ADD);
+
+	// Drop target
+	if (m_pDropTarget)
+		m_pDropTarget->Register(this);
 
 	// Finish
 	OnCompositionChanged();
@@ -736,7 +777,7 @@ void CBackstageWnd::OnClose()
 		WindowPlacement.length = sizeof(WindowPlacement);
 
 		if (GetWindowPlacement(&WindowPlacement))
-			LFGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
+			LFGetApp()->WriteBinary(m_PlacementPrefix+_T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
 	}
 
 	CFrontstageWnd::OnClose();
@@ -745,6 +786,12 @@ void CBackstageWnd::OnClose()
 void CBackstageWnd::OnDestroy()
 {
 	LFGetApp()->HideTooltip();
+
+	if (m_pDropTarget)
+	{
+		m_pDropTarget->Revoke();
+		delete m_pDropTarget;
+	}
 
 	if (m_pTaskbarList3)
 		m_pTaskbarList3->Release();
@@ -1169,10 +1216,10 @@ LRESULT CBackstageWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 BOOL CBackstageWnd::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 {
-	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
+	if (pCopyDataStruct->cbData!=sizeof(CDSWAKEUP))
 		return FALSE;
 
-	CDS_Wakeup* pCDS = (CDS_Wakeup*)pCopyDataStruct->lpData;
+	CDSWAKEUP* pCDS = (CDSWAKEUP*)pCopyDataStruct->lpData;
 	if (pCDS->AppID!=LFGetApp()->m_AppID)
 		return FALSE;
 

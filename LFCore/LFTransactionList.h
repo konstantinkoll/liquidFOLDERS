@@ -33,7 +33,7 @@ struct LFTransactionListItem
 
 #pragma warning(pop)
 
-class LFTransactionList : public LFDynArray<LFTransactionListItem, 128, 128>
+class LFTransactionList sealed : public LFDynArray<LFTransactionListItem, 128, 128>
 {
 public:
 	LFTransactionList();

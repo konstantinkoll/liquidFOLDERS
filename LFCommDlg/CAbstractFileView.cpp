@@ -85,7 +85,14 @@ void CAbstractFileView::FinishUpdate(BOOL InternalCall)
 			}
 
 		if (IsSelectionEnabled())
+		{
 			m_FocusItemSelected = (m_FocusItem>=0) && IsItemSelected(m_FocusItem);
+		}
+		else
+		{
+			if (m_FocusItem>=0)
+				SelectItem(m_FocusItem, m_FocusItemSelected);
+		}
 
 		AdjustLayout();
 

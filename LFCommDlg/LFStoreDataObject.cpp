@@ -6,26 +6,6 @@
 #include "LFCommDlg.h"
 
 
-BOOL CreateGlobalMemory(const void* pSrc, SIZE_T sz, HGLOBAL& hDst)
-{
-	if (!pSrc)
-	{
-		hDst = NULL;
-		return FALSE;
-	}
-
-	hDst = GlobalAlloc(GMEM_MOVEABLE, sz);
-	if (!hDst)
-		return FALSE;
-
-	void* pDst = GlobalLock(hDst);
-	memcpy(pDst, pSrc, sz);
-	GlobalUnlock(hDst);
-
-	return TRUE;
-}
-
-
 // LFStoreDataObject
 //
 
@@ -43,70 +23,77 @@ LFStoreDataObject::LFStoreDataObject(LFItemDescriptor* pItemDescriptor)
 	}
 }
 
+BOOL LFStoreDataObject::CreateGlobalMemory(LPCVOID pSrc, SIZE_T Size, HGLOBAL& hDst)
+{
+	ASSERT(pSrc);
+	ASSERT(Size>0);
+
+	if ((hDst=GlobalAlloc(GMEM_MOVEABLE, Size))==NULL)
+		return FALSE;
+
+	LPVOID pDst = GlobalLock(hDst);
+
+	memcpy(pDst, pSrc, Size);
+	GlobalUnlock(hDst);
+
+	return TRUE;
+}
+
 void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, LPCWSTR Name)
 {
-	WCHAR Path[MAX_PATH];
-	if (GetTempPath(MAX_PATH, Path))
+	if ((m_hShellLink=GlobalAlloc(GMEM_MOVEABLE, 0))!=NULL)
 	{
-		WCHAR Filename[MAX_PATH];
-		if (GetTempFileName(Path, L"LNK", 0, Filename))
+		// Create stream
+		IStream* pStream;
+		if (SUCCEEDED(CreateStreamOnHGlobal(m_hShellLink, FALSE, &pStream)))
 		{
-			// Datei erzeugen
-			IPersistFile* pPersistFile = NULL;
-			if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)))
+			// Get IPersist object
+			IPersistStream* pPersistStream = NULL;
+			if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistStream, (void**)&pPersistStream)))
 			{
-				// Save the link by calling IPersistFile::Save
-				pPersistFile->Save(Filename, TRUE);
-				pPersistFile->Release();
+				// Save the link to stream by calling IPersistStream::Save
+				pPersistStream->Save(pStream, TRUE);
 
-				HANDLE hFile = CreateFile(Filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-				if (hFile!=INVALID_HANDLE_VALUE)
+				// Stream size
+				LARGE_INTEGER Move;
+				Move.LowPart = Move.HighPart = 0;
+
+				ULARGE_INTEGER Size;
+				if (SUCCEEDED(pStream->Seek(Move, STREAM_SEEK_CUR, &Size)))
 				{
-					LARGE_INTEGER Size;
-					Size.QuadPart = 0;
-					GetFileSizeEx(hFile, &Size);
+					// File group descriptor
+					FILEGROUPDESCRIPTOR FileGroupDescriptor;
+					ZeroMemory(&FileGroupDescriptor, sizeof(FileGroupDescriptor));
 
-					ASSERT(Size.HighPart==0);
+					FileGroupDescriptor.cItems = 1;
+					FileGroupDescriptor.fgd[0].dwFlags = FD_FILESIZE | FD_WRITESTIME;
+					FileGroupDescriptor.fgd[0].nFileSizeLow = Size.LowPart;
+					FileGroupDescriptor.fgd[0].nFileSizeHigh = Size.HighPart;
+					FileGroupDescriptor.fgd[0].ftLastWriteTime.dwLowDateTime = 0x256D4000;
+					FileGroupDescriptor.fgd[0].ftLastWriteTime.dwHighDateTime = 0x01BF53EB;
 
-					m_hShellLink = GlobalAlloc(GMEM_MOVEABLE, Size.LowPart);
-					if (m_hShellLink)
+					// Link name
+					wcscpy_s(FileGroupDescriptor.fgd[0].cFileName, MAX_PATH, Name);
+
+					WCHAR* pChar = FileGroupDescriptor.fgd[0].cFileName;
+					while (*pChar!=L'\0')
 					{
-						void* pDst = GlobalLock(m_hShellLink);
-						DWORD Read;
-						ReadFile(hFile, pDst, Size.LowPart, &Read, NULL);
-						GlobalUnlock(m_hShellLink);
+						if ((*pChar<L' ') || (wcschr(L"<>:\"/\\|?*", *pChar)))
+							*pChar = L'_';
 
-						// Descriptor
-						FILEGROUPDESCRIPTOR fgd;
-						ZeroMemory(&fgd, sizeof(fgd));
-						fgd.cItems = 1;
-						fgd.fgd[0].dwFlags = FD_FILESIZE | FD_WRITESTIME;
-						fgd.fgd[0].nFileSizeLow = Size.LowPart;
-						fgd.fgd[0].nFileSizeHigh = Size.HighPart;
-						fgd.fgd[0].ftLastWriteTime.dwLowDateTime = 0x256D4000;
-						fgd.fgd[0].ftLastWriteTime.dwHighDateTime = 0x01BF53EB;
-
-						wcscpy_s(fgd.fgd[0].cFileName, MAX_PATH, Name);
-
-						WCHAR* pChar = fgd.fgd[0].cFileName;
-						while (*pChar!=L'\0')
-						{
-							if ((*pChar<L' ') || (wcschr(L"<>:\"/\\|?*", *pChar)))
-								*pChar = L'_';
-
-							pChar++;
-						}
-
-						wcscat_s(fgd.fgd[0].cFileName, MAX_PATH, L".lnk");
-
-						CreateGlobalMemory(&fgd, sizeof(fgd), m_hDescriptor);
-						CloseHandle(hFile);
+						pChar++;
 					}
 
-					// Datei löschen
-					DeleteFile(Filename);
+					wcscat_s(FileGroupDescriptor.fgd[0].cFileName, MAX_PATH, L".lnk");
+
+					CreateGlobalMemory(&FileGroupDescriptor, sizeof(FileGroupDescriptor), m_hDescriptor);
 				}
+
+				// Release IPersist object
+				pPersistStream->Release();
 			}
+
+			// Release stream
 		}
 	}
 }
@@ -117,10 +104,12 @@ STDMETHODIMP LFStoreDataObject::QueryInterface(REFIID iid, void** ppvObject)
 	{
 		AddRef();
 		*ppvObject = this;
+
 		return S_OK;
 	}
 
 	*ppvObject = NULL;
+
 	return E_NOINTERFACE;
 }
 
@@ -141,6 +130,7 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFStoreDataObject::Release()
 			GlobalFree(m_hShellLink);
 
 		delete this;
+
 		return 0;
 	}
 
@@ -162,6 +152,7 @@ STDMETHODIMP LFStoreDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMediu
 
 		pMedium->tymed = TYMED_HGLOBAL;
 		pMedium->pUnkForRelease = NULL;
+
 		return S_OK;
 	}
 
@@ -172,6 +163,7 @@ STDMETHODIMP LFStoreDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMediu
 
 		pMedium->tymed = TYMED_HGLOBAL;
 		pMedium->pUnkForRelease = NULL;
+
 		return S_OK;
 	}
 

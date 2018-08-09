@@ -116,6 +116,7 @@ IDB_CONTEXTS_32         RCDATA                  "res\\Contexts_32.png"
 IDB_CONTEXTS_48         RCDATA                  "res\\Contexts_48.png"
 IDB_CONTEXTS_64         RCDATA                  "res\\Contexts_64.png"
 IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
+IDB_MULTIPLE_48         RCDATA                  "res\\Multiple_48.png"
 IDF_DINMITTELSCHRIFT    RCDATA                  "res\\DINMittelschrift.ttf"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1017,6 +1018,10 @@ BEGIN
     IDS_FREEBYTESAVAILABLE  "%s verfügbar"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_OTHERFILES          "Andere Dateien"
+    IDS_DEFAULTSTORE        "Standard-Speicherort"
+    IDS_DROPTARGET_IMPORTCOPY "Nach %1 kopieren"
+    IDS_DROPTARGET_IMPORTMOVE "Nach %1 verschieben"
+    IDS_DROPTARGET_REMEMBER "In der %1 merken"
 END
 
 STRINGTABLE 
@@ -1911,6 +1916,10 @@ BEGIN
     IDS_FREEBYTESAVAILABLE  "%s disponibles"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_OTHERFILES          "Otros archivosn"
+    IDS_DEFAULTSTORE        "Ubicación estándar"
+    IDS_DROPTARGET_IMPORTCOPY "Copiar a %1"
+    IDS_DROPTARGET_IMPORTMOVE "Mover a %1"
+    IDS_DROPTARGET_REMEMBER "Recordar en %1"
 END
 
 STRINGTABLE 
@@ -2803,6 +2812,10 @@ BEGIN
     IDS_FREEBYTESAVAILABLE  "%s disponibles"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien présenter."
     IDS_OTHERFILES          "Autres fichiers"
+    IDS_DEFAULTSTORE        "Emplacement défaut"
+    IDS_DROPTARGET_IMPORTCOPY "Copier à %1"
+    IDS_DROPTARGET_IMPORTMOVE "Déplacer vers %1"
+    IDS_DROPTARGET_REMEMBER "Remarquer dans %1"
 END
 
 STRINGTABLE 
@@ -3721,7 +3734,7 @@ BEGIN
     IDS_DELETESTORE_MSG     "Do you really want to delete this location?"
     IDS_FORMAT_CAPTION      "You cannot format volume %c:"
     IDS_FORMAT_MSG          "It contains locations that you are using.\nFormatting this volume will destroy those locations."
-    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
+    IDS_ILLEGALYEAR         "You can only view the years 1900 through 2100."
     IDS_STORECREATED        "The location “%s” was added."
 END
 
@@ -3738,6 +3751,10 @@ BEGIN
     IDS_FREEBYTESAVAILABLE  "%s available"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_OTHERFILES          "Other files"
+    IDS_DEFAULTSTORE        "Default location"
+    IDS_DROPTARGET_IMPORTCOPY "Copy to %1"
+    IDS_DROPTARGET_IMPORTMOVE "Move to %1"
+    IDS_DROPTARGET_REMEMBER "Remember on %1"
 END
 
 STRINGTABLE 

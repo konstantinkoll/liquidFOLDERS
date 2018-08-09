@@ -349,6 +349,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CBackstageDropTarget.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CBackstageEdit.cpp"
 				>
 			</File>
@@ -509,6 +513,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFDataSource.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFDeleteStoreDlg.cpp"
 				>
 			</File>
@@ -601,10 +609,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreDataObject.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFStoreMaintenanceDlg.cpp"
 				>
 			</File>
@@ -618,10 +622,6 @@
 			</File>
 			<File
 				RelativePath=".\LFTooltip.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFTransactionDataObject.cpp"
 				>
 			</File>
 			<File
@@ -796,6 +796,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Minimize.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Multiple_48.png"
 				>
 			</File>
 			<File
@@ -1001,6 +1005,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CBackstageDropTarget.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CBackstageEdit.h"
 				>
 			</File>
@@ -1165,6 +1173,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFDataSource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFDeleteStoreDlg.h"
 				>
 			</File>
@@ -1257,10 +1269,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreDataObject.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LFStoreMaintenanceDlg.h"
 				>
 			</File>
@@ -1274,10 +1282,6 @@
 			</File>
 			<File
 				RelativePath=".\LFTooltip.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFTransactionDataObject.h"
 				>
 			</File>
 			<File

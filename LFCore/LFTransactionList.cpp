@@ -271,26 +271,28 @@ BOOL LFTransactionList::SetStoreAttributes(const LFVariantData* pVData, LPCWSTR*
 	assert(ppStoreName);
 	assert(ppStoreComments);
 
-	if (pVData)
-		switch (pVData->Attr)
-		{
-		case LFAttrComments:
-			assert(pVData->Type==LFTypeUnicodeString);
+	if (!pVData)
+		return TRUE;
 
-			*ppStoreComments = pVData->UnicodeString;
+	switch (pVData->Attr)
+	{
+	case LFAttrComments:
+		assert(pVData->Type==LFTypeUnicodeString);
+
+		*ppStoreComments = pVData->UnicodeString;
+
+		return TRUE;
+
+	case LFAttrFileName:
+		assert(pVData->Type==LFTypeUnicodeString);
+
+		if (!pVData->IsNull)
+		{
+			*ppStoreName = pVData->UnicodeString;
 
 			return TRUE;
-
-		case LFAttrFileName:
-			assert(pVData->Type==LFTypeUnicodeString);
-
-			if (!pVData->IsNull)
-			{
-				*ppStoreName = pVData->UnicodeString;
-
-				return TRUE;
-			}
 		}
+	}
 
 	return FALSE;
 }

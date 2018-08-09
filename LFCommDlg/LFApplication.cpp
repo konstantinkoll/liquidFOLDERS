@@ -17,7 +17,7 @@
 
 const INT LFApplication::m_ColorDotSizes[4] = { 14, 16, 20, 25 };
 
-LFApplication::LFApplication(GUID& AppID)
+LFApplication::LFApplication(const GUID& AppID)
 {
 	// ID
 	m_AppID = AppID;
@@ -62,8 +62,7 @@ LFApplication::LFApplication(GUID& AppID)
 		zGetThemePartSize = (PFNGETTHEMEPARTSIZE)GetProcAddress(hModThemes, "GetThemePartSize");
 		zIsAppThemed = (PFNISAPPTHEMED)GetProcAddress(hModThemes, "IsAppThemed");
 
-		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zGetThemePartSize && zIsAppThemed);
-		if (m_ThemeLibLoaded)
+		if (!(m_ThemeLibLoaded=(zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zGetThemePartSize && zIsAppThemed)))
 		{
 			FreeLibrary(hModThemes);
 			hModThemes = NULL;
@@ -88,8 +87,7 @@ LFApplication::LFApplication(GUID& AppID)
 		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModDwm, "DwmIsCompositionEnabled");
 		zDwmSetWindowAttribute = (PFNDWMSETWINDOWATTRIBUTE)GetProcAddress(hModDwm, "DwmSetWindowAttribute");
 
-		m_DwmLibLoaded = (zDwmIsCompositionEnabled && zDwmSetWindowAttribute);
-		if (!m_DwmLibLoaded)
+		if (!(m_DwmLibLoaded=(zDwmIsCompositionEnabled && zDwmSetWindowAttribute)))
 		{
 			FreeLibrary(hModDwm);
 			hModDwm = NULL;
@@ -109,8 +107,7 @@ LFApplication::LFApplication(GUID& AppID)
 	{
 		zRegisterApplicationRestart = (PFNREGISTERAPPLICATIONRESTART)GetProcAddress(hModKernel, "RegisterApplicationRestart");
 
-		m_KernelLibLoaded = (zRegisterApplicationRestart!=NULL);
-		if (!m_KernelLibLoaded)
+		if ((m_KernelLibLoaded=(zRegisterApplicationRestart!=NULL))==FALSE)
 		{
 			FreeLibrary(hModKernel);
 			hModKernel = NULL;
@@ -123,14 +120,34 @@ LFApplication::LFApplication(GUID& AppID)
 		m_KernelLibLoaded = FALSE;
 	}
 
+	// Shell
+	hModShell = LoadLibrary(_T("SHELL32.DLL"));
+	if (hModShell)
+	{
+		zGetPropertyStoreForWindow = (PFNGETPROPERTYSTOREFORWINDOW)GetProcAddress(hModShell, "SHGetPropertyStoreForWindow");
+		zSetCurrentProcessExplicitAppUserModelID = (PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)GetProcAddress(hModShell, "SetCurrentProcessExplicitAppUserModelID");
+
+		if (!(m_ShellLibLoaded=(zGetPropertyStoreForWindow && zSetCurrentProcessExplicitAppUserModelID)))
+		{
+			FreeLibrary(hModShell);
+			hModShell = NULL;
+		}
+	}
+	else
+	{
+		zChangeWindowMessageFilter = NULL;
+		zSetCurrentProcessExplicitAppUserModelID = NULL;
+
+		m_ShellLibLoaded = FALSE;
+	}
+
 	// User
 	hModUser = LoadLibrary(_T("USER32.DLL"));
 	if (hModUser)
 	{
 		zChangeWindowMessageFilter = (PFNCHANGEWINDOWMESSAGEFILTER)GetProcAddress(hModKernel, "ChangeWindowMessageFilter");
 
-		m_UserLibLoaded = (zChangeWindowMessageFilter!=NULL);
-		if (!m_UserLibLoaded)
+		if ((m_UserLibLoaded=(zChangeWindowMessageFilter!=NULL))==FALSE)
 		{
 			FreeLibrary(hModUser);
 			hModUser = NULL;
@@ -202,14 +219,14 @@ LFApplication::~LFApplication()
 	if (hModDwm)
 		FreeLibrary(hModDwm);
 
-	if (hModShell)
-		FreeLibrary(hModShell);
-
 	if (hModKernel)
 		FreeLibrary(hModKernel);
 
 	if (hModUser)
 		FreeLibrary(hModUser);
+
+	if (hModShell)
+		FreeLibrary(hModShell);
 
 	if (hFontDinMittelschrift)
 		RemoveFontMemResourceEx(hFontDinMittelschrift);

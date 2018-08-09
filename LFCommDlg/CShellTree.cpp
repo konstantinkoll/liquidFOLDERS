@@ -940,7 +940,7 @@ void CShellTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		if (!Name.IsEmpty())
 		{
 			IShellFolder* pParentFolder;
-			if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+			if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_PPV_ARGS(&pParentFolder), NULL)))
 			{
 				LPITEMIDLIST pidlRel;
 				if (SUCCEEDED(pParentFolder->SetNameOf(m_hWnd, pItem->pidlRel, Name, SHGDN_NORMAL, &pidlRel)))

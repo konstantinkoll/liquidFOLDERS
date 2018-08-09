@@ -70,7 +70,7 @@ inline UINT CFileSummary::GetFileCount() const
 // CIconHeader
 //
 
-class CIconHeader : public CInspectorHeader
+class CIconHeader sealed : public CInspectorHeader
 {
 public:
 	CIconHeader();

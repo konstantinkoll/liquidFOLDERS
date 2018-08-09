@@ -52,12 +52,12 @@ class LFStoreMaintenanceDlg : public LFDialog
 {
 public:
 	LFStoreMaintenanceDlg(LFMaintenanceList* pMaintenanceList, CWnd* pParentWnd=NULL);
-	~LFStoreMaintenanceDlg();
 
 protected:
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 	virtual BOOL InitDialog();
 
+	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	DECLARE_MESSAGE_MAP()
 

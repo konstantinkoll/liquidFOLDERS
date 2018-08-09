@@ -333,7 +333,7 @@ void CIconHeader::DrawHeader(CDC& dc, Graphics& g, const CRect& rect, BOOL Theme
 	switch (m_Status)
 	{
 	case ICONMULTIPLE:
-		g.DrawImage(theApp.GetCachedResourceImage(IDB_MULTIPLE), pt.x, pt.y);
+		g.DrawImage(theApp.GetCachedResourceImage(IDB_MULTIPLE_128), pt.x, pt.y);
 		break;
 
 	case ICONCORE:

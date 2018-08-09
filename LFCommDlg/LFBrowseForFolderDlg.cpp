@@ -20,12 +20,6 @@ LFBrowseForFolderDlg::LFBrowseForFolderDlg(const CString& Caption, const CString
 	m_FolderPath[0] = L'\0';
 }
 
-LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
-{
-	if (m_FolderPIDL)
-		LFGetApp()->GetShellManager()->FreeItem(m_FolderPIDL);
-}
-
 void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
@@ -80,9 +74,18 @@ BOOL LFBrowseForFolderDlg::InitDialog()
 
 
 BEGIN_MESSAGE_MAP(LFBrowseForFolderDlg, LFDialog)
+	ON_WM_DESTROY()
 	ON_WM_GETMINMAXINFO()
 	ON_NOTIFY(TVN_SELCHANGED, IDC_SHELLTREE, OnSelectionChanged)
 END_MESSAGE_MAP()
+
+void LFBrowseForFolderDlg::OnDestroy()
+{
+	if (m_FolderPIDL)
+		LFGetApp()->GetShellManager()->FreeItem(m_FolderPIDL);
+
+	LFDialog::OnDestroy();
+}
 
 void LFBrowseForFolderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DOCUMENT Type="Advanced Installer" CreateVersion="7.7" version="11.8" Modules="enterprise" RootPath="..*" Language="en" Id="{1C3C25C4-C01D-4308-BCB5-73A292D55371}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
-    <ROW Name="HiddenItems" Value="UpdaterComponent;SerValComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent;MsiDirectEditorComponent"/>
+    <ROW Name="HiddenItems" Value="UpdaterComponent;SerValComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiValidationComponent">
     <ROW Table="File" Column="Sequence" MinValue="1" MaxValue="2147483647" Description="Sequence with respect to the media images; order must track cabinet order." Options="0" ColumnType="3" ColumnIndex="7" ColumnSize="4" MsiKey="File#Sequence"/>
@@ -39,10 +39,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{21828B34-F577-48B5-8A19-C2F9321AFE31} 3082:{CBDEA269-1425-4D55-BA81-CBDD24F997E9} 1036:{474C9450-3F1A-473C-A771-F1166D95BC4D} 1031:{BBB3E23F-E403-4767-B98C-DC1EDD839BA2} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{5DA09552-3CC9-4529-9B15-5ED97B91AC01} 3082:{49C9CCCC-49C8-4960-9E65-1FEC95E68248} 1036:{6FFF26E5-3FFA-4046-9184-DBBF91C3E453} 1031:{1D7AB3F4-EBE8-4CE1-BF56-140916D58999} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="4.0.7" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.0.8" Type="32"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
@@ -84,6 +84,12 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\x64\LFCore.dll" SelfReg="false" NextFile="liquidFOLDERS.exe"/>
     <ROW File="liquidFOLDERS.exe" Component_="liquidFOLDERS.exe" FileName="StoreM~1.exe|liquidFOLDERS.exe" Attributes="0" SourcePath="Release\x64\liquidFOLDERS.exe" SelfReg="false"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
+    <ROW MsiShortcutProperty="StoreManager_10" Shortcut_="StoreManager_1" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
+    <ROW MsiShortcutProperty="StoreManager_0" Shortcut_="StoreManager" PropertyKey="System.AppUserModel.ID" PropVariantValue="app.liquidFOLDERS.liquidFOLDERS"/>
+    <ROW MsiShortcutProperty="liquidFOLDERS_0" Shortcut_="liquidFOLDERS.exe" PropertyKey="System.AppUserModel.ID" PropVariantValue="app.liquidFOLDERS.liquidFOLDERS"/>
+    <ROW MsiShortcutProperty="liquidFOLDERS_10" Shortcut_="liquidFOLDERS.exe_1" PropertyKey="System.AppUserModel.ID" PropVariantValue="app.liquidFOLDERS.liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>

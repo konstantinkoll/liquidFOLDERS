@@ -994,6 +994,7 @@ void CFrontstageItemView::OnMouseMove(UINT nFlags, CPoint point)
 		if ((abs(point.x-m_DragPos.x)>=GetSystemMetrics(SM_CXDRAG)) || (abs(point.y-m_DragPos.y)>=GetSystemMetrics(SM_CYDRAG)))
 		{
 			ResetDragLocation();
+			m_EditItem = -1;
 
 			if (!SendNotifyMessage(IVN_BEGINDRAGANDDROP))
 				return;
@@ -1136,7 +1137,7 @@ void CFrontstageItemView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_END:
 		if (IsFocusItemEnabled() && m_ItemCount)
 		{
-			const INT Item = HandleNavigationKeys(nChar, Control);
+			const INT Item = HandleNavigationKeys(nChar, GetKeyState(VK_CONTROL)<0);
 
 			if (Item!=m_FocusItem)
 			{

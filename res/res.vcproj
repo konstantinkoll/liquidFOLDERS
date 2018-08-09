@@ -2045,7 +2045,11 @@
 			>
 		</File>
 		<File
-			RelativePath="Multiple.png"
+			RelativePath=".\Multiple_128.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Multiple_48.png"
 			>
 		</File>
 		<File

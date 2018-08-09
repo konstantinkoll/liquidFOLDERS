@@ -18,6 +18,8 @@
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
 #define _AFX_ALL_WARNINGS
 
+#define OEMRESOURCE
+
 #include <afxwin.h>             // MFC-Kern- und -Standardkomponenten
 #include <afxext.h>             // MFC-Erweiterungen
 #include <afxcontrolbars.h>     // MFC-Unterstützung für Multifunktionsleisten und Steuerleisten

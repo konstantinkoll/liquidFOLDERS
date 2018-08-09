@@ -12,7 +12,7 @@ struct LFFileImportListItem
 	BOOL FindFileDataPresent;
 };
 
-class LFFileImportList : public LFDynArray<LFFileImportListItem, 128, 128>
+class LFFileImportList sealed : public LFDynArray<LFFileImportListItem, 128, 128>
 {
 public:
 	LFFileImportList();

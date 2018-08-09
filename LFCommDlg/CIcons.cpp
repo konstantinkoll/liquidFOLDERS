@@ -217,7 +217,7 @@ void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot, BOOL Disabled, BO
 	}
 }
 
-HBITMAP CIcons::ExtractBitmap(CImageList& ImageList, INT nImage)
+HBITMAP CIcons::ExtractBitmap(CImageList& ImageList, INT nImage, BOOL WhiteBackground)
 {
 	INT cx = 128;
 	INT cy = 128;
@@ -228,6 +228,9 @@ HBITMAP CIcons::ExtractBitmap(CImageList& ImageList, INT nImage)
 
 	HBITMAP hBitmap = CreateTransparentBitmap(cx, cy);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+	if (WhiteBackground)
+		dc.FillSolidRect(0, 0, cx, cy, 0xFFFFFF);
 
 	ImageList.DrawEx(&dc, nImage, CPoint(0, 0), CSize(cx, cy), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 

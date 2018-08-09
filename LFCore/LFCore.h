@@ -351,7 +351,7 @@ LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(BYTE Context);
 // Existierendes LFSearchResult freigeben
 LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* pSearchResult);
 
-// LFItemDescriptor zum LFSearchResult hinzufügen
+// LFItemDescriptor zum LFSearchResult hinzufügen, sofern noch nicht vorhanden
 LFCORE_API BOOL __stdcall LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItemDescriptor);
 
 // Alle markierten LFItemDescriptor (RemoveFlag==TRUE) aus LFSearchResult entfernen

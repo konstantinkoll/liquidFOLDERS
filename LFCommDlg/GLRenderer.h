@@ -138,7 +138,7 @@ struct GLRenderContext
 	GLuint rbDepthMultisample;
 };
 
-class GLRenderer
+class GLRenderer sealed
 {
 public:
 	GLRenderer();

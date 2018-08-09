@@ -39,6 +39,21 @@ LFCORE_API void LFFreeSearchResult(LFSearchResult* pSearchResult)
 LFCORE_API BOOL LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItemDescriptor)
 {
 	assert(pSearchResult);
+	assert(pItemDescriptor);
+
+	// Skip if item already exists
+	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
+		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
+			if ((pItemDescriptor->StoreID==(*pSearchResult)[a]->StoreID) &&
+				(pItemDescriptor->CoreAttributes.FileID==(*pSearchResult)[a]->CoreAttributes.FileID))
+				{
+					LFFreeItemDescriptor(pItemDescriptor);
+
+					return TRUE;
+				}
+
+	// Select item
+	pItemDescriptor->Type |= LFTypeSelected;
 
 	return pSearchResult->AddItem(pItemDescriptor);
 }

@@ -7,30 +7,6 @@
 #include "LFCommDlg.h"
 
 
-BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
-{
-	if (!hSrc)
-	{
-		hDst = NULL;
-		return FALSE;
-	}
-
-	SIZE_T Size = GlobalSize(hSrc);
-
-	if ((hDst=GlobalAlloc(GMEM_MOVEABLE, Size))==NULL)
-		return FALSE;
-
-	LPVOID pSrc = GlobalLock(hSrc);
-	LPVOID pDst = GlobalLock(hDst);
-
-	memcpy(pDst, pSrc, Size);
-
-	GlobalUnlock(hSrc);
-	GlobalUnlock(hDst);
-
-	return TRUE;
-}
-
 void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 {
 	Version.Empty();

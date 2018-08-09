@@ -274,6 +274,9 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(const LFItemDescriptor* pItem
 
 	LFItemDescriptor* pClone = new LFItemDescriptor(*pItemDescriptor);
 
+	// Deselect clone
+	pClone->Type &= ~LFTypeSelected;
+
 	// Reset reference counter
 	pClone->RefCount = 1;
 

@@ -176,7 +176,7 @@ BOOL CFileView::IsItemSelected(INT Index) const
 	assert(Index>=0);
 	assert(Index<m_ItemCount);
 
-	return IsItemSelected((*p_CookedFiles)[Index]);
+	return IsSelectionEnabled() ? IsItemSelected((*p_CookedFiles)[Index]) : CAbstractFileView::IsItemSelected(Index);
 }
 
 void CFileView::SelectItem(INT Index, BOOL Select)

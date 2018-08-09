@@ -58,6 +58,7 @@
 #define IDB_CONTEXTS_32                 20045
 #define IDB_CONTEXTS_48                 20046
 #define IDB_CONTEXTS_64                 20047
+#define IDB_MULTIPLE_48                 20048
 #define IDB_BLUEMARBLE_1024             20090
 #define IDB_BLUEMARBLE_2048             20091
 #define IDB_BLUEMARBLE_8192             20092
@@ -124,6 +125,10 @@
 #define IDS_FREEBYTESAVAILABLE          20247
 #define IDS_NOTHINGTODISPLAY            20248
 #define IDS_OTHERFILES                  20249
+#define IDS_DEFAULTSTORE                20250
+#define IDS_DROPTARGET_IMPORTCOPY       20251
+#define IDS_DROPTARGET_IMPORTMOVE       20252
+#define IDS_DROPTARGET_REMEMBER         20253
 #define IDS_COMPARE_FIRST               20300
 #define IDS_COMPARE_IGNORE              20300
 #define IDS_COMPARE_ISNULL              20301

@@ -44,7 +44,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	ABSOLUTESTOREID m_StoreID;
-	LFDropTarget m_DropTarget;
 	CRect m_rectIcon;
 	LFStoreDescriptor m_StoreDescriptor;
 	UINT m_StoreIcon;

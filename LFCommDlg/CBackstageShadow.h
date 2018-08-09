@@ -8,7 +8,7 @@
 // CBackstageShadow
 //
 
-class CBackstageShadow
+class CBackstageShadow sealed
 {
 public:
 	CBackstageShadow();

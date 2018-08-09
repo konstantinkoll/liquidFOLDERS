@@ -11,7 +11,7 @@
 // GLFont
 //
 
-class GLFont
+class GLFont sealed
 {
 public:
 	GLFont();

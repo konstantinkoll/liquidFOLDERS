@@ -12,7 +12,7 @@
 
 class CStore;
 
-class CIndex
+class CIndex sealed
 {
 public:
 	CIndex(CStore* pStore, BOOL IsMainIndex, BOOL WriteAccess, UINT StoreDataSize);

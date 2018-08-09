@@ -40,5 +40,6 @@ protected:
 	HGLOBAL m_hShellLink;
 
 private:
+	static BOOL CreateGlobalMemory(LPCVOID pSrc, SIZE_T Size, HGLOBAL& hDst);
 	void CreateGlobals(IShellLink* pShellLink, LPCWSTR Name);
 };

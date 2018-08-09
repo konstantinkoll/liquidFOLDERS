@@ -12,7 +12,7 @@
 #define LI_SLIGHTLYLARGER     (UINT)1
 #define LI_FORTOOLTIPS        (UINT)2
 
-class CIcons
+class CIcons sealed
 {
 public:
 	CIcons();
@@ -30,7 +30,7 @@ public:
 	INT AddIcon(CImageList& ImageList, INT nImage);
 	void SetGammaMode(BOOL UseDarkBackgroundGamma);
 	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot=FALSE, BOOL Disabled=FALSE, BOOL Shadow=FALSE);
-	static HBITMAP ExtractBitmap(CImageList& ImageList, INT nImage);
+	static HBITMAP ExtractBitmap(CImageList& ImageList, INT nImage, BOOL WhiteBackground=FALSE);
 	HBITMAP ExtractBitmap(INT nImage, BOOL Shadow=FALSE);
 	HICON ExtractIcon(INT nImage, BOOL Shadow=FALSE);
 	HIMAGELIST ExtractImageList() const;

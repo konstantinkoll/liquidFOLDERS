@@ -111,8 +111,6 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* pPersistentData)
 	if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
 		m_pWndFileView->SetFocus();
 
-	RegisterDragDrop(m_pWndFileView->GetSafeHwnd(), &m_DropTarget);
-
 	if (pVictim)
 	{
 		pVictim->DestroyWindow();
@@ -260,9 +258,6 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	{
 		if (m_pWndFileView)
 			m_pWndFileView->UpdateSearchResult(NULL, NULL, NULL, NULL);
-
-		RevokeDragDrop(m_wndHeaderArea.GetSafeHwnd());
-		RevokeDragDrop(m_pWndFileView->GetSafeHwnd());
 	}
 	else
 	{
@@ -275,8 +270,6 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		}
 
 		m_DropTarget.SetStore(pFilter);
-		RegisterDragDrop(m_wndHeaderArea.GetSafeHwnd(), &m_DropTarget);
-		RegisterDragDrop(m_pWndFileView->GetSafeHwnd(), &m_DropTarget);
 	}
 
 	if (m_IsClipboard)
@@ -624,7 +617,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 33, TRUE, TRUE);
 
 	// Drop target
-	m_DropTarget.SetOwner(GetOwner());
+	m_DropTarget.Register(this);
 
 	// Explorer header
 	if (!m_wndHeaderArea.Create(this, 2, TRUE))
@@ -751,7 +744,7 @@ void CMainView::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 void CMainView::OnBeginDragAndDrop(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	IDataObject* pDataObject = NULL;
+	LFDataSource *pDataSource = NULL;
 
 	if (m_Context==LFContextStores)
 	{
@@ -760,35 +753,32 @@ void CMainView::OnBeginDragAndDrop(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		if (Index!=-1)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
 
 			if (pItemDescriptor->Type & LFTypeShortcutAllowed)
-				pDataObject = new LFStoreDataObject(pItemDescriptor);
+				pDataSource = new LFDataSource(pItemDescriptor);
 		}
 	}
 	else
 	{
 		// All other contexts
 		LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
+
 		if (!pTransactionList->m_LastError && pTransactionList->m_ItemCount)
-			pDataObject = new LFTransactionDataObject(pTransactionList);
+			pDataSource = new LFDataSource(pTransactionList);
 
 		LFFreeTransactionList(pTransactionList);
 	}
 
 	// Do drag and drop
-	if (pDataObject)
+	if (pDataSource)
 	{
 		// Disable local drop target
 		m_DropTarget.SetDragSource(TRUE);
 
-		LFDropSource* pDropSource = new LFDropSource();
+		LFDropSource DropSource(pDataSource);
+		pDataSource->DoDragDrop(DROPEFFECT_COPY | DROPEFFECT_LINK, NULL, &DropSource);
 
-		DWORD dwEffect;
-		SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY, &dwEffect);
-
-		pDropSource->Release();
-		pDataObject->Release();
+		delete pDataSource;
 
 		// Enable local drop target
 		m_DropTarget.SetDragSource(FALSE);
@@ -1174,10 +1164,11 @@ void CMainView::OnItemSendTo(UINT nID)
 						{
 							CWaitCursor WaitCursor;
 
-							LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
+							LFDataSource DataSource(pTransactionList);
+							IDataObject* pDataObject = DataSource.GetDataObject();
 
 							POINTL pt = { 0, 0 };
-							DWORD dwEffect = DROPEFFECT_COPY;
+							DROPEFFECT dwEffect = DROPEFFECT_COPY;
 							if (SUCCEEDED(pDropTarget->DragEnter(pDataObject, MK_LBUTTON, pt, &dwEffect)))
 							{
 								pDropTarget->Drop(pDataObject, MK_LBUTTON, pt, &dwEffect);
@@ -1186,8 +1177,6 @@ void CMainView::OnItemSendTo(UINT nID)
 							{
 								pDropTarget->DragLeave();
 							}
-
-							pDataObject->Release();
 						}
 
 						LFFreeTransactionList(pTransactionList);
@@ -1492,12 +1481,12 @@ void CMainView::OnFileCopy()
 	if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
 	{
 		CWaitCursor WaitCursor;
-		LFTransactionDataObject* pDataObject = new LFTransactionDataObject(pTransactionList);
 
-		OleSetClipboard(pDataObject);
-		OleFlushClipboard();
+		LFDataSource* pDataSource = new LFDataSource(pTransactionList);
 
-		pDataObject->Release();
+		pDataSource->SetClipboard();
+		pDataSource->FlushClipboard();
+		// pDataSource is now owned by clipboard, DO NOT DELETE!
 
 		// Show notification
 		WCHAR tmpStr[256];

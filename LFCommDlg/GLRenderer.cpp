@@ -436,7 +436,7 @@ void GLRenderer::CreateTexture(UINT nResID, UINT& nPictureID, IPicture*& pPictur
 					{
 						IStream* pStream = SHCreateMemStream((LPBYTE)pResourceData, Size);
 
-						OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&pPicture);
+						OleLoadPicture(pStream, 0, FALSE, IID_PPV_ARGS(&pPicture));
 
 						pStream->Release();
 					}

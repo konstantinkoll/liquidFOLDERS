@@ -116,12 +116,6 @@ LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* pMaintenanceList
 	m_pMaintenanceList = pMaintenanceList;
 }
 
-LFStoreMaintenanceDlg::~LFStoreMaintenanceDlg()
-{
-	if (m_pMaintenanceList)
-		LFFreeMaintenanceList(m_pMaintenanceList);
-}
-
 void LFStoreMaintenanceDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
 	LFDialog::AdjustLayout(rectLayout, nFlags);
@@ -154,8 +148,16 @@ BOOL LFStoreMaintenanceDlg::InitDialog()
 
 
 BEGIN_MESSAGE_MAP(LFStoreMaintenanceDlg, LFDialog)
+	ON_WM_DESTROY()
 	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
+
+void LFStoreMaintenanceDlg::OnDestroy()
+{
+	LFFreeMaintenanceList(m_pMaintenanceList);
+
+	LFDialog::OnDestroy();
+}
 
 void LFStoreMaintenanceDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {

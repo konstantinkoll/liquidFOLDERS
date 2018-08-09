@@ -32,7 +32,7 @@ struct HeapfileHeader
 	BYTE Fill[488];			// Pad to 512 byte
 };
 
-class CHeapfile
+class CHeapfile sealed
 {
 public:
 	CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initialize);

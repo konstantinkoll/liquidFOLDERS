@@ -507,7 +507,7 @@ void CIndex::AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResu
 	DISCARD_SLAVE();
 
 	if (Result==LFOk)
-		pSearchResult->AddItem(pItemDescriptor);
+		LFAddItem(pSearchResult, pItemDescriptor);
 
 	pTransactionList->SetError(ItemID, Result);
 

@@ -13,7 +13,7 @@ struct LFMaintenanceListItem
 	UINT IconID;
 };
 
-class LFMaintenanceList : public LFDynArray<LFMaintenanceListItem, 16, 16>
+class LFMaintenanceList sealed : public LFDynArray<LFMaintenanceListItem, 16, 16>
 {
 public:
 	LFMaintenanceList();

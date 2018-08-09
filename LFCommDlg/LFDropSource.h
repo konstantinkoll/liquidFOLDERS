@@ -3,32 +3,27 @@
 //
 
 #pragma once
+#include "LFDataSource.h"
 
 
 // LFDropSource
 //
 
-class LFDropSource : public IDropSource
+class LFDropSource : public COleDropSource
 {
 public:
-	LFDropSource();
+	LFDropSource(LFDataSource* pDataSource);
 
-	BEGIN_INTERFACE
-
-	// IUnknown members
-	STDMETHOD(QueryInterface)(REFIID iid, void** ppvObject);
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release());
-
-	// IDropSource members
-	STDMETHOD(QueryContinueDrag)(BOOL fEscapePressed, DWORD grfKeyState);
-	STDMETHOD(GiveFeedback)(DWORD dwEffect);
-
-	END_INTERFACE
-
-	DWORD GetLastEffect() const;
+	virtual SCODE QueryContinueDrag(BOOL bEscapePressed, DWORD dwKeyState);
+	virtual SCODE GiveFeedback(DROPEFFECT DropEffect);
 
 protected:
-	LONG m_lRefCount;
-	DWORD m_LastEffect;
+	BOOL GetGlobalData(LPCWSTR lpszFormat, FORMATETC& FormatEtc, STGMEDIUM& StgMedium) const;
+	DWORD GetGlobalDataDWord(LPCTSTR lpszFormat) const;
+	BOOL SetDragImageCursor(DROPEFFECT DropEffect) const;
+
+	LPDATAOBJECT p_DataObject;
+
+private:
+	BOOL m_SetCursor;
 };

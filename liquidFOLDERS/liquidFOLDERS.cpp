@@ -7,8 +7,7 @@
 #include "liquidFOLDERS.h"
 
 
-GUID theAppID =	// {5EB05AE5-C6FE-4E53-A034-3623921D18ED}
-	{ 0x5EB05AE5, 0xC6FE, 0x4E53, { 0xA0, 0x34, 0x36, 0x23, 0x92, 0x1D, 0x18, 0xED } };
+const GUID theAppID = { 0x5EB05AE5, 0xC6FE, 0x4E53, { 0xA0, 0x34, 0x36, 0x23, 0x92, 0x1D, 0x18, 0xED } };
 
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
@@ -19,16 +18,18 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 	if (SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, NULL, SMTO_NORMAL, 500, &Result))
 		if (Result==24878)
 		{
-			CDS_Wakeup cdsw;
-			ZeroMemory(&cdsw, sizeof(cdsw));
-			cdsw.AppID = theAppID;
-			if (lParam)
-				wcscpy_s(cdsw.Command, MAX_PATH, (LPCWSTR)lParam);
+			CDSWAKEUP CDSW;
+			ZeroMemory(&CDSW, sizeof(CDSW));
+			CDSW.AppID = theAppID;
 
-			COPYDATASTRUCT cds;
-			cds.cbData = sizeof(cdsw);
-			cds.lpData = &cdsw;
-			if (SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&cds))
+			if (lParam)
+				wcscpy_s(CDSW.Command, MAX_PATH, (LPCWSTR)lParam);
+
+			COPYDATASTRUCT CDS;
+			CDS.cbData = sizeof(CDSW);
+			CDS.lpData = &CDSW;
+
+			if (SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&CDS))
 				return FALSE;
 		}
 
@@ -65,6 +66,10 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	if (!LFApplication::InitInstance())
 		return FALSE;
+
+	// User Model ID
+	if (m_ShellLibLoaded)
+		zSetCurrentProcessExplicitAppUserModelID(L"app.liquidFOLDERS.liquidFOLDERS");
 
 	// RestartManager
 	if (m_KernelLibLoaded)
