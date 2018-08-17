@@ -45,35 +45,25 @@ void ParseInput(LPSTR pStr, LFLicense* pLicense)
 		{
 			*(pSeparator++) = '\0';
 
-			if (strcmp(pStr, LICENSE_ID)==0)
+			if (strcmp(pStr, LICENSE_PRODUCT)==0)
 			{
-				strcpy_s(pLicense->PurchaseID, 256, pSeparator);
+				strcpy_s(pLicense->ProductID, 256, pSeparator);
 			}
 			else
-				if (strcmp(pStr, LICENSE_PRODUCT)==0)
+				if (strcmp(pStr, LICENSE_DATE)==0)
 				{
-					strcpy_s(pLicense->ProductID, 256, pSeparator);
+					strcpy_s(pLicense->PurchaseDate, 256, pSeparator);
 				}
 				else
-					if (strcmp(pStr, LICENSE_DATE)==0)
+					if (strcmp(pStr, LICENSE_QUANTITY)==0)
 					{
-						strcpy_s(pLicense->PurchaseDate, 256, pSeparator);
+						strcpy_s(pLicense->Quantity, 256, pSeparator);
 					}
 					else
-						if (strcmp(pStr, LICENSE_QUANTITY)==0)
+						if (strcmp(pStr, LICENSE_NAME)==0)
 						{
-							strcpy_s(pLicense->Quantity, 256, pSeparator);
+							strcpy_s(pLicense->RegName, 256, pSeparator);
 						}
-						else
-							if (strcmp(pStr, LICENSE_NAME)==0)
-							{
-								strcpy_s(pLicense->RegName, 256, pSeparator);
-							}
-							else
-								if (strcmp(pStr, LICENSE_VERSION)==0)
-								{
-									sscanf_s(pSeparator, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
-								}
 		}
 
 		pStr = pChar+1;
@@ -102,6 +92,7 @@ BOOL GetLicense(LFLicense* pLicense)
 
 	CHAR Message[BUFSIZE];
 	ZeroMemory(Message, sizeof(Message));
+
 	if (!ReadCodedLicense(Message, sizeof(Message)))
 		return FALSE;
 

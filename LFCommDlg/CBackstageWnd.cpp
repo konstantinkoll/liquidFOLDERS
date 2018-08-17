@@ -20,7 +20,7 @@
 HBRUSH hBackgroundTop = NULL;
 HBRUSH hBackgroundBottom = NULL;
 
-const FMTID AppUserModel =  { 0x9F4C2855, 0x9F79, 0x4B39, { 0xA8, 0xD0, 0xE1, 0xD4, 0x2D, 0xE1, 0xD5, 0xF3 } };
+const FMTID AppUserModel = { 0x9F4C2855, 0x9F79, 0x4B39, { 0xA8, 0xD0, 0xE1, 0xD4, 0x2D, 0xE1, 0xD5, 0xF3 } };
 const FMTID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
 
 const PROPERTYKEY AppUserModelID = { AppUserModel, 5 };
@@ -107,6 +107,9 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 
 	// Adjust layout
 	AdjustLayout();
+
+	// Show completed window
+	ShowWindow(SW_SHOW);
 
 	return TRUE;
 }
@@ -258,7 +261,7 @@ void CBackstageWnd::GetCaptionButtonMargins(LPSIZE lpSize) const
 	ASSERT(lpSize);
 
 	lpSize->cx = 0;
-	lpSize->cy = BACKSTAGEBORDER-2;
+	lpSize->cy = BACKSTAGEBORDER;
 
 	m_wndWidgets.AddWidgetSize(lpSize);
 
@@ -310,10 +313,17 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 	}
 
 	// Widgets
-	CSize Size(0, 0);
-	m_wndWidgets.AddWidgetSize(&Size);
+	if (m_wndWidgets.HasButtons())
+	{
+		CSize Size(0, 0);
+		m_wndWidgets.AddWidgetSize(&Size);
 
-	m_wndWidgets.SetWindowPos(NULL, rectClient.right-Size.cx, -1, Size.cx+1, Size.cy+1, nFlags);
+		m_wndWidgets.SetWindowPos(NULL, rectClient.right-Size.cx, -1, Size.cx+1, Size.cy+1, nFlags | SWP_SHOWWINDOW);
+	}
+	else
+	{
+		m_wndWidgets.ShowWindow(SW_HIDE);
+	}
 
 	// Frontstage
 	AdjustLayout(rectLayout, nFlags);

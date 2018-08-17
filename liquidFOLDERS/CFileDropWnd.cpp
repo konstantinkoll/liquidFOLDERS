@@ -215,6 +215,7 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 			ShowWindow(SW_RESTORE);
 
 		SetForegroundWindow();
+
 		return 24878;
 	}
 
@@ -224,9 +225,7 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 
 void CFileDropWnd::OnStoreOpenNewWindow()
 {
-	CMainWnd* pFrame = new CMainWnd();
-	pFrame->CreateStore(m_StoreDescriptor.StoreID);
-	pFrame->ShowWindow(SW_SHOW);
+	(new CMainWnd())->Create(m_StoreDescriptor.StoreID);
 }
 
 void CFileDropWnd::OnStoreSynchronize()

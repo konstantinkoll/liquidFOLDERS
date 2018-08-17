@@ -12,7 +12,7 @@
 CAbstractFileView::CAbstractFileView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
 	: CFrontstageItemView(Flags, DataSize, szItemInflate)
 {
-	ASSERT((Flags & (FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM))==(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM));
+	ASSERT(Flags & FRONTSTAGE_ENABLEFOCUSITEM);
 
 	p_CookedFiles = NULL;
 
@@ -67,21 +67,21 @@ void CAbstractFileView::FinishUpdate(BOOL InternalCall)
 	{
 		BOOL NeedsNewFocusItem = (m_FocusItem>=0) ? !GetItemData(m_FocusItem)->Valid : FALSE;
 
-		for (INT a=0; a<m_ItemCount; a++)
-			if (GetItemData(a)->Valid)
+		for (INT Index=0; Index<m_ItemCount; Index++)
+			if (GetItemData(Index)->Valid)
 			{
 				m_Nothing = FALSE;
 
 				if (NeedsNewFocusItem)
 				{
-					m_FocusItem = a;
+					m_FocusItem = Index;
 					NeedsNewFocusItem = FALSE;
 				}
 			}
 			else
 			{
-				SelectItem(a, FALSE);
-				ItemSelectionChanged(a);
+				SelectItem(Index, FALSE);
+				ItemSelectionChanged(Index);
 			}
 
 		if (IsSelectionEnabled())

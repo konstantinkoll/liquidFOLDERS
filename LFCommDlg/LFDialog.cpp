@@ -136,7 +136,7 @@ void LFDialog::AddBottomRightControl(CWnd* pChildWnd)
 		CRect rectBorders(0, 0, 7, 7);
 		MapDialogRect(&rectBorders);
 
-		m_BottomDivider = Control.rectClient.top-rectBorders.Height()-2;
+		m_BottomDivider = Control.rectClient.top-rectBorders.Height()-1;
 	}
 
 	m_BottomRightControls.AddItem(Control);

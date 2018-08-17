@@ -41,7 +41,7 @@ protected:
 	afx_msg void OnSortCount();
 	afx_msg void OnShowRare();
 	afx_msg void OnUseSize();
-	afx_msg void OnUseColors();
+	afx_msg void OnUseColor();
 	afx_msg void OnUseOpacity();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()

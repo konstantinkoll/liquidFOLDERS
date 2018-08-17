@@ -404,6 +404,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\AboutDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCalendarView.cpp"
 				>
 			</File>
@@ -468,10 +472,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GlobeOptionsDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\liquidFOLDERS.cpp"
 				>
 			</File>
@@ -521,6 +521,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\AboutDlg.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CCalendarView.h"
 				>
@@ -583,10 +587,6 @@
 			</File>
 			<File
 				RelativePath=".\CTimelineView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GlobeOptionsDlg.h"
 				>
 			</File>
 			<File

@@ -432,12 +432,12 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	switch (nChar)
 	{
 	case VK_LEFT:
-		for (INT a=Item-1; a>=0; a--)
+		for (INT Index=Item-1; Index>=0; Index--)
 		{
-			const TimelineItemData* pData = GetTimelineItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(Index);
 			if ((pData->Hdr.Column<Column) && pData->Hdr.Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				break;
 			}
@@ -446,23 +446,23 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_RIGHT:
-		for (INT a=Item+1; a<m_ItemCount; a++)
+		for (INT Index=Item+1; Index<m_ItemCount; Index++)
 		{
-			const TimelineItemData* pData = GetTimelineItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(Index);
 			if ((pData->Hdr.Column>Column) && pData->Hdr.Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				break;
 			}
 		}
 
-		for (INT a=Item; a>=0; a--)
+		for (INT Index=Item; Index>=0; Index--)
 		{
-			const TimelineItemData* pData = GetTimelineItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(Index);
 			if ((pData->Hdr.Column>Column) && pData->Hdr.Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				break;
 			}
@@ -471,12 +471,12 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_UP:
-		for (INT a=Item-1; a>=0; a--)
+		for (INT Index=Item-1; Index>=0; Index--)
 		{
-			const TimelineItemData* pData = GetTimelineItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(Index);
 			if ((pData->Hdr.Column==Column) && pData->Hdr.Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				break;
 			}
@@ -485,12 +485,12 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_PRIOR:
-		for (INT a=Item-1; a>=0; a--)
+		for (INT Index=Item-1; Index>=0; Index--)
 		{
-			const TimelineItemData* pData = GetTimelineItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(Index);
 			if ((pData->Hdr.Column<=Column) && pData->Hdr.Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				if (pData->Hdr.Rect.top<=Bottom-rect.Height())
 					break;
@@ -500,12 +500,12 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_DOWN:
-		for (INT a=Item+1; a<m_ItemCount; a++)
+		for (INT Index=Item+1; Index<m_ItemCount; Index++)
 		{
-			const TimelineItemData* pData = GetTimelineItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(Index);
 			if ((pData->Hdr.Column==Column) && pData->Hdr.Valid)
 			{
-				Item = a;
+				Item = Index;
 				break;
 			}
 		}
@@ -513,12 +513,12 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_NEXT:
-		for (INT a=Item+1; a<m_ItemCount; a++)
+		for (INT Index=Item+1; Index<m_ItemCount; Index++)
 		{
-			const TimelineItemData* pData = GetTimelineItemData(a);
+			const TimelineItemData* pData = GetTimelineItemData(Index);
 			if ((pData->Hdr.Column>=Column) && pData->Hdr.Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				if (pData->Hdr.Rect.bottom>=Top+rect.Height())
 					break;
@@ -530,22 +530,22 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_HOME:
 		if (Control)
 		{
-			for (INT a=0; a<m_ItemCount; a++)
-				if (GetTimelineItemData(a)->Hdr.Valid)
+			for (INT Index=0; Index<m_ItemCount; Index++)
+				if (GetTimelineItemData(Index)->Hdr.Valid)
 				{
-					Item = a;
+					Item = Index;
 
 					break;
 				}
 		}
 		else
-			for (INT a=Item-1; a>=0; a--)
+			for (INT Index=Item-1; Index>=0; Index--)
 			{
-				const TimelineItemData* pData = GetTimelineItemData(a);
+				const TimelineItemData* pData = GetTimelineItemData(Index);
 				if (pData->Hdr.Valid)
 					if (pData->Hdr.Column<Column)
 					{
-						Item = a;
+						Item = Index;
 
 						break;
 					}
@@ -556,22 +556,22 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_END:
 		if (Control)
 		{
-			for (INT a=m_ItemCount-1; a>=0; a--)
-				if (GetTimelineItemData(a)->Hdr.Valid)
+			for (INT Index=m_ItemCount-1; Index>=0; Index--)
+				if (GetTimelineItemData(Index)->Hdr.Valid)
 				{
-					Item = a;
+					Item = Index;
 
 					break;
 				}
 		}
 		else
-			for (INT a=Item+1; a<m_ItemCount; a++)
+			for (INT Index=Item+1; Index<m_ItemCount; Index++)
 			{
-				const TimelineItemData* pData = GetTimelineItemData(a);
+				const TimelineItemData* pData = GetTimelineItemData(Index);
 				if (pData->Hdr.Valid)
 					if (pData->Hdr.Column>Column)
 					{
-						Item = a;
+						Item = Index;
 
 						break;
 					}
@@ -975,9 +975,9 @@ void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRe
 	g.SetPixelOffsetMode(PixelOffsetModeNone);
 
 	// Items
-	for (INT a=0; a<m_ItemCount; a++)
+	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
-		TimelineItemData* pData = GetTimelineItemData(a);
+		TimelineItemData* pData = GetTimelineItemData(Index);
 
 		if (pData->Hdr.Valid)
 		{
@@ -985,7 +985,7 @@ void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRe
 			rect.OffsetRect(0, -m_VScrollPos);
 
 			if (IntersectRect(&rectIntersect, rect, rectUpdate))
-				DrawItem(dc, g, rect, a, Themed);
+				DrawItem(dc, g, rect, Index, Themed);
 		}
 	}
 }

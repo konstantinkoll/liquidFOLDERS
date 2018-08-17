@@ -43,12 +43,10 @@ struct LFVersion
 
 struct LFLicense
 {
-	CHAR PurchaseID[256];
 	CHAR ProductID[256];
 	CHAR PurchaseDate[16];				// Either DD/MM/YYYY or DD.MM.YYYY
 	CHAR Quantity[8];
 	CHAR RegName[256];
-	LFVersion Version;
 };
 
 

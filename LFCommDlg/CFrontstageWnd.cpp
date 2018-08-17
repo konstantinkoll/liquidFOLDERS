@@ -210,6 +210,7 @@ IMPLEMENT_TOOLTIP_NOWHEEL(CFrontstageWnd, CWnd)
 
 BEGIN_TOOLTIP_MAP(CFrontstageWnd, CWnd)
 	ON_WM_DESTROY()
+	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_MESSAGE(WM_NCPAINT, OnNcPaint)
 	ON_WM_ERASEBKGND()
@@ -223,6 +224,24 @@ void CFrontstageWnd::OnDestroy()
 	HideTooltip();
 
 	CWnd::OnDestroy();
+}
+
+void CFrontstageWnd::OnNcCalcSize(BOOL bCalcValidRect, NCCALCSIZE_PARAMS* lpncsp)
+{
+	if (HasBorder())
+	{
+		const INT cxEdge = GetSystemMetrics(SM_CXEDGE);
+		const INT cyEdge = GetSystemMetrics(SM_CYEDGE);
+
+		lpncsp->rgrc[0].left += cxEdge;
+		lpncsp->rgrc[0].right -= cxEdge;
+		lpncsp->rgrc[0].top += cyEdge;
+		lpncsp->rgrc[0].bottom -= cyEdge;
+	}
+	else
+	{
+		CWnd::OnNcCalcSize(bCalcValidRect, lpncsp);
+	}
 }
 
 LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)

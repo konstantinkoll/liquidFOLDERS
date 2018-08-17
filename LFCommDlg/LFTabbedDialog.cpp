@@ -14,7 +14,7 @@ LFTabbedDialog::LFTabbedDialog(UINT nCaptionID, CWnd* pParentWnd, UINT* pLastTab
 	: LFDialog(IDD_TABBEDDIALOG, pParentWnd)
 {
 	if (nCaptionID)
-		ENSURE(m_Caption.LoadString(nCaptionID));
+		ENSURE(m_DialogCaption.LoadString(nCaptionID));
 
 	p_LastTab = pLastTab;
 
@@ -101,18 +101,16 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 							pChildWnd->GetWindowText(szWindowText, 256);
 
 							// Recreate window, and save handle for tab switching
-							ControlOnTab Ctrl;
-							Ctrl.hWnd = CreateWindowEx(dwExStyle, szClassName, szWindowText, dwStyle, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), GetSafeHwnd(), (HMENU)nID, NULL, NULL);
-							Ctrl.Index = m_TabCount;
+							HWND hWnd = CreateWindowEx(dwExStyle, szClassName, szWindowText, dwStyle, rectWindow.left, rectWindow.top, rectWindow.Width(), rectWindow.Height(), GetSafeHwnd(), (HMENU)nID, NULL, NULL);
 
-							AddControl(Ctrl);
+							AddControl(hWnd, m_TabCount);
 
 							// Set font
-							::SendMessage(Ctrl.hWnd, WM_SETFONT, (WPARAM)pFont->GetSafeHandle(), NULL);
+							::SendMessage(hWnd, WM_SETFONT, (WPARAM)pFont->GetSafeHandle(), NULL);
 
 							// Set bitmap
 							if (CompareClassName(szClassName, _T("Static")) && (dwStyle & SS_BITMAP))
-								::SendMessage(Ctrl.hWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)pChildWnd->SendMessage(STM_GETIMAGE, IMAGE_BITMAP));
+								::SendMessage(hWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)pChildWnd->SendMessage(STM_GETIMAGE, IMAGE_BITMAP));
 
 							// Append tab hint
 							if (CompareClassName(szClassName, _T("CCategory")))
@@ -148,21 +146,43 @@ BOOL LFTabbedDialog::AddTab(UINT nResID, LPSIZE pszTabArea)
 
 void LFTabbedDialog::AddControl(HWND hWnd, UINT Index)
 {
+	ASSERT(Index<=m_TabCount);
+	ASSERT(Index<MAXTABS);
+
+#ifdef _DEBUG
+	for (UINT a=0; a<m_ControlsOnTab.m_ItemCount; a++)
+		ASSERT(m_ControlsOnTab[a].hWnd!=hWnd);
+#endif
+
 	ControlOnTab Ctrl;
 	Ctrl.hWnd = hWnd;
-	Ctrl.Index = Index;
+	Ctrl.TabMask = 1<<Index;
 
 	AddControl(Ctrl);
 }
 
+void LFTabbedDialog::ShowControlOnTabs(HWND hWnd, USHORT Mask)
+{
+	for (UINT a=0; a<m_ControlsOnTab.m_ItemCount; a++)
+		if (m_ControlsOnTab[a].hWnd==hWnd)
+		{
+			m_ControlsOnTab[a].TabMask = Mask;
+
+			break;
+		}
+}
+
 void LFTabbedDialog::ShowTab(UINT Index)
 {
+	ASSERT(Index<m_TabCount);
+
 	BOOL First = TRUE;
+	const USHORT Mask = 1<<Index;
 
 	for (UINT a=0; a<m_ControlsOnTab.m_ItemCount; a++)
 	{
 		const HWND hWnd = m_ControlsOnTab[a].hWnd;
-		const BOOL Show = (m_ControlsOnTab[a].Index==Index);
+		const BOOL Show = (m_ControlsOnTab[a].TabMask & Mask);
 
 		::ShowWindow(hWnd, Show ? SW_SHOW : SW_HIDE);
 
@@ -177,6 +197,8 @@ void LFTabbedDialog::ShowTab(UINT Index)
 
 void LFTabbedDialog::SelectTab(UINT Index)
 {
+	ASSERT(Index<m_TabCount);
+
 	m_CurrentTab = Index;
 
 	m_wndSidebar.SetSelection(IDD_TABBEDDIALOG+Index);
@@ -203,7 +225,7 @@ BOOL LFTabbedDialog::InitSidebar(LPSIZE /*pszTabArea*/)
 BOOL LFTabbedDialog::InitDialog()
 {
 	// Caption
-	SetWindowText(m_Caption);
+	SetWindowText(m_DialogCaption);
 
 	// Buttons
 	HINSTANCE hInstance = LoadLibrary(_T("USER32.DLL"));
@@ -228,8 +250,8 @@ BEGIN_MESSAGE_MAP(LFTabbedDialog, LFDialog)
 	ON_WM_DESTROY()
 	ON_NOTIFY(REQUEST_TOOLTIP_DATA, 3, OnRequestTooltipData)
 
-	ON_COMMAND_RANGE(IDD_TABBEDDIALOG, IDD_TABBEDDIALOG+98, OnSelectTab)
-	ON_UPDATE_COMMAND_UI_RANGE(IDD_TABBEDDIALOG, IDD_TABBEDDIALOG+98, OnUpdateTabCommands)
+	ON_COMMAND_RANGE(IDD_TABBEDDIALOG, IDD_TABBEDDIALOG+MAXTABS-1, OnSelectTab)
+	ON_UPDATE_COMMAND_UI_RANGE(IDD_TABBEDDIALOG, IDD_TABBEDDIALOG+MAXTABS-1, OnUpdateTabCommands)
 END_MESSAGE_MAP()
 
 void LFTabbedDialog::OnDestroy()

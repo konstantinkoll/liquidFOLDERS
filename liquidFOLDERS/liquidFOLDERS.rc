@@ -52,8 +52,8 @@ IDB_BACKGROUND_CAPACITYBAR RCDATA                  "res\\Background_CapacityBar.
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,9,0
- PRODUCTVERSION 4,0,9,0
+ FILEVERSION 4,0,10,0
+ PRODUCTVERSION 4,0,10,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.9"
+            VALUE "FileVersion", "4.0.10"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.9"
+            VALUE "ProductVersion", "4.0.10"
         END
     END
     BLOCK "VarFileInfo"
@@ -102,6 +102,16 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 //
 // Menu
 //
+
+IDM_STORES MENU 
+BEGIN
+    MENUITEM "Speicherort &hinzufügen...",  IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "S&ynchronisieren",            IDM_STORES_SYNCHRONIZE
+    MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_RUNMAINTENANCE
+    MENUITEM SEPARATOR
+    MENUITEM "S&peicherkapazität zeigen",   IDM_ICONS_SHOWCAPACITY
+END
 
 IDM_FONTS MENU 
 BEGIN
@@ -177,29 +187,32 @@ END
 
 IDM_CALENDAR MENU 
 BEGIN
-    MENUITEM "&Wochentage anzeigen",        IDM_CALENDAR_SHOWDAYS
+    MENUITEM "Wo&chentage anzeigen",        IDM_CALENDAR_SHOWDAYS
     MENUITEM "&Jahr auswählen...\tStrg+Y",  IDM_CALENDAR_GOTOYEAR
 END
 
 IDM_GLOBE MENU 
 BEGIN
-    MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
-    MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
-    MENUITEM "&Größe anpassen\tPos1",       IDM_GLOBE_AUTOSIZE
+    MENUITEM "Or&t anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
+    MENUITEM "G&röße anpassen\tPos1",       IDM_GLOBE_AUTOSIZE
+    MENUITEM SEPARATOR
+    MENUITEM "&Orte markieren",             IDM_GLOBE_SHOWLOCATIONS
+    MENUITEM "&Flughafen-Namen",            IDM_GLOBE_SHOWAIRPORTNAMES
+    MENUITEM "&GPS-Koordinaten",            IDM_GLOBE_SHOWCOORDINATES
+    MENUITEM "Be&schreibungen",             IDM_GLOBE_SHOWDESCRIPTIONS
 END
 
 IDM_TAGCLOUD MENU 
 BEGIN
     POPUP "&Sortieren nach"
     BEGIN
-        MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
-        MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
-        MENUITEM SEPARATOR
-        MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
+        MENUITEM "&Wert",                       IDM_TAGCLOUD_SORTVALUE
+        MENUITEM "Datei&anzahl",                IDM_TAGCLOUD_SORTCOUNT
     END
+    MENUITEM "Seltene &Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
     MENUITEM SEPARATOR
-    MENUITEM "Schrift&größe",               IDM_TAGCLOUD_USESIZE
-    MENUITEM "&Farbe",                      IDM_TAGCLOUD_USECOLORS
+    MENUITEM "Schriftg&röße",               IDM_TAGCLOUD_USESIZE
+    MENUITEM "Far&be",                      IDM_TAGCLOUD_USECOLOR
     MENUITEM "&Deckkraft",                  IDM_TAGCLOUD_USEOPACITY
 END
 
@@ -215,7 +228,7 @@ END
 // Dialog
 //
 
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 196, 276
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 196, 275
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Details für „%s“"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -230,7 +243,7 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,139,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 291
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "„%s“ organisieren nach"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -240,28 +253,75 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
     CONTROL         "Sortierrichtung",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
     COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,232,273,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,174,270,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,232,270,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
+IDD_ABOUT_LICENSE DIALOGEX 0, 0, 245, 225
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Globus-Einstellungen"
+CAPTION "Lizenz"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,103,157,50,14
-    CONTROL         "3D-Einstellungen (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
+    CONTROL         "Lizenz",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,231,15
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,180,231,38,WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,7,180,45,8
+    CONTROL         "X",IDC_REGNAME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,181,183,8
+    LTEXT           "Kaufdatum:",IDC_STATIC,7,190,45,8
+    CONTROL         "X",IDC_PURCHASEDATE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,190,183,8
+    LTEXT           "Produkt:",IDC_STATIC,7,200,45,8
+    CONTROL         "X",IDC_PRODUCTID,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,200,183,8
+    LTEXT           "Menge:",IDC_STATIC,7,210,45,8
+    CONTROL         "X",IDC_QUANTITY,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,210,183,8
+END
+
+IDD_ABOUT_VIEWS DIALOGEX 0, 0, 245, 282
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Ansicht"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "3D-Einstellungen (OpenGL)",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,231,15
     LTEXT           "3D-Modell:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_MODELQUALITY,65,24,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Texturgröße:",IDC_STATIC,7,43,54,8
-    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Komprimieren",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
-    CONTROL         "Objekte",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
-    CONTROL         "&Orte markieren",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
-    CONTROL         "&Flughafen-Namen zeigen",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
-    CONTROL         "&GPS-Koordinaten zeigen",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
-    CONTROL         "Be&schreibung zeigen",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
+    COMBOBOX        IDC_TEXTUREQUALITY,65,41,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Ko&mprimieren",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,139,43,99,10
+    CONTROL         "Symbole",IDC_CATEGORY5,"CCategory",WS_GROUP,7,62,231,15
+    CONTROL         "S&peicherkapazität anzeigen",IDM_ICONS_SHOWCAPACITY,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,79,231,10
+    CONTROL         "Kalender",IDC_CATEGORY6,"CCategory",WS_GROUP,7,98,231,15
+    CONTROL         "Wo&chentage anzeigen",IDM_CALENDAR_SHOWDAYS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,115,231,10
+    CONTROL         "Globus",IDC_CATEGORY7,"CCategory",WS_GROUP,7,134,231,15
+    CONTROL         "&Orte markieren",IDM_GLOBE_SHOWLOCATIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,231,10
+    CONTROL         "&Flughafen-Namen",IDM_GLOBE_SHOWAIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,164,231,10
+    CONTROL         "&GPS-Koordinaten",IDM_GLOBE_SHOWCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,177,231,10
+    CONTROL         "Be&schreibungen",IDM_GLOBE_SHOWDESCRIPTIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,190,231,10
+    CONTROL         "Wortwolke",IDC_CATEGORY8,"CCategory",WS_GROUP,7,209,231,15
+    CONTROL         "Sortieren nach &Wert",IDM_TAGCLOUD_SORTVALUE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,127,226,111,10
+    CONTROL         "Sortieren nach Datei&anzahl",IDM_TAGCLOUD_SORTCOUNT,
+                    "Button",BS_AUTORADIOBUTTON | WS_TABSTOP,127,238,111,10
+    CONTROL         "Seltene &Tags anzeigen",IDM_TAGCLOUD_SHOWRARE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,226,111,10
+    CONTROL         "Schriftg&röße",IDM_TAGCLOUD_USESIZE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,239,111,10
+    CONTROL         "Far&be",IDM_TAGCLOUD_USECOLOR,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,252,111,10
+    CONTROL         "&Deckkraft",IDM_TAGCLOUD_USEOPACITY,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,265,111,10
+END
+
+IDD_ABOUT_GENERAL DIALOGEX 0, 0, 245, 315
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Allgemein"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Updates",IDC_CATEGORY1,"CCategory",WS_GROUP,7,164,231,15
+    CONTROL         "Automatisch nach &Updates suchen",IDC_ENABLEAUTOUPDATE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,181,231,10
+    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,193,221,10
+    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,205,221,10
+    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,217,221,10
+    PUSHBUTTON      "Jetzt nach Update &suchen...",IDC_UPDATENOW,7,235,120,14,WS_GROUP
+    CONTROL         "Beim Start öffnen\nWählen Sie hier, welche Ansicht beim Start von liquidFOLDERS als erstes angezeigt werden soll.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,258,231,35
+    COMBOBOX        IDC_STARTWITH,7,295,120,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s (%u Bit), %s\nErstellt am %s Uhr.",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,231,148
 END
 
 
@@ -286,15 +346,31 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 287
+        BOTTOMMARGIN, 284
     END
 
-    IDD_GLOBEOPTIONS, DIALOG
+    IDD_ABOUT_LICENSE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 153
+        RIGHTMARGIN, 238
         TOPMARGIN, 7
-        BOTTOMMARGIN, 171
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_ABOUT_VIEWS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+
+    IDD_ABOUT_GENERAL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 308
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -343,7 +419,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_SHOWCAPACITY "&Speicherkapazität zeigen"
     IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
     IDS_CONTEXTMENU_SENDTO_SINGLE "S&enden an"
     IDS_CONTEXTMENU_SENDTO_MULTIPLE "%u Dateien s&enden an"
@@ -360,11 +435,11 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK_SINGLE "&Aufgabe erstellen..."
     IDS_CONTEXTMENU_MAKETASK_MULTIPLE "%u &Aufgaben erstellen..."
     IDS_CONTEXTMENU_TASKDONE_SINGLE "&Aufgabe erledigt"
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &Aufgaben erledigt"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &Aufgaben erledigt"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
@@ -376,12 +451,9 @@ BEGIN
     IDS_SHORTCUTCREATED     "Die Verknüpfung wurde auf dem Desktop erstellt."
     IDS_WELCOME_CAPTION     "Willkommen bei liquidFOLDERS"
     IDS_WELCOME_MESSAGE     "Fügen Sie Speicherorte hinzu, die von liquidFOLDERS verwaltet werden sollen:"
+    IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
     IDS_QUALITY_HIGH        "Hoch"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -412,6 +484,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Speicherort als Standard.\nAls Standard-Speicherort setzen"
     IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Speicherorts an.\nEigenschaften"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_ADD          "Fügt einen Speicherort für Ihre Dateien hinzu.\nSpeicherort hinzufügen..."
     IDM_STORES_SYNCHRONIZE  "Synchronisiert alle Speicherorte mit ihrer Datenquelle.\nSynchronisieren"
     IDM_STORES_RUNMAINTENANCE "Wartungsarbeiten durchführen"
@@ -444,12 +520,12 @@ BEGIN
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
     IDM_FILE_MAKETASK       "Markiert die ausgewählten Dateien als Aufgabe.\nAufgabe erstellen..."
-    IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
-    IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
+    IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nAufgabe erledigt"
     IDM_FILE_RECOVER        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
@@ -471,6 +547,10 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_JUMPTOLOCATION 
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergrößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
@@ -480,7 +560,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
-    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
+    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Dateianzahl sortieren"
 END
 
 STRINGTABLE 
@@ -517,6 +597,16 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 //
 // Menu
 //
+
+IDM_STORES MENU 
+BEGIN
+    MENUITEM "&Adjuntar ubicación...",      IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "Si&ncronizar",                IDM_STORES_SYNCHRONIZE
+    MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_RUNMAINTENANCE
+    MENUITEM SEPARATOR
+    MENUITEM "Mostrar &capacidad",          IDM_ICONS_SHOWCAPACITY
+END
 
 IDM_FONTS MENU 
 BEGIN
@@ -598,23 +688,27 @@ END
 
 IDM_GLOBE MENU 
 BEGIN
-    MENUITEM "Configuraciones de &globo...", IDM_GLOBE_SETTINGS
     MENUITEM "Seleccionar &ubicación...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
     MENUITEM "Ajustar globo para &adaptar\tInicio", IDM_GLOBE_AUTOSIZE
+    MENUITEM SEPARATOR
+    MENUITEM "Marcar &ubicaciones",         IDM_GLOBE_SHOWLOCATIONS
+    MENUITEM "Nombres de &aeropuertos",     IDM_GLOBE_SHOWAIRPORTNAMES
+    MENUITEM "Coordenadas &GPS",            IDM_GLOBE_SHOWCOORDINATES
+    MENUITEM "De&scripciónes",              IDM_GLOBE_SHOWDESCRIPTIONS
 END
 
 IDM_TAGCLOUD MENU 
 BEGIN
     POPUP "&Ordenar por"
     BEGIN
-        MENUITEM "Ordenar por &valor",          IDM_TAGCLOUD_SORTVALUE
-        MENUITEM "Ordenar por &conteo",         IDM_TAGCLOUD_SORTCOUNT
-        MENUITEM SEPARATOR
-        MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
+        MENUITEM "&Valor",                      IDM_TAGCLOUD_SORTVALUE
+        MENUITEM "&Cantidad de archivos",       IDM_TAGCLOUD_SORTCOUNT
     END
-    MENUITEM "Usar &tamaño de fuente",      IDM_TAGCLOUD_USESIZE
-    MENUITEM "Usar &color",                 IDM_TAGCLOUD_USECOLORS
-    MENUITEM "Usar &opacidad",              IDM_TAGCLOUD_USEOPACITY
+    MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
+    MENUITEM SEPARATOR
+    MENUITEM "&Tamaño de fuente",           IDM_TAGCLOUD_USESIZE
+    MENUITEM "&Color",                      IDM_TAGCLOUD_USECOLOR
+    MENUITEM "&Opacidad",                   IDM_TAGCLOUD_USEOPACITY
 END
 
 IDM_INSPECTOR MENU 
@@ -629,7 +723,7 @@ END
 // Dialog
 //
 
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 206, 276
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 206, 275
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Detalles para «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -644,7 +738,7 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,149,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 291
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Organizar «%s» por"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -653,29 +747,75 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
     CONTROL         "Tipo de clasificación",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
     COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,232,273,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,174,270,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,232,270,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
+IDD_ABOUT_GENERAL DIALOGEX 0, 0, 245, 315
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Configuraciones de globo"
+CAPTION "Geral"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
-    PUSHBUTTON      "Cancelar",IDCANCEL,103,157,50,14
-    CONTROL         "Configuraciones 3D (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
+    CONTROL         "Actualizacione",IDC_CATEGORY1,"CCategory",WS_GROUP,7,164,231,15
+    CONTROL         "Buscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,181,231,10
+    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,193,221,10
+    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,205,221,10
+    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,217,221,10
+    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,7,235,120,14,WS_GROUP
+    CONTROL         "Abrir al inicio\nSeleccione aquí qué vista se debe mostrar primero al iniciar liquidFOLDERS.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,258,231,35
+    COMBOBOX        IDC_STARTWITH,7,295,120,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Desarrollado de <a>liquidFOLDERS</a> en Alemania.\nVersion %s (%u bit), %s\nCreado %s.",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,231,148
+END
+
+IDD_ABOUT_LICENSE DIALOGEX 0, 0, 245, 225
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Licensia"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Licensia",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,231,15
+    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,180,231,38,WS_GROUP
+    LTEXT           "Nombre:",IDC_STATIC,7,180,45,8
+    CONTROL         "X",IDC_REGNAME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,181,183,8
+    LTEXT           "Adquisición:",IDC_STATIC,7,190,45,8
+    CONTROL         "X",IDC_PURCHASEDATE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,190,183,8
+    LTEXT           "Producto:",IDC_STATIC,7,200,45,8
+    CONTROL         "X",IDC_PRODUCTID,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,200,183,8
+    LTEXT           "Número:",IDC_STATIC,7,210,45,8
+    CONTROL         "X",IDC_QUANTITY,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,210,183,8
+END
+
+IDD_ABOUT_VIEWS DIALOGEX 0, 0, 245, 282
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Vista"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Configuraciones 3D (OpenGL)",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,231,15
     LTEXT           "Modelo 3D:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_MODELQUALITY,65,24,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Texturas:",IDC_STATIC,7,43,54,8
-    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Comprimir",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
-    CONTROL         "Ítems",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
-    CONTROL         "Marcar &ubicaciones",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
-    CONTROL         "Mostrar &nombres de aeropuertos",IDC_AIRPORTNAMES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
-    CONTROL         "Mostrar &coordenadas GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
-    CONTROL         "Mostrar &descripción",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
+    COMBOBOX        IDC_TEXTUREQUALITY,65,41,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Co&mprimir",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,139,43,99,10
+    CONTROL         "Íconos",IDC_CATEGORY5,"CCategory",WS_GROUP,7,62,231,15
+    CONTROL         "Mostrar ca&pacidad",IDM_ICONS_SHOWCAPACITY,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,79,231,10
+    CONTROL         "Calendario",IDC_CATEGORY6,"CCategory",WS_GROUP,7,98,231,15
+    CONTROL         "Mostrar &días",IDM_CALENDAR_SHOWDAYS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,115,231,10
+    CONTROL         "Globo",IDC_CATEGORY7,"CCategory",WS_GROUP,7,134,231,15
+    CONTROL         "Marcar &ubicaciones",IDM_GLOBE_SHOWLOCATIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,231,10
+    CONTROL         "Nombres de &aeropuertos",IDM_GLOBE_SHOWAIRPORTNAMES,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,164,231,10
+    CONTROL         "Coordenadas &GPS",IDM_GLOBE_SHOWCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,177,231,10
+    CONTROL         "De&scripciónes",IDM_GLOBE_SHOWDESCRIPTIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,190,231,10
+    CONTROL         "Nube de palabras",IDC_CATEGORY8,"CCategory",WS_GROUP,7,209,231,15
+    CONTROL         "Ordenar por &valor",IDM_TAGCLOUD_SORTVALUE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,141,226,97,10
+    CONTROL         "Ordenar por &cantidad",IDM_TAGCLOUD_SORTCOUNT,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,141,238,97,10
+    CONTROL         "Mostrar e&tiquetas poco comunes",IDM_TAGCLOUD_SHOWRARE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,226,125,10
+    CONTROL         "Tamaño de &fuente",IDM_TAGCLOUD_USESIZE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,239,125,10
+    CONTROL         "Co&lor",IDM_TAGCLOUD_USECOLOR,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,252,125,10
+    CONTROL         "&Opacidad",IDM_TAGCLOUD_USEOPACITY,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,265,125,10
 END
 
 
@@ -700,15 +840,31 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 287
+        BOTTOMMARGIN, 284
     END
 
-    IDD_GLOBEOPTIONS, DIALOG
+    IDD_ABOUT_GENERAL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 153
+        RIGHTMARGIN, 238
         TOPMARGIN, 7
-        BOTTOMMARGIN, 171
+        BOTTOMMARGIN, 308
+    END
+
+    IDD_ABOUT_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_ABOUT_VIEWS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -757,7 +913,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_SHOWCAPACITY "Mostrar &capacidad"
     IDS_CONTEXTMENU_EDIT    "E&ditar..."
     IDS_CONTEXTMENU_SENDTO_SINGLE "&Enviar a"
     IDS_CONTEXTMENU_SENDTO_MULTIPLE "&Enviar %u archivos a"
@@ -774,11 +929,11 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK_SINGLE "Crear &tarea..."
     IDS_CONTEXTMENU_MAKETASK_MULTIPLE "Crear %u &tareas..."
     IDS_CONTEXTMENU_TASKDONE_SINGLE "&Tarea cumplida"
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tareas cumplida"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tareas cumplida"
     IDS_CONTEXTMENU_MORE    "&Más..."
     IDS_NOITEMSSELECTED     "Ítems no seleccionados"
     IDS_NORENDERINGCONTEXT  "No se puede crear un contexto OpenGL para gráficos en 3D."
@@ -793,10 +948,6 @@ BEGIN
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
     IDS_QUALITY_HIGH        "Alto"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -827,6 +978,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Establece el ubicación seleccionado al el ubicación estándar.\nEstablecer al ubicación estándar"
     IDM_STORE_PROPERTIES    "Despliega las propiedades del ubicación seleccionado.\nPropiedades"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_ADD          "Adjuntar un ubicación para sus archivos.\nAdjuntar ubicación..."
     IDM_STORES_SYNCHRONIZE  "Sincroniza todos los ubicaciones con su fuente de datos.\nSincronizar"
     IDM_STORES_RUNMAINTENANCE "Ejecutar mantenimiento"
@@ -859,12 +1014,12 @@ BEGIN
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
     IDM_FILE_MAKETASK       "Marca los archivos seleccionados como tarea.\nCrear tarea..."
-    IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
-    IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
+    IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nTarea cumplida"
     IDM_FILE_RECOVER        "Restablece los archivos seleccionados.\nRestablecer"
@@ -886,6 +1041,10 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_JUMPTOLOCATION 
                             "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
     IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
@@ -895,7 +1054,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Ordena las etiquetas en su orden canónico.\nOrdenar por valor"
-    IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su número de archivo.\nOrdenar por número"
+    IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su cantidad de archivos.\nOrdenar por cantidad"
 END
 
 STRINGTABLE 
@@ -933,9 +1092,19 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 // Menu
 //
 
+IDM_STORES MENU 
+BEGIN
+    MENUITEM "&Ajouter emplacement...",     IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "S&ynchroniser",               IDM_STORES_SYNCHRONIZE
+    MENUITEM "Exécuter &travails d'entretien", IDM_STORES_RUNMAINTENANCE
+    MENUITEM SEPARATOR
+    MENUITEM "Afficher ca&pacité",          IDM_ICONS_SHOWCAPACITY
+END
+
 IDM_FONTS MENU 
 BEGIN
-    MENUITEM "Afficher fontes &installées...", IDM_FONTS_SHOWINSTALLED
+    MENUITEM "Afficher caractères &installées...", IDM_FONTS_SHOWINSTALLED
 END
 
 IDM_NEW MENU 
@@ -1013,23 +1182,27 @@ END
 
 IDM_GLOBE MENU 
 BEGIN
-    MENUITEM "Paramètres du &globe...",     IDM_GLOBE_SETTINGS
     MENUITEM "Choisissez l'&endroit...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
     MENUITEM "&Adapter à la fenêtre\tOrigine", IDM_GLOBE_AUTOSIZE
+    MENUITEM SEPARATOR
+    MENUITEM "Marquer &lieux",              IDM_GLOBE_SHOWLOCATIONS
+    MENUITEM "Noms d'&aéroport",            IDM_GLOBE_SHOWAIRPORTNAMES
+    MENUITEM "Coordonnées &GPS",            IDM_GLOBE_SHOWCOORDINATES
+    MENUITEM "De&scriptions",               IDM_GLOBE_SHOWDESCRIPTIONS
 END
 
 IDM_TAGCLOUD MENU 
 BEGIN
     POPUP "&Trier par"
     BEGIN
-        MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
-        MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
-        MENUITEM SEPARATOR
-        MENUITEM "Présenter les tags &rares",   IDM_TAGCLOUD_SHOWRARE
+        MENUITEM "&Valeur",                     IDM_TAGCLOUD_SORTVALUE
+        MENUITEM "&Nombre de fichiers",         IDM_TAGCLOUD_SORTCOUNT
     END
-    MENUITEM "Utilise la &taille",          IDM_TAGCLOUD_USESIZE
-    MENUITEM "Utilise la &couleur",         IDM_TAGCLOUD_USECOLORS
-    MENUITEM "Utilise la &propriété couvrante", IDM_TAGCLOUD_USEOPACITY
+    MENUITEM "Afficher les &tags rares",    IDM_TAGCLOUD_SHOWRARE
+    MENUITEM SEPARATOR
+    MENUITEM "Tai&lle du caractère",        IDM_TAGCLOUD_USESIZE
+    MENUITEM "&Couleur",                    IDM_TAGCLOUD_USECOLOR
+    MENUITEM "&Opacité",                    IDM_TAGCLOUD_USEOPACITY
 END
 
 IDM_INSPECTOR MENU 
@@ -1044,7 +1217,7 @@ END
 // Dialog
 //
 
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 201, 276
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 201, 275
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Détails pour «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -1059,7 +1232,7 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,144,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 291
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Organiser «%s» après"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1069,28 +1242,74 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
     CONTROL         "Direction de tri",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
     COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,232,273,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,174,270,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,232,270,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
+IDD_ABOUT_GENERAL DIALOGEX 0, 0, 245, 315
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Paramètres du globe"
+CAPTION "Général"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,103,157,50,14
-    CONTROL         "Paramètres 3D (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
+    CONTROL         "Mises à jour",IDC_CATEGORY1,"CCategory",WS_GROUP,7,164,231,15
+    CONTROL         "Chercher automatiquement des &mises á jour",IDC_ENABLEAUTOUPDATE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,181,231,10
+    CONTROL         "Tous les &jours",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,193,221,10
+    CONTROL         "&Hebdomadaire",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,205,221,10
+    CONTROL         "M&ensuel",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,217,221,10
+    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,7,235,155,14,WS_GROUP
+    CONTROL         "Ouvrir au démarrage\nSélectionnez ici quelle vue doit être affichée en premier lors du démarrage de liquidFOLDERS.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,258,231,35
+    COMBOBOX        IDC_STARTWITH,7,295,155,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Développée par <a>liquidFOLDERS</a> en Allemagne.\nVersion %s (%u bits), %s\nCrée %s.",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,231,148
+END
+
+IDD_ABOUT_LICENSE DIALOGEX 0, 0, 245, 225
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Licence"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Licence",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,231,15
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,180,231,38,WS_GROUP
+    LTEXT           "Nom:",IDC_STATIC,7,180,50,8
+    CONTROL         "X",IDC_REGNAME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,60,181,178,8
+    LTEXT           "Date d'achat:",IDC_STATIC,7,190,50,8
+    CONTROL         "X",IDC_PURCHASEDATE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,60,190,178,8
+    LTEXT           "Produit:",IDC_STATIC,7,200,50,8
+    CONTROL         "X",IDC_PRODUCTID,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,60,200,178,8
+    LTEXT           "Nombre:",IDC_STATIC,7,210,50,8
+    CONTROL         "X",IDC_QUANTITY,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,60,210,178,8
+END
+
+IDD_ABOUT_VIEWS DIALOGEX 0, 0, 245, 282
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Vue"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Paramètres 3D (OpenGL)",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,231,15
     LTEXT           "Modèle 3D:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_MODELQUALITY,65,24,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Textures:",IDC_STATIC,7,43,54,8
-    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Compresser",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
-    CONTROL         "Objets",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
-    CONTROL         "&Sélectionner des lieux",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
-    CONTROL         "Présenter &noms d'aéroport",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
-    CONTROL         "Présenter &coordonnées-GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
-    CONTROL         "Présenter &descriptions",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
+    COMBOBOX        IDC_TEXTUREQUALITY,65,41,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Co&mpresser",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,139,43,99,10
+    CONTROL         "Symboles",IDC_CATEGORY5,"CCategory",WS_GROUP,7,62,231,15
+    CONTROL         "Afficher ca&pacité",IDM_ICONS_SHOWCAPACITY,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,79,231,10
+    CONTROL         "Calendrier",IDC_CATEGORY6,"CCategory",WS_GROUP,7,98,231,15
+    CONTROL         "Afficher les &jours",IDM_CALENDAR_SHOWDAYS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,115,231,10
+    CONTROL         "Globe",IDC_CATEGORY7,"CCategory",WS_GROUP,7,134,231,15
+    CONTROL         "Marquer &lieux",IDM_GLOBE_SHOWLOCATIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,231,10
+    CONTROL         "Noms d'&aéroport",IDM_GLOBE_SHOWAIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,164,231,10
+    CONTROL         "Coordonnées &GPS",IDM_GLOBE_SHOWCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,177,231,10
+    CONTROL         "De&scriptions",IDM_GLOBE_SHOWDESCRIPTIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,190,231,10
+    CONTROL         "Nuage de mots-clés",IDC_CATEGORY8,"CCategory",WS_GROUP,7,209,231,15
+    CONTROL         "Trier par la &valeur",IDM_TAGCLOUD_SORTVALUE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,116,226,122,10
+    CONTROL         "Trier par le &nombre de fichiers",IDM_TAGCLOUD_SORTCOUNT,
+                    "Button",BS_AUTORADIOBUTTON | WS_TABSTOP,116,238,122,10
+    CONTROL         "Afficher les &tags rares",IDM_TAGCLOUD_SHOWRARE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,226,100,10
+    CONTROL         "Ta&ille du caractère",IDM_TAGCLOUD_USESIZE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,239,100,10
+    CONTROL         "&Couleur",IDM_TAGCLOUD_USECOLOR,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,252,100,10
+    CONTROL         "&Opacité",IDM_TAGCLOUD_USEOPACITY,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,265,100,10
 END
 
 
@@ -1115,15 +1334,31 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 287
+        BOTTOMMARGIN, 284
     END
 
-    IDD_GLOBEOPTIONS, DIALOG
+    IDD_ABOUT_GENERAL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 153
+        RIGHTMARGIN, 238
         TOPMARGIN, 7
-        BOTTOMMARGIN, 171
+        BOTTOMMARGIN, 308
+    END
+
+    IDD_ABOUT_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_ABOUT_VIEWS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1172,7 +1407,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_SHOWCAPACITY "Afficher capacité"
     IDS_CONTEXTMENU_EDIT    "&Modifier..."
     IDS_CONTEXTMENU_SENDTO_SINGLE "E&nvoyer à"
     IDS_CONTEXTMENU_SENDTO_MULTIPLE "E&nvoyer %u fichiers à"
@@ -1189,11 +1423,11 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK_SINGLE "Créer &tâche..."
     IDS_CONTEXTMENU_MAKETASK_MULTIPLE "Créer %u &tâches..."
     IDS_CONTEXTMENU_TASKDONE_SINGLE "&Tâche fini"
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tâches fini"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tâches fini"
     IDS_CONTEXTMENU_MORE    "&Plus..."
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
     IDS_NORENDERINGCONTEXT  "Impossible de créer un contexte OpenGL pour les graphiques 3D."
@@ -1208,10 +1442,6 @@ BEGIN
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
     IDS_QUALITY_HIGH        "Haut"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -1242,6 +1472,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Met l'emplacement choisi comme l'emplacement défaut.\nMettre emplacement défaut"
     IDM_STORE_PROPERTIES    "Présente les propriétés du emplacement choisi.\nPropriétés"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_ADD          "Ajouter un emplacement pour vos fichiers.\nAjouter emplacement..."
     IDM_STORES_SYNCHRONIZE  "Synchroniser tous les emplacements avec leur source de données.\nSynchroniser"
     IDM_STORES_RUNMAINTENANCE "Effectuer travails d'entretien"
@@ -1249,7 +1483,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FONTS_SHOWINSTALLED "Ouvre le Panneau de configuration et affiche toutes les fontes installées.\nAfficher fontes &installées"
+    IDM_FONTS_SHOWINSTALLED "Ouvre le Panneau de configuration et affiche toutes les caractères installées.\nAfficher caractères &installées"
 END
 
 STRINGTABLE 
@@ -1274,12 +1508,12 @@ BEGIN
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Enlève les fichiers choisis du presse-papiers.\nEnlever"
     IDM_FILE_MAKETASK       "Marque les fichiers choisis comme une tâche.\nCréer tâche..."
-    IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
-    IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
+    IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
     IDM_FILE_TASKDONE       "Supprime la marque comme une tâche des fichiers choisis.\nTâche fini"
     IDM_FILE_RECOVER        "Reconstitue tous les fichiers.\nReconstituer"
@@ -1301,6 +1535,10 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_JUMPTOLOCATION 
                             "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
     IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
@@ -1310,7 +1548,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Trier tous les tags par ordre alphabétique.\nTrier par ordre alphabétique"
-    IDM_TAGCLOUD_SORTCOUNT  "Trier tous les tags par nombre de fichier.\nTrier par nombre"
+    IDM_TAGCLOUD_SORTCOUNT  "Trier tous les tags par nombre de fichiers.\nTrier par nombre"
 END
 
 STRINGTABLE 
@@ -1398,6 +1636,16 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Menu
 //
 
+IDM_STORES MENU 
+BEGIN
+    MENUITEM "&Add storage location...",    IDM_STORES_ADD
+    MENUITEM SEPARATOR
+    MENUITEM "S&ynchronize",                IDM_STORES_SYNCHRONIZE
+    MENUITEM "Run &maintenance",            IDM_STORES_RUNMAINTENANCE
+    MENUITEM SEPARATOR
+    MENUITEM "Show ca&pacity",              IDM_ICONS_SHOWCAPACITY
+END
+
 IDM_FONTS MENU 
 BEGIN
     MENUITEM "Show &installed fonts...",    IDM_FONTS_SHOWINSTALLED
@@ -1478,24 +1726,27 @@ END
 
 IDM_GLOBE MENU 
 BEGIN
-    MENUITEM "Globe &settings...",          IDM_GLOBE_SETTINGS
     MENUITEM "Jump to &location...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
     MENUITEM "Size globe to &fit\tHome",    IDM_GLOBE_AUTOSIZE
+    MENUITEM SEPARATOR
+    MENUITEM "Mark &locations",             IDM_GLOBE_SHOWLOCATIONS
+    MENUITEM "&Airport names",              IDM_GLOBE_SHOWAIRPORTNAMES
+    MENUITEM "&GPS coordinates",            IDM_GLOBE_SHOWCOORDINATES
+    MENUITEM "De&scriptions",               IDM_GLOBE_SHOWDESCRIPTIONS
 END
 
 IDM_TAGCLOUD MENU 
 BEGIN
     POPUP "&Sort by"
     BEGIN
-        MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
-        MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
-        MENUITEM SEPARATOR
-        MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
+        MENUITEM "&Value",                      IDM_TAGCLOUD_SORTVALUE
+        MENUITEM "File &count",                 IDM_TAGCLOUD_SORTCOUNT
     END
-    MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
-    MENUITEM "Use &font size",              IDM_TAGCLOUD_USESIZE
-    MENUITEM "Use &color",                  IDM_TAGCLOUD_USECOLORS
-    MENUITEM "Use &opacity",                IDM_TAGCLOUD_USEOPACITY
+    MENUITEM "Show rare &tags",             IDM_TAGCLOUD_SHOWRARE
+    MENUITEM SEPARATOR
+    MENUITEM "&Font size",                  IDM_TAGCLOUD_USESIZE
+    MENUITEM "Colo&r",                      IDM_TAGCLOUD_USECOLOR
+    MENUITEM "&Opacity",                    IDM_TAGCLOUD_USEOPACITY
 END
 
 IDM_INSPECTOR MENU 
@@ -1510,7 +1761,7 @@ END
 // Dialog
 //
 
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 196, 276
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 196, 275
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Details for “%s”"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -1525,7 +1776,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,139,254,50,14,WS_GROUP
 END
 
-IDD_ORGANIZE DIALOGEX 0, 0, 289, 295
+IDD_ORGANIZE DIALOGEX 0, 0, 289, 291
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Organize “%s” by"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1535,28 +1786,73 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,275,191
     CONTROL         "Sort direction",IDC_CATEGORY2,"CCategory",WS_GROUP,7,224,275,15
     COMBOBOX        IDC_SORTDIRECTION,7,242,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,174,273,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,232,273,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,174,270,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,232,270,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 179
+IDD_ABOUT_GENERAL DIALOGEX 0, 0, 245, 315
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Globe settings"
+CAPTION "General"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,45,157,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,103,157,50,14
-    CONTROL         "3D settings (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
+    CONTROL         "Updates",IDC_CATEGORY1,"CCategory",WS_GROUP,7,164,231,15
+    CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,181,231,10
+    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,193,221,10
+    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,205,221,10
+    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,17,217,221,10
+    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,7,235,120,14,WS_GROUP
+    CONTROL         "Open at start\nSelect here which view should be displayed first when starting liquidFOLDERS.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,258,231,35
+    COMBOBOX        IDC_STARTWITH,7,295,120,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s (%u bit), %s\nBuilt %s.",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,231,148
+END
+
+IDD_ABOUT_LICENSE DIALOGEX 0, 0, 245, 225
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "License"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "License",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,231,15
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,180,231,38,WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,7,180,55,8
+    CONTROL         "X",IDC_REGNAME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,181,173,8
+    LTEXT           "Purchase date:",IDC_STATIC,7,190,55,8
+    CONTROL         "X",IDC_PURCHASEDATE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,190,173,8
+    LTEXT           "Product:",IDC_STATIC,7,200,55,8
+    CONTROL         "X",IDC_PRODUCTID,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,200,173,8
+    LTEXT           "Quantity:",IDC_STATIC,7,210,55,8
+    CONTROL         "X",IDC_QUANTITY,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,210,173,8
+END
+
+IDD_ABOUT_VIEWS DIALOGEX 0, 0, 245, 282
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "View"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "3D settings (OpenGL)",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,231,15
     LTEXT           "3D model:",IDC_STATIC,7,26,54,8
-    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_MODELQUALITY,65,24,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Texture size:",IDC_STATIC,7,43,54,8
-    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Compress",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
-    CONTROL         "Objects",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
-    CONTROL         "Mark &locations",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
-    CONTROL         "Show &airport names",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
-    CONTROL         "Show &GPS coordinates",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
-    CONTROL         "Show &description",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
+    COMBOBOX        IDC_TEXTUREQUALITY,65,41,60,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Co&mpress",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,139,43,99,10
+    CONTROL         "Icons",IDC_CATEGORY5,"CCategory",WS_GROUP,7,62,231,15
+    CONTROL         "Show ca&pacity",IDM_ICONS_SHOWCAPACITY,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,79,231,10
+    CONTROL         "Calendar",IDC_CATEGORY6,"CCategory",WS_GROUP,7,98,231,15
+    CONTROL         "Show &days",IDM_CALENDAR_SHOWDAYS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,115,231,10
+    CONTROL         "Globe",IDC_CATEGORY7,"CCategory",WS_GROUP,7,134,231,15
+    CONTROL         "Mark &locations",IDM_GLOBE_SHOWLOCATIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,151,231,10
+    CONTROL         "&Airport names",IDM_GLOBE_SHOWAIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,164,231,10
+    CONTROL         "&GPS coordinates",IDM_GLOBE_SHOWCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,177,231,10
+    CONTROL         "De&scriptions",IDM_GLOBE_SHOWDESCRIPTIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,190,231,10
+    CONTROL         "Tag cloud",IDC_CATEGORY8,"CCategory",WS_GROUP,7,209,231,15
+    CONTROL         "Sort by &value",IDM_TAGCLOUD_SORTVALUE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,127,226,111,10
+    CONTROL         "Sort by file &count",IDM_TAGCLOUD_SORTCOUNT,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,127,238,111,10
+    CONTROL         "Show rare &tags",IDM_TAGCLOUD_SHOWRARE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,226,111,10
+    CONTROL         "&Font size",IDM_TAGCLOUD_USESIZE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,239,111,10
+    CONTROL         "Colo&r",IDM_TAGCLOUD_USECOLOR,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,252,111,10
+    CONTROL         "&Opacity",IDM_TAGCLOUD_USEOPACITY,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,265,111,10
 END
 
 
@@ -1581,15 +1877,31 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 282
         TOPMARGIN, 7
-        BOTTOMMARGIN, 287
+        BOTTOMMARGIN, 284
     END
 
-    IDD_GLOBEOPTIONS, DIALOG
+    IDD_ABOUT_GENERAL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 153
+        RIGHTMARGIN, 238
         TOPMARGIN, 7
-        BOTTOMMARGIN, 171
+        BOTTOMMARGIN, 308
+    END
+
+    IDD_ABOUT_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_ABOUT_VIEWS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1638,7 +1950,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_SHOWCAPACITY "Show &capacity"
     IDS_CONTEXTMENU_EDIT    "&Edit..."
     IDS_CONTEXTMENU_SENDTO_SINGLE "S&end to"
     IDS_CONTEXTMENU_SENDTO_MULTIPLE "S&end %u files to"
@@ -1655,11 +1966,11 @@ BEGIN
     IDS_CONTEXTMENU_MAKETASK_SINGLE "Create &task..."
     IDS_CONTEXTMENU_MAKETASK_MULTIPLE "Create %u &tasks..."
     IDS_CONTEXTMENU_TASKDONE_SINGLE "&Task done"
+    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tasks done"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_TASKDONE_MULTIPLE "%u &tasks done"
     IDS_CONTEXTMENU_MORE    "&More..."
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
@@ -1674,10 +1985,6 @@ BEGIN
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
     IDS_QUALITY_HIGH        "High"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_QUALITY_ULTRA       "Ultra"
 END
 
@@ -1708,6 +2015,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Makes the selected location the default location.\nMake default location"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected location.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_ADD          "Add a location for your files.\nAdd storage location..."
     IDM_STORES_SYNCHRONIZE  "Synchronizes all locations with their data source.\nSynchronize"
     IDM_STORES_RUNMAINTENANCE "Run maintenance"
@@ -1740,12 +2051,12 @@ BEGIN
     IDM_FILE_REMOVEFROMCLIPBOARD 
                             "Removes the selected files from the clipboard window.\nRemove"
     IDM_FILE_MAKETASK       "Marks the selected files as task.\nCreate task..."
-    IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
-    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
+    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
     IDM_FILE_TASKDONE       "Removes the task marking from the selected files.\nTask done"
     IDM_FILE_RECOVER        "Recovers the selected files.\nRecover"
@@ -1767,6 +2078,10 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_JUMPTOLOCATION 
                             "Centers the globe on a specific location.\nJump to location..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"

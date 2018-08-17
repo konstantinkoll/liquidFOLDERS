@@ -184,7 +184,7 @@ void CFileView::SelectItem(INT Index, BOOL Select)
 	ASSERT(Index>=0);
 	ASSERT(Index<m_ItemCount);
 
-	if (GetItemData(Index)->Valid)
+	if (!Select || GetItemData(Index)->Valid)
 	{
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		SelectItem(pItemDescriptor, Select);
@@ -347,7 +347,7 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 	// Stores
 	UINT nID = FIRSTSENDTO;
 
-	STOREID StoreID;
+	ABSOLUTESTOREID StoreID;
 	if (LFGetDefaultStore(StoreID)==LFOk)
 	{
 		AppendSendToItem(Menu, nID, CString((LPCSTR)IDS_DEFAULTSTORE), (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, cx, cy, LR_SHARED), cx, cy);
@@ -478,10 +478,6 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 			{
 			case LFContextStores:
 				Menu.LoadMenu(IDM_STORES);
-
-				Menu.AppendMenu(MF_SEPARATOR | MF_BYPOSITION);
-				Menu.AppendMenu(MF_STRING | MF_BYPOSITION, IDM_ICONS_SHOWCAPACITY, CString((LPCSTR)IDS_CONTEXTMENU_SHOWCAPACITY));
-
 				break;
 
 			case LFContextFonts:
@@ -735,13 +731,6 @@ void CFileView::DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pIte
 
 		break;
 	}
-}
-
-void CFileView::UnselectAllAfterTransaction()
-{
-	if (p_CookedFiles)
-		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
-			SelectItem(a, FALSE);
 }
 
 

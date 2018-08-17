@@ -163,12 +163,11 @@ void CMainView::SetHeader()
 			}
 
 		// Merge hint and file count/size
-		if (pHint)
-			if (*pHint!=L'\0')
-			{
-				Hint.Insert(0, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? _T("—") : _T(" – "));
-				Hint.Insert(0, pHint);
-			}
+		if (pHint && (*pHint!=L'\0'))
+		{
+			Hint.Insert(0, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? _T("—") : _T(" – "));
+			Hint.Insert(0, pHint);
+		}
 
 		// Thumbnail
 		HBITMAP hBitmap = NULL;
@@ -382,7 +381,7 @@ void CMainView::RemoveTransactedItems(LFTransactionList* pTransactionList)
 
 	// Unselect all files
 	if (m_pWndFileView)
-		m_pWndFileView->UnselectAllAfterTransaction();
+		m_pWndFileView->SendMessage(IDM_ITEMVIEW_SELECTNONE);
 
 	// Remove items from raw search result
 	for (UINT a=0; a<pTransactionList->m_ItemCount; a++)
@@ -475,6 +474,7 @@ void CMainView::SelectionChanged()
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+
 			if (CFileView::IsItemSelected(pItemDescriptor))
 				m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
 		}
@@ -1242,18 +1242,14 @@ void CMainView::OnStoreOpenNewWindow()
 {
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-	{
-		CMainWnd* pFrameWnd = new CMainWnd();
-		pFrameWnd->CreateStore((*p_CookedFiles)[Index]->StoreID);
-		pFrameWnd->ShowWindow(SW_SHOW);
-	}
+		(new CMainWnd())->Create((*p_CookedFiles)[Index]->StoreID);
 }
 
 void CMainView::OnStoreOpenFileDrop()
 {
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
-		theApp.GetFileDrop((*p_CookedFiles)[Index]->StoreID);
+		theApp.OpenFileDrop((*p_CookedFiles)[Index]->StoreID);
 
 	// Iconize own window
 	GetTopLevelParent()->ShowWindow(SW_MINIMIZE);

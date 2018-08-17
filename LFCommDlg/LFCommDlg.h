@@ -30,7 +30,7 @@
 #include "CTooltipHeader.h"
 #include "GLFont.h"
 #include "GLRenderer.h"
-#include "LFAboutDlg.h"
+#include "LFAboutDialog.h"
 #include "LFAddStoreDlg.h"
 #include "LFApplication.h"
 #include "LFAttributeListDlg.h"

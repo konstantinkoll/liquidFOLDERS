@@ -156,6 +156,36 @@ INT CFrontstageItemView::CompareItems(INT /*Index1*/, INT /*Index2*/) const
 	return 0;
 }
 
+void CFrontstageItemView::Swap(INT Index1, INT Index2)
+{
+	ASSERT(Index1>=0);
+	ASSERT(Index1>=0);
+	ASSERT(Index1<m_ItemCount);
+	ASSERT(Index2<m_ItemCount);
+
+	LPBYTE Ptr1 = (LPBYTE)GetItemData(Index1);
+	LPBYTE Ptr2 = (LPBYTE)GetItemData(Index2);
+
+	// Swap QWORDs
+	for (SIZE_T szData=0; szData<m_DataSize/8; szData++)
+	{
+		const UINT64 Temp = *((UINT64*)Ptr1);
+		*((UINT64*)Ptr1) = *((UINT64*)Ptr2);
+		Ptr1 += 8;
+
+		*((UINT64*)Ptr2) = Temp;
+		Ptr2 += 8;
+	}
+
+	// Swap remaining BYTEs
+	for (SIZE_T szData=0; szData<m_DataSize % 8; szData++)
+	{
+		const BYTE Temp = *Ptr1;
+		*(Ptr1++) = *Ptr2;
+		*(Ptr2++) = Temp;
+	}
+}
+
 void CFrontstageItemView::Heap(INT Element, INT Count)
 {
 	while (Element<=Count/2-1)
@@ -355,12 +385,12 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	switch (nChar)
 	{
 	case VK_LEFT:
-		for (INT a=Item-1; a>=0; a--)
+		for (INT Index=Item-1; Index>=0; Index--)
 		{
-			const ItemData* pItemData = GetItemData(a);
+			const ItemData* pItemData = GetItemData(Index);
 			if ((pItemData->Row==Row) && pItemData->Valid)
 			{
-				Item = a;
+				Item = Index;
 				break;
 			}
 		}
@@ -368,12 +398,12 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_RIGHT:
-		for (INT a=Item+1; a<m_ItemCount; a++)
+		for (INT Index=Item+1; Index<m_ItemCount; Index++)
 		{
-			const ItemData* pItemData = GetItemData(a);
+			const ItemData* pItemData = GetItemData(Index);
 			if ((pItemData->Row==Row) && pItemData->Valid)
 			{
-				Item = a;
+				Item = Index;
 				break;
 			}
 		}
@@ -381,12 +411,12 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_UP:
-		for (INT a=Item-1; a>=0; a--)
+		for (INT Index=Item-1; Index>=0; Index--)
 		{
-			const ItemData* pItemData = GetItemData(a);
+			const ItemData* pItemData = GetItemData(Index);
 			if ((pItemData->Row<Row) && pItemData->Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				if (pItemData->Column<=Column)
 					break;
@@ -399,12 +429,12 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_PRIOR:
-		for (INT a=Item-1; a>=0; a--)
+		for (INT Index=Item-1; Index>=0; Index--)
 		{
-			const ItemData* pItemData = GetItemData(a);
+			const ItemData* pItemData = GetItemData(Index);
 			if ((pItemData->Row<=Row) && (pItemData->Column<=Column) && pItemData->Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				if (pItemData->Rect.top<=Bottom-rect.Height()+(INT)m_HeaderHeight)
 					break;
@@ -414,12 +444,12 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_DOWN:
-		for (INT a=Item+1; a<m_ItemCount; a++)
+		for (INT Index=Item+1; Index<m_ItemCount; Index++)
 		{
-			const ItemData* pItemData = GetItemData(a);
+			const ItemData* pItemData = GetItemData(Index);
 			if ((pItemData->Row>Row) && pItemData->Valid)
 			{
-				Item = a;
+				Item = Index;
 
 				if (pItemData->Column>=Column)
 					break;
@@ -432,10 +462,10 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		break;
 
 	case VK_NEXT:
-		for (INT a=Item+1; a<m_ItemCount; a++)
+		for (INT Index=Item+1; Index<m_ItemCount; Index++)
 		{
-			const ItemData* pItemData = GetItemData(a);
-			if (pItemData->Row!=GetItemData(a-1)->Row)
+			const ItemData* pItemData = GetItemData(Index);
+			if (pItemData->Row!=GetItemData(Index-1)->Row)
 				if (pItemData->Rect.bottom>=Top+rect.Height()-(INT)m_HeaderHeight)
 					if (TmpRow==-1)
 					{
@@ -448,7 +478,7 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 					}
 
 			if (((TmpRow==-1) || (pItemData->Column<=Column)) && pItemData->Valid)
-				Item = a;
+				Item = Index;
 		}
 
 		break;
@@ -456,21 +486,21 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_HOME:
 		if (Control)
 		{
-			for (INT a=0; a<m_ItemCount; a++)
-				if (GetItemData(a)->Valid)
+			for (INT Index=0; Index<m_ItemCount; Index++)
+				if (GetItemData(Index)->Valid)
 				{
-					Item = a;
+					Item = Index;
 					break;
 				}
 		}
 		else
-			for (INT a=Item-1; a>=0; a--)
+			for (INT Index=Item-1; Index>=0; Index--)
 			{
-				const ItemData* pItemData = GetItemData(a);
+				const ItemData* pItemData = GetItemData(Index);
 				if (pItemData->Valid)
 					if (pItemData->Row==Row)
 					{
-						Item = a;
+						Item = Index;
 					}
 					else
 					{
@@ -483,21 +513,21 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	case VK_END:
 		if (Control)
 		{
-			for (INT a=m_ItemCount-1; a>=0; a--)
-				if (GetItemData(a)->Valid)
+			for (INT Index=m_ItemCount-1; Index>=0; Index--)
+				if (GetItemData(Index)->Valid)
 				{
-					Item = a;
+					Item = Index;
 					break;
 				}
 		}
 		else
-			for (INT a=Item+1; a<m_ItemCount; a++)
+			for (INT Index=Item+1; Index<m_ItemCount; Index++)
 			{
-				const ItemData* pItemData = GetItemData(a);
+				const ItemData* pItemData = GetItemData(Index);
 				if (pItemData->Valid)
 					if (pItemData->Row==Row)
 					{
-						Item = a;
+						Item = Index;
 					}
 					else
 					{
@@ -839,13 +869,13 @@ Restart:
 
 	INT Category = -1;
 
-	for (INT a=0; a<m_ItemCount; a++)
+	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
-		ItemData* pData = GetItemData(a);
+		ItemData* pData = GetItemData(Index);
 
 		if (pData->Valid)
 		{
-			if (GetItemCategory(a)!=Category)
+			if (GetItemCategory(Index)!=Category)
 			{
 				if (x>Margin)
 				{
@@ -859,7 +889,7 @@ Restart:
 				if (y>Margin)
 					y += 8;
 
-				Category = GetItemCategory(a);
+				Category = GetItemCategory(Index);
 				ASSERT(Category<(INT)m_ItemCategories.m_ItemCount);
 
 				const LPRECT lpRect = &m_ItemCategories[Category].Rect;
@@ -943,17 +973,19 @@ void CFrontstageItemView::AdjustLayoutSingleRow(INT Columns)
 	INT Column = 0;
 	INT x = ITEMVIEWMARGIN;
 
-	for (INT a=0; a<m_ItemCount; a++)
-		if (GetItemData(a)->Valid)
-		{
-			ItemData* pItemData = GetItemData(a);
+	for (INT Index=0; Index<m_ItemCount; Index++)
+	{
+		ItemData* pItemData = GetItemData(Index);
 
+		if (pItemData->Valid)
+		{
 			pItemData->Column = Column++;
 			pItemData->Rect.right = (pItemData->Rect.left=x)+Width;
 			pItemData->Rect.bottom = (pItemData->Rect.top=ITEMVIEWMARGIN)+m_ItemHeight;
 
 			m_ScrollWidth = x+=(Width+ITEMVIEWMARGIN);
 		}
+	}
 
 	CFrontstageScroller::AdjustLayout();
 }

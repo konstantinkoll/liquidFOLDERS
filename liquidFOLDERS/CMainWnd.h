@@ -32,9 +32,11 @@ public:
 	virtual void GetLayoutRect(LPRECT lpRect);
 
 	BOOL Create(LFFilter* pFilter=NULL, BOOL IsClipboard=FALSE);
+	BOOL Create(const ABSOLUTESTOREID& StoreID);
+	BOOL Create(LPCSTR IATACode);
+	BOOL Create(BYTE ContextID);
 	BOOL CreateClipboard();
 	BOOL CreateRoot();
-	BOOL CreateStore(const ABSOLUTESTOREID& StoreID);
 	BOOL AddClipItem(const LFItemDescriptor* pItemDescriptor, BOOL& First);
 
 protected:

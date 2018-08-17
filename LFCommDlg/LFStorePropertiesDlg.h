@@ -103,7 +103,7 @@ private:
 	static CString MakeHex(LPBYTE x, UINT bCount);
 	static void CEscape(CString &strEscape);
 
-	_GUID m_StoreUniqueID;
+	GUID m_StoreUniqueID;
 	CString m_MaskContents;
 	CString m_MaskMaintenance;
 	CString m_MaskSynchronized;

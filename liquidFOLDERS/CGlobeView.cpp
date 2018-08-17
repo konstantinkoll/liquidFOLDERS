@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "CGlobeView.h"
-#include "GlobeOptionsDlg.h"
 #include "liquidFOLDERS.h"
 #include <math.h>
 
@@ -21,7 +20,7 @@
 #define ANIMLENGTH       200
 #define MOVEDELAY        10
 #define MOVEDIVIDER      8.0f
-#define WHITE            100
+#define WHITEHEIGHT      100
 
 const GLfloat CGlobeView::m_lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 const GLfloat CGlobeView::m_lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -51,6 +50,14 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* p
 
 void CGlobeView::SetViewSettings(BOOL UpdateSearchResultPending)
 {
+	// Position
+	if (UpdateSearchResultPending)
+	{
+		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_GlobalViewSettings->GlobeLatitude/1000.0f;
+		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_GlobalViewSettings->GlobeLongitude/1000.0f;
+		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_GlobalViewSettings->GlobeZoom;
+	}
+
 	if (m_RenderContext.hRC)
 	{
 		// Textures
@@ -62,15 +69,17 @@ void CGlobeView::SetViewSettings(BOOL UpdateSearchResultPending)
 		theRenderer.CreateTextureClouds(m_nTextureClouds);
 		theRenderer.CreateTextureLocationIndicator(m_nTextureLocationIndicator);
 
+		// Reset halo model for change of background color
+		if (m_nHaloModel)
+		{
+			glDeleteLists(m_nHaloModel, 1);
+			m_nHaloModel = 0;
+		}
+
 		// Commit settings
 		if (!UpdateSearchResultPending)
 			Invalidate();
 	}
-
-	// Settings
-	m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_GlobalViewSettings->GlobeLatitude/1000.0f;
-	m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_GlobalViewSettings->GlobeLongitude/1000.0f;
-	m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_GlobalViewSettings->GlobeZoom;
 }
 
 void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
@@ -237,7 +246,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(const GLmatrix& ModelView, const
 				pData->ScreenPoint[1] = (INT)Y;
 				pData->Alpha = (Z<BLENDIN) ? (GLfloat)((Z-BLENDOUT)/(BLENDIN-BLENDOUT)) : 1.0f;
 
-				if (m_GlobalViewSettings.GlobeShowSpots)
+				if (m_GlobalViewSettings.GlobeShowLocations)
 					theRenderer.DrawIcon(X, Y, 6.0f+8.0f*pData->Alpha, pData->Alpha);
 			}
 		}
@@ -246,22 +255,28 @@ __forceinline void CGlobeView::CalcAndDrawSpots(const GLmatrix& ModelView, const
 
 __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 {
+	const BOOL NoLabel = FALSE;
+
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
 		GlobeItemData* pData = GetGlobeItemData(a);
 
-		if (pData->Hdr.Valid)
-			if (pData->Alpha>0.0f)
+		if (pData->Hdr.Valid && (pData->Alpha>0.0f))
+			if (NoLabel)
 			{
-				// Beschriftung
+				ZeroMemory(&pData->Hdr.Rect, sizeof(RECT));
+			}
+			else
+			{
+				// Label text
 				LPCWSTR pCaption = (*p_CookedFiles)[a]->CoreAttributes.FileName;
 				SIZE_T cCaption = wcslen(pCaption);
 
 				LPCWSTR pSubcaption = NULL;
-				LPCWSTR pCoordinates = (m_GlobalViewSettings.GlobeShowGPS ? pData->CoordString : NULL);
-				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescription ? (*p_CookedFiles)[a]->Description : NULL);
+				LPCWSTR pCoordinates = (m_GlobalViewSettings.GlobeShowCoordinates ? pData->CoordString : NULL);
+				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescriptions ? (*p_CookedFiles)[a]->Description : NULL);
 
-				// Beschriftung aufbereiten
+				// Adjust label text
 				switch (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type)
 				{
 				case LFTypeIATACode:
@@ -270,6 +285,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 						if (m_GlobalViewSettings.GlobeShowAirportNames)
 						{
 							pSubcaption = &pCaption[3];
+
 							while ((*pSubcaption==L' ') || (*pSubcaption==L'–') || (*pSubcaption==L'—'))
 								pSubcaption++;
 						}
@@ -280,7 +296,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 					break;
 
 				case LFTypeGeoCoordinates:
-					if ((wcscmp(pCaption, pData->CoordString)==0) && (m_GlobalViewSettings.GlobeShowGPS))
+					if ((wcscmp(pCaption, pData->CoordString)==0) && m_GlobalViewSettings.GlobeShowCoordinates)
 						pCoordinates = NULL;
 
 					break;
@@ -596,8 +612,8 @@ __forceinline void CGlobeView::RenderScene()
 		glBegin(GL_QUADS);
 
 		theRenderer.SetColor(BackColor);
-		glVertex2i(0, WHITE-1);
-		glVertex2i(m_RenderContext.Width, WHITE-1);
+		glVertex2i(0, WHITEHEIGHT-1);
+		glVertex2i(m_RenderContext.Width, WHITEHEIGHT-1);
 
 		glColor3f(1.0, 1.0, 1.0);
 		glVertex2i(m_RenderContext.Width, 0);
@@ -860,10 +876,13 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_CONTEXTMENU()
 
 	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
+	ON_COMMAND(IDM_GLOBE_SHOWLOCATIONS, OnShowLocations)
+	ON_COMMAND(IDM_GLOBE_SHOWAIRPORTNAMES, OnShowAirportNames)
+	ON_COMMAND(IDM_GLOBE_SHOWCOORDINATES, OnShowCoordinates)
+	ON_COMMAND(IDM_GLOBE_SHOWDESCRIPTIONS, OnShowDescriptions)
 	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBE_ZOOMOUT, OnZoomOut)
 	ON_COMMAND(IDM_GLOBE_AUTOSIZE, OnAutosize)
-	ON_COMMAND(IDM_GLOBE_SETTINGS, OnSettings)
 	ON_COMMAND(IDM_GLOBE_GOOGLEEARTH, OnGoogleEarth)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_JUMPTOLOCATION, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)
 END_MESSAGE_MAP()
@@ -1108,6 +1127,34 @@ void CGlobeView::OnJumpToLocation()
 	}
 }
 
+void CGlobeView::OnShowLocations()
+{
+	p_GlobalViewSettings->GlobeShowLocations = !p_GlobalViewSettings->GlobeShowLocations;
+
+	theApp.UpdateViewSettings(-1, LFViewGlobe);
+}
+
+void CGlobeView::OnShowAirportNames()
+{
+	p_GlobalViewSettings->GlobeShowAirportNames = !p_GlobalViewSettings->GlobeShowAirportNames;
+
+	theApp.UpdateViewSettings(-1, LFViewGlobe);
+}
+
+void CGlobeView::OnShowCoordinates()
+{
+	p_GlobalViewSettings->GlobeShowCoordinates = !p_GlobalViewSettings->GlobeShowCoordinates;
+
+	theApp.UpdateViewSettings(-1, LFViewGlobe);
+}
+
+void CGlobeView::OnShowDescriptions()
+{
+	p_GlobalViewSettings->GlobeShowDescriptions = !p_GlobalViewSettings->GlobeShowDescriptions;
+
+	theApp.UpdateViewSettings(-1, LFViewGlobe);
+}
+
 void CGlobeView::OnZoomIn()
 {
 	if (m_GlobeTarget.Zoom>0)
@@ -1133,12 +1180,6 @@ void CGlobeView::OnAutosize()
 	m_GlobeTarget.Zoom = 600;
 
 	UpdateScene();
-}
-
-void CGlobeView::OnSettings()
-{
-	if (GlobeOptionsDlg(m_Context, this).DoModal()==IDOK)
-		theApp.UpdateViewSettings(-1, LFViewGlobe);
 }
 
 void CGlobeView::OnGoogleEarth()
@@ -1217,6 +1258,22 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_GLOBE_SHOWLOCATIONS:
+		pCmdUI->SetCheck(m_GlobalViewSettings.GlobeShowLocations);
+		break;
+
+	case IDM_GLOBE_SHOWAIRPORTNAMES:
+		pCmdUI->SetCheck(m_GlobalViewSettings.GlobeShowAirportNames);
+		break;
+
+	case IDM_GLOBE_SHOWCOORDINATES:
+		pCmdUI->SetCheck(m_GlobalViewSettings.GlobeShowCoordinates);
+		break;
+
+	case IDM_GLOBE_SHOWDESCRIPTIONS:
+		pCmdUI->SetCheck(m_GlobalViewSettings.GlobeShowDescriptions);
+		break;
+
 	case IDM_GLOBE_ZOOMIN:
 		bEnable &= m_GlobeTarget.Zoom>0;
 		break;
@@ -1227,10 +1284,6 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	case IDM_GLOBE_AUTOSIZE:
 		bEnable &= m_GlobeTarget.Zoom!=600;
-		break;
-
-	case IDM_GLOBE_SETTINGS:
-		bEnable = TRUE;
 		break;
 
 	case IDM_GLOBE_GOOGLEEARTH:

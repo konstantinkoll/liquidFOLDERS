@@ -53,14 +53,53 @@ BOOL CMainWnd::Create(LFFilter* pFilter, BOOL IsClipboard)
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION)), IsClipboard ? _T("Clipboard") : _T("Main"), IsClipboard ? CSize(-1, -1) : CSize(0, 0));
 }
 
-BOOL CMainWnd::CreateStore(const ABSOLUTESTOREID& StoreID)
+BOOL CMainWnd::Create(const ABSOLUTESTOREID& StoreID)
 {
+	// Filter
 	LFFilter* pFilter = LFAllocFilter(LFFilterModeDirectoryTree);
 	pFilter->Query.StoreID = StoreID;
 
+	// Store name as filter name
 	LFStoreDescriptor StoreDescriptor;
 	if (LFGetStoreSettings(StoreID, StoreDescriptor)==LFOk)
 		wcscpy_s(pFilter->Name, 256, StoreDescriptor.StoreName);
+
+	return Create(pFilter);
+}
+
+BOOL CMainWnd::Create(LPCSTR IATACode)
+{
+	ASSERT(strlen(IATACode)==3);
+
+	// Variant Data
+	LFVariantData VData;
+	LFInitVariantData(VData, LFAttrLocationIATA);
+
+	strcpy_s(VData.IATACode, 4, IATACode);
+	VData.IsNull = FALSE;
+
+	// Filter with condition
+	LFFilter* pFilter = LFAllocFilter();
+	pFilter->Query.pConditionList = LFAllocFilterCondition(LFFilterCompareIsEqual, VData);
+
+	// Airport name as filter name
+	LFAirport* pAirport;
+	if (LFIATAGetAirportByCode(IATACode, pAirport))
+		MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, pFilter->Name, 256);
+
+	return Create(pFilter);
+}
+
+BOOL CMainWnd::Create(BYTE ContextID)
+{
+	ASSERT(ContextID<LFContextCount);
+
+	// Filter
+	LFFilter* pFilter = LFAllocFilter();
+	pFilter->Query.Context = ContextID;
+
+	// Store name as filter name
+	wcscpy_s(pFilter->Name, 256, theApp.m_Contexts[ContextID].Name);
 
 	return Create(pFilter);
 }

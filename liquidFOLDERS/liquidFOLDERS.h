@@ -13,17 +13,23 @@
 // Siehe liquidFOLDERS.cpp für die Implementierung dieser Klasse
 //
 
+#define STARTWITH_STORES        0
+#define STARTWITH_ALLFILES      1
+#define STARTWITH_FAVORITES     2
+#define STARTWITH_TASKS         3
+#define STARTWITH_NEW           4
+
 class CLiquidFoldersApp : public LFApplication
 {
 public:
 	CLiquidFoldersApp();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(LPWSTR pCmdLine=NULL);
+	virtual BOOL OpenCommandLine(LPWSTR pCmdLine=NULL);
 	virtual INT ExitInstance();
 
 	CMainWnd* GetClipboard();
-	CWnd* GetFileDrop(const ABSOLUTESTOREID& StoreID);
+	void OpenFileDrop(const ABSOLUTESTOREID& StoreID);
 
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void SetContextSort(INT Context, UINT Attr, BOOL SortDescending, BOOL SetLastView=TRUE);
@@ -36,12 +42,17 @@ public:
 	LFContextViewSettings m_ContextViewSettings[LFContextCount];
 	LFGlobalViewSettings m_GlobalViewSettings;
 
+	INT m_StartWith;
+
 	BOOL m_ShowInspectorPane;
 	UINT m_InspectorPaneWidth;
 
 	BOOL m_FileDropAlwaysOnTop;
 
 protected:
+	afx_msg void OnBackstageAbout();
+	DECLARE_MESSAGE_MAP()
+
 	void SanitizeContextViewSettings(INT Context);
 	void LoadContextViewSettings(UINT Context, BOOL Reset);
 	void SaveContextViewSettings(UINT Context);

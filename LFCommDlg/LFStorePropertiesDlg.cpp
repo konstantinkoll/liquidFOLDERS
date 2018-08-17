@@ -211,14 +211,8 @@ BOOL LFStorePropertiesDlg::InitDialog()
 	m_wndUsageList.Create(this, IDC_USAGELIST);
 	AddControl(m_wndUsageList, 1);
 
-	// Init dialog
-	BOOL Result = LFTabbedDialog::InitDialog();
-
 	// Caption
-	CString Caption;
-	Caption.Format(IDS_STOREPROPERTIES, m_StoreDescriptor.StoreName);
-
-	SetWindowText(Caption);
+	m_DialogCaption.Format(IDS_STOREPROPERTIES, m_StoreDescriptor.StoreName);
 
 	// Icons
 	m_wndSynchronizeIcon.SetTaskIcon(AfxGetResourceHandle(), IDI_STORESYNCHRONIZE);
@@ -245,7 +239,7 @@ BOOL LFStorePropertiesDlg::InitDialog()
 	// Store
 	OnUpdateStore(NULL, NULL);
 
-	return Result;
+	return LFTabbedDialog::InitDialog();
 }
 
 CString LFStorePropertiesDlg::MakeHex(LPBYTE x, UINT bCount)
@@ -460,9 +454,9 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		GetDlgItem(IDC_LASTSEENLABEL)->EnableWindow((m_StoreDescriptor.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(m_StoreDescriptor.LastSeen);
 
-		STOREID StoreID;
+		ABSOLUTESTOREID StoreID;
 		if (LFGetDefaultStore(StoreID)==LFOk)
-			m_wndMakeDefault.SetCheck(strcmp(m_StoreDescriptor.StoreID, StoreID)==0);
+			m_wndMakeDefault.SetCheck(m_StoreDescriptor.StoreID==StoreID);
 
 		// Tab 1
 		LFTimeToString(m_StoreDescriptor.MaintenanceTime, tmpStr, 256);

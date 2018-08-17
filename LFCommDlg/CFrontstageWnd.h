@@ -171,6 +171,7 @@ protected:
 	void TrackPopupMenu(CMenu& Menu, const CPoint& pos, BOOL SetDefaultItem=TRUE, BOOL AlignRight=FALSE) const;
 
 	afx_msg void OnDestroy();
+	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg LRESULT OnNcPaint(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

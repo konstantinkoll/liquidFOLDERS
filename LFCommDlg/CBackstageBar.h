@@ -37,6 +37,7 @@ public:
 	CBackstageBar(BOOL Small=FALSE);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, INT m_Spacer=0, BOOL ReverseOrder=FALSE);
+	BOOL HasButtons() const;
 	static UINT GetPreferredHeight();
 	UINT GetPreferredWidth() const;
 
@@ -74,3 +75,8 @@ private:
 	BOOL m_Small;
 	BOOL m_ReverseOrder;
 };
+
+inline BOOL CBackstageBar::HasButtons() const
+{
+	return m_BarItems.m_ItemCount>0;
+}

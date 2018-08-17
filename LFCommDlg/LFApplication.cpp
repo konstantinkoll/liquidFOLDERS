@@ -318,9 +318,9 @@ BOOL LFApplication::InitInstance()
 	return TRUE;
 }
 
-CWnd* LFApplication::OpenCommandLine(LPWSTR /*CmdLine*/)
+BOOL LFApplication::OpenCommandLine(LPWSTR /*CmdLine*/)
 {
-	return NULL;
+	return FALSE;
 }
 
 INT LFApplication::ExitInstance()
@@ -1159,7 +1159,6 @@ BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(IDM_BACKSTAGE_PURCHASE, OnBackstagePurchase)
 	ON_COMMAND(IDM_BACKSTAGE_ENTERLICENSEKEY, OnBackstageEnterLicenseKey)
 	ON_COMMAND(IDM_BACKSTAGE_SUPPORT, OnBackstageSupport)
-	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_PURCHASE, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
 END_MESSAGE_MAP()
 
@@ -1178,11 +1177,6 @@ void LFApplication::OnBackstageEnterLicenseKey()
 void LFApplication::OnBackstageSupport()
 {
 	SendMail();
-}
-
-void LFApplication::OnBackstageAbout()
-{
-	LFAboutDlg(m_pActiveWnd).DoModal();
 }
 
 void LFApplication::OnUpdateBackstageCommands(CCmdUI* pCmdUI)

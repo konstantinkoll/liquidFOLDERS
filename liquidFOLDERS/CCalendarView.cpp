@@ -46,6 +46,7 @@ void CCalendarView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+
 			if (pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy])
 				if (*((INT64*)pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy]))
 				{
@@ -69,10 +70,11 @@ void CCalendarView::SetYear(UINT Year)
 	m_Year = Year;
 
 	if (p_CookedFiles)
-		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-			if (GetCalendarItemData(a)->Time.wYear==Year)
+		for (UINT Index=0; Index<p_CookedFiles->m_ItemCount; Index++)
+			if (GetCalendarItemData(Index)->Time.wYear==Year)
 			{
-				m_FocusItem = a;
+				m_FocusItem = Index;
+
 				break;
 			}
 
@@ -160,6 +162,7 @@ Restart:
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			CalendarItemData* pData = GetCalendarItemData(a);
+
 			if ((pData->Hdr.Valid=(pData->Time.wYear==m_Year))==TRUE)
 			{
 				ASSERT(pData->Time.wMonth<=12);

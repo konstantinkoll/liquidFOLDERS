@@ -30,17 +30,17 @@ struct LFGlobalViewSettings
 	INT GlobeLatitude;
 	INT GlobeLongitude;
 	INT GlobeZoom;
-	BOOL GlobeShowSpots;
+	BOOL GlobeShowLocations;
 	BOOL GlobeShowAirportNames;
-	BOOL GlobeShowGPS;
-	BOOL GlobeShowDescription;
+	BOOL GlobeShowCoordinates;
+	BOOL GlobeShowDescriptions;
 
 	BOOL IconsShowCapacity;
 
-	BOOL TagcloudCanonical;
+	INT TagcloudSort;
 	BOOL TagcloudShowRare;
 	BOOL TagcloudUseSize;
-	BOOL TagcloudUseColors;
+	BOOL TagcloudUseColor;
 	BOOL TagcloudUseOpacity;
 };
 
@@ -102,7 +102,6 @@ public:
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	UINT GetSortAttribute() const;
 	static BOOL IsItemSelected(const LFItemDescriptor* pItemDescriptor);
-	void UnselectAllAfterTransaction();
 	const SendToItemData* GetSendToItemData(UINT nID) const;
 
 protected:

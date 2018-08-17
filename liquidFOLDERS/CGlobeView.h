@@ -57,10 +57,13 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 
 	afx_msg void OnJumpToLocation();
+	afx_msg void OnShowLocations();
+	afx_msg void OnShowAirportNames();
+	afx_msg void OnShowCoordinates();
+	afx_msg void OnShowDescriptions();
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
-	afx_msg void OnSettings();
 	afx_msg void OnGoogleEarth();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()

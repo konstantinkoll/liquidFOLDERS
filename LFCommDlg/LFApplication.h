@@ -65,7 +65,7 @@ public:
 	virtual ~LFApplication();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(LPWSTR CmdLine=NULL);
+	virtual BOOL OpenCommandLine(LPWSTR CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void AddFrame(CWnd* pFrame);

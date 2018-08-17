@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "AboutDlg.h"
 #include "CFileDropWnd.h"
 #include "liquidFOLDERS.h"
 
@@ -20,6 +21,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 		{
 			CDSWAKEUP CDSW;
 			ZeroMemory(&CDSW, sizeof(CDSW));
+
 			CDSW.AppID = theAppID;
 
 			if (lParam)
@@ -37,9 +39,12 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 }
 
 
-// CLiquidFoldersApp
+// Das einzige CLiquidFOldersApp-Objekt
 
 CLiquidFoldersApp theApp;
+
+
+// CLiquidFoldersApp-Erstellung
 
 CLiquidFoldersApp::CLiquidFoldersApp()
 	: LFApplication(theAppID)
@@ -48,6 +53,8 @@ CLiquidFoldersApp::CLiquidFoldersApp()
 	m_AppInitialized = FALSE;
 }
 
+
+// CLiquidFoldersApp-Initialisierung
 
 BOOL CLiquidFoldersApp::InitInstance()
 {
@@ -92,6 +99,8 @@ BOOL CLiquidFoldersApp::InitInstance()
 	m_TextureQuality = (GLTextureQuality)GetInt(_T("TextureQuality"), TEXTUREMEDIUM);
 	m_TextureCompress = GetInt(_T("TextureCompress"), FALSE);
 
+	m_StartWith = GetInt(_T("StartWith"), 0);
+
 	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), TRUE);
 	m_InspectorPaneWidth = GetInt(_T("InspectorPaneWidth"), 220);
 	if (m_InspectorPaneWidth<140)
@@ -111,102 +120,90 @@ BOOL CLiquidFoldersApp::InitInstance()
 	return TRUE;
 }
 
-CWnd* CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
+BOOL CLiquidFoldersApp::OpenCommandLine(LPWSTR pCmdLine)
 {
 	// Parse parameter and create window
 	if (pCmdLine)
 	{
-		// Prepare arguments
+		// Uppcase command line
 		WCHAR* pChar = pCmdLine;
 		while (*pChar)
 			*(pChar++) = (WCHAR)toupper(*pChar);
 
-		STOREID StoreID;
-		DEFAULTSTOREID(StoreID);
-
-		WCHAR* pSpace = wcschr(pCmdLine, L' ');
-		if (pSpace)
-		{
-			WideCharToMultiByte(CP_ACP, 0, pSpace+1, -1, StoreID, LFKeySize, NULL, NULL);
-			*pSpace = L'\0';
-		}
-
-		// Update
+		// Check for updates
 		if (wcscmp(pCmdLine, L"/CHECKUPDATE")==0)
-			return NULL;
+			return FALSE;
 
 		// FileDrop
 		if (wcscmp(pCmdLine, L"/FILEDROP")==0)
 		{
-			ABSOLUTESTOREID AbsoluteStoreID;
-			const UINT Result = LFResolveStoreIDEx(AbsoluteStoreID, StoreID);
-
-			switch (Result)
+			UINT Result;
+			ABSOLUTESTOREID StoreID;
+			if ((Result=LFGetDefaultStore(StoreID))==LFOk)
 			{
-			case LFOk:
-				return GetFileDrop(AbsoluteStoreID);
+				OpenFileDrop(StoreID);
 
-			case LFNoDefaultStore:
-				goto OpenRootWindow;
-
-			default:
+				return TRUE;
+			}
+			else
+			{
 				LFErrorBox(CWnd::GetForegroundWindow(), Result);
 
-				return NULL;
+				return FALSE;
 			}
 		}
 
-		// Key or IATA code
-		if ((wcschr(pCmdLine, L'.')==NULL) && (wcschr(pCmdLine, L':')==NULL) && (wcschr(pCmdLine, L'\\')==NULL) && (wcschr(pCmdLine, L'/')==NULL))
+		// Store ID or IATA airport code
+		if (wcspbrk(pCmdLine, L".:\\/")==NULL)
 		{
-			// Key
+			// Store ID
 			if (wcslen(pCmdLine)==LFKeySize-1)
 			{
-				ABSOLUTESTOREID AbsoluteStoreID;
-				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, AbsoluteStoreID, LFKeySize, NULL, NULL);
+				ABSOLUTESTOREID StoreID;
+				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, StoreID, LFKeySize, NULL, NULL);
 
-				CMainWnd* pFrameWnd = new CMainWnd();
-				pFrameWnd->CreateStore(AbsoluteStoreID);
-				pFrameWnd->ShowWindow(SW_SHOW);
+				(new CMainWnd())->Create(StoreID);
 
-				return pFrameWnd;
+				return TRUE;
 			}
 
 			// IATA airport code
 			if (wcslen(pCmdLine)==3)
 			{
-				CHAR Code[4];
-				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, Code, 4, NULL, NULL);
+				CHAR IATACode[4];
+				WideCharToMultiByte(CP_ACP, 0, pCmdLine, -1, IATACode, 4, NULL, NULL);
 
-				LFVariantData VData;
-				LFInitVariantData(VData, LFAttrLocationIATA);
+				(new CMainWnd())->Create(IATACode);
 
-				strcpy_s(VData.AnsiString, 256, Code);
-				VData.IsNull = FALSE;
-
-				LFFilter* pFilter = LFAllocFilter();
-				pFilter->Query.pConditionList = LFAllocFilterCondition(LFFilterCompareIsEqual, VData);
-
-				LFAirport* pAirport;
-				if (LFIATAGetAirportByCode(Code, pAirport))
-					MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, pFilter->Name, 256);
-
-				CMainWnd* pFrameWnd = new CMainWnd();
-				pFrameWnd->Create(pFilter);
-				pFrameWnd->ShowWindow(SW_SHOW);
-
-				return pFrameWnd;
+				return TRUE;
 			}
 		}
 	}
 
-	// Root
-OpenRootWindow:
-	CMainWnd* pFrameWnd = new CMainWnd();
-	pFrameWnd->CreateRoot();
-	pFrameWnd->ShowWindow(SW_SHOW);
+	// Default
+	switch (m_StartWith)
+	{
+	case STARTWITH_ALLFILES:
+		(new CMainWnd())->Create((BYTE)LFContextAllFiles);
+		break;
 
-	return pFrameWnd;
+	case STARTWITH_FAVORITES:
+		(new CMainWnd())->Create(LFContextFavorites);
+		break;
+
+	case STARTWITH_TASKS:
+		(new CMainWnd())->Create(LFContextTasks);
+		break;
+
+	case STARTWITH_NEW:
+		(new CMainWnd())->Create(LFContextNew);
+		break;
+
+	default:
+		(new CMainWnd())->CreateRoot();
+	}
+
+	return TRUE;
 }
 
 INT CLiquidFoldersApp::ExitInstance()
@@ -224,6 +221,8 @@ INT CLiquidFoldersApp::ExitInstance()
 		WriteInt(_T("TextureQuality"), m_TextureQuality);
 		WriteInt(_T("TextureCompress"), m_TextureCompress);
 
+		WriteInt(_T("StartWith"), m_StartWith);
+
 		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
 		WriteInt(_T("InspectorPaneWidth"), m_InspectorPaneWidth);
 
@@ -237,29 +236,21 @@ INT CLiquidFoldersApp::ExitInstance()
 CMainWnd* CLiquidFoldersApp::GetClipboard()
 {
 	if (!p_ClipboardWnd)
-	{
-		p_ClipboardWnd = new CMainWnd();
-		p_ClipboardWnd->CreateClipboard();
-		p_ClipboardWnd->ShowWindow(SW_SHOW);
-	}
+		(p_ClipboardWnd=new CMainWnd())->CreateClipboard();
 
 	return p_ClipboardWnd;
 }
 
-CWnd* CLiquidFoldersApp::GetFileDrop(const ABSOLUTESTOREID& StoreID)
+void CLiquidFoldersApp::OpenFileDrop(const ABSOLUTESTOREID& StoreID)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 	{
 		CWnd* pFrameWnd = m_pMainFrames.GetNext(p);
 		if (pFrameWnd->SendMessage(WM_OPENFILEDROP, (WPARAM)(LPCSTR)StoreID)==24878)
-			return pFrameWnd;
+			return;
 	}
 
-	CFileDropWnd* pFrameWnd = new CFileDropWnd();
-	pFrameWnd->Create(StoreID);
-	pFrameWnd->ShowWindow(SW_SHOW);
-
-	return pFrameWnd;
+	(new CFileDropWnd())->Create(StoreID);
 }
 
 
@@ -446,17 +437,17 @@ BOOL CLiquidFoldersApp::LoadGlobalViewSettings()
 	m_GlobalViewSettings.GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_GlobalViewSettings.GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_GlobalViewSettings.GlobeZoom = GetInt(_T("GlobeZoom"), 600);
-	m_GlobalViewSettings.GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
+	m_GlobalViewSettings.GlobeShowLocations = GetInt(_T("GlobeShowLocations"), TRUE);
 	m_GlobalViewSettings.GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
-	m_GlobalViewSettings.GlobeShowGPS = GetInt(_T("GlobeShowGPS"), FALSE);
-	m_GlobalViewSettings.GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
+	m_GlobalViewSettings.GlobeShowCoordinates = GetInt(_T("GlobeShowCoordinates"), FALSE);
+	m_GlobalViewSettings.GlobeShowDescriptions = GetInt(_T("GlobeShowDescriptions"), TRUE);
 
 	m_GlobalViewSettings.IconsShowCapacity = GetInt(_T("IconsShowCapacity"), TRUE);
 
-	m_GlobalViewSettings.TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
+	m_GlobalViewSettings.TagcloudSort = GetInt(_T("TagcloudSort"), 0);
 	m_GlobalViewSettings.TagcloudShowRare = GetInt(_T("TagcloudShowRare"), TRUE);
 	m_GlobalViewSettings.TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
-	m_GlobalViewSettings.TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
+	m_GlobalViewSettings.TagcloudUseColor = GetInt(_T("TagcloudUseColor"), TRUE);
 	m_GlobalViewSettings.TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
 
 	return Reset;
@@ -472,19 +463,33 @@ void CLiquidFoldersApp::SaveGlobalViewSettings()
 	WriteInt(_T("GlobeLatitude"), m_GlobalViewSettings.GlobeLatitude);
 	WriteInt(_T("GlobeLongitude"), m_GlobalViewSettings.GlobeLongitude);
 	WriteInt(_T("GlobeZoom"), m_GlobalViewSettings.GlobeZoom);
-	WriteInt(_T("GlobeShowSpots"), m_GlobalViewSettings.GlobeShowSpots);
+	WriteInt(_T("GlobeShowLocations"), m_GlobalViewSettings.GlobeShowLocations);
 	WriteInt(_T("GlobeShowAirportNames"), m_GlobalViewSettings.GlobeShowAirportNames);
-	WriteInt(_T("GlobeShowGPS"), m_GlobalViewSettings.GlobeShowGPS);
-	WriteInt(_T("GlobeShowDescription"), m_GlobalViewSettings.GlobeShowDescription);
+	WriteInt(_T("GlobeShowCoordinates"), m_GlobalViewSettings.GlobeShowCoordinates);
+	WriteInt(_T("GlobeShowDescriptions"), m_GlobalViewSettings.GlobeShowDescriptions);
 
 	WriteInt(_T("IconsShowCapacity"), m_GlobalViewSettings.IconsShowCapacity);
 
-	WriteInt(_T("TagcloudSortCanonical"), m_GlobalViewSettings.TagcloudCanonical);
+	WriteInt(_T("TagcloudSort"), m_GlobalViewSettings.TagcloudSort);
 	WriteInt(_T("TagcloudShowRare"), m_GlobalViewSettings.TagcloudShowRare);
 	WriteInt(_T("TagcloudUseSize"), m_GlobalViewSettings.TagcloudUseSize);
-	WriteInt(_T("TagcloudUseColors"), m_GlobalViewSettings.TagcloudUseColors);
+	WriteInt(_T("TagcloudUseColor"), m_GlobalViewSettings.TagcloudUseColor);
 	WriteInt(_T("TagcloudUseOpacity"), m_GlobalViewSettings.TagcloudUseOpacity);
 
 	WriteInt(_T("ViewSettingsVersion"), VIEWSETTINGSVERSION);
 #endif
+}
+
+
+BEGIN_MESSAGE_MAP(CLiquidFoldersApp, LFApplication)
+	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
+END_MESSAGE_MAP()
+
+void CLiquidFoldersApp::OnBackstageAbout()
+{
+	CWaitCursor WaitCursor;
+
+	AboutDlg dlg(m_pActiveWnd);
+	if (dlg.DoModal()==IDOK)
+		UpdateViewSettings();
 }

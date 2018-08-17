@@ -26,9 +26,9 @@ void CBackstageWidgets::AddWidgetSize(LPSIZE lpSize) const
 {
 	ASSERT(lpSize);
 
-	lpSize->cy += m_ButtonSize+2;
+	lpSize->cy += m_ButtonSize;
 
-	if (IsWindow(m_hWnd))
+	if (HasButtons() && IsWindow(m_hWnd))
 	{
 		lpSize->cx += GetPreferredWidth()-1;
 
@@ -76,7 +76,8 @@ INT CBackstageWidgets::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (dwStyle & WS_MAXIMIZEBOX)
 		AddItem(SC_MAXIMIZE, BACKSTAGEICON_MAXIMIZE);
 
-	AddItem(SC_CLOSE, BACKSTAGEICON_CLOSE, 0, TRUE);
+	if (dwStyle & WS_SYSMENU)
+		AddItem(SC_CLOSE, BACKSTAGEICON_CLOSE, 0, TRUE);
 
 	return 0;
 }

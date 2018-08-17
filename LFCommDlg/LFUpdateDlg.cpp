@@ -128,6 +128,7 @@ BOOL LFUpdateDlg::AddTrayIcon() const
 {
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
+
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = GetSafeHwnd();
 	nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_GUID | NIF_SHOWTIP;
@@ -135,8 +136,13 @@ BOOL LFUpdateDlg::AddTrayIcon() const
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WM_TRAYMENU;
 	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
+
 	GetWindowText(nid.szTip, 128);
 
+	// Delete abandoned tray icon
+	Shell_NotifyIcon(NIM_DELETE, &nid);
+
+	// Add tray icon and set version
 	if (Shell_NotifyIcon(NIM_ADD, &nid))
 		return Shell_NotifyIcon(NIM_SETVERSION, &nid);
 
@@ -147,6 +153,7 @@ BOOL LFUpdateDlg::RemoveTrayIcon() const
 {
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
+
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = GetSafeHwnd();
 	nid.uFlags = NIF_GUID;
@@ -187,11 +194,7 @@ BOOL LFUpdateDlg::InitDialog()
 	SetIcon(LFGetApp()->LoadIcon(IDR_APPLICATION), FALSE);
 	SetIcon(LFGetApp()->LoadIcon(IDR_APPLICATION), TRUE);
 
-	// Version
-	CRect rectWnd;
-	m_wndVersionInfo.GetWindowRect(rectWnd);
-	ScreenToClient(rectWnd);
-
+	// Version info
 	CString Caption;
 	m_wndVersionInfo.GetWindowText(Caption);
 
@@ -200,24 +203,28 @@ BOOL LFUpdateDlg::InitDialog()
 
 	m_wndVersionInfo.SetWindowText(Text);
 
-	// Hintergrund
-	const INT Height = rectWnd.Height();
-	const INT LineGap = Height/6;
-	const INT HeightCaption = 4*LineGap;
-	const INT HeightVersion = 2*LineGap;
+	// Background
+	CRect rectWnd;
+	m_wndVersionInfo.GetWindowRect(rectWnd);
+	ScreenToClient(rectWnd);
+
+	const INT WindowHeight = rectWnd.Height();
+	const INT LineHeight = WindowHeight/6;
+	const INT CaptionHeight = 4*LineHeight;
+	const INT VersionHeight = 2*LineHeight;
 
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
-	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
-	m_VersionFont.CreateFont(HeightVersion);
+	m_CaptionFont.CreateFont(CaptionHeight, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
+	m_VersionFont.CreateFont(VersionHeight);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	m_CaptionTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-HeightCaption-HeightVersion)/2-4;
-	m_IconTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-62)/2-3;
+	m_CaptionTop = rectWnd.top-rectLayout.top+(WindowHeight-CaptionHeight-VersionHeight)/2-4;
+	m_IconTop = rectWnd.top-rectLayout.top+(WindowHeight-62)/2-3;
 
 	rectWnd.left = rectLayout.left+82;
-	rectWnd.top = rectLayout.top+m_CaptionTop+HeightCaption;
+	rectWnd.top = rectLayout.top+m_CaptionTop+CaptionHeight;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Feature-Liste
@@ -353,9 +360,7 @@ void LFUpdateDlg::OnHide(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 void LFUpdateDlg::OnDownload()
 {
-	CString URL((LPCSTR)IDS_UPDATEURL);
-
-	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(GetSafeHwnd(), _T("open"), CString((LPCSTR)IDS_UPDATEURL), NULL, NULL, SW_SHOWNORMAL);
 
 	EndDialog(IDOK);
 }

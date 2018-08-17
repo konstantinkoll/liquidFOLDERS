@@ -16,7 +16,7 @@
 struct ControlOnTab
 {
 	HWND hWnd;
-	UINT Index;
+	USHORT TabMask;
 };
 
 class LFTabbedDialog : public LFDialog
@@ -33,6 +33,7 @@ protected:
 	BOOL AddTab(UINT nResID, LPSIZE pszTabArea);
 	void AddControl(const ControlOnTab& Ctrl);
 	void AddControl(HWND hWnd, UINT Index);
+	void ShowControlOnTabs(HWND hWnd, USHORT Mask);
 	void SelectTab(UINT Index);
 
 	afx_msg void OnDestroy();
@@ -42,11 +43,11 @@ protected:
 	afx_msg void OnUpdateTabCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	CString m_DialogCaption;
 	UINT m_CurrentTab;
 
 private:
 	CBackstageSidebar m_wndSidebar;
-	CString m_Caption;
 	UINT m_TabCount;
 	UINT* p_LastTab;
 	LFDynArray<ControlOnTab, 16, 16>m_ControlsOnTab;

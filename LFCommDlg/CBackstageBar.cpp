@@ -61,12 +61,7 @@ UINT CBackstageBar::GetPreferredHeight()
 
 UINT CBackstageBar::GetPreferredWidth() const
 {
-	UINT Width = m_BarItems.m_ItemCount*m_ButtonSize+2;
-
-	if (m_BarItems.m_ItemCount)
-		Width += m_BarItems.m_ItemCount*m_Spacer;
-
-	return Width;
+	return HasButtons() ? m_BarItems.m_ItemCount*m_ButtonSize+(m_BarItems.m_ItemCount-1)*m_Spacer+2 : 0;
 }
 
 void CBackstageBar::Reset()
@@ -119,7 +114,7 @@ void CBackstageBar::InvalidateItem(INT Index)
 
 void CBackstageBar::AdjustLayout()
 {
-	if (!m_BarItems.m_ItemCount)
+	if (!HasButtons())
 		return;
 
 	CRect rect;
@@ -129,6 +124,7 @@ void CBackstageBar::AdjustLayout()
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 		m_BarItems[a].Width = 0;
 
+	ASSERT(m_BarItems.m_ItemCount>=1);
 	INT UnallocatedWidth = rect.Width()-2-(m_BarItems.m_ItemCount-1)*m_Spacer;
 
 	// Calc layout

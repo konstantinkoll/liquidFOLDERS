@@ -30,7 +30,7 @@ void CTagcloudView::SetViewSettings(BOOL UpdateSearchResultPending)
 	if (m_GlobalViewSettings.TagcloudUseSize!=p_GlobalViewSettings->TagcloudUseSize)
 		Changes = 1;
 
-	if ((m_GlobalViewSettings.TagcloudCanonical!=p_GlobalViewSettings->TagcloudCanonical) || (m_GlobalViewSettings.TagcloudShowRare!=p_GlobalViewSettings->TagcloudShowRare))
+	if ((m_GlobalViewSettings.TagcloudSort!=p_GlobalViewSettings->TagcloudSort) || (m_GlobalViewSettings.TagcloudShowRare!=p_GlobalViewSettings->TagcloudShowRare))
 		Changes = 2;
 
 	// Commit settings
@@ -63,8 +63,8 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 	if (p_CookedFiles)
 	{
 		// Sort cooked files
-		LFSortSearchResult(p_CookedFiles, m_GlobalViewSettings.TagcloudCanonical ? m_ContextViewSettings.SortBy : LFAttrFileCount,
-			!m_GlobalViewSettings.TagcloudCanonical || theApp.IsAttributeSortDescending(m_Context, m_ContextViewSettings.SortBy));
+		LFSortSearchResult(p_CookedFiles, (m_GlobalViewSettings.TagcloudSort==0) ? m_ContextViewSettings.SortBy : LFAttrFileCount,
+			(m_GlobalViewSettings.TagcloudSort!=0) || theApp.IsAttributeSortDescending(m_Context, m_ContextViewSettings.SortBy));
 
 		INT Minimum = -1;
 		INT Maximum = -1;
@@ -180,6 +180,7 @@ Restart:
 		for (INT a=0; a<m_ItemCount; a++)
 		{
 			TagcloudItemData* pData = GetTagcloudItemData(a);
+
 			if (pData->Hdr.Valid)
 			{
 				LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
@@ -234,7 +235,7 @@ void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Ind
 	// Calculate color
 	if (!IsItemSelected(pItemDescriptor))
 	{
-		COLORREF clrText = m_GlobalViewSettings.TagcloudUseColors ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+		COLORREF clrText = m_GlobalViewSettings.TagcloudUseColor ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
 		if (m_GlobalViewSettings.TagcloudUseOpacity)
 		{
@@ -265,7 +266,7 @@ BEGIN_MESSAGE_MAP(CTagcloudView, CFileView)
 	ON_COMMAND(IDM_TAGCLOUD_SORTCOUNT, OnSortCount)
 	ON_COMMAND(IDM_TAGCLOUD_SHOWRARE, OnShowRare)
 	ON_COMMAND(IDM_TAGCLOUD_USESIZE, OnUseSize)
-	ON_COMMAND(IDM_TAGCLOUD_USECOLORS, OnUseColors)
+	ON_COMMAND(IDM_TAGCLOUD_USECOLOR, OnUseColor)
 	ON_COMMAND(IDM_TAGCLOUD_USEOPACITY, OnUseOpacity)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_TAGCLOUD_SORTVALUE, IDM_TAGCLOUD_USEOPACITY, OnUpdateCommands)
 END_MESSAGE_MAP()
@@ -283,14 +284,14 @@ INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CTagcloudView::OnSortValue()
 {
-	p_GlobalViewSettings->TagcloudCanonical = TRUE;
+	p_GlobalViewSettings->TagcloudSort = 0;
 
 	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
 void CTagcloudView::OnSortCount()
 {
-	p_GlobalViewSettings->TagcloudCanonical = FALSE;
+	p_GlobalViewSettings->TagcloudSort = 1;
 
 	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
@@ -309,9 +310,9 @@ void CTagcloudView::OnUseSize()
 	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
 
-void CTagcloudView::OnUseColors()
+void CTagcloudView::OnUseColor()
 {
-	p_GlobalViewSettings->TagcloudUseColors = !p_GlobalViewSettings->TagcloudUseColors;
+	p_GlobalViewSettings->TagcloudUseColor = !p_GlobalViewSettings->TagcloudUseColor;
 
 	theApp.UpdateViewSettings(-1, LFViewTagcloud);
 }
@@ -330,18 +331,18 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_TAGCLOUD_SORTVALUE:
-		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudCanonical);
+		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudSort==0);
 
 		if (!pCmdUI->m_pMenu)
-			bEnable = !m_GlobalViewSettings.TagcloudCanonical && !m_Nothing;
+			bEnable = (m_GlobalViewSettings.TagcloudSort!=0) && !m_Nothing;
 
 		break;
 
 	case IDM_TAGCLOUD_SORTCOUNT:
-		pCmdUI->SetCheck(!m_GlobalViewSettings.TagcloudCanonical);
+		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudSort==1);
 
 		if (!pCmdUI->m_pMenu)
-			bEnable = m_GlobalViewSettings.TagcloudCanonical && !m_Nothing;
+			bEnable = (m_GlobalViewSettings.TagcloudSort!=1) && !m_Nothing;
 
 		break;
 
@@ -353,8 +354,8 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudUseSize);
 		break;
 
-	case IDM_TAGCLOUD_USECOLORS:
-		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudUseColors);
+	case IDM_TAGCLOUD_USECOLOR:
+		pCmdUI->SetCheck(m_GlobalViewSettings.TagcloudUseColor);
 		break;
 
 	case IDM_TAGCLOUD_USEOPACITY:

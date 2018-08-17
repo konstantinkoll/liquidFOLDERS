@@ -235,24 +235,6 @@ inline INT CFrontstageItemView::GetGutterForMargin(INT Margin)
 	return (Margin>=BACKSTAGEBORDER) ? ITEMVIEWMARGINLARGE : ITEMVIEWMARGIN;
 }
 
-inline void CFrontstageItemView::Swap(INT Index1, INT Index2)
-{
-	ASSERT(Index1>=0);
-	ASSERT(Index1>=0);
-	ASSERT(Index1<m_ItemCount);
-	ASSERT(Index2<m_ItemCount);
-
-	LPBYTE Ptr1 = (LPBYTE)GetItemData(Index1);
-	LPBYTE Ptr2 = (LPBYTE)GetItemData(Index2);
-
-	for (SIZE_T sz=0; sz<m_DataSize; sz++)
-	{
-		const BYTE b = *Ptr1;
-		*(Ptr1++) = *Ptr2;
-		*(Ptr2++) = b;
-	}
-}
-
 inline void CFrontstageItemView::SelectNone()
 {
 	SendMessage(WM_COMMAND, IDM_ITEMVIEW_SELECTNONE);
