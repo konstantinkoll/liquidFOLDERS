@@ -592,8 +592,8 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 13);
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 14);
 	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 15);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 16);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 17);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 16, TRUE);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 17, TRUE);
 
 	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 18, TRUE);
 

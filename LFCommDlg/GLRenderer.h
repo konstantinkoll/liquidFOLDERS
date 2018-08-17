@@ -90,6 +90,7 @@ enum GLTextureQuality
 };
 
 typedef GLfloat GLcolor[4];
+typedef GLfloat GLmatrix[4][4];
 
 typedef void (APIENTRY* PFNGLACTIVETEXTUREPROC)(GLenum texture);
 typedef void (APIENTRY* PFNGLMULTITEXCOORD2FPROC)(GLenum texture, GLfloat s, GLfloat t);
@@ -176,7 +177,7 @@ public:
 	GLTextureQuality m_MaxTextureQuality;
 
 	static DOUBLE DegToRad(DOUBLE Deg);
-	static void MatrixMultiplication4f(GLfloat Result[4][4], const GLfloat Left[4][4], const GLfloat Right[4][4]);
+	static void MatrixMultiplication4f(GLmatrix& Result, const GLmatrix& Left, const GLmatrix& Right);
 	static BOOL SetupPixelFormat(HDC hDC, DWORD dwFlags=0);
 	static void ColorRef2GLColor(GLcolor& DstColor, COLORREF SrcColor, GLfloat Alpha=1.0f);
 	static void SetColor(COLORREF SrcColor, GLfloat Alpha=1.0f);

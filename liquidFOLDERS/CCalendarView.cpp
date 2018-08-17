@@ -142,6 +142,7 @@ Restart:
 			{
 				HasScrollbars = TRUE;
 				rectLayout.right -= GetSystemMetrics(SM_CXVSCROLL);
+
 				goto Restart;
 			}
 
@@ -182,8 +183,6 @@ Restart:
 
 				pData->Hdr.Column = pMonth->Column*7+(Day%7);
 				pData->Hdr.Row = pMonth->Row*6+(Day/7);
-
-				//m_Nothing = FALSE;
 			}
 	}
 

@@ -122,7 +122,7 @@ INT CGlobeView::ItemAtPosition(CPoint point) const
 
 	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
-		GlobeItemData* pData = GetGlobeItemData(Index);
+		const GlobeItemData* pData = GetGlobeItemData(Index);
 
 		if (pData->Hdr.Valid)
 			if ((pData->Alpha>0.75f) || ((pData->Alpha>0.1f) && (pData->Alpha>Alpha-0.05f)))
@@ -210,12 +210,12 @@ void CGlobeView::WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pIt
 // OpenGL
 //
 
-__forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4])
+__forceinline void CGlobeView::CalcAndDrawSpots(const GLmatrix& ModelView, const GLmatrix& Projection)
 {
 	GLfloat SizeX = m_RenderContext.Width/2.0f;
 	GLfloat SizeY = m_RenderContext.Height/2.0f;
 
-	GLfloat MVP[4][4];
+	GLmatrix MVP;
 	theRenderer.MatrixMultiplication4f(MVP, ModelView, Projection);
 
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
@@ -694,8 +694,8 @@ __forceinline void CGlobeView::RenderScene()
 	glRotatef(m_GlobeCurrent.Longitude+90.0f, 0.0f, 1.0f, 0.0f);
 
 	// Store matrices for later
-	GLfloat MatrixModelView[4][4];
-	GLfloat MatrixProjection[4][4];
+	GLmatrix MatrixModelView;
+	GLmatrix MatrixProjection;
 	glGetFloatv(GL_MODELVIEW_MATRIX, &MatrixModelView[0][0]);
 	glGetFloatv(GL_PROJECTION_MATRIX, &MatrixProjection[0][0]);
 

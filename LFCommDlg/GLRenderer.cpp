@@ -152,7 +152,7 @@ BOOL GLRenderer::Initialize()
 	return m_Initialized;
 }
 
-void GLRenderer::MatrixMultiplication4f(GLfloat Result[4][4], const GLfloat Left[4][4], const GLfloat Right[4][4])
+void GLRenderer::MatrixMultiplication4f(GLmatrix& Result, const GLmatrix& Left, const GLmatrix& Right)
 {
 	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
 	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];

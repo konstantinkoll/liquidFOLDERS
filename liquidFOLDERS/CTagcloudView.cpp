@@ -43,6 +43,7 @@ void CTagcloudView::SetViewSettings(BOOL UpdateSearchResultPending)
 		{
 		case 2:
 			SetSearchResult(p_Filter, p_RawFiles, p_CookedFiles, NULL);
+			FinishUpdate();
 
 		case 1:
 			AdjustLayout();
@@ -84,7 +85,7 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 		}
 
 		// Calculate display properties
-		INT Delta = Maximum-Minimum+1;
+		const INT Delta = Maximum-Minimum+1;
 
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{

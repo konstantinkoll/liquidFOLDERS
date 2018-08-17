@@ -65,6 +65,7 @@ class CFrontstageItemView : public CFrontstageScroller
 {
 public:
 	CFrontstageItemView(UINT Flags=FRONTSTAGE_ENABLESCROLLING, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
+
 	BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect=CRect(0, 0, 0, 0), UINT nClassStyle=0);
 	INT GetSelectedItem() const;
 	void SetFocusItem(INT Index, UINT Mode=SETFOCUSITEM_MOVEDESELECT);

@@ -39,7 +39,7 @@ protected:
 	virtual void GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL Themed) const;
 	virtual BOOL DrawNothing() const;
 
-	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
+	void CalcAndDrawSpots(const GLmatrix& ModelView, const GLmatrix& Projection);
 	void CalcAndDrawLabel(BOOL Themed);
 	void DrawLabel(GlobeItemData* pData, SIZE_T cCaption, LPCWSTR pCaption, LPCWSTR pSubcaption, LPCWSTR pCoordinates, LPCWSTR pDescription, BOOL Selected, BOOL Focused, BOOL Hot, BOOL Themed);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
