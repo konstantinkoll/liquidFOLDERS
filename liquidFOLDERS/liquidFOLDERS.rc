@@ -52,8 +52,8 @@ IDB_BACKGROUND_CAPACITYBAR RCDATA                  "res\\Background_CapacityBar.
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,10,0
- PRODUCTVERSION 4,0,10,0
+ FILEVERSION 4,0,11,0
+ PRODUCTVERSION 4,0,11,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.10"
+            VALUE "FileVersion", "4.0.11"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.10"
+            VALUE "ProductVersion", "4.0.11"
         END
     END
     BLOCK "VarFileInfo"
@@ -450,7 +450,7 @@ BEGIN
     IDS_FILESCOPIED         "%s in die Zwischenablage kopiert."
     IDS_SHORTCUTCREATED     "Die Verknüpfung wurde auf dem Desktop erstellt."
     IDS_WELCOME_CAPTION     "Willkommen bei liquidFOLDERS"
-    IDS_WELCOME_MESSAGE     "Fügen Sie Speicherorte hinzu, die von liquidFOLDERS verwaltet werden sollen:"
+    IDS_WELCOME_MESSAGE     "Fügen Sie Speicherorte hinzu, die von liquidFOLDERS verwaltet werden sollen."
     IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
     IDS_QUALITY_HIGH        "Hoch"
@@ -944,7 +944,7 @@ BEGIN
     IDS_FILESCOPIED         "%s copiado al portapapeles."
     IDS_SHORTCUTCREATED     "El acceso directo ha sido creado en el escritorio."
     IDS_WELCOME_CAPTION     "Bienvenido a liquidFOLDERS"
-    IDS_WELCOME_MESSAGE     "Agregue ubicaciones que serán administradas por liquidFOLDERS:"
+    IDS_WELCOME_MESSAGE     "Agregue ubicaciones que serán administradas por liquidFOLDERS."
     IDS_QUALITY_LOW         "Bajo"
     IDS_QUALITY_MEDIUM      "Medio"
     IDS_QUALITY_HIGH        "Alto"
@@ -1438,7 +1438,7 @@ BEGIN
     IDS_FILESCOPIED         "%s copié au presse-papiers."
     IDS_SHORTCUTCREATED     "Le raccourci a été créé sur le bureau."
     IDS_WELCOME_CAPTION     "Bienvenue à liquidFOLDERS"
-    IDS_WELCOME_MESSAGE     "Ajoutez les emplacements devant être gérés par liquidFOLDERS:"
+    IDS_WELCOME_MESSAGE     "Ajoutez les emplacements devant être gérés par liquidFOLDERS."
     IDS_QUALITY_LOW         "Faible"
     IDS_QUALITY_MEDIUM      "Moyens"
     IDS_QUALITY_HIGH        "Haut"
@@ -1981,7 +1981,7 @@ BEGIN
     IDS_FILESCOPIED         "%s copied to the clipboard."
     IDS_SHORTCUTCREATED     "The shortcut has been created on the desktop."
     IDS_WELCOME_CAPTION     "Welcome to liquidFOLDERS"
-    IDS_WELCOME_MESSAGE     "Add storage locations that shall be managed by liquidFOLDERS:"
+    IDS_WELCOME_MESSAGE     "Add storage locations that shall be managed by liquidFOLDERS."
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
     IDS_QUALITY_HIGH        "High"

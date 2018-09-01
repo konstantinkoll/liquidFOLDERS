@@ -13,7 +13,7 @@
 		} \
 		else \
 		{ \
-			assert((m_Items[ReadIdx]->Type & LFTypeMask)==LFTypeFile); \
+			assert(LFIsFile(m_Items[ReadIdx])); \
 			LFFreeItemDescriptor(m_Items[ReadIdx]); \
 		} \
 	m_ItemCount = WriteIdx;

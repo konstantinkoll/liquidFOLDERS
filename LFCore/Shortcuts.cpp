@@ -64,7 +64,7 @@ LFCORE_API UINT LFGetShortcutForItem(LFItemDescriptor* pItemDescriptor, IShellLi
 {
 	assert(pItemDescriptor);
 
-	switch (pItemDescriptor->Type & LFTypeMask)
+	switch (LFGetItemType(pItemDescriptor))
 	{
 	case LFTypeStore:
 		return GetShortcutForStore(pShellLink, pItemDescriptor->StoreID, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->IconID);
@@ -89,8 +89,10 @@ UINT CreateDesktopShortcut(IShellLink* pShellLink, LPCWSTR pLinkFileName)
 		SanitizeFileName(SanitizedLinkFileName, MAX_PATH, pLinkFileName);
 
 		WCHAR PathLink[2*MAX_PATH];
-		WCHAR NumberStr[16] = L"";
 		UINT Number = 1;
+
+		WCHAR NumberStr[16];
+		NumberStr[0] = L'\0';
 
 		// Check if link file exists; if yes append number
 		do

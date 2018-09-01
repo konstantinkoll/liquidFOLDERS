@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8789
+#define AirportCount_DE 8790
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -5403,7 +5403,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 156, "NRR", "", "Roosevelt Roads", { -18.245000, -65.643333 } },
 	{ 209, "NRS", "", "Imperial Beach", { -32.566667, -117.116667 } },
 	{  81, "NRT", "TYO", "Tokyo (Narita)", { -35.764722, 140.386389 } },
-	{  40, "NRW", "NRW", "Nordrhein-Westfalen", { -51.513458, 7.575681 } },
+	{  40, "NRW", "NRW", "Nordrhein-Westfalen", { -51.521865, 7.587156 } },
 	{  11, "NRY", "", "Newry", { 16.050000, 129.200000 } },
 	{  11, "NSA", "", "Noosa", { 26.423333, 153.063333 } },
 	{  13, "NSB", "", "Bimini", { -25.766944, -79.250000 } },
@@ -8945,6 +8945,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  88, "ZMT", "", "Massett", { -54.027500, -132.125278 } },
 	{  40, "ZMU", "", "München (Hbf)", { -48.140556, 11.557778 } },
 	{  88, "ZNA", "", "Nanaimo (Harbour Seaplane Base)", { -49.052222, -123.870278 } },
+	{  40, "ZNB", "NRW", "Hamm", { -51.690000, 7.816667 } },
 	{ 209, "ZNC", "", "Nyack", { -60.980556, -159.993611 } },
 	{ 142, "ZND", "", "Zinder", { -13.778889, 8.983889 } },
 	{  11, "ZNE", "", "Newman", { 23.417778, 119.802778 } },

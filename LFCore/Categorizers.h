@@ -67,6 +67,8 @@ public:
 
 protected:
 	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
+
+	LPCWSTR m_Separator;
 };
 
 

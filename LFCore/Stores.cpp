@@ -1352,7 +1352,7 @@ LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPat
 	assert(cCount>=MAX_PATH);
 
 	// For files only
-	if ((pItemDescriptor->Type & LFTypeMask)!=LFTypeFile)
+	if (!LFIsFile(pItemDescriptor))
 		return LFIllegalItemType;
 
 	// Linked files are not locally stored

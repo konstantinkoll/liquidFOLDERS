@@ -58,7 +58,9 @@ CLiquidFoldersApp::CLiquidFoldersApp()
 
 BOOL CLiquidFoldersApp::InitInstance()
 {
-	WCHAR CmdLine[256] = L"";
+	WCHAR CmdLine[256];
+	CmdLine[0] = L'\0';
+
 	for (INT a=1; a<__argc; a++)
 	{
 		wcscat_s(CmdLine, 256, __wargv[a]);

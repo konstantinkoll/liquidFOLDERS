@@ -1071,7 +1071,7 @@ void CMainView::OnItemOpen()
 		else
 		{
 			// Only files have no navigable filter
-			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+			ASSERT(LFIsFile(pItemDescriptor));
 
 			if (pItemDescriptor->Type & LFTypeMounted)
 			{
@@ -1299,8 +1299,9 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		const INT Index = GetSelectedItem();
 		if (Index!=-1)
 		{
-			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore)
+			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+			if (LFIsStore(pItemDescriptor))
 				switch (pCmdUI->m_nID)
 				{
 				case IDM_STORE_SYNCHRONIZE:

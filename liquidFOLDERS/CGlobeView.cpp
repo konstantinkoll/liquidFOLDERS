@@ -268,35 +268,32 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 			}
 			else
 			{
+				const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+
 				// Label text
-				LPCWSTR pCaption = (*p_CookedFiles)[a]->CoreAttributes.FileName;
+				LPCWSTR pCaption = pItemDescriptor->CoreAttributes.FileName;
 				SIZE_T cCaption = wcslen(pCaption);
 
 				LPCWSTR pSubcaption = NULL;
 				LPCWSTR pCoordinates = (m_GlobalViewSettings.GlobeShowCoordinates ? pData->CoordString : NULL);
-				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescriptions ? (*p_CookedFiles)[a]->Description : NULL);
+				LPCWSTR pDescription = (m_GlobalViewSettings.GlobeShowDescriptions ? pItemDescriptor->Description : NULL);
 
 				// Adjust label text
 				switch (theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.Type)
 				{
 				case LFTypeIATACode:
-					if (cCaption>6)
+					if (LFHasSubcaption(pItemDescriptor))
 					{
 						if (m_GlobalViewSettings.GlobeShowAirportNames)
-						{
-							pSubcaption = &pCaption[3];
+							pSubcaption = &pCaption[pItemDescriptor->FolderSubcaptionStart];
 
-							while ((*pSubcaption==L' ') || (*pSubcaption==L'–') || (*pSubcaption==L'—'))
-								pSubcaption++;
-						}
-
-						cCaption = 3;
+						cCaption = pItemDescriptor->FolderMainCaptionCount;
 					}
 
 					break;
 
 				case LFTypeGeoCoordinates:
-					if ((wcscmp(pCaption, pData->CoordString)==0) && m_GlobalViewSettings.GlobeShowCoordinates)
+					if (m_GlobalViewSettings.GlobeShowCoordinates && (wcscmp(pCaption, pData->CoordString)==0))
 						pCoordinates = NULL;
 
 					break;

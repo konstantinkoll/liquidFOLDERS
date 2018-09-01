@@ -230,6 +230,7 @@ void CURLCategorizer::GetFilterValue(LFVariantData& VData, LFItemDescriptor* pIt
 CIATACategorizer::CIATACategorizer()
 	: CCategorizer(LFAttrLocationIATA)
 {
+	m_Separator = (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? L"—" : L" – ";
 }
 
 void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const
@@ -245,10 +246,15 @@ void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDe
 		LFIATAGetLocationNameForAirport(pAirport, LocationName, 256);
 
 		// IATA code to Unicode
-		WCHAR tmpStr[256];
-		MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, tmpStr, 256);
+		assert(strlen(pAirport->Code)==3);
+		pFolder->FolderMainCaptionCount = 3;
 
-		wcscat_s(tmpStr, 256, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? L"—" : L" – ");
+		WCHAR tmpStr[256];
+		MultiByteToWideChar(CP_ACP, 0, pAirport->Code, 4, tmpStr, 256);
+
+		wcscat_s(tmpStr, 256, m_Separator);
+
+		pFolder->FolderSubcaptionStart = (UINT)wcslen(tmpStr);
 		wcscat_s(tmpStr, 256, LocationName);
 
 		// Set attributes

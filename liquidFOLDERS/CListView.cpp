@@ -232,13 +232,18 @@ void CListView::AdjustLayout()
 			Data.Rect.left = BACKSTAGEBORDER;
 			Data.Rect.right = m_ScrollWidth-BACKSTAGEBORDER;
 
-			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
+			if (LFIsFolder(pItemDescriptor))
 			{
 				VERIFY((Data.First=pItemDescriptor->AggregateFirst)>=0);
 				VERIFY((LastFolderItem=Data.Last=pItemDescriptor->AggregateLast)>=0);
 
 				if (pItemDescriptor->CoreAttributes.FileName[0])
+				{
 					Data.Rect.bottom += m_LargeFontHeight+((m_PreviewAttribute>=0) ? CARDPADDING+PREVIEWITEMOFFSET : CARDPADDING/2+LFCATEGORYPADDING);
+
+					if (pItemDescriptor->FolderMainCaptionCount)
+						Data.Rect.bottom += m_DefaultFontHeight;
+				}
 
 				Data.pItemDescriptor = pItemDescriptor;
 			}
@@ -338,7 +343,17 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 		{
 			rect.top -= LFCATEGORYPADDING;
 
-			DrawCategory(dc, rect, pItemDescriptor->CoreAttributes.FileName, NULL, Themed);
+			if (pItemDescriptor->FolderMainCaptionCount)
+			{
+				WCHAR Caption[256];
+				wcsncpy_s(Caption, 256, pItemDescriptor->CoreAttributes.FileName, pItemDescriptor->FolderMainCaptionCount);
+			
+				DrawCategory(dc, rect, Caption, &pItemDescriptor->CoreAttributes.FileName[pItemDescriptor->FolderSubcaptionStart], Themed);
+			}
+			else
+			{
+				DrawCategory(dc, rect, pItemDescriptor->CoreAttributes.FileName, NULL, Themed);
+			}
 		}
 
 		// Preview
@@ -346,6 +361,9 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 		{
 			rect.left -= 2;
 			rect.top += m_LargeFontHeight+LFCATEGORYPADDING+CARDPADDING;
+
+			if (pItemDescriptor->FolderMainCaptionCount)
+				rect.top += m_DefaultFontHeight;
 
 			DrawJumboIcon(dc, g, rect.TopLeft(), pItemDescriptor);
 

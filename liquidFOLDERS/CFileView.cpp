@@ -189,7 +189,7 @@ void CFileView::SelectItem(INT Index, BOOL Select)
 		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 		SelectItem(pItemDescriptor, Select);
 
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1))
+		if (LFIsAggregatedFolder(pItemDescriptor))
 			for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
 				SelectItem((*p_RawFiles)[a], Select);
 	}
@@ -522,7 +522,7 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 	UINT InsertPos = 0;
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
-	switch (pItemDescriptor->Type & LFTypeMask)
+	switch (LFGetItemType(pItemDescriptor))
 	{
 	case LFTypeStore:
 		Menu.LoadMenu(IDM_STORE);
@@ -556,7 +556,7 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 
 	// Append file menu
 	if (m_Context!=LFContextTrash)
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1)))
+		if (LFIsFile(pItemDescriptor) || LFIsAggregatedFolder(pItemDescriptor))
 		{
 			if (m_Context!=LFContextArchive)
 				Menu.InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION,
@@ -594,7 +594,7 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 			PopupMenu.Detach();
 		}
 
-	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
+	if (LFIsFile(pItemDescriptor))
 		if (LFIsFilterFile(pItemDescriptor))
 		{
 			// "Edit" command
@@ -656,7 +656,7 @@ CString CFileView::GetItemLabel(const LFItemDescriptor* pItemDescriptor) const
 	}
 
 	// Extension
-	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
+	if (LFIsFile(pItemDescriptor))
 		if ((!m_HideFileExt || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			strLabel += _T(".");
@@ -675,7 +675,7 @@ UINT CFileView::GetColorDotCount(const LFItemDescriptor* pItemDescriptor)
 {
 	ASSERT(pItemDescriptor);
 
-	switch (pItemDescriptor->Type & LFTypeMask)
+	switch (LFGetItemType(pItemDescriptor))
 	{
 #ifdef _DEBUG
 	case LFTypeStore:
@@ -714,7 +714,7 @@ void CFileView::DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pIte
 
 	BOOL First = TRUE;
 
-	switch (pItemDescriptor->Type & LFTypeMask)
+	switch (LFGetItemType(pItemDescriptor))
 	{
 	case LFTypeFile:
 		ASSERT(pItemDescriptor->AggregateColorSet==(1 << pItemDescriptor->CoreAttributes.Color));

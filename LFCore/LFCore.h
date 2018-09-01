@@ -259,7 +259,7 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
 //
 
 // Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes=NULL, LPVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes=NULL, LPCVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
 
 // Neuen LFItemDescriptor für Store erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(const LFStoreDescriptor& StoreDescriptor);
@@ -269,6 +269,70 @@ LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(const LFItemDescrip
 
 // Existierenden LFItemDescriptor freigeben
 LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor);
+
+inline UINT LFGetItemType(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return (pItemDescriptor->Type & LFTypeMask);
+}
+
+// Prüft, ob der LFItemDescriptor ein Store ist
+inline BOOL LFIsStore(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return LFGetItemType(pItemDescriptor)==LFTypeStore;
+}
+
+// Prüft, ob der LFItemDescriptor ein Ordner ist
+inline BOOL LFIsFolder(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return LFGetItemType(pItemDescriptor)==LFTypeFolder;
+}
+
+// Prüft, ob der LFItemDescriptor aggregiert ist
+inline BOOL LFIsAggregated(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(LFIsFolder(pItemDescriptor));
+	assert((pItemDescriptor->AggregateFirst!=-1)==(pItemDescriptor->AggregateLast!=-1));
+
+	return (pItemDescriptor->AggregateFirst!=-1);
+}
+
+// Prüft, ob der LFItemDescriptor ein aggregierter Ordner ist
+inline BOOL LFIsAggregatedFolder(const LFItemDescriptor* pItemDescriptor)
+{
+	return LFIsFolder(pItemDescriptor) && LFIsAggregated(pItemDescriptor);
+}
+
+// Prüft, ob der LFItemDescriptor eine Datei ist
+inline BOOL LFIsFile(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return LFGetItemType(pItemDescriptor)==LFTypeFile;
+}
+
+// Prüft, ob der Name des LFItemDescriptor in Haupt- und Nebenüberschrift aufgeteilt ist
+inline BOOL LFHasSubcaption(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(!LFIsStore(pItemDescriptor));
+	assert((pItemDescriptor->FolderMainCaptionCount==0) || (pItemDescriptor->FolderSubcaptionStart>pItemDescriptor->FolderMainCaptionCount));
+
+	return pItemDescriptor->FolderMainCaptionCount;
+}
+
+// Liefert die Nebenüberschrift zurück
+inline LPCWSTR LFGetSubcaption(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(LFHasSubcaption(pItemDescriptor));
+
+	return &pItemDescriptor->CoreAttributes.FileName[pItemDescriptor->FolderSubcaptionStart];
+}
+
 
 // Gibt den System-Kontext einer Datei zurück
 inline BYTE LFGetSystemContextID(const LFCoreAttributes& CoreAttributes)

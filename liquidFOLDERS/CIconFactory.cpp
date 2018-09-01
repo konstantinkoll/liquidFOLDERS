@@ -63,7 +63,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		DrawAppBadge = FALSE;
 
 		// Do we have a folder?
-		if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
+		if (LFIsFolder(pItemDescriptor))
 		{
 			// Try to draw a representative thumbnail
 			if (DrawRepresentativeThumbnail(dc, g, pt, pItemDescriptor, pRawFiles, ThumbnailYOffset))
@@ -98,7 +98,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 	}
 	else
 	{
-		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+		ASSERT(LFIsFile(pItemDescriptor));
 
 		// Draw thumbnail or file format icon
 		if (!DrawJumboThumbnail(dc, g, pt, pItemDescriptor, DrawSash, ThumbnailYOffset))
@@ -141,7 +141,7 @@ void CIconFactory::DrawSmallIcon(CDC& dc, const CPoint& pt, const LFItemDescript
 	}
 	else
 	{
-		ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+		ASSERT(LFIsFile(pItemDescriptor));
 
 		// Draw file format icon
 		theApp.m_SystemImageListSmall.DrawEx(&dc, GetSystemIconIndex(pItemDescriptor->CoreAttributes.FileFormat), pt, CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, nStyle);
@@ -240,8 +240,7 @@ void CIconFactory::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy
 
 BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail)
 {
-	ASSERT(pItemDescriptor);
-	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+	ASSERT(LFIsFile(pItemDescriptor));
 
 	// Calculate thumbnail size and other parameters
 	const BOOL BlackFrame = LFIsAudioFile(pItemDescriptor);
@@ -363,8 +362,7 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 
 BOOL CIconFactory::LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail)
 {
-	ASSERT(pItemDescriptor);
-	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+	ASSERT(LFIsFile(pItemDescriptor));
 
 	// Is there a thumbnail?
 	if (m_Thumbnails.Lookup(pItemDescriptor, Thumbnail))
@@ -397,8 +395,7 @@ BOOL CIconFactory::LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailD
 
 BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, BOOL& DrawSash, INT ThumbnailYOffset)
 {
-	ASSERT(pItemDescriptor);
-	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+	ASSERT(LFIsFile(pItemDescriptor));
 
 	ThumbnailData Thumbnail;
 	if (!LookupThumbnail(pItemDescriptor, Thumbnail))
@@ -432,8 +429,7 @@ BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LF
 
 BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset)
 {
-	ASSERT(pItemDescriptor);
-	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder);
+	ASSERT(LFIsFolder(pItemDescriptor));
 
 	// No placeholder icon
 	if (!theApp.IsPlaceholderIcon(pItemDescriptor->IconID))
@@ -444,7 +440,7 @@ BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoin
 		return FALSE;
 
 	// Is the folder an aggregated folder?
-	if ((pItemDescriptor->AggregateFirst==-1) || (pItemDescriptor->AggregateLast==-1))
+	if (!LFIsAggregated(pItemDescriptor))
 		return FALSE;
 
 	// Try to draw a thumbnail
@@ -498,8 +494,7 @@ BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFGeoCoordi
 
 BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
 {
-	ASSERT(pItemDescriptor);
-	ASSERT((pItemDescriptor->Type & LFTypeMask)!=LFTypeFile);
+	ASSERT(LFIsFolder(pItemDescriptor));
 
 	// GPS coordinates
 	LFVariantData VData;

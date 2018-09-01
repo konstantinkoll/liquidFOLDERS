@@ -14,15 +14,12 @@ LFCORE_API LFTransactionList* LFAllocTransactionList(LFSearchResult* pSearchResu
 
 	if (pSearchResult)
 		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-		{
-			const UINT Type = (*pSearchResult)[a]->Type;
-
-			if (All || (Type & LFTypeSelected))
+			if (All || ((*pSearchResult)[a]->Type & LFTypeSelected))
 			{
-				assert(((Type & LFTypeMask)==LFTypeFile) || ((Type & LFTypeMask)==LFTypeStore));
+				assert(LFIsFile((*pSearchResult)[a]) || LFIsStore((*pSearchResult)[a]));
+
 				pTransactionList->AddItem((*pSearchResult)[a], a);
 			}
-		}
 
 	return pTransactionList;
 }
@@ -313,7 +310,7 @@ UINT LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	for (UINT a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].LastError==LFOk) && !m_Items[a].Processed)
 		{
-			switch (m_Items[a].pItemDescriptor ? m_Items[a].pItemDescriptor->Type & LFTypeMask : LFTypeFile)
+			switch (m_Items[a].pItemDescriptor ? LFGetItemType(m_Items[a].pItemDescriptor) : LFTypeFile)
 			{
 			case LFTypeFile:
 				if ((Result=OpenStore(m_Items[a].StoreID, pStore, TransactionType>LFTransactionLastReadonly))==LFOk)

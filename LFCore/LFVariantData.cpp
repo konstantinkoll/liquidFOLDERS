@@ -451,9 +451,9 @@ LFCORE_API void LFTimeToString(const FILETIME t, LPWSTR pStr, SIZE_T cCount, BOO
 		FileTimeToSystemTime(&t, &stUTC);
 		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
-		INT Size = GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, pStr, (INT)cCount);
+		const INT Size = GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, pStr, (INT)cCount);
 
-		if (IncludeTime && ((stLocal.wHour) || (stLocal.wMinute) || (stLocal.wSecond)))
+		if (IncludeTime && (stLocal.wHour || stLocal.wMinute || stLocal.wSecond))
 		{
 			pStr[Size-1] = L' ';
 

@@ -301,7 +301,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	if (Index!=-1)
 	{
 		LFItemDescriptor* pItemDescriptor = (*m_pSearchResult)[Index];
-		bEnable = ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore);
+		bEnable = LFIsStore(pItemDescriptor);
 
 		switch (pCmdUI->m_nID)
 		{

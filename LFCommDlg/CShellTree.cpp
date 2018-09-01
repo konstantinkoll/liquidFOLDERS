@@ -787,7 +787,9 @@ void CShellTree::OnContextMenu(CWnd* pWnd, CPoint point)
 				else
 					if (idCmd)
 					{
-						CHAR Verb[256] = "";
+						CHAR Verb[256];
+						Verb[0] = '\0';
+
 						pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
 
 						if (strcmp(Verb, "rename")==0)
@@ -981,10 +983,11 @@ LRESULT CShellTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	if (!hNotifyLock)
 		return NULL;
 
-	WCHAR Path1[MAX_PATH] = L"";
-	WCHAR Path2[MAX_PATH] = L"";
-	WCHAR Parent1[MAX_PATH] = L"";
-	WCHAR Parent2[MAX_PATH] = L"";
+	WCHAR Path1[MAX_PATH];
+	WCHAR Path2[MAX_PATH];
+	WCHAR Parent1[MAX_PATH];
+	WCHAR Parent2[MAX_PATH];
+	Path1[0] = Path2[0] = Parent1[0] = Parent2[0] = L'\0';
 
 	SHGetPathFromIDList(pidls[0], Path1);
 

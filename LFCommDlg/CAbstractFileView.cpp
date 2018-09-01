@@ -168,10 +168,9 @@ void CAbstractFileView::EditLabel(INT Index)
 
 	if (IsLabelEditEnabled() && (Index>=0) && (Index<m_ItemCount))
 	{
-		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+		const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeStore) ||
-			((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)))
+		if (LFIsStore(pItemDescriptor) || ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)))
 		{
 			m_EditItem = Index;
 			InvalidateItem(Index);

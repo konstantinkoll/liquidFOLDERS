@@ -154,7 +154,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 		const UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[LFAttrRating]);
 		ASSERT(Rating<=LFMaxRating);
 
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) || Rating)
+		if (LFIsFile(pItemDescriptor) || Rating)
 		{
 			CDC dcMem;
 			dcMem.CreateCompatibleDC(&dc);

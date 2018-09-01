@@ -644,7 +644,7 @@ CString LFApplication::GetHintForItem(const LFItemDescriptor* pItemDescriptor, L
 	if (pFormatName)
 		if (*pFormatName)
 		{
-			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+			ASSERT(LFIsFile(pItemDescriptor));
 
 			CString tmpStr(pFormatName);
 
@@ -661,7 +661,7 @@ CString LFApplication::GetHintForItem(const LFItemDescriptor* pItemDescriptor, L
 		}
 
 	// Free bytes available
-	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeStore)
+	if (LFIsStore(pItemDescriptor))
 		LFTooltip::AppendAttribute(Hint, _T(""), GetFreeBytesAvailable(pItemDescriptor->StoreDescriptor));
 
 	// Other attributes

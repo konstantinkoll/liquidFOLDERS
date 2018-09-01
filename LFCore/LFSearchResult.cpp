@@ -42,7 +42,7 @@ LFCORE_API BOOL LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItem
 	assert(pItemDescriptor);
 
 	// Skip if item already exists
-	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
+	if (LFIsFile(pItemDescriptor))
 		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
 			if ((pItemDescriptor->StoreID==(*pSearchResult)[a]->StoreID) &&
 				(pItemDescriptor->CoreAttributes.FileID==(*pSearchResult)[a]->CoreAttributes.FileID))
@@ -253,8 +253,7 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 
 void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor)
 {
-	assert(pItemDescriptor);
-	assert((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+	assert(LFIsFile(pItemDescriptor));
 
 	if (FileSummary.FileCount++)
 	{
@@ -295,7 +294,7 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 	if (!LFDynArray::AddItem(pItemDescriptor))
 		return FALSE;
 
-	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile)
+	if (LFIsFile(pItemDescriptor))
 	{
 		// Special icon for filter
 		if (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")==0)
@@ -484,7 +483,7 @@ void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
 	// Retain item
-	if (((ReadIndex2==ReadIndex1+1) && (!GroupSingle || ((m_Items[ReadIndex1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
+	if (((ReadIndex2==ReadIndex1+1) && (!GroupSingle || LFIsFolder(m_Items[ReadIndex1]))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
 	{
 		for (UINT a=ReadIndex1; a<ReadIndex2; a++)
 			m_Items[WriteIndex++] = m_Items[a];
@@ -700,7 +699,7 @@ void LFSearchResult::UpdateFolderColors(const LFSearchResult* pRawFiles)
 	{
 		LFItemDescriptor* pItemDescriptor = m_Items[a];
 
-		if (((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder) && (pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1))
+		if (LFIsAggregatedFolder(pItemDescriptor))
 		{
 			// Create file summary
 			LFFileSummary FileSummary;

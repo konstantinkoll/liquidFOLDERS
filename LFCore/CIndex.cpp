@@ -688,20 +688,21 @@ BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 
 	START_FINDMASTER(, Exists, pItemDescriptor->CoreAttributes.FileID);
 
-	if (Exists || (pItemDescriptor->CoreAttributes.Flags & LFFlagLink))
+	if (Exists || (PtrM->Flags & LFFlagLink))
 	{
-		pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
+		PtrM->Flags &= ~LFFlagMissing;
 	}
 	else
 	{
-		pItemDescriptor->CoreAttributes.Flags |= LFFlagMissing;
+		PtrM->Flags |= LFFlagMissing;
 	}
 
 	if (RemoveNew)
-		pItemDescriptor->CoreAttributes.Flags &= ~LFFlagNew;
+		PtrM->Flags &= ~LFFlagNew;
 
 	REMOVE_STATS();
-	m_pTable[IDXTABLE_MASTER]->Update(pItemDescriptor, PtrM);
+	pItemDescriptor->CoreAttributes.Flags = PtrM->Flags;
+	m_pTable[IDXTABLE_MASTER]->MakeDirty();
 	ADD_STATS();
 
 	END_FINDMASTER();

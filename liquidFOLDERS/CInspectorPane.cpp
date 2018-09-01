@@ -136,8 +136,7 @@ void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 
 void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 {
-	ASSERT(pItemDescriptor);
-	ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFile);
+	ASSERT(LFIsFile(pItemDescriptor));
 
 	// Basic
 	p_LastItem = pItemDescriptor;
@@ -207,7 +206,7 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 		}
 
 	// Type and properties
-	switch (m_Type=(pItemDescriptor->Type & LFTypeMask))
+	switch (m_Type=LFGetItemType(pItemDescriptor))
 	{
 	case LFTypeFile:
 		AddFile(pItemDescriptor);

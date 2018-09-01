@@ -174,6 +174,9 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 	CString strLabel = GetItemLabel(pItemDescriptor);
 	INT ColorDotWidth = GetColorDotWidth(pItemDescriptor);
 
+	if (LFIsFolder(pItemDescriptor) && LFHasSubcaption(pItemDescriptor))
+		strLabel.Truncate(pItemDescriptor->FolderMainCaptionCount);
+
 	// We only care for the height of rectLine here
 	CRect rectLine(rectLabel);
 	rectLine.bottom = rectLine.top+m_DefaultFontHeight;
@@ -244,7 +247,7 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 
 	// Hint
 	if (Line<MaxLineCount)
-		switch (pItemDescriptor->Type & LFTypeMask)
+		switch (LFGetItemType(pItemDescriptor))
 		{
 		case LFTypeStore:
 			if (m_GlobalViewSettings.IconsShowCapacity)
@@ -253,12 +256,13 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 			break;
 
 		case LFTypeFolder:
-			ASSERT(pItemDescriptor->Description[0]);
+			LPCWSTR pHint = LFHasSubcaption(pItemDescriptor) ? LFGetSubcaption(pItemDescriptor) : pItemDescriptor->Description;
+			ASSERT(pHint[0]);
 
 			CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
 
 			SetLightTextColor(dc, pItemDescriptor, Themed);
-			dc.DrawText(pItemDescriptor->Description, -1, CRect(rectLabel.left, rectLabel.bottom-m_SmallFontHeight, rectLabel.right, rectLabel.bottom), DT_CENTER | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			dc.DrawText(pHint, -1, CRect(rectLabel.left, rectLabel.bottom-m_SmallFontHeight, rectLabel.right, rectLabel.bottom), DT_CENTER | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 			dc.SelectObject(pOldFont);
 

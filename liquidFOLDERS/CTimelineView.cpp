@@ -142,7 +142,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 					pData->PreviewMask |= PRV_SOURCE;
 
 				// Map properties to Creator, Title, Collection and Comments
-				switch (pItemDescriptor->Type & LFTypeMask)
+				switch (LFGetItemType(pItemDescriptor))
 				{
 				case LFTypeFile:
 					pData->pStrCreator = GetAttribute(pData, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
@@ -734,7 +734,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	// Caption
 	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? pItemDescriptor->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
-	if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
+	if (LFIsFolder(pItemDescriptor))
 	{
 		LPCWSTR pSubstring = wcsstr(pItemDescriptor->Description, L" (");
 
@@ -750,7 +750,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 	// Subcaption
 	WCHAR tmpBuf[256];
-	LFAttributeToString(pItemDescriptor, ((pItemDescriptor->Type & LFTypeMask)==LFTypeFile) ? m_ContextViewSettings.SortBy : LFAttrFileName, tmpBuf, 256);
+	LFAttributeToString(pItemDescriptor, LFIsFile(pItemDescriptor) ? m_ContextViewSettings.SortBy : LFAttrFileName, tmpBuf, 256);
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
 
@@ -780,7 +780,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 		// Concatenate creator and title
 		if (pData->PreviewMask & (PRV_CREATOR | PRV_TITLE))
 		{
-			WCHAR tmpStr[514] = L"";
+			WCHAR tmpStr[514];
+			tmpStr[0] = L'\0';
 
 			// Creator
 			if (pData->PreviewMask & PRV_CREATOR)
@@ -845,12 +846,12 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 
 		if (pData->PreviewMask & PRV_REPRESENTATIVE)
 		{
-			ASSERT((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder);
+			ASSERT(LFIsFolder(pItemDescriptor));
 
 			theApp.m_IconFactory.DrawJumboIcon(dc, g, ptPreview, pItemDescriptor, p_RawFiles, 0);
 		}
 		else
-			if ((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder)
+			if (LFIsFolder(pItemDescriptor))
 			{
 				INT Row = 0;
 				INT Col = 0;

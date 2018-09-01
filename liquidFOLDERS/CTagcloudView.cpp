@@ -75,7 +75,7 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 			TagcloudItemData* pData = GetTagcloudItemData(a);
 
-			if ((pData->Hdr.Valid=((pItemDescriptor->Type & LFTypeMask)==LFTypeFolder))==TRUE)
+			if ((pData->Hdr.Valid=LFIsFolder(pItemDescriptor))==TRUE)
 			{
 				pData->Cnt = pItemDescriptor->AggregateCount;
 
@@ -183,11 +183,11 @@ Restart:
 
 			if (pData->Hdr.Valid)
 			{
-				LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+				const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 
 				CRect rect(0, 0, rectLayout.Width()-2*MARGIN, 128);
 				dc.SelectObject(GetFont(a));
-				dc.DrawText(pItemDescriptor->CoreAttributes.FileName, rect, TEXTFORMAT | DT_CALCRECT);
+				dc.DrawText(pItemDescriptor->CoreAttributes.FileName, LFHasSubcaption(pItemDescriptor) ? pItemDescriptor->FolderMainCaptionCount : -1, rect, TEXTFORMAT | DT_CALCRECT);
 				rect.InflateRect(PADDINGX, PADDINGY);
 
 				// Next row
@@ -250,7 +250,7 @@ void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Ind
 	}
 
 	CFont* pOldFont = dc.SelectObject(GetFont(Index));
-	dc.DrawText(pItemDescriptor->CoreAttributes.FileName, (LPRECT)rectItem, TEXTFORMAT | DT_CENTER | DT_VCENTER);
+	dc.DrawText(pItemDescriptor->CoreAttributes.FileName, LFHasSubcaption(pItemDescriptor) ? pItemDescriptor->FolderMainCaptionCount : -1, (LPRECT)rectItem, TEXTFORMAT | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 }
 

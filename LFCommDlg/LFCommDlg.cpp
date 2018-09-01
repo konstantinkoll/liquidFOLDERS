@@ -242,16 +242,15 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 			dc.SelectObject(pOldPen);
 		}
 
-	if (Hint)
-		if (Hint[0]!=L'\0')
-		{
-			dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
+	if (Hint && *Hint)
+	{
+		dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
-			rect.top += rectLine.Height();
+		rect.top += LFGetApp()->m_LargeFont.GetFontHeight();
 
-			dc.SelectObject(&LFGetApp()->m_DefaultFont);
-			dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_NOPREFIX | (rect.Height()>=2*LFGetApp()->m_DefaultFont.GetFontHeight() ? DT_WORDBREAK : DT_END_ELLIPSIS));
-		}
+		dc.SelectObject(&LFGetApp()->m_DefaultFont);
+		dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_NOPREFIX | (rect.Height()>=2*LFGetApp()->m_DefaultFont.GetFontHeight() ? DT_WORDBREAK : DT_END_ELLIPSIS));
+	}
 
 	dc.SelectObject(pOldFont);
 }

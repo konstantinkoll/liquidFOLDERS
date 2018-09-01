@@ -860,9 +860,6 @@ struct LFItemDescriptor
 	// Volatile attributes
 	ABSOLUTESTOREID StoreID;
 
-	// Internal data from store
-	BYTE StoreData[LFMaxStoreDataSize];
-
 	// Must be last in struct in this order, as zero-filling depends on it
 	LFCoreAttributes CoreAttributes;
 
@@ -887,9 +884,15 @@ struct LFItemDescriptor
 		// For files and folders
 		struct
 		{
+			// Division of main caption and subcaption
+			UINT FolderMainCaptionCount;
+			UINT FolderSubcaptionStart;
+
+			// File data
 			DOUBLE Dimension;
 			DOUBLE AspectRatio;
 			BYTE SlaveData[LFMaxSlaveSize];
+			BYTE StoreData[LFMaxStoreDataSize];
 		};
 	};
 };

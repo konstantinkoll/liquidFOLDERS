@@ -20,6 +20,7 @@ CStore::CStore(LFStoreDescriptor* pStoreDescriptor, HANDLE hMutexForStore, UINT 
 {
 	assert(pStoreDescriptor);
 	assert(hMutexForStore);
+	assert(AdditionalDataSize<=LFMaxStoreDataSize);
 
 	p_StoreDescriptor = pStoreDescriptor;
 	hMutex = hMutexForStore;
@@ -242,8 +243,9 @@ UINT CStore::ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemDescriptor, BOOL M
 {
 	assert(m_pIndexMain!=NULL);
 
-	// Reset store data in item descriptor (maybe left from "Send to" operation and others)
-	ZeroMemory(&pItemDescriptor->StoreData, LFMaxStoreDataSize);
+	// IMPORTANT! Reset store data in item descriptor!
+	// May be uninitialized or left from "Send to" operation!
+	ResetStoreData(pItemDescriptor);
 
 	// Import
 	UINT Result;
@@ -648,7 +650,8 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 		wcscpy_s(Name, 256, pItemDescriptor->CoreAttributes.FileName);
 
 		// Extract annotation in brackets
-		WCHAR Annotation[256] = L"";
+		WCHAR Annotation[256];
+		Annotation[0] = L'\0';
 
 		if (Name[0])
 			if (Name[wcslen(Name)-1]==L')')

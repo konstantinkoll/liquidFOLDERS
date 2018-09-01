@@ -178,7 +178,7 @@ UINT GetFolderIcon(const LFFileSummary& FileSummary, const LFVariantData& VData,
 // LFItemDescriptor
 //
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes, LPVOID pStoreData, SIZE_T StoreDataSize)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData, SIZE_T StoreDataSize)
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
 
@@ -198,14 +198,20 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCore
 	}
 
 	if (pStoreData)
-#ifdef _DEBUG
-		memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, pStoreData, StoreDataSize);
-#else
+	{
+		assert(StoreDataSize>0);
+		assert(StoreDataSize<=LFMaxStoreDataSize);
+
 		memcpy(pItemDescriptor->StoreData, pStoreData, StoreDataSize);
-#endif
+	}
+	else
+	{
+		ResetStoreData(pItemDescriptor);
+	}
 
 	pItemDescriptor->AggregateFirst = pItemDescriptor->AggregateLast = -1;
 	pItemDescriptor->RefCount = 1;
+	pItemDescriptor->FolderMainCaptionCount = pItemDescriptor->FolderSubcaptionStart = 0;
 
 	// Zeiger auf statische Attributwerte initalisieren
 	for (UINT a=0; a<IndexTables[IDXTABLE_MASTER].cTableEntries; a++)
@@ -227,7 +233,10 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor& St
 	// Description
 	LFGetFileSummary(pItemDescriptor->Description, 256, StoreDescriptor.Statistics.FileCount[LFContextAllFiles], StoreDescriptor.Statistics.FileSize[LFContextAllFiles]);
 
-	WCHAR Hint[256] = L"";
+	// Hint
+	WCHAR Hint[256];
+	Hint[0] = L'\0';
+
 	if (LFIsStoreMounted(&StoreDescriptor))
 	{
 		if (StoreDescriptor.Source>LFTypeSourceInternal)

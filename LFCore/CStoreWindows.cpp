@@ -39,6 +39,7 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 
 	// Import new files
 	Result = m_pFileImportList->m_LastError;
+	const SIZE_T szDatPath = wcslen(p_StoreDescriptor->DatPath);
 
 	for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
 	{
@@ -56,9 +57,9 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 				}
 			}
 
-			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
-
-			wcscpy_s((LPWSTR)pItemDescriptor->StoreData, MAX_PATH, &(*m_pFileImportList)[a].Path[wcslen(p_StoreDescriptor->DatPath)]);
+			// Set store data from path
+			LPCWSTR pStr = &(*m_pFileImportList)[a].Path[szDatPath];
+			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(NULL, pStr, (wcslen(pStr)+1)*sizeof(WCHAR));
 
 			UINT Result;
 			WCHAR Path[2*MAX_PATH];
@@ -126,8 +127,10 @@ UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDe
 		SanitizeFileName(SanitizedFileName, MAX_PATH, pFilename);
 
 		WCHAR Path[2*MAX_PATH];
-		WCHAR NumberStr[16] = L"";
 		UINT Number = 1;
+
+		WCHAR NumberStr[16];
+		NumberStr[0] = L'\0';
 
 		// Check if file exists; if yes append number
 		do
