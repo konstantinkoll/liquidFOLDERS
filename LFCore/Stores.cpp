@@ -5,6 +5,7 @@
 #include "FileSystem.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
+#include "Progress.h"
 #include "Stores.h"
 
 
@@ -201,13 +202,12 @@ UINT SaveStoreSettingsToRegistry(LFStoreDescriptor* pStoreDescriptor)
 	return Result;
 }
 
-UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* pStoreDescriptor)
+UINT DeleteStoreSettingsFromRegistry(const LFStoreDescriptor& Victim)
 {
-	assert(pStoreDescriptor);
-	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
+	assert((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
 
 	CHAR Key[256];
-	GetRegistryKey(pStoreDescriptor->StoreID, Key);
+	GetRegistryKey(Victim.StoreID, Key);
 
 	LSTATUS lStatus = RegDeleteKeyA(HKEY_CURRENT_USER, Key);
 
@@ -218,7 +218,7 @@ UINT DeleteStoreSettingsFromRegistry(LFStoreDescriptor* pStoreDescriptor)
 // Persistence in .store file
 //
 
-UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, LPWSTR pPath)
+UINT GetKeyFileFromStoreDescriptor(const LFStoreDescriptor* pStoreDescriptor, LPWSTR pPath)
 {
 	assert(pStoreDescriptor);
 	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
@@ -228,7 +228,7 @@ UINT GetKeyFileFromStoreDescriptor(LFStoreDescriptor* pStoreDescriptor, LPWSTR p
 		return LFStoreNotMounted;
 
 	wcsncpy_s(pPath, MAX_PATH, pStoreDescriptor->DatPath, 3);		// .store file is always in root directory
-	AppendGUID(pPath, pStoreDescriptor, L".store");
+	AppendGUID(pPath, *pStoreDescriptor, L".store");
 
 	return LFOk;
 }
@@ -280,14 +280,13 @@ UINT SaveStoreSettingsToFile(LFStoreDescriptor* pStoreDescriptor)
 	return Result;
 }
 
-UINT DeleteStoreSettingsFromFile(LFStoreDescriptor* pStoreDescriptor)
+UINT DeleteStoreSettingsFromFile(const LFStoreDescriptor& Victim)
 {
-	assert(pStoreDescriptor);
-	assert((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
+	assert((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
 
 	UINT Result;
 	WCHAR Path[MAX_PATH];
-	if ((Result=GetKeyFileFromStoreDescriptor(pStoreDescriptor, Path))!=LFOk)
+	if ((Result=GetKeyFileFromStoreDescriptor(&Victim, Path))!=LFOk)
 		return Result;
 
 	return DeleteFile(Path) ? LFOk : (GetLastError()==ERROR_ACCESS_DENIED) ? LFNoAccessError : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFDriveNotReady;
@@ -347,11 +346,11 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 			if (LFGetSourceForVolume((CHAR)pStoreDescriptor->DatPath[0])>LFTypeSourceInternal)
 			{
 				wcsncpy_s(pStoreDescriptor->IdxPathMain, MAX_PATH, pStoreDescriptor->DatPath, 3);
-				AppendGUID(pStoreDescriptor->IdxPathMain, pStoreDescriptor);
+				AppendGUID(pStoreDescriptor->IdxPathMain, *pStoreDescriptor);
 			}
 			else
 			{
-				GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathMain);
+				GetAutoPath(*pStoreDescriptor, pStoreDescriptor->IdxPathMain);
 			}
 
 			// Cloud storage
@@ -395,7 +394,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 	{
 		// Get automatic data path
 		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (pStoreDescriptor->Flags & LFStoreFlagsAutoLocation))
-			GetAutoPath(pStoreDescriptor, pStoreDescriptor->DatPath);
+			GetAutoPath(*pStoreDescriptor, pStoreDescriptor->DatPath);
 
 		// Main index
 		if (((pStoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || LFIsStoreMounted(pStoreDescriptor))
@@ -412,7 +411,7 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 	// Set aux index for local hybrid stores
 	if ((pStoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 	{
-		GetAutoPath(pStoreDescriptor, pStoreDescriptor->IdxPathAux);
+		GetAutoPath(*pStoreDescriptor, pStoreDescriptor->IdxPathAux);
 		wcscat_s(pStoreDescriptor->IdxPathAux, MAX_PATH, L"INDEX\\");
 	}
 	else
@@ -539,24 +538,22 @@ UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime
 	return Result;
 }
 
-UINT DeleteStoreFromCache(LFStoreDescriptor* pStoreDescriptor)
+UINT DeleteStoreFromCache(LFStoreDescriptor& Victim)
 {
-	LFStoreDescriptor Victim = *pStoreDescriptor;
-
 	// Remove persistent records
 	UINT Result;
 
 	if ((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
-		if ((Result=DeleteStoreSettingsFromRegistry(&Victim))!=LFOk)
+		if ((Result=DeleteStoreSettingsFromRegistry(Victim))!=LFOk)
 			return Result;
 
 	if (((Victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal) && (LFIsStoreMounted(&Victim)))
-		if ((Result=DeleteStoreSettingsFromFile(&Victim))!=LFOk)
+		if ((Result=DeleteStoreSettingsFromFile(Victim))!=LFOk)
 			return Result;
 
 	// Remove from cache
 	for (UINT a=0; a<StoreCount; a++)
-		if (StoreCache[a].StoreID==pStoreDescriptor->StoreID)
+		if (StoreCache[a].StoreID==Victim.StoreID)
 		{
 			if (a<StoreCount-1)
 			{
@@ -983,8 +980,8 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName, LPCWSTR pComments,
 	if (!GetMutexForStores())
 		return LFMutexError;
 
-	LFStoreDescriptor Store;
-	GetDescriptorForNewStore(&Store);
+	LFStoreDescriptor StoreDescriptor;
+	GetDescriptorForNewStore(&StoreDescriptor);
 
 #if (LFStoreModeBackendInternal!=0)
 	Store.Mode = LFStoreModeBackendInternal;
@@ -992,31 +989,31 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName, LPCWSTR pComments,
 
 	// Set data
 	if (pComments)
-		wcscpy_s(Store.Comments, 256, pComments);
+		wcscpy_s(StoreDescriptor.Comments, 256, pComments);
 
 	if (cVolume)
 	{
-		swprintf_s(Store.DatPath, MAX_PATH, L"%c:\\", cVolume);
-		AppendGUID(Store.DatPath, &Store);
+		swprintf_s(StoreDescriptor.DatPath, MAX_PATH, L"%c:\\", cVolume);
+		AppendGUID(StoreDescriptor.DatPath, StoreDescriptor);
 
-		Store.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceInternal) ? LFStoreModeIndexInternal : MakeSearchable ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
+		StoreDescriptor.Mode |= (LFGetSourceForVolume(cVolume)==LFTypeSourceInternal) ? LFStoreModeIndexInternal : MakeSearchable ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal;
 	}
 	else
 	{
-		Store.Flags |= LFStoreFlagsAutoLocation;
+		StoreDescriptor.Flags |= LFStoreFlagsAutoLocation;
 	}
 
 	// Retrieve or save store name
 	if (pStoreName)
 	{
 		if (*pStoreName)
-			wcscpy_s(Store.StoreName, 256, pStoreName);
+			wcscpy_s(StoreDescriptor.StoreName, 256, pStoreName);
 
 		// Copy name back for display purposes
-		wcscpy_s(pStoreName, 256, Store.StoreName);
+		wcscpy_s(pStoreName, 256, StoreDescriptor.StoreName);
 	}
 
-	return CommitInitializeStore(&Store);
+	return CommitInitializeStore(&StoreDescriptor);
 }
 
 LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName, LFProgress* pProgress)
@@ -1077,7 +1074,7 @@ LFCORE_API UINT LFMakeStoreSearchable(const ABSOLUTESTOREID& StoreID, BOOL Searc
 			if (!Searchable)
 				if (LFIsStoreMounted(pStoreDescriptor))
 				{
-					if ((Result=DeleteStoreSettingsFromRegistry(pStoreDescriptor))==LFOk)
+					if ((Result=DeleteStoreSettingsFromRegistry(Victim))==LFOk)
 					{
 						// Convert to external index
 						pStoreDescriptor->Mode = (pStoreDescriptor->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
@@ -1087,7 +1084,7 @@ LFCORE_API UINT LFMakeStoreSearchable(const ABSOLUTESTOREID& StoreID, BOOL Searc
 						{
 							// Delete aux index
 							WCHAR Path[MAX_PATH];
-							GetAutoPath(&Victim, Path);
+							GetAutoPath(Victim, Path);
 							DeleteDirectory(Path);
 						}
 					}
@@ -1097,7 +1094,7 @@ LFCORE_API UINT LFMakeStoreSearchable(const ABSOLUTESTOREID& StoreID, BOOL Searc
 					// Store is not mounted, so delete local copy
 					if ((Result=pStore->PrepareDelete())==LFOk)
 						if ((Result=pStore->CommitDelete())==LFOk)
-							Result = DeleteStoreFromCache(&Victim);
+							Result = DeleteStoreFromCache(Victim);
 
 					pStoreDescriptor = NULL;
 				}
@@ -1144,19 +1141,11 @@ LFCORE_API UINT LFDeleteStore(const ABSOLUTESTOREID& StoreID, LFProgress* pProgr
 	if (pStoreDescriptor)
 	{
 		// Progress
-		if (pProgress)
+		if (ProgressMinorStart(pProgress, 2, pStoreDescriptor->StoreName, TRUE))
 		{
-			pProgress->MinorCount = 2;
-			pProgress->MinorCurrent = 0;
-			pProgress->NoMinorCounter = TRUE;
-			wcscpy_s(pProgress->Object, 256, pStoreDescriptor->StoreName);
+			ReleaseMutexForStores();
 
-			if (UpdateProgress(pProgress))
-			{
-				ReleaseMutexForStores();
-
-				return LFCancel;
-			}
+			return LFCancel;
 		}
 
 		// !!!WARNING!!!
@@ -1170,43 +1159,36 @@ LFCORE_API UINT LFDeleteStore(const ABSOLUTESTOREID& StoreID, LFProgress* pProgr
 		if ((Result=GetStore(&Victim, pStore))==LFOk)
 		{
 			if ((Result=pStore->PrepareDelete())==LFOk)
-				if ((Result=DeleteStoreFromCache(pStoreDescriptor))==LFOk)
+				if ((Result=DeleteStoreFromCache(Victim))==LFOk)
 				{
+					// Early release of mutex for broadcast message and before physically deleting files
 					ReleaseMutexForStores();
 
 					SendLFNotifyMessage(LFMessages.StoresChanged);
 
 					// Progress
-					if (pProgress)
-					{
-						pProgress->MinorCurrent++;
-						UpdateProgress(pProgress);
-					}
+					ProgressMinorNext(pProgress);
 
 					Result = pStore->CommitDelete();
 				}
 				else
 				{
-					if (pProgress)
-						pProgress->MinorCount++;
+					// Progress
+					ProgressMinorNext(pProgress, TRUE);
 				}
 
 			delete pStore;
 		}
 
 		// Progress
-		if (pProgress)
-		{
-			pProgress->MinorCurrent++;
-			UpdateProgress(pProgress);
-		}
+		ProgressMinorNext(pProgress);
 	}
 	else
 	{
-		ReleaseMutexForStores();
-
 		Result = LFIllegalID;
 	}
+
+	ReleaseMutexForStores();
 
 	return Result;
 }
@@ -1258,8 +1240,8 @@ LFCORE_API UINT LFSynchronizeStores(const STOREID& StoreID, LFProgress* pProgres
 		UINT Count;
 		if ((Result=LFGetAllStores(lpcStoreIDs, Count))==LFOk)
 		{
-			if (pProgress)
-				pProgress->MajorCount = Count;
+			// Progress
+			ProgressMajorStart(pProgress, Count);
 
 			for (UINT a=0; a<Count; a++)
 			{
@@ -1274,13 +1256,9 @@ LFCORE_API UINT LFSynchronizeStores(const STOREID& StoreID, LFProgress* pProgres
 				if (Result==LFStoreNotMounted)
 					Result = LFOk;
 
-				if (pProgress)
-				{
-					if (pProgress->UserAbort)
-						break;
-
-					pProgress->MajorCurrent++;
-				}
+				// Progress
+				if (ProgressMajorNext(pProgress))
+					break;
 			}
 
 			free(lpcStoreIDs);
@@ -1316,8 +1294,8 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 	UINT Count;
 	if ((pMaintenanceList->m_LastError=LFGetAllStores(lpcStoreIDs, Count))==LFOk)
 	{
-		if (pProgress)
-			pProgress->MajorCount = Count;
+		// Progress
+		ProgressMajorStart(pProgress, Count);
 
 		for (UINT a=0; a<Count; a++)
 		{
@@ -1328,13 +1306,9 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 			pStore->ScheduledMaintenance(pMaintenanceList, pProgress);
 			delete pStore;
 
-			if (pProgress)
-			{
-				if (pProgress->UserAbort)
-					break;
-
-				pProgress->MajorCurrent++;
-			}
+			// Progress
+			if (ProgressMajorNext(pProgress))
+				break;
 		}
 
 		free(lpcStoreIDs);
@@ -1345,7 +1319,7 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 	return pMaintenanceList;
 }
 
-LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew, BOOL CheckExists)
+LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew)
 {
 	assert(pItemDescriptor);
 	assert(pPath);
@@ -1355,44 +1329,31 @@ LFCORE_API UINT LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPat
 	if (!LFIsFile(pItemDescriptor))
 		return LFIllegalItemType;
 
-	// Linked files are not locally stored
-	if (pItemDescriptor->CoreAttributes.Flags & LFFlagLink)
-	{
-		*pPath = L'\0';
-		return LFOk;
-	}
-
 	// Get file location from backend
 	UINT Result;
 	CStore* pStore;
 	if ((Result=GetStore(pItemDescriptor->StoreID, pStore))==LFOk)
 	{
+		// For optimal performance, get the file location without index query
 		WCHAR Path[2*MAX_PATH];
-		if ((Result=pStore->GetFileLocation(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
+		if ((Result=pStore->GetFilePath(pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
 		{
-			if (CheckExists || (RemoveNew && (pItemDescriptor->CoreAttributes.Flags & LFFlagNew)))
-			{
-				BOOL Exists = FileExists(Path);
+			const BOOL Exists = FileExists(Path);
+			if (!Exists)
+				Result = LFNoFileBody;
 
-				if ((Exists!=((pItemDescriptor->CoreAttributes.Flags & LFFlagMissing)==0)) || (RemoveNew && (pItemDescriptor->CoreAttributes.Flags & LFFlagNew)))
-					if ((Result=pStore->Open(TRUE))==LFOk)
-					{
-						pStore->UpdateMissingFlag(pItemDescriptor, Exists, RemoveNew);
-
-						if (RemoveNew)
-							SendLFNotifyMessage(LFMessages.StatisticsChanged);
-					}
-					else
-					{
-						// Ignore a write protected store - open the file regardless!
-						if (Result==LFDriveWriteProtected)
-							Result = LFOk;
-					}
-
-				if (CheckExists && !Exists)
-					Result = LFNoFileBody;
-
-			}
+			// Do we have to open the index?
+			if ((Exists!=((pItemDescriptor->CoreAttributes.Flags & LFFlagMissing)==0)) || (RemoveNew && (pItemDescriptor->CoreAttributes.Flags & LFFlagNew)))
+				if ((Result=pStore->Open(TRUE))==LFOk)
+				{
+					Result = pStore->GetFileLocation(pItemDescriptor, Path, 2*MAX_PATH, RemoveNew);
+				}
+				else
+				{
+					// Ignore a write protected store - open the file regardless!
+					if (Result==LFDriveWriteProtected)
+						Result = LFOk;
+				}
 
 			if (Result==LFOk)
 				if (wcslen(&Path[4])<=MAX_PATH)
@@ -1619,15 +1580,15 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 		WCHAR Mask[] = L" :\\*.store";
 		Mask[0] = cVolume;
 
-		WIN32_FIND_DATA FindFileData;
-		HANDLE hFind = FindFirstFile(Mask, &FindFileData);
+		WIN32_FIND_DATA FindData;
+		HANDLE hFind = FindFirstFile(Mask, &FindData);
 		if (hFind!=INVALID_HANDLE_VALUE)
 			do
 			{
 				// Construct name of .store file
 				WCHAR Path[MAX_PATH] = L" :\\";
 				Path[0] = cVolume;
-				wcscat_s(Path, MAX_PATH, FindFileData.cFileName);
+				wcscat_s(Path, MAX_PATH, FindData.cFileName);
 
 				LFStoreDescriptor Store;
 				if (LoadStoreSettingsFromFile(Path, &Store))
@@ -1642,7 +1603,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 						pSlot->Flags &= ~LFStoreFlagsVictim;
 
 						// Is the .store file newer than the last mount time?
-						if ((CompareFileTime(&FindFileData.ftLastWriteTime, &pSlot->MountTime)>0) || ((Source!=LFTypeSourceNethood) && ((pSlot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)))
+						if ((CompareFileTime(&FindData.ftLastWriteTime, &pSlot->MountTime)>0) || ((Source!=LFTypeSourceNethood) && ((pSlot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)))
 						{
 							// Yes, but just update attributes
 							wcscpy_s(pSlot->StoreName, 256, Store.StoreName);
@@ -1687,7 +1648,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 						// The store must have a cache slot by now - be ultra-safe!
 						assert(pSlot);
 
-						pSlot->MountTime = FindFileData.ftLastWriteTime;
+						pSlot->MountTime = FindData.ftLastWriteTime;
 						ChangeOccured |= 2;
 
 						// Set data path
@@ -1727,7 +1688,7 @@ UINT MountVolume(CHAR cVolume, BOOL Mount, BOOL OnInitialize)
 					}
 				}
 			}
-			while (FindNextFile(hFind, &FindFileData));
+			while (FindNextFile(hFind, &FindData));
 
 		FindClose(hFind);
 	}

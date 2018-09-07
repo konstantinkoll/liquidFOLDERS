@@ -13,7 +13,7 @@
 #define QUERYSTATE_PASSED_SLAVE            0x08
 #define QUERYSTATE_PASSED_SEARCHTERM       0x10
 
-BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& QueryState);
+BOOL PassesFilter(UINT TableID, LPCVOID pTableData, LFFilter* pFilter, BYTE& QueryState);
 BOOL PassesFilter(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter, BYTE& QueryState);
 
 inline void InitializeQueryState(BYTE& QueryState)

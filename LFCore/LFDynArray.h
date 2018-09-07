@@ -13,6 +13,7 @@ public:
 	BOOL AddItem(const T& Item);
 	BOOL InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE);
 	void DeleteItems(UINT Pos, UINT Count=1);
+
 	const T& operator[](const SIZE_T Index) const;
 	T& operator[](const SIZE_T Index);
 

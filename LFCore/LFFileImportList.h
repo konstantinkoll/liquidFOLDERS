@@ -8,8 +8,8 @@ struct LFFileImportListItem
 	WCHAR Path[MAX_PATH];
 	UINT LastError;
 	BOOL Processed;
-	WIN32_FIND_DATA FindFileData;
-	BOOL FindFileDataPresent;
+	WIN32_FIND_DATA FindData;
+	BOOL FindDataPresent;
 };
 
 class LFFileImportList sealed : public LFDynArray<LFFileImportListItem, 128, 128>
@@ -17,7 +17,7 @@ class LFFileImportList sealed : public LFDynArray<LFFileImportListItem, 128, 128
 public:
 	LFFileImportList();
 
-	BOOL AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindFileData=NULL);
+	BOOL AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindData=NULL);
 	void Resolve(BOOL Recursive, LFProgress* pProgress=NULL);
 	void Sort();
 	LPCWSTR GetFileName(UINT Index);

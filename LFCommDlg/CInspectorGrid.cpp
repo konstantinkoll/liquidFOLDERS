@@ -84,16 +84,6 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pVData)
 }
 
 
-BEGIN_MESSAGE_MAP(CPropertyHolder, CFrontstageScroller)
-	ON_WM_RBUTTONDOWN()
-END_MESSAGE_MAP()
-
-void CPropertyHolder::OnRButtonDown(UINT /*nFlags*/, CPoint /*point*/)
-{
-	SetFocus();
-}
-
-
 // CProperty
 //
 

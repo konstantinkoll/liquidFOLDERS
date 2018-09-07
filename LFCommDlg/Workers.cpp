@@ -119,9 +119,9 @@ void LFRunStoreMaintenance(CWnd* pParentWnd)
 
 void LFDeleteStore(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd)
 {
-	LFStoreDescriptor StoreDescriptor;
-	UINT Result = LFGetStoreSettings(StoreID, StoreDescriptor);
-	if (Result!=LFOk)
+	LFStoreDescriptor Victim;
+	UINT Result;
+	if ((Result=LFGetStoreSettings(StoreID, Victim))!=LFOk)
 	{
 		LFErrorBox(pParentWnd, Result);
 		return;
@@ -129,19 +129,18 @@ void LFDeleteStore(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd)
 
 	// LFMessageBox
 	CString Caption;
-	Caption.Format(IDS_DELETESTORE_CAPTION, StoreDescriptor.StoreName);
+	Caption.Format(IDS_DELETESTORE_CAPTION, Victim.StoreName);
 
 	if (LFMessageBox(pParentWnd, CString((LPCSTR)IDS_DELETESTORE_MSG), Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
 		return;
-
 	// Only show dialog when store is mounted
-	if (LFIsStoreMounted(&StoreDescriptor) && (LFDeleteStoreDlg(StoreID, pParentWnd).DoModal()!=IDOK))
+	if (LFIsStoreMounted(&Victim) && (LFDeleteStoreDlg(Victim.StoreID, pParentWnd).DoModal()!=IDOK))
 		return;
 
 	// Run
 	WorkerStoreDeleteParameters Parameters;
 	ZeroMemory(&Parameters, sizeof(Parameters));
-	Parameters.StoreID = StoreID;
+	Parameters.StoreID = Victim.StoreID;
 
 	LFDoWithProgress(WorkerStoreDelete, &Parameters.Hdr, pParentWnd);
 	LFErrorBox(pParentWnd, Parameters.Hdr.Result);

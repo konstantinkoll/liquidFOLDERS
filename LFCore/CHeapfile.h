@@ -8,7 +8,7 @@
 // CHeapfile
 //
 
-#define MaxBufferSize     262144
+#define MaxBufferSize     524288
 #define HeapSignature     "LFIDX"
 
 // Magic values
@@ -39,7 +39,7 @@ public:
 	~CHeapfile();
 
 	UINT GetVersion() const;
-	UINT GetItemCount() const;
+	UINT_PTR GetItemCount() const;
 	UINT GetElementSize() const;
 	UINT GetRequiredElementSize() const;
 	UINT64 GetRequiredFileSize() const;
@@ -47,14 +47,14 @@ public:
 	UINT GetError(BOOL SingleStore=FALSE);
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);
-	BOOL FindNext(INT& Next, LPVOID& Ptr);
-	BOOL FindKey(const FILEID& FileID, INT& Next, LPVOID& Ptr);
+	BOOL FindNext(INT_PTR& Next, LPVOID& Ptr);
+	BOOL FindKey(const FILEID& FileID, INT_PTR& Next, LPVOID& Ptr);
 	void Add(LFItemDescriptor* pItemDescriptor);
 	void Update(LFItemDescriptor* pItemDescriptor, LPVOID Ptr);
-	void Update(LFItemDescriptor* pItemDescriptor, INT& Next);
+	void Update(LFItemDescriptor* pItemDescriptor, INT_PTR& Next);
 	void Update(LFItemDescriptor* pItemDescriptor);
 	void Invalidate(LPVOID Ptr);
-	void Invalidate(const FILEID& FileID, INT& Next);
+	void Invalidate(const FILEID& FileID, INT_PTR& Next);
 	void Invalidate(LFItemDescriptor* pItemDescriptor);
 	void GetFromItemDescriptor(LPVOID Ptr, LFItemDescriptor* pItemDescriptor);
 	BOOL Compact();
@@ -64,7 +64,7 @@ public:
 protected:
 	void AllocBuffer();
 	void CloseFile();
-	void ElementToBuffer(INT ID);
+	void ElementToBuffer(const INT_PTR ID);
 	BOOL WriteHeader();
 	void Flush();
 
@@ -74,15 +74,16 @@ protected:
 	UINT m_StoreDataSize;
 	UINT m_KeyOffset;
 
-	LPVOID m_pBuffer;
-	UINT m_ItemCount;
+	LPBYTE m_pBuffer;
+	UINT_PTR m_ItemCount;
 	UINT m_BufferCount;
-	INT m_FirstInBuffer;
-	INT m_LastInBuffer;
+	INT_PTR m_FirstInBuffer;
+	INT_PTR m_LastInBuffer;
 	BOOL m_HeaderNeedsWriteback;
 	BOOL m_BufferNeedsWriteback;
 
 private:
+	LPCFILEID GetFileID(INT_PTR ID) const;
 	static void ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const SIZE_T SrcSize);
 	void GetAttribute(LPVOID Ptr, SIZE_T Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
 
@@ -93,6 +94,11 @@ private:
 inline UINT CHeapfile::GetVersion() const
 {
 	return m_Header.Version;
+}
+
+inline UINT_PTR CHeapfile::GetItemCount() const
+{
+	return m_ItemCount;
 }
 
 inline UINT CHeapfile::GetElementSize() const
@@ -110,7 +116,15 @@ inline UINT64 CHeapfile::GetRequiredFileSize() const
 	return GetRequiredElementSize()*m_ItemCount+sizeof(HeapfileHeader);
 }
 
-inline UINT CHeapfile::GetItemCount() const
+inline LPCFILEID CHeapfile::GetFileID(INT_PTR ID) const
 {
-	return m_ItemCount;
+	return (LPCFILEID)(m_pBuffer+m_KeyOffset+(ID-m_FirstInBuffer)*m_Header.ElementSize);
+}
+
+inline void CHeapfile::MakeDirty(BOOL NeedsCompaction)
+{
+	m_BufferNeedsWriteback = TRUE;
+
+	m_Header.NeedsCompaction |= NeedsCompaction;
+	m_HeaderNeedsWriteback |= NeedsCompaction;
 }

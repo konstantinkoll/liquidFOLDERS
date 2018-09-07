@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFFileImportList.h"
+#include "Progress.h"
 #include "Stores.h"
 
 
@@ -48,7 +49,7 @@ LFFileImportList::LFFileImportList()
 	m_LastError = LFOk;
 }
 
-BOOL LFFileImportList::AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindFileData)
+BOOL LFFileImportList::AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindData)
 {
 	assert(pPath);
 
@@ -64,15 +65,15 @@ BOOL LFFileImportList::AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindFileData)
 			*pChar = L'\0';
 	}
 
-	// FindFileData
-	if (pFindFileData)
+	// FindData
+	if (pFindData)
 	{
-		Item.FindFileData = *pFindFileData;
-		Item.FindFileDataPresent = TRUE;
+		Item.FindData = *pFindData;
+		Item.FindDataPresent = TRUE;
 	}
 	else
 	{
-		Item.FindFileDataPresent = FALSE;
+		Item.FindDataPresent = FALSE;
 	}
 
 	Item.LastError = LFOk;
@@ -83,15 +84,8 @@ BOOL LFFileImportList::AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindFileData)
 
 void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 {
-	// Init progress
-	if (pProgress)
-	{
-		wcscpy_s(pProgress->Object, 256, m_Items[0].Path);
-
-		pProgress->MinorCount = 1;
-		pProgress->MinorCurrent = 0;
-		UpdateProgress(pProgress);
-	}
+	// Progress
+	ProgressMinorStart(pProgress, 1, m_Items[0].Path);
 
 	// Resolve
 	UINT Index = 0;
@@ -100,7 +94,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 	{
 		if (!m_Items[Index].Processed)
 		{
-			DWORD Attr = m_Items[Index].FindFileDataPresent ? m_Items[Index].FindFileData.dwFileAttributes : GetFileAttributes(m_Items[Index].Path);
+			DWORD Attr = m_Items[Index].FindDataPresent ? m_Items[Index].FindData.dwFileAttributes : GetFileAttributes(m_Items[Index].Path);
 			if (Attr==INVALID_FILE_ATTRIBUTES)
 			{
 				m_Items[Index].Processed = TRUE;
@@ -113,26 +107,26 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 					wcscpy_s(DirSpec, MAX_PATH, m_Items[Index].Path);
 					wcscat_s(DirSpec, MAX_PATH, L"\\*");
 
-					WIN32_FIND_DATAW FindFileData;
-					HANDLE hFind = FindFirstFile(DirSpec, &FindFileData);
+					WIN32_FIND_DATAW FindData;
+					HANDLE hFind = FindFirstFile(DirSpec, &FindData);
 
 					if (hFind!=INVALID_HANDLE_VALUE)
 						do
 						{
-							if (((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL | FILE_ATTRIBUTE_SYSTEM))==0) &&
-								(wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0) &&
-								((FindFileData.cFileName[0]!='.') || ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)==0)) &&
-								(((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0) || Recursive) &&
-								(wcslen(m_Items[Index].Path)+wcslen(FindFileData.cFileName)<MAX_PATH-1))
+							if (((FindData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL | FILE_ATTRIBUTE_SYSTEM))==0) &&
+								(wcscmp(FindData.cFileName, L".")!=0) && (wcscmp(FindData.cFileName, L"..")!=0) &&
+								((FindData.cFileName[0]!='.') || ((FindData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)==0)) &&
+								(((FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0) || Recursive) &&
+								(wcslen(m_Items[Index].Path)+wcslen(FindData.cFileName)<MAX_PATH-1))
 								{
 									WCHAR Filename[MAX_PATH];
 									wcscpy_s(Filename, MAX_PATH, m_Items[Index].Path);
 									wcscat_s(Filename, MAX_PATH, L"\\");
-									wcscat_s(Filename, MAX_PATH, FindFileData.cFileName);
+									wcscat_s(Filename, MAX_PATH, FindData.cFileName);
 
-									AddPath(Filename, &FindFileData);
+									AddPath(Filename, &FindData);
 
-									// Update
+									// Progress
 									if (pProgress)
 									{
 										pProgress->MinorCount = m_ItemCount;
@@ -140,16 +134,12 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 									}
 								}
 						}
-						while (FindNextFile(hFind, &FindFileData)!=0);
+						while (FindNextFile(hFind, &FindData)!=0);
 
 					FindClose(hFind);
 
-					// Update
-					if (pProgress)
-					{
-						pProgress->MinorCount = m_ItemCount;
-						UpdateProgress(pProgress);
-					}
+					// Progress
+					ProgressMinorNext(pProgress);
 
 					m_Items[Index].Processed = TRUE;
 				}
@@ -252,17 +242,9 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 	m_Items[Index].LastError = Result;
 	m_Items[Index].Processed = TRUE;
 
-	if (pProgress)
-	{
-		wcscpy_s(pProgress->Object, 256, GetFileName(Index));
-		pProgress->MinorCurrent++;
-
-		if (Result>LFCancel)
-			pProgress->ProgressState = LFProgressError;
-
-		if (UpdateProgress(pProgress))
-			m_LastError = LFCancel;
-	}
+	// Progress
+	if (ProgressMinorNext(pProgress, Result, GetFileName(Index)))
+		m_LastError = LFCancel;
 }
 
 UINT LFFileImportList::DoFileImport(BOOL Recursive, const STOREID& StoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress)
@@ -279,15 +261,10 @@ UINT LFFileImportList::DoFileImport(BOOL Recursive, const STOREID& StoreID, LFIt
 			if (!m_Items[a].Processed)
 			{
 				// Progress
-				if (pProgress)
+				if (SetProgressObject(pProgress, GetFileName(a)))
 				{
-					wcscpy_s(pProgress->Object, 256, GetFileName(a));
-
-					if (UpdateProgress(pProgress))
-					{
-						m_LastError = LFCancel;
-						break;
-					}
+					m_LastError = LFCancel;
+					break;
 				}
 
 				// Metadata
@@ -297,29 +274,18 @@ UINT LFFileImportList::DoFileImport(BOOL Recursive, const STOREID& StoreID, LFIt
 	
 				LFFreeItemDescriptor(pItemDescriptor);
 			}
-			else
-			{
-				// Resolved paths
-				if (pProgress)
-					pProgress->MinorCurrent++;
-			}
 
 			// Progress
-			if (pProgress)
-				if (pProgress->UserAbort)
-					break;
+			if (AbortProgress(pProgress))
+				break;
 		}
 
 		delete pStore;
 	}
 
 	// Finish
-	if (pProgress)
-	{
-		pProgress->Object[0] = L'\0';
-		if (UpdateProgress(pProgress))
-			m_LastError = LFCancel;
-	}
+	if (SetProgressObject(pProgress))
+		m_LastError = LFCancel;
 
 	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 

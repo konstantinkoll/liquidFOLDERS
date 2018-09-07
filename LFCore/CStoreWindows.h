@@ -12,6 +12,9 @@ class CStoreWindows : public CStore
 public:
 	CStoreWindows(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexForStore);
 
+	// Non-Index operations
+	virtual UINT GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const;
+
 	// Index operations
 	virtual UINT Synchronize(LFProgress* pProgress=NULL, BOOL OnInitialize=FALSE);
 
@@ -20,11 +23,10 @@ public:
 
 protected:
 	// Callbacks
-	virtual UINT GetFileLocation(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const;
-	virtual UINT RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor);
-	virtual UINT DeleteFile(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData);
+	virtual UINT RenameFile(const REVENANTFILE& File, LFItemDescriptor* pItemDescriptor);
+	virtual UINT DeleteFile(const REVENANTFILE& File);
 	virtual void SetAttributesFromStore(LFItemDescriptor* pItemDescriptor);
-	virtual BOOL SynchronizeFile(LFCoreAttributes& CoreAttributes, LPCVOID pStoreData);
+	virtual BOOL SynchronizeFile(const REVENANTFILE& File);
 
 private:
 	LFFileImportList* m_pFileImportList;

@@ -4,8 +4,8 @@
 
 
 void SanitizeFileName(LPWSTR lpDstName, SIZE_T cCount, LPCWSTR lpSrcName);
-void AppendGUID(LPWSTR lpPath, LFStoreDescriptor* pStoreDescriptor, LPCWSTR pSuffix=L"\\");
-void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR lpPath);
+void AppendGUID(LPWSTR lpPath, const LFStoreDescriptor& StoreDescriptor, LPCWSTR pSuffix=L"\\");
+void GetAutoPath(const LFStoreDescriptor& StoreDescriptor, LPWSTR lpPath);
 BOOL FileExists(LPCWSTR lpPath, WIN32_FIND_DATA* pFindData=NULL);
 BOOL DirectoryExists(LPCWSTR lpPath);
 void CompressFile(HANDLE hFile, CHAR cVolume);

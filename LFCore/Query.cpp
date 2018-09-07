@@ -13,7 +13,7 @@
 #pragma comment(lib, "shlwapi.lib")
 
 
-BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
+BOOL CheckCondition(LPCVOID pValue, LFFilterCondition* pFilterCondition)
 {
 	assert(pFilterCondition);
 	assert(pFilterCondition->Compare>=LFFilterCompareIgnore);
@@ -366,7 +366,7 @@ BOOL CheckCondition(LPVOID pValue, LFFilterCondition* pFilterCondition)
 	return TRUE;
 }
 
-BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& QueryState)
+BOOL PassesFilter(UINT TableID, LPCVOID pTableData, LFFilter* pFilter, BYTE& QueryState)
 {
 	assert(TableID>=0);
 	assert(TableID<IDXTABLECOUNT);
@@ -376,7 +376,7 @@ BOOL PassesFilter(UINT TableID, LPVOID pTableData, LFFilter* pFilter, BYTE& Quer
 	// Primary checks on core attributes only
 	if (TableID==IDXTABLE_MASTER)
 	{
-		const LFCoreAttributes* pCoreAttributes = (LFCoreAttributes*)pTableData;
+		const LPCCOREATTRIBUTES pCoreAttributes = (LPCCOREATTRIBUTES)pTableData;
 
 		// Only show trashed files when filter queries trashcan
 		if ((pCoreAttributes->Flags & LFFlagTrash) && (pFilter->Query.Context!=LFContextTrash))

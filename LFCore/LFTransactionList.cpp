@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFTransactionList.h"
+#include "Progress.h"
 #include "Stores.h"
 
 
@@ -132,21 +133,13 @@ void LFTransactionList::SetError(const ABSOLUTESTOREID& StoreID, UINT Result, LF
 			m_Items[a].LastError = Result;
 			m_Items[a].Processed = TRUE;
 
-			if (pProgress)
-			{
-				pProgress->Object[0] = L'\0';
-				pProgress->MinorCurrent++;
-			}
+			// Progress
+			ProgressMinorSkip(pProgress);
 		}
 
-	if (pProgress)
-	{
-		if (Result>LFCancel)
-			pProgress->ProgressState = LFProgressError;
-
-		if (UpdateProgress(pProgress))
-			m_LastError = LFCancel;
-	}
+	// Progress
+	if (SetProgressError(pProgress, m_LastError))
+		m_LastError = LFCancel;
 }
 
 void LFTransactionList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
@@ -164,17 +157,9 @@ void LFTransactionList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 	m_Items[Index].LastError = Result;
 	m_Items[Index].Processed = TRUE;
 
-	if (pProgress)
-	{
-		wcscpy_s(pProgress->Object, 256, m_Items[Index].pItemDescriptor ? m_Items[Index].pItemDescriptor->CoreAttributes.FileName : L"");
-		pProgress->MinorCurrent++;
-
-		if (Result>LFCancel)
-			pProgress->ProgressState = LFProgressError;
-
-		if (UpdateProgress(pProgress))
-			m_LastError = LFCancel;
-	}
+	// Progress
+	if (ProgressMinorNext(pProgress, Result, m_Items[Index].pItemDescriptor ? m_Items[Index].pItemDescriptor->CoreAttributes.FileName : L""))
+		m_LastError = LFCancel;
 }
 
 HGLOBAL LFTransactionList::CreateDropFiles()
@@ -297,11 +282,7 @@ BOOL LFTransactionList::SetStoreAttributes(const LFVariantData* pVData, LPCWSTR*
 UINT LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgress, UINT_PTR Parameter, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2, const LFVariantData* pVariantData3)
 {
 	// Progress
-	if (pProgress)
-	{
-		pProgress->MinorCount = m_ItemCount;
-		pProgress->MinorCurrent = 0;
-	}
+	ProgressMinorStart(pProgress, m_ItemCount);
 
 	// Process items
 	UINT Result;
@@ -359,9 +340,8 @@ UINT LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 			}
 
 			// Progress
-			if (pProgress)
-				if (pProgress->UserAbort)
-					break;
+			if (AbortProgress(pProgress))
+				break;
 		}
 
 	// Get PIDLs

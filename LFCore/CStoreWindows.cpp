@@ -3,6 +3,7 @@
 #include "CStoreWindows.h"
 #include "FileProperties.h"
 #include "FileSystem.h"
+#include "Progress.h"
 #include "Stores.h"
 
 
@@ -14,6 +15,31 @@ CStoreWindows::CStoreWindows(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexF
 {
 	m_pFileImportList = NULL;
 }
+
+
+// Non-index operations
+//
+
+
+UINT CStoreWindows::GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const
+{
+	assert((LPCVOID)File);
+	assert(pPath);
+	assert(cCount>=2*MAX_PATH);
+
+	if (!LFIsStoreMounted(p_StoreDescriptor))
+		return LFStoreNotMounted;
+
+	wcscpy_s(pPath, cCount, L"\\\\?\\");
+	wcscat_s(pPath, cCount, p_StoreDescriptor->DatPath);
+	wcscat_s(pPath, cCount, (LPCWSTR)(LPCVOID)File);
+
+	return LFOk;
+}
+
+
+// Index operations
+//
 
 UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 {
@@ -46,15 +72,10 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 		if (!(*m_pFileImportList)[a].Processed)
 		{
 			// Progress
-			if (pProgress)
+			if (SetProgressObject(pProgress, m_pFileImportList->GetFileName(a)))
 			{
-				wcscpy_s(pProgress->Object, 256, m_pFileImportList->GetFileName(a));
-
-				if (UpdateProgress(pProgress))
-				{
-					Result = LFCancel;
-					goto Finish;
-				}
+				Result = LFCancel;
+				goto Finish;
 			}
 
 			// Set store data from path
@@ -69,15 +90,10 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 			LFFreeItemDescriptor(pItemDescriptor);
 
 			// Progress
-			if (pProgress)
+			if (ProgressMinorNext(pProgress))
 			{
-				pProgress->MinorCurrent++;
-
-				if (UpdateProgress(pProgress))
-				{
-					Result = LFCancel;
-					goto Finish;
-				}
+				Result = LFCancel;
+				goto Finish;
 			}
 		}
 	}
@@ -94,20 +110,9 @@ Finish:
 	return Result;
 }
 
-UINT CStoreWindows::GetFileLocation(const LFCoreAttributes& /*pCoreAttributes*/, LPCVOID pStoreData, LPWSTR pPath, SIZE_T cCount) const
-{
-	assert(pStoreData);
-	assert(pPath);
 
-	if (!LFIsStoreMounted(p_StoreDescriptor))
-		return LFStoreNotMounted;
-
-	wcscpy_s(pPath, cCount, L"\\\\?\\");
-	wcscat_s(pPath, cCount, p_StoreDescriptor->DatPath);
-	wcscat_s(pPath, cCount, (LPCWSTR)pStoreData);
-
-	return LFOk;
-}
+// Callbacks
+//
 
 UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount)
 {
@@ -149,7 +154,7 @@ UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDe
 
 			swprintf_s(NumberStr, 16, L" (%u)", ++Number);
 
-			if ((Result=GetFileLocation(pItemDescriptor->CoreAttributes, pData, Path, 2*MAX_PATH))!=LFOk)
+			if ((Result=GetFilePath(pItemDescriptor, Path, 2*MAX_PATH))!=LFOk)
 				return Result;
 		}
 		while (_waccess(Path, 0)==0);
@@ -163,12 +168,11 @@ UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDe
 	CreateNewFileID(pItemDescriptor->CoreAttributes.FileID);
 
 	// Location
-	return CStore::GetFileLocation(pItemDescriptor, pPath, cCount);
+	return GetFilePath(pItemDescriptor, pPath, cCount);
 }
 
-UINT CStoreWindows::RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pStoreData, LFItemDescriptor* pItemDescriptor)
+UINT CStoreWindows::RenameFile(const REVENANTFILE& File, LFItemDescriptor* pItemDescriptor)
 {
-	assert(pStoreData);
 	assert(pItemDescriptor);
 
 	// Sanitize Name
@@ -176,7 +180,7 @@ UINT CStoreWindows::RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pS
 	wcscpy_s(tmpStr, 256, pItemDescriptor->CoreAttributes.FileName);
 	SanitizeFileName(pItemDescriptor->CoreAttributes.FileName, 256, tmpStr);
 
-	// Path
+	// Change path in store data of item descriptor
 	LPWSTR pData = (LPWSTR)pItemDescriptor->StoreData;
 
 	LPWSTR pStr = wcsrchr(pData, L'\\');
@@ -193,24 +197,17 @@ UINT CStoreWindows::RenameFile(const LFCoreAttributes& CoreAttributes, LPVOID pS
 	wcscat_s(pStr, cCount, Extension);
 
 	// Commit
-	return CStore::RenameFile(CoreAttributes, pStoreData, pItemDescriptor);
+	return CStore::RenameFile(File, pItemDescriptor);
 }
 
-UINT CStoreWindows::DeleteFile(const LFCoreAttributes& CoreAttributes, LPCVOID pStoreData)
+UINT CStoreWindows::DeleteFile(const REVENANTFILE& File)
 {
-	assert(pStoreData);
-
-	if (!LFIsStoreMounted(p_StoreDescriptor))
-		return LFStoreNotMounted;
-
+	UINT Result;
 	WCHAR Path[2*MAX_PATH];
-	GetFileLocation(CoreAttributes, pStoreData, Path, 2*MAX_PATH);
+	if ((Result=GetFilePath(File, Path, 2*MAX_PATH))!=LFOk)
+		return Result;
 
-	if (::DeleteFile(Path))
-		return LFOk;
-
-	DWORD Error = GetLastError();
-	return (Error==ERROR_NO_MORE_FILES) || (Error==ERROR_FILE_NOT_FOUND) || (Error==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
+	return ::DeleteFile(Path) ? LFOk : CStore::DeleteFile();
 }
 
 void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
@@ -237,13 +234,14 @@ void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 	CStore::SetAttributesFromStore(pItemDescriptor);
 }
 
-BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes& CoreAttributes, LPCVOID pStoreData)
+BOOL CStoreWindows::SynchronizeFile(const REVENANTFILE& File)
 {
 	assert(m_pFileImportList);
 
+	UINT Result;
 	WCHAR Path[2*MAX_PATH];
-	if (GetFileLocation(CoreAttributes, pStoreData, Path, 2*MAX_PATH)!=LFOk)
-		return TRUE;
+	if ((Result=GetFilePath(File, Path, 2*MAX_PATH))!=LFOk)
+		return Result!=LFNoFileBody;
 
 	// Find in import list using binary search
 	INT First = 0;
@@ -260,9 +258,9 @@ BOOL CStoreWindows::SynchronizeFile(LFCoreAttributes& CoreAttributes, LPCVOID pS
 			if (!pItem->Processed)
 			{
 				// Update metadata
-				assert(pItem->FindFileDataPresent);
+				assert(pItem->FindDataPresent);
 
-				SetAttributesFromFindFileData(CoreAttributes, pItem->FindFileData);
+				SetAttributesFromFindData(*File, pItem->FindData);
 
 				pItem->Processed = TRUE;
 			}

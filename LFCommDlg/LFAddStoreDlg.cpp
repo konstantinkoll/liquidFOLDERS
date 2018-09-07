@@ -114,8 +114,8 @@ void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path, LPCWSTR StoreName)
 
 	WorkerCreateStoreWindowsParameters Parameters;
 	ZeroMemory(&Parameters, sizeof(Parameters));
+	wcscpy_s(Parameters.StoreName, 256, StoreName);
 	wcscpy_s(Parameters.Path, MAX_PATH, Path);
-	wcscpy_s(Parameters.StoreName, MAX_PATH, StoreName);
 
 	LFDoWithProgress(WorkerCreateStoreWindows, &Parameters.Hdr, this);
 

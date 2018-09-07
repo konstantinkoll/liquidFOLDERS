@@ -18,22 +18,63 @@ CStoreInternal::CStoreInternal(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMute
 {
 }
 
+void CStoreInternal::GetInternalFilePath(const LFCoreAttributes& CoreAttributes, LPWSTR pPath, SIZE_T cCount) const
+{
+	assert(pPath);
+	assert(cCount>=2*MAX_PATH);
+
+	WCHAR Buffer[LFKeySize+1];
+	Buffer[0] = CoreAttributes.FileID[0];
+	Buffer[1] = L'\\';
+	MultiByteToWideChar(CP_ACP, 0, &CoreAttributes.FileID[1], -1, &Buffer[2], LFKeySize-1);
+
+	wcscpy_s(pPath, cCount, L"\\\\?\\");
+	wcscat_s(pPath, cCount, p_StoreDescriptor->DatPath);
+	wcscat_s(pPath, cCount, Buffer);
+}
+
 
 // Non-Index operations
 //
 
+UINT CStoreInternal::GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const
+{
+	assert(pPath);
+	assert(cCount>=2*MAX_PATH);
+
+	if (!LFIsStoreMounted(p_StoreDescriptor))
+		return LFStoreNotMounted;
+
+	WCHAR Buffer[MAX_PATH];
+	SanitizeFileName(Buffer, MAX_PATH, ((LPCCOREATTRIBUTES)File)->FileName);
+
+	GetInternalFilePath(*File, pPath, cCount);
+	wcscat_s(pPath, cCount, L"\\");
+	wcsncat_s(pPath, cCount, Buffer, 127);
+
+	if (((LPCCOREATTRIBUTES)File)->FileFormat[0])
+	{
+		WCHAR Buffer[LFExtSize];
+		MultiByteToWideChar(CP_ACP, 0, ((LPCCOREATTRIBUTES)File)->FileFormat, -1, Buffer, LFExtSize);
+
+		wcscat_s(pPath, cCount, L".");
+		wcscat_s(pPath, cCount, Buffer);
+	}
+
+	return LFOk;
+}
+
 UINT CStoreInternal::PrepareDelete()
 {
 	// Data path writeable?
-	if (p_StoreDescriptor->DatPath[0]!=L'\0')
+	if (LFIsStoreMounted(p_StoreDescriptor))
 	{
 		WCHAR Path[MAX_PATH];
 		wcscpy_s(Path, MAX_PATH, p_StoreDescriptor->DatPath);
 		wcscat_s(Path, MAX_PATH, L"*");
 
-		if (FileExists(Path))
-			if (!VolumeWriteable((CHAR)p_StoreDescriptor->DatPath[0]))
-				return LFDriveWriteProtected;
+		if (FileExists(Path) && !VolumeWriteable((CHAR)p_StoreDescriptor->DatPath[0]))
+			return LFDriveWriteProtected;
 	}
 
 	return CStore::PrepareDelete();
@@ -48,7 +89,7 @@ UINT CStoreInternal::CreateDirectories()
 	UINT Result = CStore::CreateDirectories();
 
 	// Hide data directory when it exists, but not for stores with an internal index and auto-location enabled!
-	if ((Result==LFOk) && (p_StoreDescriptor->DatPath[0]!=L'\0') && (((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal) || ((p_StoreDescriptor->Flags & LFStoreFlagsAutoLocation)==0)))
+	if ((Result==LFOk) && LFIsStoreMounted(p_StoreDescriptor) && (((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal) || ((p_StoreDescriptor->Flags & LFStoreFlagsAutoLocation)==0)))
 		SetFileAttributes(p_StoreDescriptor->DatPath, FILE_ATTRIBUTE_HIDDEN);
 
 	return Result;
@@ -107,5 +148,19 @@ UINT CStoreInternal::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemD
 	if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 		return LFIllegalPhysicalPath;
 
-	return GetFileLocation(pItemDescriptor, pPath, cCount);
+	return GetFilePath(pItemDescriptor, pPath, cCount);
+}
+
+UINT CStoreInternal::DeleteFile(const REVENANTFILE& File)
+{
+	WCHAR Path[2*MAX_PATH];
+	UINT Result;
+	if ((Result=GetFilePath(File, Path, 2*MAX_PATH))!=LFOk)
+		return Result;
+
+	WCHAR* pChar = wcsrchr(Path, L'\\');
+	if (pChar)
+		*(pChar+1) = L'\0';
+
+	return DeleteDirectory(Path) ? LFOk : CStore::DeleteFile();
 }

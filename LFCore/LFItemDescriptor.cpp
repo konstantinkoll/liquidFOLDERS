@@ -178,7 +178,7 @@ UINT GetFolderIcon(const LFFileSummary& FileSummary, const LFVariantData& VData,
 // LFItemDescriptor
 //
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes, LPCVOID pStoreData, SIZE_T StoreDataSize)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LPCCOREATTRIBUTES pCoreAttributes, LPCVOID pStoreData, SIZE_T StoreDataSize)
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
 

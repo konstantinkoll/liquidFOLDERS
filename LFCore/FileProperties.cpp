@@ -125,7 +125,7 @@ void SetFileContext(LFCoreAttributes& CoreAttributes, BOOL OnImport)
 // File system handling
 //
 
-void SetAttributesFromFindFileData(LFCoreAttributes& CoreAttributes, WIN32_FIND_DATA& FindData)
+void SetAttributesFromFindData(LFCoreAttributes& CoreAttributes, const WIN32_FIND_DATA& FindData)
 {
 	// Set attributes
 	CoreAttributes.FileSize = (((INT64)FindData.nFileSizeHigh) << 32) | FindData.nFileSizeLow;
@@ -149,15 +149,15 @@ void SetAttributesFromFindFileData(LFCoreAttributes& CoreAttributes, WIN32_FIND_
 		CoreAttributes.CreationTime = CoreAttributes.FileTime;
 }
 
-void SetAttributesFromFindFileData(LFCoreAttributes& CoreAttributes, LPCWSTR pPath)
+void SetAttributesFromFindData(LFCoreAttributes& CoreAttributes, LPCWSTR pPath)
 {
 	assert(pPath);
 
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind = FindFirstFile(pPath, &FindFileData);
+	WIN32_FIND_DATA FindData;
+	HANDLE hFind = FindFirstFile(pPath, &FindData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
-		SetAttributesFromFindFileData(CoreAttributes, FindFileData);
+		SetAttributesFromFindData(CoreAttributes, FindData);
 
 	FindClose(hFind);
 }

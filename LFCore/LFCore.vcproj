@@ -498,6 +498,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Progress.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Query.cpp"
 				>
 			</File>
@@ -673,6 +677,10 @@
 			</File>
 			<File
 				RelativePath=".\Mutex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Progress.h"
 				>
 			</File>
 			<File

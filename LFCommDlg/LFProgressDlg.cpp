@@ -29,9 +29,6 @@ void LFProgressDlg::DoDataExchange(CDataExchange* pDX)
 
 void LFProgressDlg::UpdateProgress()
 {
-	CSingleLock ProgressLock(&m_Mutex);
-	ProgressLock.Lock();
-
 	// Caption
 	GetDlgItem(IDC_CAPTION)->SetWindowText(m_Progress.Object);
 
@@ -77,14 +74,12 @@ void LFProgressDlg::UpdateProgress()
 
 	// Counter
 	CString tmpStr(_T(""));
-	if ((nCurrent<=nOf) && (!m_Abort))
+	if ((nCurrent<=nOf) && !m_Abort)
 		tmpStr.Format(nOf==1 ? m_XofY_Singular : m_XofY_Plural, nCurrent, nOf);
 
 	GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(tmpStr);
 
 	m_Update = FALSE;
-
-	ProgressLock.Unlock();
 }
 
 BOOL LFProgressDlg::InitDialog()
@@ -97,7 +92,7 @@ BOOL LFProgressDlg::InitDialog()
 		CreateThread(NULL, 0, p_ThreadProc, p_Parameters, 0, NULL);
 	}
 
-	SetTimer(1, 25, NULL);
+	SetTimer(1, 50, NULL);
 
 	return TRUE;
 }
@@ -159,7 +154,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 	LFProgress* pProgress = (LFProgress*)wParam;
 
 	if (!pProgress)
-		return NULL;
+		return FALSE;
 
 	// Handle abort
 	if (m_Abort)

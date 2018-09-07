@@ -10,89 +10,58 @@
 #include "TableAttributes.h"
 
 
+extern LFMessageIDs LFMessages;
+
+
 // Macros
 //
 
-#define COMPACT(Index) \
-	if (!RequiredSpaceAvailable(m_IdxPath, m_pTable[Index]->GetRequiredFileSize())) \
-		return LFNotEnoughFreeDiscSpace; \
-	if (!m_pTable[Index]->Compact()) \
-		return LFIndexRepairError;
+#define ADD_STATS(ITEM) \
+	if (m_IsMainIndex) p_Store->AddFileToStatistics(ITEM);
 
-#define COUNT_FILE(ContextOps, TaskOps) \
-	if (PtrM->Flags & LFFlagTrash) \
-	{ \
-		ContextOps(LFContextTrash); \
-	} \
-	else \
-		if (PtrM->Flags & LFFlagArchive) \
-		{ \
-			ContextOps(LFContextArchive); \
-		} \
-		else \
-		{ \
-			if (!LFIsFilterFile(*PtrM)) \
-				ContextOps(LFContextAllFiles); \
-			const BYTE UserContext = LFGetUserContextID(*PtrM); \
-			if (UserContext) \
-				ContextOps(UserContext); \
-			if (PtrM->Rating) \
-				ContextOps(LFContextFavorites); \
-			if (PtrM->Flags & LFFlagTask) \
-			{ \
-				ContextOps(LFContextTasks); \
-				TaskOps(PtrM->Priority); \
-			} \
-			if (PtrM->Flags & LFFlagNew) \
-				ContextOps(LFContextNew); \
-		}
-
-#define ADD_STATS() \
-	if (m_IsMainIndex) AddFileToStatistics(PtrM);
-
-#define REMOVE_STATS() \
-	if (m_IsMainIndex) RemoveFileFromStatistics(PtrM);
+#define REMOVE_STATS(ITEM) \
+	if (m_IsMainIndex) p_Store->RemoveFileFromStatistics(ITEM);
 
 #define BUILD_ITEMDESCRIPTOR() \
-	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize); \
+	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster), m_StoreDataSize); \
 	pItemDescriptor->Type = m_StoreTypeFlags; \
 	pItemDescriptor->StoreID = p_StoreDescriptor->StoreID;
 
 #define APPEND_ITEMDESCRIPTOR() \
-	LPVOID PtrS; \
-	if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS)) \
-		AttachSlave(pItemDescriptor, PtrM->SlaveID, PtrS);
+	LPVOID PtrSlave = NULL; \
+	if (m_pTable[PtrMaster->SlaveID]->FindKey(PtrMaster->FileID, IDs[PtrMaster->SlaveID], PtrSlave)) \
+		AttachSlave(pItemDescriptor, PtrMaster->SlaveID, PtrSlave);
 
 #define LOAD_MASTER(AbortOps, AbortRetval) \
 	if (!LoadTable(IDXTABLE_MASTER)) { AbortOps; return AbortRetval; }
 
 #define LOAD_SLAVE() \
-	if (PtrM->SlaveID && (PtrM->SlaveID<IDXTABLECOUNT)) \
-		if (LoadTable(PtrM->SlaveID)) {
+	if (PtrMaster->SlaveID && (PtrMaster->SlaveID<IDXTABLECOUNT)) \
+		if (LoadTable(PtrMaster->SlaveID)) {
 
-#define DISCARD_SLAVE() } else { Result = m_pTable[PtrM->SlaveID]->GetError(); }
+#define DISCARD_SLAVE() } else { Result = m_pTable[PtrMaster->SlaveID]->GetError(); }
 
 #define START_FINDMASTER(AbortOps, AbortRetval, Key) \
 	LOAD_MASTER(AbortOps, AbortRetval); \
-	INT ID = 0; \
-	LFCoreAttributes* PtrM; \
-	if (m_pTable[IDXTABLE_MASTER]->FindKey(Key, ID, (LPVOID&)PtrM)) {
+	INT_PTR ID = 0; \
+	LPCOREATTRIBUTES PtrMaster = NULL; \
+	if (m_pTable[IDXTABLE_MASTER]->FindKey(Key, ID, (LPVOID&)PtrMaster)) {
 
 #define END_FINDMASTER() }
 
 #define START_ITERATEMASTER() \
 	LOAD_MASTER(SetError(pTransactionList, m_pTable[IDXTABLE_MASTER]->GetError()),); \
-	INT ID = 0; \
-	LFCoreAttributes* PtrM; \
-	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (LPVOID&)PtrM)) {
+	INT_PTR ID = 0; \
+	LPCOREATTRIBUTES PtrMaster = NULL; \
+	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (LPVOID&)PtrMaster)) {
 
 #define END_ITERATEMASTER() }
 
 #define START_ITERATEALLEX(AbortOps, AbortRetval) \
 	LOAD_MASTER(AbortOps, AbortRetval); \
-	INT IDs[IDXTABLECOUNT]; ZeroMemory(IDs, sizeof(IDs)); \
-	LFCoreAttributes* PtrM; \
-	while (m_pTable[IDXTABLE_MASTER]->FindNext(IDs[IDXTABLE_MASTER], (LPVOID&)PtrM)) {
+	INT_PTR IDs[IDXTABLECOUNT]; ZeroMemory(IDs, sizeof(IDs)); \
+	LPCOREATTRIBUTES PtrMaster = NULL; \
+	while (m_pTable[IDXTABLE_MASTER]->FindNext(IDs[IDXTABLE_MASTER], (LPVOID&)PtrMaster)) {
 
 #define START_ITERATEALL(pTransactionList) \
 	START_ITERATEALLEX(SetError(pTransactionList, m_pTable[IDXTABLE_MASTER]->GetError()),)
@@ -104,7 +73,7 @@
 	for (; ItemID<pTransactionList->m_ItemCount; ItemID++) \
 		if (((*pTransactionList)[ItemID].LastError==LFOk) && \
 			((*pTransactionList)[ItemID].StoreID==p_StoreDescriptor->StoreID) && \
-			((*pTransactionList)[ItemID].FileID==PtrM->FileID)) \
+			((*pTransactionList)[ItemID].FileID==PtrMaster->FileID)) \
 			goto Exists; \
 	continue; \
 	Exists:
@@ -116,14 +85,16 @@
 CIndex::CIndex(CStore* pStore, BOOL IsMainIndex, BOOL WriteAccess, UINT StoreDataSize)
 {
 	assert(pStore);
+	assert(StoreDataSize<=LFMaxStoreDataSize);
 
 	p_Store = pStore;
 	m_StoreTypeFlags = StoreFlagsToType(p_StoreDescriptor=pStore->p_StoreDescriptor, LFTypeFile);
-	m_WriteAccess = WriteAccess;
-	m_AdditionalDataSize = StoreDataSize;
+	m_StoreDataSize = StoreDataSize;
 
 	ZeroMemory(m_pTable, sizeof(m_pTable));
 	wcscpy_s(m_IdxPath, MAX_PATH, ((m_IsMainIndex=IsMainIndex)==TRUE) ? p_StoreDescriptor->IdxPathMain : p_StoreDescriptor->IdxPathAux);
+
+	m_WriteAccess = ((m_VolumeWriteable=VolumeWriteable((CHAR)m_IdxPath[0]))==TRUE) && WriteAccess;
 }
 
 CIndex::~CIndex()
@@ -138,7 +109,7 @@ BOOL CIndex::LoadTable(UINT TableID, BOOL Initialize, UINT* pResult)
 	assert(TableID<IDXTABLECOUNT);
 
 	if (!m_pTable[TableID])
-		m_pTable[TableID] = new CHeapfile(m_IdxPath, (BYTE)TableID, m_AdditionalDataSize, Initialize);
+		m_pTable[TableID] = new CHeapfile(m_IdxPath, (BYTE)TableID, m_StoreDataSize, Initialize);
 
 	const UINT Result = m_pTable[TableID]->m_OpenStatus;
 	if (pResult)
@@ -159,15 +130,24 @@ BOOL CIndex::Initialize()
 	return Result;
 }
 
+UINT CIndex::CompactTable(UINT TableID) const
+{
+	assert(TableID<IDXTABLECOUNT);
+
+	if (!RequiredSpaceAvailable(m_IdxPath, m_pTable[TableID]->GetRequiredFileSize()))
+		return LFNotEnoughFreeDiscSpace;
+
+	return m_pTable[TableID]->Compact() ? LFOk : LFIndexRepairError;
+}
+
 UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL& Repaired, LFProgress* pProgress)
 {
 	// Already performed non-scheduled maintenance?
 	if (!Scheduled && (p_StoreDescriptor->Flags & LFStoreFlagsMaintained))
 		return LFOk;
 
-	// Is the index volume writeable?
-	const BOOL Writeable = VolumeWriteable((CHAR)m_IdxPath[0]);
-	if (Writeable)
+	// Update store flags
+	if (m_VolumeWriteable)
 	{
 		p_StoreDescriptor->Flags |= LFStoreFlagsManageable | LFStoreFlagsWriteable;
 	}
@@ -210,7 +190,10 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL& Repaired, LFProgress
 			return LFIndexRepairError;
 
 		case HeapMaintenanceRequired:
-			COMPACT(a);
+			UINT Result;
+			if ((Result=CompactTable(a))!=LFOk)
+				return Result;
+
 			Repaired = UpdateContexts = TRUE;
 
 			break;
@@ -224,9 +207,10 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL& Repaired, LFProgress
 			return LFSharingViolation1;
 
 		case HeapCannotCreate:
-			if (Writeable)
+			if (m_WriteAccess)
 			{
 				p_StoreDescriptor->Flags |= LFStoreFlagsError;
+
 				return (a==IDXTABLE_MASTER) ? LFIndexRepairError : LFIndexCreateError;
 			}
 
@@ -243,138 +227,145 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL& Repaired, LFProgress
 		}
 
 		// Progress
-		if (pProgress)
-		{
-			pProgress->MinorCurrent++;
-			if (UpdateProgress(pProgress))
-				return LFCancel;
-		}
+		if (ProgressMinorNext(pProgress))
+			return LFCancel;
 	}
 
 	// Max. record size for one file
 	RecordSize += m_pTable[IDXTABLE_MASTER]->GetRequiredElementSize();
 
 	// Enough space for slave reindexing if neccessary?
-	if (SlaveReindex)
-		if (!RequiredSpaceAvailable(m_IdxPath, RecordSize*m_pTable[IDXTABLE_MASTER]->GetItemCount()))
-			return LFNotEnoughFreeDiscSpace;
+	if (SlaveReindex && !RequiredSpaceAvailable(m_IdxPath, RecordSize*m_pTable[IDXTABLE_MASTER]->GetItemCount()))
+		return LFNotEnoughFreeDiscSpace;
 
 	// Reset statistics
-	ResetStatistics();
+	p_Store->ResetStatistics();
 
 	// Traverse index
-	INT ID = 0;
-	LFCoreAttributes* PtrM;
-	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (LPVOID&)PtrM))
+	INT_PTR ID = 0;
+	LPCOREATTRIBUTES PtrMaster = NULL;
+	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (LPVOID&)PtrMaster))
 	{
-		// Operations below modify index
-		if (!Writeable)
+		// Operations below modify index, so the index has to be writeable
+		if (m_WriteAccess)
 		{
-			AddFileToStatistics(PtrM);
-			continue;
-		}
-
-		WCHAR Path[2*MAX_PATH];
-		if (Scheduled || SlaveReindex)
-			p_Store->GetFileLocation(*PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), Path, 2*MAX_PATH);
-
-		// File body present?
-		if (Scheduled)
-			if (!(PtrM->Flags & LFFlagLink) && LFIsStoreMounted(p_StoreDescriptor))
+			// Index version changed? Then update contexts!
+			if (UpdateContexts)
 			{
-				WIN32_FIND_DATA FindFileData;
-				const BOOL Exists = FileExists(Path, &FindFileData);
-
-				// Update metadata
-				if (Exists)
-				{
-					SetAttributesFromFindFileData(*PtrM, FindFileData);
-
-					m_pTable[IDXTABLE_MASTER]->MakeDirty();
-				}
-
-				// Update flags
-				const BYTE Flags = Exists ? 0 : LFFlagMissing;
-				if ((Flags & LFFlagMissing)!=(PtrM->Flags & LFFlagMissing))
-				{
-					PtrM->Flags = (PtrM->Flags & ~LFFlagMissing) | Flags;
-					Repaired = TRUE;
-
-					m_pTable[IDXTABLE_MASTER]->MakeDirty();
-				}
+				SetFileContext(*PtrMaster, FALSE);
+				m_pTable[IDXTABLE_MASTER]->MakeDirty();
 			}
 
-		// Index version changed? Then update contexts!
-		if (UpdateContexts)
-		{
-			SetFileContext(*PtrM, FALSE);
-			m_pTable[IDXTABLE_MASTER]->MakeDirty();
+			// Get file location for reindexing of slave, and for verifying location on scheduled maintenance
+			if (Scheduled || SlaveReindex)
+			{
+				const BYTE Flags = PtrMaster->Flags;
+
+				WCHAR Path[2*MAX_PATH];
+				WIN32_FIND_DATA FindData;
+				if (GetFileLocation(PtrMaster, Path, 2*MAX_PATH, NULL, FALSE, &FindData)==LFOk)
+				{
+					// Flags changed?
+					Repaired |= (Flags!=PtrMaster->Flags);
+
+					if (Scheduled)
+					{
+						// Update metadata
+						SetAttributesFromFindData(*PtrMaster, FindData);
+						m_pTable[IDXTABLE_MASTER]->MakeDirty();
+					}
+
+					// Slave index missing?
+					if (SlaveReindex && PtrMaster->SlaveID && (PtrMaster->SlaveID<IDXTABLECOUNT) && (TableLoadResult[PtrMaster->SlaveID]==HeapCreated))
+					{
+						BUILD_ITEMDESCRIPTOR();
+
+						// Retrieve metadata
+						SetAttributesFromShell(pItemDescriptor, &Path[4], FALSE);	// No fully qualified path allowed, skip prefix
+						p_Store->SetAttributesFromStore(pItemDescriptor);
+
+						// Add file to newly created slave
+						m_pTable[PtrMaster->SlaveID]->Add(pItemDescriptor);
+	
+						LFFreeItemDescriptor(pItemDescriptor);
+					}
+				}
+			}
 		}
 
-		AddFileToStatistics(PtrM);
-
-		// Slave index missing?
-		if (SlaveReindex)
-			if (PtrM->SlaveID && (PtrM->SlaveID<IDXTABLECOUNT))
-				if (TableLoadResult[PtrM->SlaveID]==HeapCreated)
-				{
-					BUILD_ITEMDESCRIPTOR();
-
-					// Retrieve metadata
-					SetAttributesFromShell(pItemDescriptor, &Path[4], FALSE);	// No fully qualified path allowed, skip prefix
-					p_Store->SetAttributesFromStore(pItemDescriptor);
-
-					// Add file to newly created slave
-					m_pTable[PtrM->SlaveID]->Add(pItemDescriptor);
-
-					LFFreeItemDescriptor(pItemDescriptor);
-				}
+		// Add file to statistics after all maintenance checks are completed
+		p_Store->AddFileToStatistics(PtrMaster);
 	}
 
 	// Progress
-	if (pProgress)
-	{
-		pProgress->MinorCurrent++;
-		if (UpdateProgress(pProgress))
-			return LFCancel;
-	}
+	if (ProgressMinorNext(pProgress))
+		return LFCancel;
 
 	// Compaction
 	if (Scheduled)
 		for (UINT a=0; a<IDXTABLECOUNT; a++)
 		{
-			COMPACT(a);
+			UINT Result;
+			if ((Result=CompactTable(a))!=LFOk)
+				return Result;
 
 			Repaired |= (TableLoadResult[a]!=m_pTable[a]->m_OpenStatus);
 
 			// Progress
-			if (pProgress)
-			{
-				pProgress->MinorCurrent++;
-				if (UpdateProgress(pProgress))
-					return LFCancel;
-			}
+			if (ProgressMinorNext(pProgress))
+				return LFCancel;
 		}
 
 	return LFOk;
 }
 
-void CIndex::AddFileToStatistics(LFCoreAttributes* PtrM) const
+UINT CIndex::GetFileLocation(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor, BOOL RemoveNew, WIN32_FIND_DATA* pFindData)
 {
-	assert(PtrM);
+	assert(pPath);
+	assert(cCount>=2*MAX_PATH);
 
-	#define ADDFILE_CONTEXT(Context) { p_StoreDescriptor->Statistics.FileCount[Context]++; p_StoreDescriptor->Statistics.FileSize[Context] += PtrM->FileSize; }
-	#define ADDFILE_TASK(Priority) { p_StoreDescriptor->Statistics.TaskCount[Priority]++; }
-	COUNT_FILE(ADDFILE_CONTEXT, ADDFILE_TASK);
-}
+	UINT Result;
+	if ((Result=p_Store->GetFilePath(File, pPath, cCount))!=LFOk)
+		return Result;
 
-void CIndex::RemoveFileFromStatistics(LFCoreAttributes* PtrM) const
-{
-	assert(PtrM);
+	const BOOL Exists = FileExists(pPath, pFindData);
 
-	#define SUBFILE_CONTEXT(Context) { p_StoreDescriptor->Statistics.FileCount[Context]--; p_StoreDescriptor->Statistics.FileSize[Context] -= PtrM->FileSize; }
-	#define SUBFILE_TASK(Priority) { p_StoreDescriptor->Statistics.TaskCount[Priority]--; }
-	COUNT_FILE(SUBFILE_CONTEXT, SUBFILE_TASK);
+	// Update flags
+	RemoveNew &= m_WriteAccess && ((File & LFFlagNew)!=0);
+
+	if (m_WriteAccess)
+	{
+		if ((Exists!=((File & LFFlagMissing)==0)) || RemoveNew)
+		{
+			if (Exists)
+			{
+				File -= LFFlagMissing;
+			}
+			else
+			{
+				File += LFFlagMissing;
+			}
+
+			if (RemoveNew)
+				File -= LFFlagNew;
+
+			m_pTable[IDXTABLE_MASTER]->MakeDirty();
+		}
+	}
+
+	// Update item descriptor
+	if (pItemDescriptor)
+	{
+		pItemDescriptor->CoreAttributes.Flags = File;
+
+		if (m_StoreDataSize)
+			memcpy(pItemDescriptor->StoreData, File, m_StoreDataSize);
+
+		if (RemoveNew && m_IsMainIndex)
+			SendLFNotifyMessage(LFMessages.StatisticsChanged);
+	}
+
+	return Exists ? LFOk : LFNoFileBody;
 }
 
 
@@ -404,8 +395,7 @@ UINT CIndex::Add(LFItemDescriptor* pItemDescriptor)
 
 	m_pTable[IDXTABLE_MASTER]->Add(pItemDescriptor);
 
-	if (m_IsMainIndex)
-		AddFileToStatistics(&pItemDescriptor->CoreAttributes);
+	ADD_STATS(pItemDescriptor);
 
 	return LFOk;
 }
@@ -426,24 +416,23 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 	if (UpdateStatistics)
 	{
 		// Delay resetting statistics in case of unaccessible index
-		ResetStatistics(DoReset);
-
-		AddFileToStatistics(PtrM);
+		p_Store->ResetStatistics(DoReset);
+		p_Store->AddFileToStatistics(PtrMaster);
 	}
 
 	ResetQueryState(QueryState);
-	if (!PassesFilter(IDXTABLE_MASTER, PtrM, pFilter, QueryState))
+	if (!PassesFilter(IDXTABLE_MASTER, PtrMaster, pFilter, QueryState))
 		continue;
 
 	UINT Result = LFOk;
-	LPVOID PtrS = NULL;
+	LPVOID PtrSlave = NULL;
 
 	if (!pFilter->Query.IgnoreSlaves)
 	{
 		LOAD_SLAVE();
 
-		if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-			if (!PassesFilter(PtrM->SlaveID, PtrS, pFilter, QueryState))
+		if (m_pTable[PtrMaster->SlaveID]->FindKey(PtrMaster->FileID, IDs[PtrMaster->SlaveID], PtrSlave))
+			if (!PassesFilter(PtrMaster->SlaveID, PtrSlave, pFilter, QueryState))
 				continue;
 
 		DISCARD_SLAVE();
@@ -456,8 +445,8 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 	if (Result==LFOk)
 	{
 		BUILD_ITEMDESCRIPTOR();
-		if (PtrS)
-			AttachSlave(pItemDescriptor, PtrM->SlaveID, PtrS);
+		if (PtrSlave)
+			AttachSlave(pItemDescriptor, PtrMaster->SlaveID, PtrSlave);
 
 		if (PassesFilter(pItemDescriptor, pFilter, QueryState) && pSearchResult->AddItem(pItemDescriptor))
 			continue;
@@ -469,7 +458,7 @@ void CIndex::Query(LFFilter* pFilter, LFSearchResult* pSearchResult, BOOL Update
 
 	// Statistics reset still pending (happens if there weren't any files to iterate over in an empty store)?
 	if (UpdateStatistics)
-		ResetStatistics(DoReset);
+		p_Store->ResetStatistics(DoReset);
 }
 
 UINT CIndex::UpdateStatistics()
@@ -479,14 +468,13 @@ UINT CIndex::UpdateStatistics()
 	START_ITERATEALLEX(, m_pTable[IDXTABLE_MASTER]->GetError());
 
 	// Delay resetting statistics in case of unaccessible index
-	ResetStatistics(DoReset);
-
-	AddFileToStatistics(PtrM);
+	p_Store->ResetStatistics(DoReset);
+	p_Store->AddFileToStatistics(PtrMaster);
 
 	END_ITERATEALL();
 
 	// Statistics reset still pending (happens if there weren't any files to iterate over in an empty store)?
-	ResetStatistics(DoReset);
+	p_Store->ResetStatistics(DoReset);
 
 	return LFOk;
 }
@@ -509,7 +497,7 @@ void CIndex::AddToSearchResult(LFTransactionList* pTransactionList, LFSearchResu
 	if (Result==LFOk)
 		LFAddItem(pSearchResult, pItemDescriptor);
 
-	pTransactionList->SetError(ItemID, Result);
+	SetError(pTransactionList, ItemID, Result);
 
 	END_ITERATEALL();
 
@@ -531,7 +519,7 @@ void CIndex::ResolveLocations(LFTransactionList* pTransactionList)
 	START_ITERATEMASTER();
 	IN_TRANSACTIONLIST(pTransactionList);
 
-	pTransactionList->SetError(ItemID, p_Store->GetFileLocation(*PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), (*pTransactionList)[ItemID].Path, 2*MAX_PATH));
+	SetError(pTransactionList, ItemID, GetFileLocation(PtrMaster, (*pTransactionList)[ItemID].Path, 2*MAX_PATH, (*pTransactionList)[ItemID].pItemDescriptor));
 
 	END_ITERATEMASTER();
 
@@ -580,15 +568,11 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, const STOREID& StoreID,
 	IN_TRANSACTIONLIST(pTransactionList);
 
 	// Progress
-	if (pProgress)
+	if (SetProgressObject(pProgress, PtrMaster->FileName))
 	{
-		wcscpy_s(pProgress->Object, 256, PtrM->FileName);
-		if (UpdateProgress(pProgress))
-		{
-			pTransactionList->m_LastError = LFCancel;
+		pTransactionList->m_LastError = LFCancel;
 
-			return;
-		}
+		return;
 	}
 
 	BUILD_ITEMDESCRIPTOR();
@@ -599,13 +583,11 @@ void CIndex::SendTo(LFTransactionList* pTransactionList, const STOREID& StoreID,
 	APPEND_ITEMDESCRIPTOR();
 	DISCARD_SLAVE();
 
-	//		if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
-
 	if (Result==LFOk)
 	{
 		WCHAR Path[2*MAX_PATH];
-		if (p_Store->GetFileLocation(*PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), Path, 2*MAX_PATH)==LFOk)
-			pTransactionList->SetError(ItemID, pStore->ImportFile(Path, pItemDescriptor, FALSE, FALSE), pProgress);
+		if (GetFileLocation(PtrMaster, Path, 2*MAX_PATH, (*pTransactionList)[ItemID].pItemDescriptor)==LFOk)
+			SetError(pTransactionList, ItemID, pStore->ImportFile(Path, pItemDescriptor, FALSE, FALSE), pProgress);
 	}
 
 	LFFreeItemDescriptor(pItemDescriptor);
@@ -649,7 +631,7 @@ void CIndex::UpdateUserContext(LFTransactionList* pTransactionList, BYTE UserCon
 	UINT Result;
 
 	// Move allowed?
-	if (!ContextMoveAllowed(PtrM->SystemContextID, UserContextID))
+	if (!ContextMoveAllowed(PtrMaster->SystemContextID, UserContextID))
 	{
 		Result = LFIllegalItemType;
 	}
@@ -657,20 +639,20 @@ void CIndex::UpdateUserContext(LFTransactionList* pTransactionList, BYTE UserCon
 	{
 		Result = LFOk;
 
-		REMOVE_STATS();
+		REMOVE_STATS(PtrMaster);
 
 		// Remove "New" flag
-		PtrM->Flags &= ~LFFlagNew;
+		PtrMaster->Flags &= ~LFFlagNew;
 
 		// Set new user context (reset if same as system context)
-		PtrM->UserContextID = (PtrM->SystemContextID==UserContextID) ? 0 : UserContextID;
+		PtrMaster->UserContextID = (PtrMaster->SystemContextID==UserContextID) ? 0 : UserContextID;
 
 		m_pTable[IDXTABLE_MASTER]->MakeDirty();
 	
-		ADD_STATS();
+		ADD_STATS(PtrMaster);
 	}
 
-	pTransactionList->SetError(ItemID, Result);
+	SetError(pTransactionList, ItemID, Result);
 
 	END_ITERATEMASTER();
 
@@ -678,7 +660,7 @@ void CIndex::UpdateUserContext(LFTransactionList* pTransactionList, BYTE UserCon
 	SetError(pTransactionList, LFIllegalID);
 }
 
-BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, BOOL RemoveNew)
+UINT CIndex::GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew)
 {
 	assert(pItemDescriptor);
 
@@ -686,28 +668,18 @@ BOOL CIndex::UpdateMissingFlag(LFItemDescriptor* pItemDescriptor, BOOL Exists, B
 	if (!m_WriteAccess)
 		return LFIndexAccessError;
 
-	START_FINDMASTER(, Exists, pItemDescriptor->CoreAttributes.FileID);
+	UINT Result = LFIllegalID;
 
-	if (Exists || (PtrM->Flags & LFFlagLink))
-	{
-		PtrM->Flags &= ~LFFlagMissing;
-	}
-	else
-	{
-		PtrM->Flags |= LFFlagMissing;
-	}
+	START_FINDMASTER(, LFIllegalID, pItemDescriptor->CoreAttributes.FileID);
 
-	if (RemoveNew)
-		PtrM->Flags &= ~LFFlagNew;
-
-	REMOVE_STATS();
-	pItemDescriptor->CoreAttributes.Flags = PtrM->Flags;
+	REMOVE_STATS(PtrMaster);
+	Result = GetFileLocation(PtrMaster, pPath, cCount, pItemDescriptor, RemoveNew);
 	m_pTable[IDXTABLE_MASTER]->MakeDirty();
-	ADD_STATS();
+	ADD_STATS(PtrMaster);
 
 	END_FINDMASTER();
 
-	return !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing);
+	return Result;
 }
 
 void CIndex::UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags)
@@ -726,46 +698,46 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, const FILETIME
 	START_ITERATEMASTER();
 	IN_TRANSACTIONLIST(pTransactionList);
 
-	if ((PtrM->Flags & (LFFlagTrash | LFFlagTask | LFFlagArchive | LFFlagNew))!=Flags)
+	if ((PtrMaster->Flags & (LFFlagTrash | LFFlagTask | LFFlagArchive | LFFlagNew))!=Flags)
 	{
-		REMOVE_STATS();
+		REMOVE_STATS(PtrMaster);
 
 		// Remove "New" flag
-		PtrM->Flags &= ~LFFlagNew;
+		PtrMaster->Flags &= ~LFFlagNew;
 
 		// "Archive" flag
 		if (Flags & LFFlagArchive)
-			if (!(PtrM->Flags & LFFlagArchive))
+			if (!(PtrMaster->Flags & LFFlagArchive))
 			{
-				PtrM->Flags |= LFFlagArchive;
-				PtrM->ArchiveTime = TransactionTime;
+				PtrMaster->Flags |= LFFlagArchive;
+				PtrMaster->ArchiveTime = TransactionTime;
 			}
 
 		// "Trash" flag
 		if (Flags & LFFlagTrash)
-			if (!(PtrM->Flags & LFFlagTrash))
+			if (!(PtrMaster->Flags & LFFlagTrash))
 			{
-				PtrM->Flags |= LFFlagTrash;
-				PtrM->DeleteTime = TransactionTime;
+				PtrMaster->Flags |= LFFlagTrash;
+				PtrMaster->DeleteTime = TransactionTime;
 			}
 
 		// Recover
 		if (!Flags)
-			if (PtrM->Flags & LFFlagTrash)
+			if (PtrMaster->Flags & LFFlagTrash)
 			{
-				PtrM->Flags &= ~LFFlagTrash;
-				ZeroMemory(&PtrM->DeleteTime, sizeof(FILETIME));
+				PtrMaster->Flags &= ~LFFlagTrash;
+				ZeroMemory(&PtrMaster->DeleteTime, sizeof(FILETIME));
 			}
 			else
-				if (PtrM->Flags & LFFlagArchive)
+				if (PtrMaster->Flags & LFFlagArchive)
 				{
-					PtrM->Flags &= ~LFFlagArchive;
-					ZeroMemory(&PtrM->ArchiveTime, sizeof(FILETIME));
+					PtrMaster->Flags &= ~LFFlagArchive;
+					ZeroMemory(&PtrMaster->ArchiveTime, sizeof(FILETIME));
 				}
 				else
-					if (PtrM->Flags & LFFlagTask)
+					if (PtrMaster->Flags & LFFlagTask)
 					{
-						PtrM->Flags &= ~LFFlagTask;
+						PtrMaster->Flags &= ~LFFlagTask;
 
 						// Check if data structure is large enough for properties that were extended in liquidFOLDERS 3.1.0
 						if (m_pTable[IDXTABLE_MASTER]->GetVersion()>=4)
@@ -773,17 +745,17 @@ void CIndex::UpdateItemState(LFTransactionList* pTransactionList, const FILETIME
 							assert(m_pTable[IDXTABLE_MASTER]->GetElementSize()>=offsetof(LFCoreAttributes, DueTime)+sizeof(FILETIME));
 							assert(m_pTable[IDXTABLE_MASTER]->GetElementSize()>=offsetof(LFCoreAttributes, DoneTime)+sizeof(FILETIME));
 
-							PtrM->DueTime.dwHighDateTime = PtrM->DueTime.dwLowDateTime = 0;
-							PtrM->DoneTime = TransactionTime;
+							PtrMaster->DueTime.dwHighDateTime = PtrMaster->DueTime.dwLowDateTime = 0;
+							PtrMaster->DoneTime = TransactionTime;
 						}
 					}
 
 		m_pTable[IDXTABLE_MASTER]->MakeDirty();
 
-		ADD_STATS();
+		ADD_STATS(PtrMaster);
 	}
 
-	pTransactionList->SetError(ItemID, LFOk);
+	SetError(pTransactionList, ItemID, LFOk, NULL);
 
 	END_ITERATEMASTER();
 
@@ -841,7 +813,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, const LFVariantData* pV
 	UINT Result;
 
 	// Write protected?
-	if (PtrM->Flags & (LFFlagArchive | LFFlagTrash))
+	if (PtrMaster->Flags & (LFFlagArchive | LFFlagTrash))
 	{
 		Result = LFFileWriteProtected;
 	}
@@ -849,7 +821,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, const LFVariantData* pV
 	{
 		Result = LFOk;
 
-		REMOVE_STATS();
+		REMOVE_STATS(PtrMaster);
 
 		LFItemDescriptor* pItemDescriptor = (*pTransactionList)[ItemID].pItemDescriptor;
 		assert(pItemDescriptor);
@@ -875,51 +847,43 @@ void CIndex::Update(LFTransactionList* pTransactionList, const LFVariantData* pV
 			LFSetAttributeVariantData(pItemDescriptor, *pVariantData3);
 
 		// Rename physical file?
-		if (DoRename)
-			if (!(PtrM->Flags & LFFlagLink) && m_IsMainIndex)
+		if (DoRename && m_IsMainIndex)
+			switch (Result=p_Store->RenameFile(REVENANTFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)), pItemDescriptor))
 			{
-				Result = p_Store->RenameFile(*PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), pItemDescriptor);
+			case LFOk:
+				pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
+				break;
 
-				switch (Result)
-				{
-				case LFOk:
-					pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
-					break;
+			case LFNoFileBody:
+				pItemDescriptor->CoreAttributes.Flags |= LFFlagMissing;
 
-				case LFNoFileBody:
-					pItemDescriptor->CoreAttributes.Flags |= LFFlagMissing;
+			default:
+				// Revert renaming operation
+				wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, PtrMaster->FileName);
 
-				default:
-					wcscpy_s(pItemDescriptor->CoreAttributes.FileName, 256, PtrM->FileName);
-
-					if (m_AdditionalDataSize)
-#ifdef _DEBUG
-						memcpy_s(pItemDescriptor->StoreData, LFMaxStoreDataSize, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize);
-#else
-						memcpy(pItemDescriptor->StoreData, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM), m_AdditionalDataSize);
-#endif
-				}
+				if (m_StoreDataSize)
+					memcpy(pItemDescriptor->StoreData, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster), m_StoreDataSize);
 			}
 
 		// Master
-		m_pTable[IDXTABLE_MASTER]->Update(pItemDescriptor, PtrM);
+		m_pTable[IDXTABLE_MASTER]->Update(pItemDescriptor, PtrMaster);
 
-		ADD_STATS();
+		ADD_STATS(PtrMaster);
 
 		// Slave
 		if (IncludeSlaves)
 		{
 			LOAD_SLAVE();
 
-			LPVOID PtrS;
-			if (m_pTable[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-				m_pTable[PtrM->SlaveID]->Update(pItemDescriptor, PtrS);
+			LPVOID PtrSlave = NULL;
+			if (m_pTable[PtrMaster->SlaveID]->FindKey(PtrMaster->FileID, IDs[PtrMaster->SlaveID], PtrSlave))
+				m_pTable[PtrMaster->SlaveID]->Update(pItemDescriptor, PtrSlave);
 
 			DISCARD_SLAVE();
 		}
 	}
 
-	pTransactionList->SetError(ItemID, Result);
+	SetError(pTransactionList, ItemID, Result);
 
 	END_ITERATEALL();
 
@@ -938,38 +902,29 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 	START_ITERATEALLEX(, m_pTable[IDXTABLE_MASTER]->GetError());
 
 	// Progress
-	if (pProgress)
-	{
-		wcscpy_s(pProgress->Object, 256, PtrM->FileName);
-		if (UpdateProgress(pProgress))
-			return LFCancel;
-	}
+	if (SetProgressObject(pProgress, PtrMaster->FileName))
+		return LFCancel;
 
-	if (p_Store->SynchronizeFile(*PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM)))
+	if (p_Store->SynchronizeFile(REVENANTFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster))))
 	{
 		m_pTable[IDXTABLE_MASTER]->MakeDirty();
 
 		// Progress
-		if (pProgress)
-		{
-			pProgress->MinorCurrent++;
-			if (UpdateProgress(pProgress))
-				return LFCancel;
-		}
+		if (ProgressMinorNext(pProgress))
+			return LFCancel;
 	}
 	else
 	{
 		LOAD_SLAVE();
-		m_pTable[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
+		m_pTable[PtrMaster->SlaveID]->Invalidate(PtrMaster->FileID, IDs[PtrMaster->SlaveID]);
 		DISCARD_SLAVE();
 
-		REMOVE_STATS();
-		m_pTable[IDXTABLE_MASTER]->Invalidate(PtrM);
+		REMOVE_STATS(PtrMaster);
+		m_pTable[IDXTABLE_MASTER]->Invalidate(PtrMaster);
 
 		// Progress
-		if (pProgress)
-			if (pProgress->UserAbort)
-				return LFCancel;
+		if (AbortProgress(pProgress))
+			return LFCancel;
 	}
 
 	END_ITERATEALL();
@@ -993,38 +948,32 @@ void CIndex::Delete(LFTransactionList* pTransactionList, LFProgress* pProgress)
 	IN_TRANSACTIONLIST(pTransactionList);
 
 	// Progress
-	if (pProgress)
+	if (SetProgressObject(pProgress, PtrMaster->FileName))
 	{
-		wcscpy_s(pProgress->Object, 256, PtrM->FileName);
-		if (UpdateProgress(pProgress))
-		{
-			pTransactionList->m_LastError = LFCancel;
+		pTransactionList->m_LastError = LFCancel;
 
-			return;
-		}
+		return;
 	}
 
-	UINT Result = (PtrM->Flags & LFFlagLink) ? LFOk : p_Store->DeleteFile(*PtrM, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrM));
-
+	UINT Result = p_Store->DeleteFile(REVENANTFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)));
 	if (Result==LFOk)
 	{
 		LOAD_SLAVE();
-		m_pTable[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
+		m_pTable[PtrMaster->SlaveID]->Invalidate(PtrMaster->FileID, IDs[PtrMaster->SlaveID]);
 		DISCARD_SLAVE();
 	}
 
 	if (Result==LFOk)
 	{
-		REMOVE_STATS();
-		m_pTable[IDXTABLE_MASTER]->Invalidate(PtrM);
+		REMOVE_STATS(PtrMaster);
+		m_pTable[IDXTABLE_MASTER]->Invalidate(PtrMaster);
 	}
 
-	pTransactionList->SetError(ItemID, Result, pProgress);
+	SetError(pTransactionList, ItemID, Result, pProgress);
 
 	// Progress
-	if (pProgress)
-		if (pProgress->UserAbort)
-			return;
+	if (AbortProgress(pProgress))
+		return;
 
 	END_ITERATEALL();
 

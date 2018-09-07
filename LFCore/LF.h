@@ -83,13 +83,11 @@ protected:
 		CHAR Key[LFKeySize];
 		UINT64 Key64[LFKeySize/8];
 	};
-} ID;
+} ID, *LPID;
 
-typedef ID* LPID;
 typedef const ID* LPCID;
 
-typedef struct _STOREID : ID {} STOREID;
-typedef STOREID* LPSTOREID;
+typedef struct _STOREID : ID {} STOREID, *LPSTOREID;
 typedef const STOREID* LPCSTOREID;
 
 inline void DEFAULTSTOREID(STOREID& ID) { ID[0] = '\0'; }
@@ -99,9 +97,8 @@ typedef struct _ABSOLUTESTOREID : STOREID
 {
 	friend BOOL operator==(const _ABSOLUTESTOREID& a, const _ABSOLUTESTOREID& b) { return (a.Key64[0]==b.Key64[0]) && (a.Key64[1]==b.Key64[1]); }
 	friend BOOL operator!=(const _ABSOLUTESTOREID& a, const _ABSOLUTESTOREID& b) { return (a.Key64[0]!=b.Key64[0]) || (a.Key64[1]!=b.Key64[1]); }
-} ABSOLUTESTOREID;
+} ABSOLUTESTOREID, *LPABSOLUTESTOREID;
 
-typedef ABSOLUTESTOREID* LPABSOLUTESTOREID;
 typedef const ABSOLUTESTOREID* LPCABSOLUTESTOREID;
 
 inline ABSOLUTESTOREID MAKEABSOLUTESTOREID(const STOREID& ID) { assert(ID[0]!='\0'); return *((LPABSOLUTESTOREID)&ID); }
@@ -112,9 +109,8 @@ typedef struct _FILEID : ID
 {
 	friend BOOL operator==(const _FILEID& a, const _FILEID& b) { return (a.Key64[0]==b.Key64[0]) && (a.Key64[1]==b.Key64[1]); }
 	friend BOOL operator!=(const _FILEID& a, const _FILEID& b) { return (a.Key64[0]!=b.Key64[0]) || (a.Key64[1]!=b.Key64[1]); }
-} FILEID;
+} FILEID, *LPFILEID;
 
-typedef FILEID* LPFILEID;
 typedef const FILEID* LPCFILEID;
 
 
@@ -767,6 +763,9 @@ struct LFCoreAttributes
 	FILETIME DoneTime;
 };
 
+typedef LFCoreAttributes* LPCOREATTRIBUTES;
+typedef const LPCOREATTRIBUTES LPCCOREATTRIBUTES;
+
 #pragma warning(pop)
 
 
@@ -812,7 +811,7 @@ struct LFCoreAttributes
 #define LFTypeManageable              0x00400000
 #define LFTypeWriteable               0x00800000
 
-// Typpe: visual flags
+// Type: visual flags
 #define LFTypeSelected                0x01000000	// Volatile
 #define LFTypeDefault                 0x02000000
 #define LFTypeGhosted                 0x04000000
@@ -831,7 +830,6 @@ struct LFCoreAttributes
 #define LFFlagTask                    0x04
 #define LFFlagMissing                 0x08
 #define LFFlagArchive                 0x10
-#define LFFlagLink                    0x20
 
 
 // Item data structure

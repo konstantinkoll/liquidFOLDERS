@@ -22,40 +22,34 @@ void SanitizeFileName(LPWSTR lpDstName, SIZE_T cCount, LPCWSTR lpSrcName)
 	}
 }
 
-void AppendGUID(LPWSTR lpPath, LFStoreDescriptor* pStoreDescriptor, LPCWSTR pSuffix)
+void AppendGUID(LPWSTR lpPath, const LFStoreDescriptor& StoreDescriptor, LPCWSTR pSuffix)
 {
 	assert(lpPath);
-	assert(pStoreDescriptor);
 	assert(pSuffix);
 
 	WCHAR szGUID[MAX_PATH];
-	if (StringFromGUID2(pStoreDescriptor->UniqueID, szGUID, MAX_PATH))
+	if (StringFromGUID2(StoreDescriptor.UniqueID, szGUID, MAX_PATH))
 	{
 		wcscat_s(lpPath, MAX_PATH, szGUID);
 		wcscat_s(lpPath, MAX_PATH, pSuffix);
 	}
 }
 
-void GetAutoPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR lpPath)
+void GetAutoPath(const LFStoreDescriptor& StoreDescriptor, LPWSTR lpPath)
 {
-	assert(pStoreDescriptor);
 	assert(lpPath);
 
 	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, L"Stores", lpPath);
 	wcscat_s(lpPath, MAX_PATH, L"\\");
-	AppendGUID(lpPath, pStoreDescriptor);
+	AppendGUID(lpPath, StoreDescriptor);
 }
 
 BOOL FileExists(LPCWSTR lpPath, WIN32_FIND_DATA* pFindData)
 {
 	assert(lpPath);
 
-	WIN32_FIND_DATA FindFileData;
-
-	if (!pFindData)
-		pFindData = &FindFileData;
-
-	HANDLE hFind = FindFirstFile(lpPath, pFindData);
+	WIN32_FIND_DATA FindData;
+	HANDLE hFind = FindFirstFile(lpPath, pFindData ? pFindData : &FindData);
 
 	BOOL Result = (hFind!=INVALID_HANDLE_VALUE);
 	if (Result)
@@ -68,9 +62,9 @@ BOOL DirectoryExists(LPCWSTR lpPath)
 {
 	assert(lpPath);
 
-	WIN32_FIND_DATA FindFileData;
-	if (FileExists(lpPath, &FindFileData))
-		if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+	WIN32_FIND_DATA FindData;
+	if (FileExists(lpPath, &FindData))
+		if (FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			return TRUE;
 
 	return FALSE;
@@ -144,22 +138,22 @@ UINT CopyDirectory(LPCWSTR lpPathSrc, LPCWSTR lpPathDst)
 	wcscpy_s(Path, MAX_PATH, lpPathSrc);
 	wcscat_s(Path, MAX_PATH, L"*");
 
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind = FindFirstFile(Path, &FindFileData);
+	WIN32_FIND_DATA FindData;
+	HANDLE hFind = FindFirstFile(Path, &FindData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
 		do
 		{
-			if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
+			if ((FindData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 			{
 				WCHAR PathSource[MAX_PATH];
 				wcscpy_s(PathSource, MAX_PATH, lpPathSrc);
-				wcscat_s(PathSource, MAX_PATH, FindFileData.cFileName);
+				wcscat_s(PathSource, MAX_PATH, FindData.cFileName);
 
 				WCHAR PathDestination[MAX_PATH];
 				wcscpy_s(PathDestination, MAX_PATH, lpPathDst);
-				wcscat_s(PathDestination, MAX_PATH, FindFileData.cFileName);
+				wcscat_s(PathDestination, MAX_PATH, FindData.cFileName);
 
 				if (!CopyFile(PathSource, PathDestination, FALSE))
 				{
@@ -168,7 +162,7 @@ UINT CopyDirectory(LPCWSTR lpPathSrc, LPCWSTR lpPathDst)
 				}
 			}
 		}
-		while (FindNextFile(hFind, &FindFileData)!=0);
+		while (FindNextFile(hFind, &FindData)!=0);
 
 		FindClose(hFind);
 	}
@@ -185,22 +179,22 @@ BOOL DeleteDirectory(LPCWSTR lpPath)
 	wcscpy_s(Path, MAX_PATH, lpPath);
 	wcscat_s(Path, MAX_PATH, L"*");
 
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind = FindFirstFile(Path, &FindFileData);
+	WIN32_FIND_DATA FindData;
+	HANDLE hFind = FindFirstFile(Path, &FindData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
 		do
 		{
-			if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
+			if ((FindData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 			{
 				WCHAR FileName[MAX_PATH];
 				wcscpy_s(FileName, MAX_PATH, lpPath);
-				wcscat_s(FileName, MAX_PATH, FindFileData.cFileName);
+				wcscat_s(FileName, MAX_PATH, FindData.cFileName);
 
-				if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				if (FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 				{
-					if ((wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0))
+					if ((wcscmp(FindData.cFileName, L".")!=0) && (wcscmp(FindData.cFileName, L"..")!=0))
 					{
 						wcscat_s(FileName, MAX_PATH, L"\\");
 						if (!DeleteDirectory(FileName))
@@ -209,7 +203,7 @@ BOOL DeleteDirectory(LPCWSTR lpPath)
 				}
 				else
 				{
-					if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+					if (FindData.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
 						SetFileAttributes(FileName, FILE_ATTRIBUTE_NORMAL);
 
 					if (!DeleteFile(FileName))
@@ -217,7 +211,7 @@ BOOL DeleteDirectory(LPCWSTR lpPath)
 				}
 			}
 		}
-		while (FindNextFile(hFind, &FindFileData)!=0);
+		while (FindNextFile(hFind, &FindData)!=0);
 
 		FindClose(hFind);
 	}

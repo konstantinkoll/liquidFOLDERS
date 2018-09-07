@@ -34,9 +34,6 @@ protected:
 
 	CProperty* CreateProperty(LFVariantData* pVData);
 
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	DECLARE_MESSAGE_MAP()
-
 	static CString m_MultipleValues;
 	STOREID m_StoreID;
 };

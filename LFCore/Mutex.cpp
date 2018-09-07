@@ -4,7 +4,6 @@
 
 
 HMUTEX hMutexStores;
-extern LFMessageIDs LFMessages;
 
 
 // Mutex
@@ -99,18 +98,4 @@ TryAgain:
 
 	// All other errors
 	return FileNoAccess;
-}
-
-
-// Calling UI threads
-//
-
-DWORD_PTR UpdateProgress(LFProgress* pProgress)
-{
-	DWORD_PTR Result;
-
-	if (SendMessageTimeout(pProgress->hWnd, LFMessages.UpdateProgress, (WPARAM)pProgress, NULL, SMTO_ABORTIFHUNG, 5000, &Result))
-		return Result;
-
-	return TRUE;
 }

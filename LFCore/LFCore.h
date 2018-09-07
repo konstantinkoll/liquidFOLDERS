@@ -169,7 +169,7 @@ LFCORE_API UINT __stdcall LFSynchronizeStores(const STOREID& StoreID, LFProgress
 LFCORE_API LFMaintenanceList* __stdcall LFScheduledMaintenance(LFProgress* pProgress=NULL);
 
 // Gibt den physischen Pfad einer Datei zurück
-LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew=TRUE, BOOL CheckExists=TRUE);
+LFCORE_API UINT __stdcall LFGetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew=TRUE);
 
 // Importiert Dateien
 LFCORE_API UINT __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL Recursive, const STOREID& StoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);
@@ -259,7 +259,7 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
 //
 
 // Neuen LFItemDescriptor erzeugen und ggf. die Kern-Attribute belegen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(const LFCoreAttributes* pCoreAttributes=NULL, LPCVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(const LPCCOREATTRIBUTES pCoreAttributes=NULL, LPCVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
 
 // Neuen LFItemDescriptor für Store erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(const LFStoreDescriptor& StoreDescriptor);
@@ -363,25 +363,25 @@ inline BYTE LFGetUserContextID(const LFItemDescriptor* pItemDescriptor)
 }
 
 // Gibt TRUE zurück, wenn die Datei eine Audio-Datei ist
-#define LFIsAudioFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextAudio)
+#define LFIsAudioFile(ITEM) (LFGetSystemContextID(ITEM)==LFContextAudio)
 
 // Gibt TRUE zurück, wenn die Datei ein Dokument ist
-#define LFIsDocumentFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextDocuments)
+#define LFIsDocumentFile(ITEM) (LFGetSystemContextID(ITEM)==LFContextDocuments)
 
 // Gibt TRUE zurück, wenn die Datei ein Filter ist
-#define LFIsFilterFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextFilters)
+#define LFIsFilterFile(ITEM) (LFGetSystemContextID(ITEM)==LFContextFilters)
 
 // Gibt TRUE zurück, wenn die Datei eine Mediendatei ist
-#define LFIsMediaFile(pItemDescriptor) ((LFGetSystemContextID(pItemDescriptor)>=LFContextAudio) && (LFGetSystemContextID(pItemDescriptor)<=LFContextVideos))
+#define LFIsMediaFile(ITEM) ((LFGetSystemContextID(ITEM)>=LFContextAudio) && (LFGetSystemContextID(ITEM)<=LFContextVideos))
 
 // Gibt TRUE zurück, wenn der Ordner durch ein einziges Vorschaubild seines Inhalts repräsentiert werden kann
-#define LFIsRepresentativeFolder(pItemDescriptor) ((LFGetUserContextID(pItemDescriptor)==LFContextMusic) || (LFGetUserContextID(pItemDescriptor)==LFContextPodcasts))
+#define LFIsRepresentativeFolder(ITEM) ((LFGetUserContextID(ITEM)==LFContextMusic) || (LFGetUserContextID(ITEM)==LFContextPodcasts))
 
 // Gibt TRUE zurück, wenn die Datei eine zeitbasierte Mediendatei ist
-#define LFIsTimebasedMediaFile(pItemDescriptor) ((LFGetSystemContextID(pItemDescriptor)==LFContextAudio) || (LFGetSystemContextID(pItemDescriptor)==LFContextVideos))
+#define LFIsTimebasedMediaFile(ITEM) ((LFGetSystemContextID(ITEM)==LFContextAudio) || (LFGetSystemContextID(ITEM)==LFContextVideos))
 
 // Gibt TRUE zurück, wenn die Datei ein Video ist
-#define LFIsVideoFile(pItemDescriptor) (LFGetSystemContextID(pItemDescriptor)==LFContextVideos)
+#define LFIsVideoFile(ITEM) (LFGetSystemContextID(pItemDescriptor)==LFContextVideos)
 
 
 // Neuen LFFilter erzeugen

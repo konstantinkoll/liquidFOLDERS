@@ -66,7 +66,7 @@ CHeapfile::CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initia
 			goto Create;
 
 		// Process header
-		m_ItemCount = (UINT)((Size.QuadPart-sizeof(HeapfileHeader))/m_Header.ElementSize);
+		m_ItemCount = (UINT_PTR)((Size.QuadPart-sizeof(HeapfileHeader))/m_Header.ElementSize);
 		m_OpenStatus = (m_Header.Version<CURIDXVERSION) ? HeapMaintenanceRequired : HeapOk;
 
 		// Adjustments for other tuple sizes
@@ -84,6 +84,7 @@ CHeapfile::CHeapfile(LPCWSTR Path, UINT TableID, UINT StoreDataSize, BOOL Initia
 Create:
 		// (Re)create file
 		ZeroMemory(&m_Header, sizeof(HeapfileHeader));
+
 		strcpy_s(m_Header.ID, sizeof(m_Header.ID), HeapSignature);
 		m_Header.ElementSize = m_RequiredElementSize;
 		m_Header.Version = CURIDXVERSION;
@@ -154,7 +155,7 @@ void CHeapfile::AllocBuffer()
 		m_BufferCount = 2;
 
 	// Allocate buffer
-	m_pBuffer = malloc(m_BufferCount*m_Header.ElementSize);
+	m_pBuffer = (LPBYTE)malloc(m_BufferCount*m_Header.ElementSize);
 
 	// Set invalid
 	m_FirstInBuffer = m_LastInBuffer = -1;
@@ -172,12 +173,10 @@ void CHeapfile::CloseFile()
 	}
 }
 
-void CHeapfile::ElementToBuffer(INT ID)
+void CHeapfile::ElementToBuffer(INT_PTR ID)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
-
-	if (((ID>=m_FirstInBuffer) && (ID<=m_LastInBuffer)) || (ID>=(INT)m_ItemCount))
-		return;
+	assert(ID<(INT_PTR)m_ItemCount);
 
 	Flush();
 
@@ -231,7 +230,7 @@ void CHeapfile::Flush()
 		if (SetFilePointerEx(hFile, Pos, NULL, FILE_BEGIN))
 		{
 			DWORD Written;
-			WriteFile(hFile, m_pBuffer, (m_LastInBuffer-m_FirstInBuffer+1)*m_Header.ElementSize, &Written, NULL);
+			WriteFile(hFile, m_pBuffer, (DWORD)((m_LastInBuffer-m_FirstInBuffer+1)*m_Header.ElementSize), &Written, NULL);
 
 			m_BufferNeedsWriteback = FALSE;
 		}
@@ -241,56 +240,36 @@ void CHeapfile::Flush()
 
 // Search and modification
 
-void CHeapfile::MakeDirty(BOOL NeedsCompaction)
-{
-	m_BufferNeedsWriteback = TRUE;
+#define SCANHEAPFILE(Next, Ptr, Condition) \
+	assert(m_OpenStatus<=HeapMaintenanceRequired); \
+	LPCFILEID lpcFileID = Ptr ? (LPCFILEID)((LPBYTE)Ptr+m_KeyOffset) : GetFileID(Next-1); \
+	do \
+	{ \
+		if (Next>=(INT_PTR)m_ItemCount) \
+			return FALSE; \
+		if ((Next<m_FirstInBuffer) || (Next>m_LastInBuffer)) \
+		{ \
+			ElementToBuffer(Next); \
+			lpcFileID = GetFileID(Next); \
+		} \
+		else \
+		{ \
+			lpcFileID = (LPCFILEID)((LPBYTE)lpcFileID+m_Header.ElementSize); \
+		} \
+		Next++; \
+	} \
+	while (Condition); \
+	Ptr = (LPBYTE)lpcFileID-m_KeyOffset; \
+	return TRUE;
 
-	m_Header.NeedsCompaction |= NeedsCompaction;
-	m_HeaderNeedsWriteback |= NeedsCompaction;
+BOOL CHeapfile::FindNext(INT_PTR& Next, LPVOID& Ptr)
+{
+	SCANHEAPFILE(Next, Ptr, *lpcFileID[0]=='\0');
 }
 
-BOOL CHeapfile::FindNext(INT& Next, LPVOID& Ptr)
+BOOL CHeapfile::FindKey(const FILEID& FileID, INT_PTR& Next, LPVOID& Ptr)
 {
-	assert(m_OpenStatus<=HeapMaintenanceRequired);
-
-	LPCFILEID lpcFileID;
-
-	do
-	{
-		if (Next>=(INT)m_ItemCount)
-			return FALSE;
-
-		ElementToBuffer(Next);
-
-		lpcFileID = (LPCFILEID)((LPBYTE)m_pBuffer+((Next++)-m_FirstInBuffer)*m_Header.ElementSize+m_KeyOffset);
-	}
-	while (*lpcFileID[0]=='\0');
-
-	Ptr = (LPBYTE)lpcFileID-m_KeyOffset;
-
-	return TRUE;
-}
-
-BOOL CHeapfile::FindKey(const FILEID& FileID, INT& Next, LPVOID& Ptr)
-{
-	assert(m_OpenStatus<=HeapMaintenanceRequired);
-
-	LPCFILEID lpcFileID;
-
-	do
-	{
-		if (Next>=(INT)m_ItemCount)
-			return FALSE;
-
-		ElementToBuffer(Next);
-
-		lpcFileID = (LPCFILEID)((LPBYTE)m_pBuffer+((Next++)-m_FirstInBuffer)*m_Header.ElementSize+m_KeyOffset);
-	}
-	while (FileID!=*lpcFileID);
-
-	Ptr = (LPBYTE)lpcFileID-m_KeyOffset;
-
-	return TRUE;
+	SCANHEAPFILE(Next, Ptr, *lpcFileID!=FileID);
 }
 
 void CHeapfile::Add(LFItemDescriptor* pItemDescriptor)
@@ -300,21 +279,21 @@ void CHeapfile::Add(LFItemDescriptor* pItemDescriptor)
 
 	if (m_FirstInBuffer==-1)
 	{
-		// Puffer unbenutzt
+		// Buffer unused
 		m_FirstInBuffer = m_ItemCount;
 	}
 	else
-		if ((m_LastInBuffer!=(INT)m_ItemCount-1) || (m_LastInBuffer-m_FirstInBuffer+1>=(INT)m_BufferCount))
+		if ((m_LastInBuffer!=(INT_PTR)m_ItemCount-1) || (m_LastInBuffer-m_FirstInBuffer+1>=(INT_PTR)m_BufferCount))
 		{
-			// Falsche Elemente im Puffer, oder nicht mehr genug Platz
+			// Wrong elements in buffer, or not enough space
 			Flush();
 			m_FirstInBuffer = m_ItemCount;
 		}
 
 	m_LastInBuffer = m_ItemCount;
 
-	// Im RAM hinzufügen
-	LPBYTE Ptr = (LPBYTE)m_pBuffer+(m_ItemCount-m_FirstInBuffer)*m_Header.ElementSize;
+	// Add in RAM
+	LPBYTE Ptr = m_pBuffer+(m_ItemCount-m_FirstInBuffer)*m_Header.ElementSize;
 	GetFromItemDescriptor(Ptr, pItemDescriptor);
 
 	if (m_KeyOffset==m_Header.ElementSize-LFKeySize)
@@ -335,12 +314,12 @@ void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, LPVOID Ptr)
 	MakeDirty();
 }
 
-void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, INT& Next)
+void CHeapfile::Update(LFItemDescriptor* pItemDescriptor, INT_PTR& Next)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 	assert(pItemDescriptor);
 
-	LPVOID Ptr;
+	LPVOID Ptr = NULL;
 	if (FindKey(pItemDescriptor->CoreAttributes.FileID, Next, Ptr))
 		Update(pItemDescriptor, Ptr);
 }
@@ -350,7 +329,7 @@ void CHeapfile::Update(LFItemDescriptor* pItemDescriptor)
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 	assert(pItemDescriptor);
 
-	INT ID = 0;
+	INT_PTR ID = 0;
 	Update(pItemDescriptor, ID);
 }
 
@@ -363,11 +342,11 @@ void CHeapfile::Invalidate(LPVOID Ptr)
 	MakeDirty(TRUE);
 }
 
-void CHeapfile::Invalidate(const FILEID& FileID, INT& Next)
+void CHeapfile::Invalidate(const FILEID& FileID, INT_PTR& Next)
 {
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 
-	LPVOID Ptr;
+	LPVOID Ptr = NULL;
 	if (FindKey(FileID, Next, Ptr))
 		Invalidate(Ptr);
 }
@@ -377,7 +356,7 @@ void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
 	assert(m_OpenStatus<=HeapMaintenanceRequired);
 	assert(pItemDescriptor);
 
-	INT ID = 0;
+	INT_PTR ID = 0;
 	Invalidate(pItemDescriptor->CoreAttributes.FileID, ID);
 }
 
@@ -481,15 +460,14 @@ BOOL CHeapfile::Compact()
 
 	INT TempCount = 0;
 
-	INT Next = 0;
-	LPVOID pData;
-
-	while (FindNext(Next, pData))
+	INT_PTR ID = 0;
+	LPBYTE Ptr = NULL;
+	while (FindNext(ID, (LPVOID&)Ptr))
 	{
-		memcpy(pTempBuffer, pData, m_Header.ElementSize-PaddedDataSize);
+		memcpy(pTempBuffer, Ptr, m_Header.ElementSize-PaddedDataSize);
 
 		if (PaddedDataSize)
-			memcpy(pTempBuffer+TempHeader.ElementSize-PaddedDataSize, (LPBYTE)pData+m_Header.ElementSize-PaddedDataSize, PaddedDataSize);
+			memcpy(pTempBuffer+TempHeader.ElementSize-PaddedDataSize, Ptr+m_Header.ElementSize-PaddedDataSize, PaddedDataSize);
 
 		if (!WriteFile(hTempFile, pTempBuffer, TempHeader.ElementSize, &Written, NULL))
 			ABORT
