@@ -261,7 +261,7 @@ LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)
 
 LRESULT CFrontstageWnd::OnNcPaint(WPARAM wParam, LPARAM lParam)
 {
-	if (HasBorder() && IsCtrlThemed())
+	if (HasBorder())
 	{
 		// Window DC
 		CWindowDC dc(this);

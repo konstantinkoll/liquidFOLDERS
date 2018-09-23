@@ -809,6 +809,22 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 	GetShellManager()->FreeItem(pidlFQ);
 }
 
+void LFApplication::OpenFolderAndSelectItem(LPCWSTR Path)
+{
+	ASSERT(Path);
+
+	if (Path[0]!=L'\0')
+	{
+		LPITEMIDLIST pidlFQ;
+		if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, 0, NULL)))
+		{
+			SHOpenFolderAndSelectItems(pidlFQ, 0, NULL, 0);
+
+			GetShellManager()->FreeItem(pidlFQ);
+		}
+	}
+}
+
 
 // Sounds
 

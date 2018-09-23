@@ -28,7 +28,7 @@
 UINT LFAboutDialog::m_LastTab = 0;
 
 LFAboutDialog::LFAboutDialog(USHORT BackgroundTabMask, CWnd* pParentWnd)
-	: LFTabbedDialog(IDS_ABOUT, pParentWnd, &m_LastTab)
+	: LFTabbedDialog(IDS_ABOUT, pParentWnd, &m_LastTab, TRUE)
 {
 	m_BackgroundTabMask = BackgroundTabMask;
 

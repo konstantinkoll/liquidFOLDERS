@@ -78,7 +78,7 @@ void LFUpdateDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayou
 			rectLine.left += m_FeatureItemHeight+MARGIN+MARGIN/2;
 
 			dc.SelectObject(a<3 ? &LFGetApp()->m_DialogBoldFont : &LFGetApp()->m_DialogFont);
-			dc.SetTextColor(a<3 ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+			dc.SetTextColor(a<3 ? 0x2020FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 			dc.DrawText(CString((LPCSTR)IDS_UPDATE_FIRST+a), rectLine, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
 
 			rectText.OffsetRect(0, m_FeatureItemHeight+MARGIN);

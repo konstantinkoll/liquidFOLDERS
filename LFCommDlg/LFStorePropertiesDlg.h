@@ -35,9 +35,6 @@ protected:
 	virtual INT CompareItems(INT Index1, INT Index2) const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	DECLARE_MESSAGE_MAP()
-
 	static CIcons m_ContextIcons;
 
 private:

@@ -33,7 +33,6 @@ protected:
 	void FinishUpdate(BOOL InternalCall=FALSE);
 	void DestroyEdit(BOOL Accept=FALSE);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);

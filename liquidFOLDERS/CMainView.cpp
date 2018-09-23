@@ -1341,9 +1341,9 @@ void CMainView::OnFileOpenWith()
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
+		UINT Result;
 		WCHAR Path[MAX_PATH];
-		UINT Result = LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH);
-		if (Result==LFOk)
+		if ((Result=LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH))==LFOk)
 		{
 			WCHAR Cmd[300];
 			wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
@@ -1363,17 +1363,11 @@ void CMainView::OnFileShowExplorer()
 	const INT Index = GetSelectedItem();
 	if (Index!=-1)
 	{
+		UINT Result;
 		WCHAR Path[MAX_PATH];
-		UINT Result = LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH);
-		if (Result==LFOk)
+		if ((Result=LFGetFileLocation((*p_CookedFiles)[Index], Path, MAX_PATH))==LFOk)
 		{
-			LPITEMIDLIST pidlFQ;
-			if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, 0, NULL)))
-			{
-				SHOpenFolderAndSelectItems(pidlFQ, 0, NULL, 0);
-
-				theApp.GetShellManager()->FreeItem(pidlFQ);
-			}
+			theApp.OpenFolderAndSelectItem(Path);
 		}
 		else
 		{
@@ -1385,16 +1379,15 @@ void CMainView::OnFileShowExplorer()
 void CMainView::OnFileEdit()
 {
 	const INT Index = GetSelectedItem();
-	if (Index!=-1)
-		if (_stricmp((*p_CookedFiles)[Index]->CoreAttributes.FileFormat, "filter")==0)
-		{
-			LFFilter* pFilter = LFLoadFilter((*p_CookedFiles)[Index]);
+	if ((Index!=-1) && (_stricmp((*p_CookedFiles)[Index]->CoreAttributes.FileFormat, "filter")==0))
+	{
+		LFFilter* pFilter = LFLoadFilter((*p_CookedFiles)[Index]);
 
-			if (LFEditFilterDlg(pFilter && !LFIsDefaultStoreID(pFilter->Query.StoreID) ? pFilter->Query.StoreID : m_StoreID, this, pFilter).DoModal()==IDOK)
-				GetTopLevelParent()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
+		if (LFEditFilterDlg(pFilter && !LFIsDefaultStoreID(pFilter->Query.StoreID) ? pFilter->Query.StoreID : m_StoreID, this, pFilter).DoModal()==IDOK)
+			GetTopLevelParent()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 
-			LFFreeFilter(pFilter);
-		}
+		LFFreeFilter(pFilter);
+	}
 }
 
 void CMainView::OnFileRemember()

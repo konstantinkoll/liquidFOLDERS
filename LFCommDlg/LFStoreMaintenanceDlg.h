@@ -22,9 +22,6 @@ protected:
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	DECLARE_MESSAGE_MAP()
-
 	CImageList* p_StoreIcons;
 	LFMaintenanceList* p_MaintenanceList;
 
@@ -41,7 +38,7 @@ private:
 
 inline COLORREF CMaintenanceReport::SetDarkTextColor(CDC& dc, INT Index, HICON hIcon, BOOL Themed) const
 {
-	return (hIcon!=hIconReady) ? dc.SetTextColor(0x0000FF) : CFrontstageItemView::SetDarkTextColor(dc, Index, Themed);
+	return (hIcon!=hIconReady) ? dc.SetTextColor(0x2020FF) : CFrontstageItemView::SetDarkTextColor(dc, Index, Themed);
 }
 
 

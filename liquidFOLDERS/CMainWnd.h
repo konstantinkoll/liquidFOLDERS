@@ -133,7 +133,7 @@ inline STOREID CMainWnd::GetStatisticsID() const
 
 inline COLORREF CMainWnd::PriorityColor() const
 {
-	return m_Statistics.TaskCount[10] ? 0x0000FF :
+	return m_Statistics.TaskCount[10] ? 0x2020FF :
 		m_Statistics.TaskCount[8] || m_Statistics.TaskCount[9] ? 0x0060FF :
 		m_Statistics.TaskCount[6] || m_Statistics.TaskCount[7] ? 0x00A0E0 :
 		m_Statistics.TaskCount[4] || m_Statistics.TaskCount[5] ? 0x05BB7D :

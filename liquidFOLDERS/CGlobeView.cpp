@@ -155,7 +155,7 @@ void CGlobeView::GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BO
 {
 	ENSURE(strMessage.LoadString(IDS_NORENDERINGCONTEXT));
 
-	clrMessage = 0x0000FF;
+	clrMessage = 0x2020FF;
 }
 
 BOOL CGlobeView::DrawNothing() const

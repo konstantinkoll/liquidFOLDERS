@@ -12,6 +12,9 @@
 CGenreList::CGenreList()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM, sizeof(GenreItemData))
 {
+	// Item
+	SetItemHeight(0, 1, ITEMCELLPADDING);
+	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+2*ITEMCELLPADDING;
 }
 
 void CGenreList::ShowTooltip(const CPoint& point)
@@ -225,23 +228,6 @@ UINT CGenreList::GetSelectedGenre() const
 	const INT Index = GetSelectedItem();
 
 	return (Index>=0) ? GetGenreItemData(Index)->GenreID : 0;
-}
-
-
-BEGIN_MESSAGE_MAP(CGenreList, CFrontstageItemView)
-	ON_WM_CREATE()
-END_MESSAGE_MAP()
-
-INT CGenreList::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageItemView::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Item
-	SetItemHeight(0, 1, ITEMCELLPADDING);
-	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+2*ITEMCELLPADDING;
-
-	return 0;
 }
 
 

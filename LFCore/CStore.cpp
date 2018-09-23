@@ -536,24 +536,23 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 		WCHAR Annotation[256];
 		Annotation[0] = L'\0';
 
-		if (Name[0])
-			if (Name[wcslen(Name)-1]==L')')
+		if (Name[0] && (Name[wcslen(Name)-1]==L')'))
+		{
+			LPWSTR pBracket = wcsrchr(Name, L'(');
+			if (pBracket)
 			{
-				LPWSTR pBracket = wcsrchr(Name, L'(');
-				if (pBracket)
+				wcsncpy_s(Annotation, 256, pBracket+1, wcslen(pBracket)-2);
+
+				if (SetAttributesFromAnnotation(pItemDescriptor, Annotation))
 				{
-					wcsncpy_s(Annotation, 256, pBracket+1, wcslen(pBracket)-2);
+					// Remove annotation and trim file name
+					while ((pBracket>Name) && (*(pBracket-1)==L' '))
+						*pBracket--;
 
-					if (SetAttributesFromAnnotation(pItemDescriptor, Annotation))
-					{
-						// Remove annotation and trim file name
-						while ((pBracket>Name) && (*(pBracket-1)==L' '))
-							*pBracket--;
-
-						*pBracket = L'\0';
-					}
+					*pBracket = L'\0';
 				}
 			}
+		}
 
 		// Find separator char
 		LPCWSTR pSeparator = wcsstr(Name, L" – ");
@@ -618,6 +617,11 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 			LPCWSTR pTitle = pSeparator+SeparatorLength;
 			if (*pTitle)
 				SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
+		}
+		else
+		{
+			if (LFIsNullAttribute(pItemDescriptor, LFAttrTitle))
+				SetAttribute(pItemDescriptor, LFAttrTitle, Name);
 		}
 	}
 }

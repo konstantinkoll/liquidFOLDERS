@@ -113,6 +113,7 @@ public:
 	BOOL ShowRepresentativeThumbnail(INT SubfolderAttribute, UINT Context) const;
 
 	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR Verb);
+	void OpenFolderAndSelectItem(LPCWSTR Path);
 
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();

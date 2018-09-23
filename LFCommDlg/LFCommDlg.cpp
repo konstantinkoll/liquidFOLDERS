@@ -525,7 +525,7 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 		else
 		{
 			rect.top++;
-			dc.FillSolidRect(rect, Red ? 0x0000FF : GetSysColor(COLOR_HIGHLIGHT));
+			dc.FillSolidRect(rect, Red ? 0x2020FF : GetSysColor(COLOR_HIGHLIGHT));
 
 			dc.SetTextColor(Red ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
 		}
@@ -923,18 +923,18 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, 
 		LPCITEMIDLIST pidlRel;
 		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 		{
-			WIN32_FIND_DATA ffd;
-			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlRel, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
+			WIN32_FIND_DATA FindData;
+			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlRel, SHGDFIL_FINDDATA, &FindData, sizeof(WIN32_FIND_DATA))))
 			{
-				FILETIME lft;
+				FILETIME LocalFileTime;
 
 				WCHAR tmpBuf1[256];
-				FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
-				LFTimeToString(lft, tmpBuf1, 256);
+				FileTimeToLocalFileTime(&FindData.ftCreationTime, &LocalFileTime);
+				LFTimeToString(LocalFileTime, tmpBuf1, 256);
 
 				WCHAR tmpBuf2[256];
-				FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
-				LFTimeToString(lft, tmpBuf2, 256);
+				FileTimeToLocalFileTime(&FindData.ftLastWriteTime, &LocalFileTime);
+				LFTimeToString(LocalFileTime, tmpBuf2, 256);
 
 				CString tmpStr;
 				tmpStr.Format(_T("\n%s: %s\n%s: %s"),

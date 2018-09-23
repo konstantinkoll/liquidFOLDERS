@@ -20,6 +20,10 @@ CAbstractFileView::CAbstractFileView(UINT Flags, SIZE_T DataSize, const CSize& s
 	m_pWndEdit = NULL;
 	m_TypingBuffer[0] = L'\0';
 	m_TypingTicks = 0;
+
+	// Item cateogries
+	for (UINT a=0; a<LFItemCategoryCount; a++)
+		AddItemCategory(LFGetApp()->m_ItemCategories[a].Caption, LFGetApp()->m_ItemCategories[a].Hint);
 }
 
 BOOL CAbstractFileView::PreTranslateMessage(MSG* pMsg)
@@ -223,7 +227,6 @@ void CAbstractFileView::DestroyEdit(BOOL Accept)
 
 
 BEGIN_MESSAGE_MAP(CAbstractFileView, CFrontstageItemView)
-	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_MOUSEHOVER()
 	ON_WM_CHAR()
@@ -232,18 +235,6 @@ BEGIN_MESSAGE_MAP(CAbstractFileView, CFrontstageItemView)
 
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
-
-INT CAbstractFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageItemView::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Item cateogries
-	for (UINT a=0; a<LFItemCategoryCount; a++)
-		AddItemCategory(LFGetApp()->m_ItemCategories[a].Caption, LFGetApp()->m_ItemCategories[a].Hint);
-
-	return 0;
-}
 
 void CAbstractFileView::OnDestroy()
 {

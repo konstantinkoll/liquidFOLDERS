@@ -167,7 +167,7 @@ void CFileView::AdjustScrollbars()
 
 COLORREF CFileView::GetItemTextColor(INT Index) const
 {
-	return ((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1;
+	return ((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x2020FF : (COLORREF)-1;
 }
 
 BOOL CFileView::IsItemSelected(INT Index) const

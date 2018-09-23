@@ -15,10 +15,11 @@ CString CUsageList::m_OtherFiles;
 CUsageList::CUsageList()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING, sizeof(UsageItemData))
 {
-	m_IconSize = 0;
-
 	if (m_OtherFiles.IsEmpty())
 		ENSURE(m_OtherFiles.LoadString(IDS_OTHERFILES));
+
+	// Item
+	SetItemHeight(m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, max(32, 2*m_DefaultFontHeight)), 2);
 }
 
 INT CUsageList::CompareItems(INT Index1, INT Index2) const
@@ -89,22 +90,6 @@ void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	DrawTile(dc, rect, m_ContextIcons, pData->Context,
 		GetLightTextColor(dc, Index, Themed), 2,
 		(pData->Context==LFContextAllFiles) ? m_OtherFiles : pContextDescriptor->Name, pContextDescriptor->Comment);
-}
-
-
-BEGIN_MESSAGE_MAP(CUsageList, CFrontstageItemView)
-	ON_WM_CREATE()
-END_MESSAGE_MAP()
-
-INT CUsageList::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageItemView::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Item
-	SetItemHeight(m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, max(32, 2*m_DefaultFontHeight)), 2);
-
-	return 0;
 }
 
 

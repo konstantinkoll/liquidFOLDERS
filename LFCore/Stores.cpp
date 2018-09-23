@@ -935,7 +935,7 @@ LFCORE_API UINT LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* 
 		{
 			*pType |= LFTypeMaintained;
 
-			if (!pStoreDescriptor->Statistics.FileCount[LFContextAllFiles])
+			if (!pStoreDescriptor->Statistics.FileCount[LFContextAllFiles] && !pStoreDescriptor->Statistics.FileCount[LFContextArchive])
 				*pType = (*pType & ~LFTypeBadgeMask) | LFTypeBadgeEmpty;
 		}
 		else

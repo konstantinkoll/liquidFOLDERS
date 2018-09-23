@@ -22,7 +22,7 @@ struct ControlOnTab
 class LFTabbedDialog : public LFDialog
 {
 public:
-	LFTabbedDialog(UINT nCaptionID, CWnd* pParentWnd=NULL, UINT* pLastTab=NULL);
+	LFTabbedDialog(UINT nCaptionID, CWnd* pParentWnd=NULL, UINT* pLastTab=NULL, BOOL WantsBitmap=FALSE);
 
 protected:
 	virtual void ShowTab(UINT Index);

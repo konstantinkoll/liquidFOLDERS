@@ -12,10 +12,23 @@
 CMaintenanceReport::CMaintenanceReport()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING, sizeof(UsageItemData))
 {
-	p_StoreIcons = NULL;
 	p_MaintenanceList = NULL;
 
-	hIconReady = hIconWarning = hIconError = NULL;
+	// Error messages
+	for (UINT a=0; a<LFErrorCount; a++)
+		LFGetErrorText(m_ErrorText[a], 256, a);
+
+	// Icons
+	m_BadgeSize = GetSystemMetrics(SM_CYICON);
+	hIconReady = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_READY), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
+	hIconWarning = (HICON)LoadImage(AfxGetResourceHandle(), IDI_WARNING, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
+	hIconError = (HICON)LoadImage(AfxGetResourceHandle(), IDI_ERROR, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
+
+	m_IconSize = ((m_ItemHeight-2*ITEMVIEWPADDING)>=128) ? 128 : LFGetApp()->m_ExtraLargeIconSize;
+	p_StoreIcons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : &LFGetApp()->m_CoreImageListExtraLarge;
+
+	// Item
+	SetItemHeight(LFGetApp()->m_ExtraLargeIconSize, 4);
 }
 
 void CMaintenanceReport::ShowTooltip(const CPoint& point)
@@ -73,35 +86,6 @@ void CMaintenanceReport::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, IN
 
 	SetDarkTextColor(dc, Index, hIcon, Themed);
 	dc.DrawText(pDescription, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_WORDBREAK);
-}
-
-
-BEGIN_MESSAGE_MAP(CMaintenanceReport, CFrontstageItemView)
-	ON_WM_CREATE()
-END_MESSAGE_MAP()
-
-INT CMaintenanceReport::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrontstageItemView::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Item
-	SetItemHeight(LFGetApp()->m_ExtraLargeIconSize, 4);
-
-	// Icons
-	m_BadgeSize = GetSystemMetrics(SM_CYICON);
-	hIconReady = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_READY), IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
-	hIconWarning = (HICON)LoadImage(AfxGetResourceHandle(), IDI_WARNING, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
-	hIconError = (HICON)LoadImage(AfxGetResourceHandle(), IDI_ERROR, IMAGE_ICON, m_BadgeSize, m_BadgeSize, LR_SHARED);
-
-	m_IconSize = ((m_ItemHeight-2*ITEMVIEWPADDING)>=128) ? 128 : LFGetApp()->m_ExtraLargeIconSize;
-	p_StoreIcons = (m_IconSize==128) ? &LFGetApp()->m_CoreImageListJumbo : &LFGetApp()->m_CoreImageListExtraLarge;
-
-	// Error messages
-	for (UINT a=0; a<LFErrorCount; a++)
-		LFGetErrorText(m_ErrorText[a], 256, a);
-
-	return 0;
 }
 
 

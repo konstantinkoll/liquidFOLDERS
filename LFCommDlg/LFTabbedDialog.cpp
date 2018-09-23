@@ -10,8 +10,8 @@
 // LFTabbedDialog
 //
 
-LFTabbedDialog::LFTabbedDialog(UINT nCaptionID, CWnd* pParentWnd, UINT* pLastTab)
-	: LFDialog(IDD_TABBEDDIALOG, pParentWnd)
+LFTabbedDialog::LFTabbedDialog(UINT nCaptionID, CWnd* pParentWnd, UINT* pLastTab, BOOL WantsBitmap)
+	: LFDialog(IDD_TABBEDDIALOG, pParentWnd, WantsBitmap)
 {
 	if (nCaptionID)
 		ENSURE(m_DialogCaption.LoadString(nCaptionID));

@@ -584,7 +584,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 
 		rectText.OffsetRect(0, 1);
 
-		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4840F0 : IsWindowEnabled() ? 0xDACCC4 : 0x998981 : m_ShowExpireCaption ? 0x0000FF : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
+		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4840F0 : IsWindowEnabled() ? 0xDACCC4 : 0x998981 : m_ShowExpireCaption ? 0x2020FF : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
 		dc.DrawText(Caption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 		dc.SelectObject(pOldFont);

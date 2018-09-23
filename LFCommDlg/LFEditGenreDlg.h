@@ -36,9 +36,6 @@ protected:
 	virtual void ShowTooltip(const CPoint& point);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	DECLARE_MESSAGE_MAP()
-
 private:
 	GenreItemData* GetGenreItemData(INT Index) const;
 	void AddItemCategory(const LFMusicGenre* pMusicGenre);
