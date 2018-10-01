@@ -233,6 +233,9 @@ BEGIN_MESSAGE_MAP(CAbstractFileView, CFrontstageItemView)
 	ON_WM_KEYDOWN()
 	ON_WM_SETCURSOR()
 
+	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
+	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
+
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
@@ -332,7 +335,24 @@ BOOL CAbstractFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Me
 }
 
 
-// Edit
+// Header notifications
+
+void CAbstractFileView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	OnDestroyEdit();
+
+	CFrontstageItemView::OnBeginDrag(pNMHDR, pResult);
+}
+
+void CAbstractFileView::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	OnDestroyEdit();
+
+	CFrontstageItemView::OnBeginTrack(pNMHDR, pResult);
+}
+
+
+// Label edit
 
 void CAbstractFileView::OnDestroyEdit()
 {

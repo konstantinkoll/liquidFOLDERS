@@ -462,9 +462,13 @@ void CBackstageSidebar::OnPaint()
 				{
 					CRect rectCount(rectItem.right-m_CountWidth+BORDER/2, rectItem.top-2, rectItem.right-BORDER/2-SHADOW/2, rectItem.bottom);
 
+					CFont* pOldFont;
 					const COLORREF clr = m_Items[a].Color;
+
 					if (clr!=(COLORREF)-1)
 					{
+						pOldFont = dc.SelectObject(&LFGetApp()->m_SmallBoldFont);
+
 						if (Themed)
 						{
 							g.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -510,12 +514,26 @@ void CBackstageSidebar::OnPaint()
 					}
 					else
 					{
+						pOldFont = dc.SelectObject(&LFGetApp()->m_SmallFont);
+
 						rectCount.top += 5;
 
-						dc.SetTextColor(Highlight ? colSel : colNum);
+						if (!Highlight)
+						{
+							rectCount.OffsetRect(0, -1);
+							dc.SetTextColor(0x000000);
+
+							dc.DrawText(FormatCount(m_Items[a].Count), rectCount, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (clr!=(COLORREF)-1 ? DT_CENTER : DT_RIGHT));
+
+							rectCount.OffsetRect(0, 1);
+							dc.SetTextColor(colNum);
+						}
+						else
+						{
+							dc.SetTextColor(colSel);
+						}
 					}
 
-					CFont* pOldFont = dc.SelectObject(clr!=(COLORREF)-1 ? &LFGetApp()->m_SmallBoldFont : &LFGetApp()->m_SmallFont);
 					dc.DrawText(FormatCount(m_Items[a].Count), rectCount, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (clr!=(COLORREF)-1 ? DT_CENTER : DT_RIGHT));
 					dc.SelectObject(pOldFont);
 				}

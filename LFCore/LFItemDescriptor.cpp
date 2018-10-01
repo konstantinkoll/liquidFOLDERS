@@ -230,6 +230,14 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor& St
 	pItemDescriptor->CategoryID = (StoreDescriptor.Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
 	pItemDescriptor->IconID = LFGetStoreIcon(&StoreDescriptor, &pItemDescriptor->Type);
 
+	// Contains deleted files?
+	if (StoreDescriptor.Statistics.FileCount[LFContextTrash])
+		pItemDescriptor->AggregateColorSet |= 1<<8;		// Special black dot
+
+	// Contains new files?
+	if (StoreDescriptor.Statistics.FileCount[LFContextNew])
+		pItemDescriptor->AggregateColorSet |= 1<<9;		// Special blue dot
+
 	// Description
 	LFGetFileSummary(pItemDescriptor->Description, 256, StoreDescriptor.Statistics.FileCount[LFContextAllFiles], StoreDescriptor.Statistics.FileSize[LFContextAllFiles]);
 

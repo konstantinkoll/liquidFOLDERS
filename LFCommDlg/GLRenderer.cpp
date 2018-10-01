@@ -315,7 +315,7 @@ GLuint GLRenderer::CreateGlobe(UINT cx) const
 	glEnd();
 	glEndList();
 
-	delete[] pGrid;
+	delete pGrid;
 
 	return Index;
 }

@@ -16,6 +16,8 @@ CFrontstageScroller::CFrontstageScroller(UINT Flags)
 	m_HeaderHeight = m_ItemHeight = 0;
 	m_szScrollStep.cx = m_szScrollStep.cy = DEFAULTSCROLLSTEP;
 	m_pWndHeader = NULL;
+	m_HeaderItemClicked = -1;
+	m_IgnoreHeaderItemChange = TRUE;
 
 	m_szScrollStep.cx = DEFAULTSCROLLSTEP;
 	m_szScrollStep.cy = LFGetApp()->m_DefaultFont.GetFontHeight();
@@ -29,6 +31,125 @@ INT CFrontstageScroller::GetHeaderIndent() const
 }
 
 void CFrontstageScroller::GetHeaderContextMenu(CMenu& /*Menu*/, INT /*HeaderItem*/)
+{
+}
+
+BOOL CFrontstageScroller::AllowHeaderColumnDrag(UINT /*Attr*/) const
+{
+	return FALSE;
+}
+
+BOOL CFrontstageScroller::AllowHeaderColumnTrack(UINT /*Attr*/) const
+{
+	return FALSE;
+}
+
+void CFrontstageScroller::UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths)
+{
+	ASSERT(HasHeader());
+	ASSERT(pColumnOrder);
+	ASSERT(pColumnWidths);
+
+	if (Position<0)
+	{
+		// Column dragged out of header
+		pColumnWidths[Attr] = 0;
+	}
+	else
+	{
+		// Column dropped, get order array from header
+		INT ColumnCount = m_pWndHeader->GetItemCount();
+		ASSERT(ColumnCount>0);
+
+		INT* pOrderArray = new INT[ColumnCount];
+		m_pWndHeader->GetOrderArray(pOrderArray, ColumnCount);
+
+		// Copy order array to context view settings, and insert dragged column
+		INT ReadIndex = 0;
+		INT WriteIndex = 0;
+
+		for (INT a=0; a<ColumnCount; a++)
+			if (a==Position)
+			{
+				pColumnOrder[WriteIndex++] = Attr;
+			}
+			else
+			{
+				if (pOrderArray[ReadIndex]==(INT)Attr)
+					ReadIndex++;
+
+				pColumnOrder[WriteIndex++] = pOrderArray[ReadIndex++];
+			}
+
+		// Delete order array
+		delete pOrderArray;
+	}
+}
+
+void CFrontstageScroller::UpdateHeaderColumnOrder(UINT /*Attr*/, INT /*Position*/)
+{
+}
+
+void CFrontstageScroller::UpdateHeaderColumnWidth(UINT /*Attr*/, INT /*Width*/)
+{
+}
+
+void CFrontstageScroller::UpdateHeaderColumn(UINT /*Attr*/, HDITEM& /*HeaderItem*/) const
+{
+}
+
+void CFrontstageScroller::UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BOOL bShowHeader, INT PreviewAttribute)
+{
+	ASSERT(HasHeader());
+	ASSERT(pColumnOrder);
+	ASSERT(pColumnWidths);
+
+	if (bShowHeader)
+	{
+		m_IgnoreHeaderItemChange = TRUE;
+		SetRedraw(FALSE);
+
+		// Set column order (preview column is always first)
+		INT ColumnCount = m_pWndHeader->GetItemCount();
+		ASSERT(ColumnCount>0);
+
+		INT* pOrderArray = new INT[ColumnCount];
+		UINT WriteIndex = 0;
+
+		if (PreviewAttribute>=0)
+			pOrderArray[WriteIndex++] = PreviewAttribute;
+
+		for (INT a=0; a<ColumnCount; a++)
+			if (pColumnOrder[a]!=PreviewAttribute)
+				pOrderArray[WriteIndex++] = pColumnOrder[a];
+
+		VERIFY(m_pWndHeader->SetOrderArray(ColumnCount, pOrderArray));
+		delete pOrderArray;
+
+		// Set column properties
+		for (INT a=0; a<ColumnCount; a++)
+		{
+			HDITEM HeaderItem;
+			UpdateHeaderColumn((UINT)a, HeaderItem);
+			pColumnWidths[a] = HeaderItem.cxy;
+
+			m_pWndHeader->SetItem(a, &HeaderItem);
+		}
+
+		ShowHeader();
+
+		SetRedraw(TRUE);
+		m_pWndHeader->Invalidate();
+
+		m_IgnoreHeaderItemChange = FALSE;
+	}
+	else
+	{
+		HideHeader();
+	}
+}
+
+void CFrontstageScroller::HeaderColumnClicked(UINT /*Attr*/)
 {
 }
 
@@ -83,7 +204,7 @@ void CFrontstageScroller::AdjustLayout()
 	WINDOWPOS wp;
 	ZeroMemory(&wp, sizeof(wp));
 
-	if (m_pWndHeader)
+	if (HasHeader())
 	{
 		CRect rect;
 		GetWindowRect(rect);
@@ -103,7 +224,7 @@ void CFrontstageScroller::AdjustLayout()
 	Invalidate();
 
 	// Set header position
-	if (m_pWndHeader)
+	if (HasHeader())
 		m_pWndHeader->SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 
 	// Update hover item
@@ -140,7 +261,7 @@ void CFrontstageScroller::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRE
 	}
 
 	// Header
-	if (m_pWndHeader && (dx!=0))
+	if (HasHeader() && (dx!=0))
 	{
 		CRect rectWindow;
 		GetWindowRect(rectWindow);
@@ -212,6 +333,31 @@ void CFrontstageScroller::SetItemHeight(INT ItemHeight)
 	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)-1;
 }
 
+BOOL CFrontstageScroller::AddHeaderColumn(LPCWSTR Caption, BOOL Right)
+{
+	ASSERT(Caption);
+
+	// Create header
+	if (!HasHeader())
+	{
+		m_pWndHeader = new CTooltipHeader();
+
+		if (!m_pWndHeader->Create(this, 1))
+			return FALSE;
+	}
+
+	// Add item
+	HDITEM Item;
+	Item.mask = HDI_TEXT | HDI_FORMAT;
+	Item.pszText = (LPWSTR)Caption;
+	Item.fmt = HDF_STRING;
+
+	if (Right)
+		Item.fmt |= HDF_RIGHT;
+
+	return m_pWndHeader->InsertItem(m_pWndHeader->GetItemCount(), &Item)!=-1;
+}
+
 
 BEGIN_MESSAGE_MAP(CFrontstageScroller, CFrontstageWnd)
 	ON_WM_DESTROY()
@@ -228,6 +374,12 @@ BEGIN_MESSAGE_MAP(CFrontstageScroller, CFrontstageWnd)
 	ON_WM_CONTEXTMENU()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+
+	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
+	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
+	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
+	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
+	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
 END_MESSAGE_MAP()
 
 void CFrontstageScroller::OnDestroy()
@@ -534,4 +686,56 @@ void CFrontstageScroller::OnSetFocus(CWnd* /*pOldWnd*/)
 void CFrontstageScroller::OnKillFocus(CWnd* /*pNewWnd*/)
 {
 	Invalidate();
+}
+
+
+// Header notifications
+
+void CFrontstageScroller::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	*pResult = (pHdr->iItem<0) ? TRUE : !AllowHeaderColumnDrag((UINT)pHdr->iItem);
+}
+
+void CFrontstageScroller::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (pHdr->pitem->mask & HDI_WIDTH)
+		*pResult = (pHdr->iItem<0) ? TRUE : !AllowHeaderColumnTrack((UINT)pHdr->iItem);
+}
+
+void CFrontstageScroller::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (!m_IgnoreHeaderItemChange && (pHdr->pitem->mask & HDI_ORDER) && (pHdr->iItem>=0))
+	{
+		UpdateHeaderColumnOrder((UINT)pHdr->iItem, pHdr->pitem->iOrder);
+
+		*pResult = TRUE;
+	}
+}
+
+void CFrontstageScroller::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (!m_IgnoreHeaderItemChange && (pHdr->pitem->mask & HDI_WIDTH) && (pHdr->iItem>=0))
+	{
+		UpdateHeaderColumnWidth((UINT)pHdr->iItem, pHdr->pitem->cxy);
+
+		*pResult = TRUE;
+	}
+}
+
+void CFrontstageScroller::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (pHdr->iItem>=0)
+		HeaderColumnClicked((UINT)pHdr->iItem);
+
+	*pResult = FALSE;
 }

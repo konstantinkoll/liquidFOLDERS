@@ -268,7 +268,7 @@ void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescript
 	FileSummary.FileSize += pItemDescriptor->CoreAttributes.FileSize;
 	FileSummary.Flags |= (pItemDescriptor->CoreAttributes.Flags & (LFFlagNew | LFFlagTask | LFFlagMissing));
 	FileSummary.ItemColors[pItemDescriptor->CoreAttributes.Color]++;
-	FileSummary.ItemColorSet |= pItemDescriptor->AggregateColorSet;
+	FileSummary.ItemColorSet |= (BYTE)pItemDescriptor->AggregateColorSet;
 	FileSummary.ContextSet |= (1ull<<LFGetUserContextID(pItemDescriptor));
 	FileSummary.OnlyTimebasedMediaFiles &= LFIsTimebasedMediaFile(pItemDescriptor);
 

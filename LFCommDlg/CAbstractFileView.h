@@ -31,6 +31,7 @@ protected:
 	virtual RECT GetLabelRect(INT Index) const;
 
 	void FinishUpdate(BOOL InternalCall=FALSE);
+	void AddHeaderColumns();
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	afx_msg void OnDestroy();
@@ -38,6 +39,9 @@ protected:
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
+
+	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
 
 	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
@@ -51,7 +55,13 @@ private:
 	DWORD m_TypingTicks;
 };
 
+inline void CAbstractFileView::AddHeaderColumns()
+{
+	for (UINT a=0; a<LFAttributeCount; a++)
+		VERIFY(AddHeaderColumn());
+}
+
 inline BOOL CAbstractFileView::IsEditing() const
 {
-	return (m_pWndEdit!=NULL);
+	return m_pWndEdit!=NULL;
 }

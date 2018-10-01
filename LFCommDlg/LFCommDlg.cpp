@@ -44,7 +44,7 @@ void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
 
-			delete[] lpInfo;
+			delete lpInfo;
 		}
 	}
 }

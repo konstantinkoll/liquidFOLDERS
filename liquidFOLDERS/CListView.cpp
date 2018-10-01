@@ -18,11 +18,10 @@
 #define SPACER                 (4*ITEMCELLPADDING+1)
 
 CListView::CListView()
-	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(ListItemData))
+	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(ListItemData))
 {
 	m_pFolderItems = NULL;
-	m_HeaderItemClicked = -1;
-	m_HasFolders = m_IgnoreHeaderItemChange = FALSE;
+	m_HasFolders = FALSE;
 }
 
 void CListView::SetViewSettings(BOOL UpdateSearchResultPending)
@@ -30,7 +29,7 @@ void CListView::SetViewSettings(BOOL UpdateSearchResultPending)
 	// Copy context view settings early for header
 	m_ContextViewSettings = *p_ContextViewSettings;
 
-	AdjustHeader();
+	UpdateHeader();
 
 	// Commit settings
 	if (p_CookedFiles && !UpdateSearchResultPending)
@@ -103,71 +102,7 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 		m_Flags &= ~FRONTSTAGE_CARDBACKGROUND;
 	}
 
-	AdjustHeader();
-}
-
-void CListView::AdjustHeader()
-{
-	if (p_CookedFiles && m_ItemCount)
-	{
-		m_IgnoreHeaderItemChange = TRUE;
-		SetRedraw(FALSE);
-
-		// Set column order (preview column is always first)
-		INT ColumnOrder[LFAttributeCount];
-		UINT Index = 0;
-
-		if (m_PreviewAttribute>=0)
-			ColumnOrder[Index++] = m_PreviewAttribute;
-
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (p_ContextViewSettings->ColumnOrder[a]!=m_PreviewAttribute)
-				ColumnOrder[Index++] = p_ContextViewSettings->ColumnOrder[a];
-
-		VERIFY(m_pWndHeader->SetOrderArray(LFAttributeCount, ColumnOrder));
-
-		// Set column properties
-		for (UINT a=0; a<LFAttributeCount; a++)
-		{
-			HDITEM hdi;
-			hdi.mask = HDI_WIDTH | HDI_FORMAT | HDI_TEXT;
-			hdi.cxy = m_ContextViewSettings.ColumnWidth[a] = ((INT)a==m_PreviewAttribute) ? PREVIEWWIDTH : ((INT)a==m_SubfolderAttribute) ? 0 : p_ContextViewSettings->ColumnWidth[a];
-			hdi.fmt = HDF_STRING | (theApp.IsAttributeFormatRight(a) ? HDF_RIGHT : HDF_LEFT);
-			hdi.pszText = (LPWSTR)theApp.GetAttributeName(a, m_Context);
-
-			if (m_ContextViewSettings.SortBy==a)
-				hdi.fmt |= m_ContextViewSettings.SortDescending ? HDF_SORTDOWN : HDF_SORTUP;
-
-			if (theApp.m_Attributes[a].TypeProperties.DefaultColumnWidth && hdi.cxy)
-			{
-				if (theApp.m_Attributes[a].AttrProperties.Type==LFTypeRating)
-				{
-					hdi.cxy = m_ContextViewSettings.ColumnWidth[a] = p_ContextViewSettings->ColumnWidth[a] = RATINGBITMAPWIDTH+SPACER;
-				}
-				else
-				{
-					if (hdi.cxy<GetMinColumnWidth(a))
-						p_ContextViewSettings->ColumnWidth[a] = hdi.cxy = GetMinColumnWidth(a);
-				}
-			}
-			else
-			{
-				hdi.cxy = 0;
-			}
-
-			m_pWndHeader->SetItem(a, &hdi);
-		}
-
-		m_pWndHeader->ModifyStyle(HDS_HIDDEN, 0);
-		SetRedraw(TRUE);
-		m_pWndHeader->Invalidate();
-
-		m_IgnoreHeaderItemChange = FALSE;
-
-		return;
-	}
-
-	m_pWndHeader->ModifyStyle(0, HDS_HIDDEN);
+	UpdateHeader();
 }
 
 INT CListView::GetHeaderIndent() const
@@ -187,6 +122,82 @@ void CListView::GetHeaderContextMenu(CMenu& Menu, INT HeaderItem)
 			Menu.InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_LIST_TOGGLEATTRIBUTE+a, theApp.GetAttributeName(a, m_Context));
 
 	m_HeaderItemClicked = HeaderItem;
+}
+
+BOOL CListView::AllowHeaderColumnDrag(UINT Attr) const
+{
+	return
+		(m_ContextViewSettings.ColumnWidth[Attr]!=0) &&							// Visible column
+		(theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth!=0) &&		// Visible attribute
+		((INT)Attr!=m_PreviewAttribute);										// Not preview attribute
+}
+
+BOOL CListView::AllowHeaderColumnTrack(UINT Attr) const
+{
+	return
+		AllowHeaderColumnDrag(Attr) &&
+		(theApp.m_Attributes[Attr].AttrProperties.Type!=LFTypeRating);			// Variable width
+}
+
+void CListView::UpdateHeaderColumnOrder(UINT Attr, INT Position)
+{
+	CFileView::UpdateHeaderColumnOrder(Attr, Position, p_ContextViewSettings->ColumnOrder, p_ContextViewSettings->ColumnWidth);
+
+	theApp.UpdateViewSettings(m_Context, LFViewList);
+}
+
+void CListView::UpdateHeaderColumnWidth(UINT Attr, INT Width)
+{
+	if (!theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth)
+	{
+		Width = 0;
+	}
+	else
+	{
+		if (Width<GetMinColumnWidth(Attr))
+			Width = theApp.IsAttributeAlwaysVisible(Attr) ? GetMinColumnWidth(Attr) : 0;
+	}
+
+	if (Width!=p_ContextViewSettings->ColumnWidth[Attr])
+	{
+		p_ContextViewSettings->ColumnWidth[Attr] = Width;
+
+		theApp.UpdateViewSettings(m_Context, LFViewList);
+	}
+}
+
+void CListView::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
+{
+	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT | HDI_TEXT;
+	HeaderItem.cxy = ((INT)Attr==m_PreviewAttribute) ? PREVIEWWIDTH : ((INT)Attr==m_SubfolderAttribute) ? 0 : p_ContextViewSettings->ColumnWidth[Attr];
+	HeaderItem.fmt = HDF_STRING | (theApp.IsAttributeFormatRight(Attr) ? HDF_RIGHT : HDF_LEFT);
+	HeaderItem.pszText = (LPWSTR)theApp.GetAttributeName(Attr, m_Context);
+
+	if (m_ContextViewSettings.SortBy==Attr)
+		HeaderItem.fmt |= m_ContextViewSettings.SortDescending ? HDF_SORTDOWN : HDF_SORTUP;
+
+	if (theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth && HeaderItem.cxy)
+	{
+		if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
+		{
+			HeaderItem.cxy = RATINGBITMAPWIDTH+SPACER;
+		}
+		else
+		{
+			if (HeaderItem.cxy<GetMinColumnWidth(Attr))
+				HeaderItem.cxy = GetMinColumnWidth(Attr);
+		}
+	}
+	else
+	{
+		HeaderItem.cxy = 0;
+	}
+}
+
+void CListView::HeaderColumnClicked(UINT Attr)
+{
+	if (theApp.IsAttributeSortable(m_Context, Attr, m_SubfolderAttribute))
+		theApp.SetContextSort(m_Context, Attr, m_ContextViewSettings.SortBy==Attr ? !m_ContextViewSettings.SortDescending : theApp.IsAttributeSortDescending(m_Context, Attr), FALSE);
 }
 
 void CListView::AdjustLayout()
@@ -277,7 +288,7 @@ void CListView::AdjustLayout()
 	}
 	else
 	{
-		// Adjust layout with folders
+		// Adjust layout without folders
 		m_ScrollWidth += BACKSTAGEBORDER;
 		m_ScrollHeight = 1;
 
@@ -596,12 +607,6 @@ BEGIN_MESSAGE_MAP(CListView, CFileView)
 	ON_COMMAND(IDM_LIST_AUTOSIZE, OnAutosize)
 	ON_COMMAND(IDM_LIST_CHOOSE, OnChooseDetails)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_LIST_AUTOSIZEALL, IDM_LIST_CHOOSE, OnUpdateDetailsCommands)
-
-	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
-	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
-	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
-	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
-	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
 END_MESSAGE_MAP()
 
 INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -610,16 +615,7 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Header
-	m_pWndHeader = new CTooltipHeader();
-	if (!m_pWndHeader->Create(this, 1))
-		return -1;
-
-	HDITEM hdi;
-	hdi.mask = HDI_FORMAT;
-	hdi.fmt = HDF_STRING;
-
-	for (UINT a=0; a<LFAttributeCount; a++)
-		m_pWndHeader->InsertItem(a, &hdi);
+	AddHeaderColumns();
 
 	// Items
 	SetItemHeight(GetSystemMetrics(SM_CYSMICON), 1, ITEMCELLPADDING);
@@ -666,7 +662,7 @@ void CListView::OnAutosizeAll()
 		if (m_ContextViewSettings.ColumnWidth[a] && ((INT)a!=m_PreviewAttribute))
 			AutosizeColumn(a);
 
-	AdjustHeader();
+	UpdateHeader();
 	AdjustLayout();
 }
 
@@ -676,7 +672,7 @@ void CListView::OnAutosize()
 	{
 		AutosizeColumn(m_HeaderItemClicked);
 
-		AdjustHeader();
+		UpdateHeader();
 		AdjustLayout();
 	}
 }
@@ -690,121 +686,4 @@ void CListView::OnChooseDetails()
 void CListView::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pCmdUI->m_nID==IDM_LIST_AUTOSIZE ? (m_HeaderItemClicked>=0) && (m_HeaderItemClicked!=m_PreviewAttribute) : TRUE);
-}
-
-
-// Header commands
-
-void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-
-	OnDestroyEdit();
-
-	// Do not drag invisible columns, hidden attributes or the preview attribute
-	const INT Attr = pHdr->iItem;
-
-	*pResult =
-		(Attr<0) ||																// No attribute
-		(m_ContextViewSettings.ColumnWidth[Attr]==0) ||							// Currently invisible column
-		(theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth==0) ||		// Hidden attribute
-		(Attr==m_PreviewAttribute);												// Preview attribute of this list
-}
-
-void CListView::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-
-	if (pHdr->pitem->mask & HDI_ORDER)
-	{
-		const INT Attr = pHdr->iItem;
-
-		if (pHdr->pitem->iOrder==-1)
-		{
-			// Attribute dragged out of header
-			p_ContextViewSettings->ColumnWidth[Attr] = 0;
-		}
-		else
-		{
-			// Attribute dropped - get real order array with possible preview column at position 0
-			INT OrderArray[LFAttributeCount];
-			m_pWndHeader->GetOrderArray(OrderArray, LFAttributeCount);
-
-			// Copy order array to context view settings, and insert dragged column
-			UINT ReadIndex = 0;
-			UINT WriteIndex = 0;
-
-			for (UINT a=0; a<LFAttributeCount; a++)
-				if (pHdr->pitem->iOrder==(INT)a)
-				{
-					p_ContextViewSettings->ColumnOrder[WriteIndex++] = Attr;
-				}
-				else
-				{
-					if (OrderArray[ReadIndex]==Attr)
-						ReadIndex++;
-
-					p_ContextViewSettings->ColumnOrder[WriteIndex++] = OrderArray[ReadIndex++];
-				}
-		}
-
-		theApp.UpdateViewSettings(m_Context, LFViewList);
-
-		*pResult = TRUE;
-	}
-}
-
-void CListView::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-
-	if (pHdr->pitem->mask & HDI_WIDTH)
-	{
-		OnDestroyEdit();
-
-		// Do not track rating columns, invisible columns, hidden attributes or the preview attribute
-		const UINT Attr = pHdr->iItem;
-
-		*pResult =
-			(theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating) ||		// Fixed width
-			(m_ContextViewSettings.ColumnWidth[Attr]==0) ||							// Currently invisible column
-			(theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth==0) ||		// Hidden attribute
-			((INT)Attr==m_PreviewAttribute);										// Preview attribute of this list
-	}
-}
-
-void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-
-	if (!m_IgnoreHeaderItemChange && (pHdr->pitem->mask & HDI_WIDTH))
-	{
-		const UINT Attr = pHdr->iItem;
-
-		// Guarantee GetMinColumnWidth(), or hide column
-		INT Width = 0;
-		if (theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth)
-			Width = (pHdr->pitem->cxy<GetMinColumnWidth(Attr)) ? theApp.IsAttributeAlwaysVisible(Attr) ? GetMinColumnWidth(Attr) : 0 : pHdr->pitem->cxy;
-
-		if ((Width!=m_ContextViewSettings.ColumnWidth[Attr]) || (Width!=pHdr->pitem->cxy))
-		{
-			p_ContextViewSettings->ColumnWidth[Attr] = Width;
-
-			theApp.UpdateViewSettings(m_Context, LFViewList);
-		}
-
-		*pResult = TRUE;
-	}
-}
-
-void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-
-	const UINT Attr = pHdr->iItem;
-
-	if (theApp.IsAttributeSortable(m_Context, Attr, m_SubfolderAttribute))
-		theApp.SetContextSort(m_Context, Attr, m_ContextViewSettings.SortBy==Attr ? !m_ContextViewSettings.SortDescending : theApp.IsAttributeSortDescending(m_Context, Attr), FALSE);
-
-	*pResult = FALSE;
 }

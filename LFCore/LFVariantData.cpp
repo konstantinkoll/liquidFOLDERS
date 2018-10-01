@@ -594,7 +594,7 @@ LFCORE_API void LFVariantDataFromString(LFVariantData& VData, LPCWSTR pStr)
 
 	if (pStr)
 	{
-		SIZE_T Size = wcslen(pStr);
+		const SIZE_T Size = wcslen(pStr);
 
 		WCHAR Buffer[256];
 		WCHAR* pChar;

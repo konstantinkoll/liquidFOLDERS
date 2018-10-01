@@ -24,6 +24,12 @@ public:
 protected:
 	virtual INT GetHeaderIndent() const;
 	virtual void GetHeaderContextMenu(CMenu& Menu, INT HeaderItem);
+	virtual BOOL AllowHeaderColumnDrag(UINT Attr) const;
+	virtual BOOL AllowHeaderColumnTrack(UINT Attr) const;
+	virtual void UpdateHeaderColumnOrder(UINT Attr, INT Position);
+	virtual void UpdateHeaderColumnWidth(UINT Attr, INT Width);
+	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
+	virtual void HeaderColumnClicked(UINT Attr);
 	virtual void AdjustScrollbars();
 	virtual void AdjustLayout();
 	virtual void GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL Themed) const;
@@ -34,6 +40,12 @@ protected:
 
 	void ResetScrollArea();
 	void SetItemHeight(INT ItemHeight);
+	BOOL HasHeader() const;
+	BOOL IsHeaderVisible() const;
+	BOOL AddHeaderColumn(LPCWSTR Caption=L"", BOOL Right=FALSE);
+	BOOL AddHeaderColumn(UINT nID, BOOL Right=FALSE);
+	void UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths);
+	void UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BOOL bShowHeader=TRUE, INT PreviewAttribute=-1);
 
 	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
@@ -50,6 +62,12 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+
+	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 	UINT m_Flags;
@@ -64,7 +82,41 @@ protected:
 	INT m_ItemHeight;
 	CSize m_szScrollStep;
 
-	CTooltipHeader* m_pWndHeader;
+	INT m_HeaderItemClicked;
 
 private:
+	void HideHeader() const;
+	void ShowHeader() const;
+
+	CTooltipHeader* m_pWndHeader;
+	BOOL m_IgnoreHeaderItemChange;
 };
+
+inline BOOL CFrontstageScroller::HasHeader() const
+{
+	return m_pWndHeader!=NULL;
+}
+
+inline BOOL CFrontstageScroller::IsHeaderVisible() const
+{
+	return HasHeader() && !(m_pWndHeader->GetStyle() & HDS_HIDDEN);
+}
+
+inline BOOL CFrontstageScroller::AddHeaderColumn(UINT nID, BOOL Right)
+{
+	return AddHeaderColumn(CString((LPCSTR)nID), Right);
+}
+
+inline void CFrontstageScroller::HideHeader() const
+{
+	ASSERT(HasHeader());
+
+	m_pWndHeader->ModifyStyle(0, HDS_HIDDEN);
+}
+
+inline void CFrontstageScroller::ShowHeader() const
+{
+	ASSERT(HasHeader());
+
+	m_pWndHeader->ModifyStyle(HDS_HIDDEN, 0);
+}

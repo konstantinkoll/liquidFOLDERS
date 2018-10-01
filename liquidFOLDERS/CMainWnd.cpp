@@ -421,7 +421,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					break;
 				}
 
-				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+Context, Context, theApp.m_Contexts[Context].Name, (Context==LFContextNew) ? 0xFF6020 : (Context==LFContextTrash) ? 0x383030 : (COLORREF)-1);
+				m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+Context, Context, theApp.m_Contexts[Context].Name, (Context==LFContextNew) ? LFItemColorNew : (Context==LFContextTrash) ? LFItemColorTrash : (COLORREF)-1);
 			}
 
 			SetSidebar(&m_wndSidebar);

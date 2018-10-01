@@ -334,7 +334,6 @@ UINT CIndex::GetFileLocation(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCou
 	RemoveNew &= m_WriteAccess && ((File & LFFlagNew)!=0);
 
 	if (m_WriteAccess)
-	{
 		if ((Exists!=((File & LFFlagMissing)==0)) || RemoveNew)
 		{
 			if (Exists)
@@ -351,7 +350,6 @@ UINT CIndex::GetFileLocation(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCou
 
 			m_pTable[IDXTABLE_MASTER]->MakeDirty();
 		}
-	}
 
 	// Update item descriptor
 	if (pItemDescriptor)

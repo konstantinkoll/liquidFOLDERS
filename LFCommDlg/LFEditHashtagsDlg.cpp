@@ -117,7 +117,7 @@ void LFEditHashtagsDlg::OnUpdateAssignedHashtags()
 
 			m_wndAssignedHashtags.SetItemText(Index, 1, pItemDescriptor->Description);
 
-			if (LFContainsHashtag(m_Hashtags.GetBuffer(), pItemDescriptor->CoreAttributes.FileName))
+			if (LFContainsHashtag(m_Hashtags, pItemDescriptor->CoreAttributes.FileName))
 				m_wndAssignedHashtags.SetCheck(Index);
 		}
 	}

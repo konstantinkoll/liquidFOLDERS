@@ -185,7 +185,7 @@ void CProperty::OnSetString(CString& Value) const
 	ToString(tmpStr, 256);
 
 	// Is new value different?
-	if (((p_VData->Attr!=LFAttrFileName) || !Value.IsEmpty()) && (wcscmp(tmpStr, Value.GetBuffer())!=0))
+	if (((p_VData->Attr!=LFAttrFileName) || !Value.IsEmpty()) && (wcscmp(tmpStr, Value)!=0))
 	{
 		LFVariantDataFromString(*p_VData, Value);
 
@@ -898,7 +898,7 @@ void CInspectorGrid::SortProperties()
 	// If neccessary, delete sorting of property items (to be recreated when layout is adjusted)
 	if (m_pSortArray)
 	{
-		delete[] m_pSortArray;
+		delete m_pSortArray;
 		m_pSortArray = NULL;
 	}
 
@@ -1487,7 +1487,7 @@ void CInspectorGrid::OnDestroy()
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		delete m_Properties[a].pProperty;
 
-	delete[] m_pSortArray;
+	delete m_pSortArray;
 
 	CPropertyHolder::OnDestroy();
 }

@@ -546,7 +546,7 @@ struct LFContextDescriptor
 #pragma pack(pop)
 
 
-// Item colors
+// File colors
 
 #define LFItemColorDefault         0xFFFFFF
 #define LFItemColorRed             0x303BFF
@@ -564,6 +564,14 @@ struct LFContextDescriptor
 
 #define LFItemColorCount           8
 #define LFItemColorFadeCount       4
+
+
+// Store colors
+
+#define LFItemColorTrash           0x383030		// For stores only
+#define LFItemColorNew             0xFF6020		// For stores only
+
+#define LFColorCount               LFItemColorCount+2
 
 
 // Applications
@@ -850,7 +858,7 @@ struct LFItemDescriptor
 	// Item aggregation
 	LFFilter* pNextFilter;
 	UINT AggregateCount;
-	BYTE AggregateColorSet;
+	WORD AggregateColorSet;
 
 	// Pointer to attribute values
 	LPVOID AttributeValues[LFAttributeCount];

@@ -1000,7 +1000,7 @@ CString LFApplication::GetLatestVersion(CString CurrentVersion)
 									VersionIni += CString(pBuffer);
 								}
 
-								delete[] pBuffer;
+								delete pBuffer;
 							}
 						}
 						while (dwSize>0);
