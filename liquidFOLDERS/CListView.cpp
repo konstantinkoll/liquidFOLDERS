@@ -110,7 +110,7 @@ INT CListView::GetHeaderIndent() const
 	return m_HasFolders ? BACKSTAGEBORDER+CARDPADDING-ITEMCELLPADDING-1 : BACKSTAGEBORDER-1;
 }
 
-void CListView::GetHeaderContextMenu(CMenu& Menu, INT HeaderItem)
+void CListView::GetHeaderContextMenu(CMenu& Menu, UINT Attr)
 {
 	OnDestroyEdit();
 
@@ -120,8 +120,6 @@ void CListView::GetHeaderContextMenu(CMenu& Menu, INT HeaderItem)
 	for (INT a=LFAttributeCount-1; a>=0; a--)
 		if (theApp.IsAttributeAdvertised(m_Context, a) && theApp.m_Attributes[a].TypeProperties.DefaultColumnWidth)
 			Menu.InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_LIST_TOGGLEATTRIBUTE+a, theApp.GetAttributeName(a, m_Context));
-
-	m_HeaderItemClicked = HeaderItem;
 }
 
 BOOL CListView::AllowHeaderColumnDrag(UINT Attr) const

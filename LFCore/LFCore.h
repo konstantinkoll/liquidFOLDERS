@@ -374,6 +374,9 @@ inline BYTE LFGetUserContextID(const LFItemDescriptor* pItemDescriptor)
 // Gibt TRUE zurück, wenn die Datei eine Mediendatei ist
 #define LFIsMediaFile(ITEM) ((LFGetSystemContextID(ITEM)>=LFContextAudio) && (LFGetSystemContextID(ITEM)<=LFContextVideos))
 
+// Gibt TRUE zurück, wenn die Datei ein Bild ist
+#define LFIsPictureFile(ITEM) (LFGetSystemContextID(ITEM)==LFContextPictures)
+
 // Gibt TRUE zurück, wenn der Ordner durch ein einziges Vorschaubild seines Inhalts repräsentiert werden kann
 #define LFIsRepresentativeFolder(ITEM) ((LFGetUserContextID(ITEM)==LFContextMusic) || (LFGetUserContextID(ITEM)==LFContextPodcasts))
 

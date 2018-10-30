@@ -31,7 +31,7 @@ protected:
 	virtual RECT GetLabelRect(INT Index) const;
 
 	void FinishUpdate(BOOL InternalCall=FALSE);
-	void AddHeaderColumns();
+	void AddHeaderColumns(BOOL Shadow=FALSE);
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	afx_msg void OnDestroy();
@@ -55,10 +55,10 @@ private:
 	DWORD m_TypingTicks;
 };
 
-inline void CAbstractFileView::AddHeaderColumns()
+inline void CAbstractFileView::AddHeaderColumns(BOOL Shadow)
 {
 	for (UINT a=0; a<LFAttributeCount; a++)
-		VERIFY(AddHeaderColumn());
+		VERIFY(AddHeaderColumn(Shadow));
 }
 
 inline BOOL CAbstractFileView::IsEditing() const

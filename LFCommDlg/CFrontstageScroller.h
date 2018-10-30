@@ -23,7 +23,7 @@ public:
 
 protected:
 	virtual INT GetHeaderIndent() const;
-	virtual void GetHeaderContextMenu(CMenu& Menu, INT HeaderItem);
+	virtual void GetHeaderContextMenu(CMenu& Menu, UINT Attr);
 	virtual BOOL AllowHeaderColumnDrag(UINT Attr) const;
 	virtual BOOL AllowHeaderColumnTrack(UINT Attr) const;
 	virtual void UpdateHeaderColumnOrder(UINT Attr, INT Position);
@@ -42,8 +42,8 @@ protected:
 	void SetItemHeight(INT ItemHeight);
 	BOOL HasHeader() const;
 	BOOL IsHeaderVisible() const;
-	BOOL AddHeaderColumn(LPCWSTR Caption=L"", BOOL Right=FALSE);
-	BOOL AddHeaderColumn(UINT nID, BOOL Right=FALSE);
+	BOOL AddHeaderColumn(BOOL Shadow, LPCWSTR Caption=L"", BOOL Right=FALSE);
+	BOOL AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right=FALSE);
 	void UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths);
 	void UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BOOL bShowHeader=TRUE, INT PreviewAttribute=-1);
 
@@ -102,9 +102,9 @@ inline BOOL CFrontstageScroller::IsHeaderVisible() const
 	return HasHeader() && !(m_pWndHeader->GetStyle() & HDS_HIDDEN);
 }
 
-inline BOOL CFrontstageScroller::AddHeaderColumn(UINT nID, BOOL Right)
+inline BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right)
 {
-	return AddHeaderColumn(CString((LPCSTR)nID), Right);
+	return AddHeaderColumn(Shadow, CString((LPCSTR)nID), Right);
 }
 
 inline void CFrontstageScroller::HideHeader() const

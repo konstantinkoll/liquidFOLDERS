@@ -35,7 +35,7 @@ protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual INT GetHeaderIndent() const;
-	virtual void GetHeaderContextMenu(CMenu& Menu, INT HeaderItem);
+	virtual void GetHeaderContextMenu(CMenu& Menu, UINT Attr);
 	virtual BOOL AllowHeaderColumnDrag(UINT Attr) const;
 	virtual BOOL AllowHeaderColumnTrack(UINT Attr) const;
 	virtual void UpdateHeaderColumnOrder(UINT Attr, INT Position);

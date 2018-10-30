@@ -30,7 +30,7 @@ INT CFrontstageScroller::GetHeaderIndent() const
 	return BACKSTAGEBORDER-1;
 }
 
-void CFrontstageScroller::GetHeaderContextMenu(CMenu& /*Menu*/, INT /*HeaderItem*/)
+void CFrontstageScroller::GetHeaderContextMenu(CMenu& /*Menu*/, UINT /*Attr*/)
 {
 }
 
@@ -333,7 +333,7 @@ void CFrontstageScroller::SetItemHeight(INT ItemHeight)
 	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)-1;
 }
 
-BOOL CFrontstageScroller::AddHeaderColumn(LPCWSTR Caption, BOOL Right)
+BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, LPCWSTR Caption, BOOL Right)
 {
 	ASSERT(Caption);
 
@@ -342,7 +342,7 @@ BOOL CFrontstageScroller::AddHeaderColumn(LPCWSTR Caption, BOOL Right)
 	{
 		m_pWndHeader = new CTooltipHeader();
 
-		if (!m_pWndHeader->Create(this, 1))
+		if (!m_pWndHeader->Create(this, 1, Shadow))
 			return FALSE;
 	}
 
@@ -667,11 +667,14 @@ void CFrontstageScroller::OnContextMenu(CWnd* pWnd, CPoint point)
 		htt.pt = pt;
 
 		// Get menu
-		CMenu Menu;
-		GetHeaderContextMenu(Menu, m_pWndHeader->HitTest(&htt));
+		if ((m_HeaderItemClicked=m_pWndHeader->HitTest(&htt))>=0)
+		{
+			CMenu Menu;
+			GetHeaderContextMenu(Menu, (UINT)m_HeaderItemClicked);
 
-		// Track popup menu
-		TrackPopupMenu(Menu, point, this, FALSE);
+			// Track popup menu
+			TrackPopupMenu(Menu, point, this, FALSE);
+		}
 	}
 	else
 	{

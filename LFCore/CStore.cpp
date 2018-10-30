@@ -620,7 +620,7 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 		}
 		else
 		{
-			if (LFIsNullAttribute(pItemDescriptor, LFAttrTitle))
+			if (!LFIsPictureFile(pItemDescriptor) && LFIsNullAttribute(pItemDescriptor, LFAttrTitle))
 				SetAttribute(pItemDescriptor, LFAttrTitle, Name);
 		}
 	}
