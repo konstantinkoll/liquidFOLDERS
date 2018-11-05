@@ -254,13 +254,13 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, LPCGU
 		case VT_DATE:
 			if (AttrProperties[Attr].Type==LFTypeTime)
 			{
-				SYSTEMTIME st;
-				FILETIME ft;
+				SYSTEMTIME SystemTime;
+				FILETIME FileTime;
 
-				VariantTimeToSystemTime(Value.date, &st);
-				SystemTimeToFileTime(&st, &ft);
+				VariantTimeToSystemTime(Value.date, &SystemTime);
+				SystemTimeToFileTime(&SystemTime, &FileTime);
 
-				SetAttribute(pItemDescriptor, Attr, &ft);
+				SetAttribute(pItemDescriptor, Attr, &FileTime);
 			}
 
 			break;

@@ -22,9 +22,11 @@ CUsageList::CUsageList()
 	SetItemHeight(m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, max(32, 2*m_DefaultFontHeight)), 2);
 }
 
-INT CUsageList::CompareItems(INT Index1, INT Index2) const
+INT CUsageList::CompareUsage(UsageItemData* pData1, UsageItemData* pData2, const SortParameters& /*Parameters*/)
 {
-	return (INT)((GetUsageItemData(Index2)->FileSize-GetUsageItemData(Index1)->FileSize)>>32);
+	const INT Result =(INT)((pData2->FileSize-pData1->FileSize)>>32);
+
+	return Result ? Result : wcscmp(LFGetApp()->m_Contexts[pData1->Context].Name, LFGetApp()->m_Contexts[pData2->Context].Name);
 }
 
 void CUsageList::AddContext(const LFStatistics& Statistics, UINT Context)
@@ -61,7 +63,7 @@ void CUsageList::SetUsage(LFStatistics Statistics)
 		AddContext(Statistics, 0);
 
 	LastItem();
-	SortItems();
+	SortItems((PFNCOMPARE)CompareUsage);
 
 	AdjustLayout();
 }
@@ -301,8 +303,8 @@ void LFStorePropertiesDlg::OnRunBackup()
 	{
 		CWaitCursor WaitCursor;
 
-		CStdioFile f;
-		if (!f.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
+		CStdioFile File;
+		if (!File.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
 		{
 			LFErrorBox(this, LFDriveNotReady);
 		}
@@ -310,7 +312,7 @@ void LFStorePropertiesDlg::OnRunBackup()
 		{
 			try
 			{
-				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
+				File.WriteString(_T("Windows Registry Editor Version 5.00\n"));
 
 				// Iterate stores
 				for (UINT a=0; a<Count; a++)
@@ -322,47 +324,47 @@ void LFStorePropertiesDlg::OnRunBackup()
 							// Header
 							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
 							tmpStr += StoreDescriptor.StoreID;
-							f.WriteString(tmpStr+_T("]\n"));
+							File.WriteString(tmpStr+_T("]\n"));
 
 							// Name
 							tmpStr = StoreDescriptor.StoreName;
 							CEscape(tmpStr);
-							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
+							File.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
 
 							// Mode
 							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), StoreDescriptor.Mode);
-							f.WriteString(tmpStr);
+							File.WriteString(tmpStr);
 
 							// AutoLocation
 							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), StoreDescriptor.Flags & LFStoreFlagsAutoLocation);
-							f.WriteString(tmpStr);
+							File.WriteString(tmpStr);
 
 							if ((StoreDescriptor.Flags & LFStoreFlagsAutoLocation)==0)
 							{
 								// Path
 								tmpStr = StoreDescriptor.DatPath;
 								CEscape(tmpStr);
-								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
+								File.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
 							}
 
 							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.UniqueID, sizeof(StoreDescriptor.UniqueID))+_T("\n"));
+							File.WriteString(_T("\"GUID\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.UniqueID, sizeof(StoreDescriptor.UniqueID))+_T("\n"));
 
 							// IndexVersion
 							tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), StoreDescriptor.IndexVersion);
-							f.WriteString(tmpStr);
+							File.WriteString(tmpStr);
 
 							// CreationTime
-							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.CreationTime, sizeof(StoreDescriptor.CreationTime))+_T("\n"));
+							File.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.CreationTime, sizeof(StoreDescriptor.CreationTime))+_T("\n"));
 
 							// FileTime
-							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.FileTime, sizeof(StoreDescriptor.FileTime))+_T("\n"));
+							File.WriteString(_T("\"FileTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.FileTime, sizeof(StoreDescriptor.FileTime))+_T("\n"));
 
 							// MaintenanceTime
-							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.MaintenanceTime, sizeof(StoreDescriptor.MaintenanceTime))+_T("\n"));
+							File.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.MaintenanceTime, sizeof(StoreDescriptor.MaintenanceTime))+_T("\n"));
 
 							// SynchronizeTime
-							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.SynchronizeTime, sizeof(StoreDescriptor.SynchronizeTime))+_T("\n"));
+							File.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.SynchronizeTime, sizeof(StoreDescriptor.SynchronizeTime))+_T("\n"));
 						}
 				}
 			}
@@ -371,7 +373,7 @@ void LFStorePropertiesDlg::OnRunBackup()
 				LFErrorBox(this, LFDriveNotReady);
 			}
 
-			f.Close();
+			File.Close();
 		}
 	}
 

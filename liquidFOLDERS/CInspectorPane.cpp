@@ -278,11 +278,11 @@ void CFileSummary::UpdateIATAAirport(BOOL AllowMultiple)
 		}
 		else
 		{
-			LFAirport* pAirport;
-			if (LFIATAGetAirportByCode(m_AttributeSummary[LFAttrLocationIATA].VData.IATACode, pAirport))
+			LPCAIRPORT lpcAirport;
+			if (LFIATAGetAirportByCode(m_AttributeSummary[LFAttrLocationIATA].VData.IATACode, lpcAirport))
 			{
-				AddValueVirtual(AttrIATAAirportName, pAirport->Name);
-				AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(pAirport->CountryID)->Name);
+				AddValueVirtual(AttrIATAAirportName, lpcAirport->Name);
+				AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(lpcAirport->CountryID)->Name);
 			}
 			else
 			{

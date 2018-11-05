@@ -952,9 +952,9 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, 
 
 // IATA
 
-HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, LONG Width, LONG Height)
+HBITMAP LFIATACreateAirportMap(LPCAIRPORT lpcAirport, LONG Width, LONG Height)
 {
-	ASSERT(pAirport);
+	ASSERT(lpcAirport);
 
 	// Create bitmap
 	CDC dc;
@@ -971,8 +971,8 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, LONG Width, LONG Height)
 	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
 
 	// Map location
-	INT X = (INT)((pAirport->Location.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
-	INT Y = (INT)((pAirport->Location.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
+	INT X = (INT)((lpcAirport->Location.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
+	INT Y = (INT)((lpcAirport->Location.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
 
 	// Map offset
 	INT OffsX = -X+Width/2;
@@ -1001,7 +1001,7 @@ HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, LONG Width, LONG Height)
 	// Create font path
 	FontFamily fontFamily(_T("Arial"));
 	WCHAR pszBuf[4];
-	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
+	MultiByteToWideChar(CP_ACP, 0, lpcAirport->Code, -1, pszBuf, 4);
 
 	StringFormat StrFormat;
 	GraphicsPath TextPath;

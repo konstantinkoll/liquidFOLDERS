@@ -301,7 +301,7 @@ void CPropertyIATA::OnSetString(CString& Value) const
 		return;
 
 	// Get old airport
-	LFAirport* pAirportOld = NULL;
+	LPCAIRPORT pAirportOld = NULL;
 	if (!m_Multiple)
 		LFIATAGetAirportByCode(p_VData->IATACode, pAirportOld);
 
@@ -312,7 +312,7 @@ void CPropertyIATA::OnSetString(CString& Value) const
 	SHORT Attr2 = -1;
 	SHORT Attr3 = -1;
 
-	LFAirport* pAirportNew = NULL;
+	LPCAIRPORT pAirportNew = NULL;
 	if (LFIATAGetAirportByCode(p_VData->IATACode, pAirportNew) && !m_Multiple)
 	{
 		// Location name
@@ -374,13 +374,13 @@ void CPropertyIATA::SetAdditionalVData(LFVariantData* pVDataLocationName, LFVari
 		ASSERT(LFGetApp()->m_Attributes[p_VDataLocationGPS->Attr].AttrProperties.Type==LFTypeGeoCoordinates);
 }
 
-SHORT CPropertyIATA::OnSetLocationName(LFAirport* pAirport) const
+SHORT CPropertyIATA::OnSetLocationName(LPCAIRPORT lpcAirport) const
 {
-	ASSERT(pAirport);
+	ASSERT(lpcAirport);
 
 	if (p_VDataLocationName)
 	{
-		MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, p_VDataLocationName->UnicodeString, 256);
+		MultiByteToWideChar(CP_ACP, 0, lpcAirport->Name, -1, p_VDataLocationName->UnicodeString, 256);
 		p_VDataLocationName->IsNull = FALSE;
 
 		return (SHORT)p_VDataLocationName->Attr;
@@ -389,13 +389,13 @@ SHORT CPropertyIATA::OnSetLocationName(LFAirport* pAirport) const
 	return -1;
 }
 
-SHORT CPropertyIATA::OnSetLocationGPS(LFAirport* pAirport) const
+SHORT CPropertyIATA::OnSetLocationGPS(LPCAIRPORT lpcAirport) const
 {
-	ASSERT(pAirport);
+	ASSERT(lpcAirport);
 
 	if (p_VDataLocationGPS)
 	{
-		p_VDataLocationGPS->GeoCoordinates = pAirport->Location;
+		p_VDataLocationGPS->GeoCoordinates = lpcAirport->Location;
 		p_VDataLocationGPS->IsNull = FALSE;
 
 		return (SHORT)p_VDataLocationGPS->Attr;

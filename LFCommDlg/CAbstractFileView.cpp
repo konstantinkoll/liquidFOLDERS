@@ -9,8 +9,8 @@
 // CAbstractFileView
 //
 
-CAbstractFileView::CAbstractFileView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
-	: CFrontstageItemView(Flags, DataSize, szItemInflate)
+CAbstractFileView::CAbstractFileView(UINT Flags, SIZE_T szData, const CSize& szItemInflate)
+	: CFrontstageItemView(Flags, szData, szItemInflate)
 {
 	ASSERT(Flags & FRONTSTAGE_ENABLEFOCUSITEM);
 

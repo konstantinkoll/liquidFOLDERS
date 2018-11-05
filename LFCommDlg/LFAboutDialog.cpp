@@ -33,28 +33,28 @@ LFAboutDialog::LFAboutDialog(USHORT BackgroundTabMask, CWnd* pParentWnd)
 	m_BackgroundTabMask = BackgroundTabMask;
 
 	// Compile time
-	SYSTEMTIME st;
-	ZeroMemory(&st, sizeof(st));
+	SYSTEMTIME SystemTime;
+	ZeroMemory(&SystemTime, sizeof(SystemTime));
 
-	st.wDay = COMPILE_DAY;
-	st.wMonth = COMPILE_MONTH;
-	st.wYear = COMPILE_YEAR;
-	st.wHour = COMPILE_HOUR;
-	st.wMinute = COMPILE_MINUTE;
-	st.wSecond = COMPILE_SECOND;
+	SystemTime.wDay = COMPILE_DAY;
+	SystemTime.wMonth = COMPILE_MONTH;
+	SystemTime.wYear = COMPILE_YEAR;
+	SystemTime.wHour = COMPILE_HOUR;
+	SystemTime.wMinute = COMPILE_MINUTE;
+	SystemTime.wSecond = COMPILE_SECOND;
 
-	GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, m_BuildInfo, 256);
+	GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &SystemTime, NULL, m_BuildInfo, 256);
 	wcscat_s(m_BuildInfo, 256, L", ");
 
 	WCHAR tmpStr[256];
-	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT | TIME_NOSECONDS, &st, NULL, tmpStr, 256);
+	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT | TIME_NOSECONDS, &SystemTime, NULL, tmpStr, 256);
 	wcscat_s(m_BuildInfo, 256, tmpStr);
 
 	// Special icons
-	GetLocalTime(&st);
+	GetLocalTime(&SystemTime);
 
-	p_AppLogo = LFGetApp()->GetCachedResourceImage((st.wMonth==3) && (st.wDay==17) ? IDB_STPATRICK : IDB_LIQUIDFOLDERS_128);
-	p_SantaHat = (st.wMonth==12) ? LFGetApp()->GetCachedResourceImage(IDB_SANTA) : NULL;
+	p_AppLogo = LFGetApp()->GetCachedResourceImage((SystemTime.wMonth==3) && (SystemTime.wDay==17) ? IDB_STPATRICK : IDB_LIQUIDFOLDERS_128);
+	p_SantaHat = (SystemTime.wMonth==12) ? LFGetApp()->GetCachedResourceImage(IDB_SANTA) : NULL;
 
 	// Application name
 	ENSURE(m_AppName.LoadString(IDR_APPLICATION));

@@ -110,7 +110,7 @@ INT CListView::GetHeaderIndent() const
 	return m_HasFolders ? BACKSTAGEBORDER+CARDPADDING-ITEMCELLPADDING-1 : BACKSTAGEBORDER-1;
 }
 
-void CListView::GetHeaderContextMenu(CMenu& Menu, UINT Attr)
+void CListView::GetHeaderContextMenu(CMenu& Menu)
 {
 	OnDestroyEdit();
 

@@ -200,18 +200,18 @@ void CGlobeView::UpdateCursor()
 		SetCursor(hCursor=theApp.LoadStandardCursor(lpszCursorName=Cursor));
 }
 
-void CGlobeView::WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr)
+void CGlobeView::WriteGoogleAttribute(CStdioFile& File, const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	WCHAR tmpStr[256];
 	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
 
 	if (tmpStr[0])
 	{
-		f.WriteString(_T("&lt;b&gt;"));
-		f.WriteString(theApp.GetAttributeName(Attr, m_Context));
-		f.WriteString(_T("&lt;/b&gt;: "));
-		f.WriteString(tmpStr);
-		f.WriteString(_T("&lt;br&gt;"));
+		File.WriteString(_T("&lt;b&gt;"));
+		File.WriteString(theApp.GetAttributeName(Attr, m_Context));
+		File.WriteString(_T("&lt;/b&gt;: "));
+		File.WriteString(tmpStr);
+		File.WriteString(_T("&lt;br&gt;"));
 	}
 }
 
@@ -1203,48 +1203,48 @@ void CGlobeView::OnGoogleEarth()
 	}
 	else
 	{
-		CStdioFile f(fStream);
+		CStdioFile File(fStream);
 		try
 		{
-			f.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
-			f.WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
-			f.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
-			f.WriteString(_T("<StyleMap id=\"Location\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
+			File.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
+			File.WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
+			File.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
+			File.WriteString(_T("<StyleMap id=\"Location\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
 
 			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 			{
 				const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 				if (IsItemSelected(pItemDescriptor) && ((pItemDescriptor->CoreAttributes.LocationGPS.Latitude!=0) || (pItemDescriptor->CoreAttributes.LocationGPS.Longitude!=0)))
 				{
-					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString(pItemDescriptor->CoreAttributes.FileName);
-					f.WriteString(_T("</name>\n<description>"));
+					File.WriteString(_T("<Placemark>\n<name>"));
+					File.WriteString(pItemDescriptor->CoreAttributes.FileName);
+					File.WriteString(_T("</name>\n<description>"));
 
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationName);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationIATA);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrLocationGPS);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrCreator);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrMediaCollection);
-					WriteGoogleAttribute(f, pItemDescriptor, LFAttrComments);
+					WriteGoogleAttribute(File, pItemDescriptor, LFAttrLocationName);
+					WriteGoogleAttribute(File, pItemDescriptor, LFAttrLocationIATA);
+					WriteGoogleAttribute(File, pItemDescriptor, LFAttrLocationGPS);
+					WriteGoogleAttribute(File, pItemDescriptor, LFAttrCreator);
+					WriteGoogleAttribute(File, pItemDescriptor, LFAttrMediaCollection);
+					WriteGoogleAttribute(File, pItemDescriptor, LFAttrComments);
 
-					f.WriteString(_T("&lt;div&gt;</description>\n<styleUrl>#Location</styleUrl>\n"));
+					File.WriteString(_T("&lt;div&gt;</description>\n<styleUrl>#Location</styleUrl>\n"));
 
 					CString tmpStr;
 					tmpStr.Format(_T("<Point><coordinates>%.6lf,%.6lf,-5000</coordinates></Point>\n"), pItemDescriptor->CoreAttributes.LocationGPS.Longitude, -pItemDescriptor->CoreAttributes.LocationGPS.Latitude);
 
-					f.WriteString(tmpStr+_T("</Placemark>\n"));
+					File.WriteString(tmpStr+_T("</Placemark>\n"));
 				}
 			}
 
-			f.WriteString(_T("</Document>\n</kml>\n"));
-			f.Close();
+			File.WriteString(_T("</Document>\n</kml>\n"));
+			File.Close();
 
 			ShellExecute(m_hWnd, _T("open"), szTempName, NULL, NULL, SW_SHOWNORMAL);
 		}
 		catch(CFileException ex)
 		{
 			LFErrorBox(this, LFDriveNotReady);
-			f.Close();
+			File.Close();
 		}
 	}
 }

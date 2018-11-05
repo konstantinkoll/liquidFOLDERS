@@ -30,7 +30,7 @@ INT CFrontstageScroller::GetHeaderIndent() const
 	return BACKSTAGEBORDER-1;
 }
 
-void CFrontstageScroller::GetHeaderContextMenu(CMenu& /*Menu*/, UINT /*Attr*/)
+void CFrontstageScroller::GetHeaderContextMenu(CMenu& /*Menu*/)
 {
 }
 
@@ -670,7 +670,7 @@ void CFrontstageScroller::OnContextMenu(CWnd* pWnd, CPoint point)
 		if ((m_HeaderItemClicked=m_pWndHeader->HitTest(&htt))>=0)
 		{
 			CMenu Menu;
-			GetHeaderContextMenu(Menu, (UINT)m_HeaderItemClicked);
+			GetHeaderContextMenu(Menu);
 
 			// Track popup menu
 			TrackPopupMenu(Menu, point, this, FALSE);

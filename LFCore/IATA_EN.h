@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8791
+#define AirportCount_EN 8792
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -5353,6 +5353,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 138, "NNI", "", "Namutoni", { 18.807500, 16.926944 } },
 	{ 213, "NNK", "", "Naknek", { -58.732778, -157.020000 } },
 	{ 213, "NNL", "", "Nondalton", { -59.980278, -154.839167 } },
+	{  92, "NNR", "", "Connemara", { -53.230556, -9.467778 } },
 	{ 197, "NNT", "", "Nan", { -18.807778, 100.783333 } },
 	{  26, "NNU", "", "Nanuque", { 17.823333, -40.330000 } },
 	{  89, "NNX", "", "Nunukan", { -4.150000, 117.650000 } },

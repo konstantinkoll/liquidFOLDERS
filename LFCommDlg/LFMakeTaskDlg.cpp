@@ -54,5 +54,6 @@ END_MESSAGE_MAP()
 void LFMakeTaskDlg::OnUseDate()
 {
 	m_UseDate = ((CButton*)GetDlgItem(IDC_USEDATE))->GetCheck();
+
 	EnableControls();
 }

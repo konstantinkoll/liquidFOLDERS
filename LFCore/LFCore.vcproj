@@ -478,6 +478,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFMemorySort.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFSearchResult.cpp"
 				>
 			</File>
@@ -657,6 +661,10 @@
 			</File>
 			<File
 				RelativePath=".\LFMaintenanceList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFMemorySort.h"
 				>
 			</File>
 			<File

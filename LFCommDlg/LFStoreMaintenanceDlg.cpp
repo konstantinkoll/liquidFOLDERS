@@ -118,7 +118,7 @@ void LFStoreMaintenanceDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 BOOL LFStoreMaintenanceDlg::InitDialog()
 {
 	CString Hint;
-	Hint.Format(CString((LPCSTR)(m_pMaintenanceList->m_ItemCount==1 ? IDS_STOREMAINTENANCE_HINT_SINGULAR : IDS_STOREMAINTENANCE_HINT_PLURAL)), m_pMaintenanceList->m_ItemCount);
+	Hint.Format(m_pMaintenanceList->m_ItemCount==1 ? IDS_STOREMAINTENANCE_HINT_SINGULAR : IDS_STOREMAINTENANCE_HINT_PLURAL, m_pMaintenanceList->m_ItemCount);
 
 	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
 	m_wndHeaderArea.SetHeader(CString((LPCSTR)IDS_STOREMAINTENANCE_CAPTION), Hint, NULL, CPoint(0, 0), FALSE);

@@ -156,6 +156,12 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 						pData->CollectionIconID = theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor));
 					}
 
+					// Only show comments if different from collection and title
+					if (pData->pStrComments)
+						if ((pData->pStrCollection && (wcscmp(pData->pStrComments, pData->pStrCollection)==0)) ||
+							(pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0)))
+							pData->PreviewMask &= ~PRV_COMMENTS;
+
 					if (UsePreview(pItemDescriptor))
 					{
 						pData->PreviewMask |= PRV_THUMBNAILS;
@@ -206,6 +212,10 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 							pItemDescriptor->IconID = pData->CollectionIconID;
 							pData->PreviewMask |= PRV_REPRESENTATIVE;
 						}
+
+					// Only show comments if different from title
+					if (pData->pStrComments && pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0))
+						pData->PreviewMask &= ~PRV_COMMENTS;
 
 					break;
 				}
@@ -263,8 +273,8 @@ void CTimelineView::AdjustLayout()
 	}
 
 	// Current year
-	SYSTEMTIME st;
-	GetLocalTime(&st);
+	SYSTEMTIME stLocal;
+	GetLocalTime(&stLocal);
 
 	// Width
 	CRect rectLayout;
@@ -275,13 +285,12 @@ void CTimelineView::AdjustLayout()
 	BOOL HasScrollbars = FALSE;
 
 Restart:
-
 	m_ItemCategories.m_ItemCount = 0;
 	m_TwoColumns = m_ScrollWidth-2*GUTTER-MIDDLE-4*CARDPADDING+2*THUMBMARGINX+8>=4*(128+THUMBMARGINX);
 	m_ItemWidth = m_TwoColumns ? (m_ScrollWidth-MIDDLE)/2-GUTTER : m_ScrollWidth-2*GUTTER;
 	m_PreviewColumns = (m_ItemWidth-2*CARDPADDING+THUMBMARGINX+4)/(128+THUMBMARGINX);
 
-	WORD Year = st.wYear;
+	WORD Year = stLocal.wYear;
 	INT CurTop[2] = { GUTTER+2, GUTTER+2 };
 	INT LastTop = -10;
 	INT Row = 0;

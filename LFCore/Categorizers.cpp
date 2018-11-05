@@ -238,19 +238,19 @@ void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDe
 	assert(pSpecimen->AttributeValues[m_Attr]);
 	assert(AttrProperties[m_Attr].Type==LFTypeIATACode);
 
-	LFAirport* pAirport;
-	if (LFIATAGetAirportByCode((LPCSTR)pSpecimen->AttributeValues[m_Attr], pAirport))
+	LPCAIRPORT lpcAirport;
+	if (LFIATAGetAirportByCode((LPCSTR)pSpecimen->AttributeValues[m_Attr], lpcAirport))
 	{
 		// Location name
 		WCHAR LocationName[256];
-		LFIATAGetLocationNameForAirport(pAirport, LocationName, 256);
+		LFIATAGetLocationNameForAirport(lpcAirport, LocationName, 256);
 
 		// IATA code to Unicode
-		assert(strlen(pAirport->Code)==3);
+		assert(strlen(lpcAirport->Code)==3);
 		pFolder->FolderMainCaptionCount = 3;
 
 		WCHAR tmpStr[256];
-		MultiByteToWideChar(CP_ACP, 0, pAirport->Code, 4, tmpStr, 256);
+		MultiByteToWideChar(CP_ACP, 0, lpcAirport->Code, 4, tmpStr, 256);
 
 		wcscat_s(tmpStr, 256, m_Separator);
 
@@ -260,8 +260,8 @@ void CIATACategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDe
 		// Set attributes
 		SetAttribute(pFolder, LFAttrFileName, tmpStr);
 		SetAttribute(pFolder, LFAttrLocationName, LocationName);
-		SetAttribute(pFolder, LFAttrLocationIATA, pAirport->Code);
-		SetAttribute(pFolder, LFAttrLocationGPS, &pAirport->Location);
+		SetAttribute(pFolder, LFAttrLocationIATA, lpcAirport->Code);
+		SetAttribute(pFolder, LFAttrLocationGPS, &lpcAirport->Location);
 	}
 	else
 	{
@@ -381,14 +381,14 @@ CDateCategorizer::CDateCategorizer(UINT Attr)
 {
 }
 
-void CDateCategorizer::GetDate(const FILETIME* Time, LPSYSTEMTIME Date)
+void CDateCategorizer::GetDate(const LPFILETIME Time, LPSYSTEMTIME Date)
 {
 	SYSTEMTIME stUTC;
 	FileTimeToSystemTime(Time, &stUTC);
 	SystemTimeToTzSpecificLocalTime(NULL, &stUTC, Date);
 }
 
-void CDateCategorizer::GetDay(const FILETIME* Time, LPFILETIME Day)
+void CDateCategorizer::GetDay(const LPFILETIME Time, LPFILETIME Day)
 {
 	SYSTEMTIME stLocal;
 	GetDate(Time, &stLocal);
@@ -405,10 +405,10 @@ BOOL CDateCategorizer::CompareItems(const LFItemDescriptor* pItemDescriptor1, co
 	assert(AttrProperties[m_Attr].Type==LFTypeTime);
 
 	SYSTEMTIME stLocal1;
-	GetDate((FILETIME*)pItemDescriptor1->AttributeValues[m_Attr], &stLocal1);
+	GetDate((LPFILETIME)pItemDescriptor1->AttributeValues[m_Attr], &stLocal1);
 
 	SYSTEMTIME stLocal2;
-	GetDate((FILETIME*)pItemDescriptor2->AttributeValues[m_Attr], &stLocal2);
+	GetDate((LPFILETIME)pItemDescriptor2->AttributeValues[m_Attr], &stLocal2);
 
 	return (stLocal1.wDay==stLocal2.wDay) && (stLocal1.wMonth==stLocal2.wMonth) && (stLocal1.wYear==stLocal2.wYear);
 }
@@ -417,7 +417,7 @@ void CDateCategorizer::GetFilterValue(LFVariantData& VData, LFItemDescriptor* pI
 {
 	LFInitVariantData(VData, m_Attr);
 
-	GetDay((FILETIME*)pItemDescriptor->AttributeValues[m_Attr], &VData.Time);
+	GetDay((LPFILETIME)pItemDescriptor->AttributeValues[m_Attr], &VData.Time);
 	VData.IsNull = FALSE;
 }
 

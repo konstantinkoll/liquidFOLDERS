@@ -3,6 +3,7 @@
 #include "LF.h"
 #include "LFFileImportList.h"
 #include "LFMaintenanceList.h"
+#include "LFMemorySort.h"
 #include "LFSearchResult.h"
 #include "LFTransactionList.h"
 
@@ -63,6 +64,10 @@ LFCORE_API void __stdcall LFGetErrorText(LPWSTR pStr, SIZE_T cCount, UINT ID);
 LFCORE_API void __stdcall LFCoreErrorBox(UINT nID, HWND hWnd=NULL);
 
 
+// Sortiert einen Speicherbereich
+LFCORE_API void LFSortMemory(LPVOID pMemory, UINT ItemCount, SIZE_T szData, PFNCOMPARE zCompare, UINT Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
+
+
 // Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
 LFCORE_API void __stdcall LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID);
 
@@ -96,7 +101,6 @@ LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FAL
 // Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
 // und keine ordnungsgemäße Lizenz vorliegt
 LFCORE_API BOOL __stdcall LFIsSharewareExpired();
-
 
 
 
@@ -183,40 +187,40 @@ LFCORE_API UINT __stdcall LFDoFileImport(LFFileImportList* pFileImportList, BOOL
 LFCORE_API BOOL __stdcall LFContainsHashtag(LPCWSTR pUnicodeArray, LPCWSTR pHashtag);
 
 // Konvertiert einen FourCC in eine Zeichenkette
-LFCORE_API void __stdcall LFFourCCToString(const UINT c, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFFourCCToString(const UINT FourCC, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine 32-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFUINTToString(const UINT u, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFUINTToString(const UINT Uint, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine 64-Bit-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFSizeToString(const INT64 s, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFSizeToString(const INT64 Size, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert einen Bruch in eine Zeichenkette
-LFCORE_API void __stdcall LFFractionToString(const LFFraction f, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFFractionToString(const LFFraction& Fraction, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Double-Zahl in eine Zeichenkette
-LFCORE_API void __stdcall LFDoubleToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFDoubleToString(const DOUBLE Double, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Koordinaten-Komponente in eine Zeichenkette
-LFCORE_API void __stdcall LFGeoCoordinateToString(const DOUBLE c, LPWSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
+LFCORE_API void __stdcall LFGeoCoordinateToString(const DOUBLE Coordinate, LPWSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
 
 // Konvertiert eine Geo-Position in eine Zeichenkette
-LFCORE_API void __stdcall LFGeoCoordinatesToString(const LFGeoCoordinates& c, LPWSTR pStr, SIZE_T cCount, BOOL FillZero);
+LFCORE_API void __stdcall LFGeoCoordinatesToString(const LFGeoCoordinates& Coordinates, LPWSTR pStr, SIZE_T cCount, BOOL FillZero);
 
 // Konvertiert eine Zeit in eine Zeichenkette
-LFCORE_API void __stdcall LFTimeToString(const FILETIME t, LPWSTR pStr, SIZE_T cCount, BOOL IncludeTime=TRUE);
+LFCORE_API void __stdcall LFTimeToString(const FILETIME& Time, LPWSTR pStr, SIZE_T cCount, BOOL IncludeTime=TRUE);
 
 // Konvertiert eine Bitrate in eine Zeichenkette
-LFCORE_API void __stdcall LFBitrateToString(const UINT r, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFBitrateToString(const UINT Bitrate, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Zeitdauer in eine Zeichenkette
-LFCORE_API void __stdcall LFDurationToString(UINT d, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFDurationToString(const UINT Duration, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Megapixel-Angabe in eine Zeichenkette
-LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE Resolution, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert eine Bildraten in eine Zeichenkette
-LFCORE_API void __stdcall LFFramerateToString(const UINT r, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFFramerateToString(const UINT Framerate, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert ein Attribut in eine Zeichenkette
 LFCORE_API void __stdcall LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount);
@@ -488,24 +492,24 @@ LFCORE_API UINT __stdcall LFIATAGetCountryCount();
 LFCORE_API UINT __stdcall LFIATAGetAirportCount();
 
 // Liefert Zeiger auf Territorium zurück
-LFCORE_API const LFCountry* __stdcall LFIATAGetCountry(UINT CountryID);
+LFCORE_API LPCCOUNTRY __stdcall LFIATAGetCountry(UINT CountryID);
 
 // Setzt den Zeiger *ppAirport auf den nächsten Flughafen
-LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LFAirport*& pAirport);
+LFCORE_API INT __stdcall LFIATAGetNextAirport(INT Last, LPCAIRPORT& lpcAirport);
 
 // Setzt den Zeiger *ppAirport auf den nächsten Flughafen, der im Territorium CountryID liegt.
 // *ppAirport kann in jedem Fall überschrieben werden.
-LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LFAirport*& pAirport);
+LFCORE_API INT __stdcall LFIATAGetNextAirportByCountry(UINT CountryID, INT Last, LPCAIRPORT& lpcAirport);
 
 // Setzt den Zeiger *pStr auf den Flughafen mit dem übergebenen Code.
 // *pStr kann in jedem Fall überschrieben werden.
-LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(LPCSTR lpszCode, LFAirport*& pAirport);
+LFCORE_API BOOL __stdcall LFIATAGetAirportByCode(LPCSTR lpcszCode, LPCAIRPORT& lpcAirport);
 
 // Gibt einen Hinweis-String für einen Flughafen zurück.
-LFCORE_API void __stdcall LFIATAGetLocationNameForAirport(LFAirport* pAirport, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFIATAGetLocationNameForAirport(LPCAIRPORT lpcAirport, LPWSTR pStr, SIZE_T cCount);
 
 // Gibt einen Hinweis-String für einen IATA-Code zurück.
-LFCORE_API void __stdcall LFIATAGetLocationNameForCode(LPCSTR lpszCode, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFIATAGetLocationNameForCode(LPCSTR lpcszCode, LPWSTR pStr, SIZE_T cCount);
 
 
 // ID3

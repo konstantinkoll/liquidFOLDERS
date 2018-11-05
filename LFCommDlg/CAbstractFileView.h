@@ -15,7 +15,7 @@
 class CAbstractFileView : public CFrontstageItemView
 {
 public:
-	CAbstractFileView(UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
+	CAbstractFileView(UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM, SIZE_T szData=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 
 	virtual void EditLabel(INT Index);
 

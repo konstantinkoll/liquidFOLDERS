@@ -56,8 +56,7 @@ private:
 	static void AddStoreToSummary(LFFileSummary& FileSummary, const LFStoreDescriptor& StoreDescriptor);
 	static void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	static void CloseFileSummary(LFFileSummary& FileSummary);
-	INT Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const;
-	void Heap(UINT Element, const UINT Count, const UINT Attr, const BOOL Descending);
+	static INT __stdcall CompareItems(LFItemDescriptor** pData1, LFItemDescriptor** pData2, const SortParameters& Parameters);
 	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 };
 

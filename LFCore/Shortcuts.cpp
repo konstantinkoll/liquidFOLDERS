@@ -13,30 +13,29 @@ UINT GetShortcutForStore(IShellLink*& pShellLink, const ABSOLUTESTOREID& StoreID
 	assert(IconID>0);
 
 	WCHAR Path[MAX_PATH];
-	if (LFGetApplicationPath(Path, MAX_PATH))
-		if (LFCreateShellLink(pShellLink))
-		{
-			// Physical path to file
-			pShellLink->SetPath(Path);
+	if (LFGetApplicationPath(Path, MAX_PATH) && LFCreateShellLink(pShellLink))
+	{
+		// Physical path to file
+		pShellLink->SetPath(Path);
 
-			// Arguments for app invoke
-			WCHAR Arguments[LFKeySize];
-			MultiByteToWideChar(CP_ACP, 0, StoreID, -1, Arguments, LFKeySize);
+		// Arguments for app invoke
+		WCHAR Arguments[LFKeySize];
+		MultiByteToWideChar(CP_ACP, 0, StoreID, -1, Arguments, LFKeySize);
 
-			pShellLink->SetArguments(Arguments);
+		pShellLink->SetArguments(Arguments);
 
-			// Comments
-			if (Comments)
-				pShellLink->SetDescription(Comments);
+		// Comments
+		if (Comments)
+			pShellLink->SetDescription(Comments);
 
-			// Icon
-			WCHAR IconLocation[MAX_PATH];
-			GetModuleFileName(LFCoreModuleHandle, IconLocation, MAX_PATH);
-			
-			pShellLink->SetIconLocation(IconLocation, IconID-1);
+		// Icon
+		WCHAR IconLocation[MAX_PATH];
+		GetModuleFileName(LFCoreModuleHandle, IconLocation, MAX_PATH);
 
-			return LFOk;
-		}
+		pShellLink->SetIconLocation(IconLocation, IconID-1);
+
+		return LFOk;
+	}
 
 	return LFRegistryError;
 }

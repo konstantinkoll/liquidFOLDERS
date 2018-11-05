@@ -39,12 +39,9 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 }
 
 
-// Das einzige CLiquidFOldersApp-Objekt
+// CLiquidFoldersApp object
 
 CLiquidFoldersApp theApp;
-
-
-// CLiquidFoldersApp-Erstellung
 
 CLiquidFoldersApp::CLiquidFoldersApp()
 	: LFApplication(theAppID)
@@ -54,7 +51,7 @@ CLiquidFoldersApp::CLiquidFoldersApp()
 }
 
 
-// CLiquidFoldersApp-Initialisierung
+// CLiquidFoldersApp initialization
 
 BOOL CLiquidFoldersApp::InitInstance()
 {
@@ -84,12 +81,12 @@ BOOL CLiquidFoldersApp::InitInstance()
 	if (m_KernelLibLoaded)
 		zRegisterApplicationRestart(L"", 8);	// RESTART_NO_REBOOT
 
-	// Pfad zu Google Earth
+	// Path to Google Earth
 	DWORD dwSize = sizeof(m_PathGoogleEarth)/sizeof(WCHAR);
 	if (FAILED(AssocQueryString(ASSOCF_REMAPRUNDLL | ASSOCF_INIT_IGNOREUNKNOWN, ASSOCSTR_EXECUTABLE, L".kml", NULL, m_PathGoogleEarth, &dwSize)))
 		m_PathGoogleEarth[0] = L'\0';
 
-	// Registry auslesen
+	// Registry
 	SetRegistryBase(_T("Settings"));
 
 	const BOOL ResetViewSettings = LoadGlobalViewSettings();

@@ -91,9 +91,9 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
 			if (IsNullValue(AttrProperties[LFAttrLocationGPS].Type, (*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS]))
 			{
-				LFAirport* pAirport;
-				if (LFIATAGetAirportByCode((LPCSTR)(*pSearchResult)[a]->AttributeValues[LFAttrLocationIATA], pAirport))
-					(*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS] = &pAirport->Location;
+				LPCAIRPORT lpcAirport;
+				if (LFIATAGetAirportByCode((LPCSTR)(*pSearchResult)[a]->AttributeValues[LFAttrLocationIATA], lpcAirport))
+					(*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS] = (LPVOID)&lpcAirport->Location;
 			}
 
 	pSearchResult->Sort(Attr, Descending);
@@ -140,7 +140,7 @@ LFSearchResult::LFSearchResult(BYTE Context)
 }
 
 LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
-	: LFDynArray()
+	: LFDynArray(pSearchResult->m_ItemCount)
 {
 	assert(pSearchResult);
 
@@ -159,25 +159,17 @@ LFSearchResult::LFSearchResult(LFSearchResult* pSearchResult)
 
 	if (pSearchResult->m_ItemCount)
 	{
-		assert(pSearchResult->m_Items);
+		memcpy(m_Items, pSearchResult->m_Items, (m_ItemCount=pSearchResult->m_ItemCount)*sizeof(LFItemDescriptor*));
 
-		const SIZE_T Size = pSearchResult->m_ItemCount*sizeof(LFItemDescriptor*);
-
-		m_Items = (LFItemDescriptor**)malloc(Size);
-		memcpy(m_Items, pSearchResult->m_Items, pSearchResult->m_ItemCount*sizeof(LFItemDescriptor*));
-
-		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
+		for (UINT a=0; a<m_ItemCount; a++)
 			m_Items[a]->RefCount++;
-
-		m_ItemCount = m_Allocated = pSearchResult->m_ItemCount;
 	}
 }
 
 LFSearchResult::~LFSearchResult()
 {
-	if (m_Items)
-		for (UINT a=0; a<m_ItemCount; a++)
-			LFFreeItemDescriptor(m_Items[a]);
+	for (UINT a=0; a<m_ItemCount; a++)
+		LFFreeItemDescriptor(m_Items[a]);
 }
 
 void LFSearchResult::FinishQuery(LFFilter* pFilter)
@@ -355,129 +347,63 @@ void LFSearchResult::KeepRange(UINT First, UINT Last)
 	UpdateFileSummary(FALSE);
 }
 
-INT LFSearchResult::Compare(LFItemDescriptor* pItem1, LFItemDescriptor* pItem2, UINT Attr, BOOL Descending) const
+INT LFSearchResult::CompareItems(LFItemDescriptor** pData1, LFItemDescriptor** pData2, const SortParameters& Parameters)
 {
+	const LFItemDescriptor* pItemDescriptor1 = *pData1;
+	const LFItemDescriptor* pItemDescriptor2 = *pData2;
+
 	// Categories
-	if (m_HasCategories && (pItem1->CategoryID!=pItem2->CategoryID))
-		return (INT)pItem1->CategoryID-(INT)pItem2->CategoryID;
+	if (Parameters.Parameter1 && (pItemDescriptor1->CategoryID!=pItemDescriptor2->CategoryID))
+		return (INT)pItemDescriptor1->CategoryID-(INT)pItemDescriptor2->CategoryID;
 
 	// Items with NULL values or empty strings shall be last
-	const UINT Type = AttrProperties[Attr].Type;
-	BOOL i1Null = IsNullValue(Type, pItem1->AttributeValues[Attr]);
-	BOOL i2Null = IsNullValue(Type, pItem2->AttributeValues[Attr]);
+	const UINT Type = AttrProperties[Parameters.Attr].Type;
+	BOOL Item1Null = IsNullValue(Type, pItemDescriptor1->AttributeValues[Parameters.Attr]);
+	BOOL Item2Null = IsNullValue(Type, pItemDescriptor2->AttributeValues[Parameters.Attr]);
 
-	if (i1Null!=i2Null)
-		return (INT)i1Null-(INT)i2Null;
+	if (Item1Null!=Item2Null)
+		return (INT)Item1Null-(INT)Item2Null;
 
 	// Compare attribute
 	INT Result = 0;
 
-	if (!i1Null && !i2Null)
+	if (!Item1Null && !Item2Null)
 	{
-		Result = CompareValues(Type, pItem1->AttributeValues[Attr], pItem2->AttributeValues[Attr], FALSE);
+		Result = CompareValues(Type, pItemDescriptor1->AttributeValues[Parameters.Attr], pItemDescriptor2->AttributeValues[Parameters.Attr], FALSE);
 
 		// Invert order
-		if (Descending)
+		if (Parameters.Descending)
 			Result = -Result;
 	}
 
 	// Media collections employ the sequence number as secondary
 	if (!Result)
-		switch (Attr)
+		switch (Parameters.Attr)
 		{
-		case LFAttrMediaCollection:
-			return Compare(pItem1, pItem2, LFAttrSequenceInCollection, IsAttributeSortDescending(m_Context, LFAttrSequenceInCollection));
+/*		case LFAttrMediaCollection:
+			return CompareItems(pItem1, pItem2, LFAttrSequenceInCollection, Parameters.Parameter2);
 
 		case LFAttrSequenceInCollection:
-			return Compare(pItem1, pItem2, LFAttrTitle, FALSE);
+			return CompareItems(pItem1, pItem2, LFAttrTitle, FALSE);*/
 
 		case LFAttrFileName:
 			break;
 
 		default:
-			Result = _wcsicmp(pItem1->CoreAttributes.FileName, pItem2->CoreAttributes.FileName);
+			Result = _wcsicmp(pItemDescriptor1->CoreAttributes.FileName, pItemDescriptor2->CoreAttributes.FileName);
 	}
 
 	// Are the files identical? Then use store ID and file ID as secondaries
 	if (!Result)
-		if ((Result=strcmp(pItem1->StoreID, pItem2->StoreID))==0)
-			Result = strcmp(pItem1->CoreAttributes.FileID, pItem2->CoreAttributes.FileID);
+		if ((Result=strcmp(pItemDescriptor1->StoreID, pItemDescriptor2->StoreID))==0)
+			Result = strcmp(pItemDescriptor1->CoreAttributes.FileID, pItemDescriptor2->CoreAttributes.FileID);
 
 	return Result;
 }
 
-void LFSearchResult::Heap(UINT Element, const UINT Count, const UINT Attr, const BOOL Descending)
-{
-	LFItemDescriptor* pItemDescriptor = m_Items[Element];
-	UINT Parent = Element;
-	UINT Child;
-
-	while ((Child=(Parent+1)*2)<Count)
-	{
-		if (Compare(m_Items[Child-1], m_Items[Child], Attr, Descending)>0)
-			Child--;
-
-		m_Items[Parent] = m_Items[Child];
-		Parent = Child;
-	}
-
-	if (Child==Count)
-	{
-		if (Compare(m_Items[--Child], pItemDescriptor, Attr, Descending)>=0)
-		{
-			m_Items[Parent] = m_Items[Child];
-			m_Items[Child] = pItemDescriptor;
-
-			return;
-		}
-
-		Child = Parent;
-	}
-	else
-	{
-		if (Parent==Element)
-			return;
-
-		if (Compare(m_Items[Parent], pItemDescriptor, Attr, Descending)>=0)
-		{
-			m_Items[Parent] = pItemDescriptor;
-
-			return;
-		}
-
-		Child = (Parent-1)/2;
-	}
-
-	while (Child!=Element)
-	{
-		Parent = (Child-1)/2;
-
-		if (Compare(m_Items[Parent], pItemDescriptor, Attr, Descending)>=0)
-			break;
-
-		m_Items[Child] = m_Items[Parent];
-		Child = Parent;
-	}
-
-	m_Items[Child] = pItemDescriptor;
-}
-
 void LFSearchResult::Sort(UINT Attr, BOOL Descending)
 {
-	if (m_ItemCount>1)
-	{
-		for (INT a=m_ItemCount/2-1; a>=0; a--)
-			Heap(a, m_ItemCount, Attr, Descending);
-
-		for (INT a=m_ItemCount-1; a>0; a--)
-		{
-			LFItemDescriptor* pItemDescriptor = m_Items[0];
-			m_Items[0] = m_Items[a];
-			m_Items[a] = pItemDescriptor;
-
-			Heap(0, a, Attr, Descending);
-		}
-	}
+	SortItems((PFNCOMPARE)CompareItems, Attr, Descending, m_HasCategories, IsAttributeSortDescending(m_Context, LFAttrSequenceInCollection));
 }
 
 UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
@@ -627,9 +553,8 @@ void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
 				}
 				else
 				{
-					if (!Iterator->second.Multiple)
-						if (Iterator->second.Name.compare(Hashtag)!=0)
-							Iterator->second.Multiple = TRUE;
+					if (!Iterator->second.Multiple && (Iterator->second.Name.compare(Hashtag)!=0))
+						Iterator->second.Multiple = TRUE;
 
 					if ((m_Items[a]->Type & LFTypeSourceMask)!=Iterator->second.Source)
 						Iterator->second.Source = LFTypeSourceUnknown;

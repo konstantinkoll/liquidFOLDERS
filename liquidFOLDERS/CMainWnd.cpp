@@ -83,9 +83,9 @@ BOOL CMainWnd::Create(LPCSTR IATACode)
 	pFilter->Query.pConditionList = LFAllocFilterCondition(LFFilterCompareIsEqual, VData);
 
 	// Airport name as filter name
-	LFAirport* pAirport;
-	if (LFIATAGetAirportByCode(IATACode, pAirport))
-		MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, pFilter->Name, 256);
+	LPCAIRPORT lpcAirport;
+	if (LFIATAGetAirportByCode(IATACode, lpcAirport))
+		MultiByteToWideChar(CP_ACP, 0, lpcAirport->Name, -1, pFilter->Name, 256);
 
 	return Create(pFilter);
 }

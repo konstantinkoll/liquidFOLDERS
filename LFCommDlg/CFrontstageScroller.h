@@ -23,7 +23,7 @@ public:
 
 protected:
 	virtual INT GetHeaderIndent() const;
-	virtual void GetHeaderContextMenu(CMenu& Menu, UINT Attr);
+	virtual void GetHeaderContextMenu(CMenu& Menu);
 	virtual BOOL AllowHeaderColumnDrag(UINT Attr) const;
 	virtual BOOL AllowHeaderColumnTrack(UINT Attr) const;
 	virtual void UpdateHeaderColumnOrder(UINT Attr, INT Position);

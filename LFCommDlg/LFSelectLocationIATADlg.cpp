@@ -205,9 +205,9 @@ void LFSelectLocationIATADlg::OnRequestTextColor(NMHDR* pNMHDR, LRESULT* pResult
 
 	if (pTextColor->Item!=-1)
 	{
-		const LFAirport* pAirport = p_Airports[pTextColor->Item];
+		LPCAIRPORT lpcAirport = p_Airports[pTextColor->Item];
 
-		if (strcmp(pAirport->Code, pAirport->MetroCode)==0)
+		if (strcmp(lpcAirport->Code, lpcAirport->MetroCode)==0)
 			pTextColor->Color = 0x208040;
 	}
 
@@ -220,16 +220,16 @@ void LFSelectLocationIATADlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResu
 
 	if (pTooltipData->Item!=-1)
 	{
-		LFAirport* pAirport = p_Airports[pTooltipData->Item];
+		LPCAIRPORT lpcAirport = p_Airports[pTooltipData->Item];
 
-		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, pAirport->Name);
-		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, LFIATAGetCountry(pAirport->CountryID)->Name);
+		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, lpcAirport->Name);
+		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, LFIATAGetCountry(lpcAirport->CountryID)->Name);
 
 		WCHAR tmpStr[256];
-		LFGeoCoordinatesToString(pAirport->Location, tmpStr, 256, FALSE);
+		LFGeoCoordinatesToString(lpcAirport->Location, tmpStr, 256, FALSE);
 		LFTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_LOCATION, tmpStr);
 
-		pTooltipData->hBitmap = LFIATACreateAirportMap(pAirport, 192, 192);
+		pTooltipData->hBitmap = LFIATACreateAirportMap(lpcAirport, 192, 192);
 
 		*pResult = TRUE;
 	}

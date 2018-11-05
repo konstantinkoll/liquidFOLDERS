@@ -5390,6 +5390,7 @@ NNG     Nanning, China;4;22*36'30"N, 108*10'21"E
 NNI     Namutoni, Namibia;4;18*48'27"S, 16*55'37"E
 NNK     Naknek, USA;4;58*43'58"N, 157*1'12"W
 NNL     Nondalton, USA;4;59*58'49"N, 154*50'21"W
+NNR     Connemara, Ireland;5;53*13'50"N, 9*28'4"W
 NNT     Nan, Thailand;4;18*48'28"N, 100*47'0"E
 NNU     Nanuque, Brazil;4;17*49'24"S, 40*19'48"W
 NNX     Nunukan, Indonesia;4;4*9'0"N, 117*39'0"E

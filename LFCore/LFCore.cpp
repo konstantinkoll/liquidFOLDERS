@@ -8,6 +8,7 @@
 #include "IATA.h"
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
+#include "LFMemorySort.h"
 #include "LFVariantData.h"
 #include "resource.h"
 #include "Stores.h"

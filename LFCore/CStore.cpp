@@ -492,9 +492,9 @@ UINT CStore::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescripto
 	pItemDescriptor->StoreID = p_StoreDescriptor->StoreID;
 
 	// Randomize
-	SYSTEMTIME st;
-	GetSystemTime(&st);
-	srand(st.wMilliseconds*rand());
+	SYSTEMTIME SystemTime;
+	GetSystemTime(&SystemTime);
+	srand(SystemTime.wMilliseconds*rand());
 
 	return LFOk;
 }

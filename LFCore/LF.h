@@ -174,6 +174,8 @@ struct LFCountry
 	CHAR Name[31];
 };
 
+typedef const LFCountry* LPCCOUNTRY;
+
 struct LFAirport
 {
 	UINT CountryID;
@@ -182,6 +184,8 @@ struct LFAirport
 	CHAR Name[44];
 	LFGeoCoordinates Location;
 };
+
+typedef const LFAirport* LPCAIRPORT;
 
 #pragma pack(pop)
 

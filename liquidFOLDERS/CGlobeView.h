@@ -93,7 +93,7 @@ private:
 	GlobeItemData* GetGlobeItemData(INT Index) const;
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
-	void WriteGoogleAttribute(CStdioFile& f, const LFItemDescriptor* pItemDescriptor, UINT Attr);
+	void WriteGoogleAttribute(CStdioFile& File, const LFItemDescriptor* pItemDescriptor, UINT Attr);
 	void RenderScene();
 
 	static const GLcolor m_lAmbient;

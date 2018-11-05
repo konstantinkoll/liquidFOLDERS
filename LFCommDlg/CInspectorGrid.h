@@ -139,8 +139,8 @@ protected:
 
 private:
 	void SetAdditionalVData(LFVariantData* pLocationName, LFVariantData* pLocationGPS);
-	SHORT OnSetLocationName(LFAirport* pAirport) const;
-	SHORT OnSetLocationGPS(LFAirport* pAirport) const;
+	SHORT OnSetLocationName(LPCAIRPORT lpcAirport) const;
+	SHORT OnSetLocationGPS(LPCAIRPORT lpcAirport) const;
 };
 
 

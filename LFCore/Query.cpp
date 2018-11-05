@@ -297,28 +297,28 @@ BOOL CheckCondition(LPCVOID pValue, LFFilterCondition* pFilterCondition)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			CDateCategorizer::GetDay((FILETIME*)pValue, &Time1);
+			CDateCategorizer::GetDay((LPFILETIME)pValue, &Time1);
 			CDateCategorizer::GetDay(&pFilterCondition->VData.Time, &Time2);
 
 			return memcmp(&Time1, &Time2, sizeof(FILETIME))==0;
 
 		case LFFilterCompareIsNotEqual:
-			CDateCategorizer::GetDay((FILETIME*)pValue, &Time1);
+			CDateCategorizer::GetDay((LPFILETIME)pValue, &Time1);
 			CDateCategorizer::GetDay(&pFilterCondition->VData.Time, &Time2);
 
 			return memcmp(&Time1, &Time2, sizeof(FILETIME))!=0;
 
 		case LFFilterCompareIsAboveOrEqual:
-			ULI1.LowPart = ((FILETIME*)pValue)->dwLowDateTime;
-			ULI1.HighPart = ((FILETIME*)pValue)->dwHighDateTime;
+			ULI1.LowPart = ((LPFILETIME)pValue)->dwLowDateTime;
+			ULI1.HighPart = ((LPFILETIME)pValue)->dwHighDateTime;
 			ULI2.LowPart = pFilterCondition->VData.Time.dwLowDateTime;
 			ULI2.HighPart = pFilterCondition->VData.Time.dwHighDateTime;
 
 			return ULI1.QuadPart>=ULI2.QuadPart;
 
 		case LFFilterCompareIsBelowOrEqual:
-			ULI1.LowPart = ((FILETIME*)pValue)->dwLowDateTime;
-			ULI1.HighPart = ((FILETIME*)pValue)->dwHighDateTime;
+			ULI1.LowPart = ((LPFILETIME)pValue)->dwLowDateTime;
+			ULI1.HighPart = ((LPFILETIME)pValue)->dwHighDateTime;
 			ULI2.LowPart = pFilterCondition->VData.Time.dwLowDateTime;
 			ULI2.HighPart = pFilterCondition->VData.Time.dwHighDateTime;
 

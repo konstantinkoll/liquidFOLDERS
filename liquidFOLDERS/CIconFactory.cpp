@@ -177,8 +177,8 @@ HBITMAP CIconFactory::GetMapBitmap(LPCSTR lpszIATACode)
 {
 	ASSERT(lpszIATACode);
 
-	LFAirport* pAirport;
-	if (!LFIATAGetAirportByCode(lpszIATACode, pAirport))
+	LPCAIRPORT lpcAirport;
+	if (!LFIATAGetAirportByCode(lpszIATACode, lpcAirport))
 		return NULL;
 
 	CDC dc;
@@ -189,7 +189,7 @@ HBITMAP CIconFactory::GetMapBitmap(LPCSTR lpszIATACode)
 
 	Graphics g(dc);
 
-	DrawJumboMap(g, CPoint(0, 0), pAirport->Location, 0);
+	DrawJumboMap(g, CPoint(0, 0), lpcAirport->Location, 0);
 
 	return (HBITMAP)dc.SelectObject(hOldBitmap);
 }

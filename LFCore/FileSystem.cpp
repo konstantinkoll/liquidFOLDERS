@@ -73,21 +73,20 @@ BOOL DirectoryExists(LPCWSTR lpPath)
 void CompressFile(HANDLE hFile, CHAR cVolume)
 {
 	BY_HANDLE_FILE_INFORMATION FileInformation;
-	if (GetFileInformationByHandle(hFile, &FileInformation))
-		if ((FileInformation.dwFileAttributes & (FILE_ATTRIBUTE_ENCRYPTED | FILE_ATTRIBUTE_COMPRESSED))==0)
-		{
-			WCHAR Root[4] = L" :\\";
-			Root[0] = cVolume;
+	if (GetFileInformationByHandle(hFile, &FileInformation) && ((FileInformation.dwFileAttributes & (FILE_ATTRIBUTE_ENCRYPTED | FILE_ATTRIBUTE_COMPRESSED))==0))
+	{
+		WCHAR Root[4] = L" :\\";
+		Root[0] = cVolume;
 
-			DWORD Flags;
-			if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
-				if (Flags & FS_FILE_COMPRESSION)
-				{
-					USHORT Mode = COMPRESSION_FORMAT_LZNT1;
-					DWORD Returned;
+		DWORD Flags;
+		if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
+			if (Flags & FS_FILE_COMPRESSION)
+			{
+				USHORT Mode = COMPRESSION_FORMAT_LZNT1;
+				DWORD Returned;
 
-					DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
-				}
+				DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
+			}
 		}
 }
 

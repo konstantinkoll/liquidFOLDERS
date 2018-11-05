@@ -53,7 +53,7 @@ void CCalendarView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 					CalendarItemData* pData = GetCalendarItemData(a);
 
 					SYSTEMTIME stUTC;
-					FileTimeToSystemTime((FILETIME*)pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy], &stUTC);
+					FileTimeToSystemTime((LPFILETIME)pItemDescriptor->AttributeValues[m_ContextViewSettings.SortBy], &stUTC);
 					SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &pData->Time);
 				}
 		}
@@ -350,11 +350,11 @@ INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Current year
-	SYSTEMTIME st;
-	GetLocalTime(&st);
+	SYSTEMTIME stLocal;
+	GetLocalTime(&stLocal);
 
-	ASSERT((st.wYear>=MINYEAR) && (st.wYear<=MAXYEAR));
-	m_Year = st.wYear;
+	ASSERT((stLocal.wYear>=MINYEAR) && (stLocal.wYear<=MAXYEAR));
+	m_Year = stLocal.wYear;
 
 	// First day of week
 	WCHAR DOW[2];

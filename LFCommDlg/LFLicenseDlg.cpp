@@ -63,8 +63,8 @@ void LFLicenseDlg::OnLoadLicense()
 	{
 		CString LicenseKey;
 
-		CStdioFile f;
-		if (!f.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
+		CStdioFile File;
+		if (!File.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
 		{
 			LFErrorBox(this, LFDriveNotReady);
 		}
@@ -75,7 +75,7 @@ void LFLicenseDlg::OnLoadLicense()
 				CString Line;
 
 				UINT cLines = 0;
-				while ((f.ReadString(Line)) && (cLines++<128))
+				while (File.ReadString(Line) && (cLines++<128))
 					LicenseKey.Append(Line+_T("\r\n"));
 			}
 			catch(CFileException ex)
@@ -83,7 +83,7 @@ void LFLicenseDlg::OnLoadLicense()
 				LFErrorBox(this, LFDriveNotReady);
 			}
 
-			f.Close();
+			File.Close();
 
 			GetDlgItem(IDC_LICENSEKEY)->SetWindowText(LicenseKey);
 			GetDlgItem(IDOK)->EnableWindow(TRUE);

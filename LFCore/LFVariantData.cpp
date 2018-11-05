@@ -138,7 +138,7 @@ INT CompareValues(UINT Type, LPCVOID pData1, LPCVOID pData2, BOOL CaseSensitive)
 		}
 
 	case LFTypeTime:
-		return CompareFileTime((FILETIME*)pData1, (FILETIME*)pData2);
+		return CompareFileTime((LPFILETIME)pData1, (LPFILETIME)pData2);
 
 	case LFTypeBitrate:
 	case LFTypeDuration:
@@ -237,7 +237,7 @@ void ToString(LPCVOID pValue, UINT Type, LPWSTR pStr, SIZE_T cCount)
 			return;
 
 		case LFTypeTime:
-			LFTimeToString(*((FILETIME*)pValue), pStr, cCount);
+			LFTimeToString(*((LPFILETIME)pValue), pStr, cCount);
 			return;
 
 		case LFTypeBitrate:
@@ -348,7 +348,7 @@ LFCORE_API BOOL LFContainsHashtag(LPCWSTR pUnicodeArray, LPCWSTR pHashtag)
 // ToString
 //
 
-LFCORE_API void LFFourCCToString(const UINT c, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFFourCCToString(const UINT FourCC, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
@@ -358,97 +358,97 @@ LFCORE_API void LFFourCCToString(const UINT c, LPWSTR pStr, SIZE_T cCount)
 	}
 	else
 	{
-		pStr[0] = c & 0xFF;
-		pStr[1] = (c>>8) & 0xFF;
-		pStr[2] = (c>>16) & 0xFF;
-		pStr[3] = c>>24;
+		pStr[0] = FourCC & 0xFF;
+		pStr[1] = (FourCC>>8) & 0xFF;
+		pStr[2] = (FourCC>>16) & 0xFF;
+		pStr[3] = FourCC>>24;
 		pStr[4] = '\0';
 	}
 }
 
-LFCORE_API void LFUINTToString(const UINT u, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFUINTToString(const UINT Uint, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	if (u==0)
+	if (!Uint)
 	{
 		*pStr = L'\0';
 	}
 	else
 	{
-		swprintf_s(pStr, cCount, L"%u", u);
+		swprintf_s(pStr, cCount, L"%u", Uint);
 	}
 }
 
-LFCORE_API void LFSizeToString(const INT64 s, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFSizeToString(const INT64 Size, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	StrFormatByteSize(s, pStr, (UINT)cCount);
+	StrFormatByteSize(Size, pStr, (UINT)cCount);
 }
 
-LFCORE_API void LFFractionToString(const LFFraction f, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFFractionToString(const LFFraction& Fraction, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	if ((f.Num==0) || (f.Denum==0))
+	if ((Fraction.Num==0) || (Fraction.Denum==0))
 	{
 		pStr[0] = L'\0';
 	}
 	else
 	{
-		swprintf_s(pStr, cCount, L"%u/%u", f.Num, f.Denum);
+		swprintf_s(pStr, cCount, L"%u/%u", Fraction.Num, Fraction.Denum);
 	}
 }
 
-LFCORE_API void LFDoubleToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFDoubleToString(const DOUBLE Double, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	swprintf_s(pStr, cCount, L"%.2lf", d);
+	swprintf_s(pStr, cCount, L"%.2lf", Double);
 }
 
-LFCORE_API void LFGeoCoordinateToString(const DOUBLE c, LPWSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
+LFCORE_API void LFGeoCoordinateToString(const DOUBLE Coordinate, LPWSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
 {
 	assert(pStr);
 
 	swprintf_s(pStr, cCount, FillZero ? L"%03u°%02u\'%02u\"%c" : L"%u°%u\'%u\"%c",
-		(UINT)(fabs(c)+ROUNDOFF),
-		(UINT)GetMinutes(c),
-		(UINT)(GetSeconds(c)+0.5),
-		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
+		(UINT)(fabs(Coordinate)+ROUNDOFF),
+		(UINT)GetMinutes(Coordinate),
+		(UINT)(GetSeconds(Coordinate)+0.5),
+		Coordinate>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
 }
 
-LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates& c, LPWSTR pStr, SIZE_T cCount, BOOL FillZero)
+LFCORE_API void LFGeoCoordinatesToString(const LFGeoCoordinates& Coordinates, LPWSTR pStr, SIZE_T cCount, BOOL FillZero)
 {
 	assert(pStr);
 
-	if ((c.Latitude==0) && (c.Longitude==0))
+	if ((Coordinates.Latitude==0) && (Coordinates.Longitude==0))
 	{
 		*pStr = L'\0';
 	}
 	else
 	{
 		WCHAR tmpStr[32];
-		LFGeoCoordinateToString(c.Longitude, tmpStr, 32, FALSE, FillZero);
+		LFGeoCoordinateToString(Coordinates.Longitude, tmpStr, 32, FALSE, FillZero);
 
-		LFGeoCoordinateToString(c.Latitude, pStr, cCount, TRUE, FillZero);
+		LFGeoCoordinateToString(Coordinates.Latitude, pStr, cCount, TRUE, FillZero);
 		wcscat_s(pStr, cCount, L", ");
 		wcscat_s(pStr, cCount, tmpStr);
 	}
 }
 
-LFCORE_API void LFTimeToString(const FILETIME t, LPWSTR pStr, SIZE_T cCount, BOOL IncludeTime)
+LFCORE_API void LFTimeToString(const FILETIME& Time, LPWSTR pStr, SIZE_T cCount, BOOL IncludeTime)
 {
 	assert(pStr);
 
 	*pStr = L'\0';
 
-	if ((t.dwHighDateTime) || (t.dwLowDateTime))
+	if (Time.dwHighDateTime || Time.dwLowDateTime)
 	{
 		SYSTEMTIME stUTC;
 		SYSTEMTIME stLocal;
-		FileTimeToSystemTime(&t, &stUTC);
+		FileTimeToSystemTime(&Time, &stUTC);
 		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
 		const INT Size = GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, pStr, (INT)cCount);
@@ -462,64 +462,62 @@ LFCORE_API void LFTimeToString(const FILETIME t, LPWSTR pStr, SIZE_T cCount, BOO
 	}
 }
 
-LFCORE_API void LFBitrateToString(const UINT r, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFBitrateToString(const UINT Bitrate, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	if (r==0)
+	if (!Bitrate)
 	{
 		*pStr = L'\0';
 	}
 	else
 	{
-		swprintf_s(pStr, cCount, L"%u kBit/s", (r+500)/1000);
+		swprintf_s(pStr, cCount, L"%u kBit/s", (Bitrate+500)/1000);
 	}
 }
 
-LFCORE_API void LFDurationToString(UINT d, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFDurationToString(UINT Duration, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	d = (d+500)/1000;
-
-	if (d==0)
+	if ((Duration=(Duration+500)/1000)==0)
 	{
 		*pStr = L'\0';
 	}
 	else
-		if (d/3600)
+		if (Duration/3600)
 		{
-			swprintf_s(pStr, cCount, L"%02u:%02u:%02u", d/3600, (d/60)%60, d%60);
+			swprintf_s(pStr, cCount, L"%02u:%02u:%02u", Duration/3600, (Duration/60)%60, Duration%60);
 		}
 		else
 		{
-			swprintf_s(pStr, cCount, L"%02u:%02u", d/60, d%60);
+			swprintf_s(pStr, cCount, L"%02u:%02u", Duration/60, Duration%60);
 		}
 }
 
-LFCORE_API void LFMegapixelToString(const DOUBLE d, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFMegapixelToString(const DOUBLE Resolution, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	swprintf_s(pStr, cCount, L"%.1lf Megapixel", d);
+	swprintf_s(pStr, cCount, L"%.1lf Megapixel", Resolution);
 }
 
-LFCORE_API void LFFramerateToString(const UINT r, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFFramerateToString(const UINT Framerate, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pStr);
 
-	if (r==0)
+	if (!Framerate)
 	{
 		*pStr = L'\0';
 	}
 	else
-		if ((r % 1000)==0)
+		if ((Framerate % 1000)==0)
 		{
-			swprintf_s(pStr, cCount, L"%u fps", r/1000);
+			swprintf_s(pStr, cCount, L"%u fps", Framerate/1000);
 		}
 		else
 		{
-			swprintf_s(pStr, cCount, L"%.2lf fps", r/1000.0);
+			swprintf_s(pStr, cCount, L"%.2lf fps", Framerate/1000.0);
 		}
 }
 

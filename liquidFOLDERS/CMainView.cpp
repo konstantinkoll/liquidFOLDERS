@@ -46,9 +46,8 @@ BOOL CMainView::Create(CWnd* pParentWnd, UINT nID, BOOL IsClipboard)
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The file view gets the command first
-	if (m_pWndFileView)
-		if (m_pWndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-			return TRUE;
+	if (m_pWndFileView && m_pWndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
 
 	// Check application commands
 	if (theApp.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))

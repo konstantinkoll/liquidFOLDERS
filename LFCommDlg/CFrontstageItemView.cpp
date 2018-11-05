@@ -9,16 +9,16 @@
 // CFrontstageItemView
 //
 
-CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
+CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T szData, const CSize& szItemInflate)
 	: CFrontstageScroller(Flags)
 {
 	ASSERT(((Flags & FRONTSTAGE_ENABLESELECTION)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
 	ASSERT(((Flags & FRONTSTAGE_ENABLESHIFTSELECTION)==0) || (Flags & FRONTSTAGE_ENABLESELECTION));
 	ASSERT(((Flags & FRONTSTAGE_ENABLEDRAGANDDROP)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
 	ASSERT(((Flags & FRONTSTAGE_ENABLELABELEDIT)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
-	ASSERT(DataSize>=sizeof(ItemData));
+	ASSERT(szData>=sizeof(ItemData));
 
-	m_DataSize = DataSize;
+	m_szData = szData;
 	m_pItemData = NULL;
 	m_szItemInflate = szItemInflate;
 
@@ -86,7 +86,7 @@ void CFrontstageItemView::SetItemCount(UINT ItemCount, BOOL Virtual)
 	FreeItemData(TRUE);
 
 	// Allocate new item data
-	const SIZE_T Size = ((SIZE_T)(m_ItemDataAllocated=ItemCount))*m_DataSize;
+	const SIZE_T Size = ((SIZE_T)(m_ItemDataAllocated=ItemCount))*m_szData;
 	ZeroMemory(m_pItemData=(LPBYTE)malloc(Size), Size);
 
 	if (Virtual)
@@ -113,8 +113,8 @@ void CFrontstageItemView::AddItem(LPCVOID pData)
 	ZeroMemory(pItemData, sizeof(ItemData));
 	pItemData->Valid = TRUE;
 
-	if (m_DataSize>sizeof(ItemData))
-		memcpy(((LPBYTE)pItemData)+sizeof(ItemData), ((LPBYTE)pData)+sizeof(ItemData), m_DataSize-sizeof(ItemData));
+	if (m_szData>sizeof(ItemData))
+		memcpy(((LPBYTE)pItemData)+sizeof(ItemData), ((LPBYTE)pData)+sizeof(ItemData), m_szData-sizeof(ItemData));
 
 	m_Nothing = FALSE;
 }
@@ -151,75 +151,9 @@ void CFrontstageItemView::ValidateAllItems()
 
 // Item sort
 
-INT CFrontstageItemView::CompareItems(INT /*Index1*/, INT /*Index2*/) const
+void CFrontstageItemView::SortItems(PFNCOMPARE zCompare, UINT Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
 {
-	return 0;
-}
-
-void CFrontstageItemView::Swap(INT Index1, INT Index2)
-{
-	ASSERT(Index1>=0);
-	ASSERT(Index1>=0);
-	ASSERT(Index1<m_ItemCount);
-	ASSERT(Index2<m_ItemCount);
-
-	LPBYTE Ptr1 = (LPBYTE)GetItemData(Index1);
-	LPBYTE Ptr2 = (LPBYTE)GetItemData(Index2);
-
-	// Swap QWORDs
-	for (SIZE_T szData=0; szData<m_DataSize/8; szData++)
-	{
-		const UINT64 Temp = *((UINT64*)Ptr1);
-		*((UINT64*)Ptr1) = *((UINT64*)Ptr2);
-		Ptr1 += 8;
-
-		*((UINT64*)Ptr2) = Temp;
-		Ptr2 += 8;
-	}
-
-	// Swap remaining BYTEs
-	for (SIZE_T szData=0; szData<m_DataSize % 8; szData++)
-	{
-		const BYTE Temp = *Ptr1;
-		*(Ptr1++) = *Ptr2;
-		*(Ptr2++) = Temp;
-	}
-}
-
-void CFrontstageItemView::Heap(INT Element, INT Count)
-{
-	while (Element<=Count/2-1)
-	{
-		INT Index = (Element+1)*2-1;
-		if (Index+1<Count)
-			if (CompareItems(Index, Index+1)<0)
-				Index++;
-
-		if (CompareItems(Element, Index)<0)
-		{
-			Swap(Element, Index);
-			Element = Index;
-		}
-		else
-		{
-			break;
-		}
-	}
-}
-
-void CFrontstageItemView::SortItems()
-{
-	if (m_ItemCount>1)
-	{
-		for (INT a=m_ItemCount/2-1; a>=0; a--)
-			Heap(a, m_ItemCount);
-
-		for (INT a=m_ItemCount-1; a>0; a--)
-		{
-			Swap(0, a);
-			Heap(0, a);
-		}
-	}
+	LFSortMemory(m_pItemData, m_ItemCount, m_szData, zCompare, Attr, Descending, Parameter1, Parameter2);
 }
 
 

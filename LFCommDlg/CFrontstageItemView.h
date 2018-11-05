@@ -64,7 +64,7 @@ struct ItemData
 class CFrontstageItemView : public CFrontstageScroller
 {
 public:
-	CFrontstageItemView(UINT Flags=FRONTSTAGE_ENABLESCROLLING, SIZE_T DataSize=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
+	CFrontstageItemView(UINT Flags=FRONTSTAGE_ENABLESCROLLING, SIZE_T szData=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect=CRect(0, 0, 0, 0), UINT nClassStyle=0);
 	INT GetSelectedItem() const;
@@ -73,7 +73,6 @@ public:
 
 protected:
 	virtual INT GetItemCategory(INT Index) const;
-	virtual INT CompareItems(INT Index1, INT Index2) const;
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
 	virtual COLORREF GetItemTextColor(INT Index) const;
@@ -101,7 +100,7 @@ protected:
 	ItemData* GetItemData(INT Index) const;
 	void FreeItemData(BOOL InternalCall=FALSE);
 	void ValidateAllItems();
-	void SortItems();
+	void SortItems(PFNCOMPARE zCompare, UINT Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
 	RECT GetItemRect(INT Index) const;
 	BOOL HasItemsSelected() const;
 	void ItemSelectionChanged(INT Index);
@@ -163,12 +162,10 @@ protected:
 private:
 	void ResetItemCategories();
 	static INT GetGutterForMargin(INT Margin);
-	void Swap(INT Index1, INT Index2);
-	void Heap(INT Element, INT Count);
 	static UINT GetTileRows(UINT Rows, va_list vl);
 	void DrawTile(CDC& dc, CRect& rect, COLORREF TextColor, UINT Rows, va_list& vl) const;
 
-	SIZE_T m_DataSize;
+	SIZE_T m_szData;
 	LPBYTE m_pItemData;
 	UINT m_ItemDataAllocated;
 	CPoint m_DragPos;
@@ -227,7 +224,7 @@ inline ItemData* CFrontstageItemView::GetItemData(INT Index) const
 	ASSERT(Index>=0);
 	ASSERT(Index<m_ItemCount);
 
-	return ((ItemData*)(m_pItemData+Index*m_DataSize));
+	return (ItemData*)(m_pItemData+Index*m_szData);
 }
 
 inline INT CFrontstageItemView::GetGutterForMargin(INT Margin)

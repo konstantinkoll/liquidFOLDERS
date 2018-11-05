@@ -840,9 +840,8 @@ void LFApplication::PlayRegSound(const CString& Identifier)
 	{
 		CString strFile;
 
-		if (reg.Read(_T(""), strFile))
-			if (!strFile.IsEmpty())
-				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
+		if (reg.Read(_T(""), strFile) && !strFile.IsEmpty())
+			PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
 	}
 }
 
@@ -891,7 +890,7 @@ void LFApplication::PlayWarningSound()
 
 void LFApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval) const
 {
-	EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
+	EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1);
 	Interval = GetGlobalInt(_T("UpdateCheckInterval"), 0);
 }
 
@@ -909,16 +908,16 @@ BOOL LFApplication::IsUpdateCheckDue() const
 
 	if (EnableAutoUpdate && (Interval>=0) && (Interval<=2))
 	{
-		FILETIME ft;
-		GetSystemTimeAsFileTime(&ft);
+		FILETIME FileTime;
+		GetSystemTimeAsFileTime(&FileTime);
+
+		ULARGE_INTEGER Now;
+		Now.HighPart = FileTime.dwHighDateTime;
+		Now.LowPart = FileTime.dwLowDateTime;
 
 		ULARGE_INTEGER LastUpdateCheck;
 		LastUpdateCheck.HighPart = GetGlobalInt(_T("LastUpdateCheckHigh"), 0);
 		LastUpdateCheck.LowPart = GetGlobalInt(_T("LastUpdateCheckLow"), 0);
-
-		ULARGE_INTEGER Now;
-		Now.HighPart = ft.dwHighDateTime;
-		Now.LowPart = ft.dwLowDateTime;
 
 #define SECOND (10000000ull)
 #define MINUTE (60ull*SECOND)
@@ -952,15 +951,11 @@ BOOL LFApplication::IsUpdateCheckDue() const
 
 void LFApplication::WriteUpdateCheckTime() const
 {
-	FILETIME ft;
-	GetSystemTimeAsFileTime(&ft);
+	FILETIME FileTime;
+	GetSystemTimeAsFileTime(&FileTime);
 
-	ULARGE_INTEGER Now;
-	Now.HighPart = ft.dwHighDateTime;
-	Now.LowPart = ft.dwLowDateTime;
-
-	WriteGlobalInt(_T("LastUpdateCheckHigh"), Now.HighPart);
-	WriteGlobalInt(_T("LastUpdateCheckLow"), Now.LowPart);
+	WriteGlobalInt(_T("LastUpdateCheckHigh"), FileTime.dwHighDateTime);
+	WriteGlobalInt(_T("LastUpdateCheckLow"), FileTime.dwLowDateTime);
 }
 
 CString LFApplication::GetLatestVersion(CString CurrentVersion)
@@ -1180,9 +1175,7 @@ END_MESSAGE_MAP()
 
 void LFApplication::OnBackstagePurchase()
 {
-	CString URL((LPCSTR)IDS_PURCHASEURL);
-
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), CString((LPCSTR)IDS_PURCHASEURL), NULL, NULL, SW_SHOWNORMAL);
 }
 
 void LFApplication::OnBackstageEnterLicenseKey()

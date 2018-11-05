@@ -43,7 +43,7 @@ public:
 	UINT GetElementSize() const;
 	UINT GetRequiredElementSize() const;
 	UINT64 GetRequiredFileSize() const;
-	LPVOID GetStoreData(LPVOID pChar) const;
+	LPCVOID GetStoreData(LPCVOID pChar) const;
 	UINT GetError(BOOL SingleStore=FALSE);
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);
@@ -84,7 +84,7 @@ protected:
 
 private:
 	LPCFILEID GetFileID(INT_PTR ID) const;
-	static void ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const SIZE_T SrcSize);
+	static void ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPCVOID pSrc, const SIZE_T SrcSize);
 	void GetAttribute(LPVOID Ptr, SIZE_T Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
 
 	WCHAR m_Path[MAX_PATH];

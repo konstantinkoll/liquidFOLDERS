@@ -128,8 +128,8 @@ class CDateCategorizer : public CCategorizer
 public:
 	CDateCategorizer(UINT Attr);
 
-	static void GetDate(const FILETIME* Time, LPSYSTEMTIME Date);
-	static void GetDay(const FILETIME* Time, LPFILETIME Day);
+	static void GetDate(const LPFILETIME Time, LPSYSTEMTIME Date);
+	static void GetDay(const LPFILETIME Time, LPFILETIME Day);
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;

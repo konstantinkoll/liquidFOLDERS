@@ -142,7 +142,7 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, 
 
 // IATA
 
-HBITMAP LFIATACreateAirportMap(LFAirport* pAirport, LONG Width, LONG Height);
+HBITMAP LFIATACreateAirportMap(LPCAIRPORT lpcAirport, LONG Width, LONG Height);
 
 
 // MessageBox

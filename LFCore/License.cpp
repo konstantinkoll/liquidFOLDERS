@@ -176,16 +176,16 @@ LFCORE_API BOOL LFIsSharewareExpired()
 	}
 
 	// Check
-	FILETIME ft;
-	GetSystemTimeAsFileTime(&ft);
+	FILETIME FileTime;
+	GetSystemTimeAsFileTime(&FileTime);
+
+	ULARGE_INTEGER Now;
+	Now.HighPart = FileTime.dwHighDateTime;
+	Now.LowPart = FileTime.dwLowDateTime;
 
 	ULARGE_INTEGER FirstInstall;
 	FirstInstall.HighPart = ExpireBuffer.dwHighDateTime;
 	FirstInstall.LowPart = ExpireBuffer.dwLowDateTime;
-
-	ULARGE_INTEGER Now;
-	Now.HighPart = ft.dwHighDateTime;
-	Now.LowPart = ft.dwLowDateTime;
 
 #define SECOND ((ULONGLONG)10000000)
 #define MINUTE (60*SECOND)

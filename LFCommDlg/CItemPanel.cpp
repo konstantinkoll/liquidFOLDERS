@@ -34,7 +34,7 @@ CItemPanel::CItemPanel()
 
 void CItemPanel::Reset()
 {
-	m_Text = _T("");
+	m_Text.Empty();
 	m_Lines = 0;
 	p_Icons = NULL;
 

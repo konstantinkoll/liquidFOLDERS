@@ -16,8 +16,8 @@ CIcons CFileView::m_DefaultColorDots;
 CString CFileView::m_WelcomeCaption;
 CString CFileView::m_WelcomeMessage;
 
-CFileView::CFileView(UINT Flags, SIZE_T DataSize, const CSize& szItemInflate)
-	: CAbstractFileView(Flags | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLEDRAGANDDROP, DataSize, szItemInflate)
+CFileView::CFileView(UINT Flags, SIZE_T szData, const CSize& szItemInflate)
+	: CAbstractFileView(Flags | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLEDRAGANDDROP, szData, szItemInflate)
 {
 	if (m_WelcomeCaption.IsEmpty())
 		ENSURE(m_WelcomeCaption.LoadString(IDS_WELCOME_CAPTION));

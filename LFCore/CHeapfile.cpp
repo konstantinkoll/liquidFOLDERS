@@ -114,7 +114,7 @@ CHeapfile::~CHeapfile()
 	free(m_pBuffer);
 }
 
-LPVOID CHeapfile::GetStoreData(LPVOID pData) const
+LPCVOID CHeapfile::GetStoreData(LPCVOID pData) const
 {
 	return m_Header.StoreDataSize ? (LPBYTE)pData+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
 }
@@ -360,7 +360,7 @@ void CHeapfile::Invalidate(LFItemDescriptor* pItemDescriptor)
 	Invalidate(pItemDescriptor->CoreAttributes.FileID, ID);
 }
 
-void CHeapfile::ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPVOID pSrc, const SIZE_T SrcSize)
+void CHeapfile::ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPCVOID pSrc, const SIZE_T SrcSize)
 {
 	assert(pDst);
 	assert(pSrc);
