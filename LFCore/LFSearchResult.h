@@ -57,6 +57,7 @@ private:
 	static void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	static void CloseFileSummary(LFFileSummary& FileSummary);
 	static INT __stdcall CompareItems(LFItemDescriptor** pData1, LFItemDescriptor** pData2, const SortParameters& Parameters);
+	static INT CompareItemsSecondary(LFItemDescriptor** pData1, LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending=FALSE);
 	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 };
 
@@ -74,4 +75,12 @@ inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, const 
 	FileSummary.FileSize += StoreDescriptor.Statistics.FileSize[0];
 
 	FileSummary.Context = LFContextStores;
+}
+
+inline INT LFSearchResult::CompareItemsSecondary(LFItemDescriptor** pData1, LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending)
+{
+	Parameters.Attr = Attr;
+	Parameters.Descending = Descending;
+
+	return CompareItems(pData1, pData2, Parameters);
 }

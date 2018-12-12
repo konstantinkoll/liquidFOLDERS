@@ -380,18 +380,19 @@ INT LFSearchResult::CompareItems(LFItemDescriptor** pData1, LFItemDescriptor** p
 	if (!Result)
 		switch (Parameters.Attr)
 		{
-/*		case LFAttrMediaCollection:
-			return CompareItems(pItem1, pItem2, LFAttrSequenceInCollection, Parameters.Parameter2);
+		case LFAttrMediaCollection:
+			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrSequenceInCollection, Parameters.Parameter2);
 
 		case LFAttrSequenceInCollection:
-			return CompareItems(pItem1, pItem2, LFAttrTitle, FALSE);*/
+			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrTitle);
 
 		case LFAttrFileName:
+			Result = _stricmp(pItemDescriptor1->CoreAttributes.FileFormat, pItemDescriptor2->CoreAttributes.FileFormat);
 			break;
 
 		default:
 			Result = _wcsicmp(pItemDescriptor1->CoreAttributes.FileName, pItemDescriptor2->CoreAttributes.FileName);
-	}
+		}
 
 	// Are the files identical? Then use store ID and file ID as secondaries
 	if (!Result)
