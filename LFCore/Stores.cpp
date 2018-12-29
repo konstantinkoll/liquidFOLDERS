@@ -325,9 +325,9 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 			WCHAR szVolumeRoot[] = L" :\\";
 			szVolumeRoot[0] = pStoreDescriptor->DatPath[0];
 
-			SHFILEINFO sfi;
-			if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
-				wcscpy_s(pStoreDescriptor->LastSeen, 256, sfi.szDisplayName);
+			SHFILEINFO ShellFileInfo;
+			if (SHGetFileInfo(szVolumeRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
+				wcscpy_s(pStoreDescriptor->LastSeen, 256, ShellFileInfo.szDisplayName);
 
 			if ((pStoreDescriptor->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendWindows)
 			{
@@ -1316,6 +1316,9 @@ LFCORE_API LFMaintenanceList* LFScheduledMaintenance(LFProgress* pProgress)
 		SendLFNotifyMessage(LFMessages.StoreAttributesChanged);
 	}
 
+	// Sort
+	pMaintenanceList->SortItems();
+
 	return pMaintenanceList;
 }
 
@@ -1489,9 +1492,9 @@ void MountVolumes(UINT Mask, BOOL OnInitialize)
 
 		szVolumeRoot[0] = cVolume;
 
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES))
-			if (sfi.dwAttributes)
+		SHFILEINFO ShellFileInfo;
+		if (SHGetFileInfo(szVolumeRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES))
+			if (ShellFileInfo.dwAttributes)
 				MountVolume(cVolume, TRUE, OnInitialize);
 	}
 }

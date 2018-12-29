@@ -248,14 +248,13 @@ void CAbstractFileView::OnDestroy()
 
 void CAbstractFileView::OnMouseHover(UINT nFlags, CPoint point)
 {
-	if (!IsEditing())
-		if (m_HoverItem==m_EditItem)
-		{
-			HideTooltip();
-			EditLabel(m_EditItem);
+	if (!IsEditing() && (m_HoverItem==m_EditItem))
+	{
+		HideTooltip();
+		EditLabel(m_EditItem);
 
-			return;
-		}
+		return;
+	}
 
 	CFrontstageItemView::OnMouseHover(nFlags, point);
 }

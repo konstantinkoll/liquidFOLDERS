@@ -48,7 +48,7 @@ CDesktopDimmer::CDesktopDimmer()
 
 BOOL CDesktopDimmer::Create(CWnd* pParentWnd)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_NO));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_NO));
 
 	CRect rect;
 	GetDesktopWindow()->GetWindowRect(rect);

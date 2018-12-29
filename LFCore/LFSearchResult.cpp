@@ -69,7 +69,7 @@ LFCORE_API void LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOO
 {
 	assert(pSearchResult);
 
-	pSearchResult->Sort(Attr, Descending);
+	pSearchResult->SortItems(Attr, Descending);
 }
 
 LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter)
@@ -81,7 +81,7 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 	{
 		pSearchResult = new LFSearchResult(pSearchResult);
 		pSearchResult->GroupArray(Attr, pFilter);
-		pSearchResult->Sort(Attr, Descending);
+		pSearchResult->SortItems(Attr, Descending);
 
 		return pSearchResult;
 	}
@@ -96,10 +96,10 @@ LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UI
 					(*pSearchResult)[a]->AttributeValues[LFAttrLocationGPS] = (LPVOID)&lpcAirport->Location;
 			}
 
-	pSearchResult->Sort(Attr, Descending);
+	pSearchResult->SortItems(Attr, Descending);
 
 	LFSearchResult* pCookedFiles = new LFSearchResult(pSearchResult);
-	pCookedFiles->Group(Attr, GroupSingle, pFilter);
+	pCookedFiles->GroupItems(Attr, GroupSingle, pFilter);
 
 	// Revert to old GPS location
 	if (Attr==LFAttrLocationGPS)
@@ -347,7 +347,7 @@ void LFSearchResult::KeepRange(UINT First, UINT Last)
 	UpdateFileSummary(FALSE);
 }
 
-INT LFSearchResult::CompareItems(LFItemDescriptor** pData1, LFItemDescriptor** pData2, const SortParameters& Parameters)
+INT LFSearchResult::CompareItems(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, const SortParameters& Parameters)
 {
 	const LFItemDescriptor* pItemDescriptor1 = *pData1;
 	const LFItemDescriptor* pItemDescriptor2 = *pData2;
@@ -402,9 +402,9 @@ INT LFSearchResult::CompareItems(LFItemDescriptor** pData1, LFItemDescriptor** p
 	return Result;
 }
 
-void LFSearchResult::Sort(UINT Attr, BOOL Descending)
+void LFSearchResult::SortItems(UINT Attr, BOOL Descending)
 {
-	SortItems((PFNCOMPARE)CompareItems, Attr, Descending, m_HasCategories, IsAttributeSortDescending(m_Context, LFAttrSequenceInCollection));
+	LFDynArray::SortItems((PFNCOMPARE)CompareItems, Attr, Descending, m_HasCategories, IsAttributeSortDescending(m_Context, LFAttrSequenceInCollection));
 }
 
 UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
@@ -437,7 +437,7 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 	return 1;
 }
 
-void LFSearchResult::Group(UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
+void LFSearchResult::GroupItems(UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
 	if (!m_ItemCount)
 		return;

@@ -40,7 +40,7 @@ struct TimelineItemData
 	UINT PreviewMask;
 };
 
-class CTimelineView : public CFileView
+class CTimelineView sealed : public CFileView
 {
 public:
 	CTimelineView();

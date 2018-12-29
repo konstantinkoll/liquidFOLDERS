@@ -22,7 +22,7 @@ struct UsageItemData
 	INT64 FileSize;
 };
 
-class CUsageList : public CFrontstageItemView
+class CUsageList sealed : public CFrontstageItemView
 {
 public:
 	CUsageList();

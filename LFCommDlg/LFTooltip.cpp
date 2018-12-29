@@ -22,7 +22,7 @@ LFTooltip::LFTooltip()
 
 BOOL LFTooltip::Create()
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_LAYERED, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
 }

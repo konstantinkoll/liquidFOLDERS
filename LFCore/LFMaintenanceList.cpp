@@ -27,3 +27,8 @@ BOOL LFMaintenanceList::AddItem(LFStoreDescriptor* pStoreDescriptor, UINT Result
 
 	return LFDynArray::AddItem(Item);
 }
+
+INT LFMaintenanceList::CompareItems(const LFMaintenanceListItem* pData1, const LFMaintenanceListItem* pData2, const SortParameters& /*Parameters*/)
+{
+	return (pData1->Result!=pData2->Result) ? (INT)pData2->Result-(INT)pData1->Result : wcscmp(pData1->Name, pData2->Name);
+}

@@ -95,9 +95,9 @@ CString CShellTree::GetItemText(ExplorerTreeItemData* pItem) const
 {
 	ASSERT(pItem);
 
-	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
-		return sfi.szDisplayName;
+	SHFILEINFO ShellFileInfo;
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
+		return ShellFileInfo.szDisplayName;
 
 	return _T("?");
 }
@@ -106,9 +106,9 @@ INT CShellTree::GetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const
 {
 	ASSERT(pItem);
 
-	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | (bSelected ? SHGFI_OPENICON : SHGFI_LINKOVERLAY))))
-		return sfi.iIcon;
+	SHFILEINFO ShellFileInfo;
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | (bSelected ? SHGFI_OPENICON : SHGFI_LINKOVERLAY))))
+		return ShellFileInfo.iIcon;
 
 	return -1;
 }

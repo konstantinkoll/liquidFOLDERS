@@ -52,7 +52,7 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 	m_pFileImportList->Resolve(TRUE, pProgress);
 
 	// Sort for binary search
-	m_pFileImportList->Sort();
+	m_pFileImportList->SortItems();
 
 	// Synchronize with index
 	UINT Result;
@@ -250,7 +250,7 @@ BOOL CStoreWindows::SynchronizeFile(const REVENANTFILE& File)
 	while (First<=Last)
 	{
 		const INT Mid = (First+Last)/2;
-		LFFileImportListItem* pItem = &(*m_pFileImportList)[Mid];
+		LFFileImportItem* pItem = &(*m_pFileImportList)[Mid];
 
 		const INT Result = _wcsicmp(&Path[4], pItem->Path);
 		if (!Result)

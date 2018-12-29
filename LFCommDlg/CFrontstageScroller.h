@@ -38,6 +38,7 @@ protected:
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
+	void EnsureVisible(const CRect& rectItem);
 	void ResetScrollArea();
 	void SetItemHeight(INT ItemHeight);
 	BOOL HasHeader() const;

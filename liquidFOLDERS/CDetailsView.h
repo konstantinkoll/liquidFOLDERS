@@ -9,7 +9,7 @@
 // CDetailsView
 //
 
-class CDetailsView : public CFileView
+class CDetailsView sealed : public CFileView
 {
 public:
 	CDetailsView();

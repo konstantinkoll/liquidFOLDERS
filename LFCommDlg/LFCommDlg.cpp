@@ -912,12 +912,12 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 
 void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint)
 {
-	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCWSTR)pidlFQ, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
+	SHFILEINFO ShellFileInfo;
+	if (SUCCEEDED(SHGetFileInfo((LPCWSTR)pidlFQ, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
-		hIcon = pIcons->ExtractIcon(sfi.iIcon);
-		Caption = sfi.szDisplayName;
-		Hint = sfi.szTypeName;
+		hIcon = pIcons->ExtractIcon(ShellFileInfo.iIcon);
+		Caption = ShellFileInfo.szDisplayName;
+		Hint = ShellFileInfo.szTypeName;
 
 		IShellFolder* pParentFolder;
 		LPCITEMIDLIST pidlRel;

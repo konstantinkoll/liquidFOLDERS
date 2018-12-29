@@ -27,7 +27,7 @@
 	virtual CPoint PointAtPosition(CPoint point) const; \
 	virtual LPCVOID PtrAtPosition(CPoint point) const; \
 	virtual void InvalidateItem(INT Index); \
-	virtual void InvalidatePoint(const CPoint& Point); \
+	virtual void InvalidatePoint(const CPoint& point); \
 	virtual void InvalidatePtr(LPCVOID Ptr); \
 	virtual void ShowTooltip(const CPoint& point); \
 	void HideTooltip(); \

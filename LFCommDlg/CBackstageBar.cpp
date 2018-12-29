@@ -49,7 +49,7 @@ BOOL CBackstageBar::Create(CWnd* pParentWnd, UINT nID, INT Spacer, BOOL ReverseO
 	m_Spacer = Spacer;
 	m_ReverseOrder = ReverseOrder;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::CreateEx(WS_EX_NOACTIVATE, className, _T(""), WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }

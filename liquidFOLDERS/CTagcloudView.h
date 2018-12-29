@@ -21,7 +21,7 @@ struct TagcloudItemData
 // CTagcloudView
 //
 
-class CTagcloudView : public CFileView
+class CTagcloudView sealed : public CFileView
 {
 public:
 	CTagcloudView();

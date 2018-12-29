@@ -9,6 +9,8 @@
 // CFrontstageScroller
 //
 
+#define ENSUREVISIBLEEXTRAMARGIN     2
+
 CFrontstageScroller::CFrontstageScroller(UINT Flags)
 	: CFrontstageWnd()
 {
@@ -153,6 +155,17 @@ void CFrontstageScroller::HeaderColumnClicked(UINT /*Attr*/)
 {
 }
 
+void CFrontstageScroller::ResetScrollArea()
+{
+	m_ScrollWidth = m_ScrollHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
+	m_HoverItem = -1;
+}
+
+void CFrontstageScroller::SetItemHeight(INT ItemHeight)
+{
+	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)-1;
+}
+
 void CFrontstageScroller::AdjustScrollbars()
 {
 	// Dimensions
@@ -280,6 +293,50 @@ void CFrontstageScroller::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRE
 	}
 }
 
+void CFrontstageScroller::EnsureVisible(const CRect& rectItem)
+{
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	if (!rectClient.Height())
+		return;
+
+	CSize nInc(0, 0);
+
+	// Vertical
+	if (rectItem.bottom+ENSUREVISIBLEEXTRAMARGIN>rectClient.Height())
+		nInc.cy = rectItem.bottom-rectClient.Height()+ENSUREVISIBLEEXTRAMARGIN;
+
+	if (rectItem.top-ENSUREVISIBLEEXTRAMARGIN<nInc.cy+(INT)m_HeaderHeight)
+		nInc.cy = rectItem.top-(INT)m_HeaderHeight-ENSUREVISIBLEEXTRAMARGIN;
+
+	nInc.cy = max(-m_VScrollPos, min(nInc.cy, m_VScrollMax-m_VScrollPos));
+
+	// Horizontal
+	if ((rectItem.right-rectItem.left<rectClient.Width()) || (rectItem.right<rectClient.left) || (rectItem.left>=rectClient.right))
+	{
+		if (rectItem.right+ENSUREVISIBLEEXTRAMARGIN>rectClient.Width())
+			nInc.cx = rectItem.right-rectClient.Width()+ENSUREVISIBLEEXTRAMARGIN;
+
+		if (rectItem.left-ENSUREVISIBLEEXTRAMARGIN<nInc.cx)
+			nInc.cx = rectItem.left-ENSUREVISIBLEEXTRAMARGIN;
+
+		nInc.cx = max(-m_HScrollPos, min(nInc.cx, m_HScrollMax-m_HScrollPos));
+	}
+
+	// Scroll window
+	if (nInc.cx || nInc.cy)
+	{
+		m_HScrollPos += nInc.cx;
+		m_VScrollPos += nInc.cy;
+
+		ScrollWindow(-nInc.cx, -nInc.cy);
+
+		SetScrollPos(SB_VERT, m_VScrollPos);
+		SetScrollPos(SB_HORZ, m_HScrollPos);
+	}
+}
+
 void CFrontstageScroller::GetNothingMessage(CString& strMessage, COLORREF& /*clrMessage*/, BOOL /*Themed*/) const
 {
 	ENSURE(strMessage.LoadString(IDS_NOTHINGTODISPLAY));
@@ -320,17 +377,6 @@ void CFrontstageScroller::DrawNothing(CDC& dc, CRect rect, BOOL Themed) const
 
 void CFrontstageScroller::DrawStage(CDC& /*dc*/, Graphics& /*g*/, const CRect& /*rect*/, const CRect& /*rectUpdate*/, BOOL /*Themed*/)
 {
-}
-
-void CFrontstageScroller::ResetScrollArea()
-{
-	m_ScrollWidth = m_ScrollHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
-	m_HoverItem = -1;
-}
-
-void CFrontstageScroller::SetItemHeight(INT ItemHeight)
-{
-	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)-1;
 }
 
 BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, LPCWSTR Caption, BOOL Right)
@@ -532,8 +578,7 @@ void CFrontstageScroller::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		break;
 	}
 
-	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
-	if (nInc)
+	if ((nInc=max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos)))!=0)
 	{
 		SetScrollPos(SB_VERT, m_VScrollPos+=nInc);
 		ScrollWindow(0, -nInc);
@@ -586,8 +631,7 @@ void CFrontstageScroller::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		break;
 	}
 
-	nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
-	if (nInc)
+	if ((nInc=max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos)))!=0)
 	{
 		SetScrollPos(SB_HORZ, m_HScrollPos+=nInc);
 		ScrollWindow(-nInc, 0);
@@ -609,8 +653,8 @@ BOOL CFrontstageScroller::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	if (nScrollLines<1)
 		nScrollLines = 1;
 
-	INT nInc = max(-m_VScrollPos, min(-zDelta*m_szScrollStep.cy*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
-	if (nInc)
+	INT nInc;
+	if ((nInc=max(-m_VScrollPos, min(-zDelta*m_szScrollStep.cy*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos)))!=0)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
@@ -631,8 +675,8 @@ void CFrontstageScroller::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	if (!rect.PtInRect(pt))
 		return;
 
-	INT nInc = max(-m_HScrollPos, min(zDelta*m_szScrollStep.cx/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
-	if (nInc)
+	INT nInc;
+	if ((nInc=max(-m_HScrollPos, min(zDelta*m_szScrollStep.cx/WHEEL_DELTA, m_HScrollMax-m_HScrollPos)))!=0)
 	{
 		m_HScrollPos += nInc;
 		ScrollWindow(-nInc, 0);

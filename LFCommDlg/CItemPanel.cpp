@@ -116,11 +116,11 @@ BOOL CItemPanel::SetItem(LPITEMIDLIST pidlFQ, LPCWSTR Path, UINT nID, LPCWSTR Hi
 {
 	ASSERT(pidlFQ);
 
-	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_SYSICONINDEX)))
+	SHFILEINFO ShellFileInfo;
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_SYSICONINDEX)))
 	{
 		// Text
-		CString tmpStr(sfi.szDisplayName);
+		CString tmpStr(ShellFileInfo.szDisplayName);
 
 		if (Path && (*Path!=L'\0'))
 		{
@@ -144,7 +144,7 @@ BOOL CItemPanel::SetItem(LPITEMIDLIST pidlFQ, LPCWSTR Path, UINT nID, LPCWSTR Hi
 
 		CImageList* pImageList = (rect.Height()>=LFGetApp()->m_ExtraLargeIconSize) ? &LFGetApp()->m_SystemImageListExtraLarge : &LFGetApp()->m_SystemImageListSmall;
 
-		SetItem(tmpStr, pImageList, sfi.iIcon);
+		SetItem(tmpStr, pImageList, ShellFileInfo.iIcon);
 
 		return TRUE;
 	}

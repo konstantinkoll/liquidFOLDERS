@@ -26,7 +26,7 @@ struct FolderData
 	INT Last;
 };
 
-class CListView : public CFileView
+class CListView sealed : public CFileView
 {
 public:
 	CListView();

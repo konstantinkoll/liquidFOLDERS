@@ -50,7 +50,7 @@ BOOL CBackstageShadow::Create()
 	}
 
 	// Create transparent windows
-	CString className = AfxRegisterWndClass(0);
+	const CString className = AfxRegisterWndClass(0);
 
 	BOOL Result = TRUE;
 

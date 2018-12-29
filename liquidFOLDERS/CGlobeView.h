@@ -22,7 +22,7 @@ struct GlobeItemData
 // CGlobeView
 //
 
-class CGlobeView : public CFileView
+class CGlobeView sealed : public CFileView
 {
 public:
 	CGlobeView();

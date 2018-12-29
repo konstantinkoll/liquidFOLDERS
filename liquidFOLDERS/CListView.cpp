@@ -15,7 +15,6 @@
 #define MAXAUTOWIDTH           400
 #define PREVIEWITEMOFFSET      2
 #define PREVIEWWIDTH           128+CARDPADDING
-#define SPACER                 (4*ITEMCELLPADDING+1)
 
 CListView::CListView()
 	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(ListItemData))
@@ -107,7 +106,7 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 
 INT CListView::GetHeaderIndent() const
 {
-	return m_HasFolders ? BACKSTAGEBORDER+CARDPADDING-ITEMCELLPADDING-1 : BACKSTAGEBORDER-1;
+	return m_HasFolders ? BACKSTAGEBORDER+CARDPADDING-ITEMCELLPADDINGY-1 : BACKSTAGEBORDER-1;
 }
 
 void CListView::GetHeaderContextMenu(CMenu& Menu)
@@ -178,7 +177,7 @@ void CListView::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
 	{
 		if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
 		{
-			HeaderItem.cxy = RATINGBITMAPWIDTH+SPACER;
+			HeaderItem.cxy = RATINGBITMAPWIDTH+ITEMCELLSPACER;
 		}
 		else
 		{
@@ -226,7 +225,7 @@ void CListView::AdjustLayout()
 	if (m_HasFolders && m_pFolderItems)
 	{
 		// Adjust layout with folders
-		m_ScrollWidth += 2*(BACKSTAGEBORDER+CARDPADDING-ITEMCELLPADDING)+m_PreviewSize.cx;
+		m_ScrollWidth += 2*(BACKSTAGEBORDER+CARDPADDING-ITEMCELLPADDINGY)+m_PreviewSize.cx;
 		m_ScrollHeight = BACKSTAGEBORDER;
 		INT LastFolderItem = -1;
 		INT Row = 0;
@@ -267,7 +266,7 @@ void CListView::AdjustLayout()
 			}
 
 			// Files
-			CRect rectFile(Data.Rect.left+CARDPADDING-ITEMCELLPADDING+m_PreviewSize.cx, Data.Rect.bottom-ITEMCELLPADDING, m_ScrollWidth-BACKSTAGEBORDER-CARDPADDING+ITEMCELLPADDING, Data.Rect.bottom-ITEMCELLPADDING+m_ItemHeight);
+			CRect rectFile(Data.Rect.left+CARDPADDING-ITEMCELLPADDINGY+m_PreviewSize.cx, Data.Rect.bottom-ITEMCELLPADDINGY, m_ScrollWidth-BACKSTAGEBORDER-CARDPADDING+ITEMCELLPADDINGY, Data.Rect.bottom-ITEMCELLPADDINGY+m_ItemHeight);
 			for (UINT b=(UINT)Data.First; b<=(UINT)Data.Last; b++)
 			{
 				ListItemData* pData = GetItemData(b);
@@ -278,7 +277,7 @@ void CListView::AdjustLayout()
 				rectFile.OffsetRect(0, m_szScrollStep.cy);
 			}
 
-			Data.Rect.bottom += max(Data.pItemDescriptor ? m_PreviewSize.cy-PREVIEWITEMOFFSET : 0, m_szScrollStep.cy*(Data.Last-Data.First+1)-2*ITEMCELLPADDING+1)+CARDPADDING;
+			Data.Rect.bottom += max(Data.pItemDescriptor ? m_PreviewSize.cy-PREVIEWITEMOFFSET : 0, m_szScrollStep.cy*(Data.Last-Data.First+1)-2*ITEMCELLPADDINGY+1)+CARDPADDING;
 			m_Folders.AddItem(Data);
 
 			m_ScrollHeight = Data.Rect.bottom+BACKSTAGEBORDER;
@@ -327,8 +326,8 @@ RECT CListView::GetLabelRect(INT Index) const
 	}
 
 	// Calculate rectangle
-	rect.right = rect.left+m_ContextViewSettings.ColumnWidth[0]-3*ITEMCELLPADDING;
-	rect.left += m_IconSize+2*ITEMCELLPADDING+GetColorDotWidth(Index)-2;
+	rect.right = rect.left+m_ContextViewSettings.ColumnWidth[0]-2;
+	rect.left += m_IconSize+GetColorDotWidth(Index)+ITEMCELLPADDINGX+ITEMCELLPADDINGY-4;
 
 	return rect;
 }
@@ -401,13 +400,13 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 
 	// Trailing separator
 	if (pData->DrawTrailingSeparator && Themed)
-		dc.FillSolidRect(rectItem->left+ITEMCELLPADDING, rectItem->bottom-1, rectItem->right-rectItem->left-2*ITEMCELLPADDING, 1, 0xF8F6F6);
+		dc.FillSolidRect(rectItem->left+ITEMCELLPADDINGY, rectItem->bottom-1, rectItem->right-rectItem->left-2*ITEMCELLPADDINGY, 1, 0xF8F6F6);
 
 	// Background
 	DrawItemBackground(dc, rectItem, Index, Themed);
 
 	CRect rect(rectItem);
-	rect.right = rect.left-3*ITEMCELLPADDING;
+	rect.right = rect.left-ITEMCELLSPACER+ITEMCELLPADDINGY+1;
 
 	// Columns
 	COLORREF TextColors[2] = { SetDarkTextColor(dc, pItemDescriptor, Themed), dc.GetTextColor() };
@@ -418,7 +417,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 
 		if (m_ContextViewSettings.ColumnWidth[Attr] && ((INT)Attr!=m_PreviewAttribute))
 		{
-			rect.right = (rect.left=rect.right+SPACER)+m_ContextViewSettings.ColumnWidth[Attr]-SPACER;
+			rect.right = (rect.left=rect.right+ITEMCELLSPACER)+m_ContextViewSettings.ColumnWidth[Attr]-ITEMCELLSPACER;
 
 			if (pItemDescriptor->AttributeValues[Attr])
 			{
@@ -427,7 +426,7 @@ void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 					// Icon
 					theApp.m_IconFactory.DrawSmallIcon(dc, CPoint(rect.left, (rect.top+rect.bottom-m_IconSize)/2), pItemDescriptor);
 
-					rect.left += m_IconSize+2*ITEMCELLPADDING;
+					rect.left += m_IconSize+ITEMCELLPADDINGX;
 
 					// Color
 					DrawColorDots(dc, rect, pItemDescriptor, m_DefaultFontHeight);
@@ -530,7 +529,7 @@ INT CListView::GetMaxAttributeWidth(UINT Attr) const
 
 	// Fixed width for rating bitmaps
 	if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
-		return RATINGBITMAPWIDTH+SPACER;
+		return RATINGBITMAPWIDTH+ITEMCELLSPACER;
 
 	// Preview
 	if ((INT)Attr==m_PreviewAttribute)
@@ -548,7 +547,7 @@ INT CListView::GetMaxAttributeWidth(UINT Attr) const
 
 		for (INT a=0; a<m_ItemCount; a++)
 		{
-			INT cx = SPACER;
+			INT cx = ITEMCELLSPACER;
 
 			if (Attr==LFAttrFileName)
 			{
@@ -580,7 +579,7 @@ INT CListView::GetMaxAttributeWidth(UINT Attr) const
 
 	// Icon
 	if (Attr==LFAttrFileName)
-		Width += m_IconSize+4*m_DefaultColorDots.GetIconSize()/3+2*ITEMCELLPADDING;
+		Width += m_IconSize+4*m_DefaultColorDots.GetIconSize()/3+ITEMCELLPADDINGX+ITEMCELLPADDINGY;
 
 	return max(Width, GetMinColumnWidth(Attr));
 }
@@ -616,7 +615,7 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AddHeaderColumns();
 
 	// Items
-	SetItemHeight(GetSystemMetrics(SM_CYSMICON), 1, ITEMCELLPADDING);
+	SetItemHeight(GetSystemMetrics(SM_CYSMICON), 1, ITEMCELLPADDINGY);
 
 	return 0;
 }

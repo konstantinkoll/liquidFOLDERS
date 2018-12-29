@@ -19,6 +19,15 @@ public:
 	LFMaintenanceList();
 
 	BOOL AddItem(LFStoreDescriptor* pStoreDescriptor, UINT Result);
+	void SortItems();
 
 	UINT m_LastError;
+
+private:
+	static INT __stdcall CompareItems(const LFMaintenanceListItem* pData1, const LFMaintenanceListItem* pData2, const SortParameters& Parameters);
 };
+
+inline void LFMaintenanceList::SortItems()
+{
+	LFDynArray::SortItems((PFNCOMPARE)CompareItems);
+}

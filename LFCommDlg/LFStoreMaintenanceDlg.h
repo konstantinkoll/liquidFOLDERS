@@ -10,7 +10,7 @@
 // CMaintenanceReport
 //
 
-class CMaintenanceReport : public CFrontstageItemView
+class CMaintenanceReport sealed : public CFrontstageItemView
 {
 public:
 	CMaintenanceReport();

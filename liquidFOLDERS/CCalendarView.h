@@ -26,7 +26,7 @@ struct CalendarMonth
 	UINT DOM;			// Days of month
 };
 
-class CCalendarView : public CFileView
+class CCalendarView sealed : public CFileView
 {
 public:
 	CCalendarView();

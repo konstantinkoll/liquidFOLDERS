@@ -413,10 +413,10 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 					wcscat_s(Dst, MAX_PATH, L"\\");
 					wcscat_s(Dst, MAX_PATH, ffd.cFileName);
 
-					SHFILEINFO sfi;
-					if (SHGetFileInfo(Dst, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX | SHGFI_SMALLICON))
+					SHFILEINFO ShellFileInfo;
+					if (SHGetFileInfo(Dst, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX | SHGFI_SMALLICON))
 					{
-						AppendSendToItem(Menu, nID, Name, theApp.m_SystemImageListSmall.ExtractIcon(sfi.iIcon), cx, cy);
+						AppendSendToItem(Menu, nID, Name, theApp.m_SystemImageListSmall.ExtractIcon(ShellFileInfo.iIcon), cx, cy);
 						Added = TRUE;
 
 						const UINT Index = (nID++) & 0xFF;
@@ -445,10 +445,10 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 
 		WCHAR szDriveRoot[] = L" :\\";
 		szDriveRoot[0] = cVolume;
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON | (CheckEmpty ? SHGFI_ATTRIBUTES : 0)))
+		SHFILEINFO ShellFileInfo;
+		if (SHGetFileInfo(szDriveRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON | (CheckEmpty ? SHGFI_ATTRIBUTES : 0)))
 		{
-			if ((!sfi.dwAttributes) && CheckEmpty)
+			if ((!ShellFileInfo.dwAttributes) && CheckEmpty)
 				continue;
 
 			if (Added)
@@ -457,7 +457,7 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 				Added = FALSE;
 			}
 
-			AppendSendToItem(Menu, nID, sfi.szDisplayName, sfi.hIcon, cx, cy);
+			AppendSendToItem(Menu, nID, ShellFileInfo.szDisplayName, ShellFileInfo.hIcon, cx, cy);
 
 			const UINT Index = (nID++) & 0xFF;
 

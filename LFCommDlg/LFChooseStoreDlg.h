@@ -12,7 +12,7 @@
 // CStoreList
 //
 
-class CStoreList : public CAbstractFileView
+class CStoreList sealed : public CAbstractFileView
 {
 public:
 	CStoreList();

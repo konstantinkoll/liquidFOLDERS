@@ -144,7 +144,7 @@ void CFrontstageWnd::InvalidateItem(INT /*Index*/)
 	Invalidate();
 }
 
-void CFrontstageWnd::InvalidatePoint(const CPoint& /*Point*/)
+void CFrontstageWnd::InvalidatePoint(const CPoint& /*point*/)
 {
 	Invalidate();
 }

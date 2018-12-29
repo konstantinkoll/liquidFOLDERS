@@ -38,10 +38,10 @@ void CVolumeList::ShowTooltip(const CPoint& point)
 	WCHAR szVolumeRoot[] = L" :\\";
 	szVolumeRoot[0] = pData->cVolume;
 
-	SHFILEINFO sfi;
-	if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
-		LFGetApp()->ShowTooltip(this, point, pData->DisplayName, sfi.szTypeName,
-			LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(sfi.iIcon), NULL);
+	SHFILEINFO ShellFileInfo;
+	if (SHGetFileInfo(szVolumeRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
+		LFGetApp()->ShowTooltip(this, point, pData->DisplayName, ShellFileInfo.szTypeName,
+			LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(ShellFileInfo.iIcon), NULL);
 }
 
 BOOL CVolumeList::GetContextMenu(CMenu& Menu, INT Index)
@@ -80,18 +80,17 @@ void CVolumeList::SetVolumes(UINT Mask)
 		WCHAR szVolumeRoot[] = L" :\\";
 		szVolumeRoot[0] = cVolume;
 
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szVolumeRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX))
+		SHFILEINFO ShellFileInfo;
+		if (SHGetFileInfo(szVolumeRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX))
 		{
-			if (!sfi.dwAttributes)
+			if (!ShellFileInfo.dwAttributes)
 				continue;
 
-			AddVolume(cVolume, sfi.szDisplayName, sfi.iIcon);
+			AddVolume(cVolume, ShellFileInfo.szDisplayName, ShellFileInfo.iIcon);
 		}
 	}
 
 	LastItem();
-
 	AdjustLayout();
 }
 

@@ -22,7 +22,7 @@ struct GenreItemData
 	BOOL FirstInCategory;
 };
 
-class CGenreList : public CFrontstageItemView
+class CGenreList sealed : public CFrontstageItemView
 {
 public:
 	CGenreList();

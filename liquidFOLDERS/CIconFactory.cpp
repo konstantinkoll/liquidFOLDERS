@@ -24,8 +24,8 @@ CIconFactory::CIconFactory()
 	m_SystemIcons128.Create(128, 128, ILC_COLOR32, 64, 8);
 
 	// Retrieve index of generic file format icons
-	SHFILEINFO sfi;
-	m_GenericSystemIconIndex = SUCCEEDED(SHGetFileInfo(_T("*"), 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? sfi.iIcon : 3;
+	SHFILEINFO ShellFileInfo;
+	m_GenericSystemIconIndex = SUCCEEDED(SHGetFileInfo(_T("*"), 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? ShellFileInfo.iIcon : 3;
 	m_GenericIconIndex128 = QuarterJumboSystemIcon(m_GenericSystemIconIndex);
 }
 
@@ -551,13 +551,13 @@ void CIconFactory::LookupFileFormat(LPCSTR lpszFileFormat, FileFormatData& Data)
 		if ((Key[1]!=':') || (Key[2]!='\\'))
 			Ext.Insert(0, _T("*."));
 
-		SHFILEINFO sfi;
-		if (SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
+		SHFILEINFO ShellFileInfo;
+		if (SUCCEEDED(SHGetFileInfo(Ext, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
 		{
 			// Copy data into hashmap
-			wcscpy_s(Data.FileFormatName, 80, sfi.szTypeName);
-			Data.SystemIconIndex = sfi.iIcon;
-			Data.IconIndex128 = QuarterJumboSystemIcon(sfi.iIcon);
+			wcscpy_s(Data.FileFormatName, 80, ShellFileInfo.szTypeName);
+			Data.SystemIconIndex = ShellFileInfo.iIcon;
+			Data.IconIndex128 = QuarterJumboSystemIcon(ShellFileInfo.iIcon);
 
 			m_FileFormats.SetAt(Key, Data);
 

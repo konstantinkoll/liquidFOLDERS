@@ -26,7 +26,7 @@ BOOL CFileDropWnd::Create(const ABSOLUTESTOREID& StoreID)
 {
 	m_StoreID = StoreID;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_FILEDROP));
 
 	CSize Size;
 	GetCaptionButtonMargins(&Size);

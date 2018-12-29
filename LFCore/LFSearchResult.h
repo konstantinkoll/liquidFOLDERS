@@ -30,8 +30,8 @@ public:
 	BOOL AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor);
 	void RemoveFlaggedItems(BOOL UpdateSummary=TRUE);
 	void KeepRange(UINT First, UINT Last);
-	void Sort(UINT Attr, BOOL Descending);
-	void Group(UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
+	void SortItems(UINT Attr, BOOL Descending);
+	void GroupItems(UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 	void GroupArray(UINT Attr, LFFilter* pFilter);
 	void UpdateFolderColors(const LFSearchResult* pRawFiles);
 
@@ -56,8 +56,8 @@ private:
 	static void AddStoreToSummary(LFFileSummary& FileSummary, const LFStoreDescriptor& StoreDescriptor);
 	static void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	static void CloseFileSummary(LFFileSummary& FileSummary);
-	static INT __stdcall CompareItems(LFItemDescriptor** pData1, LFItemDescriptor** pData2, const SortParameters& Parameters);
-	static INT CompareItemsSecondary(LFItemDescriptor** pData1, LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending=FALSE);
+	static INT __stdcall CompareItems(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, const SortParameters& Parameters);
+	static INT CompareItemsSecondary(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending=FALSE);
 	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
 };
 
@@ -77,7 +77,7 @@ inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, const 
 	FileSummary.Context = LFContextStores;
 }
 
-inline INT LFSearchResult::CompareItemsSecondary(LFItemDescriptor** pData1, LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending)
+inline INT LFSearchResult::CompareItemsSecondary(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending)
 {
 	Parameters.Attr = Attr;
 	Parameters.Descending = Descending;

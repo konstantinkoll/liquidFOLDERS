@@ -13,8 +13,8 @@ CGenreList::CGenreList()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM, sizeof(GenreItemData))
 {
 	// Item
-	SetItemHeight(0, 1, ITEMCELLPADDING);
-	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+2*ITEMCELLPADDING;
+	SetItemHeight(0, 1, ITEMCELLPADDINGY);
+	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+ITEMCELLPADDINGX;
 }
 
 void CGenreList::ShowTooltip(const CPoint& point)
@@ -188,10 +188,10 @@ void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	const GenreItemData* pData = GetGenreItemData(Index);
 
 	CRect rect(rectItem);
-	rect.DeflateRect(2*ITEMCELLPADDING, ITEMCELLPADDING);
+	rect.DeflateRect(ITEMCELLPADDINGX, ITEMCELLPADDINGY);
 
 	if (pData->FileCount)
-		rect.right -= m_FileCountWidth+ITEMCELLPADDING;
+		rect.right -= m_FileCountWidth;
 
 	// Name
 	dc.DrawText(pData->pMusicGenre->Name, -1, rect, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_VCENTER);
@@ -199,7 +199,7 @@ void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	// Count
 	if (pData->FileCount)
 	{
-		rect.left = rect.right+ITEMCELLPADDING;
+		rect.left = rect.right;
 		rect.right += m_FileCountWidth;
 
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallFont);

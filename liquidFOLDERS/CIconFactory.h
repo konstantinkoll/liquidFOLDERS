@@ -18,7 +18,7 @@ struct FileFormatData
 	INT IconIndex128;
 };
 
-class CIconFactory
+class CIconFactory sealed
 {
 public:
 	CIconFactory();

@@ -19,7 +19,7 @@ struct VolumeItemData
 	INT iIcon;
 };
 
-class CVolumeList : public CFrontstageItemView
+class CVolumeList sealed : public CFrontstageItemView
 {
 public:
 	CVolumeList();

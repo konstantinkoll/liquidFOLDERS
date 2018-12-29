@@ -40,7 +40,7 @@ CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T szData, const CSize&
 
 BOOL CFrontstageItemView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, UINT nClassStyle)
 {
-	CString className = AfxRegisterWndClass(nClassStyle | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(nClassStyle | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageScroller::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, rect, pParentWnd, nID);
 }
@@ -500,58 +500,10 @@ void CFrontstageItemView::DeleteSelectedItem() const
 
 // Scroller
 
-#define ENSUREVISIBLEEXTRAMARGIN     2
-
 void CFrontstageItemView::EnsureVisible(INT Index)
 {
-	if (!IsScrollingEnabled())
-		return;
-
-	if ((Index<0) || (Index>=m_ItemCount))
-		return;
-
-	CRect rectClient;
-	GetClientRect(rectClient);
-
-	if (!rectClient.Height())
-		return;
-
-	CSize nInc(0, 0);
-
-	const RECT rectItem = GetItemRect(Index);
-
-	// Vertical
-	if (rectItem.bottom+ENSUREVISIBLEEXTRAMARGIN>rectClient.Height())
-		nInc.cy = rectItem.bottom-rectClient.Height()+ENSUREVISIBLEEXTRAMARGIN;
-
-	if (rectItem.top-ENSUREVISIBLEEXTRAMARGIN<nInc.cy+(INT)m_HeaderHeight)
-		nInc.cy = rectItem.top-(INT)m_HeaderHeight-ENSUREVISIBLEEXTRAMARGIN;
-
-	nInc.cy = max(-m_VScrollPos, min(nInc.cy, m_VScrollMax-m_VScrollPos));
-
-	// Horizontal
-	if ((rectItem.right-rectItem.left<rectClient.Width()) || (rectItem.right<rectClient.left) || (rectItem.left>=rectClient.right))
-	{
-		if (rectItem.right+ENSUREVISIBLEEXTRAMARGIN>rectClient.Width())
-			nInc.cx = rectItem.right-rectClient.Width()+ENSUREVISIBLEEXTRAMARGIN;
-
-		if (rectItem.left-ENSUREVISIBLEEXTRAMARGIN<nInc.cx)
-			nInc.cx = rectItem.left-ENSUREVISIBLEEXTRAMARGIN;
-
-		nInc.cx = max(-m_HScrollPos, min(nInc.cx, m_HScrollMax-m_HScrollPos));
-	}
-
-	// Scroll window
-	if (nInc.cx || nInc.cy)
-	{
-		m_HScrollPos += nInc.cx;
-		m_VScrollPos += nInc.cy;
-
-		ScrollWindow(-nInc.cx, -nInc.cy);
-
-		SetScrollPos(SB_VERT, m_VScrollPos);
-		SetScrollPos(SB_HORZ, m_HScrollPos);
-	}
+	if (IsScrollingEnabled() && (Index>=0) && (Index<m_ItemCount))
+		CFrontstageScroller::EnsureVisible(GetItemRect(Index));
 }
 
 void CFrontstageItemView::AdjustScrollbars()
@@ -879,6 +831,9 @@ void CFrontstageItemView::AdjustLayoutColumns(INT Columns, INT Margin)
 {
 	ASSERT(Columns>=1);
 
+	if (HasBorder())
+		Margin = ITEMCELLPADDINGY;
+
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
@@ -891,21 +846,23 @@ void CFrontstageItemView::AdjustLayoutSingleRow(INT Columns)
 {
 	ASSERT(Columns>=1);
 
+	const INT Margin = HasBorder() ? ITEMCELLPADDINGY : ITEMVIEWMARGIN;
+
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
 	if (!rectLayout.Width())
 		return;
 
-	INT Width = (rectLayout.Width()-ITEMVIEWMARGIN)/Columns-ITEMVIEWMARGIN;
+	INT Width = (rectLayout.Width()-Margin)/Columns-Margin;
 	if (Width<ITEMVIEWMINWIDTH)
 		Width = ITEMVIEWMINWIDTH;
 
-	m_ItemHeight = (m_ScrollHeight=rectLayout.Height()-GetSystemMetrics(SM_CYHSCROLL))-2*ITEMVIEWMARGIN;
-	m_ScrollWidth = ITEMVIEWMARGIN;
+	m_ItemHeight = (m_ScrollHeight=rectLayout.Height()-GetSystemMetrics(SM_CYHSCROLL))-2*Margin;
+	m_ScrollWidth = Margin;
 
 	INT Column = 0;
-	INT x = ITEMVIEWMARGIN;
+	INT x = Margin;
 
 	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
@@ -915,9 +872,9 @@ void CFrontstageItemView::AdjustLayoutSingleRow(INT Columns)
 		{
 			pItemData->Column = Column++;
 			pItemData->Rect.right = (pItemData->Rect.left=x)+Width;
-			pItemData->Rect.bottom = (pItemData->Rect.top=ITEMVIEWMARGIN)+m_ItemHeight;
+			pItemData->Rect.bottom = (pItemData->Rect.top=Margin)+m_ItemHeight;
 
-			m_ScrollWidth = x+=(Width+ITEMVIEWMARGIN);
+			m_ScrollWidth = x+=(Width+Margin);
 		}
 	}
 

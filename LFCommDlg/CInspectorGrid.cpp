@@ -798,7 +798,7 @@ BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, UINT ContextMenuID, CIns
 	m_ContextMenuID = ContextMenuID;
 	m_pHeader = pHeader;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CPropertyHolder::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
@@ -1042,7 +1042,7 @@ void CInspectorGrid::EnsureVisible(INT Index)
 
 	const RECT rectItem = GetItemRect(Index);
 
-	// Vertikal
+	// Vertical
 	INT nInc = 0;
 
 	if (rectItem.bottom>rect.Height())
@@ -1051,8 +1051,7 @@ void CInspectorGrid::EnsureVisible(INT Index)
 	if (rectItem.top<nInc)
 		nInc = rectItem.top;
 
-	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
-	if (nInc)
+	if ((nInc=max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos)))!=0)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);

@@ -9,7 +9,7 @@
 // CIconsView
 //
 
-class CIconsView : public CFileView
+class CIconsView sealed : public CFileView
 {
 public:
 	CIconsView();

@@ -9,9 +9,10 @@
 
 // CConditionList
 //
+
 typedef LFDynArray<LFFilterCondition, 4, 4> ConditionArray;
 
-class CConditionList : public CFrontstageItemView
+class CConditionList sealed : public CFrontstageItemView
 {
 public:
 	CConditionList();
