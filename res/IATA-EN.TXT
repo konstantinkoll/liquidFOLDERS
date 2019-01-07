@@ -3342,7 +3342,7 @@ ISO     Kinston, USA;4;35*19'53"N, 77*36'32"W
 ISP     Islip, USA;4;40*47'43"N, 73*6'1"W
 ISQ     Manistique, USA;4;45*58'29"N, 86*10'19"W
 ISS     Wiscasset, USA;4;43*57'41"N, 69*42'45"W
-IST     Istanbul, Turkey;4;40*58'37"N, 28*48'53"E
+IST     Istanbul, Turkey;5;41*15'50"N, 28*42'20"E
 ISU     Sulaimaniyya, Iraq;5;35*33'39"N, 45*18'53"E
 ISW     Wisconsin Rapids, USA;4;44*21'37"N, 89*50'20"W
 ISZ     Cincinnati (Blue Ash Airport), USA;4;39*14'48"N, 84*23'20"W
@@ -6900,7 +6900,7 @@ SAS     Salton City, USA;4;33*14'28"N, 115*57'9"W
 SAT     San Antonio, USA;4;29*32'1"N, 98*28'11"W
 SAU     Sawu, Indonesia;4;10*28'59"S, 121*50'60"E
 SAV     Savannah, USA;4;32*7'39"N, 81*12'8"W
-SAW     Istanbul (Sabiha Gokcen), Turkey;5;40*54'17"N, 29*18'33"E
+SAW     Istanbul (Sabiha Gökçen), Turkey;5;40*53'55"N, 29*18'33"E
 SAX     Sambú, Panama;4;8*1'1"N, 78*11'60"W
 SAY     Siena, Italy;4;43*15'23"N, 11*15'18"E
 SAZ     Sasstown, Liberia;4;4*40'1"N, 8*25'1"W

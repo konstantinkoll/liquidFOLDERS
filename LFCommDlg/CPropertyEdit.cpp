@@ -9,11 +9,12 @@
 // CPropertyEdit
 //
 
-#define BORDER      2
 #define PADDING     1
 
+#define WM_TEXTCHANGED     WM_USER+10
+
 CPropertyEdit::CPropertyEdit()
-	: CPropertyHolder()
+	: CFrontstageWnd()
 {
 	WNDCLASS wndcls;
 	ZeroMemory(&wndcls, sizeof(wndcls));
@@ -30,6 +31,7 @@ CPropertyEdit::CPropertyEdit()
 			AfxThrowResourceException();
 	}
 
+	// Data
 	LFInitVariantData(m_VData, LFAttrFileName);
 
 	m_pProperty = NULL;
@@ -37,20 +39,14 @@ CPropertyEdit::CPropertyEdit()
 	m_ButtonWidth = 0;
 }
 
-BOOL CPropertyEdit::Create(CWnd* pParentWnd, UINT nID)
-{
-	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
-
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
-}
-
 void CPropertyEdit::PreSubclassWindow()
 {
-	CPropertyHolder::PreSubclassWindow();
+	CWnd::PreSubclassWindow();
 
-	ModifyStyle(0, WS_CLIPCHILDREN);
+	// Style is neccessary!
+	ASSERT(GetStyle() & WS_CLIPCHILDREN);
 
-	m_wndButton.Create(_T("..."), this, 2);
+	m_wndButton.Create(_T("..."), this, 1, TRUE);
 	m_wndButton.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 }
 
@@ -73,7 +69,7 @@ void CPropertyEdit::AdjustLayout()
 
 		m_wndButton.SetWindowPos(NULL, rectButton.left, rectButton.top, rectButton.Width(), rectButton.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 
-		m_ButtonWidth += BORDER;
+		m_ButtonWidth += ITEMCELLPADDINGY;
 	}
 	else
 	{
@@ -92,21 +88,35 @@ void CPropertyEdit::AdjustLayout()
 	Invalidate();
 }
 
+void CPropertyEdit::DestroyEdit()
+{
+	if (m_pWndEdit)
+	{
+		m_pWndEdit->DestroyWindow();
+		delete m_pWndEdit;
+
+		m_pWndEdit = NULL;
+	}
+
+	delete m_pProperty;
+}
+
 void CPropertyEdit::CreateProperty()
 {
 	DestroyEdit();
 
-	m_pProperty = CPropertyHolder::CreateProperty(&m_VData);
+	m_pProperty = CProperty::CreateProperty(&m_VData, this);
 
 	if (m_pProperty->OnClickValue(-1))
-		m_pWndEdit = m_pProperty->CreateEditControl(CRect(0, 0, 0, 0), this);
+		m_pWndEdit = m_pProperty->CreateEditControl(CRect(0, 0, 0, 0));
 
 	AdjustLayout();
 }
 
-void CPropertyEdit::SetInitialData(const LFVariantData& VData)
+void CPropertyEdit::SetInitialData(const LFVariantData& VData, const STOREID& StoreID)
 {
 	m_VData = VData;
+	m_StoreID = StoreID;
 
 	CreateProperty();
 }
@@ -125,6 +135,7 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 		{
 			m_VData.Attr = Attr;
 
+			// Cut off any strings that are too long
 			switch (pAttribute->AttrProperties.Type)
 			{
 			case LFTypeUnicodeString:
@@ -143,8 +154,52 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 	}
 }
 
-void CPropertyEdit::DrawStage(CDC& dc, Graphics& /*g*/, const CRect& rect, const CRect& /*rectUpdate*/, BOOL /*Themed*/)
+
+BEGIN_MESSAGE_MAP(CPropertyEdit, CFrontstageWnd)
+	ON_WM_DESTROY()
+	ON_WM_PAINT()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_RBUTTONDOWN()
+	ON_WM_KEYDOWN()
+	ON_WM_SETCURSOR()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
+	ON_WM_GETDLGCODE()
+
+	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
+	ON_MESSAGE(WM_TEXTCHANGED, OnTextChanged)
+
+	ON_BN_CLICKED(1, OnClick)
+	ON_EN_CHANGE(2, OnChange)
+END_MESSAGE_MAP()
+
+void CPropertyEdit::OnDestroy()
 {
+	DestroyEdit();
+
+	CFrontstageWnd::OnDestroy();
+}
+
+void CPropertyEdit::OnPaint()
+{
+	CPaintDC pDC(this);
+
+	CRect rect;
+	GetClientRect(rect);
+
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	// Background
+	dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
+
+	// Property
 	if (!m_pWndEdit)
 	{
 		const BOOL Focused = (GetFocus()==this);
@@ -159,6 +214,7 @@ void CPropertyEdit::DrawStage(CDC& dc, Graphics& /*g*/, const CRect& rect, const
 
 			m_pProperty->DrawValue(dc, CRect(rectValue.left+PADDING, rectValue.top, rectValue.right-PADDING, rectValue.bottom));
 
+			// Focus rectangle
 			if (Focused)
 			{
 				dc.SetBkColor(0x000000);
@@ -166,50 +222,24 @@ void CPropertyEdit::DrawStage(CDC& dc, Graphics& /*g*/, const CRect& rect, const
 			}
 		}
 	}
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldBitmap);
 }
 
-void CPropertyEdit::DestroyEdit()
+void CPropertyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (m_pWndEdit)
-	{
-		m_pWndEdit->DestroyWindow();
-		delete m_pWndEdit;
+	if (m_pProperty && m_pProperty->WantsChars() && m_pProperty->OnPushChar(nChar))
+		return;
 
-		m_pWndEdit = NULL;
-	}
-
-	delete m_pProperty;
+	CFrontstageWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
+void CPropertyEdit::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
-	if (Attr1!=-1)
-	{
-		m_pProperty->UpdateState(FALSE);
-		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-
-	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
-}
-
-
-BEGIN_MESSAGE_MAP(CPropertyEdit, CPropertyHolder)
-	ON_WM_DESTROY()
-	ON_WM_LBUTTONUP()
-	ON_WM_KEYDOWN()
-	ON_WM_GETDLGCODE()
-	ON_WM_SETCURSOR()
-
-	ON_EN_CHANGE(1, OnChange)
-	ON_BN_CLICKED(2, OnClick)
-	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
-END_MESSAGE_MAP()
-
-void CPropertyEdit::OnDestroy()
-{
-	DestroyEdit();
-
-	CPropertyHolder::OnDestroy();
+	if (GetFocus()!=this)
+		SetFocus();
 }
 
 void CPropertyEdit::OnLButtonUp(UINT /*nFlags*/, CPoint point)
@@ -218,17 +248,10 @@ void CPropertyEdit::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		m_pProperty->OnClickValue(point.x-PADDING);
 }
 
-void CPropertyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CPropertyEdit::OnRButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
-	if (m_pProperty && m_pProperty->WantsChars() && m_pProperty->OnPushChar(nChar))
-		return;
-
-	CPropertyHolder::OnKeyDown(nChar, nRepCnt, nFlags);
-}
-
-UINT CPropertyEdit::OnGetDlgCode()
-{
-	return DLGC_WANTARROWS | DLGC_WANTCHARS;
+	if (GetFocus()!=this)
+		SetFocus();
 }
 
 BOOL CPropertyEdit::OnSetCursor(CWnd* pWnd, UINT /*nHitTest*/, UINT /*Message*/)
@@ -245,53 +268,74 @@ BOOL CPropertyEdit::OnSetCursor(CWnd* pWnd, UINT /*nHitTest*/, UINT /*Message*/)
 	return TRUE;
 }
 
-void CPropertyEdit::OnSetFocus(CWnd* pOldWnd)
+void CPropertyEdit::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	if (m_pWndEdit)
 	{
 		m_pWndEdit->SetFocus();
 	}
 	else
+	{
 		if (m_ButtonWidth)
-		{
 			m_wndButton.SetFocus();
-		}
+	}
 
-	CPropertyHolder::OnSetFocus(pOldWnd);
+	Invalidate();
 }
 
-
-void CPropertyEdit::OnChange()
+void CPropertyEdit::OnKillFocus(CWnd* /*pOldWnd*/)
 {
-	PostMessage(WM_PROPERTYCHANGED);
+	Invalidate();
 }
+
+UINT CPropertyEdit::OnGetDlgCode()
+{
+	return DLGC_WANTARROWS | DLGC_WANTCHARS;
+}
+
+
+LRESULT CPropertyEdit::OnPropertyChanged(WPARAM wParam, LPARAM lParam)
+{
+	// Redraw property
+	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
+
+	return GetOwner()->SendMessage(WM_PROPERTYCHANGED, wParam, lParam);
+}
+
+LRESULT CPropertyEdit::OnTextChanged(WPARAM wParam, LPARAM lParam)
+{
+	if (m_pWndEdit)
+	{
+		WCHAR tmpStr[256];
+		m_pWndEdit->GetWindowText(tmpStr, 256);
+
+		LFVariantDataFromString(m_VData, tmpStr);
+
+		return GetOwner()->SendMessage(WM_PROPERTYCHANGED, wParam, lParam);
+	}
+
+	return NULL;
+}
+
 
 void CPropertyEdit::OnClick()
 {
-	if (m_pProperty)
-		if (m_pProperty->HasButton())
+	if (m_pProperty && m_pProperty->HasButton())
+	{
+		m_pProperty->OnClickButton(m_StoreID);
+
+		// Update edit control
+		if (m_pWndEdit)
 		{
-			m_pProperty->OnClickButton();
+			WCHAR tmpStr[256];
+			LFVariantDataToString(m_VData, tmpStr, 256);
 
-			// Update edit control
-			if (m_pWndEdit)
-			{
-				WCHAR tmpStr[256];
-				LFVariantDataToString(m_VData, tmpStr, 256);
-
-				m_pWndEdit->SetWindowText(tmpStr);
-			}
+			m_pWndEdit->SetWindowText(tmpStr);
 		}
+	}
 }
 
-LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+void CPropertyEdit::OnChange()
 {
-	ASSERT(m_pWndEdit);
-
-	WCHAR tmpStr[256];
-	m_pWndEdit->GetWindowText(tmpStr, 256);
-
-	LFVariantDataFromString(m_VData, tmpStr);
-
-	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, m_VData.Attr);
+	PostMessage(WM_TEXTCHANGED);
 }

@@ -17,44 +17,12 @@ CAbstractFileView::CAbstractFileView(UINT Flags, SIZE_T szData, const CSize& szI
 	p_CookedFiles = NULL;
 
 	m_FlagsMask = Flags;
-	m_pWndEdit = NULL;
 	m_TypingBuffer[0] = L'\0';
 	m_TypingTicks = 0;
 
 	// Item cateogries
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		AddItemCategory(LFGetApp()->m_ItemCategories[a].Caption, LFGetApp()->m_ItemCategories[a].Hint);
-}
-
-BOOL CAbstractFileView::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_KEYDOWN:
-		if (m_pWndEdit)
-			switch (pMsg->wParam)
-			{
-			case VK_EXECUTE:
-			case VK_RETURN:
-				DestroyEdit(TRUE);
-				return TRUE;
-
-			case VK_ESCAPE:
-				DestroyEdit(FALSE);
-				return TRUE;
-			}
-
-		break;
-
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-		if (m_pWndEdit)
-			return TRUE;
-
-		break;
-	}
-
-	return CFrontstageItemView::PreTranslateMessage(pMsg);
 }
 
 void CAbstractFileView::UpdateSearchResult(LFSearchResult* pCookedFiles)
@@ -111,6 +79,17 @@ void CAbstractFileView::FinishUpdate(BOOL InternalCall)
 	SetCursor(LFGetApp()->LoadStandardCursor(p_CookedFiles ? IDC_ARROW : IDC_WAIT));
 }
 
+
+// Item categories
+
+INT CAbstractFileView::GetItemCategory(INT Index) const
+{
+	return (p_CookedFiles && p_CookedFiles->m_HasCategories) ? (*p_CookedFiles)[Index]->CategoryID : -1;
+}
+
+
+// Item data
+
 void CAbstractFileView::SetSearchResult(LFSearchResult* pCookedFiles)
 {
 	DestroyEdit();
@@ -141,9 +120,15 @@ void CAbstractFileView::SetSearchResult(LFSearchResult* pCookedFiles)
 	p_CookedFiles = pCookedFiles;
 }
 
+
+// Item handling
+
 void CAbstractFileView::ShowTooltip(const CPoint& point)
 {
 	ASSERT(m_HoverItem>=0);
+
+	if (IsEditing())
+		return;
 
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HoverItem];
 
@@ -151,9 +136,39 @@ void CAbstractFileView::ShowTooltip(const CPoint& point)
 		LFGetApp()->GetHintForItem(pItemDescriptor), NULL, NULL);
 }
 
-INT CAbstractFileView::GetItemCategory(INT Index) const
+COLORREF CAbstractFileView::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 {
-	return (p_CookedFiles && p_CookedFiles->m_HasCategories) ? (*p_CookedFiles)[Index]->CategoryID : -1;
+	return ((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x2020FF : (COLORREF)-1;
+}
+
+
+// Label edit
+
+void CAbstractFileView::DestroyEdit(BOOL Accept)
+{
+	if (IsEditing())
+	{
+		const INT EditItem = m_EditItem;
+
+		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
+		CEdit* pVictim = m_pWndEdit;
+		m_pWndEdit = NULL;
+
+		// Get text
+		CString Name;
+		pVictim->GetWindowText(Name);
+
+		// Destroy window; this will trigger another DestroyEdit() call!
+		pVictim->DestroyWindow();
+		delete pVictim;
+
+		if (Accept && (EditItem>=0) && !Name.IsEmpty())
+			GetOwner()->SendMessage(WM_RENAMEITEM, (WPARAM)EditItem, (LPARAM)(LPCWSTR)Name);
+	}
+
+	m_TypingBuffer[0] = L'\0';
+
+	CFrontstageItemView::DestroyEdit(Accept);
 }
 
 LFFont* CAbstractFileView::GetLabelFont() const
@@ -176,6 +191,8 @@ void CAbstractFileView::EditLabel(INT Index)
 
 		if (LFIsStore(pItemDescriptor) || ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)))
 		{
+			HideTooltip();
+
 			m_EditItem = Index;
 			InvalidateItem(Index);
 			EnsureVisible(Index);
@@ -199,35 +216,8 @@ void CAbstractFileView::EditLabel(INT Index)
 	}
 }
 
-void CAbstractFileView::DestroyEdit(BOOL Accept)
-{
-	if (m_pWndEdit)
-	{
-		const INT EditItem = m_EditItem;
-
-		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
-		CEdit* pVictim = m_pWndEdit;
-		m_pWndEdit = NULL;
-
-		// Get text
-		CString Name;
-		pVictim->GetWindowText(Name);
-
-		// Destroy window; this will trigger another DestroyEdit() call!
-		pVictim->DestroyWindow();
-		delete pVictim;
-
-		if (Accept && (EditItem>=0) && !Name.IsEmpty())
-			GetOwner()->SendMessage(WM_RENAMEITEM, (WPARAM)EditItem, (LPARAM)(LPCWSTR)Name);
-	}
-
-	m_EditItem = -1;
-	m_TypingBuffer[0] = L'\0';
-}
-
 
 BEGIN_MESSAGE_MAP(CAbstractFileView, CFrontstageItemView)
-	ON_WM_DESTROY()
 	ON_WM_MOUSEHOVER()
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
@@ -235,28 +225,18 @@ BEGIN_MESSAGE_MAP(CAbstractFileView, CFrontstageItemView)
 
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
-
-	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
-
-void CAbstractFileView::OnDestroy()
-{
-	DestroyEdit();
-
-	CFrontstageItemView::OnDestroy();
-}
 
 void CAbstractFileView::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if (!IsEditing() && (m_HoverItem==m_EditItem))
 	{
-		HideTooltip();
 		EditLabel(m_EditItem);
-
-		return;
 	}
-
-	CFrontstageItemView::OnMouseHover(nFlags, point);
+	else
+	{
+		CFrontstageItemView::OnMouseHover(nFlags, point);
+	}
 }
 
 void CAbstractFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -331,29 +311,4 @@ BOOL CAbstractFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Me
 	SetCursor(LFGetApp()->LoadStandardCursor(p_CookedFiles ? IDC_ARROW : IDC_WAIT));
 
 	return TRUE;
-}
-
-
-// Header notifications
-
-void CAbstractFileView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	OnDestroyEdit();
-
-	CFrontstageItemView::OnBeginDrag(pNMHDR, pResult);
-}
-
-void CAbstractFileView::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	OnDestroyEdit();
-
-	CFrontstageItemView::OnBeginTrack(pNMHDR, pResult);
-}
-
-
-// Label edit
-
-void CAbstractFileView::OnDestroyEdit()
-{
-	DestroyEdit(TRUE);
 }

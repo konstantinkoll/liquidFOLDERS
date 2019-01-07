@@ -32,9 +32,8 @@ protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
+	virtual COLORREF GetItemTextColor(INT Index, BOOL Themed) const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
-
-	LFFont* GetFont(INT Index);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSortValue();
@@ -46,10 +45,11 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	LFFont m_Fonts[20];
-
 private:
 	TagcloudItemData* GetTagcloudItemData(INT Index) const;
+	LFFont* GetItemFont(INT Index);
+
+	LFFont m_Fonts[20];
 };
 
 inline TagcloudItemData* CTagcloudView::GetTagcloudItemData(INT Index) const

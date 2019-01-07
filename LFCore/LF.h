@@ -202,6 +202,8 @@ struct LFMusicGenre
 	BOOL Show;
 };
 
+typedef const LFMusicGenre* LPCMUSICGENRE;
+
 #pragma pack(pop)
 
 

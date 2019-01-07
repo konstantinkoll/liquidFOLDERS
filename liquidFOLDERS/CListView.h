@@ -44,8 +44,8 @@ protected:
 	virtual void HeaderColumnClicked(UINT Attr);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT Index) const;
+	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	void DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Themed);
 	void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed);
@@ -78,7 +78,7 @@ private:
 
 inline void CListView::UpdateHeader()
 {
-	CFileView::UpdateHeader(p_ContextViewSettings->ColumnOrder, m_ContextViewSettings.ColumnWidth, p_CookedFiles && m_ItemCount, m_PreviewAttribute);
+	CFileView::UpdateHeader(p_ContextViewSettings->ColumnOrder, p_ContextViewSettings->ColumnWidth, p_CookedFiles && m_ItemCount, m_PreviewAttribute);
 }
 
 inline INT CListView::GetMinColumnWidth(UINT Attr)

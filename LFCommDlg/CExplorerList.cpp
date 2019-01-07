@@ -15,7 +15,6 @@
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
-	CONSTRUCTOR_TOOLTIP()
 
 	p_ImageList = NULL;
 	m_ColumnCount = 1;
@@ -106,20 +105,9 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 	dc.FillSolidRect(rect, GetSysColor(IsWindowEnabled() ? COLOR_WINDOW : COLOR_3DFACE));
 
-	NM_TEXTCOLOR tag;
-	ZeroMemory(&tag, sizeof(tag));
-
-	tag.hdr.code = REQUEST_TEXTCOLOR;
-	tag.hdr.hwndFrom = m_hWnd;
-	tag.hdr.idFrom = GetDlgCtrlID();
-	tag.Item = nID;
-	tag.Color = (COLORREF)-1;
-
-	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
-
 	if (IsWindowEnabled())
 	{
-		DrawListItemBackground(dc, rect, Themed, GetFocus()==this, m_HoverItem==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED, tag.Color);
+		DrawListItemBackground(dc, rect, Themed, GetFocus()==this, GetHotItem()==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED);
 	}
 	else
 	{
@@ -231,62 +219,13 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	dc.SelectObject(pOldBitmap);
 }
 
-INT CExplorerList::ItemAtPosition(CPoint point) const
-{
-	LVHITTESTINFO htt;
-	htt.pt = point;
 
-	return HitTest(&htt);
-}
-
-CPoint CExplorerList::PointAtPosition(CPoint /*point*/) const
-{
-	return CPoint(-1, -1);
-}
-
-LPCVOID CExplorerList::PtrAtPosition(CPoint /*point*/) const
-{
-	return NULL;
-}
-
-void CExplorerList::InvalidateItem(INT /*Index*/)
-{
-	Invalidate();
-}
-
-void CExplorerList::InvalidatePoint(const CPoint& /*point*/)
-{
-	Invalidate();
-}
-
-void CExplorerList::InvalidatePtr(LPCVOID /*Ptr*/)
-{
-	Invalidate();
-}
-
-void CExplorerList::ShowTooltip(const CPoint& point)
-{
-	NM_TOOLTIPDATA tag;
-	ZeroMemory(&tag, sizeof(tag));
-
-	tag.hdr.code = REQUEST_TOOLTIP_DATA;
-	tag.hdr.hwndFrom = m_hWnd;
-	tag.hdr.idFrom = GetDlgCtrlID();
-	tag.Item = m_HoverItem;
-
-	if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
-		LFGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : GetItemText(m_HoverItem, 0), tag.Hint, tag.hIcon, tag.hBitmap);
-}
-
-
-IMPLEMENT_TOOLTIP_WHEEL(CExplorerList, CListCtrl)
-
-BEGIN_TOOLTIP_MAP(CExplorerList, CListCtrl)
+BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
-END_TOOLTIP_MAP()
+END_MESSAGE_MAP()
 
 INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {

@@ -52,8 +52,7 @@ BOOL LFEditConditionDlg::InitDialog()
 	LFAttributeListDlg::InitDialog();
 
 	// Bedingung
-	m_wndEdit.SetInitialData(m_Condition.VData);
-	m_wndEdit.SetStore(m_StoreID);
+	m_wndEdit.SetInitialData(m_Condition.VData, m_StoreID);
 
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.VData.Attr);

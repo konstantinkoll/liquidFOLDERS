@@ -79,49 +79,49 @@ static const BYTE DefaultPalette[64] = {
 	0, 0, 0, 0
 };
 
-void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
+void CreateRoundRectangle(LPCRECT lpcRect, INT Radius, GraphicsPath& Path)
 {
-	ASSERT(lpRect);
+	ASSERT(lpcRect);
 
 	const INT Diameter = Radius*2+1;
-	const INT Right = lpRect->right-Diameter-1;
-	const INT Bottom = lpRect->bottom-Diameter-1;
+	const INT Right = lpcRect->right-Diameter-1;
+	const INT Bottom = lpcRect->bottom-Diameter-1;
 
 	Path.Reset();
-	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 180, 90);
-	Path.AddArc(Right, lpRect->top, Diameter, Diameter, 270, 90);
+	Path.AddArc(lpcRect->left, lpcRect->top, Diameter, Diameter, 180, 90);
+	Path.AddArc(Right, lpcRect->top, Diameter, Diameter, 270, 90);
 	Path.AddArc(Right-1, Bottom-1, Diameter+1, Diameter+1, 0, 90);
-	Path.AddArc(lpRect->left, Bottom-1, Diameter+1, Diameter+1, 90, 90);
+	Path.AddArc(lpcRect->left, Bottom-1, Diameter+1, Diameter+1, 90, 90);
 	Path.CloseFigure();
 }
 
-void CreateRoundTop(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
+void CreateRoundTop(LPCRECT lpcRect, INT Radius, GraphicsPath& Path)
 {
-	ASSERT(lpRect);
+	ASSERT(lpcRect);
 
 	const INT Diameter = Radius*2+1;
-	const INT Right = lpRect->right-Diameter-1;
+	const INT Right = lpcRect->right-Diameter-1;
 
 	// 10° less to both sides
 	Path.Reset();
-	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 190, 80);
-	Path.AddArc(Right, lpRect->top, Diameter, Diameter, 270, 80);
+	Path.AddArc(lpcRect->left, lpcRect->top, Diameter, Diameter, 190, 80);
+	Path.AddArc(Right, lpcRect->top, Diameter, Diameter, 270, 80);
 }
 
-void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
+void CreateReflectionRectangle(LPCRECT lpcRect, INT Radius, GraphicsPath& Path)
 {
-	ASSERT(lpRect);
+	ASSERT(lpcRect);
 
 	Path.Reset();
 
 	const INT Diameter = Radius*2+1;
-	const INT Width = lpRect->right-lpRect->left;
+	const INT Width = lpcRect->right-lpcRect->left;
 
-	Path.AddLine(Point(lpRect->left+Width*2/3, lpRect->top), Point(lpRect->left+Diameter, lpRect->top));
-	Path.AddArc(lpRect->left, lpRect->top, Diameter, Diameter, 180, 90);
-	Path.AddLine(Point(lpRect->left, lpRect->top+Diameter), Point(lpRect->left, lpRect->bottom-Diameter));
-	Path.AddArc(lpRect->left, lpRect->bottom, Diameter, Diameter, 180, -90);
-	Path.AddLine(Point(lpRect->left+Diameter, lpRect->bottom), Point(lpRect->left+Width/3, lpRect->bottom));
+	Path.AddLine(Point(lpcRect->left+Width*2/3, lpcRect->top), Point(lpcRect->left+Diameter, lpcRect->top));
+	Path.AddArc(lpcRect->left, lpcRect->top, Diameter, Diameter, 180, 90);
+	Path.AddLine(Point(lpcRect->left, lpcRect->top+Diameter), Point(lpcRect->left, lpcRect->bottom-Diameter));
+	Path.AddArc(lpcRect->left, lpcRect->bottom, Diameter, Diameter, 180, -90);
+	Path.AddLine(Point(lpcRect->left+Diameter, lpcRect->bottom), Point(lpcRect->left+Width/3, lpcRect->bottom));
 
 	Path.CloseFigure();
 }
@@ -255,15 +255,15 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 	dc.SelectObject(pOldFont);
 }
 
-void DrawReflection(Graphics& g, LPCRECT lpRect)
+void DrawReflection(Graphics& g, LPCRECT lpcRect)
 {
 	GraphicsPath pathReflection;
-	CreateReflectionRectangle(lpRect, 1, pathReflection);
+	CreateReflectionRectangle(lpcRect, 1, pathReflection);
 
-	const INT Height = lpRect->bottom-lpRect->top;
-	const INT Width = lpRect->right-lpRect->left;
+	const INT Height = lpcRect->bottom-lpcRect->top;
+	const INT Width = lpcRect->right-lpcRect->left;
 
-	LinearGradientBrush brush(Rect(lpRect->left, lpRect->top, lpRect->left+Width, Height), Color(0x30FFFFFF), Color(0x00FFFFFF), LinearGradientModeForwardDiagonal);
+	LinearGradientBrush brush(Rect(lpcRect->left, lpcRect->top, lpcRect->left+Width, Height), Color(0x30FFFFFF), Color(0x00FFFFFF), LinearGradientModeForwardDiagonal);
 	g.FillPath(&brush, &pathReflection);
 }
 
@@ -357,7 +357,7 @@ void DrawListItemForeground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL /*WinFo
 	}
 }
 
-void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal)
+void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL Enabled, BOOL Selected, BOOL Hover, BOOL ClipHorizontal)
 {
 	if (Hover || Selected)
 		if (Themed)
@@ -413,7 +413,7 @@ void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL S
 			dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 		}
 
-	dc.SetTextColor(Themed ? Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(Enabled ? Themed ? Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_GRAYTEXT));
 }
 
 void DrawMilledRectangle(Graphics& g, CRect rect, BOOL Backstage, INT Radius)
@@ -605,21 +605,21 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 	}
 }
 
-void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom)
+void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpcRect, BOOL IncludeBottom)
 {
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	GraphicsPath path;
-	CreateRoundRectangle(lpRect, 3, path);
+	CreateRoundRectangle(lpcRect, 3, path);
 
-	LinearGradientBrush brush1(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x0C000000), Color(0x00000000));
+	LinearGradientBrush brush1(Point(0, lpcRect->top-1), Point(0, lpcRect->bottom), Color(0x0C000000), Color(0x00000000));
 
 	Pen pen(&brush1);
 	g.DrawPath(&pen, &path);
 
 	if (IncludeBottom)
 	{
-		LinearGradientBrush brush2(Point(0, lpRect->top-1), Point(0, lpRect->bottom), Color(0x00FFFFFF), Color(0xFFFFFFFF));
+		LinearGradientBrush brush2(Point(0, lpcRect->top-1), Point(0, lpcRect->bottom), Color(0x00FFFFFF), Color(0xFFFFFFFF));
 
 		pen.SetBrush(&brush2);
 		g.DrawPath(&pen, &path);

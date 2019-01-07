@@ -156,6 +156,8 @@ class CFrontstageWnd : public CWnd
 public:
 	CFrontstageWnd();
 
+	static BOOL HasBorder(HWND hWnd);
+	static BOOL HasBorder(const CWnd* pWnd);
 	void DrawWindowEdge(Graphics& g, BOOL Themed) const;
 	void DrawWindowEdge(CDC& dc, BOOL Themed) const;
 
@@ -164,14 +166,13 @@ protected:
 	virtual BOOL GetContextMenu(CMenu& Menu, LPCVOID Ptr);
 	virtual BOOL GetContextMenu(CMenu& Menu, const CPoint& point);
 
-	BOOL HasBorder() const;
-	void DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed) const;
-	void DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed, BOOL Hot=FALSE, BOOL Focused=FALSE, BOOL Selected=FALSE, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE) const;
 	void TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem=TRUE, BOOL AlignRight=FALSE) const;
 	void TrackPopupMenu(CMenu& Menu, const CPoint& pos, BOOL SetDefaultItem=TRUE, BOOL AlignRight=FALSE) const;
+	BOOL HasBorder() const;
+	void DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const;
+	void DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed, BOOL Hot=FALSE, BOOL Focused=FALSE, BOOL Selected=FALSE, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE) const;
 
 	afx_msg void OnDestroy();
-	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg LRESULT OnNcPaint(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -181,11 +182,25 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	DECLARE_TOOLTIP()
+
+private:
+	void DrawWindowEdge(Graphics& g) const;
 };
+
+inline BOOL CFrontstageWnd::HasBorder(const CWnd* pWnd)
+{
+	return HasBorder(pWnd->GetSafeHwnd());
+}
 
 inline BOOL CFrontstageWnd::HasBorder() const
 {
-	return ((GetStyle() & (WS_CHILD | WS_BORDER))==(WS_CHILD | WS_BORDER)) || (GetExStyle() & WS_EX_CLIENTEDGE);
+	return HasBorder(this);
+}
+
+inline void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed) const
+{
+	if (Themed)
+		DrawWindowEdge(g);
 }
 
 inline void CFrontstageWnd::TrackPopupMenu(CMenu& Menu, const CPoint& pos, BOOL SetDefaultItem, BOOL AlignRight) const

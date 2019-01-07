@@ -103,6 +103,7 @@ BEGIN_TOOLTIP_MAP(CTooltipHeader, CHeaderCtrl)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_ENABLE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_MESSAGE(HDM_LAYOUT, OnLayout)
@@ -141,13 +142,14 @@ void CTooltipHeader::OnPaint()
 	Graphics g(dc);
 
 	// Background
+	const BOOL Enabled = IsWindowEnabled();// && GetParent()->IsWindowEnabled();
 	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));
 
 	CFont* pOldFont = dc.SelectObject(GetFont());
 
-	if (Themed)
+	if (Enabled && Themed)
 	{
 		dc.FillSolidRect(rect, 0xFFFFFF);
 
@@ -170,7 +172,10 @@ void CTooltipHeader::OnPaint()
 
 	Pen pen(Color(0x80FFFFFF));
 
-	for (INT a=0; a<GetItemCount(); a++)
+	const INT ItemCount = GetItemCount();
+	const BOOL HasBorder = CFrontstageWnd::HasBorder(GetParent());
+
+	for (INT a=0; a<ItemCount; a++)
 	{
 		CRect rectItem;
 		if (GetItemRect(a, rectItem))
@@ -183,9 +188,9 @@ void CTooltipHeader::OnPaint()
 
 			if (GetItem(a, &hdi) && (hdi.cxy))
 			{
-				if (Themed)
+				if (Enabled && Themed)
 				{
-					if ((rectItem.left==0) && (lpBuffer[0]!=L'\0'))
+					if ((rectItem.left==0) && (lpBuffer[0]!=L'\0') && !HasBorder)
 					{
 						g.DrawRectangle(&pen, rectItem.left-1, -1, 2, rectItem.Height()-1);
 						g.FillRectangle(&brush1, rectItem.left, 0, 1, Line);
@@ -194,9 +199,12 @@ void CTooltipHeader::OnPaint()
 						rectItem.left++;
 					}
 
-					g.DrawRectangle(&pen, rectItem.right-2, -1, 2, rectItem.Height()-1);
-					g.FillRectangle(&brush1, rectItem.right-1, 0, 1, Line);
-					g.FillRectangle(&brush2, rectItem.right-1, Line, 1, rectItem.Height()-Line-1);
+					if ((a<ItemCount-1) || !HasBorder)
+					{
+						g.DrawRectangle(&pen, rectItem.right-2, -1, 2, rectItem.Height()-1);
+						g.FillRectangle(&brush1, rectItem.right-1, 0, 1, Line);
+						g.FillRectangle(&brush2, rectItem.right-1, Line, 1, rectItem.Height()-Line-1);
+					}
 
 					rectItem.right--;
 				}
@@ -216,7 +224,7 @@ void CTooltipHeader::OnPaint()
 							rectBounds.top--;
 					}
 
-					DrawSubitemBackground(dc, g, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
+					DrawSubitemBackground(dc, g, rectBounds, Themed, Enabled, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
 
 					if (Themed)
 					{
@@ -237,12 +245,10 @@ void CTooltipHeader::OnPaint()
 						rectItem.OffsetRect(1, 1);
 
 					UINT nFormat = DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX;
+					ASSERT(DT_LEFT==0);
+
 					switch (hdi.fmt & HDF_JUSTIFYMASK)
 					{
-					case HDF_LEFT:
-						nFormat |= DT_LEFT;
-						break;
-
 					case HDF_CENTER:
 						nFormat |= DT_CENTER;
 						break;
@@ -282,6 +288,11 @@ void CTooltipHeader::OnPaint()
 
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
+}
+
+void CTooltipHeader::OnEnable(BOOL /*bEnable*/)
+{
+	Invalidate();
 }
 
 void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)

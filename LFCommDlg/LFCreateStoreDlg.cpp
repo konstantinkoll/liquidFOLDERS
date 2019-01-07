@@ -29,20 +29,8 @@ CVolumeList::CVolumeList()
 	}
 }
 
-void CVolumeList::ShowTooltip(const CPoint& point)
-{
-	ASSERT(m_HoverItem>=0);
 
-	const VolumeItemData* pData = GetVolumeItemData(m_HoverItem);
-
-	WCHAR szVolumeRoot[] = L" :\\";
-	szVolumeRoot[0] = pData->cVolume;
-
-	SHFILEINFO ShellFileInfo;
-	if (SHGetFileInfo(szVolumeRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
-		LFGetApp()->ShowTooltip(this, point, pData->DisplayName, ShellFileInfo.szTypeName,
-			LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(ShellFileInfo.iIcon), NULL);
-}
+// Menus
 
 BOOL CVolumeList::GetContextMenu(CMenu& Menu, INT Index)
 {
@@ -51,6 +39,17 @@ BOOL CVolumeList::GetContextMenu(CMenu& Menu, INT Index)
 
 	return FALSE;
 }
+
+
+// Layouts
+
+void CVolumeList::AdjustLayout()
+{
+	AdjustLayoutSingleRow(3);
+}
+
+
+// Item data
 
 void CVolumeList::AddVolume(CHAR cVolume, LPCWSTR DisplayName, INT iIcon)
 {
@@ -94,6 +93,27 @@ void CVolumeList::SetVolumes(UINT Mask)
 	AdjustLayout();
 }
 
+
+// Item handling
+
+void CVolumeList::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	const VolumeItemData* pData = GetVolumeItemData(m_HoverItem);
+
+	WCHAR szVolumeRoot[] = L" :\\";
+	szVolumeRoot[0] = pData->cVolume;
+
+	SHFILEINFO ShellFileInfo;
+	if (SHGetFileInfo(szVolumeRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
+		LFGetApp()->ShowTooltip(this, point, pData->DisplayName, ShellFileInfo.szTypeName,
+			LFGetApp()->m_SystemImageListExtraLarge.ExtractIcon(ShellFileInfo.iIcon), NULL);
+}
+
+
+// Item selection
+
 CHAR CVolumeList::GetSelectedVolume() const
 {
 	const INT Index = GetSelectedItem();
@@ -101,10 +121,8 @@ CHAR CVolumeList::GetSelectedVolume() const
 	return (Index<0) ? '\0' : GetVolumeItemData(Index)->cVolume;
 }
 
-void CVolumeList::AdjustLayout()
-{
-	AdjustLayoutSingleRow(3);
-}
+
+// Drawing
 
 void CVolumeList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
 {
@@ -131,7 +149,7 @@ void CVolumeList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index
 // LFCreateStoreDlg
 //
 
-#define WM_VOLUMECHANGE     WM_USER+4
+#define WM_VOLUMECHANGE     WM_USER+6
 
 LFCreateStoreDlg::LFCreateStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_CREATESTORE, pParentWnd)

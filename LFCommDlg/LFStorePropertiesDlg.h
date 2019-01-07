@@ -34,13 +34,12 @@ protected:
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
-	static INT __stdcall CompareUsage(UsageItemData* pData1, UsageItemData* pData2, const SortParameters& Parameters);
-
 	static CIcons m_ContextIcons;
 
 private:
 	UsageItemData* GetUsageItemData(INT Index) const;
 	void AddContext(const LFStatistics& Statistics, UINT Context);
+	static INT __stdcall CompareItems(UsageItemData* pData1, UsageItemData* pData2, const SortParameters& Parameters);
 
 	static CString m_OtherFiles;
 };

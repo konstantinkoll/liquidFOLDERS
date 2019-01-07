@@ -25,13 +25,11 @@ CListView::CListView()
 
 void CListView::SetViewSettings(BOOL UpdateSearchResultPending)
 {
-	// Copy context view settings early for header
+	// Copy context view settings early for column widths
 	m_ContextViewSettings = *p_ContextViewSettings;
 
-	UpdateHeader();
-
 	// Commit settings
-	if (p_CookedFiles && !UpdateSearchResultPending)
+	if (!UpdateSearchResultPending)
 	{
 		AdjustLayout();
 		RedrawWindow();
@@ -100,8 +98,6 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 	{
 		m_Flags &= ~FRONTSTAGE_CARDBACKGROUND;
 	}
-
-	UpdateHeader();
 }
 
 INT CListView::GetHeaderIndent() const
@@ -199,6 +195,9 @@ void CListView::HeaderColumnClicked(UINT Attr)
 
 void CListView::AdjustLayout()
 {
+	// Header
+	UpdateHeader();
+
 	// Preview
 	if (m_PreviewAttribute>=0)
 	{
@@ -393,93 +392,86 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 	}
 }
 
-void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
+void CListView::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+	if (pItemDescriptor->AttributeValues[Attr])
+	{
+		if (Attr==LFAttrFileName)
+		{
+			// Icon
+			theApp.m_IconFactory.DrawSmallIcon(dc, CPoint(rectCell.left, (rectCell.top+rectCell.bottom-m_IconSize)/2), pItemDescriptor);
+
+			rectCell.left += m_IconSize+ITEMCELLPADDINGX;
+
+			// Color
+			DrawColorDots(dc, rectCell, pItemDescriptor, m_DefaultFontHeight);
+
+			// Label
+			if (IsEditing() && (Index==m_EditItem))
+				return;
+		}
+
+		// Column
+		if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
+		{
+			// Rating bitmap
+			const UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[Attr]);
+			ASSERT(Rating<=LFMaxRating);
+
+			CDC dcMem;
+			dcMem.CreateCompatibleDC(&dc);
+
+			HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(Attr==LFAttrPriority ? theApp.hPriorityBitmaps[Rating] : theApp.hRatingBitmaps[Rating]);
+
+			dc.AlphaBlend(rectCell.left, (rectCell.top+rectCell.bottom-RATINGBITMAPHEIGHT)/2-1, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+
+			SelectObject(dcMem, hOldBitmap);
+		}
+		else
+		{
+			// Text column
+			WCHAR tmpStr[256];
+
+			switch (Attr)
+			{
+			case LFAttrFileName:
+				wcsncpy_s(tmpStr, 256, GetItemLabel(pItemDescriptor), _TRUNCATE);
+				break;
+
+			case LFAttrFileFormat:
+				wcscpy_s(tmpStr, 256, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat));
+				break;
+
+			default:
+				LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
+			}
+
+			if (tmpStr[0])
+			{
+				const COLORREF clr = (Attr!=LFAttrFileName) ? SetDarkTextColor(dc, pItemDescriptor, Themed) : dc.GetTextColor();
+
+				dc.DrawText(tmpStr, rectCell, (theApp.IsAttributeFormatRight(Attr) ? DT_RIGHT : DT_LEFT) | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+				dc.SetTextColor(clr);
+			}
+		}
+	}
+}
+
+void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
+{
 	ListItemData* pData = GetItemData(Index);
 
 	// Trailing separator
 	if (pData->DrawTrailingSeparator && Themed)
 		dc.FillSolidRect(rectItem->left+ITEMCELLPADDINGY, rectItem->bottom-1, rectItem->right-rectItem->left-2*ITEMCELLPADDINGY, 1, 0xF8F6F6);
 
-	// Background
+	// Delayed background
 	DrawItemBackground(dc, rectItem, Index, Themed);
 
-	CRect rect(rectItem);
-	rect.right = rect.left-ITEMCELLSPACER+ITEMCELLPADDINGY+1;
-
-	// Columns
-	COLORREF TextColors[2] = { SetDarkTextColor(dc, pItemDescriptor, Themed), dc.GetTextColor() };
-
-	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		const UINT Attr = m_ContextViewSettings.ColumnOrder[a];
-
-		if (m_ContextViewSettings.ColumnWidth[Attr] && ((INT)Attr!=m_PreviewAttribute))
-		{
-			rect.right = (rect.left=rect.right+ITEMCELLSPACER)+m_ContextViewSettings.ColumnWidth[Attr]-ITEMCELLSPACER;
-
-			if (pItemDescriptor->AttributeValues[Attr])
-			{
-				if (Attr==LFAttrFileName)
-				{
-					// Icon
-					theApp.m_IconFactory.DrawSmallIcon(dc, CPoint(rect.left, (rect.top+rect.bottom-m_IconSize)/2), pItemDescriptor);
-
-					rect.left += m_IconSize+ITEMCELLPADDINGX;
-
-					// Color
-					DrawColorDots(dc, rect, pItemDescriptor, m_DefaultFontHeight);
-
-					// Label
-					if (IsEditing() && (Index==m_EditItem))
-						continue;
-				}
-
-				// Column
-				if (theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeRating)
-				{
-					// Rating bitmap
-					const UCHAR Rating = *((UCHAR*)pItemDescriptor->AttributeValues[Attr]);
-					ASSERT(Rating<=LFMaxRating);
-
-					CDC dcMem;
-					dcMem.CreateCompatibleDC(&dc);
-
-					HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(Attr==LFAttrPriority ? theApp.hPriorityBitmaps[Rating] : theApp.hRatingBitmaps[Rating]);
-
-					dc.AlphaBlend(rect.left, (rect.top+rect.bottom-RATINGBITMAPHEIGHT)/2-1, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
-
-					SelectObject(dcMem, hOldBitmap);
-				}
-				else
-				{
-					// Text column
-					WCHAR tmpStr[256];
-
-					switch (Attr)
-					{
-					case LFAttrFileName:
-						wcsncpy_s(tmpStr, 256, GetItemLabel(pItemDescriptor), _TRUNCATE);
-						break;
-
-					case LFAttrFileFormat:
-						wcscpy_s(tmpStr, 256, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat));
-						break;
-
-					default:
-						LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);
-					}
-
-					if (tmpStr[0])
-					{
-						dc.SetTextColor(TextColors[Attr==LFAttrFileName ? 0 : 1]);
-						dc.DrawText(tmpStr, rect, (theApp.IsAttributeFormatRight(Attr) ? DT_RIGHT : DT_LEFT) | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-					}
-				}
-			}
-		}
-	}
+	// Item
+	DrawListItem(dc, rectItem, Index, Themed, m_ContextViewSettings.ColumnOrder, m_ContextViewSettings.ColumnWidth, m_PreviewAttribute);
 }
 
 void CListView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/, const CRect& rectUpdate, BOOL Themed)
@@ -511,12 +503,6 @@ void CListView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/, const CRe
 				DrawItem(dc, rect, a, Themed);
 		}
 	}
-}
-
-void CListView::ScrollWindow(INT dx, INT dy, LPCRECT lpRect, LPCRECT lpClipRect)
-{
-
-	CFileView::ScrollWindow(dx, dy, lpRect, lpClipRect);
 }
 
 INT CListView::GetMaxAttributeWidth(UINT Attr) const
@@ -659,7 +645,6 @@ void CListView::OnAutosizeAll()
 		if (m_ContextViewSettings.ColumnWidth[a] && ((INT)a!=m_PreviewAttribute))
 			AutosizeColumn(a);
 
-	UpdateHeader();
 	AdjustLayout();
 }
 
@@ -669,7 +654,6 @@ void CListView::OnAutosize()
 	{
 		AutosizeColumn(m_HeaderItemClicked);
 
-		UpdateHeader();
 		AdjustLayout();
 	}
 }

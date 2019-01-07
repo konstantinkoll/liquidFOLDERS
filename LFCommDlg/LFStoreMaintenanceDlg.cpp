@@ -31,14 +31,16 @@ CMaintenanceReport::CMaintenanceReport()
 	SetItemHeight(LFGetApp()->m_ExtraLargeIconSize, 4);
 }
 
-void CMaintenanceReport::ShowTooltip(const CPoint& point)
-{
-	ASSERT(m_HoverItem>=0);
 
-	LFStoreDescriptor StoreDescriptor;
-	if (LFGetStoreSettings((*p_MaintenanceList)[m_HoverItem].StoreID, StoreDescriptor, TRUE)==LFOk)
-		LFGetApp()->ShowTooltip(this, point, StoreDescriptor);
+// Layouts
+
+void CMaintenanceReport::AdjustLayout()
+{
+	AdjustLayoutColumns();
 }
+
+
+// Item data
 
 void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
 {
@@ -48,10 +50,20 @@ void CMaintenanceReport::SetMaintenanceList(LFMaintenanceList* pMaintenanceList)
 	AdjustLayout();
 }
 
-void CMaintenanceReport::AdjustLayout()
+
+// Item handling
+
+void CMaintenanceReport::ShowTooltip(const CPoint& point)
 {
-	AdjustLayoutColumns();
+	ASSERT(m_HoverItem>=0);
+
+	LFStoreDescriptor StoreDescriptor;
+	if (LFGetStoreSettings((*p_MaintenanceList)[m_HoverItem].StoreID, StoreDescriptor, TRUE)==LFOk)
+		LFGetApp()->ShowTooltip(this, point, StoreDescriptor);
 }
+
+
+// Drawing
 
 void CMaintenanceReport::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {

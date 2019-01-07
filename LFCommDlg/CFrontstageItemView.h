@@ -69,62 +69,68 @@ public:
 	CFrontstageItemView(UINT Flags=FRONTSTAGE_ENABLESCROLLING, SIZE_T szData=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect=CRect(0, 0, 0, 0), UINT nClassStyle=0);
-	INT GetSelectedItem() const;
+	
+	UINT GetItemCount() const;
 	void SetFocusItem(INT Index, UINT Mode=SETFOCUSITEM_MOVEDESELECT);
+	INT GetSelectedItem() const;
 	void SelectNone();
 
 protected:
+	virtual void AdjustScrollbars();
 	virtual INT GetItemCategory(INT Index) const;
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
-	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual COLORREF GetItemTextColor(INT Index, BOOL Themed) const;
+	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);
-	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
 	virtual void FireSelectedItem() const;
 	virtual void DeleteSelectedItem() const;
-	virtual void AdjustScrollbars();
 	virtual BOOL DrawNothing() const;
+	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
+	virtual void DestroyEdit(BOOL Accept=FALSE);
 
-	LRESULT SendNotifyMessage(UINT Code) const;
 	BOOL IsScrollingEnabled() const;
 	BOOL IsFocusItemEnabled() const;
 	BOOL IsSelectionEnabled() const;
 	BOOL IsShiftSelectionEnabled() const;
 	BOOL IsDragAndDropEnabled() const;
 	BOOL IsLabelEditEnabled() const;
+	LRESULT SendNotifyMessage(UINT Code) const;
+	void SetItemHeight(INT IconSize, INT Rows, INT Padding=ITEMVIEWPADDING);
+	void SetItemHeight(const CIcons& Icons, INT Rows, INT Padding=ITEMVIEWPADDING);
+	void SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding=ITEMVIEWPADDING);
+	void EnsureVisible(INT Index);
+	void GetLayoutRect(CRect& rectLayout);
+	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN);
+	void AdjustLayoutList();
+	void AdjustLayoutColumns(INT Columns=1, INT Margin=ITEMVIEWMARGIN);
+	void AdjustLayoutSingleRow(INT Columns, INT Margin=ITEMVIEWMARGIN);
 	void AddItemCategory(LPCWSTR Caption, LPCWSTR Hint=L"", INT IconID=0);
 	void SetItemCount(UINT ItemCount, BOOL Virtual);
 	void AddItem(LPCVOID pData);
 	void LastItem();
+	void ValidateAllItems();
 	ItemData* GetItemData(INT Index) const;
 	void FreeItemData(BOOL InternalCall=FALSE);
-	void ValidateAllItems();
 	void SortItems(PFNCOMPARE zCompare, UINT Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
 	RECT GetItemRect(INT Index) const;
 	BOOL HasItemsSelected() const;
 	void ItemSelectionChanged(INT Index);
 	void ItemSelectionChanged();
-	void EnsureVisible(INT Index);
 	void ResetDragLocation();
 	BOOL IsDragLocationValid() const;
-	void DrawTile(CDC& dc, CRect rect, CIcons& Icons, INT IconID, COLORREF TextColor, UINT Rows, ...) const;
-	void DrawTile(CDC& dc, CRect rect, CImageList& ImageList, INT IconID, UINT nStyle, COLORREF TextColor, UINT Rows, ...) const;
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	COLORREF GetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF GetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
-	void SetItemHeight(INT IconSize, INT Rows, INT Padding=ITEMVIEWPADDING);
-	void SetItemHeight(const CIcons& Icons, INT Rows, INT Padding=ITEMVIEWPADDING);
-	void SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding=ITEMVIEWPADDING);
-	void GetLayoutRect(CRect& rectLayout);
-	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN);
-	void AdjustLayoutColumns(INT Columns=1, INT Margin=ITEMVIEWMARGIN);
-	void AdjustLayoutSingleRow(INT Columns);
+	void DrawListItem(CDC& dc, CRect rect, INT Index, BOOL Themed, INT* pColumnOrder, INT* pColumnWidth, INT PreviewAttribute=-1);
+	void DrawTile(CDC& dc, CRect rect, CIcons& Icons, INT IconID, COLORREF TextColor, UINT Rows, ...) const;
+	void DrawTile(CDC& dc, CRect rect, CImageList& ImageList, INT IconID, UINT nStyle, COLORREF TextColor, UINT Rows, ...) const;
 
 	afx_msg void OnDestroy();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -162,8 +168,8 @@ protected:
 	BOOL m_ShowFocusRect;
 
 private:
-	void ResetItemCategories();
 	static INT GetGutterForMargin(INT Margin);
+	void ResetItemCategories();
 	static UINT GetTileRows(UINT Rows, va_list vl);
 	void DrawTile(CDC& dc, CRect& rect, COLORREF TextColor, UINT Rows, va_list& vl) const;
 
@@ -214,10 +220,28 @@ inline BOOL CFrontstageItemView::IsLabelEditEnabled() const
 	return (m_Flags & FRONTSTAGE_ENABLELABELEDIT);
 }
 
+inline INT CFrontstageItemView::GetGutterForMargin(INT Margin)
+{
+	return (Margin>=BACKSTAGEBORDER) ? ITEMVIEWMARGINLARGE : (Margin>=ITEMCELLPADDINGY) ? ITEMVIEWMARGIN : ITEMCELLPADDINGY;
+}
+
+inline void CFrontstageItemView::SetItemHeight(const CIcons& Icons, INT Rows, INT Padding)
+{
+	ASSERT(Rows>=1);
+	ASSERT(Padding>=0);
+
+	SetItemHeight(Icons.GetIconSize(), Rows, Padding);
+}
+
 inline void CFrontstageItemView::ResetItemCategories()
 {
 	for (UINT a=0; a<m_ItemCategories.m_ItemCount; a++)
 		ZeroMemory(&m_ItemCategories[a].Rect, sizeof(RECT));
+}
+
+inline UINT CFrontstageItemView::GetItemCount() const
+{
+	return m_ItemCount;
 }
 
 inline ItemData* CFrontstageItemView::GetItemData(INT Index) const
@@ -227,16 +251,6 @@ inline ItemData* CFrontstageItemView::GetItemData(INT Index) const
 	ASSERT(Index<m_ItemCount);
 
 	return (ItemData*)(m_pItemData+Index*m_szData);
-}
-
-inline INT CFrontstageItemView::GetGutterForMargin(INT Margin)
-{
-	return (Margin>=BACKSTAGEBORDER) ? ITEMVIEWMARGINLARGE : (Margin>=ITEMCELLPADDINGY) ? ITEMVIEWMARGIN : ITEMCELLPADDINGY;
-}
-
-inline void CFrontstageItemView::SelectNone()
-{
-	SendMessage(WM_COMMAND, IDM_ITEMVIEW_SELECTNONE);
 }
 
 inline void CFrontstageItemView::ItemSelectionChanged(INT Index)
@@ -252,6 +266,11 @@ inline void CFrontstageItemView::ItemSelectionChanged()
 {
 	Invalidate();
 	SendNotifyMessage(IVN_SELECTIONCHANGED);
+}
+
+inline void CFrontstageItemView::SelectNone()
+{
+	SendMessage(WM_COMMAND, IDM_ITEMVIEW_SELECTNONE);
 }
 
 inline void CFrontstageItemView::ResetDragLocation()
@@ -272,24 +291,4 @@ inline COLORREF CFrontstageItemView::SetLightTextColor(CDC& dc, INT Index, BOOL 
 inline COLORREF CFrontstageItemView::SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const
 {
 	return dc.SetTextColor(GetDarkTextColor(dc, Index, Themed));
-}
-
-inline void CFrontstageItemView::SetItemHeight(const CIcons& Icons, INT Rows, INT Padding)
-{
-	ASSERT(Rows>=1);
-	ASSERT(Padding>=0);
-
-	SetItemHeight(Icons.GetIconSize(), Rows, Padding);
-}
-
-inline void CFrontstageItemView::SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding)
-{
-	ASSERT(Rows>=1);
-	ASSERT(Padding>=0);
-
-	INT cx;
-	INT cy;
-	ImageList_GetIconSize(ImageList, &cx, &cy);
-
-	SetItemHeight(cy, Rows, Padding);
 }

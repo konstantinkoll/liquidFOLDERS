@@ -31,6 +31,119 @@ CTimelineView::CTimelineView()
 {
 }
 
+void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
+{
+	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
+
+	for (INT a=0; a<m_ItemCount; a++)
+	{
+		TimelineItemData* pData = GetTimelineItemData(a);
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+
+		LFVariantData Property;
+		LFGetAttributeVariantDataEx(pItemDescriptor, m_ContextViewSettings.SortBy, Property);
+
+		if (!LFIsNullVariantData(Property))
+		{
+			// Year
+			SYSTEMTIME stUTC;
+			SYSTEMTIME stLocal;
+			FileTimeToSystemTime(&Property.Time, &stUTC);
+			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+			pData->Year = stLocal.wYear;
+
+			// Source
+			if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceWindows)
+				pData->PreviewMask |= PRV_SOURCE;
+
+			// Map properties to Creator, Title, Collection and Comments
+			switch (LFGetItemType(pItemDescriptor))
+			{
+			case LFTypeFile:
+				pData->pStrCreator = GetAttribute(pData, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
+				pData->pStrTitle = GetAttribute(pData, PRV_TITLE, pItemDescriptor, LFAttrTitle);
+				pData->pStrCollection = GetAttribute(pData, PRV_COLLECTION, pItemDescriptor, LFAttrMediaCollection);
+				pData->pStrComments = GetAttribute(pData, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
+
+				if (pData->pStrCollection)
+				{
+					pData->PreviewMask |= PRV_COLLECTIONICON;
+					pData->CollectionIconID = theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor));
+				}
+
+				// Only show comments if different from collection and title
+				if (pData->pStrComments)
+					if ((pData->pStrCollection && (wcscmp(pData->pStrComments, pData->pStrCollection)==0)) ||
+						(pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0)))
+						pData->PreviewMask &= ~PRV_COMMENTS;
+
+				if (UsePreview(pItemDescriptor))
+				{
+					pData->PreviewMask |= PRV_THUMBNAILS;
+					pData->ThumbnailCount = 1;
+				}
+
+				break;
+
+			case LFTypeFolder:
+				// Aggregate properties
+				pData->PreviewMask |= PRV_CREATOR | PRV_TITLE | PRV_COMMENTS | PRV_COLLECTIONICON;
+				pData->pStrCreator = pData->pStrTitle = pData->pStrComments = NULL;
+				pData->CollectionIconID = 0;
+
+				ASSERT(pItemDescriptor->AggregateFirst>=0);
+				ASSERT(pItemDescriptor->AggregateLast>=0);
+
+				for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
+				{
+					LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[b];
+
+					if (UsePreview(pItemDescriptor))
+					{
+						pData->PreviewMask |= PRV_THUMBNAILS;
+						pData->ThumbnailCount++;
+					}
+					else
+					{
+						pData->PreviewMask |= PRV_CONTENTLIST;
+						pData->ListCount++;
+					}
+
+					AggregateAttribute(pData->PreviewMask, pData->pStrCreator, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
+					AggregateAttribute(pData->PreviewMask, pData->pStrTitle, PRV_TITLE, pItemDescriptor, LFAttrMediaCollection);
+					AggregateAttribute(pData->PreviewMask, pData->pStrComments, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
+
+					AggregateIcon(pData->PreviewMask, pData->CollectionIconID, PRV_COLLECTIONICON, theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor)));
+				}
+
+				// Only show icon and indent text when the collection is valid
+				if ((pData->PreviewMask & PRV_TITLE)==0)
+					pData->PreviewMask &= ~PRV_COLLECTIONICON;
+
+				// Show representative icon for music albums and podcasts
+				if (pData->PreviewMask & (PRV_CREATOR | PRV_TITLE))
+					if (LFIsRepresentativeFolder(pItemDescriptor))
+					{
+						pItemDescriptor->IconID = pData->CollectionIconID;
+						pData->PreviewMask |= PRV_REPRESENTATIVE;
+					}
+
+				// Only show comments if different from title
+				if (pData->pStrComments && pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0))
+					pData->PreviewMask &= ~PRV_COMMENTS;
+
+				break;
+			}
+
+			pData->Hdr.Valid = TRUE;
+		}
+	}
+}
+
+
+// Layouts
+
 LPCWSTR CTimelineView::GetAttribute(TimelineItemData* pData, UINT Mask, const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
 	ASSERT(pData);
@@ -114,117 +227,6 @@ void CTimelineView::AggregateIcon(UINT& PreviewMask, INT& AggregatedIconID, UINT
 	}
 }
 
-void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData)
-{
-	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
-
-	if (p_CookedFiles)
-		for (INT a=0; a<m_ItemCount; a++)
-		{
-			TimelineItemData* pData = GetTimelineItemData(a);
-			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-
-			LFVariantData Property;
-			LFGetAttributeVariantDataEx(pItemDescriptor, m_ContextViewSettings.SortBy, Property);
-
-			if (!LFIsNullVariantData(Property))
-			{
-				// Year
-				SYSTEMTIME stUTC;
-				SYSTEMTIME stLocal;
-				FileTimeToSystemTime(&Property.Time, &stUTC);
-				SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
-
-				pData->Year = stLocal.wYear;
-
-				// Source
-				if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceWindows)
-					pData->PreviewMask |= PRV_SOURCE;
-
-				// Map properties to Creator, Title, Collection and Comments
-				switch (LFGetItemType(pItemDescriptor))
-				{
-				case LFTypeFile:
-					pData->pStrCreator = GetAttribute(pData, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
-					pData->pStrTitle = GetAttribute(pData, PRV_TITLE, pItemDescriptor, LFAttrTitle);
-					pData->pStrCollection = GetAttribute(pData, PRV_COLLECTION, pItemDescriptor, LFAttrMediaCollection);
-					pData->pStrComments = GetAttribute(pData, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
-
-					if (pData->pStrCollection)
-					{
-						pData->PreviewMask |= PRV_COLLECTIONICON;
-						pData->CollectionIconID = theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor));
-					}
-
-					// Only show comments if different from collection and title
-					if (pData->pStrComments)
-						if ((pData->pStrCollection && (wcscmp(pData->pStrComments, pData->pStrCollection)==0)) ||
-							(pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0)))
-							pData->PreviewMask &= ~PRV_COMMENTS;
-
-					if (UsePreview(pItemDescriptor))
-					{
-						pData->PreviewMask |= PRV_THUMBNAILS;
-						pData->ThumbnailCount = 1;
-					}
-
-					break;
-
-				case LFTypeFolder:
-					// Aggregate properties
-					pData->PreviewMask |= PRV_CREATOR | PRV_TITLE | PRV_COMMENTS | PRV_COLLECTIONICON;
-					pData->pStrCreator = pData->pStrTitle = pData->pStrComments = NULL;
-					pData->CollectionIconID = 0;
-
-					ASSERT(pItemDescriptor->AggregateFirst>=0);
-					ASSERT(pItemDescriptor->AggregateLast>=0);
-
-					for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
-					{
-						LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[b];
-
-						if (UsePreview(pItemDescriptor))
-						{
-							pData->PreviewMask |= PRV_THUMBNAILS;
-							pData->ThumbnailCount++;
-						}
-						else
-						{
-							pData->PreviewMask |= PRV_CONTENTLIST;
-							pData->ListCount++;
-						}
-
-						AggregateAttribute(pData->PreviewMask, pData->pStrCreator, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
-						AggregateAttribute(pData->PreviewMask, pData->pStrTitle, PRV_TITLE, pItemDescriptor, LFAttrMediaCollection);
-						AggregateAttribute(pData->PreviewMask, pData->pStrComments, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
-
-						AggregateIcon(pData->PreviewMask, pData->CollectionIconID, PRV_COLLECTIONICON, theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor)));
-					}
-
-					// Only show icon and indent text when the collection is valid
-					if ((pData->PreviewMask & PRV_TITLE)==0)
-						pData->PreviewMask &= ~PRV_COLLECTIONICON;
-
-					// Show representative icon for music albums and podcasts
-					if (pData->PreviewMask & (PRV_CREATOR | PRV_TITLE))
-						if (LFIsRepresentativeFolder(pItemDescriptor))
-						{
-							pItemDescriptor->IconID = pData->CollectionIconID;
-							pData->PreviewMask |= PRV_REPRESENTATIVE;
-						}
-
-					// Only show comments if different from title
-					if (pData->pStrComments && pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0))
-						pData->PreviewMask &= ~PRV_COMMENTS;
-
-					break;
-				}
-
-				pData->Hdr.Valid = TRUE;
-			}
-		}
-}
-
 BOOL CTimelineView::UsePreview(LFItemDescriptor* pItemDescriptor)
 {
 	if (pItemDescriptor->Type & LFTypeMounted)
@@ -266,20 +268,18 @@ BOOL CTimelineView::UsePreview(LFItemDescriptor* pItemDescriptor)
 
 void CTimelineView::AdjustLayout()
 {
-	if (!p_CookedFiles)
-	{
-		m_ScrollWidth = m_ScrollHeight = 0;
+	// Layout rect
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
+	if (!rectLayout.Width())
 		return;
-	}
 
 	// Current year
 	SYSTEMTIME stLocal;
 	GetLocalTime(&stLocal);
 
-	// Width
-	CRect rectLayout;
-	GetLayoutRect(rectLayout);
-
+	// Items
 	m_ScrollWidth = rectLayout.Width();
 
 	BOOL HasScrollbars = FALSE;
@@ -422,10 +422,13 @@ Restart:
 		}
 	}
 
-	m_ScrollHeight = max(CurTop[0], CurTop[1]);
+	m_ScrollHeight = p_CookedFiles ? max(CurTop[0], CurTop[1]) : 0;
 
 	CFileView::AdjustLayout();
 }
+
+
+// Item handling
 
 INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 {
@@ -592,16 +595,8 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 	return Item;
 }
 
-RECT CTimelineView::GetLabelRect(INT Index) const
-{
-	RECT rect = GetItemRect(Index);
 
-	rect.bottom = (rect.top+=CARDPADDING-2)+m_DefaultFontHeight+4;
-	rect.left += CARDPADDING+m_SmallIconSize+SMALLPADDING-5;
-	rect.right -= CARDPADDING-2;
-
-	return rect;
-}
+// Drawing
 
 void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed)
 {
@@ -998,6 +993,20 @@ void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRe
 				DrawItem(dc, g, rect, Index, Themed);
 		}
 	}
+}
+
+
+// Label edit
+
+RECT CTimelineView::GetLabelRect(INT Index) const
+{
+	RECT rect = GetItemRect(Index);
+
+	rect.bottom = (rect.top+=CARDPADDING-2)+m_DefaultFontHeight+4;
+	rect.left += CARDPADDING+m_SmallIconSize+SMALLPADDING-5;
+	rect.right -= CARDPADDING-2;
+
+	return rect;
 }
 
 

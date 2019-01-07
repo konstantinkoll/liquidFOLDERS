@@ -44,6 +44,7 @@ void CTagcloudView::SetViewSettings(BOOL UpdateSearchResultPending)
 		case 2:
 			SetSearchResult(p_Filter, p_RawFiles, p_CookedFiles, NULL);
 			FinishUpdate();
+			break;
 
 		case 1:
 			AdjustLayout();
@@ -127,6 +128,9 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 	}
 }
 
+
+// Menus
+
 BOOL CTagcloudView::GetContextMenu(CMenu& Menu, INT Index)
 {
 	if (Index==-1)
@@ -135,17 +139,8 @@ BOOL CTagcloudView::GetContextMenu(CMenu& Menu, INT Index)
 	return CFileView::GetContextMenu(Menu, Index);
 }
 
-void CTagcloudView::AdjustLayout()
-{
-	if (p_CookedFiles)
-	{
-		CClientDC dc(this);
 
-		CRect rectLayout;
-		GetLayoutRect(rectLayout);
-
-		if (!rectLayout.Width())
-			return;
+// Layouts
 
 #define CenterRow(Last) for (INT Index=RowStart; Index<=Last; Index++) \
 	{ \
@@ -165,96 +160,113 @@ void CTagcloudView::AdjustLayout()
 		} \
 	}
 
+void CTagcloudView::AdjustLayout()
+{
+	// Layout rect
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
+	if (!rectLayout.Width())
+		return;
+
+	// DC
+	CClientDC dc(this);
+
+	// Items
 	BOOL HasScrollbars = FALSE;
 
 Restart:
-		m_ScrollWidth = m_ScrollHeight = 0;
+	m_ScrollWidth = m_ScrollHeight = 0;
 
-		INT Column = 0;
-		INT Row = 0;
-		INT x = 0;
-		INT y = MARGIN;
-		INT RowHeight = 0;
-		INT RowStart = 0;
+	INT Column = 0;
+	INT Row = 0;
+	INT x = 0;
+	INT y = MARGIN;
+	INT RowHeight = 0;
+	INT RowStart = 0;
 
-		for (INT a=0; a<m_ItemCount; a++)
-		{
-			TagcloudItemData* pData = GetTagcloudItemData(a);
-
-			if (pData->Hdr.Valid)
-			{
-				const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-
-				CRect rect(0, 0, rectLayout.Width()-2*MARGIN, 128);
-				dc.SelectObject(GetFont(a));
-				dc.DrawText(pItemDescriptor->CoreAttributes.FileName, LFHasSubcaption(pItemDescriptor) ? pItemDescriptor->FolderMainCaptionCount : -1, rect, TEXTFORMAT | DT_CALCRECT);
-				rect.InflateRect(PADDINGX, PADDINGY);
-
-				// Next row
-				if (x+rect.Width()+2*MARGIN>rectLayout.Width())
-				{
-					Column = 0;
-					Row++;
-					y += RowHeight+GUTTER;
-
-					if (a)
-						CenterRow(a-1);
-
-					x = 0;
-					RowStart = a;
-					RowHeight = 0;
-				}
-
-				rect.MoveToXY(x, y);
-
-				pData->Hdr.Rect = rect;
-				pData->Hdr.Column = Column++;
-				pData->Hdr.Row = Row;
-
-				x += rect.Width()+GUTTER;
-				RowHeight = max(RowHeight, rect.Height());
-			}
-		}
-
-		if (m_ItemCount)
-			CenterRow(m_ItemCount-1);
-	}
-	else
+	for (INT a=0; a<m_ItemCount; a++)
 	{
-		m_ScrollWidth = m_ScrollHeight = 0;
+		TagcloudItemData* pData = GetTagcloudItemData(a);
+
+		if (pData->Hdr.Valid)
+		{
+			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
+
+			CRect rect(0, 0, rectLayout.Width()-2*MARGIN, 128);
+			dc.SelectObject(GetItemFont(a));
+			dc.DrawText(pItemDescriptor->CoreAttributes.FileName, LFHasSubcaption(pItemDescriptor) ? pItemDescriptor->FolderMainCaptionCount : -1, rect, TEXTFORMAT | DT_CALCRECT);
+			rect.InflateRect(PADDINGX, PADDINGY);
+
+			// Next row
+			if (x+rect.Width()+2*MARGIN>rectLayout.Width())
+			{
+				Column = 0;
+				Row++;
+				y += RowHeight+GUTTER;
+
+				if (a)
+					CenterRow(a-1);
+
+				x = 0;
+				RowStart = a;
+				RowHeight = 0;
+			}
+
+			rect.MoveToXY(x, y);
+
+			pData->Hdr.Rect = rect;
+			pData->Hdr.Column = Column++;
+			pData->Hdr.Row = Row;
+
+			x += rect.Width()+GUTTER;
+			RowHeight = max(RowHeight, rect.Height());
+		}
 	}
+
+	if (m_ItemCount)
+		CenterRow(m_ItemCount-1);
 
 	CFileView::AdjustLayout();
 }
 
-void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+
+// Item handling
+
+COLORREF CTagcloudView::GetItemTextColor(INT Index, BOOL Themed) const
 {
-	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	const TagcloudItemData* pData = GetTagcloudItemData(Index);
 
-	// Calculate color
-	if (!IsItemSelected(pItemDescriptor))
+	COLORREF clrText = m_GlobalViewSettings.TagcloudUseColor ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+
+	if (m_GlobalViewSettings.TagcloudUseOpacity)
 	{
-		COLORREF clrText = m_GlobalViewSettings.TagcloudUseColor ? pData->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+		const COLORREF clrBack = GetStageBackgroundColor(Themed);
 
-		if (m_GlobalViewSettings.TagcloudUseOpacity)
-		{
-			const COLORREF clrBack = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-
-			clrText = ((clrText & 0xFF)*pData->Alpha + (clrBack & 0xFF)*(255-pData->Alpha))>>8 |
-				((((clrText>>8) & 0xFF)*pData->Alpha + ((clrBack>>8) & 0xFF)*(255-pData->Alpha)) & 0xFF00) |
-				((((clrText>>16) & 0xFF)*pData->Alpha + ((clrBack>>16) & 0xFF)*(255-pData->Alpha))<<8) & 0xFF0000;
-		}
-
-		dc.SetTextColor(clrText);
+		clrText = ((clrText & 0xFF)*pData->Alpha + (clrBack & 0xFF)*(255-pData->Alpha))>>8 |
+			((((clrText>>8) & 0xFF)*pData->Alpha + ((clrBack>>8) & 0xFF)*(255-pData->Alpha)) & 0xFF00) |
+			((((clrText>>16) & 0xFF)*pData->Alpha + ((clrBack>>16) & 0xFF)*(255-pData->Alpha))<<8) & 0xFF0000;
 	}
 
-	CFont* pOldFont = dc.SelectObject(GetFont(Index));
+	return clrText;
+}
+
+
+// Drawing
+
+void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
+{
+	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+	CFont* pOldFont = dc.SelectObject(GetItemFont(Index));
 	dc.DrawText(pItemDescriptor->CoreAttributes.FileName, LFHasSubcaption(pItemDescriptor) ? pItemDescriptor->FolderMainCaptionCount : -1, (LPRECT)rectItem, TEXTFORMAT | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 }
 
-LFFont* CTagcloudView::GetFont(INT Index)
+
+// Font sizes
+
+LFFont* CTagcloudView::GetItemFont(INT Index)
 {
 	return &m_Fonts[m_GlobalViewSettings.TagcloudUseSize ? GetTagcloudItemData(Index)->FontSize : DEFAULTFONT];
 }
@@ -276,11 +288,13 @@ INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Font sizes
 	for (INT a=0; a<20; a++)
 		m_Fonts[a].CreateFont(a*2+10, a>=6 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY);
 
 	return 0;
 }
+
 
 void CTagcloudView::OnSortValue()
 {

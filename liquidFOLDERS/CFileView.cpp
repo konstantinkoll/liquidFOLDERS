@@ -20,10 +20,10 @@ CFileView::CFileView(UINT Flags, SIZE_T szData, const CSize& szItemInflate)
 	: CAbstractFileView(Flags | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLEDRAGANDDROP, szData, szItemInflate)
 {
 	if (m_WelcomeCaption.IsEmpty())
+	{
 		ENSURE(m_WelcomeCaption.LoadString(IDS_WELCOME_CAPTION));
-
-	if (m_WelcomeMessage.IsEmpty())
 		ENSURE(m_WelcomeMessage.LoadString(IDS_WELCOME_MESSAGE));
+	}
 
 	p_TaskIcons = NULL;
 	p_InspectorPane = NULL;
@@ -116,140 +116,18 @@ void CFileView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 	CAbstractFileView::SetSearchResult(pCookedFiles);
 }
 
-void CFileView::AdjustScrollbars()
+void CFileView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
 {
-	CAbstractFileView::AdjustScrollbars();
+	ZeroMemory(&Data, sizeof(Data));
 
-	// Command button
-	if (CAbstractFileView::DrawNothing() && (m_Context==LFContextStores))
-	{
-		CRect rectClient;
-		GetClientRect(rectClient);
-
-		// Message
-		CDC dc;
-		dc.CreateCompatibleDC(NULL);
-
-		CFont* pOldFont = dc.SelectObject(&theApp.m_CaptionFont);
-
-		CRect rectText(rectClient);
-		rectText.DeflateRect(BACKSTAGEBORDER, 0);
-
-		dc.DrawText(m_WelcomeCaption, rectText, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX | DT_CALCRECT);
-
-		m_WelcomeCaptionHeight = rectText.Height()+BACKSTAGEBORDER/2;
-
-		rectText = rectClient;
-		rectText.DeflateRect(BACKSTAGEBORDER, 0);
-
-		dc.SelectObject(&theApp.m_LargeFont);
-
-		dc.DrawText(m_WelcomeMessage, rectText, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX | DT_CALCRECT);
-
-		m_WelcomeMessageHeight = rectText.Height()+BACKSTAGEBORDER;
-
-		dc.SelectObject(pOldFont);
-
-		// Button
-		CString tmpStr;
-		m_wndCommandButton.GetWindowText(tmpStr);
-
-		const INT ButtonWidth = min(rectClient.Width()-2*BACKSTAGEBORDER, max(theApp.m_DefaultFont.GetTextExtent(tmpStr).cx, p_TaskIcons->GetIconSize())+2*BUTTONPADDING);
-		const INT ButtonHeight = m_DefaultFontHeight+p_TaskIcons->GetIconSize()+3*BUTTONPADDING-2;
-
-		m_wndCommandButton.SetWindowPos(NULL, (rectClient.Width()-ButtonWidth)/2, 2*BACKSTAGEBORDER+m_WelcomeCaptionHeight+m_WelcomeMessageHeight, ButtonWidth, ButtonHeight, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE);
-	}
-	else
-	{
-		m_wndCommandButton.ShowWindow(SW_HIDE);
-	}
+	Data.FocusItem = m_FocusItem;
+	Data.FocusItemSelected = !ForReload && p_CookedFiles && (m_FocusItem>=0) && (m_FocusItem<(INT)p_CookedFiles->m_ItemCount) ? IsItemSelected(m_FocusItem) : FALSE;
+	Data.HScrollPos = m_HScrollPos;
+	Data.VScrollPos = m_VScrollPos;
 }
 
-COLORREF CFileView::GetItemTextColor(INT Index) const
-{
-	return ((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x2020FF : (COLORREF)-1;
-}
 
-BOOL CFileView::IsItemSelected(INT Index) const
-{
-	assert(p_CookedFiles);
-	assert(Index>=0);
-	assert(Index<m_ItemCount);
-
-	return IsSelectionEnabled() ? IsItemSelected((*p_CookedFiles)[Index]) : CAbstractFileView::IsItemSelected(Index);
-}
-
-void CFileView::SelectItem(INT Index, BOOL Select)
-{
-	ASSERT(Index>=0);
-	ASSERT(Index<m_ItemCount);
-
-	if (!Select || GetItemData(Index)->Valid)
-	{
-		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-		SelectItem(pItemDescriptor, Select);
-
-		if (LFIsAggregatedFolder(pItemDescriptor))
-			for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
-				SelectItem((*p_RawFiles)[a], Select);
-	}
-}
-
-void CFileView::FireSelectedItem() const
-{
-	ASSERT(IsFocusItemEnabled());
-	ASSERT(GetSelectedItem()>=0);
-
-	GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
-}
-
-void CFileView::DeleteSelectedItem() const
-{
-	ASSERT(IsFocusItemEnabled());
-	ASSERT(GetSelectedItem()>=0);
-
-	GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_DELETE);
-}
-
-void CFileView::ShowTooltip(const CPoint& point)
-{
-	ASSERT(m_HoverItem>=0);
-
-	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HoverItem];
-	HBITMAP hBitmap = (m_Flags & FF_ENABLETOOLTIPICONS) ? theApp.m_IconFactory.GetJumboIconBitmap(pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL) : NULL;
-
-	theApp.ShowTooltip(this, point, GetItemLabel(pItemDescriptor),
-		theApp.GetHintForItem(pItemDescriptor, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat)),
-		NULL, hBitmap);
-}
-
-void CFileView::DrawNothing(CDC& dc, CRect rect, BOOL Themed) const
-{
-	if (m_Context==LFContextStores)
-	{
-		rect.top += 2*BACKSTAGEBORDER;
-		rect.left += BACKSTAGEBORDER;
-		rect.right -= BACKSTAGEBORDER;
-
-		CFont* pOldFont = dc.SelectObject(&theApp.m_CaptionFont);
-
-		dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
-		dc.DrawText(m_WelcomeCaption, rect, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX);
-
-		rect.top += m_WelcomeCaptionHeight;
-
-		dc.SelectObject(&theApp.m_LargeFont);
-
-		dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-		dc.DrawText(m_WelcomeMessage, rect, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX);
-
-		dc.SelectObject(pOldFont);
-	}
-	else
-	{
-		CFrontstageScroller::DrawNothing(dc, rect, Themed);
-	}
-}
+// Menus
 
 void CFileView::AppendMoveToItem(CMenu& Menu, UINT FromContext, UINT ToContext) const
 {
@@ -516,6 +394,7 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 	}
 
 	// Item context menu
+	ASSERT(p_InspectorPane);
 	const UINT FileCount = p_InspectorPane->GetFileCount();
 	const BOOL MultipleFiles = (FileCount>1);
 
@@ -616,15 +495,123 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 	return FALSE;
 }
 
-void CFileView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
-{
-	ZeroMemory(&Data, sizeof(Data));
 
-	Data.FocusItem = m_FocusItem;
-	Data.FocusItemSelected = !ForReload && p_CookedFiles && (m_FocusItem>=0) && (m_FocusItem<(INT)p_CookedFiles->m_ItemCount) ? IsItemSelected(m_FocusItem) : FALSE;
-	Data.HScrollPos = m_HScrollPos;
-	Data.VScrollPos = m_VScrollPos;
+// Scrolling
+
+void CFileView::AdjustScrollbars()
+{
+	CAbstractFileView::AdjustScrollbars();
+
+	// Command button
+	if (CAbstractFileView::DrawNothing() && (m_Context==LFContextStores))
+	{
+		CRect rectClient;
+		GetClientRect(rectClient);
+
+		// Message
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
+
+		CFont* pOldFont = dc.SelectObject(&theApp.m_CaptionFont);
+
+		CRect rectText(rectClient);
+		rectText.DeflateRect(BACKSTAGEBORDER, 0);
+
+		dc.DrawText(m_WelcomeCaption, rectText, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX | DT_CALCRECT);
+
+		m_WelcomeCaptionHeight = rectText.Height()+BACKSTAGEBORDER/2;
+
+		rectText = rectClient;
+		rectText.DeflateRect(BACKSTAGEBORDER, 0);
+
+		dc.SelectObject(&theApp.m_LargeFont);
+		dc.DrawText(m_WelcomeMessage, rectText, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX | DT_CALCRECT);
+		dc.SelectObject(pOldFont);
+
+		m_WelcomeMessageHeight = rectText.Height()+BACKSTAGEBORDER;
+
+		// Button
+		CString tmpStr;
+		m_wndCommandButton.GetWindowText(tmpStr);
+
+		const INT ButtonWidth = min(rectClient.Width()-2*BACKSTAGEBORDER, max(theApp.m_DefaultFont.GetTextExtent(tmpStr).cx, p_TaskIcons->GetIconSize())+2*BUTTONPADDING);
+		const INT ButtonHeight = m_DefaultFontHeight+p_TaskIcons->GetIconSize()+3*BUTTONPADDING-2;
+
+		m_wndCommandButton.SetWindowPos(NULL, (rectClient.Width()-ButtonWidth)/2, 2*BACKSTAGEBORDER+m_WelcomeCaptionHeight+m_WelcomeMessageHeight, ButtonWidth, ButtonHeight, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+	else
+	{
+		m_wndCommandButton.ShowWindow(SW_HIDE);
+	}
 }
+
+
+// Item handling
+
+void CFileView::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	if (IsEditing())
+		return;
+
+	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HoverItem];
+	HBITMAP hBitmap = (m_Flags & FF_ENABLETOOLTIPICONS) ? theApp.m_IconFactory.GetJumboIconBitmap(pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL) : NULL;
+
+	theApp.ShowTooltip(this, point, GetItemLabel(pItemDescriptor),
+		theApp.GetHintForItem(pItemDescriptor, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat)),
+		NULL, hBitmap);
+}
+
+
+// Item selection
+
+BOOL CFileView::IsItemSelected(INT Index) const
+{
+	assert(p_CookedFiles);
+	assert(Index>=0);
+	assert(Index<m_ItemCount);
+
+	return IsSelectionEnabled() ? IsItemSelected((*p_CookedFiles)[Index]) : CAbstractFileView::IsItemSelected(Index);
+}
+
+void CFileView::SelectItem(INT Index, BOOL Select)
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<m_ItemCount);
+
+	if (!Select || GetItemData(Index)->Valid)
+	{
+		LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+		SelectItem(pItemDescriptor, Select);
+
+		if (LFIsAggregatedFolder(pItemDescriptor))
+			for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
+				SelectItem((*p_RawFiles)[a], Select);
+	}
+}
+
+
+// Selected item commands
+
+void CFileView::FireSelectedItem() const
+{
+	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
+
+	GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
+}
+
+void CFileView::DeleteSelectedItem() const
+{
+	ASSERT(IsFocusItemEnabled());
+	ASSERT(GetSelectedItem()>=0);
+
+	GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_DELETE);
+}
+
+
+// Draw support
 
 CString CFileView::GetItemLabel(const LFItemDescriptor* pItemDescriptor) const
 {
@@ -664,11 +651,6 @@ CString CFileView::GetItemLabel(const LFItemDescriptor* pItemDescriptor) const
 		}
 
 	return strLabel;
-}
-
-void CFileView::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset) const
-{
-	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL, TRUE, ThumbnailYOffset);
 }
 
 UINT CFileView::GetColorDotCount(const LFItemDescriptor* pItemDescriptor)
@@ -728,6 +710,42 @@ void CFileView::DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pIte
 	}
 }
 
+void CFileView::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset) const
+{
+	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL, TRUE, ThumbnailYOffset);
+}
+
+
+// Drawing
+
+void CFileView::DrawNothing(CDC& dc, CRect rect, BOOL Themed) const
+{
+	if (m_Context==LFContextStores)
+	{
+		rect.top += 2*BACKSTAGEBORDER;
+		rect.left += BACKSTAGEBORDER;
+		rect.right -= BACKSTAGEBORDER;
+
+		CFont* pOldFont = dc.SelectObject(&theApp.m_CaptionFont);
+
+		dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+		dc.DrawText(m_WelcomeCaption, rect, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX);
+
+		rect.top += m_WelcomeCaptionHeight;
+
+		dc.SelectObject(&theApp.m_LargeFont);
+
+		dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+		dc.DrawText(m_WelcomeMessage, rect, DT_TOP | DT_CENTER | DT_WORDBREAK | DT_HIDEPREFIX);
+
+		dc.SelectObject(pOldFont);
+	}
+	else
+	{
+		CFrontstageScroller::DrawNothing(dc, rect, Themed);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CFileView, CAbstractFileView)
 	ON_WM_CREATE()
@@ -756,7 +774,7 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (Pos!=-1)
 		tmpStr.Delete(0, Pos+1);
 
-	m_wndCommandButton.Create(tmpStr, this, 2);
+	m_wndCommandButton.Create(tmpStr, this, 2, TRUE);
 
 	return 0;
 }

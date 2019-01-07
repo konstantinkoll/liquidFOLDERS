@@ -22,12 +22,16 @@ CUsageList::CUsageList()
 	SetItemHeight(m_ContextIcons.LoadForSize(IDB_CONTEXTS_16, max(32, 2*m_DefaultFontHeight)), 2);
 }
 
-INT CUsageList::CompareUsage(UsageItemData* pData1, UsageItemData* pData2, const SortParameters& /*Parameters*/)
-{
-	const INT Result =(INT)((pData2->FileSize-pData1->FileSize)>>32);
 
-	return Result ? Result : wcscmp(LFGetApp()->m_Contexts[pData1->Context].Name, LFGetApp()->m_Contexts[pData2->Context].Name);
+// Layouts
+
+void CUsageList::AdjustLayout()
+{
+	AdjustLayoutColumns();
 }
+
+
+// Item data
 
 void CUsageList::AddContext(const LFStatistics& Statistics, UINT Context)
 {
@@ -63,15 +67,23 @@ void CUsageList::SetUsage(LFStatistics Statistics)
 		AddContext(Statistics, 0);
 
 	LastItem();
-	SortItems((PFNCOMPARE)CompareUsage);
+	SortItems((PFNCOMPARE)CompareItems);
 
 	AdjustLayout();
 }
 
-void CUsageList::AdjustLayout()
+
+// Item sort
+
+INT CUsageList::CompareItems(UsageItemData* pData1, UsageItemData* pData2, const SortParameters& /*Parameters*/)
 {
-	AdjustLayoutColumns();
+	const INT Result =(INT)((pData2->FileSize-pData1->FileSize)>>32);
+
+	return Result ? Result : wcscmp(LFGetApp()->m_Contexts[pData1->Context].Name, LFGetApp()->m_Contexts[pData2->Context].Name);
 }
+
+
+// Drawing
 
 void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {

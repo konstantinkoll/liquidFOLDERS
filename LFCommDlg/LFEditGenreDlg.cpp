@@ -17,14 +17,8 @@ CGenreList::CGenreList()
 	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+ITEMCELLPADDINGX;
 }
 
-void CGenreList::ShowTooltip(const CPoint& point)
-{
-	ASSERT(m_HoverItem>=0);
 
-	const GenreItemData* pData = GetGenreItemData(m_HoverItem);
-
-	LFGetApp()->ShowTooltip(this, point, pData->pMusicGenre->Name, pData->pDescription);
-}
+// Layouts
 
 void CGenreList::AdjustLayout()
 {
@@ -66,12 +60,18 @@ void CGenreList::AdjustLayout()
 		pData->Hdr.Rect.bottom = (pData->Hdr.Rect.top=ItemsHeight)+m_ItemHeight;
 
 		ItemsHeight = pData->Hdr.Rect.bottom-1;
+
+		if (pData->FirstInCategory)
+			ItemsHeight += m_ItemHeight/2;
 	}
 
 	m_ScrollHeight = max(CategoriesHeight, ItemsHeight+1)+ITEMVIEWMARGIN;
 
 	CFrontstageScroller::AdjustLayout();
 }
+
+
+// Item data
 
 void CGenreList::AddItem(const LFMusicGenre* pMusicGenre, UINT GenreID, BOOL FirstInCategory)
 {
@@ -98,16 +98,16 @@ void CGenreList::AddItem(const LFMusicGenre* pMusicGenre, UINT GenreID, BOOL Fir
 
 void CGenreList::AddMusicGenreCategory(UINT IconID)
 {
-	const LFMusicGenre* pMusicGenre;
+	LPCMUSICGENRE lpcMusicGenre;
 
-	INT Index = LFID3GetNextMusicGenreByIcon(IconID, 0, &pMusicGenre);			// Skip genre 0
+	INT Index = LFID3GetNextMusicGenreByIcon(IconID, 0, lpcMusicGenre);			// Skip genre 0
 	while (Index!=-1)
 	{
 		// Skip primary genre for this icon!
-		if (!pMusicGenre->Primary)
-			AddItem(pMusicGenre, Index, FALSE);
+		if (!lpcMusicGenre->Primary)
+			AddItem(lpcMusicGenre, Index, FALSE);
 
-		Index = LFID3GetNextMusicGenreByIcon(IconID, Index, &pMusicGenre);
+		Index = LFID3GetNextMusicGenreByIcon(IconID, Index, lpcMusicGenre);
 	}
 }
 
@@ -147,41 +147,78 @@ void CGenreList::SetGenres(const STOREID& StoreID)
 	// Add music genres
 	SetItemCount(GENREBUFFERSIZE, FALSE);
 
-	const LFMusicGenre* pOtherPrimary = NULL;
+	LPCMUSICGENRE lpcOtherPrimary = NULL;
 	INT OtherPrimaryIndex = 0;
 
-	const LFMusicGenre* pMusicGenre;
+	LPCMUSICGENRE lpcMusicGenre;
 
-	INT Index = LFID3GetNextMusicGenre(0, &pMusicGenre);			// Skip genre 0
+	INT Index = LFID3GetNextMusicGenre(0, lpcMusicGenre);			// Skip genre 0
 	while (Index!=-1)
 	{
-		if (pMusicGenre->Primary)
-			if (pMusicGenre->IconID==IDI_FLD_DEFAULTGENRE)
+		if (lpcMusicGenre->Primary)
+			if (lpcMusicGenre->IconID==IDI_FLD_DEFAULTGENRE)
 			{
-				pOtherPrimary = pMusicGenre;
+				lpcOtherPrimary = lpcMusicGenre;
 				OtherPrimaryIndex = Index;
 			}
 			else
 			{
-				AddItemCategory(pMusicGenre);
-				AddItem(pMusicGenre, Index);
-				AddMusicGenreCategory(pMusicGenre->IconID);
+				AddItemCategory(lpcMusicGenre);
+				AddItem(lpcMusicGenre, Index);
+				AddMusicGenreCategory(lpcMusicGenre->IconID);
 			}
 
-		Index = LFID3GetNextMusicGenre(Index, &pMusicGenre);
+		Index = LFID3GetNextMusicGenre(Index, lpcMusicGenre);
 	}
 
 	// Add "Other" category
-	if (pOtherPrimary)
+	if (lpcOtherPrimary)
 	{
-		AddItemCategory(pOtherPrimary);
-		AddItem(pOtherPrimary, OtherPrimaryIndex);
-		AddMusicGenreCategory(pOtherPrimary->IconID);
+		AddItemCategory(lpcOtherPrimary);
+		AddItem(lpcOtherPrimary, OtherPrimaryIndex);
+		AddMusicGenreCategory(lpcOtherPrimary->IconID);
 	}
 
 	LastItem();
 	AdjustLayout();
 }
+
+
+// Item handling
+
+void CGenreList::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	const GenreItemData* pData = GetGenreItemData(m_HoverItem);
+
+	LFGetApp()->ShowTooltip(this, point, pData->pMusicGenre->Name, pData->pDescription);
+}
+
+void CGenreList::SelectGenre(UINT GenreID)
+{
+	for (INT a=0; a<m_ItemCount; a++)
+		if (GetGenreItemData(a)->GenreID==GenreID)
+		{
+			SetFocusItem(a);
+			EnsureVisible(a);
+
+			break;
+		}
+}
+
+
+// Item selection
+
+UINT CGenreList::GetSelectedGenre() const
+{
+	const INT Index = GetSelectedItem();
+
+	return (Index>=0) ? GetGenreItemData(Index)->GenreID : 0;
+}
+
+
+// Drawing
 
 void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
@@ -209,25 +246,6 @@ void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 
 		dc.SelectObject(pOldFont);
 	}
-}
-
-void CGenreList::SelectGenre(UINT GenreID)
-{
-	for (INT a=0; a<m_ItemCount; a++)
-		if (GetGenreItemData(a)->GenreID==GenreID)
-		{
-			SetFocusItem(a);
-			EnsureVisible(a);
-
-			break;
-		}
-}
-
-UINT CGenreList::GetSelectedGenre() const
-{
-	const INT Index = GetSelectedItem();
-
-	return (Index>=0) ? GetGenreItemData(Index)->GenreID : 0;
 }
 
 

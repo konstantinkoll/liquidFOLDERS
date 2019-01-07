@@ -31,8 +31,8 @@ class CCalendarView sealed : public CFileView
 public:
 	CCalendarView();
 
-	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
@@ -40,14 +40,13 @@ protected:
 	virtual void AdjustLayout();
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 
-	void SetYear(UINT Year);
+	void GetMonthSize(LPSIZE lpSize);
 	UINT DaysOfMonth(UINT Month) const;
 	UINT StartOfMonth(UINT Month) const;
-	void GetMonthSize(LPSIZE lpSize);
 	void DrawMonth(CDC& dc, Graphics& g, CRect& rectMonth, INT Month, BOOL Themed);
+	void SetYear(UINT Year);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	afx_msg void OnShowCaptions();

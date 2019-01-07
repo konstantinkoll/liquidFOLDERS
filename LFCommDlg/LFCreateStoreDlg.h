@@ -24,12 +24,11 @@ class CVolumeList sealed : public CFrontstageItemView
 public:
 	CVolumeList();
 
-	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
-
 	void SetVolumes(UINT Mask=LFGLV_INTERNAL | LFGLV_EXTERNAL | LFGLV_NETWORK);
 	CHAR GetSelectedVolume() const;
 
 protected:
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void ShowTooltip(const CPoint& point);
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);

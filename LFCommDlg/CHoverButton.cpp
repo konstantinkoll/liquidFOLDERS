@@ -17,11 +17,15 @@ CHoverButton::CHoverButton()
 	m_DrawBorder = FALSE;
 }
 
-BOOL CHoverButton::Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nID)
+BOOL CHoverButton::Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nID, BOOL Enabled)
 {
 	m_DrawBorder = TRUE;
 
-	return CButton::Create(lpszCaption, WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
+	DWORD dwStyle = WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW;
+	if (!Enabled)
+		dwStyle |= WS_DISABLED;
+
+	return CButton::Create(lpszCaption, dwStyle, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)

@@ -67,7 +67,7 @@ struct FVPersistentData
 
 // SendTo Item
 
-#define CHOOSESTOREID "CHOOSE"
+#define CHOOSESTOREID     "CHOOSE"
 
 struct SendToItemData
 {
@@ -95,35 +95,34 @@ public:
 	CFileView(UINT Flags=FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, SIZE_T szData=sizeof(ItemData), const CSize& szItemInflate=CSize(0, 0));
 
 	virtual BOOL Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pTaskIcons, CInspectorPane* pInspectorPane, LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, UINT nClassStyle=0);
-	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 
 	void UpdateViewSettings(INT Context=-1, BOOL UpdateSearchResultPending=FALSE);
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	UINT GetSortAttribute() const;
-	static BOOL IsItemSelected(const LFItemDescriptor* pItemDescriptor);
 	const SendToItemData* GetSendToItemData(UINT nID) const;
+	static BOOL IsItemSelected(const LFItemDescriptor* pItemDescriptor);
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustScrollbars();
-	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual void ShowTooltip(const CPoint& point);
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);
 	virtual void FireSelectedItem() const;
 	virtual void DeleteSelectedItem() const;
-	virtual void ShowTooltip(const CPoint& point);
 	virtual void DrawNothing(CDC& dc, CRect rect, BOOL Themed) const;
 
 	CString GetItemLabel(const LFItemDescriptor* pItemDescriptor) const;
-	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
 	COLORREF SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	static UINT GetColorDotCount(const LFItemDescriptor* pItemDescriptor);
 	INT GetColorDotWidth(const LFItemDescriptor* pItemDescriptor, const CIcons& Icons=m_DefaultColorDots) const;
 	INT GetColorDotWidth(INT Index, const CIcons& Icons=m_DefaultColorDots) const;
 	void DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pItemDescriptor, INT FontHeight=0, CIcons& Icons=m_DefaultColorDots) const;
+	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -148,19 +147,19 @@ protected:
 	static CIcons m_DefaultColorDots;
 
 private:
-	void SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select=TRUE);
 	void AppendMoveToItem(CMenu& Menu, UINT FromContext, UINT ToContext) const;
 	void GetMoveToMenu(CMenu& Menu) const;
 	void AppendSendToItem(CMenu& Menu, UINT nIDCtl, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy);
 	void GetSendToMenu(CMenu& Menu);
+	void SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select=TRUE);
 
 	static CString m_WelcomeCaption;
 	static CString m_WelcomeMessage;
 	INT m_WelcomeCaptionHeight;
 	INT m_WelcomeMessageHeight;
+	CHoverButton m_wndCommandButton;
 	CIcons* p_TaskIcons;
 	CInspectorPane* p_InspectorPane;
-	CHoverButton m_wndCommandButton;
 
 	SendToItemData m_SendToItems[256];
 };
@@ -170,11 +169,16 @@ inline UINT CFileView::GetSortAttribute() const
 	return m_ContextViewSettings.SortBy;
 }
 
+inline const SendToItemData* CFileView::GetSendToItemData(UINT nID) const
+{
+	return (nID>=FIRSTSENDTO) && (nID<=LASTSENDTO) ? &m_SendToItems[nID-FIRSTSENDTO] : NULL;
+}
+
 inline BOOL CFileView::IsItemSelected(const LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
-	return pItemDescriptor->Type & LFTypeSelected;
+	return (pItemDescriptor->Type & LFTypeSelected);
 }
 
 inline void CFileView::SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select)
@@ -193,7 +197,7 @@ inline void CFileView::SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select
 
 inline COLORREF CFileView::SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
 {
-	if (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
+	if (!IsItemSelected(pItemDescriptor) && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing))
 		return dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
 	return dc.GetTextColor();
@@ -201,7 +205,7 @@ inline COLORREF CFileView::SetLightTextColor(CDC& dc, const LFItemDescriptor* pI
 
 inline COLORREF CFileView::SetDarkTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
 {
-	if (!(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) && !IsItemSelected(pItemDescriptor))
+	if (!IsItemSelected(pItemDescriptor) && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing))
 		return dc.SetTextColor(Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT));
 
 	return dc.GetTextColor();
@@ -214,9 +218,4 @@ inline INT CFileView::GetColorDotWidth(INT Index, const CIcons& Icons) const
 	assert(Index<m_ItemCount);
 
 	return GetColorDotWidth((*p_CookedFiles)[Index], Icons);
-}
-
-inline const SendToItemData* CFileView::GetSendToItemData(UINT nID) const
-{
-	return (nID>=FIRSTSENDTO) && (nID<=LASTSENDTO) ? &m_SendToItems[nID-FIRSTSENDTO] : NULL;
 }

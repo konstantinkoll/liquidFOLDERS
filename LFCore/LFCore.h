@@ -516,11 +516,11 @@ LFCORE_API void __stdcall LFIATAGetLocationNameForCode(LPCSTR lpcszCode, LPWSTR 
 //
 
 // Setzt den Zeiger *ppMusicGenre auf das nächsten Genre
-LFCORE_API INT __stdcall LFID3GetNextMusicGenre(INT Last, const LFMusicGenre** ppMusicGenre);
+LFCORE_API INT __stdcall LFID3GetNextMusicGenre(INT Last, LPCMUSICGENRE& lpcMusicGenre);
 
 // Setzt den Zeiger *ppMusicGenre auf das nächsten Genre mit dem Icon IconID.
 // *ppMusicGenre kann in jedem Fall überschrieben werden.
-LFCORE_API INT __stdcall LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, const LFMusicGenre** ppMusicGenre);
+LFCORE_API INT __stdcall LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, LPCMUSICGENRE& lpcMusicGenre);
 
 
 

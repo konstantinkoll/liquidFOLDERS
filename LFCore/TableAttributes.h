@@ -53,12 +53,12 @@ inline BOOL ContextMoveAllowed(BYTE SystemContextID, BYTE UserContextID)
 
 inline BOOL IsAttributeSortDescending(UINT Context, UINT Attr)
 {
-	assert(Context<LFContextCount);
 	assert(Attr<LFAttributeCount);
 
-	for (UINT a=0; a<SPECIALATTRIBUTENAMESCOUNT; a++)
-		if ((SpecialAttributeNames[a].Attr==Attr) && (SpecialAttributeNames[a].ContextSet & (1ull<<Context)))
-			return SpecialAttributeNames[a].SortDescending;
+	if (Context<LFContextCount)
+		for (UINT a=0; a<SPECIALATTRIBUTENAMESCOUNT; a++)
+			if ((SpecialAttributeNames[a].Attr==Attr) && (SpecialAttributeNames[a].ContextSet & (1ull<<Context)))
+				return SpecialAttributeNames[a].SortDescending;
 
 	return (TypeProperties[AttrProperties[Attr].Type].DataFlags & LFDataSortDescending);
 }

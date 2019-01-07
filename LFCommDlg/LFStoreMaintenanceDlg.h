@@ -18,8 +18,8 @@ public:
 	void SetMaintenanceList(LFMaintenanceList* pMaintenanceList);
 
 protected:
-	virtual void ShowTooltip(const CPoint& point);
 	virtual void AdjustLayout();
+	virtual void ShowTooltip(const CPoint& point);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	CImageList* p_StoreIcons;

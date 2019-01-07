@@ -9,93 +9,86 @@
 #include "LFEditTimeDlg.h"
 
 
-// CPropertyHolder
+// CProperty
 //
 
-CString CPropertyHolder::m_MultipleValues;
+CString CProperty::m_MultipleValues;
 
-CPropertyHolder::CPropertyHolder()
-	: CFrontstageScroller(FRONTSTAGE_COMPLEXBACKGROUND)
+CProperty::CProperty(LFVariantData* pVData, CWnd* pOwnerWnd)
 {
+	ASSERT(pVData);
+	ASSERT(pOwnerWnd);
+
 	if (m_MultipleValues.IsEmpty())
 		ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
+
+	p_OwnerWnd = pOwnerWnd;
+	p_VData = pVData;
+	p_VDataRange = NULL;
+	m_Modified = m_Multiple = m_ShowRange = FALSE;
 }
 
-CProperty* CPropertyHolder::CreateProperty(LFVariantData* pVData)
+CProperty* CProperty::CreateProperty(LFVariantData* pVData, CWnd* pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type<LFTypeCount);
+	ASSERT(pOwnerWnd);
 
 	CProperty* pProperty;
 
 	switch (pVData->Type)
 	{
 	case LFTypeIATACode:
-		pProperty = new CPropertyIATA(pVData, this);
+		pProperty = new CPropertyIATA(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeRating:
-		pProperty = new CPropertyRating(pVData, this);
+		pProperty = new CPropertyRating(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeUINT:
 	case LFTypeYear:
-		pProperty = new CPropertyNumber(pVData, this);
+		pProperty = new CPropertyNumber(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeSize:
-		pProperty = new CPropertySize(pVData, this);
+		pProperty = new CPropertySize(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeColor:
-		pProperty = new CPropertyColor(pVData, this);
+		pProperty = new CPropertyColor(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeGeoCoordinates:
-		pProperty = new CPropertyGeoCoordinates(pVData, this);
+		pProperty = new CPropertyGeoCoordinates(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeTime:
-		pProperty = new CPropertyTime(pVData, this);
+		pProperty = new CPropertyTime(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeDuration:
-		pProperty = new CPropertyDuration(pVData, this);
+		pProperty = new CPropertyDuration(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeGenre:
-		pProperty = new CPropertyGenre(pVData, this);
+		pProperty = new CPropertyGenre(pVData, pOwnerWnd);
 		break;
 
 	case LFTypeUnicodeArray:
 		if (pVData->Attr==LFAttrHashtags) 
 		{
-			pProperty = new CPropertyHashtags(pVData, this);
+			pProperty = new CPropertyHashtags(pVData, pOwnerWnd);
 			break;
 		}
 
 	default:
-		pProperty = new CProperty(pVData, this);
+		pProperty = new CProperty(pVData, pOwnerWnd);
 	}
 
 	ASSERT(pProperty);
 
 	return pProperty;
-}
-
-
-// CProperty
-//
-
-CProperty::CProperty(LFVariantData* pVData, CPropertyHolder* pParent)
-{
-	ASSERT(pVData);
-	ASSERT(pParent);
-
-	p_VData = pVData;
-	p_VDataRange = NULL;
-	p_Parent = pParent;
-	m_Modified = m_Multiple = m_ShowRange = FALSE;
 }
 
 void CProperty::ToString(LPWSTR pStr, SIZE_T nCount) const
@@ -116,7 +109,7 @@ void CProperty::ToString(LPWSTR pStr, SIZE_T nCount) const
 		else
 		{
 			// Notification
-			wcscpy_s(pStr, nCount, CPropertyHolder::m_MultipleValues);
+			wcscpy_s(pStr, nCount, m_MultipleValues);
 		}
 	}
 	else
@@ -131,13 +124,13 @@ INT CProperty::GetMinWidth() const
 	return 8*LFGetApp()->m_DialogFont.GetFontHeight();
 }
 
-void CProperty::DrawValue(CDC& dc, LPCRECT lpRect) const
+void CProperty::DrawValue(CDC& dc, LPCRECT lpcRect) const
 {
 	WCHAR tmpStr[256];
 	ToString(tmpStr, 256);
 
 	CFont* pOldFont = m_Multiple ? dc.SelectObject(&LFGetApp()->m_DialogItalicFont) : m_Modified ? dc.SelectObject(&LFGetApp()->m_DialogBoldFont) : NULL;
-	dc.DrawText(tmpStr, -1, (LPRECT)lpRect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
+	dc.DrawText(tmpStr, -1, (LPRECT)lpcRect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 
 	if (pOldFont)
 		dc.SelectObject(pOldFont);
@@ -148,10 +141,10 @@ HCURSOR CProperty::SetCursor(INT /*x*/) const
 	return LFGetApp()->LoadStandardCursor(IDC_IBEAM);
 }
 
-CMFCMaskedEdit* CProperty::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+CMFCMaskedEdit* CProperty::CreateEditControl(const CRect& rect, HFONT hFont) const
 {
 	CMFCMaskedEdit* pWndEdit = new CMFCMaskedEdit();
-	pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, pParentWnd, 1);
+	pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, p_OwnerWnd, 2);
 	
 	// Font
 	pWndEdit->SendMessage(WM_SETFONT, (WPARAM)hFont);
@@ -198,7 +191,7 @@ BOOL CProperty::OnClickValue(INT /*x*/) const
 	return TRUE;
 }
 
-void CProperty::OnClickButton()
+void CProperty::OnClickButton(const STOREID& /*StoreID*/)
 {
 }
 
@@ -237,8 +230,8 @@ BOOL CProperty::OnPushChar(UINT /*ch*/) const
 // CPropertyHashtags
 //
 
-CPropertyHashtags::CPropertyHashtags(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyHashtags::CPropertyHashtags(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeUnicodeArray);
@@ -249,9 +242,9 @@ BOOL CPropertyHashtags::HasButton() const
 	return TRUE;
 }
 
-void CPropertyHashtags::OnClickButton()
+void CPropertyHashtags::OnClickButton(const STOREID& StoreID)
 {
-	LFEditHashtagsDlg dlg(m_Multiple ? _T("") : p_VData->UnicodeArray, p_Parent->m_StoreID, p_Parent);
+	LFEditHashtagsDlg dlg(m_Multiple ? _T("") : p_VData->UnicodeArray, StoreID, p_OwnerWnd);
 	if (dlg.DoModal()==IDOK)
 	{
 		WCHAR Buffer[4096];
@@ -269,8 +262,8 @@ void CPropertyHashtags::OnClickButton()
 // CPropertyIATA
 //
 
-CPropertyIATA::CPropertyIATA(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyIATA::CPropertyIATA(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeIATACode);
@@ -278,9 +271,9 @@ CPropertyIATA::CPropertyIATA(LFVariantData* pVData, CPropertyHolder* pParent)
 	p_VDataLocationName = p_VDataLocationGPS = NULL;
 }
 
-CMFCMaskedEdit* CPropertyIATA::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+CMFCMaskedEdit* CPropertyIATA::CreateEditControl(const CRect& rect, HFONT hFont) const
 {
-	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, pParentWnd, hFont);
+	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, hFont);
 
 	pWndEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
 
@@ -348,7 +341,7 @@ void CPropertyIATA::OnSetString(CString& Value) const
 	NotifyOwner(Attr2, Attr3);
 }
 
-void CPropertyIATA::OnClickButton()
+void CPropertyIATA::OnClickButton(const STOREID& /*StoreID*/)
 {
 	LFSelectPropertyIATADlg dlg(NULL, &p_VData->AnsiString[0], p_VDataLocationName!=NULL, p_VDataLocationGPS!=NULL);
 	if ((dlg.DoModal()==IDOK) && dlg.p_Airport)
@@ -407,8 +400,8 @@ SHORT CPropertyIATA::OnSetLocationGPS(LPCAIRPORT lpcAirport) const
 // CPropertyRating
 //
 
-CPropertyRating::CPropertyRating(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyRating::CPropertyRating(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeRating);
@@ -419,7 +412,7 @@ INT CPropertyRating::GetMinWidth() const
 	return RATINGBITMAPWIDTH+6;
 }
 
-void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
+void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpcRect) const
 {
 	// Rating bitmap
 	const UCHAR Rating = m_Multiple ? m_ShowRange ? p_VDataRange->Rating : 0 : p_VData->Rating;
@@ -430,7 +423,7 @@ void CPropertyRating::DrawValue(CDC& dc, LPCRECT lpRect) const
 
 	HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(p_VData->Attr==LFAttrPriority ? LFGetApp()->hPriorityBitmaps[Rating] : LFGetApp()->hRatingBitmaps[Rating]);
 
-	dc.AlphaBlend(lpRect->left+6, (lpRect->top+lpRect->bottom-RATINGBITMAPHEIGHT)/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+	dc.AlphaBlend(lpcRect->left+6, (lpcRect->top+lpcRect->bottom-RATINGBITMAPHEIGHT)/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
 
 	SelectObject(dcMem, hOldBitmap);
 }
@@ -516,16 +509,16 @@ void CPropertyRating::OnSetRating(UCHAR Rating) const
 // CPropertyNumber
 //
 
-CPropertyNumber::CPropertyNumber(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyNumber::CPropertyNumber(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT((pVData->Type==LFTypeUINT) || (pVData->Type==LFTypeDuration) || (pVData->Type==LFTypeYear));
 }
 
-CMFCMaskedEdit* CPropertyNumber::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+CMFCMaskedEdit* CPropertyNumber::CreateEditControl(const CRect& rect, HFONT hFont) const
 {
-	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, pParentWnd, hFont);
+	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, hFont);
 
 	pWndEdit->SetValidChars(_T("0123456789"));
 
@@ -536,16 +529,16 @@ CMFCMaskedEdit* CPropertyNumber::CreateEditControl(const CRect& rect, CWnd* pPar
 // CPropertySize
 //
 
-CPropertySize::CPropertySize(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertySize::CPropertySize(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeSize);
 }
 
-CMFCMaskedEdit* CPropertySize::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+CMFCMaskedEdit* CPropertySize::CreateEditControl(const CRect& rect, HFONT hFont) const
 {
-	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, pParentWnd, hFont);
+	CMFCMaskedEdit* pWndEdit = CProperty::CreateEditControl(rect, hFont);
 
 	pWndEdit->SetValidChars(_T("0123456789 KkMmGgBb"));
 
@@ -560,8 +553,8 @@ CMFCMaskedEdit* CPropertySize::CreateEditControl(const CRect& rect, CWnd* pParen
 
 CIcons CPropertyColor::m_ColorDots;
 
-CPropertyColor::CPropertyColor(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyColor::CPropertyColor(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeColor);
@@ -574,12 +567,12 @@ INT CPropertyColor::GetMinWidth() const
 	return 7*m_ColorDots.GetIconSize()+6*GUTTER;
 }
 
-void CPropertyColor::DrawValue(CDC& dc, LPCRECT lpRect) const
+void CPropertyColor::DrawValue(CDC& dc, LPCRECT lpcRect) const
 {
 	const INT Size = m_ColorDots.GetIconSize();
 
-	INT x = lpRect->left;
-	INT y = (lpRect->top+lpRect->bottom-Size)/2;
+	INT x = lpcRect->left;
+	INT y = (lpcRect->top+lpcRect->bottom-Size)/2;
 
 	for (UINT a=1; a<LFItemColorCount; a++)
 	{
@@ -644,8 +637,8 @@ void CPropertyColor::OnSetColor(BYTE Color) const
 // CPropertyGeoCoordinates
 //
 
-CPropertyGeoCoordinates::CPropertyGeoCoordinates(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyGeoCoordinates::CPropertyGeoCoordinates(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeGeoCoordinates);
@@ -666,9 +659,9 @@ BOOL CPropertyGeoCoordinates::OnClickValue(INT /*x*/) const
 	return FALSE;
 }
 
-void CPropertyGeoCoordinates::OnClickButton()
+void CPropertyGeoCoordinates::OnClickButton(const STOREID& /*StoreID*/)
 {
-	LFSelectLocationGPSDlg dlg(p_VData->GeoCoordinates, p_Parent);
+	LFSelectLocationGPSDlg dlg(p_VData->GeoCoordinates, p_OwnerWnd);
 	if (dlg.DoModal()==IDOK)
 	{
 		p_VData->GeoCoordinates = dlg.m_Location;
@@ -682,8 +675,8 @@ void CPropertyGeoCoordinates::OnClickButton()
 // CPropertyTime
 //
 
-CPropertyTime::CPropertyTime(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyTime::CPropertyTime(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeTime);
@@ -704,9 +697,9 @@ BOOL CPropertyTime::OnClickValue(INT /*x*/) const
 	return FALSE;
 }
 
-void CPropertyTime::OnClickButton()
+void CPropertyTime::OnClickButton(const STOREID& /*StoreID*/)
 {
-	if (LFEditTimeDlg(p_VData, p_Parent).DoModal()==IDOK)
+	if (LFEditTimeDlg(p_VData, p_OwnerWnd).DoModal()==IDOK)
 		NotifyOwner();
 }
 
@@ -714,14 +707,14 @@ void CPropertyTime::OnClickButton()
 // CPropertyDuration
 //
 
-CPropertyDuration::CPropertyDuration(LFVariantData* pData, CPropertyHolder* pParent)
-	: CPropertyNumber(pData, pParent)
+CPropertyDuration::CPropertyDuration(LFVariantData* pData, CWnd* pOwnerWnd)
+	: CPropertyNumber(pData, pOwnerWnd)
 {
 }
 
-CMFCMaskedEdit* CPropertyDuration::CreateEditControl(const CRect& rect, CWnd* pParentWnd, HFONT hFont) const
+CMFCMaskedEdit* CPropertyDuration::CreateEditControl(const CRect& rect, HFONT hFont) const
 {
-	CMFCMaskedEdit* pWndEdit = CPropertyNumber::CreateEditControl(rect, pParentWnd, hFont);
+	CMFCMaskedEdit* pWndEdit = CPropertyNumber::CreateEditControl(rect, hFont);
 
 	pWndEdit->EnableMask(_T("DD DD DD"), _T("__:__:__"), _T('0'), _T("0123456789"));
 	pWndEdit->EnableGetMaskedCharsOnly(FALSE);
@@ -734,8 +727,8 @@ CMFCMaskedEdit* CPropertyDuration::CreateEditControl(const CRect& rect, CWnd* pP
 // CPropertyGenre
 //
 
-CPropertyGenre::CPropertyGenre(LFVariantData* pVData, CPropertyHolder* pParent)
-	: CProperty(pVData, pParent)
+CPropertyGenre::CPropertyGenre(LFVariantData* pVData, CWnd* pOwnerWnd)
+	: CProperty(pVData, pOwnerWnd)
 {
 	ASSERT(pVData);
 	ASSERT(pVData->Type==LFTypeGenre);
@@ -751,9 +744,9 @@ BOOL CPropertyGenre::OnClickValue(INT /*x*/) const
 	return FALSE;
 }
 
-void CPropertyGenre::OnClickButton()
+void CPropertyGenre::OnClickButton(const STOREID& StoreID)
 {
-	LFEditGenreDlg dlg(m_Multiple ? 0 : p_VData->Genre, p_Parent->m_StoreID, p_Parent);
+	LFEditGenreDlg dlg(m_Multiple ? 0 : p_VData->Genre, StoreID, p_OwnerWnd);
 	if (dlg.DoModal()==IDOK)
 	{
 		p_VData->UINT32 = dlg.m_Genre;
@@ -782,8 +775,9 @@ HICON CInspectorGrid::hIconResetHot = NULL;
 HICON CInspectorGrid::hIconResetPressed = NULL;
 
 CInspectorGrid::CInspectorGrid()
-	: CPropertyHolder()
+	: CFrontstageScroller(FRONTSTAGE_COMPLEXBACKGROUND)
 {
+	DEFAULTSTOREID(m_StoreID);
 	m_SortAlphabetic = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
@@ -793,14 +787,16 @@ CInspectorGrid::CInspectorGrid()
 	m_HoverPart = NOPART;
 }
 
-BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, UINT ContextMenuID, CInspectorHeader* pHeader)
+BOOL CInspectorGrid::Create(CWnd* pOwnerWndWnd, UINT nID, UINT ContextMenuID, CInspectorHeader* pHeader)
 {
 	m_ContextMenuID = ContextMenuID;
 	m_pHeader = pHeader;
 
 	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CPropertyHolder::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageScroller::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pOwnerWndWnd, nID);
+
+//	return CFrontstageScroller::Create(pOwnerWndWnd, nID);
 }
 
 BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
@@ -831,10 +827,10 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CPropertyHolder::PreTranslateMessage(pMsg);
+	return CFrontstageScroller::PreTranslateMessage(pMsg);
 }
 
-void CInspectorGrid::SetPropertyName(Property& Prop, LPCWSTR pszName, CDC& dc)
+void CInspectorGrid::SetPropertyName(Property& Prop, LPCWSTR pszName)
 {
 	ASSERT(pszName);
 
@@ -842,31 +838,24 @@ void CInspectorGrid::SetPropertyName(Property& Prop, LPCWSTR pszName, CDC& dc)
 	wcscpy_s(Prop.Name, LFAttributeNameSize, pszName);
 
 	// Update label width
-	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DialogFont);
-
-	Prop.LabelWidth = dc.GetTextExtent(CString(pszName)+_T(":")).cx;
-
-	dc.SelectObject(pOldFont);
+	Prop.LabelWidth = LFGetApp()->m_DialogFont.GetTextExtent(CString(pszName)+_T(":")).cx;
 }
 
-void CInspectorGrid::AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT Category, BOOL Editable, BOOL Visible)
+void CInspectorGrid::AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT CategoryID, BOOL Editable, BOOL Visible)
 {
 	ASSERT(pVData);
 	ASSERT(pszName);
 
 	// Property structure
 	Property Prop;
-	Prop.pProperty = CreateProperty(pVData);
-	Prop.Category = Category;
+	Prop.pProperty = CProperty::CreateProperty(pVData, this);
+	Prop.CategoryID = CategoryID;
 	Prop.Editable = Editable;
 	Prop.Visible = Visible;
 	Prop.Top = Prop.Bottom = -1;
 
 	// Set property name
-	CDC dc;
-	dc.CreateCompatibleDC(NULL);
-
-	SetPropertyName(Prop, pszName, dc);
+	SetPropertyName(Prop, pszName);
 
 	// Add property to grid
 	m_Properties.AddItem(Prop);
@@ -920,15 +909,12 @@ void CInspectorGrid::SetContext(UINT Context)
 	m_Context = Context;
 
 	// Update property names
-	CDC dc;
-	dc.CreateCompatibleDC(NULL);
-
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
 		const UINT Attr = m_Properties[a].pProperty->GetVData()->Attr;
 
 		if (Attr<LFAttributeCount)
-			SetPropertyName(m_Properties[a], LFGetApp()->GetAttributeName(Attr, m_Context), dc);
+			SetPropertyName(m_Properties[a], LFGetApp()->GetAttributeName(Attr, m_Context));
 	}
 
 	SortProperties();
@@ -1103,7 +1089,7 @@ INT CInspectorGrid::Compare(INT Eins, INT Zwei) const
 	const Property* pEins = &m_Properties[m_pSortArray[Eins]];
 	const Property* pZwei = &m_Properties[m_pSortArray[Zwei]];
 
-	return m_SortAlphabetic ? wcscmp(pEins->Name, pZwei->Name) : (pEins->Category!=pZwei->Category) ? (INT)pEins->Category-(INT)pZwei->Category : m_pSortArray[Eins]-m_pSortArray[Zwei];
+	return m_SortAlphabetic ? wcscmp(pEins->Name, pZwei->Name) : (pEins->CategoryID!=pZwei->CategoryID) ? (INT)pEins->CategoryID-(INT)pZwei->CategoryID : m_pSortArray[Eins]-m_pSortArray[Zwei];
 }
 
 void CInspectorGrid::Heap(INT Element, INT Count)
@@ -1175,21 +1161,21 @@ void CInspectorGrid::AdjustLayout()
 	// Place categories and  properties
 	INT LabelWidth = m_LabelWidth = m_MinWidth = 0;
 	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : MARGIN+1;
-	UINT Category = (UINT)-1;
+	UINT CategoryID = (UINT)-1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
 		Property* pProp = &m_Properties[m_pSortArray[a]];
 
 		// Category
-		if (!m_SortAlphabetic && pProp->Visible && (pProp->Category!=Category))
+		if (!m_SortAlphabetic && pProp->Visible && (pProp->CategoryID!=CategoryID))
 		{
-			Category = pProp->Category;
+			CategoryID = pProp->CategoryID;
 
 			const INT Spacer = (m_ScrollHeight==1) ? -MARGIN : 8;
 
-			m_Categories[Category].Top = m_ScrollHeight+Spacer;
-			m_Categories[Category].Bottom = m_ScrollHeight+LFGetApp()->m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING+Spacer;
+			m_Categories[CategoryID].Top = m_ScrollHeight+Spacer;
+			m_Categories[CategoryID].Bottom = m_ScrollHeight+LFGetApp()->m_LargeFont.GetFontHeight()+2*LFCATEGORYPADDING+Spacer;
 
 			m_ScrollHeight += LFGetApp()->m_LargeFont.GetFontHeight()+2*MARGIN+Spacer+1;
 		}
@@ -1348,7 +1334,7 @@ void CInspectorGrid::ResetProperty(INT Index)
 	{
 		LFClearVariantData(*m_Properties[Index].pProperty->GetVData());
 
-		NotifyOwner((SHORT)Index);
+		NotifyOwner(Index);
 	}
 }
 
@@ -1374,14 +1360,14 @@ void CInspectorGrid::EditProperty(INT Index)
 			rect.left += m_LabelWidth+BORDER-1;
 
 			ASSERT(!m_pWndEdit);
-			m_pWndEdit = pProp->pProperty->CreateEditControl(rect, this, LFGetApp()->m_DialogBoldFont);
+			m_pWndEdit = pProp->pProperty->CreateEditControl(rect, LFGetApp()->m_DialogBoldFont);
 			m_pWndEdit->SetFocus();
 
 			return;
 		}
 
 		if (pProp->pProperty->HasButton())
-			pProp->pProperty->OnClickButton();
+			pProp->pProperty->OnClickButton(m_StoreID);
 	}
 }
 
@@ -1394,18 +1380,6 @@ void CInspectorGrid::ModifyProperty(INT Index)
 		m_Properties[Index].pProperty->SetModified();
 		InvalidateItem(Index);
 	}
-}
-
-void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
-{
-	ModifyProperty(Attr1);
-	ModifyProperty(Attr2);
-	ModifyProperty(Attr3);
-
-	HideTooltip();
-
-	UpdateWindow();
-	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
 }
 
 void CInspectorGrid::DestroyEdit(BOOL Accept)
@@ -1437,7 +1411,7 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 }
 
 
-BEGIN_MESSAGE_MAP(CInspectorGrid, CPropertyHolder)
+BEGIN_MESSAGE_MAP(CInspectorGrid, CFrontstageScroller)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
@@ -1447,19 +1421,21 @@ BEGIN_MESSAGE_MAP(CInspectorGrid, CPropertyHolder)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_KEYDOWN()
-	ON_WM_GETDLGCODE()
 	ON_WM_SETCURSOR()
+	ON_WM_GETDLGCODE()
 
-	ON_EN_KILLFOCUS(1, OnDestroyEdit)
+	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
+
+	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
 INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CPropertyHolder::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageScroller::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	// Item height
-	SetItemHeight(max(LFGetApp()->m_DialogFont.GetFontHeight(), 16)+2);
+	CFrontstageScroller::SetItemHeight(max(LFGetApp()->m_DialogFont.GetFontHeight(), 16)+2);
 
 	// Icons
 	m_IconSize = (m_ItemHeight>=27) ? 25 : (m_ItemHeight>=22) ? 20 : (m_ItemHeight>=18) ? 16 : 14;
@@ -1488,12 +1464,12 @@ void CInspectorGrid::OnDestroy()
 
 	delete m_pSortArray;
 
-	CPropertyHolder::OnDestroy();
+	CFrontstageScroller::OnDestroy();
 }
 
 void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 {
-	CPropertyHolder::OnSize(nType, cx, cy);
+	CFrontstageScroller::OnSize(nType, cx, cy);
 
 	// Adjust size of edit control
 	if (m_pWndEdit)
@@ -1562,7 +1538,7 @@ void CInspectorGrid::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 	}
 
-	CPropertyHolder::OnLButtonDown(nFlags, point);
+	CFrontstageScroller::OnLButtonDown(nFlags, point);
 }
 
 void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
@@ -1590,7 +1566,7 @@ void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 			else
 				if (Part==PARTBUTTON)
 				{
-					m_Properties[Index].pProperty->OnClickButton();
+					m_Properties[Index].pProperty->OnClickButton(m_StoreID);
 				}
 	}
 	else
@@ -1675,7 +1651,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if ((GetKeyState(VK_CONTROL)<0) && (m_SelectedItem!=-1))
 			if (m_Properties[m_SelectedItem].pProperty->HasButton())
 			{
-				m_Properties[m_SelectedItem].pProperty->OnClickButton();
+				m_Properties[m_SelectedItem].pProperty->OnClickButton(m_StoreID);
 				break;
 			}
 
@@ -1716,13 +1692,8 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					break;
 		}
 
-		CPropertyHolder::OnKeyDown(nChar, nRepCnt, nFlags);
+		CFrontstageScroller::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
-}
-
-UINT CInspectorGrid::OnGetDlgCode()
-{
-	return DLGC_WANTARROWS | DLGC_WANTCHARS | DLGC_WANTALLKEYS;
 }
 
 BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
@@ -1747,6 +1718,23 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Messa
 	SetCursor(LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return TRUE;
+}
+
+
+LRESULT CInspectorGrid::OnPropertyChanged(WPARAM wParam, LPARAM lParam)
+{
+	ModifyProperty((SHORT)LOWORD(wParam));
+	ModifyProperty((SHORT)LOWORD(lParam));
+	ModifyProperty((SHORT)HIWORD(lParam));
+
+	UpdateWindow();
+
+	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, wParam, lParam);
+}
+
+UINT CInspectorGrid::OnGetDlgCode()
+{
+	return DLGC_WANTARROWS | DLGC_WANTCHARS | DLGC_WANTALLKEYS;
 }
 
 

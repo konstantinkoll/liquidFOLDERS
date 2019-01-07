@@ -241,6 +241,8 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "vox",     LFContextAudio, 0 },
 	{ "wav",     LFContextAudio, 0 },
 	{ "wave",    LFContextAudio, 0 },
+	{ "webm",    LFContextVideos, 0 },
+	{ "webp",    LFContextPictures, 0 },
 	{ "wm",      LFContextAudio, 0 },
 	{ "wma",     LFContextAudio, 0 },
 	{ "wmv",     LFContextVideos, 0 },

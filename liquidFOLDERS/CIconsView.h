@@ -18,11 +18,8 @@ protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT Index) const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
-
-	void DrawCapacity(CDC& dc, Graphics& g, CRect rectCapacity, const LFStoreDescriptor& StoreDescriptor, BOOL Themed) const;
-	void DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFItemDescriptor* pItemDescriptor, BOOL Themed, UINT MaxLineCount=2) const;
+	virtual RECT GetLabelRect(INT Index) const;
 
 	afx_msg void OnShowCapacity();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
@@ -30,4 +27,6 @@ protected:
 
 private:
 	static void DrawCapacityBar(Graphics& g, const CRect& rect, const LFStoreDescriptor& StoreDescriptor);
+	void DrawCapacity(CDC& dc, Graphics& g, CRect rectCapacity, const LFStoreDescriptor& StoreDescriptor, BOOL Themed) const;
+	void DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFItemDescriptor* pItemDescriptor, BOOL Themed, UINT MaxLineCount=2) const;
 };

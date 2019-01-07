@@ -9,7 +9,7 @@
 // CHeaderButton
 //
 
-#define WM_ADJUSTLAYOUT     WM_USER+2
+#define WM_ADJUSTLAYOUT     WM_USER+1
 
 class CHeaderButton : public CHoverButton
 {

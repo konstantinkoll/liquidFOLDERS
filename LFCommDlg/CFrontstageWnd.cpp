@@ -9,9 +9,6 @@
 // CFrontstageWnd
 //
 
-#define BORDERSIZE            2
-#define WHITEAREAHEIGHT     100
-
 CFrontstageWnd::CFrontstageWnd()
 	: CWnd()
 {
@@ -19,110 +16,42 @@ CFrontstageWnd::CFrontstageWnd()
 }
 
 
-// Cards
+// Menus
 
-void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed) const
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, INT /*Index*/)
 {
-	ASSERT(lpRect);
-
-	dc.FillSolidRect(lpRect, Themed ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
-
-	if (Themed)
-	{
-		g.SetPixelOffsetMode(PixelOffsetModeHalf);
-		g.SetSmoothingMode(SmoothingModeNone);
-
-		LinearGradientBrush brush(Point(0, lpRect->top), Point(0, lpRect->top+WHITEAREAHEIGHT), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
-		g.FillRectangle(&brush, Rect(lpRect->left, lpRect->top, lpRect->right-lpRect->left, WHITEAREAHEIGHT));
-
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-	}
+	return FALSE;
 }
 
-void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect) const
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, LPCVOID /*Ptr*/)
 {
-	// Shadow
-	GraphicsPath Path;
-
-	if (Themed)
-	{
-		CRect rectShadow(lpRect);
-		rectShadow.OffsetRect(1, 1);
-
-		CreateRoundRectangle(rectShadow, 3, Path);
-
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
-
-		Pen pen(Color(0x0C000000));
-		g.DrawPath(&pen, &Path);
-	}
-
-	// Background
-	if ((!Themed || !Hot) && !Selected)
-	{
-		CRect rect(lpRect);
-		rect.DeflateRect(1, 1);
-
-		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-
-		if (Themed)
-		{
-			Matrix m;
-			m.Translate(-1.0, -1.0);
-			Path.Transform(&m);
-
-			Pen pen(Color(0xFFD0D1D5));
-			g.DrawPath(&pen, &Path);
-		}
-		else
-		{
-			dc.Draw3dRect(lpRect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
-		}
-	}
-
-	DrawListItemBackground(dc, lpRect, Themed, GetFocus()==this, Hot, Focused, Selected, TextColor, ShowFocusRect);
+	return FALSE;
 }
 
-void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed) const
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, const CPoint& /*point*/)
 {
-	if (Themed)
+	return FALSE;
+}
+
+void CFrontstageWnd::TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem, BOOL AlignRight) const
+{
+	if (IsMenu(Menu))
 	{
-		CWnd* pRootWnd = GetAncestor(GA_ROOT);
-		ASSERT(pRootWnd);
+		if (SetDefaultItem)
+			Menu.SetDefaultItem(0, TRUE);
 
-		if (!pRootWnd->IsZoomed())
+		CMenu MenuPopup;
+		if (MenuPopup.CreatePopupMenu())
 		{
-			CRect rectOutline;
-			pRootWnd->GetClientRect(rectOutline);
-			pRootWnd->ClientToScreen(rectOutline);
-			ScreenToClient(rectOutline);
+			MenuPopup.InsertMenu(0, MF_POPUP, (UINT_PTR)(HMENU)Menu);
 
-			rectOutline.InflateRect(1, 1);
-
-			g.SetPixelOffsetMode(PixelOffsetModeNone);
-			g.SetSmoothingMode(LFGetApp()->m_SmoothingModeAntiAlias8x8);
-
-			GraphicsPath path;
-			CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
-
-			Pen pen(Color(0xFF000000));
-			g.DrawPath(&pen, &path);
+			Menu.TrackPopupMenu((AlignRight ? TPM_RIGHTALIGN : TPM_LEFTALIGN) | TPM_RIGHTBUTTON, pos.x, pos.y, pWndOwner, NULL);
 		}
 	}
 }
 
-void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed) const
-{
-	if (Themed)
-	{
-		Graphics g(dc);
 
-		DrawWindowEdge(g, Themed);
-	}
-}
-
-
-// Items
+// Item handling
 
 INT CFrontstageWnd::ItemAtPosition(CPoint /*point*/) const
 {
@@ -170,38 +99,121 @@ void CFrontstageWnd::UpdateHoverItem()
 	}
 }
 
-
-// Menus
-
-BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, INT /*Index*/)
+BOOL CFrontstageWnd::HasBorder(HWND hWnd)
 {
-	return FALSE;
+	ASSERT(hWnd);
+
+	return ((GetWindowLong(hWnd, GWL_STYLE) & (WS_CHILD | WS_BORDER))==(WS_CHILD | WS_BORDER)) || (GetWindowLong(hWnd, GWL_EXSTYLE) & WS_EX_CLIENTEDGE);
 }
 
-BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, LPCVOID /*Ptr*/)
-{
-	return FALSE;
-}
 
-BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, const CPoint& /*point*/)
-{
-	return FALSE;
-}
+// Draw support
 
-void CFrontstageWnd::TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem, BOOL AlignRight) const
+void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const
 {
-	if (IsMenu(Menu))
+	ASSERT(lpcRect);
+
+	if (Themed)
 	{
-		if (SetDefaultItem)
-			Menu.SetDefaultItem(0, TRUE);
+		const INT Height = lpcRect->bottom-lpcRect->top;
+		const INT Width = lpcRect->right-lpcRect->left;
 
-		CMenu MenuPopup;
-		if (MenuPopup.CreatePopupMenu())
+		Bitmap* pImage = LFGetApp()->GetCachedResourceImage(IDB_BACKGROUND_CARDS);
+		ASSERT(pImage);
+
+		// Gradient
+		const INT GradientHeight = pImage->GetHeight();
+
+		ImageAttributes ImgAttr;
+		ImgAttr.SetWrapMode(WrapModeTile);
+
+		g.DrawImage(pImage, Rect(lpcRect->left, lpcRect->top, Width, GradientHeight), 0, 0, Width, GradientHeight, UnitPixel, &ImgAttr);
+
+		// Bottom
+		dc.FillSolidRect(lpcRect->left, lpcRect->top+GradientHeight, Width, Height-GradientHeight, 0xF8F5F4);
+	}
+	else
+	{
+		dc.FillSolidRect(lpcRect, GetSysColor(COLOR_3DFACE));
+	}
+}
+
+void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect) const
+{
+	// Shadow
+	GraphicsPath Path;
+
+	if (Themed)
+	{
+		CRect rectShadow(lpcRect);
+		rectShadow.OffsetRect(1, 1);
+
+		CreateRoundRectangle(rectShadow, 3, Path);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+
+		Pen pen(Color(0x0C000000));
+		g.DrawPath(&pen, &Path);
+	}
+
+	// Background
+	if ((!Themed || !Hot) && !Selected)
+	{
+		CRect rect(lpcRect);
+		rect.DeflateRect(1, 1);
+
+		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+		if (Themed)
 		{
-			MenuPopup.InsertMenu(0, MF_POPUP, (UINT_PTR)(HMENU)Menu);
+			Matrix m;
+			m.Translate(-1.0, -1.0);
+			Path.Transform(&m);
 
-			Menu.TrackPopupMenu((AlignRight ? TPM_RIGHTALIGN : TPM_LEFTALIGN) | TPM_RIGHTBUTTON, pos.x, pos.y, pWndOwner, NULL);
+			Pen pen(Color(0xFFD0D1D5));
+			g.DrawPath(&pen, &Path);
 		}
+		else
+		{
+			dc.Draw3dRect(lpcRect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+		}
+	}
+
+	DrawListItemBackground(dc, lpcRect, Themed, GetFocus()==this, Hot, Focused, Selected, TextColor, ShowFocusRect);
+}
+
+void CFrontstageWnd::DrawWindowEdge(Graphics& g) const
+{
+	CWnd* pRootWnd = GetAncestor(GA_ROOT);
+	ASSERT(pRootWnd);
+
+	if (!pRootWnd->IsZoomed())
+	{
+		CRect rectOutline;
+		pRootWnd->GetClientRect(rectOutline);
+		pRootWnd->ClientToScreen(rectOutline);
+		ScreenToClient(rectOutline);
+
+		rectOutline.InflateRect(1, 1);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(LFGetApp()->m_SmoothingModeAntiAlias8x8);
+
+		GraphicsPath path;
+		CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
+
+		Pen pen(Color(0xFF000000));
+		g.DrawPath(&pen, &path);
+	}
+}
+
+void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed) const
+{
+	if (Themed)
+	{
+		Graphics g(dc);
+
+		DrawWindowEdge(g);
 	}
 }
 
@@ -210,7 +222,6 @@ IMPLEMENT_TOOLTIP_NOWHEEL(CFrontstageWnd, CWnd)
 
 BEGIN_TOOLTIP_MAP(CFrontstageWnd, CWnd)
 	ON_WM_DESTROY()
-	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_MESSAGE(WM_NCPAINT, OnNcPaint)
 	ON_WM_ERASEBKGND()
@@ -224,24 +235,6 @@ void CFrontstageWnd::OnDestroy()
 	HideTooltip();
 
 	CWnd::OnDestroy();
-}
-
-void CFrontstageWnd::OnNcCalcSize(BOOL bCalcValidRect, NCCALCSIZE_PARAMS* lpncsp)
-{
-	if (HasBorder())
-	{
-		const INT cxEdge = GetSystemMetrics(SM_CXEDGE);
-		const INT cyEdge = GetSystemMetrics(SM_CYEDGE);
-
-		lpncsp->rgrc[0].left += cxEdge;
-		lpncsp->rgrc[0].right -= cxEdge;
-		lpncsp->rgrc[0].top += cyEdge;
-		lpncsp->rgrc[0].bottom -= cyEdge;
-	}
-	else
-	{
-		CWnd::OnNcCalcSize(bCalcValidRect, lpncsp);
-	}
 }
 
 LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)

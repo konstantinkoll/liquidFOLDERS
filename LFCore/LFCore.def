@@ -16,15 +16,16 @@ EXPORTS
 	LFInitProgress @10
 	LFGetErrorText @11
 	LFCoreErrorBox @12
-	LFGetAttrCategoryName @13
-	LFGetAttributeInfo @14
-	LFGetSourceName @15
-	LFGetItemCategoryInfo @16
-	LFGetContextInfo @17
-	LFGetSortedAttributeList @18
-	LFGetItemColor @19
-	LFIsLicensed @20
-	LFIsSharewareExpired @21
+	LFSortMemory @13
+	LFGetAttrCategoryName @14
+	LFGetAttributeInfo @15
+	LFGetSourceName @16
+	LFGetItemCategoryInfo @17
+	LFGetContextInfo @18
+	LFGetSortedAttributeList @19
+	LFGetItemColor @20
+	LFIsLicensed @21
+	LFIsSharewareExpired @22
 
 	LFGetDefaultStore @100
 	LFSetDefaultStore @101

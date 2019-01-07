@@ -48,11 +48,12 @@ public:
 protected:
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT Index) const;
 	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
+	virtual RECT GetLabelRect(INT Index) const;
 
-	void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
+	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
@@ -70,7 +71,6 @@ private:
 	static void AggregateAttribute(UINT& PreviewMask, LPCWSTR& pStrAggregated, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr);
 	static void AggregateIcon(UINT& PreviewMask, INT& AggregatedIconID, UINT Mask, INT IconID);
 	static BOOL UsePreview(LFItemDescriptor* pItemDescriptor);
-	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed);
 
 	static const ARGB m_BevelColors[8];
 };

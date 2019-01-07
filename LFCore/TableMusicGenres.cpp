@@ -33,19 +33,19 @@ extern const LFMusicGenre MusicGenres[MUSICGENRECOUNT] = {
 	{ L"Big Band", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Big Beat", IDI_FLD_ELECTRONIC, FALSE, TRUE },
 	{ L"Black Metal", IDI_FLD_METAL, FALSE, TRUE },
-	{ L"Bluegrass", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Bluegrass", IDI_FLD_COUNTRY, FALSE, TRUE },
 	{ L"Blues", IDI_FLD_BLUES, TRUE, TRUE },
 	{ L"Bollywood", IDI_FLD_WORLDMUSIC, FALSE, TRUE },
 	{ L"Booty Bass", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Breakbeat", IDI_FLD_ELECTRONIC, FALSE, TRUE },
 	{ L"Britpop", IDI_FLD_POP, FALSE, TRUE },
 	{ L"Cabaret", IDI_FLD_REDCURTAIN, FALSE, TRUE },
-	{ L"Celtic", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Celtic", IDI_FLD_WORLDMUSIC, FALSE, TRUE },
 	{ L"Chamber Music", IDI_FLD_CLASSICAL, FALSE, TRUE },
 	{ L"Chanson", IDI_FLD_REDCURTAIN, FALSE, TRUE },
 	{ L"Chillout", IDI_FLD_ELECTRONIC, FALSE, TRUE },
 	{ L"Chorus", IDI_FLD_REDCURTAIN, FALSE, TRUE },
-	{ L"Christian Gangsta Rap", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Christian Gangsta Rap", IDI_FLD_HIPHOP, FALSE, TRUE },
 	{ L"Christian Rap", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Christian Rock", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Classic Rock", IDI_FLD_ROCK, FALSE, TRUE },
@@ -69,7 +69,7 @@ extern const LFMusicGenre MusicGenres[MUSICGENRECOUNT] = {
 	{ L"Drum Solo", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Dub", IDI_FLD_REGGAE, FALSE, TRUE },
 	{ L"Dubstep", IDI_FLD_REGGAE, FALSE, TRUE },
-	{ L"Duet", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Duet", IDI_FLD_REDCURTAIN, FALSE, TRUE },
 	{ L"Easy Listening", IDI_FLD_EASYLISTENING, TRUE, TRUE },
 	{ L"EBM", IDI_FLD_ELECTRONIC, FALSE, TRUE },
 	{ L"Eclectic", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
@@ -85,13 +85,13 @@ extern const LFMusicGenre MusicGenres[MUSICGENRECOUNT] = {
 	{ L"Experimental", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Fast Fusion", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Folk", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
-	{ L"Folk-Rock", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Folk-Rock", IDI_FLD_ROCK, FALSE, TRUE },
 	{ L"Folklore", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Freestyle", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
-	{ L"Funk", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Funk", IDI_FLD_SOUL, FALSE, TRUE },
 	{ L"Fusion", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"G-Funk", IDI_FLD_HIPHOP, FALSE, TRUE },
-	{ L"Game", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Game", IDI_FLD_ELECTRONIC, FALSE, TRUE },
 	{ L"Gangsta", IDI_FLD_HIPHOP, FALSE, TRUE },
 	{ L"Gangsta Rap", IDI_FLD_HIPHOP, FALSE, TRUE },
 	{ L"Garage Rock", IDI_FLD_ROCK, FALSE, TRUE },
@@ -103,7 +103,7 @@ extern const LFMusicGenre MusicGenres[MUSICGENRECOUNT] = {
 	{ L"Gothic", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Grunge", IDI_FLD_ALTERNATIVE, FALSE, TRUE },
 	{ L"Hard Rock", IDI_FLD_ROCK, FALSE, TRUE },
-	{ L"Hardcore", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Hardcore", IDI_FLD_ELECTRONIC, FALSE, TRUE },
 	{ L"Heavy Metal", IDI_FLD_METAL, FALSE, TRUE },
 	{ L"Hip-Hop", IDI_FLD_HIPHOP, TRUE, TRUE },
 	{ L"House", IDI_FLD_ELECTRONIC, FALSE, TRUE },
@@ -155,8 +155,8 @@ extern const LFMusicGenre MusicGenres[MUSICGENRECOUNT] = {
 	{ L"Pop-Punk", IDI_FLD_POP, FALSE, TRUE },
 	{ L"Porn Groove", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Post-Punk", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
-	{ L"Post-Rock", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
-	{ L"Power Ballad", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Post-Rock", IDI_FLD_ROCK, FALSE, TRUE },
+	{ L"Power Ballad", IDI_FLD_METAL, FALSE, TRUE },
 	{ L"Pranks", IDI_FLD_REDCURTAIN, FALSE, TRUE },
 	{ L"Primus", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Progressive Rock", IDI_FLD_ROCK, FALSE, TRUE },
@@ -181,12 +181,12 @@ extern const LFMusicGenre MusicGenres[MUSICGENRECOUNT] = {
 	{ L"Satire", IDI_FLD_SPOKENWORD, FALSE, TRUE },
 	{ L"Shoegaze", IDI_FLD_ROCK, FALSE, TRUE },
 	{ L"Showtunes", IDI_FLD_SOUNDTRACKS, FALSE, TRUE },
-	{ L"Ska", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Ska", IDI_FLD_SOUL, FALSE, TRUE },
 	{ L"Slow Jam", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
 	{ L"Slow Rock", IDI_FLD_ROCK, FALSE, TRUE },
-	{ L"Sonata", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Sonata", IDI_FLD_CLASSICAL, FALSE, TRUE },
 	{ L"Soul", IDI_FLD_SOUL, TRUE, TRUE },
-	{ L"Sound Clip", IDI_FLD_DEFAULTGENRE, FALSE, TRUE },
+	{ L"Sound Clip", IDI_FLD_SOUNDTRACKS, FALSE, TRUE },
 	{ L"Soundtrack", IDI_FLD_SOUNDTRACKS, FALSE, FALSE },
 	{ L"Soundtracks", IDI_FLD_SOUNDTRACKS, TRUE, TRUE },
 	{ L"Southern Rock", IDI_FLD_ROCK, FALSE, TRUE },
@@ -270,22 +270,20 @@ UINT GetGenreIcon(UINT nID)
 	return (nID<MUSICGENRECOUNT) ? MusicGenres[nID].IconID : IDI_FLD_DEFAULTGENRE;
 }
 
-LFCORE_API INT LFID3GetNextMusicGenre(INT Last, const LFMusicGenre** ppMusicGenre)
+LFCORE_API INT LFID3GetNextMusicGenre(INT Last, LPCMUSICGENRE& lpcMusicGenre)
 {
-	assert(ppMusicGenre);
-
 	if (Last<-1)
 		Last = -1;
 
 	if (Last>=MUSICGENRECOUNT-1)
 		return -1;
 
-	*ppMusicGenre = &MusicGenres[++Last];
+	lpcMusicGenre = &MusicGenres[++Last];
 
 	return Last;
 }
 
-LFCORE_API INT LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, const LFMusicGenre** ppMusicGenre)
+LFCORE_API INT LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, LPCMUSICGENRE& lpcMusicGenre)
 {
 	if (Last<-1)
 		Last = -1;
@@ -295,9 +293,9 @@ LFCORE_API INT LFID3GetNextMusicGenreByIcon(UINT IconID, INT Last, const LFMusic
 		if (Last>=MUSICGENRECOUNT-1)
 			return -1;
 
-		*ppMusicGenre = &MusicGenres[++Last];
+		lpcMusicGenre = &MusicGenres[++Last];
 	}
-	while ((*ppMusicGenre)->IconID!=IconID);
+	while (lpcMusicGenre->IconID!=IconID);
 
 	return Last;
 }

@@ -16,7 +16,7 @@ public:
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
-	BOOL Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nID);
+	BOOL Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nID, BOOL Enabled=FALSE);
 
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

@@ -184,8 +184,7 @@ UINT CStoreWindows::RenameFile(const REVENANTFILE& File, LFItemDescriptor* pItem
 	LPWSTR pData = (LPWSTR)pItemDescriptor->StoreData;
 
 	LPWSTR pStr = wcsrchr(pData, L'\\');
-	if (!pStr)
-		pStr = pData;
+	pStr = pStr ? ++pStr : pData;
 
 	LPCWSTR pExtension = wcsrchr(pStr, L'.');
 

@@ -37,10 +37,10 @@ protected:
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 private:
+	void AddItemCategory(LPCMUSICGENRE lpcMusicGenre);
 	GenreItemData* GetGenreItemData(INT Index) const;
-	void AddItemCategory(const LFMusicGenre* pMusicGenre);
-	void AddItem(const LFMusicGenre* pMusicGenre, UINT GenreID, BOOL FirstInCategory=TRUE);
 	void AddMusicGenreCategory(UINT IconID);
+	void AddItem(const LFMusicGenre* pMusicGenre, UINT GenreID, BOOL FirstInCategory=TRUE);
 
 	INT m_FileCountWidth;
 
@@ -53,9 +53,9 @@ inline GenreItemData* CGenreList::GetGenreItemData(INT Index) const
 	return (GenreItemData*)GetItemData(Index);
 }
 
-inline void CGenreList::AddItemCategory(const LFMusicGenre* pMusicGenre)
+inline void CGenreList::AddItemCategory(LPCMUSICGENRE lpcMusicGenre)
 {
-	CFrontstageItemView::AddItemCategory(pMusicGenre->Name, L"", pMusicGenre->IconID);
+	CFrontstageItemView::AddItemCategory(lpcMusicGenre->Name, L"", lpcMusicGenre->IconID);
 }
 
 

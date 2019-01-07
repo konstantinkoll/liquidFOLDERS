@@ -30,6 +30,9 @@ void CIconsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 	ValidateAllItems();
 }
 
+
+// Layouts
+
 void CIconsView::AdjustLayout()
 {
 	// Item width must be odd for proper alignment of jumbo core icons
@@ -37,16 +40,8 @@ void CIconsView::AdjustLayout()
 		FALSE, BACKSTAGEBORDER);
 }
 
-RECT CIconsView::GetLabelRect(INT Index) const
-{
-	RECT rect = GetItemRect(Index);
 
-	rect.bottom = (rect.top+=128+ITEMVIEWPADDING+ITEMVIEWPADDING/2-2)+m_DefaultFontHeight+4;
-	rect.left += ITEMVIEWPADDING/2;
-	rect.right -= ITEMVIEWPADDING/2;
-
-	return rect;
-}
+// Draw support
 
 void CIconsView::DrawCapacityBar(Graphics& g, const CRect& rect, const LFStoreDescriptor& StoreDescriptor)
 {
@@ -270,6 +265,9 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 		}
 }
 
+
+// Drawing
+
 void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
@@ -286,6 +284,20 @@ void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOO
 
 	// Icon
 	DrawJumboIcon(dc, g, CPoint((rectItem->left+rectItem->right-128)/2, rectItem->top+ITEMVIEWPADDING), pItemDescriptor);
+}
+
+
+// Label edit
+
+RECT CIconsView::GetLabelRect(INT Index) const
+{
+	RECT rect = GetItemRect(Index);
+
+	rect.bottom = (rect.top+=128+ITEMVIEWPADDING+ITEMVIEWPADDING/2-2)+m_DefaultFontHeight+4;
+	rect.left += ITEMVIEWPADDING/2;
+	rect.right -= ITEMVIEWPADDING/2;
+
+	return rect;
 }
 
 

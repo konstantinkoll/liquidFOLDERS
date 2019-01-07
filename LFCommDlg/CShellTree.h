@@ -9,7 +9,7 @@
 // CShellTree
 //
 
-#define WM_SHELLCHANGE     WM_USER+1
+#define WM_SHELLCHANGE     WM_USER+5
 
 struct ExplorerTreeItemData
 {

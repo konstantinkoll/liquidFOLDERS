@@ -9,15 +9,6 @@
 // CExplorerList
 //
 
-#define REQUEST_TEXTCOLOR                3
-
-struct NM_TEXTCOLOR
-{
-	NMHDR hdr;
-	INT Item;
-	COLORREF Color;
-};
-
 class CExplorerList : public CListCtrl
 {
 public:
@@ -38,8 +29,6 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
-
-	DECLARE_TOOLTIP()
 
 	HTHEME m_hThemeButton;
 	CSize m_CheckboxSize;

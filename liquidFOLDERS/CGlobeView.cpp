@@ -124,6 +124,33 @@ void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 			m_GlobeCurrent = pPersistentData->Location;
 }
 
+void CGlobeView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
+{
+	CFileView::GetPersistentData(Data, ForReload);
+
+	Data.Location = m_GlobeCurrent;
+	Data.LocationValid = TRUE;
+}
+
+
+// Menus
+
+BOOL CGlobeView::GetContextMenu(CMenu& Menu, INT Index)
+{
+	if (Index==-1)
+		Menu.LoadMenu(IDM_GLOBE);
+
+	const BOOL SetDefaultItem = CFileView::GetContextMenu(Menu, Index);
+
+	if (Index!=-1)
+		Menu.InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, CString((LPCSTR)IDS_CONTEXTMENU_OPENGOOGLEEARTH));
+
+	return SetDefaultItem;
+}
+
+
+// Item handling
+
 INT CGlobeView::ItemAtPosition(CPoint point) const
 {
 	INT Result = -1;
@@ -151,6 +178,9 @@ void CGlobeView::ShowTooltip(const CPoint& point)
 		CFileView::ShowTooltip(point);
 }
 
+
+// Drawing
+
 void CGlobeView::GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL /*Themed*/) const
 {
 	ENSURE(strMessage.LoadString(IDS_NORENDERINGCONTEXT));
@@ -163,26 +193,6 @@ BOOL CGlobeView::DrawNothing() const
 	return !m_RenderContext.hRC;
 }
 
-BOOL CGlobeView::GetContextMenu(CMenu& Menu, INT Index)
-{
-	if (Index==-1)
-		Menu.LoadMenu(IDM_GLOBE);
-
-	const BOOL SetDefaultItem = CFileView::GetContextMenu(Menu, Index);
-
-	if (Index!=-1)
-		Menu.InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, CString((LPCSTR)IDS_CONTEXTMENU_OPENGOOGLEEARTH));
-
-	return SetDefaultItem;
-}
-
-void CGlobeView::GetPersistentData(FVPersistentData& Data, BOOL ForReload) const
-{
-	CFileView::GetPersistentData(Data, ForReload);
-
-	Data.Location = m_GlobeCurrent;
-	Data.LocationValid = TRUE;
-}
 
 BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const
 {
@@ -199,6 +209,9 @@ void CGlobeView::UpdateCursor()
 	if (Cursor!=lpszCursorName)
 		SetCursor(hCursor=theApp.LoadStandardCursor(lpszCursorName=Cursor));
 }
+
+
+// Google Earth export
 
 void CGlobeView::WriteGoogleAttribute(CStdioFile& File, const LFItemDescriptor* pItemDescriptor, UINT Attr)
 {
@@ -854,6 +867,16 @@ __forceinline void CGlobeView::RenderScene()
 			// Draw label
 			CalcAndDrawLabel(Themed);
 		}
+
+	// Taskbar shadow
+	if (Themed && DrawShadow())
+	{
+		theRenderer.SetColor(0x000000, 0.094f);
+		glRecti(0, 0, m_RenderContext.Width, 1);
+
+		theRenderer.SetColor(0x000000, 0.047f);
+		glRecti(0, 1, m_RenderContext.Width, 2);
+	}
 
 	theRenderer.EndRender(this, m_RenderContext, Themed);
 }

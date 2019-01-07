@@ -17,12 +17,10 @@ class CConditionList sealed : public CFrontstageItemView
 public:
 	CConditionList();
 
-	virtual void PreSubclassWindow();
-	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
-
 	void SetConditions(const ConditionArray& Conditions);
 
 protected:
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void AdjustLayout();
 	virtual void FireSelectedItem() const;
 	virtual void DeleteSelectedItem() const;

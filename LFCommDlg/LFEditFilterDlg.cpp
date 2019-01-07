@@ -31,19 +31,37 @@ CConditionList::CConditionList()
 			AfxThrowResourceException();
 	}
 
+	// Conditions
 	p_Conditions = NULL;
 
 	if (m_strCompare[0].IsEmpty())
 		for (UINT a=0; a<LFFilterCompareCount; a++)
 			ENSURE(m_strCompare[a].LoadString(IDS_COMPARE_FIRST+a));
-}
 
-void CConditionList::PreSubclassWindow()
-{
-	CFrontstageItemView::PreSubclassWindow();
-
+	// Items
 	SetItemHeight(LFGetApp()->m_ExtraLargeIconSize, 2);
 }
+
+
+// Menus
+
+BOOL CConditionList::GetContextMenu(CMenu& Menu, INT Index)
+{
+	Menu.LoadMenu(Index>=0 ? IDM_CONDITION : IDM_CONDITIONLIST);
+
+	return (Index>=0);
+}
+
+
+// Layouts
+
+void CConditionList::AdjustLayout()
+{
+	AdjustLayoutColumns();
+}
+
+
+// Item data
 
 void CConditionList::SetConditions(const ConditionArray& Conditions)
 {
@@ -53,17 +71,8 @@ void CConditionList::SetConditions(const ConditionArray& Conditions)
 	AdjustLayout();
 }
 
-BOOL CConditionList::GetContextMenu(CMenu& Menu, INT Index)
-{
-	Menu.LoadMenu(Index>=0 ? IDM_CONDITION : IDM_CONDITIONLIST);
 
-	return (Index>=0);
-}
-
-void CConditionList::AdjustLayout()
-{
-	AdjustLayoutColumns();
-}
+// Selected item commands
 
 void CConditionList::FireSelectedItem() const
 {
@@ -80,6 +89,9 @@ void CConditionList::DeleteSelectedItem() const
 
 	GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_DELETE);
 }
+
+
+// Drawing
 
 void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {

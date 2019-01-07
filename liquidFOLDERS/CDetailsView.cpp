@@ -22,6 +22,9 @@ void CDetailsView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	ValidateAllItems();
 }
 
+
+// Layouts
+
 void CDetailsView::AdjustLayout()
 {
 	CRect rectLayout;
@@ -34,21 +37,8 @@ void CDetailsView::AdjustLayout()
 		FullWidth, BACKSTAGEBORDER);
 }
 
-LFFont* CDetailsView::GetLabelFont() const
-{
-	return &theApp.m_LargeFont;
-}
 
-RECT CDetailsView::GetLabelRect(INT Index) const
-{
-	RECT rect = GetItemRect(Index);
-
-	rect.bottom = (rect.top+=ITEMVIEWPADDING-2)+m_LargeFontHeight+4;
-	rect.left += 128+2*ITEMVIEWPADDING+GetColorDotWidth(Index, m_LargeColorDots)-5;
-	rect.right -= ITEMVIEWPADDING-2;
-
-	return rect;
-}
+// Drawing
 
 void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
@@ -166,4 +156,23 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 			SelectObject(dcMem, hOldBitmap);
 		}
 	}
+}
+
+
+// Label edit
+
+LFFont* CDetailsView::GetLabelFont() const
+{
+	return &theApp.m_LargeFont;
+}
+
+RECT CDetailsView::GetLabelRect(INT Index) const
+{
+	RECT rect = GetItemRect(Index);
+
+	rect.bottom = (rect.top+=ITEMVIEWPADDING-2)+m_LargeFontHeight+4;
+	rect.left += 128+2*ITEMVIEWPADDING+GetColorDotWidth(Index, m_LargeColorDots)-5;
+	rect.right -= ITEMVIEWPADDING-2;
+
+	return rect;
 }
