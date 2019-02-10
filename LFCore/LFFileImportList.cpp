@@ -49,12 +49,59 @@ LFFileImportList::LFFileImportList()
 	m_LastError = LFOk;
 }
 
+BOOL LFFileImportList::IsPathGUID(LPCWSTR pPath)
+{
+	assert(pPath);
+
+	// Check first and last chars: must be brackets
+	const SIZE_T szPath = wcslen(pPath);
+	if (szPath<34)
+		return FALSE;
+
+	if ((pPath[0]!=L'{') || (pPath[szPath-1]!=L'}'))
+		return FALSE;
+
+	// Check all other chars
+	for (SIZE_T Ptr=1; Ptr<szPath-1; Ptr++)
+		if (!wcschr(L"-0123456789ABCDEFabcdef", pPath[Ptr]))
+			return FALSE;
+
+	return TRUE;
+}
+
+BOOL LFFileImportList::IsPathEligible(SIZE_T szPath, const WIN32_FIND_DATA& FindData, DWORD Forbidden)
+{
+	assert((Forbidden & ALWAYSFORBIDDEN)==ALWAYSFORBIDDEN);
+
+	// No forbidden files
+	if (FindData.dwFileAttributes & Forbidden)
+		return FALSE;
+
+	// No super-hidden files
+	if ((FindData.cFileName[0]=='.') && (FindData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN))
+		return FALSE;
+
+	// No virtual parent folders
+	if ((wcscmp(FindData.cFileName, L".")==0) || (wcscmp(FindData.cFileName, L"..")==0))
+		return FALSE;
+
+	// No GUIDs as path name
+	if (IsPathGUID(FindData.cFileName))
+		return FALSE;
+
+	// Check for max path size
+	if (szPath+wcslen(FindData.cFileName)+1>=MAX_PATH)
+		return FALSE;
+
+	// Eligible
+	return TRUE;
+}
+
 BOOL LFFileImportList::AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindData)
 {
 	assert(pPath);
 
 	LFFileImportItem Item;
-
 	wcscpy_s(Item.Path, MAX_PATH, pPath);
 
 	// Remove trailing backslash
@@ -88,8 +135,9 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 	ProgressMinorStart(pProgress, 1, m_Items[0].Path);
 
 	// Resolve
-	UINT Index = 0;
+	const DWORD Forbidden = Recursive ? ALWAYSFORBIDDEN : ALWAYSFORBIDDEN | FILE_ATTRIBUTE_DIRECTORY;
 
+	UINT Index = 0;
 	while (Index<m_ItemCount)
 	{
 		if (!m_Items[Index].Processed)
@@ -102,7 +150,9 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 			else
 				if (Attr & FILE_ATTRIBUTE_DIRECTORY)
 				{
-					// Dateien suchen und hinzufügen
+					// Find and add files
+					const SIZE_T szPath = wcslen(m_Items[Index].Path);
+
 					WCHAR DirSpec[MAX_PATH];
 					wcscpy_s(DirSpec, MAX_PATH, m_Items[Index].Path);
 					wcscat_s(DirSpec, MAX_PATH, L"\\*");
@@ -113,11 +163,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 					if (hFind!=INVALID_HANDLE_VALUE)
 						do
 						{
-							if (((FindData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL | FILE_ATTRIBUTE_SYSTEM))==0) &&
-								(wcscmp(FindData.cFileName, L".")!=0) && (wcscmp(FindData.cFileName, L"..")!=0) &&
-								((FindData.cFileName[0]!='.') || ((FindData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)==0)) &&
-								(((FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0) || Recursive) &&
-								(wcslen(m_Items[Index].Path)+wcslen(FindData.cFileName)<MAX_PATH-1))
+							if (IsPathEligible(szPath, FindData, Forbidden))
 								{
 									WCHAR Filename[MAX_PATH];
 									wcscpy_s(Filename, MAX_PATH, m_Items[Index].Path);

@@ -1032,26 +1032,41 @@ LFCORE_API UINT LFCreateStoreWindows(LPCWSTR pPath, LPWSTR pStoreName, LFProgres
 	if (!TrailingBackslash)
 		wcscat_s(Store.DatPath, MAX_PATH, L"\\");
 
-	// Create name
-	wcscpy_s(Store.StoreName, 256, pPath);
+	// Set store name
+	if (pStoreName && *pStoreName)
+	{
+		// Given store name
+		wcscpy_s(Store.StoreName, 256, pStoreName);
+	}
+	else
+	{
+		// Create store name
+		wcscpy_s(Store.StoreName, 256, pPath);
 
-	if (TrailingBackslash)
-		Store.StoreName[wcslen(Store.StoreName)-1] = L'\0';
+		if (TrailingBackslash)
+			Store.StoreName[wcslen(Store.StoreName)-1] = L'\0';
 
-	LPCWSTR pChar = wcsrchr(Store.StoreName, L'\\');
-	if (pChar)
-		wcscpy_s(Store.StoreName, 256, pChar+1);
-
-	// Retrieve or save store name
-	if (pStoreName)
-		if (*pStoreName)
+		LPCWSTR pChar = wcsrchr(Store.StoreName, L'\\');
+		if (pChar)
 		{
-			wcscpy_s(Store.StoreName, 256, pStoreName);
+			// Valid subfolder path
+			wcscpy_s(Store.StoreName, 256, pChar+1);
 		}
 		else
 		{
-			wcscpy_s(pStoreName, 256, Store.StoreName);
+			// Get volume name
+			WCHAR szVolumeRoot[] = L" :\\";
+			szVolumeRoot[0] = Store.DatPath[0];
+
+			SHFILEINFO ShellFileInfo;
+			if (SHGetFileInfo(szVolumeRoot, 0, &ShellFileInfo, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
+				wcscpy_s(Store.StoreName, 256, ShellFileInfo.szDisplayName);
 		}
+
+		// Copy back created store name to caller
+		if (pStoreName)
+			wcscpy_s(pStoreName, 256, Store.StoreName);
+	}
 
 	return CommitInitializeStore(&Store, pProgress);
 }

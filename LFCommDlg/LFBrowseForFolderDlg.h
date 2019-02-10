@@ -35,6 +35,8 @@ protected:
 	CString m_Hint;
 
 private:
+	static BOOL IsValidPath(ExplorerTreeItemData* pData);
+
 	CHeaderArea m_wndHeaderArea;
 	CShellTree m_wndExplorerTree;
 };

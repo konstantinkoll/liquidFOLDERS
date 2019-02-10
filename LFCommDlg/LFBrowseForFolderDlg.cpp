@@ -29,6 +29,36 @@ void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+BOOL LFBrowseForFolderDlg::IsValidPath(ExplorerTreeItemData* pData)
+{
+	// Check item data
+	if (!pData)
+		return FALSE;
+
+	// Get path
+	WCHAR Path[MAX_PATH];
+	if (!SHGetPathFromIDList(pData->pidlFQ, Path))
+		return FALSE;
+
+	// Check volume type
+	ASSERT((Path[0]>=L'A') && (Path[0]<='Z'));
+	if ((LFGetLogicalVolumes() & (1<<(Path[0]-L'A')))==0)
+		return FALSE;
+
+	// Subfolder
+	if (wcslen(Path)>3)
+		return TRUE;
+
+	// Check for boot volume
+	WCHAR WindowsDirectory[MAX_PATH];
+	UINT szPath = GetWindowsDirectory(WindowsDirectory, MAX_PATH);
+	if (!szPath || (szPath>MAX_PATH-1))
+		return FALSE;
+
+	// Only allow root directory on non-boot volumes
+	return Path[0]!=WindowsDirectory[0];
+}
+
 void LFBrowseForFolderDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
 	LFDialog::AdjustLayout(rectLayout, nFlags);
@@ -101,16 +131,6 @@ void LFBrowseForFolderDlg::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*
 	{
 		NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
-		BOOL Enable = FALSE;
-
-		ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->itemNew.lParam;
-		if (pItem)
-		{
-			WCHAR Path[MAX_PATH];
-			if (SHGetPathFromIDList(pItem->pidlFQ, Path))
-				Enable = (wcslen(Path)>3);
-		}
-
-		GetDlgItem(IDOK)->EnableWindow(Enable);
+		GetDlgItem(IDOK)->EnableWindow(IsValidPath((ExplorerTreeItemData*)pNMTreeView->itemNew.lParam));
 	}
 }
