@@ -182,6 +182,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LPCCOREATTRIBUTES pCore
 {
 	LFItemDescriptor* pItemDescriptor = new LFItemDescriptor;
 
+	// Core attributes
 	if (pCoreAttributes)
 	{
 		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, CoreAttributes));
@@ -197,6 +198,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LPCCOREATTRIBUTES pCore
 		ZeroMemory(pItemDescriptor, offsetof(LFItemDescriptor, Description)+sizeof(pItemDescriptor->Description[0]));
 	}
 
+	// Store data
 	if (pStoreData)
 	{
 		assert(StoreDataSize>0);
@@ -209,15 +211,16 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LPCCOREATTRIBUTES pCore
 		ResetStoreData(pItemDescriptor);
 	}
 
-	pItemDescriptor->AggregateFirst = pItemDescriptor->AggregateLast = -1;
-	pItemDescriptor->RefCount = 1;
-	pItemDescriptor->FolderMainCaptionCount = pItemDescriptor->FolderSubcaptionStart = 0;
-
-	// Zeiger auf statische Attributwerte initalisieren
+	// Attributes
 	for (UINT a=0; a<IndexTables[IDXTABLE_MASTER].cTableEntries; a++)
 		pItemDescriptor->AttributeValues[CoreAttributeEntries[a].Attr] = (BYTE*)&pItemDescriptor->CoreAttributes+CoreAttributeEntries[a].Offset;
 
 	pItemDescriptor->AttributeValues[LFAttrFileCount] = &pItemDescriptor->AggregateCount;
+
+	// Other
+	pItemDescriptor->AggregateFirst = pItemDescriptor->AggregateLast = -1;
+	pItemDescriptor->RefCount = 1;
+	pItemDescriptor->FolderMainCaptionCount = pItemDescriptor->FolderSubcaptionStart = 0;
 
 	return pItemDescriptor;
 }

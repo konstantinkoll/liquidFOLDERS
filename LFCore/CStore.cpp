@@ -499,7 +499,7 @@ UINT CStore::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescripto
 	return LFOk;
 }
 
-UINT CStore::RenameFile(const REVENANTFILE& File, LFItemDescriptor* pItemDescriptor)
+UINT CStore::RenameFile(const HORCRUXFILE& File, LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
@@ -626,7 +626,11 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 	}
 }
 
-BOOL CStore::SynchronizeFile(const REVENANTFILE& /*File*/)
+void CStore::SynchronizeMatch(const HORCRUXFILE& /*File*/)
+{
+}
+
+BOOL CStore::SynchronizeCommit(const HORCRUXFILE& /*File*/)
 {
 	// Always keep file
 	return TRUE;

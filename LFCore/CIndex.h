@@ -11,14 +11,17 @@
 
 #define IndexMaintenanceSteps     (IDXTABLECOUNT*2+1)
 
-typedef class _REVENANTFILE
+typedef class _HORCRUXFILE
 {
 public:
+	operator LFCoreAttributes&() const { return *p_CoreAttributes; }
 	operator LPCCOREATTRIBUTES() const { return p_CoreAttributes; }
 	operator LPCVOID() const { return p_StoreData; }
+	operator LPCWSTR() const { return (LPCWSTR)p_StoreData; }
+	operator LPWSTR() const { return (LPWSTR)p_StoreData; }
 	operator BYTE() const { return p_CoreAttributes->Flags; }
 
-	inline const _REVENANTFILE(LPCCOREATTRIBUTES pCoreAttributes, LPCVOID pStoreData)
+	inline const _HORCRUXFILE(LPCCOREATTRIBUTES pCoreAttributes, LPVOID pStoreData)
 	{
 		assert(pCoreAttributes);
 
@@ -26,7 +29,7 @@ public:
 		p_StoreData = pStoreData;
 	}
 
-	inline const _REVENANTFILE(LFItemDescriptor* pItemDescriptor)
+	inline const _HORCRUXFILE(LFItemDescriptor* pItemDescriptor)
 	{
 		assert(pItemDescriptor);
 
@@ -34,15 +37,15 @@ public:
 		p_StoreData = &pItemDescriptor->StoreData;
 	}
 
-	friend _REVENANTFILE operator+=(const _REVENANTFILE& File, const BYTE Flag) { File.p_CoreAttributes->Flags |= Flag; return File; }
-	friend _REVENANTFILE operator-=(const _REVENANTFILE& File, const BYTE Flag) { File.p_CoreAttributes->Flags &= ~Flag; return File; }
-	friend _REVENANTFILE operator|=(const _REVENANTFILE& File, const UINT Flags) { File.p_CoreAttributes->Flags |= Flags; return File; }
-	friend _REVENANTFILE operator&=(const _REVENANTFILE& File, const UINT Flags) { File.p_CoreAttributes->Flags &= Flags; return File; }
+	friend _HORCRUXFILE operator+=(const _HORCRUXFILE& File, const BYTE Flag) { File.p_CoreAttributes->Flags |= Flag; return File; }
+	friend _HORCRUXFILE operator-=(const _HORCRUXFILE& File, const BYTE Flag) { File.p_CoreAttributes->Flags &= ~Flag; return File; }
+	friend _HORCRUXFILE operator|=(const _HORCRUXFILE& File, const UINT Flags) { File.p_CoreAttributes->Flags |= Flags; return File; }
+	friend _HORCRUXFILE operator&=(const _HORCRUXFILE& File, const UINT Flags) { File.p_CoreAttributes->Flags &= Flags; return File; }
 
 protected:
 	LPCOREATTRIBUTES p_CoreAttributes;
-	LPCVOID p_StoreData;
-} REVENANTFILE, *LPREVENANTFILE;
+	LPVOID p_StoreData;
+} HORCRUXFILE, *LPHORCRUXFILE;
 
 class CStore;
 
@@ -70,7 +73,8 @@ public:
 
 	// Operations with callbacks to CStore object
 	void Update(LFTransactionList* pTransactionList, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL, BOOL MakeTask=FALSE);
-	UINT Synchronize(LFProgress* pProgress=NULL);
+	UINT SynchronizeMatch();
+	UINT SynchronizeCommit(LFProgress* pProgress=NULL);
 	void Delete(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
 protected:
@@ -78,7 +82,7 @@ protected:
 	void SetError(LFTransactionList* pTransactionList, UINT Index, UINT Result, LFProgress* pProgress=NULL) const;
 	BOOL LoadTable(UINT TableID, BOOL Initialize=FALSE, UINT* pResult=NULL);
 	UINT CompactTable(UINT TableID) const;
-	UINT GetFileLocation(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor=NULL, BOOL RemoveNew=FALSE, WIN32_FIND_DATA* pFindData=NULL);
+	UINT GetFileLocation(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor=NULL, BOOL RemoveNew=FALSE, WIN32_FIND_DATA* pFindData=NULL);
 
 	CStore* p_Store;
 	LFStoreDescriptor* p_StoreDescriptor;
@@ -124,5 +128,5 @@ inline BOOL CIndex::ProgressMinorNext(LFProgress* pProgress) const
 
 inline UINT CIndex::GetFileLocation(LPCCOREATTRIBUTES PtrMaster, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor, BOOL RemoveNew, WIN32_FIND_DATA* pFindData)
 {
-	return GetFileLocation(REVENANTFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)), pPath, cCount, pItemDescriptor, RemoveNew, pFindData);
+	return GetFileLocation(HORCRUXFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)), pPath, cCount, pItemDescriptor, RemoveNew, pFindData);
 }

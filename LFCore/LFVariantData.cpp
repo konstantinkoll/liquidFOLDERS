@@ -800,7 +800,7 @@ Abort:
 
 					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
 					SystemTimeToFileTime(&stUTC, &VData.Time);
-					VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
+					VData.IsNull = !(VData.Time.dwHighDateTime | VData.Time.dwLowDateTime);
 				}
 
 				break;
@@ -824,7 +824,7 @@ Abort:
 					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
 					SystemTimeToFileTime(&stUTC, &VData.Time);
 
-					VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
+					VData.IsNull = !(VData.Time.dwHighDateTime || VData.Time.dwLowDateTime);
 				}
 
 				break;
@@ -851,7 +851,7 @@ Abort:
 							TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
 							SystemTimeToFileTime(&stUTC, &VData.Time);
 
-							VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
+							VData.IsNull = !(VData.Time.dwHighDateTime || VData.Time.dwLowDateTime);
 						}
 					}
 					else
@@ -873,7 +873,7 @@ Abort:
 								TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
 								SystemTimeToFileTime(&stUTC, &VData.Time);
 
-								VData.IsNull = !((VData.Time.dwHighDateTime) || (VData.Time.dwLowDateTime));
+								VData.IsNull = !(VData.Time.dwHighDateTime || VData.Time.dwLowDateTime);
 							}
 						}
 				}

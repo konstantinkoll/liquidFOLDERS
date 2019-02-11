@@ -49,11 +49,14 @@ extern LFMessageIDs LFMessages;
 
 #define END_FINDMASTER() }
 
-#define START_ITERATEMASTER() \
-	LOAD_MASTER(SetError(pTransactionList, m_pTable[IDXTABLE_MASTER]->GetError()),); \
+#define START_ITERATEMASTEREX(AbortOps, AbortRetval) \
+	LOAD_MASTER(AbortOps, AbortRetval); \
 	INT_PTR ID = 0; \
 	LPCOREATTRIBUTES PtrMaster = NULL; \
 	while (m_pTable[IDXTABLE_MASTER]->FindNext(ID, (LPVOID&)PtrMaster)) {
+
+#define START_ITERATEMASTER() \
+	START_ITERATEMASTEREX(SetError(pTransactionList, m_pTable[IDXTABLE_MASTER]->GetError()),)
 
 #define END_ITERATEMASTER() }
 
@@ -319,7 +322,7 @@ UINT CIndex::MaintenanceAndStatistics(BOOL Scheduled, BOOL& Repaired, LFProgress
 	return LFOk;
 }
 
-UINT CIndex::GetFileLocation(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor, BOOL RemoveNew, WIN32_FIND_DATA* pFindData)
+UINT CIndex::GetFileLocation(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor, BOOL RemoveNew, WIN32_FIND_DATA* pFindData)
 {
 	assert(pPath);
 	assert(cCount>=2*MAX_PATH);
@@ -846,7 +849,7 @@ void CIndex::Update(LFTransactionList* pTransactionList, const LFVariantData* pV
 
 		// Rename physical file?
 		if (DoRename && m_IsMainIndex)
-			switch (Result=p_Store->RenameFile(REVENANTFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)), pItemDescriptor))
+			switch (Result=p_Store->RenameFile(HORCRUXFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)), pItemDescriptor))
 			{
 			case LFOk:
 				pItemDescriptor->CoreAttributes.Flags &= ~LFFlagMissing;
@@ -889,7 +892,20 @@ void CIndex::Update(LFTransactionList* pTransactionList, const LFVariantData* pV
 	SetError(pTransactionList, LFIllegalID);
 }
 
-UINT CIndex::Synchronize(LFProgress* pProgress)
+UINT CIndex::SynchronizeMatch()
+{
+	UINT Result = LFOk;
+
+	START_ITERATEMASTEREX(, m_pTable[IDXTABLE_MASTER]->GetError());
+
+	p_Store->SynchronizeMatch(HORCRUXFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)));
+
+	END_ITERATEMASTER();
+
+	return Result;
+}
+
+UINT CIndex::SynchronizeCommit(LFProgress* pProgress)
 {
 	// Access
 	if (!m_WriteAccess)
@@ -903,8 +919,12 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 	if (SetProgressObject(pProgress, PtrMaster->FileName))
 		return LFCancel;
 
-	if (p_Store->SynchronizeFile(REVENANTFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster))))
+	if (p_Store->SynchronizeCommit(HORCRUXFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster))))
 	{
+		// File is not missing
+		PtrMaster->Flags &= ~LFFlagMissing;
+
+		// Update core attributes from find data
 		m_pTable[IDXTABLE_MASTER]->MakeDirty();
 
 		// Progress
@@ -913,6 +933,7 @@ UINT CIndex::Synchronize(LFProgress* pProgress)
 	}
 	else
 	{
+		// Remove file from index
 		LOAD_SLAVE();
 		m_pTable[PtrMaster->SlaveID]->Invalidate(PtrMaster->FileID, IDs[PtrMaster->SlaveID]);
 		DISCARD_SLAVE();
@@ -953,7 +974,7 @@ void CIndex::Delete(LFTransactionList* pTransactionList, LFProgress* pProgress)
 		return;
 	}
 
-	UINT Result = p_Store->DeleteFile(REVENANTFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)));
+	UINT Result = p_Store->DeleteFile(HORCRUXFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)));
 	if (Result==LFOk)
 	{
 		LOAD_SLAVE();

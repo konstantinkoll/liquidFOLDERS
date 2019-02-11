@@ -43,7 +43,7 @@ public:
 	UINT GetElementSize() const;
 	UINT GetRequiredElementSize() const;
 	UINT64 GetRequiredFileSize() const;
-	LPCVOID GetStoreData(LPCVOID pChar) const;
+	LPVOID GetStoreData(LPCVOID pData) const;
 	UINT GetError(BOOL SingleStore=FALSE);
 
 	void MakeDirty(BOOL NeedsCompaction=FALSE);

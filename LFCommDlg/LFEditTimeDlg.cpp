@@ -84,7 +84,7 @@ BOOL LFEditTimeDlg::InitDialog()
 
 	// Data
 	if (!p_VData->IsNull)
-		if ((p_VData->Time.dwHighDateTime) || (p_VData->Time.dwLowDateTime))
+		if (p_VData->Time.dwHighDateTime || p_VData->Time.dwLowDateTime)
 		{
 			SYSTEMTIME stUTC;
 			SYSTEMTIME stLocal;

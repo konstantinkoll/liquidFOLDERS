@@ -137,15 +137,7 @@ void SetAttributesFromFindData(LFCoreAttributes& CoreAttributes, const WIN32_FIN
 		CoreAttributes.Flags = (CoreAttributes.Flags & ~LFFlagNew) | LFFlagArchive;
 
 	// Adjust files with modification time older than creation time
-	ULARGE_INTEGER CreationTime;
-	CreationTime.LowPart = CoreAttributes.CreationTime.dwLowDateTime;
-	CreationTime.HighPart = CoreAttributes.CreationTime.dwHighDateTime;
-
-	ULARGE_INTEGER FileTime;
-	FileTime.LowPart = CoreAttributes.FileTime.dwLowDateTime;
-	FileTime.HighPart = CoreAttributes.FileTime.dwHighDateTime;
-
-	if (CreationTime.QuadPart>FileTime.QuadPart)
+	if (CompareFileTime(&CoreAttributes.CreationTime, &CoreAttributes.FileTime)>0)
 		CoreAttributes.CreationTime = CoreAttributes.FileTime;
 }
 

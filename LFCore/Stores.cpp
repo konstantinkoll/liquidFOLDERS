@@ -36,8 +36,8 @@ LFStoreDescriptor StoreCache[MAXSTORES];
 #pragma comment(linker, "/SECTION:.stores,RWS")
 
 
-#define STOREDESCRIPTORFILESIZE               offsetof(LFStoreDescriptor, IdxPathMain)
-#define STOREDESCRIPTORREQUIREDFILESIZE       offsetof(LFStoreDescriptor, SynchronizeTime)
+#define STOREDESCRIPTORFILESIZE             offsetof(LFStoreDescriptor, IdxPathMain)
+#define STOREDESCRIPTORREQUIREDFILESIZE     offsetof(LFStoreDescriptor, SynchronizeTime)
 
 #define ResetStoreFlags(pStoreDescriptor)     pStoreDescriptor->Flags &= (LFStoreFlagsAutoLocation | LFStoreFlagsError);
 

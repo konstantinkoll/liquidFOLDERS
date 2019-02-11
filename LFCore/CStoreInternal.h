@@ -12,7 +12,7 @@ public:
 	CStoreInternal(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexForStore);
 
 	// Non-Index operations
-	virtual UINT GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const;
+	virtual UINT GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount) const;
 	virtual UINT PrepareDelete();
 
 	// Callbacks
@@ -22,7 +22,7 @@ public:
 protected:
 	// Callbacks
 	virtual UINT DeleteDirectories();
-	virtual UINT DeleteFile(const REVENANTFILE& File);
+	virtual UINT DeleteFile(const HORCRUXFILE& File);
 
 private:
 	void GetInternalFilePath(const LFCoreAttributes& CoreAttributes, LPWSTR pPath, SIZE_T cCount) const;

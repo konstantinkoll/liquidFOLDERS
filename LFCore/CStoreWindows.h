@@ -13,7 +13,7 @@ public:
 	CStoreWindows(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexForStore);
 
 	// Non-Index operations
-	virtual UINT GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const;
+	virtual UINT GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount) const;
 
 	// Index operations
 	virtual UINT Synchronize(LFProgress* pProgress=NULL, BOOL OnInitialize=FALSE);
@@ -23,11 +23,26 @@ public:
 
 protected:
 	// Callbacks
-	virtual UINT RenameFile(const REVENANTFILE& File, LFItemDescriptor* pItemDescriptor);
-	virtual UINT DeleteFile(const REVENANTFILE& File);
+	virtual UINT RenameFile(const HORCRUXFILE& File, LFItemDescriptor* pItemDescriptor);
+	virtual UINT DeleteFile(const HORCRUXFILE& File);
 	virtual void SetAttributesFromStore(LFItemDescriptor* pItemDescriptor);
-	virtual BOOL SynchronizeFile(const REVENANTFILE& File);
+	virtual void SynchronizeMatch(const HORCRUXFILE& File);
+	virtual BOOL SynchronizeCommit(const HORCRUXFILE& File);
+
+	SIZE_T m_szDatPath;
 
 private:
+	LPCWSTR ExtractFileName(LPCWSTR pPath);
+	LFFileImportItem* FindSimilarFile(const HORCRUXFILE& File);
+
 	LFFileImportList* m_pFileImportList;
 };
+
+inline LPCWSTR CStoreWindows::ExtractFileName(LPCWSTR pData)
+{
+	assert(pData);
+
+	LPCWSTR pStr = wcsrchr(pData, L'\\');
+
+	return pStr ? pStr+1 : pData;
+}

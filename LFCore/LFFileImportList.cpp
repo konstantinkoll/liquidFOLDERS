@@ -47,6 +47,7 @@ LFFileImportList::LFFileImportList()
 	: LFDynArray()
 {
 	m_LastError = LFOk;
+	m_IsSorted = FALSE;
 }
 
 BOOL LFFileImportList::IsPathGUID(LPCWSTR pPath)
@@ -97,34 +98,43 @@ BOOL LFFileImportList::IsPathEligible(SIZE_T szPath, const WIN32_FIND_DATA& Find
 	return TRUE;
 }
 
-BOOL LFFileImportList::AddPath(LPCWSTR pPath, WIN32_FIND_DATA* pFindData)
+BOOL LFFileImportList::AddPath(LPCWSTR pPath)
 {
 	assert(pPath);
+	assert(pPath[0]!=L'\0');
 
+	// Path
 	LFFileImportItem Item;
 	wcscpy_s(Item.Path, MAX_PATH, pPath);
 
 	// Remove trailing backslash
-	if (Item.Path[0]!=L'\0')
-	{
-		WCHAR* pChar = &Item.Path[wcslen(Item.Path)-1];
-		if (*pChar==L'\\')
-			*pChar = L'\0';
-	}
-
-	// FindData
-	if (pFindData)
-	{
-		Item.FindData = *pFindData;
-		Item.FindDataPresent = TRUE;
-	}
-	else
-	{
-		Item.FindDataPresent = FALSE;
-	}
+	WCHAR* pChar = &Item.Path[wcslen(Item.Path)-1];
+	if (*pChar==L'\\')
+		*pChar = L'\0';
 
 	Item.LastError = LFOk;
-	Item.Processed = FALSE;
+	Item.Processed = PROCESSED_UNTOUCHED;
+	Item.Flags = 0;
+
+	return LFDynArray::AddItem(Item);
+}
+
+BOOL LFFileImportList::AddPath(LPCWSTR pPath, const WIN32_FIND_DATA& FindData)
+{
+	assert(pPath);
+	assert(pPath[0]!=L'\0');
+	assert(pPath[wcslen(pPath)-1]!=L'\\');
+
+	// Path
+	LFFileImportItem Item;
+	wcscpy_s(Item.Path, MAX_PATH, pPath);
+
+	Item.LastError = LFOk;
+	Item.Processed = PROCESSED_UNTOUCHED;
+
+	// FindData
+	Item.FindData = FindData;
+	Item.Flags = FII_FINDDATAVALID;
 
 	return LFDynArray::AddItem(Item);
 }
@@ -142,10 +152,10 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 	{
 		if (!m_Items[Index].Processed)
 		{
-			DWORD Attr = m_Items[Index].FindDataPresent ? m_Items[Index].FindData.dwFileAttributes : GetFileAttributes(m_Items[Index].Path);
+			const DWORD Attr = (m_Items[Index].Flags & FII_FINDDATAVALID) ? m_Items[Index].FindData.dwFileAttributes : GetFileAttributes(m_Items[Index].Path);
 			if (Attr==INVALID_FILE_ATTRIBUTES)
 			{
-				m_Items[Index].Processed = TRUE;
+				m_Items[Index].Processed = PROCESSED_FINISHED;
 			}
 			else
 				if (Attr & FILE_ATTRIBUTE_DIRECTORY)
@@ -164,21 +174,21 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 						do
 						{
 							if (IsPathEligible(szPath, FindData, Forbidden))
+							{
+								WCHAR Filename[MAX_PATH];
+								wcscpy_s(Filename, MAX_PATH, m_Items[Index].Path);
+								wcscat_s(Filename, MAX_PATH, L"\\");
+								wcscat_s(Filename, MAX_PATH, FindData.cFileName);
+
+								AddPath(Filename, FindData);
+
+								// Progress
+								if (pProgress)
 								{
-									WCHAR Filename[MAX_PATH];
-									wcscpy_s(Filename, MAX_PATH, m_Items[Index].Path);
-									wcscat_s(Filename, MAX_PATH, L"\\");
-									wcscat_s(Filename, MAX_PATH, FindData.cFileName);
-
-									AddPath(Filename, &FindData);
-
-									// Progress
-									if (pProgress)
-									{
-										pProgress->MinorCount = m_ItemCount;
-										UpdateProgress(pProgress);
-									}
+									pProgress->MinorCount = m_ItemCount;
+									UpdateProgress(pProgress);
 								}
+							}
 						}
 						while (FindNextFile(hFind, &FindData)!=0);
 
@@ -187,7 +197,7 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 					// Progress
 					ProgressMinorNext(pProgress);
 
-					m_Items[Index].Processed = TRUE;
+					m_Items[Index].Processed = PROCESSED_FINISHED;
 				}
 		}
 
@@ -217,7 +227,7 @@ void LFFileImportList::SetError(UINT Index, UINT Result, LFProgress* pProgress)
 		m_LastError = Result;
 
 	m_Items[Index].LastError = Result;
-	m_Items[Index].Processed = TRUE;
+	m_Items[Index].Processed = PROCESSED_FINISHED;
 
 	// Progress
 	if (ProgressMinorNext(pProgress, Result, GetFileName(Index)))
@@ -267,4 +277,42 @@ UINT LFFileImportList::DoFileImport(BOOL Recursive, const STOREID& StoreID, LFIt
 	SendLFNotifyMessage(LFMessages.StatisticsChanged);
 
 	return m_LastError;
+}
+
+LFFileImportItem* LFFileImportList::FindPath(LPCWSTR pPath)
+{
+	assert(pPath);
+
+	// Sort to enable binary search
+	if (!m_IsSorted)
+	{
+		SortItems();
+
+		m_IsSorted = TRUE;
+	}
+
+	// Find path in import list using binary search
+	INT First = 0;
+	INT Last = (INT)m_ItemCount-1;
+
+	while (First<=Last)
+	{
+		const INT Mid = (First+Last)/2;
+		LFFileImportItem* pItem = &m_Items[Mid];
+
+		const INT Result = _wcsicmp(&pPath[4], pItem->Path);
+		if (!Result)
+			return pItem;
+
+		if (Result<0)
+		{
+			Last = Mid-1;
+		}
+		else
+		{
+			First = Mid+1;
+		}
+	}
+
+	return NULL;
 }

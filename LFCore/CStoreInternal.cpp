@@ -37,7 +37,7 @@ void CStoreInternal::GetInternalFilePath(const LFCoreAttributes& CoreAttributes,
 // Non-Index operations
 //
 
-UINT CStoreInternal::GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const
+UINT CStoreInternal::GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount) const
 {
 	assert(pPath);
 	assert(cCount>=2*MAX_PATH);
@@ -48,7 +48,7 @@ UINT CStoreInternal::GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T 
 	WCHAR Buffer[MAX_PATH];
 	SanitizeFileName(Buffer, MAX_PATH, ((LPCCOREATTRIBUTES)File)->FileName);
 
-	GetInternalFilePath(*File, pPath, cCount);
+	GetInternalFilePath(File, pPath, cCount);
 	wcscat_s(pPath, cCount, L"\\");
 	wcsncat_s(pPath, cCount, Buffer, 127);
 
@@ -151,7 +151,7 @@ UINT CStoreInternal::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemD
 	return GetFilePath(pItemDescriptor, pPath, cCount);
 }
 
-UINT CStoreInternal::DeleteFile(const REVENANTFILE& File)
+UINT CStoreInternal::DeleteFile(const HORCRUXFILE& File)
 {
 	WCHAR Path[2*MAX_PATH];
 	UINT Result;

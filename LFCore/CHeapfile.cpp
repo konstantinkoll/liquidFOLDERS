@@ -114,7 +114,7 @@ CHeapfile::~CHeapfile()
 	free(m_pBuffer);
 }
 
-LPCVOID CHeapfile::GetStoreData(LPCVOID pData) const
+LPVOID CHeapfile::GetStoreData(LPCVOID pData) const
 {
 	return m_Header.StoreDataSize ? (LPBYTE)pData+m_Header.ElementSize-m_Header.StoreDataSize : NULL;
 }

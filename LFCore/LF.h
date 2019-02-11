@@ -392,6 +392,9 @@ struct LFItemCategoryDescriptor
 
 // Variant attribute data
 
+inline BOOL operator==(const FILETIME& a, const FILETIME& b) { return *((UINT64*)&a)==*((UINT64*)&b); }
+inline BOOL operator!=(const FILETIME& a, const FILETIME& b) { return *((UINT64*)&a)!=*((UINT64*)&b); }
+
 struct LFFraction
 {
 	UINT Num;
@@ -785,7 +788,7 @@ typedef const LPCOREATTRIBUTES LPCCOREATTRIBUTES;
 
 // Sources
 
-#define LFSourceCount                 11
+#define LFSourceCount     11
 
 
 // Item structure

@@ -50,8 +50,6 @@ BOOL CheckCondition(LPCVOID pValue, LFFilterCondition* pFilterCondition)
 	CHAR Server[256];
 	FILETIME Time1;
 	FILETIME Time2;
-	ULARGE_INTEGER ULI1;
-	ULARGE_INTEGER ULI2;
 	LPCWSTR pHashtagArray;
 	WCHAR Hashtag[256];
 
@@ -309,20 +307,10 @@ BOOL CheckCondition(LPCVOID pValue, LFFilterCondition* pFilterCondition)
 			return memcmp(&Time1, &Time2, sizeof(FILETIME))!=0;
 
 		case LFFilterCompareIsAboveOrEqual:
-			ULI1.LowPart = ((LPFILETIME)pValue)->dwLowDateTime;
-			ULI1.HighPart = ((LPFILETIME)pValue)->dwHighDateTime;
-			ULI2.LowPart = pFilterCondition->VData.Time.dwLowDateTime;
-			ULI2.HighPart = pFilterCondition->VData.Time.dwHighDateTime;
-
-			return ULI1.QuadPart>=ULI2.QuadPart;
+			return CompareFileTime((LPFILETIME)pValue, &pFilterCondition->VData.Time)>=0;
 
 		case LFFilterCompareIsBelowOrEqual:
-			ULI1.LowPart = ((LPFILETIME)pValue)->dwLowDateTime;
-			ULI1.HighPart = ((LPFILETIME)pValue)->dwHighDateTime;
-			ULI2.LowPart = pFilterCondition->VData.Time.dwLowDateTime;
-			ULI2.HighPart = pFilterCondition->VData.Time.dwHighDateTime;
-
-			return ULI1.QuadPart<=ULI2.QuadPart;
+			return CompareFileTime((LPFILETIME)pValue, &pFilterCondition->VData.Time)<=0;
 
 		default:
 			return FALSE;

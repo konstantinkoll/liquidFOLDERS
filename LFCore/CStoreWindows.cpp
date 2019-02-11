@@ -14,6 +14,7 @@ CStoreWindows::CStoreWindows(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexF
 	: CStore(pStoreDescriptor, hMutexForStore, sizeof(WCHAR)*MAX_PATH)
 {
 	m_pFileImportList = NULL;
+	m_szDatPath = wcslen(p_StoreDescriptor->DatPath);
 }
 
 
@@ -21,7 +22,7 @@ CStoreWindows::CStoreWindows(LFStoreDescriptor* pStoreDescriptor, HMUTEX hMutexF
 //
 
 
-UINT CStoreWindows::GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const
+UINT CStoreWindows::GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount) const
 {
 	assert((LPCVOID)File);
 	assert(pPath);
@@ -51,25 +52,26 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 	// Resolve
 	m_pFileImportList->Resolve(TRUE, pProgress);
 
-	// Sort for binary search
-	m_pFileImportList->SortItems();
-
 	// Synchronize with index
 	UINT Result;
-	if ((Result=m_pIndexMain->Synchronize(pProgress))!=LFOk)
+	if ((Result=m_pIndexMain->SynchronizeMatch())!=LFOk)
+		goto Finish;
+
+	if ((Result=m_pIndexMain->SynchronizeCommit(pProgress))!=LFOk)
 		goto Finish;
 
 	if (m_pIndexAux)
-		if ((Result=m_pIndexAux->Synchronize(pProgress))!=LFOk)
+		if ((Result=m_pIndexAux->SynchronizeCommit(pProgress))!=LFOk)
 			goto Finish;
 
 	// Import new files
 	Result = m_pFileImportList->m_LastError;
-	const SIZE_T szDatPath = wcslen(p_StoreDescriptor->DatPath);
 
 	for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
 	{
-		if (!(*m_pFileImportList)[a].Processed)
+		const LFFileImportItem* pItem = &(*m_pFileImportList)[a];
+
+		if (!pItem->Processed)
 		{
 			// Progress
 			if (SetProgressObject(pProgress, m_pFileImportList->GetFileName(a)))
@@ -79,13 +81,15 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 			}
 
 			// Set store data from path
-			LPCWSTR pStr = &(*m_pFileImportList)[a].Path[szDatPath];
+			assert(m_szDatPath);
+			LPCWSTR pStr = &pItem->Path[m_szDatPath];
+
 			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(NULL, pStr, (wcslen(pStr)+1)*sizeof(WCHAR));
 
 			UINT Result;
 			WCHAR Path[2*MAX_PATH];
-			if ((Result=CStore::PrepareImport((*m_pFileImportList)[a].Path, pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
-				CommitImport(pItemDescriptor, TRUE, (*m_pFileImportList)[a].Path, OnInitialize);
+			if ((Result=CStore::PrepareImport(pItem->Path, pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
+				CommitImport(pItemDescriptor, TRUE, pItem->Path, OnInitialize);
 
 			LFFreeItemDescriptor(pItemDescriptor);
 
@@ -171,35 +175,32 @@ UINT CStoreWindows::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDe
 	return GetFilePath(pItemDescriptor, pPath, cCount);
 }
 
-UINT CStoreWindows::RenameFile(const REVENANTFILE& File, LFItemDescriptor* pItemDescriptor)
+UINT CStoreWindows::RenameFile(const HORCRUXFILE& File, LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
-	// Sanitize Name
+	// Sanitize name
 	WCHAR tmpStr[256];
 	wcscpy_s(tmpStr, 256, pItemDescriptor->CoreAttributes.FileName);
 	SanitizeFileName(pItemDescriptor->CoreAttributes.FileName, 256, tmpStr);
 
 	// Change path in store data of item descriptor
-	LPWSTR pData = (LPWSTR)pItemDescriptor->StoreData;
-
-	LPWSTR pStr = wcsrchr(pData, L'\\');
-	pStr = pStr ? ++pStr : pData;
-
-	LPCWSTR pExtension = wcsrchr(pStr, L'.');
+	LPCWSTR pData = (LPCWSTR)pItemDescriptor->StoreData;
+	LPWSTR pName = (LPWSTR)ExtractFileName(pData);
+	LPCWSTR pExtension = wcsrchr(pName, L'.');
 
 	WCHAR Extension[MAX_PATH];
 	wcscpy_s(Extension, MAX_PATH, pExtension ? pExtension : L"");
 
-	SIZE_T cCount = MAX_PATH+pData-pStr-wcslen(Extension);
-	wcscpy_s(pStr, cCount, pItemDescriptor->CoreAttributes.FileName);
-	wcscat_s(pStr, cCount, Extension);
+	const SIZE_T cCount = MAX_PATH+pData-pName-wcslen(Extension);
+	wcscpy_s(pName, cCount, pItemDescriptor->CoreAttributes.FileName);
+	wcscat_s(pName, cCount, Extension);
 
 	// Commit
 	return CStore::RenameFile(File, pItemDescriptor);
 }
 
-UINT CStoreWindows::DeleteFile(const REVENANTFILE& File)
+UINT CStoreWindows::DeleteFile(const HORCRUXFILE& File)
 {
 	UINT Result;
 	WCHAR Path[2*MAX_PATH];
@@ -233,49 +234,71 @@ void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 	CStore::SetAttributesFromStore(pItemDescriptor);
 }
 
-BOOL CStoreWindows::SynchronizeFile(const REVENANTFILE& File)
+LFFileImportItem* CStoreWindows::FindSimilarFile(const HORCRUXFILE& File)
+{
+	LPCWSTR pName = ExtractFileName(File);
+
+	for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
+	{
+		LFFileImportItem* pItem = &(*m_pFileImportList)[a];
+
+		if ((pItem->Processed!=PROCESSED_FINISHED) &&
+			((pItem->Flags & (FII_MATCHED | FII_FINDDATAVALID))==FII_FINDDATAVALID) &&
+			(((LPCCOREATTRIBUTES)File)->FileTime==pItem->FindData.ftLastWriteTime) &&
+			(((LPCCOREATTRIBUTES)File)->CreationTime==pItem->FindData.ftCreationTime) &&
+			(((LPCCOREATTRIBUTES)File)->FileSize==((((INT64)pItem->FindData.nFileSizeHigh) << 32) | pItem->FindData.nFileSizeLow)) &&
+			(_wcsicmp(pName, ExtractFileName(pItem->Path))==0))
+			return pItem;
+	}
+
+	return NULL;
+}
+
+void CStoreWindows::SynchronizeMatch(const HORCRUXFILE& File)
 {
 	assert(m_pFileImportList);
 
-	UINT Result;
 	WCHAR Path[2*MAX_PATH];
-	if ((Result=GetFilePath(File, Path, 2*MAX_PATH))!=LFOk)
-		return Result!=LFNoFileBody;
-
-	// Find in import list using binary search
-	INT First = 0;
-	INT Last = (INT)m_pFileImportList->m_ItemCount-1;
-
-	while (First<=Last)
+	if (GetFilePath(File, Path, 2*MAX_PATH)==LFOk)
 	{
-		const INT Mid = (First+Last)/2;
-		LFFileImportItem* pItem = &(*m_pFileImportList)[Mid];
+		LFFileImportItem* pItem = m_pFileImportList->FindPath(Path);
 
-		const INT Result = _wcsicmp(&Path[4], pItem->Path);
-		if (!Result)
-		{
-			if (!pItem->Processed)
-			{
-				// Update metadata
-				assert(pItem->FindDataPresent);
+		// Set "matched" flag
+		if (pItem && (pItem->Processed!=PROCESSED_FINISHED))
+			pItem->Flags |= FII_MATCHED;
+	}
+}
 
-				SetAttributesFromFindData(*File, pItem->FindData);
+BOOL CStoreWindows::SynchronizeCommit(const HORCRUXFILE& File)
+{
+	assert(m_pFileImportList);
+	assert(m_szDatPath);
 
-				pItem->Processed = TRUE;
-			}
+	WCHAR Path[2*MAX_PATH];
+	if (GetFilePath(File, Path, 2*MAX_PATH)!=LFOk)
+		return TRUE;
 
-			return TRUE;
-		}
+	// Find path
+	LFFileImportItem* pItem = m_pFileImportList->FindPath(Path);
 
-		if (Result<0)
-		{
-			Last = Mid-1;
-		}
-		else
-		{
-			First = Mid+1;
-		}
+	// Find similar file
+	if (!pItem)
+	{
+		pItem = FindSimilarFile(File);
+
+		if (pItem)
+			wcscpy_s(File, MAX_PATH, &pItem->Path[m_szDatPath]);
 	}
 
-	return FALSE;
+	// Update metadata
+	if (pItem && (pItem->Processed!=PROCESSED_FINISHED))
+	{
+		assert(pItem->Flags & FII_FINDDATAVALID);
+		SetAttributesFromFindData(File, pItem->FindData);
+
+		assert(pItem->Processed+1<PROCESSED_FINISHED);
+		pItem->Processed++;
+	}
+
+	return pItem!=NULL;
 }

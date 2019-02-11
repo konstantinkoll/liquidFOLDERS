@@ -24,7 +24,7 @@ public:
 	virtual UINT Initialize(LFProgress* pProgress=NULL);
 	virtual UINT PrepareDelete();
 	virtual UINT CommitDelete();
-	virtual UINT GetFilePath(const REVENANTFILE& File, LPWSTR pPath, SIZE_T cCount) const=0;
+	virtual UINT GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount) const=0;
 
 	UINT MaintenanceAndStatistics(LFProgress* pProgress=NULL, BOOL Scheduled=FALSE);
 	void ScheduledMaintenance(LFMaintenanceList* pMaintenanceList, LFProgress* pProgress=NULL);
@@ -56,10 +56,11 @@ public:
 protected:
 	// Callbacks
 	virtual UINT DeleteDirectories();
-	virtual UINT RenameFile(const REVENANTFILE& File, LFItemDescriptor* pItemDescriptor);
-	virtual UINT DeleteFile(const REVENANTFILE& File)=0;
+	virtual UINT RenameFile(const HORCRUXFILE& File, LFItemDescriptor* pItemDescriptor);
+	virtual UINT DeleteFile(const HORCRUXFILE& File)=0;
 	virtual void SetAttributesFromStore(LFItemDescriptor* pItemDescriptor);
-	virtual BOOL SynchronizeFile(const REVENANTFILE& File);
+	virtual void SynchronizeMatch(const HORCRUXFILE& File);
+	virtual BOOL SynchronizeCommit(const HORCRUXFILE& File);
 
 	// Aux functions
 	void CreateNewFileID(FILEID& FileID) const;
