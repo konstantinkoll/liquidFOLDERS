@@ -63,12 +63,14 @@ void CFileView::UpdateViewSettings(INT Context, BOOL UpdateSearchResultPending)
 	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context];
 	p_GlobalViewSettings = &theApp.m_GlobalViewSettings;
 
-	// Allow view subclass to see both old and new settings
+	// Copy context view settings locally
+	m_ContextViewSettings = *p_ContextViewSettings;
+
+	// Allow subclass to see both new and old global settings
 	ResetDragLocation();
 	SetViewSettings(UpdateSearchResultPending);
 
-	// Copy settings locally
-	m_ContextViewSettings = *p_ContextViewSettings;
+	// Finally copy global view settings locally
 	m_GlobalViewSettings = *p_GlobalViewSettings;
 }
 

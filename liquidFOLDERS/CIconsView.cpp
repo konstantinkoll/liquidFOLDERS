@@ -19,6 +19,7 @@ CIconsView::CIconsView()
 
 void CIconsView::SetViewSettings(BOOL UpdateSearchResultPending)
 {
+	// Commit settings
 	if (!UpdateSearchResultPending)
 		Invalidate();
 }

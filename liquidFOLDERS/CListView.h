@@ -78,7 +78,7 @@ private:
 
 inline void CListView::UpdateHeader()
 {
-	CFileView::UpdateHeader(p_ContextViewSettings->ColumnOrder, p_ContextViewSettings->ColumnWidth, p_CookedFiles && m_ItemCount, m_PreviewAttribute);
+	CFileView::UpdateHeader(m_ContextViewSettings.ColumnOrder, m_ContextViewSettings.ColumnWidth, p_CookedFiles && m_ItemCount, m_PreviewAttribute);
 }
 
 inline INT CListView::GetMinColumnWidth(UINT Attr)

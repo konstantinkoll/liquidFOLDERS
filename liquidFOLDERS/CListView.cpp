@@ -25,13 +25,12 @@ CListView::CListView()
 
 void CListView::SetViewSettings(BOOL UpdateSearchResultPending)
 {
-	// Copy context view settings early for column widths
-	m_ContextViewSettings = *p_ContextViewSettings;
-
 	// Commit settings
 	if (!UpdateSearchResultPending)
 	{
 		AdjustLayout();
+
+		// Redraw window for immediate effect of header resize
 		RedrawWindow();
 	}
 }
@@ -162,7 +161,7 @@ void CListView::UpdateHeaderColumnWidth(UINT Attr, INT Width)
 void CListView::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
 {
 	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT | HDI_TEXT;
-	HeaderItem.cxy = ((INT)Attr==m_PreviewAttribute) ? PREVIEWWIDTH : ((INT)Attr==m_SubfolderAttribute) ? 0 : p_ContextViewSettings->ColumnWidth[Attr];
+	HeaderItem.cxy = ((INT)Attr==m_PreviewAttribute) ? PREVIEWWIDTH : ((INT)Attr==m_SubfolderAttribute) ? 0 : m_ContextViewSettings.ColumnWidth[Attr];
 	HeaderItem.fmt = HDF_STRING | (theApp.IsAttributeFormatRight(Attr) ? HDF_RIGHT : HDF_LEFT);
 	HeaderItem.pszText = (LPWSTR)theApp.GetAttributeName(Attr, m_Context);
 
@@ -632,8 +631,8 @@ void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
 	const UINT Attr = pCmdUI->m_nID-IDM_LIST_TOGGLEATTRIBUTE;
 	ASSERT(Attr<LFAttributeCount);
 
-	pCmdUI->SetCheck(m_ContextViewSettings.ColumnWidth[Attr]);
-	pCmdUI->Enable(!theApp.IsAttributeAlwaysVisible(Attr) && ((INT)Attr!=m_PreviewAttribute));
+	pCmdUI->SetCheck(p_ContextViewSettings->ColumnWidth[Attr]);
+	pCmdUI->Enable(!theApp.IsAttributeAlwaysVisible(Attr) && ((INT)Attr!=m_PreviewAttribute) && ((INT)Attr!=m_SubfolderAttribute));
 }
 
 
