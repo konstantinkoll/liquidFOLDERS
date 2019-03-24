@@ -546,7 +546,7 @@ LFCORE_API UINT __stdcall LFQueryStatistics(LFStatistics& Statistics, const STOR
 // Thumbnails
 //
 
-LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz);
+LFCORE_API HBITMAP __stdcall LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size);
 
 // Bereitet eine Bitmap für die Ausgabe vor, da viele Thumbnail-Handler korrupte Vorschaubilder zurückliefern.
 // Die Bitmap wird ggf. auf maximal 128x128 Pixel skaliert.
@@ -575,10 +575,11 @@ LFCORE_API UINT __stdcall LFCreateDesktopShortcutForStore(const LFStoreDescripto
 // Liefert den Pfad des Box-Ordners zurück
 LFCORE_API BOOL __stdcall LFGetBoxPath(LPWSTR pPath);
 
+// Liefert den Pfad des Google-Drive-Ordners zurück
+LFCORE_API BOOL __stdcall LFGetGoogleDrivePath(LPWSTR pPath);
 
 // Liefert die Pfade von iCloud zurück
 LFCORE_API BOOL __stdcall LFGetICloudPaths(LFICloudPaths& iCloudPaths);
-
 
 // Liefert die Pfade von OneDrive zurück
 LFCORE_API BOOL __stdcall LFGetOneDrivePaths(LFOneDrivePaths& OneDrivePaths);

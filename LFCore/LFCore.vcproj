@@ -1079,6 +1079,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\STR_GoogleDrive.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\STR_iCloudDrive.ico"
 				>
 			</File>

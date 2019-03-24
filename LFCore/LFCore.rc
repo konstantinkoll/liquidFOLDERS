@@ -38,7 +38,7 @@ IDI_STR_DROPBOX         ICON                    "res\\STR_Dropbox.ico"
 IDI_STR_ICLOUDDRIVE     ICON                    "res\\STR_iCloudDrive.ico"
 IDI_STR_ONEDRIVE        ICON                    "res\\STR_OneDrive.ico"
 IDI_STR_ICLOUDPHOTOS    ICON                    "res\\STR_iCloudPhotos.ico"
-IDI_STR_RESERVED6       ICON                    "res\\Template.ico"
+IDI_STR_GOOGLEDRIVE     ICON                    "res\\STR_GoogleDrive.ico"
 IDI_STR_RESERVED5       ICON                    "res\\Template.ico"
 IDI_STR_RESERVED4       ICON                    "res\\Template.ico"
 IDI_STR_RESERVED3       ICON                    "res\\Template.ico"
@@ -110,8 +110,8 @@ IDI_FLD_PLACEHOLDER_TV  ICON                    "res\\FLD_Placeholder_TV.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,22,0
- PRODUCTVERSION 4,0,22,0
+ FILEVERSION 4,0,23,0
+ PRODUCTVERSION 4,0,23,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -128,13 +128,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.22"
+            VALUE "FileVersion", "4.0.23"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2019 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.22"
+            VALUE "ProductVersion", "4.0.23"
         END
     END
     BLOCK "VarFileInfo"
@@ -450,6 +450,7 @@ BEGIN
     IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_ICLOUDPHOTOS    "iCloud-Fotomediathek"
+    IDS_SRC_GOOGLEDRIVE     "Google Drive"
 END
 
 STRINGTABLE 
@@ -469,6 +470,7 @@ BEGIN
     IDS_QSRC_ICLOUDDRIVE    "Auf iCloud"
     IDS_QSRC_ONEDRIVE       "Auf OneDrive"
     IDS_QSRC_ICLOUDPHOTOS   "Auf iCloud"
+    IDS_QSRC_GOOGLEDRIVE    "Auf Google Drive"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -777,6 +779,7 @@ BEGIN
     IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_ICLOUDPHOTOS    "Fototeca de iCloud"
+    IDS_SRC_GOOGLEDRIVE     "Google Drive"
 END
 
 STRINGTABLE 
@@ -796,6 +799,7 @@ BEGIN
     IDS_QSRC_ICLOUDDRIVE    "En iCloud"
     IDS_QSRC_ONEDRIVE       "En OneDrive"
     IDS_QSRC_ICLOUDPHOTOS   "En iCloud"
+    IDS_QSRC_GOOGLEDRIVE    "En Google Drive"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -1106,6 +1110,7 @@ BEGIN
     IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_ICLOUDPHOTOS    "Photothèque iCloud"
+    IDS_SRC_GOOGLEDRIVE     "Google Drive"
 END
 
 STRINGTABLE 
@@ -1125,6 +1130,7 @@ BEGIN
     IDS_QSRC_ICLOUDDRIVE    "Dans iCloud"
     IDS_QSRC_ONEDRIVE       "Dans OneDrive"
     IDS_QSRC_ICLOUDPHOTOS   "Dans iCloud"
+    IDS_QSRC_GOOGLEDRIVE    "Dans Google Drive"
 END
 
 #endif    // Französisch (neutral) resources
@@ -1470,6 +1476,7 @@ BEGIN
     IDS_SRC_ICLOUDDRIVE     "iCloud Drive"
     IDS_SRC_ONEDRIVE        "OneDrive"
     IDS_SRC_ICLOUDPHOTOS    "iCloud Photo Library"
+    IDS_SRC_GOOGLEDRIVE     "Google Drive"
 END
 
 STRINGTABLE 
@@ -1489,6 +1496,7 @@ BEGIN
     IDS_QSRC_ICLOUDDRIVE    "On iCloud"
     IDS_QSRC_ONEDRIVE       "On OneDrive"
     IDS_QSRC_ICLOUDPHOTOS   "On iCloud"
+    IDS_QSRC_GOOGLEDRIVE    "On Google Drive"
 END
 
 #endif    // Englisch (USA) resources

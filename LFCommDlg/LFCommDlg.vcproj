@@ -473,6 +473,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GoogleDrive.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ICloud.cpp"
 				>
 			</File>
@@ -494,10 +498,6 @@
 			</File>
 			<File
 				RelativePath=".\LFAttributeListDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFBoxDlg.cpp"
 				>
 			</File>
 			<File
@@ -562,6 +562,10 @@
 			</File>
 			<File
 				RelativePath=".\LFFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFGenericCloudProviderDlg.cpp"
 				>
 			</File>
 			<File
@@ -1129,6 +1133,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GoogleDrive.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ICloud.h"
 				>
 			</File>
@@ -1154,10 +1162,6 @@
 			</File>
 			<File
 				RelativePath=".\LFAttributeListDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFBoxDlg.h"
 				>
 			</File>
 			<File
@@ -1222,6 +1226,10 @@
 			</File>
 			<File
 				RelativePath=".\LFFont.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFGenericCloudProviderDlg.h"
 				>
 			</File>
 			<File

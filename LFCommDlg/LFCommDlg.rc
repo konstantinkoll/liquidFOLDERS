@@ -233,7 +233,7 @@ CAPTION "IATA Flughafen-Code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     DEFPUSHBUTTON   "OK",IDOK,75,288,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,132,288,50,14,WS_GROUP
     CONTROL         "Land/Gebiet",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
@@ -247,7 +247,7 @@ CAPTION "IATA Flughafen-Code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     CONTROL         "Orts&namen überschreiben",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,299,175,10
     CONTROL         "&GPS-Koordinaten überschreiben",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,310,175,10
     DEFPUSHBUTTON   "OK",IDOK,75,335,50,14,WS_GROUP
@@ -423,8 +423,9 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Fügt das lokale Box-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Fügt ein lokales Dropbox-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt ein lokales iCloud-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Fügt ein lokales OneDrive-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt das lokale Google-Drive-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_GOOGLEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt ein lokales iCloud-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ICLOUD,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Fügt ein lokales OneDrive-Verzeichnis als Speicherort hinzu.",IDC_ADDSTORE_ONEDRIVE,214,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Fertig",IDOK,571,286,50,14,WS_GROUP
 END
 
@@ -520,9 +521,9 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,233,210,50,14,WS_GROUP
 END
 
-IDD_BOX DIALOGEX 0, 0, 252, 96
+IDD_GENERICCLOUDPROVIDER DIALOGEX 0, 0, 252, 96
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Box"
+CAPTION "X"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Verzeichnis",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,238,15
@@ -792,7 +793,7 @@ BEGIN
         BOTTOMMARGIN, 224
     END
 
-    IDD_BOX, DIALOG
+    IDD_GENERICCLOUDPROVIDER, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
@@ -973,6 +974,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_BOX        "Indexiert das bestehenden Verzeichnis Ihrer lokalen Box-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
+    IDS_ADDSTORE_GOOGLEDRIVE "Indexiert das bestehenden Verzeichnis Ihrer lokalen Google-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_ICLOUD     "Indexiert die bestehenden lokalen iCloud-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_SUBSCRIPTION        "Abo"
@@ -1090,7 +1092,7 @@ CAPTION "Código de aeropuerto IATA"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     DEFPUSHBUTTON   "OK",IDOK,75,288,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,132,288,50,14,WS_GROUP
     CONTROL         "Territorio",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
@@ -1104,7 +1106,7 @@ CAPTION "Código de aeropuerto IATA"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     CONTROL         "Sobreponer &nombre",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,299,175,10
     CONTROL         "Sobreponer coordenadas &GPS",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,310,175,10
     DEFPUSHBUTTON   "OK",IDOK,75,335,50,14,WS_GROUP
@@ -1262,8 +1264,9 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Adjunta la carpeta local de Box como ubicación.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Adjunta una carpeta local de Dropbox como ubicación.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta una carpeta local de iCloud como ubicación.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adjunta una carpeta local de OneDrive como ubicación.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta la carpeta local de Google Drive como ubicación.",IDC_ADDSTORE_GOOGLEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta una carpeta local de iCloud como ubicación.",IDC_ADDSTORE_ICLOUD,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adjunta una carpeta local de OneDrive como ubicación.",IDC_ADDSTORE_ONEDRIVE,214,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Listo",IDOK,571,286,50,14,WS_GROUP
 END
 
@@ -1368,7 +1371,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,243,279,50,14,WS_GROUP
 END
 
-IDD_BOX DIALOGEX 0, 0, 252, 96
+IDD_GENERICCLOUDPROVIDER DIALOGEX 0, 0, 252, 96
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Box"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1643,7 +1646,7 @@ BEGIN
         BOTTOMMARGIN, 293
     END
 
-    IDD_BOX, DIALOG
+    IDD_GENERICCLOUDPROVIDER, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
@@ -1832,6 +1835,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_BOX        "Índices la carpeta existente de su aplicación local de Box.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no se copian o modifican."
+    IDS_ADDSTORE_GOOGLEDRIVE "Índices la carpeta existente de su aplicación local de Google.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_ICLOUD     "Índices las carpetas locales existentes de iCloud.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no se copian o modifican."
     IDS_SUBSCRIPTION        "Suscripción"
@@ -1949,7 +1953,7 @@ CAPTION "Code d'aéroport IATA"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     DEFPUSHBUTTON   "OK",IDOK,75,288,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,132,288,50,14,WS_GROUP
     CONTROL         "Territoire",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
@@ -1963,7 +1967,7 @@ CAPTION "Code d'aéroport IATA"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     CONTROL         "Remplacer le &nom d'endroit",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,299,175,10
     CONTROL         "Remplacer les coordonnées &GPS",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,310,175,10
     DEFPUSHBUTTON   "OK",IDOK,75,335,50,14,WS_GROUP
@@ -2140,8 +2144,9 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Ajoute le dossier local de Box comme emplacement.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Ajoute un dossier local de Dropbox comme emplacement.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute un dossier local de iCloud comme emplacement.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Ajoute un dossier local de OneDrive comme emplacement.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute le dossier local de Google Drive comme emplacement.",IDC_ADDSTORE_GOOGLEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute un dossier local de iCloud comme emplacement.",IDC_ADDSTORE_ICLOUD,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Ajoute un dossier local de OneDrive comme emplacement.",IDC_ADDSTORE_ONEDRIVE,214,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Fini",IDOK,571,286,50,14,WS_GROUP
 END
 
@@ -2224,7 +2229,7 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,233,210,50,14,WS_GROUP
 END
 
-IDD_BOX DIALOGEX 0, 0, 252, 96
+IDD_GENERICCLOUDPROVIDER DIALOGEX 0, 0, 252, 96
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Box"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2499,7 +2504,7 @@ BEGIN
         BOTTOMMARGIN, 224
     END
 
-    IDD_BOX, DIALOG
+    IDD_GENERICCLOUDPROVIDER, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
@@ -2688,6 +2693,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_BOX        "Indices le dossier existant de votre application Box local.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas copiés ou modifiés."
+    IDS_ADDSTORE_GOOGLEDRIVE "Indices le dossier existant de votre application Google local.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_ICLOUD     "Indices les dossiers locaux existants de iCloud.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_SUBSCRIPTION        "Abonnement"
@@ -2855,7 +2861,7 @@ CAPTION "IATA airport code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     DEFPUSHBUTTON   "OK",IDOK,75,288,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,132,288,50,14,WS_GROUP
     CONTROL         "Territory",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
@@ -2869,7 +2875,7 @@ CAPTION "IATA airport code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,74,175,199
     CONTROL         "Overwrite location &name",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,299,175,10
     CONTROL         "Overwrite &GPS coordinates",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,310,175,10
     DEFPUSHBUTTON   "OK",IDOK,75,335,50,14,WS_GROUP
@@ -3026,8 +3032,9 @@ BEGIN
     CONTROL         "",IDC_CATEGORY2,"CCategory",WS_GROUP,7,101,614,15
     PUSHBUTTON      "Adds the local Box folder as storage location.",IDC_ADDSTORE_BOX,7,116,200,74,BS_MULTILINE | WS_DISABLED
     PUSHBUTTON      "Adds a local Dropbox folder as storage location.",IDC_ADDSTORE_DROPBOX,214,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds a local iCloud folder as storage location.",IDC_ADDSTORE_ICLOUD,421,116,200,74,BS_MULTILINE | WS_DISABLED
-    PUSHBUTTON      "Adds a local OneDrive folder as storage location.",IDC_ADDSTORE_ONEDRIVE,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds the local Google Drive folder as storage location.",IDC_ADDSTORE_GOOGLEDRIVE,421,116,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds a local iCloud folder as storage location.",IDC_ADDSTORE_ICLOUD,7,197,200,74,BS_MULTILINE | WS_DISABLED
+    PUSHBUTTON      "Adds a local OneDrive folder as storage location.",IDC_ADDSTORE_ONEDRIVE,214,197,200,74,BS_MULTILINE | WS_DISABLED
     DEFPUSHBUTTON   "Done",IDOK,571,286,50,14,WS_GROUP
 END
 
@@ -3132,7 +3139,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,243,279,50,14,WS_GROUP
 END
 
-IDD_BOX DIALOGEX 0, 0, 252, 96
+IDD_GENERICCLOUDPROVIDER DIALOGEX 0, 0, 252, 96
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Box"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -3407,7 +3414,7 @@ BEGIN
         BOTTOMMARGIN, 293
     END
 
-    IDD_BOX, DIALOG
+    IDD_GENERICCLOUDPROVIDER, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 245
@@ -3596,6 +3603,7 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be copied or modified."
     IDS_ADDSTORE_BOX        "Indexes the existing folder of your local Box client.\nYour files will not be copied or modified."
     IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox client.\nYour files will not be copied or modified."
+    IDS_ADDSTORE_GOOGLEDRIVE "Indexes the existing folder of your local Google client.\nYour files will not be copied or modified."
     IDS_ADDSTORE_ICLOUD     "Indexes the existing local iCloud folders.\nYour files will not be copied or modified."
     IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be copied or modified."
     IDS_SUBSCRIPTION        "Subscription"

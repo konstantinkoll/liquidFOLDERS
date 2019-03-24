@@ -788,7 +788,7 @@ typedef const LPCOREATTRIBUTES LPCCOREATTRIBUTES;
 
 // Sources
 
-#define LFSourceCount     11
+#define LFSourceCount     12
 
 
 // Item structure
@@ -804,6 +804,7 @@ typedef const LPCOREATTRIBUTES LPCCOREATTRIBUTES;
 #define LFTypeSourceICloudDrive       0x00000008
 #define LFTypeSourceOneDrive          0x00000009
 #define LFTypeSourceICloudPhotos      0x0000000A
+#define LFTypeSourceGoogleDrive       0x0000000B
 
 #define LFTypeSourceMask              0x000000FF
 

@@ -12,7 +12,7 @@
 #define IDI_STR_ICLOUDDRIVE             8
 #define IDI_STR_ONEDRIVE                9
 #define IDI_STR_ICLOUDPHOTOS            10
-#define IDI_STR_RESERVED6               11
+#define IDI_STR_GOOGLEDRIVE             11
 #define IDI_STR_RESERVED5               12
 #define IDI_STR_RESERVED4               13
 #define IDI_STR_RESERVED3               14
@@ -289,6 +289,7 @@
 #define IDS_SRC_ICLOUDDRIVE             1708
 #define IDS_SRC_ONEDRIVE                1709
 #define IDS_SRC_ICLOUDPHOTOS            1710
+#define IDS_SRC_GOOGLEDRIVE             1711
 #define IDS_QSRC_FIRST                  1800
 #define IDS_QSRC_UNKNOWN                1800
 #define IDS_QSRC_LIQUIDFOLDERS          1801
@@ -301,6 +302,7 @@
 #define IDS_QSRC_ICLOUDDRIVE            1808
 #define IDS_QSRC_ONEDRIVE               1809
 #define IDS_QSRC_ICLOUDPHOTOS           1810
+#define IDS_QSRC_GOOGLEDRIVE            1811
 
 // Next default values for new objects
 // 

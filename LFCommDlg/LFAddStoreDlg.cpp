@@ -11,11 +11,11 @@
 // LFAddStoreDlg
 //
 
-#define PADDING          10
+#define PADDING         10
 #define SOURCECOUNT     sizeof(m_Sources)/sizeof(UINT)
 
 const UINT LFAddStoreDlg::m_Sources[] = { LFTypeSourceInternal, LFTypeSourceWindows,
-	LFTypeSourceBox, LFTypeSourceDropbox, LFTypeSourceICloudDrive, LFTypeSourceOneDrive };
+	LFTypeSourceBox, LFTypeSourceDropbox, LFTypeSourceGoogleDrive, LFTypeSourceICloudDrive, LFTypeSourceOneDrive };
 CImageList LFAddStoreDlg::m_SourceIcons;
 
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)
@@ -44,6 +44,7 @@ void LFAddStoreDlg::CheckSources()
 {
 	GetDlgItem(IDC_ADDSTORE_BOX)->EnableWindow(m_Box.CheckForBox());
 	GetDlgItem(IDC_ADDSTORE_DROPBOX)->EnableWindow(m_Dropbox.CheckForDropbox());
+	GetDlgItem(IDC_ADDSTORE_GOOGLEDRIVE)->EnableWindow(m_GoogleDrive.CheckForGoogleDrive());
 	GetDlgItem(IDC_ADDSTORE_ICLOUD)->EnableWindow(m_ICloud.CheckForICloud());
 	GetDlgItem(IDC_ADDSTORE_ONEDRIVE)->EnableWindow(m_OneDrive.CheckForOneDrive());
 }
@@ -69,6 +70,30 @@ void LFAddStoreDlg::ShowResult(UINT Result, const CString StoreName)
 
 			m_wndExplorerNotification.SetNotification(ENT_WARNING, Text);
 		}
+}
+
+void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path, LPCWSTR StoreName)
+{
+	ASSERT(Path);
+	ASSERT(StoreName);
+
+	WorkerCreateStoreWindowsParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
+	wcscpy_s(Parameters.StoreName, 256, StoreName);
+	wcscpy_s(Parameters.Path, MAX_PATH, Path);
+
+	LFDoWithProgress(WorkerCreateStoreWindows, &Parameters.Hdr, this);
+
+	ShowResult(Parameters.Hdr.Result, Parameters.StoreName);
+}
+
+void LFAddStoreDlg::AddGenericCloudProvider(const CString& ProviderName, LPCWSTR lpcPath)
+{
+	ASSERT(lpcPath);
+
+	LFGenericCloudProviderDlg dlg(ProviderName, lpcPath, this);
+	if (dlg.DoModal()==IDOK)
+		AddWindowsPathAsStore(dlg.m_FolderPath, ProviderName);
 }
 
 BOOL LFAddStoreDlg::InitDialog()
@@ -107,21 +132,6 @@ BOOL LFAddStoreDlg::InitDialog()
 	return TRUE;
 }
 
-void LFAddStoreDlg::AddWindowsPathAsStore(LPCWSTR Path, LPCWSTR StoreName)
-{
-	ASSERT(Path);
-	ASSERT(StoreName);
-
-	WorkerCreateStoreWindowsParameters Parameters;
-	ZeroMemory(&Parameters, sizeof(Parameters));
-	wcscpy_s(Parameters.StoreName, 256, StoreName);
-	wcscpy_s(Parameters.Path, MAX_PATH, Path);
-
-	LFDoWithProgress(WorkerCreateStoreWindows, &Parameters.Hdr, this);
-
-	ShowResult(Parameters.Hdr.Result, Parameters.StoreName);
-}
-
 
 BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 	ON_WM_ACTIVATE()
@@ -132,6 +142,7 @@ BEGIN_MESSAGE_MAP(LFAddStoreDlg, LFDialog)
 	ON_BN_CLICKED(IDC_ADDSTORE_WINDOWS, OnBtnWindows)
 	ON_BN_CLICKED(IDC_ADDSTORE_BOX, OnBtnBox)
 	ON_BN_CLICKED(IDC_ADDSTORE_DROPBOX, OnBtnDropbox)
+	ON_BN_CLICKED(IDC_ADDSTORE_GOOGLEDRIVE, OnBtnGoogleDrive)
 	ON_BN_CLICKED(IDC_ADDSTORE_ICLOUD, OnBtnICloud)
 	ON_BN_CLICKED(IDC_ADDSTORE_ONEDRIVE, OnBtnOneDrive)
 END_MESSAGE_MAP()
@@ -228,9 +239,7 @@ void LFAddStoreDlg::OnBtnWindows()
 
 void LFAddStoreDlg::OnBtnBox()
 {
-	LFBoxDlg dlg(m_Box, this);
-	if (dlg.DoModal()==IDOK)
-		AddWindowsPathAsStore(dlg.m_FolderPath, L"Box");
+	AddGenericCloudProvider(_T("Box"), m_Box.m_Path);
 }
 
 void LFAddStoreDlg::OnBtnDropbox()
@@ -238,6 +247,11 @@ void LFAddStoreDlg::OnBtnDropbox()
 	LFDropboxDlg dlg(m_Dropbox, this);
 	if (dlg.DoModal()==IDOK)
 		AddWindowsPathAsStore(dlg.m_FolderPath);
+}
+
+void LFAddStoreDlg::OnBtnGoogleDrive()
+{
+	AddGenericCloudProvider(_T("Google Drive"), m_GoogleDrive.m_Path);
 }
 
 void LFAddStoreDlg::OnBtnICloud()

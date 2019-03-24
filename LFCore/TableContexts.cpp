@@ -64,6 +64,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "dv",      LFContextVideos, 0 },
 	{ "dvf",     LFContextAudio, 0 },
 	{ "dvi",     LFContextVideos, 0 },
+	{ "elfo",    LFContextDocuments, 0 },
 	{ "eml",     LFContextMessages, 0 },
 	{ "eot",     LFContextFonts, 0 },
 	{ "epa",     LFContextPictures, 0 },

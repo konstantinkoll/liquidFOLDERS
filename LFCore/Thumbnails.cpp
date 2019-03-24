@@ -13,7 +13,7 @@ using namespace Gdiplus;
 extern OSVERSIONINFO osInfo;
 
 
-LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
+LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size)
 {
 	WCHAR Path[MAX_PATH];
 	if (LFGetFileLocation(pItemDescriptor, Path, MAX_PATH, FALSE)!=LFOk)
@@ -36,7 +36,7 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (LPVOID*)&pThumbnailProvider)))
 				{
 					DWORD dwAlpha = WTSAT_UNKNOWN;
-					pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBitmap, &dwAlpha);
+					pThumbnailProvider->GetThumbnail(min(Size.cx, Size.cy), &hBitmap, &dwAlpha);
 
 					pThumbnailProvider->Release();
 
@@ -51,7 +51,7 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE sz)
 			{
 				DWORD dwPriority = 0;
 				DWORD dwFlags = IEIFLAG_SCREEN | IEIFLAG_NOBORDER | IEIFLAG_NOSTAMP | IEIFLAG_OFFLINE;
-				HRESULT hResult = pExtractImage->GetLocation(Path, MAX_PATH, &dwPriority, &sz, 32, &dwFlags);
+				HRESULT hResult = pExtractImage->GetLocation(Path, MAX_PATH, &dwPriority, &Size, 32, &dwFlags);
 
 				if (SUCCEEDED(hResult) || (hResult==E_PENDING))
 					pExtractImage->Extract(&hBitmap);

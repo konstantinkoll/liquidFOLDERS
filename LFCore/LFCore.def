@@ -121,5 +121,6 @@ EXPORTS
 	LFCreateDesktopShortcutForStore @702
 
 	LFGetBoxPath @800
-	LFGetICloudPaths @801
-	LFGetOneDrivePaths @802
+	LFGetGoogleDrivePath @801
+	LFGetICloudPaths @802
+	LFGetOneDrivePaths @803

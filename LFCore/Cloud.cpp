@@ -65,6 +65,26 @@ HRESULT GetKnownFolderPath(REFKNOWNFOLDERID rfid, LPWSTR lpPath)
 	return E_NOTIMPL;
 }
 
+BOOL GetRegistryPath(LPCWSTR lpcSubKey, LPCWSTR lpcValueName, LPWSTR lpPath, HKEY hKeyHive=HKEY_CURRENT_USER, DWORD cCount=MAX_PATH)
+{
+	assert(lpcSubKey);
+	assert(lpcValueName);
+
+	BOOL Result = FALSE;
+
+	HKEY hKey;
+	if (RegOpenKeyW(hKeyHive, lpcSubKey, &hKey)==ERROR_SUCCESS)
+	{
+		DWORD Size = cCount*sizeof(WCHAR);
+		if (RegQueryValueExW(hKey, lpcValueName, 0, NULL, (BYTE*)lpPath, &Size)==ERROR_SUCCESS)
+			Result = TRUE;
+
+		RegCloseKey(hKey);
+	}
+
+	return Result;
+}
+
 
 // Box
 
@@ -73,6 +93,18 @@ LFCORE_API BOOL LFGetBoxPath(LPWSTR pPath)
 	assert(pPath);
 
 	return GetProfilePath(pPath, L"\\Box Sync");
+}
+
+
+// Google Drive
+
+LFCORE_API BOOL LFGetGoogleDrivePath(LPWSTR pPath)
+{
+	assert(pPath);
+
+	WCHAR DatabasePath[MAX_PATH];
+
+	return GetRegistryPath(L"Software\\Google\\Drive", L"Path", DatabasePath) && GetProfilePath(pPath, L"\\Google Drive");
 }
 
 
@@ -86,15 +118,8 @@ LFCORE_API BOOL LFGetICloudPaths(LFICloudPaths& iCloudPaths)
 	BOOL Result = GetProfilePath(iCloudPaths.Drive, L"\\iCloudDrive");
 
 	// iCloud Photo Library
-	HKEY hKey;
-	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Apple Inc.\\Internet Services\\iCloud Photos\\Settings", &hKey)==ERROR_SUCCESS)
-	{
-		DWORD Size = sizeof(iCloudPaths.PhotoLibrary);
-		if (RegQueryValueEx(hKey, L"DownloadPath", 0, NULL, (BYTE*)iCloudPaths.PhotoLibrary, &Size)==ERROR_SUCCESS)
-			Result = TRUE;
-
-		RegCloseKey(hKey);
-	}
+	if (GetRegistryPath(L"Software\\Apple Inc.\\Internet Services\\iCloud Photos\\Settings", L"DownloadPath", iCloudPaths.PhotoLibrary))
+		Result =TRUE;
 
 	return Result;
 }
@@ -133,22 +158,13 @@ LFCORE_API BOOL LFGetOneDrivePaths(LFOneDrivePaths& OneDrivePaths)
 	ZeroMemory(&OneDrivePaths, sizeof(OneDrivePaths));
 
 	// Fallback: Windows Registry
-	HKEY hKey;
-	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Microsoft\\OneDrive", &hKey)==ERROR_SUCCESS)
-	{
-		DWORD Size = sizeof(OneDrivePaths.OneDrive);
-		BOOL Result = (RegQueryValueEx(hKey, L"UserFolder", 0, NULL, (BYTE*)OneDrivePaths.OneDrive, &Size)==ERROR_SUCCESS);
+	if (GetRegistryPath(L"Software\\Microsoft\\OneDrive", L"UserFolder", OneDrivePaths.OneDrive))
+		if (DirectoryExists(OneDrivePaths.OneDrive))
+		{
+			AddOneDrivePaths(OneDrivePaths);
 
-		RegCloseKey(hKey);
-
-		if (Result)
-			if (DirectoryExists(OneDrivePaths.OneDrive))
-			{
-				AddOneDrivePaths(OneDrivePaths);
-
-				return TRUE;
-			}
-	}
+			return TRUE;
+		}
 
 	// Environment
 	if (GetEnvironmentVariable(L"OneDrive", OneDrivePaths.OneDrive, MAX_PATH))

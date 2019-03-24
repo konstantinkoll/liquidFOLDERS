@@ -302,7 +302,8 @@ void TestCloudPath(LFStoreDescriptor* pStoreDescriptor, LPWSTR pPath, UINT Sourc
 
 	if (pPath[0]!=L'\0')
 	{
-		wcscat_s(pPath, MAX_PATH, L"\\");
+		if (pPath[wcslen(pPath)-1]!=L'\\')
+			wcscat_s(pPath, MAX_PATH, L"\\");
 
 		if (wcsncmp(pPath, pStoreDescriptor->DatPath, wcslen(pPath))==0)
 			pStoreDescriptor->Source = Source;
@@ -354,18 +355,22 @@ void CompleteStoreSettings(LFStoreDescriptor* pStoreDescriptor)
 			}
 
 			// Cloud storage
-			WCHAR szPath[MAX_PATH];
+			WCHAR Path[MAX_PATH];
 
 			// Box
-			if (LFGetBoxPath(szPath))
-				TestCloudPath(pStoreDescriptor, szPath, LFTypeSourceBox);
+			if (LFGetBoxPath(Path))
+				TestCloudPath(pStoreDescriptor, Path, LFTypeSourceBox);
 
 			// Dropbox
-			wcscpy_s(szPath, MAX_PATH, pStoreDescriptor->DatPath);
-			wcscat_s(szPath, MAX_PATH, L".dropbox");
+			wcscpy_s(Path, MAX_PATH, pStoreDescriptor->DatPath);
+			wcscat_s(Path, MAX_PATH, L".dropbox");
 
-			if (FileExists(szPath))
+			if (FileExists(Path))
 				pStoreDescriptor->Source = LFTypeSourceDropbox;
+
+			// Google Drive
+			if (LFGetGoogleDrivePath(Path))
+				TestCloudPath(pStoreDescriptor, Path, LFTypeSourceGoogleDrive);
 
 			// iCloud
 			LFICloudPaths iCloudPaths;
