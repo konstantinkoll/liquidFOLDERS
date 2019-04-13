@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8791
+#define AirportCount_DE 8792
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -7022,6 +7022,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 113, "SPT", "", "Sipitang", { -5.083056, 115.550000 } },
 	{  98, "SPU", "", "Split", { -43.538889, 16.298056 } },
 	{ 209, "SPW", "", "Spencer", { -43.165556, -95.202778 } },
+	{   1, "SPX", "", "Sphinx International Airport", { -30.109722, 30.895278 } },
 	{  44, "SPY", "", "San Pédro", { -4.746667, -6.660833 } },
 	{ 209, "SPZ", "", "Springdale", { -36.176389, -94.119167 } },
 	{ 209, "SQA", "", "Santa Inez", { -34.606944, -120.075556 } },

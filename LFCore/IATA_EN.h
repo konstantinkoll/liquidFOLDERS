@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8792
+#define AirportCount_EN 8793
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1307,7 +1307,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  26, "CAF", "", "Carauari", { 4.871389, -66.897500 } },
 	{  94, "CAG", "", "Cagliari", { -39.251389, 9.054167 } },
 	{ 217, "CAH", "", "Ca Mau", { -9.188056, 105.174722 } },
-	{  55, "CAI", "", "Kairo", { -30.121944, 31.405556 } },
+	{  55, "CAI", "", "Cairo", { -30.121944, 31.405556 } },
 	{ 216, "CAJ", "", "Canaima", { -6.231944, -62.854444 } },
 	{ 213, "CAK", "", "Akron", { -40.916111, -81.442222 } },
 	{ 211, "CAL", "", "Campbeltown", { -55.437222, -5.686389 } },
@@ -7025,6 +7025,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 119, "SPT", "", "Sipitang", { -5.083056, 115.550000 } },
 	{  47, "SPU", "", "Split", { -43.538889, 16.298056 } },
 	{ 213, "SPW", "", "Spencer", { -43.165556, -95.202778 } },
+	{  55, "SPX", "", "Sphinx International Airport", { -30.109722, 30.895278 } },
 	{  95, "SPY", "", "San Pédro", { -4.746667, -6.660833 } },
 	{ 213, "SPZ", "", "Springdale", { -36.176389, -94.119167 } },
 	{ 213, "SQA", "", "Santa Inez", { -34.606944, -120.075556 } },
