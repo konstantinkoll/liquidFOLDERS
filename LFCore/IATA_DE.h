@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8792
+#define AirportCount_DE 8793
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1188,7 +1188,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "BUB", "", "Burwell", { -41.776667, -99.149722 } },
 	{  11, "BUC", "", "Burketown", { 17.748611, 139.534444 } },
 	{ 207, "BUD", "", "Budapest", { -47.436944, 19.255556 } },
-	{   8, "BUE", "BUE", "Buenos Aires", { 34.690694, -58.475694 } },
+	{   8, "BUE", "BUE", "Buenos Aires", { 34.663796, -58.521296 } },
 	{ 209, "BUF", "", "Buffalo", { -42.940556, -78.732222 } },
 	{   4, "BUG", "", "Benguela", { 12.608889, 13.403611 } },
 	{ 159, "BUH", "BUH", "Bucharest", { -44.537639, 26.102222 } },
@@ -2250,6 +2250,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 213, "EOR", "", "El Dorado", { -6.715556, -61.639167 } },
 	{ 209, "EOS", "", "Neosho", { -36.810833, -94.391667 } },
 	{ 213, "EOZ", "", "Elorza", { -7.059722, -69.496667 } },
+	{   8, "EPA", "BUE", "Buenos Aires (El Palomar)", { 34.610000, -58.612500 } },
 	{ 209, "EPG", "", "Weeping Water", { -40.867500, -96.110000 } },
 	{ 209, "EPH", "", "Ephrata", { -47.307500, -119.515833 } },
 	{ 212, "EPI", "", "Epi", { 16.583056, 168.200000 } },

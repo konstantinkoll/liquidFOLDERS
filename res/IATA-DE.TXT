@@ -2105,6 +2105,7 @@ EOK     Keokuk, USA;4;40*27'36"N, 91*25'43"W
 EOR     El Dorado, Venezuela;4;6*42'56"N, 61*38'21"W
 EOS     Neosho, USA;4;36*48'39"N, 94*23'30"W
 EOZ     Elorza, Venezuela;4;7*3'35"N, 69*29'48"W
+EPA BUE Buenos Aires (El Palomar), Argentinien;5;34*36'36"S, 58*36'45"W
 EPG     Weeping Water, USA;4;40*52'3"N, 96*6'36"W
 EPH     Ephrata, USA;4;47*18'27"N, 119*30'57"W
 EPI     Epi, Vanuatu;4;16*34'59"S, 168*11'60"E
