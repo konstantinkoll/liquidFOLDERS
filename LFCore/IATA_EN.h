@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8794
+#define AirportCount_EN 8795
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -5208,6 +5208,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  11, "NAS", "", "Nassau", { -25.038889, -77.466111 } },
 	{  26, "NAT", "", "Natal", { 5.911389, -35.247778 } },
 	{  66, "NAU", "", "Napuka", { 14.176667, -141.267222 } },
+	{ 203, "NAV", "", "Nevsehir Kapadokya Airport", { -38.768889, 34.526389 } },
 	{ 197, "NAW", "", "Narathiwat", { -6.520000, 101.743333 } },
 	{ 213, "NAX", "", "Ewa", { -21.307222, -158.070278 } },
 	{  41, "NAY", "BJS", "Beijing (Nan Yuan Airforce Base)", { -39.960833, 116.256667 } },

@@ -5228,6 +5228,7 @@ NAR     Puerto Nare, Kolumbien;4;6*12'36"N, 74*35'26"W
 NAS     Nassau, Bahamas;4;25*2'20"N, 77*27'58"W
 NAT     Natal, Brasilien;4;5*54'41"S, 35*14'52"W
 NAU     Napuka, Franz.-Polynesien;4;14*10'36"S, 141*16'2"W
+NAV     Nevsehir Kapadokya Airport, Türkei;5;38*46'8"N, 34*31'35"E
 NAW     Narathiwat, Thailand;4;6*31'12"N, 101*44'36"E
 NAX     Ewa, USA;4;21*18'26"N, 158*4'13"W
 NAY BJS Beijing (Nan Yuan Airforce Base), China;4;39*57'39"N, 116*15'24"E
