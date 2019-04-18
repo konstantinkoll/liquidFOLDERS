@@ -139,7 +139,7 @@ BOOL LFFileImportList::AddPath(LPCWSTR pPath, const WIN32_FIND_DATA& FindData)
 	return LFDynArray::AddItem(Item);
 }
 
-void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
+UINT LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 {
 	// Progress
 	ProgressMinorStart(pProgress, 1, m_Items[0].Path);
@@ -194,10 +194,11 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 
 					FindClose(hFind);
 
-					// Progress
-					ProgressMinorNext(pProgress);
-
 					m_Items[Index].Processed = PROCESSED_FINISHED;
+
+					// Progress
+					if (ProgressMinorNext(pProgress))
+						return LFCancel;
 				}
 		}
 
@@ -207,6 +208,8 @@ void LFFileImportList::Resolve(BOOL Recursive, LFProgress* pProgress)
 	// Progress
 	if (pProgress)
 		pProgress->MinorCount = m_ItemCount;
+
+	return LFOk;
 }
 
 INT LFFileImportList::CompareItems(LFFileImportItem* pData1, LFFileImportItem* pData2, const SortParameters& /*Parameters*/)
@@ -240,31 +243,32 @@ UINT LFFileImportList::DoFileImport(BOOL Recursive, const STOREID& StoreID, LFIt
 	if ((m_LastError=OpenStore(StoreID, pStore))==LFOk)
 	{
 		// Resolve
-		Resolve(Recursive, pProgress);
-
-		// Process files
-		for (UINT a=0; a<m_ItemCount; a++)
+		if ((m_LastError=Resolve(Recursive, pProgress))==LFOk)
 		{
-			if (!m_Items[a].Processed)
+			// Process files
+			for (UINT a=0; a<m_ItemCount; a++)
 			{
-				// Progress
-				if (SetProgressObject(pProgress, GetFileName(a)))
+				if (!m_Items[a].Processed)
 				{
-					m_LastError = LFCancel;
-					break;
+					// Progress
+					if (SetProgressObject(pProgress, GetFileName(a)))
+					{
+						m_LastError = LFCancel;
+						break;
+					}
+
+					// Metadata
+					LFItemDescriptor* pItemDescriptor = LFCloneItemDescriptor(pItemTemplate);
+
+					SetError(a, pStore->ImportFile(m_Items[a].Path, pItemDescriptor, Move), pProgress);
+	
+					LFFreeItemDescriptor(pItemDescriptor);
 				}
 
-				// Metadata
-				LFItemDescriptor* pItemDescriptor = LFCloneItemDescriptor(pItemTemplate);
-
-				SetError(a, pStore->ImportFile(m_Items[a].Path, pItemDescriptor, Move), pProgress);
-	
-				LFFreeItemDescriptor(pItemDescriptor);
+				// Progress
+				if (AbortProgress(pProgress))
+					break;
 			}
-
-			// Progress
-			if (AbortProgress(pProgress))
-				break;
 		}
 
 		delete pStore;

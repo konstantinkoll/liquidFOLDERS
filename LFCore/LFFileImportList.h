@@ -27,7 +27,7 @@ public:
 
 	BOOL AddPath(LPCWSTR pPath);
 	BOOL AddPath(LPCWSTR pPath, const WIN32_FIND_DATA& FindData);
-	void Resolve(BOOL Recursive, LFProgress* pProgress=NULL);
+	UINT Resolve(BOOL Recursive, LFProgress* pProgress=NULL);
 	LPCWSTR GetFileName(UINT Index);
 	void SetError(UINT Index, UINT Result, LFProgress* pProgress=NULL);
 	UINT DoFileImport(BOOL Recursive, const STOREID& StoreID, LFItemDescriptor* pItemTemplate, BOOL Move, LFProgress* pProgress=NULL);

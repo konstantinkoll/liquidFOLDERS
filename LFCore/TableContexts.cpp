@@ -26,6 +26,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "au",      LFContextAudio, 0 },
 	{ "audio",   LFContextAudio, 0 },
 	{ "avi",     LFContextVideos, 0 },
+	{ "avif",    LFContextPictures, 0 },
 	{ "awb",     LFContextAudio, 0 },
 	{ "azw",     LFContextDocuments, LFContextBooks },
 	{ "bm",      LFContextPictures, 0 },
