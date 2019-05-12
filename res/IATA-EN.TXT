@@ -3336,7 +3336,7 @@ ISH     Ischia, Italy;4;40*45'0"N, 13*53'60"E
 ISI     Isisford, Australia;4;24*15'30"S, 144*25'30"E
 ISJ     Isla Mujers, Mexico;4;21*14'42"N, 86*44'24"W
 ISK     Nasik, India;4;19*57'49"N, 73*48'28"E
-ISL     Isabel Pass, USA
+ISL     Istanbul (Atatürk), Turkey;5;40*58'34"N, 28*48'51"E
 ISM     Kissimmee, USA;4;28*17'23"N, 81*26'13"W
 ISN     Williston, USA;4;48*10'41"N, 103*38'32"W
 ISO     Kinston, USA;4;35*19'53"N, 77*36'32"W

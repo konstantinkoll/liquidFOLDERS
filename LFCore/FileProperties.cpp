@@ -105,7 +105,7 @@ void SetFileContext(LFCoreAttributes& CoreAttributes, BOOL OnImport)
 		CoreAttributes.UserContextID = UserContextID;
 	}
 	else
-		if (CoreAttributes.UserContextID && !(CtxProperties[SystemContextID].AllowMoveToContext & (1ull<<UserContextID)))
+		if (CoreAttributes.UserContextID && !(CtxProperties[SystemContextID].AllowMoveToContext & (1ull<<CoreAttributes.UserContextID)))
 		{
 			// Illegal user context: set new user context
 			CoreAttributes.UserContextID = UserContextID;

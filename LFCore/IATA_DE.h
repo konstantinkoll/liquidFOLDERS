@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8794
+#define AirportCount_DE 8795
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3417,6 +3417,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  11, "ISI", "", "Isisford", { 24.258333, 144.425000 } },
 	{ 125, "ISJ", "", "Isla Mujers", { -21.245000, -86.740000 } },
 	{  72, "ISK", "", "Nasik", { -19.963611, 73.807778 } },
+	{ 200, "ISL", "", "Istanbul (Atatürk)", { -40.976111, 28.814167 } },
 	{ 209, "ISM", "", "Kissimmee", { -28.289722, -81.436944 } },
 	{ 209, "ISN", "", "Williston", { -48.178056, -103.642222 } },
 	{ 209, "ISO", "", "Kinston", { -35.331389, -77.608889 } },
