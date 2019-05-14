@@ -268,30 +268,31 @@ struct LFItemCategoryDescriptor
 #define LFContextMusic                   12
 #define LFContextPodcasts                13
 #define LFContextTVShows                 14
+#define LFContextColorTables             15
 
-#define LFContextFavorites               15
-#define LFContextNew                     16
-#define LFContextTasks                   17
-#define LFContextArchive                 18
-#define LFContextTrash                   19
+#define LFContextFavorites               16
+#define LFContextNew                     17
+#define LFContextTasks                   18
+#define LFContextArchive                 19
+#define LFContextTrash                   20
 
-#define LFContextSearch                  20
-#define LFContextStores                  21
-#define LFContextClipboard               22
-#define LFContextSubfolderDefault        23
-#define LFContextSubfolderBooks          24
-#define LFContextSubfolderFonts          25
-#define LFContextSubfolderMessages       26
-#define LFContextSubfolderMovies         27
-#define LFContextSubfolderMusic          28
-#define LFContextSubfolderPictures       29
-#define LFContextSubfolderPodcasts       30
-#define LFContextSubfolderTVShows        31
-#define LFContextSubfolderVideos         32
+#define LFContextSearch                  21
+#define LFContextStores                  22
+#define LFContextClipboard               23
+#define LFContextSubfolderDefault        24
+#define LFContextSubfolderBooks          25
+#define LFContextSubfolderFonts          26
+#define LFContextSubfolderMessages       27
+#define LFContextSubfolderMovies         28
+#define LFContextSubfolderMusic          29
+#define LFContextSubfolderPictures       30
+#define LFContextSubfolderPodcasts       31
+#define LFContextSubfolderTVShows        32
+#define LFContextSubfolderVideos         33
 
-#define LFLastPersistentContext          14
-#define LFLastQueryContext               19
-#define LFContextCount                   33
+#define LFLastPersistentContext          15
+#define LFLastQueryContext               20
+#define LFContextCount                   34
 
 #define LFContextAuto                    0xFF	// Internal use only
 #define LFContextRemove                  LFContextAllFiles

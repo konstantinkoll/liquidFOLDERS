@@ -7,6 +7,7 @@
 #pragma data_seg(".shared")
 
 extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
+	{ "3dl",     LFContextColorTables, 0 },
 	{ "8svx",    LFContextAudio, 0 },
 	{ "aa",      LFContextAudio, 0 },
 	{ "aac",     LFContextAudio, 0 },
@@ -46,6 +47,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "cs",      LFContextDocuments, 0 },
 	{ "css",     LFContextDocuments, 0 },
 	{ "csv",     LFContextDocuments, 0 },
+	{ "cube",    LFContextColorTables, 0 },
 	{ "cur",     LFContextPictures, 0 },
 	{ "dct",     LFContextAudio, 0 },
 	{ "dib",     LFContextPictures, 0 },
@@ -99,6 +101,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "iba",     LFContextDocuments, LFContextBooks },
 	{ "ibook",   LFContextDocuments, LFContextBooks },
 	{ "ibooks",  LFContextDocuments, LFContextBooks },
+	{ "icc",     LFContextColorTables, 0 },
 	{ "icl",     LFContextPictures, 0 },
 	{ "ico",     LFContextPictures, 0 },
 	{ "iff",     LFContextAudio, 0 },
@@ -124,7 +127,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "lib",     LFContextApps, 0 },
 	{ "lit",     LFContextDocuments, LFContextBooks },
 	{ "log",     LFContextDocuments, 0 },
-	{ "look",    LFContextApps, 0 },
+	{ "look",    LFContextColorTables, 0 },
 	{ "m1v",     LFContextVideos, 0 },
 	{ "m2a",     LFContextAudio, 0 },
 	{ "m2v",     LFContextVideos, 0 },
@@ -174,6 +177,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "oxps",    LFContextDocuments, 0 },
 	{ "p",       LFContextDocuments, 0 },
 	{ "pages",   LFContextDocuments, 0 },
+	{ "pal",     LFContextColorTables, 0 },
 	{ "pas",     LFContextDocuments, 0 },
 	{ "pcd",     LFContextPictures, 0 },
 	{ "pcx",     LFContextPictures, 0 },
@@ -282,7 +286,8 @@ extern const BYTE ContextSlaves[LFLastPersistentContext+1] = {
 	IDXTABLE_VIDEOS,		// LFContextMovies
 	IDXTABLE_AUDIO,			// LFContextMusic
 	IDXTABLE_MASTER,		// LFContextPodcasts
-	IDXTABLE_VIDEOS			// LFContextTVShows
+	IDXTABLE_VIDEOS,		// LFContextTVShows
+	IDXTABLE_DOCUMENTS		// LFContextColorTables
 };
 
 #pragma data_seg()

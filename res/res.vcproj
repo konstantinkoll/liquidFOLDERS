@@ -800,6 +800,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Contexts\LUTs_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\LUTs_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\LUTs_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\LUTs_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Contexts\LUTs_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Contexts\Messages_16.png"
 				>
 			</File>

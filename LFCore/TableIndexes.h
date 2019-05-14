@@ -8,7 +8,7 @@
 #define IDXTABLE_MASTER     0
 #define IDXTABLECOUNT       6
 
-#define CURIDXVERSION       5
+#define CURIDXVERSION       6
 
 
 // Core attributes
@@ -37,12 +37,14 @@
 
 #define IDXTABLE_DOCUMENTS     1
 
-#define IDXATTRS_BOOKS         ((1ull<<LFAttrCreator) | (1ull<<LFAttrTitle) | (1ull<<LFAttrReleased) | \
-								(1ull<<LFAttrLanguage) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrISBN) | \
-								(1ull<<LFAttrPages) | (1ull<<LFAttrSignature))
+#define IDXATTRS_BOOKS         ((1ull<<LFAttrCreator) | (1ull<<LFAttrMediaCollection) | (1ull<<LFAttrTitle) | \
+								(1ull<<LFAttrReleased) | (1ull<<LFAttrLanguage) | (1ull<<LFAttrCopyright) | \
+								(1ull<<LFAttrISBN) | (1ull<<LFAttrPages) | (1ull<<LFAttrSignature))
 #define IDXATTRS_DOCUMENTS     ((1ull<<LFAttrCreator) | (1ull<<LFAttrTitle) | (1ull<<LFAttrLanguage) | \
 								(1ull<<LFAttrCopyright) | (1ull<<LFAttrPages) | (1ull<<LFAttrResponsible) | \
 								(1ull<<LFAttrCustomer))
+#define IDXATTRS_COLORTABLES   ((1ull<<LFAttrCreator) | (1ull<<LFAttrMediaCollection) | (1ull<<LFAttrTitle) | \
+								(1ull<<LFAttrCopyright) | (1ull<<LFAttrResponsible) | (1ull<<LFAttrCustomer))
 
 #define ADVATTRS_BOOKS         (ADVATTRS_MEDIA & (IDXATTRS_CORE | IDXATTRS_BOOKS))
 #define ADVATTRS_DOCUMENTS     ((ADVATTRS_OWNMEDIA & (IDXATTRS_CORE | IDXATTRS_DOCUMENTS)) | \
@@ -61,6 +63,7 @@ struct DocumentAttributes
 	CHAR Language[3];
 	WCHAR Customer[256];
 	UINT PublishedYear;
+	WCHAR MediaCollection[256];
 };
 
 

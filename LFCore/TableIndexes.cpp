@@ -37,7 +37,8 @@ const IdxTableEntry DocumentAttributeEntries[] = {
 	{ LFAttrPages, offsetof(DocumentAttributes, Pages) },
 	{ LFAttrLanguage, offsetof(DocumentAttributes, Language) },
 	{ LFAttrCustomer, offsetof(DocumentAttributes, Customer) },
-	{ LFAttrReleased, offsetof(DocumentAttributes, PublishedYear) }
+	{ LFAttrReleased, offsetof(DocumentAttributes, PublishedYear) },
+	{ LFAttrMediaCollection, offsetof(DocumentAttributes, MediaCollection) }
 };
 
 const IdxTableEntry MessageAttributeEntries[] = {

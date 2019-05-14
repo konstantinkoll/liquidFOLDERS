@@ -15,7 +15,7 @@ CIcons CMainWnd::m_SmallIcons;
 const UINT CMainWnd::m_ContextOrder[LFLastQueryContext+1] = {
 	LFContextAllFiles, LFContextFavorites,
 	LFContextAudio, LFContextBooks, LFContextMovies, LFContextMusic, LFContextPictures, LFContextPodcasts, LFContextTVShows, LFContextVideos,
-	LFContextDocuments, LFContextFonts, LFContextContacts, LFContextMessages, LFContextApps,
+	LFContextDocuments, LFContextContacts, LFContextMessages, LFContextApps, LFContextFonts, LFContextColorTables,
 	LFContextNew, LFContextTasks, LFContextArchive, LFContextTrash,
 	LFContextFilters
 };

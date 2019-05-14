@@ -119,6 +119,13 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	ADVATTRS_TVSHOWS,
 	(1ull<<LFContextMovies) | REMOVEFROMCONTEXT },
 
+	// LFContextColorTables
+	{ LFAttrRating, TRUE, LFContextSubfolderDefault,
+	MINVIEWS, LFViewList,
+	IDXATTRS_CORE | IDXATTRS_COLORTABLES,
+	ADVATTRS_MINIMAL | (1ull<<LFAttrRating) | (1ull<<LFAttrMediaCollection),
+	0 },
+
 	// LFContextFavorites
 	{ LFAttrRating, TRUE, 0,
 	ALLVIEWS, LFViewList,
@@ -576,21 +583,21 @@ extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 
 
 #define CTX_AUDIO    ((1ull<<LFContextAudio) | (1ull<<LFContextMusic) | (1ull<<LFContextSubfolderMusic))
+#define CTX_PICTURES ((1ull<<LFContextPictures) | (1ull<<LFContextSubfolderPictures))
 #define CTX_PODCASTS ((1ull<<LFContextPodcasts) | (1ull<<LFContextSubfolderPodcasts))
 #define CTX_TVSHOWS  ((1ull<<LFContextTVShows) | (1ull<<LFContextSubfolderTVShows))
+#define CTX_VIDEOS   ((1ull<<LFContextVideos) | (1ull<<LFContextSubfolderVideos))
 
 extern const SpecialAttributeName SpecialAttributeNames[SPECIALATTRIBUTENAMESCOUNT] = {
 	{ LFAttrMediaCollection, IDS_ALBUM, IDI_FLD_PLACEHOLDER_NOTE, FALSE, CTX_AUDIO },
-	{ LFAttrMediaCollection, IDS_ROLL, IDI_FLD_DEFAULT, FALSE,(1ull<<LFContextPictures) | (1ull<<LFContextVideos) },
+	{ LFAttrMediaCollection, IDS_ROLL, IDI_FLD_DEFAULT, FALSE, CTX_PICTURES | CTX_VIDEOS | (1ull<<LFContextColorTables) },
 	{ LFAttrMediaCollection, IDS_PODCAST, IDI_FLD_PLACEHOLDER_PODCAST, FALSE,CTX_PODCASTS },
 	{ LFAttrMediaCollection, IDS_TVSHOW, IDI_FLD_PLACEHOLDER_TV, FALSE, CTX_TVSHOWS },
 	{ LFAttrSequenceInCollection, IDS_EPISODE, 0, TRUE, CTX_PODCASTS },
-	{ LFAttrSequenceInCollection, IDS_EPISODE, 0, FALSE, CTX_TVSHOWS | (1ull<<LFContextVideos) },
+	{ LFAttrSequenceInCollection, IDS_EPISODE, 0, FALSE, CTX_TVSHOWS | CTX_VIDEOS },
 	{ LFAttrSequenceInCollection, IDS_TRACK, 0, FALSE, CTX_AUDIO },
-	{ LFAttrCreator, IDS_ARTIST, IDI_FLD_PLACEHOLDER_CONTACT, FALSE, CTX_AUDIO },
-	{ LFAttrCreator, IDS_ARTIST, IDI_FLD_PLACEHOLDER_CONTACT, FALSE, (1ull<<LFContextPictures) },
-	{ LFAttrCreator, IDS_AUTHOR, IDI_FLD_PLACEHOLDER_CONTACT, FALSE, CTX_PODCASTS | CTX_TVSHOWS | (1ull<<LFContextVideos) | (1ull<<LFContextMovies) },
-	{ LFAttrCreator, IDS_AUTHOR, IDI_FLD_PLACEHOLDER_CONTACT, FALSE, (1ull<<LFContextBooks) | (1ull<<LFContextDocuments) }
+	{ LFAttrCreator, IDS_ARTIST, IDI_FLD_PLACEHOLDER_CONTACT, FALSE, CTX_AUDIO | CTX_PICTURES },
+	{ LFAttrCreator, IDS_AUTHOR, IDI_FLD_PLACEHOLDER_CONTACT, FALSE, CTX_PODCASTS | CTX_TVSHOWS | CTX_VIDEOS | (1ull<<LFContextBooks) | (1ull<<LFContextDocuments) | (1ull<<LFContextColorTables) | (1ull<<LFContextMovies) }
 };
 
 #pragma data_seg()
