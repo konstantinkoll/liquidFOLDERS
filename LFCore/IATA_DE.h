@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8795
+#define AirportCount_DE 8796
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -7971,6 +7971,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 212, "VLS", "", "Valesdir", { 16.796111, 168.176944 } },
 	{ 160, "VLU", "", "Velikiye Luki", { -56.381111, 30.608056 } },
 	{ 213, "VLV", "", "Valera", { -9.340833, -70.584167 } },
+	{  62, "VLY", "", "Anglesey", { -53.248056, -4.535278 } },
 	{   8, "VME", "", "Villa Mercedes", { 33.725278, -65.378056 } },
 	{ 209, "VMR", "", "Vermillion", { -42.765278, -96.934167 } },
 	{ 136, "VMU", "", "Baimuru", { 7.483056, 144.800000 } },

@@ -199,9 +199,10 @@
 #define IDM_STORE_PROPERTIES            21288
 #define IDD_DELETESTORE                 21300
 #define IDC_CAPTION                     21301
-#define IDC_NUKEMESSAGE                 21302
-#define IDC_KEEP                        21303
-#define IDC_DELETE                      21304
+#define IDC_NUKEMESSAGE1                21302
+#define IDC_NUKEMESSAGE2                21303
+#define IDC_KEEP                        21304
+#define IDC_DELETE                      21305
 #define IDD_SELECTLOCATIONIATA          21400
 #define IDC_COUNTRY                     21401
 #define IDC_AIRPORTS                    21402

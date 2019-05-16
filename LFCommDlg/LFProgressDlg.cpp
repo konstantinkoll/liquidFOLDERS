@@ -140,8 +140,10 @@ void LFProgressDlg::OnCancel()
 		GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
 
 		// Progress bar
-		m_wndProgress.SendMessage(0x410, LFProgressCancelled);
-		m_wndProgress.RedrawWindow();
+		if (m_Progress.ProgressState==LFProgressWorking)
+			m_Progress.ProgressState = LFProgressCancelled;
+
+		UpdateProgress();
 	}
 	else
 	{

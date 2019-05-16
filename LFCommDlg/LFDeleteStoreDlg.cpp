@@ -27,9 +27,11 @@ BOOL LFDeleteStoreDlg::InitDialog()
 	// Fette Überschrift
 	GetDlgItem(IDC_CAPTION)->SetFont(&LFGetApp()->m_DialogBoldFont);
 
-	// Nuke
-	if ((m_StoreDescriptor.Mode & LFStoreModeBackendMask)>LFStoreModeBackendInternal)
-		GetDlgItem(IDC_NUKEMESSAGE)->ShowWindow(SW_HIDE);
+	// Nuke messages
+	const BOOL Nuke = (m_StoreDescriptor.Mode & LFStoreModeBackendMask)<=LFStoreModeBackendInternal;
+
+	GetDlgItem(IDC_NUKEMESSAGE1)->ShowWindow(Nuke ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_NUKEMESSAGE2)->ShowWindow(Nuke ? SW_HIDE : SW_SHOW);
 
 	// Titelleiste
 	CString Mask;

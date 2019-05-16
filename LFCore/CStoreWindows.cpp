@@ -86,7 +86,6 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 
 			LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor(NULL, pStr, (wcslen(pStr)+1)*sizeof(WCHAR));
 
-			UINT Result;
 			WCHAR Path[2*MAX_PATH];
 			if ((Result=CStore::PrepareImport(pItem->Path, pItemDescriptor, Path, 2*MAX_PATH))==LFOk)
 				CommitImport(pItemDescriptor, TRUE, pItem->Path, OnInitialize);

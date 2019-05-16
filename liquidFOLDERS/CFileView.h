@@ -115,7 +115,7 @@ protected:
 	virtual void DeleteSelectedItem() const;
 	virtual void DrawNothing(CDC& dc, CRect rect, BOOL Themed) const;
 
-	CString GetItemLabel(const LFItemDescriptor* pItemDescriptor) const;
+	CString GetItemLabel(const LFItemDescriptor* pItemDescriptor, BOOL AllowExtension=TRUE) const;
 	COLORREF SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const;
 	static UINT GetColorDotCount(const LFItemDescriptor* pItemDescriptor);

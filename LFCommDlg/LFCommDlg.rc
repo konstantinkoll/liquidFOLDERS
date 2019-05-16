@@ -196,18 +196,19 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,464,264,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 277, 170
+IDD_DELETESTORE DIALOGEX 0, 0, 277, 162
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Angeschlossenen Speicherort „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Abbrechen",IDCANCEL,220,149,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Abbrechen",IDCANCEL,220,141,50,14,WS_GROUP
     LTEXT           "Soll der Speicherort wirklich gelöscht werden?",IDC_CAPTION,7,31,263,15
-    LTEXT           "Da der gewählte Speicherort zur Zeit angeschlossen ist, werden\nalle Dateien ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_NUKEMESSAGE,7,51,263,17
+    LTEXT           "Da der gewählte Speicherort zur Zeit angeschlossen ist, werden\nalle Dateien ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_NUKEMESSAGE1,7,51,263,17
+    LTEXT           "Es werden alle in liquidFOLDERS gespeicherten Eigenschaften gelöscht,\ndie Dateien selbst bleiben jedoch erhalten.",IDC_NUKEMESSAGE2,7,51,263,17
     LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“\nauswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,263,17
-    CONTROL         "Speicherort &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,263,10
-    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,263,10
-    PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,47,149,165,14,WS_DISABLED | WS_GROUP
+    CONTROL         "Speicherort &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,103,263,10
+    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,115,263,10
+    PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,47,141,165,14,WS_DISABLED | WS_GROUP
 END
 
 IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 320
@@ -622,7 +623,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 163
+        BOTTOMMARGIN, 155
     END
 
     IDD_SELECTLOCATIONGPS, DIALOG
@@ -974,7 +975,8 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indexiert ein bestehendes Windows-Verzeichnis.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_BOX        "Indexiert das bestehenden Verzeichnis Ihrer lokalen Box-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_DROPBOX    "Indexiert die bestehenden Verzeichnisse Ihrer lokalen Dropbox-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
-    IDS_ADDSTORE_GOOGLEDRIVE "Indexiert das bestehenden Verzeichnis Ihrer lokalen Google-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
+    IDS_ADDSTORE_GOOGLEDRIVE 
+                            "Indexiert das bestehenden Verzeichnis Ihrer lokalen Google-Anwendung.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_ICLOUD     "Indexiert die bestehenden lokalen iCloud-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_ADDSTORE_ONEDRIVE   "Indexiert die bestehenden lokalen OneDrive-Verzeichnisse.\nDie enthaltenen Dateien werden dabei nicht kopiert oder verändert."
     IDS_SUBSCRIPTION        "Abo"
@@ -1055,18 +1057,19 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,464,264,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 277, 170
+IDD_DELETESTORE DIALOGEX 0, 0, 277, 162
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eliminar ubicación conectado «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Cancelar",IDCANCEL,220,149,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,220,141,50,14,WS_GROUP
     LTEXT           "Confirme si realmente desea eliminar el ubicación seleccionado.",IDC_CAPTION,7,31,263,15
-    LTEXT           "Dado que el ubicación está actualmente conectado, perderá todos\nlos archivos dentro de ese ubicación sin opción a recuperarlos!",IDC_NUKEMESSAGE,7,51,263,17
-    LTEXT           "Usted da permiso de eliminar el ubicación al elegir «Eliminar» en\nla parte de abajo y luego dar clic en «Eliminar ahora».",IDC_STATIC,7,81,263,17
-    CONTROL         "&Conservar ubicación",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,263,10
-    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,263,10
-    PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,67,149,145,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Dado que el ubicación está actualmente conectado, perderá todos\nlos archivos dentro de ese ubicación sin opción a recuperarlos!",IDC_NUKEMESSAGE1,7,51,263,17
+    LTEXT           "Todas las propiedades guardaras en liquidFOLDERS se eliminan,\npero los archivos se conservan.",IDC_NUKEMESSAGE2,7,51,263,17
+    LTEXT           "Usted da permiso de eliminar el ubicación al elegir «Eliminar» en\nla parte de abajo y luego dar clic en «Eliminar ahora»:",IDC_STATIC,7,81,263,17
+    CONTROL         "&Conservar ubicación",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,103,263,10
+    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,115,263,10
+    PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,67,141,145,14,WS_DISABLED | WS_GROUP
 END
 
 IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 320
@@ -1483,7 +1486,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 163
+        BOTTOMMARGIN, 155
     END
 
     IDD_SELECTLOCATIONGPS, DIALOG
@@ -1835,7 +1838,8 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Índices una carpeta existente de Windows.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_BOX        "Índices la carpeta existente de su aplicación local de Box.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_DROPBOX    "Índices las carpetas existentes de su aplicación local de Dropbox.\nSus archivos no se copian o modifican."
-    IDS_ADDSTORE_GOOGLEDRIVE "Índices la carpeta existente de su aplicación local de Google.\nSus archivos no se copian o modifican."
+    IDS_ADDSTORE_GOOGLEDRIVE 
+                            "Índices la carpeta existente de su aplicación local de Google.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_ICLOUD     "Índices las carpetas locales existentes de iCloud.\nSus archivos no se copian o modifican."
     IDS_ADDSTORE_ONEDRIVE   "Índices las carpetas locales existentes de OneDrive.\nSus archivos no se copian o modifican."
     IDS_SUBSCRIPTION        "Suscripción"
@@ -1916,18 +1920,19 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,464,264,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 287, 170
+IDD_DELETESTORE DIALOGEX 0, 0, 287, 162
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Effacez l'emplacement monté «%s»"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Annuler",IDCANCEL,230,149,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Annuler",IDCANCEL,230,141,50,14,WS_GROUP
     LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer l'emplacement choisi.",IDC_CAPTION,7,31,273,15
-    LTEXT           "Comme l'emplacement est actuellement monté, vous perdrez tous les\nfichiers à l'intérieur de c'emplacement sans option de récupération!",IDC_NUKEMESSAGE,7,51,273,17
+    LTEXT           "Comme l'emplacement est actuellement monté, vous perdrez tous les\nfichiers à l'intérieur de c'emplacement sans option de récupération!",IDC_NUKEMESSAGE1,7,51,273,17
+    LTEXT           "Les propriétés sauvegardées dans liquidFOLDERS sont effacées,\nmais les fichiers eux-mêmes sont conservés.",IDC_NUKEMESSAGE2,7,51,263,17
     LTEXT           "Pour l'effacement vous donnez votre approbation en choisir\n«Effacer» et, ensuite, en cliquer sur «Effacer maintenant»:",IDC_STATIC,7,81,273,17
-    CONTROL         "&Gardez l'emplacement",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,273,10
-    CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,273,10
-    PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,7,149,215,14,WS_DISABLED | WS_GROUP
+    CONTROL         "&Gardez l'emplacement",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,103,273,10
+    CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,115,273,10
+    PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,7,141,215,14,WS_DISABLED | WS_GROUP
 END
 
 IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 320
@@ -2341,7 +2346,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 280
         TOPMARGIN, 7
-        BOTTOMMARGIN, 163
+        BOTTOMMARGIN, 155
     END
 
     IDD_SELECTLOCATIONGPS, DIALOG
@@ -2693,7 +2698,8 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indices d'un dossier Windows existant.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_BOX        "Indices le dossier existant de votre application Box local.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_DROPBOX    "Indices les dossiers existants de votre application Dropbox local.\nVos fichiers ne seront pas copiés ou modifiés."
-    IDS_ADDSTORE_GOOGLEDRIVE "Indices le dossier existant de votre application Google local.\nVos fichiers ne seront pas copiés ou modifiés."
+    IDS_ADDSTORE_GOOGLEDRIVE 
+                            "Indices le dossier existant de votre application Google local.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_ICLOUD     "Indices les dossiers locaux existants de iCloud.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_ADDSTORE_ONEDRIVE   "Indices les dossiers locaux existants de OneDrive.\nVos fichiers ne seront pas copiés ou modifiés."
     IDS_SUBSCRIPTION        "Abonnement"
@@ -2824,18 +2830,19 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,464,264,50,14,WS_GROUP
 END
 
-IDD_DELETESTORE DIALOGEX 0, 0, 277, 170
+IDD_DELETESTORE DIALOGEX 0, 0, 277, 162
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Delete mounted location “%s”"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Cancel",IDCANCEL,220,149,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,220,141,50,14,WS_GROUP
     LTEXT           "Please confirm that you really want to delete the selected location.",IDC_CAPTION,7,31,263,15
-    LTEXT           "Since the location is currently mounted, you will lose\nall files inside that location without recovery option!",IDC_NUKEMESSAGE,7,51,263,17
-    LTEXT           "You give permission to delete the location by choosing “Delete”\nbelow, and then click on the button “Delete now”.",IDC_STATIC,7,81,263,17
-    CONTROL         "&Keep the location",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,111,263,10
-    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,123,263,10
-    PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,37,149,175,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Since the location is currently mounted, you will lose\nall files inside that location without recovery option!",IDC_NUKEMESSAGE1,7,51,263,17
+    LTEXT           "All properties stored in liquidFOLDERS will be deleted,\nbut the files will be retained.",IDC_NUKEMESSAGE2,7,51,263,17
+    LTEXT           "You give permission to delete the location by choosing “Delete”\nbelow, and then click on the button “Delete now”:",IDC_STATIC,7,81,263,17
+    CONTROL         "&Keep the location",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,103,263,10
+    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,115,263,10
+    PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,37,141,175,14,WS_DISABLED | WS_GROUP
 END
 
 IDD_SELECTLOCATIONGPS DIALOGEX 0, 0, 430, 320
@@ -3251,7 +3258,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 163
+        BOTTOMMARGIN, 155
     END
 
     IDD_SELECTLOCATIONGPS, DIALOG
@@ -3603,7 +3610,8 @@ BEGIN
     IDS_ADDSTORE_WINDOWS    "Indexes an existing Windows folder.\nYour files will not be copied or modified."
     IDS_ADDSTORE_BOX        "Indexes the existing folder of your local Box client.\nYour files will not be copied or modified."
     IDS_ADDSTORE_DROPBOX    "Indexes the existing folders of your local Dropbox client.\nYour files will not be copied or modified."
-    IDS_ADDSTORE_GOOGLEDRIVE "Indexes the existing folder of your local Google client.\nYour files will not be copied or modified."
+    IDS_ADDSTORE_GOOGLEDRIVE 
+                            "Indexes the existing folder of your local Google client.\nYour files will not be copied or modified."
     IDS_ADDSTORE_ICLOUD     "Indexes the existing local iCloud folders.\nYour files will not be copied or modified."
     IDS_ADDSTORE_ONEDRIVE   "Indexes the existing local OneDrive folders.\nYour files will not be copied or modified."
     IDS_SUBSCRIPTION        "Subscription"

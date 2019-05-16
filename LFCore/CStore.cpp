@@ -607,7 +607,7 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 			for (LPCWSTR pChar=Value; pChar; pChar++)
 				if (*pChar>=L'A')
 				{
-					const UINT Attr = (pItemDescriptor->CoreAttributes.SystemContextID>LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection) ? LFAttrMediaCollection : LFAttrCreator;
+					const UINT Attr = (pItemDescriptor->CoreAttributes.SystemContextID!=LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection) ? LFAttrMediaCollection : LFAttrCreator;
 					SetAttribute(pItemDescriptor, Attr, Value);
 
 					break;
@@ -623,6 +623,13 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 			if (!LFIsPictureFile(pItemDescriptor) && LFIsNullAttribute(pItemDescriptor, LFAttrTitle))
 				SetAttribute(pItemDescriptor, LFAttrTitle, Name);
 		}
+	}
+
+	// Only for documents
+	if (LFIsDocumentFile(pItemDescriptor))
+	{
+		if (LFIsNullAttribute(pItemDescriptor, LFAttrTitle))
+			SetAttribute(pItemDescriptor, LFAttrTitle, pItemDescriptor->CoreAttributes.FileName);
 	}
 }
 

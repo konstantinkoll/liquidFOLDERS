@@ -615,7 +615,7 @@ void CFileView::DeleteSelectedItem() const
 
 // Draw support
 
-CString CFileView::GetItemLabel(const LFItemDescriptor* pItemDescriptor) const
+CString CFileView::GetItemLabel(const LFItemDescriptor* pItemDescriptor, BOOL AllowExtension) const
 {
 	CString strLabel(pItemDescriptor->CoreAttributes.FileName);
 
@@ -645,7 +645,7 @@ CString CFileView::GetItemLabel(const LFItemDescriptor* pItemDescriptor) const
 	}
 
 	// Extension
-	if (LFIsFile(pItemDescriptor))
+	if (AllowExtension && LFIsFile(pItemDescriptor))
 		if ((!m_HideFileExt || (pItemDescriptor->CoreAttributes.FileName[0]==L'\0')) && (pItemDescriptor->CoreAttributes.FileFormat[0]!='\0') && (_stricmp(pItemDescriptor->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			strLabel += _T(".");

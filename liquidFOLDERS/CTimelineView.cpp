@@ -66,18 +66,24 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 				pData->pStrCollection = GetAttribute(pData, PRV_COLLECTION, pItemDescriptor, LFAttrMediaCollection);
 				pData->pStrComments = GetAttribute(pData, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
 
-				if (pData->pStrCollection)
+				// Only show title if different from file name or other attributes are present
+				if (((pData->PreviewMask & PRV_ATTRIBUTES)==PRV_TITLE) && (wcscmp(pData->pStrTitle, GetItemLabel(pItemDescriptor, FALSE))==0))
+					pData->PreviewMask &= ~PRV_ATTRIBUTES;
+
+				// Collection icon
+				if (pData->PreviewMask & PRV_COLLECTION)
 				{
 					pData->PreviewMask |= PRV_COLLECTIONICON;
 					pData->CollectionIconID = theApp.GetAttributeIcon(LFAttrMediaCollection, LFGetUserContextID(pItemDescriptor));
 				}
 
 				// Only show comments if different from collection and title
-				if (pData->pStrComments)
-					if ((pData->pStrCollection && (wcscmp(pData->pStrComments, pData->pStrCollection)==0)) ||
-						(pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0)))
+				if (pData->PreviewMask & PRV_COMMENTS)
+					if (((pData->PreviewMask & PRV_COLLECTION) && (wcscmp(pData->pStrComments, pData->pStrCollection)==0)) ||
+						((pData->PreviewMask & PRV_TITLE) && (wcscmp(pData->pStrComments, pData->pStrTitle)==0)))
 						pData->PreviewMask &= ~PRV_COMMENTS;
 
+				// Thumbnail
 				if (UsePreview(pItemDescriptor))
 				{
 					pData->PreviewMask |= PRV_THUMBNAILS;
