@@ -370,7 +370,10 @@ inline BYTE LFGetUserContextID(const LFItemDescriptor* pItemDescriptor)
 #define LFIsAudioFile(ITEM) (LFGetSystemContextID(ITEM)==LFContextAudio)
 
 // Gibt TRUE zurück, wenn die Datei ein Dokument ist
-#define LFIsDocumentFile(ITEM) ((LFGetSystemContextID(ITEM)==LFContextDocuments) || (LFGetSystemContextID(ITEM)==LFContextColorTables))
+#define LFIsDocumentFileLoose(ITEM) (LFIsDocumentFileStrict(ITEM) || (LFGetSystemContextID(ITEM)==LFContextColorTables))
+
+// Gibt TRUE zurück, wenn die Datei ein Dokument ist
+#define LFIsDocumentFileStrict(ITEM) (LFGetSystemContextID(ITEM)==LFContextDocuments)
 
 // Gibt TRUE zurück, wenn die Datei ein Filter ist
 #define LFIsFilterFile(ITEM) (LFGetSystemContextID(ITEM)==LFContextFilters)

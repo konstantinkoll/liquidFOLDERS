@@ -626,7 +626,7 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 	}
 
 	// Only for documents
-	if (LFIsDocumentFile(pItemDescriptor))
+	if (LFIsDocumentFileLoose(pItemDescriptor))
 	{
 		if (LFIsNullAttribute(pItemDescriptor, LFAttrTitle))
 			SetAttribute(pItemDescriptor, LFAttrTitle, pItemDescriptor->CoreAttributes.FileName);

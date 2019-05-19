@@ -245,7 +245,7 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	// Calculate thumbnail size and other parameters
 	const BOOL BlackFrame = LFIsAudioFile(pItemDescriptor);
 	const BOOL IsMediaFile = LFIsMediaFile(pItemDescriptor);
-	const BOOL IsDocumentFile = LFIsDocumentFile(pItemDescriptor);
+	const BOOL IsDocumentFile = LFIsDocumentFileStrict(pItemDescriptor);
 	const INT CutOff = IsMediaFile || IsDocumentFile ? THUMBCUTOFF : 0;
 	const INT ThumbSize = (BlackFrame ? 124 : 118)+2*CutOff;
 

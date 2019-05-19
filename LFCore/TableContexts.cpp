@@ -12,6 +12,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "aa",      LFContextAudio, 0 },
 	{ "aac",     LFContextAudio, 0 },
 	{ "aax",     LFContextAudio, 0 },
+	{ "aco",     LFContextColorTables, 0 },
 	{ "act",     LFContextAudio, 0 },
 	{ "aiff",    LFContextAudio, 0 },
 	{ "air",     LFContextDocuments, 0 },
@@ -23,6 +24,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "appx",    LFContextApps, 0 },
 	{ "arw",     LFContextPictures, 0 },						// RAW format (digital camera)
 	{ "asc",     LFContextDocuments, 0 },
+	{ "ase",     LFContextColorTables, 0 },
 	{ "asm",     LFContextDocuments, 0 },
 	{ "au",      LFContextAudio, 0 },
 	{ "audio",   LFContextAudio, 0 },
@@ -224,6 +226,8 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "shtm",    LFContextDocuments, 0 },
 	{ "shtml",   LFContextDocuments, 0 },
 	{ "snd",     LFContextAudio, 0 },
+	{ "spi1d",   LFContextColorTables, 0 },
+	{ "spi3d",   LFContextColorTables, 0 },
 	{ "sr2",     LFContextPictures, 0 },						// RAW format (digital camera)
 	{ "srt",     LFContextAudio, 0 },
 	{ "svg",     LFContextPictures, 0 },

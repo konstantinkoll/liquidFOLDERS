@@ -67,7 +67,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 				pData->pStrComments = GetAttribute(pData, PRV_COMMENTS, pItemDescriptor, LFAttrComments);
 
 				// Only show title if different from file name or other attributes are present
-				if (((pData->PreviewMask & PRV_ATTRIBUTES)==PRV_TITLE) && (wcscmp(pData->pStrTitle, GetItemLabel(pItemDescriptor, FALSE))==0))
+				if (((pData->PreviewMask & PRV_ATTRIBUTES)==PRV_TITLE) && !LFIsMediaFile(pItemDescriptor) && (wcscmp(pData->pStrTitle, GetItemLabel(pItemDescriptor, FALSE))==0))
 					pData->PreviewMask &= ~PRV_ATTRIBUTES;
 
 				// Collection icon
