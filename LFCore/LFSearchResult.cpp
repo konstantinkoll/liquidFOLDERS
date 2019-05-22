@@ -272,11 +272,11 @@ void LFSearchResult::CloseFileSummary(LFFileSummary& FileSummary)
 {
 	// Aggregate context
 	for (BYTE a=0; a<=LFLastPersistentContext; a++)
-		if ((FileSummary.ContextSet>>a) & 1)
+		if ((a!=LFContextColorTables) && ((FileSummary.ContextSet>>a) & 1))
 			FileSummary.Context = (FileSummary.Context==LFContextAuto) ? a : LFContextAllFiles;
 
 	if (FileSummary.Context==LFContextAuto)
-		FileSummary.Context = LFContextAllFiles;
+		FileSummary.Context = ((FileSummary.ContextSet>>LFContextColorTables) & 1) ? LFContextColorTables : LFContextAllFiles;
 }
 
 BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)

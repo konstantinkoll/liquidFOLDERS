@@ -2,10 +2,10 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="liquidFOLDERS"
-	ProjectGUID="{1E784088-B044-4E3A-9628-32A4C3A266E0}"
-	RootNamespace="liquidFOLDERS"
-	Keyword="MFCProj"
+	Name="ConvertPNG2CUBE"
+	ProjectGUID="{522B1674-123A-F831-214E-EDC146184AB3}"
+	RootNamespace="ConvertPNG2CUBE"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -25,6 +25,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
+			UseOfATL="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,47 +42,39 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="false"
-				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(SolutionDir)\LFCommDlg,$(SolutionDir)\LFCore"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				CallingConvention="2"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
-				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="0"
 				FixedBaseAddress="1"
 				TargetMachine="1"
 			/>
@@ -90,7 +83,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -114,6 +106,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
+			UseOfATL="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -130,8 +123,6 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="false"
 				TargetEnvironment="3"
 			/>
 			<Tool
@@ -139,38 +130,33 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(SolutionDir)\LFCommDlg,$(SolutionDir)\LFCore"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				CallingConvention="2"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
-				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="0"
 				FixedBaseAddress="1"
 				TargetMachine="17"
 			/>
@@ -179,7 +165,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -203,7 +188,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			UseOfATL="0"
+			UseOfATL="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -221,9 +206,6 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="false"
-				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -232,39 +214,32 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(SolutionDir)\LFCommDlg,$(SolutionDir)\LFCore"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
-				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				CallingConvention="2"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
-				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="false"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="0"
@@ -277,7 +252,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -293,8 +267,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="EXE wird signiert."
-				CommandLine="signtool.exe sign /f &quot;$(SolutionDir)liquidFOLDERS Application Integration.pfx&quot; &quot;$(OutDir)\$(ProjectName).exe&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -303,6 +275,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
+			UseOfATL="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -320,8 +293,6 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="false"
 				TargetEnvironment="3"
 			/>
 			<Tool
@@ -331,39 +302,32 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(SolutionDir)\LFCommDlg,$(SolutionDir)\LFCore"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
-				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				CallingConvention="2"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\LFCommDlg.res"
 				LinkIncremental="1"
-				DelayLoadDLLs="shell32.dll"
 				GenerateDebugInformation="false"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="0"
@@ -376,7 +340,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -392,8 +355,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="EXE wird signiert."
-				CommandLine="signtool.exe sign /f &quot;$(SolutionDir)liquidFOLDERS Application Integration.pfx&quot; &quot;$(OutDir)\$(ProjectName).exe&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -403,82 +364,10 @@
 		<Filter
 			Name="Quelldateien"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			UniqueIdentifier="{45435365-ABCE-F421-1432-BCFA§788234F}"
 			>
 			<File
-				RelativePath=".\AboutDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CDetailsView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CFileDropWnd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CFileView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlobeView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CHistoryBar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ChooseDetailsDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CIconFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CIconsView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CInspectorPane.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CJournalButton.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CListView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CMainView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CMainWnd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CTagcloudView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CTimelineView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\liquidFOLDERS.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OrganizeDlg.cpp"
+				RelativePath=".\ConvertPNG2CUBE.cpp"
 				>
 			</File>
 			<File
@@ -521,86 +410,10 @@
 		<Filter
 			Name="Headerdateien"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			UniqueIdentifier="{43278ACE-FFAB-1243-123E-CAFE461713EA}"
 			>
 			<File
-				RelativePath=".\AboutDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CDetailsView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CFileDropWnd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CFileView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlobeView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CHistoryBar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ChooseDetailsDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CIconFactory.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CIconsView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CInspectorPane.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CJournalButton.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CListView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMainView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMainWnd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTagcloudView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTimelineView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\liquidFOLDERS.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OrganizeDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\ConvertPNG2CUBE.h"
 				>
 			</File>
 			<File
@@ -611,94 +424,8 @@
 				RelativePath=".\targetver.h"
 				>
 			</File>
-			<File
-				RelativePath=".\ThumbnailList.h"
-				>
-			</File>
 		</Filter>
-		<Filter
-			Name="Ressourcendateien"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-			<File
-				RelativePath=".\res\Applications_29.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Background_CapacityBar.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_1024.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_512.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_8192.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Clouds_1024.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Clouds_2048.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Clouds_4096.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\liquidFOLDERS.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Multiple_128.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tasks_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tasks_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tasks_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tasks_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tasks_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Thumbnail.png"
-				>
-			</File>
-		</Filter>
-		<File
-			RelativePath=".\liquidFOLDERS32.manifest.xml"
-			>
-		</File>
-		<File
-			RelativePath=".\liquidFOLDERS64.manifest.xml"
-			>
-		</File>
 	</Files>
 	<Globals>
-		<Global
-			Name="RESOURCE_FILE"
-			Value="liquidFOLDERS.rc"
-		/>
 	</Globals>
 </VisualStudioProject>

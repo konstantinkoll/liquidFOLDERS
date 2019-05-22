@@ -86,7 +86,7 @@ LFCORE_API BOOL LFIATAGetAirportByCode(LPCSTR lpcszCode, LPCAIRPORT& lpcAirport)
 
 		lpcAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
 
-		const INT Result = strcmp(lpcAirport->Code, lpcszCode);
+		const INT Result = _byteswap_ulong(*((LPINT)&lpcAirport->Code))-_byteswap_ulong(*((LPINT)lpcszCode));
 		if (!Result)
 			return TRUE;
 

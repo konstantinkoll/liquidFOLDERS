@@ -13,7 +13,7 @@ class LFFont : public CFont
 public:
 	LFFont();
 
-	BOOL CreateFont(INT nHeight, BYTE nQuality=CLEARTYPE_QUALITY, INT nWeight=FW_NORMAL, BYTE bItalic=0, LPCTSTR lpszFacename=_T("Arial"));
+	BOOL CreateFont(INT nHeight, BYTE nQuality=CLEARTYPE_QUALITY, INT nWeight=FW_NORMAL, BYTE bItalic=0, LPCTSTR lpszFacename=_T("Arial"), INT nEscapement=0);
 	BOOL CreateFontIndirect(const LOGFONT* lpLogFont);
 	INT GetFontHeight() const;
 	CSize GetTextExtent(LPCTSTR lpszString) const;

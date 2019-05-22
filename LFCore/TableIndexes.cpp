@@ -32,6 +32,7 @@ const IdxTableEntry DocumentAttributeEntries[] = {
 	{ LFAttrCopyright, offsetof(DocumentAttributes, Copyright) },
 	{ LFAttrTitle, offsetof(DocumentAttributes, Title) },
 	{ LFAttrResponsible, offsetof(DocumentAttributes, Responsible) },
+	{ LFAttrApplication, offsetof(DocumentAttributes, Application) },
 	{ LFAttrSignature, offsetof(DocumentAttributes, Signature) },
 	{ LFAttrISBN, offsetof(DocumentAttributes, ISBN) },
 	{ LFAttrPages, offsetof(DocumentAttributes, Pages) },

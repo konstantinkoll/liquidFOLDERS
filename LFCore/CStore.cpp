@@ -525,8 +525,8 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
-	// Only for media files
-	if (LFIsMediaFile(pItemDescriptor))
+	// Only for media files and color tables
+	if (LFIsMediaFile(pItemDescriptor) || (LFGetSystemContextID(pItemDescriptor)==LFContextColorTables))
 	{
 		// Buffer
 		WCHAR Name[256];
@@ -554,69 +554,73 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 			}
 		}
 
-		// Find separator char
-		LPCWSTR pSeparator = wcsstr(Name, L" – ");
-		SIZE_T SeparatorLength = 3;
-
-		if (!pSeparator)
+		// Only for media files
+		if (LFIsMediaFile(pItemDescriptor))
 		{
-			pSeparator = wcschr(Name, L'—');
-			SeparatorLength = 1;
-		}
+			// Find separator char
+			LPCWSTR pSeparator = wcsstr(Name, L" – ");
+			SIZE_T SeparatorLength = 3;
 
-		// Find space character separating name and number
-		if (!pSeparator)
-		{
-			if ((pSeparator=wcsrchr(Name, L' '))!=NULL)
+			if (!pSeparator)
 			{
-				// Only (and at least one) number chars following the right-most space?
-				LPCWSTR pChar = pSeparator+1;
-
-				do
-				{
-					if ((*pChar<L'0') || (*pChar>L'9'))
-					{
-						// No, so there is no separator!
-						pSeparator = NULL;
-
-						break;
-					}
-
-					// When the number gets larger than 4 digits, do not recognize
-					// it as it is probably a year number in the file name. We do
-					// not want that as media title!
-					if (pChar-pSeparator>3)
-					{
-						pSeparator = NULL;
-
-						break;
-					}
-				}
-				while (*(++pChar));
+				pSeparator = wcschr(Name, L'—');
+				SeparatorLength = 1;
 			}
 
-			SeparatorLength = 1;
-		}
-
-		if (pSeparator)
-		{
-			// Creator or media collection
-			WCHAR Value[256];
-			wcsncpy_s(Value, 256, Name, pSeparator-Name);
-
-			for (LPCWSTR pChar=Value; pChar; pChar++)
-				if (*pChar>=L'A')
+			// Find space character separating name and number
+			if (!pSeparator)
+			{
+				if ((pSeparator=wcsrchr(Name, L' '))!=NULL)
 				{
-					const UINT Attr = (pItemDescriptor->CoreAttributes.SystemContextID!=LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection) ? LFAttrMediaCollection : LFAttrCreator;
-					SetAttribute(pItemDescriptor, Attr, Value);
+					// Only (and at least one) number chars following the right-most space?
+					LPCWSTR pChar = pSeparator+1;
 
-					break;
+					do
+					{
+						if ((*pChar<L'0') || (*pChar>L'9'))
+						{
+							// No, so there is no separator!
+							pSeparator = NULL;
+
+							break;
+						}
+
+						// When the number gets larger than 4 digits, do not recognize
+						// it as it is probably a year number in the file name. We do
+						// not want that as media title!
+						if (pChar-pSeparator>3)
+						{
+							pSeparator = NULL;
+
+							break;
+						}
+					}
+					while (*(++pChar));
 				}
 
-			// Title
-			LPCWSTR pTitle = pSeparator+SeparatorLength;
-			if (*pTitle)
-				SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
+				SeparatorLength = 1;
+			}
+
+			if (pSeparator)
+			{
+				// Creator or media collection
+				WCHAR Value[256];
+				wcsncpy_s(Value, 256, Name, pSeparator-Name);
+
+				for (LPCWSTR pChar=Value; pChar; pChar++)
+					if (*pChar>=L'A')
+					{
+						const UINT Attr = (pItemDescriptor->CoreAttributes.SystemContextID!=LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection) ? LFAttrMediaCollection : LFAttrCreator;
+						SetAttribute(pItemDescriptor, Attr, Value);
+
+						break;
+					}
+
+				// Title
+				LPCWSTR pTitle = pSeparator+SeparatorLength;
+				if (*pTitle)
+					SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
+			}
 		}
 		else
 		{

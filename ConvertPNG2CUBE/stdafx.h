@@ -17,3 +17,7 @@
 
 #include <afx.h>
 #include <iostream>
+
+#include <gdiplus.h>
+using namespace Gdiplus;
+#pragma comment(lib, "gdiplus.lib")

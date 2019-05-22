@@ -168,43 +168,9 @@ void CMainView::SetHeader()
 			Hint.Insert(0, pHint);
 		}
 
-		// Thumbnail
-		HBITMAP hBitmap = NULL;
-		CPoint BitmapOffset(-2, -1);
+		CPoint BitmapOffset;
+		m_wndHeaderArea.SetHeader(p_CookedFiles->m_Name, Hint, theApp.m_IconFactory.GetHeaderBitmap(p_RawFiles, p_Filter, m_ViewID, BitmapOffset), BitmapOffset, FALSE);
 
-		// Representative thumbnail
-		const INT SubfolderAttribute = LFGetSubfolderAttribute(p_Filter);
-		INT IconID = p_RawFiles->m_IconID;
-
-		if (theApp.ShowRepresentativeThumbnail(SubfolderAttribute, m_Context))
-		{
-			if (theApp.IsPlaceholderIcon(IconID))
-				if (m_ViewID==LFViewList)
-				{
-					hBitmap = theApp.m_IconFactory.GetRepresentativeThumbnailBitmap(p_RawFiles);
-				}
-				else
-				{
-					IconID = 0;
-				}
-		}
-		else
-		{
-			// Map thumbnail
-			if ((IconID==IDI_FLD_PLACEHOLDER_LOCATION) && (SubfolderAttribute==LFAttrLocationIATA))
-				hBitmap = theApp.m_IconFactory.GetMapBitmap(p_Filter->Query.pConditionList->VData.IATACode);
-		}
-
-		// Icon
-		if (!hBitmap && IconID)
-		{
-			hBitmap = CIcons::ExtractBitmap(theApp.m_CoreImageListJumbo, IconID-1);
-
-			if (p_RawFiles->m_IconID<IDI_FIRSTPLACEHOLDERICON)
-				BitmapOffset.x = BitmapOffset.y = -4;
-		}
-
-		m_wndHeaderArea.SetHeader(p_CookedFiles->m_Name, Hint, hBitmap, BitmapOffset, FALSE);
 		SetHeaderButtons();
 
 		GetTopLevelParent()->SetWindowText(p_CookedFiles->m_Name);

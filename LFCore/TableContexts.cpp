@@ -8,12 +8,14 @@
 
 extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "3dl",     LFContextColorTables, 0 },
+	{ "8bsc",    LFContextColorTables, 0 },
 	{ "8svx",    LFContextAudio, 0 },
 	{ "aa",      LFContextAudio, 0 },
 	{ "aac",     LFContextAudio, 0 },
 	{ "aax",     LFContextAudio, 0 },
 	{ "aco",     LFContextColorTables, 0 },
 	{ "act",     LFContextAudio, 0 },
+	{ "acv",     LFContextColorTables, 0 },
 	{ "aiff",    LFContextAudio, 0 },
 	{ "air",     LFContextDocuments, 0 },
 	{ "airx",    LFContextDocuments, 0 },
@@ -26,6 +28,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "asc",     LFContextDocuments, 0 },
 	{ "ase",     LFContextColorTables, 0 },
 	{ "asm",     LFContextDocuments, 0 },
+	{ "atf",     LFContextColorTables, 0 },
 	{ "au",      LFContextAudio, 0 },
 	{ "audio",   LFContextAudio, 0 },
 	{ "avi",     LFContextVideos, 0 },
@@ -45,6 +48,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "chm",     LFContextDocuments, 0 },
 	{ "cpp",     LFContextDocuments, 0 },
 	{ "cr2",     LFContextPictures, 0 },						// RAW format (digital camera)
+	{ "crv",     LFContextColorTables, 0 },
 	{ "crw",     LFContextPictures, 0 },						// RAW format (digital camera)
 	{ "cs",      LFContextDocuments, 0 },
 	{ "css",     LFContextDocuments, 0 },

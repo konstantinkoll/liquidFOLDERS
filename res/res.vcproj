@@ -1924,6 +1924,14 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Rolls"
+			>
+			<File
+				RelativePath=".\Rolls\ROL_Default.ico"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\AppLogo.ico"
 			>

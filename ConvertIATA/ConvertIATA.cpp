@@ -7,10 +7,6 @@
 #include <wchar.h>
 
 
-// Das einzige Anwendungsobjekt
-//
-
-CWinApp theApp;
 CString path;
 SIZE_T maxCountryLength;
 SIZE_T maxAirportLength;
@@ -217,14 +213,6 @@ void ConvertFile(const CString& LanguageSuffix)
 
 INT _tmain(INT /*argc*/, TCHAR* /*argv[]*/, TCHAR* /*envp[]*/)
 {
-	// MFC initialisieren und drucken. Bei Fehlschlag Fehlermeldung aufrufen.
-	if (!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))
-	{
-		// TODO: Den Fehlercode an Ihre Anforderungen anpassen.
-		_tprintf(_T("Schwerwiegender Fehler bei der MFC-Initialisierung\n"));
-		return 1;
-	}
-
 	// Pfad
 	TCHAR szPathName[MAX_PATH];
 	::GetModuleFileName(NULL, szPathName, MAX_PATH);

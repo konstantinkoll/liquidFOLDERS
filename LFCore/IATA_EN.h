@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8797
+#define AirportCount_EN 8798
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3202,7 +3202,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 156, "HUU", "", "Huánuco", { 9.878889, -76.204722 } },
 	{ 189, "HUV", "", "Hudiksvall", { -61.768333, 17.080556 } },
 	{ 129, "HUX", "", "Huatulco", { -15.775278, -96.262500 } },
-	{ 211, "HUY", "", "Humberside", { -53.574444, 0.350833 } },
+	{ 211, "HUY", "", "Humberside", { -53.574444, -0.350833 } },
 	{  41, "HUZ", "", "Huizhow", { -23.083056, 114.366944 } },
 	{ 117, "HVA", "", "Analalava", { 14.629722, 47.763889 } },
 	{   8, "HVB", "", "Hervey Bay", { 25.318889, 152.880278 } },
@@ -3599,7 +3599,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  73, "JNX", "", "Náxos", { -37.080556, 25.368056 } },
 	{  41, "JNZ", "", "Jinzhou", { -41.116944, 121.016944 } },
 	{  63, "JOE", "", "Joensuu", { -62.662778, 29.607500 } },
-	{  89, "JOG", "", "Jogjakarta", { 7.788056, 110.431667 } },
+	{  89, "JOG", "", "Yogyakarta (Adisucipto)", { 7.788056, 110.431667 } },
 	{  26, "JOI", "", "Joinville", { 26.224444, -48.797500 } },
 	{ 164, "JOK", "", "Yoshkar Ola", { -56.700556, 47.904722 } },
 	{ 157, "JOL", "", "Jolo", { -6.053611, 121.011111 } },
@@ -8551,6 +8551,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  35, "YHU", "YMQ", "Montreal (St.-Hubert Airport)", { -45.517500, -73.416944 } },
 	{  35, "YHY", "", "Hay River", { -60.839722, -115.782778 } },
 	{  35, "YHZ", "", "Halifax", { -44.880833, -63.508611 } },
+	{  89, "YIA", "", "Yogyakarta (Kulon Progo)", { 7.907500, 110.054444 } },
 	{  35, "YIB", "", "Atikokan", { -48.773889, -91.638611 } },
 	{  35, "YIC", "", "Isachsen", { -78.783056, -103.550000 } },
 	{  35, "YIF", "", "Pakuashipi", { -51.211667, -58.658333 } },

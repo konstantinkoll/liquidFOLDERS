@@ -3115,7 +3115,7 @@ HUT     Hutchinson, USA;4;38*3'56"N, 97*51'38"W
 HUU     Huánuco, Peru;4;9*52'44"S, 76*12'17"W
 HUV     Hudiksvall, Sweden;4;61*46'6"N, 17*4'50"E
 HUX     Huatulco, Mexico;4;15*46'31"N, 96*15'45"W
-HUY     Humberside, United Kingdom;4;53*34'28"N, 0*21'3"E
+HUY     Humberside, United Kingdom;5;53*34'28"N, 0*21'3"W
 HUZ     Huizhow, China;4;23*4'59"N, 114*22'1"E
 HVA     Analalava, Madagascar;4;14*37'47"S, 47*45'50"E
 HVB     Hervey Bay, Australia;4;25*19'8"S, 152*52'49"E
@@ -3545,7 +3545,7 @@ JNX     Náxos, Greece;4;37*4'50"N, 25*22'5"E
 JNZ     Jinzhou, China;4;41*7'1"N, 121*1'1"E
 JOC     Orange County, USA
 JOE     Joensuu, Finland;4;62*39'46"N, 29*36'27"E
-JOG     Jogjakarta, Indonesia;4;7*47'17"S, 110*25'54"E
+JOG     Yogyakarta (Adisucipto), Indonesia;5;7*47'17"S, 110*25'54"E
 JOI     Joinville, Brazil;4;26*13'28"S, 48*47'51"W
 JOK     Yoshkar Ola, Russia;4;56*42'2"N, 47*54'17"E
 JOL     Jolo, Philippines;4;6*3'13"N, 121*0'40"E
@@ -8916,6 +8916,7 @@ YHT     Haines Junction, Canada;4;60*47'21"N, 137*32'44"W
 YHU YMQ Montreal (St.-Hubert Airport), Canada;4;45*31'3"N, 73*25'1"W
 YHY     Hay River, Canada;4;60*50'23"N, 115*46'58"W
 YHZ     Halifax, Canada;4;44*52'51"N, 63*30'31"W
+YIA     Yogyakarta (Kulon Progo), Indonesia;5;7*54'27"S, 110*3'16"E
 YIB     Atikokan, Canada;4;48*46'26"N, 91*38'19"W
 YIC     Isachsen, Canada;4;78*46'59"N, 103*33'0"W
 YIF     Pakuashipi, Canada;4;51*12'42"N, 58*39'30"W

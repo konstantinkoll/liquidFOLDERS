@@ -558,7 +558,7 @@ void CFileView::ShowTooltip(const CPoint& point)
 		return;
 
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_HoverItem];
-	HBITMAP hBitmap = (m_Flags & FF_ENABLETOOLTIPICONS) ? theApp.m_IconFactory.GetJumboIconBitmap(pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL) : NULL;
+	HBITMAP hBitmap = (m_Flags & FF_ENABLETOOLTIPICONS) ? theApp.m_IconFactory.GetTooltipBitmap(pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL) : NULL;
 
 	theApp.ShowTooltip(this, point, GetItemLabel(pItemDescriptor),
 		theApp.GetHintForItem(pItemDescriptor, theApp.m_IconFactory.GetTypeName(pItemDescriptor->CoreAttributes.FileFormat)),

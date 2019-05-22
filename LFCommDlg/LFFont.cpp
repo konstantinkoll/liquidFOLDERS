@@ -16,9 +16,9 @@ LFFont::LFFont()
 	m_FontHeight = 0;
 }
 
-BOOL LFFont::CreateFont(INT nHeight, BYTE nQuality, INT nWeight, BYTE bItalic, LPCTSTR lpszFacename)
+BOOL LFFont::CreateFont(INT nHeight, BYTE nQuality, INT nWeight, BYTE bItalic, LPCTSTR lpszFacename, INT nEscapement)
 {
-	BOOL Result = CFont::CreateFont(nHeight, 0, 0, 0, nWeight, bItalic, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, nQuality, VARIABLE_PITCH | FF_SWISS, lpszFacename);
+	BOOL Result = CFont::CreateFont(nHeight, 0, nEscapement, 0, nWeight, bItalic, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, nQuality, VARIABLE_PITCH | FF_SWISS, lpszFacename);
 
 	if (Result)
 		CalcFontHeight();

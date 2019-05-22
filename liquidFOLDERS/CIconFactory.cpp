@@ -20,8 +20,11 @@ CIconFactory::CIconFactory()
 
 	m_SmallIconSize = GetSystemMetrics(SM_CYSMICON);
 
-	// Image list for scales down 128x128 icons
+	// Image list for scaled down 128x128 icons
 	m_SystemIcons128.Create(128, 128, ILC_COLOR32, 64, 8);
+
+	// Font for roll counter
+	m_RollFont.CreateFont(19, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"), 2700);
 
 	// Retrieve index of generic file format icons
 	SHFILEINFO ShellFileInfo;
@@ -90,11 +93,19 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		{
 			// No sash for system icons other than placeholder icon
 			DrawSash = FALSE;
+
+			// Offset roll icon for visually pleasing result
+			if (pItemDescriptor->IconID>=IDI_ROL_DEFAULT)
+				pt.x += 3;
 		}
 
 		// Draw core icon
 		theApp.m_CoreImageListJumbo.DrawEx(&dc, pItemDescriptor->IconID-1, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
 		DrawStoreIconShadow(g, pt, pItemDescriptor->IconID);
+
+		// Roll count
+		if (LFIsFolder(pItemDescriptor))
+			DrawRollCount(dc, pt, pItemDescriptor->IconID, pItemDescriptor->AggregateCount);
 	}
 	else
 	{
@@ -148,53 +159,227 @@ void CIconFactory::DrawSmallIcon(CDC& dc, const CPoint& pt, const LFItemDescript
 	}
 }
 
-HBITMAP CIconFactory::GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchResult)
+
+// Draw support
+
+BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, BOOL& DrawSash, INT ThumbnailYOffset)
+{
+	ASSERT(LFIsFile(pItemDescriptor));
+
+	ThumbnailData Thumbnail;
+	if (!LookupThumbnail(pItemDescriptor, Thumbnail))
+		return FALSE;
+
+	// Draw color background
+	if (!Thumbnail.HasBackground)
+	{
+		ASSERT(Thumbnail.HasFrame);
+
+		g.SetSmoothingMode(SmoothingModeNone);
+
+		SolidBrush brush(Color(COLORREF2RGB(LFGetItemColor(pItemDescriptor->CoreAttributes.Color, LFItemColorFadeLight))));
+		g.FillRectangle(&brush, pt.x+3, pt.y+2+ThumbnailYOffset, 122, 122);
+	}
+
+	// Handle sash
+	DrawSash &= Thumbnail.HasFrame;
+
+	// Draw thumbnail
+	HDC hdcMem = CreateCompatibleDC(dc);
+	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, Thumbnail.hBitmap);
+
+	AlphaBlend(dc, pt.x, pt.y+ThumbnailYOffset, 128, 128, hdcMem, 0, 0, 128, 128, BF);
+
+	SelectObject(hdcMem, hOldBitmap);
+	DeleteDC(hdcMem);
+
+	return TRUE;
+}
+
+BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset)
+{
+	ASSERT(LFIsFolder(pItemDescriptor));
+
+	// No placeholder icon
+	if (!theApp.IsPlaceholderIcon(pItemDescriptor->IconID))
+		return FALSE;
+
+	// Do we have a raw search result?
+	if (!pRawFiles)
+		return FALSE;
+
+	// Is the folder an aggregated folder?
+	if (!LFIsAggregated(pItemDescriptor))
+		return FALSE;
+
+	// Try to draw a thumbnail
+	for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
+		if (DrawJumboThumbnail(dc, g, pt, (*pRawFiles)[a], ThumbnailYOffset))
+			return TRUE;
+
+	return FALSE;
+}
+
+BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFGeoCoordinates& GeoCoordinates, INT ThumbnailYOffset)
+{
+	// Draw map
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+	Bitmap* pMap = theApp.GetCachedResourceImage(IDB_BLUEMARBLE_512);
+	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
+
+	// Map location
+	INT X = (INT)((GeoCoordinates.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
+	INT Y = (INT)((GeoCoordinates.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
+
+	// Map offset
+	INT OffsX = -X+124/2;
+	INT OffsY = -Y+124/2;
+
+	if (OffsY>0)
+	{
+		OffsY = 0;
+	}
+	else
+		if (OffsY<124-Size.cy)
+		{
+			OffsY = 124-Size.cy;
+		}
+
+	ImageAttributes ImgAttr;
+	ImgAttr.SetWrapMode(WrapModeTile);
+	g.DrawImage(pMap, Rect(pt.x+2, pt.y+ThumbnailYOffset+1, 124, 124), -OffsX, -OffsY, 124, 124, UnitPixel, &ImgAttr);
+
+	// Location indicator
+	X += OffsX-4;
+	Y += OffsY-4;
+	DrawLocationIndicator(g, pt.x+2+X, pt.y+ThumbnailYOffset+1+Y, 8);
+
+	// Decorate map with thumbnail frame
+	g.DrawImage(theApp.GetCachedResourceImage(IDB_THUMBNAIL), pt.x, pt.y+ThumbnailYOffset);
+
+	return TRUE;
+}
+
+BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
+{
+	ASSERT(LFIsFolder(pItemDescriptor));
+
+	// GPS coordinates
+	LFVariantData VData;
+	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrLocationGPS, VData);
+
+	return LFIsNullVariantData(VData) ? FALSE : DrawJumboMap(g, pt, VData.GeoCoordinates, ThumbnailYOffset);
+}
+
+void CIconFactory::DrawRollCount(CDC& dc, const CPoint& pt, UINT IconID, UINT Count)
+{
+	ASSERT(IDI_ROL_DEFAULT<IDI_FIRSTPLACEHOLDERICON);
+
+	if ((IconID>=IDI_ROL_DEFAULT) && (IconID<IDI_FIRSTPLACEHOLDERICON))
+	{
+		CFont* pOldFont = dc.SelectObject(&m_RollFont);
+		UINT OldAlign = dc.SetTextAlign(TA_BASELINE);
+
+		CString stCount = CBackstageSidebar::FormatCount(Count);
+		dc.SetTextColor(0xFFFFFF);
+
+		CRect rectCalc(0, 0, 128, 128);
+		dc.DrawText(stCount, rectCalc, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_HIDEPREFIX | DT_CALCRECT);
+
+		CRect rectText(pt.x+61+2, pt.y+71+29-2-rectCalc.Width()/2, pt.x+61+16-2, pt.y+71+48-2);
+		dc.DrawText(stCount, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_HIDEPREFIX);
+
+		MakeBitmapSolid((HBITMAP)GetCurrentObject(dc, OBJ_BITMAP), rectText.left, rectText.top, rectText.Width(), rectText.Height());
+
+		dc.SetTextAlign(OldAlign);
+		dc.SelectObject(pOldFont);
+	}
+}
+
+
+// Bitmap handling
+
+HBITMAP CIconFactory::GetHeaderBitmap(LFSearchResult* pSearchResult, LFFilter* pFilter, INT ViewID, CPoint& BitmapOffset)
 {
 	ASSERT(pSearchResult);
 
-	CDC dc;
-	dc.CreateCompatibleDC(NULL);
-
-	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
-
-	Graphics g(dc);
-
-	// Try to draw a thumbnail
-	BOOL DrawSash;
-
-	for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-		if (DrawJumboThumbnail(dc, g, CPoint(0, 0), (*pSearchResult)[a], DrawSash, 0))
-			return (HBITMAP)dc.SelectObject(hOldBitmap);
-
-	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBitmap);
-
-	return NULL;
-}
-
-HBITMAP CIconFactory::GetMapBitmap(LPCSTR lpszIATACode)
-{
-	ASSERT(lpszIATACode);
-
-	LPCAIRPORT lpcAirport;
-	if (!LFIATAGetAirportByCode(lpszIATACode, lpcAirport))
+	INT IconID;
+	if ((IconID=pSearchResult->m_IconID)==0)
 		return NULL;
 
+	// Default bitmap offset for header
+	BitmapOffset.x = -2;
+	BitmapOffset.y = -1;
+
+	// Create memory bitmap
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
+	dc.SetBkMode(TRANSPARENT);
 
 	HBITMAP hBitmap = CreateTransparentBitmap(128, 128);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	Graphics g(dc);
 
-	DrawJumboMap(g, CPoint(0, 0), lpcAirport->Location, 0);
+	// Representative thumbnail
+	const INT SubfolderAttribute = LFGetSubfolderAttribute(pFilter);
 
-	return (HBITMAP)dc.SelectObject(hOldBitmap);
+	if (theApp.ShowRepresentativeThumbnail(SubfolderAttribute, pSearchResult->m_Context))
+	{
+		if (theApp.IsPlaceholderIcon(IconID))
+			if (ViewID==LFViewList)
+			{
+				BOOL DrawSash;
+
+				for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
+					if (DrawJumboThumbnail(dc, g, CPoint(0, 0), (*pSearchResult)[a], DrawSash, 0))
+						goto Done;
+			}
+			else
+			{
+				IconID = 0;
+			}
+	}
+	else
+	{
+		// Map thumbnail
+		if ((IconID==IDI_FLD_PLACEHOLDER_LOCATION) && (SubfolderAttribute==LFAttrLocationIATA))
+		{
+			ASSERT(pFilter);
+			ASSERT(pFilter->Query.pConditionList);
+
+			LPCAIRPORT lpcAirport;
+			if (LFIATAGetAirportByCode(pFilter->Query.pConditionList->VData.IATACode, lpcAirport))
+			{
+				DrawJumboMap(g, CPoint(0, 0), lpcAirport->Location, 0);
+				goto Done;
+			}
+		}
+	}
+
+	// Icon
+	if (IconID)
+	{
+		theApp.m_CoreImageListJumbo.DrawEx(&dc, IconID-1, CPoint(0, 0), CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+		DrawRollCount(dc, CPoint(0, 0), IconID, pSearchResult->m_ItemCount);
+
+		if (IconID<IDI_FIRSTPLACEHOLDERICON)
+			BitmapOffset.x = BitmapOffset.y = -4;
+	}
+	else
+	{
+		DeleteObject(hBitmap);
+		hBitmap = NULL;
+	}
+
+Done:
+	dc.SelectObject(hOldBitmap);
+
+	return hBitmap;
 }
 
-HBITMAP CIconFactory::GetJumboIconBitmap(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles)
+HBITMAP CIconFactory::GetTooltipBitmap(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles)
 {
 	ASSERT(pItemDescriptor);
 
@@ -221,8 +406,10 @@ void CIconFactory::MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy
 	BITMAP Bitmap;
 	GetObject(hBitmap, sizeof(Bitmap), &Bitmap);
 
+	if (!Bitmap.bmBits)
+		return;
+
 	ASSERT(Bitmap.bmBitsPixel==32);
-	ASSERT(Bitmap.bmBits);
 
 	// Set alpha channel to 0xFF
 	for (INT Row=y; Row<y+cy; Row++)
@@ -391,116 +578,6 @@ BOOL CIconFactory::LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailD
 
 		return FALSE;
 	}
-}
-
-BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, BOOL& DrawSash, INT ThumbnailYOffset)
-{
-	ASSERT(LFIsFile(pItemDescriptor));
-
-	ThumbnailData Thumbnail;
-	if (!LookupThumbnail(pItemDescriptor, Thumbnail))
-		return FALSE;
-
-	// Draw color background
-	if (!Thumbnail.HasBackground)
-	{
-		ASSERT(Thumbnail.HasFrame);
-
-		g.SetSmoothingMode(SmoothingModeNone);
-
-		SolidBrush brush(Color(COLORREF2RGB(LFGetItemColor(pItemDescriptor->CoreAttributes.Color, LFItemColorFadeLight))));
-		g.FillRectangle(&brush, pt.x+3, pt.y+2+ThumbnailYOffset, 122, 122);
-	}
-
-	// Handle sash
-	DrawSash &= Thumbnail.HasFrame;
-
-	// Draw thumbnail
-	HDC hdcMem = CreateCompatibleDC(dc);
-	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, Thumbnail.hBitmap);
-
-	AlphaBlend(dc, pt.x, pt.y+ThumbnailYOffset, 128, 128, hdcMem, 0, 0, 128, 128, BF);
-
-	SelectObject(hdcMem, hOldBitmap);
-	DeleteDC(hdcMem);
-
-	return TRUE;
-}
-
-BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset)
-{
-	ASSERT(LFIsFolder(pItemDescriptor));
-
-	// No placeholder icon
-	if (!theApp.IsPlaceholderIcon(pItemDescriptor->IconID))
-		return FALSE;
-
-	// Do we have a raw search result?
-	if (!pRawFiles)
-		return FALSE;
-
-	// Is the folder an aggregated folder?
-	if (!LFIsAggregated(pItemDescriptor))
-		return FALSE;
-
-	// Try to draw a thumbnail
-	for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
-		if (DrawJumboThumbnail(dc, g, pt, (*pRawFiles)[a], ThumbnailYOffset))
-			return TRUE;
-
-	return FALSE;
-}
-
-BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFGeoCoordinates& GeoCoordinates, INT ThumbnailYOffset)
-{
-	// Draw map
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-	Bitmap* pMap = theApp.GetCachedResourceImage(IDB_BLUEMARBLE_512);
-	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
-
-	// Map location
-	INT X = (INT)((GeoCoordinates.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
-	INT Y = (INT)((GeoCoordinates.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
-
-	// Map offset
-	INT OffsX = -X+124/2;
-	INT OffsY = -Y+124/2;
-
-	if (OffsY>0)
-	{
-		OffsY = 0;
-	}
-	else
-		if (OffsY<124-Size.cy)
-		{
-			OffsY = 124-Size.cy;
-		}
-
-	ImageAttributes ImgAttr;
-	ImgAttr.SetWrapMode(WrapModeTile);
-	g.DrawImage(pMap, Rect(pt.x+2, pt.y+ThumbnailYOffset+1, 124, 124), -OffsX, -OffsY, 124, 124, UnitPixel, &ImgAttr);
-
-	// Location indicator
-	X += OffsX-4;
-	Y += OffsY-4;
-	DrawLocationIndicator(g, pt.x+2+X, pt.y+ThumbnailYOffset+1+Y, 8);
-
-	// Decorate map with thumbnail frame
-	g.DrawImage(theApp.GetCachedResourceImage(IDB_THUMBNAIL), pt.x, pt.y+ThumbnailYOffset);
-
-	return TRUE;
-}
-
-BOOL CIconFactory::DrawJumboMap(Graphics& g, const CPoint& pt, const LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset)
-{
-	ASSERT(LFIsFolder(pItemDescriptor));
-
-	// GPS coordinates
-	LFVariantData VData;
-	LFGetAttributeVariantDataEx(pItemDescriptor, LFAttrLocationGPS, VData);
-
-	return LFIsNullVariantData(VData) ? FALSE : DrawJumboMap(g, pt, VData.GeoCoordinates, ThumbnailYOffset);
 }
 
 

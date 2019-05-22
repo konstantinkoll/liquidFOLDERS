@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DOCUMENT Type="Advanced Installer" CreateVersion="7.7" version="11.8" Modules="enterprise" RootPath="..*" Language="en" Id="{8FCF12AE-6582-4D6A-B3AB-2127ECB20E96}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
-    <ROW Name="HiddenItems" Value="UpdaterComponent;SerValComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent"/>
+    <ROW Name="HiddenItems" Value="UpdaterComponent;SerValComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;MsiServInstComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;MsiClassComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiValidationComponent">
     <ROW Table="File" Column="Sequence" MinValue="1" MaxValue="2147483647" Description="Sequence with respect to the media images; order must track cabinet order." Options="0" ColumnType="3" ColumnIndex="7" ColumnSize="4" MsiKey="File#Sequence"/>
@@ -49,12 +49,12 @@
     <ROW Property="UpgradeCode" Value="{67BB0890-A341-4E87-90D6-AEB28804E142}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1, Windows Server 2003 x86, Windows Server 2003 x86 Service Pack 1" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT64" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT64Display" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT64Display" MultiBuildValue="DefaultBuild:64 bit Operating Systems" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows 2000, Windows XP x86, Windows XP x86 Service Pack 1, Windows Server 2003 x86, Windows Server 2003 x86 Service Pack 1" ValueLocId="-"/>
     <ATTRIBUTE name="DeletedRows" value="MinBackground@ExitBackground@ShortcutLogoIcon@TabBackground@CompleteSetupIcon@InstallLogoIcon@OptionsLogoIcon@AI_CF_TITLE_TEXT_STYLE@WaitLogoItem@InstallerIcon@LicenseAgreeLogoIcon@AI_LOG_CHECKBOX@DlgTitleFont"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
@@ -67,6 +67,7 @@
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="SystemFolder" Directory_Parent="TARGETDIR" DefaultDir="System~1|SystemFolder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="TempFolder" Directory_Parent="TARGETDIR" DefaultDir="TEMPFO~1|TempFolder" IsPseudoRoot="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AI_CustomARPName" ComponentId="{4F878DDA-81E5-41DE-8AEE-05ED6EAA8A70}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
@@ -82,8 +83,8 @@
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" NextFile="liquidFOLDERS.exe" DigSign="true"/>
-    <ROW File="liquidFOLDERS.exe" Component_="liquidFOLDERS.exe" FileName="StoreM~1.exe|liquidFOLDERS.exe" Attributes="0" SourcePath="Release\Win32\liquidFOLDERS.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" NextFile="liquidFOLDERS.exe"/>
+    <ROW File="liquidFOLDERS.exe" Component_="liquidFOLDERS.exe" FileName="StoreM~1.exe|liquidFOLDERS.exe" Attributes="0" SourcePath="Release\Win32\liquidFOLDERS.exe" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
     <ROW MsiShortcutProperty="StoreManager_10" Shortcut_="StoreManager_1" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
@@ -171,6 +172,8 @@
     <ROW Name="Warning.ico" SourcePath="Setup\Warning.ico"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
+    <ROW Name="tempFiles.dll" SourcePath="&lt;AI_CUSTACTS&gt;tempFiles.dll"/>
+    <ROW Name="viewer.exe" SourcePath="&lt;AI_CUSTACTS&gt;viewer.exe"/>
     <ATTRIBUTE name="DeletedRows" value="info@completi@repairic@background@optionslogoicon@applogoicon@exitbackground@insticon@custicon@exclamic@installlogoicon@waitlogoicon@removico"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
@@ -231,15 +234,15 @@
     <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="300" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
     <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the selected features" TextStyle="TitleFont" Order="400" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
     <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
-    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ExitDialog#Bitmap"/>
     <ROW Dialog_="ExitDialog" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="&amp;Close" TextStyle="DlgFont8" Order="200" TextLocId="Azure.Control.Text.ExitDialog#Finish" MsiKey="ExitDialog#Finish" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="0" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="ExitDialog#Back" Options="1"/>
@@ -401,6 +404,8 @@
     <ROW Dialog_="VerifyRepairDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT AND InstallMode = &quot;Repair&quot;" Ordering="1"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control_="RemoveButton" Event="NewDialog" Argument="VerifyRemoveDlg" Condition="AI_MAINT AND InstallMode = &quot;Remove&quot;" Ordering="601"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control_="RepairButton" Event="NewDialog" Argument="VerifyRepairDlg" Condition="AI_MAINT AND InstallMode = &quot;Repair&quot;" Ordering="601"/>
+    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_RemoveTempFiles" Condition="1" Ordering="102"/>
+    <ROW Dialog_="UserExit" Control_="Finish" Event="DoAction" Argument="AI_RemoveTempFiles" Condition="1" Ordering="101"/>
     <ATTRIBUTE name="DeletedRows" value="OutOfRbDiskDlg#OkButton#EndDialog#Return#1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
@@ -420,6 +425,7 @@
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_DEL_EMPTY_SHORTCUTDIR" Target="[SHORTCUTDIR]"/>
     <ROW Action="AI_DATA_SETTER_1" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
+    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="AI_RemoveAllTempFiles" Target="[AI_TEMP_FILE_ROLLBACK_INFO]"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Type="1" Source="aicustact.dll" Target="DeleteShortcuts"/>
     <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Type="3073" Source="aicustact.dll" Target="DeleteEmptyDirectory" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
@@ -432,16 +438,20 @@
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_ExtractFiles" Type="1025" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER_1"/>
     <ROW Action="AI_ExtractLzma" Type="1025" Source="lzmaextractor.dll" Target="ExtractLZMAFiles"/>
+    <ROW Action="AI_ExtractTempFiles" Type="1" Source="tempFiles.dll" Target="ExtractTempFiles"/>
     <ROW Action="AI_FindExeLzma" Type="1" Source="lzmaextractor.dll" Target="FindEXE"/>
     <ROW Action="AI_GetArpIconPath" Type="1" Source="aicustact.dll" Target="GetArpIconPath"/>
     <ROW Action="AI_InstallModeCheck" Type="1" Source="aicustact.dll" Target="UpdateInstallMode" WithoutSeq="true"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH" Target="[AI_SETUPEXEPATH_ORIGINAL]"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
+    <ROW Action="AI_RemoveAllTempFiles" Type="1281" Source="tempFiles.dll" Target="RemoveAllTempFiles" AdditionalSeq="AI_DATA_SETTER_2"/>
+    <ROW Action="AI_RemoveTempFiles" Type="1" Source="tempFiles.dll" Target="RemoveTempFiles" WithoutSeq="true"/>
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="LaunchFile" Type="3138" Source="viewer.exe" Target="/RunAsAdmin /HideWindow &quot;[SystemFolder]certutil.exe&quot; -addstore -enterprise -v root &quot;[&amp;liquidfoldersglobalroot.cer]&quot;" Options="1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
@@ -455,7 +465,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1501"/>
+    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1503"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
     <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
@@ -466,8 +476,8 @@
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6598" Builds="DefaultBuild"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="1402"/>
-    <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6402"/>
-    <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6401"/>
+    <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6403"/>
+    <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6402"/>
     <ROW Action="AI_AiRemoveRegsImmediate" Sequence="2599"/>
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="201"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
@@ -478,6 +488,11 @@
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="InstallFinalize" Sequence="6599" SeqType="0" MsiKey="InstallFinalize"/>
     <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
+    <ROW Action="AI_ExtractTempFiles" Sequence="1001"/>
+    <ROW Action="AI_RemoveTempFiles" Sequence="6600"/>
+    <ROW Action="AI_RemoveAllTempFiles" Sequence="1502"/>
+    <ROW Action="AI_DATA_SETTER_2" Sequence="1501"/>
+    <ROW Action="LaunchFile" Condition="( NOT Installed )" Sequence="6401"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
@@ -487,12 +502,12 @@
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101"/>
     <ROW Action="ExecuteAction" Sequence="1299" SeqType="0" MsiKey="ExecuteAction"/>
+    <ROW Action="AI_ExtractTempFiles" Sequence="1001"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="( Version9X OR (VersionNT AND (NOT VersionNT64)) )" Description="[ProductName] cannot be installed on [WindowsTypeNT64Display]" DescriptionLocId="AI.LaunchCondition.NoNT64" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="( Version9X OR VersionNT64 OR ( VersionNT AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 4))) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &gt;= 1))) OR VersionNT64) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &lt;&gt; 1))) OR VersionNT64) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="( Version9X OR VersionNT64 OR ( VersionNT AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 4))) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &gt;= 1))) OR VersionNT64) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &lt;&gt; 1))) OR VersionNT64) AND (((VersionNT &lt;&gt; 502) OR ((VersionNT = 502) AND (ServicePackLevel &gt;= 1))) OR VersionNT64) AND (((VersionNT &lt;&gt; 502) OR ((VersionNT = 502) AND (ServicePackLevel &lt;&gt; 1))) OR VersionNT64) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]" DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiMergeModsComponent">
@@ -572,5 +587,8 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MultipleInstancesComponent">
     <ATTRIBUTE name="DynamicInstances" value="DefaultBuild:"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.TempFileComponent">
+    <ROW FileId="liquidfoldersglobalroot.cer" Name="LIQUID~1.CER|liquidFOLDERS Global Root.cer" Directory_="TempFolder" Property="AI_LIQUIDFOLDERSGLOBALROOT.CER" Options="0" Data="D:\Eigene Dateien\Flightmap\Setup\liquidFOLDERS Global Root.cer"/>
   </COMPONENT>
 </DOCUMENT>

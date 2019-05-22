@@ -123,7 +123,7 @@ extern const LFContextProperties CtxProperties[LFContextCount] = {
 	{ LFAttrRating, TRUE, LFContextSubfolderDefault,
 	MINVIEWS, LFViewList,
 	IDXATTRS_CORE | IDXATTRS_COLORTABLES,
-	ADVATTRS_MINIMAL | (1ull<<LFAttrRating) | (1ull<<LFAttrMediaCollection),
+	ADVATTRS_MINIMAL | (1ull<<LFAttrRating) | (1ull<<LFAttrMediaCollection) | (1ull<<LFAttrApplication),
 	0 },
 
 	// LFContextFavorites
@@ -590,7 +590,7 @@ extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 
 extern const SpecialAttributeName SpecialAttributeNames[SPECIALATTRIBUTENAMESCOUNT] = {
 	{ LFAttrMediaCollection, IDS_ALBUM, IDI_FLD_PLACEHOLDER_NOTE, FALSE, CTX_AUDIO },
-	{ LFAttrMediaCollection, IDS_ROLL, IDI_FLD_DEFAULT, FALSE, CTX_PICTURES | CTX_VIDEOS | (1ull<<LFContextColorTables) },
+	{ LFAttrMediaCollection, IDS_ROLL, IDI_ROL_DEFAULT, FALSE, CTX_PICTURES | CTX_VIDEOS | (1ull<<LFContextColorTables) },
 	{ LFAttrMediaCollection, IDS_PODCAST, IDI_FLD_PLACEHOLDER_PODCAST, FALSE,CTX_PODCASTS },
 	{ LFAttrMediaCollection, IDS_TVSHOW, IDI_FLD_PLACEHOLDER_TV, FALSE, CTX_TVSHOWS },
 	{ LFAttrSequenceInCollection, IDS_EPISODE, 0, TRUE, CTX_PODCASTS },

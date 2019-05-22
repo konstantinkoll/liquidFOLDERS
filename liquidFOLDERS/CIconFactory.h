@@ -26,20 +26,22 @@ public:
 	void DrawJumboFormatIcon(CDC& dc, const CPoint& pt, LPCSTR lpszFileFormat, BOOL Ghosted=FALSE);
 	void DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, BOOL DrawOverlays=TRUE, INT ThumbnailYOffset=1);
 	void DrawSmallIcon(CDC& dc, const CPoint& pt, const LFItemDescriptor* pItemDescriptor);
-	CString GetTypeName(LPCSTR lpszFileFormat);
 
-	HBITMAP GetRepresentativeThumbnailBitmap(LFSearchResult* pSearchResult);
-	HBITMAP GetMapBitmap(LPCSTR lpszIATACode);
-	HBITMAP GetJumboIconBitmap(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
+	HBITMAP GetHeaderBitmap(LFSearchResult* pSearchResult, LFFilter* pFilter, INT ViewID, CPoint& BitmapOffset);
+	HBITMAP GetTooltipBitmap(LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles);
+
+	CString GetTypeName(LPCSTR lpszFileFormat);
 
 	static CIcons m_ApplicationIcons;
 
 protected:
-	BOOL LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
 	BOOL DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, BOOL& DrawSash, INT ThumbnailYOffset=1);
 	BOOL DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LFItemDescriptor* pItemDescriptor, LFSearchResult* pRawFiles, INT ThumbnailYOffset);
 	BOOL DrawJumboMap(Graphics& g, const CPoint& pt, const LFGeoCoordinates& GeoCoordinates, INT ThumbnailYOffset=1);
 	BOOL DrawJumboMap(Graphics& g, const CPoint& pt, const LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset=1);
+	void DrawRollCount(CDC&dc, const CPoint& pt, UINT IconID, UINT Count);
+
+	BOOL LookupThumbnail(LFItemDescriptor* pItemDescriptor, ThumbnailData& Thumbnail);
 
 	void LookupFileFormat(LPCSTR lpszFileFormat, FileFormatData& Data);
 	INT GetSystemIconIndex(LPCSTR lpszFileFormat);
@@ -48,6 +50,7 @@ protected:
 	ThumbnailList<8192> m_NoThumbnails;
 	CMap<LPCSTR, LPCSTR, FileFormatData, FileFormatData> m_FileFormats;
 	CImageList m_SystemIcons128;
+	LFFont m_RollFont;
 
 private:
 	static void MakeBitmapSolid(HBITMAP hBitmap, INT x, INT y, INT cx, INT cy);

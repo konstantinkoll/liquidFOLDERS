@@ -44,7 +44,8 @@
 								(1ull<<LFAttrCopyright) | (1ull<<LFAttrPages) | (1ull<<LFAttrResponsible) | \
 								(1ull<<LFAttrCustomer))
 #define IDXATTRS_COLORTABLES   ((1ull<<LFAttrCreator) | (1ull<<LFAttrMediaCollection) | (1ull<<LFAttrTitle) | \
-								(1ull<<LFAttrCopyright) | (1ull<<LFAttrResponsible) | (1ull<<LFAttrCustomer))
+								(1ull<<LFAttrApplication) | (1ull<<LFAttrCopyright) | (1ull<<LFAttrResponsible) | \
+								(1ull<<LFAttrCustomer))
 
 #define ADVATTRS_BOOKS         (ADVATTRS_MEDIA & (IDXATTRS_CORE | IDXATTRS_BOOKS))
 #define ADVATTRS_DOCUMENTS     ((ADVATTRS_OWNMEDIA & (IDXATTRS_CORE | IDXATTRS_DOCUMENTS)) | \
@@ -56,7 +57,8 @@ struct DocumentAttributes
 	WCHAR Copyright[256];
 	WCHAR Title[256];
 	WCHAR Responsible[256];
-	BYTE FREE[16];
+	BYTE Application;
+	BYTE FREE[15];
 	CHAR Signature[32];
 	CHAR ISBN[32];
 	UINT Pages;
