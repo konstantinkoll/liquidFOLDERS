@@ -135,6 +135,10 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 						pData->PreviewMask |= PRV_REPRESENTATIVE;
 					}
 
+				// Only show creator if different from title
+				if (pData->pStrCreator && pData->pStrTitle && (wcscmp(pData->pStrCreator, pData->pStrTitle)==0))
+					pData->PreviewMask &= ~PRV_CREATOR;
+
 				// Only show comments if different from title
 				if (pData->pStrComments && pData->pStrTitle && (wcscmp(pData->pStrComments, pData->pStrTitle)==0))
 					pData->PreviewMask &= ~PRV_COMMENTS;
