@@ -41,6 +41,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "caf",     LFContextAudio, 0 },
 	{ "cb7",     LFContextDocuments, LFContextBooks },
 	{ "cba",     LFContextDocuments, LFContextBooks },
+	{ "cbf",     LFContextColorTables, 0 },
 	{ "cbr",     LFContextDocuments, LFContextBooks },
 	{ "cbt",     LFContextDocuments, LFContextBooks },
 	{ "cbz",     LFContextDocuments, LFContextBooks },
@@ -276,6 +277,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "xm",      LFContextAudio, 0 },
 	{ "xml",     LFContextDocuments, 0 },
 	{ "xps",     LFContextDocuments, 0 },
+	{ "xray",    LFContextColorTables, 0 },
 	{ "xsl",     LFContextDocuments, 0 }
 };
 

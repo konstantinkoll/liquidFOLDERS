@@ -818,6 +818,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\APP_Snapseed.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\APP_Vimeo.ico"
 				>
 			</File>

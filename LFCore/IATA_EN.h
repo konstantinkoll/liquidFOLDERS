@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8798
+#define AirportCount_EN 8799
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -6701,6 +6701,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 102, "SCO", "", "Aqtan", { -43.860000, 51.091944 } },
 	{  64, "SCP", "", "Saint-Crepin", { -44.701667, 6.600278 } },
 	{ 183, "SCQ", "", "Santiago de Compostela", { -42.896389, -8.415278 } },
+	{ 189, "SCR", "", "Scandinavian Mountains Airport", { -61.158889, 12.840000 } },
 	{ 211, "SCS", "", "Lerwick (Scatsa)", { -60.432778, -1.296111 } },
 	{ 221, "SCT", "", "Socotra", { -12.630556, 53.905833 } },
 	{  48, "SCU", "", "Santiago de Cuba", { -19.969722, -75.835278 } },

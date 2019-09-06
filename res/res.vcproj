@@ -1836,6 +1836,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Applications\APP_Snapseed.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Applications\APP_Vimeo.ico"
 				>
 			</File>
@@ -1905,6 +1909,10 @@
 			</File>
 			<File
 				RelativePath=".\Applications\Snapchat_29.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\Snapseed_29.png"
 				>
 			</File>
 			<File

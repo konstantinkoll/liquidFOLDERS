@@ -6949,7 +6949,7 @@ SCN     Saarbruecken, Germany;4;49*12'52"N, 7*6'34"E
 SCO     Aqtan, Kasachstan;4;43*51'36"N, 51*5'31"E
 SCP     Saint-Crepin, France;4;44*42'6"N, 6*36'1"E
 SCQ     Santiago de Compostela, Spain;4;42*53'47"N, 8*24'55"W
-SCR     Scranton, USA
+SCR     Scandinavian Mountains Airport, Sweden;5;61*9'32"N, 12*50'24"E
 SCS     Lerwick (Scatsa), United Kingdom;4;60*25'58"N, 1*17'46"W
 SCT     Socotra, Yemen;4;12*37'50"N, 53*54'21"E
 SCU     Santiago de Cuba, Cuba;4;19*58'11"N, 75*50'7"W

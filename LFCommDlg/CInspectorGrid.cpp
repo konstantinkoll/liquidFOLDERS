@@ -795,8 +795,6 @@ BOOL CInspectorGrid::Create(CWnd* pOwnerWndWnd, UINT nID, UINT ContextMenuID, CI
 	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageScroller::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pOwnerWndWnd, nID);
-
-//	return CFrontstageScroller::Create(pOwnerWndWnd, nID);
 }
 
 BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
@@ -1555,7 +1553,7 @@ void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 		if ((Index==m_SelectedItem) && (Index!=-1))
 			if (Part==PARTRESET)
 			{
-				BOOL DoReset = (nFlags & MK_CONTROL);
+				BOOL DoReset = (nFlags & MK_CONTROL) || !m_pHeader;
 
 				if (!DoReset)
 					DoReset = (LFMessageBox(this, CString((LPCSTR)IDS_DELETEPROPERTY_MSG), CString((LPCSTR)IDS_DELETEPROPERTY_CAPTION), MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES);
