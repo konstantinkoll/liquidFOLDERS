@@ -6,14 +6,14 @@
 UINT GetApplicationIcon(BYTE nID);
 
 
-#define APPLICATIONCOUNT     32
+#define APPLICATIONCOUNT     35
 
 
 #pragma pack(push,1)
 
 struct RegisteredApplication
 {
-	WCHAR Name[14];
+	WCHAR Name[19];
 	BYTE ApplicationID;
 };
 

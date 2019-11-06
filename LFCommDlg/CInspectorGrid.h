@@ -345,7 +345,6 @@ private:
 	void CreateSortArray();
 	void NotifyOwner(INT Attr);
 
-	CMFCMaskedEdit* m_pWndEdit;
 	INT* m_pSortArray;
 	UINT m_ContextMenuID;
 };

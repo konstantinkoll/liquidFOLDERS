@@ -320,6 +320,16 @@ void CFrontstageScroller::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRE
 		m_pWndHeader->SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
 		m_pWndHeader->UpdateWindow();
 	}
+
+	// Edit window
+	if (m_pWndEdit)
+	{
+		CRect rectWindow;
+		m_pWndEdit->GetWindowRect(rectWindow);
+		ScreenToClient(rectWindow);
+
+		m_pWndEdit->SetWindowPos(NULL, rectWindow.left+dx, rectWindow.top+dy, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+	}
 }
 
 void CFrontstageScroller::EnsureVisible(const CRect& rectItem)

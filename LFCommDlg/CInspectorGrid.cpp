@@ -781,7 +781,6 @@ CInspectorGrid::CInspectorGrid()
 	m_SortAlphabetic = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
-	m_pWndEdit = NULL;
 	m_IconSize = m_Context = m_ContextMenuID = 0;
 	m_SelectedItem = m_EditItem = -1;
 	m_HoverPart = NOPART;

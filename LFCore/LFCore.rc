@@ -98,6 +98,7 @@ IDI_APP_VIMEO           ICON                    "res\\APP_Vimeo.ico"
 IDI_APP_PICFX           ICON                    "res\\APP_Picfx.ico"
 IDI_APP_AFTERLIGHT      ICON                    "res\\APP_Afterlight.ico"
 IDI_APP_SNAPSEED        ICON                    "res\\APP_Snapseed.ico"
+IDI_APP_RNIFILMS        ICON                    "res\\APP_RNIFilms.ico"
 IDI_ROL_DEFAULT         ICON                    "res\\ROL_Default.ico"
 IDI_FLD_PLACEHOLDER_DEFAULT ICON                    "res\\FLD_Placeholder_Default.ico"
 IDI_FLD_PLACEHOLDER_CONTACT ICON                    "res\\FLD_Placeholder_Contact.ico"
@@ -112,8 +113,8 @@ IDI_FLD_PLACEHOLDER_TV  ICON                    "res\\FLD_Placeholder_TV.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,29,0
- PRODUCTVERSION 4,0,29,0
+ FILEVERSION 4,0,30,0
+ PRODUCTVERSION 4,0,30,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -130,13 +131,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.29"
+            VALUE "FileVersion", "4.0.30"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2019 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.29"
+            VALUE "ProductVersion", "4.0.30"
         END
     END
     BLOCK "VarFileInfo"

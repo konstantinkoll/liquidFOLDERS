@@ -607,8 +607,9 @@ struct LFContextDescriptor
 #define LFApplicationPicFX           18
 #define LFApplicationAfterlight      19
 #define LFApplicationSnapseed        20
+#define LFApplicationRNIFilms        21
 
-#define LFApplicationCount           21
+#define LFApplicationCount           22
 
 
 // Statistics
