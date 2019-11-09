@@ -5936,7 +5936,7 @@ PEF     Peenemünde, Germany;5;54*9'28"N, 13*46'28"E
 PEG     Perugia, Italy;4;43*5'45"N, 12*30'48"E
 PEH     Pehuajó, Argentina;4;35*50'41"S, 61*51'27"W
 PEI     Pereira, Columbia;4;4*48'46"N, 75*44'22"W
-PEK BJS Beijing (Peking), China;4;40*4'48"N, 116*35'4"E
+PEK BJS Beijing (Capital International Airport), China;4;40*4'48"N, 116*35'4"E
 PEL     Pelaneng, Lesotho;4;29*7'1"S, 28*30'0"E
 PEM     Puerto Maldonado, Peru;4;12*36'49"S, 69*13'43"W
 PEN     Penang, Malaysia;4;5*17'50"N, 100*16'37"E
@@ -6051,6 +6051,7 @@ PKT     Port Keats, Australia;4;14*15'0"S, 129*31'45"E
 PKU     Pekanbaru, Indonesia;4;0*27'39"S, 101*26'40"E
 PKV     Pskov, Russia;5;57*47'02"N, 28*23'44"E
 PKW     Selibi Phikwe, Botswana;4;22*3'30"S, 27*49'44"E
+PKX BJS Beijing (Daxing International Airport), China;5;39*30'33"N, 116*24'38"E
 PKY     Palangkaraya, Indonesia;4;2*13'30"S, 113*56'34"E
 PKZ     Pakse, Laos;4;15*7'55"N, 105*46'53"E
 PLA     Planadas, Columbia;4;3*17'60"N, 75*43'59"W

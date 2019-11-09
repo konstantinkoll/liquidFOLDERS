@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8799
+#define AirportCount_EN 8800
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -955,7 +955,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 137, "BJN", "", "Bajone", { 17.166944, 37.950000 } },
 	{  22, "BJO", "", "Bermejo", { 22.773333, -64.312778 } },
 	{  60, "BJR", "", "Bahar Dar", { -11.608056, 37.321667 } },
-	{  41, "BJS", "BJS", "Beijing", { -40.020417, 116.420556 } },
+	{  41, "BJS", "BJS", "Beijing", { -39.850000, 116.417222 } },
 	{ 140, "BJU", "", "Bajura", { -29.501944, 81.668889 } },
 	{ 203, "BJV", "", "Bodrum/Milas", { -37.250556, 27.664167 } },
 	{  89, "BJW", "", "Bajawa", { 8.816944, 120.983056 } },
@@ -5864,7 +5864,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  94, "PEG", "", "Perugia", { -43.095833, 12.513333 } },
 	{   6, "PEH", "", "Pehuajó", { 35.844722, -61.857500 } },
 	{  42, "PEI", "", "Pereira", { -4.812778, -75.739444 } },
-	{  41, "PEK", "BJS", "Beijing (Peking)", { -40.080000, 116.584444 } },
+	{  41, "PEK", "BJS", "Beijing (Capital International Airport)", { -40.080000, 116.584444 } },
 	{ 110, "PEL", "", "Pelaneng", { 29.116944, 28.500000 } },
 	{ 156, "PEM", "", "Puerto Maldonado", { 12.613611, -69.228611 } },
 	{ 119, "PEN", "", "Penang", { -5.297222, 100.276944 } },
@@ -5973,6 +5973,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  89, "PKU", "", "Pekanbaru", { 0.460833, 101.444444 } },
 	{ 164, "PKV", "", "Pskov", { -57.783889, 28.395556 } },
 	{  24, "PKW", "", "Selibi Phikwe", { 22.058333, 27.828889 } },
+	{  41, "PKX", "BJS", "Beijing (Daxing International Airport)", { -39.509167, 116.410556 } },
 	{  89, "PKY", "", "Palangkaraya", { 2.225000, 113.942778 } },
 	{ 107, "PKZ", "", "Pakse", { -15.131944, 105.781389 } },
 	{  42, "PLA", "", "Planadas", { -3.300000, -75.733056 } },

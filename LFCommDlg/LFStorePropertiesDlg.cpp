@@ -77,7 +77,7 @@ void CUsageList::SetUsage(LFStatistics Statistics)
 
 INT CUsageList::CompareItems(UsageItemData* pData1, UsageItemData* pData2, const SortParameters& /*Parameters*/)
 {
-	const INT Result =(INT)((pData2->FileSize-pData1->FileSize)>>32);
+	const INT Result = (pData1->FileSize>pData2->FileSize) ? -1 : (pData1->FileSize<pData2->FileSize) ? 1 : 0;
 
 	return Result ? Result : wcscmp(LFGetApp()->m_Contexts[pData1->Context].Name, LFGetApp()->m_Contexts[pData2->Context].Name);
 }
