@@ -11,7 +11,7 @@
 //
 
 CDetailsView::CDetailsView()
-	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS)
+	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_ENABLEEDITONHOVER | FF_ENABLEFOLDERTOOLTIPS)
 {
 }
 
@@ -166,12 +166,15 @@ LFFont* CDetailsView::GetLabelFont() const
 	return &theApp.m_LargeFont;
 }
 
-RECT CDetailsView::GetLabelRect(INT Index) const
+RECT CDetailsView::GetLabelRect() const
 {
-	RECT rect = GetItemRect(Index);
+	ASSERT(m_EditItem>=0);
+	ASSERT(m_EditItem<m_ItemCount);
+
+	RECT rect = GetItemRect(m_EditItem);
 
 	rect.bottom = (rect.top+=ITEMVIEWPADDING-2)+m_LargeFontHeight+4;
-	rect.left += 128+2*ITEMVIEWPADDING+GetColorDotWidth(Index, m_LargeColorDots)-5;
+	rect.left += 128+2*ITEMVIEWPADDING+GetColorDotWidth(m_EditItem, m_LargeColorDots)-5;
 	rect.right -= ITEMVIEWPADDING-2;
 
 	return rect;

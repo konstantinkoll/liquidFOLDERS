@@ -257,6 +257,8 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 
 void DrawReflection(Graphics& g, LPCRECT lpcRect)
 {
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
 	GraphicsPath pathReflection;
 	CreateReflectionRectangle(lpcRect, 1, pathReflection);
 
@@ -384,7 +386,7 @@ void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL E
 				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 
 				rect.DeflateRect(1, 1);
-				INT y = (rect.top+rect.bottom)/2;
+				const INT y = (rect.top+rect.bottom)/2;
 
 				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xFFEAF6FD), Color(0xFFD7EFFC));
 				g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
@@ -396,7 +398,7 @@ void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL E
 			{
 				dc.FillSolidRect(rect, 0xF6E4C2);
 
-				INT y = (rect.top+rect.bottom)/2;
+				const INT y = (rect.top+rect.bottom)/2;
 
 				LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xFFA9D9F2), Color(0xFF90CBEB));
 				g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
@@ -497,13 +499,13 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 			Pen pen(Red ? Color(0x80600000) : Color(0x80062D60));
 			g.DrawPath(&pen, &path);
 
-			g.SetPixelOffsetMode(PixelOffsetModeHalf);
-
 			rect.left++;
 			rect.bottom = (++rect.top)+rect.Height()/2;
 
 			if (Red)
 			{
+				g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
 				CreateRoundRectangle(rect, 2, path);
 
 				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0x60FFFFFF), Color(0x20FFFFFF));
@@ -511,8 +513,6 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 			}
 			else
 			{
-				g.SetPixelOffsetMode(PixelOffsetModeNone);
-
 				rect.right--;
 				CreateRoundTop(rect, 2, path);
 
@@ -543,6 +543,7 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 		if (Focused || Selected || Hover)
 		{
 			Graphics g(dc);
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 			// Inner Border
 			rect.DeflateRect(1, 1);
@@ -568,7 +569,9 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 					g.FillRectangle(&brush2, rect.left, rect.top+rect.Height()/2+1, rect.Width(), rect.Height()-rect.Height()/2);
 				}
 
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
+
 			GraphicsPath path;
 
 			if (!Selected)
@@ -607,8 +610,6 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpcRect, BOOL IncludeBottom)
 {
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
-
 	GraphicsPath path;
 	CreateRoundRectangle(lpcRect, 3, path);
 
@@ -630,13 +631,18 @@ void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BO
 {
 	if (Themed)
 	{
+		// Outer border
 		if (DrawBorder)
-			DrawWhiteButtonBorder(g, rect, FALSE);
+		{
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
 
+			DrawWhiteButtonBorder(g, rect, FALSE);
+		}
+
+		// Inner border
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 		g.SetSmoothingMode(SmoothingModeNone);
 
-		// Inner border
 		rect.DeflateRect(2, 2);
 
 		if (Selected)
@@ -733,6 +739,7 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOO
 	if (Themed)
 	{
 		Graphics g(dc);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		DrawWhiteButtonBorder(g, rect, FALSE);
 
@@ -743,16 +750,16 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOO
 		{
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-			GraphicsPath PathInner;
-			CreateRoundRectangle(rect, 2, PathInner);
+			GraphicsPath pathInner;
+			CreateRoundRectangle(rect, 2, pathInner);
 
 			SolidBrush brush(Color(COLORREF2RGB(clr) & (Enabled ? 0xFFFFFFFF : 0x3FFFFFFF)));
-			g.FillPath(&brush, &PathInner);
+			g.FillPath(&brush, &pathInner);
 
 			if (Enabled)
 			{
 				// Boost reflection for light colors
-				UINT Alpha = (((clr>>16)*(clr>>16)+6*((clr & 0x00FF00)>>8)*((clr & 0x00FF00)>>8)+5*(clr & 0xFF)*(clr & 0xFF))<<10) & 0xFF000000;
+				const UINT Alpha = (((clr>>16)*(clr>>16)+6*((clr & 0x00FF00)>>8)*((clr & 0x00FF00)>>8)+5*(clr & 0xFF)*(clr & 0xFF))<<10) & 0xFF000000;
 
 				LinearGradientBrush brush1(Point(0, rect.top), Point(0, (rect.top+rect.bottom)/2+1), Color(Alpha+0x30FFFFFF), Color(Alpha+0x20FFFFFF));
 				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width()-1, rect.Height()/2);
@@ -767,11 +774,11 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOO
 		rect.right--;
 		rect.bottom--;
 
-		GraphicsPath PathOuter;
-		CreateRoundRectangle(rect, 2, PathOuter);
+		GraphicsPath pathOuter;
+		CreateRoundRectangle(rect, 2, pathOuter);
 
 		Pen pen(Color(Enabled ? Focused || Hover ? 0x40000000 : (clr!=(COLORREF)-1) ? 0x20000000 : 0x08000000 : 0x10000000));
-		g.DrawPath(&pen, &PathOuter);
+		g.DrawPath(&pen, &pathOuter);
 	}
 	else
 	{

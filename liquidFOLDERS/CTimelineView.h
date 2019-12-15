@@ -51,9 +51,9 @@ protected:
 	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
-	virtual RECT GetLabelRect(INT Index) const;
+	virtual RECT GetLabelRect() const;
 
-	void DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed);
+	void DrawCategory(CDC& dc, Graphics& g, LPCRECT lpcRectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()

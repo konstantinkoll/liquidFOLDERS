@@ -16,6 +16,8 @@ CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T szData, const CSize&
 	ASSERT(((Flags & FRONTSTAGE_ENABLESHIFTSELECTION)==0) || (Flags & FRONTSTAGE_ENABLESELECTION));
 	ASSERT(((Flags & FRONTSTAGE_ENABLEDRAGANDDROP)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
 	ASSERT(((Flags & FRONTSTAGE_ENABLELABELEDIT)==0) || (Flags & FRONTSTAGE_ENABLEFOCUSITEM));
+	ASSERT(((Flags & FRONTSTAGE_ENABLEEDITONHOVER)==0) || (Flags & FRONTSTAGE_ENABLELABELEDIT));
+	ASSERT(((Flags & FRONTSTAGE_HIDESELECTIONONEDIT)==0) || (Flags & FRONTSTAGE_ENABLELABELEDIT));
 	ASSERT(szData>=sizeof(ItemData));
 
 	m_szData = szData;
@@ -32,7 +34,7 @@ CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T szData, const CSize&
 	m_Nothing = TRUE;
 
 	m_FocusItem = m_EditItem = m_SelectionAnchor = -1;
-	m_FocusItemSelected = m_MultipleSelected = m_ShowFocusRect = FALSE;
+	m_FocusItemSelected = m_MultipleSelected = m_ShowFocusRect = m_ButtonDownInWindow = FALSE;
 
 	ResetDragLocation();
 	ZeroMemory(&m_Bitmaps, sizeof(m_Bitmaps));
@@ -98,7 +100,7 @@ void CFrontstageItemView::GetLayoutRect(CRect& rectLayout)
 	CFrontstageScroller::GetLayoutRect(rectLayout);
 }
 
-void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, INT Margin)
+void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, INT Margin, INT TopOffset)
 {
 	// Layout rect
 	CRect rectLayout;
@@ -111,12 +113,15 @@ void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, 
 	if (HasBorder())
 		Margin = ITEMCELLPADDINGY;
 
-	ASSERT(szItem.cx>0);
+	ASSERT(FullWidth || (szItem.cx>0));
 	ASSERT(szItem.cy>0);
 
 	CSize szGutter;
 	szGutter.cx = GetGutterForMargin(Margin);
 	szGutter.cy = FullWidth ? -1 : szGutter.cx;
+
+	if (!TopOffset)
+		TopOffset = m_HeaderHeight ? 1 : Margin;
 
 	// Items
 	m_szScrollStep.cy = (m_ItemHeight=szItem.cy)+szGutter.cy;
@@ -129,7 +134,7 @@ Restart:
 	INT Column = 0;
 	INT Row = 0;
 	INT x = Margin;
-	INT y = m_HeaderHeight ? 1 : Margin;
+	INT y = TopOffset;
 
 	INT Category = -1;
 
@@ -150,7 +155,7 @@ Restart:
 					y += szItem.cy+szGutter.cy;
 				}
 
-				if (y>Margin)
+				if (y>TopOffset)
 					y += 8;
 
 				Category = GetItemCategory(Index);
@@ -572,16 +577,19 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		for (INT Index=Item-1; Index>=0; Index--)
 		{
 			const ItemData* pItemData = GetItemData(Index);
-			if ((pItemData->Row<Row) && pItemData->Valid)
+			if (pItemData->Valid)
 			{
-				Item = Index;
-
-				if (pItemData->Column<=Column)
+				if ((Item!=m_FocusItem) && (pItemData->Row<Row-1))
 					break;
-			}
 
-			if (pItemData->Row<Row-1)
-				break;
+				if (pItemData->Row<Row)
+				{
+					Item = Index;
+
+					if (pItemData->Column<=Column)
+						break;
+				}
+			}
 		}
 
 		break;
@@ -605,16 +613,20 @@ INT CFrontstageItemView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 		for (INT Index=Item+1; Index<m_ItemCount; Index++)
 		{
 			const ItemData* pItemData = GetItemData(Index);
-			if ((pItemData->Row>Row) && pItemData->Valid)
+			if (pItemData->Valid)
 			{
-				Item = Index;
-
-				if (pItemData->Column>=Column)
+				if ((Item!=m_FocusItem) && (pItemData->Row>Row+1))
 					break;
-			}
 
-			if (pItemData->Row>Row+1)
-				break;
+				if (pItemData->Row>Row)
+				{
+					Item = Index;
+
+					if (pItemData->Column>=Column)
+						break;
+				}
+
+			}
 		}
 
 		break;
@@ -730,7 +742,7 @@ INT CFrontstageItemView::GetSelectedItem() const
 
 // Selected item commands
 
-void CFrontstageItemView::FireSelectedItem() const
+void CFrontstageItemView::FireSelectedItem()
 {
 	ASSERT(IsFocusItemEnabled());
 	ASSERT(GetSelectedItem()>=0);
@@ -743,7 +755,7 @@ void CFrontstageItemView::FireSelectedItem() const
 	GetOwner()->PostMessage(WM_COMMAND, IDOK);
 }
 
-void CFrontstageItemView::DeleteSelectedItem() const
+void CFrontstageItemView::DeleteSelectedItem()
 {
 	ASSERT(IsFocusItemEnabled());
 	ASSERT(GetSelectedItem()>=0);
@@ -776,19 +788,20 @@ void CFrontstageItemView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Inde
 {
 	if (IsWindowEnabled())
 	{
-		const BOOL Selected = IsSelectionEnabled() ? IsItemSelected(Index) : (m_FocusItem==Index) && m_FocusItemSelected;
+		const BOOL bDrawHover = DrawHover(Index);
+		const BOOL bDrawSelection = DrawSelection(Index);
 
-		if (Cached && Selected && Themed)
+		if (Cached && bDrawSelection && Themed)
 		{
-			DRAWCACHED(BITMAP_SELECTION, DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, Selected));
+			DRAWCACHED(BITMAP_SELECTION, DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, bDrawHover, m_FocusItem==Index, bDrawSelection));
 
 			const COLORREF TextColor = GetItemTextColor(Index, Themed);
-			dc.SetTextColor(Selected ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
+			dc.SetTextColor(bDrawSelection ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
 		}
 		else
 		{
 			DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
-				m_HoverItem==Index, m_FocusItem==Index, Selected, IsWindowEnabled() ? GetItemTextColor(Index, Themed) : GetSysColor(COLOR_GRAYTEXT), m_ShowFocusRect);
+				bDrawHover, m_FocusItem==Index, bDrawSelection, IsWindowEnabled() ? GetItemTextColor(Index, Themed) : GetSysColor(COLOR_GRAYTEXT), m_ShowFocusRect);
 		}
 	}
 	else
@@ -799,29 +812,27 @@ void CFrontstageItemView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Inde
 
 void CFrontstageItemView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
-	const BOOL Selected = IsSelectionEnabled() ? IsItemSelected(Index) : (m_FocusItem==Index) && m_FocusItemSelected;
-
-	if (((m_HoverItem!=Index) && !Selected) || !Themed)
+	if (((m_HoverItem!=Index) && !DrawSelection(Index)) || !Themed)
 		return;
 
 	if (Cached)
 	{
-		DRAWCACHED(BITMAP_REFLECTION, DrawListItemForeground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, Selected));
+		DRAWCACHED(BITMAP_REFLECTION, DrawListItemForeground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, TRUE));
 	}
 	else
 	{
-		DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, Selected);
+		DrawListItemForeground(dc, rectItem, Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, TRUE);
 	}
 }
 
 COLORREF CFrontstageItemView::GetLightTextColor(CDC& dc, INT Index, BOOL Themed) const
 {
-	return IsItemSelected(Index) ? dc.GetTextColor() : Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
+	return DrawSelection(Index) ? dc.GetTextColor() : Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
 }
 
 COLORREF CFrontstageItemView::GetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const
 {
-	return IsItemSelected(Index) ? dc.GetTextColor() : Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT);
+	return DrawSelection(Index) ? dc.GetTextColor() : Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT);
 }
 
 
@@ -976,8 +987,80 @@ void CFrontstageItemView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/,
 
 // Label edit
 
+BOOL CFrontstageItemView::AllowItemEditLabel(INT /*Index*/) const
+{
+	return TRUE;
+}
+
+RECT CFrontstageItemView::GetLabelRect() const
+{
+	ASSERT(m_EditItem>=0);
+	ASSERT(m_EditItem<m_ItemCount);
+
+	return GetItemRect(m_EditItem);
+}
+
+CEdit* CFrontstageItemView::CreateLabelEditControl()
+{
+	CEdit* pWndEdit = new CEdit();
+	pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, GetLabelRect(), this, 2);
+
+	return pWndEdit;
+}
+
+void CFrontstageItemView::EditLabel(INT Index)
+{
+	ASSERT(!m_pWndEdit);
+
+	if (IsLabelEditEnabled() && !IsEditing() && (Index>=0) && (Index<m_ItemCount) && AllowItemEditLabel(Index))
+	{
+		HideTooltip();
+
+		EnsureVisible(m_EditItem=Index);
+		InvalidateItem(Index);
+
+		ASSERT(CRect(GetLabelRect()).Height()<=GetLabelFont()->GetFontHeight()+4);
+		m_pWndEdit = CreateLabelEditControl();
+
+		m_pWndEdit->SetFont(GetLabelFont());
+		m_pWndEdit->SetFocus();
+		m_pWndEdit->SetSel(0, -1);
+	}
+	else
+	{
+		m_EditItem = -1;
+	}
+}
+
+void CFrontstageItemView::EndLabelEdit(INT /*Index*/, CString& /*Value*/)
+{
+}
+
 void CFrontstageItemView::DestroyEdit(BOOL Accept)
 {
+	if (IsEditing())
+	{
+		const INT EditItem = m_EditItem;
+
+		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
+		CEdit* pVictim = m_pWndEdit;
+		m_pWndEdit = NULL;
+
+		// Get value
+		CString Value;
+		pVictim->GetWindowText(Value);
+
+		// Destroy window; this will trigger another DestroyEdit() call!
+		pVictim->DestroyWindow();
+		delete pVictim;
+
+		if (Accept && (EditItem!=-1))
+			EndLabelEdit(EditItem, Value);
+
+		if (IsHideSelectionOnEditEnabled())
+			InvalidateItem(EditItem);
+	}
+
 	if (m_EditItem!=-1)
 	{
 		m_HoverItem = m_EditItem = -1;
@@ -991,6 +1074,8 @@ void CFrontstageItemView::DestroyEdit(BOOL Accept)
 BEGIN_MESSAGE_MAP(CFrontstageItemView, CFrontstageScroller)
 	ON_WM_DESTROY()
 	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSEHOVER()
+	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
@@ -1032,12 +1117,33 @@ void CFrontstageItemView::OnMouseMove(UINT nFlags, CPoint point)
 	CFrontstageScroller::OnMouseMove(nFlags, point);
 }
 
+void CFrontstageItemView::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if (IsEditOnHoverEnabled() && !IsEditing() && (m_HoverItem==m_EditItem))
+	{
+		EditLabel(m_EditItem);
+	}
+	else
+	{
+		CFrontstageScroller::OnMouseHover(nFlags, point);
+	}
+}
+
+void CFrontstageItemView::OnMouseLeave()
+{
+	m_ButtonDownInWindow = FALSE;
+
+	CFrontstageScroller::OnMouseLeave();
+}
+
 void CFrontstageItemView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CFrontstageScroller::OnLButtonDown(nFlags, point);
 
 	if (IsFocusItemEnabled())
 	{
+		m_ButtonDownInWindow = TRUE;
+
 		const INT Index = ItemAtPosition(point);
 		if (Index!=-1)
 		{
@@ -1049,7 +1155,7 @@ void CFrontstageItemView::OnLButtonDown(UINT nFlags, CPoint point)
 				SetFocusItem(Index, SETFOCUSITEM_MOVETOGGLESELECT);
 			}
 			else
-				if ((m_FocusItem==Index) && m_FocusItemSelected)
+				if ((m_FocusItem==Index) && m_FocusItemSelected && (m_EditItem!=Index))
 				{
 					m_EditItem = Index;
 				}
@@ -1065,9 +1171,10 @@ void CFrontstageItemView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	ResetDragLocation();
 
-	if (!(nFlags & MK_CONTROL) || !IsSelectionEnabled())
-		if (ItemAtPosition(point)==-1)
-			OnSelectNone();
+	if ((!(nFlags & MK_CONTROL) || !IsSelectionEnabled()) && (ItemAtPosition(point)==-1) && m_ButtonDownInWindow)
+		OnSelectNone();
+
+	m_ButtonDownInWindow = FALSE;
 }
 
 void CFrontstageItemView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
@@ -1143,6 +1250,12 @@ void CFrontstageItemView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		break;
 
+	case 'D':
+		if (Control && (GetSelectedItem()>=0))
+			DeleteSelectedItem();
+
+		break;
+
 	case 'I':
 	case 'T':
 		if (Control)
@@ -1179,6 +1292,12 @@ void CFrontstageItemView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		break;
 
+	case VK_F2:
+		if (Plain && (m_FocusItem>=0) && IsItemSelected(m_FocusItem))
+			EditLabel(m_FocusItem);
+
+		break;
+
 	case VK_SPACE:
 		if (IsSelectionEnabled() && (m_FocusItem>=0))
 		{
@@ -1196,7 +1315,7 @@ void CFrontstageItemView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 
 	case VK_DELETE:
-		if (Plain && GetSelectedItem()>=0)
+		if (Plain && (GetSelectedItem()>=0))
 			DeleteSelectedItem();
 
 		break;

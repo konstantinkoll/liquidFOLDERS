@@ -105,7 +105,11 @@ void LFItemTemplateDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 	}
 
 	if (IsWindow(m_wndInspectorGrid))
-		m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+BACKSTAGEBORDER, rectLayout.top+ExplorerHeight, rectLayout.Width()-BACKSTAGEBORDER, m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+	{
+		ASSERT(m_wndInspectorGrid.GetMinWidth()<=rectLayout.Width());
+
+		m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left, rectLayout.top+ExplorerHeight, rectLayout.Width(), m_BottomDivider-rectLayout.top-ExplorerHeight, nFlags);
+	}
 }
 
 BOOL LFItemTemplateDlg::InitDialog()

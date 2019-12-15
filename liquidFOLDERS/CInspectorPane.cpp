@@ -457,16 +457,16 @@ CInspectorPane::CInspectorPane()
 			ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
 }
 
-INT CInspectorPane::GetMinWidth(INT Height) const
+INT CInspectorPane::GetMinWidth() const
 {
-	return m_wndInspectorGrid.GetMinWidth(Height)+BACKSTAGEBORDER;
+	ASSERT(BACKSTAGEBORDER-INSPECTORGRIDMARGIN>=PANEGRIPPER);
+
+	return m_wndInspectorGrid.GetMinWidth()+BACKSTAGEBORDER-INSPECTORGRIDMARGIN;
 }
 
 void CInspectorPane::AdjustLayout(CRect rectLayout)
 {
-	const INT BorderLeft = BACKSTAGEBORDER-PANEGRIPPER;
-
-	m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+BorderLeft, rectLayout.top, rectLayout.Width()-BorderLeft, rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndInspectorGrid.SetWindowPos(NULL, rectLayout.left+BACKSTAGEBORDER-INSPECTORGRIDMARGIN-PANEGRIPPER, rectLayout.top, rectLayout.Width()-BACKSTAGEBORDER+INSPECTORGRIDMARGIN+PANEGRIPPER, rectLayout.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInspectorPane::SaveSettings() const
@@ -575,6 +575,9 @@ void CInspectorPane::AggregateClose()
 	m_wndInspectorGrid.SetStore(m_FileSummary.m_StoreStatus==STATUSUSED ? m_FileSummary.m_StoreID : DEFAULTSTOREID());
 
 	// Update properties, except for AttrIATAAirportName and AttrIATAAirportCounty (must be last)
+	ASSERT(AttrIATAAirportName>=AttrCount-2);
+	ASSERT(AttrIATAAirportCountry>=AttrCount-2);
+
 	for (UINT a=0; a<AttrCount-2; a++)
 		UpdatePropertyState(a);
 
@@ -605,7 +608,7 @@ INT CInspectorPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Add attribute properties
-	m_wndInspectorGrid.AddAttributeProperties(&m_FileSummary.m_AttributeSummary[0].VData, sizeof(AttributeSummary));
+	m_wndInspectorGrid.AddAttributeProperties(&m_FileSummary.m_AttributeSummary[0].VData, sizeof(AttributeSummary), AttrCount);
 
 	// Add virtual attribute properties
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)

@@ -12,7 +12,7 @@
 CFrontstagePane::CFrontstagePane()
 	: CFrontstageWnd()
 {
-	m_MaxWidth = GetMinWidth(0);
+	m_MaxWidth = GetMinWidth();
 }
 
 BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth, BOOL Shadow)
@@ -26,7 +26,7 @@ BOOL CFrontstagePane::Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT Prefer
 	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_NOACTIVATE, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
-INT CFrontstagePane::GetMinWidth(INT /*Height*/) const
+INT CFrontstagePane::GetMinWidth() const
 {
 	return 240+PANEGRIPPER;
 }
@@ -35,9 +35,9 @@ void CFrontstagePane::AdjustLayout(CRect /*rectLayout*/)
 {
 }
 
-void CFrontstagePane::SetMaxWidth(INT MaxWidth, INT Height)
+void CFrontstagePane::SetMaxWidth(INT MaxWidth)
 {
-	m_MaxWidth = max(MaxWidth, GetMinWidth(Height))-PANEGRIPPER;
+	m_MaxWidth = max(MaxWidth, GetMinWidth())-PANEGRIPPER;
 }
 
 void CFrontstagePane::GetLayoutRect(LPRECT lpRect) const
@@ -72,6 +72,8 @@ LRESULT CFrontstagePane::OnNcHitTest(CPoint point)
 	{
 		CRect rectLayout;
 		GetLayoutRect(rectLayout);
+
+		ClientToScreen(rectLayout);
 
 		if (!rectLayout.PtInRect(point))
 			HitTest = m_IsLeft ? HTRIGHT : HTLEFT;
@@ -149,8 +151,8 @@ void CFrontstagePane::OnSize(UINT nType, INT cx, INT cy)
 
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
-	AdjustLayout(rectLayout);
 
+	AdjustLayout(rectLayout);
 	GetParent()->PostMessage(WM_ADJUSTLAYOUT);
 
 	Invalidate();
@@ -163,6 +165,6 @@ void CFrontstagePane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	CRect rect;
 	GetClientRect(rect);
 
-	lpMMI->ptMinTrackSize.x = GetMinWidth(rect.bottom);
+	lpMMI->ptMinTrackSize.x = GetMinWidth();
 	lpMMI->ptMaxTrackSize.x = max(lpMMI->ptMinTrackSize.x, m_MaxWidth+PANEGRIPPER);
 }

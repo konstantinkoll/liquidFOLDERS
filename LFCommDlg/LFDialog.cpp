@@ -189,6 +189,7 @@ void LFDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 	if (Themed)
 	{
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 			if (m_Buttons[a]->IsWindowVisible())

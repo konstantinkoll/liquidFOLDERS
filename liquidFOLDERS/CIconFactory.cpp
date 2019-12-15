@@ -175,7 +175,7 @@ BOOL CIconFactory::DrawJumboThumbnail(CDC& dc, Graphics& g, const CPoint& pt, LF
 	{
 		ASSERT(Thumbnail.HasFrame);
 
-		g.SetSmoothingMode(SmoothingModeNone);
+		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 		SolidBrush brush(Color(COLORREF2RGB(LFGetItemColor(pItemDescriptor->CoreAttributes.Color, LFItemColorFadeLight))));
 		g.FillRectangle(&brush, pt.x+3, pt.y+2+ThumbnailYOffset, 122, 122);

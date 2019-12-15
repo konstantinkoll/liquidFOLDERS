@@ -19,7 +19,7 @@ protected:
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
-	virtual RECT GetLabelRect(INT Index) const;
+	virtual RECT GetLabelRect() const;
 
 	afx_msg void OnShowCapacity();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);

@@ -273,7 +273,6 @@ void LFTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 			{
 				dc.BitBlt(rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, &dcBitmap, 0, 0, SRCCOPY);
 
-				g.SetPixelOffsetMode(PixelOffsetModeNone);
 				g.SetSmoothingMode(SmoothingModeNone);
 
 				Pen pen(Color(0x40FFFFFF));

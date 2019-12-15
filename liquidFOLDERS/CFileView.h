@@ -83,8 +83,8 @@ struct SendToItemData
 // CFileView
 //
 
-#define FF_ENABLEFOLDERTOOLTIPS     0x00010000
-#define FF_ENABLETOOLTIPICONS       0x00020000
+#define FF_ENABLEFOLDERTOOLTIPS     0x10000000
+#define FF_ENABLETOOLTIPICONS       0x20000000
 
 #define FIRSTSENDTO     0xFF00
 #define LASTSENDTO      0xFFFF
@@ -111,8 +111,8 @@ protected:
 	virtual void ShowTooltip(const CPoint& point);
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);
-	virtual void FireSelectedItem() const;
-	virtual void DeleteSelectedItem() const;
+	virtual void FireSelectedItem();
+	virtual void DeleteSelectedItem();
 	virtual void DrawNothing(CDC& dc, CRect rect, BOOL Themed) const;
 
 	CString GetItemLabel(const LFItemDescriptor* pItemDescriptor, BOOL AllowExtension=TRUE) const;

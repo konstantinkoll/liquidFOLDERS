@@ -714,8 +714,7 @@ void CShellTree::OnContextMenu(CWnd* pWnd, CPoint point)
 	HTREEITEM hItem = NULL;
 	if ((point.x<0) && (point.y<0))
 	{
-		hItem = GetSelectedItem();
-		if (!hItem)
+		if ((hItem=GetSelectedItem())==NULL)
 			return;
 
 		CRect rectItem;
@@ -1068,8 +1067,7 @@ LRESULT CShellTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		tag.hdr.idFrom = GetDlgCtrlID();
 		tag.hdr.code = TVN_SELCHANGED;
 
-		tag.itemNew.hItem = GetSelectedItem();
-		if (tag.itemNew.hItem)
+		if ((tag.itemNew.hItem=GetSelectedItem())!=NULL)
 		{
 			tag.itemNew.mask = TVIF_PARAM | TVIF_CHILDREN | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_STATE;
 			GetItem(&tag.itemNew);

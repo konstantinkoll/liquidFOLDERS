@@ -86,6 +86,10 @@ BOOL LFFileImportList::IsPathEligible(SIZE_T szPath, const WIN32_FIND_DATA& Find
 	if ((wcscmp(FindData.cFileName, L".")==0) || (wcscmp(FindData.cFileName, L"..")==0))
 		return FALSE;
 
+	// No desktop.ini file
+	if (wcscmp(FindData.cFileName, L"desktop.ini")==0)
+		return FALSE;
+
 	// No GUIDs as path name
 	if (IsPathGUID(FindData.cFileName))
 		return FALSE;

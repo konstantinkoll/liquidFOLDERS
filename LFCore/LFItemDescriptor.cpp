@@ -67,17 +67,17 @@ void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID pValue)
 	assert(AttrProperties[Attr].Type<LFTypeCount);
 	assert(pValue);
 
-	// Altes Attribut freigeben
+	// Free existing attribute
 	FreeAttribute(pItemDescriptor, Attr);
 
-	// Größe ermitteln
+	// Get attribute size
 	const SIZE_T Size = GetAttributeSize(Attr, pValue);
 
-	// Ggf. Speicher reservieren
+	// Allocate memory
 	if (!pItemDescriptor->AttributeValues[Attr])
 		pItemDescriptor->AttributeValues[Attr] = malloc(Size);
 
-	// Kopieren
+	// Copy attribute data
 	switch (AttrProperties[Attr].Type)
 	{
 	case LFTypeUnicodeString:

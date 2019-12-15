@@ -184,7 +184,7 @@ void LFTabbedDialog::ShowTab(UINT Index)
 		const HWND hWnd = m_ControlsOnTab[a].hWnd;
 		const BOOL Show = (m_ControlsOnTab[a].TabMask & Mask);
 
-		::ShowWindow(hWnd, Show ? SW_SHOW : SW_HIDE);
+		::SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | (Show ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 
 		if (First && Show && (::GetWindowLong(hWnd, GWL_STYLE) & WS_TABSTOP))
 			if (::IsWindowEnabled(hWnd))
@@ -207,9 +207,7 @@ void LFTabbedDialog::SelectTab(UINT Index)
 	ShowTab(Index);
 
 	m_BackBufferL = m_BackBufferH = 0;
-	UpdateBackground();
-
-	Invalidate();
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 }
 
 BOOL LFTabbedDialog::InitSidebar(LPSIZE /*pszTabArea*/)

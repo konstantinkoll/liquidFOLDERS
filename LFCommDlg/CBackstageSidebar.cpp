@@ -359,7 +359,6 @@ void CBackstageSidebar::OnPaint()
 	const COLORREF colNum = Themed ? 0x998981 : GetSysColor(COLOR_3DSHADOW);
 
 	Graphics g(dc);
-	g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 	// Items
 	const BOOL Small = (rect.right<m_PreferredWidth);
@@ -471,6 +470,7 @@ void CBackstageSidebar::OnPaint()
 
 						if (Themed)
 						{
+							g.SetPixelOffsetMode(PixelOffsetModeHalf);
 							g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 							GraphicsPath path;

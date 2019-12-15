@@ -14,9 +14,9 @@
 #define GUTTER             BACKSTAGEBORDER
 #define MIDDLE             (2*GUTTER+6)
 #define BLENDHEIGHT        2*(GUTTER+CARDPADDING)
-#define CATEGORYRADIUS     8
 #define LARGEPADDING       (CARDPADDING-1)
 #define SMALLPADDING       (CARDPADDING/2+1)
+#define CATEGORYPADDING    (3*CARDPADDING/2)
 #define THUMBMARGINX       2
 #define THUMBMARGINY       THUMBMARGINX
 #define THUMBOFFSETY       -1
@@ -27,7 +27,7 @@
 const ARGB CTimelineView::m_BevelColors[8] = { 0x80FFFFFF, 0xFF7A7A7C, 0xFFA7A8AA, 0xFFBEBFC2, 0xFFCACBCD, 0xFFCACBCD, 0xFF7A7A7C, 0x80FFFFFF };
 
 CTimelineView::CTimelineView()
-	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT, sizeof(TimelineItemData), CSize(ARROWSIZE+1, 0))
+	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_ENABLEEDITONHOVER, sizeof(TimelineItemData), CSize(ARROWSIZE+1, 0))
 {
 }
 
@@ -373,7 +373,7 @@ Restart:
 				}
 			}
 
-			// New section?
+			// New category?
 			if (pData->Year!=Year)
 			{
 				Year = pData->Year;
@@ -382,9 +382,13 @@ Restart:
 				ZeroMemory(&Data, sizeof(Data));
 
 				swprintf_s(Data.Caption, 256, L"%u", (UINT)Year);
-				
+
+				INT Top = max(CurTop[0], CurTop[1]);
+				if (Top>GUTTER+2)
+					Top += GUTTER+2;
+
 				Data.Rect.right = (Data.Rect.left=m_ScrollWidth/2-m_LabelWidth/2)+m_LabelWidth;
-				Data.Rect.bottom = (Data.Rect.top=max(CurTop[0], CurTop[1]))+2*CARDPADDING+theApp.m_SmallBoldFont.GetFontHeight()-2;
+				Data.Rect.bottom = (Data.Rect.top=Top)+2*CATEGORYPADDING+m_DefaultFontHeight-6;
 
 				m_ItemCategories.AddItem(Data);
 
@@ -608,85 +612,29 @@ INT CTimelineView::HandleNavigationKeys(UINT nChar, BOOL Control) const
 
 // Drawing
 
-void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT rectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed)
+void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT lpcRectCategory, ItemCategoryData* pItemCategoryData, BOOL Themed)
 {
-	CRect rectText(rectCategory);
+	// Glas
+	DrawGlasBackground(dc, g, lpcRectCategory, Themed);
+
+	// Text
+	CRect rectText(lpcRectCategory);
 
 	if (Themed)
 	{
-		// Background
-		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+		dc.SetTextColor(0xFFFFFF);
+		rectText.OffsetRect(0, 1);
 
-		GraphicsPath path;
-		CreateRoundRectangle(rectCategory, CATEGORYRADIUS, path);
-
-		LinearGradientBrush brush1(Point(0, rectCategory->top), Point(0, rectCategory->bottom), Color((ARGB)m_BevelColors[2]), Color((ARGB)m_BevelColors[4]));
-		g.FillPath(&brush1, &path);
-
-		// Light border
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
-
-		Region OldClip;
-		g.GetClip(&OldClip);
-
-		const INT Left = (rectCategory->left+rectCategory->right)/2-4;
-
-		if (m_TwoColumns)
-			g.SetClip(Rect(Left, rectCategory->top-1, 8, rectCategory->bottom-rectCategory->top+1), CombineModeExclude);
-
-		CRect rectBorder(rectCategory);
-		rectBorder.left--;
-		rectBorder.top--;
-
-		CreateRoundRectangle(rectBorder, CATEGORYRADIUS+1, path);
-
-		Pen pen(Color((ARGB)m_BevelColors[0]));
-		g.DrawPath(&pen, &path);
-
-		// Dark border
-		if (m_TwoColumns)
-		{
-			g.SetClip(&OldClip);
-			g.SetClip(Rect(Left+2, rectCategory->top, 4, rectCategory->bottom-rectCategory->top), CombineModeExclude);
-		}
-
-		rectBorder.DeflateRect(1, 1);
-		CreateRoundRectangle(rectBorder, CATEGORYRADIUS, path);
-
-		pen.SetColor(Color((ARGB)m_BevelColors[1]));
-		g.DrawPath(&pen, &path);
-
-		g.SetClip(&OldClip);
-
-		// Text
-		rectText.OffsetRect(1, 0);
-
-		COLORREF OldColor = dc.SetTextColor(0x7C7A7A);
 		dc.DrawText(pItemCategoryData->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 
-		rectText.OffsetRect(-1, -1);
-
-		dc.SetTextColor(OldColor);
-
-		// Finishing touches
-		if (m_TwoColumns)
-		{
-			g.SetPixelOffsetMode(PixelOffsetModeHalf);
-
-			LinearGradientBrush brush2(Point(0, rectCategory->top-BLENDHEIGHT), Point(0, rectCategory->top), Color(0x00A7A8AA), Color(0xFFA7A8AA));
-			g.FillRectangle(&brush2, Left+3, rectCategory->top-BLENDHEIGHT, 3, BLENDHEIGHT);
-
-			dc.SetPixel((rectCategory->left+rectCategory->right)/2-1, rectCategory->bottom-1, 0xCDCBCA);
-		}
+		dc.SetTextColor(0x7A716C);
+		rectText.OffsetRect(0, -1);
 	}
 	else
 	{
-		dc.FillSolidRect(rectCategory, GetSysColor(COLOR_3DSHADOW));
-
-		rectText.OffsetRect(0, -1);
+		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 	}
 
-	// Text
 	dc.DrawText(pItemCategoryData->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
 
@@ -967,9 +915,7 @@ void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRe
 		}
 
 	// Categories
-	CFont* pOldFont = dc.SelectObject(&theApp.m_SmallBoldFont);
-
-	dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
+	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 	for (UINT a=0; a<m_ItemCategories.m_ItemCount; a++)
 	{
@@ -1008,9 +954,12 @@ void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRe
 
 // Label edit
 
-RECT CTimelineView::GetLabelRect(INT Index) const
+RECT CTimelineView::GetLabelRect() const
 {
-	RECT rect = GetItemRect(Index);
+	ASSERT(m_EditItem>=0);
+	ASSERT(m_EditItem<m_ItemCount);
+
+	RECT rect = GetItemRect(m_EditItem);
 
 	rect.bottom = (rect.top+=CARDPADDING-2)+m_DefaultFontHeight+4;
 	rect.left += CARDPADDING+m_SmallIconSize+SMALLPADDING-5;
@@ -1034,7 +983,7 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Heights
 	m_CaptionHeight = max(m_SmallIconSize, m_DefaultFontHeight+CARDPADDING/3+m_SmallFontHeight);
-	m_LabelWidth = (theApp.m_SmallBoldFont.GetTextExtent(_T("8888")).cx+2*CARDPADDING) | 1;
+	m_LabelWidth = theApp.m_DefaultFont.GetTextExtent(_T("8888")).cx+2*CATEGORYPADDING;
 
 	return 0;
 }

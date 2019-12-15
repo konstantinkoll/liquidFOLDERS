@@ -53,10 +53,7 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	// Button
 	const BOOL Themed = IsCtrlThemed();
 
-	if (Themed && m_DrawBorder)
-		DrawWhiteButtonBorder(g, rect);
-
-	DrawWhiteButtonBackground(dc, g, rect, Themed, Focused, Selected, m_HoverItem>=0, Disabled);
+	DrawWhiteButtonBackground(dc, g, rect, Themed, Focused, Selected, m_HoverItem>=0, Disabled, m_DrawBorder);
 
 	// Content
 	NM_DRAWBUTTONFOREGROUND tag;

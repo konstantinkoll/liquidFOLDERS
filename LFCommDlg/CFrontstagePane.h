@@ -16,12 +16,12 @@ class CFrontstagePane : public CFrontstageWnd
 public:
 	CFrontstagePane();
 
-	virtual INT GetMinWidth(INT Height) const;
+	virtual INT GetMinWidth() const;
 	virtual void AdjustLayout(CRect rectLayout);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL IsLeft, INT PreferredWidth, BOOL Shadow=FALSE);
 	INT GetPreferredWidth() const;
-	void SetMaxWidth(INT MaxWidth, INT Height);
+	void SetMaxWidth(INT MaxWidth);
 	void GetLayoutRect(LPRECT lpRect) const;
 
 protected:

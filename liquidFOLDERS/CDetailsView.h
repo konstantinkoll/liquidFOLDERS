@@ -19,5 +19,5 @@ protected:
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual LFFont* GetLabelFont() const;
-	virtual RECT GetLabelRect(INT Index) const;
+	virtual RECT GetLabelRect() const;
 };

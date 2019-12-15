@@ -18,6 +18,9 @@
 #define FRONTSTAGE_ENABLESHIFTSELECTION     0x00000800
 #define FRONTSTAGE_ENABLEDRAGANDDROP        0x00001000
 #define FRONTSTAGE_ENABLELABELEDIT          0x00002000
+#define FRONTSTAGE_ENABLEEDITONHOVER        0x00004000
+
+#define FRONTSTAGE_HIDESELECTIONONEDIT      0x01000000
 
 #define IVN_SELECTIONCHANGED                0x00000100
 #define IVN_BEGINDRAGANDDROP                0x00000200
@@ -74,6 +77,7 @@ public:
 	void SetFocusItem(INT Index, UINT Mode=SETFOCUSITEM_MOVEDESELECT);
 	INT GetSelectedItem() const;
 	void SelectNone();
+	void EditLabel(INT Index);
 
 protected:
 	virtual void AdjustScrollbars();
@@ -84,12 +88,16 @@ protected:
 	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);
-	virtual void FireSelectedItem() const;
-	virtual void DeleteSelectedItem() const;
+	virtual void FireSelectedItem();
+	virtual void DeleteSelectedItem();
 	virtual BOOL DrawNothing() const;
 	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
+	virtual BOOL AllowItemEditLabel(INT Index) const;
+	virtual RECT GetLabelRect() const;
+	virtual CEdit* CreateLabelEditControl();
+	virtual void EndLabelEdit(INT Index, CString& Value);
 	virtual void DestroyEdit(BOOL Accept=FALSE);
 
 	BOOL IsScrollingEnabled() const;
@@ -98,13 +106,15 @@ protected:
 	BOOL IsShiftSelectionEnabled() const;
 	BOOL IsDragAndDropEnabled() const;
 	BOOL IsLabelEditEnabled() const;
+	BOOL IsEditOnHoverEnabled() const;
+	BOOL IsHideSelectionOnEditEnabled() const;
 	LRESULT SendNotifyMessage(UINT Code) const;
 	void SetItemHeight(INT IconSize, INT Rows, INT Padding=ITEMVIEWPADDING);
 	void SetItemHeight(const CIcons& Icons, INT Rows, INT Padding=ITEMVIEWPADDING);
 	void SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding=ITEMVIEWPADDING);
 	void EnsureVisible(INT Index);
 	void GetLayoutRect(CRect& rectLayout);
-	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN);
+	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN, INT TopOffset=0);
 	void AdjustLayoutList();
 	void AdjustLayoutColumns(INT Columns=1, INT Margin=ITEMVIEWMARGIN);
 	void AdjustLayoutSingleRow(INT Columns, INT Margin=ITEMVIEWMARGIN);
@@ -134,6 +144,8 @@ protected:
 
 	afx_msg void OnDestroy();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
@@ -170,6 +182,9 @@ protected:
 private:
 	static INT GetGutterForMargin(INT Margin);
 	void ResetItemCategories();
+	BOOL IsEditItem(INT Index) const;
+	BOOL DrawHover(INT Index) const;
+	BOOL DrawSelection(INT Index) const;
 	static UINT GetTileRows(UINT Rows, va_list vl);
 	void DrawTile(CDC& dc, CRect& rect, COLORREF TextColor, UINT Rows, va_list& vl) const;
 
@@ -177,6 +192,7 @@ private:
 	LPBYTE m_pItemData;
 	UINT m_ItemDataAllocated;
 	CPoint m_DragPos;
+	BOOL m_ButtonDownInWindow;
 
 	CachedSelectionBitmap m_Bitmaps[2];
 };
@@ -193,31 +209,44 @@ inline BOOL CFrontstageItemView::IsFocusItemEnabled() const
 
 inline BOOL CFrontstageItemView::IsSelectionEnabled() const
 {
-	ASSERT(((m_Flags & FRONTSTAGE_ENABLESELECTION)==0) || (m_Flags & FRONTSTAGE_ENABLEFOCUSITEM));
+	ASSERT(((m_Flags & FRONTSTAGE_ENABLESELECTION)==0) || IsFocusItemEnabled());
 
 	return (m_Flags & FRONTSTAGE_ENABLESELECTION);
 }
 
 inline BOOL CFrontstageItemView::IsShiftSelectionEnabled() const
 {
-	ASSERT(((m_Flags & FRONTSTAGE_ENABLESELECTION)==0) || (m_Flags & FRONTSTAGE_ENABLEFOCUSITEM));
-	ASSERT(((m_Flags & FRONTSTAGE_ENABLESHIFTSELECTION)==0) || (m_Flags & FRONTSTAGE_ENABLESELECTION));
+	ASSERT(((m_Flags & FRONTSTAGE_ENABLESHIFTSELECTION)==0) || IsSelectionEnabled());
 
 	return (m_Flags & FRONTSTAGE_ENABLESHIFTSELECTION);
 }
 
 inline BOOL CFrontstageItemView::IsDragAndDropEnabled() const
 {
-	ASSERT(((m_Flags & FRONTSTAGE_ENABLEDRAGANDDROP)==0) || (m_Flags & FRONTSTAGE_ENABLEFOCUSITEM));
+	ASSERT(((m_Flags & FRONTSTAGE_ENABLEDRAGANDDROP)==0) || IsFocusItemEnabled());
 
 	return (m_Flags & FRONTSTAGE_ENABLEDRAGANDDROP);
 }
 
 inline BOOL CFrontstageItemView::IsLabelEditEnabled() const
 {
-	ASSERT(((m_Flags & FRONTSTAGE_ENABLELABELEDIT)==0) || (m_Flags & FRONTSTAGE_ENABLEFOCUSITEM));
+	ASSERT(((m_Flags & FRONTSTAGE_ENABLELABELEDIT)==0) || IsFocusItemEnabled());
 
 	return (m_Flags & FRONTSTAGE_ENABLELABELEDIT);
+}
+
+inline BOOL CFrontstageItemView::IsEditOnHoverEnabled() const
+{
+	ASSERT(((m_Flags & FRONTSTAGE_ENABLEEDITONHOVER)==0) || IsLabelEditEnabled());
+
+	return (m_Flags & FRONTSTAGE_ENABLEEDITONHOVER);
+}
+
+inline BOOL CFrontstageItemView::IsHideSelectionOnEditEnabled() const
+{
+	ASSERT(((m_Flags & FRONTSTAGE_HIDESELECTIONONEDIT)==0) || IsLabelEditEnabled());
+
+	return (m_Flags & FRONTSTAGE_HIDESELECTIONONEDIT);
 }
 
 inline INT CFrontstageItemView::GetGutterForMargin(INT Margin)
@@ -281,6 +310,21 @@ inline void CFrontstageItemView::ResetDragLocation()
 inline BOOL CFrontstageItemView::IsDragLocationValid() const
 {
 	return (m_DragPos.x!=-1) && (m_DragPos.y!=-1);
+}
+
+inline BOOL CFrontstageItemView::IsEditItem(INT Index) const
+{
+	return IsEditing() && (Index==m_EditItem) && IsHideSelectionOnEditEnabled();
+}
+
+inline BOOL CFrontstageItemView::DrawHover(INT Index) const
+{
+	return IsEditItem(Index) ? FALSE : Index==m_HoverItem;
+}
+
+inline BOOL CFrontstageItemView::DrawSelection(INT Index) const
+{
+	return IsEditItem(Index) ? FALSE : IsSelectionEnabled() ? IsItemSelected(Index) : (m_FocusItem==Index) && m_FocusItemSelected;
 }
 
 inline COLORREF CFrontstageItemView::SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const

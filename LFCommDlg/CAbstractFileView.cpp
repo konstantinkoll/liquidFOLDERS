@@ -144,81 +144,47 @@ COLORREF CAbstractFileView::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 
 // Label edit
 
+BOOL CAbstractFileView::AllowItemEditLabel(INT Index) const
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<m_ItemCount);
+
+	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+	return LFIsStore(pItemDescriptor) || ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
+}
+
+CEdit* CAbstractFileView::CreateLabelEditControl()
+{
+	ASSERT(m_EditItem>=0);
+	ASSERT(m_EditItem<m_ItemCount);
+
+	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_EditItem];
+
+	CEdit* pWndEdit = CFrontstageItemView::CreateLabelEditControl();
+	pWndEdit->SetWindowText(pItemDescriptor->CoreAttributes.FileName);
+
+	return pWndEdit;
+}
+
+void CAbstractFileView::EndLabelEdit(INT Index, CString& Value)
+{
+	ASSERT(Index>=0);
+	ASSERT(Index<m_ItemCount);
+
+	if (!Value.IsEmpty())
+		GetOwner()->SendMessage(WM_RENAMEITEM, (WPARAM)Index, (LPARAM)(LPCWSTR)Value);
+}
+
 void CAbstractFileView::DestroyEdit(BOOL Accept)
 {
-	if (IsEditing())
-	{
-		const INT EditItem = m_EditItem;
-
-		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
-		CEdit* pVictim = m_pWndEdit;
-		m_pWndEdit = NULL;
-
-		// Get text
-		CString Name;
-		pVictim->GetWindowText(Name);
-
-		// Destroy window; this will trigger another DestroyEdit() call!
-		pVictim->DestroyWindow();
-		delete pVictim;
-
-		if (Accept && (EditItem>=0) && !Name.IsEmpty())
-			GetOwner()->SendMessage(WM_RENAMEITEM, (WPARAM)EditItem, (LPARAM)(LPCWSTR)Name);
-	}
+	CFrontstageItemView::DestroyEdit(Accept);
 
 	m_TypingBuffer[0] = L'\0';
-
-	CFrontstageItemView::DestroyEdit(Accept);
-}
-
-LFFont* CAbstractFileView::GetLabelFont() const
-{
-	return &LFGetApp()->m_DefaultFont;
-}
-
-RECT CAbstractFileView::GetLabelRect(INT Index) const
-{
-	return GetItemRect(Index);
-}
-
-void CAbstractFileView::EditLabel(INT Index)
-{
-	m_EditItem = -1;
-
-	if (IsLabelEditEnabled() && (Index>=0) && (Index<m_ItemCount))
-	{
-		const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
-
-		if (LFIsStore(pItemDescriptor) || ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)))
-		{
-			HideTooltip();
-
-			m_EditItem = Index;
-			InvalidateItem(Index);
-			EnsureVisible(Index);
-
-			LFFont* pFont = GetLabelFont();
-			const INT FontHeight = pFont->GetFontHeight();
-
-			CRect rect(GetLabelRect(Index));
-			if (rect.Height()>FontHeight+4)
-				rect.bottom = (rect.top+=(rect.Height()-FontHeight-4)/2)+FontHeight+4;
-
-			ASSERT(!m_pWndEdit);
-			m_pWndEdit = new CEdit();
-			m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
-
-			m_pWndEdit->SetWindowText(pItemDescriptor->CoreAttributes.FileName);
-			m_pWndEdit->SetFont(pFont);
-			m_pWndEdit->SetFocus();
-			m_pWndEdit->SetSel(0, -1);
-		}
-	}
 }
 
 
 BEGIN_MESSAGE_MAP(CAbstractFileView, CFrontstageItemView)
-	ON_WM_MOUSEHOVER()
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
 	ON_WM_SETCURSOR()
@@ -226,18 +192,6 @@ BEGIN_MESSAGE_MAP(CAbstractFileView, CFrontstageItemView)
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
 END_MESSAGE_MAP()
-
-void CAbstractFileView::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if (!IsEditing() && (m_HoverItem==m_EditItem))
-	{
-		EditLabel(m_EditItem);
-	}
-	else
-	{
-		CFrontstageItemView::OnMouseHover(nFlags, point);
-	}
-}
 
 void CAbstractFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
@@ -286,16 +240,8 @@ void CAbstractFileView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CAbstractFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	const BOOL Plain = (GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0);
-
 	switch (nChar)
 	{
-	case VK_F2:
-		if (Plain && (m_FocusItem>=0) && IsItemSelected(m_FocusItem))
-			EditLabel(m_FocusItem);
-
-		break;
-
 	case VK_SPACE:
 		// Do not allow space when typing
 		if (m_TypingBuffer[0])

@@ -8,7 +8,7 @@
 
 
 #define SOURCEPATH          _T("C:\\Users\\ROOT\\Desktop\\LUTs\\")
-#define DESTINATIONPATH     _T("C:\\Users\\ROOT\\Dropbox\\LUTs\\")
+#define DESTINATIONPATH     _T("C:\\Users\\ROOT\\Dropbox\\")
 using namespace std;
 
 void ConvertFile(const CString& FN)
@@ -16,7 +16,7 @@ void ConvertFile(const CString& FN)
 	wcout << FN.GetString() << _T("\n");
 
 	// Einlesen
-	Bitmap bmp(SOURCEPATH+FN+_T(".JPG"));
+	Bitmap bmp(SOURCEPATH+FN+_T(".PNG"));
 
 	if ((bmp.GetWidth()!=512) || (bmp.GetHeight()!=512))
 		return;
@@ -67,7 +67,7 @@ INT _tmain(INT /*argc*/, TCHAR* /*argv[]*/, TCHAR* /*envp[]*/)
 
 	// Konvertieren
 	CString Mask(SOURCEPATH);
-	Mask.Append(_T("*.JPG"));
+	Mask.Append(_T("*.PNG"));
 
 	WIN32_FIND_DATA FindData;
 	HANDLE hFind = FindFirstFile(Mask, &FindData);

@@ -169,6 +169,7 @@ protected:
 	void TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem=TRUE, BOOL AlignRight=FALSE) const;
 	void TrackPopupMenu(CMenu& Menu, const CPoint& pos, BOOL SetDefaultItem=TRUE, BOOL AlignRight=FALSE) const;
 	BOOL HasBorder() const;
+	void DrawGlasBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const;
 	void DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const;
 	void DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed, BOOL Hot=FALSE, BOOL Focused=FALSE, BOOL Selected=FALSE, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE) const;
 

@@ -596,7 +596,7 @@ void CFileView::SelectItem(INT Index, BOOL Select)
 
 // Selected item commands
 
-void CFileView::FireSelectedItem() const
+void CFileView::FireSelectedItem()
 {
 	ASSERT(IsFocusItemEnabled());
 	ASSERT(GetSelectedItem()>=0);
@@ -604,7 +604,7 @@ void CFileView::FireSelectedItem() const
 	GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
 }
 
-void CFileView::DeleteSelectedItem() const
+void CFileView::DeleteSelectedItem()
 {
 	ASSERT(IsFocusItemEnabled());
 	ASSERT(GetSelectedItem()>=0);

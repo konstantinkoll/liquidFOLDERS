@@ -519,6 +519,16 @@ void CFrontstageScroller::DrawStage(CDC& /*dc*/, Graphics& /*g*/, const CRect& /
 
 // Label edit
 
+LFFont* CFrontstageScroller::GetLabelFont() const
+{
+	return &LFGetApp()->m_DefaultFont;
+}
+
+RECT CFrontstageScroller::GetLabelRect() const
+{
+	return CRect(0, 0, 0, 0);
+}
+
 void CFrontstageScroller::DestroyEdit(BOOL /*Accept*/)
 {
 }
@@ -581,6 +591,7 @@ void CFrontstageScroller::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	Graphics g(dc);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Background
 	const BOOL Themed = IsCtrlThemed();
@@ -660,7 +671,16 @@ void CFrontstageScroller::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFrontstageWnd::OnSize(nType, cx, cy);
 
+	// Layout
 	AdjustLayout();
+
+	// Label edit
+	if (m_pWndEdit)
+	{
+		CRect rectLabel(GetLabelRect());
+
+		m_pWndEdit->SetWindowPos(NULL, rectLabel.left, rectLabel.top, rectLabel.Width(), rectLabel.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+	}
 }
 
 void CFrontstageScroller::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)

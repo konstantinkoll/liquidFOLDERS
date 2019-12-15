@@ -20,7 +20,7 @@ public:
 	virtual INT GetMinWidth() const;
 	virtual void DrawValue(CDC& dc, LPCRECT lpcRect) const;
 	virtual HCURSOR SetCursor(INT x) const;
-	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect, HFONT hFont=(HFONT)GetStockObject(DEFAULT_GUI_FONT)) const;
+	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect) const;
 	virtual BOOL CanDelete() const;
 	virtual BOOL HasButton() const;
 	virtual BOOL WantsChars() const;
@@ -96,7 +96,7 @@ friend class CInspectorGrid;
 public:
 	CPropertyIATA(LFVariantData* pVData, CWnd* pOwnerWnd);
 
-	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect, HFONT hFont) const;
+	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect) const;
 	virtual BOOL HasButton() const;
 	virtual void OnSetString(CString& Value) const;
 	virtual void OnClickButton(const STOREID& StoreID=DEFAULTSTOREID());
@@ -141,7 +141,7 @@ class CPropertyNumber : public CProperty
 public:
 	CPropertyNumber(LFVariantData* pVData, CWnd* pOwnerWnd);
 
-	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect, HFONT hFont) const;
+	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect) const;
 };
 
 
@@ -153,7 +153,7 @@ class CPropertySize : public CProperty
 public:
 	CPropertySize(LFVariantData* pVData, CWnd* pOwnerWnd);
 
-	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect, HFONT hFont) const;
+	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect) const;
 };
 
 
@@ -218,7 +218,7 @@ class CPropertyDuration : public CPropertyNumber
 public:
 	CPropertyDuration(LFVariantData* pData, CWnd* pOwnerWnd);
 
-	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect, HFONT hFont) const;
+	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect) const;
 };
 
 
@@ -250,78 +250,68 @@ public:
 // CInspectorGrid
 //
 
-struct Property
+struct PropertyItemData
 {
 	ItemData Hdr;
 	CProperty* pProperty;
+	UINT Attr;
+	UINT CategoryID;
 	WCHAR Name[LFAttributeNameSize];
 	INT LabelWidth;
-	UINT CategoryID;
 	BOOL Editable;
-	BOOL Visible;
-	INT Top;
-	INT Bottom;
 };
 
-struct PropertyCategory
-{
-	INT Top;
-	INT Bottom;
-};
+#define INSPECTORGRIDMARGIN     2
 
-class CInspectorGrid : public CFrontstageScroller
+class CInspectorGrid : public CFrontstageItemView
 {
 public:
 	CInspectorGrid();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pOwnerWndWnd, UINT nID, UINT ContextMenuID, CInspectorHeader* pHeader=NULL);
-	void AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT CategoryID=LFAttrCategoryInternal, BOOL Editable=FALSE, BOOL Visible=FALSE);
-	void AddAttributeProperties(LFVariantData* pVDataArray, SIZE_T ItemSize=sizeof(LFVariantData));
-	void SetAlphabeticMode(BOOL SortAlphabetic);
+	BOOL Create(CWnd* pOwnerWnd, UINT nID, UINT ContextMenuID, CInspectorHeader* pHeader=NULL);
 	void SetContext(UINT Context);
 	void SetStore(const STOREID& StoreID);
-	void UpdatePropertyState(UINT Index, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pVDataRange=NULL);
-	INT GetMinWidth(INT Height) const;
+	void AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT CategoryID=LFAttrCategoryInternal, BOOL Visible=FALSE, BOOL Editable=FALSE);
+	void AddAttributeProperties(LFVariantData* pVDataArray, SIZE_T ItemSize=sizeof(LFVariantData), UINT ItemCount=LFAttributeCount);
+	void UpdatePropertyState(UINT Attr, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pVDataRange=NULL);
+	void SetAlphabeticMode(BOOL SortAlphabetic);
+	INT GetMinWidth() const;
 
 protected:
-	virtual INT ItemAtPosition(CPoint point) const;
-	virtual void InvalidateItem(INT Index);
+	virtual INT GetItemCategory(INT Index) const;
 	virtual void ShowTooltip(const CPoint& point);
-	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
+	virtual void FireSelectedItem();
+	virtual void DeleteSelectedItem();
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
+	virtual BOOL AllowItemEditLabel(INT Index) const;
+	virtual LFFont* GetLabelFont() const;
+	virtual RECT GetLabelRect() const;
+	virtual CEdit* CreateLabelEditControl();
+	virtual void EndLabelEdit(INT Index, CString& Value);
 
-	void SortProperties();
-	RECT GetItemRect(INT Index) const;
+	void ResetProperty(INT Index, BOOL Force=FALSE);
+	void SortItems();
 	UINT PartAtPosition(const CPoint& point, INT Index) const;
-	void EnsureVisible(INT Index);
-	void SelectItem(INT Index);
-	void ResetProperty(INT Index);
-	void EditProperty(INT Index);
-	void ModifyProperty(INT Index);
-	void DestroyEdit(BOOL Accept=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg UINT OnGetDlgCode();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
-	afx_msg UINT OnGetDlgCode();
 
 	afx_msg LRESULT OnPropertyChanged(WPARAM wParam, LPARAM lParam);
-
-	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 
-	LFDynArray<Property, LFAttributeCount, 8> m_Properties;
-	PropertyCategory m_Categories[LFAttrCategoryCount];
 	static HICON hIconResetNormal;
 	static HICON hIconResetSelected;
 	static HICON hIconResetHot;
@@ -335,31 +325,35 @@ protected:
 	BOOL m_SortAlphabetic;
 	BOOL m_PartPressed;
 	UINT m_HoverPart;
-	INT m_SelectedItem;
-	INT m_EditItem;
 
 private:
-	void SetPropertyName(Property& Prop, LPCWSTR pszName);
-	INT Compare(INT Eins, INT Zwei) const;
-	void Heap(INT Element, INT Count);
-	void CreateSortArray();
-	void NotifyOwner(INT Attr);
+	PropertyItemData* GetPropertyItemData(INT Index) const;
+	PropertyItemData* GetPropertyItemDataForAttribute(UINT Attr) const;
+	INT GetItemHeight() const;
+	static void SetPropertyName(PropertyItemData& Data, LPCWSTR pszName);
+	static INT __stdcall CompareItems(PropertyItemData* pData1, PropertyItemData* pData2, const SortParameters& Parameters);
+	void ModifyProperty(SHORT Attr);
+	void NotifyOwner(INT Attr) const;
 
-	INT* m_pSortArray;
 	UINT m_ContextMenuID;
 };
+
+inline PropertyItemData* CInspectorGrid::GetPropertyItemData(INT Index) const
+{
+	return (PropertyItemData*)GetItemData(Index);
+}
 
 inline void CInspectorGrid::SetStore(const STOREID& StoreID)
 {
 	m_StoreID = StoreID;
 }
 
-inline INT CInspectorGrid::GetMinWidth(INT Height) const
+inline INT CInspectorGrid::GetMinWidth() const
 {
-	return Height<m_ScrollHeight ? m_MinWidth+GetSystemMetrics(SM_CXVSCROLL) : m_MinWidth;
+	return m_MinWidth;
 }
 
-inline void CInspectorGrid::NotifyOwner(INT Attr)
+inline void CInspectorGrid::NotifyOwner(INT Attr) const
 {
-	OnPropertyChanged(Attr, (LPARAM)-1);
+	SendMessage(WM_PROPERTYCHANGED, (WPARAM)Attr, (LPARAM)-1);
 }

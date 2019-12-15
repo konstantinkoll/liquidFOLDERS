@@ -170,7 +170,6 @@ struct LFGeoCoordinates
 
 struct LFCountry
 {
-	UINT ID;
 	CHAR Name[31];
 };
 

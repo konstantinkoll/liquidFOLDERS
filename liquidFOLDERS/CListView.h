@@ -43,9 +43,9 @@ protected:
 	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
 	virtual void HeaderColumnClicked(UINT Attr);
 	virtual void AdjustLayout();
-	virtual RECT GetLabelRect(INT Index) const;
 	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
+	virtual RECT GetLabelRect() const;
 
 	void DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Themed);
 	void DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed);

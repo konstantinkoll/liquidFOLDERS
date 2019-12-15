@@ -74,7 +74,7 @@ void CConditionList::SetConditions(const ConditionArray& Conditions)
 
 // Selected item commands
 
-void CConditionList::FireSelectedItem() const
+void CConditionList::FireSelectedItem()
 {
 	ASSERT(IsFocusItemEnabled());
 	ASSERT(GetSelectedItem()>=0);
@@ -82,7 +82,7 @@ void CConditionList::FireSelectedItem() const
 	GetOwner()->SendMessage(WM_COMMAND, IDM_CONDITION_EDIT);
 }
 
-void CConditionList::DeleteSelectedItem() const
+void CConditionList::DeleteSelectedItem()
 {
 	ASSERT(IsFocusItemEnabled());
 	ASSERT(GetSelectedItem()>=0);

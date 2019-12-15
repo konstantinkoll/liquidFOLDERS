@@ -22,7 +22,7 @@ public:
 protected:
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
-	virtual RECT GetLabelRect(INT Index) const;
+	virtual RECT GetLabelRect() const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()

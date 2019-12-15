@@ -41,6 +41,8 @@ protected:
 	virtual BOOL DrawNothing() const;
 	virtual void DrawNothing(CDC& dc, CRect rect, BOOL Themed) const;
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
+	virtual LFFont* GetLabelFont() const;
+	virtual RECT GetLabelRect() const;
 	virtual void DestroyEdit(BOOL Accept=FALSE);
 
 	BOOL HasHeader() const;

@@ -17,7 +17,7 @@
 #define PREVIEWWIDTH           128+CARDPADDING
 
 CListView::CListView()
-	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(ListItemData))
+	: CFileView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_ENABLEEDITONHOVER | FF_ENABLEFOLDERTOOLTIPS | FF_ENABLETOOLTIPICONS, sizeof(ListItemData))
 {
 	m_pFolderItems = NULL;
 	m_HasFolders = FALSE;
@@ -307,29 +307,6 @@ void CListView::AdjustLayout()
 	CFileView::AdjustLayout();
 }
 
-RECT CListView::GetLabelRect(INT Index) const
-{
-	RECT rect = GetItemRect(Index);
-
-	// Find file name column
-	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		const UINT Attr = m_ContextViewSettings.ColumnOrder[a];
-
-		if (Attr==LFAttrFileName)
-			break;
-
-		if ((INT)Attr!=m_PreviewAttribute)
-			rect.left += m_ContextViewSettings.ColumnWidth[Attr];
-	}
-
-	// Calculate rectangle
-	rect.right = rect.left+m_ContextViewSettings.ColumnWidth[0]-2;
-	rect.left += m_IconSize+GetColorDotWidth(Index)+ITEMCELLPADDINGX+ITEMCELLPADDINGY-4;
-
-	return rect;
-}
-
 void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Themed)
 {
 	// Card
@@ -503,6 +480,38 @@ void CListView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/, const CRe
 		}
 	}
 }
+
+
+// Label edit
+
+RECT CListView::GetLabelRect() const
+{
+	ASSERT(m_EditItem>=0);
+	ASSERT(m_EditItem<m_ItemCount);
+
+	RECT rect = GetItemRect(m_EditItem);
+
+	// Find file name column
+	for (UINT a=0; a<LFAttributeCount; a++)
+	{
+		const UINT Attr = m_ContextViewSettings.ColumnOrder[a];
+
+		if (Attr==LFAttrFileName)
+			break;
+
+		if ((INT)Attr!=m_PreviewAttribute)
+			rect.left += m_ContextViewSettings.ColumnWidth[Attr];
+	}
+
+	// Calculate rectangle
+	rect.right = rect.left+m_ContextViewSettings.ColumnWidth[0]-2;
+	rect.left += m_IconSize+GetColorDotWidth(m_EditItem)+ITEMCELLPADDINGX+ITEMCELLPADDINGY-4;
+
+	return rect;
+}
+
+
+// Column handling
 
 INT CListView::GetMaxAttributeWidth(UINT Attr) const
 {

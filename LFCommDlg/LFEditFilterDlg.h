@@ -22,8 +22,8 @@ public:
 protected:
 	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void AdjustLayout();
-	virtual void FireSelectedItem() const;
-	virtual void DeleteSelectedItem() const;
+	virtual void FireSelectedItem();
+	virtual void DeleteSelectedItem();
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	const ConditionArray* p_Conditions;

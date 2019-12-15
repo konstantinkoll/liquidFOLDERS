@@ -109,6 +109,62 @@ BOOL CFrontstageWnd::HasBorder(HWND hWnd)
 
 // Draw support
 
+void CFrontstageWnd::DrawGlasBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const
+{
+	ASSERT(lpcRect);
+
+	CRect rectBackground(lpcRect);
+	rectBackground.DeflateRect(1, 1);
+
+	if (Themed)
+	{
+		// Shadow
+		CRect rectShadow(lpcRect);
+		rectShadow.OffsetRect(1, 1);
+
+		GraphicsPath pathOuter;
+		CreateRoundRectangle(rectShadow, 7, pathOuter);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+
+		Pen pen1(Color(0x0A000000));
+		g.DrawPath(&pen1, &pathOuter);
+
+		// Background
+		CRect rect(lpcRect);
+		rect.DeflateRect(1, 1);
+
+		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+		g.SetSmoothingMode(SmoothingModeNone);
+
+		SolidBrush brush(Color(0xE4F8F9FC));
+		g.FillRectangle(&brush, rectBackground.left+1, rectBackground.top+1, rectBackground.Width()-2, rectBackground.Height()-2);
+
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		// Inner border
+		GraphicsPath pathInner;
+		CreateRoundRectangle(rectBackground, 6, pathInner);
+
+		Pen pen3(Color(0xFFFFFFFF));
+		g.DrawPath(&pen3, &pathInner);
+
+		// Outer border
+		Matrix m;
+		m.Translate(-1.0f, -1.0f);
+		pathOuter.Transform(&m);
+
+		Pen pen2(Color(0xFFD0D1D5));
+		g.DrawPath(&pen2, &pathOuter);
+	}
+	else
+	{
+		dc.FillSolidRect(rectBackground, GetSysColor(COLOR_WINDOW));
+		dc.Draw3dRect(lpcRect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+	}
+}
+
 void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const
 {
 	ASSERT(lpcRect);
@@ -141,19 +197,19 @@ void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, B
 void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect) const
 {
 	// Shadow
-	GraphicsPath Path;
+	GraphicsPath path;
 
 	if (Themed)
 	{
 		CRect rectShadow(lpcRect);
 		rectShadow.OffsetRect(1, 1);
 
-		CreateRoundRectangle(rectShadow, 3, Path);
+		CreateRoundRectangle(rectShadow, 3, path);
 
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
 
 		Pen pen(Color(0x0C000000));
-		g.DrawPath(&pen, &Path);
+		g.DrawPath(&pen, &path);
 	}
 
 	// Background
@@ -167,11 +223,11 @@ void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpcRect, B
 		if (Themed)
 		{
 			Matrix m;
-			m.Translate(-1.0, -1.0);
-			Path.Transform(&m);
+			m.Translate(-1.0f, -1.0f);
+			path.Transform(&m);
 
 			Pen pen(Color(0xFFD0D1D5));
-			g.DrawPath(&pen, &Path);
+			g.DrawPath(&pen, &path);
 		}
 		else
 		{

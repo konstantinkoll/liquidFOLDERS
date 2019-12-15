@@ -1095,8 +1095,8 @@ void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	if (!m_IsDialog)
 		if (GetStyle() & WS_THICKFRAME)
 		{
-			lpMMI->ptMinTrackSize.x = 650+GetSystemMetrics(SM_CXVSCROLL);
-			lpMMI->ptMinTrackSize.y = 384;
+			lpMMI->ptMinTrackSize.x = 600+GetSystemMetrics(SM_CXVSCROLL);
+			lpMMI->ptMinTrackSize.y = 350;
 		}
 		else
 		{

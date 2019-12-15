@@ -13,7 +13,7 @@
 #define CAPACITYBARHEIGHT     10
 
 CIconsView::CIconsView()
-	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FF_ENABLEFOLDERTOOLTIPS)
+	: CFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_ENABLEEDITONHOVER | FF_ENABLEFOLDERTOOLTIPS)
 {
 }
 
@@ -119,24 +119,24 @@ void CIconsView::DrawCapacity(CDC& dc, Graphics& g, CRect rectCapacity, const LF
 		LinearGradientBrush brushGradient1(Point(0, Bevel), Point(0, Height), Color(0x00000000), Color(0x40000000));
 		gBars->FillRectangle(&brushGradient1, 0, Bevel, Width, Height-Bevel);
 
-		GraphicsPath Path;
-		CreateRoundTop(rectBars, 3, Path);
+		GraphicsPath path;
+		CreateRoundTop(rectBars, 3, path);
 
 		Pen pen(Color(0x60FFFFFF));
-		gBars->DrawPath(&pen, &Path);
+		gBars->DrawPath(&pen, &path);
 
 		Matrix m;
 		m.Translate(0.0f, 1.0f);
-		Path.Transform(&m);
+		path.Transform(&m);
 
 		pen.SetColor(Color(0x40FFFFFF));
-		gBars->DrawPath(&pen, &Path);
+		gBars->DrawPath(&pen, &path);
 
-		CreateRoundRectangle(rectBars, 3, Path);
+		CreateRoundRectangle(rectBars, 3, path);
 
 		LinearGradientBrush brushGradient2(Point(0, 0), Point(0, Height), Color(0x00000000), Color(0x40000000));
 		pen.SetBrush(&brushGradient2);
-		gBars->DrawPath(&pen, &Path);
+		gBars->DrawPath(&pen, &path);
 
 		// Draw bar
 		TextureBrush brushTexture(&bMemory, WrapModeTile);
@@ -144,8 +144,8 @@ void CIconsView::DrawCapacity(CDC& dc, Graphics& g, CRect rectCapacity, const LF
 
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-		CreateRoundRectangle(rectCapacity, 3, Path);
-		g.FillPath(&brushTexture, &Path);
+		CreateRoundRectangle(rectCapacity, 3, path);
+		g.FillPath(&brushTexture, &path);
 	}
 	else
 	{
@@ -290,9 +290,12 @@ void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOO
 
 // Label edit
 
-RECT CIconsView::GetLabelRect(INT Index) const
+RECT CIconsView::GetLabelRect() const
 {
-	RECT rect = GetItemRect(Index);
+	ASSERT(m_EditItem>=0);
+	ASSERT(m_EditItem<m_ItemCount);
+
+	RECT rect = GetItemRect(m_EditItem);
 
 	rect.bottom = (rect.top+=128+ITEMVIEWPADDING+ITEMVIEWPADDING/2-2)+m_DefaultFontHeight+4;
 	rect.left += ITEMVIEWPADDING/2;

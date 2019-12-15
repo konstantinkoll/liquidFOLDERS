@@ -186,7 +186,7 @@ void ConvertFile(const CString& LanguageSuffix)
 	for (INT a=0; a<CountryCount; a++)
 	{
 		CString Delimiter = (a<CountryCount-1) ? "," : "";
-		tmpStr.Format("\t{ %3d, \"%s\" }%s\n", a, CountryNames[a], Delimiter);
+		tmpStr.Format("\t{ \"%s\" }%s\n", CountryNames[a], Delimiter);
 		output.WriteString(tmpStr);
 	}
 	output.WriteString("};\n\n");

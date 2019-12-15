@@ -10,7 +10,7 @@
 //
 
 CStoreList::CStoreList()
-	: CAbstractFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLELABELEDIT)
+	: CAbstractFileView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_ENABLEEDITONHOVER)
 {
 }
 
@@ -38,10 +38,16 @@ void CStoreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 		(LPCWSTR)LFGetApp()->GetFreeBytesAvailable(pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart));
 }
 
-RECT CStoreList::GetLabelRect(INT Index) const
+
+// Label edit
+
+RECT CStoreList::GetLabelRect() const
 {
+	ASSERT(m_EditItem>=0);
+	ASSERT(m_EditItem<m_ItemCount);
+
 	// Rows
-	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[m_EditItem];
 
 	INT Rows = 2;
 
@@ -52,7 +58,7 @@ RECT CStoreList::GetLabelRect(INT Index) const
 		Rows++;
 
 	// Rect
-	RECT rect = GetItemRect(Index);
+	RECT rect = GetItemRect(m_EditItem);
 
 	rect.bottom = (rect.top+=(rect.bottom-rect.top-Rows*m_DefaultFontHeight)/2-2)+m_DefaultFontHeight+4;
 	rect.left += m_IconSize+2*ITEMVIEWPADDING-5;
