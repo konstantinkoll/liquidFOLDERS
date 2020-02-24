@@ -1131,7 +1131,7 @@ void CInspectorGrid::FireSelectedItem()
 
 	const PropertyItemData* pData = GetPropertyItemData(GetSelectedItem());
 
-	if (pData->pProperty->HasButton())
+	if (pData->Editable && pData->pProperty->HasButton())
 		pData->pProperty->OnClickButton(m_StoreID);
 }
 
@@ -1153,7 +1153,7 @@ void CInspectorGrid::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index,
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DialogFont);
 
 	// Label
-	COLORREF clr = !pData->Editable ? SetLightTextColor(dc, Index, Themed) : dc.GetTextColor();
+	const COLORREF clr = !pData->Editable ? SetLightTextColor(dc, Index, Themed) : dc.GetTextColor();
 
 	CRect rectPart(rectItem->left+PADDINGX, rectItem->top, rectItem->left+m_LabelWidth+PADDINGX, rectItem->bottom);
 	dc.DrawText(CString(pData->Name)+_T(":"), rectPart, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
