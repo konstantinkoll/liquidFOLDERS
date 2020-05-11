@@ -1512,6 +1512,7 @@ CSK     Cap Skirring, Senegal;4;12*24'37"N, 16*44'46"W
 CSL     San Luis (Obispo Army Airfield), USA;4;35*19'60"N, 120*44'4"W
 CSM     Clinton (Sherman Airport), USA;4;35*20'23"N, 99*12'2"W
 CSN     Carson City, USA;4;39*11'32"N, 119*44'4"W
+CSO     Cochstedt, Germany;5;51*51'21"N, 11*25'6"E
 CSP     Cape Spencer, USA;4;58*11'57"N, 136*38'20"W
 CSQ     Creston, USA;4;41*1'17"N, 94*21'48"W
 CSR     Casuarito, Columbia;4;5*49'59"N, 68*7'59"W
@@ -4805,7 +4806,7 @@ MJR     Miramar, Argentina;4;38*13'37"S, 57*52'11"W
 MJS     Maganja da Costa, Mosambique
 MJT     Mytiléne, Greece;4;39*3'24"N, 26*35'54"E
 MJU     Mamuju, Indonesia;4;2*40'59"S, 118*54'0"E
-MJV     Murcia, Spain;4;37*46'30"N, 0*48'45"E
+MJV     Murcia, Spain;5;37*46'30"N, 0*48'45"W
 MJY     Mangunjaya, Indonesia;4;2*43'59"S, 103*34'1"E
 MJZ     Mirnyy, Russia;4;62*32'5"N, 114*2'20"E
 MKA     Marianske Lazne, Czech Republic;4;49*55'24"N, 12*43'36"E
@@ -5818,6 +5819,7 @@ OWE     Owendo, Gabun;4;0*18'0"S, 9*30'0"E
 OWI     Ottawa, USA;4;38*32'19"N, 95*15'11"W
 OWK     Norridgewock, USA;4;44*42'56"N, 69*51'59"W
 OWX     Ottawa, USA;4;41*2'8"N, 83*58'55"W
+OXB     Bissau, Guinea Bissau;5;11*53'42"N, 15*39'13"W
 OXC     Oxford, USA;4;41*28'43"N, 73*8'7"W
 OXD     Oxford, USA;4;39*30'8"N, 84*47'4"W
 OXF     Oxford, United Kingdom;4;51*50'13"N, 1*19'12"W
@@ -7499,6 +7501,7 @@ SYX     Sanya, China;5;18*18'10"N, 109*24'44"E
 SYY     Stornway, United Kingdom;4;58*12'56"N, 6*19'52"W
 SYZ     Shiraz, Iran;4;29*32'21"N, 52*35'23"E
 SZA     Soyo, Angola;4;6*8'28"S, 12*22'18"E
+SZB     Kuala Lumpur (Subang), Malaysia;5;3*7'52"N, 101*32'53"E
 SZC     Santa Cruz, Costa Rica;4;10*16'1"N, 85*35'60"W
 SZG     Salzburg, Austria;4;47*47'36"N, 13*0'16"E
 SZH     Senipah, Indonesia;4;0*57'0"S, 117*9'0"E
@@ -8266,7 +8269,7 @@ VKT     Vorkuta, Russia;4;67*29'19"N, 63*59'35"E
 VKW     West Kavi, USA
 VKX     Friendly, USA;4;38*44'55"N, 76*57'21"W
 VLA     Vandalia, USA;4;38*59'29"N, 89*9'58"W
-VLC     Valencia, Spain;4;39*29'22"N, 0*28'54"E
+VLC     Valencia, Spain;5;39*29'22"N, 0*28'54"W
 VLD     Valdosta, USA;4;30*46'57"N, 83*16'36"W
 VLG     Villa Gesell, Argentina;4;37*14'7"S, 57*1'45"W
 VLI     Port Vila, Vanuatu;4;17*41'58"S, 168*19'11"E

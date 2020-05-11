@@ -52,8 +52,8 @@ IDB_BACKGROUND_CAPACITYBAR RCDATA                  "res\\Background_CapacityBar.
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,33,0
- PRODUCTVERSION 4,0,33,0
+ FILEVERSION 4,0,34,0
+ PRODUCTVERSION 4,0,34,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.33"
+            VALUE "FileVersion", "4.0.34"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2020 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.33"
+            VALUE "ProductVersion", "4.0.34"
         END
     END
     BLOCK "VarFileInfo"

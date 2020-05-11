@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8799
+#define AirportCount_DE 8802
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1693,6 +1693,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "CSL", "", "San Luis (Obispo Army Airfield)", { -35.333333, -120.734444 } },
 	{ 209, "CSM", "", "Clinton (Sherman Airport)", { -35.339722, -99.200556 } },
 	{ 209, "CSN", "", "Carson City", { -39.192222, -119.734444 } },
+	{  40, "CSO", "", "Cochstedt", { -51.855833, 11.418333 } },
 	{ 209, "CSP", "", "Cape Spencer", { -58.199167, -136.638889 } },
 	{ 209, "CSQ", "", "Creston", { -41.021389, -94.363333 } },
 	{  95, "CSR", "", "Casuarito", { -5.833056, -68.133056 } },
@@ -4796,7 +4797,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{   8, "MJR", "", "Miramar", { 38.226944, -57.869722 } },
 	{  60, "MJT", "", "Mytiléne", { -39.056667, 26.598333 } },
 	{  73, "MJU", "", "Mamuju", { 2.683056, 118.900000 } },
-	{ 175, "MJV", "", "Murcia", { -37.775000, 0.812500 } },
+	{ 175, "MJV", "", "Murcia", { -37.775000, -0.812500 } },
 	{  73, "MJY", "", "Mangunjaya", { 2.733056, 103.566944 } },
 	{ 160, "MJZ", "", "Mirnyy", { -62.534722, 114.038889 } },
 	{ 198, "MKA", "", "Marianske Lazne", { -49.923333, 12.726667 } },
@@ -5750,6 +5751,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "OWI", "", "Ottawa", { -38.538611, -95.253056 } },
 	{ 209, "OWK", "", "Norridgewock", { -44.715556, -69.866389 } },
 	{ 209, "OWX", "", "Ottawa", { -41.035556, -83.981944 } },
+	{  67, "OXB", "", "Bissau", { -11.895000, -15.653611 } },
 	{ 209, "OXC", "", "Oxford", { -41.478611, -73.135278 } },
 	{ 209, "OXD", "", "Oxford", { -39.502222, -84.784444 } },
 	{  62, "OXF", "", "Oxford", { -51.836944, -1.320000 } },
@@ -7232,6 +7234,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  62, "SYY", "", "Stornway", { -58.215556, -6.331111 } },
 	{  75, "SYZ", "", "Shiraz", { -29.539167, 52.589722 } },
 	{   4, "SZA", "", "Soyo", { 6.141111, 12.371667 } },
+	{ 113, "SZB", "", "Kuala Lumpur (Subang)", { -3.131111, 101.548056 } },
 	{  38, "SZC", "", "Santa Cruz", { -10.266944, -85.600000 } },
 	{ 147, "SZG", "", "Salzburg", { -47.793333, 13.004444 } },
 	{  73, "SZH", "", "Senipah", { 0.950000, 117.150000 } },
@@ -7960,7 +7963,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 160, "VKT", "", "Vorkuta", { -67.488611, 63.993056 } },
 	{ 209, "VKX", "", "Friendly", { -38.748611, -76.955833 } },
 	{ 209, "VLA", "", "Vandalia", { -38.991389, -89.166111 } },
-	{ 175, "VLC", "", "Valencia", { -39.489444, 0.481667 } },
+	{ 175, "VLC", "", "Valencia", { -39.489444, -0.481667 } },
 	{ 209, "VLD", "", "Valdosta", { -30.782500, -83.276667 } },
 	{   8, "VLG", "", "Villa Gesell", { 37.235278, -57.029167 } },
 	{ 212, "VLI", "", "Port Vila", { 17.699444, 168.319722 } },
