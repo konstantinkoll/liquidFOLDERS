@@ -67,6 +67,8 @@ void CMaintenanceReport::ShowTooltip(const CPoint& point)
 
 void CMaintenanceReport::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const LFMaintenanceListItem* pData = &(*p_MaintenanceList)[Index];
 
 	CRect rect(rectItem);

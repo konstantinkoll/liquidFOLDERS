@@ -1171,7 +1171,7 @@ LRESULT CBackstageWnd::OnTaskbarButtonCreated(WPARAM /*wParam*/, LPARAM /*lParam
 			m_pTaskbarList3 = NULL;
 		}
 
-		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void**)&m_pTaskbarList3);
+		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID*)&m_pTaskbarList3);
 
 		if (m_pTaskbarList3)
 			if (FAILED(m_pTaskbarList3->HrInit()))

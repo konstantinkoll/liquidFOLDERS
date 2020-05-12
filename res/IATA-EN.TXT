@@ -4169,6 +4169,7 @@ LCF     Hull, United Kingdom
 LCG     A Coruña, Spain;4;43*18'7"N, 8*22'38"W
 LCH     Lake Charles (Regional Airport), USA;4;30*7'34"N, 93*13'24"W
 LCI     Laconia, USA;4;43*34'22"N, 71*25'8"W
+LCJ     Lodz, Poland;5;51*43'19"N, 19*23'53"E
 LCK     Columbus, USA;4;39*48'50"N, 82*55'40"W
 LCL     Pinar del Río (La Coloma), Cuba;4;22*20'11"N, 83*38'32"W
 LCM     La Cumbre, Argentina;4;31*0'22"S, 64*31'53"W
@@ -4504,6 +4505,7 @@ LUU     Laura, Australia;4;15*34'1"S, 144*26'60"E
 LUV     Langgur/Tual, Indonesia;4;5*39'42"S, 132*43'53"E
 LUW     Luwuk, Indonesia;4;1*2'20"S, 122*46'19"E
 LUX     Luxemburg, Luxemburg;4;49*37'24"N, 6*12'16"E
+LUZ     Lublin, Poland;5;51*14'25"N, 22*42'49"E
 LVA     Laval, France;4;48*1'56"N, 0*44'34"E
 LVB     Santana do Livramento, Brazil;4;30*50'8"S, 55*37'33"W
 LVD     Lime Village, USA;4;61*21'33"N, 155*26'26"W
@@ -7980,6 +7982,7 @@ TYS     Knoxville (Tyson Airport), USA;4;35*48'39"N, 83*59'39"W
 TYT     Treinta y Tres, Uruguay;4;33*12'0"S, 54*20'60"W
 TYZ     Taylor, USA;4;34*27'10"N, 110*6'53"W
 TZA     Belize City (Municipal Airstrip), Belize;4;17*30'0"N, 88*10'59"W
+TZL     Tuzla, Bosnia;5;44*27'31"N, 18*43'29"E
 TZM     Tizimín, Mexico;4;21*7'1"N, 87*58'1"W
 TZN     South Andros, Bahamas;4;24*9'31"N, 77*35'21"W
 TZV     Tompkinsville, USA;4;36*43'45"N, 85*39'9"W

@@ -114,7 +114,7 @@ protected:
 	void SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding=ITEMVIEWPADDING);
 	void EnsureVisible(INT Index);
 	void GetLayoutRect(CRect& rectLayout);
-	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN, INT TopOffset=0);
+	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN, INT TopOffset=0, BOOL AllowItemSeparator=TRUE);
 	void AdjustLayoutList();
 	void AdjustLayoutColumns(INT Columns=1, INT Margin=ITEMVIEWMARGIN);
 	void AdjustLayoutSingleRow(INT Columns, INT Margin=ITEMVIEWMARGIN);
@@ -132,6 +132,7 @@ protected:
 	void ItemSelectionChanged();
 	void ResetDragLocation();
 	BOOL IsDragLocationValid() const;
+	void DrawItemSeparator(CDC& dc, LPCRECT rectItem, BOOL Themed);
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	void DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
 	COLORREF GetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
@@ -178,6 +179,7 @@ protected:
 	INT m_SelectionAnchor;
 	BOOL m_MultipleSelected;
 	BOOL m_ShowFocusRect;
+	BOOL m_DrawItemSeparator;
 
 private:
 	static INT GetGutterForMargin(INT Margin);

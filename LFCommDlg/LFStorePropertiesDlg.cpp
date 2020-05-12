@@ -87,6 +87,8 @@ INT CUsageList::CompareItems(UsageItemData* pData1, UsageItemData* pData2, const
 
 void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const UsageItemData* pData = (UsageItemData*)GetItemData(Index);
 	const LFContextDescriptor* pContextDescriptor = &LFGetApp()->m_Contexts[pData->Context];
 
@@ -96,6 +98,7 @@ void CUsageList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 	// Occupied storage
 	WCHAR tmpStr[256];
 	LFSizeToString(pData->FileSize, tmpStr, 256);
+
 
 	dc.DrawText(tmpStr, -1, rect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 	rect.right -= LFGetApp()->m_LargeFont.GetTextExtent(tmpStr).cx+(BACKSTAGEBORDER-ITEMVIEWPADDING);

@@ -162,14 +162,14 @@ LFApplication::LFApplication(const GUID& AppID)
 
 	// System image lists
 	IImageList* pImageList;
-	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&pImageList)))
+	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (LPVOID*)&pImageList)))
 		m_SystemImageListSmall.Attach((HIMAGELIST)pImageList);
 
-	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&pImageList)))
+	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (LPVOID*)&pImageList)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)pImageList);
 
 	if (OSVersion>=OS_Vista)
-		if (SUCCEEDED(SHGetImageList(SHIL_JUMBO, IID_IImageList, (void**)&pImageList)))
+		if (SUCCEEDED(SHGetImageList(SHIL_JUMBO, IID_IImageList, (LPVOID*)&pImageList)))
 			m_SystemImageListJumbo.Attach((HIMAGELIST)pImageList);
 
 	// Core image lists
@@ -759,10 +759,10 @@ void LFApplication::ExecuteExplorerContextMenu(CHAR cVolume, LPCSTR Verb)
 	LPCITEMIDLIST pidlRel;
 
 	IShellFolder* pParentFolder;
-	if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+	if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 	{
 		IContextMenu* pContextMenu;
-		if (SUCCEEDED(pParentFolder->GetUIObjectOf(m_pMainWnd->GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (void**)&pContextMenu)))
+		if (SUCCEEDED(pParentFolder->GetUIObjectOf(m_pMainWnd->GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (LPVOID*)&pContextMenu)))
 		{
 			HMENU hPopup = CreatePopupMenu();
 			if (hPopup)

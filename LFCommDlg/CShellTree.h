@@ -15,7 +15,7 @@ struct ExplorerTreeItemData
 {
 	LPITEMIDLIST pidlFQ;
 	LPITEMIDLIST pidlRel;
-	ULONG dwAttributes;
+	SFGAOF dwAttributes;
 };
 
 class CShellTree : public CTreeCtrl
@@ -26,16 +26,15 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	LPCITEMIDLIST GetSelectedPIDL() const;
 	BOOL GetSelectedPath(LPWSTR Path) const;
-	void PopulateTree();
-	void SetRootPath(LPCWSTR RootPath);
-	void SetOnlyFilesystem(BOOL OnlyFilesystem);
 
 protected:
 	virtual LRESULT WindowProc(UINT Message, WPARAM wParam, LPARAM lParam);
 
+	CString GetItemText(LPITEMIDLIST pidlFQ) const;
 	CString GetItemText(ExplorerTreeItemData* pItem) const;
+	INT GetItemIcon(LPITEMIDLIST pidlFQ, BOOL bSelected) const;
 	INT GetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const;
-	HTREEITEM InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULONG dwAttributes=SFGAO_HASSUBFOLDER, HTREEITEM hParent=TVI_ROOT);
+	HTREEITEM InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, SFGAOF dwAttributes=SFGAO_HASSUBFOLDER, HTREEITEM hParent=TVI_ROOT);
 	HTREEITEM InsertItem(LPCWSTR Path, HTREEITEM hParent=TVI_ROOT);
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
@@ -63,16 +62,22 @@ protected:
 	DECLARE_TOOLTIP()
 
 	IContextMenu2* m_pContextMenu2;
-	BOOL m_OnlyFilesystem;
-	BOOL m_ExplorerStyle;
-	CString m_RootPath;
 
 private:
 	ULONG m_SHChangeNotifyRegister;
 	CString m_strBuffer;
 };
 
-inline void CShellTree::SetOnlyFilesystem(BOOL OnlyFilesystem)
+inline CString CShellTree::GetItemText(ExplorerTreeItemData* pItem) const
 {
-	m_OnlyFilesystem = OnlyFilesystem;
+	ASSERT(pItem);
+
+	return GetItemText(pItem->pidlFQ);
+}
+
+inline INT CShellTree::GetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const
+{
+	ASSERT(pItem);
+
+	return GetItemIcon(pItem->pidlFQ, bSelected);
 }

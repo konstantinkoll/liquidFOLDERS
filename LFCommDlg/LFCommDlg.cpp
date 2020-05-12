@@ -41,7 +41,7 @@ void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 				}
 
 				if (Copyright)
-					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
+					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (LPVOID*)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
 
 			delete lpInfo;
@@ -883,7 +883,6 @@ void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
 	case LFTypeRating:
 	case LFTypeUINT:
 	case LFTypeSize:
-	case LFTypeTime:
 	case LFTypeDouble:
 	case LFTypeDuration:
 	case LFTypeBitrate:
@@ -928,7 +927,7 @@ void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, 
 
 		IShellFolder* pParentFolder;
 		LPCITEMIDLIST pidlRel;
-		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 		{
 			WIN32_FIND_DATA FindData;
 			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlRel, SHGDFIL_FINDDATA, &FindData, sizeof(WIN32_FIND_DATA))))

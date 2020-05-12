@@ -95,6 +95,8 @@ void CConditionList::DeleteSelectedItem()
 
 void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const LFFilterCondition* pFilterCondition = &(*p_Conditions)[Index];
 	const UINT Attr = pFilterCondition->VData.Attr;
 

@@ -162,10 +162,8 @@ BOOL CItemPanel::SetItem(LPCWSTR Path, UINT nID, LPCWSTR Hint)
 
 	if (*Path)
 	{
-		const SFGAOF dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
-
 		LPITEMIDLIST pidlFQ;
-		if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, dwAttributes, NULL)))
+		if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, 0, NULL)))
 		{
 			Result = SetItem(pidlFQ, Path, nID, Hint);
 

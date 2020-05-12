@@ -19,13 +19,14 @@ INT CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 // CShellTree
 //
 
+#define SFGAO_REQUIRED     (SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE)
+
 CShellTree::CShellTree()
 	: CTreeCtrl()
 {
 	CONSTRUCTOR_TOOLTIP();
 
 	m_pContextMenu2 = NULL;
-	m_ExplorerStyle = FALSE;
 	m_SHChangeNotifyRegister = NULL;
 }
 
@@ -53,6 +54,8 @@ LPCITEMIDLIST CShellTree::GetSelectedPIDL() const
 
 BOOL CShellTree::GetSelectedPath(LPWSTR Path) const
 {
+	ASSERT(Path);
+
 	LPCITEMIDLIST pidl = GetSelectedPIDL();
 
 	return pidl ? SHGetPathFromIDList(pidl, Path) : FALSE;
@@ -76,10 +79,10 @@ LRESULT CShellTree::WindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		if ((wParam==VK_RETURN) || (wParam==VK_ESCAPE))
 		{
-			CEdit* pEditCtrl = GetEditControl();
-			if (pEditCtrl)
+			CEdit* pWndEdit = GetEditControl();
+			if (pWndEdit)
 			{
-				pEditCtrl->SendMessage(WM_KEYDOWN, wParam, lParam);
+				pWndEdit->SendMessage(WM_KEYDOWN, wParam, lParam);
 
 				return TRUE;
 			}
@@ -91,29 +94,29 @@ LRESULT CShellTree::WindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 	return CTreeCtrl::WindowProc(Message, wParam, lParam);
 }
 
-CString CShellTree::GetItemText(ExplorerTreeItemData* pItem) const
+CString CShellTree::GetItemText(LPITEMIDLIST pidlFQ) const
 {
-	ASSERT(pItem);
+	ASSERT(pidlFQ);
 
 	SHFILEINFO ShellFileInfo;
-	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
 		return ShellFileInfo.szDisplayName;
 
 	return _T("?");
 }
 
-INT CShellTree::GetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected) const
+INT CShellTree::GetItemIcon(LPITEMIDLIST pidlFQ, BOOL bSelected) const
 {
-	ASSERT(pItem);
+	ASSERT(pidlFQ);
 
 	SHFILEINFO ShellFileInfo;
-	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | (bSelected ? SHGFI_OPENICON : SHGFI_LINKOVERLAY))))
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | (bSelected ? SHGFI_OPENICON : SHGFI_LINKOVERLAY))))
 		return ShellFileInfo.iIcon;
 
 	return -1;
 }
 
-HTREEITEM CShellTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULONG dwAttributes, HTREEITEM hParent)
+HTREEITEM CShellTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, SFGAOF dwAttributes, HTREEITEM hParent)
 {
 	if (!pidlRel)
 		return NULL;
@@ -122,7 +125,7 @@ HTREEITEM CShellTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULON
 	ZeroMemory(&tvItem, sizeof(tvItem));
 	tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN;
 
-	ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)GlobalAlloc(GPTR, sizeof(AFX_SHELLITEMINFO));
+	ExplorerTreeItemData* pItem = new ExplorerTreeItemData;
 	pItem->pidlRel = pidlRel;
 	pItem->pidlFQ = pidlFQ;
 	pItem->dwAttributes = dwAttributes;
@@ -144,15 +147,14 @@ HTREEITEM CShellTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULON
 
 HTREEITEM CShellTree::InsertItem(LPCWSTR Path, HTREEITEM hParent)
 {
-	const SFGAOF dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
-
+	SFGAOF dwAttributes;
 	LPITEMIDLIST pidlFQ;
-	if (FAILED(SHParseDisplayName(Path, NULL, &pidlFQ, dwAttributes, NULL)))
+	if (FAILED(SHParseDisplayName(Path, NULL, &pidlFQ, SFGAO_REQUIRED, &dwAttributes)))
 		return NULL;
 
 	IShellFolder* pParentFolder;
 	LPCITEMIDLIST pidlRel;
-	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 	{
 		LFGetApp()->GetShellManager()->FreeItem(pidlFQ);
 
@@ -162,28 +164,6 @@ HTREEITEM CShellTree::InsertItem(LPCWSTR Path, HTREEITEM hParent)
 	pParentFolder->Release();
 
 	return InsertItem(pidlFQ, LFGetApp()->GetShellManager()->CopyItem(pidlRel), dwAttributes, hParent);
-}
-
-void CShellTree::PopulateTree()
-{
-	DeleteAllItems();
-
-	LPITEMIDLIST pidl;
-	HTREEITEM hItem = NULL;
-	if (m_RootPath.IsEmpty())
-	{
-		if (FAILED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
-			return;
-
-		hItem = InsertItem(pidl, LFGetApp()->GetShellManager()->CopyItem(pidl));
-	}
-	else
-	{
-		Select(hItem=InsertItem(m_RootPath), TVGN_CARET);
-	}
-
-	if (hItem && (!(GetStyle() & TVS_LINESATROOT)))
-		Expand(hItem, TVE_EXPAND);
 }
 
 BOOL CShellTree::ChildrenContainPath(HTREEITEM hParentItem, LPCWSTR Path) const
@@ -215,6 +195,8 @@ BOOL CShellTree::ChildrenContainPath(HTREEITEM hParentItem, LPCWSTR Path) const
 
 BOOL CShellTree::DeletePath(LPCWSTR Path)
 {
+	ASSERT(Path);
+
 	BOOL Deleted = FALSE;
 
 	CList<HTREEITEM> lstItems;
@@ -287,6 +269,9 @@ BOOL CShellTree::DeletePath(LPCWSTR Path)
 
 BOOL CShellTree::AddPath(LPCWSTR Path, LPCWSTR Parent)
 {
+	ASSERT(Path);
+	ASSERT(Parent);
+
 	BOOL Added = FALSE;
 
 	CList<HTREEITEM> lstItems;
@@ -395,13 +380,13 @@ void CShellTree::UpdatePath(LPCWSTR Path1, LPCWSTR Path2)
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Path1)==0)
 				{
-					const SFGAOF dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
+					SFGAOF dwAttributes;
 					LPITEMIDLIST pidlFQ;
-					if (SUCCEEDED(SHParseDisplayName(Path2, NULL, &pidlFQ, dwAttributes, NULL)))
+					if (SUCCEEDED(SHParseDisplayName(Path2, NULL, &pidlFQ, SFGAO_REQUIRED, &dwAttributes)))
 					{
 						IShellFolder* pParentFolder;
 						LPCITEMIDLIST pidlRel;
-						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 						{
 							LFGetApp()->GetShellManager()->FreeItem(pItem->pidlFQ);
 							LFGetApp()->GetShellManager()->FreeItem(pItem->pidlRel);
@@ -439,15 +424,6 @@ void CShellTree::UpdatePath(LPCWSTR Path1, LPCWSTR Path2)
 	}
 }
 
-void CShellTree::SetRootPath(LPCWSTR RootPath)
-{
-	if (RootPath!=m_RootPath)
-	{
-		m_RootPath = RootPath;
-		PopulateTree();
-	}
-}
-
 BOOL CShellTree::GetChildItems(HTREEITEM hParentItem)
 {
 	CWaitCursor WaitCursor;
@@ -461,8 +437,7 @@ BOOL CShellTree::GetChildItems(HTREEITEM hParentItem)
 
 	SetRedraw(FALSE);
 
-	ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
-	EnumObjects(hParentItem, pItem->pidlFQ);
+	EnumObjects(hParentItem, ((ExplorerTreeItemData*)tvItem.lParam)->pidlFQ);
 
 	SetRedraw(TRUE);
 	RedrawWindow();
@@ -483,7 +458,7 @@ void CShellTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 		pDesktop->AddRef();
 	}
 	else
-		if (FAILED(pDesktop->BindToObject(pidlParent, NULL, IID_IShellFolder, (void**)&pParentFolder)))
+		if (FAILED(pDesktop->BindToObject(pidlParent, NULL, IID_IShellFolder, (LPVOID*)&pParentFolder)))
 		{
 			pDesktop->Release();
 			return;
@@ -491,26 +466,27 @@ void CShellTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 
 	IEnumIDList* pEnum;
 	if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
-		if(pEnum)
+		if (pEnum)
 		{
 			LPITEMIDLIST pidlTemp;
 			while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 			{
-				DWORD dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
-				pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes);
+				SFGAOF dwAttributes = SFGAO_REQUIRED;
+				if (FAILED(pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes)))
+					continue;
 
 				// Don't include virtual branches
 				if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
 					continue;
 
-				// Don't include liquidFOLDERS
-				SHDESCRIPTIONID did;
+				// Don't include liquidFOLDERS Explorer namespace extension
+				/*SHDESCRIPTIONID did;
 				if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 				{
 					const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
 					if (did.clsid==LFNE)
 						continue;
-				}
+				}*/
 
 				// Don't include file junctions
 				LPITEMIDLIST pidlFQ = LFGetApp()->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
@@ -519,7 +495,7 @@ void CShellTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 				if (SUCCEEDED(SHGetPathFromIDList(pidlFQ, Path)))
 				{
 					DWORD Attr = GetFileAttributes(Path);
-					if ((Attr!=INVALID_FILE_ATTRIBUTES) && (!(Attr & FILE_ATTRIBUTE_DIRECTORY)))
+					if ((Attr!=INVALID_FILE_ATTRIBUTES) && !(Attr & FILE_ATTRIBUTE_DIRECTORY))
 					{
 						LFGetApp()->GetShellManager()->FreeItem(pidlFQ);
 						continue;
@@ -622,6 +598,14 @@ INT CShellTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CTreeCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Theme
+	if (LFGetApp()->m_ThemeLibLoaded && (LFGetApp()->OSVersion>=OS_Vista))
+	{
+		LFGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+
+		ModifyStyle(0, TVS_TRACKSELECT);
+	}
+
 	// Font
 	SetFont(&LFGetApp()->m_DefaultFont, FALSE);
 
@@ -635,6 +619,15 @@ INT CShellTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED |
 			SHCNE_MKDIR | SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
+
+	// Populate tree
+	LPITEMIDLIST pidl;
+	if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
+	{
+		HTREEITEM hItem;
+		if ((hItem=InsertItem(pidl, LFGetApp()->GetShellManager()->CopyItem(pidl)))!=NULL)
+			Expand(hItem, TVE_EXPAND);
+	}
 
 	return 0;
 }
@@ -669,22 +662,16 @@ BOOL CShellTree::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CShellTree::OnPaint()
 {
-	if ((m_ExplorerStyle) && (IsCtrlThemed()))
+	if (IsCtrlThemed())
 	{
 		SetBkColor(0xFFFFFF);
 		SetTextColor(0x000000);
 	}
 	else
-		if (IsWindowEnabled())
-		{
-			SetBkColor(GetSysColor(COLOR_WINDOW));
-			SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-		}
-		else
-		{
-			SetBkColor(GetSysColor(COLOR_3DFACE));
-			SetTextColor(GetSysColor(COLOR_GRAYTEXT));
-		}
+	{
+		SetBkColor(GetSysColor(COLOR_WINDOW));
+		SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+	}
 
 	CPaintDC pDC(this);
 
@@ -750,11 +737,11 @@ void CShellTree::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 
 	IShellFolder* pParentFolder;
-	if (FAILED(SHBindToParent(pInfo->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+	if (FAILED(SHBindToParent(pInfo->pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, NULL)))
 		return;
 
 	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetParent()->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&pInfo->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetParent()->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&pInfo->pidlRel, IID_IContextMenu, NULL, (LPVOID*)&pcm)))
 	{
 		HMENU hPopup = CreatePopupMenu();
 		if (hPopup)
@@ -770,7 +757,7 @@ void CShellTree::OnContextMenu(CWnd* pWnd, CPoint point)
 					SetMenuDefaultItem(hPopup, 0x7000, 0);
 				}
 
-				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
+				pcm->QueryInterface(IID_IContextMenu2, (LPVOID*)&m_pContextMenu2);
 				UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
 
 				if (m_pContextMenu2)
@@ -895,7 +882,7 @@ void CShellTree::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
 	LFGetApp()->GetShellManager()->FreeItem(pItem->pidlFQ);
 	LFGetApp()->GetShellManager()->FreeItem(pItem->pidlRel);
 
-	GlobalFree((HGLOBAL)pItem);
+	delete pItem;
 	*pResult = 0;
 }
 
@@ -904,18 +891,18 @@ void CShellTree::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	NMTVDISPINFO* pNMTreeView = (NMTVDISPINFO*)pNMHDR;
 	ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->item.lParam;
 
-	CEdit* edit = GetEditControl();
-	if (edit)
+	CEdit* pWndEdit = GetEditControl();
+	if (pWndEdit)
 	{
 		IShellFolder* pParentFolder;
-		if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+		if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, NULL)))
 		{
 			STRRET strret;
 			if (SUCCEEDED(pParentFolder->GetDisplayNameOf(pItem->pidlRel, SHGDN_FOREDITING, &strret)))
 				if (strret.uType==STRRET_WSTR)
 				{
-					edit->SetWindowText(strret.pOleStr);
-					edit->SetSel(0, -1);
+					pWndEdit->SetWindowText(strret.pOleStr);
+					pWndEdit->SetSel(0, -1);
 				}
 
 			pParentFolder->Release();

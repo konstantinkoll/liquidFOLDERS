@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8803
+#define AirportCount_EN 8806
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -4181,6 +4181,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 183, "LCG", "", "A Coruña", { -43.301944, -8.377222 } },
 	{ 213, "LCH", "", "Lake Charles (Regional Airport)", { -30.126111, -93.223333 } },
 	{ 213, "LCI", "", "Laconia", { -43.572778, -71.418889 } },
+	{ 158, "LCJ", "", "Lodz", { -51.721944, 19.398056 } },
 	{ 213, "LCK", "", "Columbus", { -39.813889, -82.927778 } },
 	{  48, "LCL", "", "Pinar del Río (La Coloma)", { -22.336389, -83.642222 } },
 	{   6, "LCM", "", "La Cumbre", { 31.006111, -64.531389 } },
@@ -4501,6 +4502,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  89, "LUV", "", "Langgur/Tual", { 5.661667, 132.731389 } },
 	{  89, "LUW", "", "Luwuk", { 1.038889, 122.771944 } },
 	{ 113, "LUX", "", "Luxemburg", { -49.623333, 6.204444 } },
+	{ 158, "LUZ", "", "Lublin", { -51.240278, 22.713611 } },
 	{  64, "LVA", "", "Laval", { -48.032222, 0.742778 } },
 	{  26, "LVB", "", "Santana do Livramento", { 30.835556, -55.625833 } },
 	{ 213, "LVD", "", "Lime Village", { -61.359167, -155.440556 } },
@@ -7701,6 +7703,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 212, "TYT", "", "Treinta y Tres", { 33.200000, -54.350000 } },
 	{ 213, "TYZ", "", "Taylor", { -34.452778, -110.114722 } },
 	{  18, "TZA", "", "Belize City (Municipal Airstrip)", { -17.500000, -88.183056 } },
+	{  23, "TZL", "", "Tuzla", { -44.458611, 18.724722 } },
 	{ 129, "TZM", "", "Tizimín", { -21.116944, -87.966944 } },
 	{  11, "TZN", "", "South Andros", { -24.158611, -77.589167 } },
 	{ 213, "TZV", "", "Tompkinsville", { -36.729167, -85.652500 } },

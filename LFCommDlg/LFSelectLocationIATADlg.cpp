@@ -223,6 +223,8 @@ void CAirportList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, 
 
 void CAirportList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	DrawListItem(dc, rectItem, Index, Themed, m_ColumnOrder, m_ColumnWidth);
 }
 

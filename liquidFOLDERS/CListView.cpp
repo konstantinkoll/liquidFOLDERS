@@ -194,6 +194,9 @@ void CListView::HeaderColumnClicked(UINT Attr)
 
 void CListView::AdjustLayout()
 {
+	// Item separator
+	m_DrawItemSeparator = TRUE;
+
 	// Header
 	UpdateHeader();
 
@@ -437,16 +440,8 @@ void CListView::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOO
 
 void CListView::DrawItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed)
 {
-	ListItemData* pData = GetItemData(Index);
+	ASSERT(rectItem);
 
-	// Trailing separator
-	if (pData->DrawTrailingSeparator && Themed)
-		dc.FillSolidRect(rectItem->left+ITEMCELLPADDINGY, rectItem->bottom-1, rectItem->right-rectItem->left-2*ITEMCELLPADDINGY, 1, 0xF8F6F6);
-
-	// Delayed background
-	DrawItemBackground(dc, rectItem, Index, Themed);
-
-	// Item
 	DrawListItem(dc, rectItem, Index, Themed, m_ContextViewSettings.ColumnOrder, m_ContextViewSettings.ColumnWidth, m_PreviewAttribute);
 }
 
@@ -456,27 +451,33 @@ void CListView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/, const CRe
 
 	// Folders
 	if (m_HasFolders)
-		for (UINT a=0; a<m_Folders.m_ItemCount; a++)
+		for (UINT Folder=0; Folder<m_Folders.m_ItemCount; Folder++)
 		{
-			CRect rect(m_Folders[a].Rect);
-			rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+			CRect rectFolder(m_Folders[Folder].Rect);
+			rectFolder.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
 
-			if (IntersectRect(&rectIntersect, rect, rectUpdate))
-				DrawFolder(dc, g, rect, a, Themed);
+			if (IntersectRect(&rectIntersect, rectFolder, rectUpdate))
+				DrawFolder(dc, g, rectFolder, Folder, Themed);
 		}
 
 	// Items
-	for (INT a=0; a<m_ItemCount; a++)
+	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
-		ListItemData* pData = GetItemData(a);
+		ListItemData* pData = GetItemData(Index);
 
 		if (pData->Hdr.Valid)
 		{
-			CRect rect(pData->Hdr.Rect);
-			rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+			CRect rectItem(pData->Hdr.Rect);
+			rectItem.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
 
-			if (IntersectRect(&rectIntersect, rect, rectUpdate))
-				DrawItem(dc, rect, a, Themed);
+			if (IntersectRect(&rectIntersect, rectItem, rectUpdate))
+			{
+				if (pData->DrawTrailingSeparator)
+					DrawItemSeparator(dc, rectItem, Themed);
+
+				DrawItemBackground(dc, rectItem, Index, Themed);
+				DrawItem(dc, rectItem, Index, Themed);
+			}
 		}
 	}
 }

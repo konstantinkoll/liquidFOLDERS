@@ -256,6 +256,8 @@ COLORREF CTagcloudView::GetItemTextColor(INT Index, BOOL Themed) const
 
 void CTagcloudView::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
 {
+	ASSERT(rectItem);
+
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
 	CFont* pOldFont = dc.SelectObject(GetItemFont(Index));

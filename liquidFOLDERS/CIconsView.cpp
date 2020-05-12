@@ -271,6 +271,8 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 
 void CIconsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
 	// Label

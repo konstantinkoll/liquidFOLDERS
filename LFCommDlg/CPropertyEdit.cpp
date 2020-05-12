@@ -108,7 +108,12 @@ void CPropertyEdit::CreateProperty()
 	m_pProperty = CProperty::CreateProperty(&m_VData, this);
 
 	if (m_pProperty->OnClickValue(-1))
+	{
 		m_pWndEdit = m_pProperty->CreateEditControl(CRect(0, 0, 0, 0));
+
+		m_pWndEdit->SetFont(&LFGetApp()->m_DialogFont);
+		m_pWndEdit->SetSel(0, -1);
+	}
 
 	AdjustLayout();
 }

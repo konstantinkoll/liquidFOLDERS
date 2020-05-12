@@ -29,6 +29,8 @@ void CStoreList::AdjustLayout()
 
 void CStoreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
 	DrawTile(dc, rectItem, LFGetApp()->m_CoreImageListExtraLarge, pItemDescriptor->IconID-1, 

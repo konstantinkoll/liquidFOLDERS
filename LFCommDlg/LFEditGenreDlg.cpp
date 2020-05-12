@@ -22,6 +22,10 @@ CGenreList::CGenreList()
 
 void CGenreList::AdjustLayout()
 {
+	// Item separator
+	m_DrawItemSeparator = FALSE;
+
+	// Layout rect
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
@@ -222,6 +226,8 @@ UINT CGenreList::GetSelectedGenre() const
 
 void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const GenreItemData* pData = GetGenreItemData(Index);
 
 	CRect rect(rectItem);

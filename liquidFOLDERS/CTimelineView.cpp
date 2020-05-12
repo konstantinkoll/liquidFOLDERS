@@ -640,6 +640,8 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT lpcRectCategory, 
 
 void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	// Card
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	TimelineItemData* pData = GetTimelineItemData(Index);

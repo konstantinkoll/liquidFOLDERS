@@ -42,6 +42,7 @@ void CDetailsView::AdjustLayout()
 
 void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
 	ASSERT(LFAttrFileName==0);
 
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];

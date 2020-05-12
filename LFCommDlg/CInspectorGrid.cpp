@@ -850,19 +850,6 @@ INT CInspectorGrid::GetItemHeight() const
 
 void CInspectorGrid::AdjustLayout()
 {
-	// Select new property when current property is invisible
-	/*if (!m_Properties[m_SelectedItem].Visible)
-	{
-		m_SelectedItem = -1;
-
-		for (UINT a=0; a<m_itemcount; a++)
-			if (m_Properties[m_pSortArray[a]].Visible)
-			{
-				m_SelectedItem = m_pSortArray[a];
-				break;
-			}
-	}*/
-
 	if (m_FocusItem==-1)
 		m_FocusItem = 0;
 
@@ -892,7 +879,7 @@ void CInspectorGrid::AdjustLayout()
 	m_MinWidth += 2*Margin+max(128, LabelWidth+m_IconSize+2*((m_ItemHeight-m_IconSize)/2)+4*PADDINGX)+GetSystemMetrics(SM_CXVSCROLL);
 
 	// Set layout
-	CFrontstageItemView::AdjustLayoutGrid(CSize(0, GetItemHeight()), TRUE, Margin, m_pHeader ? m_pHeader->GetPreferredHeight()+ITEMVIEWMARGINLARGE : 0);
+	CFrontstageItemView::AdjustLayoutGrid(CSize(0, GetItemHeight()), TRUE, Margin, m_pHeader ? m_pHeader->GetPreferredHeight()+ITEMVIEWMARGINLARGE : 0, FALSE);
 }
 
 
@@ -1148,6 +1135,8 @@ void CInspectorGrid::DeleteSelectedItem()
 
 void CInspectorGrid::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const PropertyItemData* pData = GetPropertyItemData(Index);
 
 	CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DialogFont);

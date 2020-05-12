@@ -25,7 +25,8 @@ void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_FolderPIDL = LFGetApp()->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
-		SHGetPathFromIDList(m_FolderPIDL, m_FolderPath);
+
+		VERIFY(SHGetPathFromIDList(m_FolderPIDL, m_FolderPath));
 	}
 }
 
@@ -88,15 +89,6 @@ BOOL LFBrowseForFolderDlg::InitDialog()
 
 	// Explorer tree
 	m_wndExplorerTree.Create(this, IDC_SHELLTREE);
-
-	if (LFGetApp()->m_ThemeLibLoaded && (LFGetApp()->OSVersion>=OS_Vista))
-	{
-		LFGetApp()->zSetWindowTheme(m_wndExplorerTree, L"EXPLORER", NULL);
-		m_wndExplorerTree.ModifyStyle(0, TVS_TRACKSELECT);
-	}
-
-	m_wndExplorerTree.SetOnlyFilesystem(TRUE);
-	m_wndExplorerTree.PopulateTree();
 	m_wndExplorerTree.SetFocus();
 
 	return FALSE;

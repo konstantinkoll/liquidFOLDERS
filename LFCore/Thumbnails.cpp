@@ -28,8 +28,8 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size)
 		LPCITEMIDLIST pidlRel;
 		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 		{
-			// IThumbnailProvider, verfügbar seit Windows Vista
-			// Liefert auch rechteckige Vorschaubilder
+			// IThumbnailProvider, available since Windows Vista
+			// May deliver non-square thumbnails
 			if (osInfo.dwMajorVersion>=6)
 			{
 				IThumbnailProvider* pThumbnailProvider;
@@ -44,8 +44,8 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size)
 				}
 			}
 
-			// IExtractImage, verfügbar seit Windows XP und Fallback seit Windows Vista
-			// Liefert immer quadratische Vorschaubilder
+			// IExtractImage, available since Windows XP and fallback since Windows Vista
+			// Always delivers square thumbnails
 			IExtractImage* pExtractImage;
 			if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IExtractImage, NULL, (LPVOID*)&pExtractImage)))
 			{

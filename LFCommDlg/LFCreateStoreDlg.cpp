@@ -126,6 +126,8 @@ CHAR CVolumeList::GetSelectedVolume() const
 
 void CVolumeList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
 {
+	ASSERT(rectItem);
+
 	const VolumeItemData* pData = GetVolumeItemData(Index);
 
 	CRect rect(rectItem);

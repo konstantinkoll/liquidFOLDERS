@@ -34,7 +34,7 @@ CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T szData, const CSize&
 	m_Nothing = TRUE;
 
 	m_FocusItem = m_EditItem = m_SelectionAnchor = -1;
-	m_FocusItemSelected = m_MultipleSelected = m_ShowFocusRect = m_ButtonDownInWindow = FALSE;
+	m_FocusItemSelected = m_MultipleSelected = m_ShowFocusRect = m_DrawItemSeparator = m_ButtonDownInWindow = FALSE;
 
 	ResetDragLocation();
 	ZeroMemory(&m_Bitmaps, sizeof(m_Bitmaps));
@@ -100,8 +100,11 @@ void CFrontstageItemView::GetLayoutRect(CRect& rectLayout)
 	CFrontstageScroller::GetLayoutRect(rectLayout);
 }
 
-void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, INT Margin, INT TopOffset)
+void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, INT Margin, INT TopOffset, BOOL AllowItemSeparator)
 {
+	// Item separator
+	m_DrawItemSeparator = AllowItemSeparator && FullWidth;
+
 	// Layout rect
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
@@ -214,6 +217,9 @@ void CFrontstageItemView::AdjustLayoutList()
 {
 	ASSERT(HasHeader());
 
+	// Item separator
+	m_DrawItemSeparator = TRUE;
+
 	// Layout rect
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
@@ -269,6 +275,9 @@ void CFrontstageItemView::AdjustLayoutColumns(INT Columns, INT Margin)
 void CFrontstageItemView::AdjustLayoutSingleRow(INT Columns, INT Margin)
 {
 	ASSERT(Columns>=1);
+
+	// Item separator
+	m_DrawItemSeparator = FALSE;
 
 	// Layout rect
 	CRect rectLayout;
@@ -764,6 +773,15 @@ void CFrontstageItemView::DeleteSelectedItem()
 
 // Draw support
 
+void CFrontstageItemView::DrawItemSeparator(CDC& dc, LPCRECT rectItem, BOOL Themed)
+{
+	ASSERT(rectItem);
+	ASSERT(m_DrawItemSeparator);
+
+	if (Themed)
+		dc.FillSolidRect(rectItem->left+ITEMCELLPADDINGY, rectItem->bottom-1, rectItem->right-rectItem->left-2*ITEMCELLPADDINGY, 1, 0xF8F6F6);
+}
+
 #define DRAWCACHED(nID, DrawOps) \
 	CDC MemDC; \
 	MemDC.CreateCompatibleDC(&dc); \
@@ -786,6 +804,8 @@ void CFrontstageItemView::DeleteSelectedItem()
 
 void CFrontstageItemView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
+	ASSERT(rectItem);
+
 	if (IsWindowEnabled())
 	{
 		const BOOL bDrawHover = DrawHover(Index);
@@ -812,6 +832,8 @@ void CFrontstageItemView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Inde
 
 void CFrontstageItemView::DrawItemForeground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached)
 {
+	ASSERT(rectItem);
+
 	if (((m_HoverItem!=Index) && !DrawSelection(Index)) || !Themed)
 		return;
 
@@ -954,6 +976,9 @@ void CFrontstageItemView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/,
 
 			if (IntersectRect(&rectIntersect, rectItem, rectUpdate))
 			{
+				if (m_DrawItemSeparator && ((Index<m_ItemCount-1) || (m_VScrollMax==0)))
+					DrawItemSeparator(dc, rectItem, Themed);
+
 				DrawItemBackground(dc, rectItem, Index, Themed);
 				DrawItem(dc, g, rectItem, Index, Themed);
 

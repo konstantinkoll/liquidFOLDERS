@@ -1118,10 +1118,10 @@ void CMainView::OnItemSendTo(UINT nID)
 			{
 				IShellFolder* pParentFolder;
 				LPCITEMIDLIST pidlRel;
-				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 				{
 					IDropTarget* pDropTarget;
-					if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
+					if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (LPVOID*)&pDropTarget)))
 					{
 						LFTransactionList* pTransactionList = BuildTransactionList(FALSE, TRUE);
 						if (pTransactionList->m_ItemCount && !pTransactionList->m_LastError)
