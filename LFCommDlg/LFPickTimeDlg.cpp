@@ -1,17 +1,17 @@
 
-// LFEditTimeDlg.cpp: Implementierung der Klasse LFEditTimeDlg
+// LFPickTimeDlg.cpp: Implementierung der Klasse LFPickTimeDlg
 //
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFEditTimeDlg.h"
+#include "LFPickTimeDlg.h"
 
 
-// LFEditTimeDlg
+// LFPickTimeDlg
 //
 
-LFEditTimeDlg::LFEditTimeDlg(LFVariantData* pVData, CWnd* pParentWnd, UINT nIDTemplate, BOOL UseTime, BOOL UseDate)
-	: LFDialog(nIDTemplate, pParentWnd)
+LFPickTimeDlg::LFPickTimeDlg(LFVariantData* pVData, ITEMCONTEXT Context, CWnd* pParentWnd, UINT nIDTemplate, BOOL UseTime, BOOL UseDate)
+	: CAttributePickDlg(pVData->Attr, Context, nIDTemplate, pParentWnd)
 {
 	ASSERT(pVData);
 
@@ -20,9 +20,9 @@ LFEditTimeDlg::LFEditTimeDlg(LFVariantData* pVData, CWnd* pParentWnd, UINT nIDTe
 	m_UseTime = UseTime;
 }
 
-void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
+void LFPickTimeDlg::DoDataExchange(CDataExchange* pDX)
 {
-	LFDialog::DoDataExchange(pDX);
+	CAttributePickDlg::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_CALENDAR, m_wndCalendar);
 	DDX_Control(pDX, IDC_TIME, m_wndTime);
@@ -56,10 +56,9 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-BOOL LFEditTimeDlg::InitDialog()
+BOOL LFPickTimeDlg::InitDialog()
 {
-	if (m_lpszTemplateName==MAKEINTRESOURCE(IDD_EDITTIME))
-		SetWindowText(LFGetApp()->GetAttributeName(p_VData->Attr));
+	CAttributePickDlg::InitDialog();
 
 	// Size
 	CRect rect;
@@ -68,8 +67,8 @@ BOOL LFEditTimeDlg::InitDialog()
 	CRect rectCalendar;
 	m_wndCalendar.GetWindowRect(rectCalendar);
 
-	INT GrowX = rect.Width()-rectCalendar.Width();
-	INT GrowY = rect.Height()-rectCalendar.Height();
+	const INT GrowX = rect.Width()-rectCalendar.Width();
+	const INT GrowY = rect.Height()-rectCalendar.Height();
 
 #define GrowXY(pWnd) { pWnd->GetWindowRect(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
 #define GrowX(pWnd) { pWnd->GetWindowRect(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height(), SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS); }
@@ -83,20 +82,18 @@ BOOL LFEditTimeDlg::InitDialog()
 	GrowXMoveY(GetDlgItem(IDC_TIME));
 
 	// Data
-	if (!p_VData->IsNull)
-		if (p_VData->Time.dwHighDateTime || p_VData->Time.dwLowDateTime)
-		{
-			SYSTEMTIME stUTC;
-			SYSTEMTIME stLocal;
-			FileTimeToSystemTime(&p_VData->Time, &stUTC);
-			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+	if (!p_VData->IsNull && (p_VData->Time.dwHighDateTime || p_VData->Time.dwLowDateTime))
+	{
+		SYSTEMTIME stUTC;
+		SYSTEMTIME stLocal;
+		FileTimeToSystemTime(&p_VData->Time, &stUTC);
+		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
-			ENSURE(m_wndCalendar.SetCurSel(&stLocal));
+		ENSURE(m_wndCalendar.SetCurSel(&stLocal));
 
-			m_UseTime = (stLocal.wHour!=0) || (stLocal.wMinute!=0) || (stLocal.wSecond!=0);
-			if (m_UseTime)
-				ENSURE(m_wndTime.SetTime(&stLocal));
-		}
+		if ((m_UseTime=(stLocal.wHour || stLocal.wMinute || stLocal.wSecond))==TRUE)
+			ENSURE(m_wndTime.SetTime(&stLocal));
+	}
 
 	// Calendar
 	m_wndCalendar.SetColor(MCSC_BACKGROUND, 0xFFFFFF);
@@ -127,20 +124,22 @@ BOOL LFEditTimeDlg::InitDialog()
 	return TRUE;
 }
 
-void LFEditTimeDlg::EnableControls()
+void LFPickTimeDlg::EnableControls()
 {
-	GetDlgItem(IDC_USETIME)->EnableWindow(m_UseDate);
 	m_wndCalendar.EnableWindow(m_UseDate);
+
+	GetDlgItem(IDC_USETIME)->EnableWindow(m_UseDate);
 	m_wndTime.EnableWindow(m_UseDate && m_UseTime);
 }
 
 
-BEGIN_MESSAGE_MAP(LFEditTimeDlg, LFDialog)
+BEGIN_MESSAGE_MAP(LFPickTimeDlg, CAttributePickDlg)
 	ON_BN_CLICKED(IDC_USETIME, OnUseTime)
 END_MESSAGE_MAP()
 
-void LFEditTimeDlg::OnUseTime()
+void LFPickTimeDlg::OnUseTime()
 {
 	m_UseTime = ((CButton*)GetDlgItem(IDC_USETIME))->GetCheck();
+
 	EnableControls();
 }

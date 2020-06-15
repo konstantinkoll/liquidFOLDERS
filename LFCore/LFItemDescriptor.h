@@ -3,8 +3,8 @@
 #include "LF.h"
 
 
-SIZE_T GetAttributeSize(UINT Attr, LPCVOID pValue);
-void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID pValue);
+SIZE_T GetAttributeSize(ATTRIBUTE Attr, LPCVOID pValue);
+void SetAttribute(LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr, LPCVOID pValue);
 
 UINT GetColoredFolderIcon(const LFFileSummary& FileSummary);
 UINT GetFolderIcon(const LFFileSummary& FileSummary, const LFVariantData& VData, BOOL IgnoreDefaultIcon=FALSE);

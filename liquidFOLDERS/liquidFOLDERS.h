@@ -32,9 +32,9 @@ public:
 	void OpenFileDrop(const ABSOLUTESTOREID& StoreID);
 
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
-	void SetContextSort(INT Context, UINT Attr, BOOL SortDescending, BOOL SetLastView=TRUE);
+	void SetContextSort(ITEMCONTEXT Context, ATTRIBUTE Attr, BOOL SortDescending, BOOL SetLastView=TRUE);
 	void UpdateViewSettings(INT Context=-1, INT View=-1);
-	void SetContextView(INT Context, INT View);
+	void SetContextView(ITEMCONTEXT Context, UINT View);
 
 	CMainWnd* p_ClipboardWnd;
 	WCHAR m_PathGoogleEarth[MAX_PATH];
@@ -53,9 +53,9 @@ protected:
 	afx_msg void OnBackstageAbout();
 	DECLARE_MESSAGE_MAP()
 
-	void SanitizeContextViewSettings(INT Context);
-	void LoadContextViewSettings(UINT Context, BOOL Reset);
-	void SaveContextViewSettings(UINT Context);
+	void SanitizeContextViewSettings(ITEMCONTEXT Context);
+	void LoadContextViewSettings(ITEMCONTEXT Context, BOOL Reset);
+	void SaveContextViewSettings(ITEMCONTEXT Context);
 	BOOL LoadGlobalViewSettings();
 	void SaveGlobalViewSettings();
 
@@ -63,3 +63,14 @@ protected:
 };
 
 extern CLiquidFoldersApp theApp;
+
+
+inline void CLiquidFoldersApp::UpdateViewSettings(INT Context, INT View)
+{
+	ASSERT(Context>=-1);
+	ASSERT(Context<LFContextCount);
+	ASSERT(View>=-1);
+	ASSERT(View<LFViewCount);
+
+	Broadcast(Context, View, WM_UPDATEVIEWSETTINGS);
+}

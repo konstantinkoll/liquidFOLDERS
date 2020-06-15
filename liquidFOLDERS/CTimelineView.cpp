@@ -154,7 +154,7 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 
 // Layouts
 
-LPCWSTR CTimelineView::GetAttribute(TimelineItemData* pData, UINT Mask, const LFItemDescriptor* pItemDescriptor, UINT Attr)
+LPCWSTR CTimelineView::GetAttribute(TimelineItemData* pData, UINT Mask, const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	ASSERT(pData);
 	ASSERT(pItemDescriptor);
@@ -177,7 +177,7 @@ LPCWSTR CTimelineView::GetAttribute(TimelineItemData* pData, UINT Mask, const LF
 	return NULL;
 }
 
-void CTimelineView::AggregateAttribute(UINT& PreviewMask, LPCWSTR& pStrAggregated, UINT Mask, LFItemDescriptor* pItemDescriptor, UINT Attr)
+void CTimelineView::AggregateAttribute(UINT& PreviewMask, LPCWSTR& pStrAggregated, UINT Mask, LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT(Attr<LFAttributeCount);

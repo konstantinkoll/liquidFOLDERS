@@ -9,6 +9,8 @@
 // CFrontstageItemView
 //
 
+INT CFrontstageItemView::m_MaxCountWidth = 0;
+
 CFrontstageItemView::CFrontstageItemView(UINT Flags, SIZE_T szData, const CSize& szItemInflate)
 	: CFrontstageScroller(Flags)
 {
@@ -417,7 +419,7 @@ void CFrontstageItemView::FreeItemData(BOOL InternalCall)
 
 // Item sort
 
-void CFrontstageItemView::SortItems(PFNCOMPARE zCompare, UINT Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
+void CFrontstageItemView::SortItems(PFNCOMPARE zCompare, ATTRIBUTE Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
 {
 	LFSortMemory(m_pItemData, m_ItemCount, m_szData, zCompare, Attr, Descending, Parameter1, Parameter2);
 }
@@ -880,6 +882,38 @@ UINT CFrontstageItemView::GetTileRows(UINT Rows, va_list vl)
 	return TileRows;
 }
 
+void CFrontstageItemView::DrawCountItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, LPCWSTR Label, UINT Count)
+{
+	ASSERT(rectItem);
+
+	CRect rect(rectItem);
+	rect.DeflateRect(ITEMCELLPADDINGX, ITEMCELLPADDINGY);
+
+	if (Count)
+	{
+		if (!m_MaxCountWidth)
+			m_MaxCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("888W")).cx+ITEMCELLPADDINGX;
+
+		rect.right -= m_MaxCountWidth;
+	}
+
+	// Name
+	dc.DrawText(Label, -1, rect, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_VCENTER);
+
+	// Count
+	if (Count)
+	{
+		rect.right += m_MaxCountWidth;
+
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallFont);
+
+		SetLightTextColor(dc, Index, Themed);
+		dc.DrawText(CBackstageSidebar::FormatCount(Count), rect, DT_SINGLELINE | DT_NOPREFIX | DT_RIGHT | DT_VCENTER);
+
+		dc.SelectObject(pOldFont);
+	}
+}
+
 void CFrontstageItemView::DrawListItem(CDC& dc, CRect rect, INT Index, BOOL Themed, INT* pColumnOrder, INT* pColumnWidth, INT PreviewAttribute)
 {
 	ASSERT(HasHeader());
@@ -893,7 +927,7 @@ void CFrontstageItemView::DrawListItem(CDC& dc, CRect rect, INT Index, BOOL Them
 
 	for (UINT a=0; a<ColumnCount; a++)
 	{
-		const UINT Attr = pColumnOrder[a];
+		const ATTRIBUTE Attr = pColumnOrder[a];
 
 		if (pColumnWidth[Attr] && ((INT)Attr!=PreviewAttribute))
 		{
@@ -1117,14 +1151,14 @@ END_MESSAGE_MAP()
 
 void CFrontstageItemView::OnDestroy()
 {
+	CFrontstageScroller::OnDestroy();
+
 	// Item data
 	free(m_pItemData);
 
 	// Cached bitmaps
 	DeleteObject(m_Bitmaps[BITMAP_SELECTION].hBitmap);
 	DeleteObject(m_Bitmaps[BITMAP_REFLECTION].hBitmap);
-
-	CFrontstageScroller::OnDestroy();
 }
 
 void CFrontstageItemView::OnMouseMove(UINT nFlags, CPoint point)

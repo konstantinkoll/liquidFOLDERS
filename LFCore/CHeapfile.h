@@ -85,7 +85,7 @@ protected:
 private:
 	LPCFILEID GetFileID(INT_PTR ID) const;
 	static void ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPCVOID pSrc, const SIZE_T SrcSize);
-	void GetAttribute(LPVOID Ptr, SIZE_T Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const;
+	void GetAttribute(LPVOID Ptr, SIZE_T Offset, ATTRIBUTE Attr, LFItemDescriptor* pItemDescriptor) const;
 
 	WCHAR m_Path[MAX_PATH];
 	HANDLE hFile;

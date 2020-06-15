@@ -30,7 +30,7 @@ extern const LFTypeProperties TypeProperties[LFTypeCount];
 
 struct SpecialAttributeName
 {
-	UINT Attr;
+	ATTRIBUTE Attr;
 	UINT nID;
 	UINT IconID;
 	BOOL SortDescending;
@@ -43,7 +43,7 @@ struct SpecialAttributeName
 extern const SpecialAttributeName SpecialAttributeNames[SPECIALATTRIBUTENAMESCOUNT];
 
 
-inline BOOL ContextMoveAllowed(BYTE SystemContextID, BYTE UserContextID)
+inline BOOL ContextMoveAllowed(ITEMCONTEXT SystemContextID, ITEMCONTEXT UserContextID)
 {
 	assert(SystemContextID<LFContextCount);
 	assert(UserContextID<LFContextCount);
@@ -51,7 +51,7 @@ inline BOOL ContextMoveAllowed(BYTE SystemContextID, BYTE UserContextID)
 	return !UserContextID || (SystemContextID==UserContextID) || (CtxProperties[SystemContextID].AllowMoveToContext & (1ull<<UserContextID));
 }
 
-inline BOOL IsAttributeSortDescending(UINT Context, UINT Attr)
+inline BOOL IsAttributeSortDescending(ATTRIBUTE Attr, ITEMCONTEXT Context)
 {
 	assert(Attr<LFAttributeCount);
 

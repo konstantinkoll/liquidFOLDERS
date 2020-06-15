@@ -51,16 +51,13 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, const CRect& rect, CIcons* pT
 	return TRUE;
 }
 
-void CFileView::UpdateViewSettings(INT Context, BOOL UpdateSearchResultPending)
+void CFileView::UpdateViewSettings(ITEMCONTEXT Context, BOOL UpdateSearchResultPending)
 {
 	DestroyEdit();
 	HideTooltip();
 
 	// Set new context
-	if (Context>=0)
-		m_Context = Context;
-
-	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context];
+	p_ContextViewSettings = &theApp.m_ContextViewSettings[m_Context=Context];
 	p_GlobalViewSettings = &theApp.m_GlobalViewSettings;
 
 	// Copy context view settings locally
@@ -155,7 +152,7 @@ void CFileView::GetMoveToMenu(CMenu& Menu) const
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		if (IsItemSelected(a))
 		{
-			const BYTE Context = LFGetUserContextID((*p_CookedFiles)[a]);
+			const ITEMCONTEXT Context = LFGetUserContextID((*p_CookedFiles)[a]);
 
 			UserContext = (UserContext==-1) || (UserContext==Context) ? Context : -2;
 			ContextMask &= theApp.m_Contexts[Context].CtxProperties.AllowMoveToContext;

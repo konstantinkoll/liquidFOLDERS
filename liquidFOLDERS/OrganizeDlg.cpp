@@ -9,7 +9,7 @@
 // OrganizeDlg
 //
 
-OrganizeDlg::OrganizeDlg(CWnd* pParentWnd, UINT Context)
+OrganizeDlg::OrganizeDlg(CWnd* pParentWnd, ITEMCONTEXT Context)
 	: LFAttributeListDlg(IDD_ORGANIZE, pParentWnd, Context)
 {
 	p_ContextViewSettings = &theApp.m_ContextViewSettings[Context];
@@ -26,15 +26,13 @@ void OrganizeDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		const UINT Index = m_wndSortAttribute.GetNextItem(-1, LVNI_SELECTED);
 		if (Index!=-1)
-			theApp.SetContextSort(m_Context,
-				(UINT)m_wndSortAttribute.GetItemData(Index),
-				m_wndSortDirection.GetCurSel());
+			theApp.SetContextSort(m_Context, (UINT)m_wndSortAttribute.GetItemData(Index), m_wndSortDirection.GetCurSel());
 	}
 }
 
-void OrganizeDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
+void OrganizeDlg::TestAttribute(ATTRIBUTE Attr, BOOL& Add, BOOL& Check)
 {
-	Add = theApp.IsAttributeAvailable(m_Context, Attr) && theApp.IsAttributeSortable(m_Context, Attr) && (theApp.m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
+	Add = theApp.IsAttributeAvailable(Attr, m_Context) && theApp.IsAttributeSortable(Attr, m_Context) && (theApp.m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 
 	Check = FALSE;
 }
@@ -80,9 +78,9 @@ void OrganizeDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		const INT Index = m_wndSortAttribute.GetNextItem(-1, LVNI_SELECTED);
 		if (Index!=-1)
 		{
-			const UINT Attr = (UINT)m_wndSortAttribute.GetItemData(Index);
+			const ATTRIBUTE Attr = (UINT)m_wndSortAttribute.GetItemData(Index);
 
-			m_wndSortDirection.SetCurSel(theApp.IsAttributeSortDescending(m_Context, Attr) ? 1 : 0);
+			m_wndSortDirection.SetCurSel(theApp.IsAttributeSortDescending(Attr, m_Context) ? 1 : 0);
 		}
 	}
 }

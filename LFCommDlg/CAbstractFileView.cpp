@@ -101,13 +101,13 @@ void CAbstractFileView::SetSearchResult(LFSearchResult* pCookedFiles)
 		SetItemCount(pCookedFiles->m_ItemCount, TRUE);
 
 		// Enable shift selection and label edit in certain contexts
-		m_Flags &= ~(FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT);
+		m_Flags &= ~(FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION | FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_ENABLEEDITONHOVER);
 
 		if (pCookedFiles->m_Context!=LFContextStores)
 			m_Flags |= (FRONTSTAGE_ENABLESELECTION | FRONTSTAGE_ENABLESHIFTSELECTION);
 
 		if ((pCookedFiles->m_Context!=LFContextArchive) && (pCookedFiles->m_Context!=LFContextTrash))
-			m_Flags |= FRONTSTAGE_ENABLELABELEDIT;
+			m_Flags |= FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_ENABLEEDITONHOVER;
 
 		// Disable flags that weren't initially allowed
 		m_Flags &= m_FlagsMask;

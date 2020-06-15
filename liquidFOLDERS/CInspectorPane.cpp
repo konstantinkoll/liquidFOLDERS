@@ -18,7 +18,7 @@ CFileSummary::CFileSummary()
 	Reset();
 }
 
-void CFileSummary::ResetAttribute(UINT Attr)
+void CFileSummary::ResetAttribute(ATTRIBUTE Attr)
 {
 	ASSERT(Attr<AttrCount);
 
@@ -28,14 +28,14 @@ void CFileSummary::ResetAttribute(UINT Attr)
 	LFInitVariantData(m_AttributeSummary[Attr].VDataRange, Attr);
 }
 
-void CFileSummary::Reset(UINT Context)
+void CFileSummary::Reset(ITEMCONTEXT OriginalContext)
 {
-	m_Context = Context;
 	p_LastItem = NULL;
 	m_ItemCount = 0;
+	m_ItemContext = m_OriginalContext = OriginalContext;
 
-	// Icon, flags and store
-	m_IconStatus = m_StoreStatus = STATUSUNUSED;
+	// Context, icon, flags and store
+	m_ContextStatus = m_IconStatus = m_StoreStatus = STATUSUNUSED;
 	m_FlagsFirst = TRUE;
 	m_FlagsSet = m_FlagsMultiple = 0;
 	m_AggregatedFiles = TRUE;
@@ -45,7 +45,7 @@ void CFileSummary::Reset(UINT Context)
 		ResetAttribute(a);
 }
 
-void CFileSummary::AddValueVirtual(UINT Attr, const LPCWSTR pStrValue)
+void CFileSummary::AddValueVirtual(ATTRIBUTE Attr, const LPCWSTR pStrValue)
 {
 	ASSERT(Attr<AttrCount);
 	ASSERT(pStrValue);
@@ -71,7 +71,7 @@ void CFileSummary::AddValueVirtual(UINT Attr, const LPCWSTR pStrValue)
 	}
 }
 
-void CFileSummary::AddValueVirtual(UINT Attr, const LPCSTR pStrValue)
+void CFileSummary::AddValueVirtual(ATTRIBUTE Attr, const LPCSTR pStrValue)
 {
 	ASSERT(pStrValue);
 
@@ -81,7 +81,7 @@ void CFileSummary::AddValueVirtual(UINT Attr, const LPCSTR pStrValue)
 	AddValueVirtual(Attr, tmpStr);
 }
 
-void CFileSummary::AddValueVirtual(UINT Attr, const INT64 Size)
+void CFileSummary::AddValueVirtual(ATTRIBUTE Attr, const INT64 Size)
 {
 	WCHAR tmpStr[256];
 	LFSizeToString(Size, tmpStr, 256);
@@ -89,12 +89,15 @@ void CFileSummary::AddValueVirtual(UINT Attr, const INT64 Size)
 	AddValueVirtual(Attr, tmpStr);
 }
 
-void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
+void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	ASSERT(pItemDescriptor);
 	ASSERT(Attr<LFAttributeCount);
 
-	if (theApp.IsAttributeAvailable(m_Context, Attr) && pItemDescriptor->AttributeValues[Attr])
+	//const ITEMCONTEXT Context = m_OriginalContext>LFLastPersistentContext ? m_OriginalContext : LFGetUserContextID(pItemDescriptor);
+	const ITEMCONTEXT Context = m_OriginalContext;
+
+	if (theApp.IsAttributeAvailable(Attr, Context) && pItemDescriptor->AttributeValues[Attr])
 	{
 		AttributeSummary* pAttributeSummary = &m_AttributeSummary[Attr];
 
@@ -116,18 +119,28 @@ void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, UINT Attr)
 				if (LFCompareVariantData(pAttributeSummary->VData, Property)==0)
 					return;
 
-				// Set lower and upper range to first value
-				pAttributeSummary->VDataRange = pAttributeSummary->VData;
 				pAttributeSummary->Status = STATUSMULTIPLE;
+
+				// Set lower and upper ranges
+				if (LFIsNullVariantData(pAttributeSummary->VData))
+				{
+					pAttributeSummary->VData = pAttributeSummary->VDataRange = Property;
+					break;
+				}
+
+				pAttributeSummary->VDataRange = pAttributeSummary->VData;
 
 				// Compare Property with range values
 
 			case STATUSMULTIPLE:
-				if (LFCompareVariantData(Property, pAttributeSummary->VData)<0)
-					pAttributeSummary->VData = Property;
+				if (!LFIsNullVariantData(Property))
+				{
+					if (LFCompareVariantData(Property, pAttributeSummary->VData)<0)
+						pAttributeSummary->VData = Property;
 
-				if (LFCompareVariantData(Property, pAttributeSummary->VDataRange)>0)
-					pAttributeSummary->VDataRange = Property;
+					if (LFCompareVariantData(Property, pAttributeSummary->VDataRange)>0)
+						pAttributeSummary->VDataRange = Property;
+				}
 
 				break;
 			}
@@ -141,6 +154,25 @@ void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 	// Basic
 	p_LastItem = pItemDescriptor;
 	m_ItemCount++;
+
+	// Context
+	if (m_ContextStatus<STATUSMULTIPLE)
+		switch (m_ContextStatus)
+		{
+		case STATUSUNUSED:
+			m_ContextStatus = STATUSUSED;
+			m_ItemContext = LFGetUserContextID(pItemDescriptor->CoreAttributes);
+			break;
+
+		case STATUSUSED:
+			if (m_ItemContext!=LFGetUserContextID(pItemDescriptor->CoreAttributes))
+			{
+				m_ContextStatus = STATUSMULTIPLE;
+				m_ItemContext = m_OriginalContext;
+			}
+
+			break;
+		}
 
 	// Flags
 	if (m_FlagsFirst)
@@ -475,14 +507,14 @@ void CInspectorPane::SaveSettings() const
 	theApp.WriteInt(_T("InspectorSortAlphabetic"), m_SortAlphabetic);
 }
 
-void CInspectorPane::UpdatePropertyState(UINT Attr)
+void CInspectorPane::UpdatePropertyState(ATTRIBUTE Attr)
 {
 	ASSERT(Attr<AttrCount);
 
 	const AttributeSummary* pAttributeSummary = &m_FileSummary.m_AttributeSummary[Attr];
 
 	m_wndInspectorGrid.UpdatePropertyState(Attr, pAttributeSummary->Status==STATUSMULTIPLE,
-		Attr<LFAttributeCount ? theApp.IsAttributeEditable(Attr) && (m_FileSummary.m_Context!=LFContextArchive) && (m_FileSummary.m_Context!=LFContextTrash) : FALSE,
+		Attr<LFAttributeCount ? theApp.IsAttributeEditable(Attr) && (m_FileSummary.m_OriginalContext!=LFContextArchive) && (m_FileSummary.m_OriginalContext!=LFContextTrash) : FALSE,
 		pAttributeSummary->Visible && (m_ShowInternal ? TRUE : Attr<LFAttributeCount ? (theApp.m_Attributes[Attr].AttrProperties.Category!=LFAttrCategoryInternal) : FALSE),
 		&pAttributeSummary->VDataRange);
 }
@@ -501,6 +533,9 @@ void CInspectorPane::UpdateIATAAirport(BOOL AllowMultiple)
 
 void CInspectorPane::AggregateClose()
 {
+	// Context
+	m_wndInspectorGrid.SetContext(m_FileSummary.m_ItemContext);
+
 	// Type
 	if (m_FileSummary.m_Type==LFTypeStore)
 	{
@@ -570,9 +605,6 @@ void CInspectorPane::AggregateClose()
 
 		m_FileSummary.AddValueVirtual(AttrFlags, tmpStr);
 	}
-
-	// Store
-	m_wndInspectorGrid.SetStore(m_FileSummary.m_StoreStatus==STATUSUSED ? m_FileSummary.m_StoreID : DEFAULTSTOREID());
 
 	// Update properties, except for AttrIATAAirportName and AttrIATAAirportCounty (must be last)
 	ASSERT(AttrIATAAirportName>=AttrCount-2);

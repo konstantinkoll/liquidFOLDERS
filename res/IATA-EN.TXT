@@ -95,7 +95,7 @@ AEH     Abeche, Tschad;4;13*50'49"N, 20*50'40"E
 AEK     Aseki, New Guinea;4;7*20'60"S, 146*10'59"E
 AEL     Albert Lea, USA;4;43*40'54"N, 93*22'2"W
 AEO     Aioun el Atrouss, Mauretania;4;16*42'41"N, 9*38'16"W
-AEP BUE Buenos Aires (Jorge Newbery), Argentina;4;34*33'33"S, 58*24'56"W
+AEP BUE Buenos Aires (Aeroparque Jorge Newbery), Argentina;4;34*33'33"S, 58*24'56"W
 AER     Adler/Sochi, Russia;4;43*26'60"N, 39*57'24"E
 AES     Ålesund, Norway;4;62*33'37"N, 6*6'37"E
 AET     Allakaket, USA;4;66*33'7"N, 152*37'20"W

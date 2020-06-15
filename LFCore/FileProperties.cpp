@@ -89,8 +89,8 @@ void SetFileContext(LFCoreAttributes& CoreAttributes, BOOL OnImport)
 #endif
 
 	// Find context
-	BYTE SystemContextID = 0;
-	BYTE UserContextID = 0;
+	ITEMCONTEXT SystemContextID = 0;
+	ITEMCONTEXT UserContextID = 0;
 	GetHardcodedContext(CoreAttributes.FileFormat, SystemContextID, UserContextID);
 
 	assert(ContextMoveAllowed(SystemContextID, UserContextID));
@@ -178,7 +178,7 @@ BOOL SetAttributesFromAnnotation(LFItemDescriptor* pItemDescriptor, LPCWSTR pAnn
 // Shell property handling
 //
 
-void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, LPCGUID Schema, UINT ID, LFItemDescriptor* pItemDescriptor, UINT Attr)
+void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, LPCGUID Schema, UINT ID, LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	assert(pParentFolder);
 

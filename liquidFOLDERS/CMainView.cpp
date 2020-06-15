@@ -30,7 +30,8 @@ CMainView::CMainView()
 	p_RawFiles = p_CookedFiles = NULL;
 	p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
-	m_Context = m_ViewID = -1;
+	m_Context = LFContextAllFiles;
+	m_ViewID = -1;
 	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
 }
 
@@ -126,7 +127,7 @@ void CMainView::SetHeaderButtons()
 	ASSERT(p_OrganizeButton);
 	ASSERT(p_ViewButton);
 
-	const UINT Attr = m_pWndFileView ? m_pWndFileView->GetSortAttribute() : theApp.m_ContextViewSettings[m_Context].SortBy;
+	const ATTRIBUTE Attr = m_pWndFileView ? m_pWndFileView->GetSortAttribute() : theApp.m_ContextViewSettings[m_Context].SortBy;
 	p_OrganizeButton->SetValue(theApp.GetAttributeName(Attr, m_Context), FALSE);
 
 	p_ViewButton->SetValue(CString((LPCSTR)IDM_SETVIEW_FIRST+m_ViewID));
@@ -225,9 +226,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	}
 	else
 	{
-		m_Context = pCookedFiles->m_Context;
-
-		if (!CreateFileView(theApp.m_ContextViewSettings[m_Context].View, pPersistentData))
+		if (!CreateFileView(theApp.m_ContextViewSettings[m_Context=pCookedFiles->m_Context].View, pPersistentData))
 		{
 			m_pWndFileView->UpdateViewSettings(m_Context, TRUE);
 			m_pWndFileView->UpdateSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
@@ -823,10 +822,10 @@ void CMainView::OnOrganizeButton()
 	CMenu Menu;
 	Menu.CreatePopupMenu();
 
-	const INT SubfolderAttribute = LFGetSubfolderAttribute(p_Filter);
+	const SUBFOLDERATTRIBUTE SubfolderAttribute = LFGetSubfolderAttribute(p_Filter);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (theApp.IsAttributeSortable(m_Context, a, SubfolderAttribute) && theApp.IsAttributeAdvertised(m_Context, a))
+		if (theApp.IsAttributeSortable(a, m_Context, SubfolderAttribute) && theApp.IsAttributeAdvertised(a, m_Context))
 			Menu.AppendMenu(MF_STRING, IDM_SETORGANIZE_FIRST+a, _T("&")+CString(theApp.GetAttributeName(a, m_Context)));
 
 	Menu.AppendMenu(MF_SEPARATOR);
@@ -842,7 +841,7 @@ void CMainView::OnOrganizeOptions()
 
 void CMainView::OnSetOrganize(UINT nID)
 {
-	theApp.SetContextSort(m_Context, nID-IDM_SETORGANIZE_FIRST, theApp.IsAttributeSortDescending(m_Context, nID-IDM_SETORGANIZE_FIRST));
+	theApp.SetContextSort(m_Context, nID-IDM_SETORGANIZE_FIRST, theApp.IsAttributeSortDescending(nID-IDM_SETORGANIZE_FIRST, m_Context));
 
 	SetFocus();
 }

@@ -19,9 +19,8 @@ extern UINT VolumeTypes[];
 extern void LoadTwoStrings(HINSTANCE hInstance, UINT uID, LPWSTR lpBuffer1, SIZE_T cchBufferMax1, LPWSTR lpBuffer, SIZE_T cchBufferMax);
 
 
-LFCORE_API LFSearchResult* LFAllocSearchResult(BYTE Context)
+LFCORE_API LFSearchResult* LFAllocSearchResult(ITEMCONTEXT Context)
 {
-	assert(Context>=0);
 	assert(Context<LFContextCount);
 
 	LFSearchResult* pSearchResult = new LFSearchResult(Context);
@@ -65,14 +64,14 @@ LFCORE_API void LFRemoveFlaggedItems(LFSearchResult* pSearchResult)
 	pSearchResult->RemoveFlaggedItems();
 }
 
-LFCORE_API void LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending)
+LFCORE_API void LFSortSearchResult(LFSearchResult* pSearchResult, ATTRIBUTE Attr, BOOL Descending)
 {
 	assert(pSearchResult);
 
 	pSearchResult->SortItems(Attr, Descending);
 }
 
-LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter)
+LFCORE_API LFSearchResult* LFGroupSearchResult(LFSearchResult* pSearchResult, ATTRIBUTE Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter)
 {
 	assert(pSearchResult);
 
@@ -121,7 +120,7 @@ LFCORE_API void LFUpdateFolderColors(LFSearchResult* pCookedFiles, const LFSearc
 // LFSearchResult
 //
 
-LFSearchResult::LFSearchResult(BYTE Context)
+LFSearchResult::LFSearchResult(ITEMCONTEXT Context)
 	: LFDynArray()
 {
 	assert(Context<LFContextCount);
@@ -402,12 +401,12 @@ INT LFSearchResult::CompareItems(const LFItemDescriptor** pData1, const LFItemDe
 	return Result;
 }
 
-void LFSearchResult::SortItems(UINT Attr, BOOL Descending)
+void LFSearchResult::SortItems(ATTRIBUTE Attr, BOOL Descending)
 {
-	LFDynArray::SortItems((PFNCOMPARE)CompareItems, Attr, Descending, m_HasCategories, IsAttributeSortDescending(m_Context, LFAttrSequenceInCollection));
+	LFDynArray::SortItems((PFNCOMPARE)CompareItems, Attr, Descending, m_HasCategories, IsAttributeSortDescending(LFAttrSequenceInCollection, m_Context));
 }
 
-UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
+UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, ATTRIBUTE Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
 	// Retain item
 	if (((ReadIndex2==ReadIndex1+1) && (!GroupSingle || LFIsFolder(m_Items[ReadIndex1]))) || (IsNullValue(AttrProperties[Attr].Type, m_Items[ReadIndex1]->AttributeValues[Attr])))
@@ -437,7 +436,7 @@ UINT LFSearchResult::Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2
 	return 1;
 }
 
-void LFSearchResult::GroupItems(UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
+void LFSearchResult::GroupItems(ATTRIBUTE Attr, BOOL GroupSingle, LFFilter* pFilter)
 {
 	if (!m_ItemCount)
 		return;
@@ -520,7 +519,7 @@ void LFSearchResult::GroupItems(UINT Attr, BOOL GroupSingle, LFFilter* pFilter)
 	delete pCategorizer;
 }
 
-void LFSearchResult::GroupArray(UINT Attr, LFFilter* pFilter)
+void LFSearchResult::GroupArray(ATTRIBUTE Attr, LFFilter* pFilter)
 {
 	assert(AttrProperties[Attr].Type==LFTypeUnicodeArray);
 	assert(!AttrProperties[Attr].DefaultIconID);

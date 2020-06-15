@@ -214,7 +214,7 @@ struct VideoAttributes
 
 struct IdxTableEntry
 {
-	UINT Attr;
+	ATTRIBUTE Attr;
 	INT_PTR Offset;
 };
 

@@ -9,8 +9,8 @@
 // LFSelectPropertyIATADlg
 //
 
-LFSelectPropertyIATADlg::LFSelectPropertyIATADlg(CWnd* pParentWnd, const LPCSTR pAirport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
-	: LFSelectLocationIATADlg(pParentWnd, pAirport, IDD_SELECTPROPERTYIATA)
+LFSelectPropertyIATADlg::LFSelectPropertyIATADlg(CWnd* pParentWnd, const LPCSTR lpcAirport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
+	: LFSelectLocationIATADlg(pParentWnd, lpcAirport, IDD_SELECTPROPERTYIATA)
 {
 	m_AllowOverwriteName = AllowOverwriteName;
 	m_AllowOverwriteGPS = AllowOverwriteGPS;

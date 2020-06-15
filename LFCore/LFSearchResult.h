@@ -21,7 +21,7 @@
 class LFSearchResult sealed : public LFDynArray<LFItemDescriptor*, 64, 2048>
 {
 public:
-	LFSearchResult(BYTE Context=LFContextAllFiles);
+	LFSearchResult(ITEMCONTEXT Context=LFContextAllFiles);
 	LFSearchResult(LFSearchResult* pSearchResult);
 	~LFSearchResult();
 
@@ -30,9 +30,9 @@ public:
 	BOOL AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor);
 	void RemoveFlaggedItems(BOOL UpdateSummary=TRUE);
 	void KeepRange(UINT First, UINT Last);
-	void SortItems(UINT Attr, BOOL Descending);
-	void GroupItems(UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
-	void GroupArray(UINT Attr, LFFilter* pFilter);
+	void SortItems(ATTRIBUTE Attr, BOOL Descending);
+	void GroupItems(ATTRIBUTE Attr, BOOL GroupSingle, LFFilter* pFilter);
+	void GroupArray(ATTRIBUTE Attr, LFFilter* pFilter);
 	void UpdateFolderColors(const LFSearchResult* pRawFiles);
 
 	UINT m_LastError;
@@ -40,7 +40,7 @@ public:
 	WCHAR m_Name[256];
 	WCHAR m_Hint[256];
 	DWORD m_QueryTime;
-	BYTE m_Context;
+	ITEMCONTEXT m_Context;
 	UINT m_IconID;
 
 	BOOL m_RawCopy;
@@ -57,8 +57,8 @@ private:
 	static void AddFileToSummary(LFFileSummary& FileSummary, LFItemDescriptor* pItemDescriptor);
 	static void CloseFileSummary(LFFileSummary& FileSummary);
 	static INT __stdcall CompareItems(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, const SortParameters& Parameters);
-	static INT CompareItemsSecondary(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending=FALSE);
-	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, UINT Attr, BOOL GroupSingle, LFFilter* pFilter);
+	static INT CompareItemsSecondary(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, SortParameters Parameters, ATTRIBUTE Attr, BOOL Descending=FALSE);
+	UINT Aggregate(UINT WriteIndex, UINT ReadIndex1, UINT ReadIndex2, LPVOID pCategorizer, ATTRIBUTE Attr, BOOL GroupSingle, LFFilter* pFilter);
 };
 
 inline void LFSearchResult::InitializeFileSummary(LFFileSummary& FileSummary)
@@ -77,7 +77,7 @@ inline void LFSearchResult::AddStoreToSummary(LFFileSummary& FileSummary, const 
 	FileSummary.Context = LFContextStores;
 }
 
-inline INT LFSearchResult::CompareItemsSecondary(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, SortParameters Parameters, UINT Attr, BOOL Descending)
+inline INT LFSearchResult::CompareItemsSecondary(const LFItemDescriptor** pData1, const LFItemDescriptor** pData2, SortParameters Parameters, ATTRIBUTE Attr, BOOL Descending)
 {
 	Parameters.Attr = Attr;
 	Parameters.Descending = Descending;

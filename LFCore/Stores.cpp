@@ -1432,7 +1432,7 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, const STOREID& Store
 		// Iterate all stores
 		for (UINT a=0; a<StoreCount; a++)
 		{
-			for (UINT Context=0; Context<=LFLastQueryContext; Context++)
+			for (ITEMCONTEXT Context=0; Context<=LFLastQueryContext; Context++)
 			{
 				Statistics.FileCount[Context] += StoreCache[a].Statistics.FileCount[Context];
 				Statistics.FileSize[Context] += StoreCache[a].Statistics.FileSize[Context];
@@ -1444,7 +1444,7 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, const STOREID& Store
 
 		// Global context set
 		if (pGlobalContextSet)
-			for (UINT Context=0; Context<=LFLastQueryContext; Context++)
+			for (ITEMCONTEXT Context=0; Context<=LFLastQueryContext; Context++)
 				if (Statistics.FileCount[Context])
 					*pGlobalContextSet |= (1ull<<Context);
 	}
@@ -1458,7 +1458,7 @@ LFCORE_API UINT LFQueryStatistics(LFStatistics& Statistics, const STOREID& Store
 
 		// Global context set
 		if (pGlobalContextSet)
-			for (UINT Context=0; Context<=LFLastQueryContext; Context++)
+			for (ITEMCONTEXT Context=0; Context<=LFLastQueryContext; Context++)
 				for (UINT a=0; a<StoreCount; a++)
 					if (StoreCache[a].Statistics.FileCount[Context])
 					{

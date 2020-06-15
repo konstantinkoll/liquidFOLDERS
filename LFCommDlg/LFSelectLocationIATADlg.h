@@ -28,12 +28,12 @@ public:
 	LPCAIRPORT GetSelectedAirport() const;
 
 protected:
-	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
-	virtual void HeaderColumnClicked(UINT Attr);
+	virtual void UpdateHeaderColumn(ATTRIBUTE Attr, HDITEM& HeaderItem) const;
+	virtual void HeaderColumnClicked(ATTRIBUTE Attr);
 	virtual void AdjustLayout();
 	virtual void ShowTooltip(const CPoint& point);
 	virtual COLORREF GetItemTextColor(INT Index, BOOL Themed) const;
-	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
+	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, ATTRIBUTE Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	void SortItems();
@@ -73,7 +73,7 @@ inline void CAirportList::UpdateHeader()
 class LFSelectLocationIATADlg : public LFDialog
 {
 public:
-	LFSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR pAirport=NULL, UINT nIDTemplate=IDD_SELECTLOCATIONIATA);
+	LFSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR lpcAirport=NULL, UINT nIDTemplate=IDD_SELECTLOCATIONIATA);
 
 	LPCAIRPORT p_Airport;
 

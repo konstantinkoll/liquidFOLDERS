@@ -28,12 +28,12 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual INT GetHeaderIndent() const;
 	virtual void GetHeaderContextMenu(CMenu& Menu);
-	virtual BOOL AllowHeaderColumnDrag(UINT Attr) const;
-	virtual BOOL AllowHeaderColumnTrack(UINT Attr) const;
-	virtual void UpdateHeaderColumnOrder(UINT Attr, INT Position);
-	virtual void UpdateHeaderColumnWidth(UINT Attr, INT Width);
-	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
-	virtual void HeaderColumnClicked(UINT Attr);
+	virtual BOOL AllowHeaderColumnDrag(ATTRIBUTE Attr) const;
+	virtual BOOL AllowHeaderColumnTrack(ATTRIBUTE Attr) const;
+	virtual void UpdateHeaderColumnOrder(ATTRIBUTE Attr, INT Position);
+	virtual void UpdateHeaderColumnWidth(ATTRIBUTE Attr, INT Width);
+	virtual void UpdateHeaderColumn(ATTRIBUTE Attr, HDITEM& HeaderItem) const;
+	virtual void HeaderColumnClicked(ATTRIBUTE Attr);
 	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpcRect=NULL, LPCRECT lpClipRect=NULL);
 	virtual void AdjustScrollbars();
 	virtual void AdjustLayout();
@@ -53,7 +53,7 @@ protected:
 	BOOL AddHeaderColumn(BOOL Shadow, LPCWSTR Caption=L"", BOOL Right=FALSE);
 	BOOL AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right=FALSE);
 	void SetFixedColumnWidths(INT* pColumnOrder, INT* pColumnWidths);
-	void UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths);
+	void UpdateHeaderColumnOrder(ATTRIBUTE Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths);
 	void UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BOOL bShowHeader=TRUE, INT PreviewAttribute=-1);
 	void ResetScrollArea();
 	void SetItemHeight(INT ItemHeight);

@@ -89,7 +89,7 @@ void CGlobeView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, L
 	if (p_CookedFiles)
 		if (p_CookedFiles->m_ItemCount)
 		{
-			const UINT Attr = (m_ContextViewSettings.SortBy==LFAttrLocationIATA) ? LFAttrLocationGPS : m_ContextViewSettings.SortBy;
+			const ATTRIBUTE Attr = (m_ContextViewSettings.SortBy==LFAttrLocationIATA) ? LFAttrLocationGPS : m_ContextViewSettings.SortBy;
 
 			ASSERT(theApp.m_Attributes[Attr].AttrProperties.Type==LFTypeGeoCoordinates);
 
@@ -213,7 +213,7 @@ void CGlobeView::UpdateCursor()
 
 // Google Earth export
 
-void CGlobeView::WriteGoogleAttribute(CStdioFile& File, const LFItemDescriptor* pItemDescriptor, UINT Attr)
+void CGlobeView::WriteGoogleAttribute(CStdioFile& File, const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	WCHAR tmpStr[256];
 	LFAttributeToString(pItemDescriptor, Attr, tmpStr, 256);

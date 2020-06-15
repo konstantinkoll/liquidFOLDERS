@@ -65,7 +65,7 @@ void CTagcloudView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 	{
 		// Sort cooked files
 		LFSortSearchResult(p_CookedFiles, (m_GlobalViewSettings.TagcloudSort==0) ? m_ContextViewSettings.SortBy : LFAttrFileCount,
-			(m_GlobalViewSettings.TagcloudSort!=0) || theApp.IsAttributeSortDescending(m_Context, m_ContextViewSettings.SortBy));
+			(m_GlobalViewSettings.TagcloudSort!=0) || theApp.IsAttributeSortDescending(m_ContextViewSettings.SortBy, m_Context));
 
 		INT Minimum = -1;
 		INT Maximum = -1;

@@ -560,6 +560,7 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 			// Find separator char
 			LPCWSTR pSeparator = wcsstr(Name, L" – ");
 			SIZE_T SeparatorLength = 3;
+			BOOL SeparatorIsSpace = FALSE;
 
 			if (!pSeparator)
 			{
@@ -599,20 +600,27 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 				}
 
 				SeparatorLength = 1;
+				SeparatorIsSpace = TRUE;
 			}
 
 			if (pSeparator)
 			{
 				// Creator or media collection
+				const ATTRIBUTE Attr = (pItemDescriptor->CoreAttributes.SystemContextID!=LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection) ? LFAttrMediaCollection : LFAttrCreator;
+
+				// If the separator is a space (and thus the remainder a number), do not use as LFAttrCreator
+				if ((Attr==LFAttrCreator) && SeparatorIsSpace)
+					// Use whole file name as title
+					goto SetTitle;
+
+				// Remove leading chars that are not letters
 				WCHAR Value[256];
 				wcsncpy_s(Value, 256, Name, pSeparator-Name);
 
 				for (LPCWSTR pChar=Value; pChar; pChar++)
 					if (*pChar>=L'A')
 					{
-						const UINT Attr = (pItemDescriptor->CoreAttributes.SystemContextID!=LFContextAudio) && LFIsNullAttribute(pItemDescriptor, LFAttrMediaCollection) ? LFAttrMediaCollection : LFAttrCreator;
 						SetAttribute(pItemDescriptor, Attr, Value);
-
 						break;
 					}
 
@@ -624,6 +632,7 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 		}
 		else
 		{
+SetTitle:
 			if (!LFIsPictureFile(pItemDescriptor) && LFIsNullAttribute(pItemDescriptor, LFAttrTitle))
 				SetAttribute(pItemDescriptor, LFAttrTitle, Name);
 		}

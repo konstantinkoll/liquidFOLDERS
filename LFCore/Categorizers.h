@@ -11,7 +11,7 @@
 class CCategorizer
 {
 public:
-	CCategorizer(UINT Attr);
+	CCategorizer(ATTRIBUTE Attr);
 
 	LFItemDescriptor* GetFolder(LFItemDescriptor* pItemDescriptor, LFFilter* pFilter, LFFileSummary& FileSummary, INT FirstAggregate=-1, INT LastAggregate=-1) const;
 	BOOL IsEqual(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;
@@ -21,7 +21,7 @@ protected:
 	virtual void GetFilterValue(LFVariantData& VData, LFItemDescriptor* pItemDescriptor) const;
 	virtual void CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDescriptor* pSpecimen) const;
 
-	UINT m_Attr;
+	ATTRIBUTE m_Attr;
 };
 
 
@@ -94,7 +94,7 @@ protected:
 class CRatingCategorizer : public CCategorizer
 {
 public:
-	CRatingCategorizer(UINT Attr);
+	CRatingCategorizer(ATTRIBUTE Attr);
 
 	static BYTE GetRatingCategory(const BYTE Rating);
 
@@ -110,7 +110,7 @@ protected:
 class CSizeCategorizer : public CCategorizer
 {
 public:
-	CSizeCategorizer(UINT Attr);
+	CSizeCategorizer(ATTRIBUTE Attr);
 
 	static UINT GetSizeCategory(const INT64 Size);
 
@@ -126,7 +126,7 @@ protected:
 class CDateCategorizer : public CCategorizer
 {
 public:
-	CDateCategorizer(UINT Attr);
+	CDateCategorizer(ATTRIBUTE Attr);
 
 	static void GetDate(const LPFILETIME Time, LPSYSTEMTIME Date);
 	static void GetDay(const LPFILETIME Time, LPFILETIME Day);
@@ -143,7 +143,7 @@ protected:
 class CDurationCategorizer : public CCategorizer
 {
 public:
-	CDurationCategorizer(UINT Attr);
+	CDurationCategorizer(ATTRIBUTE Attr);
 
 	static UINT GetDurationCategory(const UINT Duration);
 
@@ -159,7 +159,7 @@ protected:
 class CMegapixelCategorizer : public CCategorizer
 {
 public:
-	CMegapixelCategorizer(UINT Attr);
+	CMegapixelCategorizer(ATTRIBUTE Attr);
 
 protected:
 	virtual BOOL CompareItems(const LFItemDescriptor* pItemDescriptor1, const LFItemDescriptor* pItemDescriptor2) const;

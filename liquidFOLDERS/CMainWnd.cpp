@@ -12,7 +12,7 @@
 CIcons CMainWnd::m_LargeIcons;
 CIcons CMainWnd::m_SmallIcons;
 
-const UINT CMainWnd::m_ContextOrder[LFLastQueryContext+1] = {
+const BYTE CMainWnd::m_ContextOrder[LFLastQueryContext+1] = {
 	LFContextAllFiles, LFContextFavorites,
 	LFContextAudio, LFContextBooks, LFContextMovies, LFContextMusic, LFContextPictures, LFContextPodcasts, LFContextTVShows, LFContextVideos,
 	LFContextDocuments, LFContextMessages, LFContextApps, LFContextColorTables, LFContextContacts, LFContextFonts,
@@ -396,11 +396,11 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// Sidebar
 		if (m_wndSidebar.Create(this, m_LargeIcons, m_SmallIcons, IDB_CONTEXTS_16, 4, TRUE))
 		{
-			ASSERT((sizeof(m_ContextOrder)/sizeof(UINT))==LFLastQueryContext+1);
+			ASSERT((sizeof(m_ContextOrder)/sizeof(BYTE))==LFLastQueryContext+1);
 
 			for (UINT a=0; a<=LFLastQueryContext; a++)
 			{
-				const UINT Context = m_ContextOrder[a];
+				const ITEMCONTEXT Context = m_ContextOrder[a];
 
 				switch (Context)
 				{
@@ -581,6 +581,8 @@ void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)
 	BOOL bEnable = !m_IsClipboard;
 
 	const UINT Context = pCmdUI->m_nID-IDM_NAV_SWITCHCONTEXT;
+	ASSERT(Context<LFContextCount);
+
 	if ((Context!=LFContextAllFiles) && (Context!=LFContextFilters))
 		bEnable &= (m_Statistics.FileCount[Context]>0);
 
@@ -631,7 +633,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	if (!m_IsClipboard)
 	{
-		INT Context = m_wndMainView.GetContext();
+		ITEMCONTEXT Context = m_wndMainView.GetContext();
 		if ((Context>LFLastQueryContext) && m_pActiveFilter && m_pActiveFilter->IsSubfolder && m_pBreadcrumbBack)
 			Context = m_pBreadcrumbBack->pFilter->Result.Context;
 
@@ -700,6 +702,7 @@ void CMainWnd::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
 	const UINT Context = pTooltipData->Item-IDM_NAV_SWITCHCONTEXT;
+	ASSERT(Context<LFContextCount);
 
 	wcscpy_s(pTooltipData->Hint, 4096, theApp.m_Contexts[Context].Comment);
 

@@ -373,7 +373,7 @@ void CHeapfile::ZeroCopy(LPVOID pDst, const SIZE_T DstSize, LPCVOID pSrc, const 
 		ZeroMemory((LPBYTE)pDst+SrcSize, DstSize-SrcSize);
 }
 
-void CHeapfile::GetAttribute(LPVOID Ptr, SIZE_T Offset, UINT Attr, LFItemDescriptor* pItemDescriptor) const
+void CHeapfile::GetAttribute(LPVOID Ptr, SIZE_T Offset, ATTRIBUTE Attr, LFItemDescriptor* pItemDescriptor) const
 {
 	assert(Ptr);
 	assert(Attr<LFAttributeCount);

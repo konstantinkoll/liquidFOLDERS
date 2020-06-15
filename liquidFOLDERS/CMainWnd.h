@@ -99,7 +99,7 @@ private:
 	static BOOL CookSortDescending(const LFContextViewSettings* pContextViewSettings);
 	static BOOL CookGroupSingle(const LFContextViewSettings* pContextViewSettings);
 
-	static const UINT m_ContextOrder[LFLastQueryContext+1];
+	static const BYTE m_ContextOrder[LFLastQueryContext+1];
 	STOREID m_StatisticsID;
 	BOOL m_StatisticsResult;
 };
@@ -152,5 +152,5 @@ inline BOOL CMainWnd::CookGroupSingle(const LFContextViewSettings* pContextViewS
 	const LFAttributeDescriptor* pAttribute = &LFGetApp()->m_Attributes[pContextViewSettings->SortBy];
 
 	return ((pAttribute->AttrProperties.Type!=LFTypeTime) && (pContextViewSettings->SortBy!=LFAttrFileName)) ||
-		(pContextViewSettings->View==LFViewCalendar) || (pContextViewSettings->View==LFViewGlobe) || (pContextViewSettings->View==LFViewTagcloud);
+		(pContextViewSettings->View==LFViewGlobe) || (pContextViewSettings->View==LFViewTagcloud);
 }

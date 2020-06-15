@@ -11,8 +11,8 @@
 struct RegisteredFileFormat
 {
 	CHAR Format[8];
-	BYTE SystemContextID;
-	BYTE UserContextID;
+	ITEMCONTEXT SystemContextID;
+	ITEMCONTEXT UserContextID;
 };
 
 #pragma pack(pop)

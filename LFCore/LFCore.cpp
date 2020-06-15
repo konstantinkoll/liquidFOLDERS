@@ -457,7 +457,7 @@ LFCORE_API void LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID)
 	LoadString(LFCoreModuleHandle, IDS_ATTRCATEGORY_FIRST+ID, pStr, (INT)cCount);
 }
 
-LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID)
+LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, ATTRIBUTE ID)
 {
 	assert(ID<LFAttributeCount);
 	assert(LFItemColorCount<=8);
@@ -512,7 +512,13 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 	assert(!(AttrProperties[ID].DataFlags & LFDataAlwaysVisible) || TypeProperties[AttrProperties[ID].Type].DefaultColumnWidth);
 	assert((AttrProperties[ID].Type!=LFTypeUnicodeArray) || !AttrProperties[ID].DefaultIconID);
 	assert(AttrProperties[ID].DefaultPriority<=LFMinAttributePriority);
+
+	assert(!(AttrProperties[ID].DataFlags & LFDataTaxonomy) || !(TypeProperties[AttrProperties[ID].Type].DataFlags & LFDataTaxonomy));
 	assert(!(AttrProperties[ID].DataFlags & LFDataBucket) || !(TypeProperties[AttrProperties[ID].Type].DataFlags & LFDataBucket));
+	assert((AttrProperties[ID].DataFlags & LFDataBucket) || !(AttrProperties[ID].DataFlags & LFDataTaxonomy));
+	assert((TypeProperties[AttrProperties[ID].Type].DataFlags & LFDataBucket) || !(TypeProperties[AttrProperties[ID].Type].DataFlags & LFDataTaxonomy));
+	assert(!(AttrProperties[ID].DataFlags & LFDataTaxonomy) || (AttrProperties[ID].DataFlags & LFDataEditable));
+	assert((AttrProperties[ID].DataFlags & LFDataTaxonomy) || (TypeProperties[AttrProperties[ID].Type].DataFlags & LFDataTaxonomy) || !(AttrProperties[ID].DataFlags & LFDataTaxonomyPickGlobally));
 
 	assert((ID==LFAttrColor) || (AttrProperties[ID].Type!=LFTypeColor));
 
@@ -523,7 +529,7 @@ LFCORE_API void LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, U
 
 #ifdef _DEBUG
 	// The alternate sort attribute has to resolve to LFAttrFileName eventually
-	UINT Attr = ID;
+	ATTRIBUTE Attr = ID;
 	do
 	{
 		Attr = AttrProperties[Attr].AlternateSort;
@@ -552,7 +558,7 @@ LFCORE_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDesc
 	LoadTwoStrings(LFCoreModuleHandle, IDS_ITEMCATEGORY_FIRST+ID, ItemCategoryDescriptor.Caption, 256, ItemCategoryDescriptor.Hint, 256);
 }
 
-LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID)
+LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, ITEMCONTEXT ID)
 {
 	assert(ID<LFContextCount);
 
@@ -571,9 +577,9 @@ LFCORE_API void LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID
 	assert((CtxProperties[ID].AvailableAttributes | CtxProperties[ID].AdvertisedAttributes)==CtxProperties[ID].AvailableAttributes);
 
 #ifdef _DEBUG
-	for (UINT a=0; a<LFAttributeCount; a++)
-		if (((CtxProperties[ID].AvailableAttributes>>a) & 1) && ((ID<LFContextSubfolderDefault) || (TypeProperties[AttrProperties[a].Type].DataFlags & LFDataSortableInSubfolder)))
-			assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[a].Type].AllowedViews);
+	for (ATTRIBUTE Attr=0; Attr<LFAttributeCount; Attr++)
+		if (((CtxProperties[ID].AvailableAttributes>>Attr) & 1) && ((ID<LFContextSubfolderDefault) || (TypeProperties[AttrProperties[Attr].Type].DataFlags & LFDataSortableInSubfolder)))
+			assert(CtxProperties[ID].AvailableViews & TypeProperties[AttrProperties[Attr].Type].AllowedViews);
 #endif
 
 	assert((ID<=LFLastPersistentContext) || !CtxProperties[ID].SubfolderContext);
@@ -589,9 +595,9 @@ LFCORE_API void LFGetSortedAttributeList(LFAttributeList& AttributeList)
 	UINT Index = 0;
 
 	for (UINT Priority=0; Priority<=LFMinAttributePriority; Priority++)
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (AttrProperties[a].DefaultPriority==Priority)
-				AttributeList[Index++] = a;
+		for (ATTRIBUTE Attr=0; Attr<LFAttributeCount; Attr++)
+			if (AttrProperties[Attr].DefaultPriority==Priority)
+				AttributeList[Index++] = Attr;
 }
 
 

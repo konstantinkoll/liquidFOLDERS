@@ -14,7 +14,7 @@ extern WCHAR ItemColorNames[LFItemColorCount-1][256];
 // CCategorizer
 //
 
-CCategorizer::CCategorizer(UINT Attr)
+CCategorizer::CCategorizer(ATTRIBUTE Attr)
 {
 	m_Attr = Attr;
 }
@@ -306,7 +306,7 @@ void CChannelsCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFIt
 // CRatingCategorizer
 //
 
-CRatingCategorizer::CRatingCategorizer(UINT Attr)
+CRatingCategorizer::CRatingCategorizer(ATTRIBUTE Attr)
 	: CCategorizer(Attr)
 {
 }
@@ -343,7 +343,7 @@ void CRatingCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItem
 // CSizeCategorizer
 //
 
-CSizeCategorizer::CSizeCategorizer(UINT Attr)
+CSizeCategorizer::CSizeCategorizer(ATTRIBUTE Attr)
 	: CCategorizer(Attr)
 {
 }
@@ -376,7 +376,7 @@ void CSizeCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFItemDe
 // CDateCategorizer
 //
 
-CDateCategorizer::CDateCategorizer(UINT Attr)
+CDateCategorizer::CDateCategorizer(ATTRIBUTE Attr)
 	: CCategorizer(Attr)
 {
 }
@@ -425,7 +425,7 @@ void CDateCategorizer::GetFilterValue(LFVariantData& VData, LFItemDescriptor* pI
 // CDurationCategorizer
 //
 
-CDurationCategorizer::CDurationCategorizer(UINT Attr)
+CDurationCategorizer::CDurationCategorizer(ATTRIBUTE Attr)
 	: CCategorizer(Attr)
 {
 }
@@ -497,7 +497,7 @@ void CDurationCategorizer::CustomizeFolder(LFItemDescriptor* pFolder, const LFIt
 // CMegapixelCategorizer
 //
 
-CMegapixelCategorizer::CMegapixelCategorizer(UINT Attr)
+CMegapixelCategorizer::CMegapixelCategorizer(ATTRIBUTE Attr)
 	: CCategorizer(Attr)
 {
 }

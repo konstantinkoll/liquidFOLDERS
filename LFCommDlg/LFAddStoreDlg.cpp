@@ -149,10 +149,12 @@ END_MESSAGE_MAP()
 
 void LFAddStoreDlg::OnActivate(UINT nState, CWnd* /*pWndOther*/, BOOL /*bMinimized*/)
 {
-#ifndef _DEBUG
 	if (nState!=WA_INACTIVE)
+	{
+#ifndef _DEBUG
 		CheckSources();
 #endif
+	}
 }
 
 void LFAddStoreDlg::OnDrawButtonForeground(UINT /*nCtrlID*/, NMHDR* pNMHDR, LRESULT* pResult)

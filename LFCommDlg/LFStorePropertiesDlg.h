@@ -17,7 +17,7 @@
 struct UsageItemData
 {
 	ItemData Hdr;
-	UINT Context;
+	ITEMCONTEXT Context;
 	UINT FileCount;
 	INT64 FileSize;
 };
@@ -38,7 +38,7 @@ protected:
 
 private:
 	UsageItemData* GetUsageItemData(INT Index) const;
-	void AddContext(const LFStatistics& Statistics, UINT Context);
+	void AddContext(const LFStatistics& Statistics, ITEMCONTEXT Context);
 	static INT __stdcall CompareItems(UsageItemData* pData1, UsageItemData* pData2, const SortParameters& Parameters);
 
 	static CString m_OtherFiles;

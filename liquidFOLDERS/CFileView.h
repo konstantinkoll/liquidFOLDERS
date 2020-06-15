@@ -13,7 +13,7 @@
 
 struct LFContextViewSettings
 {
-	UINT SortBy;
+	ATTRIBUTE SortBy;
 	BOOL SortDescending;
 
 	UINT View;
@@ -98,7 +98,7 @@ public:
 	virtual void GetPersistentData(FVPersistentData& Data, BOOL ForReload=FALSE) const;
 	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 
-	void UpdateViewSettings(INT Context=-1, BOOL UpdateSearchResultPending=FALSE);
+	void UpdateViewSettings(ITEMCONTEXT Context, BOOL UpdateSearchResultPending=FALSE);
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	UINT GetSortAttribute() const;
 	const SendToItemData* GetSendToItemData(UINT nID) const;
@@ -134,13 +134,13 @@ protected:
 	afx_msg void OnDrawItem(INT nID, LPDRAWITEMSTRUCT lpdis);
 	DECLARE_MESSAGE_MAP()
 
-	INT m_Context;
+	ITEMCONTEXT m_Context;
 	LFContextViewSettings m_ContextViewSettings;
 	LFGlobalViewSettings m_GlobalViewSettings;
 	LFContextViewSettings* p_ContextViewSettings;
 	LFGlobalViewSettings* p_GlobalViewSettings;
 	LFFilter* p_Filter;
-	INT m_SubfolderAttribute;
+	SUBFOLDERATTRIBUTE m_SubfolderAttribute;
 	LFSearchResult* p_RawFiles;
 	BOOL m_HideFileExt;
 	static CIcons m_LargeColorDots;

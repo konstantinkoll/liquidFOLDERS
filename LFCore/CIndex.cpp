@@ -614,7 +614,7 @@ BOOL CIndex::ExistingFileID(const FILEID& FileID)
 	return Result;
 }
 
-void CIndex::UpdateUserContext(LFTransactionList* pTransactionList, BYTE UserContextID)
+void CIndex::UpdateUserContext(LFTransactionList* pTransactionList, ITEMCONTEXT UserContextID)
 {
 	assert(pTransactionList);
 

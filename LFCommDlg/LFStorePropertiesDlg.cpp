@@ -33,7 +33,7 @@ void CUsageList::AdjustLayout()
 
 // Item data
 
-void CUsageList::AddContext(const LFStatistics& Statistics, UINT Context)
+void CUsageList::AddContext(const LFStatistics& Statistics, ITEMCONTEXT Context)
 {
 	UsageItemData Data;
 
@@ -51,7 +51,7 @@ void CUsageList::SetUsage(LFStatistics Statistics)
 	// Add contexts
 	SetItemCount(LFLastPersistentContext+1, FALSE);
 
-	for (UINT a=1; a<=LFLastPersistentContext; a++)
+	for (BYTE a=1; a<=LFLastPersistentContext; a++)
 		if (Statistics.FileCount[a])
 		{
 			if (a!=LFContextFilters)

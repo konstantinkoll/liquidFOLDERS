@@ -98,7 +98,7 @@ void CConditionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT In
 	ASSERT(rectItem);
 
 	const LFFilterCondition* pFilterCondition = &(*p_Conditions)[Index];
-	const UINT Attr = pFilterCondition->VData.Attr;
+	const ATTRIBUTE Attr = pFilterCondition->VData.Attr;
 
 	WCHAR tmpStr[512];
 	wcscpy_s(tmpStr, 512, m_strCompare[pFilterCondition->Compare]);
@@ -226,7 +226,7 @@ void LFEditFilterDlg::OnSave()
 
 void LFEditFilterDlg::OnAddCondition()
 {
-	LFEditConditionDlg dlg(GetSelectedStore(), this);
+	LFEditConditionDlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
 		m_Conditions.AddItem(dlg.m_Condition);
@@ -242,7 +242,7 @@ void LFEditFilterDlg::OnEditCondition()
 	const INT Index = GetSelectedCondition();
 	if (Index!=-1)
 	{
-		LFEditConditionDlg dlg(GetSelectedStore(), this, &m_Conditions[Index]);
+		LFEditConditionDlg dlg(this, &m_Conditions[Index]);
 		if (dlg.DoModal()==IDOK)
 		{
 			m_Conditions[Index] = dlg.m_Condition;

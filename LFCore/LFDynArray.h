@@ -15,7 +15,7 @@ public:
 	BOOL AddItem(const T& Item);
 	BOOL InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE);
 	void DeleteItems(UINT Pos, UINT Count=1);
-	void SortItems(PFNCOMPARE zCompare, UINT Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
+	void SortItems(PFNCOMPARE zCompare, ATTRIBUTE Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
 
 	const T& operator[](const SIZE_T Index) const;
 	T& operator[](const SIZE_T Index);
@@ -119,7 +119,7 @@ void LFDynArray<T, FirstAlloc, SubsequentAlloc>::DeleteItems(UINT Pos, UINT Coun
 }
 
 template <typename T, UINT FirstAlloc, UINT SubsequentAlloc>
-void LFDynArray<T, FirstAlloc, SubsequentAlloc>::SortItems(PFNCOMPARE zCompare, UINT Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
+void LFDynArray<T, FirstAlloc, SubsequentAlloc>::SortItems(PFNCOMPARE zCompare, ATTRIBUTE Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
 {
 	LFSortMemory(m_Items, m_ItemCount, sizeof(T), zCompare, Attr, Descending, Parameter1, Parameter2);
 }

@@ -17,8 +17,8 @@ public:
 	virtual void PreSubclassWindow();
 
 	BOOL IsNullData() const;
-	void SetInitialData(const LFVariantData& VData, const STOREID& StoreID=DEFAULTSTOREID());
-	void SetAttribute(UINT Attr);
+	void SetInitialData(const LFVariantData& VData);
+	void SetAttribute(ATTRIBUTE Attr);
 
 	LFVariantData m_VData;
 
@@ -48,7 +48,6 @@ protected:
 	CProperty* m_pProperty;
 	CMFCMaskedEdit* m_pWndEdit;
 	CHoverButton m_wndButton;
-	STOREID m_StoreID;
 	INT m_ButtonWidth;
 };
 

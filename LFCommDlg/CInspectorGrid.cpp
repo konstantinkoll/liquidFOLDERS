@@ -4,9 +4,10 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
-#include "LFEditGenreDlg.h"
-#include "LFEditHashtagsDlg.h"
-#include "LFEditTimeDlg.h"
+#include "LFPickGenreDlg.h"
+#include "LFPickHashtagsDlg.h"
+#include "LFPickStringDlg.h"
+#include "LFPickTimeDlg.h"
 
 
 // CProperty
@@ -188,18 +189,24 @@ BOOL CProperty::OnClickValue(INT /*x*/) const
 	return TRUE;
 }
 
-void CProperty::OnClickButton(const STOREID& /*StoreID*/)
+void CProperty::OnClickButton(ITEMCONTEXT Context)
 {
+	ASSERT(p_VData->Type==LFTypeUnicodeString);
+
+	LFPickStringDlg dlg(p_VData->Attr, Context, m_Multiple ? _T("") : p_VData->UnicodeString, p_OwnerWnd);
+	if (dlg.DoModal()==IDOK)
+	{
+		wcsncpy_s(p_VData->UnicodeString, LFGetApp()->m_Attributes[p_VData->Attr].AttrProperties.cCharacters, dlg.m_UnicodeString, _TRUNCATE);
+		p_VData->IsNull = FALSE;
+
+		NotifyOwner();
+	}
+
 }
 
 BOOL CProperty::CanDelete() const
 {
 	return (p_VData->Attr!=LFAttrFileName) && (!LFIsNullVariantData(*p_VData) || m_Multiple);
-}
-
-BOOL CProperty::HasButton() const
-{
-	return FALSE;
 }
 
 BOOL CProperty::WantsChars() const
@@ -211,7 +218,7 @@ void CProperty::UpdateState(BOOL Multiple, const LFVariantData* pVDataRange)
 {
 	const UINT Type = p_VData->Type;
 
-	m_ShowRange = ((m_Multiple=Multiple)==TRUE) &&
+	m_ShowRange = ((m_Multiple=Multiple)==TRUE) && (LFCompareVariantData(*p_VData, *pVDataRange)!=0) &&
 		((p_VDataRange=pVDataRange)!=NULL) && !LFIsNullVariantData(*pVDataRange) &&
 		((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeYear) || (Type==LFTypeSize) || (Type==LFTypeDouble) || (Type==LFTypeTime) || (Type==LFTypeBitrate) || (Type==LFTypeDuration) || (Type==LFTypeMegapixel));
 
@@ -234,14 +241,9 @@ CPropertyHashtags::CPropertyHashtags(LFVariantData* pVData, CWnd* pOwnerWnd)
 	ASSERT(pVData->Type==LFTypeUnicodeArray);
 }
 
-BOOL CPropertyHashtags::HasButton() const
+void CPropertyHashtags::OnClickButton(ITEMCONTEXT Context)
 {
-	return TRUE;
-}
-
-void CPropertyHashtags::OnClickButton(const STOREID& StoreID)
-{
-	LFEditHashtagsDlg dlg(m_Multiple ? _T("") : p_VData->UnicodeArray, StoreID, p_OwnerWnd);
+	LFPickHashtagsDlg dlg(p_VData->Attr, Context, m_Multiple ? _T("") : p_VData->UnicodeArray, p_OwnerWnd);
 	if (dlg.DoModal()==IDOK)
 	{
 		WCHAR Buffer[4096];
@@ -275,11 +277,6 @@ CMFCMaskedEdit* CPropertyIATA::CreateEditControl(const CRect& rect) const
 	pWndEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
 
 	return pWndEdit;
-}
-
-BOOL CPropertyIATA::HasButton() const
-{
-	return TRUE;
 }
 
 void CPropertyIATA::OnSetString(CString& Value) const
@@ -338,9 +335,9 @@ void CPropertyIATA::OnSetString(CString& Value) const
 	NotifyOwner(Attr2, Attr3);
 }
 
-void CPropertyIATA::OnClickButton(const STOREID& /*StoreID*/)
+void CPropertyIATA::OnClickButton(ITEMCONTEXT /*Context*/)
 {
-	LFSelectPropertyIATADlg dlg(NULL, &p_VData->AnsiString[0], p_VDataLocationName!=NULL, p_VDataLocationGPS!=NULL);
+	LFSelectPropertyIATADlg dlg(p_OwnerWnd, &p_VData->AnsiString[0], p_VDataLocationName!=NULL, p_VDataLocationGPS!=NULL);
 	if ((dlg.DoModal()==IDOK) && dlg.p_Airport)
 	{
 		// IATA code
@@ -645,11 +642,6 @@ CPropertyGeoCoordinates::CPropertyGeoCoordinates(LFVariantData* pVData, CWnd* pO
 	ASSERT(pVData->Type==LFTypeGeoCoordinates);
 }
 
-BOOL CPropertyGeoCoordinates::HasButton() const
-{
-	return TRUE;
-}
-
 HCURSOR CPropertyGeoCoordinates::SetCursor(INT /*x*/) const
 {
 	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
@@ -660,7 +652,7 @@ BOOL CPropertyGeoCoordinates::OnClickValue(INT /*x*/) const
 	return FALSE;
 }
 
-void CPropertyGeoCoordinates::OnClickButton(const STOREID& /*StoreID*/)
+void CPropertyGeoCoordinates::OnClickButton(ITEMCONTEXT /*Context*/)
 {
 	LFSelectLocationGPSDlg dlg(p_VData->GeoCoordinates, p_OwnerWnd);
 	if (dlg.DoModal()==IDOK)
@@ -683,11 +675,6 @@ CPropertyTime::CPropertyTime(LFVariantData* pVData, CWnd* pOwnerWnd)
 	ASSERT(pVData->Type==LFTypeTime);
 }
 
-BOOL CPropertyTime::HasButton() const
-{
-	return TRUE;
-}
-
 HCURSOR CPropertyTime::SetCursor(INT /*x*/) const
 {
 	return LFGetApp()->LoadStandardCursor(IDC_ARROW);
@@ -698,9 +685,9 @@ BOOL CPropertyTime::OnClickValue(INT /*x*/) const
 	return FALSE;
 }
 
-void CPropertyTime::OnClickButton(const STOREID& /*StoreID*/)
+void CPropertyTime::OnClickButton(ITEMCONTEXT Context)
 {
-	if (LFEditTimeDlg(p_VData, p_OwnerWnd).DoModal()==IDOK)
+	if (LFPickTimeDlg(p_VData, Context, p_OwnerWnd).DoModal()==IDOK)
 		NotifyOwner();
 }
 
@@ -735,19 +722,14 @@ CPropertyGenre::CPropertyGenre(LFVariantData* pVData, CWnd* pOwnerWnd)
 	ASSERT(pVData->Type==LFTypeGenre);
 }
 
-BOOL CPropertyGenre::HasButton() const
-{
-	return TRUE;
-}
-
 BOOL CPropertyGenre::OnClickValue(INT /*x*/) const
 {
 	return FALSE;
 }
 
-void CPropertyGenre::OnClickButton(const STOREID& StoreID)
+void CPropertyGenre::OnClickButton(ITEMCONTEXT Context)
 {
-	LFEditGenreDlg dlg(m_Multiple ? 0 : p_VData->Genre, StoreID, p_OwnerWnd);
+	LFPickGenreDlg dlg(p_VData->Attr, Context, m_Multiple ? 0 : p_VData->Genre, p_OwnerWnd);
 	if (dlg.DoModal()==IDOK)
 	{
 		p_VData->UINT32 = dlg.m_Genre;
@@ -758,12 +740,56 @@ void CPropertyGenre::OnClickButton(const STOREID& StoreID)
 }
 
 
+// CAttributePickDlg
+//
+
+CAttributePickDlg::CAttributePickDlg(ATTRIBUTE Attr, ITEMCONTEXT Context, UINT nIDTemplate, CWnd* pParentWnd)
+	: LFDialog(nIDTemplate, pParentWnd)
+{
+	ASSERT(Attr<LFAttributeCount);
+	ASSERT(Context<LFContextCount);
+
+	m_Attr = Attr;
+	m_Context = Context;
+}
+
+BOOL CAttributePickDlg::InitDialog()
+{
+	// Caption
+	CString Caption;
+	GetWindowText(Caption);
+
+	if (Caption.IsEmpty())
+		SetWindowText(LFGetApp()->GetAttributeName(m_Attr, m_Context));
+
+	return TRUE;
+}
+
+LFSearchResult* CAttributePickDlg::RunQuery() const
+{
+	// Filter (slaves have to be included for tooltips)
+	LFFilter* pFilter = LFAllocFilter();
+	pFilter->Query.Context = LFGetApp()->IsAttributeTaxonomyPickGlobally(m_Attr) ? LFContextAllFiles : m_Context;
+
+	// Query
+	CWaitCursor WaitCursor;
+
+	LFSearchResult* pRawFiles = LFQuery(pFilter);
+	LFSearchResult* pCookedFiles = LFGroupSearchResult(pRawFiles, m_Attr, FALSE, TRUE, pFilter);
+
+	LFFreeFilter(pFilter);
+	LFFreeSearchResult(pRawFiles);
+
+	return pCookedFiles;
+}
+
+
 // CInspectorGrid
 //
 
-#define PADDINGX    (ITEMCELLPADDINGX/2)
-#define PADDINGY    ITEMCELLPADDINGY
-#define MARGIN      2
+#define PADDINGX     (ITEMCELLPADDINGX/2)
+#define PADDINGY     ITEMCELLPADDINGY
+#define MARGIN       2
 
 #define NOPART         0
 #define PARTLABEL      1
@@ -779,10 +805,10 @@ HICON CInspectorGrid::hIconResetPressed = NULL;
 CInspectorGrid::CInspectorGrid()
 	: CFrontstageItemView(FRONTSTAGE_COMPLEXBACKGROUND | FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLELABELEDIT | FRONTSTAGE_HIDESELECTIONONEDIT, sizeof(PropertyItemData))
 {
-	DEFAULTSTOREID(m_StoreID);
 	m_SortAlphabetic = m_PartPressed = FALSE;
 	m_pHeader = NULL;
-	m_IconSize = m_Context = m_ContextMenuID = 0;
+	m_IconSize = m_ContextMenuID = 0;
+	m_Context = 0;
 	m_HoverPart = NOPART;
 
 	// Item cateogries
@@ -893,7 +919,7 @@ INT CInspectorGrid::GetItemCategory(INT Index) const
 
 // Item data
 
-PropertyItemData* CInspectorGrid::GetPropertyItemDataForAttribute(UINT Attr) const
+PropertyItemData* CInspectorGrid::GetPropertyItemDataForAttribute(ATTRIBUTE Attr) const
 {
 	for (INT a=0; a<m_ItemCount; a++)
 	{
@@ -920,7 +946,7 @@ void CInspectorGrid::SetPropertyName(PropertyItemData& Data, LPCWSTR pszName)
 	Data.LabelWidth = LFGetApp()->m_DialogFont.GetTextExtent(CString(pszName)+_T(":")).cx;
 }
 
-void CInspectorGrid::SetContext(UINT Context)
+void CInspectorGrid::SetContext(ITEMCONTEXT Context)
 {
 	// Set new context
 	m_Context = Context;
@@ -957,6 +983,7 @@ void CInspectorGrid::AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT Ca
 void CInspectorGrid::AddAttributeProperties(LFVariantData* pVDataArray, SIZE_T ItemSize, UINT ItemCount)
 {
 	ASSERT(pVDataArray);
+	ASSERT(ItemSize>=sizeof(LFVariantData));
 	ASSERT(ItemCount>=LFAttributeCount);
 
 	SetItemCount(ItemCount, FALSE);
@@ -976,7 +1003,7 @@ void CInspectorGrid::AddAttributeProperties(LFVariantData* pVDataArray, SIZE_T I
 	((CPropertyIATA*)GetPropertyItemData(LFAttrLocationIATA)->pProperty)->SetAdditionalVData((LFVariantData*)(pVData+LFAttrLocationName*ItemSize), (LFVariantData*)(pVData+LFAttrLocationGPS*ItemSize));
 }
 
-void CInspectorGrid::UpdatePropertyState(UINT Attr, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pVDataRange)
+void CInspectorGrid::UpdatePropertyState(ATTRIBUTE Attr, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pVDataRange)
 {
 	DestroyEdit();
 
@@ -1041,13 +1068,25 @@ UINT CInspectorGrid::PartAtPosition(const CPoint& point, INT Index) const
 	const PropertyItemData* pData = GetPropertyItemData(Index);
 
 	// Label
-	CRect rectPart(pData->Hdr.Rect.left+PADDINGX, pData->Hdr.Rect.top, pData->Hdr.Rect.left+m_LabelWidth+PADDINGX, pData->Hdr.Rect.bottom);
+	CRect rectPart(pData->Hdr.Rect.left+PADDINGX, pData->Hdr.Rect.top-m_VScrollPos, pData->Hdr.Rect.left+m_LabelWidth+PADDINGX, pData->Hdr.Rect.bottom-m_VScrollPos);
 
 	if (rectPart.PtInRect(point))
 		return PARTLABEL;
 
 	rectPart.left = rectPart.right+2*PADDINGX;
 	rectPart.right = pData->Hdr.Rect.right;
+
+	// Edit button
+	if (pData->Editable && pData->pProperty->HasButton() && (!IsEditing() || (Index!=m_EditItem)))
+	{
+		CRect rectButton(rectPart);
+		rectPart.right = (rectButton.left=rectButton.right-rectButton.Height()-m_IconSize/2)-PADDINGX;
+
+		rectButton.DeflateRect(1, 1);
+
+		if (rectButton.PtInRect(point))
+			return PARTBUTTON;
+	}
 
 	// Reset button
 	if (pData->Editable && pData->pProperty->CanDelete())
@@ -1058,19 +1097,6 @@ UINT CInspectorGrid::PartAtPosition(const CPoint& point, INT Index) const
 			return PARTRESET;
 
 		rectPart.right -= m_IconSize+2*Offs+PADDINGX;
-	}
-
-	// Edit button
-	if (pData->Editable && pData->pProperty->HasButton() && (!IsEditing() || (Index!=m_EditItem)))
-	{
-		CRect rectButton(rectPart);
-		rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
-		rectButton.DeflateRect(1, 1);
-
-		if (rectButton.PtInRect(point))
-			return PARTBUTTON;
-
-		rectPart.right = rectButton.left-PADDINGX;
 	}
 
 	// Value
@@ -1119,7 +1145,7 @@ void CInspectorGrid::FireSelectedItem()
 	const PropertyItemData* pData = GetPropertyItemData(GetSelectedItem());
 
 	if (pData->Editable && pData->pProperty->HasButton())
-		pData->pProperty->OnClickButton(m_StoreID);
+		pData->pProperty->OnClickButton(m_Context);
 }
 
 void CInspectorGrid::DeleteSelectedItem()
@@ -1150,20 +1176,11 @@ void CInspectorGrid::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index,
 	rectPart.left = rectPart.right+2*PADDINGX;
 	rectPart.right = rectItem->right;
 
-	// Reset button
-	if (pData->Editable && pData->pProperty->CanDelete())
-	{
-		const INT Offs = (m_ItemHeight-m_IconSize)/2;
-		DrawIconEx(dc, rectPart.right-m_IconSize-Offs, rectPart.top+Offs, (Index==m_HoverItem) && (m_HoverPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : IsItemSelected(Index) ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
-
-		rectPart.right -= m_IconSize+2*Offs+PADDINGX;
-	}
-
 	// Edit button
 	if (pData->Editable && pData->pProperty->HasButton() && (!IsEditing() || (Index!=m_EditItem)))
 	{
 		CRect rectButton(rectPart);
-		rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
+		rectPart.right = (rectButton.left=rectButton.right-rectButton.Height()-m_IconSize/2)-PADDINGX;
 
 		if (!Themed)
 			rectButton.DeflateRect(1, 1);
@@ -1177,8 +1194,15 @@ void CInspectorGrid::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index,
 			rectButton.OffsetRect(1, 1);
 
 		dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+	}
 
-		rectPart.right = rectButton.left-PADDINGX;
+	// Reset button
+	if (pData->Editable && pData->pProperty->CanDelete())
+	{
+		const INT Offs = (m_ItemHeight-m_IconSize)/2;
+		DrawIconEx(dc, rectPart.right-m_IconSize-Offs, rectPart.top+Offs, (Index==m_HoverItem) && (m_HoverPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : IsItemSelected(Index) ? hIconResetSelected : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+
+		rectPart.right -= m_IconSize+2*Offs+PADDINGX;
 	}
 
 	// Value
@@ -1369,7 +1393,7 @@ void CInspectorGrid::OnLButtonUp(UINT nFlags, CPoint point)
 			{
 			case PARTBUTTON:
 				// Edit button
-				GetPropertyItemData(Index)->pProperty->OnClickButton(m_StoreID);
+				GetPropertyItemData(Index)->pProperty->OnClickButton(m_Context);
 				break;
 
 			case PARTRESET:

@@ -1,10 +1,11 @@
 
-// LFEditGenreDlg.h: Schnittstelle der Klasse LFEditGenreDlg
+// LFPickGenreDlg.h: Schnittstelle der Klasse LFPickGenreDlg
 //
 
 #pragma once
 #include "LFCore.h"
 #include "CFrontstageItemView.h"
+#include "CInspectorGrid.h"
 
 
 // CGenreList
@@ -15,7 +16,7 @@
 struct GenreItemData
 {
 	ItemData Hdr;
-	const LFMusicGenre* pMusicGenre;
+	LPCMUSICGENRE lpcMusicGenre;
 	UINT GenreID;
 	LPCWSTR pDescription;
 	UINT FileCount;
@@ -27,7 +28,7 @@ class CGenreList sealed : public CFrontstageItemView
 public:
 	CGenreList();
 
-	void SetGenres(const STOREID& StoreID);
+	void SetGenres(ATTRIBUTE Attr, LFSearchResult* pSearchResult);
 	void SelectGenre(UINT GenreID);
 	UINT GetSelectedGenre() const;
 
@@ -40,9 +41,7 @@ private:
 	void AddItemCategory(LPCMUSICGENRE lpcMusicGenre);
 	GenreItemData* GetGenreItemData(INT Index) const;
 	void AddMusicGenreCategory(UINT IconID);
-	void AddItem(const LFMusicGenre* pMusicGenre, UINT GenreID, BOOL FirstInCategory=TRUE);
-
-	INT m_FileCountWidth;
+	void AddItem(LPCMUSICGENRE lpcMusicGenre, UINT GenreID, BOOL FirstInCategory=TRUE);
 
 	WCHAR m_Description[GENREBUFFERSIZE][256];
 	UINT m_FileCount[GENREBUFFERSIZE];
@@ -59,13 +58,13 @@ inline void CGenreList::AddItemCategory(LPCMUSICGENRE lpcMusicGenre)
 }
 
 
-// LFEditGenreDlg
+// LFPickGenreDlg
 //
 
-class LFEditGenreDlg : public LFDialog
+class LFPickGenreDlg : public CAttributePickDlg
 {
 public:
-	LFEditGenreDlg(UINT Genre, const STOREID& StoreID, CWnd* pParentWnd=NULL);
+	LFPickGenreDlg(ATTRIBUTE Attr, ITEMCONTEXT Context, UINT Genre, CWnd* pParentWnd=NULL);
 
 	UINT m_Genre;
 
@@ -80,6 +79,5 @@ protected:
 	CGenreList m_wndGenreList;
 
 private:
-	STOREID m_StoreID;
 	BOOL m_SelectGenre;
 };

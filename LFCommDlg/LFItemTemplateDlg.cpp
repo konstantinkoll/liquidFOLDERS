@@ -125,7 +125,6 @@ BOOL LFItemTemplateDlg::InitDialog()
 	// Inspector
 	m_wndInspectorGrid.Create(this, IDC_INSPECTOR, IDM_ITEMTEMPLATE);
 
-	m_wndInspectorGrid.SetStore(m_StoreID);
 	m_wndInspectorGrid.AddAttributeProperties(m_AttributeValues);
 	m_wndInspectorGrid.SetFocus();
 
@@ -174,7 +173,7 @@ void LFItemTemplateDlg::OnChooseStore()
 	LFChooseStoreDlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
-		m_wndInspectorGrid.SetStore(m_StoreID=dlg.m_StoreID);
+		m_StoreID = dlg.m_StoreID;
 
 		OnStoresChanged(NULL, NULL);
 	}

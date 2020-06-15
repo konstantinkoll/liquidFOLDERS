@@ -67,7 +67,7 @@ public:
 	void ResolveLocations(LFTransactionList* pTransactionList);
 	void SendTo(LFTransactionList* pTransactionList, const STOREID& StoreID, LFProgress* pProgress=NULL);
 	BOOL ExistingFileID(const FILEID& FileID);
-	void UpdateUserContext(LFTransactionList* pTransactionList, BYTE UserContextID);
+	void UpdateUserContext(LFTransactionList* pTransactionList, ITEMCONTEXT UserContextID);
 	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew);
 	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags);
 

@@ -19,7 +19,7 @@ extern CHAR DefaultStore[LFKeySize];
 // Dynamic attribute handling
 //
 
-inline BOOL IsStaticAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr)
+inline BOOL IsStaticAttribute(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -27,7 +27,7 @@ inline BOOL IsStaticAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr
 	return (pItemDescriptor->AttributeValues[Attr]>=(LPBYTE)pItemDescriptor) && (pItemDescriptor->AttributeValues[Attr]<(LPBYTE)pItemDescriptor+sizeof(LFItemDescriptor));
 }
 
-void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
+void FreeAttribute(LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -40,7 +40,7 @@ void FreeAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr)
 	}
 }
 
-SIZE_T GetAttributeSize(UINT Attr, LPCVOID pValue)
+SIZE_T GetAttributeSize(ATTRIBUTE Attr, LPCVOID pValue)
 {
 	assert(Attr<LFAttributeCount);
 	assert(AttrProperties[Attr].Type<LFTypeCount);
@@ -60,7 +60,7 @@ SIZE_T GetAttributeSize(UINT Attr, LPCVOID pValue)
 	}
 }
 
-void SetAttribute(LFItemDescriptor* pItemDescriptor, UINT Attr, LPCVOID pValue)
+void SetAttribute(LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr, LPCVOID pValue)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -118,7 +118,7 @@ UINT GetColoredFolderIcon(const LFFileSummary& FileSummary)
 	return IDI_FLD_DEFAULT+IconColorIndex;
 }
 
-UINT GetAttributeIcon(UINT Attr, const LFFileSummary& FileSummary)
+UINT GetAttributeIcon(ATTRIBUTE Attr, const LFFileSummary& FileSummary)
 {
 	assert(Attr<LFAttributeCount);
 

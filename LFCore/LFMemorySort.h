@@ -1,6 +1,7 @@
 
 #pragma once
 #include <assert.h>
+#include "LF.h"
 
 struct SortParameters;
 
@@ -13,7 +14,7 @@ struct SortParameters
 	UINT ItemCount;
 	SIZE_T szData;
 	PFNCOMPARE zCompare;
-	UINT Attr;
+	ATTRIBUTE Attr;
 	BOOL Descending;
 	BOOL Parameter1;
 	BOOL Parameter2;

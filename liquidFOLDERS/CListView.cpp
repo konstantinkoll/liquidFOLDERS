@@ -40,10 +40,10 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 	CFileView::SetSearchResult(pFilter, pRawFiles, pCookedFiles, pPersistentData);
 
 	// Switch to alternate sort attribute if neccessary
-	while (!theApp.IsAttributeSortable(m_Context, m_ContextViewSettings.SortBy, m_SubfolderAttribute) || ((INT)m_ContextViewSettings.SortBy==m_SubfolderAttribute))
+	while (!theApp.IsAttributeSortable(m_ContextViewSettings.SortBy, m_Context, m_SubfolderAttribute) || ((SUBFOLDERATTRIBUTE)m_ContextViewSettings.SortBy==m_SubfolderAttribute))
 	{
 		m_ContextViewSettings.SortBy = (UINT)theApp.m_Attributes[m_ContextViewSettings.SortBy].AttrProperties.AlternateSort;
-		m_ContextViewSettings.SortDescending = theApp.IsAttributeSortDescending(m_Context, m_ContextViewSettings.SortBy);
+		m_ContextViewSettings.SortDescending = theApp.IsAttributeSortDescending(m_ContextViewSettings.SortBy, m_Context);
 	}
 
 	// Group search result
@@ -55,11 +55,11 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 		ValidateAllItems();
 
 		// Attribute and icon
-		const UINT Attr = m_ContextViewSettings.SortBy;
+		const ATTRIBUTE Attr = m_ContextViewSettings.SortBy;
 		const UINT Icon = theApp.GetAttributeIcon(Attr, pCookedFiles->m_Context);
 
 		// Folders
-		m_HasFolders = ((INT)Attr!=m_SubfolderAttribute) && (Icon || theApp.IsAttributeBucket(Attr));
+		m_HasFolders = ((SUBFOLDERATTRIBUTE)Attr!=m_SubfolderAttribute) && (Icon || theApp.IsAttributeBucket(Attr));
 
 		if (LFGetSubfolderAttribute(pFilter)==Attr)
 			m_HasFolders = FALSE;
@@ -67,7 +67,7 @@ void CListView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LF
 		// Preview attribute
 		m_PreviewAttribute = m_HasFolders &&
 			!theApp.ShowRepresentativeThumbnail(m_SubfolderAttribute, m_Context) &&
-			(Icon || theApp.ShowRepresentativeThumbnail(Attr, pCookedFiles->m_Context)) ? Attr : -1;
+			(Icon || theApp.ShowRepresentativeThumbnail(Attr, pCookedFiles->m_Context)) ? (SUBFOLDERATTRIBUTE)Attr : -1;
 
 		// Prepare search result
 		if (m_HasFolders)
@@ -112,33 +112,33 @@ void CListView::GetHeaderContextMenu(CMenu& Menu)
 	Menu.LoadMenu(IDM_LIST);
 
 	for (INT a=LFAttributeCount-1; a>=0; a--)
-		if (theApp.IsAttributeAdvertised(m_Context, a) && theApp.m_Attributes[a].TypeProperties.DefaultColumnWidth)
+		if (theApp.IsAttributeAdvertised(a, m_Context) && theApp.m_Attributes[a].TypeProperties.DefaultColumnWidth)
 			Menu.InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_LIST_TOGGLEATTRIBUTE+a, theApp.GetAttributeName(a, m_Context));
 }
 
-BOOL CListView::AllowHeaderColumnDrag(UINT Attr) const
+BOOL CListView::AllowHeaderColumnDrag(ATTRIBUTE Attr) const
 {
 	return
 		(m_ContextViewSettings.ColumnWidth[Attr]!=0) &&							// Visible column
 		(theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth!=0) &&		// Visible attribute
-		((INT)Attr!=m_PreviewAttribute);										// Not preview attribute
+		((SUBFOLDERATTRIBUTE)Attr!=m_PreviewAttribute);										// Not preview attribute
 }
 
-BOOL CListView::AllowHeaderColumnTrack(UINT Attr) const
+BOOL CListView::AllowHeaderColumnTrack(ATTRIBUTE Attr) const
 {
 	return
 		AllowHeaderColumnDrag(Attr) &&
 		(theApp.m_Attributes[Attr].AttrProperties.Type!=LFTypeRating);			// Variable width
 }
 
-void CListView::UpdateHeaderColumnOrder(UINT Attr, INT Position)
+void CListView::UpdateHeaderColumnOrder(ATTRIBUTE Attr, INT Position)
 {
 	CFileView::UpdateHeaderColumnOrder(Attr, Position, p_ContextViewSettings->ColumnOrder, p_ContextViewSettings->ColumnWidth);
 
 	theApp.UpdateViewSettings(m_Context, LFViewList);
 }
 
-void CListView::UpdateHeaderColumnWidth(UINT Attr, INT Width)
+void CListView::UpdateHeaderColumnWidth(ATTRIBUTE Attr, INT Width)
 {
 	if (!theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth)
 	{
@@ -158,10 +158,10 @@ void CListView::UpdateHeaderColumnWidth(UINT Attr, INT Width)
 	}
 }
 
-void CListView::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
+void CListView::UpdateHeaderColumn(ATTRIBUTE Attr, HDITEM& HeaderItem) const
 {
 	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT | HDI_TEXT;
-	HeaderItem.cxy = ((INT)Attr==m_PreviewAttribute) ? PREVIEWWIDTH : ((INT)Attr==m_SubfolderAttribute) ? 0 : m_ContextViewSettings.ColumnWidth[Attr];
+	HeaderItem.cxy = ((SUBFOLDERATTRIBUTE)Attr==m_PreviewAttribute) ? PREVIEWWIDTH : ((SUBFOLDERATTRIBUTE)Attr==m_SubfolderAttribute) ? 0 : m_ContextViewSettings.ColumnWidth[Attr];
 	HeaderItem.fmt = HDF_STRING | (theApp.IsAttributeFormatRight(Attr) ? HDF_RIGHT : HDF_LEFT);
 	HeaderItem.pszText = (LPWSTR)theApp.GetAttributeName(Attr, m_Context);
 
@@ -186,10 +186,10 @@ void CListView::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
 	}
 }
 
-void CListView::HeaderColumnClicked(UINT Attr)
+void CListView::HeaderColumnClicked(ATTRIBUTE Attr)
 {
-	if (theApp.IsAttributeSortable(m_Context, Attr, m_SubfolderAttribute))
-		theApp.SetContextSort(m_Context, Attr, m_ContextViewSettings.SortBy==Attr ? !m_ContextViewSettings.SortDescending : theApp.IsAttributeSortDescending(m_Context, Attr), FALSE);
+	if (theApp.IsAttributeSortable(Attr, m_Context, m_SubfolderAttribute))
+		theApp.SetContextSort(m_Context, Attr, m_ContextViewSettings.SortBy==Attr ? !m_ContextViewSettings.SortDescending : theApp.IsAttributeSortDescending(Attr, m_Context), FALSE);
 }
 
 void CListView::AdjustLayout()
@@ -217,7 +217,7 @@ void CListView::AdjustLayout()
 	m_ScrollWidth = 0;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if ((INT)a!=m_PreviewAttribute)
+		if ((SUBFOLDERATTRIBUTE)a!=m_PreviewAttribute)
 			m_ScrollWidth += m_ContextViewSettings.ColumnWidth[a];
 
 	// Folders
@@ -371,7 +371,7 @@ void CListView::DrawFolder(CDC& dc, Graphics& g, CRect& rect, INT Index, BOOL Th
 	}
 }
 
-void CListView::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed)
+void CListView::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, ATTRIBUTE Attr, BOOL Themed)
 {
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
@@ -495,12 +495,12 @@ RECT CListView::GetLabelRect() const
 	// Find file name column
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		const UINT Attr = m_ContextViewSettings.ColumnOrder[a];
+		const ATTRIBUTE Attr = m_ContextViewSettings.ColumnOrder[a];
 
 		if (Attr==LFAttrFileName)
 			break;
 
-		if ((INT)Attr!=m_PreviewAttribute)
+		if ((SUBFOLDERATTRIBUTE)Attr!=m_PreviewAttribute)
 			rect.left += m_ContextViewSettings.ColumnWidth[Attr];
 	}
 
@@ -514,7 +514,7 @@ RECT CListView::GetLabelRect() const
 
 // Column handling
 
-INT CListView::GetMaxAttributeWidth(UINT Attr) const
+INT CListView::GetMaxAttributeWidth(ATTRIBUTE Attr) const
 {
 	ASSERT(Attr<LFAttributeCount);
 
@@ -527,7 +527,7 @@ INT CListView::GetMaxAttributeWidth(UINT Attr) const
 		return RATINGBITMAPWIDTH+ITEMCELLSPACER;
 
 	// Preview
-	if ((INT)Attr==m_PreviewAttribute)
+	if ((SUBFOLDERATTRIBUTE)Attr==m_PreviewAttribute)
 		return PREVIEWWIDTH;
 
 	// Calculate width
@@ -579,7 +579,7 @@ INT CListView::GetMaxAttributeWidth(UINT Attr) const
 	return max(Width, GetMinColumnWidth(Attr));
 }
 
-void CListView::AutosizeColumn(UINT Attr)
+void CListView::AutosizeColumn(ATTRIBUTE Attr)
 {
 	ASSERT(Attr<LFAttributeCount);
 
@@ -628,7 +628,7 @@ void CListView::OnDestroy()
 
 void CListView::OnToggleAttribute(UINT nID)
 {
-	const UINT Attr = nID-IDM_LIST_TOGGLEATTRIBUTE;
+	const ATTRIBUTE Attr = nID-IDM_LIST_TOGGLEATTRIBUTE;
 	ASSERT(Attr<LFAttributeCount);
 
 	p_ContextViewSettings->ColumnWidth[Attr] = p_ContextViewSettings->ColumnWidth[Attr] ? 0 : theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
@@ -638,11 +638,11 @@ void CListView::OnToggleAttribute(UINT nID)
 
 void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
 {
-	const UINT Attr = pCmdUI->m_nID-IDM_LIST_TOGGLEATTRIBUTE;
+	const ATTRIBUTE Attr = pCmdUI->m_nID-IDM_LIST_TOGGLEATTRIBUTE;
 	ASSERT(Attr<LFAttributeCount);
 
 	pCmdUI->SetCheck(p_ContextViewSettings->ColumnWidth[Attr]);
-	pCmdUI->Enable(!theApp.IsAttributeAlwaysVisible(Attr) && ((INT)Attr!=m_PreviewAttribute) && ((INT)Attr!=m_SubfolderAttribute));
+	pCmdUI->Enable(!theApp.IsAttributeAlwaysVisible(Attr) && ((SUBFOLDERATTRIBUTE)Attr!=m_PreviewAttribute) && ((SUBFOLDERATTRIBUTE)Attr!=m_SubfolderAttribute));
 }
 
 
@@ -651,7 +651,7 @@ void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
 void CListView::OnAutosizeAll()
 {
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (m_ContextViewSettings.ColumnWidth[a] && ((INT)a!=m_PreviewAttribute))
+		if (m_ContextViewSettings.ColumnWidth[a] && ((SUBFOLDERATTRIBUTE)a!=m_PreviewAttribute))
 			AutosizeColumn(a);
 
 	AdjustLayout();

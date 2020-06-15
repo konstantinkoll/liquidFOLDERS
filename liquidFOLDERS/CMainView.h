@@ -26,7 +26,7 @@ public:
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData=NULL, BOOL UpdateSelection=TRUE);
 	BOOL StoreIDValid() const;
 	STOREID GetStoreID() const;
-	INT GetContext() const;
+	BYTE GetContext() const;
 	INT GetViewID() const;
 	void DismissNotification();
 	void ShowNotification(UINT Type, const CString& Message, UINT Command=0);
@@ -139,7 +139,7 @@ protected:
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	STOREID m_StoreID;
-	INT m_Context;
+	ITEMCONTEXT m_Context;
 	INT m_ViewID;
 	BOOL m_StoreIDValid;
 	BOOL m_IsClipboard;
@@ -169,7 +169,7 @@ inline STOREID CMainView::GetStoreID() const
 	return m_StoreID;
 }
 
-inline INT CMainView::GetContext() const
+inline BYTE CMainView::GetContext() const
 {
 	return m_Context;
 }

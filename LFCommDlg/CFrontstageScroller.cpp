@@ -150,7 +150,7 @@ void CFrontstageScroller::SetFixedColumnWidths(INT* pColumnOrder, INT* pColumnWi
 	}
 }
 
-void CFrontstageScroller::UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths)
+void CFrontstageScroller::UpdateHeaderColumnOrder(ATTRIBUTE Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths)
 {
 	ASSERT(HasHeader());
 	ASSERT(pColumnOrder);

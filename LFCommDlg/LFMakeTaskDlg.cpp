@@ -11,7 +11,7 @@
 //
 
 LFMakeTaskDlg::LFMakeTaskDlg(LFVariantData* pVDataPriority, LFVariantData* pVDataDueTime, CWnd* pParentWnd)
-	: LFEditTimeDlg(pVDataDueTime, pParentWnd, IDD_MAKETASK, FALSE, FALSE)
+	: LFPickTimeDlg(pVDataDueTime, LFContextTasks, pParentWnd, IDD_MAKETASK, FALSE, FALSE)
 {
 	ASSERT(pVDataPriority);
 
@@ -20,7 +20,7 @@ LFMakeTaskDlg::LFMakeTaskDlg(LFVariantData* pVDataPriority, LFVariantData* pVDat
 
 void LFMakeTaskDlg::DoDataExchange(CDataExchange* pDX)
 {
-	LFEditTimeDlg::DoDataExchange(pDX);
+	LFPickTimeDlg::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_PRIORITY, m_wndPriority);
 
@@ -30,9 +30,9 @@ void LFMakeTaskDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL LFMakeTaskDlg::InitDialog()
 {
-	LFEditTimeDlg::InitDialog();
+	LFPickTimeDlg::InitDialog();
 
-	// Size
+	// Priority control
 	CRect rectCalendar;
 	m_wndCalendar.GetWindowRect(rectCalendar);
 
@@ -40,14 +40,13 @@ BOOL LFMakeTaskDlg::InitDialog()
 	m_wndPriority.GetWindowRect(rect);
 	m_wndPriority.SetWindowPos(NULL, 0, 0, rectCalendar.Width(), rect.Height(), SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
-	// Data
 	m_wndPriority.SetInitialData(*p_VDataPriority);
 
 	return TRUE;
 }
 
 
-BEGIN_MESSAGE_MAP(LFMakeTaskDlg, LFEditTimeDlg)
+BEGIN_MESSAGE_MAP(LFMakeTaskDlg, LFPickTimeDlg)
 	ON_BN_CLICKED(IDC_USEDATE, OnUseDate)
 END_MESSAGE_MAP()
 

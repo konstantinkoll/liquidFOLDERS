@@ -59,7 +59,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		const UINT Attr = theApp.m_SortedAttributeList[a];
+		const ATTRIBUTE Attr = theApp.m_SortedAttributeList[a];
 
 		if (theApp.m_Attributes[Attr].AttrProperties.DefaultPriority==LFMinAttributePriority)
 			break;
@@ -107,7 +107,7 @@ void CDetailsView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, B
 			}
 		}
 		else
-			if (theApp.IsAttributeAvailable(m_Context, Attr))
+			if (theApp.IsAttributeAvailable(Attr, m_Context))
 			{
 				// Other properties
 				theApp.AttributeToString(Name, Value, pItemDescriptor, Attr);

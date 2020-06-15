@@ -10,11 +10,9 @@
 // LFEditConditionDlg
 //
 
-LFEditConditionDlg::LFEditConditionDlg(const STOREID& StoreID, CWnd* pParentWnd, LFFilterCondition* pCondition)
+LFEditConditionDlg::LFEditConditionDlg(CWnd* pParentWnd, LFFilterCondition* pCondition)
 	: LFAttributeListDlg(IDD_EDITCONDITION, pParentWnd)
 {
-	m_StoreID = StoreID;
-
 	if (pCondition)
 	{
 		m_Condition = *pCondition;
@@ -41,7 +39,7 @@ void LFEditConditionDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFEditConditionDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
+void LFEditConditionDlg::TestAttribute(ATTRIBUTE Attr, BOOL& Add, BOOL& Check)
 {
 	Add = (LFGetApp()->m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 	Check = FALSE;
@@ -52,7 +50,7 @@ BOOL LFEditConditionDlg::InitDialog()
 	LFAttributeListDlg::InitDialog();
 
 	// Bedingung
-	m_wndEdit.SetInitialData(m_Condition.VData, m_StoreID);
+	m_wndEdit.SetInitialData(m_Condition.VData);
 
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.VData.Attr);
@@ -75,7 +73,7 @@ void LFEditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		const INT Index = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
 		if (Index!=-1)
 		{
-			const UINT Attr = (UINT)m_wndAttribute.GetItemData(Index);
+			const ATTRIBUTE Attr = (UINT)m_wndAttribute.GetItemData(Index);
 
 			SetCompareComboBox(&m_wndCompare, Attr, m_Condition.Compare);
 			m_wndEdit.SetAttribute(Attr);

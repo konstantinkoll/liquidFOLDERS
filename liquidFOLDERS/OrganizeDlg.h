@@ -12,11 +12,11 @@
 class OrganizeDlg : public LFAttributeListDlg
 {
 public:
-	OrganizeDlg(CWnd* pParentWnd=NULL, UINT Context=LFContextAllFiles);
+	OrganizeDlg(CWnd* pParentWnd=NULL, ITEMCONTEXT Context=LFContextAllFiles);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
+	virtual void TestAttribute(ATTRIBUTE Attr, BOOL& Add, BOOL& Check);
 	virtual BOOL InitDialog();
 
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);

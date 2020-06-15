@@ -327,7 +327,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 144, "AEK", "", "Aseki", { 7.350000, 146.183056 } },
 	{ 213, "AEL", "", "Albert Lea", { -43.681667, -93.367222 } },
 	{ 126, "AEO", "", "Aioun el Atrouss", { -16.711389, -9.637778 } },
-	{   6, "AEP", "BUE", "Buenos Aires (Jorge Newbery)", { 34.559167, -58.415556 } },
+	{   6, "AEP", "BUE", "Buenos Aires (Aeroparque Jorge Newbery)", { 34.559167, -58.415556 } },
 	{ 164, "AER", "", "Adler/Sochi", { -43.450000, 39.956667 } },
 	{ 150, "AES", "", "Ålesund", { -62.560278, 6.110278 } },
 	{ 213, "AET", "", "Allakaket", { -66.551944, -152.622222 } },

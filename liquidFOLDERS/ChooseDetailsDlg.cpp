@@ -9,7 +9,7 @@
 // ChooseDetailsDlg
 //
 
-ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, UINT Context)
+ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, ITEMCONTEXT Context)
 	: LFAttributeListDlg(IDD_CHOOSEDETAILS, pParentWnd, Context)
 {
 	p_ContextViewSettings = &theApp.m_ContextViewSettings[Context];
@@ -32,7 +32,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
 		{
-			const UINT Attr = (UINT)m_wndAttributes.GetItemData(a);
+			const ATTRIBUTE Attr = (UINT)m_wndAttributes.GetItemData(a);
 
 			if (m_wndAttributes.GetCheck(a) || theApp.IsAttributeAlwaysVisible(Attr))
 			{
@@ -52,9 +52,9 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void ChooseDetailsDlg::TestAttribute(UINT Attr, BOOL& Add, BOOL& Check)
+void ChooseDetailsDlg::TestAttribute(ATTRIBUTE Attr, BOOL& Add, BOOL& Check)
 {
-	Add = theApp.IsAttributeAvailable(m_Context, Attr) && theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
+	Add = theApp.IsAttributeAvailable(Attr, m_Context) && theApp.m_Attributes[Attr].TypeProperties.DefaultColumnWidth;
 	Check = p_ContextViewSettings->ColumnWidth[Attr];
 }
 

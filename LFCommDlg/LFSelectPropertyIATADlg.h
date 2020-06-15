@@ -13,7 +13,7 @@
 class LFSelectPropertyIATADlg : public LFSelectLocationIATADlg
 {
 public:
-	LFSelectPropertyIATADlg(CWnd* pParentWnd=NULL, const LPCSTR pAirport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
+	LFSelectPropertyIATADlg(CWnd* pParentWnd=NULL, const LPCSTR lpcAirport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
 
 	BOOL m_OverwriteName;
 	BOOL m_OverwriteGPS;

@@ -5,6 +5,7 @@
 #pragma once
 #include "LFCore.h"
 #include "CIcons.h"
+#include "LFDialog.h"
 
 
 // CProperty
@@ -22,11 +23,10 @@ public:
 	virtual HCURSOR SetCursor(INT x) const;
 	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect) const;
 	virtual BOOL CanDelete() const;
-	virtual BOOL HasButton() const;
 	virtual BOOL WantsChars() const;
 	virtual void OnSetString(CString& Value) const;
 	virtual BOOL OnClickValue(INT x) const;
-	virtual void OnClickButton(const STOREID& StoreID=DEFAULTSTOREID());
+	virtual void OnClickButton(ITEMCONTEXT Context=LFContextAllFiles);
 	virtual BOOL OnPushChar(UINT nChar) const;
 
 	static CProperty* CreateProperty(LFVariantData* pVData, CWnd* pOwnerWnd);
@@ -34,6 +34,7 @@ public:
 	void UpdateState(BOOL Multiple, const LFVariantData* pVDataRange=NULL);
 	LFVariantData* GetVData() const;
 	BOOL HasMultipleValues() const;
+	BOOL HasButton() const;
 	void SetModified();
 
 	static CString m_MultipleValues;
@@ -59,6 +60,11 @@ inline BOOL CProperty::HasMultipleValues() const
 	return m_Multiple;
 }
 
+inline BOOL CProperty::HasButton() const
+{
+	return ((LFApplication*)AfxGetApp())->IsAttributeTaxonomy(p_VData->Attr);
+}
+
 inline void CProperty::SetModified()
 {
 	m_Modified = TRUE;
@@ -81,8 +87,7 @@ class CPropertyHashtags : public CProperty
 public:
 	CPropertyHashtags(LFVariantData* pVData, CWnd* pOwnerWnd);
 
-	virtual BOOL HasButton() const;
-	virtual void OnClickButton(const STOREID& StoreID=DEFAULTSTOREID());
+	virtual void OnClickButton(ITEMCONTEXT Context=LFContextAllFiles);
 };
 
 
@@ -97,9 +102,8 @@ public:
 	CPropertyIATA(LFVariantData* pVData, CWnd* pOwnerWnd);
 
 	virtual CMFCMaskedEdit* CreateEditControl(const CRect& rect) const;
-	virtual BOOL HasButton() const;
 	virtual void OnSetString(CString& Value) const;
-	virtual void OnClickButton(const STOREID& StoreID=DEFAULTSTOREID());
+	virtual void OnClickButton(ITEMCONTEXT Context=LFContextAllFiles);
 
 protected:
 	LFVariantData* p_VDataLocationName;
@@ -188,10 +192,9 @@ class CPropertyGeoCoordinates : public CProperty
 public:
 	CPropertyGeoCoordinates(LFVariantData* pVData, CWnd* pOwnerWnd);
 
-	virtual BOOL HasButton() const;
 	virtual HCURSOR SetCursor(INT x) const;
 	virtual BOOL OnClickValue(INT x) const;
-	virtual void OnClickButton(const STOREID& StoreID=DEFAULTSTOREID());
+	virtual void OnClickButton(ITEMCONTEXT Context=LFContextAllFiles);
 };
 
 
@@ -203,10 +206,9 @@ class CPropertyTime : public CProperty
 public:
 	CPropertyTime(LFVariantData* pVData, CWnd* pOwnerWnd);
 
-	virtual BOOL HasButton() const;
 	virtual HCURSOR SetCursor(INT x) const;
 	virtual BOOL OnClickValue(INT x) const;
-	virtual void OnClickButton(const STOREID& StoreID=DEFAULTSTOREID());
+	virtual void OnClickButton(ITEMCONTEXT Context=LFContextAllFiles);
 };
 
 
@@ -230,9 +232,8 @@ class CPropertyGenre : public CProperty
 public:
 	CPropertyGenre(LFVariantData* pVData, CWnd* pOwnerWnd);
 
-virtual BOOL HasButton() const;
 	virtual BOOL OnClickValue(INT x) const;
-	virtual void OnClickButton(const STOREID& StoreID=DEFAULTSTOREID());
+	virtual void OnClickButton(ITEMCONTEXT Context=LFContextAllFiles);
 };
 
 
@@ -247,6 +248,26 @@ public:
 };
 
 
+// CAttributePickDlg
+//
+
+class CAttributePickDlg : public LFDialog
+{
+public:
+	CAttributePickDlg(ATTRIBUTE Attr, ITEMCONTEXT Context, UINT nIDTemplate, CWnd* pParentWnd=NULL);
+
+protected:
+	virtual BOOL InitDialog();
+
+	LFSearchResult* RunQuery() const;
+
+	ATTRIBUTE m_Attr;
+
+private:
+	ITEMCONTEXT m_Context;
+};
+
+
 // CInspectorGrid
 //
 
@@ -254,7 +275,7 @@ struct PropertyItemData
 {
 	ItemData Hdr;
 	CProperty* pProperty;
-	UINT Attr;
+	ATTRIBUTE Attr;
 	UINT CategoryID;
 	WCHAR Name[LFAttributeNameSize];
 	INT LabelWidth;
@@ -273,11 +294,10 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pOwnerWnd, UINT nID, UINT ContextMenuID, CInspectorHeader* pHeader=NULL);
-	void SetContext(UINT Context);
-	void SetStore(const STOREID& StoreID);
+	void SetContext(ITEMCONTEXT Context);
 	void AddProperty(LFVariantData* pVData, LPCWSTR pszName, UINT CategoryID=LFAttrCategoryInternal, BOOL Visible=FALSE, BOOL Editable=FALSE);
 	void AddAttributeProperties(LFVariantData* pVDataArray, SIZE_T ItemSize=sizeof(LFVariantData), UINT ItemCount=LFAttributeCount);
-	void UpdatePropertyState(UINT Attr, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pVDataRange=NULL);
+	void UpdatePropertyState(ATTRIBUTE Attr, BOOL Multiple, BOOL Editable, BOOL Visible, const LFVariantData* pVDataRange=NULL);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
 	INT GetMinWidth() const;
 
@@ -316,19 +336,18 @@ protected:
 	static HICON hIconResetSelected;
 	static HICON hIconResetHot;
 	static HICON hIconResetPressed;
-	STOREID m_StoreID;
 	CInspectorHeader* m_pHeader;
 	INT m_LabelWidth;
 	INT m_MinWidth;
 	INT m_IconSize;
-	UINT m_Context;
+	ITEMCONTEXT m_Context;
 	BOOL m_SortAlphabetic;
 	BOOL m_PartPressed;
 	UINT m_HoverPart;
 
 private:
 	PropertyItemData* GetPropertyItemData(INT Index) const;
-	PropertyItemData* GetPropertyItemDataForAttribute(UINT Attr) const;
+	PropertyItemData* GetPropertyItemDataForAttribute(ATTRIBUTE Attr) const;
 	INT GetItemHeight() const;
 	static void SetPropertyName(PropertyItemData& Data, LPCWSTR pszName);
 	static INT __stdcall CompareItems(PropertyItemData* pData1, PropertyItemData* pData2, const SortParameters& Parameters);
@@ -341,11 +360,6 @@ private:
 inline PropertyItemData* CInspectorGrid::GetPropertyItemData(INT Index) const
 {
 	return (PropertyItemData*)GetItemData(Index);
-}
-
-inline void CInspectorGrid::SetStore(const STOREID& StoreID)
-{
-	m_StoreID = StoreID;
 }
 
 inline INT CInspectorGrid::GetMinWidth() const

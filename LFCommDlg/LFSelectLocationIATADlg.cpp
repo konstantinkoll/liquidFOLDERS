@@ -44,7 +44,7 @@ CAirportList::CAirportList()
 
 // Header
 
-void CAirportList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
+void CAirportList::UpdateHeaderColumn(ATTRIBUTE Attr, HDITEM& HeaderItem) const
 {
 	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT;
 	HeaderItem.fmt = HDF_STRING | HDF_LEFT;
@@ -56,7 +56,7 @@ void CAirportList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
 		HeaderItem.cxy = ITEMVIEWMINWIDTH;
 }
 
-void CAirportList::HeaderColumnClicked(UINT Attr)
+void CAirportList::HeaderColumnClicked(ATTRIBUTE Attr)
 {
 	m_SortDescending = (m_SortAttribute==Attr) ? !m_SortDescending : FALSE;
 	m_SortAttribute = Attr;
@@ -200,7 +200,7 @@ COLORREF CAirportList::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 
 // Drawing
 
-void CAirportList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL /*Themed*/)
+void CAirportList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, ATTRIBUTE Attr, BOOL /*Themed*/)
 {
 	LPCAIRPORT lpcAirport = GetAirport(Index);
 
@@ -232,7 +232,7 @@ void CAirportList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Inde
 // LFSelectLocationIATADlg
 //
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirport, UINT nIDTemplate)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR lpcAirport, UINT nIDTemplate)
 	: LFDialog(nIDTemplate, pParentWnd)
 {
 	m_LastCountrySelected = LFGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
@@ -240,7 +240,7 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirpo
 	m_LastSortDirection = LFGetApp()->GetInt(_T("IATALastSortDirection"), FALSE);
 
 	p_Airport = NULL;
-	LFIATAGetAirportByCode(pAirport, p_Airport);
+	LFIATAGetAirportByCode(lpcAirport, p_Airport);
 }
 
 void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)

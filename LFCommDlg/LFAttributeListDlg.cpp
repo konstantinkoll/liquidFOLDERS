@@ -18,7 +18,7 @@ INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 // LFAttributeListDlg
 //
 
-LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd, UINT Context)
+LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd, ITEMCONTEXT Context)
 	: LFDialog(nIDTemplate, pParentWnd)
 {
 	m_Context = Context;
@@ -51,7 +51,7 @@ void LFAttributeListDlg::PrepareListCtrl(INT nID, BOOL Check)
 	PrepareListCtrl((CExplorerList*)GetDlgItem(nID), Check);
 }
 
-void LFAttributeListDlg::AddAttribute(CExplorerList* pExplorerList, UINT Attr)
+void LFAttributeListDlg::AddAttribute(CExplorerList* pExplorerList, ATTRIBUTE Attr)
 {
 	ASSERT(pExplorerList);
 
@@ -74,7 +74,7 @@ void LFAttributeListDlg::AddAttribute(CExplorerList* pExplorerList, UINT Attr)
 	pExplorerList->SetCheck(pExplorerList->InsertItem(&lvi), Check);
 }
 
-void LFAttributeListDlg::AddAttribute(UINT nID, UINT Attr)
+void LFAttributeListDlg::AddAttribute(UINT nID, ATTRIBUTE Attr)
 {
 	AddAttribute((CExplorerList*)GetDlgItem(nID), Attr);
 }

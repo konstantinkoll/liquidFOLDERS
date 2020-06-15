@@ -3,13 +3,13 @@
 //
 
 #pragma once
-#include "LFEditTimeDlg.h"
+#include "LFPickTimeDlg.h"
 
 
 // LFMakeTaskDlg
 //
 
-class LFMakeTaskDlg : public LFEditTimeDlg
+class LFMakeTaskDlg : public LFPickTimeDlg
 {
 public:
 	LFMakeTaskDlg(LFVariantData* pVDataPriority, LFVariantData* pVDataDueTime, CWnd* pParentWnd=NULL);
@@ -21,7 +21,8 @@ protected:
 	afx_msg void OnUseDate();
 	DECLARE_MESSAGE_MAP()
 
-	LFVariantData* p_VDataPriority;
-
 	CPropertyEdit m_wndPriority;
+
+private:
+	LFVariantData* p_VDataPriority;
 };

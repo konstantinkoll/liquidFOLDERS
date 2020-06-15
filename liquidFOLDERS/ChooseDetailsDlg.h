@@ -13,11 +13,11 @@
 class ChooseDetailsDlg : public LFAttributeListDlg
 {
 public:
-	ChooseDetailsDlg(CWnd* pParentWnd=NULL, UINT Context=LFContextAllFiles);
+	ChooseDetailsDlg(CWnd* pParentWnd=NULL, ITEMCONTEXT Context=LFContextAllFiles);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual void TestAttribute(UINT Attr, BOOL& Add, BOOL& Check);
+	virtual void TestAttribute(ATTRIBUTE Attr, BOOL& Add, BOOL& Check);
 	virtual BOOL InitDialog();
 
 	afx_msg void OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult);

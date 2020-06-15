@@ -91,7 +91,7 @@ protected:
 	virtual void FireSelectedItem();
 	virtual void DeleteSelectedItem();
 	virtual BOOL DrawNothing() const;
-	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
+	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, ATTRIBUTE Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 	virtual BOOL AllowItemEditLabel(INT Index) const;
@@ -125,7 +125,7 @@ protected:
 	void ValidateAllItems();
 	ItemData* GetItemData(INT Index) const;
 	void FreeItemData(BOOL InternalCall=FALSE);
-	void SortItems(PFNCOMPARE zCompare, UINT Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
+	void SortItems(PFNCOMPARE zCompare, ATTRIBUTE Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
 	RECT GetItemRect(INT Index) const;
 	BOOL HasItemsSelected() const;
 	void ItemSelectionChanged(INT Index);
@@ -139,6 +139,7 @@ protected:
 	COLORREF GetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
+	void DrawCountItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, LPCWSTR Label, UINT Count);
 	void DrawListItem(CDC& dc, CRect rect, INT Index, BOOL Themed, INT* pColumnOrder, INT* pColumnWidth, INT PreviewAttribute=-1);
 	void DrawTile(CDC& dc, CRect rect, CIcons& Icons, INT IconID, COLORREF TextColor, UINT Rows, ...) const;
 	void DrawTile(CDC& dc, CRect rect, CImageList& ImageList, INT IconID, UINT nStyle, COLORREF TextColor, UINT Rows, ...) const;
@@ -193,6 +194,9 @@ private:
 	SIZE_T m_szData;
 	LPBYTE m_pItemData;
 	UINT m_ItemDataAllocated;
+
+	static INT m_MaxCountWidth;
+
 	CPoint m_DragPos;
 	BOOL m_ButtonDownInWindow;
 

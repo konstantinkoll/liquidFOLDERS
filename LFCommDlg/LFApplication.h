@@ -87,7 +87,7 @@ public:
 	static void LoadColorDots(CIcons& Icons, const LFFont& Font);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* pImageList);
 
-	void AttributeToString(CString& Name, CString& Value, const LFItemDescriptor* pItemDescriptor, UINT Attr) const;
+	void AttributeToString(CString& Name, CString& Value, const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr) const;
 	static CString GetFreeBytesAvailable(INT64 FreeBytesAvailable);
 	static CString GetFreeBytesAvailable(const LFStoreDescriptor& StoreDescriptor);
 	CString GetHintForItem(const LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName=NULL) const;
@@ -96,21 +96,23 @@ public:
 	void ShowTooltip(const CWnd* pWndOwner, const CPoint& point, const LFStoreDescriptor& StoreDescriptor);
 	void HideTooltip(const CWnd* pWndOwner=NULL);
 
-	LPCWSTR GetAttributeName(UINT Attr, UINT Context=LFContextAllFiles) const;
-	INT GetAttributeIcon(UINT Attr, UINT Context=LFContextAllFiles) const;
-	BOOL IsAttributeAlwaysVisible(UINT Attr) const;
-	BOOL IsAttributeAdvertised(INT Context, UINT Attr) const;
-	BOOL IsAttributeAvailable(INT Context, UINT Attr) const;
-	BOOL IsAttributeBucket(UINT Attr) const;
-	BOOL IsAttributeEditable(UINT Attr) const;
-	BOOL IsAttributeFormatRight(UINT Attr) const;
-	BOOL IsAttributeSortable(INT Context, UINT Attr, INT SubfolderAttribute=-1) const;
-	BOOL IsAttributeSortableInSubfolder(UINT Attr) const;
-	BOOL IsAttributeSortDescending(UINT Context, UINT Attr) const;
+	LPCWSTR GetAttributeName(ATTRIBUTE Attr, ITEMCONTEXT Context=LFContextAllFiles) const;
+	INT GetAttributeIcon(ATTRIBUTE Attr, ITEMCONTEXT Context=LFContextAllFiles) const;
+	BOOL IsAttributeAlwaysVisible(ATTRIBUTE Attr) const;
+	BOOL IsAttributeAdvertised(ATTRIBUTE Attr, ITEMCONTEXT Context) const;
+	BOOL IsAttributeAvailable(ATTRIBUTE Attr, ITEMCONTEXT Context) const;
+	BOOL IsAttributeTaxonomy(ATTRIBUTE Attr) const;
+	BOOL IsAttributeTaxonomyPickGlobally(ATTRIBUTE Attr) const;
+	BOOL IsAttributeBucket(ATTRIBUTE Attr) const;
+	BOOL IsAttributeEditable(ATTRIBUTE Attr) const;
+	BOOL IsAttributeFormatRight(ATTRIBUTE Attr) const;
+	BOOL IsAttributeSortable(ATTRIBUTE Attr, ITEMCONTEXT Context, SUBFOLDERATTRIBUTE SubfolderAttribute=-1) const;
+	BOOL IsAttributeSortableInSubfolder(ATTRIBUTE Attr) const;
+	BOOL IsAttributeSortDescending(ATTRIBUTE Attr, ITEMCONTEXT Context) const;
 	static BOOL IsPlaceholderIcon(UINT IconID);
-	BOOL IsViewAllowed(INT Context, INT View) const;
-	BOOL ShowRepresentativeThumbnail(UINT Attr, UINT Context) const;
-	BOOL ShowRepresentativeThumbnail(INT SubfolderAttribute, UINT Context) const;
+	BOOL IsViewAllowed(ITEMCONTEXT Context, UINT View) const;
+	BOOL ShowRepresentativeThumbnail(ATTRIBUTE Attr, ITEMCONTEXT Context) const;
+	BOOL ShowRepresentativeThumbnail(SUBFOLDERATTRIBUTE SubfolderAttribute, ITEMCONTEXT Context) const;
 
 	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR Verb);
 	void OpenFolderAndSelectItem(LPCWSTR Path);
@@ -205,7 +207,7 @@ protected:
 	LFDynArray<ResourceCacheItem, 16, 4> m_ResourceCache;
 
 private:
-	void AppendAttribute(CString& Str, const LFItemDescriptor* pItemDescriptor, UINT Attr) const;
+	void AppendAttribute(CString& Str, const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr) const;
 	static void PlayRegSound(const CString& Identifier);
 
 	BOOL IsUpdateCheckDue() const;
@@ -242,64 +244,76 @@ inline void LFApplication::ShowTooltip(const CWnd* pWndOwner, const CPoint& poin
 	ShowTooltip(pWndOwner, point, StoreDescriptor.StoreName, GetHintForStore(StoreDescriptor));
 }
 
-inline BOOL LFApplication::IsAttributeAlwaysVisible(UINT Attr) const
+inline BOOL LFApplication::IsAttributeAlwaysVisible(ATTRIBUTE Attr) const
 {
 	ASSERT(Attr<LFAttributeCount);
 
 	return (m_Attributes[Attr].AttrProperties.DataFlags & LFDataAlwaysVisible);
 }
 
-inline BOOL LFApplication::IsAttributeAdvertised(INT Context, UINT Attr) const
+inline BOOL LFApplication::IsAttributeAdvertised(ATTRIBUTE Attr, ITEMCONTEXT Context) const
 {
-	ASSERT(Context>=0);
-	ASSERT(Context<LFContextCount);
 	ASSERT(Attr<LFAttributeCount);
+	ASSERT(Context<LFContextCount);
 
 	return (m_Contexts[Context].CtxProperties.AdvertisedAttributes>>Attr) & 1;
 }
 
-inline BOOL LFApplication::IsAttributeAvailable(INT Context, UINT Attr) const
+inline BOOL LFApplication::IsAttributeAvailable(ATTRIBUTE Attr, ITEMCONTEXT Context) const
 {
-	ASSERT(Context>=0);
-	ASSERT(Context<LFContextCount);
 	ASSERT(Attr<LFAttributeCount);
+	ASSERT(Context<LFContextCount);
 
 	return (m_Contexts[Context].CtxProperties.AvailableAttributes>>Attr) & 1;
 }
 
-inline BOOL LFApplication::IsAttributeBucket(UINT Attr) const
+inline BOOL LFApplication::IsAttributeTaxonomy(ATTRIBUTE Attr) const
+{
+	ASSERT(Attr<LFAttributeCount);
+
+	return (m_Attributes[Attr].TypeProperties.DataFlags | m_Attributes[Attr].AttrProperties.DataFlags) & LFDataTaxonomy;
+}
+
+inline BOOL LFApplication::IsAttributeTaxonomyPickGlobally(ATTRIBUTE Attr) const
+{
+	ASSERT(Attr<LFAttributeCount);
+
+	return m_Attributes[Attr].AttrProperties.DataFlags & LFDataTaxonomyPickGlobally;
+}
+
+inline BOOL LFApplication::IsAttributeBucket(ATTRIBUTE Attr) const
 {
 	ASSERT(Attr<LFAttributeCount);
 
 	return (m_Attributes[Attr].TypeProperties.DataFlags | m_Attributes[Attr].AttrProperties.DataFlags) & LFDataBucket;
 }
 
-inline BOOL LFApplication::IsAttributeEditable(UINT Attr) const
+inline BOOL LFApplication::IsAttributeEditable(ATTRIBUTE Attr) const
 {
 	ASSERT(Attr<LFAttributeCount);
 
 	return (m_Attributes[Attr].AttrProperties.DataFlags & LFDataEditable);
 }
 
-inline BOOL LFApplication::IsAttributeFormatRight(UINT Attr) const
+inline BOOL LFApplication::IsAttributeFormatRight(ATTRIBUTE Attr) const
 {
 	ASSERT(Attr<LFAttributeCount);
 
 	return (m_Attributes[Attr].TypeProperties.DataFlags & LFDataFormatRight);
 }
 
-inline BOOL LFApplication::IsAttributeSortable(INT Context, UINT Attr, INT SubfolderAttribute) const
+inline BOOL LFApplication::IsAttributeSortable(ATTRIBUTE Attr, ITEMCONTEXT Context, SUBFOLDERATTRIBUTE SubfolderAttribute) const
 {
-	ASSERT(Context>=0);
 	ASSERT(Context<LFContextCount);
 	ASSERT(Attr<LFAttributeCount);
+	ASSERT(SubfolderAttribute>=-1);
 
-	return ((INT)Attr!=SubfolderAttribute) &&
+	return ((SUBFOLDERATTRIBUTE)Attr!=SubfolderAttribute) &&
 		((SubfolderAttribute!=LFAttrMediaCollection) || (Attr!=LFAttrCreator)) &&
 		(!LFIsSubfolderContext(Context) || IsAttributeSortableInSubfolder(Attr));
 }
 
-inline BOOL LFApplication::IsAttributeSortableInSubfolder(UINT Attr) const
+inline BOOL LFApplication::IsAttributeSortableInSubfolder(ATTRIBUTE Attr) const
 {
 	ASSERT(Attr<LFAttributeCount);
 
@@ -311,24 +325,22 @@ inline BOOL LFApplication::IsPlaceholderIcon(UINT IconID)
 	return IconID>=IDI_FLD_PLACEHOLDER_DEFAULT;
 }
 
-inline BOOL LFApplication::IsViewAllowed(INT Context, INT View) const
+inline BOOL LFApplication::IsViewAllowed(ITEMCONTEXT Context, UINT View) const
 {
-	ASSERT(Context>=0);
 	ASSERT(Context<LFContextCount);
-	ASSERT(View>=0);
 	ASSERT(View<=31);
 
 	return (m_Contexts[Context].CtxProperties.AvailableViews>>View) & 1;
 }
 
-inline BOOL LFApplication::ShowRepresentativeThumbnail(UINT Attr, UINT Context) const
+inline BOOL LFApplication::ShowRepresentativeThumbnail(ATTRIBUTE Attr, ITEMCONTEXT Context) const
 {
 	ASSERT(Attr<LFAttributeCount);
 
 	return (GetAttributeIcon(Attr, Context)>=IDI_FIRSTPLACEHOLDERICON) && (m_Attributes[Attr].AttrProperties.DataFlags & LFDataShowRepresentativeThumbnail);
 }
 
-inline BOOL LFApplication::ShowRepresentativeThumbnail(INT SubfolderAttribute, UINT Context) const
+inline BOOL LFApplication::ShowRepresentativeThumbnail(SUBFOLDERATTRIBUTE SubfolderAttribute, ITEMCONTEXT Context) const
 {
-	return (SubfolderAttribute>=0) && (SubfolderAttribute!=LFAttrCreator) && ShowRepresentativeThumbnail((UINT)SubfolderAttribute, Context);
+	return (SubfolderAttribute>=0) && (SubfolderAttribute!=LFAttrCreator) && ShowRepresentativeThumbnail((ATTRIBUTE)SubfolderAttribute, Context);
 }

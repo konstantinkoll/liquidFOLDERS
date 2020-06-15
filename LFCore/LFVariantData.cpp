@@ -521,7 +521,7 @@ LFCORE_API void LFFramerateToString(const UINT Framerate, LPWSTR pStr, SIZE_T cC
 		}
 }
 
-LFCORE_API void LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount)
+LFCORE_API void LFAttributeToString(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr, LPWSTR pStr, SIZE_T cCount)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -534,7 +534,7 @@ LFCORE_API void LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UIN
 // LFVariantData
 //
 
-LFCORE_API void LFInitVariantData(LFVariantData& VData, UINT Attr)
+LFCORE_API void LFInitVariantData(LFVariantData& VData, ATTRIBUTE Attr)
 {
 	VData.Attr = Attr;
 	VData.Type = (Attr<LFAttributeCount) ? AttrProperties[Attr].Type : LFTypeUnicodeString;
@@ -926,7 +926,7 @@ Abort:
 	}
 }
 
-LFCORE_API INT LFCompareVariantData(LFVariantData& VData1, LFVariantData& VData2)
+LFCORE_API INT LFCompareVariantData(const LFVariantData& VData1, const LFVariantData& VData2)
 {
 	if (VData1.IsNull && VData2.IsNull)
 		return 0;
@@ -988,7 +988,7 @@ LFCORE_API void LFGetAttributeVariantData(const LFItemDescriptor* pItemDescripto
 	}
 }
 
-LFCORE_API void LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& VData)
+LFCORE_API void LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr, LFVariantData& VData)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
@@ -1009,7 +1009,7 @@ LFCORE_API void LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, con
 	SetAttribute(pItemDescriptor, VData.Attr, &VData.Value);
 }
 
-LFCORE_API BOOL LFIsNullAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr)
+LFCORE_API BOOL LFIsNullAttribute(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 {
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);

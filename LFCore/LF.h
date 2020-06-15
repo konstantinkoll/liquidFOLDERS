@@ -252,6 +252,8 @@ struct LFItemCategoryDescriptor
 
 // Contexts
 
+typedef BYTE ITEMCONTEXT;
+
 #define LFContextAllFiles                0
 #define LFContextFilters                 1
 #define LFContextAudio                   2
@@ -298,6 +300,9 @@ struct LFItemCategoryDescriptor
 
 
 // Attributes
+
+typedef UINT ATTRIBUTE;
+typedef INT SUBFOLDERATTRIBUTE;
 
 #define LFAttrFileName                 0	// Core
 #define LFAttrPriority                 1
@@ -406,7 +411,7 @@ struct LFFraction
 
 struct LFVariantData
 {
-	UINT Attr;
+	ATTRIBUTE Attr;
 	BYTE Type;
 	BYTE IsNull;
 	union
@@ -473,9 +478,10 @@ struct LFVariantData
 #define LFDataEditable                        0x01	// For attribute
 #define LFDataShowRepresentativeThumbnail     0x02
 #define LFDataAlwaysVisible                   0x04
-#define LFDataNeverSortable                   0x08
+#define LFDataTaxonomyPickGlobally            0x08
 
-#define LFDataBucket                          0x80	// For both
+#define LFDataTaxonomy                        0x40	// For both
+#define LFDataBucket                          0x80
 
 #pragma pack(push, 1)
 
@@ -535,9 +541,9 @@ typedef UINT LFAttributeList[LFAttributeCount];
 
 struct LFContextProperties
 {
-	UINT DefaultAttribute;
+	ATTRIBUTE DefaultAttribute;
 	BOOL AllowGroups;
-	BYTE SubfolderContext;
+	ITEMCONTEXT SubfolderContext;
 	UINT AvailableViews;
 	UINT DefaultView;
 	UINT64 AvailableAttributes;
@@ -627,7 +633,7 @@ struct LFFileSummary
 	UINT ItemColors[LFItemColorCount];
 	BYTE ItemColorSet;
 	UINT64 ContextSet;
-	BYTE Context;
+	ITEMCONTEXT Context;
 	BYTE Flags;
 	UINT Source;
 	UINT64 Duration;
@@ -668,7 +674,7 @@ struct LFFilterQuery
 {
 	BYTE Mode;
 
-	BYTE Context;							// For LFFilterModeDirectoryTree and above
+	ITEMCONTEXT Context;			// For LFFilterModeDirectoryTree and above
 	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
 	STOREID StoreID;						// For LFFilterModeDirectoryTree and above
 	WCHAR SearchTerm[256];					// For LFFilterModeDirectoryTree and above
@@ -678,7 +684,7 @@ struct LFFilterQuery
 struct LFFilterResult
 {
 	WCHAR Name[256];
-	BYTE Context;
+	ITEMCONTEXT Context;
 };
 
 struct LFFilter
@@ -773,8 +779,8 @@ struct LFCoreAttributes
 
 	// Private
 	BYTE SlaveID;
-	BYTE SystemContextID;
-	BYTE UserContextID;
+	ITEMCONTEXT SystemContextID;
+	ITEMCONTEXT UserContextID;
 	BYTE Reserved4;
 
 	// Public extended

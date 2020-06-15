@@ -314,7 +314,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	0, LFViewList, 3, 0, { 0,0 }, 54 },
 
 	// LFAttrHashtags
-	{ LFTypeUnicodeArray, LFAttrCategoryBasic, LFDataEditable, 255,
+	{ LFTypeUnicodeArray, LFAttrCategoryBasic, LFDataEditable | LFDataTaxonomyPickGlobally, 255,
 	0, LFViewTagcloud, 3, 0, { &SHPropertySummary, 5 }, 15 },
 
 	// LFAttrRating
@@ -338,7 +338,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	0, LFViewList, LFMinAttributePriority, 0, { &SHPropertyStorage, 12 }, 12 },
 
 	// LFAttrLocationName
-	{ LFTypeUnicodeString, LFAttrCategoryGeotagging, LFDataEditable | LFDataBucket, 255,
+	{ LFTypeUnicodeString, LFAttrCategoryGeotagging, LFDataEditable | LFDataTaxonomy | LFDataBucket, 255,
 	0, LFViewList, 4, 0, { 0,0 }, 18 },
 
 	// LFAttrLocationIATA
@@ -355,15 +355,15 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 
 
 	// LFAttrCreator
-	{ LFTypeUnicodeString, LFAttrCategoryMedia, LFDataEditable | LFDataShowRepresentativeThumbnail | LFDataBucket, 255,
+	{ LFTypeUnicodeString, LFAttrCategoryMedia, LFDataEditable | LFDataShowRepresentativeThumbnail | LFDataTaxonomy | LFDataBucket, 255,
 	IDI_FLD_PLACEHOLDER_CONTACT, LFViewIcons, 1, LFAttrMediaCollection, { &SHPropertyMusic, 13 }, 38 },
 
 	// LFAttrMediaCollection
-	{ LFTypeUnicodeString, LFAttrCategoryMedia, LFDataEditable | LFDataShowRepresentativeThumbnail | LFDataBucket, 255,
+	{ LFTypeUnicodeString, LFAttrCategoryMedia, LFDataEditable | LFDataShowRepresentativeThumbnail | LFDataTaxonomy | LFDataBucket, 255,
 	IDI_FLD_PLACEHOLDER_DEFAULT, LFViewIcons, 1, LFAttrSequenceInCollection, { &SHPropertyMusic, 4 }, 31 },
 
 	// LFAttrSequenceInCollection
-	{ LFTypeUINT, LFAttrCategoryMedia, LFDataEditable | LFDataNeverSortable, 0,
+	{ LFTypeUINT, LFAttrCategoryMedia, LFDataEditable, 0,
 	0, LFViewList, 1, 0, { &SHPropertyMusic, 7 }, 56 },
 
 	// LFAttrTitle
@@ -456,7 +456,7 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 	0, LFViewList, LFMinAttributePriority, 0, { &SHPropertyAudio, 10 }, 35 },
 
 	// LFAttrGenre
-	{ LFTypeGenre, LFAttrCategoryAudio, LFDataEditable, 0,
+	{ LFTypeGenre, LFAttrCategoryAudio, LFDataEditable | LFDataTaxonomyPickGlobally, 0,
 	IDI_FLD_DEFAULTGENRE, LFViewIcons, 2, LFAttrCreator, { &SHPropertyMusic, 11 }, 32 },
 
 
@@ -483,11 +483,11 @@ extern const LFAttributeProperties AttrProperties[LFAttributeCount] = {
 
 
 	// LFAttrResponsible
-	{ LFTypeUnicodeString, LFAttrCategoryTasks, LFDataEditable | LFDataBucket, 255,
+	{ LFTypeUnicodeString, LFAttrCategoryTasks, LFDataEditable | LFDataTaxonomy | LFDataTaxonomyPickGlobally | LFDataBucket, 255,
 	0, LFViewList, LFMinAttributePriority, 0, { 0,0 }, 49 },
 
 	// LFAttrCustomer
-	{ LFTypeUnicodeString, LFAttrCategoryTasks, LFDataEditable | LFDataBucket, 255,
+	{ LFTypeUnicodeString, LFAttrCategoryTasks, LFDataEditable | LFDataTaxonomy | LFDataTaxonomyPickGlobally | LFDataBucket, 255,
 	0, LFViewList, 3, 0, { &SHPropertyUnnamed7, 100 }, 52 }
 };
 
@@ -505,7 +505,7 @@ extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeUnicodeArray
-	{ 0, WIDTH_HUGE, LFDataContainsLetters,
+	{ 0, WIDTH_HUGE, LFDataContainsLetters | LFDataTaxonomy | LFDataBucket,
 	(1<<LFViewIcons) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewTagcloud },
 
 	// LFTypeAnsiString
@@ -513,7 +513,7 @@ extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeIATACode
-	{ sizeof(CHAR)*4, WIDTH_TINY, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataBucket,
+	{ sizeof(CHAR)*4, WIDTH_TINY, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataTaxonomy | LFDataBucket,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewGlobe) | (1<<LFViewTagcloud), LFViewList },
 
 	// LFTypeFourCC
@@ -545,11 +545,11 @@ extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails), LFViewList },
 
 	// LFTypeGeoCoordinates
-	{ sizeof(LFGeoCoordinates), WIDTH_LARGE, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataBucket,
+	{ sizeof(LFGeoCoordinates), WIDTH_LARGE, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataTaxonomy | LFDataBucket,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewGlobe), LFViewIcons },
 
 	// LFTypeTime
-	{ sizeof(FILETIME), WIDTH_MEDIUM, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataSortDescending | LFDataBucket,
+	{ sizeof(FILETIME), WIDTH_MEDIUM, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataSortDescending | LFDataTaxonomy | LFDataBucket,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewCalendar) | (1<<LFViewTimeline) | (1<<LFViewTagcloud), LFViewTimeline },
 
 	// LFTypeBitrate,
@@ -565,7 +565,7 @@ extern const LFTypeProperties TypeProperties[LFTypeCount] = {
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeGenre
-	{ sizeof(UINT), WIDTH_LARGE, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataBucket,
+	{ sizeof(UINT), WIDTH_LARGE, LFDataContainsLetters | LFDataSortableInSubfolder | LFDataTaxonomy | LFDataBucket,
 	(1<<LFViewIcons) | (1<<LFViewList) | (1<<LFViewDetails) | (1<<LFViewTagcloud), LFViewIcons },
 
 	// LFTypeApplication

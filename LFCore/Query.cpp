@@ -426,7 +426,7 @@ BOOL PassesFilter(UINT TableID, LPCVOID pTableData, LFFilter* pFilter, BYTE& Que
 	while (pFilterCondition)
 	{
 		BOOL AttributePresent = FALSE;
-		const UINT Attr = pFilterCondition->VData.Attr;
+		const ATTRIBUTE Attr = pFilterCondition->VData.Attr;
 
 		for (UINT a=0; a<pTable->cTableEntries; a++)
 			if (pTable->pTableEntries[a].Attr==Attr)
@@ -482,7 +482,7 @@ BOOL PassesFilter(UINT TableID, LPCVOID pTableData, LFFilter* pFilter, BYTE& Que
 			// Compare attributes
 			for (UINT a=0; a<pTable->cTableEntries; a++)
 			{
-				const UINT Attr = pTable->pTableEntries[a].Attr;
+				const ATTRIBUTE Attr = pTable->pTableEntries[a].Attr;
 
 				if ((QueryState & QUERYSTATE_SEARCHTERM_NOLETTERS) || (TypeProperties[AttrProperties[Attr].Type].DataFlags & LFDataContainsLetters))
 				{

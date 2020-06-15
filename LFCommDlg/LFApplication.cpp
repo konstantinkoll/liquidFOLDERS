@@ -191,12 +191,12 @@ LFApplication::LFApplication(const GUID& AppID)
 	LFGetSortedAttributeList(m_SortedAttributeList);
 
 	// Get attribute information
-	for (UINT a=0; a<LFAttributeCount; a++)
-		LFGetAttributeInfo(m_Attributes[a], a);
+	for (ATTRIBUTE Attribute=0; Attribute<LFAttributeCount; Attribute++)
+		LFGetAttributeInfo(m_Attributes[Attribute], Attribute);
 
 	// Get context information
-	for (UINT a=0; a<LFContextCount; a++)
-		LFGetContextInfo(m_Contexts[a], a);
+	for (ITEMCONTEXT Context=0; Context<LFContextCount; Context++)
+		LFGetContextInfo(m_Contexts[Context], Context);
 
 	// Get Item category information
 	for (UINT a=0; a<LFItemCategoryCount; a++)
@@ -548,7 +548,7 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT Size, CImageList* 
 
 // Tooltips
 
-void LFApplication::AttributeToString(CString& Name, CString& Value, const LFItemDescriptor* pItemDescriptor, UINT Attr) const
+void LFApplication::AttributeToString(CString& Name, CString& Value, const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr) const
 {
 	ASSERT(pItemDescriptor);
 
@@ -602,7 +602,7 @@ CString LFApplication::GetFreeBytesAvailable(INT64 FreeBytesAvailable)
 	return tmpStr;
 }
 
-void LFApplication::AppendAttribute(CString& Str, const LFItemDescriptor* pItemDescriptor, UINT Attr) const
+void LFApplication::AppendAttribute(CString& Str, const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr) const
 {
 	ASSERT(pItemDescriptor);
 
@@ -650,7 +650,7 @@ CString LFApplication::GetHintForItem(const LFItemDescriptor* pItemDescriptor, L
 	// Other attributes
 	for (UINT a=1; a<LFAttributeCount; a++)
 	{
-		const UINT Attr = m_SortedAttributeList[a];
+		const ATTRIBUTE Attr = m_SortedAttributeList[a];
 
 		if (m_Attributes[Attr].AttrProperties.DefaultPriority==LFMinAttributePriority)
 			break;
@@ -695,7 +695,7 @@ void LFApplication::HideTooltip(const CWnd* pWndOwner)
 
 // Attributes
 
-LPCWSTR LFApplication::GetAttributeName(UINT Attr, UINT Context) const
+LPCWSTR LFApplication::GetAttributeName(ATTRIBUTE Attr, ITEMCONTEXT Context) const
 {
 	ASSERT(Attr<LFAttributeCount);
 	ASSERT(Context<LFContextCount);
@@ -708,7 +708,7 @@ LPCWSTR LFApplication::GetAttributeName(UINT Attr, UINT Context) const
 	return m_Attributes[Attr].ContextRecords[0].Name;
 }
 
-INT LFApplication::GetAttributeIcon(UINT Attr, UINT Context) const
+INT LFApplication::GetAttributeIcon(ATTRIBUTE Attr, ITEMCONTEXT Context) const
 {
 	ASSERT(Attr<LFAttributeCount);
 	ASSERT(Context<LFContextCount);
@@ -721,7 +721,7 @@ INT LFApplication::GetAttributeIcon(UINT Attr, UINT Context) const
 	return m_Attributes[Attr].AttrProperties.DefaultIconID;
 }
 
-BOOL LFApplication::IsAttributeSortDescending(UINT Context, UINT Attr) const
+BOOL LFApplication::IsAttributeSortDescending(ATTRIBUTE Attr, ITEMCONTEXT Context) const
 {
 	ASSERT(Attr<LFAttributeCount);
 	ASSERT(Context<LFContextCount);

@@ -65,14 +65,14 @@ LFCORE_API void __stdcall LFCoreErrorBox(UINT nID, HWND hWnd=NULL);
 
 
 // Sortiert einen Speicherbereich
-LFCORE_API void LFSortMemory(LPVOID pMemory, UINT ItemCount, SIZE_T szData, PFNCOMPARE zCompare, UINT Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
+LFCORE_API void LFSortMemory(LPVOID pMemory, UINT ItemCount, SIZE_T szData, PFNCOMPARE zCompare, ATTRIBUTE Attr=0, BOOL Descending=FALSE, BOOL Parameter1=FALSE, BOOL Parameter2=FALSE);
 
 
 // Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
 LFCORE_API void __stdcall LFGetAttrCategoryName(LPWSTR pStr, SIZE_T cCount, UINT ID);
 
 // Informationen über ein Attribut zurückliefern
-LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, UINT ID);
+LFCORE_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& AttributeDescriptor, ATTRIBUTE ID);
 
 // Name einer Datenquelle in aktueller Sprache zurückliefern
 LFCORE_API void __stdcall LFGetSourceName(LPWSTR pStr, SIZE_T cCount, UINT ID, BOOL Qualified);
@@ -81,7 +81,7 @@ LFCORE_API void __stdcall LFGetSourceName(LPWSTR pStr, SIZE_T cCount, UINT ID, B
 LFCORE_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& ItemCategoryDescriptor, UINT ID);
 
 // Informationen über einen Kontext zurückliefern
-LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescriptor, UINT ID);
+LFCORE_API void __stdcall LFGetContextInfo(LFContextDescriptor& ContextDescriptor, ITEMCONTEXT ID);
 
 // Gibt eine Liste aller Attribute zurück, die nach ihrer Priorität sortiert sind
 LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeList);
@@ -223,10 +223,10 @@ LFCORE_API void __stdcall LFMegapixelToString(const DOUBLE Resolution, LPWSTR pS
 LFCORE_API void __stdcall LFFramerateToString(const UINT Framerate, LPWSTR pStr, SIZE_T cCount);
 
 // Konvertiert ein Attribut in eine Zeichenkette
-LFCORE_API void __stdcall LFAttributeToString(const LFItemDescriptor* pItemDescriptor, UINT Attr, LPWSTR pStr, SIZE_T cCount);
+LFCORE_API void __stdcall LFAttributeToString(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr, LPWSTR pStr, SIZE_T cCount);
 
 // Initalisiert eine LFVariantData-Struktur
-LFCORE_API void __stdcall LFInitVariantData(LFVariantData& VData, UINT Attr);
+LFCORE_API void __stdcall LFInitVariantData(LFVariantData& VData, ATTRIBUTE Attr);
 
 // Löscht eine LFVariantData-Struktur
 // Value.Attr muss gesetzt sein
@@ -242,17 +242,17 @@ LFCORE_API void __stdcall LFVariantDataToString(const LFVariantData& VData, LPWS
 LFCORE_API void __stdcall LFVariantDataFromString(LFVariantData& VData, LPCWSTR pStr);
 
 // Vergleicht zwei Dateiattribute
-LFCORE_API INT __stdcall LFCompareVariantData(LFVariantData& Data1, LFVariantData& Data2);
+LFCORE_API INT __stdcall LFCompareVariantData(const LFVariantData& Data1, const LFVariantData& Data2);
 
 // Attributwert holen
 LFCORE_API void __stdcall LFGetAttributeVariantData(const LFItemDescriptor* pItemDescriptor, LFVariantData& VData);
-LFCORE_API void __stdcall LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, UINT Attr, LFVariantData& VData);
+LFCORE_API void __stdcall LFGetAttributeVariantDataEx(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr, LFVariantData& VData);
 
 // Attributwert setzen
 LFCORE_API void __stdcall LFSetAttributeVariantData(LFItemDescriptor* pItemDescriptor, const LFVariantData& VData);
 
 // Prüfen, ob ein Attributwert existiert
-LFCORE_API BOOL __stdcall LFIsNullAttribute(const LFItemDescriptor* pItemDescriptor, UINT Attr);
+LFCORE_API BOOL __stdcall LFIsNullAttribute(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr);
 
 // Entfernt doppelte Eintäge in einem Unicode-Array
 LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
@@ -420,7 +420,7 @@ inline void LFFreeFilterCondition(LFFilterCondition* pFilterCondition)
 
 
 // Neues Suchergebnis mit Kontext Context erzeugen
-LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(BYTE Context);
+LFCORE_API LFSearchResult* __stdcall LFAllocSearchResult(ITEMCONTEXT Context);
 
 // Existierendes LFSearchResult freigeben
 LFCORE_API void __stdcall LFFreeSearchResult(LFSearchResult* pSearchResult);
@@ -433,10 +433,10 @@ LFCORE_API BOOL __stdcall LFAddItem(LFSearchResult* pSearchResult, LFItemDescrip
 LFCORE_API void __stdcall LFRemoveFlaggedItems(LFSearchResult* pSearchResult);
 
 // Sortiert LFSearchResult
-LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending=FALSE);
+LFCORE_API void __stdcall LFSortSearchResult(LFSearchResult* pSearchResult, ATTRIBUTE Attr, BOOL Descending=FALSE);
 
 // Gruppiert LFSearchResult und liefert Kopie zurück
-LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, UINT Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter);
+LFCORE_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* pSearchResult, ATTRIBUTE Attr, BOOL Descending, BOOL GroupSingle, LFFilter* pFilter);
 
 // Errechnet die Ordnerfarben nach Änderungen neu
 LFCORE_API void LFUpdateFolderColors(LFSearchResult* pCookedFiles, const LFSearchResult* pRawFiles);

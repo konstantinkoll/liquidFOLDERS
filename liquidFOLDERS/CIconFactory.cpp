@@ -323,7 +323,7 @@ HBITMAP CIconFactory::GetHeaderBitmap(LFSearchResult* pSearchResult, LFFilter* p
 	Graphics g(dc);
 
 	// Representative thumbnail
-	const INT SubfolderAttribute = LFGetSubfolderAttribute(pFilter);
+	const SUBFOLDERATTRIBUTE SubfolderAttribute = LFGetSubfolderAttribute(pFilter);
 
 	if (theApp.ShowRepresentativeThumbnail(SubfolderAttribute, pSearchResult->m_Context))
 	{

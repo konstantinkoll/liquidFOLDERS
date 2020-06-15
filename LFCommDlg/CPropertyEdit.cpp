@@ -118,15 +118,14 @@ void CPropertyEdit::CreateProperty()
 	AdjustLayout();
 }
 
-void CPropertyEdit::SetInitialData(const LFVariantData& VData, const STOREID& StoreID)
+void CPropertyEdit::SetInitialData(const LFVariantData& VData)
 {
 	m_VData = VData;
-	m_StoreID = StoreID;
 
 	CreateProperty();
 }
 
-void CPropertyEdit::SetAttribute(UINT Attr)
+void CPropertyEdit::SetAttribute(ATTRIBUTE Attr)
 {
 	if ((Attr!=m_VData.Attr) || !m_pProperty)
 	{
@@ -327,7 +326,7 @@ void CPropertyEdit::OnClick()
 {
 	if (m_pProperty && m_pProperty->HasButton())
 	{
-		m_pProperty->OnClickButton(m_StoreID);
+		m_pProperty->OnClickButton();
 
 		// Update edit control
 		if (m_pWndEdit)

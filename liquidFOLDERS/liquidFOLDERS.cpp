@@ -91,8 +91,8 @@ BOOL CLiquidFoldersApp::InitInstance()
 
 	const BOOL ResetViewSettings = LoadGlobalViewSettings();
 
-	for (UINT a=0; a<LFContextCount; a++)
-		LoadContextViewSettings(a, ResetViewSettings);
+	for (ITEMCONTEXT Context=0; Context<LFContextCount; Context++)
+		LoadContextViewSettings(Context, ResetViewSettings);
 
 	m_ModelQuality = (GLModelQuality)GetInt(_T("ModelQuality"), MODELULTRA);
 	m_TextureQuality = (GLTextureQuality)GetInt(_T("TextureQuality"), TEXTUREMEDIUM);
@@ -209,8 +209,8 @@ INT CLiquidFoldersApp::ExitInstance()
 {
 	if (m_AppInitialized)
 	{
-		for (UINT a=0; a<LFContextCount; a++)
-			SaveContextViewSettings(a);
+		for (ITEMCONTEXT Context=0; Context<LFContextCount; Context++)
+			SaveContextViewSettings(Context);
 
 		SetRegistryBase(_T("Settings"));
 
@@ -253,15 +253,14 @@ void CLiquidFoldersApp::OpenFileDrop(const ABSOLUTESTOREID& StoreID)
 }
 
 
-void CLiquidFoldersApp::SanitizeContextViewSettings(INT Context)
+void CLiquidFoldersApp::SanitizeContextViewSettings(ITEMCONTEXT Context)
 {
-	ASSERT(Context>=0);
 	ASSERT(Context<LFContextCount);
 
 	// Find view for this attribute that is allowed in the context
-	const UINT Attr = m_ContextViewSettings[Context].SortBy;
+	const ATTRIBUTE Attr = m_ContextViewSettings[Context].SortBy;
 
-	ASSERT(IsAttributeSortable(Context, Attr));
+	ASSERT(IsAttributeSortable(Attr, Context));
 	ASSERT(m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 
 	UINT Mask = m_Attributes[Attr].TypeProperties.AllowedViews & m_Contexts[Context].CtxProperties.AvailableViews;
@@ -285,18 +284,18 @@ void CLiquidFoldersApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 {
 	ASSERT(Context>=-1);
 	ASSERT(Context<LFContextCount);
+	ASSERT(View>=-1);
+	ASSERT(View<LFViewCount);
 
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 		m_pMainFrames.GetNext(p)->PostMessage(WM_CONTEXTVIEWCOMMAND, cmdMsg, MAKELPARAM(Context, View));
 }
 
-void CLiquidFoldersApp::SetContextSort(INT Context, UINT Attr, BOOL SortDescending, BOOL SetLastView)
+void CLiquidFoldersApp::SetContextSort(ITEMCONTEXT Context, ATTRIBUTE Attr, BOOL SortDescending, BOOL SetLastView)
 {
-	ASSERT(Context>=0);
 	ASSERT(Context<LFContextCount);
-	ASSERT(Attr>=0);
 	ASSERT(Attr<LFAttributeCount);
-	ASSERT(IsAttributeSortable(Context, Attr));
+	ASSERT(IsAttributeSortable(Attr, Context));
 	ASSERT(m_Attributes[Attr].AttrProperties.DefaultView!=(UINT)-1);
 
 	if (m_ContextViewSettings[Context].SortBy!=Attr)
@@ -314,19 +313,9 @@ void CLiquidFoldersApp::SetContextSort(INT Context, UINT Attr, BOOL SortDescendi
 	Broadcast(Context, -1, WM_UPDATESORTSETTINGS);
 }
 
-void CLiquidFoldersApp::UpdateViewSettings(INT Context, INT View)
+void CLiquidFoldersApp::SetContextView(ITEMCONTEXT Context, UINT View)
 {
-	ASSERT(Context>=-1);
 	ASSERT(Context<LFContextCount);
-
-	Broadcast(Context, View, WM_UPDATEVIEWSETTINGS);
-}
-
-void CLiquidFoldersApp::SetContextView(INT Context, INT View)
-{
-	ASSERT(Context>=0);
-	ASSERT(Context<LFContextCount);
-	ASSERT(View>=0);
 	ASSERT(View<=LFViewCount);
 
 	if (View!=(INT)m_ContextViewSettings[Context].View)
@@ -343,21 +332,21 @@ void CLiquidFoldersApp::SetContextView(INT Context, INT View)
 
 // Registry and view settings
 
-void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
+void CLiquidFoldersApp::LoadContextViewSettings(ITEMCONTEXT Context, BOOL Reset)
 {
 	CString Base;
 	Base.Format(_T("Settings\\Context%u"), Context);
 	SetRegistryBase(Base);
 
 	const UINT DefaultAttribute = m_Contexts[Context].CtxProperties.DefaultAttribute;
-	const BOOL SortDescending = theApp.IsAttributeSortDescending(Context, DefaultAttribute);
+	const BOOL SortDescending = theApp.IsAttributeSortDescending(DefaultAttribute, Context);
 	const UINT DefaultView = m_Contexts[Context].CtxProperties.DefaultView;
 
 	// Default columns
 	memcpy(&m_ContextViewSettings[Context].ColumnOrder, m_SortedAttributeList, sizeof(LFAttributeList));
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		m_ContextViewSettings[Context].ColumnWidth[a] = (IsAttributeAlwaysVisible(a) || IsAttributeAdvertised(Context, a)) ? m_Attributes[a].TypeProperties.DefaultColumnWidth : 0;
+		m_ContextViewSettings[Context].ColumnWidth[a] = (IsAttributeAlwaysVisible(a) || IsAttributeAdvertised(a, Context)) ? m_Attributes[a].TypeProperties.DefaultColumnWidth : 0;
 
 	// Double the width of file name and title
 	m_ContextViewSettings[Context].ColumnWidth[LFAttrFileName] <<= 1;
@@ -370,7 +359,7 @@ void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
 		m_ContextViewSettings[Context].SortDescending = GetInt(_T("SortDescending"), SortDescending);
 		m_ContextViewSettings[Context].View = GetInt(_T("View"), DefaultView);
 
-		Reset |= !IsAttributeAvailable(Context, m_ContextViewSettings[Context].SortBy) ||
+		Reset |= !IsAttributeAvailable(m_ContextViewSettings[Context].SortBy, Context) ||
 			(m_ContextViewSettings[Context].View>=LFViewCount) || !IsViewAllowed(Context, m_ContextViewSettings[Context].View);
 	}
 
@@ -388,7 +377,7 @@ void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
-			if (!IsAttributeAvailable(Context, a))
+			if (!IsAttributeAvailable(a, Context))
 			{
 				m_ContextViewSettings[Context].ColumnWidth[a] = 0;
 			}
@@ -403,7 +392,7 @@ void CLiquidFoldersApp::LoadContextViewSettings(UINT Context, BOOL Reset)
 	SetRegistryBase(_T("Settings"));
 }
 
-void CLiquidFoldersApp::SaveContextViewSettings(UINT Context)
+void CLiquidFoldersApp::SaveContextViewSettings(ITEMCONTEXT Context)
 {
 	CString Base;
 	Base.Format(_T("Settings\\Context%u"), Context);

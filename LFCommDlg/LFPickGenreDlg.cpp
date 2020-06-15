@@ -1,9 +1,10 @@
 
-// LFEditGenreDlg.cpp: Implementierung der Klasse LFEditGenreDlg
+// LFPickGenreDlg.cpp: Implementierung der Klasse LFPickGenreDlg
 //
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
+#include "LFPickGenreDlg.h"
 
 
 // CGenreList
@@ -14,7 +15,6 @@ CGenreList::CGenreList()
 {
 	// Item
 	SetItemHeight(0, 1, ITEMCELLPADDINGY);
-	m_FileCountWidth = LFGetApp()->m_SmallFont.GetTextExtent(_T("000W")).cx+ITEMCELLPADDINGX;
 }
 
 
@@ -77,21 +77,21 @@ void CGenreList::AdjustLayout()
 
 // Item data
 
-void CGenreList::AddItem(const LFMusicGenre* pMusicGenre, UINT GenreID, BOOL FirstInCategory)
+void CGenreList::AddItem(LPCMUSICGENRE lpcMusicGenre, UINT GenreID, BOOL FirstInCategory)
 {
-	ASSERT(pMusicGenre);
+	ASSERT(lpcMusicGenre);
 
 	// Hide some non-primary genres like "Negerpunk"
-	if (!pMusicGenre->Show)
+	if (!lpcMusicGenre->Show)
 	{
-		ASSERT(!pMusicGenre->Primary);
+		ASSERT(!lpcMusicGenre->Primary);
 
 		return;
 	}
 
 	GenreItemData Data;
 
-	Data.pMusicGenre = pMusicGenre;
+	Data.lpcMusicGenre = lpcMusicGenre;
 	Data.GenreID = GenreID;
 	Data.pDescription = m_Description[GenreID];
 	Data.FileCount = m_FileCount[GenreID];
@@ -115,38 +115,27 @@ void CGenreList::AddMusicGenreCategory(UINT IconID)
 	}
 }
 
-void CGenreList::SetGenres(const STOREID& StoreID)
+void CGenreList::SetGenres(ATTRIBUTE Attr, LFSearchResult* pSearchResult)
 {
 	// Gather statistics
 	ZeroMemory(m_Description, sizeof(m_Description));
 	ZeroMemory(m_FileCount, sizeof(m_FileCount));
-
-	// Filter
-	LFFilter* pFilter = LFAllocFilter();
-	pFilter->Query.Context = LFContextMusic;
-	pFilter->Query.StoreID = StoreID;
-
-	// Query
-	CWaitCursor WaitCursor;
-
-	LFSearchResult* pRawFiles = LFQuery(pFilter);
-	LFSearchResult* pCookedFiles = LFGroupSearchResult(pRawFiles, LFAttrGenre, FALSE, TRUE, pFilter);
-	LFFreeFilter(pFilter);
-
-	for (UINT a=0; a<pCookedFiles->m_ItemCount; a++)
+	
+	// Aggregate
+	for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
 	{
 		LFVariantData VData;
-		LFGetAttributeVariantDataEx((*pCookedFiles)[a], LFAttrGenre, VData);
+		LFGetAttributeVariantDataEx((*pSearchResult)[a], Attr, VData);
 
 		if (!LFIsNullVariantData(VData) && (VData.Genre<GENREBUFFERSIZE))
 		{
-			wcscpy_s(m_Description[VData.Genre], 256, (*pCookedFiles)[a]->Description);
-			m_FileCount[VData.Genre] = (*pCookedFiles)[a]->AggregateCount;
+			wcscpy_s(m_Description[VData.Genre], 256, (*pSearchResult)[a]->Description);
+			m_FileCount[VData.Genre] = (*pSearchResult)[a]->AggregateCount;
 		}
 	}
 
-	LFFreeSearchResult(pCookedFiles);
-	LFFreeSearchResult(pRawFiles);
+	// Free search result
+	LFFreeSearchResult(pSearchResult);
 
 	// Add music genres
 	SetItemCount(GENREBUFFERSIZE, FALSE);
@@ -183,6 +172,7 @@ void CGenreList::SetGenres(const STOREID& StoreID)
 		AddMusicGenreCategory(lpcOtherPrimary->IconID);
 	}
 
+	// Finish
 	LastItem();
 	AdjustLayout();
 }
@@ -196,7 +186,7 @@ void CGenreList::ShowTooltip(const CPoint& point)
 
 	const GenreItemData* pData = GetGenreItemData(m_HoverItem);
 
-	LFGetApp()->ShowTooltip(this, point, pData->pMusicGenre->Name, pData->pDescription);
+	LFGetApp()->ShowTooltip(this, point, pData->lpcMusicGenre->Name, pData->pDescription);
 }
 
 void CGenreList::SelectGenre(UINT GenreID)
@@ -226,56 +216,33 @@ UINT CGenreList::GetSelectedGenre() const
 
 void CGenreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
-	ASSERT(rectItem);
-
 	const GenreItemData* pData = GetGenreItemData(Index);
 
-	CRect rect(rectItem);
-	rect.DeflateRect(ITEMCELLPADDINGX, ITEMCELLPADDINGY);
-
-	if (pData->FileCount)
-		rect.right -= m_FileCountWidth;
-
-	// Name
-	dc.DrawText(pData->pMusicGenre->Name, -1, rect, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_VCENTER);
-
-	// Count
-	if (pData->FileCount)
-	{
-		rect.left = rect.right;
-		rect.right += m_FileCountWidth;
-
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallFont);
-
-		SetLightTextColor(dc, Index, Themed);
-		dc.DrawText(CBackstageSidebar::FormatCount(pData->FileCount), rect, DT_SINGLELINE | DT_NOPREFIX | DT_RIGHT | DT_VCENTER);
-
-		dc.SelectObject(pOldFont);
-	}
+	DrawCountItem(dc, rectItem, Index, Themed, pData->lpcMusicGenre->Name, pData->FileCount);
 }
 
 
-// LFEditGenreDlg
+// LFPickGenreDlg
 //
 
-LFEditGenreDlg::LFEditGenreDlg(UINT Genre, const STOREID& StoreID, CWnd* pParentWnd)
-	: LFDialog(IDD_EDITGENRE, pParentWnd)
+LFPickGenreDlg::LFPickGenreDlg(ATTRIBUTE Attr, ITEMCONTEXT Context, UINT Genre, CWnd* pParentWnd)
+	: CAttributePickDlg(Attr, Context, IDD_PICKGENRE, pParentWnd)
 {
-	m_Genre = Genre;
-	m_StoreID = StoreID;
+	ASSERT(LFGetApp()->m_Attributes[Attr].AttrProperties.Type==LFTypeGenre);
 
+	m_Genre = Genre;
 	m_SelectGenre = TRUE;
 }
 
-void LFEditGenreDlg::DoDataExchange(CDataExchange* pDX)
+void LFPickGenreDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
 		m_Genre = m_wndGenreList.GetSelectedGenre();
 }
 
-void LFEditGenreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
+void LFPickGenreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	LFDialog::AdjustLayout(rectLayout, nFlags);
+	CAttributePickDlg::AdjustLayout(rectLayout, nFlags);
 
 	if (IsWindow(m_wndGenreList))
 	{
@@ -289,10 +256,13 @@ void LFEditGenreDlg::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 	}
 }
 
-BOOL LFEditGenreDlg::InitDialog()
+BOOL LFPickGenreDlg::InitDialog()
 {
+	CAttributePickDlg::InitDialog();
+
+	// Genre list
 	m_wndGenreList.Create(this, IDC_GENRELIST);
-	m_wndGenreList.SetGenres(m_StoreID);
+	m_wndGenreList.SetGenres(m_Attr, RunQuery());
 
 	m_wndGenreList.SetFocus();
 
@@ -300,13 +270,13 @@ BOOL LFEditGenreDlg::InitDialog()
 }
 
 
-BEGIN_MESSAGE_MAP(LFEditGenreDlg, LFDialog)
+BEGIN_MESSAGE_MAP(LFPickGenreDlg, CAttributePickDlg)
 	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
-void LFEditGenreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+void LFPickGenreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	LFDialog::OnGetMinMaxInfo(lpMMI);
+	CAttributePickDlg::OnGetMinMaxInfo(lpMMI);
 
 	lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 360);
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);

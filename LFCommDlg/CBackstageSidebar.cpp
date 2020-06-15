@@ -45,9 +45,7 @@ CBackstageSidebar::CBackstageSidebar()
 BOOL CBackstageSidebar::Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts)
 {
 	// Sidebar with numbers?
-	m_ShowCounts = ShowCounts;
-
-	if (ShowCounts)
+	if ((m_ShowCounts=ShowCounts)==TRUE)
 		m_CountWidth = LFGetApp()->m_SmallBoldFont.GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
 
 	// Create

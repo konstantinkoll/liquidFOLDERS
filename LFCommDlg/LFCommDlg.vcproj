@@ -549,18 +549,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFEditGenreDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFEditHashtagsDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFEditTimeDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFFont.cpp"
 				>
 			</File>
@@ -594,6 +582,22 @@
 			</File>
 			<File
 				RelativePath=".\LFOneDriveDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickGenreDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickHashtagsDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickStringDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickTimeDlg.cpp"
 				>
 			</File>
 			<File
@@ -1213,18 +1217,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFEditGenreDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFEditHashtagsDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFEditTimeDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LFFont.h"
 				>
 			</File>
@@ -1258,6 +1250,22 @@
 			</File>
 			<File
 				RelativePath=".\LFOneDriveDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickGenreDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickHashtagsDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickStringDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFPickTimeDlg.h"
 				>
 			</File>
 			<File

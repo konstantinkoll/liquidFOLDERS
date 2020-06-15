@@ -844,7 +844,7 @@ void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
 	pComboBox->SetItemData(pComboBox->AddString(CString((LPCSTR)ResID)), CompareID);
 }
 
-void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request)
+void SetCompareComboBox(CComboBox* pComboBox, ATTRIBUTE Attr, INT Request)
 {
 	ASSERT(pComboBox);
 

@@ -132,6 +132,7 @@
 #define IDS_DROPTARGET_IMPORTMOVE       20253
 #define IDS_DROPTARGET_REMEMBER         20254
 #define IDS_ABOUT                       20255
+#define IDS_SUGGESTIONS                 20256
 #define IDS_COMPARE_FIRST               20300
 #define IDS_COMPARE_IGNORE              20300
 #define IDS_COMPARE_ISNULL              20301
@@ -222,10 +223,9 @@
 #define IDC_LICENSEKEY                  21603
 #define IDD_STOREMAINTENANCE            21700
 #define IDC_MAINTENANCEREPORT           21701
-#define IDD_EDITHASHTAGS                21800
+#define IDD_PICKHASHTAGS                21800
 #define IDC_ASSIGNEDHASHTAGS            21801
-#define IDC_HASHTAGSFROMALLSTORES       21802
-#define IDC_NEWHASHTAGS                 21803
+#define IDC_NEWHASHTAGS                 21802
 #define IDD_BROWSEFORFOLDER             21900
 #define IDC_HEADERAREA                  21901
 #define IDC_SHELLTREE                   21902
@@ -246,7 +246,7 @@
 #define IDC_ADDSTORE_GOOGLEDRIVE        22107
 #define IDC_ADDSTORE_ICLOUD             22108
 #define IDC_ADDSTORE_ONEDRIVE           22109
-#define IDD_EDITTIME                    22200
+#define IDD_PICKTIME                    22200
 #define IDC_CALENDAR                    22201
 #define IDC_USETIME                     22202
 #define IDC_TIME                        22203
@@ -339,8 +339,10 @@
 #define IDC_HIDE                        23402
 #define IDM_UPDATE                      23490
 #define IDM_UPDATE_RESTORE              23491
-#define IDD_EDITGENRE                   23500
+#define IDD_PICKGENRE                   23500
 #define IDC_GENRELIST                   23501
+#define IDD_PICKSTRING                  23600
+#define IDC_STRINGLIST                  23601
 #define IDM_ITEMVIEW_SELECTALL          24000
 #define IDM_ITEMVIEW_SELECTNONE         24001
 #define IDM_ITEMVIEW_SELECTTOGGLE       24002

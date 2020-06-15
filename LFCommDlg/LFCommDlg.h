@@ -41,7 +41,6 @@
 #include "LFDropSource.h"
 #include "LFDropTarget.h"
 #include "LFEditFilterDlg.h"
-#include "LFEditGenreDlg.h"
 #include "LFFont.h"
 #include "LFGenericCloudProviderDlg.h"
 #include "LFGotoYearDlg.h"
@@ -136,7 +135,7 @@ void DrawStoreIconShadow(CDC& dc, const CPoint& pt, UINT IconID, INT IconSize=12
 
 // liquidFOLDERS
 
-void SetCompareComboBox(CComboBox* pComboBox, UINT Attr, INT Request=-1);
+void SetCompareComboBox(CComboBox* pComboBox, ATTRIBUTE Attr, INT Request=-1);
 void TooltipDataFromPIDL(LPITEMIDLIST pidlFQ, CImageList* pIcons, HICON& hIcon, CString& Caption, CString& Hint);
 
 

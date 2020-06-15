@@ -100,7 +100,7 @@ void SortMemory(const SortParameters& Parameters)
 	}
 }
 
-LFCORE_API void LFSortMemory(LPVOID pMemory, UINT ItemCount, SIZE_T szData, PFNCOMPARE zCompare, UINT Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
+LFCORE_API void LFSortMemory(LPVOID pMemory, UINT ItemCount, SIZE_T szData, PFNCOMPARE zCompare, ATTRIBUTE Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
 {
 	assert(szData>0);
 	assert(zCompare);
