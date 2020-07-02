@@ -18,13 +18,13 @@ LFDeleteStoreDlg::LFDeleteStoreDlg(const ABSOLUTESTOREID& StoreID, CWnd* pParent
 
 BOOL LFDeleteStoreDlg::InitDialog()
 {
-	// Store prüfen
+	// Check store
 	OnStoresChanged(NULL, NULL);
 
-	// Radiobutton setzen
+	// Radiobutton
 	((CButton*)GetDlgItem(IDC_KEEP))->SetCheck(TRUE);
 
-	// Fette Überschrift
+	// Set fat font for caption message
 	GetDlgItem(IDC_CAPTION)->SetFont(&LFGetApp()->m_DialogBoldFont);
 
 	// Nuke messages
@@ -33,7 +33,7 @@ BOOL LFDeleteStoreDlg::InitDialog()
 	GetDlgItem(IDC_NUKEMESSAGE1)->ShowWindow(Nuke ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_NUKEMESSAGE2)->ShowWindow(Nuke ? SW_HIDE : SW_SHOW);
 
-	// Titelleiste
+	// Caption
 	CString Mask;
 	GetWindowText(Mask);
 

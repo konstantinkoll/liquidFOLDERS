@@ -168,6 +168,7 @@ BOOL LFPickStringDlg::InitDialog()
 
 BEGIN_MESSAGE_MAP(LFPickStringDlg, CAttributePickDlg)
 	ON_WM_GETMINMAXINFO()
+	ON_NOTIFY(IVN_SELECTIONCHANGED, IDC_STRINGLIST, OnSelectionChanged)
 END_MESSAGE_MAP()
 
 void LFPickStringDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
@@ -185,4 +186,11 @@ void LFPickStringDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	}
 
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
+}
+
+void LFPickStringDlg::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	GetDlgItem(IDOK)->EnableWindow(!m_wndStringList.GetSelectedString().IsEmpty());
+
+	*pResult = 0;
 }

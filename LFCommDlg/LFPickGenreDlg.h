@@ -74,6 +74,7 @@ protected:
 	virtual BOOL InitDialog();
 
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 	CGenreList m_wndGenreList;

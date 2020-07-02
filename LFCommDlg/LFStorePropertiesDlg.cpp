@@ -252,6 +252,7 @@ CString LFStorePropertiesDlg::MakeHex(LPBYTE x, UINT bCount)
 	{
 		CString Digit;
 		Digit.Format(_T("%.2x"), x[a]);
+
 		tmpStr += Digit;
 
 		if (a<bCount-1)
@@ -408,8 +409,8 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 	m_wndMakeDefault.EnableWindow(m_StoreDescriptorValid);
 	m_wndMakeSearchable.EnableWindow(m_StoreDescriptorValid);
 
-	const BOOL Editable = m_StoreDescriptorValid && (m_StoreType & LFTypeWriteable);
-	GetDlgItem(IDOK)->EnableWindow(Editable);
+	const BOOL IsEditable = m_StoreDescriptorValid && (m_StoreType & LFTypeWriteable);
+	GetDlgItem(IDOK)->EnableWindow(IsEditable);
 
 	// Usage
 	m_wndUsageHeader.SetHeader(m_StoreDescriptor.StoreName, LFGetApp()->GetFreeBytesAvailable(m_StoreDescriptor));
@@ -418,7 +419,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 	// Synchronize
 	const BOOL CanSynchronize = m_StoreType & LFTypeSynchronizeAllowed;
 	GetDlgItem(IDC_SYNCHRONIZED)->EnableWindow(CanSynchronize);
-	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize && Editable);
+	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize && IsEditable);
 
 	// Update properties
 	if (m_StoreDescriptorValid)

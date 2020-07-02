@@ -87,6 +87,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "flc",     LFContextVideos, 0 },
 	{ "fli",     LFContextVideos, 0 },
 	{ "flic",    LFContextVideos, 0 },
+	{ "fluid",   LFContextDocuments, 0 },
 	{ "flv",     LFContextVideos, 0 },
 	{ "fnt",     LFContextFonts, 0 },
 	{ "fon",     LFContextFonts, 0 },

@@ -47,7 +47,7 @@ LFAboutDialog::LFAboutDialog(USHORT BackgroundTabMask, CWnd* pParentWnd)
 	wcscat_s(m_BuildInfo, 256, L", ");
 
 	WCHAR tmpStr[256];
-	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT | TIME_NOSECONDS, &SystemTime, NULL, tmpStr, 256);
+	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &SystemTime, NULL, tmpStr, 256);
 	wcscat_s(m_BuildInfo, 256, tmpStr);
 
 	// Special icons

@@ -272,6 +272,7 @@ BOOL LFPickGenreDlg::InitDialog()
 
 BEGIN_MESSAGE_MAP(LFPickGenreDlg, CAttributePickDlg)
 	ON_WM_GETMINMAXINFO()
+	ON_NOTIFY(IVN_SELECTIONCHANGED, IDC_GENRELIST, OnSelectionChanged)
 END_MESSAGE_MAP()
 
 void LFPickGenreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
@@ -280,4 +281,11 @@ void LFPickGenreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 	lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 360);
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
+}
+
+void LFPickGenreDlg::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	GetDlgItem(IDOK)->EnableWindow(m_wndGenreList.GetSelectedGenre());
+
+	*pResult = 0;
 }

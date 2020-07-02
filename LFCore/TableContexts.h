@@ -3,7 +3,7 @@
 #include "LF.h"
 
 
-#define FILEFORMATCOUNT     272
+#define FILEFORMATCOUNT     273
 
 
 #pragma pack(push,1)

@@ -730,7 +730,9 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	LFGetApp()->HideTooltip();
-	LFGetApp()->AddFrame(this);
+
+	if (!m_IsDialog)
+		LFGetApp()->AddFrame(this);
 
 	ModifyStyle(0, WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 

@@ -195,7 +195,6 @@ void CTaskbar::DrawTaskbarShadow(Graphics& g, const CRect& rectClient)
 
 BEGIN_MESSAGE_MAP(CTaskbar, CFrontstageWnd)
 	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_THEMECHANGED()
@@ -217,11 +216,6 @@ void CTaskbar::OnDestroy()
 	DeleteObject(hBackgroundBrush);
 
 	CFrontstageWnd::OnDestroy();
-}
-
-BOOL CTaskbar::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CTaskbar::OnPaint()
