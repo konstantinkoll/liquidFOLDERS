@@ -1,4 +1,3 @@
-
 #include "stdafx.h"
 #include "CStoreWindows.h"
 #include "FileProperties.h"
@@ -28,7 +27,7 @@ UINT CStoreWindows::GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cC
 	assert(pPath);
 	assert(cCount>=2*MAX_PATH);
 
-	if (!LFIsStoreMounted(p_StoreDescriptor))
+	if (!IsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
 	wcscpy_s(pPath, cCount, L"\\\\?\\");
@@ -60,9 +59,8 @@ UINT CStoreWindows::Synchronize(LFProgress* pProgress, BOOL OnInitialize)
 	if ((Result=m_pIndexMain->SynchronizeCommit(pProgress))!=LFOk)
 		goto Finish;
 
-	if (m_pIndexAux)
-		if ((Result=m_pIndexAux->SynchronizeCommit(pProgress))!=LFOk)
-			goto Finish;
+	if (m_pIndexAux && ((Result=m_pIndexAux->SynchronizeCommit(pProgress))!=LFOk))
+		goto Finish;
 
 	// Import new files
 	Result = m_pFileImportList->m_LastError;
@@ -235,6 +233,7 @@ void CStoreWindows::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 
 LFFileImportItem* CStoreWindows::FindSimilarFile(const HORCRUXFILE& File)
 {
+	LPCCOREATTRIBUTES pCoreAttributes = File;
 	LPCWSTR pName = ExtractFileName(File);
 
 	for (UINT a=0; a<m_pFileImportList->m_ItemCount; a++)
@@ -243,9 +242,9 @@ LFFileImportItem* CStoreWindows::FindSimilarFile(const HORCRUXFILE& File)
 
 		if ((pItem->Processed!=PROCESSED_FINISHED) &&
 			((pItem->Flags & (FII_MATCHED | FII_FINDDATAVALID))==FII_FINDDATAVALID) &&
-			(((LPCCOREATTRIBUTES)File)->FileTime==pItem->FindData.ftLastWriteTime) &&
-			(((LPCCOREATTRIBUTES)File)->CreationTime==pItem->FindData.ftCreationTime) &&
-			(((LPCCOREATTRIBUTES)File)->FileSize==((((INT64)pItem->FindData.nFileSizeHigh) << 32) | pItem->FindData.nFileSizeLow)) &&
+			(pCoreAttributes->FileTime==pItem->FindData.ftLastWriteTime) &&
+			(pCoreAttributes->CreationTime==pItem->FindData.ftCreationTime) &&
+			(pCoreAttributes->FileSize==((((INT64)pItem->FindData.nFileSizeHigh) << 32) | pItem->FindData.nFileSizeLow)) &&
 			(_wcsicmp(pName, ExtractFileName(pItem->Path))==0))
 			return pItem;
 	}
@@ -281,19 +280,14 @@ BOOL CStoreWindows::SynchronizeCommit(const HORCRUXFILE& File)
 	LFFileImportItem* pItem = m_pFileImportList->FindPath(Path);
 
 	// Find similar file
-	if (!pItem)
-	{
-		pItem = FindSimilarFile(File);
-
-		if (pItem)
-			wcscpy_s(File, MAX_PATH, &pItem->Path[m_szDatPath]);
-	}
+	if (!pItem && ((pItem=FindSimilarFile(File))!=NULL))
+		wcscpy_s(File, MAX_PATH, &pItem->Path[m_szDatPath]);
 
 	// Update metadata
 	if (pItem && (pItem->Processed!=PROCESSED_FINISHED))
 	{
 		assert(pItem->Flags & FII_FINDDATAVALID);
-		SetAttributesFromFindData(File, pItem->FindData);
+		SetAttributesFromFindData(File, pItem->FindData, TRUE);
 
 		assert(pItem->Processed+1<PROCESSED_FINISHED);
 		pItem->Processed++;

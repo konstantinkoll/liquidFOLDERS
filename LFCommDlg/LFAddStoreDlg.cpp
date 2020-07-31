@@ -14,8 +14,8 @@
 #define PADDING         10
 #define SOURCECOUNT     sizeof(m_Sources)/sizeof(UINT)
 
-const UINT LFAddStoreDlg::m_Sources[] = { LFTypeSourceInternal, LFTypeSourceWindows,
-	LFTypeSourceBox, LFTypeSourceDropbox, LFTypeSourceGoogleDrive, LFTypeSourceICloudDrive, LFTypeSourceOneDrive };
+const UINT LFAddStoreDlg::m_Sources[] = { LFSourceInternal, LFSourceWindows,
+	LFSourceBox, LFSourceDropbox, LFSourceGoogleDrive, LFSourceICloudDrive, LFSourceOneDrive };
 CImageList LFAddStoreDlg::m_SourceIcons;
 
 LFAddStoreDlg::LFAddStoreDlg(CWnd* pParentWnd)

@@ -129,7 +129,7 @@ inline BOOL LFDropTarget::AddToClipboard(CWnd* pWnd, HLIQUIDFILES hLiquidFiles) 
 
 	if (pTransactionList->m_ItemCount)
 		for (UINT a=0; a<p_SearchResult->m_ItemCount; a++)
-			(*p_SearchResult)[a]->Type &= ~LFTypeSelected;
+			(*p_SearchResult)[a]->Flags &= ~LFFlagsItemSelected;
 
 	// Do work
 	const UINT Result = LFDoTransaction(pTransactionList, LFTransactionAddToSearchResult, NULL, (UINT_PTR)p_SearchResult);

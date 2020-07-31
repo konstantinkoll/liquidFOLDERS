@@ -39,21 +39,23 @@ public:
 	void AddItem(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
 	void UpdateIATAAirport(BOOL AllowMultiple);
 	UINT GetFileCount() const;
+	UINT GetCompressibleFileCount() const;
 
 	AttributeSummary m_AttributeSummary[AttrCount];
 	const LFItemDescriptor* p_LastItem;
 	UINT m_ItemCount;
+	UINT m_CompressibleItemCount;
 	UINT m_ContextStatus;
 	ITEMCONTEXT m_OriginalContext;
 	ITEMCONTEXT m_ItemContext;
 	UINT m_IconStatus;
 	UINT m_IconID;
-	BOOL m_FlagsFirst;
-	UINT m_FlagsSet;
-	UINT m_FlagsMultiple;
+	BOOL m_StateFirst;
+	BYTE m_StateSet;
+	BYTE m_MultipleStates;
+	BYTE m_Type;
 	UINT m_StoreStatus;
 	STOREID m_StoreID;
-	UINT m_Type;
 	BOOL m_AggregatedFiles;
 
 protected:
@@ -66,6 +68,11 @@ private:
 inline UINT CFileSummary::GetFileCount() const
 {
 	return m_AggregatedFiles ? m_ItemCount : 0;
+}
+
+inline UINT CFileSummary::GetCompressibleFileCount() const
+{
+	return m_AggregatedFiles ? m_CompressibleItemCount : 0;
 }
 
 
@@ -115,6 +122,7 @@ public:
 	void AggregateAdd(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles);
 	void AggregateClose();
 	UINT GetFileCount() const;
+	UINT GetCompressibleFileCount() const;
 
 protected:
 	void SaveSettings() const;
@@ -155,4 +163,9 @@ inline void CInspectorPane::AggregateAdd(const LFItemDescriptor* pItemDescriptor
 inline UINT CInspectorPane::GetFileCount() const
 {
 	return m_FileSummary.GetFileCount();
+}
+
+inline UINT CInspectorPane::GetCompressibleFileCount() const
+{
+	return m_FileSummary.GetCompressibleFileCount();
 }

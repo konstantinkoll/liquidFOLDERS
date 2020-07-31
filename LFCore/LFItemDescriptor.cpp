@@ -32,7 +32,7 @@ void FreeAttribute(LFItemDescriptor* pItemDescriptor, ATTRIBUTE Attr)
 	assert(pItemDescriptor);
 	assert(Attr<LFAttributeCount);
 
-	// Attribut nur dann freigeben, wenn es nicht im statischer Teil des LFItemDescriptor liegt
+	// Only free attribute memory when not in static part of LFItemDescriptor
 	if (pItemDescriptor->AttributeValues[Attr] && !IsStaticAttribute(pItemDescriptor, Attr))
 	{
 		free(pItemDescriptor->AttributeValues[Attr]);
@@ -225,13 +225,14 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptor(const LPCCOREATTRIBUTES pCore
 	return pItemDescriptor;
 }
 
-LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor& StoreDescriptor)
+LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(LFStoreDescriptor& StoreDescriptor)
 {
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
 	// Category, icon and type
-	pItemDescriptor->CategoryID = (StoreDescriptor.Source>LFTypeSourceUSB) ? LFItemCategoryRemote : LFItemCategoryLocal;
-	pItemDescriptor->IconID = LFGetStoreIcon(&StoreDescriptor, &pItemDescriptor->Type);
+	pItemDescriptor->CategoryID = (StoreDescriptor.Source>=LFSourceNethood) ? LFItemCategoryRemote : LFItemCategoryLocal;
+	pItemDescriptor->IconID = LFGetStoreIconEx(StoreDescriptor);
+	pItemDescriptor->Flags = (StoreDescriptor.Flags & LFFlagsMaskItem) | LFTypeStore;
 
 	// Contains deleted files?
 	if (StoreDescriptor.Statistics.FileCount[LFContextTrash])
@@ -248,9 +249,9 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor& St
 	WCHAR Hint[256];
 	Hint[0] = L'\0';
 
-	if (LFIsStoreMounted(&StoreDescriptor))
+	if (IsStoreMounted(&StoreDescriptor))
 	{
-		if (StoreDescriptor.Source>LFTypeSourceInternal)
+		if (StoreDescriptor.Source>LFSourceInternal)
 		{
 			Hint[0] = L' ';
 			LoadString(LFCoreModuleHandle, IDS_QSRC_UNKNOWN+StoreDescriptor.Source, &Hint[1], 255);
@@ -258,7 +259,7 @@ LFCORE_API LFItemDescriptor* LFAllocItemDescriptorEx(const LFStoreDescriptor& St
 		}
 	}
 	else
-		if (wcscmp(StoreDescriptor.LastSeen, L"")!=0)
+		if (StoreDescriptor.LastSeen[0]!=L'\0')
 		{
 			WCHAR LastSeen[256];
 			LoadString(LFCoreModuleHandle, IDS_LASTSEEN, LastSeen, 256);
@@ -295,7 +296,7 @@ LFCORE_API LFItemDescriptor* LFCloneItemDescriptor(const LFItemDescriptor* pItem
 	LFItemDescriptor* pClone = new LFItemDescriptor(*pItemDescriptor);
 
 	// Deselect clone
-	pClone->Type &= ~LFTypeSelected;
+	pClone->Flags &= ~LFFlagsItemSelected;
 
 	// Reset reference counter
 	pClone->RefCount = 1;
@@ -325,12 +326,14 @@ LFItemDescriptor* AllocFolderDescriptor(const LFFileSummary& FileSummary, const 
 {
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptor();
 
-	pItemDescriptor->Type = LFTypeFolder | FileSummary.Source;
+	pItemDescriptor->Type = ((pItemDescriptor->AggregateFirst=AggregateFirst)>=0) ? LFTypeAggregatedFolder : LFTypeFolder;
+	pItemDescriptor->Source = FileSummary.Source;
+
 	pItemDescriptor->CoreAttributes.FileSize = FileSummary.FileSize;
-	pItemDescriptor->CoreAttributes.Flags = FileSummary.Flags;
+	pItemDescriptor->CoreAttributes.State = FileSummary.State;
 	pItemDescriptor->CoreAttributes.UserContextID = pItemDescriptor->CoreAttributes.SystemContextID = FileSummary.Context;
+
 	pItemDescriptor->AggregateCount = FileSummary.FileCount;
-	pItemDescriptor->AggregateFirst = AggregateFirst;
 	pItemDescriptor->AggregateLast = AggregateLast;
 	pItemDescriptor->AggregateColorSet = FileSummary.ItemColorSet;
 

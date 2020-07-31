@@ -13,6 +13,7 @@
 #include "resource.h"
 #include "Stores.h"
 #include "TableAttributes.h"
+#include "Volumes.h"
 #include "Watchdog.h"
 #include <shlwapi.h>
 #include <winioctl.h>
@@ -25,7 +26,6 @@ OSVERSIONINFO osInfo;
 #pragma data_seg(".shared")
 
 LFMessageIDs LFMessages;
-LFVolumeDescriptor Volumes[26];
 
 const COLORREF ItemColorFade[LFItemColorFadeCount] = { 0x00000000, 0x808080, 0xC0C0C0, 0xE0E0E0 };
 const COLORREF ItemColors[LFItemColorCount] = {
@@ -44,9 +44,6 @@ WCHAR ItemColorNames[LFItemColorCount-1][256];
 
 LFCORE_API void LFInitialize()
 {
-	// Volumes
-	ZeroMemory(&Volumes, sizeof(Volumes));
-
 	// OS version
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
@@ -67,6 +64,7 @@ LFCORE_API void LFInitialize()
 	// Other modules
 	InitMutex();
 	InitAirportDatabase();
+	InitVolumes();
 	InitStores();
 	InitWatchdog();
 }
@@ -176,42 +174,6 @@ LFCORE_API void LFGetFileSummaryEx(LPWSTR pStr, SIZE_T cCount, const LFFileSumma
 }
 
 
-// Registry settings
-//
-
-LFCORE_API BOOL LFHideFileExt()
-{
-	DWORD HideFileExt = 0;
-
-	HKEY hKey;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &hKey)==ERROR_SUCCESS)
-	{
-		DWORD dwSize = sizeof(HideFileExt);
-		RegQueryValueEx(hKey, L"HideFileExt", 0, NULL, (LPBYTE)&HideFileExt, &dwSize);
-
-		RegCloseKey(hKey);
-	}
-
-	return (HideFileExt!=0);
-}
-
-LFCORE_API BOOL LFHideVolumesWithNoMedia()
-{
-	DWORD HideVolumesWithNoMedia = (osInfo.dwMajorVersion<6) ? 0 : 1;
-
-	HKEY hKey;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &hKey)==ERROR_SUCCESS)
-	{
-		DWORD dwSize = sizeof(HideVolumesWithNoMedia);
-		RegQueryValueEx(hKey, L"HideVolumesWithNoMedia", 0, NULL, (LPBYTE)&HideVolumesWithNoMedia, &dwSize);
-
-		RegCloseKey(hKey);
-	}
-
-	return (HideVolumesWithNoMedia!=0);
-}
-
-
 // Resources
 //
 
@@ -276,136 +238,6 @@ void LoadTwoStrings(HINSTANCE hInstance, UINT ID, LPWSTR lpBuffer1, SIZE_T cchBu
 }
 
 
-// Volumes
-//
-
-BYTE GetVolumeBus(CHAR cVolume)
-{
-	assert(cVolume>='A');
-	assert(cVolume<='Z');
-
-	BYTE VolumeBus = BusTypeMaxReserved;
-
-	WCHAR szDevice[7] = L"\\\\?\\ :";
-	szDevice[4] = cVolume;
-
-	HANDLE hDevice = CreateFile(szDevice, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
-	if (hDevice!=INVALID_HANDLE_VALUE)
-	{
-		STORAGE_ADAPTER_DESCRIPTOR OutBuffer;
-		OutBuffer.Size = sizeof(STORAGE_ADAPTER_DESCRIPTOR);
-
-		STORAGE_PROPERTY_QUERY Query;
-		Query.PropertyId = StorageAdapterProperty;
-		Query.QueryType = PropertyStandardQuery;
-
-		DWORD dwOutBytes;
-		if (DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
-			&Query, sizeof(STORAGE_PROPERTY_QUERY), &OutBuffer, sizeof(STORAGE_ADAPTER_DESCRIPTOR),
-			&dwOutBytes, NULL))
-			VolumeBus = OutBuffer.BusType;
-
-		CloseHandle(hDevice);
-	}
-
-	return VolumeBus;
-}
-
-void GetVolumeInformation(CHAR cVolume, BOOL ForceAvailable=FALSE)
-{
-	assert(cVolume>='A');
-	assert(cVolume<='Z');
-
-	const UINT VolumeID = cVolume-'A';
-
-	// Already mounted?
-	if (Volumes[VolumeID].Mounted)
-		return;
-
-	// Check if volume exists
-	if (!ForceAvailable)
-		if ((GetLogicalDrives() & (1<<VolumeID))==0)
-			return;
-
-	Volumes[VolumeID].Mounted = TRUE;
-	Volumes[VolumeID].LogicalVolumeType = LFGLV_INTERNAL;
-	Volumes[VolumeID].Source = LFTypeSourceInternal;
-
-	// Detect drive type and volume source
-	CHAR szRoot[] = " :\\";
-	szRoot[0] = cVolume;
-
-	switch (GetDriveTypeA(szRoot))
-	{
-	case DRIVE_REMOVABLE:
-		Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
-
-	case DRIVE_FIXED:
-		switch (GetVolumeBus(cVolume))
-		{
-		case BusType1394:
-			Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
-			Volumes[VolumeID].Source = LFTypeSource1394;
-			break;
-
-		case BusTypeUsb:
-			Volumes[VolumeID].LogicalVolumeType = LFGLV_EXTERNAL;
-			Volumes[VolumeID].Source = LFTypeSourceUSB;
-			break;
-		}
-
-		break;
-
-	case DRIVE_REMOTE:
-		Volumes[VolumeID].LogicalVolumeType = LFGLV_NETWORK;
-		Volumes[VolumeID].Source = LFTypeSourceNethood;
-		break;
-
-	default:
-		Volumes[VolumeID].LogicalVolumeType = 0;
-	}
-}
-
-LFCORE_API UINT LFGetSourceForVolume(CHAR cVolume)
-{
-	assert(cVolume>='A');
-	assert(cVolume<='Z');
-
-	GetVolumeInformation(cVolume);
-
-	const UINT VolumeID = cVolume-'A';
-
-	return Volumes[VolumeID].Mounted ? Volumes[VolumeID].Source : LFTypeSourceUnknown;
-}
-
-LFCORE_API UINT LFGetLogicalVolumes(UINT Mask)
-{
-	DWORD VolumesOnSystem = GetLogicalDrives();
-	if ((Mask & LFGLV_FLOPPIES)==0)
-		VolumesOnSystem &= ~3;
-
-	DWORD Index = 4;
-
-	for (CHAR cVolume='C'; cVolume<='Z'; cVolume++, Index<<=1)
-	{
-		const UINT VolumeID = cVolume-'A';
-
-		if ((VolumesOnSystem & Index)==0)
-		{
-			Volumes[VolumeID].Mounted = FALSE;
-			continue;
-		}
-
-		GetVolumeInformation(cVolume, TRUE);
-
-		if ((Mask & Volumes[VolumeID].LogicalVolumeType)==0)
-			VolumesOnSystem &= ~Index;
-	}
-
-	return VolumesOnSystem;
-}
-
-
 // Threading
 //
 
@@ -427,23 +259,6 @@ LFCORE_API void LFGetErrorText(LPWSTR pStr, SIZE_T cCount, UINT ID)
 	assert(pStr);
 
 	LoadString(LFCoreModuleHandle, IDS_ERR_FIRST+ID, pStr, (INT)cCount);
-}
-
-LFCORE_API void LFCoreErrorBox(UINT ID, HWND hWnd)
-{
-	if (ID>LFCancel)
-	{
-		WCHAR Caption[256];
-		LoadString(LFCoreModuleHandle, IDS_ERRORCAPTION, Caption, 256);
-
-		WCHAR Message[256];
-		LFGetErrorText(Message, 256, ID);
-
-		if (!hWnd)
-			hWnd = GetForegroundWindow();
-
-		MessageBox(hWnd, Message, Caption, MB_OK | MB_ICONERROR);
-	}
 }
 
 

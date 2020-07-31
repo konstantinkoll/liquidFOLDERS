@@ -102,7 +102,6 @@ public:
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData, BOOL InternalCall=FALSE);
 	UINT GetSortAttribute() const;
 	const SendToItemData* GetSendToItemData(UINT nID) const;
-	static BOOL IsItemSelected(const LFItemDescriptor* pItemDescriptor);
 
 protected:
 	virtual void SetViewSettings(BOOL UpdateSearchResultPending);
@@ -174,30 +173,23 @@ inline const SendToItemData* CFileView::GetSendToItemData(UINT nID) const
 	return (nID>=FIRSTSENDTO) && (nID<=LASTSENDTO) ? &m_SendToItems[nID-FIRSTSENDTO] : NULL;
 }
 
-inline BOOL CFileView::IsItemSelected(const LFItemDescriptor* pItemDescriptor)
-{
-	assert(pItemDescriptor);
-
-	return (pItemDescriptor->Type & LFTypeSelected);
-}
-
 inline void CFileView::SelectItem(LFItemDescriptor* pItemDescriptor, BOOL Select)
 {
 	ASSERT(pItemDescriptor);
 
 	if (Select)
 	{
-		pItemDescriptor->Type |= LFTypeSelected;
+		pItemDescriptor->Flags |= LFFlagsItemSelected;
 	}
 	else
 	{
-		pItemDescriptor->Type &= ~LFTypeSelected;
+		pItemDescriptor->Flags &= ~LFFlagsItemSelected;
 	}
 }
 
 inline COLORREF CFileView::SetLightTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
 {
-	if (!IsItemSelected(pItemDescriptor) && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing))
+	if (!LFIsItemSelected(pItemDescriptor) && !(pItemDescriptor->CoreAttributes.State & LFItemStateMissing))
 		return dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
 	return dc.GetTextColor();
@@ -205,7 +197,7 @@ inline COLORREF CFileView::SetLightTextColor(CDC& dc, const LFItemDescriptor* pI
 
 inline COLORREF CFileView::SetDarkTextColor(CDC& dc, const LFItemDescriptor* pItemDescriptor, BOOL Themed) const
 {
-	if (!IsItemSelected(pItemDescriptor) && !(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing))
+	if (!LFIsItemSelected(pItemDescriptor) && !(pItemDescriptor->CoreAttributes.State & LFItemStateMissing))
 		return dc.SetTextColor(Themed ? 0x4C4C4C : GetSysColor(COLOR_WINDOWTEXT));
 
 	return dc.GetTextColor();

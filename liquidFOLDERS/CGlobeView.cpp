@@ -1222,7 +1222,7 @@ void CGlobeView::OnGoogleEarth()
 	FILE* fStream;
 	if (_tfopen_s(&fStream, szTempName, _T("wt,ccs=UTF-8")))
 	{
-		LFErrorBox(this, LFDriveNotReady);
+		LFErrorBox(this, LFVolumeNotReady);
 	}
 	else
 	{
@@ -1237,7 +1237,7 @@ void CGlobeView::OnGoogleEarth()
 			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 			{
 				const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
-				if (IsItemSelected(pItemDescriptor) && ((pItemDescriptor->CoreAttributes.LocationGPS.Latitude!=0) || (pItemDescriptor->CoreAttributes.LocationGPS.Longitude!=0)))
+				if (LFIsItemSelected(pItemDescriptor) && ((pItemDescriptor->CoreAttributes.LocationGPS.Latitude!=0) || (pItemDescriptor->CoreAttributes.LocationGPS.Longitude!=0)))
 				{
 					File.WriteString(_T("<Placemark>\n<name>"));
 					File.WriteString(pItemDescriptor->CoreAttributes.FileName);
@@ -1266,7 +1266,7 @@ void CGlobeView::OnGoogleEarth()
 		}
 		catch(CFileException ex)
 		{
-			LFErrorBox(this, LFDriveNotReady);
+			LFErrorBox(this, LFVolumeNotReady);
 			File.Close();
 		}
 	}

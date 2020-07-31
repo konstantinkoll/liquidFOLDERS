@@ -70,12 +70,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		{
 			// Try to draw a representative thumbnail
 			if (DrawRepresentativeThumbnail(dc, g, pt, pItemDescriptor, pRawFiles, ThumbnailYOffset))
-			{
-				// No sash for representative thumbnails
-				DrawSash = FALSE;
-
 				goto FinishIcon;
-			}
 
 			// Try to draw a map using the GPS coordinates
 			if (DrawJumboMap(g, pt, pItemDescriptor, ThumbnailYOffset))
@@ -100,7 +95,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		}
 
 		// Draw core icon
-		theApp.m_CoreImageListJumbo.DrawEx(&dc, pItemDescriptor->IconID-1, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask));
+		theApp.m_CoreImageListJumbo.DrawEx(&dc, pItemDescriptor->IconID-1, pt, CSize(128, 128), CLR_NONE, 0xFFFFFF, LFGetImageListStyle(pItemDescriptor));
 		DrawStoreIconShadow(g, pt, pItemDescriptor->IconID);
 
 		// Roll count
@@ -114,7 +109,7 @@ void CIconFactory::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescript
 		// Draw thumbnail or file format icon
 		if (!DrawJumboThumbnail(dc, g, pt, pItemDescriptor, DrawSash, ThumbnailYOffset))
 		{
-			DrawJumboFormatIcon(dc, pt, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Type & LFTypeGhosted);
+			DrawJumboFormatIcon(dc, pt, pItemDescriptor->CoreAttributes.FileFormat, pItemDescriptor->Flags & LFFlagsGhosted);
 
 			// No overlays for file format icons
 			DrawAppBadge = DrawSash = FALSE;
@@ -134,9 +129,9 @@ FinishIcon:
 
 	if (DrawSash)
 	{
-		const INT Overlay = (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? IDI_OVR_ERROR : (pItemDescriptor->CoreAttributes.Flags & LFFlagNew) ? IDI_OVR_NEW : 0;
+		const INT Overlay = (pItemDescriptor->CoreAttributes.State & LFItemStateMissing) ? IDI_OVR_ERROR : (pItemDescriptor->CoreAttributes.State & LFItemStateNew) ? IDI_OVR_NEW : 0;
 		if (Overlay)
-			theApp.m_CoreImageListJumbo.DrawEx(&dc, Overlay-1, CPoint(pt.x+1, pt.y+ThumbnailYOffset-2), CSize(128, 128), CLR_NONE, 0xFFFFFF, ((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT));
+			theApp.m_CoreImageListJumbo.DrawEx(&dc, Overlay-1, CPoint(pt.x+1, pt.y+ThumbnailYOffset-2), CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 	}
 }
 
@@ -144,18 +139,17 @@ void CIconFactory::DrawSmallIcon(CDC& dc, const CPoint& pt, const LFItemDescript
 {
 	ASSERT(pItemDescriptor);
 
-	const UINT nStyle = (pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT;
 	if (pItemDescriptor->IconID)
 	{
 		// Draw core icon
-		theApp.m_CoreImageListSmall.DrawEx(&dc, pItemDescriptor->IconID-1, pt, CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, nStyle);
+		theApp.m_CoreImageListSmall.DrawEx(&dc, pItemDescriptor->IconID-1, pt, CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, LFGetGhostedImageListStyle(pItemDescriptor));
 	}
 	else
 	{
 		ASSERT(LFIsFile(pItemDescriptor));
 
 		// Draw file format icon
-		theApp.m_SystemImageListSmall.DrawEx(&dc, GetSystemIconIndex(pItemDescriptor->CoreAttributes.FileFormat), pt, CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, nStyle);
+		theApp.m_SystemImageListSmall.DrawEx(&dc, GetSystemIconIndex(pItemDescriptor->CoreAttributes.FileFormat), pt, CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, LFGetGhostedImageListStyle(pItemDescriptor));
 	}
 }
 
@@ -209,7 +203,7 @@ BOOL CIconFactory::DrawRepresentativeThumbnail(CDC& dc, Graphics& g, const CPoin
 		return FALSE;
 
 	// Is the folder an aggregated folder?
-	if (!LFIsAggregated(pItemDescriptor))
+	if (!LFIsAggregatedFolder(pItemDescriptor))
 		return FALSE;
 
 	// Try to draw a thumbnail

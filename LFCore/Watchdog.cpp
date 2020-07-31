@@ -11,6 +11,20 @@ HWND hWndWatchdog = NULL;
 ULONG ulSHChangeNotifyRegister;
 
 
+void MessageBox(UINT ID)
+{
+	if (ID>LFVolumeWriteProtected)
+	{
+		WCHAR Caption[256];
+		LoadString(LFCoreModuleHandle, IDS_ERRORCAPTION, Caption, 256);
+
+		WCHAR Message[256];
+		LFGetErrorText(Message, 256, ID);
+
+		MessageBox(GetForegroundWindow(), Message, Caption, MB_OK | MB_ICONERROR);
+	}
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam)
 {
 	// Volume
@@ -29,12 +43,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT32 Message, WPARAM wParam, LPARAM lParam
 					{
 					case SHCNE_DRIVEADD:
 					case SHCNE_MEDIAINSERTED:
-						LFCoreErrorBox(MountVolume((CHAR)Path[0]));
+						MessageBox(MountVolume((CHAR)Path[0]));
 						break;
 
 					case SHCNE_MEDIAREMOVED:
 					case SHCNE_DRIVEREMOVED:
-						LFCoreErrorBox(MountVolume((CHAR)Path[0], FALSE));
+						MessageBox(MountVolume((CHAR)Path[0], FALSE));
 						break;
 					}
 

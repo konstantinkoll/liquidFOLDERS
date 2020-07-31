@@ -19,6 +19,7 @@ CAbstractFileView::CAbstractFileView(UINT Flags, SIZE_T szData, const CSize& szI
 	m_FlagsMask = Flags;
 	m_TypingBuffer[0] = L'\0';
 	m_TypingTicks = 0;
+	m_ShowCompColor = TRUE;
 
 	// Item cateogries
 	for (UINT a=0; a<LFItemCategoryCount; a++)
@@ -111,6 +112,9 @@ void CAbstractFileView::SetSearchResult(LFSearchResult* pCookedFiles)
 
 		// Disable flags that weren't initially allowed
 		m_Flags &= m_FlagsMask;
+
+		// Show file compression
+		m_ShowCompColor = LFShowCompColor();
 	}
 	else
 	{
@@ -138,7 +142,9 @@ void CAbstractFileView::ShowTooltip(const CPoint& point)
 
 COLORREF CAbstractFileView::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 {
-	return ((*p_CookedFiles)[Index]->CoreAttributes.Flags & LFFlagMissing) ? 0x2020FF : (COLORREF)-1;
+	const ITEMSTATE State = (*p_CookedFiles)[Index]->CoreAttributes.State;
+
+	return (State & LFItemStateMissing) ? 0x2020FF : m_ShowCompColor && (State & LFItemStateCompressed) ? 0xFF2020 : (COLORREF)-1;
 }
 
 
@@ -151,7 +157,7 @@ BOOL CAbstractFileView::AllowItemEditLabel(INT Index) const
 
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
-	return LFIsStore(pItemDescriptor) || ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
+	return (pItemDescriptor->Flags & LFFlagsRenameDeleteAllowed) && (LFIsStore(pItemDescriptor) || (LFIsFile(pItemDescriptor) && (pItemDescriptor->Flags & LFFlagsMounted)));
 }
 
 CEdit* CAbstractFileView::CreateLabelEditControl()

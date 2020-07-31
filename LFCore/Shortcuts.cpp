@@ -63,7 +63,7 @@ LFCORE_API UINT LFGetShortcutForItem(LFItemDescriptor* pItemDescriptor, IShellLi
 {
 	assert(pItemDescriptor);
 
-	switch (LFGetItemType(pItemDescriptor))
+	switch (pItemDescriptor->Type)
 	{
 	case LFTypeStore:
 		return GetShortcutForStore(pShellLink, pItemDescriptor->StoreID, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->IconID);
@@ -143,7 +143,7 @@ LFCORE_API UINT LFCreateDesktopShortcutForItem(LFItemDescriptor* pItemDescriptor
 LFCORE_API UINT LFCreateDesktopShortcutForStore(const LFStoreDescriptor& StoreDescriptor)
 {
 	IShellLink* pShellLink;
-	UINT Result = GetShortcutForStore(pShellLink, StoreDescriptor.StoreID, StoreDescriptor.Comments, LFGetStoreIcon(&StoreDescriptor));
+	UINT Result = GetShortcutForStore(pShellLink, StoreDescriptor.StoreID, StoreDescriptor.Comments, LFGetStoreIcon(StoreDescriptor));
 	if (Result!=LFOk)
 		return Result;
 

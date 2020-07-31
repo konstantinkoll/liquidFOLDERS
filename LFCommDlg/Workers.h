@@ -43,6 +43,12 @@ struct WorkerImportParameters
 	BOOL DeleteSource;
 };
 
+struct WorkerCompressParameters
+{
+	LFWorkerParameters Hdr;
+	LFTransactionList* pTransactionList;
+};
+
 struct WorkerDeleteParameters
 {
 	LFWorkerParameters Hdr;
@@ -52,6 +58,7 @@ struct WorkerDeleteParameters
 DWORD WINAPI WorkerCreateStoreWindows(LPVOID lpParam);
 DWORD WINAPI WorkerSendTo(LPVOID lpParam);
 DWORD WINAPI WorkerImport(LPVOID lpParam);
+DWORD WINAPI WorkerCompress(LPVOID lpParam);
 DWORD WINAPI WorkerDelete(LPVOID lpParam);
 
 void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);

@@ -86,13 +86,11 @@ BOOL CItemPanel::SetItem(const STOREID& StoreID)
 	LFStoreDescriptor StoreDescriptor;
 	if (LFGetStoreSettings(StoreID, StoreDescriptor)==LFOk)
 	{
-		LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(StoreDescriptor);
-
 		// Text
-		CString tmpStr(LFGetApp()->GetHintForItem(pItemDescriptor));
+		CString tmpStr(LFGetApp()->GetHintForStore(StoreDescriptor));
 
 		tmpStr.Insert(0, _T("\n"));
-		tmpStr.Insert(0, pItemDescriptor->CoreAttributes.FileName);
+		tmpStr.Insert(0, StoreDescriptor.StoreName);
 
 		// Icon
 		CRect rect;
@@ -100,9 +98,7 @@ BOOL CItemPanel::SetItem(const STOREID& StoreID)
 
 		CImageList* pImageList = (rect.Height()>=LFGetApp()->m_ExtraLargeIconSize) ? &LFGetApp()->m_CoreImageListExtraLarge : &LFGetApp()->m_CoreImageListSmall;
 
-		SetItem(tmpStr, pImageList, pItemDescriptor->IconID-1, pItemDescriptor->Type & LFTypeGhosted);
-
-		LFFreeItemDescriptor(pItemDescriptor);
+		SetItem(tmpStr, pImageList, LFGetStoreIcon(StoreDescriptor)-1, StoreDescriptor.Flags & LFFlagsGhosted);
 
 		return TRUE;
 	}

@@ -31,13 +31,13 @@ void CFileSummary::ResetAttribute(ATTRIBUTE Attr)
 void CFileSummary::Reset(ITEMCONTEXT OriginalContext)
 {
 	p_LastItem = NULL;
-	m_ItemCount = 0;
+	m_ItemCount = m_CompressibleItemCount = 0;
 	m_ItemContext = m_OriginalContext = OriginalContext;
 
 	// Context, icon, flags and store
 	m_ContextStatus = m_IconStatus = m_StoreStatus = STATUSUNUSED;
-	m_FlagsFirst = TRUE;
-	m_FlagsSet = m_FlagsMultiple = 0;
+	m_StateFirst = TRUE;
+	m_StateSet = m_MultipleStates = 0;
 	m_AggregatedFiles = TRUE;
 
 	// Attribute summaries
@@ -94,10 +94,7 @@ void CFileSummary::AddValue(const LFItemDescriptor* pItemDescriptor, ATTRIBUTE A
 	ASSERT(pItemDescriptor);
 	ASSERT(Attr<LFAttributeCount);
 
-	//const ITEMCONTEXT Context = m_OriginalContext>LFLastPersistentContext ? m_OriginalContext : LFGetUserContextID(pItemDescriptor);
-	const ITEMCONTEXT Context = m_OriginalContext;
-
-	if (theApp.IsAttributeAvailable(Attr, Context) && pItemDescriptor->AttributeValues[Attr])
+	if (theApp.IsAttributeAvailable(Attr, m_OriginalContext) && pItemDescriptor->AttributeValues[Attr])
 	{
 		AttributeSummary* pAttributeSummary = &m_AttributeSummary[Attr];
 
@@ -155,6 +152,10 @@ void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 	p_LastItem = pItemDescriptor;
 	m_ItemCount++;
 
+	// Compressible
+	if (LFIsCompressible(pItemDescriptor))
+		m_CompressibleItemCount++;
+
 	// Context
 	if (m_ContextStatus<STATUSMULTIPLE)
 		switch (m_ContextStatus)
@@ -175,16 +176,16 @@ void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 		}
 
 	// Flags
-	if (m_FlagsFirst)
+	if (m_StateFirst)
 	{
-		m_FlagsFirst = FALSE;
+		m_StateFirst = FALSE;
 	}
 	else
 	{
-		m_FlagsMultiple = m_FlagsSet ^ pItemDescriptor->CoreAttributes.Flags;
+		m_MultipleStates |= (m_StateSet ^ pItemDescriptor->CoreAttributes.State);
 	}
 
-	m_FlagsSet |= pItemDescriptor->CoreAttributes.Flags;
+	m_StateSet |= pItemDescriptor->CoreAttributes.State;
 
 	// Color
 	m_AttributeSummary[LFAttrColor].VData.ColorSet |= pItemDescriptor->AggregateColorSet;
@@ -210,7 +211,7 @@ void CFileSummary::AddFile(const LFItemDescriptor* pItemDescriptor)
 		AddValue(pItemDescriptor, a);
 
 	// Virtual properties
-	AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0]);
+	AddValueVirtual(AttrSource, theApp.m_SourceNames[pItemDescriptor->Source][0]);
 }
 
 void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSearchResult* pRawFiles)
@@ -238,25 +239,10 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 		}
 
 	// Type and properties
-	switch (m_Type=LFGetItemType(pItemDescriptor))
+	switch (m_Type=pItemDescriptor->Type)
 	{
 	case LFTypeFile:
 		AddFile(pItemDescriptor);
-
-		break;
-
-	case LFTypeFolder:
-		if ((pItemDescriptor->AggregateFirst!=-1) && (pItemDescriptor->AggregateLast!=-1))
-		{
-			for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
-				AddFile((*pRawFiles)[a]);
-		}
-		else
-		{
-			m_ItemCount += pItemDescriptor->AggregateCount;
-			m_AggregatedFiles = FALSE;
-		}
-
 		break;
 
 	case LFTypeStore:
@@ -280,7 +266,7 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 			AddValueVirtual(AttrSynchronizeTime, tmpStr);
 
 		// Last seen
-		if ((pItemDescriptor->StoreDescriptor.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+		if (pItemDescriptor->StoreDescriptor.IndexMode!=LFStoreIndexModeInternal)
 			AddValueVirtual(AttrLastSeen, pItemDescriptor->StoreDescriptor.LastSeen);
 
 		// Volume space
@@ -289,6 +275,17 @@ void CFileSummary::AddItem(const LFItemDescriptor* pItemDescriptor, const LFSear
 
 		if (pItemDescriptor->StoreDescriptor.TotalNumberOfBytesFree.QuadPart!=pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart)
 			AddValueVirtual(AttrFreeBytesAvailable, pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart);
+
+		break;
+
+	case LFTypeFolder:
+		m_ItemCount += pItemDescriptor->AggregateCount;
+		m_AggregatedFiles = FALSE;
+		break;
+
+	case LFTypeAggregatedFolder:
+		for (INT a=pItemDescriptor->AggregateFirst; a<=pItemDescriptor->AggregateLast; a++)
+			AddFile((*pRawFiles)[a]);
 
 		break;
 	}
@@ -561,9 +558,8 @@ void CInspectorPane::AggregateClose()
 		break;
 
 	default:
-		switch (m_FileSummary.m_Type)
+		if (m_FileSummary.m_Type==LFTypeFile)
 		{
-		case LFTypeFile:
 			if (m_FileSummary.m_ItemCount==1)
 			{
 				m_IconHeader.SetPreview(m_FileSummary.p_LastItem, m_TypeName);
@@ -577,28 +573,26 @@ void CInspectorPane::AggregateClose()
 				{
 					m_IconHeader.SetFormatIcon(m_FileSummary.m_AttributeSummary[LFAttrFileFormat].VData.AnsiString, m_TypeName);
 				}
-
-			break;
-
-		default:
+		}
+		else
+		{
 			m_IconHeader.SetCoreIcon(m_FileSummary.m_IconID, m_TypeName);
 		}
 	}
 
-	// Flags
-	if (!m_FileSummary.m_FlagsFirst)
+	// State
+	if (!m_FileSummary.m_StateFirst)
 	{
-		// Flags
-		WCHAR tmpStr[7] = L"AMTND";
+		WCHAR tmpStr[7] = L"CAMTND";
 		WCHAR* pChar = tmpStr;
 
-		for (UINT Flag=LFFlagArchive; Flag>0; Flag>>=1, pChar++)
-			if (m_FileSummary.m_FlagsMultiple & Flag)
+		for (ITEMSTATE State=LFItemStateCompressed; State>0; State>>=1, pChar++)
+			if (m_FileSummary.m_MultipleStates & State)
 			{
 				*pChar = L'?';
 			}
 			else
-				if ((m_FileSummary.m_FlagsSet & Flag)==0)
+				if ((m_FileSummary.m_StateSet & State)==0)
 				{
 					*pChar = L'-';
 				}

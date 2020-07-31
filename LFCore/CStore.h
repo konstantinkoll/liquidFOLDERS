@@ -42,10 +42,10 @@ public:
 	virtual UINT Synchronize(LFProgress* pProgress=NULL, BOOL OnInitialize=FALSE);
 	virtual UINT ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemTemplate, BOOL Move=FALSE, BOOL RetrieveMetadata=TRUE);
 
-	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew=TRUE);
 	UINT CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit=TRUE, LPCWSTR pPath=NULL, BOOL OnInitialize=FALSE);
 	void Query(LFFilter* pFilter, LFSearchResult* pSearchResult);
 	void DoTransaction(LFTransactionList* pTransactionList, UINT TransactionType, LFProgress* pProgress=NULL, UINT_PTR Parameter=0, const LFVariantData* pVariantData1=NULL, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL);
+	UINT UpdateItemState(LFItemDescriptor* pItemDescriptor, const WIN32_FIND_DATA& FindData, BOOL Exists, BOOL RemoveNew=TRUE);
 
 	// Callbacks
 	virtual UINT CreateDirectories();

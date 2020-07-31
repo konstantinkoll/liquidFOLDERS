@@ -52,7 +52,7 @@ LFCORE_API BOOL LFAddItem(LFSearchResult* pSearchResult, LFItemDescriptor* pItem
 				}
 
 	// Select item
-	pItemDescriptor->Type |= LFTypeSelected;
+	pItemDescriptor->Flags |= LFFlagsItemSelected;
 
 	return pSearchResult->AddItem(pItemDescriptor);
 }
@@ -248,16 +248,16 @@ void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescript
 
 	if (FileSummary.FileCount++)
 	{
-		if ((pItemDescriptor->Type & LFTypeSourceMask)!=FileSummary.Source)
-			FileSummary.Source = LFTypeSourceUnknown;
+		if (pItemDescriptor->Source!=FileSummary.Source)
+			FileSummary.Source = LFSourceUnknown;
 	}
 	else
 	{
-		FileSummary.Source = pItemDescriptor->Type & LFTypeSourceMask;
+		FileSummary.Source = pItemDescriptor->Source;
 	}
 
 	FileSummary.FileSize += pItemDescriptor->CoreAttributes.FileSize;
-	FileSummary.Flags |= (pItemDescriptor->CoreAttributes.Flags & (LFFlagNew | LFFlagTask | LFFlagMissing));
+	FileSummary.State |= pItemDescriptor->CoreAttributes.State;
 	FileSummary.ItemColors[pItemDescriptor->CoreAttributes.Color]++;
 	FileSummary.ItemColorSet |= (BYTE)pItemDescriptor->AggregateColorSet;
 	FileSummary.ContextSet |= (1ull<<LFGetUserContextID(pItemDescriptor));
@@ -269,6 +269,9 @@ void LFSearchResult::AddFileToSummary(LFFileSummary& FileSummary, LFItemDescript
 
 void LFSearchResult::CloseFileSummary(LFFileSummary& FileSummary)
 {
+	// State
+	FileSummary.State &= (LFItemStateNew | LFItemStateTask | LFItemStateMissing);
+
 	// Aggregate context
 	for (BYTE a=0; a<=LFLastPersistentContext; a++)
 		if ((a!=LFContextColorTables) && ((FileSummary.ContextSet>>a) & 1))
@@ -297,7 +300,7 @@ BOOL LFSearchResult::AddItem(LFItemDescriptor* pItemDescriptor)
 	return TRUE;
 }
 
-BOOL LFSearchResult::AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor)
+BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor& StoreDescriptor)
 {
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(StoreDescriptor);
 
@@ -341,7 +344,7 @@ void LFSearchResult::RemoveFlaggedItems(BOOL UpdateSummary)
 void LFSearchResult::KeepRange(UINT First, UINT Last)
 {
 	// Deselect all remaining items
-	REMOVEITEMS((ReadIdx>=First) && (ReadIdx<=Last), ->Type &= ~LFTypeSelected);
+	REMOVEITEMS((ReadIdx>=First) && (ReadIdx<=Last), ->Flags &= ~LFFlagsItemSelected);
 
 	UpdateFileSummary(FALSE);
 }
@@ -383,6 +386,9 @@ INT LFSearchResult::CompareItems(const LFItemDescriptor** pData1, const LFItemDe
 			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrSequenceInCollection, Parameters.Parameter2);
 
 		case LFAttrSequenceInCollection:
+			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrCreator);
+
+		case LFAttrCreator:
 			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrTitle);
 
 		case LFAttrFileName:
@@ -524,7 +530,7 @@ void LFSearchResult::GroupArray(ATTRIBUTE Attr, LFFilter* pFilter)
 	assert(AttrProperties[Attr].Type==LFTypeUnicodeArray);
 	assert(!AttrProperties[Attr].DefaultIconID);
 
-	typedef struct { std::wstring Name; BOOL Multiple; UINT Source; LFFileSummary FileSummary; } TagItem;
+	typedef struct { std::wstring Name; BOOL Multiple; SOURCE Source; LFFileSummary FileSummary; } TagItem;
 	typedef stdext::hash_map<std::wstring, TagItem> Hashtags;
 	Hashtags Tags;
 
@@ -544,7 +550,7 @@ void LFSearchResult::GroupArray(ATTRIBUTE Attr, LFFilter* pFilter)
 				Hashtags::iterator Iterator = Tags.find(Key);
 				if (Iterator==Tags.end())
 				{
-					TagItem Item = { Hashtag, FALSE, 1, m_Items[a]->Type & LFTypeSourceMask };
+					TagItem Item = { Hashtag, FALSE, 1, m_Items[a]->Source };
 
 					InitializeFileSummary(Item.FileSummary);
 					AddFileToSummary(Item.FileSummary, m_Items[a]);
@@ -556,8 +562,8 @@ void LFSearchResult::GroupArray(ATTRIBUTE Attr, LFFilter* pFilter)
 					if (!Iterator->second.Multiple && (Iterator->second.Name.compare(Hashtag)!=0))
 						Iterator->second.Multiple = TRUE;
 
-					if ((m_Items[a]->Type & LFTypeSourceMask)!=Iterator->second.Source)
-						Iterator->second.Source = LFTypeSourceUnknown;
+					if (m_Items[a]->Source!=Iterator->second.Source)
+						Iterator->second.Source = LFSourceUnknown;
 
 					AddFileToSummary(Iterator->second.FileSummary, m_Items[a]);
 				}

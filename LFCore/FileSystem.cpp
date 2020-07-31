@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "FileSystem.h"
 #include "LFCore.h"
-#include <shlobj.h>
+#include "Volumes.h"
 #include <winioctl.h>
 
 
@@ -44,12 +44,11 @@ void GetAutoPath(const LFStoreDescriptor& StoreDescriptor, LPWSTR lpPath)
 	AppendGUID(lpPath, StoreDescriptor);
 }
 
-BOOL FileExists(LPCWSTR lpPath, WIN32_FIND_DATA* pFindData)
+BOOL FileExists(LPCWSTR lpPath, WIN32_FIND_DATA& FindData)
 {
 	assert(lpPath);
 
-	WIN32_FIND_DATA FindData;
-	HANDLE hFind = FindFirstFile(lpPath, pFindData ? pFindData : &FindData);
+	HANDLE hFind = FindFirstFile(lpPath, &FindData);
 
 	BOOL Result = (hFind!=INVALID_HANDLE_VALUE);
 	if (Result)
@@ -63,38 +62,56 @@ BOOL DirectoryExists(LPCWSTR lpPath)
 	assert(lpPath);
 
 	WIN32_FIND_DATA FindData;
-	if (FileExists(lpPath, &FindData))
-		if (FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-			return TRUE;
-
-	return FALSE;
+	return FileExists(lpPath, FindData) && (FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 }
 
 void CompressFile(HANDLE hFile, CHAR cVolume)
 {
 	BY_HANDLE_FILE_INFORMATION FileInformation;
 	if (GetFileInformationByHandle(hFile, &FileInformation) && ((FileInformation.dwFileAttributes & (FILE_ATTRIBUTE_ENCRYPTED | FILE_ATTRIBUTE_COMPRESSED))==0))
-	{
-		WCHAR Root[4] = L" :\\";
-		Root[0] = cVolume;
+		if (GetVolume(cVolume)->Flags & LFFlagsCompressionAllowed)
+		{
+			USHORT Mode = COMPRESSION_FORMAT_LZNT1;
+			DWORD Returned;
 
-		DWORD Flags;
-		if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
-			if (Flags & FS_FILE_COMPRESSION)
-			{
-				USHORT Mode = COMPRESSION_FORMAT_LZNT1;
-				DWORD Returned;
-
-				DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
-			}
+			DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
 		}
+}
+
+BOOL CompressFile(LPCWSTR lpPath)
+{
+	assert(lpPath);
+
+	BOOL Result = FALSE;
+
+	HANDLE hFile;
+	if ((hFile=CreateFile(lpPath, GENERIC_WRITE | GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL))!=INVALID_HANDLE_VALUE)
+	{
+		// Handle extended path types
+		const WCHAR* pVolume = lpPath;
+		while (*pVolume && (*pVolume<L'A' || *pVolume>L'Z'))
+			pVolume++;
+
+		if (*pVolume)
+		{
+			CompressFile(hFile, (CHAR)*pVolume);
+
+			BY_HANDLE_FILE_INFORMATION FileInformation;
+			if (GetFileInformationByHandle(hFile, &FileInformation) && (FileInformation.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED))
+				Result = TRUE;
+		}
+
+		CloseHandle(hFile);
+	}
+
+	return Result;
 }
 
 void HideFile(LPCWSTR lpPath)
 {
 	assert(lpPath);
 
-	DWORD dwFileAttributes = GetFileAttributes(lpPath);
+	const DWORD dwFileAttributes = GetFileAttributes(lpPath);
 
 	if (dwFileAttributes!=INVALID_FILE_ATTRIBUTES)
 		SetFileAttributes(lpPath, dwFileAttributes | FILE_ATTRIBUTE_HIDDEN);
@@ -109,19 +126,6 @@ BOOL RequiredSpaceAvailable(LPCWSTR lpPath, UINT64 Required)
 	return GetDiskFreeSpaceEx(lpPath, &FreeBytesAvailable, NULL, NULL) ? FreeBytesAvailable.QuadPart>=Required : FALSE;
 }
 
-BOOL VolumeWriteable(CHAR cVolume)
-{
-	WCHAR Path[] = L" :\\";
-	Path[0] = cVolume;
-
-	DWORD dwFlags;
-	if (GetVolumeInformation(Path, NULL, 0, NULL, 0, &dwFlags, NULL, 0))
-		if ((dwFlags & FILE_READ_ONLY_VOLUME)==0)
-			return TRUE;
-
-	return FALSE;
-}
-
 DWORD CreateDirectory(LPCWSTR lpPath)
 {
 	assert(lpPath);
@@ -129,7 +133,7 @@ DWORD CreateDirectory(LPCWSTR lpPath)
 	return CreateDirectory(lpPath, NULL) ? ERROR_SUCCESS : GetLastError();
 }
 
-UINT CopyDirectory(LPCWSTR lpPathSrc, LPCWSTR lpPathDst)
+UINT CopyDirectory(LPCWSTR lpPathSrc, LPCWSTR lpPathDst, BOOL Compress)
 {
 	UINT Result = LFOk;
 
@@ -146,6 +150,7 @@ UINT CopyDirectory(LPCWSTR lpPathSrc, LPCWSTR lpPathDst)
 		{
 			if ((FindData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 			{
+				// Copy file
 				WCHAR PathSource[MAX_PATH];
 				wcscpy_s(PathSource, MAX_PATH, lpPathSrc);
 				wcscat_s(PathSource, MAX_PATH, FindData.cFileName);
@@ -159,6 +164,10 @@ UINT CopyDirectory(LPCWSTR lpPathSrc, LPCWSTR lpPathDst)
 					Result = LFCannotCopyIndex;
 					break;
 				}
+
+				// Compress destination file
+				if (Compress)
+					CompressFile(PathDestination);
 			}
 		}
 		while (FindNextFile(hFind, &FindData)!=0);
@@ -173,7 +182,7 @@ BOOL DeleteDirectory(LPCWSTR lpPath)
 {
 	BOOL Result = TRUE;
 
-	// Dateien löschen
+	// Remove files
 	WCHAR Path[MAX_PATH];
 	wcscpy_s(Path, MAX_PATH, lpPath);
 	wcscat_s(Path, MAX_PATH, L"*");
@@ -215,7 +224,7 @@ BOOL DeleteDirectory(LPCWSTR lpPath)
 		FindClose(hFind);
 	}
 
-	// Verzeichnis löschen
+	// Remove directory
 	if (Result)
 		Result = RemoveDirectory(lpPath);
 

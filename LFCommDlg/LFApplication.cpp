@@ -624,24 +624,34 @@ CString LFApplication::GetHintForItem(const LFItemDescriptor* pItemDescriptor, L
 	LFTooltip::AppendAttribute(Hint, _T(""), pItemDescriptor->Description);
 
 	// File format
-	if (pFormatName)
-		if (*pFormatName)
+	if (pFormatName && *pFormatName)
+	{
+		ASSERT(LFIsFile(pItemDescriptor));
+
+		CString tmpStr(pFormatName);
+
+		// Source
+		if (pItemDescriptor->Source>LFSourceInternal)
 		{
-			ASSERT(LFIsFile(pItemDescriptor));
+			WCHAR strSource[256] = L" ";
+			wcscpy_s(&strSource[1], 255, m_SourceNames[pItemDescriptor->Source][1]);
+			strSource[1] = (WCHAR)towlower(strSource[1]);
 
-			CString tmpStr(pFormatName);
-
-			if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceInternal)
-			{
-				WCHAR strSource[256] = L" ";
-				wcscpy_s(&strSource[1], 255, m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][1]);
-				strSource[1] = (WCHAR)towlower(strSource[1]);
-
-				tmpStr.Append(strSource);
-			}
-
-			LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
+			tmpStr.Append(strSource);
 		}
+
+		// Compression
+		if (pItemDescriptor->CoreAttributes.State & LFItemStateCompressed)
+		{
+			CString strCompressed((LPCSTR)IDS_COMPRESSED);
+
+			tmpStr.Append(_T(" ("));
+			tmpStr.Append(strCompressed);
+			tmpStr.Append(_T(")"));
+		}
+
+		LFTooltip::AppendAttribute(Hint, _T(""), tmpStr);
+	}
 
 	// Free bytes available
 	if (LFIsStore(pItemDescriptor))
@@ -661,7 +671,7 @@ CString LFApplication::GetHintForItem(const LFItemDescriptor* pItemDescriptor, L
 	return Hint;
 }
 
-CString LFApplication::GetHintForStore(const LFStoreDescriptor& StoreDescriptor) const
+CString LFApplication::GetHintForStore(LFStoreDescriptor& StoreDescriptor) const
 {
 	LFItemDescriptor* pItemDescriptor = LFAllocItemDescriptorEx(StoreDescriptor);
 

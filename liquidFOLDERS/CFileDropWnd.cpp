@@ -63,8 +63,7 @@ void CFileDropWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 	// Icon
 	CPoint pt(m_rectIcon.left-ICONOFFSETX, m_rectIcon.top-ICONOFFSETY);
 
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1, pt, CSize(128, 128),
-		CLR_NONE, CLR_NONE, ((m_StoreType & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (m_StoreType & LFTypeBadgeMask));
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, m_StoreIcon-1, pt, CSize(128, 128), CLR_NONE, CLR_NONE, LFGetImageListStyle(m_StoreDescriptor));
 	DrawStoreIconShadow(dc, pt, m_StoreIcon);
 
 	// Text
@@ -102,6 +101,7 @@ void CFileDropWnd::SetTopMost(BOOL AlwaysOnTop)
 	theApp.m_FileDropAlwaysOnTop = m_AlwaysOnTop = AlwaysOnTop;
 
 	SetWindowPos(AlwaysOnTop ? &wndTopMost : &wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndShadow.Update(this);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu)
@@ -260,19 +260,19 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_STORE_SYNCHRONIZE:
-		bEnable = ((m_StoreType & (LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable))==(LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable));
+		bEnable = (m_StoreDescriptor.Flags & LFFlagsSynchronizeAllowed);
 		break;
 
 	case IDM_STORE_MAKEDEFAULT:
-		bEnable = !(m_StoreType & LFTypeDefault);
+		bEnable = !(m_StoreDescriptor.Flags & LFFlagsStoreIsDefault);
 		break;
 
 	case IDM_STORE_SHORTCUT:
-		bEnable = (m_StoreType & LFTypeShortcutAllowed);
+		bEnable = (m_StoreDescriptor.Flags & LFFlagsShortcutAllowed);
 		break;
 
 	case IDM_STORE_DELETE:
-		bEnable = (m_StoreType & LFTypeManageable);
+		bEnable = (m_StoreDescriptor.Flags & LFFlagsRenameDeleteAllowed);
 		break;
 
 	case IDM_STORE_RENAME:
@@ -289,7 +289,7 @@ LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	if (LFGetStoreSettings(m_StoreID, m_StoreDescriptor)!=LFOk)
 		PostMessage(WM_CLOSE);
 
-	m_StoreIcon = LFGetStoreIcon(&m_StoreDescriptor, &m_StoreType);
+	m_StoreIcon = LFGetStoreIconEx(m_StoreDescriptor);
 
 	SetWindowText(m_StoreDescriptor.StoreName);
 	Invalidate();

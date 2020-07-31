@@ -30,6 +30,7 @@ CFileView::CFileView(UINT Flags, SIZE_T szData, const CSize& szItemInflate)
 	p_Filter = NULL;
 	p_RawFiles = NULL;
 	m_Context = LFContextAllFiles;
+	m_HideFileExt = FALSE;
 	m_SubfolderAttribute = -1;
 	m_WelcomeCaptionHeight = m_WelcomeMessageHeight = 0;
 }
@@ -89,6 +90,7 @@ void CFileView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 			m_FocusItem = -1;
 		}
 
+		// Hide file extensions
 		m_HideFileExt = LFHideFileExt();
 	}
 
@@ -135,7 +137,7 @@ void CFileView::AppendMoveToItem(CMenu& Menu, UINT FromContext, UINT ToContext) 
 	ASSERT(ToContext<LFContextCount);
 
 	CString tmpStr;
-	tmpStr.Format((ToContext==LFContextAllFiles) ? IDS_CONTEXTMENU_REMOVEFROMCONTEXT : IDS_CONTEXTMENU_MOVETOCONTEXT, theApp.m_Contexts[(ToContext==LFContextAllFiles) ? FromContext : ToContext].Name);
+	tmpStr.Format((ToContext==LFContextRemove) ? IDS_CONTEXTMENU_REMOVEFROMCONTEXT : IDS_CONTEXTMENU_MOVETOCONTEXT, theApp.m_Contexts[(ToContext==LFContextRemove) ? FromContext : ToContext].Name);
 
 	Menu.AppendMenu(MF_STRING, IDM_FILE_MOVETOCONTEXT+ToContext, tmpStr);
 }
@@ -178,7 +180,7 @@ void CFileView::GetMoveToMenu(CMenu& Menu) const
 		if (Menu.GetMenuItemCount())
 			Menu.AppendMenu(MF_SEPARATOR);
 
-		AppendMoveToItem(Menu, UserContext, LFContextAllFiles);
+		AppendMoveToItem(Menu, UserContext, LFContextRemove);
 	}
 }
 
@@ -231,9 +233,8 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 		Added = TRUE;
 
 		const UINT Index = (nID++) & 0xFF;
-
+		m_SendToItems[Index].StoreID = StoreID;
 		m_SendToItems[Index].IsStore = TRUE;
-		DEFAULTSTOREID(m_SendToItems[Index].StoreID);
 	}
 
 	if (LFGetStoreCount())
@@ -274,16 +275,15 @@ void CFileView::GetSendToMenu(CMenu& Menu)
 					wcscpy_s(Name, MAX_PATH, ffd.cFileName);
 
 					WCHAR* pLastExt = wcsrchr(Name, L'.');
-					if (pLastExt)
-						if (*pLastExt!=L'\0')
-						{
-							CString Ext(pLastExt);
-							Ext.MakeUpper();
-							if ((Ext==_T(".DESKLINK")) || (Ext==_T(".LFSENDTO")))
-								continue;
+					if (pLastExt && (*pLastExt!=L'\0'))
+					{
+						CString Ext(pLastExt);
+						Ext.MakeUpper();
+						if ((Ext==_T(".DESKLINK")) || (Ext==_T(".LFSENDTO")))
+							continue;
 
-							*pLastExt = L'\0';
-						}
+						*pLastExt = L'\0';
+					}
 
 					WCHAR Dst[MAX_PATH];
 					wcscpy_s(Dst, MAX_PATH, Path);
@@ -400,7 +400,7 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 	UINT InsertPos = 0;
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
-	switch (LFGetItemType(pItemDescriptor))
+	switch (pItemDescriptor->Type)
 	{
 	case LFTypeStore:
 		Menu.LoadMenu(IDM_STORE);
@@ -411,11 +411,8 @@ BOOL CFileView::GetContextMenu(CMenu& Menu, INT Index)
 
 		break;
 
-	case LFTypeFolder:
-		if ((pItemDescriptor->AggregateFirst==-1) || (pItemDescriptor->AggregateLast==-1))
-			break;
-
 	case LFTypeFile:
+	case LFTypeAggregatedFolder:
 		if ((m_Context==LFContextArchive) || (m_Context==LFContextTrash))
 		{
 			Menu.LoadMenu(MultipleFiles ? IDM_FILE_AWAY_MULTIPLE : IDM_FILE_AWAY_SINGLE);
@@ -571,7 +568,7 @@ BOOL CFileView::IsItemSelected(INT Index) const
 	assert(Index>=0);
 	assert(Index<m_ItemCount);
 
-	return IsSelectionEnabled() ? IsItemSelected((*p_CookedFiles)[Index]) : CAbstractFileView::IsItemSelected(Index);
+	return IsSelectionEnabled() ? LFIsItemSelected((*p_CookedFiles)[Index]) : CAbstractFileView::IsItemSelected(Index);
 }
 
 void CFileView::SelectItem(INT Index, BOOL Select)
@@ -656,13 +653,12 @@ UINT CFileView::GetColorDotCount(const LFItemDescriptor* pItemDescriptor)
 {
 	ASSERT(pItemDescriptor);
 
-	switch (LFGetItemType(pItemDescriptor))
+	if (LFIsFile(pItemDescriptor))
 	{
-	case LFTypeFile:
 		return pItemDescriptor->CoreAttributes.Color ? 1 : 0;
-
-	case LFTypeStore:
-	case LFTypeFolder:
+	}
+	else
+	{
 		UINT Count = 0;
 
 		for (UINT a=1; a<LFColorCount; a++)
@@ -671,8 +667,6 @@ UINT CFileView::GetColorDotCount(const LFItemDescriptor* pItemDescriptor)
 
 		return Count;
 	}
-
-	return 0;
 }
 
 INT CFileView::GetColorDotWidth(const LFItemDescriptor* pItemDescriptor, const CIcons& Icons) const
@@ -689,23 +683,18 @@ void CFileView::DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pIte
 
 	BOOL First = TRUE;
 
-	switch (LFGetItemType(pItemDescriptor))
+	if (pItemDescriptor->Type==LFTypeFile)
 	{
-	case LFTypeFile:
 		ASSERT(pItemDescriptor->AggregateColorSet==(1 << pItemDescriptor->CoreAttributes.Color));
 
 		if (pItemDescriptor->CoreAttributes.Color)
 			DrawColorDot(dc, rect, pItemDescriptor->CoreAttributes.Color, First, Icons, FontHeight);
-
-		break;
-
-	case LFTypeStore:
-	case LFTypeFolder:
+	}
+	else
+	{
 		for (BYTE a=1; a<LFColorCount; a++)
 			if (pItemDescriptor->AggregateColorSet & (1 << a))
 				DrawColorDot(dc, rect, a, First, Icons, FontHeight);
-
-		break;
 	}
 }
 

@@ -294,10 +294,13 @@ void CListView::AdjustLayout()
 		{
 			CRect rectFile(BACKSTAGEBORDER, 1, m_ScrollWidth-1, m_ItemHeight+1);
 
+			INT Row = 0;
+
 			for (INT a=0; a<m_ItemCount; a++)
 			{
 				ListItemData* pData = GetItemData(a);
 				pData->Hdr.Rect = rectFile;
+				pData->Hdr.Row = Row++;
 				pData->DrawTrailingSeparator = (a<m_ItemCount-1);
 
 				rectFile.OffsetRect(0, m_szScrollStep.cy);

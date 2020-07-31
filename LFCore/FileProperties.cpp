@@ -125,20 +125,47 @@ void SetFileContext(LFCoreAttributes& CoreAttributes, BOOL OnImport)
 // File system handling
 //
 
-void SetAttributesFromFindData(LFCoreAttributes& CoreAttributes, const WIN32_FIND_DATA& FindData)
+BOOL IsInvalidItemState(const LFCoreAttributes& CoreAttributes, const WIN32_FIND_DATA& FindData, BOOL Exists, BOOL RemoveNew)
 {
-	// Set attributes
-	CoreAttributes.FileSize = (((INT64)FindData.nFileSizeHigh) << 32) | FindData.nFileSizeLow;
-	CoreAttributes.CreationTime = FindData.ftCreationTime;
-	CoreAttributes.FileTime = FindData.ftLastWriteTime;
+	if (Exists!=((CoreAttributes.State & LFItemStateMissing)==0))
+		return TRUE;
 
-	// Hidden flag
-	if (FindData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
-		CoreAttributes.Flags = (CoreAttributes.Flags & ~LFFlagNew) | LFFlagArchive;
+	return Exists ? (RemoveNew && (CoreAttributes.State & LFItemStateNew)) ||
+		((BOOL)(CoreAttributes.State & LFItemStateCompressed)!=(BOOL)(FindData.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED))
+		: FALSE;
+}
 
-	// Adjust files with modification time older than creation time
-	if (CompareFileTime(&CoreAttributes.CreationTime, &CoreAttributes.FileTime)>0)
-		CoreAttributes.CreationTime = CoreAttributes.FileTime;
+void SetAttributesFromFindData(LFCoreAttributes& CoreAttributes, const WIN32_FIND_DATA& FindData, BOOL Exists, BOOL RemoveNew)
+{
+	if (!Exists)
+	{
+		// Set "Missing" item state
+		CoreAttributes.State |= LFItemStateMissing;
+	}
+	else
+	{
+		// Remove "Missing" item state
+		CoreAttributes.State &= ~LFItemStateMissing;
+
+		// Remove "New" item state if requested
+		if (RemoveNew)
+			CoreAttributes.State &= ~LFItemStateNew;
+
+		// Set attributes
+		CoreAttributes.FileSize = (((INT64)FindData.nFileSizeHigh) << 32) | FindData.nFileSizeLow;
+		CoreAttributes.CreationTime = FindData.ftCreationTime;
+		CoreAttributes.FileTime = FindData.ftLastWriteTime;
+
+		// "Compressed" attribute
+		if (FindData.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED)
+		{
+			CoreAttributes.State |= LFItemStateCompressed;
+		}
+		else
+		{
+			CoreAttributes.State &= ~LFItemStateCompressed;
+		}
+	}
 }
 
 void SetAttributesFromFindData(LFCoreAttributes& CoreAttributes, LPCWSTR pPath)
@@ -149,7 +176,13 @@ void SetAttributesFromFindData(LFCoreAttributes& CoreAttributes, LPCWSTR pPath)
 	HANDLE hFind = FindFirstFile(pPath, &FindData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
-		SetAttributesFromFindData(CoreAttributes, FindData);
+	{
+		SetAttributesFromFindData(CoreAttributes, FindData, TRUE);
+
+		// "Hidden" attribute
+		if (FindData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
+		CoreAttributes.State = (CoreAttributes.State & ~LFItemStateNew) | LFItemStateArchive;
+	}
 
 	FindClose(hFind);
 }
@@ -195,16 +228,23 @@ void GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, LPCGU
 			break;
 
 		case 8200:
-			if (AttrProperties[Attr].Type==LFTypeGenre)
-			{
-				BSTR HUGEP *pbStr;
-				if (SUCCEEDED(SafeArrayAccessData(Value.parray, (void HUGEP**)&pbStr)))
-				{
-					const UINT Genre = FindMusicGenre(pbStr[0]);
+			BSTR HUGEP *pbStr;
 
+			if (SUCCEEDED(SafeArrayAccessData(Value.parray, (void HUGEP**)&pbStr)))
+				switch (AttrProperties[Attr].Type)
+				{
+				case LFTypeUnicodeString:
+				case LFTypeUnicodeArray:
+					SetAttribute(pItemDescriptor, Attr, pbStr[0]);
+
+					break;
+
+				case LFTypeGenre:
+					const UINT Genre = FindMusicGenre(pbStr[0]);
 					SetAttribute(pItemDescriptor, Attr, &Genre);
+
+					break;
 				}
-			}
 
 			break;
 

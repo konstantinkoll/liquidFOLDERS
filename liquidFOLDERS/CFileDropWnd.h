@@ -47,6 +47,5 @@ protected:
 	CRect m_rectIcon;
 	LFStoreDescriptor m_StoreDescriptor;
 	UINT m_StoreIcon;
-	UINT m_StoreType;
 	BOOL m_AlwaysOnTop;
 };

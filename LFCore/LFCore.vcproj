@@ -22,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
@@ -103,7 +103,7 @@
 		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
@@ -185,7 +185,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -276,7 +276,7 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -582,6 +582,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Volumes.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Watchdog.cpp"
 				>
 			</File>
@@ -744,6 +748,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Volumes.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Watchdog.h"
 				>
 			</File>
@@ -858,10 +866,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Classical.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_Content.ico"
 				>
 			</File>
@@ -890,6 +894,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FLD_Folk.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FLD_Gray.ico"
 				>
 			</File>
@@ -915,6 +923,10 @@
 			</File>
 			<File
 				RelativePath=".\res\FLD_Metal.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_MusicSheet.ico"
 				>
 			</File>
 			<File
@@ -951,6 +963,14 @@
 			</File>
 			<File
 				RelativePath=".\res\FLD_Pop.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Psychedelic.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FLD_Punk.ico"
 				>
 			</File>
 			<File

@@ -9,8 +9,6 @@
 // CIndex
 //
 
-#define IndexMaintenanceSteps     (IDXTABLECOUNT*2+1)
-
 typedef class _HORCRUXFILE
 {
 public:
@@ -19,7 +17,7 @@ public:
 	operator LPCVOID() const { return p_StoreData; }
 	operator LPCWSTR() const { return (LPCWSTR)p_StoreData; }
 	operator LPWSTR() const { return (LPWSTR)p_StoreData; }
-	operator BYTE() const { return p_CoreAttributes->Flags; }
+	operator ITEMSTATE() const { return p_CoreAttributes->State; }
 
 	inline const _HORCRUXFILE(LPCCOREATTRIBUTES pCoreAttributes, LPVOID pStoreData)
 	{
@@ -37,15 +35,13 @@ public:
 		p_StoreData = &pItemDescriptor->StoreData;
 	}
 
-	friend _HORCRUXFILE operator+=(const _HORCRUXFILE& File, const BYTE Flag) { File.p_CoreAttributes->Flags |= Flag; return File; }
-	friend _HORCRUXFILE operator-=(const _HORCRUXFILE& File, const BYTE Flag) { File.p_CoreAttributes->Flags &= ~Flag; return File; }
-	friend _HORCRUXFILE operator|=(const _HORCRUXFILE& File, const UINT Flags) { File.p_CoreAttributes->Flags |= Flags; return File; }
-	friend _HORCRUXFILE operator&=(const _HORCRUXFILE& File, const UINT Flags) { File.p_CoreAttributes->Flags &= Flags; return File; }
-
 protected:
 	LPCOREATTRIBUTES p_CoreAttributes;
 	LPVOID p_StoreData;
 } HORCRUXFILE, *LPHORCRUXFILE;
+
+
+#define IndexMaintenanceSteps     (IDXTABLECOUNT*2+1)
 
 class CStore;
 
@@ -67,9 +63,10 @@ public:
 	void ResolveLocations(LFTransactionList* pTransactionList);
 	void SendTo(LFTransactionList* pTransactionList, const STOREID& StoreID, LFProgress* pProgress=NULL);
 	BOOL ExistingFileID(const FILEID& FileID);
-	void UpdateUserContext(LFTransactionList* pTransactionList, ITEMCONTEXT UserContextID);
-	UINT GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew);
-	void UpdateItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, BYTE Flags);
+	void SetUserContext(LFTransactionList* pTransactionList, ITEMCONTEXT UserContextID);
+	void SetItemState(LFTransactionList* pTransactionList, const FILETIME& TransactionTime, ITEMSTATE State);
+	UINT UpdateItemState(LFItemDescriptor* pItemDescriptor, const WIN32_FIND_DATA& FindData, BOOL Exists, BOOL RemoveNew=FALSE);
+	void Compress(LFTransactionList* pTransactionList, LFProgress* pProgress=NULL);
 
 	// Operations with callbacks to CStore object
 	void Update(LFTransactionList* pTransactionList, const LFVariantData* pVariantData1, const LFVariantData* pVariantData2=NULL, const LFVariantData* pVariantData3=NULL, BOOL MakeTask=FALSE);
@@ -82,23 +79,19 @@ protected:
 	void SetError(LFTransactionList* pTransactionList, UINT Index, UINT Result, LFProgress* pProgress=NULL) const;
 	BOOL LoadTable(UINT TableID, BOOL Initialize=FALSE, UINT* pResult=NULL);
 	UINT CompactTable(UINT TableID) const;
-	UINT GetFileLocation(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor=NULL, BOOL RemoveNew=FALSE, WIN32_FIND_DATA* pFindData=NULL);
+	UINT GetFileLocation(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor);
 
 	CStore* p_Store;
 	LFStoreDescriptor* p_StoreDescriptor;
-	UINT m_StoreTypeFlags;
+	UINT m_StoreFlags;
+	UINT m_StoreDataSize;
 	BOOL m_IsMainIndex;
 	BOOL m_WriteAccess;
-	BOOL m_VolumeWriteable;
-	UINT m_StoreDataSize;
 	CHeapfile* m_pTable[IDXTABLECOUNT];
 
 private:
 	BOOL ProgressMinorNext(LFProgress* pProgress) const;
 	BOOL InspectForUpdate(const LFVariantData* pVData, BOOL& IncludeSlaves, BOOL& DoRename);
-
-	// Wrapper function
-	UINT GetFileLocation(LPCCOREATTRIBUTES PtrMaster, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor=NULL, BOOL RemoveNew=FALSE, WIN32_FIND_DATA* pFindData=NULL);
 
 	WCHAR m_IdxPath[MAX_PATH];
 };
@@ -120,13 +113,4 @@ inline void CIndex::SetError(LFTransactionList* pTransactionList, UINT Index, UI
 inline BOOL CIndex::ProgressMinorNext(LFProgress* pProgress) const
 {
 	return m_IsMainIndex ? ::ProgressMinorNext(pProgress) : FALSE;
-}
-
-
-// Wrapper function
-//
-
-inline UINT CIndex::GetFileLocation(LPCCOREATTRIBUTES PtrMaster, LPWSTR pPath, SIZE_T cCount, LFItemDescriptor* pItemDescriptor, BOOL RemoveNew, WIN32_FIND_DATA* pFindData)
-{
-	return GetFileLocation(HORCRUXFILE(PtrMaster, m_pTable[IDXTABLE_MASTER]->GetStoreData(PtrMaster)), pPath, cCount, pItemDescriptor, RemoveNew, pFindData);
 }

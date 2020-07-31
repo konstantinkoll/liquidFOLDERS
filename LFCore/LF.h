@@ -226,16 +226,6 @@ struct LFOneDrivePaths
 };
 
 
-// Volumes
-
-struct LFVolumeDescriptor
-{
-	BOOL Mounted;
-	UINT LogicalVolumeType;
-	UINT Source;
-};
-
-
 // Item categories
 
 #define LFItemCategoryLocal      0
@@ -254,49 +244,49 @@ struct LFItemCategoryDescriptor
 
 typedef BYTE ITEMCONTEXT;
 
-#define LFContextAllFiles                0
-#define LFContextFilters                 1
-#define LFContextAudio                   2
-#define LFContextPictures                3
-#define LFContextVideos                  4
-#define LFContextDocuments               5
-#define LFContextContacts                6
-#define LFContextMessages                7
-#define LFContextFonts                   8
-#define LFContextApps                    9
-#define LFContextBooks                   10
-#define LFContextMovies                  11
-#define LFContextMusic                   12
-#define LFContextPodcasts                13
-#define LFContextTVShows                 14
-#define LFContextColorTables             15
+#define LFContextAllFiles              0
+#define LFContextFilters               1
+#define LFContextAudio                 2
+#define LFContextPictures              3
+#define LFContextVideos                4
+#define LFContextDocuments             5
+#define LFContextContacts              6
+#define LFContextMessages              7
+#define LFContextFonts                 8
+#define LFContextApps                  9
+#define LFContextBooks                 10
+#define LFContextMovies                11
+#define LFContextMusic                 12
+#define LFContextPodcasts              13
+#define LFContextTVShows               14
+#define LFContextColorTables           15
 
-#define LFContextFavorites               16
-#define LFContextNew                     17
-#define LFContextTasks                   18
-#define LFContextArchive                 19
-#define LFContextTrash                   20
+#define LFContextFavorites             16
+#define LFContextNew                   17
+#define LFContextTasks                 18
+#define LFContextArchive               19
+#define LFContextTrash                 20
 
-#define LFContextSearch                  21
-#define LFContextStores                  22
-#define LFContextClipboard               23
-#define LFContextSubfolderDefault        24
-#define LFContextSubfolderBooks          25
-#define LFContextSubfolderFonts          26
-#define LFContextSubfolderMessages       27
-#define LFContextSubfolderMovies         28
-#define LFContextSubfolderMusic          29
-#define LFContextSubfolderPictures       30
-#define LFContextSubfolderPodcasts       31
-#define LFContextSubfolderTVShows        32
-#define LFContextSubfolderVideos         33
+#define LFContextSearch                21
+#define LFContextStores                22
+#define LFContextClipboard             23
+#define LFContextSubfolderDefault      24
+#define LFContextSubfolderBooks        25
+#define LFContextSubfolderFonts        26
+#define LFContextSubfolderMessages     27
+#define LFContextSubfolderMovies       28
+#define LFContextSubfolderMusic        29
+#define LFContextSubfolderPictures     30
+#define LFContextSubfolderPodcasts     31
+#define LFContextSubfolderTVShows      32
+#define LFContextSubfolderVideos       33
 
-#define LFLastPersistentContext          15
-#define LFLastQueryContext               20
-#define LFContextCount                   34
+#define LFLastPersistentContext        15
+#define LFLastQueryContext             20
+#define LFContextCount                 34
 
-#define LFContextAuto                    0xFF	// Internal use only
-#define LFContextRemove                  LFContextAllFiles
+#define LFContextAuto                  0xFF	// Internal use only
+#define LFContextRemove                LFContextAllFiles
 
 
 // Attributes
@@ -617,30 +607,6 @@ struct LFContextDescriptor
 #define LFApplicationCount           22
 
 
-// Statistics
-
-struct LFStatistics
-{
-	UINT FileCount[LFLastQueryContext+1];
-	INT64 FileSize[LFLastQueryContext+1];
-	UINT TaskCount[LFMaxRating+1];
-};
-
-struct LFFileSummary
-{
-	UINT FileCount;
-	INT64 FileSize;
-	UINT ItemColors[LFItemColorCount];
-	BYTE ItemColorSet;
-	UINT64 ContextSet;
-	ITEMCONTEXT Context;
-	BYTE Flags;
-	UINT Source;
-	UINT64 Duration;
-	BOOL OnlyTimebasedMediaFiles;
-};
-
-
 // Search filter
 
 #define LFFilterModeStores                0
@@ -674,7 +640,7 @@ struct LFFilterQuery
 {
 	BYTE Mode;
 
-	ITEMCONTEXT Context;			// For LFFilterModeDirectoryTree and above
+	ITEMCONTEXT Context;					// For LFFilterModeDirectoryTree and above
 	BOOL IgnoreSlaves;						// If TRUE, only core properties are retrieved
 	STOREID StoreID;						// For LFFilterModeDirectoryTree and above
 	WCHAR SearchTerm[256];					// For LFFilterModeDirectoryTree and above
@@ -700,24 +666,148 @@ struct LFFilter
 #pragma pack(pop)
 
 
-// Store structure
+// Sources
 
-#define LFStoreModeIndexInternal         0x00000000
-#define LFStoreModeIndexHybrid           0x00000001
-#define LFStoreModeIndexExternal         0x00000002
-#define LFStoreModeIndexMask             0x0000000F
+#define LFSourceUnknown           0
+#define LFSourceInternal          1
+#define LFSourceWindows           2
+#define LFSource1394              3
+#define LFSourceUSB               4
+#define LFSourceNethood           5
+#define LFSourceBox               6
+#define LFSourceDropbox           7
+#define LFSourceICloudDrive       8
+#define LFSourceOneDrive          9
+#define LFSourceICloudPhotos     10
+#define LFSourceGoogleDrive      11
 
-#define LFStoreModeBackendInternal       0x00000000
-#define LFStoreModeBackendWindows        0x02000000
-#define LFStoreModeBackendMask           0xFF000000
-#define LFStoreModeBackendShift          24
+#define LFSourceCount            12
 
-#define LFStoreFlagsAutoLocation         0x00000001
-#define LFStoreFlagsError                0x00000002
-#define LFStoreFlagsVictim               0x00000004
-#define LFStoreFlagsMaintained           LFTypeMaintained
-#define LFStoreFlagsManageable           LFTypeManageable
-#define LFStoreFlagsWriteable            LFTypeWriteable
+typedef BYTE SOURCE;
+
+
+// Statistics
+
+typedef BYTE ITEMSTATE;
+
+struct LFStatistics
+{
+	UINT FileCount[LFLastQueryContext+1];
+	INT64 FileSize[LFLastQueryContext+1];
+	UINT TaskCount[LFMaxRating+1];
+};
+
+struct LFFileSummary
+{
+	UINT FileCount;
+	INT64 FileSize;
+	UINT64 ContextSet;
+	ITEMCONTEXT Context;
+	UINT ItemColors[LFItemColorCount];
+	BYTE ItemColorSet;
+	ITEMSTATE State;
+	SOURCE Source;
+	UINT64 Duration;
+	BOOL OnlyTimebasedMediaFiles;
+};
+
+
+// Flags
+
+// Item type
+#define LFTypeStore                    0
+#define LFTypeFile                     1
+#define LFTypeFolder                   2
+#define LFTypeAggregatedFolder         3
+
+#define LFTypeMask                     0x00000003
+
+// Badge
+#define LFFlagsBadgeError              1
+#define LFFlagsBadgeDefault            2
+#define LFFlagsBadgeNew                3
+#define LFFlagsBadgeEmpty              4
+
+#define LFFlagsBadgeMask               0x0000001C
+
+// Visual
+#define LFFlagsItemSelected            0x00000020
+#define LFFlagsGhosted                 0x00000040
+
+// Stores
+#define LFFlagsStoreMaintained         0x00000100
+#define LFFlagsStoreIsDefault          0x00000200
+
+// Capabilities
+#define LFFlagsMounted                 0x00010000
+#define LFFlagsCompressionAllowed      0x00020000
+#define LFFlagsWriteable               0x00040000
+#define LFFlagsRenameDeleteAllowed     0x00100000
+#define LFFlagsShortcutAllowed         0x00200000
+#define LFFlagsSynchronizeAllowed      0x00400000
+#define LFFlagsExplorerAllowed         0x00800000
+
+// Mask for stores when volume is unmounted
+#define LFFlagsMaskUnmount             0xFF100000
+
+// Mask Volume->Store
+#define LFFlagsMaskVolume              0xFF070000
+
+// Mask Store
+#define LFFlagsMaskStore               0xFFF70100
+
+// Mask Store->Item
+#define LFFlagsMaskItem                0xFFF7035C
+
+// Mask Store->Files
+#define LFFlagsMaskFiles               0xFFF70000
+
+#pragma warning(push)
+#pragma warning(disable: 4201)
+
+#define FLAGS \
+	union \
+	{ \
+		UINT Flags; \
+		struct \
+		{ \
+			BYTE Type :2; \
+			BYTE Badge :3; \
+			BYTE Visual: 2; \
+			BYTE Reserved1 :1; \
+			BYTE StoreFlags :2; \
+			BYTE Reserved2 :6; \
+			BYTE Capabilities; \
+			SOURCE Source; \
+		}; \
+	};
+
+
+// Volumes
+
+struct VOLUME
+{
+	FLAGS;
+	BYTE LogicalVolumeType;
+};
+
+typedef VOLUME* LPVOLUME;
+typedef const VOLUME* LPCVOLUME;
+
+
+// Stores
+
+#define LFStoreIndexModeInternal     0
+#define LFStoreIndexModeHybrid       1
+#define LFStoreIndexModeExternal     2
+
+#define LFStoreBackendInternal       0
+#define LFStoreBackendWindows        2
+
+#define LFStoreStateAutoLocation     0x00000001
+#define LFStoreStateError            0x00000002
+
+typedef UINT STORESTATE;
 
 struct LFStoreDescriptor
 {
@@ -725,31 +815,45 @@ struct LFStoreDescriptor
 	WCHAR StoreName[256];
 	WCHAR LastSeen[256];
 	WCHAR Comments[256];
-	UINT Mode;
+	union
+	{
+		UINT Mode;
+		struct
+		{
+			BYTE IndexMode;
+			BYTE Reserved1;
+			BYTE Reserved2;
+			BYTE Backend;
+		};
+	};
 	GUID UniqueID;
-	UINT Flags;
+	STORESTATE State;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	FILETIME MaintenanceTime;
 	UINT IndexVersion;
-	WCHAR DatPath[MAX_PATH];
+	union
+	{
+		WCHAR DatPath[MAX_PATH];
+		WCHAR Volume;
+	};
 	FILETIME SynchronizeTime;
 
 	WCHAR IdxPathMain[MAX_PATH];				// Volatile, must be first
 	WCHAR IdxPathAux[MAX_PATH];					// Volatile
 	FILETIME MountTime;							// Volatile
-	UINT Source;								// Volatile
+	FLAGS;										// Volatile
 	LFStatistics Statistics;					// Volatile
 	ULARGE_INTEGER FreeBytesAvailable;			// Volatile
 	ULARGE_INTEGER TotalNumberOfBytes;			// Volatile
 	ULARGE_INTEGER TotalNumberOfBytesFree;		// Volatile
+
+	BOOL HideMainIndex;							// Private flag
+	BOOL Victim;								// Private flag
 };
 
 
 // Attribute structures
-
-#pragma warning(push)
-#pragma warning(disable: 4201)
 
 struct LFCoreAttributes
 {
@@ -764,7 +868,7 @@ struct LFCoreAttributes
 	FILETIME ArchiveTime;
 	CHAR FileFormat[LFExtSize];
 	INT64 FileSize;
-	BYTE Flags;
+	ITEMSTATE State;
 	BYTE Color;
 	BYTE Reserved1;
 	BYTE Reserved2;
@@ -794,73 +898,19 @@ typedef const LPCOREATTRIBUTES LPCCOREATTRIBUTES;
 #pragma warning(pop)
 
 
-// Sources
-
-#define LFSourceCount     12
-
-
 // Item structure
 
-#define LFTypeSourceUnknown           0x00000000	// Must be lowest bits
-#define LFTypeSourceInternal          0x00000001
-#define LFTypeSourceWindows           0x00000002
-#define LFTypeSource1394              0x00000003
-#define LFTypeSourceUSB               0x00000004
-#define LFTypeSourceNethood           0x00000005
-#define LFTypeSourceBox               0x00000006
-#define LFTypeSourceDropbox           0x00000007
-#define LFTypeSourceICloudDrive       0x00000008
-#define LFTypeSourceOneDrive          0x00000009
-#define LFTypeSourceICloudPhotos      0x0000000A
-#define LFTypeSourceGoogleDrive       0x0000000B
-
-#define LFTypeSourceMask              0x000000FF
-
-// Type: badge flags
-#define LFTypeBadgeError              0x00000100	// Volatile, must match image list
-#define LFTypeBadgeDefault            0x00000200
-#define LFTypeBadgeNew                0x00000300
-#define LFTypeBadgeEmpty              0x00000400
-
-#define LFTypeBadgeMask               0x00000F00
-
-// Type: capability flags
-#define LFTypeShortcutAllowed         0x00001000	// Volatile
-#define LFTypeSynchronizeAllowed      0x00002000
-#define LFTypeExplorerAllowed         0x00004000
-
-#define LFTypeCapabilityMask          0x000FF000
-
-// Type: store flags
-#define LFTypeMounted                 0x00100000	// Volatile
-#define LFTypeMaintained              0x00200000
-#define LFTypeManageable              0x00400000
-#define LFTypeWriteable               0x00800000
-
-// Type: visual flags
-#define LFTypeSelected                0x01000000	// Volatile
-#define LFTypeDefault                 0x02000000
-#define LFTypeGhosted                 0x04000000
-
-// Item type
-#define LFTypeStore                   0x00000000	// Volatile
-#define LFTypeFile                    0x40000000
-#define LFTypeFolder                  0x80000000
-
-#define LFTypeMask                    0xC0000000
-
-
-// Persistent item flags
-#define LFFlagTrash                   0x01			// Persistent, DO NOT CHANGE
-#define LFFlagNew                     0x02
-#define LFFlagTask                    0x04
-#define LFFlagMissing                 0x08
-#define LFFlagArchive                 0x10
+#define LFItemStateTrash              0x01
+#define LFItemStateNew                0x02
+#define LFItemStateTask               0x04
+#define LFItemStateMissing            0x08
+#define LFItemStateArchive            0x10
+#define LFItemStateCompressed         0x20
 
 
 // Item data structure
-#define LFMaxSlaveSize                3236			// Check when new attributes are added
-#define LFMaxStoreDataSize            sizeof(WCHAR)*MAX_PATH
+#define LFMaxSlaveSize         3236			// Check when new attributes are added
+#define LFMaxStoreDataSize     sizeof(WCHAR)*MAX_PATH
 
 #pragma warning(push)
 #pragma warning(disable: 4201)
@@ -868,7 +918,7 @@ typedef const LPCOREATTRIBUTES LPCCOREATTRIBUTES;
 struct LFItemDescriptor
 {
 	// Basic
-	UINT Type;
+	FLAGS;
 	UINT CategoryID;
 	UINT IconID;
 	BOOL RemoveFlag;
@@ -935,8 +985,9 @@ struct LFItemDescriptor
 #define LFTransactionRecover               0x102
 #define LFTransactionUpdate                0x103
 #define LFTransactionUpdateTask            0x104
-#define LFTransactionUpdateUserContext     0x105
-#define LFTransactionDelete                0x106
+#define LFTransactionSetUserContext        0x105
+#define LFTransactionCompress              0x106
+#define LFTransactionDelete                0x107
 
 #define LFTransactionLastReadonly          0x0FF
 
@@ -945,14 +996,14 @@ struct LFItemDescriptor
 
 #define LFOk                         0
 #define LFCancel                     1
-#define LFDriveWriteProtected        2
+#define LFVolumeWriteProtected       2
 #define LFSharingViolation1          3
 #define LFSharingViolation2          4
 #define LFMemoryError                5
 #define LFIllegalQuery               6
 #define LFIllegalStoreDescriptor     7
 #define LFStoreNotFound              8
-#define LFDriveNotReady              9
+#define LFVolumeNotReady             9
 #define LFIllegalPhysicalPath        10
 #define LFRegistryError              11
 #define LFNoAccessError              12
@@ -975,6 +1026,7 @@ struct LFItemDescriptor
 #define LFCannotRenameFile           29
 #define LFCannotCopyIndex            30
 #define LFNoFileBody                 31
+#define LFCannotCompressFile         32
 
-#define LFErrorCount                 32
+#define LFErrorCount                 33
 #define LFFirstFatalError            5

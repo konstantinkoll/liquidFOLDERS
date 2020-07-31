@@ -33,8 +33,7 @@ void CStoreList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index,
 
 	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
-	DrawTile(dc, rectItem, LFGetApp()->m_CoreImageListExtraLarge, pItemDescriptor->IconID-1, 
-		((pItemDescriptor->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | (pItemDescriptor->Type & LFTypeBadgeMask), 
+	DrawTile(dc, rectItem, LFGetApp()->m_CoreImageListExtraLarge, pItemDescriptor->IconID-1, LFGetImageListStyle(pItemDescriptor),
 		GetDarkTextColor(dc, Index, Themed), 4,
 		pItemDescriptor->CoreAttributes.FileName, pItemDescriptor->CoreAttributes.Comments, pItemDescriptor->Description,
 		(LPCWSTR)LFGetApp()->GetFreeBytesAvailable(pItemDescriptor->StoreDescriptor.FreeBytesAvailable.QuadPart));
@@ -128,7 +127,7 @@ void LFChooseStoreDlg::UpdateOkButton()
 	BOOL bEnable = (Index!=-1);
 
 	if (m_Writeable && bEnable)
-		bEnable &= ((*m_pSearchResult)[Index]->Type & (LFTypeMounted | LFTypeWriteable))==(LFTypeMounted | LFTypeWriteable);
+		bEnable &= ((*m_pSearchResult)[Index]->Flags & (LFFlagsMounted | LFFlagsWriteable))==(LFFlagsMounted | LFFlagsWriteable);
 
 	GetDlgItem(IDOK)->EnableWindow(bEnable);
 }
@@ -249,7 +248,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	INT Index = -1;
 
 	for (UINT a=0; a<m_pSearchResult->m_ItemCount; a++)
-		if (((Index==-1) && ((*m_pSearchResult)[a]->Type & LFTypeDefault)) || (StoreID==(*m_pSearchResult)[a]->StoreID))
+		if (((Index==-1) && ((*m_pSearchResult)[a]->Flags & LFFlagsStoreIsDefault)) || (StoreID==(*m_pSearchResult)[a]->StoreID))
 			Index = a;
 
 	m_wndStoreList.SetFocusItem(Index);
@@ -314,7 +313,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_STORE_MAKEDEFAULT:
-			bEnable = !(pItemDescriptor->Type & LFTypeDefault);
+		// TODO	bEnable = !(pItemDescriptor->Flags & LFTypeDefault);
 			break;
 
 		case IDM_STORE_SYNCHRONIZE:
@@ -322,15 +321,15 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			break;
 
 		case IDM_STORE_SHORTCUT:
-			bEnable = (pItemDescriptor->Type & LFTypeShortcutAllowed);
+			bEnable = (pItemDescriptor->Flags & LFFlagsShortcutAllowed);
 			break;
 
 		case IDM_STORE_DELETE:
-			bEnable = (pItemDescriptor->Type & LFTypeManageable);
+			bEnable = (pItemDescriptor->Flags & LFFlagsRenameDeleteAllowed);
 			break;
 
 		case IDM_STORE_RENAME:
-			bEnable = (pItemDescriptor->Type & LFTypeManageable) && !m_wndStoreList.IsEditing();
+			bEnable = (pItemDescriptor->Flags & LFFlagsRenameDeleteAllowed) && !m_wndStoreList.IsEditing();
 			break;
 		}
 	}

@@ -65,7 +65,6 @@ protected:
 
 private:
 	ULONG m_SHChangeNotifyRegister;
-	CString m_strBuffer;
 };
 
 inline CString CShellTree::GetItemText(ExplorerTreeItemData* pItem) const

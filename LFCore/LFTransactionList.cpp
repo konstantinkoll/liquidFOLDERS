@@ -15,7 +15,7 @@ LFCORE_API LFTransactionList* LFAllocTransactionList(LFSearchResult* pSearchResu
 
 	if (pSearchResult)
 		for (UINT a=0; a<pSearchResult->m_ItemCount; a++)
-			if (All || ((*pSearchResult)[a]->Type & LFTypeSelected))
+			if (All || LFIsItemSelected((*pSearchResult)[a]))
 			{
 				assert(LFIsFile((*pSearchResult)[a]) || LFIsStore((*pSearchResult)[a]));
 
@@ -291,7 +291,7 @@ UINT LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	for (UINT a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].LastError==LFOk) && !m_Items[a].Processed)
 		{
-			switch (m_Items[a].pItemDescriptor ? LFGetItemType(m_Items[a].pItemDescriptor) : LFTypeFile)
+			switch (m_Items[a].pItemDescriptor ? m_Items[a].pItemDescriptor->Type : LFTypeFile)
 			{
 			case LFTypeFile:
 				if ((Result=OpenStore(m_Items[a].StoreID, pStore, TransactionType>LFTransactionLastReadonly))==LFOk)
@@ -365,7 +365,7 @@ UINT LFTransactionList::DoTransaction(UINT TransactionType, LFProgress* pProgres
 	case LFTransactionRecover:
 	case LFTransactionUpdate:
 	case LFTransactionUpdateTask:
-	case LFTransactionUpdateUserContext:
+	case LFTransactionSetUserContext:
 	case LFTransactionDelete:
 		SendLFNotifyMessage(LFMessages.StatisticsChanged);
 

@@ -18,6 +18,13 @@ inline BOOL SendLFNotifyMessage(UINT Msg)
 
 UINT SaveStoreSettings(LFStoreDescriptor* pStoreDescriptor);
 
+inline BOOL IsStoreMounted(const LFStoreDescriptor* pStoreDescriptor)
+{
+	assert(pStoreDescriptor);
+
+	return pStoreDescriptor->Volume!=L'\0';
+}
+
 void CreateNewStoreID(ABSOLUTESTOREID& StoreID);
 LFStoreDescriptor* FindStore(const ABSOLUTESTOREID& StoreID);
 LFStoreDescriptor* FindStore(const GUID& UniqueID);
@@ -26,7 +33,6 @@ UINT UpdateStoreInCache(LFStoreDescriptor* pStoreDescriptor, BOOL UpdateFileTime
 UINT MakeDefaultStore(LFStoreDescriptor* pStoreDescriptor);
 void ChooseNewDefaultStore(BOOL OnInitialize=FALSE);
 
-UINT StoreFlagsToType(const LFStoreDescriptor* pStoreDescriptor, UINT ItemType);
 void GetDiskFreeSpaceForStore(LFStoreDescriptor& StoreDescriptor);
 UINT GetStore(LFStoreDescriptor* pStoreDescriptor, CStore*& pStore);
 UINT GetStore(const ABSOLUTESTOREID& StoreID, CStore*& pStore);
@@ -34,7 +40,7 @@ UINT OpenStore(const ABSOLUTESTOREID& StoreID, CStore*& pStore, BOOL WriteAccess
 UINT OpenStore(const STOREID& StoreID, CStore*& pStore, BOOL WriteAccess=TRUE);
 
 void QueryStores(LFSearchResult* pSearchResult);
-void MountVolumes(UINT Mask, BOOL OnInitialize=FALSE);
+void MountVolumes(BYTE Mask, BOOL OnInitialize=FALSE);
 void InitStores();
 
 UINT MountVolume(CHAR cVolume, BOOL Mount=TRUE, BOOL OnInitialize=FALSE);

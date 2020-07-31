@@ -24,7 +24,7 @@ class CVolumeList sealed : public CFrontstageItemView
 public:
 	CVolumeList();
 
-	void SetVolumes(UINT Mask=LFGLV_INTERNAL | LFGLV_EXTERNAL | LFGLV_NETWORK);
+	void SetVolumes(BYTE Mask=LFGLV_INTERNAL | LFGLV_EXTERNAL | LFGLV_NETWORK);
 	CHAR GetSelectedVolume() const;
 
 protected:

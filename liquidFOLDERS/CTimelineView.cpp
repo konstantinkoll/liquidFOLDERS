@@ -10,17 +10,17 @@
 // CTimelineView
 //
 
-#define ARROWSIZE          (GUTTER-4)
-#define GUTTER             BACKSTAGEBORDER
-#define MIDDLE             (2*GUTTER+6)
-#define BLENDHEIGHT        2*(GUTTER+CARDPADDING)
-#define LARGEPADDING       (CARDPADDING-1)
-#define SMALLPADDING       (CARDPADDING/2+1)
-#define CATEGORYPADDING    (3*CARDPADDING/2)
-#define THUMBMARGINX       2
-#define THUMBMARGINY       THUMBMARGINX
-#define THUMBOFFSETY       -1
-#define MAXFILELIST        10
+#define ARROWSIZE           (GUTTER-4)
+#define GUTTER              BACKSTAGEBORDER
+#define MIDDLE              (2*GUTTER+6)
+#define BLENDHEIGHT         2*(GUTTER+CARDPADDING)
+#define LARGEPADDING        (CARDPADDING-1)
+#define SMALLPADDING        (CARDPADDING/2+1)
+#define CATEGORYPADDING     (3*CARDPADDING/2)
+#define THUMBMARGINX        2
+#define THUMBMARGINY        THUMBMARGINX
+#define THUMBOFFSETY        -1
+#define MAXFILELIST         10
 
 #define DrawCollectionIcon()     theApp.m_CoreImageListSmall.DrawEx(&dc, pData->CollectionIconID-1, CPoint(rect.left, rectAttr.top-(m_DefaultFontHeight-16)/2), CSize(m_SmallIconSize, m_SmallIconSize), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 
@@ -54,11 +54,11 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 			pData->Year = stLocal.wYear;
 
 			// Source
-			if ((pItemDescriptor->Type & LFTypeSourceMask)>LFTypeSourceWindows)
+			if (pItemDescriptor->Source>LFSourceWindows)
 				pData->PreviewMask |= PRV_SOURCE;
 
-			// Map properties to Creator, Title, Collection and Comments
-			switch (LFGetItemType(pItemDescriptor))
+			// Map properties to creator, title, collection and comments
+			switch (pItemDescriptor->Type)
 			{
 			case LFTypeFile:
 				pData->pStrCreator = GetAttribute(pData, PRV_CREATOR, pItemDescriptor, LFAttrCreator);
@@ -92,14 +92,11 @@ void CTimelineView::SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles
 
 				break;
 
-			case LFTypeFolder:
+			case LFTypeAggregatedFolder:
 				// Aggregate properties
 				pData->PreviewMask |= PRV_CREATOR | PRV_TITLE | PRV_COMMENTS | PRV_COLLECTIONICON;
 				pData->pStrCreator = pData->pStrTitle = pData->pStrComments = NULL;
 				pData->CollectionIconID = 0;
-
-				ASSERT(pItemDescriptor->AggregateFirst>=0);
-				ASSERT(pItemDescriptor->AggregateLast>=0);
 
 				for (INT b=pItemDescriptor->AggregateFirst; b<=pItemDescriptor->AggregateLast; b++)
 				{
@@ -239,7 +236,7 @@ void CTimelineView::AggregateIcon(UINT& PreviewMask, INT& AggregatedIconID, UINT
 
 BOOL CTimelineView::UsePreview(LFItemDescriptor* pItemDescriptor)
 {
-	if (pItemDescriptor->Type & LFTypeMounted)
+	if (pItemDescriptor->Flags & LFFlagsMounted)
 		switch (LFGetSystemContextID(pItemDescriptor))
 		{
 		case LFContextAllFiles:
@@ -638,6 +635,13 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPCRECT lpcRectCategory, 
 	dc.DrawText(pItemCategoryData->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
 
+COLORREF CTimelineView::GetItemTextColor(INT Index, BOOL Themed) const
+{
+	const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
+
+	return LFIsFolder(pItemDescriptor) ? 0xCC3300 : CFileView::GetItemTextColor(Index, Themed);
+}
+
 void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed)
 {
 	ASSERT(rectItem);
@@ -646,9 +650,9 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 	TimelineItemData* pData = GetTimelineItemData(Index);
 
-	const BOOL Selected = IsItemSelected(pItemDescriptor);
+	const BOOL Selected = LFIsItemSelected(pItemDescriptor);
 	DrawCardForeground(dc, g, rectItem, Themed, m_HoverItem==Index, m_FocusItem==Index, Selected,
-		(pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (COLORREF)-1,
+		(pItemDescriptor->CoreAttributes.State & LFItemStateMissing) ? 0x0000FF : (COLORREF)-1,
 		m_ShowFocusRect);
 
 	CRect rect(rectItem);
@@ -696,7 +700,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 	DrawColorDots(dc, rectCaption, pItemDescriptor, m_DefaultFontHeight);
 
 	// Caption
-	dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : (pItemDescriptor->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? pItemDescriptor->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	const COLORREF TextColor = GetItemTextColor(Index, Themed);
+	dc.SetTextColor(Selected ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
 
 	if (LFIsFolder(pItemDescriptor))
 	{
@@ -888,7 +893,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, 
 			}
 
 			rect.top += LARGEPADDING;
-			dc.DrawText(theApp.m_SourceNames[pItemDescriptor->Type & LFTypeSourceMask][0], -1, rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+			dc.DrawText(theApp.m_SourceNames[pItemDescriptor->Source][0], -1, rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 		}
 
 		dc.SelectObject(pOldFont);

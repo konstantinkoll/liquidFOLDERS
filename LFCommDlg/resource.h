@@ -133,6 +133,7 @@
 #define IDS_DROPTARGET_REMEMBER         20254
 #define IDS_ABOUT                       20255
 #define IDS_SUGGESTIONS                 20256
+#define IDS_COMPRESSED                  20257
 #define IDS_COMPARE_FIRST               20300
 #define IDS_COMPARE_IGNORE              20300
 #define IDS_COMPARE_ISNULL              20301

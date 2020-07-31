@@ -438,7 +438,7 @@ void CMainView::SelectionChanged()
 		{
 			const LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[a];
 
-			if (CFileView::IsItemSelected(pItemDescriptor))
+			if (LFIsItemSelected(pItemDescriptor))
 				m_wndInspectorPane.AggregateAdd(pItemDescriptor, p_RawFiles);
 		}
 
@@ -518,6 +518,7 @@ BEGIN_MESSAGE_MAP(CMainView, CFrontstageWnd)
 	ON_COMMAND(IDM_FILE_REMOVEFROMCLIPBOARD, OnFileRemoveFromClipboard)
 	ON_COMMAND(IDM_FILE_MAKETASK, OnFileMakeTask)
 	ON_COMMAND(IDM_FILE_ARCHIVE, OnFileArchive)
+	ON_COMMAND(IDM_FILE_COMPRESS, OnFileCompress)
 	ON_COMMAND(IDM_FILE_COPY, OnFileCopy)
 	ON_COMMAND(IDM_FILE_SHORTCUT, OnItemShortcut)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
@@ -566,18 +567,19 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
 	m_wndTaskbar.AddButton(IDM_FILE_REMOVEFROMCLIPBOARD, 23, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILE_MAKETASK, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_COMPRESS, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 28);
 
-	#define INSPECTORICONVISIBLE     28
-	#define INSPECTORICONHIDDEN      29
+	#define INSPECTORICONVISIBLE     29
+	#define INSPECTORICONHIDDEN      30
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? INSPECTORICONVISIBLE : INSPECTORICONHIDDEN, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 34, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.Register(this);
@@ -671,7 +673,7 @@ void CMainView::OnInitMenuPopup(CMenu* pMenuPopup, UINT nIndex, BOOL bSysMenu)
 		// Get menu item info
 		MENUITEMINFO MenuItemInfo;
 		MenuItemInfo.cbSize = sizeof(MenuItemInfo);
-		MenuItemInfo.fMask = MIIM_TYPE | MIIM_DATA;
+		MenuItemInfo.fMask = MIIM_TYPE | MIIM_DATA | MIIM_ID;
 		MenuItemInfo.dwTypeData = strMask;
 		MenuItemInfo.cch = sizeof(strMask)/sizeof(WCHAR);
 
@@ -680,7 +682,7 @@ void CMainView::OnInitMenuPopup(CMenu* pMenuPopup, UINT nIndex, BOOL bSysMenu)
 		// When a string contains %u: replace it
 		if ((MenuItemInfo.fType==MFT_STRING) && wcsstr(strMask, L"%u"))
 		{
-			swprintf_s(strMenuString, 256, strMask, m_wndInspectorPane.GetFileCount());
+			swprintf_s(strMenuString, 256, strMask, MenuItemInfo.wID==IDM_FILE_COMPRESS ? m_wndInspectorPane.GetCompressibleFileCount() : m_wndInspectorPane.GetFileCount());
 
 			// Set menu item info
 			MenuItemInfo.dwTypeData = strMenuString;
@@ -717,7 +719,7 @@ void CMainView::OnBeginDragAndDrop(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		{
 			LFItemDescriptor* pItemDescriptor = (*p_CookedFiles)[Index];
 
-			if (pItemDescriptor->Type & LFTypeShortcutAllowed)
+			if (pItemDescriptor->Flags & LFFlagsShortcutAllowed)
 				pDataSource = new LFDataSource(pItemDescriptor);
 		}
 	}
@@ -1005,7 +1007,7 @@ void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_FILTERS_EDIT:
-			bEnable &= ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
+			bEnable &= ((pItemDescriptor->Flags & (LFTypeMask | LFFlagsMounted))==(LFTypeFile | LFFlagsMounted));
 			break;
 		}
 	}
@@ -1036,7 +1038,7 @@ void CMainView::OnItemOpen()
 			// Only files have no navigable filter
 			ASSERT(LFIsFile(pItemDescriptor));
 
-			if (pItemDescriptor->Type & LFTypeMounted)
+			if (pItemDescriptor->Flags & LFFlagsMounted)
 			{
 				WCHAR Path[MAX_PATH];
 				UINT Result;
@@ -1189,7 +1191,7 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		{
 		case IDM_ITEM_OPEN:
 			bEnable = (pItemDescriptor->pNextFilter!=NULL) ||
-				((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
+				((pItemDescriptor->Flags & (LFTypeMask | LFFlagsMounted))==(LFTypeFile | LFFlagsMounted));
 
 			break;
 		}
@@ -1268,23 +1270,23 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				switch (pCmdUI->m_nID)
 				{
 				case IDM_STORE_SYNCHRONIZE:
-					bEnable = ((pItemDescriptor->Type & (LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable))==(LFTypeSynchronizeAllowed | LFTypeMounted | LFTypeWriteable));
+					bEnable = (pItemDescriptor->Flags & LFFlagsSynchronizeAllowed);
 					break;
 
 				case IDM_STORE_MAKEDEFAULT:
-					bEnable = !(pItemDescriptor->Type & LFTypeDefault);
+					bEnable = !(pItemDescriptor->Flags & LFFlagsStoreIsDefault);
 					break;
 
 				case IDM_STORE_SHORTCUT:
-					bEnable = (pItemDescriptor->Type & LFTypeShortcutAllowed);
+					bEnable = (pItemDescriptor->Flags & LFFlagsShortcutAllowed);
 					break;
 
 				case IDM_STORE_DELETE:
-					bEnable = (pItemDescriptor->Type & LFTypeManageable);
+					bEnable = (pItemDescriptor->Flags & LFFlagsRenameDeleteAllowed);
 					break;
 
 				case IDM_STORE_RENAME:
-					bEnable = (pItemDescriptor->Type & LFTypeManageable) && !m_pWndFileView->IsEditing();
+					bEnable = (pItemDescriptor->Flags & LFFlagsRenameDeleteAllowed) && !m_pWndFileView->IsEditing();
 					break;
 
 				default:
@@ -1366,9 +1368,8 @@ void CMainView::OnFileRemember()
 	{
 		const LFItemDescriptor* pItemDescriptor = (*p_RawFiles)[a];
 
-		if (CFileView::IsItemSelected(pItemDescriptor))
-			if (pClipboardWnd->AddClipItem(pItemDescriptor, First))
-				Changes = TRUE;
+		if (LFIsItemSelected(pItemDescriptor) && pClipboardWnd->AddClipItem(pItemDescriptor, First))
+			Changes = TRUE;
 	}
 
 	if (Changes)
@@ -1426,6 +1427,20 @@ void CMainView::OnFileArchive()
 	ShowNotification(pTransactionList->m_LastError);
 
 	LFFreeTransactionList(pTransactionList);
+}
+
+void CMainView::OnFileCompress()
+{
+	WorkerCompressParameters Parameters;
+	ZeroMemory(&Parameters, sizeof(Parameters));
+	Parameters.pTransactionList = BuildTransactionList();
+
+	LFDoWithProgress(WorkerCompress, &Parameters.Hdr, this);
+
+	// Show notification
+	ShowNotification(Parameters.pTransactionList->m_LastError);
+
+	LFFreeTransactionList(Parameters.pTransactionList);
 }
 
 void CMainView::OnFileCopy()
@@ -1502,19 +1517,19 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_FILE_OPENWITH:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && !LFIsFilterFile(pItemDescriptor);
+			bEnable = ((pItemDescriptor->Flags & (LFTypeMask | LFFlagsMounted))==(LFTypeFile | LFFlagsMounted)) && !LFIsFilterFile(pItemDescriptor);
 
 		break;
 
 	case IDM_FILE_SHOWEXPLORER:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted | LFTypeExplorerAllowed))==(LFTypeFile | LFTypeMounted | LFTypeExplorerAllowed)) && !LFIsFilterFile(pItemDescriptor);
+			bEnable = (pItemDescriptor->Flags & (LFTypeMask | LFFlagsExplorerAllowed))==(LFTypeFile | LFFlagsExplorerAllowed) && !LFIsFilterFile(pItemDescriptor);
 
 		break;
 
 	case IDM_FILE_EDIT:
 		if (pItemDescriptor)
-			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted)) && LFIsFilterFile(pItemDescriptor);
+			bEnable = ((pItemDescriptor->Flags & (LFTypeMask | LFFlagsMounted | LFFlagsWriteable))==(LFTypeFile | LFFlagsMounted | LFFlagsWriteable)) && LFIsFilterFile(pItemDescriptor);
 
 		break;
 
@@ -1534,6 +1549,10 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		bEnable = m_wndInspectorPane.GetFileCount() && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
 		break;
 
+	case IDM_FILE_COMPRESS:
+		bEnable = m_wndInspectorPane.GetCompressibleFileCount();
+		break;
+
 	case IDM_FILE_COPY:
 	case IDM_FILE_DELETE:
 		bEnable = m_wndInspectorPane.GetFileCount();
@@ -1541,13 +1560,13 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 	case IDM_FILE_SHORTCUT:
 		if (pItemDescriptor && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
-			bEnable = (pItemDescriptor->Type & (LFTypeMask | LFTypeMounted | LFTypeShortcutAllowed))==(LFTypeFile | LFTypeMounted | LFTypeShortcutAllowed);
+			bEnable = (pItemDescriptor->Flags & LFFlagsShortcutAllowed);
 
 		break;
 
 	case IDM_FILE_RENAME:
 		if (pItemDescriptor && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
-			bEnable = ((pItemDescriptor->Type & (LFTypeMask | LFTypeMounted))==(LFTypeFile | LFTypeMounted));
+			bEnable = ((pItemDescriptor->Flags & (LFTypeMask | LFFlagsRenameDeleteAllowed))==(LFTypeFile | LFFlagsRenameDeleteAllowed));
 
 		if (m_pWndFileView)
 			bEnable &= !m_pWndFileView->IsEditing();
@@ -1576,7 +1595,7 @@ void CMainView::OnFileMoveToContext(UINT CmdID)
 	CWaitCursor WaitCursor;
 
 	LFTransactionList* pTransactionList = BuildTransactionList();
-	LFDoTransaction(pTransactionList, LFTransactionUpdateUserContext, NULL, CmdID-IDM_FILE_MOVETOCONTEXT);
+	LFDoTransaction(pTransactionList, LFTransactionSetUserContext, NULL, CmdID-IDM_FILE_MOVETOCONTEXT);
 	RemoveTransactedItems(pTransactionList);
 
 	// Show notification

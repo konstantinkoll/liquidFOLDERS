@@ -57,18 +57,21 @@ IDI_FLD_DEFAULTGENRE    ICON                    "res\\FLD_DefaultGenre.ico"
 IDI_FLD_ALTERNATIVE     ICON                    "res\\FLD_Alternative.ico"
 IDI_FLD_AMBIENT         ICON                    "res\\FLD_Ambient.ico"
 IDI_FLD_BLUES           ICON                    "res\\FLD_Blues.ico"
-IDI_FLD_CLASSICAL       ICON                    "res\\FLD_Classical.ico"
 IDI_FLD_COUNTRY         ICON                    "res\\FLD_Country.ico"
 IDI_FLD_DANCE           ICON                    "res\\FLD_Dance.ico"
 IDI_FLD_EASYLISTENING   ICON                    "res\\FLD_EasyListening.ico"
 IDI_FLD_ELECTRONIC      ICON                    "res\\FLD_Electronic.ico"
+IDI_FLD_FOLK            ICON                    "res\\FLD_Folk.ico"
 IDI_FLD_HIPHOP          ICON                    "res\\FLD_Hip-Hop.ico"
 IDI_FLD_JAZZ            ICON                    "res\\FLD_Jazz.ico"
 IDI_FLD_JPOP            ICON                    "res\\FLD_J-Pop.ico"
 IDI_FLD_LATIN           ICON                    "res\\FLD_Latin.ico"
 IDI_FLD_METAL           ICON                    "res\\FLD_Metal.ico"
+IDI_FLD_MUSICSHEET      ICON                    "res\\FLD_MusicSheet.ico"
 IDI_FLD_OLDIES          ICON                    "res\\FLD_Oldies.ico"
 IDI_FLD_POP             ICON                    "res\\FLD_Pop.ico"
+IDI_FLD_PUNK            ICON                    "res\\FLD_Punk.ico"
+IDI_FLD_PSYCHEDELIC     ICON                    "res\\FLD_Psychedelic.ico"
 IDI_FLD_RANDB           ICON                    "res\\FLD_RandB.ico"
 IDI_FLD_REDCURTAIN      ICON                    "res\\FLD_RedCurtain.ico"
 IDI_FLD_REGGAE          ICON                    "res\\FLD_Reggae.ico"
@@ -113,8 +116,8 @@ IDI_FLD_PLACEHOLDER_TV  ICON                    "res\\FLD_Placeholder_TV.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,36,0
- PRODUCTVERSION 4,0,36,0
+ FILEVERSION 4,1,0,0
+ PRODUCTVERSION 4,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -131,13 +134,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.36"
+            VALUE "FileVersion", "4.1.0"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2020 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.36"
+            VALUE "ProductVersion", "4.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -325,7 +328,7 @@ STRINGTABLE
 BEGIN
     IDS_ERR_OK              "OK"
     IDS_ERR_CANCEL          "Abgebrochen"
-    IDS_ERR_DRIVEWRITEPROTECTED "Der Datenträger ist schreibgeschützt."
+    IDS_ERR_VOLUMEWRITEPROTECTED "Der Datenträger ist schreibgeschützt."
     IDS_ERR_SHARINGVIOLATION1 
                             "Der Speicherort wird zur Zeit von einem anderen Gerät blockiert."
 END
@@ -338,7 +341,7 @@ BEGIN
     IDS_ERR_ILLEGALQUERY    "Der Filter beschreibt eine ungültige Abfrage."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "Der Speicherort ist ungültig."
     IDS_ERR_STORENOTFOUND   "Der gewählte Speicherort ist nicht angeschlossen oder nicht vorhanden."
-    IDS_ERR_DRIVENOTREADY   "Der Datenträger ist nicht bereit!"
+    IDS_ERR_VOLUMENOTREADY  "Der Datenträger ist nicht bereit!"
     IDS_ERR_ILLEGALPHYSFOLDER 
                             "Auf das physische Verzeichnis kann nicht zugegriffen werden."
     IDS_ERR_REGISTRY        "Auf die Registry kann nicht zugegriffen werden."
@@ -370,6 +373,7 @@ BEGIN
     IDS_ERR_CANNOTRENAMEFILE "Einige Dateien können nicht umbenannt werden."
     IDS_ERR_INDEXCOPY       "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt?)."
     IDS_ERR_NOFILEBODY      "Die Datei befindet sich nicht mehr an ihrem Speicherort."
+    IDS_ERR_CANNOTCOMPRESSFILE "Einige Dateien können nicht komprimiert werden."
 END
 
 STRINGTABLE 
@@ -656,7 +660,7 @@ STRINGTABLE
 BEGIN
     IDS_ERR_OK              "Ok"
     IDS_ERR_CANCEL          "Cancelado"
-    IDS_ERR_DRIVEWRITEPROTECTED "La unidad está protegida contra escritura."
+    IDS_ERR_VOLUMEWRITEPROTECTED "La unidad está protegida contra escritura."
     IDS_ERR_SHARINGVIOLATION1 
                             "El ubicación está por el momento bloqueado por otro dispositivo."
 END
@@ -669,7 +673,7 @@ BEGIN
     IDS_ERR_ILLEGALQUERY    "El filtro describe una solicitud ilegal."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "El ubicación es invalidez."
     IDS_ERR_STORENOTFOUND   "El ubicación seleccionado no está conectado ó no está presente."
-    IDS_ERR_DRIVENOTREADY   "La unidad no está lista!"
+    IDS_ERR_VOLUMENOTREADY  "La unidad no está lista!"
     IDS_ERR_ILLEGALPHYSFOLDER "La carpeta física no es accessible."
     IDS_ERR_REGISTRY        "No se puede acceder al registro."
     IDS_ERR_NOACCESS        "La carpeta física no es accessible. Por favor revise los derechos de acceso del directorio del ubicación."
@@ -700,6 +704,7 @@ BEGIN
     IDS_ERR_CANNOTRENAMEFILE "Algunos archivos no pueden ser renombrados."
     IDS_ERR_INDEXCOPY       "El índice no puede ser actualizado (¿disco protegido contra escritura?)."
     IDS_ERR_NOFILEBODY      "El archivo ya no está presente en su ubicación."
+    IDS_ERR_CANNOTCOMPRESSFILE "Algunos archivos no pueden ser comprimir."
 END
 
 STRINGTABLE 
@@ -986,7 +991,7 @@ STRINGTABLE
 BEGIN
     IDS_ERR_OK              "OK"
     IDS_ERR_CANCEL          "Annulé"
-    IDS_ERR_DRIVEWRITEPROTECTED 
+    IDS_ERR_VOLUMEWRITEPROTECTED 
                             "Le support de données est protégé en écriture."
     IDS_ERR_SHARINGVIOLATION1 
                             "L'emplacement est bloqué à présent par un autre appareil."
@@ -1000,7 +1005,7 @@ BEGIN
     IDS_ERR_ILLEGALQUERY    "Le filtre décrit une interrogation non valable."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "L'emplacement est invalidité."
     IDS_ERR_STORENOTFOUND   "L'emplacement choisi n'est pas relié ou pas disponible."
-    IDS_ERR_DRIVENOTREADY   "Le support de données n'est pas prêt!"
+    IDS_ERR_VOLUMENOTREADY  "Le support de données n'est pas prêt!"
     IDS_ERR_ILLEGALPHYSFOLDER "Il n'y a pas accès au dossier physique."
     IDS_ERR_REGISTRY        "Il n'ya pas accès au registry."
     IDS_ERR_NOACCESS        "Il n'y a pas accès au dossier physique. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
@@ -1032,6 +1037,8 @@ BEGIN
                             "Certains fichiers ne peuvent pas être renommées."
     IDS_ERR_INDEXCOPY       "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture?)."
     IDS_ERR_NOFILEBODY      "Le fichier ne se trouve pas à leur emplacement."
+    IDS_ERR_CANNOTCOMPRESSFILE 
+                            "Certains fichiers ne peuvent pas être compressés."
 END
 
 STRINGTABLE 
@@ -1355,7 +1362,7 @@ STRINGTABLE
 BEGIN
     IDS_ERR_OK              "OK"
     IDS_ERR_CANCEL          "Canceled"
-    IDS_ERR_DRIVEWRITEPROTECTED "The drive is write protected."
+    IDS_ERR_VOLUMEWRITEPROTECTED "The volume is write protected."
     IDS_ERR_SHARINGVIOLATION1 
                             "The location is currently blocked by another device."
 END
@@ -1368,7 +1375,7 @@ BEGIN
     IDS_ERR_ILLEGALQUERY    "The filter describes an illegal request."
     IDS_ERR_ILLEGALSTOREDESCRIPTOR "The location is invalid."
     IDS_ERR_STORENOTFOUND   "The selected location is not mounted or not present."
-    IDS_ERR_DRIVENOTREADY   "The drive is not ready!"
+    IDS_ERR_VOLUMENOTREADY  "The volume is not ready!"
     IDS_ERR_ILLEGALPHYSFOLDER "The physical folder is not accessible."
     IDS_ERR_REGISTRY        "The registry cannot be accessed."
     IDS_ERR_NOACCESS        "The physical folder is not accessible. Please check the access rights of the location's directory."
@@ -1399,6 +1406,7 @@ BEGIN
     IDS_ERR_CANNOTRENAMEFILE "Some files cannot be renamed."
     IDS_ERR_INDEXCOPY       "The index cannot be updated (write protected disc?)."
     IDS_ERR_NOFILEBODY      "The file is not at its location anymore."
+    IDS_ERR_CANNOTCOMPRESSFILE "Some files cannot be compressed."
 END
 
 STRINGTABLE 

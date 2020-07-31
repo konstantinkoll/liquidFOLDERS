@@ -61,7 +61,7 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
 	{
-		p_ItemDescriptor->Type = LFTypeFile;
+		p_ItemDescriptor->Flags = LFTypeFile;
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (!m_AttributeValues[a].IsNull)

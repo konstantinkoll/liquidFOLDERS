@@ -38,6 +38,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	LFSearchResult* p_CookedFiles;
+	BOOL m_ShowCompColor;
 
 private:
 	UINT m_FlagsMask;

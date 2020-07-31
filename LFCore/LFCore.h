@@ -39,29 +39,12 @@ LFCORE_API void __stdcall LFGetFileSummary(LPWSTR pStr, SIZE_T cCount, UINT Coun
 LFCORE_API void __stdcall LFGetFileSummaryEx(LPWSTR pStr, SIZE_T cCount, const LFFileSummary& Summary);
 
 
-// Gibt TRUE zurück, wenn der Explorer Dateiendungen verbirgt
-LFCORE_API BOOL __stdcall LFHideFileExt();
-
-// Gibt TRUE zurück, wenn der Explorer leere Laufwerke verbirgt
-LFCORE_API BOOL __stdcall LFHideVolumesWithNoMedia();
-
-
-// Liefert den Source-Typ eines Laufwerks zurück
-LFCORE_API UINT __stdcall LFGetSourceForVolume(CHAR cVolume);
-
-// Wie Win32-Funktion GetLogicalVolumes(), allerdings selektiv (s.o.)
-LFCORE_API UINT __stdcall LFGetLogicalVolumes(UINT Mask=LFGLV_INTERNAL | LFGLV_EXTERNAL | LFGLV_NETWORK);
-
-
 // Initalisiert eine LFProgress-Datenstruktur
 LFCORE_API void __stdcall LFInitProgress(LFProgress& Progress, HWND hWnd, UINT MajorCount=0);
 
 
 // Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
 LFCORE_API void __stdcall LFGetErrorText(LPWSTR pStr, SIZE_T cCount, UINT ID);
-
-// Anzeigen eines Fehlers (LFError...) in aktueller Sprache
-LFCORE_API void __stdcall LFCoreErrorBox(UINT nID, HWND hWnd=NULL);
 
 
 // Sortiert einen Speicherbereich
@@ -104,6 +87,26 @@ LFCORE_API BOOL __stdcall LFIsSharewareExpired();
 
 
 
+// Volumes
+//
+
+// Gibt TRUE zurück, wenn der Explorer Dateiendungen verbirgt
+LFCORE_API BOOL __stdcall LFHideFileExt();
+
+// Gibt TRUE zurück, wenn der Explorer komprimierte Dateien blau darstellt
+LFCORE_API BOOL __stdcall LFShowCompColor();
+
+// Gibt TRUE zurück, wenn der Explorer leere Laufwerke verbirgt
+LFCORE_API BOOL __stdcall LFHideVolumesWithNoMedia();
+
+
+// Liefert den Source-Typ eines Laufwerks zurück
+LFCORE_API SOURCE __stdcall LFGetSourceForVolume(CHAR cVolume);
+
+// Wie Win32-Funktion GetLogicalVolumes(), allerdings selektiv (s.o.)
+LFCORE_API UINT __stdcall LFGetLogicalVolumes(BYTE Mask=LFGLV_INTERNAL | LFGLV_EXTERNAL | LFGLV_NETWORK);
+
+
 // Stores
 //
 
@@ -142,14 +145,20 @@ LFCORE_API UINT __stdcall LFGetStoreSettingsEx(const GUID UniqueID, LFStoreDescr
 LFCORE_API BOOL __stdcall LFStoresOnVolume(CHAR cVolume);
 
 // Gibt die ID für das Icon eines Stores zurück
-LFCORE_API UINT __stdcall LFGetStoreIcon(const LFStoreDescriptor* pStoreDescriptor, UINT* pType=NULL);
+inline UINT LFGetStoreIcon(const LFStoreDescriptor& StoreDescriptor)
+{
+	return max(LFSourceInternal, StoreDescriptor.Source);
+}
 
-// Prüft, ob ein Store angeschlossen ist
-inline BOOL LFIsStoreMounted(const LFStoreDescriptor* pStoreDescriptor)
+// Gibt die ID für das Icon eines Stores zurück
+LFCORE_API UINT __stdcall LFGetStoreIconEx(LFStoreDescriptor& StoreDescriptor);
+
+// Prüft, ob ein Store im Windows-Dateisystem liegt
+inline BOOL LFIsWindowsStore(const LFStoreDescriptor* pStoreDescriptor)
 {
 	assert(pStoreDescriptor);
 
-	return pStoreDescriptor->DatPath[0]!=L'\0';
+	return pStoreDescriptor->Backend==LFStoreBackendWindows;
 }
 
 // Erzeugt einen neuen Store
@@ -266,7 +275,7 @@ LFCORE_API void __stdcall LFSanitizeUnicodeArray(LPWSTR pStr, SIZE_T cCount);
 LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptor(const LPCCOREATTRIBUTES pCoreAttributes=NULL, LPCVOID pStoreData=NULL, SIZE_T StoreDataSize=0);
 
 // Neuen LFItemDescriptor für Store erzeugen
-LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(const LFStoreDescriptor& StoreDescriptor);
+LFCORE_API LFItemDescriptor* __stdcall LFAllocItemDescriptorEx(LFStoreDescriptor& StoreDescriptor);
 
 // Unabhängige Kopie von pItemDescriptor erzeugen
 LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(const LFItemDescriptor* pItemDescriptor);
@@ -274,42 +283,13 @@ LFCORE_API LFItemDescriptor* __stdcall LFCloneItemDescriptor(const LFItemDescrip
 // Existierenden LFItemDescriptor freigeben
 LFCORE_API void __stdcall LFFreeItemDescriptor(LFItemDescriptor* pItemDescriptor);
 
-inline UINT LFGetItemType(const LFItemDescriptor* pItemDescriptor)
-{
-	assert(pItemDescriptor);
-
-	return (pItemDescriptor->Type & LFTypeMask);
-}
 
 // Prüft, ob der LFItemDescriptor ein Store ist
 inline BOOL LFIsStore(const LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
-	return LFGetItemType(pItemDescriptor)==LFTypeStore;
-}
-
-// Prüft, ob der LFItemDescriptor ein Ordner ist
-inline BOOL LFIsFolder(const LFItemDescriptor* pItemDescriptor)
-{
-	assert(pItemDescriptor);
-
-	return LFGetItemType(pItemDescriptor)==LFTypeFolder;
-}
-
-// Prüft, ob der LFItemDescriptor aggregiert ist
-inline BOOL LFIsAggregated(const LFItemDescriptor* pItemDescriptor)
-{
-	assert(LFIsFolder(pItemDescriptor));
-	assert((pItemDescriptor->AggregateFirst!=-1)==(pItemDescriptor->AggregateLast!=-1));
-
-	return (pItemDescriptor->AggregateFirst!=-1);
-}
-
-// Prüft, ob der LFItemDescriptor ein aggregierter Ordner ist
-inline BOOL LFIsAggregatedFolder(const LFItemDescriptor* pItemDescriptor)
-{
-	return LFIsFolder(pItemDescriptor) && LFIsAggregated(pItemDescriptor);
+	return pItemDescriptor->Type==LFTypeStore;
 }
 
 // Prüft, ob der LFItemDescriptor eine Datei ist
@@ -317,8 +297,75 @@ inline BOOL LFIsFile(const LFItemDescriptor* pItemDescriptor)
 {
 	assert(pItemDescriptor);
 
-	return LFGetItemType(pItemDescriptor)==LFTypeFile;
+	return pItemDescriptor->Type==LFTypeFile;
 }
+
+// Prüft, ob der LFItemDescriptor ein Ordner ist
+inline BOOL LFIsFolder(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return pItemDescriptor->Type>=LFTypeFolder;
+}
+
+// Prüft, ob der LFItemDescriptor ein aggregierender Ordner ist
+inline BOOL LFIsAggregatedFolder(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+	assert((pItemDescriptor->Type==LFTypeAggregatedFolder)==((pItemDescriptor->AggregateFirst>=0) && (pItemDescriptor->AggregateLast>=0)));
+	assert(pItemDescriptor->AggregateLast>=pItemDescriptor->AggregateFirst);
+
+	return pItemDescriptor->Type==LFTypeAggregatedFolder;
+}
+
+// Prüft, ob ein LFItemDescriptor ausgewählt ist
+inline BOOL LFIsItemSelected(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return pItemDescriptor->Flags & LFFlagsItemSelected;
+}
+
+// Prüft, ob ein LFItemDescriptor komprimierbar ist
+inline BOOL LFIsCompressible(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+	assert(LFIsFile(pItemDescriptor));
+
+	return (pItemDescriptor->Flags & LFFlagsCompressionAllowed) && !(pItemDescriptor->CoreAttributes.State & LFItemStateCompressed);
+}
+
+// Prüft, ob ein LFItemDescriptor eine komprimierbare Datei ist
+inline BOOL LFIsCompressibleFile(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return LFIsFile(pItemDescriptor) && LFIsCompressible(pItemDescriptor);
+}
+
+
+// Gibt den nStyle-Parameter für CListView::DrawEx zurück
+inline UINT LFGetImageListStyle(const LFStoreDescriptor& StoreDescriptor)
+{
+	return ((StoreDescriptor.Flags & LFFlagsGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT) | INDEXTOOVERLAYMASK(StoreDescriptor.Badge);
+}
+
+// Gibt den nStyle-Parameter ohne Overlays für CListView::DrawEx zurück
+inline UINT LFGetGhostedImageListStyle(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return ((pItemDescriptor->Flags & LFFlagsGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
+}
+
+// Gibt den nStyle-Parameter für CListView::DrawEx zurück
+inline UINT LFGetImageListStyle(const LFItemDescriptor* pItemDescriptor)
+{
+	assert(pItemDescriptor);
+
+	return LFGetGhostedImageListStyle(pItemDescriptor) | INDEXTOOVERLAYMASK(pItemDescriptor->Badge);
+}
+
 
 // Prüft, ob der Name des LFItemDescriptor in Haupt- und Nebenüberschrift aufgeteilt ist
 inline BOOL LFHasSubcaption(const LFItemDescriptor* pItemDescriptor)

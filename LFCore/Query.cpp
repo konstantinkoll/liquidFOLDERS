@@ -367,12 +367,12 @@ BOOL PassesFilter(UINT TableID, LPCVOID pTableData, LFFilter* pFilter, BYTE& Que
 		const LPCCOREATTRIBUTES pCoreAttributes = (LPCCOREATTRIBUTES)pTableData;
 
 		// Only show trashed files when filter queries trashcan
-		if ((pCoreAttributes->Flags & LFFlagTrash) && (pFilter->Query.Context!=LFContextTrash))
+		if ((pCoreAttributes->State & LFItemStateTrash) && (pFilter->Query.Context!=LFContextTrash))
 			return FALSE;
 
 		// Only show archived files when filter queries archive
-		if ((pCoreAttributes->Flags & LFFlagArchive) && (pFilter->Query.Context!=LFContextArchive) &&
-			(((pCoreAttributes->Flags & LFFlagTrash)==0) || (pFilter->Query.Context!=LFContextTrash)))
+		if ((pCoreAttributes->State & LFItemStateArchive) && (pFilter->Query.Context!=LFContextArchive) &&
+			(((pCoreAttributes->State & LFItemStateTrash)==0) || (pFilter->Query.Context!=LFContextTrash)))
 			return FALSE;
 
 		if (((pFilter->Query.Context!=LFContextAllFiles) && (pFilter->Query.Context!=LFContextAuto)) || LFIsFilterFile(*pCoreAttributes))
@@ -385,25 +385,25 @@ BOOL PassesFilter(UINT TableID, LPCVOID pTableData, LFFilter* pFilter, BYTE& Que
 				break;
 
 			case LFContextTasks:
-				if (!(pCoreAttributes->Flags & LFFlagTask))
+				if (!(pCoreAttributes->State & LFItemStateTask))
 					return FALSE;
 
 				break;
 
 			case LFContextNew:
-				if (!(pCoreAttributes->Flags & LFFlagNew))
+				if (!(pCoreAttributes->State & LFItemStateNew))
 					return FALSE;
 
 				break;
 
 			case LFContextArchive:
-				if (!(pCoreAttributes->Flags & LFFlagArchive))
+				if (!(pCoreAttributes->State & LFItemStateArchive))
 					return FALSE;
 
 				break;
 
 			case LFContextTrash:
-				if (!(pCoreAttributes->Flags & LFFlagTrash))
+				if (!(pCoreAttributes->State & LFItemStateTrash))
 					return FALSE;
 
 				break;

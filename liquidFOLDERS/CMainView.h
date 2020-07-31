@@ -116,6 +116,7 @@ protected:
 	afx_msg void OnFileRemoveFromClipboard();
 	afx_msg void OnFileMakeTask();
 	afx_msg void OnFileArchive();
+	afx_msg void OnFileCompress();
 	afx_msg void OnFileCopy();
 	afx_msg void OnFileDelete();
 	afx_msg void OnFileRename();

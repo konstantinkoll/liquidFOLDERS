@@ -420,7 +420,7 @@ void CHeapfile::GetFromItemDescriptor(LPVOID Ptr, LFItemDescriptor* pItemDescrip
 
 BOOL CHeapfile::Compact()
 {
-	if ((!m_Header.NeedsCompaction) && (m_OpenStatus!=HeapMaintenanceRequired))
+	if (!m_Header.NeedsCompaction && (m_OpenStatus!=HeapMaintenanceRequired))
 		return TRUE;
 
 	// Temporary filename

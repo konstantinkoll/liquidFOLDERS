@@ -28,7 +28,7 @@ BOOL LFDeleteStoreDlg::InitDialog()
 	GetDlgItem(IDC_CAPTION)->SetFont(&LFGetApp()->m_DialogBoldFont);
 
 	// Nuke messages
-	const BOOL Nuke = (m_StoreDescriptor.Mode & LFStoreModeBackendMask)<=LFStoreModeBackendInternal;
+	const BOOL Nuke = !LFIsWindowsStore(&m_StoreDescriptor);
 
 	GetDlgItem(IDC_NUKEMESSAGE1)->ShowWindow(Nuke ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_NUKEMESSAGE2)->ShowWindow(Nuke ? SW_HIDE : SW_SHOW);

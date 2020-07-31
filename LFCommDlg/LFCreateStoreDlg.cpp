@@ -62,7 +62,7 @@ void CVolumeList::AddVolume(CHAR cVolume, LPCWSTR DisplayName, INT iIcon)
 	AddItem(&Data);
 }
 
-void CVolumeList::SetVolumes(UINT Mask)
+void CVolumeList::SetVolumes(BYTE Mask)
 {
 	ASSERT(LFContextAllFiles==0);
 
@@ -70,7 +70,6 @@ void CVolumeList::SetVolumes(UINT Mask)
 	SetItemCount(26, FALSE);
 
 	DWORD VolumesOnSystem = LFGetLogicalVolumes(Mask);
-
 	for (CHAR cVolume='A'; cVolume<='Z'; cVolume++, VolumesOnSystem>>=1)
 	{
 		if ((VolumesOnSystem & 1)==0)
@@ -231,7 +230,7 @@ void LFCreateStoreDlg::OnDestroy()
 
 void LFCreateStoreDlg::OnUpdateControls()
 {
-	UINT Source = LFTypeSourceInternal;
+	SOURCE Source = LFSourceInternal;
 
 	// Volume list
 	if (!m_wndAutoPath.GetCheck())
@@ -247,7 +246,7 @@ void LFCreateStoreDlg::OnUpdateControls()
 	}
 
 	// Make searchable
-	m_wndMakeSearchable.EnableWindow(Source!=LFTypeSourceInternal);
+	m_wndMakeSearchable.EnableWindow(Source!=LFSourceInternal);
 
 	// Icon
 	m_wndIcon.SetCoreIcon(Source);
@@ -292,17 +291,17 @@ void LFCreateStoreDlg::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 
 	if (const CHAR cVolume = GetSelectedVolume())
 	{
-		const UINT Source = LFGetSourceForVolume(cVolume);
-
 		switch (pCmdUI->m_nID)
 		{
-		case IDM_VOLUME_FORMAT:
-		case IDM_VOLUME_EJECT:
-			bEnable = (Source>LFTypeSourceWindows) && (Source<LFTypeSourceNethood);
-			break;
-
 		case IDM_VOLUME_PROPERTIES:
 			bEnable = TRUE;
+			break;
+
+		case IDM_VOLUME_FORMAT:
+		case IDM_VOLUME_EJECT:
+			const SOURCE Source = LFGetSourceForVolume(cVolume);
+
+			bEnable = (Source>LFSourceWindows) && (Source<LFSourceNethood);
 			break;
 		}
 	}

@@ -53,10 +53,11 @@
 	case WM_MOUSEWHEEL: \
 	case WM_MOUSEHWHEEL:
 
-#define IMPLEMENT_TOOLTIP_NOWHEEL(theClass, baseClass) IMPLEMENT_TOOLTIP(theClass, baseClass, TOOLTIP_NOWHEEL)
-#define IMPLEMENT_TOOLTIP_WHEEL(theClass, baseClass) IMPLEMENT_TOOLTIP(theClass, baseClass, TOOLTIP_WHEEL)
+#define IMPLEMENT_TOOLTIP_NOWHEEL(theClass, baseClass) IMPLEMENT_TOOLTIP(theClass, baseClass, TOOLTIP_NOWHEEL, )
+#define IMPLEMENT_TOOLTIP_WHEEL(theClass, baseClass) IMPLEMENT_TOOLTIP(theClass, baseClass, TOOLTIP_WHEEL, )
+#define IMPLEMENT_TOOLTIP_WHEELWITHADDITIONALCODE(theClass, baseClass, AdditionalCode) IMPLEMENT_TOOLTIP(theClass, baseClass, TOOLTIP_WHEEL, AdditionalCode)
 
-#define IMPLEMENT_TOOLTIP(theClass, baseClass, MouseWheel) \
+#define IMPLEMENT_TOOLTIP(theClass, baseClass, MouseWheel, AdditionalCode) \
 	BOOL theClass::PreTranslateMessage(MSG* pMsg) \
 	{ \
 	switch (pMsg->message) \
@@ -76,6 +77,7 @@
 	MouseWheel \
 		HideTooltip(); \
 		break; \
+AdditionalCode; \
 	} \
 	return baseClass::PreTranslateMessage(pMsg); \
 	} \

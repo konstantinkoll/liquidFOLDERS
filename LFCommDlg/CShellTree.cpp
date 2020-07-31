@@ -75,7 +75,7 @@ LRESULT CShellTree::WindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 
 		break;
-
+/*
 	case WM_KEYDOWN:
 		if ((wParam==VK_RETURN) || (wParam==VK_ESCAPE))
 		{
@@ -88,7 +88,7 @@ LRESULT CShellTree::WindowProc(UINT Message, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
-		break;
+		break;*/
 	}
 
 	return CTreeCtrl::WindowProc(Message, wParam, lParam);
@@ -575,7 +575,19 @@ void CShellTree::ShowTooltip(const CPoint& point)
 }
 
 
-IMPLEMENT_TOOLTIP_WHEEL(CShellTree, CTreeCtrl)
+#define ADDITIONALCODE \
+	case WM_KEYDOWN: \
+		{ \
+			CEdit* pWndEdit = GetEditControl(); \
+			if (pWndEdit && ((pMsg->wParam==VK_RETURN) || (pMsg->wParam==VK_ESCAPE))) \
+			{ \
+				pWndEdit->SendMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam); \
+				return TRUE; \
+			} \
+			break; \
+		} \
+
+IMPLEMENT_TOOLTIP_WHEELWITHADDITIONALCODE(CShellTree, CTreeCtrl, ADDITIONALCODE)
 
 BEGIN_TOOLTIP_MAP(CShellTree, CTreeCtrl)
 	ON_WM_CREATE()
@@ -919,44 +931,21 @@ void CShellTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 	*pResult = FALSE;
 
-	CEdit* pWndEdit = GetEditControl();
-	if (pWndEdit)
+	if (pNMTreeView->item.pszText && *pNMTreeView->item.pszText)
 	{
-		CString Name;
-		pWndEdit->GetWindowText(Name);
-
-		if (!Name.IsEmpty())
+		IShellFolder* pParentFolder;
+		if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_PPV_ARGS(&pParentFolder), NULL)))
 		{
-			IShellFolder* pParentFolder;
-			if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_PPV_ARGS(&pParentFolder), NULL)))
+			LPITEMIDLIST pidlRel;
+			if (SUCCEEDED(pParentFolder->SetNameOf(m_hWnd, pItem->pidlRel, pNMTreeView->item.pszText, SHGDN_NORMAL, &pidlRel)))
 			{
-				LPITEMIDLIST pidlRel;
-				if (SUCCEEDED(pParentFolder->SetNameOf(m_hWnd, pItem->pidlRel, Name, SHGDN_NORMAL, &pidlRel)))
-				{
-					LPITEMIDLIST pidlParent;
-					LFGetApp()->GetShellManager()->GetParentItem(pItem->pidlFQ, pidlParent);
+				// Tree will be updated through OnShellChange
 
-					LFGetApp()->GetShellManager()->FreeItem(pItem->pidlFQ);
-					LFGetApp()->GetShellManager()->FreeItem(pItem->pidlRel);
-
-					pItem->pidlFQ = LFGetApp()->GetShellManager()->ConcatenateItem(pidlParent, pidlRel);
-					pItem->pidlRel = pidlRel;
-
-					UpdateChildPIDLs(pNMTreeView->item.hItem, pItem->pidlFQ);
-					LFGetApp()->GetShellManager()->FreeItem(pidlParent);
-
-					*pResult = TRUE;
-				}
-
-				pParentFolder->Release();
+				*pResult = TRUE;
 			}
-		}
-	}
 
-	if (*pResult)
-	{
-		m_strBuffer = GetItemText(pItem);
-		pNMTreeView->item.pszText = m_strBuffer.GetBuffer(m_strBuffer.GetLength());
+			pParentFolder->Release();
+		}
 	}
 }
 
@@ -1012,9 +1001,8 @@ LRESULT CShellTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	case SHCNE_DRIVEREMOVED:
 	case SHCNE_MEDIAREMOVED:
 	case SHCNE_RMDIR:
-		if (Path1[0]!='\0')
-			if (DeletePath(Path1))
-				NotifyOwner = TRUE;
+		if ((Path1[0]!='\0') && DeletePath(Path1))
+			NotifyOwner = TRUE;
 
 		break;
 
@@ -1028,6 +1016,7 @@ LRESULT CShellTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 			{
 				if (DeletePath(Path1))
 					NotifyOwner = TRUE;
+
 				if ((Parent2[0]!='\0') && (wcscmp(Path2, Parent2)!=0))
 					if (AddPath(Path2, Parent2))
 						NotifyOwner = TRUE;
@@ -1038,6 +1027,7 @@ LRESULT CShellTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	case SHCNE_UPDATEITEM:
 		wcscpy_s(Path2, MAX_PATH, Parent1);
 		wcscat_s(Path2, MAX_PATH, L"\\desktop.ini");
+
 		if (wcscmp(Path1, Path2)==0)
 			UpdatePath(Parent1, Parent1);
 

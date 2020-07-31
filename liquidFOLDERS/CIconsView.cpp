@@ -243,7 +243,7 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 
 	// Hint
 	if (Line<MaxLineCount)
-		switch (LFGetItemType(pItemDescriptor))
+		switch (pItemDescriptor->Type)
 		{
 		case LFTypeStore:
 			if (m_GlobalViewSettings.IconsShowCapacity)
@@ -252,6 +252,7 @@ void CIconsView::DrawWrapLabel(CDC& dc, Graphics& g, const CRect& rectLabel, LFI
 			break;
 
 		case LFTypeFolder:
+		case LFTypeAggregatedFolder:
 			LPCWSTR pHint = LFHasSubcaption(pItemDescriptor) ? LFGetSubcaption(pItemDescriptor) : pItemDescriptor->Description;
 			ASSERT(pHint[0]);
 

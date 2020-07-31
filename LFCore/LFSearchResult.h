@@ -27,7 +27,7 @@ public:
 
 	void FinishQuery(LFFilter* pFilter);
 	BOOL AddItem(LFItemDescriptor* pItemDescriptor);
-	BOOL AddStoreDescriptor(const LFStoreDescriptor& StoreDescriptor);
+	BOOL AddStoreDescriptor(LFStoreDescriptor& StoreDescriptor);
 	void RemoveFlaggedItems(BOOL UpdateSummary=TRUE);
 	void KeepRange(UINT First, UINT Last);
 	void SortItems(ATTRIBUTE Attr, BOOL Descending);

@@ -66,7 +66,7 @@ void LFLicenseDlg::OnLoadLicense()
 		CStdioFile File;
 		if (!File.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
 		{
-			LFErrorBox(this, LFDriveNotReady);
+			LFErrorBox(this, LFVolumeNotReady);
 		}
 		else
 		{
@@ -80,7 +80,7 @@ void LFLicenseDlg::OnLoadLicense()
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(this, LFDriveNotReady);
+				LFErrorBox(this, LFVolumeNotReady);
 			}
 
 			File.Close();

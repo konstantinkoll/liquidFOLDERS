@@ -23,7 +23,7 @@ BOOL LFMaintenanceList::AddItem(LFStoreDescriptor* pStoreDescriptor, UINT Result
 	wcscpy_s(Item.Comments, 256, pStoreDescriptor->Comments);
 	Item.StoreID = pStoreDescriptor->StoreID;
 	Item.Result = Result;
-	Item.IconID = LFGetStoreIcon(pStoreDescriptor);
+	Item.IconID = LFGetStoreIcon(*pStoreDescriptor);
 
 	return LFDynArray::AddItem(Item);
 }

@@ -72,6 +72,16 @@ DWORD WINAPI WorkerImport(LPVOID lpParam)
 	LF_WORKERTHREAD_FINISH(lpParam);
 }
 
+DWORD WINAPI WorkerCompress(LPVOID lpParam)
+{
+	LF_WORKERTHREAD_START(lpParam);
+
+	WorkerCompressParameters* pParameters = (WorkerCompressParameters*)lpParam;
+	pParameters->Hdr.Result = LFDoTransaction(pParameters->pTransactionList, LFTransactionCompress, &Progress);
+
+	LF_WORKERTHREAD_FINISH(lpParam);
+}
+
 DWORD WINAPI WorkerDelete(LPVOID lpParam)
 {
 	LF_WORKERTHREAD_START(lpParam);
@@ -133,8 +143,9 @@ void LFDeleteStore(const ABSOLUTESTOREID& StoreID, CWnd* pParentWnd)
 
 	if (LFMessageBox(pParentWnd, CString((LPCSTR)IDS_DELETESTORE_MSG), Caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)!=IDYES)
 		return;
+
 	// Only show dialog when store is mounted
-	if (LFIsStoreMounted(&Victim) && (LFDeleteStoreDlg(Victim.StoreID, pParentWnd).DoModal()!=IDOK))
+	if ((Victim.Flags & LFFlagsMounted) && (LFDeleteStoreDlg(Victim.StoreID, pParentWnd).DoModal()!=IDOK))
 		return;
 
 	// Run

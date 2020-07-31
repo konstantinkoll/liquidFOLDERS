@@ -15,7 +15,6 @@ extern CHAR KeyChars[38];
 //
 
 #define ABORT(Result)       { if (pProgress) pProgress->ProgressState = (Result>LFCancel) ? LFProgressError : LFProgressCancelled; return Result; }
-#define FASTEST_INDEX()     ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid)
 
 CStore::CStore(LFStoreDescriptor* pStoreDescriptor, HANDLE hMutexForStore, UINT AdditionalDataSize)
 {
@@ -46,11 +45,11 @@ UINT CStore::Open(BOOL WriteAccess)
 	// Write access is only possible when the store is mounted and not write-protected
 	if (WriteAccess)
 	{
-		if (!LFIsStoreMounted(p_StoreDescriptor))
+		if ((p_StoreDescriptor->Flags & LFFlagsMounted)==0)
 			return LFStoreNotMounted;
 
-		if ((p_StoreDescriptor->Flags & LFStoreFlagsWriteable)==0)
-			return LFDriveWriteProtected;
+		if ((p_StoreDescriptor->Flags & LFFlagsWriteable)==0)
+			return LFVolumeWriteProtected;
 	}
 
 	// Open index(es)
@@ -60,7 +59,7 @@ UINT CStore::Open(BOOL WriteAccess)
 		m_pIndexMain = new CIndex(this, TRUE, TRUE, m_AdditionalDataSize);
 
 		// Aux index for hybrid indexing
-		if ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
+		if (p_StoreDescriptor->IndexMode==LFStoreIndexModeHybrid)
 			m_pIndexAux = new CIndex(this, FALSE, TRUE, m_AdditionalDataSize);
 
 		m_WriteAccess = TRUE;
@@ -70,7 +69,7 @@ UINT CStore::Open(BOOL WriteAccess)
 		// Select aux store for hybrid indexing:
 		// - Faster access (resides on local harddrive)
 		// - Available even in unmounted state
-		m_pIndexMain = new CIndex(this, FASTEST_INDEX(), FALSE, m_AdditionalDataSize);
+		m_pIndexMain = new CIndex(this, p_StoreDescriptor->IndexMode!=LFStoreIndexModeHybrid, FALSE, m_AdditionalDataSize);
 	}
 
 	return LFOk;
@@ -104,13 +103,11 @@ UINT CStore::Initialize(LFProgress* pProgress)
 		return Result;
 
 	// Initialize index
-	if (m_pIndexMain)
-		if (!m_pIndexMain->Initialize())
-			return LFIndexCreateError;
+	if (m_pIndexMain && !m_pIndexMain->Initialize())
+		return LFIndexCreateError;
 
-	if (m_pIndexAux)
-		if (!m_pIndexAux->Initialize())
-			return LFIndexCreateError;
+	if (m_pIndexAux && !m_pIndexAux->Initialize())
+		return LFIndexCreateError;
 
 	// Synchronize
 	if ((Result=Synchronize(pProgress, TRUE))!=LFOk)
@@ -145,10 +142,10 @@ UINT CStore::MaintenanceAndStatistics(LFProgress* pProgress, BOOL Scheduled)
 
 	// Create store directories
 	UINT Result = CreateDirectories();
-	if (Result!=LFOk)
+	if (Result>LFVolumeWriteProtected)
 	{
-		// Set Manageable flag to allow a broken store to be deleted
-		p_StoreDescriptor->Flags |= LFStoreFlagsManageable;
+		// Set LFFlagsRenameDeleteAllowed to allow a broken store to be deleted
+		p_StoreDescriptor->Flags |= LFFlagsRenameDeleteAllowed;
 
 		ABORT(Result);
 	}
@@ -160,7 +157,7 @@ UINT CStore::MaintenanceAndStatistics(LFProgress* pProgress, BOOL Scheduled)
 	// Open index and check (always open main index: MountVolume relies on copying the main index for hybrid indexes)
 	BOOL Repaired = FALSE;
 
-	CIndex* pIndex = new CIndex(this, LFIsStoreMounted(p_StoreDescriptor), TRUE, m_AdditionalDataSize);
+	CIndex* pIndex = new CIndex(this, IsStoreMounted(p_StoreDescriptor), TRUE, m_AdditionalDataSize);
 	Result = pIndex->MaintenanceAndStatistics(Scheduled, Repaired, pProgress);
 	delete pIndex;
 
@@ -173,10 +170,10 @@ UINT CStore::MaintenanceAndStatistics(LFProgress* pProgress, BOOL Scheduled)
 	}
 
 	// Clone index for hybrid indexing
-	if (((p_StoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid) && LFIsStoreMounted(p_StoreDescriptor))
+	if ((p_StoreDescriptor->IndexMode==LFStoreIndexModeHybrid) && IsStoreMounted(p_StoreDescriptor))
 	{
-		if (!VolumeWriteable((CHAR)p_StoreDescriptor->IdxPathAux[0]))
-			ABORT(LFDriveWriteProtected);
+		if (!(p_StoreDescriptor->Flags & LFFlagsWriteable))
+			ABORT(LFVolumeWriteProtected);
 
 		if ((Result=CopyDirectory(p_StoreDescriptor->IdxPathMain, p_StoreDescriptor->IdxPathAux))!=LFOk)
 			ABORT(Result);
@@ -185,7 +182,7 @@ UINT CStore::MaintenanceAndStatistics(LFProgress* pProgress, BOOL Scheduled)
 	// Timestamp maintenance
 	if (Scheduled || Repaired)
 	{
-		p_StoreDescriptor->Flags &= ~LFStoreFlagsError;
+		p_StoreDescriptor->State &= ~LFStoreStateError;
 
 		if (Repaired)
 			p_StoreDescriptor->IndexVersion = CURIDXVERSION;
@@ -226,21 +223,6 @@ UINT CStore::ImportFile(LPCWSTR pPath, LFItemDescriptor* pItemDescriptor, BOOL M
 	return Result;
 }
 
-UINT CStore::GetFileLocation(LFItemDescriptor* pItemDescriptor, LPWSTR pPath, SIZE_T cCount, BOOL RemoveNew)
-{
-	assert(m_pIndexMain);
-	assert(pItemDescriptor);
-	assert(pPath);
-	assert(cCount>=2*MAX_PATH);
-
-	UINT Result = m_pIndexMain->GetFileLocation(pItemDescriptor, pPath, cCount, RemoveNew);
-
-	if (m_pIndexAux)
-		m_pIndexAux->GetFileLocation(pItemDescriptor, pPath, cCount, RemoveNew);
-
-	return Result;
-}
-
 UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWSTR pPath, BOOL OnInitialize)
 {
 	assert(pItemDescriptor);
@@ -252,7 +234,13 @@ UINT CStore::CommitImport(LFItemDescriptor* pItemDescriptor, BOOL Commit, LPCWST
 	{
 		// Flags (must be first)
 		if (!OnInitialize)
-			pItemDescriptor->CoreAttributes.Flags |= LFFlagNew;
+		{
+			// Remove "Compressed" state
+			pItemDescriptor->CoreAttributes.State &= ~LFItemStateCompressed;
+
+			// Add "New" state
+			pItemDescriptor->CoreAttributes.State |= LFItemStateNew;
+		}
 
 		// Metadata
 		if (pPath)
@@ -288,7 +276,7 @@ void CStore::Query(LFFilter* pFilter, LFSearchResult* pSearchResult)
 	assert(pFilter);
 	assert(pSearchResult);
 
-	if (p_StoreDescriptor->Source==LFTypeSourceNethood)
+	if (p_StoreDescriptor->Source==LFSourceNethood)
 	{
 		// Keep old copy of statistics
 		LFStatistics Statistics = p_StoreDescriptor->Statistics;
@@ -343,26 +331,26 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 		break;
 
 	case LFTransactionArchive:
-		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, LFFlagArchive);
+		m_pIndexMain->SetItemState(pTransactionList, TransactionTime, LFItemStateArchive);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateItemState(pTransactionList, TransactionTime, LFFlagArchive);
+			m_pIndexAux->SetItemState(pTransactionList, TransactionTime, LFItemStateArchive);
 
 		break;
 
 	case LFTransactionPutInTrash:
-		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, LFFlagTrash);
+		m_pIndexMain->SetItemState(pTransactionList, TransactionTime, LFItemStateTrash);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateItemState(pTransactionList, TransactionTime, LFFlagTrash);
+			m_pIndexAux->SetItemState(pTransactionList, TransactionTime, LFItemStateTrash);
 
 		break;
 
 	case LFTransactionRecover:
-		m_pIndexMain->UpdateItemState(pTransactionList, TransactionTime, 0);
+		m_pIndexMain->SetItemState(pTransactionList, TransactionTime, 0);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateItemState(pTransactionList, TransactionTime, 0);
+			m_pIndexAux->SetItemState(pTransactionList, TransactionTime, 0);
 
 		break;
 
@@ -375,11 +363,19 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 		break;
 
-	case LFTransactionUpdateUserContext:
-		m_pIndexMain->UpdateUserContext(pTransactionList, (BYTE)Parameter);
+	case LFTransactionSetUserContext:
+		m_pIndexMain->SetUserContext(pTransactionList, (BYTE)Parameter);
 
 		if (m_pIndexAux)
-			m_pIndexAux->UpdateUserContext(pTransactionList, (BYTE)Parameter);
+			m_pIndexAux->SetUserContext(pTransactionList, (BYTE)Parameter);
+
+		break;
+
+	case LFTransactionCompress:
+		m_pIndexMain->Compress(pTransactionList, pProgress);
+
+		if (m_pIndexAux)
+			m_pIndexAux->Compress(pTransactionList, pProgress);
 
 		break;
 
@@ -395,6 +391,19 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 		pTransactionList->SetError(p_StoreDescriptor->StoreID, LFIllegalItemType, pProgress);
 	}
 }
+	
+UINT CStore::UpdateItemState(LFItemDescriptor* pItemDescriptor, const WIN32_FIND_DATA& FindData, BOOL Exists, BOOL RemoveNew)
+{
+	assert(m_pIndexMain);
+	assert(pItemDescriptor);
+
+	UINT Result = m_pIndexMain->UpdateItemState(pItemDescriptor, FindData, Exists, RemoveNew);
+
+	if (m_pIndexAux)
+		m_pIndexAux->UpdateItemState(pItemDescriptor, FindData, Exists, RemoveNew);
+
+	return Result;
+}
 
 
 // Callbacks
@@ -402,11 +411,14 @@ void CStore::DoTransaction(LFTransactionList* pTransactionList, UINT Transaction
 
 UINT CStore::CreateDirectories()
 {
+	// Volume write protected?
+	if (!(p_StoreDescriptor->Flags & LFFlagsWriteable))
+		return LFVolumeWriteProtected;
+
 	// Create data path
 	if (wcslen(p_StoreDescriptor->DatPath)>3)
 	{
 		DWORD Result = CreateDirectory(p_StoreDescriptor->DatPath);
-
 		if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
 	}
@@ -415,17 +427,16 @@ UINT CStore::CreateDirectories()
 	if (p_StoreDescriptor->IdxPathMain[0]!=L'\0')
 	{
 		DWORD Result = CreateDirectory(p_StoreDescriptor->IdxPathMain);
-
 		if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
 
 		// Hide directory
-		if (LFGetSourceForVolume((CHAR)p_StoreDescriptor->IdxPathMain[0])!=LFTypeSourceInternal)
+		if (p_StoreDescriptor->HideMainIndex)
 			HideFile(p_StoreDescriptor->IdxPathMain);
 	}
 
 	// Create aux index path
-	if ((p_StoreDescriptor->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
+	if (p_StoreDescriptor->IndexMode==LFStoreIndexModeHybrid)
 	{
 		WCHAR tmpStr[MAX_PATH];
 		GetAutoPath(*p_StoreDescriptor, tmpStr);
@@ -435,13 +446,8 @@ UINT CStore::CreateDirectories()
 			return LFIllegalPhysicalPath;
 
 		Result = CreateDirectory(p_StoreDescriptor->IdxPathAux);
-
 		if ((Result!=ERROR_SUCCESS) && (Result!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
-
-		// Hide directory
-		if (LFGetSourceForVolume((CHAR)p_StoreDescriptor->IdxPathAux[0])!=LFTypeSourceInternal)
-			HideFile(p_StoreDescriptor->IdxPathAux);
 	}
 
 	return LFOk;
@@ -452,11 +458,11 @@ UINT CStore::DeleteDirectories()
 	// Delete index directories
 	if (p_StoreDescriptor->IdxPathMain[0]!=L'\0')
 		if (!DeleteDirectory(p_StoreDescriptor->IdxPathMain))
-			return LFDriveNotReady;
+			return LFVolumeNotReady;
 
 	if (p_StoreDescriptor->IdxPathAux[0]!=L'\0')
 		if (!DeleteDirectory(p_StoreDescriptor->IdxPathAux))
-			return LFDriveNotReady;
+			return LFVolumeNotReady;
 
 	// Delete internal directory
 	WCHAR Path[MAX_PATH];
@@ -475,14 +481,14 @@ UINT CStore::PrepareImport(LPCWSTR pFilename, LPCSTR pExtension, LFItemDescripto
 	assert(pExtension);
 	assert(pItemDescriptor);
 
-	if (!LFIsStoreMounted(p_StoreDescriptor))
+	if (!IsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
 	if (!m_WriteAccess)
 		return LFIndexAccessError;
 
-	// Type
-	pItemDescriptor->Type = (pItemDescriptor->Type & ~LFTypeMask) | LFTypeFile;
+	// Flags
+	pItemDescriptor->Type = LFTypeFile;
 
 	// Filename and extension
 	SetAttribute(pItemDescriptor, LFAttrFileName, pFilename);
@@ -503,7 +509,7 @@ UINT CStore::RenameFile(const HORCRUXFILE& File, LFItemDescriptor* pItemDescript
 {
 	assert(pItemDescriptor);
 
-	if (!LFIsStoreMounted(p_StoreDescriptor))
+	if (!IsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
 	if (!m_WriteAccess)
@@ -518,7 +524,7 @@ UINT CStore::RenameFile(const HORCRUXFILE& File, LFItemDescriptor* pItemDescript
 	if ((Result=GetFilePath(pItemDescriptor, Path2, 2*MAX_PATH))!=LFOk)
 		return Result;
 
-	return FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : (GetLastError()==ERROR_WRITE_PROTECT) ? LFDriveWriteProtected : LFCannotRenameFile : LFNoFileBody;
+	return FileExists(Path1) ? MoveFile(Path1, Path2) ? LFOk : (GetLastError()==ERROR_WRITE_PROTECT) ? LFVolumeWriteProtected : LFCannotRenameFile : LFNoFileBody;
 }
 
 void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
@@ -715,7 +721,7 @@ UINT CStore::DeleteFile()
 		return LFOk;
 
 	case ERROR_WRITE_PROTECT:
-		return LFDriveWriteProtected;
+		return LFVolumeWriteProtected;
 
 	default:
 		return LFCannotDeleteFile;
@@ -726,12 +732,12 @@ UINT CStore::DeleteFile()
 // Statistics
 
 #define COUNT_FILE(ContextOps, TaskOps) \
-	if (CoreAttributes.Flags & LFFlagTrash) \
+	if (CoreAttributes.State & LFItemStateTrash) \
 	{ \
 		ContextOps(LFContextTrash); \
 	} \
 	else \
-		if (CoreAttributes.Flags & LFFlagArchive) \
+		if (CoreAttributes.State & LFItemStateArchive) \
 		{ \
 			ContextOps(LFContextArchive); \
 		} \
@@ -744,12 +750,12 @@ UINT CStore::DeleteFile()
 				ContextOps(UserContext); \
 			if (CoreAttributes.Rating) \
 				ContextOps(LFContextFavorites); \
-			if (CoreAttributes.Flags & LFFlagTask) \
+			if (CoreAttributes.State & LFItemStateTask) \
 			{ \
 				ContextOps(LFContextTasks); \
 				TaskOps(CoreAttributes.Priority); \
 			} \
-			if (CoreAttributes.Flags & LFFlagNew) \
+			if (CoreAttributes.State & LFItemStateNew) \
 				ContextOps(LFContextNew); \
 		}
 

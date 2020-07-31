@@ -52,8 +52,8 @@ IDB_BACKGROUND_CAPACITYBAR RCDATA                  "res\\Background_CapacityBar.
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,36,0
- PRODUCTVERSION 4,0,36,0
+ FILEVERSION 4,1,0,0
+ PRODUCTVERSION 4,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "liquidFOLDERS"
-            VALUE "FileVersion", "4.0.36"
+            VALUE "FileVersion", "4.1.0"
             VALUE "InternalName", "liquidFOLDERS"
             VALUE "LegalCopyright", "© 2009-2020 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "liquidFOLDERS.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "4.0.36"
+            VALUE "ProductVersion", "4.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -138,6 +138,8 @@ IDM_FILE_SINGLE MENU
 BEGIN
     MENUITEM "&Archivieren",                IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
+    MENUITEM "Ko&mprimieren",               IDM_FILE_COMPRESS
+    MENUITEM SEPARATOR
     MENUITEM "&Kopieren",                   IDM_FILE_COPY
     MENUITEM SEPARATOR
     MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
@@ -150,6 +152,8 @@ END
 IDM_FILE_MULTIPLE MENU 
 BEGIN
     MENUITEM "%u Dateien &archivieren",     IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "%u Dateien ko&mprimieren",    IDM_FILE_COMPRESS
     MENUITEM SEPARATOR
     MENUITEM "%u Dateien &kopieren",        IDM_FILE_COPY
     MENUITEM SEPARATOR
@@ -525,6 +529,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
+    IDM_FILE_COMPRESS       "Komprimiert die ausgewählten Dateien mit der NTFS-Dateisystemkompression.\nKomprimieren"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nAufgabe erledigt"
@@ -633,6 +638,8 @@ IDM_FILE_SINGLE MENU
 BEGIN
     MENUITEM "&Archivar %u archivos",       IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
+    MENUITEM "Co&mprimir %u archivos",      IDM_FILE_COMPRESS
+    MENUITEM SEPARATOR
     MENUITEM "&Copiar %u archivos",         IDM_FILE_COPY
     MENUITEM SEPARATOR
     MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
@@ -645,6 +652,8 @@ END
 IDM_FILE_MULTIPLE MENU 
 BEGIN
     MENUITEM "&Archivar %u archivos",       IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "Co&mprimir %u archivos",      IDM_FILE_COMPRESS
     MENUITEM SEPARATOR
     MENUITEM "&Copiar %u archivos",         IDM_FILE_COPY
     MENUITEM SEPARATOR
@@ -1019,6 +1028,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
+    IDM_FILE_COMPRESS       "Comprime los archivos seleccionados mediante la compresión del NTFS.\nComprimir"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
     IDM_FILE_TASKDONE       "Entfernt die Markierung als Aufgabe.\nTarea cumplida"
@@ -1127,6 +1137,8 @@ IDM_FILE_SINGLE MENU
 BEGIN
     MENUITEM "&Archiver",                   IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
+    MENUITEM "Co&mpresser",                 IDM_FILE_COMPRESS
+    MENUITEM SEPARATOR
     MENUITEM "&Copier",                     IDM_FILE_COPY
     MENUITEM SEPARATOR
     MENUITEM "Créer r&accourci",            IDM_FILE_SHORTCUT
@@ -1139,6 +1151,8 @@ END
 IDM_FILE_MULTIPLE MENU 
 BEGIN
     MENUITEM "&Archiver %u fichiers",       IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "Co&mpresser %u fichiers",     IDM_FILE_COMPRESS
     MENUITEM SEPARATOR
     MENUITEM "&Copier %u fichiers",         IDM_FILE_COPY
     MENUITEM SEPARATOR
@@ -1513,6 +1527,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
+    IDM_FILE_COMPRESS       "Compresse les fichiers choisis à l'aide de la compression NTFS.\nCompresser"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
     IDM_FILE_TASKDONE       "Supprime la marque comme une tâche des fichiers choisis.\nTâche fini"
@@ -1671,6 +1686,8 @@ IDM_FILE_SINGLE MENU
 BEGIN
     MENUITEM "&Archive",                    IDM_FILE_ARCHIVE
     MENUITEM SEPARATOR
+    MENUITEM "Co&mpress",                   IDM_FILE_COMPRESS
+    MENUITEM SEPARATOR
     MENUITEM "&Copy",                       IDM_FILE_COPY
     MENUITEM SEPARATOR
     MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
@@ -1683,6 +1700,8 @@ END
 IDM_FILE_MULTIPLE MENU 
 BEGIN
     MENUITEM "&Archive %u files",           IDM_FILE_ARCHIVE
+    MENUITEM SEPARATOR
+    MENUITEM "Co&mpress %u files",          IDM_FILE_COMPRESS
     MENUITEM SEPARATOR
     MENUITEM "&Copy %u files",              IDM_FILE_COPY
     MENUITEM SEPARATOR
@@ -2056,6 +2075,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
+    IDM_FILE_COMPRESS       "Compresses the selected files using NTFS file system compression.\nCompress"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
     IDM_FILE_TASKDONE       "Removes the task marking from the selected files.\nTask done"

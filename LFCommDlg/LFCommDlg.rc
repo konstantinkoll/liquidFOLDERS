@@ -1004,6 +1004,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SUGGESTIONS         "Vorschläge"
+    IDS_COMPRESSED          "komprimiert"
 END
 
 STRINGTABLE 
@@ -1884,6 +1885,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SUGGESTIONS         "Propuestas"
+    IDS_COMPRESSED          "comprimido"
 END
 
 STRINGTABLE 
@@ -2761,6 +2763,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SUGGESTIONS         "Propositions"
+    IDS_COMPRESSED          "comprimé"
 END
 
 STRINGTABLE 
@@ -3690,6 +3693,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SUGGESTIONS         "Suggestions"
+    IDS_COMPRESSED          "compressed"
 END
 
 STRINGTABLE 

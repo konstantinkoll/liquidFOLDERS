@@ -9,7 +9,7 @@
 // CTimelineView
 //
 
-#define PRV_SOURCE             0x00000001
+#define PRV_SOURCE         0x00000001
 #define PRV_CONTENTLIST        0x00000100
 #define PRV_THUMBNAILS         0x00000200
 #define PRV_REPRESENTATIVE     0x00000400
@@ -49,6 +49,7 @@ protected:
 	virtual void SetSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* pPersistentData);
 	virtual void AdjustLayout();
 	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
+	virtual COLORREF GetItemTextColor(INT Index, BOOL Themed) const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 	virtual RECT GetLabelRect() const;

@@ -42,7 +42,7 @@ UINT CStoreInternal::GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T c
 	assert(pPath);
 	assert(cCount>=2*MAX_PATH);
 
-	if (!LFIsStoreMounted(p_StoreDescriptor))
+	if (!IsStoreMounted(p_StoreDescriptor))
 		return LFStoreNotMounted;
 
 	WCHAR Buffer[MAX_PATH];
@@ -67,14 +67,14 @@ UINT CStoreInternal::GetFilePath(const HORCRUXFILE& File, LPWSTR pPath, SIZE_T c
 UINT CStoreInternal::PrepareDelete()
 {
 	// Data path writeable?
-	if (LFIsStoreMounted(p_StoreDescriptor))
+	if (IsStoreMounted(p_StoreDescriptor))
 	{
 		WCHAR Path[MAX_PATH];
 		wcscpy_s(Path, MAX_PATH, p_StoreDescriptor->DatPath);
 		wcscat_s(Path, MAX_PATH, L"*");
 
-		if (FileExists(Path) && !VolumeWriteable((CHAR)p_StoreDescriptor->DatPath[0]))
-			return LFDriveWriteProtected;
+		if (FileExists(Path) && !(p_StoreDescriptor->Flags & LFFlagsWriteable))
+			return LFVolumeWriteProtected;
 	}
 
 	return CStore::PrepareDelete();
@@ -89,7 +89,7 @@ UINT CStoreInternal::CreateDirectories()
 	UINT Result = CStore::CreateDirectories();
 
 	// Hide data directory when it exists, but not for stores with an internal index and auto-location enabled!
-	if ((Result==LFOk) && LFIsStoreMounted(p_StoreDescriptor) && (((p_StoreDescriptor->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal) || ((p_StoreDescriptor->Flags & LFStoreFlagsAutoLocation)==0)))
+	if ((Result==LFOk) && IsStoreMounted(p_StoreDescriptor) && ((p_StoreDescriptor->IndexMode!=LFStoreIndexModeInternal) || !(p_StoreDescriptor->State & LFStoreStateAutoLocation)))
 		SetFileAttributes(p_StoreDescriptor->DatPath, FILE_ATTRIBUTE_HIDDEN);
 
 	return Result;
@@ -104,8 +104,8 @@ UINT CStoreInternal::DeleteDirectories()
 		return Result;
 
 	// Delete data directory
-	if (p_StoreDescriptor->DatPath[0])
-		Result = DeleteDirectory(p_StoreDescriptor->DatPath) ? LFOk : LFDriveNotReady;
+	if (IsStoreMounted(p_StoreDescriptor))
+		Result = DeleteDirectory(p_StoreDescriptor->DatPath) ? LFOk : LFVolumeNotReady;
 
 	return Result;
 }

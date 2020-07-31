@@ -21,7 +21,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			>
@@ -41,7 +41,7 @@
 		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			>
@@ -62,7 +62,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -83,7 +83,7 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			WholeProgramOptimization="1"

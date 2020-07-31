@@ -21,7 +21,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			>
@@ -41,7 +41,7 @@
 		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			>
@@ -62,7 +62,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -84,7 +84,7 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="R:\liquidFOLDERS\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="10"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -128,10 +128,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Classical.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Folders\FLD_Content.ico"
 				>
 			</File>
@@ -160,6 +156,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Folders\FLD_Folk.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Folders\FLD_Gray.ico"
 				>
 			</File>
@@ -185,6 +185,10 @@
 			</File>
 			<File
 				RelativePath=".\Folders\FLD_Metal.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_MusicSheet.ico"
 				>
 			</File>
 			<File
@@ -221,6 +225,14 @@
 			</File>
 			<File
 				RelativePath=".\Folders\FLD_Pop.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Psychedelic.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Folders\FLD_Punk.ico"
 				>
 			</File>
 			<File
@@ -1121,6 +1133,26 @@
 			</File>
 			<File
 				RelativePath=".\Tasks\CalendarPrevious_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Compress_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Compress_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Compress_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Compress_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Compress_64.png"
 				>
 			</File>
 			<File

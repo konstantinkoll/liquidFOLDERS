@@ -168,7 +168,7 @@ void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 			if (SetDefault)
 				LFErrorBox(this, LFSetDefaultStore(m_StoreDescriptor.StoreID));
 
-			ASSERT(m_wndMakeSearchable.IsWindowVisible()==((m_StoreDescriptor.Mode & LFStoreModeIndexMask)>=LFStoreModeIndexHybrid));
+			ASSERT(m_wndMakeSearchable.IsWindowVisible()==(m_StoreDescriptor.IndexMode>=LFStoreIndexModeHybrid));
 
 			if (m_wndMakeSearchable.IsWindowVisible())
 				LFErrorBox(this, LFMakeStoreSearchable(m_StoreDescriptor.StoreID, MakeSearchable));
@@ -227,15 +227,15 @@ BOOL LFStorePropertiesDlg::InitDialog()
 	GetDlgItem(IDC_SYNCHRONIZED)->GetWindowText(m_MaskSynchronized);
 
 	// Store
-	m_wndStoreIcon.SetCoreIcon(LFGetStoreIcon(&m_StoreDescriptor));
+	m_wndStoreIcon.SetCoreIcon(LFGetStoreIcon(m_StoreDescriptor));
 
-	if ((m_StoreDescriptor.Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
+	if (m_StoreDescriptor.IndexMode==LFStoreIndexModeInternal)
 	{
 		m_wndMakeSearchable.ShowWindow(SW_HIDE);
 	}
 	else
 	{
-		m_wndMakeSearchable.SetCheck((m_StoreDescriptor.Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid);
+		m_wndMakeSearchable.SetCheck(m_StoreDescriptor.IndexMode==LFStoreIndexModeHybrid);
 	}
 
 	// Store
@@ -322,7 +322,7 @@ void LFStorePropertiesDlg::OnRunBackup()
 		CStdioFile File;
 		if (!File.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
 		{
-			LFErrorBox(this, LFDriveNotReady);
+			LFErrorBox(this, LFVolumeNotReady);
 		}
 		else
 		{
@@ -334,59 +334,58 @@ void LFStorePropertiesDlg::OnRunBackup()
 				for (UINT a=0; a<Count; a++)
 				{
 					LFStoreDescriptor StoreDescriptor;
-					if (LFGetStoreSettings(lpcStoreIDs[a], StoreDescriptor)==LFOk)
-						if ((StoreDescriptor.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
+					if ((LFGetStoreSettings(lpcStoreIDs[a], StoreDescriptor)==LFOk) && (StoreDescriptor.IndexMode!=LFStoreIndexModeExternal))
+					{
+						// Header
+						tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
+						tmpStr += StoreDescriptor.StoreID;
+						File.WriteString(tmpStr+_T("]\n"));
+
+						// Name
+						tmpStr = StoreDescriptor.StoreName;
+						CEscape(tmpStr);
+						File.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
+
+						// Mode
+						tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), StoreDescriptor.Mode);
+						File.WriteString(tmpStr);
+
+						// AutoLocation
+						tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), StoreDescriptor.State & LFStoreStateAutoLocation);
+						File.WriteString(tmpStr);
+
+						if ((StoreDescriptor.State & LFStoreStateAutoLocation)==0)
 						{
-							// Header
-							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
-							tmpStr += StoreDescriptor.StoreID;
-							File.WriteString(tmpStr+_T("]\n"));
-
-							// Name
-							tmpStr = StoreDescriptor.StoreName;
+							// Path
+							tmpStr = StoreDescriptor.DatPath;
 							CEscape(tmpStr);
-							File.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
-
-							// Mode
-							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), StoreDescriptor.Mode);
-							File.WriteString(tmpStr);
-
-							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), StoreDescriptor.Flags & LFStoreFlagsAutoLocation);
-							File.WriteString(tmpStr);
-
-							if ((StoreDescriptor.Flags & LFStoreFlagsAutoLocation)==0)
-							{
-								// Path
-								tmpStr = StoreDescriptor.DatPath;
-								CEscape(tmpStr);
-								File.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
-							}
-
-							// GUID
-							File.WriteString(_T("\"GUID\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.UniqueID, sizeof(StoreDescriptor.UniqueID))+_T("\n"));
-
-							// IndexVersion
-							tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), StoreDescriptor.IndexVersion);
-							File.WriteString(tmpStr);
-
-							// CreationTime
-							File.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.CreationTime, sizeof(StoreDescriptor.CreationTime))+_T("\n"));
-
-							// FileTime
-							File.WriteString(_T("\"FileTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.FileTime, sizeof(StoreDescriptor.FileTime))+_T("\n"));
-
-							// MaintenanceTime
-							File.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.MaintenanceTime, sizeof(StoreDescriptor.MaintenanceTime))+_T("\n"));
-
-							// SynchronizeTime
-							File.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.SynchronizeTime, sizeof(StoreDescriptor.SynchronizeTime))+_T("\n"));
+							File.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
 						}
+
+						// GUID
+						File.WriteString(_T("\"GUID\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.UniqueID, sizeof(StoreDescriptor.UniqueID))+_T("\n"));
+
+						// IndexVersion
+						tmpStr.Format(_T("\"IndexVersion\"=dword:%.8x\n"), StoreDescriptor.IndexVersion);
+						File.WriteString(tmpStr);
+
+						// CreationTime
+						File.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.CreationTime, sizeof(StoreDescriptor.CreationTime))+_T("\n"));
+
+						// FileTime
+						File.WriteString(_T("\"FileTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.FileTime, sizeof(StoreDescriptor.FileTime))+_T("\n"));
+
+						// MaintenanceTime
+						File.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.MaintenanceTime, sizeof(StoreDescriptor.MaintenanceTime))+_T("\n"));
+
+						// SynchronizeTime
+						File.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((LPBYTE)&StoreDescriptor.SynchronizeTime, sizeof(StoreDescriptor.SynchronizeTime))+_T("\n"));
+					}
 				}
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(this, LFDriveNotReady);
+				LFErrorBox(this, LFVolumeNotReady);
 			}
 
 			File.Close();
@@ -401,7 +400,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 {
 	// Get store data
 	if ((m_StoreDescriptorValid=((LFGetStoreSettingsEx(m_StoreUniqueID, m_StoreDescriptor)==LFOk)))==TRUE)
-		m_StoreIcon = LFGetStoreIcon(&m_StoreDescriptor, &m_StoreType);
+		m_StoreIcon = LFGetStoreIconEx(m_StoreDescriptor);
 
 	// Basic settings
 	m_wndStoreName.EnableWindow(m_StoreDescriptorValid);
@@ -409,7 +408,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 	m_wndMakeDefault.EnableWindow(m_StoreDescriptorValid);
 	m_wndMakeSearchable.EnableWindow(m_StoreDescriptorValid);
 
-	const BOOL IsEditable = m_StoreDescriptorValid && (m_StoreType & LFTypeWriteable);
+	const BOOL IsEditable = m_StoreDescriptorValid && (m_StoreDescriptor.Flags & LFFlagsWriteable);
 	GetDlgItem(IDOK)->EnableWindow(IsEditable);
 
 	// Usage
@@ -417,7 +416,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 	m_wndUsageList.SetUsage(m_StoreDescriptor);
 
 	// Synchronize
-	const BOOL CanSynchronize = m_StoreType & LFTypeSynchronizeAllowed;
+	const BOOL CanSynchronize = m_StoreDescriptor.Flags & LFFlagsSynchronizeAllowed;
 	GetDlgItem(IDC_SYNCHRONIZED)->EnableWindow(CanSynchronize);
 	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize && IsEditable);
 
@@ -434,7 +433,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		if (m_wndStoreComment.LineLength()==0)
 			m_wndStoreComment.SetWindowText(m_StoreDescriptor.Comments);
 
-		if (m_StoreDescriptor.Flags & LFStoreFlagsMaintained)
+		if (m_StoreDescriptor.Flags & LFFlagsStoreMaintained)
 		{
 			GetDlgItem(IDC_CONTENTSLABEL)->EnableWindow(TRUE);
 
@@ -454,7 +453,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		LFTimeToString(m_StoreDescriptor.FileTime, tmpStr, 256);
 		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
 
-		GetDlgItem(IDC_LASTSEENLABEL)->EnableWindow((m_StoreDescriptor.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
+		GetDlgItem(IDC_LASTSEENLABEL)->EnableWindow(m_StoreDescriptor.IndexMode!=LFStoreIndexModeInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(m_StoreDescriptor.LastSeen);
 
 		ABSOLUTESTOREID StoreID;

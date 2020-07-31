@@ -80,7 +80,6 @@ protected:
 	LFStoreDescriptor m_StoreDescriptor;
 	BOOL m_StoreDescriptorValid;
 	UINT m_StoreIcon;
-	UINT m_StoreType;
 	static UINT m_LastTab;
 
 	CIconCtrl m_wndStoreIcon;

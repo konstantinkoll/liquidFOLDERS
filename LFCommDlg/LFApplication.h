@@ -91,9 +91,9 @@ public:
 	static CString GetFreeBytesAvailable(INT64 FreeBytesAvailable);
 	static CString GetFreeBytesAvailable(const LFStoreDescriptor& StoreDescriptor);
 	CString GetHintForItem(const LFItemDescriptor* pItemDescriptor, LPCWSTR pFormatName=NULL) const;
-	CString GetHintForStore(const LFStoreDescriptor& StoreDescriptor) const;
+	CString GetHintForStore(LFStoreDescriptor& StoreDescriptor) const;
 	void ShowTooltip(const CWnd* pWndOwner, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
-	void ShowTooltip(const CWnd* pWndOwner, const CPoint& point, const LFStoreDescriptor& StoreDescriptor);
+	void ShowTooltip(const CWnd* pWndOwner, const CPoint& point, LFStoreDescriptor& StoreDescriptor);
 	void HideTooltip(const CWnd* pWndOwner=NULL);
 
 	LPCWSTR GetAttributeName(ATTRIBUTE Attr, ITEMCONTEXT Context=LFContextAllFiles) const;
@@ -239,7 +239,7 @@ inline CString LFApplication::GetFreeBytesAvailable(const LFStoreDescriptor& Sto
 	return GetFreeBytesAvailable(StoreDescriptor.FreeBytesAvailable.QuadPart);
 }
 
-inline void LFApplication::ShowTooltip(const CWnd* pWndOwner, const CPoint& point, const LFStoreDescriptor& StoreDescriptor)
+inline void LFApplication::ShowTooltip(const CWnd* pWndOwner, const CPoint& point, LFStoreDescriptor& StoreDescriptor)
 {
 	ShowTooltip(pWndOwner, point, StoreDescriptor.StoreName, GetHintForStore(StoreDescriptor));
 }
