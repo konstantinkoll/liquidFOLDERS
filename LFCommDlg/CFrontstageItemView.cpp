@@ -181,7 +181,7 @@ Restart:
 			pData->Rect.right = (pData->Rect.left=x)+szItem.cx;
 			pData->Rect.bottom = (pData->Rect.top=y)+szItem.cy;
 
-			if ((x+=szItem.cx+szGutter.cx)>m_ScrollWidth)
+			if (((x+=szItem.cx+szGutter.cx)>m_ScrollWidth) && !FullWidth)
 				m_ScrollWidth = x-1;
 
 			if (y+szItem.cy+szGutter.cy-1>m_ScrollHeight)

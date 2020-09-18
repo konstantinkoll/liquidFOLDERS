@@ -39,10 +39,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{B4DB438A-71E8-4AD5-B3C3-2CF6697AE3B5} 3082:{D9A4DA6B-CA45-4E64-BD9E-EEF061CDF172} 1036:{E1D088D1-9B3D-40E8-B4BD-BDF1FABD4416} 1031:{D117418D-02D7-4ECE-9734-FA0886D9B66F} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{A83E5895-BA5B-4B63-B367-74ED99858172} 3082:{EAA0A45B-4146-4129-AC1F-B9F8630BCFCD} 1036:{891963E8-23F8-4C89-914E-5826DC590005} 1031:{6DE717B8-2B0F-4CDD-9B2E-1E054E907A8E} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="4.1.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.1.1" Type="32"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
@@ -67,6 +67,7 @@
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="System64Folder" Directory_Parent="TARGETDIR" DefaultDir="System~1|System64Folder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="TempFolder" Directory_Parent="TARGETDIR" DefaultDir="TEMPFO~1|TempFolder" IsPseudoRoot="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AI_CustomARPName" ComponentId="{B2F25C9C-1476-4A5C-AF39-E55B4E59EB4A}" Directory_="APPDIR" Attributes="260" KeyPath="DisplayName" Options="1"/>
@@ -76,16 +77,16 @@
     <ROW Component="SHORTCUTDIR" ComponentId="{B2E9C933-6ED7-45F4-9358-07EA8D258913}" Directory_="SHORTCUTDIR" Attributes="768"/>
     <ROW Component="liquidFOLDERS" ComponentId="{0A04AAF7-EFBC-440C-8A01-64AFB0A0081D}" Directory_="APPDIR" Attributes="772" KeyPath="AIShRegAnswer"/>
     <ROW Component="liquidFOLDERS.exe" ComponentId="{45727770-2F88-41B5-8203-81C0B2F3108C}" Directory_="APPDIR" Attributes="768" KeyPath="liquidFOLDERS.exe"/>
-    <ROW Component="liquidFOLDERSGlobalRoot.cer" ComponentId="{E051D1DA-4C3F-4A68-A376-DE34A589F374}" Directory_="APPDIR" Attributes="0" KeyPath="liquidFOLDERSGlobalRoot.cer" Type="0"/>
+    <ROW Component="liquidFOLDERSGlobalRoot.cer_1" ComponentId="{8D8A3398-44C3-4052-9640-1112BA73ACBF}" Directory_="TempFolder" Attributes="0" KeyPath="liquidFOLDERSGlobalRoot.cer" Type="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify LFCore.dll Quick_Launch SHORTCUTDIR liquidFOLDERS liquidFOLDERS.exe liquidFOLDERSGlobalRoot.cer"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify LFCore.dll Quick_Launch SHORTCUTDIR liquidFOLDERS liquidFOLDERS.exe liquidFOLDERSGlobalRoot.cer_1"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\x64\LFCore.dll" SelfReg="false" NextFile="liquidFOLDERS.exe"/>
     <ROW File="liquidFOLDERS.exe" Component_="liquidFOLDERS.exe" FileName="StoreM~1.exe|liquidFOLDERS.exe" Attributes="0" SourcePath="Release\x64\liquidFOLDERS.exe" SelfReg="false" NextFile="liquidFOLDERSGlobalRoot.cer"/>
-    <ROW File="liquidFOLDERSGlobalRoot.cer" Component_="liquidFOLDERSGlobalRoot.cer" FileName="LIQUID~1.CER|liquidFOLDERS Global Root.cer" Attributes="0" SourcePath="Setup\liquidFOLDERS Global Root.cer" SelfReg="false"/>
+    <ROW File="liquidFOLDERSGlobalRoot.cer" Component_="liquidFOLDERSGlobalRoot.cer_1" FileName="LIQUID~1.CER|liquidFOLDERS Global Root.cer" Attributes="0" SourcePath="Setup\liquidFOLDERS Global Root.cer" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
     <ROW MsiShortcutProperty="StoreManager_10" Shortcut_="StoreManager_1" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
@@ -234,15 +235,15 @@
     <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="300" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
     <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the selected features" TextStyle="TitleFont" Order="400" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
     <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
-    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ExitDialog#Bitmap"/>
     <ROW Dialog_="ExitDialog" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="&amp;Close" TextStyle="DlgFont8" Order="200" TextLocId="Azure.Control.Text.ExitDialog#Finish" MsiKey="ExitDialog#Finish" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="0" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="ExitDialog#Back" Options="1"/>

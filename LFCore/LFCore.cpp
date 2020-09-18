@@ -13,6 +13,7 @@
 #include "resource.h"
 #include "Stores.h"
 #include "TableAttributes.h"
+#include "Thumbnails.h"
 #include "Volumes.h"
 #include "Watchdog.h"
 #include <shlwapi.h>
@@ -64,6 +65,7 @@ LFCORE_API void LFInitialize()
 	// Other modules
 	InitMutex();
 	InitAirportDatabase();
+	InitThumbnails();
 	InitVolumes();
 	InitStores();
 	InitWatchdog();

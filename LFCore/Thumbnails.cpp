@@ -13,6 +13,22 @@ using namespace Gdiplus;
 extern OSVERSIONINFO osInfo;
 
 
+HMODULE hModShell;
+PFNSHCREATEITEMFROMPARSINGNAME zSHCreateItemFromParsingName;
+
+
+void InitThumbnails()
+{
+	if ((hModShell=LoadLibrary(L"SHELL32.DLL"))!=NULL)
+	{
+		zSHCreateItemFromParsingName = (PFNSHCREATEITEMFROMPARSINGNAME)GetProcAddress(hModShell, "SHCreateItemFromParsingName");
+	}
+	else
+	{
+		zSHCreateItemFromParsingName = NULL;
+	}
+}
+
 LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size)
 {
 	WCHAR Path[MAX_PATH];
@@ -21,6 +37,22 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size)
 
 	HBITMAP hBitmap = NULL;
 
+	// IShellItemImageFactory, available since Windows Vista
+	// May deliver non-square thumbnails
+	if ((osInfo.dwMajorVersion>=6) && zSHCreateItemFromParsingName)
+	{
+		IShellItemImageFactory* pShellItemImageFactory;
+		if (SUCCEEDED(zSHCreateItemFromParsingName(Path, NULL, IID_IShellItemImageFactory, (LPVOID*)&pShellItemImageFactory)))
+		{
+			pShellItemImageFactory->GetImage(Size, SIIGBF_RESIZETOFIT | SIIGBF_THUMBNAILONLY, &hBitmap);
+			pShellItemImageFactory->Release();
+
+			goto Finish;
+		}
+	}
+
+	// IExtractImage, available since Windows XP and fallback since Windows Vista
+	// Always delivers square thumbnails
 	LPITEMIDLIST pidlFQ;
 	if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, 0, NULL)))
 	{
@@ -28,24 +60,6 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size)
 		LPCITEMIDLIST pidlRel;
 		if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (LPVOID*)&pParentFolder, &pidlRel)))
 		{
-			// IThumbnailProvider, available since Windows Vista
-			// May deliver non-square thumbnails
-			if (osInfo.dwMajorVersion>=6)
-			{
-				IThumbnailProvider* pThumbnailProvider;
-				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (LPVOID*)&pThumbnailProvider)))
-				{
-					DWORD dwAlpha = WTSAT_UNKNOWN;
-					pThumbnailProvider->GetThumbnail(min(Size.cx, Size.cy), &hBitmap, &dwAlpha);
-
-					pThumbnailProvider->Release();
-
-					goto Finish;
-				}
-			}
-
-			// IExtractImage, available since Windows XP and fallback since Windows Vista
-			// Always delivers square thumbnails
 			IExtractImage* pExtractImage;
 			if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IExtractImage, NULL, (LPVOID*)&pExtractImage)))
 			{
@@ -57,17 +71,15 @@ LFCORE_API HBITMAP LFGetThumbnail(LFItemDescriptor* pItemDescriptor, SIZE Size)
 					pExtractImage->Extract(&hBitmap);
 
 				pExtractImage->Release();
-
-				goto Finish;
 			}
 
-Finish:
 			pParentFolder->Release();
 		}
 
 		CoTaskMemFree(pidlFQ);
 	}
 
+Finish:
 	return LFSanitizeThumbnail(hBitmap);
 }
 

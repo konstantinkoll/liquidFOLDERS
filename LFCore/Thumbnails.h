@@ -1,6 +1,12 @@
 
 #pragma once
 
+typedef HRESULT(__stdcall* PFNSHCREATEITEMFROMPARSINGNAME)(PCWSTR pszPath, IBindCtx *pbc, REFIID riid, void **ppv);
+
+
+void InitThumbnails();
+
+
 template<UINT Scale>
 void HQScale24(const BITMAPINFO& DIB, LPBYTE pBitsSrc, LPBYTE pBitsDst)
 {
