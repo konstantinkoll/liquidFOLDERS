@@ -603,8 +603,9 @@ struct LFContextDescriptor
 #define LFApplicationAfterlight      19
 #define LFApplicationSnapseed        20
 #define LFApplicationRNIFilms        21
+#define LFApplicationTikTok          22
 
-#define LFApplicationCount           22
+#define LFApplicationCount           23
 
 
 // Search filter

@@ -28,6 +28,7 @@ extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT] = {
 	{ L"Afterlight",         LFApplicationAfterlight },
 	{ L"Snapseed",           LFApplicationSnapseed },
 	{ L"RNI Films",          LFApplicationRNIFilms },
+	{ L"TikTok",             LFApplicationTikTok },
 
 	{ L"FB",                 LFApplicationFacebook },
 	{ L"Flixel",             LFApplicationCinemagraph },
@@ -41,7 +42,9 @@ extern const RegisteredApplication ApplicationRegistry[APPLICATIONCOUNT] = {
 	{ L"YT",                 LFApplicationYouTube },
 	{ L"Afterglow",          LFApplicationAfterlight },
 	{ L"RNI",                LFApplicationRNIFilms },
-	{ L"Really Nice Images", LFApplicationRNIFilms }
+	{ L"Really Nice Images", LFApplicationRNIFilms },
+	{ L"Tik Tok",            LFApplicationTikTok },
+	{ L"Douyin",             LFApplicationTikTok }
 };
 
 #pragma data_seg()

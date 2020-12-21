@@ -834,6 +834,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\APP_TikTok.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\APP_Vimeo.ico"
 				>
 			</File>

@@ -3,16 +3,13 @@
 #include "LF.h"
 
 
-#define FILEFORMATCOUNT     273
-
-#define NOCOMPRESSION     0
-#define CANCOMPRESS       1
+#define FILEFORMATCOUNT     279
 
 #pragma pack(push,1)
 
 struct RegisteredFileFormat
 {
-	CHAR Format[8];
+	CHAR Format[LFExtSize];
 	ITEMCONTEXT SystemContextID;
 	ITEMCONTEXT UserContextID;
 	BYTE CanCompress;

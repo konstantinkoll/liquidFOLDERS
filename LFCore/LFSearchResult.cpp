@@ -382,13 +382,13 @@ INT LFSearchResult::CompareItems(const LFItemDescriptor** pData1, const LFItemDe
 	if (!Result)
 		switch (Parameters.Attr)
 		{
+		case LFAttrCreator:
+			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrMediaCollection);
+
 		case LFAttrMediaCollection:
 			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrSequenceInCollection, Parameters.Parameter2);
 
 		case LFAttrSequenceInCollection:
-			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrCreator);
-
-		case LFAttrCreator:
 			return CompareItemsSecondary(pData1, pData2, Parameters, LFAttrTitle);
 
 		case LFAttrFileName:

@@ -5,7 +5,6 @@
 #define IDR_APPLICATION                 128
 #define IDR_CLIPBOARD                   129
 #define IDR_FILEDROP                    130
-#define IDR_PLAYER                      131
 #define IDM_BACKSTAGE_PURCHASE          200
 #define IDM_BACKSTAGE_ENTERLICENSEKEY   201
 #define IDM_BACKSTAGE_SUPPORT           202

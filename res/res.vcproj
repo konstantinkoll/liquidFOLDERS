@@ -1876,6 +1876,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Applications\APP_TikTok.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Applications\APP_Vimeo.ico"
 				>
 			</File>
@@ -1953,6 +1957,10 @@
 			</File>
 			<File
 				RelativePath=".\Applications\Snapseed_29.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Applications\TikTok_29.png"
 				>
 			</File>
 			<File
@@ -2134,10 +2142,6 @@
 		</File>
 		<File
 			RelativePath=".\Multiple_48.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Player.ico"
 			>
 		</File>
 		<File
