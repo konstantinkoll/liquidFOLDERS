@@ -10,8 +10,6 @@
 // CIconFactory
 //
 
-#define THUMBCUTOFF     2
-
 CIcons CIconFactory::m_ApplicationIcons;
 
 CIconFactory::CIconFactory()
@@ -427,8 +425,7 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	const BOOL BlackFrame = LFIsAudioFile(pItemDescriptor);
 	const BOOL IsMediaFile = LFIsMediaFile(pItemDescriptor);
 	const BOOL IsDocumentFile = LFIsDocumentFileStrict(pItemDescriptor);
-	const INT CutOff = IsMediaFile || IsDocumentFile ? THUMBCUTOFF : 0;
-	const INT ThumbSize = (BlackFrame ? 124 : 118)+2*CutOff;
+	const INT ThumbSize = (BlackFrame ? 124 : 118);
 
 	HBITMAP hBitmapImage = LFGetThumbnail(pItemDescriptor, CSize(ThumbSize, ThumbSize));
 	if (!hBitmapImage)
@@ -446,13 +443,13 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	}
 
 	// Convert thumbnail to 128x128x32bpp
-	CRect rectSrc(CutOff, CutOff, BitmapImage.bmWidth-CutOff, BitmapImage.bmHeight-CutOff);
+	CRect rectSrc(0, 0, BitmapImage.bmWidth, BitmapImage.bmHeight);
 
 	CRect rectDst;
-	rectDst.right = (rectDst.left=(128-BitmapImage.bmWidth)/2+CutOff)+BitmapImage.bmWidth-2*CutOff;
-	rectDst.bottom = (rectDst.top=(128-BitmapImage.bmHeight)/2+CutOff-1)+BitmapImage.bmHeight-2*CutOff;
+	rectDst.right = (rectDst.left=(128-BitmapImage.bmWidth)/2)+BitmapImage.bmWidth;
+	rectDst.bottom = (rectDst.top=(128-BitmapImage.bmHeight)/2-1)+BitmapImage.bmHeight;
 
-	Thumbnail.HasFrame = IsMediaFile || IsDocumentFile || ((rectSrc.Width()<=118+2*THUMBCUTOFF) && (rectSrc.Height()<=118+2*THUMBCUTOFF));
+	Thumbnail.HasFrame = IsMediaFile || IsDocumentFile || ((rectSrc.Width()<=118) && (rectSrc.Height()<=118));
 	Thumbnail.HasBackground = !Thumbnail.HasFrame || BlackFrame;
 
 	CDC dc;
@@ -464,42 +461,11 @@ BOOL CIconFactory::GetThumbnailBitmap(LFItemDescriptor* pItemDescriptor, Thumbna
 	Graphics g(dc);
 	g.SetSmoothingMode(SmoothingModeNone);
 
-	if (Thumbnail.HasFrame)
+	if (Thumbnail.HasFrame && BlackFrame)
 	{
 		// Draw background
-		if (BlackFrame)
-		{
-			SolidBrush brush(Color(0xFF000000));
-			g.FillRectangle(&brush, 2, 1, 124, 124);
-		}
-
-		// Inflate sizes which are just 1 or 2 pixels short
-		if (CutOff)
-		{
-			if (rectSrc.Width()==ThumbSize-2*CutOff-2)
-			{
-				rectSrc.InflateRect(1, 0);
-				rectDst.InflateRect(1, 0);
-			}
-			else
-				if (rectSrc.Width()==ThumbSize-2*CutOff-1)
-				{
-					rectSrc.right++;
-					rectDst.right++;
-				}
-
-			if (rectSrc.Height()==ThumbSize-2*CutOff-2)
-			{
-				rectSrc.InflateRect(0, 1);
-				rectDst.InflateRect(0, 1);
-			}
-			else
-				if (rectSrc.Height()==ThumbSize-2*CutOff-1)
-				{
-					rectSrc.bottom++;
-					rectDst.bottom++;
-				}
-		}
+		SolidBrush brush(Color(0xFF000000));
+		g.FillRectangle(&brush, 2, 1, 124, 124);
 	}
 
 	// Draw image on thumbnail

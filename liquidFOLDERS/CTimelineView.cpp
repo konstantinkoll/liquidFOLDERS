@@ -908,6 +908,8 @@ void CTimelineView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRe
 	if (m_TwoColumns)
 		if (Themed)
 		{
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
 			const INT x = m_ScrollWidth/2-4;
 
 			for (UINT a=0; a<8; a++)

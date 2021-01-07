@@ -960,9 +960,6 @@ LFCORE_API UINT LFGetStoreIconEx(LFStoreDescriptor& StoreDescriptor)
 
 LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName, LPCWSTR pComments, CHAR cVolume, BOOL MakeSearchable)
 {
-	if (!GetMutexForStores())
-		return LFMutexError;
-
 	LFStoreDescriptor StoreDescriptor;
 	GetDescriptorForNewStore(&StoreDescriptor);
 
@@ -982,7 +979,7 @@ LFCORE_API UINT LFCreateStoreLiquidfolders(LPWSTR pStoreName, LPCWSTR pComments,
 		StoreDescriptor.State |= LFStoreStateAutoLocation;
 
 #if (LFStoreIndexModeInternal!=0)
-			Store.IndexMode = LFStoreIndexModeInternal;
+	Store.IndexMode = LFStoreIndexModeInternal;
 #endif
 	}
 
