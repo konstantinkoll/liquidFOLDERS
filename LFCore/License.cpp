@@ -138,7 +138,8 @@ LFCORE_API BOOL LFIsLicensed(LFLicense* pLicense, BOOL Reload)
 	if (pLicense)
 		*pLicense = LicenseBuffer;
 
-	return strncmp(LicenseBuffer.ProductID, "liquidFOLDERS", 13)==0;
+	return (strncmp(LicenseBuffer.ProductID, "liquidFOLDERS", 13)==0) &&
+		(strcmp(LicenseBuffer.RegName, "Roland Koelling")!=0);
 }
 
 LFCORE_API BOOL LFIsSharewareExpired()

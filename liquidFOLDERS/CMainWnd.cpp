@@ -275,6 +275,7 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPe
 	{
 		DeleteBreadcrumbItems(m_pBreadcrumbForward);
 
+		// Get current state
 		FVPersistentData Data;
 		m_wndMainView.GetPersistentData(Data);
 
@@ -316,13 +317,13 @@ void CMainWnd::NavigateTo(LFFilter* pFilter, UINT NavMode, FVPersistentData* pPe
 	}
 
 	// Cook search result
-	OnCookFiles((WPARAM)pPersistentData);
+	OnCookFiles(0, (LPARAM)pPersistentData);
 
 	// Update histroy
 	UpdateHistory(NavMode);
 }
 
-void CMainWnd::LeafBreadcrumbs(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, UINT Pages)
+void CMainWnd::FlipBreadcrumbs(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, UINT Pages)
 {
 	ASSERT(!m_IsClipboard);
 
@@ -330,13 +331,13 @@ void CMainWnd::LeafBreadcrumbs(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pCons
 	LFFilter* pFilter = m_pActiveFilter;
 	m_pActiveFilter = NULL;
 
-	// Current state
+	// Get current state
 	FVPersistentData Data;
 	m_wndMainView.GetPersistentData(Data);
 
-	// Leaf through breadcrumbs
+	// Flip through breadcrumbs
 	for (UINT a=0; a<Pages; a++)
-		LeafBreadcrumbItem(pAddItem, pConsumeItem, pFilter, Data);
+		FlipBreadcrumbItem(pAddItem, pConsumeItem, pFilter, Data);
 
 	// Navigate to new filter
 	NavigateTo(pFilter, NAVMODE_HISTORY, &Data);
@@ -497,19 +498,19 @@ void CMainWnd::OnDrawItem(INT nIDCtl, LPDRAWITEMSTRUCT lpdis)
 
 void CMainWnd::OnNavigateBack()
 {
-	LeafBreadcrumbs(m_pBreadcrumbForward, m_pBreadcrumbBack);
+	FlipBreadcrumbs(m_pBreadcrumbForward, m_pBreadcrumbBack);
 }
 
 void CMainWnd::OnNavigateForward()
 {
-	LeafBreadcrumbs(m_pBreadcrumbBack, m_pBreadcrumbForward);
+	FlipBreadcrumbs(m_pBreadcrumbBack, m_pBreadcrumbForward);
 }
 
 void CMainWnd::OnNavigateReload()
 {
 	ASSERT(!m_IsClipboard);
 
-	// Current state
+	// Get current state
 	FVPersistentData Data;
 	m_wndMainView.GetPersistentData(Data);
 
@@ -594,7 +595,7 @@ void CMainWnd::OnUpdateSwitchContextCommands(CCmdUI* pCmdUI)
 
 LRESULT CMainWnd::OnNavigateBack(WPARAM wParam, LPARAM /*lParam*/)
 {
-	LeafBreadcrumbs(m_pBreadcrumbForward, m_pBreadcrumbBack, (UINT)wParam);
+	FlipBreadcrumbs(m_pBreadcrumbForward, m_pBreadcrumbBack, (UINT)wParam);
 
 	return NULL;
 }
@@ -608,7 +609,7 @@ LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM lParam)
 	return NULL;
 }
 
-LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
+LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM lParam)
 {
 	LFSearchResult* pVictim = m_pCookedFiles;
 	m_pCookedFiles = m_pRawFiles;
@@ -629,7 +630,17 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 			LFSortSearchResult(m_pRawFiles, pContextViewSettings->SortBy, pContextViewSettings->SortDescending);
 		}
 
-	m_wndMainView.UpdateSearchResult(m_pActiveFilter, m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
+	// Get current state
+	FVPersistentData Data;
+	if (wParam)
+	{
+		m_wndMainView.GetPersistentData(Data);
+
+		ASSERT(!lParam);
+		lParam = (LPARAM)&Data;
+	}
+
+	m_wndMainView.UpdateSearchResult(m_pActiveFilter, m_pRawFiles, m_pCookedFiles, (FVPersistentData*)lParam);
 
 	if (!m_IsClipboard)
 	{
@@ -728,7 +739,7 @@ LRESULT CMainWnd::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		switch (m_pCookedFiles->m_Context)
 		{
 		case LFContextClipboard:
-			PostMessage(WM_COOKFILES);
+			PostMessage(WM_COOKFILES, 2);
 
 		case LFContextStores:
 			break;

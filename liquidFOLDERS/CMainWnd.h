@@ -94,7 +94,7 @@ private:
 	STOREID GetStatisticsID() const;
 	void UpdateHistory(UINT NavMode);
 	void NavigateTo(LFFilter* pFilter, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* pPersistentData=NULL, INT AggregateFirst=-1, INT AggregateLast=-1);
-	void LeafBreadcrumbs(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, UINT Pages=1);
+	void FlipBreadcrumbs(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, UINT Pages=1);
 	COLORREF PriorityColor() const;
 	static BOOL CookSortDescending(const LFContextViewSettings* pContextViewSettings);
 	static BOOL CookGroupSingle(const LFContextViewSettings* pContextViewSettings);

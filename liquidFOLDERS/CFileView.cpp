@@ -87,6 +87,7 @@ void CFileView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		}
 		else
 		{
+			m_HScrollPos = m_VScrollPos = 0;
 			m_FocusItem = -1;
 		}
 

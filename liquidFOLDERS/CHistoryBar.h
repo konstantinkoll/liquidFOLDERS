@@ -19,7 +19,7 @@ void AddBreadcrumbItem(BreadcrumbItem*& pBreadcrumbItem, LFFilter* pFilter, cons
 void ConsumeBreadcrumbItem(BreadcrumbItem*& pBreadcrumbItem, LFFilter*& pFilter, FVPersistentData& Data);
 void DeleteBreadcrumbItems(BreadcrumbItem*& pBreadcrumbItem);
 
-inline void LeafBreadcrumbItem(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, LFFilter*& pFilter, FVPersistentData& Data)
+inline void FlipBreadcrumbItem(BreadcrumbItem*& pAddItem, BreadcrumbItem*& pConsumeItem, LFFilter*& pFilter, FVPersistentData& Data)
 {
 	AddBreadcrumbItem(pAddItem, pFilter, Data);
 	ConsumeBreadcrumbItem(pConsumeItem, pFilter, Data);

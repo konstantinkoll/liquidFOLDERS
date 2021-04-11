@@ -185,6 +185,7 @@ void CMainView::UpdateViewSettings()
 {
 	if (m_pWndFileView)
 	{
+		// Get current state
 		FVPersistentData Data;
 		GetPersistentData(Data);
 
@@ -197,6 +198,7 @@ void CMainView::UpdateViewSettings()
 
 void CMainView::UpdateSearchResult()
 {
+	// Get current state
 	FVPersistentData Data;
 	GetPersistentData(Data, TRUE);
 
@@ -354,9 +356,7 @@ void CMainView::RemoveTransactedItems(LFTransactionList* pTransactionList)
 	LFRemoveFlaggedItems(p_RawFiles);
 
 	// Cook search result
-	FVPersistentData Data;
-	GetPersistentData(Data);
-	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
+	GetOwner()->SendMessage(WM_COOKFILES, 1);
 }
 
 BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
@@ -771,8 +771,10 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 
 	if (pTransactionList->m_Modified)
 	{
+		// Cook search result
 		FVPersistentData Data;
 		GetPersistentData(Data);
+
 		UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data);
 	}
 
@@ -1373,7 +1375,7 @@ void CMainView::OnFileRemember()
 	}
 
 	if (Changes)
-		pClipboardWnd->SendMessage(WM_COOKFILES);
+		pClipboardWnd->SendMessage(WM_COOKFILES, 2);
 }
 
 void CMainView::OnFileRemoveFromClipboard()
