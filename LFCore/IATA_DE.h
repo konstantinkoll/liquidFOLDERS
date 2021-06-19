@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8805
+#define AirportCount_DE 8806
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1721,7 +1721,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  11, "CTR", "", "Cattle Creek", { 17.606944, 131.548889 } },
 	{  81, "CTS", "", "Chitose", { -42.775278, 141.692222 } },
 	{  51, "CTT", "", "Le Castellet", { -43.252222, 5.786111 } },
-	{  36, "CTU", "", "Chengdu", { -30.578611, 103.947222 } },
+	{  36, "CTU", "", "Chengdu (Shuangliu)", { -30.578611, 103.947222 } },
 	{ 209, "CTW", "", "Cottonwood", { -34.730000, -112.035000 } },
 	{ 209, "CTX", "", "Cortland", { -42.592778, -76.215000 } },
 	{ 209, "CTY", "", "Cross City", { -29.635556, -83.104722 } },
@@ -7360,6 +7360,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 175, "TFN", "TCI", "Teneriffa Nord", { -28.482778, -16.341667 } },
 	{ 175, "TFS", "TCI", "Teneriffa Süd", { -28.044444, -16.572500 } },
 	{ 148, "TFT", "", "Taftan", { -28.966944, 61.600000 } },
+	{  36, "TFU", "", "Chengdu (Tianfu)", { -30.318889, 104.445000 } },
 	{ 118, "TFY", "", "Tarfaya", { -27.950000, -12.916944 } },
 	{ 171, "TGA", "", "Tengah", { -1.387222, 103.708611 } },
 	{ 209, "TGC", "", "Trenton", { -35.932500, -88.848889 } },
@@ -8782,7 +8783,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  88, "YUJ", "", "Lady Franklin", { -68.483056, -113.216944 } },
 	{  88, "YUL", "YMQ", "Montreal (International Airport)", { -45.470556, -73.740833 } },
 	{ 209, "YUM", "", "Yuma International", { -32.656667, -114.605833 } },
-	{  88, "YUS", "", "Sheperd Bay", { -68.800000, -93.416944 } },
+	{  36, "YUS", "", "Yushu", { -32.839167, 97.038889 } },
 	{  88, "YUT", "", "Repulse Bay", { -66.521389, -86.224722 } },
 	{  88, "YUV", "", "Longstaff Bluff", { -68.933056, -75.283056 } },
 	{  88, "YUW", "", "Dewar Lakes", { -68.633056, -71.133056 } },

@@ -1540,7 +1540,7 @@ CTQ     Santa Vitoria, Brazil;4;18*50'2"S, 50*8'38"W
 CTR     Cattle Creek, Australia;4;17*36'25"S, 131*32'56"E
 CTS     Chitose, Japan;4;42*46'31"N, 141*41'32"E
 CTT     Le Castellet, France;4;43*15'8"N, 5*47'10"E
-CTU     Chengdu, China;4;30*34'43"N, 103*56'50"E
+CTU     Chengdu (Shuangliu), China;4;30*34'43"N, 103*56'50"E
 CTV     Catavina, Mexico
 CTW     Cottonwood, USA;4;34*43'48"N, 112*2'6"W
 CTX     Cortland, USA;4;42*35'34"N, 76*12'54"W
@@ -7631,6 +7631,7 @@ TFN TCI Tenerife North, Spain;4;28*28'58"N, 16*20'30"W
 TFR     Tarbes, France
 TFS TCI Tenerife South, Spain;4;28*2'40"N, 16*34'21"W
 TFT     Taftan, Pakistan;4;28*58'1"N, 61*35'60"E
+TFU     Chengdu (Tianfu), China;5;30*19'8"N, 104*26'42"E
 TFY     Tarfaya, Morocco;4;27*57'0"N, 12*55'1"W
 TGA     Tengah, Singapore;4;1*23'14"N, 103*42'31"E
 TGC     Trenton, USA;4;35*55'57"N, 88*50'56"W
@@ -9165,7 +9166,7 @@ YUM     Yuma International, USA;4;32*39'24"N, 114*36'21"W
 YUN     Johnson Point, Canada
 YUQ     Jenny Lind Island, Canada
 YUR     Gladman Point, Canada
-YUS     Sheperd Bay, Canada;4;68*48'0"N, 93*25'1"W
+YUS     Yushu, China;5;32*50'21"N, 97*2'20"E
 YUT     Repulse Bay, Canada;4;66*31'17"N, 86*13'29"W
 YUU     Mackar Inlet, Canada
 YUV     Longstaff Bluff, Canada;4;68*55'59"N, 75*16'59"W

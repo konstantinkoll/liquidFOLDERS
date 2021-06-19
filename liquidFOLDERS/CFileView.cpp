@@ -701,7 +701,9 @@ void CFileView::DrawColorDots(CDC& dc, CRect& rect, const LFItemDescriptor* pIte
 
 void CFileView::DrawJumboIcon(CDC& dc, Graphics& g, CPoint pt, LFItemDescriptor* pItemDescriptor, INT ThumbnailYOffset) const
 {
-	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context) ? p_RawFiles : NULL, TRUE, ThumbnailYOffset);
+	const BOOL ShowRepresentativeThumbnail = theApp.ShowRepresentativeThumbnail(m_ContextViewSettings.SortBy, m_Context);
+
+	theApp.m_IconFactory.DrawJumboIcon(dc, g, pt, pItemDescriptor, ShowRepresentativeThumbnail ? p_RawFiles : NULL, !ShowRepresentativeThumbnail, ThumbnailYOffset);
 }
 
 
