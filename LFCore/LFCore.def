@@ -19,8 +19,6 @@ EXPORTS
 	LFGetContextInfo @18
 	LFGetSortedAttributeList @19
 	LFGetItemColor @20
-	LFIsLicensed @21
-	LFIsSharewareExpired @22
 
 	LFHideFileExt @100
 	LFShowCompColor @101

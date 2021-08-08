@@ -70,7 +70,6 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg LRESULT OnTaskbarButtonCreated(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnLicenseActivated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnSetProgress(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
@@ -83,7 +82,6 @@ protected:
 	BOOL m_WantsBitmap;
 	INT m_SidebarWidth;
 	BOOL m_ShowCaption;
-	BOOL m_ShowExpireCaption;
 	INT m_BottomDivider;
 	INT m_BackBufferL;
 	INT m_BackBufferH;

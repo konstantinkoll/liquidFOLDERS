@@ -35,7 +35,6 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	hAccelerator = NULL;
 	m_pDropTarget = NULL;
 	m_pSidebarWnd = NULL;
-	m_ShowExpireCaption = FALSE;
 	m_SidebarWidth = m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
 	hBackgroundBrush = NULL;
 	m_pTaskbarList3 = NULL;
@@ -45,7 +44,6 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 {
 	m_PlacementPrefix = lpszPlacementPrefix;
 	m_ShowCaption = ShowCaption;
-	m_ShowExpireCaption = LFIsSharewareExpired();
 	m_pDropTarget = pDropTarget;
 
 	// Get size of work area
@@ -273,7 +271,7 @@ INT CBackstageWnd::GetCaptionHeight(BOOL IncludeBottomMargin) const
 	CSize Size;
 	GetCaptionButtonMargins(&Size);
 
-	return max((m_ShowCaption || m_ShowExpireCaption) ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0, Size.cy);
+	return max(m_ShowCaption ? LFGetApp()->m_SmallBoldFont.GetFontHeight()+(IncludeBottomMargin ? 2 : 1)*BACKSTAGECAPTIONMARGIN : 0, Size.cy);
 }
 
 BOOL CBackstageWnd::HasDocumentSheet() const
@@ -537,7 +535,7 @@ void CBackstageWnd::PaintBackground(CPaintDC& pDC, CRect rect)
 
 void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 {
-	if (m_ShowCaption || m_ShowExpireCaption)
+	if (m_ShowCaption)
 	{
 		const INT CaptionHeight = GetCaptionHeight();
 
@@ -558,15 +556,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 
 		// Caption
 		CString Caption;
-
-		if (m_ShowExpireCaption)
-		{
-			ENSURE(Caption.LoadString(IDS_EXPIRECAPTION));
-		}
-		else
-		{
-			GetWindowText(Caption);
-		}
+		GetWindowText(Caption);
 
 		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_SmallBoldFont);
 
@@ -583,7 +573,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 
 		rectText.OffsetRect(0, 1);
 
-		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4840F0 : IsWindowEnabled() ? 0xDACCC4 : 0x998981 : m_ShowExpireCaption ? 0x2020FF : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
+		dc.SetTextColor(Themed ? IsWindowEnabled() ? 0xDACCC4 : 0x998981 : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
 		dc.DrawText(Caption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 		dc.SelectObject(pOldFont);
@@ -718,7 +708,6 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CFrontstageWnd)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_CONTEXTMENU()
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_TaskbarButtonCreated, OnTaskbarButtonCreated)
-	ON_REGISTERED_MESSAGE(LFGetApp()->m_LicenseActivatedMsg, OnLicenseActivated)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_SetProgressMsg, OnSetProgress)
 	ON_REGISTERED_MESSAGE(LFGetApp()->m_WakeupMsg, OnWakeup)
 	ON_WM_COPYDATA()
@@ -1182,20 +1171,6 @@ LRESULT CBackstageWnd::OnTaskbarButtonCreated(WPARAM /*wParam*/, LPARAM /*lParam
 				m_pTaskbarList3 = NULL;
 			}
 	}
-
-	return NULL;
-}
-
-LRESULT CBackstageWnd::OnLicenseActivated(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	m_ShowExpireCaption = LFIsSharewareExpired();
-
-	AdjustLayout(SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOCOPYBITS);
-
-	m_BackBufferL = m_BackBufferH = 0;
-	UpdateBackground();
-
-	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 
 	return NULL;
 }

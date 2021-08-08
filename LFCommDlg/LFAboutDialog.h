@@ -26,7 +26,6 @@ protected:
 	afx_msg void OnVersionInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnableAutoUpdate();
 	afx_msg void OnUpdateNow();
-	afx_msg void OnEnterLicenseKey();
 	DECLARE_MESSAGE_MAP()
 
 	static UINT m_LastTab;
@@ -35,7 +34,6 @@ protected:
 
 private:
 	BOOL ShowBackgroundOnTab(UINT Index) const;
-	void CheckLicenseKey();
 	void CheckInternetConnection();
 
 	Bitmap* p_AppLogo;

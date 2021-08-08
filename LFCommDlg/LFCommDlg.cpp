@@ -1053,16 +1053,3 @@ void LFErrorBox(CWnd* pParentWnd, UINT Result)
 		LFMessageBox(pParentWnd, Message, CString((LPCSTR)IDS_ERROR), Type);
 	}
 }
-
-BOOL LFNagScreen(CWnd* pParentWnd)
-{
-	if (LFIsSharewareExpired())
-	{
-		if (LFMessageBox(pParentWnd, CString((LPCSTR)IDS_NOLICENSE), _T("liquidFOLDERS"), MB_OK | MB_ICONSTOP)==IDOK)
-			LFGetApp()->OnBackstagePurchase();
-
-		return FALSE;
-	}
-
-	return TRUE;
-}

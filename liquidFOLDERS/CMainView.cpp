@@ -576,10 +576,8 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	#define INSPECTORICONHIDDEN      30
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? INSPECTORICONVISIBLE : INSPECTORICONHIDDEN, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 32, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.Register(this);
@@ -893,12 +891,8 @@ void CMainView::OnUpdateSetViewCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnStoresAdd()
 {
-	// Allowed?
-	if (LFNagScreen(this))
-	{
-		CWaitCursor WaitCursor;
-		LFAddStoreDlg(this).DoModal();
-	}
+	CWaitCursor WaitCursor;
+	LFAddStoreDlg(this).DoModal();
 }
 
 void CMainView::OnStoresSynchronize()

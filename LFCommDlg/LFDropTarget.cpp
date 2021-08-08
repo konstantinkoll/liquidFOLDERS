@@ -203,10 +203,6 @@ BOOL LFDropTarget::OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT Dr
 	if (m_IsDragSource || !m_IsDropAllowed)
 		return FALSE;
 
-	// Allowed?
-	if (!LFNagScreen(pWnd))
-		return FALSE;
-
 	// Bring window to front
 	if (!pWnd)
 		pWnd = CWnd::GetForegroundWindow();

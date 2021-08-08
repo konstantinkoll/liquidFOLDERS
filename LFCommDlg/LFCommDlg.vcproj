@@ -569,10 +569,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFLicenseDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFMakeTaskDlg.cpp"
 				>
 			</File>
@@ -1230,10 +1226,6 @@
 			</File>
 			<File
 				RelativePath=".\LFItemTemplateDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFLicenseDlg.h"
 				>
 			</File>
 			<File

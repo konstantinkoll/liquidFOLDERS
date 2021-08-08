@@ -62,7 +62,6 @@ BOOL AboutDlg::InitSidebar(LPSIZE pszTabArea)
 
 	AddTab(IDD_ABOUT_GENERAL, pszTabArea);
 	AddTab(IDD_ABOUT_VIEWS, pszTabArea);
-	AddTab(IDD_ABOUT_LICENSE, pszTabArea);
 
 	return TRUE;
 }

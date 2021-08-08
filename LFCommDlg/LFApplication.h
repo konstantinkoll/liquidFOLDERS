@@ -159,7 +159,6 @@ public:
 	UINT OSVersion;
 	SmoothingMode m_SmoothingModeAntiAlias8x8;
 	UINT m_TaskbarButtonCreated;
-	UINT m_LicenseActivatedMsg;
 	UINT m_SetProgressMsg;
 	UINT m_WakeupMsg;
 	GUID m_AppID;
@@ -194,9 +193,7 @@ public:
 	PFNCHANGEWINDOWMESSAGEFILTER zChangeWindowMessageFilter;
 	BOOL m_UserLibLoaded;
 
-	afx_msg void OnBackstagePurchase();
 protected:
-	afx_msg void OnBackstageEnterLicenseKey();
 	afx_msg void OnBackstageSupport();
 	afx_msg void OnBackstageAbout();
 	afx_msg void OnUpdateBackstageCommands(CCmdUI* pCmdUI);
@@ -212,7 +209,7 @@ private:
 
 	BOOL IsUpdateCheckDue() const;
 	void WriteUpdateCheckTime() const;
-	static CString GetLatestVersion(CString CurrentVersion);
+	static CString GetLatestVersion(const CString& CurrentVersion);
 	static CString GetIniValue(CString Ini, const CString& Name);
 	static void ParseVersion(const CString& tmpStr, LFVersion* pVersion);
 	static BOOL IsVersionLater(const LFVersion& LatestVersion, const LFVersion& CurrentVersion);

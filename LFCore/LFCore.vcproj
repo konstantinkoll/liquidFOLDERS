@@ -366,10 +366,6 @@
 		</Configuration>
 	</Configurations>
 	<References>
-		<ProjectReference
-			ReferencedProjectIdentifier="{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}"
-			RelativePathToProject=".\cryptlib\cryptlib.vcproj"
-		/>
 	</References>
 	<Files>
 		<Filter
@@ -495,10 +491,6 @@
 			</File>
 			<File
 				RelativePath=".\LFVariantData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\License.cpp"
 				>
 			</File>
 			<File
@@ -685,10 +677,6 @@
 			</File>
 			<File
 				RelativePath=".\LFVariantData.h"
-				>
-			</File>
-			<File
-				RelativePath=".\License.h"
 				>
 			</File>
 			<File

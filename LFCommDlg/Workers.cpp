@@ -102,10 +102,6 @@ void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pP
 
 void LFRunSynchronizeStores(const STOREID& StoreID, CWnd* pParentWnd)
 {
-	// Allowed?
-	if (!LFNagScreen(pParentWnd))
-		return;
-
 	// Run
 	WorkerSynchronizeStoresParameters Parameters;
 	ZeroMemory(&Parameters, sizeof(Parameters));

@@ -46,7 +46,6 @@
 #include "LFGotoYearDlg.h"
 #include "LFICloudDlg.h"
 #include "LFItemTemplateDlg.h"
-#include "LFLicenseDlg.h"
 #include "LFMakeTaskDlg.h"
 #include "LFMessageBoxDlg.h"
 #include "LFOneDriveDlg.h"
@@ -148,7 +147,6 @@ HBITMAP LFIATACreateAirportMap(LPCAIRPORT lpcAirport, LONG Width, LONG Height);
 
 INT LFMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type);
 void LFErrorBox(CWnd* pParentWnd, UINT Result);
-BOOL LFNagScreen(CWnd* pParentWnd=NULL);
 
 
 // Progress
