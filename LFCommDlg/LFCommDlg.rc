@@ -485,19 +485,6 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,232,272,50,14,WS_GROUP
 END
 
-IDD_LICENSE DIALOGEX 0, 0, 350, 181
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Lizenzschlüssel eingeben"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Unser Partner MyCommerce sendet Ihnen eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Laden Sie diese Datei, oder kopieren Sie den Inhalt der Datei in das Textfeld.",IDC_INSTRUCTIONS,7,7,336,35
-    CONTROL         "Lizenzschlüssel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
-    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
-    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,160,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,293,160,50,14,WS_GROUP
-END
-
 IDD_CREATESTORE DIALOGEX 0, 0, 290, 231
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Neuen Speicherort erstellen"
@@ -780,14 +767,6 @@ BEGIN
         BOTTOMMARGIN, 286
     END
 
-    IDD_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 174
-    END
-
     IDD_CREATESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -931,7 +910,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/home/de/"
     IDS_ERROR               "Fehler"
@@ -939,10 +917,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
-    IDS_LICFILEFILTER       "Lizenzdateien"
-    IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
-    IDS_LICENSEVALID_MSG    "Ihr Lizenzschlüssel ist gültig. Vielen Dank für den Kauf von liquidFOLDERS!"
     IDS_MULTIPLEVALUES      "Unterschiedliche Werte"
     IDS_UACMESSAGE          "Ihre Zustimmung ist erforderlich"
     IDS_EXPAND              "E&rweitern"
@@ -952,8 +926,6 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u Speicherort gewartet"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u Speicherorte gewartet"
     IDS_REGFILEFILTER       "Registrierungsdatei"
-    IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
-    IDS_EXPIRECAPTION       "Unregistrierte Kopie – bitte erwerben Sie eine Lizenz!"
     IDS_XOFY_SINGULAR       "%u von %u"
 END
 
@@ -1038,9 +1010,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_PURCHASE  "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
-    IDM_BACKSTAGE_ENTERLICENSEKEY 
-                            "Öffnet ein Fenster zum Freischalten von liquidFOLDERS.\nLizenzschlüssel eingeben"
     IDM_BACKSTAGE_SUPPORT   "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
     IDM_BACKSTAGE_ABOUT     "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
 END
@@ -1344,19 +1313,6 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,232,272,50,14,WS_GROUP
 END
 
-IDD_LICENSE DIALOGEX 0, 0, 350, 181
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Dictar licencia"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo «liquidFOLDERS.lic» adjunto. Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro.",IDC_INSTRUCTIONS,7,7,336,35
-    CONTROL         "Licencia",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
-    PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,7,62,115,15,WS_GROUP
-    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,160,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,293,160,50,14,WS_GROUP
-END
-
 IDD_CREATESTORE DIALOGEX 0, 0, 290, 231
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Crear un nuevo ubicación"
@@ -1644,14 +1600,6 @@ BEGIN
         BOTTOMMARGIN, 286
     END
 
-    IDD_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 174
-    END
-
     IDD_CREATESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1811,7 +1759,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/home/es/"
     IDS_ERROR               "Error"
@@ -1819,10 +1766,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_INVALIDLICENSE      "La licencia que usted ha ingresado no es válida o ha expirado!"
-    IDS_LICFILEFILTER       "Archivos de licencia"
-    IDS_LICENSEVALID_CAPTION "Licencia válida"
-    IDS_LICENSEVALID_MSG    "Su licencia es válida. Muchas gracias por adquirir liquidFOLDERS! Nosotros apreciamos su negocio."
     IDS_MULTIPLEVALUES      "Datos diversos"
     IDS_UACMESSAGE          "liquidFOLDERS necesita su permiso para continuar"
     IDS_EXPAND              "&Abrir"
@@ -1832,8 +1775,6 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u ubicación inspeccionar"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u ubicaciones inspeccionar"
     IDS_REGFILEFILTER       "Archivo de Registro"
-    IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
-    IDS_EXPIRECAPTION       "Copia no registrada – compre una licencia por fovor!"
     IDS_XOFY_SINGULAR       "%u de %u"
 END
 
@@ -1918,9 +1859,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_PURCHASE  "Abre su navegador estándar visualizando una página a través de la cual usted puede adquirir la licencia.\nAdquirir licencia"
-    IDM_BACKSTAGE_ENTERLICENSEKEY 
-                            "Abre una ventana para ver e ingresar su licencia.\nDictar licencia"
     IDM_BACKSTAGE_SUPPORT   "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
     IDM_BACKSTAGE_ABOUT     "Abre información y configuración de liquidFOLDERS.\nAcerca de liquidFOLDERS"
 END
@@ -2021,19 +1959,6 @@ CAPTION "Travail d'entretien"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,243,279,50,14,WS_GROUP
-END
-
-IDD_LICENSE DIALOGEX 0, 0, 350, 181
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Donner clé de licence"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire MyCommerce vous envoie un e-mail auquel le fichier «liquidFOLDERS.lic» est ajouté. Ensuite ouvrez le fichier, ou copierez son contenu dans le champ de texte y compris.",IDC_INSTRUCTIONS,7,7,336,35
-    CONTROL         "Licence",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
-    PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,7,62,115,15,WS_GROUP
-    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,160,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,293,160,50,14,WS_GROUP
 END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 248, 316
@@ -2417,14 +2342,6 @@ BEGIN
         BOTTOMMARGIN, 293
     END
 
-    IDD_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 174
-    END
-
     IDD_BROWSEFORFOLDER, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -2688,7 +2605,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/home/fr/"
     IDS_ERROR               "Erreur"
@@ -2696,10 +2612,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_INVALIDLICENSE      "La licence entrée est non valable ou s'est terminée!"
-    IDS_LICFILEFILTER       "Fichiers de licence"
-    IDS_LICENSEVALID_CAPTION "La licence est acceptée"
-    IDS_LICENSEVALID_MSG    "Sa clé de licence est valable. Merci beaucoup pour l'achat de liquidFOLDERS!"
     IDS_MULTIPLEVALUES      "Valeurs plusieurs"
     IDS_UACMESSAGE          "liquidFOLDERS a besoin de votre permission de continuer"
     IDS_EXPAND              "&Ouvrir"
@@ -2709,8 +2621,6 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u emplacement revisé"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u semplacements revisée"
     IDS_REGFILEFILTER       "Fichier de Registre"
-    IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
-    IDS_EXPIRECAPTION       "Copie non enregistée – acheter une license s'il vous plaît!"
     IDS_XOFY_SINGULAR       "%u sur %u"
 END
 
@@ -2795,9 +2705,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_PURCHASE  "Ouvre le navigateur défaut avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
-    IDM_BACKSTAGE_ENTERLICENSEKEY 
-                            "Ouvre une fenêtre pour la déverrouillage de liquidFOLDERS.\nDonner clé de licence"
     IDM_BACKSTAGE_SUPPORT   "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
     IDM_BACKSTAGE_ABOUT     "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
 END
@@ -3150,19 +3057,6 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,232,272,50,14,WS_GROUP
 END
 
-IDD_LICENSE DIALOGEX 0, 0, 350, 181
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Enter license key"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Our partner MyCommerce will send you an email that has the file “liquidFOLDERS.lic” attached to it. Open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_INSTRUCTIONS,7,7,336,35
-    CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
-    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
-    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,160,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,293,160,50,14,WS_GROUP
-END
-
 IDD_CREATESTORE DIALOGEX 0, 0, 290, 231
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create a new storage location"
@@ -3450,14 +3344,6 @@ BEGIN
         BOTTOMMARGIN, 286
     END
 
-    IDD_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 174
-    END
-
     IDD_CREATESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -3617,7 +3503,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/home/en/"
     IDS_ERROR               "Error"
@@ -3625,10 +3510,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"
-    IDS_LICFILEFILTER       "License files"
-    IDS_LICENSEVALID_CAPTION "License valid"
-    IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing liquidFOLDERS! We appreciate your business."
     IDS_MULTIPLEVALUES      "Multiple values"
     IDS_UACMESSAGE          "liquidFOLDERS needs your permission"
     IDS_EXPAND              "&Expand"
@@ -3638,8 +3519,6 @@ BEGIN
     IDS_STOREMAINTENANCE_HINT_SINGULAR "%u location serviced"
     IDS_STOREMAINTENANCE_HINT_PLURAL "%u locations serviced"
     IDS_REGFILEFILTER       "Registry file"
-    IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
-    IDS_EXPIRECAPTION       "Unregistered copy—please purchase a license!"
     IDS_XOFY_SINGULAR       "%u of %u"
 END
 
@@ -3724,9 +3603,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_PURCHASE  "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
-    IDM_BACKSTAGE_ENTERLICENSEKEY 
-                            "Opens a window to enter your license key.\nEnter license key"
     IDM_BACKSTAGE_SUPPORT   "Opens your standard mail software to contact customer support.\nContact support"
     IDM_BACKSTAGE_ABOUT     "Shows liquidFOLDERS information and settings.\nAbout liquidFOLDERS"
 END

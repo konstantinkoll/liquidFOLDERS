@@ -77,15 +77,6 @@ LFCORE_API void __stdcall LFGetSortedAttributeList(LFAttributeList& AttributeLis
 LFCORE_API COLORREF __stdcall LFGetItemColor(UINT ID, UINT Fade=LFItemColorFadePure);
 
 
-// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
-// Die gespeicherten Lizenzinformationen finden sich in License
-LFCORE_API BOOL __stdcall LFIsLicensed(LFLicense* pLicense=NULL, BOOL Reload=FALSE);
-
-// Gibt TRUE zurück, wenn die Shareware-Version ausgelaufen ist,
-// und keine ordnungsgemäße Lizenz vorliegt
-LFCORE_API BOOL __stdcall LFIsSharewareExpired();
-
-
 
 // Volumes
 //

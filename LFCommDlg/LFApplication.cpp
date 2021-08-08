@@ -47,7 +47,6 @@ LFApplication::LFApplication(const GUID& AppID)
 	// Messages
 	p_MessageIDs = LFGetMessageIDs();
 	m_TaskbarButtonCreated = RegisterWindowMessage(_T("TaskbarButtonCreated"));
-	m_LicenseActivatedMsg = RegisterWindowMessage(_T("liquidFOLDERS.LicenseActivated"));
 	m_SetProgressMsg = RegisterWindowMessage(_T("liquidFOLDERS.SetProgress"));
 	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.NewWindow"));
 
@@ -946,12 +945,9 @@ void LFApplication::WriteUpdateCheckTime() const
 	WriteGlobalInt(_T("LastUpdateCheckLow"), FileTime.dwLowDateTime);
 }
 
-CString LFApplication::GetLatestVersion(CString CurrentVersion)
+CString LFApplication::GetLatestVersion(const CString& CurrentVersion)
 {
 	CString VersionIni;
-
-	// License
-	CurrentVersion += LFIsLicensed() ? _T(" (licensed)") : LFIsSharewareExpired() ? _T(" (expired)") : _T(" (evaluation)");
 
 	// Get available version
 	HINTERNET hSession = WinHttpOpen(_T("liquidFOLDERS/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
@@ -1155,21 +1151,9 @@ void LFApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
-	ON_COMMAND(IDM_BACKSTAGE_PURCHASE, OnBackstagePurchase)
-	ON_COMMAND(IDM_BACKSTAGE_ENTERLICENSEKEY, OnBackstageEnterLicenseKey)
 	ON_COMMAND(IDM_BACKSTAGE_SUPPORT, OnBackstageSupport)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_PURCHASE, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_SUPPORT, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
 END_MESSAGE_MAP()
-
-void LFApplication::OnBackstagePurchase()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), CString((LPCSTR)IDS_PURCHASEURL), NULL, NULL, SW_SHOWNORMAL);
-}
-
-void LFApplication::OnBackstageEnterLicenseKey()
-{
-	LFLicenseDlg(m_pActiveWnd).DoModal();
-}
 
 void LFApplication::OnBackstageSupport()
 {
@@ -1178,14 +1162,5 @@ void LFApplication::OnBackstageSupport()
 
 void LFApplication::OnUpdateBackstageCommands(CCmdUI* pCmdUI)
 {
-	switch (pCmdUI->m_nID)
-	{
-	case IDM_BACKSTAGE_PURCHASE:
-	case IDM_BACKSTAGE_ENTERLICENSEKEY:
-		pCmdUI->Enable(!LFIsLicensed());
-		break;
-
-	default:
-		pCmdUI->Enable(TRUE);
-	}
+	pCmdUI->Enable(TRUE);
 }

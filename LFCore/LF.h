@@ -31,22 +31,11 @@ struct LFProgress
 	BOOL NoMinorCounter;				// Set TRUE if thread does not wish minor progress counter to be displayed
 };
 
-
-// License
-
 struct LFVersion
 {
 	UINT Major;
 	UINT Minor;
 	UINT Build;
-};
-
-struct LFLicense
-{
-	CHAR ProductID[256];
-	CHAR PurchaseDate[16];				// Either DD/MM/YYYY or DD.MM.YYYY
-	CHAR Quantity[8];
-	CHAR RegName[256];
 };
 
 

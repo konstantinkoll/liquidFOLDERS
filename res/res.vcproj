@@ -1276,26 +1276,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Tasks\Key_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Key_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Key_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Key_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Key_64.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Tasks\MakeDefault_16.png"
 				>
 			</File>
@@ -1373,26 +1353,6 @@
 			</File>
 			<File
 				RelativePath=".\Tasks\Open_64.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Purchase_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Purchase_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Purchase_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Purchase_48.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Tasks\Purchase_64.png"
 				>
 			</File>
 			<File
