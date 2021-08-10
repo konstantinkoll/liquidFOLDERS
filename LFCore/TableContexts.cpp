@@ -149,6 +149,7 @@ extern const RegisteredFileFormat ContextRegistry[FILEFORMATCOUNT] = {
 	{ "m4a",             LFContextAudio, LFContextPodcasts },
 	{ "m4b",             LFContextAudio, LFContextPodcasts },
 	{ "m4p",             LFContextAudio, LFContextMusic },
+	{ "m4r",             LFContextAudio, 0 },
 	{ "m4v",             LFContextVideos, 0 },
 	{ "maff",            LFContextDocuments, 0 },
 	{ "mht",             LFContextDocuments, 0 },
