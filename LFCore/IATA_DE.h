@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8806
+#define AirportCount_DE 8808
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -493,7 +493,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 162, "ANH", "", "Anuha Island", { 8.983056, 160.500000 } },
 	{ 209, "ANI", "", "Aniak", { -61.581667, -159.543056 } },
 	{  97, "ANJ", "", "Zanaga", { 2.850000, 13.816944 } },
-	{ 200, "ANK", "", "Ankara Etimesgut", { -39.949722, 32.688611 } },
+	{ 200, "ANK", "", "Ankara (Etimesgut Airforce Base)", { -39.949722, 32.688611 } },
 	{   4, "ANL", "", "Andulo", { 11.466944, 16.700000 } },
 	{ 111, "ANM", "", "Antalaha", { 14.999444, 50.320278 } },
 	{ 209, "ANN", "", "Annette", { -55.042500, -131.572222 } },
@@ -1528,7 +1528,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "CKV", "", "Clarksville", { -36.621944, -87.415000 } },
 	{ 209, "CKX", "", "Chicken", { -64.071389, -141.952222 } },
 	{  66, "CKY", "", "Conakry", { -9.576944, -13.611944 } },
-	{ 200, "CKZ", "", "Canakkale", { -40.137778, 26.426667 } },
+	{ 200, "CKZ", "", "Çanakkale", { -40.137778, 26.426667 } },
 	{  16, "CLA", "", "Comilla", { -23.433056, 91.183056 } },
 	{  76, "CLB", "", "Castlebar", { -53.848333, -9.280278 } },
 	{ 209, "CLD", "", "Carlsbad", { -33.128333, -117.280000 } },
@@ -2030,6 +2030,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  40, "DRS", "", "Dresden", { -51.132778, 13.767222 } },
 	{ 209, "DRT", "", "Del Rio", { -29.374167, -100.927222 } },
 	{ 209, "DRU", "", "Drummond", { -46.620833, -113.205000 } },
+	{ 114, "DRV", "", "Dharavandhoo", { -5.156667, 73.130556 } },
 	{  11, "DRW", "", "Darwin", { 12.414722, 130.876667 } },
 	{  62, "DSA", "", "Robin Hood Airport", { -53.474722, -1.004444 } },
 	{  87, "DSC", "", "Dschang", { -5.450000, 10.066944 } },
@@ -3725,7 +3726,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "KCK", "KCK", "Kansas City", { -38.685185, -95.088750 } },
 	{ 209, "KCL", "", "Chignik (Lagoon Airport)", { -56.311111, -158.535833 } },
 	{ 209, "KCN", "", "Chernofski Harbor", { -53.399167, -167.551944 } },
-	{ 200, "KCO", "", "Kocaeli (Cengiz Topel Airport)", { -40.916944, 29.916944 } },
+	{ 200, "KCO", "", "Cengiz Topel Airport", { -40.916944, 29.916944 } },
 	{ 206, "KCP", "", "Kam'yanets'-Podil's'kyy", { -48.683056, 26.616944 } },
 	{ 209, "KCQ", "", "Chignik", { -56.311389, -158.373333 } },
 	{ 209, "KCR", "", "Colorado Creek", { -63.567778, -155.989167 } },
@@ -7238,6 +7239,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{   4, "SZA", "", "Soyo", { 6.141111, 12.371667 } },
 	{ 113, "SZB", "", "Kuala Lumpur (Subang)", { -3.131111, 101.548056 } },
 	{  38, "SZC", "", "Santa Cruz", { -10.266944, -85.600000 } },
+	{ 200, "SZF", "", "Samsun Çarsamba", { -41.265556, 36.548611 } },
 	{ 147, "SZG", "", "Salzburg", { -47.793333, 13.004444 } },
 	{  73, "SZH", "", "Senipah", { 0.950000, 117.150000 } },
 	{ 182, "SZK", "", "Skukuza", { 24.960833, 31.588611 } },

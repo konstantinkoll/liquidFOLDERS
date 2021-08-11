@@ -208,7 +208,7 @@ void LFSearchResult::FinishQuery(LFFilter* pFilter)
 			break;
 
 		case LFFilterModeQuery:
-			m_Context = (pFilter->IsPersistent || (pFilter->Query.SearchTerm[0]!=L'\0') || (pFilter->Query.pConditionList!=NULL)) ? LFContextSearch : pFilter->Query.Context;
+			m_Context = (pFilter->IsPersistent || (pFilter->Query.SearchTerm[0]!=L'\0') || (pFilter->Query.pConditionList!=NULL) || (pFilter->Query.Context==LFContextAuto)) ? LFContextSearch : pFilter->Query.Context;
 			break;
 		}
 
