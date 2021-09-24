@@ -631,9 +631,13 @@ void CStore::SetAttributesFromStore(LFItemDescriptor* pItemDescriptor)
 					}
 
 				// Title
-				LPCWSTR pTitle = pSeparator+SeparatorLength;
-				if (*pTitle)
-					SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
+				if (!SeparatorIsSpace)
+				{
+					LPCWSTR pTitle = pSeparator+SeparatorLength;
+
+					if (*pTitle)
+						SetAttribute(pItemDescriptor, LFAttrTitle, pTitle);
+				}
 			}
 		}
 		else
