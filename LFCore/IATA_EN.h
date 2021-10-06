@@ -229,7 +229,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8809
+#define AirportCount_EN 8811
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2235,6 +2235,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  89, "ENE", "", "Ende", { 8.849167, 121.660556 } },
 	{  63, "ENF", "", "Enontekiö", { -68.362500, 23.424444 } },
 	{  41, "ENH", "", "Enshi", { -30.320278, 109.485000 } },
+	{ 157, "ENI", "", "El Nido", { -11.201944, 119.416944 } },
 	{  79, "ENJ", "", "El Naranjo", { -14.083056, -90.816944 } },
 	{ 211, "ENK", "", "Enniskillen", { -54.398889, -7.651667 } },
 	{ 213, "ENL", "", "Centralia", { -38.515000, -89.091111 } },
@@ -5989,6 +5990,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 201, "PLF", "", "Pala", { -9.378056, 14.925000 } },
 	{ 211, "PLH", "", "Plymouth", { -50.422778, -4.105833 } },
 	{ 169, "PLI", "", "Palm Island", { -12.583056, -61.383056 } },
+	{  18, "PLJ", "", "Placencia", { -16.533333, -88.361111 } },
 	{ 213, "PLK", "", "Point Lookout", { -36.625833, -93.228889 } },
 	{  26, "PLL", "", "Ponta Pelada", { 3.146111, -59.986389 } },
 	{  89, "PLM", "", "Palembang", { 2.898333, 104.700000 } },

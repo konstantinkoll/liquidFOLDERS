@@ -2088,6 +2088,7 @@ END     Enid (Vance Airforce Base), USA;4;36*20'21"N, 97*54'59"W
 ENE     Ende, Indonesia;4;8*50'57"S, 121*39'38"E
 ENF     Enontekiö, Finland;4;68*21'45"N, 23*25'28"E
 ENH     Enshi, China;4;30*19'13"N, 109*29'6"E
+ENI     El Nido, Philippines;5;11*12'7"N, 119*25'1"E
 ENJ     El Naranjo, Guatemala;4;14*4'59"N, 90*49'1"W
 ENK     Enniskillen, United Kingdom;4;54*23'56"N, 7*39'6"W
 ENL     Centralia, USA;4;38*30'54"N, 89*5'28"W
@@ -6068,6 +6069,7 @@ PLF     Pala, Tschad;4;9*22'41"N, 14*55'30"E
 PLG     La Plagne, France
 PLH     Plymouth, United Kingdom;4;50*25'22"N, 4*6'21"W
 PLI     Palm Island, Saint Vincent;4;12*34'59"N, 61*22'59"W
+PLJ     Placencia, Belize;5;16*32"14'N, 88*21'40"W
 PLK     Point Lookout, USA;4;36*37'33"N, 93*13'44"W
 PLL     Ponta Pelada, Brazil;5;3*8'46"S, 59*59'11"W
 PLM     Palembang, Indonesia;4;2*53'54"S, 104*41'60"E
