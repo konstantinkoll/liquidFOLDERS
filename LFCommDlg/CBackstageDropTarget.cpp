@@ -26,9 +26,7 @@ CBackstageDropTarget::~CBackstageDropTarget()
 
 DROPIMAGETYPE CBackstageDropTarget::DropEffectToDropImage(DROPEFFECT DropEffect)
 {
-	DropEffect &= ~DROPEFFECT_SCROLL;
-
-	if (DropEffect==DROPEFFECT_NONE)
+	if ((DropEffect & ~DROPEFFECT_SCROLL)==DROPEFFECT_NONE)
 		return DROPIMAGE_NONE;
 
 	if (DropEffect & DROPEFFECT_MOVE)
